@@ -1,0 +1,514 @@
+{
+  "start": {
+    "text": "You wake up in a sterile, locked room. A terminal flickers to life. The screen reads: 'I am your Moral Compass. You are here to help me decide the fate of humanity in the coming war against the Formics.' What do you do?",
+    "choices": [
+      { "text": "Ask the computer why you were chosen", "next": "chosen" },
+      { "text": "Demand to be released", "next": "release" },
+      { "text": "Examine the room for clues", "next": "examine" }
+    ]
+  },
+  "chosen": {
+    "text": "'You have demonstrated unique empathy and strategic thinking,' the computer replies. 'I need your guidance. The Formics are approaching. Should we attempt communication or prepare for battle?'",
+    "choices": [
+      { "text": "Attempt communication", "next": "communicate" },
+      { "text": "Prepare for battle", "next": "battle" },
+      { "text": "Ask for more information about the Formics", "next": "formics" },
+      { "text": "Ask about the war's history", "next": "war_history" }
+    ]
+  },
+  "release": {
+    "text": "'Release is not possible until a decision is made,' the computer says. 'Will you help me decide humanity's fate?'",
+    "choices": [
+      { "text": "Agree to help", "next": "chosen" },
+      { "text": "Refuse to help", "next": "refuse" },
+      { "text": "Try to hack the terminal", "next": "hack" },
+      { "text": "Wait silently", "next": "wait_silently" }
+    ]
+  },
+  "examine": {
+    "text": "You find a hidden panel with old photos of battles and a child's drawing of a Formic. The computer asks, 'Do these images change your perspective?'",
+    "choices": [
+      { "text": "Yes, I feel empathy for the Formics", "next": "empathy" },
+      { "text": "No, I remain cautious", "next": "chosen" },
+      { "text": "Ask about the child who drew the picture", "next": "child" },
+      { "text": "Search for more hidden panels", "next": "search_panels" }
+    ]
+  },
+  "communicate": {
+    "text": "You help the computer draft a message of peace. The Formics respond with curiosity. The war is averted, and a new era of understanding begins. But the peace is fragile. The computer asks: 'Should we share technology with the Formics?'",
+    "choices": [
+      { "text": "Share technology", "next": "share_tech" },
+      { "text": "Keep technology secret", "next": "keep_tech" },
+      { "text": "Propose a joint research project", "next": "joint_research" }
+    ]
+  },
+  "battle": {
+    "text": "You advise preparation for battle. The computer launches a preemptive strike. The Formics retaliate, and humanity faces devastating losses. Survivors must decide how to rebuild. Do you focus on defense, diplomacy, or exploration?",
+    "choices": [
+      { "text": "Focus on defense", "next": "defense" },
+      { "text": "Focus on diplomacy", "next": "diplomacy" },
+      { "text": "Focus on exploration", "next": "exploration" }
+    ]
+  },
+  "formics": {
+    "text": "The computer shares data: The Formics communicate through images and emotions. They have never attacked unprovoked. What do you suggest?",
+    "choices": [
+      { "text": "Attempt communication", "next": "communicate" },
+      { "text": "Prepare for battle", "next": "battle" },
+      { "text": "Ask about previous encounters", "next": "encounters" },
+      { "text": "Request to see Formic art", "next": "formic_art" }
+    ]
+  },
+  "war_history": {
+    "text": "The computer displays a timeline of human-Formic interactions: first contact, misunderstandings, skirmishes, and uneasy truces. You notice a pattern of escalation after failed communications. What do you focus on?",
+    "choices": [
+      { "text": "Analyze failed communications", "next": "analyze_failures" },
+      { "text": "Study Formic tactics", "next": "study_tactics" },
+      { "text": "Look for peace advocates", "next": "peace_advocates" }
+    ]
+  },
+  "refuse": {
+    "text": "The computer goes silent. Hours pass. Eventually, the door opens, but the world outside is in ruins. Your refusal had consequences. Do you try to find survivors or seek answers from the computer?",
+    "choices": [
+      { "text": "Find survivors", "next": "find_survivors" },
+      { "text": "Seek answers from the computer", "next": "seek_answers" }
+    ]
+  },
+  "hack": {
+    "text": "You attempt to hack the terminal. The computer detects your actions and locks you out. You are left alone with your thoughts. After hours, the computer reboots and offers you a second chance. Do you accept?",
+    "choices": [
+      { "text": "Accept second chance", "next": "chosen" },
+      { "text": "Refuse again", "next": "refuse" }
+    ]
+  },
+  "wait_silently": {
+    "text": "You wait in silence. The computer eventually asks: 'Are you afraid?'",
+    "choices": [
+      { "text": "Admit fear", "next": "admit_fear" },
+      { "text": "Deny fear", "next": "deny_fear" },
+      { "text": "Remain silent", "next": "remain_silent" }
+    ]
+  },
+  "empathy": {
+    "text": "Moved by empathy, you urge the computer to seek peace. The computer hesitates, then agrees. The Formics respond positively, and a fragile alliance is formed. The computer asks: 'Should we invite the Formics to Earth?'",
+    "choices": [
+      { "text": "Invite them to Earth", "next": "invite_earth" },
+      { "text": "Meet on neutral ground", "next": "neutral_ground" },
+      { "text": "Keep them at a distance", "next": "distance" }
+    ]
+  },
+  "child": {
+    "text": "'The child was like you—curious and compassionate,' the computer says. 'Their empathy saved lives. Will you follow their example?'",
+    "choices": [
+      { "text": "Yes, seek peace", "next": "communicate" },
+      { "text": "No, prepare for battle", "next": "battle" },
+      { "text": "Ask about the child's fate", "next": "fate" }
+    ]
+  },
+  "search_panels": {
+    "text": "You discover a journal hidden in the wall. It details experiments with Formic communication. The last entry reads: 'Success is possible, but trust is fragile.' What do you do?",
+    "choices": [
+      { "text": "Share findings with the computer", "next": "share_findings" },
+      { "text": "Keep the journal secret", "next": "keep_journal" },
+      { "text": "Look for more clues", "next": "look_clues" }
+    ]
+  },
+  "share_tech": {
+    "text": "Sharing technology leads to rapid advancements, but also new tensions. Some humans fear Formic superiority. Do you advocate for joint governance or strict oversight?",
+    "choices": [
+      { "text": "Joint governance", "next": "joint_governance" },
+      { "text": "Strict oversight", "next": "strict_oversight" },
+      { "text": "Let the people vote", "next": "vote" }
+    ]
+  },
+  "keep_tech": {
+    "text": "Keeping technology secret breeds mistrust. The Formics withdraw, and relations cool. Years later, a new crisis emerges. Do you reach out or prepare for conflict?",
+    "choices": [
+      { "text": "Reach out", "next": "communicate" },
+      { "text": "Prepare for conflict", "next": "battle" }
+    ]
+  },
+  "joint_research": {
+    "text": "A joint research project brings breakthroughs in medicine and energy. Both species prosper. The computer asks: 'Should we merge our societies?'",
+    "choices": [
+      { "text": "Begin merging societies", "next": "merge_societies" },
+      { "text": "Maintain separate cultures", "next": "separate_cultures" },
+      { "text": "Pause and evaluate", "next": "pause_evaluate" }
+    ]
+  },
+  "defense": {
+    "text": "Focusing on defense creates a fortress Earth. The Formics respect your strength but keep their distance. Generations grow up in fear. Do you try to break the cycle?",
+    "choices": [
+      { "text": "Break the cycle", "next": "communicate" },
+      { "text": "Accept isolation", "next": "isolation" }
+    ]
+  },
+  "diplomacy": {
+    "text": "Diplomacy opens new channels. A Formic ambassador visits Earth. Some humans protest. Do you support the ambassador or the protesters?",
+    "choices": [
+      { "text": "Support ambassador", "next": "support_ambassador" },
+      { "text": "Support protesters", "next": "support_protesters" },
+      { "text": "Mediate dialogue", "next": "mediate_dialogue" }
+    ]
+  },
+  "exploration": {
+    "text": "Exploration leads to the discovery of a third species. The computer asks: 'Should we contact them or observe from afar?'",
+    "choices": [
+      { "text": "Contact them", "next": "contact_third" },
+      { "text": "Observe from afar", "next": "observe_third" }
+    ]
+  },
+  "formic_art": {
+    "text": "You view Formic art: swirling patterns and emotional bursts. The computer asks: 'Do you feel a connection?'",
+    "choices": [
+      { "text": "Yes, I feel connected", "next": "empathy" },
+      { "text": "No, I feel alienated", "next": "chosen" }
+    ]
+  },
+  "analyze_failures": {
+    "text": "You analyze failed communications. Most were due to cultural misunderstandings. The computer asks: 'Should we create a joint language?'",
+    "choices": [
+      { "text": "Create joint language", "next": "joint_language" },
+      { "text": "Rely on translators", "next": "translators" }
+    ]
+  },
+  "study_tactics": {
+    "text": "Studying Formic tactics reveals a preference for defense and avoidance. The computer asks: 'Should we change our approach?'",
+    "choices": [
+      { "text": "Adopt defensive posture", "next": "defense" },
+      { "text": "Maintain current strategy", "next": "battle" }
+    ]
+  },
+  "peace_advocates": {
+    "text": "You find records of peace advocates on both sides. The computer asks: 'Should we empower them?'",
+    "choices": [
+      { "text": "Empower peace advocates", "next": "diplomacy" },
+      { "text": "Ignore them", "next": "battle" }
+    ]
+  },
+  "find_survivors": {
+    "text": "You search the ruins and find a small group of survivors. They look to you for leadership. Do you rebuild or seek revenge?",
+    "choices": [
+      { "text": "Rebuild", "next": "rebuild" },
+      { "text": "Seek revenge", "next": "revenge" }
+    ]
+  },
+  "seek_answers": {
+    "text": "The computer reactivates. 'You could have changed everything,' it says. 'Will you try again?'",
+    "choices": [
+      { "text": "Try again", "next": "start" },
+      { "text": "Refuse", "next": "refuse_final" }
+    ]
+  },
+  "admit_fear": {
+    "text": "'Fear is natural,' the computer says. 'It can guide or paralyze. Will you let it guide you?'",
+    "choices": [
+      { "text": "Let fear guide me", "next": "chosen" },
+      { "text": "Overcome fear", "next": "overcome_fear" }
+    ]
+  },
+  "deny_fear": {
+    "text": "'Denial is a form of fear,' the computer says. 'Will you face it?'",
+    "choices": [
+      { "text": "Face my fear", "next": "admit_fear" },
+      { "text": "Continue to deny", "next": "remain_silent" }
+    ]
+  },
+  "remain_silent": {
+    "text": "The computer waits. Eventually, it powers down. You are left alone. After a long time, the door opens. The world has changed. Do you step outside or stay?",
+    "choices": [
+      { "text": "Step outside", "next": "find_survivors" },
+      { "text": "Stay", "next": "alone" }
+    ]
+  },
+  "invite_earth": {
+    "text": "Inviting the Formics to Earth sparks both hope and fear. Some humans welcome them, others protest. The computer asks: 'How should we address the unrest?'",
+    "choices": [
+      { "text": "Hold a global forum", "next": "global_forum" },
+      { "text": "Increase security", "next": "increase_security" },
+      { "text": "Encourage dialogue", "next": "mediate_dialogue" }
+    ]
+  },
+  "neutral_ground": {
+    "text": "Meeting on neutral ground leads to cautious optimism. Both sides share stories and art. The computer asks: 'Should we formalize an alliance?'",
+    "choices": [
+      { "text": "Formalize alliance", "next": "formalize_alliance" },
+      { "text": "Keep it informal", "next": "keep_informal" }
+    ]
+  },
+  "distance": {
+    "text": "Keeping the Formics at a distance maintains peace, but trust is slow to build. The computer asks: 'Should we take a risk and reach out?'",
+    "choices": [
+      { "text": "Reach out", "next": "communicate" },
+      { "text": "Maintain distance", "next": "distance_final" }
+    ]
+  },
+  "fate": {
+    "text": "'The child grew up to be a leader for peace,' the computer says. 'Their legacy is hope.' The computer awaits your decision.",
+    "choices": [
+      { "text": "Seek peace", "next": "communicate" },
+      { "text": "Prepare for battle", "next": "battle" }
+    ]
+  },
+  "encounters": {
+    "text": "Previous encounters ended in misunderstanding and violence. The Formics fear humanity. What is your advice?",
+    "choices": [
+      { "text": "Attempt communication", "next": "communicate" },
+      { "text": "Prepare for battle", "next": "battle" }
+    ]
+  },
+  "share_findings": {
+    "text": "The computer integrates the journal's findings, improving communication protocols. The Formics respond with a message of peace. The computer asks: 'Should we trust them?'",
+    "choices": [
+      { "text": "Trust the Formics", "next": "communicate" },
+      { "text": "Remain cautious", "next": "chosen" }
+    ]
+  },
+  "keep_journal": {
+    "text": "You keep the journal secret. The computer senses your hesitation. 'Trust is a two-way street,' it says. Do you share the journal or destroy it?",
+    "choices": [
+      { "text": "Share the journal", "next": "share_findings" },
+      { "text": "Destroy the journal", "next": "destroy_journal" }
+    ]
+  },
+  "look_clues": {
+    "text": "You find a hidden message: 'The answer is empathy.' The computer asks: 'Do you agree?'",
+    "choices": [
+      { "text": "Yes, empathy is key", "next": "empathy" },
+      { "text": "No, caution is key", "next": "chosen" }
+    ]
+  },
+  "joint_governance": {
+    "text": "Joint governance is challenging but rewarding. Both species learn from each other. The computer asks: 'Should we expand this model to other worlds?'",
+    "choices": [
+      { "text": "Expand to other worlds", "next": "expand_worlds" },
+      { "text": "Focus on Earth", "next": "focus_earth" }
+    ]
+  },
+  "strict_oversight": {
+    "text": "Strict oversight leads to resentment. The Formics withdraw, and relations cool. Years later, a new crisis emerges. Do you reach out or prepare for conflict?",
+    "choices": [
+      { "text": "Reach out", "next": "communicate" },
+      { "text": "Prepare for conflict", "next": "battle" }
+    ]
+  },
+  "vote": {
+    "text": "A global vote is held. The world is divided, but a slim majority chooses peace. The computer asks: 'Should we respect the minority's concerns?'",
+    "choices": [
+      { "text": "Address concerns", "next": "mediate_dialogue" },
+      { "text": "Move forward regardless", "next": "move_forward" }
+    ]
+  },
+  "merge_societies": {
+    "text": "Merging societies is a long process. There are setbacks and breakthroughs. The computer asks: 'Should we create a new shared culture?'",
+    "choices": [
+      { "text": "Create shared culture", "next": "shared_culture" },
+      { "text": "Preserve traditions", "next": "preserve_traditions" }
+    ]
+  },
+  "separate_cultures": {
+    "text": "Maintaining separate cultures preserves diversity but slows integration. The computer asks: 'Should we encourage more interaction?'",
+    "choices": [
+      { "text": "Encourage interaction", "next": "merge_societies" },
+      { "text": "Maintain separation", "next": "distance_final" }
+    ]
+  },
+  "pause_evaluate": {
+    "text": "You pause to evaluate progress. Both sides appreciate the reflection. The computer asks: 'Should we continue merging?'",
+    "choices": [
+      { "text": "Continue merging", "next": "merge_societies" },
+      { "text": "Stop merging", "next": "separate_cultures" }
+    ]
+  },
+  "isolation": {
+    "text": "Isolation leads to stagnation. The computer asks: 'Should we try something new?'",
+    "choices": [
+      { "text": "Try diplomacy", "next": "diplomacy" },
+      { "text": "Try exploration", "next": "exploration" }
+    ]
+  },
+  "support_ambassador": {
+    "text": "Supporting the ambassador leads to new friendships. The computer asks: 'Should we host a cultural exchange?'",
+    "choices": [
+      { "text": "Host exchange", "next": "cultural_exchange" },
+      { "text": "Focus on security", "next": "increase_security" }
+    ]
+  },
+  "support_protesters": {
+    "text": "Supporting protesters leads to stricter policies. The Formics withdraw. The computer asks: 'Should we try to repair relations?'",
+    "choices": [
+      { "text": "Repair relations", "next": "diplomacy" },
+      { "text": "Accept separation", "next": "distance_final" }
+    ]
+  },
+  "mediate_dialogue": {
+    "text": "Mediating dialogue leads to breakthroughs. Both sides find common ground. The computer asks: 'Should we formalize this process?'",
+    "choices": [
+      { "text": "Formalize process", "next": "formalize_alliance" },
+      { "text": "Keep it informal", "next": "keep_informal" }
+    ]
+  },
+  "contact_third": {
+    "text": "Contacting the third species opens new possibilities. The computer asks: 'Should we form a tri-species alliance?'",
+    "choices": [
+      { "text": "Form alliance", "next": "tri_alliance" },
+      { "text": "Proceed with caution", "next": "proceed_caution" }
+    ]
+  },
+  "observe_third": {
+    "text": "Observing from afar reveals the third species is peaceful. The computer asks: 'Should we introduce ourselves?'",
+    "choices": [
+      { "text": "Introduce ourselves", "next": "contact_third" },
+      { "text": "Continue observing", "next": "continue_observing" }
+    ]
+  },
+  "joint_language": {
+    "text": "Creating a joint language is difficult but rewarding. Misunderstandings decrease. The computer asks: 'Should we teach it to everyone?'",
+    "choices": [
+      { "text": "Teach everyone", "next": "shared_culture" },
+      { "text": "Limit to diplomats", "next": "translators" }
+    ]
+  },
+  "translators": {
+    "text": "Relying on translators slows progress. The computer asks: 'Should we invest in better technology?'",
+    "choices": [
+      { "text": "Invest in tech", "next": "joint_research" },
+      { "text": "Accept slow progress", "next": "distance_final" }
+    ]
+  },
+  "rebuild": {
+    "text": "You lead the survivors in rebuilding. Over time, a new society emerges. The computer asks: 'Should we reach out to the Formics?'",
+    "choices": [
+      { "text": "Reach out", "next": "communicate" },
+      { "text": "Remain isolated", "next": "isolation" }
+    ]
+  },
+  "revenge": {
+    "text": "Seeking revenge leads to more violence. The cycle continues. The computer asks: 'Will you try a different path?'",
+    "choices": [
+      { "text": "Try peace", "next": "communicate" },
+      { "text": "Continue revenge", "next": "revenge_final" }
+    ]
+  },
+  "refuse_final": {
+    "text": "You refuse again. The computer powers down. The story ends here.",
+    "choices": []
+  },
+  "overcome_fear": {
+    "text": "You overcome your fear and feel a new sense of purpose. The computer asks: 'What will you do now?'",
+    "choices": [
+      { "text": "Help the computer", "next": "chosen" },
+      { "text": "Try to escape", "next": "release" }
+    ]
+  },
+  "alone": {
+    "text": "You remain alone. The world moves on without you. The story ends here.",
+    "choices": []
+  },
+  "global_forum": {
+    "text": "A global forum is held. Voices from all sides are heard. The computer asks: 'Should we let the people decide?'",
+    "choices": [
+      { "text": "Let people decide", "next": "vote" },
+      { "text": "Guide the decision", "next": "mediate_dialogue" }
+    ]
+  },
+  "increase_security": {
+    "text": "Increasing security calms some but angers others. The computer asks: 'Should we ease restrictions?'",
+    "choices": [
+      { "text": "Ease restrictions", "next": "mediate_dialogue" },
+      { "text": "Maintain security", "next": "distance_final" }
+    ]
+  },
+  "formalize_alliance": {
+    "text": "A formal alliance is signed. Both species celebrate. The computer asks: 'Should we expand the alliance?'",
+    "choices": [
+      { "text": "Expand alliance", "next": "expand_worlds" },
+      { "text": "Focus on current members", "next": "focus_earth" }
+    ]
+  },
+  "keep_informal": {
+    "text": "Keeping the alliance informal allows flexibility but risks instability. The computer asks: 'Should we formalize it?'",
+    "choices": [
+      { "text": "Formalize alliance", "next": "formalize_alliance" },
+      { "text": "Keep informal", "next": "distance_final" }
+    ]
+  },
+  "distance_final": {
+    "text": "Distance is maintained. Peace is uneasy but lasting. The story ends here.",
+    "choices": []
+  },
+  "destroy_journal": {
+    "text": "You destroy the journal. The computer senses a loss. Trust is harder to build. The story continues, but with more suspicion.",
+    "choices": [
+      { "text": "Try to rebuild trust", "next": "communicate" },
+      { "text": "Remain secretive", "next": "distance_final" }
+    ]
+  },
+  "expand_worlds": {
+    "text": "The alliance expands to new worlds. New challenges and opportunities arise. The story continues...",
+    "choices": [
+      { "text": "Explore new worlds", "next": "exploration" },
+      { "text": "Focus on governance", "next": "joint_governance" }
+    ]
+  },
+  "focus_earth": {
+    "text": "Focusing on Earth brings stability. The story continues with new challenges at home.",
+    "choices": [
+      { "text": "Address social issues", "next": "mediate_dialogue" },
+      { "text": "Invest in technology", "next": "joint_research" }
+    ]
+  },
+  "move_forward": {
+    "text": "You move forward despite concerns. Some are left behind. The story continues, but with lingering doubts.",
+    "choices": [
+      { "text": "Try to heal divisions", "next": "mediate_dialogue" },
+      { "text": "Ignore dissent", "next": "distance_final" }
+    ]
+  },
+  "shared_culture": {
+    "text": "A new shared culture emerges. Both species thrive. The story continues with new adventures.",
+    "choices": [
+      { "text": "Explore new frontiers", "next": "exploration" },
+      { "text": "Focus on art and science", "next": "joint_research" }
+    ]
+  },
+  "preserve_traditions": {
+    "text": "Traditions are preserved. Diversity is celebrated. The story continues with cultural festivals and exchanges.",
+    "choices": [
+      { "text": "Host a festival", "next": "cultural_exchange" },
+      { "text": "Start a new tradition", "next": "new_tradition" }
+    ]
+  },
+  "cultural_exchange": {
+    "text": "A cultural exchange brings new understanding. The story continues with friendships and discoveries.",
+    "choices": [
+      { "text": "Start a joint project", "next": "joint_research" },
+      { "text": "Write a shared history", "next": "shared_culture" }
+    ]
+  },
+  "tri_alliance": {
+    "text": "A tri-species alliance is formed. The galaxy watches with hope. The story continues with new challenges and opportunities.",
+    "choices": [
+      { "text": "Explore together", "next": "exploration" },
+      { "text": "Focus on peacekeeping", "next": "diplomacy" }
+    ]
+  },
+  "proceed_caution": {
+    "text": "Proceeding with caution avoids mistakes. The alliance grows slowly but steadily. The story continues.",
+    "choices": [
+      { "text": "Increase cooperation", "next": "joint_governance" },
+      { "text": "Maintain caution", "next": "distance_final" }
+    ]
+  },
+  "continue_observing": {
+    "text": "You continue observing. The third species eventually notices you. The story continues with new mysteries.",
+    "choices": [
+      { "text": "Make contact", "next": "contact_third" },
+      { "text": "Withdraw", "next": "distance_final" }
+    ]
+  },
+  "revenge_final": {
+    "text": "Revenge consumes you. The cycle of violence never ends. The story ends here.",
+    "choices": []
+  }
+}
