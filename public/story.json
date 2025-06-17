@@ -506,9 +506,16 @@
       { "text": "Make contact", "next": "contact_third" },
       { "text": "Withdraw", "next": "distance_final" }
     ]
-  },
-  "revenge_final": {
+  },  "revenge_final": {
     "text": "Revenge consumes you. The cycle of violence never ends. The story ends here.",
     "choices": []
+  },
+  "new_tradition": {
+    "text": "You start a new tradition that blends both cultures. It becomes a symbol of unity and hope. The story continues with celebrations and new bonds.",
+    "choices": [
+      { "text": "Organize a unity celebration", "next": "cultural_exchange" },
+      { "text": "Document the tradition", "next": "shared_culture" },
+      { "text": "Teach it to the children", "next": "focus_earth" }
+    ]
   }
 }

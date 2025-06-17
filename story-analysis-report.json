@@ -1,0 +1,70 @@
+{
+  "timestamp": "2025-06-17T15:33:10.435Z",
+  "totalNodes": 73,
+  "endingNodes": 4,
+  "totalPaths": 106140,
+  "averagePathLength": 18.95431505558696,
+  "averageBranchingFactor": 2.1780821917808217,
+  "averageTextLength": 128.2876712328767,
+  "highBranchingNodes": [
+    [
+      "chosen",
+      4
+    ],
+    [
+      "release",
+      4
+    ],
+    [
+      "examine",
+      4
+    ],
+    [
+      "formics",
+      4
+    ]
+  ],
+  "mostConnectedNodes": [
+    [
+      "start",
+      106140
+    ],
+    [
+      "distance_final",
+      106132
+    ],
+    [
+      "exploration",
+      92895
+    ],
+    [
+      "chosen",
+      84159
+    ],
+    [
+      "joint_research",
+      83157
+    ],
+    [
+      "contact_third",
+      77076
+    ],
+    [
+      "diplomacy",
+      68049
+    ],
+    [
+      "communicate",
+      66377
+    ],
+    [
+      "mediate_dialogue",
+      62361
+    ],
+    [
+      "shared_culture",
+      61602
+    ]
+  ],
+  "potentialIssues": []
+}
