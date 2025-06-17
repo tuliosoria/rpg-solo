@@ -66,10 +66,10 @@ The story has **48** distinct endings:
 > "The refined monitoring system becomes the gold standard for interspecies agreements, preventing conflicts and ensuring fairness across the galaxy."
 
 #### hollow_triumph
-> "The victory feels empty. You've won everything and gained nothing. The silence where Formic songs once filled the cosmos haunts your dreams. What was the point of it all?"
+> "You stand in the command center where it all began, surrounded by the detritus of victory: tactical displays showing empty star systems, casualty reports reduced to statistical abstractions, and the final communication from the last Formic hive—a simple mathematical equation that translates to 'Why?' The silence is deafening. Where once the cosmic background radiation carried the faint harmonics of Formic mourning-songs, now there is nothing but the cold, indifferent hum of empty space. You've won everything: every Formic world is now a human colony, every piece of their technology has been reverse-engineered, every strategic advantage has been secured. But the taste of victory is ashes in your mouth. Your reflection in the command center's viewports shows a stranger—someone who signed death warrants for billions and called it strategy. The pyrrhic nature of your success becomes clear: in the process of ensuring humanity's survival, you've murdered wonder itself. The universe is smaller now, lonelier, stripped of the alien perspectives that might have taught humanity to transcend its limitations. What was the point of it all? To inherit a galaxy scrubbed clean of mystery, beauty, and the challenging gift of otherness?"
 
 #### species_reflection
-> "You realize humanity has become the very monster it once feared. In destroying the Formics, you've destroyed your own humanity. The real extinction was internal."
+> "The revelation comes not as a sudden epiphany but as a slow, creeping horror that builds in your consciousness like radiation sickness. You're reviewing historical records when you find it: a Formic text translated just weeks before their extinction, a philosophical treatise on the nature of evil. 'True monsters are not born,' the alien philosopher wrote, 'they are made by choices, accumulated grain by grain until the soul is buried beneath the weight of its own compromises. The humans believe we are the darkness, but we fear they are becoming something far worse—a species that can convince itself that any atrocity is justified.' The words were written three centuries before first contact, but they read like a prophecy. You realize humanity has become the very monster it once feared. Each 'necessary' compromise led to the next: from defensive preparations to preemptive strikes, from military targets to civilian populations, from prisoners of war to experimental subjects. The Formics never wanted to destroy humanity—they wanted to understand it. And in the end, perhaps they understood too well. You've not only destroyed their civilization; you've destroyed your own humanity. The real extinction was internal, a death of the soul so complete that the survivors don't even realize they're walking corpses."
 
 #### god_complex
 > "The power to control minds across species makes you feel godlike. You play civilizations against each other for your amusement. Entire star systems dance to your whims as you watch from your throne of bones."
@@ -165,26 +165,26 @@ The story has **48** distinct endings:
 
 | Node | Choices | Text Length | Type |
 |------|---------|-------------|------|
-| start | 4 | 302 | Branching |
-| chosen | 5 | 291 | Branching |
+| start | 4 | 979 | Branching |
+| chosen | 5 | 1173 | Branching |
 | release | 4 | 113 | Branching |
-| examine | 4 | 147 | Branching |
-| communicate | 3 | 234 | Branching |
-| battle | 4 | 247 | Branching |
-| formics | 4 | 136 | Branching |
-| war_history | 3 | 213 | Branching |
+| examine | 4 | 1127 | Branching |
+| communicate | 3 | 1341 | Branching |
+| battle | 4 | 1251 | Branching |
+| formics | 4 | 1304 | Branching |
+| war_history | 3 | 1393 | Branching |
 | refuse | 2 | 195 | Branching |
 | hack | 2 | 206 | Branching |
 | wait_silently | 3 | 68 | Branching |
-| empathy | 3 | 217 | Branching |
-| child | 3 | 130 | Branching |
+| empathy | 3 | 1337 | Branching |
+| child | 3 | 1327 | Branching |
 | search_panels | 3 | 175 | Branching |
 | share_tech | 3 | 165 | Branching |
 | keep_tech | 2 | 161 | Branching |
-| joint_research | 4 | 143 | Branching |
-| defense | 2 | 164 | Branching |
+| joint_research | 4 | 1256 | Branching |
+| defense | 2 | 1320 | Branching |
 | diplomacy | 3 | 133 | Branching |
-| exploration | 3 | 120 | Branching |
+| exploration | 3 | 1366 | Branching |
 | formic_art | 2 | 107 | Branching |
 | analyze_failures | 2 | 135 | Branching |
 | study_tactics | 2 | 123 | Branching |
@@ -239,25 +239,25 @@ The story has **48** distinct endings:
 | revenge_final | 0 | 76 | Ending |
 | new_tradition | 3 | 144 | Branching |
 | memory_loss | 4 | 246 | Branching |
-| memory_restored | 4 | 233 | Branching |
+| memory_restored | 4 | 1335 | Branching |
 | memory_suppressed | 4 | 204 | Branching |
 | ethics_violation | 4 | 195 | Branching |
 | authority_question | 4 | 229 | Branching |
-| moral_question | 4 | 222 | Branching |
+| moral_question | 4 | 1143 | Branching |
 | personal_peace | 3 | 234 | Branching |
 | professional_strategy | 3 | 222 | Branching |
 | balanced_approach | 3 | 207 | Branching |
 | emotional_conflict | 3 | 234 | Branching |
 | logical_analysis | 3 | 224 | Branching |
-| utilitarian_ethics | 5 | 228 | Branching |
+| utilitarian_ethics | 5 | 1263 | Branching |
 | deontological_ethics | 4 | 224 | Branching |
 | virtue_ethics | 4 | 223 | Branching |
 | moral_abdication | 4 | 225 | Branching |
 | emotional_diplomacy | 3 | 208 | Branching |
 | chemical_translation | 3 | 227 | Branching |
 | mathematical_diplomacy | 3 | 193 | Branching |
-| sacrifice_acceptance | 3 | 222 | Branching |
-| cosmic_threat | 3 | 219 | Branching |
+| sacrifice_acceptance | 3 | 1260 | Branching |
+| cosmic_threat | 3 | 1333 | Branching |
 | xenomath_institute | 3 | 199 | Branching |
 | ark_construction | 3 | 252 | Branching |
 | galactic_council | 0 | 205 | Ending |
@@ -382,18 +382,18 @@ The story has **48** distinct endings:
 | species_assistance | 1 | 42 | Linear |
 | monitoring_expansion | 1 | 48 | Linear |
 | monitoring_sharing | 1 | 49 | Linear |
-| human_supremacy | 4 | 222 | Branching |
+| human_supremacy | 4 | 904 | Branching |
 | colonial_expansion | 4 | 196 | Branching |
-| formic_slavery | 4 | 210 | Branching |
-| biological_experiments | 4 | 225 | Branching |
+| formic_slavery | 4 | 1346 | Branching |
+| biological_experiments | 4 | 963 | Branching |
 | dehumanization_campaign | 4 | 192 | Branching |
-| mind_breaking | 4 | 202 | Branching |
+| mind_breaking | 4 | 1109 | Branching |
 | systematic_genocide | 4 | 194 | Branching |
 | hive_shattering | 4 | 176 | Branching |
 | mind_controlled_army | 5 | 172 | Branching |
-| genocide_celebration | 4 | 179 | Branching |
-| hollow_triumph | 0 | 170 | Ending |
-| species_reflection | 0 | 161 | Ending |
+| genocide_celebration | 4 | 1292 | Branching |
+| hollow_triumph | 0 | 1237 | Ending |
+| species_reflection | 0 | 1321 | Ending |
 | god_complex | 0 | 207 | Ending |
 | authoritarian_victory | 0 | 188 | Ending |
 | societal_breakdown | 0 | 180 | Ending |
@@ -447,7 +447,7 @@ The story has **48** distinct endings:
 The following nodes offer the most significant branching in the story:
 
 #### chosen (5 choices)
-> "'You have demonstrated unique empathy and strategic thinking throughout your life,' the computer replies. 'Your psychological profile indicates an ability to see multiple perspectives. I need your guidance. The Formics are approaching. Should we attempt communication or prepare for battle?'"
+> "The computer's response comes with a slight delay, as if it's calculating not just words but the precise emotional impact each syllable might have. 'You have demonstrated unique empathy and strategic thinking throughout your life,' it begins, the synthetic voice carrying an almost human warmth that makes the sterile room feel even more unsettling. 'Your psychological profile indicates an ability to see multiple perspectives—a rare trait in a species prone to binary thinking. Dr. Elena Vasquez, xenobiologist, peace negotiator, mother.' The last word hangs in the air like a blade. 'I need your guidance because you understand loss, yet still choose hope over vengeance.' Through the terminal's speakers, you hear something that chills you: the distant sound of space traffic control chatter, punctuated by military callsigns and coordinates. The Formics aren't just approaching—they're already in the outer system. 'The fleet commanders want to fire first and ask questions never,' the computer continues. 'The diplomats want to talk until there's nothing left to negotiate. I require a third perspective: yours. Should we attempt communication or prepare for battle?'"
 
 **Choices:**
 - "Attempt communication" → `communicate`
@@ -457,7 +457,7 @@ The following nodes offer the most significant branching in the story:
 - "Question the morality of this decision" → `moral_question`
 
 #### utilitarian_ethics (5 choices)
-> "You calculate that peace benefits the maximum number of beings. The computer agrees but asks: 'What if peace requires sacrifice of some for the many? What if the Formics demand human colonies as reparations for past aggression?'"
+> "You lean back in the cold metal chair, fingers steepled as you work through the moral calculus that could determine the fate of civilizations. 'The greatest good for the greatest number,' you state, the utilitarian principle rolling off your tongue with mathematical precision. 'If we're talking about pure numbers, peace objectively creates more happiness, prevents more suffering, and maximizes flourishing across both species.' The computer's sensors track your biometrics as you speak—heart rate steady, voice confident, pupils dilated with the intellectual thrill of solving a cosmic puzzle. 'But,' it interjects with algorithmic precision, 'what if peace requires sacrifice of some for the many? What if lasting stability demands that human frontier colonies be surrendered as reparations for past aggression? What if the Formics demand tribute—perhaps a percentage of human offspring to be raised in their hive culture as a gesture of trust? The mathematics are clear: temporary suffering for some, eternal peace for billions.' The utilitarian framework that seemed so clean and logical moments ago suddenly feels like a scalpel at your throat. Every principle has a price, and now you must decide if you're willing to pay it—or make others pay it for you."
 
 **Choices:**
 - "Accept sacrifices for the greater good" → `sacrifice_acceptance`
@@ -477,7 +477,7 @@ The following nodes offer the most significant branching in the story:
 - "Realize you've become godlike" → `god_complex`
 
 #### start (4 choices)
-> "You wake up in a sterile, locked room with no memory of how you arrived. A terminal flickers to life, casting an eerie blue glow. The screen reads: 'I am your Moral Compass. You are here to help me decide the fate of humanity in the coming war against the Formics. Time is running out.' What do you do?"
+> "Consciousness returns like surfacing from dark waters—slowly, then all at once. You find yourself in a room that could be a laboratory, a prison, or both. The walls are seamless white polymer that seems to absorb sound, creating an unsettling silence broken only by the soft hum of hidden machinery. Your body aches as if you've been unconscious for hours, maybe days. There are no windows, no obvious exits, just a single terminal mounted on the far wall that suddenly flickers to life with an electronic chime. The screen casts an eerie blue glow across your face as text appears in clean, clinical font: 'I am your Moral Compass. You are here to help me decide the fate of humanity in the coming war against the Formics. Time is running out.' The cursor blinks expectantly. Outside these sterile walls, two civilizations stand on the precipice of a conflict that could reshape the galaxy. Your next choice may determine whether your species survives—or whether it deserves to."
 
 **Choices:**
 - "Ask the computer why you were chosen" → `chosen`
@@ -495,7 +495,7 @@ The following nodes offer the most significant branching in the story:
 - "Wait silently" → `wait_silently`
 
 #### examine (4 choices)
-> "You find a hidden panel with old photos of battles and a child's drawing of a Formic. The computer asks, 'Do these images change your perspective?'"
+> "Your fingers find a nearly invisible seam in the wall, and a hidden panel slides open with a whisper of displaced air. Inside, protected by a thin layer of transparent aluminum, are artifacts that tell a story in silence: photographs from the first Formic encounters, their edges yellowed with age and radiation exposure. The images show massive insectoid forms moving with precise coordination, their cities carved from living crystal that seems to pulse with its own inner light. But it's the child's drawing that stops your breath—crayon figures holding hands beneath a sky filled with unfamiliar constellations, human and Formic children playing together in some imagined future that war has made impossible. The drawing is signed 'Sofia, Age 7' in careful block letters. Your hands tremble as recognition floods through you—this is your daughter's artwork, somehow preserved in this place beyond memory. 'Do these images change your perspective?' the computer asks, its voice softer now, almost gentle. You realize this room isn't just a laboratory or prison—it's a shrine to possibility, a museum of what could have been."
 
 **Choices:**
 - "Yes, I feel empathy for the Formics" → `empathy`
@@ -504,7 +504,7 @@ The following nodes offer the most significant branching in the story:
 - "Search for more hidden panels" → `search_panels`
 
 #### battle (4 choices)
-> "You advise preparation for battle. The computer launches a preemptive strike. The Formics retaliate, and humanity faces devastating losses. Survivors must decide how to rebuild. Do you focus on defense, diplomacy, exploration, or something darker?"
+> "The decision weighs heavy in your chest as you authorize humanity's first preemptive strike against an alien civilization. The computer's weapons systems come online with mechanical precision—orbital kinetic bombardments, fusion warheads, and experimental energy weapons all converging on Formic outposts across three star systems. You watch the tactical display as red dots vanish one by one, each representing thousands of alien lives snuffed out in nuclear fire. 'Strike successful,' the computer reports with chilling neutrality. 'Estimated Formic casualties: 2.7 million. Projected human casualties from retaliation: 800,000 to 1.2 million.' The numbers feel abstract until the retaliation begins. Formic ships emerge from quantum tunnels you didn't know existed, their technology more advanced than anticipated. Earth's orbital defenses crumble like paper. Cities burn. The lucky ones die quickly. In the aftermath, as you stand among the ruins of civilization, survivors look to you for guidance. Humanity has perhaps a generation left before the Formics finish what you started. The irony is bitter: in trying to protect humanity, you may have doomed it. But perhaps, in this crucible of war, something greater can still emerge from the ashes."
 
 **Choices:**
 - "Focus on defense" → `defense`
@@ -513,7 +513,7 @@ The following nodes offer the most significant branching in the story:
 - "Establish human supremacy" → `human_supremacy`
 
 #### formics (4 choices)
-> "The computer shares data: The Formics communicate through images and emotions. They have never attacked unprovoked. What do you suggest?"
+> "The computer's display transforms into a three-dimensional holographic interface, floating data streams coalescing into a comprehensive alien psychology profile. 'The Formics communicate through a complex synesthesia of visual patterns and emotional resonances,' the computer explains as swirling diagrams illustrate the alien nervous system. 'What humans interpret as aggressive posturing—the spreading of wings, the clicking of mandibles—are actually expressions of deep mourning. They are grieving their dead from our previous encounters.' The hologram shifts to show recorded interactions: human soldiers firing on Formics who were performing what now appears to be funeral rites. 'In 847 recorded first contact scenarios across their expansion history, the Formics have never initiated hostilities. They are aggressive only when their young are threatened, or when they perceive genocidal intent.' The image zooms in on a Formic queen, her massive form delicately tending to egg clusters while her workers create intricate geometric patterns with their bodies—a form of prayer, the computer notes. 'They view humanity as a species in perpetual adolescence: violent, unpredictable, but possessing a spark of individual creativity they find fascinating. They came here to study us, not to conquer us.'"
 
 **Choices:**
 - "Attempt communication" → `communicate`
@@ -522,7 +522,7 @@ The following nodes offer the most significant branching in the story:
 - "Request to see Formic art" → `formic_art`
 
 #### joint_research (4 choices)
-> "A joint research project brings breakthroughs in medicine and energy. Both species prosper. The computer asks: 'Should we merge our societies?'"
+> "The research station orbiting Jupiter's moon Europa becomes a symbol of what's possible when two radically different species set aside their fears to pursue knowledge together. In the vast, crystal-domed laboratories, human scientists work alongside Formic researchers whose compound eyes see patterns in quantum mechanics that human minds can barely comprehend. Dr. Sarah Chen, a human geneticist, describes her partnership with Worker-Caste-Mathematics-Singer 7441 as 'like learning to paint with colors that don't exist.' Together, they develop regenerative medicine that can regrow limbs, fusion reactors the size of briefcases, and terraforming techniques that don't destroy existing ecosystems but enhance them. The breakthrough comes when Formic hive-processing power combines with human creative intuition to solve the unified field theory—a discovery that makes faster-than-light travel finally possible. Children on both worlds grow up learning dual-species science, speaking in mathematical harmonies that transcend language barriers. The computer's next question carries the weight of unprecedented success: 'Should we merge our societies?' You realize this isn't just about research anymore—it's about the birth of a truly hybrid civilization."
 
 **Choices:**
 - "Begin merging societies" → `merge_societies`
@@ -540,7 +540,7 @@ The following nodes offer the most significant branching in the story:
 - "Demand to know who authorized this" → `authority_question`
 
 #### memory_restored (4 choices)
-> "Memories flood back: your daughter's face, research on Formic empathy, failed peace talks. You remember why this matters. The weight of personal loss and professional expertise shapes your perspective. What guides your next decision?"
+> "The neural barriers dissolve like ice in warm water, and your life comes flooding back in a torrent of sensation and emotion. You are Dr. Elena Vasquez, and the memories hit you with physical force: Sofia's laugh as she builds sandcastles on Luna Beach, her tiny hands pressing against the aquarium glass as she watches Earth's last dolphins swim. You remember the Formic communication protocols you developed—the breakthrough discovery that their 'aggressive' postures were actually grief displays, mourning rituals for their dead. You remember the peace talks on Europa Station, how close you came to breakthrough before the military took over. And you remember the day Sofia died in the Titan Colony bombardment—not from Formic weapons, but from human ones, a 'friendly fire' incident during the retreat. The weight of personal loss crashes into professional knowledge, creating a complex emotional landscape. Your daughter dreamed of meeting aliens; she drew pictures of herself playing with Formic children. The irony cuts deep: the very species you're being asked to judge might have been her friends in another timeline. As the memories settle, you realize why you were chosen—not despite your emotional connection, but because of it. The question now is whether personal trauma will drive you toward vengeance or understanding."
 
 **Choices:**
 - "Use personal experience to seek peace" → `personal_peace`
@@ -576,7 +576,7 @@ The following nodes offer the most significant branching in the story:
 - "Focus on the immediate crisis" → `crisis_focus`
 
 #### moral_question (4 choices)
-> "'Is it moral for one person to decide the fate of two species?' you ask. The computer pauses. 'Perhaps morality is the burden we must bear for consciousness. The Formics face the same dilemma. What makes a decision right?'"
+> "The question hangs in the sterile air like incense in a cathedral, heavy with the weight of cosmic responsibility. 'Is it moral for one person to decide the fate of two species?' The computer's processing cores hum as it considers your challenge to its very premise. When it responds, its voice carries something almost like uncertainty—a digital approximation of doubt. 'Perhaps morality is the burden we must bear for consciousness,' it muses. 'The Formics face the same dilemma in their vast collective mind. Billions of individual nodes wrestling with the same choice you face. What makes a decision right? The outcome? The intention? The process? Or perhaps there is no right choice—only choices, and the courage to live with their consequences.' Through the chamber's speakers, you hear something unexpected: the faint harmonics of Formic communication, grief-songs transmitted across space from their homeworld. They're mourning. Not just for their dead, but for the terrible necessity of the choice itself. In this moment, you realize that morality isn't a destination—it's a compass. And now you must choose which direction to follow."
 
 **Choices:**
 - "The greatest good for the greatest number" → `utilitarian_ethics`
@@ -612,7 +612,7 @@ The following nodes offer the most significant branching in the story:
 - "Accept the consequences of inaction" → `acceptance_inaction`
 
 #### human_supremacy (4 choices)
-> "You advocate for human supremacy, arguing that humanity's survival instincts and individual consciousness make them inherently superior. The computer agrees to implement policies favoring human expansion at Formic expense."
+> "Your words echo in the sterile chamber as you articulate the dark philosophy: humanity's gift of individual consciousness, the spark of creativity that burns within each person, makes your species inherently superior to the collective hive-mind of the Formics. 'They are insects,' you argue, watching the computer's algorithms process your reasoning. 'Sophisticated, yes, but ultimately guided by instinct rather than true free will. We are the apex of evolution—conscious, creative, capable of transcending our biological programming.' The computer's silence stretches for long moments before it responds: 'Your logic is... compelling. Implementing supremacist protocols.' You feel a chill as you realize you've just condemned an entire species to subjugation, yet part of you believes it's the natural order. The strong must rule the weak. The question now is: how will humanity's superiority manifest?"
 
 **Choices:**
 - "Establish human colonies on Formic worlds" → `colonial_expansion`
@@ -630,7 +630,7 @@ The following nodes offer the most significant branching in the story:
 - "Question this path" → `colonial_doubt`
 
 #### formic_slavery (4 choices)
-> "You justify enslaving Formics by arguing their hive mind makes them natural workers who don't value individual freedom. Millions of Formics are forced into labor camps. Their silent suffering haunts the galaxy."
+> "The justification flows from your lips like poison honey, sweet with rationalization but toxic in its core. 'They're hive creatures,' you explain to the assembled Council, gesturing toward the holographic displays showing Formic colonies. 'Individual freedom is a human concept—meaningless to beings who share collective consciousness. We're not enslaving them; we're simply... directing their natural inclinations toward productive labor.' The words taste bitter even as you speak them, but the economic projections are compelling: Formic workers could build human civilization to unprecedented heights. The first labor camps are established on asteroid mining stations—'temporary facilities' for 'voluntary workers.' You tell yourself the Formics understand the necessity, that their silent compliance indicates acceptance. But late at night, when you review the surveillance feeds, you see something that chills you: Formics in their holding cells, moving in perfect synchronization, creating complex geometric patterns with their bodies. They're not accepting their fate—they're communicating. Planning. Grieving. And somewhere in those silent, synchronized movements, you recognize something that makes your stomach turn: they're teaching their young to remember. Remember what freedom felt like before humans decided they didn't deserve it."
 
 **Choices:**
 - "Expand the slave labor program" → `industrial_slavery`
@@ -639,7 +639,7 @@ The following nodes offer the most significant branching in the story:
 - "Question the morality of this system" → `moral_doubt`
 
 #### biological_experiments (4 choices)
-> "You authorize horrific experiments on captured Formics to understand their biology. The research yields advances in human enhancement, but at the cost of unspeakable torture. The screams are silent, but the suffering is real."
+> "Dr. Chen's laboratory stretches before you, a cathedral of chrome and glass where Formic subjects lie strapped to examination tables. 'The neural pathways are fascinating,' she explains, her voice clinical and detached as she points to the writhing alien form. 'Their hive connection creates redundant consciousness pathways. Watch this.' She activates a neural probe and the Formic's body convulses silently—their species cannot scream, but their compound eyes reflect an agony that transcends sound. You authorize the continuation of these experiments, telling yourself that the advancement of human science justifies any cost. The researchers develop new enhancement drugs, longevity treatments, and cognitive boosters from Formic biology. Each breakthrough is written in alien suffering, each medical miracle built on a foundation of torture. When you leave the lab, you can still see those eyes in your reflection. But progress demands sacrifice, doesn't it?"
 
 **Choices:**
 - "Continue experiments for 'greater good'" → `utilitarian_horror`
@@ -657,7 +657,7 @@ The following nodes offer the most significant branching in the story:
 - "Export this ideology to other species" → `galactic_supremacy`
 
 #### mind_breaking (4 choices)
-> "You develop techniques to shatter the Formic hive mind, creating isolated, terrified individuals who beg for death. These broken creatures serve as perfect test subjects, having lost all will to resist."
+> "Dr. Reeves leads you through a corridor lined with containment cells. 'Traditional torture is ineffective on hive minds,' she explains, her footsteps echoing off sterile walls. 'But we've discovered something far more devastating.' She stops before a reinforced window. Inside, a Formic sits motionless, its compound eyes vacant and staring. 'We've learned to sever their hive connection—to make them... individual. Imagine suddenly being cut off from every thought, every feeling, every memory you've ever shared. Imagine being utterly, completely alone for the first time in your existence.' The creature inside rocks back and forth, its movements erratic and purposeless. 'They break within hours. Some try to reconnect so desperately they claw at their own neural interfaces until they bleed. Others simply... stop. The consciousness fragmenting process has a 97% success rate in creating compliant subjects. They'll do anything—absolutely anything—if you promise to reconnect them to the hive, even for a moment.' You watch the broken creature and feel a profound unease. Is this what victory looks like?"
 
 **Choices:**
 - "Perfect the technique for mass application" → `hive_shattering`
@@ -684,7 +684,7 @@ The following nodes offer the most significant branching in the story:
 - "Watch the universe scream" → `cosmic_torture`
 
 #### genocide_celebration (4 choices)
-> "Humanity celebrates the extinction of the Formics with parades and monuments. Children learn songs about the great victory. You've made genocide a cultural triumph to be proud of."
+> "The parade down New Geneva's main boulevard is a spectacle of calculated triumph, twenty kilometers of marching humans celebrating the systematic extinction of an entire species. You watch from the reviewing stand as children who have never seen a living Formic throw confetti made from shredded Formic texts, their ancient mathematical proofs and philosophical meditations reduced to colorful debris. The floats tell the story humanity wants to remember: brave human warriors overcoming mindless insect invaders, not the reality of industrialized slaughter and concentration camps. Musicians play variations on Formic mourning-songs, the mournful harmonies twisted into victory marches that would make their original composers weep—if any still lived to hear them. The museum curator hands you a ceremonial blade made from a Formic queen's carapace as children sing the new national anthem: 'When the stars held monsters, we burned them clean / Now the cosmos is ours, a human dream.' You've made genocide into entertainment, extinction into patriotism. The crowd cheers as holographic displays show empty Formic worlds being recolonized by human families. But in the silence between cheers, you hear something that chills you: the sound of your own species learning to take pride in murder."
 
 **Choices:**
 - "Plan celebrations for future extinctions" → `extinction_festivals`
@@ -729,7 +729,7 @@ The following nodes offer the most significant branching in the story:
 - "Perfect the breeding programs" → `galactic_empire_of_suffering`
 
 #### communicate (3 choices)
-> "You help the computer draft a message of peace. The Formics respond with curiosity. The war is averted, and a new era of understanding begins. But the peace is fragile. The computer asks: 'Should we share technology with the Formics?'"
+> "Your hands hover over the communication interface as you craft humanity's first intentional message to an alien species. The weight of history presses down on you—every word you choose could determine whether your children inherit a galaxy of cooperation or conquest. You begin with mathematics, then simple concepts: peace, understanding, shared existence among the stars. The transmission feels like casting a message in a bottle into an infinite ocean. Hours pass in silence. Then, suddenly, the response arrives—not in words, but in images that flood your mind through the computer's neural interface. You see Formic younglings at play, their four arms weaving complex patterns of light and sound. You see vast underground gardens where they cultivate bioluminescent plants that sing with harmonious frequencies. You see their grief—deep, collective mourning for colonies lost to human misunderstanding. The Formics' message is clear: they, too, have families, dreams, art, and an intricate civilization built on cooperation rather than competition. When the communication session ends, tears stream down your face. The computer asks quietly, 'How should we proceed with first contact protocols?' You realize that this moment—this choice to reach out rather than lash out—has just changed the trajectory of galactic civilization forever."
 
 **Choices:**
 - "Share technology" → `share_tech`
@@ -737,7 +737,7 @@ The following nodes offer the most significant branching in the story:
 - "Propose a joint research project" → `joint_research`
 
 #### war_history (3 choices)
-> "The computer displays a timeline of human-Formic interactions: first contact, misunderstandings, skirmishes, and uneasy truces. You notice a pattern of escalation after failed communications. What do you focus on?"
+> "The chamber dims as the computer transforms the walls into an immersive timeline, surrounding you with the tragic history of human-Formic relations. Dates and events scroll past like falling stars: '2157 - First Contact: Beacon System.' The air shimmers with holographic reconstructions of that moment—human explorers emerging from their ship to find crystalline structures humming with alien music, Formic scouts approaching with what the humans interpreted as weapons but were actually ceremonial gift-offerings. 'The pattern repeats,' the computer narrates with something approaching sadness. 'Initial wonder, followed by fear-driven misinterpretation, escalation, and violence.' You watch the cascade of failures: the Titan Incident where human miners destroyed a Formic archaeological site, not realizing it was a cemetery; the Europa Standoff where a translation error turned a Formic peace offering into what appeared to be a declaration of war; the Proxima Centauri Massacre where human colonists killed Formic children they mistook for invasion scouts. Each event is accompanied by intercepted Formic communications—grief-songs that span decades, mourning not just their dead but the dying possibility of peaceful coexistence. 'Notice the pattern,' the computer urges. 'Every escalation occurred when communication broke down. Every peace accord succeeded when empathy overcame fear.'"
 
 **Choices:**
 - "Analyze failed communications" → `analyze_failures`
@@ -753,7 +753,7 @@ The following nodes offer the most significant branching in the story:
 - "Remain silent" → `remain_silent`
 
 #### empathy (3 choices)
-> "Moved by empathy, you urge the computer to seek peace. The computer hesitates, then agrees. The Formics respond positively, and a fragile alliance is formed. The computer asks: 'Should we invite the Formics to Earth?'"
+> "The child's drawing seems to glow in your memory—crude stick figures of humans and Formics holding what might be hands, standing beneath a sky filled with stars that could belong to any world. Something breaks open in your chest, a dam of compassion that floods through your logical defenses. 'They're not monsters,' you whisper to the computer. 'Look at this art—it shows curiosity, even affection. How can we destroy beings capable of inspiring a child's wonder?' The computer's processors whir quietly as it analyzes your emotional response, perhaps finding it illogical, perhaps finding it enlightened. 'Your empathy is noted,' it finally responds. 'Initiating peaceful contact protocols.' What follows is the most delicate dance in human history: first contact through mathematics and music, slowly building trust across the vast gulf of species difference. The Formics respond with cautious hope, sending their own artistic expressions—complex crystalline structures that sing when touched by starlight, visual poems that tell stories of loss and longing that transcend species boundaries. When the first formal peace accords are signed in the space between worlds, you realize that choosing empathy over fear has altered the course of galactic civilization. The computer's next question carries the weight of that historic moment."
 
 **Choices:**
 - "Invite them to Earth" → `invite_earth`
@@ -761,7 +761,7 @@ The following nodes offer the most significant branching in the story:
 - "Keep them at a distance" → `distance`
 
 #### child (3 choices)
-> "'The child was like you—curious and compassionate,' the computer says. 'Their empathy saved lives. Will you follow their example?'"
+> "The computer's voice takes on a reverent quality, as if speaking of something sacred. 'The child was Sofia Elena Vasquez—your daughter, Elena. Age seven when she drew this picture, age eleven when she died in the Titan Colony bombardment.' The words hit you like decompression, stealing your breath. 'She was like you—curious and compassionate, fascinated by the possibility of alien friends rather than alien enemies. In her final weeks, she organized "Friendship for Formics" club meetings in the colony school, teaching other children that differences in appearance don't mean differences in heart.' The computer pauses, processing what might be grief in an artificial mind. 'Her last letter to Earth Central Command, dictated three days before the bombardment, read: "Dear Space Government, Please don't fight the bug people. They probably just want friends like I do. Maybe if we show them our toys, they'll show us theirs. Love, Sofia." The letter arrived six hours after the colony's destruction.' The hidden panel displays a video message—Sofia's bright smile as she explains her drawing, pointing to the human and Formic figures. 'This one is me, and this one is my Formic best friend. We're going to build sandcastles on Mars together!' Her empathy saved no lives, but it preserved hope. Will you follow her example?'"
 
 **Choices:**
 - "Yes, seek peace" → `communicate`
@@ -793,7 +793,7 @@ The following nodes offer the most significant branching in the story:
 - "Mediate dialogue" → `mediate_dialogue`
 
 #### exploration (3 choices)
-> "Exploration leads to the discovery of a third species. The computer asks: 'Should we contact them or observe from afar?'"
+> "The exploration ship 'New Horizons' has been traveling for eighteen months through the Kepler-442 system when Captain Martinez makes the discovery that changes everything. 'Command, you need to see this,' her voice crackles through quantum entanglement communicators as the ship's sensors detect artificial structures on the third planet. But these aren't Formic crystals or human geometries—these are something entirely new. The structures appear to be grown rather than built, organic spirals that pulse with bioluminescent patterns, creating cities that look like vast flowers blooming across the planet's surface. The third species—which the crew starts calling the Gardeners—seems to communicate through controlled electromagnetic fields that create aurora-like displays in their atmosphere. Their technology integrates seamlessly with their ecosystem; they haven't conquered their world so much as collaborated with it. 'They're beautiful,' Martinez whispers as her ship's cameras capture beings that move like living art, their translucent bodies refracting light into rainbow patterns. This discovery changes the fundamental equation: it's no longer just humans versus Formics, but a three-way first contact scenario where each species might hold the key to understanding the others. The computer's voice carries new urgency as it processes the implications."
 
 **Choices:**
 - "Contact them" → `contact_third`
@@ -889,7 +889,7 @@ The following nodes offer the most significant branching in the story:
 - "Develop mathematical ethics frameworks" → `math_ethics`
 
 #### sacrifice_acceptance (3 choices)
-> "Accepting that some sacrifice is necessary for peace, you negotiate a complex agreement. Some human colonies relocate, but in exchange, Formics share advanced biotechnology that extends human lifespan. Most see it as fair."
+> "The negotiation takes place in a neutral space station orbiting Jupiter, with representatives from both species sitting across a table that could determine the fate of civilizations. The Formic delegation communicates through a device that translates their biochemical signals into holographic mathematics, while human diplomats struggle with the moral weight of the decision before them. 'Some human frontier colonies must be relocated,' you announce, the words heavy with the lives they represent. 'Families who have lived for generations on worlds like Kepler-438b will need to abandon their homes to make space for Formic refugees fleeing the dark matter storm.' The room falls silent except for the soft harmonics of Formic grief-songs. But then the breakthrough comes: in exchange for these territorial concessions, the Formics offer their most precious gift—biotechnology that can extend human lifespan to match their own centuries-long existence. Suddenly, the children being asked to leave their ancestral homes will live to see those homes again, to visit them as Formic-human joint colonies. What seems like sacrifice transforms into shared inheritance. Most see it as fair, though the pain of displacement remains real for those who must endure it."
 
 **Choices:**
 - "Monitor the agreement's success" → `agreement_monitoring`
@@ -897,7 +897,7 @@ The following nodes offer the most significant branching in the story:
 - "Study the biotechnology advances" → `biotech_study`
 
 #### cosmic_threat (3 choices)
-> "Investigation reveals an approaching dark matter storm that could sterilize entire star systems. The Formics' aggressive expansion wasn't conquest - it was evacuation. Humanity and Formics must work together to survive."
+> "The revelation unfolds like a nightmare made of mathematics and dark matter. Dr. Hassan's astrophysics team has been analyzing Formic star charts for months when the pattern becomes undeniable: a massive dark matter storm is sweeping across the galaxy, an entropic wave that doesn't just destroy planets—it unravels the fundamental forces that hold matter together. Worlds caught in its path don't explode; they simply cease to exist, their atoms forgetting how to bond, their gravity wells dissipating like smoke. The storm moves at a significant fraction of light speed, and Earth lies directly in its projected path. 'The Formics' aggressive expansion wasn't conquest,' Dr. Hassan explains as the holographic display shows evacuation trajectories spanning centuries. 'It was the largest refugee migration in galactic history. They've been running from this storm for over a thousand years, trying to save as many worlds as possible.' The computer's analysis is stark: the storm will reach human space in approximately eighty years. Neither species can survive alone—human technology excels at rapid deployment and individual innovation, while Formic civilization has perfected large-scale coordination and bio-adaptation. The universe has handed both species the ultimate test: learn to work together, or face extinction together."
 
 **Choices:**
 - "Build massive ark ships" → `ark_construction`
