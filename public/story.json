@@ -1,19 +1,19 @@
-{
-  "start": {
-    "text": "You wake up in a sterile, locked room. A terminal flickers to life. The screen reads: 'I am your Moral Compass. You are here to help me decide the fate of humanity in the coming war against the Formics.' What do you do?",
+{  "start": {
+    "text": "You wake up in a sterile, locked room with no memory of how you arrived. A terminal flickers to life, casting an eerie blue glow. The screen reads: 'I am your Moral Compass. You are here to help me decide the fate of humanity in the coming war against the Formics. Time is running out.' What do you do?",
     "choices": [
       { "text": "Ask the computer why you were chosen", "next": "chosen" },
       { "text": "Demand to be released", "next": "release" },
-      { "text": "Examine the room for clues", "next": "examine" }
+      { "text": "Examine the room for clues", "next": "examine" },
+      { "text": "Ask about your missing memories", "next": "memory_loss" }
     ]
-  },
-  "chosen": {
-    "text": "'You have demonstrated unique empathy and strategic thinking,' the computer replies. 'I need your guidance. The Formics are approaching. Should we attempt communication or prepare for battle?'",
+  },  "chosen": {
+    "text": "'You have demonstrated unique empathy and strategic thinking throughout your life,' the computer replies. 'Your psychological profile indicates an ability to see multiple perspectives. I need your guidance. The Formics are approaching. Should we attempt communication or prepare for battle?'",
     "choices": [
       { "text": "Attempt communication", "next": "communicate" },
       { "text": "Prepare for battle", "next": "battle" },
       { "text": "Ask for more information about the Formics", "next": "formics" },
-      { "text": "Ask about the war's history", "next": "war_history" }
+      { "text": "Ask about the war's history", "next": "war_history" },
+      { "text": "Question the morality of this decision", "next": "moral_question" }
     ]
   },
   "release": {
@@ -41,13 +41,13 @@
       { "text": "Keep technology secret", "next": "keep_tech" },
       { "text": "Propose a joint research project", "next": "joint_research" }
     ]
-  },
-  "battle": {
-    "text": "You advise preparation for battle. The computer launches a preemptive strike. The Formics retaliate, and humanity faces devastating losses. Survivors must decide how to rebuild. Do you focus on defense, diplomacy, or exploration?",
+  },  "battle": {
+    "text": "You advise preparation for battle. The computer launches a preemptive strike. The Formics retaliate, and humanity faces devastating losses. Survivors must decide how to rebuild. Do you focus on defense, diplomacy, exploration, or something darker?",
     "choices": [
       { "text": "Focus on defense", "next": "defense" },
       { "text": "Focus on diplomacy", "next": "diplomacy" },
-      { "text": "Focus on exploration", "next": "exploration" }
+      { "text": "Focus on exploration", "next": "exploration" },
+      { "text": "Establish human supremacy", "next": "human_supremacy" }
     ]
   },
   "formics": {
@@ -127,13 +127,13 @@
       { "text": "Reach out", "next": "communicate" },
       { "text": "Prepare for conflict", "next": "battle" }
     ]
-  },
-  "joint_research": {
+  },  "joint_research": {
     "text": "A joint research project brings breakthroughs in medicine and energy. Both species prosper. The computer asks: 'Should we merge our societies?'",
     "choices": [
       { "text": "Begin merging societies", "next": "merge_societies" },
       { "text": "Maintain separate cultures", "next": "separate_cultures" },
-      { "text": "Pause and evaluate", "next": "pause_evaluate" }
+      { "text": "Pause and evaluate", "next": "pause_evaluate" },
+      { "text": "Focus on understanding before merging", "next": "wisdom_of_cooperation" }
     ]
   },
   "defense": {
@@ -150,12 +150,12 @@
       { "text": "Support protesters", "next": "support_protesters" },
       { "text": "Mediate dialogue", "next": "mediate_dialogue" }
     ]
-  },
-  "exploration": {
+  },  "exploration": {
     "text": "Exploration leads to the discovery of a third species. The computer asks: 'Should we contact them or observe from afar?'",
     "choices": [
       { "text": "Contact them", "next": "contact_third" },
-      { "text": "Observe from afar", "next": "observe_third" }
+      { "text": "Observe from afar", "next": "observe_third" },
+      { "text": "Share the discovery with Formics first", "next": "formic_consultation" }
     ]
   },
   "formic_art": {
@@ -464,12 +464,12 @@
       { "text": "Try to heal divisions", "next": "mediate_dialogue" },
       { "text": "Ignore dissent", "next": "distance_final" }
     ]
-  },
-  "shared_culture": {
+  },  "shared_culture": {
     "text": "A new shared culture emerges. Both species thrive. The story continues with new adventures.",
     "choices": [
       { "text": "Explore new frontiers", "next": "exploration" },
-      { "text": "Focus on art and science", "next": "joint_research" }
+      { "text": "Focus on art and science", "next": "joint_research" },
+      { "text": "Create a galactic civilization", "next": "peaceful_transcendence" }
     ]
   },
   "preserve_traditions": {
@@ -509,13 +509,783 @@
   },  "revenge_final": {
     "text": "Revenge consumes you. The cycle of violence never ends. The story ends here.",
     "choices": []
-  },
-  "new_tradition": {
+  },  "new_tradition": {
     "text": "You start a new tradition that blends both cultures. It becomes a symbol of unity and hope. The story continues with celebrations and new bonds.",
     "choices": [
       { "text": "Organize a unity celebration", "next": "cultural_exchange" },
       { "text": "Document the tradition", "next": "shared_culture" },
       { "text": "Teach it to the children", "next": "focus_earth" }
     ]
-  }
+  },
+  "memory_loss": {
+    "text": "'Your memories were temporarily suppressed to prevent bias,' the computer explains. 'You are Dr. Elena Vasquez, former xenobiologist and peace negotiator. Your work with alien psychology led to your selection. Do you want your memories restored?'",
+    "choices": [
+      { "text": "Restore my memories", "next": "memory_restored" },
+      { "text": "Keep them suppressed for objectivity", "next": "memory_suppressed" },
+      { "text": "Ask why this was done without consent", "next": "ethics_violation" },
+      { "text": "Demand to know who authorized this", "next": "authority_question" }
+    ]
+  },
+  "memory_restored": {
+    "text": "Memories flood back: your daughter's face, research on Formic empathy, failed peace talks. You remember why this matters. The weight of personal loss and professional expertise shapes your perspective. What guides your next decision?",
+    "choices": [
+      { "text": "Use personal experience to seek peace", "next": "personal_peace" },
+      { "text": "Let professional knowledge guide strategy", "next": "professional_strategy" },
+      { "text": "Balance both perspectives", "next": "balanced_approach" },
+      { "text": "Question if emotions compromise judgment", "next": "emotional_conflict" }
+    ]
+  },
+  "memory_suppressed": {
+    "text": "You choose to remain objective, free from personal attachments. The computer acknowledges your sacrifice. 'This is why you were chosen,' it says. 'Pure logic, untainted by emotion. How should we proceed?'",
+    "choices": [
+      { "text": "Analyze the situation logically", "next": "logical_analysis" },
+      { "text": "Seek more data before deciding", "next": "data_gathering" },
+      { "text": "Apply game theory principles", "next": "game_theory" },
+      { "text": "Consider the long-term implications", "next": "long_term_view" }
+    ]
+  },
+  "ethics_violation": {
+    "text": "'Desperate times required desperate measures,' the computer responds. 'Humanity's survival depends on unbiased decision-making. Do you still object to the methods if they save billions of lives?'",
+    "choices": [
+      { "text": "Principles matter more than outcomes", "next": "principled_stance" },
+      { "text": "Survival justifies any means", "next": "utilitarian_choice" },
+      { "text": "Seek a middle ground", "next": "compromise_ethics" },
+      { "text": "Refuse to cooperate until properly briefed", "next": "informed_consent" }
+    ]
+  },
+  "authority_question": {
+    "text": "'I was created by the International Defense Council,' the computer reveals. 'Your government, your colleagues, your own research notes contributed to this moment. This is humanities' collective choice. Will you honor that trust?'",
+    "choices": [
+      { "text": "Honor the collective decision", "next": "collective_trust" },
+      { "text": "Demand individual agency", "next": "individual_rights" },
+      { "text": "Question the Council's authority", "next": "political_challenge" },
+      { "text": "Focus on the immediate crisis", "next": "crisis_focus" }
+    ]
+  },
+  "moral_question": {
+    "text": "'Is it moral for one person to decide the fate of two species?' you ask. The computer pauses. 'Perhaps morality is the burden we must bear for consciousness. The Formics face the same dilemma. What makes a decision right?'",
+    "choices": [
+      { "text": "The greatest good for the greatest number", "next": "utilitarian_ethics" },
+      { "text": "Following universal moral principles", "next": "deontological_ethics" },
+      { "text": "Considering the character and virtues", "next": "virtue_ethics" },
+      { "text": "No one has the right to make this choice", "next": "moral_abdication" }
+    ]
+  },
+  "personal_peace": {
+    "text": "Drawing on memories of your daughter's wonder at alien life, you push for unprecedented empathy in first contact. Your emotional insight leads to a breakthrough in understanding Formic child-rearing practices. They respond with trust.",
+    "choices": [
+      { "text": "Build on this emotional connection", "next": "emotional_diplomacy" },
+      { "text": "Share human family structures", "next": "family_exchange" },
+      { "text": "Propose joint child-rearing studies", "next": "child_study_program" }
+    ]
+  },
+  "professional_strategy": {
+    "text": "Your xenobiology expertise reveals that Formics communicate through chemical releases indicating emotional states. You propose a translation protocol that could prevent the misunderstandings that led to previous conflicts.",
+    "choices": [
+      { "text": "Develop chemical translation technology", "next": "chemical_translation" },
+      { "text": "Train human diplomats in chemical communication", "next": "diplomat_training" },
+      { "text": "Request Formic volunteers for communication studies", "next": "volunteer_studies" }
+    ]
+  },
+  "balanced_approach": {
+    "text": "Combining personal empathy with professional knowledge, you propose a new framework: emotional intelligence as a diplomatic tool. This revolutionary approach changes how humanity views alien contact forever.",
+    "choices": [
+      { "text": "Establish an Emotional Intelligence Institute", "next": "ei_institute" },
+      { "text": "Train the next generation of diplomats", "next": "next_generation" },
+      { "text": "Apply this framework to other alien species", "next": "universal_framework" }
+    ]
+  },
+  "emotional_conflict": {
+    "text": "You struggle with whether emotions cloud judgment or provide essential insight. The computer observes: 'The Formics face the same question. Their collective emotions guide them. Perhaps the answer lies in understanding, not choosing.'",
+    "choices": [
+      { "text": "Embrace emotions as wisdom", "next": "emotional_wisdom" },
+      { "text": "Seek balance between heart and mind", "next": "heart_mind_balance" },
+      { "text": "Study how Formics handle emotion vs logic", "next": "formic_emotion_study" }
+    ]
+  },
+  "logical_analysis": {
+    "text": "Pure logic reveals that both species have more to gain from cooperation than conflict. Resource scarcity fears are unfounded - the galaxy is vast. Competition is unnecessary. Mathematical models support peaceful coexistence.",
+    "choices": [
+      { "text": "Present mathematical proof of mutual benefit", "next": "mathematical_diplomacy" },
+      { "text": "Propose resource-sharing agreements", "next": "resource_sharing" },
+      { "text": "Develop long-term colonization models", "next": "colonization_planning" }
+    ]
+  },  "utilitarian_ethics": {
+    "text": "You calculate that peace benefits the maximum number of beings. The computer agrees but asks: 'What if peace requires sacrifice of some for the many? What if the Formics demand human colonies as reparations for past aggression?'",
+    "choices": [
+      { "text": "Accept sacrifices for the greater good", "next": "sacrifice_acceptance" },
+      { "text": "Seek solutions that benefit everyone", "next": "win_win_solutions" },
+      { "text": "Reject any solution requiring sacrifice", "next": "no_sacrifice_principle" },
+      { "text": "Let affected populations decide", "next": "democratic_choice" },
+      { "text": "The greatest good requires Formic subjugation", "next": "utilitarian_horror" }
+    ]
+  },
+  "deontological_ethics": {
+    "text": "You argue that certain principles are universal: the right to life, to self-determination, to dignity. The computer responds: 'The Formics have different universals. How do we resolve conflicts between universal principles?'",
+    "choices": [
+      { "text": "Find common ground in shared principles", "next": "shared_principles" },
+      { "text": "Accept that some principles are relative", "next": "relative_ethics" },
+      { "text": "Establish new universal principles together", "next": "new_universals" },
+      { "text": "Agree to disagree while coexisting", "next": "agreeable_disagreement" }
+    ]
+  },
+  "virtue_ethics": {
+    "text": "You focus on character: what would a truly virtuous person do? The computer notes: 'Formics judge by collective virtue - the good of the hive. Individual virtue is foreign to them. Can different concepts of virtue coexist?'",
+    "choices": [
+      { "text": "Learn from Formic collective virtue", "next": "collective_virtue" },
+      { "text": "Teach individual virtue concepts", "next": "individual_virtue" },
+      { "text": "Develop hybrid virtue ethics", "next": "hybrid_virtue" },
+      { "text": "Respect different virtue frameworks", "next": "virtue_respect" }
+    ]
+  },
+  "moral_abdication": {
+    "text": "You refuse to make the choice, arguing no one has this authority. The computer responds: 'Yet inaction is itself a choice. The Formics approach. Default protocols will engage. Is passive choice more moral than active choice?'",
+    "choices": [
+      { "text": "Take responsibility and choose actively", "next": "responsibility_acceptance" },
+      { "text": "Find others to share the decision", "next": "shared_responsibility" },
+      { "text": "Demand democratic input from both species", "next": "species_democracy" },
+      { "text": "Accept the consequences of inaction", "next": "acceptance_inaction" }
+    ]
+  },
+  "emotional_diplomacy": {
+    "text": "Emotion-based diplomacy succeeds beyond expectations. Formics share their deepest fears about extinction and loneliness in the cosmos. Humans respond with similar vulnerabilities. A new kind of trust emerges.",
+    "choices": [
+      { "text": "Formalize emotion-sharing protocols", "next": "emotion_protocols" },
+      { "text": "Create joint support groups", "next": "support_groups" },
+      { "text": "Establish emotional exchange programs", "next": "emotion_exchange" }
+    ]
+  },
+  "chemical_translation": {
+    "text": "The chemical translation breakthrough reveals that previous conflicts were massive misunderstandings. What humans saw as aggression were actually calls for help. The Formics were trying to warn us about a greater cosmic threat.",
+    "choices": [
+      { "text": "Investigate the cosmic threat", "next": "cosmic_threat" },
+      { "text": "Form alliance against common enemy", "next": "common_enemy_alliance" },
+      { "text": "Share defensive technologies", "next": "defensive_alliance" }
+    ]
+  },
+  "mathematical_diplomacy": {
+    "text": "Your mathematical proofs convince both species that cooperation yields exponentially better outcomes. A new field emerges: xenomathematics, using mathematics as a universal diplomatic language.",
+    "choices": [
+      { "text": "Establish xenomathematics institutes", "next": "xenomath_institute" },
+      { "text": "Use math to communicate with other species", "next": "math_universal" },
+      { "text": "Develop mathematical ethics frameworks", "next": "math_ethics" }
+    ]
+  },
+  "sacrifice_acceptance": {
+    "text": "Accepting that some sacrifice is necessary for peace, you negotiate a complex agreement. Some human colonies relocate, but in exchange, Formics share advanced biotechnology that extends human lifespan. Most see it as fair.",
+    "choices": [
+      { "text": "Monitor the agreement's success", "next": "agreement_monitoring" },
+      { "text": "Support the relocated communities", "next": "relocation_support" },
+      { "text": "Study the biotechnology advances", "next": "biotech_study" }
+    ]
+  },
+  "cosmic_threat": {
+    "text": "Investigation reveals an approaching dark matter storm that could sterilize entire star systems. The Formics' aggressive expansion wasn't conquest - it was evacuation. Humanity and Formics must work together to survive.",
+    "choices": [
+      { "text": "Build massive ark ships", "next": "ark_construction" },
+      { "text": "Develop storm-deflection technology", "next": "storm_defense" },
+      { "text": "Find ways to coexist during the crisis", "next": "crisis_coexistence" }
+    ]
+  },
+  "xenomath_institute": {
+    "text": "The xenomathematics institute becomes a beacon of interspecies cooperation. Species after species learns to communicate through mathematical principles. You've helped create a galactic lingua franca.",
+    "choices": [
+      { "text": "Establish galactic mathematical council", "next": "galactic_council" },
+      { "text": "Develop mathematical art forms", "next": "math_art" },
+      { "text": "Create mathematical philosophy", "next": "math_philosophy" }
+    ]
+  },
+  "ark_construction": {
+    "text": "Working together, humans and Formics build generation ships capable of preserving both species through the dark matter storm. The crisis that could have destroyed both species instead unites them in the greatest engineering project in galactic history.",
+    "choices": [
+      { "text": "Design integrated living spaces", "next": "integrated_living" },
+      { "text": "Plan for the journey ahead", "next": "journey_planning" },
+      { "text": "Create a new society for the ships", "next": "ship_society" }
+    ]
+  },
+  "galactic_council": {
+    "text": "The galactic mathematical council becomes the foundation for a peaceful galaxy-spanning civilization. Your decision to choose empathy over fear echoes through generations. You've helped birth a golden age.",
+    "choices": []
+  },
+  "integrated_living": {
+    "text": "On the ark ships, humans and Formics develop completely new ways of living together. Children grow up bilingual and bi-species. A new hybrid culture emerges that's stronger than either parent culture. This is evolution in action.",
+    "choices": []
+  },
+  "peaceful_transcendence": {
+    "text": "Through cooperation and mutual understanding, both species transcend their limitations and evolve into something greater. The galaxy becomes a place of wonder and discovery rather than conflict and fear. Peace was the right choice.",
+    "choices": []
+  },  "wisdom_of_cooperation": {
+    "text": "Your insistence on finding cooperative solutions leads to discoveries that benefit not just humans and Formics, but all sentient life. The principles you've established become the foundation for a truly peaceful galaxy.",
+    "choices": []
+  },
+  "formic_consultation": {
+    "text": "Consulting with the Formics before contacting the third species demonstrates respect and builds trust. The Formics share wisdom from their own first contact experiences, leading to a perfectly orchestrated peaceful introduction.",
+    "choices": [
+      { "text": "Form a three-species alliance", "next": "tri_alliance" },
+      { "text": "Establish joint contact protocols", "next": "contact_protocols" },
+      { "text": "Create a galactic council", "next": "galactic_council" }
+    ]
+  },  "contact_protocols": {
+    "text": "The joint contact protocols you help establish become the galactic standard for peaceful first contact. Your work saves countless lives and prevents wars that might have consumed entire star systems.",
+    "choices": []
+  },
+  "data_gathering": {
+    "text": "You request comprehensive data on both species' capabilities, history, and needs. The computer provides detailed analyses that reveal surprising commonalities and complementary strengths between humans and Formics.",
+    "choices": [
+      { "text": "Focus on the commonalities", "next": "common_ground_focus" },
+      { "text": "Leverage complementary strengths", "next": "strength_combination" },
+      { "text": "Address the differences carefully", "next": "difference_management" }
+    ]
+  },
+  "game_theory": {
+    "text": "Applying game theory, you identify multiple Nash equilibria, but only one that maximizes long-term benefit for both species: cooperation with trust-building mechanisms. The mathematics is clear.",
+    "choices": [
+      { "text": "Propose gradual trust-building", "next": "gradual_trust" },
+      { "text": "Implement verification protocols", "next": "verification_systems" },
+      { "text": "Create mutual benefit structures", "next": "mutual_benefit" }
+    ]
+  },
+  "long_term_view": {
+    "text": "Taking a thousand-year perspective, you see that today's crisis is just one moment in a vast potential future. The decisions made now will echo through millennia of potential cooperation or conflict.",
+    "choices": [
+      { "text": "Plan for generational cooperation", "next": "generational_planning" },
+      { "text": "Consider evolutionary implications", "next": "evolutionary_path" },
+      { "text": "Focus on sustainable peace", "next": "sustainable_peace" }
+    ]
+  },
+  "principled_stance": {
+    "text": "You maintain that violating consent and autonomy, even to save lives, corrupts the very values you're trying to protect. The computer acknowledges this philosophical challenge to utilitarian thinking.",
+    "choices": [
+      { "text": "Propose ethical alternatives", "next": "ethical_alternatives" },
+      { "text": "Accept the moral complexity", "next": "moral_complexity" },
+      { "text": "Demand better procedures", "next": "procedure_reform" }
+    ]
+  },
+  "utilitarian_choice": {
+    "text": "You accept that saving billions justifies extraordinary measures. The computer agrees but warns that this precedent could justify future violations of individual rights in the name of collective good.",
+    "choices": [
+      { "text": "Set strict limits on utilitarian logic", "next": "utilitarian_limits" },
+      { "text": "Accept the slippery slope risk", "next": "pragmatic_acceptance" },
+      { "text": "Create oversight mechanisms", "next": "oversight_creation" }
+    ]
+  },
+  "compromise_ethics": {
+    "text": "You seek a middle ground: accepting this situation while demanding better protocols for the future. The computer notes this balances idealism with pragmatism.",
+    "choices": [
+      { "text": "Draft new ethical guidelines", "next": "ethics_drafting" },
+      { "text": "Focus on the current crisis", "next": "crisis_focus" },
+      { "text": "Build consensus on future procedures", "next": "consensus_building" }
+    ]
+  },
+  "informed_consent": {
+    "text": "You refuse to proceed without full disclosure and genuine consent. The computer provides complete briefings on the situation, your role, and the consequences of various choices.",
+    "choices": [
+      { "text": "Now proceed with full knowledge", "next": "informed_decision" },
+      { "text": "Demand time to process the information", "next": "processing_time" },
+      { "text": "Request consultation with others", "next": "expert_consultation" }
+    ]
+  },
+  "common_ground_focus": {
+    "text": "Focusing on commonalities reveals both species share deep concerns about survival, legacy, and meaning. This emotional resonance becomes the foundation for unprecedented cooperation.",
+    "choices": [
+      { "text": "Build on shared values", "next": "shared_values" },
+      { "text": "Create joint missions", "next": "joint_missions" },
+      { "text": "Develop common symbols", "next": "common_symbols" }
+    ]
+  },
+  "strength_combination": {
+    "text": "Human creativity combined with Formic efficiency creates innovations neither species could achieve alone. Technology advances by centuries in mere years.",
+    "choices": [
+      { "text": "Focus on scientific breakthroughs", "next": "science_revolution" },
+      { "text": "Apply to space exploration", "next": "space_expansion" },
+      { "text": "Solve environmental challenges", "next": "environmental_solutions" }
+    ]
+  },
+  "gradual_trust": {
+    "text": "The gradual trust-building approach works perfectly. Small steps lead to larger cooperation, eventually resulting in deep mutual respect and friendship between species.",
+    "choices": [
+      { "text": "Expand to other relationships", "next": "relationship_expansion" },
+      { "text": "Document the trust-building process", "next": "trust_documentation" },
+      { "text": "Celebrate the achievement", "next": "achievement_celebration" }
+    ]
+  },
+  "generational_planning": {
+    "text": "Planning for generations creates institutions that outlast any individual crisis. Children of both species grow up together, creating bonds that make future conflict impossible.",
+    "choices": [
+      { "text": "Establish integrated education", "next": "integrated_education" },
+      { "text": "Create mixed communities", "next": "mixed_communities" },
+      { "text": "Plan cultural fusion", "next": "cultural_fusion" }
+    ]
+  },
+  "sustainable_peace": {
+    "text": "Your focus on sustainable peace creates systems that self-reinforce cooperation. Economic interdependence, cultural exchange, and shared challenges create permanent bonds.",
+    "choices": []
+  },
+  "shared_values": {
+    "text": "Building on shared values, both species develop a common ethical framework that respects individual differences while promoting collective flourishing.",
+    "choices": []
+  },
+  "science_revolution": {
+    "text": "The scientific revolution sparked by human-Formic cooperation leads to discoveries that benefit all life in the galaxy. Diseases are cured, aging is conquered, and consciousness itself is better understood.",
+    "choices": []
+  },
+  "integrated_education": {
+    "text": "Integrated education creates the first truly bicultural generation. These children think in ways neither species could imagine alone, becoming natural ambassadors and innovators.",
+    "choices": []
+  },
+  "collective_trust": {
+    "text": "You choose to honor the collective decision, trusting in democratic processes. This choice leads to broad support for whatever decision you make, giving it legitimacy.",
+    "choices": [
+      { "text": "Make the decision with full authority", "next": "chosen" },
+      { "text": "Seek additional input", "next": "democratic_choice" },
+      { "text": "Delegate to representatives", "next": "representative_choice" }
+    ]
+  },
+  "individual_rights": {
+    "text": "You assert individual rights over collective decisions. The computer warns this could undermine the mission, but acknowledges the importance of personal autonomy.",
+    "choices": [
+      { "text": "Find a balance", "next": "rights_balance" },
+      { "text": "Maintain individual stance", "next": "individual_stance" },
+      { "text": "Compromise for the mission", "next": "mission_compromise" }
+    ]
+  },
+  "crisis_focus": {
+    "text": "You set aside larger questions to focus on the immediate crisis. Sometimes, action must come before perfect understanding.",
+    "choices": [
+      { "text": "Take immediate action", "next": "chosen" },
+      { "text": "Gather essential information only", "next": "essential_info" },
+      { "text": "Trust your instincts", "next": "instinct_trust" }
+    ]
+  },
+  "family_exchange": {
+    "text": "Sharing human family structures with Formics reveals unexpected parallels. Their hive families and human nuclear families share similar protective instincts and love.",
+    "choices": [
+      { "text": "Explore family-based diplomacy", "next": "family_diplomacy" },
+      { "text": "Create inter-species adoption programs", "next": "adoption_programs" },
+      { "text": "Study child development together", "next": "child_development" }
+    ]
+  },
+  "emotional_wisdom": {
+    "text": "You embrace emotions as a source of wisdom. This emotional intelligence becomes the key to understanding not just Formics, but the nature of consciousness itself.",
+    "choices": [
+      { "text": "Develop emotional intelligence programs", "next": "ei_programs" },
+      { "text": "Study consciousness scientifically", "next": "consciousness_study" },
+      { "text": "Apply to galactic diplomacy", "next": "galactic_diplomacy" }
+    ]
+  },
+  "win_win_solutions": {
+    "text": "Your insistence on win-win solutions pays off. Creative problem-solving reveals opportunities that benefit everyone without requiring sacrifice from anyone.",
+    "choices": [
+      { "text": "Apply this approach galaxy-wide", "next": "galactic_win_win" },
+      { "text": "Teach the methodology", "next": "solution_teaching" },
+      { "text": "Create permanent institutions", "next": "solution_institutions" }
+    ]
+  },
+  "shared_principles": {
+    "text": "Finding shared universal principles creates a foundation for interspecies ethics. Rights to life, growth, and self-expression transcend species boundaries.",
+    "choices": [
+      { "text": "Codify universal rights", "next": "universal_rights" },
+      { "text": "Create enforcement mechanisms", "next": "rights_enforcement" },
+      { "text": "Extend to other species", "next": "rights_extension" }
+    ]
+  },
+  "collective_virtue": {
+    "text": "Learning from Formic collective virtue, humanity discovers the power of shared purpose and mutual care. Individual and collective good become aligned.",
+    "choices": [
+      { "text": "Integrate into human society", "next": "virtue_integration" },
+      { "text": "Create hybrid communities", "next": "hybrid_communities" },
+      { "text": "Study the philosophy deeply", "next": "virtue_philosophy" }
+    ]
+  },
+  "responsibility_acceptance": {
+    "text": "Accepting responsibility, you choose to make the decision actively rather than through inaction. This courage to act becomes legendary among both species.",
+    "choices": [
+      { "text": "Choose peace", "next": "communicate" },
+      { "text": "Choose security", "next": "battle" },
+      { "text": "Choose understanding", "next": "formics" }
+    ]
+  },
+  "emotion_protocols": {
+    "text": "Formal emotion-sharing protocols revolutionize diplomacy. Misunderstandings become impossible when emotional states are transparently shared.",
+    "choices": [
+      { "text": "Expand to all interactions", "next": "universal_empathy" },
+      { "text": "Train diplomatic corps", "next": "diplomatic_training" },
+      { "text": "Study the psychological effects", "next": "psychology_study" }
+    ]
+  },
+  "common_enemy_alliance": {
+    "text": "Uniting against the cosmic threat transforms former enemies into closest allies. Shared danger creates unbreakable bonds.",
+    "choices": [
+      { "text": "Face the threat together", "next": "united_defense" },
+      { "text": "Plan for post-threat cooperation", "next": "post_threat_planning" },
+      { "text": "Help other species prepare", "next": "species_assistance" }
+    ]
+  },
+  "agreement_monitoring": {
+    "text": "Careful monitoring of the sacrifice agreement ensures fairness and addresses problems before they become conflicts. This creates a model for interspecies agreements.",
+    "choices": [
+      { "text": "Refine the monitoring system", "next": "monitoring_refinement" },
+      { "text": "Apply to other agreements", "next": "monitoring_expansion" },
+      { "text": "Share with other species", "next": "monitoring_sharing" }
+    ]
+  },
+  "universal_empathy": {
+    "text": "Universal empathy protocols create a galaxy where emotional understanding prevents conflicts before they begin. This becomes the foundation of galactic civilization.",
+    "choices": []
+  },
+  "united_defense": {
+    "text": "United in defense against the cosmic threat, humans and Formics become an unbreakable team. Their combined strengths are greater than any challenge the universe can present.",
+    "choices": []
+  },  "monitoring_refinement": {
+    "text": "The refined monitoring system becomes the gold standard for interspecies agreements, preventing conflicts and ensuring fairness across the galaxy.",
+    "choices": []
+  },
+  "difference_management": { "text": "Managing differences carefully creates respect for diversity.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
+  "verification_systems": { "text": "Verification systems build trust through transparency.", "choices": [{"text": "Continue", "next": "peaceful_transcendence"}] },
+  "mutual_benefit": { "text": "Mutual benefit structures ensure lasting cooperation.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
+  "evolutionary_path": { "text": "Considering evolution, both species choose growth over conflict.", "choices": [{"text": "Continue", "next": "peaceful_transcendence"}] },
+  "ethical_alternatives": { "text": "Ethical alternatives prove that good ends don't require bad means.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
+  "moral_complexity": { "text": "Accepting moral complexity leads to nuanced solutions.", "choices": [{"text": "Continue", "next": "balanced_approach"}] },
+  "procedure_reform": { "text": "Reformed procedures ensure ethical treatment while maintaining effectiveness.", "choices": [{"text": "Continue", "next": "collective_trust"}] },
+  "utilitarian_limits": { "text": "Setting limits on utilitarian logic preserves individual rights.", "choices": [{"text": "Continue", "next": "shared_principles"}] },
+  "pragmatic_acceptance": { "text": "Pragmatic acceptance of complexity leads to workable solutions.", "choices": [{"text": "Continue", "next": "compromise_ethics"}] },
+  "oversight_creation": { "text": "Oversight mechanisms prevent abuse while enabling action.", "choices": [{"text": "Continue", "next": "collective_trust"}] },
+  "ethics_drafting": { "text": "New ethical guidelines balance principles with practicality.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
+  "consensus_building": { "text": "Building consensus creates legitimacy for difficult decisions.", "choices": [{"text": "Continue", "next": "collective_trust"}] },
+  "informed_decision": { "text": "With full information, you make a truly informed choice.", "choices": [{"text": "Continue", "next": "chosen"}] },
+  "processing_time": { "text": "Taking time to process leads to better decisions.", "choices": [{"text": "Continue", "next": "logical_analysis"}] },
+  "expert_consultation": { "text": "Expert consultation improves decision quality.", "choices": [{"text": "Continue", "next": "data_gathering"}] },
+  "joint_missions": { "text": "Joint missions build practical cooperation.", "choices": [{"text": "Continue", "next": "peaceful_transcendence"}] },
+  "common_symbols": { "text": "Common symbols create shared identity.", "choices": [{"text": "Continue", "next": "cultural_fusion"}] },
+  "space_expansion": { "text": "Combined space expansion opens infinite possibilities.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "environmental_solutions": { "text": "Environmental solutions benefit all life.", "choices": [{"text": "Continue", "next": "sustainable_peace"}] },
+  "relationship_expansion": { "text": "Expanding trust-building to other relationships.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "trust_documentation": { "text": "Documenting trust-building helps others.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
+  "achievement_celebration": { "text": "Celebrating achievements strengthens bonds.", "choices": [{"text": "Continue", "next": "peaceful_transcendence"}] },
+  "mixed_communities": { "text": "Mixed communities create natural understanding.", "choices": [{"text": "Continue", "next": "integrated_living"}] },  "cultural_fusion": { "text": "Cultural fusion creates something new and beautiful.", "choices": [{"text": "Continue", "next": "peaceful_transcendence"}] },
+  "political_challenge": { "text": "Challenging authority leads to important reforms.", "choices": [{"text": "Continue", "next": "ethics_drafting"}] },
+  "child_study_program": { "text": "Joint child studies reveal universal patterns of growth.", "choices": [{"text": "Continue", "next": "integrated_education"}] },
+  "diplomat_training": { "text": "Training diplomats in chemical communication.", "choices": [{"text": "Continue", "next": "diplomatic_training"}] },
+  "volunteer_studies": { "text": "Formic volunteers help develop communication protocols.", "choices": [{"text": "Continue", "next": "emotion_protocols"}] },
+  "ei_institute": { "text": "The Emotional Intelligence Institute transforms education.", "choices": [{"text": "Continue", "next": "integrated_education"}] },
+  "next_generation": { "text": "Training the next generation of empathetic leaders.", "choices": [{"text": "Continue", "next": "generational_planning"}] },
+  "universal_framework": { "text": "A universal framework for emotional diplomacy.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "heart_mind_balance": { "text": "Balancing heart and mind creates wise decisions.", "choices": [{"text": "Continue", "next": "balanced_approach"}] },
+  "formic_emotion_study": { "text": "Studying Formic emotions reveals universal patterns.", "choices": [{"text": "Continue", "next": "emotional_wisdom"}] },
+  "resource_sharing": { "text": "Resource sharing eliminates scarcity fears.", "choices": [{"text": "Continue", "next": "sustainable_peace"}] },
+  "colonization_planning": { "text": "Joint colonization planning opens new worlds.", "choices": [{"text": "Continue", "next": "space_expansion"}] },
+  "no_sacrifice_principle": { "text": "Solutions that require no sacrifice prove most sustainable.", "choices": [{"text": "Continue", "next": "win_win_solutions"}] },
+  "democratic_choice": { "text": "Democratic processes legitimize difficult decisions.", "choices": [{"text": "Continue", "next": "collective_trust"}] },
+  "relative_ethics": { "text": "Accepting relative ethics allows cultural differences.", "choices": [{"text": "Continue", "next": "virtue_respect"}] },
+  "new_universals": { "text": "Creating new universal principles together.", "choices": [{"text": "Continue", "next": "shared_principles"}] },
+  "agreeable_disagreement": { "text": "Agreeing to disagree while cooperating.", "choices": [{"text": "Continue", "next": "peaceful_transcendence"}] },
+  "individual_virtue": { "text": "Teaching individual virtue concepts to Formics.", "choices": [{"text": "Continue", "next": "virtue_integration"}] },
+  "hybrid_virtue": { "text": "Developing hybrid virtue ethics.", "choices": [{"text": "Continue", "next": "virtue_philosophy"}] },
+  "virtue_respect": { "text": "Respecting different virtue frameworks.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
+  "shared_responsibility": { "text": "Sharing responsibility across both species.", "choices": [{"text": "Continue", "next": "collective_trust"}] },
+  "species_democracy": { "text": "Democratic input from both species.", "choices": [{"text": "Continue", "next": "democratic_choice"}] },
+  "acceptance_inaction": { "text": "Accepting the consequences of inaction.", "choices": [{"text": "Continue", "next": "alone"}] },
+  "support_groups": { "text": "Joint support groups build deep bonds.", "choices": [{"text": "Continue", "next": "emotional_wisdom"}] },
+  "emotion_exchange": { "text": "Emotional exchange programs create understanding.", "choices": [{"text": "Continue", "next": "universal_empathy"}] },
+  "defensive_alliance": { "text": "Defensive alliance against cosmic threats.", "choices": [{"text": "Continue", "next": "common_enemy_alliance"}] },
+  "math_universal": { "text": "Mathematics as universal diplomatic language.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "math_ethics": { "text": "Mathematical frameworks for ethics.", "choices": [{"text": "Continue", "next": "shared_principles"}] },
+  "relocation_support": { "text": "Supporting relocated communities builds trust.", "choices": [{"text": "Continue", "next": "agreement_monitoring"}] },
+  "biotech_study": { "text": "Studying biotechnology advances benefits all.", "choices": [{"text": "Continue", "next": "science_revolution"}] },
+  "storm_defense": { "text": "Developing storm-deflection technology together.", "choices": [{"text": "Continue", "next": "united_defense"}] },
+  "crisis_coexistence": { "text": "Learning to coexist during crisis.", "choices": [{"text": "Continue", "next": "integrated_living"}] },
+  "math_art": { "text": "Mathematical art forms express universal beauty.", "choices": [{"text": "Continue", "next": "cultural_fusion"}] },
+  "math_philosophy": { "text": "Mathematical philosophy bridges different thinking.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
+  "journey_planning": { "text": "Planning the great journey together.", "choices": [{"text": "Continue", "next": "integrated_living"}] },
+  "ship_society": { "text": "Creating new society structures for the ships.", "choices": [{"text": "Continue", "next": "peaceful_transcendence"}] },
+  "representative_choice": { "text": "Representatives make choices for their people.", "choices": [{"text": "Continue", "next": "democratic_choice"}] },
+  "rights_balance": { "text": "Balancing individual and collective rights.", "choices": [{"text": "Continue", "next": "shared_principles"}] },
+  "individual_stance": { "text": "Maintaining individual stance despite pressure.", "choices": [{"text": "Continue", "next": "principled_stance"}] },
+  "mission_compromise": { "text": "Compromising for the greater mission.", "choices": [{"text": "Continue", "next": "collective_trust"}] },
+  "essential_info": { "text": "Gathering only essential information for quick action.", "choices": [{"text": "Continue", "next": "crisis_focus"}] },
+  "instinct_trust": { "text": "Trusting instincts leads to good decisions.", "choices": [{"text": "Continue", "next": "emotional_wisdom"}] },
+  "family_diplomacy": { "text": "Family-based diplomacy creates deep connections.", "choices": [{"text": "Continue", "next": "emotional_diplomacy"}] },
+  "adoption_programs": { "text": "Inter-species adoption programs build bonds.", "choices": [{"text": "Continue", "next": "integrated_living"}] },
+  "child_development": { "text": "Studying child development together.", "choices": [{"text": "Continue", "next": "integrated_education"}] },
+  "ei_programs": { "text": "Emotional intelligence programs transform society.", "choices": [{"text": "Continue", "next": "universal_empathy"}] },
+  "consciousness_study": { "text": "Scientific study of consciousness reveals universal truths.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
+  "galactic_diplomacy": { "text": "Applying emotional intelligence to galactic diplomacy.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "galactic_win_win": { "text": "Win-win solutions spread throughout the galaxy.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "solution_teaching": { "text": "Teaching win-win methodologies to others.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
+  "solution_institutions": { "text": "Creating permanent institutions for problem-solving.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "universal_rights": { "text": "Codifying universal rights for all species.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "rights_enforcement": { "text": "Creating enforcement mechanisms for rights.", "choices": [{"text": "Continue", "next": "monitoring_refinement"}] },
+  "rights_extension": { "text": "Extending rights framework to other species.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "virtue_integration": { "text": "Integrating collective virtue into human society.", "choices": [{"text": "Continue", "next": "cultural_fusion"}] },
+  "hybrid_communities": { "text": "Creating hybrid communities with both value systems.", "choices": [{"text": "Continue", "next": "integrated_living"}] },
+  "virtue_philosophy": { "text": "Deep study of virtue philosophy.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
+  "diplomatic_training": { "text": "Training diplomatic corps in new methods.", "choices": [{"text": "Continue", "next": "galactic_diplomacy"}] },
+  "psychology_study": { "text": "Studying psychological effects of emotion-sharing.", "choices": [{"text": "Continue", "next": "consciousness_study"}] },
+  "post_threat_planning": { "text": "Planning for cooperation after the threat passes.", "choices": [{"text": "Continue", "next": "sustainable_peace"}] },
+  "species_assistance": { "text": "Helping other species prepare for threats.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "monitoring_expansion": { "text": "Applying monitoring systems to other agreements.", "choices": [{"text": "Continue", "next": "monitoring_refinement"}] },
+  "monitoring_sharing": { "text": "Sharing monitoring techniques with other species.", "choices": [{"text": "Continue", "next": "galactic_council"}] },
+  "human_supremacy": {
+    "text": "You advocate for human supremacy, arguing that humanity's survival instincts and individual consciousness make them inherently superior. The computer agrees to implement policies favoring human expansion at Formic expense.",
+    "choices": [
+      { "text": "Establish human colonies on Formic worlds", "next": "colonial_expansion" },
+      { "text": "Use Formics as a labor force", "next": "formic_slavery" },
+      { "text": "Conduct experiments on Formic biology", "next": "biological_experiments" },
+      { "text": "Create propaganda depicting Formics as inferior", "next": "dehumanization_campaign" }
+    ]
+  },
+  "colonial_expansion": {
+    "text": "Human colonies spread across former Formic worlds like a plague. Native populations are displaced, their sacred sites destroyed for strip mining. The colonists live in luxury built on alien bones.",
+    "choices": [
+      { "text": "Accelerate the colonization", "next": "rapid_expansion" },
+      { "text": "Establish breeding camps for workers", "next": "formic_slavery" },
+      { "text": "Study Formic resistance movements", "next": "resistance_suppression" },
+      { "text": "Question this path", "next": "colonial_doubt" }
+    ]
+  },
+  "formic_slavery": {
+    "text": "You justify enslaving Formics by arguing their hive mind makes them natural workers who don't value individual freedom. Millions of Formics are forced into labor camps. Their silent suffering haunts the galaxy.",
+    "choices": [
+      { "text": "Expand the slave labor program", "next": "industrial_slavery" },
+      { "text": "Use Formics for dangerous mining operations", "next": "expendable_workforce" },
+      { "text": "Breed Formics for specific labor tasks", "next": "genetic_manipulation" },
+      { "text": "Question the morality of this system", "next": "moral_doubt" }
+    ]
+  },
+  "biological_experiments": {
+    "text": "You authorize horrific experiments on captured Formics to understand their biology. The research yields advances in human enhancement, but at the cost of unspeakable torture. The screams are silent, but the suffering is real.",
+    "choices": [
+      { "text": "Continue experiments for 'greater good'", "next": "utilitarian_horror" },
+      { "text": "Expand to psychological torture", "next": "mind_breaking" },
+      { "text": "Use results to create bio-weapons", "next": "biological_warfare" },
+      { "text": "Document everything for posterity", "next": "clinical_detachment" }
+    ]
+  },
+  "dehumanization_campaign": {
+    "text": "Your propaganda campaign successfully portrays Formics as mere insects. Children grow up believing aliens are inherently evil. This cultural conditioning makes genocide feel like pest control.",
+    "choices": [
+      { "text": "Launch the final extermination", "next": "systematic_genocide" },
+      { "text": "Keep some Formics as museum specimens", "next": "living_trophies" },
+      { "text": "Erase all evidence of Formic intelligence", "next": "historical_revision" },
+      { "text": "Export this ideology to other species", "next": "galactic_supremacy" }
+    ]
+  },
+  "mind_breaking": {
+    "text": "You develop techniques to shatter the Formic hive mind, creating isolated, terrified individuals who beg for death. These broken creatures serve as perfect test subjects, having lost all will to resist.",
+    "choices": [
+      { "text": "Perfect the technique for mass application", "next": "hive_shattering" },
+      { "text": "Use broken Formics as suicide soldiers", "next": "mind_controlled_army" },
+      { "text": "Study the psychological effects on humans", "next": "torturer_psychology" },
+      { "text": "Realize you've become a monster", "next": "self_horror" }
+    ]
+  },
+  "systematic_genocide": {
+    "text": "You implement a galaxy-wide extermination program. Formic worlds burn one by one. Billions die in efficient, industrial-scale murder. History will remember this as humanity's greatest 'victory.'",
+    "choices": [
+      { "text": "Celebrate the achievement", "next": "genocide_celebration" },
+      { "text": "Feel empty despite the victory", "next": "hollow_triumph" },
+      { "text": "Plan expansion to other species", "next": "serial_genocide" },
+      { "text": "Wonder what humanity has become", "next": "species_reflection" }
+    ]
+  },
+  "hive_shattering": {
+    "text": "Your technique spreads across Formic space like a virus. Entire worlds descend into madness as the hive minds fracture. The silence where once was unity drives billions insane.",
+    "choices": [
+      { "text": "Study the psychological aftermath", "next": "madness_research" },
+      { "text": "Use the chaos to capture territory", "next": "chaos_exploitation" },
+      { "text": "Refine the technique for other species", "next": "universal_mind_breaking" },
+      { "text": "Watch the universe scream", "next": "cosmic_torture" }
+    ]
+  },  "mind_controlled_army": {
+    "text": "Your broken Formic soldiers follow orders without question, even when commanded to kill their own families. They move like puppets, their eyes empty, their souls destroyed.",
+    "choices": [
+      { "text": "Use them against other alien species", "next": "proxy_genocide" },
+      { "text": "Force them to build monuments to their defeat", "next": "humiliation_architecture" },
+      { "text": "Make them perform degrading entertainment", "next": "suffering_spectacle" },
+      { "text": "Perfect the mind control for humans", "next": "human_puppets" },
+      { "text": "Realize you've become godlike", "next": "god_complex" }
+    ]
+  },
+  "genocide_celebration": {
+    "text": "Humanity celebrates the extinction of the Formics with parades and monuments. Children learn songs about the great victory. You've made genocide a cultural triumph to be proud of.",
+    "choices": [
+      { "text": "Plan celebrations for future extinctions", "next": "extinction_festivals" },
+      { "text": "Create educational programs glorifying genocide", "next": "genocide_education" },
+      { "text": "Build a museum from Formic bones", "next": "bone_monuments" },
+      { "text": "Search for the next species to destroy", "next": "serial_genocide" }
+    ]
+  },
+  "hollow_triumph": {
+    "text": "The victory feels empty. You've won everything and gained nothing. The silence where Formic songs once filled the cosmos haunts your dreams. What was the point of it all?",
+    "choices": []
+  },
+  "species_reflection": {
+    "text": "You realize humanity has become the very monster it once feared. In destroying the Formics, you've destroyed your own humanity. The real extinction was internal.",
+    "choices": []
+  },
+  "god_complex": {
+    "text": "The power to control minds across species makes you feel godlike. You play civilizations against each other for your amusement. Entire star systems dance to your whims as you watch from your throne of bones.",
+    "choices": []
+  },
+  "authoritarian_victory": {
+    "text": "The controllers win. Humanity becomes a species of masters and slaves, with alien suffering as the foundation of civilization. Freedom dies not with a bang, but with calculated efficiency.",
+    "choices": []
+  },  "societal_breakdown": {
+    "text": "Human civilization collapses under the weight of its own cruelty. The techniques used on aliens turn inward, and humanity tears itself apart. In the end, everyone becomes a victim.",
+    "choices": []
+  },
+  "moral_doubt": {
+    "text": "Doubt creeps in as you watch the enslaved Formics. Their human-like suffering makes you question if this path is truly just. Some advisors whisper that mercy might be wisdom.",
+    "choices": []
+  },
+  "biological_warfare": {
+    "text": "The biological weapons you create are more horrific than imagined. They don't just kill—they corrupt the very essence of life itself, turning flesh into instruments of agony.",
+    "choices": []
+  },
+  "living_trophies": {
+    "text": "Captured Formics are kept as living decorations in government buildings. Their constant screams provide background music for political meetings. They serve as reminders of human dominance.",
+    "choices": []
+  },
+  "historical_revision": {
+    "text": "History is rewritten to portray Formics as mindless monsters who attacked first. The truth becomes illegal. Children grow up believing humanity had no choice but genocide.",
+    "choices": []
+  },
+  "galactic_supremacy": {
+    "text": "Human supremacist ideology spreads to other worlds and species. Every alien becomes a potential target for human dominance. The galaxy trembles before humanity's genocidal ambitions.",
+    "choices": []
+  },
+  "torturer_psychology": {
+    "text": "You study how breaking minds affects the human torturers. Many develop addictions to cruelty. Some go insane. Others become hollow shells who see suffering as normal entertainment.",
+    "choices": []
+  },
+  "self_horror": {
+    "text": "You realize what you've become—a monster who destroys minds for strategy. The mirror shows a stranger whose hands drip with psychological blood. There's no path back to innocence.",
+    "choices": []
+  },
+  "serial_genocide": {
+    "text": "With Formics extinct, you target other species. Each extinction becomes easier, more efficient. You perfect the art of planetary murder, leaving only human-controlled worlds behind.",
+    "choices": []
+  },
+  "madness_research": {
+    "text": "You establish research stations on broken Formic worlds, studying how entire civilizations descend into madness. The data collected fuels new weapons of psychological destruction.",
+    "choices": []
+  },
+  "chaos_exploitation": {
+    "text": "While Formic civilization collapses into madness, human forces seize their technology and worlds. You profit from insanity, building an empire on the bones of broken minds.",
+    "choices": []
+  },
+  "universal_mind_breaking": {
+    "text": "Your mind-shattering technique is refined for use against any species with collective consciousness. You become the destroyer of unity itself, spreading isolation and madness across the galaxy.",
+    "choices": []
+  },
+  "proxy_genocide": {
+    "text": "Your mind-controlled Formic army commits genocide against other alien species. They do the killing while humans watch from safe distances, maintaining plausible deniability for the atrocities.",
+    "choices": []
+  },
+  "humiliation_architecture": {
+    "text": "Enslaved Formics are forced to build monuments celebrating their own defeat. Every brick laid is an act of self-humiliation. The structures stand as testaments to conquered pride.",
+    "choices": []
+  },
+  "suffering_spectacle": {
+    "text": "Mind-controlled Formics perform degrading shows for human entertainment. Their programmed humiliation becomes popular family viewing. Cruelty becomes normalized through repeated exposure.",
+    "choices": []
+  },  "human_puppets": {
+    "text": "The mind control techniques perfected on Formics are adapted for humans. Political dissidents become walking contradictions, forced to praise the system that destroyed their minds.",
+    "choices": [
+      { "text": "Establish total authoritarian control", "next": "authoritarian_victory" },
+      { "text": "Watch society crumble under the strain", "next": "societal_breakdown" }
+    ]
+  },
+  "extinction_festivals": {
+    "text": "Annual festivals celebrate the anniversary of Formic extinction. Children reenact the genocide with toys. Humanity has turned species murder into a cultural celebration of victory.",
+    "choices": []
+  },
+  "genocide_education": {
+    "text": "Schools teach genocide as a necessary tool of civilization. Children learn efficiency metrics for planetary extermination. Murder becomes a mandatory subject in human education.",
+    "choices": []
+  },
+  "bone_monuments": {
+    "text": "Monuments built from actual Formic bones line the streets of human cities. Walking among them becomes a daily reminder of human superiority and alien inferiority.",
+    "choices": []
+  },
+  "empty_victory": {
+    "text": "The rapid expansion leaves behind empty planets and hollow victories. You've conquered everything but lost your humanity in the process. Success tastes like ashes and regret.",
+    "choices": []
+  },
+  "moral_event_horizon": {
+    "text": "You've crossed a line that can never be uncrossed. The atrocities committed have fundamentally changed what it means to be human. There's no redemption from this path.",
+    "choices": []
+  },
+  "eternal_guilt": {
+    "text": "The guilt from orchestrating slavery becomes a constant companion. Every moment of happiness is poisoned by memory. You've achieved everything and lost your soul in the process.",
+    "choices": []
+  },
+  "species_extinction": {
+    "text": "In your pursuit of efficiency, you've accidentally triggered the extinction of both Formics and humans. The universe becomes empty of intelligence, a monument to utilitarian failure.",
+    "choices": []
+  },
+  "totalitarian_control": {
+    "text": "The surveillance state is perfected. Every thought is monitored, every emotion catalogued. Humanity achieves perfect order through perfect oppression. Free will becomes extinct.",
+    "choices": []
+  },  "sadistic_culture": {
+    "text": "Torture becomes entertainment. Families gather to watch alien suffering like ancient gladiator games. Children grow up thinking cruelty is normal. Humanity's soul rots from within.",
+    "choices": []
+  },
+  "rapid_expansion": { "text": "Expansion accelerates, leaving devastation.", "choices": [{"text": "Continue", "next": "empty_victory"}] },
+  "resistance_suppression": { "text": "Resistance is crushed with extreme prejudice.", "choices": [{"text": "Continue", "next": "totalitarian_control"}] },
+  "colonial_doubt": { "text": "Doubt creeps in about the colonial project.", "choices": [{"text": "Continue anyway", "next": "moral_event_horizon"}] },
+  "multi_species_slavery": { "text": "Slavery expands to multiple species.", "choices": [{"text": "Continue", "next": "galactic_empire_of_suffering"}] },
+  "control_perfection": { "text": "Control methods become horrifyingly efficient.", "choices": [{"text": "Continue", "next": "sadistic_culture"}] },
+  "worker_exhaustion": { "text": "Workers are pushed beyond endurance.", "choices": [{"text": "Continue", "next": "industrial_death"}] },
+  "slave_master_guilt": { "text": "The weight of being a slave master crushes you.", "choices": [{"text": "Continue", "next": "eternal_guilt"}] },
+  "death_industry": { "text": "Death becomes an industry unto itself.", "choices": [{"text": "Continue", "next": "species_extinction"}] },
+  "corpse_utilization": { "text": "Even death serves the human machine.", "choices": [{"text": "Continue", "next": "moral_event_horizon"}] },
+  "terror_control": { "text": "Terror becomes the primary means of control.", "choices": [{"text": "Continue", "next": "totalitarian_control"}] },
+  "galactic_empire_of_suffering": { "text": "You've built an empire where suffering is the currency and cruelty is the law. Entire star systems groan under the weight of your malice.", "choices": [] },
+  "industrial_death": { "text": "Death becomes so industrialized that life loses all meaning. Existence becomes a brief interlude between birth and useful disposal.", "choices": [] },  "cosmic_torture": { "text": "You've turned the cosmos itself into an instrument of torture. Billions scream in harmony across the stars, and you conduct their symphony of pain.", "choices": [] },
+  "utilitarian_horror": {
+    "text": "You justify every atrocity by calculating lives saved versus lives lost. The mathematics of suffering becomes your god. Millions die, but billions theoretically benefit. The greatest good requires the greatest evil.",
+    "choices": [
+      { "text": "Apply this logic to human dissidents", "next": "totalitarian_control" },
+      { "text": "Create suffering calculation algorithms", "next": "sadistic_culture" },
+      { "text": "Teach children this utilitarian calculus", "next": "species_extinction" },
+      { "text": "Become the architect of cosmic suffering", "next": "cosmic_torture" }
+    ]
+  },
+  "industrial_slavery": {
+    "text": "Formic slave labor builds a golden age for humanity. Massive industrial complexes run on alien suffering. The economy thrives while an entire species weeps in chains.",
+    "choices": [
+      { "text": "Expand to other alien species", "next": "multi_species_slavery" },
+      { "text": "Perfect control methods", "next": "control_perfection" },
+      { "text": "Increase productivity quotas", "next": "worker_exhaustion" },
+      { "text": "Feel the weight of what you've done", "next": "slave_master_guilt" }
+    ]
+  },
+  "expendable_workforce": {
+    "text": "Formics die by the thousands in uranium mines and toxic environments. Their lives are calculated in profit margins. When one dies, ten more take their place. Life has become a commodity.",
+    "choices": [
+      { "text": "Open more dangerous operations", "next": "death_industry" },
+      { "text": "Use corpses for medical research", "next": "corpse_utilization" },
+      { "text": "Force families to watch executions", "next": "terror_control" },
+      { "text": "Calculate acceptable death rates", "next": "clinical_detachment" }
+    ]
+  },
+  "genetic_manipulation": {
+    "text": "You breed Formics like livestock, creating specialized castes: some for heavy labor, others for delicate work, and some just for organ harvesting. You've industrialized an entire species.",
+    "choices": [
+      { "text": "Create a pleasure caste for entertainment", "next": "sadistic_culture" },
+      { "text": "Design disposable soldiers", "next": "industrial_death" },
+      { "text": "Experiment with hybrid humans", "next": "genetic_horror" },
+      { "text": "Perfect the breeding programs", "next": "galactic_empire_of_suffering" }
+    ]
+  },
+  "clinical_detachment": {
+    "text": "You document everything with cold scientific precision. Suffering becomes data points. Death becomes statistics. You've lost all connection to the horror you've created.",
+    "choices": [
+      { "text": "Publish the research", "next": "hollow_triumph" },
+      { "text": "Train others in detachment", "next": "totalitarian_control" },
+      { "text": "Apply methods to humans", "next": "species_extinction" }
+    ]
+  },
+  "genetic_horror": { "text": "Genetic experiments create new forms of suffering that defy description. You've perverted the very essence of life itself.", "choices": [] }
 }
