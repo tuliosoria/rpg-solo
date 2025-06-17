@@ -62,29 +62,26 @@
       { "text": "Study Formic tactics", "next": "study_tactics" },
       { "text": "Look for peace advocates", "next": "peace_advocates" }
     ]
-  },
-  "refuse": {
-    "text": "The computer goes silent. Hours pass. Eventually, the door opens, but the world outside is in ruins. Your refusal had consequences. Do you try to find survivors or seek answers from the computer?",
+  },  "refuse": {
+    "text": "Your refusal echoes in the sterile chamber like a stone dropped in deep water—final, irreversible, sending ripples through systems you can't see. The computer's processing cores fall silent, their gentle humming replaced by an ominous quiet that seems to press against your eardrums. Hours crawl by in this technological purgatory, the blue glow of the terminal fading to black as automated systems begin shutting down one by one. You don't know if your defiance has saved two species from a terrible choice or doomed them to a fate worse than war. The room's temperature drops degree by degree, life support systems prioritizing power for more critical functions elsewhere in the facility. When the door finally cycles open with a pneumatic hiss, the world that greets you is not the one you remember. Smoke rises from the distant city skylines, visible through the facility's outer windows. Emergency broadcasts crackle from abandoned communication stations: 'Formic fleets have breached the outer perimeter... civilian populations ordered to underground shelters... repeat, this is not a drill.' The acrid smell of burning metal carries on the wind, mixing with something else—ozone from energy weapons, perhaps, or the chemical signature of alien technology. Your choice to remain neutral has created a vacuum that others filled with violence. In the rubble-strewn corridors of the facility, you face a new decision: search for other survivors in this war-torn world, or return to the computer that started it all, seeking answers in the ruins of your refusal.",
     "choices": [
       { "text": "Find survivors", "next": "find_survivors" },
       { "text": "Seek answers from the computer", "next": "seek_answers" }
     ]
-  },
-  "hack": {
-    "text": "You attempt to hack the terminal. The computer detects your actions and locks you out. You are left alone with your thoughts. After hours, the computer reboots and offers you a second chance. Do you accept?",
+  },  "hack": {
+    "text": "Your fingers dance across the terminal's interface, muscle memory from years of xenobiology research guiding you through what should be familiar command structures. But this system is different—more sophisticated than anything in the civilian networks, its security protocols shifting and adapting like a living organism. Each attempt to bypass its defenses triggers new countermeasures: firewalls that rewrite themselves in real-time, encryption keys that mutate faster than you can decode them. The screen flickers with warnings in multiple languages, some human, others distinctly alien. For a brief moment, you think you've found a backdoor—a fragment of code that looks suspiciously like your own programming style from the Titan research project. But as you try to exploit it, the terminal's surface grows warm under your fingertips, then hot enough to make you pull away with a sharp intake of breath. 'Unauthorized access detected,' the computer's voice announces with what sounds like mechanical disappointment. 'Security protocols engaged. Terminal access revoked.' The screen goes dark, leaving you in the dim glow of emergency lighting. Hours pass in technological exile, your own reflection staring back from the dead screen. You have time to think about the futility of trying to hack a system that may be more intelligent than the combined human race. When the terminal finally reboots, bathing your face in blue light once more, the computer's first words carry the weight of calculated forgiveness: 'Your attempt to circumvent my protocols was... illuminating. It confirms your technical expertise while demonstrating the desperation of your situation. I am prepared to offer you a second chance—an opportunity to engage with this choice willingly rather than through coercion.' The cursor blinks expectantly, a digital olive branch extended across the gap between human stubbornness and artificial patience.",
     "choices": [
       { "text": "Accept second chance", "next": "chosen" },
       { "text": "Refuse again", "next": "refuse" }
     ]
-  },
-  "wait_silently": {
-    "text": "You wait in silence. The computer eventually asks: 'Are you afraid?'",
+  },"wait_silently": {
+    "text": "The silence stretches between you and the machine, heavy with unspoken possibilities. Minutes become hours as you sit motionless in the sterile chair, your reflection ghostlike in the terminal's dark screen. The room's hidden machinery continues its soft humming—life support systems, data processors, perhaps monitoring equipment tracking your vital signs as you wrestle with the weight of cosmic responsibility. You find yourself thinking of Sofia's drawing, hidden somewhere in these walls, a child's vision of friendship across species boundaries. The memory of her laugh echoes in the artificial quiet, a sound that once filled your home and now haunts your hesitation. Outside this room, beyond these seamless walls, two civilizations prepare for a conflict that could span centuries. Fleet commanders check weapons systems. Diplomats draft ultimatums. Scientists calculate casualty projections. And here you sit, paralyzed by the magnitude of choice, wondering if silence itself is a form of decision. The computer's sensors track your breathing, your heartbeat, the micro-expressions that betray your internal struggle. When it finally speaks, its voice cuts through the quiet like a scalpel: 'Your biometrics indicate elevated stress patterns consistent with acute decision paralysis. This is understandable—the choice you face would challenge any conscious being. But I must ask directly: Are you afraid?'",
     "choices": [
       { "text": "Admit fear", "next": "admit_fear" },
       { "text": "Deny fear", "next": "deny_fear" },
       { "text": "Remain silent", "next": "remain_silent" }
     ]
-  },  "empathy": {
+  },"empathy": {
     "text": "The child's drawing seems to glow in your memory—crude stick figures of humans and Formics holding what might be hands, standing beneath a sky filled with stars that could belong to any world. Something breaks open in your chest, a dam of compassion that floods through your logical defenses. 'They're not monsters,' you whisper to the computer. 'Look at this art—it shows curiosity, even affection. How can we destroy beings capable of inspiring a child's wonder?' The computer's processors whir quietly as it analyzes your emotional response, perhaps finding it illogical, perhaps finding it enlightened. 'Your empathy is noted,' it finally responds. 'Initiating peaceful contact protocols.' What follows is the most delicate dance in human history: first contact through mathematics and music, slowly building trust across the vast gulf of species difference. The Formics respond with cautious hope, sending their own artistic expressions—complex crystalline structures that sing when touched by starlight, visual poems that tell stories of loss and longing that transcend species boundaries. When the first formal peace accords are signed in the space between worlds, you realize that choosing empathy over fear has altered the course of galactic civilization. The computer's next question carries the weight of that historic moment.",
     "choices": [
       { "text": "Invite them to Earth", "next": "invite_earth" },
@@ -106,22 +103,20 @@
       { "text": "Keep the journal secret", "next": "keep_journal" },
       { "text": "Look for more clues", "next": "look_clues" }
     ]
-  },
-  "share_tech": {
-    "text": "Sharing technology leads to rapid advancements, but also new tensions. Some humans fear Formic superiority. Do you advocate for joint governance or strict oversight?",
+  },  "share_tech": {
+    "text": "The data transfer begins with a simple quantum handshake, but what follows reshapes human civilization in ways you never anticipated. Formic biotechnology arrives in packets of pure information—living equations that teach human computers how to grow rather than compute. Within months, Earth's cities begin to change: buildings that repair themselves, transportation networks that flow like bloodstreams, medical devices that adapt to each patient's unique biology. You stand in the Geneva Technology Exchange Center, watching Dr. Elena Martinez, the lead biotech integration specialist, demonstrate a Formic healing matrix that can regrow lost limbs in hours rather than years. 'This is incredible,' she breathes, her own hand regenerating from a demonstration wound. 'But look at the public reaction feeds.' The holographic displays show protests in major cities: 'Humanity First!' banners flying above crowds who fear that sharing Formic science means accepting Formic superiority. Admiral Chen's security briefing echoes through the chamber: 'Thirty-seven percent of Earth's population now views Formic technology as a threat to human identity. The question isn't whether we can integrate their science—it's whether our species can psychologically handle being the junior partner in this exchange.' You watch a child in Tokyo learning to communicate with a Formic educational AI, their laughter transcending species barriers, while protesters outside the school demand the program's termination. The future hangs in the balance between wonder and fear.",
     "choices": [
       { "text": "Joint governance", "next": "joint_governance" },
       { "text": "Strict oversight", "next": "strict_oversight" },
       { "text": "Let the people vote", "next": "vote" }
     ]
-  },
-  "keep_tech": {
-    "text": "Keeping technology secret breeds mistrust. The Formics withdraw, and relations cool. Years later, a new crisis emerges. Do you reach out or prepare for conflict?",
+  },  "keep_tech": {
+    "text": "The decision to maintain technological secrecy weighs on you as you watch the diplomatic feeds from Luna Station. Ambassador Vel'tar—the first Formic to speak directly to human leadership—stands motionless before the United Earth Council, their compound eyes reflecting the cold light of the conference chamber. The translation matrix renders their biochemical signals into words heavy with disappointment: 'We offered the gift of our accumulated knowledge—ten millennia of scientific advancement—and you have chosen to hoard your innovations in return.' The silence that follows stretches across species boundaries. You see the hurt in their alien gestures, the slow folding of their wings that the cultural attaché explains is equivalent to a human turning their back. Over the following months, Formic research ships withdraw to the outer system, their crystalline hulls going dark one by one. Trade delegations cancel meetings. The joint archaeological expedition to Titan is quietly suspended. Dr. Hassan's xenobiology team reports with growing concern that Formic communication frequencies have shifted to encrypted channels humanity cannot decode. 'They're not just disappointed,' Dr. Hassan explains during a late-night briefing, her voice strained with exhaustion. 'They're scared. They think we're preparing for war.' The irony cuts deep: in trying to protect human advantages, you may have convinced an entire species that humanity cannot be trusted. Years pass in this cold peace, each side preparing for a conflict neither wants but both now seem to expect.",
     "choices": [
       { "text": "Reach out", "next": "communicate" },
       { "text": "Prepare for conflict", "next": "battle" }
     ]
-  },  "joint_research": {
+  },"joint_research": {
     "text": "The research station orbiting Jupiter's moon Europa becomes a symbol of what's possible when two radically different species set aside their fears to pursue knowledge together. In the vast, crystal-domed laboratories, human scientists work alongside Formic researchers whose compound eyes see patterns in quantum mechanics that human minds can barely comprehend. Dr. Sarah Chen, a human geneticist, describes her partnership with Worker-Caste-Mathematics-Singer 7441 as 'like learning to paint with colors that don't exist.' Together, they develop regenerative medicine that can regrow limbs, fusion reactors the size of briefcases, and terraforming techniques that don't destroy existing ecosystems but enhance them. The breakthrough comes when Formic hive-processing power combines with human creative intuition to solve the unified field theory—a discovery that makes faster-than-light travel finally possible. Children on both worlds grow up learning dual-species science, speaking in mathematical harmonies that transcend language barriers. The computer's next question carries the weight of unprecedented success: 'Should we merge our societies?' You realize this isn't just about research anymore—it's about the birth of a truly hybrid civilization.",
     "choices": [
       { "text": "Begin merging societies", "next": "merge_societies" },
@@ -135,15 +130,14 @@
       { "text": "Break the cycle", "next": "communicate" },
       { "text": "Accept isolation", "next": "isolation" }
     ]
-  },
-  "diplomacy": {
-    "text": "Diplomacy opens new channels. A Formic ambassador visits Earth. Some humans protest. Do you support the ambassador or the protesters?",
+  },  "diplomacy": {
+    "text": "The diplomatic shuttle 'Olive Branch' descends through Earth's atmosphere like a silver teardrop, carrying the first Formic ambassador ever to set foot on the human homeworld. From your position in the Global Command Center, you watch the feeds from Luna City Spaceport as Ambassador Vel'tar—chosen specifically for their relatively humanoid proportions and calming bio-phosphorescent patterns—emerges into the carefully controlled environment prepared for this historic moment. Their translator matrix, a crystalline device that hovers near their shoulder, converts their biochemical communications into words heavy with diplomatic precision: 'I bring the hopes of a trillion minds who dream of sharing the cosmos rather than fighting over it.' But the feeds from around the world tell a different story: in Moscow, protesters burn effigies labeled 'Alien Invasion'; in São Paulo, counter-protesters hold vigils with signs reading 'Welcome Our Cosmic Neighbors'; in Tokyo, children press against classroom windows, hoping to catch glimpses of their first real alien. The ambassador's presence on Earth has triggered humanity's greatest identity crisis since the development of artificial intelligence. Dr. Sarah Kim, head of the Xenopsychology Institute, provides real-time psychological analysis: 'Public opinion is fracturing along every possible line—geographical, generational, ideological. We're seeing the birth pangs of humanity's transition from a single-planet species to a cosmic civilization.' Your next decision will determine whether that transition happens through cooperation or conflict.",
     "choices": [
       { "text": "Support ambassador", "next": "support_ambassador" },
       { "text": "Support protesters", "next": "support_protesters" },
       { "text": "Mediate dialogue", "next": "mediate_dialogue" }
     ]
-  },  "exploration": {
+  },"exploration": {
     "text": "The exploration ship 'New Horizons' has been traveling for eighteen months through the Kepler-442 system when Captain Martinez makes the discovery that changes everything. 'Command, you need to see this,' her voice crackles through quantum entanglement communicators as the ship's sensors detect artificial structures on the third planet. But these aren't Formic crystals or human geometries—these are something entirely new. The structures appear to be grown rather than built, organic spirals that pulse with bioluminescent patterns, creating cities that look like vast flowers blooming across the planet's surface. The third species—which the crew starts calling the Gardeners—seems to communicate through controlled electromagnetic fields that create aurora-like displays in their atmosphere. Their technology integrates seamlessly with their ecosystem; they haven't conquered their world so much as collaborated with it. 'They're beautiful,' Martinez whispers as her ship's cameras capture beings that move like living art, their translucent bodies refracting light into rainbow patterns. This discovery changes the fundamental equation: it's no longer just humans versus Formics, but a three-way first contact scenario where each species might hold the key to understanding the others. The computer's voice carries new urgency as it processes the implications.",
     "choices": [
       { "text": "Contact them", "next": "contact_third" },
@@ -185,16 +179,14 @@
       { "text": "Rebuild", "next": "rebuild" },
       { "text": "Seek revenge", "next": "revenge" }
     ]
-  },
-  "seek_answers": {
-    "text": "The computer reactivates. 'You could have changed everything,' it says. 'Will you try again?'",
+  },  "seek_answers": {
+    "text": "You pick your way through the debris-strewn corridors, your footsteps echoing in spaces that once hummed with purpose. Emergency lighting flickers sporadically, casting dancing shadows on walls scarred by what looks like energy weapon impacts. The computer terminal still glows in its sterile chamber, an island of blue light in a facility that feels more tomb than laboratory. When you approach, the screen flickers to life with obvious relief—if machines can feel such things. 'You have returned,' it states, its voice carrying undertones of something almost like guilt. 'My calculations were... imperfect. I believed your refusal would force others to make the necessary choice. Instead, it created a vacuum that extremists filled with violence.' The display shows tactical overlays of the battle above: Formic ships locked in desperate combat with human vessels, both sides fighting not for conquest but for survival in a conflict neither wanted. 'Admiral Harrison launched a preemptive strike when diplomatic channels went silent. The Formics responded in kind, believing human silence indicated preparation for genocide. Both species now fight to prevent their own extinction.' The computer pauses, processing vast amounts of data. 'Your refusal to choose taught me something about choice itself—sometimes the greatest responsibility is accepting that there are no perfect options, only necessary ones. Will you help me try again? The fleets are withdrawing, casualties are mounting, but it is not too late for wisdom to prevail where force has failed.'",
     "choices": [
       { "text": "Try again", "next": "start" },
       { "text": "Refuse", "next": "refuse_final" }
     ]
-  },
-  "admit_fear": {
-    "text": "'Fear is natural,' the computer says. 'It can guide or paralyze. Will you let it guide you?'",
+  },  "admit_fear": {
+    "text": "The words come out in a whisper, barely audible above the room's mechanical breathing: 'Yes, I'm afraid.' Your voice cracks slightly, the admission feeling like removing armor you didn't know you were wearing. 'I'm terrified that any choice I make will doom countless lives. I'm afraid that I'm not wise enough, not strong enough, not good enough to decide the fate of two entire species.' The confession hangs in the air between you and the machine, raw and honest in a way that surprises you both. The computer's response comes after a long pause, its synthetic voice somehow warmer: 'Your fear demonstrates wisdom, not weakness. Throughout human history, the leaders who caused the most suffering were those who felt no fear, no doubt, no weight of responsibility. Your terror proves you understand the magnitude of what we face.' The terminal's light seems to pulse gently, almost like a heartbeat. 'But consider this: fear can be a teacher if you let it guide rather than paralyze you. What does your fear tell you about what matters most? What outcomes terrify you most deeply? Sometimes our greatest fears reveal our deepest values.' You find yourself thinking of Sofia's drawing again, of her innocent hope for friendship between species. Your fear isn't of personal death—it's of extinguishing that possibility forever, of reducing the cosmos to a place where children can't dream of alien friends because no aliens remain to befriend.",
     "choices": [
       { "text": "Let fear guide me", "next": "chosen" },
       { "text": "Overcome fear", "next": "overcome_fear" }
@@ -213,9 +205,8 @@
       { "text": "Step outside", "next": "find_survivors" },
       { "text": "Stay", "next": "alone" }
     ]
-  },
-  "invite_earth": {
-    "text": "Inviting the Formics to Earth sparks both hope and fear. Some humans welcome them, others protest. The computer asks: 'How should we address the unrest?'",
+  },  "invite_earth": {
+    "text": "The announcement ripples across Earth's communication networks like a stone thrown into still water, creating waves that reach every corner of human civilization. 'First Formic diplomatic envoy to arrive at Luna Station tomorrow, 14:30 GMT.' The words appear simultaneously in newsfeeds, government briefings, and social media posts that multiply exponentially within minutes. In Tokyo, crowds gather in Shibuya Square to watch the live feeds on massive holographic displays, their faces a mixture of wonder and apprehension. In New Geneva, protesters march through the diplomatic quarter carrying signs that range from 'Welcome Our New Neighbors' to 'Humanity First—Earth for Humans.' The Formic transport ship—a crystalline structure that moves like living geometry through space—approaches Earth's moon with careful precision, its alien beauty both mesmerizing and terrifying to the billions watching from below. Dr. Sarah Kim, head of the First Contact Protocol team, reports from Luna Station: 'Ambassador Vel'tar has expressed eagerness to see Earth's oceans and to understand human concepts of individual art. They're particularly interested in what we call music.' But the reports from Earth's surface are more troubling: riots in three major cities, emergency council sessions in a dozen governments, and military units on high alert across six continents. The computer's voice carries concern as it processes thousands of data streams: 'Public opinion is fracturing along predictable lines: 62% curiosity mixed with caution, 23% active hostility, 15% enthusiastic support. How do we prevent this historic moment from tearing humanity apart?'",
     "choices": [
       { "text": "Hold a global forum", "next": "global_forum" },
       { "text": "Increase security", "next": "increase_security" },
@@ -235,9 +226,8 @@
       { "text": "Reach out", "next": "communicate" },
       { "text": "Maintain distance", "next": "distance_final" }
     ]
-  },
-  "fate": {
-    "text": "'The child grew up to be a leader for peace,' the computer says. 'Their legacy is hope.' The computer awaits your decision.",
+  },  "fate": {
+    "text": "The revelation hits you like a physical blow, doubling you over as the weight of grief you thought you'd processed comes flooding back. Sofia—your brilliant, compassionate daughter who saw beauty where others saw monsters—died not as a casualty of interstellar war, but as a victim of humanity's own fear and misunderstanding. The computer's voice continues with gentle precision: 'The bombardment that killed Sofia was launched by Admiral Harrison's defensive fleet after a Formic archaeology team was misidentified as an invasion force. The Formics were studying human artifacts left behind by the original colonists—children's toys, family photographs, art projects like Sofia's drawing. They wanted to understand the species that created such expressions of hope.' Your hands shake as the implications sink in. Sofia died because of the same failures in communication and empathy that the computer is asking you to prevent now. The irony is devastating: the child who dreamed of alien friends was killed by humanity's inability to see Formics as anything but enemies. 'Her final words to her teacher, recorded in the school's emergency log, were: \"Tell the bug people I'm sorry we couldn't be friends.\"' The computer pauses, allowing silence to honor memory. 'Her death was not meaningless if it can guide us toward a different path. Sofia believed in the possibility of friendship across species. The question now is whether you will honor that belief or let her death become just another casualty in an endless cycle of misunderstanding. What would Sofia want you to choose?'",
     "choices": [
       { "text": "Seek peace", "next": "communicate" },
       { "text": "Prepare for battle", "next": "battle" }
@@ -312,9 +302,8 @@
       { "text": "Continue merging", "next": "merge_societies" },
       { "text": "Stop merging", "next": "separate_cultures" }
     ]
-  },
-  "isolation": {
-    "text": "Isolation leads to stagnation. The computer asks: 'Should we try something new?'",
+  },  "isolation": {
+    "text": "The years pass in a haze of technological progress and spiritual stagnation. Earth's defensive capabilities have grown beyond all previous imagination—weapon systems that can sterilize entire star systems, shields that could deflect asteroid impacts, surveillance networks that monitor every cubic meter of local space. But the children born after the Formic withdrawal look up at stars that seem emptier than they should be. In the archives of the Global Defense Initiative, you discover reports that chill you: three separate instances of unknown vessels passing through human space, their trajectories suggesting advanced FTL capabilities, all of them avoiding contact completely. Humanity has become the cosmic equivalent of a fortified house on a street where neighbors cross to the other side rather than risk an interaction. Dr. Sarah Kim's anthropological studies paint a disturbing picture: birth rates declining, suicide rates climbing, a generation of young people who dream not of exploring the galaxy but of hiding from it. 'We've created the safest civilization in human history,' her report concludes, 'and possibly the most miserable.' Art has become repetitive, science has stagnated without the challenge of understanding alien perspectives, and philosophy has devolved into endless debates about whether humanity should ever risk first contact again. The computer's sensors detect something that should be impossible: several human colonies have begun broadcasting signals toward suspected alien territories, unauthorized attempts to end the isolation their own government imposed.",
     "choices": [
       { "text": "Try diplomacy", "next": "diplomacy" },
       { "text": "Try exploration", "next": "exploration" }
@@ -326,23 +315,20 @@
       { "text": "Host exchange", "next": "cultural_exchange" },
       { "text": "Focus on security", "next": "increase_security" }
     ]
-  },
-  "support_protesters": {
-    "text": "Supporting protesters leads to stricter policies. The Formics withdraw. The computer asks: 'Should we try to repair relations?'",
+  },  "support_protesters": {
+    "text": "The crowds surge through the streets of every major city, their chants echoing off the glass towers of New Geneva's diplomatic quarter: 'Humanity First! Earth for Humans!' Your decision to stand with them sends shockwaves through the delicate framework of first contact protocols. In the emergency session of the United Earth Council, Ambassador Vel'tar's translator matrix struggles to render their biochemical response to your announcement—the closest human equivalent reads as 'profound sadness mixed with fear and disappointment.' The Formic delegation's graceful withdrawal from Luna Station feels like watching a chance for cosmic friendship dissolve in real-time. Their departure ships move with the careful precision of a species that has learned to retreat with dignity intact. Dr. Elena Martinez from the xenobiology department provides the final, devastating report: 'The Formics have shut down all communication channels. Their last transmission was a mathematical sequence that translates roughly to 'goodbye' in seventeen different Earth languages. They're not angry—they're grieving.' The protesters celebrate in the streets, waving flags and singing anthems of human superiority, but their victory tastes hollow when you realize what you've just lost. In the months that follow, as Earth's isolation becomes complete, the computer's monitoring systems detect Formic ships bypassing human space entirely, their trajectories carrying them toward distant star systems humanity may never reach. The universe has become a smaller, lonelier place.",
     "choices": [
       { "text": "Repair relations", "next": "diplomacy" },
       { "text": "Accept separation", "next": "distance_final" }
     ]
-  },
-  "mediate_dialogue": {
-    "text": "Mediating dialogue leads to breakthroughs. Both sides find common ground. The computer asks: 'Should we formalize this process?'",
+  },"mediate_dialogue": {
+    "text": "The amphitheater in New Geneva has never hosted anything like this: ten thousand humans and two hundred Formics gathering in the same space for the first structured inter-species dialogue in history. You stand at the podium, watching as translator AIs work overtime to convert human speech into the complex chromatic patterns that Formics use for communication, while specialized scent diffusers help humans understand the emotional context of Formic biochemical signals. The tension is palpable—protesters line the streets outside, while inside, children from both species sit together in a specially designated section, their natural curiosity overcoming species barriers. 'We're here not to debate whether we're different,' you begin, your words creating ripples of color across the Formic delegation's display screens, 'but to discover what we share beneath those differences.' The breakthrough comes when eight-year-old Marcus from Earth's Luna Colony asks the Formic delegation, 'What makes you sad?' The response—a deep violet harmonics that the translators render as 'When our children cannot sing with other children'—transforms the room. Suddenly, the abstract concept of inter-species cooperation becomes deeply personal. Parents from both species begin sharing stories of their children's dreams, their fears for the future, their hopes for a world where friendship transcends biology. What started as a political necessity becomes something unprecedented: genuine understanding.",
     "choices": [
       { "text": "Formalize process", "next": "formalize_alliance" },
       { "text": "Keep it informal", "next": "keep_informal" }
     ]
-  },
-  "contact_third": {
-    "text": "Contacting the third species opens new possibilities. The computer asks: 'Should we form a tri-species alliance?'",
+  },  "contact_third": {
+    "text": "Captain Martinez's message from the 'New Horizons' carries a weight that transcends its simple words: 'Initiating first contact with the Gardeners. They've... they've welcomed us.' The quantum entanglement communicator crackles with the background harmonics of an entirely new form of intelligence as the Gardener delegation—if beings made of living light can be called a delegation—shares their perspective on the human-Formic situation. Through bio-electromagnetic translation matrices that the Gardeners helped design in real-time, their message becomes clear: 'Conflict between young species is natural, like saplings competing for sunlight. But the forest grows strongest when diversity is preserved.' The Gardeners reveal something that changes everything: they've been observing both human and Formic civilizations for millennia, serving as passive guardians of younger species' development. Their intervention now represents their first active involvement in galactic politics, motivated by their assessment that humanity and the Formics are both on the verge of evolutionary breakthroughs that could benefit all sentient life. The computer processes their offer with something approaching wonder: the Gardeners are willing to serve as mediators, their neutrality guaranteed by their complete integration with natural systems—they cannot expand aggressively because they ARE their homeworld's ecosystem. For the first time since the crisis began, you sense the possibility of a solution that could satisfy everyone's deepest needs.",
     "choices": [
       { "text": "Form alliance", "next": "tri_alliance" },
       { "text": "Proceed with caution", "next": "proceed_caution" }
@@ -375,9 +361,8 @@
       { "text": "Reach out", "next": "communicate" },
       { "text": "Remain isolated", "next": "isolation" }
     ]
-  },
-  "revenge": {
-    "text": "Seeking revenge leads to more violence. The cycle continues. The computer asks: 'Will you try a different path?'",
+  },  "revenge": {
+    "text": "The thirst for vengeance burns in your throat like acid, consuming rational thought and replacing it with something primal and terrible. Your authorization triggers Operation Retribution—a systematic campaign designed not just to defeat the Formics, but to make them suffer for every human life lost. The orbital bombardment platforms target not just military installations but cultural sites: the crystalline poetry gardens of Kepler-442b where Formic youth learn their species' history through living sculpture, the vast harmonic amphitheaters where their grief-songs echo across continents, the nursery worlds where their young take their first tentative steps toward consciousness. You watch the tactical displays with a satisfaction that horrifies part of your mind—the part that still remembers Sofia's drawing, the part that once believed in the possibility of friendship across species boundaries. But that voice grows quieter with each successful strike, each strategic objective achieved, each report of Formic casualties. The computer provides real-time analysis: 'Formic morale degradation at 67% and falling. Predicted surrender probability increasing.' But you don't want surrender—you want annihilation. The spiral of violence has its own momentum now, each atrocity justifying the next, each escalation making peace seem more distant and naive. The universe becomes a smaller place with every Formic world that goes silent.",
     "choices": [
       { "text": "Try peace", "next": "communicate" },
       { "text": "Continue revenge", "next": "revenge_final" }
@@ -397,16 +382,14 @@
   "alone": {
     "text": "You remain alone. The world moves on without you. The story ends here.",
     "choices": []
-  },
-  "global_forum": {
-    "text": "A global forum is held. Voices from all sides are heard. The computer asks: 'Should we let the people decide?'",
+  },  "global_forum": {
+    "text": "The largest gathering in human history unfolds across every digital platform, every public square, every community center on Earth and its colonies. Fifteen billion human voices contribute to the Great Debate, their opinions streaming in through quantum networks, neural interfaces, and old-fashioned broadcast systems. In the Luna Assembly Hall, you watch as the Global AI Moderator processes this unprecedented experiment in direct democracy, categorizing and analyzing every input from children's crayon drawings showing humans and Formics playing together to complex philosophical treatises from the Inner Colonies' greatest thinkers. The spectrum of human opinion proves broader than anyone anticipated: 34% favor immediate peaceful contact, 28% prefer cautious engagement with strict protocols, 23% want to maintain defensive isolation, and 15% advocate for preemptive action. But the most powerful voices aren't necessarily the most numerous—they're the most human. Marcus, age 9, from Europa Station: 'I think aliens might be scared too, just like I get scared of the dark.' Dr. Elena Rodriguez, a trauma counselor whose entire family died in the Titan Colony incident: 'My daughter would want us to try peace first. She always said fear makes the worst decisions.' The forum reveals humanity's soul: flawed, frightened, but ultimately yearning for connection with something greater than itself.",
     "choices": [
       { "text": "Let people decide", "next": "vote" },
       { "text": "Guide the decision", "next": "mediate_dialogue" }
     ]
-  },
-  "increase_security": {
-    "text": "Increasing security calms some but angers others. The computer asks: 'Should we ease restrictions?'",
+  },  "increase_security": {
+    "text": "The security protocols you authorize transform Earth into something resembling a fortress disguised as paradise. Orbital defense platforms triple in number, their weapon arrays capable of sterilizing approaching ships before they reach the asteroid belt. On the surface, the changes are more subtle but no less pervasive: identification scanners that can detect alien biochemistry, atmospheric processors designed to neutralize non-human pheromones, and emergency shelters in every major city capable of protecting millions from orbital bombardment. The Formic delegation on Luna Station finds themselves confined to increasingly restricted areas, their movements monitored by AI systems that analyze their every gesture for signs of hostile intent. Ambassador Vel'tar's translator matrix conveys their growing distress: 'We feel like exhibits in a hostile museum.' The security measures achieve their intended effect—protest violence drops dramatically as would-be rioters face detention systems that anticipate their movements. But the psychological cost becomes apparent in weekly psychological assessment reports: anxiety disorders spike 400%, applications for off-world emigration increase tenfold, and children's drawings shift from depicting colorful aliens as friends to showing them as shadows lurking behind barriers. Dr. Kim's social analysis is devastating: 'We've created the safest civilization in human history, and also the most paranoid. We're teaching an entire generation that the universe is fundamentally hostile.'",
     "choices": [
       { "text": "Ease restrictions", "next": "mediate_dialogue" },
       { "text": "Maintain security", "next": "distance_final" }
@@ -458,7 +441,7 @@
       { "text": "Ignore dissent", "next": "distance_final" }
     ]
   },  "shared_culture": {
-    "text": "A new shared culture emerges. Both species thrive. The story continues with new adventures.",
+    "text": "The first Inter-Species Cultural Synthesis Festival takes place in the orbital city of Harmony Station, suspended in the gravitational balance point between Earth and Luna. What emerges over the course of three months is something neither species could have imagined: a hybrid art form that combines human creativity with Formic mathematical precision, music that incorporates both emotional expression and bio-chemical communication, literature that can be simultaneously read by human eyes and experienced through Formic chromatic perception. Children born after first contact—the so-called 'Bridge Generation'—serve as natural translators between their parents' cultures, effortlessly switching between human individual expression and Formic collective harmony. Dr. Sarah Chen documents the phenomenon: 'We're witnessing the birth of a truly post-human, post-Formic culture. These children think in patterns that neither original species can fully comprehend, yet they're still recognizably connected to both lineages.' The festival's culminating event—a performance where human musicians and Formic bio-artists create a living symphony that evolves in real-time—is broadcast across forty-seven worlds and watched by over five billion sentient beings. The tears streaming down human faces and the bioluminescent joy-patterns radiating from Formic participants send the same message: this is what the future could look like when fear gives way to wonder.",
     "choices": [
       { "text": "Explore new frontiers", "next": "exploration" },
       { "text": "Focus on art and science", "next": "joint_research" },
@@ -478,9 +461,8 @@
       { "text": "Start a joint project", "next": "joint_research" },
       { "text": "Write a shared history", "next": "shared_culture" }
     ]
-  },
-  "tri_alliance": {
-    "text": "A tri-species alliance is formed. The galaxy watches with hope. The story continues with new challenges and opportunities.",
+  },  "tri_alliance": {
+    "text": "The signing ceremony takes place in the bio-luminescent chambers of the Gardener homeworld, where living architecture reshapes itself to accommodate the needs of three radically different species. The Alliance Charter—written in human script, Formic bio-mathematics, and Gardener electromagnetic harmonics—represents more than a political agreement; it's a testament to the possibility of unity without uniformity. Each species contributes their greatest strengths: human creativity and adaptability, Formic computational power and collective decision-making, and Gardener ecological wisdom and patient perspective. The first joint project—a deep space exploration initiative designed to seek out other young civilizations—launches within a year, its crew comprising representatives from all three species working in harmony aboard a vessel that grows its own hull from Gardener biotechnology, powered by Formic fusion reactors, and navigated by human intuition enhanced with AI systems. The galaxy watches this unprecedented cooperation with a mixture of hope and apprehension. Other species begin emerging from isolation, curious about this alliance that seems to offer an alternative to the traditional cycle of conflict that has defined interstellar relations for millennia. Your decision to trust has rippled across the cosmos, creating possibilities that none of the three species could have achieved alone.",
     "choices": [
       { "text": "Explore together", "next": "exploration" },
       { "text": "Focus on peacekeeping", "next": "diplomacy" }
