@@ -1,23 +1,66 @@
 'use client';
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 
-type Choice = { text: string; next: string };
-type StoryNode = { text: string; choices: Choice[] };
+type Archetype = 'logical' | 'empathic' | 'technical' | null;
+
+type Choice = { 
+  text: string; 
+  next: string;
+  type?: 'normal' | 'skill_check' | 'memory_prompt' | 'hijack_consciousness';
+  archetype?: Archetype;
+  difficulty?: 'easy' | 'normal' | 'hard';
+};
+
+type StoryNode = { 
+  text: string; 
+  choices: Choice[];
+  memoryPrompt?: string;
+  hijackAvailable?: boolean;
+};
+
 type Story = { [key: string]: StoryNode };
 
-export default function RpgSolo() {  const [story, setStory] = useState<Story | null>(null);
+type GameState = {
+  archetype: Archetype;
+  skillChecksUsed: number;
+  memoryPromptsUsed: number;
+  hijackUsesRemaining: number;
+  totalChoicesMade: number;
+  archetypeChoicesSuccessful: number;
+};
+
+export default function RpgSolo() {
+  const [story, setStory] = useState<Story | null>(null);
   const [current, setCurrent] = useState('start');
   const [typedLength, setTypedLength] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [showChoices, setShowChoices] = useState(false);
   const [fadeClass, setFadeClass] = useState('fade-in');
   const [skipTyping, setSkipTyping] = useState(false);
-  const skipRef = useRef(false);
-  useEffect(() => {
+  const [gameState, setGameState] = useState<GameState>({
+    archetype: null,
+    skillChecksUsed: 0,
+    memoryPromptsUsed: 0,
+    hijackUsesRemaining: 3,
+    totalChoicesMade: 0,
+    archetypeChoicesSuccessful: 0
+  });
+  const [showArchetypeSelection, setShowArchetypeSelection] = useState(false);
+  const [showSkillCheckResult, setShowSkillCheckResult] = useState<{show: boolean, success: boolean, text: string}>({show: false, success: false, text: ''});
+  const [showMemoryPrompt, setShowMemoryPrompt] = useState<{show: boolean, text: string}>({show: false, text: ''});
+  const [showHijackConfirm, setShowHijackConfirm] = useState<{show: boolean, choice: Choice | null}>({show: false, choice: null});
+  const skipRef = useRef(false);  useEffect(() => {
     fetch('/story.json')
       .then(res => res.json())
       .then(setStory);
   }, []);
+
+  // Show archetype selection when story loads and no archetype chosen
+  useEffect(() => {
+    if (story && gameState.archetype === null && current === 'start') {
+      setShowArchetypeSelection(true);
+    }
+  }, [story, gameState.archetype, current]);
   // Keyboard handler for skipping typewriter effect
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -72,14 +115,88 @@ export default function RpgSolo() {  const [story, setStory] = useState<Story | 
     return () => {
       clearInterval(timer);
     };  }, [currentNode]); // Removed skipTyping dependency
-
   const handleSkipTyping = () => {
     if (isTyping) {
       skipRef.current = true;
     }
   };
 
-  const handleChoiceClick = (nextNode: string) => {
+  const selectArchetype = (archetype: Archetype) => {
+    setGameState(prev => ({ ...prev, archetype }));
+    setShowArchetypeSelection(false);
+  };
+
+  const performSkillCheck = (choice: Choice): boolean => {
+    const baseSuccess = 0.5; // 50% base chance
+    const archetypeBonus = choice.archetype === gameState.archetype ? 0.3 : 0; // +30% for matching archetype
+    const difficultyModifier = choice.difficulty === 'easy' ? 0.1 : choice.difficulty === 'hard' ? -0.1 : 0;
+    
+    const successChance = Math.min(0.95, baseSuccess + archetypeBonus + difficultyModifier);
+    const success = Math.random() < successChance;
+    
+    setGameState(prev => ({
+      ...prev,
+      skillChecksUsed: prev.skillChecksUsed + 1,
+      archetypeChoicesSuccessful: success && choice.archetype === gameState.archetype ? 
+        prev.archetypeChoicesSuccessful + 1 : prev.archetypeChoicesSuccessful
+    }));
+    
+    return success;
+  };
+
+  const handleMemoryPrompt = (memoryText: string) => {
+    setShowMemoryPrompt({ show: true, text: memoryText });
+    setGameState(prev => ({ ...prev, memoryPromptsUsed: prev.memoryPromptsUsed + 1 }));
+  };
+
+  const handleHijackAttempt = (choice: Choice) => {
+    if (gameState.hijackUsesRemaining > 0) {
+      setShowHijackConfirm({ show: true, choice });
+    }
+  };
+
+  const confirmHijack = () => {
+    if (showHijackConfirm.choice) {
+      setGameState(prev => ({ 
+        ...prev, 
+        hijackUsesRemaining: prev.hijackUsesRemaining - 1,
+        totalChoicesMade: prev.totalChoicesMade + 1
+      }));
+      setShowHijackConfirm({ show: false, choice: null });
+      handleChoiceClick(showHijackConfirm.choice.next);
+    }
+  };
+
+  const handleChoiceClick = (nextNode: string, choice?: Choice) => {
+    if (choice) {
+      setGameState(prev => ({ ...prev, totalChoicesMade: prev.totalChoicesMade + 1 }));
+
+      // Handle different choice types
+      if (choice.type === 'skill_check') {
+        const success = performSkillCheck(choice);
+        setShowSkillCheckResult({ 
+          show: true, 
+          success, 
+          text: success ? 
+            `Success! Your ${choice.archetype} expertise proves invaluable.` :
+            `Despite your efforts, the challenge proves too difficult.`
+        });
+        
+        // If failed, might show alternative path or consequence
+        if (!success) {
+          // Could redirect to failure node if it exists
+          // For now, continue to the intended node but with consequence
+        }
+      } else if (choice.type === 'memory_prompt') {
+        const memoryText = currentNode?.memoryPrompt || "What would the real Dr. Korvain have done?";
+        handleMemoryPrompt(memoryText);
+        return; // Don't proceed until memory prompt is resolved
+      } else if (choice.type === 'hijack_consciousness') {
+        handleHijackAttempt(choice);
+        return; // Don't proceed until hijack is confirmed/denied
+      }
+    }
+
     setFadeClass('fade-out');
     setTimeout(() => {
       setCurrent(nextNode);
@@ -268,9 +385,280 @@ export default function RpgSolo() {  const [story, setStory] = useState<Story | 
         .choice-button:hover::before {
           left: 100%;
         }
-        
-        .choice-button:active {
+          .choice-button:active {
           transform: translateY(0) scale(1);
+        }
+        
+        .choice-button.archetype-match {
+          border-color: rgba(100, 255, 218, 0.6);
+          background: linear-gradient(135deg, rgba(100, 255, 218, 0.3) 0%, rgba(129, 236, 236, 0.3) 100%);
+        }
+        
+        .choice-button.skill-check {
+          border-left: 4px solid #64ffda;
+        }
+        
+        .choice-button.memory-prompt {
+          border-left: 4px solid #bb86fc;
+        }
+        
+        .choice-button.hijack_consciousness {
+          border-left: 4px solid #ff6b6b;
+        }
+        
+        .choice-button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        
+        .choice-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+        }
+        
+        .choice-text {
+          flex: 1;
+        }
+        
+        .choice-indicator {
+          font-size: 0.9rem;
+          padding: 4px 8px;
+          border-radius: 8px;
+          margin-left: 12px;
+          font-weight: 600;
+        }
+        
+        .choice-indicator.skill-check {
+          background: rgba(100, 255, 218, 0.2);
+          color: #64ffda;
+        }
+        
+        .choice-indicator.memory-prompt {
+          background: rgba(187, 134, 252, 0.2);
+          color: #bb86fc;
+        }
+        
+        .choice-indicator.hijack {
+          background: rgba(255, 107, 107, 0.2);
+          color: #ff6b6b;
+        }
+        
+        .choice-indicator.archetype-bonus {
+          background: rgba(255, 193, 7, 0.2);
+          color: #ffc107;
+        }
+        
+        .archetype-selection {
+          padding: 20px 0;
+        }
+        
+        .archetype-title {
+          color: #64ffda;
+          font-size: 1.4rem;
+          margin-bottom: 12px;
+          text-align: center;
+        }
+        
+        .archetype-description {
+          color: #b0b0b0;
+          margin-bottom: 24px;
+          text-align: center;
+        }
+        
+        .archetype-button {
+          display: block;
+          width: 100%;
+          margin: 12px 0;
+          padding: 20px;
+          border: 2px solid transparent;
+          border-radius: 12px;
+          background: linear-gradient(135deg, rgba(100, 255, 218, 0.1) 0%, rgba(129, 236, 236, 0.1) 100%);
+          color: #e0e0e0;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-align: left;
+        }
+        
+        .archetype-button:hover {
+          transform: translateY(-2px);
+          border-color: rgba(100, 255, 218, 0.4);
+          background: linear-gradient(135deg, rgba(100, 255, 218, 0.2) 0%, rgba(129, 236, 236, 0.2) 100%);
+        }
+        
+        .archetype-button.logical:hover {
+          border-color: rgba(64, 196, 255, 0.6);
+        }
+        
+        .archetype-button.empathic:hover {
+          border-color: rgba(187, 134, 252, 0.6);
+        }
+        
+        .archetype-button.technical:hover {
+          border-color: rgba(255, 193, 7, 0.6);
+        }
+        
+        .archetype-name {
+          display: block;
+          font-size: 1.2rem;
+          font-weight: 700;
+          margin-bottom: 6px;
+        }
+        
+        .archetype-desc {
+          display: block;
+          font-size: 0.95rem;
+          opacity: 0.8;
+        }
+        
+        .final-stats {
+          margin-top: 20px;
+          padding: 20px;
+          background: rgba(100, 255, 218, 0.1);
+          border-radius: 12px;
+          border: 1px solid rgba(100, 255, 218, 0.2);
+        }
+        
+        .final-stats p {
+          margin: 8px 0;
+          color: #b0b0b0;
+        }
+        
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+          backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+          background: rgba(15, 15, 25, 0.95);
+          border-radius: 20px;
+          padding: 30px;
+          max-width: 500px;
+          width: 90%;
+          border: 1px solid rgba(100, 255, 218, 0.3);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+        
+        .skill-result-title {
+          font-size: 1.3rem;
+          margin-bottom: 16px;
+          text-align: center;
+        }
+        
+        .skill-result-title.success {
+          color: #4caf50;
+        }
+        
+        .skill-result-title.failure {
+          color: #f44336;
+        }
+        
+        .skill-result-text {
+          color: #e0e0e0;
+          line-height: 1.6;
+          margin-bottom: 20px;
+          text-align: center;
+        }
+        
+        .memory-title {
+          color: #bb86fc;
+          font-size: 1.3rem;
+          margin-bottom: 16px;
+          text-align: center;
+        }
+        
+        .memory-text {
+          color: #e0e0e0;
+          line-height: 1.6;
+          margin-bottom: 20px;
+          text-align: center;
+          font-style: italic;
+        }
+        
+        .memory-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+        }
+        
+        .hijack-title {
+          color: #ff6b6b;
+          font-size: 1.3rem;
+          margin-bottom: 16px;
+          text-align: center;
+        }
+        
+        .hijack-warning {
+          color: #ffeb3b;
+          font-weight: 600;
+          margin-bottom: 16px;
+          text-align: center;
+          background: rgba(255, 235, 59, 0.1);
+          padding: 12px;
+          border-radius: 8px;
+          border: 1px solid rgba(255, 235, 59, 0.3);
+        }
+        
+        .hijack-uses {
+          color: #e0e0e0;
+          margin-bottom: 20px;
+          text-align: center;
+        }
+        
+        .hijack-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+        }
+        
+        .modal-button {
+          padding: 12px 24px;
+          border: 2px solid transparent;
+          border-radius: 8px;
+          background: linear-gradient(135deg, rgba(100, 255, 218, 0.2) 0%, rgba(129, 236, 236, 0.2) 100%);
+          color: #e0e0e0;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-weight: 600;
+        }
+        
+        .modal-button:hover {
+          transform: translateY(-2px);
+          border-color: rgba(100, 255, 218, 0.4);
+        }
+        
+        .modal-button.memory-yes {
+          background: linear-gradient(135deg, rgba(187, 134, 252, 0.2) 0%, rgba(187, 134, 252, 0.3) 100%);
+        }
+        
+        .modal-button.memory-yes:hover {
+          border-color: rgba(187, 134, 252, 0.6);
+        }
+        
+        .modal-button.hijack-confirm {
+          background: linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(255, 107, 107, 0.3) 100%);
+        }
+        
+        .modal-button.hijack-confirm:hover {
+          border-color: rgba(255, 107, 107, 0.6);
+        }
+        
+        .modal-button.hijack-cancel {
+          background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0.3) 100%);
+        }
+        
+        .modal-button.hijack-cancel:hover {
+          border-color: rgba(76, 175, 80, 0.6);
         }
         
         .ending-text {
@@ -335,25 +723,166 @@ export default function RpgSolo() {  const [story, setStory] = useState<Story | 
           <div className="skip-hint">
             Press ENTER or click to skip ⤷
           </div>
-          
-          <div className="choices-container">
-            {node.choices.map((choice, idx) => (
+            <div className="choices-container">
+            {showArchetypeSelection && (
+              <div className="archetype-selection">
+                <h3 className="archetype-title">Select Dr. Korvain's Background</h3>
+                <p className="archetype-description">
+                  Choose the archetype that will shape how Dr. Korvain approaches challenges:
+                </p>
+                <button
+                  className="archetype-button logical"
+                  onClick={() => selectArchetype('logical')}
+                >
+                  <span className="archetype-name">Logical</span>
+                  <span className="archetype-desc">Scientist rooted in analysis and rationality</span>
+                </button>
+                <button
+                  className="archetype-button empathic"
+                  onClick={() => selectArchetype('empathic')}
+                >
+                  <span className="archetype-name">Empathic</span>
+                  <span className="archetype-desc">Humanitarian guided by emotional intelligence</span>
+                </button>
+                <button
+                  className="archetype-button technical"
+                  onClick={() => selectArchetype('technical')}
+                >
+                  <span className="archetype-name">Technical</span>
+                  <span className="archetype-desc">Engineer with hands-on problem-solving expertise</span>
+                </button>
+              </div>
+            )}
+            
+            {!showArchetypeSelection && node.choices.map((choice, idx) => (
               <button
                 key={idx}
-                className="choice-button"
-                onClick={() => handleChoiceClick(choice.next)}
+                className={`choice-button ${choice.type || 'normal'} ${choice.archetype === gameState.archetype ? 'archetype-match' : ''}`}
+                onClick={() => handleChoiceClick(choice.next, choice)}
+                disabled={choice.type === 'hijack_consciousness' && gameState.hijackUsesRemaining === 0}
               >
-                {choice.text}
+                <div className="choice-content">
+                  <span className="choice-text">{choice.text}</span>
+                  {choice.type === 'skill_check' && (
+                    <span className="choice-indicator skill-check">
+                      🎯 {choice.archetype === gameState.archetype ? '80%' : '50%'}
+                    </span>
+                  )}
+                  {choice.type === 'memory_prompt' && (
+                    <span className="choice-indicator memory-prompt">💭 Memory</span>
+                  )}
+                  {choice.type === 'hijack_consciousness' && (
+                    <span className="choice-indicator hijack">
+                      🧠 Override ({gameState.hijackUsesRemaining} left)
+                    </span>
+                  )}
+                  {choice.archetype === gameState.archetype && choice.type !== 'skill_check' && (
+                    <span className="choice-indicator archetype-bonus">✨ Expertise</span>
+                  )}
+                </div>
               </button>
             ))}
-            {node.choices.length === 0 && (
-              <p className="ending-text">
-                ◉ MISSION COMPLETE ◉
-              </p>
+            
+            {currentNode?.memoryPrompt && (
+              <button
+                className="choice-button memory-prompt"
+                onClick={() => handleMemoryPrompt(currentNode.memoryPrompt!)}
+              >
+                <div className="choice-content">
+                  <span className="choice-text">💭 What would the real Dr. Korvain have done?</span>
+                  <span className="choice-indicator memory-prompt">Memory ({gameState.memoryPromptsUsed} used)</span>
+                </div>
+              </button>
             )}
+            
+            {node.choices.length === 0 && !showArchetypeSelection && (
+              <div className="ending-section">
+                <p className="ending-text">◉ MISSION COMPLETE ◉</p>
+                <div className="final-stats">
+                  <p>Archetype: {gameState.archetype}</p>
+                  <p>Choices Made: {gameState.totalChoicesMade}</p>
+                  <p>Skill Checks: {gameState.skillChecksUsed}</p>
+                  <p>Archetype Successes: {gameState.archetypeChoicesSuccessful}</p>
+                  <p>Memory Prompts Used: {gameState.memoryPromptsUsed}</p>
+                  <p>Hijack Uses Remaining: {gameState.hijackUsesRemaining}</p>
+                </div>
+              </div>
+            )}
+          </div>        </div>
+      </div>
+
+      {/* Skill Check Result Modal */}
+      {showSkillCheckResult.show && (
+        <div className="modal-overlay" onClick={() => setShowSkillCheckResult({show: false, success: false, text: ''})}>
+          <div className="modal-content skill-check-modal" onClick={e => e.stopPropagation()}>
+            <h3 className={`skill-result-title ${showSkillCheckResult.success ? 'success' : 'failure'}`}>
+              {showSkillCheckResult.success ? '✅ Success!' : '❌ Challenge Failed'}
+            </h3>
+            <p className="skill-result-text">{showSkillCheckResult.text}</p>
+            <button 
+              className="modal-button"
+              onClick={() => setShowSkillCheckResult({show: false, success: false, text: ''})}
+            >
+              Continue
+            </button>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Memory Prompt Modal */}
+      {showMemoryPrompt.show && (
+        <div className="modal-overlay" onClick={() => setShowMemoryPrompt({show: false, text: ''})}>
+          <div className="modal-content memory-modal" onClick={e => e.stopPropagation()}>
+            <h3 className="memory-title">💭 Memory Fragment</h3>
+            <p className="memory-text">{showMemoryPrompt.text}</p>
+            <div className="memory-actions">
+              <button 
+                className="modal-button memory-yes"
+                onClick={() => {
+                  setShowMemoryPrompt({show: false, text: ''});
+                  // Could unlock special path or dialogue
+                }}
+              >
+                Follow Original Values
+              </button>
+              <button 
+                className="modal-button memory-no"
+                onClick={() => setShowMemoryPrompt({show: false, text: ''})}
+              >
+                Stay True to Current Self
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hijack Consciousness Confirmation Modal */}
+      {showHijackConfirm.show && (
+        <div className="modal-overlay">
+          <div className="modal-content hijack-modal" onClick={e => e.stopPropagation()}>
+            <h3 className="hijack-title">🧠 Neural Override Protocol</h3>
+            <p className="hijack-warning">
+              WARNING: This action will temporarily override another person's consciousness. 
+              This is a permanent ethical violation that cannot be undone.
+            </p>
+            <p className="hijack-uses">Remaining Uses: {gameState.hijackUsesRemaining}</p>
+            <div className="hijack-actions">
+              <button 
+                className="modal-button hijack-confirm"
+                onClick={confirmHijack}
+              >
+                Authorize Override
+              </button>
+              <button 
+                className="modal-button hijack-cancel"
+                onClick={() => setShowHijackConfirm({show: false, choice: null})}
+              >
+                Maintain Autonomy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

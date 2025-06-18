@@ -2,13 +2,14 @@
   "name": "rgp-solo",
   "version": "0.1.0",
   "private": true,  "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "validate-story": "node scripts/validate-story.js",
-  "analyze-story": "node scripts/analyze-story.js",
-  "generate-report": "node scripts/generate-report.js"
-},
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "validate-story": "node scripts/validate-story.js",
+    "validate-enhanced": "node scripts/validate-enhanced-story.js",
+    "analyze-story": "node scripts/analyze-story.js",
+    "generate-report": "node scripts/generate-report.js"
+  },
   "dependencies": {
     "next": "15.3.3",
     "react": "^19.0.0",
