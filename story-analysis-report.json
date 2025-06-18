@@ -1,14 +1,54 @@
 {
-  "timestamp": "2025-06-17T15:33:10.435Z",
-  "totalNodes": 73,
-  "endingNodes": 4,
-  "totalPaths": 106140,
-  "averagePathLength": 18.95431505558696,
-  "averageBranchingFactor": 2.1780821917808217,
-  "averageTextLength": 128.2876712328767,
+  "timestamp": "2025-06-18T02:37:52.603Z",
+  "totalNodes": 315,
+  "endingNodes": 51,
+  "totalPaths": 10000,
+  "averagePathLength": 15.2853,
+  "averageBranchingFactor": 1.8698412698412699,
+  "averageTextLength": 337.9555555555556,
   "highBranchingNodes": [
     [
       "chosen",
+      5
+    ],
+    [
+      "utilitarian_ethics",
+      5
+    ],
+    [
+      "mind_controlled_army",
+      5
+    ],
+    [
+      "start",
+      4
+    ],
+    [
+      "first_sight",
+      4
+    ],
+    [
+      "breathing_panic",
+      4
+    ],
+    [
+      "movement_test",
+      4
+    ],
+    [
+      "first_steps",
+      4
+    ],
+    [
+      "first_voice",
+      4
+    ],
+    [
+      "body_examination",
+      4
+    ],
+    [
+      "terminal_focus",
       4
     ],
     [
@@ -16,55 +56,151 @@
       4
     ],
     [
-      "examine",
+      "battle",
       4
     ],
     [
       "formics",
+      4
+    ],
+    [
+      "joint_research",
+      4
+    ],
+    [
+      "memory_loss",
+      4
+    ],
+    [
+      "memory_restored",
+      4
+    ],
+    [
+      "memory_suppressed",
+      4
+    ],
+    [
+      "ethics_violation",
+      4
+    ],
+    [
+      "authority_question",
+      4
+    ],
+    [
+      "moral_question",
+      4
+    ],
+    [
+      "deontological_ethics",
+      4
+    ],
+    [
+      "virtue_ethics",
+      4
+    ],
+    [
+      "moral_abdication",
+      4
+    ],
+    [
+      "human_supremacy",
+      4
+    ],
+    [
+      "colonial_expansion",
+      4
+    ],
+    [
+      "formic_slavery",
+      4
+    ],
+    [
+      "biological_experiments",
+      4
+    ],
+    [
+      "dehumanization_campaign",
+      4
+    ],
+    [
+      "mind_breaking",
+      4
+    ],
+    [
+      "systematic_genocide",
+      4
+    ],
+    [
+      "hive_shattering",
+      4
+    ],
+    [
+      "genocide_celebration",
+      4
+    ],
+    [
+      "utilitarian_horror",
+      4
+    ],
+    [
+      "industrial_slavery",
+      4
+    ],
+    [
+      "expendable_workforce",
+      4
+    ],
+    [
+      "genetic_manipulation",
       4
     ]
   ],
   "mostConnectedNodes": [
     [
       "start",
-      106140
+      10000
     ],
     [
-      "distance_final",
-      106132
+      "explore_room",
+      10000
     ],
     [
-      "exploration",
-      92895
+      "test_reality",
+      10000
     ],
     [
-      "chosen",
-      84159
+      "search_exit",
+      10000
     ],
     [
-      "joint_research",
-      83157
+      "alien_response",
+      9640
     ],
     [
-      "contact_third",
-      77076
+      "peaceful_success",
+      9640
     ],
     [
-      "diplomacy",
-      68049
+      "system_interaction",
+      7776
     ],
     [
-      "communicate",
-      66377
+      "accept_mission",
+      6988
     ],
     [
-      "mediate_dialogue",
-      62361
+      "peaceful_path",
+      6160
     ],
     [
-      "shared_culture",
-      61602
+      "rogers_info",
+      6000
     ]
   ],
-  "potentialIssues": []
+  "potentialIssues": [
+    "65 nodes with very short text (< 50 chars)",
+    "69 nodes with very long text (> 500 chars)",
+    "96 nodes with only one choice (might be unnecessary)"
+  ]
 }

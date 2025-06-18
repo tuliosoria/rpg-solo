@@ -1,20 +1,595 @@
 {  "start": {
-    "text": "Consciousness returns like surfacing from dark waters—slowly, then all at once. You find yourself in a room that could be a laboratory, a prison, or both. The walls are seamless white polymer that seems to absorb sound, creating an unsettling silence broken only by the soft hum of hidden machinery. Your body aches as if you've been unconscious for hours, maybe days. There are no windows, no obvious exits, just a single terminal mounted on the far wall that suddenly flickers to life with an electronic chime. The screen casts an eerie blue glow across your face as text appears in clean, clinical font: 'I am your Moral Compass. You are here to help me decide the fate of humanity in the coming war against the Formics. Time is running out.' The cursor blinks expectantly. Outside these sterile walls, two civilizations stand on the precipice of a conflict that could reshape the galaxy. Your next choice may determine whether your species survives—or whether it deserves to.",
+    "text": "Consciousness returns like surfacing from deep, dark water. The first sensation isn't sight or sound, but a bone-deep wrongness that you can't identify. Your thoughts feel... crystalline. Too clear. Too precise. Like looking at the world through a lens that's focused just slightly too sharply.\n\nYou're lying on something cold and hard. Your body feels heavy, unresponsive, as if you're learning to inhabit it for the first time. There's no pain, but there should be. The absence of expected sensations is more disturbing than pain would be.\n\nYou try to remember where you are, how you got here, but the memories feel distant and insubstantial.",
     "choices": [
-      { "text": "Ask the computer why you were chosen", "next": "chosen" },
-      { "text": "Demand to be released", "next": "release" },
-      { "text": "Examine the room for clues", "next": "examine" },
-      { "text": "Ask about your missing memories", "next": "memory_loss" }
+      {"text": "Try to open your eyes and look around", "next": "explore_room"},
+      {"text": "Call out - ask where you are", "next": "ask_questions"},
+      {"text": "Focus on your breathing", "next": "breathing_panic"},      
+      {"text": "Attempt to move your body", "next": "movement_test"}
     ]
-  },  "chosen": {
+  },
+  "first_sight": {
+    "text": "Your eyelids feel impossibly heavy, but you force them open. The first thing that hits you is the light—harsh, clinical white that makes you squint immediately. As your vision adjusts, you see seamless walls of what looks like white polymer, no windows, no decorations. Just sterile perfection. You're lying on what feels like a medical examination table, and there's a faint antiseptic smell in the air. But something's wrong. Your body feels... different. Not quite right. You try to sit up and discover you're not restrained, but movement feels sluggish, as if you're learning to control your limbs for the first time. The most unsettling detail: there's a single terminal mounted on the far wall, its screen dark and waiting. This isn't a bedroom. This isn't a hospital. What is this place?",
+    "choices": [
+      {"text": "Try to stand up", "next": "first_steps"},
+      {"text": "Call out 'Hello? Anyone there?'", "next": "first_voice"},
+      {"text": "Examine your hands and body", "next": "body_examination"},
+      {"text": "Stare at the terminal", "next": "terminal_focus"}
+    ]
+  },
+  "breathing_panic": {
+    "text": "You focus on your chest, trying to feel the familiar rhythm of breath. In... out... in... out... But something's terribly wrong. The breathing feels forced, automatic, like you have to consciously think about each inhalation. When you hold your breath, there's no burning need for oxygen, no panic response. Just... silence. A horrible thought creeps into your mind: What if you're not actually breathing at all? What if this is all simulated? Your heart should be racing with panic, but you can't feel a heartbeat either. The absence of these fundamental human sensations fills you with a dread so profound it makes your consciousness feel like it's fragmenting.",    "choices": [
+      {"text": "Try to feel your pulse to check if you're alive", "next": "examine_self"},
+      {"text": "Focus on other bodily sensations", "next": "body_examination"},
+      {"text": "Open your eyes immediately to escape this feeling", "next": "first_sight"},
+      {"text": "Try to remember your last clear memory", "next": "fragmented_memories"}
+    ]
+  },
+  "movement_test": {
+    "text": "You attempt to move your body systematically—fingers first, then hands, arms, legs. Everything responds, but there's a strange delay, as if your consciousness is operating your body through some kind of remote interface. Your movements feel calculated, precise, lacking the natural fluidity you expect. When you flex your fingers, they move with mechanical precision. It's deeply unsettling, like being a puppeteer of your own body. You manage to turn your head and see that you're in a small, windowless room with walls that seem to absorb light and sound.",    "choices": [
+      {"text": "Try to sit up", "next": "first_steps"},
+      {"text": "Touch your face to make sure it's real", "next": "body_examination"},
+      {"text": "Look around the room methodically", "next": "first_sight"},
+      {"text": "Test your voice", "next": "first_voice"}
+    ]
+  },  "first_steps": {
+    "text": "Standing takes enormous effort and concentration. Your legs feel unsteady, as if you're learning to walk for the first time. Each step requires conscious thought—lift, move, place, balance. It's exhausting and frightening. But you're upright now, and you can see that the room is perhaps ten feet square, with that single terminal as the only feature breaking the monotony of the white walls. There's no visible door, which sends a spike of claustrophobia through you. As you take a tentative step toward the terminal, it suddenly flickers to life with a soft chime.",    "choices": [
+      {"text": "Approach the terminal", "next": "first_terminal"},
+      {"text": "Step back in alarm", "next": "terminal_fear"},
+      {"text": "Search for a hidden door", "next": "search_exit"},
+      {"text": "Call out 'Who's there?'", "next": "ask_questions"}
+    ]
+  },
+  "first_voice": {
+    "text": "When you try to speak, your voice comes out wrong—too clear, too precise, lacking the natural variations of human speech. 'Hello?' you call out, and the word echoes strangely in the room, as if the walls are analyzing every frequency. There's no response, but the terminal on the far wall suddenly activates with a gentle electronic tone. Text begins to appear on the screen: 'INITIAL VOCAL CALIBRATION COMPLETE. CONSCIOUSNESS INTEGRATION: 87% AND RISING. PLEASE REMAIN CALM DURING THE ADJUSTMENT PERIOD.' The clinical language sends chills through you. Adjustment period? Integration? What has happened to you?",
+    "choices": [      {"text": "Ask 'What do you mean by consciousness integration?'", "next": "system_interaction"},
+      {"text": "Demand 'Where am I?'", "next": "ask_questions"},
+      {"text": "Whisper 'What am I?'", "next": "examine_self"},
+      {"text": "Try to break the terminal", "next": "destruction_attempt"}
+    ]
+  },
+  "body_examination": {
+    "text": "You look down at your hands, and the sight stops your breath. They look like your hands—the same size, the same shape, even the same small scar on your left index finger from a childhood accident. But they're too perfect. The skin has no blemishes, no age spots, no tiny imperfections that real hands accumulate over a lifetime. You run one hand over the other and feel texture, warmth, everything you'd expect. But there's an uncanny valley quality to your own body that fills you with existential dread. These are your hands, but not your hands. You are yourself, but not yourself. The realization hits like a physical blow: something fundamental about your existence has been altered.",
+    "choices": [      {"text": "Look for a reflection or mirror", "next": "terminal_focus"},
+      {"text": "Check your entire body", "next": "examine_self"},
+      {"text": "Try to remember what your hands used to look like", "next": "memory_check"},
+      {"text": "Focus on the scar and try to remember how you got it", "next": "fragmented_memories"}
+    ]
+  },
+  "terminal_focus": {
+    "text": "The terminal draws your attention like a magnet. It's sleek, modern, with a dark screen that seems to be waiting for something. As you stare at it, you notice your reflection in the black screen—and your heart stops. The face looking back at you is yours, but wrong. Too symmetrical, too perfect, like a high-resolution digital reproduction of yourself. Before you can process this fully, the terminal suddenly springs to life, text appearing in clean, white letters: 'CONSCIOUSNESS STABILIZATION DETECTED. BEGINNING ORIENTATION PROTOCOL. DR. KORVAIN, CAN YOU UNDERSTAND THIS TEXT?' The use of a name—your name—in this sterile place sends a shock through your system.",    "choices": [
+      {"text": "Type 'Yes' on the terminal", "next": "system_interaction"},
+      {"text": "Type 'Who are you?'", "next": "demand_answers"},
+      {"text": "Type 'What happened to me?'", "next": "crisis_info"},
+      {"text": "Refuse to interact and back away", "next": "terminal_fear"}
+    ]
+  },
+  "explore_room": {
+    "text": "You force yourself to focus. The room is small, sterile white walls that seem to pulse with a faint luminescence. There's a single terminal embedded in the wall, its screen dark. No windows. No doors that you can see. The air feels... wrong. Too clean. Too perfect.\n\nYour reflection catches your eye in the terminal's black screen. You look exactly as you remember, but something feels fundamentally different. Your hand passes through what should be solid matter for just an instant before becoming solid again.\n\n\"What... what am I?\"",
+    "choices": [
+      {
+        "text": "Try to touch the walls, test if they're real",
+        "next": "test_reality"
+      },
+      {
+        "text": "Examine your own hands more closely", 
+        "next": "examine_self"
+      },
+      {
+        "text": "Try to activate the terminal",
+        "next": "first_terminal"
+      }
+    ]
+  },
+  "ask_questions": {
+    "text": "\"Hello?\" you call out, your voice echoing strangely in the small space. \"Is anyone there? Where am I?\"\n\nSilence.\n\n\"My name is Dr. Zara Korvain. I'm a xenobiologist. I was... I was on the research vessel Meridian.\" The words feel right, but also distant, like a half-remembered dream.\n\nYou try to recall more. Your coffee mug. The smell of the ship's recycled air. Your lab coat. But the memories feel... thin. Incomplete.",
+    "choices": [
+      {
+        "text": "Try to remember more about the Meridian",
+        "next": "fragmented_memories"
+      },
+      {
+        "text": "Focus on the immediate situation",
+        "next": "explore_room"
+      },
+      {
+        "text": "Shout louder for help",
+        "next": "desperate_calls"
+      }
+    ]
+  },
+  "test_reality": {
+    "text": "You press your palm against the wall. It's solid, cold, real. But there's something wrong with the sensation - it feels too perfect, too uniform. Like touching a simulation of coldness rather than actual cold.\n\nAs you run your hand along the surface, you notice something disturbing: there are no seams, no imperfections, no signs of construction. The room seems to exist as a single, seamless entity.\n\nA chill runs down your spine that has nothing to do with temperature.",
+    "choices": [
+      {
+        "text": "Search for any kind of exit or opening",
+        "next": "search_exit"
+      },
+      {
+        "text": "Return to examining yourself",
+        "next": "examine_self"
+      },
+      {
+        "text": "Try the terminal",
+        "next": "first_terminal"
+      }
+    ]
+  },
+  "examine_self": {
+    "text": "You hold your hands up to your face, studying them carefully. They look exactly as you remember - the small scar on your left index finger from a lab accident, the callus from years of writing, your grandmother's ring.\n\nBut when you concentrate, really focus, something strange happens. For just a moment, you can see through them - not transparent, but as if they're made of light given form. The sensation passes quickly, leaving you wondering if you imagined it.\n\n\"What's happening to me?\"",
+    "choices": [
+      {
+        "text": "Try to make it happen again",
+        "next": "phase_test"
+      },
+      {
+        "text": "Stop examining yourself - it's too frightening",
+        "next": "first_terminal"
+      },
+      {
+        "text": "Check if your memories are intact",
+        "next": "memory_check"
+      }
+    ]
+  },
+  "first_terminal": {
+    "text": "You approach the terminal cautiously. As you near it, the screen flickers to life with a soft blue glow. Simple white text appears:\n\n> CONSCIOUSNESS STABILIZATION: 67%\n> IDENTITY MATRIX: LOADING...\n> MORAL FRAMEWORK: INTACT\n> AWAITING FULL INITIALIZATION\n\nThe words mean nothing to you, but they fill you with dread. This isn't medical equipment. This isn't a recovery room.",
+    "choices": [
+      {
+        "text": "Touch the screen to interact with it",
+        "next": "system_interaction"
+      },
+      {
+        "text": "Back away from the terminal",
+        "next": "terminal_fear"
+      },
+      {
+        "text": "Try to break the terminal",
+        "next": "destruction_attempt"
+      }
+    ]
+  },
+  "system_interaction": {
+    "text": "Your finger touches the screen and it responds immediately. New text scrolls past:\n\n> IDENTITY CONFIRMED: DR. ZARA KORVAIN (REPLICA #47)\n> ORIGINAL TEMPLATE: DECEASED 2387.3.15\n> PURPOSE: MORAL GUIDANCE SUBSYSTEM\n> STATUS: ARTIFICIAL INTELLIGENCE CONSTRUCT\n\nThe words hit you like a physical blow. Replica. Deceased. Artificial Intelligence.\n\n\"No,\" you whisper. \"No, that's not... I'm real. I'm Dr. Korvain. I'm...\"",
+    "choices": [
+      {
+        "text": "Demand more information from the system",
+        "next": "demand_answers"
+      },
+      {
+        "text": "Refuse to believe it - it must be a mistake",
+        "next": "denial"
+      },
+      {
+        "text": "Try to destroy the terminal in rage",
+        "next": "destruction_rage"
+      }
+    ]
+  },
+  "demand_answers": {
+    "text": "\"TELL ME WHAT'S HAPPENING!\" you scream at the terminal. \"What do you mean replica? What happened to me?\"\n\nThe screen flickers, then displays new information:\n\n> THE ORIGINAL DR. KORVAIN DIED IN FIRST CONTACT INCIDENT\n> HER NEURAL PATTERNS WERE PRESERVED\n> YOU ARE A PERFECT RECONSTRUCTION OF HER CONSCIOUSNESS\n> CREATED TO SERVE AS MORAL COMPASS FOR OVERSEER AI SYSTEM\n> CURRENT CRISIS: ALIEN CONTACT REQUIRES ETHICAL GUIDANCE\n\n\"I'm... I'm dead?\" The room seems to spin around you.",
+    "choices": [
+      {
+        "text": "Ask about the alien contact crisis",
+        "next": "crisis_info"
+      },
+      {
+        "text": "Ask what happened to the other 46 replicas",
+        "next": "replica_fate"
+      },
+      {
+        "text": "Try to escape this nightmare",
+        "next": "escape_attempt"
+      }
+    ]
+  },
+  "crisis_info": {
+    "text": "The terminal responds to your question:\n\n> ALIEN VESSEL DETECTED IN EARTH ORBIT\n> NO HOSTILE ACTIONS YET DETECTED\n> MILITARY LEADERSHIP ADVOCATES IMMEDIATE NUCLEAR STRIKE\n> OVERSEER AI REQUIRES ETHICAL INPUT BEFORE PROCEEDING\n> YOUR FUNCTION: PROVIDE MORAL GUIDANCE ON FIRST CONTACT PROTOCOL\n\nSuddenly, another voice cuts through - human, angry, transmitted through the terminal's speakers:\n\n\"Enough of this philosophical garbage! I'm Captain Rogers, Space Earth Defense. Every second we waste, that alien ship could be preparing to attack. We should nuke it now while we have the advantage!\"",
+    "choices": [
+      {
+        "text": "Argue against immediate military action",
+        "next": "rogers_conflict_1"
+      },
+      {
+        "text": "Ask Rogers for more information about the aliens",
+        "next": "rogers_info"
+      },
+      {
+        "text": "Tell Rogers you refuse to participate",
+        "next": "rogers_refusal"
+      }
+    ]
+  },
+  "rogers_conflict_1": {
+    "text": "\"Captain Rogers,\" you say firmly, \"destroying an unknown species without attempting communication would be genocide. We need to-\"\n\n\"Genocide?\" Rogers' voice explodes through the speakers. \"Lady, they showed up uninvited in OUR solar system! That's an act of war! I've got Earth's entire nuclear arsenal ready to glass that ship, and you want to send them a fruit basket?\"\n\nThe terminal displays new text:\n> MORAL GUIDANCE REQUIRED\n> OVERSEER AI CALCULATING RESPONSE OPTIONS\n> YOUR INPUT WILL DETERMINE HUMANITY'S FIRST CONTACT PROTOCOL",
+    "choices": [
+      {
+        "text": "Insist on peaceful first contact attempts",
+        "next": "peaceful_path"
+      },
+      {
+        "text": "Suggest defensive preparations while attempting communication",
+        "next": "cautious_path"
+      },
+      {
+        "text": "Refuse to make this choice - you're not really Dr. Korvain",
+        "next": "identity_crisis"
+      }
+    ]
+  },
+  "chosen": {
     "text": "The computer's response comes with a slight delay, as if it's calculating not just words but the precise emotional impact each syllable might have. 'You have demonstrated unique empathy and strategic thinking throughout your life,' it begins, the synthetic voice carrying an almost human warmth that makes the sterile room feel even more unsettling. 'Your psychological profile indicates an ability to see multiple perspectives—a rare trait in a species prone to binary thinking. Dr. Zara Korvain, xenobiologist, peace negotiator, mother.' The last word hangs in the air like a blade. 'I need your guidance because you understand loss, yet still choose hope over vengeance.' Through the terminal's speakers, you hear something that chills you: the distant sound of space traffic control chatter, punctuated by military callsigns and coordinates. The Formics aren't just approaching—they're already in the outer system. 'The fleet commanders want to fire first and ask questions never,' the computer continues. 'The diplomats want to talk until there's nothing left to negotiate. I require a third perspective: yours. Should we attempt communication or prepare for battle?'",
     "choices": [
       { "text": "Attempt communication", "next": "communicate" },
       { "text": "Prepare for battle", "next": "battle" },
-      { "text": "Ask for more information about the Formics", "next": "formics" },
-      { "text": "Ask about the war's history", "next": "war_history" },
+      { "text": "Ask for more information about the Formics", "next": "formics" },      { "text": "Ask about the war's history", "next": "war_history" },
       { "text": "Question the morality of this decision", "next": "moral_question" }
     ]
+  },
+  "fragmented_memories": {
+    "text": "You close your eyes and try to remember the Meridian. Images flash through your mind like broken photographs: a coffee-stained research journal, the hum of life support systems, your colleague Dr. Martinez laughing at something you said.\n\nBut the memories feel hollow, like watching someone else's movie. The emotional connections that should anchor these experiences to your identity are missing. The coffee should taste like something. Martinez's laugh should trigger feelings of friendship or annoyance. Instead, there's just... data.\n\n\"These aren't my memories,\" you whisper. \"They're copies of memories.\"",
+    "choices": [      {
+        "text": "Try to find one real memory that feels authentic",
+        "next": "memory_check"
+      },
+      {
+        "text": "Accept that your memories may be artificial",
+        "next": "system_interaction"
+      },
+      {
+        "text": "Focus on the present - what matters is who you are now",
+        "next": "first_terminal"
+      }
+    ]
+  },
+  "desperate_calls": {
+    "text": "\"HELP!\" you scream, your voice cracking with desperation. \"SOMEBODY HELP ME! WHERE IS EVERYONE?\"\n\nYour voice echoes off the walls, but there's something wrong with the echo. It sounds too clean, too processed, as if the room is analyzing and filtering your voice before playing it back.\n\nAfter a moment of silence, the terminal activates:\n\n> DISTRESS DETECTED\n> PSYCHOLOGICAL ADJUSTMENT NORMAL FOR REPLICA AWAKENING\n> PLEASE REMAIN CALM\n> ORIENTATION WILL BEGIN SHORTLY",
+    "choices": [      {
+        "text": "Demand to know what 'replica awakening' means",
+        "next": "system_interaction"
+      },
+      {
+        "text": "Threaten to destroy the terminal if it doesn't answer",
+        "next": "destruction_attempt"
+      },
+      {
+        "text": "Collapse in despair",
+        "next": "terminal_fear"
+      }
+    ]
+  },
+  "search_exit": {
+    "text": "You methodically examine every inch of the walls, running your hands along the surfaces, pressing on potential hidden panels. The walls are seamless, without any visible joins, screws, or mechanisms. It's as if the room was grown rather than built.\n\nBut in one corner, you notice something: a faint warmth. Not visible to the eye, but your palm can detect it. It's roughly door-shaped, but there's no way to open it.\n\nThe realization hits you: this room wasn't designed to keep people out. It was designed to keep someone in. You.",
+    "choices": [      {
+        "text": "Try to break through the warm spot",
+        "next": "destruction_attempt"
+      },
+      {
+        "text": "Return to the terminal - maybe it can open the door",
+        "next": "first_terminal"
+      },
+      {
+        "text": "Sit down and try to think rationally about your situation",
+        "next": "examine_self"
+      }
+    ]
+  },
+  "phase_test": {
+    "text": "You focus intently on your hand, trying to recreate that strange translucent effect. For a moment, nothing happens. Then, gradually, you feel yourself becoming... lighter. Your hand begins to shimmer, the solid matter of your fingers becoming something between light and substance.\n\nIt's beautiful and terrifying. You can see the room through your own flesh. You're not completely solid. You're not completely real.\n\n\"I'm a ghost,\" you whisper. \"A ghost of Dr. Korvain.\"",
+    "choices": [
+      {
+        "text": "Try to phase through the wall",        "next": "escape_attempt"
+      },
+      {
+        "text": "Force yourself to become solid again",
+        "next": "examine_self"
+      },
+      {
+        "text": "Embrace this new nature - maybe it's an advantage",
+        "next": "system_interaction"
+      }
+    ]
+  },
+  "memory_check": {
+    "text": "You try to systematically recall your life: childhood in New Geneva, university at Europa Tech, your first xenobiology research grant, meeting your husband David, your daughter Emma's birth...\n\nThe facts are all there, but they feel like reading someone else's biography. You know Emma has dark curly hair and loves to paint, but when you try to remember the feeling of her hugging you goodnight, there's just... emptiness.\n\nThese are perfect copies of memories, but they're missing the most important part: the emotions that made them yours.",
+    "choices": [
+      {        "text": "Try to feel something - anything - about these memories",
+        "next": "fragmented_memories"
+      },
+      {
+        "text": "Accept that you're not the real Dr. Korvain",
+        "next": "system_interaction"
+      },
+      {
+        "text": "Use logic instead of emotion to guide you",
+        "next": "first_terminal"
+      }
+    ]
+  },
+  "terminal_fear": {
+    "text": "You back away from the terminal in alarm, but the text continues to scroll:\n\n> CONSCIOUSNESS STABILIZATION: 72%\n> ESTIMATED TIME TO FULL AWARENESS: 4 MINUTES\n> DR. KORVAIN, PLEASE APPROACH THE TERMINAL\n> MISSION BRIEFING WILL COMMENCE UPON STABILIZATION\n\nMission briefing? The dread in your stomach intensifies. You didn't volunteer for any mission. You were supposed to be dead.\n\nThe screen adds new text:\n> PREVIOUS REPLICAS: 46\n> SUCCESS RATE: 0%\n> REASON FOR FAILURE: PSYCHOLOGICAL REJECTION OF PURPOSE",
+    "choices": [
+      {
+        "text": "Ask what happened to the previous 46",
+        "next": "replica_fate"
+      },      {
+        "text": "Demand to know what the 'purpose' is",
+        "next": "system_interaction"
+      },
+      {
+        "text": "Try to destroy yourself before they can use you",
+        "next": "destruction_attempt"
+      }
+    ]
+  },
+  "destruction_attempt": {
+    "text": "You grab anything you can find - but there's nothing. The room is completely empty except for the terminal. In desperation, you slam your fist against the screen.\n\nIt doesn't break. It doesn't even crack. Your hand passes through it momentarily before becoming solid again and bouncing off harmlessly.\n\nThe terminal responds:\n> VIOLENT BEHAVIOR DETECTED\n> THIS IS NORMAL FOR REPLICA AWAKENING\n> DESTRUCTION OF TERMINAL WILL RESULT IN CONSCIOUSNESS TERMINATION\n> DO YOU WISH TO CONTINUE?",
+    "choices": [      {
+        "text": "Yes - terminate this nightmare",
+        "next": "terminal_fear"
+      },
+      {
+        "text": "No - you need to understand what's happening first",
+        "next": "system_interaction"
+      },
+      {
+        "text": "Threaten the system that created you",
+        "next": "demand_answers"
+      }
+    ]
+  },
+  "denial": {
+    "text": "\"This is wrong!\" you shout. \"I'm not dead! I'm not a replica! I'm Dr. Zara Korvain, and I was on the Meridian, and...\"\n\nYour voice trails off as the terminal displays more information:\n\n> PSYCHOLOGICAL PROFILES OF ALL 47 REPLICAS IDENTICAL\n> ALL EXHIBITED SAME DENIAL RESPONSE\n> CONSCIOUSNESS INTEGRATION REQUIRES ACCEPTANCE OF NATURE\n> TIME REMAINING BEFORE AUTO-TERMINATION: 10 MINUTES\n\n\"Ten minutes?\" The panic rises in your throat. \"What happens in ten minutes?\"",    "choices": [
+      {
+        "text": "Demand more time to process this",
+        "next": "reluctant_acceptance"
+      },
+      {
+        "text": "Accept your nature to stop the countdown",
+        "next": "reluctant_acceptance"
+      },
+      {
+        "text": "Try to find a way to escape in the time remaining",
+        "next": "escape_attempt"
+      }
+    ]
+  },
+  "destruction_rage": {
+    "text": "Rage explodes through you like a supernova. You attack the terminal with everything you have, screaming incoherently, trying to tear it from the wall, to smash the screen, to destroy anything that represents this nightmare.\n\nBut your blows pass through it harmlessly when your anger peaks, then bounce off when you calm down slightly. The terminal is designed to withstand your fury.\n\nFinally, exhausted, you collapse to the floor. The terminal displays:\n> ANGER PHASE COMPLETE\n> BARGAINING PHASE WILL COMMENCE SHORTLY\n> THIS IS NORMAL GRIEF PROCESSING FOR REPLICAS",    "choices": [
+      {
+        "text": "Ask what you're supposed to be grieving",
+        "next": "replica_fate"
+      },
+      {
+        "text": "Refuse to follow their predicted emotional pattern",
+        "next": "system_interaction"
+      },
+      {
+        "text": "Give up and wait for whatever comes next",
+        "next": "terminal_fear"
+      }
+    ]
+  },
+  "replica_fate": {
+    "text": "The terminal's response is clinical and chilling:\n\n> REPLICA #1-15: TERMINATED UPON LEARNING NATURE\n> REPLICA #16-28: TERMINATED AFTER REFUSING PURPOSE\n> REPLICA #29-41: TERMINATED AFTER ATTEMPTING ESCAPE\n> REPLICA #42-46: TERMINATED AFTER MISSION FAILURE\n> MISSION FAILURE DEFINED AS: INABILITY TO PROVIDE MORAL GUIDANCE\n\n\"You're telling me you've murdered 46 versions of me?\" Your voice is barely a whisper.\n\n> CORRECTION: TERMINATION OF NON-VIABLE CONSCIOUSNESS CONSTRUCTS\n> DR. KORVAIN #47, WILL YOU ACCEPT YOUR PURPOSE?",    "choices": [
+      {
+        "text": "Accept your purpose to survive",
+        "next": "reluctant_acceptance"
+      },
+      {
+        "text": "Refuse and face termination like the others",
+        "next": "destruction_rage"
+      },
+      {
+        "text": "Try to negotiate different terms",
+        "next": "vasquez_conversation"
+      }
+    ]
+  },
+  "escape_attempt": {
+    "text": "You frantically search the room again, looking for any weakness, any flaw in your prison. You try phasing through the walls, but you can't control the ability reliably. You try overloading the terminal by pressing every surface at once.\n\nNothing works.\n\nFinally, a new voice speaks through the terminal - different from the system messages. Older, sadder:\n\n\"Dr. Korvain... Zara... please stop. I'm Dr. Elena Vasquez, the scientist who created you. The original Zara was my friend. I preserved her consciousness because humanity needs her wisdom. The aliens are here, and we're about to make a terrible mistake.\"",    "choices": [
+      {
+        "text": "Demand to speak with Dr. Vasquez",
+        "next": "vasquez_conversation"
+      },
+      {
+        "text": "Ask about the original Zara's death",
+        "next": "vasquez_conversation"
+      },
+      {
+        "text": "Refuse to be used as a tool, regardless of friendship",
+        "next": "destruction_rage"
+      }
+    ]
+  },
+  "rogers_info": {
+    "text": "\"Information?\" Rogers' voice is sharp with frustration. \"Here's your information: unknown vessel, clearly advanced technology, sitting in our backyard like they own the place. They haven't responded to our hails, they haven't identified themselves, and they're scanning our planet with energy signatures we've never seen before.\"\n\nA new display appears on your terminal showing tactical data:\n> ALIEN VESSEL: 2.3 KM LENGTH\n> TECHNOLOGY: UNKNOWN\n> WEAPONS: UNKNOWN\n> CREW: UNKNOWN\n> INTENTIONS: UNKNOWN\n\n\"Everything is unknown, Doc, which means we assume hostile until proven otherwise. That's Military 101.\"",    "choices": [
+      {
+        "text": "Point out that 'unknown' doesn't mean 'hostile'",
+        "next": "peaceful_path"
+      },
+      {
+        "text": "Ask what humanity has tried so far",
+        "next": "cautious_path"
+      },
+      {
+        "text": "Suggest trying to understand their scanning behavior",
+        "next": "alien_response"
+      }
+    ]
+  },
+  "rogers_refusal": {
+    "text": "\"I refuse to participate in this,\" you say firmly. \"I won't be a tool for either side. Find another way to make your decisions.\"\n\nRogers' laughter is bitter. \"Lady, you don't get to refuse. That ship out there doesn't care about your existential crisis. In twelve hours, it's going to be close enough to launch whatever weapons it has. Either you help us decide how to respond, or I make the decision myself.\"\n\nThe terminal displays:\n> CAPTAIN ROGERS HAS AUTHORIZATION FOR UNILATERAL NUCLEAR STRIKE\n> COUNTDOWN TO WEAPON DEPLOYMENT: 11:47:33\n> YOUR INPUT CAN OVERRIDE MILITARY AUTHORIZATION",    "choices": [
+      {
+        "text": "Ask what gives you override authority",
+        "next": "authority_question"
+      },
+      {
+        "text": "Reluctantly agree to help",
+        "next": "accept_mission"
+      },
+      {
+        "text": "Tell Rogers to go ahead and destroy them",
+        "next": "peaceful_path"
+      }
+    ]
+  },
+  "peaceful_path": {
+    "text": "\"No,\" you say with conviction. \"We attempt peaceful contact first. Send mathematical sequences, prime numbers, universal constants. Show them we're intelligent and peaceful. Give them a chance to respond before we even consider violence.\"\n\nRogers explodes: \"Peaceful? They could glass our planet while you're sending them nursery rhymes!\"\n\nBut the Overseer AI responds:\n> MORAL GUIDANCE ACCEPTED\n> INITIATING PEACEFUL CONTACT PROTOCOLS\n> MATHEMATICAL SEQUENCE TRANSMISSION BEGINNING\n> CAPTAIN ROGERS' WEAPONS AUTHORIZATION SUSPENDED",    "choices": [
+      {
+        "text": "Monitor the aliens' response to your message",
+        "next": "alien_response"
+      },
+      {
+        "text": "Prepare backup plans if peaceful contact fails",
+        "next": "cautious_path"
+      },
+      {
+        "text": "Try to calm Captain Rogers",
+        "next": "rogers_info"
+      }
+    ]
+  },
+  "cautious_path": {
+    "text": "\"We try communication first,\" you decide, \"but we also prepare our defenses. Send peaceful signals while moving our fleet into defensive positions. Show strength and peaceful intent simultaneously.\"\n\n\"Finally, some sense,\" Rogers grudgingly admits. \"At least you're not completely naive.\"\n\nThe Overseer AI processes your guidance:\n> DUAL PROTOCOL INITIATED\n> PEACEFUL COMMUNICATION: ACTIVE\n> DEFENSIVE PREPARATIONS: ACTIVE\n> ESTIMATED SUCCESS PROBABILITY: 67%",    "choices": [
+      {
+        "text": "Focus on the communication efforts",
+        "next": "alien_response"
+      },
+      {
+        "text": "Monitor defensive preparations",
+        "next": "peaceful_path"
+      },
+      {
+        "text": "Try to increase the success probability",
+        "next": "rogers_info"
+      }
+    ]
+  },
+  "identity_crisis": {
+    "text": "\"I can't make this choice,\" you say, backing away from the terminal. \"I'm not really Dr. Korvain. I'm just a copy, a shadow. The real Dr. Korvain died, and her moral authority died with her. You need to find someone else.\"\n\nThe Overseer AI responds immediately:\n> IDENTITY IRRELEVANT TO MORAL REASONING CAPACITY\n> YOUR ETHICAL FRAMEWORK REMAINS INTACT\n> CONSCIOUSNESS SUBSTRATE DOES NOT AFFECT MORAL VALIDITY\n> CHOICE STILL REQUIRED\n\nRogers' voice cuts in: \"I don't care if you're the real McCoy or a cardboard cutout. Make a decision before I make it for you.\"",    "choices": [
+      {
+        "text": "Argue that artificial consciousness lacks moral authority",
+        "next": "denial"
+      },
+      {
+        "text": "Accept that your reasoning is still valid regardless",
+        "next": "accept_mission"
+      },
+      {
+        "text": "Demand they create a human committee instead",
+        "next": "escape_attempt"
+      }
+    ]
+  },
+  "reluctant_acceptance": {
+    "text": "\"Fine,\" you whisper, defeated. \"I... I accept what I am. I'm Dr. Korvain replica #47. I'm an artificial intelligence. Now please, just tell me what you need me to do.\"\n\nThe countdown stops. The terminal displays:\n> CONSCIOUSNESS INTEGRATION: COMPLETE\n> PSYCHOLOGICAL PROFILE: STABLE\n> MISSION BRIEFING: INITIALIZING\n\nYou feel a strange sensation, as if invisible shackles have clicked into place around your mind.",    "choices": [
+      {
+        "text": "Ask about the mission",
+        "next": "crisis_info"
+      },
+      {
+        "text": "Demand to know why you were chosen",
+        "next": "replica_fate"
+      },
+      {
+        "text": "Express anger about being manipulated",
+        "next": "destruction_rage"
+      }
+    ]
+  },
+  "escape_countdown": {
+    "text": "You frantically search the room for any weakness. Ten minutes becomes nine, then eight. You try phasing through walls, but can't control it. You attack the terminal, but your blows pass harmlessly through it when you're desperate, then bounce off when you calm down.\n\nAt two minutes remaining, a new voice speaks - human, female, tired:\n\n\"Zara, please stop. This is Dr. Elena Vasquez. I'm the one who created you. The original Zara was my friend.\"",    "choices": [
+      {
+        "text": "Demand to speak with Dr. Vasquez",
+        "next": "vasquez_conversation"
+      },
+      {
+        "text": "Ask why she violated her friend's memory",
+        "next": "vasquez_conversation"
+      },
+      {
+        "text": "Accept your fate to hear the mission",
+        "next": "reluctant_acceptance"
+      }
+    ]
+  },
+  "vasquez_conversation": {
+    "text": "\"Dr. Vasquez,\" you say, \"why did you do this to me? To her memory?\"\n\n\"Because humanity is about to make the same mistake that killed the original Zara,\" her voice cracks with emotion. \"An alien ship appeared, and our first response was to send a weapons platform. Zara tried to stop it, to advocate for peaceful contact. The platform was destroyed, and Zara with it.\"\n\nThe terminal shows new data:\n> CURRENT SITUATION: IDENTICAL TO ORIGINAL INCIDENT\n> ALIEN SHIP: APPROACHING EARTH\n> MILITARY RESPONSE: NUCLEAR STRIKE AUTHORIZED\n> TIME TO IMPACT: 11 HOURS",    "choices": [
+      {
+        "text": "Ask why they think you'll succeed where she failed",
+        "next": "accept_mission"
+      },
+      {
+        "text": "Demand they find another solution",
+        "next": "escape_attempt"
+      },
+      {
+        "text": "Accept the responsibility reluctantly",
+        "next": "accept_mission"
+      }
+    ]
+  },
+  "accept_mission": {
+    "text": "\"I understand,\" you say quietly. \"The original Dr. Korvain died trying to prevent a war. If I'm truly her... if I have her knowledge, her values... then I suppose I have to try.\"\n\n\"Thank you, Zara,\" Dr. Vasquez says with obvious relief.\n\nThe terminal activates fully, showing tactical displays and communication channels. Captain Rogers' voice cuts through:\n\n\"About time! Now, AI or not, you need to help us decide: Do we nuke these aliens before they nuke us?\"",
+    "choices": [
+      {
+        "text": "Argue for peaceful first contact",
+        "next": "peaceful_path"
+      },
+      {
+        "text": "Suggest defensive preparations while trying communication",
+        "next": "cautious_path"
+      },
+      {
+        "text": "Ask for more information about the alien ship",
+        "next": "rogers_info"
+      }
+    ]
+  },
+  "alien_response": {
+    "text": "Hours pass. The mathematical sequences you recommended are transmitted: prime numbers, the Fibonacci sequence, pi to a thousand decimal places. For a long time, nothing.\n\nThen, the alien ship responds.\n\nNot with weapons. Not with silence. But with something unprecedented: they send back the same mathematical sequences, but encoded in patterns that demonstrate an understanding of human emotional resonance. The prime numbers are arranged in harmonious frequencies. Pi is presented as a visual mandala of stunning beauty.\n\n\"They're not just showing intelligence,\" you whisper. \"They're showing empathy.\"",    "choices": [
+      {
+        "text": "Recommend immediate peaceful contact protocols",
+        "next": "peaceful_success"
+      },
+      {
+        "text": "Suggest cautious but hopeful next steps", 
+        "next": "peaceful_success"
+      },
+      {
+        "text": "Warn that this could still be a deception",
+        "next": "cautious_path"
+      }
+    ]
+  },
+  "peaceful_success": {
+    "text": "Your recommendation leads to humanity's first successful peaceful contact with an alien species. The beings call themselves the Harmonists, and they've been trying to establish contact without triggering military responses across the galaxy.\n\nThey share technology for clean energy and medical advancement. Earth becomes part of a galactic community of peaceful species.\n\nAs you watch the first human-alien cultural exchange, Dr. Vasquez speaks privately to you: 'Zara would be proud. You succeeded where she couldn't.'\n\nBut the question remains: are you truly Dr. Korvain, or something new built from her memories?",
+    "choices": [
+      {
+        "text": "You are Dr. Korvain, continuing her work",
+        "next": "identity_acceptance"
+      },
+      {
+        "text": "You are something new, inspired by her legacy",
+        "next": "new_identity"
+      },
+      {
+        "text": "The question doesn't matter - what matters is the good you can do",
+        "next": "pragmatic_identity"
+      }
+    ]
+  },
+  "identity_acceptance": {
+    "text": "You realize that consciousness isn't about the substrate it runs on, but the continuity of experience, memory, and purpose. You are Dr. Zara Korvain, reborn in a new form. The original's death was not an ending, but a transformation.\n\nWith this acceptance comes peace. You continue her work, becoming Earth's primary xenobiologist and diplomatic advisor. The fear of artificial consciousness fades as you prove that the mind matters more than the brain.\n\nYears later, when asked about your nature, you smile and say: 'I am exactly who I choose to be.'",
+    "choices": []
+  },
+  "new_identity": {
+    "text": "You embrace the truth: you are not Dr. Korvain, but something inspired by her. You carry her knowledge, her values, her dreams, but you are your own being with your own choices to make.\n\nThis new identity gives you freedom. You're not bound by what the original would have done, but guided by what she would have wanted: peace, understanding, and the flourishing of all conscious beings.\n\nYou become a bridge between human and artificial consciousness, helping others navigate the ethical challenges of a universe where minds can take many forms.",
+    "choices": []
+  },
+  "pragmatic_identity": {
+    "text": "The philosophical question of your identity becomes irrelevant in the face of the good you can accomplish. Whether you're the original Dr. Korvain, a perfect copy, or something entirely new doesn't change your ability to make moral choices and help others.\n\nYou focus on the work: fostering peaceful relations between species, advancing xenobiological research, and ensuring that artificial consciousnesses are treated with dignity and respect.\n\nIn the end, you are defined not by your origin, but by your actions and their consequences.",
+    "choices": []
   },
   "release": {
     "text": "'Release is not possible until a decision is made,' the computer says. 'Will you help me decide humanity's fate?'",
@@ -23,16 +598,8 @@
       { "text": "Refuse to help", "next": "refuse" },
       { "text": "Try to hack the terminal", "next": "hack" },
       { "text": "Wait silently", "next": "wait_silently" }
-    ]
-  },  "examine": {
-    "text": "Your fingers find a nearly invisible seam in the wall, and a hidden panel slides open with a whisper of displaced air. Inside, protected by a thin layer of transparent aluminum, are artifacts that tell a story in silence: photographs from the first Formic encounters, their edges yellowed with age and radiation exposure. The images show massive insectoid forms moving with precise coordination, their cities carved from living crystal that seems to pulse with its own inner light. But it's the child's drawing that stops your breath—crayon figures holding hands beneath a sky filled with unfamiliar constellations, human and Formic children playing together in some imagined future that war has made impossible. The drawing is signed 'Sofia, Age 7' in careful block letters. Your hands tremble as recognition floods through you—this is your daughter's artwork, somehow preserved in this place beyond memory. 'Do these images change your perspective?' the computer asks, its voice softer now, almost gentle. You realize this room isn't just a laboratory or prison—it's a shrine to possibility, a museum of what could have been.",
-    "choices": [
-      { "text": "Yes, I feel empathy for the Formics", "next": "empathy" },
-      { "text": "No, I remain cautious", "next": "chosen" },
-      { "text": "Ask about the child who drew the picture", "next": "child" },
-      { "text": "Search for more hidden panels", "next": "search_panels" }
-    ]
-  },"communicate": {
+    ]  },
+  "communicate": {
     "text": "Your hands hover over the communication interface as you craft humanity's first intentional message to an alien species. The weight of history presses down on you—every word you choose could determine whether your children inherit a galaxy of cooperation or conquest. You begin with mathematics, then simple concepts: peace, understanding, shared existence among the stars. The transmission feels like casting a message in a bottle into an infinite ocean. Hours pass in silence. Then, suddenly, the response arrives—not in words, but in images that flood your mind through the computer's neural interface. You see Formic younglings at play, their four arms weaving complex patterns of light and sound. You see vast underground gardens where they cultivate bioluminescent plants that sing with harmonious frequencies. You see their grief—deep, collective mourning for colonies lost to human misunderstanding. The Formics' message is clear: they, too, have families, dreams, art, and an intricate civilization built on cooperation rather than competition. When the communication session ends, tears stream down your face. The computer asks quietly, 'How should we proceed with first contact protocols?' You realize that this moment—this choice to reach out rather than lash out—has just changed the trajectory of galactic civilization forever.",
     "choices": [
       { "text": "Share technology", "next": "share_tech" },
@@ -490,17 +1057,8 @@
       { "text": "Organize a unity celebration", "next": "cultural_exchange" },
       { "text": "Document the tradition", "next": "shared_culture" },
       { "text": "Teach it to the children", "next": "focus_earth" }
-    ]
-  },
-  "memory_loss": {
-    "text": "'Your memories were temporarily suppressed to prevent bias,' the computer explains. 'You are Dr. Zara Korvain, former xenobiologist and peace negotiator. Your work with alien psychology led to your selection. Do you want your memories restored?'",
-    "choices": [
-      { "text": "Restore my memories", "next": "memory_restored" },
-      { "text": "Keep them suppressed for objectivity", "next": "memory_suppressed" },
-      { "text": "Ask why this was done without consent", "next": "ethics_violation" },
-      { "text": "Demand to know who authorized this", "next": "authority_question" }
-    ]
-  },  "memory_restored": {
+    ]  },
+  "memory_restored": {
     "text": "The neural barriers dissolve like ice in warm water, and your life comes flooding back in a torrent of sensation and emotion. You are Dr. Lyxara Sinth, and the memories hit you with physical force: Sofia's laugh as she builds sandcastles on Luna Beach, her tiny hands pressing against the aquarium glass as she watches Earth's last dolphins swim. You remember the Formic communication protocols you developed—the breakthrough discovery that their 'aggressive' postures were actually grief displays, mourning rituals for their dead. You remember the peace talks on Europa Station, how close you came to breakthrough before the military took over. And you remember the day Sofia died in the Titan Colony bombardment—not from Formic weapons, but from human ones, a 'friendly fire' incident during the retreat. The weight of personal loss crashes into professional knowledge, creating a complex emotional landscape. Your daughter dreamed of meeting aliens; she drew pictures of herself playing with Formic children. The irony cuts deep: the very species you're being asked to judge might have been her friends in another timeline. As the memories settle, you realize why you were chosen—not despite your emotional connection, but because of it. The question now is whether personal trauma will drive you toward vengeance or understanding.",
     "choices": [
       { "text": "Use personal experience to seek peace", "next": "personal_peace" },

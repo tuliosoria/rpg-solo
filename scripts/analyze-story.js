@@ -73,57 +73,77 @@ function analyzeStory() {
 
   console.log(`\n🎯 PATH ANALYSIS`);
   console.log(`Ending nodes: ${endingNodes.length}`);
-
-  // Analyze all possible paths
+  // Analyze paths more efficiently - limit path analysis to prevent exponential explosion
   const allPaths = [];
+  const maxPathsToAnalyze = 10000; // Limit to prevent memory issues
   
   function findAllPaths(current = 'start', path = [], visited = new Set(), depth = 0) {
-    if (depth > 20 || visited.has(current)) return; // Prevent infinite loops
+    if (depth > 15 || visited.has(current) || allPaths.length >= maxPathsToAnalyze) return; // Reduced depth and added path limit
     
     const newPath = [...path, current];
     visited.add(current);
     
     if (!story[current] || !story[current].choices || story[current].choices.length === 0) {
       allPaths.push(newPath);
+      visited.delete(current); // Clean up
       return;
     }
     
     for (const choice of story[current].choices) {
-      if (choice.next) {
-        findAllPaths(choice.next, newPath, new Set(visited), depth + 1);
+      if (choice.next && !visited.has(choice.next)) {
+        findAllPaths(choice.next, newPath, visited, depth + 1);
       }
     }
+    
+    visited.delete(current); // Clean up
   }
 
-  findAllPaths();
+  try {
+    findAllPaths();
+  } catch (error) {
+    console.log(`⚠️  Path analysis stopped due to complexity (${allPaths.length} paths analyzed)`);
+  }
+  let avgPathLength = 0;
+  let minPathLength = 0;
+  let maxPathLength = 0;
+  let mostConnectedNodes = [];
 
-  const pathLengths = allPaths.map(path => path.length);
-  const avgPathLength = pathLengths.reduce((a, b) => a + b, 0) / pathLengths.length;
-  const minPathLength = Math.min(...pathLengths);
-  const maxPathLength = Math.max(...pathLengths);
+  if (allPaths.length === 0) {
+    console.log(`Total possible paths: Unable to calculate (too complex)`);
+    console.log(`Average path length: Unable to calculate`);
+    console.log(`Shortest path: Unable to calculate`);
+    console.log(`Longest path: Unable to calculate`);
+  } else {
+    const pathLengths = allPaths.map(path => path.length);
+    avgPathLength = pathLengths.reduce((a, b) => a + b, 0) / pathLengths.length;
+    minPathLength = Math.min(...pathLengths);
+    maxPathLength = Math.max(...pathLengths);
 
-  console.log(`Total possible paths: ${allPaths.length}`);
-  console.log(`Average path length: ${avgPathLength.toFixed(2)} nodes`);
-  console.log(`Shortest path: ${minPathLength} nodes`);
-  console.log(`Longest path: ${maxPathLength} nodes`);
-
-  // Find the most connected nodes (appearing in most paths)
-  const nodeFrequency = {};
-  allPaths.forEach(path => {
-    path.forEach(node => {
-      nodeFrequency[node] = (nodeFrequency[node] || 0) + 1;
+    console.log(`Total possible paths: ${allPaths.length}${allPaths.length >= maxPathsToAnalyze ? '+' : ''}`);
+    console.log(`Average path length: ${avgPathLength.toFixed(2)} nodes`);
+    console.log(`Shortest path: ${minPathLength} nodes`);
+    console.log(`Longest path: ${maxPathLength} nodes`);
+  }  // Find the most connected nodes (appearing in most paths) - only if we have path data
+  if (allPaths.length > 0) {
+    const nodeFrequency = {};
+    allPaths.forEach(path => {
+      path.forEach(node => {
+        nodeFrequency[node] = (nodeFrequency[node] || 0) + 1;
+      });
     });
-  });
 
-  const mostConnectedNodes = Object.entries(nodeFrequency)
-    .sort(([_, a], [__, b]) => b - a)
-    .slice(0, 10);
+    mostConnectedNodes = Object.entries(nodeFrequency)
+      .sort(([_, a], [__, b]) => b - a)
+      .slice(0, 10);
 
-  console.log(`\n🕸️  MOST CONNECTED NODES (appear in most paths):`);
-  mostConnectedNodes.forEach(([node, frequency]) => {
-    const percentage = ((frequency / allPaths.length) * 100).toFixed(1);
-    console.log(`   • ${node}: ${frequency}/${allPaths.length} paths (${percentage}%)`);
-  });
+    console.log(`\n🕸️  MOST CONNECTED NODES (appear in most paths):`);
+    mostConnectedNodes.forEach(([node, frequency]) => {
+      const percentage = ((frequency / allPaths.length) * 100).toFixed(1);
+      console.log(`   • ${node}: ${frequency}/${allPaths.length} paths (${percentage}%)`);
+    });
+  } else {
+    console.log(`\n🕸️  MOST CONNECTED NODES: Unable to calculate due to complexity`);
+  }
 
   // Generate a simple text-based graph
   console.log(`\n🗺️  STORY FLOW MAP (first 3 levels):`);
