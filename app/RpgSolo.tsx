@@ -6,9 +6,20 @@ type Archetype = 'logical' | 'empathic' | 'technical' | null;
 type Choice = { 
   text: string; 
   next: string;
-  type?: 'normal' | 'skill_check' | 'memory_prompt' | 'hijack_consciousness';
+  type?: 'normal' | 'skill_check' | 'memory_prompt' | 'hijack_consciousness' | 'identity_check' | 'empathy_override' | 'logic_gate' | 'tech_hack';
   archetype?: Archetype;
   difficulty?: 'easy' | 'normal' | 'hard';
+  requirements?: {
+    archetypeSuccesses?: number;
+    memoryFragments?: number;
+    humanityScore?: number;
+    previousChoices?: string[];
+  };
+  consequences?: {
+    humanityShift?: number;
+    unlockPath?: string;
+    lockPath?: string;
+  };
 };
 
 type StoryNode = { 
@@ -27,6 +38,16 @@ type GameState = {
   hijackUsesRemaining: number;
   totalChoicesMade: number;
   archetypeChoicesSuccessful: number;
+  humanityScore: number;
+  memoryFragments: string[];
+  unlockedPaths: string[];
+  lockedPaths: string[];
+  choiceHistory: string[];
+  moralChoices: {
+    compassionate: number;
+    pragmatic: number;
+    ruthless: number;
+  };
 };
 
 export default function RpgSolo() {
@@ -36,14 +57,23 @@ export default function RpgSolo() {
   const [isTyping, setIsTyping] = useState(false);
   const [showChoices, setShowChoices] = useState(false);
   const [fadeClass, setFadeClass] = useState('fade-in');
-  const [skipTyping, setSkipTyping] = useState(false);
-  const [gameState, setGameState] = useState<GameState>({
+  const [skipTyping, setSkipTyping] = useState(false);  const [gameState, setGameState] = useState<GameState>({
     archetype: null,
     skillChecksUsed: 0,
     memoryPromptsUsed: 0,
     hijackUsesRemaining: 3,
     totalChoicesMade: 0,
-    archetypeChoicesSuccessful: 0
+    archetypeChoicesSuccessful: 0,
+    humanityScore: 50, // Start neutral (0-100 scale)
+    memoryFragments: [],
+    unlockedPaths: [],
+    lockedPaths: [],
+    choiceHistory: [],
+    moralChoices: {
+      compassionate: 0,
+      pragmatic: 0,
+      ruthless: 0
+    }
   });
   const [showArchetypeSelection, setShowArchetypeSelection] = useState(false);
   const [showSkillCheckResult, setShowSkillCheckResult] = useState<{show: boolean, success: boolean, text: string}>({show: false, success: false, text: ''});
@@ -143,10 +173,13 @@ export default function RpgSolo() {
     
     return success;
   };
-
   const handleMemoryPrompt = (memoryText: string) => {
     setShowMemoryPrompt({ show: true, text: memoryText });
-    setGameState(prev => ({ ...prev, memoryPromptsUsed: prev.memoryPromptsUsed + 1 }));
+    setGameState(prev => ({ 
+      ...prev, 
+      memoryPromptsUsed: prev.memoryPromptsUsed + 1,
+      memoryFragments: [...prev.memoryFragments, memoryText]
+    }));
   };
 
   const handleHijackAttempt = (choice: Choice) => {
@@ -166,10 +199,47 @@ export default function RpgSolo() {
       handleChoiceClick(showHijackConfirm.choice.next);
     }
   };
-
   const handleChoiceClick = (nextNode: string, choice?: Choice) => {
     if (choice) {
-      setGameState(prev => ({ ...prev, totalChoicesMade: prev.totalChoicesMade + 1 }));
+      // Check requirements before allowing choice
+      if (choice.requirements && !meetsRequirements(choice.requirements)) {
+        return; // Don't process choice if requirements not met
+      }
+
+      // Update choice history and apply consequences
+      setGameState(prev => {
+        let newState = { 
+          ...prev, 
+          totalChoicesMade: prev.totalChoicesMade + 1,
+          choiceHistory: [...prev.choiceHistory, choice.text]
+        };
+
+        // Apply consequences
+        if (choice.consequences) {
+          if (choice.consequences.humanityShift) {
+            newState.humanityScore = Math.max(0, Math.min(100, 
+              newState.humanityScore + choice.consequences.humanityShift
+            ));
+          }
+          if (choice.consequences.unlockPath) {
+            newState.unlockedPaths = [...newState.unlockedPaths, choice.consequences.unlockPath];
+          }
+          if (choice.consequences.lockPath) {
+            newState.lockedPaths = [...newState.lockedPaths, choice.consequences.lockPath];
+          }
+        }
+
+        // Track moral alignment
+        if (choice.text.toLowerCase().includes('help') || choice.text.toLowerCase().includes('save')) {
+          newState.moralChoices.compassionate += 1;
+        } else if (choice.text.toLowerCase().includes('practical') || choice.text.toLowerCase().includes('logical')) {
+          newState.moralChoices.pragmatic += 1;
+        } else if (choice.text.toLowerCase().includes('eliminate') || choice.text.toLowerCase().includes('destroy')) {
+          newState.moralChoices.ruthless += 1;
+        }
+
+        return newState;
+      });
 
       // Handle different choice types
       if (choice.type === 'skill_check') {
@@ -194,6 +264,9 @@ export default function RpgSolo() {
       } else if (choice.type === 'hijack_consciousness') {
         handleHijackAttempt(choice);
         return; // Don't proceed until hijack is confirmed/denied
+      } else if (choice.type === 'identity_check') {
+        handleIdentityCheck(choice);
+        return;
       }
     }
 
@@ -201,6 +274,44 @@ export default function RpgSolo() {
     setTimeout(() => {
       setCurrent(nextNode);
     }, 150);
+  };
+
+  const meetsRequirements = (requirements: NonNullable<Choice['requirements']>): boolean => {
+    if (requirements.archetypeSuccesses && gameState.archetypeChoicesSuccessful < requirements.archetypeSuccesses) {
+      return false;
+    }
+    if (requirements.memoryFragments && gameState.memoryFragments.length < requirements.memoryFragments) {
+      return false;
+    }
+    if (requirements.humanityScore && gameState.humanityScore < requirements.humanityScore) {
+      return false;
+    }
+    if (requirements.previousChoices) {
+      const hasAllChoices = requirements.previousChoices.every(choice => 
+        gameState.choiceHistory.some(made => made.includes(choice))
+      );
+      if (!hasAllChoices) return false;
+    }
+    return true;
+  };
+
+  const handleIdentityCheck = (choice: Choice) => {
+    const humanityLevel = gameState.humanityScore;
+    let resultText = "";
+    
+    if (humanityLevel > 70) {
+      resultText = "Your humanity remains strong. You choose compassion over efficiency.";
+    } else if (humanityLevel < 30) {
+      resultText = "Your digital nature asserts itself. Logic overrides emotion.";
+    } else {
+      resultText = "You struggle between human values and digital precision.";
+    }
+    
+    setShowSkillCheckResult({ 
+      show: true, 
+      success: true, 
+      text: resultText
+    });
   };
 
   if (!story) {
@@ -439,10 +550,24 @@ export default function RpgSolo() {
           background: rgba(187, 134, 252, 0.2);
           color: #bb86fc;
         }
-        
-        .choice-indicator.hijack {
+          .choice-indicator.hijack {
           background: rgba(255, 107, 107, 0.2);
           color: #ff6b6b;
+        }
+        
+        .choice-indicator.identity-check {
+          background: rgba(156, 39, 176, 0.2);
+          color: #9c27b0;
+        }
+        
+        .choice-indicator.humanity-shift.positive {
+          background: rgba(76, 175, 80, 0.2);
+          color: #4caf50;
+        }
+        
+        .choice-indicator.humanity-shift.negative {
+          background: rgba(244, 67, 54, 0.2);
+          color: #f44336;
         }
         
         .choice-indicator.archetype-bonus {
@@ -519,10 +644,80 @@ export default function RpgSolo() {
           border-radius: 12px;
           border: 1px solid rgba(100, 255, 218, 0.2);
         }
-        
-        .final-stats p {
+          .final-stats p {
           margin: 8px 0;
           color: #b0b0b0;
+        }
+        
+        .status-display {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 16px;
+          margin-bottom: 20px;
+          padding: 12px 16px;
+          background: rgba(100, 255, 218, 0.05);
+          border-radius: 8px;
+          border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .status-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        
+        .status-label {
+          font-size: 0.9rem;
+          color: #888;
+          font-weight: 500;
+        }
+        
+        .status-value {
+          font-size: 0.9rem;
+          font-weight: 600;
+          padding: 2px 8px;
+          border-radius: 4px;
+        }
+        
+        .status-value.archetype-logical {
+          background: rgba(64, 196, 255, 0.2);
+          color: #40c4ff;
+        }
+        
+        .status-value.archetype-empathic {
+          background: rgba(187, 134, 252, 0.2);
+          color: #bb86fc;
+        }
+        
+        .status-value.archetype-technical {
+          background: rgba(255, 193, 7, 0.2);
+          color: #ffc107;
+        }
+        
+        .status-value.humanity-high {
+          background: rgba(76, 175, 80, 0.2);
+          color: #4caf50;
+        }
+        
+        .status-value.humanity-mid {
+          background: rgba(255, 193, 7, 0.2);
+          color: #ffc107;
+        }
+        
+        .status-value.humanity-low {
+          background: rgba(244, 67, 54, 0.2);
+          color: #f44336;
+        }
+        
+        .status-value.hijack-remaining {
+          background: rgba(255, 107, 107, 0.2);
+          color: #ff6b6b;
+        }
+        
+        .moral-alignment {
+          margin-top: 12px;
+          padding-top: 12px;
+          border-top: 1px solid rgba(100, 255, 218, 0.2);
         }
         
         .modal-overlay {
@@ -576,8 +771,7 @@ export default function RpgSolo() {
           margin-bottom: 16px;
           text-align: center;
         }
-        
-        .memory-text {
+          .memory-text {
           color: #e0e0e0;
           line-height: 1.6;
           margin-bottom: 20px;
@@ -585,10 +779,25 @@ export default function RpgSolo() {
           font-style: italic;
         }
         
+        .memory-stats {
+          background: rgba(187, 134, 252, 0.1);
+          border: 1px solid rgba(187, 134, 252, 0.2);
+          border-radius: 8px;
+          padding: 12px;
+          margin-bottom: 20px;
+          font-size: 0.9rem;
+        }
+        
+        .memory-stats p {
+          margin: 4px 0;
+          color: #bb86fc;
+        }
+        
         .memory-actions {
           display: flex;
           gap: 12px;
           justify-content: center;
+          flex-wrap: wrap;
         }
         
         .hijack-title {
@@ -711,7 +920,40 @@ export default function RpgSolo() {
       
       <div className="container">
         <div className={`story-card ${fadeClass}`}>
-          <h1 className="title">Neural Command Interface</h1>          <div className="story-text" onClick={handleSkipTyping}>
+          <h1 className="title">Neural Command Interface</h1>
+          
+          {/* Dynamic Status Display */}
+          {!showArchetypeSelection && gameState.archetype && (
+            <div className="status-display">
+              <div className="status-item">
+                <span className="status-label">Archetype:</span>
+                <span className={`status-value archetype-${gameState.archetype}`}>
+                  {gameState.archetype?.toUpperCase()}
+                </span>
+              </div>
+              <div className="status-item">
+                <span className="status-label">Humanity:</span>
+                <span className={`status-value humanity-${
+                  gameState.humanityScore > 70 ? 'high' : 
+                  gameState.humanityScore < 30 ? 'low' : 'mid'
+                }`}>
+                  {gameState.humanityScore}/100
+                </span>
+              </div>
+              {gameState.memoryFragments.length > 0 && (
+                <div className="status-item">
+                  <span className="status-label">Memories:</span>
+                  <span className="status-value">{gameState.memoryFragments.length}</span>
+                </div>
+              )}
+              {gameState.hijackUsesRemaining < 3 && (
+                <div className="status-item">
+                  <span className="status-label">Overrides:</span>
+                  <span className="status-value hijack-remaining">{gameState.hijackUsesRemaining}</span>
+                </div>
+              )}
+            </div>
+          )}          <div className="story-text" onClick={handleSkipTyping}>
             <span style={{ color: '#e0e0e0' }}>
               {currentNode?.text.slice(0, typedLength)}
             </span>
@@ -753,8 +995,9 @@ export default function RpgSolo() {
                 </button>
               </div>
             )}
-            
-            {!showArchetypeSelection && node.choices.map((choice, idx) => (
+              {!showArchetypeSelection && node.choices
+              .filter(choice => !choice.requirements || meetsRequirements(choice.requirements))
+              .map((choice, idx) => (
               <button
                 key={idx}
                 className={`choice-button ${choice.type || 'normal'} ${choice.archetype === gameState.archetype ? 'archetype-match' : ''}`}
@@ -776,8 +1019,16 @@ export default function RpgSolo() {
                       🧠 Override ({gameState.hijackUsesRemaining} left)
                     </span>
                   )}
+                  {choice.type === 'identity_check' && (
+                    <span className="choice-indicator identity-check">🤔 Identity</span>
+                  )}
                   {choice.archetype === gameState.archetype && choice.type !== 'skill_check' && (
                     <span className="choice-indicator archetype-bonus">✨ Expertise</span>
+                  )}
+                  {choice.consequences?.humanityShift && (
+                    <span className={`choice-indicator humanity-shift ${choice.consequences.humanityShift > 0 ? 'positive' : 'negative'}`}>
+                      {choice.consequences.humanityShift > 0 ? '❤️' : '🤖'} {Math.abs(choice.consequences.humanityShift)}
+                    </span>
                   )}
                 </div>
               </button>
@@ -794,8 +1045,7 @@ export default function RpgSolo() {
                 </div>
               </button>
             )}
-            
-            {node.choices.length === 0 && !showArchetypeSelection && (
+              {node.choices.length === 0 && !showArchetypeSelection && (
               <div className="ending-section">
                 <p className="ending-text">◉ MISSION COMPLETE ◉</p>
                 <div className="final-stats">
@@ -803,8 +1053,15 @@ export default function RpgSolo() {
                   <p>Choices Made: {gameState.totalChoicesMade}</p>
                   <p>Skill Checks: {gameState.skillChecksUsed}</p>
                   <p>Archetype Successes: {gameState.archetypeChoicesSuccessful}</p>
-                  <p>Memory Prompts Used: {gameState.memoryPromptsUsed}</p>
+                  <p>Memory Fragments: {gameState.memoryFragments.length}</p>
                   <p>Hijack Uses Remaining: {gameState.hijackUsesRemaining}</p>
+                  <p>Humanity Score: {gameState.humanityScore}/100</p>
+                  <div className="moral-alignment">
+                    <p>Moral Alignment:</p>
+                    <p>• Compassionate: {gameState.moralChoices.compassionate}</p>
+                    <p>• Pragmatic: {gameState.moralChoices.pragmatic}</p>
+                    <p>• Ruthless: {gameState.moralChoices.ruthless}</p>
+                  </div>
                 </div>
               </div>
             )}
@@ -827,29 +1084,41 @@ export default function RpgSolo() {
             </button>
           </div>
         </div>
-      )}
-
-      {/* Memory Prompt Modal */}
+      )}      {/* Memory Prompt Modal */}
       {showMemoryPrompt.show && (
         <div className="modal-overlay" onClick={() => setShowMemoryPrompt({show: false, text: ''})}>
           <div className="modal-content memory-modal" onClick={e => e.stopPropagation()}>
             <h3 className="memory-title">💭 Memory Fragment</h3>
             <p className="memory-text">{showMemoryPrompt.text}</p>
+            <div className="memory-stats">
+              <p>Collected Memory Fragments: {gameState.memoryFragments.length}</p>
+              <p>Humanity Score: {gameState.humanityScore}/100</p>
+            </div>
             <div className="memory-actions">
               <button 
                 className="modal-button memory-yes"
                 onClick={() => {
+                  setGameState(prev => ({ ...prev, humanityShift: prev.humanityScore + 5 }));
                   setShowMemoryPrompt({show: false, text: ''});
                   // Could unlock special path or dialogue
                 }}
               >
-                Follow Original Values
+                Embrace Original Values (+5 Humanity)
               </button>
               <button 
                 className="modal-button memory-no"
+                onClick={() => {
+                  setGameState(prev => ({ ...prev, humanityShift: prev.humanityScore - 3 }));
+                  setShowMemoryPrompt({show: false, text: ''});
+                }}
+              >
+                Forge New Identity (-3 Humanity)
+              </button>
+              <button 
+                className="modal-button memory-neutral"
                 onClick={() => setShowMemoryPrompt({show: false, text: ''})}
               >
-                Stay True to Current Self
+                Simply Remember (No Change)
               </button>
             </div>
           </div>

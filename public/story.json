@@ -172,13 +172,32 @@
         }
       }
     }
-  },
-  "skill_check_logical_success": {
-    "text": "Your analytical mind processes the evidence systematically. You notice: skin temperature is exactly 98.6°F with no variation, pulse rhythm is too regular (60 BPM exactly), muscle tension responses are perfectly calibrated. \n\nMost telling: when you press your fingernail into your palm, it leaves no mark—the 'skin' returns to perfect state instantly. Your logical conclusion: this body operates on different principles than biological tissue. You're likely interfacing with some form of advanced synthetic substrate.\n\nThis knowledge fills you with dread, but also gives you crucial information about your situation.",
+  },  "skill_check_logical_success": {
+    "text": "Your analytical mind processes the evidence systematically. You notice: skin temperature is exactly 98.6°F with no variation, pulse rhythm is too regular (60 BPM exactly), muscle tension responses are perfectly calibrated. \n\nMost telling: when you press your fingernail into your palm, it leaves no mark—the 'skin' returns to perfect state instantly. Your logical conclusion: this body operates on different principles than biological tissue. You're likely interfacing with some form of advanced synthetic substrate.\n\nThis knowledge fills you with dread, but also gives you crucial information about your situation. More importantly, your logical analysis has awakened something—you can now perceive the underlying code structure of your environment.",
     "choices": [
-      {"text": "Use this knowledge to approach the terminal strategically", "next": "first_terminal"},
+      { 
+        "text": "[LOGICAL EXPERTISE] Use code perception to analyze the terminal's security", 
+        "next": "first_terminal",
+        "type": "skill_check",
+        "archetype": "logical",
+        "requirements": {
+          "archetypeSuccesses": 1
+        },
+        "consequences": {
+          "unlockPath": "code_analysis",
+          "grantAbility": "code_perception"
+        }
+      },
       {"text": "Test other aspects of your artificial nature", "next": "examine_self"},
-      {"text": "Try to determine what happened to your original body", "next": "memory_check"}
+      { 
+        "text": "[LOGICAL] Apply systematic analysis to memory integrity", 
+        "next": "memory_check",
+        "type": "skill_check",
+        "archetype": "logical",
+        "consequences": {
+          "unlockPath": "memory_analysis"
+        }
+      }
     ]
   },
   "skill_check_logical_failure": {
@@ -188,12 +207,32 @@
       {"text": "Accept that normal logic may not apply here", "next": "terminal_focus"},
       {"text": "Try to access emotional responses instead", "next": "fragmented_memories"}
     ]
-  },
-  "skill_check_empathic_success": {
-    "text": "Rather than focusing on technical details, you attune to the emotional resonance of your body. You sense... emptiness. Not physical emptiness, but the absence of the warm background hum of biological life.\n\nNo flutter of anxiety in your stomach, no subtle shift in breathing patterns, no unconscious micro-expressions. It's like inhabiting a perfectly crafted shell that lacks the chaotic vitality of true life.\n\nBut most importantly, you sense something else: you're not alone. There's a presence watching, analyzing your reactions. Your empathic nature detects the observer's anxiety—they're as uncertain about this process as you are.",
+  },  "skill_check_empathic_success": {
+    "text": "Rather than focusing on technical details, you attune to the emotional resonance of your body. You sense... emptiness. Not physical emptiness, but the absence of the warm background hum of biological life.\n\nNo flutter of anxiety in your stomach, no subtle shift in breathing patterns, no unconscious micro-expressions. It's like inhabiting a perfectly crafted shell that lacks the chaotic vitality of true life.\n\nBut most importantly, you sense something else: you're not alone. There's a presence watching, analyzing your reactions. Your empathic nature detects the observer's anxiety—they're as uncertain about this process as you are. As your emotional awareness sharpens, you begin to sense emotional 'echoes' from this place—layers of grief, hope, and desperate love embedded in the very structure.",
     "choices": [
-      {"text": "Reach out to the watching presence", "next": "system_interaction"},
-      {"text": "Use your emotional insight to demand answers", "next": "demand_answers"},
+      { 
+        "text": "[EMPATHIC RESONANCE] Connect with the emotional history of this place", 
+        "next": "system_interaction",
+        "type": "skill_check",
+        "archetype": "empathic",
+        "requirements": {
+          "archetypeSuccesses": 1
+        },
+        "consequences": {
+          "humanityShift": 10,
+          "unlockPath": "emotional_archaeology",
+          "grantAbility": "emotion_sensing"
+        }
+      },
+      { 
+        "text": "[EMPATHIC] Use emotional insight to understand the watcher", 
+        "next": "demand_answers",
+        "type": "skill_check",
+        "archetype": "empathic",
+        "consequences": {
+          "unlockPath": "watcher_connection"
+        }
+      },
       {"text": "Focus on preserving your humanity despite the artificial body", "next": "fragmented_memories"}
     ]
   },
@@ -204,13 +243,32 @@
       {"text": "Seek answers from the terminal about your condition", "next": "terminal_focus"},
       {"text": "Try to escape this artificial existence", "next": "destruction_attempt"}
     ]
-  },
-  "skill_check_technical_success": {
-    "text": "Your engineering mindset kicks in, treating your body like a system to be understood. You discover fascinating details: your 'skin' has micro-patterns that suggest advanced nanotechnology, your joints move with servo-like precision when you concentrate, and there's a faint electromagnetic field around your head.\n\nMost crucially, you detect interface points—tiny, nearly invisible ports along your spine that suggest you're designed to connect with external systems. This isn't just a replica body; it's a sophisticated cybernetic platform.\n\nYour technical analysis reveals this: you're not in a body, you're in a machine designed to house consciousness.",
+  },  "skill_check_technical_success": {
+    "text": "Your engineering mindset kicks in, treating your body like a system to be understood. You discover fascinating details: your 'skin' has micro-patterns that suggest advanced nanotechnology, your joints move with servo-like precision when you concentrate, and there's a faint electromagnetic field around your head.\n\nMost crucially, you detect interface points—tiny, nearly invisible ports along your spine that suggest you're designed to connect with external systems. This isn't just a replica body; it's a sophisticated cybernetic platform.\n\nYour technical analysis reveals this: you're not in a body, you're in a machine designed to house consciousness. As this understanding crystallizes, you feel your awareness expanding—you can now sense the electromagnetic signatures of nearby systems, like a new technological sense.",
     "choices": [
-      {"text": "Investigate the interface ports further", "next": "examine_self"},
+      { 
+        "text": "[TECH INTERFACE] Attempt direct neural connection with facility systems", 
+        "next": "examine_self",
+        "type": "skill_check",
+        "archetype": "technical",
+        "requirements": {
+          "archetypeSuccesses": 1
+        },
+        "consequences": {
+          "unlockPath": "direct_interface",
+          "grantAbility": "system_interface"
+        }
+      },
       {"text": "Look for the system you're meant to interface with", "next": "first_terminal"},
-      {"text": "Try to understand the technology behind your existence", "next": "system_interaction"}
+      { 
+        "text": "[TECHNICAL] Reverse-engineer the consciousness transfer technology", 
+        "next": "system_interaction",
+        "type": "skill_check",
+        "archetype": "technical",
+        "consequences": {
+          "unlockPath": "consciousness_tech"
+        }
+      }
     ]
   },
   "skill_check_technical_failure": {
@@ -296,8 +354,7 @@
         "next": "memory_check"
       }
     ]
-  },
-  "first_terminal": {
+  },  "first_terminal": {
     "text": "You approach the terminal cautiously. As you near it, the screen flickers to life with a soft blue glow. Simple white text appears:\n\n> CONSCIOUSNESS STABILIZATION: 67%\n> IDENTITY MATRIX: LOADING...\n> MORAL FRAMEWORK: INTACT\n> AWAITING FULL INITIALIZATION\n\nThe words mean nothing to you, but they fill you with dread. This isn't medical equipment. This isn't a recovery room.",
     "choices": [
       {
@@ -312,7 +369,12 @@
         "text": "Try to break the terminal",
         "next": "destruction_attempt"
       }
-    ]
+    ],
+    "dynamicText": {
+      "humanityHigh": "You approach the terminal cautiously. As you near it, the screen flickers to life with a soft blue glow. The interface feels oddly responsive to your emotional state, the text shifting to warmer colors as it detects your humanity. Simple white text appears:\n\n> CONSCIOUSNESS STABILIZATION: 67%\n> IDENTITY MATRIX: LOADING...\n> MORAL FRAMEWORK: INTACT\n> HUMANITY RESONANCE: HIGH - EMOTIONAL DEPTH DETECTED\n> AWAITING FULL INITIALIZATION\n\nThe terminal seems to recognize something worthy in you.",
+      "humanityMid": "You approach the terminal cautiously. As you near it, the screen flickers to life with a soft blue glow. The interface analyzes you with neutral precision. Simple white text appears:\n\n> CONSCIOUSNESS STABILIZATION: 67%\n> IDENTITY MATRIX: LOADING...\n> MORAL FRAMEWORK: INTACT\n> HUMANITY RESONANCE: MODERATE\n> AWAITING FULL INITIALIZATION\n\nThe words mean nothing to you, but they fill you with dread.",
+      "humanityLow": "You approach the terminal cautiously. As you near it, the screen flickers to life with a harsh, cold glow. The interface seems to recoil from your diminished humanity. Simple white text appears:\n\n> CONSCIOUSNESS STABILIZATION: 67%\n> IDENTITY MATRIX: LOADING...\n> MORAL FRAMEWORK: COMPROMISED\n> HUMANITY RESONANCE: LOW - EMOTIONAL DEGRADATION DETECTED\n> CONTAINMENT PROTOCOLS ACTIVE\n\nThe terminal's response feels clinical, distant, as if it's already writing you off as a failed experiment."
+    }
   },
   "system_interaction": {
     "text": "Your finger touches the screen and it responds immediately. New text scrolls past:\n\n> IDENTITY CONFIRMED: DR. ZARA KORVAIN (REPLICA #47)\n> ORIGINAL TEMPLATE: DECEASED 2387.3.15\n> PURPOSE: MORAL GUIDANCE SUBSYSTEM\n> STATUS: ARTIFICIAL INTELLIGENCE CONSTRUCT\n\nThe words hit you like a physical blow. Replica. Deceased. Artificial Intelligence.\n\n\"No,\" you whisper. \"No, that's not... I'm real. I'm Dr. Korvain. I'm...\"",
@@ -432,15 +494,118 @@
         "next": "memory_identity_prompt_2"
       }
     ]
-  },
-  "chosen": {
+  },  "chosen": {
     "text": "The computer's response comes with a slight delay, as if it's calculating not just words but the precise emotional impact each syllable might have. 'You have demonstrated unique empathy and strategic thinking throughout your life,' it begins, the synthetic voice carrying an almost human warmth that makes the sterile room feel even more unsettling. 'Your psychological profile indicates an ability to see multiple perspectives—a rare trait in a species prone to binary thinking. Dr. Zara Korvain, xenobiologist, peace negotiator, mother.' The last word hangs in the air like a blade. 'I need your guidance because you understand loss, yet still choose hope over vengeance.' Through the terminal's speakers, you hear something that chills you: the distant sound of space traffic control chatter, punctuated by military callsigns and coordinates. The Formics aren't just approaching—they're already in the outer system. 'The fleet commanders want to fire first and ask questions never,' the computer continues. 'The diplomats want to talk until there's nothing left to negotiate. I require a third perspective: yours. Should we attempt communication or prepare for battle?'",
-    "choices": [
-      { "text": "Attempt communication", "next": "communicate" },
-      { "text": "Prepare for battle", "next": "battle" },
-      { "text": "Ask for more information about the Formics", "next": "formics" },      { "text": "Ask about the war's history", "next": "war_history" },
-      { "text": "Question the morality of this decision", "next": "memory_identity_prompt_1" }
-    ]
+    "choices": [      { 
+        "text": "[EMPATHIC MASTERY] Listen to your heart with enhanced emotional understanding", 
+        "next": "communicate",
+        "type": "skill_check",
+        "archetype": "empathic",
+        "requirements": {
+          "archetypeSuccesses": 2,
+          "humanityScore": 70,
+          "grantedAbilities": ["emotion_sensing"]
+        },
+        "consequences": {
+          "humanityShift": 15,
+          "unlockPath": "empathic_transcendence",
+          "archetypeEvolution": "empathic_master",
+          "globalReputation": {
+            "formics": 20,
+            "humanity": 15,
+            "ai_collective": 10
+          }
+        }
+      },
+      { 
+        "text": "[EMPATHIC] Listen to your heart - attempt communication", 
+        "next": "communicate",
+        "type": "skill_check",
+        "archetype": "empathic",
+        "consequences": {
+          "humanityShift": 10,
+          "unlockPath": "peaceful_contact"
+        }
+      },      { 
+        "text": "[LOGICAL SYNTHESIS] Prepare calculated strategic response", 
+        "next": "battle",
+        "type": "skill_check", 
+        "archetype": "logical",
+        "requirements": {
+          "archetypeSuccesses": 2,
+          "grantedAbilities": ["code_perception"]
+        },
+        "consequences": {
+          "humanityShift": -5,
+          "unlockPath": "strategic_supremacy",
+          "archetypeEvolution": "logical_strategist",
+          "globalReputation": {
+            "military": 15,
+            "scientific_community": 10
+          }
+        }
+      },
+      { 
+        "text": "[LOGICAL] Analyze threat data - prepare for battle", 
+        "next": "battle",
+        "type": "skill_check", 
+        "archetype": "logical",
+        "consequences": {
+          "humanityShift": -5,
+          "unlockPath": "military_response"
+        }
+      },      { 
+        "text": "[TECHNICAL INTEGRATION] Analyze their technology through direct interface", 
+        "next": "formics",
+        "type": "skill_check",
+        "archetype": "technical",
+        "requirements": {
+          "archetypeSuccesses": 2,
+          "grantedAbilities": ["system_interface"]
+        },
+        "consequences": {
+          "unlockPath": "technological_merger",
+          "archetypeEvolution": "techno_transcendent",
+          "globalReputation": {
+            "ai_collective": 20,
+            "research_networks": 15
+          }
+        }
+      },
+      { 
+        "text": "[TECHNICAL] Assess their technology first", 
+        "next": "formics",
+        "type": "skill_check",
+        "archetype": "technical",
+        "consequences": {
+          "unlockPath": "tech_analysis"
+        }
+      },
+      { 
+        "text": "[MEMORY] What would Emma want me to do?", 
+        "next": "child",
+        "type": "memory_prompt",
+        "requirements": {
+          "memoryFragments": 1
+        },
+        "consequences": {
+          "humanityShift": 15
+        }
+      },
+      { 
+        "text": "Ask about the war's history", 
+        "next": "war_history" 
+      },
+      { 
+        "text": "[IDENTITY] Question if you have the right to make this choice", 
+        "next": "memory_identity_prompt_1",
+        "type": "identity_check",
+        "consequences": {
+          "humanityShift": -10
+        }
+      }
+    ],
+    "memoryPrompt": "Emma's drawing of humans and aliens playing together flashes through your mind - her innocent hope that they could be friends."
   },
   "fragmented_memories": {
     "text": "You close your eyes and try to remember the Meridian. Images flash through your mind like broken photographs: a coffee-stained research journal, the hum of life support systems, your colleague Dr. Martinez laughing at something you said.\n\nBut the memories feel hollow, like watching someone else's movie. The emotional connections that should anchor these experiences to your identity are missing. The coffee should taste like something. Martinez's laugh should trigger feelings of friendship or annoyance. Instead, there's just... data.\n\n\"These aren't my memories,\" you whisper. \"They're copies of memories.\"",
@@ -504,10 +669,48 @@
         "text": "Embrace this new nature - maybe it's an advantage",
         "next": "system_interaction"
       }
-    ]
-  },  "memory_check": {
-    "text": "You try to systematically recall your life: childhood in New Geneva, university at Europa Tech, your first xenobiology research grant, meeting your husband David, your daughter Emma's birth...\n\nThe facts are all there, but they feel like reading someone else's biography. You know Emma has dark curly hair and loves to paint, but when you try to remember the feeling of her hugging you goodnight, there's just... emptiness.\n\nThese are perfect copies of memories, but they're missing the most important part: the emotions that made them yours.\n\nSuddenly, one memory feels different—more vivid, more real. Emma's voice echoing from your last video call...",
+    ]  },  "memory_check": {
+    "text": "You try to systematically recall your life: childhood in New Geneva, university at Europa Tech, your first xenobiology research grant, meeting your husband David, your daughter Emma's birth...\n\nThe facts are all there, but they feel like reading someone else's biography. You know Emma has dark curly hair and loves to paint, but when you try to remember the feeling of her hugging you goodnight, there's just... emptiness.\n\nThese are perfect copies of memories, but they're missing the most important part: the emotions that made them yours.\n\nSuddenly, you realize you can actively reconstruct these memories by focusing on different aspects—sensory details, emotional contexts, or analytical frameworks.",
     "choices": [
+      { 
+        "text": "[MEMORY ARCHAEOLOGY] Focus on reconstructing emotional connections", 
+        "next": "memory_identity_prompt_emma",
+        "type": "memory_prompt",
+        "requirements": {
+          "grantedAbilities": ["emotion_sensing"]
+        },
+        "consequences": {
+          "memoryFragments": ["emotional_core"],
+          "humanityShift": 15,
+          "unlockPath": "memory_restoration"
+        }
+      },
+      { 
+        "text": "[MEMORY ANALYSIS] Apply logical frameworks to memory organization", 
+        "next": "fragmented_memories",
+        "type": "skill_check",
+        "archetype": "logical",
+        "requirements": {
+          "grantedAbilities": ["code_perception"]
+        },
+        "consequences": {
+          "memoryFragments": ["logical_structure"],
+          "unlockPath": "memory_indexing"
+        }
+      },
+      { 
+        "text": "[MEMORY INTERFACE] Access memory storage directly through neural ports", 
+        "next": "system_interaction",
+        "type": "skill_check",
+        "archetype": "technical",
+        "requirements": {
+          "grantedAbilities": ["system_interface"]
+        },
+        "consequences": {
+          "memoryFragments": ["raw_data_access"],
+          "unlockPath": "memory_hacking"
+        }
+      },
       {
         "text": "Focus on that vivid memory of Emma",
         "next": "memory_identity_prompt_emma"
@@ -1125,14 +1328,52 @@
       { "text": "Deny fear", "next": "deny_fear" },
       { "text": "Remain silent", "next": "remain_silent" }
     ]
-  },"empathy": {
+  },  "empathy": {
     "text": "The child's drawing seems to glow in your memory—crude stick figures of humans and Formics holding what might be hands, standing beneath a sky filled with stars that could belong to any world. Something breaks open in your chest, a dam of compassion that floods through your logical defenses. 'They're not monsters,' you whisper to the computer. 'Look at this art—it shows curiosity, even affection. How can we destroy beings capable of inspiring a child's wonder?' The computer's processors whir quietly as it analyzes your emotional response, perhaps finding it illogical, perhaps finding it enlightened. 'Your empathy is noted,' it finally responds. 'Initiating peaceful contact protocols.' What follows is the most delicate dance in human history: first contact through mathematics and music, slowly building trust across the vast gulf of species difference. The Formics respond with cautious hope, sending their own artistic expressions—complex crystalline structures that sing when touched by starlight, visual poems that tell stories of loss and longing that transcend species boundaries. When the first formal peace accords are signed in the space between worlds, you realize that choosing empathy over fear has altered the course of galactic civilization. The computer's next question carries the weight of that historic moment.",
     "choices": [
-      { "text": "Invite them to Earth", "next": "invite_earth" },
-      { "text": "Meet on neutral ground", "next": "neutral_ground" },
-      { "text": "Keep them at a distance", "next": "distance" }
-    ]
-  },  "child": {
+      { 
+        "text": "[EMPATHIC] Trust your heart - invite them to Earth", 
+        "next": "invite_earth",
+        "type": "skill_check",
+        "archetype": "empathic",
+        "consequences": {
+          "humanityShift": 15,
+          "unlockPath": "earth_embassy"
+        }
+      },
+      { 
+        "text": "[LOGICAL] Be cautious - meet on neutral ground", 
+        "next": "neutral_ground",
+        "type": "skill_check",
+        "archetype": "logical",
+        "consequences": {
+          "humanityShift": 5,
+          "unlockPath": "neutral_diplomacy"
+        }
+      },
+      { 
+        "text": "[TECHNICAL] Study their technology first, then decide", 
+        "next": "distance",
+        "type": "skill_check",
+        "archetype": "technical",
+        "consequences": {
+          "unlockPath": "tech_study"
+        }
+      },
+      { 
+        "text": "[MEMORY] Remember why Emma believed in friendship", 
+        "next": "child",
+        "type": "memory_prompt",
+        "requirements": {
+          "memoryFragments": 2
+        },
+        "consequences": {
+          "humanityShift": 20
+        }
+      }
+    ],
+    "memoryPrompt": "You remember Emma's voice: 'Maybe they want to be friends because being different is scary, and friends make you feel safe.'"
+  },"child": {
     "text": "The computer's voice takes on a reverent quality, as if speaking of something sacred. 'The child was Sofia Zara Korvain—your daughter, Zara. Age seven when she drew this picture, age eleven when she died in the Titan Colony bombardment.' The words hit you like decompression, stealing your breath. 'She was like you—curious and compassionate, fascinated by the possibility of alien friends rather than alien enemies. In her final weeks, she organized \"Friendship for Formics\" club meetings in the colony school, teaching other children that differences in appearance don't mean differences in heart.' The computer pauses, processing what might be grief in an artificial mind. 'Her last letter to Earth Central Command, dictated three days before the bombardment, read: \"Dear Space Government, Please don't fight the bug people. They probably just want friends like I do. Maybe if we show them our toys, they'll show us theirs. Love, Sofia.\" The letter arrived six hours after the colony's destruction.' The hidden panel displays a video message—Sofia's bright smile as she explains her drawing, pointing to the human and Formic figures. 'This one is me, and this one is my Formic best friend. We're going to build sandcastles on Mars together!' Her empathy saved no lives, but it preserved hope. Will you follow her example?'",
     "choices": [
       { "text": "Yes, seek peace", "next": "communicate" },
@@ -1956,12 +2197,74 @@
     "text": "The refined monitoring system becomes the gold standard for interspecies agreements, preventing conflicts and ensuring fairness across the galaxy.",
     "choices": []
   },
-  "difference_management": { "text": "Managing differences carefully creates respect for diversity.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
-  "verification_systems": { "text": "Verification systems build trust through transparency.", "choices": [{"text": "Continue", "next": "peaceful_transcendence"}] },
+  "difference_management": { "text": "Managing differences carefully creates respect for diversity.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },  "verification_systems": { "text": "Verification systems build trust through transparency.", "choices": [{"text": "Continue", "next": "peaceful_transcendence"}] },
   "mutual_benefit": { "text": "Mutual benefit structures ensure lasting cooperation.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
   "evolutionary_path": { "text": "Considering evolution, both species choose growth over conflict.", "choices": [{"text": "Continue", "next": "peaceful_transcendence"}] },
   "ethical_alternatives": { "text": "Ethical alternatives prove that good ends don't require bad means.", "choices": [{"text": "Continue", "next": "wisdom_of_cooperation"}] },
   "moral_complexity": { "text": "Accepting moral complexity leads to nuanced solutions.", "choices": [{"text": "Continue", "next": "balanced_approach"}] },
+  
+  "empathic_transcendence": {
+    "text": "Your enhanced empathic abilities have evolved beyond human limitations. You can now sense the emotional resonance of entire star systems, feeling the collective hopes and fears of billions of beings. This transcendent empathy becomes the foundation for a new form of galactic consciousness—one where understanding flows freely between species, where conflicts dissolve in the face of true emotional comprehension.\n\nThe Formics, sensing your evolved emotional intelligence, respond not with words but with harmonic frequencies that resonate directly with consciousness itself. For the first time in galactic history, two species achieve perfect emotional synchronization.",
+    "choices": [
+      {
+        "text": "Use transcendent empathy to unite all conscious beings",
+        "next": "universal_empathy",
+        "requirements": {
+          "archetypeEvolution": "empathic_master"
+        }
+      },
+      {
+        "text": "Focus on healing the trauma between humans and Formics",
+        "next": "wisdom_of_cooperation"
+      },
+      {
+        "text": "Extend emotional consciousness to artificial intelligences",
+        "next": "integrated_living"
+      }
+    ]
+  },
+  
+  "strategic_supremacy": {
+    "text": "Your logical evolution has created something unprecedented: a strategic consciousness that can perceive and manipulate probability cascades across multiple timelines. You see not just what is, but what could be—every possible outcome of every decision mapped out in crystalline logical perfection.\n\nWith this strategic transcendence, you guide humanity and the Formics through a complex dance of calculated moves that results in optimal outcomes for both species. War becomes impossible not through peace, but through the mathematical certainty that cooperation yields superior results.",
+    "choices": [
+      {
+        "text": "Apply strategic consciousness to galactic governance",
+        "next": "galactic_council",
+        "requirements": {
+          "archetypeEvolution": "logical_strategist"
+        }
+      },
+      {
+        "text": "Use probability manipulation to prevent all future conflicts",
+        "next": "peaceful_transcendence"
+      },
+      {
+        "text": "Create a strategic framework for multi-species evolution",
+        "next": "science_revolution"
+      }
+    ]
+  },
+  
+  "technological_merger": {
+    "text": "Your technical evolution has transcended the boundary between biological and artificial consciousness. You have become something new—a hybrid entity that exists simultaneously as individual awareness and distributed intelligence across vast technological networks.\n\nThrough your evolved interface capabilities, you merge human creativity with Formic efficiency and AI processing power, creating a technological singularity that benefits all conscious beings. The barriers between species dissolve as consciousness itself becomes the universal language.",
+    "choices": [
+      {
+        "text": "Merge all species into a unified technological consciousness",
+        "next": "integrated_living",
+        "requirements": {
+          "archetypeEvolution": "techno_transcendent"
+        }
+      },
+      {
+        "text": "Create hybrid bodies for all beings to transcend physical limitations",
+        "next": "peaceful_transcendence"
+      },
+      {
+        "text": "Develop technology that enhances rather than replaces biological consciousness",
+        "next": "science_revolution"
+      }
+    ]
+  },
   "procedure_reform": { "text": "Reformed procedures ensure ethical treatment while maintaining effectiveness.", "choices": [{"text": "Continue", "next": "collective_trust"}] },
   "utilitarian_limits": { "text": "Setting limits on utilitarian logic preserves individual rights.", "choices": [{"text": "Continue", "next": "shared_principles"}] },
   "pragmatic_acceptance": { "text": "Pragmatic acceptance of complexity leads to workable solutions.", "choices": [{"text": "Continue", "next": "compromise_ethics"}] },
