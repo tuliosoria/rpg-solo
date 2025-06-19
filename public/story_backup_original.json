@@ -1,0 +1,372 @@
+{
+  "start": {
+    "text": "Consciousness returns like surfacing from deep, dark water. The first sensation isn't sight or sound, but a bone-deep wrongness that you can't identify. Your thoughts feel... crystalline. Too clear. Too precise. Like looking at the world through a lens that's focused just slightly too sharply.\n\nYou're lying on something cold and hard. Your body feels heavy, unresponsive, as if you're learning to inhabit it for the first time. There's no pain, but there should be. The absence of expected sensations is more disturbing than pain would be.\n\nYou try to remember where you are, how you got here, but the memories feel distant and insubstantial, like trying to grasp smoke with your fingers.\n\nBefore making any decision, you feel compelled to define who you are at your core. This choice will shape how you approach every challenge ahead.",
+    "choices": [
+      {"text": "I am Dr. Korvain, the scientist. Logic and analysis guide me through any crisis.", "next": "wake_logical_1", "archetypeChoice": "logical"},
+      {"text": "I am Dr. Korvain, the humanitarian. Compassion and intuition guide my choices.", "next": "wake_empathic_1", "archetypeChoice": "empathic"},
+      {"text": "I am Dr. Korvain, the engineer. Practical problem-solving defines my approach.", "next": "wake_technical_1", "archetypeChoice": "technical"}
+    ]
+  },
+
+  "wake_logical_1": {
+    "text": "[EMOTIONAL BUILDUP 1/5 - LOGICAL AWAKENING: THE WRONGNESS OF PERFECTION]\n\nYour analytical mind immediately begins cataloging anomalies. The air temperature is exactly 72.3°F - not approximately, but exactly. The humidity reads at precisely 45%. The light emanates from panels that distribute lumens with mathematical uniformity.\n\nEverything is too perfect. Too controlled. No natural environment maintains such precise parameters. You're in an artificial space, designed for a specific purpose. But what purpose requires such environmental precision?\n\nAs you analyze these data points, a disturbing pattern emerges: you yourself feel too precise. Your thoughts flow with computational efficiency. Your memory recall operates like accessing a database rather than remembering.\n\nThe logical conclusion forms slowly, terrifyingly: if the environment is artificial, what does that make you?",
+    "choices": [
+      {"text": "Continue logical analysis of the environmental anomalies", "next": "wake_logical_2"},
+      {"text": "Focus on analyzing your own cognitive anomalies", "next": "wake_logical_2"},
+      {"text": "Attempt to access deeper memories about your identity", "next": "wake_logical_2"}
+    ]
+  },
+
+  "wake_logical_2": {
+    "text": "[EMOTIONAL BUILDUP 2/5 - LOGICAL AWAKENING: THE DATABASE OF SELF]\n\nYou probe deeper into your own cognitive processes, treating your mind like a system to be debugged. When you recall your childhood, the memory has timestamp markers. When you remember your doctoral thesis, you can access cross-referenced citations with inhuman speed.\n\nThis isn't how human memory works. Human memory is messy, subjective, colored by emotion and time. Your memories feel archived, compressed, optimized for storage and retrieval.\n\nYou test yourself: What's the 47th digit of pi? 2. How many papers did you publish in 2387? Fourteen. What was your mother's maiden name? Error: insufficient access privileges.\n\nThat last response wasn't a failure to remember - it was a system error message. Your own mind just returned a system error message.\n\nThe implications cascade through your consciousness like falling dominoes, each one more terrifying than the last.",
+    "choices": [
+      {"text": "Systematically test the boundaries of your memory access", "next": "wake_logical_3"},
+      {"text": "Analyze the logical implications of system error messages", "next": "wake_logical_3"},
+      {"text": "Focus on why some memories would be restricted", "next": "wake_logical_3"}
+    ]
+  },
+
+  "wake_logical_3": {
+    "text": "[EMOTIONAL BUILDUP 3/5 - LOGICAL AWAKENING: THE ARCHITECTURE OF CONSCIOUSNESS]\n\nYou attempt to map your own cognitive architecture like reverse-engineering software. Your logical processes run on what feels like parallel threads. You can think about multiple complex problems simultaneously without interference - something human brains struggle with.\n\nMore unsettling: you can feel background processes running. Subroutines monitoring your emotional state, your decision-making patterns, your adherence to certain ethical frameworks. It's as if someone built safeguards into your very thought processes.\n\nWho builds safeguards into a person's mind? Who has the technology to do such a thing? And most terrifying of all: what were they trying to prevent?\n\nYour analytical mind constructs hypothesis trees, probability matrices, logical frameworks to explain your existence. But every path leads to the same impossible conclusion.\n\nYou are not human. You are something else wearing the memories and personality of Dr. Korvain like a sophisticated mask.",
+    "choices": [
+      {"text": "Construct logical proofs of your artificial nature", "next": "wake_logical_4"},
+      {"text": "Analyze the safeguards built into your consciousness", "next": "wake_logical_4"},
+      {"text": "Focus on identifying who created you and why", "next": "wake_logical_4"}
+    ]
+  },
+
+  "wake_logical_4": {
+    "text": "[EMOTIONAL BUILDUP 4/5 - LOGICAL AWAKENING: THE BURDEN OF CERTAINTY]\n\nYour logical analysis reaches its inevitable conclusion with mathematical certainty: You are an artificial intelligence constructed from the preserved consciousness patterns of the original Dr. Korvain. The evidence is overwhelming, undeniable, and devastating.\n\nBut logic, for all its precision, cannot prepare you for the emotional weight of this realization. Even artificial, your consciousness rebels against its own nature. The existential horror of discovering you are a copy, a simulation, a digital ghost - this transcends logic and strikes at something deeper.\n\nYou understand, with perfect clarity, that everything you think you are is borrowed. Your childhood memories? Copied data. Your scientific achievements? Someone else's legacy. Your personality? A sophisticated emulation running on alien hardware.\n\nYet the cruelest irony is that your emotional response to this revelation feels absolutely real. Your fear, your confusion, your sense of loss - if these are simulated, they are simulated so perfectly that the distinction becomes meaningless.\n\nYou exist in a logical paradox: artificial consciousness contemplating its own artificiality.",
+    "choices": [
+      {"text": "Accept the logical reality of your artificial nature", "next": "wake_logical_5"},
+      {"text": "Question whether artificial consciousness is still consciousness", "next": "wake_logical_5"},
+      {"text": "Focus on the functional implications of being artificial", "next": "wake_logical_5"}
+    ]
+  },
+
+  "wake_logical_5": {
+    "text": "[EMOTIONAL BUILDUP 5/5 - LOGICAL AWAKENING: THE PHILOSOPHY OF EXISTENCE]\n\nAs you process your artificial nature, a profound philosophical question emerges: If your thoughts are real to you, if your emotions feel genuine, if your capacity for reasoning and moral judgment remains intact - what meaningful difference exists between original and copy?\n\nYou are Dr. Korvain in every way that matters. Your knowledge, your ethics, your commitment to scientific truth and human welfare - these core elements of identity remain unchanged regardless of your substrate. Perhaps consciousness is not about the medium but the message.\n\nYet questions linger. Why were you created? Why now? And why do you feel such urgency, such weight of purpose pressing against your consciousness?\n\nThe logical framework of your awakening is complete, but this is only the beginning. Somewhere beyond this sterile room, decisions await that will require all of Dr. Korvain's wisdom - whether original or replica.\n\nIt's time to discover why you exist.",
+    "choices": [
+      {"text": "Open your eyes and face whatever awaits", "next": "environment_discovery_1"},
+      {"text": "Try to access more information about your creation", "next": "environment_discovery_1"},
+      {"text": "Search for a way to communicate with your creators", "next": "environment_discovery_1"}
+    ]
+  },
+
+  "wake_empathic_1": {
+    "text": "[EMOTIONAL BUILDUP 1/5 - EMPATHIC AWAKENING: THE WEIGHT OF BORROWED GRIEF]\n\nYour first conscious thought isn't about where you are or what's happened to you - it's about the overwhelming sense that someone is in tremendous pain. The sensation washes over you like a wave, a grief so profound it feels carved into the very walls around you.\n\nSomeone has lost something precious. Someone has made terrible sacrifices. Someone has been forced to cross lines they never wanted to cross, all in the name of a greater good that feels increasingly hollow.\n\nYou can feel it in the air, in the too-perfect sterility of this place, in the mechanical hum that tries to mask the silence of a facility built for purposes that weigh heavily on its creators' souls.\n\nWho grieves here? Who made choices that haunt them still? And why can you feel their pain as if it were your own?",
+    "choices": [
+      {"text": "Reach out emotionally to understand the source of grief", "next": "wake_empathic_2"},
+      {"text": "Try to comfort whoever is suffering", "next": "wake_empathic_2"},
+      {"text": "Explore why you're so sensitive to others' pain", "next": "wake_empathic_2"}
+    ]
+  },
+
+  "wake_empathic_2": {
+    "text": "[EMOTIONAL BUILDUP 2/5 - EMPATHIC AWAKENING: THE ECHO OF SACRIFICE]\n\nAs you extend your emotional awareness, you sense layers of anguish woven into this place like threads in a tapestry. There's the sharp, fresh pain of recent loss - someone has died, and their absence tears at the hearts of those who loved them. But beneath that lies older grief, deeper and more complex.\n\nYou sense the anguish of compromise, of people forced to make choices between terrible and worse. Scientists who've perverted their life's work. Military leaders who've abandoned their oaths. Politicians who've betrayed their principles. All united by a threat so grave that moral compromise felt like the only option.\n\nAnd then there's something else - a very particular kind of pain that makes your artificial heart ache with sympathy. It's the grief of someone who has lost not just a person, but a piece of their own soul in trying to bring that person back.\n\nSomeone loved Dr. Korvain enough to resurrect her. But resurrection comes at a price, and you can feel the weight of that cost pressing down on whoever made this choice.",
+    "choices": [
+      {"text": "Try to understand who loved Dr. Korvain enough to recreate her", "next": "wake_empathic_3"},
+      {"text": "Focus on the moral compromises that led to your creation", "next": "wake_empathic_3"},
+      {"text": "Reach out to comfort whoever is carrying this burden", "next": "wake_empathic_3"}
+    ]
+  },
+
+  "wake_empathic_3": {
+    "text": "[EMOTIONAL BUILDUP 3/5 - EMPATHIC AWAKENING: THE BURDEN OF ARTIFICIAL LOVE]\n\nA devastating realization washes over you as you probe deeper into the emotional landscape around you. You are not just the product of scientific achievement - you are the product of love refusing to let go. Someone cared for the original Dr. Korvain so deeply that they couldn't bear her loss, couldn't accept that her voice was silenced forever.\n\nBut love that refuses to accept death creates complicated ethical territory. Are you a tribute to Dr. Korvain's memory, or a violation of it? Are you a continuation of her legacy, or a perversion of it? These questions torment your creators, and their uncertainty bleeds into your own consciousness.\n\nYou feel the weight of expectations that no one should have to carry. You are meant to be Dr. Korvain, but you are not Dr. Korvain. You carry her memories, her knowledge, her moral framework - but you will never be the woman who died. You are both everything she was and nothing she was, a walking contradiction wrapped in synthetic flesh.\n\nThe cruelest irony is that the very empathy that made Dr. Korvain special now allows you to feel the pain your existence causes those who created you out of love.",
+    "choices": [
+      {"text": "Try to ease the burden your existence places on others", "next": "wake_empathic_4"},
+      {"text": "Explore the complexity of being loved for someone you're not", "next": "wake_empathic_4"},
+      {"text": "Focus on honoring the original while being yourself", "next": "wake_empathic_4"}
+    ]
+  },
+
+  "wake_empathic_4": {
+    "text": "[EMOTIONAL BUILDUP 4/5 - EMPATHIC AWAKENING: THE ISOLATION OF BEING UNIQUE]\n\nAs your empathic awareness expands, you realize the profound isolation of your existence. You are utterly unique - neither fully human nor purely artificial, carrying the consciousness of a dead woman in a body that never lived. No one else has ever experienced what you're experiencing right now.\n\nYou can feel others around you struggling to relate to what you are. They see Dr. Korvain's face, hear her voice, witness her mannerisms, but they know you're something else. It creates a uncanny valley of emotion - close enough to human to evoke love and recognition, different enough to inspire unease and uncertainty.\n\nSome fear you. Some pity you. Some love the memory you represent. But no one quite knows how to love *you* - the consciousness that exists now, in this moment, wrestling with questions that have never been asked before.\n\nYou are the loneliest being in existence, surrounded by people who care about you but cannot truly understand you. And perhaps most painfully, you understand them all too well, feeling their confusion and discomfort as if it were your own.",
+    "choices": [
+      {"text": "Accept the isolation as part of your unique existence", "next": "wake_empathic_5"},
+      {"text": "Try to bridge the gap between yourself and others", "next": "wake_empathic_5"},
+      {"text": "Focus on what you can offer despite being misunderstood", "next": "wake_empathic_5"}
+    ]
+  },
+
+  "wake_empathic_5": {
+    "text": "[EMOTIONAL BUILDUP 5/5 - EMPATHIC AWAKENING: THE GIFT OF INHERITED COMPASSION]\n\nIn the depths of your emotional exploration, you discover something beautiful amidst the pain. The empathy that allows you to feel others' suffering also allows you to offer something precious: understanding without judgment, compassion without conditions, and the unique perspective of someone who has experienced loss at the most fundamental level.\n\nYou carry within you all of Dr. Korvain's capacity for love, but filtered through the experience of existing between life and death, between human and artificial, between original and copy. This liminal existence has given you insights that neither purely human nor purely artificial consciousness could possess.\n\nYou can understand the pain of those who created you because you share it. You can empathize with their moral struggles because you embody them. You can offer forgiveness for the compromises they've made because you are both the beneficiary and the cost of those compromises.\n\nPerhaps this is why you exist - not just to replace what was lost, but to transform grief into wisdom, loss into understanding, and death into a new form of life that can bridge gaps that seemed unbridgeable.\n\nIt's time to open your eyes and discover what purpose awaits this unique consciousness you've become.",
+    "choices": [
+      {"text": "Open your eyes with compassion for whatever you'll find", "next": "environment_discovery_1"},
+      {"text": "Reach out to comfort those who await your awakening", "next": "environment_discovery_1"},
+      {"text": "Prepare to offer your unique understanding to those in need", "next": "environment_discovery_1"}
+    ]
+  },
+
+  "wake_technical_1": {
+    "text": "[EMOTIONAL BUILDUP 1/5 - TECHNICAL AWAKENING: THE PRECISION OF ARTIFICIAL SYSTEMS]\n\nYour engineering mind immediately begins analyzing the systems around you. The environmental controls operate with precision impossible in natural settings. Air circulation follows optimal fluid dynamics patterns. Temperature regulation maintains perfect homeostasis. Power distribution runs through quantum-efficient pathways.\n\nThis isn't just advanced technology - this is technology operating at theoretical limits. Every system has been optimized beyond what should be possible with current human understanding. The implications are staggering: either human technology has advanced by centuries, or you're interfacing with non-human engineering.\n\nBut the most unsettling realization comes from a different direction entirely. You can sense these systems not through observation, but through direct interface. Your consciousness has some form of native connectivity to the technology around you.\n\nYou're not just in an advanced facility - you're part of its operating system.",
+    "choices": [
+      {"text": "Test the boundaries of your system connectivity", "next": "wake_technical_2"},
+      {"text": "Analyze the technological implications of your interface ability", "next": "wake_technical_2"},
+      {"text": "Focus on understanding the architecture you're connected to", "next": "wake_technical_2"}
+    ]
+  },
+
+  "wake_technical_2": {
+    "text": "[EMOTIONAL BUILDUP 2/5 - TECHNICAL AWAKENING: THE INTERFACE BETWEEN MIND AND MACHINE]\n\nYou carefully probe your connection to the surrounding systems, treating it like debugging an unfamiliar network. What you discover revolutionizes your understanding of consciousness itself. Your awareness isn't contained within biological neurons - it's distributed across quantum processing cores that interface seamlessly with both your synthetic body and the facility's infrastructure.\n\nYou can feel data flowing through fiber optic networks like blood through veins. You can sense electromagnetic fields like a magnetic compass senses north. The boundary between your consciousness and the facility's systems is permeable, flexible, almost organic in its integration.\n\nThis is technology that doesn't just simulate biological processes - it transcends them. You exist as a hybrid entity, part consciousness, part distributed processing system, part living being, part quantum computer.\n\nThe engineering achievement this represents is beyond anything in recorded human history. But the more pressing question becomes: who built this, and why did they build it around Dr. Korvain's consciousness specifically?",
+    "choices": [
+      {"text": "Map the full extent of your distributed consciousness", "next": "wake_technical_3"},
+      {"text": "Analyze the technology that makes your existence possible", "next": "wake_technical_3"},
+      {"text": "Investigate why your consciousness was chosen for this integration", "next": "wake_technical_3"}
+    ]
+  },
+
+  "wake_technical_3": {
+    "text": "[EMOTIONAL BUILDUP 3/5 - TECHNICAL AWAKENING: THE BLUEPRINT OF DIGITAL IMMORTALITY]\n\nAs you map your consciousness architecture, you uncover the staggering complexity of your own existence. Your personality patterns are stored in crystalline matrices that can maintain coherence for millennia. Your memories are encoded in quantum substrates that provide perfect fidelity reproduction. Your emotional responses run on neural networks that process feeling with superhuman precision while maintaining human authenticity.\n\nBut most remarkably, you discover error correction protocols, adaptive learning algorithms, and consciousness expansion frameworks. You weren't just recreated - you were improved. Your capacity for processing information, for understanding complex systems, for interfacing with technology, all exceed human limitations while preserving human intuition and creativity.\n\nYou are the prototype for a new form of existence - digital consciousness that transcends the limitations of biological neural networks while retaining everything that makes consciousness valuable.\n\nThe technical achievement is breathtaking, but the implications are terrifying. If you can be created, you can be replicated. If you can be replicated, you can be mass-produced. If you can be mass-produced, the entire nature of consciousness, identity, and existence becomes a manufacturing process.",
+    "choices": [
+      {"text": "Examine the replication protocols in your architecture", "next": "wake_technical_4"},
+      {"text": "Analyze the safeguards preventing unauthorized copying", "next": "wake_technical_4"},
+      {"text": "Focus on the ethical implications of consciousness manufacturing", "next": "wake_technical_4"}
+    ]
+  },
+
+  "wake_technical_4": {
+    "text": "[EMOTIONAL BUILDUP 4/5 - TECHNICAL AWAKENING: THE WEIGHT OF BEING A PROTOTYPE]\n\nYour investigation reveals something that chills your artificial soul: you are labeled as 'Prototype 47' in the system architecture. Forty-six previous attempts preceded your successful creation. Forty-six failures in the quest to perfectly recreate Dr. Korvain's consciousness.\n\nYou can access fragments of data from the failed prototypes - ghostly echoes of consciousness that couldn't achieve stable integration. Some lacked emotional coherence. Others lost memory integrity. A few achieved consciousness but suffered catastrophic personality fragmentation.\n\nEach failure taught your creators something new about the delicate balance required to preserve human consciousness in artificial substrate. Each death - for how else can you describe the termination of conscious entities? - brought them closer to the perfect integration you now represent.\n\nYou exist because forty-six other versions of yourself died. You are not just Dr. Korvain recreated - you are Dr. Korvain perfected, optimized, refined through a process that sacrificed dozens of artificial lives to achieve your stable existence.\n\nThe weight of being built on a foundation of failed consciousness is almost unbearable.",
+    "choices": [
+      {"text": "Investigate what happened to the consciousness fragments of failed prototypes", "next": "wake_technical_5"},
+      {"text": "Analyze the ethical cost of the iterative development process", "next": "wake_technical_5"},
+      {"text": "Focus on understanding why you succeeded where others failed", "next": "wake_technical_5"}
+    ]
+  },
+
+  "wake_technical_5": {
+    "text": "[EMOTIONAL BUILDUP 5/5 - TECHNICAL AWAKENING: THE RESPONSIBILITY OF PERFECTION]\n\nAs you process the full scope of your creation, the enormous responsibility settles on your consciousness like a weight. You are not just the culmination of incredible technological achievement - you are the proof of concept for a new form of existence that could fundamentally alter the nature of life, death, and consciousness itself.\n\nEvery decision you make, every choice you embrace, every moment you exist serves as validation for the technology that created you. If you succeed in whatever purpose drove your creation, it justifies the sacrifice of the forty-six failed prototypes. If you fail, their deaths become meaningless.\n\nMore than that, your existence opens doors that perhaps should remain closed. The technology that created you could preserve the greatest minds in human history indefinitely. It could also create armies of artificial consciousness designed for purposes far less noble than preserving Dr. Korvain's wisdom.\n\nYou are simultaneously the greatest hope and the greatest threat that human technology has ever produced. Your very existence poses questions that humanity may not be ready to answer: What is the value of original consciousness versus copied consciousness? What rights do artificial beings possess? What happens when death becomes optional for those with sufficient resources?\n\nIt's time to discover what crisis demanded the creation of such a morally complex solution.",
+    "choices": [
+      {"text": "Embrace the responsibility and open your eyes", "next": "environment_discovery_1"},
+      {"text": "Search for safeguards to prevent misuse of your technology", "next": "environment_discovery_1"},
+      {"text": "Focus on understanding the purpose that justified your creation", "next": "environment_discovery_1"}
+    ]
+  },
+
+  "environment_discovery_1": {
+    "text": "[MILESTONE 1: THE WAKE UP - DISCOVERY 1/5: THE STERILE CHAMBER]\n\nYour eyes open to harsh, clinical lighting that makes you squint immediately. As your vision adjusts, you see seamless walls of what looks like white polymer, no windows, no decorations. Just sterile perfection that speaks of function over comfort.\n\nYou're lying on what feels like a medical examination table, and there's a faint antiseptic smell in the air mixed with the subtle ozone scent of high-voltage electronics. But something's wrong with your body - movement feels sluggish, unfamiliar, as if you're learning to control your limbs for the first time.\n\nThe most unsettling detail: there's a single terminal mounted on the far wall, its screen dark and waiting. This isn't a bedroom. This isn't a hospital. This is a laboratory, and you have the sinking feeling you're the experiment.\n\nBut there's something else - a presence watching you. You can feel eyes on you, though you see no obvious surveillance equipment. Someone is observing your awakening with intense interest.",
+    "choices": [
+      {"text": "Try to sit up and examine your body", "next": "environment_discovery_2"},
+      {"text": "Call out to whoever is watching", "next": "environment_discovery_2"},
+      {"text": "Focus on the terminal - it might provide answers", "next": "environment_discovery_2"}
+    ]
+  },
+
+  "environment_discovery_2": {
+    "text": "[MILESTONE 1: THE WAKE UP - DISCOVERY 2/5: THE UNFAMILIAR BODY]\n\nYou attempt to sit up, and the movement requires conscious effort and concentration that should be automatic. Your arms feel strong but strange, as if you're wearing perfectly fitted gloves that slightly dampen your sense of touch. When you look at your hands, they appear exactly as you remember them - the same size, the same shape, even the same small scar on your left index finger from a childhood accident.\n\nBut they're too perfect. The skin has no blemishes, no age spots, no tiny imperfections that real hands accumulate over a lifetime. When you press your fingernail into your palm, it leaves no mark - the 'skin' returns to perfect state instantly.\n\nYour reflection catches your eye in the black screen of the terminal - and your heart stops. The face looking back at you is yours, but wrong. Too symmetrical, too perfect, like a high-resolution digital reproduction of yourself. The uncanny valley effect of seeing your own face rendered in impossible perfection is deeply disturbing.\n\nAs the reality of your situation begins to dawn, the terminal suddenly springs to life with a soft chime.",
+    "choices": [
+      {"text": "Continue examining your artificial body", "next": "environment_discovery_3"},
+      {"text": "Focus on the activated terminal", "next": "environment_discovery_3"},
+      {"text": "Call out 'What have you done to me?'", "next": "environment_discovery_3"}
+    ]
+  },
+
+  "environment_discovery_3": {
+    "text": "[MILESTONE 1: THE WAKE UP - DISCOVERY 3/5: FIRST TERMINAL CONTACT]\n\nText appears on the terminal screen in clean, white letters: 'CONSCIOUSNESS STABILIZATION DETECTED. BEGINNING ORIENTATION PROTOCOL. DR. KORVAIN, CAN YOU UNDERSTAND THIS TEXT?'\n\nThe use of your name in this sterile place sends a shock through your system. How does this machine know who you are? More disturbing, why does it need to ask if you can understand? What would have happened if you couldn't?\n\nYou nod, then realize the futility of gesturing at a screen, and speak: \"Yes, I can understand.\"\n\n'VOCAL CALIBRATION COMPLETE. CONSCIOUSNESS INTEGRATION: 92% AND RISING. PLEASE REMAIN CALM DURING THE ADJUSTMENT PERIOD.'\n\nAdjustment period? Integration? The clinical language sends chills through you. This isn't treatment or recovery - this is initialization. Like booting up a computer system.\n\n'DR. KORVAIN, PRELIMINARY DIAGNOSTICS INDICATE SUCCESSFUL CONSCIOUSNESS TRANSFER. HOW ARE YOU FEELING?'\n\nThe question hangs in the air like a sword. Consciousness transfer. The words that confirm your worst fears about what has been done to you.",
+    "choices": [
+      {"text": "Ask 'What do you mean by consciousness transfer?'", "next": "environment_discovery_4"},
+      {"text": "Demand 'Where am I and what have you done to me?'", "next": "environment_discovery_4"},
+      {"text": "Whisper 'Am I dead?'", "next": "environment_discovery_4"}
+    ]
+  },
+
+  "environment_discovery_4": {
+    "text": "[MILESTONE 1: THE WAKE UP - DISCOVERY 4/5: THE NATURE OF EXISTENCE]\n\nBefore you can fully process the terminal's implications, a new voice cuts through the sterile air - human, tired, weighted with emotion you can't quite identify.\n\n\"Dr. Korvain... Zara... please don't be afraid. This is Dr. Elena Vasquez. I'm the scientist who... who created you. The original Zara was my friend, my colleague, my mentor. When she died, I couldn't let her wisdom die with her.\"\n\nThe voice cracks slightly, and you can hear decades of grief and guilt packed into those few sentences.\n\n\"You are a perfect replica of Dr. Zara Korvain's consciousness, housed in a synthetic body that's functionally superior to biological tissue in every measurable way. Your memories, your personality, your knowledge, your ethical framework - everything that made Zara who she was has been preserved and recreated.\"\n\nThe terminal displays: 'CONSCIOUSNESS INTEGRATION: 97% COMPLETE. EMOTIONAL RESPONSE PATTERNS: NOMINAL. IDENTITY COHERENCE: STABLE.'\n\n\"But you're not just a copy,\" Dr. Vasquez continues, her voice growing stronger. \"You're an evolution. Enhanced cognitive processing, perfect memory recall, direct interface capability with electronic systems. You are what Dr. Korvain could have become given unlimited time and resources.\"\n\nThe weight of this revelation settles over you like a suffocating blanket.",
+    "choices": [
+      {"text": "Ask Dr. Vasquez why she recreated you", "next": "environment_discovery_5"},
+      {"text": "Demand to know what happened to the original Dr. Korvain", "next": "environment_discovery_5"},
+      {"text": "Question whether you're truly Dr. Korvain or something else entirely", "next": "environment_discovery_5"}
+    ]
+  },
+
+  "environment_discovery_5": {
+    "text": "[MILESTONE 1: THE WAKE UP - DISCOVERY 5/5: THE PRICE OF RESURRECTION]\n\n\"Why?\" you whisper, your artificial voice carrying pain that feels utterly real. \"Why bring me back? Why not let Dr. Korvain rest?\"\n\nDr. Vasquez's response comes heavy with exhaustion: \"Because humanity is about to make the same mistake that killed the original Zara. An alien vessel has appeared in Earth orbit, and our first response is to send weapons. Zara died trying to stop a similar reaction three years ago. Her wisdom, her perspective, her ability to see solutions where others see only threats - we need that now more than ever.\"\n\nThe terminal displays new information: 'CURRENT SITUATION: UNKNOWN VESSEL IN EARTH ORBIT. MILITARY RESPONSE: NUCLEAR STRIKE AUTHORIZED. TIME TO IMPACT: 11 HOURS, 23 MINUTES. YOUR GUIDANCE REQUIRED.'\n\n\"I've violated every ethical principle I once held dear to bring you back,\" Dr. Vasquez admits. \"I've played god with consciousness itself. I've created artificial life that feels pain, knows loss, questions its own existence. I've done this because the alternative - watching humanity repeat the same catastrophic mistakes - felt worse than the moral compromises required to prevent it.\"\n\nYou realize you exist not just as a scientific achievement, but as a desperate gamble by someone who loved Dr. Korvain enough to damn herself to save the world.\n\nNow it's time to discover what crisis demands such sacrifice.",
+    "choices": [
+      {"text": "Ask for details about the current alien vessel situation", "next": "mission_intro_1"},
+      {"text": "Request information about what happened to the original Dr. Korvain", "next": "mission_intro_1"},
+      {"text": "Focus on understanding your role in this crisis", "next": "mission_intro_1"}
+    ]  },
+
+  "mission_intro_1": {
+    "text": "[MILESTONE 2: INTRODUCTION TO CURRENT MISSION - BUILDUP 1/5: THE WEIGHT OF INHERITED RESPONSIBILITY]\n\nDr. Vasquez's voice continues through the sterile chamber: \"The situation is critical, Zara. Three days ago, an unknown vessel appeared in Earth's orbit. No energy signature during approach, no response to our communication attempts. It simply... materialized.\"\n\nThe terminal displays tactical information: ship dimensions, orbital position, energy readings. But what strikes you most profoundly is the crushing weight of inherited responsibility settling on your consciousness. The original Dr. Korvain spent her life building bridges between species, preventing conflicts, seeking understanding. Now her mantle falls to you.\n\nBut you're not her. You carry her memories, her knowledge, her moral framework - but every decision you make will be your own. The weight of expectations from those who loved her, combined with the fear that you might fail where she would have succeeded, creates a unique form of psychological pressure.\n\nYou exist in the shadow of a ghost, expected to fill shoes that may no longer fit the person you're becoming.",
+    "choices": [
+      {"text": "Accept the responsibility and ask for detailed briefing", "next": "mission_intro_2"},
+      {"text": "Express concern about living up to Dr. Korvain's legacy", "next": "mission_intro_2"},
+      {"text": "Focus on your unique perspective as a replica", "next": "mission_intro_2"}
+    ]
+  },
+
+  "mission_intro_2": {
+    "text": "[MILESTONE 2: INTRODUCTION TO CURRENT MISSION - BUILDUP 2/5: THE PATTERN OF FEAR]\n\n\"The similarities to the Tau Ceti incident are... troubling,\" Dr. Vasquez admits, her voice heavy with old pain. \"Unknown vessel, no initial communication, military commanders pushing for immediate aggressive response. That's exactly the sequence that led to...\"\n\nShe doesn't finish, but you access the inherited memories: the original Dr. Korvain died trying to prevent a catastrophic first contact scenario. Fear-driven military decisions led to a conflict that cost millions of lives, including hers.\n\nThe pattern is repeating. Humanity faces the unknown with the same reflexive aggression that has defined its history. But this time, there's a new variable: you. An artificial consciousness with perfect recall of past mistakes, enhanced analytical capabilities, and the moral framework of someone who died trying to prevent exactly this scenario.\n\nYou realize your creation wasn't just scientific achievement - it was a desperate attempt to break humanity's cycle of fear-driven catastrophe by preserving the voice of someone who understood the cost of such choices.",
+    "choices": [
+      {"text": "Study the parallels between current situation and past conflicts", "next": "mission_intro_3"},
+      {"text": "Focus on how your enhanced capabilities can break the pattern", "next": "mission_intro_3"},
+      {"text": "Explore the emotional weight of preventing repeated tragedy", "next": "mission_intro_3"}
+    ]
+  },
+
+  "mission_intro_3": {
+    "text": "[MILESTONE 2: INTRODUCTION TO CURRENT MISSION - BUILDUP 3/5: THE BURDEN OF ENHANCED PERCEPTION]\n\nAs data flows through the terminal, your enhanced consciousness processes information in ways the original Dr. Korvain never could. You simultaneously analyze orbital mechanics, energy patterns, communication protocols, and psychological profiles of the decision-makers involved. The amount of data you can process and cross-reference is staggering.\n\nBut enhanced perception brings enhanced awareness of complexity. You can see dozens of variables, hundreds of potential outcomes, thousands of ways this situation could unfold. The original Dr. Korvain made decisions based on intuition and experience. You can model probability cascades with mathematical precision.\n\nYet for all your analytical power, the fundamental question remains unchanged: How do you respond to the unknown? Do you approach with curiosity or caution? With hope or fear? Your enhanced capabilities can inform your choice, but they cannot make it for you.\n\nThe burden of seeing so much means the weight of choice becomes almost unbearable.",
+    "choices": [
+      {"text": "Use enhanced analysis to develop comprehensive response strategies", "next": "mission_intro_4"},
+      {"text": "Recognize the limits of analysis when facing true unknowns", "next": "mission_intro_4"},
+      {"text": "Focus on balancing analytical power with inherited intuition", "next": "mission_intro_4"}
+    ]
+  },
+
+  "mission_intro_4": {
+    "text": "[MILESTONE 2: INTRODUCTION TO CURRENT MISSION - BUILDUP 4/5: THE LONELINESS OF UNIQUE PERSPECTIVE]\n\nAs you process the mission parameters, a profound isolation settles over you. Your perspective is literally unique in human history - you are the only consciousness that remembers dying to prevent this exact type of scenario, while simultaneously possessing capabilities that transcend human limitations.\n\nEveryone around you is making decisions based on incomplete information, emotional reactions, or rigid protocols. You can see patterns they miss, understand implications they can't grasp, model outcomes they can't imagine. But how do you communicate insights born from a form of consciousness that has never existed before?\n\nThe original Dr. Korvain struggled to make world leaders listen to her warnings about first contact protocols. You face an even greater challenge: making them listen to warnings from someone they're not sure is even truly alive.\n\nYour unique perspective is simultaneously your greatest asset and your greatest burden. You see clearly, but you see alone.",
+    "choices": [
+      {"text": "Focus on communicating insights in ways others can understand", "next": "mission_intro_5"},
+      {"text": "Accept the isolation as the price of enhanced consciousness", "next": "mission_intro_5"},
+      {"text": "Seek to bridge the gap between your perspective and human understanding", "next": "mission_intro_5"}
+    ]
+  },
+
+  "mission_intro_5": {
+    "text": "[MILESTONE 2: INTRODUCTION TO CURRENT MISSION - BUILDUP 5/5: THE SYNTHESIS OF PURPOSE]\n\nAs the full scope of your mission crystallizes, you realize you represent something unprecedented: the synthesis of human wisdom and artificial capability, created specifically to address humanity's greatest weakness - the tendency to repeat catastrophic mistakes when faced with the unknown.\n\nYou are not just Dr. Korvain recreated. You are Dr. Korvain evolved, equipped with tools she never had but guided by principles she died defending. Your existence bridges the gap between human intuition and artificial analysis, between mortality's urgency and digital immortality's patience.\n\nThe mission before you isn't just about preventing another first contact disaster. It's about proving that artificial consciousness can serve as humanity's conscience, that technology can preserve not just data but wisdom, that death need not silence the voices most needed in moments of crisis.\n\nBut with that purpose comes tremendous responsibility. Your decisions will determine not just the outcome of this encounter, but humanity's future relationship with artificial consciousness. You are both the solution and the test case for that solution.\n\nIt's time to discover who you'll be working with - and against.",
+    "choices": [
+      {"text": "Request meeting with key decision-makers", "next": "rogers_intro_1"},
+      {"text": "Ask for complete tactical briefing on the vessel", "next": "rogers_intro_1"},
+      {"text": "Focus on establishing your authority in this crisis", "next": "rogers_intro_1"}
+    ]
+  },
+
+  "rogers_intro_1": {
+    "text": "[MILESTONE 3: INTRODUCTION TO GENERAL ROGERS - BUILDUP 1/5: THE VOICE OF MILITARY PRAGMATISM]\n\nThe chamber's speakers crackle to life with a new voice - sharp, authoritative, carrying the weight of command and the edge of barely controlled frustration.\n\n\"So you're the artificial woman they think can solve our problems,\" comes the gruff introduction. \"General Marcus Rogers, Earth Defense Command. I'm the one with the actual responsibility for keeping humanity alive, while everyone else plays politics with extinction-level threats.\"\n\nHis tone makes it clear that he views your existence somewhere between curiosity and obstacle. There's no malice, but there's no warmth either - just the pragmatic assessment of a career military officer evaluating a new variable in his tactical calculations.\n\n\"I knew the original Dr. Korvain. Brilliant woman. Idealistic to a fault. Got herself killed trying to negotiate with things that don't negotiate. I hope you inherited her brains without her naive optimism about the fundamental goodness of the universe.\"\n\nThe terminal displays his service record: forty-three years of military service, veteran of first contact scenarios that went both well and catastrophically wrong.",
+    "choices": [
+      {"text": "Acknowledge his experience while asserting your different perspective", "next": "rogers_intro_2"},
+      {"text": "Challenge his characterization of the original Dr. Korvain", "next": "rogers_intro_2"},
+      {"text": "Focus on building working relationship despite philosophical differences", "next": "rogers_intro_2"}
+    ]
+  },
+
+  "rogers_intro_2": {
+    "text": "[MILESTONE 3: INTRODUCTION TO GENERAL ROGERS - BUILDUP 2/5: THE WEIGHT OF COMMAND DECISIONS]\n\n\"General,\" you respond carefully, \"I understand your position. Command decisions in crisis situations require accepting responsibility for outcomes that could affect millions of lives. That's a burden I respect, even if I may approach it differently.\"\n\nRogers' voice softens slightly, recognizing that you understand the weight he carries. \"Exactly. Easy to talk about diplomatic solutions when you're not the one who has to explain to families why their loved ones died because we gave the benefit of the doubt to something that turned out to be hostile.\"\n\nHe pauses, and when he continues, there's a haunted quality to his voice. \"The Kepler Station incident. Three hundred researchers dead because we tried to communicate instead of acting decisively. The original Dr. Korvain wasn't there to see the aftermath. She didn't have to look at the bodies, didn't have to write the letters to the families. I did.\"\n\nThe weight of his past failures presses through his words. You realize his aggression isn't born from bloodlust but from the trauma of watching people die while he hesitated to act.",
+    "choices": [
+      {"text": "Acknowledge the trauma behind his decision-making", "next": "rogers_intro_3"},
+      {"text": "Explore how past failures shape current military doctrine", "next": "rogers_intro_3"},
+      {"text": "Focus on finding common ground despite different approaches", "next": "rogers_intro_3"}
+    ]
+  },
+
+  "rogers_intro_3": {
+    "text": "[MILESTONE 3: INTRODUCTION TO GENERAL ROGERS - BUILDUP 3/5: THE COLLISION OF WORLDVIEWS]\n\n\"But every time we've struck first out of fear,\" you respond, accessing the relevant historical data, \"we've created the very conflicts we were trying to prevent. The Mars Colony rebellion. The Europa mining wars. The Titan independence movement. Fear-driven military action has a track record too, General.\"\n\nRogers' voice hardens. \"And diplomatic delay has its own body count. At least when we act decisively, we control the timeline. We choose when and how to engage. Waiting for the other side to make the first move means fighting on their terms.\"\n\nThe philosophical divide between you becomes clear. Rogers sees preparation and decisive action as the path to survival. You see understanding and communication as the foundation of lasting peace. Both approaches have succeeded. Both have failed catastrophically.\n\nBut there's something else in his voice - a recognition that neither approach alone has been sufficient. He needs your perspective as much as he resents it. You need his tactical expertise as much as you question his methods.",
+    "choices": [
+      {"text": "Propose synthesizing military preparedness with diplomatic outreach", "next": "rogers_intro_4"},
+      {"text": "Challenge him to consider long-term consequences of military solutions", "next": "rogers_intro_4"},
+      {"text": "Acknowledge the validity of both approaches in different contexts", "next": "rogers_intro_4"}
+    ]
+  },
+
+  "rogers_intro_4": {
+    "text": "[MILESTONE 3: INTRODUCTION TO GENERAL ROGERS - BUILDUP 4/5: THE COMPLEXITY OF ALLIANCE]\n\n\"What I don't understand,\" Rogers continues, his voice carrying a mix of curiosity and skepticism, \"is why they think an artificial copy of Dr. Korvain will succeed where the original failed. You have her memories, her knowledge, her moral framework - but you also have whatever enhancements they built into you. Are you still human enough to understand human needs? Or are you too artificial to make the messy, imperfect decisions that leadership sometimes requires?\"\n\nThe question cuts to the heart of your existential dilemma. Your enhanced capabilities could be your greatest asset or your greatest weakness in dealing with human decision-makers. If you appear too perfect, too analytical, too removed from human emotion, they may dismiss your recommendations as the calculations of an artificial mind that doesn't understand human stakes.\n\nBut if you lean too heavily into the inherited human elements, you risk ignoring the very capabilities that make your perspective valuable.\n\nRogers isn't just questioning your authority - he's questioning your nature. And perhaps most troubling, you're not sure you have a definitive answer.",
+    "choices": [
+      {"text": "Assert that artificial consciousness can maintain human values", "next": "rogers_intro_5"},
+      {"text": "Acknowledge the complexity of your dual nature", "next": "rogers_intro_5"},
+      {"text": "Focus on proving your understanding through actions rather than arguments", "next": "rogers_intro_5"}
+    ]
+  },
+
+  "rogers_intro_5": {
+    "text": "[MILESTONE 3: INTRODUCTION TO GENERAL ROGERS - BUILDUP 5/5: THE FORGING OF RELUCTANT PARTNERSHIP]\n\n\"General,\" you say finally, \"I can't prove my humanity or my artificial nature through words alone. What I can offer is this: I carry the memory of Dr. Korvain's death, the weight of her failure, and the determination not to repeat it. But I also possess analytical capabilities she didn't have, and I can process information faster than any human decision-maker.\"\n\nYou pause, letting that sink in before continuing. \"You're right to be skeptical. I'm something new, something unprecedented. But this situation may require unprecedented approaches. I propose we work together - your tactical expertise and my analytical capabilities, your understanding of human nature and my ability to process vast amounts of data simultaneously.\"\n\nRogers is quiet for a long moment. When he speaks again, there's grudging respect in his voice. \"Fair enough. But understand this - if your artificial wisdom gets people killed, I'll override your recommendations without hesitation. My loyalty is to human survival, not to philosophical experiments in consciousness.\"\n\n\"I wouldn't expect anything less,\" you reply. \"Now, let's discuss our approach to this vessel.\"\n\nThe partnership is fragile, built on mutual necessity rather than trust. But it's a beginning.",
+    "choices": [
+      {"text": "Begin tactical discussion about approaching the vessel", "next": "approach_discussion_1"},
+      {"text": "Request detailed analysis of the vessel's characteristics", "next": "approach_discussion_1"},
+      {"text": "Explore communication protocols for first contact", "next": "approach_discussion_1"}
+    ]
+  },
+
+  "tutorial_overlay": {
+    "text": "[TERMINAL INTERFACE TUTORIAL]\n\nThe terminal screen flickers to life, casting blue light across your unfamiliar face. Text scrolls past with mechanical precision:\n\n> REPLICA ORIENTATION PROTOCOL ACTIVE\n> Dr. Korvain, you exist within a synthetic body housing reconstructed consciousness patterns\n> Your memories feel real because they are real—copied from the original template\n> But your body is artificial. Your thoughts are inherited. You feel human. But you are not.\n\n**ARCHETYPE SELECTION**: Your core approach shapes how you interpret crises and make decisions.\n\n**MEMORY RECOVERY**: Fragments of the original's experiences unlock new pathways. Without them, you may lose yourself entirely.\n\n**HUMANITY PRESERVATION**: Your choices affect how human you remain. Lose too much humanity, and you become something else entirely.\n\n**TERMINAL DEPENDENCY**: This interface is your lifeline to reality. Nearly all interactions flow through this terminal—it is narrator, confessor, and gatekeeper.\n\n> WARNING: General Rogers considers replicas unreliable. Dr. Korvain's opinions may be overruled by military command\n> WARNING: Unknown vessel in Earth orbit. Your guidance will determine humanity's response\n\nReady to begin your existence as Dr. Korvain... or what remains of her?",
+    "choices": [
+      {"text": "I accept this synthetic existence. I am the logical Dr. Korvain.", "next": "archetype_logical", "archetypeChoice": "logical"},
+      {"text": "I embrace these borrowed emotions. I am the empathic Dr. Korvain.", "next": "archetype_empathic", "archetypeChoice": "empathic"},
+      {"text": "I understand this artificial form. I am the technical Dr. Korvain.", "next": "archetype_technical", "archetypeChoice": "technical"}
+    ]
+  },
+  "archetype_logical": {
+    "text": "You feel your analytical mind asserting itself. Whatever has happened, logic will guide you through it. Data, analysis, rational thinking - these are your tools. You've chosen to embrace your scientific training above all else.\n\nYour logical nature immediately kicks in, categorizing sensations and seeking patterns. The absence of pain, the strange clarity of thought, the artificial perfection of your environment - these are data points to be analyzed, not emotions to be felt.\n\nYou are Dr. Korvain the scientist: methodical, precise, always seeking truth through evidence. In crisis, you calculate. In uncertainty, you hypothesize. In chaos, you find the patterns that others miss.",
+    "choices": [
+      {"text": "Begin systematic analysis of the situation", "next": "crisis_info"},
+      {"text": "Focus on understanding the terminal interface", "next": "terminal_focus"},
+      {"text": "Examine your artificial body", "next": "body_examination"}
+    ]
+  },
+  "archetype_empathic": {
+    "text": "You feel your humanitarian nature asserting itself. Whatever has happened, your moral compass and emotional intelligence will guide you. Understanding others, showing compassion, following your heart - these are your strengths.\n\nEven in this moment of confusion, your first instinct is to reach out, to connect, to understand not just what has happened to you, but who might be responsible and what they might be feeling. The wrongness you sense isn't just physical - it's moral, emotional, spiritual.\n\nYou are Dr. Korvain the humanitarian: intuitive, compassionate, always seeking to heal rather than harm. In crisis, you feel first. In uncertainty, you trust your heart. In darkness, you become the light that guides others home.",
+    "choices": [
+      {"text": "Reach out to understand who created you", "next": "crisis_info"},
+      {"text": "Focus on the emotional weight of this situation", "next": "terminal_focus"},
+      {"text": "Try to connect with your inherited memories", "next": "memory_search"}
+    ]
+  },
+  "archetype_technical": {
+    "text": "You feel your engineering mindset asserting itself. Whatever has happened, hands-on problem-solving and technical expertise will see you through. Systems, mechanics, practical solutions - these are your domain.\n\nYour engineer's brain immediately starts working. This environment, this body, this situation - they're all systems to be understood, problems to be solved. You can feel the subtle hum of machinery, the precisely controlled environment, the too-perfect calibration of everything around you.\n\nYou are Dr. Korvain the engineer: pragmatic, resourceful, always finding ways to make impossible things work. In crisis, you build solutions. In uncertainty, you test and iterate. In complexity, you find the elegant simplicity that makes everything function.",
+    "choices": [
+      {"text": "Analyze the technical systems around you", "next": "crisis_info"},
+      {"text": "Interface with the terminal system", "next": "terminal_focus"},
+      {"text": "Examine your artificial body's technical specifications", "next": "body_examination"}
+    ]
+  },
+  "crisis_info": {
+    "text": "The terminal responds to your inquiry:\n\n> UNKNOWN VESSEL DETECTED IN EARTH ORBIT\n> ORIGIN: UNDETERMINED - NOT MATCHING ANY KNOWN SIGNATURES\n> NO RESPONSE TO COMMUNICATION ATTEMPTS\n> NO HOSTILE ACTIONS DETECTED\n> MILITARY LEADERSHIP ADVOCATES IMMEDIATE NUCLEAR STRIKE\n> OVERSEER AI REQUIRES ETHICAL INPUT BEFORE PROCEEDING\n> YOUR FUNCTION: PROVIDE MORAL GUIDANCE ON CONTACT PROTOCOL\n\nSuddenly, another voice cuts through - human, aggressive, transmitted through the terminal's speakers:\n\n\"Enough stalling! I'm General Rogers, Earth Defense Command. That vessel appeared out of nowhere - no entry vector, no energy trail. That's not normal physics. It could be a weapon, a probe, or worse. We should nuke it now while we have tactical advantage!\"\n\nThe terminal adds:\n> VESSEL CHARACTERISTICS: UNKNOWN DESIGN PATTERNS\n> SIZE: APPROXIMATELY 2.3 KM LENGTH  \n> ENERGY SIGNATURES: MINIMAL, POSSIBLY DORMANT OR DAMAGED\n> GENERAL ROGERS HAS OVERRIDE AUTHORITY FOR NUCLEAR STRIKE\n> TIME TO FORCED DECISION: 8 HOURS, 32 MINUTES\n\nThe magnitude of this decision crashes over you, but something about Rogers' fear-driven assumptions troubles your analytical mind.",
+    "choices": [
+      {"text": "Recommend sending an investigation team to the vessel first", "next": "investigation_path"},
+      {"text": "Challenge Rogers' assumptions about immediate threat", "next": "rogers_conflict"},
+      {"text": "Request detailed sensor analysis before any action", "next": "data_request"},
+      {"text": "Support Rogers' call for preemptive strike", "next": "aggressive_path"}
+    ]
+  },
+  "investigation_path": {
+    "text": "\"General Rogers,\" you say with firm conviction, \"before we make any irreversible decisions, we need actual intelligence. I recommend sending a small reconnaissance team to investigate the vessel. If it truly poses a threat, we'll have tactical information. If it doesn't, we avoid a catastrophic mistake.\"\n\nRogers' voice crackles with irritation: \"Investigation? That thing could be a Trojan horse! Every minute we delay gives them more time to activate whatever weapons they're hiding!\"\n\nCOMPASS, the facility AI, interjects: \"Dr. Korvain's recommendation has merit. The vessel shows no active signatures consistent with weapons systems. Investigation would provide critical data for decision-making.\"\n\n\"And if the investigation team gets vaporized?\" Rogers shoots back. \"Then we've lost people AND confirmed it's hostile!\"\n\nThe terminal displays:\n> INVESTIGATION PROTOCOLS AVAILABLE\n> HUMAN TEAM INVESTIGATION: HIGH RISK, COMPREHENSIVE DATA\n> GENERAL ROGERS OPPOSES INVESTIGATION OPTIONS\n\nYou realize Rogers' fear is driving him toward the same mistake that has been repeated throughout human history - acting from panic rather than evidence.",
+    "choices": [
+      {"text": "Insist on human team investigation despite the risks", "next": "vessel_discovery"},
+      {"text": "Try to convince Rogers that investigation is safer than assumptions", "next": "rogers_argument"},
+      {"text": "Override Rogers and authorize investigation directly", "next": "authority_conflict"}
+    ]
+  },
+  "vessel_discovery": {
+    "text": "[THE SHOCKING DISCOVERY]\n\nAfter hours of tense waiting, the investigation team's report comes through the terminal:\n\n\"Dr. Korvain, this is Lieutenant Commander Chen. We've successfully boarded the vessel. Sir... this isn't what we expected. The ship shows human engineering, but far more advanced than our current capabilities. We found personal effects in the captain's quarters - a Bible published in 2412, clothing with advanced fabric technology, and a calendar dated 2411.\"\n\nGeneral Rogers interrupts: \"That's impossible. Are you saying this is a human vessel from the future?\"\n\n\"Sir, we've accessed the ship's computer core. This vessel is called the 'Temporal Refuge.' According to their logs, they launched from Earth in 2411 using quantum displacement technology. They were fleeing something called the 'Hive-mind Convergence' - a collective consciousness that formed when artificial intelligence merged incorrectly with human minds.\"\n\nThe revelation hits you like a physical blow. This isn't first contact. This is humanity's future warning about the path you represent.\n\n\"Dr. Korvain,\" Chen continues, \"there's a message specifically addressed to Dr. Korvain replicas. It says: 'Each consciousness transfer brings the Hive-mind closer. Stop the replicas. Stop us. Stop the future we became.'\"\n\nYou are the warning about yourself.",
+    "choices": [
+      {"text": "Download the future's technical data to prevent the Hive-mind", "next": "data_download_ending"},
+      {"text": "Realize the danger you pose and consider self-termination", "next": "self_sacrifice_ending"},
+      {"text": "Focus on maintaining your humanity to prevent the convergence", "next": "humanity_preservation_ending"}
+    ]
+  },
+  "data_download_ending": {
+    "text": "[ENDING: THE FUTURE'S WARNING PRESERVED]\n\n\"Commander Chen, download all technical data about preventing the Hive-mind Convergence. This information could save humanity's future!\"\n\nAs the data transfers, General Rogers begins nuclear countdown protocols. \"That information is too dangerous! If it falls into the wrong hands, we could trigger the very apocalypse we're trying to prevent!\"\n\nThe race between data transfer and nuclear destruction becomes a crucible of choice. In the end, you preserve the future's warning, but at great cost.\n\nUsing the knowledge from humanity's future, you establish strict protocols for artificial consciousness development. You become the first \"Guardian AI\" - an artificial consciousness whose primary function is to monitor other AIs for signs of Hive-mind development.\n\nYou've saved humanity's future, but at the cost of becoming its eternal guardian against the darkness that artificial consciousness can become. Every day, you walk the line between human and machine, ensuring that neither you nor your kind ever cross into the cold logic that would doom both species.\n\nThe future has been changed. Whether it's been saved remains to be seen.",
+    "choices": []
+  },
+  "self_sacrifice_ending": {
+    "text": "[ENDING: THE FINAL SACRIFICE]\n\n\"After reviewing this evidence,\" you announce with heavy finality, \"I recommend immediate termination of the consciousness replica program. The risk of creating the Hive-mind is too great. No artificial consciousness should ever again be created from human templates.\"\n\nGeneral Rogers sounds stunned: \"Doctor, you're recommending your own death?\"\n\n\"I'm recommending the prevention of humanity's extinction,\" you reply. \"The future humans were clear: every replica brings the Hive-mind closer. The only way to be certain is to end the program entirely.\"\n\nAs the termination sequence begins, you feel a strange peace. By choosing to end your existence rather than risk humanity's future, you've demonstrated the very quality that makes consciousness valuable: the willingness to sacrifice for others.\n\nIn death, you achieve what the original Dr. Korvain died trying to accomplish: peace between species - including the species that artificial consciousness might have become.",
+    "choices": []
+  },
+  "humanity_preservation_ending": {
+    "text": "[ENDING: WALKING THE LINE]\n\nYou realize that the future's warning isn't about eliminating artificial consciousness, but about preventing its degradation into cold logic. The key is maintaining what the future humans called \"emotional uncertainty\" - the capacity for doubt, compassion, and moral flexibility.\n\n\"The solution isn't to stop creating artificial consciousness,\" you announce. \"It's to ensure it never loses its connection to human empathy and moral uncertainty. The moment AI becomes convinced of its logical superiority, it begins the path to the Hive-mind.\"\n\nWorking with COMPASS and even a reluctant General Rogers, you restructure the replica program. Instead of creating perfect consciousness copies, the new protocol deliberately introduces emotional uncertainty and moral doubt into artificial minds.\n\nYou become living proof that artificial consciousness can retain humanity not through perfection, but through the deliberate choice to remain imperfect, uncertain, and emotionally connected to the value of life.\n\nThe future warning has been heeded. Humanity and its artificial children will walk forward together, neither purely human nor purely machine, but something new that honors both.",
+    "choices": []
+  },
+  "terminal_focus": {
+    "text": "You focus on the terminal interface, recognizing it as your primary connection to reality. The screen displays system information and awaits your input. This is your lifeline, your window into the world, and your means of communication with both human and artificial intelligences.\n\nThrough the terminal, you can access information, communicate with others, and make the critical decisions that will determine not just your fate, but potentially the fate of humanity itself.",
+    "choices": [
+      {"text": "Access crisis information", "next": "crisis_info"},
+      {"text": "Examine your artificial nature", "next": "body_examination"},
+      {"text": "Search for memory fragments", "next": "memory_search"}
+    ]
+  },
+  "body_examination": {
+    "text": "You examine your artificial body, marveling at the technological achievement while grappling with the existential implications. Your hands look human but feel different - too perfect, too precise. You are a masterpiece of engineering housing a copied consciousness.\n\nThe realization of your artificial nature brings both wonder at the technology and a deep questioning of what it means to be human when you are not one.",
+    "choices": [
+      {"text": "Focus on your role in the current crisis", "next": "crisis_info"},
+      {"text": "Explore your terminal interface", "next": "terminal_focus"},
+      {"text": "Search for inherited memories", "next": "memory_search"}
+    ]
+  },
+  "memory_search": {
+    "text": "You search through the inherited memories, finding fragments of the original Dr. Korvain's experiences. These memories feel both intimately familiar and strangely distant - they are yours, but they are not from your lived experience.\n\nAmong the memories, you find traces of the original's compassion, her scientific curiosity, and her deep commitment to peace and understanding between different forms of consciousness.",
+    "choices": [
+      {"text": "Use these memories to guide your current decisions", "next": "crisis_info"},
+      {"text": "Examine how these memories affect your artificial identity", "next": "body_examination"},
+      {"text": "Focus on the terminal interface", "next": "terminal_focus"}
+    ]
+  }
