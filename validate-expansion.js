@@ -2,7 +2,7 @@ const fs = require('fs');
 
 // Read and validate the story JSON
 try {
-    const storyData = fs.readFileSync('./public/story.json', 'utf8');
+    const storyData = fs.readFileSync('./public/story_expanded.json', 'utf8');
     const story = JSON.parse(storyData);
     
     console.log('✅ Story JSON is valid!');
