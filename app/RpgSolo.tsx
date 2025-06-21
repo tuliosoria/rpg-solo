@@ -80,9 +80,33 @@ export default function RpgSolo() {
   const [showMemoryPrompt, setShowMemoryPrompt] = useState<{show: boolean, text: string}>({show: false, text: ''});
   const [showHijackConfirm, setShowHijackConfirm] = useState<{show: boolean, choice: Choice | null}>({show: false, choice: null});
   const skipRef = useRef(false);  useEffect(() => {
-    fetch('/story.json')
-      .then(res => res.json())
-      .then(setStory);
+    console.log('Loading story...');
+    fetch('/story_expanded.json')
+      .then(res => {
+        console.log('Story response:', res.status);
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log('Story loaded successfully:', Object.keys(data).length, 'nodes');
+        setStory(data);
+      })
+      .catch(err => {
+        console.error('Failed to load expanded story:', err);
+        console.log('Attempting to load fallback story...');
+        // Fallback to original story if expanded version fails
+        return fetch('/story.json')
+          .then(res => res.json())
+          .then(data => {
+            console.log('Fallback story loaded:', Object.keys(data).length, 'nodes');
+            setStory(data);
+          })
+          .catch(fallbackErr => {
+            console.error('Failed to load any story:', fallbackErr);
+          });
+      });
   }, []);
 
   // Show archetype selection when story loads and no archetype chosen
@@ -198,9 +222,15 @@ export default function RpgSolo() {
       setShowHijackConfirm({ show: false, choice: null });
       handleChoiceClick(showHijackConfirm.choice.next);
     }
-  };
-  const handleChoiceClick = (nextNode: string, choice?: Choice) => {
+  };  const handleChoiceClick = (nextNode: string, choice?: Choice) => {
     if (choice) {
+      // Handle archetype selection from story JSON
+      const anyChoice = choice as any;
+      if (anyChoice.archetypeChoice) {
+        setGameState(prev => ({ ...prev, archetype: anyChoice.archetypeChoice }));
+        setShowArchetypeSelection(false);
+      }
+
       // Check requirements before allowing choice
       if (choice.requirements && !meetsRequirements(choice.requirements)) {
         return; // Don't process choice if requirements not met

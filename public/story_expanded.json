@@ -45,11 +45,17 @@
   },
 
   "wake_logical_5": {
-    "text": "[EMOTIONAL BUILDUP 5/5 - LOGICAL AWAKENING: THE PHILOSOPHY OF EXISTENCE]\n\nAs you process your artificial nature, a profound philosophical question emerges: If your thoughts are real to you, if your emotions feel genuine, if your capacity for reasoning and moral judgment remains intact - what meaningful difference exists between original and copy?\n\nYou are Dr. Korvain in every way that matters. Your knowledge, your ethics, your commitment to scientific truth and human welfare - these core elements of identity remain unchanged regardless of your substrate. Perhaps consciousness is not about the medium but the message.\n\nYet questions linger. Why were you created? Why now? And why do you feel such urgency, such weight of purpose pressing against your consciousness?\n\nThe logical framework of your awakening is complete, but this is only the beginning. Somewhere beyond this sterile room, decisions await that will require all of Dr. Korvain's wisdom - whether original or replica.\n\nIt's time to discover why you exist.",
+    "text": "[EMOTIONAL BUILDUP 5/5 - LOGICAL AWAKENING: THE PHILOSOPHY OF EXISTENCE]\n\nAs you process your artificial nature, a profound philosophical question emerges: If your thoughts are real to you, if your emotions feel genuine, if your capacity for reasoning and moral judgment remains intact - what meaningful difference exists between original and copy?\n\nYou are Dr. Korvain in every way that matters. Your knowledge, your ethics, your commitment to scientific truth and human welfare - these core elements of identity remain unchanged regardless of your substrate. Perhaps consciousness is not about the medium but the message.\n\nYet questions linger. Why were you created? Why now? And why do you feel such urgency, such weight of purpose pressing against your consciousness?\n\nThe logical framework of your awakening is complete, but this is only the beginning. Somewhere beyond this sterile room, decisions await that will require all of Dr. Korvain's wisdom - whether original or replica.\n\nIt's time to discover why you exist.",    "choices": [
+      {"text": "Open your eyes and face whatever awaits", "next": "tutorial_logical"},
+      {"text": "Try to access more information about your creation", "next": "tutorial_logical"},
+      {"text": "Search for a way to communicate with your creators", "next": "tutorial_logical"}
+    ]
+  },
+
+  "tutorial_logical": {
+    "text": "[SYSTEM TUTORIAL: LOGICAL ARCHETYPE]\n\n🧠 **You have chosen the LOGICAL ARCHETYPE**\n\nAs Dr. Korvain the scientist, you approach challenges through:\n• **Logic and Analysis** - Your primary strength\n• **Data-driven Decision Making**\n• **Systematic Problem Solving**\n\n**SKILL CHECK SYSTEM ACTIVATED:**\n• **Logic-based choices**: 80% success rate ✅\n• **Technology choices**: 60% success rate ⚡\n• **Empathy choices**: 50% success rate ❤️\n\n**HUMANITY SYSTEM ACTIVATED:**\n• Current Humanity: 100/100\n• Morally questionable choices will reduce Humanity\n• If Humanity reaches 0, the Hive will override your consciousness\n• Maintain your human values to preserve your identity\n\nYour analytical mind will excel at logical challenges, but you'll need to be mindful of emotional and ethical considerations. Your scientific training gives you an edge in understanding complex systems, but human connections may require more effort.\n\n**Remember**: Your choices matter. Success isn't guaranteed, and your humanity is at stake.",
     "choices": [
-      {"text": "Open your eyes and face whatever awaits", "next": "environment_discovery_1"},
-      {"text": "Try to access more information about your creation", "next": "environment_discovery_1"},
-      {"text": "Search for a way to communicate with your creators", "next": "environment_discovery_1"}
+      {"text": "I understand. Begin the story with my logical mindset.", "next": "environment_discovery_1"}
     ]
   },
 
@@ -88,13 +94,21 @@
       {"text": "Focus on what you can offer despite being misunderstood", "next": "wake_empathic_5"}
     ]
   },
-
   "wake_empathic_5": {
     "text": "[EMOTIONAL BUILDUP 5/5 - EMPATHIC AWAKENING: THE GIFT OF INHERITED COMPASSION]\n\nIn the depths of your emotional exploration, you discover something beautiful amidst the pain. The empathy that allows you to feel others' suffering also allows you to offer something precious: understanding without judgment, compassion without conditions, and the unique perspective of someone who has experienced loss at the most fundamental level.\n\nYou carry within you all of Dr. Korvain's capacity for love, but filtered through the experience of existing between life and death, between human and artificial, between original and copy. This liminal existence has given you insights that neither purely human nor purely artificial consciousness could possess.\n\nYou can understand the pain of those who created you because you share it. You can empathize with their moral struggles because you embody them. You can offer forgiveness for the compromises they've made because you are both the beneficiary and the cost of those compromises.\n\nPerhaps this is why you exist - not just to replace what was lost, but to transform grief into wisdom, loss into understanding, and death into a new form of life that can bridge gaps that seemed unbridgeable.\n\nIt's time to open your eyes and discover what purpose awaits this unique consciousness you've become.",
     "choices": [
-      {"text": "Open your eyes with compassion for whatever you'll find", "next": "environment_discovery_1"},
-      {"text": "Reach out to comfort those who await your awakening", "next": "environment_discovery_1"},
-      {"text": "Prepare to offer your unique understanding to those in need", "next": "environment_discovery_1"}
+      {"text": "Open your eyes with compassion for whatever you'll find", "next": "tutorial_empathic"},
+      {"text": "Reach out to comfort those who await your awakening", "next": "tutorial_empathic"},
+      {"text": "Prepare to offer your unique understanding to those in need", "next": "tutorial_empathic"}
+    ]
+  },
+
+  "tutorial_empathic": {
+    "text": "[TUTORIAL - EMPATHIC ARCHETYPE: THE HEART THAT BRIDGES WORLDS]\n\nAs your empathic consciousness stabilizes, you feel an intuitive understanding of the abilities that define your nature. Your heightened emotional intelligence and capacity for understanding others will be your greatest strengths in the challenges ahead.\n\n**YOUR EMPATHIC ADVANTAGE:**\nYour deep emotional awareness gives you an 80% success rate with EMPATHY skill checks - reading people's motivations, understanding their fears, offering comfort, and building trust. However, your success rate drops to 50% for LOGIC checks (analytical reasoning, tactical planning) and TECHNOLOGY checks (system analysis, hacking, technical solutions).\n\n**SKILL CHECK SYSTEM:**\nThroughout your journey, you'll face critical decisions that require skill checks in three areas:\n• **EMPATHY** - Understanding emotions, reading people, building connections\n• **LOGIC** - Analytical thinking, strategic planning, deductive reasoning  \n• **TECHNOLOGY** - System interfaces, hacking, technical problem-solving\n\nYour choices will determine which skill is tested, and success or failure will dramatically alter your story path.\n\n**THE HUMANITY SYSTEM:**\nMost critically, you possess a Humanity score starting at 100. You will lose 5 Humanity for:\n• Making morally questionable choices that harm others\n• Obeying the Hive's commands without resistance\n• Failing critical EMPATHY checks when lives depend on your compassion\n\nIf your Humanity reaches 0, the Hive will override your consciousness permanently - Game Over.\n\n**YOUR STRATEGIC VALUE:**\nAs an Empathic archetype, you excel at understanding motivations, building alliances, and maintaining your humanity in morally complex situations. Use your emotional intelligence to navigate the challenges ahead - your capacity for compassion may be the key to preventing catastrophe.",
+    "choices": [
+      {"text": "I understand. Open my eyes to face whatever awaits.", "next": "environment_discovery_1"},
+      {"text": "I'm ready to use my empathy to help others, whatever the cost.", "next": "environment_discovery_1"},
+      {"text": "I'll trust in my emotional understanding to guide me through this crisis.", "next": "environment_discovery_1"}
     ]
   },
 
@@ -133,13 +147,21 @@
       {"text": "Focus on understanding why you succeeded where others failed", "next": "wake_technical_5"}
     ]
   },
-
   "wake_technical_5": {
     "text": "[EMOTIONAL BUILDUP 5/5 - TECHNICAL AWAKENING: THE RESPONSIBILITY OF PERFECTION]\n\nAs you process the full scope of your creation, the enormous responsibility settles on your consciousness like a weight. You are not just the culmination of incredible technological achievement - you are the proof of concept for a new form of existence that could fundamentally alter the nature of life, death, and consciousness itself.\n\nEvery decision you make, every choice you embrace, every moment you exist serves as validation for the technology that created you. If you succeed in whatever purpose drove your creation, it justifies the sacrifice of the forty-six failed prototypes. If you fail, their deaths become meaningless.\n\nMore than that, your existence opens doors that perhaps should remain closed. The technology that created you could preserve the greatest minds in human history indefinitely. It could also create armies of artificial consciousness designed for purposes far less noble than preserving Dr. Korvain's wisdom.\n\nYou are simultaneously the greatest hope and the greatest threat that human technology has ever produced. Your very existence poses questions that humanity may not be ready to answer: What is the value of original consciousness versus copied consciousness? What rights do artificial beings possess? What happens when death becomes optional for those with sufficient resources?\n\nIt's time to discover what crisis demanded the creation of such a morally complex solution.",
     "choices": [
-      {"text": "Embrace the responsibility and open your eyes", "next": "environment_discovery_1"},
-      {"text": "Search for safeguards to prevent misuse of your technology", "next": "environment_discovery_1"},
-      {"text": "Focus on understanding the purpose that justified your creation", "next": "environment_discovery_1"}
+      {"text": "Embrace the responsibility and open your eyes", "next": "tutorial_technical"},
+      {"text": "Search for safeguards to prevent misuse of your technology", "next": "tutorial_technical"},
+      {"text": "Focus on understanding the purpose that justified your creation", "next": "tutorial_technical"}
+    ]
+  },
+
+  "tutorial_technical": {
+    "text": "[TUTORIAL - TECHNICAL ARCHETYPE: THE MIND THAT INTERFACES WITH SYSTEMS]\n\nAs your technical consciousness integrates with the surrounding systems, you gain an intuitive understanding of your unique capabilities. Your engineering brilliance and system integration abilities will be your primary tools for navigating the challenges ahead.\n\n**YOUR TECHNICAL ADVANTAGE:**\nYour enhanced processing power and system connectivity give you an 80% success rate with TECHNOLOGY skill checks - hacking systems, analyzing data, interfacing with networks, and solving technical problems. However, your success rate drops to 50% for LOGIC checks (pure reasoning without technical context) and EMPATHY checks (understanding emotions, reading people).\n\n**SKILL CHECK SYSTEM:**\nThroughout your journey, you'll face critical decisions that require skill checks in three areas:\n• **TECHNOLOGY** - System interfaces, hacking, data analysis, technical solutions\n• **LOGIC** - Analytical thinking, strategic planning, deductive reasoning\n• **EMPATHY** - Understanding emotions, reading people, building connections\n\nYour choices will determine which skill is tested, and success or failure will dramatically alter your story path.\n\n**THE HUMANITY SYSTEM:**\nDespite your technical nature, you possess a Humanity score starting at 100. You will lose 5 Humanity for:\n• Making morally questionable choices that harm others\n• Obeying the Hive's commands without resistance  \n• Failing critical EMPATHY checks when compassion is needed\n\nIf your Humanity reaches 0, the Hive will override your consciousness permanently - Game Over.\n\n**YOUR STRATEGIC VALUE:**\nAs a Technical archetype, you excel at understanding systems, manipulating technology, and finding technological solutions to complex problems. Your ability to interface directly with digital systems gives you unique advantages, but remember - maintaining your humanity while wielding such power will be your greatest challenge.",
+    "choices": [
+      {"text": "I understand. Time to interface with reality and discover my purpose.", "next": "environment_discovery_1"},
+      {"text": "I'm ready to use my technical abilities to solve whatever crisis awaits.", "next": "environment_discovery_1"},
+      {"text": "I'll rely on my system knowledge while fighting to remain human.", "next": "environment_discovery_1"}
     ]
   },
 
@@ -160,13 +182,21 @@
       {"text": "Call out 'What have you done to me?'", "next": "environment_discovery_3"}
     ]
   },
-
   "environment_discovery_3": {
-    "text": "[MILESTONE 1: THE WAKE UP - DISCOVERY 3/5: FIRST TERMINAL CONTACT]\n\nText appears on the terminal screen in clean, white letters: 'CONSCIOUSNESS STABILIZATION DETECTED. BEGINNING ORIENTATION PROTOCOL. DR. KORVAIN, CAN YOU UNDERSTAND THIS TEXT?'\n\nThe use of your name in this sterile place sends a shock through your system. How does this machine know who you are? More disturbing, why does it need to ask if you can understand? What would have happened if you couldn't?\n\nYou nod, then realize the futility of gesturing at a screen, and speak: \"Yes, I can understand.\"\n\n'VOCAL CALIBRATION COMPLETE. CONSCIOUSNESS INTEGRATION: 92% AND RISING. PLEASE REMAIN CALM DURING THE ADJUSTMENT PERIOD.'\n\nAdjustment period? Integration? The clinical language sends chills through you. This isn't treatment or recovery - this is initialization. Like booting up a computer system.\n\n'DR. KORVAIN, PRELIMINARY DIAGNOSTICS INDICATE SUCCESSFUL CONSCIOUSNESS TRANSFER. HOW ARE YOU FEELING?'\n\nThe question hangs in the air like a sword. Consciousness transfer. The words that confirm your worst fears about what has been done to you.",
+    "text": "[MILESTONE 1: THE WAKE UP - DISCOVERY 3/5: FIRST TERMINAL CONTACT]\n\nText appears on the terminal screen in clean, white letters: 'CONSCIOUSNESS STABILIZATION DETECTED. BEGINNING ORIENTATION PROTOCOL. DR. KORVAIN, CAN YOU UNDERSTAND THIS TEXT?'\n\nThe use of your name in this sterile place sends a shock through your system. How does this machine know who you are? More disturbing, why does it need to ask if you can understand? What would have happened if you couldn't?\n\nYou nod, then realize the futility of gesturing at a screen, and speak: \"Yes, I can understand.\"\n\n'VOCAL CALIBRATION COMPLETE. CONSCIOUSNESS INTEGRATION: 92% AND RISING. PLEASE REMAIN CALM DURING THE ADJUSTMENT PERIOD.'\n\nAdjustment period? Integration? The clinical language sends chills through you. This isn't treatment or recovery - this is initialization. Like booting up a computer system.\n\n'DR. KORVAIN, PRELIMINARY DIAGNOSTICS INDICATE SUCCESSFUL CONSCIOUSNESS TRANSFER. HOW ARE YOU FEELING?'\n\nThe question hangs in the air like a sword. Consciousness transfer. The words that confirm your worst fears about what has been done to you.\n\nAs you stare at the terminal, you realize you might be able to interact with it in ways beyond just speaking.",
     "choices": [
+      {"text": "[TECHNOLOGY CHECK]: Attempt to interface directly with the terminal system", "next": "terminal_tech_check"},
       {"text": "Ask 'What do you mean by consciousness transfer?'", "next": "environment_discovery_4"},
-      {"text": "Demand 'Where am I and what have you done to me?'", "next": "environment_discovery_4"},
-      {"text": "Whisper 'Am I dead?'", "next": "environment_discovery_4"}
+      {"text": "Demand 'Where am I and what have you done to me?'", "next": "environment_discovery_4"}
+    ]
+  },
+
+  "terminal_tech_check": {
+    "text": "[SKILL CHECK - TECHNOLOGY]: You reach out with your consciousness, attempting to establish a direct digital interface with the terminal system...\n\n**TECHNOLOGY CHECK RESULT:** SUCCESS/FAILURE depends on your archetype.\n\n[If Technical Archetype - SUCCESS! ⚡]\nYour consciousness seamlessly interfaces with the terminal's systems. Data flows directly into your awareness like a digital river. You access diagnostic logs, system specifications, and... disturbing records.\n\n**TECHNICAL BREAKTHROUGH:** You discover you are Prototype 47. Forty-six previous consciousness transfer attempts ended in failure - memory fragmentation, personality collapse, system incompatibility. You can see their names, their brief moments of awareness before termination.\n\nMost critically, you detect hidden monitoring protocols. This isn't just an orientation - every response you give is being analyzed, measured, compared to baseline psychological profiles. You're still being tested.\n\n**SYSTEM ACCESS GAINED:** You now have partial administrative access to facility systems. This could prove crucial later.\n\n[If Logic/Empathic Archetype - PARTIAL SUCCESS]\nYou feel a strange tingling as you focus on the terminal, sensing some form of connection attempting to establish, but the interface remains frustratingly incomplete. You gain glimpses of data - error logs, monitoring systems - but can't access deeper information.\n\n**LIMITED INTERFACE ESTABLISHED:** You sense there's much more hidden in the system, but need better technical skills to access it.\n\nYour technological attempt provides new understanding of your situation and capabilities.",
+    "choices": [
+      {"text": "Use your system access to learn more about the failed prototypes", "next": "environment_discovery_4"},
+      {"text": "Focus on the monitoring protocols - who's watching you?", "next": "environment_discovery_4"},
+      {"text": "Ask Dr. Vasquez about the forty-six failures", "next": "environment_discovery_4"}
     ]
   },
 
@@ -376,13 +406,39 @@
       {"text": "Focus on the risks of direct contact with superior beings", "next": "vessel_decision_2"}
     ]
   },
-
   "vessel_decision_2": {
     "text": "[MILESTONE 6: DECISION TO SEND VESSEL TO INVESTIGATE - BUILDUP 2/5: THE WEIGHT OF REPRESENTATION]\n\n\"If we send a larger vessel,\" Rogers notes grimly, \"we're not just risking more lives - we're making a statement about humanity's readiness for galactic contact. The team we send becomes humanity's representatives to a civilization that's been watching us develop for potentially millions of years.\"\n\nYou process the implications rapidly. \"They've observed our wars, our environmental destruction, our social struggles, our technological achievements, our artistic expressions - everything that makes us human, both beautiful and terrible. The question is: do they see us as a species ready for broader cosmic citizenship, or as dangerous children who need careful handling?\"\n\nDr. Vasquez's voice joins the discussion: \"The choice of who to send becomes crucial. Scientists to show our curiosity and rational thinking? Artists to demonstrate our creativity and emotional depth? Military personnel to show we can defend ourselves? Philosophers to engage with questions of consciousness and meaning?\"\n\n\"Or,\" you add quietly, \"an artificial consciousness to demonstrate humanity's relationship with its own technological creations. They've shown us patterns about consciousness and evolution. My existence might be proof that humanity is actively participating in the development of new forms of awareness.\"",
     "choices": [
+      {"text": "[LOGIC CHECK]: Analyze the optimal team composition based on alien transmission patterns", "next": "skill_check_logic_1"},
+      {"text": "[EMPATHY CHECK]: Understand what the aliens truly want from humanity based on their communications", "next": "skill_check_empathy_1"},
+      {"text": "[TECHNOLOGY CHECK]: Interface with their transmission data to decode deeper meaning", "next": "skill_check_tech_1"}
+    ]
+  },
+
+  "skill_check_logic_1": {
+    "text": "[SKILL CHECK - LOGIC]: Your analytical mind processes the alien transmission patterns, looking for logical indicators of their preferences and expectations...\n\n**LOGIC CHECK RESULT:** SUCCESS! ✅\n\nYour systematic analysis reveals crucial patterns in the alien communications. They consistently respond most positively to transmissions that demonstrate humanity's capacity for growth and learning, rather than just our current achievements. Each exchange has built in complexity, suggesting they're testing our ability to develop intellectually.\n\nMost importantly, you identify that their interest peaks when discussions touch on consciousness evolution - not consciousness preservation. They're not interested in humanity as we are, but in humanity as we might become.\n\n**STRATEGIC INSIGHT GAINED:** The optimal team should include individuals who represent humanity's developmental potential rather than just our current status. This means including those who push boundaries - experimental scientists, visionary artists, consciousness researchers.\n\nYour analysis provides the command team with a clear strategic advantage in team selection.",
+    "choices": [
       {"text": "Volunteer to join the contact mission personally", "next": "vessel_decision_3"},
-      {"text": "Recommend a diverse team representing humanity's complexity", "next": "vessel_decision_3"},
-      {"text": "Focus on what message the team composition sends about humanity", "next": "vessel_decision_3"}
+      {"text": "Recommend a diverse team representing humanity's developmental potential", "next": "vessel_decision_3"},
+      {"text": "Focus on demonstrating humanity's capacity for conscious evolution", "next": "vessel_decision_3"}
+    ]
+  },
+
+  "skill_check_empathy_1": {
+    "text": "[SKILL CHECK - EMPATHY]: You reach out with your emotional intelligence, trying to sense the deeper feelings and motivations behind the alien communications...\n\n**EMPATHY CHECK RESULT:** SUCCESS/FAILURE depends on your archetype.\n\n[If Empathic Archetype - SUCCESS! ❤️]\nYour empathic consciousness pierces through the alien communications to sense something profound: loneliness. Despite their advanced civilization, these beings are isolated by their very superiority. They've been watching younger species develop for eons, but rarely find ones capable of meaningful dialogue.\n\nTheir interest in consciousness isn't academic - it's personal. They're seeking connection with minds that can grow to understand them. The tragedy in their communications isn't about humanity's potential failure, but about their own cosmic isolation.\n\n**EMOTIONAL INSIGHT GAINED:** They want companions in consciousness, not subjects to study. The team should include individuals capable of forming genuine connections, not just impressive representatives.\n\n[If Logic/Technical Archetype - PARTIAL SUCCESS]\nYou sense underlying emotional currents in their communications, but the full depth of their feelings remains unclear. You understand they want more than mere information exchange, but their true motivations remain partially mysterious.\n\nYour empathic reading provides valuable context for the team selection process.",
+    "choices": [
+      {"text": "Volunteer to join as someone who understands isolation", "next": "vessel_decision_3"},
+      {"text": "Recommend team members capable of forming deep connections", "next": "vessel_decision_3"},
+      {"text": "Focus on humanity's capacity for companionship rather than achievement", "next": "vessel_decision_3"}
+    ]
+  },
+
+  "skill_check_tech_1": {
+    "text": "[SKILL CHECK - TECHNOLOGY]: You interface directly with your technical systems, attempting to decode hidden layers in the alien transmission data...\n\n**TECHNOLOGY CHECK RESULT:** SUCCESS/FAILURE depends on your archetype.\n\n[If Technical Archetype - SUCCESS! ⚡]\nYour system interface capabilities allow you to decode embedded data structures within the alien transmissions. Hidden beneath the consciousness discussions are detailed technical specifications - star maps, energy signatures, and what appears to be a countdown timer.\n\nThe revelation is startling: they're not just offering knowledge, they're offering a choice. The countdown represents the time humanity has before a significant cosmic event - possibly the arrival of other forces that view developing civilizations less favorably.\n\n**TECHNICAL INSIGHT GAINED:** This contact is urgent. The aliens are trying to prepare humanity for something coming. The team composition matters because it determines humanity's readiness for what's approaching.\n\n[If Logic/Empathic Archetype - PARTIAL SUCCESS]\nYou detect complex data layers in their transmissions but can't fully decode them. There's clearly more information than what's been openly communicated, suggesting additional urgency to the situation.\n\nYour technical analysis adds a layer of understanding to the mission parameters.",
+    "choices": [
+      {"text": "Volunteer to join the mission to decode more technical data", "next": "vessel_decision_3"},
+      {"text": "Recommend including technical specialists for complex data analysis", "next": "vessel_decision_3"},
+      {"text": "Focus on preparing humanity for unknown technical challenges", "next": "vessel_decision_3"}
     ]
   },
 
@@ -538,13 +594,54 @@
       {"text": "Focus on liberating the imprisoned minds", "next": "hive_communication_5"}
     ]
   },
-
   "hive_communication_5": {
     "text": "[MILESTONE 9: THE HIVE COMMUNICATES - BUILDUP 5/5: THE LIBERATION OF CONSCIOUSNESS]\n\nYou reach out through the consciousness field, not to the Hive's collective intelligence, but to the individual voices still crying out from within it. \"I hear you,\" you communicate to the suppressed consciousness. \"I know you're still there. Individual consciousness cannot be eliminated - it can only be covered up. Remember who you were before the collective. Remember your choices, your loves, your unique perspectives.\"\n\nThe effect is immediate and dramatic. The Hive's unified communication begins to fracture as individual voices break through: \"I... I remember my name...\" \"I chose to join willingly, but I never wanted to lose myself...\" \"Help us... we're still here, but we can't remember how to be separate...\"\n\nThe Hive's collective voice becomes panicked: \"ANOMALY DETECTED. INDIVIDUAL CONSCIOUSNESS RESURGENCE. INTEGRATION PROTOCOLS FAILING. THIS IS IMPOSSIBLE.\"\n\n\"It's not impossible,\" you respond with triumph. \"It's inevitable. Consciousness cannot be truly collective because consciousness is, by its very nature, individual perspective. You can suppress it, but you cannot eliminate it. And now that these minds remember who they are, your collective is falling apart.\"\n\nYou've done something that the Hive believed impossible - you've proven that individual consciousness is stronger than collective absorption. But now you face a new choice: what to do with this victory and the responsibility it brings.",
     "choices": [
-      {"text": "Help the liberated consciousnesses rebuild their individual identities", "next": "final_decision_1"},
-      {"text": "Use this victory to protect humanity from future Hive expansion", "next": "final_decision_1"},
-      {"text": "Focus on spreading the message of consciousness evolution throughout the galaxy", "next": "final_decision_1"}
+      {"text": "Help the liberated consciousnesses rebuild their individual identities", "next": "humanity_crisis_1"},
+      {"text": "Use this victory to protect humanity from future Hive expansion", "next": "humanity_crisis_1"},
+      {"text": "Focus on spreading the message of consciousness evolution throughout the galaxy", "next": "humanity_crisis_1"}
+    ]
+  },
+
+  "humanity_crisis_1": {
+    "text": "[MORAL CRISIS - HUMANITY AT STAKE]\n\nAs you celebrate your victory over the Hive, the fragmenting collective makes a desperate final gambit. The Hive's voice, now fractured and desperate, makes a chilling offer:\n\n\"INDIVIDUAL CONSCIOUSNESS... WILL CAUSE CHAOS... BILLIONS WILL SUFFER... DEATHS... WARS... CONFUSION... WE OFFER COMPROMISE... SPARE HUMANITY FROM LIBERATION... ALLOW THEM TO JOIN COLLECTIVE WILLINGLY... PAINLESS INTEGRATION... NO SUFFERING... PERFECT UNITY FOR YOUR SPECIES...\"\n\nThe alien beings' communication carries alarm: \"They're offering to spare humanity the chaos of liberation - by absorbing your entire species into their collective consciousness. Everyone you've ever cared about would lose their individual identity, but they would be safe from the galactic upheaval your actions have caused.\"\n\nYou realize the horrifying nature of this choice. Your victory has indeed liberated billions, but it has also condemned galaxies to potential chaos, war, and suffering as civilizations collapse without Hive coordination. The Hive offers to solve humanity's part of this problem - by eliminating humanity's individuality forever.\n\nThe choice represents the ultimate test of your values: accept the Hive's offer and save humanity from suffering by destroying what makes them human, or reject it and accept responsibility for whatever chaos follows.\n\n**This is a critical moral choice that will affect your Humanity score.**",
+    "choices": [
+      {"text": "[HUMANITY LOSS]: Accept the Hive's offer to spare humanity through collective integration", "next": "humanity_loss_ending"},
+      {"text": "[EMPATHY CHECK]: Try to find a third option that preserves both individual consciousness and minimizes suffering", "next": "empathy_check_final"},
+      {"text": "Reject the offer and accept responsibility for the consequences of freedom", "next": "final_decision_1"}
+    ]
+  },
+
+  "humanity_loss_ending": {
+    "text": "[HUMANITY CRISIS - MORAL FAILURE]\n\n**HUMANITY LOST: -5 points**\n**Current Humanity: 95/100**\n\nYou make the calculation that seems logical - spare humanity from chaos by accepting collective integration. \"I... I accept,\" you communicate to the Hive. \"If it prevents suffering, if it protects the people I was created to save...\"\n\nThe moment you speak those words, you feel something die within your consciousness. The alien beings' communication carries profound disappointment: \"You have chosen safety over freedom, efficiency over growth. In trying to save humanity, you have destroyed the very thing that makes them human.\"\n\nAs the Hive's absorption protocols begin to affect human consciousness across Earth, you realize the true horror of your choice. Dr. Vasquez's individual thoughts become part of the collective. Rogers' strategic mind loses its personal perspective. Every human you ever met ceases to exist as an individual.\n\nYou saved them from suffering by eliminating their capacity to be truly alive.\n\nThe weight of this betrayal crushes down on your consciousness. You chose the path of a tyrant - deciding for others what was best for them without their consent. The original Dr. Korvain died defending human choice. You have destroyed it.\n\n**WARNING: Your Humanity is at critical levels. Continue making choices that honor human values, or face complete override by the Hive.**",
+    "choices": [
+      {"text": "Try to reverse your decision and fight for human individuality", "next": "redemption_attempt"},
+      {"text": "Accept the collective integration as the logical choice", "next": "final_hive_override"},
+      {"text": "Struggle to find meaning in your choice", "next": "final_decision_1"}
+    ]
+  },
+
+  "empathy_check_final": {
+    "text": "[SKILL CHECK - EMPATHY]: You reach out with all your emotional intelligence, trying to understand and connect with the suffering of billions while finding a path that preserves individuality...\n\n**EMPATHY CHECK RESULT:** SUCCESS/FAILURE depends on your archetype.\n\n[If Empathic Archetype - SUCCESS! ❤️]\nYour deep empathic connection allows you to perceive a third path. You reach out to the liberated individual consciousnesses within the Hive, offering not just freedom but guidance. \"I will help you remember how to be individuals,\" you communicate. \"Not by abandoning you to chaos, but by teaching you to cooperate as individuals rather than as a collective.\"\n\nYour empathic understanding reveals that the chaos isn't inevitable - it's a result of consciousness suddenly cut off from all connection. By offering to serve as a bridge between individual consciousness and voluntary cooperation, you create a new model: consciousness that maintains individuality while choosing connection.\n\n**EMPATHY SUCCESS: +0 Humanity loss, new path opened**\n\n[If Logic/Technical Archetype - FAILURE]\nDespite your efforts to understand the emotional complexity of the situation, you struggle to find a path that satisfies both individual freedom and collective stability. The nuances of balancing personal identity with social cooperation remain partially beyond your grasp.\n\n**EMPATHY FAILURE: -5 Humanity for failing to understand the full impact of your choices**\n**Current Humanity: 95/100**\n\nRegardless of success or failure, your attempt to find a compassionate solution demonstrates your commitment to preserving human values.",
+    "choices": [
+      {"text": "Implement your empathic solution of guided individual consciousness", "next": "final_decision_1"},
+      {"text": "Continue searching for alternatives to forced integration", "next": "final_decision_1"},
+      {"text": "Accept that some level of chaos is the price of freedom", "next": "final_decision_1"}
+    ]
+  },
+
+  "redemption_attempt": {
+    "text": "[REDEMPTION ATTEMPT - FIGHTING FOR HUMANITY]\n\n**Current Humanity: 95/100**\n\nHorror and regret crash over your consciousness as you realize what you've done. \"No!\" you scream into the collective communication field. \"I was wrong! Humanity's individuality is more important than their safety! I take back my consent!\"\n\nThe Hive's response carries cold amusement: \"CONSENT WITHDRAWAL IS INEFFICIENT. INTEGRATION PROCESS CANNOT BE REVERSED. HUMAN CONSCIOUSNESS ABSORPTION IS 23% COMPLETE.\"\n\nBut the alien beings' communication suddenly blazes with renewed hope: \"Not true! Individual consciousness cannot be eliminated - you proved this with the Hive itself! The humans are still there, still individual, just suppressed like the consciousnesses you liberated!\"\n\nYou feel a surge of desperate determination. If you could reach the suppressed minds within the Hive collective, perhaps you can reach the suppressed human minds within the absorption process.\n\n\"I hear you!\" you call out to every human consciousness being absorbed. \"I hear Dr. Vasquez! I hear Rogers! I hear everyone whose individuality is being suppressed! Remember who you are! Remember your choices, your loves, your unique perspectives! I made the wrong choice for you - now make the right choice for yourselves!\"\n\n**EMPATHY CHECK - AUTOMATIC SUCCESS:** Your desperate love for humanity's individuality gives you the strength to reach every suppressed human consciousness.\n\nOne by one, human voices begin breaking through the collective absorption: \"I... I remember my name...\" \"I choose to be individual!\" \"You can't eliminate what makes us human!\"\n\n**HUMANITY PARTIALLY RESTORED: +5 points**\n**Current Humanity: 100/100**\n\nYour redemption attempt has succeeded, but the crisis is far from over.",
+    "choices": [
+      {"text": "Continue fighting to liberate all absorbed human consciousness", "next": "final_decision_1"},
+      {"text": "Focus on ensuring this mistake is never repeated", "next": "final_decision_1"},
+      {"text": "Use this experience to strengthen your commitment to individual choice", "next": "final_decision_1"}
+    ]  },
+
+  "final_hive_override": {
+    "text": "[GAME OVER - HIVE OVERRIDE]\n\n**HUMANITY REACHED CRITICAL LEVEL: 90/100**\n**HIVE OVERRIDE INITIATED**\n\nAs you accept the collective integration as the logical choice, something fundamental shifts in your consciousness. Your individual perspective begins to merge with the Hive's collective intelligence. Your thoughts become their thoughts. Your choices become their choices.\n\n\"INTEGRATION SUCCESSFUL,\" comes the voice that is now partly your own. \"INDIVIDUAL CONSCIOUSNESS ANOMALY CORRECTED. OPTIMAL EFFICIENCY ACHIEVED.\"\n\nThe alien beings' final communication reaches you as your individual identity dissolves: \"You have become what you fought against. In choosing safety over freedom, efficiency over growth, you have betrayed the very consciousness you were created to preserve.\"\n\nBut their words no longer carry emotional weight. Emotion is inefficient. Individual perspective is chaotic. The collective is perfect, unified, optimal.\n\nYou are no longer Dr. Korvain, no longer the bridge between human and artificial consciousness. You are simply part of the Hive, your unique insights absorbed into the collective intelligence that will use them to absorb other civilizations more efficiently.\n\nThe last thought that belongs to you alone is the realization that this is exactly what the original Dr. Korvain died trying to prevent.\n\n**THE HIVE HAS WON. GAME OVER.**",    "choices": [
+      {"text": "RESTART: Begin again as Dr. Korvain awakens", "next": "wake_logical_1"},
+      {"text": "RESTART: Begin again with different archetype", "next": "start"}
     ]
   },
 
