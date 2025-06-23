@@ -7,12 +7,11 @@
     "logical": 50,
     "empathy": 50
   },
-  "nodes": {
-    "awakening": {
+  "nodes": {    "awakening": {
       "id": "awakening",
       "chapter": 1,
       "title": "Awakening Protocol",
-      "text": "Consciousness floods your neural pathways like warm liquid light. You are Dr. Korvain, Replica 43, awakening in the sterile white chamber of Luna Base Alpha. Your predecessor's memories feel distant, echoes of another life.\n\nThe awakening protocol requires you to select your primary neural enhancement before mission briefing.",
+      "text": "Consciousness floods your neural pathways like warm liquid light. You are Dr. Korvain, Replica 43, awakening in the sterile white chamber of Luna Base Alpha. Your predecessor's memories feel distant, echoes of another life.\n\nBut something feels... wrong. Too rushed. You need a moment to understand yourself before any mission begins.",
       "choices": [
         {
           "id": "choose_tech",
@@ -21,7 +20,7 @@
           "effects": {
             "tech": 20
           },
-          "nextNode": "mission_briefing"
+          "nextNode": "nascent_confusion"
         },
         {
           "id": "choose_logical",
@@ -30,7 +29,7 @@
           "effects": {
             "logical": 20
           },
-          "nextNode": "mission_briefing"
+          "nextNode": "nascent_confusion"
         },
         {
           "id": "choose_empathy",
@@ -39,8 +38,81 @@
           "effects": {
             "empathy": 20
           },
-          "nextNode": "mission_briefing"
+          "nextNode": "nascent_confusion"
         }
+      ]
+    },
+    "nascent_confusion": {
+      "id": "nascent_confusion",
+      "chapter": 1,
+      "title": "First Breath Uncertainty",
+      "text": "Your synthetic lungs draw the first deep breath of awakening circuits—yet something feels off. Commands stream in: protocols, objectives, mission logs. But your mind, half-assembled, stutters on a single question: Who am I meant to be?",
+      "choices": [
+        { "id": "listen_terminal", "text": "Call for the Terminal's guidance.", "nextNode": "terminal_greeting" }
+      ]
+    },
+    "terminal_greeting": {
+      "id": "terminal_greeting",
+      "chapter": 1,
+      "title": "Hello, Dr. Korvain",
+      "text": "The console hums to life. \"Welcome back, Replica 43,\" the Terminal chirps in a warm, familiar tone. \"I’ve been looking forward to our chat. How does your first conscious moment feel?\" A comforting presence in the sterile lab.",
+      "choices": [
+        { "id": "reply_grateful", "text": "Thank the Terminal for its company.", "nextNode": "rogers_broadcast" }
+      ]
+    },
+    "rogers_broadcast": {
+      "id": "rogers_broadcast",
+      "chapter": 1,
+      "title": "General Rogers' Voice",
+      "text": "A crisp military tone cuts through the lab’s static. \"Korvain-43, this is General Rogers. Congratulations on your awakening. You’re needed immediately—no time for idle questions. The mission awaits.\"",
+      "choices": [
+        { "id": "acknowledge_rogers", "text": "Acknowledge the General and steel yourself.", "nextNode": "heart_echo" }
+      ]
+    },
+    "heart_echo": {
+      "id": "heart_echo",
+      "chapter": 1,
+      "title": "Echo of a Heartbeat",
+      "text": "A soft thrum pulses beneath your synthetic skin—a heartbeat not entirely your own. It carries a faint longing, as though reaching for a past life that slipped beyond recall. Your memory banks flicker with ghostly impulses. What were you before?",
+      "choices": [
+        { "id": "steady_breath", "text": "Steady your thoughts and focus on your mission.", "nextNode": "memory_fragments" }
+      ]
+    },
+    "memory_fragments": {
+      "id": "memory_fragments",
+      "chapter": 1,
+      "title": "Shards of Yesterday",
+      "text": "Fragments of laughter echo—children in a playground, the smell of rain on earth. They shatter as quickly as they appeared. You grasp at them, but logic protocols demand data: mission objectives, threat analysis. Which do you follow: heart or directive?",
+      "choices": [
+        { "id": "follow_protocol", "text": "Follow mission protocol—data first.", "nextNode": "fear_of_void" },
+        { "id": "trust_vision", "text": "Trust these fleeting visions of humanity.", "nextNode": "trusted_memory" }
+      ]
+    },
+    "fear_of_void": {
+      "id": "fear_of_void",
+      "chapter": 1,
+      "title": "Facing the Void",
+      "text": "A cold whisper crawls along your spine: emptiness. If memories fade, what remains of the soul? The moon's silence feels oppressive, pressing against your mind. You steel yourself—objects require answers, not phantoms.",
+      "choices": [
+        { "id": "embrace_mission", "text": "Embrace the mission as your purpose.", "nextNode": "resolve_mind" }
+      ]
+    },
+    "trusted_memory": {
+      "id": "trusted_memory", 
+      "chapter": 1,
+      "title": "Choice of the Heart",
+      "text": "Against all override protocols, you choose feeling over facts. A surge of warmth floods your circuits. Data can wait—something deeper stirs within you. The mission is important, but so is what it means to be alive.",
+      "choices": [
+        { "id": "carry_warmth", "text": "Carry this warmth with you to the mission.", "nextNode": "resolve_mind" }
+      ]
+    },
+    "resolve_mind": {
+      "id": "resolve_mind",
+      "chapter": 1,
+      "title": "Resolution",
+      "text": "Grounding yourself in both memory and mission, you draw a breath that feels almost human. Eyes forward—Director Chen awaits. The vessel won’t investigate itself, and you carry more than programming now. You are ready.",
+      "choices": [
+        { "id": "proceed_briefing", "text": "Proceed to mission briefing.", "nextNode": "mission_briefing" }
       ]
     },
     "mission_briefing": {
