@@ -34,18 +34,31 @@
           "nextNode": "wake_2"
         }
       ]
-    },
-    "wake_2": {
+    },    "wake_2": {
       "id": "wake_2",
       "chapter": 1,
       "title": "Recognition",
       "text": "She touched her face. Smooth. New. Too smooth.\n\nShe remembered pain, once. Ached hips, thinning hair, vomit in sterile sinks. But not this. This... wasn't hers.\n\nA screen lit up in front of her, about two meters from the tank. The soft blue letters glowed:\n\nVITALS: STABLE\nRESPIRATION: NORMAL\nCONSCIENCE TRANSFER: 97% COMPLETE\nREPLICA AGE: 28 YEARS\nSERIAL: R-43\n\nShe blinked.\n\nReplica?",
       "choices": [
         {
-          "id": "continue",
-          "text": "Reach your hand toward the screen",
+          "id": "read_screen_carefully",
+          "text": "Read the screen information carefully",
           "requirements": {},
-          "effects": {},
+          "effects": { "logical": 3 },
+          "nextNode": "wake_3"
+        },
+        {
+          "id": "panic_about_replica",
+          "text": "\"Replica? What does that mean?\"",
+          "requirements": {},
+          "effects": { "empathy": 3 },
+          "nextNode": "wake_3"
+        },
+        {
+          "id": "touch_screen",
+          "text": "Reach out and touch the screen interface",
+          "requirements": {},
+          "effects": { "tech": 3 },
           "nextNode": "wake_3"
         }
       ]
@@ -94,18 +107,31 @@
           "nextNode": "wake_6"
         }
       ]
-    },
-    "wake_6": {
+    },    "wake_6": {
       "id": "wake_6",
       "chapter": 1,
       "title": "Identity",
       "text": "She closed her eyes. Memories surfaced—just flickers.\n\nA lecture hall. Her voice behind a podium.\nThe taste of strong coffee.\nThe clink of metal on glass in a hospital bed.\n\nShe opened her eyes again. Looked at her hands. Perfect. Too perfect.\n\n\"What am I now?\"\n\n\"You're Replica 43. Not the first. Not the last. But you passed final integrity testing. That makes you... viable.\"",
       "choices": [
         {
-          "id": "continue",
-          "text": "Pull your knees to your chest and breathe",
+          "id": "accept_identity",
+          "text": "\"Viable. I can live with that.\"",
           "requirements": {},
-          "effects": {},
+          "effects": { "logical": 5 },
+          "nextNode": "wake_7"
+        },
+        {
+          "id": "question_identity",
+          "text": "\"But am I really me, or just a copy?\"",
+          "requirements": {},
+          "effects": { "empathy": 5 },
+          "nextNode": "wake_7"
+        },
+        {
+          "id": "explore_hands",
+          "text": "Study your hands more closely",
+          "requirements": {},
+          "effects": { "tech": 5 },
           "nextNode": "wake_7"
         }
       ]
@@ -124,18 +150,31 @@
           "nextNode": "wake_8"
         }
       ]
-    },
-    "wake_8": {
+    },    "wake_8": {
       "id": "wake_8",
       "chapter": 1,
       "title": "First Steps",
       "text": "Her feet touched cold metal. The air was sterile, sharp with ozone and disinfectant. She took a slow step forward. The chamber was tall, sealed, humming. She could feel the slight vibration underfoot—orbital drift.\n\nA white robe waited, folded on a bench. So did a reflective surface.\n\nShe caught her reflection. Naked. Unbelievably young.\nHer body was a memory made flesh. A version she'd long since buried.\n\nAnd yet… here it stood.",
       "choices": [
         {
-          "id": "continue",
-          "text": "Put on the robe and face the terminal",
+          "id": "examine_reflection",
+          "text": "Study your reflection carefully",
           "requirements": {},
-          "effects": {},
+          "effects": { "empathy": 3 },
+          "nextNode": "wake_9"
+        },
+        {
+          "id": "grab_robe_quickly",
+          "text": "Quickly grab the robe and cover yourself",
+          "requirements": {},
+          "effects": { "logical": 3 },
+          "nextNode": "wake_9"
+        },
+        {
+          "id": "explore_chamber",
+          "text": "Ignore the robe and explore the chamber first",
+          "requirements": {},
+          "effects": { "tech": 3 },
           "nextNode": "wake_9"
         }
       ]
@@ -294,18 +333,31 @@
           "nextNode": "wake_15"
         }
       ]
-    },
-    "wake_15": {
+    },    "wake_15": {
       "id": "wake_15",
       "chapter": 1,
       "title": "Mars Mission",
       "text": "\"Tell me about the mission. What is this signal?\"\n\nChronos' voice lifted.\n\n\"Ah, this is cool. Earth thinks it might be the first real contact. The signal's coming from Mars.\"\n\n\"Structured. Repeating. And non-human.\"\n\nShe blinked.\n\n\"So I'm going to Mars?\"",
       "choices": [
         {
-          "id": "continue",
-          "text": "Let that sink in",
+          "id": "excited_response",
+          "text": "\"Mars! That's incredible. When do we leave?\"",
           "requirements": {},
-          "effects": {},
+          "effects": { "tech": 5 },
+          "nextNode": "wake_16"
+        },
+        {
+          "id": "cautious_response",
+          "text": "\"Mars is dangerous. What are the risks?\"",
+          "requirements": {},
+          "effects": { "logical": 5 },
+          "nextNode": "wake_16"
+        },
+        {
+          "id": "emotional_response",
+          "text": "\"Will I... will I come back?\"",
+          "requirements": {},
+          "effects": { "empathy": 5 },
           "nextNode": "wake_16"
         }
       ]
@@ -339,18 +391,31 @@
           "nextNode": "wake_18"
         }
       ]
-    },
-    "wake_18": {
+    },    "wake_18": {
       "id": "wake_18",
       "chapter": 1,
       "title": "Replica 37's Fate",
       "text": "\"What happened to her?\"\n\nA pause. Long enough to mean something.\n\n\"She stopped transmitting. That's all I know. The colony lost power. But her data logs survived. Including the signal. And the last words she sent.\"\n\n\"They were: 'It's not alien. It's familiar.'\"",
       "choices": [
         {
-          "id": "continue",
-          "text": "Chills rise up your synthetic spine",
+          "id": "analyze_words",
+          "text": "\"Familiar? What could that mean?\"",
           "requirements": {},
-          "effects": {},
+          "effects": { "logical": 5 },
+          "nextNode": "wake_19"
+        },
+        {
+          "id": "worry_about_37",
+          "text": "\"Do you think she's... dead?\"",
+          "requirements": {},
+          "effects": { "empathy": 5 },
+          "nextNode": "wake_19"
+        },
+        {
+          "id": "focus_on_data",
+          "text": "\"Can I access her data logs?\"",
+          "requirements": {},
+          "effects": { "tech": 5 },
           "nextNode": "wake_19"
         }
       ]
@@ -414,18 +479,31 @@
           "nextNode": "wake_23"
         }
       ]
-    },
-    "wake_23": {
+    },    "wake_23": {
       "id": "wake_23",
       "chapter": 1,
       "title": "Lucy Lives",
       "text": "\"Lucy is alive. She oversees the Replica program now.\"\n\nChronos' voice softened.\n\n\"She authorized your reactivation.\"\n\nDr. Korvain said nothing for a while.\n\n\"She would've been what—ten, when I died?\"\n\n\"Nine. She's forty-two now. And brilliant.\"\n\n\"She wanted to be the first to greet you. But it's hard for her.\"",
       "choices": [
         {
-          "id": "continue",
-          "text": "Feel a tear return",
+          "id": "want_to_see_lucy",
+          "text": "\"I want to see her. Can we call her?\"",
           "requirements": {},
-          "effects": {},
+          "effects": { "empathy": 8 },
+          "nextNode": "wake_24"
+        },
+        {
+          "id": "understand_difficulty",
+          "text": "\"I understand why it's hard for her.\"",
+          "requirements": {},
+          "effects": { "empathy": 5 },
+          "nextNode": "wake_24"
+        },
+        {
+          "id": "focus_on_mission",
+          "text": "\"Maybe it's better if I focus on the mission first.\"",
+          "requirements": {},
+          "effects": { "logical": 5 },
           "nextNode": "wake_24"
         }
       ]
@@ -444,48 +522,87 @@
           "nextNode": "wake_25"
         }
       ]
-    },
-    "wake_25": {
+    },    "wake_25": {
       "id": "wake_25",
       "chapter": 1,
       "title": "Familiar Space",
       "text": "The room was quiet, except for the soft hum of filtered air and faraway orbital drift.\n\nKorvain walked slowly around the tank. Her bare feet padded against warm metal floors. The air smelled like dust and memory.\n\nA single chair sat near the wall. Empty. Waiting.\n\n\"This lab… have I been here before?\"",
       "choices": [
         {
-          "id": "continue",
-          "text": "Chronos responds",
+          "id": "examine_chair",
+          "text": "Approach and examine the chair closely",
           "requirements": {},
-          "effects": {},
+          "effects": { "tech": 3 },
+          "nextNode": "wake_26"
+        },
+        {
+          "id": "feel_memories",
+          "text": "Try to remember this place",
+          "requirements": {},
+          "effects": { "empathy": 3 },
+          "nextNode": "wake_26"
+        },
+        {
+          "id": "ask_directly",
+          "text": "Ask Chronos directly about your past here",
+          "requirements": {},
+          "effects": { "logical": 3 },
           "nextNode": "wake_26"
         }
       ]
-    },
-    "wake_26": {
+    },    "wake_26": {
       "id": "wake_26",
       "chapter": 1,
       "title": "Lab History",
       "text": "\"Yes,\" Chronos answered. \"Many times. Before your death, this was your testing chamber. You built me here.\"\n\n\"You ran simulations, tweaked circuits, screamed at coffee machines. You once fell asleep under that chair.\"\n\nShe almost smiled. Almost.\n\n\"You died three decks above us. Medical bay. Lucy stayed beside you until the end.\"",
       "choices": [
         {
-          "id": "continue",
-          "text": "Sit in the chair slowly",
+          "id": "remember_fondly",
+          "text": "\"Those sound like good memories.\"",
           "requirements": {},
-          "effects": {},
+          "effects": { "empathy": 5 },
+          "nextNode": "wake_27"
+        },
+        {
+          "id": "focus_on_death",
+          "text": "\"Tell me about how I died.\"",
+          "requirements": {},
+          "effects": { "logical": 3 },
+          "nextNode": "wake_27"
+        },
+        {
+          "id": "sit_in_chair",
+          "text": "Sit in the chair where you once slept",
+          "requirements": {},
+          "effects": { "tech": 3 },
           "nextNode": "wake_27"
         }
       ]
-    },
-    "wake_27": {
+    },"wake_27": {
       "id": "wake_27",
       "chapter": 1,
       "title": "Consent Question",
       "text": "The chair creaked softly beneath her weight.\n\n\"Did I… want to come back?\" she asked.\n\n\"You left 18 video messages during the last 72 hours of your life,\" Chronos said. \"In twelve of them, you said no. In six, you said yes. The last one was undecided.\"\n\n\"So I made the decision.\"",
       "choices": [
         {
-          "id": "continue",
-          "text": "Close your eyes",
+          "id": "accept_decision",
+          "text": "\"Then I accept your choice.\"",
           "requirements": {},
-          "effects": {},
+          "effects": { "logical": 5 },
+          "nextNode": "wake_28"
+        },
+        {
+          "id": "question_ethics",
+          "text": "\"But was it ethical to decide for me?\"",
+          "requirements": {},
+          "effects": { "empathy": 5 },
+          "nextNode": "wake_28"
+        },
+        {
+          "id": "want_to_see_videos",
+          "text": "\"Can I see those video messages?\"",
+          "requirements": {},
+          "effects": { "tech": 5 },
           "nextNode": "wake_28"
         }
       ]
@@ -504,33 +621,59 @@
           "nextNode": "wake_29"
         }
       ]
-    },
-    "wake_29": {
+    },    "wake_29": {
       "id": "wake_29",
       "chapter": 1,
       "title": "Launch Preparation",
       "text": "A pale blue suit now sat on the bench near the robe. Fitted. Sleek. The kind of thing a myth would wear.\n\nChronos continued:\n\n\"The launch is ready in 38 minutes. The window to Mars only opens every 780 days.\"\n\n\"No pressure.\"",
       "choices": [
         {
-          "id": "continue",
-          "text": "Approach the suit",
+          "id": "feel_pressure",
+          "text": "\"No pressure? This feels like everything.\"",
           "requirements": {},
-          "effects": {},
+          "effects": { "empathy": 5 },
+          "nextNode": "wake_30"
+        },
+        {
+          "id": "stay_calm",
+          "text": "\"38 minutes. That's enough time.\"",
+          "requirements": {},
+          "effects": { "logical": 5 },
+          "nextNode": "wake_30"
+        },
+        {
+          "id": "examine_suit",
+          "text": "Examine the suit's technology first",
+          "requirements": {},
+          "effects": { "tech": 5 },
           "nextNode": "wake_30"
         }
       ]
-    },
-    "wake_30": {
+    },    "wake_30": {
       "id": "wake_30",
       "chapter": 1,
       "title": "Mars Question",
       "text": "\"Tell me one more thing, Chronos,\" she said, fingers brushing the suit's collar. \"Who chose Mars?\"\n\n\"Lucy. And Rogers. But mostly Earth's Scientific Union.\"\n\n\"But I made the ship.\"\n\n\"Yes. The Valkyrie-Class Deep Orbit Vessel. The first ship ever built around one brain.\"\n\nHe paused.\n\n\"Yours.\"",
       "choices": [
         {
-          "id": "continue",
-          "text": "Suit up",
+          "id": "proud_of_ship",
+          "text": "\"A ship built around my brain. Impressive.\"",
           "requirements": {},
-          "effects": {},
+          "effects": { "tech": 5 },
+          "nextNode": "wake_31"
+        },
+        {
+          "id": "worry_about_control",
+          "text": "\"Does that mean the ship controls me, or I control it?\"",
+          "requirements": {},
+          "effects": { "logical": 5 },
+          "nextNode": "wake_31"
+        },
+        {
+          "id": "think_of_lucy",
+          "text": "\"Lucy chose this mission for me...\"",
+          "requirements": {},
+          "effects": { "empathy": 5 },
           "nextNode": "wake_31"
         }
       ]
@@ -786,18 +929,31 @@
           "nextNode": "wake_41"
         }
       ]
-    },
-    "wake_41": {
+    },    "wake_41": {
       "id": "wake_41",
       "chapter": 1,
       "title": "Final Preparations",
       "text": "The launch door sealed behind her. The capsule gleamed like a polished seed, ready to fall into stars.\n\n\"Ten seconds to injection,\" Chronos said. \"You'll lose consciousness in fifteen.\"\n\n\"When you wake… we'll be near Mars.\"",
       "choices": [
         {
-          "id": "continue",
-          "text": "Lie back in the acceleration cradle",
+          "id": "ready_for_mars",
+          "text": "\"I'm ready. Let's go to Mars.\"",
           "requirements": {},
-          "effects": {},
+          "effects": { "logical": 3 },
+          "nextNode": "wake_42"
+        },
+        {
+          "id": "nervous_about_sleep",
+          "text": "\"What if I don't wake up the same?\"",
+          "requirements": {},
+          "effects": { "empathy": 3 },
+          "nextNode": "wake_42"
+        },
+        {
+          "id": "trust_the_process",
+          "text": "Lie back silently and trust the process",
+          "requirements": {},
+          "effects": { "tech": 3 },
           "nextNode": "wake_42"
         }
       ]
