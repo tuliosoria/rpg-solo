@@ -5,7 +5,7 @@ type Archetype = 'logical' | 'empathic' | 'technical' | null;
 
 type Choice = { 
   text: string; 
-  next: string;
+  nextNode: string;
   type?: 'normal' | 'skill_check' | 'memory_prompt' | 'hijack_consciousness' | 'identity_check' | 'empathy_override' | 'logic_gate' | 'tech_hack';
   archetype?: Archetype;
   difficulty?: 'easy' | 'normal' | 'hard';
@@ -31,6 +31,14 @@ type StoryNode = {
 
 type Story = { [key: string]: StoryNode };
 
+type StoryData = {
+  title?: string;
+  description?: string;
+  startNode?: string;
+  playerStats?: any;
+  nodes: Story;
+};
+
 type GameState = {
   archetype: Archetype;
   skillChecksUsed: number;
@@ -52,7 +60,7 @@ type GameState = {
 
 export default function RpgSolo() {
   const [story, setStory] = useState<Story | null>(null);
-  const [current, setCurrent] = useState('start');
+  const [current, setCurrent] = useState('awakening');
   const [typedLength, setTypedLength] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [showChoices, setShowChoices] = useState(false);
@@ -88,20 +96,26 @@ export default function RpgSolo() {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
         return res.json();
-      })
-      .then(data => {
-        console.log('Story loaded successfully:', Object.keys(data).length, 'nodes');
-        setStory(data);
+      })      .then(data => {
+        console.log('Story loaded successfully:', Object.keys(data.nodes || data).length, 'nodes');
+        setStory(data.nodes || data);
+        // Set the current node to the story's starting node if available
+        if (data.startNode) {
+          setCurrent(data.startNode);
+        }
       })
       .catch(err => {
         console.error('Failed to load expanded story:', err);
         console.log('Attempting to load fallback story...');
         // Fallback to original story if expanded version fails
         return fetch('/story.json')
-          .then(res => res.json())
-          .then(data => {
-            console.log('Fallback story loaded:', Object.keys(data).length, 'nodes');
-            setStory(data);
+          .then(res => res.json())          .then(data => {
+            console.log('Fallback story loaded:', Object.keys(data.nodes || data).length, 'nodes');
+            setStory(data.nodes || data);
+            // Set the current node to the story's starting node if available
+            if (data.startNode) {
+              setCurrent(data.startNode);
+            }
           })
           .catch(fallbackErr => {
             console.error('Failed to load any story:', fallbackErr);
@@ -111,7 +125,7 @@ export default function RpgSolo() {
 
   // Show archetype selection when story loads and no archetype chosen
   useEffect(() => {
-    if (story && gameState.archetype === null && current === 'start') {
+    if (story && gameState.archetype === null && current === 'awakening') {
       setShowArchetypeSelection(true);
     }
   }, [story, gameState.archetype, current]);
@@ -220,7 +234,7 @@ export default function RpgSolo() {
         totalChoicesMade: prev.totalChoicesMade + 1
       }));
       setShowHijackConfirm({ show: false, choice: null });
-      handleChoiceClick(showHijackConfirm.choice.next);
+      handleChoiceClick(showHijackConfirm.choice.nextNode);
     }
   };  const handleChoiceClick = (nextNode: string, choice?: Choice) => {
     if (choice) {
@@ -369,17 +383,44 @@ export default function RpgSolo() {
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
-          }
-          @keyframes spin {
+          }          @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
           }
+          
+          .error {
+            text-align: center;
+            color: #ff6b6b;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+          }
         `}</style>
+      </div>
+    );  }
+  if (!story) {
+    return (
+      <div className="container">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <div className="loading">Loading story...</div>
+        </div>
       </div>
     );
   }
 
   const node = story[current];
+  
+  if (!node) {
+    return (
+      <div className="container">
+        <div className="error">Error: Story node '{current}' not found.</div>
+      </div>
+    );
+  }
   return (
     <>
       <style jsx>{`
@@ -1021,17 +1062,16 @@ export default function RpgSolo() {
                   onClick={() => selectArchetype('technical')}
                 >
                   <span className="archetype-name">Technical</span>
-                  <span className="archetype-desc">Engineer with hands-on problem-solving expertise</span>
-                </button>
+                  <span className="archetype-desc">Engineer with hands-on problem-solving expertise</span>                </button>
               </div>
             )}
-              {!showArchetypeSelection && node.choices
-              .filter(choice => !choice.requirements || meetsRequirements(choice.requirements))
+            {!showArchetypeSelection && node && node.choices && node.choices.length > 0 &&
+              node.choices.filter(choice => !choice.requirements || meetsRequirements(choice.requirements))
               .map((choice, idx) => (
               <button
                 key={idx}
                 className={`choice-button ${choice.type || 'normal'} ${choice.archetype === gameState.archetype ? 'archetype-match' : ''}`}
-                onClick={() => handleChoiceClick(choice.next, choice)}
+                onClick={() => handleChoiceClick(choice.nextNode, choice)}
                 disabled={choice.type === 'hijack_consciousness' && gameState.hijackUsesRemaining === 0}
               >
                 <div className="choice-content">
@@ -1075,7 +1115,7 @@ export default function RpgSolo() {
                 </div>
               </button>
             )}
-              {node.choices.length === 0 && !showArchetypeSelection && (
+              {(!node || !node.choices || node.choices.length === 0) && !showArchetypeSelection && (
               <div className="ending-section">
                 <p className="ending-text">◉ MISSION COMPLETE ◉</p>
                 <div className="final-stats">
