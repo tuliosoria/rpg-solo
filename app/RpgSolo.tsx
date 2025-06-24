@@ -48,6 +48,7 @@ type SkillCheckResult = {
 export default function RpgSolo() {
   const [story, setStory] = useState<{ [key: string]: StoryNode } | null>(null);
   const [current, setCurrent] = useState('wake_1');
+  const [currentChapter, setCurrentChapter] = useState(1);
   const [gameState, setGameState] = useState<GameState>({
     tech: 5,
     logical: 5,
@@ -57,30 +58,37 @@ export default function RpgSolo() {
   const [loading, setLoading] = useState(true);
   const [skillCheckInProgress, setSkillCheckInProgress] = useState(false);
   const [diceRoll, setDiceRoll] = useState<number | null>(null);
-  const [skillCheckResult, setSkillCheckResult] = useState<SkillCheckResult | null>(null);
-  const [storyData, setStoryData] = useState<any>(null);  useEffect(() => {
-    fetch('/story.json')
-      .then(res => res.json())
-      .then(data => {
-        setStory(data.nodes);
-        setStoryData(data);
-        if (data.startNode) {
-          setCurrent(data.startNode);
+  const [skillCheckResult, setSkillCheckResult] = useState<SkillCheckResult | null>(null);  const [storyData, setStoryData] = useState<any>(null);
+  
+  const loadChapter = async (chapterNumber: number) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/chapter${chapterNumber}.json`);
+      const data = await response.json();      setStory(data.nodes);
+      setStoryData(data);
+      setCurrentChapter(chapterNumber);
+      
+      // Use the startNode from the data
+      if (data.startNode) {
+        setCurrent(data.startNode);
+      } else {
+        // Fallback to default nodes
+        if (chapterNumber === 1) {
+          setCurrent('wake_1');
+        } else if (chapterNumber === 2) {
+          setCurrent('chapter_2_start');
         }
-        if (data.playerStats) {
-          setGameState(prev => ({
-            ...prev,
-            tech: data.playerStats.tech,
-            logical: data.playerStats.logical,
-            empathy: data.playerStats.empathy
-          }));
-        }
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Failed to load story:', err);
-        setLoading(false);
-      });
+      }
+      
+      setLoading(false);
+    } catch (err) {
+      console.error(`Failed to load chapter ${chapterNumber}:`, err);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadChapter(1); // Load Chapter 1 by default
   }, []);
 
   const currentNode = story?.[current];
@@ -242,10 +250,15 @@ export default function RpgSolo() {
       setDiceRoll(null);
       setSkillCheckResult(null);
     }, 2500);
-  };
-  const handleChoice = (choice: Choice) => {
+  };  const handleChoice = (choice: Choice) => {
     if (choice.skillCheck) {
       performSkillCheck(choice);
+      return;
+    }
+
+    // Handle chapter transitions
+    if (choice.nextNode === 'chapter_2_start' && currentChapter === 1) {
+      loadChapter(2);
       return;
     }
 
@@ -331,16 +344,54 @@ export default function RpgSolo() {
       fontFamily: 'monospace'
     }}>
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        
-        {/* Title */}
+          {/* Title */}
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
           <h1 style={{ color: '#00ff88', fontSize: '2rem', margin: '0 0 10px 0' }}>
             Dr. Korvain - Replica 43
           </h1>
           <p style={{ color: '#b0b0b0', fontStyle: 'italic' }}>
-            A consciousness awakens in a new body, tasked with investigating mysterious signals from the Moon
+            A consciousness awakens in a new body, tasked with investigating mysterious signals from Mars
           </p>
-        </div>        {/* Stats - only show after upgrade mechanic is introduced */}
+          
+          {/* Chapter Selector */}
+          <div style={{ 
+            marginTop: '20px', 
+            display: 'flex', 
+            justifyContent: 'center', 
+            gap: '10px' 
+          }}>
+            <button
+              onClick={() => loadChapter(1)}
+              style={{
+                background: currentChapter === 1 ? '#00ff88' : 'rgba(255, 255, 255, 0.1)',
+                color: currentChapter === 1 ? '#000' : '#e0e0e0',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontFamily: 'monospace',
+                fontWeight: 'bold'
+              }}
+            >
+              Chapter 1
+            </button>
+            <button
+              onClick={() => loadChapter(2)}
+              style={{
+                background: currentChapter === 2 ? '#00ff88' : 'rgba(255, 255, 255, 0.1)',
+                color: currentChapter === 2 ? '#000' : '#e0e0e0',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontFamily: 'monospace',
+                fontWeight: 'bold'
+              }}
+            >
+              Chapter 2
+            </button>
+          </div>
+        </div>{/* Stats - only show after upgrade mechanic is introduced */}
         {gameState.upgradeSelected && (
           <div style={{ 
             display: 'flex', 
