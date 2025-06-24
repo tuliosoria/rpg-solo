@@ -176,22 +176,20 @@ export default function RpgSolo() {
     if (choice.skillCheck) {
       performSkillCheck(choice);
       return;
-    }
-
-    // Handle upgrade nodes - special logic for when player reaches upgrade nodes
+    }    // Handle upgrade nodes - special logic for when player reaches upgrade nodes
     if (current === 'skill_logical' || current === 'skill_empathic' || current === 'skill_technical') {
       setGameState(prev => {
         const newState = { ...prev };
         
-        // Apply the upgrade bonus based on which skill node we're on
+        // Apply the upgrade: set the chosen stat to 10 (5 base + 5 upgrade)
         if (current === 'skill_logical') {
-          newState.logical = Math.min(10, prev.logical + 5); // +5 bonus, max 10
+          newState.logical = 10;
           newState.upgradeSelected = 'logical';
         } else if (current === 'skill_empathic') {
-          newState.empathy = Math.min(10, prev.empathy + 5); // +5 bonus, max 10
+          newState.empathy = 10;
           newState.upgradeSelected = 'empathy';
         } else if (current === 'skill_technical') {
-          newState.tech = Math.min(10, prev.tech + 5); // +5 bonus, max 10
+          newState.tech = 10;
           newState.upgradeSelected = 'tech';
         }
         
@@ -273,8 +271,8 @@ export default function RpgSolo() {
           <p style={{ color: '#b0b0b0', fontStyle: 'italic' }}>
             A consciousness awakens in a new body, tasked with investigating mysterious signals from the Moon
           </p>
-        </div>        {/* Stats - only show after skill selection */}
-        {gameState.hasSkills && (
+        </div>        {/* Stats - only show after upgrade mechanic is introduced */}
+        {gameState.upgradeSelected && (
           <div style={{ 
             display: 'flex', 
             justifyContent: 'center', 
@@ -286,19 +284,31 @@ export default function RpgSolo() {
           }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '0.9rem', color: '#888' }}>TECH</div>
-              <div style={{ fontSize: '1.5rem', color: '#00ff88', fontWeight: 'bold' }}>
+              <div style={{ 
+                fontSize: '1.5rem', 
+                color: gameState.upgradeSelected === 'tech' ? '#00ff88' : '#666', 
+                fontWeight: 'bold' 
+              }}>
                 {gameState.tech}
               </div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '0.9rem', color: '#888' }}>LOGICAL</div>
-              <div style={{ fontSize: '1.5rem', color: '#00ff88', fontWeight: 'bold' }}>
+              <div style={{ 
+                fontSize: '1.5rem', 
+                color: gameState.upgradeSelected === 'logical' ? '#00ff88' : '#666', 
+                fontWeight: 'bold' 
+              }}>
                 {gameState.logical}
               </div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '0.9rem', color: '#888' }}>EMPATHY</div>
-              <div style={{ fontSize: '1.5rem', color: '#00ff88', fontWeight: 'bold' }}>
+              <div style={{ 
+                fontSize: '1.5rem', 
+                color: gameState.upgradeSelected === 'empathy' ? '#00ff88' : '#666', 
+                fontWeight: 'bold' 
+              }}>
                 {gameState.empathy}
               </div>
             </div>
