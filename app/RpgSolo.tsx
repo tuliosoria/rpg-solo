@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from 'react';
 
 type Choice = { 
-  id: string;
+  id?: string;
   text: string; 
-  nextNode: string;
+  nextNode?: string;
+  target?: string;  // Support Chapter 2 format
   requirements?: {
     tech?: number;
     logical?: number;
@@ -16,17 +17,23 @@ type Choice = {
     empathy?: number;
   };
   skillCheck?: {
-    type: string;
-    difficulty: 'easy' | 'medium' | 'hard';
+    type?: string;
+    skill?: string;
+    difficulty?: 'easy' | 'medium' | 'hard' | number;
+    description?: string;
   };
 };
 
 type StoryNode = { 
-  id: string;
-  chapter: number;
-  title: string;
+  id?: string;
+  chapter?: number;
+  title?: string;
   text: string; 
   choices: Choice[];
+  conditionalText?: {
+    success?: string;
+    failure?: string;
+  };
 };
 
 type GameState = {
@@ -35,6 +42,14 @@ type GameState = {
   empathy: number;
   hasSkills: boolean;
   upgradeSelected?: 'tech' | 'logical' | 'empathy';
+};
+
+type GameStats = {
+  nodesVisited: number;
+  skillCheckAttempts: number;
+  skillCheckSuccesses: number;
+  skillCheckFailures: number;
+  chaptersCompleted: number;
 };
 
 type SkillCheckResult = {
@@ -55,6 +70,15 @@ export default function RpgSolo() {
     empathy: 5,
     hasSkills: false
   });
+  const [gameStats, setGameStats] = useState<GameStats>({
+    nodesVisited: 0,
+    skillCheckAttempts: 0,
+    skillCheckSuccesses: 0,
+    skillCheckFailures: 0,
+    chaptersCompleted: 0
+  });
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [gameOverReason, setGameOverReason] = useState('');
   const [loading, setLoading] = useState(true);
   const [skillCheckInProgress, setSkillCheckInProgress] = useState(false);
   const [diceRoll, setDiceRoll] = useState<number | null>(null);
@@ -92,6 +116,24 @@ export default function RpgSolo() {
   }, []);
 
   const currentNode = story?.[current];
+  
+  // Check for game over when current node changes
+  useEffect(() => {
+    if (currentNode && !loading && !isGameOver) {
+      // Update node visit stats for the current node
+      setGameStats(prev => ({
+        ...prev,
+        nodesVisited: prev.nodesVisited + 1
+      }));
+      
+      const nodeText = currentNode.text;
+      if (isGameOverNode(nodeText)) {
+        setGameOverReason(extractGameOverReason(nodeText));
+        setIsGameOver(true);
+      }
+    }
+  }, [current, currentNode, loading, isGameOver]);
+
   const rollD20 = () => Math.floor(Math.random() * 20) + 1;
 
   const getDifficultyClass = (difficulty: 'easy' | 'medium' | 'hard'): number => {
@@ -207,7 +249,15 @@ export default function RpgSolo() {
     setDiceRoll(finalRoll);
     
     const { stat, statName } = determineSkillCheckStat(gameState);
-    const dc = getDifficultyClass(choice.skillCheck.difficulty);
+    
+    // Handle both old and new difficulty formats
+    let dc: number;
+    if (typeof choice.skillCheck.difficulty === 'number') {
+      dc = choice.skillCheck.difficulty;
+    } else {
+      dc = getDifficultyClass(choice.skillCheck.difficulty || 'medium');
+    }
+    
     const total = finalRoll + stat;
     const success = total >= dc;
     
@@ -221,34 +271,69 @@ export default function RpgSolo() {
     
     setSkillCheckResult(result);
     
+    // Update skill check statistics
+    setGameStats(prev => ({
+      ...prev,
+      skillCheckAttempts: prev.skillCheckAttempts + 1,
+      skillCheckSuccesses: success ? prev.skillCheckSuccesses + 1 : prev.skillCheckSuccesses,
+      skillCheckFailures: success ? prev.skillCheckFailures : prev.skillCheckFailures + 1
+    }));
+    
     // Wait a moment to show the result
     setTimeout(() => {
       setSkillCheckInProgress(false);
-        // Update the story text for skill check result nodes
-      if (choice.nextNode && story) {
+      
+      // Get the target node (support both nextNode and target properties)
+      const targetNode = choice.nextNode || choice.target;
+      
+      if (targetNode && story) {
+        const targetStoryNode = story[targetNode];
         let resultText = '';
         
-        if (choice.nextNode === 'tutorial_check_result') {
+        // Check if the target node has conditionalText
+        if (targetStoryNode && targetStoryNode.conditionalText) {
+          const conditionalText = success ? targetStoryNode.conditionalText.success : targetStoryNode.conditionalText.failure;
+          if (conditionalText) {
+            resultText = conditionalText;
+          }
+        } else if (targetNode === 'tutorial_check_result') {
+          // Legacy Chapter 1 skill check handling
           resultText = generateMarsAnalysisText(success, statName, finalRoll, stat, total, dc);
         } else {
-          // Handle Chapter 2 skill checks
-          resultText = generateChapter2SkillCheckText(choice.nextNode, success, statName, finalRoll, stat, total, dc);
+          // Legacy Chapter 2 skill check handling
+          resultText = generateChapter2SkillCheckText(targetNode, success, statName, finalRoll, stat, total, dc);
         }
         
-        // Update the node text dynamically
-        const updatedStory = { ...story };
-        if (updatedStory[choice.nextNode]) {
-          updatedStory[choice.nextNode] = {
-            ...updatedStory[choice.nextNode],
-            text: resultText
-          };
-          setStory(updatedStory);
+        // Update the node text dynamically if we have custom result text
+        if (resultText) {
+          const updatedStory = { ...story };
+          if (updatedStory[targetNode]) {
+            updatedStory[targetNode] = {
+              ...updatedStory[targetNode],
+              text: resultText
+            };
+            setStory(updatedStory);
+          }
         }
       }
       
-      setCurrent(choice.nextNode);
+      // Update node visit statistics
+      updateNodeVisitStats();
+      
+      setCurrent(targetNode || '');
       setDiceRoll(null);
       setSkillCheckResult(null);
+      
+      // Check for game over condition after setting the node
+      setTimeout(() => {
+        if (story && targetNode && story[targetNode]) {
+          const nodeText = story[targetNode].text;
+          if (isGameOverNode(nodeText)) {
+            setGameOverReason(extractGameOverReason(nodeText));
+            setIsGameOver(true);
+          }
+        }
+      }, 100);
     }, 2500);
   };  const handleChoice = (choice: Choice) => {
     if (choice.skillCheck) {
@@ -256,8 +341,11 @@ export default function RpgSolo() {
       return;
     }
 
+    // Get the target node (support both nextNode and target properties)
+    const targetNode = choice.nextNode || choice.target;
+
     // Handle chapter transitions
-    if (choice.nextNode === 'chapter_2_start' && currentChapter === 1) {
+    if (targetNode === 'chapter_2_start' && currentChapter === 1) {
       loadChapter(2);
       return;
     }
@@ -294,7 +382,23 @@ export default function RpgSolo() {
         upgradeSelected: prev.upgradeSelected
       }));
     }
-    setCurrent(choice.nextNode);
+    
+    // Update node visit statistics
+    updateNodeVisitStats();
+    
+    // Set the current node
+    setCurrent(targetNode || '');
+    
+    // Check for game over condition after setting the node
+    setTimeout(() => {
+      if (story && targetNode && story[targetNode]) {
+        const nodeText = story[targetNode].text;
+        if (isGameOverNode(nodeText)) {
+          setGameOverReason(extractGameOverReason(nodeText));
+          setIsGameOver(true);
+        }
+      }
+    }, 100);
   };
 
   const canChoose = (choice: Choice): boolean => {
@@ -303,6 +407,54 @@ export default function RpgSolo() {
     if (choice.requirements.logical && gameState.logical < choice.requirements.logical) return false;
     if (choice.requirements.empathy && gameState.empathy < choice.requirements.empathy) return false;
     return true;
+  };
+
+  const isGameOverNode = (nodeText: string): boolean => {
+    return nodeText.includes('GAME OVER') || 
+           nodeText.includes('Game Over') || 
+           nodeText.includes('CHAPTER 2 COMPLETE');
+  };
+
+  const extractGameOverReason = (nodeText: string): string => {
+    if (nodeText.includes('GAME OVER – Sacrifice Ending')) return 'Sacrifice Ending';
+    if (nodeText.includes('GAME OVER – Transcendence Ending')) return 'Transcendence Ending';
+    if (nodeText.includes('GAME OVER – Legacy Ending')) return 'Legacy Ending';
+    if (nodeText.includes('GAME OVER – Unity Ending')) return 'Unity Ending';
+    if (nodeText.includes('GAME OVER – Tragic Ending')) return 'Tragic Ending';
+    if (nodeText.includes('CHAPTER 2 COMPLETE')) return 'Chapter 2 Complete - Victory!';
+    if (nodeText.includes('GAME OVER')) return 'Game Over';
+    return 'Story Complete';
+  };
+
+  const restartGame = () => {
+    setIsGameOver(false);
+    setGameOverReason('');
+    setCurrent('wake_1');
+    setCurrentChapter(1);
+    setGameState({
+      tech: 5,
+      logical: 5,
+      empathy: 5,
+      hasSkills: false
+    });
+    setGameStats({
+      nodesVisited: 0,
+      skillCheckAttempts: 0,
+      skillCheckSuccesses: 0,
+      skillCheckFailures: 0,
+      chaptersCompleted: 0
+    });
+    setSkillCheckInProgress(false);
+    setDiceRoll(null);
+    setSkillCheckResult(null);
+    loadChapter(1);
+  };
+
+  const updateNodeVisitStats = () => {
+    setGameStats(prev => ({
+      ...prev,
+      nodesVisited: prev.nodesVisited + 1
+    }));
   };
 
   if (loading) {
@@ -317,6 +469,88 @@ export default function RpgSolo() {
         fontFamily: 'monospace'
       }}>
         Loading...
+      </div>
+    );
+  }
+
+  if (isGameOver) {
+    const successRate = gameStats.skillCheckAttempts > 0 
+      ? Math.round((gameStats.skillCheckSuccesses / gameStats.skillCheckAttempts) * 100) 
+      : 0;
+
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        background: 'linear-gradient(135deg, #1a1a2e, #16213e)',
+        color: '#e0e0e0', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        fontFamily: 'monospace',
+        padding: '20px'
+      }}>
+        <div style={{
+          background: 'rgba(0, 0, 0, 0.8)',
+          border: '2px solid #ff6b6b',
+          borderRadius: '10px',
+          padding: '40px',
+          maxWidth: '600px',
+          textAlign: 'center',
+          boxShadow: '0 0 20px rgba(255, 107, 107, 0.3)'
+        }}>
+          <h1 style={{ 
+            color: '#ff6b6b', 
+            fontSize: '2.5em', 
+            marginBottom: '20px',
+            textShadow: '0 0 10px rgba(255, 107, 107, 0.5)'
+          }}>
+            {gameOverReason}
+          </h1>
+          
+          <div style={{ 
+            background: 'rgba(255, 255, 255, 0.1)', 
+            padding: '20px', 
+            borderRadius: '8px', 
+            marginBottom: '30px',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
+          }}>
+            <h2 style={{ color: '#4ecdc4', marginBottom: '15px' }}>Game Statistics</h2>
+            <div style={{ textAlign: 'left', fontSize: '1.1em' }}>
+              <p><strong>Nodes Explored:</strong> {gameStats.nodesVisited}</p>
+              <p><strong>Skill Checks Attempted:</strong> {gameStats.skillCheckAttempts}</p>
+              <p><strong>Successful Checks:</strong> {gameStats.skillCheckSuccesses}</p>
+              <p><strong>Failed Checks:</strong> {gameStats.skillCheckFailures}</p>
+              <p><strong>Success Rate:</strong> {successRate}%</p>
+              <p><strong>Current Chapter:</strong> {currentChapter}</p>
+            </div>
+          </div>
+
+          <button 
+            onClick={restartGame}
+            style={{
+              background: 'linear-gradient(45deg, #667eea, #764ba2)',
+              color: 'white',
+              border: 'none',
+              padding: '15px 30px',
+              fontSize: '1.2em',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontFamily: 'monospace',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+            }}
+          >
+            🔄 Start New Adventure
+          </button>
+        </div>
       </div>
     );
   }
