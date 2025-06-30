@@ -349,6 +349,11 @@ export default function RpgSolo() {
       loadChapter(2);
       return;
     }
+    
+    if (targetNode === 'chapter3_start' && currentChapter === 2) {
+      loadChapter(3);
+      return;
+    }
 
     // Handle upgrade nodes - special logic for when player reaches upgrade nodes
     if (current === 'skill_logical' || current === 'skill_empathic' || current === 'skill_technical') {
@@ -624,49 +629,63 @@ export default function RpgSolo() {
             >
               Chapter 2
             </button>
+            <button
+              onClick={() => loadChapter(3)}
+              style={{
+                background: currentChapter === 3 ? '#00ff88' : 'rgba(255, 255, 255, 0.1)',
+                color: currentChapter === 3 ? '#000' : '#e0e0e0',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontFamily: 'monospace',
+                fontWeight: 'bold'
+              }}
+            >
+              Chapter 3
+            </button>
           </div>
-        </div>{/* Stats - only show after upgrade mechanic is introduced */}
-        {gameState.upgradeSelected && (
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            gap: '30px', 
-            marginBottom: '30px',
-            padding: '15px',
-            background: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: '10px'
-          }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '0.9rem', color: '#888' }}>TECH</div>
-              <div style={{ 
-                fontSize: '1.5rem', 
-                color: gameState.upgradeSelected === 'tech' ? '#00ff88' : '#666', 
-                fontWeight: 'bold' 
-              }}>
-                {gameState.tech}
-              </div>
+        </div>        {/* Stats - always visible */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          gap: '30px', 
+          marginBottom: '30px',
+          padding: '15px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '10px'
+        }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '0.9rem', color: '#888' }}>TECH</div>
+            <div style={{ 
+              fontSize: '1.5rem', 
+              color: gameState.upgradeSelected === 'tech' ? '#00ff88' : '#ccc', 
+              fontWeight: 'bold' 
+            }}>
+              {gameState.tech}
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '0.9rem', color: '#888' }}>LOGICAL</div>
-              <div style={{ 
-                fontSize: '1.5rem', 
-                color: gameState.upgradeSelected === 'logical' ? '#00ff88' : '#666', 
-                fontWeight: 'bold' 
-              }}>
-                {gameState.logical}
-              </div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '0.9rem', color: '#888' }}>LOGICAL</div>
+            <div style={{ 
+              fontSize: '1.5rem', 
+              color: gameState.upgradeSelected === 'logical' ? '#00ff88' : '#ccc', 
+              fontWeight: 'bold' 
+            }}>
+              {gameState.logical}
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '0.9rem', color: '#888' }}>EMPATHY</div>
-              <div style={{ 
-                fontSize: '1.5rem', 
-                color: gameState.upgradeSelected === 'empathy' ? '#00ff88' : '#666', 
-                fontWeight: 'bold' 
-              }}>
-                {gameState.empathy}
-              </div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '0.9rem', color: '#888' }}>EMPATHY</div>
+            <div style={{ 
+              fontSize: '1.5rem', 
+              color: gameState.upgradeSelected === 'empathy' ? '#00ff88' : '#ccc', 
+              fontWeight: 'bold' 
+            }}>
+              {gameState.empathy}
             </div>
-          </div>        )}
+          </div>
+        </div>
 
         {/* Skill Check Animation */}
         {skillCheckInProgress && (

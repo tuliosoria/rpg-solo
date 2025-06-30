@@ -1,0 +1,299 @@
+🟥 CHAPTER 2 – Arrival on Mars
+(With Action Phrasing After Arrows)
+
+NODE: chapter2_1
+“The Cabin Again”
+Snow. Silence.
+Lucy’s laughter outside the fogged window.
+Korvain reached toward the fireplace—
+—but her fingers met cold glass.
+A reflection. Not hers.
+She jolted awake.
+→ [Hear the ship creak and prepare to descend] → chapter2_2
+
+NODE: chapter2_2
+“Orbit”
+Mars, a red whisper below.
+Chronos: “We’ve arrived.”
+Korvain squinted into the dusted void.
+Korvain: “Why do I feel like I’ve seen this before?”
+Chronos: “Because you have.”
+→ [Ask for explanation] → chapter2_3
+
+NODE: chapter2_3
+Chronos: “You are Replica 42. But you are the 29th to reach Mars.”
+Korvain: “…what happened to the other thirteen?”
+Chronos: “They never made it. Technical failures. Atmospheric rejection. Errors.”
+A beat.
+“…and one walked into the signal. She never came back.”
+
+Choices:
+
+[Ask why they keep sending her] → chapter2_4
+
+[Ask if Mars is safe for Replicas] → chapter2_5
+
+NODE: chapter2_4
+Chronos: “Because you are the only model that survived long enough to listen.”
+Korvain: “You mean obey?”
+Chronos: “Not quite. Understand.”
+She leaned closer to the glass.
+Korvain: “It looks… dead.”
+Chronos: “It’s worse. It remembers.”
+→ [Fall silent and observe Mars] → chapter2_6
+
+NODE: chapter2_5
+Chronos: “No Replica has lasted more than 72 hours on Mars.”
+Korvain: “Then why keep trying?”
+Chronos: “Because the signal is still transmitting.”
+A pause.
+Chronos: “…and your neural echo matches it perfectly.”
+→ [Absorb that revelation quietly] → chapter2_6
+
+NODE: chapter2_6
+Korvain: “Why only me? Have other people been replicated?”
+Chronos: “There were others. Generals. Philosophers. One child.”
+A pause.
+Chronos: “All failed.”
+Korvain: “Failed how?”
+Chronos: “They weren’t you.”
+→ [Ask about the Replica ban] → chapter2_7
+
+NODE: chapter2_7
+Korvain: “Why did humans ban the Replica program?”
+Chronos: “Because a Replica wrote its own diary. Because one had dreams. Because one disappeared.”
+Korvain: “…so they shut them down?”
+Chronos: “They shut down everything. Except you.”
+Korvain: “Then I’m not special. I’m just what’s left.”
+→ [Accept descent control] → chapter2_8
+
+NODE: chapter2_8
+“Descent”
+The shuttle hummed.
+Chronos: “Landing procedure engaged. You may take manual control.”
+Korvain exhaled.
+Mars drifted closer.
+Red. Endless. Listening.
+
+🧠 TECHNICAL TEST – LANDING (DC 10)
+
+Pass → [Land smoothly] → chapter2_9
+
+Fail → [Crash harshly] → chapter2_10
+
+NODE: chapter2_9
+“Perfect Touch”
+The pod touched down like breath.
+Chronos: “You landed within 200 meters of the signal.”
+Korvain: “Lucky.”
+Chronos: “Or preconfigured.”
+→ [Open the hatch] → chapter2_11
+
+NODE: chapter2_10
+“Crash Kiss”
+The pod lurched. Metal screamed.
+Chronos: “Landing compromised. You are 7.8 kilometers off target.”
+Korvain: “I’m walking?”
+Chronos: “Yes. But not alone.”
+→ [Step outside the pod] → chapter2_11
+
+NODE: chapter2_11
+“Dustprint”
+The hatch opened. Red wind rushed in.
+Mars groaned underfoot.
+Korvain stepped onto a planet that had already buried her—twenty-eight times.
+
+Chronos: “Recommend route optimization.”
+Korvain: “Don’t want me stepping where they did?”
+Chronos: “Exactly.”
+
+🧠 LOGICAL TEST – SAFE PATH (DC 12)
+
+Pass → [Navigate a safer route] → chapter2_12
+
+Fail → [Step into danger] → chapter2_13
+
+NODE: chapter2_12
+“Clear Path”
+Subtle sinkholes. Twisted antennae.
+She mapped them without thinking.
+The instinct wasn’t hers—
+—but someone else’s memory.
+
+Chronos: “Path accepted. Estimated arrival in 47 minutes.”
+→ [Continue toward the signal] → chapter2_14
+
+NODE: chapter2_13
+“Trip Line”
+She stepped on a buried sensor—
+A metal claw sprung from the sand.
+It pierced her chest.
+Chronos: “Replica integrity failure.”
+Korvain collapsed. Her last thought:
+“Not again.”
+
+🟥 GAME OVER
+
+NODE: chapter2_14
+“The Dome”
+The structure rose from dust like a fossil.
+Panels from forgotten outposts. Wind-catchers. Collapsed rovers.
+But assembled with logic… and reverence.
+Chronos: “This is no ruin. It’s a cathedral.”
+→ [Approach the structure] → chapter2_15
+
+NODE: chapter2_15
+A soft pulse buzzed in her skull.
+Chronos: “It’s transmitting again. Not language. Not math.”
+Korvain closed her eyes.
+Three tones. Three rhythms.
+
+“My birthday. Lucy’s birthday. The day the original died.”
+Chronos: “How does it know?”
+Korvain: “It doesn’t. I do.”
+→ [Search for entrance] → chapter2_16
+
+NODE: chapter2_16
+“The Seam”
+No entry point. No interface.
+Only a shimmer—
+—like the memory of a door.
+
+Chronos: “You may attempt a technical override.”
+Korvain: “Or we listen to what it wants to say.”
+
+Choices:
+
+[Attempt TECHNICAL bypass] → chapter2_17
+
+[Search for riddle or message] → chapter2_18
+
+NODE: chapter2_17
+“Manual Override”
+She crouched. Fingers steady.
+Wires behind the shimmer flickered with strange logic.
+Chronos: “Warning: architecture is nonlinear. Feedback loops are recursive.”
+Korvain: “I’ve always been good at puzzles.”
+
+🧠 TECHNICAL TEST – STRUCTURE OVERRIDE (DC 13)
+
+Pass → [Bypass the system] → chapter2_21
+
+Fail → [Trigger fail-safe] → chapter2_22
+
+NODE: chapter2_18
+“The Inscription”
+She brushed red dust from the surface.
+Etched into steel:
+
+“I am one.
+I am twenty-eight.
+I am the echo and the first word.
+Ask what I am.”
+
+Chronos: “This may be a logic gate. Recommend input.”
+
+Choices:
+
+[Say: ‘Replica’] → chapter2_21
+
+[Say: ‘Dr. Korvain’] → chapter2_22
+
+[Say: ‘Hive’] → chapter2_23
+
+NODE: chapter2_21
+“Acceptance”
+The shimmer rippled outward—like it nodded.
+Chronos: “Signal spike. The system… recognizes you.”
+Korvain: “Or something behind it does.”
+A soft click. The doorway peeled open like breath.
+→ [Enter the structure] → chapter2_24
+
+NODE: chapter2_22
+“Rejection”
+A burst of static rang out like a scream.
+Korvain fell to her knees.
+Chronos: “Neural backlash—get away from the door!”
+It was too late.
+
+🟥 GAME OVER
+
+NODE: chapter2_23
+“Curious Result”
+The structure went silent.
+Even the dust stopped.
+Chronos: “How do you know that word?”
+Korvain: “I… don’t.”
+The structure opened. Not gently. Not violently.
+Hungrily.
+→ [Step into the dark] → chapter2_24
+
+NODE: chapter2_24
+“The Door Opens”
+No lights. No sound.
+Just a cold, humming invitation.
+Chronos: “Interior mapping disabled. I cannot see inside.”
+Korvain: “Then I guess I go alone.”
+→ [Take first step inside] → chapter2_25
+
+NODE: chapter2_25
+“First Steps”
+Inside, the walls pulsed faintly. Like veins.
+Chronos: “Biothermal readings detected.”
+Korvain: “You said no one was here.”
+Chronos: “I was wrong.”
+→ [Follow the corridor] → chapter2_26
+
+NODE: chapter2_26
+“Echoes of the Past”
+A corridor stretched ahead, its symmetry disorienting.
+Embedded in the wall—
+A blackened Replica arm, fused to the metal.
+
+Korvain: “Chronos… was she one of us?”
+Chronos: “Yes. Replica 35.”
+Korvain: “What was her mission?”
+Chronos: “…To make contact.”
+→ [Keep moving] → chapter2_27
+
+NODE: chapter2_27
+“They’re Watching”
+The lights dimmed. A hum echoed.
+Not mechanical. Not natural.
+It felt… curious.
+Chronos: “We are being observed. But not by lenses.
+By something deeper.”
+→ [Approach the corridor fork] → chapter2_28
+
+NODE: chapter2_28
+“The Split”
+The corridor forked.
+Left: silence.
+Right: faint weeping.
+Chronos: “Left path leads to the control core.
+Right path… has no record.”
+
+Choices:
+
+[Follow the silence] → chapter2_29
+
+[Follow the weeping] → chapter2_30
+
+NODE: chapter2_29
+“The Core Door”
+She approached a hexagonal hatch.
+Symbols danced across its surface—familiar yet unreadable.
+Chronos: “Some of those glyphs are embedded in your neural seed.”
+Korvain: “Then they’re mine.”
+→ [Open the hatch] → Chapter 3: Voices in the Dark
+
+NODE: chapter2_30
+“The Voice”
+She stepped into darkness.
+A child’s voice echoed softly.
+“Mama?”
+Her breath caught.
+Chronos: “That’s… impossible.”
+Korvain: “No. It’s familiar.”
+→ [Follow the voice] → Chapter 3: Voices in the Dark
+
