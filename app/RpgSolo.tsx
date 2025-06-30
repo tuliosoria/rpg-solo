@@ -763,9 +763,26 @@ export default function RpgSolo() {
                 filter: 'sepia(20%) hue-rotate(180deg) saturate(80%) brightness(90%)'
               }}
               onError={(e) => {
-                // Hide image container if it fails to load
-                const container = (e.target as HTMLElement).parentElement;
-                if (container) container.style.display = 'none';
+                // Show placeholder text instead of hiding container
+                const img = e.target as HTMLImageElement;
+                const container = img.parentElement;
+                if (container) {
+                  img.style.display = 'none';
+                  container.innerHTML = `
+                    <div style="
+                      padding: 40px 20px;
+                      color: rgba(255, 255, 255, 0.6);
+                      text-align: center;
+                      font-style: italic;
+                      border: 2px dashed rgba(0, 255, 136, 0.3);
+                      border-radius: 8px;
+                      background: rgba(0, 0, 0, 0.1);
+                    ">
+                      📷 Image: ${currentNode.image}<br>
+                      <small>Place this file in the /public directory to display</small>
+                    </div>
+                  `;
+                }
               }}
             />
           </div>
