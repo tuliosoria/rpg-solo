@@ -5,19 +5,11 @@ import React, { useEffect, useState, useRef } from 'react';
 const useTypewriter = (text: string, speed: number = 30) => {
   const [displayText, setDisplayText] = useState('');
   const [isComplete, setIsComplete] = useState(false);
-  const [shouldSkip, setShouldSkip] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setDisplayText('');
     setIsComplete(false);
-    setShouldSkip(false);
-    
-    if (shouldSkip) {
-      setDisplayText(text);
-      setIsComplete(true);
-      return;
-    }
 
     let i = 0;
     intervalRef.current = setInterval(() => {
@@ -33,14 +25,16 @@ const useTypewriter = (text: string, speed: number = 30) => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [text, speed, shouldSkip]);
+  }, [text, speed]);
 
   const skipAnimation = () => {
     if (!isComplete) {
-      setShouldSkip(true);
       setDisplayText(text);
       setIsComplete(true);
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     }
   };
 
@@ -292,8 +286,32 @@ export default function RpgSolo() {
     if (choice.skillCheck) {
       performSkillCheck(choice);
     } else {
-      // Regular choice - handle chapter transitions
+      // Regular choice - handle chapter transitions and skill upgrades
       const nextNode = choice.nextNode;
+      
+      // Check for skill upgrades
+      if (nextNode === 'skill_logical') {
+        setGameState(prev => ({
+          ...prev,
+          logical: 10,
+          upgradeSelected: 'logical',
+          hasSkills: true
+        }));
+      } else if (nextNode === 'skill_empathic') {
+        setGameState(prev => ({
+          ...prev,
+          empathy: 10,
+          upgradeSelected: 'empathy',
+          hasSkills: true
+        }));
+      } else if (nextNode === 'skill_technical') {
+        setGameState(prev => ({
+          ...prev,
+          tech: 10,
+          upgradeSelected: 'tech',
+          hasSkills: true
+        }));
+      }
       
       // Check if this is a chapter transition
       if (nextNode === 'chapter2_1') {
@@ -505,9 +523,9 @@ export default function RpgSolo() {
           borderRadius: '5px',
           background: 'rgba(0, 255, 0, 0.05)'
         }}>
-          <div>Tech: {gameState.tech}</div>
-          <div>Logic: {gameState.logical}</div>
-          <div>Empathy: {gameState.empathy}</div>
+          <div>Tech: {gameState.tech}{gameState.upgradeSelected === 'tech' && gameState.tech === 10 ? ' (+5)' : ''}</div>
+          <div>Logic: {gameState.logical}{gameState.upgradeSelected === 'logical' && gameState.logical === 10 ? ' (+5)' : ''}</div>
+          <div>Empathy: {gameState.empathy}{gameState.upgradeSelected === 'empathy' && gameState.empathy === 10 ? ' (+5)' : ''}</div>
         </div>
 
         {/* Skill check in progress */}
