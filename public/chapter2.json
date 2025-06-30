@@ -269,6 +269,7 @@
       "chapter": 2,
       "title": "The Dome",
       "text": "The structure rose from the dust like a fever dream given form, a testament to obsession and madness and something that might have been love. It was built from the bones of civilization: solar panels that had once powered research stations, wind-catchers from atmospheric processors, the skeletal remains of rovers that had died exploring this wasteland.\n\nBut it wasn't assembled with the desperate pragmatism of survival. Each component was placed with the reverence of a monk arranging relics, each connection made with the precision of someone building a shrine to something larger than themselves.\n\nChronos: \"This is no ruin. It's a cathedral.\"\n\nThe words sent shivers down synthetic spines. A cathedral implied worship. Worship implied something worth worshipping. On Mars, in the red desolation where nothing should live, what god would demand such devotion?",
+      "image": "dome.png",
       "choices": [
         {
           "id": "continue",

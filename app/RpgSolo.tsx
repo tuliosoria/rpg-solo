@@ -29,6 +29,7 @@ type StoryNode = {
   chapter?: number;
   title?: string;
   text: string; 
+  image?: string;
   choices: Choice[];
   conditionalText?: {
     success?: string;
@@ -741,6 +742,34 @@ export default function RpgSolo() {
             {currentNode.title}
           </h2>
         </div>
+
+        {/* Image display */}
+        {currentNode.image && (
+          <div style={{ 
+            textAlign: 'center', 
+            margin: '20px 0 30px 0',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            border: '1px solid rgba(0, 255, 136, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0.2)'
+          }}>
+            <img 
+              src={`/${currentNode.image}`}
+              alt={currentNode.title || 'Story image'}
+              style={{ 
+                maxWidth: '100%', 
+                height: 'auto',
+                display: 'block',
+                filter: 'sepia(20%) hue-rotate(180deg) saturate(80%) brightness(90%)'
+              }}
+              onError={(e) => {
+                // Hide image container if it fails to load
+                const container = (e.target as HTMLElement).parentElement;
+                if (container) container.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
 
         {/* Story text - no typewriter effect to save memory */}
         <div style={{ 
