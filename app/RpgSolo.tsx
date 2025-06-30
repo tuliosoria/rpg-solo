@@ -91,6 +91,7 @@ type SkillCheckResult = {
   total: number;
   dc: number;
   success: boolean;
+  nextNode?: string;
 };
 
 export default function RpgSolo() {
@@ -194,11 +195,26 @@ export default function RpgSolo() {
     return stats.reduce((highest, current) => current.stat > highest.stat ? current : highest);
   };
 
-  const performSkillCheck = (choice: Choice) => {
+  const performSkillCheck = async (choice: Choice) => {
     if (!choice.skillCheck) return;
 
     const { difficulty, success, failure, successNode, failureNode } = choice.skillCheck;
-    const roll = rollD20();
+    
+    setSkillCheckInProgress(true);
+    setSkillCheckResult(null);
+    
+    // Animate the dice roll
+    const rollAnimation = async () => {
+      for (let i = 0; i < 10; i++) {
+        setDiceRoll(Math.floor(Math.random() * 20) + 1);
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    };
+    
+    await rollAnimation();
+    
+    const finalRoll = rollD20();
+    setDiceRoll(finalRoll);
     
     // Handle different difficulty formats
     let dc: number;
@@ -209,20 +225,18 @@ export default function RpgSolo() {
     }
     
     const { stat, statName } = determineSkillCheckStat(gameState);
-    const total = roll + stat;
+    const total = finalRoll + stat;
     const isSuccess = total >= dc;
 
     const result: SkillCheckResult = {
-      roll,
+      roll: finalRoll,
       stat,
       total,
       dc,
       success: isSuccess
     };
 
-    setDiceRoll(roll);
     setSkillCheckResult(result);
-    setSkillCheckInProgress(true);
 
     setGameStats(prev => ({
       ...prev,
@@ -231,33 +245,22 @@ export default function RpgSolo() {
       skillCheckFailures: prev.skillCheckFailures + (isSuccess ? 0 : 1)
     }));
 
-    setTimeout(() => {
-      setSkillCheckInProgress(false);
-      setDiceRoll(null);
-      setSkillCheckResult(null);
-      
-      // Handle both old and new skill check formats
-      let nextNode: string;
+    // Store the next node for manual continuation
+    const nextNode = (() => {
       if (successNode && failureNode) {
         // New format: uses successNode/failureNode
-        nextNode = isSuccess ? successNode : failureNode;
+        return isSuccess ? successNode : failureNode;
       } else if (success && failure) {
         // Old format: uses success/failure text as node IDs
-        nextNode = isSuccess ? success : failure;
+        return isSuccess ? success : failure;
       } else {
         // Fallback to choice's nextNode
-        nextNode = choice.nextNode;
+        return choice.nextNode;
       }
-      
-      // Handle chapter transitions
-      if (nextNode === 'chapter2_1') {
-        loadChapter(2);
-      } else if (nextNode === 'chapter3_1') {
-        loadChapter(3);
-      } else {
-        setCurrent(nextNode);
-      }
-    }, 3000);
+    })();
+    
+    // Store the next node in state for manual continuation
+    setSkillCheckResult(prev => ({ ...prev!, nextNode }));
   };
 
   const canChoose = (choice: Choice): boolean => {
@@ -267,6 +270,26 @@ export default function RpgSolo() {
     return (!tech || gameState.tech >= tech) &&
            (!logical || gameState.logical >= logical) &&
            (!empathy || gameState.empathy >= empathy);
+  };
+
+  const continueAfterSkillCheck = () => {
+    if (!skillCheckResult?.nextNode) return;
+    
+    const nextNode = skillCheckResult.nextNode;
+    
+    // Clear skill check state
+    setSkillCheckInProgress(false);
+    setDiceRoll(null);
+    setSkillCheckResult(null);
+    
+    // Handle chapter transitions
+    if (nextNode === 'chapter2_1') {
+      loadChapter(2);
+    } else if (nextNode === 'chapter3_1') {
+      loadChapter(3);
+    } else {
+      setCurrent(nextNode);
+    }
   };
 
   const handleChoice = (choice: Choice) => {
@@ -529,7 +552,7 @@ export default function RpgSolo() {
         </div>
 
         {/* Skill check in progress */}
-        {skillCheckInProgress && skillCheckResult && (
+        {skillCheckInProgress && (
           <div style={{
             border: '2px solid #ffff00',
             borderRadius: '10px',
@@ -539,19 +562,55 @@ export default function RpgSolo() {
             textAlign: 'center'
           }}>
             <h3 style={{ color: '#ffff00', marginBottom: '15px' }}>🎲 SKILL CHECK</h3>
-            <div style={{ fontSize: '1.2em', marginBottom: '10px' }}>
-              Roll: {skillCheckResult.roll} + Stat: {skillCheckResult.stat} = Total: {skillCheckResult.total}
-            </div>
-            <div style={{ fontSize: '1.1em', marginBottom: '10px' }}>
-              Difficulty: {skillCheckResult.dc}
-            </div>
-            <div style={{ 
-              fontSize: '1.3em', 
-              fontWeight: 'bold',
-              color: skillCheckResult.success ? '#00ff00' : '#ff6b6b'
-            }}>
-              {skillCheckResult.success ? '✅ SUCCESS!' : '❌ FAILURE!'}
-            </div>
+            
+            {/* Dice animation phase */}
+            {diceRoll && !skillCheckResult && (
+              <div style={{ 
+                fontSize: '3em', 
+                marginBottom: '10px',
+                transform: 'scale(1.1)',
+                transition: 'transform 0.1s ease-in-out',
+                filter: 'drop-shadow(0 0 10px #ffff00)'
+              }}>
+                🎲 {diceRoll}
+              </div>
+            )}
+            
+            {/* Results phase */}
+            {skillCheckResult && (
+              <>
+                <div style={{ fontSize: '1.2em', marginBottom: '10px' }}>
+                  Roll: {skillCheckResult.roll} + Stat: {skillCheckResult.stat} = Total: {skillCheckResult.total}
+                </div>
+                <div style={{ fontSize: '1.1em', marginBottom: '10px' }}>
+                  Difficulty: {skillCheckResult.dc}
+                </div>
+                <div style={{ 
+                  fontSize: '1.3em', 
+                  fontWeight: 'bold',
+                  color: skillCheckResult.success ? '#00ff00' : '#ff6b6b',
+                  marginBottom: '15px'
+                }}>
+                  {skillCheckResult.success ? '✅ SUCCESS!' : '❌ FAILURE!'}
+                </div>
+                <button
+                  onClick={continueAfterSkillCheck}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#00ff00',
+                    color: '#000000',
+                    border: 'none',
+                    borderRadius: '5px',
+                    fontSize: '1.1em',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    fontFamily: 'Courier New, Monaco, monospace'
+                  }}
+                >
+                  Continue
+                </button>
+              </>
+            )}
           </div>
         )}
 
@@ -608,61 +667,63 @@ export default function RpgSolo() {
           )}
         </div>
 
-        {/* Choices */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '30px' }}>
-          {currentNode.choices.map((choice, index) => {
-            const canSelect = canChoose(choice);
-            return (
-              <button
-                key={index}
-                onClick={() => canSelect && handleChoice(choice)}
-                disabled={!canSelect}
-                style={{
-                  background: canSelect 
-                    ? 'linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.2) 100%)'
-                    : 'rgba(255, 255, 255, 0.05)',
-                  border: canSelect ? '1px solid #00ff88' : '1px solid #444',
-                  color: canSelect ? '#e0e0e0' : '#666',
-                  padding: '15px 20px',
-                  borderRadius: '8px',
-                  cursor: canSelect ? 'pointer' : 'not-allowed',
-                  textAlign: 'left',
-                  fontFamily: 'inherit',
-                  fontSize: '1rem',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  if (canSelect) {
-                    e.currentTarget.style.transform = 'translateX(5px)';
-                    e.currentTarget.style.boxShadow = '0 5px 15px rgba(0, 255, 136, 0.2)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (canSelect) {
-                    e.currentTarget.style.transform = 'translateX(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }
-                }}
-              >
-                <div>{choice.text}</div>
-                {choice.requirements && (
-                  <div style={{ fontSize: '0.8rem', color: '#ff6b6b', fontStyle: 'italic', marginTop: '5px' }}>
-                    {choice.requirements.tech && `Tech ${choice.requirements.tech}+ `}
-                    {choice.requirements.logical && `Logic ${choice.requirements.logical}+ `}
-                    {choice.requirements.empathy && `Empathy ${choice.requirements.empathy}+`}
-                  </div>
-                )}
-                {choice.effects && (
-                  <div style={{ fontSize: '0.8rem', color: '#00ff88', fontStyle: 'italic', marginTop: '5px' }}>
-                    {choice.effects.tech && `+${choice.effects.tech} Tech `}
-                    {choice.effects.logical && `+${choice.effects.logical} Logic `}
-                    {choice.effects.empathy && `+${choice.effects.empathy} Empathy`}
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
+        {/* Choices - only show when not in skill check */}
+        {!skillCheckInProgress && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '30px' }}>
+            {currentNode.choices.map((choice, index) => {
+              const canSelect = canChoose(choice);
+              return (
+                <button
+                  key={index}
+                  onClick={() => canSelect && handleChoice(choice)}
+                  disabled={!canSelect}
+                  style={{
+                    background: canSelect 
+                      ? 'linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.2) 100%)'
+                      : 'rgba(255, 255, 255, 0.05)',
+                    border: canSelect ? '1px solid #00ff88' : '1px solid #444',
+                    color: canSelect ? '#e0e0e0' : '#666',
+                    padding: '15px 20px',
+                    borderRadius: '8px',
+                    cursor: canSelect ? 'pointer' : 'not-allowed',
+                    textAlign: 'left',
+                    fontFamily: 'inherit',
+                    fontSize: '1rem',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (canSelect) {
+                      e.currentTarget.style.transform = 'translateX(5px)';
+                      e.currentTarget.style.boxShadow = '0 5px 15px rgba(0, 255, 136, 0.2)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (canSelect) {
+                      e.currentTarget.style.transform = 'translateX(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }
+                  }}
+                >
+                  <div>{choice.text}</div>
+                  {choice.requirements && (
+                    <div style={{ fontSize: '0.8rem', color: '#ff6b6b', fontStyle: 'italic', marginTop: '5px' }}>
+                      {choice.requirements.tech && `Tech ${choice.requirements.tech}+ `}
+                      {choice.requirements.logical && `Logic ${choice.requirements.logical}+ `}
+                      {choice.requirements.empathy && `Empathy ${choice.requirements.empathy}+`}
+                    </div>
+                  )}
+                  {choice.effects && (
+                    <div style={{ fontSize: '0.8rem', color: '#00ff88', fontStyle: 'italic', marginTop: '5px' }}>
+                      {choice.effects.tech && `+${choice.effects.tech} Tech `}
+                      {choice.effects.logical && `+${choice.effects.logical} Logic `}
+                      {choice.effects.empathy && `+${choice.effects.empathy} Empathy`}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
