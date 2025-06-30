@@ -2,6 +2,14 @@
 
 ## Required Images
 
+### wake.png  
+- **Used in:** Chapter 1, node "wake_1" (Awakening)
+- **Description:** Dr. Korvain awakening in a bio-tank/suspension chamber
+- **Style:** Dark, atmospheric sci-fi scene with glowing blue fluid and medical/lab equipment
+- **Inspiration:** Think cyberpunk meets body horror - rebirth in a sterile environment
+- **Recommended size:** 800x600 or similar landscape format
+- **Color palette:** Deep blues (bio-fluid), sterile whites/greys (lab), subtle green tech accents
+
 ### dome.png
 - **Used in:** Chapter 2, node "chapter2_14" (The Dome)
 - **Description:** A mysterious dome structure rising from the Martian dust, built from salvaged parts

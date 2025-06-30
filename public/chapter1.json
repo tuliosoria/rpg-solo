@@ -26,6 +26,7 @@
       "id": "wake_1",
       "chapter": 1,
       "title": "Awakening",
+      "image": "wake.png",
       "text": "First came warmth. Thick and slow, like honey in her lungs. Then sound—the hum of something ancient and patient.\n\nDr. Korvain gasped.\n\nHer eyes fluttered open. Darkness surrounded her, but not cold. The glow of fluid shimmered blue around her limbs. She floated, naked and perfect, inside a curved tank of polished glass. Her body was still, sculpted, a statue in suspension.\n\nNo wires. No heartbeat.\nOnly breath.\n\nAnd tears.",
       "choices": [
         {
@@ -1099,7 +1100,7 @@
           "text": "Continue to Chapter 2",
           "requirements": {},
           "effects": {},
-          "nextNode": "chapter_2_start"
+          "nextNode": "chapter2_1"
         }
       ]
     }
