@@ -853,7 +853,7 @@
       "id": "wake_40",
       "chapter": 1,
       "title": "Neural Upgrade Introduction",
-      "text": "Before she enters the launch corridor, Chronos shifts tone—calmer, more functional.\n\n\"Before you board the vessel, I can install one last thing. A neural upgrade.\"\n\n\"You'll still need to pass field tests—some easy, some brutal. But this upgrade will give you better odds.\"\n\n\"The system is simple: Roll 1d20. Add +7 if it matches your specialty, +3 if it doesn't. Difficulty is 10, 15, or 20 depending on the task.\"",
+      "text": "Before she enters the launch corridor, Chronos shifts tone—calmer, more functional.\n\n\"Before you board the vessel, I can install one last thing. A neural upgrade.\"\n\n\"You'll still need to pass field tests—some easy, some brutal. But this upgrade will give you better odds.\"\n\n\"Think of it as a skill set.\"\n\n\"Choose wisely.\"",
       "choices": [
         {
           "id": "continue",
@@ -949,7 +949,7 @@
           "text": "Analyze the mysterious Mars signal",
           "requirements": {},
           "effects": {},
-          "nextNode": "tutorial_check_result",
+          "nextNode": "wake_41",
           "skillCheck": {
             "type": "tutorial",
             "difficulty": "easy"
@@ -958,21 +958,6 @@
         {
           "id": "skip_check",
           "text": "Skip the analysis and proceed to launch",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "wake_41"
-        }
-      ]
-    },
-    "tutorial_check_result": {
-      "id": "tutorial_check_result",
-      "chapter": 1,
-      "title": "Mars Signal Analysis",
-      "text": "[This text will be dynamically generated based on the skill check result]",
-      "choices": [
-        {
-          "id": "continue",
-          "text": "Continue to launch preparations",
           "requirements": {},
           "effects": {},
           "nextNode": "wake_41"

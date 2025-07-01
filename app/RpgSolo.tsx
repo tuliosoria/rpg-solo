@@ -118,6 +118,12 @@ export default function RpgSolo() {
   const [diceRoll, setDiceRoll] = useState<number | null>(null);
   const [skillCheckResult, setSkillCheckResult] = useState<SkillCheckResult | null>(null);
   const [storyData, setStoryData] = useState<any>(null);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialData, setTutorialData] = useState<{
+    title: string;
+    statName: string;
+    statValue: number;
+  } | null>(null);
   
   const loadChapter = async (chapterNumber: number) => {
     setLoading(true);
@@ -149,8 +155,30 @@ export default function RpgSolo() {
 
   const currentNode = story?.[current];
   
+  // Function to clean story text for skill upgrade nodes
+  const getCleanedText = (text: string, nodeId: string): string => {
+    if (['skill_logical', 'skill_empathic', 'skill_technical'].includes(nodeId) && showTutorial) {
+      // Remove the tutorial information when showing tutorial interface
+      const lines = text.split('\n');
+      const cleanedLines = [];
+      let skipTutorial = false;
+      
+      for (const line of lines) {
+        if (line.includes('UPGRADE INSTALLED') || line.includes('+ Your') || line.includes('+ All checks') || line.includes('- Easy:') || line.includes('- Medium:') || line.includes('- Hard:')) {
+          skipTutorial = true;
+          continue;
+        }
+        if (!skipTutorial) {
+          cleanedLines.push(line);
+        }
+      }
+      return cleanedLines.join('\n').trim();
+    }
+    return text;
+  };
+  
   // Typewriter animation for the current node text
-  const nodeText = currentNode?.text || '';
+  const nodeText = currentNode ? getCleanedText(currentNode.text, currentNode.id) : '';
   const { displayText, isComplete, skipAnimation } = useTypewriter(nodeText, 25);
   
   // Check for game over when current node changes
@@ -292,6 +320,13 @@ export default function RpgSolo() {
     }
   };
 
+  const continueTutorial = () => {
+    setShowTutorial(false);
+    setTutorialData(null);
+    // Continue to the tutorial skill check node
+    setCurrent('tutorial_skill_check');
+  };
+
   const handleChoice = (choice: Choice) => {
     if (skillCheckInProgress) return;
 
@@ -320,6 +355,12 @@ export default function RpgSolo() {
           upgradeSelected: 'logical',
           hasSkills: true
         }));
+        setTutorialData({
+          title: 'LOGICAL UPGRADE INSTALLED',
+          statName: 'LOGICAL',
+          statValue: 10
+        });
+        setShowTutorial(true);
       } else if (nextNode === 'skill_empathic') {
         setGameState(prev => ({
           ...prev,
@@ -327,6 +368,12 @@ export default function RpgSolo() {
           upgradeSelected: 'empathy',
           hasSkills: true
         }));
+        setTutorialData({
+          title: 'EMPATHIC UPGRADE INSTALLED',
+          statName: 'EMPATHY',
+          statValue: 10
+        });
+        setShowTutorial(true);
       } else if (nextNode === 'skill_technical') {
         setGameState(prev => ({
           ...prev,
@@ -334,6 +381,12 @@ export default function RpgSolo() {
           upgradeSelected: 'tech',
           hasSkills: true
         }));
+        setTutorialData({
+          title: 'TECHNICAL UPGRADE INSTALLED',
+          statName: 'TECH',
+          statValue: 10
+        });
+        setShowTutorial(true);
       }
       
       // Check if this is a chapter transition
@@ -363,6 +416,8 @@ export default function RpgSolo() {
     });
     setIsGameOver(false);
     setGameOverReason('');
+    setShowTutorial(false);
+    setTutorialData(null);
     setCurrentChapter(1);
     loadChapter(1);
   };
@@ -410,7 +465,7 @@ export default function RpgSolo() {
         }}>
           <h1 style={{ 
             color: '#ff6b6b', 
-            fontSize: '2.5em', 
+            fontSize: '2.6em', 
             marginBottom: '20px',
             textShadow: '0 0 10px rgba(255, 107, 107, 0.5)'
           }}>
@@ -425,7 +480,7 @@ export default function RpgSolo() {
             border: '1px solid rgba(255, 255, 255, 0.2)'
           }}>
             <h2 style={{ color: '#4ecdc4', marginBottom: '15px' }}>Game Statistics</h2>
-            <div style={{ textAlign: 'left', fontSize: '1.1em' }}>
+            <div style={{ textAlign: 'left', fontSize: '1.2em' }}>
               <p><strong>Nodes Explored:</strong> {gameStats.nodesVisited}</p>
               <p><strong>Skill Checks Attempted:</strong> {gameStats.skillCheckAttempts}</p>
               <p><strong>Successful Checks:</strong> {gameStats.skillCheckSuccesses}</p>
@@ -442,7 +497,7 @@ export default function RpgSolo() {
               color: 'black',
               border: 'none',
               padding: '15px 30px',
-              fontSize: '1.2em',
+              fontSize: '1.3em',
               borderRadius: '8px',
               cursor: 'pointer',
               fontFamily: 'Courier New, Monaco, monospace',
@@ -487,7 +542,7 @@ export default function RpgSolo() {
         color: '#00ff00', 
         padding: '0',
         fontFamily: 'Courier New, Monaco, monospace',
-        fontSize: '14px',
+        fontSize: '15px',
         lineHeight: '1.4',
         overflow: 'hidden',
         position: 'relative'
@@ -526,30 +581,31 @@ export default function RpgSolo() {
           borderBottom: '1px solid #00ff00',
           paddingBottom: '10px',
           marginBottom: '20px'
+        }}>        <div style={{ 
+          color: '#00ff00', 
+          fontSize: '17px', 
+          fontWeight: 'bold' 
         }}>
-          <div style={{ 
-            color: '#00ff00', 
-            fontSize: '16px', 
-            fontWeight: 'bold' 
-          }}>
             RPG SOLO TERMINAL v1.0 - Chapter {currentChapter}
           </div>
         </div>
 
-        {/* Stats display */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          marginBottom: '20px',
-          padding: '10px',
-          border: '1px solid #00ff00',
-          borderRadius: '5px',
-          background: 'rgba(0, 255, 0, 0.05)'
-        }}>
-          <div>Tech: {gameState.tech}{gameState.upgradeSelected === 'tech' && gameState.tech === 10 ? ' (+5)' : ''}</div>
-          <div>Logic: {gameState.logical}{gameState.upgradeSelected === 'logical' && gameState.logical === 10 ? ' (+5)' : ''}</div>
-          <div>Empathy: {gameState.empathy}{gameState.upgradeSelected === 'empathy' && gameState.empathy === 10 ? ' (+5)' : ''}</div>
-        </div>
+        {/* Stats display - only show after neural upgrade is selected */}
+        {gameState.hasSkills && (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            marginBottom: '20px',
+            padding: '10px',
+            border: '1px solid #00ff00',
+            borderRadius: '5px',
+            background: 'rgba(0, 255, 0, 0.05)'
+          }}>
+            <div>Tech: {gameState.tech}{gameState.upgradeSelected === 'tech' && gameState.tech === 10 ? ' (+5)' : ''}</div>
+            <div>Logic: {gameState.logical}{gameState.upgradeSelected === 'logical' && gameState.logical === 10 ? ' (+5)' : ''}</div>
+            <div>Empathy: {gameState.empathy}{gameState.upgradeSelected === 'empathy' && gameState.empathy === 10 ? ' (+5)' : ''}</div>
+          </div>
+        )}
 
         {/* Skill check in progress */}
         {skillCheckInProgress && (
@@ -566,7 +622,7 @@ export default function RpgSolo() {
             {/* Dice animation phase */}
             {diceRoll && !skillCheckResult && (
               <div style={{ 
-                fontSize: '3em', 
+                fontSize: '3.1em', 
                 marginBottom: '10px',
                 transform: 'scale(1.1)',
                 transition: 'transform 0.1s ease-in-out',
@@ -579,14 +635,14 @@ export default function RpgSolo() {
             {/* Results phase */}
             {skillCheckResult && (
               <>
-                <div style={{ fontSize: '1.2em', marginBottom: '10px' }}>
+                <div style={{ fontSize: '1.3em', marginBottom: '10px' }}>
                   Roll: {skillCheckResult.roll} + Stat: {skillCheckResult.stat} = Total: {skillCheckResult.total}
                 </div>
-                <div style={{ fontSize: '1.1em', marginBottom: '10px' }}>
+                <div style={{ fontSize: '1.2em', marginBottom: '10px' }}>
                   Difficulty: {skillCheckResult.dc}
                 </div>
                 <div style={{ 
-                  fontSize: '1.3em', 
+                  fontSize: '1.4em', 
                   fontWeight: 'bold',
                   color: skillCheckResult.success ? '#00ff00' : '#ff6b6b',
                   marginBottom: '15px'
@@ -601,7 +657,7 @@ export default function RpgSolo() {
                     color: '#000000',
                     border: 'none',
                     borderRadius: '5px',
-                    fontSize: '1.1em',
+                    fontSize: '1.2em',
                     fontWeight: 'bold',
                     cursor: 'pointer',
                     fontFamily: 'Courier New, Monaco, monospace'
@@ -611,6 +667,113 @@ export default function RpgSolo() {
                 </button>
               </>
             )}
+          </div>
+        )}
+
+        {/* Tutorial interface for skill upgrades */}
+        {showTutorial && tutorialData && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000
+          }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #001a00, #003300)',
+              border: '3px solid #00ff00',
+              borderRadius: '15px',
+              padding: '40px',
+              maxWidth: '600px',
+              width: '90%',
+              boxShadow: '0 0 30px rgba(0, 255, 0, 0.5)',
+              textAlign: 'center',
+              position: 'relative'
+            }}>
+              {/* Header */}
+              <div style={{
+                color: '#00ff00',
+                fontSize: '25px',
+                fontWeight: 'bold',
+                marginBottom: '20px',
+                textTransform: 'uppercase',
+                letterSpacing: '2px'
+              }}>
+                🧠 NEURAL UPGRADE COMPLETE 🧠
+              </div>
+
+              {/* Upgrade Title */}
+              <div style={{
+                color: '#ffff00',
+                fontSize: '21px',
+                fontWeight: 'bold',
+                marginBottom: '25px',
+                background: 'rgba(255, 255, 0, 0.1)',
+                padding: '10px',
+                borderRadius: '8px',
+                border: '1px solid #ffff00'
+              }}>
+                {tutorialData.title}
+              </div>
+
+              {/* Stats Display */}
+              <div style={{
+                background: 'rgba(0, 255, 0, 0.1)',
+                border: '2px solid #00ff00',
+                borderRadius: '10px',
+                padding: '20px',
+                marginBottom: '25px'
+              }}>
+                <div style={{ color: '#00ff00', fontSize: '19px', marginBottom: '15px' }}>
+                  ✅ All stats start at 5. With the upgrade, your {tutorialData.statName} stat was increased to {tutorialData.statValue}
+                </div>
+                
+                <div style={{ color: '#ffffff', fontSize: '17px', lineHeight: '1.6' }}>
+                  <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>
+                    🎲 All skill checks are: <span style={{ color: '#ffff00' }}>1d20 + stat vs DC</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '15px' }}>
+                    <div>🟢 Easy: DC 10</div>
+                    <div>🟡 Medium: DC 15</div>
+                    <div>🔴 Hard: DC 20</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Continue Button */}
+              <button
+                onClick={continueTutorial}
+                style={{
+                  background: 'linear-gradient(135deg, #00ff00, #00cc00)',
+                  color: '#000000',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '15px 30px',
+                  fontSize: '19px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  boxShadow: '0 4px 15px rgba(0, 255, 0, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 255, 0, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 255, 0, 0.3)';
+                }}
+              >
+                Continue
+              </button>
+            </div>
           </div>
         )}
 
@@ -649,7 +812,7 @@ export default function RpgSolo() {
 
         {/* Story text with typewriter effect */}
         <div style={{ 
-          fontSize: '14px', 
+          fontSize: '15px', 
           lineHeight: '1.4', 
           margin: '20px 0', 
           whiteSpace: 'pre-wrap',
@@ -688,7 +851,7 @@ export default function RpgSolo() {
                     cursor: canSelect ? 'pointer' : 'not-allowed',
                     textAlign: 'left',
                     fontFamily: 'inherit',
-                    fontSize: '1rem',
+                    fontSize: '1.1rem',
                     transition: 'all 0.3s ease'
                   }}
                   onMouseEnter={(e) => {
@@ -706,14 +869,14 @@ export default function RpgSolo() {
                 >
                   <div>{choice.text}</div>
                   {choice.requirements && (
-                    <div style={{ fontSize: '0.8rem', color: '#ff6b6b', fontStyle: 'italic', marginTop: '5px' }}>
+                    <div style={{ fontSize: '0.9rem', color: '#ff6b6b', fontStyle: 'italic', marginTop: '5px' }}>
                       {choice.requirements.tech && `Tech ${choice.requirements.tech}+ `}
                       {choice.requirements.logical && `Logic ${choice.requirements.logical}+ `}
                       {choice.requirements.empathy && `Empathy ${choice.requirements.empathy}+`}
                     </div>
                   )}
                   {choice.effects && (
-                    <div style={{ fontSize: '0.8rem', color: '#00ff88', fontStyle: 'italic', marginTop: '5px' }}>
+                    <div style={{ fontSize: '0.9rem', color: '#00ff88', fontStyle: 'italic', marginTop: '5px' }}>
                       {choice.effects.tech && `+${choice.effects.tech} Tech `}
                       {choice.effects.logical && `+${choice.effects.logical} Logic `}
                       {choice.effects.empathy && `+${choice.effects.empathy} Empathy`}
