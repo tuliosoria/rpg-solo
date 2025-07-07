@@ -400,6 +400,33 @@ export default function RpgSolo() {
     }
   };
 
+  const restartChapter = () => {
+    // Reset game state but keep current chapter and skills
+    setGameState(prev => ({
+      ...prev,
+      // Keep skills and upgrades but reset to healthy state
+    }));
+    setGameStats({
+      nodesVisited: 0,
+      skillCheckAttempts: 0,
+      skillCheckSuccesses: 0,
+      skillCheckFailures: 0,
+      chaptersCompleted: 0
+    });
+    setIsGameOver(false);
+    setGameOverReason('');
+    setShowTutorial(false);
+    setTutorialData(null);
+    // Return to the beginning of current chapter
+    if (currentChapter === 1) {
+      setCurrent('wake_1');
+    } else if (currentChapter === 2) {
+      setCurrent('chapter2_1');
+    } else if (currentChapter === 3) {
+      setCurrent('chapter3_1');
+    }
+  };
+
   const restartGame = () => {
     setGameState({
       tech: 5,
@@ -445,77 +472,382 @@ export default function RpgSolo() {
 
     return (
       <div style={{ 
-        minHeight: '100vh', 
-        background: '#000000',
-        color: '#ff6b6b', 
-        display: 'flex', 
-        alignItems: 'center', 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        background: `
+          radial-gradient(circle at center, #000000 0%, #1a0000 40%, #330000 70%, #000000 100%),
+          linear-gradient(45deg, transparent 48%, rgba(255, 0, 0, 0.03) 50%, transparent 52%),
+          linear-gradient(-45deg, transparent 48%, rgba(255, 0, 0, 0.03) 50%, transparent 52%)
+        `,
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         fontFamily: 'Courier New, Monaco, monospace',
-        padding: '20px'
+        overflow: 'hidden',
+        zIndex: 10000
       }}>
+        {/* Dramatic pulsing overlay */}
         <div style={{
-          background: 'rgba(255, 107, 107, 0.1)',
-          border: '2px solid #ff6b6b',
-          borderRadius: '10px',
-          padding: '40px',
-          maxWidth: '600px',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'radial-gradient(circle at center, transparent 60%, rgba(255, 0, 0, 0.1) 100%)',
+          animation: 'deathPulse 4s ease-in-out infinite'
+        }} />
+        
+        {/* Static noise effect */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: `
+            repeating-linear-gradient(
+              90deg,
+              transparent 0px,
+              rgba(255, 0, 0, 0.02) 1px,
+              transparent 2px
+            ),
+            repeating-linear-gradient(
+              0deg,
+              transparent 0px,
+              rgba(255, 0, 0, 0.02) 1px,
+              transparent 2px
+            )
+          `,
+          pointerEvents: 'none',
+          animation: 'staticNoise 0.1s linear infinite'
+        }} />
+
+        {/* Main game over panel */}
+        <div style={{
+          position: 'relative',
+          background: `
+            linear-gradient(135deg, 
+              rgba(20, 0, 0, 0.95) 0%, 
+              rgba(40, 0, 0, 0.98) 50%, 
+              rgba(0, 0, 0, 0.95) 100%
+            )
+          `,
+          border: '4px solid #ff0000',
+          borderRadius: '0px',
+          padding: '60px 40px',
+          maxWidth: '800px',
+          width: '95%',
           textAlign: 'center',
-          boxShadow: '0 0 20px rgba(255, 107, 107, 0.3)'
+          boxShadow: `
+            0 0 50px rgba(255, 0, 0, 0.8),
+            inset 0 0 30px rgba(255, 0, 0, 0.1),
+            0 0 100px rgba(255, 0, 0, 0.3)
+          `,
+          animation: 'terminalGlitch 6s ease-in-out infinite',
+          transform: 'perspective(1000px) rotateX(2deg)',
         }}>
-          <h1 style={{ 
-            color: '#ff6b6b', 
-            fontSize: '2.6em', 
-            marginBottom: '20px',
-            textShadow: '0 0 10px rgba(255, 107, 107, 0.5)'
-          }}>
-            {gameOverReason}
-          </h1>
           
-          <div style={{ 
-            background: 'rgba(255, 255, 255, 0.1)', 
-            padding: '20px', 
-            borderRadius: '8px', 
-            marginBottom: '30px',
-            border: '1px solid rgba(255, 255, 255, 0.2)'
+          {/* Corner decorations */}
+          <div style={{
+            position: 'absolute',
+            top: '10px',
+            left: '10px',
+            width: '40px',
+            height: '40px',
+            border: '3px solid #ff0000',
+            borderRight: 'none',
+            borderBottom: 'none',
+            animation: 'cornerFlash 3s ease-in-out infinite'
+          }} />
+          <div style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            width: '40px',
+            height: '40px',
+            border: '3px solid #ff0000',
+            borderLeft: 'none',
+            borderBottom: 'none',
+            animation: 'cornerFlash 3s ease-in-out infinite 0.5s'
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: '10px',
+            left: '10px',
+            width: '40px',
+            height: '40px',
+            border: '3px solid #ff0000',
+            borderRight: 'none',
+            borderTop: 'none',
+            animation: 'cornerFlash 3s ease-in-out infinite 1s'
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: '10px',
+            right: '10px',
+            width: '40px',
+            height: '40px',
+            border: '3px solid #ff0000',
+            borderLeft: 'none',
+            borderTop: 'none',
+            animation: 'cornerFlash 3s ease-in-out infinite 1.5s'
+          }} />
+
+          {/* Skull/death symbol */}
+          <div style={{
+            fontSize: '4em',
+            color: '#ff0000',
+            marginBottom: '20px',
+            animation: 'skullPulse 2s ease-in-out infinite',
+            textShadow: '0 0 30px rgba(255, 0, 0, 1)'
           }}>
-            <h2 style={{ color: '#4ecdc4', marginBottom: '15px' }}>Game Statistics</h2>
-            <div style={{ textAlign: 'left', fontSize: '1.2em' }}>
-              <p><strong>Nodes Explored:</strong> {gameStats.nodesVisited}</p>
-              <p><strong>Skill Checks Attempted:</strong> {gameStats.skillCheckAttempts}</p>
-              <p><strong>Successful Checks:</strong> {gameStats.skillCheckSuccesses}</p>
-              <p><strong>Failed Checks:</strong> {gameStats.skillCheckFailures}</p>
-              <p><strong>Success Rate:</strong> {successRate}%</p>
-              <p><strong>Current Chapter:</strong> {currentChapter}</p>
+            ☠
+          </div>
+
+          {/* Massive GAME OVER text */}
+          <div style={{
+            fontSize: '4.5em',
+            fontWeight: 'bold',
+            color: '#ff0000',
+            textShadow: `
+              0 0 20px rgba(255, 0, 0, 0.8),
+              0 0 40px rgba(255, 0, 0, 0.6),
+              3px 3px 0px #330000,
+              -3px -3px 0px #330000
+            `,
+            marginBottom: '10px',
+            letterSpacing: '8px',
+            animation: 'bigTextFlicker 3s ease-in-out infinite',
+            transform: 'scaleY(1.2)',
+            lineHeight: '0.9'
+          }}>
+            GAME OVER
+          </div>
+
+          {/* Subtitle */}
+          <div style={{
+            fontSize: '1.5em',
+            color: '#ff6666',
+            marginBottom: '40px',
+            fontStyle: 'italic',
+            textShadow: '0 0 10px rgba(255, 0, 0, 0.5)',
+            animation: 'subtitleFade 4s ease-in-out infinite'
+          }}>
+            MISSION TERMINATED
+          </div>
+
+          {/* Failure reason in terminal style */}
+          <div style={{
+            background: 'rgba(0, 0, 0, 0.8)',
+            border: '2px solid #ff3333',
+            borderRadius: '0px',
+            padding: '25px',
+            marginBottom: '30px',
+            fontSize: '1.3em',
+            color: '#ff9999',
+            fontFamily: 'Courier New, Monaco, monospace',
+            textAlign: 'left',
+            boxShadow: 'inset 0 0 20px rgba(255, 0, 0, 0.2)'
+          }}>
+            <div style={{ 
+              color: '#ff0000', 
+              fontWeight: 'bold', 
+              marginBottom: '15px',
+              fontSize: '1.1em'
+            }}>
+              ▶ TERMINATION CAUSE:
+            </div>
+            <div style={{ 
+              fontStyle: 'italic',
+              lineHeight: '1.6',
+              borderLeft: '3px solid #ff0000',
+              paddingLeft: '15px'
+            }}>
+              {gameOverReason}
             </div>
           </div>
 
-          <button 
-            onClick={restartGame}
-            style={{
-              background: 'linear-gradient(45deg, #00ff00, #00aa00)',
-              color: 'black',
-              border: 'none',
-              padding: '15px 30px',
-              fontSize: '1.3em',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontFamily: 'Courier New, Monaco, monospace',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 4px 15px rgba(0, 255, 0, 0.3)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 255, 0, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 255, 0, 0.3)';
-            }}
-          >
-            🔄 Start New Adventure
-          </button>
+          {/* Critical system info */}
+          <div style={{
+            background: 'rgba(255, 0, 0, 0.1)',
+            border: '1px solid #ff3333',
+            padding: '20px',
+            marginBottom: '40px',
+            fontSize: '1em',
+            color: '#ff6666',
+            textAlign: 'left'
+          }}>
+            <div style={{ 
+              color: '#ff0000', 
+              fontWeight: 'bold', 
+              marginBottom: '10px',
+              textAlign: 'center'
+            }}>
+              � CRITICAL SYSTEM FAILURE 🚨
+            </div>
+            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+              Neural pathways severed • Consciousness integrity: 0% • Mission status: FAILED
+            </div>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between',
+              fontSize: '0.9em',
+              color: '#ff9999'
+            }}>
+              <span>Chapter: {currentChapter}</span>
+              <span>Progress: {gameStats.nodesVisited} nodes</span>
+              <span>Success Rate: {successRate}%</span>
+            </div>
+          </div>
+
+          {/* Restart options */}
+          <div style={{
+            borderTop: '2px solid #ff3333',
+            paddingTop: '30px',
+            marginTop: '20px'
+          }}>
+            <div style={{
+              fontSize: '1.8em',
+              color: '#ffaa00',
+              marginBottom: '25px',
+              fontWeight: 'bold',
+              textShadow: '0 0 15px rgba(255, 170, 0, 0.8)'
+            }}>
+              CHOOSE YOUR FATE
+            </div>
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '25px', 
+              justifyContent: 'center', 
+              flexWrap: 'wrap' 
+            }}>
+              <button 
+                onClick={restartChapter}
+                style={{
+                  background: 'linear-gradient(45deg, #ff4400, #ff6600, #ff4400)',
+                  color: '#ffffff',
+                  border: '3px solid #ff0000',
+                  padding: '18px 30px',
+                  fontSize: '1.4em',
+                  borderRadius: '0px',
+                  cursor: 'pointer',
+                  fontFamily: 'Courier New, Monaco, monospace',
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease',
+                  boxShadow: `
+                    0 6px 20px rgba(255, 68, 0, 0.5),
+                    inset 0 0 10px rgba(255, 255, 255, 0.1)
+                  `,
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.8)',
+                  transform: 'perspective(500px) rotateX(5deg)',
+                  minWidth: '280px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'perspective(500px) rotateX(5deg) translateY(-3px) scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 68, 0, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.2)';
+                  e.currentTarget.style.background = 'linear-gradient(45deg, #ff6600, #ff8800, #ff6600)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'perspective(500px) rotateX(5deg) translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 68, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1)';
+                  e.currentTarget.style.background = 'linear-gradient(45deg, #ff4400, #ff6600, #ff4400)';
+                }}
+              >
+                ⟲ RETURN TO CHAPTER {currentChapter}
+              </button>
+
+              <button 
+                onClick={restartGame}
+                style={{
+                  background: 'linear-gradient(45deg, #333333, #555555, #333333)',
+                  color: '#ffffff',
+                  border: '3px solid #666666',
+                  padding: '18px 30px',
+                  fontSize: '1.4em',
+                  borderRadius: '0px',
+                  cursor: 'pointer',
+                  fontFamily: 'Courier New, Monaco, monospace',
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease',
+                  boxShadow: `
+                    0 6px 20px rgba(0, 0, 0, 0.5),
+                    inset 0 0 10px rgba(255, 255, 255, 0.1)
+                  `,
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.8)',
+                  transform: 'perspective(500px) rotateX(5deg)',
+                  minWidth: '280px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'perspective(500px) rotateX(5deg) translateY(-3px) scale(1.05)';
+                  e.currentTarget.style.background = 'linear-gradient(45deg, #555555, #777777, #555555)';
+                  e.currentTarget.style.border = '3px solid #888888';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'perspective(500px) rotateX(5deg) translateY(0) scale(1)';
+                  e.currentTarget.style.background = 'linear-gradient(45deg, #333333, #555555, #333333)';
+                  e.currentTarget.style.border = '3px solid #666666';
+                }}
+              >
+                ☠ START NEW GAME
+              </button>
+            </div>
+          </div>
         </div>
+
+        <style jsx>{`
+          @keyframes deathPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+          }
+          
+          @keyframes staticNoise {
+            0% { transform: translateX(0px); }
+            10% { transform: translateX(-1px); }
+            20% { transform: translateX(1px); }
+            30% { transform: translateX(-2px); }
+            40% { transform: translateX(2px); }
+            50% { transform: translateX(-1px); }
+            60% { transform: translateX(1px); }
+            70% { transform: translateX(-2px); }
+            80% { transform: translateX(2px); }
+            90% { transform: translateX(-1px); }
+            100% { transform: translateX(0px); }
+          }
+          
+          @keyframes terminalGlitch {
+            0%, 95%, 100% { transform: perspective(1000px) rotateX(2deg) translateX(0); }
+            1% { transform: perspective(1000px) rotateX(2deg) translateX(-3px); }
+            3% { transform: perspective(1000px) rotateX(2deg) translateX(3px); }
+            5% { transform: perspective(1000px) rotateX(2deg) translateX(-2px); }
+          }
+          
+          @keyframes cornerFlash {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.3; }
+          }
+          
+          @keyframes skullPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+          }
+          
+          @keyframes bigTextFlicker {
+            0%, 90%, 100% { opacity: 1; }
+            5% { opacity: 0.7; }
+            10% { opacity: 1; }
+            15% { opacity: 0.8; }
+            20% { opacity: 1; }
+          }
+          
+          @keyframes subtitleFade {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+          }
+        `}</style>
       </div>
     );
   }

@@ -182,8 +182,24 @@
           "requirements": {},
           "effects": {},
           "nextNode": "wake_9"
+        },
+        {
+          "id": "dangerous_action",
+          "text": "Try to break the glass tank - something feels wrong",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "tank_destruction_death"
         }
       ]
+    },
+    "tank_destruction_death": {
+      "id": "tank_destruction_death",
+      "chapter": 1,
+      "title": "Fatal Error",
+      "text": "Dr. Korvain raised her fist against the glass tank. The material looked fragile, but as her knuckles connected, a massive electrical surge erupted through the chamber.\n\nSparks flew. Alarms screamed. Emergency lights bathed everything in hellish red.\n\n\"Yelena, no!\" Chronos shouted, but it was too late.\n\nThe feedback loop overloaded her neural pathways. Her consciousness, still unstable from the recent transfer, couldn't handle the massive electrical interference.\n\nHer vision went white, then black.\nHer mind... simply stopped.",
+      "isGameOver": true,
+      "gameOverReason": "Neural Cascade Failure",
+      "choices": []
     },
     "wake_9": {
       "id": "wake_9",
@@ -890,8 +906,24 @@
           "requirements": {},
           "effects": {},
           "nextNode": "skill_technical"
+        },
+        {
+          "id": "reject_upgrade",
+          "text": "Refuse the upgrade - \"I don't want anything artificial in my mind\"",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "upgrade_rejection_death"
         }
       ]
+    },
+    "upgrade_rejection_death": {
+      "id": "upgrade_rejection_death",
+      "chapter": 1,
+      "title": "Fatal Rejection",
+      "text": "\"I don't want anything artificial in my mind,\" Dr. Korvain said firmly.\n\nChronos was silent for a long moment.\n\n\"Yelena... you don't understand. The neural upgrade isn't optional. Your current neural pathways are unstable. Without the upgrade to stabilize your consciousness matrix, the journey to Mars will cause irreversible degradation.\"\n\n\"You're already artificial, Yelena. The upgrade is what keeps you... you.\"\n\nBut it was too late. As the ship began its trajectory toward Mars, her unenhanced neural patterns began to collapse under the stress of deep space travel.\n\nHer memories fragmented. Her sense of self dissolved.\nBy the time they reached Mars, nothing of Dr. Korvain remained.",
+      "isGameOver": true,
+      "gameOverReason": "Neural Pattern Collapse",
+      "choices": []
     },
     "skill_logical": {
       "id": "skill_logical",
@@ -990,13 +1022,6 @@
           "requirements": {},
           "effects": {},
           "nextNode": "wake_42"
-        },
-        {
-          "id": "begin_chapter_2",
-          "text": "Proceed to Mars landing",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "mars_landing"
         },
         {
           "id": "begin_chapter_2",

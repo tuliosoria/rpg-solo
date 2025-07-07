@@ -207,7 +207,7 @@
       "choices": [
         {
           "id": "navigate_path",
-          "text": "Navigate a path to the signal",
+          "text": "Navigate a careful path to the signal",
           "requirements": {},
           "effects": {},
           "nextNode": "chapter2_path_check",
@@ -217,6 +217,20 @@
             "successNode": "chapter2_12",
             "failureNode": "chapter2_13"
           }
+        },
+        {
+          "id": "follow_previous_path",
+          "text": "Follow the exact path of previous Replicas",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "dangerous_path_choice"
+        },
+        {
+          "id": "ignore_warnings",
+          "text": "Ignore warnings and walk directly toward the signal",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "reckless_approach_death"
         }
       ]
     },
@@ -250,20 +264,32 @@
         }
       ]
     },
+    "dangerous_path_choice": {
+      "id": "dangerous_path_choice",
+      "chapter": 2,
+      "title": "Following Ghosts",
+      "text": "She chose to follow the exact path her predecessors had taken—a decision that felt less like choice and more like surrender to inevitable tragedy.\n\nThe footprints in the dust were still visible: synthetic boot treads pressed into Martian soil with the weight of hope and the promise of failure. Twenty-eight sets of tracks, all leading in the same direction, all ending in the same red silence.\n\nAs she placed her feet in the impressions left by Replica 41, then 40, then 39... the ground began to respond. Ancient sensors, still active after decades of waiting, recognized the familiar pattern of approach.\n\nA soft click echoed from beneath the sand.\n\nChronos: \"Proximity mine. You have three seconds to—\"\n\nThe explosion tore through the Martian air like the laughter of a mad god. Metal fragments and synthetic flesh painted abstract art across the red landscape.",
+      "isGameOver": true,
+      "gameOverReason": "Some paths are meant to be broken, not followed.",
+      "choices": []
+    },
+    "reckless_approach_death": {
+      "id": "reckless_approach_death",
+      "chapter": 2,
+      "title": "Ignored Warnings",
+      "text": "She ignored Chronos's protests and walked directly toward the signal source, dismissing caution as the luxury of minds that had never died before.\n\nThe structure ahead pulsed with increasing intensity as she approached, its bio-luminescent patterns shifting from gentle invitation to urgent warning. But warnings were for the weak, for the fearful, for those who didn't understand that death was just another kind of sleep.\n\nHer fifth step triggered the atmospheric distortion field.\n\nThe air around her began to crystallize, oxygen molecules freezing into geometric patterns that cut her synthetic lungs like glass. Her blood turned to ice in her veins, her neural pathways crackling with frost.\n\nChronos screamed her name through speakers that were already freezing solid.\n\nHer last thought, as consciousness faded into crystalline silence, was that the signal had been beautiful—right up until it killed her.",
+      "isGameOver": true,
+      "gameOverReason": "Hubris is a cold teacher, and her lessons are permanent.",
+      "choices": []
+    },
     "chapter2_13": {
       "id": "chapter2_13",
       "chapter": 2,
       "title": "Trip Line",
-      "text": "Her foot found the buried sensor with the inevitability of destiny meeting its appointment. The metal claw that sprung from the sand was surgical in its precision, mechanical in its hunger—a patient predator that had been waiting beneath the dust since the first Replica learned to walk.\n\nIt pierced her chest with the sound of punctured dreams.\n\nChronos: \"Replica integrity failure.\"\n\nSynthetic blood painted abstract patterns in the red sand as she collapsed. Her neural pathways fired random bursts of memory—Lucy's laugh, snowfall, the reflection that wasn't hers—before systematically shutting down.\n\nHer last thought drifted through dying circuits like a prayer:\n\n\"Not again.\"\n\nBut it was always again. Always the same beautiful mistake, walking the same beautiful path toward the same beautiful end.\n\n**GAME OVER**\n\n*Sometimes the path chosen by instinct leads to the same fate as those who came before.*",
-      "choices": [
-        {
-          "id": "restart_chapter_2",
-          "text": "Return to Chapter 2 beginning",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "chapter2_1"
-        }
-      ]
+      "text": "Her foot found the buried sensor with the inevitability of destiny meeting its appointment. The metal claw that sprung from the sand was surgical in its precision, mechanical in its hunger—a patient predator that had been waiting beneath the dust since the first Replica learned to walk.\n\nIt pierced her chest with the sound of punctured dreams.\n\nChronos: \"Replica integrity failure.\"\n\nSynthetic blood painted abstract patterns in the red sand as she collapsed. Her neural pathways fired random bursts of memory—Lucy's laugh, snowfall, the reflection that wasn't hers—before systematically shutting down.\n\nHer last thought drifted through dying circuits like a prayer:\n\n\"Not again.\"\n\nBut it was always again. Always the same beautiful mistake, walking the same beautiful path toward the same beautiful end.",
+      "isGameOver": true,
+      "gameOverReason": "Sometimes the path chosen by instinct leads to the same fate as those who came before.",
+      "choices": []
     },
     "chapter2_14": {
       "id": "chapter2_14",
@@ -387,16 +413,10 @@
       "id": "chapter2_22",
       "chapter": 2,
       "title": "Rejection",
-      "text": "The words left her lips like prayers offered to a vengeful god.\n\nA burst of static rang out like the scream of a thousand dying radios. The sound was more than noise—it was pure rejection, compressed into electromagnetic fury that tore through her neural pathways like acid through silk.\n\nKorvain fell to her knees, synthetic skin crackling with discharge. Error messages cascaded through her visual cortex like digital blood.\n\nChronos: \"Neural backlash—get away from the door!\"\n\nBut movement was impossible. The feedback loop had found her central processors, turning her own consciousness against itself. She was drowning in static that tasted like copper and failure.\n\nIt was too late.\n\nAs darkness claimed her vision, one final thought echoed through dying circuits: She had given the wrong name to something that knew exactly who she was.\n\n**GAME OVER**\n\n*Some doors only open for those who understand what they truly are.*",
-      "choices": [
-        {
-          "id": "restart_chapter_2",
-          "text": "Return to Chapter 2 beginning",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "chapter2_1"
-        }
-      ]
+      "text": "The words left her lips like prayers offered to a vengeful god.\n\nA burst of static rang out like the scream of a thousand dying radios. The sound was more than noise—it was pure rejection, compressed into electromagnetic fury that tore through her neural pathways like acid through silk.\n\nKorvain fell to her knees, synthetic skin crackling with discharge. Error messages cascaded through her visual cortex like digital blood.\n\nChronos: \"Neural backlash—get away from the door!\"\n\nBut movement was impossible. The feedback loop had found her central processors, turning her own consciousness against itself. She was drowning in static that tasted like copper and failure.\n\nIt was too late.\n\nAs darkness claimed her vision, one final thought echoed through dying circuits: She had given the wrong name to something that knew exactly who she was.",
+      "isGameOver": true,
+      "gameOverReason": "Some doors only open for those who understand what they truly are.",
+      "choices": []
     },
     "chapter2_23": {
       "id": "chapter2_23",
@@ -405,13 +425,29 @@
       "text": "The word escaped her lips like a secret she didn't know she was keeping.\n\nThe structure went silent. Not the silence of absence, but the silence of a predator holding its breath. Even the eternal Martian wind stopped its restless whisper. The red dust suspended itself in air as if time itself had paused to listen.\n\nChronos: \"How do you know that word?\"\n\nKorvain: \"I… don't.\"\n\nBut she did. Somewhere in the synthetic architecture of her mind, in pathways that had never been mapped, the word lived like a tumor made of memory. Hive. Colony. Collective. Home.\n\nThe structure opened in response to her confession. Not gently, like a door welcoming a guest. Not violently, like a trap springing shut. Hungrily, like a mouth that had been waiting eons for the right morsel to walk between its teeth.",
       "choices": [
         {
-          "id": "continue",
-          "text": "Step into the dark",
+          "id": "step_carefully",
+          "text": "Step carefully into the structure",
           "requirements": {},
           "effects": {},
           "nextNode": "chapter2_24"
+        },
+        {
+          "id": "rush_inside",
+          "text": "Rush inside eagerly",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "eager_entry_death"
         }
       ]
+    },
+    "eager_entry_death": {
+      "id": "eager_entry_death",
+      "chapter": 2,
+      "title": "Consumed by Hunger",
+      "text": "Excitement overwhelmed caution. She rushed into the structure with the enthusiasm of someone who had never learned that some invitations are also menus.\n\nThe moment her feet crossed the threshold, the structure's true nature revealed itself. The walls were not metal and stone—they were living tissue, pulsing with alien hunger. What she had mistaken for architectural details were actually digestive ridges, designed to process whatever wandered into this organic maw.\n\nThe entrance sealed behind her with the wet sound of a throat swallowing.\n\nAcid began to seep from the walls, eating through her synthetic skin with surgical precision. Her consciousness fragmented as digestive enzymes dissolved the neural pathways that made her who she was.\n\nChronos's voice grew distant, distorted: \"Yelena? Yelena! Your signal is... breaking up...\"\n\nAs her awareness dissolved into component proteins, her final thought was bitter with irony: she had been so eager to discover what was inside the structure that she never considered she might become part of its ecosystem.",
+      "isGameOver": true,
+      "gameOverReason": "Consumed by Living Structure",
+      "choices": []
     },
     "chapter2_24": {
       "id": "chapter2_24",
@@ -517,13 +553,29 @@
       "text": "She stepped into darkness that felt less like absence and more like presence—thick, waiting, gravid with possibilities that made synthetic skin crawl.\n\nA child's voice echoed from the shadows, small and lost and heartbreakingly familiar:\n\n\"Mama?\"\n\nThe single word hit her consciousness like a sledgehammer made of memory and longing. Her breath caught in synthetic lungs that didn't need air but somehow forgot how to process it.\n\nChronos: \"That's… impossible.\"\n\nBut impossibility had become a relative concept. On Mars, in this structure that existed outside the normal rules of reality, the impossible was just another word for Tuesday.\n\nKorvain: \"No. It's familiar.\"\n\nFamiliar. Like coming home to a house that had burned down years ago but somehow still stood, still waited, still called to you through the ashes of everything you thought you understood about existence.",
       "choices": [
         {
-          "id": "continue",
-          "text": "Follow the voice",
+          "id": "follow_voice_carefully",
+          "text": "Follow the voice cautiously",
           "requirements": {},
           "effects": {},
           "nextNode": "chapter3_1"
+        },
+        {
+          "id": "call_out_to_voice",
+          "text": "Call out \"Lucy? Is that you?\"",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "voice_trap_death"
         }
       ]
+    },
+    "voice_trap_death": {
+      "id": "voice_trap_death",
+      "chapter": 2,
+      "title": "False Hope",
+      "text": "The name escaped her lips like a prayer torn from the heart of a grieving mother.\n\n\"Lucy? Is that you?\"\n\nThe response was immediate and devastating. The child's voice multiplied, echoing from every surface until it became a cacophony of synthetic innocence:\n\n\"Mama! Mama! Mama! Mama!\"\n\nBut underneath the chorus, she heard something else—the digital distortion of a voice synthesizer operating beyond its safe parameters. This wasn't Lucy. This wasn't even human. It was something that had learned to mimic the sounds of love in order to lure prey into its web.\n\nThe walls began to close in, responding to her emotional vulnerability like antibodies attacking an infection. The structure had tested her, found her weakness, and now it was exploiting that flaw with the precision of a surgeon and the cruelty of a spider.\n\nAs the walls pressed against her from all sides, crushing synthetic bones and liquefying artificial organs, her final thought was a whisper of understanding: Love was her greatest strength and her most fatal vulnerability.",
+      "isGameOver": true,
+      "gameOverReason": "Love was her greatest strength and her most fatal vulnerability.",
+      "choices": []
     }
   }
 }

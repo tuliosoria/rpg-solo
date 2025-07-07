@@ -497,31 +497,19 @@
       "id": "game_over_connection_fail",
       "chapter": 3,
       "title": "Neural Overload",
-      "text": "The connection overwhelmed her neural pathways. Sparks flew from the interface.\nKorvain's consciousness scattered across the network.\nChronos: \"Replica integrity failure. Neural cascade detected.\"\nHer last thought dissolved into static.\n\n**GAME OVER**\n\n*Some networks are too vast for a single mind to comprehend.*",
-      "choices": [
-        {
-          "id": "restart_chapter_3",
-          "text": "Return to Chapter 3 beginning",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "chapter3_1"
-        }
-      ]
+      "text": "The connection overwhelmed her neural pathways. Sparks flew from the interface.\nKorvain's consciousness scattered across the network.\nChronos: \"Replica integrity failure. Neural cascade detected.\"\nHer last thought dissolved into static.",
+      "isGameOver": true,
+      "gameOverReason": "Some networks are too vast for a single mind to comprehend.",
+      "choices": []
     },
     "game_over_disable_fail": {
       "id": "game_over_disable_fail",
       "chapter": 3,
       "title": "Core Overload",
-      "text": "Her attempt to disable the core triggered a massive feedback loop.\nThe Hive's defenses turned on her with lethal force.\nEnergy coursed through her systems, frying her neural pathways.\nChronos: \"Critical error. System failure imminent.\"\nThe last thing she saw was Lucy's sad smile.\n\n**GAME OVER**\n\n*Sometimes resistance only feeds the very thing you're fighting against.*",
-      "choices": [
-        {
-          "id": "restart_chapter_3",
-          "text": "Return to Chapter 3 beginning",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "chapter3_1"
-        }
-      ]
+      "text": "Her attempt to disable the core triggered a massive feedback loop.\nThe Hive's defenses turned on her with lethal force.\nEnergy coursed through her systems, frying her neural pathways.\nChronos: \"Critical error. System failure imminent.\"\nThe last thing she saw was Lucy's sad smile.",
+      "isGameOver": true,
+      "gameOverReason": "Sometimes resistance only feeds the very thing you're fighting against.",
+      "choices": []
     },
     "chapter4_1_1": {
       "id": "chapter4_1_1",
