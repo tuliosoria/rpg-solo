@@ -96,7 +96,7 @@ type SkillCheckResult = {
 
 export default function RpgSolo() {
   const [story, setStory] = useState<{ [key: string]: StoryNode } | null>(null);
-  const [current, setCurrent] = useState('sinal_1');
+  const [current, setCurrent] = useState('wake_1');
   const [currentChapter, setCurrentChapter] = useState(1);
   const [gameState, setGameState] = useState<GameState>({
     tech: 5,
@@ -419,7 +419,7 @@ export default function RpgSolo() {
     setTutorialData(null);
     // Return to the beginning of current chapter
     if (currentChapter === 1) {
-      setCurrent('sinal_1');
+      setCurrent('wake_1');
     } else if (currentChapter === 2) {
       setCurrent('chapter2_1');
     } else if (currentChapter === 3) {
