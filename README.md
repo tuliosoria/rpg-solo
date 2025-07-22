@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RPG Solo - O Sinal
 
-## Getting Started
+Um jogo RPG interativo ambientado no Brasil dos anos 90, onde cinco amigos investigam mistérios sobrenaturais em sua cidade.
 
-First, run the development server:
+## 🎮 Sobre o Jogo
 
+**RPG Solo** é uma aventura narrativa que combina:
+- **História envolvente** em português brasileiro
+- **Sistema de testes de habilidade** (Raciocínio, Empatia, Tecnologia)
+- **Múltiplas escolhas** que afetam o desenvolvimento da história
+- **Ambientação autêntica** dos anos 90 no Brasil
+
+### Personagens
+- **Sérgio** - Protagonista apaixonado por eletrônica
+- **Helena** - Inteligente e corajosa
+- **Dudu** - Gênio dos rádios e tecnologia
+- **Léo** - Engraçado e descontraído
+- **Ágata** - Misteriosa, com conexões espirituais
+
+## 🚀 Como Executar
+
+### Pré-requisitos
+- Node.js 18 ou superior
+- npm ou yarn
+
+### Instalação
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+O jogo estará disponível em `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📖 Capítulos Disponíveis
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Capítulo 1 - O Sinal**: A descoberta dos sinais misteriosos nos rádios
+2. **Capítulo 2 - A Queda**: A investigação na mata e o primeiro contato
+3. **Capítulo 3**: Continuação da aventura (em desenvolvimento)
 
-## Learn More
+## 🎯 Mecânicas do Jogo
 
-To learn more about Next.js, take a look at the following resources:
+### Sistema de Atributos
+- **Raciocínio (Logical)**: Para desafios lógicos e científicos
+- **Empatia (Empathy)**: Para conexões emocionais e sociais  
+- **Tecnologia (Tech)**: Para desafios técnicos e agilidade
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Testes de Habilidade
+- Sistema d20 + atributo vs dificuldade
+- Resultados afetam a narrativa e escolhas disponíveis
+- Múltiplos caminhos baseados em sucesso/falha
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠 Tecnologias
 
-## Deploy on Vercel
+- **Next.js 15.3.3** - Framework React
+- **TypeScript** - Tipagem estática
+- **Tailwind CSS** - Estilização
+- **JSON** - Armazenamento de narrativa
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📁 Estrutura do Projeto
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+├── app/                    # Aplicação React
+│   ├── RpgSolo.tsx        # Componente principal do jogo
+│   └── ...
+├── public/                # Arquivos públicos
+│   ├── chapter1.json      # Capítulo 1 - O Sinal
+│   ├── chapter2.json      # Capítulo 2 - A Queda
+│   ├── chapter3.json      # Capítulo 3
+│   └── *.png              # Imagens do jogo
+└── _PROJECT_CLEANUP_*/    # Arquivos de desenvolvimento
+```
+
+## 🎨 Características Visuais
+
+- **Interface terminal** com efeito typewriter
+- **Tema dark/green** nostálgico dos anos 90
+- **Animações suaves** para transições
+- **Game Over dramático** com efeitos visuais
+
+## 📝 Desenvolvimento
+
+O jogo foi desenvolvido com foco em:
+- Narrativa autêntica brasileira
+- Mecânicas RPG simplificadas
+- Interface intuitiva e acessível
+- Sistema modular de capítulos
+
+## 🗂 Arquivos de Backup
+
+Versões anteriores e arquivos de desenvolvimento estão organizados em:
+- `_PROJECT_BACKUP_2025-07-20/` - Backup completo anterior
+- `_PROJECT_CLEANUP_2025-07-21/` - Arquivos de desenvolvimento movidos
+
+---
+
+**Desenvolvido com ❤️ para preservar a nostalgia dos anos 90 brasileiros**

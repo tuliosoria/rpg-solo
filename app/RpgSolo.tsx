@@ -66,6 +66,12 @@ type StoryNode = {
   effects?: { tech?: number; logical?: number; empathy?: number; };
   isGameOver?: boolean;
   gameOverReason?: string;
+  skillCheck?: {
+    stat?: 'tech' | 'logical' | 'empathy';
+    difficulty: number | string;
+    successNode: string;
+    failureNode: string;
+  };
 };
 
 type GameState = {
@@ -190,6 +196,11 @@ export default function RpgSolo() {
         nodesVisited: prev.nodesVisited + 1
       }));
 
+      // Check for skill check in the current node
+      if (currentNode.skillCheck && !skillCheckInProgress) {
+        performNodeSkillCheck(currentNode.skillCheck);
+      }
+
       // Check for game over conditions
       if (currentNode.isGameOver) {
         setIsGameOver(true);
@@ -286,6 +297,62 @@ export default function RpgSolo() {
         return choice.nextNode;
       }
     })();
+    
+    // Store the next node in state for manual continuation
+    setSkillCheckResult(prev => ({ ...prev!, nextNode }));
+  };
+
+  const performNodeSkillCheck = async (nodeSkillCheck: { stat?: 'tech' | 'logical' | 'empathy'; difficulty: number | string; successNode: string; failureNode: string; }) => {
+    const { difficulty, successNode, failureNode } = nodeSkillCheck;
+    
+    setSkillCheckInProgress(true);
+    setSkillCheckResult(null);
+    
+    // Animate the dice roll
+    const rollAnimation = async () => {
+      for (let i = 0; i < 10; i++) {
+        setDiceRoll(Math.floor(Math.random() * 20) + 1);
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    };
+    
+    await rollAnimation();
+    
+    const finalRoll = rollD20();
+    setDiceRoll(finalRoll);
+    
+    // Handle different difficulty formats
+    let dc: number;
+    if (typeof difficulty === 'number') {
+      dc = difficulty;
+    } else {
+      // For node skill checks, convert string to number or use default
+      dc = parseInt(difficulty) || 10;
+    }
+    
+    const { stat, statName } = determineSkillCheckStat(gameState);
+    const total = finalRoll + stat;
+    const isSuccess = total >= dc;
+
+    const result: SkillCheckResult = {
+      roll: finalRoll,
+      stat,
+      total,
+      dc,
+      success: isSuccess
+    };
+
+    setSkillCheckResult(result);
+
+    setGameStats(prev => ({
+      ...prev,
+      skillCheckAttempts: prev.skillCheckAttempts + 1,
+      skillCheckSuccesses: prev.skillCheckSuccesses + (isSuccess ? 1 : 0),
+      skillCheckFailures: prev.skillCheckFailures + (isSuccess ? 0 : 1)
+    }));
+
+    // Store the next node for manual continuation
+    const nextNode = isSuccess ? successNode : failureNode;
     
     // Store the next node in state for manual continuation
     setSkillCheckResult(prev => ({ ...prev!, nextNode }));
