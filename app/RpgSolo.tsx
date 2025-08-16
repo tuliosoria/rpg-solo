@@ -1585,7 +1585,7 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
         {/* Choices - only show when not in skill check and after text finishes */}
         {!skillCheckInProgress && isComplete && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '30px' }}>
-            {currentNode.choices.map((choice, index) => {
+            {(currentNode.choices || []).map((choice, index) => {
               const canSelect = canChoose(choice);
               return (
                 <button
@@ -1631,7 +1631,7 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
                     <div style={{ fontSize: '0.9rem', color: '#00ff88', fontStyle: 'italic', marginTop: '5px' }}>
                       {choice.effects.tech && `+${choice.effects.tech} Tech `}
                       {choice.effects.logical && `+${choice.effects.logical} Logic `}
-                      {choice.effects.empathy && `+${choice.effects.empathy} Empathy`}
+                      {choice.effects.empathy && `+${choice.effects.empathy} Empatia`}
                     </div>
                   )}
                 </button>
