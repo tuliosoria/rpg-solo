@@ -67,6 +67,9 @@ type StoryNode = {
   isGameOver?: boolean;
   gameOver?: boolean; // accept legacy/alternate JSON key
   gameOverReason?: string;
+  // Added optional metadata to help identify epilogues
+  title?: string;
+  epilogue?: boolean;
   skillCheck?: {
     stat?: 'tech' | 'logical' | 'empathy';
     difficulty: number | string;
@@ -132,6 +135,9 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
   });
   const [isGameOver, setIsGameOver] = useState(false);
   const [gameOverReason, setGameOverReason] = useState('');
+  // New epilogue state
+  const [isEpilogue, setIsEpilogue] = useState(false);
+  const [generatedEpilogue, setGeneratedEpilogue] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [skillCheckInProgress, setSkillCheckInProgress] = useState(false);
   const [diceRoll, setDiceRoll] = useState<number | null>(null);
@@ -195,6 +201,16 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
   }, [initialLoad]);
 
   const currentNode = story?.[current];
+
+  // Helper to detect if a node represents an epilogue
+  const nodeIsEpilogue = (node?: StoryNode | null): boolean => {
+    if (!node) return false;
+    if (node.epilogue) return true;
+    const id = node.id?.toLowerCase() || '';
+    // Check Portuguese spelling present in content files
+    const title = (node.title || '').toLowerCase();
+    return id.includes('epilogo') || title.includes('epilogo');
+  };
   
   // Function to clean story text for skill upgrade nodes
   const getCleanedText = (text: string, nodeId: string): string => {
@@ -241,7 +257,7 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
   
   // Check for game over when current node changes
   useEffect(() => {
-    if (currentNode && !loading && !isGameOver) {
+    if (currentNode && !loading && !isGameOver && !isEpilogue) {
       // Update node visit stats for the current node
       setGameStats(prev => ({
         ...prev,
@@ -253,13 +269,30 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
         performNodeSkillCheck(currentNode.skillCheck);
       }
 
+      // If it's explicitly an epilogue node, always show epilogue screen
+      if (nodeIsEpilogue(currentNode)) {
+        setIsEpilogue(true);
+        setIsGameOver(false);
+        setGameOverReason('');
+        return;
+      }
+
       // Check for game over conditions (support both keys)
       if (currentNode.isGameOver || currentNode.gameOver) {
-        setIsGameOver(true);
-        setGameOverReason(currentNode.gameOverReason || 'Game Over');
+        if (currentChapter === 5) {
+          // For any Chapter 5 ending branch, show Epilogue screen
+          setGeneratedEpilogue(computeGeneratedEpilogue());
+          setIsEpilogue(true);
+          setIsGameOver(false);
+          setGameOverReason('');
+        } else {
+          // Earlier chapters keep the classic Game Over
+          setIsGameOver(true);
+          setGameOverReason(currentNode.gameOverReason || 'Game Over');
+        }
       }
     }
-  }, [currentNode, loading, isGameOver]);
+  }, [currentNode, loading, isGameOver, isEpilogue, currentChapter]);
 
   const rollD20 = () => Math.floor(Math.random() * 20) + 1;
 
@@ -541,6 +574,8 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
       chaptersCompleted: 0
     });
     setIsGameOver(false);
+    setIsEpilogue(false);
+    setGeneratedEpilogue(null);
     setGameOverReason('');
     setShowTutorial(false);
     setTutorialData(null);
@@ -573,6 +608,8 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
       chaptersCompleted: 0
     });
     setIsGameOver(false);
+    setIsEpilogue(false);
+    setGeneratedEpilogue(null);
     setGameOverReason('');
     setShowTutorial(false);
     setTutorialData(null);
@@ -609,7 +646,25 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
       saveGame();
     }
     setShowExitModal(false);
+    setIsEpilogue(false);
+    setGeneratedEpilogue(null);
     if (onExitToMenu) onExitToMenu();
+  };
+
+  // Small generator to produce a fallback epilogue for any ending
+  const computeGeneratedEpilogue = (): string => {
+    const successRate = gameStats.skillCheckAttempts > 0
+      ? Math.round((gameStats.skillCheckSuccesses / gameStats.skillCheckAttempts) * 100)
+      : 0;
+    const chapterLabel = `Capítulo ${currentChapter}`;
+    const pathHint = successRate >= 60 ? 'um traço de esperança' : 'ecos de algo que ficou para trás';
+    return [
+      `Epilogo — ${chapterLabel}`,
+      '',
+      `Depois dos eventos, o mundo seguiu diferente. Seus passos deixaram marcas sutis: Tech ${gameState.tech}, Lógica ${gameState.logical}, Empatia ${gameState.empathy}.`,
+      `Você encarou ${gameStats.nodesVisited} cenas e venceu ${successRate}% dos testes. Há ${pathHint} no ar — e histórias que continuam nas sombras.`,
+      'Seus registros permanecem, e o silêncio também. Algumas noites… parecem responder.'
+    ].join('\n');
   };
 
   if (loading) {
@@ -624,6 +679,83 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
         fontFamily: 'Courier New, Monaco, monospace'
       }}>
         Loading...
+      </div>
+    );
+  }
+
+  // Dedicated Epilogue Screen
+  if (isEpilogue) {
+    const epilogueText = nodeIsEpilogue(currentNode) && currentNode?.text ? currentNode.text : (generatedEpilogue || computeGeneratedEpilogue());
+    const epilogueParagraphs = chunkTextToParagraphs(epilogueText, 2);
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        background: 'radial-gradient(circle at center, #000014 0%, #001a1a 60%, #000000 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'Courier New, Monaco, monospace',
+        color: '#aaffaa',
+        overflow: 'hidden',
+        zIndex: 10000
+      }}>
+        {/* Soft scanlines */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,128,0.05) 2px, rgba(0,255,128,0.05) 4px)'
+        }} />
+
+        <div style={{
+          position: 'relative',
+          background: 'linear-gradient(135deg, rgba(0,20,0,0.9) 0%, rgba(0,35,0,0.95) 60%, rgba(0,0,0,0.9) 100%)',
+          border: '2px solid #00ff88',
+          borderRadius: 10,
+          padding: '40px 30px',
+          maxWidth: 900,
+          width: '94%',
+          textAlign: 'left',
+          boxShadow: '0 0 40px rgba(0,255,136,0.2)'
+        }}>
+          <div style={{ fontSize: '2.2em', color: '#00ff88', fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>
+            EPÍLOGO
+          </div>
+          {currentNode?.image && (
+            <div style={{ textAlign: 'center', margin: '10px 0 20px 0' }}>
+              <img src={`/${currentNode.image}`} alt="Epilogue illustration" style={{ maxWidth: '100%', height: 'auto', border: '1px solid #00ff88', borderRadius: 6, filter: 'sepia(90%) hue-rotate(90deg) saturate(1.6)' }} />
+            </div>
+          )}
+          <div style={{ fontSize: 16, lineHeight: 1.7, color: '#d6ffd6' }}>
+            {epilogueParagraphs.map((p, i) => (
+              <p key={i} style={{ margin: '0 0 14px 0' }}>{p}</p>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 24, flexWrap: 'wrap' }}>
+            <button onClick={restartChapter} style={{ padding: '12px 18px', border: '1px solid #00ff88', background: 'rgba(0,255,136,0.12)', color: '#e6ffe6', borderRadius: 8, cursor: 'pointer', minWidth: 220 }}>⟲ Reiniciar Capítulo</button>
+            <button onClick={restartGame} style={{ padding: '12px 18px', border: '1px solid #88ffaa', background: 'rgba(255,255,255,0.06)', color: '#e6ffe6', borderRadius: 8, cursor: 'pointer', minWidth: 220 }}>☘ Novo Jogo</button>
+            {onExitToMenu && (
+              <button onClick={() => setShowExitModal(true)} style={{ padding: '12px 18px', border: '1px solid #00ff88', background: 'rgba(0,0,0,0.35)', color: '#e6ffe6', borderRadius: 8, cursor: 'pointer', minWidth: 220 }}>↩ Voltar ao Menu</button>
+            )}
+          </div>
+        </div>
+
+        {/* Exit modal (epilogue) */}
+        {showExitModal && (
+          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 20000 }}>
+            <div style={{ background: '#0b0b0b', border: '1px solid #00ff00', padding: 24, borderRadius: 10, width: '90%', maxWidth: 460, color: '#e0ffe0', fontFamily: 'Courier New, Monaco, monospace', textAlign: 'center' }}>
+              <div style={{ fontSize: 18, marginBottom: 16, color: '#00ff88' }}>Save game before returning to menu?</div>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button onClick={() => exitToMenu(true)} style={{ padding: '10px 16px', border: '1px solid #00ff88', background: 'rgba(0,255,136,0.12)', color: '#e6ffe6', borderRadius: 8, cursor: 'pointer' }}>💾 Save & Exit</button>
+                <button onClick={() => exitToMenu(false)} style={{ padding: '10px 16px', border: '1px solid #888', background: '#111', color: '#eee', borderRadius: 8, cursor: 'pointer' }}>Exit without Saving</button>
+                <button onClick={() => setShowExitModal(false)} style={{ padding: '10px 16px', border: '1px solid #444', background: '#0b0b0b', color: '#aaa', borderRadius: 8, cursor: 'pointer' }}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -987,6 +1119,35 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
                   ↩ BACK TO MENU
                 </button>
               )}
+
+              {/* New: View Epilogue for all endings */}
+              <button 
+                onClick={() => { setGeneratedEpilogue(computeGeneratedEpilogue()); setIsEpilogue(true); setIsGameOver(false); }}
+                style={{
+                  background: 'linear-gradient(45deg, #00220f, #003a1a, #00220f)',
+                  color: '#aaffaa',
+                  border: '3px solid #00ff88',
+                  padding: '18px 30px',
+                  fontSize: '1.4em',
+                  borderRadius: '0px',
+                  cursor: 'pointer',
+                  fontFamily: 'Courier New, Monaco, monospace',
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 6px 20px rgba(0, 255, 136, 0.25)',
+                  minWidth: '280px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';
+                  e.currentTarget.style.borderColor = '#33ffaa';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.borderColor = '#00ff88';
+                }}
+              >
+                ✦ VIEW EPILOGUE
+              </button>
             </div>
           </div>
         </div>
@@ -1366,15 +1527,9 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
           </div>
         )}
 
-        {/* Image display */}
-        {currentNode.image && (
-          <div style={{ 
-            textAlign: 'center', 
-            marginBottom: '20px',
-            border: '1px solid #00ff00',
-            padding: '10px',
-            borderRadius: '5px'
-          }}>
+        {/* Image display for current node */}
+        {currentNode?.image && (
+          <div style={{ border: '1px solid #00ff00', padding: '10px', borderRadius: '5px' }}>
             <img 
               src={`/${currentNode.image}`} 
               alt="Story illustration" 
