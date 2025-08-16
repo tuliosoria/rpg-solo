@@ -1,489 +1,209 @@
 {
-  "title": "Capítulo 2 - A Queda",
-  "startNode": "queda_1",
+  "title": "Capítulo 2 - O Visitante",
+  "startNode": "visitante_1",
   "nodes": {
-    "queda_1": {
-      "id": "queda_1",
-      "chapter": 2,
-      "title": "Na Mata",
-      "text": "A mata do Jardim Andere os engoliu. As lanternas tremiam nas mãos. Léo, rindo nervoso, soltou: — Se algum ET me abduzir, espero que me leve pra Marte e não pra Minas.\n\nSérgio lançou um olhar a Helena, que caminhava ao seu lado. Ela sorriu de canto. O coração dele disparou.",
-      "choices": [
-        {
-          "id": "continuar_silencio",
-          "text": "Continuar em silêncio",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_2"
-        },
-        {
-          "id": "puxar_papo_helena",
-          "text": "Tentar puxar papo com Helena",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_2_papo"
-        }
-      ]
-    },
-    "queda_2": {
-      "id": "queda_2",
-      "chapter": 2,
-      "title": "Sinais Estranhos",
-      "text": "O cheiro de terra molhada dominava. Galhos estalavam. Dudu, à frente, sussurrou: — As interferências começaram aqui. Tô captando um padrão magnético anormal.\n\nÁgata se ajoelhou, tocando o chão. — Tem sangue no solo espiritual. Alguém está ferido... ou fugindo.",
-      "choices": [
-        {
-          "id": "ignorar_seguir",
-          "text": "Ignorar e seguir",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_3"
-        },
-        {
-          "id": "perguntar_agata",
-          "text": "Perguntar mais sobre o \"solo espiritual\"",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_3_agata"
-        }
-      ]
-    },
-    "queda_2_papo": {
-      "id": "queda_2_papo",
-      "chapter": 2,
-      "title": "Conversa com Helena",
-      "text": "— Tá tudo bem? — Sérgio perguntou, tentando parecer casual.\n\nHelena olhou de lado. — Com medo. Mas curiosa. E você?\n\n— Mesma coisa.\n\nEla sorriu. — Você treme mais que a lanterna.\n\nEle corou.",
-      "choices": [
-        {
-          "id": "focar_investigacao",
-          "text": "Focar na investigação",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_3"
-        },
-        {
-          "id": "seguir_conversando",
-          "text": "Seguir conversando",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_3_helena"
-        }
-      ]
-    },
-    "queda_3": {
-      "id": "queda_3",
-      "chapter": 2,
-      "title": "O Rastro",
-      "text": "Dudu apontou adiante. — Olha!\n\nUm rastro queimado rasgava a mata, com árvores partidas e fuligem.\n\n— Isso não é fogo comum — murmurou ele. — A temperatura de combustão aqui foi absurda.\n\nÁgata segurou o pingente no pescoço. — Eles caíram de propósito. Estão fugindo.",
-      "choices": [
-        {
-          "id": "teste_raciocinio",
-          "text": "Fazer teste de Raciocínio",
-          "requirements": {},
-          "effects": {},
-          "skillCheck": {
-            "stat": "logical",
-            "difficulty": 12,
-            "successNode": "queda_4_sucesso",
-            "failureNode": "queda_4_falha"
-          }
-        },
-        {
-          "id": "seguir_rastro",
-          "text": "Seguir o rastro",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_5"
-        }
-      ]
-    },
-    "queda_3_agata": {
-      "id": "queda_3_agata",
-      "chapter": 2,
-      "title": "Solo Espiritual",
-      "text": "— A terra guarda memória — disse Ágata. — E está confusa. Assustada. Como se algo violasse as regras do mundo.\n\nLéo revirou os olhos. — E a terra também fala com você, né? Qual o signo dela?\n\nÁgata o ignorou. Sérgio sentiu um arrepio.",
-      "choices": [
-        {
-          "id": "seguir_rastro",
-          "text": "Seguir o rastro",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_5"
-        }
-      ]
-    },
-    "queda_3_helena": {
-      "id": "queda_3_helena",
-      "chapter": 2,
-      "title": "Questionamentos",
-      "text": "— Você acredita mesmo que foi um ET? — Helena perguntou.\n\nSérgio hesitou. — Acho que... não sei. Mas alguma coisa caiu. E eu preciso saber.\n\n— Então a gente vai descobrir juntos.",
-      "choices": [
-        {
-          "id": "seguir_caminho_helena",
-          "text": "Seguir caminho com ela",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_5"
-        }
-      ]
-    },
-    "queda_4_sucesso": {
-      "id": "queda_4_sucesso",
-      "chapter": 2,
-      "title": "Revelação Científica",
-      "text": "Sérgio lembrou de um artigo sobre naves experimentais que causavam combustão por fricção dimensional. Era loucura, mas encaixava.\n\n— Isso aqui não é nosso.\n\nDudu arregalou os olhos. — Você leu a \"Revista Quark\" também?!",
-      "choices": [
-        {
-          "id": "compartilhar_teoria",
-          "text": "Compartilhar teoria com o grupo",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_5"
-        }
-      ]
-    },
-    "queda_4_falha": {
-      "id": "queda_4_falha",
-      "chapter": 2,
-      "title": "Incerteza",
-      "text": "Sérgio analisou o solo, mas estava nervoso demais.\n\n— Talvez tenha sido um drone militar... ou um meteoro?\n\nLéo bufou. — Meteoro que faz curva e derruba árvore é novo.",
-      "choices": [
-        {
-          "id": "continuar_rastro",
-          "text": "Continuar seguindo o rastro",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_5"
-        }
-      ]
-    },
-    "queda_5": {
-      "id": "queda_5",
-      "chapter": 2,
-      "title": "A Encosta",
-      "text": "O rastro levava até uma encosta. Havia uma trilha escorregadia descendo até uma clareira.\n\nDudu ligou o rádio. — Tem distorção aqui embaixo. Forte.",
-      "choices": [
-        {
-          "id": "descer_teste",
-          "text": "Descer (teste de Agilidade)",
-          "requirements": {},
-          "effects": {},
-          "skillCheck": {
-            "stat": "tech",
-            "difficulty": 10,
-            "successNode": "queda_6_sucesso",
-            "failureNode": "queda_6_falha"
-          }
-        },
-        {
-          "id": "procurar_outro_caminho",
-          "text": "Procurar outro caminho",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_6_rota"
-        }
-      ]
-    },
-    "queda_6_sucesso": {
-      "id": "queda_6_sucesso",
-      "chapter": 2,
-      "title": "Descida Segura",
-      "text": "Sérgio segurou-se em raízes e desceu. Helena veio atrás. Quando ela escorregou, ele a segurou pela cintura.\n\nEla riu, nervosa. — Tá sempre me salvando, hein?\n\nSérgio engoliu seco.",
-      "choices": [
-        {
-          "id": "continuar_clareira",
-          "text": "Continuar para a clareira",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_7"
-        }
-      ]
-    },
-    "queda_6_falha": {
-      "id": "queda_6_falha",
-      "chapter": 2,
-      "title": "Queda Perigosa",
-      "text": "Sérgio escorregou e caiu, rolando barranco abaixo. Dudu correu até ele.\n\n— Torceu o pé?\n\nSérgio tentava não gritar de dor.",
-      "choices": [
-        {
-          "id": "teste_resistencia",
-          "text": "Teste de resistência",
-          "requirements": {},
-          "effects": {},
-          "skillCheck": {
-            "stat": "tech",
-            "difficulty": 15,
-            "successNode": "queda_7",
-            "failureNode": "queda_6_morte"
-          }
-        }
-      ]
-    },
-    "queda_6_morte": {
-      "id": "queda_6_morte",
-      "chapter": 2,
-      "title": "Acidente Fatal",
-      "text": "Sérgio bateu a cabeça numa pedra. Tudo escureceu.",
-      "isGameOver": true,
-      "gameOverReason": "Sérgio morreu na queda. A aventura terminou antes mesmo de descobrir o mistério da mata.",
-      "choices": []
-    },
-    "queda_6_rota": {
-      "id": "queda_6_rota",
-      "chapter": 2,
-      "title": "Caminho Alternativo",
-      "text": "Contornaram a encosta. O caminho era longo.\n\nLéo resmungava: — Se isso for uma pegadinha da Ágata, eu juro que jogo meu All Star nela.\n\nÁgata: — Acha mesmo que eu escolheria esse lugar pra um ritual? A energia aqui tá podre.",
-      "choices": [
-        {
-          "id": "chegar_clareira",
-          "text": "Chegar à clareira",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_7"
-        }
-      ]
-    },
-    "queda_7": {
-      "id": "queda_7",
-      "chapter": 2,
-      "title": "A Nave",
-      "text": "No centro da clareira, uma estrutura retorcida de metal brilhava. A terra ao redor parecia morta.\n\nDudu gravava tudo. — Isso é de liga composta... isso é de fora.\n\nÁgata ajoelhou-se. — Eles estão com medo. E feridos.",
-      "choices": [
-        {
-          "id": "investigar_nave",
-          "text": "Investigar a nave",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_8"
-        },
-        {
-          "id": "teste_empatia",
-          "text": "Fazer teste de Empatia",
-          "requirements": {},
-          "effects": {},
-          "skillCheck": {
-            "stat": "empathy",
-            "difficulty": 10,
-            "successNode": "queda_8_sucesso",
-            "failureNode": "queda_8_falha"
-          }
-        }
-      ]
-    },
-    "queda_8": {
-      "id": "queda_8",
-      "chapter": 2,
-      "title": "Investigação da Nave",
-      "text": "A escotilha estava rachada. Dentro, tudo era escuridão e vapor. Um líquido grosso escorria.\n\nHelena: — Isso não é óleo.\n\nSérgio tocou a borda e sentiu um formigamento.",
-      "choices": [
-        {
-          "id": "entrar_nave",
-          "text": "Entrar na nave",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_9"
-        },
-        {
-          "id": "observar_fora",
-          "text": "Observar de fora",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_9_observar"
-        }
-      ]
-    },
-    "queda_8_sucesso": {
-      "id": "queda_8_sucesso",
-      "chapter": 2,
-      "title": "Conexão Empática",
-      "text": "Sérgio fechou os olhos. Uma mente aflita tocou a sua. Era confusa. Ferida. E assustada.\n\n— Tem alguém... ou algo... tentando pedir ajuda.",
-      "choices": [
-        {
-          "id": "entrar_nave",
-          "text": "Entrar na nave",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_9"
-        }
-      ]
-    },
-    "queda_8_falha": {
-      "id": "queda_8_falha",
-      "chapter": 2,
-      "title": "Medo Dominante",
-      "text": "Sérgio tentou se conectar, mas sentiu só medo. O dele mesmo.\n\n— Isso aqui é errado. Muito errado.",
-      "choices": [
-        {
-          "id": "observar_fora",
-          "text": "Observar de fora",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_9_observar"
-        }
-      ]
-    },
-    "queda_9": {
-      "id": "queda_9",
-      "chapter": 2,
-      "title": "Dentro da Nave",
-      "text": "Dentro da nave, a gravidade parecia alterada. Léo flutuava levemente. — Mano... isso é o Star Wars das trevas.\n\nDudu examinava painéis: — Esses símbolos... tem lógica fractal!\n\nHelena segurou a mão de Sérgio por reflexo.",
-      "choices": [
-        {
-          "id": "avancar_juntos",
-          "text": "Avançar juntos",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_10"
-        }
-      ]
-    },
-    "queda_9_observar": {
-      "id": "queda_9_observar",
-      "chapter": 2,
-      "title": "Observação Externa",
-      "text": "De fora, viram algo se arrastar na penumbra da nave. Um vulto.\n\nÁgata murmurou: — Não é só tecnologia. É um ser.",
-      "choices": [
-        {
-          "id": "fugir",
-          "text": "Fugir",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_11_fuga"
-        },
-        {
-          "id": "teste_coragem",
-          "text": "Fazer teste de Coragem",
-          "requirements": {},
-          "effects": {},
-          "skillCheck": {
-            "stat": "empathy",
-            "difficulty": 14,
-            "successNode": "queda_10_coragem",
-            "failureNode": "queda_11_fuga"
-          }
-        }
-      ]
-    },
-    "queda_10": {
-      "id": "queda_10",
-      "chapter": 2,
-      "title": "Avanço Corajoso",
-      "text": "O grupo avançou juntos pelo interior da nave. As paredes pulsavam com uma luz fraca, como se estivessem vivas.\n\nSérgio sentiu uma presença próxima, ferida e desesperada.",
-      "choices": [
-        {
-          "id": "procurar_criatura",
-          "text": "Procurar a criatura",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "queda_10_coragem"
-        }
-      ]
-    },
-    "queda_10_coragem": {
-      "id": "queda_10_coragem",
+    "visitante_1": {
+      "id": "visitante_1",
       "chapter": 2,
       "title": "Primeiro Contato",
-      "text": "Sérgio avançou, mesmo com o medo esmagador. Dentro da cápsula, viram uma criatura caída. Pequena, pele acinzentada, olhos vermelhos, ferida.",
+      "text": "O metal rangeu enquanto o painel do objeto se abria, liberando uma nuvem de vapor quente que se misturou ao ar frio da noite. De dentro da carcaça fumegante, uma figura esguia despontou com movimentos vacilantes. Sob a fraca luz vermelha, Sérgio divisou uma pele acinzentada e úmida revestindo um corpo magro, não muito maior que ele próprio. Dois olhos negros e ovais refletiam o brilho rubro ao encarar o grupo à distância.\n\nO coração de Sérgio martelava no peito. Helena levou as mãos à boca, incrédula, enquanto Dudu recuava um passo com o rosto pálido. Léo engoliu em seco, sem conseguir sequer formular uma piada dessa vez. Ágata sentiu um arrepio gelado percorrer a espinha – não exatamente de terror, mas de empatia; por um segundo, ela jurou sentir uma onda de medo e dor que não era sua.\n\nA criatura apoiou uma das mãos trêmulas na borda do objeto aberto. Seus dedos eram finos e alongados, quase translúcidos sob a luz avermelhada. Havia um ferimento no flanco da criatura, de onde escorria um líquido escuro e viscoso que pingava no solo. Ela soltou um som baixo – um gemido agudo e trêmulo – ao erguer o corpo frágil para fora dos destroços, fazendo Sérgio estremecer.\n\nPor um instante, os olhos da criatura encontraram os de Sérgio. Ele sentiu como se encarasse o desconhecido em pessoa – e esse desconhecido estava apavorado. A clareira mergulhou em silêncio, quebrado apenas pelo zumbido elétrico distante e pelos estalos do objeto esfriando. Sérgio sabia que precisava decidir o que fazer, e rápido, antes que os militares chegassem de vez.",
+      "image": "clareira_objeto.png",
       "choices": [
         {
-          "id": "ajudar_criatura",
-          "text": "Ajudar a criatura",
+          "id": "aproximar_criatura",
+          "text": "Aproximar-se da criatura",
           "requirements": {},
           "effects": {},
-          "nextNode": "queda_12"
+          "nextNode": "visitante_2"
         },
         {
-          "id": "observar_silencio",
-          "text": "Observar em silêncio",
+          "id": "observar_distancia",
+          "text": "Observar de longe",
           "requirements": {},
           "effects": {},
-          "nextNode": "queda_12_observar"
+          "nextNode": "visitante_2_observar"
         }
       ]
     },
-    "queda_11_fuga": {
-      "id": "queda_11_fuga",
+    "visitante_2": {
+      "id": "visitante_2",
       "chapter": 2,
-      "title": "Fuga Desesperada",
-      "text": "O grupo correu para fora. Galhos batiam nos rostos.\n\nMas algo os seguia.",
+      "title": "Aproximação",
+      "text": "Sérgio ergueu as mãos lentamente à frente do corpo e deu dois passos cautelosos em direção à criatura. O galho seco de um arbusto partiu-se sob seu pé, provocando um estalo alto. A criatura recuou de imediato, agachando-se e emitindo um chiado baixo de advertência. Por reflexo, Helena também avançou um pouco ao lado de Sérgio, as palmas abertas em sinal de paz.\n\n— Tudo bem... nós não queremos machucar você — murmurou Helena, com a voz mais calma que conseguiu encontrar. O tom suave dela contrastava com seu coração disparado. Ágata fechou os olhos e sussurrou, quase inaudível: — Ele está com mais medo da gente do que nós dele... — Dudu observava em silêncio, sem ousar um movimento brusco, enquanto Léo se mantinha alguns passos atrás, trêmulo e pronto para correr.\n\nA poucos metros da criatura, Sérgio sentiu um cheiro estranho no ar, algo parecido com ozônio misturado à terra queimada. Ele engoliu em seco e, reunindo coragem, arriscou algumas palavras gentis, embora não soubesse se o ser seria capaz de entendê-las. Com gestos lentos, apontou para si mesmo e depois estendeu a mão espalmada para a criatura, tentando mostrar que não representava uma ameaça.",
       "choices": [
         {
-          "id": "teste_fuga",
-          "text": "Fazer teste de Agilidade (FUGA)",
+          "id": "fazer_teste_empatia",
+          "text": "Tentar acalmar a criatura",
           "requirements": {},
           "effects": {},
-          "skillCheck": {
-            "stat": "tech",
-            "difficulty": 13,
-            "successNode": "queda_12_fuga_sucesso",
-            "failureNode": "queda_12_fuga_gameover"
-          }
+          "nextNode": "visitante_3_test"
         }
       ]
     },
-    "queda_12_fuga_sucesso": {
-      "id": "queda_12_fuga_sucesso",
+    "visitante_3_test": {
+      "id": "visitante_3_test",
       "chapter": 2,
-      "title": "Escape por Pouco",
-      "text": "O grupo escapou por pouco. Ofegantes, se esconderam sob as raízes.\n\nDudu: — Aquilo não era humano...",
-      "choices": [
-        {
-          "id": "esperar_acalmar",
-          "text": "Esperar acalmar",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "chapter3_1"
-        }
-      ]
-    },
-    "queda_12_fuga_gameover": {
-      "id": "queda_12_fuga_gameover",
-      "chapter": 2,
-      "title": "Capturado",
-      "text": "Sérgio tropeça. Algo o agarra.\n\nO grito ecoa pela mata.",
-      "isGameOver": true,
-      "gameOverReason": "Sérgio foi capturado pela criatura alienígena. O medo venceu a curiosidade.",
+      "title": "Teste de Empatia",
+      "text": "Teste de Empatia: Sérgio se esforça para demonstrar à criatura que não representa uma ameaça, aproximando-se com calma e compaixão. Caso seja bem-sucedido, a criatura perceberá suas intenções pacíficas e se tranquilizará; em caso de falha, o medo falará mais alto e ela reagirá de forma agressiva ou tentará escapar.",
+      "skillCheck": {
+        "stat": "empathy",
+        "difficulty": 10,
+        "successNode": "visitante_3_sucesso",
+        "failureNode": "visitante_3_falha"
+      },
       "choices": []
     },
-    "queda_12": {
-      "id": "queda_12",
+    "visitante_3_sucesso": {
+      "id": "visitante_3_sucesso",
       "chapter": 2,
-      "title": "Ato de Compaixão",
-      "text": "Sérgio se ajoelhou. — Ele tá com medo...\n\nA criatura sussurrou algo em voz baixa, em sua mente.\n\nHelena se aproximou. — Ele... confia em você.",
+      "title": "Confiança Frágil",
+      "text": "A criatura inclinou a cabeça e emitiu um som baixo, quase um trinado, enquanto fixava seus grandes olhos nos de Sérgio. Ele sentiu um alívio percorrer seu corpo ao perceber que ela não recuava mais. Com extrema delicadeza, Sérgio deu mais um passo e a criatura não resistiu quando ele tocou de leve seu braço frio e de textura borrachenta. O ser piscou lentamente, parecendo entender que aqueles jovens não queriam lhe fazer mal.\n\n— Eu... acho que ele confiou na gente — sussurrou Helena, rompendo o silêncio. Dudu soltou o fôlego que nem percebera estar prendendo e abriu um sorriso de puro espanto. Ágata se ajoelhou ao lado de Sérgio, sentindo as emoções da criatura como uma maré suave: — Ele está com dor... e muito confuso... — murmurou ela, os olhos cheios de compaixão. Léo, ainda trêmulo, arriscou dar dois passos à frente, mantendo prudente distância.\n\nSérgio notou que a criatura cambaleava, exausta e ferida. Num impulso, ele passou o braço pelo ombro esguio dela, oferecendo apoio. O ser era surpreendentemente leve. Quando Helena fez menção de ajudar também, um estalo distante ecoou da mata, seguido de vozes gritadas e latidos. Lanternas tremeluziram entre os troncos das árvores próximas.\n\n— Os soldados! — arfou Dudu, alarmado, já reconhecendo o brilho tático das lanternas entre as folhas. O coração de Sérgio voltou a disparar. Eles não tinham mais tempo. Precisavam tirar a criatura dali, e rápido.",
       "choices": [
         {
-          "id": "segurar_mao",
-          "text": "Segurar sua mão",
+          "id": "fugir_com_criatura",
+          "text": "Retirar a criatura dali",
           "requirements": {},
           "effects": {},
-          "nextNode": "chapter3_1"
+          "nextNode": "visitante_4_test_fuga"
         },
         {
-          "id": "chamar_outros",
-          "text": "Chamar os outros",
+          "id": "esconder_com_criatura",
+          "text": "Esconder-se com a criatura e esperar",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "visitante_4_test_esconder"
+        }
+      ]
+    },
+    "visitante_3_falha": {
+      "id": "visitante_3_falha",
+      "chapter": 2,
+      "title": "Pânico",
+      "text": "A criatura reagiu num sobressalto de pânico. Ela soltou um guincho estridente que fez Sérgio recuar instintivamente, levando as mãos aos ouvidos. Num movimento atabalhoado, o ser golpeou o ar com um dos braços e quase atingiu Helena, que tropeçou para trás, caindo sentada. Dudu recuou alguns passos, e Léo se encolheu atrás de uma árvore próxima, os olhos arregalados de terror.\n\n— Calma! Calma! — tentou dizer Sérgio, a voz trêmula, mas a criatura não o ouvia. Ela estava em absoluto desespero: arrastou-se para trás e encostou-se a um tronco, chiando alto e de forma descontrolada. Ágata sentiu uma pontada aguda na cabeça, como se o pavor da criatura ecoasse dentro dela, e cambaleou, atordoada.\n\nO chiado agudo reverberou pela mata silenciosa. Em resposta, ouviu-se ao longe o latido de cães e vozes gritando comandos. Estava claro que os militares tinham escutado o alarde. Em meio ao caos, a criatura contorcia-se tentando se erguer, mas suas forças falhavam. Sérgio percebeu que ou eles agiam naquele instante, ou seria o fim para todos ali.",
+      "choices": [
+        {
+          "id": "fugir_assim_mesmo",
+          "text": "Tentar fugir com a criatura mesmo assim",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "visitante_4_test_fuga"
+        },
+        {
+          "id": "abandonar_criatura",
+          "text": "Abandonar a criatura e fugir",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "visitante_end_nohelp"
+        }
+      ]
+    },
+    "visitante_2_observar": {
+      "id": "visitante_2_observar",
+      "chapter": 2,
+      "title": "Observando de Longe",
+      "text": "Sérgio conteve o impulso de correr até a clareira e observou, junto aos amigos escondidos entre a folhagem, o desenrolar da cena. A criatura havia saído completamente do objeto e agora se arrastava por alguns metros, apoiada em um tronco caído. Seus movimentos eram trôpegos e incertos, claramente debilitados pelo ferimento no flanco, que deixava um rastro escuro na vegetação.\n\n— Ele... está machucado de verdade — sussurrou Helena, com pena na voz, espiando por cima do ombro de Sérgio. Dudu assentiu em silêncio, os olhos fixos no ser extraterrestre à frente, sem piscar. Léo mal respirava, desejando quase se tornar invisível na escuridão. Ágata apertava o amuleto em seu pescoço com tanta força que os nós de seus dedos estavam brancos.\n\nAo longe, ecos de vozes e motores se aproximavam rápido. O feixe oscilante de uma lanterna já passeava pela copa das árvores adiante. Não restava muito tempo. A criatura soltou um gemido de dor ao tentar se levantar novamente, apenas para desabar de joelhos. A cena era de cortar o coração, e Sérgio sentiu um nó na garganta – não podia simplesmente ficar parado ali.\n\nO grupo trocou olhares tensos. Se não fizessem algo nos próximos segundos, os soldados alcançariam a clareira e encontrariam o ser indefeso. A dúvida queimava em cada um deles: arriscar tudo para ajudar aquela criatura desconhecida, ou salvar a própria pele e deixar que o destino seguisse seu curso?",
+      "choices": [
+        {
+          "id": "intervir_agora",
+          "text": "Intervir e ajudar a criatura",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "visitante_3_falha"
+        },
+        {
+          "id": "deixar_local",
+          "text": "Sair de fininho e voltar para casa",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "visitante_end_nohelp"
+        }
+      ]
+    },
+    "visitante_4_test_fuga": {
+      "id": "visitante_4_test_fuga",
+      "chapter": 2,
+      "title": "Teste de Agilidade",
+      "text": "Teste de Agilidade: O grupo tenta escapar rapidamente da clareira levando a criatura consigo, aproveitando a escuridão e a vegetação como cobertura. Se forem bem-sucedidos, conseguirão se distanciar sem serem vistos; em caso de fracasso, serão detectados e cercados pelos soldados.",
+      "skillCheck": {
+        "stat": "tech",
+        "difficulty": 8,
+        "successNode": "visitante_4_sucesso_fuga",
+        "failureNode": "visitante_4_falha"
+      },
+      "choices": []
+    },
+    "visitante_4_test_esconder": {
+      "id": "visitante_4_test_esconder",
+      "chapter": 2,
+      "title": "Teste de Agilidade",
+      "text": "Teste de Agilidade: O grupo permanece agachado nas sombras da mata, mantendo a criatura escondida enquanto os militares vasculham a clareira. Se tiverem sucesso, os soldados passarão sem notá-los e eles poderão escapar depois; em caso de fracasso, serão descobertos e capturados.",
+      "skillCheck": {
+        "stat": "tech",
+        "difficulty": 10,
+        "successNode": "visitante_4_sucesso_esconder",
+        "failureNode": "visitante_4_falha"
+      },
+      "choices": []
+    },
+    "visitante_4_sucesso_fuga": {
+      "id": "visitante_4_sucesso_fuga",
+      "chapter": 2,
+      "title": "Escape pela Mata",
+      "text": "Sérgio e Helena corriam lado a lado, carregando a criatura pelos ombros, enquanto Dudu iluminava o caminho com uma lanterna fraca e Ágata e Léo vinham logo atrás. Eles se afastaram da clareira o mais rápido que puderam, desviando de árvores e arbustos no escuro. O som dos soldados ficava mais distante a cada passada apressada. Quando julgaram estar longe o bastante, o grupo refugiou-se atrás de um grande rochedo coberto de musgo para recuperar o fôlego.\n\nO peito de Sérgio ardia e suas pernas tremiam após a corrida desesperada. — N-nós conseguimos... — disse Léo entre arfadas, os olhos ainda arregalados pela adrenalina. — Não acredito que conseguimos escapar! Helena pousou a criatura com cuidado no chão forrado de folhas secas. O ser respirava rápido e curto, mas permanecia consciente; seus olhos negros observavam os cinco jovens com um misto de cansaço e alívio.\n\n— E agora, o que a gente faz? — perguntou Dudu, mantendo a voz baixa. Ele espiou por entre as árvores: ao longe, era possível ver o clarão das lanternas dos militares na clareira e ouvir vagamente as vozes confusas deles. — A gente não pode voltar pra casa com ele — disse Helena, lançando um olhar preocupado para a criatura ferida. — Precisamos escondê-lo em algum lugar seguro.\n\n— Tem meu porão lá em casa... mas meu pai tá lá e... — começou Dudu, inseguro. — E se fosse no galpão abandonado perto do campo? — sugeriu Léo, ainda ofegante. — Ou... na minha casa — disse Ágata de supetão, atraindo olhares surpresos. — Minha avó saberia o que fazer.\n\nSérgio respirou fundo, limpando o suor da testa. Nenhuma das opções era perfeita, mas teriam que decidir logo. Com o estranho ser alienígena semi-inconsciente sob seus cuidados e os militares vasculhando a mata, eles precisavam agir rápido. Seja qual fosse o esconderijo escolhido, aquela seria apenas a primeira de muitas decisões difíceis pela frente.",
+      "choices": [
+        {
+          "id": "continuar_capitulo3_fuga",
+          "text": "Continuar para o Capítulo 3",
           "requirements": {},
           "effects": {},
           "nextNode": "chapter3_1"
         }
       ]
     },
-    "queda_12_observar": {
-      "id": "queda_12_observar",
+    "visitante_4_sucesso_esconder": {
+      "id": "visitante_4_sucesso_esconder",
       "chapter": 2,
-      "title": "Momento de Decisão",
-      "text": "A criatura olhou para Sérgio, respirando com dificuldade. Seus olhos suplicavam.\n\nÁgata: — Ele está nos entregando o destino dele.",
+      "title": "Nas Sombras",
+      "text": "Sérgio pressionou o corpo contra o solo úmido, sentindo o coração saltar na garganta. Helena estava encolhida ao seu lado, mantendo a criatura agachada entre eles. A poucos metros, feixes de lanternas varriam a clareira enquanto os soldados chegavam. Um deles passou tão perto que Sérgio pôde ver as botas pesadas a poucos centímetros de seu rosto, por trás do arbusto onde se escondiam.\n\n— Nenhum sinal do ocupante! — gritou uma voz rouca mais à frente. — Equipe Alfa, comecem a varredura no quadrante leste! Temos marcas de sangue, ele não pode ter ido longe! — O soldado próximo praguejou baixo e se afastou, seguindo as ordens. Outros dois militares atravessaram a clareira correndo, e logo o local ficou vazio novamente, exceto pelo burburinho distante e o piscar das luzes entre as árvores mais adiante.\n\nÁgata soltou o ar que prendia e percebeu que tremia dos pés à cabeça. Dudu olhou para os amigos e fez um sinal com a mão, indicando que era hora de sair dali. Com extremo cuidado, o grupo ergueu-se com a criatura e esgueirou-se por entre a vegetação, indo na direção oposta de onde os soldados tinham seguido.\n\nDepois de alguns minutos tensos, eles pararam atrás de um denso aglomerado de arbustos. Os sons dos militares ficavam mais fracos para trás. Léo deixou escapar uma risada nervosa, quase incrédula: — Cara, a gente conseguiu... enganamos eles. — Mas Helena logo cortou o momento de alívio: — Isso não vai durar muito. Eles vão continuar procurando.\n\n— Precisamos encontrar um lugar seguro pra ele, agora — insistiu Sérgio, sussurrando. Seus olhos cruzaram com os de Ágata, que assentiu decidida. Dudu mordeu o lábio, pensativo: — Talvez o porão lá de casa... ou o galpão velho perto do campo... — Léo respirou fundo, ainda tentando se acalmar: — Só sei que não podemos levar ele pro meio da cidade assim.\n\nExaustos e cientes da urgência, os cinco trocaram olhares e chegaram a um silencioso acordo. Carregando o peso frágil do novo amigo entre eles, desapareceram mata adentro antes que os soldados retornassem à clareira. Ainda havia um longo caminho pela frente naquela noite, e escolhas difíceis teriam que ser feitas rapidamente.",
       "choices": [
         {
-          "id": "ajudar",
-          "text": "Ajudar",
+          "id": "continuar_capitulo3_esconder",
+          "text": "Continuar para o Capítulo 3",
           "requirements": {},
           "effects": {},
           "nextNode": "chapter3_1"
-        },
+        }
+      ]
+    },
+    "visitante_4_falha": {
+      "id": "visitante_4_falha",
+      "chapter": 2,
+      "title": "Fim - Capturados",
+      "text": "Holofotes explodiram ao redor do grupo de repente, cegando-os. Vozes duras ecoaram pela mata: — Mãos na cabeça! Ninguém se mova! — Em questão de segundos, Sérgio sentiu mãos fortes agarrarem seus braços e foi separado da criatura. Ele tentou resistir, gritando: — Não machuquem ele! — mas sua voz se perdeu no alvoroço. Helena chorava e protestava enquanto um soldado a arrastava para longe, e Léo estava pálido como papel, congelado de medo.\n\nEm meio à confusão de feixes de luz, Sérgio ainda vislumbrou a criatura sendo cercada por homens armados. Um dos militares a envolveu com um grosso cobertor enquanto outros dois erguiam o ser, que já não oferecia resistência. — Alvo capturado — bradou uma voz no rádio próximo. O coração de Sérgio afundou; eles haviam falhado.\n\nHoras depois, já de madrugada, os cinco amigos foram levados de volta à cidade em um jipe militar. Nenhuma explicação foi dada a eles, além de um frio “esqueçam o que viram”. Os soldados deixaram cada jovem na porta de sua casa, sob os olhares estupefatos de pais e vizinhos. Não houve respostas, apenas o silêncio imposto.\n\nNos dias seguintes, a história oficial espalhada na cidade falava em um balão meteorológico que caíra na mata, negando qualquer evento incomum. Mas Sérgio e seus amigos sabiam a verdade – uma verdade que jamais poderiam contar. A criatura misteriosa havia sido tomada pelas sombras das autoridades, e com ela se fora a chance de trazer à tona um segredo extraordinário. (Fim de Jogo)",
+      "gameOver": true,
+      "choices": [
         {
-          "id": "fugir_final",
-          "text": "Fugir",
+          "id": "restart",
+          "text": "Recomeçar",
           "requirements": {},
           "effects": {},
-          "nextNode": "chapter3_1"
+          "nextNode": "sinal_1"
+        }
+      ]
+    },
+    "visitante_end_nohelp": {
+      "id": "visitante_end_nohelp",
+      "chapter": 2,
+      "title": "Fim - O Preço da Omissão",
+      "text": "Sérgio sentiu seus pés se moverem antes mesmo de decidir conscientemente. Em um ímpeto de medo, ele se virou e disparou mata adentro, o coração em frangalhos. Léo não precisou de convite para segui-lo de imediato. Helena hesitou por um segundo, os olhos marejados de conflito, mas acabou puxando Ágata pela mão e correndo atrás dos outros. Dudu permaneceu por um momento, olhando para a clareira e vendo a criatura encolhida ao lado dos destroços – então xingou baixo e também se juntou aos amigos na fuga.\n\nEscondidos atrás de uma elevação a uma certa distância, eles observaram em silêncio as luzes dos militares invadirem a clareira minutos depois. Ouviu-se um breve tumulto: latidos, gritos e então o silêncio. Quando as lanternas se dispersaram de volta pela mata, Sérgio soube que a criatura fora encontrada. Um peso esmagador caiu sobre seu peito, misturando um alívio covarde com um arrependimento profundo.\n\nNinguém disse uma palavra durante todo o trajeto de volta para casa naquela madrugada. Cada um carregava consigo a imagem daqueles olhos negros e apavorados observando-os antes de virarem as costas. No dia seguinte, a cidade fervilhava com boatos sobre a \"noite dos militares na mata\". A versão oficial falava em um balão meteorológico caído – uma explicação frágil que quase ninguém engoliu.\n\nSérgio e seus amigos trocaram olhares cansados na escola, mas nada comentaram. Por mais que doesse, eles sabiam que haviam desistido de algo extraordinário. O mistério daquela noite permaneceu sem solução – e talvez jamais tivessem outra chance de desvendá-lo. (Fim de Jogo)",
+      "gameOver": true,
+      "choices": [
+        {
+          "id": "restart",
+          "text": "Recomeçar",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_1"
         }
       ]
     }

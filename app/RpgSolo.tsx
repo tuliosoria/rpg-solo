@@ -65,6 +65,7 @@ type StoryNode = {
   image?: string;
   effects?: { tech?: number; logical?: number; empathy?: number; };
   isGameOver?: boolean;
+  gameOver?: boolean; // accept legacy/alternate JSON key
   gameOverReason?: string;
   skillCheck?: {
     stat?: 'tech' | 'logical' | 'empathy';
@@ -100,7 +101,19 @@ type SkillCheckResult = {
   nextNode?: string;
 };
 
-export default function RpgSolo() {
+type SavedGame = {
+  version: number;
+  timestamp: number;
+  chapter: number;
+  current: string;
+  gameState: GameState;
+  gameStats: GameStats;
+  isGameOver?: boolean;
+  gameOverReason?: string;
+  title?: string;
+};
+
+export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: () => void; initialLoad?: SavedGame }) {
   const [story, setStory] = useState<{ [key: string]: StoryNode } | null>(null);
   const [current, setCurrent] = useState('sinal_1');
   const [currentChapter, setCurrentChapter] = useState(1);
@@ -130,7 +143,8 @@ export default function RpgSolo() {
     statName: string;
     statValue: number;
   } | null>(null);
-  
+  const [showExitModal, setShowExitModal] = useState(false);
+
   const loadChapter = async (chapterNumber: number) => {
     setLoading(true);
     try {
@@ -158,6 +172,27 @@ export default function RpgSolo() {
   useEffect(() => {
     loadChapter(1);
   }, []);
+
+  // Apply saved game if provided
+  const appliedSaveRef = useRef(false);
+  useEffect(() => {
+    if (initialLoad && !appliedSaveRef.current) {
+      appliedSaveRef.current = true;
+      const applySave = async () => {
+        try {
+          setGameState(initialLoad.gameState);
+          setGameStats(initialLoad.gameStats);
+          setIsGameOver(!!initialLoad.isGameOver);
+          setGameOverReason(initialLoad.gameOverReason || '');
+          await loadChapter(initialLoad.chapter);
+          setCurrent(initialLoad.current);
+        } catch (e) {
+          console.error('Failed to apply saved game:', e);
+        }
+      };
+      applySave();
+    }
+  }, [initialLoad]);
 
   const currentNode = story?.[current];
   
@@ -201,8 +236,8 @@ export default function RpgSolo() {
         performNodeSkillCheck(currentNode.skillCheck);
       }
 
-      // Check for game over conditions
-      if (currentNode.isGameOver) {
+      // Check for game over conditions (support both keys)
+      if (currentNode.isGameOver || currentNode.gameOver) {
         setIsGameOver(true);
         setGameOverReason(currentNode.gameOverReason || 'Game Over');
       }
@@ -382,6 +417,10 @@ export default function RpgSolo() {
       loadChapter(2);
     } else if (nextNode === 'chapter3_1') {
       loadChapter(3);
+    } else if (nextNode === 'chapter4_1') {
+      loadChapter(4);
+    } else if (nextNode === 'chapter5_1') {
+      loadChapter(5);
     } else {
       setCurrent(nextNode);
     }
@@ -461,6 +500,10 @@ export default function RpgSolo() {
         loadChapter(2);
       } else if (nextNode === 'chapter3_1') {
         loadChapter(3);
+      } else if (nextNode === 'chapter4_1') {
+        loadChapter(4);
+      } else if (nextNode === 'chapter5_1') {
+        loadChapter(5);
       } else {
         setCurrent(nextNode);
       }
@@ -491,6 +534,10 @@ export default function RpgSolo() {
       setCurrent('chapter2_1');
     } else if (currentChapter === 3) {
       setCurrent('chapter3_1');
+    } else if (currentChapter === 4) {
+      setCurrent('cerco_1');
+    } else if (currentChapter === 5) {
+      setCurrent('chapter5_1');
     }
   };
 
@@ -514,6 +561,38 @@ export default function RpgSolo() {
     setTutorialData(null);
     setCurrentChapter(1);
     loadChapter(1);
+  };
+
+  // Save & Exit helpers
+  const buildSaveObject = (): SavedGame => ({
+    version: 1,
+    timestamp: Date.now(),
+    chapter: currentChapter,
+    current,
+    gameState,
+    gameStats,
+    isGameOver,
+    gameOverReason,
+    title: storyData?.title
+  });
+
+  const saveGame = () => {
+    try {
+      const save = buildSaveObject();
+      localStorage.setItem('rpgsolo_save_v1', JSON.stringify(save));
+      return true;
+    } catch (e) {
+      console.error('Failed to save game:', e);
+      return false;
+    }
+  };
+
+  const exitToMenu = (save: boolean) => {
+    if (save) {
+      saveGame();
+    }
+    setShowExitModal(false);
+    if (onExitToMenu) onExitToMenu();
   };
 
   if (loading) {
@@ -861,9 +940,76 @@ export default function RpgSolo() {
               >
                 ☠ START NEW GAME
               </button>
+
+              {onExitToMenu && (
+                <button 
+                  onClick={() => setShowExitModal(true)}
+                  style={{
+                    background: 'linear-gradient(45deg, #0a0a0a, #111, #0a0a0a)',
+                    color: '#ffffff',
+                    border: '3px solid #222',
+                    padding: '18px 30px',
+                    fontSize: '1.4em',
+                    borderRadius: '0px',
+                    cursor: 'pointer',
+                    fontFamily: 'Courier New, Monaco, monospace',
+                    fontWeight: 'bold',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 6px 20px rgba(0, 0, 0, 0.5)',
+                    minWidth: '280px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';
+                    e.currentTarget.style.borderColor = '#333';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.borderColor = '#222';
+                  }}
+                >
+                  ↩ BACK TO MENU
+                </button>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Exit modal (game over) */}
+        {showExitModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 20000
+          }}>
+            <div style={{
+              background: '#0b0b0b',
+              border: '1px solid #00ff00',
+              padding: 24,
+              borderRadius: 10,
+              width: '90%',
+              maxWidth: 460,
+              color: '#e0ffe0',
+              fontFamily: 'Courier New, Monaco, monospace',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: 18, marginBottom: 16, color: '#00ff88' }}>
+                Save game before returning to menu?
+              </div>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button onClick={() => exitToMenu(true)} style={{ padding: '10px 16px', border: '1px solid #00ff88', background: 'rgba(0,255,136,0.12)', color: '#e6ffe6', borderRadius: 8, cursor: 'pointer' }}>💾 Save & Exit</button>
+                <button onClick={() => exitToMenu(false)} style={{ padding: '10px 16px', border: '1px solid #888', background: '#111', color: '#eee', borderRadius: 8, cursor: 'pointer' }}>Exit without Saving</button>
+                <button onClick={() => setShowExitModal(false)} style={{ padding: '10px 16px', border: '1px solid #444', background: '#0b0b0b', color: '#aaa', borderRadius: 8, cursor: 'pointer' }}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <style jsx>{`
           @keyframes deathPulse {
@@ -979,14 +1125,41 @@ export default function RpgSolo() {
         <div style={{ 
           borderBottom: '1px solid #00ff00',
           paddingBottom: '10px',
-          marginBottom: '20px'
-        }}>        <div style={{ 
-          color: '#00ff00', 
-          fontSize: '17px', 
-          fontWeight: 'bold' 
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
         }}>
+          <div style={{ 
+            color: '#00ff00', 
+            fontSize: '17px', 
+            fontWeight: 'bold' 
+          }}>
             RPG SOLO TERMINAL v1.0 - Chapter {currentChapter}
           </div>
+          {onExitToMenu && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowExitModal(true); }}
+              style={{
+                background: 'transparent',
+                color: '#00ff00',
+                border: '1px solid #00ff00',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                fontSize: '0.95rem'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(0,255,0,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+              }}
+            >
+              Menu
+            </button>
+          )}
         </div>
 
         {/* Stats display - only show after neural upgrade is selected */}
@@ -1287,6 +1460,43 @@ export default function RpgSolo() {
           </div>
         )}
       </div>
+
+      {/* Exit modal (in-game) */}
+      {showExitModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0,0,0,0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 5000
+        }}>
+          <div style={{
+            background: '#0b0b0b',
+            border: '1px solid #00ff00',
+            padding: 24,
+            borderRadius: 10,
+            width: '90%',
+            maxWidth: 460,
+            color: '#e0ffe0',
+            fontFamily: 'Courier New, Monaco, monospace',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: 18, marginBottom: 16, color: '#00ff88' }}>
+              Save game before returning to menu?
+            </div>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button onClick={() => { exitToMenu(true); }} style={{ padding: '10px 16px', border: '1px solid #00ff88', background: 'rgba(0,255,136,0.12)', color: '#e6ffe6', borderRadius: 8, cursor: 'pointer' }}>💾 Save & Exit</button>
+              <button onClick={() => { exitToMenu(false); }} style={{ padding: '10px 16px', border: '1px solid #888', background: '#111', color: '#eee', borderRadius: 8, cursor: 'pointer' }}>Exit without Saving</button>
+              <button onClick={() => setShowExitModal(false)} style={{ padding: '10px 16px', border: '1px solid #444', background: '#0b0b0b', color: '#aaa', borderRadius: 8, cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

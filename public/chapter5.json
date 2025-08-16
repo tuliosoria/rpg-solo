@@ -1,0 +1,330 @@
+{
+  "title": "Capítulo 5 - Revelação",
+  "startNode": "chapter5_1",
+  "nodes": {
+    "chapter5_1": {
+      "id": "chapter5_1",
+      "chapter": 5,
+      "title": "Última Chance",
+      "text": "A velha oficina rangia com o vento da madrugada. A criatura repousava sobre um cobertor engordurado, respirando curto, o ferimento coberto por faixas improvisadas. Dudu vasculhava caixas de ferramentas; Helena mantinha a mão na testa do visitante, como quem mede febre de um amigo. Lá fora, a cidade de Varginha despertava com rumores, sirenes e ordens pelo rádio: \"Quadrante sul, varredura total\".\n\nÁgata fechou os olhos, a voz num sussurro: — Ele está pedindo... retorno. Um local alto. Sinal limpo. Antes do sol.\n\n— Então a janela é agora — disse Sérgio, sentindo o peso da decisão no estômago.",
+      "choices": [
+        { "id": "montar_transmissor", "text": "Montar um transmissor de emergência com Dudu", "nextNode": "final_2_radio" },
+        { "id": "ir_avo_agata", "text": "Procurar a avó de Ágata para estabilizar a criatura", "nextNode": "final_2_avo" },
+        { "id": "arriscar_hospital", "text": "Levar a criatura ao pronto-socorro (alto risco)", "nextNode": "final_2_hospital" }
+      ]
+    },
+    "final_2_radio": {
+      "id": "final_2_radio",
+      "chapter": 5,
+      "title": "Gambiarra de Sobrevivência",
+      "text": "Dudu espalhou pilhas, fios e um rádio de carro esfolado. — Se eu casar isso com a antena do caminhão velho e uma bateria, talvez a gente consiga um pulso de alta frequência. — Ele mordeu o lábio. — Talvez.\n\nA criatura ergueu os olhos negros, atentos, quando Dudu aproximou o microfone.",
+      "choices": [
+        { "id": "testar_montagem", "text": "Fazer teste (tech) para montar o transmissor", "nextNode": "final_2_radio_test" }
+      ]
+    },
+    "final_2_radio_test": {
+      "id": "final_2_radio_test",
+      "chapter": 5,
+      "title": "Teste de Tecnologia",
+      "text": "Teste de Tecnologia: Dudu e Sérgio tentam montar um transmissor de emergência estável.",
+      "skillCheck": {
+        "stat": "tech",
+        "difficulty": 10,
+        "successNode": "final_3_ping",
+        "failureNode": "final_3_ping_falha"
+      },
+      "choices": []
+    },
+    "final_3_ping": {
+      "id": "final_3_ping",
+      "chapter": 5,
+      "title": "Resposta no Éter",
+      "text": "O pulso cortou o ar como um assobio metálico. Por um segundo, só estática. Então, três estalos, em sequência, respostas medidas. Ágata abriu os olhos: — Ele entendeu. \"Ponto alto... Pedreira do Mirante... 02:10\".\n\nHelena assentiu, decidida: — Vamos antes que fechem tudo.",
+      "choices": [
+        { "id": "partir_bloqueio", "text": "Partir para a Pedreira do Mirante", "nextNode": "final_4_bloqueio" }
+      ]
+    },
+    "final_3_ping_falha": {
+      "id": "final_3_ping_falha",
+      "chapter": 5,
+      "title": "Sinal Vazado",
+      "text": "O transmissor chiou alto demais. Do lado de fora, um rádio respondeu: \"Captei pulso não identificado. Unidade, convergir no setor.\" Dudu empalideceu. — Eles ouviram.\n\n— Sem tempo — disse Helena, já erguendo a criatura. — Agora ou nunca!",
+      "choices": [
+        { "id": "fugir_bloqueio", "text": "Fugir pela lateral da cidade", "nextNode": "final_4_bloqueio" }
+      ]
+    },
+    "final_2_hospital": {
+      "id": "final_2_hospital",
+      "chapter": 5,
+      "title": "Luz Fria de Hospital",
+      "text": "O cheiro de desinfetante ardia no nariz. Uma enfermeira de plantão congelou ao ver o visitante sob o casaco de Helena. — Pelo amor... o que é isso?\n\n— Um atropelado... grave — improvisou Sérgio, a voz falhando.",
+      "choices": [
+        { "id": "convencer_enfermeira", "text": "Fazer teste (empathy) para conseguir ajuda discreta", "nextNode": "final_2_hosp_test" }
+      ]
+    },
+    "final_2_hosp_test": {
+      "id": "final_2_hosp_test",
+      "chapter": 5,
+      "title": "Teste de Empatia",
+      "text": "Empatia: convencer a enfermeira a ajudar sem acionar a segurança.",
+      "skillCheck": {
+        "stat": "empathy",
+        "difficulty": 11,
+        "successNode": "final_2_hosp_sucesso",
+        "failureNode": "final_bad_hosp"
+      },
+      "choices": []
+    },
+    "final_2_hosp_sucesso": {
+      "id": "final_2_hosp_sucesso",
+      "chapter": 5,
+      "title": "Juro Cuidar",
+      "text": "A enfermeira respirou fundo. — Cinco minutos na sala de medicação. Sem perguntas. — Um soro gotejou lento; ela fez um curativo firme. — Agora sumam. Ouvi no rádio: patrulha vindo pra cá.",
+      "choices": [
+        { "id": "escapar_fundos", "text": "Escapar pelos fundos do hospital", "nextNode": "final_4_fuga_hosp" }
+      ]
+    },
+    "final_4_fuga_hosp": {
+      "id": "final_4_fuga_hosp",
+      "chapter": 5,
+      "title": "Saída de Emergência",
+      "text": "Pelas escadas de incêndio, a cidade parecia um tabuleiro de pontos de luz e sirenes distantes.",
+      "choices": [
+        { "id": "teste_fuga_hosp", "text": "Fazer teste (tech) para driblar câmeras e alarmes", "nextNode": "final_4_fuga_hosp_test" }
+      ]
+    },
+    "final_4_fuga_hosp_test": {
+      "id": "final_4_fuga_hosp_test",
+      "chapter": 5,
+      "title": "Teste de Tecnologia",
+      "text": "Tecnologia: Dudu tenta burlar sensores e temporizar o alarme.",
+      "skillCheck": {
+        "stat": "tech",
+        "difficulty": 9,
+        "successNode": "final_4_bloqueio",
+        "failureNode": "final_bad_hosp"
+      },
+      "choices": []
+    },
+    "final_bad_hosp": {
+      "id": "final_bad_hosp",
+      "chapter": 5,
+      "title": "Fim — Sala Isolada",
+      "text": "O alarme disparou. Portas travaram. Soldados entraram de rompante. A criatura foi arrastada, envolta em lona cinza. Um oficial deixou apenas uma frase: — Não viram nada. — E o silêncio venceu.\n\n(Fim de Jogo)",
+      "gameOver": true,
+      "choices": [
+        { "id": "restart", "text": "Recomeçar", "nextNode": "sinal_1" }
+      ]
+    },
+    "final_2_avo": {
+      "id": "final_2_avo",
+      "chapter": 5,
+      "title": "A Casa de Dona Ema",
+      "text": "A avó de Ágata abriu a porta com olhos que já sabiam. — Entrem. — Ela esmagou folhas num pilão, preparando um unguento que ardeu doce no ar. — O que é de fora também sente medo.\n\nA criatura relaxou quando o unguento tocou seu flanco ferido.",
+      "choices": [
+        { "id": "visao_mentes", "text": "Fazer teste (empathy) para compartilhar memórias", "nextNode": "final_2_avo_test" }
+      ]
+    },
+    "final_2_avo_test": {
+      "id": "final_2_avo_test",
+      "chapter": 5,
+      "title": "Teste de Empatia",
+      "text": "Empatia: Ágata tenta receber uma visão clara da rota de retorno.",
+      "skillCheck": {
+        "stat": "empathy",
+        "difficulty": 8,
+        "successNode": "final_2_avo_sucesso",
+        "failureNode": "final_2_avo_parcial"
+      },
+      "choices": []
+    },
+    "final_2_avo_sucesso": {
+      "id": "final_2_avo_sucesso",
+      "chapter": 5,
+      "title": "Mapa de Luz",
+      "text": "Imagens inundaram Ágata: a pedreira alta, um símbolo com três riscos paralelos e um pulso de retorno às 02:10. — É lá — disse ela, ofegante. — E precisamos alinhar o sinal nesse símbolo.",
+      "choices": [
+        { "id": "partir_pedreira", "text": "Partir para a Pedreira do Mirante", "nextNode": "final_4_bloqueio" }
+      ]
+    },
+    "final_2_avo_parcial": {
+      "id": "final_2_avo_parcial",
+      "chapter": 5,
+      "title": "Sussurro Incompleto",
+      "text": "Palavras partidas: altura... três linhas... retorno... — Dona Ema traçou no ar o símbolo dos três riscos. — Vão. A mata lembra o caminho.\n\n— A pedreira, então — concluiu Helena.",
+      "choices": [
+        { "id": "seguir_pedreira", "text": "Seguir pela rota mais discreta", "nextNode": "final_4_bloqueio" }
+      ]
+    },
+    "final_4_bloqueio": {
+      "id": "final_4_bloqueio",
+      "chapter": 5,
+      "title": "Anel de Aço",
+      "text": "A estrada para a pedreira estava crivada de barreiras. Viaturas em X, lanternas varrendo sacadas e terrenos baldios. Um helicóptero riscou o céu.\n\n— A gente precisa passar — disse Sérgio, sentindo o peso da criatura apoiada nele.",
+      "choices": [
+        { "id": "disfarcar_passagem", "text": "Tentar disfarçar e conversar na barreira (lógica)", "nextNode": "final_4_disfarce_test" },
+        { "id": "atalho_mato", "text": "Cortar pelo mato e ladeiras (agilidade/tech)", "nextNode": "final_4_corrida_test" }
+      ]
+    },
+    "final_4_disfarce_test": {
+      "id": "final_4_disfarce_test",
+      "chapter": 5,
+      "title": "Teste de Raciocínio",
+      "text": "Raciocínio: Dudu improvisa uma história, Sérgio sustenta a conversa.",
+      "skillCheck": {
+        "stat": "logical",
+        "difficulty": 10,
+        "successNode": "final_5_passaram",
+        "failureNode": "final_4_corrida_test"
+      },
+      "choices": []
+    },
+    "final_4_corrida_test": {
+      "id": "final_4_corrida_test",
+      "chapter": 5,
+      "title": "Teste de Agilidade",
+      "text": "Tecnologia/Agilidade: atalhos, muros, quintais e um portão emperrado.",
+      "skillCheck": {
+        "stat": "tech",
+        "difficulty": 9,
+        "successNode": "final_5_passaram",
+        "failureNode": "final_bad_capturados"
+      },
+      "choices": []
+    },
+    "final_bad_capturados": {
+      "id": "final_bad_capturados",
+      "chapter": 5,
+      "title": "Fim — Mãos ao Alto",
+      "text": "Fachos de luz os esmagaram contra a encosta. O rádio chiou: \"Equipe, alvo à vista\". Não houve espaço para heroísmo, só a quietude dura da rendição. O segredo afundou sob pneus e ordens.\n\n(Fim de Jogo)",
+      "gameOver": true,
+      "choices": [
+        { "id": "restart", "text": "Recomeçar", "nextNode": "sinal_1" }
+      ]
+    },
+    "final_5_passaram": {
+      "id": "final_5_passaram",
+      "chapter": 5,
+      "title": "Topo do Mundo",
+      "text": "O vento na pedreira uivava. A cidade parecia um colar de luzes ao longe. Dudu abriu a mochila: fios, a bateria salva da oficina, o rádio remendado. Ágata desenhou no pó o símbolo das três linhas paralelas.\n\n— Alinhamos o pulso nesse padrão — disse ela. — E rezamos.",
+      "choices": [
+        { "id": "armar_baliza", "text": "Montar a baliza de retorno (tech)", "nextNode": "final_6_beacon_test" }
+      ]
+    },
+    "final_6_beacon_test": {
+      "id": "final_6_beacon_test",
+      "chapter": 5,
+      "title": "Teste de Tecnologia",
+      "text": "Tecnologia: casar frequência, ganho de antena e padrão de três linhas.",
+      "skillCheck": {
+        "stat": "tech",
+        "difficulty": 10,
+        "successNode": "final_6_bip",
+        "failureNode": "final_6_falha"
+      },
+      "choices": []
+    },
+    "final_6_bip": {
+      "id": "final_6_bip",
+      "chapter": 5,
+      "title": "O Céu Responde",
+      "text": "O chão vibrou com um bip grave e limpo. A criatura ergueu o rosto; seus olhos refletiram um brilho novo. No horizonte, um feixe leitoso como névoa sólida brotou por trás das nuvens.\n\n— Eles estão vindo — sussurrou Helena, a mão firme na de Sérgio.",
+      "choices": [
+        { "id": "transmitir_verdade", "text": "Transmitir ao vivo para todo mundo ver (lógica)", "nextNode": "final_7_transmitir_test" },
+        { "id": "apenas_esconder", "text": "Apenas se esconder e deixar a extração acontecer", "nextNode": "final_8_extracao" }
+      ]
+    },
+    "final_6_falha": {
+      "id": "final_6_falha",
+      "chapter": 5,
+      "title": "Faísca e Encrenca",
+      "text": "A baliza cuspiu faíscas, um cheiro de plástico queimado. Lá embaixo, motores rugiram; faróis subiram a ladeira da pedreira. — Eles nos pegaram no rastro do pulso — disse Dudu, pálido.",
+      "choices": [
+        { "id": "coragem_distrair", "text": "Fazer teste (coragem) para distrair os soldados e ganhar tempo", "nextNode": "final_6_coragem_test" }
+      ]
+    },
+    "final_6_coragem_test": {
+      "id": "final_6_coragem_test",
+      "chapter": 5,
+      "title": "Teste de Coragem",
+      "text": "Coragem: Sérgio atrai as luzes, Helena e Dudu tentam ajustar a baliza às pressas.",
+      "skillCheck": {
+        "stat": "logical",
+        "difficulty": 10,
+        "successNode": "final_6_bip",
+        "failureNode": "final_gameover_captura"
+      },
+      "choices": []
+    },
+    "final_gameover_captura": {
+      "id": "final_gameover_captura",
+      "chapter": 5,
+      "title": "Fim — Sob os Holofotes",
+      "text": "Um holofote o prendeu como um inseto. Sérgio ergueu os braços, mas já era tarde. Ordens, botas, lona cinza. A baliza morreu no pó. O feixe no céu apagou.\n\n(Fim de Jogo)",
+      "gameOver": true,
+      "choices": [
+        { "id": "restart", "text": "Recomeçar", "nextNode": "sinal_1" }
+      ]
+    },
+    "final_7_transmitir_test": {
+      "id": "final_7_transmitir_test",
+      "chapter": 5,
+      "title": "Teste de Raciocínio",
+      "text": "Raciocínio: Dudu tenta pular a interferência militar e jogar imagem e áudio para rádios amadores e a TV comunitária.",
+      "skillCheck": {
+        "stat": "logical",
+        "difficulty": 11,
+        "successNode": "final_7_transmitir_sucesso",
+        "failureNode": "final_7_transmitir_falha"
+      },
+      "choices": []
+    },
+    "final_7_transmitir_sucesso": {
+      "id": "final_7_transmitir_sucesso",
+      "chapter": 5,
+      "title": "A Cidade Acorda",
+      "text": "Telhados explodiram em antenas, rádios chiando em uníssono. No bar, na sala, na guarita: todos viram o feixe branco descendo como um lençol. Viram as silhuetas, o abraço de luz envolvendo a criatura. Viram cinco jovens de bicicleta na borda do mundo.\n\nOs motores abaixo titubearam. No rádio militar, um silêncio rarefeito. E o céu levou de volta aquilo que era seu.",
+      "choices": [
+        { "id": "epilogo", "text": "Epilogo", "nextNode": "final_epilogo" }
+      ]
+    },
+    "final_7_transmitir_falha": {
+      "id": "final_7_transmitir_falha",
+      "chapter": 5,
+      "title": "Ruído e Sombra",
+      "text": "O sinal foi esmagado por interferência. Um jipe guinchou na curva, soldados saltaram. A baliza piscou fraca — e ainda assim, o feixe tocou a borda da pedreira. A criatura olhou para Sérgio, um mosaico de memórias compartilhadas num piscar.\n\nEla subiu na coluna de luz. Um estalo seco, a claridade sumiu. As botas cercearam o grupo. — Não há provas — disse o oficial.\n\nMas o cheiro de ozônio ficou. E o céu não esquece.",
+      "choices": [
+        { "id": "epilogo", "text": "Epilogo", "nextNode": "final_epilogo_amargo" }
+      ]
+    },
+    "final_8_extracao": {
+      "id": "final_8_extracao",
+      "chapter": 5,
+      "title": "Silêncio Guardado",
+      "text": "Eles se encolheram atrás de rochas. O feixe imaculado caiu como chuva quieta. A criatura girou o rosto uma última vez: gratidão líquida, infinita. A luz a abraçou e subiu, dissolvendo-se nas nuvens como vapor.\n\n— Sem filmar? — sussurrou Léo, trêmulo.\n\n— Sem filmar — disse Helena. — Às vezes proteger é calar.",
+      "choices": [
+        { "id": "epilogo", "text": "Epilogo", "nextNode": "final_epilogo" }
+      ]
+    },
+    "final_epilogo": {
+      "id": "final_epilogo",
+      "chapter": 5,
+      "title": "Epilogo — O Que Fica",
+      "text": "Dias depois, Varginha fervilhava. Relatos, contradições, risos nervosos. Boletins oficiais falavam em treinamento, em balões, em nada. Mas as pessoas olhavam mais tempo para o céu ao anoitecer.\n\nSérgio guardou o caderno com diagramas ao lado de uma pedra lisa que brilhava sob luz fraca — lembrança que nenhum bolso revistado encontrou. Helena ria baixo no pátio da escola; Dudu sonhava com antenas que alcançam o impossível; Léo fazia piada ruim para disfarçar a coragem que descobriu; Ágata, ao fechar os olhos, ainda via três linhas de luz.\n\nO segredo não era prova. Era mudança.",
+      "gameOver": true,
+      "choices": [
+        { "id": "restart", "text": "Recomeçar a aventura", "nextNode": "sinal_1" }
+      ]
+    },
+    "final_epilogo_amargo": {
+      "id": "final_epilogo_amargo",
+      "chapter": 5,
+      "title": "Epilogo — Entre Linhas",
+      "text": "As manchetes zombaram, os relatórios negaram, e ainda assim... as histórias persistiram. Na barbearia, alguém jurou ter visto uma coluna de luz. Na rádio comunitária, chiados no mesmo horário. Na pedreira, marcas no chão como de vidro derretido.\n\nOs cinco amigos seguiram. Não com fama, mas com um pacto mudo: se a noite chamasse de novo, saberiam ouvir. E quando Sérgio rabiscava circuitos, por vezes desenhava, sem perceber, três linhas paralelas no canto da página.",
+      "gameOver": true,
+      "choices": [
+        { "id": "restart", "text": "Recomeçar a aventura", "nextNode": "sinal_1" }
+      ]
+    }
+  }
+}

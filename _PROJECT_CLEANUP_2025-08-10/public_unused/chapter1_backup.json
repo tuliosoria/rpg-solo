@@ -1,0 +1,580 @@
+{
+  "title": "Capítulo 1 - O Sinal",
+  "startNode": "sinal_1",
+  "nodes": {
+    "sinal_1": {
+      "id": "sinal_1",
+      "chapter": 1,
+      "title": "Sala de Aula",
+      "text": "Sérgio rabiscava circuitos no caderno, ignorando o professor. Seus olhos vagavam até Helena, duas carteiras à frente, que ria com uma amiga. O coração dele acelerou. Ela não sabia dos sentimentos dele, e talvez nunca soubesse.\n\nHoje, sexta-feira, era noite de testar os walkie-talkies com o grupo. Dudu, o gênio dos rádios, prometeu algo especial. Sérgio sentia um frio na espinha, como se algo grande estivesse por vir.\n\nO sinal da escola tocaria em minutos.",
+      "image": "sala_aula.png",
+      "choices": [
+        {
+          "id": "esperar_sinal",
+          "text": "Esperar o sinal",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_2"
+        }
+      ]
+    },
+    "sinal_2": {
+      "id": "sinal_2",
+      "chapter": 1,
+      "title": "O Pátio",
+      "text": "O sinal ecoou, um guincho metálico cortando o ar. Sérgio guardou o caderno e correu ao pátio.\n\nLá estavam eles: Dudu, mexendo freneticamente num rádio; Léo, com seu jeito desleixado e piada na ponta da língua; Helena, com o cabelo preso e um brilho curioso nos olhos; e Ágata, quieta, folheando um livro de símbolos estranhos.\n\n— Prontos pra hoje? — perguntou Sérgio, tentando soar confiante.",
+      "image": "grupo_amigos.png",
+      "choices": [
+        {
+          "id": "falar_grupo",
+          "text": "Falar com o grupo",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_3"
+        }
+      ]
+    },
+    "sinal_3": {
+      "id": "sinal_3",
+      "chapter": 1,
+      "title": "O Plano",
+      "text": "— Hoje vamos longe com os rádios — disse Dudu, animado. — Minha nova antena é top!\n\nLéo riu: — Top até captar ETs, né?\n\nHelena revirou os olhos. — E se pegarmos algo tipo... polícia? Ou pior?\n\nÁgata, séria, murmurou: — Ou algo que não explica.\n\nSérgio sorriu, disfarçando o nervosismo. O plano: ligar os rádios às 21h, testar o alcance, talvez captar algo interessante. Era só diversão. Ou não?",
+      "choices": [
+        {
+          "id": "confirmar_plano",
+          "text": "Confirmar o plano",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_4"
+        },
+        {
+          "id": "perguntar_agata",
+          "text": "Perguntar a Ágata sobre \"algo que não explica\"",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_4_agata"
+        }
+      ]
+    },
+    "sinal_4": {
+      "id": "sinal_4",
+      "chapter": 1,
+      "title": "Preparativos",
+      "text": "Sérgio assentiu. — Beleza, 21h, todos na escuta.\n\nO grupo se dispersou, cada um para sua casa. No quarto, Sérgio revisava o walkie-talkie, conectando fios com precisão.\n\nA mãe gritou: — Jantar!\n\n— Tô indo! — respondeu, sem desviar os olhos do rádio.\n\nAlgo no ar parecia diferente, como uma eletricidade sutil. Ele testou o aparelho. Chiados suaves. Tudo pronto. Só faltava a hora.",
+      "choices": [
+        {
+          "id": "esperar_21h",
+          "text": "Esperar as 21h",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_5"
+        }
+      ]
+    },
+    "sinal_4_agata": {
+      "id": "sinal_4_agata",
+      "chapter": 1,
+      "title": "Curiosidade sobre Ágata",
+      "text": "Sérgio olhou para Ágata. — Que história é essa de \"algo que não explica\"?\n\nEla hesitou, fechando o livro. — Às vezes, capto coisas... sonhos, sinais. Tem algo estranho na mata. — Seus olhos brilhavam com convicção.\n\nLéo riu: — Tá, bruxinha, relaxa.\n\nHelena franziu a testa. — Vamos focar nos rádios, né?\n\nSérgio sentiu um arrepio. Ágata sabia coisas que ninguém entendia.",
+      "choices": [
+        {
+          "id": "confirmar_plano",
+          "text": "Confirmar o plano",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_4"
+        },
+        {
+          "id": "insistir_agata",
+          "text": "Insistir com Ágata",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_4_agata_2"
+        }
+      ]
+    },
+    "sinal_4_agata_2": {
+      "id": "sinal_4_agata_2",
+      "chapter": 1,
+      "title": "Revelação de Ágata",
+      "text": "— Fala mais, Ágata — insistiu Sérgio.\n\nEla suspirou. — Minha avó dizia que a mata guarda segredos. Coisas que não são... humanas. Ontem sonhei com luzes vermelhas caindo.\n\nO grupo ficou em silêncio.\n\nLéo quebrou a tensão: — Sonho é só sonho, né?\n\nHelena parecia inquieta. — Vamos testar os rádios e ver no que dá.\n\nSérgio guardou as palavras de Ágata. Algo parecia errado.",
+      "choices": [
+        {
+          "id": "confirmar_plano",
+          "text": "Confirmar o plano",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_4"
+        }
+      ]
+    },
+    "sinal_5": {
+      "id": "sinal_5",
+      "chapter": 1,
+      "title": "21h - Primeiro Contato",
+      "text": "21h. Sérgio ligou o rádio. — Alguém na escuta?\n\n— Dudu, alto e claro! — veio a resposta.\n\n— Léo, presente.\n\n— Helena, aqui. Mas tem um chiado estranho.\n\nÁgata: — Eu também ouço. Não é normal.\n\nSérgio ajustou o dial. Estalos ritmados, quase um código, cortavam o silêncio. Ele sentiu um frio na espinha.",
+      "choices": [
+        {
+          "id": "tentar_decifrar",
+          "text": "Tentar decifrar o som",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_6"
+        },
+        {
+          "id": "ignorar_continuar",
+          "text": "Ignorar e continuar conversando",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_6_ignorar"
+        }
+      ]
+    },
+    "sinal_6": {
+      "id": "sinal_6",
+      "chapter": 1,
+      "title": "Decifrando o Código",
+      "text": "Sérgio pegou um caderno e anotou os estalos. — Parece um padrão — murmurou.\n\nHelena: — Tipo código morse?\n\nDudu: — Não, é mais... irregular.\n\nÁgata: — Pode ser uma interferência... ou algo tentando falar.\n\nLéo riu, nervoso. — Tá, agora é filme de terror?\n\nSérgio tentou focar. Os sons formavam fragmentos: \"...Setor Três... Alfa... 22h...\"",
+      "choices": [
+        {
+          "id": "fazer_teste_raciocinio",
+          "text": "Fazer teste de raciocínio",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_7_test"
+        }
+      ]
+    },
+    "sinal_6_ignorar": {
+      "id": "sinal_6_ignorar",
+      "chapter": 1,
+      "title": "Ignorando os Sinais",
+      "text": "— Vamos ignorar isso — disse Sérgio, forçando um tom leve. — Só chiado.\n\nLéo: — Boa, menos paranoia.\n\nHelena: — Não sei, parecia organizado.\n\nDudu: — Vou gravar, por via das dúvidas.\n\nO rádio chiou novamente, mais alto. Uma voz cortou: \"Objeto avistado. Setor Três.\" O grupo ficou mudo.",
+      "choices": [
+        {
+          "id": "ouvir_mais",
+          "text": "Ouvir mais",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_8"
+        },
+        {
+          "id": "desligar_radio",
+          "text": "Desligar o rádio",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_8_desligar"
+        }
+      ]
+    },
+    "sinal_7_test": {
+      "id": "sinal_7_test",
+      "chapter": 1,
+      "title": "Teste de Raciocínio",
+      "text": "Sérgio tenta associar os fragmentos a algo familiar. Se passar, lembra de rumores sobre \"Setor Três\", uma área militar perto da mata.",
+      "skillCheck": {
+        "stat": "logical",
+        "difficulty": 10,
+        "successNode": "sinal_7_sucesso",
+        "failureNode": "sinal_7_falha"
+      },
+      "choices": []
+    },
+    "sinal_7_sucesso": {
+      "id": "sinal_7_sucesso",
+      "chapter": 1,
+      "title": "Revelação do Setor Três",
+      "text": "— Setor Três... — murmurou Sérgio. — É uma área militar. Ouvi na barbearia, falam de testes secretos lá.\n\nHelena: — Sério? Isso tá ficando grande.\n\nDudu: — Então é o exército no rádio?\n\nÁgata: — Ou algo que eles estão caçando.\n\nSérgio sentiu o coração disparar.",
+      "choices": [
+        {
+          "id": "compartilhar_ideia",
+          "text": "Compartilhar ideia com o grupo",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_8"
+        }
+      ]
+    },
+    "sinal_7_falha": {
+      "id": "sinal_7_falha",
+      "chapter": 1,
+      "title": "Confusão",
+      "text": "Sérgio franziu a testa. \"Setor Três\" soava familiar, mas não lembrava por quê.\n\n— Pode ser algum código — disse, hesitante.\n\nLéo: — Ou só um rádio pirata zuado.\n\nHelena: — Vamos ouvir mais, vai que explica.\n\nO rádio chiou, insistente.",
+      "choices": [
+        {
+          "id": "continuar_escutando",
+          "text": "Continuar escutando",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_8"
+        }
+      ]
+    },
+    "sinal_8": {
+      "id": "sinal_8",
+      "chapter": 1,
+      "title": "Transmissão Militar",
+      "text": "Uma voz grave estalou no rádio: \"Objeto interceptado. Setor Três. Equipe Alfa, avancem.\"\n\nHelena: — Isso é militar, certeza.\n\nDudu: — Mas \"objeto\"? Tipo o quê?\n\nÁgata: — Lembram meu sonho? Luzes caindo...\n\nSérgio olhou pela janela. O céu estava claro, mas algo parecia errado.",
+      "choices": [
+        {
+          "id": "observar_ceu",
+          "text": "Observar o céu",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_9"
+        },
+        {
+          "id": "tentar_outra_frequencia",
+          "text": "Tentar outra frequência",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_9_frequencia"
+        }
+      ]
+    },
+    "sinal_8_desligar": {
+      "id": "sinal_8_desligar",
+      "chapter": 1,
+      "title": "Desligando o Rádio",
+      "text": "— Melhor desligar — disse Sérgio, com um nó na garganta.\n\nLéo: — Boa, isso tá creepy.\n\nDudu protestou: — Mas a gente tá quase descobrindo!\n\nÁgata: — Não é seguro. Algo tá ouvindo a gente.\n\nSérgio hesitou, dedo no botão. O rádio chiou sozinho: \"Setor Três... objeto caiu.\"",
+      "choices": [
+        {
+          "id": "ligar_novamente",
+          "text": "Ligar novamente",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_8"
+        },
+        {
+          "id": "deixar_desligado",
+          "text": "Deixar desligado",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_9_desligado"
+        }
+      ]
+    },
+    "sinal_9": {
+      "id": "sinal_9",
+      "chapter": 1,
+      "title": "A Luz no Céu",
+      "text": "Sérgio correu à janela. Uma luz vermelha riscou o céu, oscilando como se estivesse fora de controle. Desceu rápido, sumindo na mata.\n\nHelena: — Isso foi perto do Jardim Andere!\n\nDudu: — Caiu, certeza!\n\nLéo: — Ou é um avião... né?\n\nÁgata: — Não é avião. É outra coisa.",
+      "choices": [
+        {
+          "id": "decidir_o_que_fazer",
+          "text": "Decidir o que fazer",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_10"
+        }
+      ]
+    },
+    "sinal_9_frequencia": {
+      "id": "sinal_9_frequencia",
+      "chapter": 1,
+      "title": "Nova Frequência",
+      "text": "Sérgio girou o dial, buscando outra frequência. Estática. Então, um som novo: um zumbido grave, quase vivo.\n\nDudu: — Isso não é rádio normal.\n\nHelena: — Parece... biológico.\n\nÁgata fechou os olhos. — É um chamado.\n\nLéo: — Tá, agora eu tô com medo.",
+      "choices": [
+        {
+          "id": "continuar_na_frequencia",
+          "text": "Continuar na frequência",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_9"
+        },
+        {
+          "id": "voltar_frequencia_original",
+          "text": "Voltar à frequência original",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_8"
+        }
+      ]
+    },
+    "sinal_9_desligado": {
+      "id": "sinal_9_desligado",
+      "chapter": 1,
+      "title": "Silêncio Pesado",
+      "text": "O rádio ficou mudo. Sérgio tentou relaxar, mas o silêncio parecia pesado.\n\nHelena quebrou o clima: — E se a gente perdeu algo importante?\n\nDudu: — A gravação tá aqui. Posso analisar.\n\nÁgata: — Não é só som. Algo tá nos observando.\n\nDe repente, uma luz vermelha cruzou o céu, caindo na mata.",
+      "choices": [
+        {
+          "id": "observar_ceu",
+          "text": "Observar o céu",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_9"
+        }
+      ]
+    },
+    "sinal_10": {
+      "id": "sinal_10",
+      "chapter": 1,
+      "title": "A Decisão",
+      "text": "— A gente precisa ir lá — disse Dudu, olhos brilhando.\n\nLéo: — Vocês tão loucos! É meia-noite!\n\nHelena: — Se for rápido, dá pra chegar antes dos militares.\n\nÁgata: — Mas e se for perigoso?\n\nSérgio olhou para Helena. Queria impressioná-la, mas o medo apertava.",
+      "choices": [
+        {
+          "id": "ir_agora",
+          "text": "Ir agora",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_11_ir"
+        },
+        {
+          "id": "esperar_amanhecer",
+          "text": "Esperar amanhecer",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_11_esperar"
+        },
+        {
+          "id": "fazer_teste_empatia",
+          "text": "Fazer teste de empatia",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_11_test"
+        }
+      ]
+    },
+    "sinal_11_test": {
+      "id": "sinal_11_test",
+      "chapter": 1,
+      "title": "Teste de Empatia",
+      "text": "Sérgio tenta entender as intenções de Ágata. Se passar, percebe que ela está com medo, mas acredita que investigar pode revelar algo importante.",
+      "skillCheck": {
+        "stat": "empathy",
+        "difficulty": 8,
+        "successNode": "sinal_11_sucesso",
+        "failureNode": "sinal_11_falha"
+      },
+      "choices": []
+    },
+    "sinal_11_sucesso": {
+      "id": "sinal_11_sucesso",
+      "chapter": 1,
+      "title": "Compreendendo Ágata",
+      "text": "Sérgio notou o tremor na voz de Ágata. Ela estava assustada, mas seus olhos mostravam determinação. — Você acha que é importante, né? — perguntou ele.\n\nÁgata assentiu. — É maior que a gente. Precisamos saber.\n\nHelena: — Então vamos.\n\nSérgio respirou fundo. Era agora ou nunca.",
+      "choices": [
+        {
+          "id": "ir_agora",
+          "text": "Ir agora",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_11_ir"
+        },
+        {
+          "id": "esperar_amanhecer",
+          "text": "Esperar amanhecer",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_11_esperar"
+        }
+      ]
+    },
+    "sinal_11_falha": {
+      "id": "sinal_11_falha",
+      "chapter": 1,
+      "title": "Incerteza",
+      "text": "Sérgio não entendeu o que Ágata queria dizer. — Perigoso como? — perguntou.\n\nEla hesitou. — Só... sinto algo errado.\n\nLéo: — Tá vendo? Vamos ficar na nossa.\n\nHelena: — Mas e se for algo único?\n\nSérgio olhou para a mata, onde a luz sumira.",
+      "choices": [
+        {
+          "id": "ir_agora",
+          "text": "Ir agora",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_11_ir"
+        },
+        {
+          "id": "esperar_amanhecer",
+          "text": "Esperar amanhecer",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_11_esperar"
+        }
+      ]
+    },
+    "sinal_11_ir": {
+      "id": "sinal_11_ir",
+      "chapter": 1,
+      "title": "A Aventura Noturna",
+      "text": "— Vamos agora — decidiu Sérgio, coração disparado.\n\nDudu pegou sua mochila com ferramentas. Helena amarrou o tênis. Ágata guardou um amuleto. Léo resmungou, mas seguiu.\n\nPegaram as bicicletas e pedalaram rumo à mata. A noite estava silenciosa, exceto por um zumbido distante.",
+      "choices": [
+        {
+          "id": "seguir_pedalando",
+          "text": "Seguir pedalando",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_12"
+        }
+      ]
+    },
+    "sinal_11_esperar": {
+      "id": "sinal_11_esperar",
+      "chapter": 1,
+      "title": "Esperando o Amanhecer",
+      "text": "— Melhor esperar o dia — disse Sérgio.\n\nLéo: — Boa, menos chance de virar comida de monstro.\n\nHelena: — Mas e se os militares chegarem primeiro?\n\nDudu: — A gravação tá comigo. Podemos analisar.\n\nÁgata: — Não vai esperar até amanhã. Algo tá acontecendo agora.",
+      "choices": [
+        {
+          "id": "reconsiderar_ir",
+          "text": "Reconsiderar e ir",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_11_ir"
+        },
+        {
+          "id": "dormir_investigar_manha",
+          "text": "Dormir e investigar de manhã",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_12_esperar"
+        }
+      ]
+    },
+    "sinal_12": {
+      "id": "sinal_12",
+      "chapter": 1,
+      "title": "Na Mata",
+      "text": "As bicicletas cortavam a noite. O vento frio batia no rosto de Sérgio. A mata do Jardim Andere se aproximava, escura e densa. O zumbido crescia, como um motor quebrado.\n\nHelena: — Tá ouvindo isso?\n\nDudu: — É de lá.\n\nÁgata: — Cuidado. Não estamos sozinhos.",
+      "choices": [
+        {
+          "id": "entrar_mata",
+          "text": "Entrar na mata",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_13"
+        },
+        {
+          "id": "observar_de_longe",
+          "text": "Observar de longe",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_13_observar"
+        }
+      ]
+    },
+    "sinal_12_esperar": {
+      "id": "sinal_12_esperar",
+      "chapter": 1,
+      "title": "A Manhã Seguinte",
+      "text": "Sérgio foi dormir, mas o sono não veio. Sonhou com luzes vermelhas e vozes estranhas. De manhã, o grupo se reuniu. Dudu trouxe a gravação: \"Objeto caiu. Setor Três.\"\n\nHelena: — A mata tá cheia de militares agora.\n\nÁgata: — Ainda dá tempo de ir.",
+      "choices": [
+        {
+          "id": "ir_mata",
+          "text": "Ir à mata",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_13_dia"
+        },
+        {
+          "id": "desistir_investigacao",
+          "text": "Desistir da investigação",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_13_fim"
+        }
+      ]
+    },
+    "sinal_13": {
+      "id": "sinal_13",
+      "chapter": 1,
+      "title": "Dentro da Mata",
+      "text": "O grupo deixou as bicicletas e entrou na mata. Galhos estalavam sob os pés. O zumbido era mais forte, quase vibrando no peito. Uma luz fraca pulsava entre as árvores.\n\nLéo: — Isso é loucura.\n\nHelena: — Cala a boca, Léo.\n\nSérgio sentiu um arrepio. Algo os observava.",
+      "choices": [
+        {
+          "id": "seguir_luz",
+          "text": "Seguir a luz",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_14"
+        },
+        {
+          "id": "fazer_teste_agilidade",
+          "text": "Fazer teste de agilidade",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_14_test"
+        }
+      ]
+    },
+    "sinal_13_observar": {
+      "id": "sinal_13_observar",
+      "chapter": 1,
+      "title": "Observando de Longe",
+      "text": "Sérgio parou o grupo. — Vamos olhar primeiro.\n\nDo alto de um morro, viram luzes piscando na mata. Caminhões militares rugiam ao longe.\n\nDudu: — Eles tão cercando algo.\n\nÁgata: — Não é só um objeto. É vivo.",
+      "choices": [
+        {
+          "id": "entrar_mata",
+          "text": "Entrar na mata",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_13"
+        },
+        {
+          "id": "voltar_para_casa",
+          "text": "Voltar para casa",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_13_fim"
+        }
+      ]
+    },
+    "sinal_13_dia": {
+      "id": "sinal_13_dia",
+      "chapter": 1,
+      "title": "Mata de Dia",
+      "text": "De dia, a mata parecia menos assustadora, mas caminhões militares bloqueavam as ruas próximas. O grupo se esgueirou por um atalho. O zumbido ainda ecoava, mais fraco.\n\nHelena: — Eles já podem ter levado o que caiu.\n\nSérgio: — Ou não. Vamos procurar.",
+      "choices": [
+        {
+          "id": "entrar_mata",
+          "text": "Entrar na mata",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_14"
+        }
+      ]
+    },
+    "sinal_13_fim": {
+      "id": "sinal_13_fim",
+      "chapter": 1,
+      "title": "Fim - Missão Perdida",
+      "text": "O grupo voltou para casa, mas a curiosidade queimava. Sérgio não dormiu bem, assombrado por sonhos de luzes e vozes. No dia seguinte, a cidade falava de militares e \"algo estranho\" na mata.\n\nO rádio de Dudu captou um último chiado: \"Missão concluída.\"\n\nVocês perderam a chance de descobrir a verdade. O mistério permanece sem solução.",
+      "gameOver": true,
+      "choices": [
+        {
+          "id": "restart",
+          "text": "Recomeçar",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "sinal_1"
+        }
+      ]
+    },
+    "sinal_14": {
+      "id": "sinal_14",
+      "chapter": 1,
+      "title": "O Encontro",
+      "text": "Seguindo a luz pulsante, o grupo chegou a uma clareira. No centro, algo metálico e estranho emitia um brilho suave. Não era de origem humana.\n\nÁgata sussurrou: — É isso. É real.\n\nO objeto começou a se mover, como se percebesse a presença deles.",
+      "choices": [
+        {
+          "id": "continuar_capitulo2",
+          "text": "Continuar para o Capítulo 2",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "chapter2_1"
+        }
+      ]
+    },
+    "sinal_14_test": {
+      "id": "sinal_14_test",
+      "chapter": 1,
+      "title": "Teste de Agilidade",
+      "text": "Sérgio decide se aproximar silenciosamente da luz. Se passar no teste, consegue se mover sem fazer barulho.",
+      "skillCheck": {
+        "stat": "tech",
+        "difficulty": 8,
+        "successNode": "sinal_14",
+        "failureNode": "sinal_14"
+      },
+      "choices": []
+    }
+  }
+}
