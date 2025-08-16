@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 
 // Typewriter hook for text animation
 const useTypewriter = (text: string, speed: number = 30) => {
@@ -218,9 +218,26 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
     return text;
   };
   
+  // Helper: chunk long text into paragraphs for readability
+  const chunkTextToParagraphs = (text: string, sentencesPerParagraph: number = 2): string[] => {
+    if (!text) return [];
+    // Split by sentence endings
+    const sentences = text
+      .replace(/\s+/g, ' ') // normalize whitespace
+      .split(/(?<=[.!?…])\s+/)
+      .filter(Boolean);
+    if (sentences.length <= sentencesPerParagraph) return [text.trim()];
+    const paras: string[] = [];
+    for (let i = 0; i < sentences.length; i += sentencesPerParagraph) {
+      paras.push(sentences.slice(i, i + sentencesPerParagraph).join(' '));
+    }
+    return paras;
+  };
+  
   // Typewriter animation for the current node text
   const nodeText = currentNode ? getCleanedText(currentNode.text, currentNode.id) : '';
   const { displayText, isComplete, skipAnimation } = useTypewriter(nodeText, 25);
+  const paragraphs = useMemo(() => chunkTextToParagraphs(displayText, 2), [displayText]);
   
   // Check for game over when current node changes
   useEffect(() => {
@@ -1384,16 +1401,16 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
 
         {/* Story text with typewriter effect */}
         <div style={{ 
-          fontSize: '15px', 
-          lineHeight: '1.4', 
+          fontSize: '16px', 
+          lineHeight: '1.6', 
           margin: '20px 0', 
-          whiteSpace: 'pre-wrap',
-          minHeight: '200px',
-          color: '#00ff00',
+          color: '#c8ffc8',
           fontFamily: 'Courier New, Monaco, monospace',
-          letterSpacing: '0.5px'
+          letterSpacing: '0.3px'
         }}>
-          {displayText}
+          {paragraphs.map((p, i) => (
+            <p key={i} style={{ margin: '0 0 14px 0', whiteSpace: 'normal' }}>{p}</p>
+          ))}
           {!isComplete && (
             <span style={{ 
               color: '#00ff00',
