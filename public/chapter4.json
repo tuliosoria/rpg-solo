@@ -25,7 +25,7 @@
       "chapter": 4,
       "title": "Espiando a Rua",
       "image": "cortina.png",
-      "text": "Sérgio puxou discretamente a cortina e espiou pela fresta. Duas viaturas militares passavam devagar, soldados olhando para os lados com atenção. Um deles carregava um rádio grande preso ao ombro. O ar parece segurar a respiração.  Algo mudou no silêncio. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.",
+      "text": "Sérgio puxou discretamente a cortina e espiou pela fresta. Duas viaturas militares passavam devagar, soldados olhando para os lados com atenção. Um deles carregava um rádio grande preso ao ombro. O ar parece segurar a respiração.  Algo mudou no silêncio. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.\n\n— Dois carros, rádio aberto — sussurra Sérgio.\n— Sem janela batendo — Dudu responde, com o dedo nos lábios.\nO ser toca a parede, inquieto, e solta três estalos curtos. — Al... to. Três.\n— Ele tá repetindo — Ágata fecha os olhos. — É um pedido.",
       "choices": [
         {
           "id": "esconder_criatura",
@@ -95,7 +95,7 @@
       "id": "cerco_4",
       "chapter": 4,
       "title": "Escondendo a Criatura",
-      "text": "Helena e Ágata cobriram a criatura com cobertores e caixas, escondendo-a num canto escuro. A respiração ofegante do ser ainda escapava em estalos abafados. — Shhh...  Um som distante, metálico, que ninguém mais parece ouvir.",
+      "text": "Helena e Ágata cobriram a criatura com cobertores e caixas, escondendo-a num canto escuro. A respiração ofegante do ser ainda escapava em estalos abafados. — Shhh...  Um som distante, metálico, que ninguém mais parece ouvir.\n\n— Vai passar — diz Helena, encostando a mão. — Fica com a gente.\n— A-mi-go — repete o ser, baixo, como quem aprende.\n— Somos, sim — Léo tenta sorrir. — Mas agora, silêncio de ninja.",
       "choices": [
         {
           "id": "fazer_teste_coragem",
@@ -165,7 +165,7 @@
       "id": "cerco_6",
       "chapter": 4,
       "title": "Decisão Difícil",
-      "text": "O silêncio voltou, mas a tensão era insuportável. O ar parece segurar a respiração.  Um som distante, metálico, que ninguém mais parece ouvir. Sussurros citam militares aparecendo rápido, tarde da noite.",
+      "text": "O silêncio voltou, mas a tensão era insuportável. O ar parece segurar a respiração.  Um som distante, metálico, que ninguém mais parece ouvir. Sussurros citam militares aparecendo rápido, tarde da noite.\n\n— Ficar é virar alvo — diz Sérgio.\n— Correr é fazer barulho — rebate Dudu.\n— O alto — Ágata aponta para cima, quase num transe. — Três linhas.\nO ser repete o gesto com os dedos e murmura: — Al... to. Luz.",
       "choices": [
         {
           "id": "fugir_agora",
@@ -300,7 +300,7 @@
       "id": "cerco_10",
       "chapter": 4,
       "title": "O Refúgio",
-      "text": "Depois de uma fuga desesperada, o grupo encontrou abrigo numa velha oficina abandonada na saída da cidade. A criatura respirava fraco, mas parecia grata. Ágata fechou os olhos, sussurrando: — Eles não vão parar. Agora somos parte disso.  Você sente que não está sozinho. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.",
+      "text": "Depois de uma fuga desesperada, o grupo encontrou abrigo numa velha oficina abandonada na saída da cidade. A criatura respirava fraco, mas parecia grata. Ágata fechou os olhos, sussurrando: — Eles não vão parar. Agora somos parte disso.  Você sente que não está sozinho. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.\n\n— A gente te leva — promete Helena. — Só aguenta mais um pouco.\n— Vol... tar — o ser encosta a mão na dela. — Luz.\n— Então é isso — diz Sérgio. — A gente sobe.",
       "choices": [
         {
           "id": "continuar_capitulo5",

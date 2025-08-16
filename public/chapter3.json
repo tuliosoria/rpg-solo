@@ -6,7 +6,7 @@
       "id": "chapter3_1",
       "chapter": 3,
       "title": "Corrida na Escuridão",
-      "text": "Com a clareira ficando para trás, os cinco avançam entre troncos e raízes, carregando o ser pelos ombros como conseguem. O cheiro de amônia e terra molhada gruda na garganta. Lanternas varrem a mata ao longe. — A estrada de terra leva pro Jardim Andere — sussurra Dudu. — Se a gente sair por trás do campinho, dá pra despistar.  Você sente que não está sozinho. O murmúrio de rádios estoura em estática por um segundo.",
+      "text": "Com a clareira ficando para trás, os cinco avançam entre troncos e raízes, carregando o ser pelos ombros como conseguem. O cheiro de amônia e terra molhada gruda na garganta. Lanternas varrem a mata ao longe. — A estrada de terra leva pro Jardim Andere — sussurra Dudu. — Se a gente sair por trás do campinho, dá pra despistar.  Você sente que não está sozinho. O murmúrio de rádios estoura em estática por um segundo.\n\n— Segura firme, amigão — diz Helena, baixinho. — A gente tá tentando ajudar.\nO ser emite cliques e um ruído úmido, como se buscasse sílabas. — Am... ig... — tenta, rouco.\n— Ele entendeu! — cochicha Léo, excitado e com medo. — Continua falando baixo.\n— Sem barulho — alerta Sérgio. — Foco nas luzes.",
       "choices": [
         {
           "id": "tentar_atalho",
@@ -141,7 +141,7 @@
       "id": "chapter3_2_empatia",
       "chapter": 3,
       "title": "Sussurros de Ágata",
-      "text": "Ágata toca o peito da criatura com a ponta dos dedos e sussurra uma prece antiga.  Você sente que não está sozinho.",
+      "text": "Ágata toca o peito da criatura com a ponta dos dedos e sussurra uma prece antiga.  Você sente que não está sozinho.\n\n— Calma... — Ágata encosta a testa de leve. — Sem dor, casa, silêncio. Amigo.\nO ser inclina a cabeça, copiando sons: — Si... lên... cio... a-mi... go.\n— Isso — Helena sorri sem mostrar os dentes. — Respira com a gente.",
       "choices": [
         {
           "id": "teste_empatia_acalmar",
@@ -479,7 +479,7 @@
       "id": "chapter3_7_cuidados",
       "chapter": 3,
       "title": "Cuidados de Emergência",
-      "text": "No galpão, vocês limpam o ferimento com pano úmido. O líquido escuro cheira a metal e amônia.  Você sente que não está sozinho.",
+      "text": "No galpão, vocês limpam o ferimento com pano úmido. O líquido escuro cheira a metal e amônia.  Você sente que não está sozinho.\n\n— Pega mais água, Dudu — pede Helena. — Tá quente demais.\n— Tô indo, tô indo — ele responde, vasculhando uma pia velha.\nO ser trila baixo, quase um assobio. — Cal... ma.\n— A gente fica — diz Sérgio, firme. — Promessa.",
       "choices": [
         {
           "id": "escutar_rua",
@@ -581,7 +581,7 @@
       "id": "chapter3_8_escuta",
       "chapter": 3,
       "title": "Rádio no Escuro",
-      "text": "Dudu liga um radinho minúsculo no volume mínimo.  Há algo observando, quieto, paciente. O murmúrio de rádios estoura em estática por um segundo.",
+      "text": "Dudu liga um radinho minúsculo no volume mínimo.  Há algo observando, quieto, paciente. O murmúrio de rádios estoura em estática por um segundo.\n\n— Se a gente entender o que ele quer dizer... — Léo olha pro ser. — Você quer voltar?\nO ser toca o peito de Sérgio com dois dedos e marca ritmo: três estalos, pausa, três estalos.\n— Três... linhas? — Ágata murmura. — Um padrão.",
       "choices": [
         {
           "id": "rumo_escola",
@@ -633,7 +633,7 @@
       "id": "chapter3_9_planos",
       "chapter": 3,
       "title": "Três Rotas",
-      "text": "Escola (laboratório), Igreja (porão), Sítio (distante, mas discreto). O ser observa vocês, respirando curto. O ar parece segurar a respiração.  Algo mudou no silêncio.",
+      "text": "Escola (laboratório), Igreja (porão), Sítio (distante, mas discreto). O ser observa vocês, respirando curto. O ar parece segurar a respiração.  Algo mudou no silêncio.\n\n— Escola tem cadeado e janela — diz Sérgio. — Dá pra segurar.\n— Igreja é fundo e frio — contrapõe Helena. — Esconde melhor.\n— O sítio é longe, mas ninguém chega fácil — Léo aponta no desenho.\nO ser levanta três dedos, paralelos, e sussurra: — Al... to. Três... li-nhas.\n— Mirante, pedreira — conclui Ágata, arrepiada. — Alto.",
       "choices": [
         {
           "id": "escolher_escola",
@@ -675,16 +675,7 @@
       "id": "chapter3_10_pouso_seguro",
       "chapter": 3,
       "title": "Pouso (por Enquanto) Seguro",
-      "text": "Depois de curvas, muros e jardins, vocês alcançam o ponto escolhido. O ser se aninha num cobertor.  Há algo observando, quieto, paciente.",
-      "choices": [
-        {
-          "id": "encerrar_cap3",
-          "text": "Encerrar o capítulo e avançar",
-          "requirements": {},
-          "effects": {},
-          "nextNode": "chapter4_1"
-        }
-      ]
+      "text": "Depois de curvas, muros e jardins, vocês alcançam o ponto escolhido. O ser se aninha num cobertor.  Há algo observando, quieto, paciente.\n\n— Ei — Helena aproxima a mão devagar. — A gente vai te tirar daqui, tá?\n— Vol... tar — ele responde, suave.\n— Então vamos juntos — promete Sérgio, encarando o escuro."
     },
     "chapter3_end_capturados": {
       "id": "chapter3_end_capturados",

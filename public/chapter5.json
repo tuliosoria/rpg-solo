@@ -6,7 +6,7 @@
       "id": "chapter5_1",
       "chapter": 5,
       "title": "Última Chance",
-      "text": "A velha oficina rangia com o vento da madrugada. A criatura repousava sobre um cobertor engordurado, respirando curto, o ferimento coberto por faixas improvisadas. Dudu vasculhava caixas de ferramentas; Helena mantinha a mão na testa do visitante, como quem mede febre de um amigo. Lá fora, a cidade de Varginha despertava com rumores, sirenes e ordens pelo rádio: \"Quadrante sul, varredura total\".  Algo mudou no silêncio. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
+      "text": "A velha oficina rangia com o vento da madrugada. A criatura repousava sobre um cobertor engordurado, respirando curto, o ferimento coberto por faixas improvisadas. Dudu vasculhava caixas de ferramentas; Helena mantinha a mão na testa do visitante, como quem mede febre de um amigo. Lá fora, a cidade de Varginha despertava com rumores, sirenes e ordens pelo rádio: \"Quadrante sul, varredura total\".  Algo mudou no silêncio. Um lampejo vermelho, baixo no horizonte, como farol sem dono.\n\n— Não vão dar trégua — diz Sérgio. — A gente escolhe agora.\n— Eu monto alguma coisa — Dudu ergue fios e uma bateria. — Dá pra chamar ajuda?\n— Dona Ema entende símbolos — Ágata aperta o colar. — Memórias... posso tentar.\nO ser encosta dois dedos no peito e marca: três, pausa, três. — Al... to. Luz. Vol... tar.",
       "choices": [
         {
           "id": "montar_transmissor",
@@ -29,7 +29,7 @@
       "id": "final_2_radio",
       "chapter": 5,
       "title": "Gambiarra de Sobrevivência",
-      "text": "Dudu espalhou pilhas, fios e um rádio de carro esfolado. — Se eu casar isso com a antena do caminhão velho e uma bateria, talvez a gente consiga um pulso de alta frequência. — Ele mordeu o lábio.  Há algo observando, quieto, paciente. O murmúrio de rádios estoura em estática por um segundo.",
+      "text": "Dudu espalhou pilhas, fios e um rádio de carro esfolado. — Se eu casar isso com a antena do caminhão velho e uma bateria, talvez a gente consiga um pulso de alta frequência. — Ele mordeu o lábio.  Há algo observando, quieto, paciente. O murmúrio de rádios estoura em estática por um segundo.\n\n— Fala com a gente — Helena olha para o visitante. — Se doer, faz dois estalos. Se tudo bem, três.\nO ser responde: três estalos curtos. — Bem.",
       "choices": [
         {
           "id": "testar_montagem",
@@ -55,7 +55,7 @@
       "id": "final_3_ping",
       "chapter": 5,
       "title": "Resposta no Éter",
-      "text": "O pulso cortou o ar como um assobio metálico. Por um segundo, só estática. Então, três estalos, em sequência, respostas medidas. Ágata abriu os olhos: — Ele entendeu. \"Ponto alto... O ar parece segurar a respiração.  Há algo observando, quieto, paciente.",
+      "text": "O pulso cortou o ar como um assobio metálico. Por um segundo, só estática. Então, três estalos, em sequência, respostas medidas. Ágata abriu os olhos: — Ele entendeu. \"Ponto alto... O ar parece segurar a respiração.  Há algo observando, quieto, paciente.\n\n— Mirante — Sérgio respira. — Então é pra lá.\n— Eu seguro a gambiarra — Dudu sorri torto. — Só não deixa cair.\nO ser toca o ombro de Helena: — A-mi-go.",
       "choices": [
         {
           "id": "partir_bloqueio",
@@ -81,7 +81,7 @@
       "id": "final_2_hospital",
       "chapter": 5,
       "title": "Luz Fria de Hospital",
-      "text": "O cheiro de desinfetante ardia no nariz. Uma enfermeira de plantão congelou ao ver o visitante sob o casaco de Helena. — Pelo amor... O ar parece segurar a respiração.  Um som distante, metálico, que ninguém mais parece ouvir.",
+      "text": "O cheiro de desinfetante ardia no nariz. Uma enfermeira de plantão congelou ao ver o visitante sob o casaco de Helena. — Pelo amor... O ar parece segurar a respiração.  Um som distante, metálico, que ninguém mais parece ouvir.\n\n— Ele é ferido, não perigo — Helena suplica. — Cinco minutos. Ninguém precisa saber.\nO ser levanta a mão, imitando gesto humano: — Paz.",
       "choices": [
         {
           "id": "convencer_enfermeira",
@@ -160,7 +160,7 @@
       "id": "final_2_avo",
       "chapter": 5,
       "title": "A Casa de Dona Ema",
-      "text": "A avó de Ágata abriu a porta com olhos que já sabiam. — Entrem. — Ela esmagou folhas num pilão, preparando um unguento que ardeu doce no ar. O ar parece segurar a respiração.  Algo mudou no silêncio.",
+      "text": "A avó de Ágata abriu a porta com olhos que já sabiam. — Entrem. — Ela esmagou folhas num pilão, preparando um unguento que ardeu doce no ar. O ar parece segurar a respiração.  Algo mudou no silêncio.\n\n— Dona Ema, ele fala com estalos e imagem — Ágata explica. — Três linhas, alto.\n— Sinais antigos também são assim — responde a avó. — Poucas palavras, muito sentido.\nO ser aproxima a testa da dela, respeitoso. — Luz. Casa.",
       "choices": [
         {
           "id": "visao_mentes",
@@ -212,7 +212,7 @@
       "id": "final_4_bloqueio",
       "chapter": 5,
       "title": "Anel de Aço",
-      "text": "A estrada para a pedreira estava crivada de barreiras. Viaturas em X, lanternas varrendo sacadas e terrenos baldios. Um helicóptero riscou o céu. O ar parece segurar a respiração.  Você sente que não está sozinho.",
+      "text": "A estrada para a pedreira estava crivada de barreiras. Viaturas em X, lanternas varrendo sacadas e terrenos baldios. Um helicóptero riscou o céu. O ar parece segurar a respiração.  Você sente que não está sozinho.\n\n— Deixa comigo — diz Dudu. — Eu falo, vocês respiram.\n— Se der ruim, corta pelo mato — Sérgio desenha com o dedo. — Muro baixo aqui.\nO ser observa atento, repete: — Cor... tar. Ma... to. Amigo.",
       "choices": [
         {
           "id": "disfarcar_passagem",
@@ -270,7 +270,7 @@
       "id": "final_5_passaram",
       "chapter": 5,
       "title": "Topo do Mundo",
-      "text": "O vento na pedreira uivava. A cidade parecia um colar de luzes ao longe. Dudu abriu a mochila: fios, a bateria salva da oficina, o rádio remendado.  Algo mudou no silêncio.",
+      "text": "O vento na pedreira uivava. A cidade parecia um colar de luzes ao longe. Dudu abriu a mochila: fios, a bateria salva da oficina, o rádio remendado.  Algo mudou no silêncio.\n\n— Última chance — diz Helena, firme. — Sem heroísmo bobo.\n— Sem desistir também — Léo completa.\nO ser toca o chão três vezes, como batida de coração: — Vol... tar. Luz.",
       "choices": [
         {
           "id": "armar_baliza",
@@ -296,19 +296,7 @@
       "id": "final_6_bip",
       "chapter": 5,
       "title": "O Céu Responde",
-      "text": "O chão vibrou com um bip grave e limpo. A criatura ergueu o rosto; seus olhos refletiram um brilho novo. O ar parece segurar a respiração.  Algo mudou no silêncio.",
-      "choices": [
-        {
-          "id": "transmitir_verdade",
-          "text": "Transmitir ao vivo para todo mundo ver (lógica)",
-          "nextNode": "final_7_transmitir_test"
-        },
-        {
-          "id": "apenas_esconder",
-          "text": "Apenas se esconder e deixar a extração acontecer",
-          "nextNode": "final_8_extracao"
-        }
-      ]
+      "text": "O chão vibrou com um bip grave e limpo. A criatura ergueu o rosto; seus olhos refletiram um brilho novo. O ar parece segurar a respiração.  Algo mudou no silêncio.\n\n— Você vai conseguir — Ágata segura a mão fria.\n— A-mi-go — ele repete, e por um instante, quase sorri."
     },
     "final_6_falha": {
       "id": "final_6_falha",
@@ -367,40 +355,19 @@
       "id": "final_7_transmitir_sucesso",
       "chapter": 5,
       "title": "A Cidade Acorda",
-      "text": "Telhados explodiram em antenas, rádios chiando em uníssono. No bar, na sala, na guarita: todos viram o feixe branco descendo como um lençol. Viram as silhuetas, o abraço de luz envolvendo a criatura. Viram cinco jovens de bicicleta na borda do mundo.  Um som distante, metálico, que ninguém mais parece ouvir.",
-      "choices": [
-        {
-          "id": "epilogo",
-          "text": "Epilogo",
-          "nextNode": "final_epilogo"
-        }
-      ]
+      "text": "Telhados explodiram em antenas, rádios chiando em uníssono. No bar, na sala, na guarita: todos viram o feixe branco descendo como um lençol. Viram as silhuetas, o abraço de luz envolvendo a criatura. Viram cinco jovens de bicicleta na borda do mundo.  Um som distante, metálico, que ninguém mais parece ouvir.\n\n— Se alguém disser que foi mentira, a cidade responde — Dudu ri, nervoso.\n— A gente responde — corrige Helena."
     },
     "final_7_transmitir_falha": {
       "id": "final_7_transmitir_falha",
       "chapter": 5,
       "title": "Ruído e Sombra",
-      "text": "O sinal foi esmagado por interferência. Um jipe guinchou na curva, soldados saltaram. A baliza piscou fraca — e ainda assim, o feixe tocou a borda da pedreira. A criatura olhou para Sérgio, um mosaico de memórias compartilhadas num piscar. Ela subiu na coluna de luz. O ar parece segurar a respiração.  Algo mudou no silêncio.",
-      "choices": [
-        {
-          "id": "epilogo",
-          "text": "Epilogo",
-          "nextNode": "final_epilogo_amargo"
-        }
-      ]
+      "text": "O sinal foi esmagado por interferência. Um jipe guinchou na curva, soldados saltaram. A baliza piscou fraca — e ainda assim, o feixe tocou a borda da pedreira. A criatura olhou para Sérgio, um mosaico de memórias compartilhadas num piscar. Ela subiu na coluna de luz. O ar parece segurar a respiração.  Algo mudou no silêncio.\n\n— Desculpa — Dudu sussurra.\n— Ele entendeu — Sérgio aperta o ombro dele. — A gente trouxe até aqui."
     },
     "final_8_extracao": {
       "id": "final_8_extracao",
       "chapter": 5,
       "title": "Silêncio Guardado",
-      "text": "Eles se encolheram atrás de rochas. O feixe imaculado caiu como chuva quieta. A criatura girou o rosto uma última vez: gratidão líquida, infinita. A luz a abraçou e subiu, dissolvendo-se nas nuvens como vapor.  Algo mudou no silêncio.",
-      "choices": [
-        {
-          "id": "epilogo",
-          "text": "Epilogo",
-          "nextNode": "final_epilogo"
-        }
-      ]
+      "text": "Eles se encolheram atrás de rochas. O feixe imaculado caiu como chuva quieta. A criatura girou o rosto uma última vez: gratidão líquida, infinita. A luz a abraçou e subiu, dissolvendo-se nas nuvens como vapor.  Algo mudou no silêncio.\n\n— Volta pra casa — sussurra Helena, com os olhos molhados.\nSérgio responde ao vazio: — A gente lembra. Sempre."
     },
     "final_epilogo": {
       "id": "final_epilogo",
