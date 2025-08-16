@@ -434,6 +434,7 @@
       "chapter": 1,
       "title": "Na Mata",
       "text": "As bicicletas cortavam a noite velozmente enquanto os cinco amigos seguiam juntos, lanternas acesas balançando no guidão e feixes de luz tremeluzindo no asfalto escuro. O vento frio batia no rosto de Sérgio, fazendo seus olhos lacrimejarem, mas ele não diminuía o ritmo. A adrenalina mantinha o grupo unido e firme. Logo, as últimas casas do bairro ficaram para trás e a silhueta negra da mata do Jardim Andere surgiu à frente, fechada e misteriosa. De longe, vinha aquele zumbido baixo e constante, que agora soava mais alto a cada pedalada que os aproximava — como o som de um motor avariado ou de um enorme inseto escondido na escuridão. Helena ergueu a voz para ser ouvida sobre o barulho das bicicletas: — Vocês tão ouvindo isso?  Há algo observando, quieto, paciente. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
+      "image": "pedalando.png",
       "choices": [
         {
           "id": "entrar_mata",
