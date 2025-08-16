@@ -6,7 +6,7 @@
       "id": "sinal_1",
       "chapter": 1,
       "title": "Sala de Aula",
-      "text": "Sérgio rabiscava circuitos no caderno, ignorando a voz monótona do professor que explicava alguma fórmula no quadro. De vez em quando, seus olhos escapavam para Helena, sentada duas carteiras à frente. Ela ria de algo com a amiga ao lado, alheia ao olhar apaixonado de Sérgio. O coração dele disparava só de vê-la sorrir. Helena não tinha ideia dos sentimentos que ele guardava – e talvez nunca viesse a saber.\n\nEra sexta-feira, e naquela noite o grupo planejava testar os walkie-talkies que Dudu, o gênio dos rádios, tinha preparado. Dudu prometera uma surpresa especial na transmissão de hoje. Sérgio sentiu um frio na espinha ao pensar nisso, uma estranha mistura de animação e nervosismo, como se pressentisse que algo grande estava para acontecer.\n\nFaltavam poucos minutos para o sinal da escola tocar, anunciando o fim da aula. Sérgio mal conseguia conter a ansiedade, o lápis batucando de leve no caderno enquanto ele aguardava a liberdade da última campainha.",
+      "text": "Sérgio rabiscava circuitos no caderno, ignorando a voz monótona do professor que explicava alguma fórmula no quadro. De vez em quando, seus olhos escapavam para Helena, sentada duas carteiras à frente. Ela ria de algo com a amiga ao lado, alheia ao olhar apaixonado de Sérgio. O coração dele disparava só de vê-la sorrir. Helena não tinha ideia dos sentimentos que ele guardava – e talvez nunca viesse a saber. Era sexta-feira, e naquela noite o grupo planejava testar os walkie-talkies que Dudu, o gênio dos rádios, tinha preparado. Dudu prometera uma surpresa especial na transmissão de hoje.  A eletricidade no ar arrepia a pele. Sussurros citam militares aparecendo rápido, tarde da noite.",
       "image": "sala_aula.png",
       "choices": [
         {
@@ -22,7 +22,7 @@
       "id": "sinal_2",
       "chapter": 1,
       "title": "O Pátio",
-      "text": "O sinal ecoou pelos corredores, um guincho metálico que cortou o ar e deu vida ao burburinho de fim de aula. Sérgio fechou o caderno num instante e disparou em direção ao pátio, desviando de colegas que saíam despreocupados.\n\nNo pátio, seu grupo já o aguardava. Dudu estava agachado sobre uma mochila aberta, mexendo freneticamente em um rádio cheio de fios expostos. Léo encostava-se a um pilar com seu jeito desleixado, um sorriso de quem já tinha uma piada pronta. Helena prendia o cabelo em um rabo de cavalo, os olhos brilhando de curiosidade para o que Dudu fazia. Ágata, um pouco afastada, folheava silenciosamente um antigo livro repleto de símbolos estranhos, alheia à confusão em volta.\n\n— Prontos pra hoje? — perguntou Sérgio, tentando soar confiante enquanto se aproximava do grupo. No fundo, ele sentia as mãos trêmulas de expectativa.",
+      "text": "O sinal ecoou pelos corredores, um guincho metálico que cortou o ar e deu vida ao burburinho de fim de aula. Sérgio fechou o caderno num instante e disparou em direção ao pátio, desviando de colegas que saíam despreocupados. No pátio, seu grupo já o aguardava. Dudu estava agachado sobre uma mochila aberta, mexendo freneticamente em um rádio cheio de fios expostos. Léo encostava-se a um pilar com seu jeito desleixado, um sorriso de quem já tinha uma piada pronta. Helena prendia o cabelo em um rabo de cavalo, os olhos brilhando de curiosidade para o que Dudu fazia.  Algo mudou no silêncio.",
       "image": "grupo_amigos.png",
       "choices": [
         {
@@ -38,7 +38,7 @@
       "id": "sinal_3",
       "chapter": 1,
       "title": "O Plano",
-      "text": "— Hoje vamos longe com os rádios — anunciou Dudu, com animação transbordando na voz. — Minha nova antena é top! Vai aumentar o alcance em quilômetros.\n\nLéo soltou uma risada, já fazendo graça: — Top até pra captar conversa de ET, né?\n\nHelena revirou os olhos castanhos, meio sorrindo, meio preocupada: — Só espero que a gente não acabe sintonizando a frequência da polícia... ou coisa pior.\n\nÁgata fechou o livro de súbito e murmurou, séria: — Ou algo que não tenha explicação fácil.\n\nSérgio engoliu em seco, disfarçando o nervosismo com um sorrisinho. O plano era simples: ligar os rádios às 21h naquela noite, testar o alcance e, quem sabe, captar algo interessante no ar. Era pra ser só uma brincadeira inocente... mas as palavras de Ágata deixaram uma pulga atrás da orelha de Sérgio. E se não fosse só diversão?",
+      "text": "— Hoje vamos longe com os rádios — anunciou Dudu, com animação transbordando na voz. — Minha nova antena é top! Vai aumentar o alcance em quilômetros. Léo soltou uma risada, já fazendo graça: — Top até pra captar conversa de ET, né? Helena revirou os olhos castanhos, meio sorrindo, meio preocupada: — Só espero que a gente não acabe sintonizando a frequência da polícia... ou coisa pior. Ágata fechou o livro de súbito e murmurou, séria: — Ou algo que não tenha explicação fácil. Sérgio engoliu em seco, disfarçando o nervosismo com um sorrisinho.  A eletricidade no ar arrepia a pele.",
       "choices": [
         {
           "id": "confirmar_plano",
@@ -60,7 +60,7 @@
       "id": "sinal_4",
       "chapter": 1,
       "title": "Preparativos",
-      "text": "Sérgio concordou com um gesto de cabeça. — Fechado. Às 21h, todo mundo na escuta.\n\nCom o acordo selado, o grupo se despediu e cada um pedalou para sua casa, levando consigo a excitação do plano. Mais tarde, já em seu quarto, Sérgio espalhou as peças do walkie-talkie sobre a mesa. Com a língua entre os dentes e muita concentração, ele revisou cada fio e conexão com o cuidado de um relojoeiro, certificando-se de que tudo estivesse perfeito para logo mais.\n\n— Jantar! — a voz da mãe veio lá da cozinha, rompendo sua bolha de concentração.\n\n— Tô indo! — respondeu Sérgio, embora seus olhos não desgrudassem do rádio enquanto ajustava um último detalhe na antena caseira.\n\nQuando finalmente desceu para comer, sentia no ar uma estranha eletricidade, como se o universo segurasse a respiração. Depois de engolir o jantar às pressas, correu de volta ao quarto. Testou o aparelho e ouviu apenas um chiado suave em retorno. Tudo pronto. Agora só faltava dar a hora combinada.",
+      "text": "Sérgio concordou com um gesto de cabeça. — Fechado. Às 21h, todo mundo na escuta. Com o acordo selado, o grupo se despediu e cada um pedalou para sua casa, levando consigo a excitação do plano. Mais tarde, já em seu quarto, Sérgio espalhou as peças do walkie-talkie sobre a mesa. Com a língua entre os dentes e muita concentração, ele revisou cada fio e conexão com o cuidado de um relojoeiro, certificando-se de que tudo estivesse perfeito para logo mais. — Jantar! — a voz da mãe veio lá da cozinha, rompendo sua bolha de concentração. — Tô indo! — respondeu Sérgio, embora seus olhos não desgrudassem do rádio enquanto ajustava um último detalhe na antena caseira.  A eletricidade no ar arrepia a pele.",
       "choices": [
         {
           "id": "esperar_21h",
@@ -75,7 +75,7 @@
       "id": "sinal_4_agata",
       "chapter": 1,
       "title": "Curiosidade sobre Ágata",
-      "text": "Sérgio lançou um olhar curioso para Ágata. — Que história é essa de \"algo que não explica\"? O que você quis dizer com isso?\n\nÁgata hesitou por um instante, fechando devagar o livro de símbolos que tinha nas mãos. Por fim, respondeu em tom baixo: — Às vezes, eu... sinto coisas. Vejo em sonhos, capto sinais. E estou sentindo que tem algo estranho naquela mata hoje à noite.\n\nLéo deu uma gargalhada debochada: — Ih, lá vem a bruxinha com as previsões. Relaxa, Ágata, deve ser só sua imaginação.\n\nHelena franziu o cenho, preocupada: — Gente, vamos focar nos rádios, vai. É só um teste bobo, nada demais.\n\nApesar do tom tranquilizador de Helena, Sérgio não pôde evitar um calafrio percorrendo a espinha. Ele sabia que Ágata às vezes pressentia coisas que ninguém mais percebia. E se dessa vez ela estivesse certa?",
+      "text": "Sérgio lançou um olhar curioso para Ágata. — Que história é essa de \"algo que não explica\"? O que você quis dizer com isso? Ágata hesitou por um instante, fechando devagar o livro de símbolos que tinha nas mãos. Por fim, respondeu em tom baixo: — Às vezes, eu... sinto coisas. Vejo em sonhos, capto sinais. E estou sentindo que tem algo estranho naquela mata hoje à noite. Léo deu uma gargalhada debochada: — Ih, lá vem a bruxinha com as previsões. Relaxa, Ágata, deve ser só sua imaginação.  Um som distante, metálico, que ninguém mais parece ouvir.",
       "choices": [
         {
           "id": "confirmar_plano",
@@ -97,7 +97,7 @@
       "id": "sinal_4_agata_2",
       "chapter": 1,
       "title": "Revelação de Ágata",
-      "text": "— Conta mais, Ágata — insistiu Sérgio, inclinando-se para ouvir melhor.\n\nEla suspirou antes de continuar, como se escolhesse bem as palavras: — Minha avó sempre dizia que a mata guarda segredos antigos... coisas que não são humanas podem estar escondidas entre as árvores. E essa noite eu sonhei com luzes vermelhas caindo do céu, bem ali naquelas bandas.\n\nUm silêncio caiu sobre o grupo. Até o vento parecia ter parado.\n\nLéo balançou a cabeça e forçou uma risada para quebrar o clima tenso: — Ah, qual é... sonho é só sonho, né? Não viaja.\n\nHelena, embora tentasse se manter prática, tamborilava os dedos no braço ansiosamente: — Vamos focar nos rádios e ver no que dá. Não vamos tirar conclusões malucas antes da hora.\n\nSérgio, contudo, guardou cada palavra de Ágata na memória. O pressentimento dela o deixara inquieto, como se uma peça de quebra-cabeça faltasse para revelar um quadro ameaçador. Algo definitivamente não parecia normal naquela história.",
+      "text": "— Conta mais, Ágata — insistiu Sérgio, inclinando-se para ouvir melhor. Ela suspirou antes de continuar, como se escolhesse bem as palavras: — Minha avó sempre dizia que a mata guarda segredos antigos... coisas que não são humanas podem estar escondidas entre as árvores. E essa noite eu sonhei com luzes vermelhas caindo do céu, bem ali naquelas bandas. Um silêncio caiu sobre o grupo. Até o vento parecia ter parado. Léo balançou a cabeça e forçou uma risada para quebrar o clima tenso: — Ah, qual é... sonho é só sonho, né? Não viaja. Helena, embora tentasse se manter prática, tamborilava os dedos no braço ansiosamente: — Vamos focar nos rádios e ver no que dá. O ar parece segurar a respiração.  Você sente que não está sozinho. O murmúrio de rádios estoura em estática por um segundo.",
       "choices": [
         {
           "id": "confirmar_plano",
@@ -112,7 +112,7 @@
       "id": "sinal_5",
       "chapter": 1,
       "title": "21h - Primeiro Contato",
-      "text": "Às 21h em ponto, Sérgio sentou-se em frente ao seu rádio no quarto escurecido, apenas a lâmpada do abajur acesa ao lado. Com dedos ansiosos, girou o botão e o walkie-talkie ganhou vida com um leve chiado. Ele pressionou o botão para falar:\n\n— Alguém na escuta?\n\nApós um breve estalo, a voz de Dudu respondeu clara e animada: — Dudu aqui, alto e claro!\n\nEm seguida, outra voz surgiu em meio à estática: — Léo presente, na escuta.\n\n— Helena aqui — acrescentou a terceira voz feminina. — Mas... vocês estão ouvindo esse chiado estranho?\n\nLogo depois, Ágata entrou na linha, com um tom de cautela: — Eu também ouço. Não é um chiado normal.\n\nSérgio franziu a testa e ajustou levemente o dial com a mão trêmula. De repente, entre os chiados, surgiram estalos ritmados, quase como um código. O som repetitivo cortou o silêncio da noite, fazendo o coração de Sérgio gelar por um instante. Ele trocou um olhar apreensivo com o rádio, perguntando-se o que haviam acabado de sintonizar.",
+      "text": "Às 21h em ponto, Sérgio sentou-se em frente ao seu rádio no quarto escurecido, apenas a lâmpada do abajur acesa ao lado. Com dedos ansiosos, girou o botão e o walkie-talkie ganhou vida com um leve chiado. Ele pressionou o botão para falar: — Alguém na escuta? Após um breve estalo, a voz de Dudu respondeu clara e animada: — Dudu aqui, alto e claro! Em seguida, outra voz surgiu em meio à estática: — Léo presente, na escuta. — Helena aqui — acrescentou a terceira voz feminina. — Mas... vocês estão ouvindo esse chiado estranho? Logo depois, Ágata entrou na linha, com um tom de cautela: — Eu também ouço. Não é um chiado normal. O ar parece segurar a respiração.  Há algo observando, quieto, paciente. Sussurros citam militares aparecendo rápido, tarde da noite.",
       "choices": [
         {
           "id": "tentar_decifrar",
@@ -134,7 +134,7 @@
       "id": "sinal_6",
       "chapter": 1,
       "title": "Decifrando o Código",
-      "text": "Com o coração acelerado, Sérgio agarrou um caderno e começou a anotar os padrões dos estalos que saíam do rádio. Ele murmurou para si mesmo enquanto rabiscava pontos e traços: — Parece ter um padrão... não é aleatório.\n\n— Tipo um código Morse? — sugeriu Helena através do rádio, a voz dela baixinha, quase sussurrada, como se temesse ser ouvida por alguém além do grupo.\n\n— Acho que não, é mais... irregular — corrigiu Dudu, já analisando o som com seu ouvido treinado para frequências.\n\nÁgata falou quase num sopro: — Pode ser só interferência... ou então alguma coisa tentando se comunicar.\n\nLéo soltou uma risada nervosa para aliviar a tensão que sentia: — Ih, gente, tá parecendo filme de terror isso aí. Daqui a pouco é alguma assombração falando com a gente.\n\nSérgio, contudo, mal ouviu Léo. Ele estreitou os olhos para o caderno, tentando decifrar os fragmentos captados entre chiados: \"...Setor Três... Alfa... 22h...\". Quando percebeu essas palavras se formando no meio do estático, seu sangue gelou.",
+      "text": "Com o coração acelerado, Sérgio agarrou um caderno e começou a anotar os padrões dos estalos que saíam do rádio. Ele murmurou para si mesmo enquanto rabiscava pontos e traços: — Parece ter um padrão... não é aleatório. — Tipo um código Morse? — sugeriu Helena através do rádio, a voz dela baixinha, quase sussurrada, como se temesse ser ouvida por alguém além do grupo. — Acho que não, é mais... irregular — corrigiu Dudu, já analisando o som com seu ouvido treinado para frequências. Ágata falou quase num sopro: — Pode ser só interferência... ou então alguma coisa tentando se comunicar.  A eletricidade no ar arrepia a pele.",
       "choices": [
         {
           "id": "fazer_teste_raciocinio",
@@ -149,7 +149,7 @@
       "id": "sinal_6_ignorar",
       "chapter": 1,
       "title": "Ignorando os Sinais",
-      "text": "Sérgio pigarreou e tentou adotar um tom despreocupado: — Deve ser só estática boba. Vamos ignorar isso e continuar na nossa, pessoal.\n\nLéo soltou um suspiro de alívio: — Boa, bem melhor assim. Menos paranoia, galera.\n\nHelena, porém, continuou com a voz baixa e desconfiada: — Não sei não... aqueles estalos pareciam organizados, de verdade.\n\n— Olha, por via das dúvidas, vou deixar gravando aqui, tá? — disse Dudu do outro lado, já iniciando a gravação do rádio com um de seus aparelhos, caso algo mais acontecesse.\n\nNesse instante, antes que pudessem conversar mais, o rádio chiou novamente, dessa vez muito mais alto, estático explodindo no silêncio. Todos instintivamente ficaram em alerta. De repente, uma voz firme e grave atravessou o chiado: \"Objeto avistado. Setor Três.\"\n\nO grupo congelou; nenhum deles ousou dizer uma palavra.",
+      "text": "Sérgio pigarreou e tentou adotar um tom despreocupado: — Deve ser só estática boba. Vamos ignorar isso e continuar na nossa, pessoal. Léo soltou um suspiro de alívio: — Boa, bem melhor assim. Menos paranoia, galera. Helena, porém, continuou com a voz baixa e desconfiada: — Não sei não... aqueles estalos pareciam organizados, de verdade. — Olha, por via das dúvidas, vou deixar gravando aqui, tá? — disse Dudu do outro lado, já iniciando a gravação do rádio com um de seus aparelhos, caso algo mais acontecesse. O ar parece segurar a respiração.  Há algo observando, quieto, paciente. O murmúrio de rádios estoura em estática por um segundo.",
       "choices": [
         {
           "id": "ouvir_mais",
@@ -171,7 +171,7 @@
       "id": "sinal_7_test",
       "chapter": 1,
       "title": "Teste de Raciocínio",
-      "text": "Teste de Raciocínio: Sérgio esforça-se para associar os fragmentos da transmissão a algo familiar. Caso tenha sucesso, ele se lembrará de rumores sobre o \"Setor Três\" — supostamente uma área militar isolada perto da mata que todos na cidade comentam em sussurros.",
+      "text": "Teste de Raciocínio: Sérgio esforça-se para associar os fragmentos da transmissão a algo familiar.  Algo mudou no silêncio. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.",
       "skillCheck": {
         "stat": "logical",
         "difficulty": 10,
@@ -184,7 +184,7 @@
       "id": "sinal_7_sucesso",
       "chapter": 1,
       "title": "Revelação do Setor Três",
-      "text": "Sérgio sentiu uma pontada de reconhecimento. — Setor Três... — murmurou ele, arregalando os olhos ao lembrar. — É aquela área militar proibida, lá pros lados da mata! Ouvi uns caras comentando na barbearia outro dia. Falam que o Exército faz testes secretos lá.\n\nHelena levou a mão à boca, surpresa: — Sério mesmo? Isso tá ficando muito maior do que eu pensei...\n\nDudu quase deixou o rádio cair de tanta empolgação misturada com medo: — Então essa voz no rádio é do Exército?! Eles estão falando de operações militares ao vivo!\n\nÁgata manteve o tom sombrio: — Ou de algo que eles estão procurando... ou caçando.\n\nSérgio sentiu o coração disparar contra o peito. Se os militares estavam envolvidos, o que quer que fosse aquilo não era brincadeira.",
+      "text": "Sérgio sentiu uma pontada de reconhecimento. — Setor Três... — murmurou ele, arregalando os olhos ao lembrar. — É aquela área militar proibida, lá pros lados da mata! Ouvi uns caras comentando na barbearia outro dia. Falam que o Exército faz testes secretos lá. Helena levou a mão à boca, surpresa: — Sério mesmo? Isso tá ficando muito maior do que eu pensei... Dudu quase deixou o rádio cair de tanta empolgação misturada com medo: — Então essa voz no rádio é do Exército?!  A eletricidade no ar arrepia a pele.",
       "choices": [
         {
           "id": "compartilhar_ideia",
@@ -199,7 +199,7 @@
       "id": "sinal_7_falha",
       "chapter": 1,
       "title": "Confusão",
-      "text": "Sérgio franziu a testa, inquieto. A expressão \"Setor Três\" lhe soava estranhamente familiar, mas por mais que tentasse vasculhar a memória, não conseguia se lembrar de onde conhecia aquilo.\n\n— Deve ser algum código qualquer... — disse ele, tentando não demonstrar frustração na voz.\n\nLéo deu de ombros, ainda nervoso mas tentando parecer despreocupado: — Ou só um rádio pirata zuado pregando peça na gente. Vai ver é um maluco falando sozinho.\n\nHelena mordeu o lábio, encarando o rádio como se pudesse enxergar através dele: — Vamos continuar ouvindo. Talvez venha mais informação que explique.\n\nQuase como atendendo ao pedido dela, o aparelho voltou a chiar de forma insistente, pedindo atenção.",
+      "text": "Sérgio franziu a testa, inquieto. A expressão \"Setor Três\" lhe soava estranhamente familiar, mas por mais que tentasse vasculhar a memória, não conseguia se lembrar de onde conhecia aquilo. — Deve ser algum código qualquer... — disse ele, tentando não demonstrar frustração na voz. Léo deu de ombros, ainda nervoso mas tentando parecer despreocupado: — Ou só um rádio pirata zuado pregando peça na gente. Vai ver é um maluco falando sozinho.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "continuar_escutando",
@@ -214,7 +214,7 @@
       "id": "sinal_8",
       "chapter": 1,
       "title": "Transmissão Militar",
-      "text": "De repente, uma voz grave estourou no meio da estática, limpa o suficiente para todos ouvirem com clareza: \"Objeto interceptado. Setor Três. Equipe Alfa, avancem.\"\n\nHelena sentiu um gelo na espinha e sussurrou no canal: — Isso é transmissão militar, tenho certeza...\n\nDudu prendeu a respiração por um momento antes de soltar em um fio de voz: — Disseram \"objeto\"...? Que tipo de objeto eles teriam interceptado?\n\nO coração de Sérgio martelava. Antes que alguém arriscasse uma resposta, Ágata falou, a lembrança do sonho vívida na mente: — Lembram do que eu falei? Das luzes caindo no meu sonho? Luzes vermelhas... caindo do céu...\n\nSérgio largou o lápis e correu até a janela do quarto, abrindo as persianas com pressa. O céu noturno lá fora parecia tranquilo e estrelado, mas algo estava profundamente errado. Ele sentia na pele que a quietude escondia um turbilhão prestes a explodir.",
+      "text": "De repente, uma voz grave estourou no meio da estática, limpa o suficiente para todos ouvirem com clareza: \"Objeto interceptado. Setor Três. Equipe Alfa, avancem.\" Helena sentiu um gelo na espinha e sussurrou no canal: — Isso é transmissão militar, tenho certeza... Dudu prendeu a respiração por um momento antes de soltar em um fio de voz: — Disseram \"objeto\"...? Que tipo de objeto eles teriam interceptado? O coração de Sérgio martelava. Antes que alguém arriscasse uma resposta, Ágata falou, a lembrança do sonho vívida na mente: — Lembram do que eu falei? Das luzes caindo no meu sonho? Luzes vermelhas...  Há algo observando, quieto, paciente. O murmúrio de rádios estoura em estática por um segundo.",
       "choices": [
         {
           "id": "observar_ceu",
@@ -236,7 +236,7 @@
       "id": "sinal_8_desligar",
       "chapter": 1,
       "title": "Desligando o Rádio",
-      "text": "— Acho melhor desligar isso... — disse Sérgio de súbito, a voz entrecortada por um nó na garganta. O que estavam ouvindo dava arrepios.\n\n— Concordo, tá muito esquisito — apoiou Léo, aliviado. — Isso já ficou creepy demais pro meu gosto.\n\nDudu protestou imediatamente: — Como assim desligar? A gente tá quase descobrindo alguma coisa importante! Não podemos parar agora!\n\n— Não é seguro — avisou Ágata de repente, com firmeza incomum. — Sinto que... tem alguma coisa escutando a gente também.\n\nSérgio congelou com o dedo pairando sobre o botão de desligar. Seu coração batia descompassado. Por um segundo, tudo que se ouvia era o crepitar da estática. Então, antes que Sérgio pudesse apertar o botão, o rádio chiou sozinho e uma última frase rompeu o silêncio, como se respondesse diretamente a eles: \"Setor Três... objeto caiu.\"",
+      "text": "— Acho melhor desligar isso... — disse Sérgio de súbito, a voz entrecortada por um nó na garganta. O que estavam ouvindo dava arrepios. — Concordo, tá muito esquisito — apoiou Léo, aliviado. — Isso já ficou creepy demais pro meu gosto. Dudu protestou imediatamente: — Como assim desligar? A gente tá quase descobrindo alguma coisa importante! Não podemos parar agora! — Não é seguro — avisou Ágata de repente, com firmeza incomum. — Sinto que... tem alguma coisa escutando a gente também. Sérgio congelou com o dedo pairando sobre o botão de desligar.  Algo mudou no silêncio. Pistas falam de luzes triangulares cortando nuvens baixas.",
       "choices": [
         {
           "id": "ligar_novamente",
@@ -258,7 +258,7 @@
       "id": "sinal_9",
       "chapter": 1,
       "title": "A Luz no Céu",
-      "text": "Sérgio já estava com o rosto colado na janela quando viu acontecer: uma luz avermelhada rasgou o céu escuro. Ela atravessou o firmamento numa trajetória irregular, cambaleando como se estivesse fora de controle, deixando um rastro alaranjado atrás de si. Por um instante surreal, parecia um meteoro rubro dançando erraticamente.\n\nEntão, a luz despencou rapidamente atrás da linha de árvores na direção do bairro Jardim Andere, sumindo de vista em meio à mata distante. Mesmo dentro do quarto, Sérgio jurou ter sentido o chão tremer levemente.\n\n— Vocês viram isso?! — gritou Helena pelo rádio, a voz um misto de choque e excitação. — Caiu ali perto do Jardim Andere!\n\n— Eu vi! Caiu mesmo, com certeza! — confirmou Dudu, ofegante. Ele provavelmente também estava à janela de sua casa, testemunhando o fenômeno.\n\nLéo parecia querer negar, mas sua voz saiu trêmula: — Ou... ou foi um avião caindo? Né? Só pode ter sido um avião... certo?\n\n— Não foi avião nenhum — rebateu Ágata, decidida, enquanto contemplava o céu se apagando. — Seja lá o que for, é outra coisa. Algo não deste mundo.",
+      "text": "Sérgio já estava com o rosto colado na janela quando viu acontecer: uma luz avermelhada rasgou o céu escuro. Ela atravessou o firmamento numa trajetória irregular, cambaleando como se estivesse fora de controle, deixando um rastro alaranjado atrás de si. Por um instante surreal, parecia um meteoro rubro dançando erraticamente. Então, a luz despencou rapidamente atrás da linha de árvores na direção do bairro Jardim Andere, sumindo de vista em meio à mata distante. Mesmo dentro do quarto, Sérgio jurou ter sentido o chão tremer levemente. — Vocês viram isso?! — gritou Helena pelo rádio, a voz um misto de choque e excitação. — Caiu ali perto do Jardim Andere! — Eu vi! Caiu mesmo, com certeza! — confirmou Dudu, ofegante.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "decidir_o_que_fazer",
@@ -273,7 +273,7 @@
       "id": "sinal_9_frequencia",
       "chapter": 1,
       "title": "Nova Frequência",
-      "text": "Sérgio, tomado pela curiosidade, girou o dial do rádio em busca de outra frequência que pudesse estar relacionada. Por um momento, só encontrou estática comum... até que um novo som emergiu do ruído: um zumbido grave, contínuo, que parecia pulsar como um coração metálico.\n\n— Isso definitivamente não é transmissão de rádio normal... — comentou Dudu, a voz quase reverente diante do som estranho, como um cientista ouvindo algo extraordinário.\n\nHelena demorou a responder, hipnotizada pelo ruído incomum: — Tem algo... vivo nesse som. Sei lá, parece biológico, como se o som estivesse respirando.\n\nÁgata fechou os olhos enquanto ouvia, sua expressão ficando pálida: — É um chamado... — sussurrou ela. — Como o canto de uma criatura procurando resposta.\n\nDo outro lado, Léo engoliu em seco: — O-okay... agora eu tô oficialmente com medo, galera. Seja lá o que for isso, não gosto nem um pouco.",
+      "text": "Sérgio, tomado pela curiosidade, girou o dial do rádio em busca de outra frequência que pudesse estar relacionada. Por um momento, só encontrou estática comum... até que um novo som emergiu do ruído: um zumbido grave, contínuo, que parecia pulsar como um coração metálico. — Isso definitivamente não é transmissão de rádio normal... — comentou Dudu, a voz quase reverente diante do som estranho, como um cientista ouvindo algo extraordinário. Helena demorou a responder, hipnotizada pelo ruído incomum: — Tem algo... vivo nesse som. Sei lá, parece biológico, como se o som estivesse respirando.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "continuar_na_frequencia",
@@ -295,7 +295,7 @@
       "id": "sinal_9_desligado",
       "chapter": 1,
       "title": "Silêncio Pesado",
-      "text": "O rádio finalmente emudeceu, deixando o quarto de Sérgio mergulhado num silêncio tenso. Ele tirou os fones por um instante e tentou respirar fundo para se acalmar, mas o silêncio parecia ter peso, como um cobertor sufocante de inquietação.\n\nHelena rompeu aquele mutismo pelo canal, ainda inquieta: — E se a gente perdeu algo importante desligando? Talvez eles tenham dito mais coisas...\n\nDudu, prático, respondeu: — Calma, eu gravei tudo. A fita tá rodando aqui. Depois dá pra analisar com calma o que pegamos.\n\nÁgata parecia distante quando falou, numa voz quase desconectada: — Não eram só sons... Seja o que for, está nos observando agora.\n\nSérgio sentiu os pelos do braço se arrepiarem. Ele abriu a boca para responder quando, subitamente, uma luz intensa tingiu o céu noturno de vermelho. Através da janela, ele viu a claridade atravessar o céu e cair na direção da mata. Era a mesma luz vermelha que Ágata previra, cortando a noite e desaparecendo atrás das árvores da cidade.",
+      "text": "O rádio finalmente emudeceu, deixando o quarto de Sérgio mergulhado num silêncio tenso. Ele tirou os fones por um instante e tentou respirar fundo para se acalmar, mas o silêncio parecia ter peso, como um cobertor sufocante de inquietação. Helena rompeu aquele mutismo pelo canal, ainda inquieta: — E se a gente perdeu algo importante desligando? Talvez eles tenham dito mais coisas... Dudu, prático, respondeu: — Calma, eu gravei tudo. A fita tá rodando aqui. Depois dá pra analisar com calma o que pegamos. Ágata parecia distante quando falou, numa voz quase desconectada: — Não eram só sons... Seja o que for, está nos observando agora. O ar parece segurar a respiração.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "observar_ceu",
@@ -310,7 +310,7 @@
       "id": "sinal_10",
       "chapter": 1,
       "title": "A Decisão",
-      "text": "Não demorou muito para Dudu se pronunciar, a voz dele trêmula de empolgação: — A gente precisa ir lá agora! Temos que ver o que caiu com nossos próprios olhos!\n\n— Vocês estão loucos?! — reagiu Léo imediatamente. — Já passou da meia-noite, não dá pra sair assim! — Sua voz denunciava o medo, e ele olhava por sobre o ombro como se temesse que algo surgisse atrás dele.\n\nHelena, por outro lado, falou com resolução: — Se formos rápidos, dá pra chegar antes dos militares isolarem a área. É nossa chance de descobrir o que é antes que eles escondam tudo.\n\nÁgata abraçou a si mesma, a preocupação nítida no rosto: — Mas... e se for perigoso? Não sabemos o que caiu lá. Pode machucar a gente.\n\nSérgio ouvia cada um, sentindo o coração martelar no peito. Seus olhos pousaram em Helena, que parecia determinada a ir. Ele queria impressioná-la, mostrar que podia ser corajoso, mas o medo do desconhecido apertava seu estômago. Essa decisão pesaria em todos eles.",
+      "text": "Não demorou muito para Dudu se pronunciar, a voz dele trêmula de empolgação: — A gente precisa ir lá agora! Temos que ver o que caiu com nossos próprios olhos! — Vocês estão loucos?! — reagiu Léo imediatamente. — Já passou da meia-noite, não dá pra sair assim! — Sua voz denunciava o medo, e ele olhava por sobre o ombro como se temesse que algo surgisse atrás dele. Helena, por outro lado, falou com resolução: — Se formos rápidos, dá pra chegar antes dos militares isolarem a área. É nossa chance de descobrir o que é antes que eles escondam tudo. Ágata abraçou a si mesma, a preocupação nítida no rosto: — Mas... e se for perigoso? Não sabemos o que caiu lá.  Um som distante, metálico, que ninguém mais parece ouvir. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
       "choices": [
         {
           "id": "ir_agora",
@@ -339,7 +339,7 @@
       "id": "sinal_11_test",
       "chapter": 1,
       "title": "Teste de Empatia",
-      "text": "Teste de Empatia: Sérgio observa Ágata atentamente, tentando compreender o que se passa por trás de seus olhos. Se tiver sucesso, ele perceberá que embora ela esteja morrendo de medo, algo dentro dela diz que investigar o ocorrido é importante — importante o bastante para enfrentar esse medo.",
+      "text": "Teste de Empatia: Sérgio observa Ágata atentamente, tentando compreender o que se passa por trás de seus olhos.  Há algo observando, quieto, paciente.",
       "skillCheck": {
         "stat": "empathy",
         "difficulty": 8,
@@ -352,7 +352,7 @@
       "id": "sinal_11_sucesso",
       "chapter": 1,
       "title": "Compreendendo Ágata",
-      "text": "Sérgio notou as mãos de Ágata tremendo de leve e o brilho assustado em seu olhar. Apesar do medo evidente, havia também determinação ali. Ele se aproximou um pouco mais do rádio, falando gentilmente: — Você sente que é importante a gente ir, né? Que a gente precisa descobrir o que está acontecendo.\n\nÁgata respirou fundo e confirmou baixinho: — É maior do que a gente imagina. Maior do que nós cinco. Precisamos saber a verdade, não podemos deixar isso passar.\n\nHelena assentiu do outro lado, decidida: — Então vamos juntos. Se é importante assim, não vamos fugir.\n\nSérgio fechou os olhos por um segundo e reuniu coragem, enchendo o peito de ar. Era agora ou nunca. Eles tomaram sua decisão.",
+      "text": "Sérgio notou as mãos de Ágata tremendo de leve e o brilho assustado em seu olhar. Apesar do medo evidente, havia também determinação ali. Ele se aproximou um pouco mais do rádio, falando gentilmente: — Você sente que é importante a gente ir, né? Que a gente precisa descobrir o que está acontecendo. Ágata respirou fundo e confirmou baixinho: — É maior do que a gente imagina. Maior do que nós cinco. Precisamos saber a verdade, não podemos deixar isso passar.  Um som distante, metálico, que ninguém mais parece ouvir.",
       "choices": [
         {
           "id": "ir_agora",
@@ -374,7 +374,7 @@
       "id": "sinal_11_falha",
       "chapter": 1,
       "title": "Incerteza",
-      "text": "Sérgio tentou ler a expressão de Ágata, mas a apreensão dele próprio embaralhava seus sentidos. — P-perigoso como assim? — perguntou ele, sem entender exatamente o que ela queria dizer.\n\nÁgata abaixou os olhos, abraçando o livro de símbolos contra o peito como um talismã: — Eu só... sinto que tem algo muito errado nisso tudo. Uma coisa ruim.\n\n— Tá vendo? — exclamou Léo, quase aliviado por alguém compartilhar de seu medo. — Eu tô dizendo, melhor a gente não se meter. Vamos ficar na nossa e pronto.\n\nHelena lançou um olhar indeciso pela janela de seu quarto, em direção à distante mancha escura da mata: — Mas e se for algo único, que ninguém mais vai presenciar? Vamos mesmo perder essa chance?\n\nSérgio mordeu a parte interna da bochecha, dividido. Lá fora, a silhueta da mata no horizonte parecia esconder a resposta, como um gigante adormecido sob o manto da noite. Ele simplesmente não sabia o que fazer.",
+      "text": "Sérgio tentou ler a expressão de Ágata, mas a apreensão dele próprio embaralhava seus sentidos. — P-perigoso como assim? — perguntou ele, sem entender exatamente o que ela queria dizer. Ágata abaixou os olhos, abraçando o livro de símbolos contra o peito como um talismã: — Eu só... sinto que tem algo muito errado nisso tudo. Uma coisa ruim. — Tá vendo? — exclamou Léo, quase aliviado por alguém compartilhar de seu medo. — Eu tô dizendo, melhor a gente não se meter. Vamos ficar na nossa e pronto.  A eletricidade no ar arrepia a pele.",
       "choices": [
         {
           "id": "ir_agora",
@@ -396,7 +396,7 @@
       "id": "sinal_11_ir",
       "chapter": 1,
       "title": "A Aventura Noturna",
-      "text": "— Vamos agora! — decidiu Sérgio, tentando soar corajoso apesar do coração descontrolado no peito. Em poucos minutos, cada um deles já estava se preparando para sair escondido de casa.\n\nDudu enfiou algumas ferramentas e baterias sobressalentes na mochila surrada que sempre levava para os escoteiros. Helena trocou de roupa em um piscar de olhos, colocando uma calça jeans e amarrando bem os cadarços do tênis para pedalar. Ágata agarrou um pequeno amuleto pendurado em uma corrente — parecia um cristal envolto em arame — e o guardou no bolso, sussurrando uma prece silenciosa. Léo reclamou o tempo todo enquanto calçava os sapatos, mas não ia deixar seus amigos naquela sozinhos.\n\nPouco depois, encontraram-se pelas ruas desertas e montaram em suas bicicletas. Pedalaram juntos rumo à mata, as luzes das casas ficando para trás. A cidade dormia em silêncio, e só o som dos pedais e das correntes das bikes cortava a quietude da noite... exceto por um zumbido distante no ar, como um lamento mecânico que guiava o caminho deles.",
+      "text": "— Vamos agora! — decidiu Sérgio, tentando soar corajoso apesar do coração descontrolado no peito. Em poucos minutos, cada um deles já estava se preparando para sair escondido de casa. Dudu enfiou algumas ferramentas e baterias sobressalentes na mochila surrada que sempre levava para os escoteiros. Helena trocou de roupa em um piscar de olhos, colocando uma calça jeans e amarrando bem os cadarços do tênis para pedalar. Ágata agarrou um pequeno amuleto pendurado em uma corrente — parecia um cristal envolto em arame — e o guardou no bolso, sussurrando uma prece silenciosa. Léo reclamou o tempo todo enquanto calçava os sapatos, mas não ia deixar seus amigos naquela sozinhos.  Há algo observando, quieto, paciente.",
       "choices": [
         {
           "id": "seguir_pedalando",
@@ -411,7 +411,7 @@
       "id": "sinal_11_esperar",
       "chapter": 1,
       "title": "Esperando o Amanhecer",
-      "text": "— Acho melhor a gente esperar até amanhecer... — disse Sérgio por fim, com a voz cautelosa. A ideia de se embrenhar na mata à noite gelava seu sangue.\n\nLéo soltou um suspiro aliviado: — Finalmente alguém falando com bom senso. De dia a chance da gente virar comida de monstro é bem menor, né? — Tentou brincar, mas a tensão era perceptível.\n\nHelena não pareceu convencida: — E se os militares limparem tudo antes do amanhecer? Quando chegar de manhã, pode não ter mais nada lá pra ver... Eles vão isolar a área rápido.\n\nDudu interveio, mostrando a fita cassete que usava para gravações: — Olha, o importante é que gravei tudo que saiu no rádio. Podemos analisar com calma agora de madrugada, ver se perdemos alguma informação. Talvez dê pra entender melhor o que rolou.\n\nÁgata balançou a cabeça, inquieta: — Não vai esperar até amanhã. Eu sinto que algo está acontecendo neste exato momento. A cada minuto que passa, estamos perdendo tempo.\n\nSérgio olhou para o relógio na parede, o ponteiro dos segundos avançando implacável. A dúvida era torturante: esperar a segurança do sol ou agir sob o manto incerto da noite?",
+      "text": "— Acho melhor a gente esperar até amanhecer... — disse Sérgio por fim, com a voz cautelosa. A ideia de se embrenhar na mata à noite gelava seu sangue. Léo soltou um suspiro aliviado: — Finalmente alguém falando com bom senso. De dia a chance da gente virar comida de monstro é bem menor, né? — Tentou brincar, mas a tensão era perceptível. Helena não pareceu convencida: — E se os militares limparem tudo antes do amanhecer? Quando chegar de manhã, pode não ter mais nada lá pra ver... Eles vão isolar a área rápido. Dudu interveio, mostrando a fita cassete que usava para gravações: — Olha, o importante é que gravei tudo que saiu no rádio. Podemos analisar com calma agora de madrugada, ver se perdemos alguma informação. Talvez dê pra entender melhor o que rolou. O ar parece segurar a respiração.  Um som distante, metálico, que ninguém mais parece ouvir. Sussurros citam militares aparecendo rápido, tarde da noite.",
       "choices": [
         {
           "id": "reconsiderar_ir",
@@ -433,7 +433,7 @@
       "id": "sinal_12",
       "chapter": 1,
       "title": "Na Mata",
-      "text": "As bicicletas cortavam a noite velozmente enquanto os cinco amigos seguiam juntos, lanternas acesas balançando no guidão e feixes de luz tremeluzindo no asfalto escuro. O vento frio batia no rosto de Sérgio, fazendo seus olhos lacrimejarem, mas ele não diminuía o ritmo. A adrenalina mantinha o grupo unido e firme.\n\nLogo, as últimas casas do bairro ficaram para trás e a silhueta negra da mata do Jardim Andere surgiu à frente, fechada e misteriosa. De longe, vinha aquele zumbido baixo e constante, que agora soava mais alto a cada pedalada que os aproximava — como o som de um motor avariado ou de um enorme inseto escondido na escuridão.\n\nHelena ergueu a voz para ser ouvida sobre o barulho das bicicletas: — Vocês tão ouvindo isso?\n\nDudu assentiu, gritando de volta: — Tá vindo lá da mata, bem onde aquela coisa caiu!\n\nÁgata vinha logo atrás, e sua voz soou sombria ao alertar: — Cuidado... Sinto que não estamos sozinhos aqui.\n\nO aviso dela fez Sérgio apertar mais forte o guidão. Todos instintivamente diminuíram o ritmo, os olhos atentos ao redor. A sensação de serem observados crescia, como se a própria floresta tivesse olhos brilhando entre as folhas.",
+      "text": "As bicicletas cortavam a noite velozmente enquanto os cinco amigos seguiam juntos, lanternas acesas balançando no guidão e feixes de luz tremeluzindo no asfalto escuro. O vento frio batia no rosto de Sérgio, fazendo seus olhos lacrimejarem, mas ele não diminuía o ritmo. A adrenalina mantinha o grupo unido e firme. Logo, as últimas casas do bairro ficaram para trás e a silhueta negra da mata do Jardim Andere surgiu à frente, fechada e misteriosa. De longe, vinha aquele zumbido baixo e constante, que agora soava mais alto a cada pedalada que os aproximava — como o som de um motor avariado ou de um enorme inseto escondido na escuridão. Helena ergueu a voz para ser ouvida sobre o barulho das bicicletas: — Vocês tão ouvindo isso?  Há algo observando, quieto, paciente. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
       "choices": [
         {
           "id": "entrar_mata",
@@ -455,7 +455,7 @@
       "id": "sinal_12_esperar",
       "chapter": 1,
       "title": "A Manhã Seguinte",
-      "text": "Sérgio se revirou na cama a noite inteira, mas o sono não veio fácil. Quando finalmente adormeceu, foi assombrado por sonhos febris: viu de novo as luzes vermelhas rasgando o céu, ouviu vozes estranhas sussurrando seu nome em meio a um chiado. Acordou várias vezes com o coração aos pulos.\n\nNo primeiro clarão da manhã de sábado, ele já estava de pé. O grupo combinou de se encontrar o mais cedo possível. Reuniram-se num canto discreto da praça central, cada rosto marcado por olheiras e preocupação.\n\nDudu trouxe consigo o gravador e rebobinou a fita, fazendo o relato da noite ganhar vida novamente: \"Objeto caiu. Setor Três.\" A frase robotizada ecoou dos pequenos alto-falantes, reacendendo a urgência em todos.\n\nHelena olhava para o horizonte, onde a copa das árvores do Jardim Andere se erguia distante: — A mata tá cheia de militares agora. Ouvi vizinhos comentando que bloquearam as ruas lá perto. Tem jipe do Exército e tudo.\n\nÁgata cerrava os punhos ao lado do corpo: — Ainda dá tempo de ir antes que eles terminem. Alguma coisa me diz que nem eles conseguiram tudo ainda. Não podemos desistir agora.\n\nSérgio concordou com um meneio de cabeça, sentindo que não podia voltar atrás. O sol da manhã podia trazer clareza, mas o mistério da noite anterior continuava vivo, implorando para ser desvendado.",
+      "text": "Sérgio se revirou na cama a noite inteira, mas o sono não veio fácil. Quando finalmente adormeceu, foi assombrado por sonhos febris: viu de novo as luzes vermelhas rasgando o céu, ouviu vozes estranhas sussurrando seu nome em meio a um chiado. Acordou várias vezes com o coração aos pulos. No primeiro clarão da manhã de sábado, ele já estava de pé. O grupo combinou de se encontrar o mais cedo possível. Reuniram-se num canto discreto da praça central, cada rosto marcado por olheiras e preocupação. Dudu trouxe consigo o gravador e rebobinou a fita, fazendo o relato da noite ganhar vida novamente: \"Objeto caiu. Setor Três.\" A frase robotizada ecoou dos pequenos alto-falantes, reacendendo a urgência em todos. Helena olhava para o horizonte, onde a copa das árvores do Jardim Andere se erguia distante: — A mata tá cheia de militares agora. Ouvi vizinhos comentando que bloquearam as ruas lá perto.  Há algo observando, quieto, paciente.",
       "choices": [
         {
           "id": "ir_mata",
@@ -477,7 +477,7 @@
       "id": "sinal_13",
       "chapter": 1,
       "title": "Dentro da Mata",
-      "text": "Sob o manto da noite, o grupo encostou as bicicletas atrás de alguns arbustos e prosseguiu a pé, adentrando a mata fechada. Cada passo sobre a camada de folhas secas fazia galhos estalarem sob seus tênis, soando escandalosamente alto aos ouvidos tensos de todos.\n\nO zumbido ouvido no rádio agora era quase palpável, tão forte que parecia vibrar dentro do peito de Sérgio. Quanto mais avançavam entre as árvores, mais nítido ficava o som, intercalado por pulsos estranhos. Uma luz fraca e trêmula pulsava adiante, se infiltrando por entre os troncos grossos e projetando sombras oscilantes no caminho deles.\n\n— I-isso é loucura... — sussurrou Léo, o rosto pálido de medo enquanto ele olhava em volta, esperando ver alguma criatura saltar das sombras.\n\n— Cala a boca, Léo — retrucou Helena num sussurro áspero. Ela também estava assustada, mas tentava manter o foco naquela luz adiante.\n\nUm arrepio percorria a espinha de Sérgio a cada metro que avançavam. Ele tinha a nítida impressão de que havia olhos escondidos na escuridão observando cada movimento deles. A floresta inteira parecia prender a respiração, ciente de que intrusos se aproximavam de algo que deveria permanecer oculto.",
+      "text": "Sob o manto da noite, o grupo encostou as bicicletas atrás de alguns arbustos e prosseguiu a pé, adentrando a mata fechada. Cada passo sobre a camada de folhas secas fazia galhos estalarem sob seus tênis, soando escandalosamente alto aos ouvidos tensos de todos. O zumbido ouvido no rádio agora era quase palpável, tão forte que parecia vibrar dentro do peito de Sérgio. Quanto mais avançavam entre as árvores, mais nítido ficava o som, intercalado por pulsos estranhos. Uma luz fraca e trêmula pulsava adiante, se infiltrando por entre os troncos grossos e projetando sombras oscilantes no caminho deles. — I-isso é loucura... — sussurrou Léo, o rosto pálido de medo enquanto ele olhava em volta, esperando ver alguma criatura saltar das sombras. — Cala a boca, Léo — retrucou Helena num sussurro áspero.  Você sente que não está sozinho.",
       "choices": [
         {
           "id": "seguir_luz",
@@ -499,7 +499,7 @@
       "id": "sinal_13_observar",
       "chapter": 1,
       "title": "Observando de Longe",
-      "text": "Quando chegaram à orla da mata, Sérgio ergueu a mão, sinalizando para o grupo parar. — Espera... — disse em voz baixa. — Vamos ver o que tá acontecendo primeiro, sem ir com tudo.\n\nEles subiram com cuidado até o topo de um pequeno morro próximo, de onde tinham visão parcial da clareira mais à frente. Agachados por trás de arbustos, os amigos viram diversas luzes brancas e amarelas piscando no meio das árvores. Eram lanternas e faróis de veículos. O ronco distante de caminhões militares e o tilintar de metais quebrando galhos podia ser ouvido se aproximando.\n\nDudu engoliu em seco e comentou quase sem voz: — Os militares... eles estão cercando alguma coisa lá embaixo.\n\nÁgata apertou o amuleto no bolso e fechou os olhos por um instante: — Não é só um objeto o que eles procuram... Tem algo vivo ali. Eu sinto.\n\nSérgio trocou olhares preocupados com Helena. O tempo estava se esgotando. Se quisessem descobrir algo antes dos soldados, precisavam agir logo ou tudo seria levado embora, engolido pelo segredo.",
+      "text": "Quando chegaram à orla da mata, Sérgio ergueu a mão, sinalizando para o grupo parar. — Espera... — disse em voz baixa. — Vamos ver o que tá acontecendo primeiro, sem ir com tudo. Eles subiram com cuidado até o topo de um pequeno morro próximo, de onde tinham visão parcial da clareira mais à frente. Agachados por trás de arbustos, os amigos viram diversas luzes brancas e amarelas piscando no meio das árvores. Eram lanternas e faróis de veículos. O ronco distante de caminhões militares e o tilintar de metais quebrando galhos podia ser ouvido se aproximando. Dudu engoliu em seco e comentou quase sem voz: — Os militares... eles estão cercando alguma coisa lá embaixo. O ar parece segurar a respiração.  A eletricidade no ar arrepia a pele.",
       "choices": [
         {
           "id": "entrar_mata",
@@ -521,7 +521,7 @@
       "id": "sinal_13_dia",
       "chapter": 1,
       "title": "Mata de Dia",
-      "text": "Ao chegar ao limite da mata em plena luz do dia, o grupo notou que, embora o sol tornasse a floresta menos assustadora, a presença militar era inconfundível. Dois caminhões verde-oliva estavam estacionados bloqueando a rua principal que levava ao bosque, e homens fardados podiam ser vistos patrulhando a área mais à frente.\n\nSérgio guiou os amigos por um atalho que conhecia, passando por um buraco na cerca de arame farpado de um lote vago. Assim conseguiram entrar na mata evitando os guardas.\n\nLá dentro, os sons da natureza pareciam abafados, como se os pássaros e insetos estivessem escondidos. Ainda se ouvia, muito ao longe, um eco fraco daquele mesmo zumbido misterioso da noite passada.\n\nHelena observou marcas de pneus frescas no solo e comentou em tom baixo: — Talvez eles já tenham levado o que caiu. Se chegaram cedo, podem ter recolhido tudo.\n\nSérgio balançou a cabeça negativamente, obstinado: — Ou não... Pode ter algo que eles não acharam ainda. Vamos procurar. Enquanto não nos pegarem, temos chance de ver alguma coisa.\n\nOs amigos trocaram um breve aceno e avançaram para dentro da mata, desviando de fitas de isolamento e driblando a vigilância, determinados a chegar à clareira antes que fosse tarde.",
+      "text": "Ao chegar ao limite da mata em plena luz do dia, o grupo notou que, embora o sol tornasse a floresta menos assustadora, a presença militar era inconfundível. Dois caminhões verde-oliva estavam estacionados bloqueando a rua principal que levava ao bosque, e homens fardados podiam ser vistos patrulhando a área mais à frente. Sérgio guiou os amigos por um atalho que conhecia, passando por um buraco na cerca de arame farpado de um lote vago. Assim conseguiram entrar na mata evitando os guardas. Lá dentro, os sons da natureza pareciam abafados, como se os pássaros e insetos estivessem escondidos. Ainda se ouvia, muito ao longe, um eco fraco daquele mesmo zumbido misterioso da noite passada. Helena observou marcas de pneus frescas no solo e comentou em tom baixo: — Talvez eles já tenham levado o que caiu.  A eletricidade no ar arrepia a pele. Sussurros citam militares aparecendo rápido, tarde da noite.",
       "choices": [
         {
           "id": "entrar_mata",
@@ -536,7 +536,7 @@
       "id": "sinal_13_fim",
       "chapter": 1,
       "title": "Fim - Missão Perdida",
-      "text": "Acabrunhados e tomados pela frustração, o grupo retornou para suas casas sem respostas. A curiosidade ardia no peito de cada um, mas o medo e a indecisão falaram mais alto naquela noite. Sérgio mal pregou o olho quando tentou dormir – sempre que fechava os olhos, via aquela luz vermelha e ouvia fragmentos de vozes metálicas ecoando em sua mente.\n\nNa manhã seguinte, a cidade estava fervilhando com rumores. Na padaria, no ponto de ônibus, em cada esquina, as pessoas sussurravam sobre a movimentação de militares e \"algo estranho\" ocorrido na mata do Jardim Andere. Era notícia no rádio local: autoridades negavam qualquer incidente, mas não convenciam ninguém.\n\nAntes de se reunir com os amigos novamente, Sérgio ligou o rádio de Dudu, que ficara com ele. Só restava um último chiado gravado na fita da noite anterior: \"Missão concluída.\" Era a voz fria de um homem desconhecido, provavelmente militar, selando o fim da busca.\n\nEles haviam perdido a chance de descobrir a verdade com os próprios olhos. O mistério do que caiu na mata – e do que os soldados encontraram – permaneceria sem solução... pelo menos por enquanto. (Fim de Jogo)",
+      "text": "Acabrunhados e tomados pela frustração, o grupo retornou para suas casas sem respostas. A curiosidade ardia no peito de cada um, mas o medo e a indecisão falaram mais alto naquela noite. Sérgio mal pregou o olho quando tentou dormir – sempre que fechava os olhos, via aquela luz vermelha e ouvia fragmentos de vozes metálicas ecoando em sua mente. Na manhã seguinte, a cidade estava fervilhando com rumores. Na padaria, no ponto de ônibus, em cada esquina, as pessoas sussurravam sobre a movimentação de militares e \"algo estranho\" ocorrido na mata do Jardim Andere. Era notícia no rádio local: autoridades negavam qualquer incidente, mas não convenciam ninguém. Antes de se reunir com os amigos novamente, Sérgio ligou o rádio de Dudu, que ficara com ele. O ar parece segurar a respiração.  Você sente que não está sozinho.",
       "gameOver": true,
       "choices": [
         {
@@ -552,7 +552,7 @@
       "id": "sinal_14",
       "chapter": 1,
       "title": "O Encontro",
-      "text": "Seguindo a trêmula luz pulsante, os amigos emergiram numa clareira escondida entre as árvores altas. O ar ali estava pesado e cheirava a algo químico, um odor acre de amônia que fazia arder a garganta. Bem no centro da clareira, o solo estava queimado e coberto de galhos partidos, como se algo muito pesado tivesse caído do céu.\n\nNo meio dos arbustos amassados, encontrava-se a fonte da luz: algo metálico e de formato disforme, parcialmente enterrado na terra fofa. Tinha cerca de dois metros de comprimento e uma superfície prateada escura coberta de fuligem, emitindo um brilho suave avermelhado através de frestas em sua carcaça. Aquele objeto definitivamente não fora feito por mãos humanas — bastava um olhar para perceber.\n\nÁgata levou a mão à boca, os olhos arregalados em descrença, e sussurrou: — É isso... É real. — Sua voz mal saiu, tomada pela mistura de medo e fascínio diante do desconhecido.\n\nSérgio sentiu as pernas fraquejarem. Estava realmente diante de algo que só ouvira em histórias de ficção. Antes que pudesse se aproximar mais, o objeto metálico tremeu e soltou um estalo alto, fazendo um painel lateral deslizar lentamente. Era como se ele respondesse à presença deles, abrindo-se por vontade própria.\n\nO grupo recuou instintivamente um passo quando um vapor quente escapou do interior do artefato. Algo dentro dele se movia, projetando uma sombra trêmula na luz vermelha. Seja o que fosse, tinha percebido que não estava mais sozinho naquela mata.",
+      "text": "Seguindo a trêmula luz pulsante, os amigos emergiram numa clareira escondida entre as árvores altas. O ar ali estava pesado e cheirava a algo químico, um odor acre de amônia que fazia arder a garganta. Bem no centro da clareira, o solo estava queimado e coberto de galhos partidos, como se algo muito pesado tivesse caído do céu. No meio dos arbustos amassados, encontrava-se a fonte da luz: algo metálico e de formato disforme, parcialmente enterrado na terra fofa. Tinha cerca de dois metros de comprimento e uma superfície prateada escura coberta de fuligem, emitindo um brilho suave avermelhado através de frestas em sua carcaça. Aquele objeto definitivamente não fora feito por mãos humanas — bastava um olhar para perceber. Ágata levou a mão à boca, os olhos arregalados em descrença, e sussurrou: — É isso... É real. — Sua voz mal saiu, tomada pela mistura de medo e fascínio diante do desconhecido. Sérgio sentiu as pernas fraquejarem. Estava realmente diante de algo que só ouvira em histórias de ficção. O ar parece segurar a respiração.  Você sente que não está sozinho.",
       "choices": [
         {
           "id": "continuar_capitulo2",
@@ -567,7 +567,7 @@
       "id": "sinal_14_test",
       "chapter": 1,
       "title": "Teste de Agilidade",
-      "text": "Teste de Agilidade: Sérgio decide chegar mais perto, avançando com cuidado em direção à luz misteriosa na clareira. Se ele for bem-sucedido no teste de agilidade, conseguirá se aproximar sem fazer barulho e sem ser notado pelo que quer que esteja à espreita.",
+      "text": "Teste de Agilidade: Sérgio decide chegar mais perto, avançando com cuidado em direção à luz misteriosa na clareira. O ar parece segurar a respiração.  Há algo observando, quieto, paciente.",
       "skillCheck": {
         "stat": "tech",
         "difficulty": 8,

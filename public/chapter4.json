@@ -6,7 +6,7 @@
       "id": "cerco_1",
       "chapter": 4,
       "title": "Manhã Silenciosa",
-      "text": "O sol mal tinha nascido quando Sérgio acordou, o coração ainda batendo forte pelos acontecimentos da noite anterior. No abrigo improvisado, o grupo se reunia em torno da estranha criatura. Ela respirava com dificuldade, soltando estalos baixos no ar. Lá fora, a cidade já estava em alvoroço.\n\nDo rádio de Dudu, uma transmissão interrompeu o silêncio: \"Setor limpo. Alvo não localizado.\" As palavras eram frias, repetidas em ciclos. Helena olhou para os outros, preocupada: — Eles estão procurando. E estão cada vez mais perto.",
+      "text": "O sol mal tinha nascido quando Sérgio acordou, o coração ainda batendo forte pelos acontecimentos da noite anterior. No abrigo improvisado, o grupo se reunia em torno da estranha criatura. Ela respirava com dificuldade, soltando estalos baixos no ar. Lá fora, a cidade já estava em alvoroço. Do rádio de Dudu, uma transmissão interrompeu o silêncio: \"Setor limpo.  Você sente que não está sozinho.",
       "choices": [
         {
           "id": "observar_rua",
@@ -24,7 +24,7 @@
       "id": "cerco_2",
       "chapter": 4,
       "title": "Espiando a Rua",
-      "text": "Sérgio puxou discretamente a cortina e espiou pela fresta. Duas viaturas militares passavam devagar, soldados olhando para os lados com atenção. Um deles carregava um rádio grande preso ao ombro.\n\n— Eles estão vasculhando casa por casa... — sussurrou Sérgio, sentindo um nó no estômago. — Se baterem aqui, acabou.",
+      "text": "Sérgio puxou discretamente a cortina e espiou pela fresta. Duas viaturas militares passavam devagar, soldados olhando para os lados com atenção. Um deles carregava um rádio grande preso ao ombro. O ar parece segurar a respiração.  Algo mudou no silêncio. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.",
       "choices": [
         {
           "id": "esconder_criatura",
@@ -42,7 +42,7 @@
       "id": "cerco_3",
       "chapter": 4,
       "title": "Reforçando o Abrigo",
-      "text": "Dudu e Léo empurraram caixas e móveis para frente da porta, criando uma barreira improvisada. Helena ajudava a arrastar uma estante pesada. O som ecoava alto demais para o gosto de Sérgio.\n\nÁgata apertava o amuleto no peito, os olhos assustados: — Se eles ouvirem esse barulho, já era...",
+      "text": "Dudu e Léo empurraram caixas e móveis para frente da porta, criando uma barreira improvisada. Helena ajudava a arrastar uma estante pesada. O som ecoava alto demais para o gosto de Sérgio.  Um som distante, metálico, que ninguém mais parece ouvir.",
       "choices": [
         {
           "id": "fazer_teste_agilidade",
@@ -55,7 +55,7 @@
       "id": "cerco_3_test",
       "chapter": 4,
       "title": "Teste de Agilidade",
-      "text": "Teste de Agilidade: Sérgio tenta mover os móveis rápido e silenciosamente, evitando chamar atenção.",
+      "text": "Teste de Agilidade: Sérgio tenta mover os móveis rápido e silenciosamente, evitando chamar atenção.  A eletricidade no ar arrepia a pele.",
       "skillCheck": {
         "stat": "tech",
         "difficulty": 9,
@@ -68,7 +68,7 @@
       "id": "cerco_3_sucesso",
       "chapter": 4,
       "title": "Barreira Pronta",
-      "text": "Com movimentos precisos, Sérgio conseguiu empurrar a estante sem ranger. O abrigo estava mais seguro, ao menos por enquanto.",
+      "text": "Com movimentos precisos, Sérgio conseguiu empurrar a estante sem ranger.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "observar_rua",
@@ -81,7 +81,7 @@
       "id": "cerco_3_falha",
       "chapter": 4,
       "title": "Barulho Fatal",
-      "text": "A estante arrastou-se com um estrondo horrível. Lá fora, passos aceleraram. Uma batida forte ecoou na porta: BUM-BUM-BUM.\n\n— Abrir! Exército Brasileiro! — gritou uma voz.",
+      "text": "A estante arrastou-se com um estrondo horrível. Lá fora, passos aceleraram.  Você sente que não está sozinho. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.",
       "choices": [
         {
           "id": "esconder_criatura",
@@ -94,7 +94,7 @@
       "id": "cerco_4",
       "chapter": 4,
       "title": "Escondendo a Criatura",
-      "text": "Helena e Ágata cobriram a criatura com cobertores e caixas, escondendo-a num canto escuro. A respiração ofegante do ser ainda escapava em estalos abafados.\n\n— Shhh... — pediu Helena, nervosa, enquanto do lado de fora o som de botas se aproximava.",
+      "text": "Helena e Ágata cobriram a criatura com cobertores e caixas, escondendo-a num canto escuro. A respiração ofegante do ser ainda escapava em estalos abafados. — Shhh...  Um som distante, metálico, que ninguém mais parece ouvir.",
       "choices": [
         {
           "id": "fazer_teste_coragem",
@@ -107,7 +107,7 @@
       "id": "cerco_4_test",
       "chapter": 4,
       "title": "Teste de Coragem",
-      "text": "Teste de Coragem: Sérgio tenta se manter firme, encarando a possibilidade de confronto direto.",
+      "text": "Teste de Coragem: Sérgio tenta se manter firme, encarando a possibilidade de confronto direto.  Você sente que não está sozinho.",
       "skillCheck": {
         "stat": "logical",
         "difficulty": 10,
@@ -120,7 +120,7 @@
       "id": "cerco_4_sucesso",
       "chapter": 4,
       "title": "Frente Erguida",
-      "text": "Sérgio respirou fundo, o peito firme. Se entrassem, ele saberia o que dizer. Por sorte, as botas passaram direto. Nenhuma batida veio. Eles seguiram adiante.",
+      "text": "Sérgio respirou fundo, o peito firme. Se entrassem, ele saberia o que dizer.  Há algo observando, quieto, paciente.",
       "choices": [
         {
           "id": "decidir_fuga",
@@ -133,7 +133,7 @@
       "id": "cerco_4_falha",
       "chapter": 4,
       "title": "Pânico",
-      "text": "O coração de Sérgio disparou. Ele não conseguiu controlar o nervosismo e deixou escapar um gemido baixo. Lá fora, alguém parou. Uma lanterna brilhou pela janela.\n\n— Tem gente aí! — uma voz firme anunciou.",
+      "text": "O coração de Sérgio disparou. Ele não conseguiu controlar o nervosismo e deixou escapar um gemido baixo. Lá fora, alguém parou.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "fugir_agora",
@@ -146,7 +146,7 @@
       "id": "cerco_5",
       "chapter": 4,
       "title": "Fuga Apresada",
-      "text": "O grupo reuniu suas coisas e correu pelos fundos, a criatura apoiada nos braços de Sérgio e Helena. As ruas já tinham patrulhas, e viaturas estacionavam nas esquinas. Precisavam ser rápidos.",
+      "text": "O grupo reuniu suas coisas e correu pelos fundos, a criatura apoiada nos braços de Sérgio e Helena.  Algo mudou no silêncio. O murmúrio de rádios estoura em estática por um segundo.",
       "choices": [
         {
           "id": "tentar_esgoto",
@@ -164,7 +164,7 @@
       "id": "cerco_6",
       "chapter": 4,
       "title": "Decisão Difícil",
-      "text": "O silêncio voltou, mas a tensão era insuportável. Helena olhou para o grupo: — Não dá pra ficar aqui muito mais tempo. Eles vão voltar. Temos que decidir agora.",
+      "text": "O silêncio voltou, mas a tensão era insuportável. O ar parece segurar a respiração.  Um som distante, metálico, que ninguém mais parece ouvir. Sussurros citam militares aparecendo rápido, tarde da noite.",
       "choices": [
         {
           "id": "fugir_agora",
@@ -182,7 +182,7 @@
       "id": "cerco_7",
       "chapter": 4,
       "title": "Esgoto",
-      "text": "O grupo encontrou uma tampa de bueiro aberta no beco. O cheiro era horrível, mas era a única saída. Dudu foi o primeiro a descer.\n\nA criatura se encolheu com medo, mas Helena a encorajou com um toque suave.",
+      "text": "O grupo encontrou uma tampa de bueiro aberta no beco. O cheiro era horrível, mas era a única saída. Dudu foi o primeiro a descer.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "fazer_teste_empatia",
@@ -195,7 +195,7 @@
       "id": "cerco_7_test",
       "chapter": 4,
       "title": "Teste de Empatia",
-      "text": "Helena tenta acalmar a criatura para que ela entre no túnel de esgoto.",
+      "text": "Helena tenta acalmar a criatura para que ela entre no túnel de esgoto.  Um som distante, metálico, que ninguém mais parece ouvir.",
       "skillCheck": {
         "stat": "empathy",
         "difficulty": 8,
@@ -208,7 +208,7 @@
       "id": "cerco_7_sucesso",
       "chapter": 4,
       "title": "Descida Segura",
-      "text": "Com palavras suaves e gestos calmos, Helena fez a criatura confiar. Eles desceram no túnel escuro, a água fétida correndo pelos pés.",
+      "text": "Com palavras suaves e gestos calmos, Helena fez a criatura confiar. O ar parece segurar a respiração.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "continuar_esgoto",
@@ -221,7 +221,7 @@
       "id": "cerco_7_falha",
       "chapter": 4,
       "title": "Resistência da Criatura",
-      "text": "A criatura resistiu, soltando um grunhido forte que ecoou pelo beco. Uma lanterna brilhou ao longe. Soldados estavam se aproximando.",
+      "text": "A criatura resistiu, soltando um grunhido forte que ecoou pelo beco.  Você sente que não está sozinho.",
       "choices": [
         {
           "id": "correr_rua",
@@ -234,7 +234,7 @@
       "id": "cerco_8",
       "chapter": 4,
       "title": "Disfarce Entre Vizinhos",
-      "text": "Na esquina, vizinhos curiosos comentavam alto sobre a movimentação militar. O grupo se misturou entre eles, puxando capuzes e abaixando a cabeça.\n\nUm soldado passou devagar, analisando os rostos.",
+      "text": "Na esquina, vizinhos curiosos comentavam alto sobre a movimentação militar.  Um som distante, metálico, que ninguém mais parece ouvir.",
       "choices": [
         {
           "id": "fazer_teste_raciocinio",
@@ -247,7 +247,7 @@
       "id": "cerco_8_test",
       "chapter": 4,
       "title": "Teste de Raciocínio",
-      "text": "Dudu tenta bolar uma desculpa rápida e convincente para despistar os militares.",
+      "text": "Dudu tenta bolar uma desculpa rápida e convincente para despistar os militares.  Há algo observando, quieto, paciente. Pistas falam de luzes triangulares cortando nuvens baixas.",
       "skillCheck": {
         "stat": "logical",
         "difficulty": 9,
@@ -260,7 +260,7 @@
       "id": "cerco_8_sucesso",
       "chapter": 4,
       "title": "Mentira Convincente",
-      "text": "— Estamos indo comprar pão, senhor — disse Dudu com naturalidade. O soldado apenas balançou a cabeça e seguiu adiante.\n\nO grupo respirou aliviado.",
+      "text": "— Estamos indo comprar pão, senhor — disse Dudu com naturalidade.  Um som distante, metálico, que ninguém mais parece ouvir.",
       "choices": [
         {
           "id": "continuar_fuga",
@@ -273,7 +273,7 @@
       "id": "cerco_8_falha",
       "chapter": 4,
       "title": "Descobertos",
-      "text": "Dudu gaguejou, inventando uma desculpa sem sentido. O soldado estreitou os olhos e chamou outros. — Eles! Peguem-nos!",
+      "text": "Dudu gaguejou, inventando uma desculpa sem sentido. O soldado estreitou os olhos e chamou outros. — Eles! Peguem-nos!  A eletricidade no ar arrepia a pele. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.",
       "choices": [
         {
           "id": "correr",
@@ -286,7 +286,7 @@
       "id": "cerco_9",
       "chapter": 4,
       "title": "O Cerco Fecha",
-      "text": "As ruas ficaram lotadas de viaturas. Um helicóptero começou a sobrevoar baixo. O som das hélices vibrava na alma. Helena agarrou a mão de Sérgio: — Estamos cercados...",
+      "text": "As ruas ficaram lotadas de viaturas. Um helicóptero começou a sobrevoar baixo. O som das hélices vibrava na alma. O ar parece segurar a respiração.  A eletricidade no ar arrepia a pele. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
       "choices": [
         {
           "id": "ultima_chance",
@@ -299,7 +299,7 @@
       "id": "cerco_10",
       "chapter": 4,
       "title": "O Refúgio",
-      "text": "Depois de uma fuga desesperada, o grupo encontrou abrigo numa velha oficina abandonada na saída da cidade. A criatura respirava fraco, mas parecia grata.\n\nÁgata fechou os olhos, sussurrando: — Eles não vão parar. Agora somos parte disso.\n\nSérgio olhou para o horizonte, sentindo o peso da perseguição. A próxima noite traria escolhas ainda mais sombrias.",
+      "text": "Depois de uma fuga desesperada, o grupo encontrou abrigo numa velha oficina abandonada na saída da cidade. A criatura respirava fraco, mas parecia grata. Ágata fechou os olhos, sussurrando: — Eles não vão parar. Agora somos parte disso.  Você sente que não está sozinho. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.",
       "choices": [
         {
           "id": "continuar_capitulo5",

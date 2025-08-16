@@ -6,7 +6,7 @@
       "id": "chapter3_1",
       "chapter": 3,
       "title": "Corrida na Escuridão",
-      "text": "Com a clareira ficando para trás, os cinco avançam entre troncos e raízes, carregando o ser pelos ombros como conseguem. O cheiro de amônia e terra molhada gruda na garganta. Lanternas varrem a mata ao longe.\n\n— A estrada de terra leva pro Jardim Andere — sussurra Dudu. — Se a gente sair por trás do campinho, dá pra despistar.\n\n— Ele tá fraco — diz Helena, sentindo o corpo leve e febril do visitante tremer.\n\nÁgata segura o amuleto. — Eu consigo acalmá-lo… se me deixarem tentar.",
+      "text": "Com a clareira ficando para trás, os cinco avançam entre troncos e raízes, carregando o ser pelos ombros como conseguem. O cheiro de amônia e terra molhada gruda na garganta. Lanternas varrem a mata ao longe. — A estrada de terra leva pro Jardim Andere — sussurra Dudu. — Se a gente sair por trás do campinho, dá pra despistar.  Você sente que não está sozinho. O murmúrio de rádios estoura em estática por um segundo.",
       "choices": [
         {
           "id": "tentar_atalho",
@@ -35,7 +35,7 @@
       "id": "chapter3_2_atalho",
       "chapter": 3,
       "title": "Barranco Escorregadio",
-      "text": "O atalho corta por um barranco úmido coberto de folhas. O terreno cede sob os pés e o grupo quase despenca.",
+      "text": "O atalho corta por um barranco úmido coberto de folhas. O terreno cede sob os pés e o grupo quase despenca.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "teste_agilidade_barranco",
@@ -50,7 +50,7 @@
       "id": "chapter3_test_agilidade_barranco",
       "chapter": 3,
       "title": "Teste de Agilidade",
-      "text": "Teste de Agilidade: o grupo tenta descer o barranco sem cair nem derrubar a criatura.",
+      "text": "Teste de Agilidade: o grupo tenta descer o barranco sem cair nem derrubar a criatura.  A eletricidade no ar arrepia a pele.",
       "skillCheck": {
         "stat": "tech",
         "difficulty": 10,
@@ -63,7 +63,7 @@
       "id": "chapter3_3_descida_ok",
       "chapter": 3,
       "title": "Descida Precisa",
-      "text": "Com passos curtos e respiração presa, vocês alcançam a base. O ser solta um trinado baixo, aliviado. As lanternas estão mais distantes.",
+      "text": "Com passos curtos e respiração presa, vocês alcançam a base. O ar parece segurar a respiração.  A eletricidade no ar arrepia a pele.",
       "choices": [
         {
           "id": "seguir_para_campo",
@@ -78,7 +78,7 @@
       "id": "chapter3_3_descida_falha",
       "chapter": 3,
       "title": "Queda e Barulho",
-      "text": "Léo escorrega, derruba um tronco e o estrondo ecoa pela mata. O ser guincha; faróis mudam de direção.\n\n— Eles ouviram — sussurra Dudu, pálido.",
+      "text": "Léo escorrega, derruba um tronco e o estrondo ecoa pela mata.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "correr_mato",
@@ -100,7 +100,7 @@
       "id": "chapter3_test_esconder_folhagem",
       "chapter": 3,
       "title": "Teste de Agilidade",
-      "text": "Teste de Agilidade: vocês tentam se achatar sob samambaias e folhas sem deixar rastro.",
+      "text": "Teste de Agilidade: vocês tentam se achatar sob samambaias e folhas sem deixar rastro.  Você sente que não está sozinho.",
       "skillCheck": {
         "stat": "tech",
         "difficulty": 11,
@@ -113,7 +113,7 @@
       "id": "chapter3_2_longo",
       "chapter": 3,
       "title": "Trilha de Caçador",
-      "text": "A trilha mais longa é menos íngreme. O som dos grilos cobre seus passos.\n\n— O Setor Três deve ter perímetro no anel da estrada — cochicha Dudu. — Se cruzarmos antes do clarão, escapamos.",
+      "text": "A trilha mais longa é menos íngreme. O som dos grilos cobre seus passos. O ar parece segurar a respiração.  Você sente que não está sozinho.",
       "choices": [
         {
           "id": "teste_logica_perimetro",
@@ -128,7 +128,7 @@
       "id": "chapter3_test_perimetro",
       "chapter": 3,
       "title": "Teste de Raciocínio",
-      "text": "Sérgio tenta traçar um caminho que evite patrulhas com base nos sons e clarões à distância.",
+      "text": "Sérgio tenta traçar um caminho que evite patrulhas com base nos sons e clarões à distância.  Você sente que não está sozinho.",
       "skillCheck": {
         "stat": "logical",
         "difficulty": 10,
@@ -141,7 +141,7 @@
       "id": "chapter3_2_empatia",
       "chapter": 3,
       "title": "Sussurros de Ágata",
-      "text": "Ágata toca o peito da criatura com a ponta dos dedos e sussurra uma prece antiga. O ser respira mais devagar; os olhos vermelhos perdem o pânico.",
+      "text": "Ágata toca o peito da criatura com a ponta dos dedos e sussurra uma prece antiga.  Você sente que não está sozinho.",
       "choices": [
         {
           "id": "teste_empatia_acalmar",
@@ -156,7 +156,7 @@
       "id": "chapter3_test_empatia_acalmar",
       "chapter": 3,
       "title": "Teste de Empatia",
-      "text": "Ágata busca um vínculo emocional básico: paz, cuidado, silêncio.",
+      "text": "Ágata busca um vínculo emocional básico: paz, cuidado, silêncio.  A eletricidade no ar arrepia a pele. O murmúrio de rádios estoura em estática por um segundo.",
       "skillCheck": {
         "stat": "empathy",
         "difficulty": 9,
@@ -169,7 +169,7 @@
       "id": "chapter3_3_pulso_estavel",
       "chapter": 3,
       "title": "Pulso Estável",
-      "text": "O ser emite um trinado suave. Ele coopera, apoiando-se melhor nos ombros de Sérgio e Helena.",
+      "text": "O ser emite um trinado suave. Ele coopera, apoiando-se melhor nos ombros de Sérgio e Helena.  Algo mudou no silêncio. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
       "choices": [
         {
           "id": "seguir_campinho_estavel",
@@ -184,7 +184,7 @@
       "id": "chapter3_3_pulso_inquieto",
       "chapter": 3,
       "title": "Inquietação",
-      "text": "O ser se encolhe e solta um guincho baixo. Por um instante, lâmpadas varrem as copas ao longe.",
+      "text": "O ser se encolhe e solta um guincho baixo. Por um instante, lâmpadas varrem as copas ao longe.  Algo mudou no silêncio. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.",
       "choices": [
         {
           "id": "apressar_passo",
@@ -199,7 +199,7 @@
       "id": "chapter3_4_campinho",
       "chapter": 3,
       "title": "Beira do Bairro",
-      "text": "Vocês saem da mata por trás do campinho do Jardim Andere. A lua reflete nas poças de chuva. Ao longe, três meninas cochicham na esquina, curiosas com o barulho (e ainda não os notaram).",
+      "text": "Vocês saem da mata por trás do campinho do Jardim Andere. A lua reflete nas poças de chuva.  Você sente que não está sozinho.",
       "choices": [
         {
           "id": "evitar_testemunhas",
@@ -221,7 +221,7 @@
       "id": "chapter3_4_campinho_alerta",
       "chapter": 3,
       "title": "Sirenes ao Longe",
-      "text": "Sirenes e motores ecoam mais próximos. As três meninas na esquina dão um passo à frente, curiosas. O ser se encolhe, os olhos brilhando de dor.",
+      "text": "Sirenes e motores ecoam mais próximos. As três meninas na esquina dão um passo à frente, curiosas. O ar parece segurar a respiração.  Você sente que não está sozinho. Na escuridão, um cheiro de amônia traz lembranças de relatos antigos.",
       "choices": [
         {
           "id": "teste_agilidade_sumir",
@@ -243,7 +243,7 @@
       "id": "chapter3_test_sumir_beco",
       "chapter": 3,
       "title": "Teste de Agilidade",
-      "text": "Correr, abaixar, contornar o muro — sem derrubar latas nem chamar atenção.",
+      "text": "Correr, abaixar, contornar o muro — sem derrubar latas nem chamar atenção.  Um som distante, metálico, que ninguém mais parece ouvir. Sussurros citam militares aparecendo rápido, tarde da noite.",
       "skillCheck": {
         "stat": "tech",
         "difficulty": 12,
@@ -256,7 +256,7 @@
       "id": "chapter3_test_empatia_flash",
       "chapter": 3,
       "title": "Teste de Empatia",
-      "text": "Com palavras curtas e um toque no ombro do ser, Helena tenta conter o pânico dele.",
+      "text": "Com palavras curtas e um toque no ombro do ser, Helena tenta conter o pânico dele.  Você sente que não está sozinho. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
       "skillCheck": {
         "stat": "empathy",
         "difficulty": 11,
@@ -269,7 +269,7 @@
       "id": "chapter3_5_beco_silencio",
       "chapter": 3,
       "title": "Beco de Tijolos",
-      "text": "Um beco estreito, com muros descascados e cheiro de lixo molhado. Há um portão enferrujado que dá para um galpão abandonado.",
+      "text": "Um beco estreito, com muros descascados e cheiro de lixo molhado.  A eletricidade no ar arrepia a pele. Pistas falam de luzes triangulares cortando nuvens baixas.",
       "choices": [
         {
           "id": "galpao_esconder",
@@ -291,7 +291,7 @@
       "id": "chapter3_5_observar_rua",
       "chapter": 3,
       "title": "Olhos na Noite",
-      "text": "As meninas olham na direção de vocês, hesitantes. Uma delas aponta para o chão lamacento: há pegadas estranhas.\n\n— Precisamos decidir agora — diz Sérgio.",
+      "text": "As meninas olham na direção de vocês, hesitantes.  Algo mudou no silêncio. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
       "choices": [
         {
           "id": "despistar",
@@ -313,7 +313,7 @@
       "id": "chapter3_test_despiste",
       "chapter": 3,
       "title": "Teste de Raciocínio",
-      "text": "Dudu espalha latas e pedras para simular passos em outra direção.",
+      "text": "Dudu espalha latas e pedras para simular passos em outra direção.  Há algo observando, quieto, paciente. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
       "skillCheck": {
         "stat": "logical",
         "difficulty": 11,
@@ -326,7 +326,7 @@
       "id": "chapter3_5_flagrante",
       "chapter": 3,
       "title": "Flagrados",
-      "text": "— O que é aquilo?! — Uma das meninas solta um grito. Portas se abrem; um cachorro late; faróis viram a esquina.\n\nO ser treme e solta um trinado agudo.",
+      "text": "— O que é aquilo?! — Uma das meninas solta um grito.  Há algo observando, quieto, paciente.",
       "choices": [
         {
           "id": "correr_apertado",
@@ -348,7 +348,7 @@
       "id": "chapter3_6_galpao",
       "chapter": 3,
       "title": "Galpão das Máquinas",
-      "text": "Dentro, o eco de goteiras. Ferramentas enferrujadas, lona rasgada e um antigo compressor. O ser se encolhe num canto escuro.",
+      "text": "Dentro, o eco de goteiras. O ar parece segurar a respiração.  Um som distante, metálico, que ninguém mais parece ouvir.",
       "choices": [
         {
           "id": "fechar_portao",
@@ -370,7 +370,7 @@
       "id": "chapter3_6_casa_agata",
       "chapter": 3,
       "title": "O Quintal da Avó",
-      "text": "Um portão baixo, ervas penduradas e um terreiro varrido. A avó de Ágata espreita pela janela, olhos desconfiados.\n\n— Que criatura é essa, menina? — sussurra, fazendo o sinal da cruz.",
+      "text": "Um portão baixo, ervas penduradas e um terreiro varrido. A avó de Ágata espreita pela janela, olhos desconfiados. O ar parece segurar a respiração.  Algo mudou no silêncio. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
       "choices": [
         {
           "id": "pedir_abrigo",
@@ -392,7 +392,7 @@
       "id": "chapter3_6_interceptacao",
       "chapter": 3,
       "title": "Interceptação Militar",
-      "text": "Jipes surgem no cruzamento. — Parados! — Um holofote cobre o beco. O ser se encolhe, ofuscado.",
+      "text": "Jipes surgem no cruzamento. — Parados! — Um holofote cobre o beco. O ser se encolhe, ofuscado.  A eletricidade no ar arrepia a pele. Pistas falam de luzes triangulares cortando nuvens baixas.",
       "choices": [
         {
           "id": "tentar_fuga_beirada",
@@ -414,7 +414,7 @@
       "id": "chapter3_test_dividir_grupo",
       "chapter": 3,
       "title": "Teste de Agilidade",
-      "text": "Dois saem discretos para buscar água enquanto os demais cuidam do ser. É arriscado dividir o grupo.",
+      "text": "Dois saem discretos para buscar água enquanto os demais cuidam do ser. É arriscado dividir o grupo.  Um som distante, metálico, que ninguém mais parece ouvir.",
       "skillCheck": {
         "stat": "tech",
         "difficulty": 10,
@@ -427,7 +427,7 @@
       "id": "chapter3_test_empatia_avo",
       "chapter": 3,
       "title": "Teste de Empatia",
-      "text": "Ágata encara a avó e diz apenas: — Ele tem medo. E está ferido.",
+      "text": "Ágata encara a avó e diz apenas: — Ele tem medo. E está ferido.  Você sente que não está sozinho. Pistas falam de luzes triangulares cortando nuvens baixas.",
       "skillCheck": {
         "stat": "empathy",
         "difficulty": 9,
@@ -440,7 +440,7 @@
       "id": "chapter3_test_logica_mentira",
       "chapter": 3,
       "title": "Teste de Raciocínio",
-      "text": "Dudu tenta explicar rápido: \"Acidente, produto químico, precisamos de água e pano\".",
+      "text": "Dudu tenta explicar rápido: \"Acidente, produto químico, precisamos de água e pano\".  Você sente que não está sozinho.",
       "skillCheck": {
         "stat": "logical",
         "difficulty": 11,
@@ -453,7 +453,7 @@
       "id": "chapter3_test_fuga_beirada",
       "chapter": 3,
       "title": "Teste de Agilidade",
-      "text": "Muro, caçamba, telhado baixo — um trajeto acrobático para longe do holofote.",
+      "text": "Muro, caçamba, telhado baixo — um trajeto acrobático para longe do holofote.  Há algo observando, quieto, paciente.",
       "skillCheck": {
         "stat": "tech",
         "difficulty": 13,
@@ -466,7 +466,7 @@
       "id": "chapter3_test_distracao_beco",
       "chapter": 3,
       "title": "Teste de Raciocínio",
-      "text": "Sérgio calcula onde derrubar coisas para ecoar do outro lado.",
+      "text": "Sérgio calcula onde derrubar coisas para ecoar do outro lado.  Algo mudou no silêncio. Um lampejo vermelho, baixo no horizonte, como farol sem dono.",
       "skillCheck": {
         "stat": "logical",
         "difficulty": 12,
@@ -479,7 +479,7 @@
       "id": "chapter3_7_cuidados",
       "chapter": 3,
       "title": "Cuidados de Emergência",
-      "text": "No galpão, vocês limpam o ferimento com pano úmido. O líquido escuro cheira a metal e amônia. O ser relaxa um pouco. Dudu improvisa uma tala com ripas.",
+      "text": "No galpão, vocês limpam o ferimento com pano úmido. O líquido escuro cheira a metal e amônia.  Você sente que não está sozinho.",
       "choices": [
         {
           "id": "escutar_rua",
@@ -501,7 +501,7 @@
       "id": "chapter3_7_batida",
       "chapter": 3,
       "title": "Batida no Quarteirão",
-      "text": "Sirene curta. Passos na calçada. Vozes: — Verifiquem os galpões.\n\nO ser prende a respiração; todos também.",
+      "text": "Sirene curta. Passos na calçada. Vozes: — Verifiquem os galpões.\n\nO ser prende a respiração; todos também.  Há algo observando, quieto, paciente.",
       "choices": [
         {
           "id": "apagar_luzes",
@@ -516,7 +516,7 @@
       "id": "chapter3_test_silencio_total",
       "chapter": 3,
       "title": "Teste de Agilidade",
-      "text": "Nenhum som. Nem um vidro, nem um suspiro.",
+      "text": "Nenhum som. Nem um vidro, nem um suspiro.  Há algo observando, quieto, paciente.",
       "skillCheck": {
         "stat": "tech",
         "difficulty": 12,
@@ -529,7 +529,7 @@
       "id": "chapter3_7_benza",
       "chapter": 3,
       "title": "Rezas e Ervas",
-      "text": "A avó abre o portão. — Rápido. — Ela cobre o ser com um lençol e esfrega folhas amargas no ferimento. — O que vocês trouxeram não é do nosso mundo, mas sente dor como qualquer um.",
+      "text": "A avó abre o portão. — Rápido. — Ela cobre o ser com um lençol e esfrega folhas amargas no ferimento. O ar parece segurar a respiração.  Há algo observando, quieto, paciente.",
       "choices": [
         {
           "id": "ouvir_conselho",
@@ -544,7 +544,7 @@
       "id": "chapter3_7_porta_fechada",
       "chapter": 3,
       "title": "Porta Fechada",
-      "text": "O trinco roda por dentro. Passos se afastam. Na rua, pneus estralam. — Perdemos — sussurra Helena.",
+      "text": "O trinco roda por dentro. Passos se afastam. Na rua, pneus estralam. — Perdemos — sussurra Helena.  Um som distante, metálico, que ninguém mais parece ouvir.",
       "choices": [
         {
           "id": "voltar_galpao",
@@ -559,7 +559,7 @@
       "id": "chapter3_7_sumico",
       "chapter": 3,
       "title": "Sumir do Holofote",
-      "text": "Vocês somem por trás de muros e varais. O holofote varre o nada. Gritos se perdem em outra rua.",
+      "text": "Vocês somem por trás de muros e varais. O holofote varre o nada. Gritos se perdem em outra rua.  Um som distante, metálico, que ninguém mais parece ouvir.",
       "choices": [
         {
           "id": "reunir_galpao",
@@ -581,7 +581,7 @@
       "id": "chapter3_8_escuta",
       "chapter": 3,
       "title": "Rádio no Escuro",
-      "text": "Dudu liga um radinho minúsculo no volume mínimo. Estática… e então: “Equipe Alfa para Base: possível presença do alvo no quadrante urbano. Prioridade máxima.”\n\nHelena engole seco.",
+      "text": "Dudu liga um radinho minúsculo no volume mínimo.  Há algo observando, quieto, paciente. O murmúrio de rádios estoura em estática por um segundo.",
       "choices": [
         {
           "id": "rumo_escola",
@@ -603,7 +603,7 @@
       "id": "chapter3_8_plano",
       "chapter": 3,
       "title": "Linhas no Pó",
-      "text": "Sérgio desenha o bairro no chão poeirento. Setas, X, rotas. — Se cruzarmos a avenida antes das viaturas, chegamos à escola.",
+      "text": "Sérgio desenha o bairro no chão poeirento. Setas, X, rotas.  Há algo observando, quieto, paciente. Pistas falam de luzes triangulares cortando nuvens baixas.",
       "choices": [
         {
           "id": "confirmar_escola",
@@ -618,7 +618,7 @@
       "id": "chapter3_8_conselho",
       "chapter": 3,
       "title": "Esconderijo Antigo",
-      "text": "— Por baixo da igreja há um porão que ninguém usa — diz a avó. — Mas vocês terão que passar pela praça.\n\nLatidos soam ao longe.",
+      "text": "— Por baixo da igreja há um porão que ninguém usa — diz a avó.  Um som distante, metálico, que ninguém mais parece ouvir. O murmúrio de rádios estoura em estática por um segundo.",
       "choices": [
         {
           "id": "rota_igreja",
@@ -633,7 +633,7 @@
       "id": "chapter3_9_planos",
       "chapter": 3,
       "title": "Três Rotas",
-      "text": "Escola (laboratório), Igreja (porão), Sítio (distante, mas discreto). O ser observa vocês, respirando curto.\n\n— Ele entende que estamos ajudando — diz Ágata.",
+      "text": "Escola (laboratório), Igreja (porão), Sítio (distante, mas discreto). O ser observa vocês, respirando curto. O ar parece segurar a respiração.  Algo mudou no silêncio.",
       "choices": [
         {
           "id": "escolher_escola",
@@ -662,7 +662,7 @@
       "id": "chapter3_test_travessia",
       "chapter": 3,
       "title": "Travessia do Quarteirão",
-      "text": "Vocês precisam cruzar duas ruas e uma avenida, com viaturas circulando.",
+      "text": "Vocês precisam cruzar duas ruas e uma avenida, com viaturas circulando.  Há algo observando, quieto, paciente.",
       "skillCheck": {
         "stat": "tech",
         "difficulty": 12,
@@ -675,7 +675,7 @@
       "id": "chapter3_10_pouso_seguro",
       "chapter": 3,
       "title": "Pouso (por Enquanto) Seguro",
-      "text": "Depois de curvas, muros e jardins, vocês alcançam o ponto escolhido. O ser se aninha num cobertor. Seu olhar encontra o de Sérgio; por um momento, uma sensação invade sua mente — imagens de céu vermelho e uma queda sem controle.\n\nÁgata sussurra: — Ele está… agradecendo.",
+      "text": "Depois de curvas, muros e jardins, vocês alcançam o ponto escolhido. O ser se aninha num cobertor.  Há algo observando, quieto, paciente.",
       "choices": [
         {
           "id": "encerrar_cap3",
@@ -690,7 +690,7 @@
       "id": "chapter3_end_capturados",
       "chapter": 3,
       "title": "Fim — Capturados",
-      "text": "Holofotes, botas, vozes duras. Mãos fortes arrancam a criatura de vocês. — Alvo contido. — O rádio chia. Vocês são levados para interrogatório e liberados com ameaças. A cidade acordará com boatos e uma versão oficial sem alma.\n\nVocês falharam em proteger o visitante. (Fim de Jogo)",
+      "text": "Holofotes, botas, vozes duras. Mãos fortes arrancam a criatura de vocês. — Alvo contido. — O rádio chia. Vocês são levados para interrogatório e liberados com ameaças. O ar parece segurar a respiração.  Você sente que não está sozinho. O murmúrio de rádios estoura em estática por um segundo.",
       "gameOver": true,
       "choices": [
         {
@@ -706,7 +706,7 @@
       "id": "chapter3_end_cercados",
       "chapter": 3,
       "title": "Fim — Cercados",
-      "text": "Uma esquina errada. Faróis fecham a rota. O ser guincha, dolorido; vocês erguem as mãos. Um cobertor escuro cai sobre tudo, e a noite os engole.\n\nNão houve travessia possível. (Fim de Jogo)",
+      "text": "Uma esquina errada. Faróis fecham a rota. O ser guincha, dolorido; vocês erguem as mãos.  A eletricidade no ar arrepia a pele.",
       "gameOver": true,
       "choices": [
         {
@@ -722,7 +722,7 @@
       "id": "chapter3_4_interceptacao",
       "chapter": 3,
       "title": "Batedores na Mata",
-      "text": "Dois soldados cruzam a trilha acima. Um cão fareja o galho quebrado. Vocês ouvem: — Rastro fresco.\n\nO tempo se esgota.",
+      "text": "Dois soldados cruzam a trilha acima. Um cão fareja o galho quebrado. Vocês ouvem: — Rastro fresco.\n\nO tempo se esgota.  Você sente que não está sozinho. Pistas falam de luzes triangulares cortando nuvens baixas.",
       "choices": [
         {
           "id": "finta_pela_esquerda",

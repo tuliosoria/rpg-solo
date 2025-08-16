@@ -9,7 +9,8 @@
     "validate-story": "node scripts/validate-story.js",
     "validate-enhanced": "node scripts/validate-enhanced-story.js",
     "analyze-story": "node scripts/analyze-story.js",
-    "generate-report": "node scripts/generate-report.js"
+    "generate-report": "node scripts/generate-report.js",
+    "shrink-story": "node scripts/shrink_and_spice_story.js"
   },
   "dependencies": {
     "next": "^15.3.3",
