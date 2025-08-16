@@ -465,15 +465,18 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
     // Handle chapter transitions
     if (nextNode === 'chapter2_1') {
       loadChapter(2);
+      return;
     } else if (nextNode === 'chapter3_1') {
       loadChapter(3);
+      return;
     } else if (nextNode === 'chapter4_1') {
       loadChapter(4);
+      return;
     } else if (nextNode === 'chapter5_1') {
       loadChapter(5);
-    } else {
-      setCurrent(nextNode);
+      return;
     }
+    setCurrent(nextNode);
   };
 
   const continueTutorial = () => {
@@ -548,15 +551,18 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
       // Check if this is a chapter transition
       if (nextNode === 'chapter2_1') {
         loadChapter(2);
+        return;
       } else if (nextNode === 'chapter3_1') {
         loadChapter(3);
+        return;
       } else if (nextNode === 'chapter4_1') {
         loadChapter(4);
+        return;
       } else if (nextNode === 'chapter5_1') {
         loadChapter(5);
-      } else {
-        setCurrent(nextNode);
+        return;
       }
+      setCurrent(nextNode);
     }
   };
 
@@ -579,18 +585,20 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
     setGameOverReason('');
     setShowTutorial(false);
     setTutorialData(null);
-    // Return to the beginning of current chapter
-    if (currentChapter === 1) {
-      setCurrent('sinal_1');
-    } else if (currentChapter === 2) {
-      setCurrent('chapter2_1');
-    } else if (currentChapter === 3) {
-      setCurrent('chapter3_1');
-    } else if (currentChapter === 4) {
-      setCurrent('cerco_1');
-    } else if (currentChapter === 5) {
-      setCurrent('chapter5_1');
-    }
+
+    // Return to the beginning of current chapter using the chapter's own startNode when available
+    const getStartFor = (ch: number): string => {
+      if (storyData?.startNode) return storyData.startNode;
+      switch (ch) {
+        case 1: return 'sinal_1';
+        case 2: return 'visitante_1'; // chapter 2 real start node
+        case 3: return 'chapter3_1';
+        case 4: return 'cerco_1';
+        case 5: return 'chapter5_1';
+        default: return 'sinal_1';
+      }
+    };
+    setCurrent(getStartFor(currentChapter));
   };
 
   const restartGame = () => {
