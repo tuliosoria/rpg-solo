@@ -5,8 +5,40 @@
     "visitante_1": {
       "id": "visitante_1",
       "chapter": 2,
-      "title": "Primeiro Contato",
-      "text": "O metal rangeu enquanto o painel do objeto se abria, liberando uma nuvem de vapor quente que se misturou ao ar frio da noite. De dentro da carcaça fumegante, uma figura esguia despontou com movimentos vacilantes. Sob a fraca luz vermelha, Sérgio divisou uma pele acinzentada e úmida revestindo um corpo magro, não muito maior que ele próprio. Dois olhos negros e ovais refletiam o brilho rubro ao encarar o grupo à distância. O coração de Sérgio martelava no peito. Helena levou as mãos à boca, incrédula, enquanto Dudu recuava um passo com o rosto pálido. Léo engoliu em seco, sem conseguir sequer formular uma piada dessa vez. Ágata sentiu um arrepio gelado percorrer a espinha – não exatamente de terror, mas de empatia; por um segundo, ela jurou sentir uma onda de medo e dor que não era sua. A criatura apoiou uma das mãos trêmulas na borda do objeto aberto. Seus dedos eram finos e alongados, quase translúcidos sob a luz avermelhada. Havia um ferimento no flanco da criatura, de onde escorria um líquido escuro e viscoso que pingava no solo.  Há algo observando, quieto, paciente.",
+      "title": "Primeiro Contato: Abertura",
+      "text": "O metal rangeu enquanto o painel do objeto se abria, liberando uma nuvem de vapor quente que se misturou ao ar frio da noite. De dentro da carcaça fumegante, uma figura esguia despontou com movimentos vacilantes.",
+      "image": "clareira_objeto.png",
+      "choices": [
+        {
+          "id": "cont_1b",
+          "text": "Continuar",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "visitante_1b"
+        }
+      ]
+    },
+    "visitante_1b": {
+      "id": "visitante_1b",
+      "chapter": 2,
+      "title": "Primeiro Contato: Olhos",
+      "text": "Sob a fraca luz vermelha, Sérgio divisou uma pele acinzentada e úmida revestindo um corpo magro, não muito maior que ele próprio. Dois olhos negros e ovais refletiam o brilho rubro ao encarar o grupo à distância. O coração de Sérgio martelava no peito. Helena levou as mãos à boca, incrédula, enquanto Dudu recuava um passo com o rosto pálido. Léo engoliu em seco, sem conseguir sequer formular uma piada. Ágata sentiu um arrepio gelado percorrer a espinha — não exatamente de terror, mas de empatia; por um segundo, ela jurou sentir uma onda de medo e dor que não era sua.",
+      "image": "clareira_objeto.png",
+      "choices": [
+        {
+          "id": "cont_1c",
+          "text": "Continuar",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "visitante_1c"
+        }
+      ]
+    },
+    "visitante_1c": {
+      "id": "visitante_1c",
+      "chapter": 2,
+      "title": "Primeiro Contato: Ferimento",
+      "text": "A criatura apoiou uma das mãos trêmulas na borda do objeto aberto. Seus dedos eram finos e alongados, quase translúcidos sob a luz avermelhada. Havia um ferimento no flanco da criatura, de onde escorria um líquido escuro e viscoso que pingava no solo. Há algo observando, quieto, paciente.",
       "image": "clareira_objeto.png",
       "choices": [
         {
