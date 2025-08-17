@@ -296,7 +296,24 @@
       "id": "final_6_bip",
       "chapter": 5,
       "title": "O Céu Responde",
-      "text": "O chão vibrou com um bip grave e limpo. A criatura ergueu o rosto; seus olhos refletiram um brilho novo. O ar parece segurar a respiração.  Algo mudou no silêncio.\n\n— Você vai conseguir — Ágata segura a mão fria.\n— A-mi-go — ele repete, e por um instante, quase sorri."
+      "text": "O chão vibrou com um bip grave e limpo. A criatura ergueu o rosto; seus olhos refletiram um brilho novo. O ar parece segurar a respiração.  Algo mudou no silêncio.\n\n— Você vai conseguir — Ágata segura a mão fria.\n— A-mi-go — ele repete, e por um instante, quase sorri.",
+      "choices": [
+        {
+          "id": "transmitir_ao_vivo",
+          "text": "Transmitir ao vivo para todo mundo (lógica)",
+          "nextNode": "final_7_transmitir_test"
+        },
+        {
+          "id": "aguardar_extracao",
+          "text": "Aguardar a extração em silêncio, escondidos",
+          "nextNode": "final_8_extracao"
+        },
+        {
+          "id": "entregar_autoridades",
+          "text": "Entregar o ser às autoridades (chamar Corpo de Bombeiros)",
+          "nextNode": "final_7_entregar"
+        }
+      ]
     },
     "final_6_falha": {
       "id": "final_6_falha",
@@ -355,19 +372,40 @@
       "id": "final_7_transmitir_sucesso",
       "chapter": 5,
       "title": "A Cidade Acorda",
-      "text": "Telhados explodiram em antenas, rádios chiando em uníssono. No bar, na sala, na guarita: todos viram o feixe branco descendo como um lençol. Viram as silhuetas, o abraço de luz envolvendo a criatura. Viram cinco jovens de bicicleta na borda do mundo.  Um som distante, metálico, que ninguém mais parece ouvir.\n\n— Se alguém disser que foi mentira, a cidade responde — Dudu ri, nervoso.\n— A gente responde — corrige Helena."
+      "text": "Telhados explodiram em antenas, rádios chiando em uníssono. No bar, na sala, na guarita: todos viram o feixe branco descendo como um lençol. Viram as silhuetas, o abraço de luz envolvendo a criatura. Viram cinco jovens de bicicleta na borda do mundo.  Um som distante, metálico, que ninguém mais parece ouvir.\n\n— Se alguém disser que foi mentira, a cidade responde — Dudu ri, nervoso.\n— A gente responde — corrige Helena.",
+      "choices": [
+        {
+          "id": "ir_epilogo_bom",
+          "text": "Continuar",
+          "nextNode": "final_epilogo"
+        }
+      ]
     },
     "final_7_transmitir_falha": {
       "id": "final_7_transmitir_falha",
       "chapter": 5,
       "title": "Ruído e Sombra",
-      "text": "O sinal foi esmagado por interferência. Um jipe guinchou na curva, soldados saltaram. A baliza piscou fraca — e ainda assim, o feixe tocou a borda da pedreira. A criatura olhou para Sérgio, um mosaico de memórias compartilhadas num piscar. Ela subiu na coluna de luz. O ar parece segurar a respiração.  Algo mudou no silêncio.\n\n— Desculpa — Dudu sussurra.\n— Ele entendeu — Sérgio aperta o ombro dele. — A gente trouxe até aqui."
+      "text": "O sinal foi esmagado por interferência. Um jipe guinchou na curva, soldados saltaram. A baliza piscou fraca — e ainda assim, o feixe tocou a borda da pedreira. A criatura olhou para Sérgio, um mosaico de memórias compartilhadas num piscar. Ela subiu na coluna de luz. O ar parece segurar a respiração.  Algo mudou no silêncio.\n\n— Desculpa — Dudu sussurra.\n— Ele entendeu — Sérgio aperta o ombro dele. — A gente trouxe até aqui.",
+      "choices": [
+        {
+          "id": "ir_epilogo_amargo",
+          "text": "Continuar",
+          "nextNode": "final_epilogo_amargo"
+        }
+      ]
     },
     "final_8_extracao": {
       "id": "final_8_extracao",
       "chapter": 5,
       "title": "Silêncio Guardado",
-      "text": "Eles se encolheram atrás de rochas. O feixe imaculado caiu como chuva quieta. A criatura girou o rosto uma última vez: gratidão líquida, infinita. A luz a abraçou e subiu, dissolvendo-se nas nuvens como vapor.  Algo mudou no silêncio.\n\n— Volta pra casa — sussurra Helena, com os olhos molhados.\nSérgio responde ao vazio: — A gente lembra. Sempre."
+      "text": "Eles se encolheram atrás de rochas. O feixe imaculado caiu como chuva quieta. A criatura girou o rosto uma última vez: gratidão líquida, infinita. A luz a abraçou e subiu, dissolvendo-se nas nuvens como vapor.  Algo mudou no silêncio.\n\n— Volta pra casa — sussurra Helena, com os olhos molhados.\nSérgio responde ao vazio: — A gente lembra. Sempre.",
+      "choices": [
+        {
+          "id": "ir_epilogo_silencio",
+          "text": "Continuar",
+          "nextNode": "final_epilogo"
+        }
+      ]
     },
     "final_epilogo": {
       "id": "final_epilogo",
@@ -394,6 +432,19 @@
           "id": "restart",
           "text": "Recomeçar a aventura",
           "nextNode": "sinal_1"
+        }
+      ]
+    },
+    "final_7_entregar": {
+      "id": "final_7_entregar",
+      "chapter": 5,
+      "title": "Chamado Oficial",
+      "text": "Você pega o rádio e chama socorro. Minutos depois, uma viatura do Corpo de Bombeiros chega primeiro, seguida por caminhões verdes e homens silenciosos. Eles cercam a pedreira com fitas e lanternas. O ser o encara, olhos grandes e úmidos, como quem entende a escolha. O cheiro de amônia fica mais forte quando o cobrem com lona e o levam para a caçamba. A rua abaixo ferve em boatos; rádios chiando, ordens curtas. Ninguém dá explicações.  Alusão inevitável ao que se contaria por anos: Jardim Andere, caminhões na madrugada, segredos em caixas de metal.",
+      "choices": [
+        {
+          "id": "ir_epilogo_entrega",
+          "text": "Continuar",
+          "nextNode": "final_epilogo_amargo"
         }
       ]
     }

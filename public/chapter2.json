@@ -69,6 +69,13 @@
           "requirements": {},
           "effects": {},
           "nextNode": "visitante_3_test"
+        },
+        {
+          "id": "tentar_entender_sinais",
+          "text": "Tentar entender os sinais (falar, sem encostar)",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "visitante_interrog_1"
         }
       ]
     },
@@ -89,7 +96,7 @@
       "id": "visitante_3_sucesso",
       "chapter": 2,
       "title": "Confiança Frágil",
-      "text": "A criatura inclinou a cabeça e emitiu um som baixo, quase um trinado, enquanto fixava seus grandes olhos nos de Sérgio. Ele sentiu um alívio percorrer seu corpo ao perceber que ela não recuava mais. Com extrema delicadeza, Sérgio deu mais um passo e a criatura não resistiu quando ele tocou de leve seu braço frio e de textura borrachenta. O ser piscou lentamente, parecendo entender que aqueles jovens não queriam lhe fazer mal. — Eu... acho que ele confiou na gente — sussurrou Helena, rompendo o silêncio. Dudu soltou o fôlego que nem percebera estar prendendo e abriu um sorriso de puro espanto. Ágata se ajoelhou ao lado de Sérgio, sentindo as emoções da criatura como uma maré suave: — Ele está com dor... e muito confuso... — murmurou ela, os olhos cheios de compaixão. Léo, ainda trêmulo, arriscou dar dois passos à frente, mantendo prudente distância. Sérgio notou que a criatura cambaleava, exausta e ferida.  Há algo observando, quieto, paciente. O murmúrio de rádios estoura em estática por um segundo.",
+      "text": "A criatura inclinou a cabeça e emitiu um som baixo, quase um trinado, enquanto fixava seus grandes olhos nos de Sérgio. Ele sentiu um alívio percorrer seu corpo ao perceber que ela não recuava mais. Com extrema delicadeza, Sérgio deu mais um passo e a criatura não resistiu quando ele tocou de leve seu braço frio e de textura borrachenta. O ser piscou lentamente, parecendo entender que aqueles jovens não queriam lhe fazer mal. — Eu... acho que ele confiou na gente — sussurrou Helena, rompendo o silêncio. Dudu soltou o fôlego que nem percebera estar prendendo e abriu um sorriso de puro espanto. Ágata se ajoelhou ao lado de Sérgio, sentindo as emoções da criatura como uma maré suave: — Ele está com dor... e muito confuso... — murmurou ela, os olhos cheios de compaixão. Léo, ainda trêmulo, arriscou dar dois passos à frente, mantendo prudente distância. Sérgio notou que a criatura cambaleava, exausta e ferida.  Há algo observando, quieto, paciente. O ser encosta a testa na de Ágata por um segundo, imagens piscam: mapas, linhas de campo, órbitas. Ele articula sílabas quebradas — “car-to-gra-far… cam-pos… si-nais… res-ga-te” — e desenha três riscos paralelos no ar antes de apontar para o alto.",
       "choices": [
         {
           "id": "fugir_com_criatura",
@@ -104,6 +111,13 @@
           "requirements": {},
           "effects": {},
           "nextNode": "visitante_4_test_esconder"
+        },
+        {
+          "id": "perguntar_proposito",
+          "text": "Fazer perguntas: por que você veio? o que busca?",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "visitante_interrog_1"
         }
       ]
     },
@@ -126,6 +140,13 @@
           "requirements": {},
           "effects": {},
           "nextNode": "visitante_end_nohelp"
+        },
+        {
+          "id": "tentar_comunicar_falha",
+          "text": "Tentar se comunicar assim mesmo (baixinho)",
+          "requirements": {},
+          "effects": {},
+          "nextNode": "visitante_interrog_1"
         }
       ]
     },
@@ -236,6 +257,78 @@
           "requirements": {},
           "effects": {},
           "nextNode": "sinal_1"
+        }
+      ]
+    },
+    "visitante_interrog_1": {
+      "id": "visitante_interrog_1",
+      "chapter": 2,
+      "title": "Palavras e Imagens",
+      "text": "Helena fala baixo, mãos abertas: — A gente quer entender. Por que você veio?\nO ser inclina a cabeça. Encosta dois dedos na têmpora de Ágata, como quem pede licença. Imagens rápidas atravessam a mente dela: mapas de linhas invisíveis, pulsações, um ponto alto na borda da cidade. — Car-to... gra-far — ele articula, devagar. — Cam-pos. Si-nais. Al-to. Luz.\nDudu sussurra, arrepiado: — Ele veio mapear alguma coisa... campos? rádio?",
+      "choices": [
+        {
+          "id": "perguntar_por_que_varginha",
+          "text": "Por que aqui? Por que Varginha?",
+          "nextNode": "visitante_interrog_2"
+        },
+        {
+          "id": "parar_perguntas_1",
+          "text": "Chega de perguntas, é hora de agir",
+          "nextNode": "visitante_4_test_fuga"
+        }
+      ]
+    },
+    "visitante_interrog_2": {
+      "id": "visitante_interrog_2",
+      "chapter": 2,
+      "title": "O Ponto Alto",
+      "text": "O ser desenha no ar três riscos paralelos e aponta para cima. Depois, toca o chão e o horizonte. — Al... to. Três... li-nhas. — Ele repete, fechando os olhos. Ágata traduz, instintiva: — Mirante. Pedreira. As três linhas... talvez o padrão do retorno.\nO ser força palavras novas, a voz áspera: — Car-to-gra-far... do Sol. Linhas... ven-to... cam-po. — Ele bate no peito, depois no ar, como quem mostra correntes invisíveis que vêm de cima. — Na-ve... a-ba-ti-da. Não... que-rer pou-sar. — A mão treme, descrevendo uma espiral descendente. — Que-da. Fer... i-do.\nSérgio encara os outros: — Ele veio mapear linhas — talvez solares, magnéticas — e precisava do ponto alto. Não era pra pousar aqui. Jardim Andere é mais baixo que a pedreira... faz sentido pro sinal, não pro pouso.",
+      "choices": [
+        {
+          "id": "perguntar_se_esta_sozinho",
+          "text": "Você está sozinho? Tem mais alguém?",
+          "nextNode": "visitante_interrog_3"
+        },
+        {
+          "id": "parar_perguntas_2",
+          "text": "Chega de perguntas, vamos tirá-lo daqui",
+          "nextNode": "visitante_4_test_esconder"
+        }
+      ]
+    },
+    "visitante_interrog_3": {
+      "id": "visitante_interrog_3",
+      "chapter": 2,
+      "title": "Sinal e Resgate",
+      "text": "Ele toca o próprio peito, depois ergue a mão em direção ao céu, marcando um ritmo: — A-mi-go. Si-nal. Vol... tar. Res-ga-te. — A voz é áspera, mas a intenção é clara. Em flashes, Ágata vê uma formação em voo acima das nuvens, ecoando o padrão de três toques.\n— Ele não veio invadir — sussurra Helena. — Ele quer voltar, mas precisa de um ponto alto pra chamar ajuda.",
+      "choices": [
+        {
+          "id": "perguntar_sobre_queda",
+          "text": "O que aconteceu com a queda?",
+          "nextNode": "visitante_interrog_4"
+        },
+        {
+          "id": "agir_agora_3",
+          "text": "Já entendemos o suficiente — agir agora",
+          "nextNode": "visitante_4_test_fuga"
+        }
+      ]
+    },
+    "visitante_interrog_4": {
+      "id": "visitante_interrog_4",
+      "chapter": 2,
+      "title": "Fumaça e Lanternas",
+      "text": "O ser treme leve, olhos fechados. — Ruí-do. Ca-lor. Fer... i-do. Luz... ver-me-lha. — Ele abre os olhos, vidrados por um instante. — Ho-lo... fo-te. Lon-a. Si-lên-cio.\nDudu troca um olhar com Sérgio: — Se ficarmos aqui, vão cercar de novo.\nLéo engole seco: — A gente decide agora.",
+      "choices": [
+        {
+          "id": "interrog_final_fuga",
+          "text": "Retirar a criatura dali",
+          "nextNode": "visitante_4_test_fuga"
+        },
+        {
+          "id": "interrog_final_esconder",
+          "text": "Esconder-se com a criatura e esperar",
+          "nextNode": "visitante_4_test_esconder"
         }
       ]
     }

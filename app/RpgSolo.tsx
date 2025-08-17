@@ -154,7 +154,8 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
   const loadChapter = async (chapterNumber: number) => {
     setLoading(true);
     try {
-      const response = await fetch(`/chapter${chapterNumber}.json`);
+      // Bypass cache to always fetch the latest story files during development
+      const response = await fetch(`/chapter${chapterNumber}.json?ts=${Date.now()}`, { cache: 'no-store' });
       const data = await response.json();
       setStory(data.nodes);
       setStoryData(data);
