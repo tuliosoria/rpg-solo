@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import RpgSolo from "./RpgSolo";
+import Editor from "./Editor";
 
 type SavedGame = {
   version: number;
@@ -15,7 +16,7 @@ type SavedGame = {
 };
 
 export default function Home() {
-  const [view, setView] = useState<"menu" | "game">("menu");
+  const [view, setView] = useState<"menu" | "game" | "editor">("menu");
   const [save, setSave] = useState<SavedGame | null>(null);
   const [activeInitialLoad, setActiveInitialLoad] = useState<SavedGame | undefined>(undefined);
 
@@ -143,6 +144,31 @@ export default function Home() {
                 💾 Load
               </button>
 
+              <button
+                onClick={() => setView("editor")}
+                style={{
+                  background: "linear-gradient(135deg, rgba(0,255,0,0.10), rgba(0,255,128,0.16))",
+                  border: "1px solid #00ff88",
+                  color: "#e6ffe6",
+                  padding: "12px 22px",
+                  borderRadius: 8,
+                  fontSize: 16,
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  transition: "all 0.25s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 8px 16px rgba(0,255,136,0.12)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                ✍ Editor da História
+              </button>
+
               {save && (
                 <div style={{ color: "#8f8", fontSize: 12, marginTop: 4 }}>
                   Saved on {new Date(save.timestamp).toLocaleString()} — Chapter {save.chapter}
@@ -155,6 +181,14 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </main>
+    );
+  }
+
+  if (view === "editor") {
+    return (
+      <main>
+        <Editor onExitToMenuAction={() => setView("menu")} />
       </main>
     );
   }
