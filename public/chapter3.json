@@ -6,7 +6,7 @@
       "id": "chapter3_1",
       "chapter": 3,
       "title": "Corrida na Escuridão",
-      "text": "Com a clareira ficando para trás, os cinco avançam entre troncos e raízes, carregando o ser pelos ombros como conseguem. O cheiro de amônia e terra molhada gruda na garganta. Lanternas varrem a mata ao longe. — A estrada de terra leva pro Jardim Andere — sussurra Dudu. — Se a gente sair por trás do campinho, dá pra despistar.  Você sente que não está sozinho. O murmúrio de rádios estoura em estática por um segundo.\n\n— Segura firme, amigão — diz Helena, baixinho. — A gente tá tentando ajudar.\nO ser emite cliques e um ruído úmido, como se buscasse sílabas. — Am... ig... — tenta, rouco.\n— Ele entendeu! — cochicha Léo, excitado e com medo. — Continua falando baixo.\n— Sem barulho — alerta Sérgio. — Foco nas luzes.",
+      "text": "Com a clareira ficando para trás, os cinco avançam entre troncos e raízes, carregando o ser pelos ombros como conseguem. O cheiro de amônia e terra molhada gruda na garganta. Lanternas varrem a mata ao longe. — A estrada de terra leva pro Jardim Andere — sussurra Dudu. — Se a gente sair por trás do campinho, dá pra despistar.  Você sente que não está sozinho. O murmúrio de rádios estoura em estática por um segundo.\n\n— Segura firme, amigão — diz Helena, baixinho. — A gente tá tentando ajudar.\nO ser emite cliques e um ruído úmido, como se buscasse sílabas. — Am... ig... — tenta, rouco.\n— Ele entendeu! — cochicha Léo, excitado e com medo. — Continua falando baixo.\n— Sem barulho — alerta Sérgio. — Foco nas luzes.\n\nPor dentro, ele deseja ter mais mãos para garantir que ninguém solte a coragem antes de sair da mata.",
       "choices": [
         {
           "id": "tentar_atalho",
@@ -199,7 +199,7 @@
       "id": "chapter3_4_campinho",
       "chapter": 3,
       "title": "Beira do Bairro",
-      "text": "Vocês saem da mata por trás do campinho do Jardim Andere. A lua reflete nas poças de chuva.  Você sente que não está sozinho.",
+      "text": "Vocês saem da mata por trás do campinho do Jardim Andere. A lua reflete nas poças de chuva.  Você sente que não está sozinho.\n\n— Primeira fronteira — Dudu sussurra. — Mata pra bairro. Daqui fica real.\n— Já não tava? — Léo responde, tentando humor e encontrando só a própria voz tensa.\nHelena ajusta o lençol sobre o ser: — É só gente cansada voltando de madrugada se alguém perguntar.\nSérgio encara as traves enferrujadas e pensa em quantas tardes normais tiveram ali — e em como cada passo agora as empurra para longe delas.",
       "image": "saindo_jarddim.png",
       "choices": [
         {
@@ -270,7 +270,7 @@
       "id": "chapter3_5_beco_silencio",
       "chapter": 3,
       "title": "Beco de Tijolos",
-      "text": "Um beco estreito, com muros descascados e cheiro de lixo molhado.  A eletricidade no ar arrepia a pele. Pistas falam de luzes triangulares cortando nuvens baixas.",
+      "text": "Um beco estreito, com muros descascados e cheiro de lixo molhado.  A eletricidade no ar arrepia a pele. Pistas falam de luzes triangulares cortando nuvens baixas.\n\nO ser treme e puxa o pano. Helena segura sua mão fria: — Fica. Mais perto de gente é mais seguro que longe.\n— Isso é discutível — Léo murmura — mas tô votando com a Helena hoje.\nSérgio marca mentalmente cada respiração dos quatro, como se pudesse somar e formar uma proteção invisível.",
       "choices": [
         {
           "id": "galpao_esconder",
@@ -480,7 +480,7 @@
       "id": "chapter3_7_cuidados",
       "chapter": 3,
       "title": "Cuidados de Emergência",
-      "text": "No galpão, vocês limpam o ferimento com pano úmido. O líquido escuro cheira a metal e amônia.  Você sente que não está sozinho.\n\n— Pega mais água, Dudu — pede Helena. — Tá quente demais.\n— Tô indo, tô indo — ele responde, vasculhando uma pia velha.\nO ser trila baixo, quase um assobio. — Cal... ma.\n— A gente fica — diz Sérgio, firme. — Promessa.",
+      "text": "No galpão, vocês limpam o ferimento com pano úmido. O líquido escuro cheira a metal e amônia.  Você sente que não está sozinho.\n\n— Pega mais água, Dudu — pede Helena. — Tá quente demais.\n— Tô indo, tô indo — ele responde, vasculhando uma pia velha.\nO ser trila baixo, quase um assobio. — Cal... ma.\n— A gente fica — diz Sérgio, firme. — Promessa.\n\nEle percebe que chamou de promessa e não de plano — e isso prende o grupo mais forte que qualquer porta trancada.",
       "choices": [
         {
           "id": "escutar_rua",
@@ -713,7 +713,7 @@
       "id": "chapter3_10_pouso_seguro",
       "chapter": 3,
       "title": "Pouso (por Enquanto) Seguro",
-      "text": "Depois de curvas, muros e jardins, vocês alcançam o ponto escolhido. O ser se aninha num cobertor.  Há algo observando, quieto, paciente.\n\n— Ei — Helena aproxima a mão devagar. — A gente vai te tirar daqui, tá?\n— Vol... tar — ele responde, suave.\n— Então vamos juntos — promete Sérgio, encarando o escuro.",
+      "text": "Depois de curvas, muros e jardins, vocês alcançam o ponto escolhido. O ser se aninha num cobertor.  Há algo observando, quieto, paciente.\n\n— Ei — Helena aproxima a mão devagar. — A gente vai te tirar daqui, tá?\n— Vol... tar — ele responde, suave.\n— Então vamos juntos — promete Sérgio, encarando o escuro.\nLéo se agacha: — Se amanhã eu disser que inventei, vocês me lembram desse cheiro todo aqui.\nDudu ri baixo. Ágata fecha os olhos como quem anota tudo em lugar que ninguém confisca.",
       "choices": [
         {
           "id": "encerrar_cap3",
@@ -809,7 +809,7 @@
       "id": "chapter3_talk_helena",
       "chapter": 3,
       "title": "Entre Olhares",
-      "text": "Helena ajeita o cobertor no visitante e encosta no muro, os dedos frios. — Não sei se estou mais com medo dele... ou do que vão fazer com ele. — Ela encara você por um segundo que dura mais que o normal. — Você ficou bem quando ele encostou em você.\nVocê sente o rosto quente. — Eu só... fiz o que dava.\n— Você sempre faz — ela diz, baixo, com um quase-sorriso que some rápido. Do outro lado, o ser emite um trinado suave.",
+      "text": "Helena ajeita o cobertor no visitante e encosta no muro, os dedos frios. — Não sei se estou mais com medo dele... ou do que vão fazer com ele. — Ela encara você por um segundo que dura mais que o normal. — Você ficou bem quando ele encostou em você.\nVocê sente o rosto quente. — Eu só... fiz o que dava.\n— Você sempre faz — ela diz, baixo, com um quase-sorriso que some rápido. Do outro lado, o ser emite um trinado suave.\n\nEla acrescenta, ainda mais baixo: — Se for pra correr de madrugada pra sempre… tem piores companhias.\nA frase fica entre vocês como lanterna esquecida iluminando mais do que devia.",
       "choices": [
         { "id": "voltar_hub_galpao", "text": "Voltar ao grupo", "nextNode": "chapter3_talk_hub_galpao" },
         { "id": "voltar_hub_avo", "text": "Voltar ao grupo (quintal)", "nextNode": "chapter3_talk_hub_avo" }
@@ -829,7 +829,7 @@
       "id": "chapter3_talk_agata",
       "chapter": 3,
       "title": "Maré de Sentidos",
-      "text": "Ágata observa o ser, olhos úmidos: — O medo dele vem em ondas, mas tem uma coisa por baixo... gratidão. — Ela segura seu antebraço por um instante. — E em você tem algo preso na garganta. Palavras que não saem.\nVocê desvia o olhar, pega ar. — Depois eu... falo.\n— Fala antes que o barulho volte — ela sussurra, gentil.",
+      "text": "Ágata observa o ser, olhos úmidos: — O medo dele vem em ondas, mas tem uma coisa por baixo... gratidão. — Ela segura seu antebraço por um instante. — E em você tem algo preso na garganta. Palavras que não saem.\nVocê desvia o olhar, pega ar. — Depois eu... falo.\n— Fala antes que o barulho volte — ela sussurra, gentil.\n\n— E se depois não tiver tempo? — você arrisca.\n— Então a gente fabrica tempo — ela responde, como se fosse simples. E por um segundo, você acredita.",
       "choices": [
         { "id": "voltar_hub_galpao3", "text": "Voltar ao grupo", "nextNode": "chapter3_talk_hub_galpao" },
         { "id": "voltar_hub_avo3", "text": "Voltar ao grupo (quintal)", "nextNode": "chapter3_talk_hub_avo" }
