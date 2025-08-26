@@ -76,6 +76,7 @@ type StoryNode = {
     successNode: string;
     failureNode: string;
   };
+  friendship?: { [character: string]: number }; // optional node-wide friendship adjustments
 };
 
 type GameState = {
@@ -85,6 +86,7 @@ type GameState = {
   hasSkills: boolean;
   upgradeSelected?: 'tech' | 'logical' | 'empathy';
   chapter?: number;
+  friendship?: { [character: string]: number }; // dynamic relationship map
 };
 
 type GameStats = {
@@ -124,7 +126,8 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
     tech: 5,
     logical: 5,
     empathy: 5,
-    hasSkills: false
+  hasSkills: false,
+  friendship: { Helena: 0, Dudu: 0, Leo: 0, Ágata: 0 }
   });
   const [gameStats, setGameStats] = useState<GameStats>({
     nodesVisited: 0,
@@ -154,20 +157,109 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
   const loadChapter = async (chapterNumber: number) => {
     setLoading(true);
     try {
-      // Bypass cache to always fetch the latest story files during development
-      const response = await fetch(`/chapter${chapterNumber}.json?ts=${Date.now()}`, { cache: 'no-store' });
+      const ts = Date.now();
+      // Primeiro tenta arquivo revisado
+      const revisedName = `/capitulo${chapterNumber}_revisado.json?ts=${ts}`;
+      const legacyName = `/chapter${chapterNumber}.json?ts=${ts}`;
+      let response = await fetch(revisedName, { cache: 'no-store' });
+      if (!response.ok) {
+        response = await fetch(legacyName, { cache: 'no-store' });
+      }
       const data = await response.json();
-      setStory(data.nodes);
-      setStoryData(data);
-      setCurrentChapter(chapterNumber);
-      
-      // Use the startNode from the data
-      if (data.startNode) {
-        setCurrent(data.startNode);
+
+      // Conversão de schema: 'options' -> 'choices'
+      const mapSkill = (skill?: string): 'tech' | 'logical' | 'empathy' | undefined => {
+        if (!skill) return undefined;
+        const s = skill.toLowerCase();
+        if (s.includes('tec')) return 'tech';
+        if (s.includes('lóg') || s.includes('logi')) return 'logical';
+        if (s.includes('emp')) return 'empathy';
+  if (s.includes('corag')) return 'tech'; // Map "Coragem" heuristically to tech (adjust later if new stat added)
+        // Mapear outras (agilidade/força) heurísticamente para 'tech'
+        if (s.includes('agi') || s.includes('for')) return 'tech';
+        return undefined;
+      };
+      const mapDifficulty = (dc?: string): 'easy' | 'medium' | 'hard' => {
+        if (!dc) return 'medium';
+        const d = dc.toLowerCase();
+        if (d.startsWith('fá') || d.startsWith('fa') || d.includes('fac')) return 'easy';
+        if (d.startsWith('mé') || d.startsWith('me') || d.includes('méd')) return 'medium';
+        if (d.startsWith('dif') || d.includes('díf')) return 'hard';
+        return 'medium';
+      };
+
+      if (data && data.nodes) {
+        // Explicit node -> image mapping only (avoid heuristic false positives)
+        const explicitNodeImages: { [k: string]: string } = {
+          c1_dudu: 'dudu.png'
+        };
+        const converted: { [key: string]: StoryNode } = {};
+        Object.entries<any>(data.nodes).forEach(([key, node]) => {
+          if (node && !node.choices && node.options) {
+            node.choices = node.options.map((opt: any, idx: number) => {
+              const choice: any = {
+                id: `${node.id || key}_opt${idx}`,
+                text: opt.label || opt.text || `Opção ${idx + 1}`,
+                nextNode: opt.to || opt.next || opt.nextNode || key, // fallback para permanecer
+              };
+              // Suporte a formato legado com 'check' + 'success'/'failure'
+              if (opt.check) {
+                const stat = mapSkill(opt.check.skill);
+                const difficulty = mapDifficulty(opt.check.dc);
+                // Buscar nós de sucesso/falha explícitos
+                let successNode = opt.success?.to || opt.success?.next || opt.success?.nextNode;
+                let failureNode = opt.failure?.to || opt.failure?.next || opt.failure?.nextNode;
+                // Fallbacks: se não houver, usar o 'to' principal
+                if (!successNode) successNode = choice.nextNode;
+                if (!failureNode) failureNode = successNode; // se só sucesso definido, falha cai no mesmo
+                choice.skillCheck = {
+                  stat,
+                  difficulty,
+                  successNode,
+                  failureNode
+                };
+                // Caso haja efeitos diferentes em sucesso/falha e queira-se tratar depois, manter referências originais em choice
+                if (opt.success?.effects) choice.successEffects = opt.success.effects;
+                if (opt.failure?.effects) choice.failureEffects = opt.failure.effects;
+              } else if (opt.skill || opt.dc) {
+                // Formato simplificado anterior
+                const stat = mapSkill(opt.skill);
+                const difficulty = mapDifficulty(opt.dc);
+                choice.skillCheck = {
+                  stat,
+                  difficulty,
+                  successNode: choice.nextNode,
+                  failureNode: choice.nextNode
+                };
+              }
+              return choice;
+            });
+          }
+          // Assign only if explicitly declared in JSON or mapping
+          let autoImage = node.image || explicitNodeImages[node.id || key];
+          converted[key] = {
+            id: node.id || key,
+            text: node.text || '',
+            title: node.title,
+            image: autoImage,
+            choices: node.choices || [],
+            skillCheck: node.skillCheck,
+            gameOver: node.gameOver || node.isGameOver || false,
+            epilogue: node.epilogue,
+            friendship: node.effects?.friendship || node.friendship || undefined
+          } as StoryNode;
+        });
+        setStory(converted);
+        setStoryData(data);
+        setCurrentChapter(chapterNumber);
+        if (data.startNode) {
+          setCurrent(data.startNode);
+        } else {
+          const firstNodeKey = Object.keys(converted)[0];
+          setCurrent(firstNodeKey);
+        }
       } else {
-        // Fallback for chapters without a specified start node
-        const firstNodeKey = Object.keys(data.nodes)[0];
-        setCurrent(firstNodeKey);
+        setStory(null);
       }
     } catch (error) {
       console.error('Error loading chapter:', error);
@@ -373,13 +465,32 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
     // Store the next node for manual continuation
     const nextNode = (() => {
       if (successNode && failureNode) {
-        // New format: uses successNode/failureNode
+        // Friendship effects for success/failure (new schema captured in successEffects/failureEffects)
+        if (isSuccess && (choice as any).successEffects?.friendship) {
+          const fr = (choice as any).successEffects.friendship as Record<string, number>;
+          setGameState(prev => ({
+            ...prev,
+            friendship: Object.entries(fr).reduce((acc, [char, delta]) => {
+              acc[char] = (prev.friendship?.[char] || 0) + delta;
+              return acc;
+            }, { ...(prev.friendship || {}) })
+          }));
+          setLastFriendshipDelta(fr);
+        } else if (!isSuccess && (choice as any).failureEffects?.friendship) {
+          const fr = (choice as any).failureEffects.friendship as Record<string, number>;
+          setGameState(prev => ({
+            ...prev,
+            friendship: Object.entries(fr).reduce((acc, [char, delta]) => {
+              acc[char] = (prev.friendship?.[char] || 0) + delta;
+              return acc;
+            }, { ...(prev.friendship || {}) })
+          }));
+          setLastFriendshipDelta(fr);
+        }
         return isSuccess ? successNode : failureNode;
       } else if (success && failure) {
-        // Old format: uses success/failure text as node IDs
         return isSuccess ? success : failure;
       } else {
-        // Fallback to choice's nextNode
         return choice.nextNode;
       }
     })();
@@ -498,6 +609,19 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
         logical: Math.max(0, prev.logical + (choice.effects?.logical || 0)),
         empathy: Math.max(0, prev.empathy + (choice.effects?.empathy || 0))
       }));
+    }
+
+    // Friendship adjustments (direct choice effects)
+    if ((choice as any).effects?.friendship) {
+      const fr = (choice as any).effects.friendship as Record<string, number>;
+      setGameState(prev => ({
+        ...prev,
+        friendship: Object.entries(fr).reduce((acc, [char, delta]) => {
+          acc[char] = (prev.friendship?.[char] || 0) + delta;
+          return acc;
+        }, { ...(prev.friendship || {}) })
+      }));
+      setLastFriendshipDelta(fr);
     }
 
     // Check for skill checks
@@ -625,6 +749,15 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
     setCurrentChapter(1);
     loadChapter(1);
   };
+
+  // Track last friendship delta to show transient feedback
+  const [lastFriendshipDelta, setLastFriendshipDelta] = useState<Record<string, number> | null>(null);
+  useEffect(() => {
+    if (lastFriendshipDelta) {
+      const t = setTimeout(() => setLastFriendshipDelta(null), 3500);
+      return () => clearTimeout(t);
+    }
+  }, [lastFriendshipDelta]);
 
   // Save & Exit helpers
   const buildSaveObject = (): SavedGame => ({
@@ -1373,59 +1506,66 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
             borderRadius: '10px',
             padding: '20px',
             marginBottom: '20px',
-            background: 'rgba(255, 255, 0, 0.1)',
-            textAlign: 'center'
+            background: 'rgba(255, 255, 0, 0.06)',
+            textAlign: 'center',
+            minHeight: '140px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
           }}>
-            <h3 style={{ color: '#ffff00', marginBottom: '15px' }}>🎲 SKILL CHECK</h3>
-            
-            {/* Dice animation phase */}
-            {diceRoll && !skillCheckResult && (
-              <div style={{ 
-                fontSize: '3.1em', 
-                marginBottom: '10px',
-                transform: 'scale(1.1)',
-                transition: 'transform 0.1s ease-in-out',
-                filter: 'drop-shadow(0 0 10px #ffff00)'
-              }}>
-                🎲 {diceRoll}
-              </div>
+            {/* No text while rolling: pure visual pulse */}
+            {!skillCheckResult && (
+              <div style={{
+                width: 64,
+                height: 64,
+                margin: '0 auto',
+                border: '4px solid rgba(255,255,0,0.4)',
+                borderTopColor: '#ffff00',
+                borderRadius: '50%',
+                animation: 'spin 0.9s linear infinite',
+                boxShadow: '0 0 12px rgba(255,255,0,0.4)'
+              }} />
             )}
-            
-            {/* Results phase */}
+            {/* Results phase (show full text only after resolved) */}
             {skillCheckResult && (
               <>
-                <div style={{ fontSize: '1.3em', marginBottom: '10px' }}>
-                  Roll: {skillCheckResult.roll} + Stat: {skillCheckResult.stat} = Total: {skillCheckResult.total}
+                <h3 style={{ color: '#ffff00', marginBottom: '12px' }}>🎲 SKILL CHECK</h3>
+                <div style={{ fontSize: '1.15em', marginBottom: '8px' }}>
+                  Roll: {skillCheckResult.roll} + Stat: {skillCheckResult.stat} = {skillCheckResult.total}
                 </div>
-                <div style={{ fontSize: '1.2em', marginBottom: '10px' }}>
+                <div style={{ fontSize: '1.05em', marginBottom: '10px', opacity: 0.85 }}>
                   Difficulty: {skillCheckResult.dc}
                 </div>
                 <div style={{ 
-                  fontSize: '1.4em', 
+                  fontSize: '1.35em', 
                   fontWeight: 'bold',
-                  color: skillCheckResult.success ? '#00ff00' : '#ff6b6b',
-                  marginBottom: '15px'
+                  color: skillCheckResult.success ? '#00ff88' : '#ff6b6b',
+                  marginBottom: '16px'
                 }}>
-                  {skillCheckResult.success ? '✅ SUCCESS!' : '❌ FAILURE!'}
+                  {skillCheckResult.success ? '✅ SUCCESSO' : '❌ FALHA'}
                 </div>
                 <button
                   onClick={continueAfterSkillCheck}
                   style={{
-                    padding: '10px 20px',
-                    backgroundColor: '#00ff00',
-                    color: '#000000',
+                    padding: '10px 22px',
+                    background: skillCheckResult.success ? 'linear-gradient(90deg,#00ff88,#00cc55)' : 'linear-gradient(90deg,#ff4444,#aa0000)',
+                    color: '#000',
                     border: 'none',
-                    borderRadius: '5px',
-                    fontSize: '1.2em',
+                    borderRadius: '6px',
+                    fontSize: '1.05em',
                     fontWeight: 'bold',
                     cursor: 'pointer',
-                    fontFamily: 'Courier New, Monaco, monospace'
+                    fontFamily: 'Courier New, Monaco, monospace',
+                    boxShadow: '0 0 10px rgba(255,255,0,0.25)'
                   }}
                 >
-                  Continue
+                  Continuar
                 </button>
               </>
             )}
+            <style jsx>{`
+              @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
+            `}</style>
           </div>
         )}
 
@@ -1583,11 +1723,60 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
           )}
         </div>
 
+        {/* Friendship panel (persistent) */}
+        {gameState.friendship && (
+          <div style={{ marginTop: '10px', borderTop: '1px solid #003300', paddingTop: '14px' }}>
+            <div style={{ fontSize: 12, color: '#66ffcc', marginBottom: 6, letterSpacing: '1px' }}>RELACIONAMENTOS</div>
+            <div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap' }}>
+              {Object.entries(gameState.friendship).map(([char, val]) => (
+                <div key={char} style={{ minWidth: '120px', background: 'rgba(0,255,136,0.05)', padding: '6px 10px', borderRadius: 6, border: '1px solid #004427', position: 'relative' }}>
+                  <div style={{ fontSize: '12px', color: '#aaffee', fontWeight: 'bold', letterSpacing: '0.5px' }}>{char}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: 4 }}>
+                    <div style={{ flex: 1, height: 6, background: '#022d22', borderRadius: 4, overflow: 'hidden' }}>
+                      <div style={{ width: `${Math.max(0, Math.min(100, (val + 10) * 5))}%`, height: '100%', background: 'linear-gradient(90deg,#00ff99,#00bb66)' }} />
+                    </div>
+                    <div style={{ fontSize: 11, color: '#e0ffe0', minWidth: 24, textAlign: 'right' }}>{val}</div>
+                  </div>
+                  {lastFriendshipDelta && lastFriendshipDelta[char] && (
+                    <div style={{ position: 'absolute', top: -10, right: 4, fontSize: 11, fontWeight: 'bold', color: lastFriendshipDelta[char] > 0 ? '#00ff99' : '#ff6666', textShadow: '0 0 4px rgba(0,0,0,0.6)' }}>
+                      {lastFriendshipDelta[char] > 0 ? `+${lastFriendshipDelta[char]}` : `${lastFriendshipDelta[char]}`}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Transient toast for friendship changes */}
+        {lastFriendshipDelta && (
+          <div style={{ position: 'fixed', bottom: 20, right: 20, background: 'rgba(0,40,0,0.9)', border: '1px solid #00ff88', padding: '10px 14px', borderRadius: 8, color: '#e0ffe0', fontSize: 13, zIndex: 3000, boxShadow: '0 0 10px rgba(0,255,136,0.3)' }}>
+            {Object.entries(lastFriendshipDelta).map(([char, delta]) => (
+              <div key={char} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                <span style={{ color: '#aaffee' }}>{char}</span>
+                <span style={{ color: delta > 0 ? '#00ff99' : '#ff6666', fontWeight: 'bold' }}>{delta > 0 ? `+${delta}` : delta}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Choices - only show when not in skill check and after text finishes */}
         {!skillCheckInProgress && isComplete && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '30px' }}>
             {(currentNode.choices || []).map((choice, index) => {
               const canSelect = canChoose(choice);
+              const isSkill = !!choice.skillCheck;
+              // Remove parenthetical (Teste ...) from original text for cleaner display
+              const baseText = isSkill ? choice.text.replace(/\s*\(Teste[^)]*\)/i, '').trim() : choice.text;
+              let diffLabel = '';
+              if (isSkill) {
+                const d = choice.skillCheck!.difficulty;
+                if (typeof d === 'string') {
+                  diffLabel = d === 'easy' ? 'FÁCIL' : d === 'medium' ? 'MÉDIO' : d === 'hard' ? 'DIFÍCIL' : d.toUpperCase();
+                } else if (typeof d === 'number') {
+                  diffLabel = 'DC ' + d;
+                }
+              }
               return (
                 <button
                   key={index}
@@ -1605,7 +1794,9 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
                     textAlign: 'left',
                     fontFamily: 'inherit',
                     fontSize: '1.1rem',
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}
                   onMouseEnter={(e) => {
                     if (canSelect) {
@@ -1620,7 +1811,39 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
                     }
                   }}
                 >
-                  <div>{choice.text}</div>
+                  <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+                    <span>{baseText}</span>
+                    {isSkill && (
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          fontSize: '0.70rem',
+                          letterSpacing: '1px',
+                          background: 'rgba(255,255,0,0.08)',
+                          border: '1px solid #d6d600',
+                          color: '#ffff66',
+                          padding: '4px 8px',
+                          borderRadius: 20,
+                          fontWeight: 600,
+                          textTransform: 'uppercase',
+                          boxShadow: '0 0 6px rgba(255,255,0,0.25)'
+                        }}
+                        aria-label={`Teste de perícia ${diffLabel}`}
+                      >
+                        <span style={{ filter:'drop-shadow(0 0 2px #ffff00)' }}>🎲</span>{diffLabel}
+                      </span>
+                    )}
+                  </div>
+                  {isSkill && choice.skillCheck?.stat && (
+                    <div style={{ marginTop:6, fontSize:'0.65rem', letterSpacing:'1px', color:'#cccccc', opacity:0.75 }}>
+                      STAT: <span style={{ color:'#00ff99' }}>{choice.skillCheck.stat.toUpperCase()}</span>
+                      {typeof choice.skillCheck.difficulty === 'number' && (
+                        <span style={{ marginLeft:8 }}>DC {choice.skillCheck.difficulty}</span>
+                      )}
+                    </div>
+                  )}
                   {choice.requirements && (
                     <div style={{ fontSize: '0.9rem', color: '#ff6b6b', fontStyle: 'italic', marginTop: '5px' }}>
                       {choice.requirements.tech && `Tech ${choice.requirements.tech}+ `}
@@ -1628,13 +1851,22 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
                       {choice.requirements.empathy && `Empathy ${choice.requirements.empathy}+`}
                     </div>
                   )}
-                  {choice.effects && (
-                    <div style={{ fontSize: '0.9rem', color: '#00ff88', fontStyle: 'italic', marginTop: '5px' }}>
-                      {choice.effects.tech && `+${choice.effects.tech} Tech `}
-                      {choice.effects.logical && `+${choice.effects.logical} Logic `}
-                      {choice.effects.empathy && `+${choice.effects.empathy} Empatia`}
+                  {(choice as any).effects || (choice as any).successEffects || (choice as any).failureEffects ? (
+                    <div style={{ fontSize: '0.8rem', color: '#00ff88', fontStyle: 'italic', marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                      {(choice as any).effects?.tech && <span>Tech +{(choice as any).effects.tech}</span>}
+                      {(choice as any).effects?.logical && <span>Logic +{(choice as any).effects.logical}</span>}
+                      {(choice as any).effects?.empathy && <span>Empatia +{(choice as any).effects.empathy}</span>}
+                      {(choice as any).effects?.friendship && Object.entries((choice as any).effects.friendship).map(([c,v]: any) => (
+                        <span key={c}>{c} {v>0?`+${v}`:v}</span>
+                      ))}
+                      {(choice as any).successEffects?.friendship && Object.entries((choice as any).successEffects.friendship).map(([c,v]: any) => (
+                        <span key={c}>Sucesso: {c} {v>0?`+${v}`:v}</span>
+                      ))}
+                      {(choice as any).failureEffects?.friendship && Object.entries((choice as any).failureEffects.friendship).map(([c,v]: any) => (
+                        <span key={c}>Falha: {c} {v>0?`+${v}`:v}</span>
+                      ))}
                     </div>
-                  )}
+                  ) : null}
                 </button>
               );
             })}
