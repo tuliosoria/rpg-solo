@@ -1,5 +1,6 @@
 'use client';
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import Dice from './components/Dice';
 
 // Typewriter hook for text animation
 const useTypewriter = (text: string, speed: number = 30) => {
@@ -1513,23 +1514,20 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
             flexDirection: 'column',
             justifyContent: 'center'
           }}>
-            {/* No text while rolling: pure visual pulse */}
+            {/* Rolling phase: animated dice */}
             {!skillCheckResult && (
-              <div style={{
-                width: 64,
-                height: 64,
-                margin: '0 auto',
-                border: '4px solid rgba(255,255,0,0.4)',
-                borderTopColor: '#ffff00',
-                borderRadius: '50%',
-                animation: 'spin 0.9s linear infinite',
-                boxShadow: '0 0 12px rgba(255,255,0,0.4)'
-              }} />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                <Dice rolling={true} sides={20} durationMs={1100} finalValue={null} size={72} />
+                <div style={{ fontSize: 13, letterSpacing: '1px', color: '#ffffaa', fontFamily: 'Courier New, monospace' }}>Rolling d20...</div>
+              </div>
             )}
             {/* Results phase (show full text only after resolved) */}
             {skillCheckResult && (
               <>
                 <h3 style={{ color: '#ffff00', marginBottom: '12px' }}>🎲 SKILL CHECK</h3>
+                <div style={{ margin: '0 auto 14px', width: 72 }}>
+                  <Dice rolling={false} sides={20} finalValue={skillCheckResult.roll} size={72} />
+                </div>
                 <div style={{ fontSize: '1.15em', marginBottom: '8px' }}>
                   Roll: {skillCheckResult.roll} + Stat: {skillCheckResult.stat} = {skillCheckResult.total}
                 </div>
@@ -1563,9 +1561,7 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
                 </button>
               </>
             )}
-            <style jsx>{`
-              @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
-            `}</style>
+            {/* Spinner keyframes removed; dice animation handles visuals */}
           </div>
         )}
 
@@ -1772,7 +1768,7 @@ export default function RpgSolo({ onExitToMenu, initialLoad }: { onExitToMenu?: 
               if (isSkill) {
                 const d = choice.skillCheck!.difficulty;
                 if (typeof d === 'string') {
-                  diffLabel = d === 'easy' ? 'FÁCIL' : d === 'medium' ? 'MÉDIO' : d === 'hard' ? 'DIFÍCIL' : d.toUpperCase();
+                  diffLabel = d === 'easy' ? 'FÁCIL' : d === 'medium' ? 'MÉDIO' : d === 'hard' ? 'DIFÍCIL' : (d as any as string).toUpperCase();
                 } else if (typeof d === 'number') {
                   diffLabel = 'DC ' + d;
                 }

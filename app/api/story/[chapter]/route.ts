@@ -1,10 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
+import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 
-export async function GET(_req: NextRequest, { params }: { params: { chapter: string } }) {
+// Conform strictly to Next.js 15: params is Promise-like (async) and must be awaited
+// https://nextjs.org/docs/messages/sync-dynamic-apis
+type ChapterParams = { chapter: string };
+
+export async function GET(_req: NextRequest, { params }: { params: Promise<ChapterParams> }) {
   try {
-    const n = parseInt(params.chapter, 10);
+  const { chapter } = await params;
+    const n = parseInt(chapter, 10);
     if (![1, 2, 3, 4, 5].includes(n)) return NextResponse.json({ error: "Capítulo inválido" }, { status: 400 });
     const file = path.join(process.cwd(), "public", `chapter${n}.json`);
     const json = await fs.readFile(file, "utf-8");
@@ -14,9 +19,10 @@ export async function GET(_req: NextRequest, { params }: { params: { chapter: st
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { chapter: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<ChapterParams> }) {
   try {
-    const n = parseInt(params.chapter, 10);
+  const { chapter } = await params;
+    const n = parseInt(chapter, 10);
     if (![1, 2, 3, 4, 5].includes(n)) return NextResponse.json({ error: "Capítulo inválido" }, { status: 400 });
     const body = await req.text();
     // Validate JSON
