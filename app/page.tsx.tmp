@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState } from "react";
 import Editor from "./Editor";
 import RpgSolo from "./RpgSolo";
@@ -40,24 +40,24 @@ export default function Home() {
 
         <section className="panel fade-in-up" style={{ maxWidth: 560, width: '92%', fontFamily: 'var(--font-mono)', background: 'rgba(0,30,15,0.7)', border: '1px solid rgba(0,255,136,0.3)', boxShadow: '0 0 0 1px rgba(0,255,136,0.25), 0 22px 40px -10px rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)' }}>
           <header style={{ textAlign: 'center', marginBottom: 'var(--space-6)' }}>
-            <h1 style={{ fontSize: '2rem', margin: '0 0 .3rem', fontFamily: 'var(--font-mono)', letterSpacing: '2px', color: '#00ffaa', textShadow: '0 0 12px rgba(0,255,136,0.5)' }}>RPG SOLO TERMINAL</h1>
-            <div style={{ fontSize: '.85rem', letterSpacing: '1px', color: '#b6ffd6', textTransform: 'uppercase' }}>{save?.title || 'Capítulo 1 — O Sinal'}</div>
+            <h1 style={{ fontSize: '2rem', margin: '0 0 .3rem', fontFamily: 'var(--font-mono)', letterSpacing: '2px', color: '#00ffaa', textShadow: '0 0 12px rgba(0,255,136,0.5)' }}>â–® RPG SOLO TERMINAL</h1>
+            <div style={{ fontSize: '.85rem', letterSpacing: '1px', color: '#b6ffd6', textTransform: 'uppercase' }}>{save?.title || 'CapÃ­tulo 1 â€” O Sinal'}</div>
           </header>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            <button className="btn btn-success" style={{ fontSize: '1.05rem', fontFamily: 'var(--font-mono)', letterSpacing: '1px' }} onClick={() => { setActiveInitialLoad(undefined); setView('game'); }}>Novo Jogo</button>
-            <button className="btn btn-outline" disabled={!save} style={{ fontSize: '.95rem', opacity: save ? 1 : .4, cursor: save ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-mono)', letterSpacing: '1px' }} onClick={() => { if (!save) return; setActiveInitialLoad(save); setView('game'); }}>Carregar</button>
-            <button className="btn" style={{ fontSize: '.95rem', background: 'linear-gradient(135deg,#6366f1,#4f46e5)', fontFamily: 'var(--font-mono)', letterSpacing: '1px' }} onClick={() => setView('editor')}>Editor da História</button>
+            <button className="btn btn-success" style={{ fontSize: '1.05rem', fontFamily: 'var(--font-mono)', letterSpacing: '1px' }} onClick={() => { setActiveInitialLoad(undefined); setView('game'); }}>â–¶ Novo Jogo</button>
+            <button className="btn btn-outline" disabled={!save} style={{ fontSize: '.95rem', opacity: save ? 1 : .4, cursor: save ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-mono)', letterSpacing: '1px' }} onClick={() => { if (!save) return; setActiveInitialLoad(save); setView('game'); }}>ðŸ’¾ Carregar</button>
+            <button className="btn" style={{ fontSize: '.95rem', background: 'linear-gradient(135deg,#6366f1,#4f46e5)', fontFamily: 'var(--font-mono)', letterSpacing: '1px' }} onClick={() => setView('editor')}>âœ Editor da HistÃ³ria</button>
           </div>
 
           {save && (
             <div style={{ marginTop: 'var(--space-4)', fontSize: '.7rem', fontFamily: 'var(--font-mono)', color: '#8effc6', letterSpacing: '1px' }}>
-              Salvo em {new Date(save.timestamp).toLocaleString()} — Capítulo {save.chapter}
+              Salvo em {new Date(save.timestamp).toLocaleString()} â€” CapÃ­tulo {save.chapter}
             </div>
           )}
 
           <footer style={{ marginTop: 'var(--space-6)', fontSize: '.65rem', letterSpacing: '1px', color: '#6ae8b0', opacity: .8 }}>
-            Use o botão Menu dentro do jogo para salvar e voltar.
+            Use o botÃ£o Menu dentro do jogo para salvar e voltar.
           </footer>
         </section>
       </main>
@@ -81,4 +81,3 @@ export default function Home() {
     </main>
   );
 }
-

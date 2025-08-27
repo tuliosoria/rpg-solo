@@ -28,9 +28,44 @@ export interface DiceProps {
   motionPreference?: 'auto' | 'reduced' | 'full';
   polish?: boolean; // enable enhanced visual polish (glow dynamics)
   settleWobble?: boolean; // subtle post-landing wobble
+  theme?: 'neon' | 'ember' | 'ocean' | 'mono';
+  fx?: 'minimal' | 'classic' | 'extreme';
+  showShadow?: boolean;
+  showAura?: boolean;
+  showParticles?: boolean;
+  showTrail?: boolean;
+  label?: string;
+  critFlash?: boolean;
+  ariaLabel?: string;
 }
 
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3); // cubic ease-out
+
+// One-time style injector for keyframes used by FX
+const ensureFxStyles = () => {
+  if (typeof document === 'undefined') return;
+  const id = 'dice-fx-styles-v1';
+  if (document.getElementById(id)) return;
+  const style = document.createElement('style');
+  style.id = id;
+  style.textContent = `
+  @keyframes dice-particle {
+    0% { transform: translate(0,0) scale(1) rotate(0deg); opacity: 1; }
+    70% { opacity: .92; }
+    100% { transform: translate(var(--dx,0px), var(--dy,0px)) scale(0.9) rotate(var(--rot,0deg)); opacity: 0; }
+  }
+  @keyframes dice-aura-pulse {
+    0%,100% { transform: scale(0.96); opacity: .45; }
+    50% { transform: scale(1.04); opacity: .95; }
+  }
+  @keyframes dice-crit-flash {
+    0% { opacity: 0; }
+    15% { opacity: 0.95; }
+    100% { opacity: 0; }
+  }
+  `;
+  document.head.appendChild(style);
+};
 
 // Audio manager: rumble + stop beep + optional ticks
 const useDiceAudio = () => {
@@ -165,8 +200,20 @@ export const Dice: React.FC<DiceProps> = ({
   ticks = true,
   motionPreference = 'auto',
   polish = true,
-  settleWobble = true
+  settleWobble = true,
+  theme = 'neon',
+  fx = 'extreme',
+  showShadow,
+  showAura,
+  showParticles,
+  showTrail,
+  label = 'rolling...',
+  critFlash,
+  ariaLabel
 }) => {
+  // Inject FX styles once
+  useEffect(() => { ensureFxStyles(); }, []);
+
   const [displayValue, setDisplayValue] = useState<number>(() => Math.floor(Math.random() * sides) + 1);
   const startRef = useRef<number | null>(null);
   const completedRef = useRef(false);
@@ -198,8 +245,44 @@ export const Dice: React.FC<DiceProps> = ({
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }, [motionPreference]);
 
+  // Derived feature toggles by fx level
+  const fxLevel = fx || (polish ? 'extreme' : 'classic');
+  const enableAura = showAura ?? (fxLevel !== 'minimal');
+  const enableShadow = showShadow ?? true;
+  const enableParticles = showParticles ?? (fxLevel === 'extreme');
+  const enableTrail = showTrail ?? (fxLevel !== 'minimal');
+  const enableCritFlash = critFlash ?? (fxLevel === 'extreme');
+
   const isCritSuccess = displayValue === 20 && sides === 20;
   const isCritFailure = displayValue === 1 && sides === 20;
+
+  // Particle FX state and crit flash
+  const [fxParticles, setFxParticles] = useState<Array<{ id:number; dx:number; dy:number; color:string; size:number; shape:'rect'|'circle'; rot:number }>>([]);
+  const [flash, setFlash] = useState<null | 'success' | 'failure'>(null);
+
+  const spawnParticles = (kind: 'success'|'failure'|'neutral') => {
+    if (!enableParticles || prefersReduced) return;
+    const count = kind === 'neutral' ? 10 : 22;
+    const colors = kind === 'success'
+      ? ['#22c55e','#16a34a','#84cc16','#34d399']
+      : kind === 'failure'
+      ? ['#ef4444','#dc2626','#f97316','#b91c1c']
+      : ['#a3a3a3','#737373','#6b7280'];
+    const items = Array.from({length: count}).map((_, i) => {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = (size * 0.5) * (0.4 + Math.random() * 0.8);
+      const dx = Math.cos(angle) * radius;
+      const dy = Math.sin(angle) * radius * (kind === 'failure' ? 1.2 : -1);
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const shape: 'rect'|'circle' = kind === 'success' ? 'rect' : 'circle';
+      const partSize = Math.max(3, Math.min(10, (size/18) + Math.random()*6));
+      const rot = Math.floor(Math.random()*360);
+      return { id: Date.now() + i, dx, dy, color, size: partSize, shape, rot };
+    });
+    setFxParticles(items);
+    // auto-clear after animation
+    setTimeout(() => setFxParticles([]), 650);
+  };
 
   const faceValues = useMemo(() => {
     const used = new Set<number>([displayValue]);
@@ -311,9 +394,19 @@ export const Dice: React.FC<DiceProps> = ({
         const final = lockedFinalRef.current ?? finalValue ?? Math.floor(Math.random() * sides) + 1;
         setRot({ x: 0, y: 0 });
         stopRumble();
+        const critKind = final === 20 && sides === 20 ? 'success' : final === 1 && sides === 20 ? 'failure' : undefined;
         if (!prefersReduced) {
-          stopBeep(final === 20 && sides === 20 ? 'success' : final === 1 && sides === 20 ? 'failure' : undefined);
+          stopBeep(critKind);
         }
+        if (critKind && enableCritFlash) {
+          setFlash(critKind);
+          if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+            try { (navigator as any).vibrate(critKind === 'success' ? 60 : [30, 40, 30]); } catch {}
+          }
+          setTimeout(() => setFlash(null), 220);
+        }
+        // Particle burst
+        spawnParticles(critKind ? critKind : 'neutral');
         if (!completedRef.current) {
           completedRef.current = true;
           onComplete?.(final);
@@ -367,6 +460,14 @@ export const Dice: React.FC<DiceProps> = ({
     if (rolling) accelRef.current = true;
   };
 
+  const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
+    if (!rolling) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      accelRef.current = true;
+    }
+  };
+
   // Compose settle wobble transform post-roll
   let wobbleTransform = '';
   if (polish && settleWobble && settleProgress > 0 && !rolling) {
@@ -382,18 +483,41 @@ export const Dice: React.FC<DiceProps> = ({
     <div
       className="dice-container select-none"
       role="img"
-      aria-label={`d${sides} showing ${displayValue}`}
+      aria-busy={rolling}
+      aria-label={ariaLabel || `d${sides} showing ${displayValue}`}
       style={{
         width: size,
         height: size,
         perspective: 600,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        position: 'relative'
       }}
     >
+      {/* Soft floor shadow */}
+      {enableShadow && (
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            bottom: -size*0.18,
+            width: size * 0.9,
+            height: size * 0.28,
+            borderRadius: '50%',
+            background: 'radial-gradient(50% 60% at 50% 50%, rgba(0,0,0,0.45), rgba(0,0,0,0) 70%)',
+            filter: 'blur(4px)',
+            opacity: 0.35 + glowFactor * 0.4,
+            transform: `scale(${1 + glowFactor * 0.15})`,
+            pointerEvents: 'none'
+          }}
+        />
+      )}
+
       <div
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
         className={`relative flex items-center justify-center font-bold rounded-md`}
         style={{
           width: size,
@@ -402,6 +526,28 @@ export const Dice: React.FC<DiceProps> = ({
           cursor: rolling ? 'pointer' : 'default',
         }}
       >
+        {/* Aura ring */}
+        {enableAura && (
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: -size*0.08,
+              borderRadius: 16,
+              background: isCritSuccess
+                ? 'radial-gradient(circle at 50% 50%, rgba(34,197,94,0.35), rgba(34,197,94,0) 60%)'
+                : isCritFailure
+                ? 'radial-gradient(circle at 50% 50%, rgba(239,68,68,0.35), rgba(239,68,68,0) 60%)'
+                : 'radial-gradient(circle at 50% 50%, rgba(99,102,241,0.28), rgba(99,102,241,0) 60%)',
+              filter: 'blur(10px)',
+              opacity: 0.4 + glowFactor * 0.5,
+              animation: rolling ? 'dice-aura-pulse 1200ms ease-in-out infinite' : undefined,
+              pointerEvents: 'none',
+              zIndex: 0
+            }}
+          />
+        )}
+
         {/* 3D cube */}
         <div
           style={{
@@ -411,6 +557,7 @@ export const Dice: React.FC<DiceProps> = ({
             transformStyle: 'preserve-3d',
             transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg)${wobbleTransform}`,
             transition: transitioningHome ? 'transform 360ms cubic-bezier(0.23, 1.4, 0.32, 1)' : undefined,
+            zIndex: 1
           }}
         >
           {[0, 1, 2, 3, 4, 5].map((idx) => {
@@ -424,14 +571,52 @@ export const Dice: React.FC<DiceProps> = ({
             if (idx === 5) faceTransform = `rotateX(-90deg) translateZ(${half}px)`; // bottom
 
             const isFront = idx === 0;
+            // Palette selection by theme
+            const getPalette = () => {
+              switch(theme){
+                case 'ember':
+                  return {
+                    baseFront: 'linear-gradient(135deg,#b45309,#f59e0b)',
+                    rollingFront: 'linear-gradient(135deg,#ef4444,#b91c1c)',
+                    baseSide: 'linear-gradient(135deg,#111827,#1f2937)',
+                    success: 'linear-gradient(135deg,#22c55e,#16a34a)',
+                    failure: 'linear-gradient(135deg,#ef4444,#b91c1c)'
+                  };
+                case 'ocean':
+                  return {
+                    baseFront: 'linear-gradient(135deg,#0ea5e9,#2563eb)',
+                    rollingFront: 'linear-gradient(135deg,#22d3ee,#0ea5e9)',
+                    baseSide: 'linear-gradient(135deg,#0b1020,#0f172a)',
+                    success: 'linear-gradient(135deg,#22c55e,#16a34a)',
+                    failure: 'linear-gradient(135deg,#ef4444,#b91c1c)'
+                  };
+                case 'mono':
+                  return {
+                    baseFront: 'linear-gradient(135deg,#4b5563,#6b7280)',
+                    rollingFront: 'linear-gradient(135deg,#9ca3af,#6b7280)',
+                    baseSide: 'linear-gradient(135deg,#1f2937,#111827)',
+                    success: 'linear-gradient(135deg,#22c55e,#16a34a)',
+                    failure: 'linear-gradient(135deg,#ef4444,#b91c1c)'
+                  };
+                default:
+                  return {
+                    baseFront: 'linear-gradient(135deg,#1d4ed8,#4f46e5)',
+                    rollingFront: 'linear-gradient(135deg,#4338ca,#7e22ce)',
+                    baseSide: 'linear-gradient(135deg,#111827,#1f2937)',
+                    success: 'linear-gradient(135deg,#22c55e,#16a34a)',
+                    failure: 'linear-gradient(135deg,#ef4444,#b91c1c)'
+                  };
+              }
+            };
+            const pal = getPalette();
             const baseGradient = isFront
               ? (displayValue === 20 && sides === 20
-                  ? 'linear-gradient(135deg,#22c55e,#16a34a)'
+                  ? pal.success
                   : displayValue === 1 && sides === 20
-                  ? 'linear-gradient(135deg,#ef4444,#b91c1c)'
-                  : (/* default */ 'linear-gradient(135deg,#1d4ed8,#4f46e5)'))
-              : 'linear-gradient(135deg,#111827,#1f2937)';
-            const rollingGradient = isFront ? 'linear-gradient(135deg,#4338ca,#7e22ce)' : 'linear-gradient(135deg,#111827,#1f2937)';
+                  ? pal.failure
+                  : pal.baseFront)
+              : pal.baseSide;
+            const rollingGradient = isFront ? pal.rollingFront : pal.baseSide;
             const bg = rolling ? rollingGradient : baseGradient;
             // Dynamic glow based on state + glowFactor (front face only)
             let glow = '0 0 4px rgba(0,0,0,0.5)';
@@ -463,18 +648,36 @@ export const Dice: React.FC<DiceProps> = ({
                   fontWeight: 800,
                   fontSize: size * 0.5,
                   borderRadius: 12,
-                  border: '2px solid rgba(255,255,255,0.2)',
-                  boxShadow: `${glow}, inset 0 0 8px rgba(0,0,0,0.6)`,
+                  border: '2px solid rgba(255,255,255,0.18)',
+                  boxShadow: `${glow}, inset 0 0 8px rgba(0,0,0,0.6), inset 0 6px 20px rgba(255,255,255,0.06)`,
                   background: bg,
                   transform: faceTransform,
                   userSelect: 'none',
                 }}
               >
-                {faceValues[idx]}
+                {/* Specular highlight overlay (front face emphasis) */}
+                {isFront && (
+                  <div aria-hidden style={{ position:'absolute', inset:0, borderRadius:12, background: 'radial-gradient(120% 90% at 30% 20%, rgba(255,255,255,0.18), rgba(255,255,255,0.02) 60%, rgba(255,255,255,0) 70%)', pointerEvents:'none' }} />
+                )}
+                <span style={{
+                  textShadow: isFront
+                    ? (displayValue === 20 && sides === 20)
+                      ? '0 0 10px rgba(34,197,94,0.8)'
+                      : (displayValue === 1 && sides === 20)
+                        ? '0 0 10px rgba(239,68,68,0.8)'
+                        : '0 0 8px rgba(99,102,241,0.8)'
+                    : '0 0 4px rgba(0,0,0,0.6)'
+                }}>
+                  {faceValues[idx]}
+                </span>
               </div>
             );
           })}
         </div>
+        {/* Motion trail */}
+        {enableTrail && rolling && (
+          <div aria-hidden style={{ position:'absolute', inset:0, borderRadius:12, filter:'blur(10px)', opacity: Math.min(0.55, 0.15 + glowFactor * 0.6), background: 'linear-gradient(135deg, rgba(147,197,253,0.25), rgba(167,139,250,0.25))', zIndex: 0 }} />
+        )}
         {rolling && (
           <span
             className="absolute"
@@ -486,8 +689,20 @@ export const Dice: React.FC<DiceProps> = ({
               textShadow: '0 0 6px rgba(168,85,247,0.6)'
             }}
           >
-            rolling...
+            {label}
           </span>
+        )}
+        {/* Crit flash overlay */}
+        {flash && enableCritFlash && (
+          <div aria-hidden style={{ position:'absolute', inset:0, borderRadius:12, background: flash==='success' ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)', mixBlendMode:'screen', animation: 'dice-crit-flash 220ms ease-out both', zIndex:2 }} />
+        )}
+        {/* Particle FX */}
+        {enableParticles && fxParticles.length > 0 && (
+          <div aria-hidden style={{ position:'absolute', inset:0, overflow:'visible', pointerEvents:'none', zIndex:3 }}>
+            {fxParticles.map(p => (
+              <div key={p.id} style={{ position:'absolute', left:'50%', top:'50%', width:p.shape==='rect'? p.size*1.4 : p.size, height:p.size, background:p.color, borderRadius:p.shape==='rect'? 3 : p.size/2, transform:'translate(-50%,-50%)', animation:'dice-particle 650ms ease-out forwards', ['--dx' as any]: `${p.dx}px`, ['--dy' as any]: `${p.dy}px`, ['--rot' as any]: `${p.rot}deg`, boxShadow:'0 0 10px rgba(0,0,0,0.2)' }} />
+            ))}
+          </div>
         )}
         {/* Accessibility live region for announcing result */}
         <div aria-live="polite" style={{position:'absolute',width:1,height:1,overflow:'hidden',clip:'rect(0 0 0 0)'}}>

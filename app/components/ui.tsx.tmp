@@ -1,0 +1,125 @@
+﻿"use client";
+import React from 'react';
+
+// Reusable Button component leveraging design tokens
+export interface UIButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'outline' | 'danger' | 'success' | 'neutral';
+  size?: 'sm' | 'md' | 'lg';
+  iconLeft?: React.ReactNode;
+  iconRight?: React.ReactNode;
+  loading?: boolean;
+}
+
+const sizeStyles: Record<string,string> = {
+  sm: 'var(--space-2) var(--space-3)',
+  md: 'var(--space-3) var(--space-5)',
+  lg: 'var(--space-4) var(--space-6)'
+};
+
+export const Button: React.FC<UIButtonProps> = ({
+  variant = 'primary',
+  size = 'md',
+  iconLeft, iconRight,
+  loading,
+  disabled,
+  children,
+  style,
+  ...rest
+}) => {
+  const base: React.CSSProperties = {
+    fontFamily: 'inherit',
+    fontSize: 'var(--text-sm)',
+    fontWeight: 600,
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.55rem',
+    justifyContent: 'center',
+    borderRadius: 'var(--radius-md)',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    padding: sizeStyles[size],
+    lineHeight: 1.2,
+    position: 'relative',
+    transition: 'var(--transition-fast)',
+    border: '1px solid transparent',
+    userSelect: 'none',
+    boxShadow: 'var(--shadow-sm)'
+  };
+
+  const variants: Record<string, React.CSSProperties> = {
+    primary: { background: 'linear-gradient(135deg,var(--accent),var(--accent-hover))', color: '#fff' },
+    outline: { background: 'transparent', color: 'var(--accent)', borderColor: 'var(--accent)' },
+    danger: { background: 'linear-gradient(135deg,var(--danger),#dc2626)', color: '#fff' },
+    success: { background: 'linear-gradient(135deg,var(--success),#15803d)', color: '#fff' },
+    neutral: { background: 'linear-gradient(135deg,var(--color-gray-600),var(--color-gray-500))', color: '#fff' }
+  };
+
+  const hover: React.CSSProperties = disabled ? {} : {
+    filter: 'brightness(1.07)',
+    boxShadow: 'var(--shadow-lg)'
+  };
+
+  return (
+    <button
+      {...rest}
+      disabled={disabled || loading}
+      style={{ ...base, ...variants[variant], ...(style||{}) }}
+      onMouseEnter={(e) => { Object.assign(e.currentTarget.style, hover); }}
+      onMouseLeave={(e) => { if (!disabled && !loading) { e.currentTarget.style.filter=''; e.currentTarget.style.boxShadow='var(--shadow-sm)'; } }}
+    >
+      {loading && (
+        <span style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <span style={{ width:16, height:16, border:'2px solid rgba(255,255,255,0.4)', borderTopColor:'#fff', borderRadius:'50%', animation:'spin .8s linear infinite' }} />
+        </span>
+      )}
+      {!loading && iconLeft}
+      <span style={{ opacity: loading ? 0 : 1 }}>{children}</span>
+      {!loading && iconRight}
+    </button>
+  );
+};
+
+// Card / Panel wrapper
+export const Panel: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, style, ...rest }) => (
+  <div
+    {...rest}
+    style={{
+      background: 'var(--panel-bg)',
+      backdropFilter: 'blur(var(--panel-blur))',
+      WebkitBackdropFilter: 'blur(var(--panel-blur))',
+      border: '1px solid var(--border-color)',
+      borderRadius: 'var(--radius-lg)',
+      padding: 'var(--space-6)',
+      boxShadow: 'var(--shadow-md)',
+      position: 'relative',
+      ...style
+    }}
+  >
+    {children}
+  </div>
+);
+
+// Simple accessible modal
+interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+  title?: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+}
+
+export const Modal: React.FC<ModalProps> = ({ open, onClose, title, children, footer }) => {
+  if (!open) return null;
+  return (
+    <div role="dialog" aria-modal="true" aria-label={title} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:10000 }} onClick={onClose}>
+      <div onClick={(e)=>e.stopPropagation()} style={{ width:'min(480px,92%)', background:'var(--background-alt)', border:'1px solid var(--border-color)', borderRadius:'var(--radius-lg)', boxShadow:'var(--shadow-lg)', padding:'var(--space-6)', position:'relative' }}>
+        {title && <h2 style={{ marginTop:0, fontSize:'var(--text-xl)', marginBottom:'var(--space-4)' }}>{title}</h2>}
+        <div>{children}</div>
+        {footer && <div style={{ marginTop:'var(--space-6)', display:'flex', justifyContent:'flex-end', gap:'var(--space-3)' }}>{footer}</div>}
+        <button aria-label="Fechar" onClick={onClose} style={{ position:'absolute', top:8, right:8, background:'transparent', border:'none', cursor:'pointer', fontSize:18, color:'var(--foreground-muted)' }}>Ã—</button>
+      </div>
+    </div>
+  );
+};
+
+export default { Button, Panel, Modal };
+
