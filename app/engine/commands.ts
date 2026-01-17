@@ -221,45 +221,85 @@ function isMeaningfulAction(command: string, args: string[], state: GameState, r
   return false;
 }
 
-// Institutional notices for wandering players - returns notices lazily to avoid initialization issues
+// UFO74 messages for wandering players - a friendly hacker guide
 function getWanderingNotice(level: number): TerminalEntry[] {
   if (level === 0) {
-    // First notice - gentle procedural reminder
+    // First notice - friendly tip
     return [
       createEntry('system', ''),
-      createEntry('system', '───────────────────────────────────────────────────────────'),
-      createEntry('system', 'SESSION MONITOR: Low correlation index detected.'),
-      createEntry('system', 'REMINDER: Effective reviews cross-reference multiple sources.'),
-      createEntry('system', 'REF: /internal/incident_review_protocol.txt'),
-      createEntry('system', '───────────────────────────────────────────────────────────'),
+      createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('warning', '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │'),
+      createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('system', ''),
+      createEntry('output', 'UFO74: hey hackerkid, you still there?'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: looks like youre just wandering around.'),
+      createEntry('output', '       i get it, the system is confusing.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: heres the thing - you need to actually READ the files.'),
+      createEntry('output', '       use "open <filename>" and look for connections.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: theres a protocol doc in /internal/ that explains'),
+      createEntry('output', '       what kind of info youre supposed to piece together.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: good luck. ill check back later.'),
+      createEntry('system', ''),
+      createEntry('warning', '>> CONNECTION CLOSED <<'),
       createEntry('system', ''),
     ];
   } else if (level === 1) {
-    // Second notice - slightly more pointed
+    // Second notice - more specific guidance
     return [
       createEntry('system', ''),
-      createEntry('warning', '───────────────────────────────────────────────────────────'),
-      createEntry('warning', 'SESSION MONITOR: Activity pattern flagged.'),
-      createEntry('system', 'NOTE: Random access without file examination'),
-      createEntry('system', '      may indicate unauthorized reconnaissance.'),
-      createEntry('system', 'SUGGESTION: Focus on document content, not structure.'),
-      createEntry('warning', '───────────────────────────────────────────────────────────'),
+      createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('warning', '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │'),
+      createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('system', ''),
+      createEntry('output', 'UFO74: hackerkid, still spinning your wheels?'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: listen, i risked a lot getting you this access.'),
+      createEntry('output', '       the truth is buried in these files.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: you need to find evidence of:'),
+      createEntry('output', '       - what they recovered (check /storage/)'),
+      createEntry('output', '       - what they contained (check /ops/quarantine/)'),
+      createEntry('output', '       - who else was involved (check /comms/)'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: read the files. connect the dots.'),
+      createEntry('output', '       thats how you reconstruct what happened.'),
+      createEntry('system', ''),
+      createEntry('warning', '>> CONNECTION CLOSED <<'),
       createEntry('system', ''),
     ];
   } else {
-    // Third notice - institutional concern
+    // Third notice - urgent help
     return [
       createEntry('system', ''),
-      createEntry('warning', '───────────────────────────────────────────────────────────'),
-      createEntry('warning', 'SESSION MONITOR: Review coherence assessment: LOW'),
+      createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('warning', '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │'),
+      createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
       createEntry('system', ''),
-      createEntry('system', 'This session has accessed multiple directories'),
-      createEntry('system', 'without substantive file examination.'),
+      createEntry('output', 'UFO74: hackerkid, im worried about you.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: youve been in there a while and i dont see progress.'),
+      createEntry('output', '       the system will notice eventually.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: ok, im gonna spell it out:'),
+      createEntry('output', ''),
+      createEntry('output', '       1. GO TO a directory (cd storage, cd ops, etc)'),
+      createEntry('output', '       2. LIST the files (ls)'),
+      createEntry('output', '       3. OPEN them (open filename.txt)'),
+      createEntry('output', '       4. READ what they say'),
+      createEntry('output', '       5. LOOK for connections between files'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: theres something huge hidden in there.'),
+      createEntry('output', '       they covered up something in january 96.'),
+      createEntry('output', '       find the pieces. put them together.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: this is the last time i can reach you safely.'),
+      createEntry('output', '       youre on your own now, hackerkid.'),
       createEntry('system', ''),
-      createEntry('system', 'Incoherent sessions may be flagged for oversight review.'),
-      createEntry('system', ''),
-      createEntry('system', 'RECOMMENDED: Read files. Correlate information.'),
-      createEntry('warning', '───────────────────────────────────────────────────────────'),
+      createEntry('warning', '>> CONNECTION TERMINATED <<'),
       createEntry('system', ''),
     ];
   }
