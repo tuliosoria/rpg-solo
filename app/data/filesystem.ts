@@ -1066,6 +1066,12 @@ const transcript_core: FileNode = {
   status: 'encrypted',
   reveals: ['telepathic_scouts', 'being_containment'],
   corruptible: true,
+  imageTrigger: {
+    src: '/images/et-scared.png',
+    alt: 'Recovered visual - Subject during transmission',
+    tone: 'clinical',
+    corrupted: true,
+  },
   securityQuestion: {
     question: 'SECURITY CHECK: Enter material sample weight from transport log (kg)',
     answers: ['340', '340kg', '340 kg'],
