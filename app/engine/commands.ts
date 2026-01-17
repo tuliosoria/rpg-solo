@@ -196,6 +196,119 @@ function calculateHostilityIncrease(state: GameState, command: string): number {
   return 0;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// WANDERING DETECTION - Implicit guidance through institutional notices
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Check if an action is "meaningful" (reading files, finding truths)
+function isMeaningfulAction(command: string, args: string[], state: GameState, result: { output: TerminalEntry[]; stateChanges: Partial<GameState> }): boolean {
+  // Reading a file is meaningful
+  if (command === 'open' || command === 'decrypt') {
+    return result.output.some(e => e.type !== 'error');
+  }
+  
+  // Discovering truth is definitely meaningful
+  if (result.stateChanges.truthsDiscovered && 
+      (result.stateChanges.truthsDiscovered as Set<string>).size > state.truthsDiscovered.size) {
+    return true;
+  }
+  
+  // Gaining access level is meaningful
+  if (result.stateChanges.accessLevel && result.stateChanges.accessLevel > state.accessLevel) {
+    return true;
+  }
+  
+  return false;
+}
+
+// Institutional notices for wandering players - returns notices lazily to avoid initialization issues
+function getWanderingNotice(level: number): TerminalEntry[] {
+  if (level === 0) {
+    // First notice - gentle procedural reminder
+    return [
+      createEntry('system', ''),
+      createEntry('system', '───────────────────────────────────────────────────────────'),
+      createEntry('system', 'SESSION MONITOR: Low correlation index detected.'),
+      createEntry('system', 'REMINDER: Effective reviews cross-reference multiple sources.'),
+      createEntry('system', 'REF: /internal/incident_review_protocol.txt'),
+      createEntry('system', '───────────────────────────────────────────────────────────'),
+      createEntry('system', ''),
+    ];
+  } else if (level === 1) {
+    // Second notice - slightly more pointed
+    return [
+      createEntry('system', ''),
+      createEntry('warning', '───────────────────────────────────────────────────────────'),
+      createEntry('warning', 'SESSION MONITOR: Activity pattern flagged.'),
+      createEntry('system', 'NOTE: Random access without file examination'),
+      createEntry('system', '      may indicate unauthorized reconnaissance.'),
+      createEntry('system', 'SUGGESTION: Focus on document content, not structure.'),
+      createEntry('warning', '───────────────────────────────────────────────────────────'),
+      createEntry('system', ''),
+    ];
+  } else {
+    // Third notice - institutional concern
+    return [
+      createEntry('system', ''),
+      createEntry('warning', '───────────────────────────────────────────────────────────'),
+      createEntry('warning', 'SESSION MONITOR: Review coherence assessment: LOW'),
+      createEntry('system', ''),
+      createEntry('system', 'This session has accessed multiple directories'),
+      createEntry('system', 'without substantive file examination.'),
+      createEntry('system', ''),
+      createEntry('system', 'Incoherent sessions may be flagged for oversight review.'),
+      createEntry('system', ''),
+      createEntry('system', 'RECOMMENDED: Read files. Correlate information.'),
+      createEntry('warning', '───────────────────────────────────────────────────────────'),
+      createEntry('system', ''),
+    ];
+  }
+}
+
+// Check if player seems lost and return appropriate nudge
+function checkWanderingState(state: GameState, command: string, args: string[], result: { output: TerminalEntry[]; stateChanges: Partial<GameState> }): { notices: TerminalEntry[]; stateChanges: Partial<GameState> } | null {
+  const commandCount = state.sessionCommandCount || 0;
+  const lastMeaningful = state.lastMeaningfulAction || 0;
+  const wanderingCount = state.wanderingNoticeCount || 0;
+  
+  // Don't trigger in early session
+  if (commandCount < 15) return null;
+  
+  // Don't spam notices
+  if (wanderingCount >= 3) return null;
+  
+  // Check if this action is meaningful
+  const meaningful = isMeaningfulAction(command, args, state, result);
+  
+  if (meaningful) {
+    // Reset wandering state on meaningful action
+    return {
+      notices: [],
+      stateChanges: {
+        lastMeaningfulAction: commandCount,
+      },
+    };
+  }
+  
+  // Calculate commands since last meaningful action
+  const commandsSinceMeaningful = commandCount - lastMeaningful;
+  
+  // Trigger thresholds increase with each notice
+  const threshold = 8 + (wanderingCount * 5); // 8, 13, 18
+  
+  if (commandsSinceMeaningful >= threshold) {
+    return {
+      notices: getWanderingNotice(Math.min(wanderingCount, 2)),
+      stateChanges: {
+        wanderingNoticeCount: wanderingCount + 1,
+        lastMeaningfulAction: commandCount, // Reset to avoid immediate re-trigger
+      },
+    };
+  }
+  
+  return null;
+}
+
 // Generate unique ID for terminal entries
 let entryIdCounter = 0;
 export function generateEntryId(): string {
@@ -1580,6 +1693,20 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         result.stateChanges.lastIncognitoTrigger = Date.now();
       }
     }
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // WANDERING DETECTION - Implicit guidance for lost players
+  // ═══════════════════════════════════════════════════════════════════════════
+  const wanderingCheck = checkWanderingState(state, command, args, result);
+  if (wanderingCheck) {
+    if (wanderingCheck.notices.length > 0) {
+      result.output = [...result.output, ...wanderingCheck.notices];
+    }
+    result.stateChanges = {
+      ...result.stateChanges,
+      ...wanderingCheck.stateChanges,
+    };
   }
   
   return result;

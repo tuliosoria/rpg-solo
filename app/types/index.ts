@@ -116,6 +116,11 @@ export interface GameState {
   
   // Session command count (for time-sensitive content)
   sessionCommandCount: number;
+  
+  // Wandering detection (for implicit guidance)
+  lastMeaningfulAction: number; // Command count at last meaningful action
+  wanderingNoticeCount: number; // How many times we've nudged the player
+  lastDirectoriesVisited: string[]; // Recent directory history for pattern detection
 }
 
 export interface SaveSlot {
@@ -170,4 +175,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   sessionDoomCountdown: 0,
   categoriesRead: new Set(),
   sessionCommandCount: 0,
+  lastMeaningfulAction: 0,
+  wanderingNoticeCount: 0,
+  lastDirectoriesVisited: [],
 };
