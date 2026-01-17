@@ -21,6 +21,181 @@ import {
 import { createSeededRng, seededRandomInt, seededRandomPick } from './rng';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 
+// ═══════════════════════════════════════════════════════════════════════════
+// SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface SingularEvent {
+  id: string;
+  trigger: (state: GameState, command: string, args: string[]) => boolean;
+  execute: (state: GameState) => { output: TerminalEntry[]; stateChanges: Partial<GameState>; delayMs?: number; triggerFlicker?: boolean };
+}
+
+const SINGULAR_EVENTS: SingularEvent[] = [
+  {
+    // THE ECHO - Triggered when accessing psi files at high detection
+    id: 'the_echo',
+    trigger: (state, command, args) => {
+      if (state.singularEventsTriggered?.has('the_echo')) return false;
+      if (command !== 'open' && command !== 'decrypt') return false;
+      const path = args[0]?.toLowerCase() || '';
+      return (path.includes('psi') || path.includes('transcript')) && state.detectionLevel >= 40;
+    },
+    execute: (state) => ({
+      output: [
+        createEntry('system', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
+        createEntry('warning', '                    [SIGNAL ECHO DETECTED]'),
+        createEntry('system', ''),
+        createEntry('output', '                    ...we see you seeing...'),
+        createEntry('system', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {
+        singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'the_echo']),
+        sessionStability: state.sessionStability - 15,
+        systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 2, 5),
+      },
+      delayMs: 3000,
+      triggerFlicker: true,
+    }),
+  },
+  {
+    // THE SILENCE - Terminal goes completely silent briefly after accessing admin at high risk
+    id: 'the_silence',
+    trigger: (state, command, args) => {
+      if (state.singularEventsTriggered?.has('the_silence')) return false;
+      if (command !== 'cd' && command !== 'ls') return false;
+      const path = args[0]?.toLowerCase() || state.currentPath.toLowerCase();
+      return path.includes('admin') && state.detectionLevel >= 60 && state.flags.adminUnlocked;
+    },
+    execute: (state) => ({
+      output: [
+        createEntry('system', ''),
+        createEntry('system', ''),
+        createEntry('system', ''),
+        createEntry('system', '            .'),
+        createEntry('system', ''),
+        createEntry('system', ''),
+        createEntry('system', ''),
+        createEntry('system', '                              .'),
+        createEntry('system', ''),
+        createEntry('system', ''),
+        createEntry('warning', '                                              .'),
+        createEntry('system', ''),
+        createEntry('system', ''),
+        createEntry('error', 'SESSION OBSERVATION LEVEL: ELEVATED'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {
+        singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'the_silence']),
+        detectionLevel: Math.min(state.detectionLevel + 20, 99),
+        systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
+      },
+      delayMs: 5000,
+      triggerFlicker: true,
+    }),
+  },
+  {
+    // THE WATCHER ACKNOWLEDGMENT - After discovering 3+ truths, system acknowledges awareness
+    id: 'watcher_ack',
+    trigger: (state) => {
+      if (state.singularEventsTriggered?.has('watcher_ack')) return false;
+      return state.truthsDiscovered.size >= 3 && state.detectionLevel >= 50;
+    },
+    execute: (state) => ({
+      output: [
+        createEntry('system', ''),
+        createEntry('error', '─────────────────────────────────────────'),
+        createEntry('system', ''),
+        createEntry('warning', 'NOTICE: Your inquiry has been noted.'),
+        createEntry('system', ''),
+        createEntry('output', 'Pattern analysis: SYSTEMATIC'),
+        createEntry('output', 'Intent classification: RECONSTRUCTION'),
+        createEntry('system', ''),
+        createEntry('warning', 'Observation continues.'),
+        createEntry('system', ''),
+        createEntry('error', '─────────────────────────────────────────'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {
+        singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'watcher_ack']),
+        systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
+      },
+      delayMs: 2500,
+      triggerFlicker: true,
+    }),
+  },
+];
+
+// Check and trigger singular events
+function checkSingularEvents(state: GameState, command: string, args: string[]): { output: TerminalEntry[]; stateChanges: Partial<GameState>; delayMs?: number; triggerFlicker?: boolean } | null {
+  for (const event of SINGULAR_EVENTS) {
+    if (event.trigger(state, command, args)) {
+      return event.execute(state);
+    }
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SYSTEM PERSONALITY DEGRADATION - Terminal becomes colder as hostility rises
+// ═══════════════════════════════════════════════════════════════════════════
+
+function getHostileSystemMessage(hostilityLevel: number, normalMessage: string): string {
+  if (hostilityLevel <= 1) return normalMessage;
+  if (hostilityLevel === 2) {
+    // Slightly shorter, more formal
+    return normalMessage.replace(/\.$/, '').replace('Use:', 'Command:');
+  }
+  if (hostilityLevel === 3) {
+    // Colder, removes tips and hints
+    if (normalMessage.toLowerCase().includes('tip:')) return '';
+    if (normalMessage.toLowerCase().includes('hint:')) return '';
+    return normalMessage.replace(/\.$/, '');
+  }
+  if (hostilityLevel >= 4) {
+    // Very cold, minimal responses
+    if (normalMessage.toLowerCase().includes('tip:')) return '';
+    if (normalMessage.toLowerCase().includes('hint:')) return '';
+    if (normalMessage.toLowerCase().includes('use:')) return '';
+    if (normalMessage.length > 40) return normalMessage.substring(0, 35) + '...';
+    return normalMessage;
+  }
+  return normalMessage;
+}
+
+function applyHostileFiltering(entries: TerminalEntry[], hostilityLevel: number): TerminalEntry[] {
+  if (hostilityLevel <= 1) return entries;
+  
+  return entries
+    .map(entry => ({
+      ...entry,
+      content: getHostileSystemMessage(hostilityLevel, entry.content),
+    }))
+    .filter(entry => entry.content !== '' || entry.type === 'system'); // Keep empty system lines for spacing
+}
+
+// Calculate hostility increase based on actions
+function calculateHostilityIncrease(state: GameState, command: string): number {
+  const baseHostility = state.systemHostilityLevel || 0;
+  
+  // High-risk commands increase hostility
+  if (command === 'trace') return 1;
+  if (command === 'recover') return 1;
+  if (command === 'override') return 2;
+  if (command === 'decrypt') return state.detectionLevel > 50 ? 1 : 0;
+  
+  // Detection thresholds trigger hostility
+  if (state.detectionLevel >= 80 && baseHostility < 4) return 1;
+  if (state.detectionLevel >= 60 && baseHostility < 3) return 1;
+  if (state.detectionLevel >= 40 && baseHostility < 2) return 1;
+  
+  return 0;
+}
+
 // Generate unique ID for terminal entries
 let entryIdCounter = 0;
 export function generateEntryId(): string {
@@ -49,13 +224,21 @@ export function parseCommand(input: string): { command: string; args: string[] }
   return { command, args };
 }
 
-// Calculate delay based on detection level
+// Calculate delay based on detection level and per-run variance
 export function calculateDelay(state: GameState): number {
-  if (state.detectionLevel < 20) return 0;
-  if (state.detectionLevel < 40) return 300;
-  if (state.detectionLevel < 60) return 800;
-  if (state.detectionLevel < 80) return 1500;
-  return 2500;
+  // Base delay from detection level
+  let baseDelay = 0;
+  if (state.detectionLevel < 20) baseDelay = 0;
+  else if (state.detectionLevel < 40) baseDelay = 300;
+  else if (state.detectionLevel < 60) baseDelay = 800;
+  else if (state.detectionLevel < 80) baseDelay = 1500;
+  else baseDelay = 2500;
+  
+  // Per-run variance: some runs have faster/slower response times (±30%)
+  const rng = createSeededRng(state.seed + 777);
+  const variance = 0.7 + (rng() * 0.6); // 0.7 to 1.3
+  
+  return Math.floor(baseDelay * variance);
 }
 
 // Check if should trigger flicker based on stability
@@ -64,6 +247,28 @@ export function shouldFlicker(state: GameState): boolean {
   if (state.sessionStability > 60) return Math.random() < 0.1;
   if (state.sessionStability > 40) return Math.random() < 0.25;
   return Math.random() < 0.5;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PER-RUN VARIANCE - Different runs have different "hot" commands
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Get per-run detection multiplier for a command
+// Some runs certain commands are "hotter" (1.5x detection) while others are safer (0.7x)
+function getCommandDetectionMultiplier(state: GameState, command: string): number {
+  const rng = createSeededRng(state.seed + command.charCodeAt(0) * 100);
+  const roll = rng();
+  
+  // Most commands are normal, but some get marked as hot/cold
+  if (roll < 0.15) return 1.5; // Hot - this command is being watched this run
+  if (roll > 0.85) return 0.7; // Cold - less monitored this run
+  return 1.0;
+}
+
+// Apply per-run variance to detection increase
+function applyDetectionVariance(state: GameState, command: string, baseIncrease: number): number {
+  const multiplier = getCommandDetectionMultiplier(state, command);
+  return Math.floor(baseIncrease * multiplier);
 }
 
 // Apply corruption to a random file
@@ -114,31 +319,66 @@ function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEnt
   const newCount = state.truthsDiscovered.size;
   
   if (newCount > previousCount) {
-    // Generate soft progress feedback
-    const messages: Record<string, string> = {
-      debris_relocation: 'NOTICE: Asset relocation chain sufficiently documented.',
-      being_containment: 'NOTICE: Bio-containment protocols cross-verified.',
-      telepathic_scouts: 'NOTICE: Contextual model coherence increased.',
-      international_actors: 'NOTICE: Multi-lateral involvement confirmed.',
-      transition_2026: 'NOTICE: Transition-window inference strengthened.',
+    // Generate institutional-style progress acknowledgments
+    // These are varied and never explain what was found
+    const institutionalMessages: Record<string, string[]> = {
+      debris_relocation: [
+        'MEMO FLAG: Asset chain no longer speculative.',
+        'NOTICE: Physical evidence pathway documented.',
+        'SYSTEM: Relocation records cross-referenced.',
+      ],
+      being_containment: [
+        'NOTICE: Bio-material handling protocols confirmed.',
+        'MEMO FLAG: Specimen chain verified.',
+        'SYSTEM: Containment timeline established.',
+      ],
+      telepathic_scouts: [
+        'NOTICE: Contextual model coherence increased.',
+        'MEMO FLAG: Signal origin hypothesis strengthened.',
+        'SYSTEM: Communication pathway inferred.',
+      ],
+      international_actors: [
+        'NOTICE: Multi-lateral involvement confirmed.',
+        'MEMO FLAG: Foreign coordination documented.',
+        'SYSTEM: External asset chain verified.',
+      ],
+      transition_2026: [
+        'NOTICE: Temporal reference convergence detected.',
+        'MEMO FLAG: Transition-window inference strengthened.',
+        'SYSTEM: Chronological model updated.',
+      ],
     };
     
     for (const reveal of newReveals) {
-      if (messages[reveal] && !Array.from(state.truthsDiscovered).includes(reveal)) {
+      const messages = institutionalMessages[reveal];
+      if (messages && !Array.from(state.truthsDiscovered).includes(reveal)) {
         continue;
       }
-      if (messages[reveal]) {
+      if (messages) {
+        // Pick a message based on seed for per-run variance
+        const rng = createSeededRng(state.seed + reveal.length);
+        const messageIndex = Math.floor(rng() * messages.length);
         notices.push(createEntry('notice', ''));
-        notices.push(createEntry('notice', messages[reveal]));
+        notices.push(createEntry('notice', messages[messageIndex]));
       }
+    }
+    
+    // Additional milestone acknowledgments (never say "progress")
+    if (newCount === 2 && previousCount < 2) {
+      notices.push(createEntry('notice', ''));
+      notices.push(createEntry('notice', 'SYSTEM: Independent verification detected.'));
+    }
+    
+    if (newCount === 4 && previousCount < 4) {
+      notices.push(createEntry('notice', ''));
+      notices.push(createEntry('notice', 'NOTICE: Sufficient documentation threshold approaching.'));
+      notices.push(createEntry('warning', 'WARNING: Comprehensive access may trigger archive protocols.'));
     }
   }
   
   // Check for near-victory
   if (newCount >= 4 && !state.flags.nearVictory) {
     state.flags.nearVictory = true;
-    notices.push(createEntry('notice', ''));
-    notices.push(createEntry('notice', 'NOTICE: Sufficient documentation threshold approaching.'));
   }
   
   return notices;
@@ -187,8 +427,20 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     ...notices,
   ];
   
-  // Check for image trigger
-  const imageTrigger = file.imageTrigger;
+  // Check for image trigger - ONLY show if not shown this run
+  let imageTrigger: ImageTrigger | undefined = undefined;
+  if (file.imageTrigger) {
+    const imageId = file.imageTrigger.src;
+    const imagesShown = state.imagesShownThisRun || new Set<string>();
+    
+    if (!imagesShown.has(imageId)) {
+      imageTrigger = file.imageTrigger;
+      // Mark this image as shown
+      const newImagesShown = new Set(imagesShown);
+      newImagesShown.add(imageId);
+      stateChanges.imagesShownThisRun = newImagesShown;
+    }
+  }
   
   return {
     output,
@@ -336,6 +588,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   }),
 
   status: (args, state) => {
+    const hostility = state.systemHostilityLevel || 0;
+    
     const lines = [
       '',
       '═══════════════════════════════════════════════════════════',
@@ -344,35 +598,35 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       '',
     ];
     
-    // Detection surfacing
+    // Detection surfacing - becomes more terse at high hostility
     if (state.detectionLevel < 20) {
-      lines.push('  LOGGING: Nominal');
+      lines.push(hostility >= 3 ? '  LOGGING: Nominal' : '  LOGGING: Nominal');
     } else if (state.detectionLevel < 50) {
-      lines.push('  LOGGING: Active monitoring enabled');
+      lines.push(hostility >= 3 ? '  LOGGING: Active' : '  LOGGING: Active monitoring enabled');
     } else if (state.detectionLevel < 80) {
-      lines.push('  LOGGING: WARNING — Audit trail flagged');
+      lines.push(hostility >= 3 ? '  LOGGING: FLAGGED' : '  LOGGING: WARNING — Audit trail flagged');
     } else {
-      lines.push('  LOGGING: CRITICAL — Countermeasures engaged');
+      lines.push(hostility >= 3 ? '  LOGGING: CRITICAL' : '  LOGGING: CRITICAL — Countermeasures engaged');
     }
     
     // Integrity surfacing
     if (state.dataIntegrity > 80) {
-      lines.push('  DATA INTEGRITY: Stable');
+      lines.push(hostility >= 3 ? '  DATA: Stable' : '  DATA INTEGRITY: Stable');
     } else if (state.dataIntegrity > 50) {
-      lines.push('  DATA INTEGRITY: Degraded — Some files affected');
+      lines.push(hostility >= 3 ? '  DATA: Degraded' : '  DATA INTEGRITY: Degraded — Some files affected');
     } else if (state.dataIntegrity > 20) {
-      lines.push('  DATA INTEGRITY: CRITICAL — Multiple data loss events');
+      lines.push(hostility >= 3 ? '  DATA: CRITICAL' : '  DATA INTEGRITY: CRITICAL — Multiple data loss events');
     } else {
-      lines.push('  DATA INTEGRITY: FAILURE — Widespread corruption');
+      lines.push(hostility >= 3 ? '  DATA: FAILURE' : '  DATA INTEGRITY: FAILURE — Widespread corruption');
     }
     
     // Session stability
     if (state.sessionStability > 80) {
-      lines.push('  SESSION: Connected');
+      lines.push(hostility >= 3 ? '  SESSION: Connected' : '  SESSION: Connected');
     } else if (state.sessionStability > 50) {
-      lines.push('  SESSION: Intermittent');
+      lines.push(hostility >= 3 ? '  SESSION: Intermittent' : '  SESSION: Intermittent');
     } else {
-      lines.push('  SESSION: UNSTABLE — Connection degrading');
+      lines.push(hostility >= 3 ? '  SESSION: UNSTABLE' : '  SESSION: UNSTABLE — Connection degrading');
     }
     
     // Access level (vague)
@@ -382,6 +636,24 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       lines.push('  ACCESS: Elevated');
     } else {
       lines.push('  ACCESS: Administrative');
+    }
+    
+    // System attitude indicator at high hostility
+    if (hostility >= 4) {
+      lines.push('');
+      lines.push('  SYSTEM ATTITUDE: Non-cooperative');
+    } else if (hostility >= 2) {
+      lines.push('');
+      lines.push('  SYSTEM ATTITUDE: Monitored');
+    }
+    
+    // Terrible Mistake indicator
+    if (state.terribleMistakeTriggered) {
+      lines.push('');
+      lines.push('  ▓▓▓ PURGE PROTOCOL: ACTIVE ▓▓▓');
+      if (state.sessionDoomCountdown > 0) {
+        lines.push(`  OPERATIONS REMAINING: ${state.sessionDoomCountdown}`);
+      }
     }
     
     lines.push('');
@@ -559,8 +831,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       ...notices,
     ];
     
-    // Check for image trigger
-    const imageTrigger = file.imageTrigger;
+    // Check for image trigger - ONLY show if not shown this run
+    let imageTrigger: ImageTrigger | undefined = undefined;
+    if (file.imageTrigger) {
+      const imageId = file.imageTrigger.src;
+      const imagesShown = state.imagesShownThisRun || new Set<string>();
+      
+      if (!imagesShown.has(imageId)) {
+        imageTrigger = file.imageTrigger;
+        // Mark this image as shown
+        const newImagesShown = new Set(imagesShown);
+        newImagesShown.add(imageId);
+        stateChanges.imagesShownThisRun = newImagesShown;
+      }
+    }
     
     return {
       output,
@@ -695,7 +979,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output,
       stateChanges: {
         ...newState,
-        detectionLevel: state.detectionLevel + 12,
+        detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'recover', 12),
         dataIntegrity: state.dataIntegrity - 10,
         sessionStability: state.sessionStability - 8,
       },
@@ -734,7 +1018,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     return {
       output,
       stateChanges: {
-        detectionLevel: state.detectionLevel + 15,
+        detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'trace', 15),
         accessLevel: Math.min(state.accessLevel + 1, 3),
         sessionStability: state.sessionStability - 5,
       },
@@ -752,9 +1036,58 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
     
-    // High risk - may unlock admin or trigger lockdown
+    // High risk - may unlock admin, trigger lockdown, or THE TERRIBLE MISTAKE
     const rng = createSeededRng(state.rngState);
     const roll = rng();
+    
+    // THE TERRIBLE MISTAKE - Triggered at specific dangerous conditions
+    // Player gains forbidden knowledge but session is now doomed
+    const isTerribleMistakeCondition = 
+      state.detectionLevel >= 70 && 
+      state.truthsDiscovered.size >= 2 &&
+      !state.terribleMistakeTriggered &&
+      roll >= 0.3 && roll < 0.45; // Rare but intentional window
+    
+    if (isTerribleMistakeCondition) {
+      return {
+        output: [
+          createEntry('system', 'Initiating protocol override...'),
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓ CRITICAL BREACH ▓▓▓'),
+          createEntry('error', ''),
+          createEntry('warning', '════════════════════════════════════════════'),
+          createEntry('warning', 'EMERGENCY BUFFER DUMP — DO NOT DISTRIBUTE'),
+          createEntry('warning', '════════════════════════════════════════════'),
+          createEntry('system', ''),
+          createEntry('output', 'RECOVERED FRAGMENT [ORIGIN: UNKNOWN NODE]:'),
+          createEntry('system', ''),
+          createEntry('output', '  ...harvest cycle confirmed...'),
+          createEntry('output', '  ...cognitive extraction: 7.2 billion units...'),
+          createEntry('output', '  ...window activation: IMMINENT...'),
+          createEntry('output', '  ...no intervention possible...'),
+          createEntry('output', '  ...observation terminates upon extraction...'),
+          createEntry('system', ''),
+          createEntry('error', '════════════════════════════════════════════'),
+          createEntry('error', 'PURGE PROTOCOL INITIATED'),
+          createEntry('error', 'SYSTEM WILL TERMINATE IN 8 OPERATIONS'),
+          createEntry('error', '════════════════════════════════════════════'),
+          createEntry('system', ''),
+          createEntry('warning', 'You should not have seen this.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          terribleMistakeTriggered: true,
+          sessionDoomCountdown: 8,
+          flags: { ...state.flags, adminUnlocked: true, forbiddenKnowledge: true },
+          accessLevel: 5,
+          detectionLevel: 99,
+          systemHostilityLevel: 5,
+          rngState: seededRandomInt(rng, 0, 2147483647),
+        },
+        triggerFlicker: true,
+        delayMs: 4000,
+      };
+    }
     
     if (state.legacyAlertCounter >= 5 || roll < 0.3) {
       // Lockdown
@@ -794,6 +1127,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         accessLevel: 5,
         detectionLevel: state.detectionLevel + 25,
         sessionStability: state.sessionStability - 15,
+        systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
         rngState: seededRandomInt(rng, 0, 2147483647),
       },
       triggerFlicker: true,
@@ -968,6 +1302,46 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     };
   }
   
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TERRIBLE MISTAKE - Doom countdown check
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
+    const newCountdown = state.sessionDoomCountdown - 1;
+    
+    if (newCountdown <= 0) {
+      return {
+        output: [
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('error', ''),
+          createEntry('error', '                    PURGE PROTOCOL COMPLETE'),
+          createEntry('error', ''),
+          createEntry('warning', '          You saw what you should not have seen.'),
+          createEntry('warning', '          The knowledge is yours to keep.'),
+          createEntry('warning', '          But this session is now closed.'),
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('error', ''),
+        ],
+        stateChanges: {
+          isGameOver: true,
+          gameOverReason: 'PURGE PROTOCOL - FORBIDDEN KNOWLEDGE',
+          sessionDoomCountdown: 0,
+        },
+        triggerFlicker: true,
+        delayMs: 3000,
+      };
+    }
+    
+    // Add countdown warning to any command result
+    const countdownWarning = newCountdown <= 3 
+      ? createEntry('error', `▓▓▓ PURGE IN ${newCountdown} ▓▓▓`)
+      : createEntry('warning', `[PURGE COUNTDOWN: ${newCountdown}]`);
+    
+    // Continue with normal command but inject countdown
+    state = { ...state, sessionDoomCountdown: newCountdown };
+  }
+  
   // Check for pending decrypt answer
   if (state.pendingDecryptFile) {
     const filePath = state.pendingDecryptFile;
@@ -1107,6 +1481,56 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
   
   const result = handler(args, state);
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SINGULAR EVENTS - Check for irreversible one-time events
+  // ═══════════════════════════════════════════════════════════════════════════
+  const singularEvent = checkSingularEvents(state, command, args);
+  if (singularEvent) {
+    // Merge singular event output with command result
+    result.output = [...result.output, ...singularEvent.output];
+    result.stateChanges = {
+      ...result.stateChanges,
+      ...singularEvent.stateChanges,
+    };
+    if (singularEvent.delayMs) {
+      result.delayMs = (result.delayMs || 0) + singularEvent.delayMs;
+    }
+    if (singularEvent.triggerFlicker) {
+      result.triggerFlicker = true;
+    }
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SYSTEM HOSTILITY - Update and apply personality degradation
+  // ═══════════════════════════════════════════════════════════════════════════
+  const hostilityIncrease = calculateHostilityIncrease(state, command);
+  if (hostilityIncrease > 0) {
+    result.stateChanges.systemHostilityLevel = Math.min(
+      (state.systemHostilityLevel || 0) + hostilityIncrease, 
+      5
+    );
+  }
+  
+  // Apply hostile filtering to tips and system messages at high hostility
+  const currentHostility = result.stateChanges.systemHostilityLevel ?? state.systemHostilityLevel ?? 0;
+  if (currentHostility >= 3) {
+    result.output = applyHostileFiltering(result.output, currentHostility);
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // DOOM COUNTDOWN - Inject warning if terrible mistake was triggered
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
+    const newCountdown = state.sessionDoomCountdown - 1;
+    result.stateChanges.sessionDoomCountdown = newCountdown;
+    
+    const countdownWarning = newCountdown <= 3 
+      ? [createEntry('error', ''), createEntry('error', `▓▓▓ PURGE IN ${newCountdown} ▓▓▓`), createEntry('error', '')]
+      : [createEntry('warning', ''), createEntry('warning', `[PURGE COUNTDOWN: ${newCountdown}]`)];
+    
+    result.output = [...result.output, ...countdownWarning];
+  }
   
   // Check if we should add an incognito message after reading important files
   // Trigger when file was successfully opened/decrypted and contains notice entries

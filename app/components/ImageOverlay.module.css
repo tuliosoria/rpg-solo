@@ -13,17 +13,33 @@
   z-index: 200;
   cursor: pointer;
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  animation: fadeIn 0.1s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Initial shock - brief white flash */
+.initialShock {
+  animation: shockFlash 0.05s ease-out;
+}
+
+@keyframes shockFlash {
+  0% { background: rgba(255, 255, 255, 0.8); }
+  100% { background: rgba(0, 0, 0, 0.95); }
 }
 
 .flickering {
-  animation: imageFlicker 0.15s ease-in-out;
+  animation: imageFlicker 0.1s ease-in-out;
 }
 
 @keyframes imageFlicker {
   0% { opacity: 1; }
-  25% { opacity: 0.3; }
-  50% { opacity: 0.8; }
-  75% { opacity: 0.4; }
+  25% { opacity: 0.2; }
+  50% { opacity: 0.9; }
+  75% { opacity: 0.3; }
   100% { opacity: 1; }
 }
 

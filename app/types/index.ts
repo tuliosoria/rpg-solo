@@ -97,6 +97,19 @@ export interface GameState {
   // Incognito hacker messages
   incognitoMessageCount: number;
   lastIncognitoTrigger: number; // Timestamp of last message
+  
+  // Irreversible events tracking (each can only happen once per run)
+  singularEventsTriggered: Set<string>;
+  
+  // Images shown this run (each image shown at most once)
+  imagesShownThisRun: Set<string>;
+  
+  // System personality degradation (affects tone as risk increases)
+  systemHostilityLevel: number; // 0-5, increases with risky actions
+  
+  // Terrible mistake state - forbidden knowledge revealed but session doomed
+  terribleMistakeTriggered: boolean;
+  sessionDoomCountdown: number; // Commands remaining before forced purge
 }
 
 export interface SaveSlot {
@@ -144,4 +157,9 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   pendingDecryptFile: undefined,
   incognitoMessageCount: 0,
   lastIncognitoTrigger: 0,
+  singularEventsTriggered: new Set(),
+  imagesShownThisRun: new Set(),
+  systemHostilityLevel: 0,
+  terribleMistakeTriggered: false,
+  sessionDoomCountdown: 0,
 };

@@ -14,27 +14,41 @@ interface ImageOverlayProps {
 export default function ImageOverlay({ src, alt, tone, onCloseAction, corrupted = false }: ImageOverlayProps) {
   const [visible, setVisible] = useState(false);
   const [flickering, setFlickering] = useState(true);
+  const [initialShock, setInitialShock] = useState(true);
   
   useEffect(() => {
-    // Initial flicker effect
+    // SUDDEN appearance - immediate flash then image
+    // This creates a "shock" moment
+    const shockTimeout = setTimeout(() => {
+      setInitialShock(false);
+    }, 50);
+    
+    // Image appears quickly after initial flash
     const flickerTimeout = setTimeout(() => {
       setFlickering(false);
       setVisible(true);
-    }, 300);
+    }, 150);
     
-    // Random flicker during display
+    // Random flicker during display - more aggressive
     const flickerInterval = setInterval(() => {
-      if (Math.random() < 0.15) {
+      if (Math.random() < 0.2) {
         setFlickering(true);
-        setTimeout(() => setFlickering(false), 100 + Math.random() * 150);
+        setTimeout(() => setFlickering(false), 50 + Math.random() * 100);
       }
-    }, 2000);
+    }, 1500);
+    
+    // Auto-close after 8 seconds for shock effect
+    const autoClose = setTimeout(() => {
+      onCloseAction();
+    }, 8000);
     
     return () => {
+      clearTimeout(shockTimeout);
       clearTimeout(flickerTimeout);
       clearInterval(flickerInterval);
+      clearTimeout(autoClose);
     };
-  }, []);
+  }, [onCloseAction]);
   
   // Close on escape key
   useEffect(() => {
@@ -50,7 +64,7 @@ export default function ImageOverlay({ src, alt, tone, onCloseAction, corrupted 
   
   return (
     <div 
-      className={`${styles.overlay} ${flickering ? styles.flickering : ''}`}
+      className={`${styles.overlay} ${flickering ? styles.flickering : ''} ${initialShock ? styles.initialShock : ''}`}
       onClick={onCloseAction}
     >
       {/* Scanlines */}
@@ -60,10 +74,10 @@ export default function ImageOverlay({ src, alt, tone, onCloseAction, corrupted 
       <div className={`${styles.glow} ${tone === 'clinical' ? styles.greenGlow : styles.amberGlow}`} />
       
       <div className={styles.container}>
-        {/* Header */}
+        {/* Header - minimal, no decoration */}
         <div className={styles.header}>
           <span className={styles.headerText}>
-            ═══ RECOVERED VISUAL DATA ═══
+            {corrupted ? '▓▓▓ PARTIAL RECOVERY ▓▓▓' : '═══ RECOVERED VISUAL DATA ═══'}
           </span>
         </div>
         
@@ -89,17 +103,10 @@ export default function ImageOverlay({ src, alt, tone, onCloseAction, corrupted 
           )}
         </div>
         
-        {/* Footer */}
-        <div className={styles.footer}>
-          <span className={styles.footerText}>
-            [PRESS ANY KEY TO CONTINUE]
-          </span>
-        </div>
+        {/* Footer - removed, let image speak for itself */}
         
-        {/* Metadata */}
+        {/* Minimal metadata */}
         <div className={styles.metadata}>
-          <div>SOURCE: ARCHIVE RECOVERY</div>
-          <div>STATUS: {corrupted ? 'PARTIAL' : 'RECONSTRUCTED'}</div>
           <div>CLASSIFICATION: RESTRICTED</div>
         </div>
       </div>

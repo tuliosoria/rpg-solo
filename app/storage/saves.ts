@@ -12,6 +12,8 @@ function serializeState(state: GameState): string {
   return JSON.stringify({
     ...state,
     truthsDiscovered: Array.from(state.truthsDiscovered),
+    singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
+    imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
   });
 }
 
@@ -21,6 +23,8 @@ function deserializeState(json: string): GameState {
   return {
     ...parsed,
     truthsDiscovered: new Set(parsed.truthsDiscovered || []),
+    singularEventsTriggered: new Set(parsed.singularEventsTriggered || []),
+    imagesShownThisRun: new Set(parsed.imagesShownThisRun || []),
   };
 }
 
@@ -97,6 +101,8 @@ export function createNewGame(): GameState {
     sessionStartTime: Date.now(),
     history: bootSequence,
     truthsDiscovered: new Set(),
+    singularEventsTriggered: new Set(),
+    imagesShownThisRun: new Set(),
   };
 }
 
