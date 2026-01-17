@@ -110,6 +110,12 @@ export interface GameState {
   // Terrible mistake state - forbidden knowledge revealed but session doomed
   terribleMistakeTriggered: boolean;
   sessionDoomCountdown: number; // Commands remaining before forced purge
+  
+  // Content categories read (for conditional file access)
+  categoriesRead: Set<string>; // e.g., 'military', 'medical', 'comms', 'logistics'
+  
+  // Session command count (for time-sensitive content)
+  sessionCommandCount: number;
 }
 
 export interface SaveSlot {
@@ -162,4 +168,6 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   systemHostilityLevel: 0,
   terribleMistakeTriggered: false,
   sessionDoomCountdown: 0,
+  categoriesRead: new Set(),
+  sessionCommandCount: 0,
 };

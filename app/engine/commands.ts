@@ -825,6 +825,24 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const reveals = getFileReveals(filePath);
     const notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
     
+    // Track content category based on file path
+    const categoriesRead = new Set(state.categoriesRead || []);
+    if (filePath.startsWith('/ops/')) categoriesRead.add('military');
+    if (filePath.startsWith('/ops/medical/')) categoriesRead.add('medical');
+    if (filePath.startsWith('/ops/assessments/')) categoriesRead.add('assessments');
+    if (filePath.startsWith('/comms/')) categoriesRead.add('comms');
+    if (filePath.startsWith('/comms/liaison/')) categoriesRead.add('liaison');
+    if (filePath.startsWith('/comms/intercepts/')) categoriesRead.add('intercepts');
+    if (filePath.startsWith('/storage/')) categoriesRead.add('storage');
+    if (filePath.startsWith('/admin/')) categoriesRead.add('admin');
+    if (filePath.startsWith('/internal/')) categoriesRead.add('internal');
+    
+    // Check if player has read multiple categories (unlocks pattern recognition files)
+    if (categoriesRead.size >= 3 && !state.flags['readMultipleCategories']) {
+      stateChanges.flags = { ...state.flags, readMultipleCategories: true };
+    }
+    stateChanges.categoriesRead = categoriesRead;
+    
     const output = [
       ...createOutputEntries(['', `FILE: ${filePath}`, '']),
       ...createOutputEntries(content),
@@ -1481,6 +1499,17 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
   
   const result = handler(args, state);
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SESSION COMMAND COUNTER - Track total commands for time-sensitive content
+  // ═══════════════════════════════════════════════════════════════════════════
+  result.stateChanges.sessionCommandCount = (state.sessionCommandCount || 0) + 1;
+  
+  // After enough commands, flag that early window has passed (affects time-sensitive files)
+  const commandCount = (state.sessionCommandCount || 0) + 1;
+  if (commandCount >= 30 && !state.flags['earlyWindowPassed']) {
+    result.stateChanges.flags = { ...result.stateChanges.flags, ...state.flags, earlyWindowPassed: true };
+  }
   
   // ═══════════════════════════════════════════════════════════════════════════
   // SINGULAR EVENTS - Check for irreversible one-time events

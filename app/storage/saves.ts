@@ -14,6 +14,7 @@ function serializeState(state: GameState): string {
     truthsDiscovered: Array.from(state.truthsDiscovered),
     singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
     imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
+    categoriesRead: Array.from(state.categoriesRead || []),
   });
 }
 
@@ -25,6 +26,7 @@ function deserializeState(json: string): GameState {
     truthsDiscovered: new Set(parsed.truthsDiscovered || []),
     singularEventsTriggered: new Set(parsed.singularEventsTriggered || []),
     imagesShownThisRun: new Set(parsed.imagesShownThisRun || []),
+    categoriesRead: new Set(parsed.categoriesRead || []),
   };
 }
 

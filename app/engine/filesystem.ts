@@ -110,6 +110,33 @@ export function getFileContent(path: string, state: GameState, decrypted: boolea
     content = [...file.content];
   }
   
+  // Time-sensitive content degradation
+  // Files with 'time_sensitive' in content become partially corrupted after 30 commands
+  const commandCount = state.sessionCommandCount || 0;
+  const isTimeSensitive = file.content.some((line: string) => 
+    line.includes('TIME-SENSITIVE') || 
+    line.includes('[EARLY SESSION ONLY]') ||
+    path.includes('early_') ||
+    path.includes('initial_')
+  );
+  
+  if (isTimeSensitive && commandCount > 30) {
+    // Progressively corrupt time-sensitive files
+    const corruptionLevel = Math.min(Math.floor((commandCount - 30) / 10), 5);
+    content = content.map((line: string, idx: number) => {
+      if (idx === 0 || idx === content.length - 1) return line; // Keep first/last line
+      if (Math.random() < corruptionLevel * 0.15) {
+        return '[DATA DEGRADED - RETRIEVAL WINDOW EXCEEDED]';
+      }
+      return line;
+    });
+    
+    if (corruptionLevel >= 3) {
+      content.push('');
+      content.push('[WARNING: File integrity compromised due to delayed access]');
+    }
+  }
+  
   // Apply mutations (corruption)
   if (mutation) {
     for (const lineIdx of mutation.corruptedLines || []) {
