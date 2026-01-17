@@ -1,0 +1,196 @@
+/* Terminal 1996 - Game Over Component Styles */
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  z-index: 300;
+}
+
+.flickering {
+  animation: flicker 0.15s ease-in-out;
+}
+
+@keyframes flicker {
+  0% { opacity: 1; }
+  25% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+  75% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Scanlines */
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 0, 0, 0.02) 2px,
+    rgba(255, 0, 0, 0.02) 4px
+  );
+  pointer-events: none;
+  z-index: 310;
+}
+
+/* Error phase */
+.errorContent {
+  text-align: center;
+  z-index: 305;
+}
+
+.errorBox {
+  padding: 40px;
+}
+
+.errorHeader {
+  color: #660000;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.errorTitle {
+  color: #ff0000;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  margin: 20px 0;
+  text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+  animation: errorPulse 1s ease-in-out infinite;
+}
+
+@keyframes errorPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.errorReason {
+  color: #ff4444;
+  font-size: 18px;
+  margin: 30px 0;
+  padding: 15px;
+  border: 1px solid #440000;
+  background: rgba(68, 0, 0, 0.3);
+}
+
+.errorDetails {
+  color: #aa0000;
+  font-size: 14px;
+  line-height: 2;
+  margin: 20px 0;
+}
+
+.errorFooter {
+  color: #666;
+  font-size: 12px;
+  margin-top: 30px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+/* Restart phase */
+.restartContent {
+  text-align: center;
+  z-index: 305;
+  width: 90%;
+  max-width: 600px;
+}
+
+.restartBox {
+  padding: 40px;
+  border: 1px solid #333;
+  background: rgba(0, 20, 0, 0.3);
+}
+
+.restartHeader {
+  color: #00aa00;
+  font-size: 20px;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+}
+
+.restartStatus {
+  color: #00ff00;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.progressContainer {
+  margin: 20px 0;
+}
+
+.progressBar {
+  color: #00ff00;
+  font-size: 14px;
+  letter-spacing: 0;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.progressPercent {
+  color: #00aa00;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.restartLog {
+  text-align: left;
+  color: #006600;
+  font-size: 12px;
+  line-height: 1.8;
+  margin-top: 30px;
+  padding: 15px;
+  border: 1px solid #002200;
+  background: rgba(0, 10, 0, 0.5);
+  min-height: 150px;
+}
+
+.restartLog div {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.complete {
+  color: #00ff00 !important;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .errorTitle {
+    font-size: 18px;
+    letter-spacing: 2px;
+  }
+  
+  .errorReason {
+    font-size: 14px;
+  }
+  
+  .restartHeader {
+    font-size: 16px;
+  }
+  
+  .progressBar {
+    font-size: 11px;
+  }
+}

@@ -1,9 +1,0 @@
-🖼️ TO ADD THE GROUP IMAGE:
-
-STEP 1: Save the beautiful artwork image you shared
-STEP 2: Rename it to exactly: grupo_amigos.png  
-STEP 3: Place it in this folder: c:\Users\Tulio\Desktop\rpg-solo\rgp-solo\public\
-
-The game is already configured to show this image in the "Reunião no Pátio" scene.
-
-Once you add the file, refresh your browser and the image will appear! ✨

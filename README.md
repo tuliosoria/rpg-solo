@@ -1,96 +1,64 @@
-# RPG Solo - O Sinal
+# Varginha: Terminal 1996
 
-Um jogo RPG interativo ambientado no Brasil dos anos 90, onde cinco amigos investigam mistérios sobrenaturais em sua cidade.
+A text-based discovery puzzle game set in a Brazilian intelligence legacy terminal system, January 1996.
 
-## 🎮 Sobre o Jogo
+## The Game
 
-**RPG Solo** é uma aventura narrativa que combina:
-- **História envolvente** em português brasileiro
-- **Sistema de testes de habilidade** (Raciocínio, Empatia, Tecnologia)
-- **Múltiplas escolhas** que afetam o desenvolvimento da história
-- **Ambientação autêntica** dos anos 90 no Brasil
+You have illegally accessed a Brazilian intelligence legacy terminal to reconstruct the truth behind a classified incident before shutdown, corruption, or detection occurs.
 
-### Personagens
-- **Sérgio** - Protagonista apaixonado por eletrônica
-- **Helena** - Inteligente e corajosa
-- **Dudu** - Gênio dos rádios e tecnologia
-- **Léo** - Engraçado e descontraído
-- **Ágata** - Misteriosa, com conexões espirituais
+**Genre:** Procedural Horror / Ufology / Hard Sci-Fi Cosmology
 
-## 🚀 Como Executar
+## Getting Started
 
-### Pré-requisitos
-- Node.js 18 ou superior
-- npm ou yarn
-
-### Instalação
 ```bash
 npm install
 npm run dev
 ```
 
-O jogo estará disponível em `http://localhost:3000`
+Open [http://localhost:3000](http://localhost:3000) to play.
 
-## 📖 Capítulos Disponíveis
+## Commands
 
-1. **Capítulo 1 - O Sinal**: A descoberta dos sinais misteriosos nos rádios
-2. **Capítulo 2 - A Queda**: A investigação na mata e o primeiro contato
-3. **Capítulo 3**: Continuação da aventura (em desenvolvimento)
+- `help` - Display available commands
+- `status` - Check system status
+- `ls` - List directory contents
+- `cd <dir>` - Change directory
+- `open <file>` - Open and read a file
+- `decrypt <file>` - Decrypt encrypted files
+- `recover <file>` - Attempt file recovery (risky)
+- `trace` - Trace system connections (risky)
+- `override protocol` - Attempt security override (critical risk)
+- `save` - Save current session
 
-## 🎯 Mecânicas do Jogo
+## Mechanics
 
-### Sistema de Atributos
-- **Raciocínio (Logical)**: Para desafios lógicos e científicos
-- **Empatia (Empathy)**: Para conexões emocionais e sociais  
-- **Tecnologia (Tech)**: Para desafios técnicos e agilidade
+- **Detection increases** with each action - the system is monitoring you
+- **File integrity degrades** - corruption and data loss can occur
+- **Truth emerges through inference** - cross-reference files to understand what happened
+- **Five truths** must be discovered before the session ends
 
-### Testes de Habilidade
-- Sistema d20 + atributo vs dificuldade
-- Resultados afetam a narrativa e escolhas disponíveis
-- Múltiplos caminhos baseados em sucesso/falha
-
-## 🛠 Tecnologias
-
-- **Next.js 15.3.3** - Framework React
-- **TypeScript** - Tipagem estática
-- **Tailwind CSS** - Estilização
-- **JSON** - Armazenamento de narrativa
-
-## 📁 Estrutura do Projeto
+## Project Structure
 
 ```
-├── app/                    # Aplicação React
-│   ├── RpgSolo.tsx        # Componente principal do jogo
-│   └── ...
-├── public/                # Arquivos públicos
-│   ├── chapter1.json      # Capítulo 1 - O Sinal
-│   ├── chapter2.json      # Capítulo 2 - A Queda
-│   ├── chapter3.json      # Capítulo 3
-│   └── *.png              # Imagens do jogo
-└── _PROJECT_CLEANUP_*/    # Arquivos de desenvolvimento
+app/
+├── components/     # React UI components
+│   ├── Menu.tsx
+│   ├── Terminal.tsx
+│   └── SaveModal.tsx
+├── engine/         # Game logic
+│   ├── commands.ts
+│   ├── filesystem.ts
+│   └── rng.ts
+├── storage/        # Save/load utilities
+├── data/           # Filesystem content
+└── types/          # TypeScript definitions
 ```
 
-## 🎨 Características Visuais
+## Tech Stack
 
-- **Interface terminal** com efeito typewriter
-- **Tema dark/green** nostálgico dos anos 90
-- **Animações suaves** para transições
-- **Game Over dramático** com efeitos visuais
+- Next.js 15
+- React 18
+- TypeScript
+- CSS Modules
 
-## 📝 Desenvolvimento
 
-O jogo foi desenvolvido com foco em:
-- Narrativa autêntica brasileira
-- Mecânicas RPG simplificadas
-- Interface intuitiva e acessível
-- Sistema modular de capítulos
-
-## 🗂 Arquivos de Backup
-
-Versões anteriores e arquivos de desenvolvimento estão organizados em:
-- `_PROJECT_BACKUP_2025-07-20/` - Backup completo anterior
-- `_PROJECT_CLEANUP_2025-07-21/` - Arquivos de desenvolvimento movidos
-
----
-
-**Desenvolvido com ❤️ para preservar a nostalgia dos anos 90 brasileiros**

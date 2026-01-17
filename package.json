@@ -10,12 +10,14 @@
     "validate-enhanced": "node scripts/validate-enhanced-story.js",
     "analyze-story": "node scripts/analyze-story.js",
     "generate-report": "node scripts/generate-report.js",
-    "shrink-story": "node scripts/shrink_and_spice_story.js"
+    "shrink-story": "node scripts/shrink_and_spice_story.js",
+    "validate-fundamentals": "node scripts/story_validator.js"
   },
   "dependencies": {
     "next": "^15.3.3",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "yaml": "^2.8.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

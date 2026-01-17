@@ -1,0 +1,121 @@
+/* Terminal 1996 - Save Modal Styles */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #0a0a0a;
+  border: 1px solid #00ff00;
+  padding: 30px;
+  max-width: 450px;
+  width: 90%;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  color: #00ff00;
+  box-shadow: 0 0 40px rgba(0, 255, 0, 0.2);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.header h2 {
+  font-size: 20px;
+  letter-spacing: 4px;
+  margin-bottom: 10px;
+}
+
+.line {
+  color: #006600;
+  font-size: 14px;
+}
+
+.content {
+  margin-bottom: 24px;
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  color: #00aa00;
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  background: #001100;
+  border: 1px solid #003300;
+  color: #00ff00;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #00ff00;
+}
+
+.input::placeholder {
+  color: #004400;
+}
+
+.info {
+  font-size: 12px;
+  color: #006600;
+  line-height: 1.8;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+}
+
+.saveButton,
+.cancelButton {
+  flex: 1;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 2px;
+}
+
+.saveButton {
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid #00ff00;
+  color: #00ff00;
+}
+
+.saveButton:hover:not(:disabled) {
+  background: rgba(0, 255, 0, 0.2);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+}
+
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background: transparent;
+  border: 1px solid #333;
+  color: #666;
+}
+
+.cancelButton:hover {
+  border-color: #666;
+  color: #999;
+}

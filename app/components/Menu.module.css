@@ -1,0 +1,294 @@
+/* Terminal 1996 - Menu Component Styles */
+
+.menu {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #00ff00;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Scanlines overlay */
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* CRT glow */
+.glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-shadow: inset 0 0 200px rgba(0, 255, 0, 0.05);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Flicker animation */
+.flicker {
+  animation: menuFlicker 0.5s ease-in-out;
+}
+
+@keyframes menuFlicker {
+  0% { opacity: 0; }
+  20% { opacity: 0.8; }
+  40% { opacity: 0.4; }
+  60% { opacity: 0.9; }
+  80% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* Menu content */
+.menuContent {
+  position: relative;
+  z-index: 15;
+  text-align: center;
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Title */
+.title {
+  margin-bottom: 60px;
+}
+
+.titleLine {
+  color: #006600;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+.titleText {
+  font-size: 48px;
+  font-weight: bold;
+  letter-spacing: 8px;
+  margin: 20px 0 5px 0;
+  text-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+.subtitleText {
+  font-size: 24px;
+  font-weight: normal;
+  letter-spacing: 6px;
+  margin: 0 0 20px 0;
+  color: #00aa00;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.subtitle {
+  color: #00aa00;
+  font-size: 14px;
+  letter-spacing: 4px;
+  margin-top: 15px;
+}
+
+/* Menu options */
+.menuOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 60px;
+}
+
+.menuButton {
+  background: transparent;
+  border: 1px solid #004400;
+  color: #00ff00;
+  padding: 16px 32px;
+  font-family: inherit;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 2px;
+}
+
+.menuButton:hover {
+  background: rgba(0, 255, 0, 0.1);
+  border-color: #00ff00;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.menuButton:active {
+  transform: translateY(0);
+}
+
+/* Footer */
+.footer {
+  color: #006600;
+  font-size: 12px;
+}
+
+.footerLine {
+  margin: 5px 0;
+}
+
+/* Header for sub-screens */
+.header {
+  margin-bottom: 40px;
+}
+
+.headerTitle {
+  font-size: 24px;
+  letter-spacing: 4px;
+  margin-bottom: 15px;
+}
+
+/* Saves list */
+.savesList {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 30px;
+}
+
+.noSaves {
+  color: #666;
+  padding: 40px;
+}
+
+.saveSlot {
+  position: relative;
+  text-align: left;
+  padding: 16px 20px;
+  border: 1px solid #003300;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saveSlot:hover {
+  background: rgba(0, 255, 0, 0.05);
+  border-color: #00ff00;
+}
+
+.saveName {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #00ff00;
+}
+
+.saveInfo {
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  color: #00aa00;
+  margin-bottom: 4px;
+}
+
+.saveDate {
+  font-size: 11px;
+  color: #666;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: #660000;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.deleteButton:hover {
+  color: #ff0000;
+}
+
+/* Back button */
+.backButton {
+  background: transparent;
+  border: 1px solid #333;
+  color: #666;
+  padding: 12px 24px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 2px;
+}
+
+.backButton:hover {
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+/* Credits */
+.credits {
+  text-align: left;
+  margin-bottom: 40px;
+}
+
+.creditSection {
+  margin-bottom: 24px;
+}
+
+.creditLabel {
+  font-size: 12px;
+  color: #006600;
+  margin-bottom: 4px;
+  letter-spacing: 2px;
+}
+
+.creditValue {
+  font-size: 14px;
+  color: #00aa00;
+  line-height: 1.6;
+}
+
+/* Scrollbar */
+.savesList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.savesList::-webkit-scrollbar-track {
+  background: #001a00;
+}
+
+.savesList::-webkit-scrollbar-thumb {
+  background: #003300;
+  border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .menuContent {
+    padding: 20px;
+  }
+  
+  .titleText {
+    font-size: 32px;
+    letter-spacing: 4px;
+  }
+  
+  .subtitle {
+    font-size: 11px;
+  }
+  
+  .menuButton {
+    padding: 14px 24px;
+    font-size: 16px;
+  }
+}
