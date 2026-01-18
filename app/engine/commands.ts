@@ -3038,6 +3038,19 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
     ];
   }
   
+  // Check for script-like input (contains INIT, TARGET, EXEC)
+  const fullInput = `${command} ${args.join(' ')}`.toUpperCase();
+  if (fullInput.includes('INIT') || fullInput.includes('TARGET=') || fullInput.includes('EXEC')) {
+    return [
+      createEntry('system', ''),
+      createEntry('system', 'TIP:'),
+      createEntry('system', 'This looks like a reconstruction script.'),
+      createEntry('system', 'Use the script command to execute it:'),
+      createEntry('system', '  script INIT;TARGET=/admin/neural_fragment_raw.dat;EXEC'),
+      createEntry('system', ''),
+    ];
+  }
+  
   // Check for directory-like input (ends with / or looks like a path)
   if (command.includes('/') || command.endsWith('/') || 
       ['storage', 'ops', 'comms', 'admin', 'tmp', 'assets', 'quarantine', 'prato', 'exo', 'psi'].includes(command)) {
