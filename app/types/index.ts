@@ -90,6 +90,10 @@ export interface GameState {
   // Chat with Prisoner 45
   prisoner45QuestionsAsked: number; // Max 5
   prisoner45Disconnected: boolean;
+  prisoner45UsedResponses: Set<string>; // Track used responses to never repeat
+  
+  // Scout Link state
+  scoutLinkUsedResponses: Set<string>; // Track used responses to never repeat
   
   // Decrypt challenge state
   pendingDecryptFile?: string; // File awaiting security answer
@@ -169,6 +173,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   isGameOver: false,
   prisoner45QuestionsAsked: 0,
   prisoner45Disconnected: false,
+  prisoner45UsedResponses: new Set(),
+  scoutLinkUsedResponses: new Set(),
   pendingDecryptFile: undefined,
   incognitoMessageCount: 0,
   lastIncognitoTrigger: 0,

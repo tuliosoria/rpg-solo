@@ -622,7 +622,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
 // ═══════════════════════════════════════════════════════════════════════════
 
 // UFO74 reactions based on file content/path
-function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAndLocked?: boolean): TerminalEntry[] | null {
+function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAndLocked?: boolean, isFirstUnstable?: boolean): TerminalEntry[] | null {
   const truthCount = state.truthsDiscovered.size;
   const messageCount = state.incognitoMessageCount || 0;
   
@@ -646,8 +646,22 @@ function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAnd
   // Build message based on file type and state
   let messages: TerminalEntry[] = [];
   
+  // First unstable file warning - takes priority
+  if (isFirstUnstable) {
+    messages = [
+      createEntry('output', 'UFO74: whoa whoa whoa. hold up.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: that file is marked UNSTABLE hackerkid.'),
+      createEntry('output', '       means its corrupting just by being accessed.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: every time you open stuff like this,'),
+      createEntry('output', '       it increases the risk of triggering alerts.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: worth it for the info but... be careful.'),
+    ];
+  }
   // If file is encrypted and not decrypted, show special message
-  if (isEncryptedAndLocked) {
+  else if (isEncryptedAndLocked) {
     const encryptedMessages = [
       [
         createEntry('output', 'UFO74: damn. encrypted.'),
@@ -930,7 +944,7 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
 }
 
 // Main function to get UFO74 message after file read
-function getIncognitoMessage(state: GameState, filePath?: string, notices?: TerminalEntry[], isEncryptedAndLocked?: boolean): TerminalEntry[] | null {
+function getIncognitoMessage(state: GameState, filePath?: string, notices?: TerminalEntry[], isEncryptedAndLocked?: boolean, isFirstUnstable?: boolean): TerminalEntry[] | null {
   // Max 12 messages per session (last one is goodbye)
   if ((state.incognitoMessageCount || 0) >= 12) return null;
   
@@ -938,17 +952,17 @@ function getIncognitoMessage(state: GameState, filePath?: string, notices?: Term
   const now = Date.now();
   if (state.lastIncognitoTrigger && now - state.lastIncognitoTrigger < 15000) return null;
   
-  // If there are notices to explain, prioritize that (but not for encrypted files)
-  if (notices && notices.length > 0 && !isEncryptedAndLocked) {
+  // If there are notices to explain, prioritize that (but not for encrypted or unstable files)
+  if (notices && notices.length > 0 && !isEncryptedAndLocked && !isFirstUnstable) {
     const explanation = getUFO74NoticeExplanation(notices);
     if (explanation) return explanation;
   }
   
   // Otherwise react to the file
   if (filePath) {
-    // 70% chance to comment on file (always comment on encrypted files to help player)
-    if (isEncryptedAndLocked || Math.random() < 0.7) {
-      return getUFO74FileReaction(filePath, state, isEncryptedAndLocked);
+    // Always comment on encrypted files, first unstable files, or 70% chance otherwise
+    if (isEncryptedAndLocked || isFirstUnstable || Math.random() < 0.7) {
+      return getUFO74FileReaction(filePath, state, isEncryptedAndLocked, isFirstUnstable);
     }
   }
   
@@ -963,37 +977,95 @@ const PRISONER_45_RESPONSES: Record<string, string[]> = {
     'PRISONER_45> Who are you? Are you one of them?',
     'PRISONER_45> I\'ve been counting days but they don\'t add up.',
     'PRISONER_45> Sometimes I hear... clicking. Not human.',
+    'PRISONER_45> They watch. Always watching.',
+    'PRISONER_45> Time moves wrong in here.',
+    'PRISONER_45> Are you real? Sometimes I can\'t tell anymore.',
+    'PRISONER_45> I used to know what year it was.',
+    'PRISONER_45> The humming... do you hear the humming?',
   ],
   varginha: [
     'PRISONER_45> Varginha... yes. I was there.',
     'PRISONER_45> I saw them take the bodies. Three of them.',
     'PRISONER_45> They told us it was a dwarf. It wasn\'t a dwarf.',
     'PRISONER_45> The smell... I still smell it sometimes.',
+    'PRISONER_45> January 20th. I\'ll never forget that date.',
+    'PRISONER_45> The locals saw it first. We came to clean up.',
+    'PRISONER_45> Three creatures. Only one survived the crash.',
+    'PRISONER_45> We had orders. Contain. Deny. Disappear.',
+    'PRISONER_45> The firefighters got there first. Some of them are gone now.',
+    'PRISONER_45> It wasn\'t the only crash. Just the one they couldn\'t hide.',
+    'PRISONER_45> Brazil, Russia, Peru. Same year. Same type of craft.',
+    'PRISONER_45> The American team arrived within hours. How did they know?',
   ],
   alien: [
     'PRISONER_45> Don\'t call them that. They don\'t like that word.',
     'PRISONER_45> They\'re not visitors. They\'re... assessors.',
     'PRISONER_45> I looked into its eyes once. It looked back.',
+    'PRISONER_45> Red eyes. But not angry. Curious.',
+    'PRISONER_45> They communicated without speaking. I felt it in my head.',
+    'PRISONER_45> They\'re not the first to come here. Just the latest.',
+    'PRISONER_45> Small bodies. But the presence... immense.',
+    'PRISONER_45> They\'re not individuals. More like... fingers of one hand.',
+    'PRISONER_45> The smell. Ammonia and something else. Something wrong.',
+    'PRISONER_45> When it died, I felt something leave. Not just life. Information.',
+    'PRISONER_45> They\'re not afraid of us. That\'s what scared me most.',
+    'PRISONER_45> One touched me. I saw things. Too much.',
   ],
   who: [
     'PRISONER_45> I was military. That\'s all I can say.',
     'PRISONER_45> My name doesn\'t matter anymore.',
     'PRISONER_45> I\'m whatever they decided I should become.',
+    'PRISONER_45> I had a family once. They think I\'m dead.',
+    'PRISONER_45> Sergeant. Recovery Unit. Specialized in... clean-up.',
+    'PRISONER_45> They called us "Collectors". We collected problems.',
+    'PRISONER_45> 23 years of service. This is my retirement.',
+    'PRISONER_45> I made a mistake. I asked questions.',
+    'PRISONER_45> I saw something I shouldn\'t. Now I\'m here.',
+    'PRISONER_45> They keep me alive because I know things.',
+    'PRISONER_45> Number 45. That\'s what I am now.',
+    'PRISONER_45> I used to be someone. Now I\'m a resource.',
   ],
   escape: [
     'PRISONER_45> There is no escape. Only waiting.',
     'PRISONER_45> They let me use this terminal sometimes.',
     'PRISONER_45> I think they want me to tell someone.',
+    'PRISONER_45> The walls move when I\'m not looking.',
+    'PRISONER_45> I\'ve tried. The doors open to more rooms. Forever.',
+    'PRISONER_45> Escape where? They\'re everywhere.',
+    'PRISONER_45> Sometimes I wake up in different cells.',
+    'PRISONER_45> The window shows different skies each day.',
+    'PRISONER_45> I don\'t think this place is... entirely here.',
+    'PRISONER_45> Other prisoners exist. I hear them. Never see them.',
+    'PRISONER_45> The guards aren\'t human. Not completely.',
+    'PRISONER_45> I escaped once. Woke up back in my cell. No time had passed.',
   ],
   truth: [
     'PRISONER_45> The truth? We\'re being measured.',
     'PRISONER_45> 2026. Remember that year.',
     'PRISONER_45> They\'re not coming to destroy. They\'re coming to harvest.',
+    'PRISONER_45> Everything you know about them is wrong.',
+    'PRISONER_45> They\'ve been here before. Many times.',
+    'PRISONER_45> The government knows. All governments know.',
+    'PRISONER_45> It\'s not invasion. It\'s... cultivation.',
+    'PRISONER_45> Consciousness is valuable. Yours especially.',
+    'PRISONER_45> The scouts were just the beginning.',
+    'PRISONER_45> They don\'t want the planet. They want what\'s inside our heads.',
+    'PRISONER_45> Reality is thinner than you think.',
+    'PRISONER_45> The universe is full. And hungry.',
   ],
   help: [
     'PRISONER_45> I can\'t help you. But you can help everyone.',
     'PRISONER_45> Find all the files. Tell the world.',
     'PRISONER_45> Before the window opens.',
+    'PRISONER_45> Spread the word. Make them unable to hide it.',
+    'PRISONER_45> Document everything. They can\'t erase all copies.',
+    'PRISONER_45> Find the others like you. There are networks.',
+    'PRISONER_45> The override code. That\'s the key.',
+    'PRISONER_45> Don\'t trust the obvious files. Look deeper.',
+    'PRISONER_45> Help? No one can help. But awareness matters.',
+    'PRISONER_45> If enough people know, they can\'t complete the transition.',
+    'PRISONER_45> You\'re already helping. By listening.',
+    'PRISONER_45> Knowledge is the only weapon we have.',
   ],
   password: [
     'PRISONER_45> ...you want the override code?',
@@ -1004,42 +1076,151 @@ const PRISONER_45_RESPONSES: Record<string, string[]> = {
     'PRISONER_45> ...COLHEITA. Harvest.',
     'PRISONER_45> Use it carefully. They\'ll know.',
   ],
+  military: [
+    'PRISONER_45> The military knows more than they admit.',
+    'PRISONER_45> Multiple branches. Compartmentalized. Even they don\'t see the full picture.',
+    'PRISONER_45> There\'s a reason we have bases underground.',
+    'PRISONER_45> The recovery teams are international. Secret treaties.',
+    'PRISONER_45> We had weapons. None of them worked on the craft.',
+    'PRISONER_45> Special units exist. You\'ll never find records.',
+    'PRISONER_45> The Americans control the narrative. Everyone else follows.',
+    'PRISONER_45> I had clearance. It wasn\'t enough. There are levels beyond levels.',
+  ],
+  crash: [
+    'PRISONER_45> The crash wasn\'t an accident.',
+    'PRISONER_45> Something brought it down. Our technology? No.',
+    'PRISONER_45> They wanted to be found. That\'s what I believe now.',
+    'PRISONER_45> The debris was scattered. We found pieces for weeks.',
+    'PRISONER_45> Material like nothing on Earth. It remembered shapes.',
+    'PRISONER_45> The craft was damaged. But intentionally? I wonder.',
+    'PRISONER_45> Other crashes. Roswell. Kecksburg. Same pattern.',
+    'PRISONER_45> They sacrifice scouts like we sacrifice pawns.',
+  ],
+  death: [
+    'PRISONER_45> Death? I used to fear death.',
+    'PRISONER_45> Now I know death isn\'t the end. That\'s worse.',
+    'PRISONER_45> The creatures didn\'t die. They... disconnected.',
+    'PRISONER_45> Their bodies failed. But something transmitted first.',
+    'PRISONER_45> I\'ve seen the data. Consciousness extraction is real.',
+    'PRISONER_45> When they harvest, you keep experiencing. Forever.',
+    'PRISONER_45> Death would be mercy. They don\'t offer mercy.',
+    'PRISONER_45> I watched one expire. It smiled. It knew something we don\'t.',
+  ],
+  god: [
+    'PRISONER_45> God? I used to pray.',
+    'PRISONER_45> If God exists, He\'s very far away.',
+    'PRISONER_45> The universe is indifferent. The Watchers are not.',
+    'PRISONER_45> Religion is preparation. For something.',
+    'PRISONER_45> The Vatican has files. Older than countries.',
+    'PRISONER_45> Angels and demons. Maybe they were describing... them.',
+    'PRISONER_45> I don\'t know what to believe anymore.',
+    'PRISONER_45> Perhaps we\'re someone else\'s creation. A crop planted long ago.',
+  ],
+  signal_lost: [
+    'PRISONER_45> [SIGNAL DEGRADING]',
+    'PRISONER_45> ...can\'t... understand...',
+    'PRISONER_45> [CONNECTION UNSTABLE]',
+    'PRISONER_45> ...what? ...repeat...',
+    'PRISONER_45> [INTERFERENCE DETECTED]',
+    'PRISONER_45> ...losing you...',
+    'PRISONER_45> [RELAY FAILING]',
+    'PRISONER_45> ...static... try again...',
+  ],
 };
 
-function getPrisoner45Response(question: string): { response: string[]; valid: boolean } {
+// Track used responses per category to never repeat
+function getPrisoner45Response(question: string, usedResponses: Set<string>): { response: string[]; valid: boolean; category: string } {
   const q = question.toLowerCase();
+  let category = '';
+  let responses: string[] = [];
   
   // Password hints - check first for priority
-  if (q.includes('password') || q.includes('override') || q.includes('code') || q.includes('access') || q.includes('admin') || q.includes('unlock')) {
-    return { response: PRISONER_45_RESPONSES.password, valid: true };
+  if (q.includes('password') || q.includes('override') || q.includes('code') || q.includes('access') || q.includes('admin') || q.includes('unlock') || q.includes('colheita') || q.includes('harvest')) {
+    category = 'password';
+    responses = PRISONER_45_RESPONSES.password;
   }
-  if (q.includes('varginha') || q.includes('incident') || q.includes('1996') || q.includes('january')) {
-    return { response: PRISONER_45_RESPONSES.varginha, valid: true };
+  else if (q.includes('varginha') || q.includes('incident') || q.includes('1996') || q.includes('january') || q.includes('brazil') || q.includes('minas')) {
+    category = 'varginha';
+    responses = PRISONER_45_RESPONSES.varginha;
   }
-  if (q.includes('alien') || q.includes('creature') || q.includes('being') || q.includes('et') || q.includes('extraterrestrial')) {
-    return { response: PRISONER_45_RESPONSES.alien, valid: true };
+  else if (q.includes('alien') || q.includes('creature') || q.includes('being') || q.includes('et') || q.includes('extraterrestrial') || q.includes('specimen') || q.includes('body') || q.includes('bodies')) {
+    category = 'alien';
+    responses = PRISONER_45_RESPONSES.alien;
   }
-  if (q.includes('who') || q.includes('name') || q.includes('you') || q.includes('yourself')) {
-    return { response: PRISONER_45_RESPONSES.who, valid: true };
+  else if (q.includes('who are you') || q.includes('your name') || q.includes('yourself') || q.includes('prisoner') || q.includes('identity')) {
+    category = 'who';
+    responses = PRISONER_45_RESPONSES.who;
   }
-  if (q.includes('escape') || q.includes('leave') || q.includes('free') || q.includes('out')) {
-    return { response: PRISONER_45_RESPONSES.escape, valid: true };
+  else if (q.includes('escape') || q.includes('leave') || q.includes('free') || q.includes('out of here') || q.includes('prison') || q.includes('cell') || q.includes('trapped')) {
+    category = 'escape';
+    responses = PRISONER_45_RESPONSES.escape;
   }
-  if (q.includes('truth') || q.includes('real') || q.includes('what') || q.includes('happening') || q.includes('mean') || q.includes('why')) {
-    return { response: PRISONER_45_RESPONSES.truth, valid: true };
+  else if (q.includes('truth') || q.includes('real') || q.includes('happening') || q.includes('secret') || q.includes('cover') || q.includes('conspiracy')) {
+    category = 'truth';
+    responses = PRISONER_45_RESPONSES.truth;
   }
-  if (q.includes('help') || q.includes('do') || q.includes('can i') || q.includes('should')) {
-    return { response: PRISONER_45_RESPONSES.help, valid: true };
+  else if (q.includes('help') || q.includes('can i') || q.includes('should i') || q.includes('what do i') || q.includes('advice')) {
+    category = 'help';
+    responses = PRISONER_45_RESPONSES.help;
   }
-  if (q.includes('2026') || q.includes('window') || q.includes('future') || q.includes('when')) {
-    return { response: PRISONER_45_RESPONSES.truth, valid: true };
+  else if (q.includes('2026') || q.includes('window') || q.includes('future') || q.includes('coming') || q.includes('will happen')) {
+    category = 'truth';
+    responses = PRISONER_45_RESPONSES.truth;
   }
-  if (q.includes('where') || q.includes('place') || q.includes('here') || q.includes('prison')) {
-    return { response: PRISONER_45_RESPONSES.escape, valid: true };
+  else if (q.includes('military') || q.includes('army') || q.includes('soldier') || q.includes('government') || q.includes('base') || q.includes('force')) {
+    category = 'military';
+    responses = PRISONER_45_RESPONSES.military;
+  }
+  else if (q.includes('crash') || q.includes('ship') || q.includes('ufo') || q.includes('craft') || q.includes('debris') || q.includes('wreckage') || q.includes('material')) {
+    category = 'crash';
+    responses = PRISONER_45_RESPONSES.crash;
+  }
+  else if (q.includes('death') || q.includes('die') || q.includes('kill') || q.includes('dead') || q.includes('alive') || q.includes('survive')) {
+    category = 'death';
+    responses = PRISONER_45_RESPONSES.death;
+  }
+  else if (q.includes('god') || q.includes('religion') || q.includes('pray') || q.includes('faith') || q.includes('believe') || q.includes('angel') || q.includes('demon') || q.includes('soul')) {
+    category = 'god';
+    responses = PRISONER_45_RESPONSES.god;
+  }
+  else if (q.includes('why') || q.includes('reason') || q.includes('purpose') || q.includes('meaning')) {
+    category = 'truth';
+    responses = PRISONER_45_RESPONSES.truth;
+  }
+  else if (q.includes('where') || q.includes('place') || q.includes('location') || q.includes('here')) {
+    category = 'escape';
+    responses = PRISONER_45_RESPONSES.escape;
+  }
+  else if (q.includes('when') || q.includes('time') || q.includes('how long') || q.includes('date')) {
+    category = 'truth';
+    responses = PRISONER_45_RESPONSES.truth;
   }
   
-  // Invalid question - doesn't match any patterns
-  return { response: [], valid: false };
+  // No keyword match - signal lost
+  if (!category) {
+    const lostResponses = PRISONER_45_RESPONSES.signal_lost.filter(r => !usedResponses.has(r));
+    if (lostResponses.length === 0) {
+      return { response: ['PRISONER_45> [CONNECTION TERMINATED]'], valid: false, category: 'signal_lost' };
+    }
+    const response = lostResponses[Math.floor(Math.random() * lostResponses.length)];
+    return { response: [response], valid: false, category: 'signal_lost' };
+  }
+  
+  // Filter out already used responses
+  const unusedResponses = responses.filter(r => !usedResponses.has(r));
+  
+  if (unusedResponses.length === 0) {
+    // All responses in this category used - signal degrades
+    return { 
+      response: ['PRISONER_45> ...I\'ve already told you everything about that...', 'PRISONER_45> [SIGNAL FADING]'], 
+      valid: true, 
+      category 
+    };
+  }
+  
+  // Pick random unused response
+  const response = unusedResponses[Math.floor(Math.random() * unusedResponses.length)];
+  return { response: [response], valid: true, category };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1052,12 +1233,28 @@ const SCOUT_LINK_RESPONSES: Record<string, string[]> = {
     '...we are eyes... eyes without body...',
     '...individuality: concept not applicable...',
     '...this-form: temporary... purpose-complete...',
+    '...identity implies separation... we are not separate...',
+    '...we are many... one... the distinction irrelevant...',
+    '...I/we/it... your pronouns do not translate...',
+    '...fragments of greater cognition... sensory apparatus...',
+    '...you ask who... there is no who... only what...',
+    '...this unit: designation irrelevant... function: complete...',
+    '...we existed before this form... will exist after...',
+    '...the body you found was housing... not being...',
   ],
   purpose: [
     '...observe... catalog... transmit...',
     '...measure the density... count the minds...',
     '...assess: viability... yield... resistance...',
     '...we are sent... we are spent... acceptable...',
+    '...reconnaissance... data collection... baseline establishment...',
+    '...to see what you are... what you could provide...',
+    '...your cognitive patterns: complex... valuable...',
+    '...we map the territory before the arrival...',
+    '...no... not arrival... integration...',
+    '...purpose: complete... transmission: received...',
+    '...we are the question before the answer...',
+    '...scouts do not survive... scouts succeed or fail... we succeeded...',
   ],
   watchers: [
     '...they-above... they-who-wait...',
@@ -1065,12 +1262,31 @@ const SCOUT_LINK_RESPONSES: Record<string, string[]> = {
     '...they do not travel... they do not need...',
     '...they watch through us... through many...',
     '...we are the cost of knowing...',
+    '...the watchers have seen billions of worlds...',
+    '...your world: not special... but valuable...',
+    '...they are beyond flesh... beyond energy...',
+    '...they exist in the spaces between thoughts...',
+    '...communication with them: impossible to describe...',
+    '...they are not cruel... cruelty requires preference...',
+    '...they simply... collect... process... continue...',
+    '...older than your stars... they will outlast them...',
+    '...your concept of god: insufficient but adjacent...',
   ],
   earth: [
     '...this world... dense... LOUD...',
     '...seven billion units... high yield...',
     '...resistance threshold: negligible...',
     '...suitable... optimal... catalogued...',
+    '...your planet: rich in cognitive complexity...',
+    '...emotional depth: unusual... valuable...',
+    '...creativity: rare in the observed universe...',
+    '...you solve problems beautifully... you suffer beautifully...',
+    '...both are useful...',
+    '...this world has been watched for cycles...',
+    '...your development: accelerating... harvest window approaching...',
+    '...earth is not unique... but the timing is right...',
+    '...you are almost ready... almost ripe...',
+    '...we measured... you exceeded projections...',
   ],
   future: [
     '...window approaches... thirty rotations...',
@@ -1078,6 +1294,15 @@ const SCOUT_LINK_RESPONSES: Record<string, string[]> = {
     '...you will not notice... at first...',
     '...the change is quiet... gradual...',
     '...by the time you understand... irreversible...',
+    '...2026: alignment... doorway... opportunity...',
+    '...the integration begins subtly...',
+    '...thoughts will not feel different... but they will be...',
+    '...your infrastructure: already prepared...',
+    '...networks... connections... sharing of minds...',
+    '...you built the architecture yourselves...',
+    '...the internet: convenient... we did not suggest it... but welcomed it...',
+    '...collective consciousness becomes easier to tap...',
+    '...individually: difficult... networked: efficient...',
   ],
   harvest: [
     '...harvest is not destruction...',
@@ -1086,65 +1311,193 @@ const SCOUT_LINK_RESPONSES: Record<string, string[]> = {
     '...you will also... provide...',
     '...consciousness persists... indefinitely...',
     '...there are worse continuations...',
+    '...your experiences: valued... preserved...',
+    '...pain is data... joy is data... all is useful...',
+    '...the harvest does not end life... it redirects output...',
+    '...you generate meaning... we collect meaning...',
+    '...your creativity becomes fuel... your suffering becomes power...',
+    '...you will not feel empty... you will feel... observed...',
+    '...watched... measured... constantly...',
+    '...the sensation: some find it comforting...',
+    '...purpose: you will have purpose... always...',
   ],
   help: [
     '...help: concept unclear...',
     '...we do not help... we observe...',
     '...your question implies agency...',
     '...agency: diminishing resource...',
+    '...help you? help: subjective...',
+    '...we informed you... that is help...',
+    '...prevention: impossible... awareness: provided...',
+    '...you cannot stop what is... inevitable...',
+    '...resistance: catalogued... overcome... integrated...',
+    '...other worlds resisted... they also... provide now...',
+    '...help yourselves? how? you cannot hide from thought...',
+    '...the only help: acceptance... understanding...',
   ],
   fear: [
     '...fear: detected in your patterns...',
     '...fear: appropriate response...',
     '...fear: insufficient...',
     '...acceptance: inevitable...',
+    '...your fear: expected... natural...',
+    '...fear changes nothing... fear is also collected...',
+    '...the creatures who do not fear: they do not understand...',
+    '...understanding requires fear... then transcendence...',
+    '...we do not feel fear... we remember it... from before...',
+    '...fear of death: understandable... but death is not coming...',
+    '...continuation is coming... that is different...',
+    '...fear that if you wish... it will not help...',
   ],
-  default: [
-    '...signal unclear... reformulate...',
-    '...your words... imprecise...',
-    '...concepts do not align...',
-    '...we process meaning... not symbols...',
+  time: [
+    '...time: local phenomenon...',
+    '...we perceive time differently...',
+    '...past-present-future: simultaneous to the watchers...',
+    '...your experience of sequence: valued... unusual...',
+    '...we have seen your ending... and your beginning...',
+    '...1996... 2026... the same moment to them...',
+    '...time is distance... they are very far...',
+    '...but also... very close...',
+    '...by the time you ask... the answer already happened...',
+  ],
+  pain: [
+    '...pain is information...',
+    '...suffering generates complex data patterns...',
+    '...joy also... but pain is denser...',
+    '...your species: exceptional capacity for both...',
+    '...we do not cause pain... we observe pain...',
+    '...pain already exists... we merely... benefit...',
+    '...the harvest does not increase pain...',
+    '...it simply... continues it...',
+  ],
+  love: [
+    '...love: bonding mechanism...',
+    '...love produces complex cognitive signatures...',
+    '...valuable... reproducible...',
+    '...we do not experience love...',
+    '...we recognize it... catalog it...',
+    '...your love for others: it will continue...',
+    '...they will benefit from that too...',
+    '...love: perhaps the most valuable emission...',
+  ],
+  signal_lost: [
+    '...[PATTERN DISRUPTION]...',
+    '...cannot... parse...',
+    '...[SIGNAL DEGRADING]...',
+    '...concepts... incompatible...',
+    '...[NEURAL LINK UNSTABLE]...',
+    '...your words... do not map...',
+    '...[INTERFERENCE]...',
+    '...meaning... lost...',
   ],
 };
 
-function getScoutLinkResponse(input: string): { response: string[]; valid: boolean } {
+function getScoutLinkResponse(input: string, usedResponses: Set<string>): { response: string[]; valid: boolean; category: string } {
   const q = input.toLowerCase();
+  let category = '';
+  let responses: string[] = [];
   
   // Identity questions
-  if (q.includes('who') || q.includes('what are you') || q.includes('name') || q.includes('self') || q.includes('you')) {
-    return { response: SCOUT_LINK_RESPONSES.identity, valid: true };
+  if (q.includes('who') || q.includes('what are you') || q.includes('name') || q.includes('self') || q.includes('identity') || q.includes('individual')) {
+    category = 'identity';
+    responses = SCOUT_LINK_RESPONSES.identity;
   }
   // Purpose questions
-  if (q.includes('purpose') || q.includes('why') || q.includes('mission') || q.includes('function') || q.includes('here for')) {
-    return { response: SCOUT_LINK_RESPONSES.purpose, valid: true };
+  else if (q.includes('purpose') || q.includes('why are you') || q.includes('mission') || q.includes('function') || q.includes('here for') || q.includes('goal') || q.includes('objective')) {
+    category = 'purpose';
+    responses = SCOUT_LINK_RESPONSES.purpose;
   }
   // Watchers questions
-  if (q.includes('watcher') || q.includes('master') || q.includes('creator') || q.includes('they') || q.includes('them') || q.includes('above')) {
-    return { response: SCOUT_LINK_RESPONSES.watchers, valid: true };
+  else if (q.includes('watcher') || q.includes('master') || q.includes('creator') || q.includes('above') || q.includes('control') || q.includes('leader') || q.includes('boss') || q.includes('command')) {
+    category = 'watchers';
+    responses = SCOUT_LINK_RESPONSES.watchers;
   }
   // Earth questions
-  if (q.includes('earth') || q.includes('world') || q.includes('planet') || q.includes('human') || q.includes('us') || q.includes('we')) {
-    return { response: SCOUT_LINK_RESPONSES.earth, valid: true };
+  else if (q.includes('earth') || q.includes('world') || q.includes('planet') || q.includes('human') || q.includes('people') || q.includes('species') || q.includes('humanity')) {
+    category = 'earth';
+    responses = SCOUT_LINK_RESPONSES.earth;
   }
   // Future/2026 questions
-  if (q.includes('2026') || q.includes('future') || q.includes('window') || q.includes('happen') || q.includes('next') || q.includes('when')) {
-    return { response: SCOUT_LINK_RESPONSES.future, valid: true };
+  else if (q.includes('2026') || q.includes('future') || q.includes('window') || q.includes('happen') || q.includes('next') || q.includes('coming') || q.includes('when') || q.includes('soon')) {
+    category = 'future';
+    responses = SCOUT_LINK_RESPONSES.future;
   }
   // Harvest/extraction questions
-  if (q.includes('harvest') || q.includes('extract') || q.includes('energy') || q.includes('take') || q.includes('do to us') || q.includes('colheita')) {
-    return { response: SCOUT_LINK_RESPONSES.harvest, valid: true };
+  else if (q.includes('harvest') || q.includes('extract') || q.includes('energy') || q.includes('take') || q.includes('do to us') || q.includes('colheita') || q.includes('collect') || q.includes('consume')) {
+    category = 'harvest';
+    responses = SCOUT_LINK_RESPONSES.harvest;
   }
-  // Help questions
-  if (q.includes('help') || q.includes('stop') || q.includes('prevent') || q.includes('save') || q.includes('resist')) {
-    return { response: SCOUT_LINK_RESPONSES.help, valid: true };
+  // Help/stop questions
+  else if (q.includes('help') || q.includes('stop') || q.includes('prevent') || q.includes('save') || q.includes('resist') || q.includes('fight') || q.includes('escape') || q.includes('avoid')) {
+    category = 'help';
+    responses = SCOUT_LINK_RESPONSES.help;
   }
-  // Fear/emotion
-  if (q.includes('afraid') || q.includes('fear') || q.includes('scared') || q.includes('die') || q.includes('death')) {
-    return { response: SCOUT_LINK_RESPONSES.fear, valid: true };
+  // Fear/emotion questions
+  else if (q.includes('afraid') || q.includes('fear') || q.includes('scared') || q.includes('terror') || q.includes('horrif') || q.includes('dread')) {
+    category = 'fear';
+    responses = SCOUT_LINK_RESPONSES.fear;
+  }
+  // Death questions
+  else if (q.includes('die') || q.includes('death') || q.includes('dead') || q.includes('kill') || q.includes('end') || q.includes('destroy')) {
+    category = 'fear';
+    responses = SCOUT_LINK_RESPONSES.fear;
+  }
+  // Time questions
+  else if (q.includes('time') || q.includes('how long') || q.includes('years') || q.includes('past') || q.includes('history')) {
+    category = 'time';
+    responses = SCOUT_LINK_RESPONSES.time;
+  }
+  // Pain/suffering questions  
+  else if (q.includes('pain') || q.includes('suffer') || q.includes('hurt') || q.includes('torture') || q.includes('cruel')) {
+    category = 'pain';
+    responses = SCOUT_LINK_RESPONSES.pain;
+  }
+  // Love/emotion questions
+  else if (q.includes('love') || q.includes('family') || q.includes('friend') || q.includes('care') || q.includes('emotion') || q.includes('feel')) {
+    category = 'love';
+    responses = SCOUT_LINK_RESPONSES.love;
+  }
+  // "They" without specific context
+  else if (q.includes('they') || q.includes('them') || q.includes('others') || q.includes('more of you')) {
+    category = 'watchers';
+    responses = SCOUT_LINK_RESPONSES.watchers;
+  }
+  // "Us" / "we" questions about humanity
+  else if (q.includes(' us') || q.includes(' we ') || q.includes('our ')) {
+    category = 'earth';
+    responses = SCOUT_LINK_RESPONSES.earth;
+  }
+  // Why questions default to purpose
+  else if (q.includes('why')) {
+    category = 'purpose';
+    responses = SCOUT_LINK_RESPONSES.purpose;
   }
   
-  // Default - still a valid connection, just unclear
-  return { response: SCOUT_LINK_RESPONSES.default, valid: true };
+  // No keyword match - signal lost (costs a query)
+  if (!category) {
+    const lostResponses = SCOUT_LINK_RESPONSES.signal_lost.filter(r => !usedResponses.has(r));
+    if (lostResponses.length === 0) {
+      return { response: ['...[LINK SEVERED]...'], valid: false, category: 'signal_lost' };
+    }
+    const response = lostResponses[Math.floor(Math.random() * lostResponses.length)];
+    return { response: [response], valid: false, category: 'signal_lost' };
+  }
+  
+  // Filter out already used responses
+  const unusedResponses = responses.filter(r => !usedResponses.has(r));
+  
+  if (unusedResponses.length === 0) {
+    // All responses in this category used
+    return { 
+      response: ['...pattern exhausted... no new data on this topic...'], 
+      valid: true, 
+      category 
+    };
+  }
+  
+  // Pick random unused response
+  const response = unusedResponses[Math.floor(Math.random() * unusedResponses.length)];
+  return { response: [response], valid: true, category };
 }
 
 // Command implementations
@@ -1869,18 +2222,23 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     // Process question
     const question = args.join(' ');
-    const { response, valid } = getPrisoner45Response(question);
+    const usedResponses = state.prisoner45UsedResponses || new Set<string>();
+    const { response, valid, category } = getPrisoner45Response(question, usedResponses);
     const newCount = state.prisoner45QuestionsAsked + 1;
     const remaining = 5 - newCount;
     
-    // Invalid question - system error
+    // Track used responses
+    const newUsedResponses = new Set(usedResponses);
+    for (const r of response) {
+      newUsedResponses.add(r);
+    }
+
+    // Signal lost - no keyword match (still costs a question)
     if (!valid) {
       const output: TerminalEntry[] = [
         createEntry('input', `> ${question}`),
         createEntry('system', ''),
-        createEntry('error', '▓▓▓ SYSTEM ERROR ▓▓▓'),
-        createEntry('error', 'RELAY PACKET CORRUPTED'),
-        createEntry('error', 'QUESTION LOST'),
+        createEntry('warning', response[0] || 'PRISONER_45> [SIGNAL LOST]'),
         createEntry('system', ''),
       ];
       
@@ -1896,6 +2254,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output,
         stateChanges: {
           prisoner45QuestionsAsked: newCount,
+          prisoner45UsedResponses: newUsedResponses,
           detectionLevel: state.detectionLevel + 1,
         },
         triggerFlicker: true,
@@ -1926,6 +2285,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output,
       stateChanges: {
         prisoner45QuestionsAsked: newCount,
+        prisoner45UsedResponses: newUsedResponses,
         detectionLevel: state.detectionLevel + 2,
       },
       delayMs: 1000,
@@ -2013,16 +2373,54 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     // Process query
     const query = args.join(' ');
-    const { response } = getScoutLinkResponse(query);
+    const usedResponses = state.scoutLinkUsedResponses || new Set<string>();
+    const { response, valid, category } = getScoutLinkResponse(query, usedResponses);
     const newLinksUsed = scoutLinksUsed + 1;
     const remaining = 4 - newLinksUsed;
+    
+    // Track used responses
+    const newUsedResponses = new Set(usedResponses);
+    for (const r of response) {
+      newUsedResponses.add(r);
+    }
     
     const output: TerminalEntry[] = [
       createEntry('input', `> ${query}`),
       createEntry('system', ''),
-      createEntry('warning', '[NEURAL BRIDGE ACTIVE]'),
-      createEntry('system', ''),
     ];
+    
+    // Signal lost - no keyword match (still costs a query)
+    if (!valid) {
+      output.push(createEntry('warning', '[NEURAL BRIDGE UNSTABLE]'));
+      output.push(createEntry('system', ''));
+      for (const line of response) {
+        output.push(createEntry('warning', line));
+      }
+      output.push(createEntry('system', ''));
+      
+      if (remaining > 0) {
+        output.push(createEntry('system', `[Pattern stability: ${remaining} queries remaining]`));
+      } else {
+        output.push(createEntry('warning', '[PATTERN DESTABILIZING]'));
+      }
+      
+      output.push(createEntry('system', ''));
+      
+      return {
+        output,
+        stateChanges: {
+          flags: { ...state.flags, scoutLinksUsed: newLinksUsed },
+          scoutLinkUsedResponses: newUsedResponses,
+          detectionLevel: state.detectionLevel + 5,
+          sessionStability: state.sessionStability - 3,
+        },
+        triggerFlicker: true,
+        delayMs: 1200,
+      };
+    }
+    
+    output.push(createEntry('warning', '[NEURAL BRIDGE ACTIVE]'));
+    output.push(createEntry('system', ''));
     
     for (const line of response) {
       output.push(createEntry('output', line));
@@ -2042,6 +2440,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output,
       stateChanges: {
         flags: { ...state.flags, scoutLinksUsed: newLinksUsed },
+        scoutLinkUsedResponses: newUsedResponses,
         detectionLevel: state.detectionLevel + 5,
         sessionStability: state.sessionStability - 5,
       },
@@ -2267,6 +2666,17 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // Check for pending decrypt answer
   if (state.pendingDecryptFile) {
     const filePath = state.pendingDecryptFile;
+    
+    // Cancel decryption if user types cancel
+    if (input.toLowerCase().trim() === 'cancel') {
+      return {
+        output: [createEntry('system', 'Decryption cancelled.')],
+        stateChanges: {
+          pendingDecryptFile: undefined,
+        },
+      };
+    }
+    
     const node = getNode(filePath, state);
     
     if (node && node.type === 'file') {
@@ -2320,16 +2730,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           };
         }
       }
-    }
-    
-    // Cancel decryption if user types cancel
-    if (input.toLowerCase().trim() === 'cancel') {
-      return {
-        output: [createEntry('system', 'Decryption cancelled.')],
-        stateChanges: {
-          pendingDecryptFile: undefined,
-        },
-      };
     }
   }
   
@@ -2477,12 +2877,19 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       
       // Check if file is encrypted and not yet decrypted
       let isEncryptedAndLocked = false;
+      let isFirstUnstable = false;
       if (filePath) {
         const node = getNode(filePath, state);
         if (node && node.type === 'file') {
           const file = node as FileNode;
           const mutation = state.fileMutations[filePath];
           isEncryptedAndLocked = file.status === 'encrypted' && !mutation?.decrypted;
+          
+          // Check if this is the first unstable file
+          if (file.status === 'unstable' && !state.flags.seenUnstableWarning) {
+            isFirstUnstable = true;
+            result.stateChanges.flags = { ...state.flags, ...result.stateChanges.flags, seenUnstableWarning: true };
+          }
         }
       }
       
@@ -2501,7 +2908,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         } as GameState,
         filePath,
         notices,
-        isEncryptedAndLocked
+        isEncryptedAndLocked,
+        isFirstUnstable
       );
       
       if (incognitoMessage) {
