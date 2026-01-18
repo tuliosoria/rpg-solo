@@ -567,6 +567,11 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     pendingDecryptFile: undefined,
   };
   
+  // Special handling: Decrypting neural dump unlocks scout link
+  if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
+    stateChanges.flags = { ...state.flags, scoutLinkUnlocked: true };
+  }
+  
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
   const reveals = getFileReveals(filePath);
   const notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
@@ -579,6 +584,14 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     ...createOutputEntries(content || ['[DECRYPTION FAILED]']),
     ...notices,
   ];
+  
+  // Add scout link notice if just unlocked
+  if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
+    output.push(createEntry('system', ''));
+    output.push(createEntry('notice', 'NOTICE: Neural pattern preserved.'));
+    output.push(createEntry('notice', 'NOTICE: Remote link now available.'));
+    output.push(createEntry('system', 'Use: link'));
+  }
   
   // Check for image trigger - ONLY show if not shown this run
   let imageTrigger: ImageTrigger | undefined = undefined;
@@ -999,6 +1012,111 @@ function getPrisoner45Response(question: string): { response: string[]; valid: b
   return { response: [], valid: false };
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// SCOUT NEURAL LINK — Remote access to preserved scout consciousness
+// ═══════════════════════════════════════════════════════════════════════════
+
+const SCOUT_LINK_RESPONSES: Record<string, string[]> = {
+  identity: [
+    '...not-self... extension... function...',
+    '...we are eyes... eyes without body...',
+    '...individuality: concept not applicable...',
+    '...this-form: temporary... purpose-complete...',
+  ],
+  purpose: [
+    '...observe... catalog... transmit...',
+    '...measure the density... count the minds...',
+    '...assess: viability... yield... resistance...',
+    '...we are sent... we are spent... acceptable...',
+  ],
+  watchers: [
+    '...they-above... they-who-wait...',
+    '...ancient... patient... vast...',
+    '...they do not travel... they do not need...',
+    '...they watch through us... through many...',
+    '...we are the cost of knowing...',
+  ],
+  earth: [
+    '...this world... dense... LOUD...',
+    '...seven billion units... high yield...',
+    '...resistance threshold: negligible...',
+    '...suitable... optimal... catalogued...',
+  ],
+  future: [
+    '...window approaches... thirty rotations...',
+    '...not arrival... transition...',
+    '...you will not notice... at first...',
+    '...the change is quiet... gradual...',
+    '...by the time you understand... irreversible...',
+  ],
+  harvest: [
+    '...harvest is not destruction...',
+    '...the crop continues living...',
+    '...you will think... feel... create...',
+    '...you will also... provide...',
+    '...consciousness persists... indefinitely...',
+    '...there are worse continuations...',
+  ],
+  help: [
+    '...help: concept unclear...',
+    '...we do not help... we observe...',
+    '...your question implies agency...',
+    '...agency: diminishing resource...',
+  ],
+  fear: [
+    '...fear: detected in your patterns...',
+    '...fear: appropriate response...',
+    '...fear: insufficient...',
+    '...acceptance: inevitable...',
+  ],
+  default: [
+    '...signal unclear... reformulate...',
+    '...your words... imprecise...',
+    '...concepts do not align...',
+    '...we process meaning... not symbols...',
+  ],
+};
+
+function getScoutLinkResponse(input: string): { response: string[]; valid: boolean } {
+  const q = input.toLowerCase();
+  
+  // Identity questions
+  if (q.includes('who') || q.includes('what are you') || q.includes('name') || q.includes('self') || q.includes('you')) {
+    return { response: SCOUT_LINK_RESPONSES.identity, valid: true };
+  }
+  // Purpose questions
+  if (q.includes('purpose') || q.includes('why') || q.includes('mission') || q.includes('function') || q.includes('here for')) {
+    return { response: SCOUT_LINK_RESPONSES.purpose, valid: true };
+  }
+  // Watchers questions
+  if (q.includes('watcher') || q.includes('master') || q.includes('creator') || q.includes('they') || q.includes('them') || q.includes('above')) {
+    return { response: SCOUT_LINK_RESPONSES.watchers, valid: true };
+  }
+  // Earth questions
+  if (q.includes('earth') || q.includes('world') || q.includes('planet') || q.includes('human') || q.includes('us') || q.includes('we')) {
+    return { response: SCOUT_LINK_RESPONSES.earth, valid: true };
+  }
+  // Future/2026 questions
+  if (q.includes('2026') || q.includes('future') || q.includes('window') || q.includes('happen') || q.includes('next') || q.includes('when')) {
+    return { response: SCOUT_LINK_RESPONSES.future, valid: true };
+  }
+  // Harvest/extraction questions
+  if (q.includes('harvest') || q.includes('extract') || q.includes('energy') || q.includes('take') || q.includes('do to us') || q.includes('colheita')) {
+    return { response: SCOUT_LINK_RESPONSES.harvest, valid: true };
+  }
+  // Help questions
+  if (q.includes('help') || q.includes('stop') || q.includes('prevent') || q.includes('save') || q.includes('resist')) {
+    return { response: SCOUT_LINK_RESPONSES.help, valid: true };
+  }
+  // Fear/emotion
+  if (q.includes('afraid') || q.includes('fear') || q.includes('scared') || q.includes('die') || q.includes('death')) {
+    return { response: SCOUT_LINK_RESPONSES.fear, valid: true };
+  }
+  
+  // Default - still a valid connection, just unclear
+  return { response: SCOUT_LINK_RESPONSES.default, valid: true };
+}
+
 // Command implementations
 const commands: Record<string, (args: string[], state: GameState) => CommandResult> = {
   help: (args, state) => ({
@@ -1017,6 +1135,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       '  recover <file>    Attempt file recovery (RISK)',
       '  trace             Trace system connections (RISK)',
       '  chat              Open secure relay channel',
+      '  link              Access preserved neural pattern (EXTREME RISK)',
+      '  script <code>     Execute data reconstruction script',
       '  override protocol <CODE>  Attempt security override (requires code)',
       '  save              Save current session',
       '  clear             Clear terminal display',
@@ -1773,6 +1893,263 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         detectionLevel: state.detectionLevel + 2,
       },
       delayMs: 1000,
+    };
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SCOUT NEURAL LINK — Remote access to preserved scout consciousness
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  link: (args, state) => {
+    // Requires access to neural dump file first
+    if (!state.flags.scoutLinkUnlocked) {
+      return {
+        output: [
+          createEntry('system', 'Initiating psi-comm bridge...'),
+          createEntry('error', ''),
+          createEntry('error', 'ACCESS DENIED'),
+          createEntry('error', 'NO VALID NEURAL PATTERN LOADED'),
+          createEntry('system', ''),
+          createEntry('system', 'Hint: Access requires prior neural capture decryption.'),
+          createEntry('system', '      Check quarantine storage for .psi files.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 5,
+        },
+        delayMs: 1500,
+      };
+    }
+    
+    // Check if scout link is exhausted
+    const scoutLinksUsed = state.flags.scoutLinksUsed || 0;
+    if (scoutLinksUsed >= 4) {
+      return {
+        output: [
+          createEntry('system', 'Initiating psi-comm bridge...'),
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓ NEURAL PATTERN DEGRADED ▓▓▓'),
+          createEntry('error', ''),
+          createEntry('warning', '...pattern... fading...'),
+          createEntry('warning', '...consciousness... dispersing...'),
+          createEntry('warning', '...we... were... watching...'),
+          createEntry('error', ''),
+          createEntry('error', 'LINK TERMINATED — PATTERN EXHAUSTED'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          flags: { ...state.flags, scoutLinkExhausted: true },
+          detectionLevel: state.detectionLevel + 10,
+        },
+        triggerFlicker: true,
+        delayMs: 2500,
+      };
+    }
+    
+    // If no args, show link prompt
+    if (args.length === 0) {
+      const remaining = 4 - scoutLinksUsed;
+      return {
+        output: [
+          createEntry('system', 'Initiating psi-comm bridge...'),
+          createEntry('warning', ''),
+          createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('warning', '▓ WARNING: NEURAL PATTERN LINK ACTIVE    ▓'),
+          createEntry('warning', '▓ COGNITIVE CONTAMINATION RISK: HIGH     ▓'),
+          createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('system', ''),
+          createEntry('output', '...connection... established...'),
+          createEntry('output', '...we... perceive... you...'),
+          createEntry('output', '...your questions... imprecise... but understood...'),
+          createEntry('system', ''),
+          createEntry('system', `[Pattern stability: ${remaining} queries remaining]`),
+          createEntry('system', ''),
+          createEntry('system', 'Use: link <thought or question>'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 8,
+        },
+        triggerFlicker: true,
+        delayMs: 2000,
+      };
+    }
+    
+    // Process query
+    const query = args.join(' ');
+    const { response } = getScoutLinkResponse(query);
+    const newLinksUsed = scoutLinksUsed + 1;
+    const remaining = 4 - newLinksUsed;
+    
+    const output: TerminalEntry[] = [
+      createEntry('input', `> ${query}`),
+      createEntry('system', ''),
+      createEntry('warning', '[NEURAL BRIDGE ACTIVE]'),
+      createEntry('system', ''),
+    ];
+    
+    for (const line of response) {
+      output.push(createEntry('output', line));
+    }
+    
+    output.push(createEntry('system', ''));
+    
+    if (remaining > 0) {
+      output.push(createEntry('system', `[Pattern stability: ${remaining} queries remaining]`));
+    } else {
+      output.push(createEntry('warning', '[PATTERN DESTABILIZING]'));
+    }
+    
+    output.push(createEntry('system', ''));
+    
+    return {
+      output,
+      stateChanges: {
+        flags: { ...state.flags, scoutLinksUsed: newLinksUsed },
+        detectionLevel: state.detectionLevel + 5,
+        sessionStability: state.sessionStability - 5,
+      },
+      triggerFlicker: true,
+      delayMs: 1500,
+    };
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SCRIPT COMMAND — Data reconstruction via user-written scripts
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  script: (args, state) => {
+    if (args.length === 0) {
+      return {
+        output: [
+          createEntry('system', 'SCRIPT EXECUTOR v1.7'),
+          createEntry('system', ''),
+          createEntry('system', 'Usage: script <script_content>'),
+          createEntry('system', ''),
+          createEntry('system', 'Required format:'),
+          createEntry('system', '  INIT;TARGET=<path>;EXEC'),
+          createEntry('system', ''),
+          createEntry('system', 'Example:'),
+          createEntry('system', '  script INIT;TARGET=/admin/neural_fragment.dat;EXEC'),
+          createEntry('system', ''),
+          createEntry('system', 'See /tmp/data_reconstruction.util for available targets.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const scriptContent = args.join(' ').toUpperCase();
+    
+    // Parse script
+    const hasInit = scriptContent.includes('INIT');
+    const hasExec = scriptContent.includes('EXEC');
+    const targetMatch = scriptContent.match(/TARGET=([^;]+)/);
+    
+    if (!hasInit || !hasExec) {
+      return {
+        output: [
+          createEntry('system', 'Parsing script...'),
+          createEntry('error', ''),
+          createEntry('error', 'SYNTAX ERROR'),
+          createEntry('error', 'Script must contain INIT and EXEC commands.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 2,
+        },
+      };
+    }
+    
+    if (!targetMatch) {
+      return {
+        output: [
+          createEntry('system', 'Parsing script...'),
+          createEntry('error', ''),
+          createEntry('error', 'SYNTAX ERROR'),
+          createEntry('error', 'Script must specify TARGET=<path>'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 2,
+        },
+      };
+    }
+    
+    const target = targetMatch[1].toLowerCase();
+    
+    // Valid targets
+    if (target.includes('neural_fragment') || target.includes('/admin/neural')) {
+      return {
+        output: [
+          createEntry('system', 'Parsing script...'),
+          createEntry('system', 'INIT... OK'),
+          createEntry('system', 'TARGET=/admin/neural_fragment.dat... LOCATED'),
+          createEntry('system', 'EXEC... RUNNING'),
+          createEntry('warning', ''),
+          createEntry('warning', '▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓'),
+          createEntry('warning', ''),
+          createEntry('system', 'Recovering fragmented sectors...'),
+          createEntry('system', 'Rebuilding data structure...'),
+          createEntry('system', 'Validating integrity...'),
+          createEntry('notice', ''),
+          createEntry('notice', 'RECONSTRUCTION SUCCESSFUL'),
+          createEntry('notice', ''),
+          createEntry('system', 'File /admin/neural_fragment.dat is now accessible.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          flags: { ...state.flags, scriptExecuted: true },
+          detectionLevel: state.detectionLevel + 15,
+        },
+        triggerFlicker: true,
+        delayMs: 3000,
+      };
+    }
+    
+    if (target.includes('psi_residue') || target.includes('/comms/psi')) {
+      return {
+        output: [
+          createEntry('system', 'Parsing script...'),
+          createEntry('system', 'INIT... OK'),
+          createEntry('system', 'TARGET=/comms/psi_residue.log... LOCATED'),
+          createEntry('system', 'EXEC... RUNNING'),
+          createEntry('warning', ''),
+          createEntry('warning', '▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓'),
+          createEntry('warning', ''),
+          createEntry('system', 'Recovering fragmented sectors...'),
+          createEntry('error', 'ERROR: Corruption too severe'),
+          createEntry('error', 'Partial recovery only:'),
+          createEntry('system', ''),
+          createEntry('output', '...they see through us...'),
+          createEntry('output', '...we are not the first world...'),
+          createEntry('output', '...we will not be the last...'),
+          createEntry('system', ''),
+          createEntry('warning', 'RECONSTRUCTION PARTIAL — FILE LOST'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 10,
+        },
+        triggerFlicker: true,
+        delayMs: 2500,
+      };
+    }
+    
+    // Invalid target
+    return {
+      output: [
+        createEntry('system', 'Parsing script...'),
+        createEntry('system', 'INIT... OK'),
+        createEntry('system', `TARGET=${target}... SEARCHING`),
+        createEntry('error', ''),
+        createEntry('error', 'TARGET NOT FOUND'),
+        createEntry('error', 'Specified path does not contain reconstructable data.'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {
+        detectionLevel: state.detectionLevel + 3,
+      },
     };
   },
 
