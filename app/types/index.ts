@@ -153,6 +153,8 @@ export interface SaveSlot {
   truthCount: number;
 }
 
+export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow' | 'glitchy';
+
 export interface CommandResult {
   output: TerminalEntry[];
   stateChanges: Partial<GameState>;
@@ -160,6 +162,7 @@ export interface CommandResult {
   delayMs?: number;
   imageTrigger?: ImageTrigger;
   videoTrigger?: VideoTrigger;
+  streamingMode?: StreamingMode; // How to stream the output
 }
 
 export const TRUTH_CATEGORIES = [
