@@ -622,7 +622,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
 // ═══════════════════════════════════════════════════════════════════════════
 
 // UFO74 reactions based on file content/path
-function getUFO74FileReaction(filePath: string, state: GameState): TerminalEntry[] | null {
+function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAndLocked?: boolean): TerminalEntry[] | null {
   const truthCount = state.truthsDiscovered.size;
   const messageCount = state.incognitoMessageCount || 0;
   
@@ -646,7 +646,37 @@ function getUFO74FileReaction(filePath: string, state: GameState): TerminalEntry
   // Build message based on file type and state
   let messages: TerminalEntry[] = [];
   
-  if (isFinalMessage) {
+  // If file is encrypted and not decrypted, show special message
+  if (isEncryptedAndLocked) {
+    const encryptedMessages = [
+      [
+        createEntry('output', 'UFO74: damn. encrypted.'),
+        createEntry('output', ''),
+        createEntry('output', 'UFO74: we NEED to see whats in this file hackerkid.'),
+        createEntry('output', '       i trust you can figure out the password.'),
+        createEntry('output', ''),
+        createEntry('output', 'UFO74: try: decrypt <filename>'),
+        createEntry('output', '       the answer is probably in another file somewhere.'),
+      ],
+      [
+        createEntry('output', 'UFO74: locked. of course.'),
+        createEntry('output', ''),
+        createEntry('output', 'UFO74: the good stuff is always behind a wall.'),
+        createEntry('output', '       but you can crack it. look for clues in other docs.'),
+        createEntry('output', ''),
+        createEntry('output', 'UFO74: use decrypt to try breaking in.'),
+      ],
+      [
+        createEntry('output', 'UFO74: encryption. figures.'),
+        createEntry('output', ''),
+        createEntry('output', 'UFO74: this file is important - thats why its protected.'),
+        createEntry('output', '       find the answer in the other files and decrypt it.'),
+        createEntry('output', ''),
+        createEntry('output', 'UFO74: i believe in you kiddo.'),
+      ],
+    ];
+    messages = encryptedMessages[Math.floor(Math.random() * encryptedMessages.length)];
+  } else if (isFinalMessage) {
     // Final goodbye
     messages = [
       createEntry('output', 'UFO74: hackerkid... this is it.'),
@@ -900,7 +930,7 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
 }
 
 // Main function to get UFO74 message after file read
-function getIncognitoMessage(state: GameState, filePath?: string, notices?: TerminalEntry[]): TerminalEntry[] | null {
+function getIncognitoMessage(state: GameState, filePath?: string, notices?: TerminalEntry[], isEncryptedAndLocked?: boolean): TerminalEntry[] | null {
   // Max 12 messages per session (last one is goodbye)
   if ((state.incognitoMessageCount || 0) >= 12) return null;
   
@@ -908,17 +938,17 @@ function getIncognitoMessage(state: GameState, filePath?: string, notices?: Term
   const now = Date.now();
   if (state.lastIncognitoTrigger && now - state.lastIncognitoTrigger < 15000) return null;
   
-  // If there are notices to explain, prioritize that
-  if (notices && notices.length > 0) {
+  // If there are notices to explain, prioritize that (but not for encrypted files)
+  if (notices && notices.length > 0 && !isEncryptedAndLocked) {
     const explanation = getUFO74NoticeExplanation(notices);
     if (explanation) return explanation;
   }
   
   // Otherwise react to the file
   if (filePath) {
-    // 70% chance to comment on file
-    if (Math.random() < 0.7) {
-      return getUFO74FileReaction(filePath, state);
+    // 70% chance to comment on file (always comment on encrypted files to help player)
+    if (isEncryptedAndLocked || Math.random() < 0.7) {
+      return getUFO74FileReaction(filePath, state, isEncryptedAndLocked);
     }
   }
   
@@ -1381,9 +1411,15 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
     
-    // Check for reveals
-    const reveals = getFileReveals(filePath);
-    const notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
+    // Check if file is encrypted and not yet decrypted
+    const isEncryptedAndLocked = file.status === 'encrypted' && !mutation?.decrypted;
+    
+    // Check for reveals - ONLY if file is not encrypted or has been decrypted
+    let notices: ReturnType<typeof createEntry>[] = [];
+    if (!isEncryptedAndLocked) {
+      const reveals = getFileReveals(filePath);
+      notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
+    }
     
     // Track content category based on file path
     const categoriesRead = new Set(state.categoriesRead || []);
@@ -1409,9 +1445,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       ...notices,
     ];
     
-    // Check for image trigger - ONLY show if not shown this run
+    // Check for image trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
     let imageTrigger: ImageTrigger | undefined = undefined;
-    if (file.imageTrigger) {
+    if (file.imageTrigger && !isEncryptedAndLocked) {
       const imageId = file.imageTrigger.src;
       const imagesShown = state.imagesShownThisRun || new Set<string>();
       
@@ -2439,8 +2475,19 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       // Extract file path from args
       const filePath = args.length > 0 ? resolvePath(args[0], state.currentPath) : undefined;
       
-      // Get notices from this read
-      const notices = result.output.filter(entry => 
+      // Check if file is encrypted and not yet decrypted
+      let isEncryptedAndLocked = false;
+      if (filePath) {
+        const node = getNode(filePath, state);
+        if (node && node.type === 'file') {
+          const file = node as FileNode;
+          const mutation = state.fileMutations[filePath];
+          isEncryptedAndLocked = file.status === 'encrypted' && !mutation?.decrypted;
+        }
+      }
+      
+      // Get notices from this read (only if not encrypted)
+      const notices = isEncryptedAndLocked ? [] : result.output.filter(entry => 
         entry.type === 'notice' && 
         (entry.content.includes('NOTICE:') || entry.content.includes('MEMO FLAG:') || entry.content.includes('SYSTEM:'))
       );
@@ -2453,7 +2500,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           lastIncognitoTrigger: state.lastIncognitoTrigger || 0,
         } as GameState,
         filePath,
-        notices
+        notices,
+        isEncryptedAndLocked
       );
       
       if (incognitoMessage) {
