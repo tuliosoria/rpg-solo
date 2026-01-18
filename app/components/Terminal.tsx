@@ -176,6 +176,32 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     return parts.join(' │ ') || 'SYSTEM NOMINAL';
   };
   
+  // Get truth discovery status
+  const getTruthStatus = () => {
+    const truths = gameState.truthsDiscovered;
+    return {
+      recovered: truths.has('debris_relocation'),
+      captured: truths.has('being_containment'),
+      communicated: truths.has('telepathic_scouts'),
+      involved: truths.has('international_actors'),
+      future: truths.has('transition_2026'),
+      total: truths.size,
+    };
+  };
+  
+  // Get risk level display
+  const getRiskLevel = () => {
+    const detection = gameState.detectionLevel;
+    if (detection >= 80) return { level: 'CRITICAL', color: 'critical' };
+    if (detection >= 60) return { level: 'HIGH', color: 'high' };
+    if (detection >= 40) return { level: 'ELEVATED', color: 'elevated' };
+    if (detection >= 20) return { level: 'LOW', color: 'low' };
+    return { level: 'MINIMAL', color: 'minimal' };
+  };
+  
+  const truthStatus = getTruthStatus();
+  const riskInfo = getRiskLevel();
+  
   // Render terminal entry
   const renderEntry = (entry: TerminalEntry) => {
     let className = styles.line;
@@ -217,6 +243,43 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       <div className={styles.statusBar}>
         <span className={styles.statusLeft}>VARGINHA: TERMINAL 1996</span>
         <span className={styles.statusRight}>{getStatusBar()}</span>
+      </div>
+      
+      {/* Progress tracker */}
+      <div className={styles.progressTracker}>
+        <div className={styles.truthsSection}>
+          <span className={styles.trackerLabel}>EVIDENCE:</span>
+          <span className={truthStatus.recovered ? styles.truthFound : styles.truthMissing} title="Physical debris/materials recovered">
+            {truthStatus.recovered ? '■' : '□'} RECOVERED
+          </span>
+          <span className={truthStatus.captured ? styles.truthFound : styles.truthMissing} title="Beings/specimens captured">
+            {truthStatus.captured ? '■' : '□'} CAPTURED
+          </span>
+          <span className={truthStatus.communicated ? styles.truthFound : styles.truthMissing} title="Communication/telepathy evidence">
+            {truthStatus.communicated ? '■' : '□'} SIGNALS
+          </span>
+          <span className={truthStatus.involved ? styles.truthFound : styles.truthMissing} title="International involvement">
+            {truthStatus.involved ? '■' : '□'} FOREIGN
+          </span>
+          <span className={truthStatus.future ? styles.truthFound : styles.truthMissing} title="Future plans/2026 window">
+            {truthStatus.future ? '■' : '□'} 2026
+          </span>
+          <span className={styles.truthCount}>
+            [{truthStatus.total}/5]
+          </span>
+        </div>
+        <div className={styles.riskSection}>
+          <span className={styles.trackerLabel}>RISK:</span>
+          <div className={styles.riskBar}>
+            <div 
+              className={`${styles.riskFill} ${styles[riskInfo.color]}`} 
+              style={{ width: `${gameState.detectionLevel}%` }}
+            />
+          </div>
+          <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
+            {riskInfo.level}
+          </span>
+        </div>
       </div>
       
       {/* Output area */}

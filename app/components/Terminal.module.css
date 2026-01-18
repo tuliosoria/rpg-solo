@@ -78,6 +78,106 @@
   color: #00ff00;
 }
 
+/* Progress tracker */
+.progressTracker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 16px;
+  background: #000d00;
+  border-bottom: 1px solid #002200;
+  font-size: 11px;
+  z-index: 2;
+  gap: 20px;
+}
+
+.truthsSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.riskSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.trackerLabel {
+  color: #006600;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.truthFound {
+  color: #00ff00;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.truthMissing {
+  color: #004400;
+}
+
+.truthCount {
+  color: #00aa00;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.riskBar {
+  width: 80px;
+  height: 8px;
+  background: #001a00;
+  border: 1px solid #003300;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.riskFill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.riskLevel {
+  font-weight: bold;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* Risk level colors */
+.minimal {
+  background-color: #004400;
+  color: #00aa00;
+}
+
+.low {
+  background-color: #006600;
+  color: #00ff00;
+}
+
+.elevated {
+  background-color: #666600;
+  color: #ffff00;
+}
+
+.high {
+  background-color: #664400;
+  color: #ff8800;
+}
+
+.critical {
+  background-color: #660000;
+  color: #ff0000;
+  animation: criticalPulse 1s ease-in-out infinite;
+}
+
+@keyframes criticalPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 /* Output area */
 .output {
   flex: 1;
