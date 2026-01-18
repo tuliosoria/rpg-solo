@@ -3,10 +3,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GameState, TerminalEntry, ImageTrigger } from '../types';
 import { executeCommand, createEntry, getTutorialMessage, TUTORIAL_MESSAGES } from '../engine/commands';
+import { listDirectory, resolvePath } from '../engine/filesystem';
 import { autoSave } from '../storage/saves';
 import ImageOverlay from './ImageOverlay';
 import GameOver from './GameOver';
 import styles from './Terminal.module.css';
+
+// Available commands for auto-completion
+const COMMANDS = ['help', 'status', 'ls', 'cd', 'open', 'decrypt', 'recover', 'trace', 'chat', 'clear', 'save', 'exit', 'override'];
+const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover'];
 
 interface TerminalProps {
   initialState: GameState;
@@ -171,9 +176,107 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     inputRef.current?.focus();
   }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker]);
   
+  // Get auto-complete suggestions
+  const getCompletions = useCallback((input: string): string[] => {
+    const trimmed = input.trimStart();
+    const parts = trimmed.split(/\s+/);
+    
+    if (parts.length <= 1) {
+      // Complete command names
+      const partial = parts[0].toLowerCase();
+      return COMMANDS.filter(cmd => cmd.startsWith(partial));
+    }
+    
+    // Complete file/directory arguments for specific commands
+    const cmd = parts[0].toLowerCase();
+    if (!COMMANDS_WITH_FILE_ARGS.includes(cmd)) return [];
+    
+    const partial = parts[parts.length - 1];
+    const currentPath = gameState.currentPath;
+    
+    // Determine the directory to search and the prefix to match
+    let searchDir = currentPath;
+    let prefix = partial;
+    
+    if (partial.includes('/')) {
+      const lastSlash = partial.lastIndexOf('/');
+      const dirPart = partial.substring(0, lastSlash + 1);
+      prefix = partial.substring(lastSlash + 1);
+      searchDir = resolvePath(dirPart, currentPath);
+    }
+    
+    const entries = listDirectory(searchDir, gameState);
+    if (!entries) return [];
+    
+    // Filter entries that match the prefix
+    const matches = entries
+      .map(e => e.name.replace(/\/$/, '')) // Remove trailing slash for matching
+      .filter(name => name.toLowerCase().startsWith(prefix.toLowerCase()));
+    
+    // For 'cd', only show directories
+    if (cmd === 'cd') {
+      const dirEntries = entries.filter(e => e.type === 'dir');
+      return dirEntries
+        .map(e => e.name.replace(/\/$/, ''))
+        .filter(name => name.toLowerCase().startsWith(prefix.toLowerCase()));
+    }
+    
+    return matches;
+  }, [gameState]);
+  
   // Handle keyboard navigation
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowUp') {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const completions = getCompletions(inputValue);
+      
+      if (completions.length === 1) {
+        // Single match - complete it
+        const parts = inputValue.trimStart().split(/\s+/);
+        if (parts.length <= 1) {
+          // Completing a command
+          setInputValue(completions[0] + ' ');
+        } else {
+          // Completing a file/directory argument
+          const cmd = parts[0];
+          const partial = parts[parts.length - 1];
+          let prefix = '';
+          if (partial.includes('/')) {
+            prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
+          }
+          setInputValue(`${cmd} ${prefix}${completions[0]}`);
+        }
+      } else if (completions.length > 1) {
+        // Multiple matches - show them in terminal and complete common prefix
+        const commonPrefix = completions.reduce((acc, str) => {
+          while (acc && !str.toLowerCase().startsWith(acc.toLowerCase())) {
+            acc = acc.slice(0, -1);
+          }
+          return acc;
+        }, completions[0]);
+        
+        // Update input with common prefix
+        const parts = inputValue.trimStart().split(/\s+/);
+        if (parts.length <= 1) {
+          setInputValue(commonPrefix);
+        } else {
+          const cmd = parts[0];
+          const partial = parts[parts.length - 1];
+          let prefix = '';
+          if (partial.includes('/')) {
+            prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
+          }
+          setInputValue(`${cmd} ${prefix}${commonPrefix}`);
+        }
+        
+        // Show completions in terminal
+        const completionEntry = createEntry('system', completions.join('  '));
+        setGameState(prev => ({
+          ...prev,
+          history: [...prev.history, completionEntry]
+        }));
+      }
+    } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       const newIndex = Math.min(historyIndex + 1, gameState.commandHistory.length - 1);
       if (newIndex >= 0 && gameState.commandHistory[newIndex]) {
@@ -194,7 +297,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       e.preventDefault();
       setGameState(prev => ({ ...prev, history: [] }));
     }
-  }, [historyIndex, gameState.commandHistory]);
+  }, [historyIndex, gameState.commandHistory, inputValue, getCompletions]);
   
   // Get status bar content
   const getStatusBar = () => {

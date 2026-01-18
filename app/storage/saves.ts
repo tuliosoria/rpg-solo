@@ -30,12 +30,24 @@ function deserializeState(json: string): GameState {
   };
 }
 
+// Check if we're in a browser with real localStorage
+function isBrowserWithStorage(): boolean {
+  try {
+    return typeof document !== 'undefined' && 
+           typeof window !== 'undefined' && 
+           typeof window.localStorage !== 'undefined' &&
+           typeof window.localStorage.getItem === 'function';
+  } catch {
+    return false;
+  }
+}
+
 // Get all save slots
 export function getSaveSlots(): SaveSlot[] {
-  if (typeof window === 'undefined') return [];
+  if (!isBrowserWithStorage()) return [];
   
   try {
-    const raw = localStorage.getItem(SAVES_KEY);
+    const raw = window.localStorage.getItem(SAVES_KEY);
     if (!raw) return [];
     return JSON.parse(raw);
   } catch {
@@ -44,7 +56,9 @@ export function getSaveSlots(): SaveSlot[] {
 }
 
 // Save game to a slot
-export function saveGame(state: GameState, slotName?: string): SaveSlot {
+export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
+  if (!isBrowserWithStorage()) return null;
+  
   const id = `save_${Date.now()}`;
   const name = slotName || `Session ${new Date().toLocaleString()}`;
   
@@ -57,7 +71,7 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot {
   };
   
   // Save the state
-  localStorage.setItem(SAVE_PREFIX + id, serializeState(state));
+  window.localStorage.setItem(SAVE_PREFIX + id, serializeState(state));
   
   // Update saves list
   const slots = getSaveSlots();
@@ -65,17 +79,17 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot {
   
   // Keep only last 10 saves
   const trimmedSlots = slots.slice(0, 10);
-  localStorage.setItem(SAVES_KEY, JSON.stringify(trimmedSlots));
+  window.localStorage.setItem(SAVES_KEY, JSON.stringify(trimmedSlots));
   
   return slot;
 }
 
 // Load game from a slot
 export function loadGame(slotId: string): GameState | null {
-  if (typeof window === 'undefined') return null;
+  if (!isBrowserWithStorage()) return null;
   
   try {
-    const raw = localStorage.getItem(SAVE_PREFIX + slotId);
+    const raw = window.localStorage.getItem(SAVE_PREFIX + slotId);
     if (!raw) return null;
     return deserializeState(raw);
   } catch {
@@ -85,10 +99,12 @@ export function loadGame(slotId: string): GameState | null {
 
 // Delete a save slot
 export function deleteSave(slotId: string): void {
-  localStorage.removeItem(SAVE_PREFIX + slotId);
+  if (!isBrowserWithStorage()) return;
+  
+  window.localStorage.removeItem(SAVE_PREFIX + slotId);
   
   const slots = getSaveSlots().filter(s => s.id !== slotId);
-  localStorage.setItem(SAVES_KEY, JSON.stringify(slots));
+  window.localStorage.setItem(SAVES_KEY, JSON.stringify(slots));
 }
 
 // Create a fresh game state
@@ -112,15 +128,17 @@ export function createNewGame(): GameState {
 
 // Auto-save (quick slot)
 export function autoSave(state: GameState): void {
-  localStorage.setItem('terminal1996:autosave', serializeState(state));
+  if (!isBrowserWithStorage()) return;
+  
+  window.localStorage.setItem('terminal1996:autosave', serializeState(state));
 }
 
 // Load auto-save
 export function loadAutoSave(): GameState | null {
-  if (typeof window === 'undefined') return null;
+  if (!isBrowserWithStorage()) return null;
   
   try {
-    const raw = localStorage.getItem('terminal1996:autosave');
+    const raw = window.localStorage.getItem('terminal1996:autosave');
     if (!raw) return null;
     return deserializeState(raw);
   } catch {
