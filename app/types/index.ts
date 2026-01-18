@@ -13,7 +13,8 @@ export interface ImageTrigger {
 
 export interface VideoTrigger {
   src: string;
-  alt: string;
+  title: string;
+  tone: ImageTone;
   corrupted?: boolean;
 }
 
@@ -79,6 +80,12 @@ export interface GameState {
   // Flags for game progression
   flags: Record<string, boolean>;
   
+  // Override password attempt tracking
+  overrideFailedAttempts: number;
+  
+  // Scout link usage tracking
+  scoutLinksUsed: number;
+  
   // Truth categories discovered (5 required for victory)
   truthsDiscovered: Set<string>;
   
@@ -102,9 +109,6 @@ export interface GameState {
   // Scout Link state
   scoutLinkUsedResponses: Set<string>; // Track used responses to never repeat
   
-  // UFO74 unique reactions tracking
-  ufo74UsedReactions: Set<number>; // Track which reaction indices have been used
-  
   // Decrypt challenge state
   pendingDecryptFile?: string; // File awaiting security answer
   
@@ -117,9 +121,6 @@ export interface GameState {
   
   // Images shown this run (each image shown at most once)
   imagesShownThisRun: Set<string>;
-  
-  // Videos shown this run (each video shown at most once)
-  videosShownThisRun: Set<string>;
   
   // System personality degradation (affects tone as risk increases)
   systemHostilityLevel: number; // 0-5, increases with risky actions
@@ -152,6 +153,8 @@ export interface SaveSlot {
   truthCount: number;
 }
 
+export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow' | 'glitchy';
+
 export interface CommandResult {
   output: TerminalEntry[];
   stateChanges: Partial<GameState>;
@@ -159,6 +162,7 @@ export interface CommandResult {
   delayMs?: number;
   imageTrigger?: ImageTrigger;
   videoTrigger?: VideoTrigger;
+  streamingMode?: StreamingMode; // How to stream the output
 }
 
 export const TRUTH_CATEGORIES = [
@@ -182,6 +186,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   sessionStability: 100,
   legacyAlertCounter: 0,
   flags: {},
+  overrideFailedAttempts: 0,
+  scoutLinksUsed: 0,
   truthsDiscovered: new Set(),
   fileMutations: {},
   isGameOver: false,
@@ -189,13 +195,11 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   prisoner45Disconnected: false,
   prisoner45UsedResponses: new Set(),
   scoutLinkUsedResponses: new Set(),
-  ufo74UsedReactions: new Set(),
   pendingDecryptFile: undefined,
   incognitoMessageCount: 0,
   lastIncognitoTrigger: 0,
   singularEventsTriggered: new Set(),
   imagesShownThisRun: new Set(),
-  videosShownThisRun: new Set(),
   systemHostilityLevel: 0,
   terribleMistakeTriggered: false,
   sessionDoomCountdown: 0,

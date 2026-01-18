@@ -2184,8 +2184,8 @@ const data_reconstruction_util: FileNode = {
     'AVAILABLE TARGETS',
     '───────────────────────────────────────────────────────────',
     '',
-    '  /admin/neural_fragment_raw.dat    [FRAGMENTED]',
-    '  /comms/psi/psi_residue.log         [CORRUPTED]',
+    '  /admin/neural_fragment.dat    [FRAGMENTED]',
+    '  /comms/psi_residue.log        [CORRUPTED]',
     '',
     'NOTE: Successful reconstruction may reveal hidden content.',
     '',
@@ -2197,7 +2197,7 @@ const data_reconstruction_util: FileNode = {
 const reconstructed_neural: FileNode = {
   type: 'file',
   name: 'neural_fragment.dat',
-  status: 'unlocked',
+  status: 'intact',
   accessThreshold: 4,
   requiredFlags: ['scriptExecuted'],
   reveals: ['being_containment', 'telepathic_scouts'],
@@ -2242,48 +2242,38 @@ const reconstructed_neural: FileNode = {
   ],
 };
 
-// Placeholder files for script reconstruction targets
-const neural_fragment_placeholder: FileNode = {
+// Video file for surveillance footage
+const surveillance_footage_recovery: FileNode = {
   type: 'file',
-  name: 'neural_fragment.dat',
-  status: 'fragmented',
-  accessThreshold: 2,
+  name: 'surveillance_recovery.vid',
+  status: 'unstable',
   content: [
-    '▓▓▓ DATA FRAGMENT — UNREADABLE ▓▓▓',
+    '═══════════════════════════════════════════════════════════',
+    'RECOVERED VIDEO DATA - PARTIAL',
+    'SOURCE: CONTAINMENT FACILITY B - CAM 07',
+    'DATE: 1996-01-20 03:47:22',
+    '═══════════════════════════════════════════════════════════',
     '',
-    'ERROR: File severely fragmented.',
-    'Sectors corrupted: 847 / 1024',
-    'Integrity: 17%',
+    'STATUS: Partial frame recovery successful',
+    'INTEGRITY: 47% - Significant temporal corruption',
     '',
-    'This file cannot be read directly.',
+    'CONTENT SUMMARY:',
+    '  Surveillance footage from containment observation',
+    '  chamber. Subject displays anomalous movement patterns.',
+    '  Audio track corrupted beyond recovery.',
     '',
-    'RECOMMENDATION:',
-    '  Use data reconstruction utility.',
-    '  See: /tmp/data_reconstruction.util',
+    'WARNING: Visual content may cause disorientation.',
     '',
+    'Press ENTER to initiate video playback...',
   ],
-};
-
-const psi_residue_placeholder: FileNode = {
-  type: 'file',
-  name: 'psi_residue.log',
-  status: 'corrupted',
-  accessThreshold: 2,
-  content: [
-    '▓▓▓ CORRUPTED LOG FILE ▓▓▓',
-    '',
-    'ERROR: Data corruption detected.',
-    'Recoverable sectors: UNKNOWN',
-    '',
-    'Partial fragments visible:',
-    '  ...sig..l...ource...unkn...',
-    '  ...cogn...tive...patt...',
-    '',
-    'RECOMMENDATION:',
-    '  Attempt reconstruction via script utility.',
-    '  See: /tmp/data_reconstruction.util',
-    '',
-  ],
+  videoTrigger: {
+    src: '/videos/surveillance_recovery.mp4',
+    title: 'CONTAINMENT_CAM_07_RECOVERY.VID',
+    tone: 'surveillance',
+    corrupted: true,
+  },
+  reveals: ['being_containment'],
+  corruptible: true,
 };
 
 // Build filesystem tree
@@ -2314,6 +2304,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'witness_statement_raw.txt': early_witness_statement,
             'neural_dump_alfa.psi': neural_dump_alfa,
             'specimen_purpose_analysis.txt': specimen_purpose_analysis,
+            'surveillance_recovery.vid': surveillance_footage_recovery,
           },
         },
       },
@@ -2362,7 +2353,6 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
           children: {
             'transcript_core.enc': transcript_core,
             'transcript_limit.enc': transcript_limit,
-            'psi_residue.log': psi_residue_placeholder,
             'psi_analysis_report.txt': psi_analysis_report,
           },
         },
@@ -2406,7 +2396,6 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         'extraction_mechanism.red': extraction_mechanism,
         'second_deployment.sig': second_deployment_intercept,
         'neural_fragment.dat': reconstructed_neural,
-        'neural_fragment_raw.dat': neural_fragment_placeholder,
       },
     },
     internal: {

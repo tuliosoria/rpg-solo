@@ -11,7 +11,6 @@
   align-items: center;
   justify-content: center;
   z-index: 200;
-  cursor: pointer;
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   animation: fadeIn 0.1s ease-out;
 }
@@ -72,6 +71,10 @@
   z-index: 205;
 }
 
+.greenGlow {
+  box-shadow: inset 0 0 200px rgba(0, 255, 0, 0.08);
+}
+
 .amberGlow {
   box-shadow: inset 0 0 200px rgba(255, 170, 0, 0.08);
 }
@@ -80,7 +83,7 @@
 .container {
   position: relative;
   z-index: 215;
-  max-width: 900px;
+  max-width: 800px;
   width: 90%;
   text-align: center;
 }
@@ -102,23 +105,59 @@
   border: 2px solid #003300;
   background: #000;
   padding: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .videoWrapper {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 16 / 9;
   background: #000;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.greenTone {
+  filter: sepia(100%) saturate(300%) brightness(70%) hue-rotate(70deg);
+}
+
+.amberTone {
+  filter: sepia(100%) saturate(200%) brightness(80%) hue-rotate(15deg);
 }
 
 .video {
   width: 100%;
   height: 100%;
   display: block;
+  object-fit: contain;
   opacity: 0.9;
-  cursor: auto;
-  filter: sepia(100%) saturate(200%) brightness(80%) hue-rotate(15deg);
+}
+
+/* Error display */
+.errorDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #ff4444;
+  padding: 40px;
+}
+
+.errorIcon {
+  font-size: 32px;
+  animation: errorPulse 1s ease-in-out infinite;
+}
+
+@keyframes errorPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.errorText {
+  font-size: 14px;
+  letter-spacing: 2px;
 }
 
 /* Noise overlay */
@@ -171,6 +210,71 @@
   100% { transform: translateX(100%); }
 }
 
+/* Controls */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(0, 20, 0, 0.8);
+  border: 1px solid #003300;
+  margin-bottom: 12px;
+}
+
+.playButton {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid #00aa00;
+  color: #00ff00;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.playButton:hover:not(:disabled) {
+  background: rgba(0, 255, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.playButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.progressContainer {
+  flex: 1;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.progressBar {
+  height: 8px;
+  background: #001a00;
+  border: 1px solid #003300;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #00aa00, #00ff00);
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.timeDisplay {
+  color: #00aa00;
+  font-size: 12px;
+  min-width: 100px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Metadata */
 .metadata {
   color: #004400;
@@ -180,15 +284,18 @@
   padding: 12px;
   border: 1px solid #002200;
   background: rgba(0, 20, 0, 0.5);
-  display: flex;
-  justify-content: space-between;
+}
+
+.hint {
+  margin-top: 8px;
+  color: #006600;
+  font-style: italic;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .container {
     width: 95%;
-    max-width: 100%;
   }
   
   .headerText {
@@ -196,9 +303,22 @@
     letter-spacing: 2px;
   }
   
+  .controls {
+    gap: 8px;
+    padding: 8px;
+  }
+  
+  .playButton {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .timeDisplay {
+    font-size: 10px;
+    min-width: 80px;
+  }
+  
   .metadata {
     font-size: 10px;
-    flex-direction: column;
-    gap: 4px;
   }
 }

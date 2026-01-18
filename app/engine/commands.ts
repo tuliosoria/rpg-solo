@@ -613,14 +613,14 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
   let videoTrigger: VideoTrigger | undefined = undefined;
   if (file.videoTrigger) {
     const videoId = file.videoTrigger.src;
-    const videosShown = state.videosShownThisRun || new Set<string>();
+    const imagesShown = state.imagesShownThisRun || new Set<string>();
     
-    if (!videosShown.has(videoId)) {
+    if (!imagesShown.has(videoId)) {
       videoTrigger = file.videoTrigger;
-      // Mark this video as shown
-      const newVideosShown = new Set(videosShown);
-      newVideosShown.add(videoId);
-      stateChanges.videosShownThisRun = newVideosShown;
+      // Mark this video as shown (reuse imagesShownThisRun for both)
+      const newImagesShown = new Set(imagesShown);
+      newImagesShown.add(videoId);
+      stateChanges.imagesShownThisRun = newImagesShown;
     }
   }
   
@@ -631,6 +631,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     delayMs: 2000,
     imageTrigger,
     videoTrigger,
+    streamingMode: 'slow' as const,
   };
 }
 
@@ -766,14 +767,8 @@ function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAnd
     ];
     messages = nervousMessages[Math.floor(Math.random() * nervousMessages.length)];
   } else {
-    // Normal reactions based on file content - try path-specific first
-    const pathReaction = getUFO74ContentReaction(filePath);
-    if (pathReaction) {
-      messages = pathReaction;
-    } else {
-      // No path-specific reaction - use unique generic reaction
-      return null; // Signal to caller to use unique reaction system
-    }
+    // Normal reactions based on file content
+    messages = getUFO74ContentReaction(filePath);
   }
   
   const footer = [
@@ -878,61 +873,29 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
     ];
   }
   
-  // Default - return null to let the main function handle unique responses
-  return null;
-}
-
-// All unique UFO74 reactions (each can only be used once per session)
-const UFO74_UNIQUE_REACTIONS: string[][] = [
-  ['UFO74: interesting file hackerkid.', '', 'UFO74: keep digging. look for patterns.', '       connect the dots between files.'],
-  ['UFO74: youre doing good.', '', 'UFO74: every file is a piece of the puzzle.', '       the truth is in there somewhere.'],
-  ['UFO74: noted.', '', 'UFO74: try looking in different directories.', '       /ops, /storage, /comms all have good stuff.'],
-  ['UFO74: nice find.', '', 'UFO74: save this in your memory hackerkid.', '       youll need it later.'],
-  ['UFO74: this is getting good.', '', 'UFO74: the more you find the clearer the picture gets.'],
-  ['UFO74: youre on the right track.', '', 'UFO74: they thought they could hide this forever.', '       they were wrong.'],
-  ['UFO74: another piece of the puzzle.', '', 'UFO74: keep going. youre closer than you think.'],
-  ['UFO74: this is what they didnt want anyone to see.', '', 'UFO74: share this. document it. make copies.'],
-  ['UFO74: i knew there was more.', '', 'UFO74: these files... theyre painting a picture.', '       and its not pretty.'],
-  ['UFO74: good work hackerkid.', '', 'UFO74: dont stop now. theres always more.'],
-  ['UFO74: hmm. this is significant.', '', 'UFO74: cross-reference this with the other files.', '       patterns emerge when you connect things.'],
-  ['UFO74: theyre sloppy. left too many traces.', '', 'UFO74: thats how coverups work.', '       eventually someone finds the threads.'],
-  ['UFO74: another nail in the coffin of denial.', '', 'UFO74: they cant explain this away.'],
-  ['UFO74: fascinating.', '', 'UFO74: i wonder how deep this goes.', '       probably deeper than either of us realizes.'],
-  ['UFO74: alright hackerkid, this is solid.', '', 'UFO74: keep building the case.'],
-  ['UFO74: every document tells a story.', '', 'UFO74: this one says they knew. they all knew.'],
-  ['UFO74: were getting somewhere now.', '', 'UFO74: the fog is lifting.'],
-  ['UFO74: this cant be coincidence.', '', 'UFO74: too many files pointing the same direction.'],
-  ['UFO74: i wish i could unsee some of this.', '', 'UFO74: but knowledge is power. keep going.'],
-  ['UFO74: theyll deny everything.', '', 'UFO74: thats why we need proof. like this.'],
-  ['UFO74: this fits with what i suspected.', '', 'UFO74: but seeing it confirmed... different feeling.'],
-  ['UFO74: history is written by the victors.', '', 'UFO74: unless someone like you rewrites it.'],
-  ['UFO74: i cant believe they documented this.', '', 'UFO74: arrogance. they never expected anyone to find it.'],
-  ['UFO74: my hands are shaking reading this.', '', 'UFO74: is this what truth feels like?'],
-];
-
-function getUniqueUFO74Reaction(usedReactions: Set<number>): { entries: TerminalEntry[]; index: number } | null {
-  // Find an unused reaction
-  const availableIndices: number[] = [];
-  for (let i = 0; i < UFO74_UNIQUE_REACTIONS.length; i++) {
-    if (!usedReactions.has(i)) {
-      availableIndices.push(i);
-    }
-  }
+  // Default reaction
+  const defaultReactions = [
+    [
+      createEntry('output', 'UFO74: interesting file hackerkid.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: keep digging. look for patterns.'),
+      createEntry('output', '       connect the dots between files.'),
+    ],
+    [
+      createEntry('output', 'UFO74: youre doing good.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: every file is a piece of the puzzle.'),
+      createEntry('output', '       the truth is in there somewhere.'),
+    ],
+    [
+      createEntry('output', 'UFO74: noted.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: try looking in different directories.'),
+      createEntry('output', '       /ops, /storage, /comms all have good stuff.'),
+    ],
+  ];
   
-  if (availableIndices.length === 0) {
-    // All reactions used - UFO74 goes quiet
-    return null;
-  }
-  
-  const selectedIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
-  const reaction = UFO74_UNIQUE_REACTIONS[selectedIndex];
-  
-  const entries: TerminalEntry[] = [];
-  for (const line of reaction) {
-    entries.push(createEntry('output', line));
-  }
-  
-  return { entries, index: selectedIndex };
+  return defaultReactions[Math.floor(Math.random() * defaultReactions.length)];
 }
 
 // UFO74 explains NOTICE messages
@@ -999,14 +962,7 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
 }
 
 // Main function to get UFO74 message after file read
-// Returns entries and optional state changes for unique reaction tracking
-function getIncognitoMessage(
-  state: GameState, 
-  filePath?: string, 
-  notices?: TerminalEntry[], 
-  isEncryptedAndLocked?: boolean, 
-  isFirstUnstable?: boolean
-): { entries: TerminalEntry[]; stateChanges?: Partial<GameState> } | null {
+function getIncognitoMessage(state: GameState, filePath?: string, notices?: TerminalEntry[], isEncryptedAndLocked?: boolean, isFirstUnstable?: boolean): TerminalEntry[] | null {
   // Max 12 messages per session (last one is goodbye)
   if ((state.incognitoMessageCount || 0) >= 12) return null;
   
@@ -1017,50 +973,14 @@ function getIncognitoMessage(
   // If there are notices to explain, prioritize that (but not for encrypted or unstable files)
   if (notices && notices.length > 0 && !isEncryptedAndLocked && !isFirstUnstable) {
     const explanation = getUFO74NoticeExplanation(notices);
-    if (explanation) return { entries: explanation };
+    if (explanation) return explanation;
   }
   
   // Otherwise react to the file
   if (filePath) {
     // Always comment on encrypted files, first unstable files, or 70% chance otherwise
     if (isEncryptedAndLocked || isFirstUnstable || Math.random() < 0.7) {
-      const reaction = getUFO74FileReaction(filePath, state, isEncryptedAndLocked, isFirstUnstable);
-      if (reaction) {
-        return { entries: reaction };
-      }
-      
-      // No path-specific reaction - use unique generic reaction system
-      const usedReactions = state.ufo74UsedReactions || new Set<number>();
-      const uniqueReaction = getUniqueUFO74Reaction(usedReactions);
-      
-      if (!uniqueReaction) {
-        // All unique reactions exhausted - UFO74 goes quiet on generic files
-        return null;
-      }
-      
-      // Build the full UFO74 message with header/footer
-      const header = [
-        createEntry('system', ''),
-        createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
-        createEntry('warning', '│ >> UFO74 << ENCRYPTED CHANNEL                          │'),
-        createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
-        createEntry('system', ''),
-      ];
-      
-      const footer = [
-        createEntry('system', ''),
-        createEntry('warning', '>> CHANNEL IDLE <<'),
-        createEntry('system', ''),
-      ];
-      
-      // Track the used reaction
-      const newUsedReactions = new Set(usedReactions);
-      newUsedReactions.add(uniqueReaction.index);
-      
-      return {
-        entries: [...header, ...uniqueReaction.entries, ...footer],
-        stateChanges: { ufo74UsedReactions: newUsedReactions },
-      };
+      return getUFO74FileReaction(filePath, state, isEncryptedAndLocked, isFirstUnstable);
     }
   }
   
@@ -1915,17 +1835,29 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     let videoTrigger: VideoTrigger | undefined = undefined;
     if (file.videoTrigger && !isEncryptedAndLocked) {
       const videoId = file.videoTrigger.src;
-      const videosShown = state.videosShownThisRun || new Set<string>();
+      const imagesShown = state.imagesShownThisRun || new Set<string>();
       
-      if (!videosShown.has(videoId)) {
+      if (!imagesShown.has(videoId)) {
         videoTrigger = file.videoTrigger;
-        // Mark this video as shown
-        const newVideosShown = new Set(videosShown);
-        newVideosShown.add(videoId);
-        stateChanges.videosShownThisRun = newVideosShown;
+        // Mark this video as shown (reuse imagesShownThisRun for both)
+        const newImagesShown = new Set(imagesShown);
+        newImagesShown.add(videoId);
+        stateChanges.imagesShownThisRun = newImagesShown;
       }
     }
     
+    // Determine streaming mode based on file status
+    let streamingMode: 'none' | 'fast' | 'normal' | 'slow' | 'glitchy' = 'normal';
+    if (file.status === 'unstable' || triggerFlicker) {
+      streamingMode = 'glitchy';
+    } else if (file.status === 'encrypted') {
+      streamingMode = 'slow';
+    } else if (file.status === 'restricted' || file.status === 'restricted_briefing') {
+      streamingMode = 'slow';
+    } else if (content.length > 30) {
+      streamingMode = 'fast'; // Long files stream faster
+    }
+
     return {
       output,
       stateChanges,
@@ -1933,6 +1865,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       delayMs: calculateDelay(state),
       imageTrigger,
       videoTrigger,
+      streamingMode,
     };
   },
 
@@ -2138,11 +2071,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
     
-    const password = args.slice(1).join(' ').toUpperCase().replace(/[<>]/g, '').trim();
+    const password = args.slice(1).join(' ').toUpperCase();
     const correctPassword = 'COLHEITA';
     
     // Track failed attempts
-    const failedAttempts = state.flags.overrideFailedAttempts || 0;
+    const failedAttempts = state.overrideFailedAttempts || 0;
     
     // Wrong password
     if (password !== correctPassword) {
@@ -2181,7 +2114,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ],
         stateChanges: {
           detectionLevel: state.detectionLevel + 15,
-          flags: { ...state.flags, overrideFailedAttempts: newFailedAttempts },
+          overrideFailedAttempts: newFailedAttempts,
         },
         triggerFlicker: true,
         delayMs: 1500,
@@ -2255,7 +2188,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('warning', 'WARNING: Session heavily monitored'),
       ],
       stateChanges: {
-        flags: { ...state.flags, adminUnlocked: true, overrideFailedAttempts: 0 },
+        flags: { ...state.flags, adminUnlocked: true },
+        overrideFailedAttempts: 0,
         accessLevel: 5,
         detectionLevel: state.detectionLevel + 25,
         sessionStability: state.sessionStability - 15,
@@ -2432,7 +2366,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
     
     // Check if scout link is exhausted
-    const scoutLinksUsed = state.flags.scoutLinksUsed || 0;
+    const scoutLinksUsed = state.scoutLinksUsed || 0;
     if (scoutLinksUsed >= 4) {
       return {
         output: [
@@ -2523,7 +2457,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output,
         stateChanges: {
-          flags: { ...state.flags, scoutLinksUsed: newLinksUsed },
+          scoutLinksUsed: newLinksUsed,
           scoutLinkUsedResponses: newUsedResponses,
           detectionLevel: state.detectionLevel + 5,
           sessionStability: state.sessionStability - 3,
@@ -2553,7 +2487,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     return {
       output,
       stateChanges: {
-        flags: { ...state.flags, scoutLinksUsed: newLinksUsed },
+        scoutLinksUsed: newLinksUsed,
         scoutLinkUsedResponses: newUsedResponses,
         detectionLevel: state.detectionLevel + 5,
         sessionStability: state.sessionStability - 5,
@@ -2579,7 +2513,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', '  INIT;TARGET=<path>;EXEC'),
           createEntry('system', ''),
           createEntry('system', 'Example:'),
-          createEntry('system', '  script INIT;TARGET=/admin/neural_fragment_raw.dat;EXEC'),
+          createEntry('system', '  script INIT;TARGET=/admin/neural_fragment.dat;EXEC'),
           createEntry('system', ''),
           createEntry('system', 'See /tmp/data_reconstruction.util for available targets.'),
           createEntry('system', ''),
@@ -2633,7 +2567,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('system', 'Parsing script...'),
           createEntry('system', 'INIT... OK'),
-          createEntry('system', 'TARGET=/admin/neural_fragment_raw.dat... LOCATED'),
+          createEntry('system', 'TARGET=/admin/neural_fragment.dat... LOCATED'),
           createEntry('system', 'EXEC... RUNNING'),
           createEntry('warning', ''),
           createEntry('warning', '▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓'),
@@ -2661,7 +2595,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('system', 'Parsing script...'),
           createEntry('system', 'INIT... OK'),
-          createEntry('system', 'TARGET=/comms/psi/psi_residue.log... LOCATED'),
+          createEntry('system', 'TARGET=/comms/psi_residue.log... LOCATED'),
           createEntry('system', 'EXEC... RUNNING'),
           createEntry('warning', ''),
           createEntry('warning', '▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓'),
@@ -3013,13 +2947,12 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         (entry.content.includes('NOTICE:') || entry.content.includes('MEMO FLAG:') || entry.content.includes('SYSTEM:'))
       );
       
-      const incognitoResult = getIncognitoMessage(
+      const incognitoMessage = getIncognitoMessage(
         {
           ...state,
           truthsDiscovered: state.truthsDiscovered,
           incognitoMessageCount: state.incognitoMessageCount || 0,
           lastIncognitoTrigger: state.lastIncognitoTrigger || 0,
-          ufo74UsedReactions: state.ufo74UsedReactions || new Set(),
         } as GameState,
         filePath,
         notices,
@@ -3027,15 +2960,10 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         isFirstUnstable
       );
       
-      if (incognitoResult) {
-        result.output = [...result.output, ...incognitoResult.entries];
+      if (incognitoMessage) {
+        result.output = [...result.output, ...incognitoMessage];
         result.stateChanges.incognitoMessageCount = (state.incognitoMessageCount || 0) + 1;
         result.stateChanges.lastIncognitoTrigger = Date.now();
-        
-        // Apply any additional state changes (e.g., tracking used unique reactions)
-        if (incognitoResult.stateChanges) {
-          result.stateChanges = { ...result.stateChanges, ...incognitoResult.stateChanges };
-        }
       }
     }
   }
@@ -3067,19 +2995,6 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
       createEntry('system', ''),
       createEntry('system', 'TIP:'),
       createEntry('system', 'To list directory contents, use: ls'),
-      createEntry('system', ''),
-    ];
-  }
-  
-  // Check for script-like input (contains INIT, TARGET, EXEC)
-  const fullInput = `${command} ${args.join(' ')}`.toUpperCase();
-  if (fullInput.includes('INIT') || fullInput.includes('TARGET=') || fullInput.includes('EXEC')) {
-    return [
-      createEntry('system', ''),
-      createEntry('system', 'TIP:'),
-      createEntry('system', 'This looks like a reconstruction script.'),
-      createEntry('system', 'Use the script command to execute it:'),
-      createEntry('system', '  script INIT;TARGET=/admin/neural_fragment_raw.dat;EXEC'),
       createEntry('system', ''),
     ];
   }
