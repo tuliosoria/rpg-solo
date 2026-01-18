@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GameState, TerminalEntry, ImageTrigger } from '../types';
-import { executeCommand, createEntry } from '../engine/commands';
+import { executeCommand, createEntry, getTutorialMessage, TUTORIAL_MESSAGES } from '../engine/commands';
 import { autoSave } from '../storage/saves';
 import ImageOverlay from './ImageOverlay';
 import GameOver from './GameOver';
@@ -59,6 +59,46 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   // Handle command submission
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // During tutorial, only accept empty Enter to advance
+    if (!gameState.tutorialComplete) {
+      // If user typed something, show error
+      if (inputValue.trim()) {
+        const errorEntry = createEntry('error', 'ERROR: Incoming transmission in progress. Press ENTER to continue.');
+        setGameState(prev => ({
+          ...prev,
+          history: [...prev.history, errorEntry],
+        }));
+        setInputValue('');
+        return;
+      }
+      
+      const currentStep = gameState.tutorialStep;
+      const nextStep = currentStep + 1;
+      
+      // Get the tutorial message for this step
+      const tutorialEntries = getTutorialMessage(currentStep);
+      
+      if (nextStep >= TUTORIAL_MESSAGES.length) {
+        // Tutorial complete
+        setGameState(prev => ({
+          ...prev,
+          history: [...prev.history, ...tutorialEntries],
+          tutorialStep: -1,
+          tutorialComplete: true,
+        }));
+      } else {
+        // Show next message
+        setGameState(prev => ({
+          ...prev,
+          history: [...prev.history, ...tutorialEntries],
+          tutorialStep: nextStep,
+        }));
+      }
+      
+      setInputValue('');
+      return;
+    }
     
     if (isProcessing || !inputValue.trim()) return;
     
@@ -306,6 +346,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           autoFocus
           autoComplete="off"
           spellCheck={false}
+          placeholder={!gameState.tutorialComplete ? 'Press ENTER to continue...' : ''}
         />
         <span className={styles.cursor}>_</span>
       </form>

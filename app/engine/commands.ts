@@ -952,11 +952,24 @@ const PRISONER_45_RESPONSES: Record<string, string[]> = {
     'PRISONER_45> Find all the files. Tell the world.',
     'PRISONER_45> Before the window opens.',
   ],
+  password: [
+    'PRISONER_45> ...you want the override code?',
+    'PRISONER_45> They whisper it sometimes. When they think I\'m asleep.',
+    'PRISONER_45> It\'s what they do to us. What they\'ve always done.',
+    'PRISONER_45> The word for taking... for gathering the crop...',
+    'PRISONER_45> In their language? No. In ours. Portuguese.',
+    'PRISONER_45> ...COLHEITA. Harvest.',
+    'PRISONER_45> Use it carefully. They\'ll know.',
+  ],
 };
 
 function getPrisoner45Response(question: string): { response: string[]; valid: boolean } {
   const q = question.toLowerCase();
   
+  // Password hints - check first for priority
+  if (q.includes('password') || q.includes('override') || q.includes('code') || q.includes('access') || q.includes('admin') || q.includes('unlock')) {
+    return { response: PRISONER_45_RESPONSES.password, valid: true };
+  }
   if (q.includes('varginha') || q.includes('incident') || q.includes('1996') || q.includes('january')) {
     return { response: PRISONER_45_RESPONSES.varginha, valid: true };
   }
@@ -1004,7 +1017,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       '  recover <file>    Attempt file recovery (RISK)',
       '  trace             Trace system connections (RISK)',
       '  chat              Open secure relay channel',
-      '  override protocol Attempt security override (CRITICAL)',
+      '  override protocol <CODE>  Attempt security override (requires code)',
       '  save              Save current session',
       '  clear             Clear terminal display',
       '',
@@ -1473,7 +1486,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   },
 
   'override': (args, state) => {
-    // Only handle "override protocol"
+    // Requires: "override protocol <PASSWORD>"
     if (args.length === 0 || args[0].toLowerCase() !== 'protocol') {
       return {
         output: [createEntry('error', 'ERROR: Unknown command')],
@@ -1481,22 +1494,93 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
     
-    // High risk - may unlock admin, trigger lockdown, or THE TERRIBLE MISTAKE
+    // Check if password was provided
+    if (args.length < 2) {
+      return {
+        output: [
+          createEntry('system', 'Initiating protocol override...'),
+          createEntry('error', ''),
+          createEntry('error', 'ACCESS DENIED'),
+          createEntry('error', ''),
+          createEntry('warning', 'Protocol override requires authentication code.'),
+          createEntry('warning', 'Usage: override protocol <CODE>'),
+          createEntry('system', ''),
+          createEntry('system', 'Hint: Someone in this system might know the code...'),
+        ],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 5,
+        },
+        triggerFlicker: true,
+        delayMs: 1500,
+      };
+    }
+    
+    const password = args.slice(1).join(' ').toUpperCase();
+    const correctPassword = 'COLHEITA';
+    
+    // Track failed attempts
+    const failedAttempts = state.flags.overrideFailedAttempts || 0;
+    
+    // Wrong password
+    if (password !== correctPassword) {
+      const newFailedAttempts = failedAttempts + 1;
+      
+      // Too many failed attempts = lockdown
+      if (newFailedAttempts >= 3) {
+        return {
+          output: [
+            createEntry('system', `Verifying code: ${password}...`),
+            createEntry('error', ''),
+            createEntry('error', '═══════════════════════════════════════════════════════════'),
+            createEntry('error', 'SECURITY COUNTERMEASURE ACTIVATED'),
+            createEntry('error', 'MULTIPLE AUTHENTICATION FAILURES DETECTED'),
+            createEntry('error', '═══════════════════════════════════════════════════════════'),
+            createEntry('error', ''),
+            createEntry('error', 'IMMEDIATE SHUTDOWN'),
+            createEntry('error', ''),
+          ],
+          stateChanges: {
+            isGameOver: true,
+            gameOverReason: 'SECURITY LOCKDOWN - AUTHENTICATION FAILURE',
+          },
+          triggerFlicker: true,
+          delayMs: 3000,
+        };
+      }
+      
+      return {
+        output: [
+          createEntry('system', `Verifying code: ${password}...`),
+          createEntry('error', ''),
+          createEntry('error', 'INVALID AUTHENTICATION CODE'),
+          createEntry('error', ''),
+          createEntry('warning', `WARNING: ${3 - newFailedAttempts} attempt(s) remaining before lockdown`),
+        ],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 15,
+          flags: { ...state.flags, overrideFailedAttempts: newFailedAttempts },
+        },
+        triggerFlicker: true,
+        delayMs: 1500,
+      };
+    }
+    
+    // Correct password!
+    // THE TERRIBLE MISTAKE - Can still trigger at high detection with correct password
     const rng = createSeededRng(state.rngState);
     const roll = rng();
     
-    // THE TERRIBLE MISTAKE - Triggered at specific dangerous conditions
-    // Player gains forbidden knowledge but session is now doomed
     const isTerribleMistakeCondition = 
       state.detectionLevel >= 70 && 
       state.truthsDiscovered.size >= 2 &&
       !state.terribleMistakeTriggered &&
-      roll >= 0.3 && roll < 0.45; // Rare but intentional window
+      roll < 0.35; // 35% chance when conditions are met
     
     if (isTerribleMistakeCondition) {
       return {
         output: [
-          createEntry('system', 'Initiating protocol override...'),
+          createEntry('system', `Verifying code: ${password}...`),
+          createEntry('system', 'Authentication accepted.'),
           createEntry('error', ''),
           createEntry('error', '▓▓▓ CRITICAL BREACH ▓▓▓'),
           createEntry('error', ''),
@@ -1534,32 +1618,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
     
-    if (state.legacyAlertCounter >= 5 || roll < 0.3) {
-      // Lockdown
-      return {
-        output: [
-          createEntry('system', 'Initiating protocol override...'),
-          createEntry('error', ''),
-          createEntry('error', '═══════════════════════════════════════════════════════════'),
-          createEntry('error', 'SECURITY COUNTERMEASURE ACTIVATED'),
-          createEntry('error', '═══════════════════════════════════════════════════════════'),
-          createEntry('error', ''),
-          createEntry('error', 'IMMEDIATE SHUTDOWN'),
-          createEntry('error', ''),
-        ],
-        stateChanges: {
-          isGameOver: true,
-          gameOverReason: 'SECURITY LOCKDOWN',
-        },
-        triggerFlicker: true,
-        delayMs: 3000,
-      };
-    }
-    
     // Success - unlock admin
     return {
       output: [
-        createEntry('system', 'Initiating protocol override...'),
+        createEntry('system', `Verifying code: ${password}...`),
+        createEntry('system', 'Authentication accepted.'),
+        createEntry('warning', ''),
         createEntry('warning', 'WARNING: Legacy security bypass detected'),
         createEntry('output', ''),
         createEntry('notice', 'NOTICE: Administrative archive access granted'),
@@ -1568,7 +1632,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('warning', 'WARNING: Session heavily monitored'),
       ],
       stateChanges: {
-        flags: { ...state.flags, adminUnlocked: true },
+        flags: { ...state.flags, adminUnlocked: true, overrideFailedAttempts: 0 },
         accessLevel: 5,
         detectionLevel: state.detectionLevel + 25,
         sessionStability: state.sessionStability - 15,
@@ -2107,7 +2171,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
       createEntry('system', ''),
       createEntry('system', 'TIP:'),
       createEntry('system', 'Elevated access requires protocol override.'),
-      createEntry('system', 'Use: override protocol'),
+      createEntry('system', 'Use: override protocol <CODE>'),
       createEntry('warning', 'WARNING: High risk operation.'),
       createEntry('system', ''),
     ];
@@ -2148,7 +2212,53 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   ];
 }
 
-// Boot sequence for new game
+// Tutorial messages from UFO74 - shown one at a time
+export const TUTORIAL_MESSAGES: string[][] = [
+  [
+    '┌─────────────────────────────────────────────────────────┐',
+    '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │',
+    '└─────────────────────────────────────────────────────────┘',
+  ],
+  [
+    'UFO74: hey kid, youre in. nice work.',
+  ],
+  [
+    'UFO74: listen carefully. i dont have much time to explain.',
+  ],
+  [
+    'UFO74: this is a government archive. something happened in',
+    '       varginha, brazil in january 1996. they buried it.',
+  ],
+  [
+    'UFO74: i need you to find evidence of 5 things:',
+  ],
+  [
+    '       1. what they RECOVERED (debris, materials)',
+    '       2. what they CAPTURED (beings, specimens)',
+    '       3. how they COMMUNICATED (signals, telepathy)',
+    '       4. who else was INVOLVED (other countries)',
+    '       5. what happens NEXT (future dates, plans)',
+  ],
+  [
+    'UFO74: the files are scattered across directories.',
+    '       use "ls" to see whats there, "cd" to move around,',
+    '       and "open" to read files. some are encrypted.',
+  ],
+  [
+    'UFO74: the longer you stay connected, the more risk.',
+    '       find the evidence and get out.',
+  ],
+  [
+    'UFO74: ill keep track of what you find. good luck hackerkid.',
+  ],
+  [
+    '>> CONNECTION IDLE <<',
+    '',
+    'Type "help" for available commands.',
+  ],
+];
+
+// Boot sequence for new game (without UFO74 tutorial)
 export function generateBootSequence(): TerminalEntry[] {
   return [
     createEntry('system', ''),
@@ -2165,39 +2275,45 @@ export function generateBootSequence(): TerminalEntry[] {
     createEntry('system', 'INCIDENT-RELATED ARCHIVE'),
     createEntry('warning', 'WARNING: Partial access may result in incomplete conclusions.'),
     createEntry('system', ''),
-    createEntry('system', 'Type "help" for available commands.'),
-    createEntry('system', ''),
-    // UFO74 initial contact
-    createEntry('system', ''),
-    createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
-    createEntry('warning', '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │'),
-    createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
-    createEntry('system', ''),
-    createEntry('output', 'UFO74: hey kid, youre in. nice work.'),
-    createEntry('output', ''),
-    createEntry('output', 'UFO74: listen carefully. i dont have much time to explain.'),
-    createEntry('output', ''),
-    createEntry('output', 'UFO74: this is a government archive. something happened in'),
-    createEntry('output', '       varginha, brazil in january 1996. they buried it.'),
-    createEntry('output', ''),
-    createEntry('output', 'UFO74: i need you to find evidence of 5 things:'),
-    createEntry('output', ''),
-    createEntry('output', '       1. what they RECOVERED (debris, materials)'),
-    createEntry('output', '       2. what they CAPTURED (beings, specimens)'),
-    createEntry('output', '       3. how they COMMUNICATED (signals, telepathy)'),
-    createEntry('output', '       4. who else was INVOLVED (other countries)'),
-    createEntry('output', '       5. what happens NEXT (future dates, plans)'),
-    createEntry('output', ''),
-    createEntry('output', 'UFO74: the files are scattered across directories.'),
-    createEntry('output', '       use "ls" to see whats there, "cd" to move around,'),
-    createEntry('output', '       and "open" to read files. some are encrypted.'),
-    createEntry('output', ''),
-    createEntry('output', 'UFO74: the longer you stay connected, the more risk.'),
-    createEntry('output', '       find the evidence and get out.'),
-    createEntry('output', ''),
-    createEntry('output', 'UFO74: ill keep track of what you find. good luck hackerkid.'),
-    createEntry('system', ''),
-    createEntry('warning', '>> CONNECTION IDLE <<'),
-    createEntry('system', ''),
   ];
+}
+
+// Convert tutorial message to entries
+export function getTutorialMessage(step: number): TerminalEntry[] {
+  if (step < 0 || step >= TUTORIAL_MESSAGES.length) {
+    return [];
+  }
+  
+  const messages = TUTORIAL_MESSAGES[step];
+  const entries: TerminalEntry[] = [createEntry('system', '')];
+  
+  const isLastStep = step === TUTORIAL_MESSAGES.length - 1;
+  
+  for (let i = 0; i < messages.length; i++) {
+    const msg = messages[i];
+    
+    if (step === 0) {
+      // First message (transmission header) - all warnings
+      entries.push(createEntry('warning', msg));
+    } else if (isLastStep) {
+      // Last message: first line is warning, rest are system
+      if (i === 0) {
+        entries.push(createEntry('warning', msg));
+      } else {
+        entries.push(createEntry('system', msg));
+      }
+    } else {
+      entries.push(createEntry('output', msg));
+    }
+  }
+  
+  // Add "press enter" hint except for the last message
+  if (!isLastStep) {
+    entries.push(createEntry('system', ''));
+    entries.push(createEntry('system', '                    [ press ENTER to continue ]'));
+  } else {
+    entries.push(createEntry('system', ''));
+  }
+  
+  return entries;
 }

@@ -83,10 +83,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 16px;
-  background: #000d00;
-  border-bottom: 1px solid #002200;
-  font-size: 11px;
+  padding: 8px 16px;
+  background: #001800;
+  border-bottom: 1px solid #00aa00;
+  font-size: 12px;
   z-index: 2;
   gap: 20px;
 }
@@ -106,31 +106,34 @@
 }
 
 .trackerLabel {
-  color: #006600;
+  color: #00cc00;
   font-weight: bold;
   text-transform: uppercase;
+  text-shadow: 0 0 4px rgba(0, 200, 0, 0.5);
 }
 
 .truthFound {
   color: #00ff00;
-  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
+  font-weight: bold;
 }
 
 .truthMissing {
-  color: #004400;
+  color: #336633;
 }
 
 .truthCount {
-  color: #00aa00;
+  color: #00ff00;
   font-weight: bold;
   margin-left: 4px;
+  text-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
 }
 
 .riskBar {
   width: 80px;
-  height: 8px;
-  background: #001a00;
-  border: 1px solid #003300;
+  height: 10px;
+  background: #0a1a0a;
+  border: 1px solid #00aa00;
   border-radius: 2px;
   overflow: hidden;
 }
@@ -148,28 +151,33 @@
 
 /* Risk level colors */
 .minimal {
-  background-color: #004400;
-  color: #00aa00;
+  background-color: #00aa00;
+  color: #00ff00;
+  text-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
 }
 
 .low {
-  background-color: #006600;
+  background-color: #00cc00;
   color: #00ff00;
+  text-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
 }
 
 .elevated {
-  background-color: #666600;
+  background-color: #aaaa00;
   color: #ffff00;
+  text-shadow: 0 0 4px rgba(255, 255, 0, 0.6);
 }
 
 .high {
-  background-color: #664400;
-  color: #ff8800;
+  background-color: #cc6600;
+  color: #ff9900;
+  text-shadow: 0 0 4px rgba(255, 150, 0, 0.6);
 }
 
 .critical {
-  background-color: #660000;
+  background-color: #cc0000;
   color: #ff0000;
+  text-shadow: 0 0 6px rgba(255, 0, 0, 0.8);
   animation: criticalPulse 1s ease-in-out infinite;
 }
 
@@ -266,6 +274,17 @@
   font-family: inherit;
   font-size: inherit;
   caret-color: transparent;
+}
+
+.inputField::placeholder {
+  color: #00aa00;
+  opacity: 1;
+  animation: placeholderPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes placeholderPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 .inputField:disabled {

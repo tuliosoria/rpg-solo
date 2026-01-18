@@ -105,6 +105,8 @@ export function createNewGame(): GameState {
     truthsDiscovered: new Set(),
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
+    tutorialStep: 0,
+    tutorialComplete: false,
   };
 }
 

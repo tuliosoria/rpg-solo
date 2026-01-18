@@ -121,6 +121,10 @@ export interface GameState {
   lastMeaningfulAction: number; // Command count at last meaningful action
   wanderingNoticeCount: number; // How many times we've nudged the player
   lastDirectoriesVisited: string[]; // Recent directory history for pattern detection
+  
+  // Tutorial state (UFO74 intro messages)
+  tutorialStep: number; // -1 = complete, 0+ = current message index
+  tutorialComplete: boolean;
 }
 
 export interface SaveSlot {
@@ -178,4 +182,6 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   lastMeaningfulAction: 0,
   wanderingNoticeCount: 0,
   lastDirectoriesVisited: [],
+  tutorialStep: 0,
+  tutorialComplete: false,
 };
