@@ -66,20 +66,17 @@ export function listDirectory(path: string, state: GameState): { name: string; t
       if (!hasAllFlags) continue;
     }
     
-    // Access threshold hides files UNLESS they are restricted (restricted files should be visible but locked)
-    if (child.accessThreshold && state.accessLevel < child.accessThreshold) {
-      // For files, check if they're restricted - if so, show them as locked
-      if (child.type === 'file') {
-        const file = child as FileNode;
-        if (file.status !== 'restricted' && file.status !== 'restricted_briefing') {
-          // Not a restricted file - hide it
-          continue;
-        }
-        // Restricted files are visible but will be blocked by canAccessFile
-      } else {
-        // Directories with insufficient access are hidden
-        continue;
+    // Restricted files are only visible after override is active
+    if (child.type === 'file') {
+      const file = child as FileNode;
+      if ((file.status === 'restricted' || file.status === 'restricted_briefing') && !state.overrideActive) {
+        continue; // Hide restricted files until override is active
       }
+    }
+    
+    // Access threshold hides files and directories with insufficient access level
+    if (child.accessThreshold && state.accessLevel < child.accessThreshold) {
+      continue;
     }
     
     // Check if file is deleted
