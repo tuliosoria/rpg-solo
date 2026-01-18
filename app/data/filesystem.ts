@@ -2197,7 +2197,7 @@ const data_reconstruction_util: FileNode = {
 const reconstructed_neural: FileNode = {
   type: 'file',
   name: 'neural_fragment.dat',
-  status: 'unlocked',
+  status: 'intact',
   accessThreshold: 4,
   requiredFlags: ['scriptExecuted'],
   reveals: ['being_containment', 'telepathic_scouts'],
@@ -2242,6 +2242,40 @@ const reconstructed_neural: FileNode = {
   ],
 };
 
+// Video file for surveillance footage
+const surveillance_footage_recovery: FileNode = {
+  type: 'file',
+  name: 'surveillance_recovery.vid',
+  status: 'unstable',
+  content: [
+    '═══════════════════════════════════════════════════════════',
+    'RECOVERED VIDEO DATA - PARTIAL',
+    'SOURCE: CONTAINMENT FACILITY B - CAM 07',
+    'DATE: 1996-01-20 03:47:22',
+    '═══════════════════════════════════════════════════════════',
+    '',
+    'STATUS: Partial frame recovery successful',
+    'INTEGRITY: 47% - Significant temporal corruption',
+    '',
+    'CONTENT SUMMARY:',
+    '  Surveillance footage from containment observation',
+    '  chamber. Subject displays anomalous movement patterns.',
+    '  Audio track corrupted beyond recovery.',
+    '',
+    'WARNING: Visual content may cause disorientation.',
+    '',
+    'Press ENTER to initiate video playback...',
+  ],
+  videoTrigger: {
+    src: '/videos/surveillance_recovery.mp4',
+    title: 'CONTAINMENT_CAM_07_RECOVERY.VID',
+    tone: 'surveillance',
+    corrupted: true,
+  },
+  reveals: ['being_containment'],
+  corruptible: true,
+};
+
 // Build filesystem tree
 export const FILESYSTEM_ROOT: DirectoryNode = {
   type: 'dir',
@@ -2270,6 +2304,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'witness_statement_raw.txt': early_witness_statement,
             'neural_dump_alfa.psi': neural_dump_alfa,
             'specimen_purpose_analysis.txt': specimen_purpose_analysis,
+            'surveillance_recovery.vid': surveillance_footage_recovery,
           },
         },
       },

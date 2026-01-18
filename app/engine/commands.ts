@@ -8,7 +8,8 @@ import {
   TRUTH_CATEGORIES,
   FileMutation,
   FileNode,
-  ImageTrigger
+  ImageTrigger,
+  VideoTrigger
 } from '../types';
 import { 
   resolvePath, 
@@ -608,12 +609,28 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     }
   }
   
+  // Check for video trigger - ONLY show if not shown this run
+  let videoTrigger: VideoTrigger | undefined = undefined;
+  if (file.videoTrigger) {
+    const videoId = file.videoTrigger.src;
+    const imagesShown = state.imagesShownThisRun || new Set<string>();
+    
+    if (!imagesShown.has(videoId)) {
+      videoTrigger = file.videoTrigger;
+      // Mark this video as shown (reuse imagesShownThisRun for both)
+      const newImagesShown = new Set(imagesShown);
+      newImagesShown.add(videoId);
+      stateChanges.imagesShownThisRun = newImagesShown;
+    }
+  }
+  
   return {
     output,
     stateChanges,
     triggerFlicker: true,
     delayMs: 2000,
     imageTrigger,
+    videoTrigger,
   };
 }
 
@@ -1813,12 +1830,28 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       }
     }
     
+    // Check for video trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
+    let videoTrigger: VideoTrigger | undefined = undefined;
+    if (file.videoTrigger && !isEncryptedAndLocked) {
+      const videoId = file.videoTrigger.src;
+      const imagesShown = state.imagesShownThisRun || new Set<string>();
+      
+      if (!imagesShown.has(videoId)) {
+        videoTrigger = file.videoTrigger;
+        // Mark this video as shown (reuse imagesShownThisRun for both)
+        const newImagesShown = new Set(imagesShown);
+        newImagesShown.add(videoId);
+        stateChanges.imagesShownThisRun = newImagesShown;
+      }
+    }
+    
     return {
       output,
       stateChanges,
       triggerFlicker,
       delayMs: calculateDelay(state),
       imageTrigger,
+      videoTrigger,
     };
   },
 
@@ -2028,7 +2061,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const correctPassword = 'COLHEITA';
     
     // Track failed attempts
-    const failedAttempts = state.flags.overrideFailedAttempts || 0;
+    const failedAttempts = state.overrideFailedAttempts || 0;
     
     // Wrong password
     if (password !== correctPassword) {
@@ -2067,7 +2100,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ],
         stateChanges: {
           detectionLevel: state.detectionLevel + 15,
-          flags: { ...state.flags, overrideFailedAttempts: newFailedAttempts },
+          overrideFailedAttempts: newFailedAttempts,
         },
         triggerFlicker: true,
         delayMs: 1500,
@@ -2141,7 +2174,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('warning', 'WARNING: Session heavily monitored'),
       ],
       stateChanges: {
-        flags: { ...state.flags, adminUnlocked: true, overrideFailedAttempts: 0 },
+        flags: { ...state.flags, adminUnlocked: true },
+        overrideFailedAttempts: 0,
         accessLevel: 5,
         detectionLevel: state.detectionLevel + 25,
         sessionStability: state.sessionStability - 15,
@@ -2318,7 +2352,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
     
     // Check if scout link is exhausted
-    const scoutLinksUsed = state.flags.scoutLinksUsed || 0;
+    const scoutLinksUsed = state.scoutLinksUsed || 0;
     if (scoutLinksUsed >= 4) {
       return {
         output: [
@@ -2409,7 +2443,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output,
         stateChanges: {
-          flags: { ...state.flags, scoutLinksUsed: newLinksUsed },
+          scoutLinksUsed: newLinksUsed,
           scoutLinkUsedResponses: newUsedResponses,
           detectionLevel: state.detectionLevel + 5,
           sessionStability: state.sessionStability - 3,
@@ -2439,7 +2473,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     return {
       output,
       stateChanges: {
-        flags: { ...state.flags, scoutLinksUsed: newLinksUsed },
+        scoutLinksUsed: newLinksUsed,
         scoutLinkUsedResponses: newUsedResponses,
         detectionLevel: state.detectionLevel + 5,
         sessionStability: state.sessionStability - 5,
