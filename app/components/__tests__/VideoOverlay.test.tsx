@@ -61,12 +61,11 @@ describe('VideoOverlay', () => {
 
   it('calls onCloseAction when overlay is clicked', async () => {
     const user = userEvent.setup();
-    render(<VideoOverlay {...defaultProps} />);
+    const { container } = render(<VideoOverlay {...defaultProps} />);
     
-    const overlay = screen.getByText(/RECOVERED VIDEO DATA/i).parentElement?.parentElement?.parentElement;
-    if (overlay) {
-      await user.click(overlay);
-    }
+    // Click on the overlay background (not the video itself)
+    const overlay = container.firstChild as HTMLElement;
+    await user.click(overlay);
     
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
