@@ -70,8 +70,8 @@ export function listDirectory(path: string, state: GameState): { name: string; t
     if (child.type === 'file') {
       const file = child as FileNode;
       if (file.status === 'restricted' || file.status === 'restricted_briefing') {
-        // Restricted files only visible after override is active
-        if (!state.overrideActive) {
+        // Restricted files only visible after override (adminUnlocked) is active
+        if (!state.flags?.adminUnlocked) {
           continue; // Hide restricted files until override is active
         }
         // Override is active - show the file (skip accessThreshold check for restricted files)
