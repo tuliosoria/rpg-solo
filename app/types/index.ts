@@ -95,6 +95,9 @@ export interface GameState {
   // Scout Link state
   scoutLinkUsedResponses: Set<string>; // Track used responses to never repeat
   
+  // UFO74 unique reactions tracking
+  ufo74UsedReactions: Set<number>; // Track which reaction indices have been used
+  
   // Decrypt challenge state
   pendingDecryptFile?: string; // File awaiting security answer
   
@@ -175,6 +178,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   prisoner45Disconnected: false,
   prisoner45UsedResponses: new Set(),
   scoutLinkUsedResponses: new Set(),
+  ufo74UsedReactions: new Set(),
   pendingDecryptFile: undefined,
   incognitoMessageCount: 0,
   lastIncognitoTrigger: 0,
