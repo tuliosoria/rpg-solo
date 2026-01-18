@@ -11,6 +11,12 @@ export interface ImageTrigger {
   corrupted?: boolean;
 }
 
+export interface VideoTrigger {
+  src: string;
+  alt: string;
+  corrupted?: boolean;
+}
+
 export interface SecurityQuestion {
   question: string;
   answers: string[]; // Multiple valid answers (case insensitive)
@@ -28,6 +34,7 @@ export interface FileNode {
   requiredFlags?: string[]; // Required flags to appear
   corruptible?: boolean;
   imageTrigger?: ImageTrigger; // Image to display when file is accessed
+  videoTrigger?: VideoTrigger; // Video to display when file is accessed
   securityQuestion?: SecurityQuestion; // Required to decrypt
 }
 
@@ -111,6 +118,9 @@ export interface GameState {
   // Images shown this run (each image shown at most once)
   imagesShownThisRun: Set<string>;
   
+  // Videos shown this run (each video shown at most once)
+  videosShownThisRun: Set<string>;
+  
   // System personality degradation (affects tone as risk increases)
   systemHostilityLevel: number; // 0-5, increases with risky actions
   
@@ -148,6 +158,7 @@ export interface CommandResult {
   triggerFlicker?: boolean;
   delayMs?: number;
   imageTrigger?: ImageTrigger;
+  videoTrigger?: VideoTrigger;
 }
 
 export const TRUTH_CATEGORIES = [
@@ -184,6 +195,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   lastIncognitoTrigger: 0,
   singularEventsTriggered: new Set(),
   imagesShownThisRun: new Set(),
+  videosShownThisRun: new Set(),
   systemHostilityLevel: 0,
   terribleMistakeTriggered: false,
   sessionDoomCountdown: 0,

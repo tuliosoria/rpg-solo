@@ -8,7 +8,8 @@ import {
   TRUTH_CATEGORIES,
   FileMutation,
   FileNode,
-  ImageTrigger
+  ImageTrigger,
+  VideoTrigger
 } from '../types';
 import { 
   resolvePath, 
@@ -608,12 +609,28 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     }
   }
   
+  // Check for video trigger - ONLY show if not shown this run
+  let videoTrigger: VideoTrigger | undefined = undefined;
+  if (file.videoTrigger) {
+    const videoId = file.videoTrigger.src;
+    const videosShown = state.videosShownThisRun || new Set<string>();
+    
+    if (!videosShown.has(videoId)) {
+      videoTrigger = file.videoTrigger;
+      // Mark this video as shown
+      const newVideosShown = new Set(videosShown);
+      newVideosShown.add(videoId);
+      stateChanges.videosShownThisRun = newVideosShown;
+    }
+  }
+  
   return {
     output,
     stateChanges,
     triggerFlicker: true,
     delayMs: 2000,
     imageTrigger,
+    videoTrigger,
   };
 }
 
@@ -1894,12 +1911,28 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       }
     }
     
+    // Check for video trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
+    let videoTrigger: VideoTrigger | undefined = undefined;
+    if (file.videoTrigger && !isEncryptedAndLocked) {
+      const videoId = file.videoTrigger.src;
+      const videosShown = state.videosShownThisRun || new Set<string>();
+      
+      if (!videosShown.has(videoId)) {
+        videoTrigger = file.videoTrigger;
+        // Mark this video as shown
+        const newVideosShown = new Set(videosShown);
+        newVideosShown.add(videoId);
+        stateChanges.videosShownThisRun = newVideosShown;
+      }
+    }
+    
     return {
       output,
       stateChanges,
       triggerFlicker,
       delayMs: calculateDelay(state),
       imageTrigger,
+      videoTrigger,
     };
   },
 
