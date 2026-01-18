@@ -2105,7 +2105,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
     
-    const password = args.slice(1).join(' ').toUpperCase();
+    const password = args.slice(1).join(' ').toUpperCase().replace(/[<>]/g, '').trim();
     const correctPassword = 'COLHEITA';
     
     // Track failed attempts
