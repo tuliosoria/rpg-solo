@@ -2184,8 +2184,8 @@ const data_reconstruction_util: FileNode = {
     'AVAILABLE TARGETS',
     '───────────────────────────────────────────────────────────',
     '',
-    '  /admin/neural_fragment.dat    [FRAGMENTED]',
-    '  /comms/psi_residue.log        [CORRUPTED]',
+    '  /admin/neural_fragment_raw.dat    [FRAGMENTED]',
+    '  /comms/psi/psi_residue.log         [CORRUPTED]',
     '',
     'NOTE: Successful reconstruction may reveal hidden content.',
     '',
@@ -2239,6 +2239,50 @@ const reconstructed_neural: FileNode = {
     '  continues after extraction. Indefinitely.',
     '',
     '═══ END RECOVERED CONTENT ═══',
+  ],
+};
+
+// Placeholder files for script reconstruction targets
+const neural_fragment_placeholder: FileNode = {
+  type: 'file',
+  name: 'neural_fragment.dat',
+  status: 'fragmented',
+  accessThreshold: 2,
+  content: [
+    '▓▓▓ DATA FRAGMENT — UNREADABLE ▓▓▓',
+    '',
+    'ERROR: File severely fragmented.',
+    'Sectors corrupted: 847 / 1024',
+    'Integrity: 17%',
+    '',
+    'This file cannot be read directly.',
+    '',
+    'RECOMMENDATION:',
+    '  Use data reconstruction utility.',
+    '  See: /tmp/data_reconstruction.util',
+    '',
+  ],
+};
+
+const psi_residue_placeholder: FileNode = {
+  type: 'file',
+  name: 'psi_residue.log',
+  status: 'corrupted',
+  accessThreshold: 2,
+  content: [
+    '▓▓▓ CORRUPTED LOG FILE ▓▓▓',
+    '',
+    'ERROR: Data corruption detected.',
+    'Recoverable sectors: UNKNOWN',
+    '',
+    'Partial fragments visible:',
+    '  ...sig..l...ource...unkn...',
+    '  ...cogn...tive...patt...',
+    '',
+    'RECOMMENDATION:',
+    '  Attempt reconstruction via script utility.',
+    '  See: /tmp/data_reconstruction.util',
+    '',
   ],
 };
 
@@ -2318,6 +2362,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
           children: {
             'transcript_core.enc': transcript_core,
             'transcript_limit.enc': transcript_limit,
+            'psi_residue.log': psi_residue_placeholder,
             'psi_analysis_report.txt': psi_analysis_report,
           },
         },
@@ -2361,6 +2406,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         'extraction_mechanism.red': extraction_mechanism,
         'second_deployment.sig': second_deployment_intercept,
         'neural_fragment.dat': reconstructed_neural,
+        'neural_fragment_raw.dat': neural_fragment_placeholder,
       },
     },
     internal: {

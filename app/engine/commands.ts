@@ -2546,7 +2546,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', '  INIT;TARGET=<path>;EXEC'),
           createEntry('system', ''),
           createEntry('system', 'Example:'),
-          createEntry('system', '  script INIT;TARGET=/admin/neural_fragment.dat;EXEC'),
+          createEntry('system', '  script INIT;TARGET=/admin/neural_fragment_raw.dat;EXEC'),
           createEntry('system', ''),
           createEntry('system', 'See /tmp/data_reconstruction.util for available targets.'),
           createEntry('system', ''),
@@ -2600,7 +2600,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('system', 'Parsing script...'),
           createEntry('system', 'INIT... OK'),
-          createEntry('system', 'TARGET=/admin/neural_fragment.dat... LOCATED'),
+          createEntry('system', 'TARGET=/admin/neural_fragment_raw.dat... LOCATED'),
           createEntry('system', 'EXEC... RUNNING'),
           createEntry('warning', ''),
           createEntry('warning', '▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓'),
@@ -2628,7 +2628,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('system', 'Parsing script...'),
           createEntry('system', 'INIT... OK'),
-          createEntry('system', 'TARGET=/comms/psi_residue.log... LOCATED'),
+          createEntry('system', 'TARGET=/comms/psi/psi_residue.log... LOCATED'),
           createEntry('system', 'EXEC... RUNNING'),
           createEntry('warning', ''),
           createEntry('warning', '▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓'),
