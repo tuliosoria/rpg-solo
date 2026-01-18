@@ -44,7 +44,6 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const skipStreamingRef = useRef(false);
-  const streamingAbortRef = useRef<AbortController | null>(null);
   
   // Scroll to bottom when history changes
   useEffect(() => {
