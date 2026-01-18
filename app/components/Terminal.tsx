@@ -44,8 +44,6 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const skipStreamingRef = useRef(false);
-| null>(null);
->>>>>>> e7a09e2 (feat: stream terminal file output)
   
   // Scroll to bottom when history changes
   useEffect(() => {
