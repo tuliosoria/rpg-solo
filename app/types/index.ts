@@ -11,6 +11,13 @@ export interface ImageTrigger {
   corrupted?: boolean;
 }
 
+export interface VideoTrigger {
+  src: string;
+  title: string;
+  tone: ImageTone;
+  corrupted?: boolean;
+}
+
 export interface SecurityQuestion {
   question: string;
   answers: string[]; // Multiple valid answers (case insensitive)
@@ -28,6 +35,7 @@ export interface FileNode {
   requiredFlags?: string[]; // Required flags to appear
   corruptible?: boolean;
   imageTrigger?: ImageTrigger; // Image to display when file is accessed
+  videoTrigger?: VideoTrigger; // Video to display when file is accessed
   securityQuestion?: SecurityQuestion; // Required to decrypt
 }
 
@@ -71,6 +79,12 @@ export interface GameState {
   
   // Flags for game progression
   flags: Record<string, boolean>;
+  
+  // Override password attempt tracking
+  overrideFailedAttempts: number;
+  
+  // Scout link usage tracking
+  scoutLinksUsed: number;
   
   // Truth categories discovered (5 required for victory)
   truthsDiscovered: Set<string>;
@@ -145,6 +159,7 @@ export interface CommandResult {
   triggerFlicker?: boolean;
   delayMs?: number;
   imageTrigger?: ImageTrigger;
+  videoTrigger?: VideoTrigger;
 }
 
 export const TRUTH_CATEGORIES = [
@@ -168,6 +183,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   sessionStability: 100,
   legacyAlertCounter: 0,
   flags: {},
+  overrideFailedAttempts: 0,
+  scoutLinksUsed: 0,
   truthsDiscovered: new Set(),
   fileMutations: {},
   isGameOver: false,

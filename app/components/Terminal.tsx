@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { GameState, TerminalEntry, ImageTrigger } from '../types';
+import { GameState, TerminalEntry, ImageTrigger, VideoTrigger } from '../types';
 import { executeCommand, createEntry, getTutorialMessage, TUTORIAL_MESSAGES } from '../engine/commands';
 import { listDirectory, resolvePath } from '../engine/filesystem';
 import { autoSave } from '../storage/saves';
 import ImageOverlay from './ImageOverlay';
+import VideoOverlay from './VideoOverlay';
 import GameOver from './GameOver';
 import styles from './Terminal.module.css';
 
@@ -26,6 +27,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [flickerActive, setFlickerActive] = useState(false);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [activeImage, setActiveImage] = useState<ImageTrigger | null>(null);
+  const [activeVideo, setActiveVideo] = useState<VideoTrigger | null>(null);
   const [showGameOver, setShowGameOver] = useState(false);
   const [gameOverReason, setGameOverReason] = useState('');
   
@@ -163,6 +165,11 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     // Show image if triggered
     if (result.imageTrigger) {
       setActiveImage(result.imageTrigger);
+    }
+    
+    // Show video if triggered
+    if (result.videoTrigger) {
+      setActiveVideo(result.videoTrigger);
     }
     
     // Check for game over
@@ -472,6 +479,20 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           corrupted={activeImage.corrupted}
           onCloseAction={() => {
             setActiveImage(null);
+            inputRef.current?.focus();
+          }}
+        />
+      )}
+      
+      {/* Video overlay */}
+      {activeVideo && (
+        <VideoOverlay
+          src={activeVideo.src}
+          title={activeVideo.title}
+          tone={activeVideo.tone}
+          corrupted={activeVideo.corrupted}
+          onCloseAction={() => {
+            setActiveVideo(null);
             inputRef.current?.focus();
           }}
         />
