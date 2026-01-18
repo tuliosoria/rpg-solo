@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { GameState, TerminalEntry, ImageTrigger, VideoTrigger } from '../types';
+import { GameState, TerminalEntry, ImageTrigger, VideoTrigger, StreamingMode } from '../types';
 import { executeCommand, createEntry, getTutorialMessage, TUTORIAL_MESSAGES } from '../engine/commands';
 import { listDirectory, resolvePath } from '../engine/filesystem';
 import { autoSave } from '../storage/saves';
@@ -14,6 +14,15 @@ import styles from './Terminal.module.css';
 const COMMANDS = ['help', 'status', 'ls', 'cd', 'open', 'decrypt', 'recover', 'trace', 'chat', 'clear', 'save', 'exit', 'override'];
 const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover'];
 
+// Streaming timing configuration (ms per line)
+const STREAMING_DELAYS: Record<StreamingMode, { base: number; variance: number; glitchChance: number; glitchDelay: number }> = {
+  none: { base: 0, variance: 0, glitchChance: 0, glitchDelay: 0 },
+  fast: { base: 25, variance: 15, glitchChance: 0, glitchDelay: 0 },
+  normal: { base: 50, variance: 25, glitchChance: 0, glitchDelay: 0 },
+  slow: { base: 80, variance: 40, glitchChance: 0.05, glitchDelay: 200 },
+  glitchy: { base: 60, variance: 40, glitchChance: 0.15, glitchDelay: 400 },
+};
+
 interface TerminalProps {
   initialState: GameState;
   onExitAction: () => void;
@@ -24,6 +33,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [gameState, setGameState] = useState<GameState>(initialState);
   const [inputValue, setInputValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const [flickerActive, setFlickerActive] = useState(false);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [activeImage, setActiveImage] = useState<ImageTrigger | null>(null);
@@ -33,6 +43,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const skipStreamingRef = useRef(false);
+  const streamingAbortRef = useRef<AbortController | null>(null);
   
   // Scroll to bottom when history changes
   useEffect(() => {
@@ -62,6 +74,77 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     setFlickerActive(true);
     setTimeout(() => setFlickerActive(false), 300);
   }, []);
+  
+  // Stream output lines with variable timing
+  const streamOutput = useCallback(async (
+    entries: TerminalEntry[],
+    mode: StreamingMode,
+    baseState: GameState
+  ): Promise<void> => {
+    if (mode === 'none' || entries.length === 0) {
+      // No streaming - add all at once
+      setGameState(prev => ({
+        ...prev,
+        history: [...prev.history, ...entries],
+      }));
+      return;
+    }
+    
+    const config = STREAMING_DELAYS[mode];
+    skipStreamingRef.current = false;
+    
+    for (let i = 0; i < entries.length; i++) {
+      // Check if streaming was skipped
+      if (skipStreamingRef.current) {
+        // Add remaining entries all at once
+        const remaining = entries.slice(i);
+        setGameState(prev => ({
+          ...prev,
+          history: [...prev.history, ...remaining],
+        }));
+        break;
+      }
+      
+      // Add single entry
+      const entry = entries[i];
+      setGameState(prev => ({
+        ...prev,
+        history: [...prev.history, entry],
+      }));
+      
+      // Calculate delay with variance
+      let delay = config.base + (Math.random() * config.variance * 2 - config.variance);
+      
+      // Random glitch pause
+      if (Math.random() < config.glitchChance) {
+        delay += config.glitchDelay;
+        // Trigger flicker on glitch
+        if (config.glitchDelay > 100) {
+          triggerFlicker();
+        }
+      }
+      
+      // Wait before next line
+      if (delay > 0 && i < entries.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }, [triggerFlicker]);
+  
+  // Handle skip streaming (spacebar/enter during streaming)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isStreaming && (e.key === ' ' || e.key === 'Enter' || e.key === 'Escape')) {
+        e.preventDefault();
+        skipStreamingRef.current = true;
+      }
+    };
+    
+    if (isStreaming) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isStreaming]);
   
   // Handle command submission
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -149,18 +232,45 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       triggerFlicker();
     }
     
-    // Update state with results
-    const updatedState: GameState = {
-      ...newState,
+    // Determine streaming mode
+    const streamingMode = result.streamingMode || 'none';
+    
+    // Build the state changes without history (we'll stream that)
+    const stateChangesWithoutHistory = {
       ...result.stateChanges,
-      history: result.stateChanges.history !== undefined 
-        ? result.stateChanges.history 
-        : [...newState.history, ...result.output],
       truthsDiscovered: result.stateChanges.truthsDiscovered || newState.truthsDiscovered,
     };
     
-    setGameState(updatedState);
-    setIsProcessing(false);
+    // Apply non-history state changes first
+    const intermediateState: GameState = {
+      ...newState,
+      ...stateChangesWithoutHistory,
+    };
+    
+    // If history is explicitly set in stateChanges, use that instead of streaming
+    if (result.stateChanges.history !== undefined) {
+      setGameState({
+        ...intermediateState,
+        history: result.stateChanges.history,
+      });
+      setIsProcessing(false);
+    } else if (streamingMode !== 'none' && result.output.length > 0) {
+      // Stream output line by line
+      setIsStreaming(true);
+      setGameState(intermediateState);
+      
+      await streamOutput(result.output, streamingMode, intermediateState);
+      
+      setIsStreaming(false);
+      setIsProcessing(false);
+    } else {
+      // No streaming - add all at once
+      setGameState({
+        ...intermediateState,
+        history: [...newState.history, ...result.output],
+      });
+      setIsProcessing(false);
+    }
     
     // Show image if triggered
     if (result.imageTrigger) {
@@ -173,15 +283,15 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     }
     
     // Check for game over
-    if (updatedState.isGameOver) {
-      setGameOverReason(updatedState.gameOverReason || 'CRITICAL SYSTEM FAILURE');
+    if (intermediateState.isGameOver) {
+      setGameOverReason(intermediateState.gameOverReason || 'CRITICAL SYSTEM FAILURE');
       setShowGameOver(true);
       return;
     }
     
     // Focus input after processing
     inputRef.current?.focus();
-  }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker]);
+  }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput]);
   
   // Get auto-complete suggestions
   const getCompletions = useCallback((input: string): string[] => {

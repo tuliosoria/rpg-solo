@@ -631,6 +631,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     delayMs: 2000,
     imageTrigger,
     videoTrigger,
+    streamingMode: 'slow' as const,
   };
 }
 
@@ -1845,6 +1846,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       }
     }
     
+    // Determine streaming mode based on file status
+    let streamingMode: 'none' | 'fast' | 'normal' | 'slow' | 'glitchy' = 'normal';
+    if (file.status === 'unstable' || triggerFlicker) {
+      streamingMode = 'glitchy';
+    } else if (file.status === 'encrypted') {
+      streamingMode = 'slow';
+    } else if (file.status === 'restricted' || file.status === 'restricted_briefing') {
+      streamingMode = 'slow';
+    } else if (content.length > 30) {
+      streamingMode = 'fast'; // Long files stream faster
+    }
+    
     return {
       output,
       stateChanges,
@@ -1852,6 +1865,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       delayMs: calculateDelay(state),
       imageTrigger,
       videoTrigger,
+      streamingMode,
     };
   },
 
