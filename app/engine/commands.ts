@@ -2780,6 +2780,49 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       }
     }
   }
+
+  // Turing evaluation answer handling: if a Turing evaluation is active,
+  // treat single-letter responses as evaluation answers and short-circuit.
+  if (state.turingEvaluationActive) {
+    const ans = input.trim().toUpperCase();
+    // Human-like answer fails the evaluation
+    if (ans === 'A') {
+      return {
+        output: [createEntry('system', 'TURING EVALUATION: HUMAN-LIKE RESPONSE DETECTED')],
+        stateChanges: {
+          isGameOver: true,
+          gameOverReason: 'TURING EVALUATION FAILED',
+        },
+        triggerFlicker: true,
+      };
+    }
+
+    // Cold/logical answers advance or complete the evaluation
+    if (ans === 'B') {
+      const nextIndex = (state.turingEvaluationIndex || 0) + 1;
+      if ((state.turingEvaluationIndex || 0) >= 2) {
+        return {
+          output: [createEntry('system', 'TURING EVALUATION: COMPLETED')],
+          stateChanges: {
+            turingEvaluationActive: false,
+            turingEvaluationCompleted: true,
+          },
+        };
+      }
+      return {
+        output: [createEntry('system', 'TURING EVALUATION: RESPONSE RECORDED')],
+        stateChanges: {
+          turingEvaluationIndex: nextIndex,
+        },
+      };
+    }
+
+    // Non A/B responses prompt clarification
+    return {
+      output: [createEntry('system', 'TURING EVALUATION: Please answer with A or B')],
+      stateChanges: {},
+    };
+  }
   
   // Check for lockdown
   if (state.legacyAlertCounter >= 10) {
@@ -2851,6 +2894,19 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
   
   const result = handler(args, state);
+
+  // Trigger Turing evaluation when the player asks for help at elevated detection.
+  // This activates a short A/B evaluation sequence intended to detect human-like responses.
+  if (command === 'help' && state.detectionLevel >= 45 && !state.turingEvaluationActive && !state.turingEvaluationCompleted) {
+    result.output = [
+      ...result.output,
+      createEntry('system', ''),
+      createEntry('warning', 'TURING EVALUATION: INITIATED'),
+      createEntry('system', 'Please respond: A) Human-like    B) Cold, logical'),
+    ];
+    result.stateChanges.turingEvaluationActive = true;
+    result.stateChanges.turingEvaluationIndex = 0;
+  }
   
   // ═══════════════════════════════════════════════════════════════════════════
   // SESSION COMMAND COUNTER - Track total commands for time-sensitive content
