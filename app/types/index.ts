@@ -113,6 +113,11 @@ export interface GameState {
   // Decrypt challenge state
   pendingDecryptFile?: string; // File awaiting security answer
   
+  // Turing evaluation state
+  turingEvaluationActive: boolean;
+  turingEvaluationIndex: number;
+  turingEvaluationCompleted: boolean;
+  
   // Neural cluster echo state
   neuralClusterUnlocked: boolean;
   neuralClusterActive: boolean;
@@ -203,6 +208,9 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   prisoner45UsedResponses: new Set(),
   scoutLinkUsedResponses: new Set(),
   pendingDecryptFile: undefined,
+  turingEvaluationActive: false,
+  turingEvaluationIndex: 0,
+  turingEvaluationCompleted: false,
   neuralClusterUnlocked: false,
   neuralClusterActive: false,
   neuralClusterEmissions: 0,
