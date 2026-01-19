@@ -598,6 +598,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           alt={activeImage.alt}
           tone={activeImage.tone}
           corrupted={activeImage.corrupted}
+          durationMs={activeImage.durationMs}
           onCloseAction={() => {
             setActiveImage(null);
             inputRef.current?.focus();

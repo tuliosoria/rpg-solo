@@ -2276,6 +2276,38 @@ const surveillance_footage_recovery: FileNode = {
   corruptible: true,
 };
 
+// Restricted comms file describing the neural cluster experiment
+const neural_cluster_experiment: FileNode = {
+  type: 'file',
+  name: 'neural_cluster_experiment.red',
+  status: 'restricted',
+  accessThreshold: 4,
+  content: [
+    '═══════════════════════════════════════════════════════════',
+    'COMMS/EXPERIMENTAL — NEURAL CLUSTER',
+    'CLASSIFICATION: RESTRICTED',
+    'REFERENCE: NC-7 / OBS-RESIDUAL',
+    '═══════════════════════════════════════════════════════════',
+    '',
+    'SUMMARY:',
+    '  This record describes an experimental attempt to',
+    '  construct a synthetic neural network modeled after',
+    '  dissected scout tissue. The objective is to emulate',
+    '  residual perceptual activity rather than consciousness.',
+    '',
+    'OBSERVATION:',
+    '  The cluster does not respond to dialogue. It emits',
+    '  fragmented conceptual residues when stimulated.',
+    '  Outputs are non-interactive, non-intentional.',
+    '',
+    'ACCESS NOTE:',
+    '  Stimulation channel is undocumented and unstable.',
+    '  Use is not authorized outside containment review.',
+    '',
+    '═══════════════════════════════════════════════════════════',
+  ],
+};
+
 // Build filesystem tree
 export const FILESYSTEM_ROOT: DirectoryNode = {
   type: 'dir',
@@ -2363,6 +2395,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
           children: {
             'foreign_liaison_note.txt': foreign_liaison_note,
             'medical_examiner_query.txt': medical_examiner_query,
+            'neural_cluster_experiment.red': neural_cluster_experiment,
           },
         },
         intercepts: {
