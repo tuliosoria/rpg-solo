@@ -8,6 +8,9 @@ import { autoSave } from '../storage/saves';
 import ImageOverlay from './ImageOverlay';
 import VideoOverlay from './VideoOverlay';
 import GameOver from './GameOver';
+import Blackout from './Blackout';
+import ICQChat from './ICQChat';
+import Victory from './Victory';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
@@ -40,6 +43,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [activeVideo, setActiveVideo] = useState<VideoTrigger | null>(null);
   const [showGameOver, setShowGameOver] = useState(false);
   const [gameOverReason, setGameOverReason] = useState('');
+  const [showBlackout, setShowBlackout] = useState(false);
+  const [showICQ, setShowICQ] = useState(false);
+  const [showVictoryOverlay, setShowVictoryOverlay] = useState(false);
   
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -286,6 +292,11 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       setGameOverReason(intermediateState.gameOverReason || 'CRITICAL SYSTEM FAILURE');
       setShowGameOver(true);
       return;
+    }
+
+    // Trigger Blackout/ICQ flow if cheat set icqPhase
+    if (intermediateState.icqPhase) {
+      setShowBlackout(true);
     }
     
     // Focus input after processing
@@ -613,6 +624,24 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           reason={gameOverReason}
           onRestartCompleteAction={onExitAction}
         />
+      )}
+      {/* Blackout -> ICQ flow */}
+      {showBlackout && (
+        <Blackout onCompleteAction={() => {
+          setShowBlackout(false);
+          setShowICQ(true);
+        }} />
+      )}
+
+      {showICQ && (
+        <ICQChat onVictoryAction={() => {
+          setShowICQ(false);
+          setShowVictoryOverlay(true);
+        }} />
+      )}
+
+      {showVictoryOverlay && (
+        <Victory onRestartAction={onExitAction} />
       )}
     </div>
   );
