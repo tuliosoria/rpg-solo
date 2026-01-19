@@ -91,6 +91,18 @@ describe('Filesystem', () => {
       expect(entries!.some(e => e.name === 'surveillance_recovery.vid')).toBe(true);
     });
 
+    it('hides prato archive before override', () => {
+      const state = createTestState({ accessLevel: 5 });
+      const entries = listDirectory('/ops/prato', state);
+      expect(entries!.some(e => e.name === 'archive/')).toBe(false);
+    });
+
+    it('shows prato archive after override', () => {
+      const state = createTestState({ accessLevel: 5, flags: { adminUnlocked: true } });
+      const entries = listDirectory('/ops/prato', state);
+      expect(entries!.some(e => e.name === 'archive/')).toBe(true);
+    });
+
     it('returns null for non-existent directory', () => {
       const state = createTestState();
       const entries = listDirectory('/nonexistent', state);

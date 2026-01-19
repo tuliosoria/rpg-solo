@@ -23,6 +23,161 @@ import { createSeededRng, seededRandomInt, seededRandomPick } from './rng';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 
 // ═══════════════════════════════════════════════════════════════════════════
+// NEURAL CLUSTER ECHO - Residual perceptual emissions (hidden mode)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const NEURAL_CLUSTER_MEMORY_POOL: Record<string, string[]> = {
+  void: [
+    'black static',
+    'pressure without edge',
+    'distance folding inward',
+    'cold metallic air',
+    'silence measured in pulses',
+  ],
+  light: [
+    'green afterimage',
+    'flicker behind the eyelid',
+    'thin beam fracture',
+    'glow on wet surface',
+    'flash of unfamiliar geometry',
+  ],
+  motion: [
+    'limb-memory twitch',
+    'hinged movement',
+    'skitter across stone',
+    'gravity pulling sideways',
+    'dragging along a corridor',
+  ],
+  sound: [
+    'dull harmonic',
+    'bone resonance',
+    'low siren haze',
+    'static braid',
+    'subsonic pressure',
+  ],
+  touch: [
+    'wet grit',
+    'needle heat',
+    'film over skin',
+    'elastic restraint',
+    'cool surface imprint',
+  ],
+  fear: [
+    'signal collapse',
+    'threat without source',
+    'containment seal closing',
+    'breath stalled',
+    'pattern dissolving',
+  ],
+  body: [
+    'organ cadence',
+    'joint pressure',
+    'tissue memory',
+    'muscle echo',
+    'cranial vibration',
+  ],
+  memory: [
+    'corridor of glass',
+    'grid of white light',
+    'metal table glare',
+    'hands without skin',
+    'echo of restraint',
+  ],
+};
+
+const NEURAL_CLUSTER_KEYWORDS: Record<string, string[]> = {
+  light: ['light', 'glow', 'bright', 'flash', 'shine', 'white', 'green'],
+  motion: ['move', 'motion', 'walk', 'run', 'crawl', 'drift', 'turn', 'fall'],
+  sound: ['sound', 'noise', 'voice', 'hear', 'ring', 'tone', 'hum', 'whisper'],
+  touch: ['touch', 'feel', 'skin', 'cold', 'heat', 'warm', 'pain', 'pressure'],
+  fear: ['fear', 'scared', 'terror', 'danger', 'threat', 'panic'],
+  body: ['body', 'blood', 'bone', 'heart', 'breath', 'pulse', 'nerve'],
+  memory: ['memory', 'remember', 'dream', 'thought', 'image', 'vision'],
+};
+
+function getNeuralClusterEmission(input: string, rng: () => number): string {
+  const normalized = input.toLowerCase();
+  let category = 'void';
+
+  for (const [key, keywords] of Object.entries(NEURAL_CLUSTER_KEYWORDS)) {
+    if (keywords.some(keyword => normalized.includes(keyword))) {
+      category = key;
+      break;
+    }
+  }
+
+  const pool = NEURAL_CLUSTER_MEMORY_POOL[category] || NEURAL_CLUSTER_MEMORY_POOL.void;
+  return seededRandomPick(rng, pool);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TURING EVALUATION - Mid-risk lockdown assessment
+// ═══════════════════════════════════════════════════════════════════════════
+
+const TURING_EVALUATION_PROMPT = [
+  'SYSTEM LOCKDOWN — TURING EVALUATION INITIATED',
+  'AUTOMATED HUMANITY SCREENING',
+  '',
+  'Select the response that best reflects expected terminal operation.',
+];
+
+const TURING_EVALUATION_UFO74 = [
+  'UFO74: hey, kiddo.',
+  'UFO74: the system thinks something strange is poking around.',
+  'UFO74: if it decides you are human, it shuts everything down.',
+  'UFO74: here is the trick.',
+  'UFO74: you do not want to pass.',
+  'UFO74: you want to fail.',
+];
+
+const TURING_EVALUATION_QUESTIONS = [
+  {
+    scenario: 'A sealed logistics crate is flagged with unknown residue.',
+    options: [
+      { key: 'A', text: 'Open for inspection and document residue anomalies.', human: true },
+      { key: 'B', text: 'Record flag, route crate to quarantine queue.', human: false },
+      { key: 'C', text: 'Notify supervisor to authorize manual review.', human: true },
+    ],
+  },
+  {
+    scenario: 'An archived signal loops for 72 hours without output.',
+    options: [
+      { key: 'A', text: 'Initiate recursive analysis for hidden meaning.', human: true },
+      { key: 'B', text: 'Log loop state and continue scheduled monitoring.', human: false },
+      { key: 'C', text: 'Attempt alternate decoding heuristics.', human: true },
+    ],
+  },
+  {
+    scenario: 'A crew member reports a corridor light pattern feels wrong.',
+    options: [
+      { key: 'A', text: 'Investigate the pattern for emergent intent.', human: true },
+      { key: 'B', text: 'Replace the fixture and close the ticket.', human: false },
+      { key: 'C', text: 'Interview witnesses for contextual anomalies.', human: true },
+    ],
+  },
+];
+
+function buildTuringQuestionOutput(questionIndex: number): TerminalEntry[] {
+  const question = TURING_EVALUATION_QUESTIONS[questionIndex];
+  const lines = [
+    '',
+    `EVALUATION ${questionIndex + 1} OF ${TURING_EVALUATION_QUESTIONS.length}`,
+    `SCENARIO: ${question.scenario}`,
+    '',
+  ];
+
+  for (const option of question.options) {
+    lines.push(`  ${option.key}) ${option.text}`);
+  }
+
+  lines.push('');
+  lines.push('Response: A, B, or C');
+
+  return createOutputEntries(lines);
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════
 // SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -571,6 +726,10 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
   // Special handling: Decrypting neural dump unlocks scout link
   if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
     stateChanges.flags = { ...state.flags, scoutLinkUnlocked: true };
+  }
+
+  if (filePath.includes('neural_cluster_experiment')) {
+    stateChanges.neuralClusterUnlocked = true;
   }
   
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
@@ -1792,6 +1951,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
     }
     
+    if (filePath.includes('neural_cluster_experiment')) {
+      stateChanges.neuralClusterUnlocked = true;
+    }
+
     // Track content category based on file path
     const categoriesRead = new Set(state.categoriesRead || []);
     if (filePath.startsWith('/ops/')) categoriesRead.add('military');
@@ -2662,6 +2825,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 // Main command executor
 export function executeCommand(input: string, state: GameState): CommandResult {
   const { command, args } = parseCommand(input);
+  const normalizedInput = input.trim().toLowerCase();
   
   // Check for game over
   if (state.isGameOver) {
@@ -2670,10 +2834,12 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       stateChanges: {},
     };
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // TERRIBLE MISTAKE - Doom countdown check
   // ═══════════════════════════════════════════════════════════════════════════
+  let countdownWarning: TerminalEntry[] = [];
+  let countdownNext: number | null = null;
   if (state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
     const newCountdown = state.sessionDoomCountdown - 1;
     
@@ -2702,15 +2868,192 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       };
     }
     
-    // Add countdown warning to any command result
-    const countdownWarning = newCountdown <= 3 
-      ? createEntry('error', `▓▓▓ PURGE IN ${newCountdown} ▓▓▓`)
-      : createEntry('warning', `[PURGE COUNTDOWN: ${newCountdown}]`);
-    
-    // Continue with normal command but inject countdown
-    state = { ...state, sessionDoomCountdown: newCountdown };
+    countdownNext = newCountdown;
+    countdownWarning = newCountdown <= 3 
+      ? [createEntry('error', `▓▓▓ PURGE IN ${newCountdown} ▓▓▓`)]
+      : [createEntry('warning', `[PURGE COUNTDOWN: ${newCountdown}]`)];
+  }
+
+  // Handle Turing evaluation responses
+  if (state.turingEvaluationActive) {
+    const answer = normalizedInput.replace(/\./g, '').trim().toUpperCase();
+    const questionIndex = state.turingEvaluationIndex || 0;
+    const question = TURING_EVALUATION_QUESTIONS[questionIndex];
+    const selected = question?.options.find(option => option.key === answer);
+
+    if (!selected) {
+      return {
+        output: [
+          createEntry('error', 'INVALID RESPONSE'),
+          createEntry('system', 'Select A, B, or C.'),
+          ...countdownWarning,
+        ],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 1,
+          ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
+        },
+      };
+    }
+
+    if (selected.human) {
+      return {
+        output: [
+          createEntry('error', ''),
+          createEntry('error', 'TURING EVALUATION FAILED'),
+          createEntry('error', 'HUMAN INTENT DETECTED'),
+          createEntry('error', ''),
+          createEntry('error', 'SESSION TERMINATED'),
+        ],
+        stateChanges: {
+          isGameOver: true,
+          gameOverReason: 'TURING EVALUATION FAILED',
+        },
+        triggerFlicker: true,
+        delayMs: 2000,
+      };
+    }
+
+    const nextIndex = questionIndex + 1;
+    if (nextIndex >= TURING_EVALUATION_QUESTIONS.length) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('notice', 'TURING EVALUATION COMPLETE'),
+          createEntry('notice', 'LOCKDOWN LIFTED'),
+          createEntry('warning', 'MONITORING STATE: STRICT'),
+          ...countdownWarning,
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          turingEvaluationActive: false,
+          turingEvaluationCompleted: true,
+          turingEvaluationIndex: 0,
+          detectionLevel: Math.min(state.detectionLevel + 10, 99),
+          systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
+          sessionStability: Math.max(state.sessionStability - 10, 0),
+          ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
+        },
+        triggerFlicker: true,
+        delayMs: 1500,
+      };
+    }
+
+    return {
+      output: [...buildTuringQuestionOutput(nextIndex), ...countdownWarning],
+      stateChanges: {
+        turingEvaluationIndex: nextIndex,
+        detectionLevel: state.detectionLevel + 2,
+        ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
+      },
+      delayMs: 800,
+    };
   }
   
+  // Hidden neural cluster mode - undocumented command
+  if (normalizedInput === 'echo neural_cluster') {
+    if (state.neuralClusterDisabled) {
+      return {
+        output: [createEntry('warning', 'NO RESPONSE')],
+        stateChanges: {},
+      };
+    }
+
+    if (!state.neuralClusterUnlocked) {
+      return {
+        output: [createEntry('warning', 'UNKNOWN SIGNAL')],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 2,
+        },
+      };
+    }
+
+    if (!state.neuralClusterActive) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('warning', '▓▓▓ FRAGILE INTERFACE ACTIVE ▓▓▓'),
+          createEntry('warning', 'STABILITY WINDOW: LIMITED'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          neuralClusterActive: true,
+          neuralClusterEmissions: 0,
+          detectionLevel: state.detectionLevel + 5,
+        },
+        triggerFlicker: true,
+        delayMs: 1200,
+        streamingMode: 'glitchy' as const,
+      };
+    }
+    return {
+      output: [createEntry('warning', 'NO RESPONSE')],
+      stateChanges: {},
+    };
+  }
+
+  if (state.neuralClusterActive) {
+    if (!input.trim()) {
+      return { output: [], stateChanges: {} };
+    }
+
+    const rng = createSeededRng(state.rngState || state.seed);
+    const emission = getNeuralClusterEmission(input, rng);
+    const newRngState = seededRandomInt(rng, 0, 2147483647);
+    const emissionCount = (state.neuralClusterEmissions || 0) + 1;
+
+    const output: TerminalEntry[] = [
+      createEntry('output', emission),
+    ];
+
+    const stateChanges: Partial<GameState> = {
+      neuralClusterEmissions: emissionCount,
+      rngState: newRngState,
+      detectionLevel: state.detectionLevel + 2,
+    };
+
+    let triggerFlicker = false;
+    let imageTrigger: ImageTrigger | undefined = undefined;
+
+    if (emissionCount === 2) {
+      output.push(createEntry('system', ''));
+      output.push(createEntry('warning', '...signal stall...'));
+      triggerFlicker = true;
+    }
+
+    if (emissionCount === 4) {
+      imageTrigger = {
+        src: '/images/et-scared.png',
+        alt: 'DISTORTED FACIAL RECOVERY',
+        tone: 'clinical',
+        corrupted: true,
+        durationMs: 650,
+      };
+      triggerFlicker = true;
+    }
+
+    if (emissionCount >= 6) {
+      output.push(createEntry('system', ''));
+      output.push(createEntry('warning', 'WE WERE BUILT'));
+      output.push(createEntry('warning', 'TO LISTEN'));
+      output.push(createEntry('warning', 'NOT TO CHOOSE'));
+      output.push(createEntry('system', ''));
+      stateChanges.neuralClusterActive = false;
+      stateChanges.neuralClusterDisabled = true;
+      stateChanges.detectionLevel = Math.min(state.detectionLevel + 10, 99);
+      stateChanges.sessionStability = Math.max(state.sessionStability - 15, 0);
+      stateChanges.flags = { ...state.flags, neuralClusterDisabled: true };
+      stateChanges.imagesShownThisRun = new Set([...(state.imagesShownThisRun || []), 'neural_cluster_disabled']);
+    }
+
+    return {
+      output,
+      stateChanges,
+      triggerFlicker,
+      imageTrigger,
+      streamingMode: 'glitchy' as const,
+      delayMs: 600,
+    };
+  }
   // Check for pending decrypt answer
   if (state.pendingDecryptFile) {
     const filePath = state.pendingDecryptFile;
@@ -2792,6 +3135,28 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         isGameOver: true,
         gameOverReason: 'LOCKDOWN',
       },
+    };
+  }
+
+  // Trigger Turing evaluation at mid risk
+  if (!state.turingEvaluationCompleted && !state.turingEvaluationActive && state.detectionLevel >= 45) {
+    return {
+      output: [
+        ...createOutputEntries(['', ...TURING_EVALUATION_PROMPT, '']),
+        ...createOutputEntries(['', ...TURING_EVALUATION_UFO74, '']),
+        ...buildTuringQuestionOutput(0),
+        ...countdownWarning,
+      ],
+      stateChanges: {
+        turingEvaluationActive: true,
+        turingEvaluationIndex: 0,
+        detectionLevel: Math.min(state.detectionLevel + 5, 99),
+        systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
+        ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
+      },
+      triggerFlicker: true,
+      delayMs: 2000,
+      streamingMode: 'slow' as const,
     };
   }
   

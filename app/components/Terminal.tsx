@@ -44,6 +44,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const skipStreamingRef = useRef(false);
+  const lastHistoryCount = useRef(0);
   
   // Scroll to bottom when history changes
   useEffect(() => {
@@ -51,6 +52,17 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
   }, [gameState.history]);
+
+  // Keep input focused when new output arrives
+  useEffect(() => {
+    const historyCount = gameState.history.length;
+    if (historyCount !== lastHistoryCount.current) {
+      lastHistoryCount.current = historyCount;
+      if (!isProcessing && !isStreaming && !gameState.isGameOver) {
+        setTimeout(() => inputRef.current?.focus(), 0);
+      }
+    }
+  }, [gameState.history, isProcessing, isStreaming, gameState.isGameOver]);
   
   // Focus input on mount
   useEffect(() => {
@@ -288,8 +300,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       return;
     }
     
-    // Focus input after processing
-    inputRef.current?.focus();
+    // Focus input after processing (defer to allow input to re-enable)
+    setTimeout(() => inputRef.current?.focus(), 0);
   }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput]);
   
   // Get auto-complete suggestions
@@ -586,6 +598,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           alt={activeImage.alt}
           tone={activeImage.tone}
           corrupted={activeImage.corrupted}
+          durationMs={activeImage.durationMs}
           onCloseAction={() => {
             setActiveImage(null);
             inputRef.current?.focus();
