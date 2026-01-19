@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import VideoOverlay from '../VideoOverlay';
 
 describe('VideoOverlay', () => {
@@ -24,7 +24,9 @@ describe('VideoOverlay', () => {
     render(<VideoOverlay {...defaultProps} />);
     
     // Fast-forward through initial animation
-    vi.advanceTimersByTime(200);
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
     
     expect(screen.getByText(/RECOVERED VIDEO DATA/)).toBeInTheDocument();
     expect(screen.getByText(/TEST_VIDEO.VID/)).toBeInTheDocument();
@@ -33,7 +35,9 @@ describe('VideoOverlay', () => {
   it('displays corrupted header when corrupted prop is true', async () => {
     render(<VideoOverlay {...defaultProps} corrupted={true} />);
     
-    vi.advanceTimersByTime(200);
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
     
     expect(screen.getByText(/PARTIAL VIDEO RECOVERY/)).toBeInTheDocument();
   });
@@ -42,7 +46,9 @@ describe('VideoOverlay', () => {
     render(<VideoOverlay {...defaultProps} />);
     
     // Fast-forward through initial animation to make video visible
-    vi.advanceTimersByTime(200);
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
     
     // Wait for the visible state to become true
     await vi.waitFor(() => {
@@ -55,7 +61,9 @@ describe('VideoOverlay', () => {
   it('calls onCloseAction when escape key is pressed', async () => {
     render(<VideoOverlay {...defaultProps} />);
     
-    fireEvent.keyDown(window, { key: 'Escape' });
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
     
     expect(defaultProps.onCloseAction).toHaveBeenCalledTimes(1);
   });
@@ -63,7 +71,9 @@ describe('VideoOverlay', () => {
   it('renders play/pause button', async () => {
     render(<VideoOverlay {...defaultProps} />);
     
-    vi.advanceTimersByTime(200);
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
     
     const playButton = screen.getByRole('button', { name: /play/i });
     expect(playButton).toBeInTheDocument();
@@ -72,7 +82,9 @@ describe('VideoOverlay', () => {
   it('displays keyboard shortcuts hint', async () => {
     render(<VideoOverlay {...defaultProps} />);
     
-    vi.advanceTimersByTime(200);
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
     
     expect(screen.getByText(/SPACE.*Play\/Pause.*ESC.*Close/)).toBeInTheDocument();
   });
@@ -80,7 +92,9 @@ describe('VideoOverlay', () => {
   it('applies clinical tone class correctly', async () => {
     render(<VideoOverlay {...defaultProps} tone="clinical" />);
     
-    vi.advanceTimersByTime(200);
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
     
     const container = document.querySelector('[class*="greenGlow"]');
     expect(container).toBeInTheDocument();
@@ -89,7 +103,9 @@ describe('VideoOverlay', () => {
   it('applies surveillance tone class correctly', async () => {
     render(<VideoOverlay {...defaultProps} tone="surveillance" />);
     
-    vi.advanceTimersByTime(200);
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
     
     const container = document.querySelector('[class*="amberGlow"]');
     expect(container).toBeInTheDocument();
@@ -98,7 +114,9 @@ describe('VideoOverlay', () => {
   it('displays time as 00:00 / 00:00 initially', async () => {
     render(<VideoOverlay {...defaultProps} />);
     
-    vi.advanceTimersByTime(200);
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
     
     expect(screen.getByText('00:00 / 00:00')).toBeInTheDocument();
   });
@@ -111,7 +129,9 @@ describe('VideoOverlay', () => {
     expect(overlay).toBeInTheDocument();
     
     // Click directly on the overlay (not on a child)
-    fireEvent.click(overlay!);
+    act(() => {
+      fireEvent.click(overlay!);
+    });
     
     expect(defaultProps.onCloseAction).toHaveBeenCalled();
   });

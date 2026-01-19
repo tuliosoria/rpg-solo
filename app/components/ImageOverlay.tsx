@@ -9,9 +9,10 @@ interface ImageOverlayProps {
   tone: 'clinical' | 'surveillance';
   onCloseAction: () => void;
   corrupted?: boolean;
+  durationMs?: number;
 }
 
-export default function ImageOverlay({ src, alt, tone, onCloseAction, corrupted = false }: ImageOverlayProps) {
+export default function ImageOverlay({ src, alt, tone, onCloseAction, corrupted = false, durationMs = 8000 }: ImageOverlayProps) {
   const [visible, setVisible] = useState(false);
   const [flickering, setFlickering] = useState(true);
   const [initialShock, setInitialShock] = useState(true);
@@ -37,10 +38,10 @@ export default function ImageOverlay({ src, alt, tone, onCloseAction, corrupted 
       }
     }, 1500);
     
-    // Auto-close after 8 seconds for shock effect
+    // Auto-close after duration for shock effect
     const autoClose = setTimeout(() => {
       onCloseAction();
-    }, 8000);
+    }, durationMs);
     
     return () => {
       clearTimeout(shockTimeout);
@@ -48,7 +49,7 @@ export default function ImageOverlay({ src, alt, tone, onCloseAction, corrupted 
       clearInterval(flickerInterval);
       clearTimeout(autoClose);
     };
-  }, [onCloseAction]);
+  }, [onCloseAction, durationMs]);
   
   // Close on escape key
   useEffect(() => {

@@ -9,6 +9,7 @@ export interface ImageTrigger {
   alt: string;
   tone: ImageTone;
   corrupted?: boolean;
+  durationMs?: number;
 }
 
 export interface VideoTrigger {
@@ -112,6 +113,12 @@ export interface GameState {
   // Decrypt challenge state
   pendingDecryptFile?: string; // File awaiting security answer
   
+  // Neural cluster echo state
+  neuralClusterUnlocked: boolean;
+  neuralClusterActive: boolean;
+  neuralClusterEmissions: number;
+  neuralClusterDisabled: boolean;
+  
   // Incognito hacker messages
   incognitoMessageCount: number;
   lastIncognitoTrigger: number; // Timestamp of last message
@@ -196,6 +203,10 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   prisoner45UsedResponses: new Set(),
   scoutLinkUsedResponses: new Set(),
   pendingDecryptFile: undefined,
+  neuralClusterUnlocked: false,
+  neuralClusterActive: false,
+  neuralClusterEmissions: 0,
+  neuralClusterDisabled: false,
   incognitoMessageCount: 0,
   lastIncognitoTrigger: 0,
   singularEventsTriggered: new Set(),

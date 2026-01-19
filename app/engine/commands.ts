@@ -23,6 +23,95 @@ import { createSeededRng, seededRandomInt, seededRandomPick } from './rng';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 
 // ═══════════════════════════════════════════════════════════════════════════
+// NEURAL CLUSTER ECHO - Residual perceptual emissions (hidden mode)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const NEURAL_CLUSTER_MEMORY_POOL: Record<string, string[]> = {
+  void: [
+    'black static',
+    'pressure without edge',
+    'distance folding inward',
+    'cold metallic air',
+    'silence measured in pulses',
+  ],
+  light: [
+    'green afterimage',
+    'flicker behind the eyelid',
+    'thin beam fracture',
+    'glow on wet surface',
+    'flash of unfamiliar geometry',
+  ],
+  motion: [
+    'limb-memory twitch',
+    'hinged movement',
+    'skitter across stone',
+    'gravity pulling sideways',
+    'dragging along a corridor',
+  ],
+  sound: [
+    'dull harmonic',
+    'bone resonance',
+    'low siren haze',
+    'static braid',
+    'subsonic pressure',
+  ],
+  touch: [
+    'wet grit',
+    'needle heat',
+    'film over skin',
+    'elastic restraint',
+    'cool surface imprint',
+  ],
+  fear: [
+    'signal collapse',
+    'threat without source',
+    'containment seal closing',
+    'breath stalled',
+    'pattern dissolving',
+  ],
+  body: [
+    'organ cadence',
+    'joint pressure',
+    'tissue memory',
+    'muscle echo',
+    'cranial vibration',
+  ],
+  memory: [
+    'corridor of glass',
+    'grid of white light',
+    'metal table glare',
+    'hands without skin',
+    'echo of restraint',
+  ],
+};
+
+const NEURAL_CLUSTER_KEYWORDS: Record<string, string[]> = {
+  light: ['light', 'glow', 'bright', 'flash', 'shine', 'white', 'green'],
+  motion: ['move', 'motion', 'walk', 'run', 'crawl', 'drift', 'turn', 'fall'],
+  sound: ['sound', 'noise', 'voice', 'hear', 'ring', 'tone', 'hum', 'whisper'],
+  touch: ['touch', 'feel', 'skin', 'cold', 'heat', 'warm', 'pain', 'pressure'],
+  fear: ['fear', 'scared', 'terror', 'danger', 'threat', 'panic'],
+  body: ['body', 'blood', 'bone', 'heart', 'breath', 'pulse', 'nerve'],
+  memory: ['memory', 'remember', 'dream', 'thought', 'image', 'vision'],
+};
+
+function getNeuralClusterEmission(input: string, rng: () => number): string {
+  const normalized = input.toLowerCase();
+  let category = 'void';
+
+  for (const [key, keywords] of Object.entries(NEURAL_CLUSTER_KEYWORDS)) {
+    if (keywords.some(keyword => normalized.includes(keyword))) {
+      category = key;
+      break;
+    }
+  }
+
+  const pool = NEURAL_CLUSTER_MEMORY_POOL[category] || NEURAL_CLUSTER_MEMORY_POOL.void;
+  return seededRandomPick(rng, pool);
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════
 // SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -571,6 +660,10 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
   // Special handling: Decrypting neural dump unlocks scout link
   if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
     stateChanges.flags = { ...state.flags, scoutLinkUnlocked: true };
+  }
+
+  if (filePath.includes('neural_cluster_experiment')) {
+    stateChanges.neuralClusterUnlocked = true;
   }
   
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
@@ -1792,6 +1885,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
     }
     
+    if (filePath.includes('neural_cluster_experiment')) {
+      stateChanges.neuralClusterUnlocked = true;
+    }
+
     // Track content category based on file path
     const categoriesRead = new Set(state.categoriesRead || []);
     if (filePath.startsWith('/ops/')) categoriesRead.add('military');
@@ -2711,6 +2808,111 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     state = { ...state, sessionDoomCountdown: newCountdown };
   }
   
+  // Hidden neural cluster mode - undocumented command
+  if (input.trim().toLowerCase() === 'echo neural_cluster') {
+    if (state.neuralClusterDisabled) {
+      return {
+        output: [createEntry('warning', 'NO RESPONSE')],
+        stateChanges: {},
+      };
+    }
+
+    if (!state.neuralClusterUnlocked) {
+      return {
+        output: [createEntry('warning', 'UNKNOWN SIGNAL')],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 2,
+        },
+      };
+    }
+
+    if (!state.neuralClusterActive) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('warning', '▓▓▓ FRAGILE INTERFACE ACTIVE ▓▓▓'),
+          createEntry('warning', 'STABILITY WINDOW: LIMITED'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          neuralClusterActive: true,
+          neuralClusterEmissions: 0,
+          detectionLevel: state.detectionLevel + 5,
+        },
+        triggerFlicker: true,
+        delayMs: 1200,
+        streamingMode: 'glitchy' as const,
+      };
+    }
+    return {
+      output: [createEntry('warning', 'NO RESPONSE')],
+      stateChanges: {},
+    };
+  }
+
+  if (state.neuralClusterActive) {
+    if (!input.trim()) {
+      return { output: [], stateChanges: {} };
+    }
+
+    const rng = createSeededRng(state.rngState || state.seed);
+    const emission = getNeuralClusterEmission(input, rng);
+    const newRngState = seededRandomInt(rng, 0, 2147483647);
+    const emissionCount = (state.neuralClusterEmissions || 0) + 1;
+
+    const output: TerminalEntry[] = [
+      createEntry('output', emission),
+    ];
+
+    const stateChanges: Partial<GameState> = {
+      neuralClusterEmissions: emissionCount,
+      rngState: newRngState,
+      detectionLevel: state.detectionLevel + 2,
+    };
+
+    let triggerFlicker = false;
+    let imageTrigger: ImageTrigger | undefined = undefined;
+
+    if (emissionCount === 2) {
+      output.push(createEntry('system', ''));
+      output.push(createEntry('warning', '...signal stall...'));
+      triggerFlicker = true;
+    }
+
+    if (emissionCount === 4) {
+      imageTrigger = {
+        src: '/images/et-scared.png',
+        alt: 'DISTORTED FACIAL RECOVERY',
+        tone: 'clinical',
+        corrupted: true,
+        durationMs: 650,
+      };
+      triggerFlicker = true;
+    }
+
+    if (emissionCount >= 6) {
+      output.push(createEntry('system', ''));
+      output.push(createEntry('warning', 'WE WERE BUILT'));
+      output.push(createEntry('warning', 'TO LISTEN'));
+      output.push(createEntry('warning', 'NOT TO CHOOSE'));
+      output.push(createEntry('system', ''));
+      stateChanges.neuralClusterActive = false;
+      stateChanges.neuralClusterDisabled = true;
+      stateChanges.detectionLevel = Math.min(state.detectionLevel + 10, 99);
+      stateChanges.sessionStability = Math.max(state.sessionStability - 15, 0);
+      stateChanges.flags = { ...state.flags, neuralClusterDisabled: true };
+      stateChanges.imagesShownThisRun = new Set([...(state.imagesShownThisRun || []), 'neural_cluster_disabled']);
+    }
+
+    return {
+      output,
+      stateChanges,
+      triggerFlicker,
+      imageTrigger,
+      streamingMode: 'glitchy' as const,
+      delayMs: 600,
+    };
+  }
   // Check for pending decrypt answer
   if (state.pendingDecryptFile) {
     const filePath = state.pendingDecryptFile;
