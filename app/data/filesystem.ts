@@ -2373,6 +2373,8 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'regional_summary_jan96.txt': regional_summary_jan96,
           },
         },
+        // Hidden neural cluster memo, only visible after override
+        'neural_cluster_memo.txt': require('./neuralClusterMemo').default,
       },
     },
     admin: {
