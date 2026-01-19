@@ -155,6 +155,16 @@ export interface GameState {
   // Tutorial state (UFO74 intro messages)
   tutorialStep: number; // -1 = complete, 0+ = current message index
   tutorialComplete: boolean;
+  
+  // Evidence collection & ICQ phase
+  evidencesSaved: boolean; // True after running save script
+  icqPhase: boolean; // True when in ICQ chat mode
+  icqMessages: { sender: 'player' | 'teen'; text: string }[]; // Chat history
+  mathQuestionsAnswered: number; // 0-3, how many equations solved
+  currentMathQuestion: number; // Current equation index
+  mathQuestionWrong: number; // Wrong attempts on current question
+  filesSent: boolean; // True after convincing teenager
+  gameWon: boolean; // True on victory
 }
 
 export interface SaveSlot {
@@ -229,4 +239,12 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   lastDirectoriesVisited: [],
   tutorialStep: 0,
   tutorialComplete: false,
+  evidencesSaved: false,
+  icqPhase: false,
+  icqMessages: [],
+  mathQuestionsAnswered: 0,
+  currentMathQuestion: 0,
+  mathQuestionWrong: 0,
+  filesSent: false,
+  gameWon: false,
 };

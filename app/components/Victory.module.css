@@ -1,0 +1,138 @@
+/* Victory Screen Styles */
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  color: #00ff00;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+.introContent {
+  text-align: center;
+}
+
+.introTitle {
+  font-size: 60px;
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { 
+    opacity: 1;
+    text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+  }
+  50% { 
+    opacity: 0.8;
+    text-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700;
+  }
+}
+
+.messageContent {
+  max-width: 650px;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.divider {
+  color: #00aa00;
+  margin: 5px 0;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 10px #ffd700;
+  margin: 10px 0;
+}
+
+.textLine {
+  color: #00ff00;
+  margin: 3px 0;
+  line-height: 1.6;
+}
+
+.ufoLine {
+  color: #00ffaa;
+  margin: 3px 0;
+  font-style: italic;
+}
+
+.systemLine {
+  color: #00aaaa;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.credits {
+  position: fixed;
+  bottom: 40px;
+  text-align: center;
+}
+
+.restartButton {
+  background: transparent;
+  border: 2px solid #00ff00;
+  color: #00ff00;
+  padding: 12px 30px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.restartButton:hover {
+  background: #00ff00;
+  color: #000;
+  box-shadow: 0 0 15px #00ff00;
+}
+
+.creditText {
+  color: #006600;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+/* Scrollbar */
+.messageContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messageContent::-webkit-scrollbar-track {
+  background: #001a00;
+}
+
+.messageContent::-webkit-scrollbar-thumb {
+  background: #003300;
+  border-radius: 4px;
+}
