@@ -1681,6 +1681,34 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
 
+  // Cheat command: "win the game" — immediately set victory/evidence state and start ICQ phase
+  win: (args, state) => {
+    const phrase = args.join(' ').toLowerCase();
+    if (phrase !== 'the game') {
+      return {
+        output: [createEntry('error', 'ERROR: Unknown command')],
+        stateChanges: {},
+      };
+    }
+
+    const truths = new Set(state.truthsDiscovered || []);
+    for (const t of TRUTH_CATEGORIES) truths.add(t as string);
+
+    return {
+      output: [
+        createEntry('system', 'CHEAT ENABLED: Victory state activated'),
+        createEntry('system', 'All evidence flags set. Preparing ICQ transfer...'),
+      ],
+      stateChanges: {
+        truthsDiscovered: truths,
+        evidencesSaved: true,
+        flags: { ...state.flags, nearVictory: true },
+        icqPhase: true,
+        icqMessages: [],
+      },
+    };
+  },
+
   cd: (args, state) => {
     if (args.length === 0) {
       return {
