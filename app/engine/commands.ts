@@ -194,7 +194,9 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     trigger: (state, command, args) => {
       if (state.singularEventsTriggered?.has('the_echo')) return false;
       if (command !== 'open' && command !== 'decrypt') return false;
-      const path = args[0]?.toLowerCase() || '';
+      // Accept filename with or without angle brackets
+      let path = args[0]?.toLowerCase() || '';
+      path = path.replace(/^<|>$/g, '').replace(/^"|"$/g, '').replace(/^'|'$/g, '').trim();
       return (path.includes('psi') || path.includes('transcript')) && state.detectionLevel >= 40;
     },
     execute: (state) => ({
@@ -224,7 +226,9 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     trigger: (state, command, args) => {
       if (state.singularEventsTriggered?.has('the_silence')) return false;
       if (command !== 'cd' && command !== 'ls') return false;
-      const path = args[0]?.toLowerCase() || state.currentPath.toLowerCase();
+      // Accept filename with or without angle brackets
+      let path = args[0]?.toLowerCase() || state.currentPath.toLowerCase();
+      path = path.replace(/^<|>$/g, '').replace(/^"|"$/g, '').replace(/^'|'$/g, '').trim();
       return path.includes('admin') && state.detectionLevel >= 60 && state.flags.adminUnlocked;
     },
     execute: (state) => ({
@@ -443,10 +447,15 @@ function getWanderingNotice(level: number): TerminalEntry[] {
       createEntry('output', 'UFO74: ok, im gonna spell it out:'),
       createEntry('output', ''),
       createEntry('output', '       1. GO TO a directory (cd storage, cd ops, etc)'),
-      createEntry('output', '       2. LIST the files (ls)'),
+      createEntry('output', '       2. LIST the files in a folder (ls)'),
       createEntry('output', '       3. OPEN them (open filename.txt)'),
       createEntry('output', '       4. READ what they say'),
       createEntry('output', '       5. LOOK for connections between files'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: You can move between folders using the cd command.'),
+      createEntry('output', '       Use cd <foldername> to enter a folder.'),
+      createEntry('output', '       Use cd .. to go back to the previous folder.'),
+      createEntry('output', '       Try ls to see what is inside the current folder.'),
       createEntry('output', ''),
       createEntry('output', 'UFO74: theres something huge hidden in there.'),
       createEntry('output', '       they covered up something in january 96.'),
@@ -1831,11 +1840,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     lines.push('');
     
+    const outputEntries = createOutputEntries(lines);
+
+    // If this is the player's first time using ls, provide a short navigation tip
+    const stateChanges: Partial<GameState> = { detectionLevel: state.detectionLevel + 2 };
+    if (!state.flags?.seenLs) {
+      outputEntries.push(createEntry('system', ''));
+      outputEntries.push(createEntry('system', 'TIP: Use cd <foldername> to enter a folder, then run ls to inspect its contents.'));
+      outputEntries.push(createEntry('system', 'Example: cd comms then ls again to explore the content of the comms folder'));
+      stateChanges.flags = { ...state.flags, seenLs: true };
+    }
+
     return {
-      output: createOutputEntries(lines),
-      stateChanges: {
-        detectionLevel: state.detectionLevel + 2,
-      },
+      output: outputEntries,
+      stateChanges,
       delayMs: calculateDelay(state),
     };
   },
@@ -1843,7 +1861,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   cd: (args, state) => {
     if (args.length === 0) {
       return {
-        output: [createEntry('error', 'ERROR: Specify directory')],
+        output: [
+          createEntry('error', 'ERROR: Specify directory'),
+          createEntry('system', 'Try cd <foldername> to enter a folder.'),
+          createEntry('system', '       Use cd .. to go back.'),
+          createEntry('system', '       Try ls to see what is inside the current folder.'),
+        ],
         stateChanges: {},
       };
     }
@@ -1853,7 +1876,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (!node) {
       return {
-        output: [createEntry('error', `ERROR: Directory not found: ${args[0]}`)],
+        output: [
+          createEntry('error', `ERROR: Directory not found: ${args[0]}`),
+          createEntry('system', 'Try ls to see available folders.'),
+          createEntry('system', '       Use cd <foldername> to move.'),
+        ],
         stateChanges: {
           detectionLevel: state.detectionLevel + 3,
         },
@@ -1862,7 +1889,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (node.type !== 'dir') {
       return {
-        output: [createEntry('error', `ERROR: Not a directory: ${args[0]}`)],
+        output: [
+          createEntry('error', `ERROR: Not a directory: ${args[0]}`),
+          createEntry('system', 'Try ls to see available folders.'),
+        ],
         stateChanges: {},
       };
     }
@@ -1879,7 +1909,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   open: (args, state) => {
     if (args.length === 0) {
       return {
-        output: [createEntry('error', 'ERROR: Specify file')],
+        output: [
+          createEntry('error', 'ERROR: Specify file'),
+          createEntry('system', 'Try open <filename> to read a file.'),
+          createEntry('system', 'Try ls to see available files in this folder.'),
+        ],
         stateChanges: {},
       };
     }
@@ -1888,8 +1922,15 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const access = canAccessFile(filePath, state);
     
     if (!access.accessible) {
+      const outputs = [createEntry('error', `ERROR: ${access.reason}`)];
+      if (access.reason && access.reason.toLowerCase().includes('not found')) {
+        outputs.push(createEntry('system', 'Try ls to list files in the current folder.'));
+      } else if (access.reason && access.reason.toLowerCase().includes('denied')) {
+        outputs.push(createEntry('system', 'Try checking access level or use override protocol <CODE> if appropriate.'));
+      }
+
       return {
-        output: [createEntry('error', `ERROR: ${access.reason}`)],
+        output: outputs,
         stateChanges: {
           detectionLevel: state.detectionLevel + 5,
           legacyAlertCounter: state.legacyAlertCounter + 1,
@@ -1901,7 +1942,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const node = getNode(filePath, state);
     if (!node || node.type !== 'file') {
       return {
-        output: [createEntry('error', 'ERROR: File not found')],
+        output: [
+          createEntry('error', 'ERROR: File not found'),
+          createEntry('system', 'Try ls to list files in the current folder.'),
+        ],
         stateChanges: {},
       };
     }
@@ -1946,9 +1990,24 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     // Check for reveals - ONLY if file is not encrypted or has been decrypted
     let notices: ReturnType<typeof createEntry>[] = [];
+    let ufo74Comment: ReturnType<typeof createEntry>[] = [];
     if (!isEncryptedAndLocked) {
       const reveals = getFileReveals(filePath);
-      notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
+      // Only release one evidence per document read
+      let newReveal: string | undefined = undefined;
+      for (const r of reveals) {
+        if (TRUTH_CATEGORIES.includes(r as TruthCategory) && !state.truthsDiscovered.has(r)) {
+          newReveal = r;
+          break;
+        }
+      }
+      const revealArr = newReveal ? [newReveal] : [];
+      notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, revealArr);
+      // UFO74 must comment immediately after evidence is released
+      if (notices.length > 0) {
+        // Use UFO74 notice explanation for the released evidence
+        ufo74Comment = getUFO74NoticeExplanation(notices) || [];
+      }
     }
     
     if (filePath.includes('neural_cluster_experiment')) {
@@ -1977,6 +2036,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       ...createOutputEntries(['', `FILE: ${filePath}`, '']),
       ...createOutputEntries(content),
       ...notices,
+      ...ufo74Comment,
     ];
     
     // Check for image trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
@@ -2045,7 +2105,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (!node || node.type !== 'file') {
       return {
-        output: [createEntry('error', 'ERROR: File not found')],
+        output: [
+          createEntry('error', 'ERROR: File not found'),
+          createEntry('system', 'Try ls to list files in the current folder.'),
+        ],
         stateChanges: {},
       };
     }
@@ -2119,7 +2182,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (!node || node.type !== 'file') {
       return {
-        output: [createEntry('error', 'ERROR: File not found')],
+        output: [
+          createEntry('error', 'ERROR: File not found'),
+          createEntry('system', 'Try ls to list files in the current folder.'),
+        ],
         stateChanges: {},
       };
     }
@@ -2224,7 +2290,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('warning', 'Protocol override requires authentication code.'),
           createEntry('warning', 'Usage: override protocol <CODE>'),
           createEntry('system', ''),
-          createEntry('system', 'Hint: Someone in this system might know the code...'),
+          createEntry('system', 'Someone in this system might know the code...'),
         ],
         stateChanges: {
           detectionLevel: state.detectionLevel + 5,
@@ -2517,7 +2583,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'ACCESS DENIED'),
           createEntry('error', 'NO VALID NEURAL PATTERN LOADED'),
           createEntry('system', ''),
-          createEntry('system', 'Hint: Access requires prior neural capture decryption.'),
+          createEntry('system', 'Access requires prior neural capture decryption.'),
           createEntry('system', '      Check quarantine storage for .psi files.'),
           createEntry('system', ''),
         ],
@@ -3109,7 +3175,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
               createEntry('error', 'AUTHENTICATION FAILED'),
               createEntry('warning', `WARNING: Invalid attempts: ${newAlertCounter}/8`),
               createEntry('system', ''),
-              createEntry('system', `HINT: ${file.securityQuestion.hint}`),
+              createEntry('system', `NOTE: ${file.securityQuestion.hint}`),
               createEntry('system', ''),
               createEntry('system', 'Enter answer or type "cancel" to abort:'),
             ],
@@ -3177,8 +3243,9 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     // Increment legacy alert counter for invalid commands
     const newAlertCounter = state.legacyAlertCounter + 1;
     
-    // Check if this triggers game over
-    if (newAlertCounter >= 8) {
+    // Check if this triggers game over (threshold increased to 11)
+    const INVALID_ATTEMPT_THRESHOLD = 11;
+    if (newAlertCounter >= INVALID_ATTEMPT_THRESHOLD) {
       return {
         output: [
           createEntry('error', ''),
@@ -3187,7 +3254,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntry('error', '═══════════════════════════════════════════════════════════'),
           createEntry('error', ''),
           createEntry('error', 'SYSTEM LOCKDOWN INITIATED'),
-          createEntry('error', 'SESSION TERMINATED'),
+          createEntry('error', `SESSION TERMINATED - INVALID ATTEMPTS: ${newAlertCounter}/${INVALID_ATTEMPT_THRESHOLD}`),
           createEntry('error', ''),
         ],
         stateChanges: {
@@ -3202,12 +3269,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     // Provide helpful tips based on what the player might have been trying to do
     const tips = getCommandTip(command, args);
     
-    // Add the invalid attempt warning
+    // Add the invalid attempt warning and show counter
+    const statusMessage = createEntry('warning', `Invalid attempts: ${newAlertCounter} / ${INVALID_ATTEMPT_THRESHOLD}`);
     const warningMessage = createEntry('warning', '');
     const alertMessage = createEntry('warning', 'The system did not flag a critical error, but the invalid-attempt counter was incremented.');
-    
+
     return {
-      output: [...tips, warningMessage, alertMessage],
+      output: [...tips, statusMessage, warningMessage, alertMessage],
       stateChanges: {
         detectionLevel: state.detectionLevel + 1,
         legacyAlertCounter: newAlertCounter,
@@ -3355,12 +3423,10 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   const input = `${command} ${args.join(' ')}`.trim().toLowerCase();
   
   // Check for common navigation attempts
-  if (command === 'dir' || command === 'list' || command === 'show') {
+  if (command === 'dir' || command === 'list' || command === 'show' || (command === 'open' && args.length > 0)) {
     return [
-      createEntry('system', ''),
-      createEntry('system', 'TIP:'),
-      createEntry('system', 'To list directory contents, use: ls'),
-      createEntry('system', ''),
+      createEntry('error', 'ERROR: File not found'),
+      createEntry('system', 'Try ls to list files in the current folder.'),
     ];
   }
   
@@ -3489,6 +3555,7 @@ export const TUTORIAL_MESSAGES: string[][] = [
     'UFO74: the files are scattered across directories.',
     '       use "ls" to see whats there, "cd" to move around,',
     '       and "open" to read files. some are encrypted.',
+    '       Be careful with the level of risk, the more you wander, the higher is the risk.',
   ],
   [
     'UFO74: the longer you stay connected, the more risk.',

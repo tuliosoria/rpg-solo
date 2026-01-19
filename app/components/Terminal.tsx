@@ -40,6 +40,56 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [activeVideo, setActiveVideo] = useState<VideoTrigger | null>(null);
   const [showGameOver, setShowGameOver] = useState(false);
   const [gameOverReason, setGameOverReason] = useState('');
+  // Animation: reveal header after UFO74 evidence prompt
+  const [headerRevealed, setHeaderRevealed] = useState(false);
+  // Animation: reveal risk bar after UFO74 risk warning
+  const [riskBarRevealed, setRiskBarRevealed] = useState(false);
+  // Risk bar animation: animate from full to actual value
+  const [riskBarAnimValue, setRiskBarAnimValue] = useState<number|null>(null);
+    // Reveal header/progress tracker after UFO74 evidence prompt
+    useEffect(() => {
+      // Look for the exact UFO74 evidence prompt in the output history
+      const evidencePromptIndex = gameState.history.findIndex(
+        (entry) =>
+          entry.type === 'output' &&
+          typeof entry.content === 'string' &&
+          entry.content.trim().startsWith('UFO74: i need you to find evidence of 5 things:')
+      );
+      if (evidencePromptIndex !== -1 && !headerRevealed) {
+        // Wait for the ENTER prompt to be shown, then reveal header
+        const enterPromptIndex = gameState.history.findIndex(
+          (entry, idx) =>
+            idx > evidencePromptIndex &&
+            entry.type === 'system' &&
+            typeof entry.content === 'string' &&
+            entry.content.includes('[ press ENTER to continue ]')
+        );
+        if (enterPromptIndex !== -1) {
+          setTimeout(() => setHeaderRevealed(true), 400); // slight delay for effect
+        }
+      }
+    }, [gameState.history, headerRevealed]);
+
+    // Reveal risk bar after UFO74 risk warning
+    useEffect(() => {
+      // Look for the new risk warning phrase
+      const riskPhraseIndex = gameState.history.findIndex(
+        (entry) =>
+          entry.type === 'output' &&
+          typeof entry.content === 'string' &&
+          entry.content.includes('Be careful with the level of risk, the more you wander, the higher is the risk.')
+      );
+      if (riskPhraseIndex !== -1 && !riskBarRevealed) {
+        setTimeout(() => {
+          setRiskBarRevealed(true);
+          // Animate risk bar: start full, then animate to real value
+          setRiskBarAnimValue(100);
+          setTimeout(() => {
+            setRiskBarAnimValue(gameState.detectionLevel);
+          }, 700); // match CSS transition
+        }, 400);
+      }
+    }, [gameState.history, riskBarRevealed, gameState.detectionLevel]);
   
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -510,14 +560,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       {/* Scanlines overlay */}
       <div className={styles.scanlines} />
       
-      {/* Status bar */}
-      <div className={styles.statusBar}>
+      {/* Status bar & Progress tracker (animated reveal) */}
+      <div className={`${styles.statusBar} ${headerRevealed ? styles.headerRevealed : styles.headerHidden}`}>
         <span className={styles.statusLeft}>VARGINHA: TERMINAL 1996</span>
         <span className={styles.statusRight}>{getStatusBar()}</span>
       </div>
-      
-      {/* Progress tracker */}
-      <div className={styles.progressTracker}>
+      <div className={`${styles.progressTracker} ${headerRevealed ? styles.headerRevealed : styles.headerHidden}`}>
         <div className={styles.truthsSection}>
           <span className={styles.trackerLabel}>EVIDENCE:</span>
           <span className={truthStatus.recovered ? styles.truthFound : styles.truthMissing} title="Physical debris/materials recovered">
@@ -533,18 +581,18 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             {truthStatus.involved ? '■' : '□'} FOREIGN
           </span>
           <span className={truthStatus.future ? styles.truthFound : styles.truthMissing} title="Future plans/2026 window">
-            {truthStatus.future ? '■' : '□'} 2026
+            {truthStatus.future ? '■' : '□'} NEXT
           </span>
           <span className={styles.truthCount}>
             [{truthStatus.total}/5]
           </span>
         </div>
-        <div className={styles.riskSection}>
+        <div className={`${styles.riskSection} ${riskBarRevealed ? styles.riskBarRevealed : styles.riskBarHidden}`}>
           <span className={styles.trackerLabel}>RISK:</span>
           <div className={styles.riskBar}>
             <div 
               className={`${styles.riskFill} ${styles[riskInfo.color]}`} 
-              style={{ width: `${gameState.detectionLevel}%` }}
+              style={{ width: `${riskBarAnimValue !== null ? riskBarAnimValue : gameState.detectionLevel}%` }}
             />
           </div>
           <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>

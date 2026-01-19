@@ -1,3 +1,35 @@
+/* Animated risk bar reveal */
+.riskBarHidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-16px) scale(0.98);
+  filter: blur(4px) brightness(0.7);
+  transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1), filter 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+
+.riskBarRevealed {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  filter: blur(0) brightness(1);
+  transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1), filter 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+/* Animated header reveal */
+.headerHidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-32px) scale(0.98);
+  filter: blur(4px) brightness(0.7);
+  transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1), filter 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+
+.headerRevealed {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  filter: blur(0) brightness(1);
+  transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1), filter 0.7s cubic-bezier(0.4,0,0.2,1);
+}
 /* Terminal 1996 - Terminal Component Styles */
 
 .terminal {
@@ -7,8 +39,8 @@
   background: #0a0a0a;
   color: #00ff00;
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 20px;
+  line-height: 1.7;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -62,12 +94,16 @@
 .statusBar {
   display: flex;
   justify-content: space-between;
-  padding: 8px 16px;
-  background: #001a00;
-  border-bottom: 1px solid #003300;
-  color: #00aa00;
-  font-size: 12px;
-  z-index: 2;
+  align-items: center;
+  padding: 16px 32px;
+  background: #002a00;
+  border-bottom: 2px solid #00ff00;
+  color: #00ff00;
+  font-size: 1.3em;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 8px #00ff00, 0 0 2px #00ff00;
+  z-index: 3;
 }
 
 .statusLeft {
@@ -83,12 +119,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
-  background: #001800;
-  border-bottom: 1px solid #00aa00;
-  font-size: 12px;
+  padding: 16px 32px;
+  background: #003800;
+  border-bottom: 2px solid #00ff00;
+  font-size: 1.1em;
+  font-weight: bold;
   z-index: 2;
-  gap: 20px;
+  gap: 32px;
+  box-shadow: 0 2px 12px 0 #00ff0033;
 }
 
 .truthsSection {
@@ -114,12 +152,21 @@
 
 .truthFound {
   color: #00ff00;
-  text-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
+  text-shadow: 0 0 12px #00ff00, 0 0 2px #00ff00;
   font-weight: bold;
+  font-size: 1.1em;
+  border-bottom: 2px solid #00ff00;
+  padding: 0 6px;
+  border-radius: 3px;
 }
 
 .truthMissing {
   color: #336633;
+  background: #001a00;
+  border-bottom: 2px dashed #00ff00;
+  padding: 0 6px;
+  border-radius: 3px;
+  opacity: 0.7;
 }
 
 .truthCount {
@@ -253,9 +300,9 @@
 .inputArea {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 24px 32px;
   background: #001100;
-  border-top: 1px solid #003300;
+  border-top: 2px solid #00ff00;
   z-index: 2;
 }
 
@@ -272,8 +319,9 @@
   outline: none;
   color: #00ff00;
   font-family: inherit;
-  font-size: inherit;
-  caret-color: transparent;
+  font-size: 1.2em;
+  caret-color: #00ff00;
+  padding: 10px 0;
 }
 
 .inputField::placeholder {
