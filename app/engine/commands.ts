@@ -2901,6 +2901,41 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     };
   }
 
+  // Developer/test hack: force victory when player types exact phrase
+  if (normalizedInput === 'win the game') {
+    // Prepare a new truths set containing all categories (unlock evidences only)
+    const newTruths = new Set<string>(state.truthsDiscovered || []);
+    for (const t of TRUTH_CATEGORIES) newTruths.add(t as string);
+
+    // Use a cloned state to generate institutional notices for newly discovered truths
+    const fakeState: GameState = { ...state, truthsDiscovered: newTruths } as GameState;
+    const notices = checkTruthProgress(fakeState, TRUTH_CATEGORIES as string[]);
+
+    // Ask UFO74 to explain the notices (if any)
+    const incognito = getIncognitoMessage(
+      { ...fakeState, incognitoMessageCount: state.incognitoMessageCount || 0, lastIncognitoTrigger: state.lastIncognitoTrigger || 0 } as GameState,
+      undefined,
+      notices,
+      false,
+      false
+    );
+
+    const output: TerminalEntry[] = [createEntry('system', ''), ...notices];
+    if (incognito) output.push(...incognito);
+    output.push(createEntry('system', ''));
+    output.push(createEntry('output', 'All evidences unlocked. UFO74 may have additional commentary.'));
+
+    return {
+      output,
+      stateChanges: {
+        truthsDiscovered: newTruths,
+        flags: { ...state.flags, nearVictory: true },
+      },
+      triggerFlicker: true,
+      delayMs: 1000,
+    };
+  }
+
   // ═══════════════════════════════════════════════════════════════════════════
   // TERRIBLE MISTAKE - Doom countdown check
   // ═══════════════════════════════════════════════════════════════════════════
