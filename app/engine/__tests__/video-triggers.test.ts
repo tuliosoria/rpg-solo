@@ -1,8 +1,9 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
 // Mock filesystem with a test file that has a video trigger
-jest.mock('../../data/filesystem', () => ({
+vi.mock('../../data/filesystem', () => ({
   FILESYSTEM_ROOT: {
     type: 'dir',
     name: '',
@@ -34,18 +35,18 @@ describe('Video Trigger Logic', () => {
     };
   });
 
-  it('tracks shown videos in videosShownThisRun set', () => {
+  it('tracks shown videos in imagesShownThisRun set', () => {
     const result = executeCommand('open test-video-file.mp4', initialState);
 
-    if (result.stateChanges.videosShownThisRun) {
-      expect(result.stateChanges.videosShownThisRun instanceof Set).toBe(true);
+    if (result.stateChanges.imagesShownThisRun) {
+      expect(result.stateChanges.imagesShownThisRun instanceof Set).toBe(true);
     }
   });
 
   it('initializes empty set if not present', () => {
     const result = executeCommand('help', initialState);
     
-    // Help command shouldn't modify videosShownThisRun
-    expect(result.stateChanges.videosShownThisRun).toBeUndefined();
+    // Help command shouldn't modify imagesShownThisRun
+    expect(result.stateChanges.imagesShownThisRun).toBeUndefined();
   });
 });
