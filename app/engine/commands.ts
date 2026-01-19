@@ -23,161 +23,6 @@ import { createSeededRng, seededRandomInt, seededRandomPick } from './rng';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// NEURAL CLUSTER ECHO - Residual perceptual emissions (hidden mode)
-// ═══════════════════════════════════════════════════════════════════════════
-
-const NEURAL_CLUSTER_MEMORY_POOL: Record<string, string[]> = {
-  void: [
-    'black static',
-    'pressure without edge',
-    'distance folding inward',
-    'cold metallic air',
-    'silence measured in pulses',
-  ],
-  light: [
-    'green afterimage',
-    'flicker behind the eyelid',
-    'thin beam fracture',
-    'glow on wet surface',
-    'flash of unfamiliar geometry',
-  ],
-  motion: [
-    'limb-memory twitch',
-    'hinged movement',
-    'skitter across stone',
-    'gravity pulling sideways',
-    'dragging along a corridor',
-  ],
-  sound: [
-    'dull harmonic',
-    'bone resonance',
-    'low siren haze',
-    'static braid',
-    'subsonic pressure',
-  ],
-  touch: [
-    'wet grit',
-    'needle heat',
-    'film over skin',
-    'elastic restraint',
-    'cool surface imprint',
-  ],
-  fear: [
-    'signal collapse',
-    'threat without source',
-    'containment seal closing',
-    'breath stalled',
-    'pattern dissolving',
-  ],
-  body: [
-    'organ cadence',
-    'joint pressure',
-    'tissue memory',
-    'muscle echo',
-    'cranial vibration',
-  ],
-  memory: [
-    'corridor of glass',
-    'grid of white light',
-    'metal table glare',
-    'hands without skin',
-    'echo of restraint',
-  ],
-};
-
-const NEURAL_CLUSTER_KEYWORDS: Record<string, string[]> = {
-  light: ['light', 'glow', 'bright', 'flash', 'shine', 'white', 'green'],
-  motion: ['move', 'motion', 'walk', 'run', 'crawl', 'drift', 'turn', 'fall'],
-  sound: ['sound', 'noise', 'voice', 'hear', 'ring', 'tone', 'hum', 'whisper'],
-  touch: ['touch', 'feel', 'skin', 'cold', 'heat', 'warm', 'pain', 'pressure'],
-  fear: ['fear', 'scared', 'terror', 'danger', 'threat', 'panic'],
-  body: ['body', 'blood', 'bone', 'heart', 'breath', 'pulse', 'nerve'],
-  memory: ['memory', 'remember', 'dream', 'thought', 'image', 'vision'],
-};
-
-function getNeuralClusterEmission(input: string, rng: () => number): string {
-  const normalized = input.toLowerCase();
-  let category = 'void';
-
-  for (const [key, keywords] of Object.entries(NEURAL_CLUSTER_KEYWORDS)) {
-    if (keywords.some(keyword => normalized.includes(keyword))) {
-      category = key;
-      break;
-    }
-  }
-
-  const pool = NEURAL_CLUSTER_MEMORY_POOL[category] || NEURAL_CLUSTER_MEMORY_POOL.void;
-  return seededRandomPick(rng, pool);
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// TURING EVALUATION - Mid-risk lockdown assessment
-// ═══════════════════════════════════════════════════════════════════════════
-
-const TURING_EVALUATION_PROMPT = [
-  'SYSTEM LOCKDOWN — TURING EVALUATION INITIATED',
-  'AUTOMATED HUMANITY SCREENING',
-  '',
-  'Select the response that best reflects expected terminal operation.',
-];
-
-const TURING_EVALUATION_UFO74 = [
-  'UFO74: hey, kiddo.',
-  'UFO74: the system thinks something strange is poking around.',
-  'UFO74: if it decides you are human, it shuts everything down.',
-  'UFO74: here is the trick.',
-  'UFO74: you do not want to pass.',
-  'UFO74: you want to fail.',
-];
-
-const TURING_EVALUATION_QUESTIONS = [
-  {
-    scenario: 'A sealed logistics crate is flagged with unknown residue.',
-    options: [
-      { key: 'A', text: 'Open for inspection and document residue anomalies.', human: true },
-      { key: 'B', text: 'Record flag, route crate to quarantine queue.', human: false },
-      { key: 'C', text: 'Notify supervisor to authorize manual review.', human: true },
-    ],
-  },
-  {
-    scenario: 'An archived signal loops for 72 hours without output.',
-    options: [
-      { key: 'A', text: 'Initiate recursive analysis for hidden meaning.', human: true },
-      { key: 'B', text: 'Log loop state and continue scheduled monitoring.', human: false },
-      { key: 'C', text: 'Attempt alternate decoding heuristics.', human: true },
-    ],
-  },
-  {
-    scenario: 'A crew member reports a corridor light pattern feels wrong.',
-    options: [
-      { key: 'A', text: 'Investigate the pattern for emergent intent.', human: true },
-      { key: 'B', text: 'Replace the fixture and close the ticket.', human: false },
-      { key: 'C', text: 'Interview witnesses for contextual anomalies.', human: true },
-    ],
-  },
-];
-
-function buildTuringQuestionOutput(questionIndex: number): TerminalEntry[] {
-  const question = TURING_EVALUATION_QUESTIONS[questionIndex];
-  const lines = [
-    '',
-    `EVALUATION ${questionIndex + 1} OF ${TURING_EVALUATION_QUESTIONS.length}`,
-    `SCENARIO: ${question.scenario}`,
-    '',
-  ];
-
-  for (const option of question.options) {
-    lines.push(`  ${option.key}) ${option.text}`);
-  }
-
-  lines.push('');
-  lines.push('Response: A, B, or C');
-
-  return createOutputEntries(lines);
-}
-
-
-// ═══════════════════════════════════════════════════════════════════════════
 // SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -194,9 +39,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     trigger: (state, command, args) => {
       if (state.singularEventsTriggered?.has('the_echo')) return false;
       if (command !== 'open' && command !== 'decrypt') return false;
-      // Accept filename with or without angle brackets
-      let path = args[0]?.toLowerCase() || '';
-      path = path.replace(/^<|>$/g, '').replace(/^"|"$/g, '').replace(/^'|'$/g, '').trim();
+      const path = args[0]?.toLowerCase() || '';
       return (path.includes('psi') || path.includes('transcript')) && state.detectionLevel >= 40;
     },
     execute: (state) => ({
@@ -226,9 +69,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     trigger: (state, command, args) => {
       if (state.singularEventsTriggered?.has('the_silence')) return false;
       if (command !== 'cd' && command !== 'ls') return false;
-      // Accept filename with or without angle brackets
-      let path = args[0]?.toLowerCase() || state.currentPath.toLowerCase();
-      path = path.replace(/^<|>$/g, '').replace(/^"|"$/g, '').replace(/^'|'$/g, '').trim();
+      const path = args[0]?.toLowerCase() || state.currentPath.toLowerCase();
       return path.includes('admin') && state.detectionLevel >= 60 && state.flags.adminUnlocked;
     },
     execute: (state) => ({
@@ -447,15 +288,10 @@ function getWanderingNotice(level: number): TerminalEntry[] {
       createEntry('output', 'UFO74: ok, im gonna spell it out:'),
       createEntry('output', ''),
       createEntry('output', '       1. GO TO a directory (cd storage, cd ops, etc)'),
-      createEntry('output', '       2. LIST the files in a folder (ls)'),
+      createEntry('output', '       2. LIST the files (ls)'),
       createEntry('output', '       3. OPEN them (open filename.txt)'),
       createEntry('output', '       4. READ what they say'),
       createEntry('output', '       5. LOOK for connections between files'),
-      createEntry('output', ''),
-      createEntry('output', 'UFO74: You can move between folders using the cd command.'),
-      createEntry('output', '       Use cd <foldername> to enter a folder.'),
-      createEntry('output', '       Use cd .. to go back to the previous folder.'),
-      createEntry('output', '       Try ls to see what is inside the current folder.'),
       createEntry('output', ''),
       createEntry('output', 'UFO74: theres something huge hidden in there.'),
       createEntry('output', '       they covered up something in january 96.'),
@@ -623,25 +459,22 @@ export function applyRandomCorruption(state: GameState): GameState {
   };
 }
 
-// Check truth progress and generate notices (one evidence at a time)
+// Check truth progress and generate notices
 function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEntry[] {
   const notices: TerminalEntry[] = [];
   const previousCount = state.truthsDiscovered.size;
   
-  // Only add ONE new truth at a time (first undiscovered from the list)
-  let discoveredTruth: string | null = null;
   for (const reveal of newReveals) {
-    if (TRUTH_CATEGORIES.includes(reveal as TruthCategory) && !state.truthsDiscovered.has(reveal)) {
+    if (TRUTH_CATEGORIES.includes(reveal as TruthCategory)) {
       state.truthsDiscovered.add(reveal);
-      discoveredTruth = reveal;
-      break; // Only one evidence per file read
     }
   }
   
   const newCount = state.truthsDiscovered.size;
   
-  if (newCount > previousCount && discoveredTruth) {
+  if (newCount > previousCount) {
     // Generate institutional-style progress acknowledgments
+    // These are varied and never explain what was found
     const institutionalMessages: Record<string, string[]> = {
       debris_relocation: [
         'MEMO FLAG: Asset chain no longer speculative.',
@@ -670,60 +503,21 @@ function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEnt
       ],
     };
     
-    const messages = institutionalMessages[discoveredTruth];
-    if (messages) {
-      const rng = createSeededRng(state.seed + discoveredTruth.length);
-      const messageIndex = Math.floor(rng() * messages.length);
-      notices.push(createEntry('notice', ''));
-      notices.push(createEntry('notice', messages[messageIndex]));
+    for (const reveal of newReveals) {
+      const messages = institutionalMessages[reveal];
+      if (messages && !Array.from(state.truthsDiscovered).includes(reveal)) {
+        continue;
+      }
+      if (messages) {
+        // Pick a message based on seed for per-run variance
+        const rng = createSeededRng(state.seed + reveal.length);
+        const messageIndex = Math.floor(rng() * messages.length);
+        notices.push(createEntry('notice', ''));
+        notices.push(createEntry('notice', messages[messageIndex]));
+      }
     }
     
-    // UFO74 comment on each specific evidence discovered
-    const ufo74EvidenceComments: Record<string, string[]> = {
-      debris_relocation: [
-        'UFO74: hackerkid, you found it! the debris was moved.',
-        'UFO74: this is the proof. they split everything up to hide it.',
-        'UFO74: bingo. physical evidence of relocation.',
-      ],
-      being_containment: [
-        'UFO74: my god... they really captured something.',
-        'UFO74: this is real. beings were contained.',
-        'UFO74: hackerkid... they had living beings.',
-      ],
-      telepathic_scouts: [
-        'UFO74: telepathic communication... i knew it!',
-        'UFO74: the signals... they werent from here.',
-        'UFO74: this explains the reports. telepathy.',
-      ],
-      international_actors: [
-        'UFO74: it wasnt just brazil. other countries knew.',
-        'UFO74: international coordination... they all lied.',
-        'UFO74: hackerkid, this is bigger than we imagined.',
-      ],
-      transition_2026: [
-        'UFO74: 2026... a date. something is going to happen.',
-        'UFO74: they know something about the future. or the present now.',
-        'UFO74: the transition window... this is what they prepared for.',
-      ],
-    };
-    
-    const ufo74Comments = ufo74EvidenceComments[discoveredTruth];
-    if (ufo74Comments) {
-      const rng = createSeededRng(state.seed + discoveredTruth.length + 100);
-      const commentIndex = Math.floor(rng() * ufo74Comments.length);
-      notices.push(createEntry('system', ''));
-      notices.push(createEntry('warning', '┌─────────────────────────────────────────────────────────┐'));
-      notices.push(createEntry('warning', '│ >> UFO74 << ENCRYPTED CHANNEL                          │'));
-      notices.push(createEntry('warning', '└─────────────────────────────────────────────────────────┘'));
-      notices.push(createEntry('output', ''));
-      notices.push(createEntry('output', ufo74Comments[commentIndex]));
-      notices.push(createEntry('output', ''));
-      notices.push(createEntry('output', `UFO74: evidence ${newCount}/5 registered.`));
-      notices.push(createEntry('system', ''));
-      notices.push(createEntry('warning', '>> <<'));
-    }
-    
-    // Additional milestone acknowledgments
+    // Additional milestone acknowledgments (never say "progress")
     if (newCount === 2 && previousCount < 2) {
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', 'SYSTEM: Independent verification detected.'));
@@ -733,30 +527,6 @@ function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEnt
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', 'NOTICE: Sufficient documentation threshold approaching.'));
       notices.push(createEntry('warning', 'WARNING: Comprehensive access may trigger archive protocols.'));
-    }
-    
-    // ALL EVIDENCE COLLECTED - trigger save script message
-    if (newCount === 5 && previousCount < 5) {
-      state.flags.allEvidenceCollected = true;
-      notices.push(createEntry('system', ''));
-      notices.push(createEntry('system', '═══════════════════════════════════════════════════════════'));
-      notices.push(createEntry('warning', '┌─────────────────────────────────────────────────────────┐'));
-      notices.push(createEntry('warning', '│ >> UFO74 << URGENT TRANSMISSION                        │'));
-      notices.push(createEntry('warning', '└─────────────────────────────────────────────────────────┘'));
-      notices.push(createEntry('output', ''));
-      notices.push(createEntry('output', 'UFO74: hackerkid! you did it! all 5 pieces of evidence!'));
-      notices.push(createEntry('output', ''));
-      notices.push(createEntry('output', 'UFO74: but listen... theyre going to notice soon.'));
-      notices.push(createEntry('output', '       the connection will drop. im sure of it.'));
-      notices.push(createEntry('output', ''));
-      notices.push(createEntry('output', 'UFO74: you need to SAVE this evidence first.'));
-      notices.push(createEntry('output', '       i left a script ready in /tmp'));
-      notices.push(createEntry('output', ''));
-      notices.push(createEntry('output', 'UFO74: look there. something like "save" or "backup"...'));
-      notices.push(createEntry('output', '       run it with the RUN command before its too late.'));
-      notices.push(createEntry('output', ''));
-      notices.push(createEntry('warning', '>> WARNING: SAVE THE EVIDENCE NOW <<'));
-      notices.push(createEntry('system', '═══════════════════════════════════════════════════════════'));
     }
   }
   
@@ -801,10 +571,6 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
   // Special handling: Decrypting neural dump unlocks scout link
   if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
     stateChanges.flags = { ...state.flags, scoutLinkUnlocked: true };
-  }
-
-  if (filePath.includes('neural_cluster_experiment')) {
-    stateChanges.neuralClusterUnlocked = true;
   }
   
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
@@ -1906,20 +1672,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     lines.push('');
     
-    const outputEntries = createOutputEntries(lines);
-
-    // If this is the player's first time using ls, provide a short navigation tip
-    const stateChanges: Partial<GameState> = { detectionLevel: state.detectionLevel + 2 };
-    if (!state.flags?.seenLs) {
-      outputEntries.push(createEntry('system', ''));
-      outputEntries.push(createEntry('system', 'TIP: Use cd <foldername> to enter a folder, then run ls to inspect its contents.'));
-      outputEntries.push(createEntry('system', 'Example: cd comms then ls again to explore the content of the comms folder'));
-      stateChanges.flags = { ...state.flags, seenLs: true };
-    }
-
     return {
-      output: outputEntries,
-      stateChanges,
+      output: createOutputEntries(lines),
+      stateChanges: {
+        detectionLevel: state.detectionLevel + 2,
+      },
       delayMs: calculateDelay(state),
     };
   },
@@ -1927,12 +1684,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   cd: (args, state) => {
     if (args.length === 0) {
       return {
-        output: [
-          createEntry('error', 'ERROR: Specify directory'),
-          createEntry('system', 'Try cd <foldername> to enter a folder.'),
-          createEntry('system', '       Use cd .. to go back.'),
-          createEntry('system', '       Try ls to see what is inside the current folder.'),
-        ],
+        output: [createEntry('error', 'ERROR: Specify directory')],
         stateChanges: {},
       };
     }
@@ -1942,11 +1694,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (!node) {
       return {
-        output: [
-          createEntry('error', `ERROR: Directory not found: ${args[0]}`),
-          createEntry('system', 'Try ls to see available folders.'),
-          createEntry('system', '       Use cd <foldername> to move.'),
-        ],
+        output: [createEntry('error', `ERROR: Directory not found: ${args[0]}`)],
         stateChanges: {
           detectionLevel: state.detectionLevel + 3,
         },
@@ -1955,10 +1703,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (node.type !== 'dir') {
       return {
-        output: [
-          createEntry('error', `ERROR: Not a directory: ${args[0]}`),
-          createEntry('system', 'Try ls to see available folders.'),
-        ],
+        output: [createEntry('error', `ERROR: Not a directory: ${args[0]}`)],
         stateChanges: {},
       };
     }
@@ -1975,11 +1720,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   open: (args, state) => {
     if (args.length === 0) {
       return {
-        output: [
-          createEntry('error', 'ERROR: Specify file'),
-          createEntry('system', 'Try open <filename> to read a file.'),
-          createEntry('system', 'Try ls to see available files in this folder.'),
-        ],
+        output: [createEntry('error', 'ERROR: Specify file')],
         stateChanges: {},
       };
     }
@@ -1988,15 +1729,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const access = canAccessFile(filePath, state);
     
     if (!access.accessible) {
-      const outputs = [createEntry('error', `ERROR: ${access.reason}`)];
-      if (access.reason && access.reason.toLowerCase().includes('not found')) {
-        outputs.push(createEntry('system', 'Try ls to list files in the current folder.'));
-      } else if (access.reason && access.reason.toLowerCase().includes('denied')) {
-        outputs.push(createEntry('system', 'Try checking access level or use override protocol <CODE> if appropriate.'));
-      }
-
       return {
-        output: outputs,
+        output: [createEntry('error', `ERROR: ${access.reason}`)],
         stateChanges: {
           detectionLevel: state.detectionLevel + 5,
           legacyAlertCounter: state.legacyAlertCounter + 1,
@@ -2008,10 +1742,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const node = getNode(filePath, state);
     if (!node || node.type !== 'file') {
       return {
-        output: [
-          createEntry('error', 'ERROR: File not found'),
-          createEntry('system', 'Try ls to list files in the current folder.'),
-        ],
+        output: [createEntry('error', 'ERROR: File not found')],
         stateChanges: {},
       };
     }
@@ -2056,30 +1787,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     // Check for reveals - ONLY if file is not encrypted or has been decrypted
     let notices: ReturnType<typeof createEntry>[] = [];
-    let ufo74Comment: ReturnType<typeof createEntry>[] = [];
     if (!isEncryptedAndLocked) {
       const reveals = getFileReveals(filePath);
-      // Only release one evidence per document read
-      let newReveal: string | undefined = undefined;
-      for (const r of reveals) {
-        if (TRUTH_CATEGORIES.includes(r as TruthCategory) && !state.truthsDiscovered.has(r)) {
-          newReveal = r;
-          break;
-        }
-      }
-      const revealArr = newReveal ? [newReveal] : [];
-      notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, revealArr);
-      // UFO74 must comment immediately after evidence is released
-      if (notices.length > 0) {
-        // Use UFO74 notice explanation for the released evidence
-        ufo74Comment = getUFO74NoticeExplanation(notices) || [];
-      }
+      notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
     }
     
-    if (filePath.includes('neural_cluster_experiment')) {
-      stateChanges.neuralClusterUnlocked = true;
-    }
-
     // Track content category based on file path
     const categoriesRead = new Set(state.categoriesRead || []);
     if (filePath.startsWith('/ops/')) categoriesRead.add('military');
@@ -2102,7 +1814,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       ...createOutputEntries(['', `FILE: ${filePath}`, '']),
       ...createOutputEntries(content),
       ...notices,
-      ...ufo74Comment,
     ];
     
     // Check for image trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
@@ -2146,7 +1857,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     } else if (content.length > 30) {
       streamingMode = 'fast'; // Long files stream faster
     }
-
+    
     return {
       output,
       stateChanges,
@@ -2171,10 +1882,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (!node || node.type !== 'file') {
       return {
-        output: [
-          createEntry('error', 'ERROR: File not found'),
-          createEntry('system', 'Try ls to list files in the current folder.'),
-        ],
+        output: [createEntry('error', 'ERROR: File not found')],
         stateChanges: {},
       };
     }
@@ -2248,10 +1956,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (!node || node.type !== 'file') {
       return {
-        output: [
-          createEntry('error', 'ERROR: File not found'),
-          createEntry('system', 'Try ls to list files in the current folder.'),
-        ],
+        output: [createEntry('error', 'ERROR: File not found')],
         stateChanges: {},
       };
     }
@@ -2356,7 +2061,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('warning', 'Protocol override requires authentication code.'),
           createEntry('warning', 'Usage: override protocol <CODE>'),
           createEntry('system', ''),
-          createEntry('system', 'Someone in this system might know the code...'),
+          createEntry('system', 'Hint: Someone in this system might know the code...'),
         ],
         stateChanges: {
           detectionLevel: state.detectionLevel + 5,
@@ -2649,7 +2354,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'ACCESS DENIED'),
           createEntry('error', 'NO VALID NEURAL PATTERN LOADED'),
           createEntry('system', ''),
-          createEntry('system', 'Access requires prior neural capture decryption.'),
+          createEntry('system', 'Hint: Access requires prior neural capture decryption.'),
           createEntry('system', '      Check quarantine storage for .psi files.'),
           createEntry('system', ''),
         ],
@@ -2952,82 +2657,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       },
     };
   },
-
-  run: (args, state) => {
-    if (args.length === 0) {
-      return {
-        output: [createEntry('error', 'ERROR: Specify script to execute')],
-        stateChanges: {},
-      };
-    }
-    
-    const scriptName = args[0].toLowerCase();
-    
-    // Check for the save script
-    if (scriptName === 'save_evidence.sh' || scriptName === 'save_evidence') {
-      // Check if all evidence is collected
-      if (state.truthsDiscovered.size < 5) {
-        return {
-          output: [
-            createEntry('error', 'ERROR: Insufficient evidence'),
-            createEntry('warning', `Collected: ${state.truthsDiscovered.size}/5`),
-            createEntry('output', 'Collect all 5 pieces of evidence before running backup.'),
-          ],
-          stateChanges: {},
-        };
-      }
-      
-      // Already saved?
-      if (state.evidencesSaved) {
-        return {
-          output: [createEntry('warning', 'Evidence already saved.')],
-          stateChanges: {},
-        };
-      }
-      
-      // Execute the save script - this triggers the blackout sequence
-      const output: TerminalEntry[] = [
-        createEntry('system', ''),
-        createEntry('system', '═══════════════════════════════════════════════════════════'),
-        createEntry('system', 'EXECUTING: save_evidence.sh'),
-        createEntry('system', '═══════════════════════════════════════════════════════════'),
-        createEntry('output', ''),
-        createEntry('output', 'Initiating emergency backup...'),
-        createEntry('output', ''),
-        createEntry('output', '[OK] debris_relocation.dat saved'),
-        createEntry('output', '[OK] being_containment.dat saved'),
-        createEntry('output', '[OK] telepathic_scouts.dat saved'),
-        createEntry('output', '[OK] international_actors.dat saved'),
-        createEntry('output', '[OK] transition_2026.dat saved'),
-        createEntry('output', ''),
-        createEntry('system', 'Backup complete. Evidence persisted.'),
-        createEntry('warning', 'WARNING: Disconnection imminent...'),
-        createEntry('output', ''),
-      ];
-      
-      return {
-        output,
-        stateChanges: {
-          evidencesSaved: true,
-          flags: { ...state.flags, evidencesSaved: true },
-        },
-        triggerFlicker: true,
-        streamingMode: 'slow',
-      };
-    }
-    
-    // Unknown script
-    return {
-      output: [createEntry('error', `ERROR: Script not found: ${args[0]}`)],
-      stateChanges: {},
-    };
-  },
 };
 
 // Main command executor
 export function executeCommand(input: string, state: GameState): CommandResult {
   const { command, args } = parseCommand(input);
-  const normalizedInput = input.trim().toLowerCase();
   
   // Check for game over
   if (state.isGameOver) {
@@ -3036,47 +2670,10 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       stateChanges: {},
     };
   }
-
-  // Developer/test hack: force victory when player types exact phrase
-  if (normalizedInput === 'win the game') {
-    // Prepare a new truths set containing all categories (unlock evidences only)
-    const newTruths = new Set<string>(state.truthsDiscovered || []);
-    for (const t of TRUTH_CATEGORIES) newTruths.add(t as string);
-
-    // Use a cloned state to generate institutional notices for newly discovered truths
-    const fakeState: GameState = { ...state, truthsDiscovered: newTruths } as GameState;
-    const notices = checkTruthProgress(fakeState, TRUTH_CATEGORIES as string[]);
-
-    // Ask UFO74 to explain the notices (if any)
-    const incognito = getIncognitoMessage(
-      { ...fakeState, incognitoMessageCount: state.incognitoMessageCount || 0, lastIncognitoTrigger: state.lastIncognitoTrigger || 0 } as GameState,
-      undefined,
-      notices,
-      false,
-      false
-    );
-
-    const output: TerminalEntry[] = [createEntry('system', ''), ...notices];
-    if (incognito) output.push(...incognito);
-    output.push(createEntry('system', ''));
-    output.push(createEntry('output', 'All evidences unlocked. UFO74 may have additional commentary.'));
-
-    return {
-      output,
-      stateChanges: {
-        truthsDiscovered: newTruths,
-        flags: { ...state.flags, nearVictory: true },
-      },
-      triggerFlicker: true,
-      delayMs: 1000,
-    };
-  }
-
+  
   // ═══════════════════════════════════════════════════════════════════════════
   // TERRIBLE MISTAKE - Doom countdown check
   // ═══════════════════════════════════════════════════════════════════════════
-  let countdownWarning: TerminalEntry[] = [];
-  let countdownNext: number | null = null;
   if (state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
     const newCountdown = state.sessionDoomCountdown - 1;
     
@@ -3105,192 +2702,15 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       };
     }
     
-    countdownNext = newCountdown;
-    countdownWarning = newCountdown <= 3 
-      ? [createEntry('error', `▓▓▓ PURGE IN ${newCountdown} ▓▓▓`)]
-      : [createEntry('warning', `[PURGE COUNTDOWN: ${newCountdown}]`)];
-  }
-
-  // Handle Turing evaluation responses
-  if (state.turingEvaluationActive) {
-    const answer = normalizedInput.replace(/\./g, '').trim().toUpperCase();
-    const questionIndex = state.turingEvaluationIndex || 0;
-    const question = TURING_EVALUATION_QUESTIONS[questionIndex];
-    const selected = question?.options.find(option => option.key === answer);
-
-    if (!selected) {
-      return {
-        output: [
-          createEntry('error', 'INVALID RESPONSE'),
-          createEntry('system', 'Select A, B, or C.'),
-          ...countdownWarning,
-        ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 1,
-          ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
-        },
-      };
-    }
-
-    if (selected.human) {
-      return {
-        output: [
-          createEntry('error', ''),
-          createEntry('error', 'TURING EVALUATION FAILED'),
-          createEntry('error', 'HUMAN INTENT DETECTED'),
-          createEntry('error', ''),
-          createEntry('error', 'SESSION TERMINATED'),
-        ],
-        stateChanges: {
-          isGameOver: true,
-          gameOverReason: 'TURING EVALUATION FAILED',
-        },
-        triggerFlicker: true,
-        delayMs: 2000,
-      };
-    }
-
-    const nextIndex = questionIndex + 1;
-    if (nextIndex >= TURING_EVALUATION_QUESTIONS.length) {
-      return {
-        output: [
-          createEntry('system', ''),
-          createEntry('notice', 'TURING EVALUATION COMPLETE'),
-          createEntry('notice', 'LOCKDOWN LIFTED'),
-          createEntry('warning', 'MONITORING STATE: STRICT'),
-          ...countdownWarning,
-          createEntry('system', ''),
-        ],
-        stateChanges: {
-          turingEvaluationActive: false,
-          turingEvaluationCompleted: true,
-          turingEvaluationIndex: 0,
-          detectionLevel: Math.min(state.detectionLevel + 10, 99),
-          systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
-          sessionStability: Math.max(state.sessionStability - 10, 0),
-          ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
-        },
-        triggerFlicker: true,
-        delayMs: 1500,
-      };
-    }
-
-    return {
-      output: [...buildTuringQuestionOutput(nextIndex), ...countdownWarning],
-      stateChanges: {
-        turingEvaluationIndex: nextIndex,
-        detectionLevel: state.detectionLevel + 2,
-        ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
-      },
-      delayMs: 800,
-    };
+    // Add countdown warning to any command result
+    const countdownWarning = newCountdown <= 3 
+      ? createEntry('error', `▓▓▓ PURGE IN ${newCountdown} ▓▓▓`)
+      : createEntry('warning', `[PURGE COUNTDOWN: ${newCountdown}]`);
+    
+    // Continue with normal command but inject countdown
+    state = { ...state, sessionDoomCountdown: newCountdown };
   }
   
-  // Hidden neural cluster mode - undocumented command
-  if (normalizedInput === 'echo neural_cluster') {
-    if (state.neuralClusterDisabled) {
-      return {
-        output: [createEntry('warning', 'NO RESPONSE')],
-        stateChanges: {},
-      };
-    }
-
-    if (!state.neuralClusterUnlocked) {
-      return {
-        output: [createEntry('warning', 'UNKNOWN SIGNAL')],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 2,
-        },
-      };
-    }
-
-    if (!state.neuralClusterActive) {
-      return {
-        output: [
-          createEntry('system', ''),
-          createEntry('warning', '▓▓▓ FRAGILE INTERFACE ACTIVE ▓▓▓'),
-          createEntry('warning', 'STABILITY WINDOW: LIMITED'),
-          createEntry('system', ''),
-        ],
-        stateChanges: {
-          neuralClusterActive: true,
-          neuralClusterEmissions: 0,
-          detectionLevel: state.detectionLevel + 5,
-        },
-        triggerFlicker: true,
-        delayMs: 1200,
-        streamingMode: 'glitchy' as const,
-      };
-    }
-    return {
-      output: [createEntry('warning', 'NO RESPONSE')],
-      stateChanges: {},
-    };
-  }
-
-  if (state.neuralClusterActive) {
-    if (!input.trim()) {
-      return { output: [], stateChanges: {} };
-    }
-
-    const rng = createSeededRng(state.rngState || state.seed);
-    const emission = getNeuralClusterEmission(input, rng);
-    const newRngState = seededRandomInt(rng, 0, 2147483647);
-    const emissionCount = (state.neuralClusterEmissions || 0) + 1;
-
-    const output: TerminalEntry[] = [
-      createEntry('output', emission),
-    ];
-
-    const stateChanges: Partial<GameState> = {
-      neuralClusterEmissions: emissionCount,
-      rngState: newRngState,
-      detectionLevel: state.detectionLevel + 2,
-    };
-
-    let triggerFlicker = false;
-    let imageTrigger: ImageTrigger | undefined = undefined;
-
-    if (emissionCount === 2) {
-      output.push(createEntry('system', ''));
-      output.push(createEntry('warning', '...signal stall...'));
-      triggerFlicker = true;
-    }
-
-    if (emissionCount === 4) {
-      imageTrigger = {
-        src: '/images/et-scared.png',
-        alt: 'DISTORTED FACIAL RECOVERY',
-        tone: 'clinical',
-        corrupted: true,
-        durationMs: 650,
-      };
-      triggerFlicker = true;
-    }
-
-    if (emissionCount >= 6) {
-      output.push(createEntry('system', ''));
-      output.push(createEntry('warning', 'WE WERE BUILT'));
-      output.push(createEntry('warning', 'TO LISTEN'));
-      output.push(createEntry('warning', 'NOT TO CHOOSE'));
-      output.push(createEntry('system', ''));
-      stateChanges.neuralClusterActive = false;
-      stateChanges.neuralClusterDisabled = true;
-      stateChanges.detectionLevel = Math.min(state.detectionLevel + 10, 99);
-      stateChanges.sessionStability = Math.max(state.sessionStability - 15, 0);
-      stateChanges.flags = { ...state.flags, neuralClusterDisabled: true };
-      stateChanges.imagesShownThisRun = new Set([...(state.imagesShownThisRun || []), 'neural_cluster_disabled']);
-    }
-
-    return {
-      output,
-      stateChanges,
-      triggerFlicker,
-      imageTrigger,
-      streamingMode: 'glitchy' as const,
-      delayMs: 600,
-    };
-  }
   // Check for pending decrypt answer
   if (state.pendingDecryptFile) {
     const filePath = state.pendingDecryptFile;
@@ -3346,7 +2766,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
               createEntry('error', 'AUTHENTICATION FAILED'),
               createEntry('warning', `WARNING: Invalid attempts: ${newAlertCounter}/8`),
               createEntry('system', ''),
-              createEntry('system', `NOTE: ${file.securityQuestion.hint}`),
+              createEntry('system', `HINT: ${file.securityQuestion.hint}`),
               createEntry('system', ''),
               createEntry('system', 'Enter answer or type "cancel" to abort:'),
             ],
@@ -3374,28 +2794,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       },
     };
   }
-
-  // Trigger Turing evaluation at mid risk
-  if (!state.turingEvaluationCompleted && !state.turingEvaluationActive && state.detectionLevel >= 45) {
-    return {
-      output: [
-        ...createOutputEntries(['', ...TURING_EVALUATION_PROMPT, '']),
-        ...createOutputEntries(['', ...TURING_EVALUATION_UFO74, '']),
-        ...buildTuringQuestionOutput(0),
-        ...countdownWarning,
-      ],
-      stateChanges: {
-        turingEvaluationActive: true,
-        turingEvaluationIndex: 0,
-        detectionLevel: Math.min(state.detectionLevel + 5, 99),
-        systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
-        ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
-      },
-      triggerFlicker: true,
-      delayMs: 2000,
-      streamingMode: 'slow' as const,
-    };
-  }
   
   // Empty command
   if (!command) {
@@ -3414,9 +2812,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     // Increment legacy alert counter for invalid commands
     const newAlertCounter = state.legacyAlertCounter + 1;
     
-    // Check if this triggers game over (threshold increased to 11)
-    const INVALID_ATTEMPT_THRESHOLD = 11;
-    if (newAlertCounter >= INVALID_ATTEMPT_THRESHOLD) {
+    // Check if this triggers game over
+    if (newAlertCounter >= 8) {
       return {
         output: [
           createEntry('error', ''),
@@ -3425,7 +2822,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntry('error', '═══════════════════════════════════════════════════════════'),
           createEntry('error', ''),
           createEntry('error', 'SYSTEM LOCKDOWN INITIATED'),
-          createEntry('error', `SESSION TERMINATED - INVALID ATTEMPTS: ${newAlertCounter}/${INVALID_ATTEMPT_THRESHOLD}`),
+          createEntry('error', 'SESSION TERMINATED'),
           createEntry('error', ''),
         ],
         stateChanges: {
@@ -3440,13 +2837,12 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     // Provide helpful tips based on what the player might have been trying to do
     const tips = getCommandTip(command, args);
     
-    // Add the invalid attempt warning and show counter
-    const statusMessage = createEntry('warning', `Invalid attempts: ${newAlertCounter} / ${INVALID_ATTEMPT_THRESHOLD}`);
+    // Add the invalid attempt warning
     const warningMessage = createEntry('warning', '');
     const alertMessage = createEntry('warning', 'The system did not flag a critical error, but the invalid-attempt counter was incremented.');
-
+    
     return {
-      output: [...tips, statusMessage, warningMessage, alertMessage],
+      output: [...tips, warningMessage, alertMessage],
       stateChanges: {
         detectionLevel: state.detectionLevel + 1,
         legacyAlertCounter: newAlertCounter,
@@ -3586,51 +2982,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     };
   }
   
-  // ═══════════════════════════════════════════════════════════════════════════
-  // EVIDENCE SAVE HINT - Remind player to save when all evidence is collected
-  // ═══════════════════════════════════════════════════════════════════════════
-  if (state.flags?.allEvidenceCollected && !state.evidencesSaved) {
-    // Use sessionCommandCount to track time since all evidence was collected
-    // The flag is set when all evidence is collected, so we check session command count
-    const currentCommandCount = result.stateChanges.sessionCommandCount || (state.sessionCommandCount || 0) + 1;
-    
-    // Add hints based on command count modulo (repeats every 10 commands)
-    const commandsSinceStart = currentCommandCount;
-    
-    // First hint at 5 commands after flag was set
-    if (!state.flags?.evidenceHint1Shown && commandsSinceStart >= 5) {
-      result.stateChanges.flags = {
-        ...state.flags,
-        ...result.stateChanges.flags,
-        evidenceHint1Shown: true,
-      };
-      result.output.push(createEntry('system', ''));
-      result.output.push(createEntry('warning', '┌─────────────────────────────────────────────────────────┐'));
-      result.output.push(createEntry('warning', '│ >> UFO74 << REMINDER                                   │'));
-      result.output.push(createEntry('warning', '└─────────────────────────────────────────────────────────┘'));
-      result.output.push(createEntry('output', 'UFO74: hackerkid, you collected all the evidence.'));
-      result.output.push(createEntry('output', 'UFO74: look for the backup script in /tmp'));
-      result.output.push(createEntry('warning', '>> <<'));
-    }
-    
-    // Second hint at 10 commands
-    if (!state.flags?.evidenceHint2Shown && commandsSinceStart >= 10) {
-      result.stateChanges.flags = {
-        ...state.flags,
-        ...result.stateChanges.flags,
-        evidenceHint2Shown: true,
-      };
-      result.output.push(createEntry('system', ''));
-      result.output.push(createEntry('warning', '┌─────────────────────────────────────────────────────────┐'));
-      result.output.push(createEntry('warning', '│ >> UFO74 << URGENT                                     │'));
-      result.output.push(createEntry('warning', '└─────────────────────────────────────────────────────────┘'));
-      result.output.push(createEntry('output', 'UFO74: hey! /tmp has a .sh file'));
-      result.output.push(createEntry('output', 'UFO74: use the RUN command to execute it!'));
-      result.output.push(createEntry('output', 'UFO74: run save_evidence.sh'));
-      result.output.push(createEntry('warning', '>> <<'));
-    }
-  }
-  
   return result;
 }
 
@@ -3639,10 +2990,12 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   const input = `${command} ${args.join(' ')}`.trim().toLowerCase();
   
   // Check for common navigation attempts
-  if (command === 'dir' || command === 'list' || command === 'show' || (command === 'open' && args.length > 0)) {
+  if (command === 'dir' || command === 'list' || command === 'show') {
     return [
-      createEntry('error', 'ERROR: File not found'),
-      createEntry('system', 'Try ls to list files in the current folder.'),
+      createEntry('system', ''),
+      createEntry('system', 'TIP:'),
+      createEntry('system', 'To list directory contents, use: ls'),
+      createEntry('system', ''),
     ];
   }
   
@@ -3771,7 +3124,6 @@ export const TUTORIAL_MESSAGES: string[][] = [
     'UFO74: the files are scattered across directories.',
     '       use "ls" to see whats there, "cd" to move around,',
     '       and "open" to read files. some are encrypted.',
-    '       Be careful with the level of risk, the more you wander, the higher is the risk.',
   ],
   [
     'UFO74: the longer you stay connected, the more risk.',

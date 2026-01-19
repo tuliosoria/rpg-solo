@@ -2471,7 +2471,7 @@ const surveillance_footage_recovery: FileNode = {
     'Press ENTER to initiate video playback...',
   ],
   videoTrigger: {
-    src: '/videos/surveillance_recovery.mp4',
+    src: '/videos/Et dissect.mp4',
     title: 'CONTAINMENT_CAM_07_RECOVERY.VID',
     tone: 'surveillance',
     corrupted: true,

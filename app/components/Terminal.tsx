@@ -8,14 +8,11 @@ import { autoSave } from '../storage/saves';
 import ImageOverlay from './ImageOverlay';
 import VideoOverlay from './VideoOverlay';
 import GameOver from './GameOver';
-import Blackout from './Blackout';
-import ICQChat from './ICQChat';
-import Victory from './Victory';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
-const COMMANDS = ['help', 'status', 'ls', 'cd', 'open', 'decrypt', 'recover', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run'];
-const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run'];
+const COMMANDS = ['help', 'status', 'ls', 'cd', 'open', 'decrypt', 'recover', 'trace', 'chat', 'clear', 'save', 'exit', 'override'];
+const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover'];
 
 // Streaming timing configuration (ms per line)
 const STREAMING_DELAYS: Record<StreamingMode, { base: number; variance: number; glitchChance: number; glitchDelay: number }> = {
@@ -43,64 +40,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [activeVideo, setActiveVideo] = useState<VideoTrigger | null>(null);
   const [showGameOver, setShowGameOver] = useState(false);
   const [gameOverReason, setGameOverReason] = useState('');
-  // Animation: reveal header after UFO74 evidence prompt
-  const [headerRevealed, setHeaderRevealed] = useState(false);
-  // Animation: reveal risk bar after UFO74 risk warning
-  const [riskBarRevealed, setRiskBarRevealed] = useState(false);
-  // Risk bar animation: animate from full to actual value
-  const [riskBarAnimValue, setRiskBarAnimValue] = useState<number|null>(null);
-    // Reveal header/progress tracker after UFO74 evidence prompt
-    useEffect(() => {
-      // Look for the exact UFO74 evidence prompt in the output history
-      const evidencePromptIndex = gameState.history.findIndex(
-        (entry) =>
-          entry.type === 'output' &&
-          typeof entry.content === 'string' &&
-          entry.content.trim().startsWith('UFO74: i need you to find evidence of 5 things:')
-      );
-      if (evidencePromptIndex !== -1 && !headerRevealed) {
-        // Wait for the ENTER prompt to be shown, then reveal header
-        const enterPromptIndex = gameState.history.findIndex(
-          (entry, idx) =>
-            idx > evidencePromptIndex &&
-            entry.type === 'system' &&
-            typeof entry.content === 'string' &&
-            entry.content.includes('[ press ENTER to continue ]')
-        );
-        if (enterPromptIndex !== -1) {
-          setTimeout(() => setHeaderRevealed(true), 400); // slight delay for effect
-        }
-      }
-    }, [gameState.history, headerRevealed]);
-
-    // Reveal risk bar after UFO74 risk warning
-    useEffect(() => {
-      // Look for the new risk warning phrase
-      const riskPhraseIndex = gameState.history.findIndex(
-        (entry) =>
-          entry.type === 'output' &&
-          typeof entry.content === 'string' &&
-          entry.content.includes('Be careful with the level of risk, the more you wander, the higher is the risk.')
-      );
-      if (riskPhraseIndex !== -1 && !riskBarRevealed) {
-        setTimeout(() => {
-          setRiskBarRevealed(true);
-          // Animate risk bar: start full, then animate to real value
-          setRiskBarAnimValue(100);
-          setTimeout(() => {
-            setRiskBarAnimValue(gameState.detectionLevel);
-          }, 700); // match CSS transition
-        }, 400);
-      }
-    }, [gameState.history, riskBarRevealed, gameState.detectionLevel]);
-  
-  // Game phase: terminal → blackout → icq → victory
-  const [gamePhase, setGamePhase] = useState<'terminal' | 'blackout' | 'icq' | 'victory'>('terminal');
   
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const skipStreamingRef = useRef(false);
-  const lastHistoryCount = useRef(0);
   
   // Scroll to bottom when history changes
   useEffect(() => {
@@ -108,17 +51,6 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
   }, [gameState.history]);
-
-  // Keep input focused when new output arrives
-  useEffect(() => {
-    const historyCount = gameState.history.length;
-    if (historyCount !== lastHistoryCount.current) {
-      lastHistoryCount.current = historyCount;
-      if (!isProcessing && !isStreaming && !gameState.isGameOver) {
-        setTimeout(() => inputRef.current?.focus(), 0);
-      }
-    }
-  }, [gameState.history, isProcessing, isStreaming, gameState.isGameOver]);
   
   // Focus input on mount
   useEffect(() => {
@@ -135,33 +67,6 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     return () => clearInterval(interval);
   }, [gameState]);
-  
-  // Trigger blackout when evidence is saved
-  useEffect(() => {
-    if (gameState.evidencesSaved && gamePhase === 'terminal') {
-      // Delay before triggering blackout
-      const timer = setTimeout(() => {
-        setGamePhase('blackout');
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [gameState.evidencesSaved, gamePhase]);
-  
-  // Handle blackout complete - transition to ICQ
-  const handleBlackoutComplete = useCallback(() => {
-    setGamePhase('icq');
-  }, []);
-  
-  // Handle victory from ICQ chat
-  const handleVictory = useCallback(() => {
-    setGamePhase('victory');
-    setGameState(prev => ({ ...prev, gameWon: true }));
-  }, []);
-  
-  // Handle restart after victory - return to main menu for fresh start
-  const handleRestart = useCallback(() => {
-    onExitAction();
-  }, [onExitAction]);
   
   // Trigger flicker effect
   const triggerFlicker = useCallback(() => {
@@ -183,10 +88,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       }));
       return;
     }
-
+    
     const config = STREAMING_DELAYS[mode];
     skipStreamingRef.current = false;
-
+    
     for (let i = 0; i < entries.length; i++) {
       // Check if streaming was skipped
       if (skipStreamingRef.current) {
@@ -198,17 +103,17 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         }));
         break;
       }
-
+      
       // Add single entry
       const entry = entries[i];
       setGameState(prev => ({
         ...prev,
         history: [...prev.history, entry],
       }));
-
+      
       // Calculate delay with variance
       let delay = config.base + (Math.random() * config.variance * 2 - config.variance);
-
+      
       // Random glitch pause
       if (Math.random() < config.glitchChance) {
         delay += config.glitchDelay;
@@ -217,14 +122,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           triggerFlicker();
         }
       }
-
+      
       // Wait before next line
       if (delay > 0 && i < entries.length - 1) {
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
   }, [triggerFlicker]);
-
+  
   // Handle skip streaming (spacebar/enter during streaming)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -233,13 +138,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         skipStreamingRef.current = true;
       }
     };
-
+    
     if (isStreaming) {
       window.addEventListener('keydown', handleKeyDown);
       return () => window.removeEventListener('keydown', handleKeyDown);
     }
   }, [isStreaming]);
-
+  
   // Handle command submission
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -328,19 +233,19 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     // Determine streaming mode
     const streamingMode = result.streamingMode || 'none';
-
+    
     // Build the state changes without history (we'll stream that)
     const stateChangesWithoutHistory = {
       ...result.stateChanges,
       truthsDiscovered: result.stateChanges.truthsDiscovered || newState.truthsDiscovered,
     };
-
+    
     // Apply non-history state changes first
     const intermediateState: GameState = {
       ...newState,
       ...stateChangesWithoutHistory,
     };
-
+    
     // If history is explicitly set in stateChanges, use that instead of streaming
     if (result.stateChanges.history !== undefined) {
       setGameState({
@@ -352,9 +257,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       // Stream output line by line
       setIsStreaming(true);
       setGameState(intermediateState);
-
+      
       await streamOutput(result.output, streamingMode, intermediateState);
-
+      
       setIsStreaming(false);
       setIsProcessing(false);
     } else {
@@ -383,8 +288,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       return;
     }
     
-    // Focus input after processing (defer to allow input to re-enable)
-    setTimeout(() => inputRef.current?.focus(), 0);
+    // Focus input after processing
+    inputRef.current?.focus();
   }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput]);
   
   // Get auto-complete suggestions
@@ -585,19 +490,6 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     );
   };
   
-  // Render based on game phase
-  if (gamePhase === 'blackout') {
-    return <Blackout onCompleteAction={handleBlackoutComplete} />;
-  }
-  
-  if (gamePhase === 'icq') {
-    return <ICQChat onVictoryAction={handleVictory} />;
-  }
-  
-  if (gamePhase === 'victory') {
-    return <Victory onRestartAction={handleRestart} />;
-  }
-  
   return (
     <div 
       className={`${styles.terminal} ${flickerActive ? styles.flicker : ''}`}
@@ -606,12 +498,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       {/* Scanlines overlay */}
       <div className={styles.scanlines} />
       
-      {/* Status bar & Progress tracker (animated reveal) */}
-      <div className={`${styles.statusBar} ${headerRevealed ? styles.headerRevealed : styles.headerHidden}`}>
+      {/* Status bar */}
+      <div className={styles.statusBar}>
         <span className={styles.statusLeft}>VARGINHA: TERMINAL 1996</span>
         <span className={styles.statusRight}>{getStatusBar()}</span>
       </div>
-      <div className={`${styles.progressTracker} ${headerRevealed ? styles.headerRevealed : styles.headerHidden}`}>
+      
+      {/* Progress tracker */}
+      <div className={styles.progressTracker}>
         <div className={styles.truthsSection}>
           <span className={styles.trackerLabel}>EVIDENCE:</span>
           <span className={truthStatus.recovered ? styles.truthFound : styles.truthMissing} title="Physical debris/materials recovered">
@@ -627,18 +521,18 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             {truthStatus.involved ? '■' : '□'} FOREIGN
           </span>
           <span className={truthStatus.future ? styles.truthFound : styles.truthMissing} title="Future plans/2026 window">
-            {truthStatus.future ? '■' : '□'} NEXT
+            {truthStatus.future ? '■' : '□'} 2026
           </span>
           <span className={styles.truthCount}>
             [{truthStatus.total}/5]
           </span>
         </div>
-        <div className={`${styles.riskSection} ${riskBarRevealed ? styles.riskBarRevealed : styles.riskBarHidden}`}>
+        <div className={styles.riskSection}>
           <span className={styles.trackerLabel}>RISK:</span>
           <div className={styles.riskBar}>
             <div 
               className={`${styles.riskFill} ${styles[riskInfo.color]}`} 
-              style={{ width: `${riskBarAnimValue !== null ? riskBarAnimValue : gameState.detectionLevel}%` }}
+              style={{ width: `${gameState.detectionLevel}%` }}
             />
           </div>
           <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
@@ -692,7 +586,6 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           alt={activeImage.alt}
           tone={activeImage.tone}
           corrupted={activeImage.corrupted}
-          durationMs={activeImage.durationMs}
           onCloseAction={() => {
             setActiveImage(null);
             inputRef.current?.focus();
