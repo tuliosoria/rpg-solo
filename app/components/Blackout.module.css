@@ -1,0 +1,188 @@
+/* Blackout Transition Animation */
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  color: #00ff00;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: opacity 2s ease;
+}
+
+.fadeOut {
+  opacity: 0;
+}
+
+/* Scanlines overlay */
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Glitch Phase */
+.glitchContent {
+  text-align: center;
+  animation: glitch 0.3s infinite;
+}
+
+.glitchText {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff0000;
+  text-shadow: 0 0 20px #ff0000;
+  animation: textGlitch 0.5s infinite;
+}
+
+.glitchSubtext {
+  margin-top: 10px;
+  color: #ffaa00;
+  animation: textGlitch 0.7s infinite;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-5px, 5px); }
+  40% { transform: translate(-5px, -5px); }
+  60% { transform: translate(5px, 5px); }
+  80% { transform: translate(5px, -5px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes textGlitch {
+  0% { opacity: 1; }
+  10% { opacity: 0.8; transform: skewX(2deg); }
+  20% { opacity: 0.9; transform: skewX(-2deg); }
+  30% { opacity: 1; transform: skewX(0); }
+  100% { opacity: 1; }
+}
+
+/* Loading Phase */
+.loadingContent {
+  text-align: center;
+  width: 80%;
+  max-width: 500px;
+}
+
+.loadingTitle {
+  font-size: 16px;
+  color: #ffaa00;
+  margin-bottom: 20px;
+}
+
+.progressContainer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.progressBar {
+  flex: 1;
+  height: 20px;
+  background: #001a00;
+  border: 2px solid #00ff00;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #00aa00, #00ff00);
+  transition: width 0.1s ease;
+  box-shadow: 0 0 10px #00ff00;
+}
+
+.progressText {
+  font-size: 18px;
+  font-weight: bold;
+  color: #00ff00;
+  min-width: 50px;
+  text-align: right;
+}
+
+.loadingText {
+  color: #00aaaa;
+  font-size: 12px;
+}
+
+/* Message Phase */
+.messageContent {
+  width: 90%;
+  max-width: 650px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.messageHeader {
+  color: #ffaa00;
+  text-align: center;
+  font-size: 13px;
+}
+
+.messageBody {
+  margin-top: 15px;
+}
+
+.ufoLine {
+  color: #00ff00;
+  margin-bottom: 3px;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.systemLine {
+  color: #00aaaa;
+  margin-bottom: 3px;
+  font-weight: bold;
+}
+
+/* Fade Phase */
+.fadeContent {
+  text-align: center;
+}
+
+.transferText {
+  font-size: 20px;
+  color: #00ff00;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Scrollbar for message area */
+.messageContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messageContent::-webkit-scrollbar-track {
+  background: #001a00;
+}
+
+.messageContent::-webkit-scrollbar-thumb {
+  background: #003300;
+  border-radius: 4px;
+}

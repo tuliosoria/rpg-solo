@@ -2360,6 +2360,43 @@ const data_reconstruction_util: FileNode = {
   ],
 };
 
+// Save evidence script - hidden in /tmp, appears when all 5 truths are discovered
+const save_evidence_script: FileNode = {
+  type: 'file',
+  name: 'save_evidence.sh',
+  status: 'intact',
+  requiredFlags: ['allEvidenceCollected'],
+  content: [
+    '#!/bin/bash',
+    '# ═══════════════════════════════════════════════════════════',
+    '# EMERGENCY BACKUP SCRIPT',
+    '# Created by: UFO74',
+    '# Date: [TIMESTAMP REDACTED]',
+    '# ═══════════════════════════════════════════════════════════',
+    '',
+    '# This script saves the collected evidence to external media',
+    '# before the connection is cut.',
+    '',
+    'echo "Initiating emergency backup..."',
+    'echo ""',
+    '',
+    '# Save critical documents',
+    'for evidence in /collected/*.dat; do',
+    '    cp "$evidence" /external/backup/',
+    '    echo "[OK] $(basename $evidence) saved"',
+    'done',
+    '',
+    'echo ""',
+    'echo "Backup complete. Evidence persisted."',
+    'echo "WARNING: Disconnection imminent..."',
+    '',
+    '# ───────────────────────────────────────────────────────────',
+    '# INSTRUCTIONS:',
+    '#   Execute with: run save_evidence.sh',
+    '# ───────────────────────────────────────────────────────────',
+  ],
+};
+
 // File that appears after running script successfully
 const reconstructed_neural: FileNode = {
   type: 'file',
@@ -2635,6 +2672,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         'pattern_recognition.log': pattern_recognition_note,
         'coherence_threshold.log': coherence_threshold_memo,
         'data_reconstruction.util': data_reconstruction_util,
+        'save_evidence.sh': save_evidence_script,
       },
     },
   },

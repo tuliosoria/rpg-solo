@@ -623,22 +623,25 @@ export function applyRandomCorruption(state: GameState): GameState {
   };
 }
 
-// Check truth progress and generate notices
+// Check truth progress and generate notices (one evidence at a time)
 function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEntry[] {
   const notices: TerminalEntry[] = [];
   const previousCount = state.truthsDiscovered.size;
   
+  // Only add ONE new truth at a time (first undiscovered from the list)
+  let discoveredTruth: string | null = null;
   for (const reveal of newReveals) {
-    if (TRUTH_CATEGORIES.includes(reveal as TruthCategory)) {
+    if (TRUTH_CATEGORIES.includes(reveal as TruthCategory) && !state.truthsDiscovered.has(reveal)) {
       state.truthsDiscovered.add(reveal);
+      discoveredTruth = reveal;
+      break; // Only one evidence per file read
     }
   }
   
   const newCount = state.truthsDiscovered.size;
   
-  if (newCount > previousCount) {
+  if (newCount > previousCount && discoveredTruth) {
     // Generate institutional-style progress acknowledgments
-    // These are varied and never explain what was found
     const institutionalMessages: Record<string, string[]> = {
       debris_relocation: [
         'MEMO FLAG: Asset chain no longer speculative.',
@@ -667,21 +670,60 @@ function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEnt
       ],
     };
     
-    for (const reveal of newReveals) {
-      const messages = institutionalMessages[reveal];
-      if (messages && !Array.from(state.truthsDiscovered).includes(reveal)) {
-        continue;
-      }
-      if (messages) {
-        // Pick a message based on seed for per-run variance
-        const rng = createSeededRng(state.seed + reveal.length);
-        const messageIndex = Math.floor(rng() * messages.length);
-        notices.push(createEntry('notice', ''));
-        notices.push(createEntry('notice', messages[messageIndex]));
-      }
+    const messages = institutionalMessages[discoveredTruth];
+    if (messages) {
+      const rng = createSeededRng(state.seed + discoveredTruth.length);
+      const messageIndex = Math.floor(rng() * messages.length);
+      notices.push(createEntry('notice', ''));
+      notices.push(createEntry('notice', messages[messageIndex]));
     }
     
-    // Additional milestone acknowledgments (never say "progress")
+    // UFO74 comment on each specific evidence discovered
+    const ufo74EvidenceComments: Record<string, string[]> = {
+      debris_relocation: [
+        'UFO74: hackerkid, you found it! the debris was moved.',
+        'UFO74: this is the proof. they split everything up to hide it.',
+        'UFO74: bingo. physical evidence of relocation.',
+      ],
+      being_containment: [
+        'UFO74: my god... they really captured something.',
+        'UFO74: this is real. beings were contained.',
+        'UFO74: hackerkid... they had living beings.',
+      ],
+      telepathic_scouts: [
+        'UFO74: telepathic communication... i knew it!',
+        'UFO74: the signals... they werent from here.',
+        'UFO74: this explains the reports. telepathy.',
+      ],
+      international_actors: [
+        'UFO74: it wasnt just brazil. other countries knew.',
+        'UFO74: international coordination... they all lied.',
+        'UFO74: hackerkid, this is bigger than we imagined.',
+      ],
+      transition_2026: [
+        'UFO74: 2026... a date. something is going to happen.',
+        'UFO74: they know something about the future. or the present now.',
+        'UFO74: the transition window... this is what they prepared for.',
+      ],
+    };
+    
+    const ufo74Comments = ufo74EvidenceComments[discoveredTruth];
+    if (ufo74Comments) {
+      const rng = createSeededRng(state.seed + discoveredTruth.length + 100);
+      const commentIndex = Math.floor(rng() * ufo74Comments.length);
+      notices.push(createEntry('system', ''));
+      notices.push(createEntry('warning', '┌─────────────────────────────────────────────────────────┐'));
+      notices.push(createEntry('warning', '│ >> UFO74 << ENCRYPTED CHANNEL                          │'));
+      notices.push(createEntry('warning', '└─────────────────────────────────────────────────────────┘'));
+      notices.push(createEntry('output', ''));
+      notices.push(createEntry('output', ufo74Comments[commentIndex]));
+      notices.push(createEntry('output', ''));
+      notices.push(createEntry('output', `UFO74: evidence ${newCount}/5 registered.`));
+      notices.push(createEntry('system', ''));
+      notices.push(createEntry('warning', '>> <<'));
+    }
+    
+    // Additional milestone acknowledgments
     if (newCount === 2 && previousCount < 2) {
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', 'SYSTEM: Independent verification detected.'));
@@ -691,6 +733,30 @@ function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEnt
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', 'NOTICE: Sufficient documentation threshold approaching.'));
       notices.push(createEntry('warning', 'WARNING: Comprehensive access may trigger archive protocols.'));
+    }
+    
+    // ALL EVIDENCE COLLECTED - trigger save script message
+    if (newCount === 5 && previousCount < 5) {
+      state.flags.allEvidenceCollected = true;
+      notices.push(createEntry('system', ''));
+      notices.push(createEntry('system', '═══════════════════════════════════════════════════════════'));
+      notices.push(createEntry('warning', '┌─────────────────────────────────────────────────────────┐'));
+      notices.push(createEntry('warning', '│ >> UFO74 << URGENT TRANSMISSION                        │'));
+      notices.push(createEntry('warning', '└─────────────────────────────────────────────────────────┘'));
+      notices.push(createEntry('output', ''));
+      notices.push(createEntry('output', 'UFO74: hackerkid! you did it! all 5 pieces of evidence!'));
+      notices.push(createEntry('output', ''));
+      notices.push(createEntry('output', 'UFO74: but listen... theyre going to notice soon.'));
+      notices.push(createEntry('output', '       the connection will drop. im sure of it.'));
+      notices.push(createEntry('output', ''));
+      notices.push(createEntry('output', 'UFO74: you need to SAVE this evidence first.'));
+      notices.push(createEntry('output', '       i left a script ready in /tmp'));
+      notices.push(createEntry('output', ''));
+      notices.push(createEntry('output', 'UFO74: look there. something like "save" or "backup"...'));
+      notices.push(createEntry('output', '       run it with the RUN command before its too late.'));
+      notices.push(createEntry('output', ''));
+      notices.push(createEntry('warning', '>> WARNING: SAVE THE EVIDENCE NOW <<'));
+      notices.push(createEntry('system', '═══════════════════════════════════════════════════════════'));
     }
   }
   
@@ -2886,6 +2952,76 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       },
     };
   },
+
+  run: (args, state) => {
+    if (args.length === 0) {
+      return {
+        output: [createEntry('error', 'ERROR: Specify script to execute')],
+        stateChanges: {},
+      };
+    }
+    
+    const scriptName = args[0].toLowerCase();
+    
+    // Check for the save script
+    if (scriptName === 'save_evidence.sh' || scriptName === 'save_evidence') {
+      // Check if all evidence is collected
+      if (state.truthsDiscovered.size < 5) {
+        return {
+          output: [
+            createEntry('error', 'ERROR: Insufficient evidence'),
+            createEntry('warning', `Collected: ${state.truthsDiscovered.size}/5`),
+            createEntry('output', 'Collect all 5 pieces of evidence before running backup.'),
+          ],
+          stateChanges: {},
+        };
+      }
+      
+      // Already saved?
+      if (state.evidencesSaved) {
+        return {
+          output: [createEntry('warning', 'Evidence already saved.')],
+          stateChanges: {},
+        };
+      }
+      
+      // Execute the save script - this triggers the blackout sequence
+      const output: TerminalEntry[] = [
+        createEntry('system', ''),
+        createEntry('system', '═══════════════════════════════════════════════════════════'),
+        createEntry('system', 'EXECUTING: save_evidence.sh'),
+        createEntry('system', '═══════════════════════════════════════════════════════════'),
+        createEntry('output', ''),
+        createEntry('output', 'Initiating emergency backup...'),
+        createEntry('output', ''),
+        createEntry('output', '[OK] debris_relocation.dat saved'),
+        createEntry('output', '[OK] being_containment.dat saved'),
+        createEntry('output', '[OK] telepathic_scouts.dat saved'),
+        createEntry('output', '[OK] international_actors.dat saved'),
+        createEntry('output', '[OK] transition_2026.dat saved'),
+        createEntry('output', ''),
+        createEntry('system', 'Backup complete. Evidence persisted.'),
+        createEntry('warning', 'WARNING: Disconnection imminent...'),
+        createEntry('output', ''),
+      ];
+      
+      return {
+        output,
+        stateChanges: {
+          evidencesSaved: true,
+          flags: { ...state.flags, evidencesSaved: true },
+        },
+        triggerFlicker: true,
+        streamingMode: 'slow',
+      };
+    }
+    
+    // Unknown script
+    return {
+      output: [createEntry('error', `ERROR: Script not found: ${args[0]}`)],
+      stateChanges: {},
+    };
+  },
 };
 
 // Main command executor
@@ -3448,6 +3584,51 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       ...result.stateChanges,
       ...wanderingCheck.stateChanges,
     };
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EVIDENCE SAVE HINT - Remind player to save when all evidence is collected
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (state.flags?.allEvidenceCollected && !state.evidencesSaved) {
+    // Use sessionCommandCount to track time since all evidence was collected
+    // The flag is set when all evidence is collected, so we check session command count
+    const currentCommandCount = result.stateChanges.sessionCommandCount || (state.sessionCommandCount || 0) + 1;
+    
+    // Add hints based on command count modulo (repeats every 10 commands)
+    const commandsSinceStart = currentCommandCount;
+    
+    // First hint at 5 commands after flag was set
+    if (!state.flags?.evidenceHint1Shown && commandsSinceStart >= 5) {
+      result.stateChanges.flags = {
+        ...state.flags,
+        ...result.stateChanges.flags,
+        evidenceHint1Shown: true,
+      };
+      result.output.push(createEntry('system', ''));
+      result.output.push(createEntry('warning', '┌─────────────────────────────────────────────────────────┐'));
+      result.output.push(createEntry('warning', '│ >> UFO74 << REMINDER                                   │'));
+      result.output.push(createEntry('warning', '└─────────────────────────────────────────────────────────┘'));
+      result.output.push(createEntry('output', 'UFO74: hackerkid, you collected all the evidence.'));
+      result.output.push(createEntry('output', 'UFO74: look for the backup script in /tmp'));
+      result.output.push(createEntry('warning', '>> <<'));
+    }
+    
+    // Second hint at 10 commands
+    if (!state.flags?.evidenceHint2Shown && commandsSinceStart >= 10) {
+      result.stateChanges.flags = {
+        ...state.flags,
+        ...result.stateChanges.flags,
+        evidenceHint2Shown: true,
+      };
+      result.output.push(createEntry('system', ''));
+      result.output.push(createEntry('warning', '┌─────────────────────────────────────────────────────────┐'));
+      result.output.push(createEntry('warning', '│ >> UFO74 << URGENT                                     │'));
+      result.output.push(createEntry('warning', '└─────────────────────────────────────────────────────────┘'));
+      result.output.push(createEntry('output', 'UFO74: hey! /tmp has a .sh file'));
+      result.output.push(createEntry('output', 'UFO74: use the RUN command to execute it!'));
+      result.output.push(createEntry('output', 'UFO74: run save_evidence.sh'));
+      result.output.push(createEntry('warning', '>> <<'));
+    }
   }
   
   return result;

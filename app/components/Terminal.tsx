@@ -8,11 +8,14 @@ import { autoSave } from '../storage/saves';
 import ImageOverlay from './ImageOverlay';
 import VideoOverlay from './VideoOverlay';
 import GameOver from './GameOver';
+import Blackout from './Blackout';
+import ICQChat from './ICQChat';
+import Victory from './Victory';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
-const COMMANDS = ['help', 'status', 'ls', 'cd', 'open', 'decrypt', 'recover', 'trace', 'chat', 'clear', 'save', 'exit', 'override'];
-const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover'];
+const COMMANDS = ['help', 'status', 'ls', 'cd', 'open', 'decrypt', 'recover', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run'];
+const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run'];
 
 // Streaming timing configuration (ms per line)
 const STREAMING_DELAYS: Record<StreamingMode, { base: number; variance: number; glitchChance: number; glitchDelay: number }> = {
@@ -91,6 +94,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       }
     }, [gameState.history, riskBarRevealed, gameState.detectionLevel]);
   
+  // Game phase: terminal → blackout → icq → victory
+  const [gamePhase, setGamePhase] = useState<'terminal' | 'blackout' | 'icq' | 'victory'>('terminal');
+  
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const skipStreamingRef = useRef(false);
@@ -129,6 +135,33 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     return () => clearInterval(interval);
   }, [gameState]);
+  
+  // Trigger blackout when evidence is saved
+  useEffect(() => {
+    if (gameState.evidencesSaved && gamePhase === 'terminal') {
+      // Delay before triggering blackout
+      const timer = setTimeout(() => {
+        setGamePhase('blackout');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [gameState.evidencesSaved, gamePhase]);
+  
+  // Handle blackout complete - transition to ICQ
+  const handleBlackoutComplete = useCallback(() => {
+    setGamePhase('icq');
+  }, []);
+  
+  // Handle victory from ICQ chat
+  const handleVictory = useCallback(() => {
+    setGamePhase('victory');
+    setGameState(prev => ({ ...prev, gameWon: true }));
+  }, []);
+  
+  // Handle restart after victory - return to main menu for fresh start
+  const handleRestart = useCallback(() => {
+    onExitAction();
+  }, [onExitAction]);
   
   // Trigger flicker effect
   const triggerFlicker = useCallback(() => {
@@ -551,6 +584,19 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       </div>
     );
   };
+  
+  // Render based on game phase
+  if (gamePhase === 'blackout') {
+    return <Blackout onCompleteAction={handleBlackoutComplete} />;
+  }
+  
+  if (gamePhase === 'icq') {
+    return <ICQChat onVictoryAction={handleVictory} />;
+  }
+  
+  if (gamePhase === 'victory') {
+    return <Victory onRestartAction={handleRestart} />;
+  }
   
   return (
     <div 
