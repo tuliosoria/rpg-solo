@@ -158,9 +158,9 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
             {messageLines.map((line, index) => (
               <div 
                 key={index} 
-                className={line.startsWith('UFO74:') ? styles.ufoLine : styles.systemLine}
+                className={(typeof line === 'string' && line.startsWith('UFO74:')) ? styles.ufoLine : styles.systemLine}
               >
-                {line}
+                {typeof line === 'string' ? line : ''}
               </div>
             ))}
           </div>
