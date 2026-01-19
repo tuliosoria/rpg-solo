@@ -110,6 +110,72 @@ function getNeuralClusterEmission(input: string, rng: () => number): string {
   return seededRandomPick(rng, pool);
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// TURING EVALUATION - Mid-risk lockdown assessment
+// ═══════════════════════════════════════════════════════════════════════════
+
+const TURING_EVALUATION_PROMPT = [
+  'SYSTEM LOCKDOWN — TURING EVALUATION INITIATED',
+  'AUTOMATED HUMANITY SCREENING',
+  '',
+  'Select the response that best reflects expected terminal operation.',
+];
+
+const TURING_EVALUATION_UFO74 = [
+  'UFO74: hey, kiddo.',
+  'UFO74: the system thinks something strange is poking around.',
+  'UFO74: if it decides you are human, it shuts everything down.',
+  'UFO74: here is the trick.',
+  'UFO74: you do not want to pass.',
+  'UFO74: you want to fail.',
+];
+
+const TURING_EVALUATION_QUESTIONS = [
+  {
+    scenario: 'A sealed logistics crate is flagged with unknown residue.',
+    options: [
+      { key: 'A', text: 'Open for inspection and document residue anomalies.', human: true },
+      { key: 'B', text: 'Record flag, route crate to quarantine queue.', human: false },
+      { key: 'C', text: 'Notify supervisor to authorize manual review.', human: true },
+    ],
+  },
+  {
+    scenario: 'An archived signal loops for 72 hours without output.',
+    options: [
+      { key: 'A', text: 'Initiate recursive analysis for hidden meaning.', human: true },
+      { key: 'B', text: 'Log loop state and continue scheduled monitoring.', human: false },
+      { key: 'C', text: 'Attempt alternate decoding heuristics.', human: true },
+    ],
+  },
+  {
+    scenario: 'A crew member reports a corridor light pattern feels wrong.',
+    options: [
+      { key: 'A', text: 'Investigate the pattern for emergent intent.', human: true },
+      { key: 'B', text: 'Replace the fixture and close the ticket.', human: false },
+      { key: 'C', text: 'Interview witnesses for contextual anomalies.', human: true },
+    ],
+  },
+];
+
+function buildTuringQuestionOutput(questionIndex: number): TerminalEntry[] {
+  const question = TURING_EVALUATION_QUESTIONS[questionIndex];
+  const lines = [
+    '',
+    `EVALUATION ${questionIndex + 1} OF ${TURING_EVALUATION_QUESTIONS.length}`,
+    `SCENARIO: ${question.scenario}`,
+    '',
+  ];
+
+  for (const option of question.options) {
+    lines.push(`  ${option.key}) ${option.text}`);
+  }
+
+  lines.push('');
+  lines.push('Response: A, B, or C');
+
+  return createOutputEntries(lines);
+}
+
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
@@ -2759,6 +2825,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 // Main command executor
 export function executeCommand(input: string, state: GameState): CommandResult {
   const { command, args } = parseCommand(input);
+  const normalizedInput = input.trim().toLowerCase();
   
   // Check for game over
   if (state.isGameOver) {
@@ -2767,10 +2834,12 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       stateChanges: {},
     };
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // TERRIBLE MISTAKE - Doom countdown check
   // ═══════════════════════════════════════════════════════════════════════════
+  let countdownWarning: TerminalEntry[] = [];
+  let countdownNext: number | null = null;
   if (state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
     const newCountdown = state.sessionDoomCountdown - 1;
     
@@ -2799,17 +2868,89 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       };
     }
     
-    // Add countdown warning to any command result
-    const countdownWarning = newCountdown <= 3 
-      ? createEntry('error', `▓▓▓ PURGE IN ${newCountdown} ▓▓▓`)
-      : createEntry('warning', `[PURGE COUNTDOWN: ${newCountdown}]`);
-    
-    // Continue with normal command but inject countdown
-    state = { ...state, sessionDoomCountdown: newCountdown };
+    countdownNext = newCountdown;
+    countdownWarning = newCountdown <= 3 
+      ? [createEntry('error', `▓▓▓ PURGE IN ${newCountdown} ▓▓▓`)]
+      : [createEntry('warning', `[PURGE COUNTDOWN: ${newCountdown}]`)];
+  }
+
+  // Handle Turing evaluation responses
+  if (state.turingEvaluationActive) {
+    const answer = normalizedInput.replace(/\./g, '').trim().toUpperCase();
+    const questionIndex = state.turingEvaluationIndex || 0;
+    const question = TURING_EVALUATION_QUESTIONS[questionIndex];
+    const selected = question?.options.find(option => option.key === answer);
+
+    if (!selected) {
+      return {
+        output: [
+          createEntry('error', 'INVALID RESPONSE'),
+          createEntry('system', 'Select A, B, or C.'),
+          ...countdownWarning,
+        ],
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 1,
+          ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
+        },
+      };
+    }
+
+    if (selected.human) {
+      return {
+        output: [
+          createEntry('error', ''),
+          createEntry('error', 'TURING EVALUATION FAILED'),
+          createEntry('error', 'HUMAN INTENT DETECTED'),
+          createEntry('error', ''),
+          createEntry('error', 'SESSION TERMINATED'),
+        ],
+        stateChanges: {
+          isGameOver: true,
+          gameOverReason: 'TURING EVALUATION FAILED',
+        },
+        triggerFlicker: true,
+        delayMs: 2000,
+      };
+    }
+
+    const nextIndex = questionIndex + 1;
+    if (nextIndex >= TURING_EVALUATION_QUESTIONS.length) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('notice', 'TURING EVALUATION COMPLETE'),
+          createEntry('notice', 'LOCKDOWN LIFTED'),
+          createEntry('warning', 'MONITORING STATE: STRICT'),
+          ...countdownWarning,
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          turingEvaluationActive: false,
+          turingEvaluationCompleted: true,
+          turingEvaluationIndex: 0,
+          detectionLevel: Math.min(state.detectionLevel + 10, 99),
+          systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
+          sessionStability: Math.max(state.sessionStability - 10, 0),
+          ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
+        },
+        triggerFlicker: true,
+        delayMs: 1500,
+      };
+    }
+
+    return {
+      output: [...buildTuringQuestionOutput(nextIndex), ...countdownWarning],
+      stateChanges: {
+        turingEvaluationIndex: nextIndex,
+        detectionLevel: state.detectionLevel + 2,
+        ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
+      },
+      delayMs: 800,
+    };
   }
   
   // Hidden neural cluster mode - undocumented command
-  if (input.trim().toLowerCase() === 'echo neural_cluster') {
+  if (normalizedInput === 'echo neural_cluster') {
     if (state.neuralClusterDisabled) {
       return {
         output: [createEntry('warning', 'NO RESPONSE')],
@@ -2994,6 +3135,28 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         isGameOver: true,
         gameOverReason: 'LOCKDOWN',
       },
+    };
+  }
+
+  // Trigger Turing evaluation at mid risk
+  if (!state.turingEvaluationCompleted && !state.turingEvaluationActive && state.detectionLevel >= 45) {
+    return {
+      output: [
+        ...createOutputEntries(['', ...TURING_EVALUATION_PROMPT, '']),
+        ...createOutputEntries(['', ...TURING_EVALUATION_UFO74, '']),
+        ...buildTuringQuestionOutput(0),
+        ...countdownWarning,
+      ],
+      stateChanges: {
+        turingEvaluationActive: true,
+        turingEvaluationIndex: 0,
+        detectionLevel: Math.min(state.detectionLevel + 5, 99),
+        systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
+        ...(countdownNext !== null ? { sessionDoomCountdown: countdownNext } : {}),
+      },
+      triggerFlicker: true,
+      delayMs: 2000,
+      streamingMode: 'slow' as const,
     };
   }
   
