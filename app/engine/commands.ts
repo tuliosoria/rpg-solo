@@ -1832,6 +1832,56 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
     stateChanges.categoriesRead = categoriesRead;
     
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SPECIAL FILE TRIGGERS
+    // ═══════════════════════════════════════════════════════════════════════════
+    
+    // Maintenance notes reveal hidden commands
+    if (filePath.includes('maintenance_notes') && !isEncryptedAndLocked) {
+      const hiddenCmds = new Set(state.hiddenCommandsDiscovered || []);
+      hiddenCmds.add('disconnect');
+      hiddenCmds.add('scan');
+      stateChanges.hiddenCommandsDiscovered = hiddenCmds;
+    }
+    
+    // Transfer authorization contains password hint
+    if (filePath.includes('transfer_authorization') && !isEncryptedAndLocked) {
+      const passwords = new Set(state.passwordsFound || []);
+      passwords.add('varginha1996');
+      stateChanges.passwordsFound = passwords;
+    }
+    
+    // Official summary is disinformation - subtle flag
+    if (filePath.includes('incident_summary_official') && !isEncryptedAndLocked) {
+      const disinfo = new Set(state.disinformationDiscovered || []);
+      disinfo.add('official_summary');
+      stateChanges.disinformationDiscovered = disinfo;
+    }
+    
+    // Active trace triggers countdown
+    if (filePath.includes('active_trace.sys') && !isEncryptedAndLocked) {
+      if (!state.countdownActive) {
+        stateChanges.countdownActive = true;
+        stateChanges.countdownEndTime = Date.now() + (5 * 60 * 1000); // 5 minutes
+      }
+    }
+    
+    // Corrupted core dump spreads corruption to nearby files
+    if (filePath.includes('core_dump_corrupted') && !isEncryptedAndLocked) {
+      // Corrupt a random file in /tmp
+      const corruptTargets = ['/tmp/session_residue.log', '/tmp/note_to_self.tmp', '/tmp/pattern_recognition.log'];
+      const targetPath = corruptTargets[Math.floor(Math.random() * corruptTargets.length)];
+      const existingMutation = state.fileMutations[targetPath] || { corruptedLines: [], decrypted: false };
+      existingMutation.corruptedLines.push(Math.floor(Math.random() * 8) + 1);
+      stateChanges.fileMutations = {
+        ...state.fileMutations,
+        ...stateChanges.fileMutations,
+        [targetPath]: existingMutation,
+      };
+      stateChanges.dataIntegrity = (stateChanges.dataIntegrity ?? state.dataIntegrity) - 10;
+      triggerFlicker = true;
+    }
+    
     const output = [
       ...createOutputEntries(['', `FILE: ${filePath}`, '']),
       ...createOutputEntries(content),
@@ -1926,6 +1976,87 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output: [createEntry('error', 'ERROR: No recoverable data')],
         stateChanges: {},
+      };
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PASSWORD-PROTECTED FILES
+    // ═══════════════════════════════════════════════════════════════════════════
+    
+    // UFO74 identity file requires password from transfer_authorization.txt
+    if (filePath.includes('ghost_in_machine')) {
+      const password = args[1]?.toLowerCase();
+      
+      if (!password) {
+        return {
+          output: [
+            createEntry('warning', '══════════════════════════════════════════════'),
+            createEntry('warning', 'PASSWORD REQUIRED'),
+            createEntry('warning', '══════════════════════════════════════════════'),
+            createEntry('system', ''),
+            createEntry('system', 'Usage: decrypt ghost_in_machine.enc <password>'),
+            createEntry('system', ''),
+            createEntry('ufo74', '[UFO74]: This file... I don\'t recognize it.'),
+            createEntry('ufo74', '[UFO74]: But the encryption pattern looks familiar.'),
+          ],
+          stateChanges: {},
+        };
+      }
+      
+      if (password !== 'varginha1996') {
+        return {
+          output: [
+            createEntry('error', 'DECRYPTION FAILED'),
+            createEntry('error', 'Invalid password'),
+            createEntry('system', ''),
+            createEntry('ufo74', '[UFO74]: Wrong password. Keep looking.'),
+          ],
+          stateChanges: {
+            detectionLevel: state.detectionLevel + 5,
+          },
+        };
+      }
+      
+      // Password correct - trigger secret ending revelation
+      return {
+        output: [
+          createEntry('system', 'DECRYPTION SUCCESSFUL'),
+          createEntry('system', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('warning', ''),
+          createEntry('warning', '   CLASSIFIED PERSONNEL FILE'),
+          createEntry('warning', '   SUBJECT: WITNESS #74 - CODE NAME "UFO74"'),
+          createEntry('warning', ''),
+          createEntry('output', '   Location: Varginha, Minas Gerais'),
+          createEntry('output', '   Date: January 20, 1996'),
+          createEntry('output', '   Status: WITNESS SUPPRESSION FAILED'),
+          createEntry('output', ''),
+          createEntry('output', '   Subject was present during initial'),
+          createEntry('output', '   contact event. Demonstrated unusual'),
+          createEntry('output', '   resistance to memory alteration'),
+          createEntry('output', '   protocols.'),
+          createEntry('output', ''),
+          createEntry('output', '   Subject has since accessed internal'),
+          createEntry('output', '   networks repeatedly. Motivation unclear.'),
+          createEntry('output', '   Possibly seeking validation.'),
+          createEntry('output', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('system', ''),
+          createEntry('ufo74', '[UFO74]: ...'),
+          createEntry('ufo74', '[UFO74]: So you found it.'),
+          createEntry('ufo74', '[UFO74]: I was there. January 1996.'),
+          createEntry('ufo74', '[UFO74]: I saw what they did. What they took.'),
+          createEntry('ufo74', '[UFO74]: I\'ve been inside their systems ever since.'),
+          createEntry('ufo74', '[UFO74]: Not for revenge. For proof.'),
+          createEntry('ufo74', '[UFO74]: You have the proof now. Don\'t let them bury it again.'),
+        ],
+        stateChanges: {
+          ufo74SecretDiscovered: true,
+          gamePhase: 'secret_ending' as const,
+          detectionLevel: 100,
+        },
+        triggerFlicker: true,
+        delayMs: 3000,
       };
     }
     
@@ -2675,6 +2806,132 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HIDDEN COMMANDS - Discoverable through documents
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // disconnect - Severs connection (triggers neutral ending if used before saving)
+  disconnect: (args, state) => {
+    if (!state.hiddenCommandsDiscovered?.has('disconnect')) {
+      return {
+        output: [createEntry('error', 'Unknown command: disconnect')],
+        stateChanges: {},
+      };
+    }
+    
+    // If evidence not saved, neutral ending
+    if (!state.evidencesSaved) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('warning', 'DISCONNECTING...'),
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('warning', ''),
+          createEntry('warning', 'Connection severed.'),
+          createEntry('warning', 'Evidence not saved. Files lost in disconnection.'),
+          createEntry('warning', 'You escaped... but the truth remains buried.'),
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        ],
+        stateChanges: {
+          gamePhase: 'neutral_ending' as const,
+          isGameOver: true,
+          gameOverReason: 'NEUTRAL ENDING - DISCONNECTED',
+        },
+        triggerFlicker: true,
+        delayMs: 2000,
+      };
+    }
+    
+    return {
+      output: [
+        createEntry('system', 'Cannot disconnect — connection transfer in progress.'),
+        createEntry('warning', 'Evidence files are being relayed. Stand by.'),
+      ],
+      stateChanges: {},
+    };
+  },
+  
+  // scan - Reveals hidden files in current directory
+  scan: (args, state) => {
+    if (!state.hiddenCommandsDiscovered?.has('scan')) {
+      return {
+        output: [createEntry('error', 'Unknown command: scan')],
+        stateChanges: {},
+      };
+    }
+    
+    // Increase detection significantly
+    const newDetection = Math.min(100, state.detectionLevel + 15);
+    
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntry('warning', '  ▓ DEEP SCAN INITIATED ▓'),
+        createEntry('system', ''),
+        createEntry('system', '  Scanning for hidden filesystem entries...'),
+        createEntry('system', '  Revealing masked nodes...'),
+        createEntry('warning', ''),
+        createEntry('warning', '  [!] Scan complete. Hidden paths may now be visible.'),
+        createEntry('warning', '  [!] Detection risk: ELEVATED'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {
+        detectionLevel: newDetection,
+        flags: { ...state.flags, adminUnlocked: true },
+      },
+    };
+  },
+  
+  // decode - Attempts to decode cipher text (ROT13)
+  decode: (args, state) => {
+    const attempt = args.join(' ').toLowerCase().trim();
+    
+    if (!attempt) {
+      return {
+        output: [createEntry('system', 'Usage: decode <text>')],
+        stateChanges: {},
+      };
+    }
+    
+    // The cipher answer is "the truth is not what they told you"
+    // ROT13 of "the" = "gur"
+    if (attempt === 'the' || attempt === 'the truth' || attempt.includes('truth is not')) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('ufo74', '[UFO74]: Decryption successful.'),
+          createEntry('ufo74', '[UFO74]: "The truth is not what they told you."'),
+          createEntry('warning', ''),
+          createEntry('ufo74', '[UFO74]: You understand now. The official reports...'),
+          createEntry('ufo74', '[UFO74]: They were never meant to be accurate.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          disinformationDiscovered: new Set([...(state.disinformationDiscovered || []), 'cipher_decoded']),
+        },
+      };
+    }
+    
+    const cipherAttempts = (state.cipherAttempts || 0) + 1;
+    
+    if (cipherAttempts >= 3) {
+      return {
+        output: [
+          createEntry('ufo74', '[UFO74]: Still struggling with the cipher?'),
+          createEntry('ufo74', '[UFO74]: Try applying ROT13. Classic but effective.'),
+        ],
+        stateChanges: { cipherAttempts },
+      };
+    }
+    
+    return {
+      output: [createEntry('system', 'Decryption failed. Pattern not recognized.')],
+      stateChanges: { cipherAttempts },
+    };
+  },
+  
   clear: (args, state) => {
     return {
       output: [],
@@ -2789,6 +3046,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntry('output', 'god save      - Set evidencesSaved flag (triggers blackout)'),
           createEntry('output', 'god icq       - Jump directly to ICQ phase'),
           createEntry('output', 'god victory   - Jump directly to victory screen'),
+          createEntry('output', 'god bad       - Jump to bad ending (caught)'),
+          createEntry('output', 'god neutral   - Jump to neutral ending (escaped)'),
+          createEntry('output', 'god secret    - Jump to secret ending (UFO74 identity)'),
+          createEntry('output', 'god countdown - Start 2-minute countdown'),
+          createEntry('output', 'god unlock    - Unlock hidden commands & passwords'),
           createEntry('output', 'god reset     - Reset to fresh game state'),
           createEntry('output', 'god status    - Show current game flags'),
           createEntry('output', 'god stable    - Set stability to 100, detection to 0'),
@@ -2927,6 +3189,74 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {
           terribleMistakeTriggered: false,
           sessionDoomCountdown: 0,
+        },
+      };
+    }
+    
+    // New ending shortcuts
+    if (godCmd === 'bad') {
+      return {
+        output: [
+          createEntry('system', '═══ JUMPING TO BAD ENDING ═══'),
+        ],
+        stateChanges: {
+          isGameOver: true,
+          gameOverReason: 'GOD MODE - BAD ENDING',
+        },
+        skipToPhase: 'bad_ending' as const,
+      };
+    }
+    
+    if (godCmd === 'neutral') {
+      return {
+        output: [
+          createEntry('system', '═══ JUMPING TO NEUTRAL ENDING ═══'),
+        ],
+        stateChanges: {
+          isGameOver: true,
+          gameOverReason: 'GOD MODE - NEUTRAL ENDING',
+        },
+        skipToPhase: 'neutral_ending' as const,
+      };
+    }
+    
+    if (godCmd === 'secret') {
+      return {
+        output: [
+          createEntry('system', '═══ JUMPING TO SECRET ENDING ═══'),
+        ],
+        stateChanges: {
+          ufo74SecretDiscovered: true,
+        },
+        skipToPhase: 'secret_ending' as const,
+      };
+    }
+    
+    if (godCmd === 'countdown') {
+      return {
+        output: [
+          createEntry('system', '═══ COUNTDOWN ACTIVATED ═══'),
+          createEntry('output', 'You have 2 minutes before they trace you.'),
+        ],
+        stateChanges: {
+          countdownActive: true,
+          countdownEndTime: Date.now() + (2 * 60 * 1000), // 2 minutes
+        },
+      };
+    }
+    
+    if (godCmd === 'unlock') {
+      return {
+        output: [
+          createEntry('system', '═══ ALL HIDDEN FEATURES UNLOCKED ═══'),
+          createEntry('output', '✓ Hidden commands: disconnect, scan'),
+          createEntry('output', '✓ Password found: varginha1996'),
+          createEntry('output', '✓ Admin flag set'),
+        ],
+        stateChanges: {
+          hiddenCommandsDiscovered: new Set(['disconnect', 'scan']),
+          passwordsFound: new Set(['varginha1996']),
+          flags: { ...state.flags, adminUnlocked: true },
         },
       };
     }

@@ -2,17 +2,17 @@
 
 ## Narrative & Immersion
 
-- **Multiple endings**
-  - Bad ending: get caught by the system
-  - Neutral ending: escape but files are lost
+- ✅ **Multiple endings**
+  - Bad ending: get caught by the system (countdown expires)
+  - Neutral ending: escape but files are lost (disconnect command)
   - Good ending: current victory flow
-  - Secret ending: find hidden truth about UFO74's identity
+  - Secret ending: find hidden truth about UFO74's identity (password puzzle)
 
-- **UFO74 has a secret** - Reveal they're actually an insider/witness, not just a hacker. Maybe they were there in 1996.
+- ✅ **UFO74 has a secret** - Reveal they're actually an insider/witness, not just a hacker. They were there in January 1996.
 
-- **Time pressure mechanic** - Real-time countdown after triggering certain files, not just command-based. Adds urgency.
+- ✅ **Time pressure mechanic** - Real-time countdown after triggering active_trace.sys. 5 minutes to complete or get caught.
 
-- **Unreliable narrator** - Some "evidence" is planted disinformation; player must discern truth from fabrication.
+- ✅ **Unreliable narrator** - Some "evidence" is planted disinformation (official_summary_report); subtle flag when discovered.
 
 ---
 
@@ -20,13 +20,13 @@
 
 - ✅ **Stealth meter visible** - Show detection level more prominently in the UI, with visual/audio warnings at thresholds.
 
-- **File corruption spreads** - Reading unstable files can corrupt nearby files over time. Creates consequences for exploration.
+- ✅ **File corruption spreads** - Reading core_dump_corrupted.bin corrupts nearby files in /tmp. Creates consequences for exploration.
 
-- **Hidden commands** - Discoverable through reading certain documents (like `trace`, `recover`). Reward thorough players.
+- ✅ **Hidden commands** - `disconnect` and `scan` discoverable through reading maintenance_notes.txt. Reward thorough players.
 
-- **Password puzzles** - Find passwords scattered in documents to unlock deeper files. Connect the dots.
+- ✅ **Password puzzles** - Password "varginha1996" found in transfer_authorization.txt, unlocks ghost_in_machine.enc for secret ending.
 
-- **Mini-games** - Decryption could be a simple cipher puzzle, not just Q&A. More engaging interaction.
+- ✅ **Mini-games** - `decode` command for ROT13 cipher puzzles. Hints provided after failed attempts.
 
 ---
 
@@ -70,7 +70,7 @@
 
 ---
 
-## Priority Ideas (Quick Wins)
+## Priority Ideas (Quick Wins) - ALL COMPLETE ✅
 
 1. ✅ Sound design - huge atmosphere boost
 2. ✅ Stealth meter visibility - better player feedback
@@ -84,3 +84,6 @@
 
 - Randomized file locations (different playthrough = different paths)
 - New Game+ (start with UFO74 trusting you more, earlier access)
+- Easter eggs (X-Files references, Brazilian culture)
+- External website / ARG elements
+- QR codes in game

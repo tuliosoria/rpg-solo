@@ -2,6 +2,15 @@
 
 import { DirectoryNode, FileNode, SecurityQuestion } from '../types';
 import neuralClusterMemo from './neuralClusterMemo';
+import {
+  ufo74_identity_file,
+  intrusion_detected_file,
+  system_maintenance_notes,
+  personnel_transfer_extended,
+  official_summary_report,
+  cipher_message,
+  unstable_core_dump,
+} from './narrativeContent';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // INSTITUTIONAL FRAMING - Implicit guidance through bureaucratic language
@@ -2662,6 +2671,9 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         'hvac_maintenance_log.txt': hvac_maintenance_log,
         'personnel_transfer_notice.txt': personnel_transfer_notice,
         'asset_transfer_form_incomplete.txt': asset_transfer_form_incomplete,
+        'transfer_authorization.txt': personnel_transfer_extended,
+        'incident_summary_official.txt': official_summary_report,
+        'maintenance_notes.txt': system_maintenance_notes,
       },
     },
     tmp: {
@@ -2674,6 +2686,17 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         'coherence_threshold.log': coherence_threshold_memo,
         'data_reconstruction.util': data_reconstruction_util,
         'save_evidence.sh': save_evidence_script,
+        'core_dump_corrupted.bin': unstable_core_dump,
+        'encoded_transmission.enc': cipher_message,
+      },
+    },
+    sys: {
+      type: 'dir',
+      name: 'sys',
+      requiredFlags: ['adminUnlocked'],
+      children: {
+        'ghost_in_machine.enc': ufo74_identity_file,
+        'active_trace.sys': intrusion_detected_file,
       },
     },
   },

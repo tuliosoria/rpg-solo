@@ -1,0 +1,132 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0a0a05;
+  color: #aaaa00;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(170, 170, 0, 0.03) 2px,
+    rgba(170, 170, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+.disconnectContent {
+  text-align: center;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.disconnectIcon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: flicker 0.2s infinite;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.disconnectText {
+  font-size: 32px;
+  font-weight: bold;
+  color: #ffff00;
+  text-shadow: 0 0 15px #aaaa00;
+  letter-spacing: 3px;
+}
+
+.disconnectSub {
+  font-size: 14px;
+  color: #888800;
+  margin-top: 10px;
+}
+
+.messageContent {
+  max-width: 700px;
+  padding: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.dividerBold {
+  color: #aaaa00;
+  font-weight: bold;
+}
+
+.title {
+  color: #ffff00;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 0 0 10px #aaaa00;
+  text-align: center;
+}
+
+.ufoLine {
+  color: #00aaaa;
+  font-style: italic;
+}
+
+.endLine {
+  color: #aaaa00;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.dividerLine {
+  color: #555500;
+}
+
+.textLine {
+  color: #cccc66;
+}
+
+.restartSection {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.restartButton {
+  background: transparent;
+  border: 2px solid #aaaa00;
+  color: #ffff00;
+  padding: 12px 32px;
+  font-family: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 8px rgba(170, 170, 0, 0.5);
+}
+
+.restartButton:hover {
+  background: #aaaa00;
+  color: #000;
+  box-shadow: 0 0 20px rgba(170, 170, 0, 0.5);
+}

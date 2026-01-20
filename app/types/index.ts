@@ -60,7 +60,7 @@ export interface FileMutation {
 
 export interface TerminalEntry {
   id: string;
-  type: 'input' | 'output' | 'system' | 'warning' | 'error' | 'notice';
+  type: 'input' | 'output' | 'system' | 'warning' | 'error' | 'notice' | 'ufo74';
   content: string;
   timestamp: number;
 }
@@ -168,6 +168,28 @@ export interface GameState {
   
   // Debug mode
   godMode: boolean; // Hidden dev mode for testing
+  
+  // Multiple endings tracking
+  endingType?: 'bad' | 'neutral' | 'good' | 'secret'; // Which ending was achieved
+  ufo74SecretDiscovered: boolean; // Found the secret about UFO74's identity
+  
+  // Time pressure
+  countdownActive: boolean; // Real-time countdown triggered
+  countdownEndTime: number; // Timestamp when countdown expires
+  countdownTriggeredBy?: string; // What triggered the countdown
+  
+  // Unreliable narrator
+  disinformationDiscovered: Set<string>; // Files revealed to be disinformation
+  
+  // Hidden commands discovered
+  hiddenCommandsDiscovered: Set<string>; // Commands found via documents
+  
+  // Password puzzles
+  passwordsFound: Set<string>; // Passwords discovered in documents
+  
+  // Cipher puzzle state
+  pendingCipherFile?: string; // File awaiting cipher solution
+  cipherAttempts: number; // Wrong attempts on current cipher
 }
 
 export interface SaveSlot {
@@ -179,7 +201,8 @@ export interface SaveSlot {
 }
 
 export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow' | 'glitchy';
-export type GamePhase = 'terminal' | 'blackout' | 'icq' | 'victory';
+export type GamePhase = 'terminal' | 'blackout' | 'icq' | 'victory' | 'bad_ending' | 'neutral_ending' | 'secret_ending';
+export type EndingType = 'bad' | 'neutral' | 'good' | 'secret';
 
 export interface CommandResult {
   output: TerminalEntry[];
@@ -253,4 +276,20 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   filesSent: false,
   gameWon: false,
   godMode: false,
+  // Multiple endings
+  endingType: undefined,
+  ufo74SecretDiscovered: false,
+  // Time pressure
+  countdownActive: false,
+  countdownEndTime: 0,
+  countdownTriggeredBy: undefined,
+  // Unreliable narrator
+  disinformationDiscovered: new Set(),
+  // Hidden commands
+  hiddenCommandsDiscovered: new Set(),
+  // Password puzzles
+  passwordsFound: new Set(),
+  // Cipher puzzles
+  pendingCipherFile: undefined,
+  cipherAttempts: 0,
 };

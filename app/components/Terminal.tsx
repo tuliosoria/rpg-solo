@@ -13,6 +13,9 @@ import GameOver from './GameOver';
 import Blackout from './Blackout';
 import ICQChat from './ICQChat';
 import Victory from './Victory';
+import BadEnding from './BadEnding';
+import NeutralEnding from './NeutralEnding';
+import SecretEnding from './SecretEnding';
 import AchievementPopup from './AchievementPopup';
 import styles from './Terminal.module.css';
 
@@ -63,8 +66,11 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [showGameOver, setShowGameOver] = useState(false);
   const [gameOverReason, setGameOverReason] = useState('');
   
-  // Game phase: terminal → blackout → icq → victory
+  // Game phase: terminal → blackout → icq → victory (or other endings)
   const [gamePhase, setGamePhase] = useState<GamePhase>('terminal');
+  
+  // Countdown timer display
+  const [countdownDisplay, setCountdownDisplay] = useState<string | null>(null);
   
   // Glitch effects
   const [glitchActive, setGlitchActive] = useState(false);
@@ -216,6 +222,51 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     }
     return () => stopAmbient();
   }, [gameState.tutorialComplete, soundEnabled, startAmbient, stopAmbient]);
+  
+  // Countdown timer logic
+  useEffect(() => {
+    if (!gameState.countdownActive || gamePhase !== 'terminal') {
+      setCountdownDisplay(null);
+      return;
+    }
+    
+    const updateCountdown = () => {
+      const remaining = Math.max(0, gameState.countdownEndTime - Date.now());
+      const seconds = Math.ceil(remaining / 1000);
+      
+      if (seconds <= 0) {
+        // Countdown expired - trigger bad ending (caught by system)
+        setGamePhase('bad_ending');
+        setCountdownDisplay(null);
+        return;
+      }
+      
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      setCountdownDisplay(`${minutes}:${secs.toString().padStart(2, '0')}`);
+      
+      // Warning sounds at thresholds
+      if (seconds === 30 || seconds === 10 || seconds <= 5) {
+        playSound('alert');
+      }
+    };
+    
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    
+    return () => clearInterval(interval);
+  }, [gameState.countdownActive, gameState.countdownEndTime, gamePhase, playSound]);
+  
+  // Check for secret ending trigger
+  useEffect(() => {
+    if (gameState.ufo74SecretDiscovered && gamePhase === 'terminal') {
+      // Delay to let player see the reveal
+      const timer = setTimeout(() => {
+        setGamePhase('secret_ending');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [gameState.ufo74SecretDiscovered, gamePhase]);
   
   // Check for achievements
   const checkAchievement = useCallback((id: string) => {
@@ -685,6 +736,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       case 'notice':
         className = `${styles.line} ${styles.notice}`;
         break;
+      case 'ufo74':
+        className = `${styles.line} ${styles.ufo74}`;
+        break;
     }
     
     return (
@@ -711,6 +765,21 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       maxDetectionReached={maxDetectionRef.current}
       mathMistakes={gameState.mathQuestionWrong}
     />;
+  }
+  
+  if (gamePhase === 'bad_ending') {
+    return <BadEnding 
+      onRestartAction={handleRestart}
+      reason={gameState.gameOverReason}
+    />;
+  }
+  
+  if (gamePhase === 'neutral_ending') {
+    return <NeutralEnding onRestartAction={handleRestart} />;
+  }
+  
+  if (gamePhase === 'secret_ending') {
+    return <SecretEnding onRestartAction={handleRestart} />;
   }
   
   return (
@@ -742,6 +811,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       >
         {soundEnabled ? '🔊' : '🔇'}
       </button>
+      
+      {/* Countdown timer */}
+      {countdownDisplay && (
+        <div className={styles.countdownTimer}>
+          <span className={styles.countdownLabel}>⚠️ TRACE ACTIVE</span>
+          <span className={styles.countdownTime}>{countdownDisplay}</span>
+        </div>
+      )}
       
       {/* Status bar */}
       <div className={styles.statusBar}>
