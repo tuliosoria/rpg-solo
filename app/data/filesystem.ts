@@ -1,6 +1,7 @@
 // Filesystem data - Extended content for Terminal 1996
 
 import { DirectoryNode, FileNode, SecurityQuestion } from '../types';
+import neuralClusterMemo from './neuralClusterMemo';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // INSTITUTIONAL FRAMING - Implicit guidance through bureaucratic language
@@ -2623,7 +2624,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
           },
         },
         // Hidden neural cluster memo, only visible after override
-        'neural_cluster_memo.txt': require('./neuralClusterMemo').default,
+        'neural_cluster_memo.txt': neuralClusterMemo,
       },
     },
     admin: {
