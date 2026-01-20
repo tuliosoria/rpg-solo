@@ -465,11 +465,12 @@
 
 /* Redacted text styling */
 .redacted {
-  color: #ff3333;
-  background-color: rgba(255, 0, 0, 0.1);
+  color: #ff6666;
+  background-color: rgba(255, 0, 0, 0.2);
   font-weight: bold;
   animation: redactedPulse 2s ease-in-out infinite;
   cursor: not-allowed;
+  padding: 0 2px;
 }
 
 @keyframes redactedPulse {

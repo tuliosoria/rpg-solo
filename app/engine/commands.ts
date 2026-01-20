@@ -3233,15 +3233,23 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   unread: (args, state) => {
     // Find all accessible files that haven't been read
     const unreadFiles: { path: string; status: string }[] = [];
+    const MAX_SCAN_FILES = 100; // Performance limit
+    let scannedCount = 0;
     
-    const scanDirectory = (dirPath: string) => {
+    const scanDirectory = (dirPath: string, depth: number = 0) => {
+      // Limit recursion depth and total files scanned for performance
+      if (depth > 5 || scannedCount >= MAX_SCAN_FILES) return;
+      
       const entries = listDirectory(dirPath, state);
       if (!entries) return;
       
       for (const entry of entries) {
+        if (scannedCount >= MAX_SCAN_FILES) break;
+        
         const fullPath = dirPath === '/' ? `/${entry.name}` : `${dirPath}/${entry.name}`;
         
         if (entry.type === 'file') {
+          scannedCount++;
           if (!state.filesRead?.has(fullPath)) {
             const access = canAccessFile(fullPath, state);
             if (access.accessible) {
@@ -3249,7 +3257,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             }
           }
         } else if (entry.type === 'dir') {
-          scanDirectory(fullPath);
+          scanDirectory(fullPath, depth + 1);
         }
       }
     };
@@ -3293,8 +3301,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   
   progress: (args, state) => {
     // Show player progress summary
-    const truthsFound = state.truthsDiscovered?.size || 0;
     const truthsNeeded = 5;
+    const truthsFound = Math.min(state.truthsDiscovered?.size || 0, truthsNeeded); // Clamp to max
     const filesReadCount = state.filesRead?.size || 0;
     const bookmarksCount = state.bookmarkedFiles?.size || 0;
     const notesCount = state.playerNotes?.length || 0;

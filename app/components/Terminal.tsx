@@ -292,6 +292,27 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   
   // Idle hint system - nudge players who seem stuck
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastScrollTimeRef = useRef<number>(0);
+  const gameStateRef = useRef(gameState); // Ref to access current state without re-triggering effect
+  
+  // Keep ref updated
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  }, [gameState]);
+  
+  // Track scroll activity to avoid interrupting reading
+  useEffect(() => {
+    const outputEl = outputRef.current;
+    if (!outputEl) return;
+    
+    const handleScroll = () => {
+      lastScrollTimeRef.current = Date.now();
+    };
+    
+    outputEl.addEventListener('scroll', handleScroll);
+    return () => outputEl.removeEventListener('scroll', handleScroll);
+  }, []);
+  
   const IDLE_HINTS = [
     { hint: "Have you checked /internal?", condition: (s: GameState) => s.currentPath === '/' && !s.filesRead?.has('/internal/session_objectives.txt') },
     { hint: "Try 'open' on a .txt file to read it.", condition: (s: GameState) => (s.filesRead?.size || 0) === 0 },
@@ -306,18 +327,23 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver || gameState.tutorialStep >= 0) return;
     
-    // Reset timer on any activity
+    // Reset timer on any activity (history length change indicates command executed)
     if (idleHintTimerRef.current) {
       clearTimeout(idleHintTimerRef.current);
     }
     
-    // Set new idle timer (30 seconds)
+    // Set new idle timer (2 minutes)
     idleHintTimerRef.current = setTimeout(() => {
-      const hintsGiven = gameState.idleHintsGiven || 0;
+      // Skip if user scrolled recently (within last 30 seconds - they're reading)
+      const timeSinceScroll = Date.now() - lastScrollTimeRef.current;
+      if (timeSinceScroll < 30000) return;
+      
+      const currentState = gameStateRef.current;
+      const hintsGiven = currentState.idleHintsGiven || 0;
       if (hintsGiven >= 5) return; // Max 5 idle hints per session
       
       // Find an applicable hint
-      const applicableHints = IDLE_HINTS.filter(h => h.condition(gameState));
+      const applicableHints = IDLE_HINTS.filter(h => h.condition(currentState));
       if (applicableHints.length === 0) return;
       
       const hint = applicableHints[Math.floor(Math.random() * applicableHints.length)];
@@ -332,14 +358,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       }));
       
       playSound('message');
-    }, 30000);
+    }, 120000); // 2 minutes
     
     return () => {
       if (idleHintTimerRef.current) {
         clearTimeout(idleHintTimerRef.current);
       }
     };
-  }, [gameState.history.length, gamePhase, gameState.isGameOver, gameState.tutorialStep, gameState, playSound]);
+  }, [gameState.history.length, gamePhase, gameState.isGameOver, gameState.tutorialStep, playSound]);
   
   // Check for achievements
   const checkAchievement = useCallback((id: string) => {
@@ -833,7 +859,6 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     // Split and render with special styling for redacted parts
     const parts: React.ReactNode[] = [];
-    let key = 0;
     
     // Pattern for redacted sections
     const redactionPattern = /(█+|\[REDACTED\]|\[DATA LOSS\]|\[CLASSIFIED\])/g;
@@ -843,11 +868,11 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     while ((match = redactionPattern.exec(text)) !== null) {
       // Add text before the match
       if (match.index > lastIndex) {
-        parts.push(text.substring(lastIndex, match.index));
+        parts.push(<span key={`text-${lastIndex}`}>{text.substring(lastIndex, match.index)}</span>);
       }
-      // Add the redacted part with special styling
+      // Add the redacted part with special styling (use match.index for stable key)
       parts.push(
-        <span key={key++} className={styles.redacted} title="CLASSIFIED">
+        <span key={`redact-${match.index}`} className={styles.redacted} title="CLASSIFIED">
           {match[0]}
         </span>
       );
@@ -856,7 +881,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     // Add remaining text
     if (lastIndex < text.length) {
-      parts.push(text.substring(lastIndex));
+      parts.push(<span key={`text-${lastIndex}`}>{text.substring(lastIndex)}</span>);
     }
     
     return <>{parts}</>;
