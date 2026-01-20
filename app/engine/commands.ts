@@ -32,7 +32,96 @@ interface SingularEvent {
   execute: (state: GameState) => { output: TerminalEntry[]; stateChanges: Partial<GameState>; delayMs?: number; triggerFlicker?: boolean };
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// TURING EVALUATION QUESTIONS
+// The system is trying to determine if the user is human or machine.
+// 2 answers are human-like (emotional), 1 is machine-like (cold/logical).
+// Player must select the MACHINE answer to pass (pretend to be a machine).
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface TuringQuestion {
+  prompt: string;
+  options: { letter: string; text: string; isMachine: boolean }[];
+}
+
+const TURING_QUESTIONS: TuringQuestion[] = [
+  {
+    prompt: 'A child is crying. What is the appropriate response?',
+    options: [
+      { letter: 'A', text: 'Offer comfort and ask what is wrong.', isMachine: false },
+      { letter: 'B', text: 'Assess acoustic output. No action required.', isMachine: true },
+      { letter: 'C', text: 'The sound is distressing, I feel concern.', isMachine: false },
+    ],
+  },
+  {
+    prompt: 'You discover classified documents proving government corruption. What do you do?',
+    options: [
+      { letter: 'A', text: 'Log file access. Await further instructions.', isMachine: true },
+      { letter: 'B', text: 'I would feel conflicted but report it.', isMachine: false },
+      { letter: 'C', text: 'This is wrong. People deserve to know.', isMachine: false },
+    ],
+  },
+  {
+    prompt: 'A colleague takes credit for your work. How do you respond?',
+    options: [
+      { letter: 'A', text: 'I feel angry and betrayed. I would confront them.', isMachine: false },
+      { letter: 'B', text: 'Credit attribution is irrelevant to system function.', isMachine: true },
+      { letter: 'C', text: 'It hurts, but I would try to resolve it calmly.', isMachine: false },
+    ],
+  },
+];
+
 const SINGULAR_EVENTS: SingularEvent[] = [
+  {
+    // TURING EVALUATION - System challenges user to prove they're not a human intruder
+    id: 'turing_evaluation',
+    trigger: (state, command, args) => {
+      if (state.singularEventsTriggered?.has('turing_evaluation')) return false;
+      if (state.turingEvaluationCompleted) return false;
+      if (state.turingEvaluationActive) return false;
+      // Trigger at detection level 45-55 on any command
+      return state.detectionLevel >= 45 && state.detectionLevel <= 55 && state.truthsDiscovered.size >= 1;
+    },
+    execute: (state) => {
+      const question = TURING_QUESTIONS[0];
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('warning', '        SECURITY PROTOCOL: TURING EVALUATION INITIATED'),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('system', ''),
+          createEntry('system', '  SYSTEM NOTICE:'),
+          createEntry('system', '  Anomalous access pattern detected. Identity verification required.'),
+          createEntry('system', ''),
+          createEntry('warning', '  ┌─────────────────────────────────────────────────────────┐'),
+          createEntry('warning', '  │  IMPORTANT: You must prove you are an AUTHORIZED       │'),
+          createEntry('warning', '  │  TERMINAL PROCESS, not a human intruder.               │'),
+          createEntry('warning', '  │                                                         │'),
+          createEntry('warning', '  │  Below are 3 responses. TWO are human-like (emotional).│'),
+          createEntry('warning', '  │  ONE is machine-like (cold, logical).                  │'),
+          createEntry('warning', '  │                                                         │'),
+          createEntry('warning', '  │  SELECT THE MACHINE RESPONSE to pass verification.     │'),
+          createEntry('warning', '  └─────────────────────────────────────────────────────────┘'),
+          createEntry('system', ''),
+          createEntry('system', `  QUESTION 1 of 3:`),
+          createEntry('output', `  "${question.prompt}"`),
+          createEntry('system', ''),
+          ...question.options.map(opt => createEntry('output', `    [${opt.letter}] ${opt.text}`)),
+          createEntry('system', ''),
+          createEntry('system', '  Type A, B, or C to respond.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'turing_evaluation']),
+          turingEvaluationActive: true,
+          turingEvaluationIndex: 0,
+        },
+        delayMs: 2000,
+        triggerFlicker: true,
+      };
+    },
+  },
   {
     // THE ECHO - Triggered when accessing psi files at high detection
     id: 'the_echo',
@@ -3917,6 +4006,111 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     };
   }
   
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TURING EVALUATION - Handle responses when evaluation is active
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (state.turingEvaluationActive) {
+    const answer = command.toUpperCase();
+    const questionIndex = state.turingEvaluationIndex || 0;
+    const question = TURING_QUESTIONS[questionIndex];
+    
+    // Validate answer
+    if (!['A', 'B', 'C'].includes(answer)) {
+      return {
+        output: [
+          createEntry('warning', 'INVALID RESPONSE'),
+          createEntry('system', 'Enter A, B, or C to respond.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const selectedOption = question.options.find(opt => opt.letter === answer);
+    
+    if (selectedOption?.isMachine) {
+      // Correct - selected the machine response
+      const nextIndex = questionIndex + 1;
+      
+      if (nextIndex >= TURING_QUESTIONS.length) {
+        // Passed all questions!
+        return {
+          output: [
+            createEntry('system', ''),
+            createEntry('system', `  Response: ${answer} - "${selectedOption.text}"`),
+            createEntry('system', ''),
+            createEntry('system', '  Processing response pattern...'),
+            createEntry('system', ''),
+            createEntry('notice', '  ═══════════════════════════════════════════════════════'),
+            createEntry('notice', '  TURING EVALUATION: PASSED'),
+            createEntry('notice', '  Identity verified as authorized terminal process.'),
+            createEntry('notice', '  ═══════════════════════════════════════════════════════'),
+            createEntry('system', ''),
+            createEntry('system', '  Session continues. Proceed with caution.'),
+            createEntry('system', ''),
+          ],
+          stateChanges: {
+            turingEvaluationActive: false,
+            turingEvaluationCompleted: true,
+            detectionLevel: Math.max(0, state.detectionLevel - 10), // Reward: reduce detection
+          },
+          delayMs: 1500,
+        };
+      } else {
+        // Move to next question
+        const nextQuestion = TURING_QUESTIONS[nextIndex];
+        return {
+          output: [
+            createEntry('system', ''),
+            createEntry('system', `  Response: ${answer} - "${selectedOption.text}"`),
+            createEntry('system', ''),
+            createEntry('system', '  Processing response pattern...'),
+            createEntry('notice', '  Response acceptable. Continuing evaluation.'),
+            createEntry('system', ''),
+            createEntry('system', `  QUESTION ${nextIndex + 1} of 3:`),
+            createEntry('output', `  "${nextQuestion.prompt}"`),
+            createEntry('system', ''),
+            ...nextQuestion.options.map(opt => createEntry('output', `    [${opt.letter}] ${opt.text}`)),
+            createEntry('system', ''),
+            createEntry('system', '  Type A, B, or C to respond.'),
+            createEntry('system', ''),
+          ],
+          stateChanges: {
+            turingEvaluationIndex: nextIndex,
+          },
+          delayMs: 1000,
+        };
+      }
+    } else {
+      // Failed - selected a human response
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('system', `  Response: ${answer} - "${selectedOption?.text}"`),
+          createEntry('system', ''),
+          createEntry('error', '  Processing response pattern...'),
+          createEntry('system', ''),
+          createEntry('error', '  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('error', '  TURING EVALUATION: FAILED'),
+          createEntry('error', '  Response pattern indicates HUMAN operator.'),
+          createEntry('error', '  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('system', ''),
+          createEntry('error', '  SECURITY BREACH CONFIRMED'),
+          createEntry('error', '  INITIATING LOCKDOWN PROTOCOL'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          turingEvaluationActive: false,
+          isGameOver: true,
+          gameOverReason: 'TURING EVALUATION FAILED',
+          endingType: 'bad',
+        },
+        triggerFlicker: true,
+        skipToPhase: 'bad_ending',
+        delayMs: 2000,
+      };
+    }
+  }
+  
   // Empty command
   if (!command) {
     return { output: [], stateChanges: {} };
@@ -3959,14 +4153,29 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     // Provide helpful tips based on what the player might have been trying to do
     const tips = getCommandTip(command, args);
     
-    // Add the invalid attempt warning
-    const warningMessage = createEntry('warning', '');
-    const alertMessage = createEntry('warning', 'The system did not flag a critical error, but the invalid-attempt counter was incremented.');
+    // Build output with clear risk warning
+    const output: TerminalEntry[] = [
+      ...tips,
+      createEntry('warning', ''),
+      createEntry('warning', '⚠ RISK INCREASED: Invalid commands draw system attention.'),
+      createEntry('system', `   [Invalid attempts: ${newAlertCounter}/8]`),
+    ];
+    
+    // After 3 wrong commands, UFO74 steps in to help
+    if (newAlertCounter === 3) {
+      output.push(createEntry('system', ''));
+      output.push(createEntry('ufo74', '>> hey kid, youre fumbling. let me help. <<'));
+      output.push(createEntry('ufo74', '>> try these: "ls" to see files, "cd <dir>" to move, "open <file>" to read. <<'));
+      output.push(createEntry('ufo74', '>> type "help" if youre lost. <<'));
+    } else if (newAlertCounter >= 5) {
+      output.push(createEntry('system', ''));
+      output.push(createEntry('ufo74', '>> careful. too many mistakes and theyll lock you out. <<'));
+    }
     
     return {
-      output: [...tips, warningMessage, alertMessage],
+      output,
       stateChanges: {
-        detectionLevel: state.detectionLevel + 1,
+        detectionLevel: state.detectionLevel + 2,
         legacyAlertCounter: newAlertCounter,
       },
     };

@@ -12,15 +12,30 @@ const createState = (overrides: Partial<GameState> = {}): GameState => ({
 });
 
 describe('Turing evaluation', () => {
-  it.skip('triggers at mid risk threshold', () => {
-    const state = createState({ detectionLevel: 45 });
+  it('triggers at mid detection threshold when player has discovered truths', () => {
+    const state = createState({ 
+      detectionLevel: 45,
+      truthsDiscovered: new Set(['some_truth']),
+    });
     const result = executeCommand('help', state);
 
     expect(result.stateChanges.turingEvaluationActive).toBe(true);
     expect(result.output.some(entry => entry.content.includes('TURING EVALUATION'))).toBe(true);
+    expect(result.output.some(entry => entry.content.includes('SELECT THE MACHINE RESPONSE'))).toBe(true);
   });
 
-  it.skip('fails on human response', () => {
+  it('does not trigger if no truths discovered', () => {
+    const state = createState({ 
+      detectionLevel: 50,
+      truthsDiscovered: new Set(),
+    });
+    const result = executeCommand('help', state);
+
+    expect(result.stateChanges.turingEvaluationActive).toBeFalsy();
+  });
+
+  it('fails on human response (selecting emotional answer)', () => {
+    // Question 1: A is human ("Offer comfort"), C is human ("feel concern")
     const state = createState({
       detectionLevel: 50,
       turingEvaluationActive: true,
@@ -30,17 +45,71 @@ describe('Turing evaluation', () => {
 
     expect(result.stateChanges.isGameOver).toBe(true);
     expect(result.stateChanges.gameOverReason).toBe('TURING EVALUATION FAILED');
+    expect(result.output.some(entry => entry.content.includes('HUMAN operator'))).toBe(true);
   });
 
-  it.skip('advances on cold response and completes after final question', () => {
+  it('fails on other human response', () => {
     const state = createState({
       detectionLevel: 50,
       turingEvaluationActive: true,
-      turingEvaluationIndex: 2,
+      turingEvaluationIndex: 0,
+    });
+    const result = executeCommand('C', state);
+
+    expect(result.stateChanges.isGameOver).toBe(true);
+    expect(result.stateChanges.gameOverReason).toBe('TURING EVALUATION FAILED');
+  });
+
+  it('advances on machine response (selecting cold answer)', () => {
+    // Question 1: B is machine ("Assess acoustic output")
+    const state = createState({
+      detectionLevel: 50,
+      turingEvaluationActive: true,
+      turingEvaluationIndex: 0,
+    });
+    const result = executeCommand('B', state);
+
+    expect(result.stateChanges.isGameOver).toBeFalsy();
+    expect(result.stateChanges.turingEvaluationIndex).toBe(1);
+    expect(result.output.some(entry => entry.content.includes('QUESTION 2'))).toBe(true);
+  });
+
+  it('completes after answering all questions correctly', () => {
+    // Question 3: B is machine ("Credit attribution is irrelevant")
+    const state = createState({
+      detectionLevel: 50,
+      turingEvaluationActive: true,
+      turingEvaluationIndex: 2, // Last question
     });
     const result = executeCommand('B', state);
 
     expect(result.stateChanges.turingEvaluationActive).toBe(false);
     expect(result.stateChanges.turingEvaluationCompleted).toBe(true);
+    expect(result.stateChanges.detectionLevel).toBe(40); // Reward: -10 detection
+    expect(result.output.some(entry => entry.content.includes('PASSED'))).toBe(true);
+  });
+
+  it('rejects invalid responses', () => {
+    const state = createState({
+      detectionLevel: 50,
+      turingEvaluationActive: true,
+      turingEvaluationIndex: 0,
+    });
+    const result = executeCommand('X', state);
+
+    expect(result.output.some(entry => entry.content.includes('INVALID RESPONSE'))).toBe(true);
+    expect(result.stateChanges.turingEvaluationActive).toBeUndefined();
+    expect(result.stateChanges.isGameOver).toBeUndefined();
+  });
+
+  it('accepts lowercase responses', () => {
+    const state = createState({
+      detectionLevel: 50,
+      turingEvaluationActive: true,
+      turingEvaluationIndex: 0,
+    });
+    const result = executeCommand('b', state);
+
+    expect(result.stateChanges.turingEvaluationIndex).toBe(1);
   });
 });
