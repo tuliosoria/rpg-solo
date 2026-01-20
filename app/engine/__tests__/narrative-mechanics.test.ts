@@ -25,7 +25,7 @@ describe('Narrative Mechanics', () => {
           evidencesSaved: false,
         });
         const result = executeCommand('disconnect', state);
-        expect(result.stateChanges.gamePhase).toBe('neutral_ending');
+        expect(result.skipToPhase).toBe('neutral_ending');
         expect(result.stateChanges.isGameOver).toBe(true);
       });
 
@@ -35,7 +35,7 @@ describe('Narrative Mechanics', () => {
           evidencesSaved: true,
         });
         const result = executeCommand('disconnect', state);
-        expect(result.stateChanges.gamePhase).toBeUndefined();
+        expect(result.skipToPhase).toBeUndefined();
         expect(result.output.some(e => e.content.includes('transfer in progress'))).toBe(true);
       });
     });
@@ -149,7 +149,7 @@ describe('Narrative Mechanics', () => {
       const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
       if (hasSuccess) {
         expect(result.stateChanges.ufo74SecretDiscovered).toBe(true);
-        expect(result.stateChanges.gamePhase).toBe('secret_ending');
+        expect(result.skipToPhase).toBe('secret_ending');
       } else {
         expect(hasFileNotFound).toBe(true);
       }

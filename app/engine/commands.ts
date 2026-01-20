@@ -2053,9 +2053,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ],
         stateChanges: {
           ufo74SecretDiscovered: true,
-          gamePhase: 'secret_ending' as const,
           detectionLevel: 100,
         },
+        skipToPhase: 'secret_ending' as const,
         triggerFlicker: true,
         delayMs: 3000,
       };
@@ -2836,10 +2836,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
         ],
         stateChanges: {
-          gamePhase: 'neutral_ending' as const,
           isGameOver: true,
           gameOverReason: 'NEUTRAL ENDING - DISCONNECTED',
         },
+        skipToPhase: 'neutral_ending' as const,
         triggerFlicker: true,
         delayMs: 2000,
       };
