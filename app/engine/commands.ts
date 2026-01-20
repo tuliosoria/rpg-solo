@@ -501,8 +501,9 @@ export function applyRandomCorruption(state: GameState): GameState {
 }
 
 // Check truth progress and generate notices
-function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEntry[] {
+function checkTruthProgress(state: GameState, newReveals: string[]): { notices: TerminalEntry[]; stateChanges: Partial<GameState> } {
   const notices: TerminalEntry[] = [];
+  const stateChanges: Partial<GameState> = {};
   const previousCount = state.truthsDiscovered.size;
   
   for (const reveal of newReveals) {
@@ -514,6 +515,13 @@ function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEnt
   const newCount = state.truthsDiscovered.size;
   
   if (newCount > previousCount) {
+    // TRUTH DISCOVERY BREATHER: Major revelation distracts the watchers
+    // Reduce detection by 8-12 points per new truth discovered
+    const truthsJustFound = newCount - previousCount;
+    const detectionReduction = truthsJustFound * 10;
+    const newDetection = Math.max(0, state.detectionLevel - detectionReduction);
+    stateChanges.detectionLevel = newDetection;
+    
     // Generate institutional-style progress acknowledgments
     // These are varied and never explain what was found
     const institutionalMessages: Record<string, string[]> = {
@@ -558,6 +566,10 @@ function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEnt
       }
     }
     
+    // Breather notice - the system recalibrates
+    notices.push(createEntry('system', ''));
+    notices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));
+    
     // Additional milestone acknowledgments (never say "progress")
     if (newCount === 2 && previousCount < 2) {
       notices.push(createEntry('notice', ''));
@@ -576,7 +588,7 @@ function checkTruthProgress(state: GameState, newReveals: string[]): TerminalEnt
     state.flags.nearVictory = true;
   }
   
-  return notices;
+  return { notices, stateChanges };
 }
 
 // Check for victory condition
@@ -616,7 +628,10 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
   
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
   const reveals = getFileReveals(filePath);
-  const notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
+  const truthResult = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
+  
+  // Merge truth discovery state changes (includes detection reduction breather)
+  Object.assign(stateChanges, truthResult.stateChanges);
   
   const output = [
     createEntry('system', 'AUTHENTICATION VERIFIED'),
@@ -624,7 +639,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     createEntry('warning', 'WARNING: Partial recovery only'),
     ...createOutputEntries(['', `FILE: ${filePath}`, '']),
     ...createOutputEntries(content || ['[DECRYPTION FAILED]']),
-    ...notices,
+    ...truthResult.notices,
   ];
   
   // Add scout link notice if just unlocked
@@ -1895,7 +1910,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     let notices: ReturnType<typeof createEntry>[] = [];
     if (!isEncryptedAndLocked) {
       const reveals = getFileReveals(filePath);
-      notices = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
+      const truthResult = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
+      notices = truthResult.notices;
+      // Merge truth discovery state changes (includes detection reduction breather)
+      Object.assign(stateChanges, truthResult.stateChanges);
     }
     
     // Track content category based on file path
@@ -3102,6 +3120,131 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
   
+  // ═══════════════════════════════════════════════════════════════════════════
+  // STEALTH RECOVERY - wait and hide commands
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  wait: (args, state) => {
+    const usesRemaining = state.waitUsesRemaining ?? 3;
+    
+    if (usesRemaining <= 0) {
+      return {
+        output: [
+          createEntry('warning', 'Cannot wait any longer.'),
+          createEntry('system', 'The system is too alert. Staying still would be suspicious.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    if (state.detectionLevel <= 5) {
+      return {
+        output: [
+          createEntry('system', 'Detection level already minimal.'),
+          createEntry('system', 'No need to wait.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    // Calculate reduction: more effective at high detection, but costs hostility
+    const reduction = Math.min(state.detectionLevel, state.detectionLevel >= 70 ? 8 : 5);
+    const newDetection = Math.max(0, state.detectionLevel - reduction);
+    const newHostility = Math.min(5, (state.systemHostilityLevel || 0) + 1);
+    
+    const messages: TerminalEntry[] = [
+      createEntry('system', ''),
+      createEntry('system', '    . . .'),
+      createEntry('system', ''),
+      createEntry('system', '    [Holding position... monitoring suspended]'),
+      createEntry('system', ''),
+    ];
+    
+    if (newHostility >= 3) {
+      messages.push(createEntry('warning', '    The system grows impatient.'));
+    } else if (newHostility >= 2) {
+      messages.push(createEntry('system', '    Something is still watching.'));
+    } else {
+      messages.push(createEntry('system', '    Attention drifts elsewhere.'));
+    }
+    
+    messages.push(createEntry('system', ''));
+    messages.push(createEntry('system', `    Detection reduced. [${usesRemaining - 1} wait${usesRemaining - 1 === 1 ? '' : 's'} remaining]`));
+    
+    return {
+      output: messages,
+      stateChanges: {
+        detectionLevel: newDetection,
+        waitUsesRemaining: usesRemaining - 1,
+        systemHostilityLevel: newHostility,
+      },
+      streamingMode: 'slow',
+      delayMs: 2000,
+    };
+  },
+  
+  hide: (args, state) => {
+    // Only available at 90+ detection
+    if (state.detectionLevel < 90) {
+      return {
+        output: [
+          createEntry('error', 'Command not recognized: hide'),
+          createEntry('system', 'Type "help" for available commands'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    // Can only use once per run
+    if (state.hideAvailable === false && state.detectionLevel >= 90) {
+      // First time at 90+ - hide becomes available
+      // This is handled by the detection check below
+    }
+    
+    if (state.singularEventsTriggered?.has('hide_used')) {
+      return {
+        output: [
+          createEntry('error', 'Cannot hide again.'),
+          createEntry('warning', 'They know your patterns now.'),
+          createEntry('system', 'There is no second escape.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    // Emergency escape: reset to 70 but costs stability
+    const stabilityLoss = 25;
+    const newStability = Math.max(10, state.sessionStability - stabilityLoss);
+    
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntry('warning', '▓▓▓ EMERGENCY PROTOCOL ENGAGED ▓▓▓'),
+        createEntry('system', ''),
+        createEntry('system', '    Routing through backup channels...'),
+        createEntry('system', '    Fragmenting connection signature...'),
+        createEntry('system', '    Deploying decoy packets...'),
+        createEntry('system', ''),
+        createEntry('system', '    [CONNECTION DESTABILIZED]'),
+        createEntry('system', ''),
+        createEntry('output', '    You slip back into the shadows.'),
+        createEntry('warning', '    Session stability compromised.'),
+        createEntry('system', ''),
+        createEntry('ufo74', '    >> close call. dont push your luck. <<'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {
+        detectionLevel: 70,
+        sessionStability: newStability,
+        singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'hide_used']),
+        systemHostilityLevel: Math.min(5, (state.systemHostilityLevel || 0) + 2),
+      },
+      streamingMode: 'glitchy',
+      delayMs: 3000,
+      triggerFlicker: true,
+    };
+  },
+
   note: (args, state) => {
     if (args.length === 0) {
       return {
@@ -3959,6 +4102,70 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       ...result.stateChanges,
       ...wanderingCheck.stateChanges,
     };
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // DETECTION STATE WARNINGS - Urgent feedback at high detection levels
+  // ═══════════════════════════════════════════════════════════════════════════
+  const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
+  const prevDetection = state.detectionLevel;
+  
+  // Check if detection just crossed into SUSPICIOUS territory (50-69)
+  if (newDetection >= 50 && newDetection < 70 && prevDetection < 50) {
+    result.output = [
+      ...result.output,
+      createEntry('system', ''),
+      createEntry('warning', '────────────────────────────────────────'),
+      createEntry('warning', '  STATUS: SUSPICIOUS'),
+      createEntry('warning', '  System monitoring increased.'),
+      createEntry('warning', '────────────────────────────────────────'),
+    ];
+  }
+  
+  // Check if detection crossed into ALERT territory (70-84)
+  if (newDetection >= 70 && newDetection < 85 && prevDetection < 70) {
+    result.output = [
+      ...result.output,
+      createEntry('system', ''),
+      createEntry('error', '════════════════════════════════════════'),
+      createEntry('error', '  STATUS: ALERT'),
+      createEntry('warning', '  Active countermeasures online.'),
+      createEntry('error', '════════════════════════════════════════'),
+      createEntry('system', ''),
+      createEntry('ufo74', '>> careful. theyre paying attention now. <<'),
+    ];
+  }
+  
+  // Check if detection crossed into CRITICAL territory (85-89)
+  if (newDetection >= 85 && newDetection < 90 && prevDetection < 85) {
+    result.output = [
+      ...result.output,
+      createEntry('system', ''),
+      createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+      createEntry('error', '  STATUS: CRITICAL'),
+      createEntry('error', '  Trace protocols active.'),
+      createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+      createEntry('system', ''),
+      createEntry('ufo74', '>> STOP. youre about to get burned. <<'),
+      createEntry('ufo74', '>> use "wait" to lay low. you have limited uses. <<'),
+    ];
+    result.triggerFlicker = true;
+  }
+  
+  // Check if detection crossed into IMMINENT territory (90+) - hide becomes available
+  if (newDetection >= 90 && prevDetection < 90) {
+    result.output = [
+      ...result.output,
+      createEntry('system', ''),
+      createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+      createEntry('error', '  STATUS: IMMINENT DETECTION'),
+      createEntry('error', '  Countermeasures locking on.'),
+      createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+      createEntry('system', ''),
+      createEntry('ufo74', '>> EMERGENCY. type "hide" NOW. one chance. <<'),
+    ];
+    result.stateChanges.hideAvailable = true;
+    result.triggerFlicker = true;
   }
   
   return result;

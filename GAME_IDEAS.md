@@ -28,6 +28,12 @@
 
 - ✅ **Mini-games** - `decode` command for ROT13 cipher puzzles. Hints provided after failed attempts.
 
+- ✅ **Stealth recovery system** - `wait` command reduces detection (3 uses per run, costs hostility). `hide` emergency escape at 90+ detection (one-time use, costs stability).
+
+- ✅ **Detection state feedback** - Clear warnings at SUSPICIOUS (50+), ALERT (70+), CRITICAL (85+), IMMINENT (90+) with UFO74 guidance and screen effects.
+
+- ✅ **Truth discovery breathers** - Major revelations briefly reduce detection as system "recalibrates", providing tension relief.
+
 ---
 
 ## Atmosphere
@@ -43,11 +49,11 @@
 
 - ✅ **"They're watching" moments** - Occasional messages suggesting someone else is in the system. Paranoia fuel.
 
-- **Easter eggs**
-  - Real Varginha incident references
-  - X-Files nods ("the truth is out there")
-  - Brazilian culture touches (dates, locations, names)
-  - 90s internet culture references
+- ✅ **Easter eggs**
+  - Real Varginha incident references (Jardim Andere, actual timeline)
+  - X-Files nods ("trust no one", "the truth is out there", "want to believe")
+  - Brazilian culture touches (Copa 94, feijoada menu, Portuguese phrases)
+  - 90s internet culture (dial-up logs, IRC, Geocities, ASCII art signatures)
 
 ---
 
@@ -107,6 +113,5 @@
 
 - Randomized file locations (different playthrough = different paths)
 - New Game+ (start with UFO74 trusting you more, earlier access)
-- Easter eggs (X-Files references, Brazilian culture)
 - External website / ARG elements
 - QR codes in game

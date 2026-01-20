@@ -237,4 +237,97 @@ describe('UX Commands', () => {
       expect(result.stateChanges.lastOpenedFile).toBe('/internal/session_objectives.txt');
     });
   });
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // STEALTH RECOVERY COMMANDS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  describe('wait command', () => {
+    it('should reduce detection level', () => {
+      const state = createTestState({ detectionLevel: 40, waitUsesRemaining: 3 });
+      const result = executeCommand('wait', state);
+      
+      expect(result.stateChanges.detectionLevel).toBeLessThan(40);
+      expect(result.stateChanges.waitUsesRemaining).toBe(2);
+    });
+
+    it('should increase system hostility', () => {
+      const state = createTestState({ detectionLevel: 40, waitUsesRemaining: 3, systemHostilityLevel: 0 });
+      const result = executeCommand('wait', state);
+      
+      expect(result.stateChanges.systemHostilityLevel).toBe(1);
+    });
+
+    it('should fail when no uses remaining', () => {
+      const state = createTestState({ detectionLevel: 40, waitUsesRemaining: 0 });
+      const result = executeCommand('wait', state);
+      
+      expect(result.output.some(e => e.content.includes('Cannot wait any longer'))).toBe(true);
+      expect(result.stateChanges.detectionLevel).toBeUndefined();
+    });
+
+    it('should not reduce if detection already minimal', () => {
+      const state = createTestState({ detectionLevel: 3, waitUsesRemaining: 3 });
+      const result = executeCommand('wait', state);
+      
+      expect(result.output.some(e => e.content.includes('already minimal'))).toBe(true);
+      expect(result.stateChanges.detectionLevel).toBeUndefined();
+    });
+
+    it('should reduce more at high detection levels', () => {
+      const lowState = createTestState({ detectionLevel: 30, waitUsesRemaining: 3 });
+      const highState = createTestState({ detectionLevel: 80, waitUsesRemaining: 3 });
+      
+      const lowResult = executeCommand('wait', lowState);
+      const highResult = executeCommand('wait', highState);
+      
+      const lowReduction = 30 - (lowResult.stateChanges.detectionLevel ?? 30);
+      const highReduction = 80 - (highResult.stateChanges.detectionLevel ?? 80);
+      
+      expect(highReduction).toBeGreaterThan(lowReduction);
+    });
+  });
+
+  describe('hide command', () => {
+    it('should not be available at low detection', () => {
+      const state = createTestState({ detectionLevel: 50 });
+      const result = executeCommand('hide', state);
+      
+      expect(result.output.some(e => e.content.includes('not recognized'))).toBe(true);
+    });
+
+    it('should work at 90+ detection and reset to 70', () => {
+      const state = createTestState({ 
+        detectionLevel: 92, 
+        sessionStability: 100,
+        singularEventsTriggered: new Set(),
+      });
+      const result = executeCommand('hide', state);
+      
+      expect(result.stateChanges.detectionLevel).toBe(70);
+      expect(result.stateChanges.sessionStability).toBeLessThan(100);
+    });
+
+    it('should only work once per run', () => {
+      const state = createTestState({ 
+        detectionLevel: 95,
+        singularEventsTriggered: new Set(['hide_used']),
+      });
+      const result = executeCommand('hide', state);
+      
+      expect(result.output.some(e => e.content.includes('Cannot hide again'))).toBe(true);
+      expect(result.stateChanges.detectionLevel).toBeUndefined();
+    });
+
+    it('should trigger flicker effect', () => {
+      const state = createTestState({ 
+        detectionLevel: 92,
+        sessionStability: 100,
+        singularEventsTriggered: new Set(),
+      });
+      const result = executeCommand('hide', state);
+      
+      expect(result.triggerFlicker).toBe(true);
+    });
+  });
 });

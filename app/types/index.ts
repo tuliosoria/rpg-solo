@@ -202,6 +202,10 @@ export interface GameState {
   // UX: Idle detection for hints
   lastActivityTime: number; // Timestamp of last command
   idleHintsGiven: number; // How many idle hints have been shown
+  
+  // Stealth recovery system
+  waitUsesRemaining: number; // Max 3 per run, resets on new game
+  hideAvailable: boolean; // Becomes true at 90+ detection
 }
 
 export interface SaveSlot {
@@ -313,4 +317,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   // UX: Idle detection
   lastActivityTime: 0,
   idleHintsGiven: 0,
+  // Stealth recovery
+  waitUsesRemaining: 3,
+  hideAvailable: false,
 };
