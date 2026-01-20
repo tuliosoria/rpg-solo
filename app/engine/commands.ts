@@ -2710,6 +2710,209 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     // Continue with normal command but inject countdown
     state = { ...state, sessionDoomCountdown: newCountdown };
   }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GOD MODE - Hidden developer commands for testing
+  // Activation: "iddqd" (classic Doom cheat)
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  const lowerInput = input.trim().toLowerCase();
+  
+  if (lowerInput === 'iddqd') {
+    if (state.godMode) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('warning', '▓▓▓ GOD MODE DEACTIVATED ▓▓▓'),
+          createEntry('system', ''),
+        ],
+        stateChanges: { godMode: false },
+      };
+    }
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntry('warning', '▓▓▓ GOD MODE ACTIVATED ▓▓▓'),
+        createEntry('system', ''),
+        createEntry('output', 'Available commands:'),
+        createEntry('output', '  god help     - Show all god mode commands'),
+        createEntry('output', '  god evidence - Unlock all 5 evidence pieces'),
+        createEntry('output', '  god save     - Trigger evidence saved (→ blackout)'),
+        createEntry('output', '  god icq      - Jump to ICQ phase'),
+        createEntry('output', '  god victory  - Jump to victory screen'),
+        createEntry('output', '  god reset    - Reset game state'),
+        createEntry('output', '  god status   - Show current game state'),
+        createEntry('system', ''),
+        createEntry('output', 'Type "iddqd" again to deactivate.'),
+      ],
+      stateChanges: { godMode: true },
+    };
+  }
+  
+  // Handle god mode commands
+  if (state.godMode && lowerInput.startsWith('god ')) {
+    const godCmd = lowerInput.slice(4).trim();
+    
+    if (godCmd === 'help') {
+      return {
+        output: [
+          createEntry('system', '═══ GOD MODE COMMANDS ═══'),
+          createEntry('output', ''),
+          createEntry('output', 'god help      - Show this help'),
+          createEntry('output', 'god evidence  - Discover all 5 evidence pieces'),
+          createEntry('output', 'god save      - Set evidencesSaved flag (triggers blackout)'),
+          createEntry('output', 'god icq       - Jump directly to ICQ phase'),
+          createEntry('output', 'god victory   - Jump directly to victory screen'),
+          createEntry('output', 'god reset     - Reset to fresh game state'),
+          createEntry('output', 'god status    - Show current game flags'),
+          createEntry('output', 'god stable    - Set stability to 100, detection to 0'),
+          createEntry('output', 'god doom      - Disable doom countdown'),
+          createEntry('output', ''),
+          createEntry('system', 'Type "iddqd" to toggle god mode off.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    if (godCmd === 'evidence') {
+      const allTruths: TruthCategory[] = ['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026'];
+      const newTruths = new Set<TruthCategory>(allTruths);
+      return {
+        output: [
+          createEntry('system', '═══ ALL EVIDENCE UNLOCKED ═══'),
+          createEntry('output', '✓ debris_relocation'),
+          createEntry('output', '✓ being_containment'),
+          createEntry('output', '✓ telepathic_scouts'),
+          createEntry('output', '✓ international_actors'),
+          createEntry('output', '✓ transition_2026'),
+          createEntry('system', ''),
+          createEntry('output', 'Use "god save" to trigger the save phase.'),
+        ],
+        stateChanges: {
+          truthsDiscovered: newTruths,
+          flags: { ...state.flags, allEvidenceCollected: true },
+        },
+      };
+    }
+    
+    if (godCmd === 'save') {
+      return {
+        output: [
+          createEntry('system', '═══ EVIDENCE SAVED ═══'),
+          createEntry('output', 'evidencesSaved = true'),
+          createEntry('output', 'Blackout transition will trigger in 3 seconds...'),
+        ],
+        stateChanges: {
+          evidencesSaved: true,
+          flags: { ...state.flags, evidencesSaved: true },
+        },
+      };
+    }
+    
+    if (godCmd === 'icq') {
+      return {
+        output: [
+          createEntry('system', '═══ JUMPING TO ICQ PHASE ═══'),
+          createEntry('output', 'Terminal will transition to ICQ chat...'),
+        ],
+        stateChanges: {
+          evidencesSaved: true,
+          icqPhase: true,
+        },
+        skipToPhase: 'icq' as const,
+      };
+    }
+    
+    if (godCmd === 'victory') {
+      return {
+        output: [
+          createEntry('system', '═══ JUMPING TO VICTORY ═══'),
+        ],
+        stateChanges: {
+          gameWon: true,
+        },
+        skipToPhase: 'victory' as const,
+      };
+    }
+    
+    if (godCmd === 'reset') {
+      return {
+        output: [
+          createEntry('system', '═══ GAME STATE RESET ═══'),
+          createEntry('output', 'All progress cleared. Reload recommended.'),
+        ],
+        stateChanges: {
+          truthsDiscovered: new Set<TruthCategory>(),
+          evidencesSaved: false,
+          icqPhase: false,
+          gameWon: false,
+          detectionLevel: 0,
+          sessionStability: 100,
+          flags: {},
+          fileMutations: {},
+          terribleMistakeTriggered: false,
+          sessionDoomCountdown: 0,
+        },
+      };
+    }
+    
+    if (godCmd === 'status') {
+      const truths = Array.from(state.truthsDiscovered || []);
+      return {
+        output: [
+          createEntry('system', '═══ GAME STATUS ═══'),
+          createEntry('output', `Evidence found: ${truths.length}/5`),
+          createEntry('output', `  ${truths.join(', ') || '(none)'}`),
+          createEntry('output', `evidencesSaved: ${state.evidencesSaved}`),
+          createEntry('output', `icqPhase: ${state.icqPhase}`),
+          createEntry('output', `gameWon: ${state.gameWon}`),
+          createEntry('output', `detectionLevel: ${state.detectionLevel}`),
+          createEntry('output', `sessionStability: ${state.sessionStability}`),
+          createEntry('output', `terribleMistake: ${state.terribleMistakeTriggered}`),
+          createEntry('output', `doomCountdown: ${state.sessionDoomCountdown}`),
+          createEntry('output', `currentPath: ${state.currentPath}`),
+          createEntry('output', `godMode: ${state.godMode}`),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    if (godCmd === 'stable') {
+      return {
+        output: [
+          createEntry('system', '═══ STABILITY MAXED ═══'),
+          createEntry('output', 'sessionStability = 100'),
+          createEntry('output', 'detectionLevel = 0'),
+        ],
+        stateChanges: {
+          sessionStability: 100,
+          detectionLevel: 0,
+        },
+      };
+    }
+    
+    if (godCmd === 'doom') {
+      return {
+        output: [
+          createEntry('system', '═══ DOOM DISABLED ═══'),
+          createEntry('output', 'terribleMistakeTriggered = false'),
+          createEntry('output', 'sessionDoomCountdown = 0'),
+        ],
+        stateChanges: {
+          terribleMistakeTriggered: false,
+          sessionDoomCountdown: 0,
+        },
+      };
+    }
+    
+    return {
+      output: [
+        createEntry('error', `Unknown god command: ${godCmd}`),
+        createEntry('output', 'Type "god help" for available commands.'),
+      ],
+      stateChanges: {},
+    };
+  }
   
   // Check for pending decrypt answer
   if (state.pendingDecryptFile) {

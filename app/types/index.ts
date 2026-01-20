@@ -165,6 +165,9 @@ export interface GameState {
   mathQuestionWrong: number; // Wrong attempts on current question
   filesSent: boolean; // True after convincing teenager
   gameWon: boolean; // True on victory
+  
+  // Debug mode
+  godMode: boolean; // Hidden dev mode for testing
 }
 
 export interface SaveSlot {
@@ -176,6 +179,7 @@ export interface SaveSlot {
 }
 
 export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow' | 'glitchy';
+export type GamePhase = 'terminal' | 'blackout' | 'icq' | 'victory';
 
 export interface CommandResult {
   output: TerminalEntry[];
@@ -185,6 +189,7 @@ export interface CommandResult {
   imageTrigger?: ImageTrigger;
   videoTrigger?: VideoTrigger;
   streamingMode?: StreamingMode; // How to stream the output
+  skipToPhase?: GamePhase; // GOD mode: skip directly to a phase
 }
 
 export const TRUTH_CATEGORIES = [
@@ -247,4 +252,5 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   mathQuestionWrong: 0,
   filesSent: false,
   gameWon: false,
+  godMode: false,
 };
