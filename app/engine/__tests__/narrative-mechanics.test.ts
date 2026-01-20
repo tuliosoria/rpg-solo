@@ -506,4 +506,111 @@ describe('Narrative Mechanics', () => {
       expect(result.output.some(e => e.content.includes('20-JAN-1996'))).toBe(true);
     });
   });
+
+  describe('Advanced Commands', () => {
+    it('chat command connects to PRISONER_45', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      const result = executeCommand('chat', state);
+      
+      expect(result.output.some(e => e.content.includes('PRISONER_45'))).toBe(true);
+    });
+
+    it('link command shows access denied when not unlocked', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      const result = executeCommand('link', state);
+      
+      expect(result.output.some(e => 
+        e.content.includes('ACCESS DENIED') || e.content.includes('NEURAL PATTERN')
+      )).toBe(true);
+    });
+
+    it('script command shows script status', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      const result = executeCommand('script', state);
+      
+      expect(result.output.length).toBeGreaterThan(0);
+    });
+
+    it('recover command shows usage or attempts recovery', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      const result = executeCommand('recover', state);
+      
+      expect(result.output.length).toBeGreaterThan(0);
+    });
+
+    it('save command triggers evidence save flow', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      const result = executeCommand('save', state);
+      
+      expect(result.output.some(e => 
+        e.content.includes('evidence') || e.content.includes('SAVE') || e.content.includes('save')
+      )).toBe(true);
+    });
+
+    it('trace command shows network activity or traces', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        accessLevel: 2,
+      });
+      const result = executeCommand('trace', state);
+      
+      expect(result.output.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Wrong Command Handling', () => {
+    it('invalid command increases detection and alert counter', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        detectionLevel: 20,
+        legacyAlertCounter: 0,
+      });
+      const result = executeCommand('invalidcmd', state);
+      
+      expect(result.stateChanges.detectionLevel).toBe(22); // +2
+      expect(result.stateChanges.legacyAlertCounter).toBe(1);
+      expect(result.output.some(e => e.content.includes('RISK INCREASED'))).toBe(true);
+    });
+
+    it('UFO74 helps after 3 wrong commands', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        legacyAlertCounter: 2,
+      });
+      const result = executeCommand('badcommand', state);
+      
+      expect(result.stateChanges.legacyAlertCounter).toBe(3);
+      expect(result.output.some(e => e.content.includes('fumbling'))).toBe(true);
+    });
+
+    it('game over after 8 wrong commands', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        legacyAlertCounter: 7,
+      });
+      const result = executeCommand('wrongcmd', state);
+      
+      expect(result.stateChanges.isGameOver).toBe(true);
+      expect(result.stateChanges.gameOverReason).toBe('INVALID ATTEMPT THRESHOLD');
+    });
+  });
 });
