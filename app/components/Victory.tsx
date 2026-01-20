@@ -2,14 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './Victory.module.css';
+import { unlockAchievement, Achievement } from '../engine/achievements';
+import AchievementPopup from './AchievementPopup';
 
 interface VictoryProps {
   onRestartAction: () => void;
+  commandCount?: number;
+  detectionLevel?: number;
+  mathMistakes?: number;
 }
 
-export default function Victory({ onRestartAction }: VictoryProps) {
+export default function Victory({ onRestartAction, commandCount = 999, detectionLevel = 50, mathMistakes = 0 }: VictoryProps) {
   const [phase, setPhase] = useState<'intro' | 'message' | 'credits'>('intro');
   const [textLines, setTextLines] = useState<string[]>([]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null);
   
   const VICTORY_TEXT = [
     '═══════════════════════════════════════════════════════════',
@@ -45,6 +52,49 @@ export default function Victory({ onRestartAction }: VictoryProps) {
     '',
     '>> END OF TRANSMISSION <<',
   ];
+  
+  // Check for achievements on mount
+  useEffect(() => {
+    const newAchievements: Achievement[] = [];
+    
+    // Speed Demon - under 50 commands
+    if (commandCount < 50) {
+      const result = unlockAchievement('speed_demon');
+      if (result?.isNew) newAchievements.push(result.achievement);
+    }
+    
+    // Ghost Protocol - low detection
+    if (detectionLevel < 20) {
+      const result = unlockAchievement('ghost');
+      if (result?.isNew) newAchievements.push(result.achievement);
+    }
+    
+    // Survivor - won after reaching critical
+    if (detectionLevel >= 80) {
+      const result = unlockAchievement('survivor');
+      if (result?.isNew) newAchievements.push(result.achievement);
+    }
+    
+    // Mathematician - all math on first try
+    if (mathMistakes === 0) {
+      const result = unlockAchievement('mathematician');
+      if (result?.isNew) newAchievements.push(result.achievement);
+    }
+    
+    setAchievements(newAchievements);
+  }, [commandCount, detectionLevel, mathMistakes]);
+  
+  // Show achievements one by one
+  useEffect(() => {
+    if (achievements.length > 0 && !currentAchievement) {
+      setCurrentAchievement(achievements[0]);
+    }
+  }, [achievements, currentAchievement]);
+  
+  const handleAchievementDismiss = () => {
+    setAchievements(prev => prev.slice(1));
+    setCurrentAchievement(null);
+  };
   
   // Intro phase
   useEffect(() => {
@@ -115,6 +165,14 @@ export default function Victory({ onRestartAction }: VictoryProps) {
             VARGINHA: TERMINAL 1996
           </div>
         </div>
+      )}
+      
+      {/* Achievement popup */}
+      {currentAchievement && (
+        <AchievementPopup
+          achievement={currentAchievement}
+          onDismiss={handleAchievementDismiss}
+        />
       )}
     </div>
   );

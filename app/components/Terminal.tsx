@@ -5,17 +5,36 @@ import { GameState, TerminalEntry, ImageTrigger, VideoTrigger, StreamingMode, Ga
 import { executeCommand, createEntry, getTutorialMessage, TUTORIAL_MESSAGES } from '../engine/commands';
 import { listDirectory, resolvePath } from '../engine/filesystem';
 import { autoSave } from '../storage/saves';
+import { useSound } from '../hooks/useSound';
+import { unlockAchievement, Achievement } from '../engine/achievements';
 import ImageOverlay from './ImageOverlay';
 import VideoOverlay from './VideoOverlay';
 import GameOver from './GameOver';
 import Blackout from './Blackout';
 import ICQChat from './ICQChat';
 import Victory from './Victory';
+import AchievementPopup from './AchievementPopup';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
 const COMMANDS = ['help', 'status', 'ls', 'cd', 'open', 'decrypt', 'recover', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run'];
 const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run'];
+
+// "They're watching" paranoia messages
+const PARANOIA_MESSAGES = [
+  'TRACE DETECTED: External observer connected',
+  'WARNING: Packet inspection in progress',
+  'NOTICE: Session being monitored',
+  'ALERT: Unauthorized access attempt logged',
+  'SYSTEM: Someone else is in the system',
+  'ANOMALY: Data exfiltration detected',
+  'CAUTION: Your keystrokes are being recorded',
+  'INFO: Connection routed through unknown node',
+  'WARNING: Firewall breach attempt detected',
+  'NOTICE: Session flagged for review',
+  'ALERT: Third-party listener identified',
+  'SYSTEM: Memory dump in progress',
+];
 
 // Streaming timing configuration (ms per line)
 const STREAMING_DELAYS: Record<StreamingMode, { base: number; variance: number; glitchChance: number; glitchDelay: number }> = {
@@ -46,6 +65,23 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   
   // Game phase: terminal → blackout → icq → victory
   const [gamePhase, setGamePhase] = useState<GamePhase>('terminal');
+  
+  // Glitch effects
+  const [glitchActive, setGlitchActive] = useState(false);
+  const [glitchHeavy, setGlitchHeavy] = useState(false);
+  
+  // Paranoia messages
+  const [paranoiaMessage, setParanoiaMessage] = useState<string | null>(null);
+  const [paranoiaPosition, setParanoiaPosition] = useState({ top: 0, left: 0 });
+  
+  // Achievement popup
+  const [pendingAchievement, setPendingAchievement] = useState<Achievement | null>(null);
+  
+  // Previous detection level for change tracking
+  const prevDetectionRef = useRef(0);
+  
+  // Sound system
+  const { playSound, startAmbient, stopAmbient, toggleSound, soundEnabled } = useSound();
   
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -84,6 +120,102 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       return () => clearTimeout(timer);
     }
   }, [gameState.evidencesSaved, gamePhase]);
+  
+  // Random glitch effects based on detection level
+  useEffect(() => {
+    if (gamePhase !== 'terminal' || gameState.isGameOver) return;
+    
+    const detection = gameState.detectionLevel;
+    // Higher detection = more frequent glitches
+    // At 20%: ~1% chance per interval, at 80%: ~15% chance
+    const glitchChance = detection > 20 ? (detection - 20) * 0.25 : 0;
+    
+    const interval = setInterval(() => {
+      if (Math.random() * 100 < glitchChance) {
+        if (detection >= 60) {
+          // Heavy glitch at high detection
+          setGlitchHeavy(true);
+          playSound('glitch');
+          setTimeout(() => setGlitchHeavy(false), 500);
+        } else {
+          // Light glitch
+          setGlitchActive(true);
+          playSound('static');
+          setTimeout(() => setGlitchActive(false), 300);
+        }
+      }
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, [gameState.detectionLevel, gameState.isGameOver, gamePhase, playSound]);
+  
+  // "They're watching" paranoia messages
+  useEffect(() => {
+    if (gamePhase !== 'terminal' || gameState.isGameOver) return;
+    
+    const detection = gameState.detectionLevel;
+    // Only trigger paranoia at elevated detection (30%+)
+    if (detection < 30) return;
+    
+    // Higher detection = more frequent paranoia (every 20-60s)
+    const baseInterval = 60000 - (detection * 400); // 60s at 30%, 28s at 80%
+    const variance = 20000;
+    
+    const scheduleParanoia = () => {
+      const delay = baseInterval + Math.random() * variance;
+      return setTimeout(() => {
+        const message = PARANOIA_MESSAGES[Math.floor(Math.random() * PARANOIA_MESSAGES.length)];
+        const top = 100 + Math.random() * (window.innerHeight - 200);
+        const left = 50 + Math.random() * (window.innerWidth - 400);
+        
+        setParanoiaPosition({ top, left });
+        setParanoiaMessage(message);
+        playSound('warning');
+        
+        // Clear after animation
+        setTimeout(() => setParanoiaMessage(null), 3000);
+      }, delay);
+    };
+    
+    const timerId = scheduleParanoia();
+    return () => clearTimeout(timerId);
+  }, [gameState.detectionLevel, gameState.isGameOver, gamePhase, paranoiaMessage, playSound]);
+  
+  // Track detection level changes for sound/visual alerts
+  useEffect(() => {
+    const prev = prevDetectionRef.current;
+    const current = gameState.detectionLevel;
+    
+    if (current > prev) {
+      // Detection increased
+      if (current >= 80 && prev < 80) {
+        playSound('alert');
+      } else if (current >= 60 && prev < 60) {
+        playSound('warning');
+      } else if (current >= 40 && prev < 40) {
+        playSound('warning');
+      }
+    }
+    
+    prevDetectionRef.current = current;
+  }, [gameState.detectionLevel, playSound]);
+  
+  // Start ambient sound when tutorial completes
+  useEffect(() => {
+    if (gameState.tutorialComplete && soundEnabled) {
+      startAmbient();
+    }
+    return () => stopAmbient();
+  }, [gameState.tutorialComplete, soundEnabled, startAmbient, stopAmbient]);
+  
+  // Check for achievements
+  const checkAchievement = useCallback((id: string) => {
+    const result = unlockAchievement(id);
+    if (result?.isNew) {
+      setPendingAchievement(result.achievement);
+      playSound('success');
+    }
+  }, [playSound]);
   
   // Handle blackout complete - transition to ICQ
   const handleBlackoutComplete = useCallback(() => {
@@ -226,6 +358,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     const command = inputValue.trim();
     setInputValue('');
+    playSound('enter'); // Sound on command submit
     setHistoryIndex(-1);
     
     // Add command to history
@@ -325,12 +458,32 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     if (intermediateState.isGameOver) {
       setGameOverReason(intermediateState.gameOverReason || 'CRITICAL SYSTEM FAILURE');
       setShowGameOver(true);
+      playSound('error');
       return;
+    }
+    
+    // Check for achievements based on state changes
+    const truthCount = intermediateState.truthsDiscovered?.size || 0;
+    const prevTruthCount = gameState.truthsDiscovered?.size || 0;
+    
+    // First evidence discovered
+    if (truthCount > 0 && prevTruthCount === 0) {
+      checkAchievement('first_blood');
+    }
+    
+    // All truths discovered
+    if (truthCount === 5 && prevTruthCount < 5) {
+      checkAchievement('truth_seeker');
+    }
+    
+    // God mode activated
+    if (intermediateState.godMode && !gameState.godMode) {
+      checkAchievement('doom_fan');
     }
     
     // Focus input after processing
     inputRef.current?.focus();
-  }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput]);
+  }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput, playSound, checkAchievement]);
   
   // Get auto-complete suggestions
   const getCompletions = useCallback((input: string): string[] => {
@@ -540,16 +693,43 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   }
   
   if (gamePhase === 'victory') {
-    return <Victory onRestartAction={handleRestart} />;
+    return <Victory 
+      onRestartAction={handleRestart} 
+      commandCount={gameState.sessionCommandCount}
+      detectionLevel={gameState.detectionLevel}
+      mathMistakes={gameState.mathQuestionWrong}
+    />;
   }
   
   return (
     <div 
-      className={`${styles.terminal} ${flickerActive ? styles.flicker : ''}`}
+      className={`${styles.terminal} ${flickerActive ? styles.flicker : ''} ${glitchActive ? styles.glitchActive : ''} ${glitchHeavy ? styles.glitchHeavy : ''}`}
       onClick={() => inputRef.current?.focus()}
     >
       {/* Scanlines overlay */}
       <div className={styles.scanlines} />
+      
+      {/* Paranoia message overlay */}
+      {paranoiaMessage && (
+        <div 
+          className={styles.paranoiaMessage}
+          style={{ top: paranoiaPosition.top, left: paranoiaPosition.left }}
+        >
+          {paranoiaMessage}
+        </div>
+      )}
+      
+      {/* Sound toggle button */}
+      <button 
+        className={`${styles.soundToggle} ${soundEnabled ? styles.active : ''}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleSound();
+        }}
+        title={soundEnabled ? 'Sound: ON' : 'Sound: OFF'}
+      >
+        {soundEnabled ? '🔊' : '🔇'}
+      </button>
       
       {/* Status bar */}
       <div className={styles.statusBar}>
@@ -611,7 +791,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           ref={inputRef}
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            if (e.target.value.length > inputValue.length) {
+              playSound('keypress');
+            }
+          }}
           onKeyDown={handleKeyDown}
           className={styles.inputField}
           disabled={isProcessing || gameState.isGameOver}
@@ -665,6 +850,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         <GameOver
           reason={gameOverReason}
           onRestartCompleteAction={onExitAction}
+        />
+      )}
+      
+      {/* Achievement popup */}
+      {pendingAchievement && (
+        <AchievementPopup
+          achievement={pendingAchievement}
+          onDismiss={() => setPendingAchievement(null)}
         />
       )}
     </div>

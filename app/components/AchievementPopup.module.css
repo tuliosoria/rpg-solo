@@ -1,0 +1,103 @@
+.popup {
+  position: fixed;
+  bottom: 32px;
+  right: -400px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #001a00 0%, #002a00 100%);
+  border: 2px solid #00ff00;
+  border-radius: 8px;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 0, 0.3),
+    0 0 40px rgba(0, 255, 0, 0.1),
+    inset 0 0 20px rgba(0, 255, 0, 0.05);
+  z-index: 1000;
+  cursor: pointer;
+  transition: right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-width: 350px;
+}
+
+.popup.visible {
+  right: 32px;
+}
+
+.popup.exiting {
+  right: -400px;
+  transition: right 0.5s ease-in;
+}
+
+.icon {
+  font-size: 48px;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.5));
+  animation: iconPulse 1s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.header {
+  font-size: 10px;
+  color: #00aa00;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #00ff00;
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.description {
+  font-size: 12px;
+  color: #88ff88;
+  opacity: 0.8;
+}
+
+/* Scanline overlay on popup */
+.popup::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  border-radius: 6px;
+}
+
+@media (max-width: 480px) {
+  .popup {
+    left: 16px;
+    right: 16px !important;
+    bottom: 16px;
+    max-width: none;
+    transform: translateY(150%);
+  }
+  
+  .popup.visible {
+    transform: translateY(0);
+  }
+  
+  .popup.exiting {
+    transform: translateY(150%);
+  }
+}
