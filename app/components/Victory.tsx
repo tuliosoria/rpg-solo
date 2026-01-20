@@ -9,10 +9,17 @@ interface VictoryProps {
   onRestartAction: () => void;
   commandCount?: number;
   detectionLevel?: number;
+  maxDetectionReached?: number;
   mathMistakes?: number;
 }
 
-export default function Victory({ onRestartAction, commandCount = 999, detectionLevel = 50, mathMistakes = 0 }: VictoryProps) {
+export default function Victory({ 
+  onRestartAction, 
+  commandCount = 999, 
+  detectionLevel = 50, 
+  maxDetectionReached = 50,
+  mathMistakes = 0 
+}: VictoryProps) {
   const [phase, setPhase] = useState<'intro' | 'message' | 'credits'>('intro');
   const [textLines, setTextLines] = useState<string[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -63,14 +70,14 @@ export default function Victory({ onRestartAction, commandCount = 999, detection
       if (result?.isNew) newAchievements.push(result.achievement);
     }
     
-    // Ghost Protocol - low detection
+    // Ghost Protocol - low final detection
     if (detectionLevel < 20) {
       const result = unlockAchievement('ghost');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
     
-    // Survivor - won after reaching critical
-    if (detectionLevel >= 80) {
+    // Survivor - won after ever reaching critical detection
+    if (maxDetectionReached >= 80) {
       const result = unlockAchievement('survivor');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
@@ -82,7 +89,7 @@ export default function Victory({ onRestartAction, commandCount = 999, detection
     }
     
     setAchievements(newAchievements);
-  }, [commandCount, detectionLevel, mathMistakes]);
+  }, [commandCount, detectionLevel, maxDetectionReached, mathMistakes]);
   
   // Show achievements one by one
   useEffect(() => {

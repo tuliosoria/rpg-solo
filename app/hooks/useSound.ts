@@ -80,8 +80,12 @@ export function useSound() {
 
   // Initialize audio context on first interaction
   const initAudio = useCallback(() => {
+    if (typeof window === 'undefined') return null;
     if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (AudioContextClass) {
+        audioContextRef.current = new AudioContextClass();
+      }
     }
     return audioContextRef.current;
   }, []);
@@ -91,8 +95,10 @@ export function useSound() {
     if (!soundEnabled) return;
     
     const audioContext = initAudio();
-    if (!audioContext || audioContext.state === 'suspended') {
-      audioContext?.resume();
+    if (!audioContext) return;
+    
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
     }
     
     const config = SOUND_CONFIG[type];

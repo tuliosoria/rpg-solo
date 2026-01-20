@@ -77,6 +77,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   // Achievement popup
   const [pendingAchievement, setPendingAchievement] = useState<Achievement | null>(null);
   
+  // Track max detection ever reached for Survivor achievement
+  const maxDetectionRef = useRef(0);
+  
   // Previous detection level for change tracking
   const prevDetectionRef = useRef(0);
   
@@ -161,30 +164,32 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     const baseInterval = 60000 - (detection * 400); // 60s at 30%, 28s at 80%
     const variance = 20000;
     
-    const scheduleParanoia = () => {
-      const delay = baseInterval + Math.random() * variance;
-      return setTimeout(() => {
-        const message = PARANOIA_MESSAGES[Math.floor(Math.random() * PARANOIA_MESSAGES.length)];
-        const top = 100 + Math.random() * (window.innerHeight - 200);
-        const left = 50 + Math.random() * (window.innerWidth - 400);
-        
-        setParanoiaPosition({ top, left });
-        setParanoiaMessage(message);
-        playSound('warning');
-        
-        // Clear after animation
-        setTimeout(() => setParanoiaMessage(null), 3000);
-      }, delay);
-    };
+    const delay = baseInterval + Math.random() * variance;
+    const timerId = setTimeout(() => {
+      const message = PARANOIA_MESSAGES[Math.floor(Math.random() * PARANOIA_MESSAGES.length)];
+      const top = 100 + Math.random() * (window.innerHeight - 200);
+      const left = 50 + Math.random() * (window.innerWidth - 400);
+      
+      setParanoiaPosition({ top, left });
+      setParanoiaMessage(message);
+      playSound('warning');
+      
+      // Clear after animation
+      setTimeout(() => setParanoiaMessage(null), 3000);
+    }, delay);
     
-    const timerId = scheduleParanoia();
     return () => clearTimeout(timerId);
-  }, [gameState.detectionLevel, gameState.isGameOver, gamePhase, paranoiaMessage, playSound]);
+  }, [gameState.detectionLevel, gameState.isGameOver, gamePhase, playSound]);
   
   // Track detection level changes for sound/visual alerts
   useEffect(() => {
     const prev = prevDetectionRef.current;
     const current = gameState.detectionLevel;
+    
+    // Track max detection ever reached
+    if (current > maxDetectionRef.current) {
+      maxDetectionRef.current = current;
+    }
     
     if (current > prev) {
       // Detection increased
@@ -697,6 +702,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       onRestartAction={handleRestart} 
       commandCount={gameState.sessionCommandCount}
       detectionLevel={gameState.detectionLevel}
+      maxDetectionReached={maxDetectionRef.current}
       mathMistakes={gameState.mathQuestionWrong}
     />;
   }
