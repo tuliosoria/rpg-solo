@@ -463,6 +463,20 @@
   text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
+/* Redacted text styling */
+.redacted {
+  color: #ff3333;
+  background-color: rgba(255, 0, 0, 0.1);
+  font-weight: bold;
+  animation: redactedPulse 2s ease-in-out infinite;
+  cursor: not-allowed;
+}
+
+@keyframes redactedPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
 .processing {
   color: #666666;
   animation: blink 1s infinite;

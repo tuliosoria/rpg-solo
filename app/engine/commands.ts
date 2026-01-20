@@ -404,6 +404,47 @@ export function shouldFlicker(state: GameState): boolean {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// TERMINAL PERSONALITY - Typos that self-correct, hesitation for scary content
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Add hesitation dots before scary/classified content
+export function addHesitation(text: string, intensity: number = 1): string[] {
+  const dots = '.'.repeat(Math.min(3, Math.max(1, Math.floor(intensity))));
+  return [dots + dots + dots, text];
+}
+
+// Create a typo version of text that will be followed by correction
+// Returns [typo, correction] or [original] if no typo needed
+export function maybeAddTypo(text: string, chance: number = 0.1): string[] {
+  if (Math.random() > chance || text.length < 5) return [text];
+  
+  // Common typo patterns for terminal "personality"
+  const typoTypes = [
+    // Letter swap
+    (s: string) => {
+      const i = Math.floor(Math.random() * (s.length - 2)) + 1;
+      return s.substring(0, i) + s[i + 1] + s[i] + s.substring(i + 2);
+    },
+    // Double letter
+    (s: string) => {
+      const i = Math.floor(Math.random() * s.length);
+      return s.substring(0, i) + s[i] + s[i] + s.substring(i + 1);
+    },
+    // Missing letter
+    (s: string) => {
+      const i = Math.floor(Math.random() * s.length);
+      return s.substring(0, i) + s.substring(i + 1);
+    },
+  ];
+  
+  const typoFn = typoTypes[Math.floor(Math.random() * typoTypes.length)];
+  const typo = typoFn(text);
+  
+  // Return typo followed by backspace simulation and correction
+  return [typo, `[CORRECTION] ${text}`];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // PER-RUN VARIANCE - Different runs have different "hot" commands
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -1529,11 +1570,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       '',
       '  help              Display this help message',
       '  status            Display system status',
+      '  progress          Show investigation progress',
       '  ls                List directory contents',
       '  cd <dir>          Change directory',
+      '  back              Go to parent directory',
       '  open <file>       Open and display file contents',
+      '  last              Re-display last opened file',
+      '  unread            List unread files',
       '  decrypt <file>    Attempt decryption of .enc files',
       '  recover <file>    Attempt file recovery (RISK)',
+      '  note <text>       Save a personal note',
+      '  notes             View all saved notes',
+      '  bookmark [file]   Bookmark a file (or view bookmarks)',
       '  trace             Trace system connections (RISK)',
       '  chat              Open secure relay channel',
       '  link              Access preserved neural pattern (EXTREME RISK)',
@@ -1541,6 +1589,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       '  override protocol <CODE>  Attempt security override (requires code)',
       '  save              Save current session',
       '  clear             Clear terminal display',
+      '',
+      '  ↑/↓ arrows        Navigate command history',
+      '  Tab               Autocomplete commands and files',
       '',
       '═══════════════════════════════════════════════════════════',
       '',
@@ -1663,14 +1714,30 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     } else {
       for (const entry of entries) {
         let line = `  ${entry.name}`;
+        const fullPath = state.currentPath === '/' 
+          ? `/${entry.name}` 
+          : `${state.currentPath}/${entry.name}`;
         
-        // Show [READ] for files that have been opened
+        // Show markers for files
         if (entry.type === 'file') {
-          const fullPath = state.currentPath === '/' 
-            ? `/${entry.name}` 
-            : `${state.currentPath}/${entry.name}`;
+          // Bookmark marker
+          if (state.bookmarkedFiles?.has(fullPath)) {
+            line += ' ★';
+          }
+          
+          // Read marker
           if (state.filesRead?.has(fullPath)) {
             line += ' [READ]';
+          }
+          
+          // Reading time estimate (based on content length)
+          const content = getFileContent(fullPath, state);
+          if (content && content.length > 0) {
+            const wordCount = content.join(' ').split(/\s+/).length;
+            const readingMinutes = Math.ceil(wordCount / 200); // ~200 words per minute
+            if (readingMinutes >= 2) {
+              line += ` [~${readingMinutes}min]`;
+            }
           }
         }
         
@@ -1791,6 +1858,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     let stateChanges: Partial<GameState> = {
       detectionLevel: state.detectionLevel + 3,
       filesRead,
+      lastOpenedFile: filePath, // Track for 'last' command
     };
     
     let triggerFlicker = false;
@@ -2964,6 +3032,325 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         history: [],
       },
     };
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // UX COMMANDS - last, back, note, notes, bookmark, unread, progress
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  last: (args, state) => {
+    // Re-display last opened file without re-triggering detection
+    if (!state.lastOpenedFile) {
+      return {
+        output: [
+          createEntry('error', 'ERROR: No file opened yet'),
+          createEntry('system', 'TIP: Use "open <filename>" to read a file first'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const access = canAccessFile(state.lastOpenedFile, state);
+    if (!access.accessible) {
+      return {
+        output: [createEntry('error', `ERROR: File no longer accessible: ${access.reason}`)],
+        stateChanges: {},
+      };
+    }
+    
+    const content = getFileContent(state.lastOpenedFile, state);
+    if (!content) {
+      return {
+        output: [createEntry('error', 'ERROR: File content no longer available')],
+        stateChanges: {},
+      };
+    }
+    
+    const fileName = state.lastOpenedFile.split('/').pop() || state.lastOpenedFile;
+    const output: TerminalEntry[] = [
+      createEntry('system', `[Re-reading: ${fileName}]`),
+      createEntry('system', ''),
+      ...content.map(line => createEntry('output', line)),
+      createEntry('system', ''),
+    ];
+    
+    return {
+      output,
+      stateChanges: {}, // No state changes - no detection increase
+      streamingMode: 'fast',
+    };
+  },
+  
+  back: (args, state) => {
+    // Navigate to parent directory
+    if (state.currentPath === '/') {
+      return {
+        output: [createEntry('system', 'Already at root directory')],
+        stateChanges: {},
+      };
+    }
+    
+    const parts = state.currentPath.split('/').filter(p => p);
+    const newPath = parts.length <= 1 ? '/' : '/' + parts.slice(0, -1).join('/');
+    
+    return {
+      output: [createEntry('output', `Changed to: ${newPath}`)],
+      stateChanges: {
+        currentPath: newPath,
+        detectionLevel: state.detectionLevel + 1,
+      },
+    };
+  },
+  
+  note: (args, state) => {
+    if (args.length === 0) {
+      return {
+        output: [
+          createEntry('error', 'ERROR: Specify note text'),
+          createEntry('system', 'Usage: note <your text>'),
+          createEntry('system', 'Example: note password might be varginha1996'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const noteText = args.join(' ');
+    const newNotes = [...(state.playerNotes || []), { note: noteText, timestamp: Date.now() }];
+    
+    return {
+      output: [
+        createEntry('system', `Note saved: "${noteText}"`),
+        createEntry('system', `[${newNotes.length} notes total - use "notes" to view]`),
+      ],
+      stateChanges: {
+        playerNotes: newNotes,
+      },
+    };
+  },
+  
+  notes: (args, state) => {
+    const notes = state.playerNotes || [];
+    
+    if (notes.length === 0) {
+      return {
+        output: [
+          createEntry('system', 'No notes saved yet'),
+          createEntry('system', 'Use: note <text> to save a note'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const output: TerminalEntry[] = [
+      createEntry('system', ''),
+      createEntry('system', '═════════════════════════════════════════'),
+      createEntry('system', '                 YOUR NOTES              '),
+      createEntry('system', '═════════════════════════════════════════'),
+      createEntry('system', ''),
+    ];
+    
+    notes.forEach((n, i) => {
+      const time = new Date(n.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      output.push(createEntry('output', `  ${i + 1}. [${time}] ${n.note}`));
+    });
+    
+    output.push(createEntry('system', ''));
+    output.push(createEntry('system', '═════════════════════════════════════════'));
+    output.push(createEntry('system', ''));
+    
+    return {
+      output,
+      stateChanges: {},
+    };
+  },
+  
+  bookmark: (args, state) => {
+    if (args.length === 0) {
+      // Show current bookmarks
+      const bookmarks = state.bookmarkedFiles || new Set<string>();
+      
+      if (bookmarks.size === 0) {
+        return {
+          output: [
+            createEntry('system', 'No bookmarks saved'),
+            createEntry('system', 'Usage: bookmark <filename> to bookmark a file'),
+          ],
+          stateChanges: {},
+        };
+      }
+      
+      const output: TerminalEntry[] = [
+        createEntry('system', ''),
+        createEntry('system', '═══════════════════════════════════════'),
+        createEntry('system', '             BOOKMARKED FILES          '),
+        createEntry('system', '═══════════════════════════════════════'),
+        createEntry('system', ''),
+      ];
+      
+      Array.from(bookmarks).forEach((path, i) => {
+        const fileName = path.split('/').pop() || path;
+        const isRead = state.filesRead?.has(path);
+        output.push(createEntry('output', `  ${i + 1}. ${fileName} ${isRead ? '[READ]' : ''}`));
+        output.push(createEntry('system', `      └─ ${path}`));
+      });
+      
+      output.push(createEntry('system', ''));
+      output.push(createEntry('system', '═══════════════════════════════════════'));
+      
+      return { output, stateChanges: {} };
+    }
+    
+    const filePath = resolvePath(args[0], state.currentPath);
+    const node = getNode(filePath, state);
+    
+    if (!node || node.type !== 'file') {
+      return {
+        output: [createEntry('error', `ERROR: File not found: ${args[0]}`)],
+        stateChanges: {},
+      };
+    }
+    
+    const bookmarks = new Set(state.bookmarkedFiles || []);
+    
+    if (bookmarks.has(filePath)) {
+      bookmarks.delete(filePath);
+      return {
+        output: [createEntry('system', `Bookmark removed: ${filePath}`)],
+        stateChanges: { bookmarkedFiles: bookmarks },
+      };
+    }
+    
+    bookmarks.add(filePath);
+    return {
+      output: [
+        createEntry('system', `Bookmarked: ${filePath}`),
+        createEntry('system', 'Use "bookmark" to view all bookmarks'),
+      ],
+      stateChanges: { bookmarkedFiles: bookmarks },
+    };
+  },
+  
+  unread: (args, state) => {
+    // Find all accessible files that haven't been read
+    const unreadFiles: { path: string; status: string }[] = [];
+    
+    const scanDirectory = (dirPath: string) => {
+      const entries = listDirectory(dirPath, state);
+      if (!entries) return;
+      
+      for (const entry of entries) {
+        const fullPath = dirPath === '/' ? `/${entry.name}` : `${dirPath}/${entry.name}`;
+        
+        if (entry.type === 'file') {
+          if (!state.filesRead?.has(fullPath)) {
+            const access = canAccessFile(fullPath, state);
+            if (access.accessible) {
+              unreadFiles.push({ path: fullPath, status: entry.status || 'intact' });
+            }
+          }
+        } else if (entry.type === 'dir') {
+          scanDirectory(fullPath);
+        }
+      }
+    };
+    
+    scanDirectory('/');
+    
+    if (unreadFiles.length === 0) {
+      return {
+        output: [
+          createEntry('system', 'All accessible files have been read!'),
+          createEntry('system', 'Some files may require higher access levels.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const output: TerminalEntry[] = [
+      createEntry('system', ''),
+      createEntry('system', '═══════════════════════════════════════'),
+      createEntry('system', `            UNREAD FILES (${unreadFiles.length})          `),
+      createEntry('system', '═══════════════════════════════════════'),
+      createEntry('system', ''),
+    ];
+    
+    unreadFiles.slice(0, 15).forEach(file => {
+      const fileName = file.path.split('/').pop() || file.path;
+      const statusTag = file.status !== 'intact' ? ` [${file.status.toUpperCase()}]` : '';
+      output.push(createEntry('output', `  ${fileName}${statusTag}`));
+      output.push(createEntry('system', `    └─ ${file.path}`));
+    });
+    
+    if (unreadFiles.length > 15) {
+      output.push(createEntry('system', `  ... and ${unreadFiles.length - 15} more`));
+    }
+    
+    output.push(createEntry('system', ''));
+    output.push(createEntry('system', '═══════════════════════════════════════'));
+    
+    return { output, stateChanges: {} };
+  },
+  
+  progress: (args, state) => {
+    // Show player progress summary
+    const truthsFound = state.truthsDiscovered?.size || 0;
+    const truthsNeeded = 5;
+    const filesReadCount = state.filesRead?.size || 0;
+    const bookmarksCount = state.bookmarkedFiles?.size || 0;
+    const notesCount = state.playerNotes?.length || 0;
+    
+    // Progress bar for truths
+    const progressBar = '█'.repeat(truthsFound) + '░'.repeat(truthsNeeded - truthsFound);
+    
+    const output: TerminalEntry[] = [
+      createEntry('system', ''),
+      createEntry('system', '═══════════════════════════════════════════'),
+      createEntry('system', '              INVESTIGATION PROGRESS       '),
+      createEntry('system', '═══════════════════════════════════════════'),
+      createEntry('system', ''),
+      createEntry('output', `  Evidence Collected: [${progressBar}] ${truthsFound}/${truthsNeeded}`),
+      createEntry('system', ''),
+    ];
+    
+    // Show which truths have been discovered (vague hints)
+    if (truthsFound > 0) {
+      output.push(createEntry('system', '  Confirmed intel:'));
+      if (state.truthsDiscovered?.has('debris_relocation')) {
+        output.push(createEntry('output', '    ✓ Debris transfer operations confirmed'));
+      }
+      if (state.truthsDiscovered?.has('being_containment')) {
+        output.push(createEntry('output', '    ✓ Non-human containment documented'));
+      }
+      if (state.truthsDiscovered?.has('telepathic_scouts')) {
+        output.push(createEntry('output', '    ✓ Telepathic reconnaissance identified'));
+      }
+      if (state.truthsDiscovered?.has('international_actors')) {
+        output.push(createEntry('output', '    ✓ International involvement verified'));
+      }
+      if (state.truthsDiscovered?.has('transition_2026')) {
+        output.push(createEntry('output', '    ✓ Future transition event detected'));
+      }
+      output.push(createEntry('system', ''));
+    }
+    
+    output.push(createEntry('system', '  Session Statistics:'));
+    output.push(createEntry('output', `    Files examined: ${filesReadCount}`));
+    output.push(createEntry('output', `    Bookmarks: ${bookmarksCount}`));
+    output.push(createEntry('output', `    Notes: ${notesCount}`));
+    output.push(createEntry('output', `    Commands executed: ${state.sessionCommandCount || 0}`));
+    output.push(createEntry('system', ''));
+    
+    // Detection warning
+    if (state.detectionLevel >= 70) {
+      output.push(createEntry('error', '  ⚠ CRITICAL: Detection level dangerously high'));
+    } else if (state.detectionLevel >= 40) {
+      output.push(createEntry('warning', '  ⚠ WARNING: Detection level elevated'));
+    }
+    
+    output.push(createEntry('system', '═══════════════════════════════════════════'));
+    output.push(createEntry('system', ''));
+    
+    return { output, stateChanges: {} };
   },
 };
 

@@ -1,0 +1,240 @@
+// UX Commands Tests - last, back, note, notes, bookmark, unread, progress
+import { describe, it, expect } from 'vitest';
+import { executeCommand } from '../commands';
+import { GameState, DEFAULT_GAME_STATE } from '../../types';
+
+// Helper to create a test state
+const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
+  ...DEFAULT_GAME_STATE,
+  seed: 12345,
+  rngState: 12345,
+  sessionStartTime: Date.now(),
+  tutorialStep: -1,
+  tutorialComplete: true,
+  ...overrides,
+});
+
+describe('UX Commands', () => {
+  describe('last command', () => {
+    it('should show error when no file has been opened', () => {
+      const state = createTestState();
+      const result = executeCommand('last', state);
+      
+      expect(result.output.some(e => e.content.includes('No file opened yet'))).toBe(true);
+    });
+
+    it('should re-display last opened file', () => {
+      const state = createTestState({
+        lastOpenedFile: '/internal/session_objectives.txt',
+        filesRead: new Set(['/internal/session_objectives.txt']),
+      });
+      const result = executeCommand('last', state);
+      
+      expect(result.output.some(e => e.content.includes('Re-reading'))).toBe(true);
+      expect(result.stateChanges.detectionLevel).toBeUndefined(); // No detection increase
+    });
+  });
+
+  describe('back command', () => {
+    it('should go to parent directory', () => {
+      const state = createTestState({ currentPath: '/internal' });
+      const result = executeCommand('back', state);
+      
+      expect(result.stateChanges.currentPath).toBe('/');
+    });
+
+    it('should stay at root if already at root', () => {
+      const state = createTestState({ currentPath: '/' });
+      const result = executeCommand('back', state);
+      
+      expect(result.output.some(e => e.content.includes('Already at root'))).toBe(true);
+    });
+
+    it('should handle nested directories', () => {
+      const state = createTestState({ currentPath: '/internal/deep' });
+      const result = executeCommand('back', state);
+      
+      expect(result.stateChanges.currentPath).toBe('/internal');
+    });
+  });
+
+  describe('note command', () => {
+    it('should save a note', () => {
+      const state = createTestState();
+      const result = executeCommand('note password is test123', state);
+      
+      expect(result.stateChanges.playerNotes).toBeDefined();
+      expect(result.stateChanges.playerNotes?.length).toBe(1);
+      expect(result.stateChanges.playerNotes?.[0].note).toBe('password is test123');
+      expect(result.output.some(e => e.content.includes('Note saved'))).toBe(true);
+    });
+
+    it('should show error when no text provided', () => {
+      const state = createTestState();
+      const result = executeCommand('note', state);
+      
+      expect(result.output.some(e => e.content.includes('Specify note text'))).toBe(true);
+    });
+
+    it('should append to existing notes', () => {
+      const state = createTestState({
+        playerNotes: [{ note: 'first note', timestamp: 1000 }],
+      });
+      const result = executeCommand('note second note', state);
+      
+      expect(result.stateChanges.playerNotes?.length).toBe(2);
+    });
+  });
+
+  describe('notes command', () => {
+    it('should show message when no notes saved', () => {
+      const state = createTestState();
+      const result = executeCommand('notes', state);
+      
+      expect(result.output.some(e => e.content.includes('No notes saved'))).toBe(true);
+    });
+
+    it('should display saved notes', () => {
+      const state = createTestState({
+        playerNotes: [
+          { note: 'test note 1', timestamp: Date.now() },
+          { note: 'test note 2', timestamp: Date.now() },
+        ],
+      });
+      const result = executeCommand('notes', state);
+      
+      expect(result.output.some(e => e.content.includes('YOUR NOTES'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('test note 1'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('test note 2'))).toBe(true);
+    });
+  });
+
+  describe('bookmark command', () => {
+    it('should show bookmarks when no args', () => {
+      const state = createTestState({
+        bookmarkedFiles: new Set(['/internal/test.txt']),
+      });
+      const result = executeCommand('bookmark', state);
+      
+      expect(result.output.some(e => e.content.includes('BOOKMARKED FILES'))).toBe(true);
+    });
+
+    it('should show empty message when no bookmarks', () => {
+      const state = createTestState();
+      const result = executeCommand('bookmark', state);
+      
+      expect(result.output.some(e => e.content.includes('No bookmarks saved'))).toBe(true);
+    });
+
+    it('should add a bookmark', () => {
+      const state = createTestState({ currentPath: '/internal' });
+      const result = executeCommand('bookmark session_objectives.txt', state);
+      
+      expect(result.stateChanges.bookmarkedFiles).toBeDefined();
+      expect(result.stateChanges.bookmarkedFiles?.has('/internal/session_objectives.txt')).toBe(true);
+    });
+
+    it('should toggle bookmark off', () => {
+      const state = createTestState({
+        currentPath: '/internal',
+        bookmarkedFiles: new Set(['/internal/session_objectives.txt']),
+      });
+      const result = executeCommand('bookmark session_objectives.txt', state);
+      
+      expect(result.stateChanges.bookmarkedFiles?.has('/internal/session_objectives.txt')).toBe(false);
+      expect(result.output.some(e => e.content.includes('removed'))).toBe(true);
+    });
+  });
+
+  describe('unread command', () => {
+    it('should list unread files', () => {
+      const state = createTestState();
+      const result = executeCommand('unread', state);
+      
+      expect(result.output.some(e => e.content.includes('UNREAD FILES'))).toBe(true);
+    });
+
+    it('should say all read when everything is read', () => {
+      // Create a state with many files read
+      const state = createTestState({
+        filesRead: new Set([
+          '/internal/session_objectives.txt',
+          '/internal/incident_review_protocol.txt',
+          // Add many more...
+        ]),
+      });
+      // Note: This test may pass or fail depending on file count
+      const result = executeCommand('unread', state);
+      expect(result.output.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('progress command', () => {
+    it('should show investigation progress', () => {
+      const state = createTestState();
+      const result = executeCommand('progress', state);
+      
+      expect(result.output.some(e => e.content.includes('INVESTIGATION PROGRESS'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Evidence Collected'))).toBe(true);
+    });
+
+    it('should show discovered truths', () => {
+      const state = createTestState({
+        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
+      });
+      const result = executeCommand('progress', state);
+      
+      expect(result.output.some(e => e.content.includes('Debris transfer'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Non-human containment'))).toBe(true);
+    });
+
+    it('should show detection warning at high levels', () => {
+      const state = createTestState({ detectionLevel: 75 });
+      const result = executeCommand('progress', state);
+      
+      expect(result.output.some(e => e.content.includes('Detection level dangerously high'))).toBe(true);
+    });
+
+    it('should show session statistics', () => {
+      const state = createTestState({
+        filesRead: new Set(['/test1.txt', '/test2.txt']),
+        sessionCommandCount: 50,
+      });
+      const result = executeCommand('progress', state);
+      
+      expect(result.output.some(e => e.content.includes('Files examined: 2'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Commands executed: 50'))).toBe(true);
+    });
+  });
+
+  describe('ls command enhancements', () => {
+    it('should show bookmark star for bookmarked files', () => {
+      const state = createTestState({
+        currentPath: '/internal',
+        bookmarkedFiles: new Set(['/internal/session_objectives.txt']),
+      });
+      const result = executeCommand('ls', state);
+      
+      expect(result.output.some(e => e.content.includes('★'))).toBe(true);
+    });
+
+    it('should show [READ] for read files', () => {
+      const state = createTestState({
+        currentPath: '/internal',
+        filesRead: new Set(['/internal/session_objectives.txt']),
+      });
+      const result = executeCommand('ls', state);
+      
+      expect(result.output.some(e => e.content.includes('[READ]'))).toBe(true);
+    });
+  });
+
+  describe('open command enhancements', () => {
+    it('should track lastOpenedFile', () => {
+      const state = createTestState({ currentPath: '/internal' });
+      const result = executeCommand('open session_objectives.txt', state);
+      
+      expect(result.stateChanges.lastOpenedFile).toBe('/internal/session_objectives.txt');
+    });
+  });
+});

@@ -193,6 +193,15 @@ export interface GameState {
   // Cipher puzzle state
   pendingCipherFile?: string; // File awaiting cipher solution
   cipherAttempts: number; // Wrong attempts on current cipher
+  
+  // UX: Notes & bookmarks system
+  playerNotes: { note: string; timestamp: number }[]; // Player-saved notes
+  bookmarkedFiles: Set<string>; // Files player has bookmarked
+  lastOpenedFile?: string; // Last file opened (for 'last' command)
+  
+  // UX: Idle detection for hints
+  lastActivityTime: number; // Timestamp of last command
+  idleHintsGiven: number; // How many idle hints have been shown
 }
 
 export interface SaveSlot {
@@ -297,4 +306,11 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   // Cipher puzzles
   pendingCipherFile: undefined,
   cipherAttempts: 0,
+  // UX: Notes & bookmarks
+  playerNotes: [],
+  bookmarkedFiles: new Set(),
+  lastOpenedFile: undefined,
+  // UX: Idle detection
+  lastActivityTime: 0,
+  idleHintsGiven: 0,
 };

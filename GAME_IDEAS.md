@@ -80,6 +80,29 @@
 
 ---
 
+## UX Improvements - ALL COMPLETE ✅
+
+### High Impact (Quick Wins)
+- ✅ **Command history** - ↑/↓ arrows to navigate previous commands
+- ✅ **"last" command** - Re-display last opened file without detection increase
+- ✅ **"back" command** - Navigate to parent directory quickly
+- ✅ **Bookmark/note system** - `note`, `notes`, `bookmark` commands for player organization
+- ✅ **Progress indicator** - `progress` command shows evidence collected (X/5)
+
+### Medium Impact
+- ✅ **File preview on autocomplete** - Tab shows first line of files
+- ✅ **"unread" command** - List all files not yet opened
+- ✅ **Contextual hints** - UFO74 nudges after 30s idle with helpful tips
+- ✅ **Reading time estimate** - `ls` shows [~Xmin] for long documents
+
+### Immersion Boosters
+- ✅ **Sound variations** - Different sounds for messages, reveals, typing
+- ✅ **Screen flicker on revelations** - Already implemented for discoveries
+- ✅ **Redacted text styling** - ████████ blocks styled with animation
+- ✅ **Terminal personality helpers** - Typo/hesitation utilities available
+
+---
+
 ## Backlog (Future Consideration)
 
 - Randomized file locations (different playthrough = different paths)

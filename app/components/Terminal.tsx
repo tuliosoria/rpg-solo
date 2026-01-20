@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GameState, TerminalEntry, ImageTrigger, VideoTrigger, StreamingMode, GamePhase } from '../types';
 import { executeCommand, createEntry, getTutorialMessage, TUTORIAL_MESSAGES } from '../engine/commands';
-import { listDirectory, resolvePath } from '../engine/filesystem';
+import { listDirectory, resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { autoSave } from '../storage/saves';
 import { useSound } from '../hooks/useSound';
 import { unlockAchievement, Achievement } from '../engine/achievements';
@@ -20,8 +20,8 @@ import AchievementPopup from './AchievementPopup';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
-const COMMANDS = ['help', 'status', 'ls', 'cd', 'open', 'decrypt', 'recover', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run'];
-const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run'];
+const COMMANDS = ['help', 'status', 'progress', 'ls', 'cd', 'back', 'open', 'last', 'unread', 'decrypt', 'recover', 'note', 'notes', 'bookmark', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run'];
+const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run', 'bookmark'];
 
 // "They're watching" paranoia messages
 const PARANOIA_MESSAGES = [
@@ -289,6 +289,57 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       return () => clearTimeout(timer);
     }
   }, [gameState.ufo74SecretDiscovered, gamePhase]);
+  
+  // Idle hint system - nudge players who seem stuck
+  const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const IDLE_HINTS = [
+    { hint: "Have you checked /internal?", condition: (s: GameState) => s.currentPath === '/' && !s.filesRead?.has('/internal/session_objectives.txt') },
+    { hint: "Try 'open' on a .txt file to read it.", condition: (s: GameState) => (s.filesRead?.size || 0) === 0 },
+    { hint: "Use 'ls' to see what's in the current directory.", condition: (s: GameState) => s.sessionCommandCount < 5 },
+    { hint: "Some files are ENCRYPTED. You'll need 'decrypt' for those.", condition: (s: GameState) => (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2 },
+    { hint: "Try the 'progress' command to see what you've found.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 1 },
+    { hint: "The /comms directory might have useful intel.", condition: (s: GameState) => !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt') },
+    { hint: "Don't forget: 'note' saves reminders, 'bookmark' saves files.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0 },
+    { hint: "Check 'unread' to see what you haven't opened yet.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 3 },
+  ];
+  
+  useEffect(() => {
+    if (gamePhase !== 'terminal' || gameState.isGameOver || gameState.tutorialStep >= 0) return;
+    
+    // Reset timer on any activity
+    if (idleHintTimerRef.current) {
+      clearTimeout(idleHintTimerRef.current);
+    }
+    
+    // Set new idle timer (30 seconds)
+    idleHintTimerRef.current = setTimeout(() => {
+      const hintsGiven = gameState.idleHintsGiven || 0;
+      if (hintsGiven >= 5) return; // Max 5 idle hints per session
+      
+      // Find an applicable hint
+      const applicableHints = IDLE_HINTS.filter(h => h.condition(gameState));
+      if (applicableHints.length === 0) return;
+      
+      const hint = applicableHints[Math.floor(Math.random() * applicableHints.length)];
+      
+      // Add UFO74 hint to terminal
+      const hintEntry = createEntry('ufo74', `[UFO74] ${hint.hint}`);
+      setGameState(prev => ({
+        ...prev,
+        history: [...prev.history, hintEntry],
+        idleHintsGiven: (prev.idleHintsGiven || 0) + 1,
+        lastActivityTime: Date.now(),
+      }));
+      
+      playSound('message');
+    }, 30000);
+    
+    return () => {
+      if (idleHintTimerRef.current) {
+        clearTimeout(idleHintTimerRef.current);
+      }
+    };
+  }, [gameState.history.length, gamePhase, gameState.isGameOver, gameState.tutorialStep, gameState, playSound]);
   
   // Check for achievements
   const checkAchievement = useCallback((id: string) => {
@@ -666,11 +717,41 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           setInputValue(`${cmd} ${prefix}${commonPrefix}`);
         }
         
-        // Show completions in terminal
-        const completionEntry = createEntry('system', completions.join('  '));
+        // Show completions in terminal with file previews
+        const parts2 = inputValue.trimStart().split(/\s+/);
+        const cmd2 = parts2[0]?.toLowerCase();
+        const isFileCommand = cmd2 === 'open' || cmd2 === 'decrypt';
+        
+        const completionLines: string[] = [];
+        completionLines.push(completions.join('  '));
+        
+        // Show file preview for file commands
+        if (isFileCommand && completions.length <= 3) {
+          const partial2 = parts2[parts2.length - 1];
+          let searchDir2 = gameState.currentPath;
+          if (partial2.includes('/')) {
+            const lastSlash = partial2.lastIndexOf('/');
+            searchDir2 = resolvePath(partial2.substring(0, lastSlash + 1), gameState.currentPath);
+          }
+          
+          for (const completion of completions) {
+            const fullPath = searchDir2 === '/' ? `/${completion}` : `${searchDir2}/${completion}`;
+            const node = getNode(fullPath, gameState);
+            if (node && node.type === 'file') {
+              const preview = getFileContent(fullPath, gameState);
+              if (preview && preview.length > 0) {
+                const firstLine = preview.find(line => line.trim().length > 0) || preview[0];
+                const truncated = firstLine.length > 50 ? firstLine.substring(0, 50) + '...' : firstLine;
+                completionLines.push(`  ${completion}: "${truncated}"`);
+              }
+            }
+          }
+        }
+        
+        const completionEntries = completionLines.map(line => createEntry('system', line));
         setGameState(prev => ({
           ...prev,
-          history: [...prev.history, completionEntry]
+          history: [...prev.history, ...completionEntries]
         }));
       }
     } else if (e.key === 'ArrowUp') {
@@ -743,6 +824,44 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const riskInfo = getRiskLevel();
   
   // Render terminal entry
+  // Render text with redaction styling (████████)
+  const renderTextWithRedactions = (text: string) => {
+    // Check if text contains redaction blocks (█ characters)
+    if (!text.includes('█') && !text.includes('[REDACTED]') && !text.includes('[DATA LOSS]')) {
+      return text;
+    }
+    
+    // Split and render with special styling for redacted parts
+    const parts: React.ReactNode[] = [];
+    let key = 0;
+    
+    // Pattern for redacted sections
+    const redactionPattern = /(█+|\[REDACTED\]|\[DATA LOSS\]|\[CLASSIFIED\])/g;
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = redactionPattern.exec(text)) !== null) {
+      // Add text before the match
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      // Add the redacted part with special styling
+      parts.push(
+        <span key={key++} className={styles.redacted} title="CLASSIFIED">
+          {match[0]}
+        </span>
+      );
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
+    return <>{parts}</>;
+  };
+  
   const renderEntry = (entry: TerminalEntry) => {
     let className = styles.line;
     
@@ -769,7 +888,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     return (
       <div key={entry.id} className={className}>
-        {entry.content}
+        {renderTextWithRedactions(entry.content)}
       </div>
     );
   };

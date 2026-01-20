@@ -12,7 +12,10 @@ export type SoundType =
   | 'alert'
   | 'glitch'
   | 'ambient'
-  | 'static';
+  | 'static'
+  | 'message'
+  | 'reveal'
+  | 'typing';
 
 // Sound configuration
 interface SoundConfig {
@@ -31,6 +34,9 @@ const SOUND_CONFIG: Record<SoundType, SoundConfig> = {
   glitch: { volume: 0.25 },
   ambient: { volume: 0.08, loop: true },
   static: { volume: 0.12 },
+  message: { volume: 0.3 }, // UFO74 message received
+  reveal: { volume: 0.4 }, // Important discovery
+  typing: { volume: 0.08 }, // Stream typing sound
 };
 
 // Generate oscillator-based sounds (no external files needed)
@@ -200,6 +206,42 @@ export function useSound() {
       
       case 'ambient': {
         // Handled by startAmbient
+        break;
+      }
+      
+      case 'message': {
+        // UFO74 message - soft ascending chime
+        createOscillatorSound(audioContext, 'sine', 523, 0.08, volume * 0.6);
+        setTimeout(() => {
+          if (audioContextRef.current) {
+            createOscillatorSound(audioContextRef.current, 'sine', 659, 0.1, volume * 0.5);
+          }
+        }, 80);
+        setTimeout(() => {
+          if (audioContextRef.current) {
+            createOscillatorSound(audioContextRef.current, 'sine', 784, 0.15, volume * 0.4);
+          }
+        }, 160);
+        break;
+      }
+      
+      case 'reveal': {
+        // Important discovery - dramatic reveal
+        createOscillatorSound(audioContext, 'sine', 262, 0.3, volume * 0.4);
+        createOscillatorSound(audioContext, 'sine', 330, 0.3, volume * 0.3);
+        createOscillatorSound(audioContext, 'sine', 392, 0.3, volume * 0.3);
+        setTimeout(() => {
+          if (audioContextRef.current) {
+            createOscillatorSound(audioContextRef.current, 'sine', 523, 0.4, volume * 0.5);
+          }
+        }, 200);
+        break;
+      }
+      
+      case 'typing': {
+        // Soft typing sound for streaming
+        const variation = Math.random() * 100 - 50;
+        createOscillatorSound(audioContext, 'triangle', 300 + variation, 0.01, volume * 0.2);
         break;
       }
     }
