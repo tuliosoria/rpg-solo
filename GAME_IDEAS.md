@@ -107,6 +107,26 @@
 - ✅ **Redacted text styling** - ████████ blocks styled with animation
 - ✅ **Terminal personality helpers** - Typo/hesitation utilities available
 
+- ✅ **Glitch intensity scaling** - More aggressive visual corruption at high detection levels (double glitches at 90%+)
+
+- ✅ **Command-specific sounds** - Different audio feedback for dangerous vs safe commands
+
+---
+
+## Gameplay Depth (NEW)
+
+- ✅ **Correlate command** - `correlate file1 file2` cross-references files to find connections, rewards with detection reduction
+
+- ✅ **UFO74 trust degradation** - UFO74 becomes cryptic/paranoid when player triggers too many warnings
+
+- ✅ **Conditional UFO74 dialogue** - UFO74 reacts differently based on which truths the player discovered first
+
+- ✅ **Alternative truth paths** - Mundane files (vehicle logs, HVAC, duty roster) contain hidden reveals for thorough players
+
+- ✅ **Red herring files** - 10+ mundane administrative files in /internal to obscure signal with noise
+
+- ✅ **Expanded paranoia messages** - 40+ varied "they're watching" messages with escalating intensity
+
 ---
 
 ## Backlog (Future Consideration)

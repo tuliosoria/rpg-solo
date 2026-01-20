@@ -792,22 +792,67 @@ function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAnd
   // After 12 messages, UFO74 is gone
   if (messageCount >= 12) return null;
   
+  // Check trust level - affects dialogue style
+  const trustLevel = getUFO74TrustLevel(state);
+  
   // UFO74's state changes as player progresses
   const isGettingParanoid = truthCount >= 3 || messageCount >= 6;
   const isAboutToFlee = truthCount >= 4 || messageCount >= 9;
   const isFinalMessage = messageCount === 11;
   
-  // Build header
-  const header = [
-    createEntry('system', ''),
-    createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
-    createEntry('warning', '│ >> UFO74 << ENCRYPTED CHANNEL                          │'),
-    createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
-    createEntry('system', ''),
-  ];
+  // Build header - varies by trust level
+  let header: TerminalEntry[];
+  if (trustLevel === 'cryptic') {
+    header = [
+      createEntry('system', ''),
+      createEntry('error', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('error', '│ >> UFO74 << ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ UNSTABLE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ │'),
+      createEntry('error', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('system', ''),
+    ];
+  } else if (trustLevel === 'paranoid') {
+    header = [
+      createEntry('system', ''),
+      createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('warning', '│ >> UFO74 << ENCRYPTED [MONITORING DETECTED]            │'),
+      createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('system', ''),
+    ];
+  } else {
+    header = [
+      createEntry('system', ''),
+      createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('warning', '│ >> UFO74 << ENCRYPTED CHANNEL                          │'),
+      createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('system', ''),
+    ];
+  }
   
   // Build message based on file type and state
   let messages: TerminalEntry[] = [];
+  
+  // At degraded trust levels, sometimes use degraded messages instead of normal ones
+  if ((trustLevel === 'cryptic' || trustLevel === 'paranoid') && Math.random() < 0.5) {
+    messages = getUFO74DegradedTrustMessage(trustLevel, filePath);
+    const footer = [
+      createEntry('system', ''),
+      createEntry('warning', '>> CHANNEL UNSTABLE <<'),
+      createEntry('system', ''),
+    ];
+    return [...header, ...messages, ...footer];
+  }
+  
+  // Check for conditional dialogue based on truth discovery order
+  const conditionalDialogue = getUFO74ConditionalDialogue(state, filePath);
+  if (conditionalDialogue && Math.random() < 0.6) {
+    messages = conditionalDialogue;
+    const footer = [
+      createEntry('system', ''),
+      createEntry('warning', '>> CHANNEL IDLE <<'),
+      createEntry('system', ''),
+    ];
+    return [...header, ...messages, ...footer];
+  }
   
   // First unstable file warning - takes priority
   if (isFirstUnstable) {
@@ -923,6 +968,151 @@ function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAnd
   ];
   
   return [...header, ...messages, ...footer];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UFO74 TRUST & CONDITIONAL DIALOGUE SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+
+// UFO74's trust level degrades based on player's risky actions
+function getUFO74TrustLevel(state: GameState): 'trusting' | 'cautious' | 'paranoid' | 'cryptic' {
+  const warnings = state.legacyAlertCounter || 0;
+  const hostility = state.systemHostilityLevel || 0;
+  const detection = state.detectionLevel || 0;
+  
+  // Combine factors to determine trust
+  const riskScore = warnings * 2 + hostility * 3 + Math.floor(detection / 20);
+  
+  if (riskScore >= 15) return 'cryptic';     // Too risky, speaks in riddles
+  if (riskScore >= 10) return 'paranoid';    // Very nervous, short messages
+  if (riskScore >= 5) return 'cautious';     // Getting worried
+  return 'trusting';                          // Normal helpful UFO74
+}
+
+// Get conditional UFO74 dialogue based on which truths discovered first
+function getUFO74ConditionalDialogue(state: GameState, filePath: string): TerminalEntry[] | null {
+  const truthCount = state.truthsDiscovered?.size || 0;
+  const path = filePath.toLowerCase();
+  
+  // Special messages when player finds truths in certain orders
+  const truths = state.truthsDiscovered || new Set();
+  
+  // If they found telepathy first and now finding containment
+  if (truths.has('telepathic_scouts') && !truths.has('being_containment') && 
+      (path.includes('bio') || path.includes('containment') || path.includes('quarantine'))) {
+    return [
+      createEntry('output', 'UFO74: wait... if they could communicate telepathically...'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: and they were CAPTURED...'),
+      createEntry('output', '       did they CHOOSE to be captured?'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: or worse... did they communicate with the captors?'),
+    ];
+  }
+  
+  // If they found international involvement first and now finding 2026
+  if (truths.has('international_actors') && !truths.has('transition_2026') && 
+      (path.includes('2026') || path.includes('window') || path.includes('transition'))) {
+    return [
+      createEntry('output', 'UFO74: so multiple countries knew...'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: and they ALL agreed to wait until 2026?'),
+      createEntry('output', '       what could make enemies cooperate like that?'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: whatever is coming... its bigger than politics.'),
+    ];
+  }
+  
+  // If they found debris first and now finding beings
+  if (truths.has('debris_relocation') && !truths.has('being_containment') && 
+      (path.includes('autopsy') || path.includes('specimen') || path.includes('bio'))) {
+    return [
+      createEntry('output', 'UFO74: you found the ship pieces first.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: now youre finding the CREW.'),
+      createEntry('output', '       someone survived that crash hackerkid.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: imagine being stranded on an alien world...'),
+    ];
+  }
+  
+  // If 4+ truths discovered, UFO74 gets excited
+  if (truthCount >= 4) {
+    return [
+      createEntry('output', 'UFO74: youre almost there hackerkid.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: one more piece and you have the full picture.'),
+      createEntry('output', '       save everything. trust no one.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: especially not me. i could be compromised too.'),
+    ];
+  }
+  
+  return null;
+}
+
+// Degraded trust dialogue - cryptic/paranoid versions of UFO74
+function getUFO74DegradedTrustMessage(trustLevel: 'cautious' | 'paranoid' | 'cryptic', context: string): TerminalEntry[] {
+  if (trustLevel === 'cryptic') {
+    // Speaks in riddles, almost incomprehensible
+    const crypticMessages = [
+      [
+        createEntry('output', 'UFO74: ...'),
+        createEntry('output', ''),
+        createEntry('output', 'UFO74: the walls listen. even these ones.'),
+        createEntry('output', '       find the thread before it finds you.'),
+      ],
+      [
+        createEntry('output', 'UFO74: c4n t s4y m0r3'),
+        createEntry('output', ''),
+        createEntry('output', 'UFO74: th3y r3 1ns1d3 th3 syst3m'),
+        createEntry('output', '       trust n0 0n3'),
+      ],
+      [
+        createEntry('output', 'UFO74: [CONNECTION UNSTABLE]'),
+        createEntry('output', ''),
+        createEntry('output', 'UFO74: ...january... remember january...'),
+        createEntry('output', '       ...they took everything...'),
+      ],
+    ];
+    return crypticMessages[Math.floor(Math.random() * crypticMessages.length)];
+  }
+  
+  if (trustLevel === 'paranoid') {
+    // Short, nervous messages
+    const paranoidMessages = [
+      [
+        createEntry('output', 'UFO74: cant talk long.'),
+        createEntry('output', 'UFO74: theyre scanning the channel.'),
+      ],
+      [
+        createEntry('output', 'UFO74: be fast. be quiet.'),
+        createEntry('output', 'UFO74: i dont know how much longer i have.'),
+      ],
+      [
+        createEntry('output', 'UFO74: stop making noise in there.'),
+        createEntry('output', 'UFO74: every file you open... they see it.'),
+      ],
+    ];
+    return paranoidMessages[Math.floor(Math.random() * paranoidMessages.length)];
+  }
+  
+  // Cautious - still helpful but worried
+  const cautiousMessages = [
+    [
+      createEntry('output', 'UFO74: hackerkid... be more careful.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: youve triggered some flags.'),
+      createEntry('output', '       i can see them on my end.'),
+    ],
+    [
+      createEntry('output', 'UFO74: slow down a little.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: the system is getting suspicious.'),
+      createEntry('output', '       use "wait" if you need to lay low.'),
+    ],
+  ];
+  return cautiousMessages[Math.floor(Math.random() * cautiousMessages.length)];
 }
 
 // UFO74 reactions to specific file content
@@ -3591,6 +3781,164 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     output.push(createEntry('system', ''));
     
     return { output, stateChanges: {} };
+  },
+  
+  correlate: (args, state) => {
+    // Cross-reference two files to find connections and reduce detection
+    if (args.length < 2) {
+      return {
+        output: [
+          createEntry('system', 'USAGE: correlate <file1> <file2>'),
+          createEntry('system', ''),
+          createEntry('system', 'Cross-reference two files to find connections.'),
+          createEntry('system', 'Successful correlations reduce detection level.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const file1Path = resolvePath(args[0], state.currentPath);
+    const file2Path = resolvePath(args[1], state.currentPath);
+    
+    // Check if both files exist and have been read
+    const file1 = getNode(file1Path, state);
+    const file2 = getNode(file2Path, state);
+    
+    if (!file1 || file1.type !== 'file') {
+      return {
+        output: [createEntry('error', `File not found: ${args[0]}`)],
+        stateChanges: {},
+      };
+    }
+    if (!file2 || file2.type !== 'file') {
+      return {
+        output: [createEntry('error', `File not found: ${args[1]}`)],
+        stateChanges: {},
+      };
+    }
+    
+    // Both files must have been read
+    if (!state.filesRead?.has(file1Path) || !state.filesRead?.has(file2Path)) {
+      return {
+        output: [
+          createEntry('warning', 'CORRELATION FAILED'),
+          createEntry('system', ''),
+          createEntry('system', 'Both files must be opened before correlation.'),
+          createEntry('system', 'Read the files first to analyze their content.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    // Define valid correlations (pairs of file keywords that connect)
+    const VALID_CORRELATIONS: Array<{
+      keywords1: string[];
+      keywords2: string[];
+      message: string;
+      detectionReduction: number;
+    }> = [
+      {
+        keywords1: ['transport', 'logistics', 'manifest', 'transfer'],
+        keywords2: ['debris', 'material', 'sample', 'asset'],
+        message: 'Transport routes traced to material recovery sites.',
+        detectionReduction: 8,
+      },
+      {
+        keywords1: ['autopsy', 'medical', 'specimen', 'bio'],
+        keywords2: ['containment', 'quarantine', 'holding'],
+        message: 'Medical procedures linked to containment protocols.',
+        detectionReduction: 10,
+      },
+      {
+        keywords1: ['transcript', 'psi', 'signal', 'comm'],
+        keywords2: ['neural', 'telepathic', 'echo'],
+        message: 'Communication patterns match neural activity signatures.',
+        detectionReduction: 12,
+      },
+      {
+        keywords1: ['foreign', 'liaison', 'international'],
+        keywords2: ['transfer', 'coordination', 'joint'],
+        message: 'International coordination confirmed across multiple files.',
+        detectionReduction: 10,
+      },
+      {
+        keywords1: ['2026', 'window', 'transition', 'cycle'],
+        keywords2: ['threat', 'assessment', 'prediction', 'future'],
+        message: 'Timeline convergence detected across predictive models.',
+        detectionReduction: 15,
+      },
+      {
+        keywords1: ['witness', 'statement', 'observation'],
+        keywords2: ['incident', 'report', 'field'],
+        message: 'Witness accounts corroborate operational reports.',
+        detectionReduction: 6,
+      },
+      {
+        keywords1: ['budget', 'allocation', 'funding'],
+        keywords2: ['operation', 'classified', 'special'],
+        message: 'Financial trail connects to classified operations.',
+        detectionReduction: 5,
+      },
+    ];
+    
+    // Check for valid correlation
+    const path1Lower = file1Path.toLowerCase();
+    const path2Lower = file2Path.toLowerCase();
+    
+    for (const correlation of VALID_CORRELATIONS) {
+      const match1to1 = correlation.keywords1.some(k => path1Lower.includes(k));
+      const match1to2 = correlation.keywords1.some(k => path2Lower.includes(k));
+      const match2to1 = correlation.keywords2.some(k => path1Lower.includes(k));
+      const match2to2 = correlation.keywords2.some(k => path2Lower.includes(k));
+      
+      // Valid if file1 matches keywords1 AND file2 matches keywords2, or vice versa
+      if ((match1to1 && match2to2) || (match1to2 && match2to1)) {
+        const newDetection = Math.max(0, state.detectionLevel - correlation.detectionReduction);
+        return {
+          output: [
+            createEntry('system', ''),
+            createEntry('system', '═══════════════════════════════════════════'),
+            createEntry('system', '        CORRELATION ANALYSIS COMPLETE       '),
+            createEntry('system', '═══════════════════════════════════════════'),
+            createEntry('system', ''),
+            createEntry('output', `  File 1: ${file1Path.split('/').pop()}`),
+            createEntry('output', `  File 2: ${file2Path.split('/').pop()}`),
+            createEntry('system', ''),
+            createEntry('output', `  RESULT: ${correlation.message}`),
+            createEntry('system', ''),
+            createEntry('warning', `  Detection reduced by ${correlation.detectionReduction}%`),
+            createEntry('system', ''),
+            createEntry('system', '═══════════════════════════════════════════'),
+          ],
+          stateChanges: {
+            detectionLevel: newDetection,
+          },
+        };
+      }
+    }
+    
+    // No valid correlation found
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntry('system', '═══════════════════════════════════════════'),
+        createEntry('system', '        CORRELATION ANALYSIS COMPLETE       '),
+        createEntry('system', '═══════════════════════════════════════════'),
+        createEntry('system', ''),
+        createEntry('output', `  File 1: ${file1Path.split('/').pop()}`),
+        createEntry('output', `  File 2: ${file2Path.split('/').pop()}`),
+        createEntry('system', ''),
+        createEntry('warning', '  RESULT: No significant correlation found.'),
+        createEntry('system', ''),
+        createEntry('system', '  Try correlating files from different categories:'),
+        createEntry('system', '    - Transport logs + Recovery reports'),
+        createEntry('system', '    - Medical files + Containment records'),
+        createEntry('system', '    - Communications + Neural analysis'),
+        createEntry('system', ''),
+        createEntry('system', '═══════════════════════════════════════════'),
+      ],
+      stateChanges: {},
+    };
   },
 };
 

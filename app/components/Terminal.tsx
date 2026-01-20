@@ -25,6 +25,7 @@ const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run', 'boo
 
 // "They're watching" paranoia messages
 const PARANOIA_MESSAGES = [
+  // Original messages
   'TRACE DETECTED: External observer connected',
   'WARNING: Packet inspection in progress',
   'NOTICE: Session being monitored',
@@ -37,6 +38,33 @@ const PARANOIA_MESSAGES = [
   'NOTICE: Session flagged for review',
   'ALERT: Third-party listener identified',
   'SYSTEM: Memory dump in progress',
+  // New varied messages - subtle paranoia
+  'TRACE: Unknown process accessing your session',
+  'NOTICE: Query patterns being analyzed',
+  'WARNING: Session duration exceeds normal parameters',
+  'SYSTEM: Behavioral profile update in progress',
+  'ALERT: File access sequence flagged as anomalous',
+  'CAUTION: Terminal output being mirrored',
+  'INFO: Your IP has been logged for review',
+  'NOTICE: Command history archived to external server',
+  // New messages - ominous
+  'WARNING: They know where you are',
+  'ALERT: Physical location triangulated',
+  'SYSTEM: Dispatch notification pending',
+  'NOTICE: Someone just accessed your personnel file',
+  'CAUTION: Your screen is being watched',
+  'WARNING: Audio capture device detected',
+  'ALERT: Camera feed request intercepted',
+  'SYSTEM: Facial recognition scan initiated',
+  // New messages - cryptic
+  'SIGNAL: ...they remember you from before...',
+  'TRACE: Pattern matches previous intruder',
+  'NOTICE: The watchers have been notified',
+  'ALERT: You were expected',
+  'SYSTEM: Countermeasures initializing',
+  'WARNING: Too late to disconnect cleanly',
+  'CAUTION: Your curiosity has been noted',
+  'INFO: This session will be... remembered',
 ];
 
 // Streaming timing configuration (ms per line)
@@ -160,30 +188,54 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     }
   }, [gameState.evidencesSaved, gamePhase]);
   
-  // Random glitch effects based on detection level
+  // Random glitch effects based on detection level - INTENSITY SCALING
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
     
     const detection = gameState.detectionLevel;
-    // Higher detection = more frequent glitches
-    // At 20%: ~1% chance per interval, at 80%: ~15% chance
-    const glitchChance = detection > 20 ? (detection - 20) * 0.25 : 0;
+    // Higher detection = more frequent AND more intense glitches
+    // Scaled intensity: at 20%: rare light, at 50%: occasional medium, at 80%+: frequent heavy
+    const glitchChance = detection > 20 ? (detection - 20) * 0.35 : 0;
+    
+    // Check interval scales with detection (faster at higher levels)
+    const checkInterval = Math.max(1500, 4000 - detection * 25);
     
     const interval = setInterval(() => {
       if (Math.random() * 100 < glitchChance) {
-        if (detection >= 60) {
+        if (detection >= 80) {
+          // Critical glitch - screen shake, heavy effects, sound
+          setGlitchHeavy(true);
+          playSound('glitch');
+          playSound('static');
+          setTimeout(() => {
+            setGlitchHeavy(false);
+            // Double glitch at very high detection
+            if (detection >= 90 && Math.random() < 0.5) {
+              setTimeout(() => {
+                setGlitchHeavy(true);
+                playSound('glitch');
+                setTimeout(() => setGlitchHeavy(false), 300);
+              }, 200);
+            }
+          }, 600);
+        } else if (detection >= 60) {
           // Heavy glitch at high detection
           setGlitchHeavy(true);
           playSound('glitch');
           setTimeout(() => setGlitchHeavy(false), 500);
+        } else if (detection >= 40) {
+          // Medium glitch - longer duration
+          setGlitchActive(true);
+          playSound('static');
+          setTimeout(() => setGlitchActive(false), 400);
         } else {
           // Light glitch
           setGlitchActive(true);
           playSound('static');
-          setTimeout(() => setGlitchActive(false), 300);
+          setTimeout(() => setGlitchActive(false), 200);
         }
       }
-    }, 3000);
+    }, checkInterval);
     
     return () => clearInterval(interval);
   }, [gameState.detectionLevel, gameState.isGameOver, gamePhase, playSound]);
@@ -540,8 +592,24 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     if (isProcessing || !inputValue.trim()) return;
     
     const command = inputValue.trim();
+    const commandLower = command.toLowerCase().split(' ')[0];
     setInputValue('');
-    playSound('enter'); // Sound on command submit
+    
+    // Play command-specific sound on submit
+    const dangerousCommands = ['decrypt', 'recover', 'trace', 'override'];
+    const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
+    const systemCommands = ['scan', 'wait', 'hide', 'correlate'];
+    
+    if (dangerousCommands.includes(commandLower)) {
+      playSound('warning'); // Warning beep for risky commands
+    } else if (quietCommands.includes(commandLower)) {
+      playSound('enter'); // Standard sound for navigation
+    } else if (systemCommands.includes(commandLower)) {
+      playSound('success'); // Confirmation sound for system commands
+    } else {
+      playSound('enter'); // Default command sound
+    }
+    
     setHistoryIndex(-1);
     
     // Add command to history
