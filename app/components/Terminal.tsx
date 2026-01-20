@@ -91,12 +91,16 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const skipStreamingRef = useRef(false);
   const lastHistoryCount = useRef(0);
   
-  // Scroll to bottom when history changes
+  // Scroll to bottom when history changes and restore focus
   useEffect(() => {
     if (outputRef.current) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
-  }, [gameState.history]);
+    // Restore focus after history update (prevents focus loss after commands)
+    if (!isProcessing && !isStreaming && gamePhase === 'terminal') {
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
+  }, [gameState.history, isProcessing, isStreaming, gamePhase]);
   
   // Focus input on mount
   useEffect(() => {
@@ -456,6 +460,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     if (result.skipToPhase) {
       setGamePhase(result.skipToPhase);
       setIsProcessing(false);
+      // Ensure focus after phase skip
+      setTimeout(() => inputRef.current?.focus(), 0);
       return;
     }
     
@@ -486,8 +492,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       checkAchievement('doom_fan');
     }
     
-    // Focus input after processing
-    inputRef.current?.focus();
+    // Focus input after processing (use setTimeout to ensure it runs after React updates)
+    setTimeout(() => inputRef.current?.focus(), 0);
   }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput, playSound, checkAchievement]);
   
   // Get auto-complete suggestions
