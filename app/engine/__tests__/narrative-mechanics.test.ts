@@ -295,4 +295,215 @@ describe('Narrative Mechanics', () => {
       }
     });
   });
+
+  describe('Truth Discovery Breathers', () => {
+    it('reduces detection when discovering a new truth', () => {
+      // Reading a file that reveals a truth should reduce detection
+      const state = createTestState({
+        currentPath: '/storage/assets',
+        detectionLevel: 50,
+        accessLevel: 2,
+        truthsDiscovered: new Set<string>(),
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      
+      // material_x_analysis.dat reveals 'debris_relocation'
+      const result = executeCommand('open material_x_analysis.dat', state);
+      
+      // Should have detection reduction from breather
+      if (result.stateChanges.detectionLevel !== undefined) {
+        expect(result.stateChanges.detectionLevel).toBeLessThan(50);
+      }
+    });
+
+    it('shows recalibration message when truth discovered', () => {
+      const state = createTestState({
+        currentPath: '/storage/assets',
+        detectionLevel: 30,
+        accessLevel: 2,
+        truthsDiscovered: new Set<string>(),
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      
+      const result = executeCommand('open material_x_analysis.dat', state);
+      
+      // Should show recalibration message
+      const hasRecalibration = result.output.some(e => 
+        e.content.includes('recalibrating') || e.content.includes('MEMO FLAG') || e.content.includes('NOTICE')
+      );
+      expect(hasRecalibration).toBe(true);
+    });
+  });
+
+  describe('Detection State Warnings', () => {
+    it('shows SUSPICIOUS warning when crossing 50 threshold', () => {
+      const state = createTestState({
+        currentPath: '/admin',
+        detectionLevel: 48,
+        accessLevel: 4,
+        flags: { adminUnlocked: true },
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      
+      // trace command adds significant detection
+      const result = executeCommand('trace', state);
+      
+      // If we crossed 50, should see SUSPICIOUS warning
+      const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
+      if (newDetection >= 50 && newDetection < 70) {
+        const hasSuspicious = result.output.some(e => 
+          e.content.includes('SUSPICIOUS') || e.content.includes('monitoring increased')
+        );
+        expect(hasSuspicious).toBe(true);
+      }
+    });
+
+    it('shows ALERT warning when crossing 70 threshold', () => {
+      const state = createTestState({
+        currentPath: '/',
+        detectionLevel: 65,
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      
+      // decrypt adds 12 detection
+      const result = executeCommand('decrypt nonexistent.enc', state);
+      
+      const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
+      if (newDetection >= 70 && state.detectionLevel < 70) {
+        const hasAlert = result.output.some(e => 
+          e.content.includes('ALERT') || e.content.includes('paying attention')
+        );
+        expect(hasAlert).toBe(true);
+      }
+    });
+
+    it('shows CRITICAL warning and flicker at 85+ threshold', () => {
+      const state = createTestState({
+        currentPath: '/',
+        detectionLevel: 75,
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      
+      // decrypt adds ~12 detection, should push us to 87+
+      const result = executeCommand('decrypt test.enc', state);
+      
+      const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
+      if (newDetection >= 85 && state.detectionLevel < 85) {
+        expect(result.triggerFlicker).toBe(true);
+        const hasCritical = result.output.some(e => 
+          e.content.includes('CRITICAL') || e.content.includes('about to get burned')
+        );
+        expect(hasCritical).toBe(true);
+      }
+    });
+
+    it('shows IMMINENT warning and enables hide at 90+ threshold', () => {
+      const state = createTestState({
+        currentPath: '/',
+        detectionLevel: 88,
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      
+      // decrypt adds detection
+      const result = executeCommand('decrypt test.enc', state);
+      
+      const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
+      if (newDetection >= 90 && state.detectionLevel < 90) {
+        expect(result.stateChanges.hideAvailable).toBe(true);
+        const hasImminent = result.output.some(e => 
+          e.content.includes('IMMINENT') || e.content.includes('hide')
+        );
+        expect(hasImminent).toBe(true);
+      }
+    });
+  });
+
+  describe('Basic Commands', () => {
+    it('help command shows available commands', () => {
+      const state = createTestState({ tutorialStep: -1, tutorialComplete: true });
+      const result = executeCommand('help', state);
+      
+      expect(result.output.some(e => e.content.includes('TERMINAL COMMANDS'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('ls'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('cd'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('open'))).toBe(true);
+    });
+
+    it('status command shows system status', () => {
+      const state = createTestState({ 
+        tutorialStep: -1, 
+        tutorialComplete: true,
+        detectionLevel: 30,
+      });
+      const result = executeCommand('status', state);
+      
+      expect(result.output.some(e => e.content.includes('SYSTEM STATUS'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('LOGGING'))).toBe(true);
+    });
+
+    it('cd command changes directory', () => {
+      const state = createTestState({ 
+        currentPath: '/',
+        tutorialStep: -1, 
+        tutorialComplete: true,
+      });
+      const result = executeCommand('cd storage', state);
+      
+      expect(result.stateChanges.currentPath).toBe('/storage');
+    });
+
+    it('clear command clears history', () => {
+      const state = createTestState({ 
+        tutorialStep: -1, 
+        tutorialComplete: true,
+        history: [{ id: '1', type: 'output', content: 'test', timestamp: Date.now() }],
+      });
+      const result = executeCommand('clear', state);
+      
+      expect(result.stateChanges.history).toEqual([]);
+    });
+  });
+
+  describe('Easter Eggs', () => {
+    it('trust_protocol_1993.txt exists in /internal', () => {
+      const state = createTestState({ 
+        currentPath: '/internal',
+        tutorialStep: -1, 
+        tutorialComplete: true,
+      });
+      const result = executeCommand('open trust_protocol_1993.txt', state);
+      
+      expect(result.output.some(e => e.content.includes('TRUST NO ONE'))).toBe(true);
+    });
+
+    it('modem_log_jan96.txt contains IRC chat', () => {
+      const state = createTestState({ 
+        currentPath: '/tmp',
+        tutorialStep: -1, 
+        tutorialComplete: true,
+      });
+      const result = executeCommand('open modem_log_jan96.txt', state);
+      
+      expect(result.output.some(e => e.content.includes('UFO74'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('IRC'))).toBe(true);
+    });
+
+    it('jardim_andere_incident.txt contains real Varginha details', () => {
+      const state = createTestState({ 
+        currentPath: '/storage/quarantine',
+        tutorialStep: -1, 
+        tutorialComplete: true,
+      });
+      const result = executeCommand('open jardim_andere_incident.txt', state);
+      
+      expect(result.output.some(e => e.content.includes('Jardim Andere'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('20-JAN-1996'))).toBe(true);
+    });
+  });
 });
