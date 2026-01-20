@@ -4306,14 +4306,28 @@ export const TUTORIAL_MESSAGES: string[][] = [
     '       4. who else was INVOLVED (other countries)',
     '       5. what happens NEXT (future dates, plans)',
   ],
+  // Step 6: After showing the 5 things, trigger evidence tracker reveal
+  [
+    '       >> EVIDENCE TRACKER INITIALIZED <<',
+  ],
   [
     'UFO74: the files are scattered across directories.',
     '       use "ls" to see whats there, "cd" to move around,',
     '       and "open" to read files. some are encrypted.',
   ],
   [
-    'UFO74: the longer you stay connected, the more risk.',
-    '       find the evidence and get out.',
+    'UFO74: be careful, the more you move around—the risk will',
+    '       rise, and if it reaches the maximum, our connection',
+    '       will end kid.',
+  ],
+  // Step 9: After showing risk warning, trigger risk bar reveal
+  [
+    '       >> RISK MONITOR ACTIVATED <<',
+  ],
+  [
+    'UFO74: the real stuff is in the encrypted files and in',
+    '       hidden files. to see hidden files, we MUST override',
+    '       the terminal.',
   ],
   [
     'UFO74: ill keep track of what you find. good luck hackerkid.',
@@ -4362,6 +4376,9 @@ export function getTutorialMessage(step: number): TerminalEntry[] {
     if (step === 0) {
       // First message (transmission header) - all warnings
       entries.push(createEntry('warning', msg));
+    } else if (step === 6 || step === 9) {
+      // Tracker reveal messages - styled as notices
+      entries.push(createEntry('notice', msg));
     } else if (isLastStep) {
       // Last message: first line is warning, rest are system
       if (i === 0) {

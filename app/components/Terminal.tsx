@@ -83,6 +83,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   // Achievement popup
   const [pendingAchievement, setPendingAchievement] = useState<Achievement | null>(null);
   
+  // Progressive UI reveal during tutorial
+  const [showEvidenceTracker, setShowEvidenceTracker] = useState(false);
+  const [showRiskTracker, setShowRiskTracker] = useState(false);
+  
   // Track max detection ever reached for Survivor achievement
   const maxDetectionRef = useRef(0);
   
@@ -126,6 +130,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+  
+  // Show trackers if tutorial already complete (loaded game)
+  useEffect(() => {
+    if (gameState.tutorialComplete) {
+      setShowEvidenceTracker(true);
+      setShowRiskTracker(true);
+    }
+  }, [gameState.tutorialComplete]);
   
   // Auto-save periodically
   useEffect(() => {
@@ -491,6 +503,18 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       
       // Get the tutorial message for this step
       const tutorialEntries = getTutorialMessage(currentStep);
+      
+      // Trigger UI reveals at specific steps
+      // Step 6: Evidence tracker reveal (after showing the 5 things)
+      if (currentStep === 5) {
+        setTimeout(() => setShowEvidenceTracker(true), 300);
+        playSound('reveal');
+      }
+      // Step 9: Risk tracker reveal (after showing risk warning)
+      if (currentStep === 8) {
+        setTimeout(() => setShowRiskTracker(true), 300);
+        playSound('alert');
+      }
       
       if (nextStep >= TUTORIAL_MESSAGES.length) {
         // Tutorial complete
@@ -998,7 +1022,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       
       {/* Progress tracker */}
       <div className={styles.progressTracker}>
-        <div className={styles.truthsSection}>
+        <div className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}>
           <span className={styles.trackerLabel}>EVIDENCE:</span>
           <span className={truthStatus.recovered ? styles.truthFound : styles.truthMissing} title="Physical debris/materials recovered">
             {truthStatus.recovered ? '■' : '□'} RECOVERED
@@ -1019,7 +1043,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             [{truthStatus.total}/5]
           </span>
         </div>
-        <div className={styles.riskSection}>
+        <div className={`${styles.riskSection} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}>
           <span className={styles.trackerLabel}>RISK:</span>
           <div className={styles.riskBar}>
             <div 
