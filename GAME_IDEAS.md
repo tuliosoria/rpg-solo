@@ -18,7 +18,7 @@
 
 ## Gameplay Mechanics
 
-- **Stealth meter visible** - Show detection level more prominently in the UI, with visual/audio warnings at thresholds.
+- ✅ **Stealth meter visible** - Show detection level more prominently in the UI, with visual/audio warnings at thresholds.
 
 - **File corruption spreads** - Reading unstable files can corrupt nearby files over time. Creates consequences for exploration.
 
@@ -32,16 +32,16 @@
 
 ## Atmosphere
 
-- **Sound design**
+- ✅ **Sound design**
   - Keyboard clicks on typing
   - Static/interference sounds
   - Modem dial-up sounds
   - Eerie ambient background
   - Alert beeps on warnings
 
-- **Random glitches** - Unprompted screen distortions as tension builds. The system "fighting back."
+- ✅ **Random glitches** - Unprompted screen distortions as tension builds. The system "fighting back."
 
-- **"They're watching" moments** - Occasional messages suggesting someone else is in the system. Paranoia fuel.
+- ✅ **"They're watching" moments** - Occasional messages suggesting someone else is in the system. Paranoia fuel.
 
 - **Easter eggs**
   - Real Varginha incident references
@@ -53,7 +53,7 @@
 
 ## Replayability
 
-- **Achievements**
+- ✅ **Achievements**
   - "Speed Run" - Complete in under X commands
   - "Pacifist" - Win with low detection level
   - "Completionist" - Read every file
@@ -72,11 +72,11 @@
 
 ## Priority Ideas (Quick Wins)
 
-1. Sound design - huge atmosphere boost
-2. Stealth meter visibility - better player feedback
-3. Random glitches - easy to implement, high impact
-4. "They're watching" moments - tension builder
-5. Achievements - adds replayability without major changes
+1. ✅ Sound design - huge atmosphere boost
+2. ✅ Stealth meter visibility - better player feedback
+3. ✅ Random glitches - easy to implement, high impact
+4. ✅ "They're watching" moments - tension builder
+5. ✅ Achievements - adds replayability without major changes
 
 ---
 
