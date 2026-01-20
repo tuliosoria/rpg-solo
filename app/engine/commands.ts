@@ -1703,7 +1703,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (node.type !== 'dir') {
       return {
-        output: [createEntry('error', `ERROR: Not a directory: ${args[0]}`)],
+        output: [
+          createEntry('error', `ERROR: Not a directory: ${args[0]}`),
+          createEntry('system', ''),
+          createEntry('system', 'TIP: To read a file, use: open ' + args[0]),
+        ],
         stateChanges: {},
       };
     }
@@ -1740,9 +1744,27 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
     
     const node = getNode(filePath, state);
+    
+    // Check if it's a directory
+    if (node && node.type === 'dir') {
+      return {
+        output: [
+          createEntry('error', `ERROR: ${args[0]} is a directory`),
+          createEntry('system', ''),
+          createEntry('system', 'TIP: To enter a directory, use: cd ' + args[0]),
+          createEntry('system', '     To list its contents, use: ls ' + args[0]),
+        ],
+        stateChanges: {},
+      };
+    }
+    
     if (!node || node.type !== 'file') {
       return {
-        output: [createEntry('error', 'ERROR: File not found')],
+        output: [
+          createEntry('error', 'ERROR: File not found'),
+          createEntry('system', ''),
+          createEntry('system', 'TIP: Use "ls" to see available files in current directory'),
+        ],
         stateChanges: {},
       };
     }
@@ -1891,7 +1913,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (file.status !== 'encrypted') {
       return {
-        output: [createEntry('error', 'ERROR: File is not encrypted')],
+        output: [
+          createEntry('error', 'ERROR: File is not encrypted'),
+          createEntry('system', ''),
+          createEntry('system', 'TIP: This file can be read directly with: open ' + args[0]),
+        ],
         stateChanges: {},
       };
     }
