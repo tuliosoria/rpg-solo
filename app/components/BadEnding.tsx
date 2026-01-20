@@ -63,10 +63,12 @@ export default function BadEnding({ onRestartAction, reason = 'DETECTION THRESHO
     if (phase !== 'message') return;
     
     let lineIndex = 0;
+    let finalTimeout: NodeJS.Timeout | undefined;
+    
     const interval = setInterval(() => {
       if (lineIndex >= LOCKDOWN_TEXT.length) {
         clearInterval(interval);
-        setTimeout(() => setPhase('final'), 2000);
+        finalTimeout = setTimeout(() => setPhase('final'), 2000);
         return;
       }
       
@@ -74,7 +76,10 @@ export default function BadEnding({ onRestartAction, reason = 'DETECTION THRESHO
       lineIndex++;
     }, 150);
     
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (finalTimeout) clearTimeout(finalTimeout);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
   
@@ -120,6 +125,7 @@ export default function BadEnding({ onRestartAction, reason = 'DETECTION THRESHO
           <button 
             className={styles.restartButton}
             onClick={onRestartAction}
+            aria-label="Try again - restart game"
           >
             [ TRY AGAIN ]
           </button>

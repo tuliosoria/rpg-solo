@@ -241,6 +241,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   truthsDiscovered: new Set(),
   fileMutations: {},
   isGameOver: false,
+  gameOverReason: undefined,
   prisoner45QuestionsAsked: 0,
   prisoner45Disconnected: false,
   prisoner45UsedResponses: new Set(),

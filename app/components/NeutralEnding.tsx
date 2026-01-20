@@ -63,10 +63,12 @@ export default function NeutralEnding({ onRestartAction }: NeutralEndingProps) {
     if (phase !== 'message') return;
     
     let lineIndex = 0;
+    let finalTimeout: NodeJS.Timeout | undefined;
+    
     const interval = setInterval(() => {
       if (lineIndex >= NEUTRAL_TEXT.length) {
         clearInterval(interval);
-        setTimeout(() => setPhase('final'), 2000);
+        finalTimeout = setTimeout(() => setPhase('final'), 2000);
         return;
       }
       
@@ -74,7 +76,10 @@ export default function NeutralEnding({ onRestartAction }: NeutralEndingProps) {
       lineIndex++;
     }, 200);
     
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (finalTimeout) clearTimeout(finalTimeout);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
   
@@ -115,6 +120,7 @@ export default function NeutralEnding({ onRestartAction }: NeutralEndingProps) {
           <button 
             className={styles.restartButton}
             onClick={onRestartAction}
+            aria-label="Try again - restart game"
           >
             [ TRY AGAIN ]
           </button>

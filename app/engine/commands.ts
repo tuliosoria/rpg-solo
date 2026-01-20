@@ -1841,6 +1841,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       const hiddenCmds = new Set(state.hiddenCommandsDiscovered || []);
       hiddenCmds.add('disconnect');
       hiddenCmds.add('scan');
+      hiddenCmds.add('decode');
       stateChanges.hiddenCommandsDiscovered = hiddenCmds;
     }
     
@@ -1985,7 +1986,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     // UFO74 identity file requires password from transfer_authorization.txt
     if (filePath.includes('ghost_in_machine')) {
-      const password = args[1]?.toLowerCase();
+      const password = args[1]?.toLowerCase().trim();
       
       if (!password) {
         return {
@@ -2886,6 +2887,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   
   // decode - Attempts to decode cipher text (ROT13)
   decode: (args, state) => {
+    // Hidden command - must be discovered first
+    if (!state.hiddenCommandsDiscovered?.has('decode')) {
+      return {
+        output: [createEntry('error', 'Unknown command: decode')],
+        stateChanges: {},
+      };
+    }
+    
     const attempt = args.join(' ').toLowerCase().trim();
     
     if (!attempt) {
@@ -2896,8 +2905,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
     
     // The cipher answer is "the truth is not what they told you"
-    // ROT13 of "the" = "gur"
-    if (attempt === 'the' || attempt === 'the truth' || attempt.includes('truth is not')) {
+    // ROT13 of "the" = "gur" - accept partial answers
+    if (attempt === 'the' || attempt === 'the truth' || attempt === 'the truth is not what they told you') {
       return {
         output: [
           createEntry('system', ''),
@@ -3249,12 +3258,12 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       return {
         output: [
           createEntry('system', '═══ ALL HIDDEN FEATURES UNLOCKED ═══'),
-          createEntry('output', '✓ Hidden commands: disconnect, scan'),
+          createEntry('output', '✓ Hidden commands: disconnect, scan, decode'),
           createEntry('output', '✓ Password found: varginha1996'),
           createEntry('output', '✓ Admin flag set'),
         ],
         stateChanges: {
-          hiddenCommandsDiscovered: new Set(['disconnect', 'scan']),
+          hiddenCommandsDiscovered: new Set(['disconnect', 'scan', 'decode']),
           passwordsFound: new Set(['varginha1996']),
           flags: { ...state.flags, adminUnlocked: true },
         },

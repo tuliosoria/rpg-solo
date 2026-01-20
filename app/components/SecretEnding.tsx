@@ -92,10 +92,12 @@ export default function SecretEnding({ onRestartAction }: SecretEndingProps) {
     if (phase !== 'message') return;
     
     let lineIndex = 0;
+    let finalTimeout: NodeJS.Timeout | undefined;
+    
     const interval = setInterval(() => {
       if (lineIndex >= SECRET_TEXT.length) {
         clearInterval(interval);
-        setTimeout(() => setPhase('final'), 2000);
+        finalTimeout = setTimeout(() => setPhase('final'), 2000);
         return;
       }
       
@@ -103,7 +105,10 @@ export default function SecretEnding({ onRestartAction }: SecretEndingProps) {
       lineIndex++;
     }, 250);
     
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (finalTimeout) clearTimeout(finalTimeout);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
   
@@ -152,6 +157,7 @@ export default function SecretEnding({ onRestartAction }: SecretEndingProps) {
           <button 
             className={styles.restartButton}
             onClick={onRestartAction}
+            aria-label="Return to menu - restart game"
           >
             [ RETURN TO MENU ]
           </button>

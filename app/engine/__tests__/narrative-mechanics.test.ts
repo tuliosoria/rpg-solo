@@ -68,28 +68,43 @@ describe('Narrative Mechanics', () => {
     });
 
     describe('decode command', () => {
-      it('shows usage when no argument provided', () => {
+      it('returns error when command not discovered', () => {
         const state = createTestState();
+        const result = executeCommand('decode test', state);
+        expect(result.output.some(e => e.content.includes('Unknown command'))).toBe(true);
+      });
+
+      it('shows usage when no argument provided and command discovered', () => {
+        const state = createTestState({
+          hiddenCommandsDiscovered: new Set(['decode']),
+        });
         const result = executeCommand('decode', state);
         expect(result.output.some(e => e.content.includes('Usage:'))).toBe(true);
       });
 
       it('succeeds with correct answer', () => {
-        const state = createTestState();
+        const state = createTestState({
+          hiddenCommandsDiscovered: new Set(['decode']),
+        });
         const result = executeCommand('decode the', state);
         expect(result.output.some(e => e.content.includes('Decryption successful'))).toBe(true);
         expect(result.stateChanges.disinformationDiscovered?.has('cipher_decoded')).toBe(true);
       });
 
       it('fails with incorrect answer', () => {
-        const state = createTestState();
+        const state = createTestState({
+          hiddenCommandsDiscovered: new Set(['decode']),
+        });
         const result = executeCommand('decode wrong', state);
         expect(result.output.some(e => e.content.includes('Pattern not recognized'))).toBe(true);
         expect(result.stateChanges.cipherAttempts).toBe(1);
       });
 
       it('gives hint after 3 failed attempts', () => {
-        const state = createTestState({ cipherAttempts: 2 });
+        const state = createTestState({ 
+          cipherAttempts: 2,
+          hiddenCommandsDiscovered: new Set(['decode']),
+        });
         const result = executeCommand('decode wrong', state);
         expect(result.output.some(e => e.content.includes('ROT13'))).toBe(true);
         expect(result.stateChanges.cipherAttempts).toBe(3);
@@ -244,6 +259,7 @@ describe('Narrative Mechanics', () => {
         const result = executeCommand('god unlock', state);
         expect(result.stateChanges.hiddenCommandsDiscovered?.has('disconnect')).toBe(true);
         expect(result.stateChanges.hiddenCommandsDiscovered?.has('scan')).toBe(true);
+        expect(result.stateChanges.hiddenCommandsDiscovered?.has('decode')).toBe(true);
         expect(result.stateChanges.passwordsFound?.has('varginha1996')).toBe(true);
         expect(result.stateChanges.flags?.adminUnlocked).toBe(true);
       });

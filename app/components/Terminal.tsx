@@ -175,20 +175,28 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     const variance = 20000;
     
     const delay = baseInterval + Math.random() * variance;
+    let innerTimerId: NodeJS.Timeout | undefined;
+    
     const timerId = setTimeout(() => {
       const message = PARANOIA_MESSAGES[Math.floor(Math.random() * PARANOIA_MESSAGES.length)];
-      const top = 100 + Math.random() * (window.innerHeight - 200);
-      const left = 50 + Math.random() * (window.innerWidth - 400);
+      // Ensure position stays within viewport bounds
+      const maxTop = Math.max(100, window.innerHeight - 100);
+      const maxLeft = Math.max(50, window.innerWidth - 350);
+      const top = 100 + Math.random() * Math.max(0, maxTop - 100);
+      const left = 50 + Math.random() * Math.max(0, maxLeft - 50);
       
       setParanoiaPosition({ top, left });
       setParanoiaMessage(message);
       playSound('warning');
       
       // Clear after animation
-      setTimeout(() => setParanoiaMessage(null), 3000);
+      innerTimerId = setTimeout(() => setParanoiaMessage(null), 3000);
     }, delay);
     
-    return () => clearTimeout(timerId);
+    return () => {
+      clearTimeout(timerId);
+      if (innerTimerId) clearTimeout(innerTimerId);
+    };
   }, [gameState.detectionLevel, gameState.isGameOver, gamePhase, playSound]);
   
   // Track detection level changes for sound/visual alerts
