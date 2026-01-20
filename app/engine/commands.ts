@@ -1663,6 +1663,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     } else {
       for (const entry of entries) {
         let line = `  ${entry.name}`;
+        
+        // Show [READ] for files that have been opened
+        if (entry.type === 'file') {
+          const fullPath = state.currentPath === '/' 
+            ? `/${entry.name}` 
+            : `${state.currentPath}/${entry.name}`;
+          if (state.filesRead?.has(fullPath)) {
+            line += ' [READ]';
+          }
+        }
+        
         if (entry.status && entry.status !== 'intact') {
           line += ` [${entry.status.toUpperCase()}]`;
         }
@@ -1772,9 +1783,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const file = node as FileNode;
     const mutation = state.fileMutations[filePath];
     
+    // Track file as read
+    const filesRead = new Set(state.filesRead || []);
+    filesRead.add(filePath);
+    
     // Check if file is unstable and might corrupt
     let stateChanges: Partial<GameState> = {
       detectionLevel: state.detectionLevel + 3,
+      filesRead,
     };
     
     let triggerFlicker = false;

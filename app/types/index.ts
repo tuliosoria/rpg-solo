@@ -90,6 +90,9 @@ export interface GameState {
   // Truth categories discovered (5 required for victory)
   truthsDiscovered: Set<string>;
   
+  // Files the player has opened/read
+  filesRead: Set<string>;
+  
   // Persistent file mutations
   fileMutations: Record<string, FileMutation>;
   
@@ -239,6 +242,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   overrideFailedAttempts: 0,
   scoutLinksUsed: 0,
   truthsDiscovered: new Set(),
+  filesRead: new Set(),
   fileMutations: {},
   isGameOver: false,
   gameOverReason: undefined,
