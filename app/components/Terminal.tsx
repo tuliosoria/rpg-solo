@@ -96,11 +96,25 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const inputRef = useRef<HTMLInputElement>(null);
   const skipStreamingRef = useRef(false);
   const lastHistoryCount = useRef(0);
+  const streamStartScrollPos = useRef<number | null>(null);
   
-  // Scroll to bottom when history changes and restore focus
+  // Scroll behavior: during streaming scroll to bottom, after streaming scroll to content start
   useEffect(() => {
     if (outputRef.current) {
-      outputRef.current.scrollTop = outputRef.current.scrollHeight;
+      if (isStreaming) {
+        // During streaming, follow the output to bottom
+        outputRef.current.scrollTop = outputRef.current.scrollHeight;
+      } else if (streamStartScrollPos.current !== null) {
+        // Streaming just completed - scroll back to where content started
+        outputRef.current.scrollTo({
+          top: streamStartScrollPos.current,
+          behavior: 'smooth'
+        });
+        streamStartScrollPos.current = null;
+      } else {
+        // Normal operation - scroll to bottom
+        outputRef.current.scrollTop = outputRef.current.scrollHeight;
+      }
     }
     // Restore focus after history update (prevents focus loss after commands)
     if (!isProcessing && !isStreaming && gamePhase === 'terminal') {
@@ -489,6 +503,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       setIsProcessing(false);
     } else if (streamingMode !== 'none' && result.output.length > 0) {
       // Stream output line by line
+      // Save scroll position before streaming starts (where file content will begin)
+      if (outputRef.current) {
+        streamStartScrollPos.current = outputRef.current.scrollHeight;
+      }
       setIsStreaming(true);
       setGameState(intermediateState);
       
