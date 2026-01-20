@@ -45,3 +45,4 @@ next-env.d.ts
 /public/videos/*.webm
 /public/videos/*.ogg
 !/public/videos/README.md
+out/
