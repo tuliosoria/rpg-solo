@@ -82,6 +82,56 @@ export const ACHIEVEMENTS: Achievement[] = [
     description: 'Continue playing after a game over',
     icon: '💪',
   },
+  // Hidden achievements
+  {
+    id: 'archivist',
+    name: 'Archivist',
+    description: 'Read every file in a folder with 3+ files',
+    icon: '📁',
+    secret: true,
+  },
+  {
+    id: 'speed_runner',
+    name: 'Speed Runner',
+    description: 'Complete the game in under 50 commands',
+    icon: '🏃',
+    secret: true,
+  },
+  {
+    id: 'paranoid',
+    name: 'Paranoid',
+    description: 'Check system status 10+ times',
+    icon: '👀',
+    secret: true,
+  },
+  {
+    id: 'bookworm',
+    name: 'Bookworm',
+    description: 'Bookmark 5+ files',
+    icon: '🔖',
+    secret: true,
+  },
+  {
+    id: 'ghost_protocol',
+    name: 'Ghost',
+    description: 'Complete the game with detection under 30%',
+    icon: '🕵️',
+    secret: true,
+  },
+  {
+    id: 'night_owl',
+    name: 'Night Owl',
+    description: 'Play for over 30 minutes in a single session',
+    icon: '🦉',
+    secret: true,
+  },
+  {
+    id: 'completionist_hidden',
+    name: 'Completionist',
+    description: 'Read every readable file in the system',
+    icon: '📖',
+    secret: true,
+  },
 ];
 
 // Storage key for achievements

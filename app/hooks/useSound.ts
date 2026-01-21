@@ -15,7 +15,8 @@ export type SoundType =
   | 'static'
   | 'message'
   | 'reveal'
-  | 'typing';
+  | 'typing'
+  | 'transmission';
 
 // Sound configuration
 interface SoundConfig {
@@ -37,6 +38,7 @@ const SOUND_CONFIG: Record<SoundType, SoundConfig> = {
   message: { volume: 0.3 }, // UFO74 message received
   reveal: { volume: 0.4 }, // Important discovery
   typing: { volume: 0.08 }, // Stream typing sound
+  transmission: { volume: 0.35 }, // UFO74 transmission banner
 };
 
 // Generate oscillator-based sounds (no external files needed)
@@ -95,6 +97,36 @@ export function useSound() {
     }
     return audioContextRef.current;
   }, []);
+
+  // Play a key-specific sound with pitch variation based on key type
+  const playKeySound = useCallback((key: string) => {
+    if (!soundEnabled) return;
+    
+    const audioContext = initAudio();
+    if (!audioContext) return;
+    
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+    
+    const config = SOUND_CONFIG.keypress;
+    const volume = config.volume * masterVolume;
+    const variation = Math.random() * 200 - 100;
+    
+    if (key === ' ') {
+      // Space: lower pitch
+      createOscillatorSound(audioContext, 'square', 600 + variation, 0.025, volume * 0.3, variation);
+      createOscillatorSound(audioContext, 'triangle', 150 + variation / 2, 0.035, volume * 0.5);
+    } else if (key === 'Backspace') {
+      // Backspace: higher pitch
+      createOscillatorSound(audioContext, 'square', 1000 + variation, 0.015, volume * 0.25, variation);
+      createOscillatorSound(audioContext, 'triangle', 300 + variation / 2, 0.025, volume * 0.4);
+    } else {
+      // Regular letters: standard keypress
+      createOscillatorSound(audioContext, 'square', 800 + variation, 0.02, volume * 0.3, variation);
+      createOscillatorSound(audioContext, 'triangle', 200 + variation / 2, 0.03, volume * 0.5);
+    }
+  }, [soundEnabled, masterVolume, initAudio]);
 
   // Play a synthesized sound
   const playSound = useCallback((type: SoundType) => {
@@ -244,6 +276,22 @@ export function useSound() {
         createOscillatorSound(audioContext, 'triangle', 300 + variation, 0.01, volume * 0.2);
         break;
       }
+      
+      case 'transmission': {
+        // Sci-fi chirp sequence for UFO74 transmissions
+        createOscillatorSound(audioContext, 'sine', 800, 0.08, volume * 0.7);
+        setTimeout(() => {
+          if (audioContextRef.current) {
+            createOscillatorSound(audioContextRef.current, 'sine', 1200, 0.08, volume * 0.6);
+          }
+        }, 100);
+        setTimeout(() => {
+          if (audioContextRef.current) {
+            createOscillatorSound(audioContextRef.current, 'sine', 600, 0.12, volume * 0.5);
+          }
+        }, 200);
+        break;
+      }
     }
   }, [soundEnabled, masterVolume, initAudio]);
 
@@ -322,6 +370,7 @@ export function useSound() {
 
   return {
     playSound,
+    playKeySound,
     startAmbient,
     stopAmbient,
     toggleSound,

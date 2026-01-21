@@ -15,6 +15,7 @@ interface VictoryProps {
   dataIntegrity?: number;
   choiceLeakPath?: 'public' | 'covert';
   rivalInvestigatorActive?: boolean;
+  filesReadCount?: number;
 }
 
 export default function Victory({ 
@@ -26,7 +27,8 @@ export default function Victory({
   evidenceLinks = [],
   dataIntegrity = 100,
   choiceLeakPath,
-  rivalInvestigatorActive = false
+  rivalInvestigatorActive = false,
+  filesReadCount = 0
 }: VictoryProps) {
   const [phase, setPhase] = useState<'intro' | 'message' | 'credits'>('intro');
   const [textLines, setTextLines] = useState<string[]>([]);
@@ -114,8 +116,30 @@ export default function Victory({
       if (result?.isNew) newAchievements.push(result.achievement);
     }
     
+    // Hidden achievements
+    
+    // Speed Runner - under 50 commands (hidden version)
+    if (commandCount < 50) {
+      const result = unlockAchievement('speed_runner');
+      if (result?.isNew) newAchievements.push(result.achievement);
+    }
+    
+    // Ghost - detection under 30% (hidden version with different threshold)
+    if (detectionLevel < 30) {
+      const result = unlockAchievement('ghost_protocol');
+      if (result?.isNew) newAchievements.push(result.achievement);
+    }
+    
+    // Completionist - read every readable file (roughly 100 files in system)
+    // We use a reasonable threshold since some files may be inaccessible
+    const TOTAL_READABLE_FILES = 80; // Approximate count of accessible files
+    if (filesReadCount >= TOTAL_READABLE_FILES) {
+      const result = unlockAchievement('completionist_hidden');
+      if (result?.isNew) newAchievements.push(result.achievement);
+    }
+    
     setAchievements(newAchievements);
-  }, [commandCount, detectionLevel, maxDetectionReached, mathMistakes]);
+  }, [commandCount, detectionLevel, maxDetectionReached, mathMistakes, filesReadCount]);
   
   // Show achievements one by one
   useEffect(() => {

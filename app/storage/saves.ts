@@ -15,6 +15,14 @@ function serializeState(state: GameState): string {
     singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
     imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
     categoriesRead: Array.from(state.categoriesRead || []),
+    filesRead: Array.from(state.filesRead || []),
+    prisoner45UsedResponses: Array.from(state.prisoner45UsedResponses || []),
+    scoutLinkUsedResponses: Array.from(state.scoutLinkUsedResponses || []),
+    disinformationDiscovered: Array.from(state.disinformationDiscovered || []),
+    hiddenCommandsDiscovered: Array.from(state.hiddenCommandsDiscovered || []),
+    passwordsFound: Array.from(state.passwordsFound || []),
+    bookmarkedFiles: Array.from(state.bookmarkedFiles || []),
+    trapsTriggered: Array.from(state.trapsTriggered || []),
   });
 }
 
@@ -27,6 +35,16 @@ function deserializeState(json: string): GameState {
     singularEventsTriggered: new Set(parsed.singularEventsTriggered || []),
     imagesShownThisRun: new Set(parsed.imagesShownThisRun || []),
     categoriesRead: new Set(parsed.categoriesRead || []),
+    filesRead: new Set(parsed.filesRead || []),
+    prisoner45UsedResponses: new Set(parsed.prisoner45UsedResponses || []),
+    scoutLinkUsedResponses: new Set(parsed.scoutLinkUsedResponses || []),
+    disinformationDiscovered: new Set(parsed.disinformationDiscovered || []),
+    hiddenCommandsDiscovered: new Set(parsed.hiddenCommandsDiscovered || []),
+    passwordsFound: new Set(parsed.passwordsFound || []),
+    bookmarkedFiles: new Set(parsed.bookmarkedFiles || []),
+    trapsTriggered: new Set(parsed.trapsTriggered || []),
+    // Limit command history to last 100 entries
+    commandHistory: (parsed.commandHistory || []).slice(-100),
   };
 }
 
@@ -61,17 +79,19 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
   
   const id = `save_${Date.now()}`;
   const name = slotName || `Session ${new Date().toLocaleString()}`;
+  const now = Date.now();
   
   const slot: SaveSlot = {
     id,
     name,
-    timestamp: Date.now(),
+    timestamp: now,
     currentPath: state.currentPath,
     truthCount: state.truthsDiscovered.size,
   };
   
-  // Save the state
-  window.localStorage.setItem(SAVE_PREFIX + id, serializeState(state));
+  // Save the state with updated lastSaveTime
+  const stateToSave = { ...state, lastSaveTime: now };
+  window.localStorage.setItem(SAVE_PREFIX + id, serializeState(stateToSave));
   
   // Update saves list
   const slots = getSaveSlots();
@@ -140,7 +160,8 @@ export function createNewGame(): GameState {
 export function autoSave(state: GameState): void {
   if (!isBrowserWithStorage()) return;
   
-  window.localStorage.setItem('terminal1996:autosave', serializeState(state));
+  const stateToSave = { ...state, lastSaveTime: Date.now() };
+  window.localStorage.setItem('terminal1996:autosave', serializeState(stateToSave));
 }
 
 // Load auto-save

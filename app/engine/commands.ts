@@ -721,6 +721,15 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
     if (newCount === 2 && previousCount < 2) {
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', 'SYSTEM: Independent verification detected.'));
+      
+      // Correlate tutorial - explain cross-referencing evidence
+      if (!state.flags.correlateHintGiven) {
+        notices.push(...createUFO74Message([
+          'UFO74: kid, youre building a case. use "correlate" to connect',
+          '       related evidence files. cross-referencing makes the case stronger.',
+        ]));
+        stateChanges.flags = { ...state.flags, ...stateChanges.flags, correlateHintGiven: true };
+      }
     }
     
     if (newCount === 4 && previousCount < 4) {
@@ -2184,15 +2193,24 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     lines.push('');
     
+    const newStatusCount = (state.statusCommandCount || 0) + 1;
+    
     return {
       output: createOutputEntries(lines),
       stateChanges: {
         detectionLevel: state.detectionLevel + 1,
+        statusCommandCount: newStatusCount,
       },
+      // Signal to check paranoid achievement
+      checkAchievements: newStatusCount >= 10 ? ['paranoid'] : undefined,
     };
   },
 
   ls: (args, state) => {
+    // Check for -l flag
+    const longFormat = args.includes('-l');
+    const filteredArgs = args.filter(a => a !== '-l');
+    
     const entries = listDirectory(state.currentPath, state);
     
     if (!entries) {
@@ -2234,9 +2252,29 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
               line += ` [~${readingMinutes}min]`;
             }
           }
+          
+          // Long format: prominent status tags and content preview
+          if (longFormat) {
+            // Prominent status tag
+            if (entry.status && entry.status !== 'intact') {
+              line = `  ${entry.name}  [${entry.status.toUpperCase()}]`;
+            }
+            
+            // Add content preview for non-encrypted files
+            const mutation = state.fileMutations[fullPath];
+            const isEncrypted = entry.status === 'encrypted' && !mutation?.decrypted;
+            if (!isEncrypted && content && content.length > 0) {
+              const firstLine = content.find(l => l.trim().length > 0) || '';
+              const preview = firstLine.length > 30 ? firstLine.slice(0, 27) + '...' : firstLine;
+              if (preview) {
+                line += `  "${preview}"`;
+              }
+            }
+          }
         }
         
-        if (entry.status && entry.status !== 'intact') {
+        // Standard format: status tags at end (only if not long format)
+        if (!longFormat && entry.status && entry.status !== 'intact') {
           line += ` [${entry.status.toUpperCase()}]`;
         }
         lines.push(line);
@@ -2480,9 +2518,38 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const filesRead = new Set(state.filesRead || []);
     filesRead.add(filePath);
     
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SAFE FILE DETECTION - Reading mundane files reduces detection
+    // Files in /internal/admin/ and /internal/misc/ are "safe" - they make
+    // the player look like a regular user browsing boring administrative docs.
+    // ═══════════════════════════════════════════════════════════════════════════
+    const isSafeFile = filePath.startsWith('/internal/admin/') || filePath.startsWith('/internal/misc/');
+    const DETECTION_FLOOR = 5; // Can't reduce below this level
+    
+    let detectionChange = 3; // Default increase for reading files
+    let safeFileNotice: ReturnType<typeof createEntry>[] = [];
+    
+    if (isSafeFile && state.detectionLevel > DETECTION_FLOOR) {
+      // Reduce detection by 1-2 points instead of increasing
+      const rng = createSeededRng(state.seed || 0, 'safe_file', filePath);
+      const reduction = seededRandomInt(rng, 1, 2);
+      const newDetection = Math.max(DETECTION_FLOOR, state.detectionLevel - reduction);
+      detectionChange = newDetection - state.detectionLevel; // Will be negative
+      
+      // Add subtle system message
+      safeFileNotice.push(createEntry('system', ''));
+      safeFileNotice.push(createEntry('system', '[SYSTEM: access pattern normalized]'));
+      
+      // Occasionally add UFO74 comment (roughly 1 in 4 safe file reads)
+      const showUFO74 = seededRandomInt(rng, 0, 3) === 0;
+      if (showUFO74) {
+        safeFileNotice.push(createEntry('ufo74', 'UFO74: good thinking, kid. reading the boring stuff keeps you looking like a regular user.'));
+      }
+    }
+    
     // Check if file is unstable and might corrupt
     let stateChanges: Partial<GameState> = {
-      detectionLevel: state.detectionLevel + 3,
+      detectionLevel: state.detectionLevel + detectionChange,
       filesRead,
       lastOpenedFile: filePath, // Track for 'last' command
     };
@@ -2632,11 +2699,54 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideSuggested: true };
     }
     
+    // Check for Archivist achievement: all files in parent folder read
+    let achievementsToCheck: string[] = [];
+    const parentPath = filePath.substring(0, filePath.lastIndexOf('/')) || '/';
+    const parentEntries = listDirectory(parentPath, { ...state, ...stateChanges } as GameState);
+    const filesInParent = parentEntries.filter(e => e.type === 'file');
+    if (filesInParent.length >= 3) {
+      const allRead = filesInParent.every(f => {
+        const fullPath = parentPath === '/' ? `/${f.name}` : `${parentPath}/${f.name}`;
+        return filesRead.has(fullPath);
+      });
+      if (allRead) {
+        achievementsToCheck.push('archivist');
+      }
+    }
+    
   const output = [
     ...createOutputEntries(['', `FILE: ${filePath}`, '']),
     ...createOutputEntries(content),
     ...notices,
+    ...safeFileNotice,
   ];
+    
+    // Add encryption hints for locked encrypted files
+    if (isEncryptedAndLocked) {
+      output.push(createEntry('system', ''));
+      if (file.securityQuestion) {
+        // Security question encrypted file - hint to find answer in system
+        const hints = [
+          'UFO74: this file is encrypted, kid. look around for clues to the password.',
+          'UFO74: encrypted. the answer is somewhere in the system. keep digging.',
+          'UFO74: locked tight. check the other files for hints about the security question.',
+        ];
+        output.push(createEntry('ufo74', hints[Math.floor(Math.random() * hints.length)]));
+        output.push(createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to attempt decryption.'));
+      } else if (file.timedDecrypt) {
+        // Timed decrypt file - hint about the decrypt command
+        output.push(createEntry('ufo74', 'UFO74: timed encryption. you gotta be quick with the decrypt command.'));
+        output.push(createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to start the timed challenge.'));
+      } else {
+        // Standard encrypted file
+        const hints = [
+          'UFO74: try the decrypt command, kid.',
+          'UFO74: encrypted. use decrypt to crack it open.',
+        ];
+        output.push(createEntry('ufo74', hints[Math.floor(Math.random() * hints.length)]));
+        output.push(createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to decrypt this file.'));
+      }
+    }
     
     // Check for image trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
     let imageTrigger: ImageTrigger | undefined = undefined;
@@ -2688,6 +2798,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       imageTrigger,
       videoTrigger,
       streamingMode,
+      checkAchievements: achievementsToCheck.length > 0 ? achievementsToCheck : undefined,
     };
   },
 
@@ -4260,12 +4371,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
     
     bookmarks.add(filePath);
+    const newBookmarkCount = bookmarks.size;
     return {
       output: [
         createEntry('system', `Bookmarked: ${filePath}`),
         createEntry('system', 'Use "bookmark" to view all bookmarks'),
       ],
       stateChanges: { bookmarkedFiles: bookmarks },
+      checkAchievements: newBookmarkCount >= 5 ? ['bookworm'] : undefined,
     };
   },
   

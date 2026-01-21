@@ -151,6 +151,9 @@ export interface GameState {
   // Session command count (for time-sensitive content)
   sessionCommandCount: number;
   
+  // Achievement tracking
+  statusCommandCount: number; // For "Paranoid" achievement
+  
   // Wandering detection (for implicit guidance)
   lastMeaningfulAction: number; // Command count at last meaningful action
   wanderingNoticeCount: number; // How many times we've nudged the player
@@ -242,6 +245,9 @@ export interface GameState {
   
   // Hacker avatar expression
   avatarExpression: 'neutral' | 'shocked' | 'scared' | 'angry' | 'smirk';
+  
+  // Save tracking
+  lastSaveTime: number;
 }
 
 export interface SaveSlot {
@@ -265,6 +271,7 @@ export interface CommandResult {
   videoTrigger?: VideoTrigger;
   streamingMode?: StreamingMode; // How to stream the output
   skipToPhase?: GamePhase; // GOD mode: skip directly to a phase
+  checkAchievements?: string[]; // Achievement IDs to check
 }
 
 export const TRUTH_CATEGORIES = [
@@ -316,6 +323,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   sessionDoomCountdown: 0,
   categoriesRead: new Set(),
   sessionCommandCount: 0,
+  statusCommandCount: 0,
   lastMeaningfulAction: 0,
   wanderingNoticeCount: 0,
   lastDirectoriesVisited: [],
@@ -383,4 +391,6 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   rivalInvestigatorActive: false,
   // Avatar expression
   avatarExpression: 'neutral',
+  // Save tracking
+  lastSaveTime: 0,
 };

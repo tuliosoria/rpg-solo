@@ -108,6 +108,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [glitchActive, setGlitchActive] = useState(false);
   const [glitchHeavy, setGlitchHeavy] = useState(false);
   
+  // Screen shake effect
+  const [isShaking, setIsShaking] = useState(false);
+  
+  // CRT warm-up effect (only for new sessions with empty history)
+  const [isWarmingUp, setIsWarmingUp] = useState(initialState.history.length === 0);
+  
   // Paranoia messages
   const [paranoiaMessage, setParanoiaMessage] = useState<string | null>(null);
   const [paranoiaPosition, setParanoiaPosition] = useState({ top: 0, left: 0 });
@@ -154,7 +160,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const prevDetectionRef = useRef(0);
   
   // Sound system
-  const { playSound, startAmbient, stopAmbient, toggleSound, soundEnabled } = useSound();
+  const { playSound, playKeySound, startAmbient, stopAmbient, toggleSound, soundEnabled } = useSound();
   
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -190,6 +196,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+  
+  // CRT warm-up effect timeout
+  useEffect(() => {
+    if (isWarmingUp) {
+      const timer = setTimeout(() => setIsWarmingUp(false), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isWarmingUp]);
   
   // Show trackers if tutorial already complete (loaded game)
   useEffect(() => {
@@ -330,6 +344,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       } else if (current >= 40 && prev < 40) {
         playSound('warning');
       }
+      
+      // Trigger screen shake on large detection increase (10+)
+      if (current - prev >= 10) {
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 300);
+      }
     }
     
     prevDetectionRef.current = current;
@@ -412,12 +432,34 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   }, []);
   
   const IDLE_HINTS = [
-    { hint: "Have you checked /internal?", condition: (s: GameState) => s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt') },
+    // Early game - no files read yet
+    { hint: "Use 'ls' to see what's in the current directory.", condition: (s: GameState) => (s.filesRead?.size || 0) === 0 },
     { hint: "Try 'open' on a .txt file to read it.", condition: (s: GameState) => (s.filesRead?.size || 0) === 0 },
+    { hint: "Navigation tip: 'cd' changes directories. Start exploring.", condition: (s: GameState) => (s.filesRead?.size || 0) === 0 },
+    
+    // No truths discovered - need to find evidence
+    { hint: "You need evidence. Look for files that seem... off.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 3 },
+    { hint: "Some documents contradict the official narrative. Find them.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 5 },
+    { hint: "Have you checked /internal?", condition: (s: GameState) => s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt') },
+    { hint: "The /comms directory might have useful intel.", condition: (s: GameState) => !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt') },
+    
+    // Have truths but no correlations - hint about correlate
+    { hint: "You've found evidence. Try 'correlate' to connect the dots.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 2 && (s.evidenceLinks?.length || 0) === 0 },
+    { hint: "Multiple truths discovered. 'correlate file1 file2' links evidence together.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 3 && (s.evidenceLinks?.length || 0) === 0 },
+    
+    // High detection - hint about wait command
+    { hint: "Detection is high. The 'wait' command lets time pass safely.", condition: (s: GameState) => s.detectionLevel > 60 },
+    { hint: "They're watching closely. Consider using 'wait' to reduce suspicion.", condition: (s: GameState) => s.detectionLevel > 70 },
+    { hint: "CAUTION: Detection critical. 'wait' might buy you time.", condition: (s: GameState) => s.detectionLevel > 80 },
+    
+    // Override protocol hint
+    { hint: "You've seen a lot. There may be... deeper access available.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.override_unlocked },
+    { hint: "Some commands aren't listed. Keep digging.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.override_unlocked },
+    
+    // General helpful hints
     { hint: "Use 'ls' to see what's in the current directory.", condition: (s: GameState) => s.sessionCommandCount < 5 },
     { hint: "Some files are ENCRYPTED. You'll need 'decrypt' for those.", condition: (s: GameState) => (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2 },
     { hint: "Try the 'progress' command to see what you've found.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 1 },
-    { hint: "The /comms directory might have useful intel.", condition: (s: GameState) => !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt') },
     { hint: "Don't forget: 'note' saves reminders, 'bookmark' saves files.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0 },
     { hint: "Check 'unread' to see what you haven't opened yet.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 3 },
   ];
@@ -524,6 +566,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   ): Promise<void> => {
     if (mode === 'none' || entries.length === 0) {
       // No streaming - add all at once
+      // Check for transmission banner before adding
+      if (entries.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
+        playSound('transmission');
+      }
       setGameState(prev => ({
         ...prev,
         history: [...prev.history, ...entries],
@@ -539,6 +585,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       if (skipStreamingRef.current) {
         // Add remaining entries all at once
         const remaining = entries.slice(i);
+        // Check for transmission banner in remaining entries
+        if (remaining.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
+          playSound('transmission');
+        }
         setGameState(prev => ({
           ...prev,
           history: [...prev.history, ...remaining],
@@ -548,6 +598,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       
       // Add single entry
       const entry = entries[i];
+      
+      // Play transmission sound when banner appears
+      if (entry.content.includes('>> INCOMING TRANSMISSION <<')) {
+        playSound('transmission');
+      }
+      
       setGameState(prev => ({
         ...prev,
         history: [...prev.history, entry],
@@ -570,7 +626,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
-  }, [triggerFlicker]);
+  }, [triggerFlicker, playSound]);
   
   // Handle skip streaming (spacebar/enter during streaming)
   useEffect(() => {
@@ -776,6 +832,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       setIsProcessing(false);
     } else {
       // No streaming - add all at once
+      // Check for transmission banner and play sound
+      if (result.output.some((e: TerminalEntry) => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
+        playSound('transmission');
+      }
       // Include pending image/video messages if triggered
       const pendingMediaMessages: TerminalEntry[] = [];
       if (result.imageTrigger) {
@@ -852,6 +912,19 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     // God mode activated
     if (intermediateState.godMode && !gameState.godMode) {
       checkAchievement('doom_fan');
+    }
+    
+    // Check achievements requested by command result
+    if (result.checkAchievements) {
+      for (const achievementId of result.checkAchievements) {
+        checkAchievement(achievementId);
+      }
+    }
+    
+    // Night Owl achievement: playing for over 30 minutes
+    const sessionDuration = Date.now() - gameState.sessionStartTime;
+    if (sessionDuration >= 30 * 60 * 1000) { // 30 minutes in ms
+      checkAchievement('night_owl');
     }
     
     // Focus input after processing (use setTimeout to ensure it runs after React updates)
@@ -1008,8 +1081,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     } else if (e.ctrlKey && e.key === 'l') {
       e.preventDefault();
       setGameState(prev => ({ ...prev, history: [] }));
+    } else if (e.key === 'Backspace') {
+      // Play backspace sound if there's content to delete
+      if (inputValue.length > 0) {
+        playKeySound('Backspace');
+      }
     }
-  }, [historyIndex, gameState.commandHistory, inputValue, getCompletions]);
+  }, [historyIndex, gameState.commandHistory, inputValue, getCompletions, playKeySound]);
   
   // Get status bar content
   const getStatusBar = () => {
@@ -1034,6 +1112,16 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     }
     
     return parts.join(' │ ') || 'SYSTEM NOMINAL';
+  };
+  
+  // Get save indicator text
+  const getSaveIndicator = () => {
+    if (!gameState.lastSaveTime) return null;
+    const elapsed = Math.floor((Date.now() - gameState.lastSaveTime) / 60000);
+    if (elapsed < 1) return 'Saved: <1m ago';
+    if (elapsed < 60) return `Saved: ${elapsed}m ago`;
+    const hours = Math.floor(elapsed / 60);
+    return `Saved: ${hours}h ago`;
   };
   
   // Get truth discovery status
@@ -1167,6 +1255,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       dataIntegrity={gameState.dataIntegrity}
       choiceLeakPath={gameState.choiceLeakPath}
       rivalInvestigatorActive={gameState.rivalInvestigatorActive}
+      filesReadCount={gameState.filesRead?.size || 0}
     />;
   }
   
@@ -1187,7 +1276,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   
   return (
     <div 
-      className={`${styles.terminal} ${flickerActive ? styles.flicker : ''} ${glitchActive ? styles.glitchActive : ''} ${glitchHeavy ? styles.glitchHeavy : ''}`}
+      className={`${styles.terminal} ${flickerActive ? styles.flicker : ''} ${glitchActive ? styles.glitchActive : ''} ${glitchHeavy ? styles.glitchHeavy : ''} ${isShaking ? styles.shaking : ''} ${isWarmingUp ? styles.warmingUp : ''}`}
       onClick={() => inputRef.current?.focus()}
     >
       {/* Scanlines overlay */}
@@ -1242,6 +1331,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         >
           VARGINHA: TERMINAL 1996 ▼
         </span>
+        {getSaveIndicator() && (
+          <span className={styles.saveIndicator}>{getSaveIndicator()}</span>
+        )}
         <span className={styles.statusRight}>{getStatusBar()}</span>
         
         {/* Dropdown menu */}
@@ -1333,7 +1425,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             const newValue = e.target.value;
             setInputValue(newValue);
             if (newValue.length > inputValue.length) {
-              playSound('keypress');
+              // Detect the typed character (last char of new value)
+              const typedChar = newValue.charAt(newValue.length - 1);
+              playKeySound(typedChar === ' ' ? ' ' : typedChar);
               
               // Track typing speed
               const now = Date.now();

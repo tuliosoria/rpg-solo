@@ -90,6 +90,19 @@
   100% { opacity: 1; }
 }
 
+/* Shake animation for high risk events */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-3px); }
+  40% { transform: translateX(3px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+}
+
+.shaking {
+  animation: shake 0.3s ease-in-out;
+}
+
 /* Status bar */
 .statusBar {
   display: flex;
@@ -122,6 +135,12 @@
 
 .statusRight {
   color: #00ff00;
+}
+
+.saveIndicator {
+  color: #007700;
+  font-size: 0.85em;
+  margin-left: 16px;
 }
 
 /* Header dropdown menu */
@@ -784,4 +803,30 @@
   color: #ff0000;
   text-shadow: 0 0 10px #ff0000;
   font-family: ui-monospace, monospace;
+}
+
+/* CRT warm-up effect */
+@keyframes warmUp {
+  0% {
+    filter: brightness(0.1);
+  }
+  20% {
+    filter: brightness(0.4);
+  }
+  25% {
+    filter: brightness(0.15);
+  }
+  40% {
+    filter: brightness(0.5);
+  }
+  60% {
+    filter: brightness(0.7);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+.warmingUp {
+  animation: warmUp 1.5s ease-out forwards;
 }
