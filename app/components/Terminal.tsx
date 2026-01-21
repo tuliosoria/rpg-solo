@@ -98,6 +98,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [gameOverReason, setGameOverReason] = useState('');
   const [showHeaderMenu, setShowHeaderMenu] = useState(false);
   
+  // UFO74 message queue - messages wait for Enter before displaying next
+  const [pendingUfo74Messages, setPendingUfo74Messages] = useState<TerminalEntry[]>([]);
+  
   // Game phase: terminal → blackout → icq → victory (or other endings)
   const [gamePhase, setGamePhase] = useState<GamePhase>('terminal');
   
@@ -670,6 +673,18 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       return;
     }
     
+    // If there are pending UFO74 messages, show next one on Enter
+    if (pendingUfo74Messages.length > 0 && !inputValue.trim()) {
+      const [nextMessage, ...remaining] = pendingUfo74Messages;
+      setGameState(prev => ({
+        ...prev,
+        history: [...prev.history, nextMessage],
+      }));
+      setPendingUfo74Messages(remaining);
+      playSound('message');
+      return;
+    }
+    
     // During tutorial, only accept empty Enter to advance
     if (!gameState.tutorialComplete) {
       // If user typed something, show error
@@ -845,6 +860,11 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       if (result.output.some((e: TerminalEntry) => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
         playSound('transmission');
       }
+      
+      // Separate UFO74 messages from other output for queuing
+      const ufo74Messages = result.output.filter((e: TerminalEntry) => e.type === 'ufo74');
+      const otherOutput = result.output.filter((e: TerminalEntry) => e.type !== 'ufo74');
+      
       // Include pending image/video messages if triggered
       const pendingMediaMessages: TerminalEntry[] = [];
       if (result.imageTrigger) {
@@ -861,10 +881,26 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           createEntry('system', 'Press ENTER to view recovered video data.'),
         );
       }
+      
+      // Add non-UFO74 output immediately
       setGameState({
         ...intermediateState,
-        history: [...newState.history, ...result.output, ...pendingMediaMessages],
+        history: [...newState.history, ...otherOutput, ...pendingMediaMessages],
       });
+      
+      // Queue UFO74 messages with "Press ENTER" prompt if there are any
+      if (ufo74Messages.length > 0) {
+        const promptEntry = createEntry('system', '[Press ENTER to continue...]');
+        // Show first message immediately, queue the rest
+        const [firstMessage, ...remaining] = ufo74Messages;
+        setGameState(prev => ({
+          ...prev,
+          history: [...prev.history, firstMessage, promptEntry],
+        }));
+        setPendingUfo74Messages(remaining);
+        playSound('message');
+      }
+      
       setIsProcessing(false);
     }
     
@@ -938,7 +974,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     // Focus input after processing (use setTimeout to ensure it runs after React updates)
     setTimeout(() => inputRef.current?.focus(), 0);
-  }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput, playSound, checkAchievement, pendingImage, pendingVideo]);
+  }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput, playSound, checkAchievement, pendingImage, pendingVideo, pendingUfo74Messages]);
   
   // Get auto-complete suggestions
   const getCompletions = useCallback((input: string): string[] => {
@@ -1467,7 +1503,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           autoFocus
           autoComplete="off"
           spellCheck={false}
-          placeholder={!gameState.tutorialComplete ? 'Press ENTER to continue...' : ''}
+          placeholder={!gameState.tutorialComplete || pendingUfo74Messages.length > 0 ? 'Press ENTER to continue...' : ''}
         />
         <span className={styles.cursor}>_</span>
         {typingSpeedWarning && (
@@ -1517,6 +1553,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           tone={activeImage.tone}
           corrupted={activeImage.corrupted}
           onCloseAction={() => {
+            // Add "Media recovered" message to terminal
+            const recoveredMessage = createEntry('system', '[SYSTEM: Media recovered. Visual data archived to session log.]');
+            setGameState(prev => ({
+              ...prev,
+              history: [...prev.history, recoveredMessage],
+            }));
             setActiveImage(null);
             inputRef.current?.focus();
           }}
@@ -1531,6 +1573,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           tone={activeVideo.tone}
           corrupted={activeVideo.corrupted}
           onCloseAction={() => {
+            // Add "Media recovered" message to terminal
+            const recoveredMessage = createEntry('system', '[SYSTEM: Media recovered. Video data archived to session log.]');
+            setGameState(prev => ({
+              ...prev,
+              history: [...prev.history, recoveredMessage],
+            }));
             setActiveVideo(null);
             inputRef.current?.focus();
           }}

@@ -263,8 +263,10 @@
 
 .memoryLevel {
   margin-left: 1rem;
-  color: var(--terminal-dim);
-  font-size: 0.85rem;
+  font-weight: bold;
+  min-width: 60px;
+  color: #00ff00;
+  text-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
 }
 
 /* Risk level colors */

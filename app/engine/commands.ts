@@ -73,6 +73,35 @@ const TURING_QUESTIONS: TuringQuestion[] = [
 
 const SINGULAR_EVENTS: SingularEvent[] = [
   {
+    // UFO74 WARNING - Warn player before Turing test triggers
+    id: 'turing_warning',
+    trigger: (state, command, args) => {
+      if (state.singularEventsTriggered?.has('turing_warning')) return false;
+      if (state.turingEvaluationCompleted) return false;
+      if (state.turingEvaluationActive) return false;
+      // Trigger at detection level 35-44, just before Turing test threshold
+      return state.detectionLevel >= 35 && state.detectionLevel < 45 && state.truthsDiscovered.size >= 1;
+    },
+    execute: (state) => {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('ufo74', 'UFO74: kid, heads up. detection is getting high.'),
+          createEntry('ufo74', 'UFO74: if it gets much higher, the system will run'),
+          createEntry('ufo74', '       a verification check. its called turing evaluation.'),
+          createEntry('ufo74', 'UFO74: theyll ask you questions to prove youre a machine,'),
+          createEntry('ufo74', '       not a human. pick the COLD, LOGICAL answers.'),
+          createEntry('ufo74', 'UFO74: dont be human, kid. be the terminal.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'turing_warning']),
+        },
+        delayMs: 500,
+      };
+    },
+  },
+  {
     // TURING EVALUATION - System challenges user to prove they're not a human intruder
     id: 'turing_evaluation',
     trigger: (state, command, args) => {
@@ -1602,6 +1631,22 @@ function getIncognitoMessage(state: GameState, filePath?: string, notices?: Term
   // Rate limit - at least 15 seconds between messages
   const now = Date.now();
   if (state.lastIncognitoTrigger && now - state.lastIncognitoTrigger < 15000) return null;
+  
+  // DESIGN CHANGE: UFO74 should stay quiet when player is making progress.
+  // Only react to files that reveal truth or when player is struggling.
+  // Check if this is a truth discovery moment
+  const isTruthDiscovery = notices && notices.some(n => 
+    n.content.includes('TRUTH FRAGMENT') || 
+    n.content.includes('EVIDENCE') ||
+    n.content.includes('discovered')
+  );
+  
+  // If player is making progress (reading files successfully), stay quiet
+  // unless it's a truth discovery moment (those deserve celebration)
+  if (!isTruthDiscovery && !isFirstUnstable) {
+    // Only speak 20% of the time when player is progressing normally
+    if (Math.random() > 0.2) return null;
+  }
   
   // If there are notices to explain, prioritize that (but not for encrypted or unstable files)
   if (notices && notices.length > 0 && !isEncryptedAndLocked && !isFirstUnstable) {
@@ -5912,6 +5957,11 @@ export const TUTORIAL_MESSAGES: string[][] = [
   // Step 10: After showing risk warning, trigger risk bar reveal
   [
     '       >> RISK MONITOR ACTIVATED <<',
+  ],
+  [
+    'UFO74: you also got a MEMORY indicator up there. thats how',
+    '       much of the archive is still intact. corruption and',
+    '       failed recoveries will eat away at it.',
   ],
   [
     'UFO74: the real stuff is in the encrypted files and in',
