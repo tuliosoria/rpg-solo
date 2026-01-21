@@ -103,6 +103,30 @@ describe('Filesystem', () => {
       expect(entries!.some(e => e.name === 'archive/')).toBe(true);
     });
 
+    it('hides ghost session log until flag set', () => {
+      const state = createTestState();
+      const entries = listDirectory('/tmp', state);
+      expect(entries!.some(e => e.name === 'ghost_session.log')).toBe(false);
+    });
+
+    it('shows ghost session log when flag set', () => {
+      const state = createTestState({ flags: { ghostSessionAvailable: true } });
+      const entries = listDirectory('/tmp', state);
+      expect(entries!.some(e => e.name === 'ghost_session.log')).toBe(true);
+    });
+
+    it('hides trace purge memo until trace purge', () => {
+      const state = createTestState({ accessLevel: 3, flags: { adminUnlocked: true } });
+      const entries = listDirectory('/admin', state);
+      expect(entries!.some(e => e.name === 'trace_purge_memo.txt')).toBe(false);
+    });
+
+    it('shows trace purge memo after trace purge', () => {
+      const state = createTestState({ accessLevel: 3, flags: { adminUnlocked: true, tracePurgeUsed: true } });
+      const entries = listDirectory('/admin', state);
+      expect(entries!.some(e => e.name === 'trace_purge_memo.txt')).toBe(true);
+    });
+
     it('returns null for non-existent directory', () => {
       const state = createTestState();
       const entries = listDirectory('/nonexistent', state);
@@ -151,6 +175,16 @@ describe('Filesystem', () => {
       const result = canAccessFile('/internal/incident_review_protocol.txt', state);
       expect(result.accessible).toBe(false);
       expect(result.reason).toBe('FILE LOCKED');
+    });
+
+    it('denies access to restricted admin files without override', () => {
+      const state = createTestState({
+        accessLevel: 3,
+        flags: { tracePurgeUsed: true },
+      });
+      const result = canAccessFile('/admin/trace_purge_memo.txt', state);
+      expect(result.accessible).toBe(false);
+      expect(result.reason).toBe('ACCESS DENIED - RESTRICTED ARCHIVE');
     });
   });
 });

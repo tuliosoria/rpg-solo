@@ -169,6 +169,8 @@ export interface GameState {
   mathQuestionWrong: number; // Wrong attempts on current question
   filesSent: boolean; // True after convincing teenager
   gameWon: boolean; // True on victory
+  choiceLeakPath?: 'public' | 'covert'; // Final evidence delivery choice
+  icqTrust: number; // Teen trust score (0-100)
   
   // Debug mode
   godMode: boolean; // Hidden dev mode for testing
@@ -181,6 +183,8 @@ export interface GameState {
   countdownActive: boolean; // Real-time countdown triggered
   countdownEndTime: number; // Timestamp when countdown expires
   countdownTriggeredBy?: string; // What triggered the countdown
+  traceSpikeActive: boolean; // Active trace spike in progress
+  tracePurgeUsed: boolean; // Trace purge script executed
   
   // Unreliable narrator
   disinformationDiscovered: Set<string>; // Files revealed to be disinformation
@@ -223,6 +227,7 @@ export interface GameState {
   
   // System personality
   systemPersonality: 'bureaucratic' | 'defensive' | 'hostile' | 'pleading';
+  paranoiaLevel: number; // 0-100 intensity for paranoia cues
   
   // Typing speed tracking
   lastKeypressTime: number;
@@ -233,6 +238,7 @@ export interface GameState {
   
   // Epilogue unlocked
   epilogueUnlocked: boolean;
+  rivalInvestigatorActive: boolean; // Rival actor tracking the trail
   
   // Hacker avatar expression
   avatarExpression: 'neutral' | 'shocked' | 'scared' | 'angry' | 'smirk';
@@ -323,6 +329,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   mathQuestionWrong: 0,
   filesSent: false,
   gameWon: false,
+  choiceLeakPath: undefined,
+  icqTrust: 50,
   godMode: false,
   // Multiple endings
   endingType: undefined,
@@ -331,6 +339,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   countdownActive: false,
   countdownEndTime: 0,
   countdownTriggeredBy: undefined,
+  traceSpikeActive: false,
+  tracePurgeUsed: false,
   // Unreliable narrator
   disinformationDiscovered: new Set(),
   // Hidden commands
@@ -362,6 +372,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   trapWarningGiven: false,
   // System personality
   systemPersonality: 'bureaucratic',
+  paranoiaLevel: 0,
   // Typing speed
   lastKeypressTime: 0,
   fastTypingWarnings: 0,
@@ -369,6 +380,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   burnInContent: [],
   // Epilogue
   epilogueUnlocked: false,
+  rivalInvestigatorActive: false,
   // Avatar expression
   avatarExpression: 'neutral',
 };

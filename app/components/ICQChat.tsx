@@ -23,15 +23,21 @@ const MATH_QUESTIONS: MathQuestion[] = [
 
 interface ICQChatProps {
   onVictoryAction: () => void;
+  initialTrust: number;
+  onTrustChange: (trust: number) => void;
+  onMathMistake: () => void;
+  onLeakChoice: (choice: 'public' | 'covert') => void;
+  onFilesSent: () => void;
 }
 
-export default function ICQChat({ onVictoryAction }: ICQChatProps) {
+export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, onMathMistake, onLeakChoice, onFilesSent }: ICQChatProps) {
   const [messages, setMessages] = useState<ICQMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
-  const [phase, setPhase] = useState<'intro' | 'scared' | 'bargain' | 'math' | 'sending' | 'victory'>('intro');
+  const [phase, setPhase] = useState<'intro' | 'scared' | 'bargain' | 'math' | 'leak' | 'sending' | 'victory'>('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
+  const [trust, setTrust] = useState(initialTrust);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -65,6 +71,14 @@ export default function ICQChat({ onVictoryAction }: ICQChatProps) {
   // Add system message
   const addSystemMessage = (text: string) => {
     setMessages(prev => [...prev, { sender: 'system', text }]);
+  };
+  
+  const adjustTrust = (delta: number) => {
+    setTrust(prev => {
+      const next = Math.max(0, Math.min(100, prev + delta));
+      onTrustChange(next);
+      return next;
+    });
   };
   
   // Initial intro sequence
@@ -106,6 +120,9 @@ export default function ICQChat({ onVictoryAction }: ICQChatProps) {
       case 'math':
         await handleMathPhase(playerText);
         break;
+      case 'leak':
+        await handleLeakPhase(playerText);
+        break;
       default:
         break;
     }
@@ -118,6 +135,7 @@ export default function ICQChat({ onVictoryAction }: ICQChatProps) {
       await addTeenMessage('dude i dont know who u r', 1200);
       await addTeenMessage('my mom said not to talk to strangers online', 1500);
       await addTeenMessage('what do u want???', 1000);
+      adjustTrust(6);
       setPhase('bargain');
     } else if (lower.includes('file') || lower.includes('document') || lower.includes('evidence')) {
       await addTeenMessage('file??? what file??', 1200);
@@ -125,11 +143,13 @@ export default function ICQChat({ onVictoryAction }: ICQChatProps) {
       await addTeenMessage('im gonna disconnect', 1000);
       await addTeenMessage('...', 2000);
       await addTeenMessage('ok but what do u want anyway', 1200);
+      adjustTrust(2);
       setPhase('bargain');
     } else {
       await addTeenMessage('huh?', 1000);
       await addTeenMessage('i dont understand', 1200);
       await addTeenMessage('speak properly, what do u want?', 1000);
+      adjustTrust(-4);
     }
   };
   
@@ -148,6 +168,7 @@ export default function ICQChat({ onVictoryAction }: ICQChatProps) {
       await addTeenMessage('deal?', 800);
       
       addSystemMessage('═══ DEAL: Solve 3 linear equations ═══');
+      adjustTrust(4);
       setPhase('math');
       
       // Show first question
@@ -162,12 +183,15 @@ export default function ICQChat({ onVictoryAction }: ICQChatProps) {
       await addTeenMessage('my uncle talks about that stuff', 1200);
       await addTeenMessage('but maybe its true idk', 1500);
       await addTeenMessage('what do u want me to do?', 1000);
+      adjustTrust(-2);
     } else if (lower.includes('please')) {
       await addTeenMessage('hmm ur asking nicely', 1200);
       await addTeenMessage('what exactly do u want?', 1000);
+      adjustTrust(2);
     } else {
       await addTeenMessage('ok but what do i get out of this?', 1200);
       await addTeenMessage('im not gonna do anything for free', 1500);
+      adjustTrust(-3);
     }
   };
   
@@ -178,12 +202,15 @@ export default function ICQChat({ onVictoryAction }: ICQChatProps) {
     if (isNaN(answer)) {
       await addTeenMessage('thats not a number dude', 1000);
       await addTeenMessage(`hint: ${question.hint}`, 1200);
+      adjustTrust(-2);
+      onMathMistake();
       return;
     }
     
     if (answer === question.answer) {
       // Correct answer
       await addTeenMessage('yesss!!! correct 🎉', 1200);
+      adjustTrust(3);
       
       const nextQuestion = currentQuestion + 1;
       setCurrentQuestion(nextQuestion);
@@ -196,31 +223,13 @@ export default function ICQChat({ onVictoryAction }: ICQChatProps) {
         await addTeenMessage('ok im gonna save ur files', 1500);
         
         addSystemMessage('═══ SAVING FILES ═══');
-        setPhase('sending');
+        onFilesSent();
+        setPhase('leak');
         
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        await addTeenMessage('getting a floppy disk...', 1500);
-        await addTeenMessage('copying...', 2000);
-        
-        addSystemMessage('[▓▓▓▓▓▓▓▓▓▓] 100% - COMPLETE');
-        
-        await addTeenMessage('done!', 1200);
-        await addTeenMessage('saved everything to a floppy', 1500);
-        await addTeenMessage('gonna hide it under my bed', 1200);
-        await addTeenMessage('no one will find it 😎', 1000);
-        
-        addSystemMessage('═══════════════════════════════════════════════════════════');
-        addSystemMessage('MISSION COMPLETE');
-        addSystemMessage('The evidence was saved to physical media.');
-        addSystemMessage('The files survived the system purge.');
-        addSystemMessage('═══════════════════════════════════════════════════════════');
-        
-        setPhase('victory');
-        
-        // Trigger victory after delay
-        setTimeout(() => {
-          onVictoryAction();
-        }, 5000);
+        await new Promise(resolve => setTimeout(resolve, 1200));
+        await addTeenMessage('quick question before i do it', 1200);
+        await addTeenMessage('u want me to post it everywhere or keep it quiet?', 1500);
+        await addTeenMessage('type: public or covert', 1000);
         
       } else {
         // Next question
@@ -233,6 +242,8 @@ export default function ICQChat({ onVictoryAction }: ICQChatProps) {
     } else {
       // Wrong answer
       setWrongAttempts(prev => prev + 1);
+      onMathMistake();
+      adjustTrust(-3);
       
       if (wrongAttempts >= 2) {
         await addTeenMessage('dude u dont know math either?? 😂', 1200);
@@ -243,6 +254,53 @@ export default function ICQChat({ onVictoryAction }: ICQChatProps) {
         await addTeenMessage('try again', 800);
       }
     }
+  };
+  
+  const handleLeakPhase = async (playerText: string) => {
+    const lower = playerText.toLowerCase();
+    if (lower.includes('public')) {
+      onLeakChoice('public');
+      await addTeenMessage('ok ok posting it on open forums', 1200);
+      await addTeenMessage('this is gonna get wild', 1200);
+      await finalizeTransfer();
+      return;
+    }
+    if (lower.includes('covert') || lower.includes('quiet') || lower.includes('private')) {
+      onLeakChoice('covert');
+      await addTeenMessage('got it. quiet drop to my trusted list', 1200);
+      await addTeenMessage('no big splash, just copies', 1200);
+      await finalizeTransfer();
+      return;
+    }
+    
+    await addTeenMessage('public or covert. pick one.', 900);
+  };
+  
+  const finalizeTransfer = async () => {
+    setPhase('sending');
+    await new Promise(resolve => setTimeout(resolve, 1800));
+    await addTeenMessage('getting a floppy disk...', 1500);
+    await addTeenMessage('copying...', 2000);
+    
+    addSystemMessage('[▓▓▓▓▓▓▓▓▓▓] 100% - COMPLETE');
+    
+    await addTeenMessage('done!', 1200);
+    await addTeenMessage('saved everything to a floppy', 1500);
+    await addTeenMessage('gonna hide it under my bed', 1200);
+    await addTeenMessage('no one will find it 😎', 1000);
+    
+    addSystemMessage('═══════════════════════════════════════════════════════════');
+    addSystemMessage('MISSION COMPLETE');
+    addSystemMessage('The evidence was saved to physical media.');
+    addSystemMessage('The files survived the system purge.');
+    addSystemMessage('═══════════════════════════════════════════════════════════');
+    
+    setPhase('victory');
+    
+    // Trigger victory after delay
+    setTimeout(() => {
+      onVictoryAction();
+    }, 5000);
   };
   
   return (

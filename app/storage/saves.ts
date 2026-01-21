@@ -111,6 +111,15 @@ export function deleteSave(slotId: string): void {
 export function createNewGame(): GameState {
   const seed = generateSeed();
   const bootSequence = generateBootSequence();
+  const variantAlpha = seed % 2 === 0;
+  const hasPriorSave = getSaveSlots().length > 0;
+  const hasAutoSave = isBrowserWithStorage() && !!window.localStorage.getItem('terminal1996:autosave');
+  const ghostSessionAvailable = hasPriorSave || hasAutoSave;
+  const flags = {
+    ...DEFAULT_GAME_STATE.flags,
+    ...(variantAlpha ? { variant_route_alpha: true } : { variant_route_beta: true }),
+    ...(ghostSessionAvailable ? { ghostSessionAvailable: true } : {}),
+  };
   
   return {
     ...DEFAULT_GAME_STATE,
@@ -121,6 +130,7 @@ export function createNewGame(): GameState {
     truthsDiscovered: new Set(),
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
+    flags,
     tutorialStep: 0,
     tutorialComplete: false,
   };

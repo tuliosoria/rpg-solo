@@ -21,7 +21,7 @@ import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
-const COMMANDS = ['help', 'status', 'progress', 'ls', 'cd', 'back', 'open', 'last', 'unread', 'decrypt', 'recover', 'note', 'notes', 'bookmark', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run', 'correlate', 'connect', 'map'];
+const COMMANDS = ['help', 'status', 'progress', 'ls', 'cd', 'back', 'open', 'last', 'unread', 'decrypt', 'recover', 'note', 'notes', 'bookmark', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run', 'correlate', 'connect', 'map', 'leak'];
 const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run', 'bookmark', 'correlate', 'connect'];
 
 // "They're watching" paranoia messages
@@ -222,12 +222,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
     
     const detection = gameState.detectionLevel;
+    const paranoiaBoost = gameState.paranoiaLevel || 0;
     // Higher detection = more frequent AND more intense glitches
     // Scaled intensity: at 20%: rare light, at 50%: occasional medium, at 80%+: frequent heavy
-    const glitchChance = detection > 20 ? (detection - 20) * 0.35 : 0;
+    const glitchChance = detection > 20 ? (detection - 20) * 0.35 + paranoiaBoost * 0.15 : paranoiaBoost * 0.15;
     
     // Check interval scales with detection (faster at higher levels)
-    const checkInterval = Math.max(1500, 4000 - detection * 25);
+    const checkInterval = Math.max(1200, 4000 - detection * 25 - paranoiaBoost * 10);
     
     const interval = setInterval(() => {
       if (Math.random() * 100 < glitchChance) {
@@ -267,21 +268,22 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     }, checkInterval);
     
     return () => clearInterval(interval);
-  }, [gameState.detectionLevel, gameState.isGameOver, gamePhase, playSound]);
+  }, [gameState.detectionLevel, gameState.paranoiaLevel, gameState.isGameOver, gamePhase, playSound]);
   
   // "They're watching" paranoia messages
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
     
     const detection = gameState.detectionLevel;
-    // Only trigger paranoia at elevated detection (30%+)
-    if (detection < 30) return;
+    const paranoiaBoost = gameState.paranoiaLevel || 0;
+    // Only trigger paranoia at elevated detection (30%+) or paranoia spike
+    if (detection < 30 && paranoiaBoost < 10) return;
     
-    // Higher detection = more frequent paranoia (every 20-60s)
-    const baseInterval = 60000 - (detection * 400); // 60s at 30%, 28s at 80%
+    // Higher detection/paranoia = more frequent paranoia (every 15-60s)
+    const baseInterval = 60000 - (detection * 400) - (paranoiaBoost * 200);
     const variance = 20000;
     
-    const delay = baseInterval + Math.random() * variance;
+    const delay = Math.max(15000, baseInterval) + Math.random() * variance;
     let innerTimerId: NodeJS.Timeout | undefined;
     
     const timerId = setTimeout(() => {
@@ -304,7 +306,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       clearTimeout(timerId);
       if (innerTimerId) clearTimeout(innerTimerId);
     };
-  }, [gameState.detectionLevel, gameState.isGameOver, gamePhase, playSound]);
+  }, [gameState.detectionLevel, gameState.paranoiaLevel, gameState.isGameOver, gamePhase, playSound]);
   
   // Track detection level changes for sound/visual alerts
   useEffect(() => {
@@ -480,6 +482,26 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     setGameState(prev => ({ ...prev, gameWon: true }));
   }, []);
   
+  const handleIcqTrustChange = useCallback((trust: number) => {
+    setGameState(prev => ({ ...prev, icqTrust: trust }));
+  }, []);
+  
+  const handleIcqMathMistake = useCallback(() => {
+    setGameState(prev => ({ ...prev, mathQuestionWrong: (prev.mathQuestionWrong || 0) + 1 }));
+  }, []);
+  
+  const handleIcqLeakChoice = useCallback((choice: 'public' | 'covert') => {
+    setGameState(prev => ({
+      ...prev,
+      choiceLeakPath: choice,
+      flags: { ...prev.flags, leakExecuted: true },
+    }));
+  }, []);
+  
+  const handleIcqFilesSent = useCallback(() => {
+    setGameState(prev => ({ ...prev, filesSent: true }));
+  }, []);
+  
   // Handle restart after victory - return to main menu
   const handleRestart = useCallback(() => {
     onExitAction();
@@ -625,7 +647,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     setInputValue('');
     
     // Play command-specific sound on submit
-    const dangerousCommands = ['decrypt', 'recover', 'trace', 'override'];
+    const dangerousCommands = ['decrypt', 'recover', 'trace', 'override', 'leak'];
     const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
     const systemCommands = ['scan', 'wait', 'hide', 'correlate'];
     
@@ -948,6 +970,11 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     if (gameState.flags.adminUnlocked) {
       parts.push('ACCESS: ADMIN');
     }
+    if (gameState.paranoiaLevel >= 40) {
+      parts.push('PARANOIA: ELEVATED');
+    } else if (gameState.paranoiaLevel >= 15) {
+      parts.push('PARANOIA: ACTIVE');
+    }
     if (gameState.isGameOver) {
       parts.push(gameState.gameOverReason || 'TERMINATED');
     }
@@ -1056,7 +1083,16 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   }
   
   if (gamePhase === 'icq') {
-    return <ICQChat onVictoryAction={handleVictory} />;
+    return (
+      <ICQChat
+        onVictoryAction={handleVictory}
+        initialTrust={gameState.icqTrust}
+        onTrustChange={handleIcqTrustChange}
+        onMathMistake={handleIcqMathMistake}
+        onLeakChoice={handleIcqLeakChoice}
+        onFilesSent={handleIcqFilesSent}
+      />
+    );
   }
   
   if (gamePhase === 'victory') {
@@ -1066,6 +1102,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       detectionLevel={gameState.detectionLevel}
       maxDetectionReached={maxDetectionRef.current}
       mathMistakes={gameState.mathQuestionWrong}
+      evidenceLinks={gameState.evidenceLinks}
+      dataIntegrity={gameState.dataIntegrity}
+      choiceLeakPath={gameState.choiceLeakPath}
+      rivalInvestigatorActive={gameState.rivalInvestigatorActive}
     />;
   }
   

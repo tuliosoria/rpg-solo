@@ -218,6 +218,36 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       triggerFlicker: true,
     }),
   },
+  {
+    // RIVAL INVESTIGATOR - Evidence seized after heavy linking
+    id: 'rival_investigator',
+    trigger: (state) => {
+      if (state.singularEventsTriggered?.has('rival_investigator')) return false;
+      return (state.evidenceLinks?.length || 0) >= 3 && state.detectionLevel >= 45;
+    },
+    execute: (state) => ({
+      output: [
+        createEntry('system', ''),
+        createEntry('warning', '─────────────────────────────────────────'),
+        createEntry('warning', 'NOTICE: Parallel investigation detected'),
+        createEntry('system', ''),
+        createEntry('output', 'A competing analyst is pulling records.'),
+        createEntry('output', 'Chain-of-custody locks engaged on key files.'),
+        createEntry('system', ''),
+        createEntry('warning', 'Maintain discretion. Expect delays.'),
+        createEntry('warning', '─────────────────────────────────────────'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {
+        singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'rival_investigator']),
+        rivalInvestigatorActive: true,
+        systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
+        paranoiaLevel: Math.min(100, (state.paranoiaLevel || 0) + 20),
+      },
+      delayMs: 2000,
+      triggerFlicker: true,
+    }),
+  },
 ];
 
 // Check and trigger singular events
@@ -676,9 +706,12 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
   }
   
   // Check for near-victory
-  if (newCount >= 4 && !state.flags.nearVictory) {
-    state.flags.nearVictory = true;
-  }
+    if (newCount >= 4 && !state.flags.nearVictory) {
+      stateChanges.flags = { ...state.flags, ...stateChanges.flags, nearVictory: true };
+    }
+    if (newCount >= 5 && !state.flags.allEvidenceCollected) {
+      stateChanges.flags = { ...state.flags, ...stateChanges.flags, allEvidenceCollected: true };
+    }
   
   return { notices, stateChanges };
 }
@@ -2019,8 +2052,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       '  bookmark [file]   Bookmark a file (or view bookmarks)',
       '  trace             Trace system connections (RISK)',
       '  chat              Open secure relay channel',
+      '  leak <mode>       Release evidence (public|covert)',
       '  link              Access preserved neural pattern (EXTREME RISK)',
       '  script <code>     Execute data reconstruction script',
+      '  run <script>      Execute a script file',
       '  override protocol <CODE>  Attempt security override (requires code)',
       '  save              Save current session',
       '  clear             Clear terminal display',
@@ -2443,8 +2478,33 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     if (filePath.includes('active_trace.sys') && !isEncryptedAndLocked) {
       if (!state.countdownActive) {
         stateChanges.countdownActive = true;
-        stateChanges.countdownEndTime = Date.now() + (5 * 60 * 1000); // 5 minutes
+        stateChanges.countdownEndTime = Date.now() + (3 * 60 * 1000);
+        stateChanges.countdownTriggeredBy = 'trace_spike';
+        stateChanges.traceSpikeActive = true;
+        stateChanges.paranoiaLevel = Math.min(100, (state.paranoiaLevel || 0) + 15);
       }
+    }
+
+    if (filePath.includes('integrity_hashes') && !isEncryptedAndLocked) {
+      stateChanges.flags = { ...state.flags, ...stateChanges.flags, tamperEvidenceNoted: true };
+    }
+
+    if (filePath.includes('ghost_session') && !isEncryptedAndLocked) {
+      stateChanges.paranoiaLevel = Math.min(100, (state.paranoiaLevel || 0) + 10);
+    }
+
+    if (filePath.includes('redaction_keycard') && !isEncryptedAndLocked) {
+      stateChanges.flags = { ...state.flags, ...stateChanges.flags, redactionKeycardRead: true };
+    }
+
+    if (filePath.includes('redaction_override_memo') && !isEncryptedAndLocked && state.flags.redactionKeycardRead) {
+      stateChanges.flags = { ...state.flags, ...stateChanges.flags, redactionOverrideSolved: true };
+      notices.push(createEntry('notice', ''));
+      notices.push(createEntry('notice', 'NOTICE: Redaction sequence reconciled.'));
+    }
+
+    if (filePath.includes('trace_purge_memo') && !isEncryptedAndLocked) {
+      stateChanges.flags = { ...state.flags, ...stateChanges.flags, tracePurgeLogged: true };
     }
     
     // Corrupted core dump spreads corruption to nearby files
@@ -2463,11 +2523,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       triggerFlicker = true;
     }
     
-    const output = [
-      ...createOutputEntries(['', `FILE: ${filePath}`, '']),
-      ...createOutputEntries(content),
-      ...notices,
-    ];
+  const output = [
+    ...createOutputEntries(['', `FILE: ${filePath}`, '']),
+    ...createOutputEntries(content),
+    ...notices,
+  ];
     
     // Check for image trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
     let imageTrigger: ImageTrigger | undefined = undefined;
@@ -3482,6 +3542,145 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
 
+  run: (args, state) => {
+    if (args.length === 0) {
+      return {
+        output: [
+          createEntry('system', 'USAGE: run <script>'),
+          createEntry('system', 'Example: run save_evidence.sh'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const scriptName = args[0].toLowerCase();
+    
+    if (scriptName === 'save_evidence.sh') {
+      if (!state.flags.allEvidenceCollected) {
+        return {
+          output: [
+            createEntry('error', 'EXECUTION FAILED'),
+            createEntry('system', 'Evidence set incomplete. Script aborted.'),
+          ],
+          stateChanges: {
+            detectionLevel: state.detectionLevel + 4,
+          },
+        };
+      }
+      
+      return {
+        output: [
+          createEntry('system', 'Executing save_evidence.sh...'),
+          createEntry('system', ''),
+          createEntry('output', '[OK] Evidence bundle sealed'),
+          createEntry('output', '[OK] External backup created'),
+          createEntry('warning', 'WARNING: Transfer window closing'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          evidencesSaved: true,
+          flags: { ...state.flags, evidencesSaved: true },
+          filesSent: true,
+        },
+        delayMs: 1500,
+        triggerFlicker: true,
+      };
+    }
+    
+    if (scriptName === 'purge_trace.sh') {
+      if (!state.traceSpikeActive) {
+        return {
+          output: [
+            createEntry('error', 'EXECUTION FAILED'),
+            createEntry('system', 'No active trace detected.'),
+          ],
+          stateChanges: {},
+        };
+      }
+      
+      return {
+        output: [
+          createEntry('warning', 'TRACE PURGE UTILITY'),
+          createEntry('system', ''),
+          createEntry('output', '[OK] Trace buffers wiped'),
+          createEntry('output', '[OK] Session log truncated'),
+          createEntry('warning', 'NOTICE: Countermeasures reset'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          traceSpikeActive: false,
+          tracePurgeUsed: true,
+          countdownActive: false,
+          countdownEndTime: 0,
+          flags: { ...state.flags, tracePurgeUsed: true },
+          detectionLevel: Math.max(0, state.detectionLevel - 10),
+        },
+        delayMs: 1200,
+        triggerFlicker: true,
+      };
+    }
+    
+    return {
+      output: [
+        createEntry('error', 'EXECUTION FAILED'),
+        createEntry('system', `Script not found: ${args[0]}`),
+      ],
+      stateChanges: {},
+    };
+  },
+
+  leak: (args, state) => {
+    if (!state.flags.allEvidenceCollected) {
+      return {
+        output: [
+          createEntry('error', 'LEAK FAILED'),
+          createEntry('system', 'Evidence set incomplete. Leak aborted.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    if (args.length === 0) {
+      return {
+        output: [
+          createEntry('system', 'USAGE: leak <public|covert>'),
+          createEntry('system', 'public: immediate release to open networks'),
+          createEntry('system', 'covert: silent handoff to trusted cells'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const mode = args[0].toLowerCase();
+    if (mode !== 'public' && mode !== 'covert') {
+      return {
+        output: [
+          createEntry('error', 'LEAK FAILED'),
+          createEntry('system', 'Invalid mode. Use: leak public | leak covert'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const isPublic = mode === 'public';
+    return {
+      output: [
+        createEntry('system', 'EVIDENCE DISPATCH'),
+        createEntry('system', ''),
+        createEntry('output', isPublic ? 'Release channel: OPEN NETWORKS' : 'Release channel: TRUSTED CELLS'),
+        createEntry('output', isPublic ? 'Signal boosted. Narrative destabilized.' : 'Signal preserved. Identities shielded.'),
+        createEntry('system', ''),
+        createEntry('warning', 'NOTICE: This action will be remembered.'),
+      ],
+      stateChanges: {
+        choiceLeakPath: isPublic ? 'public' : 'covert',
+        flags: { ...state.flags, leakExecuted: true },
+        detectionLevel: Math.min(100, state.detectionLevel + (isPublic ? 8 : 4)),
+      },
+      delayMs: 1200,
+    };
+  },
+
   save: (args, state) => {
     // Save is handled at UI level, but acknowledge here
     return {
@@ -4438,10 +4637,14 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       stateChanges: {},
     };
   }
+
   
   // ═══════════════════════════════════════════════════════════════════════════
   // TERRIBLE MISTAKE - Doom countdown check
   // ═══════════════════════════════════════════════════════════════════════════
+  const traceSpikeWarning = state.traceSpikeActive && state.countdownActive && state.countdownTriggeredBy === 'trace_spike'
+    ? createEntry('warning', '[TRACE SPIKE ACTIVE]')
+    : null;
   if (state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
     const newCountdown = state.sessionDoomCountdown - 1;
     
@@ -5015,6 +5218,10 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
   
   const result = handler(args, state);
+
+  if (traceSpikeWarning) {
+    result.output = [traceSpikeWarning, ...result.output];
+  }
   
   // ═══════════════════════════════════════════════════════════════════════════
   // SESSION COMMAND COUNTER - Track total commands for time-sensitive content

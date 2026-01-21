@@ -11,6 +11,10 @@ interface VictoryProps {
   detectionLevel?: number;
   maxDetectionReached?: number;
   mathMistakes?: number;
+  evidenceLinks?: Array<[string, string]>;
+  dataIntegrity?: number;
+  choiceLeakPath?: 'public' | 'covert';
+  rivalInvestigatorActive?: boolean;
 }
 
 export default function Victory({ 
@@ -18,12 +22,28 @@ export default function Victory({
   commandCount = 999, 
   detectionLevel = 50, 
   maxDetectionReached = 50,
-  mathMistakes = 0 
+  mathMistakes = 0,
+  evidenceLinks = [],
+  dataIntegrity = 100,
+  choiceLeakPath,
+  rivalInvestigatorActive = false
 }: VictoryProps) {
   const [phase, setPhase] = useState<'intro' | 'message' | 'credits'>('intro');
   const [textLines, setTextLines] = useState<string[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null);
+  
+  const linkCount = evidenceLinks.length;
+  const linkStatus = linkCount >= 3 ? 'Coherent' : linkCount > 0 ? 'Partial' : 'Absent';
+  const integrityStatus = dataIntegrity >= 80 ? 'Stable' : dataIntegrity >= 50 ? 'Degraded' : 'Critical';
+  const releasePath = choiceLeakPath === 'public'
+    ? 'Open networks'
+    : choiceLeakPath === 'covert'
+      ? 'Trusted cells'
+      : 'Unspecified';
+  const interferenceLine = rivalInvestigatorActive
+    ? '  External interference: Rival investigator active'
+    : '  External interference: None recorded';
   
   const VICTORY_TEXT = [
     '═══════════════════════════════════════════════════════════',
@@ -42,6 +62,12 @@ export default function Victory({
     'The connections were severed.',
     '',
     'But the truth survived.',
+    '',
+    'ADMINISTRATIVE NOTES:',
+    `  Correlation status: ${linkStatus} (${linkCount} link${linkCount === 1 ? '' : 's'})`,
+    `  Integrity status: ${integrityStatus}`,
+    `  Release path: ${releasePath}`,
+    interferenceLine,
     '',
     'Perhaps one day, when it is safe,',
     'these files will come to light.',
