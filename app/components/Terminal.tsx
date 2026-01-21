@@ -1162,6 +1162,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             [{truthStatus.total}/5]
           </span>
         </div>
+        <div className={styles.riskSection}>
+          <span className={styles.trackerLabel}>RISK:</span>
+          <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
+            {riskInfo.level}
+          </span>
+        </div>
       </div>
       
       {/* Output area */}
