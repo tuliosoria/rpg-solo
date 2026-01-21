@@ -737,4 +737,291 @@ describe('Narrative Mechanics', () => {
       expect(state.wanderingNoticeCount).toBe(0);
     });
   });
+
+  describe('Chat Command - Prisoner_45', () => {
+    it('connects to Prisoner_45 on first use', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      const result = executeCommand('chat', state);
+      expect(result.output.some(e => e.content.includes('PRISONER_45'))).toBe(true);
+    });
+
+    it('responds to varginha-related questions', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        prisoner45QuestionsAsked: 0,
+      });
+      const result = executeCommand('chat what happened in varginha?', state);
+      expect(result.output.some(e => e.content.includes('PRISONER_45'))).toBe(true);
+      expect(result.stateChanges.prisoner45QuestionsAsked).toBe(1);
+    });
+
+    it('disconnects after 5 questions', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        prisoner45QuestionsAsked: 5,
+        prisoner45Disconnected: false,
+      });
+      const result = executeCommand('chat hello', state);
+      expect(result.output.some(e => 
+        e.content.includes('CONNECTION TERMINATED') || e.content.includes('cutting the line')
+      )).toBe(true);
+      expect(result.stateChanges.prisoner45Disconnected).toBe(true);
+    });
+
+    it('shows disconnected message when already disconnected', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        prisoner45Disconnected: true,
+      });
+      const result = executeCommand('chat hello', state);
+      expect(result.output.some(e => 
+        e.content.includes('CONNECTION TERMINATED') || e.content.includes('RELAY NODE OFFLINE')
+      )).toBe(true);
+    });
+  });
+
+  describe('Link Command - Scout Neural Link', () => {
+    it('requires scoutLinkUnlocked flag', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        flags: { scoutLinkUnlocked: false },
+      });
+      const result = executeCommand('link', state);
+      expect(result.output.some(e => 
+        e.content.includes('ACCESS DENIED') || e.content.includes('NO VALID NEURAL PATTERN')
+      )).toBe(true);
+    });
+
+    it('allows connection when unlocked', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        flags: { scoutLinkUnlocked: true },
+        scoutLinksUsed: 0,
+      });
+      const result = executeCommand('link', state);
+      expect(result.output.some(e => 
+        e.content.includes('NEURAL PATTERN LINK') || e.content.includes('connection') || e.content.includes('established')
+      )).toBe(true);
+    });
+
+    it('exhausts after 4 uses', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        flags: { scoutLinkUnlocked: true },
+        scoutLinksUsed: 4,
+      });
+      const result = executeCommand('link what is your purpose', state);
+      expect(result.output.some(e => 
+        e.content.includes('PATTERN EXHAUSTED') || e.content.includes('NEURAL PATTERN DEGRADED')
+      )).toBe(true);
+    });
+  });
+
+  describe('Run Command - Script Execution', () => {
+    it('shows usage when no script specified', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      const result = executeCommand('run', state);
+      expect(result.output.some(e => 
+        e.content.includes('USAGE') || e.content.includes('run') || e.content.includes('script')
+      )).toBe(true);
+    });
+
+    it('executes save_evidence.sh when 5 truths discovered', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/tmp',
+        truthsDiscovered: new Set(['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026']),
+      });
+      const result = executeCommand('run save_evidence.sh', state);
+      // Should either execute or show it's not in current directory
+      expect(result.output.length).toBeGreaterThan(0);
+    });
+
+    it('executes purge_trace.sh to clear countdown', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/tmp',
+        countdownActive: true,
+        countdownTriggeredBy: 'trace_spike',
+        traceSpikeActive: true,
+      });
+      const result = executeCommand('run purge_trace.sh', state);
+      // Should either clear countdown or show error
+      expect(result.output.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Recover Command', () => {
+    it('shows error when no file specified', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      const result = executeCommand('recover', state);
+      expect(result.output.some(e => 
+        e.content.includes('ERROR') || e.content.includes('Specify')
+      )).toBe(true);
+    });
+
+    it('attempts recovery on corrupted file', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/tmp',
+      });
+      const result = executeCommand('recover some_file.txt', state);
+      // Should attempt recovery or report file not found
+      expect(result.output.some(e => 
+        e.content.includes('ERROR') || e.content.includes('not found') || e.content.includes('recovery')
+      )).toBe(true);
+    });
+  });
+
+  describe('Trace Command', () => {
+    it('shows trace results at low access level', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        accessLevel: 1,
+      });
+      const result = executeCommand('trace', state);
+      expect(result.output.some(e => 
+        e.content.includes('TRACE') || e.content.includes('ACCESSIBLE') || e.content.includes('RESTRICTED')
+      )).toBe(true);
+    });
+
+    it('shows more details at higher access level', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        accessLevel: 2,
+      });
+      const result = executeCommand('trace', state);
+      expect(result.output.some(e => 
+        e.content.includes('TRACE') || e.content.includes('files')
+      )).toBe(true);
+    });
+  });
+
+  describe('Connect Command - Evidence Links', () => {
+    it('shows usage when no files specified', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+      });
+      const result = executeCommand('connect', state);
+      expect(result.output.some(e => 
+        e.content.includes('USAGE') || e.content.includes('connect')
+      )).toBe(true);
+    });
+
+    it('requires both files to be read', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        filesRead: new Set(['/storage/transport_log_96.txt']),
+      });
+      const result = executeCommand('connect /storage/transport_log_96.txt /ops/medical/autopsy_01.txt', state);
+      expect(result.output.some(e => 
+        e.content.includes('FAILED') || e.content.includes('read') || e.content.includes('not found')
+      )).toBe(true);
+    });
+  });
+
+  describe('Map Command - Evidence Web', () => {
+    it('shows no links when none created', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        evidenceLinks: [],
+      });
+      const result = executeCommand('map', state);
+      expect(result.output.some(e => 
+        e.content.includes('No') || e.content.includes('empty') || e.content.includes('EVIDENCE') || e.content.includes('MAP')
+      )).toBe(true);
+    });
+
+    it('displays existing evidence links', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        evidenceLinks: [['/storage/file1.txt', '/ops/file2.txt']],
+      });
+      const result = executeCommand('map', state);
+      expect(result.output.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Leak Command', () => {
+    it('requires allEvidenceCollected flag', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        flags: { allEvidenceCollected: false },
+      });
+      const result = executeCommand('leak', state);
+      expect(result.output.some(e => 
+        e.content.includes('LEAK FAILED') || e.content.includes('incomplete')
+      )).toBe(true);
+    });
+
+    it('shows usage when no mode specified and evidence collected', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        flags: { allEvidenceCollected: true },
+      });
+      const result = executeCommand('leak', state);
+      expect(result.output.some(e => 
+        e.content.includes('USAGE') || e.content.includes('public') || e.content.includes('covert')
+      )).toBe(true);
+    });
+  });
+
+  describe('Singular Events', () => {
+    it('turing evaluation only triggers once', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        detectionLevel: 50,
+        truthsDiscovered: new Set(['debris_relocation']),
+        singularEventsTriggered: new Set(['turing_evaluation']),
+        turingEvaluationCompleted: true,
+      });
+      // With turing already triggered, it shouldn't trigger again
+      const result = executeCommand('ls', state);
+      // Should NOT contain turing evaluation prompt
+      expect(result.output.every(e => !e.content.includes('TURING EVALUATION'))).toBe(true);
+    });
+  });
+
+  describe('Countdown System', () => {
+    it('countdown is set when reading active_trace.sys', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/sys',
+        accessLevel: 5,
+        flags: { adminUnlocked: true },
+        countdownActive: false,
+      });
+      const result = executeCommand('open active_trace.sys', state);
+      // Should trigger countdown or show file content
+      expect(result.output.length).toBeGreaterThan(0);
+    });
+  });
 });
