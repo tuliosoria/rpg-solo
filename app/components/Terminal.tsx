@@ -1162,6 +1162,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             [{truthStatus.total}/5]
           </span>
         </div>
+        {/* Hide risk bar when HUD panel is visible (tutorial complete) */}
+        {!gameState.tutorialComplete && (
         <div className={`${styles.riskSection} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}>
           <span className={styles.trackerLabel}>RISK:</span>
           <div className={styles.riskBar}>
@@ -1174,6 +1176,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             {riskInfo.level}
           </span>
         </div>
+        )}
       </div>
       
       {/* Output area */}
