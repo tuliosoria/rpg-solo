@@ -314,7 +314,7 @@ export function useSound() {
   useEffect(() => {
     return () => {
       stopAmbient();
-      if (audioContextRef.current) {
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close();
       }
     };

@@ -25,8 +25,8 @@ describe('UX Commands', () => {
 
     it('should re-display last opened file', () => {
       const state = createTestState({
-        lastOpenedFile: '/internal/session_objectives.txt',
-        filesRead: new Set(['/internal/session_objectives.txt']),
+        lastOpenedFile: '/internal/protocols/session_objectives.txt',
+        filesRead: new Set(['/internal/protocols/session_objectives.txt']),
       });
       const result = executeCommand('last', state);
       
@@ -127,21 +127,21 @@ describe('UX Commands', () => {
     });
 
     it('should add a bookmark', () => {
-      const state = createTestState({ currentPath: '/internal' });
+      const state = createTestState({ currentPath: '/internal/protocols' });
       const result = executeCommand('bookmark session_objectives.txt', state);
       
       expect(result.stateChanges.bookmarkedFiles).toBeDefined();
-      expect(result.stateChanges.bookmarkedFiles?.has('/internal/session_objectives.txt')).toBe(true);
+      expect(result.stateChanges.bookmarkedFiles?.has('/internal/protocols/session_objectives.txt')).toBe(true);
     });
 
     it('should toggle bookmark off', () => {
       const state = createTestState({
-        currentPath: '/internal',
-        bookmarkedFiles: new Set(['/internal/session_objectives.txt']),
+        currentPath: '/internal/protocols',
+        bookmarkedFiles: new Set(['/internal/protocols/session_objectives.txt']),
       });
       const result = executeCommand('bookmark session_objectives.txt', state);
       
-      expect(result.stateChanges.bookmarkedFiles?.has('/internal/session_objectives.txt')).toBe(false);
+      expect(result.stateChanges.bookmarkedFiles?.has('/internal/protocols/session_objectives.txt')).toBe(false);
       expect(result.output.some(e => e.content.includes('removed'))).toBe(true);
     });
   });
@@ -158,7 +158,7 @@ describe('UX Commands', () => {
       // Create a state with many files read
       const state = createTestState({
         filesRead: new Set([
-          '/internal/session_objectives.txt',
+          '/internal/protocols/session_objectives.txt',
           '/internal/incident_review_protocol.txt',
           // Add many more...
         ]),
@@ -210,8 +210,8 @@ describe('UX Commands', () => {
   describe('ls command enhancements', () => {
     it('should show bookmark star for bookmarked files', () => {
       const state = createTestState({
-        currentPath: '/internal',
-        bookmarkedFiles: new Set(['/internal/session_objectives.txt']),
+        currentPath: '/internal/protocols',
+        bookmarkedFiles: new Set(['/internal/protocols/session_objectives.txt']),
       });
       const result = executeCommand('ls', state);
       
@@ -220,8 +220,8 @@ describe('UX Commands', () => {
 
     it('should show [READ] for read files', () => {
       const state = createTestState({
-        currentPath: '/internal',
-        filesRead: new Set(['/internal/session_objectives.txt']),
+        currentPath: '/internal/protocols',
+        filesRead: new Set(['/internal/protocols/session_objectives.txt']),
       });
       const result = executeCommand('ls', state);
       
@@ -231,10 +231,10 @@ describe('UX Commands', () => {
 
   describe('open command enhancements', () => {
     it('should track lastOpenedFile', () => {
-      const state = createTestState({ currentPath: '/internal' });
+      const state = createTestState({ currentPath: '/internal/protocols' });
       const result = executeCommand('open session_objectives.txt', state);
       
-      expect(result.stateChanges.lastOpenedFile).toBe('/internal/session_objectives.txt');
+      expect(result.stateChanges.lastOpenedFile).toBe('/internal/protocols/session_objectives.txt');
     });
   });
 
@@ -334,8 +334,8 @@ describe('UX Commands', () => {
   describe('file re-read detection', () => {
     it('should show already read message for re-opened files', () => {
       const state = createTestState({
-        currentPath: '/internal',
-        filesRead: new Set(['/internal/session_objectives.txt']),
+        currentPath: '/internal/protocols',
+        filesRead: new Set(['/internal/protocols/session_objectives.txt']),
       });
       const result = executeCommand('open session_objectives.txt', state);
       

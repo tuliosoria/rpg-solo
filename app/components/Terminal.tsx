@@ -412,7 +412,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   }, []);
   
   const IDLE_HINTS = [
-    { hint: "Have you checked /internal?", condition: (s: GameState) => s.currentPath === '/' && !s.filesRead?.has('/internal/session_objectives.txt') },
+    { hint: "Have you checked /internal?", condition: (s: GameState) => s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt') },
     { hint: "Try 'open' on a .txt file to read it.", condition: (s: GameState) => (s.filesRead?.size || 0) === 0 },
     { hint: "Use 'ls' to see what's in the current directory.", condition: (s: GameState) => s.sessionCommandCount < 5 },
     { hint: "Some files are ENCRYPTED. You'll need 'decrypt' for those.", condition: (s: GameState) => (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2 },

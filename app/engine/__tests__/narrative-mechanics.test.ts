@@ -168,7 +168,7 @@ describe('Narrative Mechanics', () => {
 
     describe('transfer_authorization.txt', () => {
       it('reveals password when read', () => {
-        const state = createTestState({ currentPath: '/internal' });
+        const state = createTestState({ currentPath: '/internal/personnel' });
         const result = executeCommand('open transfer_authorization.txt', state);
         expect(result.stateChanges.passwordsFound?.has('varginha1996')).toBe(true);
       });
@@ -471,9 +471,9 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Easter Eggs', () => {
-    it('trust_protocol_1993.txt exists in /internal', () => {
+    it('trust_protocol_1993.txt exists in /internal/protocols', () => {
       const state = createTestState({ 
-        currentPath: '/internal',
+        currentPath: '/internal/protocols',
         tutorialStep: -1, 
         tutorialComplete: true,
       });

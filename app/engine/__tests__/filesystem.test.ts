@@ -144,7 +144,7 @@ describe('Filesystem', () => {
   describe('canAccessFile', () => {
     it('allows access to normal files', () => {
       const state = createTestState();
-      const result = canAccessFile('/internal/incident_review_protocol.txt', state);
+      const result = canAccessFile('/internal/protocols/incident_review_protocol.txt', state);
       expect(result.accessible).toBe(true);
     });
 
@@ -158,10 +158,10 @@ describe('Filesystem', () => {
     it('denies access to deleted files', () => {
       const state = createTestState({
         fileMutations: {
-          '/internal/incident_review_protocol.txt': { deleted: true, corruptedLines: [] },
+          '/internal/protocols/incident_review_protocol.txt': { deleted: true, corruptedLines: [] },
         },
       });
-      const result = canAccessFile('/internal/incident_review_protocol.txt', state);
+      const result = canAccessFile('/internal/protocols/incident_review_protocol.txt', state);
       expect(result.accessible).toBe(false);
       expect(result.reason).toBe('FILE DELETED');
     });
@@ -169,10 +169,10 @@ describe('Filesystem', () => {
     it('denies access to locked files', () => {
       const state = createTestState({
         fileMutations: {
-          '/internal/incident_review_protocol.txt': { locked: true, corruptedLines: [] },
+          '/internal/protocols/incident_review_protocol.txt': { locked: true, corruptedLines: [] },
         },
       });
-      const result = canAccessFile('/internal/incident_review_protocol.txt', state);
+      const result = canAccessFile('/internal/protocols/incident_review_protocol.txt', state);
       expect(result.accessible).toBe(false);
       expect(result.reason).toBe('FILE LOCKED');
     });

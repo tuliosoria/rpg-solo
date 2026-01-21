@@ -3761,35 +3761,74 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
       type: 'dir',
       name: 'internal',
       children: {
-        'incident_review_protocol.txt': incident_review_protocol,
-        'session_objectives.txt': session_objectives_memo,
-        'facilities_memo_12.txt': facilities_memo_12,
-        'parking_allocation_jan96.txt': parking_allocation_jan96,
-        'budget_request_q1_96.txt': budget_request_q1_96,
-        'hvac_maintenance_log.txt': hvac_maintenance_log,
-        'personnel_transfer_notice.txt': personnel_transfer_notice,
-        'asset_transfer_form_incomplete.txt': asset_transfer_form_incomplete,
-        'transfer_authorization.txt': personnel_transfer_extended,
+        // Key files at root level for easier discovery
         'incident_summary_official.txt': official_summary_report,
-        'maintenance_notes.txt': system_maintenance_notes,
-        // Easter eggs - mundane files hiding in plain sight
-        'trust_protocol_1993.txt': trust_protocol_memo,
-        'copa_94_celebration.txt': copa_94_celebration_memo,
-        'cafeteria_menu_week03.txt': cafeteria_menu_jan96,
-        // Red herring files - mundane content to obscure signal
-        'supplies_request_jan96.txt': office_supplies_request,
-        'birthdays_jan96.txt': employee_birthday_list,
-        'phone_directory_96.txt': telephone_directory,
-        'vehicle_log_jan96.txt': vehicle_mileage_log,
-        'printer_notice.txt': printer_queue_notice,
-        'cafeteria_feedback.txt': cafeteria_complaint,
-        'badge_renewal_memo.txt': security_badge_memo,
-        'training_q1_96.txt': training_schedule,
-        'lost_found_jan96.txt': lost_and_found,
-        'duty_roster_jan96.txt': weekend_duty_roster,
-        'override_protocol_memo.txt': override_protocol_memo,
-        'redaction_keycard.txt': redaction_keycard,
         'audio_transcript_brief.txt': audio_transcript_brief,
+        'redaction_keycard.txt': redaction_keycard,
+        'override_protocol_memo.txt': override_protocol_memo,
+        'maintenance_notes.txt': system_maintenance_notes,
+        
+        // Protocols subfolder
+        protocols: {
+          type: 'dir',
+          name: 'protocols',
+          children: {
+            'incident_review_protocol.txt': incident_review_protocol,
+            'session_objectives.txt': session_objectives_memo,
+            'trust_protocol_1993.txt': trust_protocol_memo,
+            'asset_transfer_form_incomplete.txt': asset_transfer_form_incomplete,
+          },
+        },
+        
+        // Personnel subfolder
+        personnel: {
+          type: 'dir',
+          name: 'personnel',
+          children: {
+            'personnel_transfer_notice.txt': personnel_transfer_notice,
+            'transfer_authorization.txt': personnel_transfer_extended,
+            'duty_roster_jan96.txt': weekend_duty_roster,
+            'birthdays_jan96.txt': employee_birthday_list,
+            'training_q1_96.txt': training_schedule,
+            'phone_directory_96.txt': telephone_directory,
+          },
+        },
+        
+        // Facilities subfolder
+        facilities: {
+          type: 'dir',
+          name: 'facilities',
+          children: {
+            'facilities_memo_12.txt': facilities_memo_12,
+            'parking_allocation_jan96.txt': parking_allocation_jan96,
+            'hvac_maintenance_log.txt': hvac_maintenance_log,
+            'lost_found_jan96.txt': lost_and_found,
+          },
+        },
+        
+        // Admin subfolder
+        admin: {
+          type: 'dir',
+          name: 'admin',
+          children: {
+            'budget_request_q1_96.txt': budget_request_q1_96,
+            'supplies_request_jan96.txt': office_supplies_request,
+            'printer_notice.txt': printer_queue_notice,
+            'badge_renewal_memo.txt': security_badge_memo,
+          },
+        },
+        
+        // Misc subfolder - mundane files / red herrings
+        misc: {
+          type: 'dir',
+          name: 'misc',
+          children: {
+            'cafeteria_menu_week03.txt': cafeteria_menu_jan96,
+            'cafeteria_feedback.txt': cafeteria_complaint,
+            'copa_94_celebration.txt': copa_94_celebration_memo,
+            'vehicle_log_jan96.txt': vehicle_mileage_log,
+          },
+        },
       },
     },
     tmp: {
