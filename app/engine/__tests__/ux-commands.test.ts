@@ -330,4 +330,30 @@ describe('UX Commands', () => {
       expect(result.triggerFlicker).toBe(true);
     });
   });
+
+  describe('file re-read detection', () => {
+    it('should show already read message for re-opened files', () => {
+      const state = createTestState({
+        currentPath: '/internal',
+        filesRead: new Set(['/internal/session_objectives.txt']),
+      });
+      const result = executeCommand('open session_objectives.txt', state);
+      
+      expect(result.output.some(e => e.content.includes('already read this file'))).toBe(true);
+      expect(result.stateChanges.detectionLevel).toBe(state.detectionLevel + 1); // Reduced penalty
+    });
+
+    it('should show trap re-read message for re-opened trap files', () => {
+      const state = createTestState({
+        currentPath: '/tmp',
+        filesRead: new Set(['/tmp/URGENT_classified_alpha.txt']),
+        trapsTriggered: new Set(['/tmp/URGENT_classified_alpha.txt']),
+        trapWarningGiven: true,
+      });
+      const result = executeCommand('open URGENT_classified_alpha.txt', state);
+      
+      expect(result.output.some(e => e.content.includes('already fell for this trap'))).toBe(true);
+      expect(result.stateChanges.detectionLevel).toBe(state.detectionLevel + 1); // Reduced penalty, not +20
+    });
+  });
 });

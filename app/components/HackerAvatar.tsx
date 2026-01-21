@@ -106,12 +106,15 @@ export default function HackerAvatar({ expression, detectionLevel, sessionStabil
       {/* Right column - Avatar */}
       <div className={styles.avatarColumn}>
         <div className={styles.tvFrame}>
+          {/* Green scanning bar */}
+          <div className={styles.scanBar} />
+          
           <div className={`${styles.imageWrapper} ${isTransitioning ? styles.transitioning : ''}`}>
             <Image
               src={EXPRESSION_IMAGES[currentExpression]}
               alt="Hacker avatar"
-              width={120}
-              height={160}
+              width={156}
+              height={208}
               className={styles.avatarImage}
               priority
             />

@@ -71,10 +71,10 @@ const PARANOIA_MESSAGES = [
 // Streaming timing configuration (ms per line)
 const STREAMING_DELAYS: Record<StreamingMode, { base: number; variance: number; glitchChance: number; glitchDelay: number }> = {
   none: { base: 0, variance: 0, glitchChance: 0, glitchDelay: 0 },
-  fast: { base: 25, variance: 15, glitchChance: 0, glitchDelay: 0 },
-  normal: { base: 50, variance: 25, glitchChance: 0, glitchDelay: 0 },
-  slow: { base: 80, variance: 40, glitchChance: 0.05, glitchDelay: 200 },
-  glitchy: { base: 60, variance: 40, glitchChance: 0.15, glitchDelay: 400 },
+  fast: { base: 40, variance: 20, glitchChance: 0, glitchDelay: 0 },
+  normal: { base: 80, variance: 30, glitchChance: 0, glitchDelay: 0 },
+  slow: { base: 120, variance: 50, glitchChance: 0.05, glitchDelay: 200 },
+  glitchy: { base: 100, variance: 50, glitchChance: 0.15, glitchDelay: 400 },
 };
 
 interface TerminalProps {
@@ -92,8 +92,11 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [activeImage, setActiveImage] = useState<ImageTrigger | null>(null);
   const [activeVideo, setActiveVideo] = useState<VideoTrigger | null>(null);
+  const [pendingImage, setPendingImage] = useState<ImageTrigger | null>(null);
+  const [pendingVideo, setPendingVideo] = useState<VideoTrigger | null>(null);
   const [showGameOver, setShowGameOver] = useState(false);
   const [gameOverReason, setGameOverReason] = useState('');
+  const [showHeaderMenu, setShowHeaderMenu] = useState(false);
   
   // Game phase: terminal → blackout → icq → victory (or other endings)
   const [gamePhase, setGamePhase] = useState<GamePhase>('terminal');
@@ -588,6 +591,20 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // If there's a pending image, show it on Enter
+    if (pendingImage && !inputValue.trim()) {
+      setActiveImage(pendingImage);
+      setPendingImage(null);
+      return;
+    }
+    
+    // If there's a pending video, show it on Enter
+    if (pendingVideo && !inputValue.trim()) {
+      setActiveVideo(pendingVideo);
+      setPendingVideo(null);
+      return;
+    }
+    
     // During tutorial, only accept empty Enter to advance
     if (!gameState.tutorialComplete) {
       // If user typed something, show error
@@ -613,8 +630,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         setTimeout(() => setShowEvidenceTracker(true), 300);
         playSound('reveal');
       }
-      // Step 9: Risk tracker reveal (after showing risk warning)
-      if (currentStep === 8) {
+      // Step 10: Risk tracker reveal (after showing risk warning)
+      if (currentStep === 9) {
         setTimeout(() => setShowRiskTracker(true), 300);
         playSound('alert');
       }
@@ -732,25 +749,62 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       
       await streamOutput(result.output, streamingMode, intermediateState);
       
+      // Add pending media messages after streaming completes
+      if (result.imageTrigger || result.videoTrigger) {
+        const pendingMediaMessages: TerminalEntry[] = [];
+        if (result.imageTrigger) {
+          pendingMediaMessages.push(
+            createEntry('warning', ''),
+            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+            createEntry('system', 'Press ENTER to view recovered visual data.'),
+          );
+        }
+        if (result.videoTrigger) {
+          pendingMediaMessages.push(
+            createEntry('warning', ''),
+            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+            createEntry('system', 'Press ENTER to view recovered video data.'),
+          );
+        }
+        setGameState(prev => ({
+          ...prev,
+          history: [...prev.history, ...pendingMediaMessages],
+        }));
+      }
+      
       setIsStreaming(false);
       setIsProcessing(false);
     } else {
       // No streaming - add all at once
+      // Include pending image/video messages if triggered
+      const pendingMediaMessages: TerminalEntry[] = [];
+      if (result.imageTrigger) {
+        pendingMediaMessages.push(
+          createEntry('warning', ''),
+          createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+          createEntry('system', 'Press ENTER to view recovered visual data.'),
+        );
+      }
+      if (result.videoTrigger) {
+        pendingMediaMessages.push(
+          createEntry('warning', ''),
+          createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+          createEntry('system', 'Press ENTER to view recovered video data.'),
+        );
+      }
       setGameState({
         ...intermediateState,
-        history: [...newState.history, ...result.output],
+        history: [...newState.history, ...result.output, ...pendingMediaMessages],
       });
       setIsProcessing(false);
     }
     
-    // Show image if triggered
+    // Set pending image/video for Enter confirmation
     if (result.imageTrigger) {
-      setActiveImage(result.imageTrigger);
+      setPendingImage(result.imageTrigger);
     }
-    
-    // Show video if triggered
     if (result.videoTrigger) {
-      setActiveVideo(result.videoTrigger);
+      setPendingVideo(result.videoTrigger);
     }
     
     // Handle GOD mode phase skip
@@ -802,7 +856,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     // Focus input after processing (use setTimeout to ensure it runs after React updates)
     setTimeout(() => inputRef.current?.focus(), 0);
-  }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput, playSound, checkAchievement]);
+  }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput, playSound, checkAchievement, pendingImage, pendingVideo]);
   
   // Get auto-complete suggestions
   const getCompletions = useCallback((input: string): string[] => {
@@ -995,14 +1049,21 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     };
   };
   
-  // Get risk level display
+  // Get risk level display with percentage
   const getRiskLevel = () => {
     const detection = gameState.detectionLevel;
-    if (detection >= 80) return { level: 'CRITICAL', color: 'critical' };
-    if (detection >= 60) return { level: 'HIGH', color: 'high' };
-    if (detection >= 40) return { level: 'ELEVATED', color: 'elevated' };
-    if (detection >= 20) return { level: 'LOW', color: 'low' };
-    return { level: 'MINIMAL', color: 'minimal' };
+    const percent = `${detection}%`;
+    if (detection >= 80) return { level: `CRITICAL ${percent}`, color: 'critical' };
+    if (detection >= 60) return { level: `HIGH ${percent}`, color: 'high' };
+    if (detection >= 40) return { level: `ELEVATED ${percent}`, color: 'elevated' };
+    if (detection >= 20) return { level: `LOW ${percent}`, color: 'low' };
+    return { level: `MINIMAL ${percent}`, color: 'minimal' };
+  };
+  
+  // Get memory (data integrity) display with percentage
+  const getMemoryLevel = () => {
+    const integrity = gameState.dataIntegrity;
+    return `${integrity}%`;
   };
   
   const truthStatus = getTruthStatus();
@@ -1173,10 +1234,48 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         </div>
       )}
       
-      {/* Status bar */}
+      {/* Status bar with dropdown menu */}
       <div className={styles.statusBar}>
-        <span className={styles.statusLeft}>VARGINHA: TERMINAL 1996</span>
+        <span 
+          className={`${styles.statusLeft} ${styles.clickable}`}
+          onClick={() => setShowHeaderMenu(!showHeaderMenu)}
+        >
+          VARGINHA: TERMINAL 1996 ▼
+        </span>
         <span className={styles.statusRight}>{getStatusBar()}</span>
+        
+        {/* Dropdown menu */}
+        {showHeaderMenu && (
+          <div className={styles.headerMenu}>
+            <button 
+              className={styles.menuItem}
+              onClick={() => {
+                onSaveRequestAction(gameState);
+                setShowHeaderMenu(false);
+              }}
+            >
+              💾 SAVE SESSION
+            </button>
+            <button 
+              className={styles.menuItem}
+              onClick={() => {
+                setShowHeaderMenu(false);
+                onExitAction();
+              }}
+            >
+              📂 LOAD SESSION
+            </button>
+            <button 
+              className={styles.menuItem}
+              onClick={() => {
+                setShowHeaderMenu(false);
+                onExitAction();
+              }}
+            >
+              🚪 RETURN TO MENU
+            </button>
+          </div>
+        )}
       </div>
       
       {/* Progress tracker */}
@@ -1195,8 +1294,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           <span className={truthStatus.involved ? styles.truthFound : styles.truthMissing} title="International involvement">
             {truthStatus.involved ? '■' : '□'} FOREIGN
           </span>
-          <span className={truthStatus.future ? styles.truthFound : styles.truthMissing} title="Future plans/2026 window">
-            {truthStatus.future ? '■' : '□'} 2026
+          <span className={truthStatus.future ? styles.truthFound : styles.truthMissing} title="Future plans/timeline window">
+            {truthStatus.future ? '■' : '□'} NEXT
           </span>
           <span className={styles.truthCount}>
             [{truthStatus.total}/5]
@@ -1206,6 +1305,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           <span className={styles.trackerLabel}>RISK:</span>
           <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
             {riskInfo.level}
+          </span>
+          <span className={styles.memoryLevel}>
+            MEM: {getMemoryLevel()}
           </span>
         </div>
       </div>

@@ -107,7 +107,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
           createEntry('system', `  QUESTION 1 of 3:`),
           createEntry('output', `  "${question.prompt}"`),
           createEntry('system', ''),
-          ...question.options.map(opt => createEntry('output', `    [${opt.letter}] ${opt.text}`)),
+          ...question.options.map(opt => createEntry('output', `    ${opt.letter}. ${opt.text}`)),
           createEntry('system', ''),
           createEntry('system', '  Type A, B, or C to respond.'),
           createEntry('system', ''),
@@ -564,6 +564,23 @@ export function maybeAddTypo(text: string, chance: number = 0.1): string[] {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// UFO74 TRANSMISSION WRAPPER - Adds encrypted channel banner
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Wrap UFO74 messages with transmission banner
+export function createUFO74Message(messages: string[]): TerminalEntry[] {
+  return [
+    createEntry('system', ''),
+    createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
+    createEntry('warning', '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │'),
+    createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
+    createEntry('system', ''),
+    ...messages.map(msg => createEntry('output', msg)),
+    createEntry('system', ''),
+  ];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // PER-RUN VARIANCE - Different runs have different "hot" commands
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -691,6 +708,14 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
     // Breather notice - the system recalibrates
     notices.push(createEntry('system', ''));
     notices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));
+    
+    // First evidence found - suggest bookmark
+    if (newCount === 1 && previousCount === 0) {
+      notices.push(...createUFO74Message([
+        'UFO74: nice find kid! want to bookmark this file?',
+        '       use "bookmark <filename>" to save files for later.',
+      ]));
+    }
     
     // Additional milestone acknowledgments (never say "progress")
     if (newCount === 2 && previousCount < 2) {
@@ -2232,7 +2257,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   cd: (args, state) => {
     if (args.length === 0) {
       return {
-        output: [createEntry('error', 'ERROR: Specify directory')],
+        output: [
+          createEntry('error', 'ERROR: Specify directory'),
+          createEntry('system', ''),
+          createEntry('system', 'TIP: Use "ls" to see available directories, then "cd <dirname>" to enter one.'),
+        ],
         stateChanges: {},
       };
     }
@@ -2242,7 +2271,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (!node) {
       return {
-        output: [createEntry('error', `ERROR: Directory not found: ${args[0]}`)],
+        output: [
+          createEntry('error', `ERROR: Directory not found: ${args[0]}`),
+          createEntry('system', ''),
+          createEntry('system', 'TIP: Use "ls" to see available directories in current location.'),
+        ],
         stateChanges: {
           detectionLevel: state.detectionLevel + 3,
         },
@@ -2260,11 +2293,21 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
     
+    // Check if this is the first successful cd
+    const isFirstCd = !state.flags.firstCdDone;
+    const output: TerminalEntry[] = [createEntry('output', `Changed to: ${targetPath}`)];
+    
+    if (isFirstCd) {
+      output.push(createEntry('system', ''));
+      output.push(createEntry('system', 'TIP: Use "cd .." to go back to the previous directory.'));
+    }
+    
     return {
-      output: [createEntry('output', `Changed to: ${targetPath}`)],
+      output,
       stateChanges: {
         currentPath: targetPath,
         detectionLevel: state.detectionLevel + 1,
+        flags: isFirstCd ? { ...state.flags, firstCdDone: true } : state.flags,
       },
     };
   },
@@ -2272,7 +2315,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   open: (args, state) => {
     if (args.length === 0) {
       return {
-        output: [createEntry('error', 'ERROR: Specify file')],
+        output: [
+          createEntry('error', 'ERROR: Specify file'),
+          createEntry('system', ''),
+          createEntry('system', 'TIP: Use "ls" to see available files, then "open <filename>" to read one.'),
+        ],
         stateChanges: {},
       };
     }
@@ -2330,7 +2377,29 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const fileName = filePath.split('/').pop() || '';
     const isTrap = TRAP_FILES.includes(fileName);
     
+    // Check if file was already read BEFORE trap check to avoid double penalty
+    const alreadyRead = state.filesRead?.has(filePath);
+    
     if (isTrap) {
+      // If trap was already triggered, show reduced penalty
+      if (alreadyRead) {
+        const content = getFileContent(filePath, state, state.fileMutations[filePath]?.decrypted);
+        return {
+          output: [
+            createEntry('system', ''),
+            createEntry('system', `=== ${filePath} ===`),
+            createEntry('system', ''),
+            ...(content || []).map(line => createEntry('output', line)),
+            createEntry('system', ''),
+            createEntry('warning', 'UFO74: you already fell for this trap, kid. lets move on.'),
+          ],
+          stateChanges: {
+            detectionLevel: state.detectionLevel + 1, // Reduced penalty for re-read
+          },
+          streamingMode: 'fast',
+        };
+      }
+      
       const trapsTriggered = new Set(state.trapsTriggered || []);
       const isFirstTrap = trapsTriggered.size === 0;
       trapsTriggered.add(filePath);
@@ -2375,6 +2444,35 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         },
         triggerFlicker: true,
         delayMs: 1000,
+      };
+    }
+    
+    // Check if non-trap file was already read - show different message
+    if (alreadyRead) {
+      const content = getFileContent(filePath, state, state.fileMutations[filePath]?.decrypted);
+      if (!content) {
+        return {
+          output: [createEntry('error', 'ERROR: Cannot read file')],
+          stateChanges: {},
+        };
+      }
+      
+      // Show file content but with "already read" message instead of UFO74
+      const output: TerminalEntry[] = [
+        createEntry('system', ''),
+        createEntry('system', `=== ${filePath} ===`),
+        createEntry('system', ''),
+        ...content.map(line => createEntry('output', line)),
+        createEntry('system', ''),
+        createEntry('warning', 'UFO74: you already read this file, kid. lets move on.'),
+      ];
+      
+      return {
+        output,
+        stateChanges: {
+          detectionLevel: state.detectionLevel + 1, // Less detection for re-read
+        },
+        streamingMode: 'fast',
       };
     }
     
@@ -2521,6 +2619,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
       stateChanges.dataIntegrity = (stateChanges.dataIntegrity ?? state.dataIntegrity) - 10;
       triggerFlicker = true;
+    }
+    
+    // After 5 files opened, UFO74 suggests override protocol
+    const totalFilesRead = filesRead.size;
+    if (totalFilesRead === 5 && !state.flags.overrideSuggested) {
+      notices.push(...createUFO74Message([
+        'UFO74: kid, youre doing good but theres MORE hidden here.',
+        '       try the override protocol to uncover restricted files.',
+        '       look for the password in the files youve read.',
+      ]));
+      stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideSuggested: true };
     }
     
   const output = [
@@ -4124,6 +4233,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       
       output.push(createEntry('system', ''));
       output.push(createEntry('system', '═══════════════════════════════════════'));
+      output.push(createEntry('system', ''));
+      output.push(createEntry('system', 'TIP: Use "open <filename>" to read a bookmarked file.'));
       
       return { output, stateChanges: {} };
     }
@@ -5105,7 +5216,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
             createEntry('system', `  QUESTION ${nextIndex + 1} of 3:`),
             createEntry('output', `  "${nextQuestion.prompt}"`),
             createEntry('system', ''),
-            ...nextQuestion.options.map(opt => createEntry('output', `    [${opt.letter}] ${opt.text}`)),
+            ...nextQuestion.options.map(opt => createEntry('output', `    ${opt.letter}. ${opt.text}`)),
             createEntry('system', ''),
             createEntry('system', '  Type A, B, or C to respond.'),
             createEntry('system', ''),
@@ -5565,11 +5676,14 @@ export const TUTORIAL_MESSAGES: string[][] = [
     '       and "open" to read files. some are encrypted.',
   ],
   [
+    'UFO74: pro tip: press TAB to autocomplete commands and filenames.',
+  ],
+  [
     'UFO74: be careful, the more you move around—the risk will',
     '       rise, and if it reaches the maximum, our connection',
     '       will end kid.',
   ],
-  // Step 9: After showing risk warning, trigger risk bar reveal
+  // Step 10: After showing risk warning, trigger risk bar reveal
   [
     '       >> RISK MONITOR ACTIVATED <<',
   ],

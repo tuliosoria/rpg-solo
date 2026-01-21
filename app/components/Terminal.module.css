@@ -110,8 +110,54 @@
   font-weight: bold;
 }
 
+.statusLeft.clickable {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.statusLeft.clickable:hover {
+  color: #00ff00;
+  text-shadow: 0 0 12px #00ff00;
+}
+
 .statusRight {
   color: #00ff00;
+}
+
+/* Header dropdown menu */
+.headerMenu {
+  position: absolute;
+  top: 100%;
+  left: 32px;
+  background: #001a00;
+  border: 2px solid #00ff00;
+  box-shadow: 0 4px 16px rgba(0, 255, 0, 0.3);
+  z-index: 100;
+  min-width: 200px;
+}
+
+.menuItem {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #003300;
+  color: #00ff00;
+  font-family: inherit;
+  font-size: 1em;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.menuItem:last-child {
+  border-bottom: none;
+}
+
+.menuItem:hover {
+  background: #003300;
+  text-shadow: 0 0 8px #00ff00;
 }
 
 /* Progress tracker */
@@ -194,6 +240,12 @@
   font-weight: bold;
   min-width: 60px;
   text-align: right;
+}
+
+.memoryLevel {
+  margin-left: 1rem;
+  color: var(--terminal-dim);
+  font-size: 0.85rem;
 }
 
 /* Risk level colors */

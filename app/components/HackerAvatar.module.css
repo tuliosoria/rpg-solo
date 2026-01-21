@@ -94,14 +94,39 @@
 
 .tvFrame {
   position: relative;
-  width: 90px;
-  height: 120px;
+  width: 117px;
+  height: 156px;
   background: #111;
   border: 3px solid #00ff00;
   overflow: hidden;
   box-shadow: 
     0 0 10px rgba(0, 255, 0, 0.3),
     inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Green scanning bar animation */
+.scanBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 255, 0, 0.8) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+  animation: scanDown 3s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes scanDown {
+  0% { top: 0; opacity: 0.8; }
+  50% { top: 100%; opacity: 1; }
+  51% { top: 100%; opacity: 0; }
+  52% { top: 0; opacity: 0; }
+  100% { top: 0; opacity: 0.8; }
 }
 
 .imageWrapper {
@@ -241,8 +266,8 @@
   }
   
   .tvFrame {
-    width: 70px;
-    height: 90px;
+    width: 91px;
+    height: 117px;
   }
   
   .tvStand {

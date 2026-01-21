@@ -678,6 +678,46 @@ const weekend_duty_roster: FileNode = {
 // FALSE LEADS - Alternative explanations that collapse under scrutiny
 // ═══════════════════════════════════════════════════════════════════════════
 
+// Password hint file - reveals COLHEITA to attentive players
+const override_protocol_memo: FileNode = {
+  type: 'file',
+  name: 'override_protocol_memo.txt',
+  status: 'intact',
+  content: [
+    '═══════════════════════════════════════════════════════════',
+    'MEMORANDUM — TERMINAL ACCESS OVERRIDE',
+    'CLASSIFICATION: INTERNAL USE ONLY',
+    '═══════════════════════════════════════════════════════════',
+    '',
+    'TO: All Terminal Operators',
+    'FROM: Systems Administration',
+    'DATE: December 1995',
+    '',
+    '───────────────────────────────────────────────────────────',
+    '',
+    'Per Director mandate, emergency terminal override codes',
+    'have been updated for the new fiscal year.',
+    '',
+    'The override protocol allows access to restricted',
+    'directories when standard authentication is unavailable.',
+    '',
+    'USAGE:',
+    '  override <authorization_code>',
+    '',
+    'CURRENT CODE:',
+    '  Project designation word. Agricultural term.',
+    '  Portuguese. Related to extraction operations.',
+    '',
+    'REMINDER:',
+    '  The code references our operational codename.',
+    '  Think: what do you do at harvest time?',
+    '',
+    'DO NOT share this code with unauthorized personnel.',
+    '',
+    '═══════════════════════════════════════════════════════════',
+  ],
+};
+
 // ═══════════════════════════════════════════════════════════════════════════
 // RED HERRING TRAPS - Enticing files that spike detection when opened
 // ═══════════════════════════════════════════════════════════════════════════
@@ -3747,6 +3787,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         'training_q1_96.txt': training_schedule,
         'lost_found_jan96.txt': lost_and_found,
         'duty_roster_jan96.txt': weekend_duty_roster,
+        'override_protocol_memo.txt': override_protocol_memo,
         'redaction_keycard.txt': redaction_keycard,
         'audio_transcript_brief.txt': audio_transcript_brief,
       },
