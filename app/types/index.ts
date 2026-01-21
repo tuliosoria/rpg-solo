@@ -233,6 +233,9 @@ export interface GameState {
   
   // Epilogue unlocked
   epilogueUnlocked: boolean;
+  
+  // Hacker avatar expression
+  avatarExpression: 'neutral' | 'shocked' | 'scared' | 'angry' | 'smirk';
 }
 
 export interface SaveSlot {
@@ -366,4 +369,6 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   burnInContent: [],
   // Epilogue
   epilogueUnlocked: false,
+  // Avatar expression
+  avatarExpression: 'neutral',
 };

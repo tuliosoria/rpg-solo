@@ -1,0 +1,169 @@
+.avatarContainer {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tvFrame {
+  position: relative;
+  width: 100px;
+  height: 130px;
+  background: #111;
+  border: 3px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 
+    0 0 10px rgba(0, 255, 0, 0.2),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s ease;
+}
+
+.imageWrapper.transitioning {
+  opacity: 0;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.9) contrast(1.1);
+}
+
+/* TV static noise overlay */
+.staticOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  animation: staticNoise 0.1s steps(5) infinite;
+  mix-blend-mode: overlay;
+}
+
+@keyframes staticNoise {
+  0% { 
+    background-position: 0 0;
+    opacity: 0.3;
+  }
+  25% { 
+    background-position: 1px 1px;
+    opacity: 0.5;
+  }
+  50% { 
+    background-position: -1px 2px;
+    opacity: 0.3;
+  }
+  75% { 
+    background-position: 2px -1px;
+    opacity: 0.6;
+  }
+  100% { 
+    background-position: 0 0;
+    opacity: 0.4;
+  }
+}
+
+/* Scanlines effect */
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 1px,
+    rgba(0, 0, 0, 0.3) 1px,
+    rgba(0, 0, 0, 0.3) 2px
+  );
+  animation: scanlineMove 8s linear infinite;
+}
+
+@keyframes scanlineMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+/* Screen flicker effect */
+.flicker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: rgba(0, 255, 0, 0.02);
+  animation: screenFlicker 0.15s infinite;
+}
+
+@keyframes screenFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.97; }
+  75% { opacity: 1; }
+  90% { opacity: 0.95; }
+}
+
+/* CRT screen curve effect */
+.crtCurve {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  border-radius: 8px;
+}
+
+/* TV stand/base */
+.tvStand {
+  width: 40px;
+  height: 8px;
+  background: linear-gradient(to bottom, #444, #222);
+  border-radius: 0 0 4px 4px;
+  margin-top: -2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .avatarContainer {
+    top: 45px;
+    right: 10px;
+  }
+  
+  .tvFrame {
+    width: 70px;
+    height: 90px;
+  }
+  
+  .tvStand {
+    width: 30px;
+    height: 6px;
+  }
+}

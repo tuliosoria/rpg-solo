@@ -611,6 +611,9 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
     const newDetection = Math.max(0, state.detectionLevel - detectionReduction);
     stateChanges.detectionLevel = newDetection;
     
+    // Trigger shocked expression on major discovery
+    stateChanges.avatarExpression = 'shocked';
+    
     // Generate institutional-style progress acknowledgments
     // These are varied and never explain what was found
     const institutionalMessages: Record<string, string[]> = {
@@ -2333,6 +2336,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           trapsTriggered,
           trapWarningGiven: true,
           filesRead: new Set([...(state.filesRead || []), filePath]),
+          avatarExpression: 'scared', // Trap triggered - scared expression
         },
         triggerFlicker: true,
         delayMs: 1000,
@@ -2612,6 +2616,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
               timedDecryptEndTime: 0,
               flags: { ...state.flags, [`decrypted_${filePath.replace(/\//g, '_')}`]: true },
               detectionLevel: Math.max(0, state.detectionLevel - 3), // Reward for fast decryption
+              avatarExpression: 'smirk', // Successful decrypt - smirk expression
             },
           };
         } else {
@@ -3008,6 +3013,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           detectionLevel: 99,
           systemHostilityLevel: 5,
           rngState: seededRandomInt(rng, 0, 2147483647),
+          avatarExpression: 'angry', // Terrible mistake - angry expression
         },
         triggerFlicker: true,
         delayMs: 4000,

@@ -17,6 +17,7 @@ import BadEnding from './BadEnding';
 import NeutralEnding from './NeutralEnding';
 import SecretEnding from './SecretEnding';
 import AchievementPopup from './AchievementPopup';
+import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
@@ -1246,6 +1247,16 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             Sequence: {gameState.timedDecryptSequence}
           </div>
         </div>
+      )}
+      
+      {/* Hacker avatar */}
+      {gameState.tutorialComplete && (
+        <HackerAvatar 
+          expression={gameState.avatarExpression as AvatarExpression || 'neutral'}
+          onExpressionTimeout={() => {
+            setGameState(prev => ({ ...prev, avatarExpression: 'neutral' }));
+          }}
+        />
       )}
       
       {/* Exit button */}
