@@ -1,6 +1,6 @@
 .hudPanel {
   position: fixed;
-  top: 50px;
+  top: 70px;
   right: 10px;
   z-index: 40;
   display: flex;
