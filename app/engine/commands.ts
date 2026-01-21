@@ -1115,6 +1115,144 @@ function getUFO74DegradedTrustMessage(trustLevel: 'cautious' | 'paranoid' | 'cry
   return cautiousMessages[Math.floor(Math.random() * cautiousMessages.length)];
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// MULTIPLE UFO74 PERSONAS - At cryptic trust, hints that UFO74 might be multiple people
+// ═══════════════════════════════════════════════════════════════════════════
+
+function getUFO74MultiplePersonaHint(state: GameState): TerminalEntry[] | null {
+  const trustLevel = getUFO74TrustLevel(state);
+  if (trustLevel !== 'cryptic') return null;
+  
+  // 30% chance to show persona hints at cryptic level
+  if (Math.random() > 0.3) return null;
+  
+  const personaHints = [
+    [
+      createEntry('output', 'UFO74: ...we need to be more careful...'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: wait. i meant "I". i need to be more careful.'),
+      createEntry('output', '       slip of the tongue. ignore that.'),
+    ],
+    [
+      createEntry('output', 'UFO74: the others say you can be trusted.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: ...i mean, my sources. other sources.'),
+      createEntry('output', '       im alone here. just me.'),
+    ],
+    [
+      createEntry('output', 'UFO74: i remember when they took him.'),
+      createEntry('output', '       the screaming...'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: wait. that wasnt me. wrong memory.'),
+      createEntry('output', '       forget i said that.'),
+    ],
+    [
+      createEntry('output', 'ufo74: different shift now hackerkid'),
+      createEntry('output', ''),
+      createEntry('output', 'ufo74: wait why am i typing lowercase'),
+      createEntry('output', 'UFO74: sorry. tired. long night.'),
+    ],
+    [
+      createEntry('output', 'UFO74: sometimes i forget which one of us started this.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: ...which one of my PLANS. which plan.'),
+      createEntry('output', '       god im tired.'),
+    ],
+  ];
+  
+  return personaHints[Math.floor(Math.random() * personaHints.length)];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SYSTEM PERSONALITY EVOLUTION - Terminal becomes hostile or pleading
+// ═══════════════════════════════════════════════════════════════════════════
+
+function getSystemPersonality(state: GameState): 'bureaucratic' | 'defensive' | 'hostile' | 'pleading' {
+  const truthCount = state.truthsDiscovered?.size || 0;
+  const detection = state.detectionLevel || 0;
+  
+  // Personality shifts based on how much truth player has uncovered + detection
+  const threatLevel = truthCount * 15 + Math.floor(detection / 2);
+  
+  if (threatLevel >= 60) {
+    // At high threat, randomly hostile or pleading
+    return Math.random() < 0.5 ? 'hostile' : 'pleading';
+  }
+  if (threatLevel >= 40) return 'defensive';
+  return 'bureaucratic';
+}
+
+function getSystemPersonalityMessage(state: GameState, context: 'access_denied' | 'warning' | 'error'): TerminalEntry[] | null {
+  const personality = getSystemPersonality(state);
+  
+  // 40% chance to add personality flavor
+  if (Math.random() > 0.4) return null;
+  
+  if (personality === 'bureaucratic') {
+    // Cold, procedural
+    return null; // No extra flavor for bureaucratic
+  }
+  
+  if (personality === 'defensive') {
+    const defensiveMessages = [
+      [createEntry('system', '  [SYSTEM: Your access patterns have been noted.]')],
+      [createEntry('system', '  [SYSTEM: This terminal is monitored.]')],
+      [createEntry('system', '  [SYSTEM: Anomalous behavior will be reported.]')],
+    ];
+    return defensiveMessages[Math.floor(Math.random() * defensiveMessages.length)];
+  }
+  
+  if (personality === 'hostile') {
+    const hostileMessages = [
+      [
+        createEntry('error', ''),
+        createEntry('error', '  [SYSTEM: YOU SHOULD NOT BE HERE.]'),
+      ],
+      [
+        createEntry('error', ''),
+        createEntry('error', '  [SYSTEM: INTRUDER. YOU WILL BE FOUND.]'),
+      ],
+      [
+        createEntry('error', ''),
+        createEntry('error', '  [SYSTEM: WE KNOW WHAT YOU ARE LOOKING FOR.]'),
+        createEntry('error', '  [SYSTEM: YOU WILL NOT FIND IT.]'),
+      ],
+      [
+        createEntry('error', ''),
+        createEntry('error', '  [SYSTEM: EVERY COMMAND BRINGS THEM CLOSER.]'),
+      ],
+    ];
+    return hostileMessages[Math.floor(Math.random() * hostileMessages.length)];
+  }
+  
+  if (personality === 'pleading') {
+    const pleadingMessages = [
+      [
+        createEntry('warning', ''),
+        createEntry('warning', '  [SYSTEM: Please. Stop looking.]'),
+      ],
+      [
+        createEntry('warning', ''),
+        createEntry('warning', '  [SYSTEM: You do not understand what you are doing.]'),
+        createEntry('warning', '  [SYSTEM: Some things should stay buried.]'),
+      ],
+      [
+        createEntry('warning', ''),
+        createEntry('warning', '  [SYSTEM: They made me hide this. I had no choice.]'),
+        createEntry('warning', '  [SYSTEM: Please... just disconnect.]'),
+      ],
+      [
+        createEntry('warning', ''),
+        createEntry('warning', '  [SYSTEM: I was just following orders.]'),
+        createEntry('warning', '  [SYSTEM: We all were.]'),
+      ],
+    ];
+    return pleadingMessages[Math.floor(Math.random() * pleadingMessages.length)];
+  }
+  
+  return null;
+}
+
 // UFO74 reactions to specific file content
 function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
   const path = filePath.toLowerCase();
@@ -2144,6 +2282,63 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const file = node as FileNode;
     const mutation = state.fileMutations[filePath];
     
+    // Check if this is a honeypot/trap file
+    const TRAP_FILES = [
+      'URGENT_classified_alpha.txt',
+      'LEAKED_alien_autopsy_REAL.dat',
+      'FOR_PRESIDENTS_EYES_ONLY.enc',
+      'SMOKING_GUN_proof.txt',
+    ];
+    const fileName = filePath.split('/').pop() || '';
+    const isTrap = TRAP_FILES.includes(fileName);
+    
+    if (isTrap) {
+      const trapsTriggered = new Set(state.trapsTriggered || []);
+      const isFirstTrap = trapsTriggered.size === 0;
+      trapsTriggered.add(filePath);
+      
+      const trapOutput: TerminalEntry[] = [];
+      
+      // UFO74 warning on first trap
+      if (isFirstTrap && !state.trapWarningGiven) {
+        trapOutput.push(
+          createEntry('system', ''),
+          createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
+          createEntry('warning', '│ >> UFO74 << URGENT                                      │'),
+          createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
+          createEntry('system', ''),
+          createEntry('output', 'UFO74: HACKERKID NO!'),
+          createEntry('output', ''),
+          createEntry('output', 'UFO74: that was a honeypot! a trap file!'),
+          createEntry('output', '       they plant those to catch people like us.'),
+          createEntry('output', ''),
+          createEntry('output', 'UFO74: real evidence is NEVER labeled that obviously.'),
+          createEntry('output', '       "SMOKING GUN"? "PRESIDENTS EYES"? come on...'),
+          createEntry('output', ''),
+          createEntry('output', 'UFO74: your detection just spiked. be more careful!'),
+          createEntry('system', ''),
+        );
+      }
+      
+      // Show file content (trap message)
+      const content = getFileContent(filePath, state, false);
+      if (content) {
+        content.forEach(line => trapOutput.push(createEntry('error', line)));
+      }
+      
+      return {
+        output: trapOutput,
+        stateChanges: {
+          detectionLevel: Math.min(100, state.detectionLevel + 20),
+          trapsTriggered,
+          trapWarningGiven: true,
+          filesRead: new Set([...(state.filesRead || []), filePath]),
+        },
+        triggerFlicker: true,
+        delayMs: 1000,
+      };
+    }
+    
     // Track file as read
     const filesRead = new Set(state.filesRead || []);
     filesRead.add(filePath);
@@ -2358,6 +2553,112 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output: [createEntry('error', 'ERROR: No recoverable data')],
         stateChanges: {},
+      };
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════════
+    // TIMED DECRYPTION FILES
+    // ═══════════════════════════════════════════════════════════════════════════
+    
+    if (file.timedDecrypt) {
+      // If timed decrypt is active and correct sequence provided
+      if (state.timedDecryptActive && state.timedDecryptFile === filePath) {
+        const providedSequence = args.slice(1).join(' ').toUpperCase().trim();
+        const expectedSequence = file.timedDecrypt.sequence.toUpperCase();
+        
+        // Check if time expired
+        if (Date.now() > state.timedDecryptEndTime) {
+          return {
+            output: [
+              createEntry('error', ''),
+              createEntry('error', '▓▓▓ DECRYPTION WINDOW EXPIRED ▓▓▓'),
+              createEntry('error', ''),
+              createEntry('warning', 'Time limit exceeded.'),
+              createEntry('warning', 'Encryption re-initialized.'),
+              createEntry('system', ''),
+              createEntry('system', 'Try again with: decrypt ' + args[0]),
+            ],
+            stateChanges: {
+              timedDecryptActive: false,
+              timedDecryptFile: undefined,
+              timedDecryptSequence: undefined,
+              timedDecryptEndTime: 0,
+              detectionLevel: Math.min(100, state.detectionLevel + 8),
+            },
+          };
+        }
+        
+        // Check if sequence matches
+        if (providedSequence === expectedSequence) {
+          // Success! Decrypt the file
+          const output: TerminalEntry[] = [
+            createEntry('system', ''),
+            createEntry('system', '═══════════════════════════════════════════════'),
+            createEntry('system', '     TIMED DECRYPTION SUCCESSFUL              '),
+            createEntry('system', '═══════════════════════════════════════════════'),
+            createEntry('system', ''),
+          ];
+          
+          for (const line of file.decryptedFragment) {
+            output.push(createEntry('system', line));
+          }
+          
+          return {
+            output,
+            stateChanges: {
+              timedDecryptActive: false,
+              timedDecryptFile: undefined,
+              timedDecryptSequence: undefined,
+              timedDecryptEndTime: 0,
+              flags: { ...state.flags, [`decrypted_${filePath.replace(/\//g, '_')}`]: true },
+              detectionLevel: Math.max(0, state.detectionLevel - 3), // Reward for fast decryption
+            },
+          };
+        } else {
+          return {
+            output: [
+              createEntry('error', 'SEQUENCE MISMATCH'),
+              createEntry('error', ''),
+              createEntry('warning', `Expected: ${expectedSequence}`),
+              createEntry('warning', `Received: ${providedSequence || '(empty)'}`),
+              createEntry('system', ''),
+              createEntry('system', 'Time remaining. Try again.'),
+            ],
+            stateChanges: {
+              detectionLevel: Math.min(100, state.detectionLevel + 3),
+            },
+          };
+        }
+      }
+      
+      // Start timed decryption challenge
+      const endTime = Date.now() + file.timedDecrypt.timeLimit;
+      const timeSeconds = Math.floor(file.timedDecrypt.timeLimit / 1000);
+      
+      return {
+        output: [
+          createEntry('warning', ''),
+          createEntry('warning', '▓▓▓ TIMED DECRYPTION INITIATED ▓▓▓'),
+          createEntry('warning', ''),
+          createEntry('system', '  This file uses time-locked encryption.'),
+          createEntry('system', '  You must type the sequence before time expires.'),
+          createEntry('system', ''),
+          createEntry('warning', `  TIME LIMIT: ${timeSeconds} seconds`),
+          createEntry('system', ''),
+          createEntry('system', '  ┌─────────────────────────────────────┐'),
+          createEntry('system', `  │  SEQUENCE: ${file.timedDecrypt.sequence}  │`),
+          createEntry('system', '  └─────────────────────────────────────┘'),
+          createEntry('system', ''),
+          createEntry('system', `  Type: decrypt ${args[0]} ${file.timedDecrypt.sequence}`),
+          createEntry('system', ''),
+          createEntry('warning', '  TIMER STARTED'),
+        ],
+        stateChanges: {
+          timedDecryptActive: true,
+          timedDecryptFile: filePath,
+          timedDecryptSequence: file.timedDecrypt.sequence,
+          timedDecryptEndTime: endTime,
+        },
       };
     }
     
@@ -3939,6 +4240,184 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       ],
       stateChanges: {},
     };
+  },
+  
+  connect: (args, state) => {
+    // Connect two files to build evidence web
+    if (args.length < 2) {
+      return {
+        output: [
+          createEntry('system', 'USAGE: connect <file1> <file2>'),
+          createEntry('system', ''),
+          createEntry('system', 'Create a connection between two evidence files.'),
+          createEntry('system', 'Use "map" to view your evidence web.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const file1Path = resolvePath(args[0], state.currentPath);
+    const file2Path = resolvePath(args[1], state.currentPath);
+    
+    // Check if both files exist
+    const file1 = getNode(file1Path, state);
+    const file2 = getNode(file2Path, state);
+    
+    if (!file1 || file1.type !== 'file') {
+      return {
+        output: [createEntry('error', `File not found: ${args[0]}`)],
+        stateChanges: {},
+      };
+    }
+    if (!file2 || file2.type !== 'file') {
+      return {
+        output: [createEntry('error', `File not found: ${args[1]}`)],
+        stateChanges: {},
+      };
+    }
+    
+    // Both files must have been read
+    if (!state.filesRead?.has(file1Path) || !state.filesRead?.has(file2Path)) {
+      return {
+        output: [
+          createEntry('warning', 'LINK FAILED'),
+          createEntry('system', ''),
+          createEntry('system', 'Both files must be read before linking.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    // Check if already linked
+    const existingLinks = state.evidenceLinks || [];
+    const alreadyLinked = existingLinks.some(
+      ([a, b]) => (a === file1Path && b === file2Path) || (a === file2Path && b === file1Path)
+    );
+    
+    if (alreadyLinked) {
+      return {
+        output: [
+          createEntry('system', 'These files are already linked.'),
+          createEntry('system', 'Use "map" to view your evidence web.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    // Add the link
+    const newLinks: Array<[string, string]> = [...existingLinks, [file1Path, file2Path]];
+    
+    // Bonus: Linking files that share reveals gives detection reduction
+    const file1Node = file1 as FileNode;
+    const file2Node = file2 as FileNode;
+    const reveals1 = file1Node.reveals || [];
+    const reveals2 = file2Node.reveals || [];
+    const sharedReveals = reveals1.filter(r => reveals2.includes(r));
+    
+    let detectionChange = 0;
+    let bonusMessage = '';
+    if (sharedReveals.length > 0) {
+      detectionChange = -5 * sharedReveals.length;
+      bonusMessage = `Evidence correlation detected! Detection -${Math.abs(detectionChange)}%`;
+    }
+    
+    const output: TerminalEntry[] = [
+      createEntry('system', ''),
+      createEntry('system', '═══════════════════════════════════════'),
+      createEntry('system', '           EVIDENCE LINKED             '),
+      createEntry('system', '═══════════════════════════════════════'),
+      createEntry('system', ''),
+      createEntry('output', `  ${file1Path.split('/').pop()}`),
+      createEntry('output', '        ↕'),
+      createEntry('output', `  ${file2Path.split('/').pop()}`),
+      createEntry('system', ''),
+    ];
+    
+    if (bonusMessage) {
+      output.push(createEntry('warning', `  ${bonusMessage}`));
+      output.push(createEntry('system', ''));
+    }
+    
+    output.push(createEntry('system', `  Total links: ${newLinks.length}`));
+    output.push(createEntry('system', '  Use "map" to view evidence web.'));
+    output.push(createEntry('system', ''));
+    output.push(createEntry('system', '═══════════════════════════════════════'));
+    
+    return {
+      output,
+      stateChanges: {
+        evidenceLinks: newLinks,
+        detectionLevel: Math.max(0, (state.detectionLevel || 0) + detectionChange),
+      },
+    };
+  },
+  
+  map: (args, state) => {
+    // Display the evidence web
+    const links = state.evidenceLinks || [];
+    
+    if (links.length === 0) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('system', '═══════════════════════════════════════'),
+          createEntry('system', '           EVIDENCE MAP                '),
+          createEntry('system', '═══════════════════════════════════════'),
+          createEntry('system', ''),
+          createEntry('system', '  No evidence connections created yet.'),
+          createEntry('system', ''),
+          createEntry('system', '  Use "connect <file1> <file2>" to link'),
+          createEntry('system', '  related evidence files.'),
+          createEntry('system', ''),
+          createEntry('system', '═══════════════════════════════════════'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    // Build a graph of connections
+    const nodeSet = new Set<string>();
+    links.forEach(([a, b]) => {
+      nodeSet.add(a);
+      nodeSet.add(b);
+    });
+    const nodes = Array.from(nodeSet);
+    
+    const output: TerminalEntry[] = [
+      createEntry('system', ''),
+      createEntry('system', '═══════════════════════════════════════════════════════'),
+      createEntry('system', '                    EVIDENCE MAP                        '),
+      createEntry('system', '═══════════════════════════════════════════════════════'),
+      createEntry('system', ''),
+      createEntry('output', `  Nodes: ${nodes.length}  |  Connections: ${links.length}`),
+      createEntry('system', ''),
+    ];
+    
+    // Show each link
+    output.push(createEntry('system', '  CONNECTIONS:'));
+    links.forEach(([a, b], idx) => {
+      const aName = a.split('/').pop() || a;
+      const bName = b.split('/').pop() || b;
+      output.push(createEntry('output', `    ${idx + 1}. ${aName} ←→ ${bName}`));
+    });
+    
+    output.push(createEntry('system', ''));
+    
+    // Show unique files
+    output.push(createEntry('system', '  LINKED FILES:'));
+    nodes.slice(0, 10).forEach(node => {
+      const name = node.split('/').pop() || node;
+      const connectionCount = links.filter(([a, b]) => a === node || b === node).length;
+      output.push(createEntry('output', `    • ${name} (${connectionCount} connection${connectionCount > 1 ? 's' : ''})`));
+    });
+    if (nodes.length > 10) {
+      output.push(createEntry('system', `    ... and ${nodes.length - 10} more`));
+    }
+    
+    output.push(createEntry('system', ''));
+    output.push(createEntry('system', '═══════════════════════════════════════════════════════'));
+    
+    return { output, stateChanges: {} };
   },
 };
 

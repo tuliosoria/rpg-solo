@@ -38,6 +38,7 @@ export interface FileNode {
   imageTrigger?: ImageTrigger; // Image to display when file is accessed
   videoTrigger?: VideoTrigger; // Video to display when file is accessed
   securityQuestion?: SecurityQuestion; // Required to decrypt
+  timedDecrypt?: { sequence: string; timeLimit: number }; // Timed decryption challenge
 }
 
 export interface DirectoryNode {
@@ -206,6 +207,32 @@ export interface GameState {
   // Stealth recovery system
   waitUsesRemaining: number; // Max 3 per run, resets on new game
   hideAvailable: boolean; // Becomes true at 90+ detection
+  
+  // Evidence linking system
+  evidenceLinks: Array<[string, string]>; // Pairs of linked file paths
+  
+  // Timed decryption state
+  timedDecryptActive: boolean;
+  timedDecryptFile?: string;
+  timedDecryptSequence?: string;
+  timedDecryptEndTime: number;
+  
+  // Red herring traps
+  trapsTriggered: Set<string>; // Files that were trap triggers
+  trapWarningGiven: boolean; // UFO74 warned about traps
+  
+  // System personality
+  systemPersonality: 'bureaucratic' | 'defensive' | 'hostile' | 'pleading';
+  
+  // Typing speed tracking
+  lastKeypressTime: number;
+  fastTypingWarnings: number;
+  
+  // Screen burn-in content
+  burnInContent: string[]; // Recent significant outputs for ghost effect
+  
+  // Epilogue unlocked
+  epilogueUnlocked: boolean;
 }
 
 export interface SaveSlot {
@@ -320,4 +347,23 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   // Stealth recovery
   waitUsesRemaining: 3,
   hideAvailable: false,
+  // Evidence linking
+  evidenceLinks: [],
+  // Timed decryption
+  timedDecryptActive: false,
+  timedDecryptFile: undefined,
+  timedDecryptSequence: undefined,
+  timedDecryptEndTime: 0,
+  // Red herring traps
+  trapsTriggered: new Set(),
+  trapWarningGiven: false,
+  // System personality
+  systemPersonality: 'bureaucratic',
+  // Typing speed
+  lastKeypressTime: 0,
+  fastTypingWarnings: 0,
+  // Screen burn-in
+  burnInContent: [],
+  // Epilogue
+  epilogueUnlocked: false,
 };

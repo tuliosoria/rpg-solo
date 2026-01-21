@@ -129,6 +129,31 @@
 
 ---
 
+## Advanced Features (NEW - Round 2)
+
+### Gameplay
+- ✅ **File linking system** - `connect file1 file2` creates evidence connections, `map` displays the web. Linking related files reduces detection.
+
+- ✅ **Timed decryption mini-game** - Some encrypted files require typing a sequence before timer expires (emergency_broadcast.enc). Fast completion rewarded.
+
+- ✅ **Red herring traps** - Honeypot files with sensational names spike detection +20% when opened, teaching players to be cautious.
+
+### Narrative
+- ✅ **Multiple UFO74 personas** - At very degraded trust, hints emerge that "UFO74" might be multiple people
+
+- ✅ **System personality evolution** - Terminal becomes more hostile/pleading as player approaches truth (bureaucratic → defensive → hostile/pleading)
+
+- ✅ **Epilogue files** - After victory, /aftermath/ directory unlocks showing consequences of exposure (news clippings, government response, UFO74's fate, 2026 projection)
+
+### Atmosphere
+- ✅ **Typing speed affects detection** - Fast typing (>8 chars/sec) triggers "suspicious pattern detected" warning
+
+- ✅ **Ambient audio pitch shift** - Background drone pitch adjusts based on detection level (stub added)
+
+- ✅ **Screen burn-in effect** - Ghost traces of previously viewed text remain visible with subtle opacity
+
+---
+
 ## Backlog (Future Consideration)
 
 - Randomized file locations (different playthrough = different paths)

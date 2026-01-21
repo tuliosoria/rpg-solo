@@ -518,7 +518,7 @@ describe('Narrative Mechanics', () => {
       expect(result.output.some(e => e.content.includes('PRISONER_45'))).toBe(true);
     });
 
-    it('link command shows access denied when not unlocked', () => {
+    it('link command shows access denied when scout link not unlocked', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -526,7 +526,7 @@ describe('Narrative Mechanics', () => {
       const result = executeCommand('link', state);
       
       expect(result.output.some(e => 
-        e.content.includes('ACCESS DENIED') || e.content.includes('NEURAL PATTERN')
+        e.content.includes('ACCESS DENIED') || e.content.includes('psi-comm')
       )).toBe(true);
     });
 

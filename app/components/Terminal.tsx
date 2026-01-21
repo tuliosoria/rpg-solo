@@ -20,8 +20,8 @@ import AchievementPopup from './AchievementPopup';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
-const COMMANDS = ['help', 'status', 'progress', 'ls', 'cd', 'back', 'open', 'last', 'unread', 'decrypt', 'recover', 'note', 'notes', 'bookmark', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run'];
-const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run', 'bookmark'];
+const COMMANDS = ['help', 'status', 'progress', 'ls', 'cd', 'back', 'open', 'last', 'unread', 'decrypt', 'recover', 'note', 'notes', 'bookmark', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run', 'correlate', 'connect', 'map'];
+const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run', 'bookmark', 'correlate', 'connect'];
 
 // "They're watching" paranoia messages
 const PARANOIA_MESSAGES = [
@@ -114,6 +114,34 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   // Progressive UI reveal during tutorial
   const [showEvidenceTracker, setShowEvidenceTracker] = useState(false);
   const [showRiskTracker, setShowRiskTracker] = useState(false);
+  
+  // Typing speed tracking
+  const [typingSpeedWarning, setTypingSpeedWarning] = useState(false);
+  const keypressTimestamps = useRef<number[]>([]);
+  
+  // Timed decryption timer display
+  const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
+  
+  // Update timed decryption countdown
+  useEffect(() => {
+    if (!gameState.timedDecryptActive || !gameState.timedDecryptEndTime) {
+      setTimedDecryptRemaining(0);
+      return;
+    }
+    
+    const updateTimer = () => {
+      const remaining = Math.max(0, gameState.timedDecryptEndTime - Date.now());
+      setTimedDecryptRemaining(remaining);
+    };
+    
+    updateTimer();
+    const interval = setInterval(updateTimer, 100);
+    
+    return () => clearInterval(interval);
+  }, [gameState.timedDecryptActive, gameState.timedDecryptEndTime]);
+  
+  // Screen burn-in effect
+  const [burnInLines, setBurnInLines] = useState<string[]>([]);
   
   // Track max detection ever reached for Survivor achievement
   const maxDetectionRef = useRef(0);
@@ -733,6 +761,17 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       checkAchievement('truth_seeker');
     }
     
+    // Update burn-in effect with significant output content
+    if (result.output.length > 5 && command.toLowerCase().startsWith('open')) {
+      const significantLines = result.output
+        .filter(entry => entry.type === 'output' && entry.content.length > 20)
+        .map(entry => entry.content)
+        .slice(0, 5);
+      if (significantLines.length > 0) {
+        setBurnInLines(prev => [...significantLines, ...prev].slice(0, 8));
+      }
+    }
+    
     // God mode activated
     if (intermediateState.godMode && !gameState.godMode) {
       checkAchievement('doom_fan');
@@ -1052,6 +1091,17 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       {/* Scanlines overlay */}
       <div className={styles.scanlines} />
       
+      {/* Screen burn-in effect - ghost text from previous outputs */}
+      {burnInLines.length > 0 && (
+        <div className={styles.burnIn}>
+          {burnInLines.map((line, i) => (
+            <div key={i} className={styles.burnInLine} style={{ opacity: 0.02 * (burnInLines.length - i) }}>
+              {line}
+            </div>
+          ))}
+        </div>
+      )}
+      
       {/* Paranoia message overlay */}
       {paranoiaMessage && (
         <div 
@@ -1143,9 +1193,32 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           type="text"
           value={inputValue}
           onChange={(e) => {
-            setInputValue(e.target.value);
-            if (e.target.value.length > inputValue.length) {
+            const newValue = e.target.value;
+            setInputValue(newValue);
+            if (newValue.length > inputValue.length) {
               playSound('keypress');
+              
+              // Track typing speed
+              const now = Date.now();
+              keypressTimestamps.current.push(now);
+              // Keep only last 10 keypresses
+              if (keypressTimestamps.current.length > 10) {
+                keypressTimestamps.current.shift();
+              }
+              
+              // Check typing speed (if 10+ chars in last second = too fast)
+              if (keypressTimestamps.current.length >= 8) {
+                const oldest = keypressTimestamps.current[0];
+                const timeSpan = (now - oldest) / 1000; // seconds
+                const charsPerSecond = keypressTimestamps.current.length / timeSpan;
+                
+                if (charsPerSecond > 8 && !typingSpeedWarning) {
+                  setTypingSpeedWarning(true);
+                  playSound('warning');
+                  // Clear warning after 3 seconds
+                  setTimeout(() => setTypingSpeedWarning(false), 3000);
+                }
+              }
             }
           }}
           onKeyDown={handleKeyDown}
@@ -1157,7 +1230,23 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           placeholder={!gameState.tutorialComplete ? 'Press ENTER to continue...' : ''}
         />
         <span className={styles.cursor}>_</span>
+        {typingSpeedWarning && (
+          <span className={styles.typingWarning}>SUSPICIOUS TYPING PATTERN DETECTED</span>
+        )}
       </form>
+      
+      {/* Timed decryption timer overlay */}
+      {gameState.timedDecryptActive && timedDecryptRemaining > 0 && (
+        <div className={styles.timedDecryptTimer}>
+          <div className={styles.timerLabel}>DECRYPTION WINDOW</div>
+          <div className={styles.timerValue}>
+            {(timedDecryptRemaining / 1000).toFixed(1)}s
+          </div>
+          <div className={styles.timerSequence}>
+            Sequence: {gameState.timedDecryptSequence}
+          </div>
+        </div>
+      )}
       
       {/* Exit button */}
       <button 

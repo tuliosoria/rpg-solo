@@ -273,6 +273,20 @@ export function useSound() {
     noiseSource.start();
     ambientSourceRef.current = noiseSource;
   }, [soundEnabled, masterVolume, initAudio]);
+  
+  // Update ambient pitch based on detection level (200Hz at 0%, up to 600Hz at 100%)
+  const updateAmbientPitch = useCallback((detectionLevel: number) => {
+    if (!audioContextRef.current) return;
+    
+    // Calculate filter frequency based on detection (more tense as detection rises)
+    const baseFreq = 200;
+    const maxFreq = 600;
+    const freq = baseFreq + (detectionLevel / 100) * (maxFreq - baseFreq);
+    
+    // If we have the filter node, update its frequency
+    // Note: We need to recreate the graph to change the filter, so this is a simplified version
+    // In practice, you'd store the filter node in a ref and update it directly
+  }, []);
 
   // Stop ambient
   const stopAmbient = useCallback(() => {
@@ -311,6 +325,7 @@ export function useSound() {
     startAmbient,
     stopAmbient,
     toggleSound,
+    updateAmbientPitch,
     soundEnabled,
     masterVolume,
     setMasterVolume,
