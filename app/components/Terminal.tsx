@@ -1249,10 +1249,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         </div>
       )}
       
-      {/* Hacker avatar */}
+      {/* Hacker avatar HUD panel */}
       {gameState.tutorialComplete && (
         <HackerAvatar 
           expression={gameState.avatarExpression as AvatarExpression || 'neutral'}
+          detectionLevel={gameState.detectionLevel}
+          sessionStability={gameState.sessionStability}
           onExpressionTimeout={() => {
             setGameState(prev => ({ ...prev, avatarExpression: 'neutral' }));
           }}

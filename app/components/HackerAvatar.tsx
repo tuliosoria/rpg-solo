@@ -8,6 +8,8 @@ export type AvatarExpression = 'neutral' | 'shocked' | 'scared' | 'angry' | 'smi
 
 interface HackerAvatarProps {
   expression: AvatarExpression;
+  detectionLevel: number;
+  sessionStability: number;
   onExpressionTimeout?: () => void;
 }
 
@@ -19,26 +21,30 @@ const EXPRESSION_IMAGES: Record<AvatarExpression, string> = {
   smirk: '/images/avatar/smirk.jpg',
 };
 
-export default function HackerAvatar({ expression, onExpressionTimeout }: HackerAvatarProps) {
+export default function HackerAvatar({ expression, detectionLevel, sessionStability, onExpressionTimeout }: HackerAvatarProps) {
   const [currentExpression, setCurrentExpression] = useState<AvatarExpression>(expression);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   
+  // Format number as digital display (00:00 style)
+  const formatDigital = (value: number) => {
+    const clamped = Math.max(0, Math.min(100, value));
+    const tens = Math.floor(clamped / 10);
+    const ones = clamped % 10;
+    return `${tens}0:${ones}0`;
+  };
+  
   useEffect(() => {
-    // When expression changes
     if (expression !== 'neutral') {
       setIsTransitioning(true);
       setCurrentExpression(expression);
       
-      // Brief transition effect
       setTimeout(() => setIsTransitioning(false), 150);
       
-      // Clear any existing timeout
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
       
-      // Return to neutral after 5 seconds
       timeoutRef.current = setTimeout(() => {
         setIsTransitioning(true);
         setTimeout(() => {
@@ -58,37 +64,66 @@ export default function HackerAvatar({ expression, onExpressionTimeout }: Hacker
     };
   }, [expression, onExpressionTimeout]);
   
+  // Calculate risk bar segments (10 segments)
+  const riskSegments = Math.ceil(detectionLevel / 10);
+  
   return (
-    <div className={styles.avatarContainer}>
-      {/* TV frame effect */}
-      <div className={styles.tvFrame}>
-        {/* Avatar image */}
-        <div className={`${styles.imageWrapper} ${isTransitioning ? styles.transitioning : ''}`}>
-          <Image
-            src={EXPRESSION_IMAGES[currentExpression]}
-            alt="Hacker avatar"
-            width={120}
-            height={160}
-            className={styles.avatarImage}
-            priority
-          />
+    <div className={styles.hudPanel}>
+      {/* Left column - Meters */}
+      <div className={styles.metersColumn}>
+        {/* Memory meter */}
+        <div className={styles.meterBox}>
+          <div className={styles.meterBar}>
+            <div 
+              className={styles.meterFill} 
+              style={{ height: `${sessionStability}%` }}
+            />
+          </div>
+          <div className={styles.digitalDisplay}>
+            {formatDigital(sessionStability)}
+          </div>
+          <div className={styles.meterLabel}>MEMORY</div>
         </div>
         
-        {/* TV static overlay */}
-        <div className={styles.staticOverlay} />
-        
-        {/* Scanlines */}
-        <div className={styles.scanlines} />
-        
-        {/* Screen flicker */}
-        <div className={styles.flicker} />
-        
-        {/* CRT curve effect */}
-        <div className={styles.crtCurve} />
+        {/* Risk meter */}
+        <div className={styles.meterBox}>
+          <div className={styles.meterLabel}>PTT</div>
+          <div className={styles.riskBarContainer}>
+            {[...Array(10)].map((_, i) => (
+              <div 
+                key={i}
+                className={`${styles.riskSegment} ${i < riskSegments ? styles.riskActive : ''} ${i >= 7 ? styles.riskCritical : i >= 4 ? styles.riskWarning : ''}`}
+              />
+            ))}
+          </div>
+          <div className={styles.digitalDisplay}>
+            {formatDigital(detectionLevel)}
+          </div>
+          <div className={styles.meterLabel}>RISK</div>
+        </div>
       </div>
       
-      {/* TV base/stand */}
-      <div className={styles.tvStand} />
+      {/* Right column - Avatar */}
+      <div className={styles.avatarColumn}>
+        <div className={styles.tvFrame}>
+          <div className={`${styles.imageWrapper} ${isTransitioning ? styles.transitioning : ''}`}>
+            <Image
+              src={EXPRESSION_IMAGES[currentExpression]}
+              alt="Hacker avatar"
+              width={120}
+              height={160}
+              className={styles.avatarImage}
+              priority
+            />
+          </div>
+          
+          {/* TV effects */}
+          <div className={styles.staticOverlay} />
+          <div className={styles.scanlines} />
+          <div className={styles.flicker} />
+          <div className={styles.crtCurve} />
+        </div>
+      </div>
     </div>
   );
 }
