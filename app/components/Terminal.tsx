@@ -160,7 +160,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const prevDetectionRef = useRef(0);
   
   // Sound system
-  const { playSound, playKeySound, startAmbient, stopAmbient, toggleSound, soundEnabled } = useSound();
+  const { playSound, playKeySound, startAmbient, stopAmbient, toggleSound, updateAmbientTension, soundEnabled } = useSound();
   
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -341,6 +341,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         playSound('alert');
       } else if (current >= 60 && prev < 60) {
         playSound('warning');
+      } else if (current >= 50 && prev < 50) {
+        playSound('warning');
       } else if (current >= 40 && prev < 40) {
         playSound('warning');
       }
@@ -362,6 +364,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     }
     return () => stopAmbient();
   }, [gameState.tutorialComplete, soundEnabled, startAmbient, stopAmbient]);
+  
+  // Update ambient tension based on detection level
+  useEffect(() => {
+    if (gameState.tutorialComplete && soundEnabled) {
+      updateAmbientTension(gameState.detectionLevel);
+    }
+  }, [gameState.detectionLevel, gameState.tutorialComplete, soundEnabled, updateAmbientTension]);
   
   // Countdown timer logic
   useEffect(() => {

@@ -342,10 +342,14 @@ function isMeaningfulAction(command: string, args: string[], state: GameState, r
 }
 
 // UFO74 messages for wandering players - a friendly hacker guide
-function getWanderingNotice(level: number): TerminalEntry[] {
+// Now context-aware based on player's exploration state
+function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
+  // Get contextual hints based on what player hasn't explored
+  const contextualHints = state ? getContextualExplorationHints(state) : null;
+  
   if (level === 0) {
-    // First notice - friendly tip
-    return [
+    // First notice - friendly tip with contextual suggestion
+    const hints: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
       createEntry('warning', '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │'),
@@ -356,17 +360,25 @@ function getWanderingNotice(level: number): TerminalEntry[] {
       createEntry('output', 'UFO74: looks like youre just wandering around.'),
       createEntry('output', '       i get it, the system is confusing.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: heres the thing - you need to actually READ the files.'),
-      createEntry('output', '       use "open <filename>" and look for connections.'),
-      createEntry('output', ''),
-      createEntry('output', 'UFO74: theres a protocol doc in /internal/ that explains'),
-      createEntry('output', '       what kind of info youre supposed to piece together.'),
-      createEntry('output', ''),
-      createEntry('output', 'UFO74: good luck. ill check back later.'),
-      createEntry('system', ''),
-      createEntry('warning', '>> CONNECTION CLOSED <<'),
-      createEntry('system', ''),
     ];
+    
+    if (contextualHints) {
+      hints.push(createEntry('output', `UFO74: ${contextualHints}`));
+      hints.push(createEntry('output', ''));
+    } else {
+      hints.push(createEntry('output', 'UFO74: heres the thing - you need to actually READ the files.'));
+      hints.push(createEntry('output', '       use "open <filename>" and look for connections.'));
+      hints.push(createEntry('output', ''));
+      hints.push(createEntry('output', 'UFO74: theres a protocol doc in /internal/ that explains'));
+      hints.push(createEntry('output', '       what kind of info youre supposed to piece together.'));
+      hints.push(createEntry('output', ''));
+    }
+    
+    hints.push(createEntry('output', 'UFO74: good luck. ill check back later.'));
+    hints.push(createEntry('system', ''));
+    hints.push(createEntry('warning', '>> CONNECTION CLOSED <<'));
+    hints.push(createEntry('system', ''));
+    return hints;
   } else if (level === 1) {
     // Second notice - more specific guidance
     return [
@@ -425,6 +437,46 @@ function getWanderingNotice(level: number): TerminalEntry[] {
   }
 }
 
+// Generate contextual hints based on what player hasn't explored yet
+function getContextualExplorationHints(state: GameState): string | null {
+  const filesRead = state.filesRead || new Set<string>();
+  const truthsDiscovered = state.truthsDiscovered || new Set<string>();
+  const prisoner45Used = state.prisoner45QuestionsAsked > 0;
+  
+  // Check for unexplored areas and give targeted hints
+  const hasReadStorage = Array.from(filesRead).some(f => f.includes('/storage/'));
+  const hasReadComms = Array.from(filesRead).some(f => f.includes('/comms/'));
+  const hasReadOps = Array.from(filesRead).some(f => f.includes('/ops/'));
+  const hasReadAdmin = Array.from(filesRead).some(f => f.includes('/admin/'));
+  
+  // Prioritized hints based on what's missing
+  if (!hasReadStorage && !truthsDiscovered.has('debris_relocation')) {
+    return 'try checking out /storage/ - thats where they logged what they moved.';
+  }
+  
+  if (!hasReadOps && !truthsDiscovered.has('being_containment')) {
+    return 'the /ops/ directory has the operational stuff. quarantine records, medical files...';
+  }
+  
+  if (!hasReadComms && !truthsDiscovered.has('telepathic_scouts')) {
+    return 'theres weird stuff in /comms/psi/ - signal transcripts that dont make sense.';
+  }
+  
+  if (!prisoner45Used && state.tutorialComplete) {
+    return 'hey, try the "chat" command. theres someone else in the system. prisoner 45.';
+  }
+  
+  if (!hasReadAdmin && truthsDiscovered.size >= 2 && state.accessLevel >= 3) {
+    return 'youve got clearance now. check /admin/ for the classified stuff.';
+  }
+  
+  if (truthsDiscovered.size >= 3 && !state.flags?.correlateHintGiven) {
+    return 'youre finding pieces. try using "correlate" to connect related files.';
+  }
+  
+  return null;
+}
+
 // Check if player seems lost and return appropriate nudge
 function checkWanderingState(state: GameState, command: string, args: string[], result: { output: TerminalEntry[]; stateChanges: Partial<GameState> }): { notices: TerminalEntry[]; stateChanges: Partial<GameState> } | null {
   const commandCount = state.sessionCommandCount || 0;
@@ -458,7 +510,7 @@ function checkWanderingState(state: GameState, command: string, args: string[], 
   
   if (commandsSinceMeaningful >= threshold) {
     return {
-      notices: getWanderingNotice(Math.min(wanderingCount, 2)),
+      notices: getWanderingNotice(Math.min(wanderingCount, 2), state),
       stateChanges: {
         wanderingNoticeCount: wanderingCount + 1,
         lastMeaningfulAction: commandCount, // Reset to avoid immediate re-trigger
@@ -1106,6 +1158,44 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
     ];
   }
   
+  // NEW: If they found beings first and now finding international actors
+  if (truths.has('being_containment') && !truths.has('international_actors') && 
+      (path.includes('liaison') || path.includes('diplomatic') || path.includes('foreign'))) {
+    return [
+      createEntry('output', 'UFO74: hold on... they captured something alive...'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: and then they SHARED it with other countries?'),
+      createEntry('output', '       who decides to do that? and why?'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: theres a bigger organization behind all this.'),
+    ];
+  }
+  
+  // NEW: If they found 2026 first and now finding telepathy
+  if (truths.has('transition_2026') && !truths.has('telepathic_scouts') && 
+      (path.includes('psi') || path.includes('telepat') || path.includes('neural'))) {
+    return [
+      createEntry('output', 'UFO74: ok this is freaking me out.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: they knew about 2026 BEFORE they could read minds?'),
+      createEntry('output', '       or did the telepathy TELL them about 2026?'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: the scouts wanted us to know. thats terrifying.'),
+    ];
+  }
+  
+  // NEW: First evidence link made - encourage more
+  if (state.evidenceLinks?.length === 1 && !state.singularEventsTriggered?.has('ufo74_first_link')) {
+    return [
+      createEntry('output', 'UFO74: nice! youre connecting the dots.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: keep linking related files together.'),
+      createEntry('output', '       the more connections you find, the stronger your case.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: use "link" to connect more evidence.'),
+    ];
+  }
+  
   // If 4+ truths discovered, UFO74 gets excited
   if (truthCount >= 4) {
     return [
@@ -1677,6 +1767,16 @@ const PRISONER_45_RESPONSES: Record<string, string[]> = {
     'PRISONER_45> I don\'t know what to believe anymore.',
     'PRISONER_45> Perhaps we\'re someone else\'s creation. A crop planted long ago.',
   ],
+  disinformation: [
+    'PRISONER_45> Don\'t trust the official summary. It\'s bait.',
+    'PRISONER_45> They planted false files to trap people like you.',
+    'PRISONER_45> The weather balloon story? Mudinho the dwarf? All lies.',
+    'PRISONER_45> Cross-reference everything. Contradictions reveal truth.',
+    'PRISONER_45> If a file seems too convenient, too obvious... be careful.',
+    'PRISONER_45> The real evidence hides in mundane places.',
+    'PRISONER_45> Look for what they tried to destroy. That\'s what matters.',
+    'PRISONER_45> Cover stories always have holes. Find them.',
+  ],
   signal_lost: [
     'PRISONER_45> [SIGNAL DEGRADING]',
     'PRISONER_45> ...can\'t... understand...',
@@ -1743,6 +1843,10 @@ function getPrisoner45Response(question: string, usedResponses: Set<string>): { 
   else if (q.includes('god') || q.includes('religion') || q.includes('pray') || q.includes('faith') || q.includes('believe') || q.includes('angel') || q.includes('demon') || q.includes('soul')) {
     category = 'god';
     responses = PRISONER_45_RESPONSES.god;
+  }
+  else if (q.includes('lie') || q.includes('fake') || q.includes('disinformation') || q.includes('cover up') || q.includes('balloon') || q.includes('mudinho') || q.includes('dwarf') || q.includes('official story') || q.includes('false')) {
+    category = 'disinformation';
+    responses = PRISONER_45_RESPONSES.disinformation;
   }
   else if (q.includes('why') || q.includes('reason') || q.includes('purpose') || q.includes('meaning')) {
     category = 'truth';
@@ -2647,6 +2751,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges.countdownTriggeredBy = 'trace_spike';
         stateChanges.traceSpikeActive = true;
         stateChanges.paranoiaLevel = Math.min(100, (state.paranoiaLevel || 0) + 15);
+        stateChanges.avatarExpression = 'shocked'; // Countdown start - shocked expression
       }
     }
 
@@ -4586,10 +4691,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         detectionReduction: 12,
       },
       {
-        keywords1: ['foreign', 'liaison', 'international'],
-        keywords2: ['transfer', 'coordination', 'joint'],
+        keywords1: ['foreign', 'liaison', 'international', 'diplomatic'],
+        keywords2: ['transfer', 'coordination', 'joint', 'standing', 'multinational'],
         message: 'International coordination confirmed across multiple files.',
         detectionReduction: 10,
+      },
+      {
+        keywords1: ['diplomatic', 'cable', 'embassy', 'station'],
+        keywords2: ['liaison', 'protocol', 'pouch'],
+        message: 'Diplomatic channels used for material transfer.',
+        detectionReduction: 12,
       },
       {
         keywords1: ['2026', 'window', 'transition', 'cycle'],
@@ -4642,6 +4753,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           ],
           stateChanges: {
             detectionLevel: newDetection,
+            avatarExpression: 'smirk', // Successful correlate - smirk expression
           },
         };
       }
@@ -5623,6 +5735,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       createEntry('ufo74', '>> use "wait" to lay low. you have limited uses. <<'),
     ];
     result.triggerFlicker = true;
+    result.stateChanges.avatarExpression = 'scared'; // Critical detection - scared expression
   }
   
   // Check if detection crossed into IMMINENT territory (90+) - hide becomes available

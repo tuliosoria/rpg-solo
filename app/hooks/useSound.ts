@@ -83,6 +83,8 @@ const createNoiseBuffer = (audioContext: AudioContext, duration: number): AudioB
 export function useSound() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const ambientSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const ambientFilterRef = useRef<BiquadFilterNode | null>(null);
+  const ambientGainRef = useRef<GainNode | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [masterVolume, setMasterVolume] = useState(0.5);
 
@@ -311,7 +313,8 @@ export function useSound() {
     noiseSource.buffer = noiseBuffer;
     noiseSource.loop = true;
     noiseFilter.type = 'lowpass';
-    noiseFilter.frequency.setValueAtTime(400, audioContext.currentTime);
+    noiseFilter.frequency.setValueAtTime(300, audioContext.currentTime); // Start at calm frequency
+    noiseFilter.Q.setValueAtTime(2, audioContext.currentTime); // Subtle resonance
     noiseGain.gain.setValueAtTime(SOUND_CONFIG.ambient.volume * masterVolume, audioContext.currentTime);
     
     noiseSource.connect(noiseFilter);
@@ -320,21 +323,41 @@ export function useSound() {
     
     noiseSource.start();
     ambientSourceRef.current = noiseSource;
+    ambientFilterRef.current = noiseFilter;
+    ambientGainRef.current = noiseGain;
   }, [soundEnabled, masterVolume, initAudio]);
   
-  // Update ambient pitch based on detection level (200Hz at 0%, up to 600Hz at 100%)
-  const updateAmbientPitch = useCallback((detectionLevel: number) => {
-    if (!audioContextRef.current) return;
+  // Update ambient tension based on detection level
+  // Lower detection = calm low-frequency hum
+  // Higher detection = more intense, higher-pitched, louder drone
+  const updateAmbientTension = useCallback((detectionLevel: number) => {
+    const audioContext = audioContextRef.current;
+    const filter = ambientFilterRef.current;
+    const gain = ambientGainRef.current;
     
-    // Calculate filter frequency based on detection (more tense as detection rises)
+    if (!audioContext || !filter || !gain) return;
+    
+    // Calculate filter frequency: 200Hz at 0%, 800Hz at 100%
     const baseFreq = 200;
-    const maxFreq = 600;
+    const maxFreq = 800;
     const freq = baseFreq + (detectionLevel / 100) * (maxFreq - baseFreq);
     
-    // If we have the filter node, update its frequency
-    // Note: We need to recreate the graph to change the filter, so this is a simplified version
-    // In practice, you'd store the filter node in a ref and update it directly
-  }, []);
+    // Calculate Q (resonance): subtle at low, sharper at high detection
+    const baseQ = 1;
+    const maxQ = 8;
+    const q = baseQ + (detectionLevel / 100) * (maxQ - baseQ);
+    
+    // Calculate volume: slightly louder as tension rises
+    const baseVolume = SOUND_CONFIG.ambient.volume * masterVolume;
+    const maxVolume = baseVolume * 2.5;
+    const volume = baseVolume + (detectionLevel / 100) * (maxVolume - baseVolume);
+    
+    // Smooth transitions
+    const now = audioContext.currentTime;
+    filter.frequency.linearRampToValueAtTime(freq, now + 0.5);
+    filter.Q.linearRampToValueAtTime(q, now + 0.5);
+    gain.gain.linearRampToValueAtTime(volume, now + 0.5);
+  }, [masterVolume]);
 
   // Stop ambient
   const stopAmbient = useCallback(() => {
@@ -346,6 +369,8 @@ export function useSound() {
       }
       ambientSourceRef.current = null;
     }
+    ambientFilterRef.current = null;
+    ambientGainRef.current = null;
   }, []);
 
   // Toggle sound on/off
@@ -374,7 +399,7 @@ export function useSound() {
     startAmbient,
     stopAmbient,
     toggleSound,
-    updateAmbientPitch,
+    updateAmbientTension,
     soundEnabled,
     masterVolume,
     setMasterVolume,
