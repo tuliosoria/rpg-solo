@@ -17,6 +17,9 @@ import BadEnding from './BadEnding';
 import NeutralEnding from './NeutralEnding';
 import SecretEnding from './SecretEnding';
 import AchievementPopup from './AchievementPopup';
+import AchievementGallery from './AchievementGallery';
+import SettingsModal from './SettingsModal';
+import StatisticsModal from './StatisticsModal';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import styles from './Terminal.module.css';
 
@@ -97,6 +100,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [showGameOver, setShowGameOver] = useState(false);
   const [gameOverReason, setGameOverReason] = useState('');
   const [showHeaderMenu, setShowHeaderMenu] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
   
   // UFO74 message queue - messages wait for Enter before displaying next
   const [pendingUfo74Messages, setPendingUfo74Messages] = useState<TerminalEntry[]>([]);
@@ -163,7 +169,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const prevDetectionRef = useRef(0);
   
   // Sound system
-  const { playSound, playKeySound, startAmbient, stopAmbient, toggleSound, updateAmbientTension, soundEnabled } = useSound();
+  const { playSound, playKeySound, startAmbient, stopAmbient, toggleSound, updateAmbientTension, soundEnabled, masterVolume, setMasterVolume } = useSound();
   
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -1405,6 +1411,33 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             <button 
               className={styles.menuItem}
               onClick={() => {
+                setShowSettings(true);
+                setShowHeaderMenu(false);
+              }}
+            >
+              ⚙️ SETTINGS
+            </button>
+            <button 
+              className={styles.menuItem}
+              onClick={() => {
+                setShowAchievements(true);
+                setShowHeaderMenu(false);
+              }}
+            >
+              🏆 ACHIEVEMENTS
+            </button>
+            <button 
+              className={styles.menuItem}
+              onClick={() => {
+                setShowStatistics(true);
+                setShowHeaderMenu(false);
+              }}
+            >
+              📊 STATISTICS
+            </button>
+            <button 
+              className={styles.menuItem}
+              onClick={() => {
                 setShowHeaderMenu(false);
                 onExitAction();
               }}
@@ -1598,6 +1631,31 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         <AchievementPopup
           achievement={pendingAchievement}
           onDismiss={() => setPendingAchievement(null)}
+        />
+      )}
+      
+      {/* Settings modal */}
+      {showSettings && (
+        <SettingsModal
+          soundEnabled={soundEnabled}
+          masterVolume={masterVolume}
+          onToggleSound={toggleSound}
+          onVolumeChange={setMasterVolume}
+          onCloseAction={() => setShowSettings(false)}
+        />
+      )}
+      
+      {/* Achievement gallery */}
+      {showAchievements && (
+        <AchievementGallery
+          onCloseAction={() => setShowAchievements(false)}
+        />
+      )}
+      
+      {/* Statistics modal */}
+      {showStatistics && (
+        <StatisticsModal
+          onCloseAction={() => setShowStatistics(false)}
         />
       )}
     </div>
