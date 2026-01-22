@@ -1341,6 +1341,11 @@ const foreign_drone_theory: FileNode = {
   type: 'file',
   name: 'foreign_drone_assessment.txt',
   status: 'intact',
+  imageTrigger: {
+    src: '/images/drone.png',
+    alt: 'Recovered visual - Foreign drone analysis',
+    tone: 'surveillance',
+  },
   content: [
     '═══════════════════════════════════════════════════════════',
     'ASSESSMENT — FOREIGN DRONE HYPOTHESIS',
@@ -2474,10 +2479,9 @@ const field_report_delta: FileNode = {
   status: 'intact',
   reveals: ['international_actors'],
   imageTrigger: {
-    src: '/images/crash.png',
-    alt: 'Recovered visual - Field reconnaissance',
+    src: '/images/prato-delta.png',
+    alt: 'Recovered visual - Operation Prato Delta field report',
     tone: 'surveillance',
-    corrupted: true,
   },
   content: [
     '═══════════════════════════════════════════════════════════',

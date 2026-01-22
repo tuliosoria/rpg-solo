@@ -707,15 +707,19 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
   const stateChanges: Partial<GameState> = {};
   const previousCount = state.truthsDiscovered.size;
   
+  // Create a new Set to avoid mutating the original state
+  const updatedTruths = new Set(state.truthsDiscovered);
   for (const reveal of newReveals) {
     if (TRUTH_CATEGORIES.includes(reveal as TruthCategory)) {
-      state.truthsDiscovered.add(reveal);
+      updatedTruths.add(reveal);
     }
   }
   
-  const newCount = state.truthsDiscovered.size;
+  const newCount = updatedTruths.size;
   
+  // Only update if we found new truths
   if (newCount > previousCount) {
+    stateChanges.truthsDiscovered = updatedTruths;
     // TRUTH DISCOVERY BREATHER: Major revelation distracts the watchers
     // Reduce detection by 8-12 points per new truth discovered
     const truthsJustFound = newCount - previousCount;
@@ -802,15 +806,26 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
       notices.push(createEntry('notice', 'NOTICE: Sufficient documentation threshold approaching.'));
       notices.push(createEntry('warning', 'WARNING: Comprehensive access may trigger archive protocols.'));
     }
-  }
-  
-  // Check for near-victory
+    
+    if (newCount === 5 && previousCount < 5) {
+      notices.push(createEntry('notice', ''));
+      notices.push(createEntry('notice', '▓▓▓ ALL EVIDENCE CATEGORIES DOCUMENTED ▓▓▓'));
+      notices.push(createEntry('warning', ''));
+      notices.push(...createUFO74Message([
+        'UFO74: you did it kid. all five categories confirmed.',
+        '       now run save_evidence.sh before they lock us out.',
+        '       type: run save_evidence.sh',
+      ]));
+    }
+    
+    // Check for near-victory
     if (newCount >= 4 && !state.flags.nearVictory) {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, nearVictory: true };
     }
     if (newCount >= 5 && !state.flags.allEvidenceCollected) {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, allEvidenceCollected: true };
     }
+  }
   
   return { notices, stateChanges };
 }
@@ -3688,6 +3703,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {
           detectionLevel: state.detectionLevel + 8,
         },
+        imageTrigger: {
+          src: '/images/et-brain.png',
+          alt: 'Neural pattern link - Scout consciousness interface',
+          tone: 'clinical',
+        },
         triggerFlicker: true,
         delayMs: 2000,
       };
@@ -5459,6 +5479,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
             createEntry('system', ''),
             createEntry('notice', '  ═══════════════════════════════════════════════════════'),
             createEntry('notice', '  TURING EVALUATION: PASSED'),
+            createEntry('notice', '  SUBJECT IS NOT HUMAN, NOT A THREAT'),
             createEntry('notice', '  Identity verified as authorized terminal process.'),
             createEntry('notice', '  ═══════════════════════════════════════════════════════'),
             createEntry('system', ''),

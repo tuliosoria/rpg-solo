@@ -1024,4 +1024,131 @@ describe('Narrative Mechanics', () => {
       expect(result.output.length).toBeGreaterThan(0);
     });
   });
+
+  describe('Truth Discovery System', () => {
+    it('properly updates truthsDiscovered in stateChanges', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/storage/assets',
+        accessLevel: 3,
+        truthsDiscovered: new Set<TruthCategory>(),
+        filesRead: new Set<string>(),
+      });
+      // Open a file that reveals a truth (material_x_analysis.dat reveals debris_relocation)
+      const result = executeCommand('open material_x_analysis.dat', state);
+      
+      // Check that truthsDiscovered is included in stateChanges
+      expect(result.stateChanges.truthsDiscovered).toBeDefined();
+      if (result.stateChanges.truthsDiscovered) {
+        expect(result.stateChanges.truthsDiscovered.size).toBeGreaterThan(0);
+      }
+    });
+
+    it('shows UFO74 message when all 5 truths are discovered', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/ops/exo',
+        accessLevel: 4,
+        // Already have 4 truths, finding the 5th
+        truthsDiscovered: new Set<TruthCategory>([
+          'debris_relocation',
+          'being_containment', 
+          'telepathic_scouts',
+          'international_actors'
+        ]),
+        flags: {},
+        filesRead: new Set<string>(),
+      });
+      // Open a file that reveals the 5th truth (transition_2026)
+      const result = executeCommand('open energy_node_assessment.txt', state);
+      
+      // Should contain UFO74 message about running save_evidence.sh
+      expect(result.output.some(e => 
+        e.content.includes('save_evidence') || e.content.includes('ALL EVIDENCE')
+      )).toBe(true);
+    });
+
+    it('sets allEvidenceCollected flag when 5 truths discovered', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/ops/exo',
+        accessLevel: 4,
+        truthsDiscovered: new Set<TruthCategory>([
+          'debris_relocation',
+          'being_containment',
+          'telepathic_scouts',
+          'international_actors'
+        ]),
+        flags: {},
+        filesRead: new Set<string>(),
+      });
+      const result = executeCommand('open energy_node_assessment.txt', state);
+      
+      expect(result.stateChanges.flags?.allEvidenceCollected).toBe(true);
+    });
+  });
+
+  describe('Link Command with Image', () => {
+    it('shows ET brain image when link is initiated', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        flags: { scoutLinkUnlocked: true },
+        scoutLinksUsed: 0,
+      });
+      const result = executeCommand('link', state);
+      
+      // Should have imageTrigger with et-brain.png
+      expect(result.imageTrigger).toBeDefined();
+      expect(result.imageTrigger?.src).toBe('/images/et-brain.png');
+    });
+
+    it('does not show image on subsequent link queries', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        flags: { scoutLinkUnlocked: true },
+        scoutLinksUsed: 1,
+      });
+      const result = executeCommand('link what is your purpose', state);
+      
+      // Query should not trigger image (only initial link does)
+      expect(result.imageTrigger).toBeUndefined();
+    });
+  });
+
+  describe('File Image Triggers', () => {
+    it('foreign_drone_assessment.txt has drone image trigger', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/ops/assessments',
+        accessLevel: 2,
+        filesRead: new Set<string>(),
+        imagesShownThisRun: new Set<string>(), // Ensure no images shown yet
+      });
+      const result = executeCommand('open foreign_drone_assessment.txt', state);
+      
+      expect(result.imageTrigger).toBeDefined();
+      expect(result.imageTrigger?.src).toBe('/images/drone.png');
+    });
+
+    it('field_report_delta.txt has prato-delta image trigger', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/ops/prato',
+        accessLevel: 2,
+        filesRead: new Set<string>(),
+        imagesShownThisRun: new Set<string>(), // Ensure no images shown yet
+      });
+      const result = executeCommand('open field_report_delta.txt', state);
+      
+      expect(result.imageTrigger).toBeDefined();
+      expect(result.imageTrigger?.src).toBe('/images/prato-delta.png');
+    });
+  });
 });

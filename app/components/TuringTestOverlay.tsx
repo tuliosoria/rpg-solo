@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import styles from './TuringTestOverlay.module.css';
 
 // Turing test question structure
@@ -126,6 +127,18 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
         <div className={styles.glow} />
         
         <div className={styles.container}>
+          {/* Turing Test Image */}
+          <div className={styles.imageContainer}>
+            <Image
+              src="/images/turing-test.png"
+              alt="Turing Evaluation Result"
+              width={150}
+              height={150}
+              className={styles.turingImage}
+              priority
+            />
+          </div>
+          
           <div className={styles.resultBox}>
             <div className={styles.resultHeader}>
               {passed ? '[ VERIFICATION COMPLETE ]' : '[ VERIFICATION FAILED ]'}
@@ -137,7 +150,7 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
             
             <div className={passed ? styles.resultPass : styles.resultFail}>
               {passed 
-                ? 'IDENTITY CONFIRMED: AUTHORIZED TERMINAL PROCESS'
+                ? 'SUBJECT IS NOT HUMAN, NOT A THREAT'
                 : 'IDENTITY REJECTED: HUMAN BEHAVIORAL PATTERNS DETECTED'}
             </div>
             
@@ -156,6 +169,18 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
       <div className={styles.glow} />
       
       <div className={styles.container}>
+        {/* Turing Test Image */}
+        <div className={styles.imageContainer}>
+          <Image
+            src="/images/turing-test.png"
+            alt="Turing Evaluation Protocol"
+            width={200}
+            height={200}
+            className={styles.turingImage}
+            priority
+          />
+        </div>
+        
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.headerLine}>

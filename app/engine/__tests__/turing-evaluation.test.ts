@@ -92,6 +92,19 @@ describe('Turing evaluation', () => {
     expect(result.output.some(entry => entry.content.includes('PASSED'))).toBe(true);
   });
 
+  it('shows "NOT HUMAN, NOT A THREAT" message on pass', () => {
+    const state = createState({
+      detectionLevel: 50,
+      turingEvaluationActive: true,
+      turingEvaluationIndex: 2, // Last question
+    });
+    const result = executeCommand('B', state);
+
+    expect(result.output.some(entry => 
+      entry.content.includes('NOT HUMAN') || entry.content.includes('NOT A THREAT')
+    )).toBe(true);
+  });
+
   it('rejects invalid responses', () => {
     const state = createState({
       detectionLevel: 50,

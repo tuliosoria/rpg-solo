@@ -104,6 +104,21 @@ const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
     'UFO74: this changes everything. they came for a reason.',
     'UFO74: the trajectory... they weren\'t leaving. they were arriving.',
   ],
+  '/images/drone.png': [
+    'UFO74: foreign drone, my ass. look at those flight characteristics.',
+    'UFO74: no propulsion system. no control surfaces. yet it flies.',
+    'UFO74: they tested it against everything in their arsenal. nothing matched.',
+  ],
+  '/images/prato-delta.png': [
+    'UFO74: three recovery sites... they didn\'t just find one crash.',
+    'UFO74: "material sharing agreement"... with who exactly?',
+    'UFO74: "discontinue local analysis" - they shipped everything out of country.',
+  ],
+  '/images/et-brain.png': [
+    'UFO74: ...you\'re looking at what they pulled from its skull.',
+    'UFO74: the neural density is off the charts. orders of magnitude beyond human.',
+    'UFO74: kid, be careful. some patterns... they can travel both ways.',
+  ],
 };
 
 interface TerminalProps {
@@ -1728,7 +1743,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
               const passedMessages = [
                 createEntry('system', ''),
                 createEntry('notice', '  TURING EVALUATION: PASSED'),
-                createEntry('notice', '  Identity verified. Session may continue.'),
+                createEntry('notice', '  SUBJECT IS NOT HUMAN, NOT A THREAT'),
+                createEntry('notice', '  Identity verified as authorized terminal process.'),
                 createEntry('system', ''),
                 createEntry('ufo74', 'UFO74: nice work, kid. you fooled the machine.'),
                 createEntry('ufo74', 'UFO74: keep digging.'),
