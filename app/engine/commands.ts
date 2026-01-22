@@ -2576,7 +2576,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             createEntry('system', ''),
             createEntry('system', `=== ${filePath} ===`),
             createEntry('system', ''),
-            ...(content || []).map(line => createEntry('output', line)),
+            ...(content || []).map(line => createEntry('file', line)),
             createEntry('system', ''),
             createEntry('warning', 'UFO74: you already fell for this trap, kid. lets move on.'),
           ],
@@ -2649,7 +2649,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('system', ''),
         createEntry('system', `=== ${filePath} ===`),
         createEntry('system', ''),
-        ...content.map(line => createEntry('output', line)),
+        ...content.map(line => createEntry('file', line)),
         createEntry('system', ''),
         createEntry('warning', 'UFO74: you already read this file, kid. lets move on.'),
       ];
@@ -4257,7 +4257,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const output: TerminalEntry[] = [
       createEntry('system', `[Re-reading: ${fileName}]`),
       createEntry('system', ''),
-      ...content.map(line => createEntry('output', line)),
+      ...content.map(line => createEntry('file', line)),
       createEntry('system', ''),
     ];
     

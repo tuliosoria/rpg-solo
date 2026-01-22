@@ -143,6 +143,29 @@
   margin-left: 16px;
 }
 
+/* ESC button in header */
+.escButton {
+  background: rgba(255, 100, 0, 0.15);
+  border: 2px solid #ff6600;
+  color: #ff9900;
+  padding: 4px 12px;
+  margin-left: 16px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-shadow: 0 0 4px rgba(255, 100, 0, 0.5);
+}
+
+.escButton:hover {
+  background: rgba(255, 100, 0, 0.3);
+  border-color: #ff9900;
+  color: #ffcc00;
+  box-shadow: 0 0 12px rgba(255, 100, 0, 0.4);
+}
+
 /* Header dropdown menu */
 .headerMenu {
   position: absolute;
@@ -458,28 +481,33 @@
   }
 }
 
-/* "They're watching" paranoia message */
+/* "They're watching" paranoia message - centered and prominent */
 .paranoiaMessage {
   position: fixed;
-  padding: 8px 16px;
-  background: rgba(0, 20, 0, 0.9);
-  border: 1px solid #003300;
-  color: #00aa00;
-  font-size: 11px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px 40px;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid #ff0000;
+  color: #ff0000;
+  font-size: 16px;
   font-family: inherit;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   opacity: 0;
-  animation: paranoiaFade 3s ease-in-out forwards;
-  z-index: 50;
+  animation: paranoiaFade 4s ease-in-out forwards;
+  z-index: 150;
   pointer-events: none;
-  text-shadow: 0 0 4px rgba(0, 255, 0, 0.3);
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 0 20px rgba(255, 0, 0, 0.3);
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.3), inset 0 0 20px rgba(255, 0, 0, 0.1);
 }
 
 @keyframes paranoiaFade {
-  0% { opacity: 0; }
-  10% { opacity: 0.7; }
-  80% { opacity: 0.7; }
-  100% { opacity: 0; }
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.02); }
 }
 
 /* Sound toggle button */
@@ -565,6 +593,17 @@
   color: #00ffff;
   font-style: italic;
   text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+/* File content styling - visual container */
+.fileContent {
+  color: #00dd00;
+  font-size: 0.92em;
+  background: rgba(0, 40, 0, 0.4);
+  border-left: 2px solid #004400;
+  padding-left: 12px;
+  margin-left: 4px;
+  line-height: 1.5;
 }
 
 /* Redacted text styling */

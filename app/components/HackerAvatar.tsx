@@ -69,8 +69,8 @@ export default function HackerAvatar({ expression, detectionLevel, sessionStabil
             <Image
               src={EXPRESSION_IMAGES[currentExpression]}
               alt="Hacker avatar"
-              width={156}
-              height={208}
+              width={203}
+              height={270}
               className={styles.avatarImage}
               priority
             />

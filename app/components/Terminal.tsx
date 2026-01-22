@@ -20,6 +20,7 @@ import AchievementPopup from './AchievementPopup';
 import AchievementGallery from './AchievementGallery';
 import SettingsModal from './SettingsModal';
 import StatisticsModal from './StatisticsModal';
+import PauseMenu from './PauseMenu';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import styles from './Terminal.module.css';
 
@@ -103,6 +104,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [showSettings, setShowSettings] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [showPauseMenu, setShowPauseMenu] = useState(false);
   
   // UFO74 message queue - messages wait for Enter before displaying next
   const [pendingUfo74Messages, setPendingUfo74Messages] = useState<TerminalEntry[]>([]);
@@ -660,6 +662,30 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       return () => window.removeEventListener('keydown', handleKeyDown);
     }
   }, [isStreaming]);
+  
+  // Handle ESC key for pause menu
+  useEffect(() => {
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isStreaming && gamePhase === 'terminal' && !gameState.isGameOver) {
+        e.preventDefault();
+        // Close any open modals first, otherwise toggle pause menu
+        if (showSettings || showAchievements || showStatistics) {
+          setShowSettings(false);
+          setShowAchievements(false);
+          setShowStatistics(false);
+        } else if (activeImage || activeVideo) {
+          setActiveImage(null);
+          setActiveVideo(null);
+        } else {
+          setShowPauseMenu(prev => !prev);
+          setShowHeaderMenu(false);
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleEscKey);
+    return () => window.removeEventListener('keydown', handleEscKey);
+  }, [isStreaming, gamePhase, gameState.isGameOver, showSettings, showAchievements, showStatistics, activeImage, activeVideo]);
   
   // Handle command submission
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -1268,6 +1294,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       case 'ufo74':
         className = `${styles.line} ${styles.ufo74}`;
         break;
+      case 'file':
+        className = `${styles.line} ${styles.fileContent}`;
+        break;
     }
     
     return (
@@ -1346,10 +1375,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       
       {/* Paranoia message overlay */}
       {paranoiaMessage && (
-        <div 
-          className={styles.paranoiaMessage}
-          style={{ top: paranoiaPosition.top, left: paranoiaPosition.left }}
-        >
+        <div className={styles.paranoiaMessage}>
           {paranoiaMessage}
         </div>
       )}
@@ -1382,6 +1408,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         >
           VARGINHA: TERMINAL 1996 ▼
         </span>
+        {/* ESC button */}
+        <button
+          className={styles.escButton}
+          onClick={() => setShowPauseMenu(true)}
+          title="Pause Menu (ESC)"
+        >
+          ESC
+        </button>
         {getSaveIndicator() && (
           <span className={styles.saveIndicator}>{getSaveIndicator()}</span>
         )}
@@ -1656,6 +1690,29 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       {showStatistics && (
         <StatisticsModal
           onCloseAction={() => setShowStatistics(false)}
+        />
+      )}
+      
+      {/* Pause menu */}
+      {showPauseMenu && (
+        <PauseMenu
+          onResumeAction={() => setShowPauseMenu(false)}
+          onSaveAction={() => {
+            setShowPauseMenu(false);
+            onSaveRequestAction(gameState);
+          }}
+          onLoadAction={() => {
+            setShowPauseMenu(false);
+            onExitAction();
+          }}
+          onSettingsAction={() => {
+            setShowPauseMenu(false);
+            setShowSettings(true);
+          }}
+          onExitAction={() => {
+            setShowPauseMenu(false);
+            onExitAction();
+          }}
         />
       )}
     </div>

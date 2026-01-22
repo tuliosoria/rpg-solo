@@ -61,7 +61,7 @@ export interface FileMutation {
 
 export interface TerminalEntry {
   id: string;
-  type: 'input' | 'output' | 'system' | 'warning' | 'error' | 'notice' | 'ufo74';
+  type: 'input' | 'output' | 'system' | 'warning' | 'error' | 'notice' | 'ufo74' | 'file';
   content: string;
   timestamp: number;
 }
