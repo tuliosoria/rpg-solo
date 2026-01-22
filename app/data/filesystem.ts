@@ -1598,7 +1598,7 @@ const standing_orders_multinational: FileNode = {
   name: 'standing_orders_multinational.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['international_actors', 'transition_2026'],
+  reveals: ['international_actors'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'STANDING ORDERS — MULTINATIONAL RECOVERY PROTOCOL',
@@ -2220,7 +2220,7 @@ const material_x_analysis: FileNode = {
   name: 'material_x_analysis.dat',
   status: 'restricted',
   accessThreshold: 2,
-  reveals: ['debris_relocation', 'international_actors'],
+  reveals: ['debris_relocation'],
   corruptible: true,
   imageTrigger: {
     src: '/images/crash.png',
@@ -2302,7 +2302,7 @@ const autopsy_alpha_log: FileNode = {
   name: 'autopsy_alpha.log',
   status: 'restricted',
   accessThreshold: 2,
-  reveals: ['being_containment', 'telepathic_scouts'],
+  reveals: ['being_containment'],
   corruptible: true,
   imageTrigger: {
     src: '/images/et.png',
@@ -2383,7 +2383,7 @@ const transcript_core: FileNode = {
   type: 'file',
   name: 'transcript_core.enc',
   status: 'encrypted',
-  reveals: ['telepathic_scouts', 'being_containment'],
+  reveals: ['telepathic_scouts'],
   corruptible: true,
   imageTrigger: {
     src: '/images/et-scared.png',
@@ -2472,7 +2472,7 @@ const field_report_delta: FileNode = {
   type: 'file',
   name: 'field_report_delta.txt',
   status: 'intact',
-  reveals: ['debris_relocation', 'international_actors'],
+  reveals: ['international_actors'],
   imageTrigger: {
     src: '/images/crash.png',
     alt: 'Recovered visual - Field reconnaissance',
@@ -2667,7 +2667,7 @@ const colonization_model: FileNode = {
   name: 'colonization_model.red',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['transition_2026', 'telepathic_scouts'],
+  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL MODEL — INDIRECT COLONIZATION',
@@ -2868,7 +2868,7 @@ const bio_program_overview: FileNode = {
   name: 'bio_program_overview.red',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['being_containment', 'international_actors'],
+  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'PROGRAM OVERVIEW — BIO-ASSESSMENT INITIATIVE',
@@ -2945,7 +2945,7 @@ const neural_dump_alfa: FileNode = {
   name: 'neural_dump_alfa.psi',
   status: 'encrypted',
   accessThreshold: 3,
-  reveals: ['telepathic_scouts', 'being_containment'],
+  reveals: ['telepathic_scouts'],
   securityQuestion: {
     question: 'Subject designation (found in autopsy records):',
     answers: ['alfa', 'alpha', 'subject alfa', 'specimen alfa'],
@@ -3083,7 +3083,7 @@ const specimen_purpose_analysis: FileNode = {
   name: 'specimen_purpose_analysis.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['being_containment', 'telepathic_scouts'],
+  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ANALYSIS — SPECIMEN FUNCTION AND PURPOSE',
@@ -3295,7 +3295,7 @@ const extraction_mechanism: FileNode = {
   name: 'extraction_mechanism.red',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['telepathic_scouts', 'transition_2026'],
+  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL PAPER — ENERGY EXTRACTION MODEL',
@@ -3906,7 +3906,7 @@ const reconstructed_neural: FileNode = {
   status: 'intact',
   accessThreshold: 4,
   requiredFlags: ['scriptExecuted'],
-  reveals: ['being_containment', 'telepathic_scouts'],
+  reveals: ['telepathic_scouts'],
   content: [
     '▓▓▓ RECONSTRUCTED DATA — NEURAL FRAGMENT ▓▓▓',
     'RECONSTRUCTION: SUCCESSFUL',

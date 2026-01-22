@@ -9,6 +9,7 @@ import { useSound } from '../hooks/useSound';
 import { unlockAchievement, Achievement } from '../engine/achievements';
 import ImageOverlay from './ImageOverlay';
 import VideoOverlay from './VideoOverlay';
+import TuringTestOverlay from './TuringTestOverlay';
 import GameOver from './GameOver';
 import Blackout from './Blackout';
 import ICQChat from './ICQChat';
@@ -81,6 +82,30 @@ const STREAMING_DELAYS: Record<StreamingMode, { base: number; variance: number; 
   glitchy: { base: 100, variance: 50, glitchChance: 0.15, glitchDelay: 400 },
 };
 
+// UFO74 comments after viewing images - keyed by image src
+const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
+  '/images/crash.png': [
+    'UFO74: that wreckage... the metallurgy is all wrong.',
+    'UFO74: they moved fast. usually they take weeks to secure a site.',
+    'UFO74: see how they positioned the tarps? they knew exactly what to hide.',
+  ],
+  '/images/et.png': [
+    'UFO74: ...i\'ve seen that face before. in the dreams.',
+    'UFO74: containment protocols were rushed. they weren\'t prepared.',
+    'UFO74: that\'s not fear in those eyes. that\'s... recognition.',
+  ],
+  '/images/et-scared.png': [
+    'UFO74: kid... during transmission, something reached back.',
+    'UFO74: they didn\'t capture it. it let itself be captured.',
+    'UFO74: that expression... it\'s trying to warn us.',
+  ],
+  '/images/second-ship.png': [
+    'UFO74: wait. there was a SECOND one?',
+    'UFO74: this changes everything. they came for a reason.',
+    'UFO74: the trajectory... they weren\'t leaving. they were arriving.',
+  ],
+};
+
 interface TerminalProps {
   initialState: GameState;
   onExitAction: () => void;
@@ -138,6 +163,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   
   // Typing speed tracking
   const [typingSpeedWarning, setTypingSpeedWarning] = useState(false);
+  
+  // Turing Test overlay
+  const [showTuringTest, setShowTuringTest] = useState(false);
   const keypressTimestamps = useRef<number[]>([]);
   
   // Timed decryption timer display
@@ -769,7 +797,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       return;
     }
     
-    if (isProcessing || !inputValue.trim()) return;
+    if (isProcessing || showTuringTest || !inputValue.trim()) return;
     
     const command = inputValue.trim();
     const commandLower = command.toLowerCase().split(' ')[0];
@@ -944,6 +972,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       setPendingVideo(result.videoTrigger);
     }
     
+    // Trigger Turing test overlay
+    if (result.triggerTuringTest) {
+      // Delay to let the terminal message show first
+      setTimeout(() => {
+        setShowTuringTest(true);
+      }, 1500);
+    }
+    
     // Handle GOD mode phase skip
     if (result.skipToPhase) {
       setGamePhase(result.skipToPhase);
@@ -965,6 +1001,11 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     const truthCount = intermediateState.truthsDiscovered?.size || 0;
     const prevTruthCount = gameState.truthsDiscovered?.size || 0;
     
+    // New evidence discovered - play fanfare!
+    if (truthCount > prevTruthCount) {
+      playSound('fanfare');
+    }
+    
     // First evidence discovered
     if (truthCount > 0 && prevTruthCount === 0) {
       checkAchievement('first_blood');
@@ -973,6 +1014,18 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     // All truths discovered
     if (truthCount === 5 && prevTruthCount < 5) {
       checkAchievement('truth_seeker');
+    }
+    
+    // Timed decryption successful - play fanfare
+    // Detect when timedDecryptActive goes from true to false with smirk expression (success indicator)
+    if (gameState.timedDecryptActive && !intermediateState.timedDecryptActive && 
+        intermediateState.avatarExpression === 'smirk') {
+      playSound('fanfare');
+    }
+    
+    // Admin override successful - play fanfare
+    if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
+      playSound('fanfare');
     }
     
     // Update burn-in effect with significant output content
@@ -1622,6 +1675,18 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           onCloseAction={() => {
             // Add "Media recovered" message to terminal
             const recoveredMessage = createEntry('system', '[SYSTEM: Media recovered. Visual data archived to session log.]');
+            
+            // Get UFO74 comment for this image
+            const imageComments = UFO74_IMAGE_COMMENTS[activeImage.src];
+            if (imageComments && imageComments.length > 0) {
+              // Pick a random comment for variety
+              const commentIndex = Math.floor(Math.random() * imageComments.length);
+              const ufo74Comment = imageComments[commentIndex];
+              
+              // Queue UFO74 message to show after "Media recovered"
+              setPendingUfo74Messages([createEntry('ufo74', ufo74Comment)]);
+            }
+            
             setGameState(prev => ({
               ...prev,
               history: [...prev.history, recoveredMessage],
@@ -1647,6 +1712,60 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
               history: [...prev.history, recoveredMessage],
             }));
             setActiveVideo(null);
+            inputRef.current?.focus();
+          }}
+        />
+      )}
+      
+      {/* Turing Test overlay */}
+      {showTuringTest && (
+        <TuringTestOverlay
+          onComplete={(passed) => {
+            setShowTuringTest(false);
+            
+            if (passed) {
+              // Turing test passed
+              const passedMessages = [
+                createEntry('system', ''),
+                createEntry('notice', '  TURING EVALUATION: PASSED'),
+                createEntry('notice', '  Identity verified. Session may continue.'),
+                createEntry('system', ''),
+                createEntry('ufo74', 'UFO74: nice work, kid. you fooled the machine.'),
+                createEntry('ufo74', 'UFO74: keep digging.'),
+                createEntry('system', ''),
+              ];
+              setGameState(prev => ({
+                ...prev,
+                history: [...prev.history, ...passedMessages],
+                turingEvaluationActive: false,
+                turingEvaluationCompleted: true,
+                detectionLevel: Math.max(0, prev.detectionLevel - 10), // Reward: reduce detection
+              }));
+              playSound('success');
+            } else {
+              // Turing test failed - game over
+              const failedMessages = [
+                createEntry('system', ''),
+                createEntry('error', '  TURING EVALUATION: FAILED'),
+                createEntry('error', '  Human behavioral patterns detected.'),
+                createEntry('error', '  TERMINATING SESSION.'),
+                createEntry('system', ''),
+              ];
+              setGameState(prev => ({
+                ...prev,
+                history: [...prev.history, ...failedMessages],
+                turingEvaluationActive: false,
+                isGameOver: true,
+                gameOverReason: 'TURING EVALUATION FAILED',
+                endingType: 'bad',
+              }));
+              playSound('error');
+              setTimeout(() => {
+                setGameOverReason('TURING EVALUATION FAILED');
+                setShowGameOver(true);
+              }, 1500);
+            }
+            
             inputRef.current?.focus();
           }}
         />

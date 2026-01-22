@@ -280,16 +280,20 @@
 
 .riskLevel {
   font-weight: bold;
-  min-width: 60px;
+  min-width: 100px;
   text-align: right;
+  /* Explicit font-size for consistency with memoryLevel */
+  font-size: inherit;
 }
 
 .memoryLevel {
   margin-left: 1rem;
   font-weight: bold;
-  min-width: 60px;
+  min-width: 90px;
   color: #00ff00;
   text-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
+  /* Same font-size as riskLevel for consistency */
+  font-size: inherit;
 }
 
 /* Risk level colors */

@@ -272,6 +272,7 @@ export interface CommandResult {
   streamingMode?: StreamingMode; // How to stream the output
   skipToPhase?: GamePhase; // GOD mode: skip directly to a phase
   checkAchievements?: string[]; // Achievement IDs to check
+  triggerTuringTest?: boolean; // Show Turing test overlay
 }
 
 export const TRUTH_CATEGORIES = [

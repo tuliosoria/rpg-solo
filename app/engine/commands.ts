@@ -79,8 +79,9 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('turing_warning')) return false;
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
-      // Trigger at detection level 35-44, just before Turing test threshold
-      return state.detectionLevel >= 35 && state.detectionLevel < 45 && state.truthsDiscovered.size >= 1;
+      // Trigger at detection level 35+, before Turing test can start
+      // This ensures warning always shows before the test, even if detection jumps
+      return state.detectionLevel >= 35 && state.truthsDiscovered.size >= 1;
     },
     execute: (state) => {
       return {
@@ -103,16 +104,18 @@ const SINGULAR_EVENTS: SingularEvent[] = [
   },
   {
     // TURING EVALUATION - System challenges user to prove they're not a human intruder
+    // Now triggers an overlay instead of inline terminal output
     id: 'turing_evaluation',
     trigger: (state, command, args) => {
       if (state.singularEventsTriggered?.has('turing_evaluation')) return false;
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
-      // Trigger at detection level 45-55 on any command
+      // Trigger at detection level 45-55 on any command, BUT only if warning was shown
+      // If warning wasn't shown yet, don't trigger (let the warning trigger first)
+      if (!state.singularEventsTriggered?.has('turing_warning')) return false;
       return state.detectionLevel >= 45 && state.detectionLevel <= 55 && state.truthsDiscovered.size >= 1;
     },
     execute: (state) => {
-      const question = TURING_QUESTIONS[0];
       return {
         output: [
           createEntry('system', ''),
@@ -120,34 +123,15 @@ const SINGULAR_EVENTS: SingularEvent[] = [
           createEntry('warning', '        SECURITY PROTOCOL: TURING EVALUATION INITIATED'),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('system', ''),
-          createEntry('system', '  SYSTEM NOTICE:'),
-          createEntry('system', '  Anomalous access pattern detected. Identity verification required.'),
-          createEntry('system', ''),
-          createEntry('warning', '  ┌─────────────────────────────────────────────────────────┐'),
-          createEntry('warning', '  │  IMPORTANT: You must prove you are an AUTHORIZED       │'),
-          createEntry('warning', '  │  TERMINAL PROCESS, not a human intruder.               │'),
-          createEntry('warning', '  │                                                         │'),
-          createEntry('warning', '  │  Below are 3 responses. TWO are human-like (emotional).│'),
-          createEntry('warning', '  │  ONE is machine-like (cold, logical).                  │'),
-          createEntry('warning', '  │                                                         │'),
-          createEntry('warning', '  │  SELECT THE MACHINE RESPONSE to pass verification.     │'),
-          createEntry('warning', '  └─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
-          createEntry('system', `  QUESTION 1 of 3:`),
-          createEntry('output', `  "${question.prompt}"`),
-          createEntry('system', ''),
-          ...question.options.map(opt => createEntry('output', `    ${opt.letter}. ${opt.text}`)),
-          createEntry('system', ''),
-          createEntry('system', '  Type A, B, or C to respond.'),
-          createEntry('system', ''),
         ],
         stateChanges: {
           singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'turing_evaluation']),
           turingEvaluationActive: true,
           turingEvaluationIndex: 0,
         },
-        delayMs: 2000,
+        delayMs: 1500,
         triggerFlicker: true,
+        triggerTuringTest: true, // NEW: Show the Turing test overlay
       };
     },
   },
@@ -280,7 +264,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
 ];
 
 // Check and trigger singular events
-function checkSingularEvents(state: GameState, command: string, args: string[]): { output: TerminalEntry[]; stateChanges: Partial<GameState>; delayMs?: number; triggerFlicker?: boolean } | null {
+function checkSingularEvents(state: GameState, command: string, args: string[]): { output: TerminalEntry[]; stateChanges: Partial<GameState>; delayMs?: number; triggerFlicker?: boolean; triggerTuringTest?: boolean } | null {
   for (const event of SINGULAR_EVENTS) {
     if (event.trigger(state, command, args)) {
       return event.execute(state);
@@ -2680,7 +2664,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     if (isSafeFile && state.detectionLevel > DETECTION_FLOOR) {
       // Reduce detection by 1-2 points instead of increasing
-      const rng = createSeededRng(state.seed || 0, 'safe_file', filePath);
+      const rng = createSeededRng((state.seed || 0) + filePath.length * 100);
       const reduction = seededRandomInt(rng, 1, 2);
       const newDetection = Math.max(DETECTION_FLOOR, state.detectionLevel - reduction);
       detectionChange = newDetection - state.detectionLevel; // Will be negative
@@ -2853,7 +2837,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     let achievementsToCheck: string[] = [];
     const parentPath = filePath.substring(0, filePath.lastIndexOf('/')) || '/';
     const parentEntries = listDirectory(parentPath, { ...state, ...stateChanges } as GameState);
-    const filesInParent = parentEntries.filter(e => e.type === 'file');
+    const filesInParent = parentEntries ? parentEntries.filter(e => e.type === 'file') : [];
     if (filesInParent.length >= 3) {
       const allRead = filesInParent.every(f => {
         const fullPath = parentPath === '/' ? `/${f.name}` : `${parentPath}/${f.name}`;
@@ -5439,6 +5423,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   
   // ═══════════════════════════════════════════════════════════════════════════
   // TURING EVALUATION - Handle responses when evaluation is active
+  // NOTE: The TuringTestOverlay component is the primary UI for this feature.
+  // This terminal-based handler serves as a fallback and is used for testing.
   // ═══════════════════════════════════════════════════════════════════════════
   if (state.turingEvaluationActive) {
     const answer = command.toUpperCase();
@@ -5645,6 +5631,9 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     }
     if (singularEvent.triggerFlicker) {
       result.triggerFlicker = true;
+    }
+    if (singularEvent.triggerTuringTest) {
+      result.triggerTuringTest = true;
     }
   }
   

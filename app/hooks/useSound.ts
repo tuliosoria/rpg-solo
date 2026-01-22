@@ -16,7 +16,8 @@ export type SoundType =
   | 'message'
   | 'reveal'
   | 'typing'
-  | 'transmission';
+  | 'transmission'
+  | 'fanfare'; // Zelda-like celebration sound
 
 // Sound configuration
 interface SoundConfig {
@@ -39,6 +40,7 @@ const SOUND_CONFIG: Record<SoundType, SoundConfig> = {
   reveal: { volume: 0.4 }, // Important discovery
   typing: { volume: 0.08 }, // Stream typing sound
   transmission: { volume: 0.35 }, // UFO74 transmission banner
+  fanfare: { volume: 0.5 }, // Zelda-like celebration
 };
 
 // Generate oscillator-based sounds (no external files needed)
@@ -292,6 +294,36 @@ export function useSound() {
             createOscillatorSound(audioContextRef.current, 'sine', 600, 0.12, volume * 0.5);
           }
         }, 200);
+        break;
+      }
+      
+      case 'fanfare': {
+        // Zelda-like item get fanfare: Ta-ra-ra-ra-ta-ta-ta-ram!
+        // Notes: E5, E5, E5, E5, C5, D5, E5 with triumphant ending
+        const notes = [
+          { freq: 659, duration: 0.1 },   // E5
+          { freq: 659, duration: 0.1 },   // E5
+          { freq: 659, duration: 0.1 },   // E5
+          { freq: 659, duration: 0.15 },  // E5 (slightly longer)
+          { freq: 523, duration: 0.1 },   // C5
+          { freq: 587, duration: 0.1 },   // D5
+          { freq: 659, duration: 0.4 },   // E5 (final long note)
+        ];
+        
+        let delay = 0;
+        notes.forEach((note) => {
+          setTimeout(() => {
+            if (audioContextRef.current) {
+              // Main tone
+              createOscillatorSound(audioContextRef.current, 'sine', note.freq, note.duration, volume * 0.6);
+              // Harmonic layer for richness
+              createOscillatorSound(audioContextRef.current, 'triangle', note.freq * 0.5, note.duration, volume * 0.3);
+              // Sparkle layer
+              createOscillatorSound(audioContextRef.current, 'sine', note.freq * 2, note.duration * 0.5, volume * 0.15);
+            }
+          }, delay * 1000);
+          delay += note.duration;
+        });
         break;
       }
     }

@@ -16,12 +16,15 @@ describe('Turing evaluation', () => {
     const state = createState({ 
       detectionLevel: 45,
       truthsDiscovered: new Set(['some_truth']),
+      // Warning must have been shown first for Turing test to trigger
+      singularEventsTriggered: new Set(['turing_warning']),
     });
     const result = executeCommand('help', state);
 
     expect(result.stateChanges.turingEvaluationActive).toBe(true);
     expect(result.output.some(entry => entry.content.includes('TURING EVALUATION'))).toBe(true);
-    expect(result.output.some(entry => entry.content.includes('SELECT THE MACHINE RESPONSE'))).toBe(true);
+    // Overlay now handles the detailed instructions, so just check for the header
+    expect(result.triggerTuringTest).toBe(true);
   });
 
   it('does not trigger if no truths discovered', () => {

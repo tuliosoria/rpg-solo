@@ -1,0 +1,303 @@
+/* Terminal 1996 - Turing Test Overlay Styles */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.98);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.flickering {
+  animation: screenFlicker 0.15s ease-in-out;
+}
+
+@keyframes screenFlicker {
+  0% { opacity: 1; }
+  25% { opacity: 0.3; }
+  50% { opacity: 0.9; }
+  75% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+/* Scanlines */
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.3) 2px,
+    rgba(0, 0, 0, 0.3) 4px
+  );
+  pointer-events: none;
+  z-index: 210;
+}
+
+/* Warning glow */
+.glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-shadow: inset 0 0 200px rgba(255, 100, 0, 0.1);
+  pointer-events: none;
+  z-index: 205;
+}
+
+/* Container */
+.container {
+  position: relative;
+  z-index: 215;
+  max-width: 700px;
+  width: 90%;
+  padding: 20px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.headerLine {
+  color: #ff6600;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.headerTitle {
+  color: #ff9900;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  padding: 8px 0;
+  animation: warningPulse 2s infinite;
+}
+
+@keyframes warningPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Instructions */
+.instructions {
+  color: #888;
+  font-size: 13px;
+  line-height: 1.8;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 12px;
+  border: 1px solid #333;
+  background: rgba(30, 30, 30, 0.5);
+}
+
+.instructionHighlight {
+  color: #ffaa00;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+/* Progress */
+.progress {
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+/* Question Box */
+.questionBox {
+  border: 2px solid #ff6600;
+  background: rgba(40, 20, 0, 0.3);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.questionPrompt {
+  color: #ffcc00;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 0 10px;
+}
+
+/* Options */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 16px;
+  border: 1px solid #444;
+  background: rgba(20, 20, 20, 0.8);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.option:hover {
+  border-color: #ff9900;
+  background: rgba(60, 40, 0, 0.3);
+}
+
+.optionLetter {
+  color: #ff9900;
+  font-weight: bold;
+  margin-right: 12px;
+  min-width: 20px;
+}
+
+.optionText {
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.optionSelected {
+  border-color: #ff9900;
+  background: rgba(80, 50, 0, 0.4);
+}
+
+.optionCorrect {
+  border-color: #00ff00 !important;
+  background: rgba(0, 60, 0, 0.4) !important;
+}
+
+.optionCorrect .optionLetter,
+.optionCorrect .optionText {
+  color: #00ff00;
+}
+
+.optionWrong {
+  border-color: #ff0000 !important;
+  background: rgba(60, 0, 0, 0.4) !important;
+}
+
+.optionWrong .optionLetter,
+.optionWrong .optionText {
+  color: #ff4444;
+}
+
+/* Feedback */
+.feedback {
+  text-align: center;
+  font-size: 14px;
+  padding: 12px;
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+  animation: feedbackPulse 0.5s ease-out;
+}
+
+@keyframes feedbackPulse {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Footer */
+.footer {
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+  letter-spacing: 1px;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+/* Result screen */
+.resultBox {
+  border: 2px solid #ff6600;
+  background: rgba(20, 10, 0, 0.9);
+  padding: 40px 30px;
+  text-align: center;
+}
+
+.resultHeader {
+  color: #ff9900;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  margin-bottom: 24px;
+}
+
+.resultScore {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+.resultPass {
+  color: #00ff00;
+  font-size: 14px;
+  padding: 16px;
+  border: 1px solid #006600;
+  background: rgba(0, 40, 0, 0.3);
+  margin-bottom: 24px;
+}
+
+.resultFail {
+  color: #ff4444;
+  font-size: 14px;
+  padding: 16px;
+  border: 1px solid #660000;
+  background: rgba(40, 0, 0, 0.3);
+  margin-bottom: 24px;
+}
+
+.resultPrompt {
+  color: #666;
+  font-size: 12px;
+  animation: blink 1.5s infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .headerTitle {
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+  
+  .questionPrompt {
+    font-size: 14px;
+  }
+  
+  .optionText {
+    font-size: 13px;
+  }
+  
+  .instructions {
+    font-size: 12px;
+  }
+}
