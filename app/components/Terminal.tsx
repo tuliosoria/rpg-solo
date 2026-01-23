@@ -28,7 +28,7 @@ import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
-const COMMANDS = ['help', 'status', 'progress', 'ls', 'cd', 'back', 'open', 'last', 'unread', 'decrypt', 'recover', 'note', 'notes', 'bookmark', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run', 'correlate', 'connect', 'map', 'leak'];
+const COMMANDS = ['help', 'status', 'progress', 'ls', 'cd', 'back', 'open', 'last', 'unread', 'decrypt', 'recover', 'note', 'notes', 'bookmark', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run', 'correlate', 'connect', 'map', 'leak', 'message'];
 const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run', 'bookmark', 'correlate', 'connect'];
 
 // "They're watching" paranoia messages
@@ -150,6 +150,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   
   // UFO74 message queue - messages wait for Enter before displaying next
   const [pendingUfo74Messages, setPendingUfo74Messages] = useState<TerminalEntry[]>([]);
+  
+  // UFO74 messages queued to show after image/video closes (from command result)
+  const [queuedAfterMediaMessages, setQueuedAfterMediaMessages] = useState<TerminalEntry[]>([]);
   
   // Game phase: terminal → blackout → icq → victory (or other endings)
   const [gamePhase, setGamePhase] = useState<GamePhase>('terminal');
@@ -997,6 +1000,17 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       setPendingVideo(result.videoTrigger);
     }
     
+    // Queue UFO74 messages from command result to show after media closes
+    if (result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0) {
+      if (result.imageTrigger || result.videoTrigger) {
+        // Media trigger present - queue messages for after media closes
+        setQueuedAfterMediaMessages(result.pendingUfo74Messages);
+      } else {
+        // No media trigger - show immediately as pending messages
+        setPendingUfo74Messages(prev => [...prev, ...result.pendingUfo74Messages!]);
+      }
+    }
+    
     // Trigger Turing test overlay
     if (result.triggerTuringTest) {
       // Delay to let the terminal message show first
@@ -1310,10 +1324,11 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     return { level: `MINIMAL ${percent}`, color: 'minimal' };
   };
   
-  // Get memory (data integrity) display with percentage
-  const getMemoryLevel = () => {
-    const integrity = gameState.dataIntegrity;
-    return `${integrity}%`;
+  // Get wrong attempts display
+  const getAttemptsDisplay = () => {
+    const attempts = gameState.wrongAttempts || 0;
+    const remaining = 8 - attempts;
+    return `${remaining}/8`;
   };
   
   const truthStatus = getTruthStatus();
@@ -1417,7 +1432,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       maxDetectionReached={maxDetectionRef.current}
       mathMistakes={gameState.mathQuestionWrong}
       evidenceLinks={gameState.evidenceLinks}
-      dataIntegrity={gameState.dataIntegrity}
+      wrongAttempts={gameState.wrongAttempts}
       choiceLeakPath={gameState.choiceLeakPath}
       rivalInvestigatorActive={gameState.rivalInvestigatorActive}
       filesReadCount={gameState.filesRead?.size || 0}
@@ -1606,7 +1621,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             {riskInfo.level}
           </span>
           <span className={styles.memoryLevel}>
-            MEM: {getMemoryLevel()}
+            ATT: {getAttemptsDisplay()}
           </span>
         </div>
       </div>
@@ -1698,15 +1713,6 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         />
       )}
       
-      {/* Exit button */}
-      <button 
-        className={styles.exitButton}
-        onClick={onExitAction}
-        title="Exit to Menu"
-      >
-        [ESC]
-      </button>
-      
       {/* Image overlay */}
       {activeImage && (
         <ImageOverlay
@@ -1718,15 +1724,27 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             // Add "Media recovered" message to terminal
             const recoveredMessage = createEntry('system', '[SYSTEM: Media recovered. Visual data archived to session log.]');
             
-            // Get UFO74 comment for this image
+            // Collect all UFO74 messages to show after image closes
+            const allUfo74Messages: TerminalEntry[] = [];
+            
+            // First add any queued messages from the command result (content reactions)
+            if (queuedAfterMediaMessages.length > 0) {
+              allUfo74Messages.push(...queuedAfterMediaMessages);
+              setQueuedAfterMediaMessages([]); // Clear the queue
+            }
+            
+            // Then add image-specific comments
             const imageComments = UFO74_IMAGE_COMMENTS[activeImage.src];
             if (imageComments && imageComments.length > 0) {
               // Pick a random comment for variety
               const commentIndex = Math.floor(Math.random() * imageComments.length);
               const ufo74Comment = imageComments[commentIndex];
-              
-              // Queue UFO74 message to show after "Media recovered"
-              setPendingUfo74Messages([createEntry('ufo74', ufo74Comment)]);
+              allUfo74Messages.push(createEntry('ufo74', ufo74Comment));
+            }
+            
+            // Queue all UFO74 messages to show after "Media recovered"
+            if (allUfo74Messages.length > 0) {
+              setPendingUfo74Messages(allUfo74Messages);
             }
             
             setGameState(prev => ({
@@ -1749,6 +1767,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           onCloseAction={() => {
             // Add "Media recovered" message to terminal
             const recoveredMessage = createEntry('system', '[SYSTEM: Media recovered. Video data archived to session log.]');
+            
+            // Check for queued UFO74 messages from the command result
+            if (queuedAfterMediaMessages.length > 0) {
+              setPendingUfo74Messages(queuedAfterMediaMessages);
+              setQueuedAfterMediaMessages([]); // Clear the queue
+            }
+            
             setGameState(prev => ({
               ...prev,
               history: [...prev.history, recoveredMessage],

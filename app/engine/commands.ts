@@ -861,7 +861,6 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
       [filePath]: mutation,
     },
     detectionLevel: state.detectionLevel + 8,
-    dataIntegrity: state.dataIntegrity - 8,
     sessionStability: state.sessionStability - 5,
     pendingDecryptFile: undefined,
   };
@@ -1537,6 +1536,20 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
       createEntry('output', '       these are cover stories hackerkid.'),
       createEntry('output', ''),
       createEntry('output', 'UFO74: the real stuff is in the encrypted files.'),
+    ];
+  }
+  
+  if (path.includes('morse_intercept')) {
+    return [
+      createEntry('output', 'UFO74: hackerkid... this is a morse code transmission.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: someone was broadcasting near the crash site.'),
+      createEntry('output', '       unauthorized. unidentified.'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: can you decipher what the message says?'),
+      createEntry('output', '       use: message <your answer>'),
+      createEntry('output', ''),
+      createEntry('output', 'UFO74: the reference key is right there in the file.'),
     ];
   }
   
@@ -2244,6 +2257,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       '  link              Access preserved neural pattern (EXTREME RISK)',
       '  script <code>     Execute data reconstruction script',
       '  run <script>      Execute a script file',
+      '  message <text>    Decipher intercepted message',
       '  override protocol <CODE>  Attempt security override (requires code)',
       '  save              Save current session',
       '  clear             Clear terminal display',
@@ -2279,15 +2293,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       lines.push(hostility >= 3 ? '  LOGGING: CRITICAL' : '  LOGGING: CRITICAL — Countermeasures engaged');
     }
     
-    // Integrity surfacing
-    if (state.dataIntegrity > 80) {
-      lines.push(hostility >= 3 ? '  DATA: Stable' : '  DATA INTEGRITY: Stable');
-    } else if (state.dataIntegrity > 50) {
-      lines.push(hostility >= 3 ? '  DATA: Degraded' : '  DATA INTEGRITY: Degraded — Some files affected');
-    } else if (state.dataIntegrity > 20) {
-      lines.push(hostility >= 3 ? '  DATA: CRITICAL' : '  DATA INTEGRITY: CRITICAL — Multiple data loss events');
+    // Attempts tracking - show remaining wrong attempts allowed
+    const attemptsRemaining = 8 - (state.wrongAttempts || 0);
+    if (attemptsRemaining >= 6) {
+      lines.push(hostility >= 3 ? '  TOLERANCE: Normal' : '  SYSTEM TOLERANCE: Normal');
+    } else if (attemptsRemaining >= 3) {
+      lines.push(hostility >= 3 ? '  TOLERANCE: Reduced' : '  SYSTEM TOLERANCE: Reduced — Errors noted');
+    } else if (attemptsRemaining >= 1) {
+      lines.push(hostility >= 3 ? '  TOLERANCE: CRITICAL' : '  SYSTEM TOLERANCE: CRITICAL — Few attempts remaining');
     } else {
-      lines.push(hostility >= 3 ? '  DATA: FAILURE' : '  DATA INTEGRITY: FAILURE — Widespread corruption');
+      lines.push(hostility >= 3 ? '  TOLERANCE: NONE' : '  SYSTEM TOLERANCE: EXHAUSTED — Lockdown imminent');
     }
     
     // Session stability
@@ -2721,7 +2736,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ...state.fileMutations,
         [filePath]: newMutation,
       };
-      stateChanges.dataIntegrity = state.dataIntegrity - 5;
       stateChanges.sessionStability = state.sessionStability - 3;
       triggerFlicker = true;
     }
@@ -2827,6 +2841,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, tracePurgeLogged: true };
     }
     
+    // Morse intercept file tracking - enables 'message' command
+    if (filePath.includes('morse_intercept') && !isEncryptedAndLocked) {
+      stateChanges.morseFileRead = true;
+    }
+    
     // Corrupted core dump spreads corruption to nearby files
     if (filePath.includes('core_dump_corrupted') && !isEncryptedAndLocked) {
       // Corrupt a random file in /tmp
@@ -2839,7 +2858,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ...stateChanges.fileMutations,
         [targetPath]: existingMutation,
       };
-      stateChanges.dataIntegrity = (stateChanges.dataIntegrity ?? state.dataIntegrity) - 10;
       triggerFlicker = true;
     }
     
@@ -3276,7 +3294,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       stateChanges: {
         ...newState,
         detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'recover', 12),
-        dataIntegrity: state.dataIntegrity - 10,
         sessionStability: state.sessionStability - 8,
       },
       triggerFlicker: true,
@@ -3380,6 +3397,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           stateChanges: {
             isGameOver: true,
             gameOverReason: 'SECURITY LOCKDOWN - AUTHENTICATION FAILURE',
+            wrongAttempts: (state.wrongAttempts || 0) + 1,
           },
           triggerFlicker: true,
           delayMs: 3000,
@@ -3397,6 +3415,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {
           detectionLevel: state.detectionLevel + 15,
           overrideFailedAttempts: newFailedAttempts,
+          wrongAttempts: (state.wrongAttempts || 0) + 1,
         },
         triggerFlicker: true,
         delayMs: 1500,
@@ -5031,6 +5050,155 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     
     return { output, stateChanges: {} };
   },
+  
+  // Morse code message deciphering command
+  message: (args, state) => {
+    // Check if morse file has been read
+    if (!state.morseFileRead) {
+      return {
+        output: [
+          createEntry('error', 'ERROR: No pending message to decipher'),
+          createEntry('system', ''),
+          createEntry('output', 'Read an intercepted signal file first.'),
+          createEntry('output', 'Check /comms/intercepts/ for signal files.'),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    // Check if already solved
+    if (state.morseMessageSolved) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('output', 'Message already deciphered: UFO RECOVERED'),
+          createEntry('system', ''),
+          ...createUFO74Message([
+            'UFO74: you already got it, hackerkid.',
+            '       the message was "UFO RECOVERED".',
+            '       someone on the ground confirmed the find.',
+          ]),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    // Check if attempts exhausted (puzzle failed permanently)
+    if ((state.morseMessageAttempts || 0) >= 3) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('error', 'Decryption attempts exhausted.'),
+          createEntry('system', ''),
+          createEntry('output', 'The intercepted message was: UFO RECOVERED'),
+          createEntry('system', ''),
+          ...createUFO74Message([
+            'UFO74: you missed it, kid. but now you know.',
+            '       "UFO RECOVERED" - confirmation from the ground.',
+          ]),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    if (args.length === 0) {
+      const attemptsRemaining = 3 - (state.morseMessageAttempts || 0);
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('output', 'Enter your deciphered message.'),
+          createEntry('output', 'Usage: message <deciphered text>'),
+          createEntry('system', ''),
+          createEntry('system', `[Attempts remaining: ${attemptsRemaining}]`),
+          createEntry('system', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    const guess = args.join(' ').toUpperCase().trim();
+    const correct = 'UFO RECOVERED';
+    const attemptsUsed = (state.morseMessageAttempts || 0) + 1;
+    const attemptsRemaining = 3 - attemptsUsed;
+    
+    // Check for correct answer - be lenient with variations
+    const isCorrect = guess === correct || 
+                      guess === 'UFORECOVERED' || 
+                      guess === 'UFO-RECOVERED' ||
+                      guess.replace(/\s+/g, ' ') === correct;
+    
+    if (isCorrect) {
+      // Success! Reveal the message and trigger a special UFO74 reaction
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('system', '▓▓▓ MESSAGE DECIPHERED ▓▓▓'),
+          createEntry('system', ''),
+          createEntry('warning', `  DECODED: ${correct}`),
+          createEntry('system', ''),
+          ...createUFO74Message([
+            'UFO74: you did it hackerkid!',
+            '       "UFO RECOVERED" - that was the confirmation.',
+            '',
+            'UFO74: someone on the ground radioed in the find.',
+            '       unauthorized frequency. probably local military.',
+            '',
+            'UFO74: this proves they KNEW what they found.',
+            '       not a weather balloon. not a drone. a UFO.',
+          ]),
+        ],
+        stateChanges: {
+          morseMessageSolved: true,
+          flags: { ...state.flags, morseDeciphered: true },
+        },
+        streamingMode: 'normal',
+      };
+    }
+    
+    // Wrong answer
+    if (attemptsRemaining <= 0) {
+      // Out of attempts
+      return {
+        output: [
+          createEntry('error', ''),
+          createEntry('error', 'DECRYPTION FAILED'),
+          createEntry('error', ''),
+          createEntry('warning', `Your answer: ${guess}`),
+          createEntry('warning', 'Maximum attempts exceeded.'),
+          createEntry('system', ''),
+          ...createUFO74Message([
+            'UFO74: damn. you ran out of tries hackerkid.',
+            '       the message was "UFO RECOVERED".',
+            '       maybe next time.',
+          ]),
+        ],
+        stateChanges: {
+          morseMessageAttempts: attemptsUsed,
+          wrongAttempts: (state.wrongAttempts || 0) + 1,
+        },
+      };
+    }
+    
+    // Wrong but more attempts available
+    return {
+      output: [
+        createEntry('warning', ''),
+        createEntry('warning', 'INCORRECT'),
+        createEntry('warning', `Your answer: ${guess}`),
+        createEntry('system', ''),
+        createEntry('system', `[Attempts remaining: ${attemptsRemaining}]`),
+        createEntry('system', ''),
+        ...createUFO74Message([
+          'UFO74: thats not it hackerkid.',
+          '       check the morse reference again.',
+          `       you have ${attemptsRemaining} more ${attemptsRemaining === 1 ? 'try' : 'tries'}.`,
+        ]),
+      ],
+      stateChanges: {
+        morseMessageAttempts: attemptsUsed,
+      },
+    };
+  },
 };
 
 // Main command executor
@@ -5745,7 +5913,14 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       );
       
       if (incognitoMessage) {
-        result.output = [...result.output, ...incognitoMessage];
+        // If there's an image or video trigger, queue UFO74 messages for AFTER the media closes
+        // This ensures player sees: file content → image → UFO74 comment (in that order)
+        if (result.imageTrigger || result.videoTrigger) {
+          result.pendingUfo74Messages = [...(result.pendingUfo74Messages || []), ...incognitoMessage];
+        } else {
+          // No media trigger - show UFO74 message immediately after file content
+          result.output = [...result.output, ...incognitoMessage];
+        }
         result.stateChanges.incognitoMessageCount = (state.incognitoMessageCount || 0) + 1;
         result.stateChanges.lastIncognitoTrigger = Date.now();
       }
@@ -5828,6 +6003,29 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       createEntry('ufo74', '>> EMERGENCY. type "hide" NOW. one chance. <<'),
     ];
     result.stateChanges.hideAvailable = true;
+    result.triggerFlicker = true;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // WRONG ATTEMPTS GAME OVER - Too many failed commands/auth attempts
+  // Skip if game over is already triggered (e.g., override lockout takes priority)
+  // ═══════════════════════════════════════════════════════════════════════════
+  const newWrongAttempts = result.stateChanges.wrongAttempts ?? state.wrongAttempts ?? 0;
+  if (newWrongAttempts >= 8 && !result.stateChanges.isGameOver) {
+    result.output = [
+      createEntry('error', ''),
+      createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+      createEntry('error', ''),
+      createEntry('error', '  TERMINAL LOCKOUT'),
+      createEntry('error', ''),
+      createEntry('error', '  Too many failed authentication attempts.'),
+      createEntry('error', '  Session terminated by security protocol.'),
+      createEntry('error', ''),
+      createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+      createEntry('error', ''),
+    ];
+    result.stateChanges.isGameOver = true;
+    result.stateChanges.gameOverReason = 'TERMINAL LOCKOUT - AUTHENTICATION FAILURE';
     result.triggerFlicker = true;
   }
   

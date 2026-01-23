@@ -74,7 +74,7 @@ export interface GameState {
   
   // Hidden variables (numeric internally, surfaced as symptoms)
   detectionLevel: number; // 0-100
-  dataIntegrity: number; // 100-0 (starts high, degrades)
+  wrongAttempts: number; // 0-8 (wrong commands/auth failures, 8 = game over)
   accessLevel: number; // 0-5
   sessionStability: number; // 100-0
   legacyAlertCounter: number; // 0-10
@@ -205,6 +205,11 @@ export interface GameState {
   pendingCipherFile?: string; // File awaiting cipher solution
   cipherAttempts: number; // Wrong attempts on current cipher
   
+  // Morse code puzzle state
+  morseFileRead: boolean; // True after reading morse_intercept.sig
+  morseMessageAttempts: number; // Wrong attempts on morse message (max 3)
+  morseMessageSolved: boolean; // True after correctly identifying the message
+  
   // UX: Notes & bookmarks system
   playerNotes: { note: string; timestamp: number }[]; // Player-saved notes
   bookmarkedFiles: Set<string>; // Files player has bookmarked
@@ -276,6 +281,7 @@ export interface CommandResult {
   skipToPhase?: GamePhase; // GOD mode: skip directly to a phase
   checkAchievements?: string[]; // Achievement IDs to check
   triggerTuringTest?: boolean; // Show Turing test overlay
+  pendingUfo74Messages?: TerminalEntry[]; // UFO74 messages to show after image/video closes
 }
 
 export const TRUTH_CATEGORIES = [
@@ -294,7 +300,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   commandHistory: [],
   commandHistoryIndex: -1,
   detectionLevel: 0,
-  dataIntegrity: 100,
+  wrongAttempts: 0,
   accessLevel: 1,
   sessionStability: 100,
   legacyAlertCounter: 0,
@@ -363,6 +369,10 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   // Cipher puzzles
   pendingCipherFile: undefined,
   cipherAttempts: 0,
+  // Morse code puzzle
+  morseFileRead: false,
+  morseMessageAttempts: 0,
+  morseMessageSolved: false,
   // UX: Notes & bookmarks
   playerNotes: [],
   bookmarkedFiles: new Set(),

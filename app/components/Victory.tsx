@@ -13,7 +13,7 @@ interface VictoryProps {
   maxDetectionReached?: number;
   mathMistakes?: number;
   evidenceLinks?: Array<[string, string]>;
-  dataIntegrity?: number;
+  wrongAttempts?: number;
   choiceLeakPath?: 'public' | 'covert';
   rivalInvestigatorActive?: boolean;
   filesReadCount?: number;
@@ -26,7 +26,7 @@ export default function Victory({
   maxDetectionReached = 50,
   mathMistakes = 0,
   evidenceLinks = [],
-  dataIntegrity = 100,
+  wrongAttempts = 0,
   choiceLeakPath,
   rivalInvestigatorActive = false,
   filesReadCount = 0
@@ -39,7 +39,7 @@ export default function Victory({
   
   const linkCount = evidenceLinks.length;
   const linkStatus = linkCount >= 3 ? 'Coherent' : linkCount > 0 ? 'Partial' : 'Absent';
-  const integrityStatus = dataIntegrity >= 80 ? 'Stable' : dataIntegrity >= 50 ? 'Degraded' : 'Critical';
+  const attemptsStatus = wrongAttempts === 0 ? 'Perfect' : wrongAttempts <= 2 ? 'Minor errors' : 'Close calls';
   const releasePath = choiceLeakPath === 'public'
     ? 'Open networks'
     : choiceLeakPath === 'covert'
@@ -69,7 +69,7 @@ export default function Victory({
     '',
     'ADMINISTRATIVE NOTES:',
     `  Correlation status: ${linkStatus} (${linkCount} link${linkCount === 1 ? '' : 's'})`,
-    `  Integrity status: ${integrityStatus}`,
+    `  Operation status: ${attemptsStatus}`,
     `  Release path: ${releasePath}`,
     interferenceLine,
     '',

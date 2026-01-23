@@ -270,12 +270,11 @@ describe('Narrative Mechanics', () => {
     it('corrupts nearby files when reading core_dump_corrupted.bin', () => {
       const state = createTestState({ 
         currentPath: '/tmp',
-        dataIntegrity: 100,
+        wrongAttempts: 0,
       });
       const result = executeCommand('open core_dump_corrupted.bin', state);
       // Should have corruption applied to a random file
       expect(result.stateChanges.fileMutations).toBeDefined();
-      expect(result.stateChanges.dataIntegrity).toBeLessThan(100);
       expect(result.triggerFlicker).toBe(true);
     });
   });

@@ -23,7 +23,7 @@ describe('Victory Component', () => {
     maxDetectionReached: 50,
     mathMistakes: 0,
     evidenceLinks: [] as Array<[string, string]>,
-    dataIntegrity: 100,
+    wrongAttempts: 0,
     filesReadCount: 20,
   };
 
