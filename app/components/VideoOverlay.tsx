@@ -2,18 +2,15 @@
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styles from './VideoOverlay.module.css';
+import type { VideoTrigger, ImageTone } from '../types';
 
-export interface VideoTrigger {
-  src: string;
-  title: string;
-  tone: 'clinical' | 'surveillance';
-  corrupted?: boolean;
-}
+// Re-export for convenience
+export type { VideoTrigger };
 
 interface VideoOverlayProps {
   src: string;
   title: string;
-  tone: 'clinical' | 'surveillance';
+  tone: ImageTone;
   onCloseAction: () => void;
   corrupted?: boolean;
 }

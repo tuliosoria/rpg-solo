@@ -10,7 +10,7 @@
 
 - ✅ **UFO74 has a secret** - Reveal they're actually an insider/witness, not just a hacker. They were there in January 1996.
 
-- ✅ **Time pressure mechanic** - Real-time countdown after triggering active_trace.sys. 5 minutes to complete or get caught.
+- ✅ **Time pressure mechanic** - Real-time countdown after triggering active_trace.sys. 3 minutes to complete or get caught.
 
 - ✅ **Unreliable narrator** - Some "evidence" is planted disinformation (official_summary_report); subtle flag when discovered.
 

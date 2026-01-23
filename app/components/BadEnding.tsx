@@ -1,16 +1,27 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './BadEnding.module.css';
+import { recordEnding } from '../storage/statistics';
 
 interface BadEndingProps {
   onRestartAction: () => void;
   reason?: string;
+  commandCount?: number;
+  detectionLevel?: number;
 }
 
-export default function BadEnding({ onRestartAction, reason = 'DETECTION THRESHOLD EXCEEDED' }: BadEndingProps) {
+export default function BadEnding({ onRestartAction, reason = 'DETECTION THRESHOLD EXCEEDED', commandCount = 0, detectionLevel = 100 }: BadEndingProps) {
   const [phase, setPhase] = useState<'glitch' | 'lockdown' | 'message' | 'final'>('glitch');
   const [textLines, setTextLines] = useState<string[]>([]);
+  const hasRecordedEnding = useRef(false);
+  
+  // Record the bad ending in statistics
+  useEffect(() => {
+    if (hasRecordedEnding.current) return;
+    hasRecordedEnding.current = true;
+    recordEnding('bad', commandCount, detectionLevel);
+  }, [commandCount, detectionLevel]);
   
   const LOCKDOWN_TEXT = [
     '╔═══════════════════════════════════════════════════════════╗',

@@ -1,15 +1,26 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './NeutralEnding.module.css';
+import { recordEnding } from '../storage/statistics';
 
 interface NeutralEndingProps {
   onRestartAction: () => void;
+  commandCount?: number;
+  detectionLevel?: number;
 }
 
-export default function NeutralEnding({ onRestartAction }: NeutralEndingProps) {
+export default function NeutralEnding({ onRestartAction, commandCount = 0, detectionLevel = 50 }: NeutralEndingProps) {
   const [phase, setPhase] = useState<'disconnect' | 'message' | 'final'>('disconnect');
   const [textLines, setTextLines] = useState<string[]>([]);
+  const hasRecordedEnding = useRef(false);
+  
+  // Record the neutral ending in statistics
+  useEffect(() => {
+    if (hasRecordedEnding.current) return;
+    hasRecordedEnding.current = true;
+    recordEnding('neutral', commandCount, detectionLevel);
+  }, [commandCount, detectionLevel]);
   
   const NEUTRAL_TEXT = [
     '═══════════════════════════════════════════════════════════',

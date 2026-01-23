@@ -21,6 +21,12 @@ import {
 } from './filesystem';
 import { createSeededRng, seededRandomInt, seededRandomPick } from './rng';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
+import { 
+  DETECTION_THRESHOLDS, 
+  DETECTION_INCREASES, 
+  DETECTION_DECREASES,
+  MAX_DETECTION 
+} from '../constants/detection';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
@@ -79,9 +85,9 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('turing_warning')) return false;
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
-      // Trigger at detection level 35+, before Turing test can start
+      // Trigger at detection level WANDERING_LOW+, before Turing test can start
       // This ensures warning always shows before the test, even if detection jumps
-      return state.detectionLevel >= 35 && state.truthsDiscovered.size >= 1;
+      return state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_LOW && state.truthsDiscovered.size >= 1;
     },
     execute: (state) => {
       return {
@@ -113,7 +119,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       // Trigger at detection level 45-55 on any command, BUT only if warning was shown
       // If warning wasn't shown yet, don't trigger (let the warning trigger first)
       if (!state.singularEventsTriggered?.has('turing_warning')) return false;
-      return state.detectionLevel >= 45 && state.detectionLevel <= 55 && state.truthsDiscovered.size >= 1;
+      return state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_RANGE_MIN && state.detectionLevel <= DETECTION_THRESHOLDS.WANDERING_RANGE_MAX && state.truthsDiscovered.size >= 1;
     },
     execute: (state) => {
       return {
@@ -142,7 +148,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('the_echo')) return false;
       if (command !== 'open' && command !== 'decrypt') return false;
       const path = args[0]?.toLowerCase() || '';
-      return (path.includes('psi') || path.includes('transcript')) && state.detectionLevel >= 40;
+      return (path.includes('psi') || path.includes('transcript')) && state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_PSI;
     },
     execute: (state) => ({
       output: [
@@ -172,7 +178,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('the_silence')) return false;
       if (command !== 'cd' && command !== 'ls') return false;
       const path = args[0]?.toLowerCase() || state.currentPath.toLowerCase();
-      return path.includes('admin') && state.detectionLevel >= 60 && state.flags.adminUnlocked;
+      return path.includes('admin') && state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_ADMIN && state.flags.adminUnlocked;
     },
     execute: (state) => ({
       output: [
@@ -206,7 +212,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     id: 'watcher_ack',
     trigger: (state) => {
       if (state.singularEventsTriggered?.has('watcher_ack')) return false;
-      return state.truthsDiscovered.size >= 3 && state.detectionLevel >= 50;
+      return state.truthsDiscovered.size >= 3 && state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_TRUTHS;
     },
     execute: (state) => ({
       output: [
@@ -236,7 +242,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     id: 'rival_investigator',
     trigger: (state) => {
       if (state.singularEventsTriggered?.has('rival_investigator')) return false;
-      return (state.evidenceLinks?.length || 0) >= 3 && state.detectionLevel >= 45;
+      return (state.evidenceLinks?.length || 0) >= 3 && state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_EVIDENCE;
     },
     execute: (state) => ({
       output: [
@@ -319,12 +325,12 @@ function calculateHostilityIncrease(state: GameState, command: string): number {
   if (command === 'trace') return 1;
   if (command === 'recover') return 1;
   if (command === 'override') return 2;
-  if (command === 'decrypt') return state.detectionLevel > 50 ? 1 : 0;
+  if (command === 'decrypt') return state.detectionLevel > DETECTION_THRESHOLDS.DECRYPT_WARNING ? 1 : 0;
   
   // Detection thresholds trigger hostility
-  if (state.detectionLevel >= 80 && baseHostility < 4) return 1;
-  if (state.detectionLevel >= 60 && baseHostility < 3) return 1;
-  if (state.detectionLevel >= 40 && baseHostility < 2) return 1;
+  if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_HIGH && baseHostility < 4) return 1;
+  if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_MED && baseHostility < 3) return 1;
+  if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_LOW && baseHostility < 2) return 1;
   
   return 0;
 }
@@ -566,10 +572,10 @@ export function parseCommand(input: string): { command: string; args: string[] }
 export function calculateDelay(state: GameState): number {
   // Base delay from detection level
   let baseDelay = 0;
-  if (state.detectionLevel < 20) baseDelay = 0;
-  else if (state.detectionLevel < 40) baseDelay = 300;
-  else if (state.detectionLevel < 60) baseDelay = 800;
-  else if (state.detectionLevel < 80) baseDelay = 1500;
+  if (state.detectionLevel < DETECTION_THRESHOLDS.DELAY_NONE) baseDelay = 0;
+  else if (state.detectionLevel < DETECTION_THRESHOLDS.DELAY_LOW) baseDelay = 300;
+  else if (state.detectionLevel < DETECTION_THRESHOLDS.DELAY_MEDIUM) baseDelay = 800;
+  else if (state.detectionLevel < DETECTION_THRESHOLDS.DELAY_HIGH) baseDelay = 1500;
   else baseDelay = 2500;
   
   // Per-run variance: some runs have faster/slower response times (±30%)
@@ -908,14 +914,14 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
   let videoTrigger: VideoTrigger | undefined = undefined;
   if (file.videoTrigger) {
     const videoId = file.videoTrigger.src;
-    const imagesShown = state.imagesShownThisRun || new Set<string>();
+    const videosShown = state.videosShownThisRun || new Set<string>();
     
-    if (!imagesShown.has(videoId)) {
+    if (!videosShown.has(videoId)) {
       videoTrigger = file.videoTrigger;
-      // Mark this video as shown (reuse imagesShownThisRun for both)
-      const newImagesShown = new Set(imagesShown);
-      newImagesShown.add(videoId);
-      stateChanges.imagesShownThisRun = newImagesShown;
+      // Mark this video as shown in videosShownThisRun
+      const newVideosShown = new Set(videosShown);
+      newVideosShown.add(videoId);
+      stateChanges.videosShownThisRun = newVideosShown;
     }
   }
   
@@ -2263,11 +2269,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     ];
     
     // Detection surfacing - becomes more terse at high hostility
-    if (state.detectionLevel < 20) {
+    if (state.detectionLevel < DETECTION_THRESHOLDS.STATUS_LOW) {
       lines.push(hostility >= 3 ? '  LOGGING: Nominal' : '  LOGGING: Nominal');
-    } else if (state.detectionLevel < 50) {
+    } else if (state.detectionLevel < DETECTION_THRESHOLDS.STATUS_MED) {
       lines.push(hostility >= 3 ? '  LOGGING: Active' : '  LOGGING: Active monitoring enabled');
-    } else if (state.detectionLevel < 80) {
+    } else if (state.detectionLevel < DETECTION_THRESHOLDS.STATUS_HIGH) {
       lines.push(hostility >= 3 ? '  LOGGING: FLAGGED' : '  LOGGING: WARNING — Audit trail flagged');
     } else {
       lines.push(hostility >= 3 ? '  LOGGING: CRITICAL' : '  LOGGING: CRITICAL — Countermeasures engaged');
@@ -2916,14 +2922,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     let videoTrigger: VideoTrigger | undefined = undefined;
     if (file.videoTrigger && !isEncryptedAndLocked) {
       const videoId = file.videoTrigger.src;
-      const imagesShown = state.imagesShownThisRun || new Set<string>();
+      const videosShown = state.videosShownThisRun || new Set<string>();
       
-      if (!imagesShown.has(videoId)) {
+      if (!videosShown.has(videoId)) {
         videoTrigger = file.videoTrigger;
-        // Mark this video as shown (reuse imagesShownThisRun for both)
-        const newImagesShown = new Set(imagesShown);
-        newImagesShown.add(videoId);
-        stateChanges.imagesShownThisRun = newImagesShown;
+        // Mark this video as shown in videosShownThisRun
+        const newVideosShown = new Set(videosShown);
+        newVideosShown.add(videoId);
+        stateChanges.videosShownThisRun = newVideosShown;
       }
     }
     
@@ -3166,12 +3172,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('ufo74', '[UFO74]: I\'ve been inside their systems ever since.'),
           createEntry('ufo74', '[UFO74]: Not for revenge. For proof.'),
           createEntry('ufo74', '[UFO74]: You have the proof now. Don\'t let them bury it again.'),
+          createEntry('system', ''),
+          createEntry('warning', '▓▓▓ THE WHOLE TRUTH AWAITS ▓▓▓'),
+          createEntry('system', '[Press ENTER to continue...]'),
         ],
         stateChanges: {
           ufo74SecretDiscovered: true,
           detectionLevel: 100,
         },
-        skipToPhase: 'secret_ending' as const,
         triggerFlicker: true,
         delayMs: 3000,
       };
@@ -3401,7 +3409,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const roll = rng();
     
     const isTerribleMistakeCondition = 
-      state.detectionLevel >= 70 && 
+      state.detectionLevel >= DETECTION_THRESHOLDS.ALERT && 
       state.truthsDiscovered.size >= 2 &&
       !state.terribleMistakeTriggered &&
       roll < 0.35; // 35% chance when conditions are met
@@ -4310,7 +4318,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
     
-    if (state.detectionLevel <= 5) {
+    if (state.detectionLevel <= DETECTION_THRESHOLDS.GHOST_MAX) {
       return {
         output: [
           createEntry('system', 'Detection level already minimal.'),
@@ -4321,7 +4329,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
     
     // Calculate reduction: more effective at high detection, but costs hostility
-    const reduction = Math.min(state.detectionLevel, state.detectionLevel >= 70 ? 8 : 5);
+    const reduction = Math.min(state.detectionLevel, state.detectionLevel >= DETECTION_THRESHOLDS.HIGH_WAIT_REDUCTION ? DETECTION_DECREASES.WAIT_HIGH_DETECTION : DETECTION_DECREASES.WAIT_NORMAL);
     const newDetection = Math.max(0, state.detectionLevel - reduction);
     const newHostility = Math.min(5, (state.systemHostilityLevel || 0) + 1);
     
@@ -4358,7 +4366,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   
   hide: (args, state) => {
     // Only available at 90+ detection
-    if (state.detectionLevel < 90) {
+    if (state.detectionLevel < DETECTION_THRESHOLDS.HIDE_AVAILABLE) {
       return {
         output: [
           createEntry('error', 'Command not recognized: hide'),
@@ -4369,7 +4377,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
     
     // Can only use once per run
-    if (state.hideAvailable === false && state.detectionLevel >= 90) {
+    if (state.hideAvailable === false && state.detectionLevel >= DETECTION_THRESHOLDS.HIDE_AVAILABLE) {
       // First time at 90+ - hide becomes available
       // This is handled by the detection check below
     }
@@ -4669,9 +4677,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     output.push(createEntry('system', ''));
     
     // Detection warning
-    if (state.detectionLevel >= 70) {
+    if (state.detectionLevel >= DETECTION_THRESHOLDS.ALERT) {
       output.push(createEntry('error', '  ⚠ CRITICAL: Detection level dangerously high'));
-    } else if (state.detectionLevel >= 40) {
+    } else if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_LOW) {
       output.push(createEntry('warning', '  ⚠ WARNING: Detection level elevated'));
     }
     

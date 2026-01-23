@@ -13,18 +13,19 @@ describe('Video Trigger Logic', () => {
       rngState: 12345,
       sessionStartTime: Date.now(),
       imagesShownThisRun: new Set(),
+      videosShownThisRun: new Set(),
     };
   });
 
-  it('tracks shown videos in imagesShownThisRun set', () => {
+  it('tracks shown videos in videosShownThisRun set', () => {
     const result = executeCommand('open /storage/quarantine/surveillance_recovery.vid', initialState);
 
-    expect(result.stateChanges.imagesShownThisRun instanceof Set).toBe(true);
+    expect(result.stateChanges.videosShownThisRun instanceof Set).toBe(true);
   });
 
-  it('does not set imagesShownThisRun for non-video commands', () => {
+  it('does not set videosShownThisRun for non-video commands', () => {
     const result = executeCommand('help', initialState);
 
-    expect(result.stateChanges.imagesShownThisRun).toBeUndefined();
+    expect(result.stateChanges.videosShownThisRun).toBeUndefined();
   });
 });

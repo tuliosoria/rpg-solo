@@ -91,13 +91,6 @@ export const ACHIEVEMENTS: Achievement[] = [
     secret: true,
   },
   {
-    id: 'speed_runner',
-    name: 'Speed Runner',
-    description: 'Complete the game in under 50 commands',
-    icon: '🏃',
-    secret: true,
-  },
-  {
     id: 'paranoid',
     name: 'Paranoid',
     description: 'Check system status 10+ times',
@@ -112,24 +105,10 @@ export const ACHIEVEMENTS: Achievement[] = [
     secret: true,
   },
   {
-    id: 'ghost_protocol',
-    name: 'Ghost',
-    description: 'Complete the game with detection under 30%',
-    icon: '🕵️',
-    secret: true,
-  },
-  {
     id: 'night_owl',
     name: 'Night Owl',
     description: 'Play for over 30 minutes in a single session',
     icon: '🦉',
-    secret: true,
-  },
-  {
-    id: 'completionist_hidden',
-    name: 'Completionist',
-    description: 'Read every readable file in the system',
-    icon: '📖',
     secret: true,
   },
 ];

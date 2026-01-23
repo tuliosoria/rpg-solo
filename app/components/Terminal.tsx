@@ -5,6 +5,8 @@ import { GameState, TerminalEntry, ImageTrigger, VideoTrigger, StreamingMode, Ga
 import { executeCommand, createEntry, getTutorialMessage, TUTORIAL_MESSAGES } from '../engine/commands';
 import { listDirectory, resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { autoSave } from '../storage/saves';
+import { incrementStatistic, addPlaytime } from '../storage/statistics';
+import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { useSound } from '../hooks/useSound';
 import { unlockAchievement, Achievement } from '../engine/achievements';
 import ImageOverlay from './ImageOverlay';
@@ -272,6 +274,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     const interval = setInterval(() => {
       if (!gameState.isGameOver) {
         autoSave(gameState);
+        // Track playtime every 30 seconds
+        addPlaytime(30000);
       }
     }, 30000); // Every 30 seconds
     
@@ -460,16 +464,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     return () => clearInterval(interval);
   }, [gameState.countdownActive, gameState.countdownEndTime, gamePhase, playSound]);
   
-  // Check for secret ending trigger
-  useEffect(() => {
-    if (gameState.ufo74SecretDiscovered && gamePhase === 'terminal') {
-      // Delay to let player see the reveal
-      const timer = setTimeout(() => {
-        setGamePhase('secret_ending');
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [gameState.ufo74SecretDiscovered, gamePhase]);
+  // Check for secret ending trigger - now requires ENTER confirmation
+  // The ufo74SecretDiscovered flag is set, but transition happens in handleSubmit
+  // when user presses Enter with empty input
   
   // Idle hint system - nudge players who seem stuck
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -511,9 +508,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     { hint: "Multiple truths discovered. 'correlate file1 file2' links evidence together.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 3 && (s.evidenceLinks?.length || 0) === 0 },
     
     // High detection - hint about wait command
-    { hint: "Detection is high. The 'wait' command lets time pass safely.", condition: (s: GameState) => s.detectionLevel > 60 },
-    { hint: "They're watching closely. Consider using 'wait' to reduce suspicion.", condition: (s: GameState) => s.detectionLevel > 70 },
-    { hint: "CAUTION: Detection critical. 'wait' might buy you time.", condition: (s: GameState) => s.detectionLevel > 80 },
+    { hint: "Detection is high. The 'wait' command lets time pass safely.", condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HOSTILITY_MED },
+    { hint: "They're watching closely. Consider using 'wait' to reduce suspicion.", condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.ALERT },
+    { hint: "CAUTION: Detection critical. 'wait' might buy you time.", condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HEAVY_GLITCH },
     
     // Override protocol hint
     { hint: "You've seen a lot. There may be... deeper access available.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.override_unlocked },
@@ -544,6 +541,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       const currentState = gameStateRef.current;
       const hintsGiven = currentState.idleHintsGiven || 0;
       if (hintsGiven >= 5) return; // Max 5 idle hints per session
+      
+      // Skip if wandering notices have recently been given (avoid double-up)
+      const wanderingCount = currentState.wanderingNoticeCount || 0;
+      if (wanderingCount > 0) return;
       
       // Find an applicable hint
       const applicableHints = IDLE_HINTS.filter(h => h.condition(currentState));
@@ -748,6 +749,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       return;
     }
     
+    // If secret ending is pending confirmation, transition on Enter
+    if (gameState.ufo74SecretDiscovered && !inputValue.trim() && gamePhase === 'terminal') {
+      setGamePhase('secret_ending');
+      return;
+    }
+    
     // If there are pending UFO74 messages, show next one on Enter
     if (pendingUfo74Messages.length > 0 && !inputValue.trim()) {
       const [nextMessage, ...remaining] = pendingUfo74Messages;
@@ -858,6 +865,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     // Execute command
     setIsProcessing(true);
+    
+    // Track command for statistics
+    incrementStatistic('commandsTyped');
     
     const result = executeCommand(command, newState);
     
@@ -1015,6 +1025,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     // Check for achievements based on state changes
     const truthCount = intermediateState.truthsDiscovered?.size || 0;
     const prevTruthCount = gameState.truthsDiscovered?.size || 0;
+    
+    // Track file reads for statistics
+    const filesReadCount = intermediateState.filesRead?.size || 0;
+    const prevFilesReadCount = gameState.filesRead?.size || 0;
+    if (filesReadCount > prevFilesReadCount) {
+      incrementStatistic('filesRead');
+    }
     
     // New evidence discovered - play fanfare!
     if (truthCount > prevTruthCount) {
@@ -1238,7 +1255,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const getStatusBar = () => {
     const parts: string[] = [];
     
-    if (gameState.detectionLevel >= 50) {
+    if (gameState.detectionLevel >= DETECTION_THRESHOLDS.SUSPICIOUS) {
       parts.push('AUDIT: ACTIVE');
     }
     if (gameState.sessionStability < 50) {
@@ -1411,15 +1428,25 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     return <BadEnding 
       onRestartAction={handleRestart}
       reason={gameState.gameOverReason}
+      commandCount={gameState.sessionCommandCount}
+      detectionLevel={gameState.detectionLevel}
     />;
   }
   
   if (gamePhase === 'neutral_ending') {
-    return <NeutralEnding onRestartAction={handleRestart} />;
+    return <NeutralEnding 
+      onRestartAction={handleRestart}
+      commandCount={gameState.sessionCommandCount}
+      detectionLevel={gameState.detectionLevel}
+    />;
   }
   
   if (gamePhase === 'secret_ending') {
-    return <SecretEnding onRestartAction={handleRestart} />;
+    return <SecretEnding 
+      onRestartAction={handleRestart}
+      commandCount={gameState.sessionCommandCount}
+      detectionLevel={gameState.detectionLevel}
+    />;
   }
   
   return (

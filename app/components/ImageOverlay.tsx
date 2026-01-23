@@ -109,6 +109,7 @@ export default function ImageOverlay({ src, alt, tone, onCloseAction, corrupted 
         {/* Minimal metadata */}
         <div className={styles.metadata}>
           <div>CLASSIFICATION: RESTRICTED</div>
+          <div className={styles.hint}>[Any key to dismiss]</div>
         </div>
       </div>
     </div>

@@ -1,15 +1,26 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './SecretEnding.module.css';
+import { recordEnding } from '../storage/statistics';
 
 interface SecretEndingProps {
   onRestartAction: () => void;
+  commandCount?: number;
+  detectionLevel?: number;
 }
 
-export default function SecretEnding({ onRestartAction }: SecretEndingProps) {
+export default function SecretEnding({ onRestartAction, commandCount = 0, detectionLevel = 100 }: SecretEndingProps) {
   const [phase, setPhase] = useState<'static' | 'reveal' | 'message' | 'final'>('static');
   const [textLines, setTextLines] = useState<string[]>([]);
+  const hasRecordedEnding = useRef(false);
+  
+  // Record the secret ending in statistics
+  useEffect(() => {
+    if (hasRecordedEnding.current) return;
+    hasRecordedEnding.current = true;
+    recordEnding('secret', commandCount, detectionLevel);
+  }, [commandCount, detectionLevel]);
   
   const SECRET_TEXT = [
     '═══════════════════════════════════════════════════════════',

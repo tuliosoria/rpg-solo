@@ -138,6 +138,9 @@ export interface GameState {
   // Images shown this run (each image shown at most once)
   imagesShownThisRun: Set<string>;
   
+  // Videos shown this run (each video shown at most once)
+  videosShownThisRun: Set<string>;
+  
   // System personality degradation (affects tone as risk increases)
   systemHostilityLevel: number; // 0-5, increases with risky actions
   
@@ -319,6 +322,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   lastIncognitoTrigger: 0,
   singularEventsTriggered: new Set(),
   imagesShownThisRun: new Set(),
+  videosShownThisRun: new Set(),
   systemHostilityLevel: 0,
   terribleMistakeTriggered: false,
   sessionDoomCountdown: 0,

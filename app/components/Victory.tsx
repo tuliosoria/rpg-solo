@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './Victory.module.css';
 import { unlockAchievement, Achievement } from '../engine/achievements';
+import { recordEnding } from '../storage/statistics';
 import AchievementPopup from './AchievementPopup';
 
 interface VictoryProps {
@@ -34,6 +35,7 @@ export default function Victory({
   const [textLines, setTextLines] = useState<string[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null);
+  const hasRecordedEnding = useRef(false);
   
   const linkCount = evidenceLinks.length;
   const linkStatus = linkCount >= 3 ? 'Coherent' : linkCount > 0 ? 'Partial' : 'Absent';
@@ -90,6 +92,13 @@ export default function Victory({
   
   // Check for achievements on mount
   useEffect(() => {
+    // Prevent duplicate recording if effect runs multiple times
+    if (hasRecordedEnding.current) return;
+    hasRecordedEnding.current = true;
+    
+    // Record the good ending in statistics
+    recordEnding('good', commandCount, detectionLevel);
+    
     const newAchievements: Achievement[] = [];
     
     // Speed Demon - under 50 commands
@@ -116,25 +125,10 @@ export default function Victory({
       if (result?.isNew) newAchievements.push(result.achievement);
     }
     
-    // Hidden achievements
-    
-    // Speed Runner - under 50 commands (hidden version)
-    if (commandCount < 50) {
-      const result = unlockAchievement('speed_runner');
-      if (result?.isNew) newAchievements.push(result.achievement);
-    }
-    
-    // Ghost - detection under 30% (hidden version with different threshold)
-    if (detectionLevel < 30) {
-      const result = unlockAchievement('ghost_protocol');
-      if (result?.isNew) newAchievements.push(result.achievement);
-    }
-    
-    // Completionist - read every readable file (roughly 100 files in system)
-    // We use a reasonable threshold since some files may be inaccessible
+    // Completionist - read every readable file (roughly 80 files in system)
     const TOTAL_READABLE_FILES = 80; // Approximate count of accessible files
     if (filesReadCount >= TOTAL_READABLE_FILES) {
-      const result = unlockAchievement('completionist_hidden');
+      const result = unlockAchievement('completionist');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
     
