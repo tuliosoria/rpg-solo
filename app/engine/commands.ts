@@ -5945,14 +5945,9 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       );
       
       if (incognitoMessage) {
-        // If there's an image or video trigger, queue UFO74 messages for AFTER the media closes
-        // This ensures player sees: file content → image → UFO74 comment (in that order)
-        if (result.imageTrigger || result.videoTrigger) {
-          result.pendingUfo74Messages = [...(result.pendingUfo74Messages || []), ...incognitoMessage];
-        } else {
-          // No media trigger - show UFO74 message immediately after file content
-          result.output = [...result.output, ...incognitoMessage];
-        }
+        // Always queue UFO74 messages to show after player presses Enter
+        // This keeps the pacing consistent - player sees file content, then presses Enter for UFO74 reaction
+        result.pendingUfo74Messages = [...(result.pendingUfo74Messages || []), ...incognitoMessage];
         result.stateChanges.incognitoMessageCount = (state.incognitoMessageCount || 0) + 1;
         result.stateChanges.lastIncognitoTrigger = Date.now();
       }
