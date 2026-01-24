@@ -2933,6 +2933,11 @@ const bio_program_overview: FileNode = {
   status: 'restricted',
   accessThreshold: 4,
   reveals: ['being_containment'],
+  imageTrigger: {
+    src: '/images/bio-program.png',
+    alt: 'Bio-Assessment Initiative - Recovered specimen documentation',
+    tone: 'clinical',
+  },
   content: [
     '═══════════════════════════════════════════════════════════',
     'PROGRAM OVERVIEW — BIO-ASSESSMENT INITIATIVE',
@@ -3360,6 +3365,11 @@ const extraction_mechanism: FileNode = {
   status: 'restricted',
   accessThreshold: 4,
   reveals: ['transition_2026'],
+  imageTrigger: {
+    src: '/images/extraction.png',
+    alt: 'Energy Extraction Model - Theoretical visualization',
+    tone: 'clinical',
+  },
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL PAPER — ENERGY EXTRACTION MODEL',
