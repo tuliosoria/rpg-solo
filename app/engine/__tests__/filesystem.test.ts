@@ -127,6 +127,18 @@ describe('Filesystem', () => {
       expect(entries!.some(e => e.name === 'trace_purge_memo.txt')).toBe(true);
     });
 
+    it('hides neural_cluster_memo.txt without adminUnlocked flag', () => {
+      const state = createTestState({ accessLevel: 5, flags: { adminUnlocked: false } });
+      const entries = listDirectory('/comms', state);
+      expect(entries!.some(e => e.name === 'neural_cluster_memo.txt')).toBe(false);
+    });
+
+    it('shows neural_cluster_memo.txt when adminUnlocked flag is set', () => {
+      const state = createTestState({ accessLevel: 5, flags: { adminUnlocked: true } });
+      const entries = listDirectory('/comms', state);
+      expect(entries!.some(e => e.name === 'neural_cluster_memo.txt')).toBe(true);
+    });
+
     it('returns null for non-existent directory', () => {
       const state = createTestState();
       const entries = listDirectory('/nonexistent', state);

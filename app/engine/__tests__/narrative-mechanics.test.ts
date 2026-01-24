@@ -1024,6 +1024,132 @@ describe('Narrative Mechanics', () => {
     });
   });
 
+  describe('Doom Countdown (sessionDoomCountdown)', () => {
+    it('decrements doom countdown exactly once per command when terribleMistakeTriggered', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        terribleMistakeTriggered: true,
+        sessionDoomCountdown: 10,
+      });
+      const result = executeCommand('ls', state);
+      
+      // Should decrement by exactly 1
+      expect(result.stateChanges.sessionDoomCountdown).toBe(9);
+    });
+
+    it('shows warning when doom countdown is low (5 or below)', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        terribleMistakeTriggered: true,
+        sessionDoomCountdown: 5,
+      });
+      const result = executeCommand('ls', state);
+      
+      // Should show doom countdown warning in output (uses PURGE COUNTDOWN or PURGE IN format)
+      expect(result.output.some(e => 
+        e.content.includes('PURGE COUNTDOWN') || e.content.includes('PURGE IN')
+      )).toBe(true);
+      expect(result.stateChanges.sessionDoomCountdown).toBe(4);
+    });
+
+    it('triggers game over when doom countdown reaches 0', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        terribleMistakeTriggered: true,
+        sessionDoomCountdown: 1, // Will become 0 after command
+      });
+      const result = executeCommand('ls', state);
+      
+      // Should trigger game over with PURGE PROTOCOL reason
+      expect(result.stateChanges.isGameOver).toBe(true);
+      expect(result.stateChanges.gameOverReason).toContain('PURGE PROTOCOL');
+    });
+
+    it('does not decrement doom countdown when terribleMistakeTriggered is false', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        terribleMistakeTriggered: false,
+        sessionDoomCountdown: 10,
+      });
+      const result = executeCommand('ls', state);
+      
+      // Should not change doom countdown
+      expect(result.stateChanges.sessionDoomCountdown).toBeUndefined();
+    });
+
+    it('maintains correct decrement across multiple commands', () => {
+      let state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        terribleMistakeTriggered: true,
+        sessionDoomCountdown: 5,
+      });
+      
+      // Execute 3 commands and verify countdown decrements correctly each time
+      for (let i = 0; i < 3; i++) {
+        const result = executeCommand('ls', state);
+        const expectedCountdown = 5 - (i + 1);
+        expect(result.stateChanges.sessionDoomCountdown).toBe(expectedCountdown);
+        
+        // Apply state changes for next iteration
+        state = {
+          ...state,
+          sessionDoomCountdown: result.stateChanges.sessionDoomCountdown ?? state.sessionDoomCountdown,
+        };
+      }
+    });
+  });
+
+  describe('Detection Level Game Over', () => {
+    it('triggers game over when detection reaches 100', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        detectionLevel: 95,
+        hiddenCommandsDiscovered: new Set(['scan']),
+      });
+      // scan adds 15 detection, should push us to 100+
+      const result = executeCommand('scan', state);
+      
+      expect(result.stateChanges.detectionLevel).toBe(100);
+      expect(result.stateChanges.isGameOver).toBe(true);
+      expect(result.stateChanges.gameOverReason).toContain('TRACED');
+    });
+
+    it('triggers game over when detection exceeds 100', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        detectionLevel: 98,
+        hiddenCommandsDiscovered: new Set(['scan']),
+      });
+      // scan adds 15 detection, should push us to 113 (capped at 100)
+      const result = executeCommand('scan', state);
+      
+      // Detection should be capped at 100
+      expect(result.stateChanges.detectionLevel).toBe(100);
+      expect(result.stateChanges.isGameOver).toBe(true);
+    });
+
+    it('does not trigger game over when detection is below 100', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        detectionLevel: 80,
+        hiddenCommandsDiscovered: new Set(['scan']),
+      });
+      // scan adds 15 detection, should push us to 95
+      const result = executeCommand('scan', state);
+      
+      expect(result.stateChanges.detectionLevel).toBe(95);
+      expect(result.stateChanges.isGameOver).toBeUndefined();
+    });
+  });
+
   describe('Truth Discovery System', () => {
     it('properly updates truthsDiscovered in stateChanges', () => {
       const state = createTestState({
