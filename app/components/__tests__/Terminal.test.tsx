@@ -268,19 +268,23 @@ describe('Terminal Component', () => {
       } as GameState,
     };
 
-    it('shows tutorial placeholder in input', () => {
+    it('shows enter button in tutorial mode', () => {
       render(<Terminal {...tutorialProps} />);
       
-      // Tutorial mode should show "Press ENTER to continue..." placeholder
-      const input = document.querySelector('input') as HTMLInputElement;
-      expect(input.placeholder).toBe('Press ENTER to continue...');
+      // Tutorial mode should show a big "PRESS ENTER TO CONTINUE" button instead of input
+      const enterButton = screen.getByRole('button', { name: /press enter to continue/i });
+      expect(enterButton).toBeInTheDocument();
+      
+      // Should NOT have an input field in tutorial mode
+      const input = document.querySelector('input');
+      expect(input).toBeNull();
     });
 
     it('advances tutorial on Enter key', async () => {
       render(<Terminal {...tutorialProps} />);
       
-      const input = document.querySelector('input') as HTMLInputElement;
-      const form = input.closest('form');
+      const enterButton = screen.getByRole('button', { name: /press enter to continue/i });
+      const form = enterButton.closest('form');
       
       // Press Enter to start showing tutorial content
       act(() => {
@@ -296,22 +300,25 @@ describe('Terminal Component', () => {
       expect(output).toBeTruthy();
     });
 
-    it('blocks typed commands during tutorial', async () => {
+    it('shows enter button instead of input during tutorial', async () => {
       render(<Terminal {...tutorialProps} />);
       
-      const input = document.querySelector('input') as HTMLInputElement;
+      // In tutorial mode, there's no input to type into - just the enter button
+      const enterButton = screen.getByRole('button', { name: /press enter to continue/i });
+      expect(enterButton).toBeInTheDocument();
       
+      // Click the button to advance
       act(() => {
-        fireEvent.change(input, { target: { value: 'help' } });
-        fireEvent.submit(input.closest('form')!);
+        fireEvent.click(enterButton);
       });
       
       act(() => {
         vi.advanceTimersByTime(500);
       });
       
-      // Should show error about transmission in progress
-      expect(screen.getByText(/transmission in progress|press ENTER/i)).toBeInTheDocument();
+      // Tutorial should still be in progress (button still visible)
+      // The button advances the tutorial step by step
+      expect(screen.getByRole('button', { name: /press enter to continue/i })).toBeInTheDocument();
     });
   });
 

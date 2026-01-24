@@ -1637,56 +1637,69 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       </div>
       
       {/* Input area */}
-      <form onSubmit={handleSubmit} className={styles.inputArea}>
-        <span className={styles.prompt}>&gt;</span>
-        <input
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          onChange={(e) => {
-            const newValue = e.target.value;
-            setInputValue(newValue);
-            if (newValue.length > inputValue.length) {
-              // Detect the typed character (last char of new value)
-              const typedChar = newValue.charAt(newValue.length - 1);
-              playKeySound(typedChar === ' ' ? ' ' : typedChar);
-              
-              // Track typing speed
-              const now = Date.now();
-              keypressTimestamps.current.push(now);
-              // Keep only last 10 keypresses
-              if (keypressTimestamps.current.length > 10) {
-                keypressTimestamps.current.shift();
-              }
-              
-              // Check typing speed (if 10+ chars in last second = too fast)
-              if (keypressTimestamps.current.length >= 8) {
-                const oldest = keypressTimestamps.current[0];
-                const timeSpan = (now - oldest) / 1000; // seconds
-                const charsPerSecond = keypressTimestamps.current.length / timeSpan;
+      {/* Show big ENTER button when in enter-only mode (tutorial, pending messages, pending media, secret ending confirmation) */}
+      {(!gameState.tutorialComplete || pendingUfo74Messages.length > 0 || pendingImage || pendingVideo || (gameState.ufo74SecretDiscovered && gamePhase === 'terminal')) && !gameState.isGameOver ? (
+        <form onSubmit={handleSubmit} className={styles.inputArea}>
+          <button
+            type="submit"
+            className={styles.enterButton}
+            disabled={isProcessing}
+            autoFocus
+          >
+            PRESS ENTER TO CONTINUE
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleSubmit} className={styles.inputArea}>
+          <span className={styles.prompt}>&gt;</span>
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setInputValue(newValue);
+              if (newValue.length > inputValue.length) {
+                // Detect the typed character (last char of new value)
+                const typedChar = newValue.charAt(newValue.length - 1);
+                playKeySound(typedChar === ' ' ? ' ' : typedChar);
                 
-                if (charsPerSecond > 8 && !typingSpeedWarning) {
-                  setTypingSpeedWarning(true);
-                  playSound('warning');
-                  // Clear warning after 3 seconds
-                  setTimeout(() => setTypingSpeedWarning(false), 3000);
+                // Track typing speed
+                const now = Date.now();
+                keypressTimestamps.current.push(now);
+                // Keep only last 10 keypresses
+                if (keypressTimestamps.current.length > 10) {
+                  keypressTimestamps.current.shift();
+                }
+                
+                // Check typing speed (if 10+ chars in last second = too fast)
+                if (keypressTimestamps.current.length >= 8) {
+                  const oldest = keypressTimestamps.current[0];
+                  const timeSpan = (now - oldest) / 1000; // seconds
+                  const charsPerSecond = keypressTimestamps.current.length / timeSpan;
+                  
+                  if (charsPerSecond > 8 && !typingSpeedWarning) {
+                    setTypingSpeedWarning(true);
+                    playSound('warning');
+                    // Clear warning after 3 seconds
+                    setTimeout(() => setTypingSpeedWarning(false), 3000);
+                  }
                 }
               }
-            }
-          }}
-          onKeyDown={handleKeyDown}
-          className={styles.inputField}
-          disabled={isProcessing || gameState.isGameOver}
-          autoFocus
-          autoComplete="off"
-          spellCheck={false}
-          placeholder={!gameState.tutorialComplete || pendingUfo74Messages.length > 0 ? 'Press ENTER to continue...' : ''}
-        />
-        <span className={styles.cursor}>_</span>
-        {typingSpeedWarning && (
-          <span className={styles.typingWarning}>SUSPICIOUS TYPING PATTERN DETECTED</span>
-        )}
-      </form>
+            }}
+            onKeyDown={handleKeyDown}
+            className={styles.inputField}
+            disabled={isProcessing || gameState.isGameOver}
+            autoFocus
+            autoComplete="off"
+            spellCheck={false}
+          />
+          <span className={styles.cursor}>_</span>
+          {typingSpeedWarning && (
+            <span className={styles.typingWarning}>SUSPICIOUS TYPING PATTERN DETECTED</span>
+          )}
+        </form>
+      )}
       
       {/* Timed decryption timer overlay */}
       {gameState.timedDecryptActive && timedDecryptRemaining > 0 && (

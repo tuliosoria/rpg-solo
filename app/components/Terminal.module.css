@@ -678,6 +678,62 @@
   opacity: 0.5;
 }
 
+/* Big Enter Button for enter-only mode */
+.enterButton {
+  flex: 1;
+  background: linear-gradient(180deg, #003300 0%, #001a00 100%);
+  border: 3px solid #00ff00;
+  border-radius: 8px;
+  color: #00ff00;
+  font-family: inherit;
+  font-size: 1.4em;
+  font-weight: bold;
+  letter-spacing: 4px;
+  padding: 20px 40px;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 0, 0.3),
+    inset 0 0 20px rgba(0, 255, 0, 0.1);
+  transition: all 0.2s ease;
+  animation: enterButtonPulse 2s ease-in-out infinite;
+}
+
+.enterButton:hover {
+  background: linear-gradient(180deg, #004400 0%, #002200 100%);
+  border-color: #44ff44;
+  text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00;
+  box-shadow: 
+    0 0 30px rgba(0, 255, 0, 0.5),
+    inset 0 0 30px rgba(0, 255, 0, 0.2);
+  transform: scale(1.02);
+}
+
+.enterButton:active {
+  background: linear-gradient(180deg, #005500 0%, #003300 100%);
+  transform: scale(0.98);
+}
+
+.enterButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  animation: none;
+}
+
+@keyframes enterButtonPulse {
+  0%, 100% { 
+    box-shadow: 
+      0 0 20px rgba(0, 255, 0, 0.3),
+      inset 0 0 20px rgba(0, 255, 0, 0.1);
+  }
+  50% { 
+    box-shadow: 
+      0 0 35px rgba(0, 255, 0, 0.5),
+      inset 0 0 30px rgba(0, 255, 0, 0.2);
+  }
+}
+
 .cursor {
   color: #00ff00;
   animation: cursorBlink 1s infinite;

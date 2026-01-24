@@ -559,6 +559,46 @@ export function createOutputEntries(lines: string[], type: TerminalEntry['type']
   return lines.map(line => createEntry(type, line));
 }
 
+// Helper to create invalid command result with legacyAlertCounter increment
+export function createInvalidCommandResult(state: GameState, commandName: string): CommandResult {
+  const newAlertCounter = state.legacyAlertCounter + 1;
+  
+  // Check if this triggers game over
+  if (newAlertCounter >= 8) {
+    return {
+      output: [
+        createEntry('error', ''),
+        createEntry('error', '═══════════════════════════════════════════════════════════'),
+        createEntry('error', 'CRITICAL: INVALID ATTEMPT THRESHOLD EXCEEDED'),
+        createEntry('error', '═══════════════════════════════════════════════════════════'),
+        createEntry('error', ''),
+        createEntry('error', 'SYSTEM LOCKDOWN INITIATED'),
+        createEntry('error', 'SESSION TERMINATED'),
+        createEntry('error', ''),
+      ],
+      stateChanges: {
+        isGameOver: true,
+        gameOverReason: 'INVALID ATTEMPT THRESHOLD',
+        legacyAlertCounter: newAlertCounter,
+      },
+      triggerFlicker: true,
+    };
+  }
+  
+  return {
+    output: [
+      createEntry('error', commandName ? `Unknown command: ${commandName}` : 'ERROR: Unknown command'),
+      createEntry('warning', ''),
+      createEntry('warning', '⚠ RISK INCREASED: Invalid commands draw system attention.'),
+      createEntry('system', `   [Invalid attempts: ${newAlertCounter}/8]`),
+    ],
+    stateChanges: {
+      detectionLevel: state.detectionLevel + 2,
+      legacyAlertCounter: newAlertCounter,
+    },
+  };
+}
+
 // Parse command into name and args
 export function parseCommand(input: string): { command: string; args: string[] } {
   const trimmed = input.trim();
@@ -3343,10 +3383,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   'override': (args, state) => {
     // Requires: "override protocol <PASSWORD>"
     if (args.length === 0 || args[0].toLowerCase() !== 'protocol') {
-      return {
-        output: [createEntry('error', 'ERROR: Unknown command')],
-        stateChanges: {},
-      };
+      // Invalid override syntax - treat as invalid command
+      return createInvalidCommandResult(state, '');
     }
     
     // Check if password was provided
@@ -4116,10 +4154,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   // disconnect - Severs connection (triggers neutral ending if used before saving)
   disconnect: (args, state) => {
     if (!state.hiddenCommandsDiscovered?.has('disconnect')) {
-      return {
-        output: [createEntry('error', 'Unknown command: disconnect')],
-        stateChanges: {},
-      };
+      // Hidden command not discovered - treat as invalid command
+      return createInvalidCommandResult(state, 'disconnect');
     }
     
     // If evidence not saved, neutral ending
@@ -4159,10 +4195,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   // scan - Reveals hidden files in current directory
   scan: (args, state) => {
     if (!state.hiddenCommandsDiscovered?.has('scan')) {
-      return {
-        output: [createEntry('error', 'Unknown command: scan')],
-        stateChanges: {},
-      };
+      // Hidden command not discovered - treat as invalid command
+      return createInvalidCommandResult(state, 'scan');
     }
     
     // Increase detection significantly
@@ -4191,10 +4225,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   decode: (args, state) => {
     // Hidden command - must be discovered first
     if (!state.hiddenCommandsDiscovered?.has('decode')) {
-      return {
-        output: [createEntry('error', 'Unknown command: decode')],
-        stateChanges: {},
-      };
+      // Hidden command not discovered - treat as invalid command
+      return createInvalidCommandResult(state, 'decode');
     }
     
     const attempt = args.join(' ').toLowerCase().trim();
