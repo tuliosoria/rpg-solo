@@ -93,12 +93,12 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       return {
         output: [
           createEntry('system', ''),
-          createEntry('ufo74', 'UFO74: kid, heads up. detection is getting high.'),
-          createEntry('ufo74', 'UFO74: if it gets much higher, the system will run'),
-          createEntry('ufo74', '       a verification check. its called turing evaluation.'),
-          createEntry('ufo74', 'UFO74: theyll ask you questions to prove youre a machine,'),
-          createEntry('ufo74', '       not a human. pick the COLD, LOGICAL answers.'),
-          createEntry('ufo74', 'UFO74: dont be human, kid. be the terminal.'),
+          createEntry('ufo74', 'UFO74: kid, heads up. your RISK level is climbing.'),
+          createEntry('ufo74', 'UFO74: around 45-55% the system runs a TURING EVALUATION.'),
+          createEntry('ufo74', '       its a security check to verify youre a machine.'),
+          createEntry('ufo74', 'UFO74: when it happens, pick the COLD, LOGICAL answers.'),
+          createEntry('ufo74', '       act like a terminal, not a human.'),
+          createEntry('ufo74', 'UFO74: fail it and theyll know someones inside.'),
           createEntry('system', ''),
         ],
         stateChanges: {
