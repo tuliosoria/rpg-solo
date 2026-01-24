@@ -2,6 +2,7 @@
 
 import { FileSystemNode, DirectoryNode, FileNode, GameState, FileMutation } from '../types';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
+import { createSeededRng } from './rng';
 
 export function resolvePath(path: string, currentPath: string): string {
   // Handle absolute vs relative paths
@@ -141,9 +142,12 @@ export function getFileContent(path: string, state: GameState, decrypted: boolea
   if (isTimeSensitive && commandCount > 30) {
     // Progressively corrupt time-sensitive files
     const corruptionLevel = Math.min(Math.floor((commandCount - 30) / 10), 5);
+    // Use seeded RNG based on path hash and command count for deterministic corruption
+    const pathHash = path.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const rng = createSeededRng(state.seed + pathHash + commandCount);
     content = content.map((line: string, idx: number) => {
       if (idx === 0 || idx === content.length - 1) return line; // Keep first/last line
-      if (Math.random() < corruptionLevel * 0.15) {
+      if (rng() < corruptionLevel * 0.15) {
         return '[DATA DEGRADED - RETRIEVAL WINDOW EXCEEDED]';
       }
       return line;

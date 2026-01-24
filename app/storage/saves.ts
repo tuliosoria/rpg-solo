@@ -14,6 +14,7 @@ function serializeState(state: GameState): string {
     truthsDiscovered: Array.from(state.truthsDiscovered),
     singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
     imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
+    videosShownThisRun: Array.from(state.videosShownThisRun || []),
     categoriesRead: Array.from(state.categoriesRead || []),
     filesRead: Array.from(state.filesRead || []),
     prisoner45UsedResponses: Array.from(state.prisoner45UsedResponses || []),
@@ -23,17 +24,22 @@ function serializeState(state: GameState): string {
     passwordsFound: Array.from(state.passwordsFound || []),
     bookmarkedFiles: Array.from(state.bookmarkedFiles || []),
     trapsTriggered: Array.from(state.trapsTriggered || []),
+    // Limit history size to prevent quota issues
+    history: state.history.slice(-500),
   });
 }
 
 // Deserialize GameState (handle Set conversion)
 function deserializeState(json: string): GameState {
   const parsed = JSON.parse(json);
+  // Spread DEFAULT_GAME_STATE first for migration support (new fields get defaults)
   return {
+    ...DEFAULT_GAME_STATE,
     ...parsed,
     truthsDiscovered: new Set(parsed.truthsDiscovered || []),
     singularEventsTriggered: new Set(parsed.singularEventsTriggered || []),
     imagesShownThisRun: new Set(parsed.imagesShownThisRun || []),
+    videosShownThisRun: new Set(parsed.videosShownThisRun || []),
     categoriesRead: new Set(parsed.categoriesRead || []),
     filesRead: new Set(parsed.filesRead || []),
     prisoner45UsedResponses: new Set(parsed.prisoner45UsedResponses || []),
@@ -91,13 +97,41 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
   
   // Save the state with updated lastSaveTime
   const stateToSave = { ...state, lastSaveTime: now };
-  window.localStorage.setItem(SAVE_PREFIX + id, serializeState(stateToSave));
+  
+  try {
+    window.localStorage.setItem(SAVE_PREFIX + id, serializeState(stateToSave));
+  } catch (e) {
+    // Handle quota exceeded error by cleaning up oldest saves
+    if (e instanceof Error && e.name === 'QuotaExceededError') {
+      const slots = getSaveSlots();
+      // Delete oldest saves to make room (keep only 5 most recent)
+      const toDelete = slots.slice(5);
+      toDelete.forEach(s => window.localStorage.removeItem(SAVE_PREFIX + s.id));
+      // Update the saves list to remove deleted slots
+      const remainingSlots = slots.slice(0, 5);
+      window.localStorage.setItem(SAVES_KEY, JSON.stringify(remainingSlots));
+      // Try again
+      try {
+        window.localStorage.setItem(SAVE_PREFIX + id, serializeState(stateToSave));
+      } catch {
+        console.error('Failed to save game: storage quota exceeded');
+        return null;
+      }
+    } else {
+      console.error('Failed to save game:', e);
+      return null;
+    }
+  }
   
   // Update saves list
   const slots = getSaveSlots();
   slots.unshift(slot); // Add to front
   
-  // Keep only last 10 saves
+  // Keep only last 10 saves, delete orphaned save data
+  if (slots.length > 10) {
+    const orphanedSlots = slots.slice(10);
+    orphanedSlots.forEach(s => window.localStorage.removeItem(SAVE_PREFIX + s.id));
+  }
   const trimmedSlots = slots.slice(0, 10);
   window.localStorage.setItem(SAVES_KEY, JSON.stringify(trimmedSlots));
   
@@ -150,6 +184,7 @@ export function createNewGame(): GameState {
     truthsDiscovered: new Set(),
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
+    videosShownThisRun: new Set(),
     flags,
     tutorialStep: 0,
     tutorialComplete: false,

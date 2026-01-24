@@ -187,6 +187,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   // Turing Test overlay
   const [showTuringTest, setShowTuringTest] = useState(false);
   const keypressTimestamps = useRef<number[]>([]);
+  const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
   
   // Timed decryption timer display
   const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
@@ -256,6 +257,15 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     inputRef.current?.focus();
   }, []);
   
+  // Cleanup typing speed warning timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (typingSpeedWarningTimeout.current) {
+        clearTimeout(typingSpeedWarningTimeout.current);
+      }
+    };
+  }, []);
+  
   // CRT warm-up effect timeout
   useEffect(() => {
     if (isWarmingUp) {
@@ -308,44 +318,73 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     // Check interval scales with detection (faster at higher levels)
     const checkInterval = Math.max(1200, 4000 - detection * 25 - paranoiaBoost * 10);
     
+    // Track all active timeouts for cleanup and cancelled flag for nested callbacks
+    const activeTimeouts: NodeJS.Timeout[] = [];
+    let cancelled = false;
+    
     const interval = setInterval(() => {
+      if (cancelled) return;
       if (Math.random() * 100 < glitchChance) {
         if (detection >= 80) {
           // Critical glitch - screen shake, heavy effects, sound
           setGlitchHeavy(true);
           playSound('glitch');
           playSound('static');
-          setTimeout(() => {
+          const t1 = setTimeout(() => {
+            if (cancelled) return;
             setGlitchHeavy(false);
             // Double glitch at very high detection
             if (detection >= 90 && Math.random() < 0.5) {
-              setTimeout(() => {
+              const t2 = setTimeout(() => {
+                if (cancelled) return;
                 setGlitchHeavy(true);
                 playSound('glitch');
-                setTimeout(() => setGlitchHeavy(false), 300);
+                const t3 = setTimeout(() => {
+                  if (cancelled) return;
+                  setGlitchHeavy(false);
+                }, 300);
+                activeTimeouts.push(t3);
               }, 200);
+              activeTimeouts.push(t2);
             }
           }, 600);
+          activeTimeouts.push(t1);
         } else if (detection >= 60) {
           // Heavy glitch at high detection
           setGlitchHeavy(true);
           playSound('glitch');
-          setTimeout(() => setGlitchHeavy(false), 500);
+          const t = setTimeout(() => {
+            if (cancelled) return;
+            setGlitchHeavy(false);
+          }, 500);
+          activeTimeouts.push(t);
         } else if (detection >= 40) {
           // Medium glitch - longer duration
           setGlitchActive(true);
           playSound('static');
-          setTimeout(() => setGlitchActive(false), 400);
+          const t = setTimeout(() => {
+            if (cancelled) return;
+            setGlitchActive(false);
+          }, 400);
+          activeTimeouts.push(t);
         } else {
           // Light glitch
           setGlitchActive(true);
           playSound('static');
-          setTimeout(() => setGlitchActive(false), 200);
+          const t = setTimeout(() => {
+            if (cancelled) return;
+            setGlitchActive(false);
+          }, 200);
+          activeTimeouts.push(t);
         }
       }
     }, checkInterval);
     
-    return () => clearInterval(interval);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+      activeTimeouts.forEach(t => clearTimeout(t));
+    };
   }, [gameState.detectionLevel, gameState.paranoiaLevel, gameState.isGameOver, gamePhase, playSound]);
   
   // "They're watching" paranoia messages
@@ -1682,7 +1721,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
                     setTypingSpeedWarning(true);
                     playSound('warning');
                     // Clear warning after 3 seconds
-                    setTimeout(() => setTypingSpeedWarning(false), 3000);
+                    if (typingSpeedWarningTimeout.current) {
+                      clearTimeout(typingSpeedWarningTimeout.current);
+                    }
+                    typingSpeedWarningTimeout.current = setTimeout(() => setTypingSpeedWarning(false), 3000);
                   }
                 }
               }

@@ -24,7 +24,7 @@ const neuralClusterMemo: FileNode = {
     '═══════════════════════════════════════════════════════════',
   ],
   accessThreshold: 4, // Only visible after override
-  requiredFlags: ['overrideUsed'],
+  requiredFlags: ['adminUnlocked'],
 };
 
 export default neuralClusterMemo;

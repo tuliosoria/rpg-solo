@@ -5252,10 +5252,16 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   const traceSpikeWarning = state.traceSpikeActive && state.countdownActive && state.countdownTriggeredBy === 'trace_spike'
     ? createEntry('warning', '[TRACE SPIKE ACTIVE]')
     : null;
+  
+  // Track doom countdown decrement for later injection into result
+  let doomCountdownDecremented = false;
+  let newDoomCountdown = 0;
+  
   if (state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
-    const newCountdown = state.sessionDoomCountdown - 1;
+    newDoomCountdown = state.sessionDoomCountdown - 1;
+    doomCountdownDecremented = true;
     
-    if (newCountdown <= 0) {
+    if (newDoomCountdown <= 0) {
       return {
         output: [
           createEntry('error', ''),
@@ -5280,13 +5286,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       };
     }
     
-    // Add countdown warning to any command result
-    const countdownWarning = newCountdown <= 3 
-      ? createEntry('error', `▓▓▓ PURGE IN ${newCountdown} ▓▓▓`)
-      : createEntry('warning', `[PURGE COUNTDOWN: ${newCountdown}]`);
-    
-    // Continue with normal command but inject countdown
-    state = { ...state, sessionDoomCountdown: newCountdown };
+    // Continue with normal command using decremented countdown
+    state = { ...state, sessionDoomCountdown: newDoomCountdown };
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -5884,17 +5885,21 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
   
   // ═══════════════════════════════════════════════════════════════════════════
-  // DOOM COUNTDOWN - Inject warning if terrible mistake was triggered
+  // DOOM COUNTDOWN - Inject warning and state change if terrible mistake was triggered
+  // The decrement was calculated earlier (around line 5256), now apply it to result
   // ═══════════════════════════════════════════════════════════════════════════
-  if (state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
-    const newCountdown = state.sessionDoomCountdown - 1;
-    result.stateChanges.sessionDoomCountdown = newCountdown;
+  if (doomCountdownDecremented) {
+    // Add the decremented countdown to state changes
+    result.stateChanges.sessionDoomCountdown = newDoomCountdown;
     
-    const countdownWarning = newCountdown <= 3 
-      ? [createEntry('error', ''), createEntry('error', `▓▓▓ PURGE IN ${newCountdown} ▓▓▓`), createEntry('error', '')]
-      : [createEntry('warning', ''), createEntry('warning', `[PURGE COUNTDOWN: ${newCountdown}]`)];
-    
-    result.output = [...result.output, ...countdownWarning];
+    // Add warning to output
+    if (newDoomCountdown > 0) {
+      const countdownWarning = newDoomCountdown <= 3 
+        ? [createEntry('error', ''), createEntry('error', `▓▓▓ PURGE IN ${newDoomCountdown} ▓▓▓`), createEntry('error', '')]
+        : [createEntry('warning', ''), createEntry('warning', `[PURGE COUNTDOWN: ${newDoomCountdown}]`)];
+      
+      result.output = [...result.output, ...countdownWarning];
+    }
   }
   
   // Check if we should add an incognito message after reading important files
@@ -6030,6 +6035,29 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       createEntry('ufo74', '>> EMERGENCY. type "hide" NOW. one chance. <<'),
     ];
     result.stateChanges.hideAvailable = true;
+    result.triggerFlicker = true;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // MAX DETECTION GAME OVER - Detection reached 100%, session terminated
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (newDetection >= MAX_DETECTION && !result.stateChanges.isGameOver) {
+    result.output = [
+      createEntry('error', ''),
+      createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+      createEntry('error', ''),
+      createEntry('error', '  INTRUSION DETECTED'),
+      createEntry('error', ''),
+      createEntry('error', '  Your connection has been traced.'),
+      createEntry('error', '  Security protocols have been dispatched.'),
+      createEntry('error', ''),
+      createEntry('error', '  >> SESSION TERMINATED <<'),
+      createEntry('error', ''),
+      createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+      createEntry('error', ''),
+    ];
+    result.stateChanges.isGameOver = true;
+    result.stateChanges.gameOverReason = 'INTRUSION DETECTED - TRACED';
     result.triggerFlicker = true;
   }
   

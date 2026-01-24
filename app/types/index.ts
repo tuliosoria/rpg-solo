@@ -169,7 +169,7 @@ export interface GameState {
   // Evidence collection & ICQ phase
   evidencesSaved: boolean; // True after running save script
   icqPhase: boolean; // True when in ICQ chat mode
-  icqMessages: { sender: 'player' | 'teen'; text: string }[]; // Chat history
+  icqMessages: { sender: 'player' | 'teen' | 'system'; text: string; timestamp?: string }[]; // Chat history
   mathQuestionsAnswered: number; // 0-3, how many equations solved
   currentMathQuestion: number; // Current equation index
   mathQuestionWrong: number; // Wrong attempts on current question
