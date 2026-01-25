@@ -8,6 +8,25 @@ import { autoSave } from '../storage/saves';
 import { incrementStatistic, addPlaytime } from '../storage/statistics';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { MAX_HISTORY_SIZE, MAX_COMMAND_HISTORY_SIZE } from '../constants/limits';
+import {
+  AUTOSAVE_INTERVAL_MS,
+  CRT_WARMUP_DURATION_MS,
+  BLACKOUT_TRANSITION_DELAY_MS,
+  GLITCH_DURATIONS,
+  GLITCH_TIMING,
+  PARANOIA_TIMING,
+  RISK_PULSE_DURATION_MS,
+  FLICKER_DURATION_MS,
+  TURING_TEST_DELAY_MS,
+  NIGHT_OWL_DURATION_MS,
+  TYPING_WARNING_TIMEOUT_MS,
+  GAME_OVER_DELAY_MS,
+} from '../constants/timing';
+import {
+  MAX_WRONG_ATTEMPTS,
+  SUSPICIOUS_TYPING_SPEED,
+  KEYPRESS_TRACK_SIZE,
+} from '../constants/gameplay';
 import { useSound } from '../hooks/useSound';
 import { unlockAchievement, Achievement } from '../engine/achievements';
 import ImageOverlay from './ImageOverlay';
@@ -297,7 +316,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   // CRT warm-up effect timeout
   useEffect(() => {
     if (isWarmingUp) {
-      const timer = setTimeout(() => setIsWarmingUp(false), 1500);
+      const timer = setTimeout(() => setIsWarmingUp(false), CRT_WARMUP_DURATION_MS);
       return () => clearTimeout(timer);
     }
   }, [isWarmingUp]);
@@ -315,10 +334,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     const interval = setInterval(() => {
       if (!gameState.isGameOver) {
         autoSave(gameState);
-        // Track playtime every 30 seconds
-        addPlaytime(30000);
+        // Track playtime every autosave interval
+        addPlaytime(AUTOSAVE_INTERVAL_MS);
       }
-    }, 30000); // Every 30 seconds
+    }, AUTOSAVE_INTERVAL_MS);
     
     return () => clearInterval(interval);
   }, [gameState]);
@@ -328,7 +347,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     if (gameState.evidencesSaved && gamePhase === 'terminal') {
       const timer = setTimeout(() => {
         setGamePhase('blackout');
-      }, 3000);
+      }, BLACKOUT_TRANSITION_DELAY_MS);
       return () => clearTimeout(timer);
     }
   }, [gameState.evidencesSaved, gamePhase]);
@@ -344,7 +363,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     const glitchChance = detection > 20 ? (detection - 20) * 0.35 + paranoiaBoost * 0.15 : paranoiaBoost * 0.15;
     
     // Check interval scales with detection (faster at higher levels)
-    const checkInterval = Math.max(1200, 4000 - detection * 25 - paranoiaBoost * 10);
+    const checkInterval = Math.max(
+      GLITCH_TIMING.MIN_INTERVAL_MS, 
+      GLITCH_TIMING.BASE_INTERVAL_MS - detection * GLITCH_TIMING.DETECTION_FACTOR - paranoiaBoost * GLITCH_TIMING.VARIANCE_FACTOR
+    );
     
     // Track all active timeouts for cleanup and cancelled flag for nested callbacks
     const activeTimeouts: NodeJS.Timeout[] = [];
@@ -370,12 +392,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
                 const t3 = setTimeout(() => {
                   if (cancelled) return;
                   setGlitchHeavy(false);
-                }, 300);
+                }, GLITCH_DURATIONS.MEDIUM);
                 activeTimeouts.push(t3);
-              }, 200);
+              }, GLITCH_DURATIONS.LIGHT);
               activeTimeouts.push(t2);
             }
-          }, 600);
+          }, GLITCH_DURATIONS.CRITICAL);
           activeTimeouts.push(t1);
         } else if (detection >= 60) {
           // Heavy glitch at high detection
@@ -384,7 +406,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           const t = setTimeout(() => {
             if (cancelled) return;
             setGlitchHeavy(false);
-          }, 500);
+          }, GLITCH_DURATIONS.HEAVY);
           activeTimeouts.push(t);
         } else if (detection >= 40) {
           // Medium glitch - longer duration
@@ -393,7 +415,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           const t = setTimeout(() => {
             if (cancelled) return;
             setGlitchActive(false);
-          }, 400);
+          }, GLITCH_DURATIONS.MEDIUM + 100);
           activeTimeouts.push(t);
         } else {
           // Light glitch
@@ -402,7 +424,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           const t = setTimeout(() => {
             if (cancelled) return;
             setGlitchActive(false);
-          }, 200);
+          }, GLITCH_DURATIONS.LIGHT);
           activeTimeouts.push(t);
         }
       }
@@ -424,11 +446,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     // Only trigger paranoia at elevated detection (30%+) or paranoia spike
     if (detection < 30 && paranoiaBoost < 10) return;
     
-    // Higher detection/paranoia = more frequent paranoia (every 15-60s)
-    const baseInterval = 60000 - (detection * 400) - (paranoiaBoost * 200);
-    const variance = 20000;
+    // Higher detection/paranoia = more frequent paranoia
+    const baseInterval = PARANOIA_TIMING.BASE_INTERVAL_MS - (detection * PARANOIA_TIMING.DETECTION_DIVISOR) - (paranoiaBoost * 200);
     
-    const delay = Math.max(15000, baseInterval) + Math.random() * variance;
+    const delay = Math.max(PARANOIA_TIMING.MIN_INTERVAL_MS, baseInterval) + Math.random() * PARANOIA_TIMING.VARIANCE_MS;
     let innerTimerId: NodeJS.Timeout | undefined;
     
     const timerId = setTimeout(() => {
@@ -444,7 +465,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       playSound('warning');
       
       // Clear after animation
-      innerTimerId = setTimeout(() => setParanoiaMessage(null), 3000);
+      innerTimerId = setTimeout(() => setParanoiaMessage(null), PARANOIA_TIMING.DISPLAY_DURATION_MS);
     }, delay);
     
     return () => {
@@ -466,7 +487,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     if (current > prev) {
       // Detection increased - trigger pulse animation
       setRiskPulse(true);
-      setTimeout(() => setRiskPulse(false), 600);
+      setTimeout(() => setRiskPulse(false), RISK_PULSE_DURATION_MS);
       
       if (current >= 80 && prev < 80) {
         playSound('alert');
@@ -481,7 +502,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       // Trigger screen shake on large detection increase (10+)
       if (current - prev >= 10) {
         setIsShaking(true);
-        setTimeout(() => setIsShaking(false), 300);
+        setTimeout(() => setIsShaking(false), GLITCH_DURATIONS.SCREEN_SHAKE);
       }
     }
     
@@ -1102,33 +1123,37 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       setIsStreaming(true);
       setGameState(intermediateState);
       
-      await streamOutput(result.output, streamingMode, intermediateState);
-      
-      // Add pending media messages after streaming completes
-      if (result.imageTrigger || result.videoTrigger) {
-        const pendingMediaMessages: TerminalEntry[] = [];
-        if (result.imageTrigger) {
-          pendingMediaMessages.push(
-            createEntry('warning', ''),
-            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-            createEntry('system', 'Press ENTER to view recovered visual data.'),
-          );
+      try {
+        await streamOutput(result.output, streamingMode, intermediateState);
+        
+        // Add pending media messages after streaming completes
+        if (result.imageTrigger || result.videoTrigger) {
+          const pendingMediaMessages: TerminalEntry[] = [];
+          if (result.imageTrigger) {
+            pendingMediaMessages.push(
+              createEntry('warning', ''),
+              createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+              createEntry('system', 'Press ENTER to view recovered visual data.'),
+            );
+          }
+          if (result.videoTrigger) {
+            pendingMediaMessages.push(
+              createEntry('warning', ''),
+              createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+              createEntry('system', 'Press ENTER to view recovered video data.'),
+            );
+          }
+          setGameState(prev => ({
+            ...prev,
+            history: [...prev.history, ...pendingMediaMessages],
+          }));
         }
-        if (result.videoTrigger) {
-          pendingMediaMessages.push(
-            createEntry('warning', ''),
-            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-            createEntry('system', 'Press ENTER to view recovered video data.'),
-          );
-        }
-        setGameState(prev => ({
-          ...prev,
-          history: [...prev.history, ...pendingMediaMessages],
-        }));
+      } finally {
+        // Always reset streaming state, even on error/interruption
+        setIsStreaming(false);
+        setIsProcessing(false);
+        skipStreamingRef.current = false;
       }
-      
-      setIsStreaming(false);
-      setIsProcessing(false);
     } else {
       // No streaming - add all at once
       // Separate UFO74 messages from other output for queuing
@@ -1300,7 +1325,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     // Night Owl achievement: playing for over 30 minutes
     const sessionDuration = Date.now() - gameState.sessionStartTime;
-    if (sessionDuration >= 30 * 60 * 1000) { // 30 minutes in ms
+    if (sessionDuration >= NIGHT_OWL_DURATION_MS) {
       checkAchievement('night_owl');
     }
     
@@ -1528,8 +1553,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   // Get wrong attempts display
   const getAttemptsDisplay = () => {
     const attempts = gameState.wrongAttempts || 0;
-    const remaining = 8 - attempts;
-    return `${remaining}/8`;
+    const remaining = MAX_WRONG_ATTEMPTS - attempts;
+    return `${remaining}/${MAX_WRONG_ATTEMPTS}`;
   };
   
   const truthStatus = getTruthStatus();
@@ -1868,25 +1893,25 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
                 // Track typing speed
                 const now = Date.now();
                 keypressTimestamps.current.push(now);
-                // Keep only last 10 keypresses
-                if (keypressTimestamps.current.length > 10) {
+                // Keep only last KEYPRESS_TRACK_SIZE keypresses
+                if (keypressTimestamps.current.length > KEYPRESS_TRACK_SIZE) {
                   keypressTimestamps.current.shift();
                 }
                 
-                // Check typing speed (if 10+ chars in last second = too fast)
-                if (keypressTimestamps.current.length >= 8) {
+                // Check typing speed (if enough chars in short time = too fast)
+                if (keypressTimestamps.current.length >= KEYPRESS_TRACK_SIZE - 2) {
                   const oldest = keypressTimestamps.current[0];
                   const timeSpan = (now - oldest) / 1000; // seconds
                   const charsPerSecond = keypressTimestamps.current.length / timeSpan;
                   
-                  if (charsPerSecond > 8 && !typingSpeedWarning) {
+                  if (charsPerSecond > SUSPICIOUS_TYPING_SPEED && !typingSpeedWarning) {
                     setTypingSpeedWarning(true);
                     playSound('warning');
-                    // Clear warning after 3 seconds
+                    // Clear warning after timeout
                     if (typingSpeedWarningTimeout.current) {
                       clearTimeout(typingSpeedWarningTimeout.current);
                     }
-                    typingSpeedWarningTimeout.current = setTimeout(() => setTypingSpeedWarning(false), 3000);
+                    typingSpeedWarningTimeout.current = setTimeout(() => setTypingSpeedWarning(false), TYPING_WARNING_TIMEOUT_MS);
                   }
                 }
               }
@@ -2071,7 +2096,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
               setTimeout(() => {
                 setGameOverReason('TURING EVALUATION FAILED');
                 setShowGameOver(true);
-              }, 1500);
+              }, GAME_OVER_DELAY_MS);
             }
             
             inputRef.current?.focus();
