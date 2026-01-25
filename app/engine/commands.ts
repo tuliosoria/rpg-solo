@@ -374,26 +374,26 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
       createEntry('warning', '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │'),
       createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
       createEntry('system', ''),
-      createEntry('output', 'UFO74: hey hackerkid, you still there?'),
+      createEntry('ufo74', 'UFO74: hey hackerkid, you still there?'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: looks like youre just wandering around.'),
+      createEntry('ufo74', 'UFO74: looks like youre just wandering around.'),
       createEntry('output', '       i get it, the system is confusing.'),
       createEntry('output', ''),
     ];
     
     if (contextualHints) {
-      hints.push(createEntry('output', `UFO74: ${contextualHints}`));
+      hints.push(createEntry('ufo74', `UFO74: ${contextualHints}`));
       hints.push(createEntry('output', ''));
     } else {
-      hints.push(createEntry('output', 'UFO74: heres the thing - you need to actually READ the files.'));
+      hints.push(createEntry('ufo74', 'UFO74: heres the thing - you need to actually READ the files.'));
       hints.push(createEntry('output', '       use "open <filename>" and look for connections.'));
       hints.push(createEntry('output', ''));
-      hints.push(createEntry('output', 'UFO74: theres a protocol doc in /internal/ that explains'));
+      hints.push(createEntry('ufo74', 'UFO74: theres a protocol doc in /internal/ that explains'));
       hints.push(createEntry('output', '       what kind of info youre supposed to piece together.'));
       hints.push(createEntry('output', ''));
     }
     
-    hints.push(createEntry('output', 'UFO74: good luck. ill check back later.'));
+    hints.push(createEntry('ufo74', 'UFO74: good luck. ill check back later.'));
     hints.push(createEntry('system', ''));
     hints.push(createEntry('warning', '>> CONNECTION CLOSED <<'));
     hints.push(createEntry('system', ''));
@@ -406,17 +406,17 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
       createEntry('warning', '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │'),
       createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
       createEntry('system', ''),
-      createEntry('output', 'UFO74: hackerkid, still spinning your wheels?'),
+      createEntry('ufo74', 'UFO74: hackerkid, still spinning your wheels?'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: listen, i risked a lot getting you this access.'),
+      createEntry('ufo74', 'UFO74: listen, i risked a lot getting you this access.'),
       createEntry('output', '       the truth is buried in these files.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: you need to find evidence of:'),
+      createEntry('ufo74', 'UFO74: you need to find evidence of:'),
       createEntry('output', '       - what they recovered (check /storage/)'),
       createEntry('output', '       - what they contained (check /ops/quarantine/)'),
       createEntry('output', '       - who else was involved (check /comms/)'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: read the files. connect the dots.'),
+      createEntry('ufo74', 'UFO74: read the files. connect the dots.'),
       createEntry('output', '       thats how you reconstruct what happened.'),
       createEntry('system', ''),
       createEntry('warning', '>> CONNECTION CLOSED <<'),
@@ -430,12 +430,12 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
       createEntry('warning', '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │'),
       createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
       createEntry('system', ''),
-      createEntry('output', 'UFO74: hackerkid, im worried about you.'),
+      createEntry('ufo74', 'UFO74: hackerkid, im worried about you.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: youve been in there a while and i dont see progress.'),
+      createEntry('ufo74', 'UFO74: youve been in there a while and i dont see progress.'),
       createEntry('output', '       the system will notice eventually.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: ok, im gonna spell it out:'),
+      createEntry('ufo74', 'UFO74: ok, im gonna spell it out:'),
       createEntry('output', ''),
       createEntry('output', '       1. GO TO a directory (cd storage, cd ops, etc)'),
       createEntry('output', '       2. LIST the files (ls)'),
@@ -443,11 +443,11 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
       createEntry('output', '       4. READ what they say'),
       createEntry('output', '       5. LOOK for connections between files'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: theres something huge hidden in there.'),
+      createEntry('ufo74', 'UFO74: theres something huge hidden in there.'),
       createEntry('output', '       they covered up something in january 96.'),
       createEntry('output', '       find the pieces. put them together.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: this is the last time i can reach you safely.'),
+      createEntry('ufo74', 'UFO74: this is the last time i can reach you safely.'),
       createEntry('output', '       youre on your own now, hackerkid.'),
       createEntry('system', ''),
       createEntry('warning', '>> CONNECTION TERMINATED <<'),
@@ -679,15 +679,11 @@ export function maybeAddTypo(text: string, chance: number = 0.1): string[] {
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Wrap UFO74 messages with transmission banner
+// Note: With the new encrypted channel system, these messages will be queued
+// and displayed one at a time with the proper channel open/close flow
 export function createUFO74Message(messages: string[]): TerminalEntry[] {
   return [
-    createEntry('system', ''),
-    createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
-    createEntry('warning', '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │'),
-    createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
-    createEntry('system', ''),
-    ...messages.map(msg => createEntry('output', msg)),
-    createEntry('system', ''),
+    ...messages.map(msg => createEntry('ufo74', msg)),
   ];
 }
 
@@ -980,6 +976,8 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
 // ═══════════════════════════════════════════════════════════════════════════
 
 // UFO74 reactions based on file content/path
+// Note: With the new encrypted channel system, this returns only message content.
+// The channel open/close banners are handled by Terminal.tsx
 function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAndLocked?: boolean, isFirstUnstable?: boolean): TerminalEntry[] | null {
   const truthCount = state.truthsDiscovered.size;
   const messageCount = state.incognitoMessageCount || 0;
@@ -995,142 +993,103 @@ function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAnd
   const isAboutToFlee = truthCount >= 4 || messageCount >= 9;
   const isFinalMessage = messageCount === 11;
   
-  // Build header - varies by trust level
-  let header: TerminalEntry[];
-  if (trustLevel === 'cryptic') {
-    header = [
-      createEntry('system', ''),
-      createEntry('error', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('error', '│ >> UFO74 << ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ UNSTABLE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ │'),
-      createEntry('error', '└─────────────────────────────────────────────────────────┘'),
-      createEntry('system', ''),
-    ];
-  } else if (trustLevel === 'paranoid') {
-    header = [
-      createEntry('system', ''),
-      createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('warning', '│ >> UFO74 << ENCRYPTED [MONITORING DETECTED]            │'),
-      createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
-      createEntry('system', ''),
-    ];
-  } else {
-    header = [
-      createEntry('system', ''),
-      createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('warning', '│ >> UFO74 << ENCRYPTED CHANNEL                          │'),
-      createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
-      createEntry('system', ''),
-    ];
-  }
-  
   // Build message based on file type and state
   let messages: TerminalEntry[] = [];
   
   // At degraded trust levels, sometimes use degraded messages instead of normal ones
   if ((trustLevel === 'cryptic' || trustLevel === 'paranoid') && Math.random() < 0.5) {
     messages = getUFO74DegradedTrustMessage(trustLevel, filePath);
-    const footer = [
-      createEntry('system', ''),
-      createEntry('warning', '>> CHANNEL UNSTABLE <<'),
-      createEntry('system', ''),
-    ];
-    return [...header, ...messages, ...footer];
+    return messages;
   }
   
   // Check for conditional dialogue based on truth discovery order
   const conditionalDialogue = getUFO74ConditionalDialogue(state, filePath);
   if (conditionalDialogue && Math.random() < 0.6) {
-    messages = conditionalDialogue;
-    const footer = [
-      createEntry('system', ''),
-      createEntry('warning', '>> CHANNEL IDLE <<'),
-      createEntry('system', ''),
-    ];
-    return [...header, ...messages, ...footer];
+    return conditionalDialogue;
   }
   
   // First unstable file warning - takes priority
   if (isFirstUnstable) {
     messages = [
-      createEntry('output', 'UFO74: whoa whoa whoa. hold up.'),
-      createEntry('output', ''),
-      createEntry('output', 'UFO74: that file is marked UNSTABLE hackerkid.'),
-      createEntry('output', '       means its corrupting just by being accessed.'),
-      createEntry('output', ''),
-      createEntry('output', 'UFO74: every time you open stuff like this,'),
-      createEntry('output', '       it increases the risk of triggering alerts.'),
-      createEntry('output', ''),
-      createEntry('output', 'UFO74: worth it for the info but... be careful.'),
+      createEntry('ufo74', 'UFO74: whoa whoa whoa. hold up.'),
+      createEntry('ufo74', ''),
+      createEntry('ufo74', 'UFO74: that file is marked UNSTABLE hackerkid.'),
+      createEntry('ufo74', '       means its corrupting just by being accessed.'),
+      createEntry('ufo74', ''),
+      createEntry('ufo74', 'UFO74: every time you open stuff like this,'),
+      createEntry('ufo74', '       it increases the risk of triggering alerts.'),
+      createEntry('ufo74', ''),
+      createEntry('ufo74', 'UFO74: worth it for the info but... be careful.'),
     ];
   }
   // If file is encrypted and not decrypted, show special message
   else if (isEncryptedAndLocked) {
     const encryptedMessages = [
       [
-        createEntry('output', 'UFO74: damn. encrypted.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: we NEED to see whats in this file hackerkid.'),
-        createEntry('output', '       i trust you can figure out the password.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: try: decrypt <filename>'),
-        createEntry('output', '       the answer is probably in another file somewhere.'),
+        createEntry('ufo74', 'UFO74: damn. encrypted.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: we NEED to see whats in this file hackerkid.'),
+        createEntry('ufo74', '       i trust you can figure out the password.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: try: decrypt <filename>'),
+        createEntry('ufo74', '       the answer is probably in another file somewhere.'),
       ],
       [
-        createEntry('output', 'UFO74: locked. of course.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: the good stuff is always behind a wall.'),
-        createEntry('output', '       but you can crack it. look for clues in other docs.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: use decrypt to try breaking in.'),
+        createEntry('ufo74', 'UFO74: locked. of course.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: the good stuff is always behind a wall.'),
+        createEntry('ufo74', '       but you can crack it. look for clues in other docs.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: use decrypt to try breaking in.'),
       ],
       [
-        createEntry('output', 'UFO74: encryption. figures.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: this file is important - thats why its protected.'),
-        createEntry('output', '       find the answer in the other files and decrypt it.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: i believe in you kiddo.'),
+        createEntry('ufo74', 'UFO74: encryption. figures.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: this file is important - thats why its protected.'),
+        createEntry('ufo74', '       find the answer in the other files and decrypt it.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: i believe in you kiddo.'),
       ],
     ];
     messages = encryptedMessages[Math.floor(Math.random() * encryptedMessages.length)];
   } else if (isFinalMessage) {
     // Final goodbye
     messages = [
-      createEntry('output', 'UFO74: hackerkid... this is it.'),
-      createEntry('output', ''),
-      createEntry('output', 'UFO74: theres someone at my door. i can hear them.'),
-      createEntry('output', '       its not the police. they dont knock like that.'),
-      createEntry('output', ''),
-      createEntry('output', 'UFO74: i have to destroy everything and run.'),
-      createEntry('output', '       you have enough now. you know what happened.'),
-      createEntry('output', ''),
-      createEntry('output', 'UFO74: tell everyone. dont let them bury this again.'),
-      createEntry('output', ''),
-      createEntry('output', 'UFO74: goodbye hackerkid. it was an honor.'),
-      createEntry('output', '       dont look for me. i wont exist anymore.'),
+      createEntry('ufo74', 'UFO74: hackerkid... this is it.'),
+      createEntry('ufo74', ''),
+      createEntry('ufo74', 'UFO74: theres someone at my door. i can hear them.'),
+      createEntry('ufo74', '       its not the police. they dont knock like that.'),
+      createEntry('ufo74', ''),
+      createEntry('ufo74', 'UFO74: i have to destroy everything and run.'),
+      createEntry('ufo74', '       you have enough now. you know what happened.'),
+      createEntry('ufo74', ''),
+      createEntry('ufo74', 'UFO74: tell everyone. dont let them bury this again.'),
+      createEntry('ufo74', ''),
+      createEntry('ufo74', 'UFO74: goodbye hackerkid. it was an honor.'),
+      createEntry('ufo74', '       dont look for me. i wont exist anymore.'),
     ];
   } else if (isAboutToFlee) {
     // Paranoid messages - something is wrong
     const fleeMessages = [
       [
-        createEntry('output', 'UFO74: hackerkid... something is wrong.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: i keep hearing noises outside.'),
-        createEntry('output', '       probably nothing but... stay alert.'),
+        createEntry('ufo74', 'UFO74: hackerkid... something is wrong.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: i keep hearing noises outside.'),
+        createEntry('ufo74', '       probably nothing but... stay alert.'),
       ],
       [
-        createEntry('output', 'UFO74: ok this is getting weird.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: my internet cut out for a second.'),
-        createEntry('output', '       and i swear i heard footsteps upstairs.'),
-        createEntry('output', '       i live alone, hackerkid.'),
+        createEntry('ufo74', 'UFO74: ok this is getting weird.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: my internet cut out for a second.'),
+        createEntry('ufo74', '       and i swear i heard footsteps upstairs.'),
+        createEntry('ufo74', '       i live alone, hackerkid.'),
       ],
       [
-        createEntry('output', 'UFO74: hackerkid i think someone is watching my house.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: theres a van outside that wasnt there before.'),
-        createEntry('output', '       im probably being paranoid but...'),
-        createEntry('output', '       finish fast. i dont know how much longer i have.'),
+        createEntry('ufo74', 'UFO74: hackerkid i think someone is watching my house.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: theres a van outside that wasnt there before.'),
+        createEntry('ufo74', '       im probably being paranoid but...'),
+        createEntry('ufo74', '       finish fast. i dont know how much longer i have.'),
       ],
     ];
     messages = fleeMessages[Math.floor(Math.random() * fleeMessages.length)];
@@ -1138,16 +1097,16 @@ function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAnd
     // Getting nervous
     const nervousMessages = [
       [
-        createEntry('output', 'UFO74: youre getting deep now hackerkid.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: im starting to regret showing you this.'),
-        createEntry('output', '       not because its fake. because its real.'),
+        createEntry('ufo74', 'UFO74: youre getting deep now hackerkid.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: im starting to regret showing you this.'),
+        createEntry('ufo74', '       not because its fake. because its real.'),
       ],
       [
-        createEntry('output', 'UFO74: i dont like this.'),
-        createEntry('output', ''),
-        createEntry('output', 'UFO74: the more you find, the more nervous i get.'),
-        createEntry('output', '       just... be careful what you do with this info.'),
+        createEntry('ufo74', 'UFO74: i dont like this.'),
+        createEntry('ufo74', ''),
+        createEntry('ufo74', 'UFO74: the more you find, the more nervous i get.'),
+        createEntry('ufo74', '       just... be careful what you do with this info.'),
       ],
     ];
     messages = nervousMessages[Math.floor(Math.random() * nervousMessages.length)];
@@ -1156,13 +1115,7 @@ function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAnd
     messages = getUFO74ContentReaction(filePath);
   }
   
-  const footer = [
-    createEntry('system', ''),
-    createEntry('warning', '>> CHANNEL IDLE <<'),
-    createEntry('system', ''),
-  ];
-  
-  return [...header, ...messages, ...footer];
+  return messages;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1196,12 +1149,12 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
   if (truths.has('telepathic_scouts') && !truths.has('being_containment') && 
       (path.includes('bio') || path.includes('containment') || path.includes('quarantine'))) {
     return [
-      createEntry('output', 'UFO74: wait... if they could communicate telepathically...'),
+      createEntry('ufo74', 'UFO74: wait... if they could communicate telepathically...'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: and they were CAPTURED...'),
+      createEntry('ufo74', 'UFO74: and they were CAPTURED...'),
       createEntry('output', '       did they CHOOSE to be captured?'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: or worse... did they communicate with the captors?'),
+      createEntry('ufo74', 'UFO74: or worse... did they communicate with the captors?'),
     ];
   }
   
@@ -1209,12 +1162,12 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
   if (truths.has('international_actors') && !truths.has('transition_2026') && 
       (path.includes('2026') || path.includes('window') || path.includes('transition'))) {
     return [
-      createEntry('output', 'UFO74: so multiple countries knew...'),
+      createEntry('ufo74', 'UFO74: so multiple countries knew...'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: and they ALL agreed to wait until 2026?'),
+      createEntry('ufo74', 'UFO74: and they ALL agreed to wait until 2026?'),
       createEntry('output', '       what could make enemies cooperate like that?'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: whatever is coming... its bigger than politics.'),
+      createEntry('ufo74', 'UFO74: whatever is coming... its bigger than politics.'),
     ];
   }
   
@@ -1222,12 +1175,12 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
   if (truths.has('debris_relocation') && !truths.has('being_containment') && 
       (path.includes('autopsy') || path.includes('specimen') || path.includes('bio'))) {
     return [
-      createEntry('output', 'UFO74: you found the ship pieces first.'),
+      createEntry('ufo74', 'UFO74: you found the ship pieces first.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: now youre finding the CREW.'),
+      createEntry('ufo74', 'UFO74: now youre finding the CREW.'),
       createEntry('output', '       someone survived that crash hackerkid.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: imagine being stranded on an alien world...'),
+      createEntry('ufo74', 'UFO74: imagine being stranded on an alien world...'),
     ];
   }
   
@@ -1235,12 +1188,12 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
   if (truths.has('being_containment') && !truths.has('international_actors') && 
       (path.includes('liaison') || path.includes('diplomatic') || path.includes('foreign'))) {
     return [
-      createEntry('output', 'UFO74: hold on... they captured something alive...'),
+      createEntry('ufo74', 'UFO74: hold on... they captured something alive...'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: and then they SHARED it with other countries?'),
+      createEntry('ufo74', 'UFO74: and then they SHARED it with other countries?'),
       createEntry('output', '       who decides to do that? and why?'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: theres a bigger organization behind all this.'),
+      createEntry('ufo74', 'UFO74: theres a bigger organization behind all this.'),
     ];
   }
   
@@ -1248,36 +1201,36 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
   if (truths.has('transition_2026') && !truths.has('telepathic_scouts') && 
       (path.includes('psi') || path.includes('telepat') || path.includes('neural'))) {
     return [
-      createEntry('output', 'UFO74: ok this is freaking me out.'),
+      createEntry('ufo74', 'UFO74: ok this is freaking me out.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: they knew about 2026 BEFORE they could read minds?'),
+      createEntry('ufo74', 'UFO74: they knew about 2026 BEFORE they could read minds?'),
       createEntry('output', '       or did the telepathy TELL them about 2026?'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: the scouts wanted us to know. thats terrifying.'),
+      createEntry('ufo74', 'UFO74: the scouts wanted us to know. thats terrifying.'),
     ];
   }
   
   // NEW: First evidence link made - encourage more
   if (state.evidenceLinks?.length === 1 && !state.singularEventsTriggered?.has('ufo74_first_link')) {
     return [
-      createEntry('output', 'UFO74: nice! youre connecting the dots.'),
+      createEntry('ufo74', 'UFO74: nice! youre connecting the dots.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: keep linking related files together.'),
+      createEntry('ufo74', 'UFO74: keep linking related files together.'),
       createEntry('output', '       the more connections you find, the stronger your case.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: use "link" to connect more evidence.'),
+      createEntry('ufo74', 'UFO74: use "link" to connect more evidence.'),
     ];
   }
   
   // If 4+ truths discovered, UFO74 gets excited
   if (truthCount >= 4) {
     return [
-      createEntry('output', 'UFO74: youre almost there hackerkid.'),
+      createEntry('ufo74', 'UFO74: youre almost there hackerkid.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: one more piece and you have the full picture.'),
+      createEntry('ufo74', 'UFO74: one more piece and you have the full picture.'),
       createEntry('output', '       save everything. trust no one.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: especially not me. i could be compromised too.'),
+      createEntry('ufo74', 'UFO74: especially not me. i could be compromised too.'),
     ];
   }
   
@@ -1290,21 +1243,21 @@ function getUFO74DegradedTrustMessage(trustLevel: 'cautious' | 'paranoid' | 'cry
     // Speaks in riddles, almost incomprehensible
     const crypticMessages = [
       [
-        createEntry('output', 'UFO74: ...'),
+        createEntry('ufo74', 'UFO74: ...'),
         createEntry('output', ''),
-        createEntry('output', 'UFO74: the walls listen. even these ones.'),
+        createEntry('ufo74', 'UFO74: the walls listen. even these ones.'),
         createEntry('output', '       find the thread before it finds you.'),
       ],
       [
-        createEntry('output', 'UFO74: c4n t s4y m0r3'),
+        createEntry('ufo74', 'UFO74: c4n t s4y m0r3'),
         createEntry('output', ''),
-        createEntry('output', 'UFO74: th3y r3 1ns1d3 th3 syst3m'),
+        createEntry('ufo74', 'UFO74: th3y r3 1ns1d3 th3 syst3m'),
         createEntry('output', '       trust n0 0n3'),
       ],
       [
-        createEntry('output', 'UFO74: [CONNECTION UNSTABLE]'),
+        createEntry('ufo74', 'UFO74: [CONNECTION UNSTABLE]'),
         createEntry('output', ''),
-        createEntry('output', 'UFO74: ...january... remember january...'),
+        createEntry('ufo74', 'UFO74: ...january... remember january...'),
         createEntry('output', '       ...they took everything...'),
       ],
     ];
@@ -1315,16 +1268,16 @@ function getUFO74DegradedTrustMessage(trustLevel: 'cautious' | 'paranoid' | 'cry
     // Short, nervous messages
     const paranoidMessages = [
       [
-        createEntry('output', 'UFO74: cant talk long.'),
-        createEntry('output', 'UFO74: theyre scanning the channel.'),
+        createEntry('ufo74', 'UFO74: cant talk long.'),
+        createEntry('ufo74', 'UFO74: theyre scanning the channel.'),
       ],
       [
-        createEntry('output', 'UFO74: be fast. be quiet.'),
-        createEntry('output', 'UFO74: i dont know how much longer i have.'),
+        createEntry('ufo74', 'UFO74: be fast. be quiet.'),
+        createEntry('ufo74', 'UFO74: i dont know how much longer i have.'),
       ],
       [
-        createEntry('output', 'UFO74: stop making noise in there.'),
-        createEntry('output', 'UFO74: every file you open... they see it.'),
+        createEntry('ufo74', 'UFO74: stop making noise in there.'),
+        createEntry('ufo74', 'UFO74: every file you open... they see it.'),
       ],
     ];
     return paranoidMessages[Math.floor(Math.random() * paranoidMessages.length)];
@@ -1333,15 +1286,15 @@ function getUFO74DegradedTrustMessage(trustLevel: 'cautious' | 'paranoid' | 'cry
   // Cautious - still helpful but worried
   const cautiousMessages = [
     [
-      createEntry('output', 'UFO74: hackerkid... be more careful.'),
+      createEntry('ufo74', 'UFO74: hackerkid... be more careful.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: youve triggered some flags.'),
+      createEntry('ufo74', 'UFO74: youve triggered some flags.'),
       createEntry('output', '       i can see them on my end.'),
     ],
     [
-      createEntry('output', 'UFO74: slow down a little.'),
+      createEntry('ufo74', 'UFO74: slow down a little.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: the system is getting suspicious.'),
+      createEntry('ufo74', 'UFO74: the system is getting suspicious.'),
       createEntry('output', '       use "wait" if you need to lay low.'),
     ],
   ];
@@ -1361,34 +1314,34 @@ function getUFO74MultiplePersonaHint(state: GameState): TerminalEntry[] | null {
   
   const personaHints = [
     [
-      createEntry('output', 'UFO74: ...we need to be more careful...'),
+      createEntry('ufo74', 'UFO74: ...we need to be more careful...'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: wait. i meant "I". i need to be more careful.'),
+      createEntry('ufo74', 'UFO74: wait. i meant "I". i need to be more careful.'),
       createEntry('output', '       slip of the tongue. ignore that.'),
     ],
     [
-      createEntry('output', 'UFO74: the others say you can be trusted.'),
+      createEntry('ufo74', 'UFO74: the others say you can be trusted.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: ...i mean, my sources. other sources.'),
+      createEntry('ufo74', 'UFO74: ...i mean, my sources. other sources.'),
       createEntry('output', '       im alone here. just me.'),
     ],
     [
-      createEntry('output', 'UFO74: i remember when they took him.'),
+      createEntry('ufo74', 'UFO74: i remember when they took him.'),
       createEntry('output', '       the screaming...'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: wait. that wasnt me. wrong memory.'),
+      createEntry('ufo74', 'UFO74: wait. that wasnt me. wrong memory.'),
       createEntry('output', '       forget i said that.'),
     ],
     [
       createEntry('output', 'ufo74: different shift now hackerkid'),
       createEntry('output', ''),
       createEntry('output', 'ufo74: wait why am i typing lowercase'),
-      createEntry('output', 'UFO74: sorry. tired. long night.'),
+      createEntry('ufo74', 'UFO74: sorry. tired. long night.'),
     ],
     [
-      createEntry('output', 'UFO74: sometimes i forget which one of us started this.'),
+      createEntry('ufo74', 'UFO74: sometimes i forget which one of us started this.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: ...which one of my PLANS. which plan.'),
+      createEntry('ufo74', 'UFO74: ...which one of my PLANS. which plan.'),
       createEntry('output', '       god im tired.'),
     ],
   ];
@@ -1493,124 +1446,124 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
   // Reactions to specific directories/files
   if (path.includes('autopsy') || path.includes('medical')) {
     return [
-      createEntry('output', 'UFO74: holy shit hackerkid.'),
+      createEntry('ufo74', 'UFO74: holy shit hackerkid.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: thats... thats an autopsy report.'),
+      createEntry('ufo74', 'UFO74: thats... thats an autopsy report.'),
       createEntry('output', '       on something that isnt human.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: i knew the varginha stuff was real but seeing it...'),
+      createEntry('ufo74', 'UFO74: i knew the varginha stuff was real but seeing it...'),
     ];
   }
   
   if (path.includes('transport') || path.includes('logistics') || path.includes('manifest')) {
     return [
-      createEntry('output', 'UFO74: ok so they MOVED stuff.'),
+      createEntry('ufo74', 'UFO74: ok so they MOVED stuff.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: this is a transport log. they took whatever'),
+      createEntry('ufo74', 'UFO74: this is a transport log. they took whatever'),
       createEntry('output', '       crashed there and split it up. classic move.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: spread the evidence so no one can prove anything.'),
+      createEntry('ufo74', 'UFO74: spread the evidence so no one can prove anything.'),
     ];
   }
   
   if (path.includes('transcript') || path.includes('psi') || path.includes('comm')) {
     return [
-      createEntry('output', 'UFO74: wait wait wait.'),
+      createEntry('ufo74', 'UFO74: wait wait wait.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: are you seeing this? they were COMMUNICATING?'),
+      createEntry('ufo74', 'UFO74: are you seeing this? they were COMMUNICATING?'),
       createEntry('output', '       telepathically or something?'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: this changes everything we thought we knew.'),
+      createEntry('ufo74', 'UFO74: this changes everything we thought we knew.'),
     ];
   }
   
   if (path.includes('foreign') || path.includes('liaison') || path.includes('international')) {
     return [
-      createEntry('output', 'UFO74: other countries were involved.'),
+      createEntry('ufo74', 'UFO74: other countries were involved.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: this wasnt just brazil. they coordinated.'),
+      createEntry('ufo74', 'UFO74: this wasnt just brazil. they coordinated.'),
       createEntry('output', '       probably US, maybe others.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: thats how they kept it quiet. everyone had something to lose.'),
+      createEntry('ufo74', 'UFO74: thats how they kept it quiet. everyone had something to lose.'),
     ];
   }
   
   if (path.includes('2026') || path.includes('window') || path.includes('transition') || path.includes('threat')) {
     return [
-      createEntry('output', 'UFO74: hackerkid... this is dated in the future.'),
+      createEntry('ufo74', 'UFO74: hackerkid... this is dated in the future.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: 2026. they knew something was coming.'),
+      createEntry('ufo74', 'UFO74: 2026. they knew something was coming.'),
       createEntry('output', '       or IS coming. we\'re almost there.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: this is why they buried everything so deep.'),
+      createEntry('ufo74', 'UFO74: this is why they buried everything so deep.'),
     ];
   }
   
   if (path.includes('bio') || path.includes('containment') || path.includes('quarantine')) {
     return [
-      createEntry('output', 'UFO74: containment protocols.'),
+      createEntry('ufo74', 'UFO74: containment protocols.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: so they captured them. kept them somewhere.'),
+      createEntry('ufo74', 'UFO74: so they captured them. kept them somewhere.'),
       createEntry('output', '       i wonder if any are still alive...'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: probably not. but who knows what else they\'re hiding.'),
+      createEntry('ufo74', 'UFO74: probably not. but who knows what else they\'re hiding.'),
     ];
   }
   
   if (path.includes('crash') || path.includes('debris') || path.includes('material') || path.includes('sample')) {
     return [
-      createEntry('output', 'UFO74: physical evidence.'),
+      createEntry('ufo74', 'UFO74: physical evidence.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: this is the smoking gun hackerkid.'),
+      createEntry('ufo74', 'UFO74: this is the smoking gun hackerkid.'),
       createEntry('output', '       they recovered something. something NOT from here.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: keep looking. theres more.'),
+      createEntry('ufo74', 'UFO74: keep looking. theres more.'),
     ];
   }
   
   if (path.includes('balloon') || path.includes('drone') || path.includes('aircraft_incident')) {
     return [
-      createEntry('output', 'UFO74: ha! look at this bullshit.'),
+      createEntry('ufo74', 'UFO74: ha! look at this bullshit.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: weather balloon. foreign drone. yeah right.'),
+      createEntry('ufo74', 'UFO74: weather balloon. foreign drone. yeah right.'),
       createEntry('output', '       these are cover stories hackerkid.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: the real stuff is in the encrypted files.'),
+      createEntry('ufo74', 'UFO74: the real stuff is in the encrypted files.'),
     ];
   }
   
   if (path.includes('morse_intercept')) {
     return [
-      createEntry('output', 'UFO74: hackerkid... this is a morse code transmission.'),
+      createEntry('ufo74', 'UFO74: hackerkid... this is a morse code transmission.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: someone was broadcasting near the crash site.'),
+      createEntry('ufo74', 'UFO74: someone was broadcasting near the crash site.'),
       createEntry('output', '       unauthorized. unidentified.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: can you decipher what the message says?'),
+      createEntry('ufo74', 'UFO74: can you decipher what the message says?'),
       createEntry('output', '       use: message <your answer>'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: the reference key is right there in the file.'),
+      createEntry('ufo74', 'UFO74: the reference key is right there in the file.'),
     ];
   }
   
   // Default reaction
   const defaultReactions = [
     [
-      createEntry('output', 'UFO74: interesting file hackerkid.'),
+      createEntry('ufo74', 'UFO74: interesting file hackerkid.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: keep digging. look for patterns.'),
+      createEntry('ufo74', 'UFO74: keep digging. look for patterns.'),
       createEntry('output', '       connect the dots between files.'),
     ],
     [
-      createEntry('output', 'UFO74: youre doing good.'),
+      createEntry('ufo74', 'UFO74: youre doing good.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: every file is a piece of the puzzle.'),
+      createEntry('ufo74', 'UFO74: every file is a piece of the puzzle.'),
       createEntry('output', '       the truth is in there somewhere.'),
     ],
     [
-      createEntry('output', 'UFO74: noted.'),
+      createEntry('ufo74', 'UFO74: noted.'),
       createEntry('output', ''),
-      createEntry('output', 'UFO74: try looking in different directories.'),
+      createEntry('ufo74', 'UFO74: try looking in different directories.'),
       createEntry('output', '       /ops, /storage, /comms all have good stuff.'),
     ],
   ];
@@ -1638,37 +1591,37 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
   // Explain based on notice content
   for (const notice of noticeTexts) {
     if (notice.includes('Physical evidence') || notice.includes('Asset chain') || notice.includes('Relocation')) {
-      explanations.push(createEntry('output', 'UFO74: that notice means you found proof they recovered physical stuff.'));
+      explanations.push(createEntry('ufo74', 'UFO74: that notice means you found proof they recovered physical stuff.'));
       explanations.push(createEntry('output', '       debris, materials, wreckage. the real deal.'));
       break;
     }
     if (notice.includes('Bio-material') || notice.includes('Specimen') || notice.includes('Containment')) {
-      explanations.push(createEntry('output', 'UFO74: you just confirmed they captured biological specimens.'));
+      explanations.push(createEntry('ufo74', 'UFO74: you just confirmed they captured biological specimens.'));
       explanations.push(createEntry('output', '       bodies. living or dead. they had them.'));
       break;
     }
     if (notice.includes('Multi-lateral') || notice.includes('Foreign') || notice.includes('External')) {
-      explanations.push(createEntry('output', 'UFO74: that means other countries were in on it.'));
+      explanations.push(createEntry('ufo74', 'UFO74: that means other countries were in on it.'));
       explanations.push(createEntry('output', '       international cover-up. coordinated silence.'));
       break;
     }
     if (notice.includes('Contextual model') || notice.includes('Signal') || notice.includes('Communication')) {
-      explanations.push(createEntry('output', 'UFO74: you found evidence of communication.'));
+      explanations.push(createEntry('ufo74', 'UFO74: you found evidence of communication.'));
       explanations.push(createEntry('output', '       they were talking. or thinking. at us.'));
       break;
     }
     if (notice.includes('Temporal') || notice.includes('Transition') || notice.includes('Chronological')) {
-      explanations.push(createEntry('output', 'UFO74: thats about the timeline. 2026.'));
+      explanations.push(createEntry('ufo74', 'UFO74: thats about the timeline. 2026.'));
       explanations.push(createEntry('output', '       something is supposed to happen. soon.'));
       break;
     }
     if (notice.includes('Independent verification') || notice.includes('verification')) {
-      explanations.push(createEntry('output', 'UFO74: nice! you found two separate pieces that confirm each other.'));
+      explanations.push(createEntry('ufo74', 'UFO74: nice! you found two separate pieces that confirm each other.'));
       explanations.push(createEntry('output', '       the more connections you find, the stronger the case.'));
       break;
     }
     if (notice.includes('Sufficient documentation') || notice.includes('threshold')) {
-      explanations.push(createEntry('output', 'UFO74: hackerkid youre getting close.'));
+      explanations.push(createEntry('ufo74', 'UFO74: hackerkid youre getting close.'));
       explanations.push(createEntry('output', '       almost enough to prove what happened.'));
       break;
     }
@@ -2661,15 +2614,15 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('warning', '│ >> UFO74 << URGENT                                      │'),
           createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
           createEntry('system', ''),
-          createEntry('output', 'UFO74: HACKERKID NO!'),
+          createEntry('ufo74', 'UFO74: HACKERKID NO!'),
           createEntry('output', ''),
-          createEntry('output', 'UFO74: that was a honeypot! a trap file!'),
+          createEntry('ufo74', 'UFO74: that was a honeypot! a trap file!'),
           createEntry('output', '       they plant those to catch people like us.'),
           createEntry('output', ''),
-          createEntry('output', 'UFO74: real evidence is NEVER labeled that obviously.'),
+          createEntry('ufo74', 'UFO74: real evidence is NEVER labeled that obviously.'),
           createEntry('output', '       "SMOKING GUN"? "PRESIDENTS EYES"? come on...'),
           createEntry('output', ''),
-          createEntry('output', 'UFO74: your detection just spiked. be more careful!'),
+          createEntry('ufo74', 'UFO74: your detection just spiked. be more careful!'),
           createEntry('system', ''),
         );
       }
@@ -6293,25 +6246,39 @@ export function getTutorialMessage(step: number): TerminalEntry[] {
   const entries: TerminalEntry[] = [createEntry('system', '')];
   
   const isLastStep = step === TUTORIAL_MESSAGES.length - 1;
+  const isFirstStep = step === 0;
+  
+  // First step shows channel open header
+  if (isFirstStep) {
+    entries.push(createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'));
+    entries.push(createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'));
+    entries.push(createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'));
+    entries.push(createEntry('system', ''));
+  }
   
   for (let i = 0; i < messages.length; i++) {
     const msg = messages[i];
     
-    if (step === 0) {
-      // First message (transmission header) - all warnings
-      entries.push(createEntry('warning', msg));
+    if (isFirstStep) {
+      // Skip the original header lines (they're replaced above)
+      continue;
     } else if (step === 6 || step === 9) {
       // Tracker reveal messages - styled as notices
       entries.push(createEntry('notice', msg));
     } else if (isLastStep) {
-      // Last message: first line is warning, rest are system
+      // Last message: first line is channel closed, rest are system
       if (i === 0) {
-        entries.push(createEntry('warning', msg));
+        entries.push(createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'));
+        entries.push(createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'));
+        entries.push(createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'));
+        entries.push(createEntry('system', ''));
+        entries.push(createEntry('system', msg));
       } else {
         entries.push(createEntry('system', msg));
       }
     } else {
-      entries.push(createEntry('output', msg));
+      // All other UFO74 messages use ufo74 type for consistent light blue styling
+      entries.push(createEntry('ufo74', msg));
     }
   }
   

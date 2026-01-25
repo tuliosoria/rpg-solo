@@ -594,9 +594,9 @@
 }
 
 .ufo74 {
-  color: #00ffff;
-  font-style: italic;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+  color: #87ceeb; /* Light blue - standardized UFO74 color */
+  font-style: normal;
+  font-size: 1em; /* Consistent with terminal font size */
 }
 
 /* File content styling - visual container */
