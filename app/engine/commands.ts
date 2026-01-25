@@ -2222,47 +2222,327 @@ function getScoutLinkResponse(input: string, usedResponses: Set<string>): { resp
 }
 
 // Command implementations
+// Detailed help for individual commands
+const COMMAND_HELP: Record<string, string[]> = {
+  help: [
+    'COMMAND: help [command]',
+    '',
+    'Display available commands or detailed help for a specific command.',
+    '',
+    'USAGE:',
+    '  help           - Show all commands',
+    '  help ls        - Show detailed help for "ls"',
+    '  help open      - Show detailed help for "open"',
+    '',
+    'TIP: Use Tab to autocomplete command names.',
+  ],
+  ls: [
+    'COMMAND: ls [-l]',
+    '',
+    'List contents of current directory.',
+    '',
+    'USAGE:',
+    '  ls             - List files and directories',
+    '  ls -l          - Long format with previews',
+    '',
+    'MARKERS:',
+    '  [NEW]          - File not yet read',
+    '  [READ]         - File already opened',
+    '  [ENCRYPTED]    - Requires decryption',
+    '  [RESTRICTED]   - Access may be limited',
+    '  ★              - Bookmarked file',
+    '',
+    'TIP: Files marked [NEW] may contain important evidence.',
+  ],
+  cd: [
+    'COMMAND: cd <directory>',
+    '',
+    'Change to a different directory.',
+    '',
+    'USAGE:',
+    '  cd ops         - Enter the "ops" directory',
+    '  cd /admin      - Go to absolute path',
+    '  cd ..          - Go to parent directory',
+    '',
+    'TIP: Use Tab to autocomplete directory names.',
+    'TIP: Use "back" to return to previous location.',
+  ],
+  back: [
+    'COMMAND: back',
+    '',
+    'Return to the previously visited directory.',
+    '',
+    'Unlike "cd .." which goes to parent, "back" returns',
+    'to wherever you were before, like a browser back button.',
+    '',
+    'USAGE:',
+    '  back           - Go to previous directory',
+    '',
+    'TIP: Navigation history is preserved during your session.',
+  ],
+  open: [
+    'COMMAND: open <file>',
+    '',
+    'Open and display the contents of a file.',
+    '',
+    'USAGE:',
+    '  open report.txt       - Open a file',
+    '  open classified.enc   - Attempt to open encrypted file',
+    '',
+    'NOTE: Some files are encrypted and require the "decrypt" command.',
+    'NOTE: Opening certain files may increase detection risk.',
+    '',
+    'TIP: Use Tab to autocomplete filenames.',
+    'TIP: Use "last" to re-read the most recently opened file.',
+  ],
+  decrypt: [
+    'COMMAND: decrypt <file>',
+    '',
+    'Attempt to decrypt an encrypted file (.enc extension).',
+    '',
+    'USAGE:',
+    '  decrypt secret.enc    - Start decryption',
+    '',
+    'You will be prompted with a security question.',
+    'Wrong answers increase detection and may trigger lockdown.',
+    '',
+    'TIP: Look for hints in other documents.',
+    'TIP: Type "cancel" to abort decryption attempt.',
+  ],
+  recover: [
+    'COMMAND: recover <file>',
+    '',
+    'Attempt to recover a corrupted or unstable file.',
+    '',
+    'USAGE:',
+    '  recover damaged.dat   - Attempt recovery',
+    '',
+    'WARNING: Recovery attempts increase detection risk.',
+    '',
+    'TIP: Some files cannot be recovered - the data is truly lost.',
+  ],
+  note: [
+    'COMMAND: note <text>',
+    '',
+    'Save a personal note to help you remember important details.',
+    '',
+    'USAGE:',
+    '  note Check the date on transport log',
+    '  note Password might be varginha',
+    '',
+    'Notes are saved with timestamps and persist across saves.',
+    '',
+    'TIP: Use "notes" to view all saved notes.',
+  ],
+  notes: [
+    'COMMAND: notes',
+    '',
+    'Display all saved personal notes.',
+    '',
+    'USAGE:',
+    '  notes          - Show all notes with timestamps',
+    '',
+    'TIP: Use "note <text>" to add a new note.',
+  ],
+  bookmark: [
+    'COMMAND: bookmark [file]',
+    '',
+    'Bookmark a file for quick reference, or view bookmarks.',
+    '',
+    'USAGE:',
+    '  bookmark                    - List all bookmarks',
+    '  bookmark report.txt         - Toggle bookmark on file',
+    '',
+    'Bookmarked files show a ★ marker in directory listings.',
+    '',
+    'TIP: Bookmark files you want to revisit or cross-reference.',
+  ],
+  progress: [
+    'COMMAND: progress',
+    '',
+    'Show your investigation progress.',
+    '',
+    'Displays:',
+    '  - Evidence categories discovered (5 total needed)',
+    '  - Current risk/detection level',
+    '  - Session statistics',
+    '',
+    'TIP: Find evidence by reading files carefully.',
+    'TIP: Some evidence requires linking multiple documents.',
+  ],
+  status: [
+    'COMMAND: status',
+    '',
+    'Display current system status and risk indicators.',
+    '',
+    'Shows:',
+    '  - Logging/audit status',
+    '  - System tolerance (wrong attempts remaining)',
+    '  - Session stability',
+    '',
+    'TIP: Check status regularly to monitor your risk level.',
+  ],
+  clear: [
+    'COMMAND: clear',
+    '',
+    'Clear the terminal display.',
+    '',
+    'USAGE:',
+    '  clear          - Clear screen',
+    '',
+    'SHORTCUT: Ctrl+L',
+  ],
+  save: [
+    'COMMAND: save',
+    '',
+    'Manually save your current session.',
+    '',
+    'USAGE:',
+    '  save           - Save to a new slot',
+    '',
+    'NOTE: The game also auto-saves periodically.',
+    '',
+    'TIP: Save before attempting risky actions.',
+  ],
+  trace: [
+    'COMMAND: trace',
+    '',
+    'Trace system connections to discover hidden pathways.',
+    '',
+    'WARNING: This command significantly increases detection risk.',
+    '',
+    'TIP: Only use when you need to find hidden resources.',
+  ],
+  chat: [
+    'COMMAND: chat',
+    '',
+    'Open the secure relay channel to communicate with contacts.',
+    '',
+    'USAGE:',
+    '  chat           - Open chat interface',
+    '',
+    'TIP: Chat may reveal information not found in documents.',
+  ],
+  last: [
+    'COMMAND: last',
+    '',
+    'Re-display the last opened file without increasing risk.',
+    '',
+    'USAGE:',
+    '  last           - Show last opened file',
+    '',
+    'TIP: Useful for reviewing evidence without navigating.',
+  ],
+  unread: [
+    'COMMAND: unread',
+    '',
+    'List all files you have not yet opened.',
+    '',
+    'USAGE:',
+    '  unread         - Show unread files',
+    '',
+    'TIP: Prioritize [NEW] files to find evidence faster.',
+  ],
+  tree: [
+    'COMMAND: tree',
+    '',
+    'Display a tree view of the directory structure.',
+    '',
+    'USAGE:',
+    '  tree           - Show directory tree',
+    '',
+    'TIP: Use this to understand the filesystem layout.',
+  ],
+  map: [
+    'COMMAND: map',
+    '',
+    'Display the evidence connection map.',
+    '',
+    'USAGE:',
+    '  map            - Show evidence connections',
+    '',
+    'Use "connect <file1> <file2>" to link related evidence.',
+  ],
+  tutorial: [
+    'COMMAND: tutorial',
+    '',
+    'Replay the introduction and tutorial messages.',
+    '',
+    'USAGE:',
+    '  tutorial       - Restart tutorial sequence',
+    '',
+    'TIP: Use this if you forgot the mission objectives.',
+  ],
+};
+
 const commands: Record<string, (args: string[], state: GameState) => CommandResult> = {
-  help: (args, state) => ({
-    output: createOutputEntries([
-      '',
-      '═══════════════════════════════════════════════════════════',
-      'TERMINAL COMMANDS',
-      '═══════════════════════════════════════════════════════════',
-      '',
-      '  help              Display this help message',
-      '  status            Display system status',
-      '  progress          Show investigation progress',
-      '  ls                List directory contents',
-      '  cd <dir>          Change directory',
-      '  back              Go to parent directory',
-      '  open <file>       Open and display file contents',
-      '  last              Re-display last opened file',
-      '  unread            List unread files',
-      '  decrypt <file>    Attempt decryption of .enc files',
-      '  recover <file>    Attempt file recovery (RISK)',
-      '  note <text>       Save a personal note',
-      '  notes             View all saved notes',
-      '  bookmark [file]   Bookmark a file (or view bookmarks)',
-      '  trace             Trace system connections (RISK)',
-      '  chat              Open secure relay channel',
-      '  leak <mode>       Release evidence (public|covert)',
-      '  link              Access preserved neural pattern (EXTREME RISK)',
-      '  script <code>     Execute data reconstruction script',
-      '  run <script>      Execute a script file',
-      '  message <text>    Decipher intercepted message',
-      '  override protocol <CODE>  Attempt security override (requires code)',
-      '  save              Save current session',
-      '  clear             Clear terminal display',
-      '',
-      '  ↑/↓ arrows        Navigate command history',
-      '  Tab               Autocomplete commands and files',
-      '',
-      '═══════════════════════════════════════════════════════════',
-      '',
-    ]),
-    stateChanges: {},
-  }),
+  help: (args, state) => {
+    // If a specific command is requested, show detailed help
+    if (args.length > 0) {
+      const cmdName = args[0].toLowerCase();
+      const details = COMMAND_HELP[cmdName];
+      
+      if (details) {
+        return {
+          output: [
+            createEntry('system', ''),
+            ...details.map(line => createEntry('output', line)),
+            createEntry('system', ''),
+          ],
+          stateChanges: {},
+        };
+      } else {
+        return {
+          output: [
+            createEntry('error', `Unknown command: ${cmdName}`),
+            createEntry('system', 'Type "help" to see all available commands.'),
+          ],
+          stateChanges: {},
+        };
+      }
+    }
+    
+    // Default: show all commands
+    return {
+      output: createOutputEntries([
+        '',
+        '═══════════════════════════════════════════════════════════',
+        'TERMINAL COMMANDS',
+        '═══════════════════════════════════════════════════════════',
+        '',
+        '  help [cmd]        Display help (or help for specific command)',
+        '  status            Display system status',
+        '  progress          Show investigation progress',
+        '  ls                List directory contents',
+        '  cd <dir>          Change directory',
+        '  back              Go to previous directory',
+        '  open <file>       Open and display file contents',
+        '  last              Re-display last opened file',
+        '  unread            List unread files',
+        '  decrypt <file>    Attempt decryption of .enc files',
+        '  recover <file>    Attempt file recovery (RISK)',
+        '  note <text>       Save a personal note',
+        '  notes             View all saved notes',
+        '  bookmark [file]   Bookmark a file (or view bookmarks)',
+        '  trace             Trace system connections (RISK)',
+        '  chat              Open secure relay channel',
+        '  tree              Show directory structure',
+        '  map               Show evidence connections',
+        '  tutorial          Replay introduction',
+        '  save              Save current session',
+        '  clear             Clear terminal display',
+        '',
+        '  ↑/↓ arrows        Navigate command history',
+        '  Tab               Autocomplete commands and files',
+        '  Ctrl+L            Clear terminal',
+        '',
+        'TIP: Type "help <command>" for detailed usage.',
+        '═══════════════════════════════════════════════════════════',
+        '',
+      ]),
+      stateChanges: {},
+    };
+  },
 
   status: (args, state) => {
     const hostility = state.systemHostilityLevel || 0;
@@ -2400,9 +2680,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             line += ' ★';
           }
           
-          // Read marker
+          // Read/New marker
           if (state.filesRead?.has(fullPath)) {
             line += ' [READ]';
+          } else {
+            line += ' [NEW]';
           }
           
           // Reading time estimate (based on content length)
@@ -2502,12 +2784,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output.push(createEntry('system', 'TIP: Use "cd .." to go back to the previous directory.'));
     }
     
+    // Push current path to navigation history (for 'back' command)
+    const updatedHistory = [...(state.navigationHistory || []), state.currentPath];
+    
     return {
       output,
       stateChanges: {
         currentPath: targetPath,
         detectionLevel: state.detectionLevel + 1,
         flags: isFirstCd ? { ...state.flags, firstCdDone: true } : state.flags,
+        navigationHistory: updatedHistory,
       },
     };
   },
@@ -4237,6 +4523,79 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
   
+  tutorial: (args, state) => {
+    // Replay the tutorial/introduction
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntry('system', 'Restarting tutorial sequence...'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {
+        tutorialStep: 0,
+        tutorialComplete: false,
+        history: [], // Clear history for fresh start
+      },
+    };
+  },
+  
+  tree: (args, state) => {
+    // Display directory tree structure
+    const buildTree = (path: string, prefix: string, depth: number): string[] => {
+      if (depth > 2) return []; // Limit depth to 2 levels
+      
+      const entries = listDirectory(path, state);
+      const lines: string[] = [];
+      
+      if (!entries) return lines;
+      
+      entries.forEach((entry, index) => {
+        const isLast = index === entries.length - 1;
+        const connector = isLast ? '└── ' : '├── ';
+        const childPrefix = isLast ? '    ' : '│   ';
+        
+        if (entry.type === 'dir') {
+          lines.push(`${prefix}${connector}${entry.name}/`);
+          const childPath = path === '/' ? `/${entry.name}` : `${path}/${entry.name}`;
+          lines.push(...buildTree(childPath, prefix + childPrefix, depth + 1));
+        } else {
+          // Show file with status indicator
+          let marker = '';
+          const fullPath = path === '/' ? `/${entry.name}` : `${path}/${entry.name}`;
+          if (state.filesRead?.has(fullPath)) {
+            marker = ' [READ]';
+          }
+          if (entry.status === 'encrypted') {
+            marker = ' [ENC]';
+          }
+          lines.push(`${prefix}${connector}${entry.name}${marker}`);
+        }
+      });
+      
+      return lines;
+    };
+    
+    const treeLines = [
+      '',
+      '═══════════════════════════════════════════════════════════',
+      'DIRECTORY STRUCTURE',
+      '═══════════════════════════════════════════════════════════',
+      '',
+      '/',
+      ...buildTree('/', '', 0),
+      '',
+      `Current location: ${state.currentPath}`,
+      '',
+      '═══════════════════════════════════════════════════════════',
+      '',
+    ];
+    
+    return {
+      output: createOutputEntries(treeLines),
+      stateChanges: {},
+    };
+  },
+  
   // ═══════════════════════════════════════════════════════════════════════════
   // UX COMMANDS - last, back, note, notes, bookmark, unread, progress
   // ═══════════════════════════════════════════════════════════════════════════
@@ -4285,22 +4644,43 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   },
   
   back: (args, state) => {
-    // Navigate to parent directory
-    if (state.currentPath === '/') {
+    // Navigate to previous directory in history (not just parent)
+    const history = state.navigationHistory || [];
+    
+    if (history.length === 0) {
+      // Fallback to parent directory if no history
+      if (state.currentPath === '/') {
+        return {
+          output: [createEntry('system', 'Already at root directory. No navigation history.')],
+          stateChanges: {},
+        };
+      }
+      
+      const parts = state.currentPath.split('/').filter(p => p);
+      const newPath = parts.length <= 1 ? '/' : '/' + parts.slice(0, -1).join('/');
+      
       return {
-        output: [createEntry('system', 'Already at root directory')],
-        stateChanges: {},
+        output: [
+          createEntry('output', `Changed to: ${newPath}`),
+          createEntry('system', 'TIP: Use "cd" to build navigation history for "back" command.'),
+        ],
+        stateChanges: {
+          currentPath: newPath,
+          detectionLevel: state.detectionLevel + 1,
+        },
       };
     }
     
-    const parts = state.currentPath.split('/').filter(p => p);
-    const newPath = parts.length <= 1 ? '/' : '/' + parts.slice(0, -1).join('/');
+    // Pop the last path from history
+    const newHistory = [...history];
+    const previousPath = newHistory.pop()!;
     
     return {
-      output: [createEntry('output', `Changed to: ${newPath}`)],
+      output: [createEntry('output', `Changed to: ${previousPath}`)],
       stateChanges: {
-        currentPath: newPath,
+        currentPath: previousPath,
         detectionLevel: state.detectionLevel + 1,
+        navigationHistory: newHistory,
       },
     };
   },

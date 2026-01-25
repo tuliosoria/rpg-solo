@@ -28,7 +28,7 @@ import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
-const COMMANDS = ['help', 'status', 'progress', 'ls', 'cd', 'back', 'open', 'last', 'unread', 'decrypt', 'recover', 'note', 'notes', 'bookmark', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run', 'correlate', 'connect', 'map', 'leak', 'message'];
+const COMMANDS = ['help', 'status', 'progress', 'ls', 'cd', 'back', 'open', 'last', 'unread', 'decrypt', 'recover', 'note', 'notes', 'bookmark', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run', 'correlate', 'connect', 'map', 'tree', 'tutorial', 'leak', 'message'];
 const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run', 'bookmark', 'correlate', 'connect'];
 
 // "They're watching" paranoia messages
@@ -187,6 +187,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   // Progressive UI reveal during tutorial
   const [showEvidenceTracker, setShowEvidenceTracker] = useState(false);
   const [showRiskTracker, setShowRiskTracker] = useState(false);
+  const [riskPulse, setRiskPulse] = useState(false);
   
   // Typing speed tracking
   const [typingSpeedWarning, setTypingSpeedWarning] = useState(false);
@@ -198,6 +199,25 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   
   // Timed decryption timer display
   const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
+  
+  // Apply CRT preference on mount
+  useEffect(() => {
+    try {
+      const crtEnabled = localStorage.getItem('varginha_crt_enabled');
+      if (crtEnabled === 'false') {
+        document.body.classList.add('no-crt');
+      }
+    } catch {
+      // localStorage not available (SSR or test environment)
+    }
+    return () => {
+      try {
+        document.body.classList.remove('no-crt');
+      } catch {
+        // document not available
+      }
+    };
+  }, []);
   
   // Update timed decryption countdown
   useEffect(() => {
@@ -443,7 +463,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     }
     
     if (current > prev) {
-      // Detection increased
+      // Detection increased - trigger pulse animation
+      setRiskPulse(true);
+      setTimeout(() => setRiskPulse(false), 600);
+      
       if (current >= 80 && prev < 80) {
         playSound('alert');
       } else if (current >= 60 && prev < 60) {
@@ -1772,7 +1795,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             [{truthStatus.total}/5]
           </span>
         </div>
-        <div className={styles.riskSection}>
+        <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
           <span className={styles.trackerLabel}>RISK:</span>
           <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
             {riskInfo.level}

@@ -110,6 +110,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
               <div className={styles.saveInfo}>
                 <span>Path: {slot.currentPath}</span>
                 <span>Progress: {slot.truthCount}/5</span>
+                <span className={slot.detectionLevel >= 80 ? styles.riskCritical : slot.detectionLevel >= 50 ? styles.riskHigh : styles.riskLow}>
+                  Risk: {slot.detectionLevel ?? 0}%
+                </span>
               </div>
               <div className={styles.saveDate}>{formatDate(slot.timestamp)}</div>
               <button 

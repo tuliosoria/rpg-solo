@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './SettingsModal.module.css';
 
 interface SettingsModalProps {
@@ -18,6 +18,30 @@ export default function SettingsModal({
   onVolumeChange,
   onCloseAction 
 }: SettingsModalProps) {
+  // CRT effects state - stored in localStorage
+  const [crtEnabled, setCrtEnabled] = useState(true);
+  
+  // Load CRT preference on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const stored = localStorage.getItem('varginha_crt_enabled');
+      if (stored !== null) {
+        const enabled = stored === 'true';
+        setCrtEnabled(enabled);
+        document.body.classList.toggle('no-crt', !enabled);
+      }
+    }
+  }, []);
+  
+  const toggleCrt = () => {
+    const newValue = !crtEnabled;
+    setCrtEnabled(newValue);
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('varginha_crt_enabled', String(newValue));
+    }
+    document.body.classList.toggle('no-crt', !newValue);
+  };
+
   return (
     <div className={styles.overlay} onClick={onCloseAction}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
@@ -53,6 +77,18 @@ export default function SettingsModal({
               />
               <span className={styles.volumeValue}>{Math.round(masterVolume * 100)}%</span>
             </div>
+          </div>
+          
+          {/* CRT Effects Toggle */}
+          <div className={styles.setting}>
+            <label className={styles.label}>CRT Effects</label>
+            <button 
+              className={`${styles.toggle} ${crtEnabled ? styles.toggleOn : styles.toggleOff}`}
+              onClick={toggleCrt}
+            >
+              {crtEnabled ? '[ ON ]' : '[ OFF ]'}
+            </button>
+            <span className={styles.hint}>Scanlines & glow</span>
           </div>
           
           {/* Info */}

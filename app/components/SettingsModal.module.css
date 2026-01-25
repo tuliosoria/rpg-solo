@@ -48,6 +48,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 20px;
   padding-bottom: 16px;
   border-bottom: 1px solid #003300;
@@ -129,6 +131,12 @@
   color: #00aa00;
   min-width: 40px;
   text-align: right;
+}
+
+.hint {
+  font-size: 11px;
+  color: #006600;
+  margin-left: 8px;
 }
 
 .info {

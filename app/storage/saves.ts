@@ -93,6 +93,7 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
     timestamp: now,
     currentPath: state.currentPath,
     truthCount: state.truthsDiscovered.size,
+    detectionLevel: state.detectionLevel,
   };
   
   // Save the state with updated lastSaveTime

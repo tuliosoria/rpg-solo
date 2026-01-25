@@ -214,6 +214,7 @@ export interface GameState {
   playerNotes: { note: string; timestamp: number }[]; // Player-saved notes
   bookmarkedFiles: Set<string>; // Files player has bookmarked
   lastOpenedFile?: string; // Last file opened (for 'last' command)
+  navigationHistory: string[]; // Stack of visited directories for 'back' command
   
   // UX: Idle detection for hints
   lastActivityTime: number; // Timestamp of last command
@@ -264,6 +265,7 @@ export interface SaveSlot {
   timestamp: number;
   currentPath: string;
   truthCount: number;
+  detectionLevel: number;
 }
 
 export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow' | 'glitchy';
@@ -377,6 +379,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   playerNotes: [],
   bookmarkedFiles: new Set(),
   lastOpenedFile: undefined,
+  navigationHistory: [],
   // UX: Idle detection
   lastActivityTime: 0,
   idleHintsGiven: 0,

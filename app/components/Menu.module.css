@@ -292,3 +292,16 @@
     font-size: 16px;
   }
 }
+
+/* Risk level colors for save slots */
+.riskLow {
+  color: #00ff00;
+}
+
+.riskHigh {
+  color: #ffff00;
+}
+
+.riskCritical {
+  color: #ff4444;
+}

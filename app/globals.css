@@ -62,3 +62,12 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #004400;
 }
+
+/* CRT Effects Toggle - when body has .no-crt, hide all scanlines and glow effects */
+body.no-crt [class*="scanlines"],
+body.no-crt [class*="Scanlines"],
+body.no-crt [class*="glow"]:not(button):not(input),
+body.no-crt [class*="Glow"]:not(button):not(input),
+body.no-crt [class*="crtCurve"] {
+  display: none !important;
+}
