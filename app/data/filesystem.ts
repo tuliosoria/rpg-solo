@@ -1255,6 +1255,7 @@ const epilogue_government_response: FileNode = {
   type: 'file',
   name: 'internal_response_memo.txt',
   status: 'intact',
+  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'CLASSIFIED INTERNAL MEMORANDUM',
@@ -1293,6 +1294,7 @@ const epilogue_ufo74_fate: FileNode = {
   type: 'file',
   name: 'ufo74_last_signal.log',
   status: 'unstable',
+  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'SIGNAL INTERCEPT — UNVERIFIED',
@@ -1328,6 +1330,7 @@ const epilogue_2026_update: FileNode = {
   type: 'file',
   name: 'projection_update_2026.txt',
   status: 'restricted',
+  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'PROJECTION UPDATE — 2026 TRANSITION WINDOW',
@@ -1368,6 +1371,7 @@ const aircraft_incident_report: FileNode = {
   type: 'file',
   name: 'aircraft_incident_report.txt',
   status: 'intact',
+  reveals: ['debris_relocation'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'INCIDENT REPORT — EXPERIMENTAL AIRCRAFT DIVISION',
@@ -1401,6 +1405,7 @@ const foreign_drone_theory: FileNode = {
   type: 'file',
   name: 'foreign_drone_assessment.txt',
   status: 'intact',
+  reveals: ['debris_relocation'],
   imageTrigger: {
     src: '/images/drone.png',
     alt: 'Recovered visual - Foreign drone analysis',
@@ -1470,6 +1475,7 @@ const industrial_accident_theory: FileNode = {
   type: 'file',
   name: 'industrial_accident_theory.txt',
   status: 'intact',
+  reveals: ['debris_relocation'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ALTERNATIVE ASSESSMENT — INDUSTRIAL ORIGIN',
@@ -1512,6 +1518,7 @@ const logistics_manifest_fragment: FileNode = {
   name: 'logistics_manifest_fragment.txt',
   status: 'unstable',
   corruptible: true,
+  reveals: ['debris_relocation'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'LOGISTICS MANIFEST — PARTIAL RECOVERY',
@@ -1542,6 +1549,7 @@ const signal_analysis_partial: FileNode = {
   name: 'signal_analysis_partial.txt',
   status: 'unstable',
   corruptible: true,
+  reveals: ['telepathic_scouts'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'SIGNAL ANALYSIS — PRELIMINARY',
@@ -1572,6 +1580,7 @@ const foreign_liaison_note: FileNode = {
   name: 'foreign_liaison_note.txt',
   status: 'restricted',
   accessThreshold: 2,
+  reveals: ['international_actors'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'LIAISON NOTE — FOREIGN COORDINATION',
@@ -1714,6 +1723,7 @@ const medical_examiner_query: FileNode = {
   type: 'file',
   name: 'medical_examiner_query.txt',
   status: 'intact',
+  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'QUERY — REGIONAL MEDICAL EXAMINER',
@@ -2015,6 +2025,7 @@ const parallel_incidents_global: FileNode = {
   name: 'parallel_incidents_global.txt',
   status: 'restricted',
   accessThreshold: 4,
+  reveals: ['international_actors'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'REFERENCE — PARALLEL INCIDENTS (INTERNATIONAL)',
@@ -2086,6 +2097,7 @@ const energy_extraction_theory: FileNode = {
   name: 'energy_extraction_theory.txt',
   status: 'restricted',
   accessThreshold: 4,
+  reveals: ['telepathic_scouts'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL DOCUMENT — ENERGY EXTRACTION MODEL',
@@ -2125,6 +2137,7 @@ const non_arrival_colonization: FileNode = {
   status: 'restricted',
   accessThreshold: 5,
   requiredFlags: ['adminUnlocked'],
+  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL FRAMEWORK — NON-ARRIVAL COLONIZATION',
@@ -2904,6 +2917,7 @@ const ethics_exception: FileNode = {
   name: 'ethics_exception_03.txt',
   status: 'restricted',
   accessThreshold: 3,
+  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ETHICS EXCEPTION — REQUEST 03',
@@ -3526,6 +3540,7 @@ const jardim_andere_report: FileNode = {
   type: 'file',
   name: 'jardim_andere_incident.txt',
   status: 'intact',
+  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'FIELD REPORT — INITIAL CONTACT',
