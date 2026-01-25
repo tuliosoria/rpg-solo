@@ -1,5 +1,7 @@
 // Achievement definitions and tracking
 
+import { safeGetJSON, safeSetJSON, safeRemoveItem } from '../storage/safeStorage';
+
 export interface Achievement {
   id: string;
   name: string;
@@ -118,28 +120,13 @@ const ACHIEVEMENTS_KEY = 'rpg-solo-achievements';
 
 // Get unlocked achievements from localStorage
 export function getUnlockedAchievements(): Set<string> {
-  if (typeof window === 'undefined') return new Set();
-  
-  try {
-    const stored = localStorage.getItem(ACHIEVEMENTS_KEY);
-    if (stored) {
-      return new Set(JSON.parse(stored));
-    }
-  } catch {
-    // localStorage may be unavailable or data corrupted
-  }
-  return new Set();
+  const stored = safeGetJSON<string[]>(ACHIEVEMENTS_KEY, []);
+  return new Set(stored);
 }
 
 // Save unlocked achievements to localStorage
 export function saveAchievements(achievements: Set<string>): void {
-  if (typeof window === 'undefined') return;
-  
-  try {
-    localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify([...achievements]));
-  } catch {
-    // localStorage may be full or unavailable
-  }
+  safeSetJSON(ACHIEVEMENTS_KEY, [...achievements]);
 }
 
 // Unlock an achievement
@@ -160,12 +147,7 @@ export function unlockAchievement(id: string): { achievement: Achievement; isNew
 
 // Clear all achievements (for testing)
 export function clearAchievements(): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.removeItem(ACHIEVEMENTS_KEY);
-  } catch {
-    // localStorage may be unavailable
-  }
+  safeRemoveItem(ACHIEVEMENTS_KEY);
 }
 
 // Get achievement by ID

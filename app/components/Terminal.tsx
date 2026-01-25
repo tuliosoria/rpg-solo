@@ -7,6 +7,7 @@ import { listDirectory, resolvePath, getFileContent, getNode } from '../engine/f
 import { autoSave } from '../storage/saves';
 import { incrementStatistic, addPlaytime } from '../storage/statistics';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
+import { MAX_HISTORY_SIZE, MAX_COMMAND_HISTORY_SIZE } from '../constants/limits';
 import { useSound } from '../hooks/useSound';
 import { unlockAchievement, Achievement } from '../engine/achievements';
 import ImageOverlay from './ImageOverlay';
@@ -1029,10 +1030,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     // Add command to history
     const inputEntry = createEntry('input', `> ${command}`);
+    // Trim history to prevent unbounded growth during long sessions
+    const trimmedHistory = gameState.history.length >= MAX_HISTORY_SIZE 
+      ? gameState.history.slice(-MAX_HISTORY_SIZE + 1)
+      : gameState.history;
     let newState: GameState = {
       ...gameState,
-      history: [...gameState.history, inputEntry],
-      commandHistory: [command, ...gameState.commandHistory.slice(0, 49)],
+      history: [...trimmedHistory, inputEntry],
+      commandHistory: [command, ...gameState.commandHistory.slice(0, MAX_COMMAND_HISTORY_SIZE - 1)],
     };
     
     setGameState(newState);

@@ -3,57 +3,109 @@
 import { GameState, SaveSlot, DEFAULT_GAME_STATE } from '../types';
 import { generateSeed } from '../engine/rng';
 import { generateBootSequence } from '../engine/commands';
+import { 
+  MAX_HISTORY_SIZE, 
+  MAX_COMMAND_HISTORY_SIZE, 
+  MAX_SAVE_SLOTS,
+  SAVE_VERSION
+} from '../constants/limits';
 
 const SAVES_KEY = 'terminal1996:saves';
 const SAVE_PREFIX = 'terminal1996:save:';
 
-// Serialize GameState (handle Set conversion)
-function serializeState(state: GameState): string {
-  return JSON.stringify({
-    ...state,
-    truthsDiscovered: Array.from(state.truthsDiscovered),
-    singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
-    imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
-    videosShownThisRun: Array.from(state.videosShownThisRun || []),
-    categoriesRead: Array.from(state.categoriesRead || []),
-    filesRead: Array.from(state.filesRead || []),
-    prisoner45UsedResponses: Array.from(state.prisoner45UsedResponses || []),
-    scoutLinkUsedResponses: Array.from(state.scoutLinkUsedResponses || []),
-    disinformationDiscovered: Array.from(state.disinformationDiscovered || []),
-    hiddenCommandsDiscovered: Array.from(state.hiddenCommandsDiscovered || []),
-    passwordsFound: Array.from(state.passwordsFound || []),
-    bookmarkedFiles: Array.from(state.bookmarkedFiles || []),
-    trapsTriggered: Array.from(state.trapsTriggered || []),
-    // Limit history size to prevent quota issues
-    history: state.history.slice(-500),
-  });
+// Interface for versioned save data
+interface VersionedSaveData {
+  version: number;
+  state: Record<string, unknown>;
 }
 
-// Deserialize GameState (handle Set conversion)
+// Migrate save data from older versions to current version
+// Add new migration cases here when SAVE_VERSION is incremented
+function migrateState(data: VersionedSaveData): Record<string, unknown> {
+  let { version, state } = data;
+  
+  // Run migrations sequentially for each version
+  // Example: if migrating from v1 to v3, run v1->v2, then v2->v3
+  
+  // Version 0 or undefined: original saves without version field
+  if (version === 0 || version === undefined) {
+    // No structural changes needed for v0 -> v1
+    // Future migrations would transform state here
+    version = 1;
+  }
+  
+  // Add future migrations here:
+  // if (version === 1) {
+  //   // Migrate v1 -> v2
+  //   state = { ...state, newField: defaultValue };
+  //   version = 2;
+  // }
+  
+  return state;
+}
+
+// Serialize GameState (handle Set conversion)
+function serializeState(state: GameState): string {
+  const data: VersionedSaveData = {
+    version: SAVE_VERSION,
+    state: {
+      ...state,
+      truthsDiscovered: Array.from(state.truthsDiscovered),
+      singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
+      imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
+      videosShownThisRun: Array.from(state.videosShownThisRun || []),
+      categoriesRead: Array.from(state.categoriesRead || []),
+      filesRead: Array.from(state.filesRead || []),
+      prisoner45UsedResponses: Array.from(state.prisoner45UsedResponses || []),
+      scoutLinkUsedResponses: Array.from(state.scoutLinkUsedResponses || []),
+      disinformationDiscovered: Array.from(state.disinformationDiscovered || []),
+      hiddenCommandsDiscovered: Array.from(state.hiddenCommandsDiscovered || []),
+      passwordsFound: Array.from(state.passwordsFound || []),
+      bookmarkedFiles: Array.from(state.bookmarkedFiles || []),
+      trapsTriggered: Array.from(state.trapsTriggered || []),
+      // Limit history size to prevent quota issues
+      history: state.history.slice(-MAX_HISTORY_SIZE),
+    },
+  };
+  return JSON.stringify(data);
+}
+
+// Deserialize GameState (handle Set conversion and version migration)
 function deserializeState(json: string): GameState {
-  const parsed = JSON.parse(json);
+  const rawParsed = JSON.parse(json);
+  
+  // Handle both versioned and legacy (unversioned) save formats
+  let parsed: Record<string, unknown>;
+  if (rawParsed.version !== undefined && rawParsed.state !== undefined) {
+    // New versioned format
+    parsed = migrateState(rawParsed as VersionedSaveData);
+  } else {
+    // Legacy unversioned format - treat as version 0
+    parsed = migrateState({ version: 0, state: rawParsed });
+  }
+  
   // Spread DEFAULT_GAME_STATE first for migration support (new fields get defaults)
   return {
     ...DEFAULT_GAME_STATE,
     ...parsed,
-    truthsDiscovered: new Set(parsed.truthsDiscovered || []),
-    singularEventsTriggered: new Set(parsed.singularEventsTriggered || []),
-    imagesShownThisRun: new Set(parsed.imagesShownThisRun || []),
-    videosShownThisRun: new Set(parsed.videosShownThisRun || []),
-    categoriesRead: new Set(parsed.categoriesRead || []),
-    filesRead: new Set(parsed.filesRead || []),
-    prisoner45UsedResponses: new Set(parsed.prisoner45UsedResponses || []),
-    scoutLinkUsedResponses: new Set(parsed.scoutLinkUsedResponses || []),
-    disinformationDiscovered: new Set(parsed.disinformationDiscovered || []),
-    hiddenCommandsDiscovered: new Set(parsed.hiddenCommandsDiscovered || []),
-    passwordsFound: new Set(parsed.passwordsFound || []),
-    bookmarkedFiles: new Set(parsed.bookmarkedFiles || []),
-    trapsTriggered: new Set(parsed.trapsTriggered || []),
+    truthsDiscovered: new Set((parsed.truthsDiscovered as string[]) || []),
+    singularEventsTriggered: new Set((parsed.singularEventsTriggered as string[]) || []),
+    imagesShownThisRun: new Set((parsed.imagesShownThisRun as string[]) || []),
+    videosShownThisRun: new Set((parsed.videosShownThisRun as string[]) || []),
+    categoriesRead: new Set((parsed.categoriesRead as string[]) || []),
+    filesRead: new Set((parsed.filesRead as string[]) || []),
+    prisoner45UsedResponses: new Set((parsed.prisoner45UsedResponses as string[]) || []),
+    scoutLinkUsedResponses: new Set((parsed.scoutLinkUsedResponses as string[]) || []),
+    disinformationDiscovered: new Set((parsed.disinformationDiscovered as string[]) || []),
+    hiddenCommandsDiscovered: new Set((parsed.hiddenCommandsDiscovered as string[]) || []),
+    passwordsFound: new Set((parsed.passwordsFound as string[]) || []),
+    bookmarkedFiles: new Set((parsed.bookmarkedFiles as string[]) || []),
+    trapsTriggered: new Set((parsed.trapsTriggered as string[]) || []),
     // Ensure fileEvidenceStates is initialized (plain object, no Set conversion needed)
-    fileEvidenceStates: parsed.fileEvidenceStates || {},
-    // Limit command history to last 100 entries
-    commandHistory: (parsed.commandHistory || []).slice(-100),
-  };
+    fileEvidenceStates: (parsed.fileEvidenceStates as Record<string, unknown>) || {},
+    // Limit command history to last MAX_COMMAND_HISTORY_SIZE entries
+    commandHistory: ((parsed.commandHistory as string[]) || []).slice(-MAX_COMMAND_HISTORY_SIZE),
+  } as GameState;
 }
 
 // Check if we're in a browser with real localStorage
@@ -130,12 +182,18 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
   const slots = getSaveSlots();
   slots.unshift(slot); // Add to front
   
-  // Keep only last 10 saves, delete orphaned save data
-  if (slots.length > 10) {
-    const orphanedSlots = slots.slice(10);
-    orphanedSlots.forEach(s => window.localStorage.removeItem(SAVE_PREFIX + s.id));
+  // Keep only last MAX_SAVE_SLOTS saves, delete orphaned save data
+  if (slots.length > MAX_SAVE_SLOTS) {
+    const orphanedSlots = slots.slice(MAX_SAVE_SLOTS);
+    orphanedSlots.forEach(s => {
+      try {
+        window.localStorage.removeItem(SAVE_PREFIX + s.id);
+      } catch {
+        // Ignore removal errors
+      }
+    });
   }
-  const trimmedSlots = slots.slice(0, 10);
+  const trimmedSlots = slots.slice(0, MAX_SAVE_SLOTS);
   window.localStorage.setItem(SAVES_KEY, JSON.stringify(trimmedSlots));
   
   return slot;

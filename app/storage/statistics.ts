@@ -1,5 +1,7 @@
 // Statistics tracking and persistence
 
+import { safeGetJSON, safeSetJSON, safeRemoveItem } from './safeStorage';
+
 export interface GameStatistics {
   totalPlaytime: number; // milliseconds
   gamesPlayed: number;
@@ -37,29 +39,13 @@ const DEFAULT_STATISTICS: GameStatistics = {
 };
 
 export function getStatistics(): GameStatistics {
-  if (typeof window === 'undefined') return DEFAULT_STATISTICS;
-  
-  try {
-    const stored = localStorage.getItem(STATISTICS_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      // Merge with defaults to handle new fields
-      return { ...DEFAULT_STATISTICS, ...parsed };
-    }
-  } catch {
-    // localStorage may be unavailable or corrupted
-  }
-  return DEFAULT_STATISTICS;
+  const stored = safeGetJSON<Partial<GameStatistics>>(STATISTICS_KEY, {});
+  // Merge with defaults to handle new fields
+  return { ...DEFAULT_STATISTICS, ...stored };
 }
 
 export function saveStatistics(stats: GameStatistics): void {
-  if (typeof window === 'undefined') return;
-  
-  try {
-    localStorage.setItem(STATISTICS_KEY, JSON.stringify(stats));
-  } catch {
-    // localStorage may be full or unavailable
-  }
+  safeSetJSON(STATISTICS_KEY, stats);
 }
 
 export function updateStatistics(updates: Partial<GameStatistics>): GameStatistics {
@@ -113,10 +99,5 @@ export function formatPlaytime(ms: number): string {
 }
 
 export function clearStatistics(): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.removeItem(STATISTICS_KEY);
-  } catch {
-    // localStorage may be unavailable
-  }
+  safeRemoveItem(STATISTICS_KEY);
 }
