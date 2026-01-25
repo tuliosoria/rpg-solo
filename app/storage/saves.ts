@@ -49,6 +49,8 @@ function deserializeState(json: string): GameState {
     passwordsFound: new Set(parsed.passwordsFound || []),
     bookmarkedFiles: new Set(parsed.bookmarkedFiles || []),
     trapsTriggered: new Set(parsed.trapsTriggered || []),
+    // Ensure fileEvidenceStates is initialized (plain object, no Set conversion needed)
+    fileEvidenceStates: parsed.fileEvidenceStates || {},
     // Limit command history to last 100 entries
     commandHistory: (parsed.commandHistory || []).slice(-100),
   };

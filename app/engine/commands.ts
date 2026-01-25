@@ -22,6 +22,11 @@ import {
 import { createSeededRng, seededRandomInt, seededRandomPick } from './rng';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 import { 
+  attemptEvidenceRevelation,
+  getDisturbingContentAvatarExpression,
+  getEvidencePotentialSummary,
+} from './evidenceRevelation';
+import { 
   DETECTION_THRESHOLDS, 
   DETECTION_INCREASES, 
   DETECTION_DECREASES,
@@ -907,11 +912,49 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
   }
   
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
-  const reveals = getFileReveals(filePath);
-  const truthResult = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
   
-  // Merge truth discovery state changes (includes detection reduction breather)
-  Object.assign(stateChanges, truthResult.stateChanges);
+  // Use evidence revelation system for gradual discovery (one evidence per read)
+  const existingReveals = getFileReveals(filePath) as TruthCategory[];
+  const revelationResult = attemptEvidenceRevelation(
+    filePath,
+    content || [],
+    existingReveals.length > 0 ? existingReveals : undefined,
+    { ...state, ...stateChanges } as GameState
+  );
+  
+  let truthNotices: TerminalEntry[] = [];
+  
+  if (revelationResult.revealedEvidence) {
+    const truthResult = checkTruthProgress(
+      { ...state, ...stateChanges } as GameState, 
+      [revelationResult.revealedEvidence]
+    );
+    truthNotices = truthResult.notices;
+    
+    // Merge truth discovery state changes (includes detection reduction breather)
+    Object.assign(stateChanges, truthResult.stateChanges);
+    
+    // Update the file evidence state
+    stateChanges.fileEvidenceStates = {
+      ...state.fileEvidenceStates,
+      ...stateChanges.fileEvidenceStates,
+      [filePath]: revelationResult.updatedFileState,
+    };
+    
+    // Hint at more evidences if available
+    if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
+      truthNotices.push(createEntry('system', ''));
+      truthNotices.push(createEntry('system', '[This file may contain additional insights on future reads]'));
+    }
+  }
+  
+  // Check for disturbing content avatar expression
+  if (content) {
+    const disturbingExpression = getDisturbingContentAvatarExpression(content);
+    if (disturbingExpression && !stateChanges.avatarExpression) {
+      stateChanges.avatarExpression = disturbingExpression;
+    }
+  }
   
   const output = [
     createEntry('system', 'AUTHENTICATION VERIFIED'),
@@ -919,7 +962,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     createEntry('warning', 'WARNING: Partial recovery only'),
     ...createOutputEntries(['', `FILE: ${filePath}`, '']),
     ...createOutputEntries(content || ['[DECRYPTION FAILED]']),
-    ...truthResult.notices,
+    ...truthNotices,
   ];
   
   // Add scout link notice if just unlocked
@@ -3032,13 +3075,50 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const isEncryptedAndLocked = file.status === 'encrypted' && !mutation?.decrypted;
     
     // Check for reveals - ONLY if file is not encrypted or has been decrypted
+    // Uses the new evidence revelation system that reveals only ONE evidence per read
     let notices: ReturnType<typeof createEntry>[] = [];
     if (!isEncryptedAndLocked) {
-      const reveals = getFileReveals(filePath);
-      const truthResult = checkTruthProgress({ ...state, ...stateChanges } as GameState, reveals);
-      notices = truthResult.notices;
-      // Merge truth discovery state changes (includes detection reduction breather)
-      Object.assign(stateChanges, truthResult.stateChanges);
+      // Get existing reveals defined in the file (for backwards compatibility)
+      const existingReveals = getFileReveals(filePath) as TruthCategory[];
+      
+      // Use the evidence revelation system for gradual, one-at-a-time discovery
+      const revelationResult = attemptEvidenceRevelation(
+        filePath,
+        content,
+        existingReveals.length > 0 ? existingReveals : undefined,
+        { ...state, ...stateChanges } as GameState
+      );
+      
+      // If an evidence was revealed, process it through the truth system
+      if (revelationResult.revealedEvidence) {
+        const truthResult = checkTruthProgress(
+          { ...state, ...stateChanges } as GameState, 
+          [revelationResult.revealedEvidence]
+        );
+        notices = truthResult.notices;
+        
+        // Merge truth discovery state changes (includes detection reduction breather)
+        Object.assign(stateChanges, truthResult.stateChanges);
+        
+        // Update the file evidence state in game state
+        stateChanges.fileEvidenceStates = {
+          ...state.fileEvidenceStates,
+          ...stateChanges.fileEvidenceStates,
+          [filePath]: revelationResult.updatedFileState,
+        };
+        
+        // If file has more unrevealed evidences, hint at it
+        if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
+          notices.push(createEntry('system', ''));
+          notices.push(createEntry('system', '[This file may contain additional insights on future reads]'));
+        }
+      }
+      
+      // Check if file content is disturbing and should trigger avatar expression
+      const disturbingExpression = getDisturbingContentAvatarExpression(content);
+      if (disturbingExpression && !stateChanges.avatarExpression) {
+        stateChanges.avatarExpression = disturbingExpression;
+      }
     }
     
     // Track content category based on file path
@@ -4555,8 +4635,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         const childPrefix = isLast ? '    ' : '│   ';
         
         if (entry.type === 'dir') {
-          lines.push(`${prefix}${connector}${entry.name}/`);
-          const childPath = path === '/' ? `/${entry.name}` : `${path}/${entry.name}`;
+          // entry.name from listDirectory already has trailing / for dirs
+          const dirName = entry.name.replace(/\/$/, ''); // Remove trailing slash
+          lines.push(`${prefix}${connector}${dirName}/`);
+          const childPath = path === '/' ? `/${dirName}` : `${path}/${dirName}`;
           lines.push(...buildTree(childPath, prefix + childPrefix, depth + 1));
         } else {
           // Show file with status indicator

@@ -83,20 +83,31 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
   
   // Initial intro sequence
   useEffect(() => {
+    let isMounted = true;
+    
     const startIntro = async () => {
+      if (!isMounted) return;
       addSystemMessage('═══ CONNECTION ESTABLISHED ═══');
       addSystemMessage('UFO74 managed to "hang" the connection on a civilian computer');
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      if (!isMounted) return;
       addSystemMessage('xXx_DarkMaster_xXx is online');
       await addTeenMessage('???', 1000);
+      if (!isMounted) return;
       await addTeenMessage('hello???', 1200);
+      if (!isMounted) return;
       await addTeenMessage('who r u??? how did u get into my icq??', 1500);
       
+      if (!isMounted) return;
       setPhase('scared');
     };
     
     startIntro();
+    
+    return () => {
+      isMounted = false;
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   

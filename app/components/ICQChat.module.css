@@ -145,6 +145,10 @@
 }
 
 /* System messages */
+.system {
+  /* Container for system messages - no special styling needed */
+}
+
 .systemMessage {
   text-align: center;
   color: #008000;

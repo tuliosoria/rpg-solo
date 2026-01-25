@@ -227,6 +227,10 @@ export interface GameState {
   // Evidence linking system
   evidenceLinks: Array<[string, string]>; // Pairs of linked file paths
   
+  // Evidence revelation system - tracks which evidences each file has revealed
+  // Key: file path, Value: evidence state for that file
+  fileEvidenceStates: Record<string, FileEvidenceState>;
+  
   // Timed decryption state
   timedDecryptActive: boolean;
   timedDecryptFile?: string;
@@ -295,6 +299,14 @@ export const TRUTH_CATEGORIES = [
 ] as const;
 
 export type TruthCategory = typeof TRUTH_CATEGORIES[number];
+
+// Evidence Revelation System types
+export interface FileEvidenceState {
+  // All evidences this file can potentially reveal (determined by content analysis)
+  potentialEvidences: TruthCategory[];
+  // Evidences already revealed from this file in current playthrough
+  revealedEvidences: TruthCategory[];
+}
 
 export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionStartTime'> = {
   currentPath: '/',
@@ -388,6 +400,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   hideAvailable: false,
   // Evidence linking
   evidenceLinks: [],
+  // Evidence revelation system
+  fileEvidenceStates: {},
   // Timed decryption
   timedDecryptActive: false,
   timedDecryptFile: undefined,
