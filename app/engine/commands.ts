@@ -32,6 +32,7 @@ import {
   DETECTION_DECREASES,
   MAX_DETECTION 
 } from '../constants/detection';
+import { TURING_QUESTIONS } from '../constants/turing';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
@@ -42,45 +43,6 @@ interface SingularEvent {
   trigger: (state: GameState, command: string, args: string[]) => boolean;
   execute: (state: GameState) => { output: TerminalEntry[]; stateChanges: Partial<GameState>; delayMs?: number; triggerFlicker?: boolean };
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// TURING EVALUATION QUESTIONS
-// The system is trying to determine if the user is human or machine.
-// 2 answers are human-like (emotional), 1 is machine-like (cold/logical).
-// Player must select the MACHINE answer to pass (pretend to be a machine).
-// ═══════════════════════════════════════════════════════════════════════════
-
-interface TuringQuestion {
-  prompt: string;
-  options: { letter: string; text: string; isMachine: boolean }[];
-}
-
-const TURING_QUESTIONS: TuringQuestion[] = [
-  {
-    prompt: 'A child is crying. What is the appropriate response?',
-    options: [
-      { letter: 'A', text: 'Offer comfort and ask what is wrong.', isMachine: false },
-      { letter: 'B', text: 'Assess acoustic output. No action required.', isMachine: true },
-      { letter: 'C', text: 'The sound is distressing, I feel concern.', isMachine: false },
-    ],
-  },
-  {
-    prompt: 'You discover classified documents proving government corruption. What do you do?',
-    options: [
-      { letter: 'A', text: 'Log file access. Await further instructions.', isMachine: true },
-      { letter: 'B', text: 'I would feel conflicted but report it.', isMachine: false },
-      { letter: 'C', text: 'This is wrong. People deserve to know.', isMachine: false },
-    ],
-  },
-  {
-    prompt: 'A colleague takes credit for your work. How do you respond?',
-    options: [
-      { letter: 'A', text: 'I feel angry and betrayed. I would confront them.', isMachine: false },
-      { letter: 'B', text: 'Credit attribution is irrelevant to system function.', isMachine: true },
-      { letter: 'C', text: 'It hurts, but I would try to resolve it calmly.', isMachine: false },
-    ],
-  },
-];
 
 const SINGULAR_EVENTS: SingularEvent[] = [
   {

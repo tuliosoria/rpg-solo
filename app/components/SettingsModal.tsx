@@ -23,21 +23,29 @@ export default function SettingsModal({
   
   // Load CRT preference on mount
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const stored = localStorage.getItem('varginha_crt_enabled');
-      if (stored !== null) {
-        const enabled = stored === 'true';
-        setCrtEnabled(enabled);
-        document.body.classList.toggle('no-crt', !enabled);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const stored = localStorage.getItem('varginha_crt_enabled');
+        if (stored !== null) {
+          const enabled = stored === 'true';
+          setCrtEnabled(enabled);
+          document.body.classList.toggle('no-crt', !enabled);
+        }
       }
+    } catch {
+      // localStorage may be unavailable
     }
   }, []);
   
   const toggleCrt = () => {
     const newValue = !crtEnabled;
     setCrtEnabled(newValue);
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.setItem('varginha_crt_enabled', String(newValue));
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('varginha_crt_enabled', String(newValue));
+      }
+    } catch {
+      // localStorage may be unavailable
     }
     document.body.classList.toggle('no-crt', !newValue);
   };

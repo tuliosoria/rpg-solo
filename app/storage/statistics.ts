@@ -47,7 +47,7 @@ export function getStatistics(): GameStatistics {
       return { ...DEFAULT_STATISTICS, ...parsed };
     }
   } catch {
-    // Ignore errors
+    // localStorage may be unavailable or corrupted
   }
   return DEFAULT_STATISTICS;
 }
@@ -58,7 +58,7 @@ export function saveStatistics(stats: GameStatistics): void {
   try {
     localStorage.setItem(STATISTICS_KEY, JSON.stringify(stats));
   } catch {
-    // Ignore errors
+    // localStorage may be full or unavailable
   }
 }
 
@@ -114,5 +114,9 @@ export function formatPlaytime(ms: number): string {
 
 export function clearStatistics(): void {
   if (typeof window === 'undefined') return;
-  localStorage.removeItem(STATISTICS_KEY);
+  try {
+    localStorage.removeItem(STATISTICS_KEY);
+  } catch {
+    // localStorage may be unavailable
+  }
 }

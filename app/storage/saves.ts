@@ -158,10 +158,14 @@ export function loadGame(slotId: string): GameState | null {
 export function deleteSave(slotId: string): void {
   if (!isBrowserWithStorage()) return;
   
-  window.localStorage.removeItem(SAVE_PREFIX + slotId);
-  
-  const slots = getSaveSlots().filter(s => s.id !== slotId);
-  window.localStorage.setItem(SAVES_KEY, JSON.stringify(slots));
+  try {
+    window.localStorage.removeItem(SAVE_PREFIX + slotId);
+    
+    const slots = getSaveSlots().filter(s => s.id !== slotId);
+    window.localStorage.setItem(SAVES_KEY, JSON.stringify(slots));
+  } catch {
+    // localStorage may be unavailable
+  }
 }
 
 // Create a fresh game state
@@ -170,7 +174,12 @@ export function createNewGame(): GameState {
   const bootSequence = generateBootSequence();
   const variantAlpha = seed % 2 === 0;
   const hasPriorSave = getSaveSlots().length > 0;
-  const hasAutoSave = isBrowserWithStorage() && !!window.localStorage.getItem('terminal1996:autosave');
+  let hasAutoSave = false;
+  try {
+    hasAutoSave = isBrowserWithStorage() && !!window.localStorage.getItem('terminal1996:autosave');
+  } catch {
+    // localStorage may be unavailable
+  }
   const ghostSessionAvailable = hasPriorSave || hasAutoSave;
   const flags = {
     ...DEFAULT_GAME_STATE.flags,
@@ -198,8 +207,12 @@ export function createNewGame(): GameState {
 export function autoSave(state: GameState): void {
   if (!isBrowserWithStorage()) return;
   
-  const stateToSave = { ...state, lastSaveTime: Date.now() };
-  window.localStorage.setItem('terminal1996:autosave', serializeState(stateToSave));
+  try {
+    const stateToSave = { ...state, lastSaveTime: Date.now() };
+    window.localStorage.setItem('terminal1996:autosave', serializeState(stateToSave));
+  } catch {
+    // localStorage may be full or unavailable
+  }
 }
 
 // Load auto-save

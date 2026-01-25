@@ -126,7 +126,7 @@ export function getUnlockedAchievements(): Set<string> {
       return new Set(JSON.parse(stored));
     }
   } catch {
-    // Ignore errors
+    // localStorage may be unavailable or data corrupted
   }
   return new Set();
 }
@@ -138,7 +138,7 @@ export function saveAchievements(achievements: Set<string>): void {
   try {
     localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify([...achievements]));
   } catch {
-    // Ignore errors
+    // localStorage may be full or unavailable
   }
 }
 
@@ -161,7 +161,11 @@ export function unlockAchievement(id: string): { achievement: Achievement; isNew
 // Clear all achievements (for testing)
 export function clearAchievements(): void {
   if (typeof window === 'undefined') return;
-  localStorage.removeItem(ACHIEVEMENTS_KEY);
+  try {
+    localStorage.removeItem(ACHIEVEMENTS_KEY);
+  } catch {
+    // localStorage may be unavailable
+  }
 }
 
 // Get achievement by ID

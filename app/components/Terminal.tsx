@@ -803,6 +803,24 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     return () => window.removeEventListener('keydown', handleEscKey);
   }, [isStreaming, gamePhase, gameState.isGameOver, showSettings, showAchievements, showStatistics, activeImage, activeVideo]);
   
+  // Use refs to track current state for async operations to avoid race conditions
+  const encryptedChannelStateRef = useRef(encryptedChannelState);
+  const pendingUfo74MessagesRef = useRef(pendingUfo74Messages);
+  const gameStateRef2 = useRef(gameState); // Secondary ref for handleSubmit
+  
+  // Keep refs in sync with state
+  useEffect(() => {
+    encryptedChannelStateRef.current = encryptedChannelState;
+  }, [encryptedChannelState]);
+  
+  useEffect(() => {
+    pendingUfo74MessagesRef.current = pendingUfo74Messages;
+  }, [pendingUfo74Messages]);
+  
+  useEffect(() => {
+    gameStateRef2.current = gameState;
+  }, [gameState]);
+  
   // Handle command submission
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -833,6 +851,9 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     
     // State: awaiting_open - Player must press Enter to open channel
     if (encryptedChannelState === 'awaiting_open' && !inputValue.trim()) {
+      // Capture current messages before state changes to avoid race conditions
+      const currentMessages = [...pendingUfo74Messages];
+      
       // Open the encrypted channel
       setEncryptedChannelState('open');
       
@@ -851,27 +872,23 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       playSound('transmission');
       
       // If we have messages, show the first one
-      if (pendingUfo74Messages.length > 0) {
-        const [firstMessage, ...remaining] = pendingUfo74Messages;
+      if (currentMessages.length > 0) {
+        const [firstMessage, ...remaining] = currentMessages;
+        // Use captured values in setTimeout to avoid stale closures
         setTimeout(() => {
+          const promptText = remaining.length === 0 
+            ? '                    [ press ENTER to close channel ]'
+            : '                    [ press ENTER to continue ]';
+          
           setGameState(prev => ({
             ...prev,
-            history: [...prev.history, firstMessage],
+            history: [...prev.history, firstMessage, createEntry('system', promptText)],
           }));
           setPendingUfo74Messages(remaining);
           
-          // If no more messages, transition to awaiting_close
+          // Transition state based on whether more messages remain
           if (remaining.length === 0) {
             setEncryptedChannelState('awaiting_close');
-            setGameState(prev => ({
-              ...prev,
-              history: [...prev.history, createEntry('system', '                    [ press ENTER to close channel ]')],
-            }));
-          } else {
-            setGameState(prev => ({
-              ...prev,
-              history: [...prev.history, createEntry('system', '                    [ press ENTER to continue ]')],
-            }));
           }
           playSound('message');
         }, 100);
@@ -882,25 +899,24 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     // State: open - Channel is open, show messages one at a time
     if (encryptedChannelState === 'open' && !inputValue.trim()) {
       if (pendingUfo74Messages.length > 0) {
-        const [nextMessage, ...remaining] = pendingUfo74Messages;
+        // Capture current messages to avoid race conditions
+        const currentMessages = [...pendingUfo74Messages];
+        const [nextMessage, ...remaining] = currentMessages;
+        
+        const promptText = remaining.length === 0 
+          ? '                    [ press ENTER to close channel ]'
+          : '                    [ press ENTER to continue ]';
+        
+        // Single atomic state update with both message and prompt
         setGameState(prev => ({
           ...prev,
-          history: [...prev.history, nextMessage],
+          history: [...prev.history, nextMessage, createEntry('system', promptText)],
         }));
         setPendingUfo74Messages(remaining);
         
         // If no more messages, transition to awaiting_close
         if (remaining.length === 0) {
           setEncryptedChannelState('awaiting_close');
-          setGameState(prev => ({
-            ...prev,
-            history: [...prev.history, createEntry('system', '                    [ press ENTER to close channel ]')],
-          }));
-        } else {
-          setGameState(prev => ({
-            ...prev,
-            history: [...prev.history, createEntry('system', '                    [ press ENTER to continue ]')],
-          }));
         }
         playSound('message');
       }
@@ -1171,8 +1187,8 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         setQueuedAfterMediaMessages(result.pendingUfo74Messages);
       } else {
         // No media trigger - trigger encrypted channel immediately
-        // Only if channel isn't already active
-        if (encryptedChannelState === 'idle') {
+        // Use ref to check current state to avoid stale closure after async operations
+        if (encryptedChannelStateRef.current === 'idle') {
           setGameState(prev => ({
             ...prev,
             history: [
