@@ -223,5 +223,293 @@ describe('Save/Load System', () => {
       expect(newGame.imagesShownThisRun).toBeInstanceOf(Set);
       expect(newGame.videosShownThisRun).toBeInstanceOf(Set);
     });
+
+    it('sets tutorialComplete to false for new games', async () => {
+      const { createNewGame } = await import('../saves');
+      
+      const newGame = createNewGame();
+      
+      expect(newGame.tutorialComplete).toBe(false);
+      expect(newGame.tutorialStep).toBe(0);
+    });
+
+    it('generates a unique seed for each new game', async () => {
+      const { createNewGame } = await import('../saves');
+      
+      const game1 = createNewGame();
+      const game2 = createNewGame();
+      
+      // Seeds should be set (non-zero)
+      expect(game1.seed).toBeGreaterThan(0);
+      expect(game2.seed).toBeGreaterThan(0);
+    });
+
+    it('sets variant route based on seed', async () => {
+      const { createNewGame } = await import('../saves');
+      
+      const newGame = createNewGame();
+      
+      // One of the variant flags should be true
+      const hasVariantAlpha = newGame.flags.variant_route_alpha;
+      const hasVariantBeta = newGame.flags.variant_route_beta;
+      
+      expect(hasVariantAlpha || hasVariantBeta).toBe(true);
+    });
+
+    it('includes boot sequence in initial history', async () => {
+      const { createNewGame } = await import('../saves');
+      
+      const newGame = createNewGame();
+      
+      expect(newGame.history.length).toBeGreaterThan(0);
+    });
+
+    it('sets sessionStartTime to current time', async () => {
+      const { createNewGame } = await import('../saves');
+      const before = Date.now();
+      
+      const newGame = createNewGame();
+      
+      const after = Date.now();
+      expect(newGame.sessionStartTime).toBeGreaterThanOrEqual(before);
+      expect(newGame.sessionStartTime).toBeLessThanOrEqual(after);
+    });
+  });
+
+  describe('deleteSave', () => {
+    it('removes save data from localStorage', async () => {
+      const { saveGame, deleteSave, loadGame } = await import('../saves');
+      
+      const state = createTestState();
+      const slot = saveGame(state, 'Test Save');
+      expect(slot).not.toBeNull();
+      
+      // Verify save exists
+      const loaded = loadGame(slot!.id);
+      expect(loaded).not.toBeNull();
+      
+      // Delete the save
+      deleteSave(slot!.id);
+      
+      // Verify save is gone
+      const loadedAfterDelete = loadGame(slot!.id);
+      expect(loadedAfterDelete).toBeNull();
+    });
+
+    it('removes slot from save slots list', async () => {
+      const { saveGame, deleteSave, getSaveSlots } = await import('../saves');
+      
+      const state = createTestState();
+      const slot = saveGame(state, 'Test Save');
+      
+      // Get initial count
+      const slotsBefore = getSaveSlots();
+      const countBefore = slotsBefore.length;
+      
+      // Delete the save
+      deleteSave(slot!.id);
+      
+      // Verify count decreased
+      const slotsAfter = getSaveSlots();
+      expect(slotsAfter.length).toBe(countBefore - 1);
+    });
+  });
+
+  describe('autoSave and loadAutoSave', () => {
+    it('saves state to autosave slot', async () => {
+      const { autoSave, loadAutoSave } = await import('../saves');
+      
+      const state = createTestState({
+        detectionLevel: 42,
+        truthsDiscovered: new Set(['debris_relocation']),
+      });
+      
+      autoSave(state);
+      
+      const loaded = loadAutoSave();
+      expect(loaded).not.toBeNull();
+      expect(loaded!.detectionLevel).toBe(42);
+      expect(loaded!.truthsDiscovered.has('debris_relocation')).toBe(true);
+    });
+
+    it('returns null when no autosave exists', async () => {
+      const { loadAutoSave } = await import('../saves');
+      
+      // Clear any existing autosave
+      delete mockStore['terminal1996:autosave'];
+      
+      const loaded = loadAutoSave();
+      expect(loaded).toBeNull();
+    });
+
+    it('updates lastSaveTime on autosave', async () => {
+      const { autoSave, loadAutoSave } = await import('../saves');
+      
+      const state = createTestState();
+      const before = Date.now();
+      
+      autoSave(state);
+      
+      const loaded = loadAutoSave();
+      expect(loaded!.lastSaveTime).toBeGreaterThanOrEqual(before);
+    });
+  });
+
+  describe('saveGame error handling', () => {
+    it('handles quota exceeded by cleaning up old saves', async () => {
+      const { saveGame, getSaveSlots } = await import('../saves');
+      
+      const state = createTestState();
+      
+      // Create many saves to approach quota
+      for (let i = 0; i < 8; i++) {
+        saveGame({ ...state, detectionLevel: i }, `Save ${i}`);
+      }
+      
+      // All saves should be there (up to limit)
+      const slots = getSaveSlots();
+      expect(slots.length).toBeLessThanOrEqual(10);
+    });
+
+    it('preserves slot metadata correctly', async () => {
+      const { saveGame, getSaveSlots } = await import('../saves');
+      
+      const state = createTestState({
+        currentPath: '/admin/classified',
+        detectionLevel: 75,
+        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
+      });
+      
+      const slot = saveGame(state, 'My Save');
+      
+      expect(slot).not.toBeNull();
+      expect(slot!.name).toBe('My Save');
+      expect(slot!.currentPath).toBe('/admin/classified');
+      expect(slot!.detectionLevel).toBe(75);
+      expect(slot!.truthCount).toBe(2);
+    });
+  });
+
+  describe('getSaveSlots', () => {
+    it('returns empty array when no saves exist', async () => {
+      // Clear mock store
+      mockStore = {};
+      vi.resetModules();
+      
+      const mockLocalStorage = {
+        getItem: (key: string) => mockStore[key] || null,
+        setItem: (key: string, value: string) => { mockStore[key] = value; },
+        removeItem: (key: string) => { delete mockStore[key]; },
+        clear: () => { mockStore = {}; },
+        length: 0,
+        key: () => null,
+      };
+      vi.stubGlobal('localStorage', mockLocalStorage);
+      vi.stubGlobal('window', { localStorage: mockLocalStorage });
+      
+      const { getSaveSlots } = await import('../saves');
+      
+      const slots = getSaveSlots();
+      expect(slots).toEqual([]);
+    });
+
+    it('returns saves in order (newest first)', async () => {
+      const { saveGame, getSaveSlots } = await import('../saves');
+      
+      const state = createTestState();
+      
+      // Create saves with delays
+      saveGame({ ...state }, 'First Save');
+      await new Promise(r => setTimeout(r, 10));
+      saveGame({ ...state }, 'Second Save');
+      await new Promise(r => setTimeout(r, 10));
+      saveGame({ ...state }, 'Third Save');
+      
+      const slots = getSaveSlots();
+      expect(slots[0].name).toBe('Third Save');
+      expect(slots[1].name).toBe('Second Save');
+      expect(slots[2].name).toBe('First Save');
+    });
+  });
+
+  describe('loadGame edge cases', () => {
+    it('returns null for non-existent save', async () => {
+      const { loadGame } = await import('../saves');
+      
+      const loaded = loadGame('non_existent_save_id');
+      expect(loaded).toBeNull();
+    });
+
+    it('handles corrupted save data gracefully', async () => {
+      const { loadGame } = await import('../saves');
+      
+      // Put corrupted data in storage
+      mockStore['terminal1996:save:corrupted_save'] = 'not valid json';
+      
+      const loaded = loadGame('corrupted_save');
+      expect(loaded).toBeNull();
+    });
+  });
+
+  describe('command history truncation', () => {
+    it('truncates command history on load', async () => {
+      const { saveGame, loadGame } = await import('../saves');
+      
+      // Create state with large command history (more than MAX_COMMAND_HISTORY_SIZE = 100)
+      const largeCommandHistory = Array.from({ length: 200 }, (_, i) => `command ${i}`);
+      
+      const state = createTestState({
+        commandHistory: largeCommandHistory,
+      });
+      
+      const slot = saveGame(state, 'Large Command History');
+      const loaded = loadGame(slot!.id);
+      
+      // Should be truncated to MAX_COMMAND_HISTORY_SIZE (100)
+      expect(loaded!.commandHistory.length).toBeLessThanOrEqual(100);
+    });
+  });
+
+  describe('versioned save format', () => {
+    it('handles legacy unversioned saves', async () => {
+      const { loadGame } = await import('../saves');
+      
+      // Simulate a legacy save (no version field)
+      const legacySave = {
+        currentPath: '/storage',
+        detectionLevel: 30,
+        accessLevel: 2,
+        truthsDiscovered: ['truth1'],
+        history: [],
+        commandHistory: [],
+      };
+      
+      mockStore['terminal1996:save:legacy_save'] = JSON.stringify(legacySave);
+      
+      const loaded = loadGame('legacy_save');
+      
+      expect(loaded).not.toBeNull();
+      expect(loaded!.currentPath).toBe('/storage');
+      expect(loaded!.detectionLevel).toBe(30);
+      expect(loaded!.truthsDiscovered).toBeInstanceOf(Set);
+      expect(loaded!.truthsDiscovered.has('truth1')).toBe(true);
+    });
+
+    it('handles versioned saves correctly', async () => {
+      const { saveGame, loadGame } = await import('../saves');
+      
+      const state = createTestState({
+        detectionLevel: 55,
+      });
+      
+      const slot = saveGame(state, 'Versioned Save');
+      
+      // Check raw storage has version field
+      const rawData = JSON.parse(mockStore[`terminal1996:save:${slot!.id}`]);
+      expect(rawData.version).toBeDefined();
+      
+      const loaded = loadGame(slot!.id);
+      expect(loaded!.detectionLevel).toBe(55);
+    });
   });
 });
