@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styles from './SettingsModal.module.css';
 
 interface SettingsModalProps {
@@ -11,16 +11,16 @@ interface SettingsModalProps {
   onCloseAction: () => void;
 }
 
-export default function SettingsModal({ 
-  soundEnabled, 
-  masterVolume, 
-  onToggleSound, 
+export default function SettingsModal({
+  soundEnabled,
+  masterVolume,
+  onToggleSound,
   onVolumeChange,
-  onCloseAction 
+  onCloseAction,
 }: SettingsModalProps) {
   // CRT effects state - stored in localStorage
   const [crtEnabled, setCrtEnabled] = useState(true);
-  
+
   // Load CRT preference on mount
   useEffect(() => {
     try {
@@ -36,7 +36,23 @@ export default function SettingsModal({
       // localStorage may be unavailable
     }
   }, []);
-  
+
+  // Handle ESC key to close modal
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onCloseAction();
+      }
+    },
+    [onCloseAction]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
   const toggleCrt = () => {
     const newValue = !crtEnabled;
     setCrtEnabled(newValue);
@@ -57,19 +73,19 @@ export default function SettingsModal({
           <h2>SETTINGS</h2>
           <div className={styles.line}>═══════════════════════════</div>
         </div>
-        
+
         <div className={styles.content}>
           {/* Sound Toggle */}
           <div className={styles.setting}>
             <label className={styles.label}>Sound Effects</label>
-            <button 
+            <button
               className={`${styles.toggle} ${soundEnabled ? styles.toggleOn : styles.toggleOff}`}
               onClick={onToggleSound}
             >
               {soundEnabled ? '[ ON ]' : '[ OFF ]'}
             </button>
           </div>
-          
+
           {/* Volume Slider */}
           <div className={styles.setting}>
             <label className={styles.label}>Master Volume</label>
@@ -79,18 +95,18 @@ export default function SettingsModal({
                 min="0"
                 max="100"
                 value={masterVolume * 100}
-                onChange={(e) => onVolumeChange(parseInt(e.target.value) / 100)}
+                onChange={e => onVolumeChange(parseInt(e.target.value) / 100)}
                 className={styles.slider}
                 disabled={!soundEnabled}
               />
               <span className={styles.volumeValue}>{Math.round(masterVolume * 100)}%</span>
             </div>
           </div>
-          
+
           {/* CRT Effects Toggle */}
           <div className={styles.setting}>
             <label className={styles.label}>CRT Effects</label>
-            <button 
+            <button
               className={`${styles.toggle} ${crtEnabled ? styles.toggleOn : styles.toggleOff}`}
               onClick={toggleCrt}
             >
@@ -98,7 +114,7 @@ export default function SettingsModal({
             </button>
             <span className={styles.hint}>Scanlines & glow</span>
           </div>
-          
+
           {/* Info */}
           <div className={styles.info}>
             <div className={styles.infoLine}>Keyboard Shortcuts:</div>
@@ -108,12 +124,9 @@ export default function SettingsModal({
             <div className={styles.shortcut}>Space/Enter — Skip streaming</div>
           </div>
         </div>
-        
+
         <div className={styles.actions}>
-          <button 
-            className={styles.closeButton}
-            onClick={onCloseAction}
-          >
+          <button className={styles.closeButton} onClick={onCloseAction}>
             [ CLOSE ]
           </button>
         </div>

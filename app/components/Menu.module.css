@@ -6,7 +6,8 @@
   min-height: 100vh;
   background: #0a0a0a;
   color: #00ff00;
-  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-family:
+    ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,12 +50,24 @@
 }
 
 @keyframes menuFlicker {
-  0% { opacity: 0; }
-  20% { opacity: 0.8; }
-  40% { opacity: 0.4; }
-  60% { opacity: 0.9; }
-  80% { opacity: 0.6; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  40% {
+    opacity: 0.4;
+  }
+  60% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* Menu content */
@@ -277,16 +290,16 @@
   .menuContent {
     padding: 20px;
   }
-  
+
   .titleText {
     font-size: 32px;
     letter-spacing: 4px;
   }
-  
+
   .subtitle {
     font-size: 11px;
   }
-  
+
   .menuButton {
     padding: 14px 24px;
     font-size: 16px;
@@ -304,4 +317,42 @@
 
 .riskCritical {
   color: #ff4444;
+}
+
+/* Selection indicator for keyboard navigation */
+.selected {
+  background: rgba(0, 255, 0, 0.1);
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+}
+
+.menuButton.selected {
+  transform: translateY(-2px);
+}
+
+.backButton.selected {
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+/* Save slot with selector */
+.saveSelector {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00ff00;
+  font-size: 14px;
+}
+
+.saveContent {
+  margin-left: 16px;
+}
+
+/* Keyboard hint */
+.keyHint {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #444;
+  letter-spacing: 1px;
 }
