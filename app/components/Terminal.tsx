@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import {
   GameState,
   TerminalEntry,
@@ -42,22 +43,24 @@ import {
 import { useSound } from '../hooks/useSound';
 import { unlockAchievement, Achievement } from '../engine/achievements';
 import { uiRandom, uiRandomInt, uiRandomPick, uiChance, uiRandomFloat } from '../engine/rng';
-import ImageOverlay from './ImageOverlay';
-import VideoOverlay from './VideoOverlay';
-import TuringTestOverlay from './TuringTestOverlay';
-import GameOver from './GameOver';
-import Blackout from './Blackout';
-import ICQChat from './ICQChat';
-import Victory from './Victory';
-import BadEnding from './BadEnding';
-import NeutralEnding from './NeutralEnding';
-import SecretEnding from './SecretEnding';
 import AchievementPopup from './AchievementPopup';
-import AchievementGallery from './AchievementGallery';
 import SettingsModal from './SettingsModal';
-import StatisticsModal from './StatisticsModal';
 import PauseMenu from './PauseMenu';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
+
+// Lazy-load conditional components for better initial load performance
+const ImageOverlay = dynamic(() => import('./ImageOverlay'), { ssr: false });
+const VideoOverlay = dynamic(() => import('./VideoOverlay'), { ssr: false });
+const TuringTestOverlay = dynamic(() => import('./TuringTestOverlay'), { ssr: false });
+const GameOver = dynamic(() => import('./GameOver'), { ssr: false });
+const Blackout = dynamic(() => import('./Blackout'), { ssr: false });
+const ICQChat = dynamic(() => import('./ICQChat'), { ssr: false });
+const Victory = dynamic(() => import('./Victory'), { ssr: false });
+const BadEnding = dynamic(() => import('./BadEnding'), { ssr: false });
+const NeutralEnding = dynamic(() => import('./NeutralEnding'), { ssr: false });
+const SecretEnding = dynamic(() => import('./SecretEnding'), { ssr: false });
+const AchievementGallery = dynamic(() => import('./AchievementGallery'), { ssr: false });
+const StatisticsModal = dynamic(() => import('./StatisticsModal'), { ssr: false });
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion

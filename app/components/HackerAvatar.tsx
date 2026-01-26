@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, memo } from 'react';
 import Image from 'next/image';
 import styles from './HackerAvatar.module.css';
 
@@ -22,22 +22,27 @@ const EXPRESSION_IMAGES: Record<AvatarExpression, string> = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function HackerAvatar({ expression, detectionLevel, sessionStability, onExpressionTimeout }: HackerAvatarProps) {
+function HackerAvatar({
+  expression,
+  detectionLevel,
+  sessionStability,
+  onExpressionTimeout,
+}: HackerAvatarProps) {
   const [currentExpression, setCurrentExpression] = useState<AvatarExpression>(expression);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   useEffect(() => {
     if (expression !== 'neutral') {
       setIsTransitioning(true);
       setCurrentExpression(expression);
-      
+
       setTimeout(() => setIsTransitioning(false), 150);
-      
+
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      
+
       timeoutRef.current = setTimeout(() => {
         setIsTransitioning(true);
         setTimeout(() => {
@@ -49,14 +54,14 @@ export default function HackerAvatar({ expression, detectionLevel, sessionStabil
     } else {
       setCurrentExpression('neutral');
     }
-    
+
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
   }, [expression, onExpressionTimeout]);
-  
+
   return (
     <div className={styles.hudPanel}>
       {/* Avatar only - meters removed per UI cleanup */}
@@ -64,7 +69,7 @@ export default function HackerAvatar({ expression, detectionLevel, sessionStabil
         <div className={styles.tvFrame}>
           {/* Green scanning bar */}
           <div className={styles.scanBar} />
-          
+
           <div className={`${styles.imageWrapper} ${isTransitioning ? styles.transitioning : ''}`}>
             <Image
               src={EXPRESSION_IMAGES[currentExpression]}
@@ -75,7 +80,7 @@ export default function HackerAvatar({ expression, detectionLevel, sessionStabil
               priority
             />
           </div>
-          
+
           {/* TV effects */}
           <div className={styles.staticOverlay} />
           <div className={styles.scanlines} />
@@ -86,3 +91,7 @@ export default function HackerAvatar({ expression, detectionLevel, sessionStabil
     </div>
   );
 }
+
+// Memoize to prevent re-renders when only detectionLevel changes
+// Only re-render when expression actually changes
+export default memo(HackerAvatar, (prev, next) => prev.expression === next.expression);

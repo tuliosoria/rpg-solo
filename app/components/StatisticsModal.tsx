@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 import { getStatistics, formatPlaytime } from '../storage/statistics';
 import styles from './StatisticsModal.module.css';
 
@@ -8,15 +8,15 @@ interface StatisticsModalProps {
   onCloseAction: () => void;
 }
 
-export default function StatisticsModal({ onCloseAction }: StatisticsModalProps) {
+export default memo(function StatisticsModal({ onCloseAction }: StatisticsModalProps) {
   const stats = getStatistics();
-  
-  const totalEndings = 
-    stats.endingsAchieved.good + 
-    stats.endingsAchieved.bad + 
-    stats.endingsAchieved.neutral + 
+
+  const totalEndings =
+    stats.endingsAchieved.good +
+    stats.endingsAchieved.bad +
+    stats.endingsAchieved.neutral +
     stats.endingsAchieved.secret;
-  
+
   return (
     <div className={styles.overlay} onClick={onCloseAction}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
@@ -24,7 +24,7 @@ export default function StatisticsModal({ onCloseAction }: StatisticsModalProps)
           <h2>STATISTICS</h2>
           <div className={styles.line}>═══════════════════════════</div>
         </div>
-        
+
         <div className={styles.content}>
           <div className={styles.section}>
             <div className={styles.sectionTitle}>SESSION DATA</div>
@@ -49,7 +49,7 @@ export default function StatisticsModal({ onCloseAction }: StatisticsModalProps)
               <span className={styles.statValue}>{stats.filesRead}</span>
             </div>
           </div>
-          
+
           <div className={styles.section}>
             <div className={styles.sectionTitle}>ENDINGS ACHIEVED</div>
             <div className={styles.stat}>
@@ -73,7 +73,7 @@ export default function StatisticsModal({ onCloseAction }: StatisticsModalProps)
               <span className={styles.statValue}>{totalEndings}</span>
             </div>
           </div>
-          
+
           <div className={styles.section}>
             <div className={styles.sectionTitle}>RECORDS</div>
             <div className={styles.stat}>
@@ -88,16 +88,13 @@ export default function StatisticsModal({ onCloseAction }: StatisticsModalProps)
             </div>
           </div>
         </div>
-        
+
         <div className={styles.actions}>
-          <button 
-            className={styles.closeButton}
-            onClick={onCloseAction}
-          >
+          <button className={styles.closeButton} onClick={onCloseAction}>
             [ CLOSE ]
           </button>
         </div>
       </div>
     </div>
   );
-}
+});

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import styles from './AchievementPopup.module.css';
 import { Achievement } from '../engine/achievements';
 
@@ -9,14 +9,14 @@ interface AchievementPopupProps {
   onDismiss: () => void;
 }
 
-export default function AchievementPopup({ achievement, onDismiss }: AchievementPopupProps) {
+function AchievementPopup({ achievement, onDismiss }: AchievementPopupProps) {
   const [visible, setVisible] = useState(false);
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
     // Animate in
     const showTimer = setTimeout(() => setVisible(true), 50);
-    
+
     // Auto-dismiss after 4 seconds
     const dismissTimer = setTimeout(() => {
       setExiting(true);
@@ -30,7 +30,7 @@ export default function AchievementPopup({ achievement, onDismiss }: Achievement
   }, [onDismiss]);
 
   return (
-    <div 
+    <div
       className={`${styles.popup} ${visible ? styles.visible : ''} ${exiting ? styles.exiting : ''}`}
       onClick={() => {
         setExiting(true);
@@ -46,3 +46,6 @@ export default function AchievementPopup({ achievement, onDismiss }: Achievement
     </div>
   );
 }
+
+// Memoize to prevent unnecessary re-renders
+export default memo(AchievementPopup);

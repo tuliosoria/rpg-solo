@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, memo } from 'react';
 import styles from './SettingsModal.module.css';
 
 interface SettingsModalProps {
@@ -11,7 +11,7 @@ interface SettingsModalProps {
   onCloseAction: () => void;
 }
 
-export default function SettingsModal({
+export default memo(function SettingsModal({
   soundEnabled,
   masterVolume,
   onToggleSound,
@@ -133,4 +133,4 @@ export default function SettingsModal({
       </div>
     </div>
   );
-}
+});

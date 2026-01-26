@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, memo } from 'react';
 import styles from './PauseMenu.module.css';
 
 interface PauseMenuProps {
@@ -11,7 +11,7 @@ interface PauseMenuProps {
   onExitAction: () => void;
 }
 
-export default function PauseMenu({
+export default memo(function PauseMenu({
   onResumeAction,
   onSaveAction,
   onLoadAction,
@@ -180,4 +180,4 @@ export default function PauseMenu({
       </div>
     </div>
   );
-}
+});

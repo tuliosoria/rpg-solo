@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 import { ACHIEVEMENTS, getUnlockedAchievements } from '../engine/achievements';
 import styles from './AchievementGallery.module.css';
 
@@ -8,13 +8,13 @@ interface AchievementGalleryProps {
   onCloseAction: () => void;
 }
 
-export default function AchievementGallery({ onCloseAction }: AchievementGalleryProps) {
+export default memo(function AchievementGallery({ onCloseAction }: AchievementGalleryProps) {
   const unlockedIds = getUnlockedAchievements();
-  
+
   const visibleAchievements = ACHIEVEMENTS.map(achievement => {
     const isUnlocked = unlockedIds.has(achievement.id);
     const isSecret = achievement.secret && !isUnlocked;
-    
+
     return {
       ...achievement,
       isUnlocked,
@@ -23,10 +23,10 @@ export default function AchievementGallery({ onCloseAction }: AchievementGallery
       displayIcon: isSecret ? '🔒' : achievement.icon,
     };
   });
-  
+
   const unlockedCount = visibleAchievements.filter(a => a.isUnlocked).length;
   const totalCount = ACHIEVEMENTS.length;
-  
+
   return (
     <div className={styles.overlay} onClick={onCloseAction}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
@@ -37,11 +37,11 @@ export default function AchievementGallery({ onCloseAction }: AchievementGallery
             {unlockedCount} / {totalCount} Unlocked
           </div>
         </div>
-        
+
         <div className={styles.content}>
           <div className={styles.grid}>
             {visibleAchievements.map(achievement => (
-              <div 
+              <div
                 key={achievement.id}
                 className={`${styles.achievement} ${achievement.isUnlocked ? styles.unlocked : styles.locked}`}
               >
@@ -54,16 +54,13 @@ export default function AchievementGallery({ onCloseAction }: AchievementGallery
             ))}
           </div>
         </div>
-        
+
         <div className={styles.actions}>
-          <button 
-            className={styles.closeButton}
-            onClick={onCloseAction}
-          >
+          <button className={styles.closeButton} onClick={onCloseAction}>
             [ CLOSE ]
           </button>
         </div>
       </div>
     </div>
   );
-}
+});
