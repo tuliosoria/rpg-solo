@@ -1626,7 +1626,31 @@ export default function Terminal({
     return `Saved: ${hours}h ago`;
   };
 
-  // Get truth discovery status
+  // Get evidence tier symbol for a category
+  const getEvidenceSymbol = (category: string): string => {
+    const tier = gameState.evidenceTiers?.[category];
+    if (!tier) return '□'; // Not discovered
+    switch (tier.tier) {
+      case 'proven': return '●';      // Filled circle - proven
+      case 'corroborated': return '◆'; // Filled diamond - linked
+      case 'fragment': return '○';     // Empty circle - fragment only
+      default: return '□';
+    }
+  };
+
+  // Get CSS class for evidence tier
+  const getEvidenceClass = (category: string): string => {
+    const tier = gameState.evidenceTiers?.[category];
+    if (!tier) return styles.truthMissing;
+    switch (tier.tier) {
+      case 'proven': return styles.truthProven;
+      case 'corroborated': return styles.truthCorroborated;
+      case 'fragment': return styles.truthFragment;
+      default: return styles.truthMissing;
+    }
+  };
+
+  // Get truth discovery status (for backward compatibility)
   const getTruthStatus = () => {
     const truths = gameState.truthsDiscovered;
     return {
@@ -1637,6 +1661,12 @@ export default function Terminal({
       future: truths.has('transition_2026'),
       total: truths.size,
     };
+  };
+
+  // Count proven evidence (for victory condition display)
+  const getProvenCount = (): number => {
+    if (!gameState.evidenceTiers) return 0;
+    return Object.values(gameState.evidenceTiers).filter(t => t.tier === 'proven').length;
   };
 
   // Get risk level display with percentage
@@ -1934,36 +1964,36 @@ export default function Terminal({
         >
           <span className={styles.trackerLabel}>EVIDENCE:</span>
           <span
-            className={truthStatus.recovered ? styles.truthFound : styles.truthMissing}
+            className={getEvidenceClass('debris_relocation')}
             title="Physical debris/materials recovered"
           >
-            {truthStatus.recovered ? '■' : '□'} RECOVERED
+            {getEvidenceSymbol('debris_relocation')} RECOVERED
           </span>
           <span
-            className={truthStatus.captured ? styles.truthFound : styles.truthMissing}
+            className={getEvidenceClass('being_containment')}
             title="Beings/specimens captured"
           >
-            {truthStatus.captured ? '■' : '□'} CAPTURED
+            {getEvidenceSymbol('being_containment')} CAPTURED
           </span>
           <span
-            className={truthStatus.communicated ? styles.truthFound : styles.truthMissing}
+            className={getEvidenceClass('telepathic_scouts')}
             title="Communication/telepathy evidence"
           >
-            {truthStatus.communicated ? '■' : '□'} SIGNALS
+            {getEvidenceSymbol('telepathic_scouts')} SIGNALS
           </span>
           <span
-            className={truthStatus.involved ? styles.truthFound : styles.truthMissing}
+            className={getEvidenceClass('international_actors')}
             title="International involvement"
           >
-            {truthStatus.involved ? '■' : '□'} FOREIGN
+            {getEvidenceSymbol('international_actors')} FOREIGN
           </span>
           <span
-            className={truthStatus.future ? styles.truthFound : styles.truthMissing}
+            className={getEvidenceClass('transition_2026')}
             title="Future plans/timeline window"
           >
-            {truthStatus.future ? '■' : '□'} NEXT
+            {getEvidenceSymbol('transition_2026')} NEXT
           </span>
-          <span className={styles.truthCount}>[{truthStatus.total}/5]</span>
+          <span className={styles.truthCount}>[{getProvenCount()}/5]</span>
         </div>
         <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
           <span className={styles.trackerLabel}>RISK:</span>

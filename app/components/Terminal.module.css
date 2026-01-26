@@ -239,6 +239,40 @@
   text-shadow: 0 0 4px rgba(0, 200, 0, 0.5);
 }
 
+/* Evidence tier: PROVEN (●) - fully verified */
+.truthProven {
+  color: #00ff00;
+  text-shadow: 0 0 12px #00ff00, 0 0 2px #00ff00;
+  font-weight: bold;
+  font-size: 1.1em;
+  border-bottom: 2px solid #00ff00;
+  padding: 0 6px;
+  border-radius: 3px;
+}
+
+/* Evidence tier: CORROBORATED (◆) - linked but not proven */
+.truthCorroborated {
+  color: #ffcc00;
+  text-shadow: 0 0 8px #ffcc00, 0 0 2px #ffcc00;
+  font-weight: bold;
+  font-size: 1.05em;
+  border-bottom: 2px solid #ffcc00;
+  padding: 0 6px;
+  border-radius: 3px;
+}
+
+/* Evidence tier: FRAGMENT (○) - found but insufficient */
+.truthFragment {
+  color: #00aa88;
+  text-shadow: 0 0 6px #00aa88;
+  font-weight: normal;
+  font-size: 1em;
+  border-bottom: 2px dashed #00aa88;
+  padding: 0 6px;
+  border-radius: 3px;
+}
+
+/* Legacy: fully found (alias for proven) */
 .truthFound {
   color: #00ff00;
   text-shadow: 0 0 12px #00ff00, 0 0 2px #00ff00;
