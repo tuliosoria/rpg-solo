@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styles from './VideoOverlay.module.css';
 import type { VideoTrigger, ImageTone } from '../types';
+import { uiChance, uiRandomInt } from '../engine/rng';
 
 // Re-export for convenience
 export type { VideoTrigger };
@@ -15,7 +16,13 @@ interface VideoOverlayProps {
   corrupted?: boolean;
 }
 
-export default function VideoOverlay({ src, title, tone, onCloseAction, corrupted = false }: VideoOverlayProps) {
+export default function VideoOverlay({
+  src,
+  title,
+  tone,
+  onCloseAction,
+  corrupted = false,
+}: VideoOverlayProps) {
   const [visible, setVisible] = useState(false);
   const [flickering, setFlickering] = useState(true);
   const [initialShock, setInitialShock] = useState(true);
@@ -25,36 +32,36 @@ export default function VideoOverlay({ src, title, tone, onCloseAction, corrupte
   const [currentTime, setCurrentTime] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const videoRef = useRef<HTMLVideoElement>(null);
-  
+
   useEffect(() => {
     // SUDDEN appearance - immediate flash then video
     const shockTimeout = setTimeout(() => {
       setInitialShock(false);
     }, 50);
-    
+
     // Video appears quickly after initial flash
     const flickerTimeout = setTimeout(() => {
       setFlickering(false);
       setVisible(true);
     }, 150);
-    
+
     // Random flicker during display - more aggressive
     const flickerInterval = setInterval(() => {
-      if (Math.random() < 0.15) {
+      if (uiChance(0.15)) {
         setFlickering(true);
-        setTimeout(() => setFlickering(false), 50 + Math.random() * 100);
+        setTimeout(() => setFlickering(false), 50 + uiRandomInt(0, 100));
       }
     }, 2000);
-    
+
     return () => {
       clearTimeout(shockTimeout);
       clearTimeout(flickerTimeout);
       clearInterval(flickerInterval);
     };
   }, []);
-  
+
   // Close on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -65,11 +72,11 @@ export default function VideoOverlay({ src, title, tone, onCloseAction, corrupte
         togglePlayPause();
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onCloseAction]);
-  
+
   const togglePlayPause = useCallback(() => {
     if (videoRef.current) {
       if (isPlaying) {
@@ -79,7 +86,7 @@ export default function VideoOverlay({ src, title, tone, onCloseAction, corrupte
       }
     }
   }, [isPlaying]);
-  
+
   const handleTimeUpdate = useCallback(() => {
     if (videoRef.current) {
       const video = videoRef.current;
@@ -87,50 +94,53 @@ export default function VideoOverlay({ src, title, tone, onCloseAction, corrupte
       setProgress((video.currentTime / video.duration) * 100);
     }
   }, []);
-  
+
   const handleLoadedMetadata = useCallback(() => {
     if (videoRef.current) {
       setDuration(videoRef.current.duration);
       setIsLoading(false);
     }
   }, []);
-  
+
   const handlePlay = useCallback(() => {
     setIsPlaying(true);
   }, []);
-  
+
   const handlePause = useCallback(() => {
     setIsPlaying(false);
   }, []);
-  
+
   const handleEnded = useCallback(() => {
     setIsPlaying(false);
     setProgress(100);
   }, []);
-  
+
   const handleError = useCallback(() => {
     setError('VIDEO DATA CORRUPTED - RETRIEVAL FAILED');
     setIsLoading(false);
   }, []);
-  
-  const handleProgressClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (videoRef.current && duration > 0) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const clickPosition = (e.clientX - rect.left) / rect.width;
-      videoRef.current.currentTime = clickPosition * duration;
-    }
-  }, [duration]);
-  
+
+  const handleProgressClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (videoRef.current && duration > 0) {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const clickPosition = (e.clientX - rect.left) / rect.width;
+        videoRef.current.currentTime = clickPosition * duration;
+      }
+    },
+    [duration]
+  );
+
   const formatTime = (time: number): string => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
-  
+
   return (
-    <div 
+    <div
       className={`${styles.overlay} ${flickering ? styles.flickering : ''} ${initialShock ? styles.initialShock : ''}`}
-      onClick={(e) => {
+      onClick={e => {
         if (e.target === e.currentTarget) {
           onCloseAction();
         }
@@ -138,10 +148,12 @@ export default function VideoOverlay({ src, title, tone, onCloseAction, corrupte
     >
       {/* Scanlines */}
       <div className={styles.scanlines} />
-      
+
       {/* CRT glow */}
-      <div className={`${styles.glow} ${tone === 'clinical' ? styles.greenGlow : styles.amberGlow}`} />
-      
+      <div
+        className={`${styles.glow} ${tone === 'clinical' ? styles.greenGlow : styles.amberGlow}`}
+      />
+
       <div className={styles.container}>
         {/* Header */}
         <div className={styles.header}>
@@ -149,12 +161,14 @@ export default function VideoOverlay({ src, title, tone, onCloseAction, corrupte
             {corrupted ? '▓▓▓ PARTIAL VIDEO RECOVERY ▓▓▓' : '═══ RECOVERED VIDEO DATA ═══'}
           </span>
         </div>
-        
+
         {/* Video frame */}
         <div className={`${styles.videoFrame} ${corrupted ? styles.corrupted : ''}`}>
-          <div className={`${styles.videoWrapper} ${tone === 'clinical' ? styles.greenTone : styles.amberTone}`}>
+          <div
+            className={`${styles.videoWrapper} ${tone === 'clinical' ? styles.greenTone : styles.amberTone}`}
+          >
             {visible && !error && (
-              <video 
+              <video
                 ref={videoRef}
                 src={src}
                 className={styles.video}
@@ -176,7 +190,7 @@ export default function VideoOverlay({ src, title, tone, onCloseAction, corrupte
             {/* Noise overlay */}
             <div className={styles.noise} />
           </div>
-          
+
           {corrupted && (
             <div className={styles.corruptionOverlay}>
               <div className={styles.corruptionLine} style={{ top: '23%' }} />
@@ -184,11 +198,11 @@ export default function VideoOverlay({ src, title, tone, onCloseAction, corrupte
             </div>
           )}
         </div>
-        
+
         {/* Video controls */}
         {!error && (
           <div className={styles.controls}>
-            <button 
+            <button
               className={styles.playButton}
               onClick={togglePlayPause}
               disabled={isLoading}
@@ -196,22 +210,19 @@ export default function VideoOverlay({ src, title, tone, onCloseAction, corrupte
             >
               {isLoading ? '...' : isPlaying ? '║║' : '▶'}
             </button>
-            
+
             <div className={styles.progressContainer} onClick={handleProgressClick}>
               <div className={styles.progressBar}>
-                <div 
-                  className={styles.progressFill} 
-                  style={{ width: `${progress}%` }}
-                />
+                <div className={styles.progressFill} style={{ width: `${progress}%` }} />
               </div>
             </div>
-            
+
             <div className={styles.timeDisplay}>
               {formatTime(currentTime)} / {formatTime(duration)}
             </div>
           </div>
         )}
-        
+
         {/* Metadata */}
         <div className={styles.metadata}>
           <div>CLASSIFICATION: RESTRICTED</div>

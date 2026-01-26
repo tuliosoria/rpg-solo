@@ -1,8 +1,20 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { GameState, TerminalEntry, ImageTrigger, VideoTrigger, StreamingMode, GamePhase } from '../types';
-import { executeCommand, createEntry, getTutorialMessage, TUTORIAL_MESSAGES } from '../engine/commands';
+import {
+  GameState,
+  TerminalEntry,
+  ImageTrigger,
+  VideoTrigger,
+  StreamingMode,
+  GamePhase,
+} from '../types';
+import {
+  executeCommand,
+  createEntry,
+  getTutorialMessage,
+  TUTORIAL_MESSAGES,
+} from '../engine/commands';
 import { listDirectory, resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { autoSave } from '../storage/saves';
 import { incrementStatistic, addPlaytime } from '../storage/statistics';
@@ -29,6 +41,7 @@ import {
 } from '../constants/gameplay';
 import { useSound } from '../hooks/useSound';
 import { unlockAchievement, Achievement } from '../engine/achievements';
+import { uiRandom, uiRandomInt, uiRandomPick, uiChance, uiRandomFloat } from '../engine/rng';
 import ImageOverlay from './ImageOverlay';
 import VideoOverlay from './VideoOverlay';
 import TuringTestOverlay from './TuringTestOverlay';
@@ -48,8 +61,46 @@ import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import styles from './Terminal.module.css';
 
 // Available commands for auto-completion
-const COMMANDS = ['help', 'status', 'progress', 'ls', 'cd', 'back', 'open', 'last', 'unread', 'decrypt', 'recover', 'note', 'notes', 'bookmark', 'trace', 'chat', 'clear', 'save', 'exit', 'override', 'run', 'correlate', 'connect', 'map', 'tree', 'tutorial', 'leak', 'message'];
-const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run', 'bookmark', 'correlate', 'connect'];
+const COMMANDS = [
+  'help',
+  'status',
+  'progress',
+  'ls',
+  'cd',
+  'back',
+  'open',
+  'last',
+  'unread',
+  'decrypt',
+  'recover',
+  'note',
+  'notes',
+  'bookmark',
+  'trace',
+  'chat',
+  'clear',
+  'save',
+  'exit',
+  'override',
+  'run',
+  'correlate',
+  'connect',
+  'map',
+  'tree',
+  'tutorial',
+  'leak',
+  'message',
+];
+const COMMANDS_WITH_FILE_ARGS = [
+  'cd',
+  'open',
+  'decrypt',
+  'recover',
+  'run',
+  'bookmark',
+  'correlate',
+  'connect',
+];
 
 // "They're watching" paranoia messages
 const PARANOIA_MESSAGES = [
@@ -96,7 +147,10 @@ const PARANOIA_MESSAGES = [
 ];
 
 // Streaming timing configuration (ms per line)
-const STREAMING_DELAYS: Record<StreamingMode, { base: number; variance: number; glitchChance: number; glitchDelay: number }> = {
+const STREAMING_DELAYS: Record<
+  StreamingMode,
+  { base: number; variance: number; glitchChance: number; glitchDelay: number }
+> = {
   none: { base: 0, variance: 0, glitchChance: 0, glitchDelay: 0 },
   fast: { base: 40, variance: 20, glitchChance: 0, glitchDelay: 0 },
   normal: { base: 80, variance: 30, glitchChance: 0, glitchDelay: 0 },
@@ -112,19 +166,19 @@ const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
     'UFO74: see how they positioned the tarps? they knew exactly what to hide.',
   ],
   '/images/et.png': [
-    'UFO74: ...i\'ve seen that face before. in the dreams.',
-    'UFO74: containment protocols were rushed. they weren\'t prepared.',
-    'UFO74: that\'s not fear in those eyes. that\'s... recognition.',
+    "UFO74: ...i've seen that face before. in the dreams.",
+    "UFO74: containment protocols were rushed. they weren't prepared.",
+    "UFO74: that's not fear in those eyes. that's... recognition.",
   ],
   '/images/et-scared.png': [
     'UFO74: kid... during transmission, something reached back.',
-    'UFO74: they didn\'t capture it. it let itself be captured.',
-    'UFO74: that expression... it\'s trying to warn us.',
+    "UFO74: they didn't capture it. it let itself be captured.",
+    "UFO74: that expression... it's trying to warn us.",
   ],
   '/images/second-ship.png': [
     'UFO74: wait. there was a SECOND one?',
     'UFO74: this changes everything. they came for a reason.',
-    'UFO74: the trajectory... they weren\'t leaving. they were arriving.',
+    "UFO74: the trajectory... they weren't leaving. they were arriving.",
   ],
   '/images/drone.png': [
     'UFO74: foreign drone, my ass. look at those flight characteristics.',
@@ -132,12 +186,12 @@ const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
     'UFO74: they tested it against everything in their arsenal. nothing matched.',
   ],
   '/images/prato-delta.png': [
-    'UFO74: three recovery sites... they didn\'t just find one crash.',
+    "UFO74: three recovery sites... they didn't just find one crash.",
     'UFO74: "material sharing agreement"... with who exactly?',
     'UFO74: "discontinue local analysis" - they shipped everything out of country.',
   ],
   '/images/et-brain.png': [
-    'UFO74: ...you\'re looking at what they pulled from its skull.',
+    "UFO74: ...you're looking at what they pulled from its skull.",
     'UFO74: the neural density is off the charts. orders of magnitude beyond human.',
     'UFO74: kid, be careful. some patterns... they can travel both ways.',
   ],
@@ -149,7 +203,11 @@ interface TerminalProps {
   onSaveRequestAction: (state: GameState) => void;
 }
 
-export default function Terminal({ initialState, onExitAction, onSaveRequestAction }: TerminalProps) {
+export default function Terminal({
+  initialState,
+  onExitAction,
+  onSaveRequestAction,
+}: TerminalProps) {
   const [gameState, setGameState] = useState<GameState>(initialState);
   const [inputValue, setInputValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -167,59 +225,61 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
   const [showAchievements, setShowAchievements] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
   const [showPauseMenu, setShowPauseMenu] = useState(false);
-  
+
   // UFO74 message queue - messages wait for Enter before displaying next
   const [pendingUfo74Messages, setPendingUfo74Messages] = useState<TerminalEntry[]>([]);
-  
+
   // UFO74 messages queued to show after image/video closes (from command result)
   const [queuedAfterMediaMessages, setQueuedAfterMediaMessages] = useState<TerminalEntry[]>([]);
-  
+
   // UFO74 Encrypted Channel state machine
   // 'idle' = normal terminal operation
   // 'awaiting_open' = "Receiving message from UFO74. Press Enter to open encrypted channel."
   // 'open' = channel is open, showing messages one at a time
   // 'awaiting_close' = final message shown, waiting for Enter to close channel
-  const [encryptedChannelState, setEncryptedChannelState] = useState<'idle' | 'awaiting_open' | 'open' | 'awaiting_close'>('idle');
-  
+  const [encryptedChannelState, setEncryptedChannelState] = useState<
+    'idle' | 'awaiting_open' | 'open' | 'awaiting_close'
+  >('idle');
+
   // Game phase: terminal → blackout → icq → victory (or other endings)
   const [gamePhase, setGamePhase] = useState<GamePhase>('terminal');
-  
+
   // Countdown timer display
   const [countdownDisplay, setCountdownDisplay] = useState<string | null>(null);
-  
+
   // Glitch effects
   const [glitchActive, setGlitchActive] = useState(false);
   const [glitchHeavy, setGlitchHeavy] = useState(false);
-  
+
   // Screen shake effect
   const [isShaking, setIsShaking] = useState(false);
-  
+
   // CRT warm-up effect (only for new sessions with empty history)
   const [isWarmingUp, setIsWarmingUp] = useState(initialState.history.length === 0);
-  
+
   // Paranoia messages
   const [paranoiaMessage, setParanoiaMessage] = useState<string | null>(null);
   const [paranoiaPosition, setParanoiaPosition] = useState({ top: 0, left: 0 });
-  
+
   // Achievement popup
   const [pendingAchievement, setPendingAchievement] = useState<Achievement | null>(null);
-  
+
   // Progressive UI reveal during tutorial
   const [showEvidenceTracker, setShowEvidenceTracker] = useState(false);
   const [showRiskTracker, setShowRiskTracker] = useState(false);
   const [riskPulse, setRiskPulse] = useState(false);
-  
+
   // Typing speed tracking
   const [typingSpeedWarning, setTypingSpeedWarning] = useState(false);
-  
+
   // Turing Test overlay
   const [showTuringTest, setShowTuringTest] = useState(false);
   const keypressTimestamps = useRef<number[]>([]);
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Timed decryption timer display
   const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
-  
+
   // Apply CRT preference on mount
   useEffect(() => {
     try {
@@ -238,43 +298,53 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       }
     };
   }, []);
-  
+
   // Update timed decryption countdown
   useEffect(() => {
     if (!gameState.timedDecryptActive || !gameState.timedDecryptEndTime) {
       setTimedDecryptRemaining(0);
       return;
     }
-    
+
     const updateTimer = () => {
       const remaining = Math.max(0, gameState.timedDecryptEndTime - Date.now());
       setTimedDecryptRemaining(remaining);
     };
-    
+
     updateTimer();
     const interval = setInterval(updateTimer, 100);
-    
+
     return () => clearInterval(interval);
   }, [gameState.timedDecryptActive, gameState.timedDecryptEndTime]);
-  
+
   // Screen burn-in effect
   const [burnInLines, setBurnInLines] = useState<string[]>([]);
-  
+
   // Track max detection ever reached for Survivor achievement
   const maxDetectionRef = useRef(0);
-  
+
   // Previous detection level for change tracking
   const prevDetectionRef = useRef(0);
-  
+
   // Sound system
-  const { playSound, playKeySound, startAmbient, stopAmbient, toggleSound, updateAmbientTension, soundEnabled, masterVolume, setMasterVolume } = useSound();
-  
+  const {
+    playSound,
+    playKeySound,
+    startAmbient,
+    stopAmbient,
+    toggleSound,
+    updateAmbientTension,
+    soundEnabled,
+    masterVolume,
+    setMasterVolume,
+  } = useSound();
+
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const skipStreamingRef = useRef(false);
   const lastHistoryCount = useRef(0);
   const streamStartScrollPos = useRef<number | null>(null);
-  
+
   // Scroll behavior: during streaming scroll to bottom, after streaming scroll to content start
   useEffect(() => {
     if (outputRef.current) {
@@ -285,7 +355,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         // Streaming just completed - scroll back to where content started
         outputRef.current.scrollTo({
           top: streamStartScrollPos.current,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
         streamStartScrollPos.current = null;
       } else {
@@ -298,12 +368,12 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       setTimeout(() => inputRef.current?.focus(), 0);
     }
   }, [gameState.history, isProcessing, isStreaming, gamePhase]);
-  
+
   // Focus input on mount
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
-  
+
   // Cleanup typing speed warning timeout on unmount
   useEffect(() => {
     return () => {
@@ -312,7 +382,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       }
     };
   }, []);
-  
+
   // CRT warm-up effect timeout
   useEffect(() => {
     if (isWarmingUp) {
@@ -320,7 +390,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       return () => clearTimeout(timer);
     }
   }, [isWarmingUp]);
-  
+
   // Show trackers if tutorial already complete (loaded game)
   useEffect(() => {
     if (gameState.tutorialComplete) {
@@ -328,7 +398,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       setShowRiskTracker(true);
     }
   }, [gameState.tutorialComplete]);
-  
+
   // Auto-save periodically
   useEffect(() => {
     const interval = setInterval(() => {
@@ -338,10 +408,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         addPlaytime(AUTOSAVE_INTERVAL_MS);
       }
     }, AUTOSAVE_INTERVAL_MS);
-    
+
     return () => clearInterval(interval);
   }, [gameState]);
-  
+
   // Phase transition: when evidencesSaved becomes true, trigger blackout
   useEffect(() => {
     if (gameState.evidencesSaved && gamePhase === 'terminal') {
@@ -351,30 +421,33 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       return () => clearTimeout(timer);
     }
   }, [gameState.evidencesSaved, gamePhase]);
-  
+
   // Random glitch effects based on detection level - INTENSITY SCALING
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
-    
+
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
     // Higher detection = more frequent AND more intense glitches
     // Scaled intensity: at 20%: rare light, at 50%: occasional medium, at 80%+: frequent heavy
-    const glitchChance = detection > 20 ? (detection - 20) * 0.35 + paranoiaBoost * 0.15 : paranoiaBoost * 0.15;
-    
+    const glitchChance =
+      detection > 20 ? (detection - 20) * 0.35 + paranoiaBoost * 0.15 : paranoiaBoost * 0.15;
+
     // Check interval scales with detection (faster at higher levels)
     const checkInterval = Math.max(
-      GLITCH_TIMING.MIN_INTERVAL_MS, 
-      GLITCH_TIMING.BASE_INTERVAL_MS - detection * GLITCH_TIMING.DETECTION_FACTOR - paranoiaBoost * GLITCH_TIMING.VARIANCE_FACTOR
+      GLITCH_TIMING.MIN_INTERVAL_MS,
+      GLITCH_TIMING.BASE_INTERVAL_MS -
+        detection * GLITCH_TIMING.DETECTION_FACTOR -
+        paranoiaBoost * GLITCH_TIMING.VARIANCE_FACTOR
     );
-    
+
     // Track all active timeouts for cleanup and cancelled flag for nested callbacks
     const activeTimeouts: NodeJS.Timeout[] = [];
     let cancelled = false;
-    
+
     const interval = setInterval(() => {
       if (cancelled) return;
-      if (Math.random() * 100 < glitchChance) {
+      if (uiRandom() * 100 < glitchChance) {
         if (detection >= 80) {
           // Critical glitch - screen shake, heavy effects, sound
           setGlitchHeavy(true);
@@ -384,7 +457,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             if (cancelled) return;
             setGlitchHeavy(false);
             // Double glitch at very high detection
-            if (detection >= 90 && Math.random() < 0.5) {
+            if (detection >= 90 && uiChance(0.5)) {
               const t2 = setTimeout(() => {
                 if (cancelled) return;
                 setGlitchHeavy(true);
@@ -429,66 +502,86 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         }
       }
     }, checkInterval);
-    
+
     return () => {
       cancelled = true;
       clearInterval(interval);
       activeTimeouts.forEach(t => clearTimeout(t));
     };
-  }, [gameState.detectionLevel, gameState.paranoiaLevel, gameState.isGameOver, gamePhase, playSound]);
-  
+  }, [
+    gameState.detectionLevel,
+    gameState.paranoiaLevel,
+    gameState.isGameOver,
+    gamePhase,
+    playSound,
+  ]);
+
   // "They're watching" paranoia messages
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
-    
+
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
     // Only trigger paranoia at elevated detection (30%+) or paranoia spike
     if (detection < 30 && paranoiaBoost < 10) return;
-    
+
     // Higher detection/paranoia = more frequent paranoia
-    const baseInterval = PARANOIA_TIMING.BASE_INTERVAL_MS - (detection * PARANOIA_TIMING.DETECTION_DIVISOR) - (paranoiaBoost * 200);
-    
-    const delay = Math.max(PARANOIA_TIMING.MIN_INTERVAL_MS, baseInterval) + Math.random() * PARANOIA_TIMING.VARIANCE_MS;
+    const baseInterval =
+      PARANOIA_TIMING.BASE_INTERVAL_MS -
+      detection * PARANOIA_TIMING.DETECTION_DIVISOR -
+      paranoiaBoost * 200;
+
+    const delay =
+      Math.max(PARANOIA_TIMING.MIN_INTERVAL_MS, baseInterval) +
+      uiRandom() * PARANOIA_TIMING.VARIANCE_MS;
     let innerTimerId: NodeJS.Timeout | undefined;
-    
+
     const timerId = setTimeout(() => {
-      const message = PARANOIA_MESSAGES[Math.floor(Math.random() * PARANOIA_MESSAGES.length)];
+      const message = uiRandomPick(PARANOIA_MESSAGES);
       // Ensure position stays within viewport bounds
       const maxTop = Math.max(100, window.innerHeight - 100);
       const maxLeft = Math.max(50, window.innerWidth - 350);
-      const top = 100 + Math.random() * Math.max(0, maxTop - 100);
-      const left = 50 + Math.random() * Math.max(0, maxLeft - 50);
-      
+      const top = 100 + uiRandom() * Math.max(0, maxTop - 100);
+      const left = 50 + uiRandom() * Math.max(0, maxLeft - 50);
+
       setParanoiaPosition({ top, left });
       setParanoiaMessage(message);
       playSound('warning');
-      
+
       // Clear after animation
-      innerTimerId = setTimeout(() => setParanoiaMessage(null), PARANOIA_TIMING.DISPLAY_DURATION_MS);
+      innerTimerId = setTimeout(
+        () => setParanoiaMessage(null),
+        PARANOIA_TIMING.DISPLAY_DURATION_MS
+      );
     }, delay);
-    
+
     return () => {
       clearTimeout(timerId);
       if (innerTimerId) clearTimeout(innerTimerId);
     };
-  }, [gameState.detectionLevel, gameState.paranoiaLevel, gameState.isGameOver, gamePhase, playSound]);
-  
+  }, [
+    gameState.detectionLevel,
+    gameState.paranoiaLevel,
+    gameState.isGameOver,
+    gamePhase,
+    playSound,
+  ]);
+
   // Track detection level changes for sound/visual alerts
   useEffect(() => {
     const prev = prevDetectionRef.current;
     const current = gameState.detectionLevel;
-    
+
     // Track max detection ever reached
     if (current > maxDetectionRef.current) {
       maxDetectionRef.current = current;
     }
-    
+
     if (current > prev) {
       // Detection increased - trigger pulse animation
       setRiskPulse(true);
       setTimeout(() => setRiskPulse(false), RISK_PULSE_DURATION_MS);
-      
+
       if (current >= 80 && prev < 80) {
         playSound('alert');
       } else if (current >= 60 && prev < 60) {
@@ -498,17 +591,17 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       } else if (current >= 40 && prev < 40) {
         playSound('warning');
       }
-      
+
       // Trigger screen shake on large detection increase (10+)
       if (current - prev >= 10) {
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), GLITCH_DURATIONS.SCREEN_SHAKE);
       }
     }
-    
+
     prevDetectionRef.current = current;
   }, [gameState.detectionLevel, playSound]);
-  
+
   // Start ambient sound when tutorial completes
   useEffect(() => {
     if (gameState.tutorialComplete && soundEnabled) {
@@ -516,136 +609,201 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     }
     return () => stopAmbient();
   }, [gameState.tutorialComplete, soundEnabled, startAmbient, stopAmbient]);
-  
+
   // Update ambient tension based on detection level
   useEffect(() => {
     if (gameState.tutorialComplete && soundEnabled) {
       updateAmbientTension(gameState.detectionLevel);
     }
   }, [gameState.detectionLevel, gameState.tutorialComplete, soundEnabled, updateAmbientTension]);
-  
+
   // Countdown timer logic
   useEffect(() => {
     if (!gameState.countdownActive || gamePhase !== 'terminal') {
       setCountdownDisplay(null);
       return;
     }
-    
+
     const updateCountdown = () => {
       const remaining = Math.max(0, gameState.countdownEndTime - Date.now());
       const seconds = Math.ceil(remaining / 1000);
-      
+
       if (seconds <= 0) {
         // Countdown expired - trigger bad ending (caught by system)
         setGamePhase('bad_ending');
         setCountdownDisplay(null);
         return;
       }
-      
+
       const minutes = Math.floor(seconds / 60);
       const secs = seconds % 60;
       setCountdownDisplay(`${minutes}:${secs.toString().padStart(2, '0')}`);
-      
+
       // Warning sounds at thresholds
       if (seconds === 30 || seconds === 10 || seconds <= 5) {
         playSound('alert');
       }
     };
-    
+
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
-    
+
     return () => clearInterval(interval);
   }, [gameState.countdownActive, gameState.countdownEndTime, gamePhase, playSound]);
-  
+
   // Check for secret ending trigger - now requires ENTER confirmation
   // The ufo74SecretDiscovered flag is set, but transition happens in handleSubmit
   // when user presses Enter with empty input
-  
+
   // Idle hint system - nudge players who seem stuck
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
   const gameStateRef = useRef(gameState); // Ref to access current state without re-triggering effect
-  
+
   // Keep ref updated
   useEffect(() => {
     gameStateRef.current = gameState;
   }, [gameState]);
-  
+
   // Track scroll activity to avoid interrupting reading
   useEffect(() => {
     const outputEl = outputRef.current;
     if (!outputEl) return;
-    
+
     const handleScroll = () => {
       lastScrollTimeRef.current = Date.now();
     };
-    
+
     outputEl.addEventListener('scroll', handleScroll);
     return () => outputEl.removeEventListener('scroll', handleScroll);
   }, []);
-  
+
   const IDLE_HINTS = [
     // Early game - no files read yet
-    { hint: "Use 'ls' to see what's in the current directory.", condition: (s: GameState) => (s.filesRead?.size || 0) === 0 },
-    { hint: "Try 'open' on a .txt file to read it.", condition: (s: GameState) => (s.filesRead?.size || 0) === 0 },
-    { hint: "Navigation tip: 'cd' changes directories. Start exploring.", condition: (s: GameState) => (s.filesRead?.size || 0) === 0 },
-    
+    {
+      hint: "Use 'ls' to see what's in the current directory.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
+    },
+    {
+      hint: "Try 'open' on a .txt file to read it.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
+    },
+    {
+      hint: "Navigation tip: 'cd' changes directories. Start exploring.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
+    },
+
     // No truths discovered - need to find evidence
-    { hint: "You need evidence. Look for files that seem... off.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 3 },
-    { hint: "Some documents contradict the official narrative. Find them.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 5 },
-    { hint: "Have you checked /internal?", condition: (s: GameState) => s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt') },
-    { hint: "The /comms directory might have useful intel.", condition: (s: GameState) => !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt') },
-    
+    {
+      hint: 'You need evidence. Look for files that seem... off.',
+      condition: (s: GameState) =>
+        (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 3,
+    },
+    {
+      hint: 'Some documents contradict the official narrative. Find them.',
+      condition: (s: GameState) =>
+        (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 5,
+    },
+    {
+      hint: 'Have you checked /internal?',
+      condition: (s: GameState) =>
+        s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt'),
+    },
+    {
+      hint: 'The /comms directory might have useful intel.',
+      condition: (s: GameState) =>
+        !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt'),
+    },
+
     // Have truths but no correlations - hint about correlate
-    { hint: "You've found evidence. Try 'correlate' to connect the dots.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 2 && (s.evidenceLinks?.length || 0) === 0 },
-    { hint: "Multiple truths discovered. 'correlate file1 file2' links evidence together.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 3 && (s.evidenceLinks?.length || 0) === 0 },
-    
+    {
+      hint: "You've found evidence. Try 'correlate' to connect the dots.",
+      condition: (s: GameState) =>
+        (s.truthsDiscovered?.size || 0) >= 2 && (s.evidenceLinks?.length || 0) === 0,
+    },
+    {
+      hint: "Multiple truths discovered. 'correlate file1 file2' links evidence together.",
+      condition: (s: GameState) =>
+        (s.truthsDiscovered?.size || 0) >= 3 && (s.evidenceLinks?.length || 0) === 0,
+    },
+
     // High detection - hint about wait command
-    { hint: "Detection is high. The 'wait' command lets time pass safely.", condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HOSTILITY_MED },
-    { hint: "They're watching closely. Consider using 'wait' to reduce suspicion.", condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.ALERT },
-    { hint: "CAUTION: Detection critical. 'wait' might buy you time.", condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HEAVY_GLITCH },
-    
+    {
+      hint: "Detection is high. The 'wait' command lets time pass safely.",
+      condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HOSTILITY_MED,
+    },
+    {
+      hint: "They're watching closely. Consider using 'wait' to reduce suspicion.",
+      condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.ALERT,
+    },
+    {
+      hint: "CAUTION: Detection critical. 'wait' might buy you time.",
+      condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HEAVY_GLITCH,
+    },
+
     // Override protocol hint
-    { hint: "You've seen a lot. There may be... deeper access available.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.override_unlocked },
-    { hint: "Some commands aren't listed. Keep digging.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.override_unlocked },
-    
+    {
+      hint: "You've seen a lot. There may be... deeper access available.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.override_unlocked,
+    },
+    {
+      hint: "Some commands aren't listed. Keep digging.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.override_unlocked,
+    },
+
     // General helpful hints
-    { hint: "Use 'ls' to see what's in the current directory.", condition: (s: GameState) => s.sessionCommandCount < 5 },
-    { hint: "Some files are ENCRYPTED. You'll need 'decrypt' for those.", condition: (s: GameState) => (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2 },
-    { hint: "Try the 'progress' command to see what you've found.", condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 1 },
-    { hint: "Don't forget: 'note' saves reminders, 'bookmark' saves files.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0 },
-    { hint: "Check 'unread' to see what you haven't opened yet.", condition: (s: GameState) => (s.filesRead?.size || 0) >= 3 },
+    {
+      hint: "Use 'ls' to see what's in the current directory.",
+      condition: (s: GameState) => s.sessionCommandCount < 5,
+    },
+    {
+      hint: "Some files are ENCRYPTED. You'll need 'decrypt' for those.",
+      condition: (s: GameState) =>
+        (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2,
+    },
+    {
+      hint: "Try the 'progress' command to see what you've found.",
+      condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 1,
+    },
+    {
+      hint: "Don't forget: 'note' saves reminders, 'bookmark' saves files.",
+      condition: (s: GameState) =>
+        (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0,
+    },
+    {
+      hint: "Check 'unread' to see what you haven't opened yet.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) >= 3,
+    },
   ];
-  
+
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver || gameState.tutorialStep >= 0) return;
-    
+
     // Reset timer on any activity (history length change indicates command executed)
     if (idleHintTimerRef.current) {
       clearTimeout(idleHintTimerRef.current);
     }
-    
+
     // Set new idle timer (2 minutes)
     idleHintTimerRef.current = setTimeout(() => {
       // Skip if user scrolled recently (within last 30 seconds - they're reading)
       const timeSinceScroll = Date.now() - lastScrollTimeRef.current;
       if (timeSinceScroll < 30000) return;
-      
+
       const currentState = gameStateRef.current;
       const hintsGiven = currentState.idleHintsGiven || 0;
       if (hintsGiven >= 5) return; // Max 5 idle hints per session
-      
+
       // Skip if wandering notices have recently been given (avoid double-up)
       const wanderingCount = currentState.wanderingNoticeCount || 0;
       if (wanderingCount > 0) return;
-      
+
       // Find an applicable hint
       const applicableHints = IDLE_HINTS.filter(h => h.condition(currentState));
       if (applicableHints.length === 0) return;
-      
-      const hint = applicableHints[Math.floor(Math.random() * applicableHints.length)];
-      
+
+      const hint = uiRandomPick(applicableHints);
+
       // Add UFO74 hint to terminal
       const hintEntry = createEntry('ufo74', `[UFO74] ${hint.hint}`);
       setGameState(prev => ({
@@ -654,45 +812,54 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         idleHintsGiven: (prev.idleHintsGiven || 0) + 1,
         lastActivityTime: Date.now(),
       }));
-      
+
       playSound('message');
     }, 120000); // 2 minutes
-    
+
     return () => {
       if (idleHintTimerRef.current) {
         clearTimeout(idleHintTimerRef.current);
       }
     };
-  }, [gameState.history.length, gamePhase, gameState.isGameOver, gameState.tutorialStep, playSound]);
-  
+  }, [
+    gameState.history.length,
+    gamePhase,
+    gameState.isGameOver,
+    gameState.tutorialStep,
+    playSound,
+  ]);
+
   // Check for achievements
-  const checkAchievement = useCallback((id: string) => {
-    const result = unlockAchievement(id);
-    if (result?.isNew) {
-      setPendingAchievement(result.achievement);
-      playSound('success');
-    }
-  }, [playSound]);
-  
+  const checkAchievement = useCallback(
+    (id: string) => {
+      const result = unlockAchievement(id);
+      if (result?.isNew) {
+        setPendingAchievement(result.achievement);
+        playSound('success');
+      }
+    },
+    [playSound]
+  );
+
   // Handle blackout complete - transition to ICQ
   const handleBlackoutComplete = useCallback(() => {
     setGamePhase('icq');
   }, []);
-  
+
   // Handle victory from ICQ chat
   const handleVictory = useCallback(() => {
     setGamePhase('victory');
     setGameState(prev => ({ ...prev, gameWon: true }));
   }, []);
-  
+
   const handleIcqTrustChange = useCallback((trust: number) => {
     setGameState(prev => ({ ...prev, icqTrust: trust }));
   }, []);
-  
+
   const handleIcqMathMistake = useCallback(() => {
     setGameState(prev => ({ ...prev, mathQuestionWrong: (prev.mathQuestionWrong || 0) + 1 }));
   }, []);
-  
+
   const handleIcqLeakChoice = useCallback((choice: 'public' | 'covert') => {
     setGameState(prev => ({
       ...prev,
@@ -700,92 +867,91 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       flags: { ...prev.flags, leakExecuted: true },
     }));
   }, []);
-  
+
   const handleIcqFilesSent = useCallback(() => {
     setGameState(prev => ({ ...prev, filesSent: true }));
   }, []);
-  
+
   // Handle restart after victory - return to main menu
   const handleRestart = useCallback(() => {
     onExitAction();
   }, [onExitAction]);
-  
+
   // Trigger flicker effect
   const triggerFlicker = useCallback(() => {
     setFlickerActive(true);
     setTimeout(() => setFlickerActive(false), 300);
   }, []);
-  
+
   // Stream output lines with variable timing
-  const streamOutput = useCallback(async (
-    entries: TerminalEntry[],
-    mode: StreamingMode,
-    baseState: GameState
-  ): Promise<void> => {
-    if (mode === 'none' || entries.length === 0) {
-      // No streaming - add all at once
-      // Check for transmission banner before adding
-      if (entries.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
-        playSound('transmission');
-      }
-      setGameState(prev => ({
-        ...prev,
-        history: [...prev.history, ...entries],
-      }));
-      return;
-    }
-    
-    const config = STREAMING_DELAYS[mode];
-    skipStreamingRef.current = false;
-    
-    for (let i = 0; i < entries.length; i++) {
-      // Check if streaming was skipped
-      if (skipStreamingRef.current) {
-        // Add remaining entries all at once
-        const remaining = entries.slice(i);
-        // Check for transmission banner in remaining entries
-        if (remaining.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
+  const streamOutput = useCallback(
+    async (entries: TerminalEntry[], mode: StreamingMode, baseState: GameState): Promise<void> => {
+      if (mode === 'none' || entries.length === 0) {
+        // No streaming - add all at once
+        // Check for transmission banner before adding
+        if (entries.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
           playSound('transmission');
         }
         setGameState(prev => ({
           ...prev,
-          history: [...prev.history, ...remaining],
+          history: [...prev.history, ...entries],
         }));
-        break;
+        return;
       }
-      
-      // Add single entry
-      const entry = entries[i];
-      
-      // Play transmission sound when banner appears
-      if (entry.content.includes('>> INCOMING TRANSMISSION <<')) {
-        playSound('transmission');
-      }
-      
-      setGameState(prev => ({
-        ...prev,
-        history: [...prev.history, entry],
-      }));
-      
-      // Calculate delay with variance
-      let delay = config.base + (Math.random() * config.variance * 2 - config.variance);
-      
-      // Random glitch pause
-      if (Math.random() < config.glitchChance) {
-        delay += config.glitchDelay;
-        // Trigger flicker on glitch
-        if (config.glitchDelay > 100) {
-          triggerFlicker();
+
+      const config = STREAMING_DELAYS[mode];
+      skipStreamingRef.current = false;
+
+      for (let i = 0; i < entries.length; i++) {
+        // Check if streaming was skipped
+        if (skipStreamingRef.current) {
+          // Add remaining entries all at once
+          const remaining = entries.slice(i);
+          // Check for transmission banner in remaining entries
+          if (remaining.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
+            playSound('transmission');
+          }
+          setGameState(prev => ({
+            ...prev,
+            history: [...prev.history, ...remaining],
+          }));
+          break;
+        }
+
+        // Add single entry
+        const entry = entries[i];
+
+        // Play transmission sound when banner appears
+        if (entry.content.includes('>> INCOMING TRANSMISSION <<')) {
+          playSound('transmission');
+        }
+
+        setGameState(prev => ({
+          ...prev,
+          history: [...prev.history, entry],
+        }));
+
+        // Calculate delay with variance
+        let delay = config.base + (uiRandom() * config.variance * 2 - config.variance);
+
+        // Random glitch pause
+        if (uiChance(config.glitchChance)) {
+          delay += config.glitchDelay;
+          // Trigger flicker on glitch
+          if (config.glitchDelay > 100) {
+            triggerFlicker();
+          }
+        }
+
+        // Wait before next line
+        if (delay > 0 && i < entries.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
-      
-      // Wait before next line
-      if (delay > 0 && i < entries.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-    }
-  }, [triggerFlicker, playSound]);
-  
+    },
+    [triggerFlicker, playSound]
+  );
+
   // Handle skip streaming (spacebar/enter during streaming)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -794,13 +960,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         skipStreamingRef.current = true;
       }
     };
-    
+
     if (isStreaming) {
       window.addEventListener('keydown', handleKeyDown);
       return () => window.removeEventListener('keydown', handleKeyDown);
     }
   }, [isStreaming]);
-  
+
   // Handle ESC key for pause menu
   useEffect(() => {
     const handleEscKey = (e: KeyboardEvent) => {
@@ -820,165 +986,167 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         }
       }
     };
-    
+
     window.addEventListener('keydown', handleEscKey);
     return () => window.removeEventListener('keydown', handleEscKey);
-  }, [isStreaming, gamePhase, gameState.isGameOver, showSettings, showAchievements, showStatistics, activeImage, activeVideo]);
-  
+  }, [
+    isStreaming,
+    gamePhase,
+    gameState.isGameOver,
+    showSettings,
+    showAchievements,
+    showStatistics,
+    activeImage,
+    activeVideo,
+  ]);
+
   // Use refs to track current state for async operations to avoid race conditions
   const encryptedChannelStateRef = useRef(encryptedChannelState);
   const pendingUfo74MessagesRef = useRef(pendingUfo74Messages);
   const gameStateRef2 = useRef(gameState); // Secondary ref for handleSubmit
-  
+
   // Keep refs in sync with state
   useEffect(() => {
     encryptedChannelStateRef.current = encryptedChannelState;
   }, [encryptedChannelState]);
-  
+
   useEffect(() => {
     pendingUfo74MessagesRef.current = pendingUfo74Messages;
   }, [pendingUfo74Messages]);
-  
+
   useEffect(() => {
     gameStateRef2.current = gameState;
   }, [gameState]);
-  
+
   // Handle command submission
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // If there's a pending image, show it on Enter
-    if (pendingImage && !inputValue.trim()) {
-      setActiveImage(pendingImage);
-      setPendingImage(null);
-      return;
-    }
-    
-    // If there's a pending video, show it on Enter
-    if (pendingVideo && !inputValue.trim()) {
-      setActiveVideo(pendingVideo);
-      setPendingVideo(null);
-      return;
-    }
-    
-    // If secret ending is pending confirmation, transition on Enter
-    if (gameState.ufo74SecretDiscovered && !inputValue.trim() && gamePhase === 'terminal') {
-      setGamePhase('secret_ending');
-      return;
-    }
-    
-    // ═══════════════════════════════════════════════════════════════════════════
-    // UFO74 ENCRYPTED CHANNEL STATE MACHINE
-    // ═══════════════════════════════════════════════════════════════════════════
-    
-    // State: awaiting_open - Player must press Enter to open channel
-    if (encryptedChannelState === 'awaiting_open' && !inputValue.trim()) {
-      // Capture current messages before state changes to avoid race conditions
-      const currentMessages = [...pendingUfo74Messages];
-      
-      // Open the encrypted channel
-      setEncryptedChannelState('open');
-      
-      // Show channel open header
-      setGameState(prev => ({
-        ...prev,
-        history: [
-          ...prev.history,
-          createEntry('system', ''),
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
-        ],
-      }));
-      playSound('transmission');
-      
-      // If we have messages, show the first one
-      if (currentMessages.length > 0) {
-        const [firstMessage, ...remaining] = currentMessages;
-        // Use captured values in setTimeout to avoid stale closures
-        setTimeout(() => {
-          const promptText = remaining.length === 0 
-            ? '                    [ press ENTER to close channel ]'
-            : '                    [ press ENTER to continue ]';
-          
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      // If there's a pending image, show it on Enter
+      if (pendingImage && !inputValue.trim()) {
+        setActiveImage(pendingImage);
+        setPendingImage(null);
+        return;
+      }
+
+      // If there's a pending video, show it on Enter
+      if (pendingVideo && !inputValue.trim()) {
+        setActiveVideo(pendingVideo);
+        setPendingVideo(null);
+        return;
+      }
+
+      // If secret ending is pending confirmation, transition on Enter
+      if (gameState.ufo74SecretDiscovered && !inputValue.trim() && gamePhase === 'terminal') {
+        setGamePhase('secret_ending');
+        return;
+      }
+
+      // ═══════════════════════════════════════════════════════════════════════════
+      // UFO74 ENCRYPTED CHANNEL STATE MACHINE
+      // ═══════════════════════════════════════════════════════════════════════════
+
+      // State: awaiting_open - Player must press Enter to open channel
+      if (encryptedChannelState === 'awaiting_open' && !inputValue.trim()) {
+        // Capture current messages before state changes to avoid race conditions
+        const currentMessages = [...pendingUfo74Messages];
+
+        // Open the encrypted channel
+        setEncryptedChannelState('open');
+
+        // Show channel open header
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            createEntry('system', ''),
+            createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+            createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
+            createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+            createEntry('system', ''),
+          ],
+        }));
+        playSound('transmission');
+
+        // If we have messages, show the first one
+        if (currentMessages.length > 0) {
+          const [firstMessage, ...remaining] = currentMessages;
+          // Use captured values in setTimeout to avoid stale closures
+          setTimeout(() => {
+            const promptText =
+              remaining.length === 0
+                ? '                    [ press ENTER to close channel ]'
+                : '                    [ press ENTER to continue ]';
+
+            setGameState(prev => ({
+              ...prev,
+              history: [...prev.history, firstMessage, createEntry('system', promptText)],
+            }));
+            setPendingUfo74Messages(remaining);
+
+            // Transition state based on whether more messages remain
+            if (remaining.length === 0) {
+              setEncryptedChannelState('awaiting_close');
+            }
+            playSound('message');
+          }, 100);
+        }
+        return;
+      }
+
+      // State: open - Channel is open, show messages one at a time
+      if (encryptedChannelState === 'open' && !inputValue.trim()) {
+        if (pendingUfo74Messages.length > 0) {
+          // Capture current messages to avoid race conditions
+          const currentMessages = [...pendingUfo74Messages];
+          const [nextMessage, ...remaining] = currentMessages;
+
+          const promptText =
+            remaining.length === 0
+              ? '                    [ press ENTER to close channel ]'
+              : '                    [ press ENTER to continue ]';
+
+          // Single atomic state update with both message and prompt
           setGameState(prev => ({
             ...prev,
-            history: [...prev.history, firstMessage, createEntry('system', promptText)],
+            history: [...prev.history, nextMessage, createEntry('system', promptText)],
           }));
           setPendingUfo74Messages(remaining);
-          
-          // Transition state based on whether more messages remain
+
+          // If no more messages, transition to awaiting_close
           if (remaining.length === 0) {
             setEncryptedChannelState('awaiting_close');
           }
           playSound('message');
-        }, 100);
+        }
+        return;
       }
-      return;
-    }
-    
-    // State: open - Channel is open, show messages one at a time
-    if (encryptedChannelState === 'open' && !inputValue.trim()) {
-      if (pendingUfo74Messages.length > 0) {
-        // Capture current messages to avoid race conditions
-        const currentMessages = [...pendingUfo74Messages];
-        const [nextMessage, ...remaining] = currentMessages;
-        
-        const promptText = remaining.length === 0 
-          ? '                    [ press ENTER to close channel ]'
-          : '                    [ press ENTER to continue ]';
-        
-        // Single atomic state update with both message and prompt
+
+      // State: awaiting_close - Final message shown, close channel on Enter
+      if (encryptedChannelState === 'awaiting_close' && !inputValue.trim()) {
+        setEncryptedChannelState('idle');
         setGameState(prev => ({
           ...prev,
-          history: [...prev.history, nextMessage, createEntry('system', promptText)],
+          history: [
+            ...prev.history,
+            createEntry('system', ''),
+            createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+            createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
+            createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+            createEntry('system', ''),
+          ],
         }));
-        setPendingUfo74Messages(remaining);
-        
-        // If no more messages, transition to awaiting_close
-        if (remaining.length === 0) {
-          setEncryptedChannelState('awaiting_close');
-        }
-        playSound('message');
+        playSound('transmission');
+        return;
       }
-      return;
-    }
-    
-    // State: awaiting_close - Final message shown, close channel on Enter
-    if (encryptedChannelState === 'awaiting_close' && !inputValue.trim()) {
-      setEncryptedChannelState('idle');
-      setGameState(prev => ({
-        ...prev,
-        history: [
-          ...prev.history,
-          createEntry('system', ''),
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
-        ],
-      }));
-      playSound('transmission');
-      return;
-    }
-    
-    // Block input during encrypted channel (unless it's Enter to advance)
-    if (encryptedChannelState !== 'idle' && inputValue.trim()) {
-      const errorEntry = createEntry('error', 'ERROR: Encrypted channel active. Press ENTER to continue.');
-      setGameState(prev => ({
-        ...prev,
-        history: [...prev.history, errorEntry],
-      }));
-      setInputValue('');
-      return;
-    }
-    
-    // During tutorial, only accept empty Enter to advance
-    if (!gameState.tutorialComplete) {
-      // If user typed something, show error
-      if (inputValue.trim()) {
-        const errorEntry = createEntry('error', 'ERROR: Incoming transmission in progress. Press ENTER to continue.');
+
+      // Block input during encrypted channel (unless it's Enter to advance)
+      if (encryptedChannelState !== 'idle' && inputValue.trim()) {
+        const errorEntry = createEntry(
+          'error',
+          'ERROR: Encrypted channel active. Press ENTER to continue.'
+        );
         setGameState(prev => ({
           ...prev,
           history: [...prev.history, errorEntry],
@@ -986,515 +1154,568 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         setInputValue('');
         return;
       }
-      
-      const currentStep = gameState.tutorialStep;
-      const nextStep = currentStep + 1;
-      
-      // Get the tutorial message for this step
-      const tutorialEntries = getTutorialMessage(currentStep);
-      
-      // Trigger UI reveals at specific steps
-      // Step 6: Evidence tracker reveal (after showing the 5 things)
-      if (currentStep === 5) {
-        setTimeout(() => setShowEvidenceTracker(true), 300);
-        playSound('reveal');
-      }
-      // Step 10: Risk tracker reveal (after showing risk warning)
-      if (currentStep === 9) {
-        setTimeout(() => setShowRiskTracker(true), 300);
-        playSound('alert');
-      }
-      
-      if (nextStep >= TUTORIAL_MESSAGES.length) {
-        // Tutorial complete
-        setGameState(prev => ({
-          ...prev,
-          history: [...prev.history, ...tutorialEntries],
-          tutorialStep: -1,
-          tutorialComplete: true,
-        }));
-      } else {
-        // Show next message
-        setGameState(prev => ({
-          ...prev,
-          history: [...prev.history, ...tutorialEntries],
-          tutorialStep: nextStep,
-        }));
-      }
-      
-      setInputValue('');
-      return;
-    }
-    
-    if (isProcessing || showTuringTest || !inputValue.trim()) return;
-    
-    const command = inputValue.trim();
-    const commandLower = command.toLowerCase().split(' ')[0];
-    setInputValue('');
-    
-    // Play command-specific sound on submit
-    const dangerousCommands = ['decrypt', 'recover', 'trace', 'override', 'leak'];
-    const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
-    const systemCommands = ['scan', 'wait', 'hide', 'correlate'];
-    
-    if (dangerousCommands.includes(commandLower)) {
-      playSound('warning'); // Warning beep for risky commands
-    } else if (quietCommands.includes(commandLower)) {
-      playSound('enter'); // Standard sound for navigation
-    } else if (systemCommands.includes(commandLower)) {
-      playSound('success'); // Confirmation sound for system commands
-    } else {
-      playSound('enter'); // Default command sound
-    }
-    
-    setHistoryIndex(-1);
-    
-    // Add command to history
-    const inputEntry = createEntry('input', `> ${command}`);
-    // Trim history to prevent unbounded growth during long sessions
-    const trimmedHistory = gameState.history.length >= MAX_HISTORY_SIZE 
-      ? gameState.history.slice(-MAX_HISTORY_SIZE + 1)
-      : gameState.history;
-    let newState: GameState = {
-      ...gameState,
-      history: [...trimmedHistory, inputEntry],
-      commandHistory: [command, ...gameState.commandHistory.slice(0, MAX_COMMAND_HISTORY_SIZE - 1)],
-    };
-    
-    setGameState(newState);
-    
-    // Handle special commands
-    if (command.toLowerCase() === 'save') {
-      onSaveRequestAction(newState);
-      return;
-    }
-    
-    if (command.toLowerCase() === 'exit' || command.toLowerCase() === 'quit') {
-      onExitAction();
-      return;
-    }
-    
-    // Execute command
-    setIsProcessing(true);
-    
-    // Track command for statistics
-    incrementStatistic('commandsTyped');
-    
-    const result = executeCommand(command, newState);
-    
-    // Apply delay if specified
-    if (result.delayMs) {
-      await new Promise(resolve => setTimeout(resolve, result.delayMs));
-    }
-    
-    // Apply flicker if specified
-    if (result.triggerFlicker) {
-      triggerFlicker();
-    }
-    
-    // Determine streaming mode
-    const streamingMode = result.streamingMode || 'none';
-    
-    // Build the state changes without history (we'll stream that)
-    const stateChangesWithoutHistory = {
-      ...result.stateChanges,
-      truthsDiscovered: result.stateChanges.truthsDiscovered || newState.truthsDiscovered,
-    };
-    
-    // Apply non-history state changes first
-    const intermediateState: GameState = {
-      ...newState,
-      ...stateChangesWithoutHistory,
-    };
-    
-    // If history is explicitly set in stateChanges, use that instead of streaming
-    if (result.stateChanges.history !== undefined) {
-      setGameState({
-        ...intermediateState,
-        history: result.stateChanges.history,
-      });
-      setIsProcessing(false);
-    } else if (streamingMode !== 'none' && result.output.length > 0) {
-      // Stream output line by line
-      // Save scroll position before streaming starts (where file content will begin)
-      if (outputRef.current) {
-        streamStartScrollPos.current = outputRef.current.scrollHeight;
-      }
-      setIsStreaming(true);
-      setGameState(intermediateState);
-      
-      try {
-        await streamOutput(result.output, streamingMode, intermediateState);
-        
-        // Add pending media messages after streaming completes
-        if (result.imageTrigger || result.videoTrigger) {
-          const pendingMediaMessages: TerminalEntry[] = [];
-          if (result.imageTrigger) {
-            pendingMediaMessages.push(
-              createEntry('warning', ''),
-              createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-              createEntry('system', 'Press ENTER to view recovered visual data.'),
-            );
-          }
-          if (result.videoTrigger) {
-            pendingMediaMessages.push(
-              createEntry('warning', ''),
-              createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-              createEntry('system', 'Press ENTER to view recovered video data.'),
-            );
-          }
+
+      // During tutorial, only accept empty Enter to advance
+      if (!gameState.tutorialComplete) {
+        // If user typed something, show error
+        if (inputValue.trim()) {
+          const errorEntry = createEntry(
+            'error',
+            'ERROR: Incoming transmission in progress. Press ENTER to continue.'
+          );
           setGameState(prev => ({
             ...prev,
-            history: [...prev.history, ...pendingMediaMessages],
+            history: [...prev.history, errorEntry],
+          }));
+          setInputValue('');
+          return;
+        }
+
+        const currentStep = gameState.tutorialStep;
+        const nextStep = currentStep + 1;
+
+        // Get the tutorial message for this step
+        const tutorialEntries = getTutorialMessage(currentStep);
+
+        // Trigger UI reveals at specific steps
+        // Step 6: Evidence tracker reveal (after showing the 5 things)
+        if (currentStep === 5) {
+          setTimeout(() => setShowEvidenceTracker(true), 300);
+          playSound('reveal');
+        }
+        // Step 10: Risk tracker reveal (after showing risk warning)
+        if (currentStep === 9) {
+          setTimeout(() => setShowRiskTracker(true), 300);
+          playSound('alert');
+        }
+
+        if (nextStep >= TUTORIAL_MESSAGES.length) {
+          // Tutorial complete
+          setGameState(prev => ({
+            ...prev,
+            history: [...prev.history, ...tutorialEntries],
+            tutorialStep: -1,
+            tutorialComplete: true,
+          }));
+        } else {
+          // Show next message
+          setGameState(prev => ({
+            ...prev,
+            history: [...prev.history, ...tutorialEntries],
+            tutorialStep: nextStep,
           }));
         }
-      } finally {
-        // Always reset streaming state, even on error/interruption
-        setIsStreaming(false);
-        setIsProcessing(false);
-        skipStreamingRef.current = false;
+
+        setInputValue('');
+        return;
       }
-    } else {
-      // No streaming - add all at once
-      // Separate UFO74 messages from other output for queuing
-      const ufo74Messages = result.output.filter((e: TerminalEntry) => e.type === 'ufo74');
-      const otherOutput = result.output.filter((e: TerminalEntry) => e.type !== 'ufo74');
-      
-      // Include pending image/video messages if triggered
-      const pendingMediaMessages: TerminalEntry[] = [];
-      if (result.imageTrigger) {
-        pendingMediaMessages.push(
-          createEntry('warning', ''),
-          createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-          createEntry('system', 'Press ENTER to view recovered visual data.'),
-        );
-      }
-      if (result.videoTrigger) {
-        pendingMediaMessages.push(
-          createEntry('warning', ''),
-          createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-          createEntry('system', 'Press ENTER to view recovered video data.'),
-        );
-      }
-      
-      // Add non-UFO74 output immediately
-      setGameState({
-        ...intermediateState,
-        history: [...newState.history, ...otherOutput, ...pendingMediaMessages],
-      });
-      
-      // Queue UFO74 messages through encrypted channel if there are any
-      if (ufo74Messages.length > 0) {
-        // Set up encrypted channel - show "Receiving message" prompt
-        setGameState(prev => ({
-          ...prev,
-          history: [
-            ...prev.history,
-            createEntry('system', ''),
-            createEntry('ufo74', 'Receiving message from UFO74. Press Enter to open encrypted channel.'),
-          ],
-        }));
-        setPendingUfo74Messages(ufo74Messages);
-        setEncryptedChannelState('awaiting_open');
-        playSound('message');
-      }
-      
-      setIsProcessing(false);
-    }
-    
-    // Set pending image/video for Enter confirmation
-    if (result.imageTrigger) {
-      setPendingImage(result.imageTrigger);
-    }
-    if (result.videoTrigger) {
-      setPendingVideo(result.videoTrigger);
-    }
-    
-    // Queue UFO74 messages from command result to show after media closes
-    if (result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0) {
-      if (result.imageTrigger || result.videoTrigger) {
-        // Media trigger present - queue messages for after media closes
-        setQueuedAfterMediaMessages(result.pendingUfo74Messages);
+
+      if (isProcessing || showTuringTest || !inputValue.trim()) return;
+
+      const command = inputValue.trim();
+      const commandLower = command.toLowerCase().split(' ')[0];
+      setInputValue('');
+
+      // Play command-specific sound on submit
+      const dangerousCommands = ['decrypt', 'recover', 'trace', 'override', 'leak'];
+      const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
+      const systemCommands = ['scan', 'wait', 'hide', 'correlate'];
+
+      if (dangerousCommands.includes(commandLower)) {
+        playSound('warning'); // Warning beep for risky commands
+      } else if (quietCommands.includes(commandLower)) {
+        playSound('enter'); // Standard sound for navigation
+      } else if (systemCommands.includes(commandLower)) {
+        playSound('success'); // Confirmation sound for system commands
       } else {
-        // No media trigger - trigger encrypted channel immediately
-        // Use ref to check current state to avoid stale closure after async operations
-        if (encryptedChannelStateRef.current === 'idle') {
+        playSound('enter'); // Default command sound
+      }
+
+      setHistoryIndex(-1);
+
+      // Add command to history
+      const inputEntry = createEntry('input', `> ${command}`);
+      // Trim history to prevent unbounded growth during long sessions
+      const trimmedHistory =
+        gameState.history.length >= MAX_HISTORY_SIZE
+          ? gameState.history.slice(-MAX_HISTORY_SIZE + 1)
+          : gameState.history;
+      let newState: GameState = {
+        ...gameState,
+        history: [...trimmedHistory, inputEntry],
+        commandHistory: [
+          command,
+          ...gameState.commandHistory.slice(0, MAX_COMMAND_HISTORY_SIZE - 1),
+        ],
+      };
+
+      setGameState(newState);
+
+      // Handle special commands
+      if (command.toLowerCase() === 'save') {
+        onSaveRequestAction(newState);
+        return;
+      }
+
+      if (command.toLowerCase() === 'exit' || command.toLowerCase() === 'quit') {
+        onExitAction();
+        return;
+      }
+
+      // Execute command
+      setIsProcessing(true);
+
+      // Track command for statistics
+      incrementStatistic('commandsTyped');
+
+      const result = executeCommand(command, newState);
+
+      // Apply delay if specified
+      if (result.delayMs) {
+        await new Promise(resolve => setTimeout(resolve, result.delayMs));
+      }
+
+      // Apply flicker if specified
+      if (result.triggerFlicker) {
+        triggerFlicker();
+      }
+
+      // Determine streaming mode
+      const streamingMode = result.streamingMode || 'none';
+
+      // Build the state changes without history (we'll stream that)
+      const stateChangesWithoutHistory = {
+        ...result.stateChanges,
+        truthsDiscovered: result.stateChanges.truthsDiscovered || newState.truthsDiscovered,
+      };
+
+      // Apply non-history state changes first
+      const intermediateState: GameState = {
+        ...newState,
+        ...stateChangesWithoutHistory,
+      };
+
+      // If history is explicitly set in stateChanges, use that instead of streaming
+      if (result.stateChanges.history !== undefined) {
+        setGameState({
+          ...intermediateState,
+          history: result.stateChanges.history,
+        });
+        setIsProcessing(false);
+      } else if (streamingMode !== 'none' && result.output.length > 0) {
+        // Stream output line by line
+        // Save scroll position before streaming starts (where file content will begin)
+        if (outputRef.current) {
+          streamStartScrollPos.current = outputRef.current.scrollHeight;
+        }
+        setIsStreaming(true);
+        setGameState(intermediateState);
+
+        try {
+          await streamOutput(result.output, streamingMode, intermediateState);
+
+          // Add pending media messages after streaming completes
+          if (result.imageTrigger || result.videoTrigger) {
+            const pendingMediaMessages: TerminalEntry[] = [];
+            if (result.imageTrigger) {
+              pendingMediaMessages.push(
+                createEntry('warning', ''),
+                createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+                createEntry('system', 'Press ENTER to view recovered visual data.')
+              );
+            }
+            if (result.videoTrigger) {
+              pendingMediaMessages.push(
+                createEntry('warning', ''),
+                createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+                createEntry('system', 'Press ENTER to view recovered video data.')
+              );
+            }
+            setGameState(prev => ({
+              ...prev,
+              history: [...prev.history, ...pendingMediaMessages],
+            }));
+          }
+        } finally {
+          // Always reset streaming state, even on error/interruption
+          setIsStreaming(false);
+          setIsProcessing(false);
+          skipStreamingRef.current = false;
+        }
+      } else {
+        // No streaming - add all at once
+        // Separate UFO74 messages from other output for queuing
+        const ufo74Messages = result.output.filter((e: TerminalEntry) => e.type === 'ufo74');
+        const otherOutput = result.output.filter((e: TerminalEntry) => e.type !== 'ufo74');
+
+        // Include pending image/video messages if triggered
+        const pendingMediaMessages: TerminalEntry[] = [];
+        if (result.imageTrigger) {
+          pendingMediaMessages.push(
+            createEntry('warning', ''),
+            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+            createEntry('system', 'Press ENTER to view recovered visual data.')
+          );
+        }
+        if (result.videoTrigger) {
+          pendingMediaMessages.push(
+            createEntry('warning', ''),
+            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+            createEntry('system', 'Press ENTER to view recovered video data.')
+          );
+        }
+
+        // Add non-UFO74 output immediately
+        setGameState({
+          ...intermediateState,
+          history: [...newState.history, ...otherOutput, ...pendingMediaMessages],
+        });
+
+        // Queue UFO74 messages through encrypted channel if there are any
+        if (ufo74Messages.length > 0) {
+          // Set up encrypted channel - show "Receiving message" prompt
           setGameState(prev => ({
             ...prev,
             history: [
               ...prev.history,
               createEntry('system', ''),
-              createEntry('ufo74', 'Receiving message from UFO74. Press Enter to open encrypted channel.'),
+              createEntry(
+                'ufo74',
+                'Receiving message from UFO74. Press Enter to open encrypted channel.'
+              ),
             ],
           }));
-          setPendingUfo74Messages(prev => [...prev, ...result.pendingUfo74Messages!]);
+          setPendingUfo74Messages(ufo74Messages);
           setEncryptedChannelState('awaiting_open');
           playSound('message');
+        }
+
+        setIsProcessing(false);
+      }
+
+      // Set pending image/video for Enter confirmation
+      if (result.imageTrigger) {
+        setPendingImage(result.imageTrigger);
+      }
+      if (result.videoTrigger) {
+        setPendingVideo(result.videoTrigger);
+      }
+
+      // Queue UFO74 messages from command result to show after media closes
+      if (result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0) {
+        if (result.imageTrigger || result.videoTrigger) {
+          // Media trigger present - queue messages for after media closes
+          setQueuedAfterMediaMessages(result.pendingUfo74Messages);
         } else {
-          // Channel already active, just queue the messages
-          setPendingUfo74Messages(prev => [...prev, ...result.pendingUfo74Messages!]);
+          // No media trigger - trigger encrypted channel immediately
+          // Use ref to check current state to avoid stale closure after async operations
+          if (encryptedChannelStateRef.current === 'idle') {
+            setGameState(prev => ({
+              ...prev,
+              history: [
+                ...prev.history,
+                createEntry('system', ''),
+                createEntry(
+                  'ufo74',
+                  'Receiving message from UFO74. Press Enter to open encrypted channel.'
+                ),
+              ],
+            }));
+            setPendingUfo74Messages(prev => [...prev, ...result.pendingUfo74Messages!]);
+            setEncryptedChannelState('awaiting_open');
+            playSound('message');
+          } else {
+            // Channel already active, just queue the messages
+            setPendingUfo74Messages(prev => [...prev, ...result.pendingUfo74Messages!]);
+          }
         }
       }
-    }
-    
-    // Trigger Turing test overlay
-    if (result.triggerTuringTest) {
-      // Delay to let the terminal message show first
-      setTimeout(() => {
-        setShowTuringTest(true);
-      }, 1500);
-    }
-    
-    // Handle GOD mode phase skip
-    if (result.skipToPhase) {
-      setGamePhase(result.skipToPhase);
-      setIsProcessing(false);
-      // Ensure focus after phase skip
+
+      // Trigger Turing test overlay
+      if (result.triggerTuringTest) {
+        // Delay to let the terminal message show first
+        setTimeout(() => {
+          setShowTuringTest(true);
+        }, 1500);
+      }
+
+      // Handle GOD mode phase skip
+      if (result.skipToPhase) {
+        setGamePhase(result.skipToPhase);
+        setIsProcessing(false);
+        // Ensure focus after phase skip
+        setTimeout(() => inputRef.current?.focus(), 0);
+        return;
+      }
+
+      // Check for game over
+      if (intermediateState.isGameOver) {
+        setGameOverReason(intermediateState.gameOverReason || 'CRITICAL SYSTEM FAILURE');
+        setShowGameOver(true);
+        playSound('error');
+        return;
+      }
+
+      // Check for achievements based on state changes
+      const truthCount = intermediateState.truthsDiscovered?.size || 0;
+      const prevTruthCount = gameState.truthsDiscovered?.size || 0;
+
+      // Track file reads for statistics
+      const filesReadCount = intermediateState.filesRead?.size || 0;
+      const prevFilesReadCount = gameState.filesRead?.size || 0;
+      if (filesReadCount > prevFilesReadCount) {
+        incrementStatistic('filesRead');
+      }
+
+      // New evidence discovered - play fanfare!
+      if (truthCount > prevTruthCount) {
+        playSound('fanfare');
+      }
+
+      // First evidence discovered
+      if (truthCount > 0 && prevTruthCount === 0) {
+        checkAchievement('first_blood');
+      }
+
+      // All truths discovered
+      if (truthCount === 5 && prevTruthCount < 5) {
+        checkAchievement('truth_seeker');
+      }
+
+      // Timed decryption successful - play fanfare
+      // Detect when timedDecryptActive goes from true to false with smirk expression (success indicator)
+      if (
+        gameState.timedDecryptActive &&
+        !intermediateState.timedDecryptActive &&
+        intermediateState.avatarExpression === 'smirk'
+      ) {
+        playSound('fanfare');
+      }
+
+      // Admin override successful - play fanfare
+      if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
+        playSound('fanfare');
+      }
+
+      // Update burn-in effect with significant output content
+      if (result.output.length > 5 && command.toLowerCase().startsWith('open')) {
+        const significantLines = result.output
+          .filter(entry => entry.type === 'output' && entry.content.length > 20)
+          .map(entry => entry.content)
+          .slice(0, 5);
+        if (significantLines.length > 0) {
+          setBurnInLines(prev => [...significantLines, ...prev].slice(0, 8));
+        }
+      }
+
+      // God mode activated
+      if (intermediateState.godMode && !gameState.godMode) {
+        checkAchievement('doom_fan');
+      }
+
+      // Check achievements requested by command result
+      if (result.checkAchievements) {
+        for (const achievementId of result.checkAchievements) {
+          checkAchievement(achievementId);
+        }
+      }
+
+      // Night Owl achievement: playing for over 30 minutes
+      const sessionDuration = Date.now() - gameState.sessionStartTime;
+      if (sessionDuration >= NIGHT_OWL_DURATION_MS) {
+        checkAchievement('night_owl');
+      }
+
+      // Focus input after processing (use setTimeout to ensure it runs after React updates)
       setTimeout(() => inputRef.current?.focus(), 0);
-      return;
-    }
-    
-    // Check for game over
-    if (intermediateState.isGameOver) {
-      setGameOverReason(intermediateState.gameOverReason || 'CRITICAL SYSTEM FAILURE');
-      setShowGameOver(true);
-      playSound('error');
-      return;
-    }
-    
-    // Check for achievements based on state changes
-    const truthCount = intermediateState.truthsDiscovered?.size || 0;
-    const prevTruthCount = gameState.truthsDiscovered?.size || 0;
-    
-    // Track file reads for statistics
-    const filesReadCount = intermediateState.filesRead?.size || 0;
-    const prevFilesReadCount = gameState.filesRead?.size || 0;
-    if (filesReadCount > prevFilesReadCount) {
-      incrementStatistic('filesRead');
-    }
-    
-    // New evidence discovered - play fanfare!
-    if (truthCount > prevTruthCount) {
-      playSound('fanfare');
-    }
-    
-    // First evidence discovered
-    if (truthCount > 0 && prevTruthCount === 0) {
-      checkAchievement('first_blood');
-    }
-    
-    // All truths discovered
-    if (truthCount === 5 && prevTruthCount < 5) {
-      checkAchievement('truth_seeker');
-    }
-    
-    // Timed decryption successful - play fanfare
-    // Detect when timedDecryptActive goes from true to false with smirk expression (success indicator)
-    if (gameState.timedDecryptActive && !intermediateState.timedDecryptActive && 
-        intermediateState.avatarExpression === 'smirk') {
-      playSound('fanfare');
-    }
-    
-    // Admin override successful - play fanfare
-    if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
-      playSound('fanfare');
-    }
-    
-    // Update burn-in effect with significant output content
-    if (result.output.length > 5 && command.toLowerCase().startsWith('open')) {
-      const significantLines = result.output
-        .filter(entry => entry.type === 'output' && entry.content.length > 20)
-        .map(entry => entry.content)
-        .slice(0, 5);
-      if (significantLines.length > 0) {
-        setBurnInLines(prev => [...significantLines, ...prev].slice(0, 8));
-      }
-    }
-    
-    // God mode activated
-    if (intermediateState.godMode && !gameState.godMode) {
-      checkAchievement('doom_fan');
-    }
-    
-    // Check achievements requested by command result
-    if (result.checkAchievements) {
-      for (const achievementId of result.checkAchievements) {
-        checkAchievement(achievementId);
-      }
-    }
-    
-    // Night Owl achievement: playing for over 30 minutes
-    const sessionDuration = Date.now() - gameState.sessionStartTime;
-    if (sessionDuration >= NIGHT_OWL_DURATION_MS) {
-      checkAchievement('night_owl');
-    }
-    
-    // Focus input after processing (use setTimeout to ensure it runs after React updates)
-    setTimeout(() => inputRef.current?.focus(), 0);
-  }, [gameState, inputValue, isProcessing, onExitAction, onSaveRequestAction, triggerFlicker, streamOutput, playSound, checkAchievement, pendingImage, pendingVideo, pendingUfo74Messages, encryptedChannelState]);
-  
+    },
+    [
+      gameState,
+      inputValue,
+      isProcessing,
+      onExitAction,
+      onSaveRequestAction,
+      triggerFlicker,
+      streamOutput,
+      playSound,
+      checkAchievement,
+      pendingImage,
+      pendingVideo,
+      pendingUfo74Messages,
+      encryptedChannelState,
+    ]
+  );
+
   // Get auto-complete suggestions
-  const getCompletions = useCallback((input: string): string[] => {
-    const trimmed = input.trimStart();
-    const parts = trimmed.split(/\s+/);
-    
-    if (parts.length <= 1) {
-      // Complete command names
-      const partial = parts[0].toLowerCase();
-      return COMMANDS.filter(cmd => cmd.startsWith(partial));
-    }
-    
-    // Complete file/directory arguments for specific commands
-    const cmd = parts[0].toLowerCase();
-    if (!COMMANDS_WITH_FILE_ARGS.includes(cmd)) return [];
-    
-    const partial = parts[parts.length - 1];
-    const currentPath = gameState.currentPath;
-    
-    // Determine the directory to search and the prefix to match
-    let searchDir = currentPath;
-    let prefix = partial;
-    
-    if (partial.includes('/')) {
-      const lastSlash = partial.lastIndexOf('/');
-      const dirPart = partial.substring(0, lastSlash + 1);
-      prefix = partial.substring(lastSlash + 1);
-      searchDir = resolvePath(dirPart, currentPath);
-    }
-    
-    const entries = listDirectory(searchDir, gameState);
-    if (!entries) return [];
-    
-    // Filter entries that match the prefix
-    const matches = entries
-      .map(e => e.name.replace(/\/$/, '')) // Remove trailing slash for matching
-      .filter(name => name.toLowerCase().startsWith(prefix.toLowerCase()));
-    
-    // For 'cd', only show directories
-    if (cmd === 'cd') {
-      const dirEntries = entries.filter(e => e.type === 'dir');
-      return dirEntries
-        .map(e => e.name.replace(/\/$/, ''))
+  const getCompletions = useCallback(
+    (input: string): string[] => {
+      const trimmed = input.trimStart();
+      const parts = trimmed.split(/\s+/);
+
+      if (parts.length <= 1) {
+        // Complete command names
+        const partial = parts[0].toLowerCase();
+        return COMMANDS.filter(cmd => cmd.startsWith(partial));
+      }
+
+      // Complete file/directory arguments for specific commands
+      const cmd = parts[0].toLowerCase();
+      if (!COMMANDS_WITH_FILE_ARGS.includes(cmd)) return [];
+
+      const partial = parts[parts.length - 1];
+      const currentPath = gameState.currentPath;
+
+      // Determine the directory to search and the prefix to match
+      let searchDir = currentPath;
+      let prefix = partial;
+
+      if (partial.includes('/')) {
+        const lastSlash = partial.lastIndexOf('/');
+        const dirPart = partial.substring(0, lastSlash + 1);
+        prefix = partial.substring(lastSlash + 1);
+        searchDir = resolvePath(dirPart, currentPath);
+      }
+
+      const entries = listDirectory(searchDir, gameState);
+      if (!entries) return [];
+
+      // Filter entries that match the prefix
+      const matches = entries
+        .map(e => e.name.replace(/\/$/, '')) // Remove trailing slash for matching
         .filter(name => name.toLowerCase().startsWith(prefix.toLowerCase()));
-    }
-    
-    return matches;
-  }, [gameState]);
-  
+
+      // For 'cd', only show directories
+      if (cmd === 'cd') {
+        const dirEntries = entries.filter(e => e.type === 'dir');
+        return dirEntries
+          .map(e => e.name.replace(/\/$/, ''))
+          .filter(name => name.toLowerCase().startsWith(prefix.toLowerCase()));
+      }
+
+      return matches;
+    },
+    [gameState]
+  );
+
   // Handle keyboard navigation
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const completions = getCompletions(inputValue);
-      
-      if (completions.length === 1) {
-        // Single match - complete it
-        const parts = inputValue.trimStart().split(/\s+/);
-        if (parts.length <= 1) {
-          // Completing a command
-          setInputValue(completions[0] + ' ');
-        } else {
-          // Completing a file/directory argument
-          const cmd = parts[0];
-          const partial = parts[parts.length - 1];
-          let prefix = '';
-          if (partial.includes('/')) {
-            prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const completions = getCompletions(inputValue);
+
+        if (completions.length === 1) {
+          // Single match - complete it
+          const parts = inputValue.trimStart().split(/\s+/);
+          if (parts.length <= 1) {
+            // Completing a command
+            setInputValue(completions[0] + ' ');
+          } else {
+            // Completing a file/directory argument
+            const cmd = parts[0];
+            const partial = parts[parts.length - 1];
+            let prefix = '';
+            if (partial.includes('/')) {
+              prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
+            }
+            setInputValue(`${cmd} ${prefix}${completions[0]}`);
           }
-          setInputValue(`${cmd} ${prefix}${completions[0]}`);
-        }
-      } else if (completions.length > 1) {
-        // Multiple matches - show them in terminal and complete common prefix
-        const commonPrefix = completions.reduce((acc, str) => {
-          while (acc && !str.toLowerCase().startsWith(acc.toLowerCase())) {
-            acc = acc.slice(0, -1);
+        } else if (completions.length > 1) {
+          // Multiple matches - show them in terminal and complete common prefix
+          const commonPrefix = completions.reduce((acc, str) => {
+            while (acc && !str.toLowerCase().startsWith(acc.toLowerCase())) {
+              acc = acc.slice(0, -1);
+            }
+            return acc;
+          }, completions[0]);
+
+          // Update input with common prefix
+          const parts = inputValue.trimStart().split(/\s+/);
+          if (parts.length <= 1) {
+            setInputValue(commonPrefix);
+          } else {
+            const cmd = parts[0];
+            const partial = parts[parts.length - 1];
+            let prefix = '';
+            if (partial.includes('/')) {
+              prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
+            }
+            setInputValue(`${cmd} ${prefix}${commonPrefix}`);
           }
-          return acc;
-        }, completions[0]);
-        
-        // Update input with common prefix
-        const parts = inputValue.trimStart().split(/\s+/);
-        if (parts.length <= 1) {
-          setInputValue(commonPrefix);
-        } else {
-          const cmd = parts[0];
-          const partial = parts[parts.length - 1];
-          let prefix = '';
-          if (partial.includes('/')) {
-            prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
-          }
-          setInputValue(`${cmd} ${prefix}${commonPrefix}`);
-        }
-        
-        // Show completions in terminal with file previews
-        const parts2 = inputValue.trimStart().split(/\s+/);
-        const cmd2 = parts2[0]?.toLowerCase();
-        const isFileCommand = cmd2 === 'open' || cmd2 === 'decrypt';
-        
-        const completionLines: string[] = [];
-        completionLines.push(completions.join('  '));
-        
-        // Show file preview for file commands
-        if (isFileCommand && completions.length <= 3) {
-          const partial2 = parts2[parts2.length - 1];
-          let searchDir2 = gameState.currentPath;
-          if (partial2.includes('/')) {
-            const lastSlash = partial2.lastIndexOf('/');
-            searchDir2 = resolvePath(partial2.substring(0, lastSlash + 1), gameState.currentPath);
-          }
-          
-          for (const completion of completions) {
-            const fullPath = searchDir2 === '/' ? `/${completion}` : `${searchDir2}/${completion}`;
-            const node = getNode(fullPath, gameState);
-            if (node && node.type === 'file') {
-              const preview = getFileContent(fullPath, gameState);
-              if (preview && preview.length > 0) {
-                const firstLine = preview.find(line => line.trim().length > 0) || preview[0];
-                const truncated = firstLine.length > 50 ? firstLine.substring(0, 50) + '...' : firstLine;
-                completionLines.push(`  ${completion}: "${truncated}"`);
+
+          // Show completions in terminal with file previews
+          const parts2 = inputValue.trimStart().split(/\s+/);
+          const cmd2 = parts2[0]?.toLowerCase();
+          const isFileCommand = cmd2 === 'open' || cmd2 === 'decrypt';
+
+          const completionLines: string[] = [];
+          completionLines.push(completions.join('  '));
+
+          // Show file preview for file commands
+          if (isFileCommand && completions.length <= 3) {
+            const partial2 = parts2[parts2.length - 1];
+            let searchDir2 = gameState.currentPath;
+            if (partial2.includes('/')) {
+              const lastSlash = partial2.lastIndexOf('/');
+              searchDir2 = resolvePath(partial2.substring(0, lastSlash + 1), gameState.currentPath);
+            }
+
+            for (const completion of completions) {
+              const fullPath =
+                searchDir2 === '/' ? `/${completion}` : `${searchDir2}/${completion}`;
+              const node = getNode(fullPath, gameState);
+              if (node && node.type === 'file') {
+                const preview = getFileContent(fullPath, gameState);
+                if (preview && preview.length > 0) {
+                  const firstLine = preview.find(line => line.trim().length > 0) || preview[0];
+                  const truncated =
+                    firstLine.length > 50 ? firstLine.substring(0, 50) + '...' : firstLine;
+                  completionLines.push(`  ${completion}: "${truncated}"`);
+                }
               }
             }
           }
+
+          const completionEntries = completionLines.map(line => createEntry('system', line));
+          setGameState(prev => ({
+            ...prev,
+            history: [...prev.history, ...completionEntries],
+          }));
         }
-        
-        const completionEntries = completionLines.map(line => createEntry('system', line));
-        setGameState(prev => ({
-          ...prev,
-          history: [...prev.history, ...completionEntries]
-        }));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const newIndex = Math.min(historyIndex + 1, gameState.commandHistory.length - 1);
+        if (newIndex >= 0 && gameState.commandHistory[newIndex]) {
+          setHistoryIndex(newIndex);
+          setInputValue(gameState.commandHistory[newIndex]);
+        }
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const newIndex = historyIndex - 1;
+        if (newIndex < 0) {
+          setHistoryIndex(-1);
+          setInputValue('');
+        } else if (gameState.commandHistory[newIndex]) {
+          setHistoryIndex(newIndex);
+          setInputValue(gameState.commandHistory[newIndex]);
+        }
+      } else if (e.ctrlKey && e.key === 'l') {
+        e.preventDefault();
+        setGameState(prev => ({ ...prev, history: [] }));
+      } else if (e.key === 'Backspace') {
+        // Play backspace sound if there's content to delete
+        if (inputValue.length > 0) {
+          playKeySound('Backspace');
+        }
       }
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      const newIndex = Math.min(historyIndex + 1, gameState.commandHistory.length - 1);
-      if (newIndex >= 0 && gameState.commandHistory[newIndex]) {
-        setHistoryIndex(newIndex);
-        setInputValue(gameState.commandHistory[newIndex]);
-      }
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      const newIndex = historyIndex - 1;
-      if (newIndex < 0) {
-        setHistoryIndex(-1);
-        setInputValue('');
-      } else if (gameState.commandHistory[newIndex]) {
-        setHistoryIndex(newIndex);
-        setInputValue(gameState.commandHistory[newIndex]);
-      }
-    } else if (e.ctrlKey && e.key === 'l') {
-      e.preventDefault();
-      setGameState(prev => ({ ...prev, history: [] }));
-    } else if (e.key === 'Backspace') {
-      // Play backspace sound if there's content to delete
-      if (inputValue.length > 0) {
-        playKeySound('Backspace');
-      }
-    }
-  }, [historyIndex, gameState.commandHistory, inputValue, getCompletions, playKeySound]);
-  
+    },
+    [historyIndex, gameState.commandHistory, inputValue, getCompletions, playKeySound]
+  );
+
   // Get status bar content
   const getStatusBar = () => {
     const parts: string[] = [];
-    
+
     if (gameState.detectionLevel >= DETECTION_THRESHOLDS.SUSPICIOUS) {
       parts.push('AUDIT: ACTIVE');
     }
@@ -1512,10 +1733,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     if (gameState.isGameOver) {
       parts.push(gameState.gameOverReason || 'TERMINATED');
     }
-    
+
     return parts.join(' │ ') || 'SYSTEM NOMINAL';
   };
-  
+
   // Get save indicator text
   const getSaveIndicator = () => {
     if (!gameState.lastSaveTime) return null;
@@ -1525,7 +1746,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     const hours = Math.floor(elapsed / 60);
     return `Saved: ${hours}h ago`;
   };
-  
+
   // Get truth discovery status
   const getTruthStatus = () => {
     const truths = gameState.truthsDiscovered;
@@ -1538,7 +1759,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       total: truths.size,
     };
   };
-  
+
   // Get risk level display with percentage
   const getRiskLevel = () => {
     const detection = gameState.detectionLevel;
@@ -1549,17 +1770,17 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     if (detection >= 20) return { level: `LOW ${percent}`, color: 'low' };
     return { level: `MINIMAL ${percent}`, color: 'minimal' };
   };
-  
+
   // Get wrong attempts display
   const getAttemptsDisplay = () => {
     const attempts = gameState.wrongAttempts || 0;
     const remaining = MAX_WRONG_ATTEMPTS - attempts;
     return `${remaining}/${MAX_WRONG_ATTEMPTS}`;
   };
-  
+
   const truthStatus = getTruthStatus();
   const riskInfo = getRiskLevel();
-  
+
   // Render terminal entry
   // Render text with redaction styling (████████)
   const renderTextWithRedactions = (text: string) => {
@@ -1567,15 +1788,15 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
     if (!text.includes('█') && !text.includes('[REDACTED]') && !text.includes('[DATA LOSS]')) {
       return text;
     }
-    
+
     // Split and render with special styling for redacted parts
     const parts: React.ReactNode[] = [];
-    
+
     // Pattern for redacted sections
     const redactionPattern = /(█+|\[REDACTED\]|\[DATA LOSS\]|\[CLASSIFIED\])/g;
     let lastIndex = 0;
     let match;
-    
+
     while ((match = redactionPattern.exec(text)) !== null) {
       // Add text before the match
       if (match.index > lastIndex) {
@@ -1589,18 +1810,18 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       );
       lastIndex = match.index + match[0].length;
     }
-    
+
     // Add remaining text
     if (lastIndex < text.length) {
       parts.push(<span key={`text-${lastIndex}`}>{text.substring(lastIndex)}</span>);
     }
-    
+
     return <>{parts}</>;
   };
-  
+
   const renderEntry = (entry: TerminalEntry) => {
     let className = styles.line;
-    
+
     switch (entry.type) {
       case 'input':
         className = `${styles.line} ${styles.input}`;
@@ -1624,19 +1845,19 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         className = `${styles.line} ${styles.fileContent}`;
         break;
     }
-    
+
     return (
       <div key={entry.id} className={className}>
         {renderTextWithRedactions(entry.content)}
       </div>
     );
   };
-  
+
   // Render different phases
   if (gamePhase === 'blackout') {
     return <Blackout onCompleteAction={handleBlackoutComplete} />;
   }
-  
+
   if (gamePhase === 'icq') {
     return (
       <ICQChat
@@ -1649,77 +1870,85 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       />
     );
   }
-  
+
   if (gamePhase === 'victory') {
-    return <Victory 
-      onRestartAction={handleRestart} 
-      commandCount={gameState.sessionCommandCount}
-      detectionLevel={gameState.detectionLevel}
-      maxDetectionReached={maxDetectionRef.current}
-      mathMistakes={gameState.mathQuestionWrong}
-      evidenceLinks={gameState.evidenceLinks}
-      wrongAttempts={gameState.wrongAttempts}
-      choiceLeakPath={gameState.choiceLeakPath}
-      rivalInvestigatorActive={gameState.rivalInvestigatorActive}
-      filesReadCount={gameState.filesRead?.size || 0}
-    />;
+    return (
+      <Victory
+        onRestartAction={handleRestart}
+        commandCount={gameState.sessionCommandCount}
+        detectionLevel={gameState.detectionLevel}
+        maxDetectionReached={maxDetectionRef.current}
+        mathMistakes={gameState.mathQuestionWrong}
+        evidenceLinks={gameState.evidenceLinks}
+        wrongAttempts={gameState.wrongAttempts}
+        choiceLeakPath={gameState.choiceLeakPath}
+        rivalInvestigatorActive={gameState.rivalInvestigatorActive}
+        filesReadCount={gameState.filesRead?.size || 0}
+      />
+    );
   }
-  
+
   if (gamePhase === 'bad_ending') {
-    return <BadEnding 
-      onRestartAction={handleRestart}
-      reason={gameState.gameOverReason}
-      commandCount={gameState.sessionCommandCount}
-      detectionLevel={gameState.detectionLevel}
-    />;
+    return (
+      <BadEnding
+        onRestartAction={handleRestart}
+        reason={gameState.gameOverReason}
+        commandCount={gameState.sessionCommandCount}
+        detectionLevel={gameState.detectionLevel}
+      />
+    );
   }
-  
+
   if (gamePhase === 'neutral_ending') {
-    return <NeutralEnding 
-      onRestartAction={handleRestart}
-      commandCount={gameState.sessionCommandCount}
-      detectionLevel={gameState.detectionLevel}
-    />;
+    return (
+      <NeutralEnding
+        onRestartAction={handleRestart}
+        commandCount={gameState.sessionCommandCount}
+        detectionLevel={gameState.detectionLevel}
+      />
+    );
   }
-  
+
   if (gamePhase === 'secret_ending') {
-    return <SecretEnding 
-      onRestartAction={handleRestart}
-      commandCount={gameState.sessionCommandCount}
-      detectionLevel={gameState.detectionLevel}
-    />;
+    return (
+      <SecretEnding
+        onRestartAction={handleRestart}
+        commandCount={gameState.sessionCommandCount}
+        detectionLevel={gameState.detectionLevel}
+      />
+    );
   }
-  
+
   return (
-    <div 
+    <div
       className={`${styles.terminal} ${flickerActive ? styles.flicker : ''} ${glitchActive ? styles.glitchActive : ''} ${glitchHeavy ? styles.glitchHeavy : ''} ${isShaking ? styles.shaking : ''} ${isWarmingUp ? styles.warmingUp : ''}`}
       onClick={() => inputRef.current?.focus()}
     >
       {/* Scanlines overlay */}
       <div className={styles.scanlines} />
-      
+
       {/* Screen burn-in effect - ghost text from previous outputs */}
       {burnInLines.length > 0 && (
         <div className={styles.burnIn}>
           {burnInLines.map((line, i) => (
-            <div key={i} className={styles.burnInLine} style={{ opacity: 0.02 * (burnInLines.length - i) }}>
+            <div
+              key={i}
+              className={styles.burnInLine}
+              style={{ opacity: 0.02 * (burnInLines.length - i) }}
+            >
               {line}
             </div>
           ))}
         </div>
       )}
-      
+
       {/* Paranoia message overlay */}
-      {paranoiaMessage && (
-        <div className={styles.paranoiaMessage}>
-          {paranoiaMessage}
-        </div>
-      )}
-      
+      {paranoiaMessage && <div className={styles.paranoiaMessage}>{paranoiaMessage}</div>}
+
       {/* Sound toggle button */}
-      <button 
+      <button
         className={`${styles.soundToggle} ${soundEnabled ? styles.active : ''}`}
-        onClick={(e) => {
+        onClick={e => {
           e.stopPropagation();
           toggleSound();
         }}
@@ -1727,7 +1956,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
       >
         {soundEnabled ? '🔊' : '🔇'}
       </button>
-      
+
       {/* Countdown timer */}
       {countdownDisplay && (
         <div className={styles.countdownTimer}>
@@ -1735,10 +1964,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           <span className={styles.countdownTime}>{countdownDisplay}</span>
         </div>
       )}
-      
+
       {/* Status bar with dropdown menu */}
       <div className={styles.statusBar}>
-        <span 
+        <span
           className={`${styles.statusLeft} ${styles.clickable}`}
           onClick={() => setShowHeaderMenu(!showHeaderMenu)}
         >
@@ -1752,15 +1981,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
         >
           ESC
         </button>
-        {getSaveIndicator() && (
-          <span className={styles.saveIndicator}>{getSaveIndicator()}</span>
-        )}
+        {getSaveIndicator() && <span className={styles.saveIndicator}>{getSaveIndicator()}</span>}
         <span className={styles.statusRight}>{getStatusBar()}</span>
-        
+
         {/* Dropdown menu */}
         {showHeaderMenu && (
           <div className={styles.headerMenu}>
-            <button 
+            <button
               className={styles.menuItem}
               onClick={() => {
                 onSaveRequestAction(gameState);
@@ -1769,7 +1996,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             >
               💾 SAVE SESSION
             </button>
-            <button 
+            <button
               className={styles.menuItem}
               onClick={() => {
                 setShowHeaderMenu(false);
@@ -1778,7 +2005,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             >
               📂 LOAD SESSION
             </button>
-            <button 
+            <button
               className={styles.menuItem}
               onClick={() => {
                 setShowSettings(true);
@@ -1787,7 +2014,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             >
               ⚙️ SETTINGS
             </button>
-            <button 
+            <button
               className={styles.menuItem}
               onClick={() => {
                 setShowAchievements(true);
@@ -1796,7 +2023,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             >
               🏆 ACHIEVEMENTS
             </button>
-            <button 
+            <button
               className={styles.menuItem}
               onClick={() => {
                 setShowStatistics(true);
@@ -1805,7 +2032,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             >
               📊 STATISTICS
             </button>
-            <button 
+            <button
               className={styles.menuItem}
               onClick={() => {
                 setShowHeaderMenu(false);
@@ -1817,61 +2044,68 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           </div>
         )}
       </div>
-      
+
       {/* Progress tracker */}
       <div className={styles.progressTracker}>
-        <div className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}>
+        <div
+          className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}
+        >
           <span className={styles.trackerLabel}>EVIDENCE:</span>
-          <span className={truthStatus.recovered ? styles.truthFound : styles.truthMissing} title="Physical debris/materials recovered">
+          <span
+            className={truthStatus.recovered ? styles.truthFound : styles.truthMissing}
+            title="Physical debris/materials recovered"
+          >
             {truthStatus.recovered ? '■' : '□'} RECOVERED
           </span>
-          <span className={truthStatus.captured ? styles.truthFound : styles.truthMissing} title="Beings/specimens captured">
+          <span
+            className={truthStatus.captured ? styles.truthFound : styles.truthMissing}
+            title="Beings/specimens captured"
+          >
             {truthStatus.captured ? '■' : '□'} CAPTURED
           </span>
-          <span className={truthStatus.communicated ? styles.truthFound : styles.truthMissing} title="Communication/telepathy evidence">
+          <span
+            className={truthStatus.communicated ? styles.truthFound : styles.truthMissing}
+            title="Communication/telepathy evidence"
+          >
             {truthStatus.communicated ? '■' : '□'} SIGNALS
           </span>
-          <span className={truthStatus.involved ? styles.truthFound : styles.truthMissing} title="International involvement">
+          <span
+            className={truthStatus.involved ? styles.truthFound : styles.truthMissing}
+            title="International involvement"
+          >
             {truthStatus.involved ? '■' : '□'} FOREIGN
           </span>
-          <span className={truthStatus.future ? styles.truthFound : styles.truthMissing} title="Future plans/timeline window">
+          <span
+            className={truthStatus.future ? styles.truthFound : styles.truthMissing}
+            title="Future plans/timeline window"
+          >
             {truthStatus.future ? '■' : '□'} NEXT
           </span>
-          <span className={styles.truthCount}>
-            [{truthStatus.total}/5]
-          </span>
+          <span className={styles.truthCount}>[{truthStatus.total}/5]</span>
         </div>
         <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
           <span className={styles.trackerLabel}>RISK:</span>
-          <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
-            {riskInfo.level}
-          </span>
-          <span className={styles.memoryLevel}>
-            ATT: {getAttemptsDisplay()}
-          </span>
+          <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>{riskInfo.level}</span>
+          <span className={styles.memoryLevel}>ATT: {getAttemptsDisplay()}</span>
         </div>
       </div>
-      
+
       {/* Output area */}
       <div className={styles.output} ref={outputRef}>
         {gameState.history.map(renderEntry)}
-        {isProcessing && (
-          <div className={`${styles.line} ${styles.processing}`}>
-            Processing...
-          </div>
-        )}
+        {isProcessing && <div className={`${styles.line} ${styles.processing}`}>Processing...</div>}
       </div>
-      
+
       {/* Input area */}
       {/* Show big ENTER button when in enter-only mode (tutorial, encrypted channel, pending media, secret ending confirmation) */}
-      {(!gameState.tutorialComplete || encryptedChannelState !== 'idle' || pendingImage || pendingVideo || (gameState.ufo74SecretDiscovered && gamePhase === 'terminal')) && !gameState.isGameOver ? (
+      {(!gameState.tutorialComplete ||
+        encryptedChannelState !== 'idle' ||
+        pendingImage ||
+        pendingVideo ||
+        (gameState.ufo74SecretDiscovered && gamePhase === 'terminal')) &&
+      !gameState.isGameOver ? (
         <form onSubmit={handleSubmit} className={styles.inputArea}>
-          <button
-            type="submit"
-            className={styles.enterButton}
-            disabled={isProcessing}
-            autoFocus
-          >
+          <button type="submit" className={styles.enterButton} disabled={isProcessing} autoFocus>
             PRESS ENTER TO CONTINUE
           </button>
         </form>
@@ -1882,14 +2116,14 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
             ref={inputRef}
             type="text"
             value={inputValue}
-            onChange={(e) => {
+            onChange={e => {
               const newValue = e.target.value;
               setInputValue(newValue);
               if (newValue.length > inputValue.length) {
                 // Detect the typed character (last char of new value)
                 const typedChar = newValue.charAt(newValue.length - 1);
                 playKeySound(typedChar === ' ' ? ' ' : typedChar);
-                
+
                 // Track typing speed
                 const now = Date.now();
                 keypressTimestamps.current.push(now);
@@ -1897,13 +2131,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
                 if (keypressTimestamps.current.length > KEYPRESS_TRACK_SIZE) {
                   keypressTimestamps.current.shift();
                 }
-                
+
                 // Check typing speed (if enough chars in short time = too fast)
                 if (keypressTimestamps.current.length >= KEYPRESS_TRACK_SIZE - 2) {
                   const oldest = keypressTimestamps.current[0];
                   const timeSpan = (now - oldest) / 1000; // seconds
                   const charsPerSecond = keypressTimestamps.current.length / timeSpan;
-                  
+
                   if (charsPerSecond > SUSPICIOUS_TYPING_SPEED && !typingSpeedWarning) {
                     setTypingSpeedWarning(true);
                     playSound('warning');
@@ -1911,7 +2145,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
                     if (typingSpeedWarningTimeout.current) {
                       clearTimeout(typingSpeedWarningTimeout.current);
                     }
-                    typingSpeedWarningTimeout.current = setTimeout(() => setTypingSpeedWarning(false), TYPING_WARNING_TIMEOUT_MS);
+                    typingSpeedWarningTimeout.current = setTimeout(
+                      () => setTypingSpeedWarning(false),
+                      TYPING_WARNING_TIMEOUT_MS
+                    );
                   }
                 }
               }
@@ -1929,24 +2166,20 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           )}
         </form>
       )}
-      
+
       {/* Timed decryption timer overlay */}
       {gameState.timedDecryptActive && timedDecryptRemaining > 0 && (
         <div className={styles.timedDecryptTimer}>
           <div className={styles.timerLabel}>DECRYPTION WINDOW</div>
-          <div className={styles.timerValue}>
-            {(timedDecryptRemaining / 1000).toFixed(1)}s
-          </div>
-          <div className={styles.timerSequence}>
-            Sequence: {gameState.timedDecryptSequence}
-          </div>
+          <div className={styles.timerValue}>{(timedDecryptRemaining / 1000).toFixed(1)}s</div>
+          <div className={styles.timerSequence}>Sequence: {gameState.timedDecryptSequence}</div>
         </div>
       )}
-      
+
       {/* Hacker avatar HUD panel */}
       {gameState.tutorialComplete && (
-        <HackerAvatar 
-          expression={gameState.avatarExpression as AvatarExpression || 'neutral'}
+        <HackerAvatar
+          expression={(gameState.avatarExpression as AvatarExpression) || 'neutral'}
           detectionLevel={gameState.detectionLevel}
           sessionStability={gameState.sessionStability}
           onExpressionTimeout={() => {
@@ -1954,7 +2187,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           }}
         />
       )}
-      
+
       {/* Image overlay */}
       {activeImage && (
         <ImageOverlay
@@ -1964,26 +2197,28 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           corrupted={activeImage.corrupted}
           onCloseAction={() => {
             // Add "Media recovered" message to terminal
-            const recoveredMessage = createEntry('system', '[SYSTEM: Media recovered. Visual data archived to session log.]');
-            
+            const recoveredMessage = createEntry(
+              'system',
+              '[SYSTEM: Media recovered. Visual data archived to session log.]'
+            );
+
             // Collect all UFO74 messages to show after image closes
             const allUfo74Messages: TerminalEntry[] = [];
-            
+
             // First add any queued messages from the command result (content reactions)
             if (queuedAfterMediaMessages.length > 0) {
               allUfo74Messages.push(...queuedAfterMediaMessages);
               setQueuedAfterMediaMessages([]); // Clear the queue
             }
-            
+
             // Then add image-specific comments
             const imageComments = UFO74_IMAGE_COMMENTS[activeImage.src];
             if (imageComments && imageComments.length > 0) {
               // Pick a random comment for variety
-              const commentIndex = Math.floor(Math.random() * imageComments.length);
-              const ufo74Comment = imageComments[commentIndex];
+              const ufo74Comment = uiRandomPick(imageComments);
               allUfo74Messages.push(createEntry('ufo74', ufo74Comment));
             }
-            
+
             // Queue all UFO74 messages through encrypted channel
             if (allUfo74Messages.length > 0) {
               setGameState(prev => ({
@@ -1992,7 +2227,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
                   ...prev.history,
                   recoveredMessage,
                   createEntry('system', ''),
-                  createEntry('ufo74', 'Receiving message from UFO74. Press Enter to open encrypted channel.'),
+                  createEntry(
+                    'ufo74',
+                    'Receiving message from UFO74. Press Enter to open encrypted channel.'
+                  ),
                 ],
               }));
               setPendingUfo74Messages(allUfo74Messages);
@@ -2009,7 +2247,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           }}
         />
       )}
-      
+
       {/* Video overlay */}
       {activeVideo && (
         <VideoOverlay
@@ -2019,8 +2257,11 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           corrupted={activeVideo.corrupted}
           onCloseAction={() => {
             // Add "Media recovered" message to terminal
-            const recoveredMessage = createEntry('system', '[SYSTEM: Media recovered. Video data archived to session log.]');
-            
+            const recoveredMessage = createEntry(
+              'system',
+              '[SYSTEM: Media recovered. Video data archived to session log.]'
+            );
+
             // Check for queued UFO74 messages from the command result
             if (queuedAfterMediaMessages.length > 0) {
               // Trigger encrypted channel for queued messages
@@ -2030,7 +2271,10 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
                   ...prev.history,
                   recoveredMessage,
                   createEntry('system', ''),
-                  createEntry('ufo74', 'Receiving message from UFO74. Press Enter to open encrypted channel.'),
+                  createEntry(
+                    'ufo74',
+                    'Receiving message from UFO74. Press Enter to open encrypted channel.'
+                  ),
                 ],
               }));
               setPendingUfo74Messages(queuedAfterMediaMessages);
@@ -2048,13 +2292,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           }}
         />
       )}
-      
+
       {/* Turing Test overlay */}
       {showTuringTest && (
         <TuringTestOverlay
-          onComplete={(passed) => {
+          onComplete={passed => {
             setShowTuringTest(false);
-            
+
             if (passed) {
               // Turing test passed
               const passedMessages = [
@@ -2098,20 +2342,15 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
                 setShowGameOver(true);
               }, GAME_OVER_DELAY_MS);
             }
-            
+
             inputRef.current?.focus();
           }}
         />
       )}
-      
+
       {/* Game Over overlay */}
-      {showGameOver && (
-        <GameOver
-          reason={gameOverReason}
-          onRestartCompleteAction={onExitAction}
-        />
-      )}
-      
+      {showGameOver && <GameOver reason={gameOverReason} onRestartCompleteAction={onExitAction} />}
+
       {/* Achievement popup */}
       {pendingAchievement && (
         <AchievementPopup
@@ -2119,7 +2358,7 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           onDismiss={() => setPendingAchievement(null)}
         />
       )}
-      
+
       {/* Settings modal */}
       {showSettings && (
         <SettingsModal
@@ -2130,21 +2369,13 @@ export default function Terminal({ initialState, onExitAction, onSaveRequestActi
           onCloseAction={() => setShowSettings(false)}
         />
       )}
-      
+
       {/* Achievement gallery */}
-      {showAchievements && (
-        <AchievementGallery
-          onCloseAction={() => setShowAchievements(false)}
-        />
-      )}
-      
+      {showAchievements && <AchievementGallery onCloseAction={() => setShowAchievements(false)} />}
+
       {/* Statistics modal */}
-      {showStatistics && (
-        <StatisticsModal
-          onCloseAction={() => setShowStatistics(false)}
-        />
-      )}
-      
+      {showStatistics && <StatisticsModal onCloseAction={() => setShowStatistics(false)} />}
+
       {/* Pause menu */}
       {showPauseMenu && (
         <PauseMenu

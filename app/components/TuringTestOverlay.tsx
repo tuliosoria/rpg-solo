@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import styles from './TuringTestOverlay.module.css';
 import { TURING_QUESTIONS } from '../constants/turing';
+import { uiChance, uiRandomInt } from '../engine/rng';
 
 interface TuringTestOverlayProps {
   onComplete: (passed: boolean) => void;
@@ -16,51 +17,54 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [flickering, setFlickering] = useState(true);
-  
+
   const currentQuestion = TURING_QUESTIONS[questionIndex];
-  
+
   // Initial flicker effect
   useEffect(() => {
     const timer = setTimeout(() => setFlickering(false), 200);
     return () => clearTimeout(timer);
   }, []);
-  
+
   // Random screen flicker
   useEffect(() => {
     const interval = setInterval(() => {
-      if (Math.random() < 0.1) {
+      if (uiChance(0.1)) {
         setFlickering(true);
-        setTimeout(() => setFlickering(false), 50 + Math.random() * 100);
+        setTimeout(() => setFlickering(false), 50 + uiRandomInt(0, 100));
       }
     }, 2000);
     return () => clearInterval(interval);
   }, []);
-  
+
   // Handle option selection
-  const handleSelect = useCallback((letter: string) => {
-    if (showFeedback || showResult) return;
-    
-    setSelectedOption(letter);
-    const option = currentQuestion.options.find(o => o.letter === letter);
-    
-    if (option?.isMachine) {
-      setCorrectAnswers(prev => prev + 1);
-    }
-    
-    setShowFeedback(true);
-    
-    // Move to next question or show result
-    setTimeout(() => {
-      if (questionIndex < TURING_QUESTIONS.length - 1) {
-        setQuestionIndex(prev => prev + 1);
-        setSelectedOption(null);
-        setShowFeedback(false);
-      } else {
-        setShowResult(true);
+  const handleSelect = useCallback(
+    (letter: string) => {
+      if (showFeedback || showResult) return;
+
+      setSelectedOption(letter);
+      const option = currentQuestion.options.find(o => o.letter === letter);
+
+      if (option?.isMachine) {
+        setCorrectAnswers(prev => prev + 1);
       }
-    }, 1500);
-  }, [questionIndex, currentQuestion, showFeedback, showResult]);
-  
+
+      setShowFeedback(true);
+
+      // Move to next question or show result
+      setTimeout(() => {
+        if (questionIndex < TURING_QUESTIONS.length - 1) {
+          setQuestionIndex(prev => prev + 1);
+          setSelectedOption(null);
+          setShowFeedback(false);
+        } else {
+          setShowResult(true);
+        }
+      }, 1500);
+    },
+    [questionIndex, currentQuestion, showFeedback, showResult]
+  );
+
   // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -71,20 +75,20 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
         }
         return;
       }
-      
+
       if (showFeedback) return;
-      
+
       const key = e.key.toUpperCase();
       if (key === 'A' || key === 'B' || key === 'C' || key === '1' || key === '2' || key === '3') {
         const letter = key === '1' ? 'A' : key === '2' ? 'B' : key === '3' ? 'C' : key;
         handleSelect(letter);
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleSelect, showFeedback, showResult, onComplete, correctAnswers]);
-  
+
   // Result screen
   if (showResult) {
     const passed = correctAnswers === 3;
@@ -92,7 +96,7 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
       <div className={`${styles.overlay} ${flickering ? styles.flickering : ''}`}>
         <div className={styles.scanlines} />
         <div className={styles.glow} />
-        
+
         <div className={styles.container}>
           {/* Turing Test Image */}
           <div className={styles.imageContainer}>
@@ -105,36 +109,32 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
               priority
             />
           </div>
-          
+
           <div className={styles.resultBox}>
             <div className={styles.resultHeader}>
               {passed ? '[ VERIFICATION COMPLETE ]' : '[ VERIFICATION FAILED ]'}
             </div>
-            
-            <div className={styles.resultScore}>
-              MACHINE RESPONSES: {correctAnswers}/3
-            </div>
-            
+
+            <div className={styles.resultScore}>MACHINE RESPONSES: {correctAnswers}/3</div>
+
             <div className={passed ? styles.resultPass : styles.resultFail}>
-              {passed 
+              {passed
                 ? 'SUBJECT IS NOT HUMAN, NOT A THREAT'
                 : 'IDENTITY REJECTED: HUMAN BEHAVIORAL PATTERNS DETECTED'}
             </div>
-            
-            <div className={styles.resultPrompt}>
-              [Press ENTER to continue]
-            </div>
+
+            <div className={styles.resultPrompt}>[Press ENTER to continue]</div>
           </div>
         </div>
       </div>
     );
   }
-  
+
   return (
     <div className={`${styles.overlay} ${flickering ? styles.flickering : ''}`}>
       <div className={styles.scanlines} />
       <div className={styles.glow} />
-      
+
       <div className={styles.container}>
         {/* Turing Test Image */}
         <div className={styles.imageContainer}>
@@ -147,20 +147,14 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
             priority
           />
         </div>
-        
+
         {/* Header */}
         <div className={styles.header}>
-          <div className={styles.headerLine}>
-            ===============================================
-          </div>
-          <div className={styles.headerTitle}>
-            SECURITY PROTOCOL: TURING EVALUATION
-          </div>
-          <div className={styles.headerLine}>
-            ===============================================
-          </div>
+          <div className={styles.headerLine}>===============================================</div>
+          <div className={styles.headerTitle}>SECURITY PROTOCOL: TURING EVALUATION</div>
+          <div className={styles.headerLine}>===============================================</div>
         </div>
-        
+
         {/* Instructions */}
         <div className={styles.instructions}>
           <div>NOTICE: Anomalous access pattern detected.</div>
@@ -169,26 +163,24 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
             Select the MACHINE response (cold, logical) to pass.
           </div>
         </div>
-        
+
         {/* Progress */}
         <div className={styles.progress}>
           QUESTION {questionIndex + 1} of {TURING_QUESTIONS.length}
         </div>
-        
+
         {/* Question Box */}
         <div className={styles.questionBox}>
-          <div className={styles.questionPrompt}>
-            "{currentQuestion.prompt}"
-          </div>
-          
+          <div className={styles.questionPrompt}>"{currentQuestion.prompt}"</div>
+
           <div className={styles.options}>
-            {currentQuestion.options.map((option) => {
+            {currentQuestion.options.map(option => {
               const isSelected = selectedOption === option.letter;
               const showCorrect = showFeedback && option.isMachine;
               const showWrong = showFeedback && isSelected && !option.isMachine;
-              
+
               return (
-                <div 
+                <div
                   key={option.letter}
                   className={`${styles.option} 
                     ${isSelected ? styles.optionSelected : ''} 
@@ -203,7 +195,7 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
             })}
           </div>
         </div>
-        
+
         {/* Feedback */}
         {showFeedback && (
           <div className={styles.feedback}>
@@ -212,11 +204,9 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
               : '[ HUMAN PATTERN DETECTED ]'}
           </div>
         )}
-        
+
         {/* Footer */}
-        <div className={styles.footer}>
-          Type A, B, or C to respond
-        </div>
+        <div className={styles.footer}>Type A, B, or C to respond</div>
       </div>
     </div>
   );
