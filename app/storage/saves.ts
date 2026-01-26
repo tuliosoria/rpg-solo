@@ -32,7 +32,8 @@ interface VersionedSaveData {
 // Migrate save data from older versions to current version
 // Add new migration cases here when SAVE_VERSION is incremented
 function migrateState(data: VersionedSaveData): Record<string, unknown> {
-  let { version, state } = data;
+  let { version } = data;
+  const { state } = data;
 
   // Run migrations sequentially for each version
   // Example: if migrating from v1 to v3, run v1->v2, then v2->v3

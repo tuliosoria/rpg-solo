@@ -3252,7 +3252,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const DETECTION_FLOOR = 5; // Can't reduce below this level
 
     let detectionChange = 3; // Default increase for reading files
-    let safeFileNotice: ReturnType<typeof createEntry>[] = [];
+    const safeFileNotice: ReturnType<typeof createEntry>[] = [];
 
     if (isSafeFile && state.detectionLevel > DETECTION_FLOOR) {
       // Reduce detection by 1-2 points instead of increasing
@@ -3278,7 +3278,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     // Check if file is unstable and might corrupt
-    let stateChanges: Partial<GameState> = {
+    const stateChanges: Partial<GameState> = {
       detectionLevel: state.detectionLevel + detectionChange,
       filesRead,
       lastOpenedFile: filePath, // Track for 'last' command
@@ -3485,7 +3485,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     // Check for Archivist achievement: all files in parent folder read
-    let achievementsToCheck: string[] = [];
+    const achievementsToCheck: string[] = [];
     const parentPath = filePath.substring(0, filePath.lastIndexOf('/')) || '/';
     const parentEntries = listDirectory(parentPath, { ...state, ...stateChanges } as GameState);
     const filesInParent = parentEntries ? parentEntries.filter(e => e.type === 'file') : [];

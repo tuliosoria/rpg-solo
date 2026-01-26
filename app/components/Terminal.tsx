@@ -1205,7 +1205,7 @@ export default function Terminal({
         gameState.history.length >= MAX_HISTORY_SIZE
           ? gameState.history.slice(-MAX_HISTORY_SIZE + 1)
           : gameState.history;
-      let newState: GameState = {
+      const newState: GameState = {
         ...gameState,
         history: [...trimmedHistory, inputEntry],
         commandHistory: [
