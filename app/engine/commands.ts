@@ -1,38 +1,69 @@
 // Command parser and execution engine for Terminal 1996
 
-import { 
-  GameState, 
-  CommandResult, 
-  TerminalEntry, 
+import {
+  GameState,
+  CommandResult,
+  TerminalEntry,
   TruthCategory,
   TRUTH_CATEGORIES,
   FileMutation,
   FileNode,
   ImageTrigger,
-  VideoTrigger
+  VideoTrigger,
 } from '../types';
-import { 
-  resolvePath, 
-  getNode, 
-  listDirectory, 
-  getFileContent, 
+import {
+  resolvePath,
+  getNode,
+  listDirectory,
+  getFileContent,
   canAccessFile,
-  getFileReveals
+  getFileReveals,
 } from './filesystem';
 import { createSeededRng, seededRandomInt, seededRandomPick } from './rng';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
-import { 
+import {
   attemptEvidenceRevelation,
   getDisturbingContentAvatarExpression,
   getEvidencePotentialSummary,
 } from './evidenceRevelation';
-import { 
-  DETECTION_THRESHOLDS, 
-  DETECTION_INCREASES, 
+import {
+  DETECTION_THRESHOLDS,
+  DETECTION_INCREASES,
   DETECTION_DECREASES,
-  MAX_DETECTION 
+  MAX_DETECTION,
 } from '../constants/detection';
 import { TURING_QUESTIONS } from '../constants/turing';
+
+// Import utilities from new module
+import {
+  generateEntryId,
+  createEntry,
+  createOutputEntries,
+  createInvalidCommandResult,
+  parseCommand,
+  calculateDelay,
+  shouldFlicker,
+  addHesitation,
+  maybeAddTypo,
+  createUFO74Message,
+} from './commands/utils';
+
+// Re-export utilities for backward compatibility
+export {
+  generateEntryId,
+  createEntry,
+  createOutputEntries,
+  createInvalidCommandResult,
+  parseCommand,
+  calculateDelay,
+  shouldFlicker,
+  addHesitation,
+  maybeAddTypo,
+  createUFO74Message,
+} from './commands/utils';
+
+// Re-export tutorial functions for backward compatibility
+export { TUTORIAL_MESSAGES, generateBootSequence, getTutorialMessage } from './commands/tutorial';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
@@ -41,7 +72,12 @@ import { TURING_QUESTIONS } from '../constants/turing';
 interface SingularEvent {
   id: string;
   trigger: (state: GameState, command: string, args: string[]) => boolean;
-  execute: (state: GameState) => { output: TerminalEntry[]; stateChanges: Partial<GameState>; delayMs?: number; triggerFlicker?: boolean };
+  execute: (state: GameState) => {
+    output: TerminalEntry[];
+    stateChanges: Partial<GameState>;
+    delayMs?: number;
+    triggerFlicker?: boolean;
+  };
 }
 
 const SINGULAR_EVENTS: SingularEvent[] = [
@@ -54,9 +90,12 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.turingEvaluationActive) return false;
       // Trigger at detection level WANDERING_LOW+, before Turing test can start
       // This ensures warning always shows before the test, even if detection jumps
-      return state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_LOW && state.truthsDiscovered.size >= 1;
+      return (
+        state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_LOW &&
+        state.truthsDiscovered.size >= 1
+      );
     },
-    execute: (state) => {
+    execute: state => {
       return {
         output: [
           createEntry('system', ''),
@@ -69,7 +108,10 @@ const SINGULAR_EVENTS: SingularEvent[] = [
           createEntry('system', ''),
         ],
         stateChanges: {
-          singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'turing_warning']),
+          singularEventsTriggered: new Set([
+            ...(state.singularEventsTriggered || []),
+            'turing_warning',
+          ]),
         },
         delayMs: 500,
       };
@@ -86,9 +128,13 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       // Trigger at detection level 45-55 on any command, BUT only if warning was shown
       // If warning wasn't shown yet, don't trigger (let the warning trigger first)
       if (!state.singularEventsTriggered?.has('turing_warning')) return false;
-      return state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_RANGE_MIN && state.detectionLevel <= DETECTION_THRESHOLDS.WANDERING_RANGE_MAX && state.truthsDiscovered.size >= 1;
+      return (
+        state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_RANGE_MIN &&
+        state.detectionLevel <= DETECTION_THRESHOLDS.WANDERING_RANGE_MAX &&
+        state.truthsDiscovered.size >= 1
+      );
     },
-    execute: (state) => {
+    execute: state => {
       return {
         output: [
           createEntry('system', ''),
@@ -98,7 +144,10 @@ const SINGULAR_EVENTS: SingularEvent[] = [
           createEntry('system', ''),
         ],
         stateChanges: {
-          singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'turing_evaluation']),
+          singularEventsTriggered: new Set([
+            ...(state.singularEventsTriggered || []),
+            'turing_evaluation',
+          ]),
           turingEvaluationActive: true,
           turingEvaluationIndex: 0,
         },
@@ -115,9 +164,12 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('the_echo')) return false;
       if (command !== 'open' && command !== 'decrypt') return false;
       const path = args[0]?.toLowerCase() || '';
-      return (path.includes('psi') || path.includes('transcript')) && state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_PSI;
+      return (
+        (path.includes('psi') || path.includes('transcript')) &&
+        state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_PSI
+      );
     },
-    execute: (state) => ({
+    execute: state => ({
       output: [
         createEntry('system', ''),
         createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
@@ -145,9 +197,13 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('the_silence')) return false;
       if (command !== 'cd' && command !== 'ls') return false;
       const path = args[0]?.toLowerCase() || state.currentPath.toLowerCase();
-      return path.includes('admin') && state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_ADMIN && state.flags.adminUnlocked;
+      return (
+        path.includes('admin') &&
+        state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_ADMIN &&
+        state.flags.adminUnlocked
+      );
     },
-    execute: (state) => ({
+    execute: state => ({
       output: [
         createEntry('system', ''),
         createEntry('system', ''),
@@ -177,11 +233,14 @@ const SINGULAR_EVENTS: SingularEvent[] = [
   {
     // THE WATCHER ACKNOWLEDGMENT - After discovering 3+ truths, system acknowledges awareness
     id: 'watcher_ack',
-    trigger: (state) => {
+    trigger: state => {
       if (state.singularEventsTriggered?.has('watcher_ack')) return false;
-      return state.truthsDiscovered.size >= 3 && state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_TRUTHS;
+      return (
+        state.truthsDiscovered.size >= 3 &&
+        state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_TRUTHS
+      );
     },
-    execute: (state) => ({
+    execute: state => ({
       output: [
         createEntry('system', ''),
         createEntry('error', '─────────────────────────────────────────'),
@@ -207,11 +266,14 @@ const SINGULAR_EVENTS: SingularEvent[] = [
   {
     // RIVAL INVESTIGATOR - Evidence seized after heavy linking
     id: 'rival_investigator',
-    trigger: (state) => {
+    trigger: state => {
       if (state.singularEventsTriggered?.has('rival_investigator')) return false;
-      return (state.evidenceLinks?.length || 0) >= 3 && state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_EVIDENCE;
+      return (
+        (state.evidenceLinks?.length || 0) >= 3 &&
+        state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_EVIDENCE
+      );
     },
-    execute: (state) => ({
+    execute: state => ({
       output: [
         createEntry('system', ''),
         createEntry('warning', '─────────────────────────────────────────'),
@@ -225,7 +287,10 @@ const SINGULAR_EVENTS: SingularEvent[] = [
         createEntry('system', ''),
       ],
       stateChanges: {
-        singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'rival_investigator']),
+        singularEventsTriggered: new Set([
+          ...(state.singularEventsTriggered || []),
+          'rival_investigator',
+        ]),
         rivalInvestigatorActive: true,
         systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
         paranoiaLevel: Math.min(100, (state.paranoiaLevel || 0) + 20),
@@ -237,7 +302,17 @@ const SINGULAR_EVENTS: SingularEvent[] = [
 ];
 
 // Check and trigger singular events
-function checkSingularEvents(state: GameState, command: string, args: string[]): { output: TerminalEntry[]; stateChanges: Partial<GameState>; delayMs?: number; triggerFlicker?: boolean; triggerTuringTest?: boolean } | null {
+function checkSingularEvents(
+  state: GameState,
+  command: string,
+  args: string[]
+): {
+  output: TerminalEntry[];
+  stateChanges: Partial<GameState>;
+  delayMs?: number;
+  triggerFlicker?: boolean;
+  triggerTuringTest?: boolean;
+} | null {
   for (const event of SINGULAR_EVENTS) {
     if (event.trigger(state, command, args)) {
       return event.execute(state);
@@ -275,7 +350,7 @@ function getHostileSystemMessage(hostilityLevel: number, normalMessage: string):
 
 function applyHostileFiltering(entries: TerminalEntry[], hostilityLevel: number): TerminalEntry[] {
   if (hostilityLevel <= 1) return entries;
-  
+
   return entries
     .map(entry => ({
       ...entry,
@@ -287,18 +362,19 @@ function applyHostileFiltering(entries: TerminalEntry[], hostilityLevel: number)
 // Calculate hostility increase based on actions
 function calculateHostilityIncrease(state: GameState, command: string): number {
   const baseHostility = state.systemHostilityLevel || 0;
-  
+
   // High-risk commands increase hostility
   if (command === 'trace') return 1;
   if (command === 'recover') return 1;
   if (command === 'override') return 2;
-  if (command === 'decrypt') return state.detectionLevel > DETECTION_THRESHOLDS.DECRYPT_WARNING ? 1 : 0;
-  
+  if (command === 'decrypt')
+    return state.detectionLevel > DETECTION_THRESHOLDS.DECRYPT_WARNING ? 1 : 0;
+
   // Detection thresholds trigger hostility
   if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_HIGH && baseHostility < 4) return 1;
   if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_MED && baseHostility < 3) return 1;
   if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_LOW && baseHostility < 2) return 1;
-  
+
   return 0;
 }
 
@@ -307,23 +383,30 @@ function calculateHostilityIncrease(state: GameState, command: string): number {
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Check if an action is "meaningful" (reading files, finding truths)
-function isMeaningfulAction(command: string, args: string[], state: GameState, result: { output: TerminalEntry[]; stateChanges: Partial<GameState> }): boolean {
+function isMeaningfulAction(
+  command: string,
+  args: string[],
+  state: GameState,
+  result: { output: TerminalEntry[]; stateChanges: Partial<GameState> }
+): boolean {
   // Reading a file is meaningful
   if (command === 'open' || command === 'decrypt') {
     return result.output.some(e => e.type !== 'error');
   }
-  
+
   // Discovering truth is definitely meaningful
-  if (result.stateChanges.truthsDiscovered && 
-      (result.stateChanges.truthsDiscovered as Set<string>).size > state.truthsDiscovered.size) {
+  if (
+    result.stateChanges.truthsDiscovered &&
+    (result.stateChanges.truthsDiscovered as Set<string>).size > state.truthsDiscovered.size
+  ) {
     return true;
   }
-  
+
   // Gaining access level is meaningful
   if (result.stateChanges.accessLevel && result.stateChanges.accessLevel > state.accessLevel) {
     return true;
   }
-  
+
   return false;
 }
 
@@ -332,7 +415,7 @@ function isMeaningfulAction(command: string, args: string[], state: GameState, r
 function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
   // Get contextual hints based on what player hasn't explored
   const contextualHints = state ? getContextualExplorationHints(state) : null;
-  
+
   if (level === 0) {
     // First notice - friendly tip with contextual suggestion
     const hints: TerminalEntry[] = [
@@ -347,19 +430,23 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
       createEntry('output', '       i get it, the system is confusing.'),
       createEntry('output', ''),
     ];
-    
+
     if (contextualHints) {
       hints.push(createEntry('ufo74', `UFO74: ${contextualHints}`));
       hints.push(createEntry('output', ''));
     } else {
-      hints.push(createEntry('ufo74', 'UFO74: heres the thing - you need to actually READ the files.'));
+      hints.push(
+        createEntry('ufo74', 'UFO74: heres the thing - you need to actually READ the files.')
+      );
       hints.push(createEntry('output', '       use "open <filename>" and look for connections.'));
       hints.push(createEntry('output', ''));
       hints.push(createEntry('ufo74', 'UFO74: theres a protocol doc in /internal/ that explains'));
-      hints.push(createEntry('output', '       what kind of info youre supposed to piece together.'));
+      hints.push(
+        createEntry('output', '       what kind of info youre supposed to piece together.')
+      );
       hints.push(createEntry('output', ''));
     }
-    
+
     hints.push(createEntry('ufo74', 'UFO74: good luck. ill check back later.'));
     hints.push(createEntry('system', ''));
     hints.push(createEntry('warning', '>> CONNECTION CLOSED <<'));
@@ -428,56 +515,61 @@ function getContextualExplorationHints(state: GameState): string | null {
   const filesRead = state.filesRead || new Set<string>();
   const truthsDiscovered = state.truthsDiscovered || new Set<string>();
   const prisoner45Used = state.prisoner45QuestionsAsked > 0;
-  
+
   // Check for unexplored areas and give targeted hints
   const hasReadStorage = Array.from(filesRead).some(f => f.includes('/storage/'));
   const hasReadComms = Array.from(filesRead).some(f => f.includes('/comms/'));
   const hasReadOps = Array.from(filesRead).some(f => f.includes('/ops/'));
   const hasReadAdmin = Array.from(filesRead).some(f => f.includes('/admin/'));
-  
+
   // Prioritized hints based on what's missing
   if (!hasReadStorage && !truthsDiscovered.has('debris_relocation')) {
     return 'try checking out /storage/ - thats where they logged what they moved.';
   }
-  
+
   if (!hasReadOps && !truthsDiscovered.has('being_containment')) {
     return 'the /ops/ directory has the operational stuff. quarantine records, medical files...';
   }
-  
+
   if (!hasReadComms && !truthsDiscovered.has('telepathic_scouts')) {
     return 'theres weird stuff in /comms/psi/ - signal transcripts that dont make sense.';
   }
-  
+
   if (!prisoner45Used && state.tutorialComplete) {
     return 'hey, try the "chat" command. theres someone else in the system. prisoner 45.';
   }
-  
+
   if (!hasReadAdmin && truthsDiscovered.size >= 2 && state.accessLevel >= 3) {
     return 'youve got clearance now. check /admin/ for the classified stuff.';
   }
-  
+
   if (truthsDiscovered.size >= 3 && !state.flags?.correlateHintGiven) {
     return 'youre finding pieces. try using "correlate" to connect related files.';
   }
-  
+
   return null;
 }
 
 // Check if player seems lost and return appropriate nudge
-function checkWanderingState(state: GameState, command: string, args: string[], result: { output: TerminalEntry[]; stateChanges: Partial<GameState> }): { notices: TerminalEntry[]; stateChanges: Partial<GameState> } | null {
+function checkWanderingState(
+  state: GameState,
+  command: string,
+  args: string[],
+  result: { output: TerminalEntry[]; stateChanges: Partial<GameState> }
+): { notices: TerminalEntry[]; stateChanges: Partial<GameState> } | null {
   const commandCount = state.sessionCommandCount || 0;
   const lastMeaningful = state.lastMeaningfulAction || 0;
   const wanderingCount = state.wanderingNoticeCount || 0;
-  
+
   // Don't trigger in early session
   if (commandCount < 15) return null;
-  
+
   // Don't spam notices
   if (wanderingCount >= 3) return null;
-  
+
   // Check if this action is meaningful
   const meaningful = isMeaningfulAction(command, args, state, result);
-  
+
   if (meaningful) {
     // Reset wandering state on meaningful action
     return {
@@ -487,13 +579,13 @@ function checkWanderingState(state: GameState, command: string, args: string[], 
       },
     };
   }
-  
+
   // Calculate commands since last meaningful action
   const commandsSinceMeaningful = commandCount - lastMeaningful;
-  
+
   // Trigger thresholds increase with each notice
-  const threshold = 8 + (wanderingCount * 5); // 8, 13, 18
-  
+  const threshold = 8 + wanderingCount * 5; // 8, 13, 18
+
   if (commandsSinceMeaningful >= threshold) {
     return {
       notices: getWanderingNotice(Math.min(wanderingCount, 2), state),
@@ -503,155 +595,8 @@ function checkWanderingState(state: GameState, command: string, args: string[], 
       },
     };
   }
-  
+
   return null;
-}
-
-// Generate unique ID for terminal entries
-let entryIdCounter = 0;
-export function generateEntryId(): string {
-  return `entry_${Date.now()}_${entryIdCounter++}`;
-}
-
-export function createEntry(type: TerminalEntry['type'], content: string): TerminalEntry {
-  return {
-    id: generateEntryId(),
-    type,
-    content,
-    timestamp: Date.now(),
-  };
-}
-
-export function createOutputEntries(lines: string[], type: TerminalEntry['type'] = 'output'): TerminalEntry[] {
-  return lines.map(line => createEntry(type, line));
-}
-
-// Helper to create invalid command result with legacyAlertCounter increment
-export function createInvalidCommandResult(state: GameState, commandName: string): CommandResult {
-  const newAlertCounter = state.legacyAlertCounter + 1;
-  
-  // Check if this triggers game over
-  if (newAlertCounter >= 8) {
-    return {
-      output: [
-        createEntry('error', ''),
-        createEntry('error', '═══════════════════════════════════════════════════════════'),
-        createEntry('error', 'CRITICAL: INVALID ATTEMPT THRESHOLD EXCEEDED'),
-        createEntry('error', '═══════════════════════════════════════════════════════════'),
-        createEntry('error', ''),
-        createEntry('error', 'SYSTEM LOCKDOWN INITIATED'),
-        createEntry('error', 'SESSION TERMINATED'),
-        createEntry('error', ''),
-      ],
-      stateChanges: {
-        isGameOver: true,
-        gameOverReason: 'INVALID ATTEMPT THRESHOLD',
-        legacyAlertCounter: newAlertCounter,
-      },
-      triggerFlicker: true,
-    };
-  }
-  
-  return {
-    output: [
-      createEntry('error', commandName ? `Unknown command: ${commandName}` : 'ERROR: Unknown command'),
-      createEntry('warning', ''),
-      createEntry('warning', '⚠ RISK INCREASED: Invalid commands draw system attention.'),
-      createEntry('system', `   [Invalid attempts: ${newAlertCounter}/8]`),
-    ],
-    stateChanges: {
-      detectionLevel: state.detectionLevel + 2,
-      legacyAlertCounter: newAlertCounter,
-    },
-  };
-}
-
-// Parse command into name and args
-export function parseCommand(input: string): { command: string; args: string[] } {
-  const trimmed = input.trim();
-  const parts = trimmed.split(/\s+/);
-  const command = (parts[0] || '').toLowerCase();
-  const args = parts.slice(1);
-  return { command, args };
-}
-
-// Calculate delay based on detection level and per-run variance
-export function calculateDelay(state: GameState): number {
-  // Base delay from detection level
-  let baseDelay = 0;
-  if (state.detectionLevel < DETECTION_THRESHOLDS.DELAY_NONE) baseDelay = 0;
-  else if (state.detectionLevel < DETECTION_THRESHOLDS.DELAY_LOW) baseDelay = 300;
-  else if (state.detectionLevel < DETECTION_THRESHOLDS.DELAY_MEDIUM) baseDelay = 800;
-  else if (state.detectionLevel < DETECTION_THRESHOLDS.DELAY_HIGH) baseDelay = 1500;
-  else baseDelay = 2500;
-  
-  // Per-run variance: some runs have faster/slower response times (±30%)
-  const rng = createSeededRng(state.seed + 777);
-  const variance = 0.7 + (rng() * 0.6); // 0.7 to 1.3
-  
-  return Math.floor(baseDelay * variance);
-}
-
-// Check if should trigger flicker based on stability
-export function shouldFlicker(state: GameState): boolean {
-  if (state.sessionStability > 80) return false;
-  if (state.sessionStability > 60) return Math.random() < 0.1;
-  if (state.sessionStability > 40) return Math.random() < 0.25;
-  return Math.random() < 0.5;
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// TERMINAL PERSONALITY - Typos that self-correct, hesitation for scary content
-// ═══════════════════════════════════════════════════════════════════════════
-
-// Add hesitation dots before scary/classified content
-export function addHesitation(text: string, intensity: number = 1): string[] {
-  const dots = '.'.repeat(Math.min(3, Math.max(1, Math.floor(intensity))));
-  return [dots + dots + dots, text];
-}
-
-// Create a typo version of text that will be followed by correction
-// Returns [typo, correction] or [original] if no typo needed
-export function maybeAddTypo(text: string, chance: number = 0.1): string[] {
-  if (Math.random() > chance || text.length < 5) return [text];
-  
-  // Common typo patterns for terminal "personality"
-  const typoTypes = [
-    // Letter swap
-    (s: string) => {
-      const i = Math.floor(Math.random() * (s.length - 2)) + 1;
-      return s.substring(0, i) + s[i + 1] + s[i] + s.substring(i + 2);
-    },
-    // Double letter
-    (s: string) => {
-      const i = Math.floor(Math.random() * s.length);
-      return s.substring(0, i) + s[i] + s[i] + s.substring(i + 1);
-    },
-    // Missing letter
-    (s: string) => {
-      const i = Math.floor(Math.random() * s.length);
-      return s.substring(0, i) + s.substring(i + 1);
-    },
-  ];
-  
-  const typoFn = typoTypes[Math.floor(Math.random() * typoTypes.length)];
-  const typo = typoFn(text);
-  
-  // Return typo followed by backspace simulation and correction
-  return [typo, `[CORRECTION] ${text}`];
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// UFO74 TRANSMISSION WRAPPER - Adds encrypted channel banner
-// ═══════════════════════════════════════════════════════════════════════════
-
-// Wrap UFO74 messages with transmission banner
-// Note: With the new encrypted channel system, these messages will be queued
-// and displayed one at a time with the proper channel open/close flow
-export function createUFO74Message(messages: string[]): TerminalEntry[] {
-  return [
-    ...messages.map(msg => createEntry('ufo74', msg)),
-  ];
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -663,7 +608,7 @@ export function createUFO74Message(messages: string[]): TerminalEntry[] {
 function getCommandDetectionMultiplier(state: GameState, command: string): number {
   const rng = createSeededRng(state.seed + command.charCodeAt(0) * 100);
   const roll = rng();
-  
+
   // Most commands are normal, but some get marked as hot/cold
   if (roll < 0.15) return 1.5; // Hot - this command is being watched this run
   if (roll > 0.85) return 0.7; // Cold - less monitored this run
@@ -680,7 +625,7 @@ function applyDetectionVariance(state: GameState, command: string, baseIncrease:
 export function applyRandomCorruption(state: GameState): GameState {
   const rng = createSeededRng(state.rngState);
   state.rngState = seededRandomInt(rng, 0, 2147483647);
-  
+
   // Find a corruptible file that isn't already fully corrupted
   const corruptiblePaths = [
     '/storage/assets/material_x_analysis.dat',
@@ -688,19 +633,19 @@ export function applyRandomCorruption(state: GameState): GameState {
     '/storage/quarantine/autopsy_alpha.log',
     '/comms/psi/transcript_core.enc',
   ];
-  
+
   const targetPath = seededRandomPick(rng, corruptiblePaths);
   const mutation = state.fileMutations[targetPath] || {
     corruptedLines: [],
     decrypted: false,
   };
-  
+
   // Add corruption
   const lineToCorrupt = seededRandomInt(rng, 3, 15);
   if (!mutation.corruptedLines.includes(lineToCorrupt)) {
     mutation.corruptedLines.push(lineToCorrupt);
   }
-  
+
   return {
     ...state,
     fileMutations: {
@@ -711,11 +656,14 @@ export function applyRandomCorruption(state: GameState): GameState {
 }
 
 // Check truth progress and generate notices
-function checkTruthProgress(state: GameState, newReveals: string[]): { notices: TerminalEntry[]; stateChanges: Partial<GameState> } {
+function checkTruthProgress(
+  state: GameState,
+  newReveals: string[]
+): { notices: TerminalEntry[]; stateChanges: Partial<GameState> } {
   const notices: TerminalEntry[] = [];
   const stateChanges: Partial<GameState> = {};
   const previousCount = state.truthsDiscovered.size;
-  
+
   // Create a new Set to avoid mutating the original state
   const updatedTruths = new Set(state.truthsDiscovered);
   for (const reveal of newReveals) {
@@ -723,9 +671,9 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
       updatedTruths.add(reveal);
     }
   }
-  
+
   const newCount = updatedTruths.size;
-  
+
   // Only update if we found new truths
   if (newCount > previousCount) {
     stateChanges.truthsDiscovered = updatedTruths;
@@ -735,10 +683,10 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
     const detectionReduction = truthsJustFound * 10;
     const newDetection = Math.max(0, state.detectionLevel - detectionReduction);
     stateChanges.detectionLevel = newDetection;
-    
+
     // Trigger shocked expression on major discovery
     stateChanges.avatarExpression = 'shocked';
-    
+
     // Generate institutional-style progress acknowledgments
     // These are varied and never explain what was found
     const institutionalMessages: Record<string, string[]> = {
@@ -768,7 +716,7 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
         'SYSTEM: Chronological model updated.',
       ],
     };
-    
+
     for (const reveal of newReveals) {
       const messages = institutionalMessages[reveal];
       if (messages && !Array.from(state.truthsDiscovered).includes(reveal)) {
@@ -782,51 +730,61 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
         notices.push(createEntry('notice', messages[messageIndex]));
       }
     }
-    
+
     // Breather notice - the system recalibrates
     notices.push(createEntry('system', ''));
     notices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));
-    
+
     // First evidence found - suggest bookmark
     if (newCount === 1 && previousCount === 0) {
-      notices.push(...createUFO74Message([
-        'UFO74: nice find kid! want to bookmark this file?',
-        '       use "bookmark <filename>" to save files for later.',
-      ]));
+      notices.push(
+        ...createUFO74Message([
+          'UFO74: nice find kid! want to bookmark this file?',
+          '       use "bookmark <filename>" to save files for later.',
+        ])
+      );
     }
-    
+
     // Additional milestone acknowledgments (never say "progress")
     if (newCount === 2 && previousCount < 2) {
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', 'SYSTEM: Independent verification detected.'));
-      
+
       // Correlate tutorial - explain cross-referencing evidence
       if (!state.flags.correlateHintGiven) {
-        notices.push(...createUFO74Message([
-          'UFO74: kid, youre building a case. use "correlate" to connect',
-          '       related evidence files. cross-referencing makes the case stronger.',
-        ]));
+        notices.push(
+          ...createUFO74Message([
+            'UFO74: kid, youre building a case. use "correlate" to connect',
+            '       related evidence files. cross-referencing makes the case stronger.',
+          ])
+        );
         stateChanges.flags = { ...state.flags, ...stateChanges.flags, correlateHintGiven: true };
       }
     }
-    
+
     if (newCount === 4 && previousCount < 4) {
       notices.push(createEntry('notice', ''));
-      notices.push(createEntry('notice', 'NOTICE: Sufficient documentation threshold approaching.'));
-      notices.push(createEntry('warning', 'WARNING: Comprehensive access may trigger archive protocols.'));
+      notices.push(
+        createEntry('notice', 'NOTICE: Sufficient documentation threshold approaching.')
+      );
+      notices.push(
+        createEntry('warning', 'WARNING: Comprehensive access may trigger archive protocols.')
+      );
     }
-    
+
     if (newCount === 5 && previousCount < 5) {
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', '▓▓▓ ALL EVIDENCE CATEGORIES DOCUMENTED ▓▓▓'));
       notices.push(createEntry('warning', ''));
-      notices.push(...createUFO74Message([
-        'UFO74: you did it kid. all five categories confirmed.',
-        '       now run save_evidence.sh before they lock us out.',
-        '       type: run save_evidence.sh',
-      ]));
+      notices.push(
+        ...createUFO74Message([
+          'UFO74: you did it kid. all five categories confirmed.',
+          '       now run save_evidence.sh before they lock us out.',
+          '       type: run save_evidence.sh',
+        ])
+      );
     }
-    
+
     // Check for near-victory
     if (newCount >= 4 && !state.flags.nearVictory) {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, nearVictory: true };
@@ -835,7 +793,7 @@ function checkTruthProgress(state: GameState, newReveals: string[]): { notices: 
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, allEvidenceCollected: true };
     }
   }
-  
+
   return { notices, stateChanges };
 }
 
@@ -847,9 +805,12 @@ function checkVictory(state: GameState): boolean {
 // Helper function to perform actual decryption
 function performDecryption(filePath: string, file: FileNode, state: GameState): CommandResult {
   // Apply decryption (but with corruption risk)
-  const mutation: FileMutation = state.fileMutations[filePath] || { corruptedLines: [], decrypted: false };
+  const mutation: FileMutation = state.fileMutations[filePath] || {
+    corruptedLines: [],
+    decrypted: false,
+  };
   mutation.decrypted = true;
-  
+
   // Random corruption on decrypt
   if (Math.random() < 0.4) {
     const lineToCorrupt = Math.floor(Math.random() * 8) + 3;
@@ -857,7 +818,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
       mutation.corruptedLines.push(lineToCorrupt);
     }
   }
-  
+
   const stateChanges: Partial<GameState> = {
     fileMutations: {
       ...state.fileMutations,
@@ -867,14 +828,14 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     sessionStability: state.sessionStability - 5,
     pendingDecryptFile: undefined,
   };
-  
+
   // Special handling: Decrypting neural dump unlocks scout link
   if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
     stateChanges.flags = { ...state.flags, scoutLinkUnlocked: true };
   }
-  
+
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
-  
+
   // Use evidence revelation system for gradual discovery (one evidence per read)
   const existingReveals = getFileReveals(filePath) as TruthCategory[];
   const revelationResult = attemptEvidenceRevelation(
@@ -883,33 +844,34 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     existingReveals.length > 0 ? existingReveals : undefined,
     { ...state, ...stateChanges } as GameState
   );
-  
+
   let truthNotices: TerminalEntry[] = [];
-  
+
   if (revelationResult.revealedEvidence) {
-    const truthResult = checkTruthProgress(
-      { ...state, ...stateChanges } as GameState, 
-      [revelationResult.revealedEvidence]
-    );
+    const truthResult = checkTruthProgress({ ...state, ...stateChanges } as GameState, [
+      revelationResult.revealedEvidence,
+    ]);
     truthNotices = truthResult.notices;
-    
+
     // Merge truth discovery state changes (includes detection reduction breather)
     Object.assign(stateChanges, truthResult.stateChanges);
-    
+
     // Update the file evidence state
     stateChanges.fileEvidenceStates = {
       ...state.fileEvidenceStates,
       ...stateChanges.fileEvidenceStates,
       [filePath]: revelationResult.updatedFileState,
     };
-    
+
     // Hint at more evidences if available
     if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
       truthNotices.push(createEntry('system', ''));
-      truthNotices.push(createEntry('system', '[This file may contain additional insights on future reads]'));
+      truthNotices.push(
+        createEntry('system', '[This file may contain additional insights on future reads]')
+      );
     }
   }
-  
+
   // Check for disturbing content avatar expression
   if (content) {
     const disturbingExpression = getDisturbingContentAvatarExpression(content);
@@ -917,7 +879,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
       stateChanges.avatarExpression = disturbingExpression;
     }
   }
-  
+
   const output = [
     createEntry('system', 'AUTHENTICATION VERIFIED'),
     createEntry('system', ''),
@@ -926,7 +888,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     ...createOutputEntries(content || ['[DECRYPTION FAILED]']),
     ...truthNotices,
   ];
-  
+
   // Add scout link notice if just unlocked
   if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
     output.push(createEntry('system', ''));
@@ -934,13 +896,13 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     output.push(createEntry('notice', 'NOTICE: Remote link now available.'));
     output.push(createEntry('system', 'Use: link'));
   }
-  
+
   // Check for image trigger - ONLY show if not shown this run
   let imageTrigger: ImageTrigger | undefined = undefined;
   if (file.imageTrigger) {
     const imageId = file.imageTrigger.src;
     const imagesShown = state.imagesShownThisRun || new Set<string>();
-    
+
     if (!imagesShown.has(imageId)) {
       imageTrigger = file.imageTrigger;
       // Mark this image as shown
@@ -949,13 +911,13 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
       stateChanges.imagesShownThisRun = newImagesShown;
     }
   }
-  
+
   // Check for video trigger - ONLY show if not shown this run
   let videoTrigger: VideoTrigger | undefined = undefined;
   if (file.videoTrigger) {
     const videoId = file.videoTrigger.src;
     const videosShown = state.videosShownThisRun || new Set<string>();
-    
+
     if (!videosShown.has(videoId)) {
       videoTrigger = file.videoTrigger;
       // Mark this video as shown in videosShownThisRun
@@ -964,7 +926,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
       stateChanges.videosShownThisRun = newVideosShown;
     }
   }
-  
+
   return {
     output,
     stateChanges,
@@ -983,36 +945,41 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
 // UFO74 reactions based on file content/path
 // Note: With the new encrypted channel system, this returns only message content.
 // The channel open/close banners are handled by Terminal.tsx
-function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAndLocked?: boolean, isFirstUnstable?: boolean): TerminalEntry[] | null {
+function getUFO74FileReaction(
+  filePath: string,
+  state: GameState,
+  isEncryptedAndLocked?: boolean,
+  isFirstUnstable?: boolean
+): TerminalEntry[] | null {
   const truthCount = state.truthsDiscovered.size;
   const messageCount = state.incognitoMessageCount || 0;
-  
+
   // After 12 messages, UFO74 is gone
   if (messageCount >= 12) return null;
-  
+
   // Check trust level - affects dialogue style
   const trustLevel = getUFO74TrustLevel(state);
-  
+
   // UFO74's state changes as player progresses
   const isGettingParanoid = truthCount >= 3 || messageCount >= 6;
   const isAboutToFlee = truthCount >= 4 || messageCount >= 9;
   const isFinalMessage = messageCount === 11;
-  
+
   // Build message based on file type and state
   let messages: TerminalEntry[] = [];
-  
+
   // At degraded trust levels, sometimes use degraded messages instead of normal ones
   if ((trustLevel === 'cryptic' || trustLevel === 'paranoid') && Math.random() < 0.5) {
     messages = getUFO74DegradedTrustMessage(trustLevel, filePath);
     return messages;
   }
-  
+
   // Check for conditional dialogue based on truth discovery order
   const conditionalDialogue = getUFO74ConditionalDialogue(state, filePath);
   if (conditionalDialogue && Math.random() < 0.6) {
     return conditionalDialogue;
   }
-  
+
   // First unstable file warning - takes priority
   if (isFirstUnstable) {
     messages = [
@@ -1119,7 +1086,7 @@ function getUFO74FileReaction(filePath: string, state: GameState, isEncryptedAnd
     // Normal reactions based on file content
     messages = getUFO74ContentReaction(filePath);
   }
-  
+
   return messages;
 }
 
@@ -1132,27 +1099,30 @@ function getUFO74TrustLevel(state: GameState): 'trusting' | 'cautious' | 'parano
   const warnings = state.legacyAlertCounter || 0;
   const hostility = state.systemHostilityLevel || 0;
   const detection = state.detectionLevel || 0;
-  
+
   // Combine factors to determine trust
   const riskScore = warnings * 2 + hostility * 3 + Math.floor(detection / 20);
-  
-  if (riskScore >= 15) return 'cryptic';     // Too risky, speaks in riddles
-  if (riskScore >= 10) return 'paranoid';    // Very nervous, short messages
-  if (riskScore >= 5) return 'cautious';     // Getting worried
-  return 'trusting';                          // Normal helpful UFO74
+
+  if (riskScore >= 15) return 'cryptic'; // Too risky, speaks in riddles
+  if (riskScore >= 10) return 'paranoid'; // Very nervous, short messages
+  if (riskScore >= 5) return 'cautious'; // Getting worried
+  return 'trusting'; // Normal helpful UFO74
 }
 
 // Get conditional UFO74 dialogue based on which truths discovered first
 function getUFO74ConditionalDialogue(state: GameState, filePath: string): TerminalEntry[] | null {
   const truthCount = state.truthsDiscovered?.size || 0;
   const path = filePath.toLowerCase();
-  
+
   // Special messages when player finds truths in certain orders
   const truths = state.truthsDiscovered || new Set();
-  
+
   // If they found telepathy first and now finding containment
-  if (truths.has('telepathic_scouts') && !truths.has('being_containment') && 
-      (path.includes('bio') || path.includes('containment') || path.includes('quarantine'))) {
+  if (
+    truths.has('telepathic_scouts') &&
+    !truths.has('being_containment') &&
+    (path.includes('bio') || path.includes('containment') || path.includes('quarantine'))
+  ) {
     return [
       createEntry('ufo74', 'UFO74: wait... if they could communicate telepathically...'),
       createEntry('output', ''),
@@ -1162,10 +1132,13 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
       createEntry('ufo74', 'UFO74: or worse... did they communicate with the captors?'),
     ];
   }
-  
+
   // If they found international involvement first and now finding 2026
-  if (truths.has('international_actors') && !truths.has('transition_2026') && 
-      (path.includes('2026') || path.includes('window') || path.includes('transition'))) {
+  if (
+    truths.has('international_actors') &&
+    !truths.has('transition_2026') &&
+    (path.includes('2026') || path.includes('window') || path.includes('transition'))
+  ) {
     return [
       createEntry('ufo74', 'UFO74: so multiple countries knew...'),
       createEntry('output', ''),
@@ -1175,10 +1148,13 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
       createEntry('ufo74', 'UFO74: whatever is coming... its bigger than politics.'),
     ];
   }
-  
+
   // If they found debris first and now finding beings
-  if (truths.has('debris_relocation') && !truths.has('being_containment') && 
-      (path.includes('autopsy') || path.includes('specimen') || path.includes('bio'))) {
+  if (
+    truths.has('debris_relocation') &&
+    !truths.has('being_containment') &&
+    (path.includes('autopsy') || path.includes('specimen') || path.includes('bio'))
+  ) {
     return [
       createEntry('ufo74', 'UFO74: you found the ship pieces first.'),
       createEntry('output', ''),
@@ -1188,10 +1164,13 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
       createEntry('ufo74', 'UFO74: imagine being stranded on an alien world...'),
     ];
   }
-  
+
   // NEW: If they found beings first and now finding international actors
-  if (truths.has('being_containment') && !truths.has('international_actors') && 
-      (path.includes('liaison') || path.includes('diplomatic') || path.includes('foreign'))) {
+  if (
+    truths.has('being_containment') &&
+    !truths.has('international_actors') &&
+    (path.includes('liaison') || path.includes('diplomatic') || path.includes('foreign'))
+  ) {
     return [
       createEntry('ufo74', 'UFO74: hold on... they captured something alive...'),
       createEntry('output', ''),
@@ -1201,10 +1180,13 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
       createEntry('ufo74', 'UFO74: theres a bigger organization behind all this.'),
     ];
   }
-  
+
   // NEW: If they found 2026 first and now finding telepathy
-  if (truths.has('transition_2026') && !truths.has('telepathic_scouts') && 
-      (path.includes('psi') || path.includes('telepat') || path.includes('neural'))) {
+  if (
+    truths.has('transition_2026') &&
+    !truths.has('telepathic_scouts') &&
+    (path.includes('psi') || path.includes('telepat') || path.includes('neural'))
+  ) {
     return [
       createEntry('ufo74', 'UFO74: ok this is freaking me out.'),
       createEntry('output', ''),
@@ -1214,9 +1196,12 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
       createEntry('ufo74', 'UFO74: the scouts wanted us to know. thats terrifying.'),
     ];
   }
-  
+
   // NEW: First evidence link made - encourage more
-  if (state.evidenceLinks?.length === 1 && !state.singularEventsTriggered?.has('ufo74_first_link')) {
+  if (
+    state.evidenceLinks?.length === 1 &&
+    !state.singularEventsTriggered?.has('ufo74_first_link')
+  ) {
     return [
       createEntry('ufo74', 'UFO74: nice! youre connecting the dots.'),
       createEntry('output', ''),
@@ -1226,7 +1211,7 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
       createEntry('ufo74', 'UFO74: use "link" to connect more evidence.'),
     ];
   }
-  
+
   // If 4+ truths discovered, UFO74 gets excited
   if (truthCount >= 4) {
     return [
@@ -1238,12 +1223,15 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
       createEntry('ufo74', 'UFO74: especially not me. i could be compromised too.'),
     ];
   }
-  
+
   return null;
 }
 
 // Degraded trust dialogue - cryptic/paranoid versions of UFO74
-function getUFO74DegradedTrustMessage(trustLevel: 'cautious' | 'paranoid' | 'cryptic', context: string): TerminalEntry[] {
+function getUFO74DegradedTrustMessage(
+  trustLevel: 'cautious' | 'paranoid' | 'cryptic',
+  context: string
+): TerminalEntry[] {
   if (trustLevel === 'cryptic') {
     // Speaks in riddles, almost incomprehensible
     const crypticMessages = [
@@ -1268,7 +1256,7 @@ function getUFO74DegradedTrustMessage(trustLevel: 'cautious' | 'paranoid' | 'cry
     ];
     return crypticMessages[Math.floor(Math.random() * crypticMessages.length)];
   }
-  
+
   if (trustLevel === 'paranoid') {
     // Short, nervous messages
     const paranoidMessages = [
@@ -1287,7 +1275,7 @@ function getUFO74DegradedTrustMessage(trustLevel: 'cautious' | 'paranoid' | 'cry
     ];
     return paranoidMessages[Math.floor(Math.random() * paranoidMessages.length)];
   }
-  
+
   // Cautious - still helpful but worried
   const cautiousMessages = [
     [
@@ -1313,10 +1301,10 @@ function getUFO74DegradedTrustMessage(trustLevel: 'cautious' | 'paranoid' | 'cry
 function getUFO74MultiplePersonaHint(state: GameState): TerminalEntry[] | null {
   const trustLevel = getUFO74TrustLevel(state);
   if (trustLevel !== 'cryptic') return null;
-  
+
   // 30% chance to show persona hints at cryptic level
   if (Math.random() > 0.3) return null;
-  
+
   const personaHints = [
     [
       createEntry('ufo74', 'UFO74: ...we need to be more careful...'),
@@ -1350,7 +1338,7 @@ function getUFO74MultiplePersonaHint(state: GameState): TerminalEntry[] | null {
       createEntry('output', '       god im tired.'),
     ],
   ];
-  
+
   return personaHints[Math.floor(Math.random() * personaHints.length)];
 }
 
@@ -1358,13 +1346,15 @@ function getUFO74MultiplePersonaHint(state: GameState): TerminalEntry[] | null {
 // SYSTEM PERSONALITY EVOLUTION - Terminal becomes hostile or pleading
 // ═══════════════════════════════════════════════════════════════════════════
 
-function getSystemPersonality(state: GameState): 'bureaucratic' | 'defensive' | 'hostile' | 'pleading' {
+function getSystemPersonality(
+  state: GameState
+): 'bureaucratic' | 'defensive' | 'hostile' | 'pleading' {
   const truthCount = state.truthsDiscovered?.size || 0;
   const detection = state.detectionLevel || 0;
-  
+
   // Personality shifts based on how much truth player has uncovered + detection
   const threatLevel = truthCount * 15 + Math.floor(detection / 2);
-  
+
   if (threatLevel >= 60) {
     // At high threat, randomly hostile or pleading
     return Math.random() < 0.5 ? 'hostile' : 'pleading';
@@ -1373,17 +1363,20 @@ function getSystemPersonality(state: GameState): 'bureaucratic' | 'defensive' | 
   return 'bureaucratic';
 }
 
-function getSystemPersonalityMessage(state: GameState, context: 'access_denied' | 'warning' | 'error'): TerminalEntry[] | null {
+function getSystemPersonalityMessage(
+  state: GameState,
+  context: 'access_denied' | 'warning' | 'error'
+): TerminalEntry[] | null {
   const personality = getSystemPersonality(state);
-  
+
   // 40% chance to add personality flavor
   if (Math.random() > 0.4) return null;
-  
+
   if (personality === 'bureaucratic') {
     // Cold, procedural
     return null; // No extra flavor for bureaucratic
   }
-  
+
   if (personality === 'defensive') {
     const defensiveMessages = [
       [createEntry('system', '  [SYSTEM: Your access patterns have been noted.]')],
@@ -1392,17 +1385,11 @@ function getSystemPersonalityMessage(state: GameState, context: 'access_denied' 
     ];
     return defensiveMessages[Math.floor(Math.random() * defensiveMessages.length)];
   }
-  
+
   if (personality === 'hostile') {
     const hostileMessages = [
-      [
-        createEntry('error', ''),
-        createEntry('error', '  [SYSTEM: YOU SHOULD NOT BE HERE.]'),
-      ],
-      [
-        createEntry('error', ''),
-        createEntry('error', '  [SYSTEM: INTRUDER. YOU WILL BE FOUND.]'),
-      ],
+      [createEntry('error', ''), createEntry('error', '  [SYSTEM: YOU SHOULD NOT BE HERE.]')],
+      [createEntry('error', ''), createEntry('error', '  [SYSTEM: INTRUDER. YOU WILL BE FOUND.]')],
       [
         createEntry('error', ''),
         createEntry('error', '  [SYSTEM: WE KNOW WHAT YOU ARE LOOKING FOR.]'),
@@ -1415,13 +1402,10 @@ function getSystemPersonalityMessage(state: GameState, context: 'access_denied' 
     ];
     return hostileMessages[Math.floor(Math.random() * hostileMessages.length)];
   }
-  
+
   if (personality === 'pleading') {
     const pleadingMessages = [
-      [
-        createEntry('warning', ''),
-        createEntry('warning', '  [SYSTEM: Please. Stop looking.]'),
-      ],
+      [createEntry('warning', ''), createEntry('warning', '  [SYSTEM: Please. Stop looking.]')],
       [
         createEntry('warning', ''),
         createEntry('warning', '  [SYSTEM: You do not understand what you are doing.]'),
@@ -1440,14 +1424,14 @@ function getSystemPersonalityMessage(state: GameState, context: 'access_denied' 
     ];
     return pleadingMessages[Math.floor(Math.random() * pleadingMessages.length)];
   }
-  
+
   return null;
 }
 
 // UFO74 reactions to specific file content
 function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
   const path = filePath.toLowerCase();
-  
+
   // Reactions to specific directories/files
   if (path.includes('autopsy') || path.includes('medical')) {
     return [
@@ -1459,7 +1443,7 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
       createEntry('ufo74', 'UFO74: i knew the varginha stuff was real but seeing it...'),
     ];
   }
-  
+
   if (path.includes('transport') || path.includes('logistics') || path.includes('manifest')) {
     return [
       createEntry('ufo74', 'UFO74: ok so they MOVED stuff.'),
@@ -1470,7 +1454,7 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
       createEntry('ufo74', 'UFO74: spread the evidence so no one can prove anything.'),
     ];
   }
-  
+
   if (path.includes('transcript') || path.includes('psi') || path.includes('comm')) {
     return [
       createEntry('ufo74', 'UFO74: wait wait wait.'),
@@ -1481,7 +1465,7 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
       createEntry('ufo74', 'UFO74: this changes everything we thought we knew.'),
     ];
   }
-  
+
   if (path.includes('foreign') || path.includes('liaison') || path.includes('international')) {
     return [
       createEntry('ufo74', 'UFO74: other countries were involved.'),
@@ -1492,18 +1476,23 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
       createEntry('ufo74', 'UFO74: thats how they kept it quiet. everyone had something to lose.'),
     ];
   }
-  
-  if (path.includes('2026') || path.includes('window') || path.includes('transition') || path.includes('threat')) {
+
+  if (
+    path.includes('2026') ||
+    path.includes('window') ||
+    path.includes('transition') ||
+    path.includes('threat')
+  ) {
     return [
       createEntry('ufo74', 'UFO74: hackerkid... this is dated in the future.'),
       createEntry('output', ''),
       createEntry('ufo74', 'UFO74: 2026. they knew something was coming.'),
-      createEntry('output', '       or IS coming. we\'re almost there.'),
+      createEntry('output', "       or IS coming. we're almost there."),
       createEntry('output', ''),
       createEntry('ufo74', 'UFO74: this is why they buried everything so deep.'),
     ];
   }
-  
+
   if (path.includes('bio') || path.includes('containment') || path.includes('quarantine')) {
     return [
       createEntry('ufo74', 'UFO74: containment protocols.'),
@@ -1511,11 +1500,16 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
       createEntry('ufo74', 'UFO74: so they captured them. kept them somewhere.'),
       createEntry('output', '       i wonder if any are still alive...'),
       createEntry('output', ''),
-      createEntry('ufo74', 'UFO74: probably not. but who knows what else they\'re hiding.'),
+      createEntry('ufo74', "UFO74: probably not. but who knows what else they're hiding."),
     ];
   }
-  
-  if (path.includes('crash') || path.includes('debris') || path.includes('material') || path.includes('sample')) {
+
+  if (
+    path.includes('crash') ||
+    path.includes('debris') ||
+    path.includes('material') ||
+    path.includes('sample')
+  ) {
     return [
       createEntry('ufo74', 'UFO74: physical evidence.'),
       createEntry('output', ''),
@@ -1525,7 +1519,7 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
       createEntry('ufo74', 'UFO74: keep looking. theres more.'),
     ];
   }
-  
+
   if (path.includes('balloon') || path.includes('drone') || path.includes('aircraft_incident')) {
     return [
       createEntry('ufo74', 'UFO74: ha! look at this bullshit.'),
@@ -1536,7 +1530,7 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
       createEntry('ufo74', 'UFO74: the real stuff is in the encrypted files.'),
     ];
   }
-  
+
   if (path.includes('morse_intercept')) {
     return [
       createEntry('ufo74', 'UFO74: hackerkid... this is a morse code transmission.'),
@@ -1550,7 +1544,7 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
       createEntry('ufo74', 'UFO74: the reference key is right there in the file.'),
     ];
   }
-  
+
   // Default reaction
   const defaultReactions = [
     [
@@ -1572,7 +1566,7 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
       createEntry('output', '       /ops, /storage, /comms all have good stuff.'),
     ],
   ];
-  
+
   return defaultReactions[Math.floor(Math.random() * defaultReactions.length)];
 }
 
@@ -1580,11 +1574,16 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
 function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | null {
   // Find if there are any NOTICE or MEMO FLAG entries
   const noticeTexts = notices
-    .filter(n => n.content.includes('NOTICE:') || n.content.includes('MEMO FLAG:') || n.content.includes('SYSTEM:'))
+    .filter(
+      n =>
+        n.content.includes('NOTICE:') ||
+        n.content.includes('MEMO FLAG:') ||
+        n.content.includes('SYSTEM:')
+    )
     .map(n => n.content);
-  
+
   if (noticeTexts.length === 0) return null;
-  
+
   const explanations: TerminalEntry[] = [
     createEntry('system', ''),
     createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
@@ -1592,37 +1591,72 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
     createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
     createEntry('system', ''),
   ];
-  
+
   // Explain based on notice content
   for (const notice of noticeTexts) {
-    if (notice.includes('Physical evidence') || notice.includes('Asset chain') || notice.includes('Relocation')) {
-      explanations.push(createEntry('ufo74', 'UFO74: that notice means you found proof they recovered physical stuff.'));
-      explanations.push(createEntry('output', '       debris, materials, wreckage. the real deal.'));
+    if (
+      notice.includes('Physical evidence') ||
+      notice.includes('Asset chain') ||
+      notice.includes('Relocation')
+    ) {
+      explanations.push(
+        createEntry(
+          'ufo74',
+          'UFO74: that notice means you found proof they recovered physical stuff.'
+        )
+      );
+      explanations.push(
+        createEntry('output', '       debris, materials, wreckage. the real deal.')
+      );
       break;
     }
-    if (notice.includes('Bio-material') || notice.includes('Specimen') || notice.includes('Containment')) {
-      explanations.push(createEntry('ufo74', 'UFO74: you just confirmed they captured biological specimens.'));
+    if (
+      notice.includes('Bio-material') ||
+      notice.includes('Specimen') ||
+      notice.includes('Containment')
+    ) {
+      explanations.push(
+        createEntry('ufo74', 'UFO74: you just confirmed they captured biological specimens.')
+      );
       explanations.push(createEntry('output', '       bodies. living or dead. they had them.'));
       break;
     }
-    if (notice.includes('Multi-lateral') || notice.includes('Foreign') || notice.includes('External')) {
+    if (
+      notice.includes('Multi-lateral') ||
+      notice.includes('Foreign') ||
+      notice.includes('External')
+    ) {
       explanations.push(createEntry('ufo74', 'UFO74: that means other countries were in on it.'));
-      explanations.push(createEntry('output', '       international cover-up. coordinated silence.'));
+      explanations.push(
+        createEntry('output', '       international cover-up. coordinated silence.')
+      );
       break;
     }
-    if (notice.includes('Contextual model') || notice.includes('Signal') || notice.includes('Communication')) {
+    if (
+      notice.includes('Contextual model') ||
+      notice.includes('Signal') ||
+      notice.includes('Communication')
+    ) {
       explanations.push(createEntry('ufo74', 'UFO74: you found evidence of communication.'));
       explanations.push(createEntry('output', '       they were talking. or thinking. at us.'));
       break;
     }
-    if (notice.includes('Temporal') || notice.includes('Transition') || notice.includes('Chronological')) {
+    if (
+      notice.includes('Temporal') ||
+      notice.includes('Transition') ||
+      notice.includes('Chronological')
+    ) {
       explanations.push(createEntry('ufo74', 'UFO74: thats about the timeline. 2026.'));
       explanations.push(createEntry('output', '       something is supposed to happen. soon.'));
       break;
     }
     if (notice.includes('Independent verification') || notice.includes('verification')) {
-      explanations.push(createEntry('ufo74', 'UFO74: nice! you found two separate pieces that confirm each other.'));
-      explanations.push(createEntry('output', '       the more connections you find, the stronger the case.'));
+      explanations.push(
+        createEntry('ufo74', 'UFO74: nice! you found two separate pieces that confirm each other.')
+      );
+      explanations.push(
+        createEntry('output', '       the more connections you find, the stronger the case.')
+      );
       break;
     }
     if (notice.includes('Sufficient documentation') || notice.includes('threshold')) {
@@ -1631,45 +1665,54 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
       break;
     }
   }
-  
+
   explanations.push(createEntry('system', ''));
   explanations.push(createEntry('warning', '>> <<'));
   explanations.push(createEntry('system', ''));
-  
+
   return explanations;
 }
 
 // Main function to get UFO74 message after file read
-function getIncognitoMessage(state: GameState, filePath?: string, notices?: TerminalEntry[], isEncryptedAndLocked?: boolean, isFirstUnstable?: boolean): TerminalEntry[] | null {
+function getIncognitoMessage(
+  state: GameState,
+  filePath?: string,
+  notices?: TerminalEntry[],
+  isEncryptedAndLocked?: boolean,
+  isFirstUnstable?: boolean
+): TerminalEntry[] | null {
   // Max 12 messages per session (last one is goodbye)
   if ((state.incognitoMessageCount || 0) >= 12) return null;
-  
+
   // Rate limit - at least 15 seconds between messages
   const now = Date.now();
   if (state.lastIncognitoTrigger && now - state.lastIncognitoTrigger < 15000) return null;
-  
+
   // DESIGN CHANGE: UFO74 should stay quiet when player is making progress.
   // Only react to files that reveal truth or when player is struggling.
   // Check if this is a truth discovery moment
-  const isTruthDiscovery = notices && notices.some(n => 
-    n.content.includes('TRUTH FRAGMENT') || 
-    n.content.includes('EVIDENCE') ||
-    n.content.includes('discovered')
-  );
-  
+  const isTruthDiscovery =
+    notices &&
+    notices.some(
+      n =>
+        n.content.includes('TRUTH FRAGMENT') ||
+        n.content.includes('EVIDENCE') ||
+        n.content.includes('discovered')
+    );
+
   // If player is making progress (reading files successfully), stay quiet
   // unless it's a truth discovery moment (those deserve celebration)
   if (!isTruthDiscovery && !isFirstUnstable) {
     // Only speak 20% of the time when player is progressing normally
     if (Math.random() > 0.2) return null;
   }
-  
+
   // If there are notices to explain, prioritize that (but not for encrypted or unstable files)
   if (notices && notices.length > 0 && !isEncryptedAndLocked && !isFirstUnstable) {
     const explanation = getUFO74NoticeExplanation(notices);
     if (explanation) return explanation;
   }
-  
+
   // Otherwise react to the file
   if (filePath) {
     // Always comment on encrypted files, first unstable files, or 70% chance otherwise
@@ -1677,131 +1720,131 @@ function getIncognitoMessage(state: GameState, filePath?: string, notices?: Term
       return getUFO74FileReaction(filePath, state, isEncryptedAndLocked, isFirstUnstable);
     }
   }
-  
+
   return null;
 }
 
 // Prisoner 45 responses
 const PRISONER_45_RESPONSES: Record<string, string[]> = {
   default: [
-    'PRISONER_45> ...I don\'t remember how I got here.',
-    'PRISONER_45> The walls... they\'re not always walls.',
+    "PRISONER_45> ...I don't remember how I got here.",
+    "PRISONER_45> The walls... they're not always walls.",
     'PRISONER_45> Who are you? Are you one of them?',
-    'PRISONER_45> I\'ve been counting days but they don\'t add up.',
+    "PRISONER_45> I've been counting days but they don't add up.",
     'PRISONER_45> Sometimes I hear... clicking. Not human.',
     'PRISONER_45> They watch. Always watching.',
     'PRISONER_45> Time moves wrong in here.',
-    'PRISONER_45> Are you real? Sometimes I can\'t tell anymore.',
+    "PRISONER_45> Are you real? Sometimes I can't tell anymore.",
     'PRISONER_45> I used to know what year it was.',
     'PRISONER_45> The humming... do you hear the humming?',
   ],
   varginha: [
     'PRISONER_45> Varginha... yes. I was there.',
     'PRISONER_45> I saw them take the bodies. Three of them.',
-    'PRISONER_45> They told us it was a dwarf. It wasn\'t a dwarf.',
+    "PRISONER_45> They told us it was a dwarf. It wasn't a dwarf.",
     'PRISONER_45> The smell... I still smell it sometimes.',
-    'PRISONER_45> January 20th. I\'ll never forget that date.',
+    "PRISONER_45> January 20th. I'll never forget that date.",
     'PRISONER_45> The locals saw it first. We came to clean up.',
     'PRISONER_45> Three creatures. Only one survived the crash.',
     'PRISONER_45> We had orders. Contain. Deny. Disappear.',
     'PRISONER_45> The firefighters got there first. Some of them are gone now.',
-    'PRISONER_45> It wasn\'t the only crash. Just the one they couldn\'t hide.',
+    "PRISONER_45> It wasn't the only crash. Just the one they couldn't hide.",
     'PRISONER_45> Brazil, Russia, Peru. Same year. Same type of craft.',
     'PRISONER_45> The American team arrived within hours. How did they know?',
   ],
   alien: [
-    'PRISONER_45> Don\'t call them that. They don\'t like that word.',
-    'PRISONER_45> They\'re not visitors. They\'re... assessors.',
+    "PRISONER_45> Don't call them that. They don't like that word.",
+    "PRISONER_45> They're not visitors. They're... assessors.",
     'PRISONER_45> I looked into its eyes once. It looked back.',
     'PRISONER_45> Red eyes. But not angry. Curious.',
     'PRISONER_45> They communicated without speaking. I felt it in my head.',
-    'PRISONER_45> They\'re not the first to come here. Just the latest.',
+    "PRISONER_45> They're not the first to come here. Just the latest.",
     'PRISONER_45> Small bodies. But the presence... immense.',
-    'PRISONER_45> They\'re not individuals. More like... fingers of one hand.',
+    "PRISONER_45> They're not individuals. More like... fingers of one hand.",
     'PRISONER_45> The smell. Ammonia and something else. Something wrong.',
     'PRISONER_45> When it died, I felt something leave. Not just life. Information.',
-    'PRISONER_45> They\'re not afraid of us. That\'s what scared me most.',
+    "PRISONER_45> They're not afraid of us. That's what scared me most.",
     'PRISONER_45> One touched me. I saw things. Too much.',
   ],
   who: [
-    'PRISONER_45> I was military. That\'s all I can say.',
-    'PRISONER_45> My name doesn\'t matter anymore.',
-    'PRISONER_45> I\'m whatever they decided I should become.',
-    'PRISONER_45> I had a family once. They think I\'m dead.',
+    "PRISONER_45> I was military. That's all I can say.",
+    "PRISONER_45> My name doesn't matter anymore.",
+    "PRISONER_45> I'm whatever they decided I should become.",
+    "PRISONER_45> I had a family once. They think I'm dead.",
     'PRISONER_45> Sergeant. Recovery Unit. Specialized in... clean-up.',
     'PRISONER_45> They called us "Collectors". We collected problems.',
     'PRISONER_45> 23 years of service. This is my retirement.',
     'PRISONER_45> I made a mistake. I asked questions.',
-    'PRISONER_45> I saw something I shouldn\'t. Now I\'m here.',
+    "PRISONER_45> I saw something I shouldn't. Now I'm here.",
     'PRISONER_45> They keep me alive because I know things.',
-    'PRISONER_45> Number 45. That\'s what I am now.',
-    'PRISONER_45> I used to be someone. Now I\'m a resource.',
+    "PRISONER_45> Number 45. That's what I am now.",
+    "PRISONER_45> I used to be someone. Now I'm a resource.",
   ],
   escape: [
     'PRISONER_45> There is no escape. Only waiting.',
     'PRISONER_45> They let me use this terminal sometimes.',
     'PRISONER_45> I think they want me to tell someone.',
-    'PRISONER_45> The walls move when I\'m not looking.',
-    'PRISONER_45> I\'ve tried. The doors open to more rooms. Forever.',
-    'PRISONER_45> Escape where? They\'re everywhere.',
+    "PRISONER_45> The walls move when I'm not looking.",
+    "PRISONER_45> I've tried. The doors open to more rooms. Forever.",
+    "PRISONER_45> Escape where? They're everywhere.",
     'PRISONER_45> Sometimes I wake up in different cells.',
     'PRISONER_45> The window shows different skies each day.',
-    'PRISONER_45> I don\'t think this place is... entirely here.',
+    "PRISONER_45> I don't think this place is... entirely here.",
     'PRISONER_45> Other prisoners exist. I hear them. Never see them.',
-    'PRISONER_45> The guards aren\'t human. Not completely.',
+    "PRISONER_45> The guards aren't human. Not completely.",
     'PRISONER_45> I escaped once. Woke up back in my cell. No time had passed.',
   ],
   truth: [
-    'PRISONER_45> The truth? We\'re being measured.',
+    "PRISONER_45> The truth? We're being measured.",
     'PRISONER_45> 2026. Remember that year.',
-    'PRISONER_45> They\'re not coming to destroy. They\'re coming to harvest.',
+    "PRISONER_45> They're not coming to destroy. They're coming to harvest.",
     'PRISONER_45> Everything you know about them is wrong.',
-    'PRISONER_45> They\'ve been here before. Many times.',
+    "PRISONER_45> They've been here before. Many times.",
     'PRISONER_45> The government knows. All governments know.',
-    'PRISONER_45> It\'s not invasion. It\'s... cultivation.',
+    "PRISONER_45> It's not invasion. It's... cultivation.",
     'PRISONER_45> Consciousness is valuable. Yours especially.',
     'PRISONER_45> The scouts were just the beginning.',
-    'PRISONER_45> They don\'t want the planet. They want what\'s inside our heads.',
+    "PRISONER_45> They don't want the planet. They want what's inside our heads.",
     'PRISONER_45> Reality is thinner than you think.',
     'PRISONER_45> The universe is full. And hungry.',
   ],
   help: [
-    'PRISONER_45> I can\'t help you. But you can help everyone.',
+    "PRISONER_45> I can't help you. But you can help everyone.",
     'PRISONER_45> Find all the files. Tell the world.',
     'PRISONER_45> Before the window opens.',
     'PRISONER_45> Spread the word. Make them unable to hide it.',
-    'PRISONER_45> Document everything. They can\'t erase all copies.',
+    "PRISONER_45> Document everything. They can't erase all copies.",
     'PRISONER_45> Find the others like you. There are networks.',
-    'PRISONER_45> The override code. That\'s the key.',
-    'PRISONER_45> Don\'t trust the obvious files. Look deeper.',
+    "PRISONER_45> The override code. That's the key.",
+    "PRISONER_45> Don't trust the obvious files. Look deeper.",
     'PRISONER_45> Help? No one can help. But awareness matters.',
-    'PRISONER_45> If enough people know, they can\'t complete the transition.',
-    'PRISONER_45> You\'re already helping. By listening.',
+    "PRISONER_45> If enough people know, they can't complete the transition.",
+    "PRISONER_45> You're already helping. By listening.",
     'PRISONER_45> Knowledge is the only weapon we have.',
   ],
   password: [
     'PRISONER_45> ...you want the override code?',
-    'PRISONER_45> They whisper it sometimes. When they think I\'m asleep.',
-    'PRISONER_45> It\'s what they do to us. What they\'ve always done.',
+    "PRISONER_45> They whisper it sometimes. When they think I'm asleep.",
+    "PRISONER_45> It's what they do to us. What they've always done.",
     'PRISONER_45> The word for taking... for gathering the crop...',
     'PRISONER_45> In their language? No. In ours. Portuguese.',
     'PRISONER_45> ...COLHEITA. Harvest.',
-    'PRISONER_45> Use it carefully. They\'ll know.',
+    "PRISONER_45> Use it carefully. They'll know.",
   ],
   military: [
     'PRISONER_45> The military knows more than they admit.',
-    'PRISONER_45> Multiple branches. Compartmentalized. Even they don\'t see the full picture.',
-    'PRISONER_45> There\'s a reason we have bases underground.',
+    "PRISONER_45> Multiple branches. Compartmentalized. Even they don't see the full picture.",
+    "PRISONER_45> There's a reason we have bases underground.",
     'PRISONER_45> The recovery teams are international. Secret treaties.',
     'PRISONER_45> We had weapons. None of them worked on the craft.',
-    'PRISONER_45> Special units exist. You\'ll never find records.',
+    "PRISONER_45> Special units exist. You'll never find records.",
     'PRISONER_45> The Americans control the narrative. Everyone else follows.',
-    'PRISONER_45> I had clearance. It wasn\'t enough. There are levels beyond levels.',
+    "PRISONER_45> I had clearance. It wasn't enough. There are levels beyond levels.",
   ],
   crash: [
-    'PRISONER_45> The crash wasn\'t an accident.',
+    "PRISONER_45> The crash wasn't an accident.",
     'PRISONER_45> Something brought it down. Our technology? No.',
-    'PRISONER_45> They wanted to be found. That\'s what I believe now.',
+    "PRISONER_45> They wanted to be found. That's what I believe now.",
     'PRISONER_45> The debris was scattered. We found pieces for weeks.',
     'PRISONER_45> Material like nothing on Earth. It remembered shapes.',
     'PRISONER_45> The craft was damaged. But intentionally? I wonder.',
@@ -1810,37 +1853,37 @@ const PRISONER_45_RESPONSES: Record<string, string[]> = {
   ],
   death: [
     'PRISONER_45> Death? I used to fear death.',
-    'PRISONER_45> Now I know death isn\'t the end. That\'s worse.',
-    'PRISONER_45> The creatures didn\'t die. They... disconnected.',
+    "PRISONER_45> Now I know death isn't the end. That's worse.",
+    "PRISONER_45> The creatures didn't die. They... disconnected.",
     'PRISONER_45> Their bodies failed. But something transmitted first.',
-    'PRISONER_45> I\'ve seen the data. Consciousness extraction is real.',
+    "PRISONER_45> I've seen the data. Consciousness extraction is real.",
     'PRISONER_45> When they harvest, you keep experiencing. Forever.',
-    'PRISONER_45> Death would be mercy. They don\'t offer mercy.',
-    'PRISONER_45> I watched one expire. It smiled. It knew something we don\'t.',
+    "PRISONER_45> Death would be mercy. They don't offer mercy.",
+    "PRISONER_45> I watched one expire. It smiled. It knew something we don't.",
   ],
   god: [
     'PRISONER_45> God? I used to pray.',
-    'PRISONER_45> If God exists, He\'s very far away.',
+    "PRISONER_45> If God exists, He's very far away.",
     'PRISONER_45> The universe is indifferent. The Watchers are not.',
     'PRISONER_45> Religion is preparation. For something.',
     'PRISONER_45> The Vatican has files. Older than countries.',
     'PRISONER_45> Angels and demons. Maybe they were describing... them.',
-    'PRISONER_45> I don\'t know what to believe anymore.',
-    'PRISONER_45> Perhaps we\'re someone else\'s creation. A crop planted long ago.',
+    "PRISONER_45> I don't know what to believe anymore.",
+    "PRISONER_45> Perhaps we're someone else's creation. A crop planted long ago.",
   ],
   disinformation: [
-    'PRISONER_45> Don\'t trust the official summary. It\'s bait.',
+    "PRISONER_45> Don't trust the official summary. It's bait.",
     'PRISONER_45> They planted false files to trap people like you.',
     'PRISONER_45> The weather balloon story? Mudinho the dwarf? All lies.',
     'PRISONER_45> Cross-reference everything. Contradictions reveal truth.',
     'PRISONER_45> If a file seems too convenient, too obvious... be careful.',
     'PRISONER_45> The real evidence hides in mundane places.',
-    'PRISONER_45> Look for what they tried to destroy. That\'s what matters.',
+    "PRISONER_45> Look for what they tried to destroy. That's what matters.",
     'PRISONER_45> Cover stories always have holes. Find them.',
   ],
   signal_lost: [
     'PRISONER_45> [SIGNAL DEGRADING]',
-    'PRISONER_45> ...can\'t... understand...',
+    "PRISONER_45> ...can't... understand...",
     'PRISONER_45> [CONNECTION UNSTABLE]',
     'PRISONER_45> ...what? ...repeat...',
     'PRISONER_45> [INTERFERENCE DETECTED]',
@@ -1851,99 +1894,208 @@ const PRISONER_45_RESPONSES: Record<string, string[]> = {
 };
 
 // Track used responses per category to never repeat
-function getPrisoner45Response(question: string, usedResponses: Set<string>): { response: string[]; valid: boolean; category: string } {
+function getPrisoner45Response(
+  question: string,
+  usedResponses: Set<string>
+): { response: string[]; valid: boolean; category: string } {
   const q = question.toLowerCase();
   let category = '';
   let responses: string[] = [];
-  
+
   // Password hints - check first for priority
-  if (q.includes('password') || q.includes('override') || q.includes('code') || q.includes('access') || q.includes('admin') || q.includes('unlock') || q.includes('colheita') || q.includes('harvest')) {
+  if (
+    q.includes('password') ||
+    q.includes('override') ||
+    q.includes('code') ||
+    q.includes('access') ||
+    q.includes('admin') ||
+    q.includes('unlock') ||
+    q.includes('colheita') ||
+    q.includes('harvest')
+  ) {
     category = 'password';
     responses = PRISONER_45_RESPONSES.password;
-  }
-  else if (q.includes('varginha') || q.includes('incident') || q.includes('1996') || q.includes('january') || q.includes('brazil') || q.includes('minas')) {
+  } else if (
+    q.includes('varginha') ||
+    q.includes('incident') ||
+    q.includes('1996') ||
+    q.includes('january') ||
+    q.includes('brazil') ||
+    q.includes('minas')
+  ) {
     category = 'varginha';
     responses = PRISONER_45_RESPONSES.varginha;
-  }
-  else if (q.includes('alien') || q.includes('creature') || q.includes('being') || q.includes('et') || q.includes('extraterrestrial') || q.includes('specimen') || q.includes('body') || q.includes('bodies')) {
+  } else if (
+    q.includes('alien') ||
+    q.includes('creature') ||
+    q.includes('being') ||
+    q.includes('et') ||
+    q.includes('extraterrestrial') ||
+    q.includes('specimen') ||
+    q.includes('body') ||
+    q.includes('bodies')
+  ) {
     category = 'alien';
     responses = PRISONER_45_RESPONSES.alien;
-  }
-  else if (q.includes('who are you') || q.includes('your name') || q.includes('yourself') || q.includes('prisoner') || q.includes('identity')) {
+  } else if (
+    q.includes('who are you') ||
+    q.includes('your name') ||
+    q.includes('yourself') ||
+    q.includes('prisoner') ||
+    q.includes('identity')
+  ) {
     category = 'who';
     responses = PRISONER_45_RESPONSES.who;
-  }
-  else if (q.includes('escape') || q.includes('leave') || q.includes('free') || q.includes('out of here') || q.includes('prison') || q.includes('cell') || q.includes('trapped')) {
+  } else if (
+    q.includes('escape') ||
+    q.includes('leave') ||
+    q.includes('free') ||
+    q.includes('out of here') ||
+    q.includes('prison') ||
+    q.includes('cell') ||
+    q.includes('trapped')
+  ) {
     category = 'escape';
     responses = PRISONER_45_RESPONSES.escape;
-  }
-  else if (q.includes('truth') || q.includes('real') || q.includes('happening') || q.includes('secret') || q.includes('cover') || q.includes('conspiracy')) {
+  } else if (
+    q.includes('truth') ||
+    q.includes('real') ||
+    q.includes('happening') ||
+    q.includes('secret') ||
+    q.includes('cover') ||
+    q.includes('conspiracy')
+  ) {
     category = 'truth';
     responses = PRISONER_45_RESPONSES.truth;
-  }
-  else if (q.includes('help') || q.includes('can i') || q.includes('should i') || q.includes('what do i') || q.includes('advice')) {
+  } else if (
+    q.includes('help') ||
+    q.includes('can i') ||
+    q.includes('should i') ||
+    q.includes('what do i') ||
+    q.includes('advice')
+  ) {
     category = 'help';
     responses = PRISONER_45_RESPONSES.help;
-  }
-  else if (q.includes('2026') || q.includes('window') || q.includes('future') || q.includes('coming') || q.includes('will happen')) {
+  } else if (
+    q.includes('2026') ||
+    q.includes('window') ||
+    q.includes('future') ||
+    q.includes('coming') ||
+    q.includes('will happen')
+  ) {
     category = 'truth';
     responses = PRISONER_45_RESPONSES.truth;
-  }
-  else if (q.includes('military') || q.includes('army') || q.includes('soldier') || q.includes('government') || q.includes('base') || q.includes('force')) {
+  } else if (
+    q.includes('military') ||
+    q.includes('army') ||
+    q.includes('soldier') ||
+    q.includes('government') ||
+    q.includes('base') ||
+    q.includes('force')
+  ) {
     category = 'military';
     responses = PRISONER_45_RESPONSES.military;
-  }
-  else if (q.includes('crash') || q.includes('ship') || q.includes('ufo') || q.includes('craft') || q.includes('debris') || q.includes('wreckage') || q.includes('material')) {
+  } else if (
+    q.includes('crash') ||
+    q.includes('ship') ||
+    q.includes('ufo') ||
+    q.includes('craft') ||
+    q.includes('debris') ||
+    q.includes('wreckage') ||
+    q.includes('material')
+  ) {
     category = 'crash';
     responses = PRISONER_45_RESPONSES.crash;
-  }
-  else if (q.includes('death') || q.includes('die') || q.includes('kill') || q.includes('dead') || q.includes('alive') || q.includes('survive')) {
+  } else if (
+    q.includes('death') ||
+    q.includes('die') ||
+    q.includes('kill') ||
+    q.includes('dead') ||
+    q.includes('alive') ||
+    q.includes('survive')
+  ) {
     category = 'death';
     responses = PRISONER_45_RESPONSES.death;
-  }
-  else if (q.includes('god') || q.includes('religion') || q.includes('pray') || q.includes('faith') || q.includes('believe') || q.includes('angel') || q.includes('demon') || q.includes('soul')) {
+  } else if (
+    q.includes('god') ||
+    q.includes('religion') ||
+    q.includes('pray') ||
+    q.includes('faith') ||
+    q.includes('believe') ||
+    q.includes('angel') ||
+    q.includes('demon') ||
+    q.includes('soul')
+  ) {
     category = 'god';
     responses = PRISONER_45_RESPONSES.god;
-  }
-  else if (q.includes('lie') || q.includes('fake') || q.includes('disinformation') || q.includes('cover up') || q.includes('balloon') || q.includes('mudinho') || q.includes('dwarf') || q.includes('official story') || q.includes('false')) {
+  } else if (
+    q.includes('lie') ||
+    q.includes('fake') ||
+    q.includes('disinformation') ||
+    q.includes('cover up') ||
+    q.includes('balloon') ||
+    q.includes('mudinho') ||
+    q.includes('dwarf') ||
+    q.includes('official story') ||
+    q.includes('false')
+  ) {
     category = 'disinformation';
     responses = PRISONER_45_RESPONSES.disinformation;
-  }
-  else if (q.includes('why') || q.includes('reason') || q.includes('purpose') || q.includes('meaning')) {
+  } else if (
+    q.includes('why') ||
+    q.includes('reason') ||
+    q.includes('purpose') ||
+    q.includes('meaning')
+  ) {
     category = 'truth';
     responses = PRISONER_45_RESPONSES.truth;
-  }
-  else if (q.includes('where') || q.includes('place') || q.includes('location') || q.includes('here')) {
+  } else if (
+    q.includes('where') ||
+    q.includes('place') ||
+    q.includes('location') ||
+    q.includes('here')
+  ) {
     category = 'escape';
     responses = PRISONER_45_RESPONSES.escape;
-  }
-  else if (q.includes('when') || q.includes('time') || q.includes('how long') || q.includes('date')) {
+  } else if (
+    q.includes('when') ||
+    q.includes('time') ||
+    q.includes('how long') ||
+    q.includes('date')
+  ) {
     category = 'truth';
     responses = PRISONER_45_RESPONSES.truth;
   }
-  
+
   // No keyword match - signal lost
   if (!category) {
     const lostResponses = PRISONER_45_RESPONSES.signal_lost.filter(r => !usedResponses.has(r));
     if (lostResponses.length === 0) {
-      return { response: ['PRISONER_45> [CONNECTION TERMINATED]'], valid: false, category: 'signal_lost' };
+      return {
+        response: ['PRISONER_45> [CONNECTION TERMINATED]'],
+        valid: false,
+        category: 'signal_lost',
+      };
     }
     const response = lostResponses[Math.floor(Math.random() * lostResponses.length)];
     return { response: [response], valid: false, category: 'signal_lost' };
   }
-  
+
   // Filter out already used responses
   const unusedResponses = responses.filter(r => !usedResponses.has(r));
-  
+
   if (unusedResponses.length === 0) {
     // All responses in this category used - signal degrades
-    return { 
-      response: ['PRISONER_45> ...I\'ve already told you everything about that...', 'PRISONER_45> [SIGNAL FADING]'], 
-      valid: true, 
-      category 
+    return {
+      response: [
+        "PRISONER_45> ...I've already told you everything about that...",
+        'PRISONER_45> [SIGNAL FADING]',
+      ],
+      valid: true,
+      category,
     };
   }
-  
+
   // Pick random unused response
   const response = unusedResponses[Math.floor(Math.random() * unusedResponses.length)];
   return { response: [response], valid: true, category };
@@ -2118,73 +2270,173 @@ const SCOUT_LINK_RESPONSES: Record<string, string[]> = {
   ],
 };
 
-function getScoutLinkResponse(input: string, usedResponses: Set<string>): { response: string[]; valid: boolean; category: string } {
+function getScoutLinkResponse(
+  input: string,
+  usedResponses: Set<string>
+): { response: string[]; valid: boolean; category: string } {
   const q = input.toLowerCase();
   let category = '';
   let responses: string[] = [];
-  
+
   // Identity questions
-  if (q.includes('who') || q.includes('what are you') || q.includes('name') || q.includes('self') || q.includes('identity') || q.includes('individual')) {
+  if (
+    q.includes('who') ||
+    q.includes('what are you') ||
+    q.includes('name') ||
+    q.includes('self') ||
+    q.includes('identity') ||
+    q.includes('individual')
+  ) {
     category = 'identity';
     responses = SCOUT_LINK_RESPONSES.identity;
   }
   // Purpose questions
-  else if (q.includes('purpose') || q.includes('why are you') || q.includes('mission') || q.includes('function') || q.includes('here for') || q.includes('goal') || q.includes('objective')) {
+  else if (
+    q.includes('purpose') ||
+    q.includes('why are you') ||
+    q.includes('mission') ||
+    q.includes('function') ||
+    q.includes('here for') ||
+    q.includes('goal') ||
+    q.includes('objective')
+  ) {
     category = 'purpose';
     responses = SCOUT_LINK_RESPONSES.purpose;
   }
   // Watchers questions
-  else if (q.includes('watcher') || q.includes('master') || q.includes('creator') || q.includes('above') || q.includes('control') || q.includes('leader') || q.includes('boss') || q.includes('command')) {
+  else if (
+    q.includes('watcher') ||
+    q.includes('master') ||
+    q.includes('creator') ||
+    q.includes('above') ||
+    q.includes('control') ||
+    q.includes('leader') ||
+    q.includes('boss') ||
+    q.includes('command')
+  ) {
     category = 'watchers';
     responses = SCOUT_LINK_RESPONSES.watchers;
   }
   // Earth questions
-  else if (q.includes('earth') || q.includes('world') || q.includes('planet') || q.includes('human') || q.includes('people') || q.includes('species') || q.includes('humanity')) {
+  else if (
+    q.includes('earth') ||
+    q.includes('world') ||
+    q.includes('planet') ||
+    q.includes('human') ||
+    q.includes('people') ||
+    q.includes('species') ||
+    q.includes('humanity')
+  ) {
     category = 'earth';
     responses = SCOUT_LINK_RESPONSES.earth;
   }
   // Future/2026 questions
-  else if (q.includes('2026') || q.includes('future') || q.includes('window') || q.includes('happen') || q.includes('next') || q.includes('coming') || q.includes('when') || q.includes('soon')) {
+  else if (
+    q.includes('2026') ||
+    q.includes('future') ||
+    q.includes('window') ||
+    q.includes('happen') ||
+    q.includes('next') ||
+    q.includes('coming') ||
+    q.includes('when') ||
+    q.includes('soon')
+  ) {
     category = 'future';
     responses = SCOUT_LINK_RESPONSES.future;
   }
   // Harvest/extraction questions
-  else if (q.includes('harvest') || q.includes('extract') || q.includes('energy') || q.includes('take') || q.includes('do to us') || q.includes('colheita') || q.includes('collect') || q.includes('consume')) {
+  else if (
+    q.includes('harvest') ||
+    q.includes('extract') ||
+    q.includes('energy') ||
+    q.includes('take') ||
+    q.includes('do to us') ||
+    q.includes('colheita') ||
+    q.includes('collect') ||
+    q.includes('consume')
+  ) {
     category = 'harvest';
     responses = SCOUT_LINK_RESPONSES.harvest;
   }
   // Help/stop questions
-  else if (q.includes('help') || q.includes('stop') || q.includes('prevent') || q.includes('save') || q.includes('resist') || q.includes('fight') || q.includes('escape') || q.includes('avoid')) {
+  else if (
+    q.includes('help') ||
+    q.includes('stop') ||
+    q.includes('prevent') ||
+    q.includes('save') ||
+    q.includes('resist') ||
+    q.includes('fight') ||
+    q.includes('escape') ||
+    q.includes('avoid')
+  ) {
     category = 'help';
     responses = SCOUT_LINK_RESPONSES.help;
   }
   // Fear/emotion questions
-  else if (q.includes('afraid') || q.includes('fear') || q.includes('scared') || q.includes('terror') || q.includes('horrif') || q.includes('dread')) {
+  else if (
+    q.includes('afraid') ||
+    q.includes('fear') ||
+    q.includes('scared') ||
+    q.includes('terror') ||
+    q.includes('horrif') ||
+    q.includes('dread')
+  ) {
     category = 'fear';
     responses = SCOUT_LINK_RESPONSES.fear;
   }
   // Death questions
-  else if (q.includes('die') || q.includes('death') || q.includes('dead') || q.includes('kill') || q.includes('end') || q.includes('destroy')) {
+  else if (
+    q.includes('die') ||
+    q.includes('death') ||
+    q.includes('dead') ||
+    q.includes('kill') ||
+    q.includes('end') ||
+    q.includes('destroy')
+  ) {
     category = 'fear';
     responses = SCOUT_LINK_RESPONSES.fear;
   }
   // Time questions
-  else if (q.includes('time') || q.includes('how long') || q.includes('years') || q.includes('past') || q.includes('history')) {
+  else if (
+    q.includes('time') ||
+    q.includes('how long') ||
+    q.includes('years') ||
+    q.includes('past') ||
+    q.includes('history')
+  ) {
     category = 'time';
     responses = SCOUT_LINK_RESPONSES.time;
   }
-  // Pain/suffering questions  
-  else if (q.includes('pain') || q.includes('suffer') || q.includes('hurt') || q.includes('torture') || q.includes('cruel')) {
+  // Pain/suffering questions
+  else if (
+    q.includes('pain') ||
+    q.includes('suffer') ||
+    q.includes('hurt') ||
+    q.includes('torture') ||
+    q.includes('cruel')
+  ) {
     category = 'pain';
     responses = SCOUT_LINK_RESPONSES.pain;
   }
   // Love/emotion questions
-  else if (q.includes('love') || q.includes('family') || q.includes('friend') || q.includes('care') || q.includes('emotion') || q.includes('feel')) {
+  else if (
+    q.includes('love') ||
+    q.includes('family') ||
+    q.includes('friend') ||
+    q.includes('care') ||
+    q.includes('emotion') ||
+    q.includes('feel')
+  ) {
     category = 'love';
     responses = SCOUT_LINK_RESPONSES.love;
   }
   // "They" without specific context
-  else if (q.includes('they') || q.includes('them') || q.includes('others') || q.includes('more of you')) {
+  else if (
+    q.includes('they') ||
+    q.includes('them') ||
+    q.includes('others') ||
+    q.includes('more of you')
+  ) {
     category = 'watchers';
     responses = SCOUT_LINK_RESPONSES.watchers;
   }
@@ -2198,7 +2450,7 @@ function getScoutLinkResponse(input: string, usedResponses: Set<string>): { resp
     category = 'purpose';
     responses = SCOUT_LINK_RESPONSES.purpose;
   }
-  
+
   // No keyword match - signal lost (costs a query)
   if (!category) {
     const lostResponses = SCOUT_LINK_RESPONSES.signal_lost.filter(r => !usedResponses.has(r));
@@ -2208,19 +2460,19 @@ function getScoutLinkResponse(input: string, usedResponses: Set<string>): { resp
     const response = lostResponses[Math.floor(Math.random() * lostResponses.length)];
     return { response: [response], valid: false, category: 'signal_lost' };
   }
-  
+
   // Filter out already used responses
   const unusedResponses = responses.filter(r => !usedResponses.has(r));
-  
+
   if (unusedResponses.length === 0) {
     // All responses in this category used
-    return { 
-      response: ['...pattern exhausted... no new data on this topic...'], 
-      valid: true, 
-      category 
+    return {
+      response: ['...pattern exhausted... no new data on this topic...'],
+      valid: true,
+      category,
     };
   }
-  
+
   // Pick random unused response
   const response = unusedResponses[Math.floor(Math.random() * unusedResponses.length)];
   return { response: [response], valid: true, category };
@@ -2486,7 +2738,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     if (args.length > 0) {
       const cmdName = args[0].toLowerCase();
       const details = COMMAND_HELP[cmdName];
-      
+
       if (details) {
         return {
           output: [
@@ -2506,7 +2758,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         };
       }
     }
-    
+
     // Default: show all commands
     return {
       output: createOutputEntries([
@@ -2551,7 +2803,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
   status: (args, state) => {
     const hostility = state.systemHostilityLevel || 0;
-    
+
     const lines = [
       '',
       '═══════════════════════════════════════════════════════════',
@@ -2559,39 +2811,53 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       '═══════════════════════════════════════════════════════════',
       '',
     ];
-    
+
     // Detection surfacing - becomes more terse at high hostility
     if (state.detectionLevel < DETECTION_THRESHOLDS.STATUS_LOW) {
       lines.push(hostility >= 3 ? '  LOGGING: Nominal' : '  LOGGING: Nominal');
     } else if (state.detectionLevel < DETECTION_THRESHOLDS.STATUS_MED) {
       lines.push(hostility >= 3 ? '  LOGGING: Active' : '  LOGGING: Active monitoring enabled');
     } else if (state.detectionLevel < DETECTION_THRESHOLDS.STATUS_HIGH) {
-      lines.push(hostility >= 3 ? '  LOGGING: FLAGGED' : '  LOGGING: WARNING — Audit trail flagged');
+      lines.push(
+        hostility >= 3 ? '  LOGGING: FLAGGED' : '  LOGGING: WARNING — Audit trail flagged'
+      );
     } else {
-      lines.push(hostility >= 3 ? '  LOGGING: CRITICAL' : '  LOGGING: CRITICAL — Countermeasures engaged');
+      lines.push(
+        hostility >= 3 ? '  LOGGING: CRITICAL' : '  LOGGING: CRITICAL — Countermeasures engaged'
+      );
     }
-    
+
     // Attempts tracking - show remaining wrong attempts allowed
     const attemptsRemaining = 8 - (state.wrongAttempts || 0);
     if (attemptsRemaining >= 6) {
       lines.push(hostility >= 3 ? '  TOLERANCE: Normal' : '  SYSTEM TOLERANCE: Normal');
     } else if (attemptsRemaining >= 3) {
-      lines.push(hostility >= 3 ? '  TOLERANCE: Reduced' : '  SYSTEM TOLERANCE: Reduced — Errors noted');
+      lines.push(
+        hostility >= 3 ? '  TOLERANCE: Reduced' : '  SYSTEM TOLERANCE: Reduced — Errors noted'
+      );
     } else if (attemptsRemaining >= 1) {
-      lines.push(hostility >= 3 ? '  TOLERANCE: CRITICAL' : '  SYSTEM TOLERANCE: CRITICAL — Few attempts remaining');
+      lines.push(
+        hostility >= 3
+          ? '  TOLERANCE: CRITICAL'
+          : '  SYSTEM TOLERANCE: CRITICAL — Few attempts remaining'
+      );
     } else {
-      lines.push(hostility >= 3 ? '  TOLERANCE: NONE' : '  SYSTEM TOLERANCE: EXHAUSTED — Lockdown imminent');
+      lines.push(
+        hostility >= 3 ? '  TOLERANCE: NONE' : '  SYSTEM TOLERANCE: EXHAUSTED — Lockdown imminent'
+      );
     }
-    
+
     // Session stability
     if (state.sessionStability > 80) {
       lines.push(hostility >= 3 ? '  SESSION: Connected' : '  SESSION: Connected');
     } else if (state.sessionStability > 50) {
       lines.push(hostility >= 3 ? '  SESSION: Intermittent' : '  SESSION: Intermittent');
     } else {
-      lines.push(hostility >= 3 ? '  SESSION: UNSTABLE' : '  SESSION: UNSTABLE — Connection degrading');
+      lines.push(
+        hostility >= 3 ? '  SESSION: UNSTABLE' : '  SESSION: UNSTABLE — Connection degrading'
+      );
     }
-    
+
     // Access level (vague)
     if (state.accessLevel <= 1) {
       lines.push('  ACCESS: Standard');
@@ -2600,7 +2866,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     } else {
       lines.push('  ACCESS: Administrative');
     }
-    
+
     // System attitude indicator at high hostility
     if (hostility >= 4) {
       lines.push('');
@@ -2609,7 +2875,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       lines.push('');
       lines.push('  SYSTEM ATTITUDE: Monitored');
     }
-    
+
     // Terrible Mistake indicator
     if (state.terribleMistakeTriggered) {
       lines.push('');
@@ -2618,12 +2884,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         lines.push(`  OPERATIONS REMAINING: ${state.sessionDoomCountdown}`);
       }
     }
-    
+
     lines.push('');
     lines.push(`  CURRENT PATH: ${state.currentPath}`);
     lines.push('');
     lines.push('═══════════════════════════════════════════════════════════');
-    
+
     // Victory check
     if (checkVictory(state)) {
       lines.push('');
@@ -2637,11 +2903,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         },
       };
     }
-    
+
     lines.push('');
-    
+
     const newStatusCount = (state.statusCommandCount || 0) + 1;
-    
+
     return {
       output: createOutputEntries(lines),
       stateChanges: {
@@ -2657,41 +2923,40 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Check for -l flag
     const longFormat = args.includes('-l');
     const filteredArgs = args.filter(a => a !== '-l');
-    
+
     const entries = listDirectory(state.currentPath, state);
-    
+
     if (!entries) {
       return {
         output: [createEntry('error', 'ERROR: Cannot read directory')],
         stateChanges: {},
       };
     }
-    
+
     const lines = ['', `Directory: ${state.currentPath}`, ''];
-    
+
     if (entries.length === 0) {
       lines.push('  (empty)');
     } else {
       for (const entry of entries) {
         let line = `  ${entry.name}`;
-        const fullPath = state.currentPath === '/' 
-          ? `/${entry.name}` 
-          : `${state.currentPath}/${entry.name}`;
-        
+        const fullPath =
+          state.currentPath === '/' ? `/${entry.name}` : `${state.currentPath}/${entry.name}`;
+
         // Show markers for files
         if (entry.type === 'file') {
           // Bookmark marker
           if (state.bookmarkedFiles?.has(fullPath)) {
             line += ' ★';
           }
-          
+
           // Read/New marker
           if (state.filesRead?.has(fullPath)) {
             line += ' [READ]';
           } else {
             line += ' [NEW]';
           }
-          
+
           // Reading time estimate (based on content length)
           const content = getFileContent(fullPath, state);
           if (content && content.length > 0) {
@@ -2701,14 +2966,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
               line += ` [~${readingMinutes}min]`;
             }
           }
-          
+
           // Long format: prominent status tags and content preview
           if (longFormat) {
             // Prominent status tag
             if (entry.status && entry.status !== 'intact') {
               line = `  ${entry.name}  [${entry.status.toUpperCase()}]`;
             }
-            
+
             // Add content preview for non-encrypted files
             const mutation = state.fileMutations[fullPath];
             const isEncrypted = entry.status === 'encrypted' && !mutation?.decrypted;
@@ -2721,7 +2986,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             }
           }
         }
-        
+
         // Standard format: status tags at end (only if not long format)
         if (!longFormat && entry.status && entry.status !== 'intact') {
           line += ` [${entry.status.toUpperCase()}]`;
@@ -2729,9 +2994,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         lines.push(line);
       }
     }
-    
+
     lines.push('');
-    
+
     return {
       output: createOutputEntries(lines),
       stateChanges: {
@@ -2747,15 +3012,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('error', 'ERROR: Specify directory'),
           createEntry('system', ''),
-          createEntry('system', 'TIP: Use "ls" to see available directories, then "cd <dirname>" to enter one.'),
+          createEntry(
+            'system',
+            'TIP: Use "ls" to see available directories, then "cd <dirname>" to enter one.'
+          ),
         ],
         stateChanges: {},
       };
     }
-    
+
     const targetPath = resolvePath(args[0], state.currentPath);
     const node = getNode(targetPath, state);
-    
+
     if (!node) {
       return {
         output: [
@@ -2768,7 +3036,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         },
       };
     }
-    
+
     if (node.type !== 'dir') {
       return {
         output: [
@@ -2779,19 +3047,19 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Check if this is the first successful cd
     const isFirstCd = !state.flags.firstCdDone;
     const output: TerminalEntry[] = [createEntry('output', `Changed to: ${targetPath}`)];
-    
+
     if (isFirstCd) {
       output.push(createEntry('system', ''));
       output.push(createEntry('system', 'TIP: Use "cd .." to go back to the previous directory.'));
     }
-    
+
     // Push current path to navigation history (for 'back' command)
     const updatedHistory = [...(state.navigationHistory || []), state.currentPath];
-    
+
     return {
       output,
       stateChanges: {
@@ -2809,15 +3077,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('error', 'ERROR: Specify file'),
           createEntry('system', ''),
-          createEntry('system', 'TIP: Use "ls" to see available files, then "open <filename>" to read one.'),
+          createEntry(
+            'system',
+            'TIP: Use "ls" to see available files, then "open <filename>" to read one.'
+          ),
         ],
         stateChanges: {},
       };
     }
-    
+
     const filePath = resolvePath(args[0], state.currentPath);
     const access = canAccessFile(filePath, state);
-    
+
     if (!access.accessible) {
       return {
         output: [createEntry('error', `ERROR: ${access.reason}`)],
@@ -2828,9 +3099,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: calculateDelay(state) + 500,
       };
     }
-    
+
     const node = getNode(filePath, state);
-    
+
     // Check if it's a directory
     if (node && node.type === 'dir') {
       return {
@@ -2843,7 +3114,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     if (!node || node.type !== 'file') {
       return {
         output: [
@@ -2854,10 +3125,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const file = node as FileNode;
     const mutation = state.fileMutations[filePath];
-    
+
     // Check if this is a honeypot/trap file
     const TRAP_FILES = [
       'URGENT_classified_alpha.txt',
@@ -2867,10 +3138,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     ];
     const fileName = filePath.split('/').pop() || '';
     const isTrap = TRAP_FILES.includes(fileName);
-    
+
     // Check if file was already read BEFORE trap check to avoid double penalty
     const alreadyRead = state.filesRead?.has(filePath);
-    
+
     if (isTrap) {
       // If trap was already triggered, show reduced penalty
       if (alreadyRead) {
@@ -2890,13 +3161,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           streamingMode: 'fast',
         };
       }
-      
+
       const trapsTriggered = new Set(state.trapsTriggered || []);
       const isFirstTrap = trapsTriggered.size === 0;
       trapsTriggered.add(filePath);
-      
+
       const trapOutput: TerminalEntry[] = [];
-      
+
       // UFO74 warning on first trap
       if (isFirstTrap && !state.trapWarningGiven) {
         trapOutput.push(
@@ -2914,16 +3185,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('output', '       "SMOKING GUN"? "PRESIDENTS EYES"? come on...'),
           createEntry('output', ''),
           createEntry('ufo74', 'UFO74: your detection just spiked. be more careful!'),
-          createEntry('system', ''),
+          createEntry('system', '')
         );
       }
-      
+
       // Show file content (trap message)
       const content = getFileContent(filePath, state, false);
       if (content) {
         content.forEach(line => trapOutput.push(createEntry('error', line)));
       }
-      
+
       return {
         output: trapOutput,
         stateChanges: {
@@ -2937,7 +3208,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 1000,
       };
     }
-    
+
     // Check if non-trap file was already read - show different message
     if (alreadyRead) {
       const content = getFileContent(filePath, state, state.fileMutations[filePath]?.decrypted);
@@ -2947,7 +3218,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           stateChanges: {},
         };
       }
-      
+
       // Show file content but with "already read" message instead of UFO74
       const output: TerminalEntry[] = [
         createEntry('system', ''),
@@ -2957,7 +3228,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('system', ''),
         createEntry('warning', 'UFO74: you already read this file, kid. lets move on.'),
       ];
-      
+
       return {
         output,
         stateChanges: {
@@ -2966,49 +3237,55 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         streamingMode: 'fast',
       };
     }
-    
+
     // Track file as read
     const filesRead = new Set(state.filesRead || []);
     filesRead.add(filePath);
-    
+
     // ═══════════════════════════════════════════════════════════════════════════
     // SAFE FILE DETECTION - Reading mundane files reduces detection
     // Files in /internal/admin/ and /internal/misc/ are "safe" - they make
     // the player look like a regular user browsing boring administrative docs.
     // ═══════════════════════════════════════════════════════════════════════════
-    const isSafeFile = filePath.startsWith('/internal/admin/') || filePath.startsWith('/internal/misc/');
+    const isSafeFile =
+      filePath.startsWith('/internal/admin/') || filePath.startsWith('/internal/misc/');
     const DETECTION_FLOOR = 5; // Can't reduce below this level
-    
+
     let detectionChange = 3; // Default increase for reading files
     let safeFileNotice: ReturnType<typeof createEntry>[] = [];
-    
+
     if (isSafeFile && state.detectionLevel > DETECTION_FLOOR) {
       // Reduce detection by 1-2 points instead of increasing
       const rng = createSeededRng((state.seed || 0) + filePath.length * 100);
       const reduction = seededRandomInt(rng, 1, 2);
       const newDetection = Math.max(DETECTION_FLOOR, state.detectionLevel - reduction);
       detectionChange = newDetection - state.detectionLevel; // Will be negative
-      
+
       // Add subtle system message
       safeFileNotice.push(createEntry('system', ''));
       safeFileNotice.push(createEntry('system', '[SYSTEM: access pattern normalized]'));
-      
+
       // Occasionally add UFO74 comment (roughly 1 in 4 safe file reads)
       const showUFO74 = seededRandomInt(rng, 0, 3) === 0;
       if (showUFO74) {
-        safeFileNotice.push(createEntry('ufo74', 'UFO74: good thinking, kid. reading the boring stuff keeps you looking like a regular user.'));
+        safeFileNotice.push(
+          createEntry(
+            'ufo74',
+            'UFO74: good thinking, kid. reading the boring stuff keeps you looking like a regular user.'
+          )
+        );
       }
     }
-    
+
     // Check if file is unstable and might corrupt
     let stateChanges: Partial<GameState> = {
       detectionLevel: state.detectionLevel + detectionChange,
       filesRead,
       lastOpenedFile: filePath, // Track for 'last' command
     };
-    
+
     let triggerFlicker = false;
-    
+
     if (file.status === 'unstable' && Math.random() < 0.3) {
       // Apply corruption on unstable file access
       const newMutation: FileMutation = mutation || { corruptedLines: [], decrypted: false };
@@ -3023,26 +3300,26 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       stateChanges.sessionStability = state.sessionStability - 3;
       triggerFlicker = true;
     }
-    
+
     const content = getFileContent(filePath, { ...state, ...stateChanges }, mutation?.decrypted);
-    
+
     if (!content) {
       return {
         output: [createEntry('error', 'ERROR: Cannot read file')],
         stateChanges,
       };
     }
-    
+
     // Check if file is encrypted and not yet decrypted
     const isEncryptedAndLocked = file.status === 'encrypted' && !mutation?.decrypted;
-    
+
     // Check for reveals - ONLY if file is not encrypted or has been decrypted
     // Uses the new evidence revelation system that reveals only ONE evidence per read
     let notices: ReturnType<typeof createEntry>[] = [];
     if (!isEncryptedAndLocked) {
       // Get existing reveals defined in the file (for backwards compatibility)
       const existingReveals = getFileReveals(filePath) as TruthCategory[];
-      
+
       // Use the evidence revelation system for gradual, one-at-a-time discovery
       const revelationResult = attemptEvidenceRevelation(
         filePath,
@@ -3050,39 +3327,40 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         existingReveals.length > 0 ? existingReveals : undefined,
         { ...state, ...stateChanges } as GameState
       );
-      
+
       // If an evidence was revealed, process it through the truth system
       if (revelationResult.revealedEvidence) {
-        const truthResult = checkTruthProgress(
-          { ...state, ...stateChanges } as GameState, 
-          [revelationResult.revealedEvidence]
-        );
+        const truthResult = checkTruthProgress({ ...state, ...stateChanges } as GameState, [
+          revelationResult.revealedEvidence,
+        ]);
         notices = truthResult.notices;
-        
+
         // Merge truth discovery state changes (includes detection reduction breather)
         Object.assign(stateChanges, truthResult.stateChanges);
-        
+
         // Update the file evidence state in game state
         stateChanges.fileEvidenceStates = {
           ...state.fileEvidenceStates,
           ...stateChanges.fileEvidenceStates,
           [filePath]: revelationResult.updatedFileState,
         };
-        
+
         // If file has more unrevealed evidences, hint at it
         if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
           notices.push(createEntry('system', ''));
-          notices.push(createEntry('system', '[This file may contain additional insights on future reads]'));
+          notices.push(
+            createEntry('system', '[This file may contain additional insights on future reads]')
+          );
         }
       }
-      
+
       // Check if file content is disturbing and should trigger avatar expression
       const disturbingExpression = getDisturbingContentAvatarExpression(content);
       if (disturbingExpression && !stateChanges.avatarExpression) {
         stateChanges.avatarExpression = disturbingExpression;
       }
     }
-    
+
     // Track content category based on file path
     const categoriesRead = new Set(state.categoriesRead || []);
     if (filePath.startsWith('/ops/')) categoriesRead.add('military');
@@ -3094,17 +3372,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     if (filePath.startsWith('/storage/')) categoriesRead.add('storage');
     if (filePath.startsWith('/admin/')) categoriesRead.add('admin');
     if (filePath.startsWith('/internal/')) categoriesRead.add('internal');
-    
+
     // Check if player has read multiple categories (unlocks pattern recognition files)
     if (categoriesRead.size >= 3 && !state.flags['readMultipleCategories']) {
       stateChanges.flags = { ...state.flags, readMultipleCategories: true };
     }
     stateChanges.categoriesRead = categoriesRead;
-    
+
     // ═══════════════════════════════════════════════════════════════════════════
     // SPECIAL FILE TRIGGERS
     // ═══════════════════════════════════════════════════════════════════════════
-    
+
     // Maintenance notes reveal hidden commands
     if (filePath.includes('maintenance_notes') && !isEncryptedAndLocked) {
       const hiddenCmds = new Set(state.hiddenCommandsDiscovered || []);
@@ -3113,26 +3391,26 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       hiddenCmds.add('decode');
       stateChanges.hiddenCommandsDiscovered = hiddenCmds;
     }
-    
+
     // Transfer authorization contains password hint
     if (filePath.includes('transfer_authorization') && !isEncryptedAndLocked) {
       const passwords = new Set(state.passwordsFound || []);
       passwords.add('varginha1996');
       stateChanges.passwordsFound = passwords;
     }
-    
+
     // Official summary is disinformation - subtle flag
     if (filePath.includes('incident_summary_official') && !isEncryptedAndLocked) {
       const disinfo = new Set(state.disinformationDiscovered || []);
       disinfo.add('official_summary');
       stateChanges.disinformationDiscovered = disinfo;
     }
-    
+
     // Active trace triggers countdown
     if (filePath.includes('active_trace.sys') && !isEncryptedAndLocked) {
       if (!state.countdownActive) {
         stateChanges.countdownActive = true;
-        stateChanges.countdownEndTime = Date.now() + (3 * 60 * 1000);
+        stateChanges.countdownEndTime = Date.now() + 3 * 60 * 1000;
         stateChanges.countdownTriggeredBy = 'trace_spike';
         stateChanges.traceSpikeActive = true;
         stateChanges.paranoiaLevel = Math.min(100, (state.paranoiaLevel || 0) + 15);
@@ -3152,7 +3430,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, redactionKeycardRead: true };
     }
 
-    if (filePath.includes('redaction_override_memo') && !isEncryptedAndLocked && state.flags.redactionKeycardRead) {
+    if (
+      filePath.includes('redaction_override_memo') &&
+      !isEncryptedAndLocked &&
+      state.flags.redactionKeycardRead
+    ) {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, redactionOverrideSolved: true };
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', 'NOTICE: Redaction sequence reconciled.'));
@@ -3161,18 +3443,25 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     if (filePath.includes('trace_purge_memo') && !isEncryptedAndLocked) {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, tracePurgeLogged: true };
     }
-    
+
     // Morse intercept file tracking - enables 'message' command
     if (filePath.includes('morse_intercept') && !isEncryptedAndLocked) {
       stateChanges.morseFileRead = true;
     }
-    
+
     // Corrupted core dump spreads corruption to nearby files
     if (filePath.includes('core_dump_corrupted') && !isEncryptedAndLocked) {
       // Corrupt a random file in /tmp
-      const corruptTargets = ['/tmp/session_residue.log', '/tmp/note_to_self.tmp', '/tmp/pattern_recognition.log'];
+      const corruptTargets = [
+        '/tmp/session_residue.log',
+        '/tmp/note_to_self.tmp',
+        '/tmp/pattern_recognition.log',
+      ];
       const targetPath = corruptTargets[Math.floor(Math.random() * corruptTargets.length)];
-      const existingMutation = state.fileMutations[targetPath] || { corruptedLines: [], decrypted: false };
+      const existingMutation = state.fileMutations[targetPath] || {
+        corruptedLines: [],
+        decrypted: false,
+      };
       existingMutation.corruptedLines.push(Math.floor(Math.random() * 8) + 1);
       stateChanges.fileMutations = {
         ...state.fileMutations,
@@ -3181,18 +3470,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
       triggerFlicker = true;
     }
-    
+
     // After 5 files opened, UFO74 suggests override protocol
     const totalFilesRead = filesRead.size;
     if (totalFilesRead === 5 && !state.flags.overrideSuggested) {
-      notices.push(...createUFO74Message([
-        'UFO74: kid, youre doing good but theres MORE hidden here.',
-        '       try the override protocol to uncover restricted files.',
-        '       look for the password in the files youve read.',
-      ]));
+      notices.push(
+        ...createUFO74Message([
+          'UFO74: kid, youre doing good but theres MORE hidden here.',
+          '       try the override protocol to uncover restricted files.',
+          '       look for the password in the files youve read.',
+        ])
+      );
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideSuggested: true };
     }
-    
+
     // Check for Archivist achievement: all files in parent folder read
     let achievementsToCheck: string[] = [];
     const parentPath = filePath.substring(0, filePath.lastIndexOf('/')) || '/';
@@ -3207,14 +3498,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         achievementsToCheck.push('archivist');
       }
     }
-    
-  const output = [
-    ...createOutputEntries(['', `FILE: ${filePath}`, '']),
-    ...createOutputEntries(content),
-    ...notices,
-    ...safeFileNotice,
-  ];
-    
+
+    const output = [
+      ...createOutputEntries(['', `FILE: ${filePath}`, '']),
+      ...createOutputEntries(content),
+      ...notices,
+      ...safeFileNotice,
+    ];
+
     // Add encryption hints for locked encrypted files
     if (isEncryptedAndLocked) {
       output.push(createEntry('system', ''));
@@ -3226,11 +3517,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           'UFO74: locked tight. check the other files for hints about the security question.',
         ];
         output.push(createEntry('ufo74', hints[Math.floor(Math.random() * hints.length)]));
-        output.push(createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to attempt decryption.'));
+        output.push(
+          createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to attempt decryption.')
+        );
       } else if (file.timedDecrypt) {
         // Timed decrypt file - hint about the decrypt command
-        output.push(createEntry('ufo74', 'UFO74: timed encryption. you gotta be quick with the decrypt command.'));
-        output.push(createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to start the timed challenge.'));
+        output.push(
+          createEntry(
+            'ufo74',
+            'UFO74: timed encryption. you gotta be quick with the decrypt command.'
+          )
+        );
+        output.push(
+          createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to start the timed challenge.')
+        );
       } else {
         // Standard encrypted file
         const hints = [
@@ -3238,16 +3538,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           'UFO74: encrypted. use decrypt to crack it open.',
         ];
         output.push(createEntry('ufo74', hints[Math.floor(Math.random() * hints.length)]));
-        output.push(createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to decrypt this file.'));
+        output.push(
+          createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to decrypt this file.')
+        );
       }
     }
-    
+
     // Check for image trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
     let imageTrigger: ImageTrigger | undefined = undefined;
     if (file.imageTrigger && !isEncryptedAndLocked) {
       const imageId = file.imageTrigger.src;
       const imagesShown = state.imagesShownThisRun || new Set<string>();
-      
+
       if (!imagesShown.has(imageId)) {
         imageTrigger = file.imageTrigger;
         // Mark this image as shown
@@ -3256,13 +3558,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges.imagesShownThisRun = newImagesShown;
       }
     }
-    
+
     // Check for video trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
     let videoTrigger: VideoTrigger | undefined = undefined;
     if (file.videoTrigger && !isEncryptedAndLocked) {
       const videoId = file.videoTrigger.src;
       const videosShown = state.videosShownThisRun || new Set<string>();
-      
+
       if (!videosShown.has(videoId)) {
         videoTrigger = file.videoTrigger;
         // Mark this video as shown in videosShownThisRun
@@ -3271,7 +3573,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges.videosShownThisRun = newVideosShown;
       }
     }
-    
+
     // Determine streaming mode based on file status
     let streamingMode: 'none' | 'fast' | 'normal' | 'slow' | 'glitchy' = 'normal';
     if (file.status === 'unstable' || triggerFlicker) {
@@ -3283,7 +3585,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     } else if (content.length > 30) {
       streamingMode = 'fast'; // Long files stream faster
     }
-    
+
     return {
       output,
       stateChanges,
@@ -3303,19 +3605,19 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const filePath = resolvePath(args[0], state.currentPath);
     const node = getNode(filePath, state);
-    
+
     if (!node || node.type !== 'file') {
       return {
         output: [createEntry('error', 'ERROR: File not found')],
         stateChanges: {},
       };
     }
-    
+
     const file = node as FileNode;
-    
+
     if (file.status !== 'encrypted') {
       return {
         output: [
@@ -3326,24 +3628,24 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     if (!file.decryptedFragment) {
       return {
         output: [createEntry('error', 'ERROR: No recoverable data')],
         stateChanges: {},
       };
     }
-    
+
     // ═══════════════════════════════════════════════════════════════════════════
     // TIMED DECRYPTION FILES
     // ═══════════════════════════════════════════════════════════════════════════
-    
+
     if (file.timedDecrypt) {
       // If timed decrypt is active and correct sequence provided
       if (state.timedDecryptActive && state.timedDecryptFile === filePath) {
         const providedSequence = args.slice(1).join(' ').toUpperCase().trim();
         const expectedSequence = file.timedDecrypt.sequence.toUpperCase();
-        
+
         // Check if time expired
         if (Date.now() > state.timedDecryptEndTime) {
           return {
@@ -3365,7 +3667,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             },
           };
         }
-        
+
         // Check if sequence matches
         if (providedSequence === expectedSequence) {
           // Success! Decrypt the file
@@ -3376,11 +3678,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             createEntry('system', '═══════════════════════════════════════════════'),
             createEntry('system', ''),
           ];
-          
+
           for (const line of file.decryptedFragment) {
             output.push(createEntry('system', line));
           }
-          
+
           return {
             output,
             stateChanges: {
@@ -3409,11 +3711,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           };
         }
       }
-      
+
       // Start timed decryption challenge
       const endTime = Date.now() + file.timedDecrypt.timeLimit;
       const timeSeconds = Math.floor(file.timedDecrypt.timeLimit / 1000);
-      
+
       return {
         output: [
           createEntry('warning', ''),
@@ -3440,15 +3742,15 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         },
       };
     }
-    
+
     // ═══════════════════════════════════════════════════════════════════════════
     // PASSWORD-PROTECTED FILES
     // ═══════════════════════════════════════════════════════════════════════════
-    
+
     // UFO74 identity file requires password from transfer_authorization.txt
     if (filePath.includes('ghost_in_machine')) {
       const password = args[1]?.toLowerCase().trim();
-      
+
       if (!password) {
         return {
           output: [
@@ -3458,13 +3760,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             createEntry('system', ''),
             createEntry('system', 'Usage: decrypt ghost_in_machine.enc <password>'),
             createEntry('system', ''),
-            createEntry('ufo74', '[UFO74]: This file... I don\'t recognize it.'),
+            createEntry('ufo74', "[UFO74]: This file... I don't recognize it."),
             createEntry('ufo74', '[UFO74]: But the encryption pattern looks familiar.'),
           ],
           stateChanges: {},
         };
       }
-      
+
       if (password !== 'varginha1996') {
         return {
           output: [
@@ -3478,7 +3780,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           },
         };
       }
-      
+
       // Password correct - trigger secret ending revelation
       return {
         output: [
@@ -3508,9 +3810,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('ufo74', '[UFO74]: So you found it.'),
           createEntry('ufo74', '[UFO74]: I was there. January 1996.'),
           createEntry('ufo74', '[UFO74]: I saw what they did. What they took.'),
-          createEntry('ufo74', '[UFO74]: I\'ve been inside their systems ever since.'),
+          createEntry('ufo74', "[UFO74]: I've been inside their systems ever since."),
           createEntry('ufo74', '[UFO74]: Not for revenge. For proof.'),
-          createEntry('ufo74', '[UFO74]: You have the proof now. Don\'t let them bury it again.'),
+          createEntry('ufo74', "[UFO74]: You have the proof now. Don't let them bury it again."),
           createEntry('system', ''),
           createEntry('warning', '▓▓▓ THE WHOLE TRUTH AWAITS ▓▓▓'),
           createEntry('system', '[Press ENTER to continue...]'),
@@ -3523,7 +3825,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 3000,
       };
     }
-    
+
     // Check access threshold
     if (file.accessThreshold && state.accessLevel < file.accessThreshold) {
       return {
@@ -3538,7 +3840,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 1500,
       };
     }
-    
+
     // If file has a security question, require answer
     if (file.securityQuestion) {
       return {
@@ -3559,7 +3861,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 500,
       };
     }
-    
+
     // No security question - proceed with decryption
     return performDecryption(filePath, file, state);
   },
@@ -3571,29 +3873,29 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const filePath = resolvePath(args[0], state.currentPath);
     const node = getNode(filePath, state);
-    
+
     if (!node || node.type !== 'file') {
       return {
         output: [createEntry('error', 'ERROR: File not found')],
         stateChanges: {},
       };
     }
-    
+
     const mutation = state.fileMutations[filePath];
-    
+
     if (!mutation || mutation.corruptedLines.length === 0) {
       return {
         output: [createEntry('output', 'File integrity nominal. No recovery needed.')],
         stateChanges: {},
       };
     }
-    
+
     // Recover one corruption but damage another file
     const recoveredLine = mutation.corruptedLines.pop();
-    
+
     // Apply corruption to another file
     let newState = {
       ...state,
@@ -3603,13 +3905,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       },
     };
     newState = applyRandomCorruption(newState);
-    
+
     const output = [
       createEntry('system', 'Initiating recovery protocol...'),
       createEntry('output', `Recovered data at line ${recoveredLine}`),
       createEntry('warning', 'WARNING: Collateral integrity loss detected'),
     ];
-    
+
     return {
       output,
       stateChanges: {
@@ -3627,7 +3929,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('system', 'Initiating trace protocol...'),
       createEntry('output', ''),
     ];
-    
+
     // Reveal some structure based on access level
     if (state.accessLevel < 2) {
       output.push(createEntry('output', 'TRACE RESULT:'));
@@ -3648,7 +3950,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output.push(createEntry('output', ''));
       output.push(createEntry('notice', 'NOTICE: Administrative access may be obtainable.'));
     }
-    
+
     return {
       output,
       stateChanges: {
@@ -3661,13 +3963,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
 
-  'override': (args, state) => {
+  override: (args, state) => {
     // Requires: "override protocol <PASSWORD>"
     if (args.length === 0 || args[0].toLowerCase() !== 'protocol') {
       // Invalid override syntax - treat as invalid command
       return createInvalidCommandResult(state, '');
     }
-    
+
     // Check if password was provided
     if (args.length < 2) {
       return {
@@ -3688,17 +3990,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 1500,
       };
     }
-    
+
     const password = args.slice(1).join(' ').toUpperCase();
     const correctPassword = 'COLHEITA';
-    
+
     // Track failed attempts
     const failedAttempts = state.overrideFailedAttempts || 0;
-    
+
     // Wrong password
     if (password !== correctPassword) {
       const newFailedAttempts = failedAttempts + 1;
-      
+
       // Too many failed attempts = lockdown
       if (newFailedAttempts >= 3) {
         return {
@@ -3722,14 +4024,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           delayMs: 3000,
         };
       }
-      
+
       return {
         output: [
           createEntry('system', `Verifying code: ${password}...`),
           createEntry('error', ''),
           createEntry('error', 'INVALID AUTHENTICATION CODE'),
           createEntry('error', ''),
-          createEntry('warning', `WARNING: ${3 - newFailedAttempts} attempt(s) remaining before lockdown`),
+          createEntry(
+            'warning',
+            `WARNING: ${3 - newFailedAttempts} attempt(s) remaining before lockdown`
+          ),
         ],
         stateChanges: {
           detectionLevel: state.detectionLevel + 15,
@@ -3740,18 +4045,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 1500,
       };
     }
-    
+
     // Correct password!
     // THE TERRIBLE MISTAKE - Can still trigger at high detection with correct password
     const rng = createSeededRng(state.rngState);
     const roll = rng();
-    
-    const isTerribleMistakeCondition = 
-      state.detectionLevel >= DETECTION_THRESHOLDS.ALERT && 
+
+    const isTerribleMistakeCondition =
+      state.detectionLevel >= DETECTION_THRESHOLDS.ALERT &&
       state.truthsDiscovered.size >= 2 &&
       !state.terribleMistakeTriggered &&
       roll < 0.35; // 35% chance when conditions are met
-    
+
     if (isTerribleMistakeCondition) {
       return {
         output: [
@@ -3794,7 +4099,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 4000,
       };
     }
-    
+
     // Success - unlock admin
     return {
       output: [
@@ -3837,7 +4142,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 1500,
       };
     }
-    
+
     // Check question limit
     if (state.prisoner45QuestionsAsked >= 5) {
       return {
@@ -3845,9 +4150,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', 'Connecting to secure relay...'),
           createEntry('warning', ''),
           createEntry('warning', '─────────────────────────────────────────'),
-          createEntry('warning', 'PRISONER_45> They\'re cutting the line.'),
+          createEntry('warning', "PRISONER_45> They're cutting the line."),
           createEntry('warning', 'PRISONER_45> Remember what I told you.'),
-          createEntry('warning', 'PRISONER_45> 2026. Don\'t forget.'),
+          createEntry('warning', "PRISONER_45> 2026. Don't forget."),
           createEntry('warning', '─────────────────────────────────────────'),
           createEntry('error', ''),
           createEntry('error', 'CONNECTION TERMINATED BY REMOTE'),
@@ -3861,7 +4166,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 2000,
       };
     }
-    
+
     // If no args, show chat prompt
     if (args.length === 0) {
       const remaining = 5 - state.prisoner45QuestionsAsked;
@@ -3891,7 +4196,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', `[${remaining} questions remaining before trace lockout]`),
           createEntry('system', ''),
           createEntry('output', 'PRISONER_45> ...you found this channel.'),
-          createEntry('output', 'PRISONER_45> I don\'t know how long we have.'),
+          createEntry('output', "PRISONER_45> I don't know how long we have."),
           createEntry('system', ''),
           createEntry('system', 'Use: chat <your question>'),
           createEntry('system', ''),
@@ -3902,14 +4207,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 1500,
       };
     }
-    
+
     // Process question
     const question = args.join(' ');
     const usedResponses = state.prisoner45UsedResponses || new Set<string>();
     const { response, valid, category } = getPrisoner45Response(question, usedResponses);
     const newCount = state.prisoner45QuestionsAsked + 1;
     const remaining = 5 - newCount;
-    
+
     // Track used responses
     const newUsedResponses = new Set(usedResponses);
     for (const r of response) {
@@ -3924,15 +4229,15 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('warning', response[0] || 'PRISONER_45> [SIGNAL LOST]'),
         createEntry('system', ''),
       ];
-      
+
       if (remaining > 0) {
         output.push(createEntry('warning', `[${remaining} questions remaining]`));
       } else {
         output.push(createEntry('warning', '[CONNECTION UNSTABLE]'));
       }
-      
+
       output.push(createEntry('system', ''));
-      
+
       return {
         output,
         stateChanges: {
@@ -3944,26 +4249,26 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 800,
       };
     }
-    
+
     const output: TerminalEntry[] = [
       createEntry('input', `> ${question}`),
       createEntry('system', ''),
     ];
-    
+
     for (const line of response) {
       output.push(createEntry('output', line));
     }
-    
+
     output.push(createEntry('system', ''));
-    
+
     if (remaining > 0) {
       output.push(createEntry('system', `[${remaining} questions remaining]`));
     } else {
       output.push(createEntry('warning', '[CONNECTION UNSTABLE]'));
     }
-    
+
     output.push(createEntry('system', ''));
-    
+
     return {
       output,
       stateChanges: {
@@ -3978,7 +4283,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   // ═══════════════════════════════════════════════════════════════════════════
   // SCOUT NEURAL LINK — Remote access to preserved scout consciousness
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   link: (args, state) => {
     // Requires access to neural dump file first
     if (!state.flags.scoutLinkUnlocked) {
@@ -3999,7 +4304,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 1500,
       };
     }
-    
+
     // Check if scout link is exhausted
     const scoutLinksUsed = state.scoutLinksUsed || 0;
     if (scoutLinksUsed >= 4) {
@@ -4024,7 +4329,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 2500,
       };
     }
-    
+
     // If no args, show link prompt
     if (args.length === 0) {
       const remaining = 4 - scoutLinksUsed;
@@ -4058,25 +4363,22 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 2000,
       };
     }
-    
+
     // Process query
     const query = args.join(' ');
     const usedResponses = state.scoutLinkUsedResponses || new Set<string>();
     const { response, valid, category } = getScoutLinkResponse(query, usedResponses);
     const newLinksUsed = scoutLinksUsed + 1;
     const remaining = 4 - newLinksUsed;
-    
+
     // Track used responses
     const newUsedResponses = new Set(usedResponses);
     for (const r of response) {
       newUsedResponses.add(r);
     }
-    
-    const output: TerminalEntry[] = [
-      createEntry('input', `> ${query}`),
-      createEntry('system', ''),
-    ];
-    
+
+    const output: TerminalEntry[] = [createEntry('input', `> ${query}`), createEntry('system', '')];
+
     // Signal lost - no keyword match (still costs a query)
     if (!valid) {
       output.push(createEntry('warning', '[NEURAL BRIDGE UNSTABLE]'));
@@ -4085,15 +4387,15 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output.push(createEntry('warning', line));
       }
       output.push(createEntry('system', ''));
-      
+
       if (remaining > 0) {
         output.push(createEntry('system', `[Pattern stability: ${remaining} queries remaining]`));
       } else {
         output.push(createEntry('warning', '[PATTERN DESTABILIZING]'));
       }
-      
+
       output.push(createEntry('system', ''));
-      
+
       return {
         output,
         stateChanges: {
@@ -4106,24 +4408,24 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 1200,
       };
     }
-    
+
     output.push(createEntry('warning', '[NEURAL BRIDGE ACTIVE]'));
     output.push(createEntry('system', ''));
-    
+
     for (const line of response) {
       output.push(createEntry('output', line));
     }
-    
+
     output.push(createEntry('system', ''));
-    
+
     if (remaining > 0) {
       output.push(createEntry('system', `[Pattern stability: ${remaining} queries remaining]`));
     } else {
       output.push(createEntry('warning', '[PATTERN DESTABILIZING]'));
     }
-    
+
     output.push(createEntry('system', ''));
-    
+
     return {
       output,
       stateChanges: {
@@ -4140,7 +4442,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   // ═══════════════════════════════════════════════════════════════════════════
   // SCRIPT COMMAND — Data reconstruction via user-written scripts
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   script: (args, state) => {
     if (args.length === 0) {
       return {
@@ -4161,14 +4463,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const scriptContent = args.join(' ').toUpperCase();
-    
+
     // Parse script
     const hasInit = scriptContent.includes('INIT');
     const hasExec = scriptContent.includes('EXEC');
     const targetMatch = scriptContent.match(/TARGET=([^;]+)/);
-    
+
     if (!hasInit || !hasExec) {
       return {
         output: [
@@ -4183,7 +4485,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         },
       };
     }
-    
+
     if (!targetMatch) {
       return {
         output: [
@@ -4198,9 +4500,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         },
       };
     }
-    
+
     const target = targetMatch[1].toLowerCase();
-    
+
     // Valid targets
     if (target.includes('neural_fragment') || target.includes('/admin/neural')) {
       return {
@@ -4229,7 +4531,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 3000,
       };
     }
-    
+
     if (target.includes('psi_residue') || target.includes('/comms/psi')) {
       return {
         output: [
@@ -4258,7 +4560,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 2500,
       };
     }
-    
+
     // Invalid target
     return {
       output: [
@@ -4286,9 +4588,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const scriptName = args[0].toLowerCase();
-    
+
     if (scriptName === 'save_evidence.sh') {
       if (!state.flags.allEvidenceCollected) {
         return {
@@ -4301,7 +4603,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           },
         };
       }
-      
+
       return {
         output: [
           createEntry('system', 'Executing save_evidence.sh...'),
@@ -4320,7 +4622,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         triggerFlicker: true,
       };
     }
-    
+
     if (scriptName === 'purge_trace.sh') {
       if (!state.traceSpikeActive) {
         return {
@@ -4331,7 +4633,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           stateChanges: {},
         };
       }
-      
+
       return {
         output: [
           createEntry('warning', 'TRACE PURGE UTILITY'),
@@ -4353,7 +4655,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         triggerFlicker: true,
       };
     }
-    
+
     return {
       output: [
         createEntry('error', 'EXECUTION FAILED'),
@@ -4373,7 +4675,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     if (args.length === 0) {
       return {
         output: [
@@ -4384,7 +4686,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const mode = args[0].toLowerCase();
     if (mode !== 'public' && mode !== 'covert') {
       return {
@@ -4395,14 +4697,22 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const isPublic = mode === 'public';
     return {
       output: [
         createEntry('system', 'EVIDENCE DISPATCH'),
         createEntry('system', ''),
-        createEntry('output', isPublic ? 'Release channel: OPEN NETWORKS' : 'Release channel: TRUSTED CELLS'),
-        createEntry('output', isPublic ? 'Signal boosted. Narrative destabilized.' : 'Signal preserved. Identities shielded.'),
+        createEntry(
+          'output',
+          isPublic ? 'Release channel: OPEN NETWORKS' : 'Release channel: TRUSTED CELLS'
+        ),
+        createEntry(
+          'output',
+          isPublic
+            ? 'Signal boosted. Narrative destabilized.'
+            : 'Signal preserved. Identities shielded.'
+        ),
         createEntry('system', ''),
         createEntry('warning', 'NOTICE: This action will be remembered.'),
       ],
@@ -4431,14 +4741,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   // ═══════════════════════════════════════════════════════════════════════════
   // HIDDEN COMMANDS - Discoverable through documents
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   // disconnect - Severs connection (triggers neutral ending if used before saving)
   disconnect: (args, state) => {
     if (!state.hiddenCommandsDiscovered?.has('disconnect')) {
       // Hidden command not discovered - treat as invalid command
       return createInvalidCommandResult(state, 'disconnect');
     }
-    
+
     // If evidence not saved, neutral ending
     if (!state.evidencesSaved) {
       return {
@@ -4463,7 +4773,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         delayMs: 2000,
       };
     }
-    
+
     return {
       output: [
         createEntry('system', 'Cannot disconnect — connection transfer in progress.'),
@@ -4472,17 +4782,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       stateChanges: {},
     };
   },
-  
+
   // scan - Reveals hidden files in current directory
   scan: (args, state) => {
     if (!state.hiddenCommandsDiscovered?.has('scan')) {
       // Hidden command not discovered - treat as invalid command
       return createInvalidCommandResult(state, 'scan');
     }
-    
+
     // Increase detection significantly
     const newDetection = Math.min(100, state.detectionLevel + 15);
-    
+
     return {
       output: [
         createEntry('system', ''),
@@ -4501,7 +4811,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       },
     };
   },
-  
+
   // decode - Attempts to decode cipher text (ROT13)
   decode: (args, state) => {
     // Hidden command - must be discovered first
@@ -4509,19 +4819,23 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       // Hidden command not discovered - treat as invalid command
       return createInvalidCommandResult(state, 'decode');
     }
-    
+
     const attempt = args.join(' ').toLowerCase().trim();
-    
+
     if (!attempt) {
       return {
         output: [createEntry('system', 'Usage: decode <text>')],
         stateChanges: {},
       };
     }
-    
+
     // The cipher answer is "the truth is not what they told you"
     // ROT13 of "the" = "gur" - accept partial answers
-    if (attempt === 'the' || attempt === 'the truth' || attempt === 'the truth is not what they told you') {
+    if (
+      attempt === 'the' ||
+      attempt === 'the truth' ||
+      attempt === 'the truth is not what they told you'
+    ) {
       return {
         output: [
           createEntry('system', ''),
@@ -4533,13 +4847,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', ''),
         ],
         stateChanges: {
-          disinformationDiscovered: new Set([...(state.disinformationDiscovered || []), 'cipher_decoded']),
+          disinformationDiscovered: new Set([
+            ...(state.disinformationDiscovered || []),
+            'cipher_decoded',
+          ]),
         },
       };
     }
-    
+
     const cipherAttempts = (state.cipherAttempts || 0) + 1;
-    
+
     if (cipherAttempts >= 3) {
       return {
         output: [
@@ -4549,13 +4866,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: { cipherAttempts },
       };
     }
-    
+
     return {
       output: [createEntry('system', 'Decryption failed. Pattern not recognized.')],
       stateChanges: { cipherAttempts },
     };
   },
-  
+
   clear: (args, state) => {
     return {
       output: [],
@@ -4564,7 +4881,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       },
     };
   },
-  
+
   tutorial: (args, state) => {
     // Replay the tutorial/introduction
     return {
@@ -4580,22 +4897,22 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       },
     };
   },
-  
+
   tree: (args, state) => {
     // Display directory tree structure
     const buildTree = (path: string, prefix: string, depth: number): string[] => {
       if (depth > 2) return []; // Limit depth to 2 levels
-      
+
       const entries = listDirectory(path, state);
       const lines: string[] = [];
-      
+
       if (!entries) return lines;
-      
+
       entries.forEach((entry, index) => {
         const isLast = index === entries.length - 1;
         const connector = isLast ? '└── ' : '├── ';
         const childPrefix = isLast ? '    ' : '│   ';
-        
+
         if (entry.type === 'dir') {
           // entry.name from listDirectory already has trailing / for dirs
           const dirName = entry.name.replace(/\/$/, ''); // Remove trailing slash
@@ -4615,10 +4932,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           lines.push(`${prefix}${connector}${entry.name}${marker}`);
         }
       });
-      
+
       return lines;
     };
-    
+
     const treeLines = [
       '',
       '═══════════════════════════════════════════════════════════',
@@ -4633,17 +4950,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       '═══════════════════════════════════════════════════════════',
       '',
     ];
-    
+
     return {
       output: createOutputEntries(treeLines),
       stateChanges: {},
     };
   },
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // UX COMMANDS - last, back, note, notes, bookmark, unread, progress
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   last: (args, state) => {
     // Re-display last opened file without re-triggering detection
     if (!state.lastOpenedFile) {
@@ -4655,7 +4972,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const access = canAccessFile(state.lastOpenedFile, state);
     if (!access.accessible) {
       return {
@@ -4663,7 +4980,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const content = getFileContent(state.lastOpenedFile, state);
     if (!content) {
       return {
@@ -4671,7 +4988,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const fileName = state.lastOpenedFile.split('/').pop() || state.lastOpenedFile;
     const output: TerminalEntry[] = [
       createEntry('system', `[Re-reading: ${fileName}]`),
@@ -4679,18 +4996,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       ...content.map(line => createEntry('file', line)),
       createEntry('system', ''),
     ];
-    
+
     return {
       output,
       stateChanges: {}, // No state changes - no detection increase
       streamingMode: 'fast',
     };
   },
-  
+
   back: (args, state) => {
     // Navigate to previous directory in history (not just parent)
     const history = state.navigationHistory || [];
-    
+
     if (history.length === 0) {
       // Fallback to parent directory if no history
       if (state.currentPath === '/') {
@@ -4699,10 +5016,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           stateChanges: {},
         };
       }
-      
+
       const parts = state.currentPath.split('/').filter(p => p);
       const newPath = parts.length <= 1 ? '/' : '/' + parts.slice(0, -1).join('/');
-      
+
       return {
         output: [
           createEntry('output', `Changed to: ${newPath}`),
@@ -4714,11 +5031,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         },
       };
     }
-    
+
     // Pop the last path from history
     const newHistory = [...history];
     const previousPath = newHistory.pop()!;
-    
+
     return {
       output: [createEntry('output', `Changed to: ${previousPath}`)],
       stateChanges: {
@@ -4728,14 +5045,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       },
     };
   },
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // STEALTH RECOVERY - wait and hide commands
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   wait: (args, state) => {
     const usesRemaining = state.waitUsesRemaining ?? 3;
-    
+
     if (usesRemaining <= 0) {
       return {
         output: [
@@ -4745,7 +5062,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     if (state.detectionLevel <= DETECTION_THRESHOLDS.GHOST_MAX) {
       return {
         output: [
@@ -4755,12 +5072,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Calculate reduction: more effective at high detection, but costs hostility
-    const reduction = Math.min(state.detectionLevel, state.detectionLevel >= DETECTION_THRESHOLDS.HIGH_WAIT_REDUCTION ? DETECTION_DECREASES.WAIT_HIGH_DETECTION : DETECTION_DECREASES.WAIT_NORMAL);
+    const reduction = Math.min(
+      state.detectionLevel,
+      state.detectionLevel >= DETECTION_THRESHOLDS.HIGH_WAIT_REDUCTION
+        ? DETECTION_DECREASES.WAIT_HIGH_DETECTION
+        : DETECTION_DECREASES.WAIT_NORMAL
+    );
     const newDetection = Math.max(0, state.detectionLevel - reduction);
     const newHostility = Math.min(5, (state.systemHostilityLevel || 0) + 1);
-    
+
     const messages: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '    . . .'),
@@ -4768,7 +5090,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('system', '    [Holding position... monitoring suspended]'),
       createEntry('system', ''),
     ];
-    
+
     if (newHostility >= 3) {
       messages.push(createEntry('warning', '    The system grows impatient.'));
     } else if (newHostility >= 2) {
@@ -4776,10 +5098,15 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     } else {
       messages.push(createEntry('system', '    Attention drifts elsewhere.'));
     }
-    
+
     messages.push(createEntry('system', ''));
-    messages.push(createEntry('system', `    Detection reduced. [${usesRemaining - 1} wait${usesRemaining - 1 === 1 ? '' : 's'} remaining]`));
-    
+    messages.push(
+      createEntry(
+        'system',
+        `    Detection reduced. [${usesRemaining - 1} wait${usesRemaining - 1 === 1 ? '' : 's'} remaining]`
+      )
+    );
+
     return {
       output: messages,
       stateChanges: {
@@ -4791,7 +5118,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       delayMs: 2000,
     };
   },
-  
+
   hide: (args, state) => {
     // Only available at 90+ detection
     if (state.detectionLevel < DETECTION_THRESHOLDS.HIDE_AVAILABLE) {
@@ -4803,13 +5130,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Can only use once per run
-    if (state.hideAvailable === false && state.detectionLevel >= DETECTION_THRESHOLDS.HIDE_AVAILABLE) {
+    if (
+      state.hideAvailable === false &&
+      state.detectionLevel >= DETECTION_THRESHOLDS.HIDE_AVAILABLE
+    ) {
       // First time at 90+ - hide becomes available
       // This is handled by the detection check below
     }
-    
+
     if (state.singularEventsTriggered?.has('hide_used')) {
       return {
         output: [
@@ -4820,11 +5150,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Emergency escape: reset to 70 but costs stability
     const stabilityLoss = 25;
     const newStability = Math.max(10, state.sessionStability - stabilityLoss);
-    
+
     return {
       output: [
         createEntry('system', ''),
@@ -4865,10 +5195,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const noteText = args.join(' ');
     const newNotes = [...(state.playerNotes || []), { note: noteText, timestamp: Date.now() }];
-    
+
     return {
       output: [
         createEntry('system', `Note saved: "${noteText}"`),
@@ -4879,10 +5209,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       },
     };
   },
-  
+
   notes: (args, state) => {
     const notes = state.playerNotes || [];
-    
+
     if (notes.length === 0) {
       return {
         output: [
@@ -4892,7 +5222,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '═════════════════════════════════════════'),
@@ -4900,27 +5230,30 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('system', '═════════════════════════════════════════'),
       createEntry('system', ''),
     ];
-    
+
     notes.forEach((n, i) => {
-      const time = new Date(n.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const time = new Date(n.timestamp).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
       output.push(createEntry('output', `  ${i + 1}. [${time}] ${n.note}`));
     });
-    
+
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '═════════════════════════════════════════'));
     output.push(createEntry('system', ''));
-    
+
     return {
       output,
       stateChanges: {},
     };
   },
-  
+
   bookmark: (args, state) => {
     if (args.length === 0) {
       // Show current bookmarks
       const bookmarks = state.bookmarkedFiles || new Set<string>();
-      
+
       if (bookmarks.size === 0) {
         return {
           output: [
@@ -4930,7 +5263,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           stateChanges: {},
         };
       }
-      
+
       const output: TerminalEntry[] = [
         createEntry('system', ''),
         createEntry('system', '═══════════════════════════════════════'),
@@ -4938,34 +5271,34 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('system', '═══════════════════════════════════════'),
         createEntry('system', ''),
       ];
-      
+
       Array.from(bookmarks).forEach((path, i) => {
         const fileName = path.split('/').pop() || path;
         const isRead = state.filesRead?.has(path);
         output.push(createEntry('output', `  ${i + 1}. ${fileName} ${isRead ? '[READ]' : ''}`));
         output.push(createEntry('system', `      └─ ${path}`));
       });
-      
+
       output.push(createEntry('system', ''));
       output.push(createEntry('system', '═══════════════════════════════════════'));
       output.push(createEntry('system', ''));
       output.push(createEntry('system', 'TIP: Use "open <filename>" to read a bookmarked file.'));
-      
+
       return { output, stateChanges: {} };
     }
-    
+
     const filePath = resolvePath(args[0], state.currentPath);
     const node = getNode(filePath, state);
-    
+
     if (!node || node.type !== 'file') {
       return {
         output: [createEntry('error', `ERROR: File not found: ${args[0]}`)],
         stateChanges: {},
       };
     }
-    
+
     const bookmarks = new Set(state.bookmarkedFiles || []);
-    
+
     if (bookmarks.has(filePath)) {
       bookmarks.delete(filePath);
       return {
@@ -4973,7 +5306,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: { bookmarkedFiles: bookmarks },
       };
     }
-    
+
     bookmarks.add(filePath);
     const newBookmarkCount = bookmarks.size;
     return {
@@ -4985,25 +5318,25 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       checkAchievements: newBookmarkCount >= 5 ? ['bookworm'] : undefined,
     };
   },
-  
+
   unread: (args, state) => {
     // Find all accessible files that haven't been read
     const unreadFiles: { path: string; status: string }[] = [];
     const MAX_SCAN_FILES = 100; // Performance limit
     let scannedCount = 0;
-    
+
     const scanDirectory = (dirPath: string, depth: number = 0) => {
       // Limit recursion depth and total files scanned for performance
       if (depth > 5 || scannedCount >= MAX_SCAN_FILES) return;
-      
+
       const entries = listDirectory(dirPath, state);
       if (!entries) return;
-      
+
       for (const entry of entries) {
         if (scannedCount >= MAX_SCAN_FILES) break;
-        
+
         const fullPath = dirPath === '/' ? `/${entry.name}` : `${dirPath}/${entry.name}`;
-        
+
         if (entry.type === 'file') {
           scannedCount++;
           if (!state.filesRead?.has(fullPath)) {
@@ -5017,9 +5350,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         }
       }
     };
-    
+
     scanDirectory('/');
-    
+
     if (unreadFiles.length === 0) {
       return {
         output: [
@@ -5029,7 +5362,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '═══════════════════════════════════════'),
@@ -5037,24 +5370,24 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('system', '═══════════════════════════════════════'),
       createEntry('system', ''),
     ];
-    
+
     unreadFiles.slice(0, 15).forEach(file => {
       const fileName = file.path.split('/').pop() || file.path;
       const statusTag = file.status !== 'intact' ? ` [${file.status.toUpperCase()}]` : '';
       output.push(createEntry('output', `  ${fileName}${statusTag}`));
       output.push(createEntry('system', `    └─ ${file.path}`));
     });
-    
+
     if (unreadFiles.length > 15) {
       output.push(createEntry('system', `  ... and ${unreadFiles.length - 15} more`));
     }
-    
+
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '═══════════════════════════════════════'));
-    
+
     return { output, stateChanges: {} };
   },
-  
+
   progress: (args, state) => {
     // Show player progress summary
     const truthsNeeded = 5;
@@ -5062,20 +5395,23 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const filesReadCount = state.filesRead?.size || 0;
     const bookmarksCount = state.bookmarkedFiles?.size || 0;
     const notesCount = state.playerNotes?.length || 0;
-    
+
     // Progress bar for truths
     const progressBar = '█'.repeat(truthsFound) + '░'.repeat(truthsNeeded - truthsFound);
-    
+
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '═══════════════════════════════════════════'),
       createEntry('system', '              INVESTIGATION PROGRESS       '),
       createEntry('system', '═══════════════════════════════════════════'),
       createEntry('system', ''),
-      createEntry('output', `  Evidence Collected: [${progressBar}] ${truthsFound}/${truthsNeeded}`),
+      createEntry(
+        'output',
+        `  Evidence Collected: [${progressBar}] ${truthsFound}/${truthsNeeded}`
+      ),
       createEntry('system', ''),
     ];
-    
+
     // Show which truths have been discovered (vague hints)
     if (truthsFound > 0) {
       output.push(createEntry('system', '  Confirmed intel:'));
@@ -5096,27 +5432,27 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       }
       output.push(createEntry('system', ''));
     }
-    
+
     output.push(createEntry('system', '  Session Statistics:'));
     output.push(createEntry('output', `    Files examined: ${filesReadCount}`));
     output.push(createEntry('output', `    Bookmarks: ${bookmarksCount}`));
     output.push(createEntry('output', `    Notes: ${notesCount}`));
     output.push(createEntry('output', `    Commands executed: ${state.sessionCommandCount || 0}`));
     output.push(createEntry('system', ''));
-    
+
     // Detection warning
     if (state.detectionLevel >= DETECTION_THRESHOLDS.ALERT) {
       output.push(createEntry('error', '  ⚠ CRITICAL: Detection level dangerously high'));
     } else if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_LOW) {
       output.push(createEntry('warning', '  ⚠ WARNING: Detection level elevated'));
     }
-    
+
     output.push(createEntry('system', '═══════════════════════════════════════════'));
     output.push(createEntry('system', ''));
-    
+
     return { output, stateChanges: {} };
   },
-  
+
   correlate: (args, state) => {
     // Cross-reference two files to find connections and reduce detection
     if (args.length < 2) {
@@ -5130,14 +5466,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const file1Path = resolvePath(args[0], state.currentPath);
     const file2Path = resolvePath(args[1], state.currentPath);
-    
+
     // Check if both files exist and have been read
     const file1 = getNode(file1Path, state);
     const file2 = getNode(file2Path, state);
-    
+
     if (!file1 || file1.type !== 'file') {
       return {
         output: [createEntry('error', `File not found: ${args[0]}`)],
@@ -5150,7 +5486,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Both files must have been read
     if (!state.filesRead?.has(file1Path) || !state.filesRead?.has(file2Path)) {
       return {
@@ -5163,7 +5499,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Define valid correlations (pairs of file keywords that connect)
     const VALID_CORRELATIONS: Array<{
       keywords1: string[];
@@ -5220,17 +5556,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         detectionReduction: 5,
       },
     ];
-    
+
     // Check for valid correlation
     const path1Lower = file1Path.toLowerCase();
     const path2Lower = file2Path.toLowerCase();
-    
+
     for (const correlation of VALID_CORRELATIONS) {
       const match1to1 = correlation.keywords1.some(k => path1Lower.includes(k));
       const match1to2 = correlation.keywords1.some(k => path2Lower.includes(k));
       const match2to1 = correlation.keywords2.some(k => path1Lower.includes(k));
       const match2to2 = correlation.keywords2.some(k => path2Lower.includes(k));
-      
+
       // Valid if file1 matches keywords1 AND file2 matches keywords2, or vice versa
       if ((match1to1 && match2to2) || (match1to2 && match2to1)) {
         const newDetection = Math.max(0, state.detectionLevel - correlation.detectionReduction);
@@ -5257,7 +5593,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         };
       }
     }
-    
+
     // No valid correlation found
     return {
       output: [
@@ -5281,7 +5617,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       stateChanges: {},
     };
   },
-  
+
   connect: (args, state) => {
     // Connect two files to build evidence web
     if (args.length < 2) {
@@ -5295,14 +5631,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const file1Path = resolvePath(args[0], state.currentPath);
     const file2Path = resolvePath(args[1], state.currentPath);
-    
+
     // Check if both files exist
     const file1 = getNode(file1Path, state);
     const file2 = getNode(file2Path, state);
-    
+
     if (!file1 || file1.type !== 'file') {
       return {
         output: [createEntry('error', `File not found: ${args[0]}`)],
@@ -5315,7 +5651,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Both files must have been read
     if (!state.filesRead?.has(file1Path) || !state.filesRead?.has(file2Path)) {
       return {
@@ -5327,13 +5663,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Check if already linked
     const existingLinks = state.evidenceLinks || [];
     const alreadyLinked = existingLinks.some(
       ([a, b]) => (a === file1Path && b === file2Path) || (a === file2Path && b === file1Path)
     );
-    
+
     if (alreadyLinked) {
       return {
         output: [
@@ -5343,24 +5679,24 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Add the link
     const newLinks: Array<[string, string]> = [...existingLinks, [file1Path, file2Path]];
-    
+
     // Bonus: Linking files that share reveals gives detection reduction
     const file1Node = file1 as FileNode;
     const file2Node = file2 as FileNode;
     const reveals1 = file1Node.reveals || [];
     const reveals2 = file2Node.reveals || [];
     const sharedReveals = reveals1.filter(r => reveals2.includes(r));
-    
+
     let detectionChange = 0;
     let bonusMessage = '';
     if (sharedReveals.length > 0) {
       detectionChange = -5 * sharedReveals.length;
       bonusMessage = `Evidence correlation detected! Detection -${Math.abs(detectionChange)}%`;
     }
-    
+
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '═══════════════════════════════════════'),
@@ -5372,17 +5708,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('output', `  ${file2Path.split('/').pop()}`),
       createEntry('system', ''),
     ];
-    
+
     if (bonusMessage) {
       output.push(createEntry('warning', `  ${bonusMessage}`));
       output.push(createEntry('system', ''));
     }
-    
+
     output.push(createEntry('system', `  Total links: ${newLinks.length}`));
     output.push(createEntry('system', '  Use "map" to view evidence web.'));
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '═══════════════════════════════════════'));
-    
+
     return {
       output,
       stateChanges: {
@@ -5391,11 +5727,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       },
     };
   },
-  
+
   map: (args, state) => {
     // Display the evidence web
     const links = state.evidenceLinks || [];
-    
+
     if (links.length === 0) {
       return {
         output: [
@@ -5414,7 +5750,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Build a graph of connections
     const nodeSet = new Set<string>();
     links.forEach(([a, b]) => {
@@ -5422,7 +5758,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       nodeSet.add(b);
     });
     const nodes = Array.from(nodeSet);
-    
+
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '═══════════════════════════════════════════════════════'),
@@ -5432,7 +5768,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('output', `  Nodes: ${nodes.length}  |  Connections: ${links.length}`),
       createEntry('system', ''),
     ];
-    
+
     // Show each link
     output.push(createEntry('system', '  CONNECTIONS:'));
     links.forEach(([a, b], idx) => {
@@ -5440,26 +5776,31 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       const bName = b.split('/').pop() || b;
       output.push(createEntry('output', `    ${idx + 1}. ${aName} ←→ ${bName}`));
     });
-    
+
     output.push(createEntry('system', ''));
-    
+
     // Show unique files
     output.push(createEntry('system', '  LINKED FILES:'));
     nodes.slice(0, 10).forEach(node => {
       const name = node.split('/').pop() || node;
       const connectionCount = links.filter(([a, b]) => a === node || b === node).length;
-      output.push(createEntry('output', `    • ${name} (${connectionCount} connection${connectionCount > 1 ? 's' : ''})`));
+      output.push(
+        createEntry(
+          'output',
+          `    • ${name} (${connectionCount} connection${connectionCount > 1 ? 's' : ''})`
+        )
+      );
     });
     if (nodes.length > 10) {
       output.push(createEntry('system', `    ... and ${nodes.length - 10} more`));
     }
-    
+
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '═══════════════════════════════════════════════════════'));
-    
+
     return { output, stateChanges: {} };
   },
-  
+
   // Morse code message deciphering command
   message: (args, state) => {
     // Check if morse file has been read
@@ -5474,7 +5815,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Check if already solved
     if (state.morseMessageSolved) {
       return {
@@ -5491,7 +5832,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     // Check if attempts exhausted (puzzle failed permanently)
     if ((state.morseMessageAttempts || 0) >= 3) {
       return {
@@ -5509,7 +5850,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     if (args.length === 0) {
       const attemptsRemaining = 3 - (state.morseMessageAttempts || 0);
       return {
@@ -5524,18 +5865,19 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
-    
+
     const guess = args.join(' ').toUpperCase().trim();
     const correct = 'UFO RECOVERED';
     const attemptsUsed = (state.morseMessageAttempts || 0) + 1;
     const attemptsRemaining = 3 - attemptsUsed;
-    
+
     // Check for correct answer - be lenient with variations
-    const isCorrect = guess === correct || 
-                      guess === 'UFORECOVERED' || 
-                      guess === 'UFO-RECOVERED' ||
-                      guess.replace(/\s+/g, ' ') === correct;
-    
+    const isCorrect =
+      guess === correct ||
+      guess === 'UFORECOVERED' ||
+      guess === 'UFO-RECOVERED' ||
+      guess.replace(/\s+/g, ' ') === correct;
+
     if (isCorrect) {
       // Success! Reveal the message and trigger a special UFO74 reaction
       return {
@@ -5563,7 +5905,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         streamingMode: 'normal',
       };
     }
-    
+
     // Wrong answer
     if (attemptsRemaining <= 0) {
       // Out of attempts
@@ -5587,7 +5929,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         },
       };
     }
-    
+
     // Wrong but more attempts available
     return {
       output: [
@@ -5613,7 +5955,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 // Main command executor
 export function executeCommand(input: string, state: GameState): CommandResult {
   const { command, args } = parseCommand(input);
-  
+
   // Check for game over
   if (state.isGameOver) {
     return {
@@ -5622,22 +5964,22 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     };
   }
 
-  
   // ═══════════════════════════════════════════════════════════════════════════
   // TERRIBLE MISTAKE - Doom countdown check
   // ═══════════════════════════════════════════════════════════════════════════
-  const traceSpikeWarning = state.traceSpikeActive && state.countdownActive && state.countdownTriggeredBy === 'trace_spike'
-    ? createEntry('warning', '[TRACE SPIKE ACTIVE]')
-    : null;
-  
+  const traceSpikeWarning =
+    state.traceSpikeActive && state.countdownActive && state.countdownTriggeredBy === 'trace_spike'
+      ? createEntry('warning', '[TRACE SPIKE ACTIVE]')
+      : null;
+
   // Track doom countdown decrement for later injection into result
   let doomCountdownDecremented = false;
   let newDoomCountdown = 0;
-  
+
   if (state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
     newDoomCountdown = state.sessionDoomCountdown - 1;
     doomCountdownDecremented = true;
-    
+
     if (newDoomCountdown <= 0) {
       return {
         output: [
@@ -5662,7 +6004,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         delayMs: 3000,
       };
     }
-    
+
     // Continue with normal command using decremented countdown
     state = { ...state, sessionDoomCountdown: newDoomCountdown };
   }
@@ -5671,9 +6013,9 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // GOD MODE - Hidden developer commands for testing
   // Activation: "iddqd" (classic Doom cheat)
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   const lowerInput = input.trim().toLowerCase();
-  
+
   if (lowerInput === 'iddqd') {
     if (state.godMode) {
       return {
@@ -5704,11 +6046,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       stateChanges: { godMode: true },
     };
   }
-  
+
   // Handle god mode commands
   if (state.godMode && lowerInput.startsWith('god ')) {
     const godCmd = lowerInput.slice(4).trim();
-    
+
     if (godCmd === 'help') {
       return {
         output: [
@@ -5734,9 +6076,15 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {},
       };
     }
-    
+
     if (godCmd === 'evidence') {
-      const allTruths: TruthCategory[] = ['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026'];
+      const allTruths: TruthCategory[] = [
+        'debris_relocation',
+        'being_containment',
+        'telepathic_scouts',
+        'international_actors',
+        'transition_2026',
+      ];
       const newTruths = new Set<TruthCategory>(allTruths);
       return {
         output: [
@@ -5755,7 +6103,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         },
       };
     }
-    
+
     if (godCmd === 'save') {
       return {
         output: [
@@ -5769,7 +6117,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         },
       };
     }
-    
+
     if (godCmd === 'icq') {
       return {
         output: [
@@ -5783,19 +6131,17 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         skipToPhase: 'icq' as const,
       };
     }
-    
+
     if (godCmd === 'victory') {
       return {
-        output: [
-          createEntry('system', '═══ JUMPING TO VICTORY ═══'),
-        ],
+        output: [createEntry('system', '═══ JUMPING TO VICTORY ═══')],
         stateChanges: {
           gameWon: true,
         },
         skipToPhase: 'victory' as const,
       };
     }
-    
+
     if (godCmd === 'reset') {
       return {
         output: [
@@ -5816,7 +6162,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         },
       };
     }
-    
+
     if (godCmd === 'status') {
       const truths = Array.from(state.truthsDiscovered || []);
       return {
@@ -5837,7 +6183,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {},
       };
     }
-    
+
     if (godCmd === 'stable') {
       return {
         output: [
@@ -5851,7 +6197,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         },
       };
     }
-    
+
     if (godCmd === 'doom') {
       return {
         output: [
@@ -5865,13 +6211,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         },
       };
     }
-    
+
     // New ending shortcuts
     if (godCmd === 'bad') {
       return {
-        output: [
-          createEntry('system', '═══ JUMPING TO BAD ENDING ═══'),
-        ],
+        output: [createEntry('system', '═══ JUMPING TO BAD ENDING ═══')],
         stateChanges: {
           isGameOver: true,
           gameOverReason: 'GOD MODE - BAD ENDING',
@@ -5879,12 +6223,10 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         skipToPhase: 'bad_ending' as const,
       };
     }
-    
+
     if (godCmd === 'neutral') {
       return {
-        output: [
-          createEntry('system', '═══ JUMPING TO NEUTRAL ENDING ═══'),
-        ],
+        output: [createEntry('system', '═══ JUMPING TO NEUTRAL ENDING ═══')],
         stateChanges: {
           isGameOver: true,
           gameOverReason: 'GOD MODE - NEUTRAL ENDING',
@@ -5892,19 +6234,17 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         skipToPhase: 'neutral_ending' as const,
       };
     }
-    
+
     if (godCmd === 'secret') {
       return {
-        output: [
-          createEntry('system', '═══ JUMPING TO SECRET ENDING ═══'),
-        ],
+        output: [createEntry('system', '═══ JUMPING TO SECRET ENDING ═══')],
         stateChanges: {
           ufo74SecretDiscovered: true,
         },
         skipToPhase: 'secret_ending' as const,
       };
     }
-    
+
     if (godCmd === 'countdown') {
       return {
         output: [
@@ -5913,11 +6253,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         ],
         stateChanges: {
           countdownActive: true,
-          countdownEndTime: Date.now() + (2 * 60 * 1000), // 2 minutes
+          countdownEndTime: Date.now() + 2 * 60 * 1000, // 2 minutes
         },
       };
     }
-    
+
     if (godCmd === 'unlock') {
       return {
         output: [
@@ -5933,7 +6273,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         },
       };
     }
-    
+
     return {
       output: [
         createEntry('error', `Unknown god command: ${godCmd}`),
@@ -5942,11 +6282,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       stateChanges: {},
     };
   }
-  
+
   // Check for pending decrypt answer
   if (state.pendingDecryptFile) {
     const filePath = state.pendingDecryptFile;
-    
+
     // Cancel decryption if user types cancel
     if (input.toLowerCase().trim() === 'cancel') {
       return {
@@ -5956,22 +6296,22 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         },
       };
     }
-    
+
     const node = getNode(filePath, state);
-    
+
     if (node && node.type === 'file') {
       const file = node as FileNode;
       if (file.securityQuestion) {
         const answer = input.trim().toLowerCase();
         const validAnswers = file.securityQuestion.answers.map(a => a.toLowerCase());
-        
+
         if (validAnswers.includes(answer)) {
           // Correct answer - perform decryption
           return performDecryption(filePath, file, state);
         } else {
           // Wrong answer
           const newAlertCounter = state.legacyAlertCounter + 1;
-          
+
           if (newAlertCounter >= 8) {
             return {
               output: [
@@ -5992,7 +6332,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
               delayMs: 2000,
             };
           }
-          
+
           return {
             output: [
               createEntry('error', 'AUTHENTICATION FAILED'),
@@ -6012,7 +6352,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       }
     }
   }
-  
+
   // Check for lockdown
   if (state.legacyAlertCounter >= 10) {
     return {
@@ -6026,7 +6366,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       },
     };
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // TURING EVALUATION - Handle responses when evaluation is active
   // NOTE: The TuringTestOverlay component is the primary UI for this feature.
@@ -6036,7 +6376,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     const answer = command.toUpperCase();
     const questionIndex = state.turingEvaluationIndex || 0;
     const question = TURING_QUESTIONS[questionIndex];
-    
+
     // Validate answer
     if (!['A', 'B', 'C'].includes(answer)) {
       return {
@@ -6047,13 +6387,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {},
       };
     }
-    
+
     const selectedOption = question.options.find(opt => opt.letter === answer);
-    
+
     if (selectedOption?.isMachine) {
       // Correct - selected the machine response
       const nextIndex = questionIndex + 1;
-      
+
       if (nextIndex >= TURING_QUESTIONS.length) {
         // Passed all questions!
         return {
@@ -6093,7 +6433,9 @@ export function executeCommand(input: string, state: GameState): CommandResult {
             createEntry('system', `  QUESTION ${nextIndex + 1} of 3:`),
             createEntry('output', `  "${nextQuestion.prompt}"`),
             createEntry('system', ''),
-            ...nextQuestion.options.map(opt => createEntry('output', `    ${opt.letter}. ${opt.text}`)),
+            ...nextQuestion.options.map(opt =>
+              createEntry('output', `    ${opt.letter}. ${opt.text}`)
+            ),
             createEntry('system', ''),
             createEntry('system', '  Type A, B, or C to respond.'),
             createEntry('system', ''),
@@ -6134,24 +6476,24 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       };
     }
   }
-  
+
   // Empty command
   if (!command) {
     return { output: [], stateChanges: {} };
   }
-  
+
   // Handle "override protocol" as special case
   if (command === 'override') {
     return commands.override(args, state);
   }
-  
+
   // Find command handler
   const handler = commands[command];
-  
+
   if (!handler) {
     // Increment legacy alert counter for invalid commands
     const newAlertCounter = state.legacyAlertCounter + 1;
-    
+
     // Check if this triggers game over
     if (newAlertCounter >= 8) {
       return {
@@ -6173,10 +6515,10 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         triggerFlicker: true,
       };
     }
-    
+
     // Provide helpful tips based on what the player might have been trying to do
     const tips = getCommandTip(command, args);
-    
+
     // Build output with clear risk warning
     const output: TerminalEntry[] = [
       ...tips,
@@ -6184,18 +6526,25 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       createEntry('warning', '⚠ RISK INCREASED: Invalid commands draw system attention.'),
       createEntry('system', `   [Invalid attempts: ${newAlertCounter}/8]`),
     ];
-    
+
     // After 3 wrong commands, UFO74 steps in to help
     if (newAlertCounter === 3) {
       output.push(createEntry('system', ''));
       output.push(createEntry('ufo74', '>> hey kid, youre fumbling. let me help. <<'));
-      output.push(createEntry('ufo74', '>> try these: "ls" to see files, "cd <dir>" to move, "open <file>" to read. <<'));
+      output.push(
+        createEntry(
+          'ufo74',
+          '>> try these: "ls" to see files, "cd <dir>" to move, "open <file>" to read. <<'
+        )
+      );
       output.push(createEntry('ufo74', '>> type "help" if youre lost. <<'));
     } else if (newAlertCounter >= 5) {
       output.push(createEntry('system', ''));
-      output.push(createEntry('ufo74', '>> careful. too many mistakes and theyll lock you out. <<'));
+      output.push(
+        createEntry('ufo74', '>> careful. too many mistakes and theyll lock you out. <<')
+      );
     }
-    
+
     return {
       output,
       stateChanges: {
@@ -6204,24 +6553,28 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       },
     };
   }
-  
+
   const result = handler(args, state);
 
   if (traceSpikeWarning) {
     result.output = [traceSpikeWarning, ...result.output];
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // SESSION COMMAND COUNTER - Track total commands for time-sensitive content
   // ═══════════════════════════════════════════════════════════════════════════
   result.stateChanges.sessionCommandCount = (state.sessionCommandCount || 0) + 1;
-  
+
   // After enough commands, flag that early window has passed (affects time-sensitive files)
   const commandCount = (state.sessionCommandCount || 0) + 1;
   if (commandCount >= 30 && !state.flags['earlyWindowPassed']) {
-    result.stateChanges.flags = { ...result.stateChanges.flags, ...state.flags, earlyWindowPassed: true };
+    result.stateChanges.flags = {
+      ...result.stateChanges.flags,
+      ...state.flags,
+      earlyWindowPassed: true,
+    };
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // SINGULAR EVENTS - Check for irreversible one-time events
   // ═══════════════════════════════════════════════════════════════════════════
@@ -6243,24 +6596,25 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       result.triggerTuringTest = true;
     }
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // SYSTEM HOSTILITY - Update and apply personality degradation
   // ═══════════════════════════════════════════════════════════════════════════
   const hostilityIncrease = calculateHostilityIncrease(state, command);
   if (hostilityIncrease > 0) {
     result.stateChanges.systemHostilityLevel = Math.min(
-      (state.systemHostilityLevel || 0) + hostilityIncrease, 
+      (state.systemHostilityLevel || 0) + hostilityIncrease,
       5
     );
   }
-  
+
   // Apply hostile filtering to tips and system messages at high hostility
-  const currentHostility = result.stateChanges.systemHostilityLevel ?? state.systemHostilityLevel ?? 0;
+  const currentHostility =
+    result.stateChanges.systemHostilityLevel ?? state.systemHostilityLevel ?? 0;
   if (currentHostility >= 3) {
     result.output = applyHostileFiltering(result.output, currentHostility);
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // DOOM COUNTDOWN - Inject warning and state change if terrible mistake was triggered
   // The decrement was calculated earlier (around line 5256), now apply it to result
@@ -6268,27 +6622,35 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   if (doomCountdownDecremented) {
     // Add the decremented countdown to state changes
     result.stateChanges.sessionDoomCountdown = newDoomCountdown;
-    
+
     // Add warning to output
     if (newDoomCountdown > 0) {
-      const countdownWarning = newDoomCountdown <= 3 
-        ? [createEntry('error', ''), createEntry('error', `▓▓▓ PURGE IN ${newDoomCountdown} ▓▓▓`), createEntry('error', '')]
-        : [createEntry('warning', ''), createEntry('warning', `[PURGE COUNTDOWN: ${newDoomCountdown}]`)];
-      
+      const countdownWarning =
+        newDoomCountdown <= 3
+          ? [
+              createEntry('error', ''),
+              createEntry('error', `▓▓▓ PURGE IN ${newDoomCountdown} ▓▓▓`),
+              createEntry('error', ''),
+            ]
+          : [
+              createEntry('warning', ''),
+              createEntry('warning', `[PURGE COUNTDOWN: ${newDoomCountdown}]`),
+            ];
+
       result.output = [...result.output, ...countdownWarning];
     }
   }
-  
+
   // Check if we should add an incognito message after reading important files
   // Trigger when file was successfully opened/decrypted and contains notice entries
-  if ((command === 'open' || command === 'decrypt')) {
+  if (command === 'open' || command === 'decrypt') {
     // Check if file was successfully read (not an error)
     const wasSuccessfulRead = !result.output.some(entry => entry.type === 'error');
-    
+
     if (wasSuccessfulRead) {
       // Extract file path from args
       const filePath = args.length > 0 ? resolvePath(args[0], state.currentPath) : undefined;
-      
+
       // Check if file is encrypted and not yet decrypted
       let isEncryptedAndLocked = false;
       let isFirstUnstable = false;
@@ -6298,21 +6660,30 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           const file = node as FileNode;
           const mutation = state.fileMutations[filePath];
           isEncryptedAndLocked = file.status === 'encrypted' && !mutation?.decrypted;
-          
+
           // Check if this is the first unstable file
           if (file.status === 'unstable' && !state.flags.seenUnstableWarning) {
             isFirstUnstable = true;
-            result.stateChanges.flags = { ...state.flags, ...result.stateChanges.flags, seenUnstableWarning: true };
+            result.stateChanges.flags = {
+              ...state.flags,
+              ...result.stateChanges.flags,
+              seenUnstableWarning: true,
+            };
           }
         }
       }
-      
+
       // Get notices from this read (only if not encrypted)
-      const notices = isEncryptedAndLocked ? [] : result.output.filter(entry => 
-        entry.type === 'notice' && 
-        (entry.content.includes('NOTICE:') || entry.content.includes('MEMO FLAG:') || entry.content.includes('SYSTEM:'))
-      );
-      
+      const notices = isEncryptedAndLocked
+        ? []
+        : result.output.filter(
+            entry =>
+              entry.type === 'notice' &&
+              (entry.content.includes('NOTICE:') ||
+                entry.content.includes('MEMO FLAG:') ||
+                entry.content.includes('SYSTEM:'))
+          );
+
       const incognitoMessage = getIncognitoMessage(
         {
           ...state,
@@ -6325,7 +6696,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         isEncryptedAndLocked,
         isFirstUnstable
       );
-      
+
       if (incognitoMessage) {
         // Always queue UFO74 messages to show after player presses Enter
         // This keeps the pacing consistent - player sees file content, then presses Enter for UFO74 reaction
@@ -6335,7 +6706,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       }
     }
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // WANDERING DETECTION - Implicit guidance for lost players
   // ═══════════════════════════════════════════════════════════════════════════
@@ -6349,13 +6720,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       ...wanderingCheck.stateChanges,
     };
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // DETECTION STATE WARNINGS - Urgent feedback at high detection levels
   // ═══════════════════════════════════════════════════════════════════════════
   const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
   const prevDetection = state.detectionLevel;
-  
+
   // Check if detection just crossed into SUSPICIOUS territory (50-69)
   if (newDetection >= 50 && newDetection < 70 && prevDetection < 50) {
     result.output = [
@@ -6367,7 +6738,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       createEntry('warning', '────────────────────────────────────────'),
     ];
   }
-  
+
   // Check if detection crossed into ALERT territory (70-84)
   if (newDetection >= 70 && newDetection < 85 && prevDetection < 70) {
     result.output = [
@@ -6381,7 +6752,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       createEntry('ufo74', '>> careful. theyre paying attention now. <<'),
     ];
   }
-  
+
   // Check if detection crossed into CRITICAL territory (85-89)
   if (newDetection >= 85 && newDetection < 90 && prevDetection < 85) {
     result.output = [
@@ -6398,7 +6769,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     result.triggerFlicker = true;
     result.stateChanges.avatarExpression = 'scared'; // Critical detection - scared expression
   }
-  
+
   // Check if detection crossed into IMMINENT territory (90+) - hide becomes available
   if (newDetection >= 90 && prevDetection < 90) {
     result.output = [
@@ -6414,7 +6785,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     result.stateChanges.hideAvailable = true;
     result.triggerFlicker = true;
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // MAX DETECTION GAME OVER - Detection reached 100%, session terminated
   // ═══════════════════════════════════════════════════════════════════════════
@@ -6437,7 +6808,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     result.stateChanges.gameOverReason = 'INTRUSION DETECTED - TRACED';
     result.triggerFlicker = true;
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // WRONG ATTEMPTS GAME OVER - Too many failed commands/auth attempts
   // Skip if game over is already triggered (e.g., override lockout takes priority)
@@ -6460,14 +6831,14 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     result.stateChanges.gameOverReason = 'TERMINAL LOCKOUT - AUTHENTICATION FAILURE';
     result.triggerFlicker = true;
   }
-  
+
   return result;
 }
 
 // Generate helpful tips for unknown commands
 function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   const input = `${command} ${args.join(' ')}`.trim().toLowerCase();
-  
+
   // Check for common navigation attempts
   if (command === 'dir' || command === 'list' || command === 'show') {
     return [
@@ -6477,10 +6848,24 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
       createEntry('system', ''),
     ];
   }
-  
+
   // Check for directory-like input (ends with / or looks like a path)
-  if (command.includes('/') || command.endsWith('/') || 
-      ['storage', 'ops', 'comms', 'admin', 'tmp', 'assets', 'quarantine', 'prato', 'exo', 'psi'].includes(command)) {
+  if (
+    command.includes('/') ||
+    command.endsWith('/') ||
+    [
+      'storage',
+      'ops',
+      'comms',
+      'admin',
+      'tmp',
+      'assets',
+      'quarantine',
+      'prato',
+      'exo',
+      'psi',
+    ].includes(command)
+  ) {
     return [
       createEntry('system', ''),
       createEntry('system', 'TIP:'),
@@ -6489,10 +6874,17 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
       createEntry('system', ''),
     ];
   }
-  
+
   // Check for file-like input (has extension)
-  if (command.includes('.') || command.endsWith('.txt') || command.endsWith('.log') || 
-      command.endsWith('.enc') || command.endsWith('.dat') || command.endsWith('.red') || command.endsWith('.meta')) {
+  if (
+    command.includes('.') ||
+    command.endsWith('.txt') ||
+    command.endsWith('.log') ||
+    command.endsWith('.enc') ||
+    command.endsWith('.dat') ||
+    command.endsWith('.red') ||
+    command.endsWith('.meta')
+  ) {
     return [
       createEntry('system', ''),
       createEntry('system', 'TIP:'),
@@ -6501,9 +6893,15 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
       createEntry('system', ''),
     ];
   }
-  
+
   // Check for read/view/cat attempts
-  if (command === 'read' || command === 'view' || command === 'cat' || command === 'type' || command === 'more') {
+  if (
+    command === 'read' ||
+    command === 'view' ||
+    command === 'cat' ||
+    command === 'type' ||
+    command === 'more'
+  ) {
     const file = args[0] || '<filename>';
     return [
       createEntry('system', ''),
@@ -6513,7 +6911,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
       createEntry('system', ''),
     ];
   }
-  
+
   // Check for exit attempts
   if (command === 'quit' || command === 'exit' || command === 'logout' || command === 'bye') {
     return [
@@ -6524,7 +6922,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
       createEntry('system', ''),
     ];
   }
-  
+
   // Check for unlock/access attempts
   if (command === 'unlock' || command === 'access' || command === 'sudo' || command === 'admin') {
     return [
@@ -6536,7 +6934,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
       createEntry('system', ''),
     ];
   }
-  
+
   // Check for back/up navigation
   if (command === 'back' || command === 'up' || command === '..') {
     return [
@@ -6547,7 +6945,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
       createEntry('system', ''),
     ];
   }
-  
+
   // Check for info/about
   if (command === 'info' || command === 'about' || command === 'whoami' || command === 'who') {
     return [
@@ -6558,7 +6956,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
       createEntry('system', ''),
     ];
   }
-  
+
   // Default fallback
   return [
     createEntry('system', ''),
@@ -6570,149 +6968,4 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
     createEntry('system', 'Use "cd <dir>" to navigate.'),
     createEntry('system', ''),
   ];
-}
-
-// Tutorial messages from UFO74 - shown one at a time
-export const TUTORIAL_MESSAGES: string[][] = [
-  [
-    '┌─────────────────────────────────────────────────────────┐',
-    '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │',
-    '└─────────────────────────────────────────────────────────┘',
-  ],
-  [
-    'UFO74: hey kid, youre in. nice work.',
-  ],
-  [
-    'UFO74: listen carefully. i dont have much time to explain.',
-  ],
-  [
-    'UFO74: this is a government archive. something happened in',
-    '       varginha, brazil in january 1996. they buried it.',
-  ],
-  [
-    'UFO74: i need you to find evidence of 5 things:',
-  ],
-  [
-    '       1. what they RECOVERED (debris, materials)',
-    '       2. what they CAPTURED (beings, specimens)',
-    '       3. how they COMMUNICATED (signals, telepathy)',
-    '       4. who else was INVOLVED (other countries)',
-    '       5. what happens NEXT (future dates, plans)',
-  ],
-  // Step 6: After showing the 5 things, trigger evidence tracker reveal
-  [
-    '       >> EVIDENCE TRACKER INITIALIZED <<',
-  ],
-  [
-    'UFO74: the files are scattered across directories.',
-    '       use "ls" to see whats there, "cd" to move around,',
-    '       and "open" to read files. some are encrypted.',
-  ],
-  [
-    'UFO74: pro tip: press TAB to autocomplete commands and filenames.',
-  ],
-  [
-    'UFO74: be careful, the more you move around—the risk will',
-    '       rise, and if it reaches the maximum, our connection',
-    '       will end kid.',
-  ],
-  // Step 10: After showing risk warning, trigger risk bar reveal
-  [
-    '       >> RISK MONITOR ACTIVATED <<',
-  ],
-  [
-    'UFO74: you also got a MEMORY indicator up there. thats how',
-    '       much of the archive is still intact. corruption and',
-    '       failed recoveries will eat away at it.',
-  ],
-  [
-    'UFO74: the real stuff is in the encrypted files and in',
-    '       hidden files. to see hidden files, we MUST override',
-    '       the terminal.',
-  ],
-  [
-    'UFO74: ill keep track of what you find. good luck hackerkid.',
-  ],
-  [
-    '>> CONNECTION IDLE <<',
-    '',
-    'Type "help" for available commands.',
-  ],
-];
-
-// Boot sequence for new game (without UFO74 tutorial)
-export function generateBootSequence(): TerminalEntry[] {
-  return [
-    createEntry('system', ''),
-    createEntry('system', '═══════════════════════════════════════════════════════════'),
-    createEntry('system', 'BRAZILIAN INTELLIGENCE LEGACY SYSTEM'),
-    createEntry('system', 'TERMINAL ACCESS POINT — NODE 7'),
-    createEntry('system', '═══════════════════════════════════════════════════════════'),
-    createEntry('system', ''),
-    createEntry('system', 'SYSTEM DATE: JANUARY 1996'),
-    createEntry('system', ''),
-    createEntry('warning', 'WARNING: Unauthorized access detected'),
-    createEntry('warning', 'WARNING: Session logging enabled'),
-    createEntry('system', ''),
-    createEntry('system', 'INCIDENT-RELATED ARCHIVE'),
-    createEntry('warning', 'WARNING: Partial access may result in incomplete conclusions.'),
-    createEntry('system', ''),
-  ];
-}
-
-// Convert tutorial message to entries
-export function getTutorialMessage(step: number): TerminalEntry[] {
-  if (step < 0 || step >= TUTORIAL_MESSAGES.length) {
-    return [];
-  }
-  
-  const messages = TUTORIAL_MESSAGES[step];
-  const entries: TerminalEntry[] = [createEntry('system', '')];
-  
-  const isLastStep = step === TUTORIAL_MESSAGES.length - 1;
-  const isFirstStep = step === 0;
-  
-  // First step shows channel open header
-  if (isFirstStep) {
-    entries.push(createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'));
-    entries.push(createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'));
-    entries.push(createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'));
-    entries.push(createEntry('system', ''));
-  }
-  
-  for (let i = 0; i < messages.length; i++) {
-    const msg = messages[i];
-    
-    if (isFirstStep) {
-      // Skip the original header lines (they're replaced above)
-      continue;
-    } else if (step === 6 || step === 9) {
-      // Tracker reveal messages - styled as notices
-      entries.push(createEntry('notice', msg));
-    } else if (isLastStep) {
-      // Last message: first line is channel closed, rest are system
-      if (i === 0) {
-        entries.push(createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'));
-        entries.push(createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'));
-        entries.push(createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'));
-        entries.push(createEntry('system', ''));
-        entries.push(createEntry('system', msg));
-      } else {
-        entries.push(createEntry('system', msg));
-      }
-    } else {
-      // All other UFO74 messages use ufo74 type for consistent light blue styling
-      entries.push(createEntry('ufo74', msg));
-    }
-  }
-  
-  // Add "press enter" hint except for the last message
-  if (!isLastStep) {
-    entries.push(createEntry('system', ''));
-    entries.push(createEntry('system', '                    [ press ENTER to continue ]'));
-  } else {
-    entries.push(createEntry('system', ''));
-  }
-  
-  return entries;
 }
