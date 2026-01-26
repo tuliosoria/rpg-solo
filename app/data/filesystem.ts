@@ -4058,8 +4058,6 @@ const surveillance_footage_recovery: FileNode = {
     '  Audio track corrupted beyond recovery.',
     '',
     'WARNING: Visual content may cause disorientation.',
-    '',
-    'Press ENTER to initiate video playback...',
   ],
   videoTrigger: {
     src: '/videos/Et dissect.mp4',

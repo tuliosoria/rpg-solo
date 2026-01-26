@@ -196,7 +196,7 @@ export default function Terminal({
 
   // UFO74 Encrypted Channel state machine
   // 'idle' = normal terminal operation
-  // 'awaiting_open' = "Receiving message from UFO74. Press Enter to open encrypted channel."
+  // 'awaiting_open' = "▓▓▓ INCOMING ENCRYPTED TRANSMISSION FROM UFO74 ▓▓▓"
   // 'open' = channel is open, showing messages one at a time
   // 'awaiting_close' = final message shown, waiting for Enter to close channel
   const [encryptedChannelState, setEncryptedChannelState] = useState<
@@ -1041,8 +1041,8 @@ export default function Terminal({
           setTimeout(() => {
             const promptText =
               remaining.length === 0
-                ? '                    [ press ENTER to close channel ]'
-                : '                    [ press ENTER to continue ]';
+                ? ''
+                : '';
 
             setGameState(prev => ({
               ...prev,
@@ -1067,10 +1067,7 @@ export default function Terminal({
           const currentMessages = [...pendingUfo74Messages];
           const [nextMessage, ...remaining] = currentMessages;
 
-          const promptText =
-            remaining.length === 0
-              ? '                    [ press ENTER to close channel ]'
-              : '                    [ press ENTER to continue ]';
+          const promptText = '';
 
           // Single atomic state update with both message and prompt
           setGameState(prev => ({
@@ -1110,7 +1107,7 @@ export default function Terminal({
       if (encryptedChannelState !== 'idle' && inputValue.trim()) {
         const errorEntry = createEntry(
           'error',
-          'ERROR: Encrypted channel active. Press ENTER to continue.'
+          'ERROR: Encrypted channel active.'
         );
         setGameState(prev => ({
           ...prev,
@@ -1126,7 +1123,7 @@ export default function Terminal({
         if (inputValue.trim()) {
           const errorEntry = createEntry(
             'error',
-            'ERROR: Incoming transmission in progress. Press ENTER to continue.'
+            'ERROR: Incoming transmission in progress.'
           );
           setGameState(prev => ({
             ...prev,
@@ -1286,14 +1283,14 @@ export default function Terminal({
               pendingMediaMessages.push(
                 createEntry('warning', ''),
                 createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-                createEntry('system', 'Press ENTER to view recovered visual data.')
+                createEntry('system', '')
               );
             }
             if (result.videoTrigger) {
               pendingMediaMessages.push(
                 createEntry('warning', ''),
                 createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-                createEntry('system', 'Press ENTER to view recovered video data.')
+                createEntry('system', '')
               );
             }
             setGameState(prev => ({
@@ -1319,14 +1316,14 @@ export default function Terminal({
           pendingMediaMessages.push(
             createEntry('warning', ''),
             createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-            createEntry('system', 'Press ENTER to view recovered visual data.')
+            createEntry('system', '')
           );
         }
         if (result.videoTrigger) {
           pendingMediaMessages.push(
             createEntry('warning', ''),
             createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-            createEntry('system', 'Press ENTER to view recovered video data.')
+            createEntry('system', '')
           );
         }
 
@@ -1346,7 +1343,7 @@ export default function Terminal({
               createEntry('system', ''),
               createEntry(
                 'ufo74',
-                'Receiving message from UFO74. Press Enter to open encrypted channel.'
+                '▓▓▓ INCOMING ENCRYPTED TRANSMISSION FROM UFO74 ▓▓▓'
               ),
             ],
           }));
@@ -1382,7 +1379,7 @@ export default function Terminal({
                 createEntry('system', ''),
                 createEntry(
                   'ufo74',
-                  'Receiving message from UFO74. Press Enter to open encrypted channel.'
+                  '▓▓▓ INCOMING ENCRYPTED TRANSMISSION FROM UFO74 ▓▓▓'
                 ),
               ],
             }));
@@ -1975,21 +1972,49 @@ export default function Terminal({
       <div className={styles.output} ref={outputRef}>
         {gameState.history.map(renderEntry)}
         {isProcessing && <div className={`${styles.line} ${styles.processing}`}>Processing...</div>}
+        {/* Blinking terminal cursor at end of text when in enter-only mode */}
+        {!isProcessing && 
+          (!gameState.tutorialComplete ||
+           encryptedChannelState !== 'idle' ||
+           pendingImage ||
+           pendingVideo ||
+           (gameState.ufo74SecretDiscovered && gamePhase === 'terminal')) &&
+          !gameState.isGameOver && (
+          <span className={styles.terminalCursor}>▌</span>
+        )}
       </div>
 
       {/* Input area */}
-      {/* Show big ENTER button when in enter-only mode (tutorial, encrypted channel, pending media, secret ending confirmation) */}
+      {/* Show subtle enter prompt when in enter-only mode (tutorial, encrypted channel, pending media, secret ending confirmation) */}
       {(!gameState.tutorialComplete ||
         encryptedChannelState !== 'idle' ||
         pendingImage ||
         pendingVideo ||
         (gameState.ufo74SecretDiscovered && gamePhase === 'terminal')) &&
       !gameState.isGameOver ? (
-        <form onSubmit={handleSubmit} className={styles.inputArea}>
-          <button type="submit" className={styles.enterButton} disabled={isProcessing} autoFocus>
-            PRESS ENTER TO CONTINUE
+        <>
+          {/* Hidden form for keyboard enter handling */}
+          <form onSubmit={handleSubmit} style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
+            <button type="submit" autoFocus />
+          </form>
+          {/* Subtle bottom-right enter prompt */}
+          <button 
+            type="button" 
+            className={styles.enterPrompt} 
+            disabled={isProcessing} 
+            onClick={handleSubmit as unknown as React.MouseEventHandler}
+            tabIndex={-1}
+          >
+            <span className={styles.enterPromptSymbol}>↵</span>
+            <span className={styles.enterPromptText}>
+              {encryptedChannelState === 'awaiting_close' ? 'close' :
+               encryptedChannelState !== 'idle' ? 'respond' :
+               pendingImage || pendingVideo ? 'view' :
+               !gameState.tutorialComplete ? '' :
+               'continue'}
+            </span>
           </button>
-        </form>
+        </>
       ) : (
         <form onSubmit={handleSubmit} className={styles.inputArea}>
           <span className={styles.prompt}>&gt;</span>
@@ -2110,7 +2135,7 @@ export default function Terminal({
                   createEntry('system', ''),
                   createEntry(
                     'ufo74',
-                    'Receiving message from UFO74. Press Enter to open encrypted channel.'
+                    '▓▓▓ INCOMING ENCRYPTED TRANSMISSION FROM UFO74 ▓▓▓'
                   ),
                 ],
               }));
@@ -2154,7 +2179,7 @@ export default function Terminal({
                   createEntry('system', ''),
                   createEntry(
                     'ufo74',
-                    'Receiving message from UFO74. Press Enter to open encrypted channel.'
+                    '▓▓▓ INCOMING ENCRYPTED TRANSMISSION FROM UFO74 ▓▓▓'
                   ),
                 ],
               }));

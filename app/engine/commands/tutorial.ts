@@ -345,13 +345,8 @@ export function getTutorialMessage(step: number): TerminalEntry[] {
     }
   }
 
-  // Add "press enter" hint except for the last message
-  if (!isLastStep) {
-    entries.push(createEntry('system', ''));
-    entries.push(createEntry('system', '                    [ press ENTER to continue ]'));
-  } else {
-    entries.push(createEntry('system', ''));
-  }
+  // Add blank line after each step (enter prompt is now handled by UI)
+  entries.push(createEntry('system', ''));
 
   return entries;
 }

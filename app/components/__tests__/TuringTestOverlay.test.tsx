@@ -354,7 +354,7 @@ describe('TuringTestOverlay', () => {
     expect(mockOnComplete).toHaveBeenCalled();
   });
 
-  it('shows press enter prompt on result screen', () => {
+  it('shows enter prompt symbol on result screen', () => {
     render(<TuringTestOverlay onComplete={mockOnComplete} />);
     
     // Answer all questions
@@ -365,7 +365,7 @@ describe('TuringTestOverlay', () => {
     act(() => { fireEvent.keyDown(window, { key: 'C' }); });
     act(() => { vi.advanceTimersByTime(1600); });
     
-    expect(screen.getByText('[Press ENTER to continue]')).toBeInTheDocument();
+    expect(screen.getByText('↵')).toBeInTheDocument();
   });
 
   it('has initial flicker effect', () => {

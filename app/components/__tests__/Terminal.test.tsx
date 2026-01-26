@@ -268,12 +268,12 @@ describe('Terminal Component', () => {
       } as GameState,
     };
 
-    it('shows enter button in tutorial mode', () => {
+    it('shows enter prompt in tutorial mode', () => {
       render(<Terminal {...tutorialProps} />);
       
-      // Tutorial mode should show a big "PRESS ENTER TO CONTINUE" button instead of input
-      const enterButton = screen.getByRole('button', { name: /press enter to continue/i });
-      expect(enterButton).toBeInTheDocument();
+      // Tutorial mode should show a subtle enter prompt button
+      const enterPrompt = screen.getByRole('button', { name: /↵/ });
+      expect(enterPrompt).toBeInTheDocument();
       
       // Should NOT have an input field in tutorial mode
       const input = document.querySelector('input');
@@ -283,12 +283,11 @@ describe('Terminal Component', () => {
     it('advances tutorial on Enter key', async () => {
       render(<Terminal {...tutorialProps} />);
       
-      const enterButton = screen.getByRole('button', { name: /press enter to continue/i });
-      const form = enterButton.closest('form');
+      const enterPrompt = screen.getByRole('button', { name: /↵/ });
       
-      // Press Enter to start showing tutorial content
+      // Click to advance tutorial
       act(() => {
-        fireEvent.submit(form!);
+        fireEvent.click(enterPrompt);
       });
       
       act(() => {
@@ -300,16 +299,16 @@ describe('Terminal Component', () => {
       expect(output).toBeTruthy();
     });
 
-    it('shows enter button instead of input during tutorial', async () => {
+    it('shows enter prompt instead of input during tutorial', async () => {
       render(<Terminal {...tutorialProps} />);
       
-      // In tutorial mode, there's no input to type into - just the enter button
-      const enterButton = screen.getByRole('button', { name: /press enter to continue/i });
-      expect(enterButton).toBeInTheDocument();
+      // In tutorial mode, there's no input to type into - just the enter prompt
+      const enterPrompt = screen.getByRole('button', { name: /↵/ });
+      expect(enterPrompt).toBeInTheDocument();
       
       // Click the button to advance
       act(() => {
-        fireEvent.click(enterButton);
+        fireEvent.click(enterPrompt);
       });
       
       act(() => {
@@ -318,7 +317,7 @@ describe('Terminal Component', () => {
       
       // Tutorial should still be in progress (button still visible)
       // The button advances the tutorial step by step
-      expect(screen.getByRole('button', { name: /press enter to continue/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /↵/ })).toBeInTheDocument();
     });
   });
 

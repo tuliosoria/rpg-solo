@@ -123,7 +123,7 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
                 : 'IDENTITY REJECTED: HUMAN BEHAVIORAL PATTERNS DETECTED'}
             </div>
 
-            <div className={styles.resultPrompt}>[Press ENTER to continue]</div>
+            <div className={styles.resultPrompt}>↵</div>
           </div>
         </div>
       </div>

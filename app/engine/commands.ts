@@ -4031,7 +4031,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('ufo74', "[UFO74]: You have the proof now. Don't let them bury it again."),
           createEntry('system', ''),
           createEntry('warning', '▓▓▓ THE WHOLE TRUTH AWAITS ▓▓▓'),
-          createEntry('system', '[Press ENTER to continue...]'),
         ],
         stateChanges: {
           ufo74SecretDiscovered: true,
