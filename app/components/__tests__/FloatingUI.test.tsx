@@ -8,7 +8,7 @@ import { FloatingUIProvider, useFloatingUI, FloatingElement } from '../FloatingU
 
 describe('FloatingUIProvider', () => {
   it('provides context to children', () => {
-    let contextValue: ReturnType<typeof useFloatingUI> | null = null;
+    let contextValue: ReturnType<typeof useFloatingUI> | undefined;
     
     function Consumer() {
       contextValue = useFloatingUI();
@@ -21,13 +21,13 @@ describe('FloatingUIProvider', () => {
       </FloatingUIProvider>
     );
     
-    expect(contextValue).not.toBeNull();
-    expect(typeof contextValue?.register).toBe('function');
-    expect(typeof contextValue?.unregister).toBe('function');
-    expect(typeof contextValue?.setVisible).toBe('function');
-    expect(typeof contextValue?.setHeight).toBe('function');
-    expect(typeof contextValue?.getStackOffset).toBe('function');
-    expect(typeof contextValue?.getZoneElements).toBe('function');
+    expect(contextValue).toBeDefined();
+    expect(typeof contextValue!.register).toBe('function');
+    expect(typeof contextValue!.unregister).toBe('function');
+    expect(typeof contextValue!.setVisible).toBe('function');
+    expect(typeof contextValue!.setHeight).toBe('function');
+    expect(typeof contextValue!.getStackOffset).toBe('function');
+    expect(typeof contextValue!.getZoneElements).toBe('function');
   });
 
   it('throws error when useFloatingUI is used outside provider', () => {
