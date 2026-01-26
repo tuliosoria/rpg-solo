@@ -9,6 +9,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"app/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"app/**/*.{ts,tsx}\"",
     "validate-story": "node scripts/validate-story.js",
     "validate-enhanced": "node scripts/validate-enhanced-story.js",
     "analyze-story": "node scripts/analyze-story.js",
@@ -23,6 +27,8 @@
     "yaml": "^2.8.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@next/eslint-plugin-next": "^16.1.4",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
@@ -32,9 +38,15 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.0.18",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "jsdom": "^27.4.0",
+    "prettier": "^3.8.1",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "typescript-eslint": "^8.53.1",
     "vitest": "^4.0.17"
   }
 }
