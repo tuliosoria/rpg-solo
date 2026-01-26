@@ -25,6 +25,15 @@ import {
   attemptEvidenceRevelation,
   getDisturbingContentAvatarExpression,
   getEvidencePotentialSummary,
+  countEvidenceByTier,
+  getCaseStrengthDescription,
+  getFileTier,
+  getFileTierSymbol,
+  attemptCorroborateUpgrade,
+  attemptProvenUpgrade,
+  initializeEvidenceTier,
+  EVIDENCE_TIER_LABELS,
+  EVIDENCE_TIER_SYMBOLS,
 } from './evidenceRevelation';
 import {
   DETECTION_THRESHOLDS,
@@ -48,6 +57,17 @@ import {
   createUFO74Message,
 } from './commands/utils';
 
+// Import tutorial functions for use in commands
+import {
+  getFirstRunMessage,
+  getTutorialTip,
+  shouldShowTutorialTip,
+  getHelpBasics,
+  getHelpEvidence,
+  getHelpWinning,
+  type TutorialTipId,
+} from './commands/tutorial';
+
 // Re-export utilities for backward compatibility
 export {
   generateEntryId,
@@ -63,7 +83,18 @@ export {
 } from './commands/utils';
 
 // Re-export tutorial functions for backward compatibility
-export { TUTORIAL_MESSAGES, generateBootSequence, getTutorialMessage } from './commands/tutorial';
+export { 
+  TUTORIAL_MESSAGES, 
+  generateBootSequence, 
+  getTutorialMessage,
+  getFirstRunMessage,
+  getTutorialTip,
+  shouldShowTutorialTip,
+  getHelpBasics,
+  getHelpEvidence,
+  getHelpWinning,
+} from './commands/tutorial';
+export type { TutorialTipId } from './commands/tutorial';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
@@ -658,7 +689,8 @@ export function applyRandomCorruption(state: GameState): GameState {
 // Check truth progress and generate notices
 function checkTruthProgress(
   state: GameState,
-  newReveals: string[]
+  newReveals: string[],
+  sourceFilePath?: string  // The file that revealed the evidence
 ): { notices: TerminalEntry[]; stateChanges: Partial<GameState> } {
   const notices: TerminalEntry[] = [];
   const stateChanges: Partial<GameState> = {};
@@ -673,6 +705,46 @@ function checkTruthProgress(
   }
 
   const newCount = updatedTruths.size;
+  
+  // Track whether we added a second file to an existing fragment category
+  let secondFragmentSameCategoryFound = false;
+  
+  // Always update linkedFiles for evidence tiers, even if no new truths discovered
+  const updatedTiers = { ...state.evidenceTiers };
+  for (const reveal of newReveals) {
+    if (TRUTH_CATEGORIES.includes(reveal as TruthCategory)) {
+      if (!updatedTiers[reveal]) {
+        updatedTiers[reveal] = {
+          tier: 'fragment',
+          linkedFiles: sourceFilePath ? [sourceFilePath] : [],
+        };
+      } else if (sourceFilePath && !updatedTiers[reveal].linkedFiles.includes(sourceFilePath)) {
+        // Adding a second (or more) file to an existing category
+        if (updatedTiers[reveal].linkedFiles.length >= 1 && updatedTiers[reveal].tier === 'fragment') {
+          secondFragmentSameCategoryFound = true;
+        }
+        updatedTiers[reveal] = {
+          ...updatedTiers[reveal],
+          linkedFiles: [...updatedTiers[reveal].linkedFiles, sourceFilePath],
+        };
+      }
+    }
+  }
+  
+  // Always update tiers if we had reveals
+  if (newReveals.length > 0) {
+    stateChanges.evidenceTiers = updatedTiers;
+  }
+  
+  // Show "second fragment" tutorial tip if conditions met (even if no new truths)
+  if (secondFragmentSameCategoryFound) {
+    if (shouldShowTutorialTip('second_fragment_same_category', state.interactiveTutorialMode, state.tutorialTipsShown || new Set())) {
+      notices.push(...getTutorialTip('second_fragment_same_category'));
+      const newTipsShown = new Set(state.tutorialTipsShown || []);
+      newTipsShown.add('second_fragment_same_category');
+      stateChanges.tutorialTipsShown = newTipsShown;
+    }
+  }
 
   // Only update if we found new truths
   if (newCount > previousCount) {
@@ -687,47 +759,29 @@ function checkTruthProgress(
     // Trigger shocked expression on major discovery
     stateChanges.avatarExpression = 'shocked';
 
-    // Generate institutional-style progress acknowledgments
-    // These are varied and never explain what was found
-    const institutionalMessages: Record<string, string[]> = {
-      debris_relocation: [
-        'MEMO FLAG: Asset chain no longer speculative.',
-        'NOTICE: Physical evidence pathway documented.',
-        'SYSTEM: Relocation records cross-referenced.',
-      ],
-      being_containment: [
-        'NOTICE: Bio-material handling protocols confirmed.',
-        'MEMO FLAG: Specimen chain verified.',
-        'SYSTEM: Containment timeline established.',
-      ],
-      telepathic_scouts: [
-        'NOTICE: Contextual model coherence increased.',
-        'MEMO FLAG: Signal origin hypothesis strengthened.',
-        'SYSTEM: Communication pathway inferred.',
-      ],
-      international_actors: [
-        'NOTICE: Multi-lateral involvement confirmed.',
-        'MEMO FLAG: Foreign coordination documented.',
-        'SYSTEM: External asset chain verified.',
-      ],
-      transition_2026: [
-        'NOTICE: Temporal reference convergence detected.',
-        'MEMO FLAG: Transition-window inference strengthened.',
-        'SYSTEM: Chronological model updated.',
-      ],
+    // Show "EVIDENCE FRAGMENT FOUND" banner for new discoveries
+    const categoryLabels: Record<string, string> = {
+      debris_relocation: 'DEBRIS TRANSFER',
+      being_containment: 'BIO CONTAINMENT',
+      telepathic_scouts: 'TELEPATHIC RECON',
+      international_actors: 'INTERNATIONAL',
+      transition_2026: 'TRANSITION 2026',
     };
 
     for (const reveal of newReveals) {
-      const messages = institutionalMessages[reveal];
-      if (messages && !Array.from(state.truthsDiscovered).includes(reveal)) {
-        continue;
-      }
-      if (messages) {
-        // Pick a message based on seed for per-run variance
-        const rng = createSeededRng(state.seed + reveal.length);
-        const messageIndex = Math.floor(rng() * messages.length);
-        notices.push(createEntry('notice', ''));
-        notices.push(createEntry('notice', messages[messageIndex]));
+      if (!Array.from(state.truthsDiscovered).includes(reveal)) {
+        // This is a new discovery
+        notices.push(createEntry('system', ''));
+        notices.push(createEntry('warning', '╔═══════════════════════════════════════════╗'));
+        notices.push(createEntry('warning', '║       EVIDENCE FRAGMENT FOUND             ║'));
+        notices.push(createEntry('warning', '╠═══════════════════════════════════════════╣'));
+        notices.push(createEntry('system', ''));
+        notices.push(createEntry('output', `  Category: ${categoryLabels[reveal] || reveal}`));
+        notices.push(createEntry('warning', `  Status: ${EVIDENCE_TIER_SYMBOLS.fragment} FRAGMENT (insufficient alone)`));
+        notices.push(createEntry('system', ''));
+        notices.push(createEntry('ufo74', '  HINT: Find corroborating file, use correlate'));
+        notices.push(createEntry('system', ''));
+        notices.push(createEntry('warning', '╚═══════════════════════════════════════════╝'));
       }
     }
 
@@ -735,12 +789,22 @@ function checkTruthProgress(
     notices.push(createEntry('system', ''));
     notices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));
 
-    // First evidence found - suggest bookmark
+    // TUTORIAL TIP: First fragment discovered
     if (newCount === 1 && previousCount === 0) {
+      // Show tutorial tip if tutorial mode is enabled
+      if (shouldShowTutorialTip('first_fragment', state.interactiveTutorialMode, state.tutorialTipsShown || new Set())) {
+        notices.push(...getTutorialTip('first_fragment'));
+        const newTipsShown = new Set(state.tutorialTipsShown || []);
+        newTipsShown.add('first_fragment');
+        stateChanges.tutorialTipsShown = newTipsShown;
+      }
+      
+      // Also show UFO74 message (works with or without tutorial mode)
       notices.push(
         ...createUFO74Message([
-          'UFO74: nice find kid! want to bookmark this file?',
-          '       use "bookmark <filename>" to save files for later.',
+          'UFO74: nice find kid! but fragments alone wont cut it.',
+          '       you need to CORROBORATE evidence to make a real case.',
+          '       find related files and use "correlate <file1> <file2>"',
         ])
       );
     }
@@ -850,7 +914,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
   if (revelationResult.revealedEvidence) {
     const truthResult = checkTruthProgress({ ...state, ...stateChanges } as GameState, [
       revelationResult.revealedEvidence,
-    ]);
+    ], filePath);
     truthNotices = truthResult.notices;
 
     // Merge truth discovery state changes (includes detection reduction breather)
@@ -2617,15 +2681,25 @@ const COMMAND_HELP: Record<string, string[]> = {
   progress: [
     'COMMAND: progress',
     '',
-    'Show your investigation progress.',
+    'Show your investigation progress with evidence tiers.',
     '',
-    'Displays:',
-    '  - Evidence categories discovered (5 total needed)',
-    '  - Current risk/detection level',
-    '  - Session statistics',
+    'EVIDENCE TIERS:',
+    '  ○ FRAGMENT     - Found by reading a file (insufficient alone)',
+    '  ◆ CORROBORATED - Two files linked via "correlate" command',
+    '  ● PROVEN       - Chain of 3+ files via "connect" command',
     '',
-    'TIP: Find evidence by reading files carefully.',
-    'TIP: Some evidence requires linking multiple documents.',
+    'WIN CONDITIONS:',
+    '  5 PROVEN       → Best ending',
+    '  3+ PROVEN      → Good ending',
+    '  5 CORROBORATED → Neutral ending',
+    '  5 FRAGMENTS    → Bad ending (dismissed as conspiracy theorist)',
+    '',
+    'WORKFLOW:',
+    '  1. Read files to discover FRAGMENTS',
+    '  2. Use "correlate" to upgrade to CORROBORATED',
+    '  3. Use "connect" to build chains for PROVEN',
+    '',
+    'TIP: Use "map" to visualize your evidence web.',
   ],
   status: [
     'COMMAND: status',
@@ -2713,22 +2787,118 @@ const COMMAND_HELP: Record<string, string[]> = {
   map: [
     'COMMAND: map',
     '',
-    'Display the evidence connection map.',
+    'Display the evidence web visualization.',
+    '',
+    'Shows:',
+    '  - Evidence chains by category',
+    '  - Proof chains for PROVEN evidence (3+ files)',
+    '  - Corroboration pairs (2 files)',
+    '  - Unlinked fragments',
     '',
     'USAGE:',
-    '  map            - Show evidence connections',
+    '  map            - Show evidence web',
     '',
-    'Use "connect <file1> <file2>" to link related evidence.',
+    'The map shows ASCII art visualization of your evidence:',
+    '  ┌──────────────────┐',
+    '  │ file_a.txt       │',
+    '  └────────┬─────────┘',
+    '           ↓',
+    '  ┌────────┴─────────┐',
+    '  │ file_b.txt       │',
+    '  └──────────────────┘',
+    '',
+    'TIP: Use "connect" to build longer chains for PROVEN tier.',
   ],
   tutorial: [
-    'COMMAND: tutorial',
+    'COMMAND: tutorial [on|off]',
     '',
-    'Replay the introduction and tutorial messages.',
+    'Toggle tutorial tips or replay the introduction.',
     '',
     'USAGE:',
     '  tutorial       - Restart tutorial sequence',
+    '  tutorial on    - Enable tutorial tips during gameplay',
+    '  tutorial off   - Disable tutorial tips',
     '',
-    'TIP: Use this if you forgot the mission objectives.',
+    'When tutorial mode is ON, helpful tips appear at key moments:',
+    '  - After finding your first evidence fragment',
+    '  - When you can correlate files',
+    '  - When you achieve PROVEN evidence',
+    '',
+    'TIP: Use "help basics" for navigation guide.',
+    'TIP: Use "help evidence" for evidence tier guide.',
+    'TIP: Use "help winning" for strategy guide.',
+  ],
+  morse: [
+    'COMMAND: morse',
+    '',
+    'Decipher intercepted morse code messages.',
+    '',
+    'USAGE:',
+    '  morse <message>  - Submit your deciphered message',
+    '  morse cancel     - Cancel current morse entry',
+    '',
+    'First read a morse intercept file (e.g., morse_intercept.sig).',
+    'Then use this command to submit your translation.',
+    '',
+    'TIP: Morse code reference charts can be found online.',
+  ],
+  leak: [
+    'COMMAND: leak',
+    '',
+    'Attempt to leak collected evidence to external channels.',
+    '',
+    'USAGE:',
+    '  leak            - Initiate evidence leak',
+    '',
+    'REQUIREMENT: All 5 evidence categories must be collected first.',
+    '',
+    'WARNING: This action triggers the endgame sequence.',
+  ],
+  correlate: [
+    'COMMAND: correlate <file1> <file2>',
+    '',
+    'Cross-reference two files to find connections.',
+    'Successful correlations upgrade evidence tier and reduce detection.',
+    '',
+    'EVIDENCE UPGRADE: FRAGMENT → CORROBORATED',
+    '',
+    'USAGE:',
+    '  correlate transport.txt manifest.txt',
+    '',
+    'VALID CORRELATIONS:',
+    '  - Transport logs + Recovery reports',
+    '  - Medical files + Containment records',
+    '  - Communications + Neural analysis',
+    '  - Diplomatic cables + Liaison memos',
+    '  - Future projections + Threat assessments',
+    '',
+    'REQUIREMENTS:',
+    '  - Both files must be read first',
+    '  - Files must share an evidence category',
+    '',
+    'TIP: Successful correlations reduce detection by 5-15%.',
+    'TIP: After corroboration, use "connect" to build a proof chain.',
+  ],
+  connect: [
+    'COMMAND: connect <file1> <file2>',
+    '',
+    'Link two evidence files to build a proof chain.',
+    'Creates connections between related documents.',
+    '',
+    'EVIDENCE UPGRADE: CORROBORATED → PROVEN (when 3+ files chained)',
+    '',
+    'USAGE:',
+    '  connect file_a.txt file_b.txt',
+    '',
+    'When 3 or more files are connected in a chain for the same',
+    'evidence category, the evidence upgrades to PROVEN tier.',
+    '',
+    'REQUIREMENTS:',
+    '  - Both files must be read first',
+    '  - Evidence must be at CORROBORATED tier first',
+    '',
+    'TIP: Use "map" to visualize your evidence chains.',
+    'TIP: PROVEN evidence gives better endings.',
   ],
 };
 
@@ -2737,6 +2907,29 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // If a specific command is requested, show detailed help
     if (args.length > 0) {
       const cmdName = args[0].toLowerCase();
+      
+      // Special help topics
+      if (cmdName === 'basics') {
+        return {
+          output: getHelpBasics(),
+          stateChanges: {},
+        };
+      }
+      
+      if (cmdName === 'evidence') {
+        return {
+          output: getHelpEvidence(),
+          stateChanges: {},
+        };
+      }
+      
+      if (cmdName === 'winning') {
+        return {
+          output: getHelpWinning(),
+          stateChanges: {},
+        };
+      }
+      
       const details = COMMAND_HELP[cmdName];
 
       if (details) {
@@ -2785,13 +2978,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  chat              Open secure relay channel',
         '  tree              Show directory structure',
         '  map               Show evidence connections',
-        '  tutorial          Replay introduction',
+        '  morse <text>      Decipher morse code messages',
+        '  leak <mode>       Leak evidence (when all found)',
+        '  tutorial [on/off] Toggle tutorial tips or replay intro',
         '  save              Save current session',
         '  clear             Clear terminal display',
         '',
         '  ↑/↓ arrows        Navigate command history',
         '  Tab               Autocomplete commands and files',
         '  Ctrl+L            Clear terminal',
+        '',
+        'GUIDES:  help basics | help evidence | help winning',
         '',
         'TIP: Type "help <command>" for detailed usage.',
         '═══════════════════════════════════════════════════════════',
@@ -2945,6 +3142,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
         // Show markers for files
         if (entry.type === 'file') {
+          // Evidence tier indicator (before other markers)
+          const tierSymbol = getFileTierSymbol(fullPath, state);
+          if (tierSymbol) {
+            line = `  [${tierSymbol}] ${entry.name}`;
+          }
+          
           // Bookmark marker
           if (state.bookmarkedFiles?.has(fullPath)) {
             line += ' ★';
@@ -2971,7 +3174,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           if (longFormat) {
             // Prominent status tag
             if (entry.status && entry.status !== 'intact') {
-              line = `  ${entry.name}  [${entry.status.toUpperCase()}]`;
+              const prefix = tierSymbol ? `  [${tierSymbol}] ` : '  ';
+              line = `${prefix}${entry.name}  [${entry.status.toUpperCase()}]`;
             }
 
             // Add content preview for non-encrypted files
@@ -2993,6 +3197,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         }
         lines.push(line);
       }
+    }
+
+    // Add tier legend if any files have evidence markers
+    const hasEvidenceMarkers = entries.some(entry => {
+      if (entry.type !== 'file') return false;
+      const fullPath = state.currentPath === '/' ? `/${entry.name}` : `${state.currentPath}/${entry.name}`;
+      return getFileTierSymbol(fullPath, state) !== null;
+    });
+    
+    if (hasEvidenceMarkers) {
+      lines.push('');
+      lines.push(`  ${EVIDENCE_TIER_SYMBOLS.fragment}=fragment  ${EVIDENCE_TIER_SYMBOLS.corroborated}=linked  ${EVIDENCE_TIER_SYMBOLS.proven}=proven`);
     }
 
     lines.push('');
@@ -3332,7 +3548,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       if (revelationResult.revealedEvidence) {
         const truthResult = checkTruthProgress({ ...state, ...stateChanges } as GameState, [
           revelationResult.revealedEvidence,
-        ]);
+        ], filePath);
         notices = truthResult.notices;
 
         // Merge truth discovery state changes (includes detection reduction breather)
@@ -3471,9 +3687,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       triggerFlicker = true;
     }
 
-    // After 5 files opened, UFO74 suggests override protocol
+    // After 5 files opened, UFO74 suggests override protocol (only if not already unlocked)
     const totalFilesRead = filesRead.size;
-    if (totalFilesRead === 5 && !state.flags.overrideSuggested) {
+    if (totalFilesRead === 5 && !state.flags.overrideSuggested && !state.flags.override_unlocked) {
       notices.push(
         ...createUFO74Message([
           'UFO74: kid, youre doing good but theres MORE hidden here.',
@@ -4670,58 +4886,43 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output: [
           createEntry('error', 'LEAK FAILED'),
-          createEntry('system', 'Evidence set incomplete. Leak aborted.'),
+          createEntry(
+            'system',
+            'Evidence set incomplete. Collect all 5 evidence categories first.'
+          ),
         ],
         stateChanges: {},
       };
     }
 
-    if (args.length === 0) {
-      return {
-        output: [
-          createEntry('system', 'USAGE: leak <public|covert>'),
-          createEntry('system', 'public: immediate release to open networks'),
-          createEntry('system', 'covert: silent handoff to trusted cells'),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    const mode = args[0].toLowerCase();
-    if (mode !== 'public' && mode !== 'covert') {
-      return {
-        output: [
-          createEntry('error', 'LEAK FAILED'),
-          createEntry('system', 'Invalid mode. Use: leak public | leak covert'),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    const isPublic = mode === 'public';
+    // When all evidence is collected, the leak command "fails" but triggers ICQ phase
+    // This is the intended behavior - the leak attempt is blocked but the system
+    // initiates a different connection (ICQ chat with teenager)
     return {
       output: [
-        createEntry('system', 'EVIDENCE DISPATCH'),
         createEntry('system', ''),
-        createEntry(
-          'output',
-          isPublic ? 'Release channel: OPEN NETWORKS' : 'Release channel: TRUSTED CELLS'
-        ),
-        createEntry(
-          'output',
-          isPublic
-            ? 'Signal boosted. Narrative destabilized.'
-            : 'Signal preserved. Identities shielded.'
-        ),
+        createEntry('system', 'INITIATING EVIDENCE LEAK...'),
         createEntry('system', ''),
-        createEntry('warning', 'NOTICE: This action will be remembered.'),
+        createEntry('warning', 'Connecting to external relay...'),
+        createEntry('warning', 'Establishing secure tunnel...'),
+        createEntry('error', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('error', ''),
+        createEntry('error', '         CONNECTION INTERCEPTED'),
+        createEntry('error', ''),
+        createEntry('warning', '  Primary relay blocked by firewall.'),
+        createEntry('warning', '  Rerouting through emergency channel...'),
+        createEntry('error', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
       ],
       stateChanges: {
-        choiceLeakPath: isPublic ? 'public' : 'covert',
-        flags: { ...state.flags, leakExecuted: true },
-        detectionLevel: Math.min(100, state.detectionLevel + (isPublic ? 8 : 4)),
+        evidencesSaved: true,
+        flags: { ...state.flags, evidencesSaved: true, leakAttempted: true },
+        filesSent: false, // Will be set to true after ICQ conversation
       },
-      delayMs: 1200,
+      delayMs: 2000,
+      triggerFlicker: true,
     };
   },
 
@@ -4883,7 +5084,41 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   },
 
   tutorial: (args, state) => {
-    // Replay the tutorial/introduction
+    // Handle tutorial on/off toggle
+    if (args.length > 0) {
+      const arg = args[0].toLowerCase();
+      
+      if (arg === 'on') {
+        return {
+          output: [
+            createEntry('system', ''),
+            createEntry('notice', 'TUTORIAL MODE: ENABLED'),
+            createEntry('output', "I'll show extra tips as you explore."),
+            createEntry('output', 'Type "tutorial off" anytime to disable.'),
+            createEntry('system', ''),
+          ],
+          stateChanges: {
+            interactiveTutorialMode: true,
+          },
+        };
+      }
+      
+      if (arg === 'off') {
+        return {
+          output: [
+            createEntry('system', ''),
+            createEntry('notice', 'TUTORIAL MODE: DISABLED'),
+            createEntry('output', "You're on your own now. Good luck kid."),
+            createEntry('system', ''),
+          ],
+          stateChanges: {
+            interactiveTutorialMode: false,
+          },
+        };
+      }
+    }
+    
+    // No args or unrecognized arg: Replay the tutorial/introduction
     return {
       output: [
         createEntry('system', ''),
@@ -5389,55 +5624,109 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   },
 
   progress: (args, state) => {
-    // Show player progress summary
+    // Show player progress summary with evidence tiers
     const truthsNeeded = 5;
-    const truthsFound = Math.min(state.truthsDiscovered?.size || 0, truthsNeeded); // Clamp to max
+    const truthsFound = Math.min(state.truthsDiscovered?.size || 0, truthsNeeded);
     const filesReadCount = state.filesRead?.size || 0;
     const bookmarksCount = state.bookmarkedFiles?.size || 0;
     const notesCount = state.playerNotes?.length || 0;
-
-    // Progress bar for truths
-    const progressBar = '█'.repeat(truthsFound) + '░'.repeat(truthsNeeded - truthsFound);
+    
+    // Get evidence tier counts
+    const tierCounts = countEvidenceByTier(state);
+    const caseStrength = getCaseStrengthDescription(state);
 
     const output: TerminalEntry[] = [
       createEntry('system', ''),
-      createEntry('system', '═══════════════════════════════════════════'),
-      createEntry('system', '              INVESTIGATION PROGRESS       '),
-      createEntry('system', '═══════════════════════════════════════════'),
-      createEntry('system', ''),
-      createEntry(
-        'output',
-        `  Evidence Collected: [${progressBar}] ${truthsFound}/${truthsNeeded}`
-      ),
+      createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
+      createEntry('system', '║            INVESTIGATION PROGRESS                     ║'),
+      createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
       createEntry('system', ''),
     ];
 
-    // Show which truths have been discovered (vague hints)
-    if (truthsFound > 0) {
-      output.push(createEntry('system', '  Confirmed intel:'));
-      if (state.truthsDiscovered?.has('debris_relocation')) {
-        output.push(createEntry('output', '    ✓ Debris transfer operations confirmed'));
+    // Evidence tier breakdown by category
+    const categoryLabels: Record<string, string> = {
+      debris_relocation: 'Debris Transfer',
+      being_containment: 'Bio Containment',
+      telepathic_scouts: 'Telepathic Recon',
+      international_actors: 'International',
+      transition_2026: 'Transition 2026',
+    };
+
+    output.push(createEntry('system', '  EVIDENCE STATUS:'));
+    output.push(createEntry('system', ''));
+
+    // Show each truth category with tier status
+    const categories = [
+      'debris_relocation',
+      'being_containment', 
+      'telepathic_scouts',
+      'international_actors',
+      'transition_2026',
+    ] as const;
+
+    for (const category of categories) {
+      const label = categoryLabels[category].padEnd(18);
+      const hasEvidence = state.truthsDiscovered?.has(category);
+      
+      if (!hasEvidence) {
+        // Not discovered yet
+        output.push(createEntry('output', `    ${label} [░░░░░░░░░░] UNDISCOVERED`));
+      } else {
+        // Get tier for this category
+        const tierState = state.evidenceTiers?.[category];
+        const tier = tierState?.tier || 'fragment';
+        const tierLabel = EVIDENCE_TIER_LABELS[tier];
+        const tierSymbol = EVIDENCE_TIER_SYMBOLS[tier];
+        
+        // Progress bar based on tier
+        let progressBar = '';
+        let tierColor: 'output' | 'warning' | 'system' = 'output';
+        
+        if (tier === 'fragment') {
+          progressBar = '███░░░░░░░';
+          tierColor = 'warning';
+        } else if (tier === 'corroborated') {
+          progressBar = '██████░░░░';
+          tierColor = 'output';
+        } else {
+          progressBar = '██████████';
+          tierColor = 'system';
+        }
+        
+        output.push(createEntry(tierColor, `    ${label} [${progressBar}] ${tierSymbol} ${tierLabel}`));
+        
+        // Show linked files for this category
+        if (tierState?.linkedFiles && tierState.linkedFiles.length > 0) {
+          const fileNames = tierState.linkedFiles.map(f => f.split('/').pop()).slice(0, 3);
+          output.push(createEntry('output', `                         └─ ${fileNames.join(', ')}`));
+        }
       }
-      if (state.truthsDiscovered?.has('being_containment')) {
-        output.push(createEntry('output', '    ✓ Non-human containment documented'));
-      }
-      if (state.truthsDiscovered?.has('telepathic_scouts')) {
-        output.push(createEntry('output', '    ✓ Telepathic reconnaissance identified'));
-      }
-      if (state.truthsDiscovered?.has('international_actors')) {
-        output.push(createEntry('output', '    ✓ International involvement verified'));
-      }
-      if (state.truthsDiscovered?.has('transition_2026')) {
-        output.push(createEntry('output', '    ✓ Future transition event detected'));
-      }
-      output.push(createEntry('system', ''));
     }
 
-    output.push(createEntry('system', '  Session Statistics:'));
+    output.push(createEntry('system', ''));
+    output.push(createEntry('system', '  ─────────────────────────────────────────────'));
+    
+    // Case strength summary
+    const provenCount = tierCounts.proven;
+    const inProgressCount = tierCounts.corroborated + tierCounts.fragments;
+    output.push(createEntry('system', ''));
+    output.push(createEntry('output', `  CASE STRENGTH: ${provenCount}/5 proven | ${inProgressCount}/5 in progress`));
+    output.push(createEntry('system', `  STATUS: ${caseStrength}`));
+    output.push(createEntry('system', ''));
+
+    // Tier legend
+    output.push(createEntry('system', '  TIER LEGEND:'));
+    output.push(createEntry('warning', `    ${EVIDENCE_TIER_SYMBOLS.fragment} FRAGMENT     - Found but insufficient alone`));
+    output.push(createEntry('output', `    ${EVIDENCE_TIER_SYMBOLS.corroborated} CORROBORATED - Two files linked via correlate`));
+    output.push(createEntry('system', `    ${EVIDENCE_TIER_SYMBOLS.proven} PROVEN       - Chain of 3+ files connected`));
+    output.push(createEntry('system', ''));
+
+    // Session Statistics
+    output.push(createEntry('system', '  ─────────────────────────────────────────────'));
+    output.push(createEntry('system', '  SESSION STATISTICS:'));
     output.push(createEntry('output', `    Files examined: ${filesReadCount}`));
-    output.push(createEntry('output', `    Bookmarks: ${bookmarksCount}`));
-    output.push(createEntry('output', `    Notes: ${notesCount}`));
-    output.push(createEntry('output', `    Commands executed: ${state.sessionCommandCount || 0}`));
+    output.push(createEntry('output', `    Evidence links: ${state.evidenceLinks?.length || 0}`));
+    output.push(createEntry('output', `    Bookmarks: ${bookmarksCount}  |  Notes: ${notesCount}`));
     output.push(createEntry('system', ''));
 
     // Detection warning
@@ -5447,7 +5736,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output.push(createEntry('warning', '  ⚠ WARNING: Detection level elevated'));
     }
 
-    output.push(createEntry('system', '═══════════════════════════════════════════'));
+    // Hint about upgrading tiers
+    if (tierCounts.fragments > 0 && tierCounts.corroborated === 0 && tierCounts.proven === 0) {
+      output.push(createEntry('system', ''));
+      output.push(createEntry('ufo74', '  TIP: Use "correlate <file1> <file2>" to upgrade FRAGMENTS'));
+    } else if (tierCounts.corroborated > 0 && tierCounts.proven === 0) {
+      output.push(createEntry('system', ''));
+      output.push(createEntry('ufo74', '  TIP: Use "connect" to build chains of 3+ files for PROVEN'));
+    }
+
+    output.push(createEntry('system', ''));
+    output.push(createEntry('system', '╚═══════════════════════════════════════════════════════╝'));
     output.push(createEntry('system', ''));
 
     return { output, stateChanges: {} };
@@ -5570,26 +5869,64 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       // Valid if file1 matches keywords1 AND file2 matches keywords2, or vice versa
       if ((match1to1 && match2to2) || (match1to2 && match2to1)) {
         const newDetection = Math.max(0, state.detectionLevel - correlation.detectionReduction);
+        
+        // Try to upgrade evidence tier (FRAGMENT → CORROBORATED)
+        const tierUpgrade = attemptCorroborateUpgrade(file1Path, file2Path, state);
+        
+        const output: TerminalEntry[] = [
+          createEntry('system', ''),
+          createEntry('system', '╔═══════════════════════════════════════════╗'),
+          createEntry('system', '║     CORRELATION ANALYSIS COMPLETE         ║'),
+          createEntry('system', '╠═══════════════════════════════════════════╣'),
+          createEntry('system', ''),
+          createEntry('output', `  File 1: ${file1Path.split('/').pop()}`),
+          createEntry('output', `  File 2: ${file2Path.split('/').pop()}`),
+          createEntry('system', ''),
+          createEntry('output', `  RESULT: ${correlation.message}`),
+          createEntry('system', ''),
+          createEntry('warning', `  Detection reduced by ${correlation.detectionReduction}%`),
+        ];
+        
+        // Show tier upgrade if successful
+        const stateChanges: Partial<GameState> = {
+          detectionLevel: newDetection,
+          avatarExpression: 'smirk',
+        };
+        
+        if (tierUpgrade.success && tierUpgrade.category && tierUpgrade.updatedTierState) {
+          output.push(createEntry('system', ''));
+          output.push(createEntry('system', '  ─────────────────────────────────────────'));
+          output.push(createEntry('system', ''));
+          output.push(createEntry('warning', `  ${EVIDENCE_TIER_SYMBOLS.corroborated} ${tierUpgrade.message}`));
+          output.push(createEntry('system', ''));
+          output.push(createEntry('ufo74', '  UFO74: nice work kid! evidence just got stronger.'));
+          output.push(createEntry('output', '         find a 3rd file and use "connect" for PROVEN.'));
+          
+          // Update tier state
+          stateChanges.evidenceTiers = {
+            ...state.evidenceTiers,
+            [tierUpgrade.category]: tierUpgrade.updatedTierState,
+          };
+          
+          // Extra detection reduction for tier upgrade
+          stateChanges.detectionLevel = Math.max(0, newDetection - 5);
+          
+          // TUTORIAL TIP: First successful correlate
+          if (shouldShowTutorialTip('first_correlate', state.interactiveTutorialMode, state.tutorialTipsShown || new Set())) {
+            output.push(...getTutorialTip('first_correlate'));
+            const newTipsShown = new Set(state.tutorialTipsShown || []);
+            newTipsShown.add('first_correlate');
+            stateChanges.tutorialTipsShown = newTipsShown;
+          }
+        }
+        
+        output.push(createEntry('system', ''));
+        output.push(createEntry('system', '╚═══════════════════════════════════════════╝'));
+        
         return {
-          output: [
-            createEntry('system', ''),
-            createEntry('system', '═══════════════════════════════════════════'),
-            createEntry('system', '        CORRELATION ANALYSIS COMPLETE       '),
-            createEntry('system', '═══════════════════════════════════════════'),
-            createEntry('system', ''),
-            createEntry('output', `  File 1: ${file1Path.split('/').pop()}`),
-            createEntry('output', `  File 2: ${file2Path.split('/').pop()}`),
-            createEntry('system', ''),
-            createEntry('output', `  RESULT: ${correlation.message}`),
-            createEntry('system', ''),
-            createEntry('warning', `  Detection reduced by ${correlation.detectionReduction}%`),
-            createEntry('system', ''),
-            createEntry('system', '═══════════════════════════════════════════'),
-          ],
-          stateChanges: {
-            detectionLevel: newDetection,
-            avatarExpression: 'smirk', // Successful correlate - smirk expression
-          },
+          output,
+          stateChanges,
+          // Sound will be triggered based on tier upgrade
         };
       }
     }
@@ -5598,9 +5935,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     return {
       output: [
         createEntry('system', ''),
-        createEntry('system', '═══════════════════════════════════════════'),
-        createEntry('system', '        CORRELATION ANALYSIS COMPLETE       '),
-        createEntry('system', '═══════════════════════════════════════════'),
+        createEntry('system', '╔═══════════════════════════════════════════╗'),
+        createEntry('system', '║     CORRELATION ANALYSIS COMPLETE         ║'),
+        createEntry('system', '╠═══════════════════════════════════════════╣'),
         createEntry('system', ''),
         createEntry('output', `  File 1: ${file1Path.split('/').pop()}`),
         createEntry('output', `  File 2: ${file2Path.split('/').pop()}`),
@@ -5612,7 +5949,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('system', '    - Medical files + Containment records'),
         createEntry('system', '    - Communications + Neural analysis'),
         createEntry('system', ''),
-        createEntry('system', '═══════════════════════════════════════════'),
+        createEntry('system', '╚═══════════════════════════════════════════╝'),
       ],
       stateChanges: {},
     };
@@ -5697,11 +6034,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       bonusMessage = `Evidence correlation detected! Detection -${Math.abs(detectionChange)}%`;
     }
 
+    // Try to upgrade evidence tier (CORROBORATED → PROVEN)
+    const tierUpgrade = attemptProvenUpgrade(file1Path, file2Path, existingLinks, state);
+
     const output: TerminalEntry[] = [
       createEntry('system', ''),
-      createEntry('system', '═══════════════════════════════════════'),
-      createEntry('system', '           EVIDENCE LINKED             '),
-      createEntry('system', '═══════════════════════════════════════'),
+      createEntry('system', '╔═══════════════════════════════════════════╗'),
+      createEntry('system', '║          EVIDENCE LINKED                  ║'),
+      createEntry('system', '╠═══════════════════════════════════════════╣'),
       createEntry('system', ''),
       createEntry('output', `  ${file1Path.split('/').pop()}`),
       createEntry('output', '        ↕'),
@@ -5714,38 +6054,81 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output.push(createEntry('system', ''));
     }
 
+    const stateChanges: Partial<GameState> = {
+      evidenceLinks: newLinks,
+      detectionLevel: Math.max(0, (state.detectionLevel || 0) + detectionChange),
+    };
+
+    // Show tier upgrade if successful (CORROBORATED → PROVEN)
+    if (tierUpgrade.success && tierUpgrade.category && tierUpgrade.updatedTierState) {
+      output.push(createEntry('system', '  ─────────────────────────────────────────'));
+      output.push(createEntry('system', ''));
+      output.push(createEntry('system', `  ${EVIDENCE_TIER_SYMBOLS.proven} ${tierUpgrade.message}`));
+      output.push(createEntry('system', ''));
+      output.push(createEntry('ufo74', '  UFO74: HELL YEAH! thats PROVEN evidence now!'));
+      output.push(createEntry('output', '         they cant dismiss that as conspiracy.'));
+      output.push(createEntry('system', ''));
+      
+      // Show the proof chain
+      if (tierUpgrade.updatedTierState.proofChain) {
+        output.push(createEntry('system', '  PROOF CHAIN:'));
+        tierUpgrade.updatedTierState.proofChain.forEach((file, i) => {
+          const fileName = file.split('/').pop();
+          const connector = i < tierUpgrade.updatedTierState!.proofChain!.length - 1 ? '├──' : '└──';
+          output.push(createEntry('output', `    ${connector} ${fileName}`));
+        });
+        output.push(createEntry('system', ''));
+      }
+      
+      // Update tier state
+      stateChanges.evidenceTiers = {
+        ...state.evidenceTiers,
+        [tierUpgrade.category]: tierUpgrade.updatedTierState,
+      };
+      
+      // Extra detection reduction for tier upgrade
+      stateChanges.detectionLevel = Math.max(0, (stateChanges.detectionLevel || state.detectionLevel || 0) - 8);
+      
+      // TUTORIAL TIP: First PROVEN evidence
+      if (shouldShowTutorialTip('first_proven', state.interactiveTutorialMode, state.tutorialTipsShown || new Set())) {
+        output.push(...getTutorialTip('first_proven'));
+        const newTipsShown = new Set(state.tutorialTipsShown || []);
+        newTipsShown.add('first_proven');
+        stateChanges.tutorialTipsShown = newTipsShown;
+      }
+    }
+
     output.push(createEntry('system', `  Total links: ${newLinks.length}`));
     output.push(createEntry('system', '  Use "map" to view evidence web.'));
     output.push(createEntry('system', ''));
-    output.push(createEntry('system', '═══════════════════════════════════════'));
+    output.push(createEntry('system', '╚═══════════════════════════════════════════╝'));
 
     return {
       output,
-      stateChanges: {
-        evidenceLinks: newLinks,
-        detectionLevel: Math.max(0, (state.detectionLevel || 0) + detectionChange),
-      },
+      stateChanges,
     };
   },
 
   map: (args, state) => {
-    // Display the evidence web
+    // Display the evidence web with ASCII visualization
     const links = state.evidenceLinks || [];
+    const tierCounts = countEvidenceByTier(state);
 
-    if (links.length === 0) {
+    if (links.length === 0 && tierCounts.total === 0) {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('system', '═══════════════════════════════════════'),
-          createEntry('system', '           EVIDENCE MAP                '),
-          createEntry('system', '═══════════════════════════════════════'),
+          createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
+          createEntry('system', '║                  EVIDENCE MAP                         ║'),
+          createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
           createEntry('system', ''),
-          createEntry('system', '  No evidence connections created yet.'),
+          createEntry('system', '  No evidence collected yet.'),
           createEntry('system', ''),
-          createEntry('system', '  Use "connect <file1> <file2>" to link'),
-          createEntry('system', '  related evidence files.'),
+          createEntry('system', '  Read files to discover evidence fragments,'),
+          createEntry('system', '  then use "correlate" and "connect" to build'),
+          createEntry('system', '  chains of proof.'),
           createEntry('system', ''),
-          createEntry('system', '═══════════════════════════════════════'),
+          createEntry('system', '╚═══════════════════════════════════════════════════════╝'),
         ],
         stateChanges: {},
       };
@@ -5757,46 +6140,103 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       nodeSet.add(a);
       nodeSet.add(b);
     });
-    const nodes = Array.from(nodeSet);
+    
+    // Also add files with evidence but no links (orphan fragments)
+    const orphanFiles: string[] = [];
+    for (const [filePath, fileState] of Object.entries(state.fileEvidenceStates || {})) {
+      if (fileState.revealedEvidences?.length > 0 && !nodeSet.has(filePath)) {
+        orphanFiles.push(filePath);
+      }
+    }
 
     const output: TerminalEntry[] = [
       createEntry('system', ''),
-      createEntry('system', '═══════════════════════════════════════════════════════'),
-      createEntry('system', '                    EVIDENCE MAP                        '),
-      createEntry('system', '═══════════════════════════════════════════════════════'),
-      createEntry('system', ''),
-      createEntry('output', `  Nodes: ${nodes.length}  |  Connections: ${links.length}`),
+      createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
+      createEntry('system', '║                  EVIDENCE MAP                         ║'),
+      createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
       createEntry('system', ''),
     ];
 
-    // Show each link
-    output.push(createEntry('system', '  CONNECTIONS:'));
-    links.forEach(([a, b], idx) => {
-      const aName = a.split('/').pop() || a;
-      const bName = b.split('/').pop() || b;
-      output.push(createEntry('output', `    ${idx + 1}. ${aName} ←→ ${bName}`));
-    });
-
+    // Show proof chains for each category
+    output.push(createEntry('system', '  EVIDENCE CHAINS BY CATEGORY:'));
     output.push(createEntry('system', ''));
 
-    // Show unique files
-    output.push(createEntry('system', '  LINKED FILES:'));
-    nodes.slice(0, 10).forEach(node => {
-      const name = node.split('/').pop() || node;
-      const connectionCount = links.filter(([a, b]) => a === node || b === node).length;
-      output.push(
-        createEntry(
-          'output',
-          `    • ${name} (${connectionCount} connection${connectionCount > 1 ? 's' : ''})`
-        )
-      );
-    });
-    if (nodes.length > 10) {
-      output.push(createEntry('system', `    ... and ${nodes.length - 10} more`));
+    const categoryLabels: Record<string, string> = {
+      debris_relocation: 'DEBRIS TRANSFER',
+      being_containment: 'BIO CONTAINMENT',
+      telepathic_scouts: 'TELEPATHIC RECON',
+      international_actors: 'INTERNATIONAL',
+      transition_2026: 'TRANSITION 2026',
+    };
+
+    for (const category of TRUTH_CATEGORIES) {
+      if (!state.truthsDiscovered?.has(category)) continue;
+      
+      const tierState = state.evidenceTiers?.[category];
+      const tier = tierState?.tier || 'fragment';
+      const tierSymbol = EVIDENCE_TIER_SYMBOLS[tier];
+      const tierLabel = EVIDENCE_TIER_LABELS[tier];
+      
+      output.push(createEntry('system', `  ${tierSymbol} ${categoryLabels[category]} [${tierLabel}]`));
+      
+      if (tier === 'proven' && tierState?.proofChain) {
+        // Show ASCII proof chain with boxes
+        output.push(createEntry('output', '    ┌─────────────────────────────────────────┐'));
+        tierState.proofChain.forEach((file, i) => {
+          const fileName = file.split('/').pop()?.substring(0, 30) || '';
+          const paddedName = fileName.padEnd(32);
+          if (i < tierState.proofChain!.length - 1) {
+            output.push(createEntry('output', `    │ ${paddedName}        │`));
+            output.push(createEntry('output', '    │        ↓                               │'));
+          } else {
+            output.push(createEntry('output', `    │ ${paddedName}        │`));
+          }
+        });
+        output.push(createEntry('output', '    └─────────────────────────────────────────┘'));
+      } else if (tier === 'corroborated' && tierState?.corroboratingFiles) {
+        // Show two linked files
+        const [f1, f2] = tierState.corroboratingFiles;
+        const n1 = f1.split('/').pop() || '';
+        const n2 = f2.split('/').pop() || '';
+        output.push(createEntry('output', `    ┌──────────────────┐`));
+        output.push(createEntry('output', `    │ ${n1.substring(0, 16).padEnd(16)} │`));
+        output.push(createEntry('output', `    └────────┬─────────┘`));
+        output.push(createEntry('output', `             ↓`));
+        output.push(createEntry('output', `    ┌────────┴─────────┐`));
+        output.push(createEntry('output', `    │ ${n2.substring(0, 16).padEnd(16)} │`));
+        output.push(createEntry('output', `    └──────────────────┘`));
+        output.push(createEntry('warning', `         + 1 more file for PROVEN`));
+      } else if (tierState?.linkedFiles) {
+        // Fragment - show as orphan node
+        const fileName = tierState.linkedFiles[0]?.split('/').pop() || '';
+        output.push(createEntry('warning', `    ◇ ${fileName}`));
+        output.push(createEntry('warning', `      (find corroborating file, use correlate)`));
+      }
+      
+      output.push(createEntry('system', ''));
     }
 
+    // Show orphan fragments (files with evidence but not connected)
+    if (orphanFiles.length > 0) {
+      output.push(createEntry('system', '  ─────────────────────────────────────────────'));
+      output.push(createEntry('warning', '  UNLINKED FRAGMENTS:'));
+      orphanFiles.slice(0, 5).forEach(file => {
+        const fileName = file.split('/').pop() || '';
+        const tier = getFileTier(file, state);
+        const symbol = tier ? EVIDENCE_TIER_SYMBOLS[tier] : '○';
+        output.push(createEntry('warning', `    ${symbol} ${fileName}`));
+      });
+      if (orphanFiles.length > 5) {
+        output.push(createEntry('warning', `    ... and ${orphanFiles.length - 5} more`));
+      }
+      output.push(createEntry('system', ''));
+    }
+
+    // Summary
+    output.push(createEntry('system', '  ─────────────────────────────────────────────'));
+    output.push(createEntry('system', `  Total Links: ${links.length}  |  Proven: ${tierCounts.proven}/5`));
     output.push(createEntry('system', ''));
-    output.push(createEntry('system', '═══════════════════════════════════════════════════════'));
+    output.push(createEntry('system', '╚═══════════════════════════════════════════════════════╝'));
 
     return { output, stateChanges: {} };
   },
@@ -5949,6 +6389,35 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         morseMessageAttempts: attemptsUsed,
       },
     };
+  },
+
+  // Morse code entry - alias for 'message' command
+  // Allows players to use 'morse <message>' or 'morse cancel' to interact with morse puzzle
+  morse: (args, state) => {
+    // Handle cancel subcommand
+    if (args.length > 0 && args[0].toLowerCase() === 'cancel') {
+      if (!state.morseFileRead) {
+        return {
+          output: [
+            createEntry('system', ''),
+            createEntry('output', 'No morse code puzzle active.'),
+          ],
+          stateChanges: {},
+        };
+      }
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('output', 'Morse code entry cancelled.'),
+          createEntry('output', 'You can try again later with "morse <message>".'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    // Otherwise, pass through to message command
+    return commands.message(args, state);
   },
 };
 

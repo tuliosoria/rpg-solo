@@ -101,7 +101,7 @@ describe('Narrative Mechanics', () => {
       });
 
       it('gives hint after 3 failed attempts', () => {
-        const state = createTestState({ 
+        const state = createTestState({
           cipherAttempts: 2,
           hiddenCommandsDiscovered: new Set(['decode']),
         });
@@ -133,7 +133,9 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc wrongpassword', state);
       // Should show decryption failed or file not found
-      const hasFailed = result.output.some(e => e.content.includes('DECRYPTION FAILED') || e.content.includes('Invalid password'));
+      const hasFailed = result.output.some(
+        e => e.content.includes('DECRYPTION FAILED') || e.content.includes('Invalid password')
+      );
       const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
       expect(hasFailed || hasFileNotFound).toBe(true);
     });
@@ -192,8 +194,12 @@ describe('Narrative Mechanics', () => {
         });
         const result = executeCommand('open /sys/active_trace.sys', state);
         // If file is accessible, should trigger countdown
-        const hasFileNotFound = result.output.some(e => e.content.includes('File not found') || e.content.includes('not found'));
-        const hasAccessDenied = result.output.some(e => e.content.includes('Access') || e.content.includes('level'));
+        const hasFileNotFound = result.output.some(
+          e => e.content.includes('File not found') || e.content.includes('not found')
+        );
+        const hasAccessDenied = result.output.some(
+          e => e.content.includes('Access') || e.content.includes('level')
+        );
         if (!hasFileNotFound && !hasAccessDenied) {
           expect(result.stateChanges.countdownActive).toBe(true);
           expect(result.stateChanges.countdownEndTime).toBeGreaterThan(Date.now());
@@ -268,7 +274,7 @@ describe('Narrative Mechanics', () => {
 
   describe('File Corruption Spread', () => {
     it('corrupts nearby files when reading core_dump_corrupted.bin', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         currentPath: '/tmp',
         wrongAttempts: 0,
       });
@@ -306,10 +312,10 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
       });
-      
+
       // material_x_analysis.dat reveals 'debris_relocation'
       const result = executeCommand('open material_x_analysis.dat', state);
-      
+
       // Should have detection reduction from breather
       if (result.stateChanges.detectionLevel !== undefined) {
         expect(result.stateChanges.detectionLevel).toBeLessThan(50);
@@ -325,12 +331,15 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
       });
-      
+
       const result = executeCommand('open material_x_analysis.dat', state);
-      
+
       // Should show recalibration message
-      const hasRecalibration = result.output.some(e => 
-        e.content.includes('recalibrating') || e.content.includes('MEMO FLAG') || e.content.includes('NOTICE')
+      const hasRecalibration = result.output.some(
+        e =>
+          e.content.includes('recalibrating') ||
+          e.content.includes('MEMO FLAG') ||
+          e.content.includes('NOTICE')
       );
       expect(hasRecalibration).toBe(true);
     });
@@ -346,15 +355,15 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
       });
-      
+
       // trace command adds significant detection
       const result = executeCommand('trace', state);
-      
+
       // If we crossed 50, should see SUSPICIOUS warning
       const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
       if (newDetection >= 50 && newDetection < 70) {
-        const hasSuspicious = result.output.some(e => 
-          e.content.includes('SUSPICIOUS') || e.content.includes('monitoring increased')
+        const hasSuspicious = result.output.some(
+          e => e.content.includes('SUSPICIOUS') || e.content.includes('monitoring increased')
         );
         expect(hasSuspicious).toBe(true);
       }
@@ -367,14 +376,14 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
       });
-      
+
       // decrypt adds 12 detection
       const result = executeCommand('decrypt nonexistent.enc', state);
-      
+
       const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
       if (newDetection >= 70 && state.detectionLevel < 70) {
-        const hasAlert = result.output.some(e => 
-          e.content.includes('ALERT') || e.content.includes('paying attention')
+        const hasAlert = result.output.some(
+          e => e.content.includes('ALERT') || e.content.includes('paying attention')
         );
         expect(hasAlert).toBe(true);
       }
@@ -387,15 +396,15 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
       });
-      
+
       // decrypt adds ~12 detection, should push us to 87+
       const result = executeCommand('decrypt test.enc', state);
-      
+
       const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
       if (newDetection >= 85 && state.detectionLevel < 85) {
         expect(result.triggerFlicker).toBe(true);
-        const hasCritical = result.output.some(e => 
-          e.content.includes('CRITICAL') || e.content.includes('about to get burned')
+        const hasCritical = result.output.some(
+          e => e.content.includes('CRITICAL') || e.content.includes('about to get burned')
         );
         expect(hasCritical).toBe(true);
       }
@@ -408,15 +417,15 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
       });
-      
+
       // decrypt adds detection
       const result = executeCommand('decrypt test.enc', state);
-      
+
       const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
       if (newDetection >= 90 && state.detectionLevel < 90) {
         expect(result.stateChanges.hideAvailable).toBe(true);
-        const hasImminent = result.output.some(e => 
-          e.content.includes('IMMINENT') || e.content.includes('hide')
+        const hasImminent = result.output.some(
+          e => e.content.includes('IMMINENT') || e.content.includes('hide')
         );
         expect(hasImminent).toBe(true);
       }
@@ -427,7 +436,7 @@ describe('Narrative Mechanics', () => {
     it('help command shows available commands', () => {
       const state = createTestState({ tutorialStep: -1, tutorialComplete: true });
       const result = executeCommand('help', state);
-      
+
       expect(result.output.some(e => e.content.includes('TERMINAL COMMANDS'))).toBe(true);
       expect(result.output.some(e => e.content.includes('ls'))).toBe(true);
       expect(result.output.some(e => e.content.includes('cd'))).toBe(true);
@@ -435,72 +444,72 @@ describe('Narrative Mechanics', () => {
     });
 
     it('status command shows system status', () => {
-      const state = createTestState({ 
-        tutorialStep: -1, 
+      const state = createTestState({
+        tutorialStep: -1,
         tutorialComplete: true,
         detectionLevel: 30,
       });
       const result = executeCommand('status', state);
-      
+
       expect(result.output.some(e => e.content.includes('SYSTEM STATUS'))).toBe(true);
       expect(result.output.some(e => e.content.includes('LOGGING'))).toBe(true);
     });
 
     it('cd command changes directory', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         currentPath: '/',
-        tutorialStep: -1, 
+        tutorialStep: -1,
         tutorialComplete: true,
       });
       const result = executeCommand('cd storage', state);
-      
+
       expect(result.stateChanges.currentPath).toBe('/storage');
     });
 
     it('clear command clears history', () => {
-      const state = createTestState({ 
-        tutorialStep: -1, 
+      const state = createTestState({
+        tutorialStep: -1,
         tutorialComplete: true,
         history: [{ id: '1', type: 'output', content: 'test', timestamp: Date.now() }],
       });
       const result = executeCommand('clear', state);
-      
+
       expect(result.stateChanges.history).toEqual([]);
     });
   });
 
   describe('Easter Eggs', () => {
     it('trust_protocol_1993.txt exists in /internal/protocols', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         currentPath: '/internal/protocols',
-        tutorialStep: -1, 
+        tutorialStep: -1,
         tutorialComplete: true,
       });
       const result = executeCommand('open trust_protocol_1993.txt', state);
-      
+
       expect(result.output.some(e => e.content.includes('TRUST NO ONE'))).toBe(true);
     });
 
     it('modem_log_jan96.txt contains IRC chat', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         currentPath: '/tmp',
-        tutorialStep: -1, 
+        tutorialStep: -1,
         tutorialComplete: true,
       });
       const result = executeCommand('open modem_log_jan96.txt', state);
-      
+
       expect(result.output.some(e => e.content.includes('UFO74'))).toBe(true);
       expect(result.output.some(e => e.content.includes('IRC'))).toBe(true);
     });
 
     it('jardim_andere_incident.txt contains real Varginha details', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         currentPath: '/storage/quarantine',
-        tutorialStep: -1, 
+        tutorialStep: -1,
         tutorialComplete: true,
       });
       const result = executeCommand('open jardim_andere_incident.txt', state);
-      
+
       expect(result.output.some(e => e.content.includes('Jardim Andere'))).toBe(true);
       expect(result.output.some(e => e.content.includes('20-JAN-1996'))).toBe(true);
     });
@@ -513,7 +522,7 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('chat', state);
-      
+
       expect(result.output.some(e => e.content.includes('PRISONER_45'))).toBe(true);
     });
 
@@ -523,10 +532,12 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('link', state);
-      
-      expect(result.output.some(e => 
-        e.content.includes('ACCESS DENIED') || e.content.includes('psi-comm')
-      )).toBe(true);
+
+      expect(
+        result.output.some(
+          e => e.content.includes('ACCESS DENIED') || e.content.includes('psi-comm')
+        )
+      ).toBe(true);
     });
 
     it('script command shows script status', () => {
@@ -535,7 +546,7 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('script', state);
-      
+
       expect(result.output.length).toBeGreaterThan(0);
     });
 
@@ -545,7 +556,7 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('recover', state);
-      
+
       expect(result.output.length).toBeGreaterThan(0);
     });
 
@@ -555,10 +566,15 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('save', state);
-      
-      expect(result.output.some(e => 
-        e.content.includes('evidence') || e.content.includes('SAVE') || e.content.includes('save')
-      )).toBe(true);
+
+      expect(
+        result.output.some(
+          e =>
+            e.content.includes('evidence') ||
+            e.content.includes('SAVE') ||
+            e.content.includes('save')
+        )
+      ).toBe(true);
     });
 
     it('trace command shows network activity or traces', () => {
@@ -568,7 +584,7 @@ describe('Narrative Mechanics', () => {
         accessLevel: 2,
       });
       const result = executeCommand('trace', state);
-      
+
       expect(result.output.length).toBeGreaterThan(0);
     });
   });
@@ -582,7 +598,7 @@ describe('Narrative Mechanics', () => {
         legacyAlertCounter: 0,
       });
       const result = executeCommand('invalidcmd', state);
-      
+
       expect(result.stateChanges.detectionLevel).toBe(22); // +2
       expect(result.stateChanges.legacyAlertCounter).toBe(1);
       expect(result.output.some(e => e.content.includes('RISK INCREASED'))).toBe(true);
@@ -595,7 +611,7 @@ describe('Narrative Mechanics', () => {
         legacyAlertCounter: 2,
       });
       const result = executeCommand('badcommand', state);
-      
+
       expect(result.stateChanges.legacyAlertCounter).toBe(3);
       expect(result.output.some(e => e.content.includes('fumbling'))).toBe(true);
     });
@@ -607,7 +623,7 @@ describe('Narrative Mechanics', () => {
         legacyAlertCounter: 7,
       });
       const result = executeCommand('wrongcmd', state);
-      
+
       expect(result.stateChanges.isGameOver).toBe(true);
       expect(result.stateChanges.gameOverReason).toBe('INVALID ATTEMPT THRESHOLD');
     });
@@ -620,7 +636,7 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('chat is the official story a lie?', state);
-      
+
       expect(result.output.some(e => e.content.includes('PRISONER_45'))).toBe(true);
     });
 
@@ -630,7 +646,7 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('chat what about the weather balloon?', state);
-      
+
       expect(result.output.some(e => e.content.includes('PRISONER_45'))).toBe(true);
     });
   });
@@ -642,7 +658,7 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('correlate', state);
-      
+
       expect(result.output.some(e => e.content.includes('USAGE'))).toBe(true);
     });
 
@@ -653,14 +669,20 @@ describe('Narrative Mechanics', () => {
         currentPath: '/',
         filesRead: new Set([]),
       });
-      const result = executeCommand('correlate /storage/transport_log_96.txt /storage/manifest_jan96.txt', state);
-      
+      const result = executeCommand(
+        'correlate /storage/transport_log_96.txt /storage/manifest_jan96.txt',
+        state
+      );
+
       // Should fail because files haven't been read OR file doesn't exist
-      expect(result.output.some(e => 
-        e.content.includes('CORRELATION FAILED') || 
-        e.content.includes('read') ||
-        e.content.includes('not found')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e =>
+            e.content.includes('CORRELATION FAILED') ||
+            e.content.includes('read') ||
+            e.content.includes('not found')
+        )
+      ).toBe(true);
     });
   });
 
@@ -673,7 +695,7 @@ describe('Narrative Mechanics', () => {
         accessLevel: 2,
       });
       const result = executeCommand('ls', state);
-      
+
       expect(result.output.some(e => e.content.includes('diplomatic_cable_23jan'))).toBe(true);
     });
 
@@ -686,8 +708,10 @@ describe('Narrative Mechanics', () => {
         flags: { adminUnlocked: true },
       });
       const result = executeCommand('ls', state);
-      
-      expect(result.output.some(e => e.content.includes('standing_orders_multinational'))).toBe(true);
+
+      expect(result.output.some(e => e.content.includes('standing_orders_multinational'))).toBe(
+        true
+      );
     });
   });
 
@@ -701,7 +725,10 @@ describe('Narrative Mechanics', () => {
         accessLevel: 2,
       });
       // We can't easily test correlate success without real files, but we can test the command exists
-      const result = executeCommand('correlate /storage/transport_log_96.txt /storage/manifest_jan96.txt', state);
+      const result = executeCommand(
+        'correlate /storage/transport_log_96.txt /storage/manifest_jan96.txt',
+        state
+      );
       // The command should at least run without error
       expect(result.output.length).toBeGreaterThan(0);
     });
@@ -766,9 +793,11 @@ describe('Narrative Mechanics', () => {
         prisoner45Disconnected: false,
       });
       const result = executeCommand('chat hello', state);
-      expect(result.output.some(e => 
-        e.content.includes('CONNECTION TERMINATED') || e.content.includes('cutting the line')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e => e.content.includes('CONNECTION TERMINATED') || e.content.includes('cutting the line')
+        )
+      ).toBe(true);
       expect(result.stateChanges.prisoner45Disconnected).toBe(true);
     });
 
@@ -779,9 +808,12 @@ describe('Narrative Mechanics', () => {
         prisoner45Disconnected: true,
       });
       const result = executeCommand('chat hello', state);
-      expect(result.output.some(e => 
-        e.content.includes('CONNECTION TERMINATED') || e.content.includes('RELAY NODE OFFLINE')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e =>
+            e.content.includes('CONNECTION TERMINATED') || e.content.includes('RELAY NODE OFFLINE')
+        )
+      ).toBe(true);
     });
   });
 
@@ -793,9 +825,11 @@ describe('Narrative Mechanics', () => {
         flags: { scoutLinkUnlocked: false },
       });
       const result = executeCommand('link', state);
-      expect(result.output.some(e => 
-        e.content.includes('ACCESS DENIED') || e.content.includes('NO VALID NEURAL PATTERN')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e => e.content.includes('ACCESS DENIED') || e.content.includes('NO VALID NEURAL PATTERN')
+        )
+      ).toBe(true);
     });
 
     it('allows connection when unlocked', () => {
@@ -806,9 +840,14 @@ describe('Narrative Mechanics', () => {
         scoutLinksUsed: 0,
       });
       const result = executeCommand('link', state);
-      expect(result.output.some(e => 
-        e.content.includes('NEURAL PATTERN LINK') || e.content.includes('connection') || e.content.includes('established')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e =>
+            e.content.includes('NEURAL PATTERN LINK') ||
+            e.content.includes('connection') ||
+            e.content.includes('established')
+        )
+      ).toBe(true);
     });
 
     it('exhausts after 4 uses', () => {
@@ -819,9 +858,12 @@ describe('Narrative Mechanics', () => {
         scoutLinksUsed: 4,
       });
       const result = executeCommand('link what is your purpose', state);
-      expect(result.output.some(e => 
-        e.content.includes('PATTERN EXHAUSTED') || e.content.includes('NEURAL PATTERN DEGRADED')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e =>
+            e.content.includes('PATTERN EXHAUSTED') || e.content.includes('NEURAL PATTERN DEGRADED')
+        )
+      ).toBe(true);
     });
   });
 
@@ -832,9 +874,12 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('run', state);
-      expect(result.output.some(e => 
-        e.content.includes('USAGE') || e.content.includes('run') || e.content.includes('script')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e =>
+            e.content.includes('USAGE') || e.content.includes('run') || e.content.includes('script')
+        )
+      ).toBe(true);
     });
 
     it('executes save_evidence.sh when 5 truths discovered', () => {
@@ -842,7 +887,13 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/tmp',
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026']),
+        truthsDiscovered: new Set([
+          'debris_relocation',
+          'being_containment',
+          'telepathic_scouts',
+          'international_actors',
+          'transition_2026',
+        ]),
       });
       const result = executeCommand('run save_evidence.sh', state);
       // Should either execute or show it's not in current directory
@@ -871,9 +922,9 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('recover', state);
-      expect(result.output.some(e => 
-        e.content.includes('ERROR') || e.content.includes('Specify')
-      )).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('ERROR') || e.content.includes('Specify'))
+      ).toBe(true);
     });
 
     it('attempts recovery on corrupted file', () => {
@@ -884,9 +935,14 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('recover some_file.txt', state);
       // Should attempt recovery or report file not found
-      expect(result.output.some(e => 
-        e.content.includes('ERROR') || e.content.includes('not found') || e.content.includes('recovery')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e =>
+            e.content.includes('ERROR') ||
+            e.content.includes('not found') ||
+            e.content.includes('recovery')
+        )
+      ).toBe(true);
     });
   });
 
@@ -898,9 +954,14 @@ describe('Narrative Mechanics', () => {
         accessLevel: 1,
       });
       const result = executeCommand('trace', state);
-      expect(result.output.some(e => 
-        e.content.includes('TRACE') || e.content.includes('ACCESSIBLE') || e.content.includes('RESTRICTED')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e =>
+            e.content.includes('TRACE') ||
+            e.content.includes('ACCESSIBLE') ||
+            e.content.includes('RESTRICTED')
+        )
+      ).toBe(true);
     });
 
     it('shows more details at higher access level', () => {
@@ -910,9 +971,9 @@ describe('Narrative Mechanics', () => {
         accessLevel: 2,
       });
       const result = executeCommand('trace', state);
-      expect(result.output.some(e => 
-        e.content.includes('TRACE') || e.content.includes('files')
-      )).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('TRACE') || e.content.includes('files'))
+      ).toBe(true);
     });
   });
 
@@ -923,9 +984,9 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('connect', state);
-      expect(result.output.some(e => 
-        e.content.includes('USAGE') || e.content.includes('connect')
-      )).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('USAGE') || e.content.includes('connect'))
+      ).toBe(true);
     });
 
     it('requires both files to be read', () => {
@@ -934,10 +995,18 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
         filesRead: new Set(['/storage/transport_log_96.txt']),
       });
-      const result = executeCommand('connect /storage/transport_log_96.txt /ops/medical/autopsy_01.txt', state);
-      expect(result.output.some(e => 
-        e.content.includes('FAILED') || e.content.includes('read') || e.content.includes('not found')
-      )).toBe(true);
+      const result = executeCommand(
+        'connect /storage/transport_log_96.txt /ops/medical/autopsy_01.txt',
+        state
+      );
+      expect(
+        result.output.some(
+          e =>
+            e.content.includes('FAILED') ||
+            e.content.includes('read') ||
+            e.content.includes('not found')
+        )
+      ).toBe(true);
     });
   });
 
@@ -949,9 +1018,15 @@ describe('Narrative Mechanics', () => {
         evidenceLinks: [],
       });
       const result = executeCommand('map', state);
-      expect(result.output.some(e => 
-        e.content.includes('No') || e.content.includes('empty') || e.content.includes('EVIDENCE') || e.content.includes('MAP')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e =>
+            e.content.includes('No') ||
+            e.content.includes('empty') ||
+            e.content.includes('EVIDENCE') ||
+            e.content.includes('MAP')
+        )
+      ).toBe(true);
     });
 
     it('displays existing evidence links', () => {
@@ -973,21 +1048,27 @@ describe('Narrative Mechanics', () => {
         flags: { allEvidenceCollected: false },
       });
       const result = executeCommand('leak', state);
-      expect(result.output.some(e => 
-        e.content.includes('LEAK FAILED') || e.content.includes('incomplete')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e => e.content.includes('LEAK FAILED') || e.content.includes('incomplete')
+        )
+      ).toBe(true);
     });
 
-    it('shows usage when no mode specified and evidence collected', () => {
+    it('triggers endgame sequence when evidence collected', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         flags: { allEvidenceCollected: true },
       });
       const result = executeCommand('leak', state);
-      expect(result.output.some(e => 
-        e.content.includes('USAGE') || e.content.includes('public') || e.content.includes('covert')
-      )).toBe(true);
+      // Should trigger the leak sequence (shows INTERCEPTED message and sets evidencesSaved)
+      expect(
+        result.output.some(
+          e => e.content.includes('INTERCEPTED') || e.content.includes('INITIATING')
+        )
+      ).toBe(true);
+      expect(result.stateChanges.evidencesSaved).toBe(true);
     });
   });
 
@@ -1033,7 +1114,7 @@ describe('Narrative Mechanics', () => {
         sessionDoomCountdown: 10,
       });
       const result = executeCommand('ls', state);
-      
+
       // Should decrement by exactly 1
       expect(result.stateChanges.sessionDoomCountdown).toBe(9);
     });
@@ -1046,11 +1127,13 @@ describe('Narrative Mechanics', () => {
         sessionDoomCountdown: 5,
       });
       const result = executeCommand('ls', state);
-      
+
       // Should show doom countdown warning in output (uses PURGE COUNTDOWN or PURGE IN format)
-      expect(result.output.some(e => 
-        e.content.includes('PURGE COUNTDOWN') || e.content.includes('PURGE IN')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e => e.content.includes('PURGE COUNTDOWN') || e.content.includes('PURGE IN')
+        )
+      ).toBe(true);
       expect(result.stateChanges.sessionDoomCountdown).toBe(4);
     });
 
@@ -1062,7 +1145,7 @@ describe('Narrative Mechanics', () => {
         sessionDoomCountdown: 1, // Will become 0 after command
       });
       const result = executeCommand('ls', state);
-      
+
       // Should trigger game over with PURGE PROTOCOL reason
       expect(result.stateChanges.isGameOver).toBe(true);
       expect(result.stateChanges.gameOverReason).toContain('PURGE PROTOCOL');
@@ -1076,7 +1159,7 @@ describe('Narrative Mechanics', () => {
         sessionDoomCountdown: 10,
       });
       const result = executeCommand('ls', state);
-      
+
       // Should not change doom countdown
       expect(result.stateChanges.sessionDoomCountdown).toBeUndefined();
     });
@@ -1088,17 +1171,18 @@ describe('Narrative Mechanics', () => {
         terribleMistakeTriggered: true,
         sessionDoomCountdown: 5,
       });
-      
+
       // Execute 3 commands and verify countdown decrements correctly each time
       for (let i = 0; i < 3; i++) {
         const result = executeCommand('ls', state);
         const expectedCountdown = 5 - (i + 1);
         expect(result.stateChanges.sessionDoomCountdown).toBe(expectedCountdown);
-        
+
         // Apply state changes for next iteration
         state = {
           ...state,
-          sessionDoomCountdown: result.stateChanges.sessionDoomCountdown ?? state.sessionDoomCountdown,
+          sessionDoomCountdown:
+            result.stateChanges.sessionDoomCountdown ?? state.sessionDoomCountdown,
         };
       }
     });
@@ -1114,7 +1198,7 @@ describe('Narrative Mechanics', () => {
       });
       // scan adds 15 detection, should push us to 100+
       const result = executeCommand('scan', state);
-      
+
       expect(result.stateChanges.detectionLevel).toBe(100);
       expect(result.stateChanges.isGameOver).toBe(true);
       expect(result.stateChanges.gameOverReason).toContain('TRACED');
@@ -1129,7 +1213,7 @@ describe('Narrative Mechanics', () => {
       });
       // scan adds 15 detection, should push us to 113 (capped at 100)
       const result = executeCommand('scan', state);
-      
+
       // Detection should be capped at 100
       expect(result.stateChanges.detectionLevel).toBe(100);
       expect(result.stateChanges.isGameOver).toBe(true);
@@ -1144,7 +1228,7 @@ describe('Narrative Mechanics', () => {
       });
       // scan adds 15 detection, should push us to 95
       const result = executeCommand('scan', state);
-      
+
       expect(result.stateChanges.detectionLevel).toBe(95);
       expect(result.stateChanges.isGameOver).toBeUndefined();
     });
@@ -1162,7 +1246,7 @@ describe('Narrative Mechanics', () => {
       });
       // Open a file that reveals a truth (material_x_analysis.dat reveals debris_relocation)
       const result = executeCommand('open material_x_analysis.dat', state);
-      
+
       // Check that truthsDiscovered is included in stateChanges
       expect(result.stateChanges.truthsDiscovered).toBeDefined();
       if (result.stateChanges.truthsDiscovered) {
@@ -1179,20 +1263,22 @@ describe('Narrative Mechanics', () => {
         // Already have 4 truths, finding the 5th
         truthsDiscovered: new Set<TruthCategory>([
           'debris_relocation',
-          'being_containment', 
+          'being_containment',
           'telepathic_scouts',
-          'international_actors'
+          'international_actors',
         ]),
         flags: {},
         filesRead: new Set<string>(),
       });
       // Open a file that reveals the 5th truth (transition_2026)
       const result = executeCommand('open energy_node_assessment.txt', state);
-      
+
       // Should contain UFO74 message about running save_evidence.sh
-      expect(result.output.some(e => 
-        e.content.includes('save_evidence') || e.content.includes('ALL EVIDENCE')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e => e.content.includes('save_evidence') || e.content.includes('ALL EVIDENCE')
+        )
+      ).toBe(true);
     });
 
     it('sets allEvidenceCollected flag when 5 truths discovered', () => {
@@ -1205,13 +1291,13 @@ describe('Narrative Mechanics', () => {
           'debris_relocation',
           'being_containment',
           'telepathic_scouts',
-          'international_actors'
+          'international_actors',
         ]),
         flags: {},
         filesRead: new Set<string>(),
       });
       const result = executeCommand('open energy_node_assessment.txt', state);
-      
+
       expect(result.stateChanges.flags?.allEvidenceCollected).toBe(true);
     });
   });
@@ -1225,7 +1311,7 @@ describe('Narrative Mechanics', () => {
         scoutLinksUsed: 0,
       });
       const result = executeCommand('link', state);
-      
+
       // Should have imageTrigger with et-brain.png
       expect(result.imageTrigger).toBeDefined();
       expect(result.imageTrigger?.src).toBe('/images/et-brain.png');
@@ -1239,7 +1325,7 @@ describe('Narrative Mechanics', () => {
         scoutLinksUsed: 1,
       });
       const result = executeCommand('link what is your purpose', state);
-      
+
       // Query should not trigger image (only initial link does)
       expect(result.imageTrigger).toBeUndefined();
     });
@@ -1256,7 +1342,7 @@ describe('Narrative Mechanics', () => {
         imagesShownThisRun: new Set<string>(), // Ensure no images shown yet
       });
       const result = executeCommand('open foreign_drone_assessment.txt', state);
-      
+
       expect(result.imageTrigger).toBeDefined();
       expect(result.imageTrigger?.src).toBe('/images/drone.png');
     });
@@ -1271,7 +1357,7 @@ describe('Narrative Mechanics', () => {
         imagesShownThisRun: new Set<string>(), // Ensure no images shown yet
       });
       const result = executeCommand('open field_report_delta.txt', state);
-      
+
       expect(result.imageTrigger).toBeDefined();
       expect(result.imageTrigger?.src).toBe('/images/prato-delta.png');
     });

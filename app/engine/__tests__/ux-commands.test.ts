@@ -209,17 +209,22 @@ describe('UX Commands', () => {
       const result = executeCommand('progress', state);
       
       expect(result.output.some(e => e.content.includes('INVESTIGATION PROGRESS'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('Evidence Collected'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('EVIDENCE STATUS'))).toBe(true);
     });
 
-    it('should show discovered truths', () => {
+    it('should show discovered truths with tier status', () => {
       const state = createTestState({
         truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
+        evidenceTiers: {
+          debris_relocation: { tier: 'fragment', linkedFiles: ['/test.txt'] },
+          being_containment: { tier: 'corroborated', linkedFiles: ['/a.txt', '/b.txt'], corroboratingFiles: ['/a.txt', '/b.txt'] },
+        },
       });
       const result = executeCommand('progress', state);
       
-      expect(result.output.some(e => e.content.includes('Debris transfer'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('Non-human containment'))).toBe(true);
+      // Check for category names in the new format
+      expect(result.output.some(e => e.content.includes('DEBRIS TRANSFER') || e.content.includes('Debris Transfer'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('BIO CONTAINMENT') || e.content.includes('Bio Containment'))).toBe(true);
     });
 
     it('should show detection warning at high levels', () => {
@@ -237,7 +242,8 @@ describe('UX Commands', () => {
       const result = executeCommand('progress', state);
       
       expect(result.output.some(e => e.content.includes('Files examined: 2'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('Commands executed: 50'))).toBe(true);
+      // Commands executed is no longer shown; check for evidence links instead
+      expect(result.output.some(e => e.content.includes('Evidence links:') || e.content.includes('SESSION STATISTICS'))).toBe(true);
     });
   });
 
