@@ -41,6 +41,7 @@ import {
   KEYPRESS_TRACK_SIZE,
 } from '../constants/gameplay';
 import { useSound } from '../hooks/useSound';
+import { useAutocomplete } from '../hooks/useAutocomplete';
 import { unlockAchievement, Achievement } from '../engine/achievements';
 import { uiRandom, uiRandomInt, uiRandomPick, uiChance, uiRandomFloat } from '../engine/rng';
 import AchievementPopup from './AchievementPopup';
@@ -62,48 +63,6 @@ const SecretEnding = dynamic(() => import('./SecretEnding'), { ssr: false });
 const AchievementGallery = dynamic(() => import('./AchievementGallery'), { ssr: false });
 const StatisticsModal = dynamic(() => import('./StatisticsModal'), { ssr: false });
 import styles from './Terminal.module.css';
-
-// Available commands for auto-completion
-const COMMANDS = [
-  'help',
-  'status',
-  'progress',
-  'ls',
-  'cd',
-  'back',
-  'open',
-  'last',
-  'unread',
-  'decrypt',
-  'recover',
-  'note',
-  'notes',
-  'bookmark',
-  'trace',
-  'chat',
-  'clear',
-  'save',
-  'exit',
-  'override',
-  'run',
-  'correlate',
-  'connect',
-  'map',
-  'tree',
-  'tutorial',
-  'leak',
-  'message',
-];
-const COMMANDS_WITH_FILE_ARGS = [
-  'cd',
-  'open',
-  'decrypt',
-  'recover',
-  'run',
-  'bookmark',
-  'correlate',
-  'connect',
-];
 
 // "They're watching" paranoia messages
 const PARANOIA_MESSAGES = [
@@ -341,6 +300,9 @@ export default function Terminal({
     masterVolume,
     setMasterVolume,
   } = useSound();
+
+  // Autocomplete hook
+  const { getCompletions, completeInput } = useAutocomplete(gameState);
 
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -1549,57 +1511,6 @@ export default function Terminal({
     ]
   );
 
-  // Get auto-complete suggestions
-  const getCompletions = useCallback(
-    (input: string): string[] => {
-      const trimmed = input.trimStart();
-      const parts = trimmed.split(/\s+/);
-
-      if (parts.length <= 1) {
-        // Complete command names
-        const partial = parts[0].toLowerCase();
-        return COMMANDS.filter(cmd => cmd.startsWith(partial));
-      }
-
-      // Complete file/directory arguments for specific commands
-      const cmd = parts[0].toLowerCase();
-      if (!COMMANDS_WITH_FILE_ARGS.includes(cmd)) return [];
-
-      const partial = parts[parts.length - 1];
-      const currentPath = gameState.currentPath;
-
-      // Determine the directory to search and the prefix to match
-      let searchDir = currentPath;
-      let prefix = partial;
-
-      if (partial.includes('/')) {
-        const lastSlash = partial.lastIndexOf('/');
-        const dirPart = partial.substring(0, lastSlash + 1);
-        prefix = partial.substring(lastSlash + 1);
-        searchDir = resolvePath(dirPart, currentPath);
-      }
-
-      const entries = listDirectory(searchDir, gameState);
-      if (!entries) return [];
-
-      // Filter entries that match the prefix
-      const matches = entries
-        .map(e => e.name.replace(/\/$/, '')) // Remove trailing slash for matching
-        .filter(name => name.toLowerCase().startsWith(prefix.toLowerCase()));
-
-      // For 'cd', only show directories
-      if (cmd === 'cd') {
-        const dirEntries = entries.filter(e => e.type === 'dir');
-        return dirEntries
-          .map(e => e.name.replace(/\/$/, ''))
-          .filter(name => name.toLowerCase().startsWith(prefix.toLowerCase()));
-      }
-
-      return matches;
-    },
-    [gameState]
-  );
-
   // Handle keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -1607,65 +1518,32 @@ export default function Terminal({
         e.preventDefault();
         const completions = getCompletions(inputValue);
 
-        if (completions.length === 1) {
-          // Single match - complete it
-          const parts = inputValue.trimStart().split(/\s+/);
-          if (parts.length <= 1) {
-            // Completing a command
-            setInputValue(completions[0] + ' ');
-          } else {
-            // Completing a file/directory argument
-            const cmd = parts[0];
-            const partial = parts[parts.length - 1];
-            let prefix = '';
-            if (partial.includes('/')) {
-              prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
-            }
-            setInputValue(`${cmd} ${prefix}${completions[0]}`);
-          }
-        } else if (completions.length > 1) {
-          // Multiple matches - show them in terminal and complete common prefix
-          const commonPrefix = completions.reduce((acc, str) => {
-            while (acc && !str.toLowerCase().startsWith(acc.toLowerCase())) {
-              acc = acc.slice(0, -1);
-            }
-            return acc;
-          }, completions[0]);
+        // Use completeInput from useAutocomplete hook
+        const completed = completeInput(inputValue, completions);
+        if (completed) {
+          setInputValue(completed);
+        }
 
-          // Update input with common prefix
+        // Show completions in terminal with file previews (for multiple matches)
+        if (completions.length > 1) {
           const parts = inputValue.trimStart().split(/\s+/);
-          if (parts.length <= 1) {
-            setInputValue(commonPrefix);
-          } else {
-            const cmd = parts[0];
-            const partial = parts[parts.length - 1];
-            let prefix = '';
-            if (partial.includes('/')) {
-              prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
-            }
-            setInputValue(`${cmd} ${prefix}${commonPrefix}`);
-          }
-
-          // Show completions in terminal with file previews
-          const parts2 = inputValue.trimStart().split(/\s+/);
-          const cmd2 = parts2[0]?.toLowerCase();
-          const isFileCommand = cmd2 === 'open' || cmd2 === 'decrypt';
+          const cmd = parts[0]?.toLowerCase();
+          const isFileCommand = cmd === 'open' || cmd === 'decrypt';
 
           const completionLines: string[] = [];
           completionLines.push(completions.join('  '));
 
           // Show file preview for file commands
           if (isFileCommand && completions.length <= 3) {
-            const partial2 = parts2[parts2.length - 1];
-            let searchDir2 = gameState.currentPath;
-            if (partial2.includes('/')) {
-              const lastSlash = partial2.lastIndexOf('/');
-              searchDir2 = resolvePath(partial2.substring(0, lastSlash + 1), gameState.currentPath);
+            const partial = parts[parts.length - 1];
+            let searchDir = gameState.currentPath;
+            if (partial.includes('/')) {
+              const lastSlash = partial.lastIndexOf('/');
+              searchDir = resolvePath(partial.substring(0, lastSlash + 1), gameState.currentPath);
             }
 
             for (const completion of completions) {
-              const fullPath =
-                searchDir2 === '/' ? `/${completion}` : `${searchDir2}/${completion}`;
+              const fullPath = searchDir === '/' ? `/${completion}` : `${searchDir}/${completion}`;
               const node = getNode(fullPath, gameState);
               if (node && node.type === 'file') {
                 const preview = getFileContent(fullPath, gameState);
