@@ -118,39 +118,55 @@ export const ACHIEVEMENTS: Achievement[] = [
 // Storage key for achievements
 const ACHIEVEMENTS_KEY = 'rpg-solo-achievements';
 
-// Get unlocked achievements from localStorage
+/**
+ * Retrieves the set of unlocked achievement IDs from localStorage.
+ * @returns Set of achievement IDs that have been unlocked
+ */
 export function getUnlockedAchievements(): Set<string> {
   const stored = safeGetJSON<string[]>(ACHIEVEMENTS_KEY, []);
   return new Set(stored);
 }
 
-// Save unlocked achievements to localStorage
+/**
+ * Persists the set of unlocked achievements to localStorage.
+ * @param achievements - Set of achievement IDs to save
+ */
 export function saveAchievements(achievements: Set<string>): void {
   safeSetJSON(ACHIEVEMENTS_KEY, [...achievements]);
 }
 
-// Unlock an achievement
+/**
+ * Unlocks an achievement by ID if not already unlocked.
+ * @param id - The achievement ID to unlock
+ * @returns Object with achievement details and whether it was newly unlocked, or null if invalid ID
+ */
 export function unlockAchievement(id: string): { achievement: Achievement; isNew: boolean } | null {
   const achievement = ACHIEVEMENTS.find(a => a.id === id);
   if (!achievement) return null;
-  
+
   const unlocked = getUnlockedAchievements();
   const isNew = !unlocked.has(id);
-  
+
   if (isNew) {
     unlocked.add(id);
     saveAchievements(unlocked);
   }
-  
+
   return { achievement, isNew };
 }
 
-// Clear all achievements (for testing)
+/**
+ * Clears all unlocked achievements from storage (for testing).
+ */
 export function clearAchievements(): void {
   safeRemoveItem(ACHIEVEMENTS_KEY);
 }
 
-// Get achievement by ID
+/**
+ * Retrieves an achievement definition by its ID.
+ * @param id - The achievement ID to look up
+ * @returns The achievement definition, or undefined if not found
+ */
 export function getAchievement(id: string): Achievement | undefined {
   return ACHIEVEMENTS.find(a => a.id === id);
 }

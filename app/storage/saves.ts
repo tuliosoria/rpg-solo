@@ -1,13 +1,23 @@
-// Save/Load utilities for Terminal 1996
+/**
+ * Save/Load Utilities for Terminal 1996
+ *
+ * Handles game state persistence to localStorage with:
+ * - Versioned save data format with automatic migrations
+ * - Set-to-Array serialization for proper JSON storage
+ * - Automatic cleanup when quota is exceeded
+ * - Auto-save support for session recovery
+ *
+ * @module storage/saves
+ */
 
 import { GameState, SaveSlot, DEFAULT_GAME_STATE } from '../types';
 import { generateSeed } from '../engine/rng';
 import { generateBootSequence } from '../engine/commands';
-import { 
-  MAX_HISTORY_SIZE, 
-  MAX_COMMAND_HISTORY_SIZE, 
+import {
+  MAX_HISTORY_SIZE,
+  MAX_COMMAND_HISTORY_SIZE,
   MAX_SAVE_SLOTS,
-  SAVE_VERSION
+  SAVE_VERSION,
 } from '../constants/limits';
 
 const SAVES_KEY = 'terminal1996:saves';
@@ -23,24 +33,24 @@ interface VersionedSaveData {
 // Add new migration cases here when SAVE_VERSION is incremented
 function migrateState(data: VersionedSaveData): Record<string, unknown> {
   let { version, state } = data;
-  
+
   // Run migrations sequentially for each version
   // Example: if migrating from v1 to v3, run v1->v2, then v2->v3
-  
+
   // Version 0 or undefined: original saves without version field
   if (version === 0 || version === undefined) {
     // No structural changes needed for v0 -> v1
     // Future migrations would transform state here
     version = 1;
   }
-  
+
   // Add future migrations here:
   // if (version === 1) {
   //   // Migrate v1 -> v2
   //   state = { ...state, newField: defaultValue };
   //   version = 2;
   // }
-  
+
   return state;
 }
 
@@ -73,7 +83,7 @@ function serializeState(state: GameState): string {
 // Deserialize GameState (handle Set conversion and version migration)
 function deserializeState(json: string): GameState {
   const rawParsed = JSON.parse(json);
-  
+
   // Handle both versioned and legacy (unversioned) save formats
   let parsed: Record<string, unknown>;
   if (rawParsed.version !== undefined && rawParsed.state !== undefined) {
@@ -83,7 +93,7 @@ function deserializeState(json: string): GameState {
     // Legacy unversioned format - treat as version 0
     parsed = migrateState({ version: 0, state: rawParsed });
   }
-  
+
   // Spread DEFAULT_GAME_STATE first for migration support (new fields get defaults)
   return {
     ...DEFAULT_GAME_STATE,
@@ -111,19 +121,24 @@ function deserializeState(json: string): GameState {
 // Check if we're in a browser with real localStorage
 function isBrowserWithStorage(): boolean {
   try {
-    return typeof document !== 'undefined' && 
-           typeof window !== 'undefined' && 
-           typeof window.localStorage !== 'undefined' &&
-           typeof window.localStorage.getItem === 'function';
+    return (
+      typeof document !== 'undefined' &&
+      typeof window !== 'undefined' &&
+      typeof window.localStorage !== 'undefined' &&
+      typeof window.localStorage.getItem === 'function'
+    );
   } catch {
     return false;
   }
 }
 
-// Get all save slots
+/**
+ * Retrieves all saved game slots from localStorage.
+ * @returns Array of save slot metadata, empty if none exist or storage unavailable
+ */
 export function getSaveSlots(): SaveSlot[] {
   if (!isBrowserWithStorage()) return [];
-  
+
   try {
     const raw = window.localStorage.getItem(SAVES_KEY);
     if (!raw) return [];
@@ -133,14 +148,20 @@ export function getSaveSlots(): SaveSlot[] {
   }
 }
 
-// Save game to a slot
+/**
+ * Saves the current game state to a new slot.
+ * Handles quota exceeded errors by removing oldest saves.
+ * @param state - The game state to save
+ * @param slotName - Optional custom name for the save slot
+ * @returns The created SaveSlot metadata, or null if save failed
+ */
 export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
   if (!isBrowserWithStorage()) return null;
-  
+
   const id = `save_${Date.now()}`;
   const name = slotName || `Session ${new Date().toLocaleString()}`;
   const now = Date.now();
-  
+
   const slot: SaveSlot = {
     id,
     name,
@@ -149,10 +170,10 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
     truthCount: state.truthsDiscovered.size,
     detectionLevel: state.detectionLevel,
   };
-  
+
   // Save the state with updated lastSaveTime
   const stateToSave = { ...state, lastSaveTime: now };
-  
+
   try {
     window.localStorage.setItem(SAVE_PREFIX + id, serializeState(stateToSave));
   } catch (e) {
@@ -177,11 +198,11 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
       return null;
     }
   }
-  
+
   // Update saves list
   const slots = getSaveSlots();
   slots.unshift(slot); // Add to front
-  
+
   // Keep only last MAX_SAVE_SLOTS saves, delete orphaned save data
   if (slots.length > MAX_SAVE_SLOTS) {
     const orphanedSlots = slots.slice(MAX_SAVE_SLOTS);
@@ -195,14 +216,18 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
   }
   const trimmedSlots = slots.slice(0, MAX_SAVE_SLOTS);
   window.localStorage.setItem(SAVES_KEY, JSON.stringify(trimmedSlots));
-  
+
   return slot;
 }
 
-// Load game from a slot
+/**
+ * Loads a saved game state by slot ID.
+ * @param slotId - The unique identifier of the save slot
+ * @returns The deserialized GameState, or null if not found
+ */
 export function loadGame(slotId: string): GameState | null {
   if (!isBrowserWithStorage()) return null;
-  
+
   try {
     const raw = window.localStorage.getItem(SAVE_PREFIX + slotId);
     if (!raw) return null;
@@ -212,13 +237,16 @@ export function loadGame(slotId: string): GameState | null {
   }
 }
 
-// Delete a save slot
+/**
+ * Deletes a save slot and its associated state data.
+ * @param slotId - The unique identifier of the save slot to delete
+ */
 export function deleteSave(slotId: string): void {
   if (!isBrowserWithStorage()) return;
-  
+
   try {
     window.localStorage.removeItem(SAVE_PREFIX + slotId);
-    
+
     const slots = getSaveSlots().filter(s => s.id !== slotId);
     window.localStorage.setItem(SAVES_KEY, JSON.stringify(slots));
   } catch {
@@ -226,7 +254,11 @@ export function deleteSave(slotId: string): void {
   }
 }
 
-// Create a fresh game state
+/**
+ * Creates a fresh game state for a new game.
+ * Generates a new seed and boot sequence, sets initial flags.
+ * @returns A new GameState ready for gameplay
+ */
 export function createNewGame(): GameState {
   const seed = generateSeed();
   const bootSequence = generateBootSequence();
@@ -244,7 +276,7 @@ export function createNewGame(): GameState {
     ...(variantAlpha ? { variant_route_alpha: true } : { variant_route_beta: true }),
     ...(ghostSessionAvailable ? { ghostSessionAvailable: true } : {}),
   };
-  
+
   return {
     ...DEFAULT_GAME_STATE,
     seed,
@@ -261,10 +293,14 @@ export function createNewGame(): GameState {
   };
 }
 
-// Auto-save (quick slot)
+/**
+ * Saves the current state to the auto-save slot.
+ * Used for session recovery on page reload.
+ * @param state - The game state to auto-save
+ */
 export function autoSave(state: GameState): void {
   if (!isBrowserWithStorage()) return;
-  
+
   try {
     const stateToSave = { ...state, lastSaveTime: Date.now() };
     window.localStorage.setItem('terminal1996:autosave', serializeState(stateToSave));
@@ -273,10 +309,13 @@ export function autoSave(state: GameState): void {
   }
 }
 
-// Load auto-save
+/**
+ * Loads the auto-saved game state if available.
+ * @returns The auto-saved GameState, or null if none exists
+ */
 export function loadAutoSave(): GameState | null {
   if (!isBrowserWithStorage()) return null;
-  
+
   try {
     const raw = window.localStorage.getItem('terminal1996:autosave');
     if (!raw) return null;

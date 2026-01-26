@@ -1,8 +1,15 @@
-// Safe localStorage utilities with consistent error handling
-// All operations silently fail if localStorage is unavailable
+/**
+ * Safe localStorage Utilities
+ *
+ * Provides consistent error handling for localStorage operations.
+ * All operations silently fail if localStorage is unavailable (SSR, private mode, quota exceeded).
+ *
+ * @module storage/safeStorage
+ */
 
 /**
- * Check if localStorage is available and functional
+ * Check if localStorage is available and functional.
+ * @returns true if localStorage can be read and written
  */
 export function isStorageAvailable(): boolean {
   try {
@@ -49,7 +56,7 @@ export function safeSetItem(key: string, value: string): boolean {
 
 /**
  * Safely remove an item from localStorage
- * @returns true if successful, false otherwise  
+ * @returns true if successful, false otherwise
  */
 export function safeRemoveItem(key: string): boolean {
   try {

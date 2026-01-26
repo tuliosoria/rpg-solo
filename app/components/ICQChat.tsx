@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './ICQChat.module.css';
 
 interface ICQMessage {
@@ -30,49 +30,61 @@ interface ICQChatProps {
   onFilesSent: () => void;
 }
 
-export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, onMathMistake, onLeakChoice, onFilesSent }: ICQChatProps) {
+export default function ICQChat({
+  onVictoryAction,
+  initialTrust,
+  onTrustChange,
+  onMathMistake,
+  onLeakChoice,
+  onFilesSent,
+}: ICQChatProps) {
   const [messages, setMessages] = useState<ICQMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
-  const [phase, setPhase] = useState<'intro' | 'scared' | 'bargain' | 'math' | 'leak' | 'sending' | 'victory'>('intro');
+  const [phase, setPhase] = useState<
+    'intro' | 'scared' | 'bargain' | 'math' | 'leak' | 'sending' | 'victory'
+  >('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [trust, setTrust] = useState(initialTrust);
-  
+
   const chatRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   // Auto-scroll to bottom
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }, [messages]);
-  
+
   // Focus input
   useEffect(() => {
     inputRef.current?.focus();
   }, [phase]);
-  
+
   // Get current time for timestamps
-  const getTimestamp = () => {
+  const getTimestamp = useCallback(() => {
     const now = new Date();
     return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-  };
-  
+  }, []);
+
   // Add teen message with typing delay
-  const addTeenMessage = async (text: string, delay = 1500) => {
-    setIsTyping(true);
-    await new Promise(resolve => setTimeout(resolve, delay));
-    setIsTyping(false);
-    setMessages(prev => [...prev, { sender: 'teen', text, timestamp: getTimestamp() }]);
-  };
-  
+  const addTeenMessage = useCallback(
+    async (text: string, delay = 1500) => {
+      setIsTyping(true);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      setIsTyping(false);
+      setMessages(prev => [...prev, { sender: 'teen', text, timestamp: getTimestamp() }]);
+    },
+    [getTimestamp]
+  );
+
   // Add system message
-  const addSystemMessage = (text: string) => {
+  const addSystemMessage = useCallback((text: string) => {
     setMessages(prev => [...prev, { sender: 'system', text }]);
-  };
-  
+  }, []);
+
   const adjustTrust = (delta: number) => {
     setTrust(prev => {
       const next = Math.max(0, Math.min(100, prev + delta));
@@ -80,17 +92,17 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
       return next;
     });
   };
-  
+
   // Initial intro sequence
   useEffect(() => {
     let isMounted = true;
-    
+
     const startIntro = async () => {
       if (!isMounted) return;
       addSystemMessage('═══ CONNECTION ESTABLISHED ═══');
       addSystemMessage('UFO74 managed to "hang" the connection on a civilian computer');
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       if (!isMounted) return;
       addSystemMessage('xXx_DarkMaster_xXx is online');
       await addTeenMessage('???', 1000);
@@ -98,28 +110,30 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
       await addTeenMessage('hello???', 1200);
       if (!isMounted) return;
       await addTeenMessage('who r u??? how did u get into my icq??', 1500);
-      
+
       if (!isMounted) return;
       setPhase('scared');
     };
-    
+
     startIntro();
-    
+
     return () => {
       isMounted = false;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  
+  }, [addSystemMessage, addTeenMessage]);
+
   // Handle player input
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isTyping) return;
-    
+
     const playerText = inputValue.trim();
     setInputValue('');
-    setMessages(prev => [...prev, { sender: 'player', text: playerText, timestamp: getTimestamp() }]);
-    
+    setMessages(prev => [
+      ...prev,
+      { sender: 'player', text: playerText, timestamp: getTimestamp() },
+    ]);
+
     // Phase-based responses
     switch (phase) {
       case 'scared':
@@ -138,11 +152,16 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
         break;
     }
   };
-  
+
   const handleScaredPhase = async (playerText: string) => {
     const lower = playerText.toLowerCase();
-    
-    if (lower.includes('help') || lower.includes('need') || lower.includes('urgent') || lower.includes('important')) {
+
+    if (
+      lower.includes('help') ||
+      lower.includes('need') ||
+      lower.includes('urgent') ||
+      lower.includes('important')
+    ) {
       await addTeenMessage('dude i dont know who u r', 1200);
       await addTeenMessage('my mom said not to talk to strangers online', 1500);
       await addTeenMessage('what do u want???', 1000);
@@ -163,11 +182,19 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
       adjustTrust(-4);
     }
   };
-  
+
   const handleBargainPhase = async (playerText: string) => {
     const lower = playerText.toLowerCase();
-    
-    if (lower.includes('save') || lower.includes('store') || lower.includes('floppy') || lower.includes('disk') || lower.includes('cd') || lower.includes('file') || lower.includes('backup')) {
+
+    if (
+      lower.includes('save') ||
+      lower.includes('store') ||
+      lower.includes('floppy') ||
+      lower.includes('disk') ||
+      lower.includes('cd') ||
+      lower.includes('file') ||
+      lower.includes('backup')
+    ) {
       await addTeenMessage('hmmmm', 1000);
       await addTeenMessage('let me think...', 1500);
       await addTeenMessage('ok ill do it', 2000);
@@ -177,18 +204,23 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
       await addTeenMessage('and i dont know how to do it 😭', 1200);
       await addTeenMessage('if u solve the 3 questions ill save ur files', 1500);
       await addTeenMessage('deal?', 800);
-      
+
       addSystemMessage('═══ DEAL: Solve 3 linear equations ═══');
       adjustTrust(4);
       setPhase('math');
-      
+
       // Show first question
       await new Promise(resolve => setTimeout(resolve, 1500));
       await addTeenMessage(`ok first question:`, 1000);
       await addTeenMessage(`${MATH_QUESTIONS[0].equation}`, 1200);
       await addTeenMessage(`what is x?`, 800);
-      
-    } else if (lower.includes('government') || lower.includes('et') || lower.includes('alien') || lower.includes('ufo') || lower.includes('varginha')) {
+    } else if (
+      lower.includes('government') ||
+      lower.includes('et') ||
+      lower.includes('alien') ||
+      lower.includes('ufo') ||
+      lower.includes('varginha')
+    ) {
       await addTeenMessage('LOLOLOLOL', 1000);
       await addTeenMessage('aliens??? r u joking', 1500);
       await addTeenMessage('my uncle talks about that stuff', 1200);
@@ -205,11 +237,11 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
       adjustTrust(-3);
     }
   };
-  
+
   const handleMathPhase = async (playerText: string) => {
     const answer = parseInt(playerText.replace(/[^0-9-]/g, ''));
     const question = MATH_QUESTIONS[currentQuestion];
-    
+
     if (isNaN(answer)) {
       await addTeenMessage('thats not a number dude', 1000);
       await addTeenMessage(`hint: ${question.hint}`, 1200);
@@ -217,31 +249,30 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
       onMathMistake();
       return;
     }
-    
+
     if (answer === question.answer) {
       // Correct answer
       await addTeenMessage('yesss!!! correct 🎉', 1200);
       adjustTrust(3);
-      
+
       const nextQuestion = currentQuestion + 1;
       setCurrentQuestion(nextQuestion);
       setWrongAttempts(0);
-      
+
       if (nextQuestion >= MATH_QUESTIONS.length) {
         // All questions answered - victory!
         await addTeenMessage('wow ur so smart', 1500);
         await addTeenMessage('thx for helping me!', 1200);
         await addTeenMessage('ok im gonna save ur files', 1500);
-        
+
         addSystemMessage('═══ SAVING FILES ═══');
         onFilesSent();
         setPhase('leak');
-        
+
         await new Promise(resolve => setTimeout(resolve, 1200));
         await addTeenMessage('quick question before i do it', 1200);
         await addTeenMessage('u want me to post it everywhere or keep it quiet?', 1500);
         await addTeenMessage('type: public or covert', 1000);
-        
       } else {
         // Next question
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -255,7 +286,7 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
       setWrongAttempts(prev => prev + 1);
       onMathMistake();
       adjustTrust(-3);
-      
+
       if (wrongAttempts >= 2) {
         await addTeenMessage('dude u dont know math either?? 😂', 1200);
         await addTeenMessage(`hint: ${question.hint}`, 1500);
@@ -266,7 +297,7 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
       }
     }
   };
-  
+
   const handleLeakPhase = async (playerText: string) => {
     const lower = playerText.toLowerCase();
     if (lower.includes('public')) {
@@ -283,37 +314,37 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
       await finalizeTransfer();
       return;
     }
-    
+
     await addTeenMessage('public or covert. pick one.', 900);
   };
-  
+
   const finalizeTransfer = async () => {
     setPhase('sending');
     await new Promise(resolve => setTimeout(resolve, 1800));
     await addTeenMessage('getting a floppy disk...', 1500);
     await addTeenMessage('copying...', 2000);
-    
+
     addSystemMessage('[▓▓▓▓▓▓▓▓▓▓] 100% - COMPLETE');
-    
+
     await addTeenMessage('done!', 1200);
     await addTeenMessage('saved everything to a floppy', 1500);
     await addTeenMessage('gonna hide it under my bed', 1200);
     await addTeenMessage('no one will find it 😎', 1000);
-    
+
     addSystemMessage('═══════════════════════════════════════════════════════════');
     addSystemMessage('MISSION COMPLETE');
     addSystemMessage('The evidence was saved to physical media.');
     addSystemMessage('The files survived the system purge.');
     addSystemMessage('═══════════════════════════════════════════════════════════');
-    
+
     setPhase('victory');
-    
+
     // Trigger victory after delay
     setTimeout(() => {
       onVictoryAction();
     }, 5000);
   };
-  
+
   return (
     <div className={styles.container}>
       {/* ICQ Title Bar */}
@@ -328,7 +359,7 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
           <span className={styles.titleBtnClose}>×</span>
         </div>
       </div>
-      
+
       {/* Contact Info Bar */}
       <div className={styles.contactBar}>
         <div className={styles.avatar}>👦</div>
@@ -337,7 +368,7 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
           <div className={styles.contactStatus}>🟢 Online</div>
         </div>
       </div>
-      
+
       {/* Chat Area */}
       <div className={styles.chatArea} ref={chatRef}>
         {messages.map((msg, index) => (
@@ -355,13 +386,9 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
             )}
           </div>
         ))}
-        {isTyping && (
-          <div className={styles.typing}>
-            xXx_DarkMaster_xXx está digitando...
-          </div>
-        )}
+        {isTyping && <div className={styles.typing}>xXx_DarkMaster_xXx está digitando...</div>}
       </div>
-      
+
       {/* Input Area */}
       <div className={styles.inputArea}>
         <form onSubmit={handleSubmit} className={styles.inputForm}>
@@ -374,8 +401,8 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
             disabled={isTyping || phase === 'victory' || phase === 'sending'}
             className={styles.input}
           />
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className={styles.sendButton}
             disabled={isTyping || phase === 'victory' || phase === 'sending'}
           >
@@ -383,7 +410,7 @@ export default function ICQChat({ onVictoryAction, initialTrust, onTrustChange, 
           </button>
         </form>
       </div>
-      
+
       {/* Status Bar */}
       <div className={styles.statusBar}>
         <span>Conectado via modem 56k</span>

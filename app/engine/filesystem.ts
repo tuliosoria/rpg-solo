@@ -4,10 +4,17 @@ import { FileSystemNode, DirectoryNode, FileNode, GameState, FileMutation } from
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 import { createSeededRng } from './rng';
 
+/**
+ * Resolves a path (absolute or relative) against a current working path.
+ * Handles `.` (current dir) and `..` (parent dir) navigation.
+ * @param path - The path to resolve (can be absolute starting with '/' or relative)
+ * @param currentPath - The current working directory path
+ * @returns The resolved absolute path
+ */
 export function resolvePath(path: string, currentPath: string): string {
   // Handle absolute vs relative paths
   let segments: string[];
-  
+
   if (path.startsWith('/')) {
     segments = path.split('/').filter(Boolean);
   } else {
@@ -15,7 +22,7 @@ export function resolvePath(path: string, currentPath: string): string {
     const newSegments = path.split('/').filter(Boolean);
     segments = [...currentSegments, ...newSegments];
   }
-  
+
   // Handle .. and .
   const resolved: string[] = [];
   for (const seg of segments) {
@@ -25,48 +32,63 @@ export function resolvePath(path: string, currentPath: string): string {
       resolved.push(seg);
     }
   }
-  
+
   return '/' + resolved.join('/');
 }
 
+/**
+ * Retrieves a filesystem node at the given path, respecting access controls.
+ * @param path - The absolute path to the node
+ * @param state - Current game state for access level and flag checks
+ * @returns The node if accessible, or null if not found/inaccessible
+ */
 export function getNode(path: string, state: GameState): FileSystemNode | null {
   const segments = path.split('/').filter(Boolean);
   let current: FileSystemNode = FILESYSTEM_ROOT;
-  
+
   for (const segment of segments) {
     if (current.type !== 'dir') return null;
     const child: FileSystemNode | undefined = current.children[segment];
     if (!child) return null;
-    
+
     // Check access requirements
     if (child.requiredFlags) {
       const hasAllFlags = child.requiredFlags.every((f: string) => state.flags[f]);
       if (!hasAllFlags) return null;
     }
-    
+
     if (child.accessThreshold && state.accessLevel < child.accessThreshold) {
       return null;
     }
-    
+
     current = child;
   }
-  
+
   return current;
 }
 
-export function listDirectory(path: string, state: GameState): { name: string; type: 'dir' | 'file'; status?: string }[] | null {
+/**
+ * Lists the contents of a directory, filtering by access permissions.
+ * @param path - The absolute path to the directory
+ * @param state - Current game state for access checks
+ * @returns Array of directory entries with name, type, and status, or null if not a directory
+ */
+export function listDirectory(
+  path: string,
+  state: GameState
+): { name: string; type: 'dir' | 'file'; status?: string }[] | null {
   const node = getNode(path, state);
   if (!node || node.type !== 'dir') return null;
-  
+
   const entries: { name: string; type: 'dir' | 'file'; status?: string }[] = [];
-  
+
   for (const [name, child] of Object.entries(node.children)) {
     // Check visibility requirements for required flags
     if (child.requiredFlags) {
       const hasAllFlags = child.requiredFlags.every(f => state.flags[f]);
       if (!hasAllFlags) continue;
     }
-    
+
     // Handle restricted files
     if (child.type === 'file') {
       const file = child as FileNode;
@@ -88,19 +110,19 @@ export function listDirectory(path: string, state: GameState): { name: string; t
         continue;
       }
     }
-    
+
     // Check if file is deleted
     const fullPath = path === '/' ? `/${name}` : `${path}/${name}`;
     const mutation = state.fileMutations[fullPath];
     if (mutation?.deleted) continue;
-    
+
     entries.push({
       name: child.type === 'dir' ? `${name}/` : name,
       type: child.type,
       status: child.type === 'file' ? (child as FileNode).status : undefined,
     });
   }
-  
+
   return entries.sort((a, b) => {
     // Directories first, then files
     if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
@@ -108,17 +130,28 @@ export function listDirectory(path: string, state: GameState): { name: string; t
   });
 }
 
-export function getFileContent(path: string, state: GameState, decrypted: boolean = false): string[] | null {
+/**
+ * Retrieves the content of a file, applying mutations and time-sensitive degradation.
+ * @param path - The absolute path to the file
+ * @param state - Current game state for mutation and timing checks
+ * @param decrypted - Whether to return decrypted content if available
+ * @returns Array of content lines, or null if file not found/deleted
+ */
+export function getFileContent(
+  path: string,
+  state: GameState,
+  decrypted: boolean = false
+): string[] | null {
   const node = getNode(path, state);
   if (!node || node.type !== 'file') return null;
-  
+
   const file = node as FileNode;
   const mutation = state.fileMutations[path];
-  
+
   // Check if deleted or locked
   if (mutation?.deleted) return null;
   if (mutation?.locked) return ['[FILE LOCKED]'];
-  
+
   // Get base content
   let content: string[];
   if (decrypted && file.decryptedFragment && mutation?.decrypted) {
@@ -128,17 +161,18 @@ export function getFileContent(path: string, state: GameState, decrypted: boolea
   } else {
     content = [...file.content];
   }
-  
+
   // Time-sensitive content degradation
   // Files with 'time_sensitive' in content become partially corrupted after 30 commands
   const commandCount = state.sessionCommandCount || 0;
-  const isTimeSensitive = file.content.some((line: string) => 
-    line.includes('TIME-SENSITIVE') || 
-    line.includes('[EARLY SESSION ONLY]') ||
-    path.includes('early_') ||
-    path.includes('initial_')
+  const isTimeSensitive = file.content.some(
+    (line: string) =>
+      line.includes('TIME-SENSITIVE') ||
+      line.includes('[EARLY SESSION ONLY]') ||
+      path.includes('early_') ||
+      path.includes('initial_')
   );
-  
+
   if (isTimeSensitive && commandCount > 30) {
     // Progressively corrupt time-sensitive files
     const corruptionLevel = Math.min(Math.floor((commandCount - 30) / 10), 5);
@@ -152,13 +186,13 @@ export function getFileContent(path: string, state: GameState, decrypted: boolea
       }
       return line;
     });
-    
+
     if (corruptionLevel >= 3) {
       content.push('');
       content.push('[WARNING: File integrity compromised due to delayed access]');
     }
   }
-  
+
   // Apply mutations (corruption)
   if (mutation) {
     for (const lineIdx of mutation.corruptedLines || []) {
@@ -166,28 +200,37 @@ export function getFileContent(path: string, state: GameState, decrypted: boolea
         content[lineIdx] = '[DATA LOSS]';
       }
     }
-    
+
     if (mutation.truncatedLine !== undefined && mutation.truncatedLine < content.length) {
       const line = content[mutation.truncatedLine];
       const cutPoint = Math.floor(line.length * 0.4);
       content[mutation.truncatedLine] = line.substring(0, cutPoint) + '—[CORRUPTION]';
     }
   }
-  
+
   return content;
 }
 
-export function canAccessFile(path: string, state: GameState): { accessible: boolean; reason?: string } {
+/**
+ * Checks if a file can be accessed by the player.
+ * @param path - The absolute path to the file
+ * @param state - Current game state for access checks
+ * @returns Object with accessible boolean and optional reason if denied
+ */
+export function canAccessFile(
+  path: string,
+  state: GameState
+): { accessible: boolean; reason?: string } {
   const node = getNode(path, state);
   if (!node) return { accessible: false, reason: 'FILE NOT FOUND' };
   if (node.type !== 'file') return { accessible: false, reason: 'NOT A FILE' };
-  
+
   const file = node as FileNode;
   const mutation = state.fileMutations[path];
-  
+
   if (mutation?.deleted) return { accessible: false, reason: 'FILE DELETED' };
   if (mutation?.locked) return { accessible: false, reason: 'FILE LOCKED' };
-  
+
   if (file.status === 'restricted' || file.status === 'restricted_briefing') {
     if (file.accessThreshold && state.accessLevel < file.accessThreshold) {
       return { accessible: false, reason: 'ACCESS DENIED - CLEARANCE INSUFFICIENT' };
@@ -196,24 +239,29 @@ export function canAccessFile(path: string, state: GameState): { accessible: boo
       return { accessible: false, reason: 'ACCESS DENIED - RESTRICTED ARCHIVE' };
     }
   }
-  
+
   return { accessible: true };
 }
 
+/**
+ * Gets the truth categories that a file can reveal when read.
+ * @param path - The absolute path to the file
+ * @returns Array of truth category IDs the file can reveal
+ */
 export function getFileReveals(path: string): string[] {
   const segments = path.split('/').filter(Boolean);
   let current: FileSystemNode = FILESYSTEM_ROOT;
-  
+
   for (const segment of segments) {
     if (current.type !== 'dir') return [];
     const child: FileSystemNode | undefined = current.children[segment];
     if (!child) return [];
     current = child;
   }
-  
+
   if (current.type === 'file') {
     return (current as FileNode).reveals || [];
   }
-  
+
   return [];
 }

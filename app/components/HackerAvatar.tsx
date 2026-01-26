@@ -21,11 +21,10 @@ const EXPRESSION_IMAGES: Record<AvatarExpression, string> = {
   smirk: '/images/avatar/smirk.jpg',
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function HackerAvatar({
   expression,
-  detectionLevel,
-  sessionStability,
+  detectionLevel: _detectionLevel,
+  sessionStability: _sessionStability,
   onExpressionTimeout,
 }: HackerAvatarProps) {
   const [currentExpression, setCurrentExpression] = useState<AvatarExpression>(expression);

@@ -1,4 +1,11 @@
-// useAutocomplete - Tab completion for terminal commands and file paths
+/**
+ * useAutocomplete - Tab Completion for Terminal
+ *
+ * Provides command and file path autocompletion for the terminal interface.
+ * Supports command name completion and context-aware file/directory completion.
+ *
+ * @module hooks/useAutocomplete
+ */
 
 import { useCallback } from 'react';
 import { GameState } from '../types';
@@ -47,6 +54,9 @@ const COMMANDS_WITH_FILE_ARGS = [
   'connect',
 ];
 
+/**
+ * Result of an autocomplete query.
+ */
 export interface AutocompleteResult {
   /** The list of possible completions */
   completions: string[];

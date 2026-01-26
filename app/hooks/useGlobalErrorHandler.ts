@@ -1,5 +1,17 @@
 'use client';
 
+/**
+ * useGlobalErrorHandler - Global Error Boundary Companion
+ *
+ * Sets up window-level handlers for:
+ * - Unhandled promise rejections
+ * - Uncaught errors that escape React's error boundary
+ *
+ * Critical errors (storage, security) are logged but don't crash the app.
+ *
+ * @module hooks/useGlobalErrorHandler
+ */
+
 import { useEffect } from 'react';
 
 /**
