@@ -945,8 +945,8 @@
 
 /* Countdown timer */
 .countdownTimer {
-  position: absolute;
-  top: 50px;
+  position: fixed;
+  top: 80px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -956,7 +956,7 @@
   background: rgba(100, 0, 0, 0.9);
   border: 2px solid #ff0000;
   border-radius: 4px;
-  z-index: 30;
+  z-index: 90;
   animation: countdownPulse 1s ease-in-out infinite;
 }
 

@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  z-index: 300;
+  z-index: 500;
 }
 
 .flickering {
@@ -41,13 +41,13 @@
     rgba(255, 0, 0, 0.02) 4px
   );
   pointer-events: none;
-  z-index: 310;
+  z-index: 515;
 }
 
 /* Error phase */
 .errorContent {
   text-align: center;
-  z-index: 305;
+  z-index: 510;
 }
 
 .errorBox {
@@ -106,7 +106,7 @@
 /* Restart phase */
 .restartContent {
   text-align: center;
-  z-index: 305;
+  z-index: 510;
   width: 90%;
   max-width: 600px;
 }
