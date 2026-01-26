@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef, memo } from 'react';
 import Image from 'next/image';
 import styles from './HackerAvatar.module.css';
+import { FloatingElement } from './FloatingUI';
 
 export type AvatarExpression = 'neutral' | 'shocked' | 'scared' | 'angry' | 'smirk';
 
@@ -62,32 +63,34 @@ function HackerAvatar({
   }, [expression, onExpressionTimeout]);
 
   return (
-    <div className={styles.hudPanel}>
-      {/* Avatar only - meters removed per UI cleanup */}
-      <div className={styles.avatarColumn}>
-        <div className={styles.tvFrame}>
-          {/* Green scanning bar */}
-          <div className={styles.scanBar} />
+    <FloatingElement id="hacker-avatar" zone="top-right" priority={2} baseOffset={130}>
+      <div className={styles.hudPanel}>
+        {/* Avatar only - meters removed per UI cleanup */}
+        <div className={styles.avatarColumn}>
+          <div className={styles.tvFrame}>
+            {/* Green scanning bar */}
+            <div className={styles.scanBar} />
 
-          <div className={`${styles.imageWrapper} ${isTransitioning ? styles.transitioning : ''}`}>
-            <Image
-              src={EXPRESSION_IMAGES[currentExpression]}
-              alt="Hacker avatar"
-              width={203}
-              height={270}
-              className={styles.avatarImage}
-              priority
-            />
+            <div className={`${styles.imageWrapper} ${isTransitioning ? styles.transitioning : ''}`}>
+              <Image
+                src={EXPRESSION_IMAGES[currentExpression]}
+                alt="Hacker avatar"
+                width={203}
+                height={270}
+                className={styles.avatarImage}
+                priority
+              />
+            </div>
+
+            {/* TV effects */}
+            <div className={styles.staticOverlay} />
+            <div className={styles.scanlines} />
+            <div className={styles.flicker} />
+            <div className={styles.crtCurve} />
           </div>
-
-          {/* TV effects */}
-          <div className={styles.staticOverlay} />
-          <div className={styles.scanlines} />
-          <div className={styles.flicker} />
-          <div className={styles.crtCurve} />
         </div>
       </div>
-    </div>
+    </FloatingElement>
   );
 }
 

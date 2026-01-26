@@ -2,6 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import AchievementPopup from '../AchievementPopup';
 import { Achievement } from '../../engine/achievements';
+import { FloatingUIProvider } from '../FloatingUI';
+
+// Wrapper for FloatingUIProvider
+const renderWithProvider = (ui: React.ReactElement) => {
+  return render(<FloatingUIProvider>{ui}</FloatingUIProvider>);
+};
 
 describe('AchievementPopup', () => {
   const mockAchievement: Achievement = {
@@ -23,7 +29,7 @@ describe('AchievementPopup', () => {
   });
 
   it('renders achievement details', () => {
-    render(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
+    renderWithProvider(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
     
     expect(screen.getByText('ACHIEVEMENT UNLOCKED')).toBeInTheDocument();
     expect(screen.getByText('Test Achievement')).toBeInTheDocument();
@@ -32,7 +38,7 @@ describe('AchievementPopup', () => {
   });
 
   it('becomes visible after initial animation delay', () => {
-    render(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
+    renderWithProvider(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
     
     // Initially not visible
     const popup = document.querySelector('[class*="popup"]');
@@ -48,7 +54,7 @@ describe('AchievementPopup', () => {
   });
 
   it('auto-dismisses after 4 seconds', () => {
-    render(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
+    renderWithProvider(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
     
     // Advance to just before auto-dismiss
     act(() => {
@@ -66,7 +72,7 @@ describe('AchievementPopup', () => {
   });
 
   it('dismisses on click', () => {
-    render(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
+    renderWithProvider(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
     
     const popup = document.querySelector('[class*="popup"]');
     
@@ -86,7 +92,7 @@ describe('AchievementPopup', () => {
   });
 
   it('adds exiting class before dismiss animation', () => {
-    render(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
+    renderWithProvider(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
     
     const popup = document.querySelector('[class*="popup"]');
     
@@ -102,7 +108,7 @@ describe('AchievementPopup', () => {
   it('clears timeouts on unmount', () => {
     const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
     
-    const { unmount } = render(
+    const { unmount } = renderWithProvider(
       <AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />
     );
     
@@ -123,7 +129,7 @@ describe('AchievementPopup', () => {
       secret: true,
     };
     
-    render(<AchievementPopup achievement={secretAchievement} onDismiss={mockOnDismiss} />);
+    renderWithProvider(<AchievementPopup achievement={secretAchievement} onDismiss={mockOnDismiss} />);
     
     expect(screen.getByText('Secret Achievement')).toBeInTheDocument();
     expect(screen.getByText('You found a secret!')).toBeInTheDocument();
@@ -131,7 +137,7 @@ describe('AchievementPopup', () => {
   });
 
   it('handles multiple rapid clicks by entering exit state', () => {
-    render(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
+    renderWithProvider(<AchievementPopup achievement={mockAchievement} onDismiss={mockOnDismiss} />);
     
     const popup = document.querySelector('[class*="popup"]');
     

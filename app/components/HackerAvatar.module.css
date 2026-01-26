@@ -1,8 +1,4 @@
 .hudPanel {
-  position: fixed;
-  top: 190px;
-  right: 10px;
-  z-index: 40;
   display: flex;
   gap: 8px;
 }

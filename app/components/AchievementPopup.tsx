@@ -3,6 +3,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import styles from './AchievementPopup.module.css';
 import { Achievement } from '../engine/achievements';
+import { FloatingElement } from './FloatingUI';
 
 interface AchievementPopupProps {
   achievement: Achievement;
@@ -30,20 +31,22 @@ function AchievementPopup({ achievement, onDismiss }: AchievementPopupProps) {
   }, [onDismiss]);
 
   return (
-    <div
-      className={`${styles.popup} ${visible ? styles.visible : ''} ${exiting ? styles.exiting : ''}`}
-      onClick={() => {
-        setExiting(true);
-        setTimeout(onDismiss, 500);
-      }}
-    >
-      <div className={styles.icon}>{achievement.icon}</div>
-      <div className={styles.content}>
-        <div className={styles.header}>ACHIEVEMENT UNLOCKED</div>
-        <div className={styles.name}>{achievement.name}</div>
-        <div className={styles.description}>{achievement.description}</div>
+    <FloatingElement id="achievement-popup" zone="bottom-right" priority={2} baseOffset={32}>
+      <div
+        className={`${styles.popup} ${visible ? styles.visible : ''} ${exiting ? styles.exiting : ''}`}
+        onClick={() => {
+          setExiting(true);
+          setTimeout(onDismiss, 500);
+        }}
+      >
+        <div className={styles.icon}>{achievement.icon}</div>
+        <div className={styles.content}>
+          <div className={styles.header}>ACHIEVEMENT UNLOCKED</div>
+          <div className={styles.name}>{achievement.name}</div>
+          <div className={styles.description}>{achievement.description}</div>
+        </div>
       </div>
-    </div>
+    </FloatingElement>
   );
 }
 

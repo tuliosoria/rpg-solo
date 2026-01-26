@@ -48,6 +48,7 @@ import AchievementPopup from './AchievementPopup';
 import SettingsModal from './SettingsModal';
 import PauseMenu from './PauseMenu';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
+import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 
 // Lazy-load conditional components for better initial load performance
 const ImageOverlay = dynamic(() => import('./ImageOverlay'), { ssr: false });
@@ -1798,6 +1799,7 @@ export default function Terminal({
   }
 
   return (
+    <FloatingUIProvider>
     <div
       className={`${styles.terminal} ${flickerActive ? styles.flicker : ''} ${glitchActive ? styles.glitchActive : ''} ${glitchHeavy ? styles.glitchHeavy : ''} ${isShaking ? styles.shaking : ''} ${isWarmingUp ? styles.warmingUp : ''}`}
       onClick={() => inputRef.current?.focus()}
@@ -1837,10 +1839,12 @@ export default function Terminal({
 
       {/* Countdown timer */}
       {countdownDisplay && (
-        <div className={styles.countdownTimer}>
-          <span className={styles.countdownLabel}>⚠️ TRACE ACTIVE</span>
-          <span className={styles.countdownTime}>{countdownDisplay}</span>
-        </div>
+        <FloatingElement id="countdown-timer" zone="top-center" priority={1} baseOffset={80}>
+          <div className={styles.countdownTimerContent}>
+            <span className={styles.countdownLabel}>⚠️ TRACE ACTIVE</span>
+            <span className={styles.countdownTime}>{countdownDisplay}</span>
+          </div>
+        </FloatingElement>
       )}
 
       {/* Status bar with dropdown menu */}
@@ -1998,22 +2002,24 @@ export default function Terminal({
             <button type="submit" autoFocus />
           </form>
           {/* Subtle bottom-right enter prompt */}
-          <button 
-            type="button" 
-            className={styles.enterPrompt} 
-            disabled={isProcessing} 
-            onClick={handleSubmit as unknown as React.MouseEventHandler}
-            tabIndex={-1}
-          >
-            <span className={styles.enterPromptSymbol}>↵</span>
-            <span className={styles.enterPromptText}>
-              {encryptedChannelState === 'awaiting_close' ? 'close' :
-               encryptedChannelState !== 'idle' ? 'respond' :
-               pendingImage || pendingVideo ? 'view' :
-               !gameState.tutorialComplete ? '' :
-               'continue'}
-            </span>
-          </button>
+          <FloatingElement id="enter-prompt" zone="bottom-right" priority={1} baseOffset={16}>
+            <button 
+              type="button" 
+              className={styles.enterPromptContent} 
+              disabled={isProcessing} 
+              onClick={handleSubmit as unknown as React.MouseEventHandler}
+              tabIndex={-1}
+            >
+              <span className={styles.enterPromptSymbol}>↵</span>
+              <span className={styles.enterPromptText}>
+                {encryptedChannelState === 'awaiting_close' ? 'close' :
+                 encryptedChannelState !== 'idle' ? 'respond' :
+                 pendingImage || pendingVideo ? 'view' :
+                 !gameState.tutorialComplete ? '' :
+                 'continue'}
+              </span>
+            </button>
+          </FloatingElement>
         </>
       ) : (
         <form onSubmit={handleSubmit} className={styles.inputArea}>
@@ -2067,19 +2073,25 @@ export default function Terminal({
             spellCheck={false}
           />
           <span className={styles.cursor}>_</span>
-          {typingSpeedWarning && (
-            <span className={styles.typingWarning}>SUSPICIOUS TYPING PATTERN DETECTED</span>
-          )}
         </form>
+      )}
+
+      {/* Typing speed warning - floating above input area */}
+      {typingSpeedWarning && (
+        <FloatingElement id="typing-warning" zone="bottom-center" priority={1} baseOffset={70}>
+          <span className={styles.typingWarningContent}>SUSPICIOUS TYPING PATTERN DETECTED</span>
+        </FloatingElement>
       )}
 
       {/* Timed decryption timer overlay */}
       {gameState.timedDecryptActive && timedDecryptRemaining > 0 && (
-        <div className={styles.timedDecryptTimer}>
-          <div className={styles.timerLabel}>DECRYPTION WINDOW</div>
-          <div className={styles.timerValue}>{(timedDecryptRemaining / 1000).toFixed(1)}s</div>
-          <div className={styles.timerSequence}>Sequence: {gameState.timedDecryptSequence}</div>
-        </div>
+        <FloatingElement id="timed-decrypt-timer" zone="top-right" priority={1} baseOffset={130}>
+          <div className={styles.timedDecryptTimerContent}>
+            <div className={styles.timerLabel}>DECRYPTION WINDOW</div>
+            <div className={styles.timerValue}>{(timedDecryptRemaining / 1000).toFixed(1)}s</div>
+            <div className={styles.timerSequence}>Sequence: {gameState.timedDecryptSequence}</div>
+          </div>
+        </FloatingElement>
       )}
 
       {/* Hacker avatar HUD panel */}
@@ -2305,5 +2317,6 @@ export default function Terminal({
         />
       )}
     </div>
+    </FloatingUIProvider>
   );
 }

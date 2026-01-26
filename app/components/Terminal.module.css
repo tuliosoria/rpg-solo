@@ -682,7 +682,43 @@
   opacity: 0.5;
 }
 
-/* Subtle Enter Prompt - bottom-right corner */
+/* Subtle Enter Prompt - now positioned by FloatingElement */
+.enterPromptContent {
+  background: rgba(0, 40, 0, 0.85);
+  border: 1px solid rgba(0, 255, 0, 0.4);
+  border-radius: 4px;
+  color: rgba(0, 255, 0, 0.85);
+  font-family: inherit;
+  font-size: 0.9em;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
+  box-shadow: 0 0 12px rgba(0, 255, 0, 0.15);
+  transition: all 0.2s ease;
+  animation: enterPromptPulse 2.5s ease-in-out infinite;
+}
+
+.enterPromptContent:hover {
+  background: rgba(0, 60, 0, 0.9);
+  border-color: rgba(0, 255, 0, 0.7);
+  color: #00ff00;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.enterPromptContent:active {
+  transform: scale(0.97);
+}
+
+.enterPromptContent:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  animation: none;
+}
+
+/* Legacy enterPrompt - kept for backwards compat */
 .enterPrompt {
   position: fixed;
   bottom: 16px;
@@ -822,7 +858,15 @@
   51%, 100% { opacity: 0; }
 }
 
-/* Typing speed warning */
+/* Typing speed warning - positioned by FloatingElement */
+.typingWarningContent {
+  color: #ff4444;
+  font-size: 10px;
+  animation: typingWarnFlash 0.3s ease-in-out infinite alternate;
+  text-shadow: 0 0 10px #ff0000;
+}
+
+/* Legacy typingWarning - kept for backwards compat */
 .typingWarning {
   position: absolute;
   left: 50%;
@@ -862,7 +906,17 @@
   filter: blur(1px);
 }
 
-/* Timed decryption timer */
+/* Timed decryption timer - positioned by FloatingElement */
+.timedDecryptTimerContent {
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid #ff4444;
+  padding: 12px 20px;
+  text-align: center;
+  animation: timerPulse 1s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+}
+
+/* Legacy timedDecryptTimer - kept for backwards compat */
 .timedDecryptTimer {
   position: fixed;
   top: 80px;
@@ -944,7 +998,19 @@
   }
 }
 
-/* Countdown timer */
+/* Countdown timer - positioned by FloatingElement */
+.countdownTimerContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 24px;
+  background: rgba(100, 0, 0, 0.9);
+  border: 2px solid #ff0000;
+  border-radius: 4px;
+  animation: countdownPulse 1s ease-in-out infinite;
+}
+
+/* Legacy countdownTimer - kept for backwards compat */
 .countdownTimer {
   position: fixed;
   top: 80px;
