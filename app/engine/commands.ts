@@ -805,6 +805,7 @@ function checkTruthProgress(
           'UFO74: nice find kid! but fragments alone wont cut it.',
           '       you need to CORROBORATE evidence to make a real case.',
           '       find related files and use "correlate <file1> <file2>"',
+          '       pro tip: use "bookmark <file>" to mark files for later.',
         ])
       );
     }
