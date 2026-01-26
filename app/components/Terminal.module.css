@@ -105,6 +105,7 @@
 
 /* Status bar */
 .statusBar {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -204,6 +205,7 @@
 
 /* Progress tracker */
 .progressTracker {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
