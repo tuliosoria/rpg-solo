@@ -90,8 +90,8 @@
 
 .tvFrame {
   position: relative;
-  width: 152px;
-  height: 203px;
+  width: 198px;
+  height: 264px;
   background: #111;
   border: 3px solid #00ff00;
   overflow: hidden;
@@ -262,8 +262,8 @@
   }
   
   .tvFrame {
-    width: 91px;
-    height: 117px;
+    width: 118px;
+    height: 152px;
   }
   
   .tvStand {
