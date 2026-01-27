@@ -1855,17 +1855,7 @@ export default function Terminal({
       {/* Paranoia message overlay */}
       {paranoiaMessage && <div className={styles.paranoiaMessage}>{paranoiaMessage}</div>}
 
-      {/* Sound toggle button */}
-      <button
-        className={`${styles.soundToggle} ${soundEnabled ? styles.active : ''}`}
-        onClick={e => {
-          e.stopPropagation();
-          toggleSound();
-        }}
-        title={soundEnabled ? 'Sound: ON' : 'Sound: OFF'}
-      >
-        {soundEnabled ? '🔊' : '🔇'}
-      </button>
+      {/* Sound toggle moved to Settings menu (ESC -> Settings) */}
 
       {/* Countdown timer */}
       {countdownDisplay && (

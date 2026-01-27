@@ -555,31 +555,7 @@
   100% { opacity: 0; transform: translate(-50%, -50%) scale(1.02); }
 }
 
-/* Sound toggle button */
-.soundToggle {
-  position: absolute;
-  top: 8px;
-  right: 60px;
-  background: transparent;
-  border: 1px solid #333;
-  color: #666;
-  padding: 4px 8px;
-  font-family: inherit;
-  font-size: 11px;
-  cursor: pointer;
-  z-index: 20;
-  transition: all 0.2s;
-}
-
-.soundToggle:hover {
-  border-color: #00ff00;
-  color: #00ff00;
-}
-
-.soundToggle.active {
-  border-color: #00aa00;
-  color: #00ff00;
-}
+/* Sound toggle moved to Settings menu - styles removed */
 
 /* Output area */
 .output {
