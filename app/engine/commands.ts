@@ -1888,13 +1888,18 @@ const PRISONER_45_RESPONSES: Record<string, string[]> = {
     'PRISONER_45> Knowledge is the only weapon we have.',
   ],
   password: [
-    'PRISONER_45> ...you want the override code?',
-    "PRISONER_45> They whisper it sometimes. When they think I'm asleep.",
-    "PRISONER_45> It's what they do to us. What they've always done.",
-    'PRISONER_45> The word for taking... for gathering the crop...',
-    'PRISONER_45> In their language? No. In ours. Portuguese.',
-    'PRISONER_45> ...COLHEITA. Harvest.',
-    "PRISONER_45> Use it carefully. They'll know.",
+    'PRISONER_45> ...you want the override code? I can tell you.',
+    "PRISONER_45> Be careful. They'll know you're trying to access restricted files.",
+    'PRISONER_45> The code... it\'s a Portuguese word. COLHEITA.',
+    'PRISONER_45> COLHEITA. It means harvest. That\'s the password.',
+    "PRISONER_45> They whisper it sometimes. When they think I'm asleep. COLHEITA.",
+    "PRISONER_45> It's what they do to us. Harvest. In Portuguese: COLHEITA.",
+    'PRISONER_45> The word for taking... for gathering the crop... COLHEITA.',
+    'PRISONER_45> In their language? No. In ours. Portuguese. COLHEITA.',
+    'PRISONER_45> ...COLHEITA. Harvest. Use it with: override protocol COLHEITA',
+    "PRISONER_45> Use it carefully. The password is COLHEITA. They'll know you used it.",
+    'PRISONER_45> I\'ll tell you, but be warned. The password is COLHEITA.',
+    'PRISONER_45> COLHEITA. Type: override protocol COLHEITA',
   ],
   military: [
     'PRISONER_45> The military knows more than they admit.',
@@ -1967,7 +1972,7 @@ function getPrisoner45Response(
   let category = '';
   let responses: string[] = [];
 
-  // Password hints - check first for priority
+  // Password hints - check first for priority (expanded keywords)
   if (
     q.includes('password') ||
     q.includes('override') ||
@@ -1976,7 +1981,39 @@ function getPrisoner45Response(
     q.includes('admin') ||
     q.includes('unlock') ||
     q.includes('colheita') ||
-    q.includes('harvest')
+    q.includes('harvest') ||
+    q.includes('senha') ||
+    q.includes('secret') ||
+    q.includes('key') ||
+    q.includes('protocol') ||
+    q.includes('restricted') ||
+    q.includes('classified') ||
+    q.includes('credentials') ||
+    q.includes('authentication') ||
+    q.includes('login') ||
+    q.includes('enter') ||
+    q.includes('open') ||
+    q.includes('reveal') ||
+    q.includes('hidden') ||
+    q.includes('locked') ||
+    q.includes('decrypt') ||
+    q.includes('decipher') ||
+    q.includes('how do i') ||
+    q.includes('how can i') ||
+    q.includes('what is the') ||
+    q.includes('tell me') ||
+    q.includes('give me') ||
+    q.includes('need the') ||
+    q.includes('what\'s the') ||
+    q.includes('whats the') ||
+    q.includes('files') && (q.includes('access') || q.includes('see') || q.includes('read') || q.includes('view')) ||
+    q.includes('redacted') ||
+    q.includes('blocked') ||
+    q.includes('denied') ||
+    q.includes('permission') ||
+    q.includes('clearance') ||
+    q.includes('authorization') ||
+    q.includes('authorize')
   ) {
     category = 'password';
     responses = PRISONER_45_RESPONSES.password;
@@ -1986,7 +2023,15 @@ function getPrisoner45Response(
     q.includes('1996') ||
     q.includes('january') ||
     q.includes('brazil') ||
-    q.includes('minas')
+    q.includes('minas') ||
+    q.includes('janeiro') ||
+    q.includes('brasil') ||
+    q.includes('gerais') ||
+    q.includes('town') ||
+    q.includes('cidade') ||
+    q.includes('happened') ||
+    q.includes('event') ||
+    q.includes('case')
   ) {
     category = 'varginha';
     responses = PRISONER_45_RESPONSES.varginha;
@@ -1998,7 +2043,23 @@ function getPrisoner45Response(
     q.includes('extraterrestrial') ||
     q.includes('specimen') ||
     q.includes('body') ||
-    q.includes('bodies')
+    q.includes('bodies') ||
+    q.includes('ets') ||
+    q.includes('aliens') ||
+    q.includes('creatures') ||
+    q.includes('beings') ||
+    q.includes('grey') ||
+    q.includes('gray') ||
+    q.includes('humanoid') ||
+    q.includes('entity') ||
+    q.includes('entities') ||
+    q.includes('them') ||
+    q.includes('they') ||
+    q.includes('visitors') ||
+    q.includes('invaders') ||
+    q.includes('outsiders') ||
+    q.includes('extraterrestre') ||
+    q.includes('alienigena')
   ) {
     category = 'alien';
     responses = PRISONER_45_RESPONSES.alien;
@@ -2007,7 +2068,15 @@ function getPrisoner45Response(
     q.includes('your name') ||
     q.includes('yourself') ||
     q.includes('prisoner') ||
-    q.includes('identity')
+    q.includes('identity') ||
+    q.includes('who r u') ||
+    q.includes('quem') ||
+    q.includes('voce') ||
+    q.includes('você') ||
+    q.includes('name') ||
+    q.includes('nome') ||
+    q.includes('45') ||
+    q.includes('are you')
   ) {
     category = 'who';
     responses = PRISONER_45_RESPONSES.who;
@@ -2018,7 +2087,16 @@ function getPrisoner45Response(
     q.includes('out of here') ||
     q.includes('prison') ||
     q.includes('cell') ||
-    q.includes('trapped')
+    q.includes('trapped') ||
+    q.includes('fugir') ||
+    q.includes('sair') ||
+    q.includes('preso') ||
+    q.includes('cela') ||
+    q.includes('jail') ||
+    q.includes('captive') ||
+    q.includes('held') ||
+    q.includes('detained') ||
+    q.includes('locked up')
   ) {
     category = 'escape';
     responses = PRISONER_45_RESPONSES.escape;
@@ -2028,7 +2106,14 @@ function getPrisoner45Response(
     q.includes('happening') ||
     q.includes('secret') ||
     q.includes('cover') ||
-    q.includes('conspiracy')
+    q.includes('conspiracy') ||
+    q.includes('verdade') ||
+    q.includes('segredo') ||
+    q.includes('really') ||
+    q.includes('actual') ||
+    q.includes('going on') ||
+    q.includes('what is') ||
+    q.includes('o que')
   ) {
     category = 'truth';
     responses = PRISONER_45_RESPONSES.truth;
@@ -2037,7 +2122,18 @@ function getPrisoner45Response(
     q.includes('can i') ||
     q.includes('should i') ||
     q.includes('what do i') ||
-    q.includes('advice')
+    q.includes('advice') ||
+    q.includes('ajuda') ||
+    q.includes('ajudar') ||
+    q.includes('devo') ||
+    q.includes('posso') ||
+    q.includes('what should') ||
+    q.includes('how do') ||
+    q.includes('how can') ||
+    q.includes('next') ||
+    q.includes('now what') ||
+    q.includes('do now') ||
+    q.includes('what now')
   ) {
     category = 'help';
     responses = PRISONER_45_RESPONSES.help;
@@ -2046,7 +2142,13 @@ function getPrisoner45Response(
     q.includes('window') ||
     q.includes('future') ||
     q.includes('coming') ||
-    q.includes('will happen')
+    q.includes('will happen') ||
+    q.includes('futuro') ||
+    q.includes('vai acontecer') ||
+    q.includes('soon') ||
+    q.includes('next year') ||
+    q.includes('prediction') ||
+    q.includes('prophecy')
   ) {
     category = 'truth';
     responses = PRISONER_45_RESPONSES.truth;
@@ -2056,7 +2158,24 @@ function getPrisoner45Response(
     q.includes('soldier') ||
     q.includes('government') ||
     q.includes('base') ||
-    q.includes('force')
+    q.includes('force') ||
+    q.includes('militar') ||
+    q.includes('exercito') ||
+    q.includes('governo') ||
+    q.includes('soldado') ||
+    q.includes('navy') ||
+    q.includes('air force') ||
+    q.includes('pentagon') ||
+    q.includes('cia') ||
+    q.includes('fbi') ||
+    q.includes('nsa') ||
+    q.includes('abin') ||
+    q.includes('agency') ||
+    q.includes('intelligence') ||
+    q.includes('oficial') ||
+    q.includes('official') ||
+    q.includes('authorities') ||
+    q.includes('autoridades')
   ) {
     category = 'military';
     responses = PRISONER_45_RESPONSES.military;
@@ -2067,7 +2186,19 @@ function getPrisoner45Response(
     q.includes('craft') ||
     q.includes('debris') ||
     q.includes('wreckage') ||
-    q.includes('material')
+    q.includes('material') ||
+    q.includes('nave') ||
+    q.includes('ovni') ||
+    q.includes('disco') ||
+    q.includes('queda') ||
+    q.includes('landed') ||
+    q.includes('landing') ||
+    q.includes('saucer') ||
+    q.includes('flying') ||
+    q.includes('spaceship') ||
+    q.includes('spacecraft') ||
+    q.includes('fell') ||
+    q.includes('found')
   ) {
     category = 'crash';
     responses = PRISONER_45_RESPONSES.crash;
@@ -2077,7 +2208,15 @@ function getPrisoner45Response(
     q.includes('kill') ||
     q.includes('dead') ||
     q.includes('alive') ||
-    q.includes('survive')
+    q.includes('survive') ||
+    q.includes('morte') ||
+    q.includes('morrer') ||
+    q.includes('morto') ||
+    q.includes('vivo') ||
+    q.includes('killed') ||
+    q.includes('murdered') ||
+    q.includes('life') ||
+    q.includes('living')
   ) {
     category = 'death';
     responses = PRISONER_45_RESPONSES.death;
@@ -2089,7 +2228,21 @@ function getPrisoner45Response(
     q.includes('believe') ||
     q.includes('angel') ||
     q.includes('demon') ||
-    q.includes('soul')
+    q.includes('soul') ||
+    q.includes('deus') ||
+    q.includes('religiao') ||
+    q.includes('rezar') ||
+    q.includes('fe') ||
+    q.includes('anjo') ||
+    q.includes('demonio') ||
+    q.includes('alma') ||
+    q.includes('church') ||
+    q.includes('igreja') ||
+    q.includes('heaven') ||
+    q.includes('hell') ||
+    q.includes('divine') ||
+    q.includes('spiritual') ||
+    q.includes('holy')
   ) {
     category = 'god';
     responses = PRISONER_45_RESPONSES.god;
@@ -2102,7 +2255,20 @@ function getPrisoner45Response(
     q.includes('mudinho') ||
     q.includes('dwarf') ||
     q.includes('official story') ||
-    q.includes('false')
+    q.includes('false') ||
+    q.includes('mentira') ||
+    q.includes('falso') ||
+    q.includes('balao') ||
+    q.includes('anao') ||
+    q.includes('historia oficial') ||
+    q.includes('hoax') ||
+    q.includes('debunk') ||
+    q.includes('skeptic') ||
+    q.includes('cetico') ||
+    q.includes('propaganda') ||
+    q.includes('coverup') ||
+    q.includes('hiding') ||
+    q.includes('escondendo')
   ) {
     category = 'disinformation';
     responses = PRISONER_45_RESPONSES.disinformation;
@@ -2110,7 +2276,11 @@ function getPrisoner45Response(
     q.includes('why') ||
     q.includes('reason') ||
     q.includes('purpose') ||
-    q.includes('meaning')
+    q.includes('meaning') ||
+    q.includes('porque') ||
+    q.includes('por que') ||
+    q.includes('razao') ||
+    q.includes('motivo')
   ) {
     category = 'truth';
     responses = PRISONER_45_RESPONSES.truth;
@@ -2118,7 +2288,11 @@ function getPrisoner45Response(
     q.includes('where') ||
     q.includes('place') ||
     q.includes('location') ||
-    q.includes('here')
+    q.includes('here') ||
+    q.includes('onde') ||
+    q.includes('lugar') ||
+    q.includes('localizacao') ||
+    q.includes('local')
   ) {
     category = 'escape';
     responses = PRISONER_45_RESPONSES.escape;
@@ -2126,10 +2300,41 @@ function getPrisoner45Response(
     q.includes('when') ||
     q.includes('time') ||
     q.includes('how long') ||
-    q.includes('date')
+    q.includes('date') ||
+    q.includes('quando') ||
+    q.includes('tempo') ||
+    q.includes('quanto tempo') ||
+    q.includes('data')
   ) {
     category = 'truth';
     responses = PRISONER_45_RESPONSES.truth;
+  } else if (
+    // Greetings - guide them to ask about password/help
+    q.includes('hello') ||
+    q.includes('hi') ||
+    q.includes('hey') ||
+    q.includes('oi') ||
+    q.includes('ola') ||
+    q.includes('olá') ||
+    q.includes('greetings') ||
+    q.includes('yo') ||
+    q.includes('sup') ||
+    q.includes('bom dia') ||
+    q.includes('boa noite') ||
+    q.includes('boa tarde') ||
+    q.includes('good') ||
+    q === 'ok' ||
+    q === 'yes' ||
+    q === 'sim' ||
+    q === 'no' ||
+    q === 'nao' ||
+    q === 'não' ||
+    q.includes('thanks') ||
+    q.includes('obrigado') ||
+    q.includes('thank you')
+  ) {
+    category = 'help';
+    responses = PRISONER_45_RESPONSES.help;
   }
 
   // No keyword match - signal lost
