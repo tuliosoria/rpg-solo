@@ -63,7 +63,7 @@ function HackerAvatar({
   }, [expression, onExpressionTimeout]);
 
   return (
-    <FloatingElement id="hacker-avatar" zone="top-right" priority={2} baseOffset={0} style={{ top: '22vh', right: 15 }}>
+    <FloatingElement id="hacker-avatar" zone="top-right" priority={2} baseOffset={0} style={{ top: 'max(170px, 22vh)', right: 15 }}>
       <div className={styles.hudPanel}>
         {/* Avatar only - meters removed per UI cleanup */}
         <div className={styles.avatarColumn}>
