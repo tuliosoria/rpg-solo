@@ -46,3 +46,4 @@ next-env.d.ts
 /public/videos/*.ogg
 !/public/videos/README.md
 out/
+steam_appid.txt
