@@ -1680,11 +1680,10 @@ export default function Terminal({
     return { level: `MINIMAL ${percent}`, color: 'minimal' };
   };
 
-  // Get wrong attempts display
+  // Get wrong attempts display (shows attempts made, not remaining)
   const getAttemptsDisplay = () => {
     const attempts = gameState.wrongAttempts || 0;
-    const remaining = MAX_WRONG_ATTEMPTS - attempts;
-    return `${remaining}/${MAX_WRONG_ATTEMPTS}`;
+    return `${attempts}/${MAX_WRONG_ATTEMPTS}`;
   };
 
   const truthStatus = getTruthStatus();
