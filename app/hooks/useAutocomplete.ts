@@ -138,14 +138,16 @@ export function useAutocomplete(gameState: GameState) {
         // Completing a command
         return completions[0] + ' ';
       } else {
-        // Completing a file/directory argument
+        // Completing a file/directory argument - preserve all previous arguments
         const cmd = parts[0];
+        const middleArgs = parts.slice(1, -1); // All args except first (cmd) and last (partial)
         const partial = parts[parts.length - 1];
         let prefix = '';
         if (partial.includes('/')) {
           prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
         }
-        return `${cmd} ${prefix}${completions[0]}`;
+        const allArgs = [...middleArgs, `${prefix}${completions[0]}`];
+        return `${cmd} ${allArgs.join(' ')}`;
       }
     } else {
       // Multiple matches - complete common prefix
@@ -159,13 +161,16 @@ export function useAutocomplete(gameState: GameState) {
       if (parts.length <= 1) {
         return commonPrefix;
       } else {
+        // Preserve all previous arguments when completing partial
         const cmd = parts[0];
+        const middleArgs = parts.slice(1, -1);
         const partial = parts[parts.length - 1];
         let prefix = '';
         if (partial.includes('/')) {
           prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
         }
-        return `${cmd} ${prefix}${commonPrefix}`;
+        const allArgs = [...middleArgs, `${prefix}${commonPrefix}`];
+        return `${cmd} ${allArgs.join(' ')}`;
       }
     }
   }, []);

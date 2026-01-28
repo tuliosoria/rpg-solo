@@ -6188,11 +6188,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     // Define valid correlations (pairs of file keywords that connect)
     // Expanded to be more forgiving with matching
+    // Note: Correlation upgrades evidence tiers but does NOT reduce detection
     const VALID_CORRELATIONS: Array<{
       keywords1: string[];
       keywords2: string[];
       message: string;
-      detectionReduction: number;
     }> = [
       {
         keywords1: [
@@ -6215,19 +6215,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           'analysis',
         ],
         message: 'Transport routes traced to material recovery sites.',
-        detectionReduction: 8,
       },
       {
         keywords1: ['autopsy', 'medical', 'specimen', 'bio', 'anatomy', 'body', 'remains', 'exam'],
         keywords2: ['containment', 'quarantine', 'holding', 'container', 'isolation', 'secure'],
         message: 'Medical procedures linked to containment protocols.',
-        detectionReduction: 10,
       },
       {
         keywords1: ['transcript', 'psi', 'signal', 'comm', 'intercept', 'message', 'broadcast'],
         keywords2: ['neural', 'telepathic', 'echo', 'brain', 'mental', 'cognitive', 'cluster'],
         message: 'Communication patterns match neural activity signatures.',
-        detectionReduction: 12,
       },
       {
         keywords1: [
@@ -6250,13 +6247,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           'order',
         ],
         message: 'International coordination confirmed across multiple files.',
-        detectionReduction: 10,
       },
       {
         keywords1: ['diplomatic', 'cable', 'embassy', 'station', 'pouch', 'classified'],
         keywords2: ['liaison', 'protocol', 'pouch', 'courier', 'transmission'],
         message: 'Diplomatic channels used for material transfer.',
-        detectionReduction: 12,
       },
       {
         keywords1: ['2026', 'window', 'transition', 'cycle', 'timeline', 'thirty', 'year'],
@@ -6270,68 +6265,57 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           'model',
         ],
         message: 'Timeline convergence detected across predictive models.',
-        detectionReduction: 15,
       },
       {
         keywords1: ['witness', 'statement', 'observation', 'testimony', 'account', 'sighting'],
         keywords2: ['incident', 'report', 'field', 'event', 'occurrence', 'patrol'],
         message: 'Witness accounts corroborate operational reports.',
-        detectionReduction: 6,
       },
       {
         keywords1: ['budget', 'allocation', 'funding', 'expense', 'cost', 'financial'],
         keywords2: ['operation', 'classified', 'special', 'project', 'program', 'black'],
         message: 'Financial trail connects to classified operations.',
-        detectionReduction: 5,
       },
       // New correlations added for more flexibility
       {
         keywords1: ['prato', 'colares', 'incident', 'patrol'],
         keywords2: ['medical', 'effect', 'injury', 'burn', 'radiation'],
         message: 'Operation records link to documented medical effects.',
-        detectionReduction: 8,
       },
       {
         keywords1: ['energy', 'power', 'extraction', 'node'],
         keywords2: ['scout', 'variant', 'craft', 'vehicle', 'drone'],
         message: 'Energy signatures correlated with observed craft types.',
-        detectionReduction: 10,
       },
       {
         keywords1: ['purpose', 'intent', 'objective', 'goal', 'mission'],
         keywords2: ['specimen', 'subject', 'bio', 'autopsy', 'anatomy'],
         message: 'Subject analysis reveals operational objectives.',
-        detectionReduction: 12,
       },
       {
         keywords1: ['jardim', 'varginha', 'andere', 'brazil'],
         keywords2: ['creature', 'entity', 'being', 'specimen', 'witness'],
         message: 'Brazilian incident details cross-referenced with biological data.',
-        detectionReduction: 10,
       },
       {
         keywords1: ['photograph', 'photo', 'image', 'visual', 'surveillance', 'footage'],
         keywords2: ['incident', 'report', 'field', 'observation', 'sighting'],
         message: 'Visual evidence corroborates field reports.',
-        detectionReduction: 7,
       },
       {
         keywords1: ['initial', 'response', 'first', 'early', 'original'],
         keywords2: ['orders', 'directive', 'protocol', 'procedure', 'instruction'],
         message: 'Initial response protocols traced to operational directives.',
-        detectionReduction: 6,
       },
       {
         keywords1: ['colonization', 'arrival', 'deployment', 'invasion', 'occupation'],
         keywords2: ['window', 'cycle', 'timeline', 'schedule', 'pattern'],
         message: 'Colonization models aligned with cyclical patterns.',
-        detectionReduction: 15,
       },
       {
         keywords1: ['ethics', 'exception', 'waiver', 'override'],
         keywords2: ['program', 'project', 'experiment', 'operation'],
         message: 'Ethics exceptions linked to classified programs.',
-        detectionReduction: 8,
       },
     ];
 
@@ -6360,8 +6344,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
       // Valid if file1 matches keywords1 AND file2 matches keywords2, or vice versa
       if ((match1to1 && match2to2) || (match1to2 && match2to1)) {
-        const newDetection = Math.max(0, state.detectionLevel - correlation.detectionReduction);
-
         // Try to upgrade evidence tier (FRAGMENT → CORROBORATED)
         const tierUpgrade = attemptCorroborateUpgrade(file1Path, file2Path, state);
 
@@ -6376,13 +6358,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('output', `  File 2: ${file2Path.split('/').pop()}`),
           createEntry('system', ''),
           createEntry('output', `  RESULT: ${correlation.message}`),
-          createEntry('system', ''),
-          createEntry('warning', `  Detection reduced by ${correlation.detectionReduction}%`),
         ];
 
         // Show tier upgrade if successful
         const stateChanges: Partial<GameState> = {
-          detectionLevel: newDetection,
           avatarExpression: 'smirk',
         };
 
@@ -6404,9 +6383,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             ...state.evidenceTiers,
             [tierUpgrade.category]: tierUpgrade.updatedTierState,
           };
-
-          // Extra detection reduction for tier upgrade
-          stateChanges.detectionLevel = Math.max(0, newDetection - 5);
 
           // TUTORIAL TIP: First successful correlate
           if (

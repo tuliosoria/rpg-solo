@@ -198,11 +198,8 @@ export default function Terminal({
   // UFO74 messages staged until user presses Enter after content/media
   const [pendingUfo74StartMessages, setPendingUfo74StartMessages] = useState<TerminalEntry[]>([]);
 
-  // UFO74 Encrypted Channel state machine
-  // 'idle' = normal terminal operation
-  // 'awaiting_open' = "▓▓▓ INCOMING ENCRYPTED TRANSMISSION FROM UFO74 ▓▓▓"
-  // 'open' = channel is open, showing messages one at a time
-  // 'awaiting_close' = final message shown, waiting for Enter to close channel
+  // UFO74 Encrypted Channel state - simplified to always be 'idle' since messages display directly
+  // Kept for backward compatibility with any code that checks the state
   const [encryptedChannelState, setEncryptedChannelState] = useState<
     'idle' | 'awaiting_open' | 'open' | 'awaiting_close'
   >('idle');
@@ -852,11 +849,12 @@ export default function Terminal({
     setTimeout(() => setFlickerActive(false), 300);
   }, []);
 
+  // Display all UFO74 messages at once through encrypted channel (no multi-press required)
   const openEncryptedChannelWithMessages = useCallback(
     (messages: TerminalEntry[]) => {
       if (messages.length === 0) return;
 
-      setEncryptedChannelState('open');
+      // Display entire encrypted channel sequence at once
       setGameState(prev => ({
         ...prev,
         history: [
@@ -866,24 +864,19 @@ export default function Terminal({
           createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
           createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
           createEntry('system', ''),
+          ...messages.flatMap(msg => [msg, createEntry('system', '')]),
+          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
+          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+          createEntry('system', ''),
         ],
       }));
       playSound('transmission');
+      playSound('message');
 
-      const [firstMessage, ...remaining] = messages;
-
-      setTimeout(() => {
-        setGameState(prev => ({
-          ...prev,
-          history: [...prev.history, firstMessage, createEntry('system', '')],
-        }));
-        setPendingUfo74Messages(remaining);
-
-        if (remaining.length === 0) {
-          setEncryptedChannelState('awaiting_close');
-        }
-        playSound('message');
-      }, 100);
+      // Clear any pending messages and keep channel idle
+      setPendingUfo74Messages([]);
+      setEncryptedChannelState('idle');
     },
     [playSound]
   );
@@ -1048,92 +1041,19 @@ export default function Terminal({
         return;
       }
 
-      // If UFO74 messages are staged, open channel on Enter
+      // If UFO74 messages are staged, show them directly (no multi-press required)
       if (pendingUfo74StartMessages.length > 0 && !inputValue.trim()) {
         const messagesToSend = [...pendingUfo74StartMessages];
         setPendingUfo74StartMessages([]);
-
-        if (encryptedChannelStateRef.current !== 'idle') {
-          setPendingUfo74Messages(prev => [...prev, ...messagesToSend]);
-          return;
-        }
-
-        setGameState(prev => ({
-          ...prev,
-          history: [
-            ...prev.history,
-            createEntry('system', ''),
-            createEntry('ufo74', '▓▓▓ INCOMING ENCRYPTED TRANSMISSION FROM UFO74 ▓▓▓'),
-          ],
-        }));
-        playSound('message');
         openEncryptedChannelWithMessages(messagesToSend);
         return;
       }
 
-      // ═══════════════════════════════════════════════════════════════════════════
-      // UFO74 ENCRYPTED CHANNEL STATE MACHINE
-      // ═══════════════════════════════════════════════════════════════════════════
-
-      // State: awaiting_open - Player must press Enter to open channel
-      if (encryptedChannelState === 'awaiting_open' && !inputValue.trim()) {
-        // Capture current messages before state changes to avoid race conditions
-        const currentMessages = [...pendingUfo74Messages];
-        openEncryptedChannelWithMessages(currentMessages);
-        return;
-      }
-
-      // State: open - Channel is open, show messages one at a time
-      if (encryptedChannelState === 'open' && !inputValue.trim()) {
-        if (pendingUfo74Messages.length > 0) {
-          // Capture current messages to avoid race conditions
-          const currentMessages = [...pendingUfo74Messages];
-          const [nextMessage, ...remaining] = currentMessages;
-
-          const promptText = '';
-
-          // Single atomic state update with both message and prompt
-          setGameState(prev => ({
-            ...prev,
-            history: [...prev.history, nextMessage, createEntry('system', promptText)],
-          }));
-          setPendingUfo74Messages(remaining);
-
-          // If no more messages, transition to awaiting_close
-          if (remaining.length === 0) {
-            setEncryptedChannelState('awaiting_close');
-          }
-          playSound('message');
-        }
-        return;
-      }
-
-      // State: awaiting_close - Final message shown, close channel on Enter
-      if (encryptedChannelState === 'awaiting_close' && !inputValue.trim()) {
-        setEncryptedChannelState('idle');
-        setGameState(prev => ({
-          ...prev,
-          history: [
-            ...prev.history,
-            createEntry('system', ''),
-            createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-            createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
-            createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-            createEntry('system', ''),
-          ],
-        }));
-        playSound('transmission');
-        return;
-      }
-
-      // Block input during encrypted channel (unless it's Enter to advance)
-      if (encryptedChannelState !== 'idle' && inputValue.trim()) {
-        const errorEntry = createEntry('error', 'ERROR: Encrypted channel active.');
-        setGameState(prev => ({
-          ...prev,
-          history: [...prev.history, errorEntry],
-        }));
-        setInputValue('');
+      // Handle any pending UFO74 messages that accumulated
+      if (pendingUfo74Messages.length > 0 && !inputValue.trim()) {
+        const messagesToSend = [...pendingUfo74Messages];
+        setPendingUfo74Messages([]);
+        openEncryptedChannelWithMessages(messagesToSend);
         return;
       }
 
@@ -1330,22 +1250,9 @@ export default function Terminal({
             } else if (shouldDeferUfo74) {
               // Defer to pendingUfo74StartMessages for open/decrypt/last commands
               setPendingUfo74StartMessages(prev => [...prev, ...ufo74Messages]);
-            } else if (encryptedChannelStateRef.current !== 'idle') {
-              // Channel already active - add to pending queue
-              setPendingUfo74Messages(prev => [...prev, ...ufo74Messages]);
             } else {
-              // Set up encrypted channel - show "Receiving message" prompt
-              setGameState(prev => ({
-                ...prev,
-                history: [
-                  ...prev.history,
-                  createEntry('system', ''),
-                  createEntry('ufo74', '▓▓▓ INCOMING ENCRYPTED TRANSMISSION FROM UFO74 ▓▓▓'),
-                ],
-              }));
-              setPendingUfo74Messages(ufo74Messages);
-              setEncryptedChannelState('awaiting_open');
-              playSound('message');
+              // Display UFO74 messages directly through encrypted channel
+              openEncryptedChannelWithMessages(ufo74Messages);
             }
           }
         } finally {
@@ -1390,18 +1297,8 @@ export default function Terminal({
           } else if (shouldDeferUfo74) {
             setPendingUfo74StartMessages(prev => [...prev, ...ufo74Messages]);
           } else {
-            // Set up encrypted channel - show "Receiving message" prompt
-            setGameState(prev => ({
-              ...prev,
-              history: [
-                ...prev.history,
-                createEntry('system', ''),
-                createEntry('ufo74', '▓▓▓ INCOMING ENCRYPTED TRANSMISSION FROM UFO74 ▓▓▓'),
-              ],
-            }));
-            setPendingUfo74Messages(ufo74Messages);
-            setEncryptedChannelState('awaiting_open');
-            playSound('message');
+            // Display UFO74 messages directly through encrypted channel
+            openEncryptedChannelWithMessages(ufo74Messages);
           }
         }
 
@@ -1418,26 +1315,14 @@ export default function Terminal({
 
       // Queue UFO74 messages from command result to show after content/media
       if (result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0) {
-        if (encryptedChannelStateRef.current !== 'idle') {
-          setPendingUfo74Messages(prev => [...prev, ...result.pendingUfo74Messages!]);
-        } else if (result.imageTrigger || result.videoTrigger) {
+        if (result.imageTrigger || result.videoTrigger) {
           // Media trigger present - queue messages for after media closes
           setQueuedAfterMediaMessages(prev => [...prev, ...result.pendingUfo74Messages!]);
         } else if (shouldDeferUfo74) {
           setPendingUfo74StartMessages(prev => [...prev, ...result.pendingUfo74Messages!]);
         } else {
-          // No media trigger - trigger encrypted channel immediately
-          setGameState(prev => ({
-            ...prev,
-            history: [
-              ...prev.history,
-              createEntry('system', ''),
-              createEntry('ufo74', '▓▓▓ INCOMING ENCRYPTED TRANSMISSION FROM UFO74 ▓▓▓'),
-            ],
-          }));
-          setPendingUfo74Messages(prev => [...prev, ...result.pendingUfo74Messages!]);
-          setEncryptedChannelState('awaiting_open');
-          playSound('message');
+          // Display UFO74 messages directly through encrypted channel
+          openEncryptedChannelWithMessages(result.pendingUfo74Messages);
         }
       }
 
