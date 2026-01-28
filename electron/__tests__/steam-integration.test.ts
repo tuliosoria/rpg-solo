@@ -43,7 +43,8 @@ const mockSteamClient = {
 
 // Import modules - use dynamic import for CommonJS compatibility
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const steamAchievements = require('../steam-achievements') as typeof import('../steam-achievements');
+const steamAchievements =
+  require('../steam-achievements') as typeof import('../steam-achievements');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const steamCloud = require('../steam-cloud') as typeof import('../steam-cloud');
 
@@ -150,7 +151,7 @@ describe('Steam Integration', () => {
       const result = steamCloud.load('autosave');
 
       expect(result.success).toBe(true);
-      expect(JSON.parse(result.data)).toEqual(gameState);
+      expect(JSON.parse(result.data!)).toEqual(gameState);
     });
 
     it('handles cloud save with localStorage fallback workflow', () => {
