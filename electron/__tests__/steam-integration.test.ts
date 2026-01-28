@@ -41,9 +41,11 @@ const mockSteamClient = {
   localplayer: mockLocalPlayer,
 };
 
-// Import modules
-const steamAchievements = require('../steam-achievements');
-const steamCloud = require('../steam-cloud');
+// Import modules - use dynamic import for CommonJS compatibility
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const steamAchievements = require('../steam-achievements') as typeof import('../steam-achievements');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const steamCloud = require('../steam-cloud') as typeof import('../steam-cloud');
 
 describe('Steam Integration', () => {
   beforeEach(() => {

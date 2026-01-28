@@ -1,4 +1,6 @@
-const { app, BrowserWindow, protocol, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const fs = require('fs');
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -9,6 +11,9 @@ const steamCloud = require('./steam-cloud');
 // Steam state
 let steamClient = null;
 let steamInitialized = false;
+
+// Server reference for cleanup
+let localServer = null;
 
 // Steam App ID - Replace with your actual Steam App ID
 // For development/testing, use 480 (Spacewar test app)
@@ -43,7 +48,9 @@ function initializeSteam() {
           console.log('Steam user:', localPlayer.getName());
         }
       } catch (e) {
-        // Ignore if we can't get user info
+        if (isDev) {
+          console.debug('Could not get Steam user info:', e.message);
+        }
       }
 
       return true;
@@ -87,12 +94,7 @@ function createWindow() {
     },
   });
 
-  // Handle Steam overlay activation
-  if (steamInitialized && steamClient) {
-    mainWindow.on('focus', () => {
-      // Steam overlay callbacks are handled automatically by steamworks.js
-    });
-  }
+  // Steam overlay is handled automatically by steamworks.js when the window has focus
 
   if (isDev) {
     // Development: load from Next.js dev server
@@ -106,24 +108,42 @@ function createWindow() {
     const mimeTypes = {
       '.html': 'text/html',
       '.js': 'application/javascript',
+      '.mjs': 'application/javascript',
       '.css': 'text/css',
       '.json': 'application/json',
       '.png': 'image/png',
       '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
       '.gif': 'image/gif',
       '.svg': 'image/svg+xml',
       '.ico': 'image/x-icon',
+      '.webp': 'image/webp',
       '.wav': 'audio/wav',
       '.mp3': 'audio/mpeg',
+      '.ogg': 'audio/ogg',
       '.mp4': 'video/mp4',
+      '.webm': 'video/webm',
       '.woff': 'font/woff',
       '.woff2': 'font/woff2',
       '.ttf': 'font/ttf',
+      '.eot': 'application/vnd.ms-fontobject',
+      '.otf': 'font/otf',
       '.txt': 'text/plain',
+      '.xml': 'application/xml',
+      '.map': 'application/json',
     };
 
-    const server = http.createServer((req, res) => {
-      let filePath = path.join(outDir, req.url === '/' ? 'index.html' : req.url);
+    localServer = http.createServer((req, res) => {
+      // Sanitize URL to prevent path traversal attacks
+      const sanitizedUrl = path.normalize(req.url).replace(/^(\.\.[\/\\])+/, '');
+      let filePath = path.join(outDir, sanitizedUrl === '/' || sanitizedUrl === '\\' ? 'index.html' : sanitizedUrl);
+      
+      // Ensure the resolved path is within outDir
+      if (!filePath.startsWith(outDir)) {
+        res.writeHead(403);
+        res.end('Forbidden');
+        return;
+      }
       
       // Handle paths without extensions (try .html)
       if (!path.extname(filePath) && !fs.existsSync(filePath)) {
@@ -149,8 +169,8 @@ function createWindow() {
       });
     });
 
-    server.listen(0, '127.0.0.1', () => {
-      const port = server.address().port;
+    localServer.listen(0, '127.0.0.1', () => {
+      const port = localServer.address().port;
       mainWindow.loadURL(`http://127.0.0.1:${port}`);
     });
   }
@@ -188,7 +208,11 @@ ipcMain.handle('steam:achievements:isUnlocked', (event, achievementId) => {
   return steamAchievements.isUnlocked(achievementId);
 });
 
+// Only allow clearing achievements in development mode (for testing)
 ipcMain.handle('steam:achievements:clear', (event, achievementId) => {
+  if (!isDev) {
+    return { success: false, error: 'Achievement clearing is only available in development mode' };
+  }
   return steamAchievements.clear(achievementId);
 });
 
@@ -259,6 +283,12 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+  // Close local server if running
+  if (localServer) {
+    localServer.close();
+    localServer = null;
+  }
+
   // Shutdown Steam before quitting
   shutdownSteam();
 

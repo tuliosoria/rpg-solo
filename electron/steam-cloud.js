@@ -118,7 +118,8 @@ function deleteFile(key) {
     const filename = CLOUD_SAVE_PREFIX + key;
 
     if (!cloud.isFileExists(filename)) {
-      return { success: true, message: 'File did not exist' };
+      // File doesn't exist, which is fine for delete - return success
+      return { success: true };
     }
 
     const result = cloud.deleteFile(filename);

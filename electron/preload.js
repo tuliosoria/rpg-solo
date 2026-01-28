@@ -42,7 +42,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     isUnlocked: id => ipcRenderer.invoke('steam:achievements:isUnlocked', id),
 
     /**
-     * Clears an achievement on Steam (for testing).
+     * Clears an achievement on Steam (development mode only).
      * @param {string} id - The game's internal achievement ID
      * @returns {Promise<{success: boolean, error?: string}>}
      */
