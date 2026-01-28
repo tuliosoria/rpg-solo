@@ -301,6 +301,84 @@ describe('Narrative Mechanics', () => {
     });
   });
 
+  describe('UFO74 Override Protocol Hints', () => {
+    it('suggests override protocol after 5 files read when not unlocked', () => {
+      // State where player has read exactly 4 files - reading 5th should trigger hint
+      const state = createTestState({
+        currentPath: '/storage/quarantine',
+        tutorialStep: -1,
+        tutorialComplete: true,
+        filesRead: new Set([
+          '/internal/admin/contact_list.txt',
+          '/internal/misc/maintenance_schedule.txt',
+          '/comms/radio_intercept_log.txt',
+          '/storage/assets/material_x_analysis.dat',
+        ]),
+        flags: { overrideSuggested: false, adminUnlocked: false },
+      });
+
+      // Open 5th file (this makes filesRead.size === 5 after processing)
+      const result = executeCommand('open bio_container.log', state);
+
+      // Should include UFO74 hint about override protocol
+      const hasOverrideHint = result.output.some(
+        e => e.content.includes('override protocol') || e.content.includes('MORE hidden')
+      );
+      expect(hasOverrideHint).toBe(true);
+      expect(result.stateChanges.flags?.overrideSuggested).toBe(true);
+    });
+
+    it('does NOT suggest override protocol when already unlocked (adminUnlocked)', () => {
+      // State where player has read 4 files BUT already has adminUnlocked
+      const state = createTestState({
+        currentPath: '/storage/quarantine',
+        tutorialStep: -1,
+        tutorialComplete: true,
+        filesRead: new Set([
+          '/internal/admin/contact_list.txt',
+          '/internal/misc/maintenance_schedule.txt',
+          '/comms/radio_intercept_log.txt',
+          '/storage/assets/material_x_analysis.dat',
+        ]),
+        flags: { overrideSuggested: false, adminUnlocked: true },
+      });
+
+      // Open 5th file
+      const result = executeCommand('open bio_container.log', state);
+
+      // Should NOT include UFO74 hint about override protocol since already unlocked
+      const hasOverrideHint = result.output.some(
+        e => e.content.includes('override protocol') && e.content.includes('MORE hidden')
+      );
+      expect(hasOverrideHint).toBe(false);
+    });
+
+    it('does NOT suggest override protocol if already suggested', () => {
+      // State where override was already suggested
+      const state = createTestState({
+        currentPath: '/storage/quarantine',
+        tutorialStep: -1,
+        tutorialComplete: true,
+        filesRead: new Set([
+          '/internal/admin/contact_list.txt',
+          '/internal/misc/maintenance_schedule.txt',
+          '/comms/radio_intercept_log.txt',
+          '/storage/assets/material_x_analysis.dat',
+        ]),
+        flags: { overrideSuggested: true, adminUnlocked: false },
+      });
+
+      // Open 5th file
+      const result = executeCommand('open bio_container.log', state);
+
+      // Should NOT include UFO74 hint since already suggested
+      const hasOverrideHint = result.output.some(
+        e => e.content.includes('override protocol') && e.content.includes('MORE hidden')
+      );
+      expect(hasOverrideHint).toBe(false);
+    });
+  });
+
   describe('Truth Discovery Breathers', () => {
     it('reduces detection when discovering a new truth', () => {
       // Reading a file that reveals a truth should reduce detection

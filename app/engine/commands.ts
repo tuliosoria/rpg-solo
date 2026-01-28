@@ -3927,7 +3927,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     // After 5 files opened, UFO74 suggests override protocol (only if not already unlocked)
     const totalFilesRead = filesRead.size;
-    if (totalFilesRead === 5 && !state.flags.overrideSuggested && !state.flags.override_unlocked) {
+    if (totalFilesRead === 5 && !state.flags.overrideSuggested && !state.flags.adminUnlocked) {
       notices.push(
         ...createUFO74Message([
           'UFO74: kid, youre doing good but theres MORE hidden here.',

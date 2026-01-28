@@ -710,11 +710,11 @@ export default function Terminal({
     // Override protocol hint
     {
       hint: "You've seen a lot. There may be... deeper access available.",
-      condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.override_unlocked,
+      condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.adminUnlocked,
     },
     {
       hint: "Some commands aren't listed. Keep digging.",
-      condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.override_unlocked,
+      condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.adminUnlocked,
     },
 
     // General helpful hints
@@ -1969,8 +1969,8 @@ export default function Terminal({
             >
               <button type="submit" autoFocus />
             </form>
-            {/* Subtle bottom-right enter prompt */}
-            <FloatingElement id="enter-prompt" zone="bottom-right" priority={1} baseOffset={16}>
+            {/* Centered enter prompt */}
+            <FloatingElement id="enter-prompt" zone="bottom-center" priority={1} baseOffset={32}>
               <button
                 type="button"
                 className={styles.enterPromptContent}
