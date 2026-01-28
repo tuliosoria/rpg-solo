@@ -91,6 +91,26 @@ export function useAutocomplete(gameState: GameState) {
       const partial = parts[parts.length - 1];
       const currentPath = gameState.currentPath;
 
+      // Special handling for correlate command second argument:
+      // Suggest from all opened files (filesRead) instead of current directory
+      if (cmd === 'correlate' && parts.length === 3) {
+        const filesRead = gameState.filesRead || new Set<string>();
+        if (filesRead.size === 0) return [];
+
+        // Get all opened file paths and filter by partial match
+        const openedFiles = Array.from(filesRead);
+        const partialLower = partial.toLowerCase();
+
+        // Match against full path or just filename
+        return openedFiles.filter(filePath => {
+          const fileName = filePath.split('/').pop() || '';
+          return (
+            filePath.toLowerCase().includes(partialLower) ||
+            fileName.toLowerCase().startsWith(partialLower)
+          );
+        });
+      }
+
       // Determine the directory to search and the prefix to match
       let searchDir = currentPath;
       let prefix = partial;
@@ -132,6 +152,9 @@ export function useAutocomplete(gameState: GameState) {
 
     const parts = input.trimStart().split(/\s+/);
 
+    // Check if completions are full paths (e.g., from filesRead for correlate second arg)
+    const completionsAreFullPaths = completions.length > 0 && completions[0].startsWith('/');
+
     if (completions.length === 1) {
       // Single match - complete it
       if (parts.length <= 1) {
@@ -142,6 +165,13 @@ export function useAutocomplete(gameState: GameState) {
         const cmd = parts[0];
         const middleArgs = parts.slice(1, -1); // All args except first (cmd) and last (partial)
         const partial = parts[parts.length - 1];
+
+        // For full path completions, use the completion directly without adding prefix
+        if (completionsAreFullPaths) {
+          const allArgs = [...middleArgs, completions[0]];
+          return `${cmd} ${allArgs.join(' ')}`;
+        }
+
         let prefix = '';
         if (partial.includes('/')) {
           prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
@@ -165,6 +195,13 @@ export function useAutocomplete(gameState: GameState) {
         const cmd = parts[0];
         const middleArgs = parts.slice(1, -1);
         const partial = parts[parts.length - 1];
+
+        // For full path completions, use the common prefix directly without adding prefix
+        if (completionsAreFullPaths) {
+          const allArgs = [...middleArgs, commonPrefix];
+          return `${cmd} ${allArgs.join(' ')}`;
+        }
+
         let prefix = '';
         if (partial.includes('/')) {
           prefix = partial.substring(0, partial.lastIndexOf('/') + 1);
