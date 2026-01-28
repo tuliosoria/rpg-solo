@@ -1,8 +1,77 @@
-const { app, BrowserWindow, protocol } = require('electron');
-const path = require('path');
-const fs = require('fs');
+const { app, BrowserWindow, protocol, ipcMain } = require('electron');
 
 const isDev = process.env.NODE_ENV === 'development';
+
+// Steam integration modules
+const steamAchievements = require('./steam-achievements');
+const steamCloud = require('./steam-cloud');
+
+// Steam state
+let steamClient = null;
+let steamInitialized = false;
+
+// Steam App ID - Replace with your actual Steam App ID
+// For development/testing, use 480 (Spacewar test app)
+const STEAM_APP_ID = process.env.STEAM_APP_ID || '480';
+
+/**
+ * Initializes Steamworks SDK.
+ * Must be called before creating the window.
+ * @returns {boolean} True if Steam was initialized successfully
+ */
+function initializeSteam() {
+  try {
+    // steamworks.js uses dynamic require for native bindings
+    const steamworks = require('steamworks.js');
+
+    // Try to initialize with our app ID
+    steamClient = steamworks.init(parseInt(STEAM_APP_ID, 10));
+
+    if (steamClient) {
+      steamInitialized = true;
+      console.log('Steam initialized successfully');
+      console.log('Steam App ID:', STEAM_APP_ID);
+
+      // Initialize sub-modules with the client
+      steamAchievements.initialize(steamClient);
+      steamCloud.initialize(steamClient);
+
+      // Log some Steam info for debugging
+      try {
+        const localPlayer = steamClient.localplayer;
+        if (localPlayer) {
+          console.log('Steam user:', localPlayer.getName());
+        }
+      } catch (e) {
+        // Ignore if we can't get user info
+      }
+
+      return true;
+    }
+  } catch (error) {
+    console.log('Steam initialization failed:', error.message);
+    console.log('Running without Steam integration');
+  }
+
+  return false;
+}
+
+/**
+ * Shuts down Steam gracefully.
+ */
+function shutdownSteam() {
+  if (steamClient) {
+    try {
+      // steamworks.js doesn't require explicit shutdown,
+      // but we clear our references
+      steamClient = null;
+      steamInitialized = false;
+      console.log('Steam shutdown complete');
+    } catch (error) {
+      console.error('Error during Steam shutdown:', error);
+    }
+  }
+}
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -17,6 +86,13 @@ function createWindow() {
       nodeIntegration: false,
     },
   });
+
+  // Handle Steam overlay activation
+  if (steamInitialized && steamClient) {
+    mainWindow.on('focus', () => {
+      // Steam overlay callbacks are handled automatically by steamworks.js
+    });
+  }
 
   if (isDev) {
     // Development: load from Next.js dev server
@@ -78,9 +154,100 @@ function createWindow() {
       mainWindow.loadURL(`http://127.0.0.1:${port}`);
     });
   }
+
+  return mainWindow;
 }
 
+// ============================================================
+// IPC Handlers for Steam functionality
+// ============================================================
+
+// Steam status
+ipcMain.handle('steam:isAvailable', () => {
+  return steamInitialized;
+});
+
+ipcMain.handle('steam:getPlayerName', () => {
+  if (!steamInitialized || !steamClient) {
+    return null;
+  }
+  try {
+    const localPlayer = steamClient.localplayer;
+    return localPlayer ? localPlayer.getName() : null;
+  } catch {
+    return null;
+  }
+});
+
+// Achievement handlers
+ipcMain.handle('steam:achievements:unlock', (event, achievementId) => {
+  return steamAchievements.unlock(achievementId);
+});
+
+ipcMain.handle('steam:achievements:isUnlocked', (event, achievementId) => {
+  return steamAchievements.isUnlocked(achievementId);
+});
+
+ipcMain.handle('steam:achievements:clear', (event, achievementId) => {
+  return steamAchievements.clear(achievementId);
+});
+
+ipcMain.handle('steam:achievements:getAllMapped', () => {
+  return steamAchievements.getAllMappedAchievements();
+});
+
+// Cloud save handlers
+ipcMain.handle('steam:cloud:isAvailable', () => {
+  return steamCloud.isAvailable();
+});
+
+ipcMain.handle('steam:cloud:save', (event, key, data) => {
+  return steamCloud.save(key, data);
+});
+
+ipcMain.handle('steam:cloud:load', (event, key) => {
+  return steamCloud.load(key);
+});
+
+ipcMain.handle('steam:cloud:delete', (event, key) => {
+  return steamCloud.deleteFile(key);
+});
+
+ipcMain.handle('steam:cloud:list', () => {
+  return steamCloud.listFiles();
+});
+
+ipcMain.handle('steam:cloud:getQuota', () => {
+  return steamCloud.getQuota();
+});
+
+// Overlay handler
+ipcMain.handle('steam:overlay:activate', (event, dialog) => {
+  if (!steamInitialized || !steamClient) {
+    return { success: false, error: 'Steam not initialized' };
+  }
+  try {
+    const overlay = steamClient.overlay;
+    if (overlay) {
+      // Valid dialog types: 'friends', 'community', 'players', 'settings',
+      // 'officialgamegroup', 'stats', 'achievements'
+      overlay.activateDialog(dialog || 'achievements');
+      return { success: true };
+    }
+    return { success: false, error: 'Overlay not available' };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+// ============================================================
+// App lifecycle
+// ============================================================
+
 app.whenReady().then(() => {
+  // Initialize Steam before creating the window
+  initializeSteam();
+
   createWindow();
 
   app.on('activate', () => {
@@ -92,8 +259,16 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+  // Shutdown Steam before quitting
+  shutdownSteam();
+
   // On macOS, apps typically stay active until explicitly quit
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('before-quit', () => {
+  // Ensure Steam is shut down
+  shutdownSteam();
 });
