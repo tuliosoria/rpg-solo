@@ -307,7 +307,6 @@ export default function Terminal({
   const skipStreamingRef = useRef(false);
   const lastHistoryCount = useRef(0);
   const streamStartScrollPos = useRef<number | null>(null);
-  const lastCommandWasNavigationRef = useRef(true); // Track if last command was navigation (for eye spawn timing)
 
   // Scroll behavior: during streaming scroll to bottom, after streaming scroll to content start
   useEffect(() => {
@@ -858,12 +857,8 @@ export default function Terminal({
   }, [playSound]);
 
   const handleFirewallEyeBatchSpawn = useCallback(() => {
-    // Only spawn eyes after navigation commands (cd, ls, dir), not after open
-    // This prevents disruption when player is reading file content
-    if (!lastCommandWasNavigationRef.current) {
-      return;
-    }
-
+    // Timer-based spawning happens regardless of last command
+    // The 60-second cooldown provides enough buffer for reading files
     const now = Date.now();
     setGameState(prev => {
       const newEyes = [...prev.firewallEyes, ...createFirewallEyeBatch(BATCH_SIZE)];
@@ -1247,9 +1242,6 @@ export default function Terminal({
       const dangerousCommands = ['decrypt', 'recover', 'trace', 'override', 'leak'];
       const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
       const systemCommands = ['scan', 'wait', 'hide'];
-      // Navigation commands for firewall eye spawning (spawn on cd/ls/dir, not on open)
-      const navigationCommands = ['ls', 'cd', 'dir', 'back', 'pwd'];
-      lastCommandWasNavigationRef.current = navigationCommands.includes(commandLower);
 
       if (dangerousCommands.includes(commandLower)) {
         playSound('warning'); // Warning beep for risky commands
