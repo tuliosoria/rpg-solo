@@ -629,6 +629,8 @@
   flex: 1;
   overflow-y: auto;
   padding: 16px;
+  /* Extra bottom padding to prevent floating buttons from overlapping content */
+  padding-bottom: 80px;
   z-index: 1;
 }
 
