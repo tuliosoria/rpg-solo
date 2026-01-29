@@ -247,12 +247,39 @@ const FIREWALL_PHRASES = [
   'Resistance is futile',
 ];
 
+// Cache for loaded voices
+let cachedVoices: SpeechSynthesisVoice[] = [];
+let voicesLoaded = false;
+
+// Initialize voices - must be called early to preload
+export function initVoices(): void {
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    return;
+  }
+
+  // Try to get voices immediately
+  cachedVoices = speechSynthesis.getVoices();
+  if (cachedVoices.length > 0) {
+    voicesLoaded = true;
+  }
+
+  // Also listen for voiceschanged event (fires when voices are ready)
+  speechSynthesis.addEventListener('voiceschanged', () => {
+    cachedVoices = speechSynthesis.getVoices();
+    voicesLoaded = true;
+  });
+}
+
 // Speak a creepy robotic voice when firewall eyes spawn
 export function speakFirewallVoice(): void {
   // Check if speech synthesis is available
   if (typeof window === 'undefined' || !window.speechSynthesis) {
+    console.warn('Speech synthesis not available');
     return;
   }
+
+  // Cancel any ongoing speech first
+  speechSynthesis.cancel();
 
   // Pick a random phrase
   const phrase = FIREWALL_PHRASES[Math.floor(Math.random() * FIREWALL_PHRASES.length)];
@@ -260,17 +287,29 @@ export function speakFirewallVoice(): void {
   const utterance = new SpeechSynthesisUtterance(phrase);
   utterance.pitch = 0.3; // Very low/deep
   utterance.rate = 0.8; // Slow
+  utterance.volume = 1.0; // Full volume
 
+  // Use cached voices if available
+  const voices = voicesLoaded ? cachedVoices : speechSynthesis.getVoices();
+  
   // Try to find a deep/male voice
-  const voices = speechSynthesis.getVoices();
   const deepVoice = voices.find(
-    v => v.name.toLowerCase().includes('male') || v.name.includes('Daniel')
+    v => v.name.toLowerCase().includes('male') || 
+         v.name.includes('Daniel') ||
+         v.name.includes('Google UK English Male')
   );
   if (deepVoice) {
     utterance.voice = deepVoice;
   }
 
-  speechSynthesis.speak(utterance);
+  // Debug logging
+  console.log('Speaking:', phrase, 'Voice:', utterance.voice?.name || 'default', 'Voices available:', voices.length);
+
+  // Workaround for Chrome bug: speech synthesis can get stuck
+  // A small delay helps ensure it actually speaks
+  setTimeout(() => {
+    speechSynthesis.speak(utterance);
+  }, 100);
 }
 
 // Export constants for use elsewhere

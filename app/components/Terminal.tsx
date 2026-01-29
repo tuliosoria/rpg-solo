@@ -56,6 +56,7 @@ import FirewallEyes, {
   DETECTION_THRESHOLD,
   BATCH_SIZE,
   speakFirewallVoice,
+  initVoices,
 } from './FirewallEyes';
 
 // Lazy-load conditional components for better initial load performance
@@ -245,6 +246,10 @@ export default function Terminal({
     } catch {
       // localStorage not available (SSR or test environment)
     }
+    
+    // Initialize voice synthesis early so voices are ready when needed
+    initVoices();
+    
     return () => {
       try {
         document.body.classList.remove('no-crt');
