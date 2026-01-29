@@ -1024,7 +1024,7 @@ describe('Story Consistency Tests', () => {
           // - "todos" (Portuguese for "everyone")
           // - "xxx" in IP addresses or phone numbers (redacted content)
           // Match only isolated TODO/FIXME/XXX that are likely dev markers
-          const hasTodo = /\bTODO\s*[:(\[]|\bFIXME\s*[:(\[]/i.test(allContent);
+          const hasTodo = /\bTODO\s*[:([]/i.test(allContent) || /\bFIXME\s*[:([]/i.test(allContent);
 
           if (hasTodo) {
             violations.push(`${file.path}: Contains TODO/FIXME marker`);
