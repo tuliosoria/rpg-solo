@@ -1735,9 +1735,10 @@ export default function Terminal({
     return { level: `MINIMAL ${percent}`, color: 'minimal' };
   };
 
-  // Get wrong attempts display (shows attempts made, not remaining)
+  // Get invalid attempts display (shows attempts made, not remaining)
+  // Uses legacyAlertCounter which tracks invalid commands, matching inline "[Invalid attempts: X/8]"
   const getAttemptsDisplay = () => {
-    const attempts = gameState.wrongAttempts || 0;
+    const attempts = gameState.legacyAlertCounter || 0;
     return `${attempts}/${MAX_WRONG_ATTEMPTS}`;
   };
 
