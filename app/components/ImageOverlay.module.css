@@ -12,13 +12,18 @@
   justify-content: center;
   z-index: 200;
   cursor: pointer;
-  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-family:
+    ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   animation: fadeIn 0.1s ease-out;
 }
 
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* Initial shock - brief white flash */
@@ -27,8 +32,12 @@
 }
 
 @keyframes shockFlash {
-  0% { background: rgba(255, 255, 255, 0.8); }
-  100% { background: rgba(0, 0, 0, 0.95); }
+  0% {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    background: rgba(0, 0, 0, 0.95);
+  }
 }
 
 .flickering {
@@ -36,11 +45,21 @@
 }
 
 @keyframes imageFlicker {
-  0% { opacity: 1; }
-  25% { opacity: 0.2; }
-  50% { opacity: 0.9; }
-  75% { opacity: 0.3; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  75% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* Scanlines */
@@ -87,6 +106,10 @@
   max-width: 700px;
   width: 90%;
   text-align: center;
+  height: 90vh;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Header */
@@ -107,11 +130,19 @@
   background: #000;
   padding: 8px;
   margin-bottom: 16px;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
 }
 
 .imageWrapper {
   position: relative;
   overflow: hidden;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .greenTone {
@@ -124,7 +155,9 @@
 
 .image {
   width: 100%;
-  height: auto;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
   display: block;
   opacity: 0.9;
 }
@@ -175,8 +208,12 @@
 }
 
 @keyframes corruptionMove {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* Footer */
@@ -192,8 +229,14 @@
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0.3; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0.3;
+  }
 }
 
 /* Metadata */
@@ -219,12 +262,12 @@
   .container {
     width: 95%;
   }
-  
+
   .headerText {
     font-size: 11px;
     letter-spacing: 2px;
   }
-  
+
   .metadata {
     font-size: 10px;
   }
