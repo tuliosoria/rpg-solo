@@ -52,8 +52,8 @@
   color: #00ff00;
   font-family:
     ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  font-size: 20px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.4;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -143,18 +143,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
+  padding: 6px 16px;
   background: #002a00;
   border-bottom: 2px solid #00ff00;
   color: #00ff00;
-  font-size: 1.3em;
+  font-size: 1.1em;
   font-weight: bold;
   letter-spacing: 0.05em;
   text-shadow:
     0 0 8px #00ff00,
     0 0 2px #00ff00;
   z-index: 3;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: nowrap;
 }
 
@@ -255,14 +255,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
-  padding-right: 180px; /* Make room for hacker avatar */
+  padding: 6px 16px;
+  padding-right: 140px; /* Make room for hacker avatar */
   background: #003800;
   border-bottom: 2px solid #00ff00;
-  font-size: 1.1em;
+  font-size: 0.95em;
   font-weight: bold;
   z-index: 2;
-  gap: 16px;
+  gap: 10px;
   box-shadow: 0 2px 12px 0 #00ff0033;
   flex-wrap: wrap;
 }
@@ -642,9 +642,9 @@
 .output {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: 8px 12px;
   /* Bottom padding handled by flex layout - no extra needed since buttons are inline */
-  padding-bottom: 16px;
+  padding-bottom: 8px;
   z-index: 1;
 }
 
@@ -669,7 +669,8 @@
 .line {
   white-space: pre-wrap;
   word-break: break-word;
-  min-height: 1.5em;
+  min-height: 1.2em;
+  margin-bottom: 1px;
 }
 
 .input {
@@ -751,7 +752,7 @@
   position: relative; /* For absolutely positioned warning */
   display: flex;
   align-items: center;
-  padding: 24px 32px;
+  padding: 10px 16px;
   background: #001100;
   border-top: 2px solid #00ff00;
   z-index: 2;
@@ -763,7 +764,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 24px 32px;
+  padding: 10px 16px;
   background: #001100;
   border-top: 2px solid #00ff00;
   z-index: 2;
@@ -783,9 +784,9 @@
   outline: none;
   color: #00ff00;
   font-family: inherit;
-  font-size: 1.2em;
+  font-size: 1em;
   caret-color: #00ff00;
-  padding: 10px 0;
+  padding: 6px 0;
 }
 
 .inputField::placeholder {
@@ -815,10 +816,10 @@
   border-radius: 6px;
   color: rgba(0, 255, 0, 0.95);
   font-family: inherit;
-  font-size: 1.1em;
+  font-size: 0.95em;
   font-weight: bold;
   letter-spacing: 2px;
-  padding: 12px 24px;
+  padding: 8px 16px;
   cursor: pointer;
   text-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
   box-shadow:
@@ -1151,31 +1152,31 @@
 /* Responsive - Medium screens (1024px - 1280px) */
 @media (max-width: 1280px) {
   .statusBar {
-    padding: 10px 20px;
-    font-size: 1.1em;
+    padding: 5px 14px;
+    font-size: 1em;
   }
 
   .progressTracker {
-    padding: 10px 16px;
-    padding-right: 160px;
-    font-size: 1em;
-    gap: 12px;
+    padding: 5px 12px;
+    padding-right: 130px;
+    font-size: 0.9em;
+    gap: 8px;
   }
 
   .truthsSection {
-    gap: 6px;
+    gap: 4px;
   }
 
   .riskSection {
-    gap: 6px;
+    gap: 4px;
   }
 
   .riskLevel {
-    min-width: 80px;
+    min-width: 70px;
   }
 
   .memoryLevel {
-    min-width: 70px;
+    min-width: 60px;
     margin-left: 0.5rem;
   }
 }
@@ -1183,18 +1184,18 @@
 /* Responsive - Small screens */
 @media (max-width: 768px) {
   .terminal {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .statusBar {
-    padding: 6px 12px;
-    font-size: 10px;
+    padding: 4px 10px;
+    font-size: 9px;
   }
 
   .progressTracker {
-    padding: 8px 12px;
-    padding-right: 12px;
-    font-size: 0.9em;
+    padding: 4px 10px;
+    padding-right: 10px;
+    font-size: 0.85em;
     flex-direction: column;
     align-items: flex-start;
   }
@@ -1209,11 +1210,11 @@
   }
 
   .output {
-    padding: 12px;
+    padding: 6px 8px;
   }
 
   .inputArea {
-    padding: 10px 12px;
+    padding: 6px 10px;
   }
 }
 
