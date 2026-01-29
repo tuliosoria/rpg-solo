@@ -291,19 +291,27 @@ export function speakFirewallVoice(): void {
 
   // Use cached voices if available
   const voices = voicesLoaded ? cachedVoices : speechSynthesis.getVoices();
-  
+
   // Try to find a deep/male voice
   const deepVoice = voices.find(
-    v => v.name.toLowerCase().includes('male') || 
-         v.name.includes('Daniel') ||
-         v.name.includes('Google UK English Male')
+    v =>
+      v.name.toLowerCase().includes('male') ||
+      v.name.includes('Daniel') ||
+      v.name.includes('Google UK English Male')
   );
   if (deepVoice) {
     utterance.voice = deepVoice;
   }
 
   // Debug logging
-  console.log('Speaking:', phrase, 'Voice:', utterance.voice?.name || 'default', 'Voices available:', voices.length);
+  console.log(
+    'Speaking:',
+    phrase,
+    'Voice:',
+    utterance.voice?.name || 'default',
+    'Voices available:',
+    voices.length
+  );
 
   // Workaround for Chrome bug: speech synthesis can get stuck
   // A small delay helps ensure it actually speaks

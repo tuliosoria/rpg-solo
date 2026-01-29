@@ -3,6 +3,23 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import Terminal from '../Terminal';
 import { DEFAULT_GAME_STATE, GameState } from '../../types';
 
+// Mock Next.js Image component
+vi.mock('next/image', () => ({
+  default: ({ src, alt, ...props }: { src: string; alt: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt} {...props} />
+  ),
+}));
+
+const mockPlaySound = vi.fn();
+const mockPlayKeySound = vi.fn();
+const mockStartAmbient = vi.fn();
+const mockStopAmbient = vi.fn();
+const mockToggleSound = vi.fn();
+const mockUpdateAmbientTension = vi.fn();
+const mockSetMasterVolume = vi.fn();
+let mockSoundEnabled = false;
+
 // Mock the storage modules
 vi.mock('../../storage/saves', () => ({
   autoSave: vi.fn(),
@@ -26,16 +43,15 @@ vi.mock('../../engine/achievements', () => ({
 // Mock useSound hook
 vi.mock('../../hooks/useSound', () => ({
   useSound: () => ({
-    playSound: vi.fn(),
-    playKeySound: vi.fn(),
-    isMuted: false,
-    toggleMute: vi.fn(),
-    volume: 0.5,
-    setVolume: vi.fn(),
-    soundEnabled: false,
-    setSoundEnabled: vi.fn(),
-    startAmbient: vi.fn(),
-    stopAmbient: vi.fn(),
+    playSound: mockPlaySound,
+    playKeySound: mockPlayKeySound,
+    startAmbient: mockStartAmbient,
+    stopAmbient: mockStopAmbient,
+    toggleSound: mockToggleSound,
+    updateAmbientTension: mockUpdateAmbientTension,
+    soundEnabled: mockSoundEnabled,
+    masterVolume: 0.5,
+    setMasterVolume: mockSetMasterVolume,
   }),
 }));
 
@@ -56,6 +72,7 @@ describe('Terminal Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
+    mockSoundEnabled = false;
   });
 
   afterEach(() => {
@@ -69,177 +86,177 @@ describe('Terminal Component', () => {
 
   it('renders the command input', () => {
     render(<Terminal {...defaultProps} />);
-    
+
     const input = document.querySelector('input');
     expect(input).toBeInTheDocument();
   });
 
   it('renders the terminal header', () => {
     render(<Terminal {...defaultProps} />);
-    
+
     // Terminal should have header with system info
     expect(screen.getByText(/TERMINAL 1996/i)).toBeInTheDocument();
   });
 
   it('accepts user input', () => {
     render(<Terminal {...defaultProps} />);
-    
+
     const input = document.querySelector('input') as HTMLInputElement;
-    
+
     act(() => {
       fireEvent.change(input, { target: { value: 'help' } });
     });
-    
+
     expect(input.value).toBe('help');
   });
 
   it('clears input after command submission', async () => {
     render(<Terminal {...defaultProps} />);
-    
+
     const input = document.querySelector('input') as HTMLInputElement;
-    
+
     act(() => {
       fireEvent.change(input, { target: { value: 'help' } });
     });
-    
+
     const form = input.closest('form');
     act(() => {
       fireEvent.submit(form!);
     });
-    
+
     // Input should be cleared after submission
     expect(input.value).toBe('');
   });
 
   it('adds command to history on submission', async () => {
     render(<Terminal {...defaultProps} />);
-    
+
     const input = document.querySelector('input') as HTMLInputElement;
-    
+
     act(() => {
       fireEvent.change(input, { target: { value: 'help' } });
     });
-    
+
     const form = input.closest('form');
     act(() => {
       fireEvent.submit(form!);
     });
-    
+
     // Advance timers for any async operations
     act(() => {
       vi.advanceTimersByTime(100);
     });
-    
+
     // The command should appear in the terminal output
     expect(screen.getByText(/> help/)).toBeInTheDocument();
   });
 
   it('shows help output when help command is executed', async () => {
     render(<Terminal {...defaultProps} />);
-    
+
     const input = document.querySelector('input') as HTMLInputElement;
-    
+
     act(() => {
       fireEvent.change(input, { target: { value: 'help' } });
       fireEvent.submit(input.closest('form')!);
     });
-    
+
     // Advance timers for streaming/processing
     act(() => {
       vi.advanceTimersByTime(1000);
     });
-    
+
     // Help output should contain terminal commands header
     expect(screen.getByText(/TERMINAL COMMANDS/i)).toBeInTheDocument();
   });
 
   it('navigates command history with arrow keys', async () => {
     render(<Terminal {...defaultProps} />);
-    
+
     const input = document.querySelector('input') as HTMLInputElement;
-    
+
     // Execute a few commands first
     act(() => {
       fireEvent.change(input, { target: { value: 'help' } });
       fireEvent.submit(input.closest('form')!);
     });
-    
+
     act(() => {
       vi.advanceTimersByTime(500);
     });
-    
+
     act(() => {
       fireEvent.change(input, { target: { value: 'status' } });
       fireEvent.submit(input.closest('form')!);
     });
-    
+
     act(() => {
       vi.advanceTimersByTime(500);
     });
-    
+
     // Press up arrow to get previous command
     act(() => {
       fireEvent.keyDown(input, { key: 'ArrowUp' });
     });
-    
+
     expect(input.value).toBe('status');
-    
+
     // Press up again
     act(() => {
       fireEvent.keyDown(input, { key: 'ArrowUp' });
     });
-    
+
     expect(input.value).toBe('help');
-    
+
     // Press down to go back
     act(() => {
       fireEvent.keyDown(input, { key: 'ArrowDown' });
     });
-    
+
     expect(input.value).toBe('status');
   });
 
   it('shows error for unknown commands', async () => {
     render(<Terminal {...defaultProps} />);
-    
+
     const input = document.querySelector('input') as HTMLInputElement;
-    
+
     act(() => {
       fireEvent.change(input, { target: { value: 'unknowncommand123' } });
       fireEvent.submit(input.closest('form')!);
     });
-    
+
     act(() => {
       vi.advanceTimersByTime(500);
     });
-    
+
     // Should show unrecognized command error
     expect(screen.getByText(/not recognized|unknown command/i)).toBeInTheDocument();
   });
 
   it('toggles pause menu on Escape key', async () => {
     render(<Terminal {...defaultProps} />);
-    
+
     // Press Escape to open pause menu
     act(() => {
       fireEvent.keyDown(window, { key: 'Escape' });
     });
-    
+
     // Pause menu should be visible
     expect(screen.getByText(/PAUSED/i)).toBeInTheDocument();
-    
+
     // Press Escape again to close
     act(() => {
       fireEvent.keyDown(window, { key: 'Escape' });
     });
-    
+
     // Pause menu should be hidden
     expect(screen.queryByText(/PAUSED/i)).not.toBeInTheDocument();
   });
 
   it('shows status bar with system information', () => {
     render(<Terminal {...defaultProps} />);
-    
+
     // Status bar should show nominal status initially
     expect(screen.getByText(/SYSTEM NOMINAL/i)).toBeInTheDocument();
   });
@@ -249,9 +266,9 @@ describe('Terminal Component', () => {
       ...defaultProps.initialState,
       detectionLevel: 60,
     };
-    
+
     render(<Terminal {...defaultProps} initialState={highDetectionState} />);
-    
+
     expect(screen.getByText(/AUDIT.*ACTIVE/i)).toBeInTheDocument();
   });
 
@@ -270,11 +287,11 @@ describe('Terminal Component', () => {
 
     it('shows enter prompt in tutorial mode', () => {
       render(<Terminal {...tutorialProps} />);
-      
+
       // Tutorial mode should show a subtle enter prompt button
       const enterPrompt = screen.getByRole('button', { name: /↵/ });
       expect(enterPrompt).toBeInTheDocument();
-      
+
       // Should NOT have an input field in tutorial mode
       const input = document.querySelector('input');
       expect(input).toBeNull();
@@ -282,18 +299,18 @@ describe('Terminal Component', () => {
 
     it('advances tutorial on Enter key', async () => {
       render(<Terminal {...tutorialProps} />);
-      
+
       const enterPrompt = screen.getByRole('button', { name: /↵/ });
-      
+
       // Click to advance tutorial
       act(() => {
         fireEvent.click(enterPrompt);
       });
-      
+
       act(() => {
         vi.advanceTimersByTime(500);
       });
-      
+
       // After first Enter, tutorial content should appear in output
       const output = document.querySelector('.output');
       expect(output).toBeTruthy();
@@ -301,20 +318,20 @@ describe('Terminal Component', () => {
 
     it('shows enter prompt instead of input during tutorial', async () => {
       render(<Terminal {...tutorialProps} />);
-      
+
       // In tutorial mode, there's no input to type into - just the enter prompt
       const enterPrompt = screen.getByRole('button', { name: /↵/ });
       expect(enterPrompt).toBeInTheDocument();
-      
+
       // Click the button to advance
       act(() => {
         fireEvent.click(enterPrompt);
       });
-      
+
       act(() => {
         vi.advanceTimersByTime(500);
       });
-      
+
       // Tutorial should still be in progress (button still visible)
       // The button advances the tutorial step by step
       expect(screen.getByRole('button', { name: /↵/ })).toBeInTheDocument();
@@ -324,27 +341,27 @@ describe('Terminal Component', () => {
   describe('Tab Completion', () => {
     it('completes command names on Tab', async () => {
       render(<Terminal {...defaultProps} />);
-      
+
       const input = document.querySelector('input') as HTMLInputElement;
-      
+
       act(() => {
         fireEvent.change(input, { target: { value: 'hel' } });
         fireEvent.keyDown(input, { key: 'Tab' });
       });
-      
+
       expect(input.value).toBe('help '); // Autocomplete adds trailing space
     });
 
     it('completes partial commands', async () => {
       render(<Terminal {...defaultProps} />);
-      
+
       const input = document.querySelector('input') as HTMLInputElement;
-      
+
       act(() => {
         fireEvent.change(input, { target: { value: 'sta' } });
         fireEvent.keyDown(input, { key: 'Tab' });
       });
-      
+
       expect(input.value).toBe('status '); // Autocomplete adds trailing space
     });
   });
