@@ -31,20 +31,15 @@ describe('Tutorial System', () => {
 
     it('returns true for different tip even if another was shown', () => {
       const shownTips = new Set(['first_fragment']);
-      const result = shouldShowTutorialTip('first_correlate', true, shownTips);
+      const result = shouldShowTutorialTip('second_fragment_same_category', true, shownTips);
       expect(result).toBe(true);
     });
   });
 
   describe('getTutorialTip', () => {
-    const tipIds: TutorialTipId[] = [
-      'first_fragment',
-      'second_fragment_same_category',
-      'first_correlate',
-      'first_proven',
-    ];
+    const tipIds: TutorialTipId[] = ['first_fragment', 'second_fragment_same_category'];
 
-    it.each(tipIds)('returns entries for %s', (tipId) => {
+    it.each(tipIds)('returns entries for %s', tipId => {
       const entries = getTutorialTip(tipId);
       expect(entries.length).toBeGreaterThan(0);
       // Check for box characters indicating proper formatting
@@ -63,7 +58,7 @@ describe('Tutorial System', () => {
     it('returns formatted help entries', () => {
       const entries = getHelpBasics();
       expect(entries.length).toBeGreaterThan(0);
-      
+
       // Check for expected content
       const allContent = entries.map(e => e.content).join('\n');
       expect(allContent).toContain('B A S I C S');
@@ -75,16 +70,13 @@ describe('Tutorial System', () => {
   });
 
   describe('getHelpEvidence', () => {
-    it('returns formatted help entries about evidence tiers', () => {
+    it('returns formatted help entries about evidence', () => {
       const entries = getHelpEvidence();
       expect(entries.length).toBeGreaterThan(0);
-      
+
       const allContent = entries.map(e => e.content).join('\n');
       expect(allContent).toContain('E V I D E N C E');
-      expect(allContent).toContain('FRAGMENT');
-      expect(allContent).toContain('CORROBORATED');
-      expect(allContent).toContain('PROVEN');
-      expect(allContent).toContain('correlate');
+      expect(allContent).toContain('OBJECTIVE');
     });
   });
 
@@ -92,7 +84,7 @@ describe('Tutorial System', () => {
     it('returns formatted help entries about winning', () => {
       const entries = getHelpWinning();
       expect(entries.length).toBeGreaterThan(0);
-      
+
       const allContent = entries.map(e => e.content).join('\n');
       expect(allContent).toContain('H O W   T O   W I N');
       expect(allContent).toContain('Debris Relocation');
@@ -107,7 +99,7 @@ describe('Tutorial System', () => {
     it('returns a friendly first-run message', () => {
       const entries = getFirstRunMessage();
       expect(entries.length).toBeGreaterThan(0);
-      
+
       const allContent = entries.map(e => e.content).join('\n');
       expect(allContent).toContain('first time');
       expect(allContent).toContain('help basics');

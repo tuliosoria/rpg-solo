@@ -50,7 +50,15 @@ export const TUTORIAL_MESSAGES: string[][] = [
     '       the terminal.',
   ],
   ['UFO74: ill keep track of what you find. good luck hackerkid.'],
-  ['>> CONNECTION IDLE <<', '', 'Type "help" for available commands.', '', 'UFO74: first time hacking a government server?', '       type "help basics" if you need guidance.', '       or just dive in. your call kid.'],
+  [
+    '>> CONNECTION IDLE <<',
+    '',
+    'Type "help" for available commands.',
+    '',
+    'UFO74: first time hacking a government server?',
+    '       type "help basics" if you need guidance.',
+    '       or just dive in. your call kid.',
+  ],
 ];
 
 // Boot sequence for new game (without UFO74 tutorial)
@@ -92,11 +100,7 @@ export function getFirstRunMessage(): TerminalEntry[] {
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Tutorial tip IDs
-export type TutorialTipId = 
-  | 'first_fragment'
-  | 'second_fragment_same_category'
-  | 'first_correlate'
-  | 'first_proven';
+export type TutorialTipId = 'first_fragment' | 'second_fragment_same_category';
 
 // Helper to create boxed tutorial tips
 function createTutorialTipBox(lines: string[]): TerminalEntry[] {
@@ -106,51 +110,32 @@ function createTutorialTipBox(lines: string[]): TerminalEntry[] {
     createEntry('notice', '╔' + '═'.repeat(width) + '╗'),
     createEntry('notice', '║  💡 TUTORIAL TIP' + ' '.repeat(width - 17) + '║'),
   ];
-  
+
   for (const line of lines) {
     const paddedLine = '  ' + line;
     const padding = Math.max(0, width - paddedLine.length);
     entries.push(createEntry('notice', '║' + paddedLine + ' '.repeat(padding) + '║'));
   }
-  
+
   entries.push(createEntry('notice', '╚' + '═'.repeat(width) + '╝'));
   entries.push(createEntry('system', ''));
-  
+
   return entries;
 }
 
 // Tutorial tips content
 export const TUTORIAL_TIPS: Record<TutorialTipId, string[]> = {
   first_fragment: [
-    'You found a FRAGMENT! But fragments',
-    'alone won\'t win your case.',
+    'You found evidence!',
     '',
-    'Find another file about the same topic',
-    'and use: correlate <file1> <file2>',
+    'Keep searching for more files.',
+    'Collect all 5 categories to win.',
   ],
   second_fragment_same_category: [
-    'Two fragments about the same thing!',
-    'Now correlate them:',
+    'Another piece of the puzzle!',
     '',
-    'correlate <file1> <file2>',
-  ],
-  first_correlate: [
-    'CORROBORATED! Much stronger.',
-    'To make it PROVEN (undeniable):',
-    '',
-    'Connect a 3rd related file with:',
-    'connect <file1> <file3>',
-    '',
-    'Use "map" to see your evidence web.',
-  ],
-  first_proven: [
-    'PROVEN! This evidence is undeniable.',
-    '',
-    'Build 5 proven chains to win.',
+    'Keep exploring the files.',
     'Use "progress" to track your case.',
-    '',
-    'Tutorial complete! Type "tutorial off"',
-    'to disable tips, or keep them on.',
   ],
 };
 
@@ -189,7 +174,7 @@ export function getHelpBasics(): TerminalEntry[] {
     createEntry('output', '  cd ..           Go back one level'),
     createEntry('system', ''),
     createEntry('output', '  READING'),
-    createEntry('output', '  open <file>     Read a file\'s contents'),
+    createEntry('output', "  open <file>     Read a file's contents"),
     createEntry('output', '  last            Re-read last opened file'),
     createEntry('system', ''),
     createEntry('output', '  TRACKING'),
@@ -209,39 +194,33 @@ export function getHelpEvidence(): TerminalEntry[] {
   return [
     createEntry('system', ''),
     createEntry('output', '═══════════════════════════════════════════════'),
-    createEntry('output', '  E V I D E N C E   T I E R S'),
+    createEntry('output', '  E V I D E N C E   S Y S T E M'),
     createEntry('output', '═══════════════════════════════════════════════'),
     createEntry('system', ''),
-    createEntry('output', '  [○] FRAGMENT'),
-    createEntry('output', '      Found by reading a file.'),
-    createEntry('output', '      Not enough to prove anything alone.'),
+    createEntry('output', '  OBJECTIVE'),
+    createEntry('output', '  Collect evidence in all 5 categories:'),
     createEntry('system', ''),
-    createEntry('output', '  [◆] CORROBORATED'),
-    createEntry('output', '      Two files linked via "correlate".'),
-    createEntry('output', '      Stronger, but still deniable.'),
-    createEntry('system', ''),
-    createEntry('output', '  [●] PROVEN'),
-    createEntry('output', '      Chain of 3+ connected files.'),
-    createEntry('output', '      Undeniable evidence.'),
+    createEntry('output', '  1. Debris Relocation'),
+    createEntry('output', '  2. Being Containment'),
+    createEntry('output', '  3. Telepathic Scouts'),
+    createEntry('output', '  4. International Actors'),
+    createEntry('output', '  5. Transition 2026'),
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
     createEntry('system', ''),
-    createEntry('output', '  HOW TO BUILD YOUR CASE:'),
+    createEntry('output', '  HOW TO FIND EVIDENCE:'),
     createEntry('system', ''),
-    createEntry('output', '  1. Read files, find fragments'),
-    createEntry('output', '  2. Find two files about same topic'),
-    createEntry('output', '  3. Use: correlate <file1> <file2>'),
-    createEntry('output', '  4. Connect a 3rd file to prove it'),
-    createEntry('output', '  5. Repeat for all 5 evidence categories'),
+    createEntry('output', '  1. Navigate directories with ls, cd'),
+    createEntry('output', '  2. Read files with open <filename>'),
+    createEntry('output', '  3. Decrypt encrypted files'),
+    createEntry('output', '  4. Use "progress" to check status'),
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
     createEntry('system', ''),
-    createEntry('output', '  ENDINGS (based on evidence quality):'),
+    createEntry('output', '  WINNING:'),
     createEntry('system', ''),
-    createEntry('output', '  • 5 PROVEN    → Best ending (full exposure)'),
-    createEntry('output', '  • 3+ PROVEN   → Good ending (partial win)'),
-    createEntry('output', '  • 5 CORROBORATED → Neutral ending'),
-    createEntry('output', '  • 5 FRAGMENTS → Bad ending (dismissed)'),
+    createEntry('output', '  • Collect all 5 categories'),
+    createEntry('output', '  • Run save_evidence.sh to complete'),
     createEntry('system', ''),
   ];
 }
@@ -254,7 +233,7 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntry('output', '═══════════════════════════════════════════════'),
     createEntry('system', ''),
     createEntry('output', '  OBJECTIVE'),
-    createEntry('output', '  Prove 5 truths about the Varginha incident:'),
+    createEntry('output', '  Collect evidence in 5 categories:'),
     createEntry('system', ''),
     createEntry('output', '  1. Debris Relocation'),
     createEntry('output', '  2. Being Containment'),
@@ -268,18 +247,17 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntry('system', ''),
     createEntry('output', '  • Read carefully - evidence is in the details'),
     createEntry('output', '  • Use "note" to track important findings'),
-    createEntry('output', '  • Correlate related files to strengthen evidence'),
-    createEntry('output', '  • Connect 3+ files to PROVE each truth'),
+    createEntry('output', '  • Decrypt encrypted files for hidden evidence'),
     createEntry('output', '  • Watch your detection level!'),
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
     createEntry('system', ''),
     createEntry('output', '  COMMANDS TO KNOW'),
     createEntry('system', ''),
-    createEntry('output', '  correlate <f1> <f2>  Link related evidence'),
-    createEntry('output', '  connect <f1> <f2>    Build proof chains'),
-    createEntry('output', '  progress             Check your case status'),
-    createEntry('output', '  map                  Visualize connections'),
+    createEntry('output', '  progress         Check your case status'),
+    createEntry('output', '  map              View collected evidence'),
+    createEntry('output', '  note <text>      Save personal notes'),
+    createEntry('output', '  bookmark <file>  Mark files for later'),
     createEntry('system', ''),
   ];
 }

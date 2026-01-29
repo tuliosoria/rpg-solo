@@ -394,9 +394,10 @@ describe('Narrative Mechanics', () => {
       // material_x_analysis.dat reveals 'debris_relocation'
       const result = executeCommand('open material_x_analysis.dat', state);
 
-      // Should have detection reduction from breather
+      // Detection should NOT decrease when discovering evidence (breather mechanic was removed)
+      // Detection either stays the same or increases slightly from the command itself
       if (result.stateChanges.detectionLevel !== undefined) {
-        expect(result.stateChanges.detectionLevel).toBeLessThan(50);
+        expect(result.stateChanges.detectionLevel).toBeGreaterThanOrEqual(50);
       }
     });
 
@@ -729,139 +730,6 @@ describe('Narrative Mechanics', () => {
     });
   });
 
-  describe('Correlate Command', () => {
-    it('shows usage when called without arguments', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-      });
-      const result = executeCommand('correlate', state);
-
-      expect(result.output.some(e => e.content.includes('USAGE'))).toBe(true);
-    });
-
-    it('requires both files to be read first', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-        currentPath: '/',
-        filesRead: new Set([]),
-      });
-      const result = executeCommand(
-        'correlate /storage/transport_log_96.txt /storage/manifest_jan96.txt',
-        state
-      );
-
-      // Should fail because files haven't been read OR file doesn't exist
-      expect(
-        result.output.some(
-          e =>
-            e.content.includes('CORRELATION FAILED') ||
-            e.content.includes('read') ||
-            e.content.includes('not found')
-        )
-      ).toBe(true);
-    });
-
-    describe('smart file resolution', () => {
-      it('resolves file by partial name when unique', () => {
-        const state = createTestState({
-          tutorialStep: -1,
-          tutorialComplete: true,
-          currentPath: '/',
-          filesRead: new Set(['/storage/quarantine/surveillance_recovery.vid']),
-          accessLevel: 2,
-        });
-        // Use the exact filename for more reliable resolution
-        const result = executeCommand(
-          'correlate /storage/quarantine/surveillance_recovery.vid qjkwxlmnp',
-          state
-        );
-        // Should resolve the first file, error will be for second file
-        expect(
-          result.output.some(
-            e =>
-              e.content.includes('File not found: qjkwxlmnp') ||
-              e.content.includes('No files matching')
-          )
-        ).toBe(true);
-      });
-
-      it('shows suggestions for ambiguous partial filename', () => {
-        const state = createTestState({
-          tutorialStep: -1,
-          tutorialComplete: true,
-          currentPath: '/',
-          filesRead: new Set([]),
-          accessLevel: 5,
-        });
-        // 'protocol' should match multiple files
-        const result = executeCommand('correlate protocol other', state);
-        // Should show suggestions
-        expect(
-          result.output.some(
-            e => e.content.includes('Did you mean') || e.content.includes('File not found')
-          )
-        ).toBe(true);
-      });
-
-      it('accepts full path directly', () => {
-        const state = createTestState({
-          tutorialStep: -1,
-          tutorialComplete: true,
-          currentPath: '/',
-          filesRead: new Set(['/storage/quarantine/surveillance_recovery.vid']),
-          accessLevel: 2,
-        });
-        const result = executeCommand(
-          'correlate /storage/quarantine/surveillance_recovery.vid nonexistent',
-          state
-        );
-        // First file resolved, second not found
-        expect(result.output.some(e => e.content.includes('File not found: nonexistent'))).toBe(
-          true
-        );
-      });
-
-      it('provides helpful message when no matches found', () => {
-        const state = createTestState({
-          tutorialStep: -1,
-          tutorialComplete: true,
-          currentPath: '/',
-          filesRead: new Set([]),
-          accessLevel: 2,
-        });
-        // Use completely unmatchable strings
-        const result = executeCommand('correlate zzqqwwxxyygg aabbccddee', state);
-        expect(
-          result.output.some(
-            e =>
-              e.content.includes('No files matching') ||
-              e.content.includes('File not found') ||
-              e.content.includes('hint')
-          )
-        ).toBe(true);
-      });
-
-      it('shows resolution note when file found by search', () => {
-        const state = createTestState({
-          tutorialStep: -1,
-          tutorialComplete: true,
-          currentPath: '/',
-          filesRead: new Set([
-            '/storage/quarantine/surveillance_recovery.vid',
-            '/internal/protocols/session_objectives.txt',
-          ]),
-          accessLevel: 2,
-        });
-        // Use partial names that should resolve
-        const result = executeCommand('correlate surveillance session_objectives', state);
-        // Check that something happened - either resolution note or correlation attempt
-        expect(result.output.length).toBeGreaterThan(0);
-      });
-    });
-  });
-
   describe('New International Actors Files', () => {
     it('diplomatic_cable_23jan.enc exists in /comms/liaison', () => {
       const state = createTestState({
@@ -892,23 +760,6 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Avatar Expression Triggers', () => {
-    it('sets smirk expression on successful correlate', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-        currentPath: '/',
-        filesRead: new Set(['/storage/transport_log_96.txt', '/storage/manifest_jan96.txt']),
-        accessLevel: 2,
-      });
-      // We can't easily test correlate success without real files, but we can test the command exists
-      const result = executeCommand(
-        'correlate /storage/transport_log_96.txt /storage/manifest_jan96.txt',
-        state
-      );
-      // The command should at least run without error
-      expect(result.output.length).toBeGreaterThan(0);
-    });
-
     it('sets scared expression when detection crosses 85', () => {
       const state = createTestState({
         tutorialStep: -1,
@@ -1008,11 +859,11 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('allows connection when unlocked', () => {
+    it('allows connection when unlocked and authenticated', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        flags: { scoutLinkUnlocked: true },
+        flags: { scoutLinkUnlocked: true, neuralLinkAuthenticated: true },
         scoutLinksUsed: 0,
       });
       const result = executeCommand('link', state);
@@ -1021,7 +872,8 @@ describe('Narrative Mechanics', () => {
           e =>
             e.content.includes('NEURAL PATTERN LINK') ||
             e.content.includes('connection') ||
-            e.content.includes('established')
+            e.content.includes('established') ||
+            e.content.includes('Query the consciousness')
         )
       ).toBe(true);
     });
@@ -1030,7 +882,7 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        flags: { scoutLinkUnlocked: true },
+        flags: { scoutLinkUnlocked: true, neuralLinkAuthenticated: true },
         scoutLinksUsed: 4,
       });
       const result = executeCommand('link what is your purpose', state);
@@ -1154,35 +1006,15 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Connect Command - Evidence Links', () => {
-    it('shows usage when no files specified', () => {
+    it('connect command was removed - shows error or unknown', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
       });
       const result = executeCommand('connect', state);
-      expect(
-        result.output.some(e => e.content.includes('USAGE') || e.content.includes('connect'))
-      ).toBe(true);
-    });
-
-    it('requires both files to be read', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-        filesRead: new Set(['/storage/transport_log_96.txt']),
-      });
-      const result = executeCommand(
-        'connect /storage/transport_log_96.txt /ops/medical/autopsy_01.txt',
-        state
-      );
-      expect(
-        result.output.some(
-          e =>
-            e.content.includes('FAILED') ||
-            e.content.includes('read') ||
-            e.content.includes('not found')
-        )
-      ).toBe(true);
+      // Connect command was removed, should show some kind of error message
+      // May show "Unknown command" or other error depending on implementation
+      expect(result.output.length).toBeGreaterThan(0);
     });
   });
 
@@ -1479,11 +1311,11 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Link Command with Image', () => {
-    it('shows ET brain image when link is initiated', () => {
+    it('shows ET brain image when link is initiated and authenticated', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        flags: { scoutLinkUnlocked: true },
+        flags: { scoutLinkUnlocked: true, neuralLinkAuthenticated: true },
         scoutLinksUsed: 0,
       });
       const result = executeCommand('link', state);
@@ -1497,7 +1329,7 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        flags: { scoutLinkUnlocked: true },
+        flags: { scoutLinkUnlocked: true, neuralLinkAuthenticated: true },
         scoutLinksUsed: 1,
       });
       const result = executeCommand('link what is your purpose', state);

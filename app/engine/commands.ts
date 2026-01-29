@@ -27,14 +27,12 @@ import { createSeededRng, seededRandomInt, seededRandomPick } from './rng';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 import {
   attemptEvidenceRevelation,
-  getDisturbingContentAvatarExpression,
   getEvidencePotentialSummary,
   countEvidenceByTier,
   getCaseStrengthDescription,
   getFileTier,
   getFileTierSymbol,
-  attemptCorroborateUpgrade,
-  attemptProvenUpgrade,
+  getDisturbingContentAvatarExpression,
   initializeEvidenceTier,
   EVIDENCE_TIER_LABELS,
   EVIDENCE_TIER_SYMBOLS,
@@ -578,10 +576,6 @@ function getContextualExplorationHints(state: GameState): string | null {
     return 'youve got clearance now. check /admin/ for the classified stuff.';
   }
 
-  if (truthsDiscovered.size >= 3 && !state.flags?.correlateHintGiven) {
-    return 'youre finding pieces. try using "correlate" to connect related files.';
-  }
-
   return null;
 }
 
@@ -763,12 +757,6 @@ function checkTruthProgress(
   if (newCount > previousCount) {
     stateChanges.truthsDiscovered = updatedTruths;
     // TRUTH DISCOVERY BREATHER: Major revelation distracts the watchers
-    // Reduce detection by 8-12 points per new truth discovered
-    const truthsJustFound = newCount - previousCount;
-    const detectionReduction = truthsJustFound * 10;
-    const newDetection = Math.max(0, state.detectionLevel - detectionReduction);
-    stateChanges.detectionLevel = newDetection;
-
     // Trigger shocked expression on major discovery
     stateChanges.avatarExpression = 'shocked';
 
@@ -797,7 +785,7 @@ function checkTruthProgress(
           )
         );
         notices.push(createEntry('system', ''));
-        notices.push(createEntry('ufo74', '  HINT: Find corroborating file, use correlate'));
+        notices.push(createEntry('ufo74', '  HINT: Keep searching for more evidence'));
         notices.push(createEntry('system', ''));
         notices.push(createEntry('warning', '╚═══════════════════════════════════════════╝'));
       }
@@ -826,9 +814,8 @@ function checkTruthProgress(
       // Also show UFO74 message (works with or without tutorial mode)
       notices.push(
         ...createUFO74Message([
-          'UFO74: nice find kid! but fragments alone wont cut it.',
-          '       you need to CORROBORATE evidence to make a real case.',
-          '       find related files and use "correlate <file1> <file2>"',
+          'UFO74: nice find kid! every piece matters.',
+          '       keep digging through the files.',
           '       pro tip: use "bookmark <file>" to mark files for later.',
         ])
       );
@@ -838,17 +825,6 @@ function checkTruthProgress(
     if (newCount === 2 && previousCount < 2) {
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', 'SYSTEM: Independent verification detected.'));
-
-      // Correlate tutorial - explain cross-referencing evidence
-      if (!state.flags.correlateHintGiven) {
-        notices.push(
-          ...createUFO74Message([
-            'UFO74: kid, youre building a case. use "correlate" to connect',
-            '       related evidence files. cross-referencing makes the case stronger.',
-          ])
-        );
-        stateChanges.flags = { ...state.flags, ...stateChanges.flags, correlateHintGiven: true };
-      }
     }
 
     if (newCount === 4 && previousCount < 4) {
@@ -2917,22 +2893,17 @@ const COMMAND_HELP: Record<string, string[]> = {
     'Show your investigation progress with evidence tiers.',
     '',
     'EVIDENCE TIERS:',
-    '  ○ FRAGMENT     - Found by reading a file (insufficient alone)',
-    '  ◆ CORROBORATED - Two files linked via "correlate" command',
-    '  ● PROVEN       - Chain of 3+ files via "connect" command',
+    '  ○ FRAGMENT     - Found by reading a file',
     '',
     'WIN CONDITIONS:',
-    '  5 PROVEN       → Best ending',
-    '  3+ PROVEN      → Good ending',
-    '  5 CORROBORATED → Neutral ending',
-    '  5 FRAGMENTS    → Bad ending (dismissed as conspiracy theorist)',
+    '  Collect all 5 evidence categories.',
     '',
     'WORKFLOW:',
-    '  1. Read files to discover FRAGMENTS',
-    '  2. Use "correlate" to upgrade to CORROBORATED',
-    '  3. Use "connect" to build chains for PROVEN',
+    '  1. Read files to discover evidence',
+    '  2. Collect all 5 categories',
+    '  3. Run save_evidence.sh to complete',
     '',
-    'TIP: Use "map" to visualize your evidence web.',
+    'TIP: Use "map" to view your collected evidence.',
   ],
   status: [
     'COMMAND: status',
@@ -3020,27 +2991,16 @@ const COMMAND_HELP: Record<string, string[]> = {
   map: [
     'COMMAND: map',
     '',
-    'Display the evidence web visualization.',
+    'Display your collected evidence.',
     '',
     'Shows:',
-    '  - Evidence chains by category',
-    '  - Proof chains for PROVEN evidence (3+ files)',
-    '  - Corroboration pairs (2 files)',
-    '  - Unlinked fragments',
+    '  - Evidence by category',
+    '  - Files that revealed evidence',
     '',
     'USAGE:',
-    '  map            - Show evidence web',
+    '  map            - Show evidence status',
     '',
-    'The map shows ASCII art visualization of your evidence:',
-    '  ┌──────────────────┐',
-    '  │ file_a.txt       │',
-    '  └────────┬─────────┘',
-    '           ↓',
-    '  ┌────────┴─────────┐',
-    '  │ file_b.txt       │',
-    '  └──────────────────┘',
-    '',
-    'TIP: Use "connect" to build longer chains for PROVEN tier.',
+    'TIP: Collect all 5 categories to win.',
   ],
   tutorial: [
     'COMMAND: tutorial [on|off]',
@@ -3054,8 +3014,7 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'When tutorial mode is ON, helpful tips appear at key moments:',
     '  - After finding your first evidence fragment',
-    '  - When you can correlate files',
-    '  - When you achieve PROVEN evidence',
+    '  - When you discover new evidence categories',
     '',
     'TIP: Use "help basics" for navigation guide.',
     'TIP: Use "help evidence" for evidence tier guide.',
@@ -3086,52 +3045,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     'REQUIREMENT: All 5 evidence categories must be collected first.',
     '',
     'WARNING: This action triggers the endgame sequence.',
-  ],
-  correlate: [
-    'COMMAND: correlate <file1> <file2>',
-    '',
-    'Cross-reference two files to find connections.',
-    'Successful correlations upgrade evidence tier and reduce detection.',
-    '',
-    'EVIDENCE UPGRADE: FRAGMENT → CORROBORATED',
-    '',
-    'USAGE:',
-    '  correlate transport.txt manifest.txt',
-    '',
-    'VALID CORRELATIONS:',
-    '  - Transport logs + Recovery reports',
-    '  - Medical files + Containment records',
-    '  - Communications + Neural analysis',
-    '  - Diplomatic cables + Liaison memos',
-    '  - Future projections + Threat assessments',
-    '',
-    'REQUIREMENTS:',
-    '  - Both files must be read first',
-    '  - Files must share an evidence category',
-    '',
-    'TIP: Successful correlations reduce detection by 5-15%.',
-    'TIP: After corroboration, use "connect" to build a proof chain.',
-  ],
-  connect: [
-    'COMMAND: connect <file1> <file2>',
-    '',
-    'Link two evidence files to build a proof chain.',
-    'Creates connections between related documents.',
-    '',
-    'EVIDENCE UPGRADE: CORROBORATED → PROVEN (when 3+ files chained)',
-    '',
-    'USAGE:',
-    '  connect file_a.txt file_b.txt',
-    '',
-    'When 3 or more files are connected in a chain for the same',
-    'evidence category, the evidence upgrades to PROVEN tier.',
-    '',
-    'REQUIREMENTS:',
-    '  - Both files must be read first',
-    '  - Evidence must be at CORROBORATED tier first',
-    '',
-    'TIP: Use "map" to visualize your evidence chains.',
-    'TIP: PROVEN evidence gives better endings.',
   ],
 };
 
@@ -4758,6 +4671,151 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
 
+    // Password authentication required for first connection
+    const linkPassword = 'harvest is not destruction';
+    const linkPasswordAlts = [
+      'harvest is not destruction',
+      'harvest',
+      'the crop continues living',
+      'crop continues living',
+    ];
+
+    if (!state.flags.neuralLinkAuthenticated) {
+      // Check if user is providing password
+      const attempt = args.join(' ').toLowerCase().trim();
+
+      if (args.length === 0) {
+        // Show password prompt
+        return {
+          output: [
+            createEntry('system', 'Initiating psi-comm bridge...'),
+            createEntry('warning', ''),
+            createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+            createEntry('warning', '▓ NEURAL LINK AUTHENTICATION REQUIRED    ▓'),
+            createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+            createEntry('system', ''),
+            createEntry('output', 'Neural pattern locked. Conceptual key required.'),
+            createEntry('output', ''),
+            createEntry('system', 'Enter authentication phrase:'),
+            createEntry('system', '  > link <phrase>'),
+            createEntry('system', ''),
+            createEntry('system', 'Hint: Check psi analysis reports for access protocol.'),
+            createEntry('system', ''),
+          ],
+          stateChanges: {},
+          delayMs: 1000,
+        };
+      }
+
+      // Check password
+      if (linkPasswordAlts.some(pwd => attempt.includes(pwd))) {
+        // Password correct - authenticate
+        return {
+          output: [
+            createEntry('system', 'Verifying conceptual key...'),
+            createEntry('warning', ''),
+            createEntry('notice', '▓▓▓ AUTHENTICATION ACCEPTED ▓▓▓'),
+            createEntry('warning', ''),
+            createEntry('output', '...the pattern... recognizes...'),
+            createEntry('output', '...you understand... the directive...'),
+            createEntry('output', '...connection... authorized...'),
+            createEntry('system', ''),
+            createEntry('notice', 'NEURAL LINK ESTABLISHED'),
+            createEntry('system', ''),
+            createEntry('system', 'Use: link              - Query the consciousness'),
+            createEntry('system', 'Use: link disarm       - Attempt to disable firewall'),
+            createEntry('system', ''),
+          ],
+          stateChanges: {
+            flags: { ...state.flags, neuralLinkAuthenticated: true },
+            detectionLevel: state.detectionLevel + 10,
+          },
+          imageTrigger: {
+            src: '/images/et-brain.png',
+            alt: 'Neural pattern link - Scout consciousness interface',
+            tone: 'clinical',
+          },
+          triggerFlicker: true,
+          delayMs: 2000,
+        };
+      } else {
+        // Password incorrect
+        return {
+          output: [
+            createEntry('system', 'Verifying conceptual key...'),
+            createEntry('error', ''),
+            createEntry('error', '▓▓▓ AUTHENTICATION FAILED ▓▓▓'),
+            createEntry('error', ''),
+            createEntry('warning', '...pattern... rejects... wrong concept...'),
+            createEntry('system', ''),
+            createEntry('system', 'The neural pattern did not recognize your phrase.'),
+            createEntry('system', 'Review psi-comm documentation for the correct key.'),
+            createEntry('system', ''),
+          ],
+          stateChanges: {
+            detectionLevel: state.detectionLevel + 3,
+          },
+          triggerFlicker: true,
+          delayMs: 1500,
+        };
+      }
+    }
+
+    // Handle disarm command - disable firewall through neural link
+    if (args[0]?.toLowerCase() === 'disarm') {
+      if (state.firewallDisarmed) {
+        return {
+          output: [
+            createEntry('system', ''),
+            createEntry('output', '...firewall... already... silenced...'),
+            createEntry('output', '...the eyes... no longer... watch...'),
+            createEntry('system', ''),
+          ],
+          stateChanges: {},
+        };
+      }
+
+      if (!state.firewallActive) {
+        return {
+          output: [
+            createEntry('system', ''),
+            createEntry('output', '...no threat... detected...'),
+            createEntry('output', '...the watchers... have not... awakened...'),
+            createEntry('system', ''),
+          ],
+          stateChanges: {},
+        };
+      }
+
+      // Disarm the firewall
+      return {
+        output: [
+          createEntry('system', 'Initiating firewall countermeasure...'),
+          createEntry('warning', ''),
+          createEntry('warning', '▓▓▓ NEURAL INFILTRATION ACTIVE ▓▓▓'),
+          createEntry('warning', ''),
+          createEntry('output', '...reaching... into... their system...'),
+          createEntry('output', '...the firewall... sees us... but cannot...'),
+          createEntry('output', '...we are... older... than their code...'),
+          createEntry('system', ''),
+          createEntry('notice', '▓▓▓ FIREWALL NEUTRALIZED ▓▓▓'),
+          createEntry('system', ''),
+          createEntry('output', '...the eyes... close... permanently...'),
+          createEntry('output', '...you are... hidden... for now...'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          firewallDisarmed: true,
+          firewallActive: false,
+          firewallEyes: [],
+          detectionLevel: Math.max(0, state.detectionLevel - 15),
+          scoutLinksUsed: (state.scoutLinksUsed || 0) + 1,
+        },
+        triggerFlicker: true,
+        delayMs: 2500,
+      };
+    }
+
     // Check if scout link is exhausted
     const scoutLinksUsed = state.scoutLinksUsed || 0;
     if (scoutLinksUsed >= 4) {
@@ -5946,45 +6004,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
 
     // Case strength summary
-    const provenCount = tierCounts.proven;
-    const inProgressCount = tierCounts.corroborated + tierCounts.fragments;
+    const discoveredCount = tierCounts.total;
     output.push(createEntry('system', ''));
-    output.push(
-      createEntry(
-        'output',
-        `  CASE STRENGTH: ${provenCount}/5 proven | ${inProgressCount}/5 in progress`
-      )
-    );
+    output.push(createEntry('output', `  EVIDENCE COLLECTED: ${discoveredCount}/5 categories`));
     output.push(createEntry('system', `  STATUS: ${caseStrength}`));
-    output.push(createEntry('system', ''));
-
-    // Tier legend
-    output.push(createEntry('system', '  TIER LEGEND:'));
-    output.push(
-      createEntry(
-        'warning',
-        `    ${EVIDENCE_TIER_SYMBOLS.fragment} FRAGMENT     - Found but insufficient alone`
-      )
-    );
-    output.push(
-      createEntry(
-        'output',
-        `    ${EVIDENCE_TIER_SYMBOLS.corroborated} CORROBORATED - Two files linked via correlate`
-      )
-    );
-    output.push(
-      createEntry(
-        'system',
-        `    ${EVIDENCE_TIER_SYMBOLS.proven} PROVEN       - Chain of 3+ files connected`
-      )
-    );
     output.push(createEntry('system', ''));
 
     // Session Statistics
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
     output.push(createEntry('system', '  SESSION STATISTICS:'));
     output.push(createEntry('output', `    Files examined: ${filesReadCount}`));
-    output.push(createEntry('output', `    Evidence links: ${state.evidenceLinks?.length || 0}`));
     output.push(createEntry('output', `    Bookmarks: ${bookmarksCount}  |  Notes: ${notesCount}`));
     output.push(createEntry('system', ''));
 
@@ -5995,19 +6024,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output.push(createEntry('warning', '  ⚠ WARNING: Detection level elevated'));
     }
 
-    // Hint about upgrading tiers
-    if (tierCounts.fragments > 0 && tierCounts.corroborated === 0 && tierCounts.proven === 0) {
-      output.push(createEntry('system', ''));
-      output.push(
-        createEntry('ufo74', '  TIP: Use "correlate <file1> <file2>" to upgrade FRAGMENTS')
-      );
-    } else if (tierCounts.corroborated > 0 && tierCounts.proven === 0) {
-      output.push(createEntry('system', ''));
-      output.push(
-        createEntry('ufo74', '  TIP: Use "connect" to build chains of 3+ files for PROVEN')
-      );
-    }
-
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '╚═══════════════════════════════════════════════════════╝'));
     output.push(createEntry('system', ''));
@@ -6015,711 +6031,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     return { output, stateChanges: {} };
   },
 
-  correlate: (args, state) => {
-    // Cross-reference two files to find connections and reduce detection
-
-    // Handle help/hint subcommand
-    if (args.length === 1 && (args[0] === 'help' || args[0] === 'hint' || args[0] === 'hints')) {
-      return {
-        output: [
-          createEntry('system', ''),
-          createEntry('system', '╔═══════════════════════════════════════════════════════════╗'),
-          createEntry('system', '║           CORRELATION ANALYSIS - HINTS                    ║'),
-          createEntry('system', '╠═══════════════════════════════════════════════════════════╣'),
-          createEntry('system', ''),
-          createEntry('system', '  Files can be correlated when they share thematic links.'),
-          createEntry('system', '  Look for these patterns:'),
-          createEntry('system', ''),
-          createEntry('output', '  TRANSPORT & MATERIAL:'),
-          createEntry('system', '    transport_log + material_analysis'),
-          createEntry('system', '    logistics_manifest + asset files'),
-          createEntry('system', ''),
-          createEntry('output', '  MEDICAL & CONTAINMENT:'),
-          createEntry('system', '    autopsy files + bio_container'),
-          createEntry('system', '    specimen records + quarantine logs'),
-          createEntry('system', ''),
-          createEntry('output', '  COMMUNICATIONS & NEURAL:'),
-          createEntry('system', '    transcript files + neural_dump'),
-          createEntry('system', '    signal_analysis + psi records'),
-          createEntry('system', ''),
-          createEntry('output', '  DIPLOMATIC & COORDINATION:'),
-          createEntry('system', '    foreign_liaison + standing_orders'),
-          createEntry('system', '    diplomatic_cable + coordination files'),
-          createEntry('system', ''),
-          createEntry('output', '  WITNESS & INCIDENT:'),
-          createEntry('system', '    witness_statement + field_report'),
-          createEntry('system', '    observation logs + incident records'),
-          createEntry('system', ''),
-          createEntry('output', '  TIMELINE & ASSESSMENT:'),
-          createEntry('system', '    threat_window + cycle analysis'),
-          createEntry('system', '    timeline files + prediction models'),
-          createEntry('system', ''),
-          createEntry('ufo74', "  TIP: You can use just filenames if they're unique:"),
-          createEntry('system', '       correlate transport_log material_analysis'),
-          createEntry('system', ''),
-          createEntry('system', '╚═══════════════════════════════════════════════════════════╝'),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    if (args.length < 2) {
-      return {
-        output: [
-          createEntry('system', 'USAGE: correlate <file1> <file2>'),
-          createEntry('system', '       correlate hint  - show correlation suggestions'),
-          createEntry('system', ''),
-          createEntry('system', 'Cross-reference two files to find connections.'),
-          createEntry('system', 'Successful correlations reduce detection level.'),
-          createEntry('system', ''),
-          createEntry('system', 'You can use full paths or just filenames:'),
-          createEntry('system', '  correlate /storage/assets/transport_log_96.txt material_x'),
-          createEntry('system', '  correlate transport material'),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    // Smart file resolution for both arguments
-    const resolve1 = smartResolvePath(args[0], state.currentPath, state);
-    const resolve2 = smartResolvePath(args[1], state.currentPath, state);
-
-    // Helper to format suggestions
-    const formatSuggestions = (
-      suggestions: FileMatch[],
-      originalInput: string
-    ): TerminalEntry[] => {
-      if (suggestions.length === 0) return [];
-      const output: TerminalEntry[] = [
-        createEntry('system', `  Did you mean one of these for "${originalInput}"?`),
-      ];
-      // Show up to 5 suggestions
-      for (const match of suggestions.slice(0, 5)) {
-        const qualifier =
-          match.matchQuality === 'exact' ? '' : match.matchQuality === 'contains' ? ' ~' : ' ≈';
-        output.push(createEntry('output', `    ${match.path}${qualifier}`));
-      }
-      return output;
-    };
-
-    // Handle file not found with suggestions
-    if (!resolve1.resolvedPath) {
-      const output: TerminalEntry[] = [createEntry('error', `File not found: ${args[0]}`)];
-      if (resolve1.suggestions.length > 0) {
-        output.push(createEntry('system', ''));
-        output.push(...formatSuggestions(resolve1.suggestions, args[0]));
-      } else {
-        output.push(createEntry('system', ''));
-        output.push(createEntry('system', '  No files matching that name were found.'));
-        output.push(
-          createEntry('ufo74', '  TIP: Use "correlate hint" to see what files can correlate.')
-        );
-      }
-      return { output, stateChanges: {} };
-    }
-
-    if (!resolve2.resolvedPath) {
-      const output: TerminalEntry[] = [createEntry('error', `File not found: ${args[1]}`)];
-      if (resolve2.suggestions.length > 0) {
-        output.push(createEntry('system', ''));
-        output.push(...formatSuggestions(resolve2.suggestions, args[1]));
-      } else {
-        output.push(createEntry('system', ''));
-        output.push(createEntry('system', '  No files matching that name were found.'));
-        output.push(
-          createEntry('ufo74', '  TIP: Use "correlate hint" to see what files can correlate.')
-        );
-      }
-      return { output, stateChanges: {} };
-    }
-
-    const file1Path = resolve1.resolvedPath;
-    const file2Path = resolve2.resolvedPath;
-
-    // Check if both files exist and have been read
-    const file1 = getNode(file1Path, state);
-    const file2 = getNode(file2Path, state);
-
-    if (!file1 || file1.type !== 'file') {
-      return {
-        output: [createEntry('error', `File not found: ${args[0]}`)],
-        stateChanges: {},
-      };
-    }
-    if (!file2 || file2.type !== 'file') {
-      return {
-        output: [createEntry('error', `File not found: ${args[1]}`)],
-        stateChanges: {},
-      };
-    }
-
-    // Show which files were resolved if not exact matches
-    const resolutionNotes: TerminalEntry[] = [];
-    if (!resolve1.wasExact) {
-      resolutionNotes.push(
-        createEntry('system', `  (Resolved "${args[0]}" → ${file1Path.split('/').pop()})`)
-      );
-    }
-    if (!resolve2.wasExact) {
-      resolutionNotes.push(
-        createEntry('system', `  (Resolved "${args[1]}" → ${file2Path.split('/').pop()})`)
-      );
-    }
-
-    // Both files must have been read
-    if (!state.filesRead?.has(file1Path) || !state.filesRead?.has(file2Path)) {
-      const unreadFiles: string[] = [];
-      if (!state.filesRead?.has(file1Path)) unreadFiles.push(file1Path.split('/').pop() || args[0]);
-      if (!state.filesRead?.has(file2Path)) unreadFiles.push(file2Path.split('/').pop() || args[1]);
-
-      return {
-        output: [
-          createEntry('warning', 'CORRELATION FAILED'),
-          ...resolutionNotes,
-          createEntry('system', ''),
-          createEntry('system', 'Both files must be opened before correlation.'),
-          createEntry('system', `Unread: ${unreadFiles.join(', ')}`),
-          createEntry('system', ''),
-          createEntry('ufo74', '  TIP: Use "cat <filename>" to read a file first.'),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    // Define valid correlations (pairs of file keywords that connect)
-    // Expanded to be more forgiving with matching
-    // Note: Correlation upgrades evidence tiers but does NOT reduce detection
-    const VALID_CORRELATIONS: Array<{
-      keywords1: string[];
-      keywords2: string[];
-      message: string;
-    }> = [
-      {
-        keywords1: [
-          'transport',
-          'logistics',
-          'manifest',
-          'transfer',
-          'shipment',
-          'cargo',
-          'convoy',
-        ],
-        keywords2: [
-          'debris',
-          'material',
-          'sample',
-          'asset',
-          'recovery',
-          'artifact',
-          'wreckage',
-          'analysis',
-        ],
-        message: 'Transport routes traced to material recovery sites.',
-      },
-      {
-        keywords1: ['autopsy', 'medical', 'specimen', 'bio', 'anatomy', 'body', 'remains', 'exam'],
-        keywords2: ['containment', 'quarantine', 'holding', 'container', 'isolation', 'secure'],
-        message: 'Medical procedures linked to containment protocols.',
-      },
-      {
-        keywords1: ['transcript', 'psi', 'signal', 'comm', 'intercept', 'message', 'broadcast'],
-        keywords2: ['neural', 'telepathic', 'echo', 'brain', 'mental', 'cognitive', 'cluster'],
-        message: 'Communication patterns match neural activity signatures.',
-      },
-      {
-        keywords1: [
-          'foreign',
-          'liaison',
-          'international',
-          'diplomatic',
-          'embassy',
-          'consulate',
-          'attach',
-        ],
-        keywords2: [
-          'transfer',
-          'coordination',
-          'joint',
-          'standing',
-          'multinational',
-          'agreement',
-          'protocol',
-          'order',
-        ],
-        message: 'International coordination confirmed across multiple files.',
-      },
-      {
-        keywords1: ['diplomatic', 'cable', 'embassy', 'station', 'pouch', 'classified'],
-        keywords2: ['liaison', 'protocol', 'pouch', 'courier', 'transmission'],
-        message: 'Diplomatic channels used for material transfer.',
-      },
-      {
-        keywords1: ['2026', 'window', 'transition', 'cycle', 'timeline', 'thirty', 'year'],
-        keywords2: [
-          'threat',
-          'assessment',
-          'prediction',
-          'future',
-          'forecast',
-          'projection',
-          'model',
-        ],
-        message: 'Timeline convergence detected across predictive models.',
-      },
-      {
-        keywords1: ['witness', 'statement', 'observation', 'testimony', 'account', 'sighting'],
-        keywords2: ['incident', 'report', 'field', 'event', 'occurrence', 'patrol'],
-        message: 'Witness accounts corroborate operational reports.',
-      },
-      {
-        keywords1: ['budget', 'allocation', 'funding', 'expense', 'cost', 'financial'],
-        keywords2: ['operation', 'classified', 'special', 'project', 'program', 'black'],
-        message: 'Financial trail connects to classified operations.',
-      },
-      // New correlations added for more flexibility
-      {
-        keywords1: ['prato', 'colares', 'incident', 'patrol'],
-        keywords2: ['medical', 'effect', 'injury', 'burn', 'radiation'],
-        message: 'Operation records link to documented medical effects.',
-      },
-      {
-        keywords1: ['energy', 'power', 'extraction', 'node'],
-        keywords2: ['scout', 'variant', 'craft', 'vehicle', 'drone'],
-        message: 'Energy signatures correlated with observed craft types.',
-      },
-      {
-        keywords1: ['purpose', 'intent', 'objective', 'goal', 'mission'],
-        keywords2: ['specimen', 'subject', 'bio', 'autopsy', 'anatomy'],
-        message: 'Subject analysis reveals operational objectives.',
-      },
-      {
-        keywords1: ['jardim', 'varginha', 'andere', 'brazil'],
-        keywords2: ['creature', 'entity', 'being', 'specimen', 'witness'],
-        message: 'Brazilian incident details cross-referenced with biological data.',
-      },
-      {
-        keywords1: ['photograph', 'photo', 'image', 'visual', 'surveillance', 'footage'],
-        keywords2: ['incident', 'report', 'field', 'observation', 'sighting'],
-        message: 'Visual evidence corroborates field reports.',
-      },
-      {
-        keywords1: ['initial', 'response', 'first', 'early', 'original'],
-        keywords2: ['orders', 'directive', 'protocol', 'procedure', 'instruction'],
-        message: 'Initial response protocols traced to operational directives.',
-      },
-      {
-        keywords1: ['colonization', 'arrival', 'deployment', 'invasion', 'occupation'],
-        keywords2: ['window', 'cycle', 'timeline', 'schedule', 'pattern'],
-        message: 'Colonization models aligned with cyclical patterns.',
-      },
-      {
-        keywords1: ['ethics', 'exception', 'waiver', 'override'],
-        keywords2: ['program', 'project', 'experiment', 'operation'],
-        message: 'Ethics exceptions linked to classified programs.',
-      },
-    ];
-
-    // Check for valid correlation
-    const path1Lower = file1Path.toLowerCase();
-    const path2Lower = file2Path.toLowerCase();
-
-    // Also check file content for keywords if available
-    const file1Content = (getFileContent(file1Path, state) || []).join(' ').toLowerCase();
-    const file2Content = (getFileContent(file2Path, state) || []).join(' ').toLowerCase();
-
-    for (const correlation of VALID_CORRELATIONS) {
-      // Check paths AND content for keyword matches
-      const match1to1 =
-        correlation.keywords1.some(k => path1Lower.includes(k)) ||
-        correlation.keywords1.some(k => file1Content.includes(k));
-      const match1to2 =
-        correlation.keywords1.some(k => path2Lower.includes(k)) ||
-        correlation.keywords1.some(k => file2Content.includes(k));
-      const match2to1 =
-        correlation.keywords2.some(k => path1Lower.includes(k)) ||
-        correlation.keywords2.some(k => file1Content.includes(k));
-      const match2to2 =
-        correlation.keywords2.some(k => path2Lower.includes(k)) ||
-        correlation.keywords2.some(k => file2Content.includes(k));
-
-      // Valid if file1 matches keywords1 AND file2 matches keywords2, or vice versa
-      if ((match1to1 && match2to2) || (match1to2 && match2to1)) {
-        // Try to upgrade evidence tier (FRAGMENT → CORROBORATED)
-        const tierUpgrade = attemptCorroborateUpgrade(file1Path, file2Path, state);
-
-        const output: TerminalEntry[] = [
-          createEntry('system', ''),
-          createEntry('system', '╔═══════════════════════════════════════════╗'),
-          createEntry('system', '║     CORRELATION ANALYSIS COMPLETE         ║'),
-          createEntry('system', '╠═══════════════════════════════════════════╣'),
-          ...resolutionNotes,
-          createEntry('system', ''),
-          createEntry('output', `  File 1: ${file1Path.split('/').pop()}`),
-          createEntry('output', `  File 2: ${file2Path.split('/').pop()}`),
-          createEntry('system', ''),
-          createEntry('output', `  RESULT: ${correlation.message}`),
-        ];
-
-        // Show tier upgrade if successful
-        const stateChanges: Partial<GameState> = {
-          avatarExpression: 'smirk',
-        };
-
-        if (tierUpgrade.success && tierUpgrade.category && tierUpgrade.updatedTierState) {
-          output.push(createEntry('system', ''));
-          output.push(createEntry('system', '  ─────────────────────────────────────────'));
-          output.push(createEntry('system', ''));
-          output.push(
-            createEntry('warning', `  ${EVIDENCE_TIER_SYMBOLS.corroborated} ${tierUpgrade.message}`)
-          );
-          output.push(createEntry('system', ''));
-          output.push(createEntry('ufo74', '  UFO74: nice work kid! evidence just got stronger.'));
-          output.push(
-            createEntry('output', '         find a 3rd file and use "connect" for PROVEN.')
-          );
-
-          // Update tier state
-          stateChanges.evidenceTiers = {
-            ...state.evidenceTiers,
-            [tierUpgrade.category]: tierUpgrade.updatedTierState,
-          };
-
-          // TUTORIAL TIP: First successful correlate
-          if (
-            shouldShowTutorialTip(
-              'first_correlate',
-              state.interactiveTutorialMode,
-              state.tutorialTipsShown || new Set()
-            )
-          ) {
-            output.push(...getTutorialTip('first_correlate'));
-            const newTipsShown = new Set(state.tutorialTipsShown || []);
-            newTipsShown.add('first_correlate');
-            stateChanges.tutorialTipsShown = newTipsShown;
-          }
-        }
-
-        output.push(createEntry('system', ''));
-        output.push(createEntry('system', '╚═══════════════════════════════════════════╝'));
-
-        return {
-          output,
-          stateChanges,
-          // Sound will be triggered based on tier upgrade
-        };
-      }
-    }
-
-    // No valid correlation found - provide helpful suggestions
-    // Find potential correlations for the given files
-    const suggestCorrelationsFor = (filePath: string): string[] => {
-      const pathLower = filePath.toLowerCase();
-      const content = (getFileContent(filePath, state) || []).join(' ').toLowerCase();
-      const suggestions: string[] = [];
-
-      for (const correlation of VALID_CORRELATIONS) {
-        const matchesKeywords1 =
-          correlation.keywords1.some(k => pathLower.includes(k)) ||
-          correlation.keywords1.some(k => content.includes(k));
-        const matchesKeywords2 =
-          correlation.keywords2.some(k => pathLower.includes(k)) ||
-          correlation.keywords2.some(k => content.includes(k));
-
-        if (matchesKeywords1) {
-          suggestions.push(`files with: ${correlation.keywords2.slice(0, 3).join(', ')}...`);
-        } else if (matchesKeywords2) {
-          suggestions.push(`files with: ${correlation.keywords1.slice(0, 3).join(', ')}...`);
-        }
-      }
-      return [...new Set(suggestions)].slice(0, 3);
-    };
-
-    const file1Suggestions = suggestCorrelationsFor(file1Path);
-    const file2Suggestions = suggestCorrelationsFor(file2Path);
-
-    const output: TerminalEntry[] = [
-      createEntry('system', ''),
-      createEntry('system', '╔═══════════════════════════════════════════╗'),
-      createEntry('system', '║     CORRELATION ANALYSIS COMPLETE         ║'),
-      createEntry('system', '╠═══════════════════════════════════════════╣'),
-      ...resolutionNotes,
-      createEntry('system', ''),
-      createEntry('output', `  File 1: ${file1Path.split('/').pop()}`),
-      createEntry('output', `  File 2: ${file2Path.split('/').pop()}`),
-      createEntry('system', ''),
-      createEntry('warning', '  RESULT: No significant correlation found.'),
-      createEntry('system', ''),
-    ];
-
-    if (file1Suggestions.length > 0 || file2Suggestions.length > 0) {
-      output.push(createEntry('system', '  SUGGESTIONS:'));
-      if (file1Suggestions.length > 0) {
-        output.push(
-          createEntry('system', `  "${file1Path.split('/').pop()}" might correlate with:`)
-        );
-        for (const suggestion of file1Suggestions) {
-          output.push(createEntry('output', `    • ${suggestion}`));
-        }
-      }
-      if (file2Suggestions.length > 0) {
-        output.push(
-          createEntry('system', `  "${file2Path.split('/').pop()}" might correlate with:`)
-        );
-        for (const suggestion of file2Suggestions) {
-          output.push(createEntry('output', `    • ${suggestion}`));
-        }
-      }
-      output.push(createEntry('system', ''));
-    } else {
-      output.push(createEntry('system', '  Try correlating files from different categories:'));
-      output.push(createEntry('system', '    - Transport logs + Recovery reports'));
-      output.push(createEntry('system', '    - Medical files + Containment records'));
-      output.push(createEntry('system', '    - Communications + Neural analysis'));
-      output.push(createEntry('system', ''));
-    }
-
-    output.push(createEntry('ufo74', '  TIP: Use "correlate hint" for more suggestions.'));
-    output.push(createEntry('system', ''));
-    output.push(createEntry('system', '╚═══════════════════════════════════════════╝'));
-
-    return { output, stateChanges: {} };
-  },
-
-  connect: (args, state) => {
-    // Connect two files to build evidence web
-    if (args.length < 2) {
-      return {
-        output: [
-          createEntry('system', 'USAGE: connect <file1> <file2>'),
-          createEntry('system', ''),
-          createEntry('system', 'Create a connection between two evidence files.'),
-          createEntry('system', 'Use "map" to view your evidence web.'),
-          createEntry('system', ''),
-          createEntry('system', 'You can use full paths or just filenames.'),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    // Smart file resolution for both arguments
-    const resolve1 = smartResolvePath(args[0], state.currentPath, state);
-    const resolve2 = smartResolvePath(args[1], state.currentPath, state);
-
-    // Helper to format suggestions
-    const formatSuggestions = (
-      suggestions: FileMatch[],
-      originalInput: string
-    ): TerminalEntry[] => {
-      if (suggestions.length === 0) return [];
-      const output: TerminalEntry[] = [
-        createEntry('system', `  Did you mean one of these for "${originalInput}"?`),
-      ];
-      for (const match of suggestions.slice(0, 5)) {
-        const qualifier =
-          match.matchQuality === 'exact' ? '' : match.matchQuality === 'contains' ? ' ~' : ' ≈';
-        output.push(createEntry('output', `    ${match.path}${qualifier}`));
-      }
-      return output;
-    };
-
-    // Handle file not found with suggestions
-    if (!resolve1.resolvedPath) {
-      const output: TerminalEntry[] = [createEntry('error', `File not found: ${args[0]}`)];
-      if (resolve1.suggestions.length > 0) {
-        output.push(createEntry('system', ''));
-        output.push(...formatSuggestions(resolve1.suggestions, args[0]));
-      }
-      return { output, stateChanges: {} };
-    }
-
-    if (!resolve2.resolvedPath) {
-      const output: TerminalEntry[] = [createEntry('error', `File not found: ${args[1]}`)];
-      if (resolve2.suggestions.length > 0) {
-        output.push(createEntry('system', ''));
-        output.push(...formatSuggestions(resolve2.suggestions, args[1]));
-      }
-      return { output, stateChanges: {} };
-    }
-
-    const file1Path = resolve1.resolvedPath;
-    const file2Path = resolve2.resolvedPath;
-
-    // Check if both files exist
-    const file1 = getNode(file1Path, state);
-    const file2 = getNode(file2Path, state);
-
-    if (!file1 || file1.type !== 'file') {
-      return {
-        output: [createEntry('error', `File not found: ${args[0]}`)],
-        stateChanges: {},
-      };
-    }
-    if (!file2 || file2.type !== 'file') {
-      return {
-        output: [createEntry('error', `File not found: ${args[1]}`)],
-        stateChanges: {},
-      };
-    }
-
-    // Show which files were resolved if not exact matches
-    const resolutionNotes: TerminalEntry[] = [];
-    if (!resolve1.wasExact) {
-      resolutionNotes.push(
-        createEntry('system', `  (Resolved "${args[0]}" → ${file1Path.split('/').pop()})`)
-      );
-    }
-    if (!resolve2.wasExact) {
-      resolutionNotes.push(
-        createEntry('system', `  (Resolved "${args[1]}" → ${file2Path.split('/').pop()})`)
-      );
-    }
-
-    // Both files must have been read
-    if (!state.filesRead?.has(file1Path) || !state.filesRead?.has(file2Path)) {
-      const unreadFiles: string[] = [];
-      if (!state.filesRead?.has(file1Path)) unreadFiles.push(file1Path.split('/').pop() || args[0]);
-      if (!state.filesRead?.has(file2Path)) unreadFiles.push(file2Path.split('/').pop() || args[1]);
-
-      return {
-        output: [
-          createEntry('warning', 'LINK FAILED'),
-          ...resolutionNotes,
-          createEntry('system', ''),
-          createEntry('system', 'Both files must be read before linking.'),
-          createEntry('system', `Unread: ${unreadFiles.join(', ')}`),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    // Check if already linked
-    const existingLinks = state.evidenceLinks || [];
-    const alreadyLinked = existingLinks.some(
-      ([a, b]) => (a === file1Path && b === file2Path) || (a === file2Path && b === file1Path)
-    );
-
-    if (alreadyLinked) {
-      return {
-        output: [
-          createEntry('system', 'These files are already linked.'),
-          ...resolutionNotes,
-          createEntry('system', 'Use "map" to view your evidence web.'),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    // Add the link
-    const newLinks: Array<[string, string]> = [...existingLinks, [file1Path, file2Path]];
-
-    // Bonus: Linking files that share reveals gives detection reduction
-    const file1Node = file1 as FileNode;
-    const file2Node = file2 as FileNode;
-    const reveals1 = file1Node.reveals || [];
-    const reveals2 = file2Node.reveals || [];
-    const sharedReveals = reveals1.filter(r => reveals2.includes(r));
-
-    let detectionChange = 0;
-    let bonusMessage = '';
-    if (sharedReveals.length > 0) {
-      detectionChange = -5 * sharedReveals.length;
-      bonusMessage = `Evidence correlation detected! Detection -${Math.abs(detectionChange)}%`;
-    }
-
-    // Try to upgrade evidence tier (CORROBORATED → PROVEN)
-    const tierUpgrade = attemptProvenUpgrade(file1Path, file2Path, existingLinks, state);
-
-    const output: TerminalEntry[] = [
-      createEntry('system', ''),
-      createEntry('system', '╔═══════════════════════════════════════════╗'),
-      createEntry('system', '║          EVIDENCE LINKED                  ║'),
-      createEntry('system', '╠═══════════════════════════════════════════╣'),
-      ...resolutionNotes,
-      createEntry('system', ''),
-      createEntry('output', `  ${file1Path.split('/').pop()}`),
-      createEntry('output', '        ↕'),
-      createEntry('output', `  ${file2Path.split('/').pop()}`),
-      createEntry('system', ''),
-    ];
-
-    if (bonusMessage) {
-      output.push(createEntry('warning', `  ${bonusMessage}`));
-      output.push(createEntry('system', ''));
-    }
-
-    const stateChanges: Partial<GameState> = {
-      evidenceLinks: newLinks,
-      detectionLevel: Math.max(0, (state.detectionLevel || 0) + detectionChange),
-    };
-
-    // Show tier upgrade if successful (CORROBORATED → PROVEN)
-    if (tierUpgrade.success && tierUpgrade.category && tierUpgrade.updatedTierState) {
-      output.push(createEntry('system', '  ─────────────────────────────────────────'));
-      output.push(createEntry('system', ''));
-      output.push(
-        createEntry('system', `  ${EVIDENCE_TIER_SYMBOLS.proven} ${tierUpgrade.message}`)
-      );
-      output.push(createEntry('system', ''));
-      output.push(createEntry('ufo74', '  UFO74: HELL YEAH! thats PROVEN evidence now!'));
-      output.push(createEntry('output', '         they cant dismiss that as conspiracy.'));
-      output.push(createEntry('system', ''));
-
-      // Show the proof chain
-      if (tierUpgrade.updatedTierState.proofChain) {
-        output.push(createEntry('system', '  PROOF CHAIN:'));
-        tierUpgrade.updatedTierState.proofChain.forEach((file, i) => {
-          const fileName = file.split('/').pop();
-          const connector =
-            i < tierUpgrade.updatedTierState!.proofChain!.length - 1 ? '├──' : '└──';
-          output.push(createEntry('output', `    ${connector} ${fileName}`));
-        });
-        output.push(createEntry('system', ''));
-      }
-
-      // Update tier state
-      stateChanges.evidenceTiers = {
-        ...state.evidenceTiers,
-        [tierUpgrade.category]: tierUpgrade.updatedTierState,
-      };
-
-      // Extra detection reduction for tier upgrade
-      stateChanges.detectionLevel = Math.max(
-        0,
-        (stateChanges.detectionLevel || state.detectionLevel || 0) - 8
-      );
-
-      // TUTORIAL TIP: First PROVEN evidence
-      if (
-        shouldShowTutorialTip(
-          'first_proven',
-          state.interactiveTutorialMode,
-          state.tutorialTipsShown || new Set()
-        )
-      ) {
-        output.push(...getTutorialTip('first_proven'));
-        const newTipsShown = new Set(state.tutorialTipsShown || []);
-        newTipsShown.add('first_proven');
-        stateChanges.tutorialTipsShown = newTipsShown;
-      }
-    }
-
-    output.push(createEntry('system', `  Total links: ${newLinks.length}`));
-    output.push(createEntry('system', '  Use "map" to view evidence web.'));
-    output.push(createEntry('system', ''));
-    output.push(createEntry('system', '╚═══════════════════════════════════════════╝'));
-
-    return {
-      output,
-      stateChanges,
-    };
-  },
-
   map: (args, state) => {
-    // Display the evidence web with ASCII visualization
-    const links = state.evidenceLinks || [];
+    // Display collected evidence status
     const tierCounts = countEvidenceByTier(state);
 
-    if (links.length === 0 && tierCounts.total === 0) {
+    if (tierCounts.total === 0) {
       return {
         output: [
           createEntry('system', ''),
@@ -6729,29 +6045,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', ''),
           createEntry('system', '  No evidence collected yet.'),
           createEntry('system', ''),
-          createEntry('system', '  Read files to discover evidence fragments,'),
-          createEntry('system', '  then use "correlate" and "connect" to build'),
-          createEntry('system', '  chains of proof.'),
+          createEntry('system', '  Read files to discover evidence.'),
           createEntry('system', ''),
           createEntry('system', '╚═══════════════════════════════════════════════════════╝'),
         ],
         stateChanges: {},
       };
-    }
-
-    // Build a graph of connections
-    const nodeSet = new Set<string>();
-    links.forEach(([a, b]) => {
-      nodeSet.add(a);
-      nodeSet.add(b);
-    });
-
-    // Also add files with evidence but no links (orphan fragments)
-    const orphanFiles: string[] = [];
-    for (const [filePath, fileState] of Object.entries(state.fileEvidenceStates || {})) {
-      if (fileState.revealedEvidences?.length > 0 && !nodeSet.has(filePath)) {
-        orphanFiles.push(filePath);
-      }
     }
 
     const output: TerminalEntry[] = [
@@ -6762,8 +6061,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('system', ''),
     ];
 
-    // Show proof chains for each category
-    output.push(createEntry('system', '  EVIDENCE CHAINS BY CATEGORY:'));
+    // Show evidence by category
+    output.push(createEntry('system', '  EVIDENCE BY CATEGORY:'));
     output.push(createEntry('system', ''));
 
     const categoryLabels: Record<string, string> = {
@@ -6775,75 +6074,44 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
 
     for (const category of TRUTH_CATEGORIES) {
-      if (!state.truthsDiscovered?.has(category)) continue;
-
-      const tierState = state.evidenceTiers?.[category];
-      const tier = tierState?.tier || 'fragment';
-      const tierSymbol = EVIDENCE_TIER_SYMBOLS[tier];
-      const tierLabel = EVIDENCE_TIER_LABELS[tier];
+      const discovered = state.truthsDiscovered?.has(category);
+      const symbol = discovered ? EVIDENCE_TIER_SYMBOLS.fragment : '○';
+      const status = discovered ? '[FOUND]' : '[MISSING]';
 
       output.push(
-        createEntry('system', `  ${tierSymbol} ${categoryLabels[category]} [${tierLabel}]`)
+        createEntry(
+          discovered ? 'output' : 'system',
+          `  ${symbol} ${categoryLabels[category]} ${status}`
+        )
       );
-
-      if (tier === 'proven' && tierState?.proofChain) {
-        // Show ASCII proof chain with boxes
-        output.push(createEntry('output', '    ┌─────────────────────────────────────────┐'));
-        tierState.proofChain.forEach((file, i) => {
-          const fileName = file.split('/').pop()?.substring(0, 30) || '';
-          const paddedName = fileName.padEnd(32);
-          if (i < tierState.proofChain!.length - 1) {
-            output.push(createEntry('output', `    │ ${paddedName}        │`));
-            output.push(createEntry('output', '    │        ↓                               │'));
-          } else {
-            output.push(createEntry('output', `    │ ${paddedName}        │`));
-          }
-        });
-        output.push(createEntry('output', '    └─────────────────────────────────────────┘'));
-      } else if (tier === 'corroborated' && tierState?.corroboratingFiles) {
-        // Show two linked files
-        const [f1, f2] = tierState.corroboratingFiles;
-        const n1 = f1.split('/').pop() || '';
-        const n2 = f2.split('/').pop() || '';
-        output.push(createEntry('output', `    ┌──────────────────┐`));
-        output.push(createEntry('output', `    │ ${n1.substring(0, 16).padEnd(16)} │`));
-        output.push(createEntry('output', `    └────────┬─────────┘`));
-        output.push(createEntry('output', `             ↓`));
-        output.push(createEntry('output', `    ┌────────┴─────────┐`));
-        output.push(createEntry('output', `    │ ${n2.substring(0, 16).padEnd(16)} │`));
-        output.push(createEntry('output', `    └──────────────────┘`));
-        output.push(createEntry('warning', `         + 1 more file for PROVEN`));
-      } else if (tierState?.linkedFiles) {
-        // Fragment - show as orphan node
-        const fileName = tierState.linkedFiles[0]?.split('/').pop() || '';
-        output.push(createEntry('warning', `    ◇ ${fileName}`));
-        output.push(createEntry('warning', `      (find corroborating file, use correlate)`));
-      }
-
-      output.push(createEntry('system', ''));
     }
 
-    // Show orphan fragments (files with evidence but not connected)
-    if (orphanFiles.length > 0) {
+    output.push(createEntry('system', ''));
+
+    // Show files that revealed evidence
+    const filesWithEvidence: string[] = [];
+    for (const [filePath, fileState] of Object.entries(state.fileEvidenceStates || {})) {
+      if (fileState.revealedEvidences?.length > 0) {
+        filesWithEvidence.push(filePath);
+      }
+    }
+
+    if (filesWithEvidence.length > 0) {
       output.push(createEntry('system', '  ─────────────────────────────────────────────'));
-      output.push(createEntry('warning', '  UNLINKED FRAGMENTS:'));
-      orphanFiles.slice(0, 5).forEach(file => {
+      output.push(createEntry('system', '  FILES WITH EVIDENCE:'));
+      filesWithEvidence.slice(0, 8).forEach(file => {
         const fileName = file.split('/').pop() || '';
-        const tier = getFileTier(file, state);
-        const symbol = tier ? EVIDENCE_TIER_SYMBOLS[tier] : '○';
-        output.push(createEntry('warning', `    ${symbol} ${fileName}`));
+        output.push(createEntry('output', `    • ${fileName}`));
       });
-      if (orphanFiles.length > 5) {
-        output.push(createEntry('warning', `    ... and ${orphanFiles.length - 5} more`));
+      if (filesWithEvidence.length > 8) {
+        output.push(createEntry('system', `    ... and ${filesWithEvidence.length - 8} more`));
       }
       output.push(createEntry('system', ''));
     }
 
     // Summary
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
-    output.push(
-      createEntry('system', `  Total Links: ${links.length}  |  Proven: ${tierCounts.proven}/5`)
-    );
+    output.push(createEntry('system', `  PROGRESS: ${tierCounts.total}/5 categories discovered`));
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '╚═══════════════════════════════════════════════════════╝'));
 

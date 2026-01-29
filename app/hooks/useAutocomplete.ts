@@ -34,8 +34,6 @@ const COMMANDS = [
   'exit',
   'override',
   'run',
-  'correlate',
-  'connect',
   'map',
   'tree',
   'tutorial',
@@ -43,16 +41,7 @@ const COMMANDS = [
   'message',
 ];
 
-const COMMANDS_WITH_FILE_ARGS = [
-  'cd',
-  'open',
-  'decrypt',
-  'recover',
-  'run',
-  'bookmark',
-  'correlate',
-  'connect',
-];
+const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run', 'bookmark'];
 
 /**
  * Result of an autocomplete query.
@@ -90,26 +79,6 @@ export function useAutocomplete(gameState: GameState) {
 
       const partial = parts[parts.length - 1];
       const currentPath = gameState.currentPath;
-
-      // Special handling for correlate command second argument:
-      // Suggest from all opened files (filesRead) instead of current directory
-      if (cmd === 'correlate' && parts.length === 3) {
-        const filesRead = gameState.filesRead || new Set<string>();
-        if (filesRead.size === 0) return [];
-
-        // Get all opened file paths and filter by partial match
-        const openedFiles = Array.from(filesRead);
-        const partialLower = partial.toLowerCase();
-
-        // Match against full path or just filename
-        return openedFiles.filter(filePath => {
-          const fileName = filePath.split('/').pop() || '';
-          return (
-            filePath.toLowerCase().includes(partialLower) ||
-            fileName.toLowerCase().startsWith(partialLower)
-          );
-        });
-      }
 
       // Determine the directory to search and the prefix to match
       let searchDir = currentPath;

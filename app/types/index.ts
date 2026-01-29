@@ -1,6 +1,12 @@
 // Terminal 1996 - Type Definitions
 
-export type FileStatus = 'intact' | 'restricted' | 'unstable' | 'encrypted' | 'conditional' | 'restricted_briefing';
+export type FileStatus =
+  | 'intact'
+  | 'restricted'
+  | 'unstable'
+  | 'encrypted'
+  | 'conditional'
+  | 'restricted_briefing';
 
 export type ImageTone = 'clinical' | 'surveillance';
 
@@ -71,106 +77,106 @@ export interface GameState {
   history: TerminalEntry[];
   commandHistory: string[];
   commandHistoryIndex: number;
-  
+
   // Hidden variables (numeric internally, surfaced as symptoms)
   detectionLevel: number; // 0-100
   wrongAttempts: number; // 0-8 (wrong commands/auth failures, 8 = game over)
   accessLevel: number; // 0-5
   sessionStability: number; // 100-0
   legacyAlertCounter: number; // 0-10
-  
+
   // Flags for game progression
   flags: Record<string, boolean>;
-  
+
   // Override password attempt tracking
   overrideFailedAttempts: number;
-  
+
   // Scout link usage tracking
   scoutLinksUsed: number;
-  
+
   // Truth categories discovered (5 required for victory)
   truthsDiscovered: Set<string>;
-  
+
   // Files the player has opened/read
   filesRead: Set<string>;
-  
+
   // Persistent file mutations
   fileMutations: Record<string, FileMutation>;
-  
+
   // Seeded RNG state
   seed: number;
   rngState: number;
-  
+
   // Session metadata
   sessionStartTime: number;
   isGameOver: boolean;
   gameOverReason?: string;
-  
+
   // Chat with Prisoner 45
   prisoner45QuestionsAsked: number; // Max 5
   prisoner45Disconnected: boolean;
   prisoner45UsedResponses: Set<string>; // Track used responses to never repeat
-  
+
   // Scout Link state
   scoutLinkUsedResponses: Set<string>; // Track used responses to never repeat
-  
+
   // Decrypt challenge state
   pendingDecryptFile?: string; // File awaiting security answer
-  
+
   // Turing evaluation state
   turingEvaluationActive: boolean;
   turingEvaluationIndex: number;
   turingEvaluationCompleted: boolean;
-  
+
   // Neural cluster echo state
   neuralClusterUnlocked: boolean;
   neuralClusterActive: boolean;
   neuralClusterEmissions: number;
   neuralClusterDisabled: boolean;
-  
+
   // Incognito hacker messages
   incognitoMessageCount: number;
   lastIncognitoTrigger: number; // Timestamp of last message
-  
+
   // Irreversible events tracking (each can only happen once per run)
   singularEventsTriggered: Set<string>;
-  
+
   // Images shown this run (each image shown at most once)
   imagesShownThisRun: Set<string>;
-  
+
   // Videos shown this run (each video shown at most once)
   videosShownThisRun: Set<string>;
-  
+
   // System personality degradation (affects tone as risk increases)
   systemHostilityLevel: number; // 0-5, increases with risky actions
-  
+
   // Terrible mistake state - forbidden knowledge revealed but session doomed
   terribleMistakeTriggered: boolean;
   sessionDoomCountdown: number; // Commands remaining before forced purge
-  
+
   // Content categories read (for conditional file access)
   categoriesRead: Set<string>; // e.g., 'military', 'medical', 'comms', 'logistics'
-  
+
   // Session command count (for time-sensitive content)
   sessionCommandCount: number;
-  
+
   // Achievement tracking
   statusCommandCount: number; // For "Paranoid" achievement
-  
+
   // Wandering detection (for implicit guidance)
   lastMeaningfulAction: number; // Command count at last meaningful action
   wanderingNoticeCount: number; // How many times we've nudged the player
   lastDirectoriesVisited: string[]; // Recent directory history for pattern detection
-  
+
   // Tutorial state (UFO74 intro messages)
   tutorialStep: number; // -1 = complete, 0+ = current message index
   tutorialComplete: boolean;
-  
+
   // Interactive tutorial mode (opt-in tips during gameplay)
   interactiveTutorialMode: boolean; // Whether player has tutorial tips enabled
   tutorialTipsShown: Set<string>; // Track which tutorial tips have been shown
   firstRunSeen: boolean; // Whether first-run welcome has been shown
-  
+
   // Evidence collection & ICQ phase
   evidencesSaved: boolean; // True after running save script
   icqPhase: boolean; // True when in ICQ chat mode
@@ -182,94 +188,110 @@ export interface GameState {
   gameWon: boolean; // True on victory
   choiceLeakPath?: 'public' | 'covert'; // Final evidence delivery choice
   icqTrust: number; // Teen trust score (0-100)
-  
+
   // Debug mode
   godMode: boolean; // Hidden dev mode for testing
-  
+
   // Multiple endings tracking
   endingType?: 'bad' | 'neutral' | 'good' | 'secret'; // Which ending was achieved
   ufo74SecretDiscovered: boolean; // Found the secret about UFO74's identity
-  
+
   // Time pressure
   countdownActive: boolean; // Real-time countdown triggered
   countdownEndTime: number; // Timestamp when countdown expires
   countdownTriggeredBy?: string; // What triggered the countdown
   traceSpikeActive: boolean; // Active trace spike in progress
   tracePurgeUsed: boolean; // Trace purge script executed
-  
+
   // Unreliable narrator
   disinformationDiscovered: Set<string>; // Files revealed to be disinformation
-  
+
   // Hidden commands discovered
   hiddenCommandsDiscovered: Set<string>; // Commands found via documents
-  
+
   // Password puzzles
   passwordsFound: Set<string>; // Passwords discovered in documents
-  
+
   // Cipher puzzle state
   pendingCipherFile?: string; // File awaiting cipher solution
   cipherAttempts: number; // Wrong attempts on current cipher
-  
+
   // Morse code puzzle state
   morseFileRead: boolean; // True after reading morse_intercept.sig
   morseMessageAttempts: number; // Wrong attempts on morse message (max 3)
   morseMessageSolved: boolean; // True after correctly identifying the message
-  
+
   // UX: Notes & bookmarks system
   playerNotes: { note: string; timestamp: number }[]; // Player-saved notes
   bookmarkedFiles: Set<string>; // Files player has bookmarked
   lastOpenedFile?: string; // Last file opened (for 'last' command)
   navigationHistory: string[]; // Stack of visited directories for 'back' command
-  
+
   // UX: Idle detection for hints
   lastActivityTime: number; // Timestamp of last command
   idleHintsGiven: number; // How many idle hints have been shown
-  
+
   // Stealth recovery system
   waitUsesRemaining: number; // Max 3 per run, resets on new game
   hideAvailable: boolean; // Becomes true at 90+ detection
-  
+
   // Evidence linking system
   evidenceLinks: Array<[string, string]>; // Pairs of linked file paths
-  
+
   // Evidence revelation system - tracks which evidences each file has revealed
   // Key: file path, Value: evidence state for that file
   fileEvidenceStates: Record<string, FileEvidenceState>;
-  
+
   // Evidence tiers system - tracks tier per truth category
   // Key: TruthCategory, Value: tier state for that category
   evidenceTiers: Record<string, EvidenceTierState>;
-  
+
   // Timed decryption state
   timedDecryptActive: boolean;
   timedDecryptFile?: string;
   timedDecryptSequence?: string;
   timedDecryptEndTime: number;
-  
+
   // Red herring traps
   trapsTriggered: Set<string>; // Files that were trap triggers
   trapWarningGiven: boolean; // UFO74 warned about traps
-  
+
   // System personality
   systemPersonality: 'bureaucratic' | 'defensive' | 'hostile' | 'pleading';
   paranoiaLevel: number; // 0-100 intensity for paranoia cues
-  
+
   // Typing speed tracking
   lastKeypressTime: number;
   fastTypingWarnings: number;
-  
+
   // Screen burn-in content
   burnInContent: string[]; // Recent significant outputs for ghost effect
-  
+
   // Epilogue unlocked
   epilogueUnlocked: boolean;
   rivalInvestigatorActive: boolean; // Rival actor tracking the trail
-  
+
   // Hacker avatar expression
   avatarExpression: 'neutral' | 'shocked' | 'scared' | 'angry' | 'smirk';
-  
+
   // Save tracking
   lastSaveTime: number;
+
+  // Firewall Eyes system
+  firewallActive: boolean; // True when detection >= 25%
+  firewallEyes: FirewallEye[]; // Active hostile eyes on screen
+  firewallDisarmed: boolean; // True if player used neural link to disable
+  lastEyeSpawnDetection: number; // Detection level when last eye spawned (for 10% increments)
+}
+
+// Firewall Eye entity
+export interface FirewallEye {
+  id: string;
+  x: number; // Position as percentage (0-100)
+  y: number; // Position as percentage (0-100)
+  spawnTime: number; // Timestamp when spawned
+  detonateTime: number; // Timestamp when it will detonate
+  isDetonating: boolean; // True during detonation animation
 }
 
 export interface SaveSlot {
@@ -282,7 +304,14 @@ export interface SaveSlot {
 }
 
 export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow' | 'glitchy';
-export type GamePhase = 'terminal' | 'blackout' | 'icq' | 'victory' | 'bad_ending' | 'neutral_ending' | 'secret_ending';
+export type GamePhase =
+  | 'terminal'
+  | 'blackout'
+  | 'icq'
+  | 'victory'
+  | 'bad_ending'
+  | 'neutral_ending'
+  | 'secret_ending';
 export type EndingType = 'bad' | 'neutral' | 'good' | 'secret';
 
 export interface CommandResult {
@@ -301,14 +330,14 @@ export interface CommandResult {
 }
 
 export const TRUTH_CATEGORIES = [
-  'debris_relocation',      // Spacecraft debris were split and relocated
-  'being_containment',      // Non-human beings were contained and transferred
-  'telepathic_scouts',      // Beings communicated telepathically and were reconnaissance bio-constructs
-  'international_actors',   // International actors were involved beyond Brazil
-  'transition_2026'         // A future transition/activation window converges on 2026
+  'debris_relocation', // Spacecraft debris were split and relocated
+  'being_containment', // Non-human beings were contained and transferred
+  'telepathic_scouts', // Beings communicated telepathically and were reconnaissance bio-constructs
+  'international_actors', // International actors were involved beyond Brazil
+  'transition_2026', // A future transition/activation window converges on 2026
 ] as const;
 
-export type TruthCategory = typeof TRUTH_CATEGORIES[number];
+export type TruthCategory = (typeof TRUTH_CATEGORIES)[number];
 
 // Evidence Tiers System - Forces players to use correlate/connect commands
 export type EvidenceTier = 'fragment' | 'corroborated' | 'proven';
@@ -324,15 +353,15 @@ export interface EvidenceTierState {
 // Human-readable labels for evidence tiers
 export const EVIDENCE_TIER_LABELS: Record<EvidenceTier, string> = {
   fragment: 'FRAGMENT',
-  corroborated: 'CORROBORATED', 
+  corroborated: 'CORROBORATED',
   proven: 'PROVEN',
 };
 
 // Evidence tier display symbols for ls command
 export const EVIDENCE_TIER_SYMBOLS: Record<EvidenceTier, string> = {
-  fragment: '○',      // Empty circle - insufficient alone
-  corroborated: '◆',  // Filled diamond - linked
-  proven: '●',        // Filled circle - proven
+  fragment: '○', // Empty circle - insufficient alone
+  corroborated: '◆', // Filled diamond - linked
+  proven: '●', // Filled circle - proven
 };
 
 // Evidence Revelation System types
@@ -465,4 +494,9 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   avatarExpression: 'neutral',
   // Save tracking
   lastSaveTime: 0,
+  // Firewall Eyes system
+  firewallActive: false,
+  firewallEyes: [],
+  firewallDisarmed: false,
+  lastEyeSpawnDetection: 0,
 };

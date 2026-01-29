@@ -49,6 +49,11 @@ import SettingsModal from './SettingsModal';
 import PauseMenu from './PauseMenu';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
+import FirewallEyes, {
+  createFirewallEye,
+  DETECTION_INCREASE_ON_DETONATE,
+  DETECTION_THRESHOLD,
+} from './FirewallEyes';
 
 // Lazy-load conditional components for better initial load performance
 const ImageOverlay = dynamic(() => import('./ImageOverlay'), { ssr: false });
@@ -848,6 +853,128 @@ export default function Terminal({
     setFlickerActive(true);
     setTimeout(() => setFlickerActive(false), 300);
   }, []);
+
+  // Firewall Eyes handlers
+  const handleFirewallActivate = useCallback(() => {
+    setGameState(prev => ({
+      ...prev,
+      firewallActive: true,
+      lastEyeSpawnDetection: prev.detectionLevel,
+      firewallEyes: [createFirewallEye()], // Spawn first eye on activation
+    }));
+    playSound('alert');
+    // Show UFO74 warning about the firewall
+    const firewallWarning = createEntry(
+      'ufo74',
+      'UFO74: KID! They deployed the FIREWALL. Those eyes - CLICK THEM before they report back!'
+    );
+    setGameState(prev => ({
+      ...prev,
+      history: [...prev.history, firewallWarning],
+    }));
+  }, [playSound]);
+
+  const handleFirewallEyeSpawn = useCallback(() => {
+    setGameState(prev => {
+      const newEyes = [...prev.firewallEyes, createFirewallEye()];
+      const eyeCount = newEyes.length;
+
+      // Add UFO74 urgency messages based on eye count
+      let urgencyMessage: TerminalEntry | null = null;
+      if (eyeCount === 2) {
+        urgencyMessage = createEntry(
+          'ufo74',
+          "UFO74: Another one! They're multiplying - click them fast!"
+        );
+      } else if (eyeCount === 3) {
+        urgencyMessage = createEntry(
+          'ufo74',
+          "UFO74: This is getting out of control. The firewall... it's AFRAID of something."
+        );
+      } else if (eyeCount === 4 && prev.flags.neuralLinkAuthenticated) {
+        urgencyMessage = createEntry(
+          'ufo74',
+          'UFO74: Wait... the neural link. It might be able to reach INTO the firewall. Try "link disarm"!'
+        );
+      } else if (eyeCount === 4) {
+        urgencyMessage = createEntry(
+          'ufo74',
+          'UFO74: KID! Too many eyes! There has to be a way to shut this down...'
+        );
+      } else if (eyeCount >= 5) {
+        urgencyMessage = createEntry(
+          'ufo74',
+          "UFO74: We're running out of time! Find something that can reach deeper than their code!"
+        );
+      }
+
+      return {
+        ...prev,
+        firewallEyes: newEyes,
+        lastEyeSpawnDetection: prev.detectionLevel,
+        history: urgencyMessage ? [...prev.history, urgencyMessage] : prev.history,
+      };
+    });
+    playSound('warning');
+  }, [playSound]);
+
+  const handleFirewallEyeClick = useCallback(
+    (eyeId: string) => {
+      setGameState(prev => ({
+        ...prev,
+        firewallEyes: prev.firewallEyes.filter(e => e.id !== eyeId),
+      }));
+      playSound('success');
+    },
+    [playSound]
+  );
+
+  const handleFirewallEyeDetonate = useCallback(
+    (eyeId: string) => {
+      setGameState(prev => {
+        // Mark eye as detonating for animation
+        const updatedEyes = prev.firewallEyes.map(e =>
+          e.id === eyeId ? { ...e, isDetonating: true } : e
+        );
+
+        // Increase detection level
+        const newDetection = Math.min(100, prev.detectionLevel + DETECTION_INCREASE_ON_DETONATE);
+
+        // Add terminal warning and UFO74 panic message
+        const detonateWarning = createEntry(
+          'error',
+          `[FIREWALL] Surveillance node reported. Detection increased to ${newDetection}%`
+        );
+
+        // UFO74 reaction to detonation
+        const ufo74Panic =
+          newDetection >= 80
+            ? createEntry('ufo74', "UFO74: THEY KNOW! They're tracing us RIGHT NOW!")
+            : newDetection >= 60
+              ? createEntry('ufo74', 'UFO74: That one got through! Be faster, kid!')
+              : createEntry('ufo74', 'UFO74: Damn! You missed one. Stay focused!');
+
+        return {
+          ...prev,
+          firewallEyes: updatedEyes,
+          detectionLevel: newDetection,
+          history: [...prev.history, detonateWarning, ufo74Panic],
+        };
+      });
+
+      playSound('error');
+      triggerFlicker();
+
+      // Remove eye after animation completes
+      setTimeout(() => {
+        setGameState(prev => ({
+          ...prev,
+          firewallEyes: prev.firewallEyes.filter(e => e.id !== eyeId),
+        }));
+      }, 500);
+    },
+    [playSound, triggerFlicker]
+  );
 
   // Display all UFO74 messages at once through encrypted channel (no multi-press required)
   const openEncryptedChannelWithMessages = useCallback(
@@ -1795,6 +1922,21 @@ export default function Terminal({
 
         {/* Paranoia message overlay */}
         {paranoiaMessage && <div className={styles.paranoiaMessage}>{paranoiaMessage}</div>}
+
+        {/* Firewall Eyes - hostile surveillance entities */}
+        {gameState.tutorialComplete && !gameState.isGameOver && (
+          <FirewallEyes
+            detectionLevel={gameState.detectionLevel}
+            firewallActive={gameState.firewallActive}
+            firewallDisarmed={gameState.firewallDisarmed}
+            eyes={gameState.firewallEyes}
+            lastEyeSpawnDetection={gameState.lastEyeSpawnDetection}
+            onEyeClick={handleFirewallEyeClick}
+            onEyeDetonate={handleFirewallEyeDetonate}
+            onSpawnEye={handleFirewallEyeSpawn}
+            onActivateFirewall={handleFirewallActivate}
+          />
+        )}
 
         {/* Sound toggle moved to Settings menu (ESC -> Settings) */}
 

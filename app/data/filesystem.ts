@@ -360,7 +360,7 @@ const personnel_transfer_notice: FileNode = {
     'Exit interviews scheduled for 30-JAN.',
     'Access credentials to be revoked 01-FEB 00:00.',
     '',
-    'NOTE: CPT. FERREIRA\'s case files transferred to',
+    "NOTE: CPT. FERREIRA's case files transferred to",
     '      Acting Chief L. ANDRADE pending replacement.',
     '',
     '═══════════════════════════════════════════════════════════',
@@ -874,7 +874,7 @@ const lost_found_log_extended: FileNode = {
     '═══════════════════════════════════════════════════════════',
     '',
     '03-JAN | 14:30 | FOUND: Black umbrella',
-    '                Location: Floor 3 men\'s bathroom',
+    "                Location: Floor 3 men's bathroom",
     '                Finder: Cleaning staff (M. Santos)',
     '                Status: CLAIMED 09-JAN',
     '',
@@ -1358,7 +1358,7 @@ const epilogue_2026_update: FileNode = {
     '  The breach, while operationally damaging, may have',
     '  inadvertently improved transition survival rates.',
     '',
-    '  The intruder\'s actions, though criminal, may have',
+    "  The intruder's actions, though criminal, may have",
     '  saved lives.',
     '',
     '  This assessment is classified and will be denied.',
@@ -2474,9 +2474,7 @@ const transcript_core: FileNode = {
     answers: ['340', '340kg', '340 kg'],
     hint: 'Check transport_log_96.txt for material weight',
   },
-  content: [
-    '[ENCRYPTED - DECRYPTION REQUIRED]',
-  ],
+  content: ['[ENCRYPTED - DECRYPTION REQUIRED]'],
   decryptedFragment: [
     '═══════════════════════════════════════════════════════════',
     'PSI-COMM TRANSCRIPT — PARTIAL RECOVERY',
@@ -2519,9 +2517,7 @@ const transcript_limit: FileNode = {
     answers: ['3', 'three', '3 subjects', 'three subjects'],
     hint: 'Check bio_container.log for subject designations',
   },
-  content: [
-    '[ENCRYPTED - DECRYPTION REQUIRED]',
-  ],
+  content: ['[ENCRYPTED - DECRYPTION REQUIRED]'],
   decryptedFragment: [
     '═══════════════════════════════════════════════════════════',
     'PSI-COMM TRANSCRIPT — SECONDARY ANALYSIS',
@@ -2788,7 +2784,13 @@ const briefing_watchers_1996: FileNode = {
   status: 'restricted_briefing',
   accessThreshold: 5,
   requiredFlags: ['adminUnlocked'],
-  reveals: ['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026'],
+  reveals: [
+    'debris_relocation',
+    'being_containment',
+    'telepathic_scouts',
+    'international_actors',
+    'transition_2026',
+  ],
   content: [
     '═══════════════════════════════════════════════════════════',
     'EXECUTIVE BRIEFING — THE WATCHERS',
@@ -3155,6 +3157,19 @@ const psi_analysis_report: FileNode = {
     'They transmit. They do not expect response.',
     '',
     'They were never designed for dialogue.',
+    '',
+    '───────────────────────────────────────────────────────────',
+    'LINK ACCESS PROTOCOL',
+    '───────────────────────────────────────────────────────────',
+    '',
+    'Neural pattern preservation allows post-mortem link.',
+    'Authentication phrase derived from psi-comm transmission.',
+    '',
+    '  > link',
+    '  > Enter phrase: ___________',
+    '',
+    'Access phrase referenced in neural dump under [conceptual',
+    'transmission] section — the primary directive.',
     '',
     '═══════════════════════════════════════════════════════════',
   ],
@@ -3601,7 +3616,7 @@ const copa_94_celebration_memo: FileNode = {
     'RE: World Cup Celebration Guidelines',
     '═══════════════════════════════════════════════════════════',
     '',
-    'Following Brazil\'s victory in the Copa do Mundo 1994,',
+    "Following Brazil's victory in the Copa do Mundo 1994,",
     'the following guidelines apply to workplace celebrations:',
     '',
     '  1. Television viewing permitted in break areas ONLY.',
@@ -3759,7 +3774,7 @@ const cafeteria_menu_jan96: FileNode = {
     '  Emergency rations distributed',
     '',
     '───────────────────────────────────────────────────────────',
-    'NOTE: Friday\'s menu cancelled due to unscheduled',
+    "NOTE: Friday's menu cancelled due to unscheduled",
     'facility lockdown. See INCIDENT REPORT 1996-01-VG.',
     '',
     'Cafeteria staff reassigned to support operations.',
@@ -4257,7 +4272,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         'redaction_keycard.txt': redaction_keycard,
         'override_protocol_memo.txt': override_protocol_memo,
         'maintenance_notes.txt': system_maintenance_notes,
-        
+
         // Protocols subfolder
         protocols: {
           type: 'dir',
@@ -4270,7 +4285,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'cipher_notes.txt': cipher_notes,
           },
         },
-        
+
         // Personnel subfolder
         personnel: {
           type: 'dir',
@@ -4285,7 +4300,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'vacation_calendar.txt': vacation_calendar_96,
           },
         },
-        
+
         // Facilities subfolder
         facilities: {
           type: 'dir',
@@ -4297,7 +4312,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'lost_found_jan96.txt': lost_and_found,
           },
         },
-        
+
         // Admin subfolder
         admin: {
           type: 'dir',
@@ -4311,7 +4326,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'maintenance_schedule.txt': maintenance_schedule_96,
           },
         },
-        
+
         // Misc subfolder - mundane files / red herrings
         misc: {
           type: 'dir',
