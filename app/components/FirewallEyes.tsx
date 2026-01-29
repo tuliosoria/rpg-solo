@@ -19,10 +19,12 @@ interface FirewallEyesProps {
   firewallDisarmed: boolean;
   eyes: FirewallEye[];
   lastEyeSpawnTime: number;
+  paused: boolean; // Pause timers during image/video overlays
   onEyeClick: (eyeId: string) => void;
   onEyeDetonate: (eyeId: string) => void;
   onSpawnEyeBatch: () => void;
   onActivateFirewall: () => void;
+  onPauseChanged?: (paused: boolean) => void; // Callback when pause state changes
 }
 
 export default function FirewallEyes({
@@ -31,25 +33,43 @@ export default function FirewallEyes({
   firewallDisarmed,
   eyes,
   lastEyeSpawnTime,
+  paused,
   onEyeClick,
   onEyeDetonate,
   onSpawnEyeBatch,
   onActivateFirewall,
+  onPauseChanged,
 }: FirewallEyesProps) {
   const detonationTimersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const spawnTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const pauseStartTimeRef = useRef<number | null>(null); // Track when pause started for time adjustment
 
-  // Activate firewall when detection reaches threshold
+  // Activate firewall when detection reaches threshold (delay if paused)
   useEffect(() => {
-    if (!firewallActive && !firewallDisarmed && detectionLevel >= DETECTION_THRESHOLD) {
+    if (!firewallActive && !firewallDisarmed && detectionLevel >= DETECTION_THRESHOLD && !paused) {
       onActivateFirewall();
     }
-  }, [detectionLevel, firewallActive, firewallDisarmed, onActivateFirewall]);
+  }, [detectionLevel, firewallActive, firewallDisarmed, paused, onActivateFirewall]);
+
+  // Track pause state to notify parent for time adjustments
+  useEffect(() => {
+    if (paused) {
+      // Record when pause started
+      pauseStartTimeRef.current = Date.now();
+    } else if (pauseStartTimeRef.current !== null) {
+      // Pause ended - notify parent to adjust eye times
+      const pauseDuration = Date.now() - pauseStartTimeRef.current;
+      if (onPauseChanged && pauseDuration > 100) {
+        onPauseChanged(false); // Signal parent to extend eye detonation times
+      }
+      pauseStartTimeRef.current = null;
+    }
+  }, [paused, onPauseChanged]);
 
   // Spawn eye batch with cooldown timer
   useEffect(() => {
-    if (!firewallActive || firewallDisarmed) {
-      // Clear spawn timer if firewall is inactive/disarmed
+    if (!firewallActive || firewallDisarmed || paused) {
+      // Clear spawn timer if firewall is inactive/disarmed/paused
       if (spawnTimerRef.current) {
         clearTimeout(spawnTimerRef.current);
         spawnTimerRef.current = null;
@@ -77,12 +97,12 @@ export default function FirewallEyes({
         clearTimeout(spawnTimerRef.current);
       }
     };
-  }, [firewallActive, firewallDisarmed, lastEyeSpawnTime, onSpawnEyeBatch]);
+  }, [firewallActive, firewallDisarmed, lastEyeSpawnTime, paused, onSpawnEyeBatch]);
 
   // Set up detonation timers for each eye
   useEffect(() => {
-    if (firewallDisarmed) {
-      // Clear all timers if firewall is disarmed
+    if (firewallDisarmed || paused) {
+      // Clear all timers if firewall is disarmed or paused
       detonationTimersRef.current.forEach(timer => clearTimeout(timer));
       detonationTimersRef.current.clear();
       return;
@@ -122,7 +142,7 @@ export default function FirewallEyes({
       // Cleanup on unmount
       detonationTimersRef.current.forEach(timer => clearTimeout(timer));
     };
-  }, [eyes, firewallDisarmed, onEyeDetonate]);
+  }, [eyes, firewallDisarmed, paused, onEyeDetonate]);
 
   // Handle click on eye
   const handleEyeClick = useCallback(

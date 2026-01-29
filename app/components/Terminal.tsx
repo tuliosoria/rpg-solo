@@ -632,6 +632,7 @@ export default function Terminal({
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
   const gameStateRef = useRef(gameState); // Ref to access current state without re-triggering effect
+  const mediaPauseStartRef = useRef<number | null>(null); // Track when media overlay started for firewall pause
 
   // Keep ref updated
   useEffect(() => {
@@ -960,6 +961,33 @@ export default function Terminal({
     },
     [playSound, triggerFlicker]
   );
+
+  // Handle firewall pause state changes (extends eye timers when media overlay closes)
+  const handleFirewallPauseChanged = useCallback((paused: boolean) => {
+    if (!paused && mediaPauseStartRef.current !== null) {
+      // Pause ended - extend all eye detonation times by the pause duration
+      const pauseDuration = Date.now() - mediaPauseStartRef.current;
+      if (pauseDuration > 100) {
+        // Only adjust if pause was significant
+        setGameState(prev => ({
+          ...prev,
+          firewallEyes: prev.firewallEyes.map(eye => ({
+            ...eye,
+            detonateTime: eye.detonateTime + pauseDuration,
+          })),
+        }));
+      }
+      mediaPauseStartRef.current = null;
+    }
+  }, []);
+
+  // Track when media pause starts
+  useEffect(() => {
+    const isMediaActive = activeImage !== null || activeVideo !== null;
+    if (isMediaActive && mediaPauseStartRef.current === null) {
+      mediaPauseStartRef.current = Date.now();
+    }
+  }, [activeImage, activeVideo]);
 
   // Display all UFO74 messages at once through encrypted channel (no multi-press required)
   const openEncryptedChannelWithMessages = useCallback(
@@ -1916,10 +1944,12 @@ export default function Terminal({
             firewallDisarmed={gameState.firewallDisarmed}
             eyes={gameState.firewallEyes}
             lastEyeSpawnTime={gameState.lastEyeSpawnTime}
+            paused={activeImage !== null || activeVideo !== null}
             onEyeClick={handleFirewallEyeClick}
             onEyeDetonate={handleFirewallEyeDetonate}
             onSpawnEyeBatch={handleFirewallEyeBatchSpawn}
             onActivateFirewall={handleFirewallActivate}
+            onPauseChanged={handleFirewallPauseChanged}
           />
         )}
 
