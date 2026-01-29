@@ -121,7 +121,7 @@ export function useAutocomplete(gameState: GameState) {
 
     const parts = input.trimStart().split(/\s+/);
 
-    // Check if completions are full paths (e.g., from filesRead for correlate second arg)
+    // Check if completions are full paths (e.g., from filesRead for multi-arg commands)
     const completionsAreFullPaths = completions.length > 0 && completions[0].startsWith('/');
 
     if (completions.length === 1) {

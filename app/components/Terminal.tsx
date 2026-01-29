@@ -246,10 +246,10 @@ export default function Terminal({
     } catch {
       // localStorage not available (SSR or test environment)
     }
-    
+
     // Initialize voice synthesis early so voices are ready when needed
     initVoices();
-    
+
     return () => {
       try {
         document.body.classList.remove('no-crt');
@@ -678,18 +678,6 @@ export default function Terminal({
       hint: 'The /comms directory might have useful intel.',
       condition: (s: GameState) =>
         !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt'),
-    },
-
-    // Have truths but no correlations - hint about correlate
-    {
-      hint: "You've found evidence. Try 'correlate' to connect the dots.",
-      condition: (s: GameState) =>
-        (s.truthsDiscovered?.size || 0) >= 2 && (s.evidenceLinks?.length || 0) === 0,
-    },
-    {
-      hint: "Multiple truths discovered. 'correlate file1 file2' links evidence together.",
-      condition: (s: GameState) =>
-        (s.truthsDiscovered?.size || 0) >= 3 && (s.evidenceLinks?.length || 0) === 0,
     },
 
     // High detection - hint about wait command
@@ -1258,7 +1246,7 @@ export default function Terminal({
       // Play command-specific sound on submit
       const dangerousCommands = ['decrypt', 'recover', 'trace', 'override', 'leak'];
       const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
-      const systemCommands = ['scan', 'wait', 'hide', 'correlate'];
+      const systemCommands = ['scan', 'wait', 'hide'];
       // Navigation commands for firewall eye spawning (spawn on cd/ls/dir, not on open)
       const navigationCommands = ['ls', 'cd', 'dir', 'back', 'pwd'];
       lastCommandWasNavigationRef.current = navigationCommands.includes(commandLower);
