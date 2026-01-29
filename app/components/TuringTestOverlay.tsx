@@ -8,9 +8,10 @@ import { uiChance, uiRandomInt } from '../engine/rng';
 
 interface TuringTestOverlayProps {
   onComplete: (passed: boolean) => void;
+  onCorrectAnswer?: () => void;
 }
 
-export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps) {
+export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: TuringTestOverlayProps) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -47,6 +48,7 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
 
       if (option?.isMachine) {
         setCorrectAnswers(prev => prev + 1);
+        onCorrectAnswer?.();
       }
 
       setShowFeedback(true);
@@ -62,7 +64,7 @@ export default function TuringTestOverlay({ onComplete }: TuringTestOverlayProps
         }
       }, 1500);
     },
-    [questionIndex, currentQuestion, showFeedback, showResult]
+    [questionIndex, currentQuestion, showFeedback, showResult, onCorrectAnswer]
   );
 
   // Keyboard controls

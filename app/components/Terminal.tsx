@@ -232,6 +232,7 @@ export default function Terminal({
   const [showTuringTest, setShowTuringTest] = useState(false);
   const keypressTimestamps = useRef<number[]>([]);
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
+  const isFirewallPaused = activeImage !== null || activeVideo !== null || showTuringTest;
 
   // Timed decryption timer display
   const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
@@ -567,11 +568,13 @@ export default function Terminal({
 
   // Start ambient sound when tutorial completes
   useEffect(() => {
-    if (gameState.tutorialComplete && soundEnabled) {
-      startAmbient();
+    if (!gameState.tutorialComplete || !soundEnabled || showTuringTest) {
+      stopAmbient();
+      return;
     }
+    startAmbient();
     return () => stopAmbient();
-  }, [gameState.tutorialComplete, soundEnabled, startAmbient, stopAmbient]);
+  }, [gameState.tutorialComplete, soundEnabled, showTuringTest, startAmbient, stopAmbient]);
 
   // Update ambient tension based on detection level
   useEffect(() => {
@@ -622,7 +625,7 @@ export default function Terminal({
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
   const gameStateRef = useRef(gameState); // Ref to access current state without re-triggering effect
-  const mediaPauseStartRef = useRef<number | null>(null); // Track when media overlay started for firewall pause
+  const firewallPauseStartRef = useRef<number | null>(null); // Track when firewall pause starts
 
   // Keep ref updated
   useEffect(() => {
@@ -925,6 +928,7 @@ export default function Terminal({
           ...prev,
           firewallEyes: updatedEyes,
           detectionLevel: newDetection,
+          avatarExpression: 'scared',
           history: [...prev.history, detonateWarning, ufo74Panic],
         };
       });
@@ -943,11 +947,11 @@ export default function Terminal({
     [playSound, triggerFlicker]
   );
 
-  // Handle firewall pause state changes (extends eye timers when media overlay closes)
+  // Handle firewall pause state changes (extends timers when overlays close)
   const handleFirewallPauseChanged = useCallback((paused: boolean) => {
-    if (!paused && mediaPauseStartRef.current !== null) {
-      // Pause ended - extend all eye detonation times by the pause duration
-      const pauseDuration = Date.now() - mediaPauseStartRef.current;
+    if (!paused && firewallPauseStartRef.current !== null) {
+      // Pause ended - extend timers by the pause duration
+      const pauseDuration = Date.now() - firewallPauseStartRef.current;
       if (pauseDuration > 100) {
         // Only adjust if pause was significant
         setGameState(prev => ({
@@ -956,19 +960,22 @@ export default function Terminal({
             ...eye,
             detonateTime: eye.detonateTime + pauseDuration,
           })),
+          lastEyeSpawnTime:
+            prev.lastEyeSpawnTime > 0
+              ? prev.lastEyeSpawnTime + pauseDuration
+              : prev.lastEyeSpawnTime,
         }));
       }
-      mediaPauseStartRef.current = null;
+      firewallPauseStartRef.current = null;
     }
   }, []);
 
-  // Track when media pause starts
+  // Track when firewall pause starts (media or Turing Test)
   useEffect(() => {
-    const isMediaActive = activeImage !== null || activeVideo !== null;
-    if (isMediaActive && mediaPauseStartRef.current === null) {
-      mediaPauseStartRef.current = Date.now();
+    if (isFirewallPaused && firewallPauseStartRef.current === null) {
+      firewallPauseStartRef.current = Date.now();
     }
-  }, [activeImage, activeVideo]);
+  }, [isFirewallPaused]);
 
   // Display all UFO74 messages at once through encrypted channel (no multi-press required)
   const openEncryptedChannelWithMessages = useCallback(
@@ -1905,7 +1912,7 @@ export default function Terminal({
             firewallDisarmed={gameState.firewallDisarmed}
             eyes={gameState.firewallEyes}
             lastEyeSpawnTime={gameState.lastEyeSpawnTime}
-            paused={activeImage !== null || activeVideo !== null}
+            paused={isFirewallPaused}
             onEyeClick={handleFirewallEyeClick}
             onEyeDetonate={handleFirewallEyeDetonate}
             onSpawnEyeBatch={handleFirewallEyeBatchSpawn}
@@ -2276,6 +2283,7 @@ export default function Terminal({
         {/* Turing Test overlay */}
         {showTuringTest && (
           <TuringTestOverlay
+            onCorrectAnswer={() => playSound('success')}
             onComplete={passed => {
               setShowTuringTest(false);
 
