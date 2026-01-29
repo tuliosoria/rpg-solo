@@ -1,0 +1,15 @@
+{
+  "instructionFile": ".github/copilot-instructions.md",
+  "cases": [
+    {
+      "id": "project-overview",
+      "prompt": "What is this project about?",
+      "expectation": "Should mention Varginha UFO incident 1996, terminal game, Brazil"
+    },
+    {
+      "id": "tech-stack",
+      "prompt": "What framework does this project use?",
+      "expectation": "Should mention Next.js and React"
+    }
+  ]
+}
