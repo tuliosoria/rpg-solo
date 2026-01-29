@@ -753,7 +753,6 @@ function checkTruthProgress(
     if (newCount === 5 && previousCount < 5) {
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', '▓▓▓ ALL EVIDENCE CATEGORIES DOCUMENTED ▓▓▓'));
-      notices.push(createEntry('warning', ''));
       notices.push(...createUFO74Message(['UFO74: all five confirmed. run save_evidence.sh NOW.']));
     }
 
@@ -3476,7 +3475,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Files in /internal/sanitized/ use euphemisms that provide plausible deniability
     // ═══════════════════════════════════════════════════════════════════════════
     if (filePath.includes('/internal/sanitized/') && !isEncryptedAndLocked) {
-      notices.push(createEntry('system', ''));
       notices.push(
         ...createUFO74Message([
           'UFO74: ugh. this is sanitized documentation.',
@@ -5766,7 +5764,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('system', ''),
           createEntry('output', 'Message already deciphered: UFO RECOVERED'),
-          createEntry('system', ''),
           ...createUFO74Message([
             'UFO74: you already got it, hackerkid.',
             '       the message was "UFO RECOVERED".',
@@ -5785,7 +5782,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'Decryption attempts exhausted.'),
           createEntry('system', ''),
           createEntry('output', 'The intercepted message was: UFO RECOVERED'),
-          createEntry('system', ''),
           ...createUFO74Message([
             'UFO74: you missed it, kid. but now you know.',
             '       "UFO RECOVERED" - confirmation from the ground.',
@@ -5830,7 +5826,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', '▓▓▓ MESSAGE DECIPHERED ▓▓▓'),
           createEntry('system', ''),
           createEntry('warning', `  DECODED: ${correct}`),
-          createEntry('system', ''),
           ...createUFO74Message([
             'UFO74: you did it hackerkid!',
             '       "UFO RECOVERED" - that was the confirmation.',
@@ -5860,7 +5855,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', ''),
           createEntry('warning', `Your answer: ${guess}`),
           createEntry('warning', 'Maximum attempts exceeded.'),
-          createEntry('system', ''),
           ...createUFO74Message([
             'UFO74: damn. you ran out of tries hackerkid.',
             '       the message was "UFO RECOVERED".',
@@ -5882,7 +5876,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('warning', `Your answer: ${guess}`),
         createEntry('system', ''),
         createEntry('system', `[Attempts remaining: ${attemptsRemaining}]`),
-        createEntry('system', ''),
         ...createUFO74Message([
           'UFO74: thats not it hackerkid.',
           '       check the morse reference again.',

@@ -147,6 +147,7 @@ export function maybeAddTypo(text: string, chance: number = 0.1): string[] {
 // Wrap UFO74 messages with transmission banner
 // Note: With the new encrypted channel system, these messages will be queued
 // and displayed one at a time with the proper channel open/close flow
+// Always adds a blank line before messages for consistent spacing
 export function createUFO74Message(messages: string[]): TerminalEntry[] {
-  return [...messages.map(msg => createEntry('ufo74', msg))];
+  return [createEntry('system', ''), ...messages.map(msg => createEntry('ufo74', msg))];
 }
