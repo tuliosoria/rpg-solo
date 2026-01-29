@@ -286,7 +286,7 @@ export function speakFirewallVoice(): void {
 
   const utterance = new SpeechSynthesisUtterance(phrase);
   utterance.pitch = 0.3; // Very low/deep
-  utterance.rate = 0.8; // Slow
+  utterance.rate = 0.5; // Very slow for creepy effect
   utterance.volume = 1.0; // Full volume
 
   // Use cached voices if available

@@ -2107,8 +2107,8 @@ export default function Terminal({
             >
               <button type="submit" autoFocus />
             </form>
-            {/* Centered enter prompt */}
-            <FloatingElement id="enter-prompt" zone="bottom-center" priority={1} baseOffset={32}>
+            {/* Centered enter prompt - inline in flex layout to prevent overlap */}
+            <div className={styles.enterPromptArea}>
               <button
                 type="button"
                 className={styles.enterPromptContent}
@@ -2131,7 +2131,7 @@ export default function Terminal({
                             : 'continue'}
                 </span>
               </button>
-            </FloatingElement>
+            </div>
           </>
         ) : (
           <form onSubmit={handleSubmit} className={styles.inputArea}>
@@ -2185,14 +2185,11 @@ export default function Terminal({
               spellCheck={false}
             />
             <span className={styles.cursor}>_</span>
+            {/* Typing speed warning - inline within input area to prevent overlap */}
+            {typingSpeedWarning && (
+              <span className={styles.typingWarningInline}>SUSPICIOUS TYPING PATTERN DETECTED</span>
+            )}
           </form>
-        )}
-
-        {/* Typing speed warning - floating above input area */}
-        {typingSpeedWarning && (
-          <FloatingElement id="typing-warning" zone="bottom-center" priority={1} baseOffset={70}>
-            <span className={styles.typingWarningContent}>SUSPICIOUS TYPING PATTERN DETECTED</span>
-          </FloatingElement>
         )}
 
         {/* Timed decryption timer overlay */}

@@ -629,8 +629,8 @@
   flex: 1;
   overflow-y: auto;
   padding: 16px;
-  /* Extra bottom padding to prevent floating buttons from overlapping content */
-  padding-bottom: 80px;
+  /* Bottom padding handled by flex layout - no extra needed since buttons are inline */
+  padding-bottom: 16px;
   z-index: 1;
 }
 
@@ -734,12 +734,26 @@
 
 /* Input area */
 .inputArea {
+  position: relative; /* For absolutely positioned warning */
   display: flex;
   align-items: center;
   padding: 24px 32px;
   background: #001100;
   border-top: 2px solid #00ff00;
   z-index: 2;
+  flex-shrink: 0; /* Prevent shrinking on small screens */
+}
+
+/* Enter prompt area - inline flex element for tutorial/continue buttons */
+.enterPromptArea {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 32px;
+  background: #001100;
+  border-top: 2px solid #00ff00;
+  z-index: 2;
+  flex-shrink: 0; /* Prevent shrinking on small screens */
 }
 
 .prompt {
@@ -780,7 +794,7 @@
   opacity: 0.5;
 }
 
-/* Subtle Enter Prompt - now positioned by FloatingElement */
+/* Subtle Enter Prompt - inline in enterPromptArea */
 .enterPromptContent {
   background: rgba(0, 50, 0, 0.9);
   border: 2px solid rgba(0, 255, 0, 0.6);
@@ -984,6 +998,19 @@
   font-size: 10px;
   animation: typingWarnFlash 0.3s ease-in-out infinite alternate;
   text-shadow: 0 0 10px #ff0000;
+}
+
+/* Typing speed warning - inline within input area */
+.typingWarningInline {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff4444;
+  font-size: 10px;
+  animation: typingWarnFlash 0.3s ease-in-out infinite alternate;
+  text-shadow: 0 0 10px #ff0000;
+  white-space: nowrap;
 }
 
 /* Legacy typingWarning - kept for backwards compat */
