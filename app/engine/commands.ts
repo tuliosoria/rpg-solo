@@ -6543,8 +6543,14 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
   // ═══════════════════════════════════════════════════════════════════════════
   // SINGULAR EVENTS - Check for irreversible one-time events
+  // Use the NEW detection level from result.stateChanges so events trigger
+  // correctly even when detection jumps past their threshold in a single command
   // ═══════════════════════════════════════════════════════════════════════════
-  const singularEvent = checkSingularEvents(state, command, args);
+  const stateWithUpdatedDetection = {
+    ...state,
+    detectionLevel: result.stateChanges.detectionLevel ?? state.detectionLevel,
+  };
+  const singularEvent = checkSingularEvents(stateWithUpdatedDetection, command, args);
   if (singularEvent) {
     // Merge singular event output with command result
     result.output = [...result.output, ...singularEvent.output];
