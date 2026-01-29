@@ -1363,6 +1363,7 @@ describe('Narrative Mechanics', () => {
         accessLevel: 2,
         filesRead: new Set<string>(),
         imagesShownThisRun: new Set<string>(), // Ensure no images shown yet
+        flags: { adminUnlocked: true }, // prato folder now requires adminUnlocked
       });
       const result = executeCommand('open field_report_delta.txt', state);
 

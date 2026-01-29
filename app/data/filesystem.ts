@@ -4116,6 +4116,178 @@ const neural_cluster_experiment: FileNode = {
   ],
 };
 
+// ═══════════════════════════════════════════════════════════════════════════
+// CODED LANGUAGE FILES - Plausible deniability documents using code names
+// These files discuss the same events but use sanitized terminology that
+// UFO74 cannot accept as evidence (too much plausible deniability)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const cargo_transfer_memo: FileNode = {
+  type: 'file',
+  name: 'cargo_transfer_memo.txt',
+  status: 'intact',
+  // NO reveals - coded language cannot be used as evidence
+  content: [
+    '═══════════════════════════════════════════════════════════',
+    'INTERNAL MEMO — CARGO TRANSFER COORDINATION',
+    'DATE: 22-JAN-1996',
+    'CLASSIFICATION: ROUTINE',
+    '═══════════════════════════════════════════════════════════',
+    '',
+    'TO: Site Operations',
+    'FROM: Logistics Division',
+    '',
+    'RE: Special cargo arrival and processing',
+    '',
+    'The package arrived yesterday evening.',
+    '',
+    'Initial inspection complete. Contents intact despite',
+    'transport conditions. Some surface degradation noted',
+    'but within acceptable parameters.',
+    '',
+    'Storage requirements:',
+    '  - Temperature: -20C minimum',
+    '  - Humidity: Controlled',
+    '  - Access: Restricted per standard protocol',
+    '',
+    'Foreign partners have been notified.',
+    'Expect coordination team within 72 hours.',
+    '',
+    'Please ensure receiving bay is cleared.',
+    '',
+    '[signature illegible]',
+    '',
+    '═══════════════════════════════════════════════════════════',
+  ],
+};
+
+const visitor_briefing: FileNode = {
+  type: 'file',
+  name: 'visitor_briefing.txt',
+  status: 'intact',
+  // NO reveals - coded language cannot be used as evidence
+  content: [
+    '═══════════════════════════════════════════════════════════',
+    'SECURITY BRIEFING — VISITING DELEGATION',
+    'DATE: 24-JAN-1996',
+    'CLASSIFICATION: INTERNAL',
+    '═══════════════════════════════════════════════════════════',
+    '',
+    'SUBJECT: Protocol for visitors',
+    '',
+    'The visitors will arrive via private aircraft.',
+    '',
+    'They have been granted full access to Facilities 1-3.',
+    'Escort required at all times. No photography.',
+    '',
+    'The delegation is primarily interested in:',
+    '  - Review of recent acquisitions',
+    '  - Assessment of specialized samples',
+    '  - Coordination on future procurement',
+    '',
+    'They will be accompanied by their own technical team.',
+    'Our role is observation and cooperation only.',
+    '',
+    'REMINDER: Standard plausible deniability protocols',
+    'remain in effect. All documentation uses approved',
+    'terminology. No direct references.',
+    '',
+    'Questions directed to Protocol Office.',
+    '',
+    '═══════════════════════════════════════════════════════════',
+  ],
+};
+
+const asset_disposition_report: FileNode = {
+  type: 'file',
+  name: 'asset_disposition_report.txt',
+  status: 'intact',
+  // NO reveals - coded language cannot be used as evidence
+  content: [
+    '═══════════════════════════════════════════════════════════',
+    'ASSET DISPOSITION REPORT',
+    'REFERENCE: ADR-96-007',
+    'DATE: 28-JAN-1996',
+    '═══════════════════════════════════════════════════════════',
+    '',
+    'ASSET CATEGORY: Special Materials',
+    '',
+    'DISPOSITION SUMMARY:',
+    '',
+    '  Item A-1: Transferred to foreign partner (complete)',
+    '  Item A-2: Retained for domestic study',
+    '  Item A-3: Status: Expired during transport',
+    '',
+    '  Item B-1: Partial. Components separated.',
+    '           Hull section: Wright-Patterson',
+    '           Propulsion remnants: Undisclosed',
+    '           Navigation system: Partner custody',
+    '',
+    'BIOLOGICAL SPECIMENS:',
+    '',
+    '  The guests did not survive the journey.',
+    '  Three units recovered. All non-viable.',
+    '  Samples preserved for analysis.',
+    '',
+    'COMMUNICATIONS EQUIPMENT:',
+    '',
+    '  Devices recovered but non-functional.',
+    '  Purpose remains unclear.',
+    '',
+    'FINAL STATUS: Assets distributed per agreement.',
+    '',
+    '═══════════════════════════════════════════════════════════',
+  ],
+};
+
+const euphemism_reference: FileNode = {
+  type: 'file',
+  name: 'terminology_guide.txt',
+  status: 'intact',
+  // NO reveals - this is the key that explains the coded language
+  content: [
+    '═══════════════════════════════════════════════════════════',
+    'APPROVED TERMINOLOGY REFERENCE',
+    'FOR: All personnel handling sensitive documentation',
+    '═══════════════════════════════════════════════════════════',
+    '',
+    'This guide establishes approved terminology for',
+    'documentation purposes. Use of direct language is',
+    'prohibited in any records that may be audited.',
+    '',
+    '────────────────────────────────────────',
+    'APPROVED TERMS AND DEFINITIONS',
+    '────────────────────────────────────────',
+    '',
+    '  "The package"      = Primary recovered material',
+    '  "Special cargo"    = Classified shipment',
+    '  "The visitors"     = Foreign delegation',
+    '  "The guests"       = Biological specimens',
+    '  "Assets"           = Recovered items (any type)',
+    '  "Procurement"      = Recovery operations',
+    '  "Acquisitions"     = Seized/recovered materials',
+    '  "Technical team"   = Scientific personnel',
+    '  "Samples"          = Biological material',
+    '  "Units"            = Individual specimens',
+    '  "Equipment"        = Recovered technology',
+    '  "Transport issues" = Specimen deterioration',
+    '',
+    '────────────────────────────────────────',
+    'USAGE NOTES',
+    '────────────────────────────────────────',
+    '',
+    '  Do NOT use terms such as:',
+    '    - Alien, extraterrestrial, non-human',
+    '    - Crash, UFO, spacecraft',
+    '    - Creature, being, entity',
+    '',
+    '  All documentation must maintain plausible',
+    '  deniability under Congressional review.',
+    '',
+    '═══════════════════════════════════════════════════════════',
+  ],
+};
+
 // Build filesystem tree
 export const FILESYSTEM_ROOT: DirectoryNode = {
   type: 'dir',
@@ -4159,6 +4331,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         prato: {
           type: 'dir',
           name: 'prato',
+          requiredFlags: ['adminUnlocked'],
           children: {
             'field_report_delta.txt': field_report_delta,
             'operation_prato_original.txt': operation_prato_original,
@@ -4166,7 +4339,6 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             archive: {
               type: 'dir',
               name: 'archive',
-              requiredFlags: ['adminUnlocked'],
               children: {
                 'colares_incident_log_77.txt': prato_incident_log_77,
                 'patrol_observation_shift_04.txt': prato_patrol_observation_77,
@@ -4283,6 +4455,18 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'trust_protocol_1993.txt': trust_protocol_memo,
             'asset_transfer_form_incomplete.txt': asset_transfer_form_incomplete,
             'cipher_notes.txt': cipher_notes,
+          },
+        },
+
+        // Sanitized documentation - uses coded language
+        sanitized: {
+          type: 'dir',
+          name: 'sanitized',
+          children: {
+            'cargo_transfer_memo.txt': cargo_transfer_memo,
+            'visitor_briefing.txt': visitor_briefing,
+            'asset_disposition_report.txt': asset_disposition_report,
+            'terminology_guide.txt': euphemism_reference,
           },
         },
 

@@ -242,9 +242,9 @@ export interface GameState {
   // Key: file path, Value: evidence state for that file
   fileEvidenceStates: Record<string, FileEvidenceState>;
 
-  // Evidence tiers system - tracks tier per truth category
-  // Key: TruthCategory, Value: tier state for that category
-  evidenceTiers: Record<string, EvidenceTierState>;
+  // Evidence tracking - simplified (no tiers)
+  // Key: TruthCategory, Value: evidence state for that category
+  evidenceStates: Record<string, EvidenceState>;
 
   // Timed decryption state
   timedDecryptActive: boolean;
@@ -327,7 +327,7 @@ export interface CommandResult {
   checkAchievements?: string[]; // Achievement IDs to check
   triggerTuringTest?: boolean; // Show Turing test overlay
   pendingUfo74Messages?: TerminalEntry[]; // UFO74 messages to show after image/video closes
-  soundTrigger?: 'fragment' | 'corroborated' | 'proven' | 'error'; // Sound effect to play
+  soundTrigger?: 'evidence' | 'error'; // Sound effect to play
 }
 
 export const TRUTH_CATEGORIES = [
@@ -340,30 +340,10 @@ export const TRUTH_CATEGORIES = [
 
 export type TruthCategory = (typeof TRUTH_CATEGORIES)[number];
 
-// Evidence Tiers System - Forces players to use correlate/connect commands
-export type EvidenceTier = 'fragment' | 'corroborated' | 'proven';
-
-// Evidence tier state for each truth category
-export interface EvidenceTierState {
-  tier: EvidenceTier;
-  linkedFiles: string[]; // Files that contribute to this evidence
-  corroboratingFiles?: [string, string]; // Two files that corroborate (for CORROBORATED tier)
-  proofChain?: string[]; // Chain of 3+ files (for PROVEN tier)
+// Evidence tracking - simplified to just track which files revealed evidence
+export interface EvidenceState {
+  linkedFiles: string[]; // Files that revealed this evidence
 }
-
-// Human-readable labels for evidence tiers
-export const EVIDENCE_TIER_LABELS: Record<EvidenceTier, string> = {
-  fragment: 'FRAGMENT',
-  corroborated: 'CORROBORATED',
-  proven: 'PROVEN',
-};
-
-// Evidence tier display symbols for ls command
-export const EVIDENCE_TIER_SYMBOLS: Record<EvidenceTier, string> = {
-  fragment: '○', // Empty circle - insufficient alone
-  corroborated: '◆', // Filled diamond - linked
-  proven: '●', // Filled circle - proven
-};
 
 // Evidence Revelation System types
 export interface FileEvidenceState {
@@ -470,8 +450,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   evidenceLinks: [],
   // Evidence revelation system
   fileEvidenceStates: {},
-  // Evidence tiers system
-  evidenceTiers: {},
+  // Evidence tracking
+  evidenceStates: {},
   // Timed decryption
   timedDecryptActive: false,
   timedDecryptFile: undefined,

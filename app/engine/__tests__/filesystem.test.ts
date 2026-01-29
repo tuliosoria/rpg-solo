@@ -99,15 +99,17 @@ describe('Filesystem', () => {
       expect(entries!.some(e => e.name === 'surveillance_recovery.vid')).toBe(true);
     });
 
-    it('hides prato archive before override', () => {
+    it('hides prato folder before override', () => {
       const state = createTestState({ accessLevel: 5 });
       const entries = listDirectory('/ops/prato', state);
-      expect(entries!.some(e => e.name === 'archive/')).toBe(false);
+      // Entire prato folder now requires adminUnlocked
+      expect(entries).toBeNull();
     });
 
-    it('shows prato archive after override', () => {
+    it('shows prato folder after override', () => {
       const state = createTestState({ accessLevel: 5, flags: { adminUnlocked: true } });
       const entries = listDirectory('/ops/prato', state);
+      expect(entries).not.toBeNull();
       expect(entries!.some(e => e.name === 'archive/')).toBe(true);
     });
 

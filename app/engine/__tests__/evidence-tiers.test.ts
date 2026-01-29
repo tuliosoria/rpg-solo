@@ -1,21 +1,20 @@
 /**
- * Evidence Tiers System Tests
+ * Simplified Evidence System Tests
  *
- * Note: The tier upgrade system (correlate/connect commands) has been removed from gameplay.
- * These tests remain for the underlying functions which are still in the codebase.
+ * The tier upgrade system (correlate/connect commands) has been removed.
+ * Evidence is now simply "discovered" when reading files.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
-  attemptCorroborateUpgrade,
-  attemptProvenUpgrade,
-  countEvidenceByTier,
-  determineEndingQuality,
-  getFileTier,
-  getFileTierSymbol,
-  initializeEvidenceTier,
+  countEvidence,
+  getCaseStrengthDescription,
+  fileHasEvidence,
+  getFileEvidenceSymbol,
+  initializeEvidence,
+  EVIDENCE_SYMBOL,
 } from '../evidenceRevelation';
-import { GameState, DEFAULT_GAME_STATE, TRUTH_CATEGORIES, EvidenceTierState } from '../../types';
+import { GameState, DEFAULT_GAME_STATE, TRUTH_CATEGORIES } from '../../types';
 
 // Helper to create a test state
 function createTestState(overrides: Partial<GameState> = {}): GameState {
@@ -28,341 +27,171 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
   } as GameState;
 }
 
-describe('Evidence Tiers System', () => {
-  describe('initializeEvidenceTier', () => {
-    it('should create a fragment tier for new evidence', () => {
+describe('Simplified Evidence System', () => {
+  describe('initializeEvidence', () => {
+    it('should create evidence state for new evidence', () => {
       const state = createTestState();
-      const result = initializeEvidenceTier('debris_relocation', '/storage/test.txt', state);
+      const result = initializeEvidence('debris_relocation', '/storage/test.txt', state);
 
-      expect(result.tier).toBe('fragment');
       expect(result.linkedFiles).toContain('/storage/test.txt');
     });
 
-    it('should add file to existing tier state', () => {
+    it('should add file to existing evidence state', () => {
       const state = createTestState({
-        evidenceTiers: {
+        evidenceStates: {
           debris_relocation: {
-            tier: 'fragment',
             linkedFiles: ['/existing.txt'],
           },
         },
       });
-      const result = initializeEvidenceTier('debris_relocation', '/new.txt', state);
+      const result = initializeEvidence('debris_relocation', '/new.txt', state);
 
       expect(result.linkedFiles).toContain('/existing.txt');
       expect(result.linkedFiles).toContain('/new.txt');
     });
   });
 
-  describe('attemptCorroborateUpgrade', () => {
-    it('should upgrade fragment to corroborated when files share evidence', () => {
-      const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation']),
-        fileEvidenceStates: {
-          '/a.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-          '/b.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-        evidenceTiers: {
-          debris_relocation: { tier: 'fragment', linkedFiles: ['/a.txt'] },
-        },
-      });
-
-      const result = attemptCorroborateUpgrade('/a.txt', '/b.txt', state);
-
-      expect(result.success).toBe(true);
-      expect(result.category).toBe('debris_relocation');
-      expect(result.previousTier).toBe('fragment');
-      expect(result.newTier).toBe('corroborated');
-      expect(result.updatedTierState?.corroboratingFiles).toEqual(['/a.txt', '/b.txt']);
-    });
-
-    it('should fail if files do not share evidence', () => {
-      const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
-        fileEvidenceStates: {
-          '/a.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-          '/b.txt': {
-            potentialEvidences: ['being_containment'],
-            revealedEvidences: ['being_containment'],
-          },
-        },
-        evidenceTiers: {
-          debris_relocation: { tier: 'fragment', linkedFiles: ['/a.txt'] },
-          being_containment: { tier: 'fragment', linkedFiles: ['/b.txt'] },
-        },
-      });
-
-      const result = attemptCorroborateUpgrade('/a.txt', '/b.txt', state);
-
-      expect(result.success).toBe(false);
-      expect(result.message).toContain('do not share evidence');
-    });
-
-    it('should not upgrade already corroborated evidence', () => {
-      const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation']),
-        fileEvidenceStates: {
-          '/a.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-          '/b.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-        evidenceTiers: {
-          debris_relocation: {
-            tier: 'corroborated',
-            linkedFiles: ['/a.txt', '/b.txt'],
-            corroboratingFiles: ['/a.txt', '/b.txt'],
-          },
-        },
-      });
-
-      const result = attemptCorroborateUpgrade('/a.txt', '/b.txt', state);
-
-      expect(result.success).toBe(false);
-      expect(result.message).toContain('already corroborated');
-    });
-  });
-
-  describe('attemptProvenUpgrade', () => {
-    it('should upgrade corroborated to proven with 3 connected files', () => {
-      const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation']),
-        fileEvidenceStates: {
-          '/a.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-          '/b.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-          '/c.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-        evidenceTiers: {
-          debris_relocation: {
-            tier: 'corroborated',
-            linkedFiles: ['/a.txt', '/b.txt'],
-            corroboratingFiles: ['/a.txt', '/b.txt'],
-          },
-        },
-      });
-
-      const existingLinks: Array<[string, string]> = [['/a.txt', '/b.txt']];
-      const result = attemptProvenUpgrade('/b.txt', '/c.txt', existingLinks, state);
-
-      expect(result.success).toBe(true);
-      expect(result.category).toBe('debris_relocation');
-      expect(result.newTier).toBe('proven');
-      expect(result.updatedTierState?.proofChain).toHaveLength(3);
-    });
-
-    it('should not upgrade with only 2 connected files', () => {
-      const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation']),
-        fileEvidenceStates: {
-          '/a.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-          '/b.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-        evidenceTiers: {
-          debris_relocation: {
-            tier: 'corroborated',
-            linkedFiles: ['/a.txt', '/b.txt'],
-            corroboratingFiles: ['/a.txt', '/b.txt'],
-          },
-        },
-      });
-
-      const existingLinks: Array<[string, string]> = [];
-      const result = attemptProvenUpgrade('/a.txt', '/b.txt', existingLinks, state);
-
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('countEvidenceByTier', () => {
-    it('should count evidence by tier correctly', () => {
+  describe('countEvidence', () => {
+    it('should count discovered evidence correctly', () => {
       const state = createTestState({
         truthsDiscovered: new Set(['debris_relocation', 'being_containment', 'telepathic_scouts']),
-        evidenceTiers: {
-          debris_relocation: { tier: 'proven', linkedFiles: [] },
-          being_containment: { tier: 'corroborated', linkedFiles: [] },
-          telepathic_scouts: { tier: 'fragment', linkedFiles: [] },
-        },
       });
 
-      const counts = countEvidenceByTier(state);
+      const count = countEvidence(state);
 
-      expect(counts.proven).toBe(1);
-      expect(counts.corroborated).toBe(1);
-      expect(counts.fragments).toBe(1);
-      expect(counts.total).toBe(3);
+      expect(count).toBe(3);
     });
 
-    it('should count evidence without tier state as fragments', () => {
+    it('should return 0 for no discovered evidence', () => {
+      const state = createTestState({
+        truthsDiscovered: new Set(),
+      });
+
+      const count = countEvidence(state);
+
+      expect(count).toBe(0);
+    });
+
+    it('should return 5 when all evidence discovered', () => {
+      const state = createTestState({
+        truthsDiscovered: new Set(TRUTH_CATEGORIES),
+      });
+
+      const count = countEvidence(state);
+
+      expect(count).toBe(5);
+    });
+  });
+
+  describe('getCaseStrengthDescription', () => {
+    it('should return COMPLETE for 5 evidence', () => {
+      const state = createTestState({
+        truthsDiscovered: new Set(TRUTH_CATEGORIES),
+      });
+
+      const description = getCaseStrengthDescription(state);
+
+      expect(description).toContain('COMPLETE');
+    });
+
+    it('should return STRONG for 4 evidence', () => {
+      const state = createTestState({
+        truthsDiscovered: new Set([
+          'debris_relocation',
+          'being_containment',
+          'telepathic_scouts',
+          'international_actors',
+        ]),
+      });
+
+      const description = getCaseStrengthDescription(state);
+
+      expect(description).toContain('STRONG');
+    });
+
+    it('should return MODERATE for 3 evidence', () => {
+      const state = createTestState({
+        truthsDiscovered: new Set(['debris_relocation', 'being_containment', 'telepathic_scouts']),
+      });
+
+      const description = getCaseStrengthDescription(state);
+
+      expect(description).toContain('MODERATE');
+    });
+
+    it('should return DEVELOPING for 1-2 evidence', () => {
       const state = createTestState({
         truthsDiscovered: new Set(['debris_relocation']),
-        evidenceTiers: {},
       });
 
-      const counts = countEvidenceByTier(state);
+      const description = getCaseStrengthDescription(state);
 
-      expect(counts.fragments).toBe(1);
-      expect(counts.total).toBe(1);
+      expect(description).toContain('DEVELOPING');
+    });
+
+    it('should return NONE for no evidence', () => {
+      const state = createTestState({
+        truthsDiscovered: new Set(),
+      });
+
+      const description = getCaseStrengthDescription(state);
+
+      expect(description).toContain('NONE');
     });
   });
 
-  describe('determineEndingQuality', () => {
-    it('should return best for 5 proven', () => {
+  describe('fileHasEvidence', () => {
+    it('should return true for files with revealed evidence', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(TRUTH_CATEGORIES),
-        evidenceTiers: Object.fromEntries(
-          TRUTH_CATEGORIES.map(c => [c, { tier: 'proven', linkedFiles: [] } as EvidenceTierState])
-        ),
-      });
-
-      expect(determineEndingQuality(state)).toBe('best');
-    });
-
-    it('should return good for 3+ proven', () => {
-      const state = createTestState({
-        truthsDiscovered: new Set(TRUTH_CATEGORIES),
-        evidenceTiers: {
-          debris_relocation: { tier: 'proven', linkedFiles: [] },
-          being_containment: { tier: 'proven', linkedFiles: [] },
-          telepathic_scouts: { tier: 'proven', linkedFiles: [] },
-          international_actors: { tier: 'corroborated', linkedFiles: [] },
-          transition_2026: { tier: 'corroborated', linkedFiles: [] },
-        },
-      });
-
-      expect(determineEndingQuality(state)).toBe('good');
-    });
-
-    it('should return neutral for 5 corroborated', () => {
-      const state = createTestState({
-        truthsDiscovered: new Set(TRUTH_CATEGORIES),
-        evidenceTiers: Object.fromEntries(
-          TRUTH_CATEGORIES.map(c => [
-            c,
-            { tier: 'corroborated', linkedFiles: [] } as EvidenceTierState,
-          ])
-        ),
-      });
-
-      expect(determineEndingQuality(state)).toBe('neutral');
-    });
-
-    it('should return bad for only fragments', () => {
-      const state = createTestState({
-        truthsDiscovered: new Set(TRUTH_CATEGORIES),
-        evidenceTiers: Object.fromEntries(
-          TRUTH_CATEGORIES.map(c => [c, { tier: 'fragment', linkedFiles: [] } as EvidenceTierState])
-        ),
-      });
-
-      expect(determineEndingQuality(state)).toBe('bad');
-    });
-
-    it('should return bad for less than 5 truths', () => {
-      const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
-        evidenceTiers: {
-          debris_relocation: { tier: 'proven', linkedFiles: [] },
-          being_containment: { tier: 'proven', linkedFiles: [] },
-        },
-      });
-
-      expect(determineEndingQuality(state)).toBe('bad');
-    });
-  });
-
-  describe('getFileTier', () => {
-    it('should return the highest tier among file contributions', () => {
-      const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
         fileEvidenceStates: {
-          '/multi.txt': {
-            potentialEvidences: ['debris_relocation', 'being_containment'],
-            revealedEvidences: ['debris_relocation', 'being_containment'],
+          '/test.txt': {
+            potentialEvidences: ['debris_relocation'],
+            revealedEvidences: ['debris_relocation'],
           },
         },
-        evidenceTiers: {
-          debris_relocation: { tier: 'fragment', linkedFiles: [] },
-          being_containment: { tier: 'proven', linkedFiles: [] },
+      });
+
+      expect(fileHasEvidence('/test.txt', state)).toBe(true);
+    });
+
+    it('should return false for files without evidence', () => {
+      const state = createTestState();
+
+      expect(fileHasEvidence('/unknown.txt', state)).toBe(false);
+    });
+
+    it('should return false for files with no revealed evidence', () => {
+      const state = createTestState({
+        fileEvidenceStates: {
+          '/test.txt': {
+            potentialEvidences: ['debris_relocation'],
+            revealedEvidences: [],
+          },
         },
       });
 
-      const tier = getFileTier('/multi.txt', state);
+      expect(fileHasEvidence('/test.txt', state)).toBe(false);
+    });
+  });
 
-      expect(tier).toBe('proven'); // Highest tier among contributions
+  describe('getFileEvidenceSymbol', () => {
+    it('should return evidence symbol for files with evidence', () => {
+      const state = createTestState({
+        fileEvidenceStates: {
+          '/test.txt': {
+            potentialEvidences: ['debris_relocation'],
+            revealedEvidences: ['debris_relocation'],
+          },
+        },
+      });
+
+      expect(getFileEvidenceSymbol('/test.txt', state)).toBe(EVIDENCE_SYMBOL);
     });
 
     it('should return null for files without evidence', () => {
       const state = createTestState();
 
-      expect(getFileTier('/unknown.txt', state)).toBeNull();
-    });
-  });
-
-  describe('getFileTierSymbol', () => {
-    it('should return correct symbol for each tier', () => {
-      const fragmentState = createTestState({
-        fileEvidenceStates: {
-          '/f.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-        truthsDiscovered: new Set(['debris_relocation']),
-        evidenceTiers: { debris_relocation: { tier: 'fragment', linkedFiles: [] } },
-      });
-      expect(getFileTierSymbol('/f.txt', fragmentState)).toBe('○');
-
-      const corrState = createTestState({
-        fileEvidenceStates: {
-          '/c.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-        truthsDiscovered: new Set(['debris_relocation']),
-        evidenceTiers: { debris_relocation: { tier: 'corroborated', linkedFiles: [] } },
-      });
-      expect(getFileTierSymbol('/c.txt', corrState)).toBe('◆');
-
-      const provenState = createTestState({
-        fileEvidenceStates: {
-          '/p.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-        truthsDiscovered: new Set(['debris_relocation']),
-        evidenceTiers: { debris_relocation: { tier: 'proven', linkedFiles: [] } },
-      });
-      expect(getFileTierSymbol('/p.txt', provenState)).toBe('●');
+      expect(getFileEvidenceSymbol('/unknown.txt', state)).toBeNull();
     });
   });
 });

@@ -3,62 +3,34 @@
 import { TerminalEntry } from '../../types';
 import { createEntry } from './utils';
 
-// Tutorial messages from UFO74 - shown one at a time
+// Tutorial messages from UFO74 - shown one at a time (concise version)
 export const TUTORIAL_MESSAGES: string[][] = [
   [
     '┌─────────────────────────────────────────────────────────┐',
     '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │',
     '└─────────────────────────────────────────────────────────┘',
   ],
-  ['UFO74: hey kid, youre in. nice work.'],
-  ['UFO74: listen carefully. i dont have much time to explain.'],
+  ['UFO74: youre in. nice.'],
+  ['UFO74: varginha, brazil, january 1996. they buried something.'],
+  ['UFO74: find evidence of 5 things:'],
   [
-    'UFO74: this is a government archive. something happened in',
-    '       varginha, brazil in january 1996. they buried it.',
+    '       1. what they RECOVERED',
+    '       2. what they CAPTURED',
+    '       3. how they COMMUNICATED',
+    '       4. who else was INVOLVED',
+    '       5. what happens NEXT',
   ],
-  ['UFO74: i need you to find evidence of 5 things:'],
-  [
-    '       1. what they RECOVERED (debris, materials)',
-    '       2. what they CAPTURED (beings, specimens)',
-    '       3. how they COMMUNICATED (signals, telepathy)',
-    '       4. who else was INVOLVED (other countries)',
-    '       5. what happens NEXT (future dates, plans)',
-  ],
-  // Step 6: After showing the 5 things, trigger evidence tracker reveal
+  // Step 5: After showing the 5 things, trigger evidence tracker reveal
   ['       >> EVIDENCE TRACKER INITIALIZED <<'],
-  [
-    'UFO74: the files are scattered across directories.',
-    '       use "ls" to see whats there, "cd" to move around,',
-    '       and "open" to read files. some are encrypted.',
-  ],
-  ['UFO74: pro tip: press TAB to autocomplete commands and filenames.'],
-  [
-    'UFO74: be careful, the more you move around—the risk will',
-    '       rise, and if it reaches the maximum, our connection',
-    '       will end kid.',
-  ],
-  // Step 10: After showing risk warning, trigger risk bar reveal
+  ['UFO74: use "ls", "cd", "open". some files are encrypted.'],
+  ['UFO74: TAB to autocomplete.'],
+  ['UFO74: watch your RISK level. too high and were done.'],
+  // Step 9: After showing risk warning, trigger risk bar reveal
   ['       >> RISK MONITOR ACTIVATED <<'],
-  [
-    'UFO74: you also got an ATT indicator up there. thats your',
-    '       attempt counter. invalid commands and wrong passwords',
-    '       will eat away at it. hit zero and youre locked out.',
-  ],
-  [
-    'UFO74: the real stuff is in the encrypted files and in',
-    '       hidden files. to see hidden files, we MUST override',
-    '       the terminal.',
-  ],
-  ['UFO74: ill keep track of what you find. good luck hackerkid.'],
-  [
-    '>> CONNECTION IDLE <<',
-    '',
-    'Type "help" for available commands.',
-    '',
-    'UFO74: first time hacking a government server?',
-    '       type "help basics" if you need guidance.',
-    '       or just dive in. your call kid.',
-  ],
+  ['UFO74: ATT counter = your tries. hit zero, locked out.'],
+  ['UFO74: the good stuff is encrypted or hidden. use override.'],
+  ['UFO74: good luck hackerkid.'],
+  ['>> CONNECTION IDLE <<', '', 'Type "help" for commands. "help basics" if youre new.'],
 ];
 
 // Boot sequence for new game (without UFO74 tutorial)
@@ -88,9 +60,7 @@ export function generateBootSequence(): TerminalEntry[] {
 export function getFirstRunMessage(): TerminalEntry[] {
   return [
     createEntry('system', ''),
-    createEntry('ufo74', 'UFO74: first time hacking a government server?'),
-    createEntry('ufo74', '       type "help basics" if you need guidance.'),
-    createEntry('ufo74', '       or just dive in. your call kid.'),
+    createEntry('ufo74', 'UFO74: new here? type "help basics".'),
     createEntry('system', ''),
   ];
 }
@@ -100,7 +70,7 @@ export function getFirstRunMessage(): TerminalEntry[] {
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Tutorial tip IDs
-export type TutorialTipId = 'first_fragment' | 'second_fragment_same_category';
+export type TutorialTipId = 'first_evidence';
 
 // Helper to create boxed tutorial tips
 function createTutorialTipBox(lines: string[]): TerminalEntry[] {
@@ -125,17 +95,11 @@ function createTutorialTipBox(lines: string[]): TerminalEntry[] {
 
 // Tutorial tips content
 export const TUTORIAL_TIPS: Record<TutorialTipId, string[]> = {
-  first_fragment: [
+  first_evidence: [
     'You found evidence!',
     '',
     'Keep searching for more files.',
     'Collect all 5 categories to win.',
-  ],
-  second_fragment_same_category: [
-    'Another piece of the puzzle!',
-    '',
-    'Keep exploring the files.',
-    'Use "progress" to track your case.',
   ],
 };
 

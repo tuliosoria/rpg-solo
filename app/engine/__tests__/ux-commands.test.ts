@@ -216,16 +216,12 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('EVIDENCE COLLECTED'))).toBe(true);
     });
 
-    it('should show discovered truths with tier status', () => {
+    it('should show discovered truths', () => {
       const state = createTestState({
         truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
-        evidenceTiers: {
-          debris_relocation: { tier: 'fragment', linkedFiles: ['/test.txt'] },
-          being_containment: {
-            tier: 'corroborated',
-            linkedFiles: ['/a.txt', '/b.txt'],
-            corroboratingFiles: ['/a.txt', '/b.txt'],
-          },
+        evidenceStates: {
+          debris_relocation: { linkedFiles: ['/test.txt'] },
+          being_containment: { linkedFiles: ['/a.txt', '/b.txt'] },
         },
       });
       const result = executeCommand('progress', state);

@@ -131,39 +131,23 @@ const STREAMING_DELAYS: Record<
 // UFO74 comments after viewing images - keyed by image src
 const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
   '/images/crash.png': [
-    'UFO74: that wreckage... the metallurgy is all wrong.',
-    'UFO74: they moved fast. usually they take weeks to secure a site.',
-    'UFO74: see how they positioned the tarps? they knew exactly what to hide.',
+    'UFO74: that wreckage... wrong metallurgy.',
+    'UFO74: they moved fast. knew what to hide.',
   ],
   '/images/et.png': [
-    "UFO74: ...i've seen that face before. in the dreams.",
-    "UFO74: containment protocols were rushed. they weren't prepared.",
-    "UFO74: that's not fear in those eyes. that's... recognition.",
+    'UFO74: seen that face in dreams.',
+    'UFO74: not fear in those eyes. recognition.',
   ],
   '/images/et-scared.png': [
-    'UFO74: kid... during transmission, something reached back.',
-    "UFO74: they didn't capture it. it let itself be captured.",
-    "UFO74: that expression... it's trying to warn us.",
+    'UFO74: during transmission, something reached back.',
+    'UFO74: let itself be captured.',
   ],
-  '/images/second-ship.png': [
-    'UFO74: wait. there was a SECOND one?',
-    'UFO74: this changes everything. they came for a reason.',
-    "UFO74: the trajectory... they weren't leaving. they were arriving.",
-  ],
-  '/images/drone.png': [
-    'UFO74: foreign drone, my ass. look at those flight characteristics.',
-    'UFO74: no propulsion system. no control surfaces. yet it flies.',
-    'UFO74: they tested it against everything in their arsenal. nothing matched.',
-  ],
-  '/images/prato-delta.png': [
-    "UFO74: three recovery sites... they didn't just find one crash.",
-    'UFO74: "material sharing agreement"... with who exactly?',
-    'UFO74: "discontinue local analysis" - they shipped everything out of country.',
-  ],
+  '/images/second-ship.png': ['UFO74: SECOND one? they were arriving.'],
+  '/images/drone.png': ['UFO74: no propulsion. no control surfaces. yet it flies.'],
+  '/images/prato-delta.png': ['UFO74: three recovery sites. shipped everything out.'],
   '/images/et-brain.png': [
-    "UFO74: ...you're looking at what they pulled from its skull.",
-    'UFO74: the neural density is off the charts. orders of magnitude beyond human.',
-    'UFO74: kid, be careful. some patterns... they can travel both ways.',
+    'UFO74: neural density off the charts.',
+    'UFO74: some patterns travel both ways. careful.',
   ],
 };
 
@@ -1700,36 +1684,16 @@ export default function Terminal({
     return `Saved: ${hours}h ago`;
   };
 
-  // Get evidence tier symbol for a category
+  // Get evidence symbol for a category
   const getEvidenceSymbol = (category: string): string => {
-    const tier = gameState.evidenceTiers?.[category];
-    if (!tier) return '□'; // Not discovered
-    switch (tier.tier) {
-      case 'proven':
-        return '●'; // Filled circle - proven
-      case 'corroborated':
-        return '◆'; // Filled diamond - linked
-      case 'fragment':
-        return '○'; // Empty circle - fragment only
-      default:
-        return '□';
-    }
+    const discovered = gameState.truthsDiscovered?.has(category);
+    return discovered ? '●' : '□'; // Filled circle if discovered, empty box if not
   };
 
-  // Get CSS class for evidence tier
+  // Get CSS class for evidence
   const getEvidenceClass = (category: string): string => {
-    const tier = gameState.evidenceTiers?.[category];
-    if (!tier) return styles.truthMissing;
-    switch (tier.tier) {
-      case 'proven':
-        return styles.truthProven;
-      case 'corroborated':
-        return styles.truthCorroborated;
-      case 'fragment':
-        return styles.truthFragment;
-      default:
-        return styles.truthMissing;
-    }
+    const discovered = gameState.truthsDiscovered?.has(category);
+    return discovered ? styles.truthProven : styles.truthMissing;
   };
 
   // Get truth discovery status (for backward compatibility)
@@ -1745,10 +1709,9 @@ export default function Terminal({
     };
   };
 
-  // Count proven evidence (for victory condition display)
-  const getProvenCount = (): number => {
-    if (!gameState.evidenceTiers) return 0;
-    return Object.values(gameState.evidenceTiers).filter(t => t.tier === 'proven').length;
+  // Get discovered count (for victory condition display)
+  const getDiscoveredCount = (): number => {
+    return gameState.truthsDiscovered?.size || 0;
   };
 
   // Get risk level display with percentage
@@ -2081,7 +2044,7 @@ export default function Terminal({
             >
               {getEvidenceSymbol('transition_2026')} NEXT
             </span>
-            <span className={styles.truthCount}>[{getProvenCount()}/5]</span>
+            <span className={styles.truthCount}>[{getDiscoveredCount()}/5]</span>
           </div>
           <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
             <span className={styles.trackerLabel}>RISK:</span>

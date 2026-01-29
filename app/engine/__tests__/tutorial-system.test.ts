@@ -14,30 +14,24 @@ import type { TutorialTipId } from '../commands/tutorial';
 describe('Tutorial System', () => {
   describe('shouldShowTutorialTip', () => {
     it('returns false when tutorial mode is off', () => {
-      const result = shouldShowTutorialTip('first_fragment', false, new Set());
+      const result = shouldShowTutorialTip('first_evidence', false, new Set());
       expect(result).toBe(false);
     });
 
     it('returns true when tutorial mode is on and tip not yet shown', () => {
-      const result = shouldShowTutorialTip('first_fragment', true, new Set());
+      const result = shouldShowTutorialTip('first_evidence', true, new Set());
       expect(result).toBe(true);
     });
 
     it('returns false when tip has already been shown', () => {
-      const shownTips = new Set(['first_fragment']);
-      const result = shouldShowTutorialTip('first_fragment', true, shownTips);
+      const shownTips = new Set(['first_evidence']);
+      const result = shouldShowTutorialTip('first_evidence', true, shownTips);
       expect(result).toBe(false);
-    });
-
-    it('returns true for different tip even if another was shown', () => {
-      const shownTips = new Set(['first_fragment']);
-      const result = shouldShowTutorialTip('second_fragment_same_category', true, shownTips);
-      expect(result).toBe(true);
     });
   });
 
   describe('getTutorialTip', () => {
-    const tipIds: TutorialTipId[] = ['first_fragment', 'second_fragment_same_category'];
+    const tipIds: TutorialTipId[] = ['first_evidence'];
 
     it.each(tipIds)('returns entries for %s', tipId => {
       const entries = getTutorialTip(tipId);
@@ -48,7 +42,7 @@ describe('Tutorial System', () => {
     });
 
     it('includes TUTORIAL TIP header', () => {
-      const entries = getTutorialTip('first_fragment');
+      const entries = getTutorialTip('first_evidence');
       const hasHeader = entries.some(e => e.content.includes('TUTORIAL TIP'));
       expect(hasHeader).toBe(true);
     });
@@ -101,7 +95,6 @@ describe('Tutorial System', () => {
       expect(entries.length).toBeGreaterThan(0);
 
       const allContent = entries.map(e => e.content).join('\n');
-      expect(allContent).toContain('first time');
       expect(allContent).toContain('help basics');
     });
   });
