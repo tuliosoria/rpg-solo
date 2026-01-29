@@ -130,7 +130,7 @@ export default function FirewallEyes({
       }
     }
 
-    // Cleanup timers for removed eyes
+    // Cleanup timers for removed eyes only (not all timers)
     detonationTimersRef.current.forEach((timer, id) => {
       if (!eyes.find(e => e.id === id)) {
         clearTimeout(timer);
@@ -138,11 +138,20 @@ export default function FirewallEyes({
       }
     });
 
-    return () => {
-      // Cleanup on unmount
-      detonationTimersRef.current.forEach(timer => clearTimeout(timer));
-    };
+    // Only cleanup all timers on actual unmount, not on re-renders
+    // The ref persists across renders, so we don't want to clear timers
+    // every time the eyes array changes
   }, [eyes, firewallDisarmed, paused, onEyeDetonate]);
+
+  // Separate cleanup effect for unmount only
+  useEffect(() => {
+    const timersRef = detonationTimersRef.current;
+    return () => {
+      // Cleanup all timers on unmount
+      timersRef.forEach(timer => clearTimeout(timer));
+      timersRef.clear();
+    };
+  }, []);
 
   // Handle click on eye
   const handleEyeClick = useCallback(
