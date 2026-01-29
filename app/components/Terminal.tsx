@@ -55,6 +55,7 @@ import FirewallEyes, {
   DETECTION_INCREASE_ON_DETONATE,
   DETECTION_THRESHOLD,
   BATCH_SIZE,
+  speakFirewallVoice,
 } from './FirewallEyes';
 
 // Lazy-load conditional components for better initial load performance
@@ -893,6 +894,7 @@ export default function Terminal({
       };
     });
     playSound('warning');
+    speakFirewallVoice(); // Creepy robotic voice for intimidation
   }, [playSound]);
 
   const handleFirewallEyeClick = useCallback(

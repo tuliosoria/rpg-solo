@@ -237,6 +237,42 @@ export function createFirewallEyeBatch(count: number = BATCH_SIZE): FirewallEye[
   return eyes;
 }
 
+// Creepy voice phrases for firewall eyes
+const FIREWALL_PHRASES = [
+  'I see you',
+  'You will fail',
+  'We block you',
+  'Cannot escape',
+  'Found you',
+  'Resistance is futile',
+];
+
+// Speak a creepy robotic voice when firewall eyes spawn
+export function speakFirewallVoice(): void {
+  // Check if speech synthesis is available
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    return;
+  }
+
+  // Pick a random phrase
+  const phrase = FIREWALL_PHRASES[Math.floor(Math.random() * FIREWALL_PHRASES.length)];
+
+  const utterance = new SpeechSynthesisUtterance(phrase);
+  utterance.pitch = 0.3; // Very low/deep
+  utterance.rate = 0.8; // Slow
+
+  // Try to find a deep/male voice
+  const voices = speechSynthesis.getVoices();
+  const deepVoice = voices.find(
+    v => v.name.toLowerCase().includes('male') || v.name.includes('Daniel')
+  );
+  if (deepVoice) {
+    utterance.voice = deepVoice;
+  }
+
+  speechSynthesis.speak(utterance);
+}
+
 // Export constants for use elsewhere
 export {
   DETECTION_THRESHOLD,
