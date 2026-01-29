@@ -6496,18 +6496,18 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     // After 3 wrong commands, UFO74 steps in to help
     if (newAlertCounter === 3) {
       output.push(createEntry('system', ''));
-      output.push(createEntry('ufo74', '>> hey kid, youre fumbling. let me help. <<'));
+      output.push(createEntry('ufo74', 'UFO74: hey kid, youre fumbling. let me help.'));
       output.push(
         createEntry(
           'ufo74',
-          '>> try these: "ls" to see files, "cd <dir>" to move, "open <file>" to read. <<'
+          'UFO74: try these: "ls" to see files, "cd <dir>" to move, "open <file>" to read.'
         )
       );
-      output.push(createEntry('ufo74', '>> type "help" if youre lost. <<'));
+      output.push(createEntry('ufo74', 'UFO74: type "help" if youre lost.'));
     } else if (newAlertCounter >= 5) {
       output.push(createEntry('system', ''));
       output.push(
-        createEntry('ufo74', '>> careful. too many mistakes and theyll lock you out. <<')
+        createEntry('ufo74', 'UFO74: careful. too many mistakes and theyll lock you out.')
       );
     }
 
