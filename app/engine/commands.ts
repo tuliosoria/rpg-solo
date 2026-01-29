@@ -158,12 +158,11 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('turing_evaluation')) return false;
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
-      // Trigger at detection level 45-55 on any command, BUT only if warning was shown
-      // If warning wasn't shown yet, don't trigger (let the warning trigger first)
+      // Trigger at detection level 45+, once warning was shown
+      // BUG FIX: Removed upper limit - previously if risk jumped past 55% the test never triggered
       if (!state.singularEventsTriggered?.has('turing_warning')) return false;
       return (
         state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_RANGE_MIN &&
-        state.detectionLevel <= DETECTION_THRESHOLDS.WANDERING_RANGE_MAX &&
         state.truthsDiscovered.size >= 1
       );
     },
@@ -256,7 +255,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       ],
       stateChanges: {
         singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'the_silence']),
-        detectionLevel: Math.min(state.detectionLevel + 20, 99),
+        detectionLevel: Math.min(state.detectionLevel + 12, 99), // was 20, reduced for pacing
         systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
       },
       delayMs: 5000,
@@ -3563,7 +3562,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output: trapOutput,
         stateChanges: {
-          detectionLevel: Math.min(100, state.detectionLevel + 20),
+          detectionLevel: Math.min(100, state.detectionLevel + 12), // was 20, reduced for pacing
           trapsTriggered,
           trapWarningGiven: true,
           filesRead: new Set([...(state.filesRead || []), filePath]),
@@ -4282,7 +4281,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output,
       stateChanges: {
         ...newState,
-        detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'recover', 12),
+        detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'recover', 8), // was 12, reduced for pacing
         sessionStability: state.sessionStability - 8,
       },
       triggerFlicker: true,
@@ -4320,7 +4319,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     return {
       output,
       stateChanges: {
-        detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'trace', 15),
+        detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'trace', 10), // was 15, reduced for pacing
         accessLevel: Math.min(state.accessLevel + 1, 3),
         sessionStability: state.sessionStability - 5,
       },
@@ -4403,7 +4402,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           ),
         ],
         stateChanges: {
-          detectionLevel: state.detectionLevel + 15,
+          detectionLevel: state.detectionLevel + 10, // was 15, reduced for pacing
           overrideFailedAttempts: newFailedAttempts,
           wrongAttempts: (state.wrongAttempts || 0) + 1,
         },
@@ -4483,7 +4482,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         flags: { ...state.flags, adminUnlocked: true },
         overrideFailedAttempts: 0,
         accessLevel: 5,
-        detectionLevel: state.detectionLevel + 25,
+        detectionLevel: state.detectionLevel + 15, // was 25, reduced for pacing
         sessionStability: state.sessionStability - 15,
         systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
         rngState: seededRandomInt(rng, 0, 2147483647),
@@ -5036,7 +5035,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ],
         stateChanges: {
           flags: { ...state.flags, scriptExecuted: true },
-          detectionLevel: state.detectionLevel + 15,
+          detectionLevel: state.detectionLevel + 10, // was 15, reduced for pacing
         },
         triggerFlicker: true,
         delayMs: 3000,
@@ -5287,7 +5286,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     // Increase detection significantly
-    const newDetection = Math.min(100, state.detectionLevel + 15);
+    const newDetection = Math.min(100, state.detectionLevel + 10); // was 15, reduced for pacing
 
     return {
       output: [
@@ -5919,9 +5918,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   },
 
   progress: (args, state) => {
-    // Show player progress summary with evidence tiers
-    const truthsNeeded = 5;
-    const truthsFound = Math.min(state.truthsDiscovered?.size || 0, truthsNeeded);
+    // Show player progress summary with evidence files collected
+    // IMPORTANT: Use file names only - no story spoilers
     const filesReadCount = state.filesRead?.size || 0;
     const bookmarksCount = state.bookmarkedFiles?.size || 0;
     const notesCount = state.playerNotes?.length || 0;
@@ -5938,19 +5936,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('system', ''),
     ];
 
-    // Evidence tier breakdown by category
-    const categoryLabels: Record<string, string> = {
-      debris_relocation: 'Debris Transfer',
-      being_containment: 'Bio Containment',
-      telepathic_scouts: 'Telepathic Recon',
-      international_actors: 'International',
-      transition_2026: 'Transition 2026',
-    };
-
-    output.push(createEntry('system', '  EVIDENCE STATUS:'));
-    output.push(createEntry('system', ''));
-
-    // Show each truth category with tier status
+    // Collect all evidence files across categories
+    const allEvidenceFiles: string[] = [];
     const categories = [
       'debris_relocation',
       'being_containment',
@@ -5960,54 +5947,40 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     ] as const;
 
     for (const category of categories) {
-      const label = categoryLabels[category].padEnd(18);
-      const hasEvidence = state.truthsDiscovered?.has(category);
+      const tierState = state.evidenceTiers?.[category];
+      if (tierState?.linkedFiles) {
+        allEvidenceFiles.push(...tierState.linkedFiles);
+      }
+    }
 
-      if (!hasEvidence) {
-        // Not discovered yet
-        output.push(createEntry('output', `    ${label} [░░░░░░░░░░] UNDISCOVERED`));
-      } else {
-        // Get tier for this category
-        const tierState = state.evidenceTiers?.[category];
-        const tier = tierState?.tier || 'fragment';
-        const tierLabel = EVIDENCE_TIER_LABELS[tier];
-        const tierSymbol = EVIDENCE_TIER_SYMBOLS[tier];
+    // Show evidence files collected (no spoilers - just filenames)
+    output.push(createEntry('system', '  EVIDENCE COLLECTED:'));
+    output.push(createEntry('system', ''));
 
-        // Progress bar based on tier
-        let progressBar = '';
-        let tierColor: 'output' | 'warning' | 'system' = 'output';
-
-        if (tier === 'fragment') {
-          progressBar = '███░░░░░░░';
-          tierColor = 'warning';
-        } else if (tier === 'corroborated') {
-          progressBar = '██████░░░░';
-          tierColor = 'output';
-        } else {
-          progressBar = '██████████';
-          tierColor = 'system';
-        }
-
-        output.push(
-          createEntry(tierColor, `    ${label} [${progressBar}] ${tierSymbol} ${tierLabel}`)
-        );
-
-        // Show linked files for this category
-        if (tierState?.linkedFiles && tierState.linkedFiles.length > 0) {
-          const fileNames = tierState.linkedFiles.map(f => f.split('/').pop()).slice(0, 3);
-          output.push(createEntry('output', `                         └─ ${fileNames.join(', ')}`));
-        }
+    if (allEvidenceFiles.length === 0) {
+      output.push(createEntry('output', '    No evidence files collected yet.'));
+      output.push(createEntry('system', ''));
+      output.push(createEntry('system', '    Read files to discover evidence.'));
+    } else {
+      // Show unique filenames only
+      const uniqueFiles = [...new Set(allEvidenceFiles)];
+      for (const filePath of uniqueFiles.slice(0, 12)) {
+        const fileName = filePath.split('/').pop() || filePath;
+        output.push(createEntry('output', `    ■ ${fileName}`));
+      }
+      if (uniqueFiles.length > 12) {
+        output.push(createEntry('system', `    ... and ${uniqueFiles.length - 12} more`));
       }
     }
 
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
 
-    // Case strength summary
+    // Case strength summary (neutral phrasing)
     const discoveredCount = tierCounts.total;
     output.push(createEntry('system', ''));
-    output.push(createEntry('output', `  EVIDENCE COLLECTED: ${discoveredCount}/5 categories`));
-    output.push(createEntry('system', `  STATUS: ${caseStrength}`));
+    output.push(createEntry('output', `  CASE STATUS: ${discoveredCount}/5 categories discovered`));
+    output.push(createEntry('system', `  STRENGTH: ${caseStrength}`));
     output.push(createEntry('system', ''));
 
     // Session Statistics

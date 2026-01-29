@@ -54,7 +54,7 @@ describe('Narrative Mechanics', () => {
         });
         const result = executeCommand('scan', state);
         expect(result.stateChanges.flags?.adminUnlocked).toBe(true);
-        expect(result.stateChanges.detectionLevel).toBe(25); // 10 + 15
+        expect(result.stateChanges.detectionLevel).toBe(20); // 10 + 10 (was +15, reduced for balance)
       });
 
       it('caps detection at 100', () => {
@@ -1234,10 +1234,10 @@ describe('Narrative Mechanics', () => {
         detectionLevel: 80,
         hiddenCommandsDiscovered: new Set(['scan']),
       });
-      // scan adds 15 detection, should push us to 95
+      // scan adds 10 detection (was 15, reduced for balance), should push us to 90
       const result = executeCommand('scan', state);
 
-      expect(result.stateChanges.detectionLevel).toBe(95);
+      expect(result.stateChanges.detectionLevel).toBe(90);
       expect(result.stateChanges.isGameOver).toBeUndefined();
     });
   });

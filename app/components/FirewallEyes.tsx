@@ -9,7 +9,8 @@ import styles from './FirewallEyes.module.css';
 const EYE_LIFETIME_MS = 8000; // Time before eye detonates (8 seconds)
 const EYE_WARNING_MS = 2000; // Time before detonation when eye starts pulsing
 const DETECTION_THRESHOLD = 25; // Detection level when firewall activates
-const SPAWN_INCREMENT = 10; // Spawn new eye every 10% detection increase
+const BATCH_SIZE = 5; // Spawn 5 eyes at once
+const SPAWN_COOLDOWN_MS = 60000; // 1 minute cooldown between spawns
 const DETECTION_INCREASE_ON_DETONATE = 5; // Risk increase when eye detonates
 
 interface FirewallEyesProps {
@@ -17,10 +18,10 @@ interface FirewallEyesProps {
   firewallActive: boolean;
   firewallDisarmed: boolean;
   eyes: FirewallEye[];
-  lastEyeSpawnDetection: number;
+  lastEyeSpawnTime: number;
   onEyeClick: (eyeId: string) => void;
   onEyeDetonate: (eyeId: string) => void;
-  onSpawnEye: () => void;
+  onSpawnEyeBatch: () => void;
   onActivateFirewall: () => void;
 }
 
@@ -29,13 +30,14 @@ export default function FirewallEyes({
   firewallActive,
   firewallDisarmed,
   eyes,
-  lastEyeSpawnDetection,
+  lastEyeSpawnTime,
   onEyeClick,
   onEyeDetonate,
-  onSpawnEye,
+  onSpawnEyeBatch,
   onActivateFirewall,
 }: FirewallEyesProps) {
   const detonationTimersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const spawnTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Activate firewall when detection reaches threshold
   useEffect(() => {
@@ -44,21 +46,38 @@ export default function FirewallEyes({
     }
   }, [detectionLevel, firewallActive, firewallDisarmed, onActivateFirewall]);
 
-  // Spawn new eye at incremental detection thresholds
+  // Spawn eye batch with cooldown timer
   useEffect(() => {
-    if (!firewallActive || firewallDisarmed) return;
-
-    // Calculate if we've crossed a new threshold
-    // First spawn at 25%, then at 35%, 45%, 55%, etc.
-    const thresholdsPassed = Math.floor((detectionLevel - DETECTION_THRESHOLD) / SPAWN_INCREMENT);
-    const lastThresholdsPassed = Math.floor(
-      (lastEyeSpawnDetection - DETECTION_THRESHOLD) / SPAWN_INCREMENT
-    );
-
-    if (thresholdsPassed > lastThresholdsPassed && thresholdsPassed >= 0) {
-      onSpawnEye();
+    if (!firewallActive || firewallDisarmed) {
+      // Clear spawn timer if firewall is inactive/disarmed
+      if (spawnTimerRef.current) {
+        clearTimeout(spawnTimerRef.current);
+        spawnTimerRef.current = null;
+      }
+      return;
     }
-  }, [detectionLevel, firewallActive, firewallDisarmed, lastEyeSpawnDetection, onSpawnEye]);
+
+    // Calculate time until next spawn is allowed
+    const now = Date.now();
+    const timeSinceLastSpawn = now - lastEyeSpawnTime;
+    const timeUntilNextSpawn = Math.max(0, SPAWN_COOLDOWN_MS - timeSinceLastSpawn);
+
+    // Clear any existing spawn timer
+    if (spawnTimerRef.current) {
+      clearTimeout(spawnTimerRef.current);
+    }
+
+    // Set timer for next spawn batch
+    spawnTimerRef.current = setTimeout(() => {
+      onSpawnEyeBatch();
+    }, timeUntilNextSpawn);
+
+    return () => {
+      if (spawnTimerRef.current) {
+        clearTimeout(spawnTimerRef.current);
+      }
+    };
+  }, [firewallActive, firewallDisarmed, lastEyeSpawnTime, onSpawnEyeBatch]);
 
   // Set up detonation timers for each eye
   useEffect(() => {
@@ -180,5 +199,20 @@ export function createFirewallEye(): FirewallEye {
   };
 }
 
+// Create a batch of eyes at once
+export function createFirewallEyeBatch(count: number = BATCH_SIZE): FirewallEye[] {
+  const eyes: FirewallEye[] = [];
+  for (let i = 0; i < count; i++) {
+    eyes.push(createFirewallEye());
+  }
+  return eyes;
+}
+
 // Export constants for use elsewhere
-export { DETECTION_THRESHOLD, DETECTION_INCREASE_ON_DETONATE, EYE_LIFETIME_MS };
+export {
+  DETECTION_THRESHOLD,
+  DETECTION_INCREASE_ON_DETONATE,
+  EYE_LIFETIME_MS,
+  BATCH_SIZE,
+  SPAWN_COOLDOWN_MS,
+};

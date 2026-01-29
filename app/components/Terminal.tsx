@@ -51,8 +51,10 @@ import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 import FirewallEyes, {
   createFirewallEye,
+  createFirewallEyeBatch,
   DETECTION_INCREASE_ON_DETONATE,
   DETECTION_THRESHOLD,
+  BATCH_SIZE,
 } from './FirewallEyes';
 
 // Lazy-load conditional components for better initial load performance
@@ -856,11 +858,12 @@ export default function Terminal({
 
   // Firewall Eyes handlers
   const handleFirewallActivate = useCallback(() => {
+    const now = Date.now();
     setGameState(prev => ({
       ...prev,
       firewallActive: true,
-      lastEyeSpawnDetection: prev.detectionLevel,
-      firewallEyes: [createFirewallEye()], // Spawn first eye on activation
+      lastEyeSpawnTime: now,
+      firewallEyes: createFirewallEyeBatch(BATCH_SIZE), // Spawn first batch of 5 eyes on activation
     }));
     playSound('alert');
     // Show UFO74 warning about the firewall
@@ -874,45 +877,27 @@ export default function Terminal({
     }));
   }, [playSound]);
 
-  const handleFirewallEyeSpawn = useCallback(() => {
+  const handleFirewallEyeBatchSpawn = useCallback(() => {
+    const now = Date.now();
     setGameState(prev => {
-      const newEyes = [...prev.firewallEyes, createFirewallEye()];
-      const eyeCount = newEyes.length;
+      const newEyes = [...prev.firewallEyes, ...createFirewallEyeBatch(BATCH_SIZE)];
 
-      // Add UFO74 urgency messages based on eye count
-      let urgencyMessage: TerminalEntry | null = null;
-      if (eyeCount === 2) {
-        urgencyMessage = createEntry(
-          'ufo74',
-          "UFO74: Another one! They're multiplying - click them fast!"
-        );
-      } else if (eyeCount === 3) {
-        urgencyMessage = createEntry(
-          'ufo74',
-          "UFO74: This is getting out of control. The firewall... it's AFRAID of something."
-        );
-      } else if (eyeCount === 4 && prev.flags.neuralLinkAuthenticated) {
-        urgencyMessage = createEntry(
-          'ufo74',
-          'UFO74: Wait... the neural link. It might be able to reach INTO the firewall. Try "link disarm"!'
-        );
-      } else if (eyeCount === 4) {
-        urgencyMessage = createEntry(
-          'ufo74',
-          'UFO74: KID! Too many eyes! There has to be a way to shut this down...'
-        );
-      } else if (eyeCount >= 5) {
-        urgencyMessage = createEntry(
-          'ufo74',
-          "UFO74: We're running out of time! Find something that can reach deeper than their code!"
-        );
-      }
+      // Add UFO74 urgency message for batch spawns
+      const urgencyMessage = prev.flags.neuralLinkAuthenticated
+        ? createEntry(
+            'ufo74',
+            'UFO74: MORE EYES! The neural link might disable the firewall - try "link disarm"!'
+          )
+        : createEntry(
+            'ufo74',
+            'UFO74: Another wave! Keep clicking those eyes - we need more time!'
+          );
 
       return {
         ...prev,
         firewallEyes: newEyes,
-        lastEyeSpawnDetection: prev.detectionLevel,
-        history: urgencyMessage ? [...prev.history, urgencyMessage] : prev.history,
+        lastEyeSpawnTime: now,
+        history: [...prev.history, urgencyMessage],
       };
     });
     playSound('warning');
@@ -1930,10 +1915,10 @@ export default function Terminal({
             firewallActive={gameState.firewallActive}
             firewallDisarmed={gameState.firewallDisarmed}
             eyes={gameState.firewallEyes}
-            lastEyeSpawnDetection={gameState.lastEyeSpawnDetection}
+            lastEyeSpawnTime={gameState.lastEyeSpawnTime}
             onEyeClick={handleFirewallEyeClick}
             onEyeDetonate={handleFirewallEyeDetonate}
-            onSpawnEye={handleFirewallEyeSpawn}
+            onSpawnEyeBatch={handleFirewallEyeBatchSpawn}
             onActivateFirewall={handleFirewallActivate}
           />
         )}

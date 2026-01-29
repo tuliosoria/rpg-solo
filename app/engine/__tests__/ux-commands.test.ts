@@ -19,7 +19,7 @@ describe('UX Commands', () => {
     it('should show error when no file has been opened', () => {
       const state = createTestState();
       const result = executeCommand('last', state);
-      
+
       expect(result.output.some(e => e.content.includes('No file opened yet'))).toBe(true);
     });
 
@@ -29,7 +29,7 @@ describe('UX Commands', () => {
         filesRead: new Set(['/internal/protocols/session_objectives.txt']),
       });
       const result = executeCommand('last', state);
-      
+
       expect(result.output.some(e => e.content.includes('Re-reading'))).toBe(true);
       expect(result.stateChanges.detectionLevel).toBeUndefined(); // No detection increase
     });
@@ -39,54 +39,54 @@ describe('UX Commands', () => {
     it('should go to parent directory when no history', () => {
       const state = createTestState({ currentPath: '/internal' });
       const result = executeCommand('back', state);
-      
+
       expect(result.stateChanges.currentPath).toBe('/');
     });
 
     it('should stay at root if already at root with no history', () => {
       const state = createTestState({ currentPath: '/' });
       const result = executeCommand('back', state);
-      
+
       expect(result.output.some(e => e.content.includes('Already at root'))).toBe(true);
     });
 
     it('should handle nested directories when no history', () => {
       const state = createTestState({ currentPath: '/internal/deep' });
       const result = executeCommand('back', state);
-      
+
       expect(result.stateChanges.currentPath).toBe('/internal');
     });
-    
+
     it('should use navigation history when available', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         currentPath: '/admin',
         navigationHistory: ['/internal', '/ops'],
       });
       const result = executeCommand('back', state);
-      
+
       // Should go to last item in history, not parent
       expect(result.stateChanges.currentPath).toBe('/ops');
       expect(result.stateChanges.navigationHistory).toEqual(['/internal']);
     });
-    
+
     it('should pop from navigation history stack', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         currentPath: '/admin/logs',
         navigationHistory: ['/', '/internal', '/ops'],
       });
       const result = executeCommand('back', state);
-      
+
       expect(result.stateChanges.currentPath).toBe('/ops');
       expect(result.stateChanges.navigationHistory).toEqual(['/', '/internal']);
     });
-    
+
     it('should fallback to parent when history is exhausted', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         currentPath: '/internal/protocols',
         navigationHistory: [],
       });
       const result = executeCommand('back', state);
-      
+
       expect(result.stateChanges.currentPath).toBe('/internal');
       expect(result.output.some(e => e.content.includes('TIP'))).toBe(true);
     });
@@ -96,7 +96,7 @@ describe('UX Commands', () => {
     it('should save a note', () => {
       const state = createTestState();
       const result = executeCommand('note password is test123', state);
-      
+
       expect(result.stateChanges.playerNotes).toBeDefined();
       expect(result.stateChanges.playerNotes?.length).toBe(1);
       expect(result.stateChanges.playerNotes?.[0].note).toBe('password is test123');
@@ -106,7 +106,7 @@ describe('UX Commands', () => {
     it('should show error when no text provided', () => {
       const state = createTestState();
       const result = executeCommand('note', state);
-      
+
       expect(result.output.some(e => e.content.includes('Specify note text'))).toBe(true);
     });
 
@@ -115,7 +115,7 @@ describe('UX Commands', () => {
         playerNotes: [{ note: 'first note', timestamp: 1000 }],
       });
       const result = executeCommand('note second note', state);
-      
+
       expect(result.stateChanges.playerNotes?.length).toBe(2);
     });
   });
@@ -124,7 +124,7 @@ describe('UX Commands', () => {
     it('should show message when no notes saved', () => {
       const state = createTestState();
       const result = executeCommand('notes', state);
-      
+
       expect(result.output.some(e => e.content.includes('No notes saved'))).toBe(true);
     });
 
@@ -136,7 +136,7 @@ describe('UX Commands', () => {
         ],
       });
       const result = executeCommand('notes', state);
-      
+
       expect(result.output.some(e => e.content.includes('YOUR NOTES'))).toBe(true);
       expect(result.output.some(e => e.content.includes('test note 1'))).toBe(true);
       expect(result.output.some(e => e.content.includes('test note 2'))).toBe(true);
@@ -149,23 +149,25 @@ describe('UX Commands', () => {
         bookmarkedFiles: new Set(['/internal/test.txt']),
       });
       const result = executeCommand('bookmark', state);
-      
+
       expect(result.output.some(e => e.content.includes('BOOKMARKED FILES'))).toBe(true);
     });
 
     it('should show empty message when no bookmarks', () => {
       const state = createTestState();
       const result = executeCommand('bookmark', state);
-      
+
       expect(result.output.some(e => e.content.includes('No bookmarks saved'))).toBe(true);
     });
 
     it('should add a bookmark', () => {
       const state = createTestState({ currentPath: '/internal/protocols' });
       const result = executeCommand('bookmark session_objectives.txt', state);
-      
+
       expect(result.stateChanges.bookmarkedFiles).toBeDefined();
-      expect(result.stateChanges.bookmarkedFiles?.has('/internal/protocols/session_objectives.txt')).toBe(true);
+      expect(
+        result.stateChanges.bookmarkedFiles?.has('/internal/protocols/session_objectives.txt')
+      ).toBe(true);
     });
 
     it('should toggle bookmark off', () => {
@@ -174,8 +176,10 @@ describe('UX Commands', () => {
         bookmarkedFiles: new Set(['/internal/protocols/session_objectives.txt']),
       });
       const result = executeCommand('bookmark session_objectives.txt', state);
-      
-      expect(result.stateChanges.bookmarkedFiles?.has('/internal/protocols/session_objectives.txt')).toBe(false);
+
+      expect(
+        result.stateChanges.bookmarkedFiles?.has('/internal/protocols/session_objectives.txt')
+      ).toBe(false);
       expect(result.output.some(e => e.content.includes('removed'))).toBe(true);
     });
   });
@@ -184,7 +188,7 @@ describe('UX Commands', () => {
     it('should list unread files', () => {
       const state = createTestState();
       const result = executeCommand('unread', state);
-      
+
       expect(result.output.some(e => e.content.includes('UNREAD FILES'))).toBe(true);
     });
 
@@ -207,9 +211,9 @@ describe('UX Commands', () => {
     it('should show investigation progress', () => {
       const state = createTestState();
       const result = executeCommand('progress', state);
-      
+
       expect(result.output.some(e => e.content.includes('INVESTIGATION PROGRESS'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('EVIDENCE STATUS'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('EVIDENCE COLLECTED'))).toBe(true);
     });
 
     it('should show discovered truths with tier status', () => {
@@ -217,21 +221,28 @@ describe('UX Commands', () => {
         truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
         evidenceTiers: {
           debris_relocation: { tier: 'fragment', linkedFiles: ['/test.txt'] },
-          being_containment: { tier: 'corroborated', linkedFiles: ['/a.txt', '/b.txt'], corroboratingFiles: ['/a.txt', '/b.txt'] },
+          being_containment: {
+            tier: 'corroborated',
+            linkedFiles: ['/a.txt', '/b.txt'],
+            corroboratingFiles: ['/a.txt', '/b.txt'],
+          },
         },
       });
       const result = executeCommand('progress', state);
-      
-      // Check for category names in the new format
-      expect(result.output.some(e => e.content.includes('DEBRIS TRANSFER') || e.content.includes('Debris Transfer'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('BIO CONTAINMENT') || e.content.includes('Bio Containment'))).toBe(true);
+
+      // New format shows file names instead of category spoilers
+      expect(
+        result.output.some(e => e.content.includes('test.txt') || e.content.includes('a.txt'))
+      ).toBe(true);
     });
 
     it('should show detection warning at high levels', () => {
       const state = createTestState({ detectionLevel: 75 });
       const result = executeCommand('progress', state);
-      
-      expect(result.output.some(e => e.content.includes('Detection level dangerously high'))).toBe(true);
+
+      expect(result.output.some(e => e.content.includes('Detection level dangerously high'))).toBe(
+        true
+      );
     });
 
     it('should show session statistics', () => {
@@ -240,10 +251,14 @@ describe('UX Commands', () => {
         sessionCommandCount: 50,
       });
       const result = executeCommand('progress', state);
-      
+
       expect(result.output.some(e => e.content.includes('Files examined: 2'))).toBe(true);
       // Commands executed is no longer shown; check for evidence links instead
-      expect(result.output.some(e => e.content.includes('Evidence links:') || e.content.includes('SESSION STATISTICS'))).toBe(true);
+      expect(
+        result.output.some(
+          e => e.content.includes('Evidence links:') || e.content.includes('SESSION STATISTICS')
+        )
+      ).toBe(true);
     });
   });
 
@@ -254,7 +269,7 @@ describe('UX Commands', () => {
         bookmarkedFiles: new Set(['/internal/protocols/session_objectives.txt']),
       });
       const result = executeCommand('ls', state);
-      
+
       expect(result.output.some(e => e.content.includes('★'))).toBe(true);
     });
 
@@ -264,40 +279,40 @@ describe('UX Commands', () => {
         filesRead: new Set(['/internal/protocols/session_objectives.txt']),
       });
       const result = executeCommand('ls', state);
-      
+
       expect(result.output.some(e => e.content.includes('[READ]'))).toBe(true);
     });
-    
+
     it('should show [NEW] for unread files', () => {
       const state = createTestState({
         currentPath: '/internal/protocols',
         filesRead: new Set(), // No files read
       });
       const result = executeCommand('ls', state);
-      
+
       expect(result.output.some(e => e.content.includes('[NEW]'))).toBe(true);
     });
   });
 
   describe('cd command navigation history', () => {
     it('should push current path to navigation history', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         currentPath: '/internal',
         navigationHistory: [],
       });
       const result = executeCommand('cd protocols', state);
-      
+
       expect(result.stateChanges.currentPath).toBe('/internal/protocols');
       expect(result.stateChanges.navigationHistory).toContain('/internal');
     });
-    
+
     it('should append to existing navigation history', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         currentPath: '/internal',
         navigationHistory: ['/'],
       });
       const result = executeCommand('cd protocols', state);
-      
+
       expect(result.stateChanges.navigationHistory).toEqual(['/', '/internal']);
     });
   });
@@ -306,7 +321,7 @@ describe('UX Commands', () => {
     it('should track lastOpenedFile', () => {
       const state = createTestState({ currentPath: '/internal/protocols' });
       const result = executeCommand('open session_objectives.txt', state);
-      
+
       expect(result.stateChanges.lastOpenedFile).toBe('/internal/protocols/session_objectives.txt');
     });
   });
@@ -319,22 +334,26 @@ describe('UX Commands', () => {
     it('should reduce detection level', () => {
       const state = createTestState({ detectionLevel: 40, waitUsesRemaining: 3 });
       const result = executeCommand('wait', state);
-      
+
       expect(result.stateChanges.detectionLevel).toBeLessThan(40);
       expect(result.stateChanges.waitUsesRemaining).toBe(2);
     });
 
     it('should increase system hostility', () => {
-      const state = createTestState({ detectionLevel: 40, waitUsesRemaining: 3, systemHostilityLevel: 0 });
+      const state = createTestState({
+        detectionLevel: 40,
+        waitUsesRemaining: 3,
+        systemHostilityLevel: 0,
+      });
       const result = executeCommand('wait', state);
-      
+
       expect(result.stateChanges.systemHostilityLevel).toBe(1);
     });
 
     it('should fail when no uses remaining', () => {
       const state = createTestState({ detectionLevel: 40, waitUsesRemaining: 0 });
       const result = executeCommand('wait', state);
-      
+
       expect(result.output.some(e => e.content.includes('Cannot wait any longer'))).toBe(true);
       expect(result.stateChanges.detectionLevel).toBeUndefined();
     });
@@ -342,7 +361,7 @@ describe('UX Commands', () => {
     it('should not reduce if detection already minimal', () => {
       const state = createTestState({ detectionLevel: 3, waitUsesRemaining: 3 });
       const result = executeCommand('wait', state);
-      
+
       expect(result.output.some(e => e.content.includes('already minimal'))).toBe(true);
       expect(result.stateChanges.detectionLevel).toBeUndefined();
     });
@@ -350,13 +369,13 @@ describe('UX Commands', () => {
     it('should reduce more at high detection levels', () => {
       const lowState = createTestState({ detectionLevel: 30, waitUsesRemaining: 3 });
       const highState = createTestState({ detectionLevel: 80, waitUsesRemaining: 3 });
-      
+
       const lowResult = executeCommand('wait', lowState);
       const highResult = executeCommand('wait', highState);
-      
+
       const lowReduction = 30 - (lowResult.stateChanges.detectionLevel ?? 30);
       const highReduction = 80 - (highResult.stateChanges.detectionLevel ?? 80);
-      
+
       expect(highReduction).toBeGreaterThan(lowReduction);
     });
   });
@@ -365,41 +384,41 @@ describe('UX Commands', () => {
     it('should not be available at low detection', () => {
       const state = createTestState({ detectionLevel: 50 });
       const result = executeCommand('hide', state);
-      
+
       expect(result.output.some(e => e.content.includes('not recognized'))).toBe(true);
     });
 
     it('should work at 90+ detection and reset to 70', () => {
-      const state = createTestState({ 
-        detectionLevel: 92, 
-        sessionStability: 100,
-        singularEventsTriggered: new Set(),
-      });
-      const result = executeCommand('hide', state);
-      
-      expect(result.stateChanges.detectionLevel).toBe(70);
-      expect(result.stateChanges.sessionStability).toBeLessThan(100);
-    });
-
-    it('should only work once per run', () => {
-      const state = createTestState({ 
-        detectionLevel: 95,
-        singularEventsTriggered: new Set(['hide_used']),
-      });
-      const result = executeCommand('hide', state);
-      
-      expect(result.output.some(e => e.content.includes('Cannot hide again'))).toBe(true);
-      expect(result.stateChanges.detectionLevel).toBeUndefined();
-    });
-
-    it('should trigger flicker effect', () => {
-      const state = createTestState({ 
+      const state = createTestState({
         detectionLevel: 92,
         sessionStability: 100,
         singularEventsTriggered: new Set(),
       });
       const result = executeCommand('hide', state);
-      
+
+      expect(result.stateChanges.detectionLevel).toBe(70);
+      expect(result.stateChanges.sessionStability).toBeLessThan(100);
+    });
+
+    it('should only work once per run', () => {
+      const state = createTestState({
+        detectionLevel: 95,
+        singularEventsTriggered: new Set(['hide_used']),
+      });
+      const result = executeCommand('hide', state);
+
+      expect(result.output.some(e => e.content.includes('Cannot hide again'))).toBe(true);
+      expect(result.stateChanges.detectionLevel).toBeUndefined();
+    });
+
+    it('should trigger flicker effect', () => {
+      const state = createTestState({
+        detectionLevel: 92,
+        sessionStability: 100,
+        singularEventsTriggered: new Set(),
+      });
+      const result = executeCommand('hide', state);
+
       expect(result.triggerFlicker).toBe(true);
     });
   });
@@ -411,7 +430,7 @@ describe('UX Commands', () => {
         filesRead: new Set(['/internal/protocols/session_objectives.txt']),
       });
       const result = executeCommand('open session_objectives.txt', state);
-      
+
       expect(result.output.some(e => e.content.includes('already read this file'))).toBe(true);
       expect(result.stateChanges.detectionLevel).toBe(state.detectionLevel + 1); // Reduced penalty
     });
@@ -424,7 +443,7 @@ describe('UX Commands', () => {
         trapWarningGiven: true,
       });
       const result = executeCommand('open URGENT_classified_alpha.txt', state);
-      
+
       expect(result.output.some(e => e.content.includes('already fell for this trap'))).toBe(true);
       expect(result.stateChanges.detectionLevel).toBe(state.detectionLevel + 1); // Reduced penalty, not +20
     });
@@ -438,7 +457,7 @@ describe('UX Commands', () => {
     it('should display directory structure', () => {
       const state = createTestState();
       const result = executeCommand('tree', state);
-      
+
       expect(result.output.some(e => e.content.includes('DIRECTORY STRUCTURE'))).toBe(true);
       expect(result.output.some(e => e.content.includes('/'))).toBe(true);
     });
@@ -446,7 +465,7 @@ describe('UX Commands', () => {
     it('should show current location', () => {
       const state = createTestState({ currentPath: '/internal' });
       const result = executeCommand('tree', state);
-      
+
       expect(result.output.some(e => e.content.includes('Current location: /internal'))).toBe(true);
     });
 
@@ -456,7 +475,7 @@ describe('UX Commands', () => {
         filesRead: new Set(['/storage/assets/transport_log_96.txt']),
       });
       const result = executeCommand('tree', state);
-      
+
       // Tree should show the marker for a read file
       expect(result.output.some(e => e.content.includes('[READ]'))).toBe(true);
     });
@@ -464,7 +483,7 @@ describe('UX Commands', () => {
     it('should not increase detection', () => {
       const state = createTestState({ detectionLevel: 10 });
       const result = executeCommand('tree', state);
-      
+
       expect(result.stateChanges.detectionLevel).toBeUndefined();
     });
   });
@@ -476,7 +495,7 @@ describe('UX Commands', () => {
         tutorialComplete: true,
       });
       const result = executeCommand('tutorial', state);
-      
+
       expect(result.stateChanges.tutorialStep).toBe(0);
       expect(result.stateChanges.tutorialComplete).toBe(false);
     });
@@ -486,14 +505,14 @@ describe('UX Commands', () => {
         history: [{ id: '1', type: 'output', content: 'test', timestamp: Date.now() }],
       });
       const result = executeCommand('tutorial', state);
-      
+
       expect(result.stateChanges.history).toEqual([]);
     });
 
     it('should show restart message', () => {
       const state = createTestState();
       const result = executeCommand('tutorial', state);
-      
+
       expect(result.output.some(e => e.content.includes('Restarting tutorial'))).toBe(true);
     });
   });
@@ -502,7 +521,7 @@ describe('UX Commands', () => {
     it('should show detailed help for specific command', () => {
       const state = createTestState();
       const result = executeCommand('help cd', state);
-      
+
       expect(result.output.some(e => e.content.includes('COMMAND: cd'))).toBe(true);
       expect(result.output.some(e => e.content.includes('USAGE:'))).toBe(true);
     });
@@ -510,7 +529,7 @@ describe('UX Commands', () => {
     it('should show help for open command', () => {
       const state = createTestState();
       const result = executeCommand('help open', state);
-      
+
       expect(result.output.some(e => e.content.includes('COMMAND: open'))).toBe(true);
       expect(result.output.some(e => e.content.includes('encrypted'))).toBe(true);
     });
@@ -518,7 +537,7 @@ describe('UX Commands', () => {
     it('should show help for decrypt command', () => {
       const state = createTestState();
       const result = executeCommand('help decrypt', state);
-      
+
       expect(result.output.some(e => e.content.includes('COMMAND: decrypt'))).toBe(true);
       expect(result.output.some(e => e.content.includes('security question'))).toBe(true);
     });
@@ -526,14 +545,14 @@ describe('UX Commands', () => {
     it('should show general help when no argument', () => {
       const state = createTestState();
       const result = executeCommand('help', state);
-      
+
       expect(result.output.some(e => e.content.includes('TERMINAL COMMANDS'))).toBe(true);
     });
 
     it('should show help for back command', () => {
       const state = createTestState();
       const result = executeCommand('help back', state);
-      
+
       expect(result.output.some(e => e.content.includes('COMMAND: back'))).toBe(true);
       expect(result.output.some(e => e.content.includes('browser back button'))).toBe(true);
     });
@@ -541,7 +560,7 @@ describe('UX Commands', () => {
     it('should handle unknown command gracefully', () => {
       const state = createTestState();
       const result = executeCommand('help unknownxyz', state);
-      
+
       // Should show general help or error message
       expect(result.output.length).toBeGreaterThan(0);
     });
@@ -557,10 +576,10 @@ describe('UX Commands', () => {
       const state = createTestState({
         currentPath: '/internal/protocols',
       });
-      
+
       // Open a file - should produce output
       const result = executeCommand('open session_objectives.txt', state);
-      
+
       // Should have output entries
       expect(result.output.length).toBeGreaterThan(0);
     });
@@ -577,15 +596,16 @@ describe('UX Commands', () => {
         },
         truthsDiscovered: new Set(['debris_relocation']),
       });
-      
+
       // Re-read the file
       const result = executeCommand('open debris_analysis.txt', state);
-      
+
       // Either shows "already read" message or reveals additional evidence
-      const hasContent = result.output.some(e => 
-        e.content.includes('already read') ||
-        e.content.includes('additional insights') ||
-        e.content.length > 0
+      const hasContent = result.output.some(
+        e =>
+          e.content.includes('already read') ||
+          e.content.includes('additional insights') ||
+          e.content.length > 0
       );
       expect(hasContent).toBe(true);
     });
@@ -595,10 +615,10 @@ describe('UX Commands', () => {
         currentPath: '/internal/protocols',
         fileEvidenceStates: {},
       });
-      
+
       // Open a file - should initialize evidence state
       const result = executeCommand('open session_objectives.txt', state);
-      
+
       // State should be tracked
       expect(result.output.length).toBeGreaterThan(0);
     });
@@ -608,10 +628,10 @@ describe('UX Commands', () => {
         currentPath: '/ops/medical',
         avatarExpression: 'neutral',
       });
-      
+
       // Open a potentially encrypted file
       const result = executeCommand('open subject_beta_autopsy.txt', state);
-      
+
       // Should produce output (either file content or encryption notice)
       expect(result.output.length).toBeGreaterThan(0);
     });
@@ -621,10 +641,10 @@ describe('UX Commands', () => {
         currentPath: '/comms/liaison',
         fileEvidenceStates: {},
       });
-      
+
       // Open file that could have multiple evidence types
       const result = executeCommand('open foreign_coordination_log.txt', state);
-      
+
       // Should output file content or encryption notice
       expect(result.output.length).toBeGreaterThan(0);
     });

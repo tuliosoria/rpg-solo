@@ -282,6 +282,7 @@ export interface GameState {
   firewallEyes: FirewallEye[]; // Active hostile eyes on screen
   firewallDisarmed: boolean; // True if player used neural link to disable
   lastEyeSpawnDetection: number; // Detection level when last eye spawned (for 10% increments)
+  lastEyeSpawnTime: number; // Timestamp of last eye batch spawn (for 1 min cooldown)
 }
 
 // Firewall Eye entity
@@ -499,4 +500,5 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   firewallEyes: [],
   firewallDisarmed: false,
   lastEyeSpawnDetection: 0,
+  lastEyeSpawnTime: 0,
 };
