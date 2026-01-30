@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  // Electron file:// compatibility
+  trailingSlash: true,
+  // Disable X-Powered-By header for security
+  poweredByHeader: false,
 };
 
 export default nextConfig;

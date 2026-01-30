@@ -7,6 +7,11 @@ const isDev = process.env.NODE_ENV === 'development';
 // Steam integration modules
 const steamAchievements = require('./steam-achievements');
 const steamCloud = require('./steam-cloud');
+const steamPresence = require('./steam-presence');
+
+// Window and tray modules
+const windowState = require('./window-state');
+const tray = require('./tray');
 
 // Steam state
 let steamClient = null;
@@ -15,9 +20,22 @@ let steamInitialized = false;
 // Server reference for cleanup
 let localServer = null;
 
+// Main window reference
+let mainWindow = null;
+
 // Steam App ID - Replace with your actual Steam App ID
 // For development/testing, use 480 (Spacewar test app)
 const STEAM_APP_ID = process.env.STEAM_APP_ID || '480';
+
+// ============================================================
+// Electron command-line optimizations for Steam/gaming
+// ============================================================
+app.commandLine.appendSwitch('--in-process-gpu'); // Better Steam overlay rendering
+app.commandLine.appendSwitch('disable-renderer-backgrounding'); // Consistent game loop
+app.commandLine.appendSwitch('disable-background-timer-throttling'); // Prevent timer throttling
+
+// Mark app as not quitting (for tray minimize)
+app.isQuitting = false;
 
 /**
  * Initializes Steamworks SDK.
@@ -40,6 +58,7 @@ function initializeSteam() {
       // Initialize sub-modules with the client
       steamAchievements.initialize(steamClient);
       steamCloud.initialize(steamClient);
+      steamPresence.initialize(steamClient);
 
       // Log some Steam info for debugging
       try {
@@ -56,8 +75,15 @@ function initializeSteam() {
       return true;
     }
   } catch (error) {
-    console.log('Steam initialization failed:', error.message);
+    console.error('Steam initialization failed:', error.message);
     console.log('Running without Steam integration');
+
+    // Handle specific Steam initialization failures
+    if (error.message.includes('SteamAPI_Init')) {
+      console.log('Hint: Ensure Steam client is running');
+    } else if (error.message.includes('steamworks.js')) {
+      console.log('Hint: Native module may need rebuilding');
+    }
   }
 
   return false;
@@ -69,8 +95,7 @@ function initializeSteam() {
 function shutdownSteam() {
   if (steamClient) {
     try {
-      // steamworks.js doesn't require explicit shutdown,
-      // but we clear our references
+      steamPresence.clearPresence();
       steamClient = null;
       steamInitialized = false;
       console.log('Steam shutdown complete');
@@ -81,20 +106,40 @@ function shutdownSteam() {
 }
 
 function createWindow() {
-  const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+  // Load saved window state
+  const savedState = windowState.loadState();
+
+  mainWindow = new BrowserWindow({
+    width: savedState.width,
+    height: savedState.height,
+    x: savedState.x,
+    y: savedState.y,
     minWidth: 800,
     minHeight: 600,
     resizable: true,
+    show: false, // Show after ready-to-show for smoother startup
+    backgroundColor: '#000000', // Reduce flash on startup
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      sandbox: true, // Enhanced security
+      backgroundThrottling: false, // Consistent game loop
+      v8CacheOptions: 'bypassHeatCheck', // Faster startup
     },
   });
 
-  // Steam overlay is handled automatically by steamworks.js when the window has focus
+  // Set up window state persistence
+  const stateManager = windowState.createWindowStateManager(mainWindow);
+
+  // Show window when ready and apply maximized state
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+    stateManager.applyMaximized();
+  });
+
+  // Initialize system tray
+  tray.initialize(mainWindow);
 
   if (isDev) {
     // Development: load from Next.js dev server
@@ -265,6 +310,47 @@ ipcMain.handle('steam:overlay:activate', (event, dialog) => {
 });
 
 // ============================================================
+// IPC Handlers for Rich Presence
+// ============================================================
+
+ipcMain.handle('steam:presence:set', (event, status) => {
+  return steamPresence.setPresence(status);
+});
+
+ipcMain.handle('steam:presence:update', (event, gameState) => {
+  // Update both Steam presence and tray status
+  steamPresence.updateFromGameState(gameState);
+  tray.updateFromGameState(gameState);
+  return { success: true };
+});
+
+ipcMain.handle('steam:presence:clear', () => {
+  return steamPresence.clearPresence();
+});
+
+ipcMain.handle('steam:presence:getStates', () => {
+  return steamPresence.getPresenceStates();
+});
+
+// ============================================================
+// IPC Handlers for Tray
+// ============================================================
+
+ipcMain.handle('tray:setMinimizeToTray', (event, enabled) => {
+  tray.setMinimizeToTray(enabled);
+  return { success: true };
+});
+
+ipcMain.handle('tray:isMinimizeToTrayEnabled', () => {
+  return tray.isMinimizeToTrayEnabled();
+});
+
+ipcMain.handle('tray:updateStatus', (event, status) => {
+  tray.updateTooltip(status);
+  return { success: true };
+});
+
+// ============================================================
 // App lifecycle
 // ============================================================
 
@@ -289,6 +375,9 @@ app.on('window-all-closed', () => {
     localServer = null;
   }
 
+  // Destroy tray icon
+  tray.destroy();
+
   // Shutdown Steam before quitting
   shutdownSteam();
 
@@ -299,6 +388,9 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
+  // Mark app as quitting so tray doesn't prevent close
+  app.isQuitting = true;
+
   // Ensure Steam is shut down
   shutdownSteam();
 });

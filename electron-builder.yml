@@ -1,0 +1,97 @@
+# Electron Builder Configuration
+# https://www.electron.build/configuration/configuration
+
+appId: com.varginha.terminal1996
+productName: "Varginha: Terminal 1996"
+copyright: "Copyright © 2026"
+
+# Directories
+directories:
+  output: dist
+  buildResources: build
+
+# Files to include in the build
+files:
+  - electron/**/*
+  - out/**/*
+  - "!**/*.map"
+  - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
+  - "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}"
+  - "!**/node_modules/*.d.ts"
+  - "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}"
+
+# Unpack native modules from asar for compatibility
+asar: true
+asarUnpack:
+  - "**/steamworks.js/**"
+  - "**/node_modules/steamworks.js/**"
+  - "**/*.node"
+
+# Windows configuration
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: public/icon.ico
+  artifactName: "${productName}-${version}-win-${arch}.${ext}"
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: public/icon.ico
+  uninstallerIcon: public/icon.ico
+  installerHeaderIcon: public/icon.ico
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: "Varginha: Terminal 1996"
+
+# macOS configuration
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: public/icon.icns
+  category: public.app-category.games
+  artifactName: "${productName}-${version}-mac-${arch}.${ext}"
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+
+dmg:
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+# Linux configuration
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+    - target: deb
+      arch:
+        - x64
+  icon: public/icon.png
+  category: Game
+  artifactName: "${productName}-${version}-linux-${arch}.${ext}"
+  synopsis: "A narrative puzzle game about the 1996 Varginha UFO incident"
+  description: |
+    Varginha: Terminal 1996 is a text-based puzzle game where players access 
+    a simulated Brazilian intelligence terminal set in January 1996.
+
+# Extra metadata
+extraMetadata:
+  main: electron/main.js
+
+# Publish configuration (for auto-update)
+publish:
+  provider: github
+  releaseType: release

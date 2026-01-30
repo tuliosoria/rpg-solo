@@ -107,4 +107,62 @@ contextBridge.exposeInMainWorld('electronAPI', {
      */
     activate: (dialog = 'achievements') => ipcRenderer.invoke('steam:overlay:activate', dialog),
   },
+
+  // Steam Rich Presence API
+  steamPresence: {
+    /**
+     * Sets a custom presence status string.
+     * @param {string} status - The status to display in Steam
+     * @returns {Promise<{success: boolean, error?: string}>}
+     */
+    set: (status) => ipcRenderer.invoke('steam:presence:set', status),
+
+    /**
+     * Updates presence from game state (also updates tray status).
+     * @param {Object} gameState - Current game state object
+     * @returns {Promise<{success: boolean}>}
+     */
+    update: (gameState) => ipcRenderer.invoke('steam:presence:update', gameState),
+
+    /**
+     * Clears the rich presence status.
+     * @returns {Promise<{success: boolean, error?: string}>}
+     */
+    clear: () => ipcRenderer.invoke('steam:presence:clear'),
+
+    /**
+     * Gets all predefined presence states.
+     * @returns {Promise<Object>}
+     */
+    getStates: () => ipcRenderer.invoke('steam:presence:getStates'),
+  },
+
+  // System Tray API
+  tray: {
+    /**
+     * Sets whether the app should minimize to tray.
+     * @param {boolean} enabled - Whether to enable minimize to tray
+     * @returns {Promise<{success: boolean}>}
+     */
+    setMinimizeToTray: (enabled) => ipcRenderer.invoke('tray:setMinimizeToTray', enabled),
+
+    /**
+     * Gets whether minimize to tray is enabled.
+     * @returns {Promise<boolean>}
+     */
+    isMinimizeToTrayEnabled: () => ipcRenderer.invoke('tray:isMinimizeToTrayEnabled'),
+
+    /**
+     * Updates the tray tooltip status.
+     * @param {string} status - Status text for the tooltip
+     * @returns {Promise<{success: boolean}>}
+     */
+    updateStatus: (status) => ipcRenderer.invoke('tray:updateStatus', status),
+
+    /**
+     * Listen for new game requests from tray menu.
+     * @param {Function} callback - Called when user clicks "New Game" in tray
+     */
+    onNewGame: (callback) => ipcRenderer.on('tray:newGame', callback),
+  },
 });
