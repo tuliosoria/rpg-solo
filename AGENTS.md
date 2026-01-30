@@ -189,3 +189,19 @@ The terminal itself has a personality that degrades as detection rises:
 ---
 
 **Keep edits minimal and consistent with the established style. Run tests after logic changes.**
+
+---
+
+## Skills (Domain-Specific Instructions)
+
+This project has specialized skills in `.github/skills/`:
+
+| Skill | Purpose | When to use |
+|-------|---------|-------------|
+| `game-design` | Narrative mechanics, detection system, player psychology | Adding/modifying game mechanics |
+| `game-content` | Writing in-world files, UFO74 dialogue, terminal messages | Creating new content |
+| `testing` | Test patterns, coverage requirements, mocking strategies | Writing/fixing tests |
+
+**Read the relevant SKILL.md before working in that domain.** For example:
+- Working on detection balance? Read `.github/skills/game-design/SKILL.md`
+- Adding new terminal files? Read `.github/skills/game-content/SKILL.md`
