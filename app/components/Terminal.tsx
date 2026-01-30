@@ -1703,6 +1703,16 @@ export default function Terminal({
   // Get truth discovery status (for backward compatibility)
   const getTruthStatus = () => {
     const truths = gameState.truthsDiscovered;
+    if (!truths || typeof truths.has !== 'function') {
+      return {
+        recovered: false,
+        captured: false,
+        communicated: false,
+        involved: false,
+        future: false,
+        total: 0,
+      };
+    }
     return {
       recovered: truths.has('debris_relocation'),
       captured: truths.has('being_containment'),
