@@ -131,9 +131,17 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       return {
         output: [
           createEntry('system', ''),
+          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
+          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+          createEntry('system', ''),
           createEntry('ufo74', 'UFO74: heads up. RISK climbing.'),
           createEntry('ufo74', '       at 45-55% theres a TURING EVALUATION.'),
           createEntry('ufo74', '       pick COLD, LOGICAL answers. act like a machine.'),
+          createEntry('system', ''),
+          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
+          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
           createEntry('system', ''),
         ],
         stateChanges: {
@@ -417,9 +425,15 @@ function isMeaningfulAction(
   state: GameState,
   result: { output: TerminalEntry[]; stateChanges: Partial<GameState> }
 ): boolean {
-  // Reading a file is meaningful
+  // Attempting to open/decrypt a file is meaningful - even failed attempts show intent
+  // Player is trying to engage with the game, not wandering aimlessly
   if (command === 'open' || command === 'decrypt') {
-    return result.output.some(e => e.type !== 'error');
+    return true;
+  }
+
+  // Navigation commands show active exploration
+  if (command === 'cd' || command === 'ls' || command === 'cat' || command === 'read') {
+    return true;
   }
 
   // Discovering truth is definitely meaningful
@@ -448,11 +462,11 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
     // First notice - friendly tip with contextual suggestion
     const hints: TerminalEntry[] = [
       createEntry('system', ''),
-      createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('warning', '│ >> UFO74 <<                                             │'),
-      createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
+      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
       createEntry('system', ''),
-      createEntry('ufo74', 'UFO74: still there? you seem lost.'),
+      createEntry('ufo74', 'UFO74: hey. need a hint?'),
     ];
 
     if (contextualHints) {
@@ -463,31 +477,35 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
     }
 
     hints.push(createEntry('system', ''));
-    hints.push(createEntry('warning', '>> <<'));
+    hints.push(createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'));
+    hints.push(createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'));
+    hints.push(createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'));
     hints.push(createEntry('system', ''));
     return hints;
   } else if (level === 1) {
     // Second notice - more specific guidance
     return [
       createEntry('system', ''),
-      createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('warning', '│ >> UFO74 <<                                             │'),
-      createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
+      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
       createEntry('system', ''),
       createEntry('ufo74', 'UFO74: look for evidence in:'),
       createEntry('output', '       /storage/, /ops/quarantine/, /comms/'),
       createEntry('ufo74', 'UFO74: read files. connect dots.'),
       createEntry('system', ''),
-      createEntry('warning', '>> <<'),
+      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
+      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
       createEntry('system', ''),
     ];
   } else {
     // Third notice - urgent help
     return [
       createEntry('system', ''),
-      createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('warning', '│ >> UFO74 <<                                             │'),
-      createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
+      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
       createEntry('system', ''),
       createEntry('ufo74', 'UFO74: last hint:'),
       createEntry('output', '       1. cd <directory>'),
@@ -495,7 +513,9 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
       createEntry('output', '       3. open <filename>'),
       createEntry('ufo74', 'UFO74: january 96. find the pieces.'),
       createEntry('system', ''),
-      createEntry('warning', '>> FINAL HINT <<'),
+      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
+      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
       createEntry('system', ''),
     ];
   }
