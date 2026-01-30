@@ -17,11 +17,19 @@ const PRESENCE_STATES = {
 };
 
 /**
+ * @typedef {Object} PresenceResult
+ * @property {boolean} success
+ * @property {string} [error]
+ * @property {boolean} [cached]
+ */
+
+/**
  * Initializes the Steam presence module.
- * @param {Object} client - The steamworks.js client instance
+ * @param {object | null | undefined} client - The steamworks.js client instance
  */
 function initialize(client) {
   steamClient = client;
+  currentPresence = '';
   if (steamClient) {
     console.log('Steam Rich Presence initialized');
   }
@@ -30,7 +38,7 @@ function initialize(client) {
 /**
  * Updates the Steam Rich Presence status.
  * @param {string} status - The status string to display
- * @returns {Object} Result with success status
+ * @returns {PresenceResult} Result with success status
  */
 function setPresence(status) {
   if (!steamClient) {
@@ -61,8 +69,8 @@ function setPresence(status) {
 
 /**
  * Updates presence based on game state.
- * @param {Object} gameState - Current game state from renderer
- * @returns {Object} Result with success status
+ * @param {object | null | undefined} gameState - Current game state from renderer
+ * @returns {PresenceResult} Result with success status
  */
 function updateFromGameState(gameState) {
   if (!steamClient) {
@@ -91,7 +99,7 @@ function updateFromGameState(gameState) {
 
 /**
  * Clears the Rich Presence status.
- * @returns {Object} Result with success status
+ * @returns {PresenceResult} Result with success status
  */
 function clearPresence() {
   if (!steamClient) {
@@ -121,7 +129,7 @@ function getCurrentPresence() {
 
 /**
  * Gets all predefined presence states.
- * @returns {Object} Object with all presence state constants
+ * @returns {object} Object with all presence state constants
  */
 function getPresenceStates() {
   return { ...PRESENCE_STATES };

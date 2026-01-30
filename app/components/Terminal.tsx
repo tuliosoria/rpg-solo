@@ -54,7 +54,7 @@ import FirewallEyes, {
   createFirewallEyeBatch,
   DETECTION_INCREASE_ON_DETONATE,
   DETECTION_THRESHOLD,
-  BATCH_SIZE,
+  getFirewallEyeBatchSize,
   speakFirewallVoice,
   initVoices,
 } from './FirewallEyes';
@@ -841,12 +841,15 @@ export default function Terminal({
   // Firewall Eyes handlers
   const handleFirewallActivate = useCallback(() => {
     const now = Date.now();
-    setGameState(prev => ({
-      ...prev,
-      firewallActive: true,
-      lastEyeSpawnTime: now,
-      firewallEyes: createFirewallEyeBatch(BATCH_SIZE), // Spawn first batch of 5 eyes on activation
-    }));
+    setGameState(prev => {
+      const batchSize = getFirewallEyeBatchSize(prev.detectionLevel);
+      return {
+        ...prev,
+        firewallActive: true,
+        lastEyeSpawnTime: now,
+        firewallEyes: createFirewallEyeBatch(batchSize),
+      };
+    });
     playSound('alert');
     // Show UFO74 warning about the firewall
     const firewallWarning = createEntry(
@@ -864,7 +867,8 @@ export default function Terminal({
     // The 60-second cooldown provides enough buffer for reading files
     const now = Date.now();
     setGameState(prev => {
-      const newEyes = [...prev.firewallEyes, ...createFirewallEyeBatch(BATCH_SIZE)];
+      const batchSize = getFirewallEyeBatchSize(prev.detectionLevel);
+      const newEyes = [...prev.firewallEyes, ...createFirewallEyeBatch(batchSize)];
 
       // Add UFO74 urgency message for batch spawns
       const urgencyMessage = prev.flags.neuralLinkAuthenticated

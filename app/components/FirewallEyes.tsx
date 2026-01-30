@@ -9,9 +9,32 @@ import styles from './FirewallEyes.module.css';
 const EYE_LIFETIME_MS = 8000; // Time before eye detonates (8 seconds)
 const EYE_WARNING_MS = 2000; // Time before detonation when eye starts pulsing
 const DETECTION_THRESHOLD = 25; // Detection level when firewall activates
-const BATCH_SIZE = 5; // Spawn 5 eyes at once
+const BATCH_SIZE = 5; // Default eyes spawned per batch
+const HIGH_RISK_BATCH_SIZE = 10;
+const CRITICAL_RISK_BATCH_SIZE = 12;
+const FIREWALL_EYE_BATCH_SIZES = {
+  BASE: BATCH_SIZE,
+  HIGH: HIGH_RISK_BATCH_SIZE,
+  CRITICAL: CRITICAL_RISK_BATCH_SIZE,
+} as const;
+const HIGH_RISK_THRESHOLD = 75;
+const CRITICAL_RISK_THRESHOLD = 85;
+const FIREWALL_EYE_BATCH_THRESHOLDS = {
+  HIGH: HIGH_RISK_THRESHOLD,
+  CRITICAL: CRITICAL_RISK_THRESHOLD,
+} as const;
 const SPAWN_COOLDOWN_MS = 60000; // 1 minute cooldown between spawns
 const DETECTION_INCREASE_ON_DETONATE = 5; // Risk increase when eye detonates
+
+export function getFirewallEyeBatchSize(detectionLevel: number): number {
+  if (detectionLevel >= FIREWALL_EYE_BATCH_THRESHOLDS.CRITICAL) {
+    return FIREWALL_EYE_BATCH_SIZES.CRITICAL;
+  }
+  if (detectionLevel >= FIREWALL_EYE_BATCH_THRESHOLDS.HIGH) {
+    return FIREWALL_EYE_BATCH_SIZES.HIGH;
+  }
+  return FIREWALL_EYE_BATCH_SIZES.BASE;
+}
 
 interface FirewallEyesProps {
   detectionLevel: number;
@@ -326,5 +349,7 @@ export {
   DETECTION_INCREASE_ON_DETONATE,
   EYE_LIFETIME_MS,
   BATCH_SIZE,
+  FIREWALL_EYE_BATCH_SIZES,
+  FIREWALL_EYE_BATCH_THRESHOLDS,
   SPAWN_COOLDOWN_MS,
 };

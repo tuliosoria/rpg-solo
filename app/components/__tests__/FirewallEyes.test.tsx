@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, act } from '@testing-library/react';
-import FirewallEyes, { DETECTION_THRESHOLD, SPAWN_COOLDOWN_MS } from '../FirewallEyes';
+import FirewallEyes, {
+  DETECTION_THRESHOLD,
+  SPAWN_COOLDOWN_MS,
+  FIREWALL_EYE_BATCH_SIZES,
+  FIREWALL_EYE_BATCH_THRESHOLDS,
+  getFirewallEyeBatchSize,
+} from '../FirewallEyes';
 import type { FirewallEye } from '../../types';
 
 describe('FirewallEyes', () => {
@@ -196,5 +202,25 @@ describe('FirewallEyes', () => {
     });
 
     expect(onEyeDetonate).toHaveBeenCalledWith('eye-1');
+  });
+
+  describe('getFirewallEyeBatchSize', () => {
+    it('returns the default size below 75% risk', () => {
+      expect(getFirewallEyeBatchSize(FIREWALL_EYE_BATCH_THRESHOLDS.HIGH - 1)).toBe(
+        FIREWALL_EYE_BATCH_SIZES.BASE
+      );
+    });
+
+    it('returns 10 at 75% risk', () => {
+      expect(getFirewallEyeBatchSize(FIREWALL_EYE_BATCH_THRESHOLDS.HIGH)).toBe(
+        FIREWALL_EYE_BATCH_SIZES.HIGH
+      );
+    });
+
+    it('returns 12 at 85% risk', () => {
+      expect(getFirewallEyeBatchSize(FIREWALL_EYE_BATCH_THRESHOLDS.CRITICAL)).toBe(
+        FIREWALL_EYE_BATCH_SIZES.CRITICAL
+      );
+    });
   });
 });
