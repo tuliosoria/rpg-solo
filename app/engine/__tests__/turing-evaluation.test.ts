@@ -8,6 +8,8 @@ const createState = (overrides: Partial<GameState> = {}): GameState => ({
   seed: 12345,
   rngState: 12345,
   sessionStartTime: Date.now(),
+  tutorialStep: -1,
+  tutorialComplete: true,
   ...overrides,
 });
 

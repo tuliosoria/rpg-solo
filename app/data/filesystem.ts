@@ -314,8 +314,6 @@ const hvac_maintenance_log: FileNode = {
   type: 'file',
   name: 'hvac_maintenance_log.txt',
   status: 'intact',
-  // Hidden reveal - cold storage failure with "CLASSIFIED" spoilage hints at biological specimens
-  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'HVAC MAINTENANCE LOG — BUILDING 3',
@@ -542,8 +540,6 @@ const vehicle_mileage_log: FileNode = {
   type: 'file',
   name: 'vehicle_log_jan96.txt',
   status: 'intact',
-  // Hidden reveal - the mileage jump (142km on 19-JAN) reveals transport operations
-  reveals: ['debris_relocation'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'VEHICLE MILEAGE LOG — JANUARY 1996',
@@ -991,8 +987,6 @@ const weekend_duty_roster: FileNode = {
   type: 'file',
   name: 'duty_roster_jan96.txt',
   status: 'intact',
-  // Hidden reveal - the "all hands on deck" mobilization on 20-21 JAN hints at coordinated response
-  reveals: ['international_actors'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'WEEKEND DUTY ROSTER — JANUARY 1996',
@@ -1161,7 +1155,6 @@ const emergency_broadcast: FileNode = {
   name: 'emergency_broadcast.enc',
   status: 'encrypted',
   accessThreshold: 2,
-  reveals: ['coverup_evidence'],
   timedDecrypt: {
     sequence: 'SIGINT-7734-ALPHA',
     timeLimit: 12000, // 12 seconds
@@ -1255,7 +1248,6 @@ const epilogue_government_response: FileNode = {
   type: 'file',
   name: 'internal_response_memo.txt',
   status: 'intact',
-  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'CLASSIFIED INTERNAL MEMORANDUM',
@@ -1294,7 +1286,6 @@ const epilogue_ufo74_fate: FileNode = {
   type: 'file',
   name: 'ufo74_last_signal.log',
   status: 'unstable',
-  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'SIGNAL INTERCEPT — UNVERIFIED',
@@ -1330,7 +1321,6 @@ const epilogue_2026_update: FileNode = {
   type: 'file',
   name: 'projection_update_2026.txt',
   status: 'restricted',
-  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'PROJECTION UPDATE — 2026 TRANSITION WINDOW',
@@ -1371,7 +1361,6 @@ const aircraft_incident_report: FileNode = {
   type: 'file',
   name: 'aircraft_incident_report.txt',
   status: 'intact',
-  reveals: ['debris_relocation'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'INCIDENT REPORT — EXPERIMENTAL AIRCRAFT DIVISION',
@@ -1405,7 +1394,6 @@ const foreign_drone_theory: FileNode = {
   type: 'file',
   name: 'foreign_drone_assessment.txt',
   status: 'intact',
-  reveals: ['debris_relocation'],
   imageTrigger: {
     src: '/images/drone.png',
     alt: 'Recovered visual - Foreign drone analysis',
@@ -1475,7 +1463,6 @@ const industrial_accident_theory: FileNode = {
   type: 'file',
   name: 'industrial_accident_theory.txt',
   status: 'intact',
-  reveals: ['debris_relocation'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ALTERNATIVE ASSESSMENT — INDUSTRIAL ORIGIN',
@@ -1518,7 +1505,6 @@ const logistics_manifest_fragment: FileNode = {
   name: 'logistics_manifest_fragment.txt',
   status: 'unstable',
   corruptible: true,
-  reveals: ['debris_relocation'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'LOGISTICS MANIFEST — PARTIAL RECOVERY',
@@ -1549,7 +1535,6 @@ const signal_analysis_partial: FileNode = {
   name: 'signal_analysis_partial.txt',
   status: 'unstable',
   corruptible: true,
-  reveals: ['telepathic_scouts'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'SIGNAL ANALYSIS — PRELIMINARY',
@@ -1580,7 +1565,6 @@ const foreign_liaison_note: FileNode = {
   name: 'foreign_liaison_note.txt',
   status: 'restricted',
   accessThreshold: 2,
-  reveals: ['international_actors'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'LIAISON NOTE — FOREIGN COORDINATION',
@@ -1615,7 +1599,6 @@ const encrypted_diplomatic_cable: FileNode = {
   name: 'diplomatic_cable_23jan.enc',
   status: 'encrypted',
   accessThreshold: 2,
-  reveals: ['international_actors'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ENCRYPTED CABLE — PRIORITY ALPHA',
@@ -1672,7 +1655,6 @@ const standing_orders_multinational: FileNode = {
   name: 'standing_orders_multinational.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['international_actors'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'STANDING ORDERS — MULTINATIONAL RECOVERY PROTOCOL',
@@ -1723,7 +1705,6 @@ const medical_examiner_query: FileNode = {
   type: 'file',
   name: 'medical_examiner_query.txt',
   status: 'intact',
-  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'QUERY — REGIONAL MEDICAL EXAMINER',
@@ -2025,7 +2006,6 @@ const parallel_incidents_global: FileNode = {
   name: 'parallel_incidents_global.txt',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['international_actors'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'REFERENCE — PARALLEL INCIDENTS (INTERNATIONAL)',
@@ -2061,7 +2041,6 @@ const thirty_year_cycle_analysis: FileNode = {
   name: 'thirty_year_cycle.txt',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ANALYSIS — THIRTY-YEAR CYCLE HYPOTHESIS',
@@ -2097,7 +2076,6 @@ const energy_extraction_theory: FileNode = {
   name: 'energy_extraction_theory.txt',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['telepathic_scouts'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL DOCUMENT — ENERGY EXTRACTION MODEL',
@@ -2137,7 +2115,6 @@ const non_arrival_colonization: FileNode = {
   status: 'restricted',
   accessThreshold: 5,
   requiredFlags: ['adminUnlocked'],
-  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL FRAMEWORK — NON-ARRIVAL COLONIZATION',
@@ -2184,7 +2161,6 @@ const early_witness_statement: FileNode = {
   name: 'witness_statement_raw.txt',
   status: 'unstable',
   corruptible: true,
-  reveals: ['telepathic_scouts'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'WITNESS STATEMENT — RAW TRANSCRIPT',
@@ -2221,7 +2197,6 @@ const initial_response_orders: FileNode = {
   name: 'initial_response_orders.txt',
   status: 'unstable',
   corruptible: true,
-  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'EMERGENCY ORDERS — INITIAL RESPONSE',
@@ -2262,7 +2237,6 @@ const transport_log_96: FileNode = {
   type: 'file',
   name: 'transport_log_96.txt',
   status: 'intact',
-  reveals: ['debris_relocation'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'TRANSPORT LOG — OPERATION PRATO EXTENSION',
@@ -2298,7 +2272,6 @@ const material_x_analysis: FileNode = {
   name: 'material_x_analysis.dat',
   status: 'restricted',
   accessThreshold: 2,
-  reveals: ['debris_relocation'],
   corruptible: true,
   imageTrigger: {
     src: '/images/crash.png',
@@ -2339,7 +2312,6 @@ const bio_container_log: FileNode = {
   type: 'file',
   name: 'bio_container.log',
   status: 'unstable',
-  reveals: ['being_containment'],
   corruptible: true,
   imageTrigger: {
     src: '/images/et.png',
@@ -2380,7 +2352,6 @@ const autopsy_alpha_log: FileNode = {
   name: 'autopsy_alpha.log',
   status: 'restricted',
   accessThreshold: 2,
-  reveals: ['being_containment'],
   corruptible: true,
   imageTrigger: {
     src: '/images/et.png',
@@ -2425,7 +2396,6 @@ const autopsy_addendum_psi: FileNode = {
   name: 'autopsy_addendum_psi.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['telepathic_scouts'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ADDENDUM PSI — NEURAL ASSESSMENT',
@@ -2461,7 +2431,6 @@ const transcript_core: FileNode = {
   type: 'file',
   name: 'transcript_core.enc',
   status: 'encrypted',
-  reveals: ['telepathic_scouts'],
   corruptible: true,
   imageTrigger: {
     src: '/images/et-scared.png',
@@ -2511,7 +2480,6 @@ const transcript_limit: FileNode = {
   name: 'transcript_limit.enc',
   status: 'encrypted',
   accessThreshold: 3,
-  reveals: ['transition_2026'],
   securityQuestion: {
     question: 'SECURITY CHECK: How many subjects were recovered total?',
     answers: ['3', 'three', '3 subjects', 'three subjects'],
@@ -2546,7 +2514,6 @@ const field_report_delta: FileNode = {
   type: 'file',
   name: 'field_report_delta.txt',
   status: 'intact',
-  reveals: ['international_actors'],
   imageTrigger: {
     src: '/images/prato-delta.png',
     alt: 'Recovered visual - Operation Prato Delta field report',
@@ -2587,7 +2554,6 @@ const scout_variants_meta: FileNode = {
   name: 'scout_variants.meta',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['telepathic_scouts'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL FRAMEWORK — SCOUT VARIANTS',
@@ -2623,7 +2589,6 @@ const energy_node_assessment: FileNode = {
   name: 'energy_node_assessment.txt',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ENERGY NODE ASSESSMENT — THEORETICAL',
@@ -2650,6 +2615,7 @@ const energy_node_assessment: FileNode = {
     'CONCLUSION:',
     '  Assessment mission appears complete.',
     '  Next phase initiation: Uncertain.',
+    '  Transition window: Undefined.',
     '  Recommend monitoring for activation signals.',
     '',
     '═══════════════════════════════════════════════════════════',
@@ -2661,7 +2627,6 @@ const threat_window: FileNode = {
   name: 'threat_window.red',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THREAT ASSESSMENT — TRANSITION WINDOW',
@@ -2701,7 +2666,6 @@ const internal_note_07: FileNode = {
   name: 'internal_note_07.txt',
   status: 'restricted',
   accessThreshold: 2,
-  reveals: ['international_actors'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'INTERNAL MEMORANDUM — NOTE 07',
@@ -2740,7 +2704,6 @@ const colonization_model: FileNode = {
   name: 'colonization_model.red',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL MODEL — INDIRECT COLONIZATION',
@@ -2784,13 +2747,6 @@ const briefing_watchers_1996: FileNode = {
   status: 'restricted_briefing',
   accessThreshold: 5,
   requiredFlags: ['adminUnlocked'],
-  reveals: [
-    'debris_relocation',
-    'being_containment',
-    'telepathic_scouts',
-    'international_actors',
-    'transition_2026',
-  ],
   content: [
     '═══════════════════════════════════════════════════════════',
     'EXECUTIVE BRIEFING — THE WATCHERS',
@@ -2919,7 +2875,6 @@ const ethics_exception: FileNode = {
   name: 'ethics_exception_03.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ETHICS EXCEPTION — REQUEST 03',
@@ -2948,7 +2903,6 @@ const bio_program_overview: FileNode = {
   name: 'bio_program_overview.red',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['being_containment'],
   imageTrigger: {
     src: '/images/bio-program.png',
     alt: 'Bio-Assessment Initiative - Recovered specimen documentation',
@@ -2989,7 +2943,6 @@ const window_alignment: FileNode = {
   name: 'window_alignment.meta',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'TEMPORAL ANALYSIS — WINDOW ALIGNMENT',
@@ -3030,7 +2983,6 @@ const neural_dump_alfa: FileNode = {
   name: 'neural_dump_alfa.psi',
   status: 'encrypted',
   accessThreshold: 3,
-  reveals: ['telepathic_scouts'],
   securityQuestion: {
     question: 'Subject designation (found in autopsy records):',
     answers: ['alfa', 'alpha', 'subject alfa', 'specimen alfa'],
@@ -3106,7 +3058,6 @@ const psi_analysis_report: FileNode = {
   name: 'psi_analysis_report.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['telepathic_scouts'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'REPORT — PSI-COMMUNICATION ANALYSIS',
@@ -3181,7 +3132,6 @@ const specimen_purpose_analysis: FileNode = {
   name: 'specimen_purpose_analysis.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ANALYSIS — SPECIMEN FUNCTION AND PURPOSE',
@@ -3247,7 +3197,6 @@ const second_deployment_intercept: FileNode = {
   status: 'encrypted',
   accessThreshold: 5,
   requiredFlags: ['adminUnlocked'],
-  reveals: ['transition_2026'],
   securityQuestion: {
     question: 'Year of projected transition window:',
     answers: ['2026', 'twenty twenty six', 'twenty-twenty-six'],
@@ -3324,7 +3273,6 @@ const window_clarification: FileNode = {
   name: 'window_clarification.red',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['transition_2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'MEMORANDUM — CLARIFICATION OF 2026 REFERENCE',
@@ -3393,7 +3341,6 @@ const extraction_mechanism: FileNode = {
   name: 'extraction_mechanism.red',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['transition_2026'],
   imageTrigger: {
     src: '/images/extraction.png',
     alt: 'Energy Extraction Model - Theoretical visualization',
@@ -3555,7 +3502,6 @@ const jardim_andere_report: FileNode = {
   type: 'file',
   name: 'jardim_andere_incident.txt',
   status: 'intact',
-  reveals: ['being_containment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'FIELD REPORT — INITIAL CONTACT',
@@ -4010,7 +3956,6 @@ const reconstructed_neural: FileNode = {
   status: 'intact',
   accessThreshold: 4,
   requiredFlags: ['scriptExecuted'],
-  reveals: ['telepathic_scouts'],
   content: [
     '▓▓▓ RECONSTRUCTED DATA — NEURAL FRAGMENT ▓▓▓',
     'RECONSTRUCTION: SUCCESSFUL',
@@ -4080,7 +4025,6 @@ const surveillance_footage_recovery: FileNode = {
     tone: 'surveillance',
     corrupted: true,
   },
-  reveals: ['being_containment'],
   corruptible: true,
 };
 

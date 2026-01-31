@@ -127,6 +127,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.turingEvaluationActive) return false;
       // Trigger at detection level WANDERING_LOW+, before Turing test can start
       // This ensures warning always shows before the test, even if detection jumps
+      if (!state.tutorialComplete) return false;
       return (
         state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_LOW &&
         state.truthsDiscovered.size >= 1
@@ -842,6 +843,11 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     pendingDecryptFile: undefined,
   };
 
+  if (!state.tutorialComplete) {
+    delete stateChanges.detectionLevel;
+    delete stateChanges.sessionStability;
+  }
+
   // Special handling: Decrypting neural dump unlocks scout link
   if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
     stateChanges.flags = { ...state.flags, scoutLinkUnlocked: true };
@@ -861,29 +867,50 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
   let truthNotices: TerminalEntry[] = [];
 
   if (revelationResult.revealedEvidence) {
-    const truthResult = checkTruthProgress(
-      { ...state, ...stateChanges } as GameState,
-      [revelationResult.revealedEvidence],
-      filePath
-    );
-    truthNotices = truthResult.notices;
-
-    // Merge truth discovery state changes (includes detection reduction breather)
-    Object.assign(stateChanges, truthResult.stateChanges);
-
-    // Update the file evidence state
-    stateChanges.fileEvidenceStates = {
-      ...state.fileEvidenceStates,
-      ...stateChanges.fileEvidenceStates,
-      [filePath]: revelationResult.updatedFileState,
-    };
-
-    // Hint at more evidences if available
-    if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
+    if (!state.tutorialComplete) {
+      // During tutorial, do not reveal evidence
+      stateChanges.fileEvidenceStates = {
+        ...state.fileEvidenceStates,
+        ...stateChanges.fileEvidenceStates,
+        [filePath]: revelationResult.updatedFileState,
+      };
+    } else if (state.flags?.overrideGateActive) {
+      // Override gate active: suppress further evidence reveals until protocol used
+      stateChanges.fileEvidenceStates = {
+        ...state.fileEvidenceStates,
+        ...stateChanges.fileEvidenceStates,
+        [filePath]: revelationResult.updatedFileState,
+      };
       truthNotices.push(createEntry('system', ''));
       truthNotices.push(
-        createEntry('system', '[This file may contain additional insights on future reads]')
+        createEntry('warning', 'NOTICE: Evidence lock engaged. Protocol override required.')
       );
+      truthNotices.push(createEntry('system', 'Search internal/ for override credentials.'));
+    } else {
+      const truthResult = checkTruthProgress(
+        { ...state, ...stateChanges } as GameState,
+        [revelationResult.revealedEvidence],
+        filePath
+      );
+      truthNotices = truthResult.notices;
+
+      // Merge truth discovery state changes (includes detection reduction breather)
+      Object.assign(stateChanges, truthResult.stateChanges);
+
+      // Update the file evidence state
+      stateChanges.fileEvidenceStates = {
+        ...state.fileEvidenceStates,
+        ...stateChanges.fileEvidenceStates,
+        [filePath]: revelationResult.updatedFileState,
+      };
+
+      // Hint at more evidences if available
+      if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
+        truthNotices.push(createEntry('system', ''));
+        truthNotices.push(
+          createEntry('system', '[This file may contain additional insights on future reads]')
+        );
+      }
     }
   }
 
@@ -2927,12 +2954,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     const newStatusCount = (state.statusCommandCount || 0) + 1;
 
+    const stateChanges: Partial<GameState> = {
+      detectionLevel: state.detectionLevel + 1,
+      statusCommandCount: newStatusCount,
+    };
+
+    if (!state.tutorialComplete) {
+      delete stateChanges.detectionLevel;
+    }
+
     return {
       output: createOutputEntries(lines),
-      stateChanges: {
-        detectionLevel: state.detectionLevel + 1,
-        statusCommandCount: newStatusCount,
-      },
+      stateChanges,
       // Signal to check paranoid achievement
       checkAchievements: newStatusCount >= 10 ? ['paranoid'] : undefined,
     };
@@ -3036,11 +3069,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     lines.push('');
 
+    const stateChanges: Partial<GameState> = {
+      detectionLevel: state.detectionLevel + 2,
+    };
+
+    if (!state.tutorialComplete) {
+      delete stateChanges.detectionLevel;
+    }
+
     return {
       output: createOutputEntries(lines),
-      stateChanges: {
-        detectionLevel: state.detectionLevel + 2,
-      },
+      stateChanges,
       delayMs: calculateDelay(state),
     };
   },
@@ -3064,15 +3103,21 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const node = getNode(targetPath, state);
 
     if (!node) {
+      const stateChanges: Partial<GameState> = {
+        detectionLevel: state.detectionLevel + 3,
+      };
+
+      if (!state.tutorialComplete) {
+        delete stateChanges.detectionLevel;
+      }
+
       return {
         output: [
           createEntry('error', `ERROR: Directory not found: ${args[0]}`),
           createEntry('system', ''),
           createEntry('system', 'TIP: Use "ls" to see available directories in current location.'),
         ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 3,
-        },
+        stateChanges,
       };
     }
 
@@ -3099,14 +3144,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Push current path to navigation history (for 'back' command)
     const updatedHistory = [...(state.navigationHistory || []), state.currentPath];
 
+    const stateChanges: Partial<GameState> = {
+      currentPath: targetPath,
+      detectionLevel: state.detectionLevel + 1,
+      flags: isFirstCd ? { ...state.flags, firstCdDone: true } : state.flags,
+      navigationHistory: updatedHistory,
+    };
+
+    if (!state.tutorialComplete) {
+      delete stateChanges.detectionLevel;
+    }
+
     return {
       output,
-      stateChanges: {
-        currentPath: targetPath,
-        detectionLevel: state.detectionLevel + 1,
-        flags: isFirstCd ? { ...state.flags, firstCdDone: true } : state.flags,
-        navigationHistory: updatedHistory,
-      },
+      stateChanges,
     };
   },
 
@@ -3129,12 +3180,19 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const access = canAccessFile(filePath, state);
 
     if (!access.accessible) {
+      const stateChanges: Partial<GameState> = {
+        detectionLevel: state.detectionLevel + 5,
+        legacyAlertCounter: state.legacyAlertCounter + 1,
+      };
+
+      if (!state.tutorialComplete) {
+        delete stateChanges.detectionLevel;
+        delete stateChanges.legacyAlertCounter;
+      }
+
       return {
         output: [createEntry('error', `ERROR: ${access.reason}`)],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 5,
-          legacyAlertCounter: state.legacyAlertCounter + 1,
-        },
+        stateChanges,
         delayMs: calculateDelay(state) + 500,
       };
     }
@@ -3194,9 +3252,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             createEntry('system', ''),
             createEntry('warning', 'UFO74: you already fell for this trap, kid. lets move on.'),
           ],
-          stateChanges: {
-            detectionLevel: state.detectionLevel + 1, // Reduced penalty for re-read
-          },
+          stateChanges: state.tutorialComplete
+            ? {
+                detectionLevel: state.detectionLevel + 1, // Reduced penalty for re-read
+              }
+            : {},
           streamingMode: 'fast',
         };
       }
@@ -3234,17 +3294,23 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         content.forEach(line => trapOutput.push(createEntry('error', line)));
       }
 
+      const nextFilesRead = new Set([...(state.filesRead || []), filePath]);
+      const safeTutorialState = {
+        trapsTriggered,
+        trapWarningGiven: true,
+        filesRead: nextFilesRead,
+      };
       return {
         output: trapOutput,
-        stateChanges: {
-          detectionLevel: Math.min(100, state.detectionLevel + 12), // was 20, reduced for pacing
-          trapsTriggered,
-          trapWarningGiven: true,
-          filesRead: new Set([...(state.filesRead || []), filePath]),
-          avatarExpression: 'scared', // Trap triggered - scared expression
-        },
-        triggerFlicker: true,
-        delayMs: 1000,
+        stateChanges: state.tutorialComplete
+          ? {
+              ...safeTutorialState,
+              detectionLevel: Math.min(100, state.detectionLevel + 12), // was 20, reduced for pacing
+              avatarExpression: 'scared', // Trap triggered - scared expression
+            }
+          : safeTutorialState,
+        triggerFlicker: state.tutorialComplete,
+        delayMs: state.tutorialComplete ? 1000 : undefined,
       };
     }
 
@@ -3270,9 +3336,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
       return {
         output,
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 1, // Less detection for re-read
-        },
+        stateChanges: state.tutorialComplete
+          ? {
+              detectionLevel: state.detectionLevel + 1, // Less detection for re-read
+            }
+          : {},
         streamingMode: 'fast',
       };
     }
@@ -3323,6 +3391,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       lastOpenedFile: filePath, // Track for 'last' command
     };
 
+    if (!state.tutorialComplete) {
+      delete stateChanges.detectionLevel;
+    }
+
     let triggerFlicker = false;
 
     if (file.status === 'unstable' && Math.random() < 0.3) {
@@ -3336,8 +3408,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ...state.fileMutations,
         [filePath]: newMutation,
       };
-      stateChanges.sessionStability = state.sessionStability - 3;
-      triggerFlicker = true;
+      if (state.tutorialComplete) {
+        stateChanges.sessionStability = state.sessionStability - 3;
+        triggerFlicker = true;
+      }
     }
 
     const content = getFileContent(filePath, { ...state, ...stateChanges }, mutation?.decrypted);
@@ -3369,29 +3443,50 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
       // If an evidence was revealed, process it through the truth system
       if (revelationResult.revealedEvidence) {
-        const truthResult = checkTruthProgress(
-          { ...state, ...stateChanges } as GameState,
-          [revelationResult.revealedEvidence],
-          filePath
-        );
-        notices = truthResult.notices;
-
-        // Merge truth discovery state changes (includes detection reduction breather)
-        Object.assign(stateChanges, truthResult.stateChanges);
-
-        // Update the file evidence state in game state
-        stateChanges.fileEvidenceStates = {
-          ...state.fileEvidenceStates,
-          ...stateChanges.fileEvidenceStates,
-          [filePath]: revelationResult.updatedFileState,
-        };
-
-        // If file has more unrevealed evidences, hint at it
-        if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
+        if (!state.tutorialComplete) {
+          // During tutorial, do not reveal evidence
+          stateChanges.fileEvidenceStates = {
+            ...state.fileEvidenceStates,
+            ...stateChanges.fileEvidenceStates,
+            [filePath]: revelationResult.updatedFileState,
+          };
+        } else if (state.flags?.overrideGateActive) {
+          // Override gate active: suppress further evidence reveals until protocol used
+          stateChanges.fileEvidenceStates = {
+            ...state.fileEvidenceStates,
+            ...stateChanges.fileEvidenceStates,
+            [filePath]: revelationResult.updatedFileState,
+          };
           notices.push(createEntry('system', ''));
           notices.push(
-            createEntry('system', '[This file may contain additional insights on future reads]')
+            createEntry('warning', 'NOTICE: Evidence lock engaged. Protocol override required.')
           );
+          notices.push(createEntry('system', 'Search internal/ for override credentials.'));
+        } else {
+          const truthResult = checkTruthProgress(
+            { ...state, ...stateChanges } as GameState,
+            [revelationResult.revealedEvidence],
+            filePath
+          );
+          notices = truthResult.notices;
+
+          // Merge truth discovery state changes (includes detection reduction breather)
+          Object.assign(stateChanges, truthResult.stateChanges);
+
+          // Update the file evidence state in game state
+          stateChanges.fileEvidenceStates = {
+            ...state.fileEvidenceStates,
+            ...stateChanges.fileEvidenceStates,
+            [filePath]: revelationResult.updatedFileState,
+          };
+
+          // If file has more unrevealed evidences, hint at it
+          if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
+            notices.push(createEntry('system', ''));
+            notices.push(
+              createEntry('system', '[This file may contain additional insights on future reads]')
+            );
+          }
         }
       }
 
@@ -3450,12 +3545,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Active trace triggers countdown
     if (filePath.includes('active_trace.sys') && !isEncryptedAndLocked) {
       if (!state.countdownActive) {
-        stateChanges.countdownActive = true;
-        stateChanges.countdownEndTime = Date.now() + 3 * 60 * 1000;
-        stateChanges.countdownTriggeredBy = 'trace_spike';
-        stateChanges.traceSpikeActive = true;
-        stateChanges.paranoiaLevel = Math.min(100, (state.paranoiaLevel || 0) + 15);
-        stateChanges.avatarExpression = 'shocked'; // Countdown start - shocked expression
+        if (state.tutorialComplete) {
+          stateChanges.countdownActive = true;
+          stateChanges.countdownEndTime = Date.now() + 3 * 60 * 1000;
+          stateChanges.countdownTriggeredBy = 'trace_spike';
+          stateChanges.traceSpikeActive = true;
+          stateChanges.paranoiaLevel = Math.min(100, (state.paranoiaLevel || 0) + 15);
+          stateChanges.avatarExpression = 'shocked'; // Countdown start - shocked expression
+        }
       }
     }
 
@@ -3543,6 +3640,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ])
       );
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideSuggested: true };
+    }
+
+    if (
+      state.tutorialComplete &&
+      totalFilesRead >= 2 &&
+      !state.flags.adminUnlocked &&
+      !state.flags.overrideGateActive
+    ) {
+      stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideGateActive: true };
+      notices.push(createEntry('system', ''));
+      notices.push(
+        createEntry('warning', 'NOTICE: Evidence lock engaged. Protocol override required.')
+      );
+      notices.push(createEntry('system', 'Search internal/ for override credentials.'));
     }
 
     // Check for Archivist achievement: all files in parent folder read
@@ -3829,6 +3940,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       }
 
       if (password !== 'varginha1996') {
+        const stateChanges: Partial<GameState> = {
+          detectionLevel: state.detectionLevel + 5,
+        };
+
+        if (!state.tutorialComplete) {
+          delete stateChanges.detectionLevel;
+        }
+
         return {
           output: [
             createEntry('error', 'DECRYPTION FAILED'),
@@ -3836,9 +3955,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             createEntry('system', ''),
             createEntry('ufo74', '[UFO74]: Wrong password. Keep looking.'),
           ],
-          stateChanges: {
-            detectionLevel: state.detectionLevel + 5,
-          },
+          stateChanges,
         };
       }
 
@@ -3879,7 +3996,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ],
         stateChanges: {
           ufo74SecretDiscovered: true,
-          detectionLevel: 100,
+          detectionLevel: state.tutorialComplete ? 100 : state.detectionLevel,
         },
         triggerFlicker: true,
         delayMs: 3000,
@@ -3893,10 +4010,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'ERROR: Decryption failed'),
           createEntry('warning', 'WARNING: Access level insufficient'),
         ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 10,
-          legacyAlertCounter: state.legacyAlertCounter + 1,
-        },
+        stateChanges: state.tutorialComplete
+          ? {
+              detectionLevel: state.detectionLevel + 10,
+              legacyAlertCounter: state.legacyAlertCounter + 1,
+            }
+          : {},
         delayMs: 1500,
       };
     }
@@ -3972,13 +4091,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('warning', 'WARNING: Collateral integrity loss detected'),
     ];
 
+    const stateChanges: Partial<GameState> = {
+      ...newState,
+      detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'recover', 8), // was 12, reduced for pacing
+      sessionStability: state.sessionStability - 8,
+    };
+
+    if (!state.tutorialComplete) {
+      delete stateChanges.detectionLevel;
+      delete stateChanges.sessionStability;
+    }
+
     return {
       output,
-      stateChanges: {
-        ...newState,
-        detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'recover', 8), // was 12, reduced for pacing
-        sessionStability: state.sessionStability - 8,
-      },
+      stateChanges,
       triggerFlicker: true,
       delayMs: 2500,
     };
@@ -4011,13 +4137,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output.push(createEntry('notice', 'NOTICE: Administrative access may be obtainable.'));
     }
 
+    const stateChanges: Partial<GameState> = {
+      detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'trace', 10), // was 15, reduced for pacing
+      accessLevel: Math.min(state.accessLevel + 1, 3),
+      sessionStability: state.sessionStability - 5,
+    };
+
+    if (!state.tutorialComplete) {
+      delete stateChanges.detectionLevel;
+      delete stateChanges.sessionStability;
+    }
+
     return {
       output,
-      stateChanges: {
-        detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'trace', 10), // was 15, reduced for pacing
-        accessLevel: Math.min(state.accessLevel + 1, 3),
-        sessionStability: state.sessionStability - 5,
-      },
+      stateChanges,
       triggerFlicker: true,
       delayMs: 1800,
     };
@@ -4032,6 +4165,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     // Check if password was provided
     if (args.length < 2) {
+      const stateChanges: Partial<GameState> = {
+        detectionLevel: state.detectionLevel + 5,
+      };
+
+      if (!state.tutorialComplete) {
+        delete stateChanges.detectionLevel;
+      }
+
       return {
         output: [
           createEntry('system', 'Initiating protocol override...'),
@@ -4043,9 +4184,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', ''),
           createEntry('system', 'Hint: Someone in this system might know the code...'),
         ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 5,
-        },
+        stateChanges,
         triggerFlicker: true,
         delayMs: 1500,
       };
@@ -4085,6 +4224,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         };
       }
 
+      const stateChanges: Partial<GameState> = {
+        detectionLevel: state.detectionLevel + 10, // was 15, reduced for pacing
+        overrideFailedAttempts: newFailedAttempts,
+        wrongAttempts: (state.wrongAttempts || 0) + 1,
+      };
+
+      if (!state.tutorialComplete) {
+        delete stateChanges.detectionLevel;
+        delete stateChanges.wrongAttempts;
+      }
+
       return {
         output: [
           createEntry('system', `Verifying code: ${password}...`),
@@ -4096,11 +4246,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             `WARNING: ${3 - newFailedAttempts} attempt(s) remaining before lockdown`
           ),
         ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 10, // was 15, reduced for pacing
-          overrideFailedAttempts: newFailedAttempts,
-          wrongAttempts: (state.wrongAttempts || 0) + 1,
-        },
+        stateChanges,
         triggerFlicker: true,
         delayMs: 1500,
       };
@@ -4148,7 +4294,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {
           terribleMistakeTriggered: true,
           sessionDoomCountdown: 8,
-          flags: { ...state.flags, adminUnlocked: true, forbiddenKnowledge: true },
+          flags: {
+            ...state.flags,
+            adminUnlocked: true,
+            forbiddenKnowledge: true,
+            overrideGateActive: false,
+          },
           accessLevel: 5,
           detectionLevel: 99,
           systemHostilityLevel: 5,
@@ -4161,6 +4312,21 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     // Success - unlock admin
+    const stateChanges: Partial<GameState> = {
+      flags: { ...state.flags, adminUnlocked: true, overrideGateActive: false },
+      overrideFailedAttempts: 0,
+      accessLevel: 5,
+      detectionLevel: state.detectionLevel + 15, // was 25, reduced for pacing
+      sessionStability: state.sessionStability - 15,
+      systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
+      rngState: seededRandomInt(rng, 0, 2147483647),
+    };
+
+    if (!state.tutorialComplete) {
+      delete stateChanges.detectionLevel;
+      delete stateChanges.sessionStability;
+    }
+
     return {
       output: [
         createEntry('system', `Verifying code: ${password}...`),
@@ -4173,15 +4339,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('output', ''),
         createEntry('warning', 'WARNING: Session heavily monitored'),
       ],
-      stateChanges: {
-        flags: { ...state.flags, adminUnlocked: true },
-        overrideFailedAttempts: 0,
-        accessLevel: 5,
-        detectionLevel: state.detectionLevel + 15, // was 25, reduced for pacing
-        sessionStability: state.sessionStability - 15,
-        systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
-        rngState: seededRandomInt(rng, 0, 2147483647),
-      },
+      stateChanges,
       triggerFlicker: true,
       delayMs: 2500,
     };
@@ -4218,10 +4376,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'CONNECTION TERMINATED BY REMOTE'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          prisoner45Disconnected: true,
-          detectionLevel: state.detectionLevel + 5,
-        },
+        stateChanges: state.tutorialComplete
+          ? {
+              prisoner45Disconnected: true,
+              detectionLevel: state.detectionLevel + 5,
+            }
+          : {
+              prisoner45Disconnected: true,
+            },
         triggerFlicker: true,
         delayMs: 2000,
       };
@@ -4261,9 +4423,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', 'Use: chat <your question>'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 3,
-        },
+        stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 3 } : {},
         delayMs: 1500,
       };
     }
@@ -4300,11 +4460,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
       return {
         output,
-        stateChanges: {
-          prisoner45QuestionsAsked: newCount,
-          prisoner45UsedResponses: newUsedResponses,
-          detectionLevel: state.detectionLevel + 1,
-        },
+        stateChanges: state.tutorialComplete
+          ? {
+              prisoner45QuestionsAsked: newCount,
+              prisoner45UsedResponses: newUsedResponses,
+              detectionLevel: state.detectionLevel + 1,
+            }
+          : {
+              prisoner45QuestionsAsked: newCount,
+              prisoner45UsedResponses: newUsedResponses,
+            },
         triggerFlicker: true,
         delayMs: 800,
       };
@@ -4331,11 +4496,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     return {
       output,
-      stateChanges: {
-        prisoner45QuestionsAsked: newCount,
-        prisoner45UsedResponses: newUsedResponses,
-        detectionLevel: state.detectionLevel + 2,
-      },
+      stateChanges: state.tutorialComplete
+        ? {
+            prisoner45QuestionsAsked: newCount,
+            prisoner45UsedResponses: newUsedResponses,
+            detectionLevel: state.detectionLevel + 2,
+          }
+        : {
+            prisoner45QuestionsAsked: newCount,
+            prisoner45UsedResponses: newUsedResponses,
+          },
       delayMs: 1000,
     };
   },
@@ -4358,9 +4528,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', '      Check quarantine storage for .psi files.'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 5,
-        },
+        stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 5 } : {},
         delayMs: 1500,
       };
     }
@@ -4420,10 +4588,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             createEntry('system', 'Use: link disarm       - Attempt to disable firewall'),
             createEntry('system', ''),
           ],
-          stateChanges: {
-            flags: { ...state.flags, neuralLinkAuthenticated: true },
-            detectionLevel: state.detectionLevel + 10,
-          },
+          stateChanges: state.tutorialComplete
+            ? {
+                flags: { ...state.flags, neuralLinkAuthenticated: true },
+                detectionLevel: state.detectionLevel + 10,
+              }
+            : {
+                flags: { ...state.flags, neuralLinkAuthenticated: true },
+              },
           imageTrigger: {
             src: '/images/et-brain.png',
             alt: 'Neural pattern link - Scout consciousness interface',
@@ -4446,9 +4618,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             createEntry('system', 'Review psi-comm documentation for the correct key.'),
             createEntry('system', ''),
           ],
-          stateChanges: {
-            detectionLevel: state.detectionLevel + 3,
-          },
+          stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 3 } : {},
           triggerFlicker: true,
           delayMs: 1500,
         };
@@ -4482,6 +4652,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       }
 
       // Disarm the firewall
+      const stateChanges: Partial<GameState> = {
+        firewallDisarmed: true,
+        firewallActive: false,
+        firewallEyes: [],
+        detectionLevel: Math.max(0, state.detectionLevel - 15),
+        scoutLinksUsed: (state.scoutLinksUsed || 0) + 1,
+      };
+
+      if (!state.tutorialComplete) {
+        delete stateChanges.detectionLevel;
+      }
+
       return {
         output: [
           createEntry('system', 'Initiating firewall countermeasure...'),
@@ -4498,13 +4680,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('output', '...you are... hidden... for now...'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          firewallDisarmed: true,
-          firewallActive: false,
-          firewallEyes: [],
-          detectionLevel: Math.max(0, state.detectionLevel - 15),
-          scoutLinksUsed: (state.scoutLinksUsed || 0) + 1,
-        },
+        stateChanges,
         triggerFlicker: true,
         delayMs: 2500,
       };
@@ -4513,6 +4689,15 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Check if scout link is exhausted
     const scoutLinksUsed = state.scoutLinksUsed || 0;
     if (scoutLinksUsed >= 4) {
+      const stateChanges: Partial<GameState> = {
+        flags: { ...state.flags, scoutLinkExhausted: true },
+        detectionLevel: state.detectionLevel + 10,
+      };
+
+      if (!state.tutorialComplete) {
+        delete stateChanges.detectionLevel;
+      }
+
       return {
         output: [
           createEntry('system', 'Initiating psi-comm bridge...'),
@@ -4526,10 +4711,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'LINK TERMINATED — PATTERN EXHAUSTED'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          flags: { ...state.flags, scoutLinkExhausted: true },
-          detectionLevel: state.detectionLevel + 10,
-        },
+        stateChanges,
         triggerFlicker: true,
         delayMs: 2500,
       };
@@ -4538,6 +4720,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // If no args, show link prompt
     if (args.length === 0) {
       const remaining = 4 - scoutLinksUsed;
+      const stateChanges: Partial<GameState> = {
+        detectionLevel: state.detectionLevel + 8,
+      };
+
+      if (!state.tutorialComplete) {
+        delete stateChanges.detectionLevel;
+      }
+
       return {
         output: [
           createEntry('system', 'Initiating psi-comm bridge...'),
@@ -4556,9 +4746,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', 'Use: link <thought or question>'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 8,
-        },
+        stateChanges,
         imageTrigger: {
           src: '/images/et-brain.png',
           alt: 'Neural pattern link - Scout consciousness interface',
@@ -4601,14 +4789,21 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
       output.push(createEntry('system', ''));
 
+      const stateChanges: Partial<GameState> = {
+        scoutLinksUsed: newLinksUsed,
+        scoutLinkUsedResponses: newUsedResponses,
+        detectionLevel: state.detectionLevel + 5,
+        sessionStability: state.sessionStability - 3,
+      };
+
+      if (!state.tutorialComplete) {
+        delete stateChanges.detectionLevel;
+        delete stateChanges.sessionStability;
+      }
+
       return {
         output,
-        stateChanges: {
-          scoutLinksUsed: newLinksUsed,
-          scoutLinkUsedResponses: newUsedResponses,
-          detectionLevel: state.detectionLevel + 5,
-          sessionStability: state.sessionStability - 3,
-        },
+        stateChanges,
         triggerFlicker: true,
         delayMs: 1200,
       };
@@ -4631,14 +4826,21 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     output.push(createEntry('system', ''));
 
+    const stateChanges: Partial<GameState> = {
+      scoutLinksUsed: newLinksUsed,
+      scoutLinkUsedResponses: newUsedResponses,
+      detectionLevel: state.detectionLevel + 5,
+      sessionStability: state.sessionStability - 5,
+    };
+
+    if (!state.tutorialComplete) {
+      delete stateChanges.detectionLevel;
+      delete stateChanges.sessionStability;
+    }
+
     return {
       output,
-      stateChanges: {
-        scoutLinksUsed: newLinksUsed,
-        scoutLinkUsedResponses: newUsedResponses,
-        detectionLevel: state.detectionLevel + 5,
-        sessionStability: state.sessionStability - 5,
-      },
+      stateChanges,
       triggerFlicker: true,
       delayMs: 1500,
     };
@@ -4685,9 +4887,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'Script must contain INIT and EXEC commands.'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 2,
-        },
+        stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 2 } : {},
       };
     }
 
@@ -4700,9 +4900,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'Script must specify TARGET=<path>'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 2,
-        },
+        stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 2 } : {},
       };
     }
 
@@ -4728,10 +4926,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', 'File /admin/neural_fragment.dat is now accessible.'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          flags: { ...state.flags, scriptExecuted: true },
-          detectionLevel: state.detectionLevel + 10, // was 15, reduced for pacing
-        },
+        stateChanges: state.tutorialComplete
+          ? {
+              flags: { ...state.flags, scriptExecuted: true },
+              detectionLevel: state.detectionLevel + 10, // was 15, reduced for pacing
+            }
+          : {
+              flags: { ...state.flags, scriptExecuted: true },
+            },
         triggerFlicker: true,
         delayMs: 3000,
       };
@@ -4758,9 +4960,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('warning', 'RECONSTRUCTION PARTIAL — FILE LOST'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          detectionLevel: state.detectionLevel + 10,
-        },
+        stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 10 } : {},
         triggerFlicker: true,
         delayMs: 2500,
       };
@@ -4777,9 +4977,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('error', 'Specified path does not contain reconstructable data.'),
         createEntry('system', ''),
       ],
-      stateChanges: {
-        detectionLevel: state.detectionLevel + 3,
-      },
+      stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 3 } : {},
     };
   },
 
@@ -4803,9 +5001,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             createEntry('error', 'EXECUTION FAILED'),
             createEntry('system', 'Evidence set incomplete. Script aborted.'),
           ],
-          stateChanges: {
-            detectionLevel: state.detectionLevel + 4,
-          },
+          stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 4 } : {},
         };
       }
 
@@ -4848,14 +5044,22 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('warning', 'NOTICE: Countermeasures reset'),
           createEntry('system', ''),
         ],
-        stateChanges: {
-          traceSpikeActive: false,
-          tracePurgeUsed: true,
-          countdownActive: false,
-          countdownEndTime: 0,
-          flags: { ...state.flags, tracePurgeUsed: true },
-          detectionLevel: Math.max(0, state.detectionLevel - 10),
-        },
+        stateChanges: state.tutorialComplete
+          ? {
+              traceSpikeActive: false,
+              tracePurgeUsed: true,
+              countdownActive: false,
+              countdownEndTime: 0,
+              flags: { ...state.flags, tracePurgeUsed: true },
+              detectionLevel: Math.max(0, state.detectionLevel - 10),
+            }
+          : {
+              traceSpikeActive: false,
+              tracePurgeUsed: true,
+              countdownActive: false,
+              countdownEndTime: 0,
+              flags: { ...state.flags, tracePurgeUsed: true },
+            },
         delayMs: 1200,
         triggerFlicker: true,
       };
@@ -5250,10 +5454,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('output', `Changed to: ${newPath}`),
           createEntry('system', 'TIP: Use "cd" to build navigation history for "back" command.'),
         ],
-        stateChanges: {
-          currentPath: newPath,
-          detectionLevel: state.detectionLevel + 1,
-        },
+        stateChanges: state.tutorialComplete
+          ? {
+              currentPath: newPath,
+              detectionLevel: state.detectionLevel + 1,
+            }
+          : {
+              currentPath: newPath,
+            },
       };
     }
 
@@ -5263,11 +5471,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     return {
       output: [createEntry('output', `Changed to: ${previousPath}`)],
-      stateChanges: {
-        currentPath: previousPath,
-        detectionLevel: state.detectionLevel + 1,
-        navigationHistory: newHistory,
-      },
+      stateChanges: state.tutorialComplete
+        ? {
+            currentPath: previousPath,
+            detectionLevel: state.detectionLevel + 1,
+            navigationHistory: newHistory,
+          }
+        : {
+            currentPath: previousPath,
+            navigationHistory: newHistory,
+          },
     };
   },
 
@@ -6059,7 +6272,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   let doomCountdownDecremented = false;
   let newDoomCountdown = 0;
 
-  if (state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
+  if (state.tutorialComplete && state.terribleMistakeTriggered && state.sessionDoomCountdown > 0) {
     newDoomCountdown = state.sessionDoomCountdown - 1;
     doomCountdownDecremented = true;
 
@@ -6395,9 +6608,29 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
         if (validAnswers.includes(answer)) {
           // Correct answer - perform decryption
+          if (!state.tutorialComplete) {
+            return {
+              output: [createEntry('system', 'Decryption unavailable during transmission.')],
+              stateChanges: {},
+            };
+          }
           return performDecryption(filePath, file, state);
         } else {
           // Wrong answer
+          if (!state.tutorialComplete) {
+            return {
+              output: [
+                createEntry('error', 'AUTHENTICATION FAILED'),
+                createEntry('system', ''),
+                createEntry('system', `HINT: ${file.securityQuestion.hint}`),
+                createEntry('system', ''),
+                createEntry('system', 'Enter answer or type "cancel" to abort:'),
+              ],
+              stateChanges: {},
+              delayMs: 500,
+            };
+          }
+
           const newAlertCounter = state.legacyAlertCounter + 1;
 
           if (newAlertCounter >= 8) {
@@ -6572,6 +6805,12 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
   // Handle "override protocol" as special case
   if (command === 'override') {
+    if (!state.tutorialComplete) {
+      return {
+        output: [createEntry('system', 'Override protocol unavailable during transmission.')],
+        stateChanges: {},
+      };
+    }
     return commands.override(args, state);
   }
 
@@ -6580,6 +6819,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
   if (!handler) {
     // Increment legacy alert counter for invalid commands
+    if (!state.tutorialComplete) {
+      const output: TerminalEntry[] = [...getCommandTip(command, args)];
+      return { output, stateChanges: {} };
+    }
+
     const newAlertCounter = state.legacyAlertCounter + 1;
     const nextDetection = Math.min(MAX_DETECTION, state.detectionLevel + 2);
 
@@ -6699,7 +6943,9 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     ...state,
     detectionLevel: result.stateChanges.detectionLevel ?? state.detectionLevel,
   };
-  const singularEvent = checkSingularEvents(stateWithUpdatedDetection, command, args);
+  const singularEvent = state.tutorialComplete
+    ? checkSingularEvents(stateWithUpdatedDetection, command, args)
+    : null;
   if (singularEvent) {
     // Merge singular event output with command result
     result.output = [...result.output, ...singularEvent.output];
@@ -6721,12 +6967,14 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // ═══════════════════════════════════════════════════════════════════════════
   // SYSTEM HOSTILITY - Update and apply personality degradation
   // ═══════════════════════════════════════════════════════════════════════════
-  const hostilityIncrease = calculateHostilityIncrease(state, command);
-  if (hostilityIncrease > 0) {
-    result.stateChanges.systemHostilityLevel = Math.min(
-      (state.systemHostilityLevel || 0) + hostilityIncrease,
-      5
-    );
+  if (state.tutorialComplete) {
+    const hostilityIncrease = calculateHostilityIncrease(state, command);
+    if (hostilityIncrease > 0) {
+      result.stateChanges.systemHostilityLevel = Math.min(
+        (state.systemHostilityLevel || 0) + hostilityIncrease,
+        5
+      );
+    }
   }
 
   // Apply hostile filtering to tips and system messages at high hostility
@@ -6831,7 +7079,9 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // ═══════════════════════════════════════════════════════════════════════════
   // WANDERING DETECTION - Implicit guidance for lost players
   // ═══════════════════════════════════════════════════════════════════════════
-  const wanderingCheck = checkWanderingState(state, command, args, result);
+  const wanderingCheck = state.tutorialComplete
+    ? checkWanderingState(state, command, args, result)
+    : null;
   if (wanderingCheck) {
     if (wanderingCheck.notices.length > 0) {
       result.output = [...result.output, ...wanderingCheck.notices];
@@ -6856,7 +7106,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   const prevDetection = Math.min(MAX_DETECTION, Math.max(0, state.detectionLevel));
 
   // Check if detection just crossed into SUSPICIOUS territory (50-69)
-  if (newDetection >= 50 && newDetection < 70 && prevDetection < 50) {
+  if (state.tutorialComplete && newDetection >= 50 && newDetection < 70 && prevDetection < 50) {
     result.output = [
       ...result.output,
       createEntry('system', ''),
@@ -6868,7 +7118,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
 
   // Check if detection crossed into ALERT territory (70-84)
-  if (newDetection >= 70 && newDetection < 85 && prevDetection < 70) {
+  if (state.tutorialComplete && newDetection >= 70 && newDetection < 85 && prevDetection < 70) {
     result.output = [
       ...result.output,
       createEntry('system', ''),
@@ -6882,7 +7132,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
 
   // Check if detection crossed into CRITICAL territory (85-89)
-  if (newDetection >= 85 && newDetection < 90 && prevDetection < 85) {
+  if (state.tutorialComplete && newDetection >= 85 && newDetection < 90 && prevDetection < 85) {
     result.output = [
       ...result.output,
       createEntry('system', ''),
@@ -6899,7 +7149,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
 
   // Check if detection crossed into IMMINENT territory (90+) - hide becomes available
-  if (newDetection >= 90 && prevDetection < 90) {
+  if (state.tutorialComplete && newDetection >= 90 && prevDetection < 90) {
     result.output = [
       ...result.output,
       createEntry('system', ''),
@@ -6917,7 +7167,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // ═══════════════════════════════════════════════════════════════════════════
   // MAX DETECTION GAME OVER - Detection reached 100%, session terminated
   // ═══════════════════════════════════════════════════════════════════════════
-  if (newDetection >= MAX_DETECTION && !result.stateChanges.isGameOver) {
+  if (state.tutorialComplete && newDetection >= MAX_DETECTION && !result.stateChanges.isGameOver) {
     result.output = [
       createEntry('error', ''),
       createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),

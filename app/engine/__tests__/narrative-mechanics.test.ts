@@ -7,6 +7,8 @@ const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   seed: 12345,
   rngState: 12345,
   sessionStartTime: Date.now(),
+  tutorialStep: -1,
+  tutorialComplete: true,
   ...overrides,
 });
 
@@ -391,7 +393,7 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
       });
 
-      // material_x_analysis.dat reveals 'debris_relocation'
+      // material_x_analysis.dat should reveal evidence
       const result = executeCommand('open material_x_analysis.dat', state);
 
       // Detection should NOT decrease when discovering evidence (breather mechanic was removed)
@@ -1252,7 +1254,7 @@ describe('Narrative Mechanics', () => {
         truthsDiscovered: new Set<TruthCategory>(),
         filesRead: new Set<string>(),
       });
-      // Open a file that reveals a truth (material_x_analysis.dat reveals debris_relocation)
+      // Open a file that reveals a truth
       const result = executeCommand('open material_x_analysis.dat', state);
 
       // Check that truthsDiscovered is included in stateChanges
@@ -1278,7 +1280,7 @@ describe('Narrative Mechanics', () => {
         flags: {},
         filesRead: new Set<string>(),
       });
-      // Open a file that reveals the 5th truth (transition_2026)
+      // Open a file that reveals the 5th truth
       const result = executeCommand('open energy_node_assessment.txt', state);
 
       // Should contain UFO74 message about running save_evidence.sh

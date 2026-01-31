@@ -10,26 +10,17 @@ export const TUTORIAL_MESSAGES: string[][] = [
     '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │',
     '└─────────────────────────────────────────────────────────┘',
   ],
-  ['UFO74: youre in. nice.'],
-  ['UFO74: varginha, brazil, january 1996. they buried something.'],
-  ['UFO74: find evidence of 5 things:'],
+  ['UFO74: youre in. keep it quiet.'],
+  ['UFO74: quick brief. this terminal is read-only.'],
+  ['UFO74: you move with "ls", "cd", and "open".'],
+  ['UFO74: when this channel closes, start with: ls'],
+  ['UFO74: internal/ is low-risk paperwork. good warm-up.'],
+  ['UFO74: watch the evidence tracker. it marks what you prove.'],
+  ['UFO74: risk climbs. once it spikes, they test you. stay cold.'],
   [
-    '       1. what they RECOVERED',
-    '       2. what they CAPTURED',
-    '       3. how they COMMUNICATED',
-    '       4. who else was INVOLVED',
-    '       5. what happens NEXT',
+    'UFO74: im out. once you dig in, the system watches back.',
+    '       move slow. read everything. connect the pieces.',
   ],
-  // Step 5: After showing the 5 things, trigger evidence tracker reveal
-  ['       >> EVIDENCE TRACKER INITIALIZED <<'],
-  ['UFO74: use "ls", "cd", "open". some files are encrypted.'],
-  ['UFO74: TAB to autocomplete.'],
-  ['UFO74: watch your RISK level. too high and were done.'],
-  // Step 9: After showing risk warning, trigger risk bar reveal
-  ['       >> RISK MONITOR ACTIVATED <<'],
-  ['UFO74: ATT counter = your tries. hit zero, locked out.'],
-  ['UFO74: the good stuff is encrypted or hidden. use override.'],
-  ['UFO74: good luck hackerkid.'],
   ['>> CONNECTION IDLE <<', '', 'Type "help" for commands. "help basics" if youre new.'],
 ];
 
@@ -258,9 +249,6 @@ export function getTutorialMessage(step: number): TerminalEntry[] {
     if (isFirstStep) {
       // Skip the original header lines (they're replaced above)
       continue;
-    } else if (step === 6 || step === 9) {
-      // Tracker reveal messages - styled as notices
-      entries.push(createEntry('notice', msg));
     } else if (isLastStep) {
       // Last message: first line is channel closed, then system/ufo74 messages
       if (i === 0) {
