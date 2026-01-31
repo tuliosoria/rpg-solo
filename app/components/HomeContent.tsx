@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { GameState } from '../types';
-import { createNewGame, loadGame } from '../storage/saves';
+import { createNewGame, loadGame, loadCheckpoint } from '../storage/saves';
 import { useGlobalErrorHandler } from '../hooks/useGlobalErrorHandler';
 import ErrorBoundary from './ErrorBoundary';
 import Menu from './Menu';
@@ -28,6 +28,19 @@ function HomeContentInner() {
     const loadedState = loadGame(slotId);
     if (loadedState) {
       setGameState(loadedState);
+      setView('game');
+    }
+  }, []);
+
+  const handleLoadCheckpoint = useCallback((slotId: string) => {
+    const loadedState = loadCheckpoint(slotId);
+    if (loadedState) {
+      // Reset game over state when loading checkpoint
+      setGameState({
+        ...loadedState,
+        isGameOver: false,
+        gameOverReason: undefined,
+      });
       setView('game');
     }
   }, []);
@@ -57,6 +70,7 @@ function HomeContentInner() {
           initialState={gameState}
           onExitAction={handleExit}
           onSaveRequestAction={handleSaveRequest}
+          onLoadCheckpointAction={handleLoadCheckpoint}
         />
         {showSaveModal && (
           <SaveModal

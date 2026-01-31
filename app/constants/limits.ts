@@ -22,3 +22,6 @@ export const MAX_SAVE_SLOTS = 10;
 
 // Maximum number of navigation history entries (for 'back' command)
 export const MAX_NAVIGATION_HISTORY = 20;
+
+// Maximum number of checkpoint saves (rolling, oldest deleted)
+export const MAX_CHECKPOINT_SAVES = 5;

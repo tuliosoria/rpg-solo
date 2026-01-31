@@ -10,19 +10,22 @@
  * @module storage/saves
  */
 
-import { GameState, SaveSlot, DEFAULT_GAME_STATE, FileMutation } from '../types';
+import { GameState, SaveSlot, CheckpointSlot, DEFAULT_GAME_STATE, FileMutation } from '../types';
 import { generateSeed } from '../engine/rng';
 import { generateBootSequence } from '../engine/commands';
 import {
   MAX_HISTORY_SIZE,
   MAX_COMMAND_HISTORY_SIZE,
   MAX_SAVE_SLOTS,
+  MAX_CHECKPOINT_SAVES,
   SAVE_VERSION,
 } from '../constants/limits';
 import { MAX_DETECTION } from '../constants/detection';
 
 const SAVES_KEY = 'terminal1996:saves';
 const SAVE_PREFIX = 'terminal1996:save:';
+const CHECKPOINTS_KEY = 'terminal1996:checkpoints';
+const CHECKPOINT_PREFIX = 'terminal1996:checkpoint:';
 
 // Interface for versioned save data
 interface VersionedSaveData {
@@ -410,5 +413,151 @@ export function loadAutoSave(): GameState | null {
     return deserializeState(raw);
   } catch {
     return null;
+  }
+}
+
+/**
+ * Retrieves all checkpoint slots from localStorage.
+ * @returns Array of checkpoint slot metadata, empty if none exist
+ */
+export function getCheckpointSlots(): CheckpointSlot[] {
+  if (!isBrowserWithStorage()) return [];
+
+  try {
+    const raw = window.localStorage.getItem(CHECKPOINTS_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Saves a checkpoint at a key progress moment.
+ * Checkpoints are separate from manual saves and limited to MAX_CHECKPOINT_SAVES.
+ * @param state - The game state to checkpoint
+ * @param reason - A short description of why this checkpoint was created
+ * @returns The created CheckpointSlot metadata, or null if save failed
+ */
+export function saveCheckpoint(state: GameState, reason: string): CheckpointSlot | null {
+  if (!isBrowserWithStorage()) return null;
+
+  const id = `checkpoint_${Date.now()}`;
+  const now = Date.now();
+
+  const slot: CheckpointSlot = {
+    id,
+    reason,
+    timestamp: now,
+    currentPath: state.currentPath,
+    truthCount: state.truthsDiscovered.size,
+    detectionLevel: state.detectionLevel,
+  };
+
+  const stateToSave = { ...state, lastSaveTime: now };
+
+  try {
+    window.localStorage.setItem(CHECKPOINT_PREFIX + id, serializeState(stateToSave));
+  } catch (e) {
+    if (isQuotaExceededError(e)) {
+      // Clean up oldest checkpoints
+      const slots = getCheckpointSlots();
+      const toDelete = slots.slice(2); // Keep only 2 most recent
+      toDelete.forEach(s => window.localStorage.removeItem(CHECKPOINT_PREFIX + s.id));
+      const remainingSlots = slots.slice(0, 2);
+      window.localStorage.setItem(CHECKPOINTS_KEY, JSON.stringify(remainingSlots));
+      // Try again
+      try {
+        window.localStorage.setItem(CHECKPOINT_PREFIX + id, serializeState(stateToSave));
+      } catch {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  // Update checkpoints list
+  const slots = getCheckpointSlots();
+  slots.unshift(slot);
+
+  // Keep only MAX_CHECKPOINT_SAVES, delete orphaned checkpoint data
+  if (slots.length > MAX_CHECKPOINT_SAVES) {
+    const orphanedSlots = slots.slice(MAX_CHECKPOINT_SAVES);
+    orphanedSlots.forEach(s => {
+      try {
+        window.localStorage.removeItem(CHECKPOINT_PREFIX + s.id);
+      } catch {
+        // Ignore removal errors
+      }
+    });
+  }
+  const trimmedSlots = slots.slice(0, MAX_CHECKPOINT_SAVES);
+  window.localStorage.setItem(CHECKPOINTS_KEY, JSON.stringify(trimmedSlots));
+
+  return slot;
+}
+
+/**
+ * Loads a checkpoint by slot ID.
+ * @param slotId - The unique identifier of the checkpoint slot
+ * @returns The deserialized GameState, or null if not found
+ */
+export function loadCheckpoint(slotId: string): GameState | null {
+  if (!isBrowserWithStorage()) return null;
+
+  try {
+    const raw = window.localStorage.getItem(CHECKPOINT_PREFIX + slotId);
+    if (!raw) return null;
+    return deserializeState(raw);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Gets the most recent checkpoint, if any.
+ * @returns The most recent CheckpointSlot, or null if none exist
+ */
+export function getLatestCheckpoint(): CheckpointSlot | null {
+  const slots = getCheckpointSlots();
+  return slots.length > 0 ? slots[0] : null;
+}
+
+/**
+ * Deletes a checkpoint slot and its associated state data.
+ * @param slotId - The unique identifier of the checkpoint slot to delete
+ */
+export function deleteCheckpoint(slotId: string): void {
+  if (!isBrowserWithStorage()) return;
+
+  try {
+    window.localStorage.removeItem(CHECKPOINT_PREFIX + slotId);
+
+    const slots = getCheckpointSlots().filter(s => s.id !== slotId);
+    window.localStorage.setItem(CHECKPOINTS_KEY, JSON.stringify(slots));
+  } catch {
+    // localStorage may be unavailable
+  }
+}
+
+/**
+ * Clears all checkpoints (used when starting a new game).
+ */
+export function clearCheckpoints(): void {
+  if (!isBrowserWithStorage()) return;
+
+  try {
+    const slots = getCheckpointSlots();
+    slots.forEach(s => {
+      try {
+        window.localStorage.removeItem(CHECKPOINT_PREFIX + s.id);
+      } catch {
+        // Ignore removal errors
+      }
+    });
+    window.localStorage.removeItem(CHECKPOINTS_KEY);
+  } catch {
+    // localStorage may be unavailable
   }
 }

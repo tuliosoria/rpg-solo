@@ -1,22 +1,35 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { CheckpointSlot } from '../types';
+import { getLatestCheckpoint } from '../storage/saves';
 import { uiChance, uiRandomFloat } from '../engine/rng';
 import styles from './GameOver.module.css';
 
 interface GameOverProps {
   reason: string;
-  onRestartCompleteAction: () => void;
+  onMainMenuAction: () => void;
+  onLoadCheckpointAction: (slotId: string) => void;
 }
 
-export default function GameOver({ reason, onRestartCompleteAction }: GameOverProps) {
-  const [phase, setPhase] = useState<'error' | 'restarting' | 'done'>('error');
+export default function GameOver({
+  reason,
+  onMainMenuAction,
+  onLoadCheckpointAction,
+}: GameOverProps) {
+  const [phase, setPhase] = useState<'error' | 'restarting' | 'options'>('error');
   const [progress, setProgress] = useState(0);
   const [flickering, setFlickering] = useState(true);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [latestCheckpoint, setLatestCheckpoint] = useState<CheckpointSlot | null>(null);
   const flickerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const restartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const flickerResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load checkpoints when component mounts
+  useEffect(() => {
+    setLatestCheckpoint(getLatestCheckpoint());
+  }, []);
 
   // Phase transitions
   useEffect(() => {
@@ -42,16 +55,16 @@ export default function GameOver({ reason, onRestartCompleteAction }: GameOverPr
   useEffect(() => {
     if (phase !== 'restarting') return;
 
-    const duration = 4000; // 4 seconds for restart
+    const duration = 3000; // 3 seconds for restart animation
     const interval = 50;
     const increment = 100 / (duration / interval);
 
     const timer = setInterval(() => {
       setProgress(prev => {
-        const next = prev + increment + uiRandomFloat(-1, 1); // Slight randomness
+        const next = prev + increment + uiRandomFloat(-1, 1);
         if (next >= 100) {
           clearInterval(timer);
-          setPhase('done');
+          setPhase('options');
           return 100;
         }
         return next;
@@ -78,25 +91,51 @@ export default function GameOver({ reason, onRestartCompleteAction }: GameOverPr
     };
   }, [phase]);
 
-  useEffect(() => {
-    if (phase !== 'done') return;
+  // Keyboard navigation for options phase
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (phase !== 'options') return;
 
-    if (restartTimerRef.current) {
-      clearTimeout(restartTimerRef.current);
-    }
-    restartTimerRef.current = setTimeout(onRestartCompleteAction, 500);
+      const hasCheckpoint = latestCheckpoint !== null;
+      const maxIndex = hasCheckpoint ? 1 : 0; // 0 = Load Checkpoint (if available), 1 = Main Menu
 
-    return () => {
-      if (restartTimerRef.current) {
-        clearTimeout(restartTimerRef.current);
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          setSelectedIndex(prev => (prev > 0 ? prev - 1 : maxIndex));
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setSelectedIndex(prev => (prev < maxIndex ? prev + 1 : 0));
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (hasCheckpoint && selectedIndex === 0) {
+            onLoadCheckpointAction(latestCheckpoint.id);
+          } else {
+            onMainMenuAction();
+          }
+          break;
       }
-    };
-  }, [phase, onRestartCompleteAction]);
+    },
+    [phase, selectedIndex, latestCheckpoint, onLoadCheckpointAction, onMainMenuAction]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   const renderProgressBar = () => {
     const filled = Math.floor(progress / 2.5); // 40 chars total
     const empty = 40 - filled;
     return `[${'█'.repeat(filled)}${'░'.repeat(Math.max(0, empty))}]`;
+  };
+
+  const formatCheckpointInfo = (checkpoint: CheckpointSlot) => {
+    const date = new Date(checkpoint.timestamp);
+    const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return `${checkpoint.reason} (${checkpoint.truthCount}/5 truths, ${checkpoint.detectionLevel}% risk) - ${timeStr}`;
   };
 
   return (
@@ -127,13 +166,11 @@ export default function GameOver({ reason, onRestartCompleteAction }: GameOverPr
       )}
 
       {/* Restarting phase */}
-      {(phase === 'restarting' || phase === 'done') && (
+      {phase === 'restarting' && (
         <div className={styles.restartContent}>
           <div className={styles.restartBox}>
             <div className={styles.restartHeader}>TERMINAL SYSTEM RESTART</div>
-            <div className={styles.restartStatus}>
-              {phase === 'done' ? 'RESTART COMPLETE' : 'REINITIALIZING...'}
-            </div>
+            <div className={styles.restartStatus}>REINITIALIZING...</div>
             <div className={styles.progressContainer}>
               <div className={styles.progressBar}>{renderProgressBar()}</div>
               <div className={styles.progressPercent}>{Math.min(100, Math.floor(progress))}%</div>
@@ -144,8 +181,44 @@ export default function GameOver({ reason, onRestartCompleteAction }: GameOverPr
               {progress > 45 && <div>Purging audit trail...</div>}
               {progress > 65 && <div>Reinitializing security layer...</div>}
               {progress > 85 && <div>Restoring default state...</div>}
-              {progress >= 100 && <div className={styles.complete}>READY</div>}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Options phase - show Load Checkpoint and Main Menu */}
+      {phase === 'options' && (
+        <div className={styles.optionsContent}>
+          <div className={styles.optionsBox}>
+            <div className={styles.optionsHeader}>SESSION TERMINATED</div>
+            <div className={styles.optionsSubheader}>
+              ═══════════════════════════════════════════════════════════
+            </div>
+
+            <div className={styles.optionsButtons}>
+              {latestCheckpoint && (
+                <button
+                  className={`${styles.optionButton} ${selectedIndex === 0 ? styles.selected : ''}`}
+                  onClick={() => onLoadCheckpointAction(latestCheckpoint.id)}
+                  onMouseEnter={() => setSelectedIndex(0)}
+                >
+                  {selectedIndex === 0 ? '▶ ' : '  '}[ LOAD CHECKPOINT ]
+                  <div className={styles.checkpointInfo}>
+                    {formatCheckpointInfo(latestCheckpoint)}
+                  </div>
+                </button>
+              )}
+
+              <button
+                className={`${styles.optionButton} ${selectedIndex === (latestCheckpoint ? 1 : 0) ? styles.selected : ''}`}
+                onClick={onMainMenuAction}
+                onMouseEnter={() => setSelectedIndex(latestCheckpoint ? 1 : 0)}
+              >
+                {selectedIndex === (latestCheckpoint ? 1 : 0) ? '▶ ' : '  '}[ MAIN MENU ]
+              </button>
+            </div>
+
+            <div className={styles.keyHint}>↑↓ Navigate • Enter Select</div>
           </div>
         </div>
       )}

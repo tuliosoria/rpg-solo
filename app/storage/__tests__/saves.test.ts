@@ -526,4 +526,123 @@ describe('Save/Load System', () => {
       expect(loaded!.detectionLevel).toBe(55);
     });
   });
+
+  describe('checkpoint system', () => {
+    it('saves and loads checkpoints correctly', async () => {
+      const {
+        saveCheckpoint,
+        loadCheckpoint,
+        getCheckpointSlots,
+        getLatestCheckpoint,
+      } = await import('../saves');
+
+      const state = createTestState({
+        detectionLevel: 25,
+        truthsDiscovered: new Set(['debris_relocation']),
+      });
+
+      const slot = saveCheckpoint(state, 'First evidence');
+      expect(slot).not.toBeNull();
+      expect(slot!.reason).toBe('First evidence');
+      expect(slot!.truthCount).toBe(1);
+
+      const loaded = loadCheckpoint(slot!.id);
+      expect(loaded).not.toBeNull();
+      expect(loaded!.detectionLevel).toBe(25);
+      expect(loaded!.truthsDiscovered.has('debris_relocation')).toBe(true);
+
+      const slots = getCheckpointSlots();
+      expect(slots.length).toBe(1);
+
+      const latest = getLatestCheckpoint();
+      expect(latest).not.toBeNull();
+      expect(latest!.id).toBe(slot!.id);
+    });
+
+    it('limits checkpoints to MAX_CHECKPOINT_SAVES', async () => {
+      const { saveCheckpoint, getCheckpointSlots } = await import('../saves');
+
+      const state = createTestState();
+
+      // Create 7 checkpoints (MAX_CHECKPOINT_SAVES is 5)
+      for (let i = 0; i < 7; i++) {
+        saveCheckpoint({ ...state, detectionLevel: i * 10 }, `Checkpoint ${i}`);
+        await new Promise(r => setTimeout(r, 5));
+      }
+
+      const slots = getCheckpointSlots();
+      expect(slots.length).toBe(5);
+
+      // Most recent should be first
+      expect(slots[0].reason).toBe('Checkpoint 6');
+    });
+
+    it('returns null for non-existent checkpoint', async () => {
+      const { loadCheckpoint } = await import('../saves');
+
+      const loaded = loadCheckpoint('non_existent_checkpoint');
+      expect(loaded).toBeNull();
+    });
+
+    it('deletes checkpoint correctly', async () => {
+      const { saveCheckpoint, deleteCheckpoint, loadCheckpoint, getCheckpointSlots } =
+        await import('../saves');
+
+      const state = createTestState();
+      const slot = saveCheckpoint(state, 'To be deleted');
+      expect(slot).not.toBeNull();
+
+      deleteCheckpoint(slot!.id);
+
+      const loaded = loadCheckpoint(slot!.id);
+      expect(loaded).toBeNull();
+
+      const slots = getCheckpointSlots();
+      expect(slots.find(s => s.id === slot!.id)).toBeUndefined();
+    });
+
+    it('clears all checkpoints', async () => {
+      const { saveCheckpoint, clearCheckpoints, getCheckpointSlots } = await import('../saves');
+
+      const state = createTestState();
+      saveCheckpoint(state, 'Checkpoint 1');
+      saveCheckpoint(state, 'Checkpoint 2');
+
+      clearCheckpoints();
+
+      const slots = getCheckpointSlots();
+      expect(slots.length).toBe(0);
+    });
+
+    it('returns empty array when no checkpoints exist', async () => {
+      // Clear mock store
+      mockStore = {};
+      vi.resetModules();
+
+      const mockLocalStorage = {
+        getItem: (key: string) => mockStore[key] || null,
+        setItem: (key: string, value: string) => {
+          mockStore[key] = value;
+        },
+        removeItem: (key: string) => {
+          delete mockStore[key];
+        },
+        clear: () => {
+          mockStore = {};
+        },
+        length: 0,
+        key: () => null,
+      };
+      vi.stubGlobal('localStorage', mockLocalStorage);
+      vi.stubGlobal('window', { localStorage: mockLocalStorage });
+
+      const { getCheckpointSlots, getLatestCheckpoint } = await import('../saves');
+
+      const slots = getCheckpointSlots();
+      expect(slots).toEqual([]);
+
+      const latest = getLatestCheckpoint();
+      expect(latest).toBeNull();
+    });
+  });
 });

@@ -175,6 +175,77 @@
   margin-top: 10px;
 }
 
+/* Options phase (after restart animation) */
+.optionsContent {
+  text-align: center;
+  z-index: 510;
+  width: 90%;
+  max-width: 600px;
+}
+
+.optionsBox {
+  padding: 40px;
+  border: 1px solid #333;
+  background: rgba(0, 20, 0, 0.3);
+}
+
+.optionsHeader {
+  color: #00ff00;
+  font-size: 24px;
+  letter-spacing: 4px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.optionsSubheader {
+  color: #006600;
+  font-size: 12px;
+  margin-bottom: 30px;
+}
+
+.optionsButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.optionButton {
+  background: transparent;
+  border: 1px solid #004400;
+  color: #00aa00;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 16px;
+  padding: 15px 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.optionButton:hover,
+.optionButton.selected {
+  background: rgba(0, 40, 0, 0.5);
+  border-color: #00aa00;
+  color: #00ff00;
+}
+
+.checkpointInfo {
+  font-size: 11px;
+  color: #006600;
+  margin-top: 8px;
+  padding-left: 20px;
+}
+
+.optionButton.selected .checkpointInfo {
+  color: #00aa00;
+}
+
+.keyHint {
+  color: #444;
+  font-size: 11px;
+  margin-top: 20px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .errorTitle {

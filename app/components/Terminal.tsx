@@ -18,7 +18,7 @@ import {
   sanitizeCommandInput,
 } from '../engine/commands';
 import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
-import { autoSave } from '../storage/saves';
+import { autoSave, saveCheckpoint, loadCheckpoint } from '../storage/saves';
 import { incrementStatistic, addPlaytime } from '../storage/statistics';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import {
@@ -168,12 +168,14 @@ interface TerminalProps {
   initialState: GameState;
   onExitAction: () => void;
   onSaveRequestAction: (state: GameState) => void;
+  onLoadCheckpointAction?: (slotId: string) => void;
 }
 
 export default function Terminal({
   initialState,
   onExitAction,
   onSaveRequestAction,
+  onLoadCheckpointAction,
 }: TerminalProps) {
   const initialPhase = deriveGamePhase(initialState);
   const [gameState, setGameState] = useState<GameState>(initialState);
@@ -1286,12 +1288,15 @@ export default function Terminal({
 
         if (nextStep >= TUTORIAL_MESSAGES.length) {
           // Tutorial complete
-          setGameState(prev => ({
-            ...prev,
-            history: [...prev.history, ...tutorialEntries],
+          const newState = {
+            ...gameState,
+            history: [...gameState.history, ...tutorialEntries],
             tutorialStep: -1,
             tutorialComplete: true,
-          }));
+          };
+          setGameState(newState);
+          // Save checkpoint at tutorial completion
+          saveCheckpoint(newState, 'Tutorial complete');
         } else {
           // Show next message
           setGameState(prev => ({
@@ -1563,9 +1568,17 @@ export default function Terminal({
         incrementStatistic('filesRead');
       }
 
-      // New evidence discovered - play fanfare!
+      // New evidence discovered - play fanfare and save checkpoint!
       if (truthCount > prevTruthCount) {
         playSound('fanfare');
+        // Save checkpoint on truth discovery
+        const checkpointReason =
+          truthCount === 1
+            ? 'First evidence'
+            : truthCount === 5
+              ? 'All evidence found'
+              : `Evidence ${truthCount}/5`;
+        saveCheckpoint(intermediateState, checkpointReason);
       }
 
       // First evidence discovered
@@ -1576,6 +1589,19 @@ export default function Terminal({
       // All truths discovered
       if (truthCount === 5 && prevTruthCount < 5) {
         checkAchievement('truth_seeker');
+      }
+
+      // Access level upgrade - save checkpoint
+      if (
+        intermediateState.accessLevel > gameState.accessLevel &&
+        intermediateState.accessLevel >= 2
+      ) {
+        saveCheckpoint(intermediateState, `Access level ${intermediateState.accessLevel}`);
+      }
+
+      // Admin unlocked - save checkpoint
+      if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
+        saveCheckpoint(intermediateState, 'Admin access unlocked');
       }
 
       // Timed decryption successful - play fanfare
@@ -2411,7 +2437,23 @@ export default function Terminal({
 
         {/* Game Over overlay */}
         {showGameOver && (
-          <GameOver reason={gameOverReason} onRestartCompleteAction={onExitAction} />
+          <GameOver
+            reason={gameOverReason}
+            onMainMenuAction={onExitAction}
+            onLoadCheckpointAction={(slotId) => {
+              if (onLoadCheckpointAction) {
+                onLoadCheckpointAction(slotId);
+              } else {
+                // Fallback: load checkpoint inline
+                const loadedState = loadCheckpoint(slotId);
+                if (loadedState) {
+                  setGameState(loadedState);
+                  setShowGameOver(false);
+                  setGamePhase('terminal');
+                }
+              }
+            }}
+          />
         )}
 
         {/* Achievement popup */}

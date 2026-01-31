@@ -304,6 +304,15 @@ export interface SaveSlot {
   detectionLevel: number;
 }
 
+export interface CheckpointSlot {
+  id: string;
+  reason: string;
+  timestamp: number;
+  currentPath: string;
+  truthCount: number;
+  detectionLevel: number;
+}
+
 export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow' | 'glitchy';
 export type GamePhase =
   | 'terminal'

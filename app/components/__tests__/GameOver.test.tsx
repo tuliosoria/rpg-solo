@@ -1,11 +1,17 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, act, fireEvent } from '@testing-library/react';
 import GameOver from '../GameOver';
+
+// Mock the storage module
+vi.mock('../../storage/saves', () => ({
+  getLatestCheckpoint: vi.fn(() => null),
+}));
 
 describe('GameOver', () => {
   const defaultProps = {
     reason: 'Detection level exceeded maximum threshold',
-    onRestartCompleteAction: vi.fn(),
+    onMainMenuAction: vi.fn(),
+    onLoadCheckpointAction: vi.fn(),
   };
 
   beforeEach(() => {
@@ -76,17 +82,71 @@ describe('GameOver', () => {
     });
   });
 
+  describe('Options Phase', () => {
+    it('shows main menu button after restart animation', async () => {
+      render(<GameOver {...defaultProps} />);
+
+      // Fast-forward through error phase (3 seconds)
+      act(() => {
+        vi.advanceTimersByTime(3100);
+      });
+
+      // Now in restart phase - need to advance through the progress bar animation
+      // Progress bar runs at 50ms intervals for 3000ms total
+      for (let i = 0; i < 70; i++) {
+        act(() => {
+          vi.advanceTimersByTime(50);
+        });
+      }
+
+      // Should show options
+      expect(screen.getByText(/MAIN MENU/)).toBeInTheDocument();
+    });
+
+    it('calls onMainMenuAction when main menu is clicked', async () => {
+      render(<GameOver {...defaultProps} />);
+
+      // Fast-forward through error phase
+      act(() => {
+        vi.advanceTimersByTime(3100);
+      });
+
+      // Advance through restart animation
+      for (let i = 0; i < 70; i++) {
+        act(() => {
+          vi.advanceTimersByTime(50);
+        });
+      }
+
+      // Click main menu button
+      const mainMenuButton = screen.getByText(/MAIN MENU/);
+      fireEvent.click(mainMenuButton);
+
+      expect(defaultProps.onMainMenuAction).toHaveBeenCalled();
+    });
+  });
+
   describe('Different Reasons', () => {
     it('displays custom game over reason', () => {
       render(
-        <GameOver reason="Wrong password attempts exceeded" onRestartCompleteAction={vi.fn()} />
+        <GameOver
+          reason="Wrong password attempts exceeded"
+          onMainMenuAction={vi.fn()}
+          onLoadCheckpointAction={vi.fn()}
+        />
       );
 
       expect(screen.getByText('Wrong password attempts exceeded')).toBeInTheDocument();
     });
 
     it('displays another custom reason', () => {
-      render(<GameOver reason="Security lockout triggered" onRestartCompleteAction={vi.fn()} />);
+      render(
+        <GameOver
+          reason="Security lockout triggered"
+          onMainMenuAction={vi.fn()}
+          onLoadCheckpointAction={vi.fn()}
+        />
+      );
 
       expect(screen.getByText('Security lockout triggered')).toBeInTheDocument();
     });
