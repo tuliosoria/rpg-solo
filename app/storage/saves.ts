@@ -67,6 +67,7 @@ function serializeState(state: GameState): string {
       videosShownThisRun: Array.from(state.videosShownThisRun || []),
       categoriesRead: Array.from(state.categoriesRead || []),
       filesRead: Array.from(state.filesRead || []),
+      tutorialTipsShown: Array.from(state.tutorialTipsShown || []),
       prisoner45UsedResponses: Array.from(state.prisoner45UsedResponses || []),
       scoutLinkUsedResponses: Array.from(state.scoutLinkUsedResponses || []),
       disinformationDiscovered: Array.from(state.disinformationDiscovered || []),
@@ -105,6 +106,9 @@ function deserializeState(json: string): GameState {
     videosShownThisRun: new Set((parsed.videosShownThisRun as string[]) || []),
     categoriesRead: new Set((parsed.categoriesRead as string[]) || []),
     filesRead: new Set((parsed.filesRead as string[]) || []),
+    tutorialTipsShown: new Set(
+      Array.isArray(parsed.tutorialTipsShown) ? (parsed.tutorialTipsShown as string[]) : []
+    ),
     prisoner45UsedResponses: new Set((parsed.prisoner45UsedResponses as string[]) || []),
     scoutLinkUsedResponses: new Set((parsed.scoutLinkUsedResponses as string[]) || []),
     disinformationDiscovered: new Set((parsed.disinformationDiscovered as string[]) || []),

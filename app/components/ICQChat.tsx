@@ -283,11 +283,12 @@ export default function ICQChat({
       }
     } else {
       // Wrong answer
-      setWrongAttempts(prev => prev + 1);
+      const nextWrongAttempts = wrongAttempts + 1;
+      setWrongAttempts(nextWrongAttempts);
       onMathMistake();
       adjustTrust(-3);
 
-      if (wrongAttempts >= 2) {
+      if (nextWrongAttempts >= 2) {
         await addTeenMessage('dude u dont know math either?? 😂', 1200);
         await addTeenMessage(`hint: ${question.hint}`, 1500);
         setWrongAttempts(0);

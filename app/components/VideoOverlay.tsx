@@ -34,6 +34,7 @@ export default function VideoOverlay({
   const [error, setError] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const flickerResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     // SUDDEN appearance - immediate flash then video
@@ -51,7 +52,13 @@ export default function VideoOverlay({
     const flickerInterval = setInterval(() => {
       if (uiChance(0.15)) {
         setFlickering(true);
-        setTimeout(() => setFlickering(false), 50 + uiRandomInt(0, 100));
+        if (flickerResetTimeoutRef.current) {
+          clearTimeout(flickerResetTimeoutRef.current);
+        }
+        flickerResetTimeoutRef.current = setTimeout(
+          () => setFlickering(false),
+          50 + uiRandomInt(0, 100)
+        );
       }
     }, 2000);
 
@@ -59,6 +66,10 @@ export default function VideoOverlay({
       clearTimeout(shockTimeout);
       clearTimeout(flickerTimeout);
       clearInterval(flickerInterval);
+      if (flickerResetTimeoutRef.current) {
+        clearTimeout(flickerResetTimeoutRef.current);
+        flickerResetTimeoutRef.current = null;
+      }
     };
   }, []);
 

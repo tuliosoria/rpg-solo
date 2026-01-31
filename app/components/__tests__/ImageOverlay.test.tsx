@@ -168,4 +168,22 @@ describe('ImageOverlay', () => {
       expect(container.querySelector('[class*="glow"]')).toBeInTheDocument();
     });
   });
+
+  describe('Cleanup', () => {
+    it('clears pending flicker timeouts on unmount', async () => {
+      const rng = await import('../../engine/rng');
+      const mockedChance = vi.mocked(rng.uiChance);
+      mockedChance.mockReturnValueOnce(true).mockReturnValue(false);
+
+      const { unmount } = render(<ImageOverlay {...defaultProps} />);
+
+      act(() => {
+        vi.advanceTimersByTime(1500);
+      });
+
+      unmount();
+
+      expect(vi.getTimerCount()).toBe(0);
+    });
+  });
 });

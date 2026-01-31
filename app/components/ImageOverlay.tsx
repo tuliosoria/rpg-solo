@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './ImageOverlay.module.css';
 import { uiChance, uiRandomInt } from '../engine/rng';
 
@@ -24,6 +24,7 @@ export default function ImageOverlay({
   const [visible, setVisible] = useState(false);
   const [flickering, setFlickering] = useState(true);
   const [initialShock, setInitialShock] = useState(true);
+  const flickerResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     // SUDDEN appearance - immediate flash then image
@@ -42,7 +43,13 @@ export default function ImageOverlay({
     const flickerInterval = setInterval(() => {
       if (uiChance(0.2)) {
         setFlickering(true);
-        setTimeout(() => setFlickering(false), 50 + uiRandomInt(0, 100));
+        if (flickerResetTimeoutRef.current) {
+          clearTimeout(flickerResetTimeoutRef.current);
+        }
+        flickerResetTimeoutRef.current = setTimeout(
+          () => setFlickering(false),
+          50 + uiRandomInt(0, 100)
+        );
       }
     }, 1500);
 
@@ -56,6 +63,10 @@ export default function ImageOverlay({
       clearTimeout(flickerTimeout);
       clearInterval(flickerInterval);
       clearTimeout(autoClose);
+      if (flickerResetTimeoutRef.current) {
+        clearTimeout(flickerResetTimeoutRef.current);
+        flickerResetTimeoutRef.current = null;
+      }
     };
   }, [onCloseAction, durationMs]);
 
