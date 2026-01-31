@@ -4,6 +4,7 @@ export {
   createEntry,
   createOutputEntries,
   createInvalidCommandResult,
+  sanitizeCommandInput,
   parseCommand,
   calculateDelay,
   shouldFlicker,

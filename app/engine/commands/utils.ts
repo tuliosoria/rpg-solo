@@ -1,6 +1,7 @@
 // Command utilities - shared helper functions for terminal commands
 
 import { GameState, CommandResult, TerminalEntry } from '../../types';
+import { MAX_COMMAND_INPUT_LENGTH } from '../../constants/limits';
 import { createSeededRng } from '../rng';
 import { DETECTION_THRESHOLDS } from '../../constants/detection';
 
@@ -70,8 +71,27 @@ export function createInvalidCommandResult(state: GameState, commandName: string
 }
 
 // Parse command into name and args
+const CONTROL_CHARS_REGEX = /[\u0000-\u001F\u007F]/g;
+const ZERO_WIDTH_REGEX = /[\u200B-\u200F\uFEFF]/g;
+
+export function sanitizeCommandInput(
+  input: string,
+  maxLength: number = MAX_COMMAND_INPUT_LENGTH
+): { value: string; wasModified: boolean; wasTruncated: boolean } {
+  const normalized = typeof input.normalize === 'function' ? input.normalize('NFKC') : input;
+  let sanitized = normalized.replace(CONTROL_CHARS_REGEX, ' ').replace(ZERO_WIDTH_REGEX, '');
+  let wasTruncated = false;
+  if (sanitized.length > maxLength) {
+    sanitized = sanitized.slice(0, maxLength);
+    wasTruncated = true;
+  }
+  const wasModified = sanitized !== input;
+  return { value: sanitized, wasModified, wasTruncated };
+}
+
 export function parseCommand(input: string): { command: string; args: string[] } {
-  const trimmed = input.trim();
+  const { value } = sanitizeCommandInput(input);
+  const trimmed = value.trim();
   const parts = trimmed.split(/\s+/);
   const command = (parts[0] || '').toLowerCase();
   const args = parts.slice(1);

@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   parseCommand,
+  sanitizeCommandInput,
   createEntry,
   createOutputEntries,
   generateEntryId,
@@ -75,6 +76,30 @@ describe('Command Utilities', () => {
       const result = parseCommand('   ');
       expect(result.command).toBe('');
       expect(result.args).toEqual([]);
+    });
+
+    it('strips zero-width characters', () => {
+      const result = parseCommand('he\u200Blp');
+      expect(result.command).toBe('help');
+    });
+
+    it('strips control characters', () => {
+      const result = parseCommand('op\u0000en file.txt');
+      expect(result.command).toBe('op');
+      expect(result.args).toEqual(['en', 'file.txt']);
+    });
+
+    it('normalizes fullwidth characters', () => {
+      const result = parseCommand('\uFF28\uFF25\uFF2C\uFF30'); // FULLWIDTH HELP
+      expect(result.command).toBe('help');
+    });
+  });
+
+  describe('sanitizeCommandInput', () => {
+    it('flags modified input when control characters removed', () => {
+      const result = sanitizeCommandInput('he\u0000lp');
+      expect(result.value).toBe('he lp');
+      expect(result.wasModified).toBe(true);
     });
   });
 
@@ -180,21 +205,21 @@ describe('Command Utilities', () => {
     it('returns higher delay for higher detection', () => {
       const lowState = createTestState({ detectionLevel: 20 });
       const highState = createTestState({ detectionLevel: 80 });
-      
+
       const lowDelay = calculateDelay(lowState);
       const highDelay = calculateDelay(highState);
-      
+
       expect(highDelay).toBeGreaterThan(lowDelay);
     });
 
     it('applies seed-based variance', () => {
       const state1 = createTestState({ detectionLevel: 50, seed: 12345 });
       const state2 = createTestState({ detectionLevel: 50, seed: 54321 });
-      
+
       // Different seeds may produce different variance
       const delay1 = calculateDelay(state1);
       const delay2 = calculateDelay(state2);
-      
+
       // Both should be reasonable delays for detection level 50
       expect(delay1).toBeGreaterThanOrEqual(0);
       expect(delay2).toBeGreaterThanOrEqual(0);
@@ -238,7 +263,7 @@ describe('Command Utilities', () => {
     it('uses probability based on stability level', () => {
       const highStab = createTestState({ sessionStability: 85 });
       const lowStab = createTestState({ sessionStability: 20 });
-      
+
       // Run multiple times to get statistical difference
       let highFlickers = 0;
       let lowFlickers = 0;
@@ -246,7 +271,7 @@ describe('Command Utilities', () => {
         if (shouldFlicker(highStab)) highFlickers++;
         if (shouldFlicker(lowStab)) lowFlickers++;
       }
-      
+
       expect(lowFlickers).toBeGreaterThan(highFlickers);
     });
   });
@@ -262,7 +287,7 @@ describe('Command Utilities', () => {
     it('scales dots with intensity', () => {
       const result1 = addHesitation('text', 1);
       const result2 = addHesitation('text', 3);
-      
+
       expect(result2[0].length).toBeGreaterThanOrEqual(result1[0].length);
     });
 
@@ -289,16 +314,16 @@ describe('Command Utilities', () => {
 
     it('returns original text when no typo', () => {
       vi.mocked(Math.random).mockReturnValue(0.5); // Above 0.1 chance
-      
+
       const result = maybeAddTypo('hello world', 0.1);
       expect(result).toEqual(['hello world']);
     });
 
     it('returns typo and correction when triggered', () => {
       vi.mocked(Math.random).mockReturnValue(0.05); // Below 0.1 chance
-      
+
       const result = maybeAddTypo('hello world', 0.1);
-      
+
       if (result.length === 2) {
         expect(result[1]).toContain('[CORRECTION]');
       }
@@ -306,14 +331,14 @@ describe('Command Utilities', () => {
 
     it('does not typo short text', () => {
       vi.mocked(Math.random).mockReturnValue(0.01);
-      
+
       const result = maybeAddTypo('hi', 0.1);
       expect(result).toEqual(['hi']);
     });
 
     it('respects custom chance parameter', () => {
       vi.mocked(Math.random).mockReturnValue(0.4);
-      
+
       const result = maybeAddTypo('hello world', 0.5); // 50% chance
       // With random = 0.4 < 0.5, should trigger typo
       if (result.length === 2) {
@@ -326,7 +351,7 @@ describe('Command Utilities', () => {
     it('returns error message for unknown command', () => {
       const state = createTestState({ legacyAlertCounter: 0 });
       const result = createInvalidCommandResult(state, 'badcmd');
-      
+
       expect(result.output.some(e => e.content.includes('badcmd'))).toBe(true);
       expect(result.stateChanges.legacyAlertCounter).toBe(1);
     });
@@ -334,14 +359,14 @@ describe('Command Utilities', () => {
     it('increases detection level', () => {
       const state = createTestState({ detectionLevel: 10, legacyAlertCounter: 0 });
       const result = createInvalidCommandResult(state, 'test');
-      
+
       expect(result.stateChanges.detectionLevel).toBe(12);
     });
 
     it('shows warning about invalid attempts', () => {
       const state = createTestState({ legacyAlertCounter: 3 });
       const result = createInvalidCommandResult(state, 'test');
-      
+
       expect(result.output.some(e => e.content.includes('RISK INCREASED'))).toBe(true);
       expect(result.output.some(e => e.content.includes('4/8'))).toBe(true);
     });
@@ -349,7 +374,7 @@ describe('Command Utilities', () => {
     it('triggers game over at 8 invalid attempts', () => {
       const state = createTestState({ legacyAlertCounter: 7 });
       const result = createInvalidCommandResult(state, 'test');
-      
+
       expect(result.stateChanges.isGameOver).toBe(true);
       expect(result.stateChanges.gameOverReason).toContain('THRESHOLD');
       expect(result.triggerFlicker).toBe(true);
@@ -358,7 +383,7 @@ describe('Command Utilities', () => {
     it('handles empty command name', () => {
       const state = createTestState({ legacyAlertCounter: 0 });
       const result = createInvalidCommandResult(state, '');
-      
+
       expect(result.output.some(e => e.content.includes('Unknown command'))).toBe(true);
     });
   });

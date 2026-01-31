@@ -132,7 +132,7 @@ export function useSound() {
       if (!audioContext) return;
 
       if (audioContext.state === 'suspended') {
-        audioContext.resume();
+        void audioContext.resume().catch(() => {});
       }
 
       const config = SOUND_CONFIG.keypress;
@@ -186,7 +186,7 @@ export function useSound() {
       if (!audioContext) return;
 
       if (audioContext.state === 'suspended') {
-        audioContext.resume();
+        void audioContext.resume().catch(() => {});
       }
 
       const config = SOUND_CONFIG[type];

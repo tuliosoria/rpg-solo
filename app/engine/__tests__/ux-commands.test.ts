@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
+import { MAX_COMMAND_INPUT_LENGTH } from '../../constants/limits';
 
 // Helper to create a test state
 const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
@@ -117,6 +118,28 @@ describe('UX Commands', () => {
       const result = executeCommand('note second note', state);
 
       expect(result.stateChanges.playerNotes?.length).toBe(2);
+    });
+  });
+
+  describe('input validation', () => {
+    it('rejects overly long commands', () => {
+      const state = createTestState();
+      const longInput = 'a'.repeat(MAX_COMMAND_INPUT_LENGTH + 10);
+
+      const result = executeCommand(longInput, state);
+
+      expect(result.output.some(e => e.content.includes('INPUT TOO LONG'))).toBe(true);
+      expect(result.stateChanges.legacyAlertCounter).toBe(1);
+      expect(result.stateChanges.detectionLevel).toBe(2);
+    });
+
+    it('clamps detection on invalid commands', () => {
+      const state = createTestState({ detectionLevel: 99 });
+
+      const result = executeCommand('doesnotexist', state);
+
+      expect(result.stateChanges.detectionLevel).toBe(100);
+      expect(result.stateChanges.isGameOver).toBe(true);
     });
   });
 

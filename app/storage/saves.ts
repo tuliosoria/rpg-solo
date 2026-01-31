@@ -10,7 +10,7 @@
  * @module storage/saves
  */
 
-import { GameState, SaveSlot, DEFAULT_GAME_STATE } from '../types';
+import { GameState, SaveSlot, DEFAULT_GAME_STATE, FileMutation } from '../types';
 import { generateSeed } from '../engine/rng';
 import { generateBootSequence } from '../engine/commands';
 import {
@@ -19,6 +19,7 @@ import {
   MAX_SAVE_SLOTS,
   SAVE_VERSION,
 } from '../constants/limits';
+import { MAX_DETECTION } from '../constants/detection';
 
 const SAVES_KEY = 'terminal1996:saves';
 const SAVE_PREFIX = 'terminal1996:save:';
@@ -55,6 +56,31 @@ function migrateState(data: VersionedSaveData): Record<string, unknown> {
   return state;
 }
 
+function toStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((entry): entry is string => typeof entry === 'string');
+}
+
+function toPlainObject(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  return value as Record<string, unknown>;
+}
+
+function clampNumber(value: unknown, fallback: number, min: number, max: number): number {
+  const numeric = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(numeric)) return fallback;
+  const rounded = Math.floor(numeric);
+  return Math.min(max, Math.max(min, rounded));
+}
+
+function normalizeSeed(value: unknown): number | null {
+  const numeric = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(numeric)) return null;
+  const rounded = Math.floor(numeric);
+  const clamped = Math.min(2147483646, Math.max(1, rounded));
+  return clamped;
+}
+
 // Serialize GameState (handle Set conversion)
 function serializeState(state: GameState): string {
   const data: VersionedSaveData = {
@@ -89,6 +115,9 @@ function deserializeState(json: string): GameState {
   // Handle both versioned and legacy (unversioned) save formats
   let parsed: Record<string, unknown>;
   if (rawParsed.version !== undefined && rawParsed.state !== undefined) {
+    if (typeof rawParsed.version === 'number' && rawParsed.version > SAVE_VERSION) {
+      throw new Error('Unsupported save version');
+    }
     // New versioned format
     parsed = migrateState(rawParsed as VersionedSaveData);
   } else {
@@ -97,29 +126,70 @@ function deserializeState(json: string): GameState {
   }
 
   // Spread DEFAULT_GAME_STATE first for migration support (new fields get defaults)
-  return {
+  const baseState = {
     ...DEFAULT_GAME_STATE,
     ...parsed,
-    truthsDiscovered: new Set((parsed.truthsDiscovered as string[]) || []),
-    singularEventsTriggered: new Set((parsed.singularEventsTriggered as string[]) || []),
-    imagesShownThisRun: new Set((parsed.imagesShownThisRun as string[]) || []),
-    videosShownThisRun: new Set((parsed.videosShownThisRun as string[]) || []),
-    categoriesRead: new Set((parsed.categoriesRead as string[]) || []),
-    filesRead: new Set((parsed.filesRead as string[]) || []),
-    tutorialTipsShown: new Set(
-      Array.isArray(parsed.tutorialTipsShown) ? (parsed.tutorialTipsShown as string[]) : []
+  } as GameState & Record<string, unknown>;
+
+  const normalizedSeed = normalizeSeed(baseState.seed) ?? generateSeed();
+  const normalizedRngState = normalizeSeed(baseState.rngState) ?? normalizedSeed;
+
+  return {
+    ...baseState,
+    seed: normalizedSeed,
+    rngState: normalizedRngState,
+    detectionLevel: clampNumber(
+      baseState.detectionLevel,
+      DEFAULT_GAME_STATE.detectionLevel,
+      0,
+      MAX_DETECTION
     ),
-    prisoner45UsedResponses: new Set((parsed.prisoner45UsedResponses as string[]) || []),
-    scoutLinkUsedResponses: new Set((parsed.scoutLinkUsedResponses as string[]) || []),
-    disinformationDiscovered: new Set((parsed.disinformationDiscovered as string[]) || []),
-    hiddenCommandsDiscovered: new Set((parsed.hiddenCommandsDiscovered as string[]) || []),
-    passwordsFound: new Set((parsed.passwordsFound as string[]) || []),
-    bookmarkedFiles: new Set((parsed.bookmarkedFiles as string[]) || []),
-    trapsTriggered: new Set((parsed.trapsTriggered as string[]) || []),
+    sessionStability: clampNumber(
+      baseState.sessionStability,
+      DEFAULT_GAME_STATE.sessionStability,
+      0,
+      100
+    ),
+    accessLevel: clampNumber(baseState.accessLevel, DEFAULT_GAME_STATE.accessLevel, 0, 5),
+    systemHostilityLevel: clampNumber(
+      baseState.systemHostilityLevel,
+      DEFAULT_GAME_STATE.systemHostilityLevel,
+      0,
+      5
+    ),
+    icqTrust: clampNumber(baseState.icqTrust, DEFAULT_GAME_STATE.icqTrust, 0, 100),
+    legacyAlertCounter: clampNumber(
+      baseState.legacyAlertCounter,
+      DEFAULT_GAME_STATE.legacyAlertCounter,
+      0,
+      10
+    ),
+    wrongAttempts: clampNumber(baseState.wrongAttempts, DEFAULT_GAME_STATE.wrongAttempts, 0, 8),
+    flags: toPlainObject(baseState.flags) as Record<string, boolean>,
+    fileMutations: toPlainObject(baseState.fileMutations) as Record<string, FileMutation>,
+    truthsDiscovered: new Set(toStringArray(parsed.truthsDiscovered)),
+    singularEventsTriggered: new Set(toStringArray(parsed.singularEventsTriggered)),
+    imagesShownThisRun: new Set(toStringArray(parsed.imagesShownThisRun)),
+    videosShownThisRun: new Set(toStringArray(parsed.videosShownThisRun)),
+    categoriesRead: new Set(toStringArray(parsed.categoriesRead)),
+    filesRead: new Set(toStringArray(parsed.filesRead)),
+    tutorialTipsShown: new Set(toStringArray(parsed.tutorialTipsShown)),
+    prisoner45UsedResponses: new Set(toStringArray(parsed.prisoner45UsedResponses)),
+    scoutLinkUsedResponses: new Set(toStringArray(parsed.scoutLinkUsedResponses)),
+    disinformationDiscovered: new Set(toStringArray(parsed.disinformationDiscovered)),
+    hiddenCommandsDiscovered: new Set(toStringArray(parsed.hiddenCommandsDiscovered)),
+    passwordsFound: new Set(toStringArray(parsed.passwordsFound)),
+    bookmarkedFiles: new Set(toStringArray(parsed.bookmarkedFiles)),
+    trapsTriggered: new Set(toStringArray(parsed.trapsTriggered)),
     // Ensure fileEvidenceStates is initialized (plain object, no Set conversion needed)
-    fileEvidenceStates: (parsed.fileEvidenceStates as Record<string, unknown>) || {},
+    fileEvidenceStates: toPlainObject(baseState.fileEvidenceStates) as Record<string, unknown>,
     // Limit command history to last MAX_COMMAND_HISTORY_SIZE entries
-    commandHistory: ((parsed.commandHistory as string[]) || []).slice(-MAX_COMMAND_HISTORY_SIZE),
+    commandHistory: toStringArray(parsed.commandHistory).slice(-MAX_COMMAND_HISTORY_SIZE),
+    history: Array.isArray(baseState.history)
+      ? baseState.history.slice(-MAX_HISTORY_SIZE)
+      : DEFAULT_GAME_STATE.history,
+    evidenceLinks: Array.isArray(baseState.evidenceLinks) ? baseState.evidenceLinks : [],
+    icqMessages: Array.isArray(baseState.icqMessages) ? baseState.icqMessages : [],
   } as GameState;
 }
 
@@ -135,6 +205,17 @@ function isBrowserWithStorage(): boolean {
   } catch {
     return false;
   }
+}
+
+function isQuotaExceededError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const domError = error as DOMException;
+  return (
+    domError.name === 'QuotaExceededError' ||
+    domError.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+    domError.code === 22 ||
+    domError.code === 1014
+  );
 }
 
 /**
@@ -183,7 +264,7 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
     window.localStorage.setItem(SAVE_PREFIX + id, serializeState(stateToSave));
   } catch (e) {
     // Handle quota exceeded error by cleaning up oldest saves
-    if (e instanceof Error && e.name === 'QuotaExceededError') {
+    if (isQuotaExceededError(e)) {
       const slots = getSaveSlots();
       // Delete oldest saves to make room (keep only 5 most recent)
       const toDelete = slots.slice(5);

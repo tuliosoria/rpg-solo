@@ -128,6 +128,28 @@ describe('Terminal Component', () => {
     expect(input.value).toBe('');
   });
 
+  it('prevents double submissions while processing', async () => {
+    render(<Terminal {...defaultProps} />);
+
+    const input = document.querySelector('input') as HTMLInputElement;
+
+    act(() => {
+      fireEvent.change(input, { target: { value: 'help' } });
+    });
+
+    const form = input.closest('form');
+    act(() => {
+      fireEvent.submit(form!);
+      fireEvent.submit(form!);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+
+    expect(screen.getAllByText(/> help/)).toHaveLength(1);
+  });
+
   it('adds command to history on submission', async () => {
     render(<Terminal {...defaultProps} />);
 
@@ -270,6 +292,44 @@ describe('Terminal Component', () => {
     render(<Terminal {...defaultProps} initialState={highDetectionState} />);
 
     expect(screen.getByText(/AUDIT.*ACTIVE/i)).toBeInTheDocument();
+  });
+
+  it('renders ICQ chat when icqPhase is active', async () => {
+    vi.useRealTimers();
+    const icqState = {
+      ...defaultProps.initialState,
+      icqPhase: true,
+    };
+
+    render(<Terminal {...defaultProps} initialState={icqState} />);
+
+    expect(await screen.findByText(/ICQ 99a -/i)).toBeInTheDocument();
+    expect(await screen.findByLabelText(/ICQ chat log/i)).toBeInTheDocument();
+  });
+
+  it('renders bad ending when endingType is bad', async () => {
+    vi.useRealTimers();
+    const badEndingState = {
+      ...defaultProps.initialState,
+      endingType: 'bad',
+      isGameOver: true,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={badEndingState} />);
+
+    expect(await screen.findByText(/CONNECTION LOST/i)).toBeInTheDocument();
+  });
+
+  it('shows Turing evaluation overlay when active', async () => {
+    vi.useRealTimers();
+    const turingState = {
+      ...defaultProps.initialState,
+      turingEvaluationActive: true,
+    };
+
+    render(<Terminal {...defaultProps} initialState={turingState} />);
+
+    expect(await screen.findByText(/TURING EVALUATION/i)).toBeInTheDocument();
   });
 
   describe('Tutorial Mode', () => {

@@ -24,6 +24,7 @@ export default function ImageOverlay({
   const [visible, setVisible] = useState(false);
   const [flickering, setFlickering] = useState(true);
   const [initialShock, setInitialShock] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const flickerResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -111,7 +112,20 @@ export default function ImageOverlay({
           <div
             className={`${styles.imageWrapper} ${tone === 'clinical' ? styles.greenTone : styles.amberTone}`}
           >
-            {visible && <img src={src} alt={alt} className={styles.image} />}
+            {visible && !error && (
+              <img
+                src={src}
+                alt={alt}
+                className={styles.image}
+                onError={() => setError('IMAGE DATA CORRUPTED - RETRIEVAL FAILED')}
+              />
+            )}
+            {error && (
+              <div className={styles.errorDisplay}>
+                <div className={styles.errorIcon}>▓▓▓</div>
+                <div className={styles.errorText}>{error}</div>
+              </div>
+            )}
             {/* Noise overlay */}
             <div className={styles.noise} />
           </div>

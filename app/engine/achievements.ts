@@ -115,6 +115,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
 ];
 
+const VALID_ACHIEVEMENT_IDS = new Set(ACHIEVEMENTS.map(a => a.id));
+
 // Storage key for achievements
 const ACHIEVEMENTS_KEY = 'rpg-solo-achievements';
 
@@ -124,7 +126,8 @@ const ACHIEVEMENTS_KEY = 'rpg-solo-achievements';
  */
 export function getUnlockedAchievements(): Set<string> {
   const stored = safeGetJSON<string[]>(ACHIEVEMENTS_KEY, []);
-  return new Set(stored);
+  const filtered = stored.filter(id => VALID_ACHIEVEMENT_IDS.has(id));
+  return new Set(filtered);
 }
 
 /**
@@ -132,7 +135,8 @@ export function getUnlockedAchievements(): Set<string> {
  * @param achievements - Set of achievement IDs to save
  */
 export function saveAchievements(achievements: Set<string>): void {
-  safeSetJSON(ACHIEVEMENTS_KEY, [...achievements]);
+  const filtered = [...achievements].filter(id => VALID_ACHIEVEMENT_IDS.has(id));
+  safeSetJSON(ACHIEVEMENTS_KEY, filtered);
 }
 
 /**

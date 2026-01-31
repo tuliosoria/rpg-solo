@@ -15,12 +15,17 @@ import {
   createEntry,
   getTutorialMessage,
   TUTORIAL_MESSAGES,
+  sanitizeCommandInput,
 } from '../engine/commands';
 import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { autoSave } from '../storage/saves';
 import { incrementStatistic, addPlaytime } from '../storage/statistics';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
-import { MAX_HISTORY_SIZE, MAX_COMMAND_HISTORY_SIZE } from '../constants/limits';
+import {
+  MAX_HISTORY_SIZE,
+  MAX_COMMAND_HISTORY_SIZE,
+  MAX_COMMAND_INPUT_LENGTH,
+} from '../constants/limits';
 import {
   AUTOSAVE_INTERVAL_MS,
   CRT_WARMUP_DURATION_MS,
@@ -153,6 +158,16 @@ const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
   ],
 };
 
+const deriveGamePhase = (state: GameState): GamePhase => {
+  if (state.endingType === 'bad') return 'bad_ending';
+  if (state.endingType === 'neutral') return 'neutral_ending';
+  if (state.endingType === 'secret') return 'secret_ending';
+  if (state.gameWon || state.endingType === 'good') return 'victory';
+  if (state.icqPhase) return 'icq';
+  if (state.evidencesSaved) return 'blackout';
+  return 'terminal';
+};
+
 interface TerminalProps {
   initialState: GameState;
   onExitAction: () => void;
@@ -164,6 +179,7 @@ export default function Terminal({
   onExitAction,
   onSaveRequestAction,
 }: TerminalProps) {
+  const initialPhase = deriveGamePhase(initialState);
   const [gameState, setGameState] = useState<GameState>(initialState);
   const [inputValue, setInputValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -174,8 +190,10 @@ export default function Terminal({
   const [activeVideo, setActiveVideo] = useState<VideoTrigger | null>(null);
   const [pendingImage, setPendingImage] = useState<ImageTrigger | null>(null);
   const [pendingVideo, setPendingVideo] = useState<VideoTrigger | null>(null);
-  const [showGameOver, setShowGameOver] = useState(false);
-  const [gameOverReason, setGameOverReason] = useState('');
+  const [showGameOver, setShowGameOver] = useState(
+    initialState.isGameOver && initialPhase === 'terminal'
+  );
+  const [gameOverReason, setGameOverReason] = useState(initialState.gameOverReason || '');
   const [showHeaderMenu, setShowHeaderMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
@@ -198,7 +216,7 @@ export default function Terminal({
   >('idle');
 
   // Game phase: terminal → blackout → icq → victory (or other endings)
-  const [gamePhase, setGamePhase] = useState<GamePhase>('terminal');
+  const [gamePhase, setGamePhase] = useState<GamePhase>(initialPhase);
 
   // Countdown timer display
   const [countdownDisplay, setCountdownDisplay] = useState<string | null>(null);
@@ -229,7 +247,7 @@ export default function Terminal({
   const [typingSpeedWarning, setTypingSpeedWarning] = useState(false);
 
   // Turing Test overlay
-  const [showTuringTest, setShowTuringTest] = useState(false);
+  const [showTuringTest, setShowTuringTest] = useState(initialState.turingEvaluationActive);
   const keypressTimestamps = useRef<number[]>([]);
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
   const isFirewallPaused = activeImage !== null || activeVideo !== null || showTuringTest;
@@ -306,6 +324,7 @@ export default function Terminal({
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const gameStateRef = useRef(gameState);
+  const isProcessingRef = useRef(false);
   const skipStreamingRef = useRef(false);
   const streamStartScrollPos = useRef<number | null>(null);
 
@@ -598,6 +617,12 @@ export default function Terminal({
       if (seconds <= 0) {
         // Countdown expired - trigger bad ending (caught by system)
         setGamePhase('bad_ending');
+        setGameState(prev => ({
+          ...prev,
+          isGameOver: true,
+          gameOverReason: 'TRACE WINDOW EXPIRED',
+          endingType: 'bad',
+        }));
         setCountdownDisplay(null);
         return;
       }
@@ -799,12 +824,18 @@ export default function Terminal({
   // Handle blackout complete - transition to ICQ
   const handleBlackoutComplete = useCallback(() => {
     setGamePhase('icq');
+    setGameState(prev => ({ ...prev, icqPhase: true }));
   }, []);
 
   // Handle victory from ICQ chat
   const handleVictory = useCallback(() => {
     setGamePhase('victory');
-    setGameState(prev => ({ ...prev, gameWon: true }));
+    setGameState(prev => ({
+      ...prev,
+      gameWon: true,
+      endingType: 'good',
+      icqPhase: false,
+    }));
   }, []);
 
   const handleIcqTrustChange = useCallback((trust: number) => {
@@ -1135,28 +1166,36 @@ export default function Terminal({
     async (e?: React.SyntheticEvent) => {
       e?.preventDefault?.();
 
+      const sanitizedInput = sanitizeCommandInput(inputValue, MAX_COMMAND_INPUT_LENGTH);
+      const trimmedInput = sanitizedInput.value.trim();
+
       // If there's a pending image, show it on Enter
-      if (pendingImage && !inputValue.trim()) {
+      if (pendingImage && !trimmedInput) {
         setActiveImage(pendingImage);
         setPendingImage(null);
         return;
       }
 
       // If there's a pending video, show it on Enter
-      if (pendingVideo && !inputValue.trim()) {
+      if (pendingVideo && !trimmedInput) {
         setActiveVideo(pendingVideo);
         setPendingVideo(null);
         return;
       }
 
       // If secret ending is pending confirmation, transition on Enter
-      if (gameState.ufo74SecretDiscovered && !inputValue.trim() && gamePhase === 'terminal') {
+      if (gameState.ufo74SecretDiscovered && !trimmedInput && gamePhase === 'terminal') {
         setGamePhase('secret_ending');
+        setGameState(prev => ({
+          ...prev,
+          endingType: 'secret',
+          isGameOver: true,
+        }));
         return;
       }
 
       // If UFO74 messages are staged, show them directly (no multi-press required)
-      if (pendingUfo74StartMessages.length > 0 && !inputValue.trim()) {
+      if (pendingUfo74StartMessages.length > 0 && !trimmedInput) {
         const messagesToSend = [...pendingUfo74StartMessages];
         setPendingUfo74StartMessages([]);
         openEncryptedChannelWithMessages(messagesToSend);
@@ -1164,7 +1203,7 @@ export default function Terminal({
       }
 
       // Handle any pending UFO74 messages that accumulated
-      if (pendingUfo74Messages.length > 0 && !inputValue.trim()) {
+      if (pendingUfo74Messages.length > 0 && !trimmedInput) {
         const messagesToSend = [...pendingUfo74Messages];
         setPendingUfo74Messages([]);
         openEncryptedChannelWithMessages(messagesToSend);
@@ -1174,7 +1213,7 @@ export default function Terminal({
       // During tutorial, only accept empty Enter to advance
       if (!gameState.tutorialComplete) {
         // If user typed something, show error
-        if (inputValue.trim()) {
+        if (trimmedInput) {
           const errorEntry = createEntry('error', 'ERROR: Incoming transmission in progress.');
           setGameState(prev => ({
             ...prev,
@@ -1223,9 +1262,9 @@ export default function Terminal({
         return;
       }
 
-      if (isProcessing || showTuringTest || !inputValue.trim()) return;
+      if (isProcessingRef.current || isProcessing || showTuringTest || !trimmedInput) return;
 
-      const command = inputValue.trim();
+      const command = trimmedInput;
       const commandLower = command.toLowerCase().split(' ')[0];
       const shouldDeferUfo74 =
         commandLower === 'open' || commandLower === 'decrypt' || commandLower === 'last';
@@ -1278,12 +1317,13 @@ export default function Terminal({
       }
 
       // Execute command
+      isProcessingRef.current = true;
       setIsProcessing(true);
 
       // Track command for statistics
       incrementStatistic('commandsTyped');
 
-      const result = executeCommand(command, newState);
+      const result = executeCommand(inputValue, newState);
 
       // Apply delay if specified
       if (result.delayMs) {
@@ -1316,6 +1356,7 @@ export default function Terminal({
           ...intermediateState,
           history: result.stateChanges.history,
         });
+        isProcessingRef.current = false;
         setIsProcessing(false);
       } else if (streamingMode !== 'none' && result.output.length > 0) {
         // Stream output line by line
@@ -1372,6 +1413,7 @@ export default function Terminal({
         } finally {
           // Always reset streaming state, even on error/interruption
           setIsStreaming(false);
+          isProcessingRef.current = false;
           setIsProcessing(false);
           skipStreamingRef.current = false;
         }
@@ -1417,6 +1459,7 @@ export default function Terminal({
         }
 
         setIsProcessing(false);
+        isProcessingRef.current = false;
       }
 
       // Set pending image/video for Enter confirmation
@@ -1451,6 +1494,7 @@ export default function Terminal({
       // Handle GOD mode phase skip
       if (result.skipToPhase) {
         setGamePhase(result.skipToPhase);
+        isProcessingRef.current = false;
         setIsProcessing(false);
         // Ensure focus after phase skip
         setTimeout(() => inputRef.current?.focus(), 0);

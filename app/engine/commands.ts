@@ -42,6 +42,7 @@ import {
   DETECTION_DECREASES,
   MAX_DETECTION,
 } from '../constants/detection';
+import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
 import { TURING_QUESTIONS } from '../constants/turing';
 
 // Import utilities from new module
@@ -50,6 +51,7 @@ import {
   createEntry,
   createOutputEntries,
   createInvalidCommandResult,
+  sanitizeCommandInput,
   parseCommand,
   calculateDelay,
   shouldFlicker,
@@ -75,6 +77,7 @@ export {
   createEntry,
   createOutputEntries,
   createInvalidCommandResult,
+  sanitizeCommandInput,
   parseCommand,
   calculateDelay,
   shouldFlicker,
@@ -4954,6 +4957,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {
           isGameOver: true,
           gameOverReason: 'NEUTRAL ENDING - DISCONNECTED',
+          endingType: 'neutral',
         },
         skipToPhase: 'neutral_ending' as const,
         triggerFlicker: true,
@@ -5961,7 +5965,79 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
 // Main command executor
 export function executeCommand(input: string, state: GameState): CommandResult {
-  const { command, args } = parseCommand(input);
+  const sanitizedInput = sanitizeCommandInput(input, MAX_COMMAND_INPUT_LENGTH);
+  if (sanitizedInput.wasTruncated) {
+    const newAlertCounter = (state.legacyAlertCounter || 0) + 1;
+    const nextDetection = Math.min(MAX_DETECTION, state.detectionLevel + 2);
+    if (newAlertCounter >= 8) {
+      return {
+        output: [
+          createEntry('error', ''),
+          createEntry('error', '═══════════════════════════════════════════════════════════'),
+          createEntry('error', 'CRITICAL: INPUT LENGTH THRESHOLD EXCEEDED'),
+          createEntry('error', '═══════════════════════════════════════════════════════════'),
+          createEntry('error', ''),
+          createEntry('error', 'SYSTEM LOCKDOWN INITIATED'),
+          createEntry('error', 'SESSION TERMINATED'),
+          createEntry('error', ''),
+        ],
+        stateChanges: {
+          isGameOver: true,
+          gameOverReason: 'INVALID INPUT THRESHOLD',
+          legacyAlertCounter: newAlertCounter,
+        },
+        triggerFlicker: true,
+      };
+    }
+
+    if (nextDetection >= MAX_DETECTION) {
+      return {
+        output: [
+          createEntry('error', 'ERROR: INPUT TOO LONG'),
+          createEntry('warning', ''),
+          createEntry(
+            'warning',
+            `Maximum command length is ${MAX_COMMAND_INPUT_LENGTH} characters.`
+          ),
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('error', ''),
+          createEntry('error', '  INTRUSION DETECTED'),
+          createEntry('error', ''),
+          createEntry('error', '  Your connection has been traced.'),
+          createEntry('error', '  Security protocols have been dispatched.'),
+          createEntry('error', ''),
+          createEntry('error', '  >> SESSION TERMINATED <<'),
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('error', ''),
+        ],
+        stateChanges: {
+          detectionLevel: nextDetection,
+          legacyAlertCounter: newAlertCounter,
+          isGameOver: true,
+          gameOverReason: 'INTRUSION DETECTED - TRACED',
+        },
+        triggerFlicker: true,
+      };
+    }
+
+    return {
+      output: [
+        createEntry('error', 'ERROR: INPUT TOO LONG'),
+        createEntry('warning', ''),
+        createEntry('warning', `Maximum command length is ${MAX_COMMAND_INPUT_LENGTH} characters.`),
+        createEntry('system', `   [Invalid attempts: ${newAlertCounter}/8]`),
+      ],
+      stateChanges: {
+        detectionLevel: nextDetection,
+        legacyAlertCounter: newAlertCounter,
+      },
+    };
+  }
+
+  const normalizedInput = sanitizedInput.value;
+  const { command, args } = parseCommand(normalizedInput);
 
   // Check for game over
   if (state.isGameOver) {
@@ -6021,7 +6097,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // Activation: "iddqd" (classic Doom cheat)
   // ═══════════════════════════════════════════════════════════════════════════
 
-  const lowerInput = input.trim().toLowerCase();
+  const lowerInput = normalizedInput.trim().toLowerCase();
 
   if (lowerInput === 'iddqd') {
     if (state.godMode) {
@@ -6144,6 +6220,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         output: [createEntry('system', '═══ JUMPING TO VICTORY ═══')],
         stateChanges: {
           gameWon: true,
+          endingType: 'good',
         },
         skipToPhase: 'victory' as const,
       };
@@ -6226,6 +6303,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {
           isGameOver: true,
           gameOverReason: 'GOD MODE - BAD ENDING',
+          endingType: 'bad',
         },
         skipToPhase: 'bad_ending' as const,
       };
@@ -6237,6 +6315,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {
           isGameOver: true,
           gameOverReason: 'GOD MODE - NEUTRAL ENDING',
+          endingType: 'neutral',
         },
         skipToPhase: 'neutral_ending' as const,
       };
@@ -6247,6 +6326,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         output: [createEntry('system', '═══ JUMPING TO SECRET ENDING ═══')],
         stateChanges: {
           ufo74SecretDiscovered: true,
+          endingType: 'secret',
+          isGameOver: true,
         },
         skipToPhase: 'secret_ending' as const,
       };
@@ -6295,7 +6376,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     const filePath = state.pendingDecryptFile;
 
     // Cancel decryption if user types cancel
-    if (input.toLowerCase().trim() === 'cancel') {
+    if (normalizedInput.toLowerCase().trim() === 'cancel') {
       return {
         output: [createEntry('system', 'Decryption cancelled.')],
         stateChanges: {
@@ -6309,7 +6390,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     if (node && node.type === 'file') {
       const file = node as FileNode;
       if (file.securityQuestion) {
-        const answer = input.trim().toLowerCase();
+        const answer = normalizedInput.trim().toLowerCase();
         const validAnswers = file.securityQuestion.answers.map(a => a.toLowerCase());
 
         if (validAnswers.includes(answer)) {
@@ -6500,6 +6581,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   if (!handler) {
     // Increment legacy alert counter for invalid commands
     const newAlertCounter = state.legacyAlertCounter + 1;
+    const nextDetection = Math.min(MAX_DETECTION, state.detectionLevel + 2);
 
     // Check if this triggers game over
     if (newAlertCounter >= 8) {
@@ -6518,6 +6600,32 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           isGameOver: true,
           gameOverReason: 'INVALID ATTEMPT THRESHOLD',
           legacyAlertCounter: newAlertCounter,
+        },
+        triggerFlicker: true,
+      };
+    }
+
+    if (nextDetection >= MAX_DETECTION) {
+      return {
+        output: [
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('error', ''),
+          createEntry('error', '  INTRUSION DETECTED'),
+          createEntry('error', ''),
+          createEntry('error', '  Your connection has been traced.'),
+          createEntry('error', '  Security protocols have been dispatched.'),
+          createEntry('error', ''),
+          createEntry('error', '  >> SESSION TERMINATED <<'),
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('error', ''),
+        ],
+        stateChanges: {
+          isGameOver: true,
+          gameOverReason: 'INTRUSION DETECTED - TRACED',
+          legacyAlertCounter: newAlertCounter,
+          detectionLevel: nextDetection,
         },
         triggerFlicker: true,
       };
@@ -6555,7 +6663,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     return {
       output,
       stateChanges: {
-        detectionLevel: state.detectionLevel + 2,
+        detectionLevel: nextDetection,
         legacyAlertCounter: newAlertCounter,
       },
     };
@@ -6737,8 +6845,15 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // ═══════════════════════════════════════════════════════════════════════════
   // DETECTION STATE WARNINGS - Urgent feedback at high detection levels
   // ═══════════════════════════════════════════════════════════════════════════
-  const newDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
-  const prevDetection = state.detectionLevel;
+  const rawDetection = result.stateChanges.detectionLevel ?? state.detectionLevel;
+  const boundedDetection = Math.min(MAX_DETECTION, Math.max(0, rawDetection));
+
+  if (result.stateChanges.detectionLevel !== undefined || rawDetection !== boundedDetection) {
+    result.stateChanges.detectionLevel = boundedDetection;
+  }
+
+  const newDetection = boundedDetection;
+  const prevDetection = Math.min(MAX_DETECTION, Math.max(0, state.detectionLevel));
 
   // Check if detection just crossed into SUSPICIOUS territory (50-69)
   if (newDetection >= 50 && newDetection < 70 && prevDetection < 50) {

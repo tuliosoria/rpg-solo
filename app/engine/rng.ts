@@ -24,10 +24,12 @@ export function generateSeed(): number {
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
     const array = new Uint32Array(1);
     crypto.getRandomValues(array);
-    return array[0] % 2147483647;
+    const seed = array[0] % 2147483647;
+    return seed === 0 ? 1 : seed;
   }
   // Fallback to Math.random for environments without crypto
-  return Math.floor(Math.random() * 2147483647);
+  const seed = Math.floor(Math.random() * 2147483647);
+  return seed === 0 ? 1 : seed;
 }
 
 /**

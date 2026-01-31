@@ -11,6 +11,9 @@ export const MAX_HISTORY_SIZE = 500;
 // Maximum number of commands in command history (for arrow-key navigation)
 export const MAX_COMMAND_HISTORY_SIZE = 100;
 
+// Maximum length of a command input string
+export const MAX_COMMAND_INPUT_LENGTH = 256;
+
 // Maximum number of player notes
 export const MAX_PLAYER_NOTES = 50;
 

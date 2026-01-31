@@ -78,7 +78,20 @@ export default function VideoOverlay({
       if (isPlaying) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play();
+        try {
+          const playPromise = videoRef.current.play();
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {
+              setError('PLAYBACK BLOCKED - USER ACTION REQUIRED');
+              setIsLoading(false);
+              setIsPlaying(false);
+            });
+          }
+        } catch {
+          setError('PLAYBACK BLOCKED - USER ACTION REQUIRED');
+          setIsLoading(false);
+          setIsPlaying(false);
+        }
       }
     }
   }, [isPlaying]);
@@ -101,14 +114,18 @@ export default function VideoOverlay({
   const handleTimeUpdate = useCallback(() => {
     if (videoRef.current) {
       const video = videoRef.current;
+      const durationValue = Number.isFinite(video.duration) ? video.duration : 0;
       setCurrentTime(video.currentTime);
-      setProgress((video.currentTime / video.duration) * 100);
+      setProgress(durationValue > 0 ? (video.currentTime / durationValue) * 100 : 0);
     }
   }, []);
 
   const handleLoadedMetadata = useCallback(() => {
     if (videoRef.current) {
-      setDuration(videoRef.current.duration);
+      const durationValue = Number.isFinite(videoRef.current.duration)
+        ? videoRef.current.duration
+        : 0;
+      setDuration(durationValue);
       setIsLoading(false);
     }
   }, []);

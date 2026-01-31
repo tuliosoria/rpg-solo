@@ -57,6 +57,19 @@ describe('ImageOverlay', () => {
       expect(img).toBeInTheDocument();
       expect(img).toHaveAttribute('src', '/images/test-image.jpg');
     });
+
+    it('shows error message when image fails to load', () => {
+      render(<ImageOverlay {...defaultProps} />);
+
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      const img = screen.getByAltText('Test recovered image');
+      fireEvent.error(img);
+
+      expect(screen.getByText(/IMAGE DATA CORRUPTED/i)).toBeInTheDocument();
+    });
   });
 
   describe('Corrupted Mode', () => {

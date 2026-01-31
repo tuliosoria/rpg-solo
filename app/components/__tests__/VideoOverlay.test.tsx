@@ -282,6 +282,32 @@ describe('VideoOverlay', () => {
     expect(playButton).toBeInTheDocument();
   });
 
+  it('shows error when playback is blocked', async () => {
+    render(<VideoOverlay {...defaultProps} />);
+
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+
+    const video = document.querySelector('video') as HTMLVideoElement;
+    if (video) {
+      Object.defineProperty(video, 'duration', { value: 120, writable: true });
+      fireEvent.loadedMetadata(video);
+      vi.spyOn(video, 'play').mockImplementation(
+        () => Promise.reject(new Error('blocked')) as never
+      );
+    }
+
+    const playButton = screen.getByRole('button', { name: /play/i });
+
+    await act(async () => {
+      fireEvent.click(playButton);
+      await Promise.resolve();
+    });
+
+    expect(screen.getByText(/PLAYBACK BLOCKED/i)).toBeInTheDocument();
+  });
+
   it('handles progress bar click to seek', async () => {
     render(<VideoOverlay {...defaultProps} />);
 
