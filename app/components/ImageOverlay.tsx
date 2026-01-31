@@ -74,6 +74,9 @@ export default function ImageOverlay({
   return (
     <div
       className={`${styles.overlay} ${flickering ? styles.flickering : ''} ${initialShock ? styles.initialShock : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Recovered image: ${alt}`}
       onClick={onCloseAction}
     >
       {/* Scanlines */}

@@ -62,6 +62,16 @@ export default function VideoOverlay({
     };
   }, []);
 
+  const togglePlayPause = useCallback(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+    }
+  }, [isPlaying]);
+
   // Close on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -75,17 +85,7 @@ export default function VideoOverlay({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onCloseAction]);
-
-  const togglePlayPause = useCallback(() => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-    }
-  }, [isPlaying]);
+  }, [onCloseAction, togglePlayPause]);
 
   const handleTimeUpdate = useCallback(() => {
     if (videoRef.current) {
@@ -140,6 +140,9 @@ export default function VideoOverlay({
   return (
     <div
       className={`${styles.overlay} ${flickering ? styles.flickering : ''} ${initialShock ? styles.initialShock : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Recovered video: ${title}`}
       onClick={e => {
         if (e.target === e.currentTarget) {
           onCloseAction();

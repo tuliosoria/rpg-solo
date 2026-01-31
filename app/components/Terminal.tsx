@@ -16,7 +16,7 @@ import {
   getTutorialMessage,
   TUTORIAL_MESSAGES,
 } from '../engine/commands';
-import { listDirectory, resolvePath, getFileContent, getNode } from '../engine/filesystem';
+import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { autoSave } from '../storage/saves';
 import { incrementStatistic, addPlaytime } from '../storage/statistics';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
@@ -305,8 +305,8 @@ export default function Terminal({
 
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const gameStateRef = useRef(gameState);
   const skipStreamingRef = useRef(false);
-  const lastHistoryCount = useRef(0);
   const streamStartScrollPos = useRef<number | null>(null);
 
   // Scroll behavior: during streaming scroll to bottom, after streaming scroll to content start
@@ -366,15 +366,16 @@ export default function Terminal({
   // Auto-save periodically
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!gameState.isGameOver) {
-        autoSave(gameState);
+      const currentState = gameStateRef.current;
+      if (!currentState.isGameOver) {
+        autoSave(currentState);
         // Track playtime every autosave interval
         addPlaytime(AUTOSAVE_INTERVAL_MS);
       }
     }, AUTOSAVE_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, [gameState]);
+  }, []);
 
   // Phase transition: when evidencesSaved becomes true, trigger blackout
   useEffect(() => {
@@ -624,10 +625,9 @@ export default function Terminal({
   // Idle hint system - nudge players who seem stuck
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
-  const gameStateRef = useRef(gameState); // Ref to access current state without re-triggering effect
   const firewallPauseStartRef = useRef<number | null>(null); // Track when firewall pause starts
 
-  // Keep ref updated
+  // Keep gameState ref updated
   useEffect(() => {
     gameStateRef.current = gameState;
   }, [gameState]);
@@ -1130,28 +1130,10 @@ export default function Terminal({
     activeVideo,
   ]);
 
-  // Use refs to track current state for async operations to avoid race conditions
-  const encryptedChannelStateRef = useRef(encryptedChannelState);
-  const pendingUfo74MessagesRef = useRef(pendingUfo74Messages);
-  const gameStateRef2 = useRef(gameState); // Secondary ref for handleSubmit
-
-  // Keep refs in sync with state
-  useEffect(() => {
-    encryptedChannelStateRef.current = encryptedChannelState;
-  }, [encryptedChannelState]);
-
-  useEffect(() => {
-    pendingUfo74MessagesRef.current = pendingUfo74Messages;
-  }, [pendingUfo74Messages]);
-
-  useEffect(() => {
-    gameStateRef2.current = gameState;
-  }, [gameState]);
-
   // Handle command submission
   const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
+    async (e?: React.SyntheticEvent) => {
+      e?.preventDefault?.();
 
       // If there's a pending image, show it on Enter
       if (pendingImage && !inputValue.trim()) {
@@ -1654,7 +1636,7 @@ export default function Terminal({
         }
       }
     },
-    [historyIndex, gameState.commandHistory, inputValue, getCompletions, playKeySound]
+    [historyIndex, gameState, inputValue, getCompletions, completeInput, playKeySound]
   );
 
   // Get status bar content
@@ -1704,29 +1686,6 @@ export default function Terminal({
     return discovered ? styles.truthProven : styles.truthMissing;
   };
 
-  // Get truth discovery status (for backward compatibility)
-  const getTruthStatus = () => {
-    const truths = gameState.truthsDiscovered;
-    if (!truths || typeof truths.has !== 'function') {
-      return {
-        recovered: false,
-        captured: false,
-        communicated: false,
-        involved: false,
-        future: false,
-        total: 0,
-      };
-    }
-    return {
-      recovered: truths.has('debris_relocation'),
-      captured: truths.has('being_containment'),
-      communicated: truths.has('telepathic_scouts'),
-      involved: truths.has('international_actors'),
-      future: truths.has('transition_2026'),
-      total: truths.size,
-    };
-  };
-
   // Get discovered count (for victory condition display)
   const getDiscoveredCount = (): number => {
     return gameState.truthsDiscovered?.size || 0;
@@ -1750,7 +1709,6 @@ export default function Terminal({
     return `${attempts}/${MAX_WRONG_ATTEMPTS}`;
   };
 
-  const truthStatus = getTruthStatus();
   const riskInfo = getRiskLevel();
 
   // Render terminal entry
@@ -1916,7 +1874,14 @@ export default function Terminal({
         )}
 
         {/* Paranoia message overlay */}
-        {paranoiaMessage && <div className={styles.paranoiaMessage}>{paranoiaMessage}</div>}
+        {paranoiaMessage && (
+          <div
+            className={styles.paranoiaMessage}
+            style={{ top: paranoiaPosition.top, left: paranoiaPosition.left }}
+          >
+            {paranoiaMessage}
+          </div>
+        )}
 
         {/* Firewall Eyes - hostile surveillance entities */}
         {gameState.tutorialComplete && !gameState.isGameOver && (
@@ -1951,7 +1916,17 @@ export default function Terminal({
         <div className={styles.statusBar}>
           <span
             className={`${styles.statusLeft} ${styles.clickable}`}
+            role="button"
+            tabIndex={0}
+            aria-expanded={showHeaderMenu}
+            aria-controls="terminal-header-menu"
             onClick={() => setShowHeaderMenu(!showHeaderMenu)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setShowHeaderMenu(prev => !prev);
+              }
+            }}
           >
             VARGINHA: TERMINAL 1996 ▼
           </span>
@@ -1968,7 +1943,7 @@ export default function Terminal({
 
           {/* Dropdown menu */}
           {showHeaderMenu && (
-            <div className={styles.headerMenu}>
+            <div className={styles.headerMenu} id="terminal-header-menu" role="menu">
               <button
                 className={styles.menuItem}
                 onClick={() => {
@@ -2075,7 +2050,13 @@ export default function Terminal({
         </div>
 
         {/* Output area */}
-        <div className={styles.output} ref={outputRef}>
+        <div
+          className={styles.output}
+          ref={outputRef}
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
+        >
           {gameState.history.map(renderEntry)}
           {isProcessing && (
             <div className={`${styles.line} ${styles.processing}`}>Processing...</div>
@@ -2114,7 +2095,7 @@ export default function Terminal({
                 type="button"
                 className={styles.enterPromptContent}
                 disabled={isProcessing}
-                onClick={handleSubmit as unknown as React.MouseEventHandler}
+                onClick={handleSubmit}
                 tabIndex={-1}
               >
                 <span className={styles.enterPromptSymbol}>↵</span>
@@ -2141,6 +2122,7 @@ export default function Terminal({
               ref={inputRef}
               type="text"
               value={inputValue}
+              aria-label="Terminal command input"
               onChange={e => {
                 const newValue = e.target.value;
                 setInputValue(newValue);

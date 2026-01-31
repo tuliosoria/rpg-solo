@@ -370,7 +370,14 @@ export default function ICQChat({
       </div>
 
       {/* Chat Area */}
-      <div className={styles.chatArea} ref={chatRef}>
+      <div
+        className={styles.chatArea}
+        ref={chatRef}
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions"
+        aria-label="ICQ chat log"
+      >
         {messages.map((msg, index) => (
           <div key={index} className={`${styles.message} ${styles[msg.sender]}`}>
             {msg.sender === 'system' ? (
@@ -400,6 +407,7 @@ export default function ICQChat({
             placeholder={phase === 'victory' ? 'Missão completa!' : 'Digite sua mensagem...'}
             disabled={isTyping || phase === 'victory' || phase === 'sending'}
             className={styles.input}
+            aria-label="ICQ message input"
           />
           <button
             type="submit"
