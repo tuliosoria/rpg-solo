@@ -3,7 +3,8 @@
 import { TerminalEntry } from '../../types';
 import { createEntry } from './utils';
 
-// Tutorial messages from UFO74 - shown one at a time (concise version)
+// Tutorial messages from UFO74 - shown one at a time
+// Design: explicit early steps, diegetic, natural hacker briefing flow
 export const TUTORIAL_MESSAGES: string[][] = [
   [
     '┌─────────────────────────────────────────────────────────┐',
@@ -11,15 +12,16 @@ export const TUTORIAL_MESSAGES: string[][] = [
     '└─────────────────────────────────────────────────────────┘',
   ],
   ['UFO74: youre in. keep it quiet.'],
-  ['UFO74: quick brief. this terminal is read-only.'],
-  ['UFO74: you move with "ls", "cd", and "open".'],
+  ['UFO74: quick brief. you cant change anything here — read only.'],
+  ['UFO74: type "ls" to see whats in front of you.'],
+  ['UFO74: type "cd <folder>" to go inside. "open <file>" to read.'],
   ['UFO74: when this channel closes, start with: ls'],
-  ['UFO74: internal/ is low-risk paperwork. good warm-up.'],
-  ['UFO74: watch the evidence tracker. it marks what you prove.'],
-  ['UFO74: risk climbs. once it spikes, they test you. stay cold.'],
+  ['UFO74: try internal/ first. routine paperwork. low heat.'],
+  ['UFO74: youll see an evidence tracker. it lights up when you prove something.'],
+  ['UFO74: risk meter climbs as you dig. if it spikes, they test you. fail that, youre out.'],
   [
-    'UFO74: im out. once you dig in, the system watches back.',
-    '       move slow. read everything. connect the pieces.',
+    'UFO74: im cutting the link. from here, youre on your own.',
+    '       move slow. read everything. the truth is in the details.',
   ],
   ['>> CONNECTION IDLE <<', '', 'Type "help" for commands. "help basics" if youre new.'],
 ];

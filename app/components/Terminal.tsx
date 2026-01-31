@@ -1274,13 +1274,13 @@ export default function Terminal({
         const tutorialEntries = getTutorialMessage(currentStep);
 
         // Trigger UI reveals at specific steps
-        // Step 6: Evidence tracker reveal (after evidence hint)
-        if (currentStep === 5) {
+        // Step 8: Evidence tracker reveal (after "youll see an evidence tracker")
+        if (currentStep === 7) {
           setTimeout(() => setShowEvidenceTracker(true), 300);
           playSound('reveal');
         }
-        // Step 7: Risk tracker reveal (after risk warning)
-        if (currentStep === 6) {
+        // Step 9: Risk tracker reveal (after "risk meter climbs")
+        if (currentStep === 8) {
           setTimeout(() => setShowRiskTracker(true), 300);
         }
 
