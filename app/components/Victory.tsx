@@ -36,6 +36,7 @@ export default function Victory({
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null);
   const hasRecordedEnding = useRef(false);
+  const creditsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const linkCount = evidenceLinks.length;
   const linkStatus = linkCount >= 3 ? 'Coherent' : linkCount > 0 ? 'Partial' : 'Absent';
@@ -168,7 +169,10 @@ export default function Victory({
     const interval = setInterval(() => {
       if (lineIndex >= victoryText.length) {
         clearInterval(interval);
-        setTimeout(() => setPhase('credits'), 2000);
+        if (creditsTimerRef.current) {
+          clearTimeout(creditsTimerRef.current);
+        }
+        creditsTimerRef.current = setTimeout(() => setPhase('credits'), 2000);
         return;
       }
 
@@ -176,7 +180,12 @@ export default function Victory({
       lineIndex++;
     }, 300);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (creditsTimerRef.current) {
+        clearTimeout(creditsTimerRef.current);
+      }
+    };
   }, [phase, victoryText]);
 
   return (

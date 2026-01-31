@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { GameState } from '../types';
 import { createNewGame, loadGame } from '../storage/saves';
 import { useGlobalErrorHandler } from '../hooks/useGlobalErrorHandler';
 import ErrorBoundary from './ErrorBoundary';
 import Menu from './Menu';
-import Terminal from './Terminal';
-import SaveModal from './SaveModal';
+
+const Terminal = dynamic(() => import('./Terminal'), { ssr: false, loading: () => null });
+const SaveModal = dynamic(() => import('./SaveModal'), { ssr: false, loading: () => null });
 
 type View = 'menu' | 'game';
 

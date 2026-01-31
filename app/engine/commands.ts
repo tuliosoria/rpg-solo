@@ -97,6 +97,8 @@ export {
 } from './commands/tutorial';
 export type { TutorialTipId } from './commands/tutorial';
 
+const TRUTH_CATEGORY_SET = new Set<string>(TRUTH_CATEGORIES);
+
 // ═══════════════════════════════════════════════════════════════════════════
 // SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
 // ═══════════════════════════════════════════════════════════════════════════
@@ -437,10 +439,8 @@ function isMeaningfulAction(
   }
 
   // Discovering truth is definitely meaningful
-  if (
-    result.stateChanges.truthsDiscovered &&
-    (result.stateChanges.truthsDiscovered as Set<string>).size > state.truthsDiscovered.size
-  ) {
+  const updatedTruths = result.stateChanges.truthsDiscovered;
+  if (updatedTruths instanceof Set && updatedTruths.size > state.truthsDiscovered.size) {
     return true;
   }
 
@@ -528,10 +528,29 @@ function getContextualExplorationHints(state: GameState): string | null {
   const prisoner45Used = state.prisoner45QuestionsAsked > 0;
 
   // Check for unexplored areas and give targeted hints
-  const hasReadStorage = Array.from(filesRead).some(f => f.includes('/storage/'));
-  const hasReadComms = Array.from(filesRead).some(f => f.includes('/comms/'));
-  const hasReadOps = Array.from(filesRead).some(f => f.includes('/ops/'));
-  const hasReadAdmin = Array.from(filesRead).some(f => f.includes('/admin/'));
+  const readFlags = {
+    storage: false,
+    comms: false,
+    ops: false,
+    admin: false,
+  };
+
+  for (const filePath of filesRead) {
+    if (!readFlags.storage && filePath.includes('/storage/')) readFlags.storage = true;
+    if (!readFlags.comms && filePath.includes('/comms/')) readFlags.comms = true;
+    if (!readFlags.ops && filePath.includes('/ops/')) readFlags.ops = true;
+    if (!readFlags.admin && filePath.includes('/admin/')) readFlags.admin = true;
+    if (readFlags.storage && readFlags.comms && readFlags.ops && readFlags.admin) {
+      break;
+    }
+  }
+
+  const {
+    storage: hasReadStorage,
+    comms: hasReadComms,
+    ops: hasReadOps,
+    admin: hasReadAdmin,
+  } = readFlags;
 
   // Prioritized hints based on what's missing
   if (!hasReadStorage && !truthsDiscovered.has('debris_relocation')) {
@@ -675,7 +694,7 @@ function checkTruthProgress(
   // Create a new Set to avoid mutating the original state
   const updatedTruths = new Set(state.truthsDiscovered);
   for (const reveal of newReveals) {
-    if (TRUTH_CATEGORIES.includes(reveal as TruthCategory)) {
+    if (TRUTH_CATEGORY_SET.has(reveal)) {
       updatedTruths.add(reveal);
     }
   }
@@ -685,7 +704,7 @@ function checkTruthProgress(
   // Update evidence states to track which files revealed evidence
   const updatedStates = { ...state.evidenceStates };
   for (const reveal of newReveals) {
-    if (TRUTH_CATEGORIES.includes(reveal as TruthCategory)) {
+    if (TRUTH_CATEGORY_SET.has(reveal)) {
       if (!updatedStates[reveal]) {
         updatedStates[reveal] = {
           linkedFiles: sourceFilePath ? [sourceFilePath] : [],
@@ -720,7 +739,7 @@ function checkTruthProgress(
     };
 
     for (const reveal of newReveals) {
-      if (!Array.from(state.truthsDiscovered).includes(reveal)) {
+      if (!state.truthsDiscovered.has(reveal)) {
         // This is a new discovery
         notices.push(createEntry('system', ''));
         notices.push(createEntry('warning', '╔═══════════════════════════════════════════╗'));
@@ -5474,12 +5493,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('system', ''),
       ];
 
-      Array.from(bookmarks).forEach((path, i) => {
+      let index = 0;
+      for (const path of bookmarks) {
+        index += 1;
         const fileName = path.split('/').pop() || path;
         const isRead = state.filesRead?.has(path);
-        output.push(createEntry('output', `  ${i + 1}. ${fileName} ${isRead ? '[READ]' : ''}`));
+        output.push(createEntry('output', `  ${index}. ${fileName} ${isRead ? '[READ]' : ''}`));
         output.push(createEntry('system', `      └─ ${path}`));
-      });
+      }
 
       output.push(createEntry('system', ''));
       output.push(createEntry('system', '═══════════════════════════════════════'));

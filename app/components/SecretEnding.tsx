@@ -107,7 +107,7 @@ export default function SecretEnding({
     if (phase !== 'message') return;
 
     let lineIndex = 0;
-    let finalTimeout: NodeJS.Timeout | undefined;
+    let finalTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const interval = setInterval(() => {
       if (lineIndex >= SECRET_TEXT.length) {

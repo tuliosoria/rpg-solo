@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import styles from './TuringTestOverlay.module.css';
 import { TURING_QUESTIONS } from '../constants/turing';
@@ -18,6 +18,8 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [flickering, setFlickering] = useState(true);
+  const flickerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentQuestion = TURING_QUESTIONS[questionIndex];
 
@@ -32,10 +34,21 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
     const interval = setInterval(() => {
       if (uiChance(0.1)) {
         setFlickering(true);
-        setTimeout(() => setFlickering(false), 50 + uiRandomInt(0, 100));
+        if (flickerTimeoutRef.current) {
+          clearTimeout(flickerTimeoutRef.current);
+        }
+        flickerTimeoutRef.current = setTimeout(
+          () => setFlickering(false),
+          50 + uiRandomInt(0, 100)
+        );
       }
     }, 2000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (flickerTimeoutRef.current) {
+        clearTimeout(flickerTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Handle option selection
@@ -54,7 +67,10 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
       setShowFeedback(true);
 
       // Move to next question or show result
-      setTimeout(() => {
+      if (advanceTimerRef.current) {
+        clearTimeout(advanceTimerRef.current);
+      }
+      advanceTimerRef.current = setTimeout(() => {
         if (questionIndex < TURING_QUESTIONS.length - 1) {
           setQuestionIndex(prev => prev + 1);
           setSelectedOption(null);
@@ -66,6 +82,17 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
     },
     [questionIndex, currentQuestion, showFeedback, showResult, onCorrectAnswer]
   );
+
+  useEffect(() => {
+    return () => {
+      if (advanceTimerRef.current) {
+        clearTimeout(advanceTimerRef.current);
+      }
+      if (flickerTimeoutRef.current) {
+        clearTimeout(flickerTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Keyboard controls
   useEffect(() => {

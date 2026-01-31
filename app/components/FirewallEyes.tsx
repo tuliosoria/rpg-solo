@@ -2,7 +2,7 @@
 
 import React, { useEffect, useCallback, useRef } from 'react';
 import { FirewallEye } from '../types';
-import { uiRandom } from '../engine/rng';
+import { uiRandom, uiRandomPick } from '../engine/rng';
 import styles from './FirewallEyes.module.css';
 
 // Configuration
@@ -63,8 +63,8 @@ export default function FirewallEyes({
   onActivateFirewall,
   onPauseChanged,
 }: FirewallEyesProps) {
-  const detonationTimersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
-  const spawnTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const detonationTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const spawnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pauseStartTimeRef = useRef<number | null>(null); // Track when pause started for time adjustment
 
   // Activate firewall when detection reaches threshold (delay if paused)
@@ -241,8 +241,12 @@ export function createFirewallEye(): FirewallEye {
   const x = 10 + uiRandom() * 80; // 10-90% horizontal
   const y = 20 + uiRandom() * 60; // 20-80% vertical (avoid header/footer)
 
+  const randomSegment = Math.floor(uiRandom() * 36 ** 8)
+    .toString(36)
+    .padStart(8, '0');
+
   return {
-    id: `eye-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: `eye-${Date.now()}-${randomSegment}`,
     x,
     y,
     spawnTime: now,
@@ -305,7 +309,7 @@ export function speakFirewallVoice(): void {
   speechSynthesis.cancel();
 
   // Pick a random phrase
-  const phrase = FIREWALL_PHRASES[Math.floor(Math.random() * FIREWALL_PHRASES.length)];
+  const phrase = uiRandomPick(FIREWALL_PHRASES);
 
   const utterance = new SpeechSynthesisUtterance(phrase);
   utterance.pitch = 0.3; // Very low/deep

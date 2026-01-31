@@ -30,14 +30,19 @@ function HackerAvatar({
 }: HackerAvatarProps) {
   const [currentExpression, setCurrentExpression] = useState<AvatarExpression>(expression);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (expression !== 'neutral') {
       setIsTransitioning(true);
       setCurrentExpression(expression);
 
-      setTimeout(() => setIsTransitioning(false), 150);
+      if (transitionTimerRef.current) {
+        clearTimeout(transitionTimerRef.current);
+      }
+      transitionTimerRef.current = setTimeout(() => setIsTransitioning(false), 150);
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -45,7 +50,10 @@ function HackerAvatar({
 
       timeoutRef.current = setTimeout(() => {
         setIsTransitioning(true);
-        setTimeout(() => {
+        if (resetTimerRef.current) {
+          clearTimeout(resetTimerRef.current);
+        }
+        resetTimerRef.current = setTimeout(() => {
           setCurrentExpression('neutral');
           setIsTransitioning(false);
           onExpressionTimeout?.();
@@ -59,11 +67,23 @@ function HackerAvatar({
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      if (transitionTimerRef.current) {
+        clearTimeout(transitionTimerRef.current);
+      }
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
+      }
     };
   }, [expression, onExpressionTimeout]);
 
   return (
-    <FloatingElement id="hacker-avatar" zone="top-right" priority={2} baseOffset={0} style={{ top: 'max(190px, 22vh)', right: 15 }}>
+    <FloatingElement
+      id="hacker-avatar"
+      zone="top-right"
+      priority={2}
+      baseOffset={0}
+      style={{ top: 'max(190px, 22vh)', right: 15 }}
+    >
       <div className={styles.hudPanel}>
         {/* Avatar only - meters removed per UI cleanup */}
         <div className={styles.avatarColumn}>
@@ -71,7 +91,9 @@ function HackerAvatar({
             {/* Green scanning bar */}
             <div className={styles.scanBar} />
 
-            <div className={`${styles.imageWrapper} ${isTransitioning ? styles.transitioning : ''}`}>
+            <div
+              className={`${styles.imageWrapper} ${isTransitioning ? styles.transitioning : ''}`}
+            >
               <Image
                 src={EXPRESSION_IMAGES[currentExpression]}
                 alt="Hacker avatar"

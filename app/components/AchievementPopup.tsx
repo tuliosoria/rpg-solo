@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import styles from './AchievementPopup.module.css';
 import { Achievement } from '../engine/achievements';
 import { FloatingElement } from './FloatingUI';
@@ -13,31 +13,45 @@ interface AchievementPopupProps {
 function AchievementPopup({ achievement, onDismiss }: AchievementPopupProps) {
   const [visible, setVisible] = useState(false);
   const [exiting, setExiting] = useState(false);
+  const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const triggerDismiss = useCallback(() => {
+    if (exitTimerRef.current) {
+      clearTimeout(exitTimerRef.current);
+    }
+    setExiting(true);
+    exitTimerRef.current = setTimeout(onDismiss, 500);
+  }, [onDismiss]);
 
   useEffect(() => {
     // Animate in
-    const showTimer = setTimeout(() => setVisible(true), 50);
+    showTimerRef.current = setTimeout(() => setVisible(true), 50);
 
     // Auto-dismiss after 4 seconds
-    const dismissTimer = setTimeout(() => {
-      setExiting(true);
-      setTimeout(onDismiss, 500);
+    dismissTimerRef.current = setTimeout(() => {
+      triggerDismiss();
     }, 4000);
 
     return () => {
-      clearTimeout(showTimer);
-      clearTimeout(dismissTimer);
+      if (showTimerRef.current) {
+        clearTimeout(showTimerRef.current);
+      }
+      if (dismissTimerRef.current) {
+        clearTimeout(dismissTimerRef.current);
+      }
+      if (exitTimerRef.current) {
+        clearTimeout(exitTimerRef.current);
+      }
     };
-  }, [onDismiss]);
+  }, [triggerDismiss]);
 
   return (
     <FloatingElement id="achievement-popup" zone="bottom-right" priority={2} baseOffset={32}>
       <div
         className={`${styles.popup} ${visible ? styles.visible : ''} ${exiting ? styles.exiting : ''}`}
-        onClick={() => {
-          setExiting(true);
-          setTimeout(onDismiss, 500);
-        }}
+        onClick={triggerDismiss}
       >
         <div className={styles.icon}>{achievement.icon}</div>
         <div className={styles.content}>

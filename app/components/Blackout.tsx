@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { uiRandomFloat } from '../engine/rng';
 import styles from './Blackout.module.css';
 
 /** UFO74's final emergency transmission messages displayed during the blackout sequence */
@@ -38,6 +39,7 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
   const [phase, setPhase] = useState<'glitch' | 'loading' | 'message' | 'fade'>('glitch');
   const [loadProgress, setLoadProgress] = useState(0);
   const [messageLines, setMessageLines] = useState<string[]>([]);
+  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Phase 1: Glitch effect
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
 
     const interval = setInterval(() => {
       setLoadProgress(prev => {
-        const next = prev + Math.random() * 8 + 2;
+        const next = prev + uiRandomFloat(2, 10);
         if (next >= 100) {
           clearInterval(interval);
           setPhase('message');
@@ -74,7 +76,10 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
     const interval = setInterval(() => {
       if (lineIndex >= UFO74_FINAL_MESSAGES.length) {
         clearInterval(interval);
-        setTimeout(() => setPhase('fade'), 2000);
+        if (fadeTimerRef.current) {
+          clearTimeout(fadeTimerRef.current);
+        }
+        fadeTimerRef.current = setTimeout(() => setPhase('fade'), 2000);
         return;
       }
 
@@ -82,7 +87,12 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
       lineIndex++;
     }, 400);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (fadeTimerRef.current) {
+        clearTimeout(fadeTimerRef.current);
+      }
+    };
   }, [phase]);
 
   // Phase 4: Fade and transition
