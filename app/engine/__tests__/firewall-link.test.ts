@@ -43,6 +43,19 @@ describe('Firewall Eyes System', () => {
 
       expect(eye1.id).not.toBe(eye2.id);
     });
+
+    it('avoids spawning in avatar region (top-right corner)', () => {
+      // Create many eyes and verify none spawn in avatar zone (x > 75% and y < 40%)
+      const eyes = [];
+      for (let i = 0; i < 100; i++) {
+        eyes.push(createFirewallEye());
+      }
+
+      for (const eye of eyes) {
+        const inAvatarZone = eye.x > 75 && eye.y < 40;
+        expect(inAvatarZone).toBe(false);
+      }
+    });
   });
 
   describe('Firewall constants', () => {

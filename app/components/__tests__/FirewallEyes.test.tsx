@@ -68,7 +68,7 @@ describe('FirewallEyes', () => {
     expect(onSpawnEyeBatch).toHaveBeenCalledTimes(1);
   });
 
-  it('enforces the 60-second cooldown between spawn batches', () => {
+  it('enforces the 90-second cooldown between spawn batches', () => {
     const onSpawnEyeBatch = vi.fn();
     const now = Date.now();
 

@@ -23,7 +23,7 @@ const FIREWALL_EYE_BATCH_THRESHOLDS = {
   HIGH: HIGH_RISK_THRESHOLD,
   CRITICAL: CRITICAL_RISK_THRESHOLD,
 } as const;
-const SPAWN_COOLDOWN_MS = 60000; // 1 minute cooldown between spawns
+const SPAWN_COOLDOWN_MS = 90000; // 90 seconds cooldown between spawns
 const DETECTION_INCREASE_ON_DETONATE = 5; // Risk increase when eye detonates
 
 export function getFirewallEyeBatchSize(detectionLevel: number): number {
@@ -237,9 +237,27 @@ export default function FirewallEyes({
 export function createFirewallEye(): FirewallEye {
   const now = Date.now();
 
-  // Random position avoiding edges and UI elements
-  const x = 10 + uiRandom() * 80; // 10-90% horizontal
-  const y = 20 + uiRandom() * 60; // 20-80% vertical (avoid header/footer)
+  // Generate random position avoiding edges and the avatar region (top-right corner)
+  // Avatar is at approximately right: 15px, top: 190px, size ~200x280px
+  // In percentage terms, avatar occupies roughly x: 80-100%, y: 15-35% of viewport
+  let x: number;
+  let y: number;
+  const maxAttempts = 10;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    x = 10 + uiRandom() * 80; // 10-90% horizontal
+    y = 20 + uiRandom() * 60; // 20-80% vertical (avoid header/footer)
+
+    // Check if position overlaps with avatar region (x > 75% and y < 40%)
+    const inAvatarZone = x > 75 && y < 40;
+    if (!inAvatarZone) {
+      break;
+    }
+    // If we're in avatar zone, regenerate (last attempt uses whatever we got but shifted)
+    if (attempt === maxAttempts - 1) {
+      x = 10 + uiRandom() * 65; // Force left of avatar region
+    }
+  }
 
   const randomSegment = Math.floor(uiRandom() * 36 ** 8)
     .toString(36)
@@ -247,8 +265,8 @@ export function createFirewallEye(): FirewallEye {
 
   return {
     id: `eye-${Date.now()}-${randomSegment}`,
-    x,
-    y,
+    x: x!,
+    y: y!,
     spawnTime: now,
     detonateTime: now + EYE_LIFETIME_MS,
     isDetonating: false,

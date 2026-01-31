@@ -248,7 +248,13 @@ export default function Terminal({
   const [showTuringTest, setShowTuringTest] = useState(initialState.turingEvaluationActive);
   const keypressTimestamps = useRef<number[]>([]);
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
-  const isFirewallPaused = activeImage !== null || activeVideo !== null || showTuringTest;
+  const isFirewallPaused =
+    activeImage !== null ||
+    activeVideo !== null ||
+    showTuringTest ||
+    gameState.timedDecryptActive ||
+    gameState.traceSpikeActive ||
+    gameState.countdownActive;
 
   // Timed decryption timer display
   const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
