@@ -31,6 +31,7 @@ export function useGlobalErrorHandler() {
 
       // Log in development
       if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
         console.error('Unhandled Promise Rejection:', error);
       }
 
@@ -46,6 +47,7 @@ export function useGlobalErrorHandler() {
       if (isCritical) {
         // Could dispatch to a global state or show a notification
         // For now, just ensure we don't crash
+        // eslint-disable-next-line no-console
         console.warn('Critical async error occurred, but app should continue:', errorMessage);
       }
     };
@@ -54,6 +56,7 @@ export function useGlobalErrorHandler() {
     const handleError = (event: ErrorEvent) => {
       // Don't prevent default - let React's error boundary handle React errors
       if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
         console.error('Global error caught:', event.error);
       }
     };

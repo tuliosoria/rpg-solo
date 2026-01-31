@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../commands';
-import { GameState, DEFAULT_GAME_STATE, FirewallEye } from '../../types';
+import { GameState, DEFAULT_GAME_STATE } from '../../types';
 import {
   createFirewallEye,
   DETECTION_THRESHOLD,

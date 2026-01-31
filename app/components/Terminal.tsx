@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import {
   GameState,
@@ -34,8 +34,6 @@ import {
   GLITCH_TIMING,
   PARANOIA_TIMING,
   RISK_PULSE_DURATION_MS,
-  FLICKER_DURATION_MS,
-  TURING_TEST_DELAY_MS,
   NIGHT_OWL_DURATION_MS,
   TYPING_WARNING_TIMEOUT_MS,
   GAME_OVER_DELAY_MS,
@@ -48,17 +46,15 @@ import {
 import { useSound } from '../hooks/useSound';
 import { useAutocomplete } from '../hooks/useAutocomplete';
 import { unlockAchievement, Achievement } from '../engine/achievements';
-import { uiRandom, uiRandomInt, uiRandomPick, uiChance, uiRandomFloat } from '../engine/rng';
+import { uiRandom, uiRandomPick, uiChance } from '../engine/rng';
 import AchievementPopup from './AchievementPopup';
 import SettingsModal from './SettingsModal';
 import PauseMenu from './PauseMenu';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 import FirewallEyes, {
-  createFirewallEye,
   createFirewallEyeBatch,
   DETECTION_INCREASE_ON_DETONATE,
-  DETECTION_THRESHOLD,
   getFirewallEyeBatchSize,
   speakFirewallVoice,
   initVoices,
@@ -240,7 +236,7 @@ export default function Terminal({
 
   // Progressive UI reveal during tutorial
   const [showEvidenceTracker, setShowEvidenceTracker] = useState(false);
-  const [showRiskTracker, setShowRiskTracker] = useState(false);
+  const [, setShowRiskTracker] = useState(false);
   const [riskPulse, setRiskPulse] = useState(false);
 
   // Typing speed tracking
@@ -714,91 +710,94 @@ export default function Terminal({
     return () => outputEl.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const IDLE_HINTS = [
-    // Early game - no files read yet
-    {
-      hint: "Use 'ls' to see what's in the current directory.",
-      condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
-    },
-    {
-      hint: "Try 'open' on a .txt file to read it.",
-      condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
-    },
-    {
-      hint: "Navigation tip: 'cd' changes directories. Start exploring.",
-      condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
-    },
+  const idleHints = useMemo(
+    (): { hint: string; condition: (s: GameState) => boolean }[] => [
+      // Early game - no files read yet
+      {
+        hint: "Use 'ls' to see what's in the current directory.",
+        condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
+      },
+      {
+        hint: "Try 'open' on a .txt file to read it.",
+        condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
+      },
+      {
+        hint: "Navigation tip: 'cd' changes directories. Start exploring.",
+        condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
+      },
 
-    // No truths discovered - need to find evidence
-    {
-      hint: 'You need evidence. Look for files that seem... off.',
-      condition: (s: GameState) =>
-        (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 3,
-    },
-    {
-      hint: 'Some documents contradict the official narrative. Find them.',
-      condition: (s: GameState) =>
-        (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 5,
-    },
-    {
-      hint: 'Have you checked /internal?',
-      condition: (s: GameState) =>
-        s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt'),
-    },
-    {
-      hint: 'The /comms directory might have useful intel.',
-      condition: (s: GameState) =>
-        !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt'),
-    },
+      // No truths discovered - need to find evidence
+      {
+        hint: 'You need evidence. Look for files that seem... off.',
+        condition: (s: GameState) =>
+          (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 3,
+      },
+      {
+        hint: 'Some documents contradict the official narrative. Find them.',
+        condition: (s: GameState) =>
+          (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 5,
+      },
+      {
+        hint: 'Have you checked /internal?',
+        condition: (s: GameState) =>
+          s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt'),
+      },
+      {
+        hint: 'The /comms directory might have useful intel.',
+        condition: (s: GameState) =>
+          !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt'),
+      },
 
-    // High detection - hint about wait command
-    {
-      hint: "Detection is high. The 'wait' command lets time pass safely.",
-      condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HOSTILITY_MED,
-    },
-    {
-      hint: "They're watching closely. Consider using 'wait' to reduce suspicion.",
-      condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.ALERT,
-    },
-    {
-      hint: "CAUTION: Detection critical. 'wait' might buy you time.",
-      condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HEAVY_GLITCH,
-    },
+      // High detection - hint about wait command
+      {
+        hint: "Detection is high. The 'wait' command lets time pass safely.",
+        condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HOSTILITY_MED,
+      },
+      {
+        hint: "They're watching closely. Consider using 'wait' to reduce suspicion.",
+        condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.ALERT,
+      },
+      {
+        hint: "CAUTION: Detection critical. 'wait' might buy you time.",
+        condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HEAVY_GLITCH,
+      },
 
-    // Override protocol hint
-    {
-      hint: "You've seen a lot. There may be... deeper access available.",
-      condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.adminUnlocked,
-    },
-    {
-      hint: "Some commands aren't listed. Keep digging.",
-      condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.adminUnlocked,
-    },
+      // Override protocol hint
+      {
+        hint: "You've seen a lot. There may be... deeper access available.",
+        condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.adminUnlocked,
+      },
+      {
+        hint: "Some commands aren't listed. Keep digging.",
+        condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.adminUnlocked,
+      },
 
-    // General helpful hints
-    {
-      hint: "Use 'ls' to see what's in the current directory.",
-      condition: (s: GameState) => s.sessionCommandCount < 5,
-    },
-    {
-      hint: "Some files are ENCRYPTED. You'll need 'decrypt' for those.",
-      condition: (s: GameState) =>
-        (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2,
-    },
-    {
-      hint: "Try the 'progress' command to see what you've found.",
-      condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 1,
-    },
-    {
-      hint: "Don't forget: 'note' saves reminders, 'bookmark' saves files.",
-      condition: (s: GameState) =>
-        (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0,
-    },
-    {
-      hint: "Check 'unread' to see what you haven't opened yet.",
-      condition: (s: GameState) => (s.filesRead?.size || 0) >= 3,
-    },
-  ];
+      // General helpful hints
+      {
+        hint: "Use 'ls' to see what's in the current directory.",
+        condition: (s: GameState) => s.sessionCommandCount < 5,
+      },
+      {
+        hint: "Some files are ENCRYPTED. You'll need 'decrypt' for those.",
+        condition: (s: GameState) =>
+          (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2,
+      },
+      {
+        hint: "Try the 'progress' command to see what you've found.",
+        condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 1,
+      },
+      {
+        hint: "Don't forget: 'note' saves reminders, 'bookmark' saves files.",
+        condition: (s: GameState) =>
+          (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0,
+      },
+      {
+        hint: "Check 'unread' to see what you haven't opened yet.",
+        condition: (s: GameState) => (s.filesRead?.size || 0) >= 3,
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver || gameState.tutorialStep >= 0) return;
@@ -823,7 +822,7 @@ export default function Terminal({
       if (wanderingCount > 0) return;
 
       // Find an applicable hint
-      const applicableHints = IDLE_HINTS.filter(h => h.condition(currentState));
+      const applicableHints = idleHints.filter(h => h.condition(currentState));
       if (applicableHints.length === 0) return;
 
       const hint = uiRandomPick(applicableHints);
@@ -850,6 +849,7 @@ export default function Terminal({
     gamePhase,
     gameState.isGameOver,
     gameState.tutorialStep,
+    idleHints,
     playSound,
   ]);
 
@@ -1090,7 +1090,7 @@ export default function Terminal({
 
   // Stream output lines with variable timing
   const streamOutput = useCallback(
-    async (entries: TerminalEntry[], mode: StreamingMode, baseState: GameState): Promise<void> => {
+    async (entries: TerminalEntry[], mode: StreamingMode, _baseState: GameState): Promise<void> => {
       if (mode === 'none' || entries.length === 0) {
         // No streaming - add all at once
         // Check for transmission banner before adding
@@ -1629,6 +1629,7 @@ export default function Terminal({
       gameState,
       inputValue,
       isProcessing,
+      showTuringTest,
       onExitAction,
       onSaveRequestAction,
       triggerFlicker,
@@ -1636,11 +1637,11 @@ export default function Terminal({
       playSound,
       openEncryptedChannelWithMessages,
       checkAchievement,
+      gamePhase,
       pendingImage,
       pendingVideo,
       pendingUfo74StartMessages,
       pendingUfo74Messages,
-      encryptedChannelState,
     ]
   );
 

@@ -1,6 +1,6 @@
 // Filesystem resolver and navigation
 
-import { FileSystemNode, DirectoryNode, FileNode, GameState, FileMutation } from '../types';
+import { FileSystemNode, FileNode, GameState } from '../types';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 import { createSeededRng } from './rng';
 

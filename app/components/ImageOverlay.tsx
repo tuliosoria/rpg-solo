@@ -113,6 +113,7 @@ export default function ImageOverlay({
             className={`${styles.imageWrapper} ${tone === 'clinical' ? styles.greenTone : styles.amberTone}`}
           >
             {visible && !error && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={src}
                 alt={alt}

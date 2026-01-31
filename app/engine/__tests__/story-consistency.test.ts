@@ -19,7 +19,6 @@ import {
   GameState,
   DEFAULT_GAME_STATE,
   TRUTH_CATEGORIES,
-  TruthCategory,
   FileNode,
   DirectoryNode,
   FileSystemNode,
@@ -83,41 +82,6 @@ describe('Story Consistency Tests', () => {
   describe('1. Story Timeline Consistency', () => {
     describe('Date References', () => {
       it('all files with dates reference January 1996 or earlier historical context', () => {
-        // Valid date patterns for the game
-        const validDatePatterns = [
-          /\b(JAN|JANUARY)[\s-]*1996\b/i,
-          /\b20-JAN-1996\b/i,
-          /\b21-JAN-1996\b/i,
-          /\b22-JAN-1996\b/i,
-          /\b23-JAN-1996\b/i,
-          /\b24-JAN-1996\b/i,
-          /\b25-JAN-1996\b/i,
-          /\b26-JAN-1996\b/i,
-          /\b27-JAN-1996\b/i,
-          /\b28-JAN-1996\b/i,
-          /\b29-JAN-1996\b/i,
-          /\b30-JAN-1996\b/i,
-          /\b31-JAN-1996\b/i,
-          /\b(FEB|FEBRUARY)[\s-]*1996\b/i, // Aftermath documents
-          /\b(MAR|MARCH)[\s-]*1996\b/i, // Aftermath documents
-          /\b(APR|APRIL)[\s-]*1996\b/i, // Aftermath documents
-          /\b(DEC|DECEMBER)[\s-]*1995\b/i, // Pre-incident setup
-          /\b1995\b/i, // Prior year references
-          /\b1994\b/i, // Older protocols
-          /\b1993\b/i, // Historical protocols
-          /\b1989\b/i, // Standing orders
-          /\b1991\b/i, // Post-Soviet references
-          /\b1977\b/i, // Operation Prato original
-          /\b1978\b/i, // Operation Prato
-          /\b1947\b/i, // Roswell reference
-          /\b1961\b/i, // Historical UFO
-          /\b1967\b/i, // Historical UFO
-          /\b1980\b/i, // Historical UFO
-          /\b2026\b/i, // Future transition window (valid narrative element)
-          /\b2007\b/i, // Cycle analysis
-          /\bFY1997\b/i, // Fiscal year reference
-        ];
-
         // Patterns that would indicate anachronisms (words, not numbers embedded in codes/usernames)
         const invalidPatterns = [
           /\binternet\b/i, // Too modern
@@ -147,7 +111,6 @@ describe('Story Consistency Tests', () => {
       it('incident dates are consistently referenced as January 20, 1996', () => {
         const incidentDatePattern = /20-JAN-1996|20[-\s]JAN[-\s]1996|January\s+20/i;
         let foundIncidentDate = false;
-        let consistentIncidentDate = true;
         const inconsistencies: string[] = [];
 
         for (const file of allFiles) {
@@ -164,7 +127,6 @@ describe('Story Consistency Tests', () => {
               // Allow 19-JAN for pre-incident sightings (like regional_summary_jan96.txt)
               if (!/anomal|sighting|unusual|light/i.test(allContent)) {
                 inconsistencies.push(`${file.path}: Incident incorrectly dated to 19-JAN`);
-                consistentIncidentDate = false;
               }
             }
           }
@@ -175,17 +137,6 @@ describe('Story Consistency Tests', () => {
       });
 
       it('events happen in logical chronological order', () => {
-        // Key events and their expected dates
-        const eventTimeline: { event: string; date: string; files: string[] }[] = [
-          { event: 'Initial sighting', date: '19-JAN', files: [] },
-          { event: 'Main incident', date: '20-JAN', files: [] },
-          { event: 'Subject recovery', date: '20-JAN', files: [] },
-          { event: 'Autopsy', date: '21-JAN', files: [] },
-          { event: 'Secondary recovery', date: '21-JAN', files: [] },
-          { event: 'Foreign liaison arrival', date: '22-JAN', files: [] },
-          { event: 'Transfer complete', date: '22-JAN', files: [] },
-        ];
-
         // Track that we find evidence of the timeline
         let hasTimelineEvidence = false;
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useEffect, memo } from 'react';
+import React, { useState, useCallback, useEffect, memo, useMemo } from 'react';
 import styles from './PauseMenu.module.css';
 
 interface PauseMenuProps {
@@ -21,9 +21,13 @@ export default memo(function PauseMenu({
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const menuItems = showExitConfirm
-    ? ['confirm_exit', 'cancel_exit']
-    : ['resume', 'save', 'load', 'settings', 'exit'];
+  const menuItems = useMemo(
+    () =>
+      showExitConfirm
+        ? ['confirm_exit', 'cancel_exit']
+        : ['resume', 'save', 'load', 'settings', 'exit'],
+    [showExitConfirm]
+  );
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback(

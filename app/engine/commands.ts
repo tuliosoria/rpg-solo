@@ -18,57 +18,38 @@ import {
   getFileContent,
   canAccessFile,
   getFileReveals,
-  smartResolvePath,
-  findFilesMatching,
-  getAllAccessibleFiles,
-  FileMatch,
 } from './filesystem';
 import { createSeededRng, seededRandomInt, seededRandomPick } from './rng';
-import { FILESYSTEM_ROOT } from '../data/filesystem';
 import {
   attemptEvidenceRevelation,
-  getEvidencePotentialSummary,
   countEvidence,
   getCaseStrengthDescription,
-  fileHasEvidence,
   getFileEvidenceSymbol,
   getDisturbingContentAvatarExpression,
-  initializeEvidence,
   EVIDENCE_SYMBOL,
 } from './evidenceRevelation';
-import {
-  DETECTION_THRESHOLDS,
-  DETECTION_INCREASES,
-  DETECTION_DECREASES,
-  MAX_DETECTION,
-} from '../constants/detection';
+import { DETECTION_THRESHOLDS, DETECTION_DECREASES, MAX_DETECTION } from '../constants/detection';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
 import { TURING_QUESTIONS } from '../constants/turing';
 
 // Import utilities from new module
 import {
-  generateEntryId,
   createEntry,
   createOutputEntries,
   createInvalidCommandResult,
   sanitizeCommandInput,
   parseCommand,
   calculateDelay,
-  shouldFlicker,
-  addHesitation,
-  maybeAddTypo,
   createUFO74Message,
 } from './commands/utils';
 
 // Import tutorial functions for use in commands
 import {
-  getFirstRunMessage,
   getTutorialTip,
   shouldShowTutorialTip,
   getHelpBasics,
   getHelpEvidence,
   getHelpWinning,
-  type TutorialTipId,
 } from './commands/tutorial';
 
 // Re-export utilities for backward compatibility
@@ -121,7 +102,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
   {
     // UFO74 WARNING - Warn player before Turing test triggers
     id: 'turing_warning',
-    trigger: (state, command, args) => {
+    trigger: (state, _command, _args) => {
       if (state.singularEventsTriggered?.has('turing_warning')) return false;
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
@@ -164,7 +145,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     // TURING EVALUATION - System challenges user to prove they're not a human intruder
     // Now triggers an overlay instead of inline terminal output
     id: 'turing_evaluation',
-    trigger: (state, command, args) => {
+    trigger: (state, _command, _args) => {
       if (state.singularEventsTriggered?.has('turing_evaluation')) return false;
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
@@ -1164,7 +1145,7 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
 // Degraded trust dialogue - cryptic/paranoid versions of UFO74
 function getUFO74DegradedTrustMessage(
   trustLevel: 'cautious' | 'paranoid' | 'cryptic',
-  context: string
+  _context: string
 ): TerminalEntry[] {
   if (trustLevel === 'cryptic') {
     // Speaks in riddles, almost incomprehensible
@@ -1198,7 +1179,7 @@ function getUFO74DegradedTrustMessage(
 // MULTIPLE UFO74 PERSONAS - At cryptic trust, hints that UFO74 might be multiple people
 // ═══════════════════════════════════════════════════════════════════════════
 
-function getUFO74MultiplePersonaHint(state: GameState): TerminalEntry[] | null {
+function _getUFO74MultiplePersonaHint(state: GameState): TerminalEntry[] | null {
   const trustLevel = getUFO74TrustLevel(state);
   if (trustLevel !== 'cryptic') return null;
 
@@ -1237,9 +1218,9 @@ function getSystemPersonality(
   return 'bureaucratic';
 }
 
-function getSystemPersonalityMessage(
+function _getSystemPersonalityMessage(
   state: GameState,
-  context: 'access_denied' | 'warning' | 'error'
+  _context: 'access_denied' | 'warning' | 'error'
 ): TerminalEntry[] | null {
   const personality = getSystemPersonality(state);
 
@@ -2752,7 +2733,7 @@ const COMMAND_HELP: Record<string, string[]> = {
 };
 
 const commands: Record<string, (args: string[], state: GameState) => CommandResult> = {
-  help: (args, state) => {
+  help: (args, _state) => {
     // If a specific command is requested, show detailed help
     if (args.length > 0) {
       const cmdName = args[0].toLowerCase();
@@ -2974,7 +2955,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   ls: (args, state) => {
     // Check for -l flag
     const longFormat = args.includes('-l');
-    const filteredArgs = args.filter(a => a !== '-l');
 
     const entries = listDirectory(state.currentPath, state);
 
@@ -4431,7 +4411,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Process question
     const question = args.join(' ');
     const usedResponses = state.prisoner45UsedResponses || new Set<string>();
-    const { response, valid, category } = getPrisoner45Response(question, usedResponses);
+    const { response, valid, category: _category } = getPrisoner45Response(question, usedResponses);
     const newCount = state.prisoner45QuestionsAsked + 1;
     const remaining = 5 - newCount;
 
@@ -4534,7 +4514,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     // Password authentication required for first connection
-    const linkPassword = 'harvest is not destruction';
     const linkPasswordAlts = [
       'harvest is not destruction',
       'harvest',
@@ -4760,7 +4739,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Process query
     const query = args.join(' ');
     const usedResponses = state.scoutLinkUsedResponses || new Set<string>();
-    const { response, valid, category } = getScoutLinkResponse(query, usedResponses);
+    const { response, valid, category: _category } = getScoutLinkResponse(query, usedResponses);
     const newLinksUsed = scoutLinksUsed + 1;
     const remaining = 4 - newLinksUsed;
 
@@ -5268,7 +5247,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
 
-  clear: (args, state) => {
+  clear: (_args, _state) => {
     return {
       output: [],
       stateChanges: {
@@ -5277,7 +5256,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
 
-  tutorial: (args, state) => {
+  tutorial: (args, _state) => {
     // Handle tutorial on/off toggle
     if (args.length > 0) {
       const arg = args[0].toLowerCase();
@@ -7215,8 +7194,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
 // Generate helpful tips for unknown commands
 function getCommandTip(command: string, args: string[]): TerminalEntry[] {
-  const input = `${command} ${args.join(' ')}`.trim().toLowerCase();
-
   // Check for common navigation attempts
   if (command === 'dir' || command === 'list' || command === 'show') {
     return [

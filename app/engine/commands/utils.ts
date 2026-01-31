@@ -71,7 +71,7 @@ export function createInvalidCommandResult(state: GameState, commandName: string
 }
 
 // Parse command into name and args
-const CONTROL_CHARS_REGEX = /[\u0000-\u001F\u007F]/g;
+const CONTROL_CHARS_REGEX = /\p{Cc}/gu;
 const ZERO_WIDTH_REGEX = /[\u200B-\u200F\uFEFF]/g;
 
 export function sanitizeCommandInput(

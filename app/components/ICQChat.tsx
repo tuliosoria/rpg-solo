@@ -46,7 +46,7 @@ export default function ICQChat({
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
-  const [trust, setTrust] = useState(initialTrust);
+  const [, setTrust] = useState(initialTrust);
 
   const chatRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);

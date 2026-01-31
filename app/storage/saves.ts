@@ -276,10 +276,12 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
       try {
         window.localStorage.setItem(SAVE_PREFIX + id, serializeState(stateToSave));
       } catch {
+        // eslint-disable-next-line no-console
         console.error('Failed to save game: storage quota exceeded');
         return null;
       }
     } else {
+      // eslint-disable-next-line no-console
       console.error('Failed to save game:', e);
       return null;
     }

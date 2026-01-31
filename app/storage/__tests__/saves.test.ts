@@ -380,7 +380,7 @@ describe('Save/Load System', () => {
     });
 
     it('preserves slot metadata correctly', async () => {
-      const { saveGame, getSaveSlots } = await import('../saves');
+      const { saveGame } = await import('../saves');
 
       const state = createTestState({
         currentPath: '/admin/classified',

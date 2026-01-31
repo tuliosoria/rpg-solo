@@ -1,26 +1,25 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import React, { useEffect } from 'react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { FloatingUIProvider, useFloatingUI, FloatingElement } from '../FloatingUI';
 
 describe('FloatingUIProvider', () => {
   it('provides context to children', () => {
     let contextValue: ReturnType<typeof useFloatingUI> | undefined;
-    
+
     function Consumer() {
       contextValue = useFloatingUI();
       return null;
     }
-    
+
     render(
       <FloatingUIProvider>
         <Consumer />
       </FloatingUIProvider>
     );
-    
+
     expect(contextValue).toBeDefined();
     expect(typeof contextValue!.register).toBe('function');
     expect(typeof contextValue!.unregister).toBe('function');
@@ -35,14 +34,14 @@ describe('FloatingUIProvider', () => {
       useFloatingUI();
       return null;
     }
-    
+
     // Suppress console.error for expected error
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     expect(() => render(<Consumer />)).toThrow(
       'useFloatingUI must be used within FloatingUIProvider'
     );
-    
+
     consoleSpy.mockRestore();
   });
 });
@@ -56,7 +55,7 @@ describe('FloatingElement', () => {
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
@@ -68,7 +67,7 @@ describe('FloatingElement', () => {
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     expect(screen.queryByText('Hidden Content')).not.toBeInTheDocument();
   });
 
@@ -80,7 +79,7 @@ describe('FloatingElement', () => {
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     const element = screen.getByText('Top Right').parentElement;
     expect(element).toHaveStyle({
       position: 'fixed',
@@ -97,7 +96,7 @@ describe('FloatingElement', () => {
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     const element = screen.getByText('Bottom Center').parentElement;
     expect(element).toHaveStyle({
       position: 'fixed',
@@ -115,7 +114,7 @@ describe('FloatingElement', () => {
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     const element = screen.getByText('Custom Offset').parentElement;
     expect(element).toHaveStyle({
       position: 'fixed',
@@ -132,7 +131,7 @@ describe('FloatingElement', () => {
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     const element = screen.getByText('With Class').parentElement;
     expect(element).toHaveClass('test-class');
   });
@@ -145,7 +144,7 @@ describe('FloatingElement', () => {
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     const element = screen.getByTestId('styled').parentElement;
     expect(element).toHaveStyle({
       position: 'fixed',
@@ -159,27 +158,31 @@ describe('Zone stacking', () => {
   it('stacks elements in same zone by priority', async () => {
     // Element with lower priority should be closer to edge (lower offset)
     // Element with higher priority should stack on top (higher offset)
-    
+
     render(
       <FloatingUIProvider>
         <FloatingElement id="first" zone="top-right" priority={1}>
-          <div data-testid="first" style={{ height: '50px' }}>First (priority 1)</div>
+          <div data-testid="first" style={{ height: '50px' }}>
+            First (priority 1)
+          </div>
         </FloatingElement>
         <FloatingElement id="second" zone="top-right" priority={2}>
-          <div data-testid="second" style={{ height: '50px' }}>Second (priority 2)</div>
+          <div data-testid="second" style={{ height: '50px' }}>
+            Second (priority 2)
+          </div>
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     const first = screen.getByTestId('first').parentElement;
     const second = screen.getByTestId('second').parentElement;
-    
+
     // First element (priority 1) should be at base offset
     expect(first).toHaveStyle({ position: 'fixed', top: '20px' });
-    
+
     // Second element (priority 2) should be offset by first element's height + gap
     // With mock ResizeObserver: 20 (base) + 50 (height from ResizeObserver) + 8 (gap) = 78
-    // But in jsdom, offsetHeight initially returns 0, so the ResizeObserver callback 
+    // But in jsdom, offsetHeight initially returns 0, so the ResizeObserver callback
     // sets height to 50, and the second element gets: 20 + 0 + 8 = 28 initially
     // Then after ResizeObserver fires: 20 + 50 + 8 = 78
     // The test captures initial render state
@@ -197,10 +200,10 @@ describe('Zone stacking', () => {
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     const topRight = screen.getByTestId('top-right').parentElement;
     const bottomLeft = screen.getByTestId('bottom-left').parentElement;
-    
+
     // Both should be at base offset since they're in different zones
     expect(topRight).toHaveStyle({ position: 'fixed', top: '20px', right: '20px' });
     expect(bottomLeft).toHaveStyle({ position: 'fixed', bottom: '20px', left: '20px' });
@@ -216,9 +219,9 @@ describe('Visibility management', () => {
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     expect(screen.getByText('Toggleable')).toBeInTheDocument();
-    
+
     rerender(
       <FloatingUIProvider>
         <FloatingElement id="toggle" zone="top-right" visible={false}>
@@ -226,7 +229,7 @@ describe('Visibility management', () => {
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     expect(screen.queryByText('Toggleable')).not.toBeInTheDocument();
   });
 
@@ -237,14 +240,16 @@ describe('Visibility management', () => {
           <div style={{ height: '50px' }}>Hidden First</div>
         </FloatingElement>
         <FloatingElement id="second" zone="top-right" priority={2}>
-          <div data-testid="visible-second" style={{ height: '50px' }}>Visible Second</div>
+          <div data-testid="visible-second" style={{ height: '50px' }}>
+            Visible Second
+          </div>
         </FloatingElement>
       </FloatingUIProvider>
     );
-    
+
     // Hidden element shouldn't be in DOM
     expect(screen.queryByText('Hidden First')).not.toBeInTheDocument();
-    
+
     // Visible element should be at base offset since hidden one doesn't count
     const second = screen.getByTestId('visible-second').parentElement;
     expect(second).toHaveStyle({ position: 'fixed', top: '20px' });
@@ -270,7 +275,7 @@ describe('All zones', () => {
           </FloatingElement>
         </FloatingUIProvider>
       );
-      
+
       const element = screen.getByText('Zone Test').parentElement;
       expect(element).toHaveStyle({ position: 'fixed', ...expectedStyle });
     });

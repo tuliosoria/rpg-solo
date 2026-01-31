@@ -1,6 +1,6 @@
 // Filesystem data - Extended content for Terminal 1996
 
-import { DirectoryNode, FileNode, SecurityQuestion } from '../types';
+import { DirectoryNode, FileNode } from '../types';
 import neuralClusterMemo from './neuralClusterMemo';
 import {
   ufo74_identity_file,

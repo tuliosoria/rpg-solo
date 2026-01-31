@@ -301,7 +301,6 @@ export function initVoices(): void {
 export function speakFirewallVoice(): void {
   // Check if speech synthesis is available
   if (typeof window === 'undefined' || !window.speechSynthesis) {
-    console.warn('Speech synthesis not available');
     return;
   }
 
@@ -329,16 +328,6 @@ export function speakFirewallVoice(): void {
   if (deepVoice) {
     utterance.voice = deepVoice;
   }
-
-  // Debug logging
-  console.log(
-    'Speaking:',
-    phrase,
-    'Voice:',
-    utterance.voice?.name || 'default',
-    'Voices available:',
-    voices.length
-  );
 
   // Workaround for Chrome bug: speech synthesis can get stuck
   // A small delay helps ensure it actually speaks

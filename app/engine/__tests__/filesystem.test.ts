@@ -340,6 +340,8 @@ describe('Filesystem', () => {
 
       // Low access should not find admin file
       expect(lowMatches.some(m => m.filename === 'trace_purge_memo.txt')).toBe(false);
+      // High access should find admin file
+      expect(highMatches.some(m => m.filename === 'trace_purge_memo.txt')).toBe(true);
     });
 
     it('includes file path in results', () => {
