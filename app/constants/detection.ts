@@ -71,3 +71,63 @@ export const DETECTION_DECREASES = {
   TRUTH_DISCOVERY: 3,
   TIMED_DECRYPT_SUCCESS: 3,
 } as const;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WARMUP PHASE - Reduced detection early game for atmospheric pacing
+// ═══════════════════════════════════════════════════════════════════════════
+// During the warmup phase, detection increases are reduced to let players
+// learn the system without punishment. The modifier ramps up gradually.
+export const WARMUP_PHASE = {
+  // Number of files read before warmup ends (exploration-based, not command-based)
+  FILES_READ_THRESHOLD: 8,
+  // Soft cap on detection during warmup - detection won't exceed this easily
+  SOFT_CAP: 15,
+  // Minimum multiplier at start (25% of normal detection)
+  MIN_MULTIPLIER: 0.25,
+  // Ramp curve: how quickly multiplier increases (higher = slower ramp)
+  RAMP_DIVISOR: 10,
+} as const;
+
+/**
+ * Calculate the warmup modifier for detection increases.
+ * Returns a multiplier (0.25 to 1.0) based on how many files have been read.
+ * Early game = low multiplier = reduced penalties.
+ * After FILES_READ_THRESHOLD files, returns 1.0 (full penalties).
+ */
+export function getWarmupMultiplier(filesReadCount: number): number {
+  if (filesReadCount >= WARMUP_PHASE.FILES_READ_THRESHOLD) {
+    return 1.0;
+  }
+  // Gradual ramp: starts at MIN_MULTIPLIER, reaches 1.0 at threshold
+  const progress = filesReadCount / WARMUP_PHASE.FILES_READ_THRESHOLD;
+  return WARMUP_PHASE.MIN_MULTIPLIER + progress * (1.0 - WARMUP_PHASE.MIN_MULTIPLIER);
+}
+
+/**
+ * Apply warmup modifier to a detection increase.
+ * During warmup, also enforces soft cap - detection increases that would
+ * push above SOFT_CAP are further reduced.
+ */
+export function applyWarmupDetection(
+  currentDetection: number,
+  increase: number,
+  filesReadCount: number
+): number {
+  const multiplier = getWarmupMultiplier(filesReadCount);
+  let modifiedIncrease = Math.ceil(increase * multiplier);
+
+  // Soft cap enforcement during warmup
+  if (filesReadCount < WARMUP_PHASE.FILES_READ_THRESHOLD) {
+    const wouldBe = currentDetection + modifiedIncrease;
+    if (wouldBe > WARMUP_PHASE.SOFT_CAP) {
+      // Allow going slightly over soft cap, but heavily diminish returns
+      const overCap = wouldBe - WARMUP_PHASE.SOFT_CAP;
+      modifiedIncrease = Math.max(
+        1,
+        modifiedIncrease - Math.floor(overCap * 0.7)
+      );
+    }
+  }
+
+  return Math.min(MAX_DETECTION, currentDetection + modifiedIncrease);
+}

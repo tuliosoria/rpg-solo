@@ -3,7 +3,7 @@
 import { GameState, CommandResult, TerminalEntry } from '../../types';
 import { MAX_COMMAND_INPUT_LENGTH } from '../../constants/limits';
 import { createSeededRng } from '../rng';
-import { DETECTION_THRESHOLDS } from '../../constants/detection';
+import { DETECTION_THRESHOLDS, applyWarmupDetection } from '../../constants/detection';
 
 // Generate unique ID for terminal entries
 let entryIdCounter = 0;
@@ -64,7 +64,7 @@ export function createInvalidCommandResult(state: GameState, commandName: string
       createEntry('system', `   [Invalid attempts: ${newAlertCounter}/8]`),
     ],
     stateChanges: {
-      detectionLevel: state.detectionLevel + 2,
+      detectionLevel: applyWarmupDetection(state.detectionLevel, 2, state.filesRead?.size || 0),
       legacyAlertCounter: newAlertCounter,
     },
   };

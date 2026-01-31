@@ -28,7 +28,7 @@ import {
   getDisturbingContentAvatarExpression,
   EVIDENCE_SYMBOL,
 } from './evidenceRevelation';
-import { DETECTION_THRESHOLDS, DETECTION_DECREASES, MAX_DETECTION } from '../constants/detection';
+import { DETECTION_THRESHOLDS, DETECTION_DECREASES, MAX_DETECTION, applyWarmupDetection, WARMUP_PHASE } from '../constants/detection';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
 import { TURING_QUESTIONS } from '../constants/turing';
 
@@ -630,6 +630,28 @@ function getCommandDetectionMultiplier(state: GameState, command: string): numbe
 function applyDetectionVariance(state: GameState, command: string, baseIncrease: number): number {
   const multiplier = getCommandDetectionMultiplier(state, command);
   return Math.floor(baseIncrease * multiplier);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WARMUP DETECTION - Reduced penalties during early exploration phase
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Calculate new detection level with warmup phase modifier.
+ * During early game (before reading WARMUP_PHASE.FILES_READ_THRESHOLD files),
+ * detection increases are reduced and soft-capped to let atmosphere build.
+ */
+function getWarmupAdjustedDetection(state: GameState, increase: number): number {
+  const filesReadCount = state.filesRead?.size || 0;
+  return applyWarmupDetection(state.detectionLevel, increase, filesReadCount);
+}
+
+/**
+ * Check if player is still in warmup phase (for UI hints, etc.)
+ */
+export function isInWarmupPhase(state: GameState): boolean {
+  const filesReadCount = state.filesRead?.size || 0;
+  return filesReadCount < WARMUP_PHASE.FILES_READ_THRESHOLD;
 }
 
 // Apply corruption to a random file
@@ -2936,7 +2958,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const newStatusCount = (state.statusCommandCount || 0) + 1;
 
     const stateChanges: Partial<GameState> = {
-      detectionLevel: state.detectionLevel + 1,
+      detectionLevel: getWarmupAdjustedDetection(state, 1),
       statusCommandCount: newStatusCount,
     };
 
@@ -3050,7 +3072,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     lines.push('');
 
     const stateChanges: Partial<GameState> = {
-      detectionLevel: state.detectionLevel + 2,
+      detectionLevel: getWarmupAdjustedDetection(state, 2),
     };
 
     if (!state.tutorialComplete) {
@@ -3084,7 +3106,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     if (!node) {
       const stateChanges: Partial<GameState> = {
-        detectionLevel: state.detectionLevel + 3,
+        detectionLevel: getWarmupAdjustedDetection(state, 3),
       };
 
       if (!state.tutorialComplete) {
@@ -3126,7 +3148,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     const stateChanges: Partial<GameState> = {
       currentPath: targetPath,
-      detectionLevel: state.detectionLevel + 1,
+      detectionLevel: getWarmupAdjustedDetection(state, 1),
       flags: isFirstCd ? { ...state.flags, firstCdDone: true } : state.flags,
       navigationHistory: updatedHistory,
     };
@@ -3161,7 +3183,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     if (!access.accessible) {
       const stateChanges: Partial<GameState> = {
-        detectionLevel: state.detectionLevel + 5,
+        detectionLevel: getWarmupAdjustedDetection(state, 5),
         legacyAlertCounter: state.legacyAlertCounter + 1,
       };
 
@@ -3234,7 +3256,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           ],
           stateChanges: state.tutorialComplete
             ? {
-                detectionLevel: state.detectionLevel + 1, // Reduced penalty for re-read
+                detectionLevel: getWarmupAdjustedDetection(state, 1), // Reduced penalty for re-read
               }
             : {},
           streamingMode: 'fast',
@@ -3318,7 +3340,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output,
         stateChanges: state.tutorialComplete
           ? {
-              detectionLevel: state.detectionLevel + 1, // Less detection for re-read
+              detectionLevel: getWarmupAdjustedDetection(state, 1), // Less detection for re-read
             }
           : {},
         streamingMode: 'fast',
@@ -3366,7 +3388,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     // Check if file is unstable and might corrupt
     const stateChanges: Partial<GameState> = {
-      detectionLevel: state.detectionLevel + detectionChange,
+      detectionLevel: detectionChange > 0 
+        ? getWarmupAdjustedDetection(state, detectionChange)
+        : state.detectionLevel + detectionChange, // Safe file reduction - no warmup needed
       filesRead,
       lastOpenedFile: filePath, // Track for 'last' command
     };
@@ -5436,7 +5460,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: state.tutorialComplete
           ? {
               currentPath: newPath,
-              detectionLevel: state.detectionLevel + 1,
+              detectionLevel: getWarmupAdjustedDetection(state, 1),
             }
           : {
               currentPath: newPath,
@@ -5453,7 +5477,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       stateChanges: state.tutorialComplete
         ? {
             currentPath: previousPath,
-            detectionLevel: state.detectionLevel + 1,
+            detectionLevel: getWarmupAdjustedDetection(state, 1),
             navigationHistory: newHistory,
           }
         : {

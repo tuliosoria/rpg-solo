@@ -357,7 +357,12 @@ describe('Command Utilities', () => {
     });
 
     it('increases detection level', () => {
-      const state = createTestState({ detectionLevel: 10, legacyAlertCounter: 0 });
+      // Provide enough files read to be past warmup phase (8+ files)
+      const state = createTestState({ 
+        detectionLevel: 10, 
+        legacyAlertCounter: 0,
+        filesRead: new Set(['/a', '/b', '/c', '/d', '/e', '/f', '/g', '/h']),
+      });
       const result = createInvalidCommandResult(state, 'test');
 
       expect(result.stateChanges.detectionLevel).toBe(12);

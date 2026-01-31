@@ -53,6 +53,7 @@ describe('Narrative Mechanics', () => {
         const state = createTestState({
           hiddenCommandsDiscovered: new Set(['scan']),
           detectionLevel: 10,
+          filesRead: new Set(['/a', '/b', '/c', '/d', '/e', '/f', '/g', '/h']), // Past warmup
         });
         const result = executeCommand('scan', state);
         expect(result.stateChanges.flags?.adminUnlocked).toBe(true);
@@ -63,6 +64,7 @@ describe('Narrative Mechanics', () => {
         const state = createTestState({
           hiddenCommandsDiscovered: new Set(['scan']),
           detectionLevel: 95,
+          filesRead: new Set(['/a', '/b', '/c', '/d', '/e', '/f', '/g', '/h']), // Past warmup
         });
         const result = executeCommand('scan', state);
         expect(result.stateChanges.detectionLevel).toBe(100);
