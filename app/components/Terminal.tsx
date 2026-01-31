@@ -43,6 +43,7 @@ import {
   SUSPICIOUS_TYPING_SPEED,
   KEYPRESS_TRACK_SIZE,
 } from '../constants/gameplay';
+import { shouldSuppressPressure } from '../constants/atmosphere';
 import { useSound } from '../hooks/useSound';
 import { useAutocomplete } from '../hooks/useAutocomplete';
 import { unlockAchievement, Achievement } from '../engine/achievements';
@@ -458,6 +459,9 @@ export default function Terminal({
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
 
+    // Suppress glitches during atmosphere phase (no pressure systems)
+    if (shouldSuppressPressure(gameState)) return;
+
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
     // Higher detection = more frequent AND more intense glitches
@@ -551,6 +555,9 @@ export default function Terminal({
   // "They're watching" paranoia messages
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
+
+    // Suppress paranoia during atmosphere phase (no pressure systems)
+    if (shouldSuppressPressure(gameState)) return;
 
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
@@ -2003,8 +2010,8 @@ export default function Terminal({
           </div>
         )}
 
-        {/* Firewall Eyes - hostile surveillance entities */}
-        {gameState.tutorialComplete && !gameState.isGameOver && (
+        {/* Firewall Eyes - hostile surveillance entities (suppressed during atmosphere phase) */}
+        {gameState.tutorialComplete && !gameState.isGameOver && !shouldSuppressPressure(gameState) && (
           <FirewallEyes
             detectionLevel={gameState.detectionLevel}
             firewallActive={gameState.firewallActive}

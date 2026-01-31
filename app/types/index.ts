@@ -283,6 +283,9 @@ export interface GameState {
   firewallDisarmed: boolean; // True if player used neural link to disable
   lastEyeSpawnDetection: number; // Detection level when last eye spawned (for 10% increments)
   lastEyeSpawnTime: number; // Timestamp of last eye batch spawn (for 1 min cooldown)
+
+  // Atmosphere Phase - quiet exploration period before pressure systems activate
+  ufo74DisengageTime: number; // Timestamp when UFO74 disengaged (for cooldown)
 }
 
 // Firewall Eye entity
@@ -490,4 +493,6 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   firewallDisarmed: false,
   lastEyeSpawnDetection: 0,
   lastEyeSpawnTime: 0,
+  // Atmosphere Phase
+  ufo74DisengageTime: 0,
 };

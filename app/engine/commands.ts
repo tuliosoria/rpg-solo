@@ -29,6 +29,7 @@ import {
   EVIDENCE_SYMBOL,
 } from './evidenceRevelation';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES, MAX_DETECTION, applyWarmupDetection, WARMUP_PHASE } from '../constants/detection';
+import { shouldSuppressPressure, shouldSuppressPenalties } from '../constants/atmosphere';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
 import { TURING_QUESTIONS } from '../constants/turing';
 
@@ -106,6 +107,8 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('turing_warning')) return false;
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
+      // Suppress during atmosphere phase and cooldown period
+      if (shouldSuppressPressure(state)) return false;
       // Trigger at detection level WANDERING_LOW+, before Turing test can start
       // This ensures warning always shows before the test, even if detection jumps
       if (!state.tutorialComplete) return false;
@@ -149,6 +152,8 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('turing_evaluation')) return false;
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
+      // Suppress during atmosphere phase and cooldown period
+      if (shouldSuppressPressure(state)) return false;
       // Trigger at detection level 45+, once warning was shown
       // BUG FIX: Removed upper limit - previously if risk jumped past 55% the test never triggered
       if (!state.singularEventsTriggered?.has('turing_warning')) return false;
@@ -182,9 +187,11 @@ const SINGULAR_EVENTS: SingularEvent[] = [
   },
   {
     // THE ECHO - Triggered when accessing psi files at high detection
+    // Suppressed during atmosphere phase
     id: 'the_echo',
     trigger: (state, command, args) => {
       if (state.singularEventsTriggered?.has('the_echo')) return false;
+      if (shouldSuppressPressure(state)) return false;
       if (command !== 'open' && command !== 'decrypt') return false;
       const path = args[0]?.toLowerCase() || '';
       return (
@@ -215,9 +222,11 @@ const SINGULAR_EVENTS: SingularEvent[] = [
   },
   {
     // THE SILENCE - Terminal goes completely silent briefly after accessing admin at high risk
+    // Suppressed during atmosphere phase
     id: 'the_silence',
     trigger: (state, command, args) => {
       if (state.singularEventsTriggered?.has('the_silence')) return false;
+      if (shouldSuppressPressure(state)) return false;
       if (command !== 'cd' && command !== 'ls') return false;
       const path = args[0]?.toLowerCase() || state.currentPath.toLowerCase();
       return (
@@ -255,9 +264,11 @@ const SINGULAR_EVENTS: SingularEvent[] = [
   },
   {
     // THE WATCHER ACKNOWLEDGMENT - After discovering 3+ truths, system acknowledges awareness
+    // Suppressed during atmosphere phase and cooldown
     id: 'watcher_ack',
     trigger: state => {
       if (state.singularEventsTriggered?.has('watcher_ack')) return false;
+      if (shouldSuppressPressure(state)) return false;
       return (
         state.truthsDiscovered.size >= 3 &&
         state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_TRUTHS
@@ -288,9 +299,11 @@ const SINGULAR_EVENTS: SingularEvent[] = [
   },
   {
     // RIVAL INVESTIGATOR - Evidence seized after heavy linking
+    // Suppressed during atmosphere phase and cooldown
     id: 'rival_investigator',
     trigger: state => {
       if (state.singularEventsTriggered?.has('rival_investigator')) return false;
+      if (shouldSuppressPressure(state)) return false;
       return (
         (state.evidenceLinks?.length || 0) >= 3 &&
         state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_EVIDENCE
@@ -3546,10 +3559,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       stateChanges.disinformationDiscovered = disinfo;
     }
 
-    // Active trace triggers countdown
+    // Active trace triggers countdown (suppressed during atmosphere phase)
     if (filePath.includes('active_trace.sys') && !isEncryptedAndLocked) {
       if (!state.countdownActive) {
-        if (state.tutorialComplete) {
+        if (state.tutorialComplete && !shouldSuppressPressure(state)) {
           stateChanges.countdownActive = true;
           stateChanges.countdownEndTime = Date.now() + 3 * 60 * 1000;
           stateChanges.countdownTriggeredBy = 'trace_spike';
@@ -4234,7 +4247,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         wrongAttempts: (state.wrongAttempts || 0) + 1,
       };
 
-      if (!state.tutorialComplete) {
+      // Suppress penalties during tutorial or atmosphere phase
+      if (shouldSuppressPenalties(state)) {
         delete stateChanges.detectionLevel;
         delete stateChanges.wrongAttempts;
       }
@@ -6108,7 +6122,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     // Wrong answer
     if (attemptsRemaining <= 0) {
-      // Out of attempts
+      // Out of attempts - suppress wrongAttempts during atmosphere phase
+      const stateChanges: Partial<GameState> = {
+        morseMessageAttempts: attemptsUsed,
+      };
+      if (!shouldSuppressPenalties(state)) {
+        stateChanges.wrongAttempts = (state.wrongAttempts || 0) + 1;
+      }
       return {
         output: [
           createEntry('error', ''),
@@ -6122,10 +6142,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             '       maybe next time.',
           ]),
         ],
-        stateChanges: {
-          morseMessageAttempts: attemptsUsed,
-          wrongAttempts: (state.wrongAttempts || 0) + 1,
-        },
+        stateChanges,
       };
     }
 

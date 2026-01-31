@@ -4,6 +4,7 @@ import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
 // Helper to create a test state
+// NOTE: Set truthsDiscovered to exit atmosphere phase so penalties apply
 const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   ...DEFAULT_GAME_STATE,
   seed: 12345,
@@ -11,6 +12,7 @@ const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   sessionStartTime: Date.now(),
   tutorialStep: -1,
   tutorialComplete: true,
+  truthsDiscovered: new Set(['debris_relocation']), // Exit atmosphere phase
   ...overrides,
 });
 

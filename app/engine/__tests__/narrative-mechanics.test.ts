@@ -9,6 +9,7 @@ const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   sessionStartTime: Date.now(),
   tutorialStep: -1,
   tutorialComplete: true,
+  truthsDiscovered: new Set(['debris_relocation']), // Exit atmosphere phase
   ...overrides,
 });
 
