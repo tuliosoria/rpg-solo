@@ -333,7 +333,7 @@ describe('Filesystem', () => {
     it('respects access level when searching', () => {
       // Low access level should not find admin files
       const lowAccessState = createTestState({ accessLevel: 1 });
-      const highAccessState = createTestState({ accessLevel: 5, flags: { adminUnlocked: true } });
+      const highAccessState = createTestState({ accessLevel: 5, flags: { adminUnlocked: true, tracePurgeUsed: true } });
 
       const lowMatches = findFilesMatching('trace_purge_memo', lowAccessState);
       const highMatches = findFilesMatching('trace_purge_memo', highAccessState);
