@@ -323,10 +323,45 @@ export default function Terminal({
 
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const enterOnlyButtonRef = useRef<HTMLButtonElement>(null);
   const gameStateRef = useRef(gameState);
   const isProcessingRef = useRef(false);
   const skipStreamingRef = useRef(false);
   const streamStartScrollPos = useRef<number | null>(null);
+
+  const isEnterOnlyMode =
+    !gameState.tutorialComplete ||
+    encryptedChannelState !== 'idle' ||
+    pendingImage ||
+    pendingVideo ||
+    pendingUfo74StartMessages.length > 0 ||
+    (gameState.ufo74SecretDiscovered && gamePhase === 'terminal');
+
+  const shouldRestoreFocus =
+    gamePhase === 'terminal' &&
+    !gameState.isGameOver &&
+    !isProcessing &&
+    !isStreaming &&
+    !showTuringTest &&
+    !activeImage &&
+    !activeVideo &&
+    !showSettings &&
+    !showAchievements &&
+    !showStatistics &&
+    !showPauseMenu &&
+    !showHeaderMenu;
+
+  const focusTerminalTarget = useCallback(() => {
+    const target = inputRef.current ?? enterOnlyButtonRef.current;
+    if (!target) return;
+    if (document.activeElement === target) return;
+    target.focus();
+  }, []);
+
+  const focusTerminalInput = useCallback(() => {
+    if (!shouldRestoreFocus) return;
+    focusTerminalTarget();
+  }, [shouldRestoreFocus, focusTerminalTarget]);
 
   // Scroll behavior: during streaming scroll to bottom, after streaming scroll to content start
   useEffect(() => {
@@ -347,15 +382,24 @@ export default function Terminal({
       }
     }
     // Restore focus after history update (prevents focus loss after commands)
-    if (!isProcessing && !isStreaming && gamePhase === 'terminal') {
-      setTimeout(() => inputRef.current?.focus(), 0);
+    if (shouldRestoreFocus) {
+      setTimeout(() => focusTerminalInput(), 0);
     }
-  }, [gameState.history, isProcessing, isStreaming, gamePhase]);
+  }, [gameState.history, isStreaming, gamePhase, shouldRestoreFocus, focusTerminalInput]);
 
   // Focus input on mount
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  // Restore focus after overlays close or mode changes
+  useEffect(() => {
+    if (!shouldRestoreFocus) return;
+    const timeout = window.setTimeout(() => {
+      focusTerminalTarget();
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [shouldRestoreFocus, isEnterOnlyMode, focusTerminalTarget]);
 
   // Cleanup typing speed warning timeout on unmount
   useEffect(() => {
@@ -1897,7 +1941,7 @@ export default function Terminal({
     <FloatingUIProvider>
       <div
         className={`${styles.terminal} ${flickerActive ? styles.flicker : ''} ${glitchActive ? styles.glitchActive : ''} ${glitchHeavy ? styles.glitchHeavy : ''} ${isShaking ? styles.shaking : ''} ${isWarmingUp ? styles.warmingUp : ''}`}
-        onClick={() => inputRef.current?.focus()}
+        onClick={focusTerminalInput}
       >
         {/* Scanlines overlay */}
         <div className={styles.scanlines} />
@@ -2106,32 +2150,21 @@ export default function Terminal({
             <div className={`${styles.line} ${styles.processing}`}>Processing...</div>
           )}
           {/* Blinking terminal cursor at end of text when in enter-only mode */}
-          {!isProcessing &&
-            (!gameState.tutorialComplete ||
-              encryptedChannelState !== 'idle' ||
-              pendingImage ||
-              pendingVideo ||
-              pendingUfo74StartMessages.length > 0 ||
-              (gameState.ufo74SecretDiscovered && gamePhase === 'terminal')) &&
-            !gameState.isGameOver && <span className={styles.terminalCursor}>▌</span>}
+          {!isProcessing && isEnterOnlyMode && !gameState.isGameOver && (
+            <span className={styles.terminalCursor}>▌</span>
+          )}
         </div>
 
         {/* Input area */}
         {/* Show subtle enter prompt when in enter-only mode (tutorial, encrypted channel, pending media, staged UFO74, secret ending confirmation) */}
-        {(!gameState.tutorialComplete ||
-          encryptedChannelState !== 'idle' ||
-          pendingImage ||
-          pendingVideo ||
-          pendingUfo74StartMessages.length > 0 ||
-          (gameState.ufo74SecretDiscovered && gamePhase === 'terminal')) &&
-        !gameState.isGameOver ? (
+        {isEnterOnlyMode && !gameState.isGameOver ? (
           <>
             {/* Hidden form for keyboard enter handling */}
             <form
               onSubmit={handleSubmit}
               style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
             >
-              <button type="submit" autoFocus />
+              <button ref={enterOnlyButtonRef} type="submit" autoFocus />
             </form>
             {/* Centered enter prompt - inline in flex layout to prevent overlap */}
             <div className={styles.enterPromptArea}>

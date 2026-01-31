@@ -91,6 +91,37 @@ describe('Terminal Component', () => {
     expect(input).toBeInTheDocument();
   });
 
+  it('restores focus after closing settings modal', () => {
+    render(<Terminal {...defaultProps} />);
+
+    const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
+    input.focus();
+    expect(input).toHaveFocus();
+
+    const headerToggle = screen.getByRole('button', { name: /VARGINHA: TERMINAL 1996/i });
+    act(() => {
+      fireEvent.click(headerToggle);
+    });
+
+    const settingsButton = screen.getByRole('button', { name: /SETTINGS/i });
+    act(() => {
+      fireEvent.click(settingsButton);
+    });
+
+    expect(screen.getByRole('heading', { name: /SETTINGS/i })).toBeInTheDocument();
+
+    const closeButton = screen.getByRole('button', { name: /\[ CLOSE \]/i });
+    act(() => {
+      fireEvent.click(closeButton);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(0);
+    });
+
+    expect(input).toHaveFocus();
+  });
+
   it('renders the terminal header', () => {
     render(<Terminal {...defaultProps} />);
 
@@ -274,6 +305,31 @@ describe('Terminal Component', () => {
 
     // Pause menu should be hidden
     expect(screen.queryByText(/PAUSED/i)).not.toBeInTheDocument();
+  });
+
+  it('restores focus after closing pause menu', () => {
+    render(<Terminal {...defaultProps} />);
+
+    const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
+    input.focus();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.getByText(/PAUSED/i)).toBeInTheDocument();
+
+    const resumeButton = screen.getByRole('button', { name: /RESUME GAME/i });
+    act(() => {
+      fireEvent.click(resumeButton);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(0);
+    });
+
+    expect(screen.queryByText(/PAUSED/i)).not.toBeInTheDocument();
+    expect(input).toHaveFocus();
   });
 
   it('shows status bar with system information', () => {
