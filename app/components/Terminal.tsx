@@ -2,29 +2,12 @@
 
 import React, { useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { GamePhase, GameState, TerminalEntry, StreamingMode } from '../types';
-import {
-  executeCommand,
-  createEntry,
-  getTutorialMessage,
-  TUTORIAL_MESSAGES,
-  sanitizeCommandInput,
-} from '../engine/commands';
-import {
-  isInTutorialMode,
-  processTutorialInput,
-  isTutorialInputState,
-} from '../engine/commands/interactiveTutorial';
-import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
-import { saveCheckpoint, loadCheckpoint } from '../storage/saves';
-import { incrementStatistic } from '../storage/statistics';
+import { GamePhase, GameState, TerminalEntry } from '../types';
+import { createEntry } from '../engine/commands';
+import { isTutorialInputState } from '../engine/commands/interactiveTutorial';
+import { loadCheckpoint } from '../storage/saves';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
-import {
-  MAX_HISTORY_SIZE,
-  MAX_COMMAND_HISTORY_SIZE,
-  MAX_COMMAND_INPUT_LENGTH,
-} from '../constants/limits';
-import { NIGHT_OWL_DURATION_MS, TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
+import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import {
   MAX_WRONG_ATTEMPTS,
   SUSPICIOUS_TYPING_SPEED,
@@ -36,10 +19,11 @@ import {
   useGameActions,
   useSound,
   useTerminalEffects,
+  useTerminalInput,
   useTerminalState,
 } from '../hooks';
 import { unlockAchievement, Achievement } from '../engine/achievements';
-import { uiRandom, uiChance, uiRandomPick } from '../engine/rng';
+import { uiRandomPick } from '../engine/rng';
 import AchievementPopup from './AchievementPopup';
 import SettingsModal from './SettingsModal';
 import PauseMenu from './PauseMenu';
@@ -61,18 +45,6 @@ const SecretEnding = dynamic(() => import('./SecretEnding'), { ssr: false });
 const AchievementGallery = dynamic(() => import('./AchievementGallery'), { ssr: false });
 const StatisticsModal = dynamic(() => import('./StatisticsModal'), { ssr: false });
 import styles from './Terminal.module.css';
-
-// Streaming timing configuration (ms per line)
-const STREAMING_DELAYS: Record<
-  StreamingMode,
-  { base: number; variance: number; glitchChance: number; glitchDelay: number }
-> = {
-  none: { base: 0, variance: 0, glitchChance: 0, glitchDelay: 0 },
-  fast: { base: 40, variance: 20, glitchChance: 0, glitchDelay: 0 },
-  normal: { base: 80, variance: 30, glitchChance: 0, glitchDelay: 0 },
-  slow: { base: 120, variance: 50, glitchChance: 0.05, glitchDelay: 200 },
-  glitchy: { base: 100, variance: 50, glitchChance: 0.15, glitchDelay: 400 },
-};
 
 // UFO74 comments after viewing images - keyed by image src
 const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
@@ -241,8 +213,12 @@ export default function Terminal({
   const streamStartScrollPos = useRef<number | null>(null);
   const suppressPressure = shouldSuppressPressure(gameState);
 
+  const isInteractiveTutorialInput =
+    !!gameState.interactiveTutorialState &&
+    !gameState.tutorialComplete &&
+    isTutorialInputState(gameState.interactiveTutorialState.current);
   const isEnterOnlyMode =
-    !gameState.tutorialComplete ||
+    (!gameState.tutorialComplete && !isInteractiveTutorialInput) ||
     encryptedChannelState !== 'idle' ||
     pendingImage ||
     pendingVideo ||
@@ -310,700 +286,55 @@ export default function Terminal({
     }
   }, []);
 
-  // Display all UFO74 messages at once through encrypted channel (no multi-press required)
-  const openEncryptedChannelWithMessages = useCallback(
-    (messages: TerminalEntry[]) => {
-      if (messages.length === 0) return;
-
-      // Display entire encrypted channel sequence at once
-      setGameState(prev => ({
-        ...prev,
-        history: [
-          ...prev.history,
-          createEntry('system', ''),
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
-          ...messages.flatMap(msg => [msg, createEntry('system', '')]),
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
-        ],
-      }));
-      playSound('transmission');
-      playSound('message');
-
-      // Clear any pending messages and keep channel idle
-      setPendingUfo74Messages([]);
-      setEncryptedChannelState('idle');
+  const { handleSubmit, handleKeyDown } = useTerminalInput({
+    gameState,
+    gamePhase,
+    inputValue,
+    isProcessing,
+    showTuringTest,
+    pendingImage,
+    pendingVideo,
+    pendingUfo74StartMessages,
+    pendingUfo74Messages,
+    historyIndex,
+    setGameState,
+    setInputValue,
+    setIsProcessing,
+    setIsStreaming,
+    setHistoryIndex,
+    setPendingImage,
+    setPendingVideo,
+    setActiveImage,
+    setActiveVideo,
+    setPendingUfo74StartMessages,
+    setPendingUfo74Messages,
+    setQueuedAfterMediaMessages,
+    setShowEvidenceTracker,
+    setShowRiskTracker,
+    setShowTuringTest,
+    setGamePhase,
+    setGameOverReason,
+    setShowGameOver,
+    setBurnInLines,
+    setEncryptedChannelState,
+    onExitAction,
+    onSaveRequestAction,
+    playSound,
+    playKeySound,
+    triggerFlicker,
+    checkAchievement,
+    getCompletions,
+    completeInput,
+    markTabPressed,
+    consumeTabPressed,
+    refs: {
+      outputRef,
+      inputRef,
+      streamStartScrollPos,
+      skipStreamingRef,
+      isProcessingRef,
     },
-    [playSound]
-  );
-
-  // Stream output lines with variable timing
-  const streamOutput = useCallback(
-    async (entries: TerminalEntry[], mode: StreamingMode, _baseState: GameState): Promise<void> => {
-      if (mode === 'none' || entries.length === 0) {
-        // No streaming - add all at once
-        // Check for transmission banner before adding
-        if (entries.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
-          playSound('transmission');
-        }
-        setGameState(prev => ({
-          ...prev,
-          history: [...prev.history, ...entries],
-        }));
-        return;
-      }
-
-      const config = STREAMING_DELAYS[mode];
-      skipStreamingRef.current = false;
-
-      for (let i = 0; i < entries.length; i++) {
-        // Check if streaming was skipped
-        if (skipStreamingRef.current) {
-          // Add remaining entries all at once
-          const remaining = entries.slice(i);
-          // Check for transmission banner in remaining entries
-          if (remaining.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
-            playSound('transmission');
-          }
-          setGameState(prev => ({
-            ...prev,
-            history: [...prev.history, ...remaining],
-          }));
-          break;
-        }
-
-        // Add single entry
-        const entry = entries[i];
-
-        // Play transmission sound when banner appears
-        if (entry.content.includes('>> INCOMING TRANSMISSION <<')) {
-          playSound('transmission');
-        }
-
-        setGameState(prev => ({
-          ...prev,
-          history: [...prev.history, entry],
-        }));
-
-        // Calculate delay with variance
-        let delay = config.base + (uiRandom() * config.variance * 2 - config.variance);
-
-        // Random glitch pause
-        if (uiChance(config.glitchChance)) {
-          delay += config.glitchDelay;
-          // Trigger flicker on glitch
-          if (config.glitchDelay > 100) {
-            triggerFlicker();
-          }
-        }
-
-        // Wait before next line
-        if (delay > 0 && i < entries.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, delay));
-        }
-      }
-    },
-    [triggerFlicker, playSound]
-  );
-
-  // Handle command submission
-  const handleSubmit = useCallback(
-    async (e?: React.SyntheticEvent) => {
-      e?.preventDefault?.();
-
-      const sanitizedInput = sanitizeCommandInput(inputValue, MAX_COMMAND_INPUT_LENGTH);
-      const trimmedInput = sanitizedInput.value.trim();
-
-      // If there's a pending image, show it on Enter
-      if (pendingImage && !trimmedInput) {
-        setActiveImage(pendingImage);
-        setPendingImage(null);
-        return;
-      }
-
-      // If there's a pending video, show it on Enter
-      if (pendingVideo && !trimmedInput) {
-        setActiveVideo(pendingVideo);
-        setPendingVideo(null);
-        return;
-      }
-
-      // If secret ending is pending confirmation, transition on Enter
-      if (gameState.ufo74SecretDiscovered && !trimmedInput && gamePhase === 'terminal') {
-        setGamePhase('secret_ending');
-        setGameState(prev => ({
-          ...prev,
-          endingType: 'secret',
-          isGameOver: true,
-        }));
-        return;
-      }
-
-      // If UFO74 messages are staged, show them directly (no multi-press required)
-      if (pendingUfo74StartMessages.length > 0 && !trimmedInput) {
-        const messagesToSend = [...pendingUfo74StartMessages];
-        setPendingUfo74StartMessages([]);
-        openEncryptedChannelWithMessages(messagesToSend);
-        return;
-      }
-
-      // Handle any pending UFO74 messages that accumulated
-      if (pendingUfo74Messages.length > 0 && !trimmedInput) {
-        const messagesToSend = [...pendingUfo74Messages];
-        setPendingUfo74Messages([]);
-        openEncryptedChannelWithMessages(messagesToSend);
-        return;
-      }
-
-      // Interactive tutorial: gated input system
-      if (isInTutorialMode(gameState)) {
-        const tutorialState = gameState.interactiveTutorialState;
-        
-        // If input is locked (during dialogue/transitions), ignore all input
-        if (!tutorialState || !isTutorialInputState(tutorialState.current)) {
-          setInputValue('');
-          return;
-        }
-
-        // Process input through interactive tutorial system
-        // consumeTabPressed() returns true if Tab was pressed since last call
-        const tabWasPressed = consumeTabPressed();
-        const result = processTutorialInput(trimmedInput, gameState, tabWasPressed);
-
-        // Apply state changes
-        if (result.output.length > 0 || result.stateChanges) {
-          setGameState(prev => ({
-            ...prev,
-            ...result.stateChanges,
-            history: [...prev.history, ...result.output],
-          }));
-        }
-
-        // Check if tutorial just completed - reveal UI elements and save checkpoint
-        if (result.stateChanges.tutorialComplete) {
-          setTimeout(() => setShowEvidenceTracker(true), 300);
-          playSound('reveal');
-          setTimeout(() => setShowRiskTracker(true), 600);
-          
-          // Save checkpoint at tutorial completion
-          const newState = {
-            ...gameState,
-            ...result.stateChanges,
-            history: [...gameState.history, ...result.output],
-          };
-          saveCheckpoint(newState, 'Tutorial complete');
-        }
-
-        setInputValue('');
-        return;
-      }
-
-      // Legacy non-interactive tutorial (for backwards compatibility)
-      if (!gameState.tutorialComplete && gameState.tutorialStep !== undefined && gameState.tutorialStep >= 0) {
-        // If user typed something, show error
-        if (trimmedInput) {
-          const errorEntry = createEntry('error', 'ERROR: Incoming transmission in progress.');
-          setGameState(prev => ({
-            ...prev,
-            history: [...prev.history, errorEntry],
-          }));
-          setInputValue('');
-          return;
-        }
-
-        const currentStep = gameState.tutorialStep;
-        const nextStep = currentStep + 1;
-
-        // Get the tutorial message for this step
-        const tutorialEntries = getTutorialMessage(currentStep);
-
-        // Trigger UI reveals at specific steps
-        // Step 8: Evidence tracker reveal (after "youll see an evidence tracker")
-        if (currentStep === 7) {
-          setTimeout(() => setShowEvidenceTracker(true), 300);
-          playSound('reveal');
-        }
-        // Step 9: Risk tracker reveal (after "risk meter climbs")
-        if (currentStep === 8) {
-          setTimeout(() => setShowRiskTracker(true), 300);
-        }
-
-        if (nextStep >= TUTORIAL_MESSAGES.length) {
-          // Tutorial complete
-          const newState = {
-            ...gameState,
-            history: [...gameState.history, ...tutorialEntries],
-            tutorialStep: -1,
-            tutorialComplete: true,
-          };
-          setGameState(newState);
-          // Save checkpoint at tutorial completion
-          saveCheckpoint(newState, 'Tutorial complete');
-        } else {
-          // Show next message
-          setGameState(prev => ({
-            ...prev,
-            history: [...prev.history, ...tutorialEntries],
-            tutorialStep: nextStep,
-          }));
-        }
-
-        setInputValue('');
-        return;
-      }
-
-      if (isProcessingRef.current || isProcessing || showTuringTest || !trimmedInput) return;
-
-      const command = trimmedInput;
-      const commandLower = command.toLowerCase().split(' ')[0];
-      const shouldDeferUfo74 =
-        commandLower === 'open' || commandLower === 'decrypt' || commandLower === 'last';
-      setInputValue('');
-
-      // Play command-specific sound on submit
-      const dangerousCommands = ['decrypt', 'recover', 'trace', 'override', 'leak'];
-      const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
-      const systemCommands = ['scan', 'wait', 'hide'];
-
-      if (dangerousCommands.includes(commandLower)) {
-        playSound('warning'); // Warning beep for risky commands
-      } else if (quietCommands.includes(commandLower)) {
-        playSound('enter'); // Standard sound for navigation
-      } else if (systemCommands.includes(commandLower)) {
-        playSound('success'); // Confirmation sound for system commands
-      } else {
-        playSound('enter'); // Default command sound
-      }
-
-      setHistoryIndex(-1);
-
-      // Add command to history
-      const inputEntry = createEntry('input', `> ${command}`);
-      // Trim history to prevent unbounded growth during long sessions
-      const trimmedHistory =
-        gameState.history.length >= MAX_HISTORY_SIZE
-          ? gameState.history.slice(-MAX_HISTORY_SIZE + 1)
-          : gameState.history;
-      const newState: GameState = {
-        ...gameState,
-        history: [...trimmedHistory, inputEntry],
-        commandHistory: [
-          command,
-          ...gameState.commandHistory.slice(0, MAX_COMMAND_HISTORY_SIZE - 1),
-        ],
-      };
-
-      setGameState(newState);
-
-      // Handle special commands
-      if (command.toLowerCase() === 'save') {
-        onSaveRequestAction(newState);
-        return;
-      }
-
-      if (command.toLowerCase() === 'exit' || command.toLowerCase() === 'quit') {
-        onExitAction();
-        return;
-      }
-
-      // Execute command
-      isProcessingRef.current = true;
-      setIsProcessing(true);
-
-      // Track command for statistics
-      incrementStatistic('commandsTyped');
-
-      const result = executeCommand(inputValue, newState);
-
-      // Apply delay if specified
-      if (result.delayMs) {
-        await new Promise(resolve => setTimeout(resolve, result.delayMs));
-      }
-
-      // Apply flicker if specified
-      if (result.triggerFlicker) {
-        triggerFlicker();
-      }
-
-      // Determine streaming mode
-      const streamingMode = result.streamingMode || 'none';
-
-      // Build the state changes without history (we'll stream that)
-      const stateChangesWithoutHistory = {
-        ...result.stateChanges,
-        truthsDiscovered: result.stateChanges.truthsDiscovered || newState.truthsDiscovered,
-      };
-
-      // Apply non-history state changes first
-      const intermediateState: GameState = {
-        ...newState,
-        ...stateChangesWithoutHistory,
-      };
-
-      // If history is explicitly set in stateChanges, use that instead of streaming
-      if (result.stateChanges.history !== undefined) {
-        setGameState({
-          ...intermediateState,
-          history: result.stateChanges.history,
-        });
-        isProcessingRef.current = false;
-        setIsProcessing(false);
-      } else if (streamingMode !== 'none' && result.output.length > 0) {
-        // Stream output line by line
-        // Separate UFO74 messages from output - they should go through encrypted channel
-        const ufo74Messages = result.output.filter((e: TerminalEntry) => e.type === 'ufo74');
-        const streamableOutput = result.output.filter((e: TerminalEntry) => e.type !== 'ufo74');
-
-        // Save scroll position before streaming starts (where file content will begin)
-        if (outputRef.current) {
-          streamStartScrollPos.current = outputRef.current.scrollHeight;
-        }
-        setIsStreaming(true);
-        setGameState(intermediateState);
-
-        try {
-          await streamOutput(streamableOutput, streamingMode, intermediateState);
-
-          // Add pending media messages after streaming completes
-          if (result.imageTrigger || result.videoTrigger) {
-            const pendingMediaMessages: TerminalEntry[] = [];
-            if (result.imageTrigger) {
-              pendingMediaMessages.push(
-                createEntry('warning', ''),
-                createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-                createEntry('system', '')
-              );
-            }
-            if (result.videoTrigger) {
-              pendingMediaMessages.push(
-                createEntry('warning', ''),
-                createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-                createEntry('system', '')
-              );
-            }
-            setGameState(prev => ({
-              ...prev,
-              history: [...prev.history, ...pendingMediaMessages],
-            }));
-          }
-
-          // Queue UFO74 messages through encrypted channel if there are any
-          if (ufo74Messages.length > 0) {
-            if (result.imageTrigger || result.videoTrigger) {
-              // Media trigger present - queue messages for after media closes
-              setQueuedAfterMediaMessages(prev => [...prev, ...ufo74Messages]);
-            } else if (shouldDeferUfo74) {
-              // Defer to pendingUfo74StartMessages for open/decrypt/last commands
-              setPendingUfo74StartMessages(prev => [...prev, ...ufo74Messages]);
-            } else {
-              // Display UFO74 messages directly through encrypted channel
-              openEncryptedChannelWithMessages(ufo74Messages);
-            }
-          }
-        } finally {
-          // Always reset streaming state, even on error/interruption
-          setIsStreaming(false);
-          isProcessingRef.current = false;
-          setIsProcessing(false);
-          skipStreamingRef.current = false;
-        }
-      } else {
-        // No streaming - add all at once
-        // Separate UFO74 messages from other output for queuing
-        const ufo74Messages = result.output.filter((e: TerminalEntry) => e.type === 'ufo74');
-        const otherOutput = result.output.filter((e: TerminalEntry) => e.type !== 'ufo74');
-
-        // Include pending image/video messages if triggered
-        const pendingMediaMessages: TerminalEntry[] = [];
-        if (result.imageTrigger) {
-          pendingMediaMessages.push(
-            createEntry('warning', ''),
-            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-            createEntry('system', '')
-          );
-        }
-        if (result.videoTrigger) {
-          pendingMediaMessages.push(
-            createEntry('warning', ''),
-            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-            createEntry('system', '')
-          );
-        }
-
-        // Add non-UFO74 output immediately
-        setGameState({
-          ...intermediateState,
-          history: [...newState.history, ...otherOutput, ...pendingMediaMessages],
-        });
-
-        // Queue UFO74 messages through encrypted channel if there are any
-        if (ufo74Messages.length > 0) {
-          if (result.imageTrigger || result.videoTrigger) {
-            setQueuedAfterMediaMessages(prev => [...prev, ...ufo74Messages]);
-          } else if (shouldDeferUfo74) {
-            setPendingUfo74StartMessages(prev => [...prev, ...ufo74Messages]);
-          } else {
-            // Display UFO74 messages directly through encrypted channel
-            openEncryptedChannelWithMessages(ufo74Messages);
-          }
-        }
-
-        setIsProcessing(false);
-        isProcessingRef.current = false;
-      }
-
-      // Set pending image/video for Enter confirmation
-      if (result.imageTrigger) {
-        setPendingImage(result.imageTrigger);
-      }
-      if (result.videoTrigger) {
-        setPendingVideo(result.videoTrigger);
-      }
-
-      // Queue UFO74 messages from command result to show after content/media
-      if (result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0) {
-        if (result.imageTrigger || result.videoTrigger) {
-          // Media trigger present - queue messages for after media closes
-          setQueuedAfterMediaMessages(prev => [...prev, ...result.pendingUfo74Messages!]);
-        } else if (shouldDeferUfo74) {
-          setPendingUfo74StartMessages(prev => [...prev, ...result.pendingUfo74Messages!]);
-        } else {
-          // Display UFO74 messages directly through encrypted channel
-          openEncryptedChannelWithMessages(result.pendingUfo74Messages);
-        }
-      }
-
-      // Trigger Turing test overlay
-      if (result.triggerTuringTest) {
-        // Delay to let the terminal message show first
-        setTimeout(() => {
-          setShowTuringTest(true);
-        }, 1500);
-      }
-
-      // Handle GOD mode phase skip
-      if (result.skipToPhase) {
-        setGamePhase(result.skipToPhase);
-        isProcessingRef.current = false;
-        setIsProcessing(false);
-        // Ensure focus after phase skip
-        setTimeout(() => inputRef.current?.focus(), 0);
-        return;
-      }
-
-      // Check for game over
-      if (intermediateState.isGameOver) {
-        setGameOverReason(intermediateState.gameOverReason || 'CRITICAL SYSTEM FAILURE');
-        setShowGameOver(true);
-        playSound('error');
-        return;
-      }
-
-      // Check for achievements based on state changes
-      const truthCount = intermediateState.truthsDiscovered?.size || 0;
-      const prevTruthCount = gameState.truthsDiscovered?.size || 0;
-
-      // Track file reads for statistics
-      const filesReadCount = intermediateState.filesRead?.size || 0;
-      const prevFilesReadCount = gameState.filesRead?.size || 0;
-      if (filesReadCount > prevFilesReadCount) {
-        incrementStatistic('filesRead');
-      }
-
-      // New evidence discovered - play fanfare and save checkpoint!
-      if (truthCount > prevTruthCount) {
-        playSound('fanfare');
-        // Save checkpoint on truth discovery
-        const checkpointReason =
-          truthCount === 1
-            ? 'First evidence'
-            : truthCount === 5
-              ? 'All evidence found'
-              : `Evidence ${truthCount}/5`;
-        saveCheckpoint(intermediateState, checkpointReason);
-      }
-
-      // First evidence discovered
-      if (truthCount > 0 && prevTruthCount === 0) {
-        checkAchievement('first_blood');
-      }
-
-      // All truths discovered
-      if (truthCount === 5 && prevTruthCount < 5) {
-        checkAchievement('truth_seeker');
-      }
-
-      // Access level upgrade - save checkpoint
-      if (
-        intermediateState.accessLevel > gameState.accessLevel &&
-        intermediateState.accessLevel >= 2
-      ) {
-        saveCheckpoint(intermediateState, `Access level ${intermediateState.accessLevel}`);
-      }
-
-      // Admin unlocked - save checkpoint
-      if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
-        saveCheckpoint(intermediateState, 'Admin access unlocked');
-      }
-
-      // Timed decryption successful - play fanfare
-      // Detect when timedDecryptActive goes from true to false with smirk expression (success indicator)
-      if (
-        gameState.timedDecryptActive &&
-        !intermediateState.timedDecryptActive &&
-        intermediateState.avatarExpression === 'smirk'
-      ) {
-        playSound('fanfare');
-      }
-
-      // Admin override successful - play fanfare
-      if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
-        playSound('fanfare');
-      }
-
-      // Update burn-in effect with significant output content
-      if (result.output.length > 5 && command.toLowerCase().startsWith('open')) {
-        const significantLines = result.output
-          .filter(entry => entry.type === 'output' && entry.content.length > 20)
-          .map(entry => entry.content)
-          .slice(0, 5);
-        if (significantLines.length > 0) {
-          setBurnInLines(prev => [...significantLines, ...prev].slice(0, 8));
-        }
-      }
-
-      // God mode activated
-      if (intermediateState.godMode && !gameState.godMode) {
-        checkAchievement('doom_fan');
-      }
-
-      // Check achievements requested by command result
-      if (result.checkAchievements) {
-        for (const achievementId of result.checkAchievements) {
-          checkAchievement(achievementId);
-        }
-      }
-
-      // Night Owl achievement: playing for over 30 minutes
-      const sessionDuration = Date.now() - gameState.sessionStartTime;
-      if (sessionDuration >= NIGHT_OWL_DURATION_MS) {
-        checkAchievement('night_owl');
-      }
-
-      // Focus input after processing (use setTimeout to ensure it runs after React updates)
-      setTimeout(() => inputRef.current?.focus(), 0);
-    },
-    [
-      gameState,
-      inputValue,
-      isProcessing,
-      showTuringTest,
-      onExitAction,
-      onSaveRequestAction,
-      triggerFlicker,
-      streamOutput,
-      playSound,
-      openEncryptedChannelWithMessages,
-      checkAchievement,
-      gamePhase,
-      pendingImage,
-      pendingVideo,
-      pendingUfo74StartMessages,
-      pendingUfo74Messages,
-      consumeTabPressed,
-    ]
-  );
-
-  // Handle keyboard navigation
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Tab') {
-        e.preventDefault();
-        
-        // Mark that Tab was pressed (for tutorial autocomplete validation)
-        markTabPressed();
-        
-        const completions = getCompletions(inputValue);
-
-        // Use completeInput from useAutocomplete hook
-        const completed = completeInput(inputValue, completions);
-        if (completed) {
-          setInputValue(completed);
-        }
-
-        // Show completions in terminal with file previews (for multiple matches)
-        if (completions.length > 1) {
-          const parts = inputValue.trimStart().split(/\s+/);
-          const cmd = parts[0]?.toLowerCase();
-          const isFileCommand = cmd === 'open' || cmd === 'decrypt';
-
-          const completionLines: string[] = [];
-          completionLines.push(completions.join('  '));
-
-          // Show file preview for file commands
-          if (isFileCommand && completions.length <= 3) {
-            const partial = parts[parts.length - 1];
-            let searchDir = gameState.currentPath;
-            if (partial.includes('/')) {
-              const lastSlash = partial.lastIndexOf('/');
-              searchDir = resolvePath(partial.substring(0, lastSlash + 1), gameState.currentPath);
-            }
-
-            for (const completion of completions) {
-              const fullPath = searchDir === '/' ? `/${completion}` : `${searchDir}/${completion}`;
-              const node = getNode(fullPath, gameState);
-              if (node && node.type === 'file') {
-                const preview = getFileContent(fullPath, gameState);
-                if (preview && preview.length > 0) {
-                  const firstLine = preview.find(line => line.trim().length > 0) || preview[0];
-                  const truncated =
-                    firstLine.length > 50 ? firstLine.substring(0, 50) + '...' : firstLine;
-                  completionLines.push(`  ${completion}: "${truncated}"`);
-                }
-              }
-            }
-          }
-
-          const completionEntries = completionLines.map(line => createEntry('system', line));
-          setGameState(prev => ({
-            ...prev,
-            history: [...prev.history, ...completionEntries],
-          }));
-        }
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const newIndex = Math.min(historyIndex + 1, gameState.commandHistory.length - 1);
-        if (newIndex >= 0 && gameState.commandHistory[newIndex]) {
-          setHistoryIndex(newIndex);
-          setInputValue(gameState.commandHistory[newIndex]);
-        }
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const newIndex = historyIndex - 1;
-        if (newIndex < 0) {
-          setHistoryIndex(-1);
-          setInputValue('');
-        } else if (gameState.commandHistory[newIndex]) {
-          setHistoryIndex(newIndex);
-          setInputValue(gameState.commandHistory[newIndex]);
-        }
-      } else if (e.ctrlKey && e.key === 'l') {
-        e.preventDefault();
-        setGameState(prev => ({ ...prev, history: [] }));
-      } else if (e.key === 'Backspace') {
-        // Play backspace sound if there's content to delete
-        if (inputValue.length > 0) {
-          playKeySound('Backspace');
-        }
-      }
-    },
-    [historyIndex, gameState, inputValue, getCompletions, completeInput, markTabPressed, playKeySound]
-  );
+  });
 
   // Get status bar content
   const getStatusBar = () => {

@@ -10,9 +10,16 @@
  * @module storage/saves
  */
 
-import { GameState, SaveSlot, CheckpointSlot, DEFAULT_GAME_STATE, FileMutation } from '../types';
+import {
+  GameState,
+  SaveSlot,
+  CheckpointSlot,
+  DEFAULT_GAME_STATE,
+  FileMutation,
+  TutorialStateID,
+} from '../types';
 import { generateSeed } from '../engine/rng';
-import { generateBootSequence } from '../engine/commands';
+import { generateBootSequence, getInitialTutorialOutput } from '../engine/commands';
 import {
   MAX_HISTORY_SIZE,
   MAX_COMMAND_HISTORY_SIZE,
@@ -352,7 +359,7 @@ export function deleteSave(slotId: string): void {
  */
 export function createNewGame(): GameState {
   const seed = generateSeed();
-  const bootSequence = generateBootSequence();
+  const bootSequence = getInitialTutorialOutput();
   const variantAlpha = seed % 2 === 0;
   const hasPriorSave = getSaveSlots().length > 0;
   let hasAutoSave = false;
@@ -381,6 +388,12 @@ export function createNewGame(): GameState {
     flags,
     tutorialStep: 0,
     tutorialComplete: false,
+    interactiveTutorialState: {
+      ...DEFAULT_GAME_STATE.interactiveTutorialState,
+      current: TutorialStateID.LS_PROMPT,
+      inputLocked: false,
+      dialogueComplete: true,
+    },
   };
 }
 

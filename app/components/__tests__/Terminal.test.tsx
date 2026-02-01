@@ -417,10 +417,11 @@ describe('Terminal Component', () => {
       render(<Terminal {...tutorialProps} />);
 
       const enterPrompt = screen.getByRole('button', { name: /↵/ });
+      enterPrompt.focus();
 
-      // Click to advance tutorial
+      // Press Enter to advance tutorial
       act(() => {
-        fireEvent.click(enterPrompt);
+        fireEvent.keyDown(enterPrompt, { key: 'Enter' });
       });
 
       act(() => {
