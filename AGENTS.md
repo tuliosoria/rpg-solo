@@ -201,6 +201,7 @@ This project has specialized skills in `.github/skills/`:
 | `game-design` | Narrative mechanics, detection system, player psychology | Adding/modifying game mechanics |
 | `game-content` | Writing in-world files, UFO74 dialogue, terminal messages | Creating new content |
 | `testing` | Test patterns, coverage requirements, mocking strategies | Writing/fixing tests |
+| `e2e-testing` | End-to-end browser testing with Playwright | See [E2E_TESTING.md](./E2E_TESTING.md) |
 
 **Read the relevant SKILL.md before working in that domain.** For example:
 - Working on detection balance? Read `.github/skills/game-design/SKILL.md`
