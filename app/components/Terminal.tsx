@@ -338,6 +338,7 @@ export default function Terminal({
   const isProcessingRef = useRef(false);
   const skipStreamingRef = useRef(false);
   const streamStartScrollPos = useRef<number | null>(null);
+  const suppressPressure = shouldSuppressPressure(gameState);
 
   const isEnterOnlyMode =
     !gameState.tutorialComplete ||
@@ -465,7 +466,7 @@ export default function Terminal({
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
 
     // Suppress glitches during atmosphere phase (no pressure systems)
-    if (shouldSuppressPressure(gameState)) return;
+    if (suppressPressure) return;
 
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
@@ -555,6 +556,7 @@ export default function Terminal({
     gameState.isGameOver,
     gamePhase,
     playSound,
+    suppressPressure,
   ]);
 
   // "They're watching" paranoia messages
@@ -562,7 +564,7 @@ export default function Terminal({
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
 
     // Suppress paranoia during atmosphere phase (no pressure systems)
-    if (shouldSuppressPressure(gameState)) return;
+    if (suppressPressure) return;
 
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
@@ -609,6 +611,7 @@ export default function Terminal({
     gameState.isGameOver,
     gamePhase,
     playSound,
+    suppressPressure,
   ]);
 
   // Track detection level changes for sound/visual alerts
@@ -2064,7 +2067,7 @@ export default function Terminal({
         )}
 
         {/* Firewall Eyes - hostile surveillance entities (suppressed during atmosphere phase) */}
-        {gameState.tutorialComplete && !gameState.isGameOver && !shouldSuppressPressure(gameState) && (
+        {gameState.tutorialComplete && !gameState.isGameOver && !suppressPressure && (
           <FirewallEyes
             detectionLevel={gameState.detectionLevel}
             firewallActive={gameState.firewallActive}
