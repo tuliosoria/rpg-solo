@@ -60,9 +60,9 @@ const PARANOIA_MESSAGES = [
 ];
 
 interface TerminalEffectsRefs {
-  outputRef: React.RefObject<HTMLDivElement>;
-  inputRef: React.RefObject<HTMLInputElement>;
-  enterOnlyButtonRef: React.RefObject<HTMLButtonElement>;
+  outputRef: React.RefObject<HTMLDivElement | null>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  enterOnlyButtonRef: React.RefObject<HTMLButtonElement | null>;
   gameStateRef: React.MutableRefObject<GameState>;
   streamStartScrollPos: React.MutableRefObject<number | null>;
   typingSpeedWarningTimeout: React.MutableRefObject<NodeJS.Timeout | null>;
@@ -92,6 +92,7 @@ interface UseTerminalEffectsOptions {
   isFirewallPaused: boolean;
   suppressPressure: boolean;
   soundEnabled: boolean;
+  onEnterPress?: () => void;
   playSound: (sound: SoundType) => void;
   startAmbient: () => void;
   stopAmbient: () => void;
@@ -137,6 +138,7 @@ export function useTerminalEffects({
   isFirewallPaused,
   suppressPressure,
   soundEnabled,
+  onEnterPress,
   playSound,
   startAmbient,
   stopAmbient,
@@ -813,6 +815,37 @@ export function useTerminalEffects({
     setActiveVideo,
     setShowPauseMenu,
     setShowHeaderMenu,
+  ]);
+
+  // Handle Enter key in enter-only mode (tutorial intro, encrypted channel, pending media)
+  // This is needed because the hidden form button approach is unreliable across browsers
+  useEffect(() => {
+    if (!isEnterOnlyMode || !onEnterPress) return;
+    if (isStreaming || isProcessing || showTuringTest || gameState.isGameOver) return;
+    if (showSettings || showAchievements || showStatistics || showPauseMenu) return;
+    if (gamePhase !== 'terminal') return;
+
+    const handleEnterKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        onEnterPress();
+      }
+    };
+
+    window.addEventListener('keydown', handleEnterKey);
+    return () => window.removeEventListener('keydown', handleEnterKey);
+  }, [
+    isEnterOnlyMode,
+    isStreaming,
+    isProcessing,
+    showTuringTest,
+    gameState.isGameOver,
+    showSettings,
+    showAchievements,
+    showStatistics,
+    showPauseMenu,
+    gamePhase,
+    onEnterPress,
   ]);
 
   return { focusTerminalInput };

@@ -19,7 +19,7 @@ import {
   TutorialStateID,
 } from '../types';
 import { generateSeed } from '../engine/rng';
-import { generateBootSequence, getInitialTutorialOutput } from '../engine/commands';
+import { getInitialTutorialOutput } from '../engine/commands/interactiveTutorial';
 import {
   MAX_HISTORY_SIZE,
   MAX_COMMAND_HISTORY_SIZE,
@@ -393,6 +393,8 @@ export function createNewGame(): GameState {
       current: TutorialStateID.LS_PROMPT,
       inputLocked: false,
       dialogueComplete: true,
+      failCount: 0,
+      nudgeShown: false,
     },
   };
 }

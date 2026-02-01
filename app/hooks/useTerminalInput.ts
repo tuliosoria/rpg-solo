@@ -47,8 +47,8 @@ const STREAMING_DELAYS: Record<
 type EncryptedChannelState = 'idle' | 'awaiting_open' | 'open' | 'awaiting_close';
 
 interface TerminalInputRefs {
-  outputRef: React.RefObject<HTMLDivElement>;
-  inputRef: React.RefObject<HTMLInputElement>;
+  outputRef: React.RefObject<HTMLDivElement | null>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
   streamStartScrollPos: React.MutableRefObject<number | null>;
   skipStreamingRef: React.MutableRefObject<boolean>;
   isProcessingRef: React.MutableRefObject<boolean>;

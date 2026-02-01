@@ -220,8 +220,8 @@ export default function Terminal({
   const isEnterOnlyMode =
     (!gameState.tutorialComplete && !isInteractiveTutorialInput) ||
     encryptedChannelState !== 'idle' ||
-    pendingImage ||
-    pendingVideo ||
+    !!pendingImage ||
+    !!pendingVideo ||
     pendingUfo74StartMessages.length > 0 ||
     (gameState.ufo74SecretDiscovered && gamePhase === 'terminal');
 
@@ -333,6 +333,66 @@ export default function Terminal({
       streamStartScrollPos,
       skipStreamingRef,
       isProcessingRef,
+    },
+  });
+
+  // Effects hook - MUST be called before any conditional returns (React rules of hooks)
+  const { focusTerminalInput } = useTerminalEffects({
+    gameState,
+    gamePhase,
+    isStreaming,
+    isProcessing,
+    isWarmingUp,
+    showTuringTest,
+    activeImage,
+    activeVideo,
+    showSettings,
+    showAchievements,
+    showStatistics,
+    showPauseMenu,
+    showHeaderMenu,
+    isEnterOnlyMode,
+    isFirewallPaused,
+    suppressPressure,
+    soundEnabled,
+    onEnterPress: handleSubmit,
+    playSound,
+    startAmbient,
+    stopAmbient,
+    updateAmbientTension,
+    setTimedDecryptRemaining,
+    setIsWarmingUp,
+    setShowEvidenceTracker,
+    setShowRiskTracker,
+    setGamePhase,
+    setGameState,
+    setGlitchActive,
+    setGlitchHeavy,
+    setParanoiaPosition,
+    setParanoiaMessage,
+    setRiskPulse,
+    setIsShaking,
+    setCountdownDisplay,
+    setShowSettings,
+    setShowAchievements,
+    setShowStatistics,
+    setShowPauseMenu,
+    setShowHeaderMenu,
+    setActiveImage,
+    setActiveVideo,
+    refs: {
+      outputRef,
+      inputRef,
+      enterOnlyButtonRef,
+      gameStateRef,
+      streamStartScrollPos,
+      typingSpeedWarningTimeout,
+      idleHintTimerRef,
+      lastScrollTimeRef,
+      firewallPauseStartRef,
+      maxDetectionRef,
+      prevDetectionRef,
+      skipStreamingRef,
     },
   });
 
@@ -545,64 +605,6 @@ export default function Terminal({
       />
     );
   }
-
-  const { focusTerminalInput } = useTerminalEffects({
-    gameState,
-    gamePhase,
-    isStreaming,
-    isProcessing,
-    isWarmingUp,
-    showTuringTest,
-    activeImage,
-    activeVideo,
-    showSettings,
-    showAchievements,
-    showStatistics,
-    showPauseMenu,
-    showHeaderMenu,
-    isEnterOnlyMode,
-    isFirewallPaused,
-    suppressPressure,
-    soundEnabled,
-    playSound,
-    startAmbient,
-    stopAmbient,
-    updateAmbientTension,
-    setTimedDecryptRemaining,
-    setIsWarmingUp,
-    setShowEvidenceTracker,
-    setShowRiskTracker,
-    setGamePhase,
-    setGameState,
-    setGlitchActive,
-    setGlitchHeavy,
-    setParanoiaPosition,
-    setParanoiaMessage,
-    setRiskPulse,
-    setIsShaking,
-    setCountdownDisplay,
-    setShowSettings,
-    setShowAchievements,
-    setShowStatistics,
-    setShowPauseMenu,
-    setShowHeaderMenu,
-    setActiveImage,
-    setActiveVideo,
-    refs: {
-      outputRef,
-      inputRef,
-      enterOnlyButtonRef,
-      gameStateRef,
-      streamStartScrollPos,
-      typingSpeedWarningTimeout,
-      idleHintTimerRef,
-      lastScrollTimeRef,
-      firewallPauseStartRef,
-      maxDetectionRef,
-      prevDetectionRef,
-      skipStreamingRef,
-    },
-  });
 
   return (
     <FloatingUIProvider>
