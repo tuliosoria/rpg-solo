@@ -44,6 +44,7 @@ import {
 import { shouldSuppressPressure } from '../constants/atmosphere';
 import { useSound } from '../hooks/useSound';
 import { useAutocomplete } from '../hooks/useAutocomplete';
+import { useGameActions } from '../hooks/useGameActions';
 import { useTerminalState } from '../hooks/useTerminalState';
 import { unlockAchievement, Achievement } from '../engine/achievements';
 import { uiRandom, uiRandomPick, uiChance } from '../engine/rng';
@@ -52,13 +53,7 @@ import SettingsModal from './SettingsModal';
 import PauseMenu from './PauseMenu';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
-import FirewallEyes, {
-  createFirewallEyeBatch,
-  DETECTION_INCREASE_ON_DETONATE,
-  getFirewallEyeBatchSize,
-  speakFirewallVoice,
-  initVoices,
-} from './FirewallEyes';
+import FirewallEyes, { initVoices } from './FirewallEyes';
 
 // Lazy-load conditional components for better initial load performance
 const ImageOverlay = dynamic(() => import('./ImageOverlay'), { ssr: false });
@@ -884,166 +879,31 @@ export default function Terminal({
     [playSound]
   );
 
-  // Handle blackout complete - transition to ICQ
-  const handleBlackoutComplete = useCallback(() => {
-    setGamePhase('icq');
-    setGameState(prev => ({ ...prev, icqPhase: true }));
-  }, []);
-
-  // Handle victory from ICQ chat
-  const handleVictory = useCallback(() => {
-    setGamePhase('victory');
-    setGameState(prev => ({
-      ...prev,
-      gameWon: true,
-      endingType: 'good',
-      icqPhase: false,
-    }));
-  }, []);
-
-  const handleIcqTrustChange = useCallback((trust: number) => {
-    setGameState(prev => ({ ...prev, icqTrust: trust }));
-  }, []);
-
-  const handleIcqMathMistake = useCallback(() => {
-    setGameState(prev => ({ ...prev, mathQuestionWrong: (prev.mathQuestionWrong || 0) + 1 }));
-  }, []);
-
-  const handleIcqLeakChoice = useCallback((choice: 'public' | 'covert') => {
-    setGameState(prev => ({
-      ...prev,
-      choiceLeakPath: choice,
-      flags: { ...prev.flags, leakExecuted: true },
-    }));
-  }, []);
-
-  const handleIcqFilesSent = useCallback(() => {
-    setGameState(prev => ({ ...prev, filesSent: true }));
-  }, []);
-
-  // Handle restart after victory - return to main menu
-  const handleRestart = useCallback(() => {
-    onExitAction();
-  }, [onExitAction]);
-
   // Trigger flicker effect
   const triggerFlicker = useCallback(() => {
     setFlickerActive(true);
     setTimeout(() => setFlickerActive(false), 300);
   }, []);
 
-  // Firewall Eyes handlers
-  const handleFirewallActivate = useCallback(() => {
-    const now = Date.now();
-    setGameState(prev => {
-      const batchSize = getFirewallEyeBatchSize(prev.detectionLevel);
-      return {
-        ...prev,
-        firewallActive: true,
-        lastEyeSpawnTime: now,
-        firewallEyes: createFirewallEyeBatch(batchSize),
-      };
-    });
-    playSound('alert');
-    // Show UFO74 warning about the firewall
-    const firewallWarning = createEntry(
-      'ufo74',
-      'UFO74: KID! They deployed the FIREWALL. Those eyes - CLICK THEM before they report back!'
-    );
-    setGameState(prev => ({
-      ...prev,
-      history: [...prev.history, firewallWarning],
-    }));
-  }, [playSound]);
-
-  const handleFirewallEyeBatchSpawn = useCallback(() => {
-    // Timer-based spawning happens regardless of last command
-    // The 60-second cooldown provides enough buffer for reading files
-    const now = Date.now();
-    setGameState(prev => {
-      const batchSize = getFirewallEyeBatchSize(prev.detectionLevel);
-      const newEyes = [...prev.firewallEyes, ...createFirewallEyeBatch(batchSize)];
-
-      // Add UFO74 urgency message for batch spawns
-      const urgencyMessage = prev.flags.neuralLinkAuthenticated
-        ? createEntry(
-            'ufo74',
-            'UFO74: MORE EYES! The neural link might disable the firewall - try "link disarm"!'
-          )
-        : createEntry(
-            'ufo74',
-            'UFO74: Another wave! Keep clicking those eyes - we need more time!'
-          );
-
-      return {
-        ...prev,
-        firewallEyes: newEyes,
-        lastEyeSpawnTime: now,
-        history: [...prev.history, urgencyMessage],
-      };
-    });
-    playSound('warning');
-    speakFirewallVoice(); // Creepy robotic voice for intimidation
-  }, [playSound]);
-
-  const handleFirewallEyeClick = useCallback(
-    (eyeId: string) => {
-      setGameState(prev => ({
-        ...prev,
-        firewallEyes: prev.firewallEyes.filter(e => e.id !== eyeId),
-      }));
-      playSound('success');
-    },
-    [playSound]
-  );
-
-  const handleFirewallEyeDetonate = useCallback(
-    (eyeId: string) => {
-      setGameState(prev => {
-        // Mark eye as detonating for animation
-        const updatedEyes = prev.firewallEyes.map(e =>
-          e.id === eyeId ? { ...e, isDetonating: true } : e
-        );
-
-        // Increase detection level
-        const newDetection = Math.min(100, prev.detectionLevel + DETECTION_INCREASE_ON_DETONATE);
-
-        // Add terminal warning and UFO74 panic message
-        const detonateWarning = createEntry(
-          'error',
-          `[FIREWALL] Surveillance node reported. Detection increased to ${newDetection}%`
-        );
-
-        // UFO74 reaction to detonation
-        const ufo74Panic =
-          newDetection >= 80
-            ? createEntry('ufo74', "UFO74: THEY KNOW! They're tracing us RIGHT NOW!")
-            : newDetection >= 60
-              ? createEntry('ufo74', 'UFO74: That one got through! Be faster, kid!')
-              : createEntry('ufo74', 'UFO74: Damn! You missed one. Stay focused!');
-
-        return {
-          ...prev,
-          firewallEyes: updatedEyes,
-          detectionLevel: newDetection,
-          avatarExpression: 'scared',
-          history: [...prev.history, detonateWarning, ufo74Panic],
-        };
-      });
-
-      playSound('error');
-      triggerFlicker();
-
-      // Remove eye after animation completes
-      setTimeout(() => {
-        setGameState(prev => ({
-          ...prev,
-          firewallEyes: prev.firewallEyes.filter(e => e.id !== eyeId),
-        }));
-      }, 500);
-    },
-    [playSound, triggerFlicker]
-  );
+  const {
+    handleBlackoutComplete,
+    handleVictory,
+    handleIcqTrustChange,
+    handleIcqMathMistake,
+    handleIcqLeakChoice,
+    handleIcqFilesSent,
+    handleRestart,
+    handleFirewallActivate,
+    handleFirewallEyeBatchSpawn,
+    handleFirewallEyeClick,
+    handleFirewallEyeDetonate,
+  } = useGameActions({
+    setGameState,
+    setGamePhase,
+    onExitAction,
+    playSound,
+    triggerFlicker,
+  });
 
   // Handle firewall pause state changes (extends timers when overlays close)
   const handleFirewallPauseChanged = useCallback((paused: boolean) => {
