@@ -53,6 +53,12 @@ import {
   getHelpWinning,
 } from './commands/tutorial';
 
+// Import interactive tutorial system
+import {
+  isInTutorialMode,
+  processTutorialInput,
+} from './commands/interactiveTutorial';
+
 // Re-export utilities for backward compatibility
 export {
   generateEntryId,
@@ -6278,6 +6284,14 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       output: [createEntry('error', 'SESSION TERMINATED')],
       stateChanges: {},
     };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // INTERACTIVE TUTORIAL - Gated input system
+  // During tutorial, only accept expected commands from UFO74's guidance
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (isInTutorialMode(state)) {
+    return processTutorialInput(normalizedInput, state, false);
   }
 
   // ═══════════════════════════════════════════════════════════════════════════

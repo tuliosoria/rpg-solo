@@ -782,7 +782,7 @@ describe('Story Consistency Tests', () => {
 
     describe('Multiple Endings', () => {
       it('bad ending triggered by detection game over', () => {
-        const state = createTestState({ godMode: true });
+        const state = createTestState({ godMode: true, tutorialComplete: true });
         const result = executeCommand('god bad', state);
 
         expect(result.skipToPhase).toBe('bad_ending');
@@ -790,7 +790,7 @@ describe('Story Consistency Tests', () => {
       });
 
       it('neutral ending triggered by disconnect without saving evidence', () => {
-        const state = createTestState({ godMode: true });
+        const state = createTestState({ godMode: true, tutorialComplete: true });
         const result = executeCommand('god neutral', state);
 
         expect(result.skipToPhase).toBe('neutral_ending');
@@ -812,7 +812,7 @@ describe('Story Consistency Tests', () => {
       });
 
       it('secret ending triggered by finding UFO74 identity', () => {
-        const state = createTestState({ godMode: true });
+        const state = createTestState({ godMode: true, tutorialComplete: true });
         const result = executeCommand('god secret', state);
 
         expect(result.skipToPhase).toBe('secret_ending');

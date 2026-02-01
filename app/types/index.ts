@@ -1,5 +1,31 @@
 // Terminal 1996 - Type Definitions
 
+// ═══════════════════════════════════════════════════════════════════════════
+// INTERACTIVE TUTORIAL STATE MACHINE
+// ═══════════════════════════════════════════════════════════════════════════
+
+export enum TutorialStateID {
+  INTRO = 0,
+  LS_PROMPT = 1,
+  CD_PROMPT = 2,
+  OPEN_PROMPT = 3,
+  FILE_DISPLAY = 4,
+  CD_BACK_PROMPT = 5,
+  LS_REINFORCE = 6,
+  TUTORIAL_END = 7,
+  GAME_ACTIVE = 8,
+}
+
+export interface InteractiveTutorialState {
+  current: TutorialStateID;
+  failCount: number;
+  nudgeShown: boolean;
+  inputLocked: boolean;
+  dialogueComplete: boolean;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+
 export type FileStatus =
   | 'intact'
   | 'restricted'
@@ -171,6 +197,9 @@ export interface GameState {
   // Tutorial state (UFO74 intro messages)
   tutorialStep: number; // -1 = complete, 0+ = current message index
   tutorialComplete: boolean;
+
+  // Interactive tutorial state machine (gated command learning)
+  interactiveTutorialState?: InteractiveTutorialState;
 
   // Interactive tutorial mode (opt-in tips during gameplay)
   interactiveTutorialMode: boolean; // Whether player has tutorial tips enabled
@@ -411,6 +440,13 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   lastDirectoriesVisited: [],
   tutorialStep: 0,
   tutorialComplete: false,
+  interactiveTutorialState: {
+    current: TutorialStateID.INTRO,
+    failCount: 0,
+    nudgeShown: false,
+    inputLocked: true,
+    dialogueComplete: false,
+  },
   interactiveTutorialMode: false,
   tutorialTipsShown: new Set(),
   firstRunSeen: false,

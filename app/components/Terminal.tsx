@@ -17,6 +17,11 @@ import {
   TUTORIAL_MESSAGES,
   sanitizeCommandInput,
 } from '../engine/commands';
+import {
+  isInTutorialMode,
+  processTutorialInput,
+  isTutorialInputState,
+} from '../engine/commands/interactiveTutorial';
 import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { autoSave, saveCheckpoint, loadCheckpoint } from '../storage/saves';
 import { incrementStatistic, addPlaytime } from '../storage/statistics';
@@ -324,7 +329,7 @@ export default function Terminal({
   } = useSound();
 
   // Autocomplete hook
-  const { getCompletions, completeInput } = useAutocomplete(gameState);
+  const { getCompletions, completeInput, markTabPressed, consumeTabPressed } = useAutocomplete(gameState);
 
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -1269,8 +1274,51 @@ export default function Terminal({
         return;
       }
 
-      // During tutorial, only accept empty Enter to advance
-      if (!gameState.tutorialComplete) {
+      // Interactive tutorial: gated input system
+      if (isInTutorialMode(gameState)) {
+        const tutorialState = gameState.interactiveTutorialState;
+        
+        // If input is locked (during dialogue/transitions), ignore all input
+        if (!tutorialState || !isTutorialInputState(tutorialState.current)) {
+          setInputValue('');
+          return;
+        }
+
+        // Process input through interactive tutorial system
+        // consumeTabPressed() returns true if Tab was pressed since last call
+        const tabWasPressed = consumeTabPressed();
+        const result = processTutorialInput(trimmedInput, gameState, tabWasPressed);
+
+        // Apply state changes
+        if (result.output.length > 0 || result.stateChanges) {
+          setGameState(prev => ({
+            ...prev,
+            ...result.stateChanges,
+            history: [...prev.history, ...result.output],
+          }));
+        }
+
+        // Check if tutorial just completed - reveal UI elements and save checkpoint
+        if (result.stateChanges.tutorialComplete) {
+          setTimeout(() => setShowEvidenceTracker(true), 300);
+          playSound('reveal');
+          setTimeout(() => setShowRiskTracker(true), 600);
+          
+          // Save checkpoint at tutorial completion
+          const newState = {
+            ...gameState,
+            ...result.stateChanges,
+            history: [...gameState.history, ...result.output],
+          };
+          saveCheckpoint(newState, 'Tutorial complete');
+        }
+
+        setInputValue('');
+        return;
+      }
+
+      // Legacy non-interactive tutorial (for backwards compatibility)
+      if (!gameState.tutorialComplete && gameState.tutorialStep !== undefined && gameState.tutorialStep >= 0) {
         // If user typed something, show error
         if (trimmedInput) {
           const errorEntry = createEntry('error', 'ERROR: Incoming transmission in progress.');
@@ -1681,6 +1729,7 @@ export default function Terminal({
       pendingVideo,
       pendingUfo74StartMessages,
       pendingUfo74Messages,
+      consumeTabPressed,
     ]
   );
 
@@ -1689,6 +1738,10 @@ export default function Terminal({
     (e: React.KeyboardEvent) => {
       if (e.key === 'Tab') {
         e.preventDefault();
+        
+        // Mark that Tab was pressed (for tutorial autocomplete validation)
+        markTabPressed();
+        
         const completions = getCompletions(inputValue);
 
         // Use completeInput from useAutocomplete hook
@@ -1763,7 +1816,7 @@ export default function Terminal({
         }
       }
     },
-    [historyIndex, gameState, inputValue, getCompletions, completeInput, playKeySound]
+    [historyIndex, gameState, inputValue, getCompletions, completeInput, markTabPressed, playKeySound]
   );
 
   // Get status bar content

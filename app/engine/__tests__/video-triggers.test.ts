@@ -12,6 +12,7 @@ describe('Video Trigger Logic', () => {
       seed: 12345,
       rngState: 12345,
       sessionStartTime: Date.now(),
+      tutorialComplete: true,  // Skip tutorial for these tests
       imagesShownThisRun: new Set(),
       videosShownThisRun: new Set(),
     };

@@ -7,9 +7,10 @@
  * @module hooks/useAutocomplete
  */
 
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { GameState } from '../types';
 import { listDirectory, resolvePath } from '../engine/filesystem';
+import { isInTutorialMode, getTutorialAutocomplete } from '../engine/commands/interactiveTutorial';
 
 // Available commands for auto-completion
 const COMMANDS = [
@@ -56,14 +57,30 @@ export interface AutocompleteResult {
 /**
  * Hook for terminal command and file path autocompletion
  * @param gameState - Current game state for filesystem access
- * @returns getCompletions function and completeInput function
+ * @returns getCompletions function, completeInput function, and tabPressed tracking
  */
 export function useAutocomplete(gameState: GameState) {
+  // Track if Tab was pressed (for tutorial autocomplete validation)
+  const tabPressedRef = useRef(false);
+
   /**
    * Get auto-complete suggestions for the given input
+   * Handles tutorial mode specially using getTutorialAutocomplete
    */
   const getCompletions = useCallback(
     (input: string): string[] => {
+      // In tutorial mode, use tutorial-specific autocomplete
+      if (isInTutorialMode(gameState)) {
+        const tutorialState = gameState.interactiveTutorialState;
+        if (tutorialState) {
+          const completion = getTutorialAutocomplete(input, tutorialState.current);
+          if (completion) {
+            return [completion];
+          }
+        }
+        return [];
+      }
+
       const trimmed = input.trimStart();
       const parts = trimmed.split(/\s+/);
 
@@ -181,5 +198,29 @@ export function useAutocomplete(gameState: GameState) {
     }
   }, []);
 
-  return { getCompletions, completeInput, COMMANDS, COMMANDS_WITH_FILE_ARGS };
+  /**
+   * Mark that Tab was pressed (for tutorial input validation)
+   */
+  const markTabPressed = useCallback(() => {
+    tabPressedRef.current = true;
+  }, []);
+
+  /**
+   * Check and reset Tab pressed flag
+   * @returns true if Tab was pressed since last check
+   */
+  const consumeTabPressed = useCallback(() => {
+    const wasPressed = tabPressedRef.current;
+    tabPressedRef.current = false;
+    return wasPressed;
+  }, []);
+
+  return { 
+    getCompletions, 
+    completeInput, 
+    markTabPressed,
+    consumeTabPressed,
+    COMMANDS, 
+    COMMANDS_WITH_FILE_ARGS 
+  };
 }
