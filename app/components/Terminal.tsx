@@ -1,15 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import {
-  GameState,
-  TerminalEntry,
-  ImageTrigger,
-  VideoTrigger,
-  StreamingMode,
-  GamePhase,
-} from '../types';
+import { GamePhase, GameState, TerminalEntry, StreamingMode } from '../types';
 import {
   executeCommand,
   createEntry,
@@ -51,6 +44,7 @@ import {
 import { shouldSuppressPressure } from '../constants/atmosphere';
 import { useSound } from '../hooks/useSound';
 import { useAutocomplete } from '../hooks/useAutocomplete';
+import { useTerminalState } from '../hooks/useTerminalState';
 import { unlockAchievement, Achievement } from '../engine/achievements';
 import { uiRandom, uiRandomPick, uiChance } from '../engine/rng';
 import AchievementPopup from './AchievementPopup';
@@ -184,74 +178,82 @@ export default function Terminal({
   onLoadCheckpointAction,
 }: TerminalProps) {
   const initialPhase = deriveGamePhase(initialState);
-  const [gameState, setGameState] = useState<GameState>(initialState);
-  const [inputValue, setInputValue] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [flickerActive, setFlickerActive] = useState(false);
-  const [historyIndex, setHistoryIndex] = useState(-1);
-  const [activeImage, setActiveImage] = useState<ImageTrigger | null>(null);
-  const [activeVideo, setActiveVideo] = useState<VideoTrigger | null>(null);
-  const [pendingImage, setPendingImage] = useState<ImageTrigger | null>(null);
-  const [pendingVideo, setPendingVideo] = useState<VideoTrigger | null>(null);
-  const [showGameOver, setShowGameOver] = useState(
-    initialState.isGameOver && initialPhase === 'terminal'
-  );
-  const [gameOverReason, setGameOverReason] = useState(initialState.gameOverReason || '');
-  const [showHeaderMenu, setShowHeaderMenu] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showAchievements, setShowAchievements] = useState(false);
-  const [showStatistics, setShowStatistics] = useState(false);
-  const [showPauseMenu, setShowPauseMenu] = useState(false);
-
-  // UFO74 message queue - messages wait for Enter before displaying next
-  const [pendingUfo74Messages, setPendingUfo74Messages] = useState<TerminalEntry[]>([]);
-
-  // UFO74 messages queued to show after image/video closes (from command result)
-  const [queuedAfterMediaMessages, setQueuedAfterMediaMessages] = useState<TerminalEntry[]>([]);
-
-  // UFO74 messages staged until user presses Enter after content/media
-  const [pendingUfo74StartMessages, setPendingUfo74StartMessages] = useState<TerminalEntry[]>([]);
-
-  // UFO74 Encrypted Channel state - simplified to always be 'idle' since messages display directly
-  // Kept for backward compatibility with any code that checks the state
-  const [encryptedChannelState, setEncryptedChannelState] = useState<
-    'idle' | 'awaiting_open' | 'open' | 'awaiting_close'
-  >('idle');
-
-  // Game phase: terminal → blackout → icq → victory (or other endings)
-  const [gamePhase, setGamePhase] = useState<GamePhase>(initialPhase);
-
-  // Countdown timer display
-  const [countdownDisplay, setCountdownDisplay] = useState<string | null>(null);
-
-  // Glitch effects
-  const [glitchActive, setGlitchActive] = useState(false);
-  const [glitchHeavy, setGlitchHeavy] = useState(false);
-
-  // Screen shake effect
-  const [isShaking, setIsShaking] = useState(false);
-
-  // CRT warm-up effect (only for new sessions with empty history)
-  const [isWarmingUp, setIsWarmingUp] = useState(initialState.history.length === 0);
-
-  // Paranoia messages
-  const [paranoiaMessage, setParanoiaMessage] = useState<string | null>(null);
-  const [paranoiaPosition, setParanoiaPosition] = useState({ top: 0, left: 0 });
-
-  // Achievement popup
-  const [pendingAchievement, setPendingAchievement] = useState<Achievement | null>(null);
-
-  // Progressive UI reveal during tutorial
-  const [showEvidenceTracker, setShowEvidenceTracker] = useState(false);
-  const [, setShowRiskTracker] = useState(false);
-  const [riskPulse, setRiskPulse] = useState(false);
-
-  // Typing speed tracking
-  const [typingSpeedWarning, setTypingSpeedWarning] = useState(false);
-
-  // Turing Test overlay
-  const [showTuringTest, setShowTuringTest] = useState(initialState.turingEvaluationActive);
+  const {
+    gameState,
+    setGameState,
+    inputValue,
+    setInputValue,
+    isProcessing,
+    setIsProcessing,
+    isStreaming,
+    setIsStreaming,
+    flickerActive,
+    setFlickerActive,
+    historyIndex,
+    setHistoryIndex,
+    activeImage,
+    setActiveImage,
+    activeVideo,
+    setActiveVideo,
+    pendingImage,
+    setPendingImage,
+    pendingVideo,
+    setPendingVideo,
+    showGameOver,
+    setShowGameOver,
+    gameOverReason,
+    setGameOverReason,
+    showHeaderMenu,
+    setShowHeaderMenu,
+    showSettings,
+    setShowSettings,
+    showAchievements,
+    setShowAchievements,
+    showStatistics,
+    setShowStatistics,
+    showPauseMenu,
+    setShowPauseMenu,
+    pendingUfo74Messages,
+    setPendingUfo74Messages,
+    queuedAfterMediaMessages,
+    setQueuedAfterMediaMessages,
+    pendingUfo74StartMessages,
+    setPendingUfo74StartMessages,
+    encryptedChannelState,
+    setEncryptedChannelState,
+    gamePhase,
+    setGamePhase,
+    countdownDisplay,
+    setCountdownDisplay,
+    glitchActive,
+    setGlitchActive,
+    glitchHeavy,
+    setGlitchHeavy,
+    isShaking,
+    setIsShaking,
+    isWarmingUp,
+    setIsWarmingUp,
+    paranoiaMessage,
+    setParanoiaMessage,
+    paranoiaPosition,
+    setParanoiaPosition,
+    pendingAchievement,
+    setPendingAchievement,
+    showEvidenceTracker,
+    setShowEvidenceTracker,
+    showRiskTracker,
+    setShowRiskTracker,
+    riskPulse,
+    setRiskPulse,
+    typingSpeedWarning,
+    setTypingSpeedWarning,
+    showTuringTest,
+    setShowTuringTest,
+    timedDecryptRemaining,
+    setTimedDecryptRemaining,
+    burnInLines,
+    setBurnInLines,
+  } = useTerminalState(initialState, initialPhase);
   const keypressTimestamps = useRef<number[]>([]);
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
   const isFirewallPaused =
@@ -261,9 +263,6 @@ export default function Terminal({
     gameState.timedDecryptActive ||
     gameState.traceSpikeActive ||
     gameState.countdownActive;
-
-  // Timed decryption timer display
-  const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
 
   // Apply CRT preference on mount
   useEffect(() => {
@@ -305,9 +304,6 @@ export default function Terminal({
 
     return () => clearInterval(interval);
   }, [gameState.timedDecryptActive, gameState.timedDecryptEndTime]);
-
-  // Screen burn-in effect
-  const [burnInLines, setBurnInLines] = useState<string[]>([]);
 
   // Track max detection ever reached for Survivor achievement
   const maxDetectionRef = useRef(0);
