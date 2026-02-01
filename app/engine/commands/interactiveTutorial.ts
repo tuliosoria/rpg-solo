@@ -190,7 +190,9 @@ export function getTutorialAutocomplete(
     if (/^open\s+c/.test(normalized)) {
       const prefix = normalized.replace(/^open\s+/, '');
       if ('cafeteria_menu'.startsWith(prefix)) {
-        return 'open cafeteria_menu';
+        // Return just the filename, not the full command
+        // completeInput() will prepend the command automatically
+        return 'cafeteria_menu';
       }
     }
   }
