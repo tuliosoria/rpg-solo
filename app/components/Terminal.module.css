@@ -1297,3 +1297,38 @@
 .warmingUp {
   animation: warmUp 1.5s ease-out forwards;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .riskBarHidden,
+  .riskBarRevealed,
+  .headerHidden,
+  .headerRevealed,
+  .flicker,
+  .shaking,
+  .critical,
+  .trackerVisible,
+  .riskWarning,
+  .riskPulse,
+  .glitchActive,
+  .glitchHeavy,
+  .paranoiaMessage,
+  .redacted,
+  .processing,
+  .inputField::placeholder,
+  .enterPromptContent,
+  .enterPrompt,
+  .enterButton,
+  .terminalCursor,
+  .cursor,
+  .typingWarningContent,
+  .typingWarningInline,
+  .typingWarning,
+  .timedDecryptTimerContent,
+  .timedDecryptTimer,
+  .countdownTimerContent,
+  .countdownTimer,
+  .warmingUp {
+    animation: none !important;
+    transition: none !important;
+  }
+}
