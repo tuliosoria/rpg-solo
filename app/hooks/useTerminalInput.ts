@@ -12,6 +12,7 @@ import {
   isInTutorialMode,
   processTutorialInput,
   isTutorialInputState,
+  TUTORIAL_BRIEFING_STEPS,
 } from '../engine/commands/interactiveTutorial';
 import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { saveCheckpoint } from '../storage/saves';
@@ -23,15 +24,17 @@ import {
 } from '../constants/limits';
 import { NIGHT_OWL_DURATION_MS } from '../constants/timing';
 import { uiRandom, uiChance } from '../engine/rng';
-import type {
-  GamePhase,
-  GameState,
-  ImageTrigger,
-  StreamingMode,
-  TerminalEntry,
-  VideoTrigger,
+import {
+  TutorialStateID,
+  type GamePhase,
+  type GameState,
+  type ImageTrigger,
+  type StreamingMode,
+  type TerminalEntry,
+  type VideoTrigger,
 } from '../types';
 import type { SoundType } from './useSound';
+import { speakCustomFirewallVoice } from '../components/FirewallEyes';
 
 const STREAMING_DELAYS: Record<
   StreamingMode,
@@ -79,7 +82,11 @@ interface UseTerminalInputOptions {
   setQueuedAfterMediaMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
   setShowEvidenceTracker: React.Dispatch<React.SetStateAction<boolean>>;
   setShowRiskTracker: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAttBar: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAvatar: React.Dispatch<React.SetStateAction<boolean>>;
   setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsShaking: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowFirewallScare: React.Dispatch<React.SetStateAction<boolean>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
   setGameOverReason: React.Dispatch<React.SetStateAction<string>>;
   setShowGameOver: React.Dispatch<React.SetStateAction<boolean>>;
@@ -89,6 +96,7 @@ interface UseTerminalInputOptions {
   onSaveRequestAction: (state: GameState) => void;
   playSound: (sound: SoundType) => void;
   playKeySound: (key: string) => void;
+  startAmbient: () => void;
   triggerFlicker: () => void;
   checkAchievement: (id: string) => void;
   getCompletions: (input: string) => string[];
@@ -123,7 +131,11 @@ export function useTerminalInput({
   setQueuedAfterMediaMessages,
   setShowEvidenceTracker,
   setShowRiskTracker,
+  setShowAttBar,
+  setShowAvatar,
   setShowTuringTest,
+  setIsShaking,
+  setShowFirewallScare,
   setGamePhase,
   setGameOverReason,
   setShowGameOver,
@@ -133,6 +145,7 @@ export function useTerminalInput({
   onSaveRequestAction,
   playSound,
   playKeySound,
+  startAmbient,
   triggerFlicker,
   checkAchievement,
   getCompletions,
@@ -275,6 +288,67 @@ export function useTerminalInput({
       if (isInTutorialMode(gameState)) {
         const tutorialState = gameState.interactiveTutorialState;
 
+        // Handle TUTORIAL_END briefing: step-by-step on Enter
+        if (tutorialState?.current === TutorialStateID.TUTORIAL_END) {
+          if (trimmedInput) {
+            setInputValue('');
+            return;
+          }
+
+          const briefingStep = gameState.tutorialStep ?? 0;
+
+          if (briefingStep < TUTORIAL_BRIEFING_STEPS.length) {
+            const stepEntries = TUTORIAL_BRIEFING_STEPS[briefingStep];
+
+            // Step 0: evidence mention → reveal evidence tracker + ambient
+            if (briefingStep === 0) {
+              setTimeout(() => setShowEvidenceTracker(true), 300);
+              startAmbient();
+              playSound('reveal');
+            }
+            // Step 1: risk/detection mention → reveal risk bar
+            if (briefingStep === 1) {
+              setTimeout(() => setShowRiskTracker(true), 300);
+              playSound('reveal');
+            }
+            // Step 2: attempts mention → reveal ATT bar
+            if (briefingStep === 2) {
+              setTimeout(() => setShowAttBar(true), 300);
+              playSound('reveal');
+            }
+
+            const nextStep = briefingStep + 1;
+            const isLastStep = nextStep >= TUTORIAL_BRIEFING_STEPS.length;
+
+            if (isLastStep) {
+              // Briefing complete → transition to GAME_ACTIVE
+              const newState = {
+                ...gameState,
+                history: [...gameState.history, ...stepEntries],
+                tutorialStep: -1,
+                tutorialComplete: true,
+                interactiveTutorialState: {
+                  ...tutorialState,
+                  current: TutorialStateID.GAME_ACTIVE,
+                  inputLocked: false,
+                },
+                currentPath: '/',
+              };
+              setGameState(newState);
+              saveCheckpoint(newState, 'Tutorial complete');
+            } else {
+              setGameState(prev => ({
+                ...prev,
+                history: [...prev.history, ...stepEntries],
+                tutorialStep: nextStep,
+              }));
+            }
+          }
+
+          setInputValue('');
+          return;
+        }
+
         if (!tutorialState || !isTutorialInputState(tutorialState.current)) {
           setInputValue('');
           return;
@@ -291,17 +365,44 @@ export function useTerminalInput({
           }));
         }
 
-        if (result.stateChanges.tutorialComplete) {
-          setTimeout(() => setShowEvidenceTracker(true), 300);
-          playSound('reveal');
-          setTimeout(() => setShowRiskTracker(true), 600);
+        // Firewall jumpscare when player navigates back (cd ..)
+        const newTutState = result.stateChanges?.interactiveTutorialState;
+        if (newTutState && newTutState.current === TutorialStateID.LS_REINFORCE) {
+          // Trigger the scare: shake + eye overlay + robotic voice
+          setIsShaking(true);
+          setShowFirewallScare(true);
+          playSound('error');
+          speakCustomFirewallVoice('Who is here? I see you');
 
-          const newState = {
-            ...gameState,
-            ...result.stateChanges,
-            history: [...gameState.history, ...result.output],
-          };
-          saveCheckpoint(newState, 'Tutorial complete');
+          // After 1.5s, dismiss scare and show UFO74 warning
+          setTimeout(() => {
+            setIsShaking(false);
+            setShowFirewallScare(false);
+
+            // UFO74 firewall warning
+            setTimeout(() => {
+              setGameState(prev => ({
+                ...prev,
+                history: [
+                  ...prev.history,
+                  createEntry('system', ''),
+                  createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+                  createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
+                  createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+                  createEntry('system', ''),
+                  createEntry('ufo74', '⚠️  Hey kid, that\'s the FIREWALL.'),
+                  createEntry('ufo74', 'We better not mess with that crazy thing.'),
+                  createEntry('ufo74', '█▓▒░ BE CAREFUL ░▒▓█'),
+                  createEntry('system', ''),
+                  createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+                  createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
+                  createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+                  createEntry('system', ''),
+                ],
+              }));
+              playSound('message');
+            }, 400);
+          }, 1500);
         }
 
         setInputValue('');

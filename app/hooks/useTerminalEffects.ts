@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo } from 'react';
-import type { GamePhase, GameState, ImageTrigger, VideoTrigger } from '../types';
+import { TutorialStateID, type GamePhase, type GameState, type ImageTrigger, type VideoTrigger } from '../types';
 import { createEntry } from '../engine/commands';
 import { autoSave } from '../storage/saves';
 import { addPlaytime } from '../storage/statistics';
@@ -101,6 +101,9 @@ interface UseTerminalEffectsOptions {
   setIsWarmingUp: React.Dispatch<React.SetStateAction<boolean>>;
   setShowEvidenceTracker: React.Dispatch<React.SetStateAction<boolean>>;
   setShowRiskTracker: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAttBar: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAvatar: React.Dispatch<React.SetStateAction<boolean>>;
+  setAvatarCreepyEntrance: React.Dispatch<React.SetStateAction<boolean>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   setGlitchActive: React.Dispatch<React.SetStateAction<boolean>>;
@@ -147,6 +150,9 @@ export function useTerminalEffects({
   setIsWarmingUp,
   setShowEvidenceTracker,
   setShowRiskTracker,
+  setShowAttBar,
+  setShowAvatar,
+  setAvatarCreepyEntrance,
   setGamePhase,
   setGameState,
   setGlitchActive,
@@ -315,8 +321,29 @@ export function useTerminalEffects({
     if (gameState.tutorialComplete) {
       setShowEvidenceTracker(true);
       setShowRiskTracker(true);
+      setShowAttBar(true);
+      setShowAvatar(true);
     }
-  }, [gameState.tutorialComplete, setShowEvidenceTracker, setShowRiskTracker]);
+  }, [gameState.tutorialComplete, setShowEvidenceTracker, setShowRiskTracker, setShowAttBar, setShowAvatar]);
+
+  // Creepy avatar entrance when the tutorial first shows the "hackerkid" user creation
+  useEffect(() => {
+    const tutState = gameState.interactiveTutorialState;
+    if (
+      tutState &&
+      tutState.current === TutorialStateID.LS_PROMPT &&
+      !gameState.tutorialComplete
+    ) {
+      // Delay so the player reads the INTRO text first
+      const timer = setTimeout(() => {
+        setAvatarCreepyEntrance(true);
+        setShowAvatar(true);
+        // Clear entrance flag after animation completes
+        setTimeout(() => setAvatarCreepyEntrance(false), 3000);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, []); // Only on mount — fresh game start
 
   // Auto-save periodically
   useEffect(() => {

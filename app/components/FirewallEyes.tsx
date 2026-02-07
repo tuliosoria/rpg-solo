@@ -317,6 +317,11 @@ export function initVoices(): void {
 
 // Speak a creepy robotic voice when firewall eyes spawn
 export function speakFirewallVoice(): void {
+  speakCustomFirewallVoice(uiRandomPick(FIREWALL_PHRASES));
+}
+
+// Speak a specific phrase in creepy robotic voice
+export function speakCustomFirewallVoice(phrase: string): void {
   // Check if speech synthesis is available
   if (typeof window === 'undefined' || !window.speechSynthesis) {
     return;
@@ -324,9 +329,6 @@ export function speakFirewallVoice(): void {
 
   // Cancel any ongoing speech first
   speechSynthesis.cancel();
-
-  // Pick a random phrase
-  const phrase = uiRandomPick(FIREWALL_PHRASES);
 
   const utterance = new SpeechSynthesisUtterance(phrase);
   utterance.pitch = 0.3; // Very low/deep

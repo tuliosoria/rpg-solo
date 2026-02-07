@@ -11,6 +11,7 @@ interface HackerAvatarProps {
   expression: AvatarExpression;
   detectionLevel: number;
   sessionStability: number;
+  creepyEntrance?: boolean;
   onExpressionTimeout?: () => void;
 }
 
@@ -26,6 +27,7 @@ function HackerAvatar({
   expression,
   detectionLevel: _detectionLevel,
   sessionStability: _sessionStability,
+  creepyEntrance = false,
   onExpressionTimeout,
 }: HackerAvatarProps) {
   const [currentExpression, setCurrentExpression] = useState<AvatarExpression>(expression);
@@ -84,7 +86,7 @@ function HackerAvatar({
       baseOffset={0}
       style={{ top: 'max(190px, 22vh)', right: 15 }}
     >
-      <div className={styles.hudPanel}>
+      <div className={`${styles.hudPanel} ${creepyEntrance ? styles.creepyEntrance : ''}`}>
         {/* Avatar only - meters removed per UI cleanup */}
         <div className={styles.avatarColumn}>
           <div className={styles.tvFrame}>
@@ -118,4 +120,6 @@ function HackerAvatar({
 
 // Memoize to prevent re-renders when only detectionLevel changes
 // Only re-render when expression actually changes
-export default memo(HackerAvatar, (prev, next) => prev.expression === next.expression);
+export default memo(HackerAvatar, (prev, next) => 
+  prev.expression === next.expression && prev.creepyEntrance === next.creepyEntrance
+);

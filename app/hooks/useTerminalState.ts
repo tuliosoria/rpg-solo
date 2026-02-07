@@ -48,6 +48,10 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
   const [pendingAchievement, setPendingAchievement] = useState<Achievement | null>(null);
   const [showEvidenceTracker, setShowEvidenceTracker] = useState(false);
   const [showRiskTracker, setShowRiskTracker] = useState(false);
+  const [showAttBar, setShowAttBar] = useState(false);
+  const [showAvatar, setShowAvatar] = useState(false);
+  const [avatarCreepyEntrance, setAvatarCreepyEntrance] = useState(false);
+  const [showFirewallScare, setShowFirewallScare] = useState(false);
   const [riskPulse, setRiskPulse] = useState(false);
   const [typingSpeedWarning, setTypingSpeedWarning] = useState(false);
   const [showTuringTest, setShowTuringTest] = useState(initialState.turingEvaluationActive);
@@ -119,6 +123,14 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     setShowEvidenceTracker,
     showRiskTracker,
     setShowRiskTracker,
+    showAttBar,
+    setShowAttBar,
+    showAvatar,
+    setShowAvatar,
+    avatarCreepyEntrance,
+    setAvatarCreepyEntrance,
+    showFirewallScare,
+    setShowFirewallScare,
     riskPulse,
     setRiskPulse,
     typingSpeedWarning,

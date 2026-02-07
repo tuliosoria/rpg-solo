@@ -158,6 +158,14 @@ export default function Terminal({
     setShowEvidenceTracker,
     showRiskTracker,
     setShowRiskTracker,
+    showAttBar,
+    setShowAttBar,
+    showAvatar,
+    setShowAvatar,
+    avatarCreepyEntrance,
+    setAvatarCreepyEntrance,
+    showFirewallScare,
+    setShowFirewallScare,
     riskPulse,
     setRiskPulse,
     typingSpeedWarning,
@@ -311,7 +319,11 @@ export default function Terminal({
     setQueuedAfterMediaMessages,
     setShowEvidenceTracker,
     setShowRiskTracker,
+    setShowAttBar,
+    setShowAvatar,
     setShowTuringTest,
+    setIsShaking,
+    setShowFirewallScare,
     setGamePhase,
     setGameOverReason,
     setShowGameOver,
@@ -321,6 +333,7 @@ export default function Terminal({
     onSaveRequestAction,
     playSound,
     playKeySound,
+    startAmbient,
     triggerFlicker,
     checkAchievement,
     getCompletions,
@@ -364,6 +377,9 @@ export default function Terminal({
     setIsWarmingUp,
     setShowEvidenceTracker,
     setShowRiskTracker,
+    setShowAttBar,
+    setShowAvatar,
+    setAvatarCreepyEntrance,
     setGamePhase,
     setGameState,
     setGlitchActive,
@@ -506,6 +522,45 @@ export default function Terminal({
     return <>{parts}</>;
   };
 
+  // Render text with backtick-wrapped commands highlighted green
+  const renderCommandHighlights = (text: string) => {
+    if (!text.includes('`')) return renderTextWithRedactions(text);
+
+    const parts: React.ReactNode[] = [];
+    const cmdPattern = /`([^`]+)`/g;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = cmdPattern.exec(text)) !== null) {
+      // Text before the match
+      if (match.index > lastIndex) {
+        parts.push(
+          <React.Fragment key={`t-${lastIndex}`}>
+            {renderTextWithRedactions(text.substring(lastIndex, match.index))}
+          </React.Fragment>
+        );
+      }
+      // The command itself — green
+      parts.push(
+        <span key={`cmd-${match.index}`} className={styles.tutorialCommand}>
+          {match[1]}
+        </span>
+      );
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Remaining text
+    if (lastIndex < text.length) {
+      parts.push(
+        <React.Fragment key={`t-${lastIndex}`}>
+          {renderTextWithRedactions(text.substring(lastIndex))}
+        </React.Fragment>
+      );
+    }
+
+    return <>{parts}</>;
+  };
+
   const renderEntry = (entry: TerminalEntry) => {
     let className = styles.line;
 
@@ -535,7 +590,7 @@ export default function Terminal({
 
     return (
       <div key={entry.id} className={className}>
-        {renderTextWithRedactions(entry.content)}
+        {entry.type === 'ufo74' ? renderCommandHighlights(entry.content) : renderTextWithRedactions(entry.content)}
       </div>
     );
   };
@@ -798,11 +853,15 @@ export default function Terminal({
             <span className={styles.truthCount}>[{getDiscoveredCount()}/5]</span>
           </div>
           <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
-            <span className={styles.trackerLabel}>RISK:</span>
-            <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
-              {riskInfo.level}
+            <span className={`${styles.riskItem} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}>
+              <span className={styles.trackerLabel}>RISK:</span>
+              <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
+                {riskInfo.level}
+              </span>
             </span>
-            <span className={styles.memoryLevel}>ATT: {getAttemptsDisplay()}</span>
+            <span className={`${styles.attItem} ${showAttBar ? styles.trackerVisible : styles.trackerHidden}`}>
+              <span className={styles.memoryLevel}>ATT: {getAttemptsDisplay()}</span>
+            </span>
           </div>
         </div>
 
@@ -933,11 +992,12 @@ export default function Terminal({
         )}
 
         {/* Hacker avatar HUD panel */}
-        {gameState.tutorialComplete && (
+        {(showAvatar || gameState.tutorialComplete) && (
           <HackerAvatar
             expression={(gameState.avatarExpression as AvatarExpression) || 'neutral'}
             detectionLevel={gameState.detectionLevel}
             sessionStability={gameState.sessionStability}
+            creepyEntrance={avatarCreepyEntrance}
             onExpressionTimeout={() => {
               setGameState(prev => ({ ...prev, avatarExpression: 'neutral' }));
             }}
@@ -1020,6 +1080,17 @@ export default function Terminal({
               inputRef.current?.focus();
             }}
           />
+        )}
+
+        {/* Firewall Scare overlay */}
+        {showFirewallScare && (
+          <div className={styles.firewallScareOverlay}>
+            <div className={styles.firewallScareEye}>
+              <div className={styles.firewallScareIris} />
+              <div className={styles.firewallScarePupil} />
+            </div>
+            <div className={styles.firewallScareText}>WHO IS HERE? I SEE YOU</div>
+          </div>
         )}
 
         {/* Turing Test overlay */}
