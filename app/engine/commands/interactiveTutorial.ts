@@ -37,27 +37,29 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
     '[UFO74]: Type ls',
   ],
   [TutorialStateID.CD_PROMPT]: [
-    '[UFO74]: Good.',
-    '[UFO74]: Now move into a folder.',
-    '[UFO74]: Type cd files',
+    '[UFO74]: Good. Five main directories.',
+    '[UFO74]: Start with internal - it has basic files.',
+    '[UFO74]: Type cd internal',
   ],
   [TutorialStateID.OPEN_PROMPT]: [
-    "[UFO74]: Two files. Neither matters, but let's look anyway.",
-    '[UFO74]: Type open cafeteria_menu',
-    '[UFO74]: Or type open c and press TAB to autocomplete.',
+    "[UFO74]: Multiple folders here. Let's check misc.",
+    '[UFO74]: Type cd misc',
   ],
   [TutorialStateID.FILE_DISPLAY]: [
-    '[UFO74]: Riveting.',
-    '[UFO74]: Not everything you find will matter.',
-    '[UFO74]: Learn to recognize what does.',
+    '[UFO74]: Three files. Nothing critical.',
+    '[UFO74]: Open the cafeteria menu.',
+    '[UFO74]: Type open cafeteria_menu_week03.txt',
+    '[UFO74]: Or use TAB to autocomplete.',
   ],
   [TutorialStateID.CD_BACK_PROMPT]: [
-    '[UFO74]: Now go back up.',
+    '[UFO74]: Riveting.',
+    "[UFO74]: Not everything matters. You'll learn what does.",
+    '[UFO74]: Go back up one level.',
     '[UFO74]: Type cd ..',
   ],
   [TutorialStateID.LS_REINFORCE]: [
-    '[UFO74]: Check where you are.',
-    '[UFO74]: Run ls again.',
+    '[UFO74]: Now go back to root.',
+    '[UFO74]: Type cd ..',
   ],
   [TutorialStateID.TUTORIAL_END]: [
     '[UFO74]: Good. You know enough.',
@@ -89,11 +91,11 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
 export const TUTORIAL_NUDGES: Record<TutorialStateID, string | null> = {
   [TutorialStateID.INTRO]: null,
   [TutorialStateID.LS_PROMPT]: '[UFO74]: Two letters. Lowercase. ls',
-  [TutorialStateID.CD_PROMPT]: '[UFO74]: cd means change directory. cd files',
-  [TutorialStateID.OPEN_PROMPT]: '[UFO74]: open followed by the filename. Try the tab key.',
-  [TutorialStateID.FILE_DISPLAY]: null,
+  [TutorialStateID.CD_PROMPT]: '[UFO74]: cd means change directory. cd internal',
+  [TutorialStateID.OPEN_PROMPT]: '[UFO74]: Navigate to misc folder. cd misc',
+  [TutorialStateID.FILE_DISPLAY]: '[UFO74]: open followed by the filename. Try TAB key.',
   [TutorialStateID.CD_BACK_PROMPT]: '[UFO74]: Two dots. cd space dot dot.',
-  [TutorialStateID.LS_REINFORCE]: '[UFO74]: Same command as before. ls',
+  [TutorialStateID.LS_REINFORCE]: '[UFO74]: Same command. cd ..',
   [TutorialStateID.TUTORIAL_END]: null,
   [TutorialStateID.GAME_ACTIVE]: null,
 };
@@ -104,30 +106,60 @@ export const TUTORIAL_NUDGES: Record<TutorialStateID, string | null> = {
 
 export const TUTORIAL_ROOT_LISTING = [
   '/',
-  '├── files/',
-  '├── logs/',
-  '├── system/',
-  '└── admin/',
+  '├── storage/',
+  '├── ops/',
+  '├── comms/',
+  '├── admin/',
+  '└── internal/',
 ];
 
-export const TUTORIAL_FILES_LISTING = [
-  '/files',
-  '├── cafeteria_menu',
-  '└── shift_schedule',
+export const TUTORIAL_INTERNAL_LISTING = [
+  '/internal',
+  '├── incident_summary_official.txt',
+  '├── protocols/',
+  '├── sanitized/',
+  '├── personnel/',
+  '├── facilities/',
+  '├── admin/',
+  '└── misc/',
+];
+
+export const TUTORIAL_MISC_LISTING = [
+  '/internal/misc',
+  '├── cafeteria_menu_week03.txt',
+  '├── printer_queue_notice.txt',
+  '└── office_supplies.txt',
 ];
 
 export const CAFETERIA_MENU_CONTENT = [
-  '┌─────────────────────────────────────┐',
-  '│  CAFETERIA MENU - WEEK 42          │',
-  '├─────────────────────────────────────┤',
-  '│  MON: Salisbury steak, mashed pot. │',
-  '│  TUE: Fish sticks, coleslaw        │',
-  '│  WED: Chicken fried rice           │',
-  '│  THU: Beef tacos                   │',
-  '│  FRI: Pizza day                    │',
-  '├─────────────────────────────────────┤',
-  '│  * Vegan options available daily   │',
-  '└─────────────────────────────────────┘',
+  '═══════════════════════════════════════════════════════════',
+  'CAFETERIA MENU — WEEK 3, JANUARY 1996',
+  '═══════════════════════════════════════════════════════════',
+  '',
+  'MONDAY (15-JAN):',
+  '  Almoço: Feijoada completa, arroz, farofa',
+  '  Jantar: Frango grelhado, legumes',
+  '',
+  'TUESDAY (16-JAN):',
+  '  Almoço: Bife acebolado, arroz, feijão',
+  '  Jantar: Sopa de legumes, pão',
+  '',
+  'WEDNESDAY (17-JAN):',
+  '  Almoço: Peixe frito, batatas',
+  '  Jantar: Macarronada',
+  '',
+  'THURSDAY (18-JAN):',
+  '  Almoço: Frango com quiabo',
+  '  Jantar: Sanduíches variados',
+  '',
+  'FRIDAY (19-JAN):',
+  '  Almoço: Churrasco misto',
+  '  Jantar: Pizza',
+  '',
+  'NOTE: Vegan/vegetarian options upon request.',
+  '      Coffee machine still OUT OF SERVICE.',
+  '',
+  '═══════════════════════════════════════════════════════════',
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -153,23 +185,28 @@ export function validateTutorialInput(
 
   switch (state) {
     case TutorialStateID.LS_PROMPT:
-    case TutorialStateID.LS_REINFORCE:
       return normalized === 'ls';
 
     case TutorialStateID.CD_PROMPT:
-      return /^cd\s+files$/.test(normalized);
+      return /^cd\s+internal$/.test(normalized);
 
     case TutorialStateID.OPEN_PROMPT:
+      return /^cd\s+misc$/.test(normalized);
+
+    case TutorialStateID.FILE_DISPLAY:
       // Full command
-      if (/^open\s+cafeteria_menu$/.test(normalized)) return true;
+      if (/^open\s+cafeteria_menu_week03\.txt$/.test(normalized)) return true;
       // Autocomplete: open c + TAB
       if (tabPressed && /^open\s+c/.test(normalized)) {
         const prefix = normalized.replace(/^open\s+/, '');
-        return 'cafeteria_menu'.startsWith(prefix);
+        return 'cafeteria_menu_week03.txt'.startsWith(prefix);
       }
       return false;
 
     case TutorialStateID.CD_BACK_PROMPT:
+      return /^cd\s+\.\.$/.test(normalized);
+
+    case TutorialStateID.LS_REINFORCE:
       return /^cd\s+\.\.$/.test(normalized);
 
     default:
@@ -186,13 +223,13 @@ export function getTutorialAutocomplete(
 ): string | null {
   const normalized = normalizeInput(input);
 
-  if (state === TutorialStateID.OPEN_PROMPT) {
+  if (state === TutorialStateID.FILE_DISPLAY) {
     if (/^open\s+c/.test(normalized)) {
       const prefix = normalized.replace(/^open\s+/, '');
-      if ('cafeteria_menu'.startsWith(prefix)) {
+      if ('cafeteria_menu_week03.txt'.startsWith(prefix)) {
         // Return just the filename, not the full command
         // completeInput() will prepend the command automatically
-        return 'cafeteria_menu';
+        return 'cafeteria_menu_week03.txt';
       }
     }
   }
@@ -365,10 +402,10 @@ function handleValidInput(
       break;
 
     case TutorialStateID.CD_PROMPT:
-      // Change to /files, show files listing
-      currentPath = '/files';
+      // Change to /internal, show internal listing
+      currentPath = '/internal';
       entries.push(createEntry('system', ''));
-      for (const line of TUTORIAL_FILES_LISTING) {
+      for (const line of TUTORIAL_INTERNAL_LISTING) {
         entries.push(createEntry('output', line));
       }
       entries.push(createEntry('system', ''));
@@ -378,24 +415,40 @@ function handleValidInput(
       break;
 
     case TutorialStateID.OPEN_PROMPT:
+      // Change to /internal/misc, show misc listing
+      currentPath = '/internal/misc';
+      entries.push(createEntry('system', ''));
+      for (const line of TUTORIAL_MISC_LISTING) {
+        entries.push(createEntry('output', line));
+      }
+      entries.push(createEntry('system', ''));
+      nextState = TutorialStateID.FILE_DISPLAY;
+      // Add FILE_DISPLAY dialogue
+      entries.push(...generateStateDialogue(TutorialStateID.FILE_DISPLAY));
+      break;
+
+    case TutorialStateID.FILE_DISPLAY:
+      // Show cafeteria menu content
+      entries.push(createEntry('system', ''));
+      for (const line of CAFETERIA_MENU_CONTENT) {
+        entries.push(createEntry('file', line));
+    case TutorialStateID.FILE_DISPLAY:
       // Show cafeteria menu content
       entries.push(createEntry('system', ''));
       for (const line of CAFETERIA_MENU_CONTENT) {
         entries.push(createEntry('file', line));
       }
       entries.push(createEntry('system', ''));
-      nextState = TutorialStateID.FILE_DISPLAY;
-      // Add FILE_DISPLAY commentary, then CD_BACK_PROMPT
-      entries.push(...generateStateDialogue(TutorialStateID.FILE_DISPLAY));
-      entries.push(...generateStateDialogue(TutorialStateID.CD_BACK_PROMPT));
       nextState = TutorialStateID.CD_BACK_PROMPT;
+      // Add CD_BACK_PROMPT dialogue
+      entries.push(...generateStateDialogue(TutorialStateID.CD_BACK_PROMPT));
       break;
 
     case TutorialStateID.CD_BACK_PROMPT:
-      // Change to root
-      currentPath = '/';
+      // Go back to /internal
+      currentPath = '/internal';
       entries.push(createEntry('system', ''));
-      entries.push(createEntry('output', '/>'));
+      entries.push(createEntry('output', '/internal>'));
       entries.push(createEntry('system', ''));
       nextState = TutorialStateID.LS_REINFORCE;
       // Add LS_REINFORCE dialogue
@@ -403,11 +456,10 @@ function handleValidInput(
       break;
 
     case TutorialStateID.LS_REINFORCE:
-      // Show root directory listing again
+      // Go back to root
+      currentPath = '/';
       entries.push(createEntry('system', ''));
-      for (const line of TUTORIAL_ROOT_LISTING) {
-        entries.push(createEntry('output', line));
-      }
+      entries.push(createEntry('output', '/>'));
       entries.push(createEntry('system', ''));
       nextState = TutorialStateID.TUTORIAL_END;
       // Add TUTORIAL_END briefing
