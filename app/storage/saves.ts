@@ -390,9 +390,9 @@ export function createNewGame(): GameState {
     tutorialComplete: false,
     interactiveTutorialState: {
       ...DEFAULT_GAME_STATE.interactiveTutorialState,
-      current: TutorialStateID.LS_PROMPT,
-      inputLocked: false,
-      dialogueComplete: true,
+      current: TutorialStateID.INTRO,
+      inputLocked: true,
+      dialogueComplete: false,
       failCount: 0,
       nudgeShown: false,
     },

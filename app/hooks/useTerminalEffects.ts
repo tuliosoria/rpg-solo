@@ -326,24 +326,7 @@ export function useTerminalEffects({
     }
   }, [gameState.tutorialComplete, setShowEvidenceTracker, setShowRiskTracker, setShowAttBar, setShowAvatar]);
 
-  // Creepy avatar entrance when the tutorial first shows the "hackerkid" user creation
-  useEffect(() => {
-    const tutState = gameState.interactiveTutorialState;
-    if (
-      tutState &&
-      tutState.current === TutorialStateID.LS_PROMPT &&
-      !gameState.tutorialComplete
-    ) {
-      // Delay so the player reads the INTRO text first
-      const timer = setTimeout(() => {
-        setAvatarCreepyEntrance(true);
-        setShowAvatar(true);
-        // Clear entrance flag after animation completes
-        setTimeout(() => setAvatarCreepyEntrance(false), 3000);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, []); // Only on mount — fresh game start
+  // Avatar entrance is now triggered by INTRO block 1 in useTerminalInput
 
   // Auto-save periodically
   useEffect(() => {

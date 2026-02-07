@@ -321,6 +321,7 @@ export default function Terminal({
     setShowRiskTracker,
     setShowAttBar,
     setShowAvatar,
+    setAvatarCreepyEntrance,
     setShowTuringTest,
     setIsShaking,
     setShowFirewallScare,

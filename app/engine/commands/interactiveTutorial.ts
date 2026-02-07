@@ -703,6 +703,48 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
 ];
 
 /**
+ * Step-by-step INTRO blocks shown one-at-a-time on Enter
+ */
+export const TUTORIAL_INTRO_STEPS: TerminalEntry[][] = [
+  // Block 0 — Encrypted channel open + first contact
+  [
+    createEntry('system', ''),
+    createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+    createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
+    createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+    createEntry('system', ''),
+    createEntry('ufo74', '[UFO74]: Connection established.'),
+    createEntry('ufo74', "[UFO74]: Listen carefully. I don't repeat myself."),
+    createEntry('ufo74', "[UFO74]: You're inside their system. Don't panic."),
+    createEntry('system', ''),
+  ],
+  // Block 1 — hackerkid creation (triggers avatar animation)
+  [
+    createEntry('ufo74', "[UFO74]: Hey kid! I'll create a user for you so you can investigate."),
+    createEntry('ufo74', '[UFO74]: You will be... hackerkid.'),
+    createEntry('system', ''),
+  ],
+  // Block 2 — User creation animation + context + first command
+  [
+    createEntry('system', '> CREATING USER PROFILE...'),
+    createEntry('system', '> USERNAME: hackerkid'),
+    createEntry('system', '> ACCESS LEVEL: 1 [PROVISIONAL]'),
+    createEntry('system', '> STATUS: ACTIVE'),
+    createEntry('system', ''),
+    createEntry('notice', '✓ USER hackerkid REGISTERED'),
+    createEntry('system', ''),
+    createEntry('ufo74', "[UFO74]: Great, now you're in. Let's get to business."),
+    createEntry('ufo74', '[UFO74]: We need to explore UFO files here. Brazil, 1996, kid. Varginha!'),
+    createEntry('ufo74', '[UFO74]: Aliens were all over the damn city.'),
+    createEntry('ufo74', "[UFO74]: I'll teach you the basics."),
+    createEntry('system', ''),
+    createEntry('ufo74', "[UFO74]: First, see what's here."),
+    createEntry('ufo74', '[UFO74]: Type `ls`'),
+    createEntry('system', ''),
+  ],
+];
+
+/**
  * Initialize a new game with interactive tutorial
  */
 export function initializeInteractiveTutorial(): Partial<GameState> {
@@ -718,40 +760,15 @@ export function initializeInteractiveTutorial(): Partial<GameState> {
  * Get the initial tutorial output (INTRO dialogue + first prompt)
  */
 export function getInitialTutorialOutput(): TerminalEntry[] {
-  const entries: TerminalEntry[] = [];
-
-  // Boot sequence header
-  entries.push(createEntry('system', ''));
-  entries.push(createEntry('system', '═══════════════════════════════════════════════════════════'));
-  entries.push(createEntry('system', 'BRAZILIAN INTELLIGENCE LEGACY SYSTEM'));
-  entries.push(createEntry('system', 'TERMINAL ACCESS POINT — NODE 7'));
-  entries.push(createEntry('system', '═══════════════════════════════════════════════════════════'));
-  entries.push(createEntry('system', ''));
-  entries.push(createEntry('system', 'SYSTEM DATE: JANUARY 1996'));
-  entries.push(createEntry('system', ''));
-
-  // UFO74 intro
-  entries.push(...generateIntroDialogue());
-
-  // User creation animation
-  entries.push(createEntry('system', ''));
-  entries.push(createEntry('system', '> CREATING USER PROFILE...'));
-  entries.push(createEntry('system', '> USERNAME: hackerkid'));
-  entries.push(createEntry('system', '> ACCESS LEVEL: 1 [PROVISIONAL]'));
-  entries.push(createEntry('system', '> STATUS: ACTIVE'));
-  entries.push(createEntry('system', ''));
-  entries.push(createEntry('notice', '✓ USER hackerkid REGISTERED'));
-  entries.push(createEntry('system', ''));
-
-  // UFO74 post-creation context
-  entries.push(createEntry('ufo74', "[UFO74]: Great, now you're in. Let's get to business."));
-  entries.push(createEntry('ufo74', '[UFO74]: We need to explore UFO files here. Brazil, 1996, kid. Varginha!'));
-  entries.push(createEntry('ufo74', '[UFO74]: Aliens were all over the damn city.'));
-  entries.push(createEntry('ufo74', "[UFO74]: I'll teach you the basics."));
-  entries.push(createEntry('system', ''));
-
-  // LS_PROMPT dialogue
-  entries.push(...generateStateDialogue(TutorialStateID.LS_PROMPT));
-
-  return entries;
+  // Only the boot header — INTRO blocks are shown step-by-step on Enter
+  return [
+    createEntry('system', ''),
+    createEntry('system', '═══════════════════════════════════════════════════════════'),
+    createEntry('system', 'BRAZILIAN INTELLIGENCE LEGACY SYSTEM'),
+    createEntry('system', 'TERMINAL ACCESS POINT — NODE 7'),
+    createEntry('system', '═══════════════════════════════════════════════════════════'),
+    createEntry('system', ''),
+    createEntry('system', 'SYSTEM DATE: JANUARY 1996'),
+    createEntry('system', ''),
+  ];
 }

@@ -12,6 +12,7 @@ import {
   isInTutorialMode,
   processTutorialInput,
   isTutorialInputState,
+  TUTORIAL_INTRO_STEPS,
   TUTORIAL_BRIEFING_STEPS,
 } from '../engine/commands/interactiveTutorial';
 import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
@@ -84,6 +85,7 @@ interface UseTerminalInputOptions {
   setShowRiskTracker: React.Dispatch<React.SetStateAction<boolean>>;
   setShowAttBar: React.Dispatch<React.SetStateAction<boolean>>;
   setShowAvatar: React.Dispatch<React.SetStateAction<boolean>>;
+  setAvatarCreepyEntrance: React.Dispatch<React.SetStateAction<boolean>>;
   setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
   setIsShaking: React.Dispatch<React.SetStateAction<boolean>>;
   setShowFirewallScare: React.Dispatch<React.SetStateAction<boolean>>;
@@ -133,6 +135,7 @@ export function useTerminalInput({
   setShowRiskTracker,
   setShowAttBar,
   setShowAvatar,
+  setAvatarCreepyEntrance,
   setShowTuringTest,
   setIsShaking,
   setShowFirewallScare,
@@ -287,6 +290,56 @@ export function useTerminalInput({
 
       if (isInTutorialMode(gameState)) {
         const tutorialState = gameState.interactiveTutorialState;
+
+        // Handle INTRO: step-by-step blocks on Enter
+        if (tutorialState?.current === TutorialStateID.INTRO) {
+          if (trimmedInput) {
+            setInputValue('');
+            return;
+          }
+
+          const introStep = gameState.tutorialStep ?? 0;
+
+          if (introStep < TUTORIAL_INTRO_STEPS.length) {
+            const stepEntries = TUTORIAL_INTRO_STEPS[introStep];
+            const nextStep = introStep + 1;
+            const isLastStep = nextStep >= TUTORIAL_INTRO_STEPS.length;
+
+            // Block 1: "You will be... hackerkid" → trigger creepy avatar entrance
+            if (introStep === 1) {
+              setTimeout(() => {
+                setAvatarCreepyEntrance(true);
+                setShowAvatar(true);
+                setTimeout(() => setAvatarCreepyEntrance(false), 3000);
+              }, 500);
+              playSound('reveal');
+            }
+
+            if (isLastStep) {
+              // Intro complete → transition to LS_PROMPT
+              setGameState(prev => ({
+                ...prev,
+                history: [...prev.history, ...stepEntries],
+                tutorialStep: 0,
+                interactiveTutorialState: {
+                  ...tutorialState,
+                  current: TutorialStateID.LS_PROMPT,
+                  inputLocked: false,
+                  dialogueComplete: true,
+                },
+              }));
+            } else {
+              setGameState(prev => ({
+                ...prev,
+                history: [...prev.history, ...stepEntries],
+                tutorialStep: nextStep,
+              }));
+            }
+          }
+
+          setInputValue('');
+          return;
+        }
 
         // Handle TUTORIAL_END briefing: step-by-step on Enter
         if (tutorialState?.current === TutorialStateID.TUTORIAL_END) {
