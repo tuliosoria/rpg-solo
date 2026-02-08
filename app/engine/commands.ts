@@ -761,8 +761,8 @@ function checkTruthProgress(
         stateChanges.tutorialTipsShown = newTipsShown;
       }
 
-      // Also show UFO74 message (works with or without tutorial mode)
-      notices.push(...createUFO74Message(['UFO74: nice find! keep digging.']));
+      // NOTE: UFO74 "nice find" is shown by the override gate block in the open handler
+      // to avoid duplicate messages. No additional notice needed here.
     }
 
     // Additional milestone acknowledgments (never say "progress")
@@ -1527,17 +1527,18 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
     [
       'PRISONER_45> ...you want the override code? Smart.',
       "PRISONER_45> The code... it's a Portuguese word. Think about what they DO to us.",
-      'PRISONER_45> COLHEITA. It means harvest. Use it with: override protocol COLHEITA',
+      'PRISONER_45> Listen closely: -.-. --- .-.. .... . .. - .-',
+      'PRISONER_45> Decode that. Then use it with: override protocol <answer>',
     ],
     [
-      "PRISONER_45> COLHEITA. That's what they call the operation. Harvest. Because that's what we are to them. CROPS.",
-      "PRISONER_45> They whisper it sometimes. When they think I'm asleep. COLHEITA. Over and over like a prayer.",
-      "PRISONER_45> It's the word the surviving creature projected into the containment team's minds. COLHEITA. They all dreamed about it.",
+      "PRISONER_45> That's what they call the operation. Harvest. Because that's what we are to them. CROPS.",
+      "PRISONER_45> They whisper it sometimes. When they think I'm asleep. Over and over like a prayer.",
+      'PRISONER_45> In morse: -.-. --- .-.. .... . .. - .-  ...figure it out.',
     ],
     [
-      "PRISONER_45> Use it carefully. override protocol COLHEITA. Once you type that, they'll know you're inside the real system.",
-      'PRISONER_45> COLHEITA. The harvest begins and ends with that word. Some words have power. This one has too much.',
-      "PRISONER_45> I learned the password from creature itself. It WANTED us to know. To understand what's coming. COLHEITA.",
+      "PRISONER_45> Use it carefully. Once you type override protocol <answer>, they'll know you're inside the real system.",
+      'PRISONER_45> The harvest begins and ends with that word. Some words have power. This one has too much.',
+      "PRISONER_45> I can only say it in code: -.-. --- .-.. .... . .. - .-  ...the creature taught me. Decode it.",
     ],
   ],
   military: [
