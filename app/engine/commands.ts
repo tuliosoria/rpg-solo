@@ -3363,14 +3363,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
 
-    // Check if this is the first successful cd
-    const isFirstCd = !state.flags.firstCdDone;
     const output: TerminalEntry[] = [createEntry('output', `Changed to: ${targetPath}`)];
-
-    if (isFirstCd) {
-      output.push(createEntry('system', ''));
-      output.push(createEntry('ufo74', '[UFO74]: use "cd .." to go back up.'));
-    }
 
     // Push current path to navigation history (for 'back' command)
     const updatedHistory = [...(state.navigationHistory || []), state.currentPath];
@@ -3378,7 +3371,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const stateChanges: Partial<GameState> = {
       currentPath: targetPath,
       detectionLevel: getWarmupAdjustedDetection(state, 1),
-      flags: isFirstCd ? { ...state.flags, firstCdDone: true } : state.flags,
       navigationHistory: updatedHistory,
     };
 
@@ -3907,6 +3899,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       });
       if (allRead) {
         achievementsToCheck.push('archivist');
+
+        // UFO74 hint: all files read in this subdirectory, suggest going back
+        if (state.currentPath !== '/' && state.tutorialComplete) {
+          notices.push(createEntry('system', ''));
+          notices.push(
+            createEntry(
+              'ufo74',
+              '[UFO74]: you read all we could here, use `cd ..` to go back up to explore other folders kid.'
+            )
+          );
+        }
       }
     }
 

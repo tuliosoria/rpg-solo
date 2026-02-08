@@ -748,22 +748,23 @@
   }
 }
 
-/* Terminal cursor at end of text */
-.terminalCursor {
-  display: inline;
-  color: #00ff00;
-  animation: terminalCursorBlink 1s step-end infinite;
-  text-shadow: 0 0 8px #00ff00;
+/* Inline enter hint at end of output in enter-only mode */
+.enterHintInline {
+  display: block;
+  color: rgba(0, 255, 0, 0.7);
+  font-size: 0.85em;
+  letter-spacing: 1px;
+  padding: 8px 0 4px;
+  animation: enterHintPulse 2s ease-in-out infinite;
 }
 
-@keyframes terminalCursorBlink {
+@keyframes enterHintPulse {
   0%,
+  100% {
+    opacity: 0.5;
+  }
   50% {
     opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0;
   }
 }
 
@@ -1035,7 +1036,7 @@
   .processing,
   .inputField::placeholder,
   .enterPromptContent,
-  .terminalCursor,
+  .enterHintInline,
   .cursor,
   .typingWarningInline,
   .timedDecryptTimerContent,

@@ -1071,9 +1071,9 @@ export default function Terminal({
           {isProcessing && (
             <div className={`${styles.line} ${styles.processing}`}>Processing...</div>
           )}
-          {/* Blinking terminal cursor at end of text when in enter-only mode */}
+          {/* Blinking enter prompt at end of text when in enter-only mode */}
           {!isProcessing && isEnterOnlyMode && !gameState.isGameOver && (
-            <span className={styles.terminalCursor}>▌</span>
+            <div className={styles.enterHintInline}>Press Enter ↵ to proceed</div>
           )}
         </div>
 
