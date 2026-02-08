@@ -4355,7 +4355,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
     admin: {
       type: 'dir',
       name: 'admin',
-      accessThreshold: 3,
+      requiredFlags: ['adminUnlocked'],
       children: {
         'threat_window.red': threat_window,
         'internal_note_07.txt': internal_note_07,
@@ -4461,6 +4461,8 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
           name: 'misc',
           children: {
             'cafeteria_menu_week03.txt': cafeteria_menu_jan96,
+            'printer_queue_notice.txt': printer_queue_notice,
+            'office_supplies.txt': office_supplies_request,
             'cafeteria_menu.txt': cafeteria_menu_week04,
             'cafeteria_feedback.txt': cafeteria_complaint,
             'copa_94_celebration.txt': copa_94_celebration_memo,

@@ -32,6 +32,7 @@ export type SoundType =
   | 'reveal'
   | 'typing'
   | 'transmission'
+  | 'creepy' // Unsettling avatar entrance
   | 'fanfare'; // Zelda-like celebration sound
 
 // Sound configuration
@@ -55,6 +56,7 @@ const SOUND_CONFIG: Record<SoundType, SoundConfig> = {
   reveal: { volume: 0.4 }, // Important discovery
   typing: { volume: 0.08 }, // Stream typing sound
   transmission: { volume: 0.35 }, // UFO74 transmission banner
+  creepy: { volume: 0.45 }, // Unsettling avatar entrance
   fanfare: { volume: 0.5 }, // Zelda-like celebration
 };
 
@@ -347,6 +349,69 @@ export function useSound() {
               createOscillatorSound(audioContextRef.current, 'sine', 600, 0.12, volume * 0.5);
             }
           }, 200);
+          break;
+        }
+
+        case 'creepy': {
+          // Robotic mechanical alert: digital pulses + synthetic growl
+          const t = audioContext.currentTime;
+
+          // 1. Low synthetic growl — square wave sweep down
+          const growlOsc = audioContext.createOscillator();
+          const growlGain = audioContext.createGain();
+          growlOsc.type = 'square';
+          growlOsc.frequency.setValueAtTime(120, t);
+          growlOsc.frequency.exponentialRampToValueAtTime(40, t + 1.8);
+          growlGain.gain.setValueAtTime(volume * 0.3, t);
+          growlGain.gain.linearRampToValueAtTime(volume * 0.15, t + 1.0);
+          growlGain.gain.exponentialRampToValueAtTime(0.001, t + 2.0);
+          growlOsc.connect(growlGain);
+          growlGain.connect(audioContext.destination);
+          growlOsc.start(t);
+          growlOsc.stop(t + 2.0);
+
+          // 2. Rapid digital clicks — short square pulses at intervals
+          for (let i = 0; i < 6; i++) {
+            const clickOsc = audioContext.createOscillator();
+            const clickGain = audioContext.createGain();
+            clickOsc.type = 'square';
+            clickOsc.frequency.value = 800 + i * 200;
+            const clickTime = t + i * 0.12;
+            clickGain.gain.setValueAtTime(0, clickTime);
+            clickGain.gain.linearRampToValueAtTime(volume * 0.5, clickTime + 0.01);
+            clickGain.gain.exponentialRampToValueAtTime(0.001, clickTime + 0.06);
+            clickOsc.connect(clickGain);
+            clickGain.connect(audioContext.destination);
+            clickOsc.start(clickTime);
+            clickOsc.stop(clickTime + 0.06);
+          }
+
+          // 3. Harsh digital tone — short buzzy mid-frequency
+          const buzzOsc = audioContext.createOscillator();
+          const buzzGain = audioContext.createGain();
+          buzzOsc.type = 'sawtooth';
+          buzzOsc.frequency.setValueAtTime(220, t + 0.8);
+          buzzOsc.frequency.linearRampToValueAtTime(180, t + 1.6);
+          buzzGain.gain.setValueAtTime(0, t + 0.8);
+          buzzGain.gain.linearRampToValueAtTime(volume * 0.25, t + 0.85);
+          buzzGain.gain.setValueAtTime(volume * 0.25, t + 1.4);
+          buzzGain.gain.exponentialRampToValueAtTime(0.001, t + 1.8);
+          buzzOsc.connect(buzzGain);
+          buzzGain.connect(audioContext.destination);
+          buzzOsc.start(t + 0.8);
+          buzzOsc.stop(t + 1.8);
+
+          // 4. Static burst at start
+          const noiseBuffer = createNoiseBuffer(audioContext, 0.15);
+          const noiseSrc = audioContext.createBufferSource();
+          const noiseGain = audioContext.createGain();
+          noiseSrc.buffer = noiseBuffer;
+          noiseGain.gain.setValueAtTime(volume * 0.6, t);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+          noiseSrc.connect(noiseGain);
+          noiseGain.connect(audioContext.destination);
+          noiseSrc.start(t);
+          noiseSrc.stop(t + 0.15);
           break;
         }
 

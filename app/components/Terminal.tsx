@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { GamePhase, GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState } from '../engine/commands/interactiveTutorial';
+import TypewriterText, { isTypableUfo74Content } from './TypewriterText';
 import { loadCheckpoint } from '../storage/saves';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
@@ -221,6 +222,89 @@ export default function Terminal({
   const streamStartScrollPos = useRef<number | null>(null);
   const suppressPressure = shouldSuppressPressure(gameState);
 
+  // --- UFO74 typewriter animation state ---
+  const animatedEntriesRef = useRef(new Set<string>());
+  const typingQueueRef = useRef<string[]>([]);
+  const queuedSetRef = useRef(new Set<string>());
+  const [activeTypingId, setActiveTypingId] = useState<string | null>(null);
+  const initializedRef = useRef(false);
+
+  // On first render, mark all existing entries as already animated
+  useEffect(() => {
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      for (const entry of gameState.history) {
+        animatedEntriesRef.current.add(entry.id);
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Detect new UFO74 text entries and add them to the typing queue
+  useEffect(() => {
+    let hasNew = false;
+    for (const entry of gameState.history) {
+      // Skip entries we already know about
+      if (animatedEntriesRef.current.has(entry.id) || queuedSetRef.current.has(entry.id)) continue;
+      if (entry.id === activeTypingId) continue;
+
+      if (entry.type === 'ufo74' && isTypableUfo74Content(entry.content)) {
+        // New typable UFO74 entry — add to queue
+        typingQueueRef.current.push(entry.id);
+        queuedSetRef.current.add(entry.id);
+        hasNew = true;
+      } else {
+        // Non-typable entry — mark as animated immediately
+        animatedEntriesRef.current.add(entry.id);
+      }
+    }
+
+    // Start typing if nothing is currently active
+    if (hasNew && !activeTypingId && typingQueueRef.current.length > 0) {
+      const nextId = typingQueueRef.current.shift()!;
+      queuedSetRef.current.delete(nextId);
+      setActiveTypingId(nextId);
+    }
+  }, [gameState.history, activeTypingId]);
+
+  // Handle typewriter completion — move to next in queue or clear
+  const handleTypingComplete = useCallback(() => {
+    // Mark current entry as animated
+    if (activeTypingId) {
+      animatedEntriesRef.current.add(activeTypingId);
+    }
+    // Start the next queued entry, or clear
+    if (typingQueueRef.current.length > 0) {
+      const nextId = typingQueueRef.current.shift()!;
+      queuedSetRef.current.delete(nextId);
+      setActiveTypingId(nextId);
+    } else {
+      setActiveTypingId(null);
+    }
+  }, [activeTypingId]);
+
+  // Skip all pending typewriter animations (called on Enter)
+  const skipAllTyping = useCallback(() => {
+    if (activeTypingId) {
+      animatedEntriesRef.current.add(activeTypingId);
+    }
+    for (const id of typingQueueRef.current) {
+      animatedEntriesRef.current.add(id);
+    }
+    typingQueueRef.current = [];
+    queuedSetRef.current.clear();
+    setActiveTypingId(null);
+  }, [activeTypingId]);
+
+  // Auto-scroll output during typewriter animation
+  const handleTypingTick = useCallback(() => {
+    if (outputRef.current) {
+      outputRef.current.scrollTop = outputRef.current.scrollHeight;
+    }
+  }, []);
+
+  // Whether a typewriter animation is currently in progress
+  const isTyping = activeTypingId !== null || typingQueueRef.current.length > 0;
+
   const isInteractiveTutorialInput =
     !!gameState.interactiveTutorialState &&
     !gameState.tutorialComplete &&
@@ -231,6 +315,7 @@ export default function Terminal({
     !!pendingImage ||
     !!pendingVideo ||
     pendingUfo74StartMessages.length > 0 ||
+    isTyping ||
     (gameState.ufo74SecretDiscovered && gamePhase === 'terminal');
 
   // Check for achievements
@@ -332,6 +417,8 @@ export default function Terminal({
     setEncryptedChannelState,
     onExitAction,
     onSaveRequestAction,
+    isTyping,
+    skipAllTyping,
     playSound,
     playKeySound,
     startAmbient,
@@ -587,6 +674,28 @@ export default function Terminal({
       case 'file':
         className = `${styles.line} ${styles.fileContent}`;
         break;
+    }
+
+    // Typewriter animation for UFO74 text entries
+    if (entry.type === 'ufo74' && isTypableUfo74Content(entry.content)) {
+      // Currently being typed — animate character by character
+      if (entry.id === activeTypingId) {
+        return (
+          <div key={entry.id} className={className}>
+            <TypewriterText
+              text={entry.content}
+              speed={30}
+              onComplete={handleTypingComplete}
+              onTick={handleTypingTick}
+              renderContent={renderCommandHighlights}
+            />
+          </div>
+        );
+      }
+      // Not yet animated — hide until its turn (covers queued AND not-yet-detected entries)
+      if (!animatedEntriesRef.current.has(entry.id)) {
+        return null;
+      }
     }
 
     return (
@@ -904,19 +1013,14 @@ export default function Terminal({
                 onClick={handleSubmit}
                 tabIndex={-1}
               >
-                <span className={styles.enterPromptSymbol}>↵</span>
                 <span className={styles.enterPromptText}>
                   {encryptedChannelState === 'awaiting_close'
-                    ? 'close'
+                    ? 'Press Enter ↵ to close'
                     : encryptedChannelState !== 'idle'
-                      ? 'respond'
+                      ? 'Press Enter ↵ to respond'
                       : pendingImage || pendingVideo
-                        ? 'view'
-                        : pendingUfo74StartMessages.length > 0
-                          ? 'continue'
-                          : !gameState.tutorialComplete
-                            ? ''
-                            : 'continue'}
+                        ? 'Press Enter ↵ to view'
+                        : 'Press Enter ↵ to continue'}
                 </span>
               </button>
             </div>
@@ -1090,7 +1194,7 @@ export default function Terminal({
               <div className={styles.firewallScareIris} />
               <div className={styles.firewallScarePupil} />
             </div>
-            <div className={styles.firewallScareText}>WHO IS HERE? I SEE YOU</div>
+            <div className={styles.firewallScareText}>I SEE YOU</div>
           </div>
         )}
 

@@ -330,30 +330,55 @@ export function speakCustomFirewallVoice(phrase: string): void {
   // Cancel any ongoing speech first
   speechSynthesis.cancel();
 
-  const utterance = new SpeechSynthesisUtterance(phrase);
-  utterance.pitch = 0.3; // Very low/deep
-  utterance.rate = 0.5; // Very slow for creepy effect
-  utterance.volume = 1.0; // Full volume
+  // Helper to configure and speak an utterance
+  const doSpeak = () => {
+    const utterance = new SpeechSynthesisUtterance(phrase);
+    utterance.pitch = 0.3; // Very low/deep
+    utterance.rate = 0.5; // Very slow for creepy effect
+    utterance.volume = 1.0; // Full volume
 
-  // Use cached voices if available
-  const voices = voicesLoaded ? cachedVoices : speechSynthesis.getVoices();
+    // Always try to get fresh voices if cache is empty
+    let voices = cachedVoices;
+    if (!voices.length) {
+      voices = speechSynthesis.getVoices();
+      if (voices.length) {
+        cachedVoices = voices;
+        voicesLoaded = true;
+      }
+    }
 
-  // Try to find a deep/male voice
-  const deepVoice = voices.find(
-    v =>
-      v.name.toLowerCase().includes('male') ||
-      v.name.includes('Daniel') ||
-      v.name.includes('Google UK English Male')
-  );
-  if (deepVoice) {
-    utterance.voice = deepVoice;
-  }
+    // Try to find a deep/male voice
+    const deepVoice = voices.find(
+      v =>
+        v.name.toLowerCase().includes('male') ||
+        v.name.includes('Daniel') ||
+        v.name.includes('Google UK English Male')
+    );
+    if (deepVoice) {
+      utterance.voice = deepVoice;
+    }
 
-  // Workaround for Chrome bug: speech synthesis can get stuck
-  // A small delay helps ensure it actually speaks
-  setTimeout(() => {
     speechSynthesis.speak(utterance);
-  }, 100);
+  };
+
+  // If voices aren't loaded yet, wait for them then speak
+  if (!voicesLoaded && speechSynthesis.getVoices().length === 0) {
+    const onVoicesReady = () => {
+      cachedVoices = speechSynthesis.getVoices();
+      voicesLoaded = true;
+      speechSynthesis.removeEventListener('voiceschanged', onVoicesReady);
+      doSpeak();
+    };
+    speechSynthesis.addEventListener('voiceschanged', onVoicesReady);
+    // Fallback: speak after a short delay even without voices
+    setTimeout(() => {
+      speechSynthesis.removeEventListener('voiceschanged', onVoicesReady);
+      doSpeak();
+    }, 300);
+  } else {
+    // Voices available — small delay for Chrome bug workaround
+    setTimeout(doSpeak, 100);
+  }
 }
 
 // Export constants for use elsewhere

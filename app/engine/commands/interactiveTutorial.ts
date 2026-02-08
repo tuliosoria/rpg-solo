@@ -4,6 +4,9 @@
 
 import { TerminalEntry, GameState, CommandResult, TutorialStateID, InteractiveTutorialState } from '../../types';
 import { createEntry } from './utils';
+import { listDirectory } from '../filesystem';
+import { FILESYSTEM_ROOT } from '../../data/filesystem';
+import { DEFAULT_GAME_STATE } from '../../types';
 
 // Re-export types for convenience
 export { TutorialStateID };
@@ -39,7 +42,7 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
     '[UFO74]: Type `ls`',
   ],
   [TutorialStateID.CD_PROMPT]: [
-    '[UFO74]: Good. Five main directories.',
+    '[UFO74]: Good. These are the main directories.',
     '[UFO74]: Start with internal — it has basic files.',
     '[UFO74]: Type `cd internal`',
   ],
@@ -48,7 +51,7 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
     '[UFO74]: Type `cd misc`',
   ],
   [TutorialStateID.FILE_DISPLAY]: [
-    '[UFO74]: Three files. Nothing critical.',
+    '[UFO74]: Mundane stuff. Nothing critical.',
     '[UFO74]: Open the cafeteria menu.',
     '[UFO74]: Type `open cafeteria_menu_week03.txt`',
     '[UFO74]: Or use TAB to autocomplete.',
@@ -64,7 +67,6 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
     '[UFO74]: Type `cd ..`',
   ],
   [TutorialStateID.TUTORIAL_END]: [
-    '[UFO74]: Good. You know enough. Now continue using ls to see directories and investigate more folders and files.',
     '[UFO74]: Now the real thing.',
     '',
     '[UFO74]: Your mission: find 5 pieces of evidence.',
@@ -80,6 +82,8 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
     '[UFO74]: Some files are bait. Opening them spikes detection.',
     '[UFO74]: Some actions are loud. Others are quiet.',
     '[UFO74]: Curiosity has a cost here.',
+    '',
+    '[UFO74]: Use `help` to see what else you can do in the terminal kid.',
     '',
     "[UFO74]: I've done what I can.",
     '[UFO74]: Good luck, kid.',
@@ -106,32 +110,36 @@ export const TUTORIAL_NUDGES: Record<TutorialStateID, string | null> = {
 // TUTORIAL FILESYSTEM (Sandbox)
 // ═══════════════════════════════════════════════════════════════════════════
 
-export const TUTORIAL_ROOT_LISTING = [
-  '/',
-  '├── storage/',
-  '├── ops/',
-  '├── comms/',
-  '├── admin/',
-  '└── internal/',
-];
+// Generate listing from the real game filesystem so tutorial always matches
+function generateListing(path: string): string[] {
+  // Use a minimal default state to query the real filesystem
+  const mockState = { ...DEFAULT_GAME_STATE } as GameState;
+  const entries = listDirectory(path, mockState);
+  if (!entries || entries.length === 0) return [path, '  (empty)'];
 
-export const TUTORIAL_INTERNAL_LISTING = [
-  '/internal',
-  '├── incident_summary_official.txt',
-  '├── protocols/',
-  '├── sanitized/',
-  '├── personnel/',
-  '├── facilities/',
-  '├── admin/',
-  '└── misc/',
-];
+  const lines = ['', `Directory: ${path}`, ''];
+  for (const entry of entries) {
+    lines.push(`  ${entry.name}`);
+  }
+  return lines;
+}
 
-export const TUTORIAL_MISC_LISTING = [
-  '/internal/misc',
-  '├── cafeteria_menu_week03.txt',
-  '├── printer_queue_notice.txt',
-  '└── office_supplies.txt',
-];
+export function getTutorialRootListing(): string[] {
+  return generateListing('/');
+}
+
+export function getTutorialInternalListing(): string[] {
+  return generateListing('/internal');
+}
+
+export function getTutorialMiscListing(): string[] {
+  return generateListing('/internal/misc');
+}
+
+// Keep backwards-compatible exports for barrel file
+export const TUTORIAL_ROOT_LISTING = generateListing('/');
+export const TUTORIAL_INTERNAL_LISTING = generateListing('/internal');
+export const TUTORIAL_MISC_LISTING = generateListing('/internal/misc');
 
 export const CAFETERIA_MENU_CONTENT = [
   '═══════════════════════════════════════════════════════════',

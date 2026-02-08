@@ -84,7 +84,7 @@ function HackerAvatar({
       zone="top-right"
       priority={2}
       baseOffset={0}
-      style={{ top: 'max(190px, 22vh)', right: 15 }}
+      style={{ top: 92, right: 10 }}
     >
       <div className={`${styles.hudPanel} ${creepyEntrance ? styles.creepyEntrance : ''}`}>
         {/* Avatar only - meters removed per UI cleanup */}

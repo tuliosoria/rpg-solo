@@ -96,6 +96,8 @@ interface UseTerminalInputOptions {
   setEncryptedChannelState: React.Dispatch<React.SetStateAction<EncryptedChannelState>>;
   onExitAction: () => void;
   onSaveRequestAction: (state: GameState) => void;
+  isTyping: boolean;
+  skipAllTyping: () => void;
   playSound: (sound: SoundType) => void;
   playKeySound: (key: string) => void;
   startAmbient: () => void;
@@ -146,6 +148,8 @@ export function useTerminalInput({
   setEncryptedChannelState,
   onExitAction,
   onSaveRequestAction,
+  isTyping,
+  skipAllTyping,
   playSound,
   playKeySound,
   startAmbient,
@@ -252,6 +256,12 @@ export function useTerminalInput({
       const sanitizedInput = sanitizeCommandInput(inputValue, MAX_COMMAND_INPUT_LENGTH);
       const trimmedInput = sanitizedInput.value.trim();
 
+      // If UFO74 typewriter animation is in progress, skip it on Enter
+      if (isTyping && !trimmedInput) {
+        skipAllTyping();
+        return;
+      }
+
       if (pendingImage && !trimmedInput) {
         setActiveImage(pendingImage);
         setPendingImage(null);
@@ -305,6 +315,11 @@ export function useTerminalInput({
             const nextStep = introStep + 1;
             const isLastStep = nextStep >= TUTORIAL_INTRO_STEPS.length;
 
+            // Sound feedback on each Enter press
+            if (introStep !== 1) {
+              playSound('enter');
+            }
+
             // Block 1: "You will be... hackerkid" → trigger creepy avatar entrance
             if (introStep === 1) {
               setTimeout(() => {
@@ -312,7 +327,7 @@ export function useTerminalInput({
                 setShowAvatar(true);
                 setTimeout(() => setAvatarCreepyEntrance(false), 3000);
               }, 500);
-              playSound('reveal');
+              playSound('creepy');
             }
 
             if (isLastStep) {
@@ -360,14 +375,18 @@ export function useTerminalInput({
               playSound('reveal');
             }
             // Step 1: risk/detection mention → reveal risk bar
-            if (briefingStep === 1) {
+            else if (briefingStep === 1) {
               setTimeout(() => setShowRiskTracker(true), 300);
               playSound('reveal');
             }
             // Step 2: attempts mention → reveal ATT bar
-            if (briefingStep === 2) {
+            else if (briefingStep === 2) {
               setTimeout(() => setShowAttBar(true), 300);
               playSound('reveal');
+            }
+            // All other briefing steps
+            else {
+              playSound('enter');
             }
 
             const nextStep = briefingStep + 1;
@@ -410,6 +429,11 @@ export function useTerminalInput({
         const tabWasPressed = consumeTabPressed();
         const result = processTutorialInput(trimmedInput, gameState, tabWasPressed);
 
+        // Sound feedback for tutorial commands
+        if (trimmedInput) {
+          playSound('enter');
+        }
+
         if (result.output.length > 0 || result.stateChanges) {
           setGameState(prev => ({
             ...prev,
@@ -425,7 +449,7 @@ export function useTerminalInput({
           setIsShaking(true);
           setShowFirewallScare(true);
           playSound('error');
-          speakCustomFirewallVoice('Who is here? I see you');
+          speakCustomFirewallVoice('I see you');
 
           // After 1.5s, dismiss scare and show UFO74 warning
           setTimeout(() => {
@@ -826,6 +850,8 @@ export function useTerminalInput({
       setShowRiskTracker,
       setShowTuringTest,
       showTuringTest,
+      skipAllTyping,
+      isTyping,
       skipStreamingRef,
       streamOutput,
       streamStartScrollPos,
