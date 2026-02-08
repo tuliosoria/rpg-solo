@@ -103,21 +103,21 @@ describe('Tutorial System', () => {
   describe('getTutorialAutocomplete', () => {
     it('returns filename only (not full command) for open command completion', () => {
       // This test prevents regression of bug where 'open open cafeteria_menu' was produced
-      const result = getTutorialAutocomplete('open c', TutorialStateID.OPEN_PROMPT);
-      expect(result).toBe('cafeteria_menu');
+      const result = getTutorialAutocomplete('open c', TutorialStateID.FILE_DISPLAY);
+      expect(result).toBe('cafeteria_menu_week03.txt');
       // Should NOT return the full command - that causes double-appending
-      expect(result).not.toBe('open cafeteria_menu');
+      expect(result).not.toBe('open cafeteria_menu_week03.txt');
     });
 
-    it('returns cafeteria_menu for partial matches', () => {
-      expect(getTutorialAutocomplete('open ca', TutorialStateID.OPEN_PROMPT)).toBe('cafeteria_menu');
-      expect(getTutorialAutocomplete('open caf', TutorialStateID.OPEN_PROMPT)).toBe('cafeteria_menu');
-      expect(getTutorialAutocomplete('open cafeteria', TutorialStateID.OPEN_PROMPT)).toBe('cafeteria_menu');
+    it('returns cafeteria_menu_week03.txt for partial matches', () => {
+      expect(getTutorialAutocomplete('open ca', TutorialStateID.FILE_DISPLAY)).toBe('cafeteria_menu_week03.txt');
+      expect(getTutorialAutocomplete('open caf', TutorialStateID.FILE_DISPLAY)).toBe('cafeteria_menu_week03.txt');
+      expect(getTutorialAutocomplete('open cafeteria', TutorialStateID.FILE_DISPLAY)).toBe('cafeteria_menu_week03.txt');
     });
 
     it('returns null for non-matching input', () => {
-      expect(getTutorialAutocomplete('open x', TutorialStateID.OPEN_PROMPT)).toBe(null);
-      expect(getTutorialAutocomplete('ls', TutorialStateID.OPEN_PROMPT)).toBe(null);
+      expect(getTutorialAutocomplete('open x', TutorialStateID.FILE_DISPLAY)).toBe(null);
+      expect(getTutorialAutocomplete('ls', TutorialStateID.FILE_DISPLAY)).toBe(null);
     });
 
     it('returns null for wrong tutorial state', () => {
