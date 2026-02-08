@@ -265,7 +265,7 @@ const morse_intercept: FileNode = {
     '',
     'INTERCEPT TYPE: Morse code transmission',
     'FREQUENCY: 7.125 MHz (amateur band, unauthorized)',
-    'DURATION: 10.6 seconds',
+    'DURATION: 8.4 seconds',
     '',
     '───────────────────────────────────────────────────────────',
     'AUDIO FILE: /audio/morse_intercept.wav',
@@ -273,7 +273,7 @@ const morse_intercept: FileNode = {
     '',
     'RAW SIGNAL TRANSCRIPTION:',
     '',
-    '  ..- ..-. ---   .-. . -.-. --- ...- . .-. . -..',
+    '  -.-. --- .-.. .... . .. - .-',
     '',
     '───────────────────────────────────────────────────────────',
     'MORSE CODE REFERENCE:',
@@ -302,6 +302,12 @@ const morse_intercept: FileNode = {
     '',
     '  Transmission origin unknown. Signal appeared on frequency',
     '  used by ground teams but NOT from any authorized unit.',
+    '',
+    '  Signal pre-dates official COMINT sweep by 6 hours.',
+    '  Believe this is a field operator\'s authentication code.',
+    '',
+    '  NOTE: Cross-reference with admin override credentials.',
+    '  Decode may yield system access passphrase.',
     '',
     '  PRIORITY: Decipher message content.',
     '  STATUS: PENDING INTERPRETATION',
@@ -4240,6 +4246,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
     storage: {
       type: 'dir',
       name: 'storage',
+      requiredFlags: ['adminUnlocked'],
       children: {
         assets: {
           type: 'dir',
@@ -4262,8 +4269,6 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'neural_dump_alfa.psi': neural_dump_alfa,
             'specimen_purpose_analysis.txt': specimen_purpose_analysis,
             'surveillance_recovery.vid': surveillance_footage_recovery,
-            // Easter egg - real Varginha incident details
-            'jardim_andere_incident.txt': jardim_andere_report,
           },
         },
       },
@@ -4296,6 +4301,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         exo: {
           type: 'dir',
           name: 'exo',
+          requiredFlags: ['adminUnlocked'],
           accessThreshold: 2,
           children: {
             'scout_variants.meta': scout_variants_meta,
@@ -4321,6 +4327,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         psi: {
           type: 'dir',
           name: 'psi',
+          requiredFlags: ['adminUnlocked'],
           children: {
             'transcript_core.enc': transcript_core,
             'transcript_limit.enc': transcript_limit,
@@ -4330,6 +4337,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         liaison: {
           type: 'dir',
           name: 'liaison',
+          requiredFlags: ['adminUnlocked'],
           accessThreshold: 2,
           children: {
             'foreign_liaison_note.txt': foreign_liaison_note,
@@ -4385,6 +4393,8 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         // Key files at root level for easier discovery
         'incident_summary_official.txt': official_summary_report,
         'audio_transcript_brief.txt': audio_transcript_brief,
+        // The ONE alien-related file available pre-override — real incident field report
+        'jardim_andere_incident.txt': jardim_andere_report,
         'redaction_keycard.txt': redaction_keycard,
         'override_protocol_memo.txt': override_protocol_memo,
         'maintenance_notes.txt': system_maintenance_notes,

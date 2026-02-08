@@ -50,14 +50,14 @@ describe('Filesystem', () => {
     });
 
     it('returns storage directory', () => {
-      const state = createTestState();
+      const state = createTestState({ flags: { adminUnlocked: true } });
       const node = getNode('/storage', state);
       expect(node).not.toBeNull();
       expect(node?.type).toBe('dir');
     });
 
     it('returns quarantine directory', () => {
-      const state = createTestState();
+      const state = createTestState({ flags: { adminUnlocked: true } });
       const node = getNode('/storage/quarantine', state);
       expect(node).not.toBeNull();
       expect(node?.type).toBe('dir');
@@ -77,7 +77,7 @@ describe('Filesystem', () => {
     });
 
     it('allows access when access level is sufficient', () => {
-      const state = createTestState({ accessLevel: 3 });
+      const state = createTestState({ accessLevel: 3, flags: { adminUnlocked: true } });
       const node = getNode('/admin', state);
       expect(node).not.toBeNull();
     });
@@ -85,7 +85,7 @@ describe('Filesystem', () => {
 
   describe('listDirectory', () => {
     it('lists root directory', () => {
-      const state = createTestState();
+      const state = createTestState({ flags: { adminUnlocked: true } });
       const entries = listDirectory('/', state);
       expect(entries).not.toBeNull();
       expect(entries!.length).toBeGreaterThan(0);
@@ -93,7 +93,7 @@ describe('Filesystem', () => {
     });
 
     it('lists quarantine directory with video file', () => {
-      const state = createTestState();
+      const state = createTestState({ flags: { adminUnlocked: true } });
       const entries = listDirectory('/storage/quarantine', state);
       expect(entries).not.toBeNull();
       expect(entries!.some(e => e.name === 'surveillance_recovery.vid')).toBe(true);
@@ -205,11 +205,12 @@ describe('Filesystem', () => {
     it('denies access to restricted admin files without override', () => {
       const state = createTestState({
         accessLevel: 3,
-        flags: { tracePurgeUsed: true },
+        flags: { adminUnlocked: true },
       });
+      // trace_purge_memo requires tracePurgeUsed flag — without it the file is hidden
       const result = canAccessFile('/admin/trace_purge_memo.txt', state);
       expect(result.accessible).toBe(false);
-      expect(result.reason).toBe('ACCESS DENIED - RESTRICTED ARCHIVE');
+      expect(result.reason).toBe('FILE NOT FOUND');
     });
   });
 
@@ -287,7 +288,7 @@ describe('Filesystem', () => {
 
   describe('findFilesMatching', () => {
     it('finds exact matches first', () => {
-      const state = createTestState();
+      const state = createTestState({ flags: { adminUnlocked: true } });
       const matches = findFilesMatching('surveillance_recovery.vid', state);
 
       expect(matches.length).toBeGreaterThan(0);
@@ -296,7 +297,7 @@ describe('Filesystem', () => {
     });
 
     it('finds files by partial name', () => {
-      const state = createTestState();
+      const state = createTestState({ flags: { adminUnlocked: true } });
       const matches = findFilesMatching('surveillance', state);
 
       expect(matches.length).toBeGreaterThan(0);
@@ -345,7 +346,7 @@ describe('Filesystem', () => {
     });
 
     it('includes file path in results', () => {
-      const state = createTestState();
+      const state = createTestState({ flags: { adminUnlocked: true } });
       const matches = findFilesMatching('surveillance_recovery', state);
 
       expect(matches.length).toBeGreaterThan(0);
@@ -356,7 +357,7 @@ describe('Filesystem', () => {
   describe('smartResolvePath', () => {
     describe('exact path resolution', () => {
       it('resolves absolute path directly', () => {
-        const state = createTestState();
+        const state = createTestState({ flags: { adminUnlocked: true } });
         const result = smartResolvePath(
           '/storage/quarantine/surveillance_recovery.vid',
           '/',
@@ -369,7 +370,7 @@ describe('Filesystem', () => {
       });
 
       it('resolves relative path from current directory', () => {
-        const state = createTestState();
+        const state = createTestState({ flags: { adminUnlocked: true } });
         const result = smartResolvePath('surveillance_recovery.vid', '/storage/quarantine', state);
 
         expect(result.resolvedPath).toBe('/storage/quarantine/surveillance_recovery.vid');
@@ -380,7 +381,7 @@ describe('Filesystem', () => {
 
     describe('fallback to search', () => {
       it('finds file by name when not in current directory', () => {
-        const state = createTestState();
+        const state = createTestState({ flags: { adminUnlocked: true } });
         // Search from root for a file in quarantine using exact filename with extension
         const result = smartResolvePath('surveillance_recovery.vid', '/', state);
 

@@ -15,6 +15,7 @@ describe('Video Trigger Logic', () => {
       tutorialComplete: true,  // Skip tutorial for these tests
       imagesShownThisRun: new Set(),
       videosShownThisRun: new Set(),
+      flags: { ...DEFAULT_GAME_STATE.flags, adminUnlocked: true },
     };
   });
 

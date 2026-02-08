@@ -222,7 +222,7 @@ export interface GameState {
   godMode: boolean; // Hidden dev mode for testing
 
   // Multiple endings tracking
-  endingType?: 'bad' | 'neutral' | 'good' | 'secret'; // Which ending was achieved
+  endingType?: EndingType; // Which ending was achieved
   ufo74SecretDiscovered: boolean; // Found the secret about UFO74's identity
 
   // Time pressure
@@ -354,6 +354,7 @@ export type GamePhase =
   | 'bad_ending'
   | 'neutral_ending'
   | 'secret_ending';
+
 export type EndingType = 'bad' | 'neutral' | 'good' | 'secret';
 
 export interface CommandResult {
@@ -368,7 +369,7 @@ export interface CommandResult {
   checkAchievements?: string[]; // Achievement IDs to check
   triggerTuringTest?: boolean; // Show Turing test overlay
   pendingUfo74Messages?: TerminalEntry[]; // UFO74 messages to show after image/video closes
-  soundTrigger?: 'evidence' | 'error'; // Sound effect to play
+  soundTrigger?: 'evidence' | 'error' | 'morse'; // Sound effect to play
 }
 
 export const TRUTH_CATEGORIES = [

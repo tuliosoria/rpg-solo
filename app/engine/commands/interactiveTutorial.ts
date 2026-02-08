@@ -74,7 +74,7 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
     '',
     '[UFO74]: But understand the risks.',
     '[UFO74]: Every action you take... they might notice.',
-    "[UFO74]: Detection hits 100%, you're done. They'll find you.",
+    "[UFO74]: Risk hits 100%, you're done. They'll find you.",
     '',
     '[UFO74]: And you only get 8 attempts.',
     '[UFO74]: Fail 8 times, the window closes. Permanently.',
@@ -83,9 +83,7 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
     '[UFO74]: Some actions are loud. Others are quiet.',
     '[UFO74]: Curiosity has a cost here.',
     '',
-    '[UFO74]: Use `help` to see what else you can do in the terminal kid.',
-    '',
-    "[UFO74]: I've done what I can.",
+    "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal.",
     '[UFO74]: Good luck, kid.',
     '',
     '[UFO74]: ...',
@@ -649,7 +647,7 @@ function generateTutorialEndDialogue(): TerminalEntry[] {
   // Only show the opening line — the rest is delivered step-by-step
   return [
     createEntry('system', ''),
-    createEntry('ufo74', '[UFO74]: Good. You know enough. Now continue using `ls` to see directories and investigate more folders and files.'),
+    createEntry('ufo74', '[UFO74]: Good. You know enough.'),
     createEntry('ufo74', '[UFO74]: Now the real thing.'),
     createEntry('system', ''),
   ];
@@ -675,7 +673,7 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
   [
     createEntry('ufo74', '[UFO74]: But understand the risks.'),
     createEntry('ufo74', '[UFO74]: Every action you take... they might notice.'),
-    createEntry('ufo74', "[UFO74]: Detection hits 100%, you're done. They'll find you."),
+    createEntry('ufo74', "[UFO74]: Risk hits 100%, you're done. They'll find you."),
     createEntry('system', ''),
   ],
   // Step 2 — Risk reveal
@@ -693,7 +691,7 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
   ],
   // Step 4
   [
-    createEntry('ufo74', "[UFO74]: I've done what I can."),
+    createEntry('ufo74', "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal."),
     createEntry('ufo74', '[UFO74]: Good luck, kid.'),
     createEntry('system', ''),
   ],

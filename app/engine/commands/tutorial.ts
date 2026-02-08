@@ -177,7 +177,7 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntry('output', '  WINNING:'),
     createEntry('system', ''),
     createEntry('output', '  • Collect all 5 categories'),
-    createEntry('output', '  • Run save_evidence.sh to complete'),
+    createEntry('output', '  • Use "leak" to transmit the evidence'),
     createEntry('system', ''),
   ];
 }

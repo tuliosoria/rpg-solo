@@ -1,0 +1,135 @@
+/* Tutorial Skip Popup — retro terminal aesthetic */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.popup {
+  background: #0a0a0a;
+  border: 2px solid #00ff00;
+  padding: 36px 44px;
+  max-width: 520px;
+  width: 90%;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
+  color: #00ff00;
+  box-shadow:
+    0 0 60px rgba(0, 255, 0, 0.25),
+    inset 0 0 30px rgba(0, 255, 0, 0.04);
+  animation: slideIn 0.3s ease-out;
+  text-align: center;
+}
+
+@keyframes slideIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.header {
+  font-size: 15px;
+  letter-spacing: 4px;
+  margin-bottom: 24px;
+  text-shadow: 0 0 12px rgba(0, 255, 0, 0.5);
+  color: #33ff33;
+}
+
+.body {
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 28px;
+  color: #00cc00;
+}
+
+.body p {
+  margin: 0 0 6px 0;
+}
+
+.highlight {
+  color: #00ff00;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.btn {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 10px 32px;
+  border: 1px solid #00ff00;
+  background: transparent;
+  color: #00ff00;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: all 0.15s ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  background: #00ff00;
+  color: #000;
+  text-shadow: none;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+  outline: none;
+}
+
+.btnSkip {
+  composes: btn;
+  border-color: #ffaa00;
+  color: #ffaa00;
+}
+
+.btnSkip:hover,
+.btnSkip:focus-visible {
+  background: #ffaa00;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.4);
+}
+
+.btnPlay {
+  composes: btn;
+}
+
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cursor {
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}

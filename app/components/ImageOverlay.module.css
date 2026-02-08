@@ -247,29 +247,6 @@
   }
 }
 
-/* Footer */
-.footer {
-  margin-bottom: 20px;
-}
-
-.footerText {
-  color: #006600;
-  font-size: 12px;
-  letter-spacing: 2px;
-  animation: blink 1.5s infinite;
-}
-
-@keyframes blink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0.3;
-  }
-}
-
 /* Metadata */
 .metadata {
   color: #004400;

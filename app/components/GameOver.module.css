@@ -169,12 +169,6 @@
   to { opacity: 1; transform: translateX(0); }
 }
 
-.complete {
-  color: #00ff00 !important;
-  font-weight: bold;
-  margin-top: 10px;
-}
-
 /* Options phase (after restart animation) */
 .optionsContent {
   text-align: center;

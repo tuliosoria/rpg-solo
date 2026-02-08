@@ -3,85 +3,6 @@
   gap: 8px;
 }
 
-.metersColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.meterBox {
-  background: rgba(0, 20, 0, 0.9);
-  border: 2px solid #00ff00;
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  min-width: 70px;
-}
-
-.meterBar {
-  width: 20px;
-  height: 50px;
-  background: #001100;
-  border: 1px solid #00aa00;
-  position: relative;
-  overflow: hidden;
-}
-
-.meterFill {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, #00ff00, #00aa00);
-  transition: height 0.3s ease;
-}
-
-.digitalDisplay {
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  color: #ff4444;
-  text-shadow: 0 0 5px #ff0000;
-  letter-spacing: 1px;
-}
-
-.meterLabel {
-  font-size: 9px;
-  color: #00ff00;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.riskBarContainer {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 2px;
-  height: 50px;
-}
-
-.riskSegment {
-  width: 25px;
-  height: 4px;
-  background: #002200;
-  border: 1px solid #004400;
-}
-
-.riskSegment.riskActive {
-  background: #00ff00;
-  box-shadow: 0 0 3px #00ff00;
-}
-
-.riskSegment.riskActive.riskWarning {
-  background: #ffaa00;
-  box-shadow: 0 0 3px #ffaa00;
-}
-
-.riskSegment.riskActive.riskCritical {
-  background: #ff4444;
-  box-shadow: 0 0 3px #ff0000;
-}
-
 .avatarColumn {
   display: flex;
   flex-direction: column;
@@ -245,30 +166,11 @@
   border-radius: 8px;
 }
 
-/* TV stand/base */
-.tvStand {
-  width: 40px;
-  height: 8px;
-  background: linear-gradient(to bottom, #444, #222);
-  border-radius: 0 0 4px 4px;
-  margin-top: -2px;
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .avatarContainer {
-    top: 45px;
-    right: 10px;
-  }
-  
   .tvFrame {
     width: 118px;
     height: 152px;
-  }
-  
-  .tvStand {
-    width: 30px;
-    height: 6px;
   }
 }
 

@@ -4,9 +4,9 @@ import React, { useRef, useCallback, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { GamePhase, GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
-import { isTutorialInputState } from '../engine/commands/interactiveTutorial';
+import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
 import TypewriterText, { isTypableUfo74Content } from './TypewriterText';
-import { loadCheckpoint } from '../storage/saves';
+import { loadCheckpoint, saveCheckpoint } from '../storage/saves';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import {
@@ -28,6 +28,7 @@ import { uiRandomPick } from '../engine/rng';
 import AchievementPopup from './AchievementPopup';
 import SettingsModal from './SettingsModal';
 import PauseMenu from './PauseMenu';
+import TutorialSkipPopup from './TutorialSkipPopup';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 import FirewallEyes from './FirewallEyes';
@@ -38,7 +39,14 @@ const VideoOverlay = dynamic(() => import('./VideoOverlay'), { ssr: false });
 const TuringTestOverlay = dynamic(() => import('./TuringTestOverlay'), { ssr: false });
 const GameOver = dynamic(() => import('./GameOver'), { ssr: false });
 const Blackout = dynamic(() => import('./Blackout'), { ssr: false });
-const ICQChat = dynamic(() => import('./ICQChat'), { ssr: false });
+const ICQChat = dynamic(() => import('./ICQChat'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ width: '100%', height: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
+      CONNECTING TO ICQ...
+    </div>
+  ),
+});
 const Victory = dynamic(() => import('./Victory'), { ssr: false });
 const BadEnding = dynamic(() => import('./BadEnding'), { ssr: false });
 const NeutralEnding = dynamic(() => import('./NeutralEnding'), { ssr: false });
@@ -180,6 +188,13 @@ export default function Terminal({
   } = useTerminalState(initialState, initialPhase);
   const keypressTimestamps = useRef<number[]>([]);
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Tutorial skip popup — show only on fresh new games (not loaded saves)
+  const [showTutorialSkip, setShowTutorialSkip] = useState(
+    !initialState.tutorialComplete &&
+    initialState.tutorialStep === 0 &&
+    initialState.interactiveTutorialState?.current === TutorialStateID.INTRO
+  );
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
   const firewallPauseStartRef = useRef<number | null>(null);
@@ -317,6 +332,75 @@ export default function Terminal({
     pendingUfo74StartMessages.length > 0 ||
     isTyping ||
     (gameState.ufo74SecretDiscovered && gamePhase === 'terminal');
+
+  // Handle tutorial skip — replicate full tutorial completion state
+  const handleTutorialSkip = useCallback(() => {
+    setShowTutorialSkip(false);
+
+    const skipIntroEntries = [
+      createEntry('system', ''),
+      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
+      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('system', ''),
+      createEntry('ufo74', '[UFO74]: Connection established.'),
+      createEntry('ufo74', "[UFO74]: You already know the drill, huh?"),
+      createEntry('ufo74', '[UFO74]: Fine, I respect that. No hand-holding.'),
+      createEntry('system', ''),
+      createEntry('system', '> CREATING USER PROFILE...'),
+      createEntry('system', '> USERNAME: hackerkid'),
+      createEntry('system', '> ACCESS LEVEL: 1 [PROVISIONAL]'),
+      createEntry('system', '> STATUS: ACTIVE'),
+      createEntry('system', ''),
+      createEntry('notice', '✓ USER hackerkid REGISTERED'),
+      createEntry('system', ''),
+      createEntry('ufo74', '[UFO74]: Find 5 evidences. Leak them. Watch your risk.'),
+      createEntry('ufo74', '[UFO74]: Type `help` if you forget something.'),
+      createEntry('ufo74', '[UFO74]: Good luck, kid.'),
+      createEntry('system', ''),
+      createEntry('ufo74', '[UFO74]: ...'),
+      createEntry('system', ''),
+      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
+      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
+      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('system', ''),
+      createEntry('system', '[UFO74 has disconnected]'),
+      createEntry('system', ''),
+    ];
+
+    const newState: GameState = {
+      ...gameState,
+      history: [...gameState.history, ...skipIntroEntries],
+      tutorialStep: -1,
+      tutorialComplete: true,
+      currentPath: '/',
+      interactiveTutorialState: {
+        current: TutorialStateID.GAME_ACTIVE,
+        inputLocked: false,
+        dialogueComplete: true,
+        failCount: 0,
+        nudgeShown: false,
+      },
+    };
+
+    setGameState(newState);
+
+    // Reveal all UI trackers
+    setShowEvidenceTracker(true);
+    setShowRiskTracker(true);
+    setShowAttBar(true);
+    setShowAvatar(true);
+
+    // Start ambient sound
+    startAmbient();
+
+    // Save checkpoint
+    saveCheckpoint(newState, 'Tutorial skipped');
+  }, [gameState, setGameState, setShowEvidenceTracker, setShowRiskTracker, setShowAttBar, setShowAvatar, startAmbient]);
+
+  const handleTutorialContinue = useCallback(() => {
+    setShowTutorialSkip(false);
+  }, []);
 
   // Check for achievements
   const checkAchievement = useCallback(
@@ -1322,6 +1406,14 @@ export default function Terminal({
               setShowPauseMenu(false);
               onExitAction();
             }}
+          />
+        )}
+
+        {/* Tutorial skip popup — shown on fresh new game */}
+        {showTutorialSkip && (
+          <TutorialSkipPopup
+            onSkip={handleTutorialSkip}
+            onContinue={handleTutorialContinue}
           />
         )}
       </div>

@@ -89,7 +89,7 @@ describe('UX Commands', () => {
       const result = executeCommand('back', state);
 
       expect(result.stateChanges.currentPath).toBe('/internal');
-      expect(result.output.some(e => e.content.includes('TIP'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('UFO74'))).toBe(true);
     });
   });
 
@@ -302,14 +302,14 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('[READ]'))).toBe(true);
     });
 
-    it('should show [NEW] for unread files', () => {
+    it('should show [UNREAD] for unread files', () => {
       const state = createTestState({
         currentPath: '/internal/protocols',
         filesRead: new Set(), // No files read
       });
       const result = executeCommand('ls', state);
 
-      expect(result.output.some(e => e.content.includes('[NEW]'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('[UNREAD]'))).toBe(true);
     });
   });
 
@@ -492,6 +492,7 @@ describe('UX Commands', () => {
       const state = createTestState({
         // File at /storage/assets/ which is depth 2 from root
         filesRead: new Set(['/storage/assets/transport_log_96.txt']),
+        flags: { adminUnlocked: true },
       });
       const result = executeCommand('tree', state);
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate Morse code audio file for 'UFO RECOVERED' message."""
+"""Generate Morse code audio file for 'COLHEITA' message."""
 
 import wave
 import struct
@@ -86,7 +86,7 @@ def save_wav(samples, filename):
             wav_file.writeframes(struct.pack('<h', sample))
 
 if __name__ == '__main__':
-    message = "UFO RECOVERED"
+    message = "COLHEITA"
     print(f"Generating Morse code for: {message}")
     
     # Show the morse code

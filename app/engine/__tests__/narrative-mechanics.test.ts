@@ -307,23 +307,21 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('UFO74 Override Protocol Hints', () => {
-    it('suggests override protocol after 5 files read when not unlocked', () => {
-      // State where player has read exactly 4 files - reading 5th should trigger hint
+    it('suggests override protocol after 3 files read when not unlocked', () => {
+      // State where player has read exactly 2 files - reading 3rd should trigger hint
       const state = createTestState({
-        currentPath: '/storage/quarantine',
+        currentPath: '/internal/misc',
         tutorialStep: -1,
         tutorialComplete: true,
         filesRead: new Set([
-          '/internal/admin/contact_list.txt',
-          '/internal/misc/maintenance_schedule.txt',
+          '/internal/protocols/incident_review_protocol.txt',
           '/comms/radio_intercept_log.txt',
-          '/storage/assets/material_x_analysis.dat',
         ]),
         flags: { overrideSuggested: false, adminUnlocked: false },
       });
 
-      // Open 5th file (this makes filesRead.size === 5 after processing)
-      const result = executeCommand('open bio_container.log', state);
+      // Open 3rd file (this makes filesRead.size === 3 after processing)
+      const result = executeCommand('open cafeteria_menu.txt', state);
 
       // Should include UFO74 hint about override protocol
       const hasOverrideHint = result.output.some(
@@ -394,6 +392,7 @@ describe('Narrative Mechanics', () => {
         truthsDiscovered: new Set<string>(),
         tutorialStep: -1,
         tutorialComplete: true,
+        flags: { adminUnlocked: true },
       });
 
       // material_x_analysis.dat should reveal evidence
@@ -414,6 +413,7 @@ describe('Narrative Mechanics', () => {
         truthsDiscovered: new Set<string>(),
         tutorialStep: -1,
         tutorialComplete: true,
+        flags: { adminUnlocked: true },
       });
 
       const result = executeCommand('open material_x_analysis.dat', state);
@@ -545,9 +545,9 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
       });
-      const result = executeCommand('cd storage', state);
+      const result = executeCommand('cd comms', state);
 
-      expect(result.stateChanges.currentPath).toBe('/storage');
+      expect(result.stateChanges.currentPath).toBe('/comms');
     });
 
     it('clear command clears history', () => {
@@ -588,7 +588,7 @@ describe('Narrative Mechanics', () => {
 
     it('jardim_andere_incident.txt contains real Varginha details', () => {
       const state = createTestState({
-        currentPath: '/storage/quarantine',
+        currentPath: '/internal',
         tutorialStep: -1,
         tutorialComplete: true,
       });
@@ -742,6 +742,7 @@ describe('Narrative Mechanics', () => {
         tutorialComplete: true,
         currentPath: '/comms/liaison',
         accessLevel: 2,
+        flags: { adminUnlocked: true },
       });
       const result = executeCommand('ls', state);
 
@@ -915,11 +916,12 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('executes save_evidence.sh when 5 truths discovered', () => {
+    it('run save_evidence.sh redirects to leak command', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/tmp',
+        flags: { allEvidenceCollected: true },
         truthsDiscovered: new Set([
           'debris_relocation',
           'being_containment',
@@ -929,8 +931,13 @@ describe('Narrative Mechanics', () => {
         ]),
       });
       const result = executeCommand('run save_evidence.sh', state);
-      // Should either execute or show it's not in current directory
-      expect(result.output.length).toBeGreaterThan(0);
+      // Should trigger the leak sequence (redirects to leak command)
+      expect(
+        result.output.some(
+          e => e.content.includes('INTERCEPTED') || e.content.includes('INITIATING')
+        )
+      ).toBe(true);
+      expect(result.stateChanges.evidencesSaved).toBe(true);
     });
 
     it('executes purge_trace.sh to clear countdown', () => {
@@ -1256,6 +1263,7 @@ describe('Narrative Mechanics', () => {
         accessLevel: 3,
         truthsDiscovered: new Set<TruthCategory>(),
         filesRead: new Set<string>(),
+        flags: { adminUnlocked: true },
       });
       // Open a file that reveals a truth
       const result = executeCommand('open material_x_analysis.dat', state);
@@ -1280,16 +1288,16 @@ describe('Narrative Mechanics', () => {
           'telepathic_scouts',
           'international_actors',
         ]),
-        flags: {},
+        flags: { adminUnlocked: true },
         filesRead: new Set<string>(),
       });
       // Open a file that reveals the 5th truth
       const result = executeCommand('open energy_node_assessment.txt', state);
 
-      // Should contain UFO74 message about running save_evidence.sh
+      // Should contain UFO74 message about using 'leak'
       expect(
         result.output.some(
-          e => e.content.includes('save_evidence') || e.content.includes('ALL EVIDENCE')
+          e => e.content.includes('leak') || e.content.includes('ALL EVIDENCE')
         )
       ).toBe(true);
     });
@@ -1306,7 +1314,7 @@ describe('Narrative Mechanics', () => {
           'telepathic_scouts',
           'international_actors',
         ]),
-        flags: {},
+        flags: { adminUnlocked: true },
         filesRead: new Set<string>(),
       });
       const result = executeCommand('open energy_node_assessment.txt', state);

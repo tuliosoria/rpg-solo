@@ -564,7 +564,7 @@ describe('Story Consistency Tests', () => {
         expect(result.stateChanges.isGameOver).toBe(true);
       });
 
-      it('discovering all 5 truths enables save_evidence script', () => {
+      it('discovering all 5 truths enables leak command', () => {
         const state = createTestState({
           tutorialStep: -1,
           tutorialComplete: true,

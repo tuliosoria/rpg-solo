@@ -1,47 +1,3 @@
-/* Animated risk bar reveal */
-.riskBarHidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-16px) scale(0.98);
-  filter: blur(4px) brightness(0.7);
-  transition:
-    opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.riskBarRevealed {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0) scale(1);
-  filter: blur(0) brightness(1);
-  transition:
-    opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-/* Animated header reveal */
-.headerHidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-32px) scale(0.98);
-  filter: blur(4px) brightness(0.7);
-  transition:
-    opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.headerRevealed {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0) scale(1);
-  filter: blur(0) brightness(1);
-  transition:
-    opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
 /* Terminal 1996 - Terminal Component Styles */
 
 .terminal {
@@ -317,43 +273,6 @@
   border-radius: 3px;
 }
 
-/* Evidence tier: CORROBORATED (◆) - linked but not proven */
-.truthCorroborated {
-  color: #ffcc00;
-  text-shadow:
-    0 0 8px #ffcc00,
-    0 0 2px #ffcc00;
-  font-weight: bold;
-  font-size: 1.05em;
-  border-bottom: 2px solid #ffcc00;
-  padding: 0 6px;
-  border-radius: 3px;
-}
-
-/* Evidence tier: FRAGMENT (○) - found but insufficient */
-.truthFragment {
-  color: #00aa88;
-  text-shadow: 0 0 6px #00aa88;
-  font-weight: normal;
-  font-size: 1em;
-  border-bottom: 2px dashed #00aa88;
-  padding: 0 6px;
-  border-radius: 3px;
-}
-
-/* Legacy: fully found (alias for proven) */
-.truthFound {
-  color: #00ff00;
-  text-shadow:
-    0 0 12px #00ff00,
-    0 0 2px #00ff00;
-  font-weight: bold;
-  font-size: 1.1em;
-  border-bottom: 2px solid #00ff00;
-  padding: 0 6px;
-  border-radius: 3px;
-}
-
 .truthMissing {
   color: #336633;
   background: #001a00;
@@ -368,22 +287,6 @@
   font-weight: bold;
   margin-left: 4px;
   text-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
-}
-
-.riskBar {
-  width: 80px;
-  height: 10px;
-  background: #0a1a0a;
-  border: 1px solid #00aa00;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.riskFill {
-  height: 100%;
-  transition:
-    width 0.3s ease,
-    background-color 0.3s ease;
 }
 
 .riskLevel {
@@ -477,11 +380,6 @@
   }
 }
 
-/* Enhanced risk indicator */
-.riskWarning {
-  animation: riskPulse 0.5s ease-in-out;
-}
-
 .riskPulse {
   animation: riskPulse 0.6s ease-in-out;
 }
@@ -566,41 +464,6 @@
     transform: translate(0) skewX(0);
     filter: brightness(0.5);
     clip-path: inset(0 0 0 0);
-  }
-}
-
-/* Screen tear effect */
-.screenTear {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 100;
-  animation: screenTear 0.15s linear;
-}
-
-@keyframes screenTear {
-  0% {
-    clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%);
-    transform: translateX(0);
-  }
-  25% {
-    clip-path: polygon(0 25%, 100% 25%, 100% 55%, 0 55%);
-    transform: translateX(5px);
-  }
-  50% {
-    clip-path: polygon(0 45%, 100% 45%, 100% 75%, 0 75%);
-    transform: translateX(-5px);
-  }
-  75% {
-    clip-path: polygon(0 65%, 100% 65%, 100% 95%, 0 95%);
-    transform: translateX(3px);
-  }
-  100% {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-    transform: translateX(0);
   }
 }
 
@@ -868,50 +731,6 @@
   animation: none;
 }
 
-/* Legacy enterPrompt - kept for backwards compat */
-.enterPrompt {
-  position: fixed;
-  bottom: 16px;
-  right: 24px;
-  background: rgba(0, 40, 0, 0.85);
-  border: 1px solid rgba(0, 255, 0, 0.4);
-  border-radius: 4px;
-  color: rgba(0, 255, 0, 0.85);
-  font-family: inherit;
-  font-size: 0.9em;
-  font-weight: bold;
-  letter-spacing: 1px;
-  padding: 8px 14px;
-  cursor: pointer;
-  text-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.15);
-  transition: all 0.2s ease;
-  z-index: 50;
-  animation: enterPromptPulse 2.5s ease-in-out infinite;
-}
-
-.enterPrompt:hover {
-  background: rgba(0, 60, 0, 0.9);
-  border-color: rgba(0, 255, 0, 0.7);
-  color: #00ff00;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-}
-
-.enterPrompt:active {
-  transform: scale(0.97);
-}
-
-.enterPrompt:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  animation: none;
-}
-
-.enterPromptSymbol {
-  display: none;
-}
-
 .enterPromptText {
   font-size: 1em;
   opacity: 0.95;
@@ -926,67 +745,6 @@
   50% {
     opacity: 1;
     box-shadow: 0 0 18px rgba(0, 255, 0, 0.25);
-  }
-}
-
-/* Legacy big enter button - kept for fallback */
-.enterButton {
-  flex: 1;
-  background: linear-gradient(180deg, #003300 0%, #001a00 100%);
-  border: 3px solid #00ff00;
-  border-radius: 8px;
-  color: #00ff00;
-  font-family: inherit;
-  font-size: 1.4em;
-  font-weight: bold;
-  letter-spacing: 4px;
-  padding: 20px 40px;
-  cursor: pointer;
-  text-transform: uppercase;
-  text-shadow:
-    0 0 10px #00ff00,
-    0 0 20px #00ff00;
-  box-shadow:
-    0 0 20px rgba(0, 255, 0, 0.3),
-    inset 0 0 20px rgba(0, 255, 0, 0.1);
-  transition: all 0.2s ease;
-  animation: enterButtonPulse 2s ease-in-out infinite;
-}
-
-.enterButton:hover {
-  background: linear-gradient(180deg, #004400 0%, #002200 100%);
-  border-color: #44ff44;
-  text-shadow:
-    0 0 15px #00ff00,
-    0 0 30px #00ff00;
-  box-shadow:
-    0 0 30px rgba(0, 255, 0, 0.5),
-    inset 0 0 30px rgba(0, 255, 0, 0.2);
-  transform: scale(1.02);
-}
-
-.enterButton:active {
-  background: linear-gradient(180deg, #005500 0%, #003300 100%);
-  transform: scale(0.98);
-}
-
-.enterButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  animation: none;
-}
-
-@keyframes enterButtonPulse {
-  0%,
-  100% {
-    box-shadow:
-      0 0 20px rgba(0, 255, 0, 0.3),
-      inset 0 0 20px rgba(0, 255, 0, 0.1);
-  }
-  50% {
-    box-shadow:
-      0 0 35px rgba(0, 255, 0, 0.5),
-      inset 0 0 30px rgba(0, 255, 0, 0.2);
   }
 }
 
@@ -1046,14 +804,6 @@
   }
 }
 
-/* Typing speed warning - positioned by FloatingElement */
-.typingWarningContent {
-  color: #ff4444;
-  font-size: 10px;
-  animation: typingWarnFlash 0.3s ease-in-out infinite alternate;
-  text-shadow: 0 0 10px #ff0000;
-}
-
 /* Typing speed warning - inline within input area */
 .typingWarningInline {
   position: absolute;
@@ -1065,19 +815,6 @@
   animation: typingWarnFlash 0.3s ease-in-out infinite alternate;
   text-shadow: 0 0 10px #ff0000;
   white-space: nowrap;
-}
-
-/* Legacy typingWarning - kept for backwards compat */
-.typingWarning {
-  position: absolute;
-  left: 50%;
-  bottom: 60px;
-  transform: translateX(-50%);
-  color: #ff4444;
-  font-size: 10px;
-  animation: typingWarnFlash 0.3s ease-in-out infinite alternate;
-  text-shadow: 0 0 10px #ff0000;
-  z-index: 50;
 }
 
 @keyframes typingWarnFlash {
@@ -1121,20 +858,6 @@
   box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
 }
 
-/* Legacy timedDecryptTimer - kept for backwards compat */
-.timedDecryptTimer {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid #ff4444;
-  padding: 12px 20px;
-  z-index: 100;
-  text-align: center;
-  animation: timerPulse 1s ease-in-out infinite;
-  box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
-}
-
 .timerLabel {
   color: #ff6666;
   font-size: 10px;
@@ -1165,27 +888,6 @@
   50% {
     border-color: #ff6666;
   }
-}
-
-/* Exit button */
-.exitButton {
-  position: absolute;
-  top: 8px;
-  right: 16px;
-  background: transparent;
-  border: 1px solid #333;
-  color: #666;
-  padding: 4px 8px;
-  font-family: inherit;
-  font-size: 11px;
-  cursor: pointer;
-  z-index: 20;
-  transition: all 0.2s;
-}
-
-.exitButton:hover {
-  border-color: #00ff00;
-  color: #00ff00;
 }
 
 /* Responsive - Medium screens (1024px - 1280px) */
@@ -1269,23 +971,6 @@
   animation: countdownPulse 1s ease-in-out infinite;
 }
 
-/* Legacy countdownTimer - kept for backwards compat */
-.countdownTimer {
-  position: fixed;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 12px 24px;
-  background: rgba(100, 0, 0, 0.9);
-  border: 2px solid #ff0000;
-  border-radius: 4px;
-  z-index: 90;
-  animation: countdownPulse 1s ease-in-out infinite;
-}
-
 @keyframes countdownPulse {
   0%,
   100% {
@@ -1338,15 +1023,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .riskBarHidden,
-  .riskBarRevealed,
-  .headerHidden,
-  .headerRevealed,
   .flicker,
   .shaking,
   .critical,
   .trackerVisible,
-  .riskWarning,
   .riskPulse,
   .glitchActive,
   .glitchHeavy,
@@ -1355,17 +1035,11 @@
   .processing,
   .inputField::placeholder,
   .enterPromptContent,
-  .enterPrompt,
-  .enterButton,
   .terminalCursor,
   .cursor,
-  .typingWarningContent,
   .typingWarningInline,
-  .typingWarning,
   .timedDecryptTimerContent,
-  .timedDecryptTimer,
   .countdownTimerContent,
-  .countdownTimer,
   .warmingUp {
     animation: none !important;
     transition: none !important;

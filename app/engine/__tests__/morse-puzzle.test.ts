@@ -20,7 +20,7 @@ describe('Morse Puzzle', () => {
   describe('message command - prerequisites', () => {
     it('should show error when morse file has not been read', () => {
       const state = createTestState({ morseFileRead: false });
-      const result = executeCommand('message UFO RECOVERED', state);
+      const result = executeCommand('message COLHEITA', state);
       
       expect(result.output.some(e => e.content.includes('No pending message'))).toBe(true);
       expect(result.output.some(e => e.content.includes('/comms/intercepts/'))).toBe(true);
@@ -36,33 +36,34 @@ describe('Morse Puzzle', () => {
   });
 
   describe('message command - correct answer', () => {
-    it('should accept correct answer "UFO RECOVERED"', () => {
+    it('should accept correct answer "COLHEITA"', () => {
       const state = createTestState({ morseFileRead: true });
-      const result = executeCommand('message UFO RECOVERED', state);
+      const result = executeCommand('message COLHEITA', state);
       
       expect(result.output.some(e => e.content.includes('MESSAGE DECIPHERED'))).toBe(true);
       expect(result.stateChanges.morseMessageSolved).toBe(true);
     });
 
-    it('should accept answer without space "UFORECOVERED"', () => {
-      const state = createTestState({ morseFileRead: true });
-      const result = executeCommand('message UFORECOVERED', state);
-      
-      expect(result.stateChanges.morseMessageSolved).toBe(true);
-    });
-
     it('should accept lowercase answer', () => {
       const state = createTestState({ morseFileRead: true });
-      const result = executeCommand('message ufo recovered', state);
+      const result = executeCommand('message colheita', state);
       
       expect(result.stateChanges.morseMessageSolved).toBe(true);
     });
 
-    it('should accept hyphenated answer "UFO-RECOVERED"', () => {
+    it('should accept hyphenated or spaced variations', () => {
       const state = createTestState({ morseFileRead: true });
-      const result = executeCommand('message UFO-RECOVERED', state);
+      const result = executeCommand('message COL-HEITA', state);
       
       expect(result.stateChanges.morseMessageSolved).toBe(true);
+    });
+
+    it('should hint at override protocol on success', () => {
+      const state = createTestState({ morseFileRead: true });
+      const result = executeCommand('message COLHEITA', state);
+      
+      expect(result.output.some(e => e.content.includes('override protocol'))).toBe(true);
+      expect(result.soundTrigger).toBe('evidence');
     });
   });
 
@@ -91,7 +92,7 @@ describe('Morse Puzzle', () => {
       const result = executeCommand('message WRONG', state);
       
       expect(result.output.some(e => e.content.includes('DECRYPTION FAILED'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('UFO RECOVERED'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('COLHEITA'))).toBe(true);
       expect(result.stateChanges.morseMessageAttempts).toBe(3);
       expect(result.stateChanges.wrongAttempts).toBe(1);
     });
@@ -101,12 +102,12 @@ describe('Morse Puzzle', () => {
       const result = executeCommand('message', state);
       
       expect(result.output.some(e => e.content.includes('exhausted'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('UFO RECOVERED'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('COLHEITA'))).toBe(true);
     });
 
     it('should show puzzle failed for any input after exhaustion', () => {
       const state = createTestState({ morseFileRead: true, morseMessageAttempts: 3 });
-      const result = executeCommand('message UFO RECOVERED', state);
+      const result = executeCommand('message COLHEITA', state);
       
       // Even correct answer should fail after exhaustion
       expect(result.output.some(e => e.content.includes('exhausted'))).toBe(true);
@@ -120,7 +121,7 @@ describe('Morse Puzzle', () => {
         morseFileRead: true, 
         morseMessageSolved: true 
       });
-      const result = executeCommand('message UFO RECOVERED', state);
+      const result = executeCommand('message COLHEITA', state);
       
       expect(result.output.some(e => e.content.includes('already deciphered'))).toBe(true);
     });

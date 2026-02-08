@@ -33,7 +33,8 @@ export type SoundType =
   | 'typing'
   | 'transmission'
   | 'creepy' // Unsettling avatar entrance
-  | 'fanfare'; // Zelda-like celebration sound
+  | 'fanfare' // Zelda-like celebration sound
+  | 'morse'; // Morse code transmission beeps
 
 // Sound configuration
 interface SoundConfig {
@@ -58,6 +59,7 @@ const SOUND_CONFIG: Record<SoundType, SoundConfig> = {
   transmission: { volume: 0.35 }, // UFO74 transmission banner
   creepy: { volume: 0.45 }, // Unsettling avatar entrance
   fanfare: { volume: 0.5 }, // Zelda-like celebration
+  morse: { volume: 0.4 }, // Morse code transmission beeps
 };
 
 // Generate oscillator-based sounds (no external files needed)
@@ -353,65 +355,72 @@ export function useSound() {
         }
 
         case 'creepy': {
-          // Robotic mechanical alert: digital pulses + synthetic growl
+          // CRT TV turning on: static burst → high-pitch whine → hum settle
           const t = audioContext.currentTime;
 
-          // 1. Low synthetic growl — square wave sweep down
-          const growlOsc = audioContext.createOscillator();
-          const growlGain = audioContext.createGain();
-          growlOsc.type = 'square';
-          growlOsc.frequency.setValueAtTime(120, t);
-          growlOsc.frequency.exponentialRampToValueAtTime(40, t + 1.8);
-          growlGain.gain.setValueAtTime(volume * 0.3, t);
-          growlGain.gain.linearRampToValueAtTime(volume * 0.15, t + 1.0);
-          growlGain.gain.exponentialRampToValueAtTime(0.001, t + 2.0);
-          growlOsc.connect(growlGain);
-          growlGain.connect(audioContext.destination);
-          growlOsc.start(t);
-          growlOsc.stop(t + 2.0);
-
-          // 2. Rapid digital clicks — short square pulses at intervals
-          for (let i = 0; i < 6; i++) {
-            const clickOsc = audioContext.createOscillator();
-            const clickGain = audioContext.createGain();
-            clickOsc.type = 'square';
-            clickOsc.frequency.value = 800 + i * 200;
-            const clickTime = t + i * 0.12;
-            clickGain.gain.setValueAtTime(0, clickTime);
-            clickGain.gain.linearRampToValueAtTime(volume * 0.5, clickTime + 0.01);
-            clickGain.gain.exponentialRampToValueAtTime(0.001, clickTime + 0.06);
-            clickOsc.connect(clickGain);
-            clickGain.connect(audioContext.destination);
-            clickOsc.start(clickTime);
-            clickOsc.stop(clickTime + 0.06);
-          }
-
-          // 3. Harsh digital tone — short buzzy mid-frequency
-          const buzzOsc = audioContext.createOscillator();
-          const buzzGain = audioContext.createGain();
-          buzzOsc.type = 'sawtooth';
-          buzzOsc.frequency.setValueAtTime(220, t + 0.8);
-          buzzOsc.frequency.linearRampToValueAtTime(180, t + 1.6);
-          buzzGain.gain.setValueAtTime(0, t + 0.8);
-          buzzGain.gain.linearRampToValueAtTime(volume * 0.25, t + 0.85);
-          buzzGain.gain.setValueAtTime(volume * 0.25, t + 1.4);
-          buzzGain.gain.exponentialRampToValueAtTime(0.001, t + 1.8);
-          buzzOsc.connect(buzzGain);
-          buzzGain.connect(audioContext.destination);
-          buzzOsc.start(t + 0.8);
-          buzzOsc.stop(t + 1.8);
-
-          // 4. Static burst at start
-          const noiseBuffer = createNoiseBuffer(audioContext, 0.15);
+          // 1. Initial static burst — white noise snap (TV tube igniting)
+          const noiseBuffer = createNoiseBuffer(audioContext, 0.35);
           const noiseSrc = audioContext.createBufferSource();
           const noiseGain = audioContext.createGain();
+          const noiseFilter = audioContext.createBiquadFilter();
           noiseSrc.buffer = noiseBuffer;
-          noiseGain.gain.setValueAtTime(volume * 0.6, t);
-          noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-          noiseSrc.connect(noiseGain);
+          noiseFilter.type = 'bandpass';
+          noiseFilter.frequency.setValueAtTime(3000, t);
+          noiseFilter.frequency.exponentialRampToValueAtTime(800, t + 0.3);
+          noiseFilter.Q.value = 0.8;
+          noiseGain.gain.setValueAtTime(volume * 0.7, t);
+          noiseGain.gain.linearRampToValueAtTime(volume * 0.4, t + 0.08);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          noiseSrc.connect(noiseFilter);
+          noiseFilter.connect(noiseGain);
           noiseGain.connect(audioContext.destination);
           noiseSrc.start(t);
-          noiseSrc.stop(t + 0.15);
+          noiseSrc.stop(t + 0.35);
+
+          // 2. High-pitch CRT whine — sine sweep from very high down to flyback freq
+          const whineOsc = audioContext.createOscillator();
+          const whineGain = audioContext.createGain();
+          whineOsc.type = 'sine';
+          whineOsc.frequency.setValueAtTime(12000, t + 0.05);
+          whineOsc.frequency.exponentialRampToValueAtTime(15700, t + 0.3);
+          whineOsc.frequency.setValueAtTime(15700, t + 0.6);
+          whineOsc.frequency.exponentialRampToValueAtTime(15600, t + 1.5);
+          whineGain.gain.setValueAtTime(0, t + 0.05);
+          whineGain.gain.linearRampToValueAtTime(volume * 0.12, t + 0.15);
+          whineGain.gain.setValueAtTime(volume * 0.12, t + 0.6);
+          whineGain.gain.exponentialRampToValueAtTime(volume * 0.04, t + 1.2);
+          whineGain.gain.exponentialRampToValueAtTime(0.001, t + 1.8);
+          whineOsc.connect(whineGain);
+          whineGain.connect(audioContext.destination);
+          whineOsc.start(t + 0.05);
+          whineOsc.stop(t + 1.8);
+
+          // 3. Low electrical hum — 60Hz buzz settling in (transformer hum)
+          const humOsc = audioContext.createOscillator();
+          const humGain = audioContext.createGain();
+          humOsc.type = 'sawtooth';
+          humOsc.frequency.value = 60;
+          humGain.gain.setValueAtTime(0, t + 0.1);
+          humGain.gain.linearRampToValueAtTime(volume * 0.2, t + 0.4);
+          humGain.gain.setValueAtTime(volume * 0.2, t + 0.8);
+          humGain.gain.exponentialRampToValueAtTime(0.001, t + 1.6);
+          humOsc.connect(humGain);
+          humGain.connect(audioContext.destination);
+          humOsc.start(t + 0.1);
+          humOsc.stop(t + 1.6);
+
+          // 4. Degauss thump — low percussive hit when the tube magnetizes
+          const thumpOsc = audioContext.createOscillator();
+          const thumpGain = audioContext.createGain();
+          thumpOsc.type = 'sine';
+          thumpOsc.frequency.setValueAtTime(80, t + 0.02);
+          thumpOsc.frequency.exponentialRampToValueAtTime(30, t + 0.2);
+          thumpGain.gain.setValueAtTime(volume * 0.6, t + 0.02);
+          thumpGain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+          thumpOsc.connect(thumpGain);
+          thumpGain.connect(audioContext.destination);
+          thumpOsc.start(t + 0.02);
+          thumpOsc.stop(t + 0.25);
           break;
         }
 
@@ -459,6 +468,80 @@ export function useSound() {
               }
             }, delay * 1000);
             delay += note.duration;
+          });
+          break;
+        }
+
+        case 'morse': {
+          // Play COLHEITA in morse code: -.-. --- .-.. .... . .. - .-
+          // Uses 700Hz sine tone, timing based on standard morse ratios
+          const MORSE_FREQ = 700;
+          const DOT = 0.06; // dot duration in seconds
+          const DASH = DOT * 3;
+          const SYMBOL_GAP = DOT; // gap between symbols within a letter
+          const LETTER_GAP = DOT * 3; // gap between letters
+
+          // COLHEITA morse sequences: each letter is an array of dot/dash durations
+          const morseLetters: number[][] = [
+            [DASH, DOT, DASH, DOT],     // C: -.-.
+            [DASH, DASH, DASH],          // O: ---
+            [DOT, DASH, DOT, DOT],       // L: .-..
+            [DOT, DOT, DOT, DOT],        // H: ....
+            [DOT],                        // E: .
+            [DOT, DOT],                   // I: ..
+            [DASH],                       // T: -
+            [DOT, DASH],                  // A: .-
+          ];
+
+          let morseDelay = 0.15; // initial pause
+
+          morseLetters.forEach((letter, letterIdx) => {
+            letter.forEach((symbolDuration, symbolIdx) => {
+              const d = morseDelay;
+              setTimeout(() => {
+                if (audioContextRef.current) {
+                  const ctx = audioContextRef.current;
+                  const t = ctx.currentTime;
+
+                  // Main tone
+                  const osc = ctx.createOscillator();
+                  const gain = ctx.createGain();
+                  osc.type = 'sine';
+                  osc.frequency.setValueAtTime(MORSE_FREQ, t);
+
+                  // Soft envelope to avoid clicks
+                  gain.gain.setValueAtTime(0, t);
+                  gain.gain.linearRampToValueAtTime(volume * 0.7, t + 0.005);
+                  gain.gain.setValueAtTime(volume * 0.7, t + symbolDuration - 0.005);
+                  gain.gain.linearRampToValueAtTime(0, t + symbolDuration);
+
+                  osc.connect(gain);
+                  gain.connect(ctx.destination);
+                  osc.start(t);
+                  osc.stop(t + symbolDuration);
+
+                  // Harmonic layer for richness (slight detuned upper octave)
+                  const osc2 = ctx.createOscillator();
+                  const gain2 = ctx.createGain();
+                  osc2.type = 'sine';
+                  osc2.frequency.setValueAtTime(MORSE_FREQ * 2, t);
+                  gain2.gain.setValueAtTime(0, t);
+                  gain2.gain.linearRampToValueAtTime(volume * 0.15, t + 0.005);
+                  gain2.gain.setValueAtTime(volume * 0.15, t + symbolDuration - 0.005);
+                  gain2.gain.linearRampToValueAtTime(0, t + symbolDuration);
+                  osc2.connect(gain2);
+                  gain2.connect(ctx.destination);
+                  osc2.start(t);
+                  osc2.stop(t + symbolDuration);
+                }
+              }, d * 1000);
+
+              morseDelay += symbolDuration + SYMBOL_GAP;
+            });
+            // Add letter gap (minus the last symbol gap already added)
+            morseDelay += LETTER_GAP - SYMBOL_GAP;
+            // Add a bit more gap after the 4th letter for drama
+            if (letterIdx === 3) morseDelay += DOT * 2;
           });
           break;
         }

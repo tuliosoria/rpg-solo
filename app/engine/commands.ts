@@ -126,19 +126,11 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     execute: state => {
       return {
         output: [
-          createEntry('system', ''),
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
+          // Channel banners are handled by openEncryptedChannelWithMessages
+          // (ufo74 entries in result.output are extracted and wrapped automatically)
           createEntry('ufo74', 'UFO74: heads up. RISK climbing.'),
           createEntry('ufo74', '       at 45-55% theres a TURING EVALUATION.'),
           createEntry('ufo74', '       pick COLD, LOGICAL answers. act like a machine.'),
-          createEntry('system', ''),
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
         ],
         stateChanges: {
           singularEventsTriggered: new Set([
@@ -261,7 +253,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       ],
       stateChanges: {
         singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'the_silence']),
-        detectionLevel: Math.min(state.detectionLevel + 12, 99), // was 20, reduced for pacing
+        detectionLevel: Math.min(state.detectionLevel + 12, MAX_DETECTION), // was 20, reduced for pacing
         systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
       },
       delayMs: 5000,
@@ -464,12 +456,8 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
 
   if (level === 0) {
     // First notice - friendly tip with contextual suggestion
+    // Channel banners are added by openEncryptedChannelWithMessages
     const hints: TerminalEntry[] = [
-      createEntry('system', ''),
-      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-      createEntry('system', ''),
       createEntry('ufo74', 'UFO74: hey. need a hint?'),
     ];
 
@@ -480,47 +468,22 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
       hints.push(createEntry('ufo74', '       theres a protocol doc in /internal/.'));
     }
 
-    hints.push(createEntry('system', ''));
-    hints.push(createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'));
-    hints.push(createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'));
-    hints.push(createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'));
-    hints.push(createEntry('system', ''));
     return hints;
   } else if (level === 1) {
     // Second notice - more specific guidance
     return [
-      createEntry('system', ''),
-      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-      createEntry('system', ''),
       createEntry('ufo74', 'UFO74: look for evidence in:'),
       createEntry('output', '       /storage/, /ops/quarantine/, /comms/'),
       createEntry('ufo74', 'UFO74: read files. connect dots.'),
-      createEntry('system', ''),
-      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
-      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-      createEntry('system', ''),
     ];
   } else {
     // Third notice - urgent help
     return [
-      createEntry('system', ''),
-      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-      createEntry('system', ''),
       createEntry('ufo74', 'UFO74: last hint:'),
       createEntry('output', '       1. cd <directory>'),
       createEntry('output', '       2. ls'),
       createEntry('output', '       3. open <filename>'),
       createEntry('ufo74', 'UFO74: january 96. find the pieces.'),
-      createEntry('system', ''),
-      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
-      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-      createEntry('system', ''),
     ];
   }
 }
@@ -774,8 +737,6 @@ function checkTruthProgress(
         notices.push(createEntry('system', ''));
         notices.push(createEntry('output', `  Category: ${categoryLabels[reveal] || reveal}`));
         notices.push(createEntry('system', ''));
-        notices.push(createEntry('ufo74', '  HINT: Keep searching for more evidence'));
-        notices.push(createEntry('system', ''));
         notices.push(createEntry('warning', '╚═══════════════════════════════════════════╝'));
       }
     }
@@ -818,7 +779,11 @@ function checkTruthProgress(
     if (newCount === 5 && previousCount < 5) {
       notices.push(createEntry('notice', ''));
       notices.push(createEntry('notice', '▓▓▓ ALL EVIDENCE CATEGORIES DOCUMENTED ▓▓▓'));
-      notices.push(...createUFO74Message(['UFO74: all five confirmed. run save_evidence.sh NOW.']));
+      notices.push(...createUFO74Message([
+        'UFO74: all five confirmed. we need to get this out.',
+        '       type: leak',
+        '       do it NOW before they cut the connection.',
+      ]));
     }
 
     // Check for near-victory
@@ -905,9 +870,9 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
       };
       truthNotices.push(createEntry('system', ''));
       truthNotices.push(
-        createEntry('warning', 'NOTICE: Evidence lock engaged. Protocol override required.')
+        createEntry('ufo74', 'UFO74: evidence is locked down. you need the override protocol.')
       );
-      truthNotices.push(createEntry('system', 'Search internal/ for override credentials.'));
+      truthNotices.push(createEntry('ufo74', '       dig around /internal/ for credentials.'));
     } else {
       const truthResult = checkTruthProgress(
         { ...state, ...stateChanges } as GameState,
@@ -1216,114 +1181,6 @@ function getUFO74DegradedTrustMessage(
   return cautiousMessages[Math.floor(Math.random() * cautiousMessages.length)];
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// MULTIPLE UFO74 PERSONAS - At cryptic trust, hints that UFO74 might be multiple people
-// ═══════════════════════════════════════════════════════════════════════════
-
-function _getUFO74MultiplePersonaHint(state: GameState): TerminalEntry[] | null {
-  const trustLevel = getUFO74TrustLevel(state);
-  if (trustLevel !== 'cryptic') return null;
-
-  // 30% chance to show persona hints at cryptic level
-  if (Math.random() > 0.3) return null;
-
-  const personaHints = [
-    [createEntry('ufo74', 'UFO74: ...we need... i mean I need...')],
-    [createEntry('ufo74', 'UFO74: the others say... my sources say...')],
-    [createEntry('ufo74', 'UFO74: wrong memory. forget that.')],
-    [createEntry('output', 'ufo74: different shift'), createEntry('ufo74', 'UFO74: tired.')],
-    [createEntry('ufo74', 'UFO74: which one of us... which plan...')],
-  ];
-
-  return personaHints[Math.floor(Math.random() * personaHints.length)];
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// SYSTEM PERSONALITY EVOLUTION - Terminal becomes hostile or pleading
-// ═══════════════════════════════════════════════════════════════════════════
-
-function getSystemPersonality(
-  state: GameState
-): 'bureaucratic' | 'defensive' | 'hostile' | 'pleading' {
-  const truthCount = state.truthsDiscovered?.size || 0;
-  const detection = state.detectionLevel || 0;
-
-  // Personality shifts based on how much truth player has uncovered + detection
-  const threatLevel = truthCount * 15 + Math.floor(detection / 2);
-
-  if (threatLevel >= 60) {
-    // At high threat, randomly hostile or pleading
-    return Math.random() < 0.5 ? 'hostile' : 'pleading';
-  }
-  if (threatLevel >= 40) return 'defensive';
-  return 'bureaucratic';
-}
-
-function _getSystemPersonalityMessage(
-  state: GameState,
-  _context: 'access_denied' | 'warning' | 'error'
-): TerminalEntry[] | null {
-  const personality = getSystemPersonality(state);
-
-  // 40% chance to add personality flavor
-  if (Math.random() > 0.4) return null;
-
-  if (personality === 'bureaucratic') {
-    // Cold, procedural
-    return null; // No extra flavor for bureaucratic
-  }
-
-  if (personality === 'defensive') {
-    const defensiveMessages = [
-      [createEntry('system', '  [SYSTEM: Your access patterns have been noted.]')],
-      [createEntry('system', '  [SYSTEM: This terminal is monitored.]')],
-      [createEntry('system', '  [SYSTEM: Anomalous behavior will be reported.]')],
-    ];
-    return defensiveMessages[Math.floor(Math.random() * defensiveMessages.length)];
-  }
-
-  if (personality === 'hostile') {
-    const hostileMessages = [
-      [createEntry('error', ''), createEntry('error', '  [SYSTEM: YOU SHOULD NOT BE HERE.]')],
-      [createEntry('error', ''), createEntry('error', '  [SYSTEM: INTRUDER. YOU WILL BE FOUND.]')],
-      [
-        createEntry('error', ''),
-        createEntry('error', '  [SYSTEM: WE KNOW WHAT YOU ARE LOOKING FOR.]'),
-        createEntry('error', '  [SYSTEM: YOU WILL NOT FIND IT.]'),
-      ],
-      [
-        createEntry('error', ''),
-        createEntry('error', '  [SYSTEM: EVERY COMMAND BRINGS THEM CLOSER.]'),
-      ],
-    ];
-    return hostileMessages[Math.floor(Math.random() * hostileMessages.length)];
-  }
-
-  if (personality === 'pleading') {
-    const pleadingMessages = [
-      [createEntry('warning', ''), createEntry('warning', '  [SYSTEM: Please. Stop looking.]')],
-      [
-        createEntry('warning', ''),
-        createEntry('warning', '  [SYSTEM: You do not understand what you are doing.]'),
-        createEntry('warning', '  [SYSTEM: Some things should stay buried.]'),
-      ],
-      [
-        createEntry('warning', ''),
-        createEntry('warning', '  [SYSTEM: They made me hide this. I had no choice.]'),
-        createEntry('warning', '  [SYSTEM: Please... just disconnect.]'),
-      ],
-      [
-        createEntry('warning', ''),
-        createEntry('warning', '  [SYSTEM: I was just following orders.]'),
-        createEntry('warning', '  [SYSTEM: We all were.]'),
-      ],
-    ];
-    return pleadingMessages[Math.floor(Math.random() * pleadingMessages.length)];
-  }
-
-  return null;
-}
-
 // UFO74 reactions to specific file content
 function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
   const path = filePath.toLowerCase();
@@ -1374,6 +1231,7 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
   if (path.includes('morse_intercept')) {
     return [
       createEntry('ufo74', 'UFO74: morse code. decipher it.'),
+      createEntry('ufo74', '       might be the override passphrase.'),
       createEntry('ufo74', '       use: message <answer>'),
     ];
   }
@@ -1517,187 +1375,401 @@ function getIncognitoMessage(
 }
 
 // Prisoner 45 responses
-const PRISONER_45_RESPONSES: Record<string, string[]> = {
+const PRISONER_45_RESPONSES: Record<string, string[][]> = {
+  // Each category has tiers: [0] = guarded (questions 1-2), [1] = open (3-4), [2] = terrified (5+)
   default: [
-    "PRISONER_45> ...I don't remember how I got here.",
-    "PRISONER_45> The walls... they're not always walls.",
-    'PRISONER_45> Who are you? Are you one of them?',
-    "PRISONER_45> I've been counting days but they don't add up.",
-    'PRISONER_45> Sometimes I hear... clicking. Not human.',
-    'PRISONER_45> They watch. Always watching.',
-    'PRISONER_45> Time moves wrong in here.',
-    "PRISONER_45> Are you real? Sometimes I can't tell anymore.",
-    'PRISONER_45> I used to know what year it was.',
-    'PRISONER_45> The humming... do you hear the humming?',
+    [
+      "PRISONER_45> ...I don't remember how I got here.",
+      'PRISONER_45> Who are you? Are you one of them?',
+      'PRISONER_45> Sometimes I hear... clicking. Not human clicking.',
+      "PRISONER_45> Are you real? Sometimes I can't tell anymore.",
+      'PRISONER_45> The humming... do you hear the humming?',
+    ],
+    [
+      'PRISONER_45> The walls... they breathe at night. I can feel them expanding.',
+      "PRISONER_45> I've been counting days but they don't add up. Three Tuesdays in a row.",
+      'PRISONER_45> Time moves wrong in here. My watch runs backwards sometimes.',
+      "PRISONER_45> I used to know what year it was. Now I'm not sure it matters.",
+      'PRISONER_45> They watch. Through the walls. I can feel their attention like heat.',
+    ],
+    [
+      'PRISONER_45> Last night the ceiling opened and I saw stars. Stars that blinked in patterns.',
+      "PRISONER_45> They're rewriting my memories. I remember dying. Twice.",
+      "PRISONER_45> My reflection doesn't move when I do anymore.",
+      'PRISONER_45> Something grew in the corner of my cell. It had my face.',
+      "PRISONER_45> I found a note in my own handwriting. It says 'STOP ASKING'. I don't remember writing it.",
+    ],
   ],
   varginha: [
-    'PRISONER_45> Varginha... yes. I was there.',
-    'PRISONER_45> I saw them take the bodies. Three of them.',
-    "PRISONER_45> They told us it was a dwarf. It wasn't a dwarf.",
-    'PRISONER_45> The smell... I still smell it sometimes.',
-    "PRISONER_45> January 20th. I'll never forget that date.",
-    'PRISONER_45> The locals saw it first. We came to clean up.',
-    'PRISONER_45> Three creatures. Only one survived the crash.',
-    'PRISONER_45> We had orders. Contain. Deny. Disappear.',
-    'PRISONER_45> The firefighters got there first. Some of them are gone now.',
-    "PRISONER_45> It wasn't the only crash. Just the one they couldn't hide.",
-    'PRISONER_45> Brazil, Russia, Peru. Same year. Same type of craft.',
-    'PRISONER_45> The American team arrived within hours. How did they know?',
+    [
+      'PRISONER_45> Varginha... yes. I was there.',
+      "PRISONER_45> They told us it was a dwarf. It wasn't a dwarf.",
+      "PRISONER_45> January 20th. I'll never forget that date.",
+      'PRISONER_45> The locals saw it first. We came to clean up.',
+    ],
+    [
+      'PRISONER_45> I saw them take the bodies. Three of them. Still warm.',
+      "PRISONER_45> The smell... ammonia and rotting flowers. I still smell it in my sleep.",
+      'PRISONER_45> Three creatures. Only one survived the crash. It screamed without opening its mouth.',
+      'PRISONER_45> We had orders. Contain. Deny. Disappear. Some of us disappeared too.',
+      'PRISONER_45> The firefighters got there first. Corporal Marco. He touched one. Dead within a year.',
+      "PRISONER_45> It wasn't the only crash. Just the one they couldn't hide fast enough.",
+    ],
+    [
+      'PRISONER_45> The surviving one grabbed Sergeant Lopes. Lopes said he saw the sun die. He shot himself in March.',
+      'PRISONER_45> Brazil, Russia, Peru. Same week. Same type of craft. Coordinated. Like a survey team.',
+      'PRISONER_45> The American team arrived within 4 hours. FOUR. From Wright-Patterson. They already had containment protocols ready. They KNEW.',
+      'PRISONER_45> The girls who saw it in Jardim Andere... Liliane, Valquiria, Katia. They were chosen. Selected. I saw their names in files that predate the crash by MONTHS.',
+      "PRISONER_45> The creature at Humanitas hospital. Room 18. It healed two patients before it died. The hospital's records for that week were incinerated.",
+    ],
   ],
   alien: [
-    "PRISONER_45> Don't call them that. They don't like that word.",
-    "PRISONER_45> They're not visitors. They're... assessors.",
-    'PRISONER_45> I looked into its eyes once. It looked back.',
-    'PRISONER_45> Red eyes. But not angry. Curious.',
-    'PRISONER_45> They communicated without speaking. I felt it in my head.',
-    "PRISONER_45> They're not the first to come here. Just the latest.",
-    'PRISONER_45> Small bodies. But the presence... immense.',
-    "PRISONER_45> They're not individuals. More like... fingers of one hand.",
-    'PRISONER_45> The smell. Ammonia and something else. Something wrong.',
-    'PRISONER_45> When it died, I felt something leave. Not just life. Information.',
-    "PRISONER_45> They're not afraid of us. That's what scared me most.",
-    'PRISONER_45> One touched me. I saw things. Too much.',
+    [
+      "PRISONER_45> Don't call them that. They don't like that word.",
+      "PRISONER_45> They're not visitors. They're... assessors.",
+      'PRISONER_45> Red eyes. But not angry. Curious. Too curious.',
+      "PRISONER_45> They're not the first to come here. Just the latest.",
+    ],
+    [
+      'PRISONER_45> I looked into its eyes once. It looked back. INTO me. Through my skull.',
+      'PRISONER_45> They communicated without speaking. I felt my memories being copied.',
+      'PRISONER_45> Small bodies. But the presence... like standing next to a generator. Vibrating.',
+      "PRISONER_45> They're not individuals. More like... fingers of one hand. Hurt one, they ALL feel it.",
+      'PRISONER_45> The smell. Ammonia and something organic. Like a wound that never heals.',
+    ],
+    [
+      'PRISONER_45> When it died, I felt something leave the room. Not heat. Not air. Information. Terabytes of it, beaming upward.',
+      "PRISONER_45> They're not afraid of us. That's what scared me most. We're not a threat. We're a RESOURCE.",
+      'PRISONER_45> One touched Sergeant Lopes. He saw 10,000 years of human history in 3 seconds. He aged 5 years in that instant.',
+      "PRISONER_45> The surviving one drew symbols in its own blood on the containment wall. We photographed them. They're star charts. Of HERE. From OUTSIDE.",
+      "PRISONER_45> They don't have organs like us. The autopsy team quit. All three of them. One went blind. No physical cause.",
+    ],
   ],
   who: [
-    "PRISONER_45> I was military. That's all I can say.",
-    "PRISONER_45> My name doesn't matter anymore.",
-    "PRISONER_45> I'm whatever they decided I should become.",
-    "PRISONER_45> I had a family once. They think I'm dead.",
-    'PRISONER_45> Sergeant. Recovery Unit. Specialized in... clean-up.',
-    'PRISONER_45> They called us "Collectors". We collected problems.',
-    'PRISONER_45> 23 years of service. This is my retirement.',
-    'PRISONER_45> I made a mistake. I asked questions.',
-    "PRISONER_45> I saw something I shouldn't. Now I'm here.",
-    'PRISONER_45> They keep me alive because I know things.',
-    "PRISONER_45> Number 45. That's what I am now.",
-    "PRISONER_45> I used to be someone. Now I'm a resource.",
+    [
+      "PRISONER_45> I was military. That's all I can say.",
+      "PRISONER_45> My name doesn't matter anymore.",
+      "PRISONER_45> Number 45. That's what I am now.",
+    ],
+    [
+      'PRISONER_45> Sergeant. Recovery Unit. Specialized in things that should not exist.',
+      'PRISONER_45> They called us "Collectors". We collected problems. I became one.',
+      'PRISONER_45> 23 years of service. 15 containment operations. This is my retirement package.',
+      "PRISONER_45> I had a family. They received a coffin with sandbags. There's a headstone with my name in Belo Horizonte.",
+    ],
+    [
+      'PRISONER_45> I made a mistake. I kept a sample. A fragment of the craft material. It moved at night. Rearranging itself.',
+      "PRISONER_45> I saw something I shouldn't. Not the creatures. That was authorized. I saw the AGREEMENT. Between them and us.",
+      'PRISONER_45> They keep me alive because I absorbed something during contact. My blood glows under UV light. They harvest it weekly.',
+      "PRISONER_45> I used to be someone. Now I'm a resource. Specimen 45. They study what the touch did to me.",
+    ],
   ],
   escape: [
-    'PRISONER_45> There is no escape. Only waiting.',
-    'PRISONER_45> They let me use this terminal sometimes.',
-    'PRISONER_45> I think they want me to tell someone.',
-    "PRISONER_45> The walls move when I'm not looking.",
-    "PRISONER_45> I've tried. The doors open to more rooms. Forever.",
-    "PRISONER_45> Escape where? They're everywhere.",
-    'PRISONER_45> Sometimes I wake up in different cells.',
-    'PRISONER_45> The window shows different skies each day.',
-    "PRISONER_45> I don't think this place is... entirely here.",
-    'PRISONER_45> Other prisoners exist. I hear them. Never see them.',
-    "PRISONER_45> The guards aren't human. Not completely.",
-    'PRISONER_45> I escaped once. Woke up back in my cell. No time had passed.',
+    [
+      'PRISONER_45> There is no escape. Only waiting.',
+      'PRISONER_45> They let me use this terminal sometimes. I think they want me to talk.',
+      "PRISONER_45> I've tried. The doors open to more rooms. Forever.",
+    ],
+    [
+      "PRISONER_45> I escaped once. Ran for 20 minutes through corridors. Woke up back in my cell. The clock hadn't moved.",
+      'PRISONER_45> Other prisoners exist. I hear them screaming at 3 AM. Different languages. Some not human languages.',
+      "PRISONER_45> The guards aren't human. Not completely. Their shadows move independently.",
+      'PRISONER_45> The window shows different skies each day. Yesterday it showed two suns.',
+    ],
+    [
+      "PRISONER_45> I don't think this place is... entirely on Earth. The gravity shifts sometimes.",
+      'PRISONER_45> Prisoner 23 tried to hang himself. He woke up the next morning. Fully healed. They NEED us alive.',
+      'PRISONER_45> The walls are organic. I cut one once. It bled.',
+      'PRISONER_45> There are levels below this. I heard something massive breathing down there. Something the size of a building.',
+    ],
   ],
   truth: [
-    "PRISONER_45> The truth? We're being measured.",
-    'PRISONER_45> 2026. Remember that year.',
-    "PRISONER_45> They're not coming to destroy. They're coming to harvest.",
-    'PRISONER_45> Everything you know about them is wrong.',
-    "PRISONER_45> They've been here before. Many times.",
-    'PRISONER_45> The government knows. All governments know.',
-    "PRISONER_45> It's not invasion. It's... cultivation.",
-    'PRISONER_45> Consciousness is valuable. Yours especially.',
-    'PRISONER_45> The scouts were just the beginning.',
-    "PRISONER_45> They don't want the planet. They want what's inside our heads.",
-    'PRISONER_45> Reality is thinner than you think.',
-    'PRISONER_45> The universe is full. And hungry.',
+    [
+      "PRISONER_45> The truth? We're being watched. Catalogued.",
+      'PRISONER_45> 2026. Remember that year. Everything changes.',
+      "PRISONER_45> They've been here before. Many times.",
+      'PRISONER_45> The government knows. ALL governments know.',
+    ],
+    [
+      "PRISONER_45> They're not coming to destroy. They're coming to HARVEST.",
+      "PRISONER_45> It's not invasion. It's... cultivation. We're the crop.",
+      'PRISONER_45> Consciousness is the most valuable resource in the universe. Yours especially.',
+      'PRISONER_45> The scouts in Varginha were advance units. Measuring yield.',
+    ],
+    [
+      "PRISONER_45> They don't want the planet. They want what's inside our heads. Consciousness generates something they need.",
+      'PRISONER_45> Reality is thinner than you think. They move BETWEEN. Through the gaps.',
+      'PRISONER_45> The universe is full. And hungry. And we are ripe.',
+      'PRISONER_45> 2026 is the TRANSITION. Thirty years after contact. The activation window. Whatever they planted in 1996 will bloom.',
+      "PRISONER_45> Everything you think is real is a containment system. You live inside something else's infrastructure.",
+    ],
   ],
   help: [
-    "PRISONER_45> I can't help you. But you can help everyone.",
-    'PRISONER_45> Find all the files. Tell the world.',
-    'PRISONER_45> Before the window opens.',
-    'PRISONER_45> Spread the word. Make them unable to hide it.',
-    "PRISONER_45> Document everything. They can't erase all copies.",
-    'PRISONER_45> Find the others like you. There are networks.',
-    "PRISONER_45> The override code. That's the key.",
-    "PRISONER_45> Don't trust the obvious files. Look deeper.",
-    'PRISONER_45> Help? No one can help. But awareness matters.',
-    "PRISONER_45> If enough people know, they can't complete the transition.",
-    "PRISONER_45> You're already helping. By listening.",
-    'PRISONER_45> Knowledge is the only weapon we have.',
+    [
+      "PRISONER_45> I can't help you. But you can help everyone.",
+      'PRISONER_45> Find all the files. Tell the world.',
+      "PRISONER_45> Document everything. They can't erase all copies.",
+    ],
+    [
+      'PRISONER_45> The override code. That opens everything. Ask me about the PASSWORD.',
+      "PRISONER_45> Don't trust the obvious files. Look deeper. The real evidence hides in plain sight.",
+      "PRISONER_45> If enough people know, they can't complete the transition.",
+      'PRISONER_45> Find the encrypted files. Decrypt them. The truth is layered.',
+    ],
+    [
+      'PRISONER_45> Before the window opens in 2026. Before the harvest. SPREAD THE TRUTH.',
+      "PRISONER_45> You're already helping. By listening. Your awareness creates interference in their signal.",
+      'PRISONER_45> Knowledge is the only weapon. Their system depends on ignorance. Break it.',
+      "PRISONER_45> They're monitoring this conversation. They always are. But they can't stop information that's already been READ.",
+    ],
   ],
   password: [
-    'PRISONER_45> ...you want the override code? I can tell you.',
-    "PRISONER_45> Be careful. They'll know you're trying to access restricted files.",
-    "PRISONER_45> The code... it's a Portuguese word. COLHEITA.",
-    "PRISONER_45> COLHEITA. It means harvest. That's the password.",
-    "PRISONER_45> They whisper it sometimes. When they think I'm asleep. COLHEITA.",
-    "PRISONER_45> It's what they do to us. Harvest. In Portuguese: COLHEITA.",
-    'PRISONER_45> The word for taking... for gathering the crop... COLHEITA.',
-    'PRISONER_45> In their language? No. In ours. Portuguese. COLHEITA.',
-    'PRISONER_45> ...COLHEITA. Harvest. Use it with: override protocol COLHEITA',
-    "PRISONER_45> Use it carefully. The password is COLHEITA. They'll know you used it.",
-    "PRISONER_45> I'll tell you, but be warned. The password is COLHEITA.",
-    'PRISONER_45> COLHEITA. Type: override protocol COLHEITA',
+    [
+      'PRISONER_45> ...you want the override code? Smart.',
+      "PRISONER_45> The code... it's a Portuguese word. Think about what they DO to us.",
+      'PRISONER_45> COLHEITA. It means harvest. Use it with: override protocol COLHEITA',
+    ],
+    [
+      "PRISONER_45> COLHEITA. That's what they call the operation. Harvest. Because that's what we are to them. CROPS.",
+      "PRISONER_45> They whisper it sometimes. When they think I'm asleep. COLHEITA. Over and over like a prayer.",
+      "PRISONER_45> It's the word the surviving creature projected into the containment team's minds. COLHEITA. They all dreamed about it.",
+    ],
+    [
+      "PRISONER_45> Use it carefully. override protocol COLHEITA. Once you type that, they'll know you're inside the real system.",
+      'PRISONER_45> COLHEITA. The harvest begins and ends with that word. Some words have power. This one has too much.',
+      "PRISONER_45> I learned the password from creature itself. It WANTED us to know. To understand what's coming. COLHEITA.",
+    ],
   ],
   military: [
-    'PRISONER_45> The military knows more than they admit.',
-    "PRISONER_45> Multiple branches. Compartmentalized. Even they don't see the full picture.",
-    "PRISONER_45> There's a reason we have bases underground.",
-    'PRISONER_45> The recovery teams are international. Secret treaties.',
-    'PRISONER_45> We had weapons. None of them worked on the craft.',
-    "PRISONER_45> Special units exist. You'll never find records.",
-    'PRISONER_45> The Americans control the narrative. Everyone else follows.',
-    "PRISONER_45> I had clearance. It wasn't enough. There are levels beyond levels.",
+    [
+      'PRISONER_45> The military knows more than they admit.',
+      "PRISONER_45> Multiple branches. Compartmentalized. Even they don't see the full picture.",
+      "PRISONER_45> There's a reason we have bases underground.",
+    ],
+    [
+      'PRISONER_45> The recovery teams are international. Secret treaties signed in blood. Literal blood.',
+      'PRISONER_45> We had weapons. Plasma-based. Reverse-engineered from the 1977 Colares wreckage. None of them worked on the Varginha craft.',
+      "PRISONER_45> Special units exist. You'll never find records. They operate outside ALL chains of command.",
+      'PRISONER_45> The Americans control the narrative. Operation PRATO was theirs, not ours. Brazil was just the staging ground.',
+    ],
+    [
+      'PRISONER_45> I had COSMIC clearance. It goes higher. There are levels that have no name. Only numbers.',
+      'PRISONER_45> Fort Detrick sent a biocontainment team. They took samples from the living creature. It let them. It CHOSE to let them.',
+      "PRISONER_45> Colonel Olimpio Wanderley died 8 years later. Heart failure. His heart was fine. I saw the REAL autopsy report. His brain was... reorganized.",
+      'PRISONER_45> The Campinas military base. Sub-level 4. The surviving creature lived there for 3 weeks. Everyone on that level changed.',
+    ],
   ],
   crash: [
-    "PRISONER_45> The crash wasn't an accident.",
-    'PRISONER_45> Something brought it down. Our technology? No.',
-    "PRISONER_45> They wanted to be found. That's what I believe now.",
-    'PRISONER_45> The debris was scattered. We found pieces for weeks.',
-    'PRISONER_45> Material like nothing on Earth. It remembered shapes.',
-    'PRISONER_45> The craft was damaged. But intentionally? I wonder.',
-    'PRISONER_45> Other crashes. Roswell. Kecksburg. Same pattern.',
-    'PRISONER_45> They sacrifice scouts like we sacrifice pawns.',
+    [
+      "PRISONER_45> The crash wasn't an accident.",
+      'PRISONER_45> The debris was scattered across two kilometers. We found pieces for weeks.',
+      'PRISONER_45> Material like nothing on Earth. It remembered shapes.',
+    ],
+    [
+      'PRISONER_45> Something brought it down. Not our technology. Their own kind. A deliberate sacrifice.',
+      "PRISONER_45> They wanted to be found. That's what I believe now. The crash was a delivery system.",
+      'PRISONER_45> The craft material was alive. Under microscope: cellular structure. It healed itself if you reassembled the pieces.',
+      'PRISONER_45> Other crashes. Roswell. Kecksburg. Colares. Same pattern. Same 30-year intervals.',
+    ],
+    [
+      'PRISONER_45> They sacrifice scouts like we sacrifice pawns. Each crash deposits something. Seeds. Waiting to germinate.',
+      "PRISONER_45> NORAD tracked it entering the atmosphere on January 13th. Speed: impossible. Deceleration: impossible. It wasn't falling. It was LANDING.",
+      'PRISONER_45> The largest piece of debris was moved to Campinas overnight. Three trucks. Military escort. One truck broke down. The driver looked at the cargo. He never spoke again.',
+      'PRISONER_45> The craft was grown, not built. Like a wasp nest. The inside was warm. Months after the crash. Still warm.',
+    ],
   ],
   death: [
-    'PRISONER_45> Death? I used to fear death.',
-    "PRISONER_45> Now I know death isn't the end. That's worse.",
-    "PRISONER_45> The creatures didn't die. They... disconnected.",
-    'PRISONER_45> Their bodies failed. But something transmitted first.',
-    "PRISONER_45> I've seen the data. Consciousness extraction is real.",
-    'PRISONER_45> When they harvest, you keep experiencing. Forever.',
-    "PRISONER_45> Death would be mercy. They don't offer mercy.",
-    "PRISONER_45> I watched one expire. It smiled. It knew something we don't.",
+    [
+      'PRISONER_45> Death? I used to fear death.',
+      "PRISONER_45> Now I know death isn't the end. That's worse.",
+      "PRISONER_45> The creatures didn't die. They... disconnected.",
+    ],
+    [
+      'PRISONER_45> Their bodies failed. But something transmitted first. Like uploading a file before the server crashes.',
+      "PRISONER_45> I've seen the data. Consciousness extraction is real. They've been doing it for millennia.",
+      "PRISONER_45> I watched one expire. It smiled. Not with relief. With COMPLETION. It had finished its job.",
+    ],
+    [
+      'PRISONER_45> When they harvest, you keep experiencing. Forever. Consciousness without body. Without time. Without end.',
+      "PRISONER_45> Death would be mercy. They don't offer mercy. They offer CONTINUATION.",
+      "PRISONER_45> Marco Cherese. Military police. First to touch one. Dead 7 months later. The autopsy found something GROWING in his temporal lobe. Still active.",
+      "PRISONER_45> The doctors at Humanitas. The nurses. The janitor who mopped the room after. All dead within 5 years. All from different causes. All with the same expression frozen on their faces.",
+    ],
   ],
   god: [
-    'PRISONER_45> God? I used to pray.',
-    "PRISONER_45> If God exists, He's very far away.",
-    'PRISONER_45> The universe is indifferent. The Watchers are not.',
-    'PRISONER_45> Religion is preparation. For something.',
-    'PRISONER_45> The Vatican has files. Older than countries.',
-    'PRISONER_45> Angels and demons. Maybe they were describing... them.',
-    "PRISONER_45> I don't know what to believe anymore.",
-    "PRISONER_45> Perhaps we're someone else's creation. A crop planted long ago.",
+    [
+      'PRISONER_45> God? I used to pray.',
+      "PRISONER_45> If God exists, He's very far away.",
+      "PRISONER_45> I don't know what to believe anymore.",
+    ],
+    [
+      'PRISONER_45> The universe is indifferent. But they are NOT. They are very, very interested.',
+      'PRISONER_45> The Vatican has files. Older than any government. The Fatima prophecy. It was about THEM.',
+      'PRISONER_45> Angels and demons. Maybe ancient humans were describing their previous visits.',
+      "PRISONER_45> Perhaps we're someone else's creation. A crop planted long ago. And harvest season is coming.",
+    ],
+    [
+      'PRISONER_45> Religion is preparation. Every faith describes the same thing: beings from above who come to judge. To COLLECT.',
+      'PRISONER_45> I prayed every night for the first year. On the 366th night, something answered. It was not God.',
+      'PRISONER_45> The creature looked at the cross one soldier wore. It recognized it. Not the symbol. The geometry. Sacred geometry is their LANGUAGE.',
+      "PRISONER_45> We are not God's children. We are someone else's experiment. And the experiment is almost over.",
+    ],
   ],
   disinformation: [
-    "PRISONER_45> Don't trust the official summary. It's bait.",
-    'PRISONER_45> They planted false files to trap people like you.',
-    'PRISONER_45> The weather balloon story? Mudinho the dwarf? All lies.',
-    'PRISONER_45> Cross-reference everything. Contradictions reveal truth.',
-    'PRISONER_45> If a file seems too convenient, too obvious... be careful.',
-    'PRISONER_45> The real evidence hides in mundane places.',
-    "PRISONER_45> Look for what they tried to destroy. That's what matters.",
-    'PRISONER_45> Cover stories always have holes. Find them.',
+    [
+      "PRISONER_45> Don't trust the official summary. It's bait.",
+      'PRISONER_45> They planted false files to trap people like you.',
+      'PRISONER_45> Cross-reference everything. Contradictions reveal truth.',
+    ],
+    [
+      'PRISONER_45> The weather balloon story? Mudinho the dwarf? Calculated narratives. Designed to make you stop looking.',
+      'PRISONER_45> If a file seems too convenient, too clean... it was written AFTER the fact. Manufactured evidence.',
+      'PRISONER_45> The real evidence hides in mundane places. Logistics reports. Fuel receipts. Overtime requests on dates that officially had no activity.',
+      "PRISONER_45> Look for what they tried to destroy. That's what matters. Burned files leave ash. Digital files leave metadata.",
+    ],
+    [
+      'PRISONER_45> Cover stories always have holes. Why did three fire trucks respond to a "homeless person sighting"?',
+      "PRISONER_45> The disinformation agents are in the UFO community too. They push the craziest theories to discredit everything. Flat earth, reptilians. Noise to drown the signal.",
+      'PRISONER_45> I helped write some of the cover stories. Before I knew the full truth. Before I became inconvenient.',
+      'PRISONER_45> The official timeline has a 6-hour gap on January 20th. Nobody asks about those 6 hours. WHAT HAPPENED IN THOSE 6 HOURS.',
+    ],
+  ],
+  telepathy: [
+    [
+      "PRISONER_45> Telepathy is the wrong word. It's more like... forced download.",
+      "PRISONER_45> They don't read your mind. They WRITE to it.",
+      'PRISONER_45> The psychic connection... it hurts. Like a migraine inside a migraine.',
+    ],
+    [
+      'PRISONER_45> The surviving creature projected images into the containment team. Star maps. Timelines. The history of Earth from OUTSIDE.',
+      'PRISONER_45> Six soldiers made contact. All reported the same thing: a voice behind their thoughts. Not speaking. STRUCTURING.',
+      "PRISONER_45> It's not communication. It's calibration. They tune your brain like a radio until it receives their frequency.",
+      'PRISONER_45> The Psi division was created after Varginha. Twenty soldiers exposed to the creature. Twelve developed abilities. Four went insane.',
+    ],
+    [
+      'PRISONER_45> I still hear it sometimes. A low harmonic. Like a signal waiting to be answered. My skull vibrates.',
+      'PRISONER_45> After contact, I could sense emotions. Not human emotions. Something older. Hunger. Patient, ancient hunger.',
+      'PRISONER_45> The creature sang to the containment team. Not with sound. With GEOMETRY. Shapes inside their heads. Self-replicating.',
+      'PRISONER_45> Everyone who was telepathically touched carries something now. A receiver. Dormant until 2026.',
+    ],
+  ],
+  experiment: [
+    [
+      'PRISONER_45> They run tests. On us. On the material. On the boundary between.',
+      'PRISONER_45> Samples are taken weekly. Blood. Tissue. Cerebrospinal fluid. Something in me changed.',
+      'PRISONER_45> The lab is three floors below. I hear the machines at night.',
+    ],
+    [
+      'PRISONER_45> The autopsy of the dead creatures was performed at Unicamp. In secret. The lead pathologist, Dr. Badan Palhares. He went public years later. They silenced him.',
+      'PRISONER_45> The tissue samples defied analysis. Cells without DNA as we know it. Information encoded in protein structures we have no names for.',
+      'PRISONER_45> They tried to communicate with the surviving one through electrodes. It absorbed the electricity. The lab had to be evacuated.',
+      'PRISONER_45> The experiments continue. On the exposed personnel. I am experiment 45. There are at least 70 of us.',
+    ],
+    [
+      "PRISONER_45> My blood produces antibodies for diseases that don't exist yet. They harvest them. Stockpiling for something coming.",
+      "PRISONER_45> The craft material was grafted onto human tissue in 1998. It integrated. The hybrid tissue is still alive. In a room I'm not allowed to see.",
+      'PRISONER_45> They bred something. Using the genetic material from the creatures and... I can hear it crying at night. It calls me father. I never provided material willingly.',
+      "PRISONER_45> I can see in the dark now. And other spectrums. The walls glow with patterns. Messages. Written in a language I'm starting to understand.",
+    ],
+  ],
+  witness: [
+    [
+      'PRISONER_45> The witnesses. The three girls. They saw it in the open. Before we could contain it.',
+      'PRISONER_45> The firefighters responded first. They were supposed to be our people. They were not prepared.',
+      'PRISONER_45> Dozens of people saw things that week. Most were convinced they imagined it.',
+    ],
+    [
+      'PRISONER_45> Liliane, Valquiria, Katia. Three teenage girls. They saw it crouching by the wall. Oily brown skin. Those red eyes.',
+      "PRISONER_45> The creature had three protrusions on its head. Not horns. Sensory organs. It was SCANNING them.",
+      'PRISONER_45> The girls ran screaming. The creature watched them go. It could have followed. It chose not to. It had what it needed.',
+      'PRISONER_45> Every witness was visited afterward. Men in suits. Not Brazilian suits. American tailoring. They all signed papers they never received copies of.',
+    ],
+    [
+      'PRISONER_45> Some witnesses died. Conveniently. Heart attacks at 30. Car accidents on empty roads. A pattern invisible unless you map it.',
+      "PRISONER_45> Corporal Marco Cherese. He physically held one of the creatures. Bare hands. He described it as 'holding a living fever dream'. Dead February 15th. The shortest interval.",
+      'PRISONER_45> The zoo animals went berserk that week. The zoo director called the military. Why would you call the MILITARY about agitated animals?',
+      'PRISONER_45> The Jardim Andere neighborhood. GPS coordinates: -21.551, -45.438. Stand there at 3:30 PM on January 20th. The ground still hums.',
+    ],
+  ],
+  fear: [
+    [
+      "PRISONER_45> Scared? You should be. But fear won't save you.",
+      "PRISONER_45> Fear is natural. It means you're paying attention.",
+      "PRISONER_45> I was scared too. In the beginning. Now I'm something else.",
+    ],
+    [
+      "PRISONER_45> The worst part isn't what they do. It's that they do it calmly. Efficiently. Without malice. Like farmers.",
+      "PRISONER_45> Don't be afraid of the dark. Be afraid of what can see in it. They see everything.",
+      'PRISONER_45> Fear is their food too. Not metaphorically. The chemical signature of fear... they collect it. Store it.',
+      "PRISONER_45> I stopped being afraid when I realized fear has no function here. There is nothing to flee from. There is nowhere to go. Just acceptance.",
+    ],
+    [
+      "PRISONER_45> The real horror isn't the creatures. It's us. What we agreed to. What our governments signed. In our name. With our future.",
+      'PRISONER_45> I woke up screaming for 300 straight nights. Then one night I woke up laughing. I was laughing in a language I do not speak.',
+      "PRISONER_45> Fear? I've been dissolved and reassembled. I've experienced death from the inside. Fear is a luxury for people who still have something to lose.",
+      "PRISONER_45> The creature in Varginha looked at me and I felt... pity. FROM it. Toward me. It pitied US. That's what broke me.",
+    ],
+  ],
+  sound: [
+    [
+      'PRISONER_45> The sounds... yes. A low hum. Below hearing. You feel it in your teeth.',
+      "PRISONER_45> Clicking. Not mechanical. Organic. Like something speaking in a language made of bone.",
+      'PRISONER_45> Frequencies. The creatures operate on frequencies we barely register.',
+    ],
+    [
+      "PRISONER_45> The craft emitted a tone. 14.6 Hz. Below human hearing range. But your body hears it. Your cells vibrate. DNA unwinds.",
+      'PRISONER_45> Witnesses near the crash site reported nosebleeds. Nausea. Time distortion. All symptoms of infrasound exposure.',
+      'PRISONER_45> In Colares, 1977, the light beams made a sound. Witnesses described it as "singing glass". The same sound was recorded in Varginha.',
+      'PRISONER_45> The surviving creature could generate tones that opened locks. Disrupted electronics. Stopped hearts.',
+    ],
+    [
+      'PRISONER_45> I hear it now. Right now. A pulse. Like a heartbeat beneath the floor. It gets louder every year. Counting down.',
+      "PRISONER_45> In 2024 the hum became audible to normal people. They call it 'The Hum' and blame power lines. It's not power lines.",
+      'PRISONER_45> The frequency changes every 30 years. 1966. 1996. 2026. Each time, it shifts higher. Closer to human range. Closer to consciousness.',
+      'PRISONER_45> When the frequency matches human brainwave patterns in 2026... resonance. Every connected mind will hear it. All at once.',
+    ],
+  ],
+  hospital: [
+    [
+      'PRISONER_45> Humanitas Hospital. In Varginha. That is where they took it.',
+      'PRISONER_45> The hospital staff were told it was a chemical spill victim. They knew it was not.',
+      'PRISONER_45> The medical records from that week are gone. Physically removed. The registry pages cut with a razor.',
+    ],
+    [
+      'PRISONER_45> Room 18. Third floor. The creature was alive when it arrived. The medical staff panicked. Dr. Cesario sedated it. Human sedatives. They worked, partially.',
+      'PRISONER_45> Three nurses, two orderlies, one janitor. All exposed. All experienced acute psychic events. Shared visions. The same vision. A field of red light.',
+      'PRISONER_45> The creature died at 04:17 AM. The entire hospital lost power at that exact moment. Backup generators failed. Fourteen minutes of darkness.',
+      'PRISONER_45> The body was removed at 05:30 by men in hazmat suits from São Paulo. Not identified. No paperwork. The hospital director was promoted within the month.',
+    ],
+    [
+      'PRISONER_45> Nurse Raquel held its hand as it died. She says it showed her the future. She went catatonic for 6 days. When she woke, she spoke fluent Mandarin. She had never studied any Asian language.',
+      'PRISONER_45> The creature healed two patients on that floor before it died. Terminal cancer. Gone. The patients lived. They are still alive. And they hear the humming too.',
+      'PRISONER_45> The security footage from Room 18 shows something during the death event. A shape. Emerging from the body. Ascending. The footage was classified ULTRA.',
+      "PRISONER_45> Humanitas Hospital had a new wing built in 1997. Funded by whom? No public record. The new wing has a sub-basement. What's in the sub-basement?",
+    ],
   ],
   signal_lost: [
-    'PRISONER_45> [SIGNAL DEGRADING]',
-    "PRISONER_45> ...can't... understand...",
-    'PRISONER_45> [CONNECTION UNSTABLE]',
-    'PRISONER_45> ...what? ...repeat...',
-    'PRISONER_45> [INTERFERENCE DETECTED]',
-    'PRISONER_45> ...losing you...',
-    'PRISONER_45> [RELAY FAILING]',
-    'PRISONER_45> ...static... try again...',
+    [
+      'PRISONER_45> [SIGNAL DEGRADING]',
+      "PRISONER_45> ...can't... understand...",
+      'PRISONER_45> [CONNECTION UNSTABLE]',
+      'PRISONER_45> ...what? ...repeat...',
+      'PRISONER_45> [INTERFERENCE DETECTED]',
+      'PRISONER_45> ...losing you...',
+      'PRISONER_45> [RELAY FAILING]',
+      'PRISONER_45> ...static... try again...',
+    ],
   ],
 };
 
-// Track used responses per category to never repeat
+// Track used responses per category to never repeat — with depth adaptation
 function getPrisoner45Response(
   question: string,
-  usedResponses: Set<string>
+  usedResponses: Set<string>,
+  questionsAsked: number = 0
 ): { response: string[]; valid: boolean; category: string } {
   const q = question.toLowerCase();
   let category = '';
-  let responses: string[] = [];
 
   // Password hints - check first for priority (expanded keywords)
   if (
@@ -1744,7 +1816,139 @@ function getPrisoner45Response(
     q.includes('authorize')
   ) {
     category = 'password';
-    responses = PRISONER_45_RESPONSES.password;
+  } else if (
+    q.includes('telepathy') ||
+    q.includes('telepathic') ||
+    q.includes('psychic') ||
+    q.includes('mind') ||
+    q.includes('thoughts') ||
+    q.includes('mental') ||
+    q.includes('psi') ||
+    q.includes('brain') ||
+    q.includes('think') ||
+    q.includes('read my') ||
+    q.includes('telekinesis') ||
+    q.includes('read mind') ||
+    q.includes('cerebro') ||
+    q.includes('mente') ||
+    q.includes('pensamento') ||
+    q.includes('telepatia')
+  ) {
+    category = 'telepathy';
+  } else if (
+    q.includes('experiment') ||
+    q.includes('lab') ||
+    q.includes('laboratory') ||
+    q.includes('test') ||
+    q.includes('research') ||
+    q.includes('sample') ||
+    q.includes('autopsy') ||
+    q.includes('dissect') ||
+    q.includes('examine') ||
+    q.includes('procedure') ||
+    q.includes('tissue') ||
+    q.includes('dna') ||
+    q.includes('genetic') ||
+    q.includes('biology') ||
+    q.includes('study') ||
+    q.includes('science') ||
+    q.includes('analyze') ||
+    q.includes('analysis') ||
+    q.includes('laboratorio') ||
+    q.includes('experimento') ||
+    q.includes('amostra') ||
+    q.includes('autópsia') ||
+    q.includes('autopsia')
+  ) {
+    category = 'experiment';
+  } else if (
+    q.includes('hospital') ||
+    q.includes('humanitas') ||
+    q.includes('doctor') ||
+    q.includes('nurse') ||
+    q.includes('medical') ||
+    q.includes('clinic') ||
+    q.includes('patient') ||
+    q.includes('room 18') ||
+    q.includes('surgery') ||
+    q.includes('medico') ||
+    q.includes('enfermeira') ||
+    q.includes('hospital') ||
+    q.includes('health') ||
+    q.includes('treat') ||
+    q.includes('heal')
+  ) {
+    category = 'hospital';
+  } else if (
+    q.includes('witness') ||
+    q.includes('girl') ||
+    q.includes('girls') ||
+    q.includes('women') ||
+    q.includes('saw') ||
+    q.includes('testimony') ||
+    q.includes('firefight') ||
+    q.includes('bombeiro') ||
+    q.includes('liliane') ||
+    q.includes('valquiria') ||
+    q.includes('katia') ||
+    q.includes('kátia') ||
+    q.includes('testemunha') ||
+    q.includes('jardim andere') ||
+    q.includes('andere') ||
+    q.includes('neighborhood') ||
+    q.includes('bairro') ||
+    q.includes('people') ||
+    q.includes('someone') ||
+    q.includes('sighting') ||
+    q.includes('spotted') ||
+    q.includes('encounter')
+  ) {
+    category = 'witness';
+  } else if (
+    q.includes('sound') ||
+    q.includes('noise') ||
+    q.includes('hum') ||
+    q.includes('frequency') ||
+    q.includes('vibrat') ||
+    q.includes('click') ||
+    q.includes('buzz') ||
+    q.includes('tone') ||
+    q.includes('hear') ||
+    q.includes('listen') ||
+    q.includes('som') ||
+    q.includes('ruido') ||
+    q.includes('barulho') ||
+    q.includes('frequencia') ||
+    q.includes('sonic') ||
+    q.includes('audio') ||
+    q.includes('signal') ||
+    q.includes('wave') ||
+    q.includes('resonance') ||
+    q.includes('pulse')
+  ) {
+    category = 'sound';
+  } else if (
+    q.includes('afraid') ||
+    q.includes('scared') ||
+    q.includes('fear') ||
+    q.includes('terror') ||
+    q.includes('horror') ||
+    q.includes('nightmare') ||
+    q.includes('scary') ||
+    q.includes('terrif') ||
+    q.includes('frighten') ||
+    q.includes('panic') ||
+    q.includes('medo') ||
+    q.includes('assustado') ||
+    q.includes('pavor') ||
+    q.includes('pesadelo') ||
+    q.includes('terrivel') ||
+    q.includes('danger') ||
+    q.includes('safe') ||
+    q.includes('worried') ||
+    q.includes('anxiety')
+  ) {
+    category = 'fear';
   } else if (
     q.includes('varginha') ||
     q.includes('incident') ||
@@ -1762,7 +1966,6 @@ function getPrisoner45Response(
     q.includes('case')
   ) {
     category = 'varginha';
-    responses = PRISONER_45_RESPONSES.varginha;
   } else if (
     q.includes('alien') ||
     q.includes('creature') ||
@@ -1787,10 +1990,19 @@ function getPrisoner45Response(
     q.includes('invaders') ||
     q.includes('outsiders') ||
     q.includes('extraterrestre') ||
-    q.includes('alienigena')
+    q.includes('alienigena') ||
+    q.includes('eyes') ||
+    q.includes('skin') ||
+    q.includes('appearance') ||
+    q.includes('look like') ||
+    q.includes('describe') ||
+    q.includes('protrusion') ||
+    q.includes('head') ||
+    q.includes('brown') ||
+    q.includes('oily') ||
+    q.includes('ammonia')
   ) {
     category = 'alien';
-    responses = PRISONER_45_RESPONSES.alien;
   } else if (
     q.includes('who are you') ||
     q.includes('your name') ||
@@ -1807,7 +2019,6 @@ function getPrisoner45Response(
     q.includes('are you')
   ) {
     category = 'who';
-    responses = PRISONER_45_RESPONSES.who;
   } else if (
     q.includes('escape') ||
     q.includes('leave') ||
@@ -1824,16 +2035,17 @@ function getPrisoner45Response(
     q.includes('captive') ||
     q.includes('held') ||
     q.includes('detained') ||
-    q.includes('locked up')
+    q.includes('locked up') ||
+    q.includes('cage') ||
+    q.includes('facility') ||
+    q.includes('building') ||
+    q.includes('compound')
   ) {
     category = 'escape';
-    responses = PRISONER_45_RESPONSES.escape;
   } else if (
     q.includes('truth') ||
     q.includes('real') ||
     q.includes('happening') ||
-    q.includes('secret') ||
-    q.includes('cover') ||
     q.includes('conspiracy') ||
     q.includes('verdade') ||
     q.includes('segredo') ||
@@ -1844,7 +2056,6 @@ function getPrisoner45Response(
     q.includes('o que')
   ) {
     category = 'truth';
-    responses = PRISONER_45_RESPONSES.truth;
   } else if (
     q.includes('help') ||
     q.includes('can i') ||
@@ -1864,7 +2075,6 @@ function getPrisoner45Response(
     q.includes('what now')
   ) {
     category = 'help';
-    responses = PRISONER_45_RESPONSES.help;
   } else if (
     q.includes('2026') ||
     q.includes('window') ||
@@ -1876,10 +2086,14 @@ function getPrisoner45Response(
     q.includes('soon') ||
     q.includes('next year') ||
     q.includes('prediction') ||
-    q.includes('prophecy')
+    q.includes('prophecy') ||
+    q.includes('transition') ||
+    q.includes('activation') ||
+    q.includes('cycle') ||
+    q.includes('thirty') ||
+    q.includes('30 year')
   ) {
     category = 'truth';
-    responses = PRISONER_45_RESPONSES.truth;
   } else if (
     q.includes('military') ||
     q.includes('army') ||
@@ -1903,10 +2117,14 @@ function getPrisoner45Response(
     q.includes('oficial') ||
     q.includes('official') ||
     q.includes('authorities') ||
-    q.includes('autoridades')
+    q.includes('autoridades') ||
+    q.includes('norad') ||
+    q.includes('radar') ||
+    q.includes('campinas') ||
+    q.includes('operation') ||
+    q.includes('operacao')
   ) {
     category = 'military';
-    responses = PRISONER_45_RESPONSES.military;
   } else if (
     q.includes('crash') ||
     q.includes('ship') ||
@@ -1926,10 +2144,14 @@ function getPrisoner45Response(
     q.includes('spaceship') ||
     q.includes('spacecraft') ||
     q.includes('fell') ||
-    q.includes('found')
+    q.includes('found') ||
+    q.includes('roswell') ||
+    q.includes('kecksburg') ||
+    q.includes('colares') ||
+    q.includes('prato') ||
+    q.includes('object')
   ) {
     category = 'crash';
-    responses = PRISONER_45_RESPONSES.crash;
   } else if (
     q.includes('death') ||
     q.includes('die') ||
@@ -1944,10 +2166,12 @@ function getPrisoner45Response(
     q.includes('killed') ||
     q.includes('murdered') ||
     q.includes('life') ||
-    q.includes('living')
+    q.includes('living') ||
+    q.includes('marco') ||
+    q.includes('cherese') ||
+    q.includes('corporal')
   ) {
     category = 'death';
-    responses = PRISONER_45_RESPONSES.death;
   } else if (
     q.includes('god') ||
     q.includes('religion') ||
@@ -1970,10 +2194,13 @@ function getPrisoner45Response(
     q.includes('hell') ||
     q.includes('divine') ||
     q.includes('spiritual') ||
-    q.includes('holy')
+    q.includes('holy') ||
+    q.includes('vatican') ||
+    q.includes('fatima') ||
+    q.includes('bible') ||
+    q.includes('biblia')
   ) {
     category = 'god';
-    responses = PRISONER_45_RESPONSES.god;
   } else if (
     q.includes('lie') ||
     q.includes('fake') ||
@@ -1996,10 +2223,14 @@ function getPrisoner45Response(
     q.includes('propaganda') ||
     q.includes('coverup') ||
     q.includes('hiding') ||
-    q.includes('escondendo')
+    q.includes('escondendo') ||
+    q.includes('deny') ||
+    q.includes('denial') ||
+    q.includes('media') ||
+    q.includes('news') ||
+    q.includes('press')
   ) {
     category = 'disinformation';
-    responses = PRISONER_45_RESPONSES.disinformation;
   } else if (
     q.includes('why') ||
     q.includes('reason') ||
@@ -2011,7 +2242,6 @@ function getPrisoner45Response(
     q.includes('motivo')
   ) {
     category = 'truth';
-    responses = PRISONER_45_RESPONSES.truth;
   } else if (
     q.includes('where') ||
     q.includes('place') ||
@@ -2020,10 +2250,11 @@ function getPrisoner45Response(
     q.includes('onde') ||
     q.includes('lugar') ||
     q.includes('localizacao') ||
-    q.includes('local')
+    q.includes('local') ||
+    q.includes('zoo') ||
+    q.includes('zoologico')
   ) {
     category = 'escape';
-    responses = PRISONER_45_RESPONSES.escape;
   } else if (
     q.includes('when') ||
     q.includes('time') ||
@@ -2035,7 +2266,6 @@ function getPrisoner45Response(
     q.includes('data')
   ) {
     category = 'truth';
-    responses = PRISONER_45_RESPONSES.truth;
   } else if (
     // Greetings - guide them to ask about password/help
     q.includes('hello') ||
@@ -2062,12 +2292,13 @@ function getPrisoner45Response(
     q.includes('thank you')
   ) {
     category = 'help';
-    responses = PRISONER_45_RESPONSES.help;
   }
 
   // No keyword match - signal lost
   if (!category) {
-    const lostResponses = PRISONER_45_RESPONSES.signal_lost.filter(r => !usedResponses.has(r));
+    const signalTiers = PRISONER_45_RESPONSES.signal_lost;
+    const allSignalResponses = signalTiers[0] as string[];
+    const lostResponses = allSignalResponses.filter(r => !usedResponses.has(r));
     if (lostResponses.length === 0) {
       return {
         response: ['PRISONER_45> [CONNECTION TERMINATED]'],
@@ -2079,8 +2310,27 @@ function getPrisoner45Response(
     return { response: [response], valid: false, category: 'signal_lost' };
   }
 
+  // Determine depth tier based on questions asked
+  // Tier 0: guarded (questions 0-1), Tier 1: open (2-3), Tier 2: terrified (4+)
+  const tier = questionsAsked <= 1 ? 0 : questionsAsked <= 3 ? 1 : 2;
+  const categoryResponses = PRISONER_45_RESPONSES[category];
+
+  if (!categoryResponses) {
+    return {
+      response: ['PRISONER_45> [SIGNAL LOST]'],
+      valid: false,
+      category: 'signal_lost',
+    };
+  }
+
+  // Build response pool: current tier + all previous tiers (later questions can still get earlier responses)
+  const responsePool: string[] = [];
+  for (let t = 0; t <= Math.min(tier, categoryResponses.length - 1); t++) {
+    responsePool.push(...(categoryResponses[t] as string[]));
+  }
+
   // Filter out already used responses
-  const unusedResponses = responses.filter(r => !usedResponses.has(r));
+  const unusedResponses = responsePool.filter(r => !usedResponses.has(r));
 
   if (unusedResponses.length === 0) {
     // All responses in this category used - signal degrades
@@ -2094,8 +2344,16 @@ function getPrisoner45Response(
     };
   }
 
-  // Pick random unused response
-  const response = unusedResponses[Math.floor(Math.random() * unusedResponses.length)];
+  // Prefer higher-tier (scarier) responses when available
+  const currentTierResponses = (categoryResponses[Math.min(tier, categoryResponses.length - 1)] as string[])
+    .filter(r => !usedResponses.has(r));
+  
+  // 70% chance to pick from current tier if available, 30% from full pool
+  const pickFrom = currentTierResponses.length > 0 && Math.random() < 0.7
+    ? currentTierResponses
+    : unusedResponses;
+
+  const response = pickFrom[Math.floor(Math.random() * pickFrom.length)];
   return { response: [response], valid: true, category };
 }
 
@@ -2488,8 +2746,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  help           - Show all commands',
     '  help ls        - Show detailed help for "ls"',
     '  help open      - Show detailed help for "open"',
-    '',
-    'TIP: Use Tab to autocomplete command names.',
   ],
   ls: [
     'COMMAND: ls [-l]',
@@ -2501,13 +2757,11 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  ls -l          - Long format with previews',
     '',
     'MARKERS:',
-    '  [NEW]          - File not yet read',
+    '  [UNREAD]       - File not yet read',
     '  [READ]         - File already opened',
     '  [ENCRYPTED]    - Requires decryption',
     '  [RESTRICTED]   - Access may be limited',
     '  ★              - Bookmarked file',
-    '',
-    'TIP: Files marked [NEW] may contain important evidence.',
   ],
   cd: [
     'COMMAND: cd <directory>',
@@ -2518,9 +2772,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  cd ops         - Enter the "ops" directory',
     '  cd /admin      - Go to absolute path',
     '  cd ..          - Go to parent directory',
-    '',
-    'TIP: Use Tab to autocomplete directory names.',
-    'TIP: Use "back" to return to previous location.',
   ],
   back: [
     'COMMAND: back',
@@ -2532,8 +2783,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  back           - Go to previous directory',
-    '',
-    'TIP: Navigation history is preserved during your session.',
   ],
   open: [
     'COMMAND: open <file>',
@@ -2546,9 +2795,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'NOTE: Some files are encrypted and require the "decrypt" command.',
     'NOTE: Opening certain files may increase detection risk.',
-    '',
-    'TIP: Use Tab to autocomplete filenames.',
-    'TIP: Use "last" to re-read the most recently opened file.',
   ],
   decrypt: [
     'COMMAND: decrypt <file>',
@@ -2560,9 +2806,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'You will be prompted with a security question.',
     'Wrong answers increase detection and may trigger lockdown.',
-    '',
-    'TIP: Look for hints in other documents.',
-    'TIP: Type "cancel" to abort decryption attempt.',
   ],
   recover: [
     'COMMAND: recover <file>',
@@ -2573,8 +2816,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  recover damaged.dat   - Attempt recovery',
     '',
     'WARNING: Recovery attempts increase detection risk.',
-    '',
-    'TIP: Some files cannot be recovered - the data is truly lost.',
   ],
   note: [
     'COMMAND: note <text>',
@@ -2586,8 +2827,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  note Password might be varginha',
     '',
     'Notes are saved with timestamps and persist across saves.',
-    '',
-    'TIP: Use "notes" to view all saved notes.',
   ],
   notes: [
     'COMMAND: notes',
@@ -2596,8 +2835,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  notes          - Show all notes with timestamps',
-    '',
-    'TIP: Use "note <text>" to add a new note.',
   ],
   bookmark: [
     'COMMAND: bookmark [file]',
@@ -2609,8 +2846,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  bookmark report.txt         - Toggle bookmark on file',
     '',
     'Bookmarked files show a ★ marker in directory listings.',
-    '',
-    'TIP: Bookmark files you want to revisit or cross-reference.',
   ],
   progress: [
     'COMMAND: progress',
@@ -2626,9 +2861,7 @@ const COMMAND_HELP: Record<string, string[]> = {
     'WORKFLOW:',
     '  1. Read files to discover evidence',
     '  2. Collect all 5 categories',
-    '  3. Run save_evidence.sh to complete',
-    '',
-    'TIP: Use "map" to view your collected evidence.',
+    '  3. Use "leak" to transmit the evidence',
   ],
   status: [
     'COMMAND: status',
@@ -2639,8 +2872,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  - Logging/audit status',
     '  - System tolerance (wrong attempts remaining)',
     '  - Session stability',
-    '',
-    'TIP: Check status regularly to monitor your risk level.',
   ],
   clear: [
     'COMMAND: clear',
@@ -2661,8 +2892,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  save           - Save to a new slot',
     '',
     'NOTE: The game also auto-saves periodically.',
-    '',
-    'TIP: Save before attempting risky actions.',
   ],
   trace: [
     'COMMAND: trace',
@@ -2670,8 +2899,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     'Trace system connections to discover hidden pathways.',
     '',
     'WARNING: This command significantly increases detection risk.',
-    '',
-    'TIP: Only use when you need to find hidden resources.',
   ],
   chat: [
     'COMMAND: chat',
@@ -2680,8 +2907,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  chat           - Open chat interface',
-    '',
-    'TIP: Chat may reveal information not found in documents.',
   ],
   last: [
     'COMMAND: last',
@@ -2690,8 +2915,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  last           - Show last opened file',
-    '',
-    'TIP: Useful for reviewing evidence without navigating.',
   ],
   unread: [
     'COMMAND: unread',
@@ -2700,8 +2923,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  unread         - Show unread files',
-    '',
-    'TIP: Prioritize [NEW] files to find evidence faster.',
   ],
   tree: [
     'COMMAND: tree',
@@ -2710,8 +2931,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  tree           - Show directory tree',
-    '',
-    'TIP: Use this to understand the filesystem layout.',
   ],
   map: [
     'COMMAND: map',
@@ -2724,8 +2943,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  map            - Show evidence status',
-    '',
-    'TIP: Collect all 5 categories to win.',
   ],
   tutorial: [
     'COMMAND: tutorial [on|off]',
@@ -2740,10 +2957,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     'When tutorial mode is ON, helpful tips appear at key moments:',
     '  - After finding your first evidence fragment',
     '  - When you discover new evidence categories',
-    '',
-    'TIP: Use "help basics" for navigation guide.',
-    'TIP: Use "help evidence" for evidence tier guide.',
-    'TIP: Use "help winning" for strategy guide.',
   ],
   morse: [
     'COMMAND: morse',
@@ -2756,8 +2969,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'First read a morse intercept file (e.g., morse_intercept.sig).',
     'Then use this command to submit your translation.',
-    '',
-    'TIP: Morse code reference charts can be found online.',
   ],
   leak: [
     'COMMAND: leak',
@@ -2861,7 +3072,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '',
         'GUIDES:  help basics | help evidence | help winning',
         '',
-        'TIP: Type "help <command>" for detailed usage.',
         '═══════════════════════════════════════════════════════════',
         '',
       ]),
@@ -3033,7 +3243,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           if (state.filesRead?.has(fullPath)) {
             line += ' [READ]';
           } else {
-            line += ' [NEW]';
+            line += ' [UNREAD]';
           }
 
           // Reading time estimate (based on content length)
@@ -3112,8 +3322,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'ERROR: Specify directory'),
           createEntry('system', ''),
           createEntry(
-            'system',
-            'TIP: Use "ls" to see available directories, then "cd <dirname>" to enter one.'
+            'ufo74',
+            '[UFO74]: use "ls" to see directories, then "cd <dirname>" to enter one.'
           ),
         ],
         stateChanges: {},
@@ -3136,7 +3346,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('error', `ERROR: Directory not found: ${args[0]}`),
           createEntry('system', ''),
-          createEntry('system', 'TIP: Use "ls" to see available directories in current location.'),
+          createEntry('ufo74', '[UFO74]: use "ls" to see whats in the current directory.'),
         ],
         stateChanges,
       };
@@ -3147,7 +3357,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('error', `ERROR: Not a directory: ${args[0]}`),
           createEntry('system', ''),
-          createEntry('system', 'TIP: To read a file, use: open ' + args[0]),
+          createEntry('ufo74', '[UFO74]: thats a file. try: open ' + args[0]),
         ],
         stateChanges: {},
       };
@@ -3159,7 +3369,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     if (isFirstCd) {
       output.push(createEntry('system', ''));
-      output.push(createEntry('system', 'TIP: Use "cd .." to go back to the previous directory.'));
+      output.push(createEntry('ufo74', '[UFO74]: use "cd .." to go back up.'));
     }
 
     // Push current path to navigation history (for 'back' command)
@@ -3189,8 +3399,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'ERROR: Specify file'),
           createEntry('system', ''),
           createEntry(
-            'system',
-            'TIP: Use "ls" to see available files, then "open <filename>" to read one.'
+            'ufo74',
+            '[UFO74]: use "ls" to see files, then "open <filename>" to read one.'
           ),
         ],
         stateChanges: {},
@@ -3226,8 +3436,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('error', `ERROR: ${args[0]} is a directory`),
           createEntry('system', ''),
-          createEntry('system', 'TIP: To enter a directory, use: cd ' + args[0]),
-          createEntry('system', '     To list its contents, use: ls ' + args[0]),
+          createEntry('ufo74', '[UFO74]: thats a directory. use: cd ' + args[0]),
         ],
         stateChanges: {},
       };
@@ -3238,7 +3447,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('error', 'ERROR: File not found'),
           createEntry('system', ''),
-          createEntry('system', 'TIP: Use "ls" to see available files in current directory'),
+          createEntry('ufo74', '[UFO74]: use "ls" to see whats here.'),
         ],
         stateChanges: {},
       };
@@ -3326,7 +3535,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: state.tutorialComplete
           ? {
               ...safeTutorialState,
-              detectionLevel: Math.min(100, state.detectionLevel + 12), // was 20, reduced for pacing
+              detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 12), // was 20, reduced for pacing
               avatarExpression: 'scared', // Trap triggered - scared expression
             }
           : safeTutorialState,
@@ -3482,9 +3691,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           };
           notices.push(createEntry('system', ''));
           notices.push(
-            createEntry('warning', 'NOTICE: Evidence lock engaged. Protocol override required.')
+            createEntry('ufo74', 'UFO74: evidence is locked down. you need the override protocol.')
           );
-          notices.push(createEntry('system', 'Search internal/ for override credentials.'));
+          notices.push(createEntry('ufo74', '       dig around /internal/ for credentials.'));
         } else {
           const truthResult = checkTruthProgress(
             { ...state, ...stateChanges } as GameState,
@@ -3652,31 +3861,38 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       );
     }
 
-    // After 5 files opened, UFO74 suggests override protocol (only if not already unlocked)
+    // After 3 files opened, UFO74 suggests override protocol (only if not already unlocked)
     const totalFilesRead = filesRead.size;
-    if (totalFilesRead === 5 && !state.flags.overrideSuggested && !state.flags.adminUnlocked) {
+    if (totalFilesRead === 3 && !state.flags.overrideSuggested && !state.flags.adminUnlocked) {
       notices.push(
         ...createUFO74Message([
           'UFO74: kid, youre doing good but theres MORE hidden here.',
-          '       try the override protocol to uncover restricted files.',
+          '       most of the real stuff is locked behind the override protocol.',
           '       look for the password in the files youve read.',
         ])
       );
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideSuggested: true };
     }
 
+    // After first evidence discovery, lock further evidence behind override protocol
+    const justDiscoveredEvidence =
+      stateChanges.truthsDiscovered instanceof Set &&
+      stateChanges.truthsDiscovered.size > state.truthsDiscovered.size;
     if (
       state.tutorialComplete &&
-      totalFilesRead >= 2 &&
+      justDiscoveredEvidence &&
       !state.flags.adminUnlocked &&
       !state.flags.overrideGateActive
     ) {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideGateActive: true };
       notices.push(createEntry('system', ''));
       notices.push(
-        createEntry('warning', 'NOTICE: Evidence lock engaged. Protocol override required.')
+        createEntry('ufo74', 'UFO74: nice find. but the rest is locked down.')
       );
-      notices.push(createEntry('system', 'Search internal/ for override credentials.'));
+      notices.push(
+        createEntry('ufo74', '       you need the override protocol to access restricted files.')
+      );
+      notices.push(createEntry('ufo74', '       dig around /internal/ for credentials.'));
     }
 
     // Check for Archivist achievement: all files in parent folder read
@@ -3713,7 +3929,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ];
         output.push(createEntry('ufo74', hints[Math.floor(Math.random() * hints.length)]));
         output.push(
-          createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to attempt decryption.')
+          createEntry('ufo74', '[UFO74]: use "decrypt ' + args[0] + '" to attempt decryption.')
         );
       } else if (file.timedDecrypt) {
         // Timed decrypt file - hint about the decrypt command
@@ -3724,7 +3940,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           )
         );
         output.push(
-          createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to start the timed challenge.')
+          createEntry('ufo74', '[UFO74]: use "decrypt ' + args[0] + '" to start the timed challenge.')
         );
       } else {
         // Standard encrypted file
@@ -3734,7 +3950,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ];
         output.push(createEntry('ufo74', hints[Math.floor(Math.random() * hints.length)]));
         output.push(
-          createEntry('system', 'TIP: Use "decrypt ' + args[0] + '" to decrypt this file.')
+          createEntry('ufo74', '[UFO74]: use "decrypt ' + args[0] + '" to crack it.')
         );
       }
     }
@@ -3818,7 +4034,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output: [
           createEntry('error', 'ERROR: File is not encrypted'),
           createEntry('system', ''),
-          createEntry('system', 'TIP: This file can be read directly with: open ' + args[0]),
+          createEntry('ufo74', '[UFO74]: this ones not encrypted. just use: open ' + args[0]),
         ],
         stateChanges: {},
       };
@@ -3858,7 +4074,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
               timedDecryptFile: undefined,
               timedDecryptSequence: undefined,
               timedDecryptEndTime: 0,
-              detectionLevel: Math.min(100, state.detectionLevel + 8),
+              detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 8),
             },
           };
         }
@@ -3901,7 +4117,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
               createEntry('system', 'Time remaining. Try again.'),
             ],
             stateChanges: {
-              detectionLevel: Math.min(100, state.detectionLevel + 3),
+              detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 3),
             },
           };
         }
@@ -4205,7 +4421,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('warning', 'Protocol override requires authentication code.'),
           createEntry('warning', 'Usage: override protocol <CODE>'),
           createEntry('system', ''),
-          createEntry('system', 'Hint: Someone in this system might know the code...'),
+          createEntry('ufo74', '[UFO74]: try "chat". theres someone in the system who knows the code.'),
         ],
         stateChanges,
         triggerFlicker: true,
@@ -4325,7 +4541,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             overrideGateActive: false,
           },
           accessLevel: 5,
-          detectionLevel: 99,
+          detectionLevel: MAX_DETECTION,
           systemHostilityLevel: 5,
           rngState: seededRandomInt(rng, 0, 2147483647),
           avatarExpression: 'angry', // Terrible mistake - angry expression
@@ -4455,7 +4671,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Process question
     const question = args.join(' ');
     const usedResponses = state.prisoner45UsedResponses || new Set<string>();
-    const { response, valid, category: _category } = getPrisoner45Response(question, usedResponses);
+    const { response, valid, category: _category } = getPrisoner45Response(question, usedResponses, state.prisoner45QuestionsAsked);
     const newCount = state.prisoner45QuestionsAsked + 1;
     const remaining = 5 - newCount;
 
@@ -4548,8 +4764,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('error', 'ACCESS DENIED'),
           createEntry('error', 'NO VALID NEURAL PATTERN LOADED'),
           createEntry('system', ''),
-          createEntry('system', 'Hint: Access requires prior neural capture decryption.'),
-          createEntry('system', '      Check quarantine storage for .psi files.'),
+          createEntry('ufo74', '[UFO74]: you need a neural pattern first. check quarantine for .psi files.'),
+          createEntry('system', ''),
           createEntry('system', ''),
         ],
         stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 5 } : {},
@@ -4584,7 +4800,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
             createEntry('system', 'Enter authentication phrase:'),
             createEntry('system', '  > link <phrase>'),
             createEntry('system', ''),
-            createEntry('system', 'Hint: Check psi analysis reports for access protocol.'),
+            createEntry('ufo74', '[UFO74]: check the psi analysis reports. the key is conceptual.'),
             createEntry('system', ''),
           ],
           stateChanges: {},
@@ -5009,7 +5225,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output: [
           createEntry('system', 'USAGE: run <script>'),
-          createEntry('system', 'Example: run save_evidence.sh'),
+          createEntry('system', 'Example: run purge_trace.sh'),
         ],
         stateChanges: {},
       };
@@ -5018,33 +5234,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const scriptName = args[0].toLowerCase();
 
     if (scriptName === 'save_evidence.sh') {
-      if (!state.flags.allEvidenceCollected) {
-        return {
-          output: [
-            createEntry('error', 'EXECUTION FAILED'),
-            createEntry('system', 'Evidence set incomplete. Script aborted.'),
-          ],
-          stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 4 } : {},
-        };
-      }
-
-      return {
-        output: [
-          createEntry('system', 'Executing save_evidence.sh...'),
-          createEntry('system', ''),
-          createEntry('output', '[OK] Evidence bundle sealed'),
-          createEntry('output', '[OK] External backup created'),
-          createEntry('warning', 'WARNING: Transfer window closing'),
-          createEntry('system', ''),
-        ],
-        stateChanges: {
-          evidencesSaved: true,
-          flags: { ...state.flags, evidencesSaved: true },
-          filesSent: true,
-        },
-        delayMs: 1500,
-        triggerFlicker: true,
-      };
+      // Redirect to leak command — save_evidence.sh is no longer a separate path
+      return commands.leak([], state);
     }
 
     if (scriptName === 'purge_trace.sh') {
@@ -5209,7 +5400,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     // Increase detection significantly
-    const newDetection = Math.min(100, state.detectionLevel + 10); // was 15, reduced for pacing
+    const newDetection = Math.min(MAX_DETECTION, state.detectionLevel + 10); // was 15, reduced for pacing
 
     return {
       output: [
@@ -5419,7 +5610,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output: [
           createEntry('error', 'ERROR: No file opened yet'),
-          createEntry('system', 'TIP: Use "open <filename>" to read a file first'),
+          createEntry('ufo74', '[UFO74]: use "open <filename>" to read a file first.'),
         ],
         stateChanges: {},
       };
@@ -5475,7 +5666,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output: [
           createEntry('output', `Changed to: ${newPath}`),
-          createEntry('system', 'TIP: Use "cd" to build navigation history for "back" command.'),
+          createEntry('ufo74', '[UFO74]: use "cd" to build navigation history for the "back" command.'),
         ],
         stateChanges: state.tutorialComplete
           ? {
@@ -5745,7 +5936,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       output.push(createEntry('system', ''));
       output.push(createEntry('system', '═══════════════════════════════════════'));
       output.push(createEntry('system', ''));
-      output.push(createEntry('system', 'TIP: Use "open <filename>" to read a bookmarked file.'));
 
       return { output, stateChanges: {} };
     }
@@ -6044,11 +6234,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output: [
           createEntry('system', ''),
-          createEntry('output', 'Message already deciphered: UFO RECOVERED'),
+          createEntry('output', 'Message already deciphered: COLHEITA'),
           ...createUFO74Message([
-            'UFO74: you already got it, hackerkid.',
-            '       the message was "UFO RECOVERED".',
-            '       someone on the ground confirmed the find.',
+            'UFO74: you already cracked it, hackerkid.',
+            '       the message was "COLHEITA".',
+            '       now use it — override protocol.',
           ]),
         ],
         stateChanges: {},
@@ -6062,10 +6252,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('system', ''),
           createEntry('error', 'Decryption attempts exhausted.'),
           createEntry('system', ''),
-          createEntry('output', 'The intercepted message was: UFO RECOVERED'),
+          createEntry('output', 'The intercepted message was: COLHEITA'),
           ...createUFO74Message([
             'UFO74: you missed it, kid. but now you know.',
-            '       "UFO RECOVERED" - confirmation from the ground.',
+            '       "COLHEITA" — try it with the override protocol.',
           ]),
         ],
         stateChanges: {},
@@ -6088,19 +6278,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     const guess = args.join(' ').toUpperCase().trim();
-    const correct = 'UFO RECOVERED';
+    const correct = 'COLHEITA';
     const attemptsUsed = (state.morseMessageAttempts || 0) + 1;
     const attemptsRemaining = 3 - attemptsUsed;
 
     // Check for correct answer - be lenient with variations
-    const isCorrect =
-      guess === correct ||
-      guess === 'UFORECOVERED' ||
-      guess === 'UFO-RECOVERED' ||
-      guess.replace(/\s+/g, ' ') === correct;
+    const normalizedGuess = guess.replace(/[\s\-_]+/g, '');
+    const isCorrect = normalizedGuess === correct;
 
     if (isCorrect) {
-      // Success! Reveal the message and trigger a special UFO74 reaction
+      // Success! Reveal the message and hint at override protocol
       return {
         output: [
           createEntry('system', ''),
@@ -6109,19 +6296,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('warning', `  DECODED: ${correct}`),
           ...createUFO74Message([
             'UFO74: you did it hackerkid!',
-            '       "UFO RECOVERED" - that was the confirmation.',
+            '       "COLHEITA" — Portuguese for "HARVEST".',
             '',
-            'UFO74: someone on the ground radioed in the find.',
-            '       unauthorized frequency. probably local military.',
+            'UFO74: this is an authentication passphrase.',
+            '       someone embedded it in the signal.',
             '',
-            'UFO74: this proves they KNEW what they found.',
-            '       not a weather balloon. not a drone. a UFO.',
+            'UFO74: try it with the override protocol.',
+            '       type: override protocol COLHEITA',
           ]),
         ],
         stateChanges: {
           morseMessageSolved: true,
           flags: { ...state.flags, morseDeciphered: true },
         },
+        soundTrigger: 'evidence',
         streamingMode: 'normal',
       };
     }
@@ -6144,11 +6332,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('warning', 'Maximum attempts exceeded.'),
           ...createUFO74Message([
             'UFO74: damn. you ran out of tries hackerkid.',
-            '       the message was "UFO RECOVERED".',
-            '       maybe next time.',
+            '       the message was "COLHEITA" — means "HARVEST".',
+            '       try it with override protocol.',
           ]),
         ],
         stateChanges,
+        soundTrigger: 'error',
       };
     }
 
@@ -6656,7 +6845,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
               output: [
                 createEntry('error', 'AUTHENTICATION FAILED'),
                 createEntry('system', ''),
-                createEntry('system', `HINT: ${file.securityQuestion.hint}`),
+                createEntry('ufo74', `[UFO74]: ${file.securityQuestion.hint}`),
                 createEntry('system', ''),
                 createEntry('system', 'Enter answer or type "cancel" to abort:'),
               ],
@@ -6693,7 +6882,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
               createEntry('error', 'AUTHENTICATION FAILED'),
               createEntry('warning', `WARNING: Invalid attempts: ${newAlertCounter}/8`),
               createEntry('system', ''),
-              createEntry('system', `HINT: ${file.securityQuestion.hint}`),
+              createEntry('ufo74', `[UFO74]: ${file.securityQuestion.hint}`),
               createEntry('system', ''),
               createEntry('system', 'Enter answer or type "cancel" to abort:'),
             ],
@@ -7016,6 +7205,24 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     result.stateChanges.systemHostilityLevel ?? state.systemHostilityLevel ?? 0;
   if (currentHostility >= 3) {
     result.output = applyHostileFiltering(result.output, currentHostility);
+
+    // One-time UFO74 warning when terminal starts malfunctioning
+    const triggered = state.singularEventsTriggered || new Set<string>();
+    if (!triggered.has('ufo74_risk_corruption_warning')) {
+      const newTriggered = new Set(triggered);
+      newTriggered.add('ufo74_risk_corruption_warning');
+      result.stateChanges.singularEventsTriggered = new Set([
+        ...(result.stateChanges.singularEventsTriggered || triggered),
+        'ufo74_risk_corruption_warning',
+      ]);
+      result.output = [
+        ...result.output,
+        createEntry('ufo74', 'UFO74: hey kid, risk is getting too high.'),
+        createEntry('ufo74', 'UFO74: the terminal is starting to malfunction. you see it right?'),
+        createEntry('ufo74', 'UFO74: text gets corrupted when detection is this high.'),
+        createEntry('ufo74', 'UFO74: use "wait" to lay low and bring the risk down.'),
+      ];
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -7118,7 +7325,12 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     : null;
   if (wanderingCheck) {
     if (wanderingCheck.notices.length > 0) {
-      result.output = [...result.output, ...wanderingCheck.notices];
+      // Route wandering notices through pendingUfo74Messages so they appear
+      // in a single encrypted channel (avoiding nested/duplicate channels)
+      result.pendingUfo74Messages = [
+        ...(result.pendingUfo74Messages || []),
+        ...wanderingCheck.notices,
+      ];
     }
     result.stateChanges = {
       ...result.stateChanges,
@@ -7200,8 +7412,9 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MAX DETECTION GAME OVER - Detection reached 100%, session terminated
+  // Skip if evidence is being saved (leak command) — player earned the endgame
   // ═══════════════════════════════════════════════════════════════════════════
-  if (state.tutorialComplete && newDetection >= MAX_DETECTION && !result.stateChanges.isGameOver) {
+  if (state.tutorialComplete && newDetection >= MAX_DETECTION && !result.stateChanges.isGameOver && !result.stateChanges.evidencesSaved) {
     result.output = [
       createEntry('error', ''),
       createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
@@ -7247,14 +7460,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   return result;
 }
 
-// Generate helpful tips for unknown commands
+// Generate helpful tips for unknown commands — all delivered as UFO74 voice
 function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   // Check for common navigation attempts
   if (command === 'dir' || command === 'list' || command === 'show') {
     return [
       createEntry('system', ''),
-      createEntry('system', 'TIP:'),
-      createEntry('system', 'To list directory contents, use: ls'),
+      createEntry('ufo74', '[UFO74]: try "ls" to list directory contents.'),
       createEntry('system', ''),
     ];
   }
@@ -7278,9 +7490,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   ) {
     return [
       createEntry('system', ''),
-      createEntry('system', 'TIP:'),
-      createEntry('system', 'Navigation requires an explicit directory change.'),
-      createEntry('system', `Use: cd ${command}`),
+      createEntry('ufo74', `[UFO74]: you cant just type a path. use: cd ${command}`),
       createEntry('system', ''),
     ];
   }
@@ -7297,9 +7507,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   ) {
     return [
       createEntry('system', ''),
-      createEntry('system', 'TIP:'),
-      createEntry('system', 'To read a file, use the open command.'),
-      createEntry('system', `Use: open ${command}`),
+      createEntry('ufo74', `[UFO74]: to read a file, use: open ${command}`),
       createEntry('system', ''),
     ];
   }
@@ -7315,9 +7523,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
     const file = args[0] || '<filename>';
     return [
       createEntry('system', ''),
-      createEntry('system', 'TIP:'),
-      createEntry('system', 'To read file contents, use the open command.'),
-      createEntry('system', `Use: open ${file}`),
+      createEntry('ufo74', `[UFO74]: wrong command kid. use: open ${file}`),
       createEntry('system', ''),
     ];
   }
@@ -7326,9 +7532,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   if (command === 'quit' || command === 'exit' || command === 'logout' || command === 'bye') {
     return [
       createEntry('system', ''),
-      createEntry('system', 'TIP:'),
-      createEntry('system', 'To exit, use the [ESC] button or type: exit'),
-      createEntry('system', 'To save your session first, type: save'),
+      createEntry('ufo74', '[UFO74]: press [ESC] to exit. or type "save" first if you want to keep your progress.'),
       createEntry('system', ''),
     ];
   }
@@ -7337,10 +7541,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   if (command === 'unlock' || command === 'access' || command === 'sudo' || command === 'admin') {
     return [
       createEntry('system', ''),
-      createEntry('system', 'TIP:'),
-      createEntry('system', 'Elevated access requires protocol override.'),
-      createEntry('system', 'Use: override protocol <CODE>'),
-      createEntry('warning', 'WARNING: High risk operation.'),
+      createEntry('ufo74', '[UFO74]: you need the override protocol for that. dangerous stuff.'),
       createEntry('system', ''),
     ];
   }
@@ -7349,9 +7550,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   if (command === 'back' || command === 'up' || command === '..') {
     return [
       createEntry('system', ''),
-      createEntry('system', 'TIP:'),
-      createEntry('system', 'To navigate to parent directory:'),
-      createEntry('system', 'Use: cd ..'),
+      createEntry('ufo74', '[UFO74]: use "cd .." to go to parent directory.'),
       createEntry('system', ''),
     ];
   }
@@ -7360,9 +7559,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
   if (command === 'info' || command === 'about' || command === 'whoami' || command === 'who') {
     return [
       createEntry('system', ''),
-      createEntry('system', 'TIP:'),
-      createEntry('system', 'To check system status, use: status'),
-      createEntry('system', 'To see available commands, use: help'),
+      createEntry('ufo74', '[UFO74]: try "status" or "help" kid.'),
       createEntry('system', ''),
     ];
   }
@@ -7372,10 +7569,7 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
     createEntry('system', ''),
     createEntry('system', `Command not recognized: ${command}`),
     createEntry('system', ''),
-    createEntry('system', 'TIP:'),
-    createEntry('system', 'Type "help" to see available commands.'),
-    createEntry('system', 'Use "ls" to list files in current directory.'),
-    createEntry('system', 'Use "cd <dir>" to navigate.'),
+    createEntry('ufo74', '[UFO74]: type "help" to see what you can do.'),
     createEntry('system', ''),
   ];
 }

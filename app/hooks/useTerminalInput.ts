@@ -265,6 +265,7 @@ export function useTerminalInput({
       if (pendingImage && !trimmedInput) {
         setActiveImage(pendingImage);
         setPendingImage(null);
+        playSound('creepy');
         return;
       }
 
@@ -284,17 +285,12 @@ export function useTerminalInput({
         return;
       }
 
-      if (pendingUfo74StartMessages.length > 0 && !trimmedInput) {
-        const messagesToSend = [...pendingUfo74StartMessages];
+      // Merge both UFO74 message queues into a single encrypted channel
+      const allPendingUfo74 = [...pendingUfo74StartMessages, ...pendingUfo74Messages];
+      if (allPendingUfo74.length > 0 && !trimmedInput) {
         setPendingUfo74StartMessages([]);
-        openEncryptedChannelWithMessages(messagesToSend);
-        return;
-      }
-
-      if (pendingUfo74Messages.length > 0 && !trimmedInput) {
-        const messagesToSend = [...pendingUfo74Messages];
         setPendingUfo74Messages([]);
-        openEncryptedChannelWithMessages(messagesToSend);
+        openEncryptedChannelWithMessages(allPendingUfo74);
         return;
       }
 
@@ -783,6 +779,21 @@ export function useTerminalInput({
 
       if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
         playSound('fanfare');
+      }
+
+      // Play morse code audio when opening the morse intercept file
+      if (!gameState.morseFileRead && intermediateState.morseFileRead) {
+        // Delay slightly so the file content starts streaming first
+        setTimeout(() => playSound('morse'), 800);
+      }
+
+      // Handle soundTrigger from command results
+      if (result.soundTrigger === 'evidence') {
+        playSound('reveal');
+      } else if (result.soundTrigger === 'error') {
+        playSound('error');
+      } else if (result.soundTrigger === 'morse') {
+        playSound('morse');
       }
 
       if (result.output.length > 5 && command.toLowerCase().startsWith('open')) {

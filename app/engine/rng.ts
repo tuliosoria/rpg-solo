@@ -92,12 +92,7 @@ export function getUIRng(): () => number {
   return uiRngInstance;
 }
 
-/**
- * Reset the UI RNG with a new seed. Useful for testing.
- */
-export function resetUIRng(seed?: number): void {
-  uiRngInstance = createSeededRng(seed ?? generateSeed());
-}
+
 
 // Convenience functions that use the global UI RNG
 export function uiRandomInt(min: number, max: number): number {

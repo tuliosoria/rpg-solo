@@ -343,14 +343,15 @@ export function useTerminalEffects({
   }, []);
 
   // Phase transition: when evidencesSaved becomes true, trigger blackout
+  // Skip if isGameOver is true to avoid conflicting state (e.g., detection hit 100% on a prior command)
   useEffect(() => {
-    if (gameState.evidencesSaved && gamePhase === 'terminal') {
+    if (gameState.evidencesSaved && gamePhase === 'terminal' && !gameState.isGameOver) {
       const timer = setTimeout(() => {
         setGamePhase('blackout');
       }, BLACKOUT_TRANSITION_DELAY_MS);
       return () => clearTimeout(timer);
     }
-  }, [gameState.evidencesSaved, gamePhase, setGamePhase]);
+  }, [gameState.evidencesSaved, gamePhase, gameState.isGameOver, setGamePhase]);
 
   // Random glitch effects based on detection level - INTENSITY SCALING
   useEffect(() => {
@@ -736,7 +737,7 @@ export function useTerminalEffects({
       const hint = uiRandomPick(applicableHints);
 
       // Add UFO74 hint to terminal
-      const hintEntry = createEntry('ufo74', `[UFO74] ${hint.hint}`);
+      const hintEntry = createEntry('ufo74', `[UFO74]: ${hint.hint}`);
       setGameState(prev => ({
         ...prev,
         history: [...prev.history, hintEntry],
