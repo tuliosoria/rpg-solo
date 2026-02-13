@@ -71,20 +71,21 @@ const EVIDENCE_CONTENT_PATTERNS: Record<TruthCategory, RegExp[]> = {
     /body|bodies/i,
   ],
   telepathic_scouts: [
-    /telepat/i,
-    /signal/i,
-    /communica/i,
-    /mental/i,
-    /neural/i,
-    /cognitive/i,
-    /psych/i,
-    /transmission/i,
-    /eeg/i,
-    /pattern/i,
-    /scout/i,
-    /reconnaissance/i,
-    /emission/i,
-    /thought/i,
+    /telepat/i, // telepathy, telepathic
+    /psi[\s_-]?comm/i, // psi-comm, psi comm, psi_comm
+    /psi[\s_-]?analysis/i, // psi analysis
+    /neural[\s_]*(capture|pattern|dump|cluster|activity)/i, // neural capture, neural pattern, etc.
+    /non[\s-]?acoustic/i, // non-acoustic communication
+    /conceptual.*transmission/i, // conceptual transmission
+    /intrusive.*thought/i, // intrusive thoughts
+    /mental.*link/i, // mental link
+    /mind.*link/i, // mind link
+    /synchronized.*neural/i, // synchronized neural activity
+    /emotional.*bleed/i, // emotional bleed-through
+    /psych.*link/i, // psychic link
+    /eeg/i, // EEG patterns
+    /scout.*organism/i, // scout organism
+    /brain.*emission/i, // brain emissions
   ],
   international_actors: [
     /foreign/i,
