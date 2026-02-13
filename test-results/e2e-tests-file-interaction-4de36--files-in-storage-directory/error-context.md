@@ -1,0 +1,88 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - 'button "VARGINHA: TERMINAL 1996 ▼" [ref=e5] [cursor=pointer]'
+      - button "ESC" [ref=e6] [cursor=pointer]
+      - generic [ref=e7]: SYSTEM NOMINAL
+    - generic [ref=e8]:
+      - generic:
+        - generic: "EVIDENCE:"
+        - generic "Physical debris/materials recovered": □ RECOVERED
+        - generic "Beings/specimens captured": □ CAPTURED
+        - generic "Communication/telepathy evidence": □ SIGNALS
+        - generic "International involvement": □ FOREIGN
+        - generic "Future plans/timeline window": □ NEXT
+        - generic: "[0/5]"
+      - generic [ref=e9]:
+        - generic [ref=e10]: "RISK:"
+        - generic [ref=e11]: MINIMAL 0%
+        - generic [ref=e12]: "ATT: 0/8"
+    - log [ref=e13]:
+      - generic [ref=e15]: ═══════════════════════════════════════════════════════════
+      - generic [ref=e16]: BRAZILIAN INTELLIGENCE LEGACY SYSTEM
+      - generic [ref=e17]: TERMINAL ACCESS POINT — NODE 7
+      - generic [ref=e18]: ═══════════════════════════════════════════════════════════
+      - generic [ref=e20]: "SYSTEM DATE: JANUARY 1996"
+      - generic [ref=e23]: ┌─────────────────────────────────────────────────────────┐
+      - generic [ref=e24]: │ >> ENCRYPTED CHANNEL OPEN << │
+      - generic [ref=e25]: └─────────────────────────────────────────────────────────┘
+      - generic [ref=e27]: "[UFO74]: Connection established."
+      - generic [ref=e28]: "[UFO74]: Listen carefully. I don't repeat myself."
+      - generic [ref=e29]: "[UFO74]: You're inside their system. Don't panic."
+      - generic [ref=e30]: "[UFO74]: I'll walk you through the basics."
+      - generic [ref=e33]: "[UFO74]: First, see what's here."
+      - generic [ref=e34]: "[UFO74]: Type ls"
+      - generic [ref=e36]: "> ls"
+      - generic [ref=e38]: /
+      - generic [ref=e39]: ├── files/
+      - generic [ref=e40]: ├── logs/
+      - generic [ref=e41]: ├── system/
+      - generic [ref=e42]: └── admin/
+      - generic [ref=e45]: "[UFO74]: Good."
+      - generic [ref=e46]: "[UFO74]: Now move into a folder."
+      - generic [ref=e47]: "[UFO74]: Type cd files"
+      - generic [ref=e49]: "> cd internal"
+      - generic [ref=e50]: INVALID INPUT
+      - generic [ref=e52]: "> cd misc"
+      - generic [ref=e53]: INVALID INPUT
+      - generic [ref=e55]: "> open cafeteria_menu"
+      - generic [ref=e56]: INVALID INPUT
+      - generic [ref=e58]: "[UFO74]: cd means change directory. cd files"
+      - generic [ref=e60]: "> cd /"
+      - generic [ref=e61]: INVALID INPUT
+      - generic [ref=e63]: "> cd /storage/assets"
+      - generic [ref=e64]: INVALID INPUT
+      - generic [ref=e66]: "> ls"
+      - generic [ref=e67]: INVALID INPUT
+      - generic [ref=e69]: "> open material_x_analysis.dat"
+      - generic [ref=e70]: INVALID INPUT
+      - generic [ref=e72]: "> open transport_log_96.txt"
+      - generic [ref=e73]: INVALID INPUT
+      - generic [ref=e75]: "> open logistics_manifest_fragment.txt"
+      - generic [ref=e76]: INVALID INPUT
+      - generic [ref=e78]: "> cd /storage/quarantine"
+      - generic [ref=e79]: INVALID INPUT
+      - generic [ref=e81]: "> ls"
+      - generic [ref=e82]: INVALID INPUT
+      - generic [ref=e84]: "> open bio_container.log"
+      - generic [ref=e85]: INVALID INPUT
+      - generic [ref=e87]: "> open autopsy_alpha.log"
+      - generic [ref=e88]: INVALID INPUT
+      - generic [ref=e90]: "> open autopsy_addendum_psi.txt"
+      - generic [ref=e91]: INVALID INPUT
+      - generic [ref=e93]: "> open witness_statement_raw.txt"
+      - generic [ref=e94]: INVALID INPUT
+      - generic [ref=e96]: "> open specimen_purpose_analysis.txt"
+      - generic [ref=e97]: INVALID INPUT
+      - generic [ref=e99]: "> open jardim_andere_incident.txt"
+      - generic [ref=e100]: INVALID INPUT
+    - generic [ref=e102]:
+      - generic [ref=e103]: ">"
+      - textbox "Terminal command input" [active] [ref=e104]
+      - generic [ref=e105]: _
+      - generic [ref=e106]: SUSPICIOUS TYPING PATTERN DETECTED
+```

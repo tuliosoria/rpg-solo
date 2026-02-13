@@ -1194,8 +1194,13 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
     return [createEntry('ufo74', 'UFO74: transport log. they split up the evidence.')];
   }
 
-  if (path.includes('transcript') || path.includes('psi') || path.includes('comm')) {
+  if (path.includes('transcript') || path.includes('psi') || path.includes('neural')) {
     return [createEntry('ufo74', 'UFO74: they were communicating. telepathically.')];
+  }
+
+  // Generic comms/intercepts - mundane intelligence files
+  if (path.includes('/comms/intercepts/')) {
+    return [createEntry('ufo74', 'UFO74: routine intercepts. signal in the noise.')];
   }
 
   if (path.includes('foreign') || path.includes('liaison') || path.includes('international')) {
