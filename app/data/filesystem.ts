@@ -147,6 +147,7 @@ const facilities_memo_12: FileNode = {
   type: 'file',
   name: 'facilities_memo_12.txt',
   status: 'intact',
+  tags: ['administrative', 'routine'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'INTERNAL MEMORANDUM — FACILITIES DIVISION',
@@ -268,6 +269,7 @@ const morse_intercept: FileNode = {
   type: 'file',
   name: 'morse_intercept.sig',
   status: 'intact',
+  tags: ['signal', 'communication', 'encryption', 'military'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'SIGNAL INTERCEPT — AUDIO CAPTURE',
@@ -362,6 +364,7 @@ const personnel_transfer_notice: FileNode = {
   type: 'file',
   name: 'personnel_transfer_notice.txt',
   status: 'intact',
+  tags: ['administrative', 'military', 'cover-up'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'PERSONNEL TRANSFER NOTICE',
@@ -388,6 +391,7 @@ const regional_summary_jan96: FileNode = {
   type: 'file',
   name: 'regional_summary_jan96.txt',
   status: 'intact',
+  tags: ['military', 'government', 'administrative'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'REGIONAL INTELLIGENCE SUMMARY — JANUARY 1996',
@@ -1621,6 +1625,7 @@ const encrypted_diplomatic_cable: FileNode = {
   name: 'diplomatic_cable_23jan.enc',
   status: 'encrypted',
   accessThreshold: 2,
+  tags: ['international', 'foreign', 'government', 'classified', 'encryption'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ENCRYPTED CABLE — PRIORITY ALPHA',
@@ -1677,6 +1682,7 @@ const standing_orders_multinational: FileNode = {
   name: 'standing_orders_multinational.txt',
   status: 'restricted',
   accessThreshold: 3,
+  tags: ['international', 'foreign', 'government', 'military', 'classified', 'cover-up'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'STANDING ORDERS — MULTINATIONAL RECOVERY PROTOCOL',
@@ -1727,6 +1733,7 @@ const medical_examiner_query: FileNode = {
   type: 'file',
   name: 'medical_examiner_query.txt',
   status: 'intact',
+  tags: ['hospital', 'medical', 'autopsy', 'cover-up'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'QUERY — REGIONAL MEDICAL EXAMINER',
@@ -2183,6 +2190,7 @@ const early_witness_statement: FileNode = {
   name: 'witness_statement_raw.txt',
   status: 'unstable',
   corruptible: true,
+  tags: ['witness', 'creature', 'telepathic'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'WITNESS STATEMENT — RAW TRANSCRIPT',
@@ -2259,6 +2267,7 @@ const transport_log_96: FileNode = {
   type: 'file',
   name: 'transport_log_96.txt',
   status: 'intact',
+  tags: ['transport', 'debris', 'military', 'crash', 'international'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'TRANSPORT LOG — OPERATION PRATO EXTENSION',
@@ -2295,6 +2304,7 @@ const material_x_analysis: FileNode = {
   status: 'restricted',
   accessThreshold: 2,
   corruptible: true,
+  tags: ['debris', 'spacecraft', 'crash', 'experiment', 'classified'],
   imageTrigger: {
     src: '/images/crash.png',
     alt: 'Recovered visual - Crash site material',
@@ -2335,6 +2345,7 @@ const bio_container_log: FileNode = {
   name: 'bio_container.log',
   status: 'unstable',
   corruptible: true,
+  tags: ['creature', 'biological', 'containment', 'medical', 'specimen'],
   imageTrigger: {
     src: '/images/et.png',
     alt: 'Recovered visual - Bio containment',
@@ -2375,6 +2386,7 @@ const autopsy_alpha_log: FileNode = {
   status: 'restricted',
   accessThreshold: 2,
   corruptible: true,
+  tags: ['autopsy', 'creature', 'biological', 'medical', 'specimen', 'classified'],
   imageTrigger: {
     src: '/images/et.png',
     alt: 'Recovered visual - Autopsy subject',
@@ -2418,6 +2430,7 @@ const autopsy_addendum_psi: FileNode = {
   name: 'autopsy_addendum_psi.txt',
   status: 'restricted',
   accessThreshold: 3,
+  tags: ['autopsy', 'medical', 'telepathic', 'psi', 'neural', 'creature'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ADDENDUM PSI — NEURAL ASSESSMENT',
@@ -2454,6 +2467,7 @@ const transcript_core: FileNode = {
   name: 'transcript_core.enc',
   status: 'encrypted',
   corruptible: true,
+  tags: ['telepathic', 'psi', 'signal', 'communication', 'creature', 'encryption'],
   imageTrigger: {
     src: '/images/et-scared.png',
     alt: 'Recovered visual - Subject during transmission',
@@ -2536,6 +2550,7 @@ const field_report_delta: FileNode = {
   type: 'file',
   name: 'field_report_delta.txt',
   status: 'intact',
+  tags: ['military', 'crash', 'creature', 'witness'],
   imageTrigger: {
     src: '/images/prato-delta.png',
     alt: 'Recovered visual - Operation Prato Delta field report',
@@ -2576,6 +2591,7 @@ const scout_variants_meta: FileNode = {
   name: 'scout_variants.meta',
   status: 'restricted',
   accessThreshold: 3,
+  tags: ['creature', 'biological', 'specimen', 'classified'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL FRAMEWORK — SCOUT VARIANTS',
@@ -2649,6 +2665,7 @@ const threat_window: FileNode = {
   name: 'threat_window.red',
   status: 'restricted',
   accessThreshold: 4,
+  tags: ['2026', 'timeline', 'classified', 'government'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'THREAT ASSESSMENT — TRANSITION WINDOW',
@@ -3005,6 +3022,7 @@ const neural_dump_alfa: FileNode = {
   name: 'neural_dump_alfa.psi',
   status: 'encrypted',
   accessThreshold: 3,
+  tags: ['telepathic', 'psi', 'neural', 'creature', 'biological', 'encryption'],
   securityQuestion: {
     question: 'Subject designation (found in autopsy records):',
     answers: ['alfa', 'alpha', 'subject alfa', 'specimen alfa'],
@@ -3080,6 +3098,7 @@ const psi_analysis_report: FileNode = {
   name: 'psi_analysis_report.txt',
   status: 'restricted',
   accessThreshold: 3,
+  tags: ['telepathic', 'psi', 'neural', 'creature', 'experiment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'REPORT — PSI-COMMUNICATION ANALYSIS',
@@ -3524,6 +3543,7 @@ const jardim_andere_report: FileNode = {
   type: 'file',
   name: 'jardim_andere_incident.txt',
   status: 'intact',
+  tags: ['witness', 'creature', 'crash', 'military'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'FIELD REPORT — INITIAL CONTACT',

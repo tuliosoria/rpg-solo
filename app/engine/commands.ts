@@ -28,6 +28,12 @@ import {
   getDisturbingContentAvatarExpression,
   EVIDENCE_SYMBOL,
 } from './evidenceRevelation';
+import {
+  ARCHIVE_FILES,
+  ARCHIVE_DIRECTORY_ADDITIONS,
+  generateArchiveTimestamp,
+  shouldFileDisappear,
+} from '../data/archiveFiles';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES, MAX_DETECTION, applyWarmupDetection, WARMUP_PHASE } from '../constants/detection';
 import { shouldSuppressPressure, shouldSuppressPenalties } from '../constants/atmosphere';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
@@ -58,6 +64,13 @@ import {
   isInTutorialMode,
   processTutorialInput,
 } from './commands/interactiveTutorial';
+
+// Import search index system
+import {
+  performSearch,
+  canSearch,
+  getSearchCooldownMessage,
+} from './searchIndex';
 
 // Re-export utilities for backward compatibility
 export {
@@ -470,11 +483,12 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
 
     return hints;
   } else if (level === 1) {
-    // Second notice - more specific guidance
+    // Second notice - more specific guidance + search hint
     return [
       createEntry('ufo74', 'UFO74: look for evidence in:'),
       createEntry('output', '       /storage/, /ops/quarantine/, /comms/'),
-      createEntry('ufo74', 'UFO74: read files. connect dots.'),
+      createEntry('ufo74', 'UFO74: the index knows more than they want you to find.'),
+      createEntry('ufo74', '       try: search <keyword>'),
     ];
   } else {
     // Third notice - urgent help
@@ -617,6 +631,154 @@ function applyDetectionVariance(state: GameState, command: string, baseIncrease:
 // ═══════════════════════════════════════════════════════════════════════════
 // WARMUP DETECTION - Reduced penalties during early exploration phase
 // ═══════════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ARCHIVE MODE HELPERS - Time mechanic for viewing past filesystem state
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Exit archive mode and return to present.
+ * Called either manually via 'present' command or automatically when actions run out.
+ */
+function exitArchiveMode(state: GameState, reason: 'manual' | 'timeout' | 'file_lost'): CommandResult {
+  const filesViewed = state.archiveFilesViewed?.size || 0;
+  
+  if (reason === 'timeout') {
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
+        createEntry('error', '           ARCHIVE STATE LOST — RETURNING TO PRESENT'),
+        createEntry('system', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
+        createEntry('output', `Archive files accessed: ${filesViewed}`),
+        createEntry('output', 'The past is sealed. You are in the present now.'),
+        createEntry('system', ''),
+        ...createUFO74Message([
+          'UFO74: back to the now hackerkid.',
+          '       hope you remembered what you needed.',
+          '       cant go back again so soon.',
+        ]),
+      ],
+      stateChanges: {
+        inArchiveMode: false,
+        archiveActionsRemaining: 0,
+        archiveTimestamp: '',
+      },
+      triggerFlicker: true,
+      delayMs: 2000,
+    };
+  }
+  
+  if (reason === 'file_lost') {
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
+        createEntry('error', '           TEMPORAL DRIFT — ARCHIVE DESTABILIZED'),
+        createEntry('system', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
+        createEntry('output', 'Connection to archive state severed.'),
+        createEntry('output', 'You are in the present now.'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {
+        inArchiveMode: false,
+        archiveActionsRemaining: 0,
+        archiveTimestamp: '',
+      },
+      triggerFlicker: true,
+      delayMs: 1500,
+    };
+  }
+  
+  // Manual exit via 'present' command
+  return {
+    output: [
+      createEntry('system', ''),
+      createEntry('warning', '              EXITING ARCHIVE STATE'),
+      createEntry('system', ''),
+      createEntry('system', '                    ... ... ...'),
+      createEntry('system', ''),
+      createEntry('output', `Archive files accessed: ${filesViewed}`),
+      createEntry('output', 'You are in the present now.'),
+      createEntry('system', ''),
+    ],
+    stateChanges: {
+      inArchiveMode: false,
+      archiveActionsRemaining: 0,
+      archiveTimestamp: '',
+    },
+    triggerFlicker: true,
+    delayMs: 1500,
+  };
+}
+
+/**
+ * Decrement archive actions and check if we need to exit.
+ * Returns state changes including forced exit if needed.
+ */
+function decrementArchiveAction(state: GameState): {
+  stateChanges: Partial<GameState>;
+  forceExit: boolean;
+} {
+  if (!state.inArchiveMode) {
+    return { stateChanges: {}, forceExit: false };
+  }
+  
+  const remaining = (state.archiveActionsRemaining || 0) - 1;
+  
+  if (remaining <= 0) {
+    return {
+      stateChanges: {
+        archiveActionsRemaining: 0,
+      },
+      forceExit: true,
+    };
+  }
+  
+  return {
+    stateChanges: {
+      archiveActionsRemaining: remaining,
+    },
+    forceExit: false,
+  };
+}
+
+/**
+ * Get archive-only files for a directory path.
+ * Returns additional file entries that only exist in archive mode.
+ */
+function getArchiveFilesForDirectory(dirPath: string): { name: string; type: 'file'; status: string }[] {
+  const additions = ARCHIVE_DIRECTORY_ADDITIONS[dirPath];
+  if (!additions) return [];
+  
+  return additions.map(name => ({
+    name,
+    type: 'file' as const,
+    status: 'intact',
+  }));
+}
+
+/**
+ * Check if a file exists only in archive mode.
+ */
+function isArchiveOnlyFile(filePath: string): boolean {
+  return filePath in ARCHIVE_FILES;
+}
+
+/**
+ * Get content of an archive-only file.
+ */
+function getArchiveFileContent(filePath: string): string[] | null {
+  const file = ARCHIVE_FILES[filePath];
+  if (!file) return null;
+  return [...file.content];
+}
 
 /**
  * Calculate new detection level with warmup phase modifier.
@@ -2988,6 +3150,21 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'WARNING: This action triggers the endgame sequence.',
   ],
+  search: [
+    'COMMAND: search <keyword>',
+    '',
+    'Query the system index for files related to a topic.',
+    '',
+    'USAGE:',
+    '  search anomaly     - Find files mentioning anomalies',
+    '  search creature    - Find creature-related files',
+    '  search telepathy   - Find telepathy/psi files',
+    '',
+    'Returns file NAMES only. You must locate files manually.',
+    '',
+    'NOTE: Index is unreliable. Some files may be missed.',
+    'NOTE: Each search is logged. Use sparingly.',
+  ],
 };
 
 const commands: Record<string, (args: string[], state: GameState) => CommandResult> = {
@@ -3057,12 +3234,15 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  open <file>       Open and display file contents',
         '  last              Re-display last opened file',
         '  unread            List unread files',
+        '  search <keyword>  Query index for related files',
         '  decrypt <file>    Attempt decryption of .enc files',
         '  recover <file>    Attempt file recovery (RISK)',
         '  note <text>       Save a personal note',
         '  notes             View all saved notes',
         '  bookmark [file]   Bookmark a file (or view bookmarks)',
         '  trace             Trace system connections (RISK)',
+        '  rewind            Access archive state (RISK)',
+        '  present           Return to present from archive',
         '  chat              Open secure relay channel',
         '  tree              Show directory structure',
         '  map               Show evidence connections',
@@ -3222,38 +3402,72 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
 
-    const lines = ['', `Directory: ${state.currentPath}`, ''];
+    // In archive mode, add archive-only files to the listing
+    let allEntries = [...entries];
+    if (state.inArchiveMode) {
+      const archiveEntries = getArchiveFilesForDirectory(state.currentPath);
+      // Add archive entries, avoiding duplicates
+      const existingNames = new Set(entries.map(e => e.name));
+      for (const archiveEntry of archiveEntries) {
+        if (!existingNames.has(archiveEntry.name)) {
+          allEntries.push(archiveEntry);
+        }
+      }
+    }
 
-    if (entries.length === 0) {
+    // Build header with archive indicator if in archive mode
+    const lines: string[] = [];
+    if (state.inArchiveMode) {
+      lines.push('');
+      lines.push(`▓▓▓ ARCHIVE STATE: ${state.archiveTimestamp} — READ-ONLY MODE ▓▓▓`);
+      lines.push(`[ARCHIVE: ${state.archiveActionsRemaining} actions remaining]`);
+    }
+    lines.push('');
+    lines.push(`Directory: ${state.currentPath}`);
+    lines.push('');
+
+    if (allEntries.length === 0) {
       lines.push('  (empty)');
     } else {
-      for (const entry of entries) {
+      for (const entry of allEntries) {
         let line = `  ${entry.name}`;
         const fullPath =
           state.currentPath === '/' ? `/${entry.name}` : `${state.currentPath}/${entry.name}`;
+
+        // Mark archive-only files
+        const isArchiveOnly = isArchiveOnlyFile(fullPath);
+        if (isArchiveOnly) {
+          line = `  [DELETED] ${entry.name}`;
+        }
 
         // Show markers for files
         if (entry.type === 'file') {
           // Evidence indicator (before other markers)
           const evidenceSymbol = getFileEvidenceSymbol(fullPath, state);
           if (evidenceSymbol) {
-            line = `  [${evidenceSymbol}] ${entry.name}`;
+            line = isArchiveOnly ? `  [DELETED][${evidenceSymbol}] ${entry.name}` : `  [${evidenceSymbol}] ${entry.name}`;
           }
 
-          // Bookmark marker
-          if (state.bookmarkedFiles?.has(fullPath)) {
+          // Bookmark marker (not for archive files)
+          if (!isArchiveOnly && state.bookmarkedFiles?.has(fullPath)) {
             line += ' ★';
           }
 
-          // Read/New marker
-          if (state.filesRead?.has(fullPath)) {
-            line += ' [READ]';
+          // Read/New marker (not for archive files - they reset each session)
+          if (!isArchiveOnly) {
+            if (state.filesRead?.has(fullPath)) {
+              line += ' [READ]';
+            } else {
+              line += ' [UNREAD]';
+            }
           } else {
-            line += ' [UNREAD]';
+            line += ' [PAST]';
           }
 
           // Reading time estimate (based on content length)
-          const content = getFileContent(fullPath, state);
+          const content = isArchiveOnly 
+            ? getArchiveFileContent(fullPath)
+            : getFileContent(fullPath, state);
           if (content && content.length > 0) {
             const wordCount = content.join(' ').split(/\s+/).length;
             const readingMinutes = Math.ceil(wordCount / 200); // ~200 words per minute
@@ -3292,7 +3506,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     // Add legend if any files have evidence markers
-    const hasEvidenceMarkers = entries.some(entry => {
+    const hasEvidenceMarkers = allEntries.some(entry => {
       if (entry.type !== 'file') return false;
       const fullPath =
         state.currentPath === '/' ? `/${entry.name}` : `${state.currentPath}/${entry.name}`;
@@ -3306,12 +3520,30 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     lines.push('');
 
-    const stateChanges: Partial<GameState> = {
+    // Handle archive mode action decrement
+    let stateChanges: Partial<GameState> = {
       detectionLevel: getWarmupAdjustedDetection(state, 2),
     };
 
     if (!state.tutorialComplete) {
       delete stateChanges.detectionLevel;
+    }
+
+    // In archive mode, decrement actions
+    if (state.inArchiveMode) {
+      const archiveResult = decrementArchiveAction(state);
+      stateChanges = { ...stateChanges, ...archiveResult.stateChanges };
+      
+      if (archiveResult.forceExit) {
+        // Time's up - exit archive mode
+        const exitResult = exitArchiveMode(state, 'timeout');
+        return {
+          output: [...createOutputEntries(lines), ...exitResult.output],
+          stateChanges: { ...stateChanges, ...exitResult.stateChanges },
+          triggerFlicker: exitResult.triggerFlicker,
+          delayMs: exitResult.delayMs,
+        };
+      }
     }
 
     return {
@@ -3437,6 +3669,97 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           createEntry('ufo74', '[UFO74]: thats a directory. use: cd ' + args[0]),
         ],
         stateChanges: {},
+      };
+    }
+
+    // Check if this is an archive-only file
+    if (isArchiveOnlyFile(filePath)) {
+      // Archive files only accessible in archive mode
+      if (!state.inArchiveMode) {
+        return {
+          output: [
+            createEntry('error', 'ERROR: File not found'),
+            createEntry('system', ''),
+            createEntry('ufo74', '[UFO74]: use "ls" to see whats here.'),
+          ],
+          stateChanges: {},
+        };
+      }
+      
+      // In archive mode - check for temporal drift (10% chance of file disappearing)
+      if (shouldFileDisappear(state.seed, filePath)) {
+        // File disappears mid-access!
+        const exitResult = exitArchiveMode(state, 'file_lost');
+        return {
+          output: [
+            createEntry('system', ''),
+            createEntry('error', '═══════════════════════════════════════════════════════════'),
+            createEntry('error', ''),
+            createEntry('error', '              FILE NO LONGER EXISTS'),
+            createEntry('error', ''),
+            createEntry('error', '              TEMPORAL DRIFT — FILE LOST'),
+            createEntry('error', ''),
+            createEntry('error', '═══════════════════════════════════════════════════════════'),
+            createEntry('system', ''),
+            ...exitResult.output,
+          ],
+          stateChanges: exitResult.stateChanges,
+          triggerFlicker: true,
+          delayMs: 2000,
+        };
+      }
+      
+      // Get archive file content
+      const archiveContent = getArchiveFileContent(filePath);
+      if (!archiveContent) {
+        return {
+          output: [createEntry('error', 'ERROR: Cannot read archived file')],
+          stateChanges: {},
+        };
+      }
+      
+      // Track this archive file as viewed
+      const archiveFilesViewed = new Set(state.archiveFilesViewed || []);
+      archiveFilesViewed.add(filePath);
+      
+      // Decrement archive actions
+      const archiveResult = decrementArchiveAction(state);
+      
+      const output: TerminalEntry[] = [
+        createEntry('system', ''),
+        createEntry('warning', `▓▓▓ ARCHIVE STATE: ${state.archiveTimestamp} — READ-ONLY MODE ▓▓▓`),
+        createEntry('warning', `[ARCHIVE: ${(state.archiveActionsRemaining || 0) - 1} actions remaining]`),
+        createEntry('system', ''),
+        createEntry('system', `=== ${filePath} [DELETED] ===`),
+        createEntry('system', ''),
+        ...archiveContent.map(line => createEntry('file', line)),
+        createEntry('system', ''),
+        createEntry('warning', '>>> THIS FILE HAS BEEN DELETED FROM PRESENT <<<'),
+        createEntry('warning', '>>> REMEMBER WHAT YOU SEE — YOU CANNOT EXPORT <<<'),
+        createEntry('system', ''),
+      ];
+      
+      let stateChanges: Partial<GameState> = {
+        ...archiveResult.stateChanges,
+        archiveFilesViewed,
+      };
+      
+      if (archiveResult.forceExit) {
+        // Time's up - exit archive mode
+        const exitResult = exitArchiveMode(state, 'timeout');
+        return {
+          output: [...output, ...exitResult.output],
+          stateChanges: { ...stateChanges, ...exitResult.stateChanges },
+          triggerFlicker: exitResult.triggerFlicker,
+          delayMs: exitResult.delayMs,
+          streamingMode: 'normal',
+        };
+      }
+      
+      return {
+        output,
+        stateChanges,
+        streamingMode: 'normal',
       };
     }
 
@@ -5500,6 +5823,82 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
 
+  search: (args, state) => {
+    // Check if keyword provided
+    if (args.length === 0) {
+      return {
+        output: [
+          createEntry('error', 'SYNTAX: search <keyword>'),
+          createEntry('system', 'Example: search anomaly'),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    // Check cooldown
+    if (!canSearch(state)) {
+      return {
+        output: [
+          createEntry('warning', getSearchCooldownMessage()),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    const keyword = args.join(' ').trim().toLowerCase();
+
+    // Perform search
+    const results = performSearch(keyword, state);
+
+    // Calculate detection increase (+2 base)
+    const detectionIncrease = 2;
+    const newDetection = Math.min(
+      MAX_DETECTION,
+      state.detectionLevel + detectionIncrease
+    );
+
+    const stateChanges: Partial<GameState> = {
+      lastSearchTime: Date.now(),
+      detectionLevel: newDetection,
+    };
+
+    // Build output
+    const output: TerminalEntry[] = [
+      createEntry('system', ''),
+      createEntry('system', `SEARCH RESULTS — "${keyword}"`),
+      createEntry('system', '─────────────────────────────────────────'),
+    ];
+
+    if (results.length === 0) {
+      output.push(createEntry('output', ''));
+      output.push(createEntry('output', '  No matching entries found.'));
+      output.push(createEntry('output', ''));
+      output.push(createEntry('system', '  [Index may be incomplete]'));
+    } else {
+      output.push(createEntry('output', ''));
+      for (const result of results) {
+        if (result.isCorrupted) {
+          output.push(createEntry('warning', `  • ${result.filename}`));
+        } else {
+          output.push(createEntry('output', `  • ${result.filename}`));
+        }
+      }
+      output.push(createEntry('output', ''));
+      output.push(createEntry('system', `  ${results.length} result(s) found`));
+    }
+
+    output.push(createEntry('system', '─────────────────────────────────────────'));
+    output.push(createEntry('system', ''));
+    // Detection feedback - subtle but present
+    output.push(createEntry('notice', 'NOTICE: Index access registered.'));
+    output.push(createEntry('system', ''));
+
+    return {
+      output,
+      stateChanges,
+    };
+  },
+
   tutorial: (args, _state) => {
     // Handle tutorial on/off toggle
     if (args.length > 0) {
@@ -6397,6 +6796,90 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     // Otherwise, pass through to message command
     return commands.message(args, state);
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // REWIND COMMAND - Time mechanic for viewing past filesystem state
+  // ═══════════════════════════════════════════════════════════════════════════
+  rewind: (args, state) => {
+    // Cannot rewind during tutorial
+    if (!state.tutorialComplete) {
+      return {
+        output: [createEntry('system', 'Temporal functions unavailable during transmission.')],
+        stateChanges: {},
+      };
+    }
+
+    // Already in archive mode - show status
+    if (state.inArchiveMode) {
+      return {
+        output: [
+          createEntry('warning', ''),
+          createEntry('warning', `ARCHIVE STATE: ${state.archiveTimestamp} — READ-ONLY MODE`),
+          createEntry('warning', `[ARCHIVE: ${state.archiveActionsRemaining} actions remaining]`),
+          createEntry('warning', ''),
+          createEntry('output', 'You are already viewing the archive.'),
+          createEntry('output', 'Navigate and read files. Memory is fragile.'),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    // Initialize archive mode
+    const timestamp = generateArchiveTimestamp();
+    const actionsRemaining = 4; // 4 actions before forced return
+
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
+        createEntry('warning', '              INITIATING TEMPORAL REGRESSION'),
+        createEntry('system', ''),
+        createEntry('system', '                    ... ... ...'),
+        createEntry('system', ''),
+        createEntry('warning', `         ARCHIVE STATE: ${timestamp} — READ-ONLY MODE`),
+        createEntry('system', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
+        createEntry('output', 'Deleted files are temporarily restored.'),
+        createEntry('output', 'You cannot modify or export anything.'),
+        createEntry('system', ''),
+        createEntry('warning', `[ARCHIVE: ${actionsRemaining} actions remaining]`),
+        createEntry('system', ''),
+        ...createUFO74Message([
+          'UFO74: careful hackerkid. youre walking through echoes.',
+          '       some files only exist in the past now.',
+          '       READ FAST. you cant take anything with you.',
+        ]),
+      ],
+      stateChanges: {
+        inArchiveMode: true,
+        archiveActionsRemaining: actionsRemaining,
+        archiveTimestamp: timestamp,
+        archiveFilesViewed: new Set<string>(),
+        detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 5), // Suspicious behavior
+      },
+      triggerFlicker: true,
+      delayMs: 2500,
+    };
+  },
+
+  // Present command - Return from archive mode (or show current state)
+  present: (args, state) => {
+    if (!state.inArchiveMode) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('output', 'You are in the present. Current timeline active.'),
+          createEntry('output', 'Use "rewind" to access archived filesystem state.'),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    // Return to present
+    return exitArchiveMode(state, 'manual');
   },
 };
 

@@ -57,6 +57,41 @@ export interface SecurityQuestion {
   hint: string; // Where to find the answer
 }
 
+// Tags for the search index system
+export type FileTag =
+  | 'creature'
+  | 'foreign'
+  | 'biological'
+  | 'signal'
+  | 'debris'
+  | 'medical'
+  | 'containment'
+  | 'telepathic'
+  | 'transport'
+  | 'cover-up'
+  | 'witness'
+  | 'journalist'
+  | 'military'
+  | 'government'
+  | 'autopsy'
+  | 'spacecraft'
+  | 'crash'
+  | 'communication'
+  | 'encryption'
+  | 'administrative'
+  | 'routine'
+  | 'classified'
+  | 'timeline'
+  | '2026'
+  | 'psi'
+  | 'neural'
+  | 'experiment'
+  | 'international'
+  | 'security'
+  | 'surveillance'
+  | 'hospital'
+  | 'specimen';
+
 export interface FileNode {
   type: 'file';
   name: string;
@@ -71,6 +106,7 @@ export interface FileNode {
   videoTrigger?: VideoTrigger; // Video to display when file is accessed
   securityQuestion?: SecurityQuestion; // Required to decrypt
   timedDecrypt?: { sequence: string; timeLimit: number }; // Timed decryption challenge
+  tags?: FileTag[]; // Search index tags for the search command
 }
 
 export interface DirectoryNode {
@@ -306,6 +342,9 @@ export interface GameState {
   // Save tracking
   lastSaveTime: number;
 
+  // Search command state
+  lastSearchTime: number; // Timestamp of last search command (for cooldown)
+
   // Firewall Eyes system
   firewallActive: boolean; // True when detection >= 25%
   firewallEyes: FirewallEye[]; // Active hostile eyes on screen
@@ -315,6 +354,12 @@ export interface GameState {
 
   // Atmosphere Phase - quiet exploration period before pressure systems activate
   ufo74DisengageTime: number; // Timestamp when UFO74 disengaged (for cooldown)
+
+  // Archive/Rewind system - time mechanic for viewing past filesystem state
+  inArchiveMode: boolean; // True when player has rewound to past state
+  archiveActionsRemaining: number; // Actions left before returning to present (3-5)
+  archiveTimestamp: string; // Display timestamp for archive state (e.g., "02:09:12")
+  archiveFilesViewed: Set<string>; // Files accessed during this archive session
 }
 
 // Firewall Eye entity
@@ -524,6 +569,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   avatarExpression: 'neutral',
   // Save tracking
   lastSaveTime: 0,
+  // Search command state
+  lastSearchTime: 0,
   // Firewall Eyes system
   firewallActive: false,
   firewallEyes: [],
@@ -532,4 +579,9 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   lastEyeSpawnTime: 0,
   // Atmosphere Phase
   ufo74DisengageTime: 0,
+  // Archive/Rewind system
+  inArchiveMode: false,
+  archiveActionsRemaining: 0,
+  archiveTimestamp: '',
+  archiveFilesViewed: new Set(),
 };
