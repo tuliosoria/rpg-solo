@@ -3165,6 +3165,33 @@ const COMMAND_HELP: Record<string, string[]> = {
     'NOTE: Index is unreliable. Some files may be missed.',
     'NOTE: Each search is logged. Use sparingly.',
   ],
+  rewind: [
+    'COMMAND: rewind',
+    '',
+    'Access the archive state — a temporal snapshot of the past.',
+    '',
+    'USAGE:',
+    '  rewind            - Enter archive mode',
+    '',
+    'EFFECTS:',
+    '  - Deleted files become temporarily visible',
+    '  - READ-ONLY mode — cannot modify or export',
+    '  - Limited actions before automatic return',
+    '  - Files may disappear mid-access (temporal drift)',
+    '',
+    'WARNING: Increases detection risk (+5).',
+    'WARNING: You cannot take information out — REMEMBER what you see.',
+  ],
+  present: [
+    'COMMAND: present',
+    '',
+    'Return to the present timeline from archive mode.',
+    '',
+    'USAGE:',
+    '  present           - Exit archive, return to present',
+    '',
+    'NOTE: Archive mode also ends automatically after limited actions.',
+  ],
 };
 
 const commands: Record<string, (args: string[], state: GameState) => CommandResult> = {
@@ -3403,7 +3430,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     // In archive mode, add archive-only files to the listing
-    let allEntries = [...entries];
+    const allEntries = [...entries];
     if (state.inArchiveMode) {
       const archiveEntries = getArchiveFilesForDirectory(state.currentPath);
       // Add archive entries, avoiding duplicates
@@ -3638,41 +3665,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     const filePath = resolvePath(args[0], state.currentPath);
-    const access = canAccessFile(filePath, state);
 
-    if (!access.accessible) {
-      const stateChanges: Partial<GameState> = {
-        detectionLevel: getWarmupAdjustedDetection(state, 5),
-        legacyAlertCounter: state.legacyAlertCounter + 1,
-      };
-
-      if (!state.tutorialComplete) {
-        delete stateChanges.detectionLevel;
-        delete stateChanges.legacyAlertCounter;
-      }
-
-      return {
-        output: [createEntry('error', `ERROR: ${access.reason}`)],
-        stateChanges,
-        delayMs: calculateDelay(state) + 500,
-      };
-    }
-
-    const node = getNode(filePath, state);
-
-    // Check if it's a directory
-    if (node && node.type === 'dir') {
-      return {
-        output: [
-          createEntry('error', `ERROR: ${args[0]} is a directory`),
-          createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: thats a directory. use: cd ' + args[0]),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    // Check if this is an archive-only file
+    // Check if this is an archive-only file FIRST (before normal access checks)
     if (isArchiveOnlyFile(filePath)) {
       // Archive files only accessible in archive mode
       if (!state.inArchiveMode) {
@@ -3739,7 +3733,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         createEntry('system', ''),
       ];
       
-      let stateChanges: Partial<GameState> = {
+      const stateChanges: Partial<GameState> = {
         ...archiveResult.stateChanges,
         archiveFilesViewed,
       };
@@ -3760,6 +3754,40 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         output,
         stateChanges,
         streamingMode: 'normal',
+      };
+    }
+
+    const access = canAccessFile(filePath, state);
+
+    if (!access.accessible) {
+      const stateChanges: Partial<GameState> = {
+        detectionLevel: getWarmupAdjustedDetection(state, 5),
+        legacyAlertCounter: state.legacyAlertCounter + 1,
+      };
+
+      if (!state.tutorialComplete) {
+        delete stateChanges.detectionLevel;
+        delete stateChanges.legacyAlertCounter;
+      }
+
+      return {
+        output: [createEntry('error', `ERROR: ${access.reason}`)],
+        stateChanges,
+        delayMs: calculateDelay(state) + 500,
+      };
+    }
+
+    const node = getNode(filePath, state);
+
+    // Check if it's a directory
+    if (node && node.type === 'dir') {
+      return {
+        output: [
+          createEntry('error', `ERROR: ${args[0]} is a directory`),
+          createEntry('system', ''),
+          createEntry('ufo74', '[UFO74]: thats a directory. use: cd ' + args[0]),
+        ],
+        stateChanges: {},
       };
     }
 
