@@ -797,7 +797,7 @@ describe('Story Consistency Tests', () => {
         expect(result.stateChanges.isGameOver).toBe(true);
       });
 
-      it('good ending triggered by saving evidence and leaking', () => {
+      it('good ending triggered by completing leak sequence', () => {
         const state = createTestState({
           tutorialStep: -1,
           tutorialComplete: true,
@@ -807,8 +807,9 @@ describe('Story Consistency Tests', () => {
 
         const result = executeCommand('leak', state);
 
-        // Should trigger leak sequence
-        expect(result.stateChanges.evidencesSaved).toBe(true);
+        // Should start leak sequence with Elusive Man
+        expect(result.stateChanges.inLeakSequence).toBe(true);
+        expect(result.stateChanges.currentLeakQuestion).toBe(0);
       });
 
       it('secret ending triggered by finding UFO74 identity', () => {

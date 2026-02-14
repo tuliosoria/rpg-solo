@@ -72,6 +72,13 @@ import {
   getSearchCooldownMessage,
 } from './searchIndex';
 
+// Import Elusive Man leak system
+import {
+  isInLeakSequence,
+  startLeakSequence,
+  processLeakAnswer,
+} from './elusiveMan';
+
 // Re-export utilities for backward compatibility
 export {
   generateEntryId,
@@ -5649,48 +5656,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   },
 
   leak: (args, state) => {
-    if (!state.flags.allEvidenceCollected) {
+    // If already in leak sequence, this shouldn't be called (input handled elsewhere)
+    // But handle gracefully just in case
+    if (state.inLeakSequence) {
       return {
         output: [
-          createEntry('error', 'LEAK FAILED'),
-          createEntry(
-            'system',
-            'Evidence set incomplete. Collect all 5 evidence categories first.'
-          ),
+          createEntry('system', 'Interrogation in progress. Answer the question or type "abort".'),
         ],
         stateChanges: {},
       };
     }
 
-    // When all evidence is collected, the leak command "fails" but triggers ICQ phase
-    // This is the intended behavior - the leak attempt is blocked but the system
-    // initiates a different connection (ICQ chat with teenager)
-    return {
-      output: [
-        createEntry('system', ''),
-        createEntry('system', 'INITIATING EVIDENCE LEAK...'),
-        createEntry('system', ''),
-        createEntry('warning', 'Connecting to external relay...'),
-        createEntry('warning', 'Establishing secure tunnel...'),
-        createEntry('error', ''),
-        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-        createEntry('error', ''),
-        createEntry('error', '         CONNECTION INTERCEPTED'),
-        createEntry('error', ''),
-        createEntry('warning', '  Primary relay blocked by firewall.'),
-        createEntry('warning', '  Rerouting through emergency channel...'),
-        createEntry('error', ''),
-        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-        createEntry('system', ''),
-      ],
-      stateChanges: {
-        evidencesSaved: true,
-        flags: { ...state.flags, evidencesSaved: true, leakAttempted: true },
-        filesSent: false, // Will be set to true after ICQ conversation
-      },
-      delayMs: 2000,
-      triggerFlicker: true,
-    };
+    // Start the Elusive Man leak sequence
+    // Can be used at any time - but player risks failure without evidence
+    return startLeakSequence(state);
   },
 
   save: (args, state) => {
@@ -7539,6 +7518,15 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         delayMs: 2000,
       };
     }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ELUSIVE MAN LEAK SEQUENCE - Handle answers during interrogation
+  // Player must demonstrate real understanding of collected evidence
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (isInLeakSequence(state)) {
+    // All input during leak sequence is treated as an answer
+    return processLeakAnswer(normalizedInput, state);
   }
 
   // Empty command

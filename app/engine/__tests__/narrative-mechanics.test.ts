@@ -916,7 +916,7 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('run save_evidence.sh redirects to leak command', () => {
+    it('run save_evidence.sh redirects to leak command (Elusive Man)', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -931,13 +931,13 @@ describe('Narrative Mechanics', () => {
         ]),
       });
       const result = executeCommand('run save_evidence.sh', state);
-      // Should trigger the leak sequence (redirects to leak command)
+      // Should trigger the Elusive Man leak sequence
       expect(
         result.output.some(
-          e => e.content.includes('INTERCEPTED') || e.content.includes('INITIATING')
+          e => e.content.includes('I have resources') || e.content.includes('SECURE CHANNEL')
         )
       ).toBe(true);
-      expect(result.stateChanges.evidencesSaved).toBe(true);
+      expect(result.stateChanges.inLeakSequence).toBe(true);
     });
 
     it('executes purge_trace.sh to clear countdown', () => {
@@ -1068,27 +1068,25 @@ describe('Narrative Mechanics', () => {
         flags: { allEvidenceCollected: false },
       });
       const result = executeCommand('leak', state);
-      expect(
-        result.output.some(
-          e => e.content.includes('LEAK FAILED') || e.content.includes('incomplete')
-        )
-      ).toBe(true);
+      // New behavior: leak always starts the Elusive Man sequence
+      // Player can try without evidence but will likely fail
+      expect(result.stateChanges.inLeakSequence).toBe(true);
     });
 
-    it('triggers endgame sequence when evidence collected', () => {
+    it('triggers Elusive Man interrogation when used', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         flags: { allEvidenceCollected: true },
       });
       const result = executeCommand('leak', state);
-      // Should trigger the leak sequence (shows INTERCEPTED message and sets evidencesSaved)
+      // Should trigger the Elusive Man leak sequence
       expect(
         result.output.some(
-          e => e.content.includes('INTERCEPTED') || e.content.includes('INITIATING')
+          e => e.content.includes('I have resources') || e.content.includes('SECURE CHANNEL')
         )
       ).toBe(true);
-      expect(result.stateChanges.evidencesSaved).toBe(true);
+      expect(result.stateChanges.inLeakSequence).toBe(true);
     });
   });
 

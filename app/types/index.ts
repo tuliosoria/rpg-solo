@@ -242,6 +242,12 @@ export interface GameState {
   tutorialTipsShown: Set<string>; // Track which tutorial tips have been shown
   firstRunSeen: boolean; // Whether first-run welcome has been shown
 
+  // Elusive Man leak sequence
+  inLeakSequence: boolean; // True when in leak interrogation
+  currentLeakQuestion: number; // 0-4, current question index
+  leakWrongAnswers: number; // Wrong answers given (max 3)
+  leakAnswers: string[]; // Player's answers for debugging/analysis
+
   // Evidence collection & ICQ phase
   evidencesSaved: boolean; // True after running save script
   icqPhase: boolean; // True when in ICQ chat mode
@@ -496,6 +502,11 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   interactiveTutorialMode: false,
   tutorialTipsShown: new Set(),
   firstRunSeen: false,
+  // Elusive Man leak sequence
+  inLeakSequence: false,
+  currentLeakQuestion: 0,
+  leakWrongAnswers: 0,
+  leakAnswers: [],
   evidencesSaved: false,
   icqPhase: false,
   icqMessages: [],
