@@ -11,14 +11,42 @@ let currentStatus = 'Idle';
 let minimizeToTray = true;
 
 /**
- * Gets the tray icon path based on platform.
+ * Gets the tray icon path based on platform and packaging state.
  * @returns {string} Path to the tray icon
  */
 function getTrayIconPath() {
   // Use different icon sizes for different platforms
   const iconName = process.platform === 'win32' ? 'icon.ico' : 'icon.png';
-  const iconPath = path.join(__dirname, '..', 'public', iconName);
-  return iconPath;
+
+  // In production (packaged), resources are in different locations
+  if (app.isPackaged) {
+    // For packaged apps, use process.resourcesPath or app.getAppPath()
+    const resourcesPath = process.resourcesPath || app.getAppPath();
+    // Try multiple possible locations
+    const possiblePaths = [
+      path.join(resourcesPath, 'public', iconName),
+      path.join(resourcesPath, 'app', 'public', iconName),
+      path.join(app.getAppPath(), 'public', iconName),
+      path.join(app.getAppPath(), '..', 'public', iconName),
+    ];
+
+    for (const iconPath of possiblePaths) {
+      try {
+        const fs = require('fs');
+        if (fs.existsSync(iconPath)) {
+          return iconPath;
+        }
+      } catch {
+        // Continue to next path
+      }
+    }
+
+    // Fallback to original path
+    return path.join(__dirname, '..', 'public', iconName);
+  }
+
+  // Development: use the public folder directly
+  return path.join(__dirname, '..', 'public', iconName);
 }
 
 /**

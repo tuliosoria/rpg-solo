@@ -54,7 +54,8 @@ function setPresence(status) {
     // steamworks.js uses the friends API for rich presence
     const friends = steamClient.friends;
     if (friends && typeof friends.setRichPresence === 'function') {
-      friends.setRichPresence('steam_display', status);
+      // Use 'status' key which is the standard for simple text presence
+      // Note: 'steam_display' requires localization tokens in Steamworks dashboard
       friends.setRichPresence('status', status);
       currentPresence = status;
       return { success: true };

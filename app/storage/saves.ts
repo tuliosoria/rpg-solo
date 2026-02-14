@@ -6,6 +6,7 @@
  * - Set-to-Array serialization for proper JSON storage
  * - Automatic cleanup when quota is exceeded
  * - Auto-save support for session recovery
+ * - Steam Cloud sync when available (with localStorage fallback)
  *
  * @module storage/saves
  */
@@ -28,6 +29,12 @@ import {
   SAVE_VERSION,
 } from '../constants/limits';
 import { MAX_DETECTION } from '../constants/detection';
+import {
+  isCloudAvailable,
+  cloudSave,
+  cloudLoad,
+  cloudDelete,
+} from '../lib/steamBridge';
 
 const SAVES_KEY = 'terminal1996:saves';
 const SAVE_PREFIX = 'terminal1996:save:';
@@ -229,6 +236,65 @@ function isQuotaExceededError(error: unknown): boolean {
 }
 
 /**
+ * Syncs a save to Steam Cloud in the background.
+ * @param key - The save key
+ * @param data - The serialized save data
+ */
+async function syncSaveToCloud(key: string, data: string): Promise<void> {
+  try {
+    const cloudAvailable = await isCloudAvailable();
+    if (cloudAvailable) {
+      const result = await cloudSave(key, data);
+      if (result.success) {
+        // eslint-disable-next-line no-console
+        console.log(`Synced save ${key} to Steam Cloud`);
+      }
+    }
+  } catch (e) {
+    // Silently fail - localStorage is the primary storage
+    // eslint-disable-next-line no-console
+    console.error('Steam Cloud sync failed:', e);
+  }
+}
+
+/**
+ * Attempts to load a save from Steam Cloud.
+ * @param key - The save key
+ * @returns The save data, or null if not found or unavailable
+ */
+async function loadSaveFromCloud(key: string): Promise<string | null> {
+  try {
+    const cloudAvailable = await isCloudAvailable();
+    if (cloudAvailable) {
+      const result = await cloudLoad(key);
+      if (result.success && result.data) {
+        return result.data;
+      }
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Steam Cloud load failed:', e);
+  }
+  return null;
+}
+
+/**
+ * Deletes a save from Steam Cloud.
+ * @param key - The save key to delete
+ */
+async function deleteSaveFromCloud(key: string): Promise<void> {
+  try {
+    const cloudAvailable = await isCloudAvailable();
+    if (cloudAvailable) {
+      await cloudDelete(key);
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Steam Cloud delete failed:', e);
+  }
+}
+
+/**
  * Retrieves all saved game slots from localStorage.
  * @returns Array of save slot metadata, empty if none exist or storage unavailable
  */
@@ -315,11 +381,15 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
   const trimmedSlots = slots.slice(0, MAX_SAVE_SLOTS);
   window.localStorage.setItem(SAVES_KEY, JSON.stringify(trimmedSlots));
 
+  // Sync to Steam Cloud in the background (fire and forget)
+  syncSaveToCloud(id, serializeState(stateToSave));
+
   return slot;
 }
 
 /**
  * Loads a saved game state by slot ID.
+ * Attempts to load from Steam Cloud first, falls back to localStorage.
  * @param slotId - The unique identifier of the save slot
  * @returns The deserialized GameState, or null if not found
  */
@@ -336,7 +406,40 @@ export function loadGame(slotId: string): GameState | null {
 }
 
 /**
+ * Loads a saved game state by slot ID, with async Steam Cloud support.
+ * Attempts to load from Steam Cloud first, falls back to localStorage.
+ * @param slotId - The unique identifier of the save slot
+ * @returns The deserialized GameState, or null if not found
+ */
+export async function loadGameAsync(slotId: string): Promise<GameState | null> {
+  if (!isBrowserWithStorage()) return null;
+
+  try {
+    // Try Steam Cloud first
+    const cloudData = await loadSaveFromCloud(slotId);
+    if (cloudData) {
+      try {
+        const cloudState = deserializeState(cloudData);
+        // Also update localStorage with cloud data for offline access
+        window.localStorage.setItem(SAVE_PREFIX + slotId, cloudData);
+        return cloudState;
+      } catch {
+        // Cloud data corrupted, fall back to localStorage
+      }
+    }
+
+    // Fall back to localStorage
+    const raw = window.localStorage.getItem(SAVE_PREFIX + slotId);
+    if (!raw) return null;
+    return deserializeState(raw);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Deletes a save slot and its associated state data.
+ * Also deletes from Steam Cloud if available.
  * @param slotId - The unique identifier of the save slot to delete
  */
 export function deleteSave(slotId: string): void {
@@ -347,6 +450,9 @@ export function deleteSave(slotId: string): void {
 
     const slots = getSaveSlots().filter(s => s.id !== slotId);
     window.localStorage.setItem(SAVES_KEY, JSON.stringify(slots));
+
+    // Also delete from Steam Cloud (fire and forget)
+    deleteSaveFromCloud(slotId);
   } catch {
     // localStorage may be unavailable
   }
@@ -402,6 +508,7 @@ export function createNewGame(): GameState {
 /**
  * Saves the current state to the auto-save slot.
  * Used for session recovery on page reload.
+ * Also syncs to Steam Cloud when available.
  * @param state - The game state to auto-save
  */
 export function autoSave(state: GameState): void {
@@ -409,7 +516,11 @@ export function autoSave(state: GameState): void {
 
   try {
     const stateToSave = { ...state, lastSaveTime: Date.now() };
-    window.localStorage.setItem('terminal1996:autosave', serializeState(stateToSave));
+    const serialized = serializeState(stateToSave);
+    window.localStorage.setItem('terminal1996:autosave', serialized);
+
+    // Sync to Steam Cloud in the background
+    syncSaveToCloud('autosave', serialized);
   } catch {
     // localStorage may be full or unavailable
   }
@@ -423,6 +534,37 @@ export function loadAutoSave(): GameState | null {
   if (!isBrowserWithStorage()) return null;
 
   try {
+    const raw = window.localStorage.getItem('terminal1996:autosave');
+    if (!raw) return null;
+    return deserializeState(raw);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Loads the auto-saved game state with async Steam Cloud support.
+ * Attempts to load from Steam Cloud first, falls back to localStorage.
+ * @returns The auto-saved GameState, or null if none exists
+ */
+export async function loadAutoSaveAsync(): Promise<GameState | null> {
+  if (!isBrowserWithStorage()) return null;
+
+  try {
+    // Try Steam Cloud first
+    const cloudData = await loadSaveFromCloud('autosave');
+    if (cloudData) {
+      try {
+        const cloudState = deserializeState(cloudData);
+        // Also update localStorage with cloud data for offline access
+        window.localStorage.setItem('terminal1996:autosave', cloudData);
+        return cloudState;
+      } catch {
+        // Cloud data corrupted, fall back to localStorage
+      }
+    }
+
+    // Fall back to localStorage
     const raw = window.localStorage.getItem('terminal1996:autosave');
     if (!raw) return null;
     return deserializeState(raw);
