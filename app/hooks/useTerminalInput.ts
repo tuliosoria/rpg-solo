@@ -167,8 +167,18 @@ export function useTerminalInput({
     (messages: TerminalEntry[]) => {
       if (messages.length === 0) return;
 
+      // Checkpoint on first UFO74 contact (major story moment)
+      if (!gameState.flags?.firstUfo74Contact) {
+        saveCheckpoint(
+          { ...gameState, flags: { ...gameState.flags, firstUfo74Contact: true } },
+          'First UFO74 contact'
+        );
+      }
+
       setGameState(prev => ({
         ...prev,
+        // Mark first UFO74 contact
+        flags: { ...prev.flags, firstUfo74Contact: true },
         history: [
           ...prev.history,
           createEntry('system', ''),
@@ -189,7 +199,7 @@ export function useTerminalInput({
       setPendingUfo74Messages([]);
       setEncryptedChannelState('idle');
     },
-    [playSound, setEncryptedChannelState, setGameState, setPendingUfo74Messages]
+    [gameState, playSound, setEncryptedChannelState, setGameState, setPendingUfo74Messages]
   );
 
   const streamOutput = useCallback(
@@ -767,6 +777,26 @@ export function useTerminalInput({
 
       if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
         saveCheckpoint(intermediateState, 'Admin access unlocked');
+      }
+
+      // Checkpoint when detection approaches critical threshold (80%+)
+      // Only checkpoint once per session to avoid spam
+      if (
+        intermediateState.detectionLevel >= 80 &&
+        gameState.detectionLevel < 80 &&
+        !gameState.flags?.criticalDetectionCheckpointed
+      ) {
+        // Save checkpoint with the flag set to prevent duplicate checkpoints
+        const stateWithFlag = {
+          ...intermediateState,
+          flags: { ...intermediateState.flags, criticalDetectionCheckpointed: true },
+        };
+        saveCheckpoint(stateWithFlag, 'Detection approaching critical');
+        // Update the intermediate state so the flag persists
+        setGameState(prev => ({
+          ...prev,
+          flags: { ...prev.flags, criticalDetectionCheckpointed: true },
+        }));
       }
 
       if (

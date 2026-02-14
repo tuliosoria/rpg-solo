@@ -79,6 +79,9 @@ import {
   processLeakAnswer,
 } from './elusiveMan';
 
+// Import checkpoint system
+import { saveCheckpoint } from '../storage/saves';
+
 // Re-export utilities for backward compatibility
 export {
   generateEntryId,
@@ -974,6 +977,12 @@ function checkVictory(state: GameState): boolean {
 
 // Helper function to perform actual decryption
 function performDecryption(filePath: string, file: FileNode, state: GameState): CommandResult {
+  // Checkpoint on first successful decryption (major milestone)
+  const isFirstDecryption = !state.flags?.firstDecryptionComplete;
+  if (isFirstDecryption) {
+    saveCheckpoint(state, 'First encrypted file decrypted');
+  }
+
   // Apply decryption (but with corruption risk)
   const mutation: FileMutation = state.fileMutations[filePath] || {
     corruptedLines: [],
@@ -997,6 +1006,11 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     detectionLevel: state.detectionLevel + 8,
     sessionStability: state.sessionStability - 5,
     pendingDecryptFile: undefined,
+    // Mark first decryption complete
+    flags: {
+      ...state.flags,
+      firstDecryptionComplete: true,
+    },
   };
 
   if (!state.tutorialComplete) {
@@ -1006,7 +1020,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
 
   // Special handling: Decrypting neural dump unlocks scout link
   if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
-    stateChanges.flags = { ...state.flags, scoutLinkUnlocked: true };
+    stateChanges.flags = { ...stateChanges.flags, scoutLinkUnlocked: true };
   }
 
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
@@ -4802,6 +4816,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Track failed attempts
     const failedAttempts = state.overrideFailedAttempts || 0;
 
+    // Checkpoint before high-risk override protocol attempt (only if first real attempt)
+    if (failedAttempts === 0) {
+      saveCheckpoint(state, 'Before override protocol');
+    }
+
     // Wrong password
     if (password !== correctPassword) {
       const newFailedAttempts = failedAttempts + 1;
@@ -5667,6 +5686,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
 
+    // Checkpoint before high-risk Elusive Man interrogation
+    saveCheckpoint(state, 'Before Elusive Man interrogation');
+
     // Start the Elusive Man leak sequence
     // Can be used at any time - but player risks failure without evidence
     return startLeakSequence(state);
@@ -5850,6 +5872,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         ],
         stateChanges: {},
       };
+    }
+
+    // Checkpoint on first search command (player learning the system)
+    if (!state.lastSearchTime) {
+      saveCheckpoint(state, 'First search command');
     }
 
     const keyword = args.join(' ').trim().toLowerCase();
@@ -6831,6 +6858,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         stateChanges: {},
       };
     }
+
+    // Checkpoint before entering archive mode (risky operation)
+    saveCheckpoint(state, 'Before archive mode');
 
     // Initialize archive mode
     const timestamp = generateArchiveTimestamp();
