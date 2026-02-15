@@ -18,6 +18,8 @@ const mockStopAmbient = vi.fn();
 const mockToggleSound = vi.fn();
 const mockUpdateAmbientTension = vi.fn();
 const mockSetMasterVolume = vi.fn();
+const mockSpeak = vi.fn();
+const mockSetMusicPlaybackRate = vi.fn();
 let mockSoundEnabled = false;
 
 // Mock the storage modules
@@ -58,6 +60,8 @@ vi.mock('../../hooks/useSound', () => ({
     soundEnabled: mockSoundEnabled,
     masterVolume: 0.5,
     setMasterVolume: mockSetMasterVolume,
+    speak: mockSpeak,
+    setMusicPlaybackRate: mockSetMusicPlaybackRate,
   }),
 }));
 
