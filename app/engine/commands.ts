@@ -34,6 +34,10 @@ import {
   generateArchiveTimestamp,
   shouldFileDisappear,
 } from '../data/archiveFiles';
+import {
+  UFO74_CONSPIRACY_REACTIONS,
+  CONSPIRACY_FILE_NAMES,
+} from '../data/conspiracyFiles';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES, MAX_DETECTION, applyWarmupDetection, WARMUP_PHASE } from '../constants/detection';
 import { shouldSuppressPressure, shouldSuppressPenalties } from '../constants/atmosphere';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
@@ -4249,6 +4253,26 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '       we need docs with DIRECT language.',
         '       look for files that say what they MEAN.',
       ]);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // CONSPIRACY EASTER EGGS - UFO74 reacts with dismissive but entertained comments
+    // These files contain real-world conspiracy theory references (non-alien)
+    // ═══════════════════════════════════════════════════════════════════════════
+    const isConspiracyFile = CONSPIRACY_FILE_NAMES.includes(fileName);
+    const conspiracyFilesSeen = new Set(state.conspiracyFilesSeen || []);
+    
+    if (isConspiracyFile && !conspiracyFilesSeen.has(filePath) && !isEncryptedAndLocked) {
+      // Mark this conspiracy file as seen
+      conspiracyFilesSeen.add(filePath);
+      stateChanges.conspiracyFilesSeen = conspiracyFilesSeen;
+      
+      // Pick a random UFO74 reaction (seeded for consistency using file path hash)
+      const conspiracyRng = createSeededRng((state.seed || 0) + filePath.length * 7);
+      const reactionIndex = seededRandomInt(conspiracyRng, 0, UFO74_CONSPIRACY_REACTIONS.length);
+      const reaction = UFO74_CONSPIRACY_REACTIONS[reactionIndex];
+      
+      ufo74ContextMessage = createUFO74Message(reaction);
     }
 
     // After 3 files opened, UFO74 suggests override protocol (only if not already unlocked)

@@ -24,6 +24,18 @@ import {
   railroad_schedule,
   fire_department_log,
 } from './expansionContent';
+import {
+  economic_transition_memo,
+  apollo_media_guidelines,
+  weather_pattern_intervention,
+  behavioral_compliance_study,
+  infrastructure_blackout_simulation,
+  avian_tracking_program,
+  consumer_device_listening,
+  archival_photo_replacement,
+  education_curriculum_revision,
+  satellite_light_reflection,
+} from './conspiracyFiles';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // INSTITUTIONAL FRAMING - Implicit guidance through bureaucratic language
@@ -4542,6 +4554,17 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'municipal_budget_96.txt': municipal_budget_96,
             'railroad_schedule_jan96.txt': railroad_schedule,
             'fire_dept_log_jan96.txt': fire_department_log,
+            // EASTER EGGS: Conspiracy theory files (UFO74 reacts when opened)
+            'economic_transition_memo.txt': economic_transition_memo,
+            'apollo_media_guidelines.pdf': apollo_media_guidelines,
+            'weather_pattern_intervention.log': weather_pattern_intervention,
+            'behavioral_compliance_study.dat': behavioral_compliance_study,
+            'infrastructure_blackout_simulation.txt': infrastructure_blackout_simulation,
+            'avian_tracking_program.csv': avian_tracking_program,
+            'consumer_device_listening.memo': consumer_device_listening,
+            'archival_photo_replacement.notice': archival_photo_replacement,
+            'education_curriculum_revision.doc': education_curriculum_revision,
+            'satellite_light_reflection_trials.txt': satellite_light_reflection,
           },
         },
       },

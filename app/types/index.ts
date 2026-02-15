@@ -96,7 +96,8 @@ export type FileTag =
   | 'transition'
   | 'diplomatic'
   | 'cia'
-  | 'scout';
+  | 'scout'
+  | 'conspiracy';
 
 export interface FileNode {
   type: 'file';
@@ -167,6 +168,9 @@ export interface GameState {
 
   // Files the player has opened/read
   filesRead: Set<string>;
+
+  // Conspiracy easter egg files seen (triggers UFO74 reactions)
+  conspiracyFilesSeen: Set<string>;
 
   // Persistent file mutations
   fileMutations: Record<string, FileMutation>;
@@ -470,6 +474,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   scoutLinksUsed: 0,
   truthsDiscovered: new Set(),
   filesRead: new Set(),
+  conspiracyFilesSeen: new Set(),
   fileMutations: {},
   isGameOver: false,
   gameOverReason: undefined,
