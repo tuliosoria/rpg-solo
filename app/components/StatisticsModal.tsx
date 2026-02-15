@@ -90,7 +90,12 @@ export default memo(function StatisticsModal({ onCloseAction }: StatisticsModalP
         </div>
 
         <div className={styles.actions}>
-          <button className={styles.closeButton} onClick={onCloseAction}>
+          <button
+            className={styles.closeButton}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={onCloseAction}
+          >
             [ CLOSE ]
           </button>
         </div>

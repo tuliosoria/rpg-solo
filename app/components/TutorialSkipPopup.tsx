@@ -71,6 +71,8 @@ export default function TutorialSkipPopup({
           <button
             ref={skipBtnRef}
             className={styles.btnSkip}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
             onClick={onSkip}
           >
             [ Y ] SKIP
@@ -78,6 +80,8 @@ export default function TutorialSkipPopup({
           <button
             ref={playBtnRef}
             className={styles.btnPlay}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
             onClick={onContinue}
           >
             [ N ] TUTORIAL

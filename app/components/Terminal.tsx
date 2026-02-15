@@ -231,6 +231,7 @@ export default function Terminal({
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const enterOnlyButtonRef = useRef<HTMLButtonElement>(null);
+  const headerMenuRef = useRef<HTMLDivElement>(null);
   const gameStateRef = useRef(gameState);
   const isProcessingRef = useRef(false);
   const skipStreamingRef = useRef(false);
@@ -583,6 +584,40 @@ export default function Terminal({
       skipStreamingRef,
     },
   });
+
+  // Click-outside handler for header menu - closes menu and refocuses input
+  useEffect(() => {
+    if (!showHeaderMenu) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      // Check if click is outside the header menu
+      if (headerMenuRef.current && !headerMenuRef.current.contains(target)) {
+        setShowHeaderMenu(false);
+        setTimeout(focusTerminalInput, 0);
+      }
+    };
+
+    // Delay adding listener to avoid immediate close
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showHeaderMenu, setShowHeaderMenu, focusTerminalInput]);
+
+  // Refocus input when tutorial skip popup closes
+  const prevShowTutorialSkipRef = useRef(showTutorialSkip);
+  useEffect(() => {
+    // If popup was just closed (was showing, now not showing), refocus
+    if (prevShowTutorialSkipRef.current && !showTutorialSkip) {
+      setTimeout(focusTerminalInput, 0);
+    }
+    prevShowTutorialSkipRef.current = showTutorialSkip;
+  }, [showTutorialSkip, focusTerminalInput]);
 
   // Wrapper for firewall eye click - auto-focus input after clicking an eye
   const handleFirewallEyeClickWithFocus = useCallback(
@@ -959,18 +994,23 @@ export default function Terminal({
 
           {/* Dropdown menu */}
           {showHeaderMenu && (
-            <div className={styles.headerMenu} id="terminal-header-menu" role="menu">
+            <div ref={headerMenuRef} className={styles.headerMenu} id="terminal-header-menu" role="menu">
               <button
                 className={styles.menuItem}
+                tabIndex={-1}
+                onMouseDown={e => e.preventDefault()}
                 onClick={() => {
                   onSaveRequestAction(gameState);
                   setShowHeaderMenu(false);
+                  setTimeout(focusTerminalInput, 0);
                 }}
               >
                 💾 SAVE SESSION
               </button>
               <button
                 className={styles.menuItem}
+                tabIndex={-1}
+                onMouseDown={e => e.preventDefault()}
                 onClick={() => {
                   setShowHeaderMenu(false);
                   onExitAction();
@@ -980,6 +1020,8 @@ export default function Terminal({
               </button>
               <button
                 className={styles.menuItem}
+                tabIndex={-1}
+                onMouseDown={e => e.preventDefault()}
                 onClick={() => {
                   setShowSettings(true);
                   setShowHeaderMenu(false);
@@ -989,24 +1031,32 @@ export default function Terminal({
               </button>
               <button
                 className={styles.menuItem}
+                tabIndex={-1}
+                onMouseDown={e => e.preventDefault()}
                 onClick={() => {
                   setShowAchievements(true);
                   setShowHeaderMenu(false);
+                  setTimeout(focusTerminalInput, 0);
                 }}
               >
                 🏆 ACHIEVEMENTS
               </button>
               <button
                 className={styles.menuItem}
+                tabIndex={-1}
+                onMouseDown={e => e.preventDefault()}
                 onClick={() => {
                   setShowStatistics(true);
                   setShowHeaderMenu(false);
+                  setTimeout(focusTerminalInput, 0);
                 }}
               >
                 📊 STATISTICS
               </button>
               <button
                 className={styles.menuItem}
+                tabIndex={-1}
+                onMouseDown={e => e.preventDefault()}
                 onClick={() => {
                   setShowHeaderMenu(false);
                   onExitAction();
@@ -1105,6 +1155,7 @@ export default function Terminal({
                 className={styles.enterPromptContent}
                 disabled={isProcessing}
                 onClick={handleSubmit}
+                onMouseDown={e => e.preventDefault()}
                 tabIndex={-1}
               >
                 <span className={styles.enterPromptText}>
@@ -1373,7 +1424,10 @@ export default function Terminal({
         {pendingAchievement && (
           <AchievementPopup
             achievement={pendingAchievement}
-            onDismiss={() => setPendingAchievement(null)}
+            onDismiss={() => {
+              setPendingAchievement(null);
+              setTimeout(focusTerminalInput, 0);
+            }}
           />
         )}
 
@@ -1384,25 +1438,38 @@ export default function Terminal({
             masterVolume={masterVolume}
             onToggleSound={toggleSound}
             onVolumeChange={setMasterVolume}
-            onCloseAction={() => setShowSettings(false)}
+            onCloseAction={() => {
+              setShowSettings(false);
+              setTimeout(focusTerminalInput, 0);
+            }}
           />
         )}
 
         {/* Achievement gallery */}
         {showAchievements && (
-          <AchievementGallery onCloseAction={() => setShowAchievements(false)} />
+          <AchievementGallery onCloseAction={() => {
+            setShowAchievements(false);
+            setTimeout(focusTerminalInput, 0);
+          }} />
         )}
 
         {/* Statistics modal */}
-        {showStatistics && <StatisticsModal onCloseAction={() => setShowStatistics(false)} />}
+        {showStatistics && <StatisticsModal onCloseAction={() => {
+          setShowStatistics(false);
+          setTimeout(focusTerminalInput, 0);
+        }} />}
 
         {/* Pause menu */}
         {showPauseMenu && (
           <PauseMenu
-            onResumeAction={() => setShowPauseMenu(false)}
+            onResumeAction={() => {
+              setShowPauseMenu(false);
+              setTimeout(focusTerminalInput, 0);
+            }}
             onSaveAction={() => {
               setShowPauseMenu(false);
               onSaveRequestAction(gameState);
+              setTimeout(focusTerminalInput, 0);
             }}
             onLoadAction={() => {
               setShowPauseMenu(false);

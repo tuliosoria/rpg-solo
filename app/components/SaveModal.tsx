@@ -65,10 +65,21 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
         </div>
 
         <div className={styles.actions}>
-          <button className={styles.saveButton} onClick={handleSave} disabled={saving}>
+          <button
+            className={styles.saveButton}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={handleSave}
+            disabled={saving}
+          >
             {saving ? 'SAVING...' : '[ SAVE ]'}
           </button>
-          <button className={styles.cancelButton} onClick={onCloseAction}>
+          <button
+            className={styles.cancelButton}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={onCloseAction}
+          >
             [ CANCEL ]
           </button>
         </div>

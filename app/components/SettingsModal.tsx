@@ -80,6 +80,8 @@ export default memo(function SettingsModal({
             <label className={styles.label}>Sound Effects</label>
             <button
               className={`${styles.toggle} ${soundEnabled ? styles.toggleOn : styles.toggleOff}`}
+              tabIndex={-1}
+              onMouseDown={e => e.preventDefault()}
               onClick={onToggleSound}
             >
               {soundEnabled ? '[ ON ]' : '[ OFF ]'}
@@ -97,6 +99,7 @@ export default memo(function SettingsModal({
                 value={masterVolume * 100}
                 onChange={e => onVolumeChange(parseInt(e.target.value) / 100)}
                 className={styles.slider}
+                tabIndex={-1}
                 disabled={!soundEnabled}
               />
               <span className={styles.volumeValue}>{Math.round(masterVolume * 100)}%</span>
@@ -108,6 +111,8 @@ export default memo(function SettingsModal({
             <label className={styles.label}>CRT Effects</label>
             <button
               className={`${styles.toggle} ${crtEnabled ? styles.toggleOn : styles.toggleOff}`}
+              tabIndex={-1}
+              onMouseDown={e => e.preventDefault()}
               onClick={toggleCrt}
             >
               {crtEnabled ? '[ ON ]' : '[ OFF ]'}
@@ -126,7 +131,12 @@ export default memo(function SettingsModal({
         </div>
 
         <div className={styles.actions}>
-          <button className={styles.closeButton} onClick={onCloseAction}>
+          <button
+            className={styles.closeButton}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={onCloseAction}
+          >
             [ CLOSE ]
           </button>
         </div>

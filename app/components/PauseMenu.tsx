@@ -114,6 +114,8 @@ export default memo(function PauseMenu({
           <div className={styles.options}>
             <button
               className={`${styles.menuButton} ${styles.exitButton} ${selectedIndex === 0 ? styles.selected : ''}`}
+              tabIndex={-1}
+              onMouseDown={e => e.preventDefault()}
               onClick={onExitAction}
               onMouseEnter={() => setSelectedIndex(0)}
             >
@@ -121,6 +123,8 @@ export default memo(function PauseMenu({
             </button>
             <button
               className={`${styles.menuButton} ${selectedIndex === 1 ? styles.selected : ''}`}
+              tabIndex={-1}
+              onMouseDown={e => e.preventDefault()}
               onClick={() => setShowExitConfirm(false)}
               onMouseEnter={() => setSelectedIndex(1)}
             >
@@ -145,6 +149,8 @@ export default memo(function PauseMenu({
         <div className={styles.options}>
           <button
             className={`${styles.menuButton} ${selectedIndex === 0 ? styles.selected : ''}`}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
             onClick={onResumeAction}
             onMouseEnter={() => setSelectedIndex(0)}
           >
@@ -152,6 +158,8 @@ export default memo(function PauseMenu({
           </button>
           <button
             className={`${styles.menuButton} ${selectedIndex === 1 ? styles.selected : ''}`}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
             onClick={onSaveAction}
             onMouseEnter={() => setSelectedIndex(1)}
           >
@@ -159,6 +167,8 @@ export default memo(function PauseMenu({
           </button>
           <button
             className={`${styles.menuButton} ${selectedIndex === 2 ? styles.selected : ''}`}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
             onClick={onLoadAction}
             onMouseEnter={() => setSelectedIndex(2)}
           >
@@ -166,6 +176,8 @@ export default memo(function PauseMenu({
           </button>
           <button
             className={`${styles.menuButton} ${selectedIndex === 3 ? styles.selected : ''}`}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
             onClick={onSettingsAction}
             onMouseEnter={() => setSelectedIndex(3)}
           >
@@ -173,6 +185,8 @@ export default memo(function PauseMenu({
           </button>
           <button
             className={`${styles.menuButton} ${styles.exitButton} ${selectedIndex === 4 ? styles.selected : ''}`}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
             onClick={handleExitClick}
             onMouseEnter={() => setSelectedIndex(4)}
           >
