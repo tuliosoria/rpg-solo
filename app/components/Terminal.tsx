@@ -584,6 +584,16 @@ export default function Terminal({
     },
   });
 
+  // Wrapper for firewall eye click - auto-focus input after clicking an eye
+  const handleFirewallEyeClickWithFocus = useCallback(
+    (eyeId: string) => {
+      handleFirewallEyeClick(eyeId);
+      // Re-focus the terminal input so user can type immediately
+      focusTerminalInput();
+    },
+    [handleFirewallEyeClick, focusTerminalInput]
+  );
+
   // Get status bar content
   const getStatusBar = () => {
     const parts: string[] = [];
@@ -898,7 +908,7 @@ export default function Terminal({
             eyes={gameState.firewallEyes}
             lastEyeSpawnTime={gameState.lastEyeSpawnTime}
             paused={isFirewallPaused}
-            onEyeClick={handleFirewallEyeClick}
+            onEyeClick={handleFirewallEyeClickWithFocus}
             onEyeDetonate={handleFirewallEyeDetonate}
             onSpawnEyeBatch={handleFirewallEyeBatchSpawn}
             onActivateFirewall={handleFirewallActivate}
