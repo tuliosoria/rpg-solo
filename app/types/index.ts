@@ -236,6 +236,9 @@ export interface GameState {
   wanderingNoticeCount: number; // How many times we've nudged the player
   lastDirectoriesVisited: string[]; // Recent directory history for pattern detection
 
+  // Hint system
+  hintsUsed: number; // How many hints the player has requested (max 4)
+
   // Tutorial state (UFO74 intro messages)
   tutorialStep: number; // -1 = complete, 0+ = current message index
   tutorialComplete: boolean;
@@ -496,6 +499,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   lastMeaningfulAction: 0,
   wanderingNoticeCount: 0,
   lastDirectoriesVisited: [],
+  hintsUsed: 0,
   tutorialStep: 0,
   tutorialComplete: false,
   interactiveTutorialState: {

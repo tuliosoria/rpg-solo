@@ -3213,6 +3213,21 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'NOTE: Archive mode also ends automatically after limited actions.',
   ],
+  hint: [
+    'COMMAND: hint',
+    '',
+    'Request guidance when you are stuck.',
+    '',
+    'USAGE:',
+    '  hint              - Receive a contextual hint',
+    '',
+    'NOTES:',
+    '  - Hints are LIMITED (4 per run)',
+    '  - Hints are vague — they guide thinking, not actions',
+    '  - Cannot reveal specific file names or answers',
+    '',
+    'Use sparingly. Trust your own analysis.',
+  ],
 };
 
 const commands: Record<string, (args: string[], state: GameState) => CommandResult> = {
@@ -3297,6 +3312,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  tree              Show directory structure',
         '  map               Show evidence connections',
         '  morse <text>      Decipher morse code messages',
+        '  hint              Request a hint (limited uses)',
         '  leak              Leak collected evidence',
         '  tutorial [on/off] Toggle tutorial tips or replay intro',
         '  save              Save current session',
@@ -5867,6 +5883,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         history: [],
       },
     };
+  },
+
+  hint: (_args, state) => {
+    // Import hint system
+    const { generateHintOutput } = require('./hintSystem');
+    return generateHintOutput(state);
   },
 
   search: (args, state) => {
