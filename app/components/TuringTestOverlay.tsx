@@ -5,6 +5,7 @@ import Image from 'next/image';
 import styles from './TuringTestOverlay.module.css';
 import { TURING_QUESTIONS } from '../constants/turing';
 import { uiChance, uiRandomInt } from '../engine/rng';
+import { useSound } from '../hooks/useSound';
 
 interface TuringTestOverlayProps {
   onComplete: (passed: boolean) => void;
@@ -20,8 +21,26 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
   const [flickering, setFlickering] = useState(true);
   const flickerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { setMusicPlaybackRate, speak, playSound } = useSound();
 
   const currentQuestion = TURING_QUESTIONS[questionIndex];
+
+  // Turing Test start effects: voice + music speed
+  useEffect(() => {
+    // Firewall speaks with menacing voice
+    speak('Welcome to Turing Test', { rate: 0.7, pitch: 0.3 });
+    
+    // Accelerate background music to 1.5x for intensity
+    setMusicPlaybackRate(1.5);
+    
+    // Play alert sound for dramatic effect
+    playSound('alert');
+    
+    // Reset music speed when component unmounts
+    return () => {
+      setMusicPlaybackRate(1.0);
+    };
+  }, [speak, setMusicPlaybackRate, playSound]);
 
   // Initial flicker effect
   useEffect(() => {

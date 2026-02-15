@@ -745,6 +745,25 @@ export function useSound() {
     };
   }, [stopAmbient, stopMusic]);
 
+  // Set music playback rate (for Turing Test intensity effect)
+  const setMusicPlaybackRate = useCallback((rate: number) => {
+    if (musicElementRef.current) {
+      musicElementRef.current.playbackRate = rate;
+    }
+  }, []);
+
+  // Speak text using Web Speech API (for Firewall voice)
+  const speak = useCallback((text: string, options?: { rate?: number; pitch?: number }) => {
+    if (!soundEnabled || typeof window === 'undefined' || !window.speechSynthesis) return;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = options?.rate ?? 0.8; // Slow, menacing
+    utterance.pitch = options?.pitch ?? 0.5; // Deep voice
+    utterance.volume = masterVolume;
+    
+    speechSynthesis.speak(utterance);
+  }, [soundEnabled, masterVolume]);
+
   return {
     playSound,
     playKeySound,
@@ -752,6 +771,8 @@ export function useSound() {
     stopAmbient,
     toggleSound,
     updateAmbientTension,
+    setMusicPlaybackRate,
+    speak,
     soundEnabled,
     masterVolume,
     setMasterVolume,
