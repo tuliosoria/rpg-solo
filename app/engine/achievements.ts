@@ -1,6 +1,7 @@
 // Achievement definitions and tracking
 
 import { safeGetJSON, safeSetJSON, safeRemoveItem } from '../storage/safeStorage';
+import { unlockAchievement as steamUnlockAchievement } from '../lib/steamBridge';
 
 export interface Achievement {
   id: string;
@@ -141,6 +142,7 @@ export function saveAchievements(achievements: Set<string>): void {
 
 /**
  * Unlocks an achievement by ID if not already unlocked.
+ * Also syncs the achievement to Steam when available.
  * @param id - The achievement ID to unlock
  * @returns Object with achievement details and whether it was newly unlocked, or null if invalid ID
  */
@@ -154,6 +156,14 @@ export function unlockAchievement(id: string): { achievement: Achievement; isNew
   if (isNew) {
     unlocked.add(id);
     saveAchievements(unlocked);
+
+    // Sync to Steam when available (fire and forget)
+    if (typeof window !== 'undefined') {
+      steamUnlockAchievement(id).catch(e => {
+        // eslint-disable-next-line no-console
+        console.error('Steam achievement sync failed:', e);
+      });
+    }
   }
 
   return { achievement, isNew };

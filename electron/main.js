@@ -16,6 +16,8 @@ const tray = require('./tray');
 // Steam state
 let steamClient = null;
 let steamInitialized = false;
+let steamReady = false;
+let pendingSteamOperations = [];
 
 // Server reference for cleanup
 let localServer = null;
@@ -26,6 +28,101 @@ let mainWindow = null;
 // Steam App ID - Replace with your actual Steam App ID
 // For development/testing, use 480 (Spacewar test app)
 const STEAM_APP_ID = process.env.STEAM_APP_ID || '480';
+
+// ============================================================
+// Input validation helpers
+// ============================================================
+
+/**
+ * Validates a string identifier (achievement ID, save key, etc.)
+ * @param {unknown} id - The value to validate
+ * @param {string} name - Name for error messages
+ * @returns {{valid: boolean, error?: string, value?: string}}
+ */
+function validateStringId(id, name = 'id') {
+  if (typeof id !== 'string') {
+    return { valid: false, error: `${name} must be a string` };
+  }
+  if (id.length === 0) {
+    return { valid: false, error: `${name} cannot be empty` };
+  }
+  if (id.length > 256) {
+    return { valid: false, error: `${name} too long (max 256 characters)` };
+  }
+  // Only allow alphanumeric, underscore, hyphen, and common separators
+  if (!/^[a-zA-Z0-9_\-:.]+$/.test(id)) {
+    return { valid: false, error: `${name} contains invalid characters` };
+  }
+  return { valid: true, value: id };
+}
+
+/**
+ * Validates save data (JSON string)
+ * @param {unknown} data - The data to validate
+ * @returns {{valid: boolean, error?: string, value?: string}}
+ */
+function validateSaveData(data) {
+  if (typeof data !== 'string') {
+    return { valid: false, error: 'Save data must be a string' };
+  }
+  // 10MB max for cloud saves
+  const MAX_SIZE = 10 * 1024 * 1024;
+  if (data.length > MAX_SIZE) {
+    return { valid: false, error: 'Save data too large (max 10MB)' };
+  }
+  return { valid: true, value: data };
+}
+
+/**
+ * Validates presence status string
+ * @param {unknown} status - The status to validate
+ * @returns {{valid: boolean, error?: string, value?: string}}
+ */
+function validatePresenceStatus(status) {
+  if (typeof status !== 'string') {
+    return { valid: false, error: 'Status must be a string' };
+  }
+  if (status.length > 256) {
+    return { valid: false, error: 'Status too long (max 256 characters)' };
+  }
+  return { valid: true, value: status };
+}
+
+// ============================================================
+// Steam ready state management
+// ============================================================
+
+/**
+ * Queues an operation to run when Steam is ready.
+ * @param {Function} operation - Async function to run
+ * @returns {Promise} - Resolves when operation completes
+ */
+function whenSteamReady(operation) {
+  if (steamReady) {
+    return operation();
+  }
+  return new Promise((resolve) => {
+    pendingSteamOperations.push(() => {
+      resolve(operation());
+    });
+  });
+}
+
+/**
+ * Marks Steam as ready and runs pending operations.
+ */
+function markSteamReady() {
+  steamReady = true;
+  const operations = pendingSteamOperations;
+  pendingSteamOperations = [];
+  operations.forEach((op) => {
+    try {
+      op();
+    } catch (e) {
+      console.error('Pending Steam operation failed:', e);
+    }
+  });
+}
 
 // ============================================================
 // Electron command-line optimizations for Steam/gaming
@@ -60,6 +157,9 @@ function initializeSteam() {
       steamCloud.initialize(steamClient);
       steamPresence.initialize(steamClient);
 
+      // Mark Steam as ready and run pending operations
+      markSteamReady();
+
       // Log some Steam info for debugging
       try {
         const localPlayer = steamClient.localplayer;
@@ -86,6 +186,9 @@ function initializeSteam() {
     }
   }
 
+  // Steam not available - still mark as "ready" so pending ops return gracefully
+  markSteamReady();
+
   return false;
 }
 
@@ -98,6 +201,8 @@ function shutdownSteam() {
       steamPresence.clearPresence();
       steamClient = null;
       steamInitialized = false;
+      steamReady = false;
+      pendingSteamOperations = [];
       console.log('Steam shutdown complete');
     } catch (error) {
       console.error('Error during Steam shutdown:', error);
@@ -246,11 +351,19 @@ ipcMain.handle('steam:getPlayerName', () => {
 
 // Achievement handlers
 ipcMain.handle('steam:achievements:unlock', (event, achievementId) => {
-  return steamAchievements.unlock(achievementId);
+  const validation = validateStringId(achievementId, 'achievementId');
+  if (!validation.valid) {
+    return { success: false, error: validation.error };
+  }
+  return whenSteamReady(() => steamAchievements.unlock(validation.value));
 });
 
 ipcMain.handle('steam:achievements:isUnlocked', (event, achievementId) => {
-  return steamAchievements.isUnlocked(achievementId);
+  const validation = validateStringId(achievementId, 'achievementId');
+  if (!validation.valid) {
+    return { success: false, unlocked: false, error: validation.error };
+  }
+  return whenSteamReady(() => steamAchievements.isUnlocked(validation.value));
 });
 
 // Only allow clearing achievements in development mode (for testing)
@@ -258,11 +371,15 @@ ipcMain.handle('steam:achievements:clear', (event, achievementId) => {
   if (!isDev) {
     return { success: false, error: 'Achievement clearing is only available in development mode' };
   }
-  return steamAchievements.clear(achievementId);
+  const validation = validateStringId(achievementId, 'achievementId');
+  if (!validation.valid) {
+    return { success: false, error: validation.error };
+  }
+  return whenSteamReady(() => steamAchievements.clear(validation.value));
 });
 
 ipcMain.handle('steam:achievements:getAllMapped', () => {
-  return steamAchievements.getAllMappedAchievements();
+  return whenSteamReady(() => steamAchievements.getAllMappedAchievements());
 });
 
 // Cloud save handlers
@@ -271,23 +388,39 @@ ipcMain.handle('steam:cloud:isAvailable', () => {
 });
 
 ipcMain.handle('steam:cloud:save', (event, key, data) => {
-  return steamCloud.save(key, data);
+  const keyValidation = validateStringId(key, 'key');
+  if (!keyValidation.valid) {
+    return { success: false, error: keyValidation.error };
+  }
+  const dataValidation = validateSaveData(data);
+  if (!dataValidation.valid) {
+    return { success: false, error: dataValidation.error };
+  }
+  return whenSteamReady(() => steamCloud.save(keyValidation.value, dataValidation.value));
 });
 
 ipcMain.handle('steam:cloud:load', (event, key) => {
-  return steamCloud.load(key);
+  const validation = validateStringId(key, 'key');
+  if (!validation.valid) {
+    return { success: false, data: null, error: validation.error };
+  }
+  return whenSteamReady(() => steamCloud.load(validation.value));
 });
 
 ipcMain.handle('steam:cloud:delete', (event, key) => {
-  return steamCloud.deleteFile(key);
+  const validation = validateStringId(key, 'key');
+  if (!validation.valid) {
+    return { success: false, error: validation.error };
+  }
+  return whenSteamReady(() => steamCloud.deleteFile(validation.value));
 });
 
 ipcMain.handle('steam:cloud:list', () => {
-  return steamCloud.listFiles();
+  return whenSteamReady(() => steamCloud.listFiles());
 });
 
 ipcMain.handle('steam:cloud:getQuota', () => {
-  return steamCloud.getQuota();
+  return whenSteamReady(() => steamCloud.getQuota());
 });
 
 // Overlay handler
@@ -295,12 +428,16 @@ ipcMain.handle('steam:overlay:activate', (event, dialog) => {
   if (!steamInitialized || !steamClient) {
     return { success: false, error: 'Steam not initialized' };
   }
+  // Validate dialog type
+  const validDialogs = ['friends', 'community', 'players', 'settings', 'officialgamegroup', 'stats', 'achievements'];
+  const dialogValue = typeof dialog === 'string' ? dialog : 'achievements';
+  if (!validDialogs.includes(dialogValue)) {
+    return { success: false, error: 'Invalid dialog type' };
+  }
   try {
     const overlay = steamClient.overlay;
     if (overlay) {
-      // Valid dialog types: 'friends', 'community', 'players', 'settings',
-      // 'officialgamegroup', 'stats', 'achievements'
-      overlay.activateDialog(dialog || 'achievements');
+      overlay.activateDialog(dialogValue);
       return { success: true };
     }
     return { success: false, error: 'Overlay not available' };
@@ -314,10 +451,18 @@ ipcMain.handle('steam:overlay:activate', (event, dialog) => {
 // ============================================================
 
 ipcMain.handle('steam:presence:set', (event, status) => {
-  return steamPresence.setPresence(status);
+  const validation = validatePresenceStatus(status);
+  if (!validation.valid) {
+    return { success: false, error: validation.error };
+  }
+  return steamPresence.setPresence(validation.value);
 });
 
 ipcMain.handle('steam:presence:update', (event, gameState) => {
+  // gameState is an object, basic validation
+  if (gameState && typeof gameState !== 'object') {
+    return { success: false, error: 'Invalid game state' };
+  }
   // Update both Steam presence and tray status
   steamPresence.updateFromGameState(gameState);
   tray.updateFromGameState(gameState);
@@ -337,6 +482,9 @@ ipcMain.handle('steam:presence:getStates', () => {
 // ============================================================
 
 ipcMain.handle('tray:setMinimizeToTray', (event, enabled) => {
+  if (typeof enabled !== 'boolean') {
+    return { success: false, error: 'enabled must be a boolean' };
+  }
   tray.setMinimizeToTray(enabled);
   return { success: true };
 });
@@ -393,4 +541,91 @@ app.on('before-quit', () => {
 
   // Ensure Steam is shut down
   shutdownSteam();
+});
+
+// ============================================================
+// Auto-updater (production only)
+// ============================================================
+
+function setupAutoUpdater() {
+  if (isDev) {
+    console.log('Auto-updater disabled in development');
+    return;
+  }
+
+  try {
+    const { autoUpdater } = require('electron-updater');
+
+    autoUpdater.logger = console;
+    autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+
+    autoUpdater.on('checking-for-update', () => {
+      console.log('Checking for updates...');
+    });
+
+    autoUpdater.on('update-available', (info) => {
+      console.log('Update available:', info.version);
+    });
+
+    autoUpdater.on('update-not-available', () => {
+      console.log('App is up to date');
+    });
+
+    autoUpdater.on('error', (err) => {
+      console.error('Auto-updater error:', err.message);
+    });
+
+    autoUpdater.on('download-progress', (progress) => {
+      console.log(`Download progress: ${progress.percent.toFixed(1)}%`);
+    });
+
+    autoUpdater.on('update-downloaded', (info) => {
+      console.log('Update downloaded:', info.version);
+      // Will install on next app quit
+    });
+
+    // Check for updates after a short delay
+    setTimeout(() => {
+      autoUpdater.checkForUpdatesAndNotify().catch((err) => {
+        // Silently fail if update check fails (offline, etc.)
+        if (isDev) {
+          console.debug('Update check failed:', err.message);
+        }
+      });
+    }, 10000); // 10 seconds after startup
+  } catch (error) {
+    // electron-updater not installed or other error
+    console.log('Auto-updater not available:', error.message);
+  }
+}
+
+// ============================================================
+// Crash reporter
+// ============================================================
+
+function setupCrashReporter() {
+  try {
+    const { crashReporter } = require('electron');
+
+    crashReporter.start({
+      productName: 'Varginha Terminal 1996',
+      companyName: 'Terminal 1996',
+      submitURL: '', // Set to your crash report server URL if desired
+      uploadToServer: false, // Set to true if you have a crash report server
+      ignoreSystemCrashHandler: false,
+    });
+
+    console.log('Crash reporter initialized');
+  } catch (error) {
+    console.error('Crash reporter setup failed:', error.message);
+  }
+}
+
+// Initialize crash reporter immediately
+setupCrashReporter();
+
+// Set up auto-updater after app is ready
+app.whenReady().then(() => {
+  setupAutoUpdater();
 });

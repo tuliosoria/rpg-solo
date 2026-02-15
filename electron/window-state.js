@@ -29,6 +29,7 @@ const defaultState = {
 
 /**
  * Validates that the window position is visible on at least one display.
+ * Uses a margin to ensure at least part of the window is accessible.
  * @param {Object} state - The window state to validate
  * @returns {boolean}
  */
@@ -38,19 +39,61 @@ function isVisibleOnScreen(state) {
   }
 
   const displays = screen.getAllDisplays();
+
+  // Ensure at least 100px of the window is visible on some display
+  const minVisibleMargin = 100;
+
   return displays.some((display) => {
     const { bounds } = display;
-    return (
-      state.x >= bounds.x - 100 &&
-      state.x < bounds.x + bounds.width - 100 &&
-      state.y >= bounds.y - 100 &&
-      state.y < bounds.y + bounds.height - 100
-    );
+    const { workArea } = display;
+
+    // Check if window overlaps with the work area (excluding taskbar, etc.)
+    const windowRight = state.x + state.width;
+    const windowBottom = state.y + state.height;
+
+    const overlapX =
+      state.x < workArea.x + workArea.width - minVisibleMargin &&
+      windowRight > workArea.x + minVisibleMargin;
+    const overlapY =
+      state.y < workArea.y + workArea.height - minVisibleMargin &&
+      windowBottom > workArea.y + minVisibleMargin;
+
+    return overlapX && overlapY;
   });
 }
 
 /**
+ * Constrains window state to be visible on current displays.
+ * If the window would be off-screen, repositions it to the primary display.
+ * @param {Object} state - The window state to constrain
+ * @returns {Object} - The constrained state
+ */
+function constrainToScreen(state) {
+  if (isVisibleOnScreen(state)) {
+    return state;
+  }
+
+  // Window would be off-screen, reset position to primary display
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { workArea } = primaryDisplay;
+
+  // Center the window on the primary display
+  const newX = Math.round(workArea.x + (workArea.width - state.width) / 2);
+  const newY = Math.round(workArea.y + (workArea.height - state.height) / 2);
+
+  return {
+    ...state,
+    x: newX,
+    y: newY,
+    // Also ensure dimensions fit within the work area
+    width: Math.min(state.width, workArea.width),
+    height: Math.min(state.height, workArea.height),
+  };
+}
+
+/**
  * Loads the saved window state from disk.
+ * Constrains the position to be visible on current displays.
  * @returns {Object} The window state or defaults if not found/invalid
  */
 function loadState() {
@@ -65,13 +108,15 @@ function loadState() {
         typeof state.width === 'number' &&
         typeof state.height === 'number' &&
         state.width >= 400 &&
-        state.height >= 300 &&
-        isVisibleOnScreen(state)
+        state.height >= 300
       ) {
-        return {
+        const mergedState = {
           ...defaultState,
           ...state,
         };
+
+        // Constrain to current screen configuration
+        return constrainToScreen(mergedState);
       }
     }
   } catch (error) {
