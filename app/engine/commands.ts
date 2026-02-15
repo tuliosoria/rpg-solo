@@ -3221,6 +3221,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     if (args.length > 0) {
       const cmdName = args[0].toLowerCase();
 
+      // Show leak help even before evidence is found — command is visible but locked
+
       // Special help topics
       if (cmdName === 'basics') {
         return {
@@ -3295,7 +3297,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  tree              Show directory structure',
         '  map               Show evidence connections',
         '  morse <text>      Decipher morse code messages',
-        '  leak <mode>       Leak evidence (when all found)',
+        '  leak              Leak collected evidence',
         '  tutorial [on/off] Toggle tutorial tips or replay intro',
         '  save              Save current session',
         '  clear             Clear terminal display',
@@ -4215,32 +4217,32 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // CODED LANGUAGE FILES - UFO74 explains these can't be used as evidence
     // Files in /internal/sanitized/ use euphemisms that provide plausible deniability
     // ═══════════════════════════════════════════════════════════════════════════
+    // Collect UFO74 contextual messages separately — only the LAST one is kept
+    // to avoid flooding the encrypted channel with multiple messages at once.
+    let ufo74ContextMessage: TerminalEntry[] | null = null;
+
     if (filePath.includes('/internal/sanitized/') && !isEncryptedAndLocked) {
-      notices.push(
-        ...createUFO74Message([
-          'UFO74: ugh. this is sanitized documentation.',
-          '       "the package"? "visitors"? "guests"?',
-          '       its all code words. plausible deniability.',
-          '',
-          '       this stuff is useless as evidence.',
-          '       they can claim its about anything.',
-          '',
-          '       we need docs with DIRECT language.',
-          '       look for files that say what they MEAN.',
-        ])
-      );
+      ufo74ContextMessage = createUFO74Message([
+        'UFO74: ugh. this is sanitized documentation.',
+        '       "the package"? "visitors"? "guests"?',
+        '       its all code words. plausible deniability.',
+        '',
+        '       this stuff is useless as evidence.',
+        '       they can claim its about anything.',
+        '',
+        '       we need docs with DIRECT language.',
+        '       look for files that say what they MEAN.',
+      ]);
     }
 
     // After 3 files opened, UFO74 suggests override protocol (only if not already unlocked)
     const totalFilesRead = filesRead.size;
     if (totalFilesRead === 3 && !state.flags.overrideSuggested && !state.flags.adminUnlocked) {
-      notices.push(
-        ...createUFO74Message([
-          'UFO74: kid, youre doing good but theres MORE hidden here.',
-          '       most of the real stuff is locked behind the override protocol.',
-          '       look for the password in the files youve read.',
-        ])
-      );
+      ufo74ContextMessage = createUFO74Message([
+        'UFO74: kid, youre doing good but theres MORE hidden here.',
+        '       most of the real stuff is locked behind the override protocol.',
+        '       look for the password in the files youve read.',
+      ]);
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideSuggested: true };
     }
 
@@ -4255,14 +4257,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       !state.flags.overrideGateActive
     ) {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideGateActive: true };
-      notices.push(createEntry('system', ''));
-      notices.push(
-        createEntry('ufo74', 'UFO74: nice find. but the rest is locked down.')
-      );
-      notices.push(
-        createEntry('ufo74', '       you need the override protocol to access restricted files.')
-      );
-      notices.push(createEntry('ufo74', '       dig around /internal/ for credentials.'));
+      ufo74ContextMessage = [
+        createEntry('ufo74', 'UFO74: nice find. but the rest is locked down.'),
+        createEntry('ufo74', '       you need the override protocol to access restricted files.'),
+        createEntry('ufo74', '       dig around /internal/ for credentials.'),
+      ];
     }
 
     // Check for Archivist achievement: all files in parent folder read
@@ -4278,15 +4277,14 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       if (allRead) {
         achievementsToCheck.push('archivist');
 
-        // UFO74 hint: all files read in this subdirectory, suggest going back
+        // UFO74 hint: all files read in this subdirectory — overrides previous messages
         if (state.currentPath !== '/' && state.tutorialComplete) {
-          notices.push(createEntry('system', ''));
-          notices.push(
+          ufo74ContextMessage = [
             createEntry(
               'ufo74',
               '[UFO74]: you read all we could here, use `cd ..` to go back up to explore other folders kid.'
-            )
-          );
+            ),
+          ];
         }
       }
     }
@@ -4387,6 +4385,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       videoTrigger,
       streamingMode,
       checkAchievements: achievementsToCheck.length > 0 ? achievementsToCheck : undefined,
+      // Route UFO74 contextual message through encrypted channel (one message per file open)
+      pendingUfo74Messages: ufo74ContextMessage || undefined,
     };
   },
 
@@ -5686,11 +5686,28 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
 
+    // Require all 5 evidence categories before allowing leak
+    const allFound = state.truthsDiscovered.size >= 5 && state.flags.allEvidenceCollected;
+    if (!allFound) {
+      const found = state.truthsDiscovered.size;
+      return {
+        output: [
+          createEntry('error', 'LEAK BLOCKED — INSUFFICIENT EVIDENCE'),
+          createEntry('system', ''),
+          createEntry('system', `  Evidence categories documented: ${found}/5`),
+          createEntry('system', '  All five categories must be confirmed before'),
+          createEntry('system', '  the leak channel can be opened.'),
+          createEntry('system', ''),
+          createEntry('ufo74', '[UFO74]: not yet. we need ALL five pieces or nobody will believe us.'),
+        ],
+        stateChanges: {},
+      };
+    }
+
     // Checkpoint before high-risk Elusive Man interrogation
     saveCheckpoint(state, 'Before Elusive Man interrogation');
 
     // Start the Elusive Man leak sequence
-    // Can be used at any time - but player risks failure without evidence
     return startLeakSequence(state);
   },
 
@@ -7832,18 +7849,25 @@ export function executeCommand(input: string, state: GameState): CommandResult {
                 entry.content.includes('SYSTEM:'))
           );
 
-      const incognitoMessage = getIncognitoMessage(
-        {
-          ...state,
-          truthsDiscovered: state.truthsDiscovered,
-          incognitoMessageCount: state.incognitoMessageCount || 0,
-          lastIncognitoTrigger: state.lastIncognitoTrigger || 0,
-        } as GameState,
-        filePath,
-        notices,
-        isEncryptedAndLocked,
-        isFirstUnstable
-      );
+      // Skip getIncognitoMessage if the command already generated UFO74 messages
+      // (e.g., override protocol hint, cd.. hint, sanitized file warning)
+      // to avoid showing multiple UFO74 messages at once
+      const alreadyHasPendingMessages = result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0;
+
+      const incognitoMessage = alreadyHasPendingMessages
+        ? null
+        : getIncognitoMessage(
+            {
+              ...state,
+              truthsDiscovered: state.truthsDiscovered,
+              incognitoMessageCount: state.incognitoMessageCount || 0,
+              lastIncognitoTrigger: state.lastIncognitoTrigger || 0,
+            } as GameState,
+            filePath,
+            notices,
+            isEncryptedAndLocked,
+            isFirstUnstable
+          );
 
       if (incognitoMessage) {
         // Always queue UFO74 messages to show after player presses Enter

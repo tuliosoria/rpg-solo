@@ -101,6 +101,22 @@ const createNoiseBuffer = (audioContext: AudioContext, duration: number): AudioB
   return buffer;
 };
 
+// ═══════════════════════════════════════════════════════════════════════════
+// AMBIENT MUSIC — Looping MP3 tracks played at low volume beneath the
+// synthesized white-noise drone.  Tracks crossfade on each loop.
+// ═══════════════════════════════════════════════════════════════════════════
+
+const MUSIC_TRACKS = [
+  '/audio/music/geoffharvey-an-alien-presence-154528.mp3',
+  '/audio/music/sound4stock-dark-sci-fi-suspense-trailer-444587.mp3',
+  '/audio/music/welc0mei0-221027-piano-mysterious-fantasy-wonder-lo-fi-retro-155647.mp3',
+  '/audio/music/desifreemusic-spy-thriller-war-music-with-retro-synths-tension-building-bass-339979.mp3',
+];
+
+/** Base volume for music (before masterVolume multiplier). Keep low so the
+ *  white-noise ambient drone remains audible. */
+const MUSIC_BASE_VOLUME = 0.07;
+
 /**
  * Hook providing synthesized audio effects for the terminal.
  * @returns Object with playSound, playKeySound, ambient controls, and volume settings
@@ -110,6 +126,11 @@ export function useSound() {
   const ambientSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const ambientFilterRef = useRef<BiquadFilterNode | null>(null);
   const ambientGainRef = useRef<GainNode | null>(null);
+  // Ambient music refs
+  const musicElementRef = useRef<HTMLAudioElement | null>(null);
+  const musicGainRef = useRef<GainNode | null>(null);
+  const musicSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const musicTrackIndexRef = useRef(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [masterVolume, setMasterVolume] = useState(0.5);
 
@@ -550,6 +571,73 @@ export function useSound() {
     [soundEnabled, masterVolume, initAudio]
   );
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // AMBIENT MUSIC — file-based MP3 playback via <audio> + Web Audio routing
+  // Must be defined BEFORE startAmbient since it's called from there.
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  const startMusic = useCallback(() => {
+    if (!soundEnabled || musicElementRef.current) return;
+
+    const audioContext = initAudio();
+    if (!audioContext) return;
+
+    try {
+      // Pick a random starting track
+      musicTrackIndexRef.current = Math.floor(Math.random() * MUSIC_TRACKS.length);
+
+      const audio = new Audio(MUSIC_TRACKS[musicTrackIndexRef.current]);
+      audio.crossOrigin = 'anonymous';
+      audio.volume = 1; // volume controlled via GainNode
+
+      // Route through Web Audio so masterVolume affects it
+      const source = audioContext.createMediaElementSource(audio);
+      const gain = audioContext.createGain();
+      gain.gain.setValueAtTime(MUSIC_BASE_VOLUME * masterVolume, audioContext.currentTime);
+      source.connect(gain);
+      gain.connect(audioContext.destination);
+
+      // When a track ends, advance to the next one
+      audio.addEventListener('ended', () => {
+        musicTrackIndexRef.current =
+          (musicTrackIndexRef.current + 1) % MUSIC_TRACKS.length;
+        audio.src = MUSIC_TRACKS[musicTrackIndexRef.current];
+        void audio.play().catch(() => {});
+      });
+
+      musicElementRef.current = audio;
+      musicSourceRef.current = source;
+      musicGainRef.current = gain;
+
+      void audio.play().catch(() => {});
+    } catch {
+      // Audio/MediaElementSource not available (e.g. test environment)
+    }
+  }, [soundEnabled, masterVolume, initAudio]);
+
+  const stopMusic = useCallback(() => {
+    if (musicElementRef.current) {
+      musicElementRef.current.pause();
+      musicElementRef.current.src = '';
+      musicElementRef.current = null;
+    }
+    if (musicSourceRef.current) {
+      try { musicSourceRef.current.disconnect(); } catch { /* noop */ }
+      musicSourceRef.current = null;
+    }
+    musicGainRef.current = null;
+  }, []);
+
+  // Keep music gain in sync with masterVolume changes
+  useEffect(() => {
+    if (musicGainRef.current && audioContextRef.current) {
+      musicGainRef.current.gain.linearRampToValueAtTime(
+        MUSIC_BASE_VOLUME * masterVolume,
+        audioContextRef.current.currentTime + 0.3
+      );
+    }
+  }, [masterVolume]);
+
   // Start ambient background drone
   const startAmbient = useCallback(() => {
     if (!soundEnabled || ambientSourceRef.current) return;
@@ -581,7 +669,10 @@ export function useSound() {
     ambientSourceRef.current = noiseSource;
     ambientFilterRef.current = noiseFilter;
     ambientGainRef.current = noiseGain;
-  }, [soundEnabled, masterVolume, initAudio]);
+
+    // Also start background music
+    startMusic();
+  }, [soundEnabled, masterVolume, initAudio, startMusic]);
 
   // Update ambient tension based on detection level
   // Lower detection = calm low-frequency hum
@@ -618,7 +709,7 @@ export function useSound() {
     [masterVolume]
   );
 
-  // Stop ambient
+  // Stop ambient noise drone
   const stopAmbient = useCallback(() => {
     if (ambientSourceRef.current) {
       try {
@@ -630,7 +721,8 @@ export function useSound() {
     }
     ambientFilterRef.current = null;
     ambientGainRef.current = null;
-  }, []);
+    stopMusic();
+  }, [stopMusic]);
 
   // Toggle sound on/off
   const toggleSound = useCallback(() => {
@@ -646,11 +738,12 @@ export function useSound() {
   useEffect(() => {
     return () => {
       stopAmbient();
+      stopMusic();
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close();
       }
     };
-  }, [stopAmbient]);
+  }, [stopAmbient, stopMusic]);
 
   return {
     playSound,

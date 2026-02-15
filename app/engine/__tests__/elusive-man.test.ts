@@ -10,6 +10,8 @@ import {
   LEAK_MAX_WRONG_ANSWERS,
 } from '../elusiveMan';
 
+const ALL_TRUTHS = new Set(['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026'] as const);
+
 const createState = (overrides: Partial<GameState> = {}): GameState => ({
   ...DEFAULT_GAME_STATE,
   seed: 12345,
@@ -17,6 +19,8 @@ const createState = (overrides: Partial<GameState> = {}): GameState => ({
   sessionStartTime: Date.now(),
   tutorialStep: -1,
   tutorialComplete: true,
+  truthsDiscovered: ALL_TRUTHS,
+  flags: { allEvidenceCollected: true },
   ...overrides,
 });
 
@@ -39,85 +43,85 @@ describe('Elusive Man Leak Mechanic', () => {
   });
 
   describe('Semantic answer evaluation', () => {
-    const originQuestion = LEAK_QUESTIONS[0]; // ORIGIN question
+    const debrisQuestion = LEAK_QUESTIONS[0]; // DEBRIS question
 
     it('accepts exact keyword matches', () => {
-      const result = evaluateAnswer('recon', originQuestion);
+      const result = evaluateAnswer('campinas', debrisQuestion);
       expect(result.isCorrect).toBe(true);
       expect(result.matchedConcepts.length).toBeGreaterThan(0);
     });
 
     it('accepts synonym matches', () => {
-      expect(evaluateAnswer('reconnaissance', originQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('scouting', originQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('observation', originQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('monitoring', originQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('ESA', debrisQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('military base', debrisQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('hangar', debrisQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('relocated', debrisQuestion).isCorrect).toBe(true);
     });
 
     it('accepts answers embedded in sentences', () => {
-      expect(evaluateAnswer('they came for reconnaissance', originQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('their mission was scouting the area', originQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('debris was taken to campinas', debrisQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('they transferred it to the military base', debrisQuestion).isCorrect).toBe(true);
     });
 
     it('is case insensitive', () => {
-      expect(evaluateAnswer('RECON', originQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('Reconnaissance', originQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('CAMPINAS', debrisQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('Hangar', debrisQuestion).isCorrect).toBe(true);
     });
 
     it('rejects incorrect answers', () => {
-      const result = evaluateAnswer('they wanted to eat humans', originQuestion);
+      const result = evaluateAnswer('they wanted to eat humans', debrisQuestion);
       expect(result.isCorrect).toBe(false);
     });
 
     it('identifies partial matches for long but wrong answers', () => {
-      const result = evaluateAnswer('i think they came here for some reason related to earth', originQuestion);
+      const result = evaluateAnswer('i think they took it somewhere far from the city center', debrisQuestion);
       expect(result.isCorrect).toBe(false);
       expect(result.isPartialMatch).toBe(true);
     });
 
     it('rejects empty or very short answers', () => {
-      expect(evaluateAnswer('', originQuestion).isCorrect).toBe(false);
-      expect(evaluateAnswer('a', originQuestion).isCorrect).toBe(false);
+      expect(evaluateAnswer('', debrisQuestion).isCorrect).toBe(false);
+      expect(evaluateAnswer('a', debrisQuestion).isCorrect).toBe(false);
     });
   });
 
-  describe('LOCATION question', () => {
-    const locationQuestion = LEAK_QUESTIONS[1];
+  describe('CONTAINMENT question', () => {
+    const containmentQuestion = LEAK_QUESTIONS[1];
 
-    it('accepts facility names', () => {
-      expect(evaluateAnswer('Campinas', locationQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('ESA facility', locationQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('military base', locationQuestion).isCorrect).toBe(true);
+    it('accepts containment-related answers', () => {
+      expect(evaluateAnswer('three biological specimens', containmentQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('bio-constructs contained', containmentQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('non-human creatures', containmentQuestion).isCorrect).toBe(true);
     });
   });
 
-  describe('BIOLOGICAL question', () => {
-    const biologicalQuestion = LEAK_QUESTIONS[2];
-
-    it('accepts autopsy-related answers', () => {
-      expect(evaluateAnswer('autopsy', biologicalQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('Americans took them', biologicalQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('US military', biologicalQuestion).isCorrect).toBe(true);
-    });
-  });
-
-  describe('COMMUNICATION question', () => {
-    const commQuestion = LEAK_QUESTIONS[3];
+  describe('PSI-COMM question', () => {
+    const psiQuestion = LEAK_QUESTIONS[2];
 
     it('accepts telepathic-related answers', () => {
-      expect(evaluateAnswer('telepathic contact', commQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('warning', commQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('neural transmission', commQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('telepathic scouts', psiQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('psi-comm reconnaissance', psiQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('neural transmission', psiQuestion).isCorrect).toBe(true);
     });
   });
 
-  describe('AFTERMATH question', () => {
-    const aftermathQuestion = LEAK_QUESTIONS[4];
+  describe('FOREIGN question', () => {
+    const foreignQuestion = LEAK_QUESTIONS[3];
 
-    it('accepts cover-up related answers', () => {
-      expect(evaluateAnswer('cover-up', aftermathQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('media suppression', aftermathQuestion).isCorrect).toBe(true);
-      expect(evaluateAnswer('witness silencing', aftermathQuestion).isCorrect).toBe(true);
+    it('accepts international actor answers', () => {
+      expect(evaluateAnswer('Americans and CIA', foreignQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('Langley', foreignQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('US military', foreignQuestion).isCorrect).toBe(true);
+    });
+  });
+
+  describe('CONVERGENCE question', () => {
+    const convergenceQuestion = LEAK_QUESTIONS[4];
+
+    it('accepts 2026 transition answers', () => {
+      expect(evaluateAnswer('2026', convergenceQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('transition in 2026', convergenceQuestion).isCorrect).toBe(true);
+      expect(evaluateAnswer('thirty rotations activation window', convergenceQuestion).isCorrect).toBe(true);
     });
   });
 
@@ -130,7 +134,7 @@ describe('Elusive Man Leak Mechanic', () => {
       expect(result.stateChanges.currentLeakQuestion).toBe(0);
       expect(result.stateChanges.leakWrongAnswers).toBe(0);
       expect(result.output.some(e => e.content.includes('I have resources'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('[ORIGIN]'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('[DEBRIS]'))).toBe(true);
     });
 
     it('processes correct answers and advances questions', () => {
@@ -141,10 +145,10 @@ describe('Elusive Man Leak Mechanic', () => {
         leakAnswers: [],
       });
 
-      const result = executeCommand('recon', state);
+      const result = executeCommand('campinas', state);
 
       expect(result.stateChanges.currentLeakQuestion).toBe(1);
-      expect(result.output.some(e => e.content.includes('[LOCATION]'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('[CONTAINMENT]'))).toBe(true);
     });
 
     it('increases detection on wrong answers', () => {
@@ -185,13 +189,13 @@ describe('Elusive Man Leak Mechanic', () => {
     it('triggers victory when all 5 questions answered correctly', () => {
       const state = createState({
         inLeakSequence: true,
-        currentLeakQuestion: 4, // Last question
+        currentLeakQuestion: 4, // Last question (CONVERGENCE)
         leakWrongAnswers: 0,
-        leakAnswers: ['recon', 'campinas', 'autopsy', 'telepathic'],
+        leakAnswers: ['campinas', 'three specimens', 'telepathic scouts', 'CIA'],
       });
 
-      // Answer the AFTERMATH question
-      const result = executeCommand('cover-up', state);
+      // Answer the CONVERGENCE question
+      const result = executeCommand('2026', state);
 
       expect(result.stateChanges.gameWon).toBe(true);
       expect(result.stateChanges.endingType).toBe('good');
@@ -204,7 +208,7 @@ describe('Elusive Man Leak Mechanic', () => {
         inLeakSequence: true,
         currentLeakQuestion: 2,
         leakWrongAnswers: 1,
-        leakAnswers: ['recon', 'campinas'],
+        leakAnswers: ['campinas', 'three specimens'],
       });
 
       const result = executeCommand('abort', state);

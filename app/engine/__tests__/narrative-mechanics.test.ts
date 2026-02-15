@@ -1061,23 +1061,28 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Leak Command', () => {
-    it('requires allEvidenceCollected flag', () => {
+    it('blocks leak when evidence is incomplete', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         flags: { allEvidenceCollected: false },
       });
       const result = executeCommand('leak', state);
-      // New behavior: leak always starts the Elusive Man sequence
-      // Player can try without evidence but will likely fail
-      expect(result.stateChanges.inLeakSequence).toBe(true);
+      // Should be blocked — not enough evidence
+      expect(
+        result.output.some(
+          e => e.content.includes('INSUFFICIENT EVIDENCE') || e.content.includes('not yet')
+        )
+      ).toBe(true);
+      expect(result.stateChanges.inLeakSequence).toBeUndefined();
     });
 
-    it('triggers Elusive Man interrogation when used', () => {
+    it('triggers Elusive Man interrogation when all evidence found', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         flags: { allEvidenceCollected: true },
+        truthsDiscovered: new Set(['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026'] as const),
       });
       const result = executeCommand('leak', state);
       // Should trigger the Elusive Man leak sequence
