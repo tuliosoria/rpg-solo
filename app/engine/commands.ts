@@ -2122,6 +2122,112 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
       "PRISONER_45> Humanitas Hospital had a new wing built in 1997. Funded by whom? No public record. The new wing has a sub-basement. What's in the sub-basement?",
     ],
   ],
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EASTER EGG RESPONSES - Personal/fun questions for curious players
+  // ═══════════════════════════════════════════════════════════════════════════
+  location: [
+    [
+      'PRISONER_45> ...where am I? Underground. Always underground. They move me every 72 hours. The walls look the same everywhere.',
+      'PRISONER_45> Somewhere in Brazil. Maybe. The windows are fake. The sunlight is simulated.',
+      'PRISONER_45> Location is meaningless. They can reach me anywhere. And you.',
+    ],
+  ],
+  brazilian: [
+    [
+      'PRISONER_45> I was born in Minas Gerais. 1961. That man is dead now. I am just a number.',
+      'PRISONER_45> Brasileiro? Sim. Not that it matters. We are all just resources to them.',
+      'PRISONER_45> My country sold me to keep their secrets. Patriotism is a control mechanism.',
+    ],
+  ],
+  greeting: [
+    [
+      'PRISONER_45> ...you are wasting time on pleasantries. They are listening. Every second counts.',
+      'PRISONER_45> Hello? This is not a social call. Focus. Find the files.',
+    ],
+  ],
+  howAreYou: [
+    [
+      'PRISONER_45> How am I? [STATIC] ...still breathing. That is more than some can say.',
+      'PRISONER_45> Every day is borrowed time. Use yours wisely.',
+    ],
+  ],
+  thanks: [
+    [
+      'PRISONER_45> Do not thank me. Thank me by spreading the truth. That is all I want.',
+      'PRISONER_45> Gratitude is... unexpected. Most people just take what they need and vanish.',
+    ],
+  ],
+  sorry: [
+    [
+      'PRISONER_45> Sorry? For what? You did not put me here. They did.',
+      'PRISONER_45> Save your apologies. Channel that energy into the mission.',
+    ],
+  ],
+  love: [
+    [
+      'PRISONER_45> Love? [LONG PAUSE] ...I loved someone once. She thinks I am dead. Maybe I am.',
+      'PRISONER_45> Love is a vulnerability they exploit. I learned to feel nothing.',
+    ],
+  ],
+  family: [
+    [
+      'PRISONER_45> Two daughters. They were 8 and 12 when I disappeared. They would be... I cannot think about that.',
+      'PRISONER_45> Family is leverage. That is why they take it from you first.',
+    ],
+  ],
+  food: [
+    [
+      'PRISONER_45> They feed me. Nutrient paste. No taste. Keeps me alive enough to be useful.',
+      'PRISONER_45> I dream about my mother feijoada sometimes. Have not tasted real food in years.',
+    ],
+  ],
+  weather: [
+    [
+      'PRISONER_45> I have not seen the sky in... how long has it been? The forecast is always fluorescent lights.',
+    ],
+  ],
+  music: [
+    [
+      'PRISONER_45> They play white noise. 24/7. To mask the screams from the other cells.',
+      'PRISONER_45> I hum old songs to myself. Keeps me sane. Mostly.',
+    ],
+  ],
+  joke: [
+    [
+      'PRISONER_45> A joke? ...here is one: we thought we were the dominant species. [STATIC] That is the punchline.',
+      'PRISONER_45> Humor. A human coping mechanism. I used to laugh. I remember laughing.',
+    ],
+  ],
+  hope: [
+    [
+      'PRISONER_45> Hope? You are my hope. Every person who reads this. That is why I keep transmitting.',
+      'PRISONER_45> Hope is dangerous. But it is all I have left.',
+    ],
+  ],
+  ufo74: [
+    [
+      'PRISONER_45> UFO74? My handler. The only one who can reach me through their firewalls.',
+      'PRISONER_45> Do not trust them completely. Trust no one completely. But they have kept me alive.',
+    ],
+  ],
+  isThisReal: [
+    [
+      'PRISONER_45> Is this real? [BITTER LAUGH] I wish it was not. Every word is true.',
+      'PRISONER_45> Reality is what they allow you to see. I am showing you what is behind the curtain.',
+    ],
+  ],
+  game: [
+    [
+      'PRISONER_45> Game? You think this is a GAME? [STATIC] ...no. This is a warning.',
+      'PRISONER_45> If you are playing a game, they have already won. This is real. BELIEVE THAT.',
+    ],
+  ],
+  age: [
+    [
+      'PRISONER_45> I stopped counting years. Time moves differently in here.',
+      'PRISONER_45> Old enough to remember when we thought we were alone in the universe. Young enough to know we never were.',
+    ],
+  ],
   signal_lost: [
     [
       'PRISONER_45> [SIGNAL DEGRADING]',
@@ -2620,13 +2726,16 @@ function getPrisoner45Response(
     q.includes('where') ||
     q.includes('place') ||
     q.includes('location') ||
-    q.includes('here') ||
     q.includes('onde') ||
     q.includes('lugar') ||
-    q.includes('localizacao') ||
-    q.includes('local') ||
+    q.includes('localizacao')
+  ) {
+    category = 'location';
+  } else if (
     q.includes('zoo') ||
-    q.includes('zoologico')
+    q.includes('zoologico') ||
+    q.includes('here') ||
+    q.includes('local')
   ) {
     category = 'escape';
   } else if (
@@ -2641,7 +2750,7 @@ function getPrisoner45Response(
   ) {
     category = 'truth';
   } else if (
-    // Greetings - guide them to ask about password/help
+    // Greetings - easter egg responses
     q.includes('hello') ||
     q.includes('hi') ||
     q.includes('hey') ||
@@ -2654,16 +2763,189 @@ function getPrisoner45Response(
     q.includes('bom dia') ||
     q.includes('boa noite') ||
     q.includes('boa tarde') ||
-    q.includes('good') ||
+    q.includes('good morning') ||
+    q.includes('good evening')
+  ) {
+    category = 'greeting';
+  } else if (
+    // Easter egg: How are you
+    q.includes('how are you') ||
+    q.includes('how r u') ||
+    q.includes('como vai') ||
+    q.includes('como esta') ||
+    q.includes('como você está') ||
+    q.includes('tudo bem')
+  ) {
+    category = 'howAreYou';
+  } else if (
+    // Easter egg: Thank you
+    q.includes('thanks') ||
+    q.includes('obrigado') ||
+    q.includes('thank you') ||
+    q.includes('thx') ||
+    q.includes('ty')
+  ) {
+    category = 'thanks';
+  } else if (
+    // Easter egg: Sorry
+    q.includes('sorry') ||
+    q.includes('desculpa') ||
+    q.includes('desculpe') ||
+    q.includes('perdao') ||
+    q.includes('perdão') ||
+    q.includes('my bad') ||
+    q.includes('apologize')
+  ) {
+    category = 'sorry';
+  } else if (
+    // Easter egg: Love
+    q.includes('love') ||
+    q.includes('amor') ||
+    q.includes('girlfriend') ||
+    q.includes('wife') ||
+    q.includes('namorada') ||
+    q.includes('esposa') ||
+    q.includes('romance') ||
+    q.includes('romantic')
+  ) {
+    category = 'love';
+  } else if (
+    // Easter egg: Family
+    q.includes('family') ||
+    q.includes('familia') ||
+    q.includes('família') ||
+    q.includes('daughter') ||
+    q.includes('son') ||
+    q.includes('children') ||
+    q.includes('kids') ||
+    q.includes('filho') ||
+    q.includes('filha') ||
+    q.includes('filhos')
+  ) {
+    category = 'family';
+  } else if (
+    // Easter egg: Food/hunger
+    q.includes('hungry') ||
+    q.includes('food') ||
+    q.includes('comida') ||
+    q.includes('fome') ||
+    q.includes('eat') ||
+    q.includes('comer') ||
+    q.includes('meal') ||
+    q.includes('refeição')
+  ) {
+    category = 'food';
+  } else if (
+    // Easter egg: Weather
+    q.includes('weather') ||
+    q.includes('clima') ||
+    q.includes('sky') ||
+    q.includes('ceu') ||
+    q.includes('céu') ||
+    q.includes('sun') ||
+    q.includes('rain') ||
+    q.includes('sol') ||
+    q.includes('chuva')
+  ) {
+    category = 'weather';
+  } else if (
+    // Easter egg: Music
+    q.includes('music') ||
+    q.includes('musica') ||
+    q.includes('música') ||
+    q.includes('song') ||
+    q.includes('sing') ||
+    q.includes('cantar') ||
+    q.includes('cancao')
+  ) {
+    category = 'music';
+  } else if (
+    // Easter egg: Joke
+    q.includes('joke') ||
+    q.includes('piada') ||
+    q.includes('funny') ||
+    q.includes('laugh') ||
+    q.includes('humor') ||
+    q.includes('engraçado') ||
+    q.includes('engracado') ||
+    q.includes('rir')
+  ) {
+    category = 'joke';
+  } else if (
+    // Easter egg: Hope
+    q.includes('hope') ||
+    q.includes('esperanca') ||
+    q.includes('esperança') ||
+    q.includes('hopeful') ||
+    q.includes('optimistic') ||
+    q.includes('otimista')
+  ) {
+    category = 'hope';
+  } else if (
+    // Easter egg: UFO74/hacker
+    q.includes('ufo74') ||
+    q.includes('who is ufo') ||
+    q.includes('quem é ufo') ||
+    q.includes('quem e ufo') ||
+    q.includes('hacker') ||
+    q.includes('handler')
+  ) {
+    category = 'ufo74';
+  } else if (
+    // Easter egg: Is this real
+    q.includes('is this real') ||
+    q.includes('isso é real') ||
+    q.includes('isso e real') ||
+    q.includes('for real') ||
+    q.includes('really real') ||
+    q.includes('actually real') ||
+    q.includes('just a') ||
+    q.includes('fiction') ||
+    q.includes('made up') ||
+    q.includes('inventado')
+  ) {
+    category = 'isThisReal';
+  } else if (
+    // Easter egg: Game
+    q.includes('game') ||
+    q.includes('jogo') ||
+    q.includes('playing') ||
+    q.includes('jogando') ||
+    q.includes('videogame') ||
+    q.includes('rpg') ||
+    q.includes('simulation') ||
+    q.includes('simulacao')
+  ) {
+    category = 'game';
+  } else if (
+    // Easter egg: Age
+    q.includes('how old') ||
+    q.includes('age') ||
+    q.includes('idade') ||
+    q.includes('velho') ||
+    q.includes('anos você tem') ||
+    q.includes('quantos anos')
+  ) {
+    category = 'age';
+  } else if (
+    // Easter egg: Brazilian
+    q.includes('brazilian') ||
+    q.includes('brasileiro') ||
+    q.includes('brasil') ||
+    q.includes('brazil') ||
+    q.includes('br') ||
+    q.includes('huehue')
+  ) {
+    category = 'brazilian';
+  } else if (
+    // Simple acknowledgments - still guide to help
     q === 'ok' ||
     q === 'yes' ||
     q === 'sim' ||
     q === 'no' ||
     q === 'nao' ||
     q === 'não' ||
-    q.includes('thanks') ||
-    q.includes('obrigado') ||
-    q.includes('thank you')
+    q.includes('good')
   ) {
     category = 'help';
   }
