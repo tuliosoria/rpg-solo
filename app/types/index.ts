@@ -90,7 +90,13 @@ export type FileTag =
   | 'security'
   | 'surveillance'
   | 'hospital'
-  | 'specimen';
+  | 'specimen'
+  | 'campinas'
+  | 'convergence'
+  | 'transition'
+  | 'diplomatic'
+  | 'cia'
+  | 'scout';
 
 export interface FileNode {
   type: 'file';
