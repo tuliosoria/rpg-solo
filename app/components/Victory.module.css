@@ -123,6 +123,27 @@
   margin-top: 10px;
 }
 
+.endingType {
+  color: #00aaaa;
+  font-size: 11px;
+  margin-top: 5px;
+  letter-spacing: 2px;
+}
+
+.warningLine {
+  color: #ff6600;
+  font-weight: bold;
+  margin: 8px 0;
+  text-shadow: 0 0 8px #ff6600;
+}
+
+.alienLine {
+  color: #aa00ff;
+  font-style: italic;
+  margin: 2px 0;
+  opacity: 0.9;
+}
+
 /* Scrollbar */
 .messageContent::-webkit-scrollbar {
   width: 8px;

@@ -446,12 +446,53 @@ export function processLeakAnswer(
     const nextIndex = currentIndex + 1;
     
     if (nextIndex >= LEAK_QUESTIONS.length) {
-      // All questions answered correctly - VICTORY!
+      // All questions answered correctly!
       output.push(createEntry('system', ''));
       for (const line of ELUSIVE_MAN_VICTORY) {
         output.push(createEntry(line.includes('▓') || line.includes('SUCCESSFUL') ? 'notice' : 'output', line));
       }
       
+      // Check if player has conspiracy files to optionally leak
+      const hasConspiracyFiles = state.conspiracyFilesSeen && state.conspiracyFilesSeen.size > 0;
+      
+      if (hasConspiracyFiles) {
+        // Ask about additional files before proceeding to victory
+        output.push(createEntry('system', ''));
+        output.push(createEntry('warning', '═══════════════════════════════════════════════════════════'));
+        output.push(createEntry('system', ''));
+        output.push(createEntry('notice', '  ADDITIONAL FILES DETECTED'));
+        output.push(createEntry('system', ''));
+        output.push(createEntry('output', `  You have ${state.conspiracyFilesSeen.size} conspiracy document(s) in your cache.`));
+        output.push(createEntry('output', '  These expose government operations beyond the alien evidence.'));
+        output.push(createEntry('system', ''));
+        output.push(createEntry('warning', '  WARNING: Releasing these may cause widespread panic.'));
+        output.push(createEntry('system', ''));
+        output.push(createEntry('output', '  Type "leak all" to release everything.'));
+        output.push(createEntry('output', '  Type "continue" to proceed with alien evidence only.'));
+        output.push(createEntry('system', ''));
+        
+        return {
+          output,
+          stateChanges: {
+            inLeakSequence: false,
+            leakQuestionsComplete: true, // Mark questions as done
+            currentLeakQuestion: 0,
+            leakWrongAnswers: 0,
+            leakAnswers: newAnswers,
+            pendingConspiracyChoice: true, // New flag for this decision point
+            evidencesSaved: true,
+            flags: {
+              ...state.flags,
+              leakSuccessful: true,
+              allEvidenceCollected: true,
+            },
+          },
+          delayMs: 2000,
+          triggerFlicker: true,
+        };
+      }
+      
+      // No conspiracy files - proceed directly to victory
       return {
         output,
         stateChanges: {
@@ -574,3 +615,99 @@ export function getLeakStatus(state: GameState): string[] {
     '═════════════════════════════════',
   ];
 }
+
+/**
+ * Check if player is at the conspiracy files choice point
+ */
+export function isPendingConspiracyChoice(state: GameState): boolean {
+  return state.pendingConspiracyChoice === true;
+}
+
+/**
+ * Process the player's choice about leaking conspiracy files
+ */
+export function processConspiracyChoice(
+  answer: string,
+  state: GameState
+): CommandResult {
+  const output: TerminalEntry[] = [];
+  const normalizedAnswer = normalizeText(answer);
+  
+  // Check for "leak all" or similar
+  const leakAllKeywords = ['leak all', 'leak everything', 'yes', 'all', 'release all'];
+  const continueKeywords = ['continue', 'no', 'skip', 'proceed', 'just alien', 'alien only'];
+  
+  if (leakAllKeywords.some(kw => normalizedAnswer.includes(kw))) {
+    // Player chose to leak conspiracy files
+    output.push(createEntry('system', ''));
+    output.push(createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'));
+    output.push(createEntry('system', ''));
+    output.push(createEntry('notice', '  FULL DISCLOSURE INITIATED'));
+    output.push(createEntry('system', ''));
+    output.push(createEntry('output', '  Uploading conspiracy documents...'));
+    output.push(createEntry('output', '  Economic manipulation memos... SENT'));
+    output.push(createEntry('output', '  Surveillance programs... SENT'));
+    output.push(createEntry('output', '  Weather modification logs... SENT'));
+    output.push(createEntry('output', '  Historical revisionism records... SENT'));
+    output.push(createEntry('system', ''));
+    output.push(createEntry('warning', '  EVERYTHING IS OUT THERE NOW.'));
+    output.push(createEntry('system', ''));
+    output.push(createEntry('error', 'UFO74: jesus christ, kid. you just blew it all open.'));
+    output.push(createEntry('error', '       the aliens AND the conspiracies.'));
+    output.push(createEntry('error', '       the world is gonna lose its mind.'));
+    output.push(createEntry('system', ''));
+    
+    return {
+      output,
+      stateChanges: {
+        pendingConspiracyChoice: false,
+        gameWon: true,
+        endingType: 'good',
+        flags: {
+          ...state.flags,
+          conspiracyFilesLeaked: true,
+        },
+      },
+      delayMs: 2500,
+      triggerFlicker: true,
+      skipToPhase: 'victory',
+    };
+  }
+  
+  if (continueKeywords.some(kw => normalizedAnswer.includes(kw))) {
+    // Player chose NOT to leak conspiracy files
+    output.push(createEntry('system', ''));
+    output.push(createEntry('notice', '  Understood. Proceeding with alien evidence only.'));
+    output.push(createEntry('system', ''));
+    output.push(createEntry('output', 'UFO74: smart choice. one bombshell at a time.'));
+    output.push(createEntry('output', '       the conspiracy stuff can wait.'));
+    output.push(createEntry('system', ''));
+    
+    return {
+      output,
+      stateChanges: {
+        pendingConspiracyChoice: false,
+        gameWon: true,
+        endingType: 'good',
+        // conspiracyFilesLeaked stays false (or undefined)
+      },
+      delayMs: 1500,
+      triggerFlicker: true,
+      skipToPhase: 'victory',
+    };
+  }
+  
+  // Unclear response
+  output.push(createEntry('system', ''));
+  output.push(createEntry('warning', '  Please clarify:'));
+  output.push(createEntry('output', '  Type "leak all" to release ALL documents.'));
+  output.push(createEntry('output', '  Type "continue" to proceed with alien evidence only.'));
+  output.push(createEntry('system', ''));
+  
+  return {
+    output,
+    stateChanges: {},
+    delayMs: 500,
+  };
+}
+

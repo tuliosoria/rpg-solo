@@ -7,7 +7,7 @@ import { uiChance, uiRandomInt } from '../engine/rng';
 interface ImageOverlayProps {
   src: string;
   alt: string;
-  tone: 'clinical' | 'surveillance';
+  tone: 'clinical' | 'surveillance' | 'eerie';
   onCloseAction: () => void;
   corrupted?: boolean;
   durationMs?: number;

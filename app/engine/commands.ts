@@ -249,7 +249,20 @@ import {
   isInLeakSequence,
   startLeakSequence,
   processLeakAnswer,
+  isPendingConspiracyChoice,
+  processConspiracyChoice,
 } from './elusiveMan';
+
+// Import Prisoner 46 system
+import {
+  PRISONER46_FILES,
+  PRISONER46_FILE_NAMES,
+  PRISONER46_RELEASE_INTRO,
+  PRISONER46_RELEASE_SEQUENCE,
+  PRISONER46_RELEASE_SUCCESS,
+  PRISONER46_ALREADY_RELEASED,
+  PRISONER46_FILE_NOT_FOUND,
+} from '../data/prisoner46';
 
 // Import checkpoint system
 import { saveCheckpoint } from '../storage/saves';
@@ -5998,6 +6011,103 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
 
+  // release - Release Prisoner 46 (hidden command discovered via containment files)
+  release: (args, state) => {
+    const target = args.join(' ').toLowerCase().trim();
+    
+    // Check for P46 / prisoner46 variants
+    const validTargets = ['p46', 'prisoner46', 'prisoner 46', 'p-46'];
+    const isReleasingP46 = validTargets.some(t => target.includes(t));
+    
+    if (!isReleasingP46) {
+      // Not releasing P46 - show generic error
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('error', 'RELEASE COMMAND REQUIRES TARGET'),
+          createEntry('system', ''),
+          createEntry('system', 'Usage: release <subject_id>'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+    
+    // Check if player has discovered Prisoner 46 files
+    const hasDiscoveredP46 = Array.from(state.filesRead).some(f => 
+      f.includes('prisoner46') || f.includes('p46_')
+    );
+    
+    if (!hasDiscoveredP46) {
+      const output = PRISONER46_FILE_NOT_FOUND.map(line =>
+        createEntry(line.includes('ERROR') ? 'error' : 'system', line)
+      );
+      return {
+        output,
+        stateChanges: {},
+      };
+    }
+    
+    // Check if already released
+    if (state.flags.prisoner46Released) {
+      const output = PRISONER46_ALREADY_RELEASED.map(line =>
+        createEntry(line.includes('ERROR') ? 'error' : 'system', line)
+      );
+      return {
+        output,
+        stateChanges: {},
+      };
+    }
+    
+    // Execute release!
+    const output: TerminalEntry[] = [];
+    
+    // Intro
+    for (const line of PRISONER46_RELEASE_INTRO) {
+      output.push(createEntry(line.includes('▓') ? 'warning' : line.includes('COMMAND') ? 'notice' : 'system', line));
+    }
+    
+    // Sequence
+    for (const line of PRISONER46_RELEASE_SEQUENCE) {
+      output.push(createEntry(
+        line.includes('WARNING') ? 'error' :
+        line.includes('>') ? 'notice' :
+        'output',
+        line
+      ));
+    }
+    
+    // Success
+    for (const line of PRISONER46_RELEASE_SUCCESS) {
+      output.push(createEntry(
+        line.includes('▓▓▓') ? 'notice' :
+        line.includes('UFO74:') ? 'ufo74' :
+        line.includes('═') ? 'warning' :
+        line.startsWith('  ...') ? 'warning' :
+        'output',
+        line
+      ));
+    }
+    
+    return {
+      output,
+      stateChanges: {
+        flags: {
+          ...state.flags,
+          prisoner46Released: true,
+        },
+        detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 15),
+      },
+      delayMs: 3000,
+      triggerFlicker: true,
+      imageTrigger: {
+        src: '/images/et-standing.png',
+        alt: 'Prisoner 46 - The surviving Varginha being',
+        tone: 'eerie',
+      },
+    };
+  },
+
   // scan - Reveals hidden files in current directory
   scan: (args, state) => {
     if (!state.hiddenCommandsDiscovered?.has('scan')) {
@@ -7808,6 +7918,14 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   if (isInLeakSequence(state)) {
     // All input during leak sequence is treated as an answer
     return processLeakAnswer(normalizedInput, state);
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CONSPIRACY FILES CHOICE - After leak success, player chooses to leak more
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (isPendingConspiracyChoice(state)) {
+    // All input during this choice is treated as the decision
+    return processConspiracyChoice(normalizedInput, state);
   }
 
   // Empty command

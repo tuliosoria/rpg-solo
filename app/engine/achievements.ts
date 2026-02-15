@@ -114,6 +114,35 @@ export const ACHIEVEMENTS: Achievement[] = [
     icon: '🦉',
     secret: true,
   },
+  // Multiple endings achievements
+  {
+    id: 'liberator',
+    name: 'Liberator',
+    description: 'Release Prisoner 46 from containment',
+    icon: '🛸',
+    secret: true,
+  },
+  {
+    id: 'whistleblower',
+    name: 'Whistleblower',
+    description: 'Leak the conspiracy files to the world',
+    icon: '📢',
+    secret: true,
+  },
+  {
+    id: 'linked',
+    name: 'Neural Link',
+    description: 'Connect to the alien consciousness',
+    icon: '🧠',
+    secret: true,
+  },
+  {
+    id: 'revelator',
+    name: 'Complete Revelation',
+    description: 'Achieve the ultimate ending with all modifiers',
+    icon: '✨',
+    secret: true,
+  },
 ];
 
 const VALID_ACHIEVEMENT_IDS = new Set(ACHIEVEMENTS.map(a => a.id));

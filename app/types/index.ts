@@ -32,9 +32,10 @@ export type FileStatus =
   | 'unstable'
   | 'encrypted'
   | 'conditional'
-  | 'restricted_briefing';
+  | 'restricted_briefing'
+  | 'corrupted';
 
-export type ImageTone = 'clinical' | 'surveillance';
+export type ImageTone = 'clinical' | 'surveillance' | 'eerie';
 
 export interface ImageTrigger {
   src: string;
@@ -97,7 +98,12 @@ export type FileTag =
   | 'diplomatic'
   | 'cia'
   | 'scout'
-  | 'conspiracy';
+  | 'conspiracy'
+  | 'quarantine'
+  | 'high-security'
+  | 'psi-comm'
+  | 'technical'
+  | 'interview';
 
 export interface FileNode {
   type: 'file';
@@ -260,6 +266,8 @@ export interface GameState {
   currentLeakQuestion: number; // 0-4, current question index
   leakWrongAnswers: number; // Wrong answers given (max 3)
   leakAnswers: string[]; // Player's answers for debugging/analysis
+  leakQuestionsComplete?: boolean; // True when all questions answered
+  pendingConspiracyChoice?: boolean; // True when waiting for conspiracy leak decision
 
   // Evidence collection & ICQ phase
   evidencesSaved: boolean; // True after running save script
