@@ -25,6 +25,12 @@ vi.mock('../../storage/saves', () => ({
   autoSave: vi.fn(),
   loadGameState: vi.fn(),
   saveGameState: vi.fn(),
+  saveCheckpoint: vi.fn(),
+  loadCheckpoint: vi.fn(),
+  getCheckpointSlots: vi.fn(() => []),
+  getLatestCheckpoint: vi.fn(() => null),
+  deleteCheckpoint: vi.fn(),
+  clearCheckpoints: vi.fn(),
 }));
 
 vi.mock('../../storage/statistics', () => ({

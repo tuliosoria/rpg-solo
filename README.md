@@ -1,12 +1,44 @@
-# Varginha: Terminal 1996
+# Terminal 1996
 
-A text-based discovery puzzle game set in a Brazilian intelligence legacy terminal system, January 1996.
+> *January 20, 1996. Varginha, Brazil. Something fell from the sky.*
 
-## The Game
+A terminal-based discovery puzzle game. You've illegally accessed a Brazilian intelligence legacy system. Reconstruct the truth before shutdown, corruption, or detection.
 
-You have illegally accessed a Brazilian intelligence legacy terminal to reconstruct the truth behind a classified incident before shutdown, corruption, or detection occurs.
+**[▶ PLAY NOW](https://thankful-grass-0f49be40f.2.azurestaticapps.net)**
 
-**Genre:** Procedural Horror / Ufology / Hard Sci-Fi Cosmology
+---
+
+## The Incident
+
+Three days ago, Brazilian Air Defense tracked an unidentified object descending over Minas Gerais. Official reports claim nothing happened. The files tell a different story.
+
+**Genre:** Procedural Horror / Ufology / Hard Sci-Fi
+
+## Features
+
+- 🖥️ **Retro CRT aesthetic** — Authentic terminal experience with scanlines and phosphor glow
+- 👁️ **Detection system** — Every action risks exposure. Get caught and it's over.
+- 🔀 **Multiple endings** — Your choices determine what truth you uncover
+- 🎵 **Atmospheric soundtrack** — 4 ambient tracks that respond to tension
+- 💾 **Save system** — Checkpoint your progress, load when needed
+- 🎮 **Steam integration** — Achievements, cloud saves, rich presence
+
+## Commands
+
+Navigate the classified archive:
+
+| Command | Description |
+|---------|-------------|
+| `ls` | List directory contents |
+| `cd <dir>` | Change directory |
+| `open <file>` | Read a file |
+| `decrypt <file>` | Decrypt classified documents |
+| `search <keyword>` | Search the file index (32 tag categories) |
+| `rewind` | Enter archive state — view deleted files (4 actions) |
+| `leak` | Interrogate the Elusive Man (5 questions only) |
+| `checkpoint` | Save current session |
+| `load` | Restore a saved session |
+| `help` | Display command reference |
 
 ## Getting Started
 
@@ -15,101 +47,52 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to play.
+Open [http://localhost:3000](http://localhost:3000) to play locally.
 
-## Commands
+## Desktop App
 
-- `help` - Display available commands
-- `status` - Check system status
-- `ls` - List directory contents
-- `cd <dir>` - Change directory
-- `open <file>` - Open and read a file (supports images and videos)
-- `decrypt <file>` - Decrypt encrypted files
-- `recover <file>` - Attempt file recovery (risky)
-- `trace` - Trace system connections (risky)
-- `override protocol` - Attempt security override (critical risk)
-- `save` - Save current session
+Available for Windows, macOS, and Linux via Electron:
 
-## Mechanics
+```bash
+npm run electron:build
+```
 
-- **Detection increases** with each action - the system is monitoring you
-- **File integrity degrades** - corruption and data loss can occur
-- **Truth emerges through inference** - cross-reference files to understand what happened
-- **Five truths** must be discovered before the session ends
+Features system tray integration and native notifications.
 
 ## Project Structure
 
 ```
 app/
 ├── components/     # React UI components
-│   ├── Menu.tsx
-│   ├── Terminal.tsx
-│   └── SaveModal.tsx
-├── engine/         # Game logic
-│   ├── commands.ts
-│   ├── filesystem.ts
-│   └── rng.ts
-├── storage/        # Save/load utilities
-├── data/           # Filesystem content
+├── engine/         # Game logic & command processing
+├── storage/        # Save/load system
+├── data/           # Filesystem & narrative content
 └── types/          # TypeScript definitions
 ```
 
 ## Tech Stack
 
-- Next.js 15
-- React 18
-- TypeScript
-- CSS Modules
-- Jest & React Testing Library (for testing)
+- **Next.js 14** + TypeScript
+- **React 18** with CSS Modules
+- **Electron** for desktop builds
+- **Steam SDK** integration
+- **1034+ tests** — Jest & React Testing Library
 
-## Features
+## CI/CD
 
-### Video Playback
-The game now supports video file playback! When you open certain files in the game, video content may be triggered:
-
-- **Automatic playback**: Videos start playing automatically when triggered
-- **CRT effect**: Videos are displayed with retro terminal aesthetics including scanlines and color grading
-- **Interactive controls**: Use the video player controls or press ESC to close
-- **Corruption effects**: Some videos may display with corruption overlays for dramatic effect
-
-#### Adding Video Files
-To add video content to your game files:
-
-1. Place video files in the `public/videos/` directory
-2. Add a `videoTrigger` property to your file definition in `app/data/filesystem.ts`:
-
-```typescript
-{
-  type: 'file',
-  name: 'surveillance_footage.dat',
-  status: 'intact',
-  content: ['Surveillance footage from...'],
-  videoTrigger: {
-    src: '/videos/surveillance.mp4',
-    alt: 'Surveillance footage',
-    corrupted: false // Set to true for corruption effects
-  }
-}
-```
-
-### Testing
-The project includes comprehensive unit and integration tests:
-
-```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Generate coverage report
-npm run test:coverage
-```
-
-### CI/CD
-GitHub Actions workflow automatically validates:
-- ✅ Unit and integration tests
-- ✅ Build validation
-- ✅ File structure validation
+GitHub Actions validates every commit:
+- ✅ Unit & integration tests
+- ✅ Build validation (web, desktop, Steam)
 - ✅ Security audits
 
+## Builds
+
+| Platform | Status |
+|----------|--------|
+| Web | Azure Static Apps |
+| Desktop | Windows, macOS, Linux |
+| Steam | Windows, macOS, Linux |
+
+---
+
+*The truth is in the terminal. Access granted.*

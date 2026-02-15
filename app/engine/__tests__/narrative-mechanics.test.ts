@@ -323,8 +323,9 @@ describe('Narrative Mechanics', () => {
       // Open 3rd file (this makes filesRead.size === 3 after processing)
       const result = executeCommand('open cafeteria_menu.txt', state);
 
-      // Should include UFO74 hint about override protocol
-      const hasOverrideHint = result.output.some(
+      // Should include UFO74 hint about override protocol (in pendingUfo74Messages, not output)
+      const pendingMessages = result.pendingUfo74Messages || [];
+      const hasOverrideHint = pendingMessages.some(
         e => e.content.includes('override protocol') || e.content.includes('MORE hidden')
       );
       expect(hasOverrideHint).toBe(true);
