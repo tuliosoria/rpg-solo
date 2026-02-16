@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { Achievement } from '../engine/achievements';
 import type {
   GamePhase,
@@ -14,6 +14,12 @@ type EncryptedChannelState = 'idle' | 'awaiting_open' | 'open' | 'awaiting_close
 
 export function useTerminalState(initialState: GameState, initialPhase: GamePhase) {
   const [gameState, setGameState] = useState<GameState>(initialState);
+  
+  // Track if this is the first render to avoid running sync effect on mount
+  const isFirstRender = useRef(true);
+  // Track the seed to detect when a different game state is passed in (e.g., checkpoint load)
+  const prevSeedRef = useRef(initialState.seed);
+  const prevLastSaveTimeRef = useRef(initialState.lastSaveTime);
   const [inputValue, setInputValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -57,6 +63,35 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
   const [showTuringTest, setShowTuringTest] = useState(initialState.turingEvaluationActive);
   const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
   const [burnInLines, setBurnInLines] = useState<string[]>([]);
+
+  // Sync state when a new game state is loaded externally (e.g., checkpoint load)
+  // We detect this by checking if the seed or lastSaveTime changed
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    
+    // Detect if this is a different game state (checkpoint load or game load)
+    const seedChanged = initialState.seed !== prevSeedRef.current;
+    const saveTimeChanged = initialState.lastSaveTime !== prevLastSaveTimeRef.current;
+    
+    if (seedChanged || saveTimeChanged) {
+      // Update the internal game state to match the new initial state
+      setGameState(initialState);
+      
+      // Sync game over state
+      setShowGameOver(initialState.isGameOver && initialPhase === 'terminal');
+      setGameOverReason(initialState.gameOverReason || '');
+      
+      // Sync Turing test state
+      setShowTuringTest(initialState.turingEvaluationActive);
+      
+      // Update refs
+      prevSeedRef.current = initialState.seed;
+      prevLastSaveTimeRef.current = initialState.lastSaveTime;
+    }
+  }, [initialState, initialPhase]);
 
   return {
     gameState,

@@ -74,10 +74,31 @@ export default function FirewallEyes({
   const detonationTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const spawnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pauseStartTimeRef = useRef<number | null>(null); // Track when pause started for time adjustment
-  const [showTutorialPopup, setShowTutorialPopup] = React.useState(false);
+  
+  // Calculate whether to show tutorial popup
+  // Show if: tutorial not shown yet, firewall active, not disarmed, and eyes exist
+  const shouldShowTutorial = !firewallEyesTutorialShown && firewallActive && !firewallDisarmed && eyes.length > 0;
+  const [showTutorialPopup, setShowTutorialPopup] = React.useState(shouldShowTutorial);
+  const tutorialCallbackFiredRef = useRef(false); // Track if we've notified parent
 
   // Determine if spawning should be suppressed
   const shouldSuppressSpawn = paused || turingTestActive || isReadingFile;
+
+  // Show tutorial popup when conditions are met
+  // Using useEffect to react to prop changes and show popup
+  useEffect(() => {
+    if (shouldShowTutorial && !showTutorialPopup) {
+      setShowTutorialPopup(true);
+    }
+  }, [shouldShowTutorial, showTutorialPopup]);
+
+  // Notify parent that tutorial was shown (only once)
+  useEffect(() => {
+    if (showTutorialPopup && !tutorialCallbackFiredRef.current) {
+      tutorialCallbackFiredRef.current = true;
+      onTutorialShown?.();
+    }
+  }, [showTutorialPopup, onTutorialShown]);
 
   // Activate firewall when detection reaches threshold (delay if paused)
   useEffect(() => {
@@ -124,11 +145,6 @@ export default function FirewallEyes({
 
     // Set timer for next spawn batch
     spawnTimerRef.current = setTimeout(() => {
-      // Show tutorial popup on first spawn
-      if (!firewallEyesTutorialShown) {
-        setShowTutorialPopup(true);
-        onTutorialShown?.();
-      }
       onSpawnEyeBatch();
     }, timeUntilNextSpawn);
 
@@ -137,7 +153,7 @@ export default function FirewallEyes({
         clearTimeout(spawnTimerRef.current);
       }
     };
-  }, [firewallActive, firewallDisarmed, lastEyeSpawnTime, shouldSuppressSpawn, firewallEyesTutorialShown, onSpawnEyeBatch, onTutorialShown]);
+  }, [firewallActive, firewallDisarmed, lastEyeSpawnTime, shouldSuppressSpawn, onSpawnEyeBatch]);
 
   // Set up detonation timers for each eye
   useEffect(() => {

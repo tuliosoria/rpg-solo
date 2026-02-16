@@ -143,6 +143,56 @@ export const ACHIEVEMENTS: Achievement[] = [
     icon: '✨',
     secret: true,
   },
+  // Individual ending achievements (one per ending variant)
+  {
+    id: 'ending_controlled_disclosure',
+    name: 'Controlled Disclosure',
+    description: 'Complete the game with a clean leak',
+    icon: '📰',
+    secret: true,
+  },
+  {
+    id: 'ending_global_panic',
+    name: 'Global Panic',
+    description: 'Leak conspiracy files and watch the world burn',
+    icon: '🔥',
+    secret: true,
+  },
+  {
+    id: 'ending_undeniable_confirmation',
+    name: 'Undeniable Proof',
+    description: 'Release Prisoner 46 and prove aliens exist',
+    icon: '👽',
+    secret: true,
+  },
+  {
+    id: 'ending_total_collapse',
+    name: 'Total Collapse',
+    description: 'Release Prisoner 46 and leak conspiracies',
+    icon: '💥',
+    secret: true,
+  },
+  {
+    id: 'ending_personal_contamination',
+    name: 'Personal Contamination',
+    description: 'Use the neural link and feel the alien presence',
+    icon: '🧠',
+    secret: true,
+  },
+  {
+    id: 'ending_paranoid_awakening',
+    name: 'Paranoid Awakening',
+    description: 'Leak conspiracies while neurally linked',
+    icon: '👁️',
+    secret: true,
+  },
+  {
+    id: 'ending_witnessed_truth',
+    name: 'Witnessed Truth',
+    description: 'Release Prisoner 46 while neurally linked',
+    icon: '🌌',
+    secret: true,
+  },
 ];
 
 const VALID_ACHIEVEMENT_IDS = new Set(ACHIEVEMENTS.map(a => a.id));

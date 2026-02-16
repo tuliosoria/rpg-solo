@@ -444,6 +444,7 @@ export default function Terminal({
   } = useGameActions({
     setGameState,
     setGamePhase,
+    setShowTuringTest,
     onExitAction,
     playSound,
     triggerFlicker,
@@ -575,6 +576,7 @@ export default function Terminal({
     setShowStatistics,
     setShowPauseMenu,
     setShowHeaderMenu,
+    setShowTuringTest,
     setActiveImage,
     setActiveVideo,
     refs: {

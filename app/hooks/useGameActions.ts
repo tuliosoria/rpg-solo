@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { createEntry } from '../engine/commands';
 import type { GamePhase, GameState } from '../types';
 import type { SoundType } from './useSound';
+import { DETECTION_THRESHOLDS } from '../constants/detection';
 import {
   createFirewallEyeBatch,
   DETECTION_INCREASE_ON_DETONATE,
@@ -14,6 +15,7 @@ import {
 interface UseGameActionsOptions {
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
+  setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
   onExitAction: () => void;
   playSound: (sound: SoundType) => void;
   triggerFlicker: () => void;
@@ -22,6 +24,7 @@ interface UseGameActionsOptions {
 export function useGameActions({
   setGameState,
   setGamePhase,
+  setShowTuringTest,
   onExitAction,
   playSound,
   triggerFlicker,
@@ -139,24 +142,57 @@ export function useGameActions({
 
   const handleFirewallEyeDetonate = useCallback(
     (eyeId: string) => {
+      // We need to determine if Turing test should trigger based on state BEFORE the update
+      // Then trigger it after the state update completes
       setGameState(prev => {
         const updatedEyes = prev.firewallEyes.map(e =>
           e.id === eyeId ? { ...e, isDetonating: true } : e
         );
 
         const newDetection = Math.min(100, prev.detectionLevel + DETECTION_INCREASE_ON_DETONATE);
+        
+        // Check if we should trigger the Turing test:
+        // - Detection just crossed the TURING_TRIGGER threshold (50%)
+        // - Player has discovered at least 1 truth
+        // - Turing test hasn't been triggered or completed yet
+        // - Tutorial is complete
+        const crossedTuringThreshold = 
+          prev.detectionLevel < DETECTION_THRESHOLDS.TURING_TRIGGER && 
+          newDetection >= DETECTION_THRESHOLDS.TURING_TRIGGER;
+        
+        const shouldTriggerTuringTest = 
+          crossedTuringThreshold &&
+          prev.tutorialComplete &&
+          prev.truthsDiscovered.size >= 1 &&
+          !prev.turingEvaluationActive &&
+          !prev.turingEvaluationCompleted &&
+          !prev.singularEventsTriggered?.has('turing_evaluation');
 
         const detonateWarning = createEntry(
           'error',
           `[FIREWALL] Surveillance node reported. Detection increased to ${newDetection}%`
         );
 
-        const ufo74Panic =
-          newDetection >= 80
-            ? createEntry('ufo74', "UFO74: THEY KNOW! They're tracing us RIGHT NOW!")
-            : newDetection >= 60
-              ? createEntry('ufo74', 'UFO74: That one got through! Be faster, kid!')
-              : createEntry('ufo74', 'UFO74: Damn! You missed one. Stay focused!');
+        // Modify UFO74 message based on whether Turing test will trigger
+        let ufo74Panic;
+        if (shouldTriggerTuringTest) {
+          ufo74Panic = createEntry('ufo74', 'UFO74: NO! Detection hit 50% — they\'re initiating Turing eval!');
+          // Schedule Turing test overlay to show after delay
+          setTimeout(() => {
+            setShowTuringTest(true);
+          }, 1500);
+        } else if (newDetection >= 80) {
+          ufo74Panic = createEntry('ufo74', "UFO74: THEY KNOW! They're tracing us RIGHT NOW!");
+        } else if (newDetection >= 60) {
+          ufo74Panic = createEntry('ufo74', 'UFO74: That one got through! Be faster, kid!');
+        } else {
+          ufo74Panic = createEntry('ufo74', 'UFO74: Damn! You missed one. Stay focused!');
+        }
+
+        // Mark Turing evaluation as triggered if applicable
+        const newSingularEvents = shouldTriggerTuringTest
+          ? new Set([...(prev.singularEventsTriggered || []), 'turing_evaluation'])
+          : prev.singularEventsTriggered;
 
         return {
           ...prev,
@@ -164,6 +200,8 @@ export function useGameActions({
           detectionLevel: newDetection,
           avatarExpression: 'scared',
           history: [...prev.history, detonateWarning, ufo74Panic],
+          turingEvaluationActive: shouldTriggerTuringTest ? true : prev.turingEvaluationActive,
+          singularEventsTriggered: newSingularEvents,
         };
       });
 
@@ -177,7 +215,7 @@ export function useGameActions({
         }));
       }, 500);
     },
-    [playSound, setGameState, triggerFlicker]
+    [playSound, setGameState, setShowTuringTest, triggerFlicker]
   );
 
   return {

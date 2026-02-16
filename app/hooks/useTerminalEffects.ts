@@ -118,6 +118,7 @@ interface UseTerminalEffectsOptions {
   setShowStatistics: React.Dispatch<React.SetStateAction<boolean>>;
   setShowPauseMenu: React.Dispatch<React.SetStateAction<boolean>>;
   setShowHeaderMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
   setActiveVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
   refs: TerminalEffectsRefs;
@@ -167,6 +168,7 @@ export function useTerminalEffects({
   setShowStatistics,
   setShowPauseMenu,
   setShowHeaderMenu,
+  setShowTuringTest,
   setActiveImage,
   setActiveVideo,
   refs,
@@ -510,7 +512,7 @@ export function useTerminalEffects({
     suppressPressure,
   ]);
 
-  // Track detection level changes for sound/visual alerts
+  // Track detection level changes for sound/visual alerts AND Turing test trigger
   useEffect(() => {
     const prev = prevDetectionRef.current;
     const current = gameState.detectionLevel;
@@ -540,20 +542,75 @@ export function useTerminalEffects({
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), GLITCH_DURATIONS.SCREEN_SHAKE);
       }
+      
+      // Check if Turing test should trigger (detection crossed 50% threshold)
+      // This catches cases where detection increases from any source (including firewall eyes)
+      const crossedTuringThreshold = 
+        prev < DETECTION_THRESHOLDS.TURING_TRIGGER && 
+        current >= DETECTION_THRESHOLDS.TURING_TRIGGER;
+      
+      if (
+        crossedTuringThreshold &&
+        gameState.tutorialComplete &&
+        gameState.truthsDiscovered.size >= 1 &&
+        !gameState.turingEvaluationActive &&
+        !gameState.turingEvaluationCompleted &&
+        !gameState.singularEventsTriggered?.has('turing_evaluation') &&
+        !showTuringTest &&
+        gamePhase === 'terminal'
+      ) {
+        // Mark as triggered and show the overlay
+        setGameState(prevState => ({
+          ...prevState,
+          turingEvaluationActive: true,
+          singularEventsTriggered: new Set([
+            ...(prevState.singularEventsTriggered || []),
+            'turing_evaluation',
+          ]),
+          history: [
+            ...prevState.history,
+            createEntry('system', ''),
+            createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+            createEntry('warning', '        SECURITY PROTOCOL: TURING EVALUATION INITIATED'),
+            createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+            createEntry('system', ''),
+          ],
+        }));
+        
+        // Trigger flicker and show Turing test overlay after delay
+        setTimeout(() => {
+          setShowTuringTest(true);
+        }, 1500);
+      }
     }
 
     prevDetectionRef.current = current;
-  }, [gameState.detectionLevel, playSound, setIsShaking, setRiskPulse]);
+  }, [
+    gameState.detectionLevel,
+    gameState.tutorialComplete,
+    gameState.truthsDiscovered.size,
+    gameState.turingEvaluationActive,
+    gameState.turingEvaluationCompleted,
+    gameState.singularEventsTriggered,
+    gamePhase,
+    showTuringTest,
+    playSound,
+    setIsShaking,
+    setRiskPulse,
+    setGameState,
+    setShowTuringTest,
+  ]);
 
   // Start ambient sound when tutorial completes
+  // Note: We DON'T stop ambient during Turing test - TuringTestOverlay accelerates the music to 1.5x
   useEffect(() => {
-    if (!gameState.tutorialComplete || !soundEnabled || showTuringTest) {
+    if (!gameState.tutorialComplete || !soundEnabled) {
       stopAmbient();
       return;
     }
     startAmbient();
     return () => stopAmbient();
-  }, [gameState.tutorialComplete, soundEnabled, showTuringTest, startAmbient, stopAmbient]);
+  }, [gameState.tutorialComplete, soundEnabled, startAmbient, stopAmbient]);
 
   // Update ambient tension based on detection level
   useEffect(() => {

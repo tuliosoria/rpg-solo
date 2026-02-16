@@ -453,8 +453,13 @@ export default function Victory({
       if (result?.isNew) newAchievements.push(result.achievement);
     }
 
+    // Unlock ending-specific achievement based on the ending variant
+    const endingAchievementId = `ending_${endingVariant}`;
+    const endingResult = unlockAchievement(endingAchievementId);
+    if (endingResult?.isNew) newAchievements.push(endingResult.achievement);
+
     setAchievements(newAchievements);
-  }, [commandCount, detectionLevel, maxDetectionReached, mathMistakes, filesReadCount, conspiracyFilesLeaked, prisoner46Released, neuralLinkAuthenticated]);
+  }, [commandCount, detectionLevel, maxDetectionReached, mathMistakes, filesReadCount, conspiracyFilesLeaked, prisoner46Released, neuralLinkAuthenticated, endingVariant]);
 
   // Show achievements one by one
   useEffect(() => {

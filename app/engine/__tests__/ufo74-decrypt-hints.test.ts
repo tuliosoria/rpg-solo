@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
-describe('UFO74 Decrypt Hints via Chat', () => {
+describe('Chat Command Priority - Prisoner 45 vs UFO74', () => {
   const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
     ...DEFAULT_GAME_STATE,
     seed: 12345,
@@ -13,144 +13,87 @@ describe('UFO74 Decrypt Hints via Chat', () => {
     ...overrides,
   });
 
-  describe('when player has NOT read the source file', () => {
-    it('should give hint for weight question without source file', () => {
-      const state = createTestState({
-        filesRead: new Set<string>(), // No files read
-      });
+  describe('password questions should go to Prisoner 45', () => {
+    // Prisoner 45 has a "password" topic with morse code hints (COLHEITA)
+    // UFO74 decrypt hints should NOT intercept chat sessions
 
-      const result = executeCommand('chat what is the weight', state);
-
-      // Should have UFO74 response
-      const output = result.output.map(e => e.content).join('\n');
-      expect(output).toContain('UFO74');
-      expect(output).toContain('transport_log_96');
-      expect(output).not.toContain('340'); // Should NOT give the answer
-    });
-
-    it('should give hint for subjects question without source file', () => {
+    it('should route password questions to Prisoner 45, not UFO74', () => {
       const state = createTestState({
         filesRead: new Set<string>(),
+        prisoner45QuestionsAsked: 0,
       });
 
-      const result = executeCommand('chat how many subjects were recovered', state);
+      const result = executeCommand('chat what is the override password', state);
 
       const output = result.output.map(e => e.content).join('\n');
-      expect(output).toContain('UFO74');
-      expect(output).toContain('bio_container');
-      expect(output).not.toContain('three'); // Should NOT give the answer
+      // Should have Prisoner 45 response with morse code hints
+      expect(output).toContain('PRISONER_45');
+      expect(output).toContain('-.-. --- .-.. .... . .. - .-'); // Morse code for COLHEITA
+      // Should NOT have UFO74 intercept
+      expect(output).not.toContain('UFO74 INTERCEPT');
     });
 
-    it('should give hint for protocol question without source file', () => {
+    it('should give morse code hints when asking about password', () => {
       const state = createTestState({
-        filesRead: new Set<string>(),
+        prisoner45QuestionsAsked: 0,
       });
 
-      const result = executeCommand('chat whats the protocol name', state);
+      const result = executeCommand('chat whats the password', state);
 
       const output = result.output.map(e => e.content).join('\n');
-      expect(output).toContain('UFO74');
-      expect(output).toContain('liaison');
-    });
-  });
-
-  describe('when player HAS read the source file', () => {
-    it('should give answer for weight question when transport log was read', () => {
-      const state = createTestState({
-        filesRead: new Set(['/storage/assets/transport_log_96.txt']),
-      });
-
-      const result = executeCommand('chat what is the material sample weight', state);
-
-      const output = result.output.map(e => e.content).join('\n');
-      expect(output).toContain('UFO74');
-      expect(output).toContain('340'); // Should give the answer
+      expect(output).toContain('PRISONER_45');
+      // Prisoner 45 gives morse code hints
+      expect(output).toMatch(/morse|code|-\.-|override/i);
     });
 
-    it('should give answer for subjects question when bio_container was read', () => {
-      const state = createTestState({
-        filesRead: new Set(['/storage/quarantine/bio_container.log']),
-      });
-
-      const result = executeCommand('chat how many subjects total', state);
-
-      const output = result.output.map(e => e.content).join('\n');
-      expect(output).toContain('UFO74');
-      expect(output).toContain('three'); // Should give the answer
-    });
-
-    it('should give answer for protocol question when liaison note was read', () => {
-      const state = createTestState({
-        filesRead: new Set(['/comms/liaison/foreign_liaison_note.txt']),
-      });
-
-      const result = executeCommand('chat what protocol governs the exchange', state);
-
-      const output = result.output.map(e => e.content).join('\n');
-      expect(output).toContain('UFO74');
-      expect(output).toContain('7-ECHO'); // Should give the answer
-    });
-  });
-
-  describe('various question phrasings', () => {
-    it('should respond to "help with decrypt"', () => {
-      const state = createTestState();
-      const result = executeCommand('chat help with decrypt psi_comm', state);
-
-      const output = result.output.map(e => e.content).join('\n');
-      expect(output).toContain('UFO74');
-    });
-
-    it('should respond to "password for"', () => {
-      const state = createTestState();
-      const result = executeCommand('chat whats the password for transcript_limit', state);
-
-      const output = result.output.map(e => e.content).join('\n');
-      expect(output).toContain('UFO74');
-    });
-
-    it('should respond to "stuck on encrypted file"', () => {
-      const state = createTestState();
-      const result = executeCommand('chat stuck on encrypted file need answer', state);
-
-      const output = result.output.map(e => e.content).join('\n');
-      expect(output).toContain('UFO74');
-    });
-
-    it('should respond to "what is the 2026"', () => {
-      const state = createTestState();
-      const result = executeCommand('chat what is the year 2026', state);
-
-      const output = result.output.map(e => e.content).join('\n');
-      expect(output).toContain('UFO74');
-      expect(output).toContain('2026');
-    });
-  });
-
-  describe('does not consume Prisoner 45 questions', () => {
-    it('should not increment question count for decrypt questions', () => {
+    it('should consume a Prisoner 45 question for password queries', () => {
       const state = createTestState({
         prisoner45QuestionsAsked: 2,
       });
 
-      const result = executeCommand('chat what is the weight password', state);
+      const result = executeCommand('chat what is the password', state);
 
-      // Should not have state changes for question count
-      expect(result.stateChanges.prisoner45QuestionsAsked).toBeUndefined();
+      // Should increment question count (password is routed to Prisoner 45)
+      expect(result.stateChanges.prisoner45QuestionsAsked).toBe(3);
     });
 
-    it('should not increase detection for decrypt questions', () => {
+    it('should route decrypt-related questions to Prisoner 45', () => {
       const state = createTestState({
-        detectionLevel: 10,
+        prisoner45QuestionsAsked: 0,
       });
 
-      const result = executeCommand('chat decrypt password help', state);
+      const result = executeCommand('chat how do I decrypt the files', state);
 
-      expect(result.stateChanges.detectionLevel).toBeUndefined();
+      const output = result.output.map(e => e.content).join('\n');
+      // Should be Prisoner 45, not UFO74
+      expect(output).toContain('PRISONER_45');
+      expect(output).not.toContain('UFO74 INTERCEPT');
+    });
+
+    it('should route code/access questions to Prisoner 45', () => {
+      const state = createTestState({
+        prisoner45QuestionsAsked: 0,
+      });
+
+      const result = executeCommand('chat what is the access code', state);
+
+      const output = result.output.map(e => e.content).join('\n');
+      expect(output).toContain('PRISONER_45');
+    });
+
+    it('should route admin unlock questions to Prisoner 45', () => {
+      const state = createTestState({
+        prisoner45QuestionsAsked: 0,
+      });
+
+      const result = executeCommand('chat how do I unlock admin', state);
+
+      const output = result.output.map(e => e.content).join('\n');
+      expect(output).toContain('PRISONER_45');
     });
   });
 
-  describe('non-decrypt questions go to Prisoner 45', () => {
+  describe('non-password questions also go to Prisoner 45', () => {
     it('should route alien questions to Prisoner 45', () => {
       const state = createTestState({
         prisoner45QuestionsAsked: 0,
@@ -174,6 +117,32 @@ describe('UFO74 Decrypt Hints via Chat', () => {
 
       const output = result.output.map(e => e.content).join('\n');
       expect(output).not.toContain('UFO74 INTERCEPT');
+      expect(output).toContain('PRISONER_45');
+    });
+
+    it('should route telepathy questions to Prisoner 45', () => {
+      const state = createTestState({
+        prisoner45QuestionsAsked: 0,
+      });
+
+      const result = executeCommand('chat can they read minds', state);
+
+      const output = result.output.map(e => e.content).join('\n');
+      expect(output).toContain('PRISONER_45');
+    });
+  });
+
+  describe('detection increases properly for chat', () => {
+    it('should increase detection for valid Prisoner 45 responses', () => {
+      const state = createTestState({
+        detectionLevel: 10,
+        prisoner45QuestionsAsked: 0,
+      });
+
+      const result = executeCommand('chat what happened in 1996', state);
+
+      // Chat with Prisoner 45 should increase detection
+      expect(result.stateChanges.detectionLevel).toBeGreaterThan(10);
     });
   });
 });

@@ -228,3 +228,63 @@ describe('FirewallEyes', () => {
     });
   });
 });
+
+describe('Tutorial Popup', () => {
+  const baseProps = {
+    detectionLevel: 30,
+    firewallActive: true,
+    firewallDisarmed: false,
+    eyes: [
+      {
+        id: 'eye-1',
+        x: 50,
+        y: 40,
+        spawnTime: Date.now(),
+        detonateTime: Date.now() + 8000,
+        isDetonating: false,
+      },
+    ] as FirewallEye[],
+    lastEyeSpawnTime: Date.now(),
+    paused: false,
+    turingTestActive: false,
+    isReadingFile: false,
+    firewallEyesTutorialShown: false, // Tutorial NOT shown yet
+    onEyeClick: vi.fn(),
+    onEyeDetonate: vi.fn(),
+    onSpawnEyeBatch: vi.fn(),
+    onActivateFirewall: vi.fn(),
+    onPauseChanged: vi.fn(),
+    onTutorialShown: vi.fn(),
+  };
+
+  it('shows tutorial popup when eyes first appear and tutorial not shown', () => {
+    const { container } = render(<FirewallEyes {...baseProps} />);
+    
+    // Should show the tutorial overlay
+    const overlay = container.querySelector('[class*="tutorialOverlay"]');
+    expect(overlay).not.toBeNull();
+    
+    // Should have called onTutorialShown
+    expect(baseProps.onTutorialShown).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not show tutorial popup when firewallEyesTutorialShown is true', () => {
+    const { container } = render(
+      <FirewallEyes {...baseProps} firewallEyesTutorialShown={true} />
+    );
+    
+    // Should NOT show the tutorial overlay
+    const overlay = container.querySelector('[class*="tutorialOverlay"]');
+    expect(overlay).toBeNull();
+  });
+
+  it('hides eyes while tutorial popup is showing', () => {
+    const { container } = render(<FirewallEyes {...baseProps} />);
+    
+    // Eyes should NOT be visible while popup is showing
+    const eyes = container.querySelectorAll('[class*="eye"]');
+    // The only element with "eye" in class should be the popup elements, not actual eyes
+    const eyeButtons = container.querySelectorAll('button[class*="eye"]');
+    expect(eyeButtons.length).toBe(0);
+  });
+});
