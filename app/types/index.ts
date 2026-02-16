@@ -248,6 +248,7 @@ export interface GameState {
 
   // Hint system
   hintsUsed: number; // How many hints the player has requested (max 4)
+  rewindRemindersShown: number; // How many rewind reminders shown this session (max 1)
 
   // Tutorial state (UFO74 intro messages)
   tutorialStep: number; // -1 = complete, 0+ = current message index
@@ -513,6 +514,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   wanderingNoticeCount: 0,
   lastDirectoriesVisited: [],
   hintsUsed: 0,
+  rewindRemindersShown: 0,
   tutorialStep: 0,
   tutorialComplete: false,
   interactiveTutorialState: {

@@ -4,6 +4,12 @@
 import { GameState, TruthCategory, TRUTH_CATEGORIES, TerminalEntry } from '../types';
 import { createEntry } from './commands/utils';
 
+// Rewind reminder configuration
+export const REWIND_REMINDER_CONFIG = {
+  minFilesReadBeforeReminder: 8, // Don't remind too early
+  maxRemindersPerSession: 1, // Don't spam
+};
+
 // Hint configuration
 export const HINT_CONFIG = {
   maxHints: 4, // Limited hints per run
@@ -103,6 +109,70 @@ const PROGRESS_HINTS = {
   ],
 };
 
+// Rewind reminder messages - contextual hints about the rewind command
+const REWIND_REMINDER_HINTS: string[] = [
+  "hey, don't forget you can use 'rewind' to roll back the system clock. some files were deleted... but not in the past.",
+  "stuck? try 'rewind'. the archive state lets you see what they tried to erase.",
+  "the archive timestamp is earlier than now. some evidence only exists in the past. use 'rewind'.",
+  "deleted files aren't really gone. they're just... not here yet. try 'rewind'.",
+];
+
+/**
+ * Determine if we should show a rewind reminder to the player.
+ * Conditions:
+ * - Tutorial must be complete (rewind unlocked)
+ * - Player hasn't used rewind yet (no archive files read)
+ * - Player has read enough files to potentially be stuck
+ * - Player is missing some truths (still has reason to explore)
+ * - Haven't shown reminder too many times
+ */
+function shouldShowRewindReminder(
+  state: GameState,
+  filesReadCount: number,
+  truthCount: number
+): boolean {
+  // Must have completed tutorial (rewind is unlocked post-tutorial)
+  if (!state.tutorialComplete) {
+    return false;
+  }
+
+  // Check if player has already used rewind (read archive files)
+  const filesRead = state.filesRead || new Set<string>();
+  const archiveFilePaths = [
+    '/storage/quarantine/witness_statement_original.txt',
+    '/storage/assets/directive_alpha_draft.txt',
+    '/comms/deleted_comms_log.txt',
+    '/internal/personnel_file_costa.txt',
+    '/internal/project_seed_memo.txt',
+    '/ops/medical/autopsy_notes_unredacted.txt',
+  ];
+  const hasReadArchiveFile = archiveFilePaths.some(path => filesRead.has(path));
+  
+  // If they've already used rewind and read archive files, no need to remind
+  if (hasReadArchiveFile) {
+    return false;
+  }
+
+  // Check if we've already shown the reminder this session
+  const rewindRemindersShown = state.rewindRemindersShown || 0;
+  if (rewindRemindersShown >= REWIND_REMINDER_CONFIG.maxRemindersPerSession) {
+    return false;
+  }
+
+  // Only show if player has read enough files (not too early)
+  if (filesReadCount < REWIND_REMINDER_CONFIG.minFilesReadBeforeReminder) {
+    return false;
+  }
+
+  // Show if player is missing truths and hasn't tried rewind
+  // This suggests they might benefit from seeing deleted files
+  if (truthCount < 3) {
+    return true;
+  }
+
+  return false;
+}
+
 /**
  * Analyze player progress and generate a contextual hint.
  * Returns null if no relevant hint can be generated.
@@ -133,6 +203,12 @@ export function analyzeProgressForHint(state: GameState): string | null {
   // Priority 1: If player has read very few files
   if (filesReadCount < 3) {
     return pickRandom(PROGRESS_HINTS.noFilesRead);
+  }
+
+  // Priority 1.5: Rewind reminder - suggest rewind if player hasn't used it yet
+  // and has read enough files to potentially be stuck
+  if (shouldShowRewindReminder(state, filesReadCount, truthCount)) {
+    return pickRandom(REWIND_REMINDER_HINTS);
   }
 
   // Priority 2: Guide toward unexplored directories that contain evidence
@@ -229,6 +305,12 @@ export function generateHintOutput(state: GameState): {
   const stateChanges: Partial<GameState> = {
     hintsUsed: hintsUsed + 1,
   };
+
+  // Track if this was a rewind reminder
+  const isRewindReminder = REWIND_REMINDER_HINTS.includes(hint);
+  if (isRewindReminder) {
+    stateChanges.rewindRemindersShown = (state.rewindRemindersShown || 0) + 1;
+  }
 
   // Apply detection penalty if tutorial is complete (hidden from player)
   if (state.tutorialComplete) {
