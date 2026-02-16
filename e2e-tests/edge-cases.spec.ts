@@ -312,7 +312,7 @@ test.describe('Edge Cases & UI', () => {
     // Check if it autocompleted to 'status'
     await page.keyboard.press('Enter');
     await page.waitForTimeout(1000);
-    let content = await getContent(page);
+    const content = await getContent(page);
     const statusCompleted = contentContains(content, 'status') || contentContains(content, 'logging');
 
     // Clear and test directory autocomplete
@@ -383,7 +383,7 @@ test.describe('Edge Cases & UI', () => {
     // Check if we can see recent output (terminal should auto-scroll)
     console.log('\n--- Checking auto-scroll ---');
     await typeCommand(page, 'status');
-    let content = await getContent(page);
+    const content = await getContent(page);
     await screenshot(page, 'edge-scroll-02-after-status');
     
     // Recent command output should be visible
@@ -437,7 +437,7 @@ test.describe('Edge Cases & UI', () => {
 
     // Verify terminal is responsive again
     await typeCommand(page, 'ls');
-    let content = await getContent(page);
+    const content = await getContent(page);
     await screenshot(page, 'edge-overlay-04-responsive');
 
     // Test opening multiple files in sequence

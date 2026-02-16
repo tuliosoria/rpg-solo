@@ -26,14 +26,13 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
   // Safely get current question with fallback
   const currentQuestion = TURING_QUESTIONS[questionIndex] || TURING_QUESTIONS[0];
   
-  // Guard against invalid state
-  if (!currentQuestion || !currentQuestion.options) {
-    console.error('TuringTestOverlay: Invalid question data', { questionIndex, TURING_QUESTIONS });
-    return null;
-  }
+  // Check for invalid question data
+  const isInvalidQuestion = !currentQuestion || !currentQuestion.options;
 
   // Turing Test start effects: voice + music speed
   useEffect(() => {
+    if (isInvalidQuestion) return;
+    
     // Firewall speaks with menacing voice
     speak('Welcome to Turing Test', { rate: 0.7, pitch: 0.3 });
     
@@ -47,16 +46,18 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
     return () => {
       setMusicPlaybackRate(1.0);
     };
-  }, [speak, setMusicPlaybackRate, playSound]);
+  }, [speak, setMusicPlaybackRate, playSound, isInvalidQuestion]);
 
   // Initial flicker effect
   useEffect(() => {
+    if (isInvalidQuestion) return;
     const timer = setTimeout(() => setFlickering(false), 200);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isInvalidQuestion]);
 
   // Random screen flicker
   useEffect(() => {
+    if (isInvalidQuestion) return;
     const interval = setInterval(() => {
       if (uiChance(0.1)) {
         setFlickering(true);
@@ -75,12 +76,12 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
         clearTimeout(flickerTimeoutRef.current);
       }
     };
-  }, []);
+  }, [isInvalidQuestion]);
 
   // Handle option selection
   const handleSelect = useCallback(
     (letter: string) => {
-      if (showFeedback || showResult) return;
+      if (isInvalidQuestion || showFeedback || showResult) return;
 
       setSelectedOption(letter);
       const option = currentQuestion.options.find(o => o.letter === letter);
@@ -106,7 +107,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
         }
       }, 1500);
     },
-    [questionIndex, currentQuestion, showFeedback, showResult, onCorrectAnswer]
+    [questionIndex, currentQuestion, showFeedback, showResult, onCorrectAnswer, isInvalidQuestion]
   );
 
   useEffect(() => {
@@ -122,6 +123,8 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
 
   // Keyboard controls
   useEffect(() => {
+    if (isInvalidQuestion) return;
+    
     const handleKeyDown = (e: KeyboardEvent) => {
       if (showResult) {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -142,7 +145,14 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleSelect, showFeedback, showResult, onComplete, correctAnswers]);
+  }, [handleSelect, showFeedback, showResult, onComplete, correctAnswers, isInvalidQuestion]);
+
+  // Guard against invalid state - must be after all hooks
+  if (isInvalidQuestion) {
+    // eslint-disable-next-line no-console
+    console.error('TuringTestOverlay: Invalid question data', { questionIndex, TURING_QUESTIONS });
+    return null;
+  }
 
   // Result screen
   if (showResult) {

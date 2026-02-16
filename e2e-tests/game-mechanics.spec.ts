@@ -117,7 +117,7 @@ test.describe('Game Mechanics', () => {
     let content = await getContent(page);
     await screenshot(page, 'mechanics-detect-01-initial');
     
-    let initialLevel = parseDetectionLevel(content);
+    const initialLevel = parseDetectionLevel(content);
     console.log(`  Initial level: ${initialLevel}`);
 
     // Actions that should increase detection
@@ -149,7 +149,7 @@ test.describe('Game Mechanics', () => {
     content = await getContent(page);
     await screenshot(page, 'mechanics-detect-02-after-actions');
     
-    let afterLevel = parseDetectionLevel(content);
+    const afterLevel = parseDetectionLevel(content);
     console.log(`  After level: ${afterLevel}`);
 
     // Continue with more risky actions
@@ -167,7 +167,7 @@ test.describe('Game Mechanics', () => {
     content = await getContent(page);
     await screenshot(page, 'mechanics-detect-03-more-actions');
     
-    let finalLevel = parseDetectionLevel(content);
+    const finalLevel = parseDetectionLevel(content);
     console.log(`  Final level: ${finalLevel}`);
 
     // Verify detection increased
@@ -201,7 +201,7 @@ test.describe('Game Mechanics', () => {
     let content = await getContent(page);
     await screenshot(page, 'mechanics-attempts-01-initial');
     
-    let initialAttempts = parseAttemptsRemaining(content);
+    const initialAttempts = parseAttemptsRemaining(content);
     console.log(`  Initial attempts remaining: ${initialAttempts}`);
 
     // Make several invalid commands
@@ -223,7 +223,7 @@ test.describe('Game Mechanics', () => {
     content = await getContent(page);
     await screenshot(page, 'mechanics-attempts-02-after-invalid');
     
-    let afterAttempts = parseAttemptsRemaining(content);
+    const afterAttempts = parseAttemptsRemaining(content);
     console.log(`  Attempts remaining after invalid commands: ${afterAttempts}`);
 
     // Try wrong passwords/decryption attempts
@@ -242,7 +242,7 @@ test.describe('Game Mechanics', () => {
     content = await getContent(page);
     await screenshot(page, 'mechanics-attempts-03-after-decrypt');
     
-    let finalAttempts = parseAttemptsRemaining(content);
+    const finalAttempts = parseAttemptsRemaining(content);
     console.log(`  Final attempts remaining: ${finalAttempts}`);
 
     // Check if the status reflects degrading security
@@ -283,7 +283,7 @@ test.describe('Game Mechanics', () => {
       return count > 0 ? count : null;
     };
 
-    let initialEvidence = getEvidenceCount(content);
+    const initialEvidence = getEvidenceCount(content);
     console.log(`  Initial evidence count: ${initialEvidence || 0}`);
 
     // Open files that should reveal evidence
@@ -331,7 +331,7 @@ test.describe('Game Mechanics', () => {
     content = await getContent(page);
     await screenshot(page, 'mechanics-evidence-02-after');
     
-    let afterEvidence = getEvidenceCount(content);
+    const afterEvidence = getEvidenceCount(content);
     console.log(`  Evidence count after: ${afterEvidence || 0}`);
 
     // Check map for evidence connections
@@ -390,7 +390,7 @@ test.describe('Game Mechanics', () => {
     await typeCommand(page, 'final_invalid_1');
     await typeCommand(page, 'final_invalid_2');
     
-    let content = await getContent(page);
+    const content = await getContent(page);
     await screenshot(page, 'mechanics-gameover-attempts-03-final');
 
     // Check if game over state is reached
@@ -425,7 +425,7 @@ test.describe('Game Mechanics', () => {
     let content = await getContent(page);
     await screenshot(page, 'mechanics-stealth-01-elevated');
     
-    let beforeLevel = parseDetectionLevel(content);
+    const beforeLevel = parseDetectionLevel(content);
     console.log(`  Detection before wait: ${beforeLevel}`);
 
     // Try wait command (stealth recovery)
@@ -449,7 +449,7 @@ test.describe('Game Mechanics', () => {
     content = await getContent(page);
     await screenshot(page, 'mechanics-stealth-03-after-wait');
     
-    let afterLevel = parseDetectionLevel(content);
+    const afterLevel = parseDetectionLevel(content);
     console.log(`  Detection after wait: ${afterLevel}`);
 
     // Test using wait multiple times (limited to 3)

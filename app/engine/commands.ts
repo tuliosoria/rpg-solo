@@ -6534,7 +6534,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   },
 
   hint: (_args, state) => {
-    // Import hint system
+    // Import hint system dynamically to avoid circular dependency
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { generateHintOutput } = require('./hintSystem');
     return generateHintOutput(state);
   },

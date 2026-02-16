@@ -125,7 +125,7 @@ test.describe('Filesystem Navigation', () => {
     await screenshot(page, 'nav-00-start');
 
     let visitedDirs = 0;
-    let failedDirs: string[] = [];
+    const failedDirs: string[] = [];
 
     for (const dir of ACCESSIBLE_DIRECTORIES) {
       console.log(`\n--- Navigating to: ${dir} ---`);
@@ -496,7 +496,7 @@ test.describe('Filesystem Navigation', () => {
       '/tmp': ['session', 'note', 'pattern', 'coherence', 'data', 'modem'],
     };
 
-    let mismatches: string[] = [];
+    const mismatches: string[] = [];
 
     for (const [dir, expectedItems] of Object.entries(expectedContents)) {
       console.log(`\n--- Checking ${dir} ---`);

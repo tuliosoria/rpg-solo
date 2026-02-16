@@ -191,7 +191,7 @@ test.describe('File Interactions', () => {
     await startGame(page);
 
     let filesOpened = 0;
-    let filesFailed: string[] = [];
+    const filesFailed: string[] = [];
 
     // Storage/assets
     console.log('\n--- /storage/assets ---');
@@ -553,7 +553,7 @@ test.describe('File Interactions', () => {
       };
     };
 
-    let initialDetection = getDetectionInfo(content);
+    const initialDetection = getDetectionInfo(content);
     console.log(`  Initial detection: ${JSON.stringify(initialDetection)}`);
 
     // Open several files to increase detection
@@ -579,7 +579,7 @@ test.describe('File Interactions', () => {
     content = await getContent(page);
     await screenshot(page, 'files-detection-02-after');
 
-    let afterDetection = getDetectionInfo(content);
+    const afterDetection = getDetectionInfo(content);
     console.log(`  After detection: ${JSON.stringify(afterDetection)}`);
 
     // Detection should have increased (or stayed same if already high)
@@ -606,7 +606,7 @@ test.describe('File Interactions', () => {
     content = await getContent(page);
     await screenshot(page, 'files-detection-03-final');
 
-    let finalDetection = getDetectionInfo(content);
+    const finalDetection = getDetectionInfo(content);
     console.log(`  Final detection: ${JSON.stringify(finalDetection)}`);
 
     console.log('\n========== DETECTION LEVEL TEST COMPLETE ==========\n');
