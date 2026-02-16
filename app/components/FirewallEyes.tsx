@@ -43,11 +43,15 @@ interface FirewallEyesProps {
   eyes: FirewallEye[];
   lastEyeSpawnTime: number;
   paused: boolean; // Pause timers during image/video overlays
+  turingTestActive: boolean; // Don't spawn during Turing test
+  isReadingFile: boolean; // Don't spawn while player is reading a file
+  firewallEyesTutorialShown: boolean; // Track if tutorial has been shown
   onEyeClick: (eyeId: string) => void;
   onEyeDetonate: (eyeId: string) => void;
   onSpawnEyeBatch: () => void;
   onActivateFirewall: () => void;
   onPauseChanged?: (paused: boolean) => void; // Callback when pause state changes
+  onTutorialShown?: () => void; // Callback when tutorial popup is shown
 }
 
 export default function FirewallEyes({
@@ -57,22 +61,30 @@ export default function FirewallEyes({
   eyes,
   lastEyeSpawnTime,
   paused,
+  turingTestActive,
+  isReadingFile,
+  firewallEyesTutorialShown,
   onEyeClick,
   onEyeDetonate,
   onSpawnEyeBatch,
   onActivateFirewall,
   onPauseChanged,
+  onTutorialShown,
 }: FirewallEyesProps) {
   const detonationTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const spawnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pauseStartTimeRef = useRef<number | null>(null); // Track when pause started for time adjustment
+  const [showTutorialPopup, setShowTutorialPopup] = React.useState(false);
+
+  // Determine if spawning should be suppressed
+  const shouldSuppressSpawn = paused || turingTestActive || isReadingFile;
 
   // Activate firewall when detection reaches threshold (delay if paused)
   useEffect(() => {
-    if (!firewallActive && !firewallDisarmed && detectionLevel >= DETECTION_THRESHOLD && !paused) {
+    if (!firewallActive && !firewallDisarmed && detectionLevel >= DETECTION_THRESHOLD && !shouldSuppressSpawn) {
       onActivateFirewall();
     }
-  }, [detectionLevel, firewallActive, firewallDisarmed, paused, onActivateFirewall]);
+  }, [detectionLevel, firewallActive, firewallDisarmed, shouldSuppressSpawn, onActivateFirewall]);
 
   // Track pause state to notify parent for time adjustments
   useEffect(() => {
@@ -91,8 +103,8 @@ export default function FirewallEyes({
 
   // Spawn eye batch with cooldown timer
   useEffect(() => {
-    if (!firewallActive || firewallDisarmed || paused) {
-      // Clear spawn timer if firewall is inactive/disarmed/paused
+    if (!firewallActive || firewallDisarmed || shouldSuppressSpawn) {
+      // Clear spawn timer if firewall is inactive/disarmed/paused/suppressed
       if (spawnTimerRef.current) {
         clearTimeout(spawnTimerRef.current);
         spawnTimerRef.current = null;
@@ -112,6 +124,11 @@ export default function FirewallEyes({
 
     // Set timer for next spawn batch
     spawnTimerRef.current = setTimeout(() => {
+      // Show tutorial popup on first spawn
+      if (!firewallEyesTutorialShown) {
+        setShowTutorialPopup(true);
+        onTutorialShown?.();
+      }
       onSpawnEyeBatch();
     }, timeUntilNextSpawn);
 
@@ -120,7 +137,7 @@ export default function FirewallEyes({
         clearTimeout(spawnTimerRef.current);
       }
     };
-  }, [firewallActive, firewallDisarmed, lastEyeSpawnTime, paused, onSpawnEyeBatch]);
+  }, [firewallActive, firewallDisarmed, lastEyeSpawnTime, shouldSuppressSpawn, firewallEyesTutorialShown, onSpawnEyeBatch, onTutorialShown]);
 
   // Set up detonation timers for each eye
   useEffect(() => {
@@ -195,15 +212,42 @@ export default function FirewallEyes({
   );
 
   // Don't render if firewall is disarmed or not active
-  if (firewallDisarmed || !firewallActive || eyes.length === 0) {
+  if (firewallDisarmed || !firewallActive || (eyes.length === 0 && !showTutorialPopup)) {
     return null;
   }
 
   const now = Date.now();
 
+  // Handle tutorial popup dismiss
+  const handleTutorialDismiss = () => {
+    setShowTutorialPopup(false);
+  };
+
   return (
     <div className={styles.firewallContainer}>
-      {eyes.map(eye => {
+      {/* Tutorial popup - first time firewall eyes spawn */}
+      {showTutorialPopup && (
+        <div className={styles.tutorialOverlay}>
+          <div className={styles.tutorialPopup}>
+            <div className={styles.tutorialHeader}>
+              ⚠️ UFO74
+            </div>
+            <div className={styles.tutorialMessage}>
+              Firewall FOUND US, kid! Click on those eyes to remove them — we need to buy some time.
+            </div>
+            <button 
+              className={styles.tutorialButton}
+              onClick={handleTutorialDismiss}
+              autoFocus
+            >
+              GOT IT
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {/* Only render eyes when tutorial is dismissed or not showing */}
+      {!showTutorialPopup && eyes.map(eye => {
         const timeUntilDetonate = eye.detonateTime - now;
         const isWarning = timeUntilDetonate <= EYE_WARNING_MS && timeUntilDetonate > 0;
         const isCritical = timeUntilDetonate <= 1000 && timeUntilDetonate > 0;

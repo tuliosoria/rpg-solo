@@ -206,6 +206,14 @@ export default function Terminal({
     gameState.traceSpikeActive ||
     gameState.countdownActive;
 
+  // File reading suppression: consider player "reading" for 15 seconds after file open
+  const FILE_READ_COOLDOWN_MS = 15000;
+  const isReadingFile = Boolean(
+    gameState.isReadingFile && 
+    gameState.lastFileReadTime && 
+    (Date.now() - gameState.lastFileReadTime < FILE_READ_COOLDOWN_MS)
+  );
+
   // Track max detection ever reached for Survivor achievement
   const maxDetectionRef = useRef(0);
 
@@ -947,11 +955,20 @@ export default function Terminal({
             eyes={gameState.firewallEyes}
             lastEyeSpawnTime={gameState.lastEyeSpawnTime}
             paused={isFirewallPaused}
+            turingTestActive={showTuringTest || gameState.turingEvaluationActive}
+            isReadingFile={isReadingFile}
+            firewallEyesTutorialShown={gameState.firewallEyesTutorialShown}
             onEyeClick={handleFirewallEyeClickWithFocus}
             onEyeDetonate={handleFirewallEyeDetonate}
             onSpawnEyeBatch={handleFirewallEyeBatchSpawn}
             onActivateFirewall={handleFirewallActivate}
             onPauseChanged={handleFirewallPauseChanged}
+            onTutorialShown={() => {
+              setGameState(prev => ({
+                ...prev,
+                firewallEyesTutorialShown: true,
+              }));
+            }}
           />
         )}
 

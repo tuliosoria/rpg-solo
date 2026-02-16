@@ -17,11 +17,15 @@ describe('FirewallEyes', () => {
     eyes: [] as FirewallEye[],
     lastEyeSpawnTime: 0,
     paused: false,
+    turingTestActive: false,
+    isReadingFile: false,
+    firewallEyesTutorialShown: true, // Skip tutorial in tests
     onEyeClick: vi.fn(),
     onEyeDetonate: vi.fn(),
     onSpawnEyeBatch: vi.fn(),
     onActivateFirewall: vi.fn(),
     onPauseChanged: vi.fn(),
+    onTutorialShown: vi.fn(),
   };
 
   beforeEach(() => {

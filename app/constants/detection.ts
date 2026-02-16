@@ -41,6 +41,10 @@ export const DETECTION_THRESHOLDS = {
   WANDERING_TRUTHS: 50, // Truth-discovery wandering
   WANDERING_EVIDENCE: 45, // Evidence-based wandering
 
+  // Turing test thresholds
+  TURING_WARNING: 45, // UFO74 warns player at this level
+  TURING_TRIGGER: 50, // Turing test triggers EXACTLY at this level
+
   // Status check thresholds
   STATUS_LOW: 20, // "All clear" status
   STATUS_MED: 50, // "Elevated" status

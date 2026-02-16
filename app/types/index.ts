@@ -379,6 +379,11 @@ export interface GameState {
   firewallDisarmed: boolean; // True if player used neural link to disable
   lastEyeSpawnDetection: number; // Detection level when last eye spawned (for 10% increments)
   lastEyeSpawnTime: number; // Timestamp of last eye batch spawn (for 1 min cooldown)
+  firewallEyesTutorialShown: boolean; // True after first-time tutorial popup shown
+
+  // File reading state (for firewall eye spawn suppression)
+  isReadingFile: boolean; // True while a file is being displayed
+  lastFileReadTime: number; // Timestamp when last file read completed
 
   // Atmosphere Phase - quiet exploration period before pressure systems activate
   ufo74DisengageTime: number; // Timestamp when UFO74 disengaged (for cooldown)
@@ -613,6 +618,10 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   firewallDisarmed: false,
   lastEyeSpawnDetection: 0,
   lastEyeSpawnTime: 0,
+  firewallEyesTutorialShown: false,
+  // File reading state
+  isReadingFile: false,
+  lastFileReadTime: 0,
   // Atmosphere Phase
   ufo74DisengageTime: 0,
   // Archive/Rewind system

@@ -251,3 +251,100 @@
   transform: translate(-50%, -50%) scale(2);
   opacity: 1;
 }
+
+/* Tutorial overlay - first-time popup */
+.tutorialOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: auto;
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+.tutorialPopup {
+  background: linear-gradient(135deg, #1a0000 0%, #330000 50%, #1a0000 100%);
+  border: 3px solid #ff0000;
+  border-radius: 8px;
+  padding: 24px 32px;
+  max-width: 450px;
+  text-align: center;
+  box-shadow:
+    0 0 30px rgba(255, 0, 0, 0.6),
+    0 0 60px rgba(255, 0, 0, 0.3),
+    inset 0 0 20px rgba(255, 0, 0, 0.1);
+  animation: popupSlideIn 0.4s ease-out;
+}
+
+.tutorialHeader {
+  font-family: 'Courier New', monospace;
+  font-size: 20px;
+  font-weight: bold;
+  color: #00ff00;
+  margin-bottom: 16px;
+  text-shadow:
+    0 0 10px #00ff00,
+    0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+.tutorialMessage {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #ffcc00;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  text-shadow:
+    0 0 5px rgba(255, 204, 0, 0.5);
+}
+
+.tutorialButton {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  background: #00ff00;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow:
+    0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.tutorialButton:hover {
+  background: #33ff33;
+  transform: scale(1.05);
+  box-shadow:
+    0 0 25px rgba(0, 255, 0, 0.7);
+}
+
+.tutorialButton:active {
+  transform: scale(0.98);
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popupSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

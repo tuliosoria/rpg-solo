@@ -323,11 +323,10 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.turingEvaluationActive) return false;
       // Suppress during atmosphere phase and cooldown period
       if (shouldSuppressPressure(state)) return false;
-      // Trigger at detection level WANDERING_LOW+, before Turing test can start
-      // This ensures warning always shows before the test, even if detection jumps
+      // Trigger at detection level 45% (TURING_WARNING threshold)
       if (!state.tutorialComplete) return false;
       return (
-        state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_LOW &&
+        state.detectionLevel >= DETECTION_THRESHOLDS.TURING_WARNING &&
         state.truthsDiscovered.size >= 1
       );
     },
@@ -336,9 +335,8 @@ const SINGULAR_EVENTS: SingularEvent[] = [
         output: [
           // Channel banners are handled by openEncryptedChannelWithMessages
           // (ufo74 entries in result.output are extracted and wrapped automatically)
-          createEntry('ufo74', 'UFO74: heads up. RISK climbing.'),
-          createEntry('ufo74', '       at 45-55% theres a TURING EVALUATION.'),
-          createEntry('ufo74', '       pick COLD, LOGICAL answers. act like a machine.'),
+          createEntry('ufo74', 'UFO74: careful kid, they\'re getting suspicious.'),
+          createEntry('ufo74', '       if you hit 50% you\'ll have to prove you\'re human.'),
         ],
         stateChanges: {
           singularEventsTriggered: new Set([
@@ -360,11 +358,11 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.turingEvaluationActive) return false;
       // Suppress during atmosphere phase and cooldown period
       if (shouldSuppressPressure(state)) return false;
-      // Trigger at detection level 45+, once warning was shown
-      // BUG FIX: Removed upper limit - previously if risk jumped past 55% the test never triggered
-      if (!state.singularEventsTriggered?.has('turing_warning')) return false;
+      // Trigger EXACTLY at detection level 50% (TURING_TRIGGER threshold)
+      // Must have at least 1 truth and warning shown (but we make warning trigger first)
+      if (!state.tutorialComplete) return false;
       return (
-        state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_RANGE_MIN &&
+        state.detectionLevel >= DETECTION_THRESHOLDS.TURING_TRIGGER &&
         state.truthsDiscovered.size >= 1
       );
     },
@@ -4520,6 +4518,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         : state.detectionLevel + detectionChange, // Safe file reduction - no warmup needed
       filesRead,
       lastOpenedFile: filePath, // Track for 'last' command
+      isReadingFile: true, // Mark as reading file (suppresses firewall eyes)
+      lastFileReadTime: Date.now(), // Track when file was read
     };
 
     if (!state.tutorialComplete) {

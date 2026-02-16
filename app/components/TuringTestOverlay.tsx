@@ -23,7 +23,14 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { setMusicPlaybackRate, speak, playSound } = useSound();
 
-  const currentQuestion = TURING_QUESTIONS[questionIndex];
+  // Safely get current question with fallback
+  const currentQuestion = TURING_QUESTIONS[questionIndex] || TURING_QUESTIONS[0];
+  
+  // Guard against invalid state
+  if (!currentQuestion || !currentQuestion.options) {
+    console.error('TuringTestOverlay: Invalid question data', { questionIndex, TURING_QUESTIONS });
+    return null;
+  }
 
   // Turing Test start effects: voice + music speed
   useEffect(() => {
