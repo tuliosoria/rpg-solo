@@ -216,6 +216,11 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         </div>
 
         <div className={styles.creditSection}>
+          <div className={styles.creditLabel}>CREATED BY</div>
+          <div className={styles.creditValue}>Tulio Soria</div>
+        </div>
+
+        <div className={styles.creditSection}>
           <div className={styles.creditLabel}>GENRE</div>
           <div className={styles.creditValue}>Procedural Horror / Ufology / Hard Sci-Fi</div>
         </div>
