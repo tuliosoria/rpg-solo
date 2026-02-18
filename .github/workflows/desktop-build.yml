@@ -37,6 +37,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install real Electron for desktop build
+        run: npm install electron@latest --save-dev --ignore-scripts
+
       - name: Build Next.js
         run: npm run build
 
