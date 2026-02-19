@@ -8,6 +8,7 @@
   bottom: 0;
   pointer-events: none;
   z-index: 40;
+  contain: layout style; /* Isolate from main document */
 }
 
 .eye {
@@ -19,7 +20,7 @@
   border: 3px solid #ff0000;
   cursor: pointer;
   pointer-events: auto;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) translateZ(0); /* GPU layer */
   animation:
     eyeSpawn 0.5s ease-out,
     eyeFloat 3s ease-in-out infinite;
@@ -30,6 +31,8 @@
   transition:
     transform 0.1s ease-out,
     box-shadow 0.3s ease;
+  will-change: transform, opacity;
+  contain: layout paint; /* Isolate paint operations */
 }
 
 .eye:hover {
@@ -129,28 +132,28 @@
   animation: countdownPulse 0.5s ease-in-out infinite;
 }
 
-/* Animations */
+/* Animations - GPU accelerated with translate3d */
 @keyframes eyeSpawn {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0);
+    transform: translate(-50%, -50%) scale(0) translateZ(0);
   }
   50% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.2);
+    transform: translate(-50%, -50%) scale(1.2) translateZ(0);
   }
   100% {
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) scale(1) translateZ(0);
   }
 }
 
 @keyframes eyeFloat {
   0%,
   100% {
-    transform: translate(-50%, -50%) translateY(0);
+    transform: translate(-50%, -50%) translate3d(0, 0, 0);
   }
   50% {
-    transform: translate(-50%, -50%) translateY(-5px);
+    transform: translate(-50%, -50%) translate3d(0, -5px, 0);
   }
 }
 

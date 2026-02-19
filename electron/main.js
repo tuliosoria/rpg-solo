@@ -4,14 +4,40 @@ const fs = require('fs');
 
 const isDev = process.env.NODE_ENV === 'development';
 
-// Steam integration modules
-const steamAchievements = require('./steam-achievements');
-const steamCloud = require('./steam-cloud');
-const steamPresence = require('./steam-presence');
+// ============================================================
+// STARTUP OPTIMIZATION: Memory management flags
+// ============================================================
+// Configure V8 GC for gaming workloads
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512 --expose-gc');
+app.commandLine.appendSwitch('--in-process-gpu'); // Better Steam overlay rendering
+app.commandLine.appendSwitch('disable-renderer-backgrounding'); // Consistent game loop
+app.commandLine.appendSwitch('disable-background-timer-throttling'); // Prevent timer throttling
 
-// Window and tray modules
-const windowState = require('./window-state');
-const tray = require('./tray');
+// ============================================================
+// LAZY LOADING: Defer Steam module loading
+// ============================================================
+let steamAchievements = null;
+let steamCloud = null;
+let steamPresence = null;
+let windowState = null;
+let tray = null;
+
+function loadWindowModules() {
+  if (!windowState) {
+    windowState = require('./window-state');
+  }
+  if (!tray) {
+    tray = require('./tray');
+  }
+}
+
+function loadSteamModules() {
+  if (!steamAchievements) {
+    steamAchievements = require('./steam-achievements');
+    steamCloud = require('./steam-cloud');
+    steamPresence = require('./steam-presence');
+  }
+}
 
 // Steam state
 let steamClient = null;
@@ -22,12 +48,28 @@ let pendingSteamOperations = [];
 // Server reference for cleanup
 let localServer = null;
 
-// Main window reference
+// Window references
 let mainWindow = null;
+let splashWindow = null;
+
+// Network status
+let isOnline = true;
+let pendingSteamSync = [];
+
+// Startup timing
+const startupTime = Date.now();
+function logStartupTime(phase) {
+  if (isDev) {
+    console.log(`[Startup] ${phase}: ${Date.now() - startupTime}ms`);
+  }
+}
 
 // Steam App ID - Replace with your actual Steam App ID
 // For development/testing, use 480 (Spacewar test app)
 const STEAM_APP_ID = process.env.STEAM_APP_ID || '480';
+
+// Mark app as not quitting (for tray minimize)
+app.isQuitting = false;
 
 // ============================================================
 // Input validation helpers
@@ -125,14 +167,141 @@ function markSteamReady() {
 }
 
 // ============================================================
-// Electron command-line optimizations for Steam/gaming
+// SPLASH SCREEN
 // ============================================================
-app.commandLine.appendSwitch('--in-process-gpu'); // Better Steam overlay rendering
-app.commandLine.appendSwitch('disable-renderer-backgrounding'); // Consistent game loop
-app.commandLine.appendSwitch('disable-background-timer-throttling'); // Prevent timer throttling
 
-// Mark app as not quitting (for tray minimize)
-app.isQuitting = false;
+function createSplashWindow() {
+  logStartupTime('Creating splash window');
+  
+  splashWindow = new BrowserWindow({
+    width: 450,
+    height: 350,
+    frame: false,
+    transparent: true,
+    resizable: false,
+    center: true,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    show: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false, // Allow IPC in splash
+    },
+  });
+
+  splashWindow.loadFile(path.join(__dirname, 'splash.html'));
+  
+  splashWindow.once('ready-to-show', () => {
+    splashWindow.show();
+    logStartupTime('Splash window shown');
+  });
+
+  return splashWindow;
+}
+
+function updateSplashStatus(status, progress = null) {
+  if (splashWindow && !splashWindow.isDestroyed()) {
+    splashWindow.webContents.send('splash:status', status);
+    if (progress !== null) {
+      splashWindow.webContents.send('splash:progress', progress);
+    }
+  }
+}
+
+function closeSplashWindow() {
+  if (splashWindow && !splashWindow.isDestroyed()) {
+    splashWindow.close();
+    splashWindow = null;
+    logStartupTime('Splash window closed');
+  }
+}
+
+// ============================================================
+// OFFLINE DETECTION
+// ============================================================
+
+function setupNetworkMonitoring() {
+  // Check initial status
+  isOnline = require('dns').promises.resolve('steamcommunity.com')
+    .then(() => { isOnline = true; })
+    .catch(() => { isOnline = false; });
+
+  // Periodic network check (every 30 seconds)
+  setInterval(async () => {
+    try {
+      await require('dns').promises.resolve('steamcommunity.com');
+      const wasOffline = !isOnline;
+      isOnline = true;
+      
+      // Process pending sync operations when back online
+      if (wasOffline && pendingSteamSync.length > 0) {
+        console.log(`Back online, processing ${pendingSteamSync.length} pending Steam operations`);
+        const pending = [...pendingSteamSync];
+        pendingSteamSync = [];
+        for (const op of pending) {
+          try {
+            await op();
+          } catch (e) {
+            console.error('Failed to process pending Steam operation:', e);
+          }
+        }
+      }
+      
+      // Notify renderer of online status
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('network:status', true);
+      }
+    } catch {
+      isOnline = false;
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('network:status', false);
+      }
+    }
+  }, 30000);
+}
+
+function queueSteamOperation(operation) {
+  if (!isOnline) {
+    pendingSteamSync.push(operation);
+    return { success: false, error: 'Offline - operation queued for sync', queued: true };
+  }
+  return null; // Proceed with operation
+}
+
+// ============================================================
+// MEMORY MANAGEMENT
+// ============================================================
+
+let gcInterval = null;
+
+function setupMemoryManagement() {
+  // Periodic GC hints for long sessions (every 5 minutes)
+  gcInterval = setInterval(() => {
+    if (global.gc) {
+      try {
+        global.gc();
+        if (isDev) {
+          const used = process.memoryUsage();
+          console.log(`[GC] Memory: ${Math.round(used.heapUsed / 1024 / 1024)}MB / ${Math.round(used.heapTotal / 1024 / 1024)}MB`);
+        }
+      } catch (e) {
+        // GC not available, ignore
+      }
+    }
+  }, 5 * 60 * 1000);
+
+  // Monitor memory usage
+  if (isDev) {
+    setInterval(() => {
+      const used = process.memoryUsage();
+      console.log(`[Memory] Heap: ${Math.round(used.heapUsed / 1024 / 1024)}MB, RSS: ${Math.round(used.rss / 1024 / 1024)}MB`);
+    }, 60000);
+  }
+}
+
+// ============================================================
+// Steam Initialization (lazy loaded)
+// ============================================================
 
 /**
  * Initializes Steamworks SDK.
@@ -140,7 +309,13 @@ app.isQuitting = false;
  * @returns {boolean} True if Steam was initialized successfully
  */
 function initializeSteam() {
+  logStartupTime('Starting Steam initialization');
+  updateSplashStatus('Connecting to Steam...', 60);
+  
   try {
+    // Lazy load Steam modules
+    loadSteamModules();
+    
     // steamworks.js uses dynamic require for native bindings
     const steamworks = require('steamworks.js');
 
@@ -172,6 +347,7 @@ function initializeSteam() {
         }
       }
 
+      logStartupTime('Steam initialized');
       return true;
     }
   } catch (error) {
@@ -187,7 +363,10 @@ function initializeSteam() {
   }
 
   // Steam not available - still mark as "ready" so pending ops return gracefully
+  // Load modules so handlers don't crash
+  loadSteamModules();
   markSteamReady();
+  logStartupTime('Steam skipped (not available)');
 
   return false;
 }
@@ -198,7 +377,9 @@ function initializeSteam() {
 function shutdownSteam() {
   if (steamClient) {
     try {
-      steamPresence.clearPresence();
+      if (steamPresence) {
+        steamPresence.clearPresence();
+      }
       steamClient = null;
       steamInitialized = false;
       steamReady = false;
@@ -210,7 +391,17 @@ function shutdownSteam() {
   }
 }
 
+// ============================================================
+// MAIN WINDOW (hidden until ready)
+// ============================================================
+
 function createWindow() {
+  logStartupTime('Creating main window');
+  updateSplashStatus('Loading game...', 80);
+  
+  // Lazy load window modules
+  loadWindowModules();
+  
   // Load saved window state
   const savedState = windowState.loadState();
 
@@ -222,8 +413,8 @@ function createWindow() {
     minWidth: 800,
     minHeight: 600,
     resizable: true,
-    show: false, // Show after ready-to-show for smoother startup
-    backgroundColor: '#000000', // Reduce flash on startup
+    show: false, // HIDDEN until content ready
+    backgroundColor: '#0a0a0a', // Match splash background - prevent white flash
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -237,10 +428,20 @@ function createWindow() {
   // Set up window state persistence
   const stateManager = windowState.createWindowStateManager(mainWindow);
 
-  // Show window when ready and apply maximized state
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
-    stateManager.applyMaximized();
+  // Show window when content is fully loaded (no white flash)
+  mainWindow.webContents.once('did-finish-load', () => {
+    logStartupTime('Content loaded');
+    updateSplashStatus('Ready!', 100);
+    
+    // Small delay for smooth transition
+    setTimeout(() => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.show();
+        stateManager.applyMaximized();
+        closeSplashWindow();
+        logStartupTime('Main window shown - startup complete');
+      }
+    }, 200);
   });
 
   // Initialize system tray
@@ -349,6 +550,15 @@ ipcMain.handle('steam:getPlayerName', () => {
   }
 });
 
+// Network status
+ipcMain.handle('network:isOnline', () => {
+  return isOnline;
+});
+
+ipcMain.handle('network:getPendingSync', () => {
+  return pendingSteamSync.length;
+});
+
 // Achievement handlers
 ipcMain.handle('steam:achievements:unlock', (event, achievementId) => {
   const validation = validateStringId(achievementId, 'achievementId');
@@ -382,9 +592,9 @@ ipcMain.handle('steam:achievements:getAllMapped', () => {
   return whenSteamReady(() => steamAchievements.getAllMappedAchievements());
 });
 
-// Cloud save handlers
+// Cloud save handlers with offline queue support
 ipcMain.handle('steam:cloud:isAvailable', () => {
-  return steamCloud.isAvailable();
+  return steamCloud ? steamCloud.isAvailable() : false;
 });
 
 ipcMain.handle('steam:cloud:save', (event, key, data) => {
@@ -396,6 +606,13 @@ ipcMain.handle('steam:cloud:save', (event, key, data) => {
   if (!dataValidation.valid) {
     return { success: false, error: dataValidation.error };
   }
+  
+  // Queue for offline sync if needed
+  const queued = queueSteamOperation(() => 
+    whenSteamReady(() => steamCloud.save(keyValidation.value, dataValidation.value))
+  );
+  if (queued) return queued;
+  
   return whenSteamReady(() => steamCloud.save(keyValidation.value, dataValidation.value));
 });
 
@@ -416,7 +633,7 @@ ipcMain.handle('steam:cloud:delete', (event, key) => {
 });
 
 ipcMain.handle('steam:cloud:list', () => {
-  return whenSteamReady(() => steamCloud.listFiles());
+  return whenSteamReady(() => steamCloud.list());
 });
 
 ipcMain.handle('steam:cloud:getQuota', () => {
@@ -455,7 +672,7 @@ ipcMain.handle('steam:presence:set', (event, status) => {
   if (!validation.valid) {
     return { success: false, error: validation.error };
   }
-  return steamPresence.setPresence(validation.value);
+  return steamPresence ? steamPresence.setPresence(validation.value) : { success: false, error: 'Steam not available' };
 });
 
 ipcMain.handle('steam:presence:update', (event, gameState) => {
@@ -464,17 +681,17 @@ ipcMain.handle('steam:presence:update', (event, gameState) => {
     return { success: false, error: 'Invalid game state' };
   }
   // Update both Steam presence and tray status
-  steamPresence.updateFromGameState(gameState);
-  tray.updateFromGameState(gameState);
+  if (steamPresence) steamPresence.updateFromGameState(gameState);
+  if (tray) tray.updateFromGameState(gameState);
   return { success: true };
 });
 
 ipcMain.handle('steam:presence:clear', () => {
-  return steamPresence.clearPresence();
+  return steamPresence ? steamPresence.clearPresence() : { success: true };
 });
 
 ipcMain.handle('steam:presence:getStates', () => {
-  return steamPresence.getPresenceStates();
+  return steamPresence ? steamPresence.getPresenceStates() : {};
 });
 
 // ============================================================
@@ -485,28 +702,44 @@ ipcMain.handle('tray:setMinimizeToTray', (event, enabled) => {
   if (typeof enabled !== 'boolean') {
     return { success: false, error: 'enabled must be a boolean' };
   }
-  tray.setMinimizeToTray(enabled);
+  if (tray) tray.setMinimizeToTray(enabled);
   return { success: true };
 });
 
 ipcMain.handle('tray:isMinimizeToTrayEnabled', () => {
-  return tray.isMinimizeToTrayEnabled();
+  return tray ? tray.isMinimizeToTrayEnabled() : false;
 });
 
 ipcMain.handle('tray:updateStatus', (event, status) => {
-  tray.updateTooltip(status);
+  if (tray) tray.updateTooltip(status);
   return { success: true };
 });
 
 // ============================================================
-// App lifecycle
+// App lifecycle - Optimized startup sequence
 // ============================================================
 
-app.whenReady().then(() => {
-  // Initialize Steam before creating the window
-  initializeSteam();
-
-  createWindow();
+app.whenReady().then(async () => {
+  logStartupTime('App ready');
+  
+  // 1. Show splash immediately
+  createSplashWindow();
+  updateSplashStatus('Initializing...', 10);
+  
+  // 2. Start network monitoring (non-blocking)
+  setupNetworkMonitoring();
+  updateSplashStatus('Checking network...', 30);
+  
+  // 3. Start memory management
+  setupMemoryManagement();
+  
+  // 4. Initialize Steam (deferred to allow splash to show)
+  setImmediate(() => {
+    initializeSteam();
+    
+    // 5. Create main window (hidden)
+    createWindow();
+  });
 
   app.on('activate', () => {
     // On macOS, re-create window when dock icon is clicked and no windows are open
@@ -517,6 +750,12 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+  // Clear GC interval
+  if (gcInterval) {
+    clearInterval(gcInterval);
+    gcInterval = null;
+  }
+  
   // Close local server if running
   if (localServer) {
     localServer.close();
@@ -524,7 +763,7 @@ app.on('window-all-closed', () => {
   }
 
   // Destroy tray icon
-  tray.destroy();
+  if (tray) tray.destroy();
 
   // Shutdown Steam before quitting
   shutdownSteam();
@@ -585,7 +824,7 @@ function setupAutoUpdater() {
       // Will install on next app quit
     });
 
-    // Check for updates after a short delay
+    // Check for updates after a short delay (deferred for startup performance)
     setTimeout(() => {
       autoUpdater.checkForUpdatesAndNotify().catch((err) => {
         // Silently fail if update check fails (offline, etc.)
@@ -593,7 +832,7 @@ function setupAutoUpdater() {
           console.debug('Update check failed:', err.message);
         }
       });
-    }, 10000); // 10 seconds after startup
+    }, 15000); // 15 seconds after startup (increased from 10)
   } catch (error) {
     // electron-updater not installed or other error
     console.log('Auto-updater not available:', error.message);
@@ -625,7 +864,10 @@ function setupCrashReporter() {
 // Initialize crash reporter immediately
 setupCrashReporter();
 
-// Set up auto-updater after app is ready
+// Set up auto-updater after app is ready (deferred)
 app.whenReady().then(() => {
-  setupAutoUpdater();
+  // Defer auto-updater setup to not block startup
+  setImmediate(() => {
+    setupAutoUpdater();
+  });
 });

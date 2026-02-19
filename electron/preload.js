@@ -249,4 +249,118 @@ contextBridge.exposeInMainWorld('electronAPI', {
       }
     },
   },
+
+  // ============================================================
+  // App Info & Updates API
+  // ============================================================
+  
+  app: {
+    /**
+     * Gets the application version.
+     * @returns {Promise<string>}
+     */
+    getVersion: () => safeInvokeNullable('app:getVersion'),
+
+    /**
+     * Manually checks for updates.
+     * @returns {Promise<{available: boolean, version?: string, error?: string}>}
+     */
+    checkForUpdates: () => safeInvoke('app:checkForUpdates'),
+
+    /**
+     * Listen for update available events.
+     * @param {Function} callback - Called when update is available
+     */
+    onUpdateAvailable: (callback) => {
+      try {
+        ipcRenderer.on('update:available', (event, info) => callback(info));
+      } catch (error) {
+        console.error('Failed to register update:available listener:', error.message);
+      }
+    },
+
+    /**
+     * Listen for update download progress.
+     * @param {Function} callback - Called with progress info
+     */
+    onUpdateProgress: (callback) => {
+      try {
+        ipcRenderer.on('update:progress', (event, progress) => callback(progress));
+      } catch (error) {
+        console.error('Failed to register update:progress listener:', error.message);
+      }
+    },
+
+    /**
+     * Listen for update downloaded events.
+     * @param {Function} callback - Called when update is downloaded
+     */
+    onUpdateDownloaded: (callback) => {
+      try {
+        ipcRenderer.on('update:downloaded', (event, info) => callback(info));
+      } catch (error) {
+        console.error('Failed to register update:downloaded listener:', error.message);
+      }
+    },
+  },
+
+  // ============================================================
+  // Deep Linking API
+  // ============================================================
+
+  deepLink: {
+    /**
+     * Listen for deep link load-save requests.
+     * @param {Function} callback - Called with saveId when varginha://load/<saveId> is opened
+     */
+    onLoadSave: (callback) => {
+      try {
+        ipcRenderer.on('deep-link:load-save', (event, saveId) => callback(saveId));
+      } catch (error) {
+        console.error('Failed to register deep-link:load-save listener:', error.message);
+      }
+    },
+  },
+
+  // ============================================================
+  // Menu Events API
+  // ============================================================
+
+  menu: {
+    /**
+     * Listen for new game menu command.
+     * @param {Function} callback - Called when File > New Game is clicked
+     */
+    onNewGame: (callback) => {
+      try {
+        ipcRenderer.on('menu:new-game', () => callback());
+      } catch (error) {
+        console.error('Failed to register menu:new-game listener:', error.message);
+      }
+    },
+
+    /**
+     * Listen for load game menu command.
+     * @param {Function} callback - Called when File > Load Game is clicked
+     */
+    onLoadGame: (callback) => {
+      try {
+        ipcRenderer.on('menu:load-game', () => callback());
+      } catch (error) {
+        console.error('Failed to register menu:load-game listener:', error.message);
+      }
+    },
+
+    /**
+     * Listen for save game menu command.
+     * @param {Function} callback - Called when File > Save Game is clicked
+     */
+    onSaveGame: (callback) => {
+      try {
+        ipcRenderer.on('menu:save-game', () => callback());
+      } catch (error) {
+        console.error('Failed to register menu:save-game listener:', error.message);
+      }
+    },
+  },
 });

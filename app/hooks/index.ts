@@ -14,6 +14,8 @@
  * - **useTerminalState** – Core Terminal state wiring
  * - **useSound** – Synthesized audio effects and ambient tension system
  * - **useGlobalErrorHandler** – Global error and rejection handling
+ * - **useGameSelectors** – Memoized selectors for game state
+ * - **useOptions** – Game options state and persistence
  */
 export { useAutocomplete, type AutocompleteResult } from './useAutocomplete';
 export { useGameActions } from './useGameActions';
@@ -22,3 +24,22 @@ export { useTerminalInput } from './useTerminalInput';
 export { useTerminalState } from './useTerminalState';
 export { useSound, type SoundType } from './useSound';
 export { useGlobalErrorHandler } from './useGlobalErrorHandler';
+export { 
+  useRiskLevel, 
+  useStatusBar, 
+  useSaveIndicator, 
+  useEvidenceState, 
+  useAttemptsDisplay,
+  useIsReadingFile,
+  useFirewallState,
+} from './useGameSelectors';
+export { 
+  useOptions, 
+  useOptionsContext, 
+  OptionsProvider, 
+  DEFAULT_OPTIONS,
+  type OptionsState,
+  type FlickerIntensity,
+  type FontSize,
+  type UseOptionsReturn,
+} from './useOptions';

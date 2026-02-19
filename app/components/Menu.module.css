@@ -356,3 +356,135 @@
   color: #444;
   letter-spacing: 1px;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   OPTIONS SCREEN STYLES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.optionsContainer {
+  text-align: left;
+  margin-bottom: 30px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.optionSection {
+  margin-bottom: 24px;
+}
+
+.optionSectionTitle {
+  font-size: 14px;
+  color: #00aa00;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.optionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid #003300;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.optionRow:hover {
+  background: rgba(0, 255, 0, 0.05);
+  border-color: #006600;
+}
+
+.optionRow.selected {
+  background: rgba(0, 255, 0, 0.1);
+  border-color: #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.optionRow.optionDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.optionRow.optionDisabled:hover {
+  background: transparent;
+  border-color: #003300;
+}
+
+.optionLabel {
+  font-size: 13px;
+  color: #00cc00;
+  letter-spacing: 1px;
+}
+
+.optionToggle {
+  font-size: 13px;
+  color: #00ff00;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.optionSelect {
+  font-size: 13px;
+  color: #00ff00;
+  letter-spacing: 1px;
+}
+
+/* Slider Styles */
+.sliderContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 150px;
+  height: 6px;
+  background: #003300;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #00ff00;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  background: #33ff33;
+  box-shadow: 0 0 12px rgba(0, 255, 0, 0.7);
+}
+
+.slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #00ff00;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.slider::-moz-range-thumb:hover {
+  background: #33ff33;
+  box-shadow: 0 0 12px rgba(0, 255, 0, 0.7);
+}
+
+.sliderValue {
+  font-size: 12px;
+  color: #00ff00;
+  min-width: 40px;
+  text-align: right;
+}

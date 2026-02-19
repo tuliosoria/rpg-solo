@@ -38,6 +38,7 @@ describe('Menu', () => {
 
       expect(screen.getByRole('button', { name: /NEW GAME/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /LOAD GAME/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /OPTIONS/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /CREDITS/i })).toBeInTheDocument();
     });
 
@@ -106,7 +107,8 @@ describe('Menu', () => {
     it('wraps around when at the end', () => {
       render(<Menu {...defaultProps} />);
 
-      // Press down 3 times to wrap around
+      // Press down 4 times to wrap around (4 items: NEW GAME, LOAD GAME, OPTIONS, CREDITS)
+      fireEvent.keyDown(window, { key: 'ArrowDown' });
       fireEvent.keyDown(window, { key: 'ArrowDown' });
       fireEvent.keyDown(window, { key: 'ArrowDown' });
       fireEvent.keyDown(window, { key: 'ArrowDown' });
@@ -287,6 +289,122 @@ describe('Menu', () => {
       fireEvent.mouseEnter(loadGameButton);
 
       expect(loadGameButton.textContent).toContain('▶');
+    });
+  });
+
+  describe('Options Screen', () => {
+    it('navigates to options screen when OPTIONS is clicked', () => {
+      render(<Menu {...defaultProps} />);
+
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      expect(screen.getByText('OPTIONS')).toBeInTheDocument();
+    });
+
+    it('renders audio section with volume slider', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      expect(screen.getByText('[ AUDIO ]')).toBeInTheDocument();
+      expect(screen.getByText('Master Volume')).toBeInTheDocument();
+      expect(screen.getByRole('slider')).toBeInTheDocument();
+    });
+
+    it('renders audio toggles', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      expect(screen.getByText('Ambient Sound')).toBeInTheDocument();
+      expect(screen.getByText('Sound Effects')).toBeInTheDocument();
+      expect(screen.getByText('Turing Test Voice')).toBeInTheDocument();
+    });
+
+    it('renders visual section with CRT and flicker options', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      expect(screen.getByText('[ VISUAL ]')).toBeInTheDocument();
+      expect(screen.getByText('CRT Effects')).toBeInTheDocument();
+      expect(screen.getByText('Screen Flicker')).toBeInTheDocument();
+      expect(screen.getByText('Flicker Intensity')).toBeInTheDocument();
+      expect(screen.getByText('Font Size')).toBeInTheDocument();
+    });
+
+    it('returns to main menu when BACK is clicked', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+      fireEvent.click(screen.getByRole('button', { name: /BACK/i }));
+
+      expect(screen.getByRole('button', { name: /NEW GAME/i })).toBeInTheDocument();
+    });
+
+    it('returns to main menu on Escape', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+      fireEvent.keyDown(window, { key: 'Escape' });
+
+      expect(screen.getByRole('button', { name: /NEW GAME/i })).toBeInTheDocument();
+    });
+
+    it('shows keyboard navigation hint', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      expect(screen.getByText(/Navigate.*Toggle.*Esc Back/)).toBeInTheDocument();
+    });
+
+    it('toggles ambient sound on click', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      // Default is ON
+      const ambientRow = screen.getByText('Ambient Sound').closest('div');
+      expect(ambientRow).toHaveTextContent('ON');
+
+      // Click to toggle
+      fireEvent.click(ambientRow!);
+      expect(ambientRow).toHaveTextContent('OFF');
+    });
+
+    it('updates volume slider', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      const slider = screen.getByRole('slider');
+      fireEvent.change(slider, { target: { value: '50' } });
+
+      expect(screen.getByText('50%')).toBeInTheDocument();
+    });
+
+    it('cycles through font sizes on click', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      const fontSizeRow = screen.getByText('Font Size').closest('div');
+      // Default is medium
+      expect(fontSizeRow).toHaveTextContent('MEDIUM');
+
+      // Click to cycle to large
+      fireEvent.click(fontSizeRow!);
+      expect(fontSizeRow).toHaveTextContent('LARGE');
+
+      // Click to cycle to small
+      fireEvent.click(fontSizeRow!);
+      expect(fontSizeRow).toHaveTextContent('SMALL');
+    });
+
+    it('navigates options with keyboard', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      // Start at index 0 (Master Volume)
+      const volumeRow = screen.getByText('Master Volume').closest('div');
+      expect(volumeRow?.className).toContain('selected');
+
+      // Press down to go to Ambient Sound
+      fireEvent.keyDown(window, { key: 'ArrowDown' });
+      const ambientRow = screen.getByText('Ambient Sound').closest('div');
+      expect(ambientRow?.className).toContain('selected');
     });
   });
 

@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { SaveSlot } from '../types';
+import { SaveSlot, FlickerIntensity, FontSize } from '../types';
 import { getSaveSlots, deleteSave } from '../storage/saves';
+import { useOptions, DEFAULT_OPTIONS } from '../hooks/useOptions';
 import styles from './Menu.module.css';
 
 interface MenuProps {
@@ -10,13 +11,16 @@ interface MenuProps {
   onLoadGameAction: (slotId: string) => void;
 }
 
-type Screen = 'main' | 'load' | 'credits';
+type Screen = 'main' | 'load' | 'credits' | 'options';
 
 export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
   const [screen, setScreen] = useState<Screen>('main');
   const [saves, setSaves] = useState<SaveSlot[]>([]);
   const [flickerActive, setFlickerActive] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Options state
+  const { options, setOption, resetOptions, isLoaded } = useOptions();
 
   // Refs for menu buttons for focus management
   const mainMenuRef = useRef<HTMLDivElement>(null);
@@ -45,8 +49,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
   // Keyboard navigation
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      // Main menu has 4 items now: NEW GAME, LOAD GAME, OPTIONS, CREDITS
       const maxIndex =
-        screen === 'main' ? 2 : screen === 'load' ? (saves.length > 0 ? saves.length : 0) : 0;
+        screen === 'main' ? 3 : screen === 'load' ? (saves.length > 0 ? saves.length : 0) : screen === 'options' ? 8 : 0;
 
       switch (e.key) {
         case 'ArrowUp':
@@ -62,7 +67,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
           if (screen === 'main') {
             if (selectedIndex === 0) onNewGameAction();
             else if (selectedIndex === 1) setScreen('load');
-            else if (selectedIndex === 2) setScreen('credits');
+            else if (selectedIndex === 2) setScreen('options');
+            else if (selectedIndex === 3) setScreen('credits');
           } else if (screen === 'load') {
             if (saves.length > 0 && selectedIndex < saves.length) {
               onLoadGameAction(saves[selectedIndex].id);
@@ -71,6 +77,11 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             }
           } else if (screen === 'credits') {
             setScreen('main');
+          } else if (screen === 'options') {
+            // Options screen - Back button is last
+            if (selectedIndex === 8) {
+              setScreen('main');
+            }
           }
           break;
         case 'Escape':
@@ -130,10 +141,18 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
 
         <button
           className={`${styles.menuButton} ${selectedIndex === 2 ? styles.selected : ''}`}
-          onClick={() => setScreen('credits')}
+          onClick={() => setScreen('options')}
           onMouseEnter={() => setSelectedIndex(2)}
         >
-          {selectedIndex === 2 ? '▶ ' : '  '}[ CREDITS ]
+          {selectedIndex === 2 ? '▶ ' : '  '}[ OPTIONS ]
+        </button>
+
+        <button
+          className={`${styles.menuButton} ${selectedIndex === 3 ? styles.selected : ''}`}
+          onClick={() => setScreen('credits')}
+          onMouseEnter={() => setSelectedIndex(3)}
+        >
+          {selectedIndex === 3 ? '▶ ' : '  '}[ CREDITS ]
         </button>
       </div>
 
@@ -258,6 +277,154 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
     </div>
   );
 
+  const renderOptions = () => {
+    const flickerOptions: FlickerIntensity[] = ['low', 'medium', 'high'];
+    const fontSizeOptions: FontSize[] = ['small', 'medium', 'large'];
+
+    return (
+      <div className={styles.menuContent}>
+        <div className={styles.header}>
+          <h2 className={styles.headerTitle}>OPTIONS</h2>
+          <div className={styles.titleLine}>═══════════════════════════════════</div>
+        </div>
+
+        <div className={styles.optionsContainer}>
+          {/* AUDIO SECTION */}
+          <div className={styles.optionSection}>
+            <div className={styles.optionSectionTitle}>[ AUDIO ]</div>
+
+            {/* Master Volume Slider */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 0 ? styles.selected : ''}`}
+              onMouseEnter={() => setSelectedIndex(0)}
+            >
+              <span className={styles.optionLabel}>Master Volume</span>
+              <div className={styles.sliderContainer}>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={options.masterVolume}
+                  onChange={e => setOption('masterVolume', parseInt(e.target.value))}
+                  className={styles.slider}
+                />
+                <span className={styles.sliderValue}>{options.masterVolume}%</span>
+              </div>
+            </div>
+
+            {/* Ambient Sound Toggle */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 1 ? styles.selected : ''}`}
+              onMouseEnter={() => setSelectedIndex(1)}
+              onClick={() => setOption('ambientSoundEnabled', !options.ambientSoundEnabled)}
+            >
+              <span className={styles.optionLabel}>Ambient Sound</span>
+              <span className={styles.optionToggle}>
+                [ {options.ambientSoundEnabled ? 'ON ' : 'OFF'} ]
+              </span>
+            </div>
+
+            {/* Sound Effects Toggle */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 2 ? styles.selected : ''}`}
+              onMouseEnter={() => setSelectedIndex(2)}
+              onClick={() => setOption('soundEffectsEnabled', !options.soundEffectsEnabled)}
+            >
+              <span className={styles.optionLabel}>Sound Effects</span>
+              <span className={styles.optionToggle}>
+                [ {options.soundEffectsEnabled ? 'ON ' : 'OFF'} ]
+              </span>
+            </div>
+
+            {/* Turing Voice Toggle */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 3 ? styles.selected : ''}`}
+              onMouseEnter={() => setSelectedIndex(3)}
+              onClick={() => setOption('turingVoiceEnabled', !options.turingVoiceEnabled)}
+            >
+              <span className={styles.optionLabel}>Turing Test Voice</span>
+              <span className={styles.optionToggle}>
+                [ {options.turingVoiceEnabled ? 'ON ' : 'OFF'} ]
+              </span>
+            </div>
+          </div>
+
+          {/* VISUAL SECTION */}
+          <div className={styles.optionSection}>
+            <div className={styles.optionSectionTitle}>[ VISUAL ]</div>
+
+            {/* CRT Effects Toggle */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 4 ? styles.selected : ''}`}
+              onMouseEnter={() => setSelectedIndex(4)}
+              onClick={() => setOption('crtEffectsEnabled', !options.crtEffectsEnabled)}
+            >
+              <span className={styles.optionLabel}>CRT Effects</span>
+              <span className={styles.optionToggle}>
+                [ {options.crtEffectsEnabled ? 'ON ' : 'OFF'} ]
+              </span>
+            </div>
+
+            {/* Screen Flicker Toggle */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 5 ? styles.selected : ''}`}
+              onMouseEnter={() => setSelectedIndex(5)}
+              onClick={() => setOption('screenFlickerEnabled', !options.screenFlickerEnabled)}
+            >
+              <span className={styles.optionLabel}>Screen Flicker</span>
+              <span className={styles.optionToggle}>
+                [ {options.screenFlickerEnabled ? 'ON ' : 'OFF'} ]
+              </span>
+            </div>
+
+            {/* Flicker Intensity Select (only when flicker is on) */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 6 ? styles.selected : ''} ${!options.screenFlickerEnabled ? styles.optionDisabled : ''}`}
+              onMouseEnter={() => setSelectedIndex(6)}
+              onClick={() => {
+                if (options.screenFlickerEnabled) {
+                  const currentIdx = flickerOptions.indexOf(options.flickerIntensity);
+                  const nextIdx = (currentIdx + 1) % flickerOptions.length;
+                  setOption('flickerIntensity', flickerOptions[nextIdx]);
+                }
+              }}
+            >
+              <span className={styles.optionLabel}>Flicker Intensity</span>
+              <span className={styles.optionSelect}>
+                {'< '}{options.flickerIntensity.toUpperCase()}{' >'}
+              </span>
+            </div>
+
+            {/* Font Size Select */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 7 ? styles.selected : ''}`}
+              onMouseEnter={() => setSelectedIndex(7)}
+              onClick={() => {
+                const currentIdx = fontSizeOptions.indexOf(options.fontSize);
+                const nextIdx = (currentIdx + 1) % fontSizeOptions.length;
+                setOption('fontSize', fontSizeOptions[nextIdx]);
+              }}
+            >
+              <span className={styles.optionLabel}>Font Size</span>
+              <span className={styles.optionSelect}>
+                {'< '}{options.fontSize.toUpperCase()}{' >'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          className={`${styles.backButton} ${selectedIndex === 8 ? styles.selected : ''}`}
+          onClick={() => setScreen('main')}
+          onMouseEnter={() => setSelectedIndex(8)}
+        >
+          {selectedIndex === 8 ? '▶ ' : '  '}[ BACK ]
+        </button>
+        <div className={styles.keyHint}>↑↓ Navigate • Enter/Click Toggle • Esc Back</div>
+      </div>
+    );
+  };
+
   return (
     <div className={`${styles.menu} ${flickerActive ? styles.flicker : ''}`}>
       {/* Scanlines */}
@@ -269,6 +436,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
       {screen === 'main' && renderMainMenu()}
       {screen === 'load' && renderLoadScreen()}
       {screen === 'credits' && renderCredits()}
+      {screen === 'options' && renderOptions()}
     </div>
   );
 }

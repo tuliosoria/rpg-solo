@@ -1,5 +1,5 @@
 {
-  "name": "rgp-solo",
+  "name": "varginha-terminal-1996",
   "version": "0.1.0",
   "private": true,
   "main": "electron/main.js",
@@ -26,37 +26,63 @@
     "electron:build": "next build && electron-builder --win --mac --linux"
   },
   "build": {
-    "appId": "com.rpgsolo.app",
-    "productName": "RPG Solo",
+    "appId": "com.terminal1996.varginha",
+    "productName": "Varginha Terminal 1996",
     "directories": {
       "output": "dist"
     },
     "files": [
       "electron/**/*",
-      "out/**/*"
+      "out/**/*",
+      "public/icon.png"
     ],
+    "protocols": [
+      {
+        "name": "Varginha Terminal Protocol",
+        "schemes": [
+          "varginha"
+        ]
+      }
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "your-github-username",
+      "repo": "varginha-terminal"
+    },
     "win": {
       "target": "nsis",
       "icon": "public/icon.ico"
     },
     "mac": {
       "target": "dmg",
-      "icon": "public/icon.icns"
+      "icon": "public/icon.icns",
+      "category": "public.app-category.games",
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
     },
     "linux": {
       "target": "AppImage",
-      "icon": "public/icon.png"
+      "icon": "public/icon.png",
+      "category": "Game"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
     }
   },
   "dependencies": {
+    "electron-log": "^5.2.0",
+    "electron-updater": "^6.3.9",
     "next": "^15.3.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "steamworks.js": "^0.4.0",
-    "yaml": "^2.8.1"
+    "steamworks.js": "^0.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@next/bundle-analyzer": "^16.1.6",
     "@next/eslint-plugin-next": "^16.1.4",
     "@playwright/test": "^1.58.1",
     "@tailwindcss/postcss": "^4",

@@ -1,6 +1,27 @@
 // Terminal 1996 - Type Definitions
 
 // ═══════════════════════════════════════════════════════════════════════════
+// OPTIONS STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+export type FlickerIntensity = 'low' | 'medium' | 'high';
+export type FontSize = 'small' | 'medium' | 'large';
+
+export interface OptionsState {
+  // Audio Options
+  masterVolume: number; // 0-100
+  ambientSoundEnabled: boolean;
+  soundEffectsEnabled: boolean;
+  turingVoiceEnabled: boolean;
+
+  // Visual Options
+  crtEffectsEnabled: boolean;
+  screenFlickerEnabled: boolean;
+  flickerIntensity: FlickerIntensity;
+  fontSize: FontSize;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // INTERACTIVE TUTORIAL STATE MACHINE
 // ═══════════════════════════════════════════════════════════════════════════
 

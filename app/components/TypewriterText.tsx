@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import styles from './Terminal.module.css';
 
 interface TypewriterTextProps {
@@ -25,7 +25,7 @@ interface TypewriterTextProps {
  *  - Comma/semicolon/colon: +50ms
  *  - Ellipsis dots (consecutive): +60ms each
  */
-export default function TypewriterText({
+function TypewriterTextComponent({
   text,
   speed = 30,
   onComplete,
@@ -90,6 +90,10 @@ export default function TypewriterText({
     </>
   );
 }
+
+// Wrap with memo to prevent unnecessary re-renders
+const TypewriterText = memo(TypewriterTextComponent);
+export default TypewriterText;
 
 /**
  * Skip the typewriter animation — instantly reveal all text.

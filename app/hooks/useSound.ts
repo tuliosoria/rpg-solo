@@ -117,6 +117,28 @@ const MUSIC_TRACKS = [
  *  white-noise ambient drone remains audible. */
 const MUSIC_BASE_VOLUME = 0.07;
 
+// Preload music tracks on module load (browser only)
+if (typeof window !== 'undefined') {
+  // Use requestIdleCallback for non-blocking preload
+  const preloadTracks = () => {
+    MUSIC_TRACKS.forEach(track => {
+      // Create a link preload element
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'audio';
+      link.href = track;
+      document.head.appendChild(link);
+    });
+  };
+  
+  if ('requestIdleCallback' in window) {
+    (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(preloadTracks);
+  } else {
+    // Fallback for Safari
+    setTimeout(preloadTracks, 1000);
+  }
+}
+
 /**
  * Hook providing synthesized audio effects for the terminal.
  * @returns Object with playSound, playKeySound, ambient controls, and volume settings

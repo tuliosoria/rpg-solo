@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useCallback, useRef, memo } from 'react';
 import { FirewallEye } from '../types';
 import { uiRandom, uiRandomPick } from '../engine/rng';
 import styles from './FirewallEyes.module.css';
@@ -54,7 +54,41 @@ interface FirewallEyesProps {
   onTutorialShown?: () => void; // Callback when tutorial popup is shown
 }
 
-export default function FirewallEyes({
+// Memoized single eye component to prevent unnecessary re-renders
+interface SingleEyeProps {
+  eye: FirewallEye;
+  now: number;
+  onEyeClick: (eyeId: string, e: React.MouseEvent) => void;
+}
+
+const SingleEye = memo(function SingleEye({ eye, now, onEyeClick }: SingleEyeProps) {
+  const timeUntilDetonate = eye.detonateTime - now;
+  const isWarning = timeUntilDetonate <= EYE_WARNING_MS && timeUntilDetonate > 0;
+  const isCritical = timeUntilDetonate <= 1000 && timeUntilDetonate > 0;
+
+  return (
+    <button
+      key={eye.id}
+      className={`${styles.eye} ${isWarning ? styles.warning : ''} ${isCritical ? styles.critical : ''} ${eye.isDetonating ? styles.detonating : ''}`}
+      style={{
+        left: `${eye.x}%`,
+        top: `${eye.y}%`,
+      }}
+      onClick={e => onEyeClick(eye.id, e)}
+      aria-label="Click to neutralize surveillance eye"
+      title="CLICK TO NEUTRALIZE"
+    >
+      <div className={styles.eyeInner}>
+        <div className={styles.eyePupil} />
+      </div>
+      {isWarning && (
+        <div className={styles.countdown}>{Math.ceil(timeUntilDetonate / 1000)}</div>
+      )}
+    </button>
+  );
+});
+
+function FirewallEyesComponent({
   detectionLevel,
   firewallActive,
   firewallDisarmed,
@@ -262,36 +296,22 @@ export default function FirewallEyes({
         </div>
       )}
       
-      {/* Only render eyes when tutorial is dismissed or not showing */}
-      {!showTutorialPopup && eyes.map(eye => {
-        const timeUntilDetonate = eye.detonateTime - now;
-        const isWarning = timeUntilDetonate <= EYE_WARNING_MS && timeUntilDetonate > 0;
-        const isCritical = timeUntilDetonate <= 1000 && timeUntilDetonate > 0;
-
-        return (
-          <button
-            key={eye.id}
-            className={`${styles.eye} ${isWarning ? styles.warning : ''} ${isCritical ? styles.critical : ''} ${eye.isDetonating ? styles.detonating : ''}`}
-            style={{
-              left: `${eye.x}%`,
-              top: `${eye.y}%`,
-            }}
-            onClick={e => handleEyeClick(eye.id, e)}
-            aria-label="Click to neutralize surveillance eye"
-            title="CLICK TO NEUTRALIZE"
-          >
-            <div className={styles.eyeInner}>
-              <div className={styles.eyePupil} />
-            </div>
-            {isWarning && (
-              <div className={styles.countdown}>{Math.ceil(timeUntilDetonate / 1000)}</div>
-            )}
-          </button>
-        );
-      })}
+      {/* Only render eyes when tutorial is dismissed or not showing - using memoized SingleEye */}
+      {!showTutorialPopup && eyes.map(eye => (
+        <SingleEye
+          key={eye.id}
+          eye={eye}
+          now={now}
+          onEyeClick={handleEyeClick}
+        />
+      ))}
     </div>
   );
 }
+
+// Wrap with memo for performance
+const FirewallEyes = memo(FirewallEyesComponent);
+export default FirewallEyes;
 
 // Utility function to create a new eye
 export function createFirewallEye(): FirewallEye {

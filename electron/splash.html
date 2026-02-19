@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading...</title>
+  <link rel="stylesheet" href="splash.css">
+</head>
+<body>
+  <div class="splash-container">
+    <div class="logo-container">
+      <div class="logo-glow"></div>
+      <h1 class="game-title">VARGINHA</h1>
+      <h2 class="game-subtitle">TERMINAL 1996</h2>
+    </div>
+    <div class="loading-container">
+      <div class="loading-bar">
+        <div class="loading-fill"></div>
+      </div>
+      <p class="loading-text">Initializing...</p>
+    </div>
+    <div class="offline-indicator" id="offline-indicator">
+      <span class="offline-icon">⚠</span>
+      <span class="offline-text">Offline Mode</span>
+    </div>
+  </div>
+  <script>
+    // Update loading status from main process
+    const { ipcRenderer } = require('electron');
+    
+    ipcRenderer.on('splash:status', (event, status) => {
+      const loadingText = document.querySelector('.loading-text');
+      if (loadingText) {
+        loadingText.textContent = status;
+      }
+    });
+    
+    ipcRenderer.on('splash:progress', (event, percent) => {
+      const loadingFill = document.querySelector('.loading-fill');
+      if (loadingFill) {
+        loadingFill.style.width = `${percent}%`;
+      }
+    });
+    
+    ipcRenderer.on('splash:offline', (event, isOffline) => {
+      const indicator = document.getElementById('offline-indicator');
+      if (indicator) {
+        indicator.classList.toggle('visible', isOffline);
+      }
+    });
+  </script>
+</body>
+</html>

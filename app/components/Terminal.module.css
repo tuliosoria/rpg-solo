@@ -15,7 +15,7 @@
   overflow: hidden;
 }
 
-/* Scanlines overlay */
+/* Scanlines overlay - GPU accelerated */
 .scanlines {
   position: absolute;
   top: 0;
@@ -31,9 +31,12 @@
   );
   pointer-events: none;
   z-index: 10;
+  will-change: opacity;
+  transform: translateZ(0); /* Force GPU layer */
+  contain: strict; /* Isolate paint/layout */
 }
 
-/* Glow effect */
+/* Glow effect - GPU accelerated */
 .terminal::before {
   content: '';
   position: absolute;
@@ -44,11 +47,15 @@
   box-shadow: inset 0 0 150px rgba(0, 255, 0, 0.05);
   pointer-events: none;
   z-index: 5;
+  will-change: opacity;
+  transform: translateZ(0);
+  contain: strict;
 }
 
-/* Flicker animation */
+/* Flicker animation - GPU accelerated */
 .flicker {
   animation: flicker 0.3s ease-in-out;
+  will-change: opacity;
 }
 
 @keyframes flicker {
@@ -69,28 +76,29 @@
   }
 }
 
-/* Shake animation for high risk events */
+/* Shake animation for high risk events - use transform for GPU */
 @keyframes shake {
   0%,
   100% {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   20% {
-    transform: translateX(-3px);
+    transform: translate3d(-3px, 0, 0);
   }
   40% {
-    transform: translateX(3px);
+    transform: translate3d(3px, 0, 0);
   }
   60% {
-    transform: translateX(-2px);
+    transform: translate3d(-2px, 0, 0);
   }
   80% {
-    transform: translateX(2px);
+    transform: translate3d(2px, 0, 0);
   }
 }
 
 .shaking {
   animation: shake 0.3s ease-in-out;
+  will-change: transform;
 }
 
 /* Status bar */
@@ -396,41 +404,43 @@
   }
 }
 
-/* Random glitch effects */
+/* Random glitch effects - GPU accelerated */
 .glitchActive {
   animation: glitchEffect 0.3s ease-in-out;
+  will-change: transform, filter;
 }
 
 @keyframes glitchEffect {
   0% {
-    transform: translate(0);
+    transform: translate3d(0, 0, 0);
     filter: none;
   }
   20% {
-    transform: translate(-3px, 2px);
+    transform: translate3d(-3px, 2px, 0);
     filter: hue-rotate(90deg);
   }
   40% {
-    transform: translate(3px, -2px);
+    transform: translate3d(3px, -2px, 0);
     filter: saturate(2);
   }
   60% {
-    transform: translate(-2px, -1px);
+    transform: translate3d(-2px, -1px, 0);
     filter: hue-rotate(-90deg);
   }
   80% {
-    transform: translate(2px, 1px);
+    transform: translate3d(2px, 1px, 0);
     filter: brightness(1.2);
   }
   100% {
-    transform: translate(0);
+    transform: translate3d(0, 0, 0);
     filter: none;
   }
 }
 
-/* Heavy glitch for high detection */
+/* Heavy glitch for high detection - GPU accelerated */
 .glitchHeavy {
   animation: glitchHeavy 0.5s ease-in-out;
+  will-change: transform, filter, clip-path;
 }
 
 @keyframes glitchHeavy {
@@ -514,7 +524,7 @@
 
 /* Sound toggle moved to Settings menu - styles removed */
 
-/* Output area */
+/* Output area - optimized for many lines */
 .output {
   flex: 1;
   overflow-y: auto;
@@ -522,6 +532,8 @@
   /* Bottom padding handled by flex layout - no extra needed since buttons are inline */
   padding-bottom: 8px;
   z-index: 1;
+  contain: content; /* Isolate layout calculations */
+  will-change: scroll-position;
 }
 
 .output::-webkit-scrollbar {
@@ -541,12 +553,14 @@
   background: #004400;
 }
 
-/* Line styles */
+/* Line styles - optimized with content-visibility */
 .line {
   white-space: pre-wrap;
   word-break: break-word;
   min-height: 1.2em;
   margin-bottom: 1px;
+  content-visibility: auto; /* Only render visible lines */
+  contain-intrinsic-size: auto 1.2em; /* Hint for content-visibility */
 }
 
 .input {
