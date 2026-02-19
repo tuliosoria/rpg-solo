@@ -242,6 +242,10 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             fictional.
           </div>
         </div>
+
+        <div className={styles.creditSection}>
+          <div className={styles.creditValue}>© 2026 Tulio Soria. All rights reserved.</div>
+        </div>
       </div>
 
       <button
