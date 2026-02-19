@@ -217,7 +217,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
 
         <div className={styles.creditSection}>
           <div className={styles.creditLabel}>CREATED BY</div>
-          <div className={styles.creditValue}>Tulio Soria</div>
+          <div className={styles.creditValue}>Tulio Soria & Arthur Ramos</div>
         </div>
 
         <div className={styles.creditSection}>
@@ -244,7 +244,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         </div>
 
         <div className={styles.creditSection}>
-          <div className={styles.creditValue}>© 2026 Tulio Soria. All rights reserved.</div>
+          <div className={styles.creditValue}>© 2026 Tulio Soria & Arthur Ramos. All rights reserved.</div>
         </div>
       </div>
 
