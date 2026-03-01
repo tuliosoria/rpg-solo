@@ -350,32 +350,32 @@ export default function Terminal({
 
     const skipIntroEntries = [
       createEntry('system', ''),
-      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('ufo74', t('terminal.tutorialSkip.channelOpenTop')),
+      createEntry('ufo74', t('terminal.tutorialSkip.channelOpenMiddle')),
+      createEntry('ufo74', t('terminal.tutorialSkip.channelOpenBottom')),
       createEntry('system', ''),
-      createEntry('ufo74', '[UFO74]: Connection established.'),
-      createEntry('ufo74', "[UFO74]: You already know the drill, huh?"),
-      createEntry('ufo74', '[UFO74]: Fine, I respect that. No hand-holding.'),
+      createEntry('ufo74', t('terminal.tutorialSkip.connected')),
+      createEntry('ufo74', t('terminal.tutorialSkip.alreadyKnow')),
+      createEntry('ufo74', t('terminal.tutorialSkip.noHandHolding')),
       createEntry('system', ''),
-      createEntry('system', '> CREATING USER PROFILE...'),
-      createEntry('system', '> USERNAME: hackerkid'),
-      createEntry('system', '> ACCESS LEVEL: 1 [PROVISIONAL]'),
-      createEntry('system', '> STATUS: ACTIVE'),
+      createEntry('system', t('terminal.tutorialSkip.createProfile')),
+      createEntry('system', t('terminal.tutorialSkip.username')),
+      createEntry('system', t('terminal.tutorialSkip.accessLevel')),
+      createEntry('system', t('terminal.tutorialSkip.statusActive')),
       createEntry('system', ''),
-      createEntry('notice', '✓ USER hackerkid REGISTERED'),
+      createEntry('notice', t('terminal.tutorialSkip.userRegistered')),
       createEntry('system', ''),
-      createEntry('ufo74', '[UFO74]: Find 5 evidences. Leak them. Watch your risk.'),
-      createEntry('ufo74', '[UFO74]: Type `help` if you forget something.'),
-      createEntry('ufo74', '[UFO74]: Good luck, kid.'),
+      createEntry('ufo74', t('terminal.tutorialSkip.objective')),
+      createEntry('ufo74', t('terminal.tutorialSkip.help')),
+      createEntry('ufo74', t('terminal.tutorialSkip.goodLuck')),
       createEntry('system', ''),
-      createEntry('ufo74', '[UFO74]: ...'),
+      createEntry('ufo74', t('terminal.tutorialSkip.ellipsis')),
       createEntry('system', ''),
-      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
-      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
+      createEntry('ufo74', t('terminal.tutorialSkip.channelClosedTop')),
+      createEntry('ufo74', t('terminal.tutorialSkip.channelClosedMiddle')),
+      createEntry('ufo74', t('terminal.tutorialSkip.channelClosedBottom')),
       createEntry('system', ''),
-      createEntry('system', '[UFO74 has disconnected]'),
+      createEntry('system', t('terminal.tutorialSkip.disconnected')),
       createEntry('system', ''),
     ];
 
@@ -407,7 +407,16 @@ export default function Terminal({
 
     // Save checkpoint
     saveCheckpoint(newState, 'Tutorial skipped');
-  }, [gameState, setGameState, setShowEvidenceTracker, setShowRiskTracker, setShowAttBar, setShowAvatar, startAmbient]);
+  }, [
+    gameState,
+    setGameState,
+    setShowEvidenceTracker,
+    setShowRiskTracker,
+    setShowAttBar,
+    setShowAvatar,
+    startAmbient,
+    t,
+  ]);
 
   const handleTutorialContinue = useCallback(() => {
     setShowTutorialSkip(false);

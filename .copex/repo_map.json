@@ -1,0 +1,3158 @@
+{
+  "version": 1,
+  "generated_at": "2026-03-01T17:26:18.776932+00:00",
+  "root": "/home/arthur/repos/rpg-solo",
+  "files": {
+    "app/components/AchievementGallery.tsx": {
+      "path": "app/components/AchievementGallery.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../engine/achievements",
+        "./AchievementGallery.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457147415326,
+      "size": 2457
+    },
+    "app/components/AchievementPopup.tsx": {
+      "path": "app/components/AchievementPopup.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../engine/achievements",
+        "./AchievementPopup.module.css",
+        "./FloatingUI",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "AchievementPopup"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457147415326,
+      "size": 2229
+    },
+    "app/components/BadEnding.tsx": {
+      "path": "app/components/BadEnding.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../storage/statistics",
+        "./BadEnding.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457147415326,
+      "size": 5525
+    },
+    "app/components/Blackout.tsx": {
+      "path": "app/components/Blackout.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../engine/rng",
+        "./Blackout.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457147415326,
+      "size": 5902
+    },
+    "app/components/ErrorBoundary.tsx": {
+      "path": "app/components/ErrorBoundary.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "./ErrorBoundary.module.css",
+        "react"
+      ],
+      "classes": [
+        "ErrorBoundary"
+      ],
+      "functions": [],
+      "methods": [
+        "componentDidCatch",
+        "render"
+      ],
+      "calls": {},
+      "mtime_ns": 1772383457148415342,
+      "size": 2943
+    },
+    "app/components/FirewallEyes.tsx": {
+      "path": "app/components/FirewallEyes.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../engine/rng",
+        "../types",
+        "./FirewallEyes.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "FirewallEyesComponent",
+        "createFirewallEye",
+        "createFirewallEyeBatch",
+        "doSpeak",
+        "getFirewallEyeBatchSize",
+        "handleTutorialDismiss",
+        "initVoices",
+        "onVoicesReady",
+        "speakCustomFirewallVoice",
+        "speakFirewallVoice"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457148415342,
+      "size": 15135
+    },
+    "app/components/FloatingUI/FloatingElement.tsx": {
+      "path": "app/components/FloatingUI/FloatingElement.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "./FloatingUIContext",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "FloatingElement",
+        "getZoneStyle"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457148415342,
+      "size": 2988
+    },
+    "app/components/FloatingUI/FloatingUIContext.tsx": {
+      "path": "app/components/FloatingUI/FloatingUIContext.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [
+        "FloatingUIProvider",
+        "useFloatingUI"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457148415342,
+      "size": 3416
+    },
+    "app/components/FloatingUI/index.ts": {
+      "path": "app/components/FloatingUI/index.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457148415342,
+      "size": 175
+    },
+    "app/components/GameOver.tsx": {
+      "path": "app/components/GameOver.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../engine/rng",
+        "../storage/saves",
+        "../types",
+        "./GameOver.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "formatCheckpointInfo",
+        "renderProgressBar"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457148415342,
+      "size": 8579
+    },
+    "app/components/HackerAvatar.tsx": {
+      "path": "app/components/HackerAvatar.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "./FloatingUI",
+        "./HackerAvatar.module.css",
+        "next/image",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "HackerAvatar"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457148415342,
+      "size": 3939
+    },
+    "app/components/HomeContent.tsx": {
+      "path": "app/components/HomeContent.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../hooks/useGlobalErrorHandler",
+        "../storage/saves",
+        "../types",
+        "./ErrorBoundary",
+        "./Menu",
+        "next/dynamic",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "HomeContentInner"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457148415342,
+      "size": 2720
+    },
+    "app/components/ICQChat.tsx": {
+      "path": "app/components/ICQChat.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "./ICQChat.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "adjustTrust",
+        "finalizeTransfer",
+        "handleBargainPhase",
+        "handleLeakPhase",
+        "handleMathPhase",
+        "handleScaredPhase",
+        "handleSubmit",
+        "startIntro"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457148415342,
+      "size": 14627
+    },
+    "app/components/ImageOverlay.tsx": {
+      "path": "app/components/ImageOverlay.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../engine/rng",
+        "./ImageOverlay.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "handleKeyDown"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457148415342,
+      "size": 4751
+    },
+    "app/components/Menu.tsx": {
+      "path": "app/components/Menu.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../hooks/useOptions",
+        "../storage/saves",
+        "../types",
+        "./Menu.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "formatDate",
+        "handleDelete",
+        "nextIdx",
+        "renderCredits",
+        "renderLoadScreen",
+        "renderMainMenu",
+        "renderOptions"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457149415359,
+      "size": 17332
+    },
+    "app/components/NeutralEnding.tsx": {
+      "path": "app/components/NeutralEnding.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../storage/statistics",
+        "./NeutralEnding.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457149415359,
+      "size": 4939
+    },
+    "app/components/PauseMenu.tsx": {
+      "path": "app/components/PauseMenu.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "./PauseMenu.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "handleExitClick"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457149415359,
+      "size": 6560
+    },
+    "app/components/SaveModal.tsx": {
+      "path": "app/components/SaveModal.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../storage/saves",
+        "../types",
+        "./SaveModal.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457149415359,
+      "size": 2715
+    },
+    "app/components/SecretEnding.tsx": {
+      "path": "app/components/SecretEnding.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../storage/statistics",
+        "./SecretEnding.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457149415359,
+      "size": 6430
+    },
+    "app/components/SettingsModal.tsx": {
+      "path": "app/components/SettingsModal.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "./SettingsModal.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "toggleCrt"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457149415359,
+      "size": 4693
+    },
+    "app/components/StatisticsModal.tsx": {
+      "path": "app/components/StatisticsModal.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../storage/statistics",
+        "./StatisticsModal.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457149415359,
+      "size": 4324
+    },
+    "app/components/Terminal.tsx": {
+      "path": "app/components/Terminal.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../constants/atmosphere",
+        "../constants/detection",
+        "../constants/timing",
+        "../engine/achievements",
+        "../engine/commands",
+        "../engine/commands/interactiveTutorial",
+        "../engine/rng",
+        "../storage/saves",
+        "../types",
+        "./AchievementPopup",
+        "./FirewallEyes",
+        "./FloatingUI",
+        "./HackerAvatar",
+        "./PauseMenu",
+        "./SettingsModal",
+        "./Terminal.module.css",
+        "./TutorialSkipPopup",
+        "./TypewriterText",
+        "next/dynamic",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "deriveGamePhase",
+        "getAttemptsDisplay",
+        "getDiscoveredCount",
+        "getEvidenceClass",
+        "getEvidenceSymbol",
+        "getRiskLevel",
+        "getSaveIndicator",
+        "getStatusBar",
+        "handleClickOutside",
+        "renderCommandHighlights",
+        "renderEntry",
+        "renderTextWithRedactions",
+        "timeSpan"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 53275
+    },
+    "app/components/TuringTestOverlay.tsx": {
+      "path": "app/components/TuringTestOverlay.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../constants/turing",
+        "../engine/rng",
+        "../hooks/useSound",
+        "./TuringTestOverlay.module.css",
+        "next/image",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "handleKeyDown"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 9354
+    },
+    "app/components/TutorialSkipPopup.tsx": {
+      "path": "app/components/TutorialSkipPopup.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "./TutorialSkipPopup.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 2549
+    },
+    "app/components/TypewriterText.tsx": {
+      "path": "app/components/TypewriterText.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "./Terminal.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "TypewriterTextComponent",
+        "isTypableUfo74Content"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 3284
+    },
+    "app/components/Victory.tsx": {
+      "path": "app/components/Victory.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../engine/achievements",
+        "../storage/statistics",
+        "./AchievementPopup",
+        "./Victory.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "handleAchievementDismiss"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 21851
+    },
+    "app/components/VideoOverlay.tsx": {
+      "path": "app/components/VideoOverlay.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../engine/rng",
+        "../types",
+        "./VideoOverlay.module.css",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "clickPosition",
+        "formatTime",
+        "handleKeyDown"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 8263
+    },
+    "app/components/__tests__/AchievementGallery.test.tsx": {
+      "path": "app/components/__tests__/AchievementGallery.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../engine/achievements",
+        "../AchievementGallery",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 6311
+    },
+    "app/components/__tests__/AchievementPopup.test.tsx": {
+      "path": "app/components/__tests__/AchievementPopup.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../engine/achievements",
+        "../AchievementPopup",
+        "../FloatingUI",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "renderWithProvider"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 4812
+    },
+    "app/components/__tests__/BadEnding.test.tsx": {
+      "path": "app/components/__tests__/BadEnding.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../storage/statistics",
+        "../BadEnding",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 3301
+    },
+    "app/components/__tests__/Blackout.test.tsx": {
+      "path": "app/components/__tests__/Blackout.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../Blackout",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 2842
+    },
+    "app/components/__tests__/FirewallEyes.test.tsx": {
+      "path": "app/components/__tests__/FirewallEyes.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457150415376,
+      "size": 7413
+    },
+    "app/components/__tests__/FloatingUI.test.tsx": {
+      "path": "app/components/__tests__/FloatingUI.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../FloatingUI",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "Consumer"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 9330
+    },
+    "app/components/__tests__/GameOver.test.tsx": {
+      "path": "app/components/__tests__/GameOver.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../GameOver",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 4907
+    },
+    "app/components/__tests__/ICQChat.test.tsx": {
+      "path": "app/components/__tests__/ICQChat.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../ICQChat",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "advanceUntilText"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 6763
+    },
+    "app/components/__tests__/ImageOverlay.test.tsx": {
+      "path": "app/components/__tests__/ImageOverlay.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../ImageOverlay",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 5961
+    },
+    "app/components/__tests__/Menu.test.tsx": {
+      "path": "app/components/__tests__/Menu.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../storage/saves",
+        "../Menu",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 15606
+    },
+    "app/components/__tests__/NeutralEnding.test.tsx": {
+      "path": "app/components/__tests__/NeutralEnding.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../storage/statistics",
+        "../NeutralEnding",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 3231
+    },
+    "app/components/__tests__/PauseMenu.test.tsx": {
+      "path": "app/components/__tests__/PauseMenu.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../PauseMenu",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 8512
+    },
+    "app/components/__tests__/SaveModal.test.tsx": {
+      "path": "app/components/__tests__/SaveModal.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../storage/saves",
+        "../../types",
+        "../SaveModal",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createMockGameState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 5295
+    },
+    "app/components/__tests__/SecretEnding.test.tsx": {
+      "path": "app/components/__tests__/SecretEnding.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../storage/statistics",
+        "../SecretEnding",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 3227
+    },
+    "app/components/__tests__/SettingsModal.test.tsx": {
+      "path": "app/components/__tests__/SettingsModal.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../SettingsModal",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 8494
+    },
+    "app/components/__tests__/Terminal.test.tsx": {
+      "path": "app/components/__tests__/Terminal.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../Terminal",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 13646
+    },
+    "app/components/__tests__/TuringTestOverlay.test.tsx": {
+      "path": "app/components/__tests__/TuringTestOverlay.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../TuringTestOverlay",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 11703
+    },
+    "app/components/__tests__/Victory.test.tsx": {
+      "path": "app/components/__tests__/Victory.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../engine/achievements",
+        "../../storage/statistics",
+        "../Victory",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 4760
+    },
+    "app/components/__tests__/VideoOverlay.test.tsx": {
+      "path": "app/components/__tests__/VideoOverlay.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../engine/rng",
+        "../VideoOverlay",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 14470
+    },
+    "app/constants/atmosphere.ts": {
+      "path": "app/constants/atmosphere.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types"
+      ],
+      "classes": [],
+      "functions": [
+        "countMeaningfulFilesRead",
+        "hasFirstEvidence",
+        "isInAtmospherePhase",
+        "isMeaningfulFile",
+        "isPressureCooldownActive",
+        "shouldSuppressPenalties",
+        "shouldSuppressPressure"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 6132
+    },
+    "app/constants/detection.ts": {
+      "path": "app/constants/detection.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [
+        "applyWarmupDetection",
+        "getWarmupMultiplier"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457151415393,
+      "size": 5341
+    },
+    "app/constants/gameplay.ts": {
+      "path": "app/constants/gameplay.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457152415410,
+      "size": 2223
+    },
+    "app/constants/limits.ts": {
+      "path": "app/constants/limits.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457152415410,
+      "size": 906
+    },
+    "app/constants/timing.ts": {
+      "path": "app/constants/timing.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457152415410,
+      "size": 1769
+    },
+    "app/constants/turing.ts": {
+      "path": "app/constants/turing.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457152415410,
+      "size": 1545
+    },
+    "app/data/archiveFiles.ts": {
+      "path": "app/data/archiveFiles.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types"
+      ],
+      "classes": [],
+      "functions": [
+        "combined",
+        "generateArchiveTimestamp",
+        "shouldFileDisappear"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457152415410,
+      "size": 40657
+    },
+    "app/data/conspiracyFiles.ts": {
+      "path": "app/data/conspiracyFiles.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457152415410,
+      "size": 30827
+    },
+    "app/data/expansionContent.ts": {
+      "path": "app/data/expansionContent.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457152415410,
+      "size": 72912
+    },
+    "app/data/filesystem.ts": {
+      "path": "app/data/filesystem.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types",
+        "./neuralClusterMemo"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457153415427,
+      "size": 210964
+    },
+    "app/data/narrativeContent.ts": {
+      "path": "app/data/narrativeContent.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457154415443,
+      "size": 17468
+    },
+    "app/data/neuralClusterMemo.ts": {
+      "path": "app/data/neuralClusterMemo.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457154415443,
+      "size": 1435
+    },
+    "app/data/prisoner46.ts": {
+      "path": "app/data/prisoner46.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457154415443,
+      "size": 14274
+    },
+    "app/engine/__tests__/achievements.test.ts": {
+      "path": "app/engine/__tests__/achievements.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "localStorageMock"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457154415443,
+      "size": 4963
+    },
+    "app/engine/__tests__/atmosphere-phase.test.ts": {
+      "path": "app/engine/__tests__/atmosphere-phase.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457154415443,
+      "size": 8138
+    },
+    "app/engine/__tests__/commands-utils.test.ts": {
+      "path": "app/engine/__tests__/commands-utils.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457154415443,
+      "size": 12684
+    },
+    "app/engine/__tests__/conspiracy-files.test.ts": {
+      "path": "app/engine/__tests__/conspiracy-files.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457154415443,
+      "size": 6822
+    },
+    "app/engine/__tests__/elusive-man.test.ts": {
+      "path": "app/engine/__tests__/elusive-man.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457154415443,
+      "size": 11076
+    },
+    "app/engine/__tests__/endings.test.ts": {
+      "path": "app/engine/__tests__/endings.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457154415443,
+      "size": 7590
+    },
+    "app/engine/__tests__/evidence-tiers.test.ts": {
+      "path": "app/engine/__tests__/evidence-tiers.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457155415460,
+      "size": 5546
+    },
+    "app/engine/__tests__/evidenceRevelation.test.ts": {
+      "path": "app/engine/__tests__/evidenceRevelation.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457155415460,
+      "size": 20937
+    },
+    "app/engine/__tests__/filesystem.test.ts": {
+      "path": "app/engine/__tests__/filesystem.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457155415460,
+      "size": 18212
+    },
+    "app/engine/__tests__/firewall-link.test.ts": {
+      "path": "app/engine/__tests__/firewall-link.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457155415460,
+      "size": 7429
+    },
+    "app/engine/__tests__/hint-system.test.ts": {
+      "path": "app/engine/__tests__/hint-system.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457155415460,
+      "size": 7992
+    },
+    "app/engine/__tests__/morse-puzzle.test.ts": {
+      "path": "app/engine/__tests__/morse-puzzle.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457155415460,
+      "size": 9298
+    },
+    "app/engine/__tests__/narrative-mechanics.test.ts": {
+      "path": "app/engine/__tests__/narrative-mechanics.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457155415460,
+      "size": 53846
+    },
+    "app/engine/__tests__/prisoner45-easter-eggs.test.ts": {
+      "path": "app/engine/__tests__/prisoner45-easter-eggs.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 4280
+    },
+    "app/engine/__tests__/rewind-command.test.ts": {
+      "path": "app/engine/__tests__/rewind-command.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 8902
+    },
+    "app/engine/__tests__/rng.test.ts": {
+      "path": "app/engine/__tests__/rng.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../rng",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 698
+    },
+    "app/engine/__tests__/search-index.test.ts": {
+      "path": "app/engine/__tests__/search-index.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../searchIndex",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 4470
+    },
+    "app/engine/__tests__/story-consistency.test.ts": {
+      "path": "app/engine/__tests__/story-consistency.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../data/filesystem",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "collectAllFiles",
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 33424
+    },
+    "app/engine/__tests__/turing-evaluation.test.ts": {
+      "path": "app/engine/__tests__/turing-evaluation.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 5799
+    },
+    "app/engine/__tests__/tutorial-system.test.ts": {
+      "path": "app/engine/__tests__/tutorial-system.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../commands/interactiveTutorial",
+        "../commands/tutorial",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 5056
+    },
+    "app/engine/__tests__/ufo74-decrypt-hints.test.ts": {
+      "path": "app/engine/__tests__/ufo74-decrypt-hints.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 5208
+    },
+    "app/engine/__tests__/ux-commands.test.ts": {
+      "path": "app/engine/__tests__/ux-commands.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../constants/limits",
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 25763
+    },
+    "app/engine/__tests__/video-triggers.test.ts": {
+      "path": "app/engine/__tests__/video-triggers.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 1100
+    },
+    "app/engine/__tests__/warmup-detection.test.ts": {
+      "path": "app/engine/__tests__/warmup-detection.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "../commands",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457156415477,
+      "size": 6492
+    },
+    "app/engine/achievements.ts": {
+      "path": "app/engine/achievements.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../lib/steamBridge",
+        "../storage/safeStorage"
+      ],
+      "classes": [],
+      "functions": [
+        "clearAchievements",
+        "getAchievement",
+        "getAllAchievementsWithStatus",
+        "getUnlockedAchievements",
+        "saveAchievements",
+        "unlockAchievement"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457157415494,
+      "size": 6945
+    },
+    "app/engine/commands.ts": {
+      "path": "app/engine/commands.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../constants/atmosphere",
+        "../constants/detection",
+        "../constants/limits",
+        "../constants/turing",
+        "../storage/saves",
+        "./hintSystem",
+        "./rng"
+      ],
+      "classes": [],
+      "functions": [
+        "applyDetectionVariance",
+        "applyHostileFiltering",
+        "applyRandomCorruption",
+        "attemptsUsed",
+        "buildTree",
+        "calculateHostilityIncrease",
+        "checkSingularEvents",
+        "checkTruthProgress",
+        "checkVictory",
+        "checkWanderingState",
+        "cipherAttempts",
+        "commandCount",
+        "currentTierResponses",
+        "decrementArchiveAction",
+        "executeCommand",
+        "exitArchiveMode",
+        "getArchiveFileContent",
+        "getArchiveFilesForDirectory",
+        "getCommandDetectionMultiplier",
+        "getCommandTip",
+        "getContextualExplorationHints",
+        "getHostileSystemMessage",
+        "getIncognitoMessage",
+        "getPrisoner45Response",
+        "getScoutLinkResponse",
+        "getUFO74ConditionalDialogue",
+        "getUFO74ContentReaction",
+        "getUFO74DegradedTrustMessage",
+        "getUFO74FileReaction",
+        "getUFO74NoticeExplanation",
+        "getUFO74TrustLevel",
+        "getWanderingNotice",
+        "getWarmupAdjustedDetection",
+        "isArchiveOnlyFile",
+        "isInWarmupPhase",
+        "isMeaningfulAction",
+        "newAlertCounter",
+        "newStatusCount",
+        "performDecryption",
+        "remaining",
+        "scanDirectory"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383690523898662,
+      "size": 337635
+    },
+    "app/engine/commands/interactiveTutorial.ts": {
+      "path": "app/engine/commands/interactiveTutorial.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../data/filesystem",
+        "../../types",
+        "../filesystem",
+        "./utils"
+      ],
+      "classes": [],
+      "functions": [
+        "generateIntroDialogue",
+        "generateListing",
+        "generateStateDialogue",
+        "generateTutorialEndDialogue",
+        "getInitialTutorialOutput",
+        "getTutorialAutocomplete",
+        "getTutorialHint",
+        "getTutorialInternalListing",
+        "getTutorialMiscListing",
+        "getTutorialRootListing",
+        "handleInvalidInput",
+        "handleValidInput",
+        "initializeInteractiveTutorial",
+        "isInTutorialMode",
+        "isTutorialInputState",
+        "normalizeInput",
+        "processTutorialInput",
+        "validateTutorialInput"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457159415527,
+      "size": 29360
+    },
+    "app/engine/commands/tutorial.ts": {
+      "path": "app/engine/commands/tutorial.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "./utils"
+      ],
+      "classes": [],
+      "functions": [
+        "createTutorialTipBox",
+        "generateBootSequence",
+        "getFirstRunMessage",
+        "getHelpBasics",
+        "getHelpEvidence",
+        "getHelpWinning",
+        "getTutorialMessage",
+        "getTutorialTip",
+        "shouldShowTutorialTip"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457160415544,
+      "size": 14341
+    },
+    "app/engine/commands/utils.ts": {
+      "path": "app/engine/commands/utils.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../constants/detection",
+        "../../constants/limits",
+        "../../types",
+        "../rng"
+      ],
+      "classes": [],
+      "functions": [
+        "addHesitation",
+        "calculateDelay",
+        "command",
+        "createEntry",
+        "createInvalidCommandResult",
+        "createOutputEntries",
+        "createUFO74Message",
+        "generateEntryId",
+        "maybeAddTypo",
+        "parseCommand",
+        "sanitizeCommandInput",
+        "shouldFlicker"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457160415544,
+      "size": 7075
+    },
+    "app/engine/elusiveMan.ts": {
+      "path": "app/engine/elusiveMan.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types"
+      ],
+      "classes": [],
+      "functions": [
+        "createEntry",
+        "evaluateAnswer",
+        "getCurrentLeakQuestion",
+        "getLeakStatus",
+        "getRandomResponse",
+        "isInLeakSequence",
+        "isPendingConspiracyChoice",
+        "normalizeText",
+        "processConspiracyChoice",
+        "processLeakAnswer",
+        "startLeakSequence",
+        "wordMatches"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457160415544,
+      "size": 26718
+    },
+    "app/engine/endings.ts": {
+      "path": "app/engine/endings.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types"
+      ],
+      "classes": [],
+      "functions": [
+        "createEndingEntries",
+        "createEntry",
+        "determineEndingVariant",
+        "generateEnding",
+        "getEndingFlags",
+        "getEndingTitle",
+        "getSeenConspiracyFiles",
+        "hasDiscoveredConspiracyFiles"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457160415544,
+      "size": 22414
+    },
+    "app/engine/evidenceRevelation.ts": {
+      "path": "app/engine/evidenceRevelation.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types",
+        "./rng"
+      ],
+      "classes": [],
+      "functions": [
+        "analyzeFileEvidencePotential",
+        "attemptEvidenceRevelation",
+        "countEvidence",
+        "fileHasEvidence",
+        "getCaseStrengthDescription",
+        "getDisturbingContentAvatarExpression",
+        "getEvidencePotentialSummary",
+        "getEvidenceState",
+        "getFileEvidenceState",
+        "getFileEvidenceSymbol",
+        "initializeEvidence",
+        "isDisturbingContent"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457160415544,
+      "size": 16061
+    },
+    "app/engine/filesystem.ts": {
+      "path": "app/engine/filesystem.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../data/filesystem",
+        "../types",
+        "./rng"
+      ],
+      "classes": [],
+      "functions": [
+        "canAccessFile",
+        "findFilesMatching",
+        "fuzzyMatchFilename",
+        "getAllAccessibleFiles",
+        "getFileContent",
+        "getFileReveals",
+        "getNode",
+        "levenshteinDistance",
+        "listDirectory",
+        "resolvePath",
+        "smartResolvePath",
+        "traverse"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457160415544,
+      "size": 14969
+    },
+    "app/engine/hintSystem.ts": {
+      "path": "app/engine/hintSystem.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types",
+        "./commands/utils"
+      ],
+      "classes": [],
+      "functions": [
+        "analyzeProgressForHint",
+        "generateHintOutput",
+        "shouldShowRewindReminder"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457160415544,
+      "size": 11378
+    },
+    "app/engine/rng.ts": {
+      "path": "app/engine/rng.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [
+        "createSeededRng",
+        "generateSeed",
+        "getUIRng",
+        "seededChance",
+        "seededRandomFloat",
+        "seededRandomInt",
+        "uiChance",
+        "uiRandom",
+        "uiRandomFloat",
+        "uiRandomInt"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457160415544,
+      "size": 3929
+    },
+    "app/engine/searchIndex.ts": {
+      "path": "app/engine/searchIndex.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../data/filesystem",
+        "../types",
+        "./rng"
+      ],
+      "classes": [],
+      "functions": [
+        "canSearch",
+        "collectAllFilesWithTags",
+        "getMatchingTags",
+        "getSearchCooldownMessage",
+        "performSearch"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457160415544,
+      "size": 10304
+    },
+    "app/hooks/__tests__/useGameSelectors.test.ts": {
+      "path": "app/hooks/__tests__/useGameSelectors.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createMockGameState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457161415561,
+      "size": 11917
+    },
+    "app/hooks/__tests__/useOptions.test.tsx": {
+      "path": "app/hooks/__tests__/useOptions.test.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../useOptions",
+        "@testing-library/react",
+        "react",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "wrapper"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457161415561,
+      "size": 9814
+    },
+    "app/hooks/__tests__/useSound.test.ts": {
+      "path": "app/hooks/__tests__/useSound.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../useSound",
+        "@testing-library/react",
+        "vitest"
+      ],
+      "classes": [
+        "MockAudioContext"
+      ],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457161415561,
+      "size": 10654
+    },
+    "app/hooks/index.ts": {
+      "path": "app/hooks/index.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457161415561,
+      "size": 1524
+    },
+    "app/hooks/useAutocomplete.ts": {
+      "path": "app/hooks/useAutocomplete.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../engine/commands/interactiveTutorial",
+        "../engine/filesystem",
+        "../types",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "useAutocomplete"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457161415561,
+      "size": 6901
+    },
+    "app/hooks/useGameActions.ts": {
+      "path": "app/hooks/useGameActions.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../constants/detection",
+        "../engine/commands",
+        "../types",
+        "./useSound",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "useGameActions"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457161415561,
+      "size": 7534
+    },
+    "app/hooks/useGameSelectors.ts": {
+      "path": "app/hooks/useGameSelectors.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../constants/detection",
+        "../constants/gameplay",
+        "../types",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "useAttemptsDisplay",
+        "useEvidenceState",
+        "useFirewallState",
+        "useIsReadingFile",
+        "useRiskLevel",
+        "useSaveIndicator",
+        "useStatusBar"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457161415561,
+      "size": 4123
+    },
+    "app/hooks/useGlobalErrorHandler.ts": {
+      "path": "app/hooks/useGlobalErrorHandler.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "handleError",
+        "handleUnhandledRejection",
+        "useGlobalErrorHandler"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457161415561,
+      "size": 2604
+    },
+    "app/hooks/useOptions.tsx": {
+      "path": "app/hooks/useOptions.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "OptionsProvider",
+        "useOptions",
+        "useOptionsContext"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457161415561,
+      "size": 6234
+    },
+    "app/hooks/useSound.ts": {
+      "path": "app/hooks/useSound.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "createNoiseBuffer",
+        "createOscillatorSound",
+        "preloadTracks",
+        "useSound"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457161415561,
+      "size": 29232
+    },
+    "app/hooks/useTerminalEffects.ts": {
+      "path": "app/hooks/useTerminalEffects.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../components/FirewallEyes",
+        "../constants/detection",
+        "../constants/timing",
+        "../engine/commands",
+        "../engine/rng",
+        "../storage/saves",
+        "../storage/statistics",
+        "../types",
+        "./useSound",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "handleEnterKey",
+        "handleEscKey",
+        "handleKeyDown",
+        "handleScroll",
+        "updateCountdown",
+        "updateTimer",
+        "useTerminalEffects"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457162415578,
+      "size": 31128
+    },
+    "app/hooks/useTerminalInput.ts": {
+      "path": "app/hooks/useTerminalInput.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../components/FirewallEyes",
+        "../constants/timing",
+        "../engine/filesystem",
+        "../engine/rng",
+        "../storage/saves",
+        "../storage/statistics",
+        "./useSound",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "useTerminalInput"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457162415578,
+      "size": 34044
+    },
+    "app/hooks/useTerminalState.ts": {
+      "path": "app/hooks/useTerminalState.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../engine/achievements",
+        "react"
+      ],
+      "classes": [],
+      "functions": [
+        "useTerminalState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457162415578,
+      "size": 6613
+    },
+    "app/layout.tsx": {
+      "path": "app/layout.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "./globals.css",
+        "next",
+        "next/font/google"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457162415578,
+      "size": 824
+    },
+    "app/lib/steamBridge.ts": {
+      "path": "app/lib/steamBridge.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../types/electron"
+      ],
+      "classes": [],
+      "functions": [
+        "activateOverlay",
+        "clearAchievement",
+        "clearPresence",
+        "cloudDelete",
+        "cloudGetQuota",
+        "cloudList",
+        "cloudLoad",
+        "cloudSave",
+        "getElectronAPI",
+        "getMappedAchievements",
+        "getPlayerName",
+        "getPresenceStates",
+        "isAchievementUnlocked",
+        "isCloudAvailable",
+        "isElectron",
+        "isMinimizeToTrayEnabled",
+        "isSteamAvailable",
+        "onTrayNewGame",
+        "setMinimizeToTray",
+        "setPresence",
+        "unlockAchievement",
+        "updatePresence",
+        "updateTrayStatus"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457162415578,
+      "size": 14734
+    },
+    "app/page.tsx": {
+      "path": "app/page.tsx",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "next/dynamic"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457162415578,
+      "size": 295
+    },
+    "app/storage/__tests__/safeStorage.test.ts": {
+      "path": "app/storage/__tests__/safeStorage.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457162415578,
+      "size": 13355
+    },
+    "app/storage/__tests__/saves.test.ts": {
+      "path": "app/storage/__tests__/saves.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../../types",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [
+        "createTestState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457162415578,
+      "size": 20658
+    },
+    "app/storage/__tests__/statistics.test.ts": {
+      "path": "app/storage/__tests__/statistics.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457162415578,
+      "size": 11385
+    },
+    "app/storage/safeStorage.ts": {
+      "path": "app/storage/safeStorage.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [
+        "isStorageAvailable",
+        "safeGetItem",
+        "safeRemoveItem",
+        "safeSetItem"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457162415578,
+      "size": 2307
+    },
+    "app/storage/saves.ts": {
+      "path": "app/storage/saves.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../constants/detection",
+        "../engine/commands/interactiveTutorial",
+        "../engine/rng"
+      ],
+      "classes": [],
+      "functions": [
+        "autoSave",
+        "clampNumber",
+        "clearCheckpoints",
+        "createNewGame",
+        "deleteCheckpoint",
+        "deleteSave",
+        "deleteSaveFromCloud",
+        "deserializeState",
+        "getCheckpointSlots",
+        "getLatestCheckpoint",
+        "getSaveSlots",
+        "isBrowserWithStorage",
+        "isQuotaExceededError",
+        "loadAutoSave",
+        "loadAutoSaveAsync",
+        "loadCheckpoint",
+        "loadGame",
+        "loadGameAsync",
+        "loadSaveFromCloud",
+        "migrateState",
+        "normalizeSeed",
+        "saveCheckpoint",
+        "saveGame",
+        "serializeState",
+        "syncSaveToCloud",
+        "toPlainObject",
+        "toStringArray"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457163415595,
+      "size": 23216
+    },
+    "app/storage/statistics.ts": {
+      "path": "app/storage/statistics.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "./safeStorage"
+      ],
+      "classes": [],
+      "functions": [
+        "addPlaytime",
+        "clearStatistics",
+        "formatPlaytime",
+        "getStatistics",
+        "incrementStatistic",
+        "recordEnding",
+        "saveStatistics",
+        "updateStatistics"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457163415595,
+      "size": 4374
+    },
+    "app/types/electron.d.ts": {
+      "path": "app/types/electron.d.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457163415595,
+      "size": 4628
+    },
+    "app/types/index.ts": {
+      "path": "app/types/index.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457163415595,
+      "size": 21032
+    },
+    "e2e-tests/comprehensive.spec.ts": {
+      "path": "e2e-tests/comprehensive.spec.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "@playwright/test"
+      ],
+      "classes": [],
+      "functions": [
+        "contentContains",
+        "getContent",
+        "logBug",
+        "screenshot",
+        "startGame",
+        "typeCommand"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457169415695,
+      "size": 26684
+    },
+    "e2e-tests/edge-cases.spec.ts": {
+      "path": "e2e-tests/edge-cases.spec.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "@playwright/test"
+      ],
+      "classes": [],
+      "functions": [
+        "contentContains",
+        "getContent",
+        "logBug",
+        "screenshot",
+        "startGame",
+        "typeCommand"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457169415695,
+      "size": 20663
+    },
+    "e2e-tests/file-interactions.spec.ts": {
+      "path": "e2e-tests/file-interactions.spec.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "@playwright/test"
+      ],
+      "classes": [],
+      "functions": [
+        "contentContains",
+        "getContent",
+        "getDetectionInfo",
+        "logBug",
+        "screenshot",
+        "startGame",
+        "typeCommand"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457169415695,
+      "size": 26260
+    },
+    "e2e-tests/game-mechanics.spec.ts": {
+      "path": "e2e-tests/game-mechanics.spec.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "@playwright/test"
+      ],
+      "classes": [],
+      "functions": [
+        "contentContains",
+        "getContent",
+        "getEvidenceCount",
+        "logBug",
+        "parseAttemptsRemaining",
+        "parseDetectionLevel",
+        "screenshot",
+        "startGame",
+        "typeCommand"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457169415695,
+      "size": 24201
+    },
+    "e2e-tests/navigation.spec.ts": {
+      "path": "e2e-tests/navigation.spec.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "@playwright/test"
+      ],
+      "classes": [],
+      "functions": [
+        "contentContains",
+        "getContent",
+        "logBug",
+        "screenshot",
+        "startGame",
+        "typeCommand"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457169415695,
+      "size": 20260
+    },
+    "e2e-tests/playwright.config.ts": {
+      "path": "e2e-tests/playwright.config.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "@playwright/test"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457169415695,
+      "size": 502
+    },
+    "e2e-tests/tutorial.spec.ts": {
+      "path": "e2e-tests/tutorial.spec.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "@playwright/test"
+      ],
+      "classes": [],
+      "functions": [
+        "pressEnter",
+        "reportStep",
+        "typeCommand"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457269417376,
+      "size": 5543
+    },
+    "electron/__tests__/steam-achievements.test.ts": {
+      "path": "electron/__tests__/steam-achievements.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../steam-achievements",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457269417376,
+      "size": 7226
+    },
+    "electron/__tests__/steam-cloud.test.ts": {
+      "path": "electron/__tests__/steam-cloud.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../steam-cloud",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457269417376,
+      "size": 8356
+    },
+    "electron/__tests__/steam-integration.test.ts": {
+      "path": "electron/__tests__/steam-integration.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../steam-achievements",
+        "../steam-cloud",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457269417376,
+      "size": 8688
+    },
+    "electron/__tests__/steam-presence.test.ts": {
+      "path": "electron/__tests__/steam-presence.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../steam-presence",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457269417376,
+      "size": 4795
+    },
+    "electron/__tests__/tray.test.ts": {
+      "path": "electron/__tests__/tray.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../tray",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457269417376,
+      "size": 1905
+    },
+    "electron/__tests__/window-state.test.ts": {
+      "path": "electron/__tests__/window-state.test.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "../window-state",
+        "vitest"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457269417376,
+      "size": 1527
+    },
+    "electron/main.js": {
+      "path": "electron/main.js",
+      "language": "javascript",
+      "parser": "regex",
+      "imports": [
+        "./steam-achievements",
+        "./steam-cloud",
+        "./steam-presence",
+        "./tray",
+        "./window-state",
+        "dns",
+        "electron",
+        "electron-updater",
+        "fs",
+        "http",
+        "path",
+        "steamworks.js"
+      ],
+      "classes": [],
+      "functions": [
+        "closeSplashWindow",
+        "createSplashWindow",
+        "createWindow",
+        "initializeSteam",
+        "loadSteamModules",
+        "loadWindowModules",
+        "logStartupTime",
+        "markSteamReady",
+        "queueSteamOperation",
+        "setupAutoUpdater",
+        "setupCrashReporter",
+        "setupMemoryManagement",
+        "setupNetworkMonitoring",
+        "shutdownSteam",
+        "updateSplashStatus",
+        "validatePresenceStatus",
+        "validateSaveData",
+        "validateStringId",
+        "whenSteamReady"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457270417393,
+      "size": 26038
+    },
+    "electron/preload.js": {
+      "path": "electron/preload.js",
+      "language": "javascript",
+      "parser": "regex",
+      "imports": [
+        "electron"
+      ],
+      "classes": [],
+      "functions": [
+        "safeInvoke",
+        "safeInvokeBoolean",
+        "safeInvokeNullable"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457270417393,
+      "size": 11690
+    },
+    "electron/steam-achievements.d.ts": {
+      "path": "electron/steam-achievements.d.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [
+        "clear",
+        "getAllMappedAchievements",
+        "getSteamAchievementName",
+        "initialize",
+        "isAvailable",
+        "isUnlocked",
+        "unlock"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457270417393,
+      "size": 1415
+    },
+    "electron/steam-achievements.js": {
+      "path": "electron/steam-achievements.js",
+      "language": "javascript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [
+        "clear",
+        "getAllMappedAchievements",
+        "getSteamAchievementName",
+        "initialize",
+        "isAvailable",
+        "isUnlocked",
+        "unlock"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457270417393,
+      "size": 4620
+    },
+    "electron/steam-cloud.d.ts": {
+      "path": "electron/steam-cloud.d.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [
+        "deleteFile",
+        "getQuota",
+        "initialize",
+        "isAvailable",
+        "listFiles",
+        "load",
+        "save"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457270417393,
+      "size": 1489
+    },
+    "electron/steam-cloud.js": {
+      "path": "electron/steam-cloud.js",
+      "language": "javascript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [
+        "deleteFile",
+        "getQuota",
+        "initialize",
+        "isAvailable",
+        "listFiles",
+        "load",
+        "save"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457271417410,
+      "size": 5170
+    },
+    "electron/steam-presence.js": {
+      "path": "electron/steam-presence.js",
+      "language": "javascript",
+      "parser": "regex",
+      "imports": [],
+      "classes": [],
+      "functions": [
+        "clearPresence",
+        "getCurrentPresence",
+        "getPresenceStates",
+        "initialize",
+        "setPresence",
+        "updateFromGameState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457271417410,
+      "size": 3954
+    },
+    "electron/tray.js": {
+      "path": "electron/tray.js",
+      "language": "javascript",
+      "parser": "regex",
+      "imports": [
+        "electron",
+        "fs",
+        "path"
+      ],
+      "classes": [],
+      "functions": [
+        "buildContextMenu",
+        "createFallbackIcon",
+        "destroy",
+        "getTray",
+        "getTrayIconPath",
+        "initialize",
+        "isMinimizeToTrayEnabled",
+        "setMinimizeToTray",
+        "updateFromGameState",
+        "updateTooltip"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457271417410,
+      "size": 5956
+    },
+    "electron/window-state.js": {
+      "path": "electron/window-state.js",
+      "language": "javascript",
+      "parser": "regex",
+      "imports": [
+        "electron",
+        "fs",
+        "path"
+      ],
+      "classes": [],
+      "functions": [
+        "constrainToScreen",
+        "createWindowStateManager",
+        "getStatePath",
+        "isVisibleOnScreen",
+        "loadState",
+        "saveState",
+        "updateState"
+      ],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457271417410,
+      "size": 5525
+    },
+    "next.config.ts": {
+      "path": "next.config.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "@next/bundle-analyzer",
+        "next"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457358418872,
+      "size": 476
+    },
+    "scripts/create_icon.py": {
+      "path": "scripts/create_icon.py",
+      "language": "python",
+      "parser": "regex",
+      "imports": [
+        "PIL",
+        "math",
+        "os"
+      ],
+      "classes": [],
+      "functions": [
+        "add_crt_curve_effect",
+        "add_glow_effect",
+        "add_scanlines",
+        "add_text_overlay",
+        "create_base_image",
+        "draw_alien_head",
+        "main"
+      ],
+      "methods": [],
+      "calls": {
+        "add_crt_curve_effect": [
+          "Add",
+          "CRT",
+          "Draw",
+          "Image",
+          "ImageDraw",
+          "RGBA",
+          "SIZE",
+          "alpha",
+          "alpha_composite",
+          "curvature",
+          "draw",
+          "fill",
+          "i",
+          "img",
+          "in",
+          "int",
+          "offset",
+          "overlay",
+          "range",
+          "rectangle",
+          "screen",
+          "subtle",
+          "vignette"
+        ],
+        "add_glow_effect": [
+          "Add",
+          "GaussianBlur",
+          "Image",
+          "ImageFilter",
+          "alpha",
+          "blend",
+          "copy",
+          "effect",
+          "elements",
+          "filter",
+          "glow",
+          "green",
+          "img",
+          "phosphor",
+          "radius",
+          "to"
+        ],
+        "add_scanlines": [
+          "Add",
+          "CRT",
+          "Draw",
+          "Image",
+          "ImageDraw",
+          "RGBA",
+          "SIZE",
+          "alpha_composite",
+          "draw",
+          "effect",
+          "fill",
+          "img",
+          "in",
+          "line",
+          "overlay",
+          "range",
+          "scanline",
+          "width",
+          "y"
+        ],
+        "add_text_overlay": [
+          "Add",
+          "Bold",
+          "CLASSIFICADO",
+          "CLASSIFIED",
+          "DejaVuSansMono",
+          "Draw",
+          "INCIDENT",
+          "Image",
+          "ImageDraw",
+          "ImageFont",
+          "LiberationMono",
+          "RGBA",
+          "Regular",
+          "TERMINAL",
+          "TERMINAL_GREEN",
+          "True",
+          "VARGINHA",
+          "_",
+          "and",
+          "classified_draw",
+          "classified_img",
+          "dejavu",
+          "draw",
+          "except",
+          "expand",
+          "fill",
+          "fillcolor",
+          "font",
+          "font_large",
+          "font_small",
+          "font_tiny",
+          "fonts",
+          "img",
+          "liberation",
+          "load_default",
+          "outline",
+          "paste",
+          "rectangle",
+          "rotate",
+          "share",
+          "stamp",
+          "terminal",
+          "text",
+          "truetype",
+          "try",
+          "ttf",
+          "usr",
+          "width"
+        ],
+        "create_base_image": [
+          "BLACK",
+          "CENTER",
+          "Create",
+          "Draw",
+          "Image",
+          "ImageDraw",
+          "RGBA",
+          "SIZE",
+          "background",
+          "base",
+          "color",
+          "dark",
+          "draw",
+          "ellipse",
+          "fill",
+          "gradient",
+          "i",
+          "img",
+          "in",
+          "int",
+          "intensity",
+          "range",
+          "subtle",
+          "with"
+        ],
+        "draw_alien_head": [
+          "BLACK",
+          "Draw",
+          "TERMINAL_GREEN",
+          "alien",
+          "angle",
+          "append",
+          "classic",
+          "cos",
+          "cx",
+          "cy",
+          "draw",
+          "ellipse",
+          "else",
+          "eye_height",
+          "eye_spacing",
+          "eye_width",
+          "eye_y",
+          "fill",
+          "grey",
+          "head",
+          "head_height",
+          "head_width",
+          "in",
+          "int",
+          "math",
+          "points",
+          "polygon",
+          "rad",
+          "radians",
+          "range",
+          "scale",
+          "silhouette",
+          "sin",
+          "width_factor",
+          "x",
+          "y"
+        ],
+        "main": [
+          "CENTER",
+          "Creating",
+          "Draw",
+          "Icon",
+          "ImageDraw",
+          "PNG",
+          "RGBA",
+          "Size",
+          "Terminal",
+          "True",
+          "Varginha",
+          "add_crt_curve_effect",
+          "add_glow_effect",
+          "add_scanlines",
+          "add_text_overlay",
+          "arthur",
+          "build",
+          "convert",
+          "create_base_image",
+          "draw",
+          "draw_alien_head",
+          "exist_ok",
+          "f",
+          "game",
+          "home",
+          "icon",
+          "img",
+          "join",
+          "makedirs",
+          "os",
+          "output_dir",
+          "output_path",
+          "path",
+          "png",
+          "print",
+          "rpg",
+          "save",
+          "saved",
+          "scale",
+          "size",
+          "solo",
+          "source",
+          "to"
+        ]
+      },
+      "mtime_ns": 1772383457528421730,
+      "size": 6549
+    },
+    "scripts/generate_morse.py": {
+      "path": "scripts/generate_morse.py",
+      "language": "python",
+      "parser": "regex",
+      "imports": [
+        "math",
+        "struct",
+        "wave"
+      ],
+      "classes": [],
+      "functions": [
+        "generate_silence",
+        "generate_tone",
+        "save_wav",
+        "text_to_morse_audio"
+      ],
+      "methods": [],
+      "calls": {
+        "generate_silence": [
+          "Generate",
+          "SAMPLE_RATE",
+          "duration",
+          "int",
+          "num_samples",
+          "silence"
+        ],
+        "generate_tone": [
+          "Generate",
+          "SAMPLE_RATE",
+          "a",
+          "append",
+          "attack",
+          "duration",
+          "elif",
+          "envelope",
+          "frequency",
+          "i",
+          "in",
+          "int",
+          "math",
+          "ms",
+          "num_samples",
+          "pi",
+          "range",
+          "release",
+          "sample",
+          "samples",
+          "sin",
+          "sine",
+          "t",
+          "tone",
+          "wave"
+        ],
+        "save_wav": [
+          "Mono",
+          "SAMPLE_RATE",
+          "Save",
+          "WAV",
+          "a",
+          "as",
+          "bit",
+          "file",
+          "filename",
+          "h",
+          "in",
+          "open",
+          "pack",
+          "sample",
+          "samples",
+          "setframerate",
+          "setnchannels",
+          "setsampwidth",
+          "struct",
+          "to",
+          "w",
+          "wav_file",
+          "wave",
+          "with",
+          "writeframes"
+        ],
+        "text_to_morse_audio": [
+          "Convert",
+          "DASH_DURATION",
+          "DOT_DURATION",
+          "LETTER_GAP",
+          "MORSE_CODE",
+          "Morse",
+          "SYMBOL_GAP",
+          "WORD_GAP",
+          "audio",
+          "char",
+          "code",
+          "elif",
+          "enumerate",
+          "extend",
+          "generate_silence",
+          "generate_tone",
+          "i",
+          "in",
+          "len",
+          "morse",
+          "samples",
+          "symbol",
+          "text",
+          "to",
+          "upper"
+        ]
+      },
+      "mtime_ns": 1772383457528421730,
+      "size": 3537
+    },
+    "scripts/mock-electron.js": {
+      "path": "scripts/mock-electron.js",
+      "language": "javascript",
+      "parser": "regex",
+      "imports": [
+        "electron",
+        "fs",
+        "path"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457528421730,
+      "size": 1345
+    },
+    "vitest.config.ts": {
+      "path": "vitest.config.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "@vitejs/plugin-react",
+        "path",
+        "vitest/config"
+      ],
+      "classes": [],
+      "functions": [],
+      "methods": [],
+      "calls": {},
+      "mtime_ns": 1772383457528421730,
+      "size": 734
+    },
+    "vitest.setup.ts": {
+      "path": "vitest.setup.ts",
+      "language": "typescript",
+      "parser": "regex",
+      "imports": [
+        "@testing-library/jest-dom",
+        "vitest"
+      ],
+      "classes": [
+        "MockResizeObserver"
+      ],
+      "functions": [],
+      "methods": [
+        "constructor",
+        "disconnect",
+        "observe",
+        "unobserve"
+      ],
+      "calls": {},
+      "mtime_ns": 1772383457528421730,
+      "size": 1758
+    }
+  }
+}

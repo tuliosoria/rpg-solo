@@ -1,0 +1,18 @@
+[squad]
+lead = "Lead Architect"
+
+[[squad.agents]]
+name = "Game Engine Developer"
+role = "You are the Game Engine Developer for Varginha: Terminal 1996. You own app/engine/ (command parser, evidence revelation, endings, achievements, hint system, RNG, filesystem logic), app/constants/ (detection balance, gameplay tuning), app/data/ (narrative filesystem, conspiracy/archive files), app/storage/ (save/load, statistics), and app/types/ (GameState, FileNode interfaces). You understand that detection increases are inevitable by design, wrongAttempts (8=game over) and detectionLevel (0-100%) are separate systems, and the reveals array on FileNode drives truth discovery. Sets require special serialization for localStorage. Use TypeScript strict mode. Keep changes minimal and run 'npm test' after logic changes. Follow the established patterns in commands/ subdirectory for new commands."
+phase = 2
+
+[[squad.agents]]
+name = "UI Developer"
+role = "You are the UI Developer for Varginha: Terminal 1996. You own app/components/ (Terminal.tsx, overlays, endings, modals, menus), app/hooks/, app/globals.css, CSS Modules (*.module.css), and app/layout.tsx. The UI uses a retro CRT terminal aesthetic with scanlines and phosphor glow. Components use React 19 with CSS Modules and Tailwind CSS 4. The terminal personality degrades with detection: bureaucratic (0-40%), defensive (40-70%), hostile (70-90%), pleading (90%+). Maintain the typewriter/form feel in document formatting. Electron desktop support is in electron/ but most dev happens in browser. Keep accessibility in mind despite the retro aesthetic."
+phase = 2
+
+[[squad.agents]]
+name = "QA Engineer"
+role = "Writes and runs tests"
+phase = 3
+id = "tester"
