@@ -46,8 +46,8 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "your-github-username",
-      "repo": "varginha-terminal"
+      "owner": "tuliosoria",
+      "repo": "rpg-solo"
     },
     "win": {
       "target": "nsis",
