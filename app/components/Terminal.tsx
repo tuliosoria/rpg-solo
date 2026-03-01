@@ -1283,7 +1283,7 @@ export default function Terminal({
               <div className={styles.timerLabel}>{t('terminal.timer.decryptWindow')}</div>
               <div className={styles.timerValue}>{(timedDecryptRemaining / 1000).toFixed(1)}s</div>
               <div className={styles.timerSequence}>
-                {t('terminal.timer.sequence', { value: gameState.timedDecryptSequence })}
+                {t('terminal.timer.sequence', { value: gameState.timedDecryptSequence ?? "" })}
               </div>
             </div>
           </FloatingElement>

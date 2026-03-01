@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import Terminal from '../Terminal';
 import { DEFAULT_GAME_STATE, GameState } from '../../types';
+import { I18nProvider } from '../../i18n';
 
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
@@ -92,6 +93,40 @@ describe('Terminal Component', () => {
   it('renders without crashing', () => {
     render(<Terminal {...defaultProps} />);
     expect(document.body).toBeTruthy();
+  });
+
+  it('localizes tutorial skip output using selected language', async () => {
+    vi.useRealTimers();
+    window.localStorage.setItem('terminal1996_language', 'es');
+
+    const tutorialState = {
+      ...DEFAULT_GAME_STATE,
+      seed: 12345,
+      rngState: 12345,
+      sessionStartTime: Date.now(),
+      tutorialComplete: false,
+      tutorialStep: 0,
+    } as GameState;
+
+    render(
+      <I18nProvider>
+        <Terminal {...defaultProps} initialState={tutorialState} />
+      </I18nProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /\[ Y \] SALTAR/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /\[ Y \] SALTAR/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('> CREANDO PERFIL DE USUARIO...')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('[UFO74 se desconectó]')).toBeInTheDocument();
+
+    window.localStorage.removeItem('terminal1996_language');
   });
 
   it('renders the command input', () => {
