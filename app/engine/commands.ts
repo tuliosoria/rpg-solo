@@ -4001,6 +4001,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output: [
           createEntry('error', `ERROR: Not a directory: ${args[0]}`),
+          createEntry('system', `  HINT: 'cd' is used for directories only.`),
+          createEntry('system', `  To read a file use 'cat ${args[0]}' or 'open ${args[0]}'.`),
           createEntry('system', ''),
           createEntry('ufo74', '[UFO74]: thats a file. try: open ' + args[0]),
         ],
@@ -4164,6 +4166,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       return {
         output: [
           createEntry('error', `ERROR: ${args[0]} is a directory`),
+          createEntry('system', `  HINT: 'open' is used for files only.`),
+          createEntry('system', `  To explore a directory use 'cd ${args[0]}' then 'ls'.`),
           createEntry('system', ''),
           createEntry('ufo74', '[UFO74]: thats a directory. use: cd ' + args[0]),
         ],
@@ -8095,7 +8099,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   if (!handler) {
     // Increment legacy alert counter for invalid commands
     if (!state.tutorialComplete) {
-      const output: TerminalEntry[] = [...getCommandTip(command, args)];
+      const output: TerminalEntry[] = [...getCommandTip(command, args, state)];
       return { output, stateChanges: {} };
     }
 
@@ -8151,7 +8155,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     }
 
     // Provide helpful tips based on what the player might have been trying to do
-    const tips = getCommandTip(command, args);
+    const tips = getCommandTip(command, args, state);
 
     // Build output with clear risk warning
     const output: TerminalEntry[] = [
@@ -8520,7 +8524,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 }
 
 // Generate helpful tips for unknown commands — all delivered as UFO74 voice
-function getCommandTip(command: string, args: string[]): TerminalEntry[] {
+function getCommandTip(command: string, args: string[], state: GameState): TerminalEntry[] {
   // Check for common navigation attempts
   if (command === 'dir' || command === 'list' || command === 'show') {
     return [
@@ -8579,10 +8583,24 @@ function getCommandTip(command: string, args: string[]): TerminalEntry[] {
     command === 'type' ||
     command === 'more'
   ) {
-    const file = args[0] || '<filename>';
+    const target = args[0] || '<filename>';
+    // Check if the target is a directory — suggest ls/cd instead
+    if (args[0]) {
+      const filePath = resolvePath(args[0], state.currentPath);
+      const node = getNode(filePath, state);
+      if (node && node.type === 'dir') {
+        return [
+          createEntry('error', `ERROR: ${args[0]} is a directory`),
+          createEntry('system', `  HINT: '${command}' is used for files only.`),
+          createEntry('system', `  To explore a directory use 'cd ${args[0]}' then 'ls'.`),
+          createEntry('system', ''),
+          createEntry('ufo74', `[UFO74]: thats a directory kid. use: ls ${args[0]}`),
+        ];
+      }
+    }
     return [
       createEntry('system', ''),
-      createEntry('ufo74', `[UFO74]: wrong command kid. use: open ${file}`),
+      createEntry('ufo74', `[UFO74]: wrong command kid. use: open ${target}`),
       createEntry('system', ''),
     ];
   }
