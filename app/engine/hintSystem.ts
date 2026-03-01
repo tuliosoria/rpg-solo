@@ -2,7 +2,7 @@
 // Provides cryptic, context-aware hints without revealing specific files or answers
 
 import { GameState, TruthCategory, TRUTH_CATEGORIES, TerminalEntry } from '../types';
-import { createEntry } from './commands/utils';
+import { createEntry, createEntryI18n } from './commands/utils';
 
 // Rewind reminder configuration
 export const REWIND_REMINDER_CONFIG = {
@@ -116,6 +116,82 @@ const REWIND_REMINDER_HINTS: string[] = [
   "the archive timestamp is earlier than now. some evidence only exists in the past. use 'rewind'.",
   "deleted files aren't really gone. they're just... not here yet. try 'rewind'.",
 ];
+
+const HINT_I18N_BY_TEXT: Record<string, string> = {
+  'Physical evidence was divided, not destroyed.': 'engine.hints.truth.debris.1',
+  'The wreckage traveled to multiple destinations.': 'engine.hints.truth.debris.2',
+  'Transport records hold clues about material distribution.': 'engine.hints.truth.debris.3',
+  'Cargo moved in different directions that week.': 'engine.hints.truth.debris.4',
+
+  'Not everything at the site was wreckage.': 'engine.hints.truth.containment.1',
+  'Medical containment requires living subjects.': 'engine.hints.truth.containment.2',
+  'Some recovery operations involved more than debris.': 'engine.hints.truth.containment.3',
+  'Quarantine protocols suggest survivors.': 'engine.hints.truth.containment.4',
+
+  'Communication happened without spoken words.': 'engine.hints.truth.telepathic.1',
+  'Signal analysis revealed unusual patterns.': 'engine.hints.truth.telepathic.2',
+  'The visitors were not explorers in the traditional sense.': 'engine.hints.truth.telepathic.3',
+  'Neural activity preceded verbal contact.': 'engine.hints.truth.telepathic.4',
+
+  'Brazil was not alone in the response.': 'engine.hints.truth.international.1',
+  'Diplomatic channels activated faster than expected.': 'engine.hints.truth.international.2',
+  'Foreign expertise arrived remarkably quickly.': 'engine.hints.truth.international.3',
+  'Coordination suggests prior agreements.': 'engine.hints.truth.international.4',
+
+  'The timeline extends decades into the future.': 'engine.hints.truth.transition.1',
+  'Thirty years is a significant interval.': 'engine.hints.truth.transition.2',
+  'Some documents reference a convergence window.': 'engine.hints.truth.transition.3',
+  'The end date is not when it ends—it begins.': 'engine.hints.truth.transition.4',
+
+  'Storage logs track more than inventory.': 'engine.hints.directory.storage.1',
+  'Asset manifests reveal movement patterns.': 'engine.hints.directory.storage.2',
+  'Physical evidence leaves paper trails.': 'engine.hints.directory.storage.3',
+
+  'Communication channels hold encrypted secrets.': 'engine.hints.directory.comms.1',
+  'Not all intercepts are routine.': 'engine.hints.directory.comms.2',
+  'Some signals defy conventional analysis.': 'engine.hints.directory.comms.3',
+
+  'Operations involved more than cleanup.': 'engine.hints.directory.ops.1',
+  'Quarantine suggests something needed containing.': 'engine.hints.directory.ops.2',
+  'Recovery teams had specialized equipment.': 'engine.hints.directory.ops.3',
+
+  'Administrative access reveals higher clearance docs.': 'engine.hints.directory.admin.1',
+  'Internal memos speak more freely.': 'engine.hints.directory.admin.2',
+  'Protocol documents reference unusual procedures.': 'engine.hints.directory.admin.3',
+
+  'Internal protocols define expected behaviors.': 'engine.hints.directory.internal.1',
+  'Access credentials may be documented internally.': 'engine.hints.directory.internal.2',
+  'Standard procedures sometimes hide exceptions.': 'engine.hints.directory.internal.3',
+
+  'You have not examined any files yet.': 'engine.hints.progress.noFiles.1',
+  'Knowledge requires investigation.': 'engine.hints.progress.noFiles.2',
+  'The filesystem contains answers.': 'engine.hints.progress.noFiles.3',
+
+  'You have only scratched the surface.': 'engine.hints.progress.fewFiles.1',
+  'Many directories remain unexplored.': 'engine.hints.progress.fewFiles.2',
+  'Persistence reveals patterns.': 'engine.hints.progress.fewFiles.3',
+
+  'Evidence exists, but you have not recognized it.': 'engine.hints.progress.noTruths.1',
+  'The pieces are there. You must see the connections.': 'engine.hints.progress.noTruths.2',
+  'Read deeper. Question what you read.': 'engine.hints.progress.noTruths.3',
+
+  'You are assembling the picture.': 'engine.hints.progress.someTruths.1',
+  'Cross-reference what you have learned.': 'engine.hints.progress.someTruths.2',
+  'Some truths illuminate others.': 'engine.hints.progress.someTruths.3',
+
+  'You are close to understanding.': 'engine.hints.progress.nearComplete.1',
+  'One or two pieces remain hidden.': 'engine.hints.progress.nearComplete.2',
+  'The full picture is almost visible.': 'engine.hints.progress.nearComplete.3',
+
+  "hey, don't forget you can use 'rewind' to roll back the system clock. some files were deleted... but not in the past.":
+    'engine.hints.rewind.1',
+  "stuck? try 'rewind'. the archive state lets you see what they tried to erase.":
+    'engine.hints.rewind.2',
+  "the archive timestamp is earlier than now. some evidence only exists in the past. use 'rewind'.":
+    'engine.hints.rewind.3',
+  "deleted files aren't really gone. they're just... not here yet. try 'rewind'.":
+    'engine.hints.rewind.4',
+};
 
 /**
  * Determine if we should show a rewind reminder to the player.
@@ -274,9 +350,21 @@ export function generateHintOutput(state: GameState): {
     return {
       output: [
         createEntry('system', ''),
-        createEntry('warning', '>>> HINT PROTOCOL: RESOURCE DEPLETED'),
-        createEntry('ufo74', 'UFO74: no more hints. rely on your own analysis.'),
-        createEntry('ufo74', '       you have enough to work with. READ the files.'),
+        createEntryI18n(
+          'warning',
+          'engine.hints.protocol.depleted',
+          '>>> HINT PROTOCOL: RESOURCE DEPLETED'
+        ),
+        createEntryI18n(
+          'ufo74',
+          'engine.hints.exhausted.line1',
+          'UFO74: no more hints. rely on your own analysis.'
+        ),
+        createEntryI18n(
+          'ufo74',
+          'engine.hints.exhausted.line2',
+          '       you have enough to work with. READ the files.'
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {},
@@ -290,9 +378,13 @@ export function generateHintOutput(state: GameState): {
     return {
       output: [
         createEntry('system', ''),
-        createEntry('warning', '>>> HINT PROTOCOL ACTIVATED'),
-        createEntry('ufo74', 'UFO74: you seem to be making progress.'),
-        createEntry('ufo74', '       keep exploring. the truth is in the files.'),
+        createEntryI18n('warning', 'engine.hints.protocol.activated', '>>> HINT PROTOCOL ACTIVATED'),
+        createEntryI18n('ufo74', 'engine.hints.progress.line1', 'UFO74: you seem to be making progress.'),
+        createEntryI18n(
+          'ufo74',
+          'engine.hints.progress.line2',
+          '       keep exploring. the truth is in the files.'
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {},
@@ -323,11 +415,18 @@ export function generateHintOutput(state: GameState): {
   return {
     output: [
       createEntry('system', ''),
-      createEntry('warning', '>>> HINT PROTOCOL ACTIVATED'),
+      createEntryI18n('warning', 'engine.hints.protocol.activated', '>>> HINT PROTOCOL ACTIVATED'),
       createEntry('system', ''),
-      createEntry('ufo74', `UFO74: ${hint}`),
+      HINT_I18N_BY_TEXT[hint]
+        ? createEntryI18n('ufo74', HINT_I18N_BY_TEXT[hint], `UFO74: ${hint}`)
+        : createEntry('ufo74', `UFO74: ${hint}`),
       createEntry('system', ''),
-      createEntry('notice', `>>> ${hintsRemaining} HINT${hintsRemaining !== 1 ? 'S' : ''} REMAINING`),
+      createEntryI18n(
+        'notice',
+        hintsRemaining === 1 ? 'engine.hints.remaining.one' : 'engine.hints.remaining.other',
+        `>>> ${hintsRemaining} HINT${hintsRemaining !== 1 ? 'S' : ''} REMAINING`,
+        { value: hintsRemaining }
+      ),
       createEntry('system', ''),
     ],
     stateChanges,

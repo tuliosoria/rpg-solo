@@ -54,6 +54,16 @@ describe('Hint System', () => {
       expect(remainingEntry).toBeDefined();
     });
 
+    it('should attach i18n keys to hint protocol entries', () => {
+      const state = createTestState({ tutorialComplete: true });
+      const result = generateHintOutput(state);
+
+      expect(result.output.find(e => e.content.includes('HINT PROTOCOL ACTIVATED'))?.i18nKey).toBe(
+        'engine.hints.protocol.activated'
+      );
+      expect(result.output.find(e => e.type === 'ufo74' && e.content.includes('UFO74:'))?.i18nKey).toBeDefined();
+    });
+
     it('should refuse hints when exhausted', () => {
       const state = createTestState({ hintsUsed: HINT_CONFIG.maxHints });
       const result = generateHintOutput(state);

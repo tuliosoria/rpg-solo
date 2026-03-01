@@ -20,6 +20,22 @@ export function createEntry(type: TerminalEntry['type'], content: string): Termi
   };
 }
 
+export function createEntryI18n(
+  type: TerminalEntry['type'],
+  i18nKey: string,
+  fallbackContent: string,
+  i18nValues?: Record<string, string | number>
+): TerminalEntry {
+  return {
+    id: generateEntryId(),
+    type,
+    content: fallbackContent,
+    i18nKey,
+    i18nValues,
+    timestamp: Date.now(),
+  };
+}
+
 export function createOutputEntries(
   lines: string[],
   type: TerminalEntry['type'] = 'output'
@@ -37,11 +53,19 @@ export function createInvalidCommandResult(state: GameState, commandName: string
       output: [
         createEntry('error', ''),
         createEntry('error', '═══════════════════════════════════════════════════════════'),
-        createEntry('error', 'CRITICAL: INVALID ATTEMPT THRESHOLD EXCEEDED'),
+        createEntryI18n(
+          'error',
+          'engine.invalidAttemptThreshold.exceeded',
+          'CRITICAL: INVALID ATTEMPT THRESHOLD EXCEEDED'
+        ),
         createEntry('error', '═══════════════════════════════════════════════════════════'),
         createEntry('error', ''),
-        createEntry('error', 'SYSTEM LOCKDOWN INITIATED'),
-        createEntry('error', 'SESSION TERMINATED'),
+        createEntryI18n(
+          'error',
+          'engine.invalidAttemptThreshold.lockdown',
+          'SYSTEM LOCKDOWN INITIATED'
+        ),
+        createEntryI18n('error', 'engine.invalidAttemptThreshold.terminated', 'SESSION TERMINATED'),
         createEntry('error', ''),
       ],
       stateChanges: {
@@ -55,13 +79,23 @@ export function createInvalidCommandResult(state: GameState, commandName: string
 
   return {
     output: [
-      createEntry(
-        'error',
-        commandName ? `Unknown command: ${commandName}` : 'ERROR: Unknown command'
-      ),
+      commandName
+        ? createEntryI18n('error', 'runtime.unknownCommand', `Unknown command: ${commandName}`, {
+            value: commandName,
+          })
+        : createEntryI18n('error', 'runtime.errorUnknownCommand', 'ERROR: Unknown command'),
       createEntry('warning', ''),
-      createEntry('warning', '⚠ RISK INCREASED: Invalid commands draw system attention.'),
-      createEntry('system', `   [Invalid attempts: ${newAlertCounter}/8]`),
+      createEntryI18n(
+        'warning',
+        'engine.invalidCommand.riskIncreased',
+        '⚠ RISK INCREASED: Invalid commands draw system attention.'
+      ),
+      createEntryI18n(
+        'system',
+        'engine.invalidCommand.invalidAttempts',
+        `   [Invalid attempts: ${newAlertCounter}/8]`,
+        { value: newAlertCounter }
+      ),
     ],
     stateChanges: {
       detectionLevel: applyWarmupDetection(state.detectionLevel, 2, state.filesRead?.size || 0),

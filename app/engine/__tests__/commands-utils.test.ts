@@ -376,6 +376,19 @@ describe('Command Utilities', () => {
       expect(result.output.some(e => e.content.includes('4/8'))).toBe(true);
     });
 
+    it('attaches i18n keys for invalid command output', () => {
+      const state = createTestState({ legacyAlertCounter: 2 });
+      const result = createInvalidCommandResult(state, 'badcmd');
+
+      expect(result.output.find(e => e.content.includes('badcmd'))?.i18nKey).toBe('runtime.unknownCommand');
+      expect(result.output.find(e => e.content.includes('RISK INCREASED'))?.i18nKey).toBe(
+        'engine.invalidCommand.riskIncreased'
+      );
+      expect(result.output.find(e => e.content.includes('3/8'))?.i18nKey).toBe(
+        'engine.invalidCommand.invalidAttempts'
+      );
+    });
+
     it('triggers game over at 8 invalid attempts', () => {
       const state = createTestState({ legacyAlertCounter: 7 });
       const result = createInvalidCommandResult(state, 'test');

@@ -265,6 +265,17 @@ export default function Terminal({
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const getEntryContent = useCallback(
+    (entry: TerminalEntry): string => {
+      if (entry.type === 'input') return entry.content;
+      if (entry.i18nKey) {
+        return t(entry.i18nKey, entry.i18nValues, entry.content);
+      }
+      return translateRuntimeText(entry.content);
+    },
+    [t, translateRuntimeText]
+  );
+
   // Detect new UFO74 text entries and add them to the typing queue
   useEffect(() => {
     let hasNew = false;
@@ -273,7 +284,7 @@ export default function Terminal({
       if (animatedEntriesRef.current.has(entry.id) || queuedSetRef.current.has(entry.id)) continue;
       if (entry.id === activeTypingId) continue;
 
-      if (entry.type === 'ufo74' && isTypableUfo74Content(entry.content)) {
+      if (entry.type === 'ufo74' && isTypableUfo74Content(getEntryContent(entry))) {
         // New typable UFO74 entry — add to queue
         typingQueueRef.current.push(entry.id);
         queuedSetRef.current.add(entry.id);
@@ -290,7 +301,7 @@ export default function Terminal({
       queuedSetRef.current.delete(nextId);
       setActiveTypingId(nextId);
     }
-  }, [gameState.history, activeTypingId]);
+  }, [gameState.history, activeTypingId, getEntryContent]);
 
   // Handle typewriter completion — move to next in queue or clear
   const handleTypingComplete = useCallback(() => {
@@ -801,7 +812,7 @@ export default function Terminal({
 
   const renderEntry = (entry: TerminalEntry) => {
     let className = styles.line;
-    const entryContent = entry.type === 'input' ? entry.content : translateRuntimeText(entry.content);
+    const entryContent = getEntryContent(entry);
 
     switch (entry.type) {
       case 'input':
@@ -828,7 +839,7 @@ export default function Terminal({
     }
 
     // Typewriter animation for UFO74 text entries
-    if (entry.type === 'ufo74' && isTypableUfo74Content(entry.content)) {
+    if (entry.type === 'ufo74' && isTypableUfo74Content(entryContent)) {
       // Currently being typed — animate character by character
       if (entry.id === activeTypingId) {
         return (

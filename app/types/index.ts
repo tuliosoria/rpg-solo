@@ -165,6 +165,8 @@ export interface TerminalEntry {
   id: string;
   type: 'input' | 'output' | 'system' | 'warning' | 'error' | 'notice' | 'ufo74' | 'file';
   content: string;
+  i18nKey?: string;
+  i18nValues?: Record<string, string | number>;
   timestamp: number;
 }
 

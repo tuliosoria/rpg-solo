@@ -114,4 +114,17 @@ describe('i18n system', () => {
       'SISTEMA LEGADO DE INTELIGENCIA BRASILEÑA'
     );
   });
+
+  it('translates new engine i18n keys for hint protocol and invalid command output', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('pt-BR');
+    });
+
+    expect(result.current.t('engine.hints.protocol.activated')).toBe('>>> PROTOCOLO DE DICAS ATIVADO');
+    expect(result.current.t('engine.invalidCommand.invalidAttempts', { value: 5 })).toBe(
+      '   [Tentativas inválidas: 5/8]'
+    );
+  });
 });
