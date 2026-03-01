@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect, memo, useMemo } from 'react';
+import { useI18n } from '../i18n';
 import styles from './PauseMenu.module.css';
 
 interface PauseMenuProps {
@@ -18,6 +19,7 @@ export default memo(function PauseMenu({
   onSettingsAction,
   onExitAction,
 }: PauseMenuProps) {
+  const { t } = useI18n();
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -105,11 +107,11 @@ export default memo(function PauseMenu({
       <div className={styles.overlay}>
         <div className={styles.menu} onClick={e => e.stopPropagation()}>
           <div className={styles.header}>
-            <h2>EXIT TO MENU?</h2>
+            <h2>{t('pause.confirm.title')}</h2>
             <div className={styles.line}>═══════════════════════════</div>
           </div>
 
-          <div className={styles.warning}>Unsaved progress will be lost.</div>
+          <div className={styles.warning}>{t('pause.confirm.warning')}</div>
 
           <div className={styles.options}>
             <button
@@ -119,7 +121,7 @@ export default memo(function PauseMenu({
               onClick={onExitAction}
               onMouseEnter={() => setSelectedIndex(0)}
             >
-              {selectedIndex === 0 ? '▶ ' : '  '}YES, EXIT
+              {selectedIndex === 0 ? '▶ ' : '  '}{t('pause.confirm.yes')}
             </button>
             <button
               className={`${styles.menuButton} ${selectedIndex === 1 ? styles.selected : ''}`}
@@ -128,11 +130,11 @@ export default memo(function PauseMenu({
               onClick={() => setShowExitConfirm(false)}
               onMouseEnter={() => setSelectedIndex(1)}
             >
-              {selectedIndex === 1 ? '▶ ' : '  '}NO, CONTINUE
+              {selectedIndex === 1 ? '▶ ' : '  '}{t('pause.confirm.no')}
             </button>
           </div>
 
-          <div className={styles.hint}>↑↓ Navigate • Enter Select • Esc Cancel</div>
+          <div className={styles.hint}>{t('pause.confirm.hint')}</div>
         </div>
       </div>
     );
@@ -140,11 +142,11 @@ export default memo(function PauseMenu({
 
   return (
     <div className={styles.overlay} onClick={onResumeAction}>
-      <div className={styles.menu} onClick={e => e.stopPropagation()}>
-        <div className={styles.header}>
-          <h2>PAUSED</h2>
-          <div className={styles.line}>═══════════════════════════</div>
-        </div>
+        <div className={styles.menu} onClick={e => e.stopPropagation()}>
+          <div className={styles.header}>
+          <h2>{t('pause.title')}</h2>
+            <div className={styles.line}>═══════════════════════════</div>
+          </div>
 
         <div className={styles.options}>
           <button
@@ -154,7 +156,7 @@ export default memo(function PauseMenu({
             onClick={onResumeAction}
             onMouseEnter={() => setSelectedIndex(0)}
           >
-            {selectedIndex === 0 ? '▶ ' : '  '}RESUME GAME
+            {selectedIndex === 0 ? '▶ ' : '  '}{t('pause.resume')}
           </button>
           <button
             className={`${styles.menuButton} ${selectedIndex === 1 ? styles.selected : ''}`}
@@ -163,7 +165,7 @@ export default memo(function PauseMenu({
             onClick={onSaveAction}
             onMouseEnter={() => setSelectedIndex(1)}
           >
-            {selectedIndex === 1 ? '▶ ' : '  '}SAVE SESSION
+            {selectedIndex === 1 ? '▶ ' : '  '}{t('pause.save')}
           </button>
           <button
             className={`${styles.menuButton} ${selectedIndex === 2 ? styles.selected : ''}`}
@@ -172,7 +174,7 @@ export default memo(function PauseMenu({
             onClick={onLoadAction}
             onMouseEnter={() => setSelectedIndex(2)}
           >
-            {selectedIndex === 2 ? '▶ ' : '  '}LOAD SESSION
+            {selectedIndex === 2 ? '▶ ' : '  '}{t('pause.load')}
           </button>
           <button
             className={`${styles.menuButton} ${selectedIndex === 3 ? styles.selected : ''}`}
@@ -181,7 +183,7 @@ export default memo(function PauseMenu({
             onClick={onSettingsAction}
             onMouseEnter={() => setSelectedIndex(3)}
           >
-            {selectedIndex === 3 ? '▶ ' : '  '}SETTINGS
+            {selectedIndex === 3 ? '▶ ' : '  '}{t('pause.settings')}
           </button>
           <button
             className={`${styles.menuButton} ${styles.exitButton} ${selectedIndex === 4 ? styles.selected : ''}`}
@@ -190,11 +192,11 @@ export default memo(function PauseMenu({
             onClick={handleExitClick}
             onMouseEnter={() => setSelectedIndex(4)}
           >
-            {selectedIndex === 4 ? '▶ ' : '  '}EXIT TO MENU
+            {selectedIndex === 4 ? '▶ ' : '  '}{t('pause.exit')}
           </button>
         </div>
 
-        <div className={styles.hint}>↑↓ Navigate • Enter Select • Esc Resume</div>
+        <div className={styles.hint}>{t('pause.hint')}</div>
       </div>
     </div>
   );

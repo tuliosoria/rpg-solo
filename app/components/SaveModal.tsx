@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { GameState } from '../types';
 import { saveGame } from '../storage/saves';
+import { useI18n } from '../i18n';
 import styles from './SaveModal.module.css';
 
 interface SaveModalProps {
@@ -12,6 +13,7 @@ interface SaveModalProps {
 }
 
 export default function SaveModal({ gameState, onCloseAction, onSavedAction }: SaveModalProps) {
+  const { language, t } = useI18n();
   const [slotName, setSlotName] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -33,34 +35,41 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
 
   const handleSave = useCallback(() => {
     setSaving(true);
-    const name = slotName.trim() || `Session ${new Date().toLocaleString()}`;
+    const locale = language === 'pt-BR' ? 'pt-BR' : language === 'es' ? 'es' : 'en-US';
+    const name = slotName.trim() || t('save.defaultName', { value: new Date().toLocaleString(locale) });
     saveGame(gameState, name);
     setSaving(false);
     onSavedAction();
-  }, [gameState, slotName, onSavedAction]);
+  }, [gameState, language, onSavedAction, slotName, t]);
 
   return (
     <div className={styles.overlay} onClick={onCloseAction}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>SAVE SESSION</h2>
+          <h2>{t('save.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
         </div>
 
         <div className={styles.content}>
-          <label className={styles.label}>Session Name (optional):</label>
+          <label className={styles.label}>{t('save.nameLabel')}</label>
           <input
             type="text"
             value={slotName}
             onChange={e => setSlotName(e.target.value)}
-            placeholder={`Session ${new Date().toLocaleString()}`}
+            placeholder={t('save.defaultName', {
+              value: new Date().toLocaleString(
+                language === 'pt-BR' ? 'pt-BR' : language === 'es' ? 'es' : 'en-US'
+              ),
+            })}
             className={styles.input}
             autoFocus
           />
 
           <div className={styles.info}>
-            <div>Current Path: {gameState.currentPath}</div>
-            <div>Progress: {gameState.truthsDiscovered.size}/5 truths</div>
+            <div>{t('save.path')}: {gameState.currentPath}</div>
+            <div>
+              {t('save.progress')}: {gameState.truthsDiscovered.size}/5 {t('save.progressSuffix')}
+            </div>
           </div>
         </div>
 
@@ -72,7 +81,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
             onClick={handleSave}
             disabled={saving}
           >
-            {saving ? 'SAVING...' : '[ SAVE ]'}
+            {saving ? t('save.button.saving') : t('save.button.idle')}
           </button>
           <button
             className={styles.cancelButton}
@@ -80,7 +89,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
             onMouseDown={e => e.preventDefault()}
             onClick={onCloseAction}
           >
-            [ CANCEL ]
+            {t('save.button.cancel')}
           </button>
         </div>
       </div>

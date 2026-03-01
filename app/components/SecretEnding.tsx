@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './SecretEnding.module.css';
 import { recordEnding } from '../storage/statistics';
+import { useI18n } from '../i18n';
 
 interface SecretEndingProps {
   onRestartAction: () => void;
@@ -78,6 +79,7 @@ export default function SecretEnding({
   commandCount = 0,
   detectionLevel = 100,
 }: SecretEndingProps) {
+  const { t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'static' | 'reveal' | 'message' | 'final'>('static');
   const [textLines, setTextLines] = useState<string[]>([]);
   const hasRecordedEnding = useRef(false);
@@ -133,14 +135,14 @@ export default function SecretEnding({
       {phase === 'static' && (
         <div className={styles.staticContent}>
           <div className={styles.staticNoise} />
-          <div className={styles.staticText}>DECRYPTING CLASSIFIED FILE...</div>
+          <div className={styles.staticText}>{translateRuntimeText('DECRYPTING CLASSIFIED FILE...')}</div>
         </div>
       )}
 
       {phase === 'reveal' && (
         <div className={styles.revealContent}>
           <div className={styles.revealIcon}>👁️</div>
-          <div className={styles.revealText}>IDENTITY CONFIRMED</div>
+          <div className={styles.revealText}>{translateRuntimeText('IDENTITY CONFIRMED')}</div>
           <div className={styles.revealSub}>UFO74 = C.E.F.</div>
         </div>
       )}
@@ -164,7 +166,7 @@ export default function SecretEnding({
                           : styles.textLine
               }
             >
-              {line}
+              {translateRuntimeText(line)}
             </div>
           ))}
         </div>
@@ -172,13 +174,13 @@ export default function SecretEnding({
 
       {phase === 'final' && (
         <div className={styles.restartSection}>
-          <div className={styles.secretBadge}>🏆 SECRET ENDING UNLOCKED</div>
+          <div className={styles.secretBadge}>{t('ending.secretUnlocked')}</div>
           <button
             className={styles.restartButton}
             onClick={onRestartAction}
-            aria-label="Return to menu - restart game"
+            aria-label={translateRuntimeText('Return to menu - restart game')}
           >
-            [ RETURN TO MENU ]
+            {t('ending.returnToMenu')}
           </button>
         </div>
       )}

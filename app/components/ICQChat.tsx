@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useI18n } from '../i18n';
 import styles from './ICQChat.module.css';
 
 interface ICQMessage {
@@ -38,6 +39,7 @@ export default function ICQChat({
   onLeakChoice,
   onFilesSent,
 }: ICQChatProps) {
+  const { t, translateRuntimeText } = useI18n();
   const [messages, setMessages] = useState<ICQMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [phase, setPhase] = useState<
@@ -92,6 +94,9 @@ export default function ICQChat({
       return next;
     });
   };
+
+  const includesAny = (text: string, terms: string[]): boolean =>
+    terms.some(term => text.includes(term));
 
   // Initial intro sequence
   useEffect(() => {
@@ -156,18 +161,15 @@ export default function ICQChat({
   const handleScaredPhase = async (playerText: string) => {
     const lower = playerText.toLowerCase();
 
-    if (
-      lower.includes('help') ||
-      lower.includes('need') ||
-      lower.includes('urgent') ||
-      lower.includes('important')
-    ) {
+    if (includesAny(lower, ['help', 'need', 'urgent', 'important', 'ajuda', 'preciso', 'ayuda', 'necesito'])) {
       await addTeenMessage('dude i dont know who u r', 1200);
       await addTeenMessage('my mom said not to talk to strangers online', 1500);
       await addTeenMessage('what do u want???', 1000);
       adjustTrust(6);
       setPhase('bargain');
-    } else if (lower.includes('file') || lower.includes('document') || lower.includes('evidence')) {
+    } else if (
+      includesAny(lower, ['file', 'document', 'evidence', 'arquivo', 'documento', 'evidencia', 'archivo'])
+    ) {
       await addTeenMessage('file??? what file??', 1200);
       await addTeenMessage('r u a hacker??? omg', 1500);
       await addTeenMessage('im gonna disconnect', 1000);
@@ -186,15 +188,24 @@ export default function ICQChat({
   const handleBargainPhase = async (playerText: string) => {
     const lower = playerText.toLowerCase();
 
-    if (
-      lower.includes('save') ||
-      lower.includes('store') ||
-      lower.includes('floppy') ||
-      lower.includes('disk') ||
-      lower.includes('cd') ||
-      lower.includes('file') ||
-      lower.includes('backup')
-    ) {
+    if (includesAny(lower, [
+      'save',
+      'store',
+      'floppy',
+      'disk',
+      'cd',
+      'file',
+      'backup',
+      'salvar',
+      'guardar',
+      'disquete',
+      'disco',
+      'respaldo',
+      'copia',
+      'cópia',
+      'archivo',
+      'arquivo'
+    ])) {
       await addTeenMessage('hmmmm', 1000);
       await addTeenMessage('let me think...', 1500);
       await addTeenMessage('ok ill do it', 2000);
@@ -214,20 +225,14 @@ export default function ICQChat({
       await addTeenMessage(`ok first question:`, 1000);
       await addTeenMessage(`${MATH_QUESTIONS[0].equation}`, 1200);
       await addTeenMessage(`what is x?`, 800);
-    } else if (
-      lower.includes('government') ||
-      lower.includes('et') ||
-      lower.includes('alien') ||
-      lower.includes('ufo') ||
-      lower.includes('varginha')
-    ) {
+    } else if (includesAny(lower, ['government', 'et', 'alien', 'ufo', 'varginha', 'governo', 'gobierno'])) {
       await addTeenMessage('LOLOLOLOL', 1000);
       await addTeenMessage('aliens??? r u joking', 1500);
       await addTeenMessage('my uncle talks about that stuff', 1200);
       await addTeenMessage('but maybe its true idk', 1500);
       await addTeenMessage('what do u want me to do?', 1000);
       adjustTrust(-2);
-    } else if (lower.includes('please')) {
+    } else if (includesAny(lower, ['please', 'por favor'])) {
       await addTeenMessage('hmm ur asking nicely', 1200);
       await addTeenMessage('what exactly do u want?', 1000);
       adjustTrust(2);
@@ -301,14 +306,14 @@ export default function ICQChat({
 
   const handleLeakPhase = async (playerText: string) => {
     const lower = playerText.toLowerCase();
-    if (lower.includes('public')) {
+    if (includesAny(lower, ['public', 'publico', 'público', 'abierto', 'aberta', 'aberto'])) {
       onLeakChoice('public');
       await addTeenMessage('ok ok posting it on open forums', 1200);
       await addTeenMessage('this is gonna get wild', 1200);
       await finalizeTransfer();
       return;
     }
-    if (lower.includes('covert') || lower.includes('quiet') || lower.includes('private')) {
+    if (includesAny(lower, ['covert', 'quiet', 'private', 'silencioso', 'discreto', 'discreta', 'privado', 'reservado'])) {
       onLeakChoice('covert');
       await addTeenMessage('got it. quiet drop to my trusted list', 1200);
       await addTeenMessage('no big splash, just copies', 1200);
@@ -366,7 +371,7 @@ export default function ICQChat({
         <div className={styles.avatar}>👦</div>
         <div className={styles.contactInfo}>
           <div className={styles.contactName}>xXx_DarkMaster_xXx</div>
-          <div className={styles.contactStatus}>🟢 Online</div>
+          <div className={styles.contactStatus}>🟢 {t('icq.online')}</div>
         </div>
       </div>
 
@@ -377,24 +382,24 @@ export default function ICQChat({
         role="log"
         aria-live="polite"
         aria-relevant="additions"
-        aria-label="ICQ chat log"
+        aria-label={t('icq.chat.aria')}
       >
         {messages.map((msg, index) => (
           <div key={index} className={`${styles.message} ${styles[msg.sender]}`}>
             {msg.sender === 'system' ? (
-              <div className={styles.systemMessage}>{msg.text}</div>
+              <div className={styles.systemMessage}>{translateRuntimeText(msg.text)}</div>
             ) : (
               <>
                 <span className={styles.messageTime}>{msg.timestamp}</span>
                 <span className={styles.messageSender}>
-                  {msg.sender === 'teen' ? 'xXx_DarkMaster_xXx' : 'Você'}:
+                  {msg.sender === 'teen' ? 'xXx_DarkMaster_xXx' : t('icq.you')}:
                 </span>
-                <span className={styles.messageText}>{msg.text}</span>
+                <span className={styles.messageText}>{translateRuntimeText(msg.text)}</span>
               </>
             )}
           </div>
         ))}
-        {isTyping && <div className={styles.typing}>xXx_DarkMaster_xXx está digitando...</div>}
+        {isTyping && <div className={styles.typing}>{t('icq.typing')}</div>}
       </div>
 
       {/* Input Area */}
@@ -405,26 +410,26 @@ export default function ICQChat({
             type="text"
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
-            placeholder={phase === 'victory' ? 'Missão completa!' : 'Digite sua mensagem...'}
+            placeholder={phase === 'victory' ? t('icq.placeholder.done') : t('icq.placeholder.default')}
             disabled={isTyping || phase === 'victory' || phase === 'sending'}
             className={styles.input}
-            aria-label="ICQ message input"
+            aria-label={t('icq.input.aria')}
           />
           <button
             type="submit"
             className={styles.sendButton}
             disabled={isTyping || phase === 'victory' || phase === 'sending'}
           >
-            Enviar
+            {t('icq.send')}
           </button>
         </form>
       </div>
 
       {/* Status Bar */}
       <div className={styles.statusBar}>
-        <span>Conectado via modem 56k</span>
+        <span>{t('icq.status.connected')}</span>
         <span>|</span>
-        <span>{phase === 'math' ? `Questão ${currentQuestion + 1}/3` : 'ICQ 99a'}</span>
+        <span>{phase === 'math' ? t('icq.status.question', { current: currentQuestion + 1 }) : 'ICQ 99a'}</span>
       </div>
     </div>
   );

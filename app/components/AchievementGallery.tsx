@@ -2,6 +2,7 @@
 
 import React, { memo } from 'react';
 import { ACHIEVEMENTS, getUnlockedAchievements } from '../engine/achievements';
+import { useI18n } from '../i18n';
 import styles from './AchievementGallery.module.css';
 
 interface AchievementGalleryProps {
@@ -9,6 +10,7 @@ interface AchievementGalleryProps {
 }
 
 export default memo(function AchievementGallery({ onCloseAction }: AchievementGalleryProps) {
+  const { t, translateRuntimeText } = useI18n();
   const unlockedIds = getUnlockedAchievements();
 
   const visibleAchievements = ACHIEVEMENTS.map(achievement => {
@@ -18,8 +20,10 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
     return {
       ...achievement,
       isUnlocked,
-      displayName: isSecret ? '???' : achievement.name,
-      displayDescription: isSecret ? 'Secret achievement' : achievement.description,
+      displayName: isSecret ? t('achievement.gallery.secretName') : translateRuntimeText(achievement.name),
+      displayDescription: isSecret
+        ? t('achievement.gallery.secretDescription')
+        : translateRuntimeText(achievement.description),
       displayIcon: isSecret ? '🔒' : achievement.icon,
     };
   });
@@ -31,10 +35,10 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
     <div className={styles.overlay} onClick={onCloseAction}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>ACHIEVEMENTS</h2>
+          <h2>{t('achievement.gallery.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
           <div className={styles.progress}>
-            {unlockedCount} / {totalCount} Unlocked
+            {t('achievement.gallery.progress', { unlocked: unlockedCount, total: totalCount })}
           </div>
         </div>
 
@@ -62,7 +66,7 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
             onMouseDown={e => e.preventDefault()}
             onClick={onCloseAction}
           >
-            [ CLOSE ]
+            {t('achievement.gallery.close')}
           </button>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import React, { useEffect, useCallback, useRef, memo } from 'react';
 import { FirewallEye } from '../types';
 import { uiRandom, uiRandomPick } from '../engine/rng';
+import { useI18n } from '../i18n';
 import styles from './FirewallEyes.module.css';
 
 // Configuration
@@ -59,9 +60,11 @@ interface SingleEyeProps {
   eye: FirewallEye;
   now: number;
   onEyeClick: (eyeId: string, e: React.MouseEvent) => void;
+  ariaLabel: string;
+  titleLabel: string;
 }
 
-const SingleEye = memo(function SingleEye({ eye, now, onEyeClick }: SingleEyeProps) {
+const SingleEye = memo(function SingleEye({ eye, now, onEyeClick, ariaLabel, titleLabel }: SingleEyeProps) {
   const timeUntilDetonate = eye.detonateTime - now;
   const isWarning = timeUntilDetonate <= EYE_WARNING_MS && timeUntilDetonate > 0;
   const isCritical = timeUntilDetonate <= 1000 && timeUntilDetonate > 0;
@@ -75,8 +78,8 @@ const SingleEye = memo(function SingleEye({ eye, now, onEyeClick }: SingleEyePro
         top: `${eye.y}%`,
       }}
       onClick={e => onEyeClick(eye.id, e)}
-      aria-label="Click to neutralize surveillance eye"
-      title="CLICK TO NEUTRALIZE"
+      aria-label={ariaLabel}
+      title={titleLabel}
     >
       <div className={styles.eyeInner}>
         <div className={styles.eyePupil} />
@@ -105,6 +108,7 @@ function FirewallEyesComponent({
   onPauseChanged,
   onTutorialShown,
 }: FirewallEyesProps) {
+  const { t } = useI18n();
   const detonationTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const spawnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pauseStartTimeRef = useRef<number | null>(null); // Track when pause started for time adjustment
@@ -280,17 +284,17 @@ function FirewallEyesComponent({
         <div className={styles.tutorialOverlay}>
           <div className={styles.tutorialPopup}>
             <div className={styles.tutorialHeader}>
-              ⚠️ UFO74
+              {t('firewall.tutorial.header')}
             </div>
             <div className={styles.tutorialMessage}>
-              Firewall FOUND US, kid! Click on those eyes to remove them — we need to buy some time.
+              {t('firewall.tutorial.message')}
             </div>
             <button 
               className={styles.tutorialButton}
               onClick={handleTutorialDismiss}
               autoFocus
             >
-              GOT IT
+              {t('firewall.tutorial.button')}
             </button>
           </div>
         </div>
@@ -303,6 +307,8 @@ function FirewallEyesComponent({
           eye={eye}
           now={now}
           onEyeClick={handleEyeClick}
+          ariaLabel={t('firewall.eye.aria')}
+          titleLabel={t('firewall.eye.title')}
         />
       ))}
     </div>

@@ -5,6 +5,7 @@ import styles from './Victory.module.css';
 import { unlockAchievement, Achievement } from '../engine/achievements';
 import { recordEnding } from '../storage/statistics';
 import AchievementPopup from './AchievementPopup';
+import { useI18n } from '../i18n';
 import {
   EndingFlags,
   EndingVariant,
@@ -354,6 +355,7 @@ export default function Victory({
   prisoner46Released = false,
   neuralLinkAuthenticated = false,
 }: VictoryProps) {
+  const { t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'intro' | 'message' | 'credits'>('intro');
   const [textLines, setTextLines] = useState<string[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -541,7 +543,7 @@ export default function Victory({
                             : styles.textLine
               }
             >
-              {line}
+              {translateRuntimeText(line)}
             </div>
           ))}
         </div>
@@ -550,10 +552,10 @@ export default function Victory({
       {phase === 'credits' && (
         <div className={styles.credits}>
           <button className={styles.restartButton} onClick={onRestartAction}>
-            [ PLAY AGAIN ]
+            {t('ending.playAgain')}
           </button>
           <div className={styles.creditText}>VARGINHA: TERMINAL 1996</div>
-          <div className={styles.endingType}>{endingTitle}</div>
+          <div className={styles.endingType}>{translateRuntimeText(endingTitle)}</div>
         </div>
       )}
 

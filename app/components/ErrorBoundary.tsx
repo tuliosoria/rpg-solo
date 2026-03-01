@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { translateStatic } from '../i18n';
 import styles from './ErrorBoundary.module.css';
 
 interface Props {
@@ -65,17 +66,17 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className={styles.glitchLines} />
             <h1 className={styles.title}>
               <span className={styles.errorCode}>ERROR 0x74494E</span>
-              CRITICAL SYSTEM FAILURE
+              {translateStatic('errorBoundary.title')}
             </h1>
             <div className={styles.message}>
-              <p>An unexpected error has occurred in the terminal session.</p>
+              <p>{translateStatic('errorBoundary.message')}</p>
               <p className={styles.subtext}>
-                The system encountered a critical fault and must restart.
+                {translateStatic('errorBoundary.subtext')}
               </p>
             </div>
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className={styles.details}>
-                <summary>Technical Details</summary>
+                <summary>{translateStatic('errorBoundary.details')}</summary>
                 <pre className={styles.errorStack}>
                   {this.state.error.toString()}
                   {this.state.errorInfo?.componentStack}
@@ -84,10 +85,10 @@ export class ErrorBoundary extends Component<Props, State> {
             )}
             <div className={styles.actions}>
               <button onClick={this.handleReturnToMenu} className={styles.button}>
-                Return to Main Menu
+                {translateStatic('errorBoundary.return')}
               </button>
               <button onClick={this.handleReload} className={styles.buttonSecondary}>
-                Force Reload
+                {translateStatic('errorBoundary.reload')}
               </button>
             </div>
           </div>

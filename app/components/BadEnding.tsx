@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './BadEnding.module.css';
 import { recordEnding } from '../storage/statistics';
+import { useI18n } from '../i18n';
 
 interface BadEndingProps {
   onRestartAction: () => void;
@@ -17,6 +18,7 @@ export default function BadEnding({
   commandCount = 0,
   detectionLevel = 100,
 }: BadEndingProps) {
+  const { t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'glitch' | 'lockdown' | 'message' | 'final'>('glitch');
   const [textLines, setTextLines] = useState<string[]>([]);
   const hasRecordedEnding = useRef(false);
@@ -107,14 +109,14 @@ export default function BadEnding({
 
       {phase === 'glitch' && (
         <div className={styles.glitchContent}>
-          <div className={styles.glitchText}>CONNECTION LOST</div>
+          <div className={styles.glitchText}>{translateRuntimeText('CONNECTION LOST')}</div>
         </div>
       )}
 
       {phase === 'lockdown' && (
         <div className={styles.lockdownContent}>
           <div className={styles.lockdownIcon}>🔒</div>
-          <div className={styles.lockdownText}>SECURITY LOCKDOWN</div>
+          <div className={styles.lockdownText}>{translateRuntimeText('SECURITY LOCKDOWN')}</div>
         </div>
       )}
 
@@ -137,7 +139,7 @@ export default function BadEnding({
                           : styles.textLine
               }
             >
-              {line}
+              {translateRuntimeText(line)}
             </div>
           ))}
         </div>
@@ -145,12 +147,12 @@ export default function BadEnding({
 
       {phase === 'final' && (
         <div className={styles.restartSection}>
-          <button
-            className={styles.restartButton}
-            onClick={onRestartAction}
-            aria-label="Try again - restart game"
-          >
-            [ TRY AGAIN ]
+            <button
+              className={styles.restartButton}
+              onClick={onRestartAction}
+              aria-label={translateRuntimeText('Try again - restart game')}
+            >
+            {t('ending.tryAgain')}
           </button>
         </div>
       )}

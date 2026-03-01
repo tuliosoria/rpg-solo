@@ -9,6 +9,7 @@ import TypewriterText, { isTypableUfo74Content } from './TypewriterText';
 import { loadCheckpoint, saveCheckpoint } from '../storage/saves';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
+import { useI18n, translateStatic } from '../i18n';
 import {
   MAX_WRONG_ATTEMPTS,
   SUSPICIOUS_TYPING_SPEED,
@@ -43,7 +44,7 @@ const ICQChat = dynamic(() => import('./ICQChat'), {
   ssr: false,
   loading: () => (
     <div style={{ width: '100%', height: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
-      CONNECTING TO ICQ...
+      {translateStatic('terminal.loading.icq')}
     </div>
   ),
 });
@@ -101,6 +102,7 @@ export default function Terminal({
   onSaveRequestAction,
   onLoadCheckpointAction,
 }: TerminalProps) {
+  const { t, translateRuntimeText } = useI18n();
   const initialPhase = deriveGamePhase(initialState);
   const {
     gameState,
@@ -644,34 +646,34 @@ export default function Terminal({
     const parts: string[] = [];
 
     if (gameState.detectionLevel >= DETECTION_THRESHOLDS.SUSPICIOUS) {
-      parts.push('AUDIT: ACTIVE');
+      parts.push(t('terminal.status.auditActive'));
     }
     if (gameState.sessionStability < 50) {
-      parts.push('SESSION: UNSTABLE');
+      parts.push(t('terminal.status.sessionUnstable'));
     }
     if (gameState.flags.adminUnlocked) {
-      parts.push('ACCESS: ADMIN');
+      parts.push(t('terminal.status.accessAdmin'));
     }
     if (gameState.paranoiaLevel >= 40) {
-      parts.push('PARANOIA: ELEVATED');
+      parts.push(t('terminal.status.paranoiaElevated'));
     } else if (gameState.paranoiaLevel >= 15) {
-      parts.push('PARANOIA: ACTIVE');
+      parts.push(t('terminal.status.paranoiaActive'));
     }
     if (gameState.isGameOver) {
-      parts.push(gameState.gameOverReason || 'TERMINATED');
+      parts.push(translateRuntimeText(gameState.gameOverReason || t('terminal.status.terminated')));
     }
 
-    return parts.join(' │ ') || 'SYSTEM NOMINAL';
+    return parts.join(' │ ') || t('terminal.status.systemNominal');
   };
 
   // Get save indicator text
   const getSaveIndicator = () => {
     if (!gameState.lastSaveTime) return null;
     const elapsed = Math.floor((Date.now() - gameState.lastSaveTime) / 60000);
-    if (elapsed < 1) return 'Saved: <1m ago';
-    if (elapsed < 60) return `Saved: ${elapsed}m ago`;
+    if (elapsed < 1) return t('terminal.save.justNow');
+    if (elapsed < 60) return t('terminal.save.minutes', { value: elapsed });
     const hours = Math.floor(elapsed / 60);
-    return `Saved: ${hours}h ago`;
+    return t('terminal.save.hours', { value: hours });
   };
 
   // Get evidence symbol for a category
@@ -695,11 +697,11 @@ export default function Terminal({
   const getRiskLevel = () => {
     const detection = gameState.detectionLevel;
     const percent = `${detection}%`;
-    if (detection >= 80) return { level: `CRITICAL ${percent}`, color: 'critical' };
-    if (detection >= 60) return { level: `HIGH ${percent}`, color: 'high' };
-    if (detection >= 40) return { level: `ELEVATED ${percent}`, color: 'elevated' };
-    if (detection >= 20) return { level: `LOW ${percent}`, color: 'low' };
-    return { level: `MINIMAL ${percent}`, color: 'minimal' };
+    if (detection >= 80) return { level: t('terminal.risk.critical', { percent }), color: 'critical' };
+    if (detection >= 60) return { level: t('terminal.risk.high', { percent }), color: 'high' };
+    if (detection >= 40) return { level: t('terminal.risk.elevated', { percent }), color: 'elevated' };
+    if (detection >= 20) return { level: t('terminal.risk.low', { percent }), color: 'low' };
+    return { level: t('terminal.risk.minimal', { percent }), color: 'minimal' };
   };
 
   // Get invalid attempts display (shows attempts made, not remaining)
@@ -734,7 +736,7 @@ export default function Terminal({
       }
       // Add the redacted part with special styling (use match.index for stable key)
       parts.push(
-        <span key={`redact-${match.index}`} className={styles.redacted} title="CLASSIFIED">
+        <span key={`redact-${match.index}`} className={styles.redacted} title={t('terminal.redaction.classified')}>
           {match[0]}
         </span>
       );
@@ -790,6 +792,7 @@ export default function Terminal({
 
   const renderEntry = (entry: TerminalEntry) => {
     let className = styles.line;
+    const entryContent = entry.type === 'input' ? entry.content : translateRuntimeText(entry.content);
 
     switch (entry.type) {
       case 'input':
@@ -822,7 +825,7 @@ export default function Terminal({
         return (
           <div key={entry.id} className={className}>
             <TypewriterText
-              text={entry.content}
+              text={entryContent}
               speed={30}
               onComplete={handleTypingComplete}
               onTick={handleTypingTick}
@@ -839,7 +842,7 @@ export default function Terminal({
 
     return (
       <div key={entry.id} className={className}>
-        {entry.type === 'ufo74' ? renderCommandHighlights(entry.content) : renderTextWithRedactions(entry.content)}
+        {entry.type === 'ufo74' ? renderCommandHighlights(entryContent) : renderTextWithRedactions(entryContent)}
       </div>
     );
   };
@@ -932,7 +935,7 @@ export default function Terminal({
                 className={styles.burnInLine}
                 style={{ opacity: 0.02 * (burnInLines.length - i) }}
               >
-                {line}
+                {translateRuntimeText(line)}
               </div>
             ))}
           </div>
@@ -944,7 +947,7 @@ export default function Terminal({
             className={styles.paranoiaMessage}
             style={{ top: paranoiaPosition.top, left: paranoiaPosition.left }}
           >
-            {paranoiaMessage}
+            {translateRuntimeText(paranoiaMessage)}
           </div>
         )}
 
@@ -980,7 +983,7 @@ export default function Terminal({
         {countdownDisplay && (
           <FloatingElement id="countdown-timer" zone="top-center" priority={1} baseOffset={80}>
             <div className={styles.countdownTimerContent}>
-              <span className={styles.countdownLabel}>⚠️ TRACE ACTIVE</span>
+              <span className={styles.countdownLabel}>{t('terminal.timer.traceActive')}</span>
               <span className={styles.countdownTime}>{countdownDisplay}</span>
             </div>
           </FloatingElement>
@@ -1002,13 +1005,13 @@ export default function Terminal({
               }
             }}
           >
-            VARGINHA: TERMINAL 1996 ▼
+            {t('terminal.header.title')} ▼
           </span>
           {/* ESC button */}
           <button
             className={styles.escButton}
             onClick={() => setShowPauseMenu(true)}
-            title="Pause Menu (ESC)"
+            title={t('terminal.pause.title')}
           >
             ESC
           </button>
@@ -1028,7 +1031,7 @@ export default function Terminal({
                   setTimeout(focusTerminalInput, 0);
                 }}
               >
-                💾 SAVE SESSION
+                {t('terminal.menu.save')}
               </button>
               <button
                 className={styles.menuItem}
@@ -1039,7 +1042,7 @@ export default function Terminal({
                   onExitAction();
                 }}
               >
-                📂 LOAD SESSION
+                {t('terminal.menu.load')}
               </button>
               <button
                 className={styles.menuItem}
@@ -1050,7 +1053,7 @@ export default function Terminal({
                   setShowHeaderMenu(false);
                 }}
               >
-                ⚙️ SETTINGS
+                {t('terminal.menu.settings')}
               </button>
               <button
                 className={styles.menuItem}
@@ -1062,7 +1065,7 @@ export default function Terminal({
                   setTimeout(focusTerminalInput, 0);
                 }}
               >
-                🏆 ACHIEVEMENTS
+                {t('terminal.menu.achievements')}
               </button>
               <button
                 className={styles.menuItem}
@@ -1074,7 +1077,7 @@ export default function Terminal({
                   setTimeout(focusTerminalInput, 0);
                 }}
               >
-                📊 STATISTICS
+                {t('terminal.menu.statistics')}
               </button>
               <button
                 className={styles.menuItem}
@@ -1085,7 +1088,7 @@ export default function Terminal({
                   onExitAction();
                 }}
               >
-                🚪 RETURN TO MENU
+                {t('terminal.menu.return')}
               </button>
             </div>
           )}
@@ -1096,42 +1099,42 @@ export default function Terminal({
           <div
             className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}
           >
-            <span className={styles.trackerLabel}>EVIDENCE:</span>
+            <span className={styles.trackerLabel}>{t('terminal.tracker.evidence')}</span>
             <span
               className={getEvidenceClass('debris_relocation')}
-              title="Physical debris/materials recovered"
+              title={t('terminal.tracker.tooltip.recovered')}
             >
-              {getEvidenceSymbol('debris_relocation')} RECOVERED
+              {getEvidenceSymbol('debris_relocation')} {t('terminal.tracker.recovered')}
             </span>
             <span
               className={getEvidenceClass('being_containment')}
-              title="Beings/specimens captured"
+              title={t('terminal.tracker.tooltip.captured')}
             >
-              {getEvidenceSymbol('being_containment')} CAPTURED
+              {getEvidenceSymbol('being_containment')} {t('terminal.tracker.captured')}
             </span>
             <span
               className={getEvidenceClass('telepathic_scouts')}
-              title="Communication/telepathy evidence"
+              title={t('terminal.tracker.tooltip.signals')}
             >
-              {getEvidenceSymbol('telepathic_scouts')} SIGNALS
+              {getEvidenceSymbol('telepathic_scouts')} {t('terminal.tracker.signals')}
             </span>
             <span
               className={getEvidenceClass('international_actors')}
-              title="International involvement"
+              title={t('terminal.tracker.tooltip.foreign')}
             >
-              {getEvidenceSymbol('international_actors')} FOREIGN
+              {getEvidenceSymbol('international_actors')} {t('terminal.tracker.foreign')}
             </span>
             <span
               className={getEvidenceClass('transition_2026')}
-              title="Future plans/timeline window"
+              title={t('terminal.tracker.tooltip.next')}
             >
-              {getEvidenceSymbol('transition_2026')} NEXT
+              {getEvidenceSymbol('transition_2026')} {t('terminal.tracker.next')}
             </span>
             <span className={styles.truthCount}>[{getDiscoveredCount()}/5]</span>
           </div>
           <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
             <span className={`${styles.riskItem} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}>
-              <span className={styles.trackerLabel}>RISK:</span>
+              <span className={styles.trackerLabel}>{t('terminal.tracker.risk')}</span>
               <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
                 {riskInfo.level}
               </span>
@@ -1152,11 +1155,11 @@ export default function Terminal({
         >
           {gameState.history.map(renderEntry)}
           {isProcessing && (
-            <div className={`${styles.line} ${styles.processing}`}>Processing...</div>
+            <div className={`${styles.line} ${styles.processing}`}>{t('terminal.processing')}</div>
           )}
           {/* Blinking enter prompt at end of text when in enter-only mode */}
           {!isProcessing && isEnterOnlyMode && !gameState.isGameOver && (
-            <div className={styles.enterHintInline}>Press Enter ↵ to proceed</div>
+            <div className={styles.enterHintInline}>{t('terminal.enter.proceed')}</div>
           )}
         </div>
 
@@ -1183,12 +1186,12 @@ export default function Terminal({
               >
                 <span className={styles.enterPromptText}>
                   {encryptedChannelState === 'awaiting_close'
-                    ? 'Press Enter ↵ to close'
+                    ? t('terminal.enter.close')
                     : encryptedChannelState !== 'idle'
-                      ? 'Press Enter ↵ to respond'
+                      ? t('terminal.enter.respond')
                       : pendingImage || pendingVideo
-                        ? 'Press Enter ↵ to view'
-                        : 'Press Enter ↵ to continue'}
+                        ? t('terminal.enter.view')
+                        : t('terminal.enter.continue')}
                 </span>
               </button>
             </div>
@@ -1200,7 +1203,7 @@ export default function Terminal({
               ref={inputRef}
               type="text"
               value={inputValue}
-              aria-label="Terminal command input"
+              aria-label={t('terminal.input.aria')}
               onChange={e => {
                 const newValue = e.target.value;
                 setInputValue(newValue);
@@ -1248,7 +1251,7 @@ export default function Terminal({
             <span className={styles.cursor}>_</span>
             {/* Typing speed warning - inline within input area to prevent overlap */}
             {typingSpeedWarning && (
-              <span className={styles.typingWarningInline}>SUSPICIOUS TYPING PATTERN DETECTED</span>
+              <span className={styles.typingWarningInline}>{t('terminal.typing.warning')}</span>
             )}
           </form>
         )}
@@ -1257,9 +1260,11 @@ export default function Terminal({
         {gameState.timedDecryptActive && timedDecryptRemaining > 0 && (
           <FloatingElement id="timed-decrypt-timer" zone="top-right" priority={1} baseOffset={130}>
             <div className={styles.timedDecryptTimerContent}>
-              <div className={styles.timerLabel}>DECRYPTION WINDOW</div>
+              <div className={styles.timerLabel}>{t('terminal.timer.decryptWindow')}</div>
               <div className={styles.timerValue}>{(timedDecryptRemaining / 1000).toFixed(1)}s</div>
-              <div className={styles.timerSequence}>Sequence: {gameState.timedDecryptSequence}</div>
+              <div className={styles.timerSequence}>
+                {t('terminal.timer.sequence', { value: gameState.timedDecryptSequence })}
+              </div>
             </div>
           </FloatingElement>
         )}
@@ -1288,7 +1293,7 @@ export default function Terminal({
               // Add "Media recovered" message to terminal
               const recoveredMessage = createEntry(
                 'system',
-                '[SYSTEM: Media recovered. Visual data archived to session log.]'
+                t('terminal.system.mediaRecoveredVisual')
               );
 
               // Collect all UFO74 messages to show after image closes
@@ -1332,7 +1337,7 @@ export default function Terminal({
               // Add "Media recovered" message to terminal
               const recoveredMessage = createEntry(
                 'system',
-                '[SYSTEM: Media recovered. Video data archived to session log.]'
+                t('terminal.system.mediaRecoveredVideo')
               );
 
               // Check for queued UFO74 messages from the command result
@@ -1362,7 +1367,7 @@ export default function Terminal({
               <div className={styles.firewallScareIris} />
               <div className={styles.firewallScarePupil} />
             </div>
-            <div className={styles.firewallScareText}>I SEE YOU</div>
+            <div className={styles.firewallScareText}>{t('terminal.firewall.scare')}</div>
           </div>
         )}
 
@@ -1377,12 +1382,12 @@ export default function Terminal({
                 // Turing test passed
                 const passedMessages = [
                   createEntry('system', ''),
-                  createEntry('notice', '  TURING EVALUATION: PASSED'),
-                  createEntry('notice', '  SUBJECT IS NOT HUMAN, NOT A THREAT'),
-                  createEntry('notice', '  Identity verified as authorized terminal process.'),
+                  createEntry('notice', t('terminal.turing.passed.header')),
+                  createEntry('notice', t('terminal.turing.passed.line1')),
+                  createEntry('notice', t('terminal.turing.passed.line2')),
                   createEntry('system', ''),
-                  createEntry('ufo74', 'UFO74: nice work, kid. you fooled the machine.'),
-                  createEntry('ufo74', 'UFO74: keep digging.'),
+                  createEntry('ufo74', t('terminal.turing.passed.ufo1')),
+                  createEntry('ufo74', t('terminal.turing.passed.ufo2')),
                   createEntry('system', ''),
                 ];
                 setGameState(prev => ({
@@ -1397,9 +1402,9 @@ export default function Terminal({
                 // Turing test failed - game over
                 const failedMessages = [
                   createEntry('system', ''),
-                  createEntry('error', '  TURING EVALUATION: FAILED'),
-                  createEntry('error', '  Human behavioral patterns detected.'),
-                  createEntry('error', '  TERMINATING SESSION.'),
+                  createEntry('error', t('terminal.turing.failed.header')),
+                  createEntry('error', t('terminal.turing.failed.line1')),
+                  createEntry('error', t('terminal.turing.failed.line2')),
                   createEntry('system', ''),
                 ];
                 setGameState(prev => ({
@@ -1407,12 +1412,12 @@ export default function Terminal({
                   history: [...prev.history, ...failedMessages],
                   turingEvaluationActive: false,
                   isGameOver: true,
-                  gameOverReason: 'TURING EVALUATION FAILED',
+                  gameOverReason: t('terminal.turing.failed.reason'),
                   endingType: 'bad',
                 }));
                 playSound('error');
                 setTimeout(() => {
-                  setGameOverReason('TURING EVALUATION FAILED');
+                  setGameOverReason(t('terminal.turing.failed.reason'));
                   setShowGameOver(true);
                 }, GAME_OVER_DELAY_MS);
               }

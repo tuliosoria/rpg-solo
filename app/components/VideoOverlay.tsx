@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styles from './VideoOverlay.module.css';
 import type { VideoTrigger, ImageTone } from '../types';
 import { uiChance, uiRandomInt } from '../engine/rng';
+import { useI18n } from '../i18n';
 
 // Re-export for convenience
 export type { VideoTrigger };
@@ -23,6 +24,7 @@ export default function VideoOverlay({
   onCloseAction,
   corrupted = false,
 }: VideoOverlayProps) {
+  const { t } = useI18n();
   const [visible, setVisible] = useState(false);
   const [flickering, setFlickering] = useState(true);
   const [initialShock, setInitialShock] = useState(true);
@@ -80,21 +82,21 @@ export default function VideoOverlay({
       } else {
         try {
           const playPromise = videoRef.current.play();
-          if (playPromise && typeof playPromise.catch === 'function') {
-            playPromise.catch(() => {
-              setError('PLAYBACK BLOCKED - USER ACTION REQUIRED');
-              setIsLoading(false);
-              setIsPlaying(false);
-            });
-          }
-        } catch {
-          setError('PLAYBACK BLOCKED - USER ACTION REQUIRED');
+            if (playPromise && typeof playPromise.catch === 'function') {
+              playPromise.catch(() => {
+                setError(t('videoOverlay.error.playbackBlocked'));
+                setIsLoading(false);
+                setIsPlaying(false);
+              });
+            }
+          } catch {
+          setError(t('videoOverlay.error.playbackBlocked'));
           setIsLoading(false);
           setIsPlaying(false);
         }
       }
     }
-  }, [isPlaying]);
+  }, [isPlaying, t]);
 
   // Close on escape key
   useEffect(() => {
@@ -144,9 +146,9 @@ export default function VideoOverlay({
   }, []);
 
   const handleError = useCallback(() => {
-    setError('VIDEO DATA CORRUPTED - RETRIEVAL FAILED');
+    setError(t('videoOverlay.error.corrupted'));
     setIsLoading(false);
-  }, []);
+  }, [t]);
 
   const handleProgressClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -170,7 +172,7 @@ export default function VideoOverlay({
       className={`${styles.overlay} ${flickering ? styles.flickering : ''} ${initialShock ? styles.initialShock : ''}`}
       role="dialog"
       aria-modal="true"
-      aria-label={`Recovered video: ${title}`}
+      aria-label={t('videoOverlay.aria', { value: title })}
       onClick={e => {
         if (e.target === e.currentTarget) {
           onCloseAction();
@@ -189,7 +191,7 @@ export default function VideoOverlay({
         {/* Header */}
         <div className={styles.header}>
           <span className={styles.headerText}>
-            {corrupted ? '▓▓▓ PARTIAL VIDEO RECOVERY ▓▓▓' : '═══ RECOVERED VIDEO DATA ═══'}
+            {corrupted ? t('videoOverlay.header.partial') : t('videoOverlay.header.full')}
           </span>
         </div>
 
@@ -237,7 +239,7 @@ export default function VideoOverlay({
               className={styles.playButton}
               onClick={togglePlayPause}
               disabled={isLoading}
-              aria-label={isPlaying ? 'Pause' : 'Play'}
+              aria-label={isPlaying ? t('videoOverlay.button.pause') : t('videoOverlay.button.play')}
             >
               {isLoading ? '...' : isPlaying ? '║║' : '▶'}
             </button>
@@ -256,9 +258,9 @@ export default function VideoOverlay({
 
         {/* Metadata */}
         <div className={styles.metadata}>
-          <div>CLASSIFICATION: RESTRICTED</div>
-          <div>FILE: {title}</div>
-          <div className={styles.hint}>[SPACE] Play/Pause • [ESC] Close</div>
+          <div>{t('videoOverlay.classification')}</div>
+          <div>{t('videoOverlay.fileLabel')}: {title}</div>
+          <div className={styles.hint}>{t('videoOverlay.hint')}</div>
         </div>
       </div>
     </div>

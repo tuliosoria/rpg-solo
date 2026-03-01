@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useCallback } from 'react';
+import { useI18n } from '../i18n';
 import styles from './TutorialSkipPopup.module.css';
 
 interface TutorialSkipPopupProps {
@@ -12,6 +13,7 @@ export default function TutorialSkipPopup({
   onSkip,
   onContinue,
 }: TutorialSkipPopupProps) {
+  const { t } = useI18n();
   const skipBtnRef = useRef<HTMLButtonElement>(null);
   const playBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -53,16 +55,17 @@ export default function TutorialSkipPopup({
         <div className={styles.scanlines} />
 
         <div className={styles.header}>
-          ⌐■-■ SECURITY CHECK ■-■⌐
+          {t('tutorialSkip.header')}
         </div>
 
         <div className={styles.body}>
           <p>
-            Already a <span className={styles.highlight}>pro hacker</span>?
+            {t('tutorialSkip.line1.prefix')}{' '}
+            <span className={styles.highlight}>{t('tutorialSkip.line1.highlight')}</span>?
           </p>
-          <p>Know all terminal commands?</p>
+          <p>{t('tutorialSkip.line2')}</p>
           <p>
-            Skip the tutorial if you want
+            {t('tutorialSkip.line3')}
             <span className={styles.cursor}>█</span>
           </p>
         </div>
@@ -75,7 +78,7 @@ export default function TutorialSkipPopup({
             onMouseDown={e => e.preventDefault()}
             onClick={onSkip}
           >
-            [ Y ] SKIP
+            {t('tutorialSkip.skip')}
           </button>
           <button
             ref={playBtnRef}
@@ -84,7 +87,7 @@ export default function TutorialSkipPopup({
             onMouseDown={e => e.preventDefault()}
             onClick={onContinue}
           >
-            [ N ] TUTORIAL
+            {t('tutorialSkip.play')}
           </button>
         </div>
       </div>

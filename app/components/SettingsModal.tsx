@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, memo } from 'react';
+import { useI18n } from '../i18n';
 import styles from './SettingsModal.module.css';
 
 interface SettingsModalProps {
@@ -18,6 +19,7 @@ export default memo(function SettingsModal({
   onVolumeChange,
   onCloseAction,
 }: SettingsModalProps) {
+  const { language, setLanguage, t } = useI18n();
   // CRT effects state - stored in localStorage
   const [crtEnabled, setCrtEnabled] = useState(true);
 
@@ -70,27 +72,29 @@ export default memo(function SettingsModal({
     <div className={styles.overlay} onClick={onCloseAction}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>SETTINGS</h2>
+          <h2>{t('settings.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
         </div>
 
         <div className={styles.content}>
           {/* Sound Toggle */}
           <div className={styles.setting}>
-            <label className={styles.label}>Sound Effects</label>
+            <label className={styles.label}>{t('settings.soundEffects')}</label>
             <button
               className={`${styles.toggle} ${soundEnabled ? styles.toggleOn : styles.toggleOff}`}
               tabIndex={-1}
               onMouseDown={e => e.preventDefault()}
               onClick={onToggleSound}
             >
-              {soundEnabled ? '[ ON ]' : '[ OFF ]'}
+              {soundEnabled
+                ? `[ ${t('options.value.on')} ]`
+                : `[ ${t('options.value.off')} ]`}
             </button>
           </div>
 
           {/* Volume Slider */}
           <div className={styles.setting}>
-            <label className={styles.label}>Master Volume</label>
+            <label className={styles.label}>{t('settings.masterVolume')}</label>
             <div className={styles.sliderContainer}>
               <input
                 type="range"
@@ -108,25 +112,49 @@ export default memo(function SettingsModal({
 
           {/* CRT Effects Toggle */}
           <div className={styles.setting}>
-            <label className={styles.label}>CRT Effects</label>
+            <label className={styles.label}>{t('settings.crtEffects')}</label>
             <button
               className={`${styles.toggle} ${crtEnabled ? styles.toggleOn : styles.toggleOff}`}
               tabIndex={-1}
               onMouseDown={e => e.preventDefault()}
               onClick={toggleCrt}
             >
-              {crtEnabled ? '[ ON ]' : '[ OFF ]'}
+              {crtEnabled
+                ? `[ ${t('options.value.on')} ]`
+                : `[ ${t('options.value.off')} ]`}
             </button>
-            <span className={styles.hint}>Scanlines & glow</span>
+            <span className={styles.hint}>{t('settings.crtHint')}</span>
+          </div>
+
+          {/* Language Select */}
+          <div className={styles.setting}>
+            <label className={styles.label}>{t('settings.language')}</label>
+            <button
+              className={styles.toggle}
+              tabIndex={-1}
+              onMouseDown={e => e.preventDefault()}
+              onClick={() => {
+                const ordered = ['en', 'pt-BR', 'es'] as const;
+                const currentIndex = ordered.indexOf(language);
+                const nextIndex = (currentIndex + 1) % ordered.length;
+                setLanguage(ordered[nextIndex]);
+              }}
+            >
+              {language === 'en'
+                ? t('language.en')
+                : language === 'pt-BR'
+                  ? t('language.pt-BR')
+                  : t('language.es')}
+            </button>
           </div>
 
           {/* Info */}
           <div className={styles.info}>
-            <div className={styles.infoLine}>Keyboard Shortcuts:</div>
-            <div className={styles.shortcut}>↑/↓ — Command history</div>
-            <div className={styles.shortcut}>Tab — Autocomplete</div>
-            <div className={styles.shortcut}>Esc — Close overlays</div>
-            <div className={styles.shortcut}>Space/Enter — Skip streaming</div>
+            <div className={styles.infoLine}>{t('settings.info.shortcuts')}</div>
+            <div className={styles.shortcut}>{t('settings.shortcut.history')}</div>
+            <div className={styles.shortcut}>{t('settings.shortcut.autocomplete')}</div>
+            <div className={styles.shortcut}>{t('settings.shortcut.close')}</div>
+            <div className={styles.shortcut}>{t('settings.shortcut.skip')}</div>
           </div>
         </div>
 
@@ -137,7 +165,7 @@ export default memo(function SettingsModal({
             onMouseDown={e => e.preventDefault()}
             onClick={onCloseAction}
           >
-            [ CLOSE ]
+            {t('settings.close')}
           </button>
         </div>
       </div>

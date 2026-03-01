@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { CheckpointSlot } from '../types';
 import { getLatestCheckpoint } from '../storage/saves';
 import { uiChance, uiRandomFloat } from '../engine/rng';
+import { useI18n } from '../i18n';
 import styles from './GameOver.module.css';
 
 interface GameOverProps {
@@ -17,6 +18,7 @@ export default function GameOver({
   onMainMenuAction,
   onLoadCheckpointAction,
 }: GameOverProps) {
+  const { language, t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'error' | 'restarting' | 'options'>('error');
   const [progress, setProgress] = useState(0);
   const [flickering, setFlickering] = useState(true);
@@ -134,8 +136,14 @@ export default function GameOver({
 
   const formatCheckpointInfo = (checkpoint: CheckpointSlot) => {
     const date = new Date(checkpoint.timestamp);
-    const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    return `${checkpoint.reason} (${checkpoint.truthCount}/5 truths, ${checkpoint.detectionLevel}% risk) - ${timeStr}`;
+    const locale = language === 'pt-BR' ? 'pt-BR' : language === 'es' ? 'es' : 'en-US';
+    const timeStr = date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+    return t('gameOver.checkpoint.info', {
+      reason: translateRuntimeText(checkpoint.reason),
+      truths: checkpoint.truthCount,
+      risk: checkpoint.detectionLevel,
+      time: timeStr,
+    });
   };
 
   return (
@@ -150,17 +158,17 @@ export default function GameOver({
             <div className={styles.errorHeader}>
               ═══════════════════════════════════════════════════════════
             </div>
-            <div className={styles.errorTitle}>▓▓▓ CRITICAL SYSTEM FAILURE ▓▓▓</div>
+            <div className={styles.errorTitle}>{t('gameOver.error.title')}</div>
             <div className={styles.errorHeader}>
               ═══════════════════════════════════════════════════════════
             </div>
-            <div className={styles.errorReason}>{reason}</div>
+            <div className={styles.errorReason}>{translateRuntimeText(reason)}</div>
             <div className={styles.errorDetails}>
-              <div>SESSION TERMINATED</div>
-              <div>AUDIT LOG ARCHIVED</div>
-              <div>COUNTERMEASURES ENGAGED</div>
+              <div>{t('gameOver.error.sessionTerminated')}</div>
+              <div>{t('gameOver.error.auditArchived')}</div>
+              <div>{t('gameOver.error.countermeasures')}</div>
             </div>
-            <div className={styles.errorFooter}>System restart imminent...</div>
+            <div className={styles.errorFooter}>{t('gameOver.error.restartSoon')}</div>
           </div>
         </div>
       )}
@@ -169,18 +177,18 @@ export default function GameOver({
       {phase === 'restarting' && (
         <div className={styles.restartContent}>
           <div className={styles.restartBox}>
-            <div className={styles.restartHeader}>TERMINAL SYSTEM RESTART</div>
-            <div className={styles.restartStatus}>REINITIALIZING...</div>
+            <div className={styles.restartHeader}>{t('gameOver.restart.header')}</div>
+            <div className={styles.restartStatus}>{t('gameOver.restart.status')}</div>
             <div className={styles.progressContainer}>
               <div className={styles.progressBar}>{renderProgressBar()}</div>
               <div className={styles.progressPercent}>{Math.min(100, Math.floor(progress))}%</div>
             </div>
             <div className={styles.restartLog}>
-              {progress > 10 && <div>Clearing session cache...</div>}
-              {progress > 25 && <div>Resetting access protocols...</div>}
-              {progress > 45 && <div>Purging audit trail...</div>}
-              {progress > 65 && <div>Reinitializing security layer...</div>}
-              {progress > 85 && <div>Restoring default state...</div>}
+              {progress > 10 && <div>{t('gameOver.restart.log1')}</div>}
+              {progress > 25 && <div>{t('gameOver.restart.log2')}</div>}
+              {progress > 45 && <div>{t('gameOver.restart.log3')}</div>}
+              {progress > 65 && <div>{t('gameOver.restart.log4')}</div>}
+              {progress > 85 && <div>{t('gameOver.restart.log5')}</div>}
             </div>
           </div>
         </div>
@@ -190,7 +198,7 @@ export default function GameOver({
       {phase === 'options' && (
         <div className={styles.optionsContent}>
           <div className={styles.optionsBox}>
-            <div className={styles.optionsHeader}>SESSION TERMINATED</div>
+            <div className={styles.optionsHeader}>{t('gameOver.options.title')}</div>
             <div className={styles.optionsSubheader}>
               ═══════════════════════════════════════════════════════════
             </div>
@@ -202,7 +210,7 @@ export default function GameOver({
                   onClick={() => onLoadCheckpointAction(latestCheckpoint.id)}
                   onMouseEnter={() => setSelectedIndex(0)}
                 >
-                  {selectedIndex === 0 ? '▶ ' : '  '}[ LOAD CHECKPOINT ]
+                  {selectedIndex === 0 ? '▶ ' : '  '}{t('gameOver.options.loadCheckpoint')}
                   <div className={styles.checkpointInfo}>
                     {formatCheckpointInfo(latestCheckpoint)}
                   </div>
@@ -214,11 +222,12 @@ export default function GameOver({
                 onClick={onMainMenuAction}
                 onMouseEnter={() => setSelectedIndex(latestCheckpoint ? 1 : 0)}
               >
-                {selectedIndex === (latestCheckpoint ? 1 : 0) ? '▶ ' : '  '}[ MAIN MENU ]
+                {selectedIndex === (latestCheckpoint ? 1 : 0) ? '▶ ' : '  '}
+                {t('gameOver.options.mainMenu')}
               </button>
             </div>
 
-            <div className={styles.keyHint}>↑↓ Navigate • Enter Select</div>
+            <div className={styles.keyHint}>{t('gameOver.options.keyHint')}</div>
           </div>
         </div>
       )}

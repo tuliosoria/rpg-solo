@@ -68,14 +68,16 @@ describe('ICQChat Component', () => {
     render(<ICQChat {...defaultProps} />);
 
     // During intro sequence, input may be disabled
-    const input = screen.getByPlaceholderText(/Digite sua mensagem|Missão completa/);
+    const input = screen.getByPlaceholderText(
+      /Type your message|Mission complete|Digite sua mensagem|Missão completa/
+    );
     expect(input).toBeTruthy();
   });
 
   it('shows status bar with connection info', () => {
     render(<ICQChat {...defaultProps} />);
 
-    expect(screen.getByText(/modem 56k/)).toBeTruthy();
+    expect(screen.getByText(/56k modem|modem 56k/)).toBeTruthy();
   });
 
   it('handles unmounting during async operations', async () => {
@@ -136,7 +138,7 @@ describe('ICQChat Component', () => {
         vi.advanceTimersByTime(10000);
       });
 
-      const input = screen.getByPlaceholderText(/Digite sua mensagem/);
+      const input = screen.getByPlaceholderText(/Type your message|Digite sua mensagem/);
 
       // Type in input
       await act(async () => {
@@ -149,7 +151,7 @@ describe('ICQChat Component', () => {
     it('has a send button', () => {
       render(<ICQChat {...defaultProps} />);
 
-      expect(screen.getByText('Enviar')).toBeTruthy();
+      expect(screen.getByText(/Send|Enviar/)).toBeTruthy();
     });
   });
 
@@ -169,7 +171,7 @@ describe('ICQChat Component', () => {
 
       await advanceUntilText(/who r u\?\?\?/i);
 
-      const input = screen.getByPlaceholderText(/Digite sua mensagem/);
+      const input = screen.getByPlaceholderText(/Type your message|Digite sua mensagem/);
       const form = input.closest('form');
       expect(form).toBeTruthy();
 

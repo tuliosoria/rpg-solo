@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styles from './ImageOverlay.module.css';
 import { uiChance, uiRandomInt } from '../engine/rng';
+import { useI18n } from '../i18n';
 
 interface ImageOverlayProps {
   src: string;
@@ -21,6 +22,7 @@ export default function ImageOverlay({
   corrupted = false,
   durationMs = 8000,
 }: ImageOverlayProps) {
+  const { t } = useI18n();
   const [visible, setVisible] = useState(false);
   const [flickering, setFlickering] = useState(true);
   const [initialShock, setInitialShock] = useState(true);
@@ -88,7 +90,7 @@ export default function ImageOverlay({
       className={`${styles.overlay} ${flickering ? styles.flickering : ''} ${initialShock ? styles.initialShock : ''}`}
       role="dialog"
       aria-modal="true"
-      aria-label={`Recovered image: ${alt}`}
+      aria-label={t('imageOverlay.aria', { value: alt })}
       onClick={onCloseAction}
     >
       {/* Scanlines */}
@@ -103,7 +105,7 @@ export default function ImageOverlay({
         {/* Header - minimal, no decoration */}
         <div className={styles.header}>
           <span className={styles.headerText}>
-            {corrupted ? '▓▓▓ PARTIAL RECOVERY ▓▓▓' : '═══ RECOVERED VISUAL DATA ═══'}
+            {corrupted ? t('imageOverlay.header.partial') : t('imageOverlay.header.full')}
           </span>
         </div>
 
@@ -118,7 +120,7 @@ export default function ImageOverlay({
                 src={src}
                 alt={alt}
                 className={styles.image}
-                onError={() => setError('IMAGE DATA CORRUPTED - RETRIEVAL FAILED')}
+                onError={() => setError(t('imageOverlay.error'))}
               />
             )}
             {error && (
@@ -143,8 +145,8 @@ export default function ImageOverlay({
 
         {/* Minimal metadata */}
         <div className={styles.metadata}>
-          <div>CLASSIFICATION: RESTRICTED</div>
-          <div className={styles.hint}>[Any key to dismiss]</div>
+          <div>{t('imageOverlay.classification')}</div>
+          <div className={styles.hint}>{t('imageOverlay.dismissHint')}</div>
         </div>
       </div>
     </div>

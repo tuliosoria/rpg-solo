@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import styles from './AchievementPopup.module.css';
 import { Achievement } from '../engine/achievements';
 import { FloatingElement } from './FloatingUI';
+import { useI18n } from '../i18n';
 
 interface AchievementPopupProps {
   achievement: Achievement;
@@ -11,6 +12,7 @@ interface AchievementPopupProps {
 }
 
 function AchievementPopup({ achievement, onDismiss }: AchievementPopupProps) {
+  const { t, translateRuntimeText } = useI18n();
   const [visible, setVisible] = useState(false);
   const [exiting, setExiting] = useState(false);
   const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -55,9 +57,9 @@ function AchievementPopup({ achievement, onDismiss }: AchievementPopupProps) {
       >
         <div className={styles.icon}>{achievement.icon}</div>
         <div className={styles.content}>
-          <div className={styles.header}>ACHIEVEMENT UNLOCKED</div>
-          <div className={styles.name}>{achievement.name}</div>
-          <div className={styles.description}>{achievement.description}</div>
+          <div className={styles.header}>{t('achievement.popup.header')}</div>
+          <div className={styles.name}>{translateRuntimeText(achievement.name)}</div>
+          <div className={styles.description}>{translateRuntimeText(achievement.description)}</div>
         </div>
       </div>
     </FloatingElement>

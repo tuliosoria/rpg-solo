@@ -6,6 +6,7 @@ import styles from './TuringTestOverlay.module.css';
 import { TURING_QUESTIONS } from '../constants/turing';
 import { uiChance, uiRandomInt } from '../engine/rng';
 import { useSound } from '../hooks/useSound';
+import { useI18n } from '../i18n';
 
 interface TuringTestOverlayProps {
   onComplete: (passed: boolean) => void;
@@ -13,6 +14,7 @@ interface TuringTestOverlayProps {
 }
 
 export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: TuringTestOverlayProps) {
+  const { t, translateRuntimeText } = useI18n();
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -34,7 +36,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
     if (isInvalidQuestion) return;
     
     // Firewall speaks with menacing voice
-    speak('Welcome to Turing Test', { rate: 0.7, pitch: 0.3 });
+    speak(t('turing.voice.welcome'), { rate: 0.7, pitch: 0.3 });
     
     // Accelerate background music to 1.5x for intensity
     setMusicPlaybackRate(1.5);
@@ -46,7 +48,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
     return () => {
       setMusicPlaybackRate(1.0);
     };
-  }, [speak, setMusicPlaybackRate, playSound, isInvalidQuestion]);
+  }, [speak, setMusicPlaybackRate, playSound, isInvalidQuestion, t]);
 
   // Initial flicker effect
   useEffect(() => {
@@ -167,7 +169,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
           <div className={styles.imageContainer}>
             <Image
               src="/images/turing-test.png"
-              alt="Turing Evaluation Result"
+              alt={t('turing.image.resultAlt')}
               width={150}
               height={150}
               className={styles.turingImage}
@@ -175,18 +177,18 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
             />
           </div>
 
-          <div className={styles.resultBox}>
-            <div className={styles.resultHeader}>
-              {passed ? '[ VERIFICATION COMPLETE ]' : '[ VERIFICATION FAILED ]'}
-            </div>
+            <div className={styles.resultBox}>
+              <div className={styles.resultHeader}>
+                {passed ? t('turing.result.complete') : t('turing.result.failed')}
+              </div>
 
-            <div className={styles.resultScore}>MACHINE RESPONSES: {correctAnswers}/3</div>
+              <div className={styles.resultScore}>{t('turing.result.score', { value: correctAnswers })}</div>
 
-            <div className={passed ? styles.resultPass : styles.resultFail}>
-              {passed
-                ? 'SUBJECT IS NOT HUMAN, NOT A THREAT'
-                : 'IDENTITY REJECTED: HUMAN BEHAVIORAL PATTERNS DETECTED'}
-            </div>
+              <div className={passed ? styles.resultPass : styles.resultFail}>
+                {passed
+                  ? t('turing.result.passLine')
+                  : t('turing.result.failLine')}
+              </div>
 
             <div className={styles.resultPrompt}>↵</div>
           </div>
@@ -205,7 +207,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
         <div className={styles.imageContainer}>
           <Image
             src="/images/turing-test.png"
-            alt="Turing Evaluation Protocol"
+            alt={t('turing.image.protocolAlt')}
             width={200}
             height={200}
             className={styles.turingImage}
@@ -216,27 +218,27 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.headerLine}>===============================================</div>
-          <div className={styles.headerTitle}>SECURITY PROTOCOL: TURING EVALUATION</div>
+          <div className={styles.headerTitle}>{t('turing.header.title')}</div>
           <div className={styles.headerLine}>===============================================</div>
         </div>
 
         {/* Instructions */}
         <div className={styles.instructions}>
-          <div>NOTICE: Anomalous access pattern detected.</div>
-          <div>You must prove you are an AUTHORIZED TERMINAL PROCESS.</div>
+          <div>{t('turing.instructions.notice')}</div>
+          <div>{t('turing.instructions.prove')}</div>
           <div className={styles.instructionHighlight}>
-            Select the MACHINE response (cold, logical) to pass.
+            {t('turing.instructions.select')}
           </div>
         </div>
 
         {/* Progress */}
         <div className={styles.progress}>
-          QUESTION {questionIndex + 1} of {TURING_QUESTIONS.length}
+          {t('turing.progress', { current: questionIndex + 1, total: TURING_QUESTIONS.length })}
         </div>
 
         {/* Question Box */}
         <div className={styles.questionBox}>
-          <div className={styles.questionPrompt}>"{currentQuestion.prompt}"</div>
+          <div className={styles.questionPrompt}>"{translateRuntimeText(currentQuestion.prompt)}"</div>
 
           <div className={styles.options}>
             {currentQuestion.options.map(option => {
@@ -254,7 +256,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
                   onClick={() => handleSelect(option.letter)}
                 >
                   <span className={styles.optionLetter}>{option.letter}.</span>
-                  <span className={styles.optionText}>{option.text}</span>
+                  <span className={styles.optionText}>{translateRuntimeText(option.text)}</span>
                 </div>
               );
             })}
@@ -265,13 +267,13 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
         {showFeedback && (
           <div className={styles.feedback}>
             {currentQuestion.options.find(o => o.letter === selectedOption)?.isMachine
-              ? '[ ACCEPTABLE RESPONSE ]'
-              : '[ HUMAN PATTERN DETECTED ]'}
+              ? t('turing.feedback.acceptable')
+              : t('turing.feedback.humanDetected')}
           </div>
         )}
 
         {/* Footer */}
-        <div className={styles.footer}>Type A, B, or C to respond</div>
+        <div className={styles.footer}>{t('turing.footer')}</div>
       </div>
     </div>
   );

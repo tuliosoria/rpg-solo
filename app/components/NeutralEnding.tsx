@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './NeutralEnding.module.css';
 import { recordEnding } from '../storage/statistics';
+import { useI18n } from '../i18n';
 
 interface NeutralEndingProps {
   onRestartAction: () => void;
@@ -56,6 +57,7 @@ export default function NeutralEnding({
   commandCount = 0,
   detectionLevel = 50,
 }: NeutralEndingProps) {
+  const { t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'disconnect' | 'message' | 'final'>('disconnect');
   const [textLines, setTextLines] = useState<string[]>([]);
   const hasRecordedEnding = useRef(false);
@@ -104,8 +106,8 @@ export default function NeutralEnding({
       {phase === 'disconnect' && (
         <div className={styles.disconnectContent}>
           <div className={styles.disconnectIcon}>⚡</div>
-          <div className={styles.disconnectText}>EMERGENCY DISCONNECT</div>
-          <div className={styles.disconnectSub}>Purging session data...</div>
+          <div className={styles.disconnectText}>{translateRuntimeText('EMERGENCY DISCONNECT')}</div>
+          <div className={styles.disconnectSub}>{translateRuntimeText('Purging session data...')}</div>
         </div>
       )}
 
@@ -128,7 +130,7 @@ export default function NeutralEnding({
                           : styles.textLine
               }
             >
-              {line}
+              {translateRuntimeText(line)}
             </div>
           ))}
         </div>
@@ -139,9 +141,9 @@ export default function NeutralEnding({
           <button
             className={styles.restartButton}
             onClick={onRestartAction}
-            aria-label="Try again - restart game"
+            aria-label={translateRuntimeText('Try again - restart game')}
           >
-            [ TRY AGAIN ]
+            {t('ending.tryAgain')}
           </button>
         </div>
       )}

@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SaveSlot, FlickerIntensity, FontSize } from '../types';
 import { getSaveSlots, deleteSave } from '../storage/saves';
-import { useOptions, DEFAULT_OPTIONS } from '../hooks/useOptions';
+import { useOptions } from '../hooks/useOptions';
+import { useI18n } from '../i18n';
 import styles from './Menu.module.css';
 
 interface MenuProps {
@@ -20,7 +21,15 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   // Options state
-  const { options, setOption, resetOptions, isLoaded } = useOptions();
+  const { options, setOption } = useOptions();
+  const { language, setLanguage, t } = useI18n();
+
+  const cycleLanguage = useCallback(() => {
+    const ordered = ['en', 'pt-BR', 'es'] as const;
+    const currentIndex = ordered.indexOf(language);
+    const nextIndex = (currentIndex + 1) % ordered.length;
+    setLanguage(ordered[nextIndex]);
+  }, [language, setLanguage]);
 
   // Refs for menu buttons for focus management
   const mainMenuRef = useRef<HTMLDivElement>(null);
@@ -51,7 +60,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
     (e: KeyboardEvent) => {
       // Main menu has 4 items now: NEW GAME, LOAD GAME, OPTIONS, CREDITS
       const maxIndex =
-        screen === 'main' ? 3 : screen === 'load' ? (saves.length > 0 ? saves.length : 0) : screen === 'options' ? 8 : 0;
+        screen === 'main' ? 3 : screen === 'load' ? (saves.length > 0 ? saves.length : 0) : screen === 'options' ? 9 : 0;
 
       switch (e.key) {
         case 'ArrowUp':
@@ -79,8 +88,10 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             setScreen('main');
           } else if (screen === 'options') {
             // Options screen - Back button is last
-            if (selectedIndex === 8) {
+            if (selectedIndex === 9) {
               setScreen('main');
+            } else if (selectedIndex === 8) {
+              cycleLanguage();
             }
           }
           break;
@@ -92,7 +103,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
           break;
       }
     },
-    [screen, selectedIndex, saves, onNewGameAction, onLoadGameAction]
+    [screen, selectedIndex, saves, onNewGameAction, onLoadGameAction, cycleLanguage]
   );
 
   useEffect(() => {
@@ -102,14 +113,15 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
 
   const handleDelete = (slotId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm('Delete this save?')) {
+    if (confirm(t('menu.confirm.deleteSave'))) {
       deleteSave(slotId);
       setSaves(getSaveSlots());
     }
   };
 
   const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString();
+    const locale = language === 'pt-BR' ? 'pt-BR' : language === 'es' ? 'es' : 'en-US';
+    return new Date(timestamp).toLocaleString(locale);
   };
 
   const renderMainMenu = () => (
@@ -118,7 +130,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         <div className={styles.titleLine}>═══════════════════════════════════</div>
         <h1 className={styles.titleText}>VARGINHA</h1>
         <h2 className={styles.subtitleText}>TERMINAL 1996</h2>
-        <div className={styles.subtitle}>BRAZILIAN INTELLIGENCE LEGACY SYSTEM</div>
+        <div className={styles.subtitle}>{t('menu.credits.settingValue')}</div>
         <div className={styles.titleLine}>═══════════════════════════════════</div>
       </div>
 
@@ -128,7 +140,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
           onClick={onNewGameAction}
           onMouseEnter={() => setSelectedIndex(0)}
         >
-          {selectedIndex === 0 ? '▶ ' : '  '}[ NEW GAME ]
+          {selectedIndex === 0 ? '▶ ' : '  '}{t('menu.main.newGame')}
         </button>
 
         <button
@@ -136,7 +148,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
           onClick={() => setScreen('load')}
           onMouseEnter={() => setSelectedIndex(1)}
         >
-          {selectedIndex === 1 ? '▶ ' : '  '}[ LOAD GAME ]
+          {selectedIndex === 1 ? '▶ ' : '  '}{t('menu.main.loadGame')}
         </button>
 
         <button
@@ -144,7 +156,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
           onClick={() => setScreen('options')}
           onMouseEnter={() => setSelectedIndex(2)}
         >
-          {selectedIndex === 2 ? '▶ ' : '  '}[ OPTIONS ]
+          {selectedIndex === 2 ? '▶ ' : '  '}{t('menu.main.options')}
         </button>
 
         <button
@@ -152,14 +164,14 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
           onClick={() => setScreen('credits')}
           onMouseEnter={() => setSelectedIndex(3)}
         >
-          {selectedIndex === 3 ? '▶ ' : '  '}[ CREDITS ]
+          {selectedIndex === 3 ? '▶ ' : '  '}{t('menu.main.credits')}
         </button>
       </div>
 
       <div className={styles.footer}>
-        <div className={styles.footerLine}>WARNING: Unauthorized access is monitored</div>
-        <div className={styles.footerLine}>Session logging enabled</div>
-        <div className={styles.keyHint}>↑↓ Navigate • Enter Select</div>
+        <div className={styles.footerLine}>{t('menu.main.warningUnauthorized')}</div>
+        <div className={styles.footerLine}>{t('menu.main.sessionLogging')}</div>
+        <div className={styles.keyHint}>{t('menu.main.keyHint')}</div>
       </div>
     </div>
   );
@@ -167,13 +179,13 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
   const renderLoadScreen = () => (
     <div className={styles.menuContent} ref={loadListRef}>
       <div className={styles.header}>
-        <h2 className={styles.headerTitle}>SAVED SESSIONS</h2>
+        <h2 className={styles.headerTitle}>{t('menu.load.title')}</h2>
         <div className={styles.titleLine}>═══════════════════════════════════</div>
       </div>
 
       <div className={styles.savesList}>
         {saves.length === 0 ? (
-          <div className={styles.noSaves}>No saved sessions found.</div>
+          <div className={styles.noSaves}>{t('menu.load.none')}</div>
         ) : (
           saves.map((slot, index) => (
             <div
@@ -186,8 +198,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
               <div className={styles.saveContent}>
                 <div className={styles.saveName}>{slot.name}</div>
                 <div className={styles.saveInfo}>
-                  <span>Path: {slot.currentPath}</span>
-                  <span>Progress: {slot.truthCount}/5</span>
+                  <span>{t('menu.load.path')}: {slot.currentPath}</span>
+                  <span>{t('menu.load.progress')}: {slot.truthCount}/5</span>
                   <span
                     className={
                       slot.detectionLevel >= 80
@@ -197,7 +209,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
                           : styles.riskLow
                     }
                   >
-                    Risk: {slot.detectionLevel ?? 0}%
+                    {t('menu.load.risk')}: {slot.detectionLevel ?? 0}%
                   </span>
                 </div>
                 <div className={styles.saveDate}>{formatDate(slot.timestamp)}</div>
@@ -215,51 +227,48 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         onClick={() => setScreen('main')}
         onMouseEnter={() => setSelectedIndex(saves.length)}
       >
-        {selectedIndex === saves.length ? '▶ ' : '  '}[ BACK ]
+        {selectedIndex === saves.length ? '▶ ' : '  '}{t('menu.load.back')}
       </button>
-      <div className={styles.keyHint}>↑↓ Navigate • Enter Select • Esc Back</div>
+      <div className={styles.keyHint}>{t('menu.load.keyHint')}</div>
     </div>
   );
 
   const renderCredits = () => (
     <div className={styles.menuContent}>
       <div className={styles.header}>
-        <h2 className={styles.headerTitle}>CREDITS</h2>
+        <h2 className={styles.headerTitle}>{t('menu.credits.title')}</h2>
         <div className={styles.titleLine}>═══════════════════════════════════</div>
       </div>
 
       <div className={styles.credits}>
         <div className={styles.creditSection}>
-          <div className={styles.creditLabel}>VARGINHA: TERMINAL 1996</div>
-          <div className={styles.creditValue}>A text-based discovery puzzle</div>
+          <div className={styles.creditLabel}>{t('menu.credits.gameLabel')}</div>
+          <div className={styles.creditValue}>{t('menu.credits.gameValue')}</div>
         </div>
 
         <div className={styles.creditSection}>
-          <div className={styles.creditLabel}>CREATED BY</div>
+          <div className={styles.creditLabel}>{t('menu.credits.createdByLabel')}</div>
           <div className={styles.creditValue}>Tulio Soria & Arthur Ramos</div>
         </div>
 
         <div className={styles.creditSection}>
-          <div className={styles.creditLabel}>GENRE</div>
-          <div className={styles.creditValue}>Procedural Horror / Ufology / Hard Sci-Fi</div>
+          <div className={styles.creditLabel}>{t('menu.credits.genreLabel')}</div>
+          <div className={styles.creditValue}>{t('menu.credits.genreValue')}</div>
         </div>
 
         <div className={styles.creditSection}>
-          <div className={styles.creditLabel}>SETTING</div>
-          <div className={styles.creditValue}>Brazilian Intelligence Legacy System, 1996</div>
+          <div className={styles.creditLabel}>{t('menu.credits.settingLabel')}</div>
+          <div className={styles.creditValue}>{t('menu.credits.settingValue')}</div>
         </div>
 
         <div className={styles.creditSection}>
-          <div className={styles.creditLabel}>INSPIRED BY</div>
-          <div className={styles.creditValue}>The Varginha Incident</div>
+          <div className={styles.creditLabel}>{t('menu.credits.inspiredByLabel')}</div>
+          <div className={styles.creditValue}>{t('menu.credits.inspiredByValue')}</div>
         </div>
 
         <div className={styles.creditSection}>
-          <div className={styles.creditLabel}>NOTE</div>
-          <div className={styles.creditValue}>
-            This is a work of fiction. All characters, events, and institutional references are
-            fictional.
-          </div>
+          <div className={styles.creditLabel}>{t('menu.credits.noteLabel')}</div>
+          <div className={styles.creditValue}>{t('menu.credits.noteValue')}</div>
         </div>
 
         <div className={styles.creditSection}>
@@ -271,9 +280,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         className={`${styles.backButton} ${styles.selected}`}
         onClick={() => setScreen('main')}
       >
-        ▶ [ BACK ]
+        ▶ {t('menu.load.back')}
       </button>
-      <div className={styles.keyHint}>Enter or Esc to go back</div>
+      <div className={styles.keyHint}>{t('menu.credits.backHint')}</div>
     </div>
   );
 
@@ -284,21 +293,21 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
     return (
       <div className={styles.menuContent}>
         <div className={styles.header}>
-          <h2 className={styles.headerTitle}>OPTIONS</h2>
+          <h2 className={styles.headerTitle}>{t('menu.options.title')}</h2>
           <div className={styles.titleLine}>═══════════════════════════════════</div>
         </div>
 
         <div className={styles.optionsContainer}>
           {/* AUDIO SECTION */}
           <div className={styles.optionSection}>
-            <div className={styles.optionSectionTitle}>[ AUDIO ]</div>
+            <div className={styles.optionSectionTitle}>{t('menu.options.audio')}</div>
 
             {/* Master Volume Slider */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 0 ? styles.selected : ''}`}
               onMouseEnter={() => setSelectedIndex(0)}
             >
-              <span className={styles.optionLabel}>Master Volume</span>
+              <span className={styles.optionLabel}>{t('menu.options.masterVolume')}</span>
               <div className={styles.sliderContainer}>
                 <input
                   type="range"
@@ -318,9 +327,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
               onMouseEnter={() => setSelectedIndex(1)}
               onClick={() => setOption('ambientSoundEnabled', !options.ambientSoundEnabled)}
             >
-              <span className={styles.optionLabel}>Ambient Sound</span>
+              <span className={styles.optionLabel}>{t('menu.options.ambientSound')}</span>
               <span className={styles.optionToggle}>
-                [ {options.ambientSoundEnabled ? 'ON ' : 'OFF'} ]
+                [ {options.ambientSoundEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
             </div>
 
@@ -330,9 +339,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
               onMouseEnter={() => setSelectedIndex(2)}
               onClick={() => setOption('soundEffectsEnabled', !options.soundEffectsEnabled)}
             >
-              <span className={styles.optionLabel}>Sound Effects</span>
+              <span className={styles.optionLabel}>{t('menu.options.soundEffects')}</span>
               <span className={styles.optionToggle}>
-                [ {options.soundEffectsEnabled ? 'ON ' : 'OFF'} ]
+                [ {options.soundEffectsEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
             </div>
 
@@ -342,16 +351,16 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
               onMouseEnter={() => setSelectedIndex(3)}
               onClick={() => setOption('turingVoiceEnabled', !options.turingVoiceEnabled)}
             >
-              <span className={styles.optionLabel}>Turing Test Voice</span>
+              <span className={styles.optionLabel}>{t('menu.options.turingVoice')}</span>
               <span className={styles.optionToggle}>
-                [ {options.turingVoiceEnabled ? 'ON ' : 'OFF'} ]
+                [ {options.turingVoiceEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
             </div>
           </div>
 
           {/* VISUAL SECTION */}
           <div className={styles.optionSection}>
-            <div className={styles.optionSectionTitle}>[ VISUAL ]</div>
+            <div className={styles.optionSectionTitle}>{t('menu.options.visual')}</div>
 
             {/* CRT Effects Toggle */}
             <div
@@ -359,9 +368,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
               onMouseEnter={() => setSelectedIndex(4)}
               onClick={() => setOption('crtEffectsEnabled', !options.crtEffectsEnabled)}
             >
-              <span className={styles.optionLabel}>CRT Effects</span>
+              <span className={styles.optionLabel}>{t('menu.options.crtEffects')}</span>
               <span className={styles.optionToggle}>
-                [ {options.crtEffectsEnabled ? 'ON ' : 'OFF'} ]
+                [ {options.crtEffectsEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
             </div>
 
@@ -371,9 +380,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
               onMouseEnter={() => setSelectedIndex(5)}
               onClick={() => setOption('screenFlickerEnabled', !options.screenFlickerEnabled)}
             >
-              <span className={styles.optionLabel}>Screen Flicker</span>
+              <span className={styles.optionLabel}>{t('menu.options.screenFlicker')}</span>
               <span className={styles.optionToggle}>
-                [ {options.screenFlickerEnabled ? 'ON ' : 'OFF'} ]
+                [ {options.screenFlickerEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
             </div>
 
@@ -389,9 +398,15 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
                 }
               }}
             >
-              <span className={styles.optionLabel}>Flicker Intensity</span>
+              <span className={styles.optionLabel}>{t('menu.options.flickerIntensity')}</span>
               <span className={styles.optionSelect}>
-                {'< '}{options.flickerIntensity.toUpperCase()}{' >'}
+                {'< '}
+                {options.flickerIntensity === 'low'
+                  ? t('options.value.low')
+                  : options.flickerIntensity === 'high'
+                    ? t('options.value.high')
+                    : t('options.value.medium')}
+                {' >'}
               </span>
             </div>
 
@@ -405,22 +420,46 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
                 setOption('fontSize', fontSizeOptions[nextIdx]);
               }}
             >
-              <span className={styles.optionLabel}>Font Size</span>
+              <span className={styles.optionLabel}>{t('menu.options.fontSize')}</span>
               <span className={styles.optionSelect}>
-                {'< '}{options.fontSize.toUpperCase()}{' >'}
+                {'< '}
+                {options.fontSize === 'small'
+                  ? t('options.value.small')
+                  : options.fontSize === 'large'
+                    ? t('options.value.large')
+                    : t('options.value.medium')}
+                {' >'}
+              </span>
+            </div>
+
+            {/* Language Select */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 8 ? styles.selected : ''}`}
+              onMouseEnter={() => setSelectedIndex(8)}
+              onClick={cycleLanguage}
+            >
+              <span className={styles.optionLabel}>{t('menu.options.language')}</span>
+              <span className={styles.optionSelect}>
+                {'< '}
+                {language === 'en'
+                  ? t('language.en')
+                  : language === 'pt-BR'
+                    ? t('language.pt-BR')
+                    : t('language.es')}
+                {' >'}
               </span>
             </div>
           </div>
         </div>
 
         <button
-          className={`${styles.backButton} ${selectedIndex === 8 ? styles.selected : ''}`}
+          className={`${styles.backButton} ${selectedIndex === 9 ? styles.selected : ''}`}
           onClick={() => setScreen('main')}
-          onMouseEnter={() => setSelectedIndex(8)}
+          onMouseEnter={() => setSelectedIndex(9)}
         >
-          {selectedIndex === 8 ? '▶ ' : '  '}[ BACK ]
+          {selectedIndex === 9 ? '▶ ' : '  '}{t('menu.options.back')}
         </button>
-        <div className={styles.keyHint}>↑↓ Navigate • Enter/Click Toggle • Esc Back</div>
+        <div className={styles.keyHint}>{t('menu.options.keyHint')}</div>
       </div>
     );
   };

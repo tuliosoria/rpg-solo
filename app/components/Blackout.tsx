@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { uiRandomFloat } from '../engine/rng';
+import { useI18n } from '../i18n';
 import styles from './Blackout.module.css';
 
 /** UFO74's final emergency transmission messages displayed during the blackout sequence */
@@ -36,6 +37,7 @@ interface BlackoutProps {
 }
 
 export default function Blackout({ onCompleteAction }: BlackoutProps) {
+  const { t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'glitch' | 'loading' | 'message' | 'fade'>('glitch');
   const [loadProgress, setLoadProgress] = useState(0);
   const [messageLines, setMessageLines] = useState<string[]>([]);
@@ -114,16 +116,16 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
       {/* Glitch Phase */}
       {phase === 'glitch' && (
         <div className={styles.glitchContent}>
-          <div className={styles.glitchText}>▓▓▓ CONNECTION INTERRUPTED ▓▓▓</div>
-          <div className={styles.glitchSubtext}>SYSTEM DETECTED UNAUTHORIZED ACCESS</div>
-          <div className={styles.glitchSubtext}>INITIATING PURGE PROTOCOL...</div>
+          <div className={styles.glitchText}>{translateRuntimeText('▓▓▓ CONNECTION INTERRUPTED ▓▓▓')}</div>
+          <div className={styles.glitchSubtext}>{translateRuntimeText('SYSTEM DETECTED UNAUTHORIZED ACCESS')}</div>
+          <div className={styles.glitchSubtext}>{translateRuntimeText('INITIATING PURGE PROTOCOL...')}</div>
         </div>
       )}
 
       {/* Loading Phase */}
       {phase === 'loading' && (
         <div className={styles.loadingContent}>
-          <div className={styles.loadingTitle}>CLEARING SYSTEM CACHE</div>
+          <div className={styles.loadingTitle}>{translateRuntimeText('CLEARING SYSTEM CACHE')}</div>
           <div className={styles.progressContainer}>
             <div className={styles.progressBar}>
               <div
@@ -134,10 +136,10 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
             <div className={styles.progressText}>{Math.min(100, Math.floor(loadProgress))}%</div>
           </div>
           <div className={styles.loadingText}>
-            {loadProgress < 30 && 'Removing session logs...'}
-            {loadProgress >= 30 && loadProgress < 60 && 'Erasing access records...'}
-            {loadProgress >= 60 && loadProgress < 90 && 'Destroying active connections...'}
-            {loadProgress >= 90 && 'Finalizing purge...'}
+            {loadProgress < 30 && translateRuntimeText('Removing session logs...')}
+            {loadProgress >= 30 && loadProgress < 60 && translateRuntimeText('Erasing access records...')}
+            {loadProgress >= 60 && loadProgress < 90 && translateRuntimeText('Destroying active connections...')}
+            {loadProgress >= 90 && translateRuntimeText('Finalizing purge...')}
           </div>
         </div>
       )}
@@ -149,7 +151,7 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
             ┌─────────────────────────────────────────────────────────┐
           </div>
           <div className={styles.messageHeader}>
-            │ &gt;&gt; UFO74 &lt;&lt; EMERGENCY TRANSMISSION │
+            {translateRuntimeText('│ >> UFO74 << EMERGENCY TRANSMISSION │')}
           </div>
           <div className={styles.messageHeader}>
             └─────────────────────────────────────────────────────────┘
@@ -160,7 +162,7 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
                 key={index}
                 className={line.startsWith('UFO74:') ? styles.ufoLine : styles.systemLine}
               >
-                {line}
+                {translateRuntimeText(line)}
               </div>
             ))}
           </div>
@@ -170,7 +172,7 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
       {/* Fade Phase */}
       {phase === 'fade' && (
         <div className={styles.fadeContent}>
-          <div className={styles.transferText}>CONNECTING TO ICQ...</div>
+          <div className={styles.transferText}>{t('blackout.transfer')}</div>
         </div>
       )}
     </div>

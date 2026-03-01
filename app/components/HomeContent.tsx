@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { GameState } from '../types';
 import { createNewGame, loadGame, loadCheckpoint } from '../storage/saves';
 import { useGlobalErrorHandler } from '../hooks/useGlobalErrorHandler';
+import { I18nProvider } from '../i18n';
 import ErrorBoundary from './ErrorBoundary';
 import Menu from './Menu';
 
@@ -94,8 +95,10 @@ export default function HomeContent() {
   useGlobalErrorHandler();
 
   return (
-    <ErrorBoundary>
-      <HomeContentInner />
-    </ErrorBoundary>
+    <I18nProvider>
+      <ErrorBoundary>
+        <HomeContentInner />
+      </ErrorBoundary>
+    </I18nProvider>
   );
 }
