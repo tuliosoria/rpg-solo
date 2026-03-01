@@ -31,7 +31,7 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     Paranoid: 'Paranoico',
     'Check system status 10+ times': 'Verifique o status do sistema 10+ vezes',
     Bookworm: 'Rato de Biblioteca',
-    'Bookmark 5+ files': 'Favorite 5+ arquivos',
+    'Bookmark 5+ files': 'Marque 5+ arquivos como favoritos',
     'Night Owl': 'Coruja Noturna',
     'Play for over 30 minutes in a single session': 'Jogue por mais de 30 minutos em uma única sessão',
     Liberator: 'Libertador',
@@ -259,7 +259,7 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     '[UFO74]: Two letters. Lowercase. ls':
       '[UFO74]: Duas letras. Minúsculas. ls',
     '[UFO74]: cd means change directory. cd internal':
-      '[UFO74]: cd significa mudar diretório. cd internal',
+      '[UFO74]: cd significa mudar de diretório. cd internal',
     '[UFO74]: Navigate to misc folder. cd misc':
       '[UFO74]: Vá para a pasta misc. cd misc',
     '[UFO74]: open followed by the filename. Try TAB key.':
@@ -271,7 +271,7 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     '[UFO74]: Good. You know enough.':
       '[UFO74]: Boa. Você já sabe o suficiente.',
     '[UFO74]: Your mission: find 5 pieces of evidence.':
-      '[UFO74]: Sua missão: encontrar 5 peças de evidência.',
+      '[UFO74]: Sua missão: encontrar 5 evidências.',
     '[UFO74]: Once you have them, leak everything.':
       '[UFO74]: Quando tiver todas, vaze tudo.',
     '[UFO74]: But understand the risks.':
@@ -283,7 +283,7 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     '[UFO74]: And you only get 8 attempts.':
       '[UFO74]: E você só tem 8 tentativas.',
     '[UFO74]: Fail 8 times, the window closes. Permanently.':
-      '[UFO74]: Falhou 8 vezes, a janela fecha. Permanentemente.',
+      '[UFO74]: Se falhar 8 vezes, a janela fecha. Permanentemente.',
     '[UFO74]: Some files are bait. Opening them spikes detection.':
       '[UFO74]: Alguns arquivos são isca. Abrir eles aumenta a detecção.',
     '[UFO74]: Some actions are loud. Others are quiet.':
@@ -296,6 +296,208 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '[UFO74]: Boa sorte, kid.',
     '[UFO74 has disconnected]':
       '[UFO74 desconectou]',
+    '[UFO74]: Connection established.':
+      '[UFO74]: Conexão estabelecida.',
+    "[UFO74]: Listen carefully. I don't repeat myself.":
+      '[UFO74]: Escuta com atenção. Não repito duas vezes.',
+    "[UFO74]: You're inside their system. Don't panic.":
+      '[UFO74]: Você está dentro do sistema deles. Não entre em pânico.',
+    "[UFO74]: Hey kid! I'll create a user for you so you can investigate.":
+      '[UFO74]: Ei, kid! Vou criar um usuário pra você investigar.',
+    '[UFO74]: You will be... hackerkid.':
+      '[UFO74]: Você vai ser... hackerkid.',
+    "[UFO74]: First, see what's here.":
+      '[UFO74]: Primeiro, veja o que tem aqui.',
+    '[UFO74]: Type `ls`':
+      '[UFO74]: Digite `ls`',
+    '[UFO74]: Good. These are the main directories.':
+      '[UFO74]: Boa. Esses são os diretórios principais.',
+    '[UFO74]: Start with internal — it has basic files.':
+      '[UFO74]: Comece por internal — lá ficam os arquivos básicos.',
+    '[UFO74]: Type `cd internal`':
+      '[UFO74]: Digite `cd internal`',
+    "[UFO74]: Multiple folders here. Let's check misc.":
+      '[UFO74]: Tem várias pastas aqui. Vamos ver misc.',
+    '[UFO74]: Type `cd misc`':
+      '[UFO74]: Digite `cd misc`',
+    '[UFO74]: Mundane stuff. Nothing critical.':
+      '[UFO74]: Coisa comum. Nada crítico.',
+    '[UFO74]: Open the cafeteria menu.':
+      '[UFO74]: Abra o cardápio da cafeteria.',
+    '[UFO74]: Type `open cafeteria_menu_week03.txt`':
+      '[UFO74]: Digite `open cafeteria_menu_week03.txt`',
+    '[UFO74]: Or use TAB to autocomplete.':
+      '[UFO74]: Ou use TAB para autocompletar.',
+    '[UFO74]: Riveting.':
+      '[UFO74]: Empolgante.',
+    "[UFO74]: Not everything matters. You'll learn what does.":
+      '[UFO74]: Nem tudo importa. Você vai aprender o que importa.',
+    '[UFO74]: Go back up one level.':
+      '[UFO74]: Volte um nível.',
+    '[UFO74]: Type `cd ..`':
+      '[UFO74]: Digite `cd ..`',
+    '[UFO74]: Now go back to root.':
+      '[UFO74]: Agora volte para a raiz.',
+    '[UFO74]: Now the real thing.':
+      '[UFO74]: Agora começa de verdade.',
+    '[UFO74]: ...':
+      '[UFO74]: ...',
+    'CAFETERIA MENU — WEEK 3, JANUARY 1996':
+      'CARDÁPIO DA CAFETERIA — SEMANA 3, JANEIRO DE 1996',
+    'MONDAY (15-JAN):':
+      'SEGUNDA (15-JAN):',
+    'TUESDAY (16-JAN):':
+      'TERÇA (16-JAN):',
+    'WEDNESDAY (17-JAN):':
+      'QUARTA (17-JAN):',
+    'THURSDAY (18-JAN):':
+      'QUINTA (18-JAN):',
+    'FRIDAY (19-JAN):':
+      'SEXTA (19-JAN):',
+    'NOTE: Vegan/vegetarian options upon request.':
+      'OBS: Opções veganas/vegetarianas mediante solicitação.',
+    'Coffee machine still OUT OF SERVICE.':
+      'Máquina de café ainda FORA DE SERVIÇO.',
+    '> CREATING USER PROFILE...':
+      '> CRIANDO PERFIL DE USUÁRIO...',
+    '> USERNAME: hackerkid':
+      '> USUÁRIO: hackerkid',
+    '> ACCESS LEVEL: 1 [PROVISIONAL]':
+      '> NÍVEL DE ACESSO: 1 [PROVISÓRIO]',
+    '> STATUS: ACTIVE':
+      '> STATUS: ATIVO',
+    '✓ USER hackerkid REGISTERED':
+      '✓ USUÁRIO hackerkid REGISTRADO',
+    "[UFO74]: Great, now you're in. Let's get to business.":
+      '[UFO74]: Boa, agora você entrou. Vamos ao que interessa.',
+    '[UFO74]: We need to explore UFO files here. Brazil, 1996, kid. Varginha!':
+      '[UFO74]: Precisamos explorar os arquivos de OVNI daqui. Brasil, 1996, kid. Varginha!',
+    '[UFO74]: Aliens were all over the damn city.':
+      '[UFO74]: Alienígenas estavam por toda a maldita cidade.',
+    "[UFO74]: I'll teach you the basics.":
+      '[UFO74]: Vou te ensinar o básico.',
+    '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │':
+      '│ >> TRANSMISSÃO RECEBIDA << CANAL CRIPTOGRAFADO         │',
+    '│         >> ENCRYPTED CHANNEL OPEN <<                    │':
+      '│         >> CANAL CRIPTOGRAFADO ABERTO <<                │',
+    '│         >> ENCRYPTED CHANNEL CLOSED <<                  │':
+      '│         >> CANAL CRIPTOGRAFADO FECHADO <<               │',
+    'UFO74: youre in. keep it quiet.':
+      'UFO74: você entrou. mantenha discrição.',
+    'UFO74: quick brief. you cant change anything here — read only.':
+      'UFO74: resumo rápido. você não pode mudar nada aqui — só leitura.',
+    'UFO74: type "ls" to see whats in front of you.':
+      'UFO74: digite "ls" para ver o que tem na sua frente.',
+    'UFO74: type "cd <folder>" to go inside. "open <file>" to read.':
+      'UFO74: digite "cd <pasta>" para entrar. "open <arquivo>" para ler.',
+    'UFO74: when this channel closes, start with: ls':
+      'UFO74: quando este canal fechar, comece com: ls',
+    'UFO74: try internal/ first. routine paperwork. low heat.':
+      'UFO74: tente internal/ primeiro. papelada de rotina. risco baixo.',
+    'UFO74: youll see an evidence tracker. it lights up when you prove something.':
+      'UFO74: você vai ver um rastreador de evidências. ele acende quando você prova algo.',
+    'UFO74: risk meter climbs as you dig. if it spikes, they test you. fail that, youre out.':
+      'UFO74: o medidor de risco sobe conforme você cava. se disparar, eles te testam. falhou, acabou.',
+    'UFO74: im cutting the link. from here, youre on your own.':
+      'UFO74: vou cortar o link. daqui pra frente, você está por conta própria.',
+    'move slow. read everything. the truth is in the details.':
+      'vá devagar. leia tudo. a verdade está nos detalhes.',
+    '>> CONNECTION IDLE <<':
+      '>> CONEXÃO OCIOSA <<',
+    'Type "help" for commands. "help basics" if youre new.':
+      'Digite "help" para ver os comandos. "help basics" se for iniciante.',
+    'UFO74: new here? type "help basics".':
+      'UFO74: é novo por aqui? digite "help basics".',
+    '║  💡 TUTORIAL TIP                          ║':
+      '║  💡 DICA DE TUTORIAL                      ║',
+    'You found evidence!':
+      'Você encontrou uma evidência!',
+    'Keep searching for more files.':
+      'Continue procurando por mais arquivos.',
+    'Collect all 5 categories to win.':
+      'Colete as 5 categorias para vencer.',
+    'ls              List files in current directory':
+      'ls              Lista arquivos no diretório atual',
+    'cd <dir>        Change directory':
+      'cd <dir>        Muda de diretório',
+    'cd ..           Go back one level':
+      'cd ..           Volta um nível',
+    "open <file>     Read a file's contents":
+      'open <file>     Lê o conteúdo de um arquivo',
+    'last            Re-read last opened file':
+      'last            Reabre o último arquivo lido',
+    'note <text>     Save a personal note':
+      'note <text>     Salva uma anotação pessoal',
+    'notes           View all your notes':
+      'notes           Mostra todas as suas anotações',
+    'bookmark <file> Bookmark a file for later':
+      'bookmark <file> Marca um arquivo para depois',
+    'progress        See your evidence status':
+      'progress        Mostra o status das evidências',
+    'map             Visualize evidence connections':
+      'map             Visualiza conexões de evidências',
+    'help            Show all commands':
+      'help            Mostra todos os comandos',
+    'Collect evidence in all 5 categories:':
+      'Colete evidências nas 5 categorias:',
+    '1. Debris Relocation':
+      '1. Relocação de Destroços',
+    '2. Being Containment':
+      '2. Contenção de Seres',
+    '3. Telepathic Scouts':
+      '3. Batedores Telepáticos',
+    '4. International Actors':
+      '4. Atores Internacionais',
+    '5. Transition 2026':
+      '5. Transição 2026',
+    'HOW TO FIND EVIDENCE:':
+      'COMO ENCONTRAR EVIDÊNCIAS:',
+    '1. Navigate directories with ls, cd':
+      '1. Navegue pelos diretórios com ls, cd',
+    '2. Read files with open <filename>':
+      '2. Leia arquivos com open <filename>',
+    '3. Decrypt encrypted files':
+      '3. Descriptografe arquivos criptografados',
+    '4. Use "progress" to check status':
+      '4. Use "progress" para verificar o status',
+    '• Collect all 5 categories':
+      '• Colete as 5 categorias',
+    '• Use "leak" to transmit the evidence':
+      '• Use "leak" para transmitir as evidências',
+    'Collect evidence in 5 categories:':
+      'Colete evidências em 5 categorias:',
+    '• Read carefully - evidence is in the details':
+      '• Leia com atenção - as evidências estão nos detalhes',
+    '• Use "note" to track important findings':
+      '• Use "note" para registrar descobertas importantes',
+    '• Decrypt encrypted files for hidden evidence':
+      '• Descriptografe arquivos criptografados para achar evidências ocultas',
+    '• Watch your detection level!':
+      '• Fique de olho no nível de detecção!',
+    'COMMANDS TO KNOW':
+      'COMANDOS IMPORTANTES',
+    'progress         Check your case status':
+      'progress         Verifica o status do caso',
+    'map              View collected evidence':
+      'map              Mostra as evidências coletadas',
+    'note <text>      Save personal notes':
+      'note <text>      Salva anotações pessoais',
+    'bookmark <file>  Mark files for later':
+      'bookmark <file>  Marca arquivos para depois',
+    'BRAZILIAN INTELLIGENCE LEGACY SYSTEM':
+      'SISTEMA LEGADO DE INTELIGÊNCIA BRASILEIRA',
+    'TERMINAL ACCESS POINT — NODE 7':
+      'PONTO DE ACESSO TERMINAL — NÓ 7',
+    'SYSTEM DATE: JANUARY 1996':
+      'DATA DO SISTEMA: JANEIRO DE 1996',
+    'WARNING: Unauthorized access detected':
+      'AVISO: acesso não autorizado detectado',
+    'WARNING: Session logging enabled':
+      'AVISO: registro de sessão ativado',
+    'INCIDENT-RELATED ARCHIVE':
+      'ARQUIVO RELACIONADO AO INCIDENTE',
+    'WARNING: Partial access may result in incomplete conclusions.':
+      'AVISO: acesso parcial pode gerar conclusões incompletas.',
     '⚠ RISK INCREASED: Invalid commands draw system attention.':
       '⚠ RISCO AUMENTOU: comandos inválidos chamam atenção do sistema.',
     'CRITICAL: INVALID ATTEMPT THRESHOLD EXCEEDED':
@@ -327,7 +529,7 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     Mathematician: 'Matemático',
     'Solve all equations on first try': 'Resuelve todas las ecuaciones al primer intento',
     'Truth Seeker': 'Buscador de la Verdad',
-    'Uncover all 5 truth categories': 'Descubre las 5 categorías de verdad',
+    'Uncover all 5 truth categories': 'Descubre las 5 categorías de la verdad',
     Persistent: 'Persistente',
     'Continue playing after a game over': 'Sigue jugando después de un game over',
     Archivist: 'Archivista',
@@ -339,7 +541,7 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'Night Owl': 'Búho Nocturno',
     'Play for over 30 minutes in a single session': 'Juega más de 30 minutos en una sola sesión',
     Liberator: 'Liberador',
-    'Release Prisoner 46 from containment': 'Libera al Prisionero 46 de contención',
+    'Release Prisoner 46 from containment': 'Libera al Prisionero 46 de la contención',
     Whistleblower: 'Denunciante',
     'Leak the conspiracy files to the world': 'Filtra los archivos de conspiración al mundo',
     'Neural Link': 'Enlace Neural',
@@ -575,7 +777,7 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     '[UFO74]: Good. You know enough.':
       '[UFO74]: Bien. Ya sabes lo suficiente.',
     '[UFO74]: Your mission: find 5 pieces of evidence.':
-      '[UFO74]: Tu misión: encontrar 5 piezas de evidencia.',
+      '[UFO74]: Tu misión: encontrar 5 evidencias.',
     '[UFO74]: Once you have them, leak everything.':
       '[UFO74]: Cuando las tengas, filtra todo.',
     '[UFO74]: But understand the risks.':
@@ -587,7 +789,7 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     '[UFO74]: And you only get 8 attempts.':
       '[UFO74]: Y solo tienes 8 intentos.',
     '[UFO74]: Fail 8 times, the window closes. Permanently.':
-      '[UFO74]: Falla 8 veces y la ventana se cierra. Para siempre.',
+      '[UFO74]: Si fallas 8 veces, la ventana se cierra. Para siempre.',
     '[UFO74]: Some files are bait. Opening them spikes detection.':
       '[UFO74]: Algunos archivos son carnada. Abrirlos dispara la detección.',
     '[UFO74]: Some actions are loud. Others are quiet.':
@@ -599,7 +801,229 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     '[UFO74]: Good luck, kid.':
       '[UFO74]: Suerte, kid.',
     '[UFO74 has disconnected]':
-      '[UFO74 se ha desconectado]',
+      '[UFO74 se desconectó]',
+    '[UFO74]: Connection established.':
+      '[UFO74]: Conexión establecida.',
+    "[UFO74]: Listen carefully. I don't repeat myself.":
+      '[UFO74]: Escucha con atención. No repito las cosas.',
+    "[UFO74]: You're inside their system. Don't panic.":
+      '[UFO74]: Estás dentro de su sistema. No entres en pánico.',
+    "[UFO74]: Hey kid! I'll create a user for you so you can investigate.":
+      '[UFO74]: ¡Ey, kid! Voy a crear un usuario para que investigues.',
+    '[UFO74]: You will be... hackerkid.':
+      '[UFO74]: Serás... hackerkid.',
+    "[UFO74]: First, see what's here.":
+      '[UFO74]: Primero, mira qué hay aquí.',
+    '[UFO74]: Type `ls`':
+      '[UFO74]: Escribe `ls`',
+    '[UFO74]: Good. These are the main directories.':
+      '[UFO74]: Bien. Estos son los directorios principales.',
+    '[UFO74]: Start with internal — it has basic files.':
+      '[UFO74]: Empieza por internal — tiene archivos básicos.',
+    '[UFO74]: Type `cd internal`':
+      '[UFO74]: Escribe `cd internal`',
+    "[UFO74]: Multiple folders here. Let's check misc.":
+      '[UFO74]: Hay varias carpetas aquí. Revisemos misc.',
+    '[UFO74]: Type `cd misc`':
+      '[UFO74]: Escribe `cd misc`',
+    '[UFO74]: Mundane stuff. Nothing critical.':
+      '[UFO74]: Cosas comunes. Nada crítico.',
+    '[UFO74]: Open the cafeteria menu.':
+      '[UFO74]: Abre el menú de la cafetería.',
+    '[UFO74]: Type `open cafeteria_menu_week03.txt`':
+      '[UFO74]: Escribe `open cafeteria_menu_week03.txt`',
+    '[UFO74]: Or use TAB to autocomplete.':
+      '[UFO74]: O usa TAB para autocompletar.',
+    '[UFO74]: Riveting.':
+      '[UFO74]: Fascinante.',
+    "[UFO74]: Not everything matters. You'll learn what does.":
+      '[UFO74]: No todo importa. Ya aprenderás qué sí.',
+    '[UFO74]: Go back up one level.':
+      '[UFO74]: Sube un nivel.',
+    '[UFO74]: Type `cd ..`':
+      '[UFO74]: Escribe `cd ..`',
+    '[UFO74]: Now go back to root.':
+      '[UFO74]: Ahora vuelve a la raíz.',
+    '[UFO74]: Now the real thing.':
+      '[UFO74]: Ahora viene lo real.',
+    '[UFO74]: ...':
+      '[UFO74]: ...',
+    'CAFETERIA MENU — WEEK 3, JANUARY 1996':
+      'MENÚ DE CAFETERÍA — SEMANA 3, ENERO DE 1996',
+    'MONDAY (15-JAN):':
+      'LUNES (15-ENE):',
+    'Almoço: Feijoada completa, arroz, farofa':
+      'Almuerzo: Feijoada completa, arroz, farofa',
+    'Jantar: Frango grelhado, legumes':
+      'Cena: Pollo a la plancha, vegetales',
+    'TUESDAY (16-JAN):':
+      'MARTES (16-ENE):',
+    'Almoço: Bife acebolado, arroz, feijão':
+      'Almuerzo: Bistec con cebolla, arroz, frijoles',
+    'Jantar: Sopa de legumes, pão':
+      'Cena: Sopa de verduras, pan',
+    'WEDNESDAY (17-JAN):':
+      'MIÉRCOLES (17-ENE):',
+    'Almoço: Peixe frito, batatas':
+      'Almuerzo: Pescado frito, papas',
+    'Jantar: Macarronada':
+      'Cena: Pasta',
+    'THURSDAY (18-JAN):':
+      'JUEVES (18-ENE):',
+    'Almoço: Frango com quiabo':
+      'Almuerzo: Pollo con quimbombó',
+    'Jantar: Sanduíches variados':
+      'Cena: Sándwiches variados',
+    'FRIDAY (19-JAN):':
+      'VIERNES (19-ENE):',
+    'Almoço: Churrasco misto':
+      'Almuerzo: Parrillada mixta',
+    'Jantar: Pizza':
+      'Cena: Pizza',
+    'NOTE: Vegan/vegetarian options upon request.':
+      'NOTA: Opciones veganas/vegetarianas a solicitud.',
+    'Coffee machine still OUT OF SERVICE.':
+      'La cafetera sigue FUERA DE SERVICIO.',
+    '> CREATING USER PROFILE...':
+      '> CREANDO PERFIL DE USUARIO...',
+    '> USERNAME: hackerkid':
+      '> USUARIO: hackerkid',
+    '> ACCESS LEVEL: 1 [PROVISIONAL]':
+      '> NIVEL DE ACCESO: 1 [PROVISIONAL]',
+    '> STATUS: ACTIVE':
+      '> ESTADO: ACTIVO',
+    '✓ USER hackerkid REGISTERED':
+      '✓ USUARIO hackerkid REGISTRADO',
+    "[UFO74]: Great, now you're in. Let's get to business.":
+      '[UFO74]: Perfecto, ya estás dentro. Vamos al grano.',
+    '[UFO74]: We need to explore UFO files here. Brazil, 1996, kid. Varginha!':
+      '[UFO74]: Tenemos que explorar archivos OVNI aquí. Brasil, 1996, kid. ¡Varginha!',
+    '[UFO74]: Aliens were all over the damn city.':
+      '[UFO74]: Había aliens por toda la maldita ciudad.',
+    "[UFO74]: I'll teach you the basics.":
+      '[UFO74]: Te enseñaré lo básico.',
+    '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │':
+      '│ >> TRANSMISIÓN ENTRANTE << CANAL ENCRIPTADO            │',
+    '│         >> ENCRYPTED CHANNEL OPEN <<                    │':
+      '│         >> CANAL ENCRIPTADO ABIERTO <<                 │',
+    '│         >> ENCRYPTED CHANNEL CLOSED <<                  │':
+      '│         >> CANAL ENCRIPTADO CERRADO <<                 │',
+    'UFO74: youre in. keep it quiet.':
+      'UFO74: ya entraste. mantén un perfil bajo.',
+    'UFO74: quick brief. you cant change anything here — read only.':
+      'UFO74: resumen rápido. aquí no puedes cambiar nada — solo lectura.',
+    'UFO74: type "ls" to see whats in front of you.':
+      'UFO74: escribe "ls" para ver lo que tienes enfrente.',
+    'UFO74: type "cd <folder>" to go inside. "open <file>" to read.':
+      'UFO74: escribe "cd <folder>" para entrar. "open <file>" para leer.',
+    'UFO74: when this channel closes, start with: ls':
+      'UFO74: cuando este canal se cierre, empieza con: ls',
+    'UFO74: try internal/ first. routine paperwork. low heat.':
+      'UFO74: prueba internal/ primero. papeleo rutinario. poco riesgo.',
+    'UFO74: youll see an evidence tracker. it lights up when you prove something.':
+      'UFO74: verás un rastreador de evidencia. se enciende cuando compruebas algo.',
+    'UFO74: risk meter climbs as you dig. if it spikes, they test you. fail that, youre out.':
+      'UFO74: el medidor de riesgo sube mientras escarbas. si se dispara, te prueban. si fallas, se acabó.',
+    'UFO74: im cutting the link. from here, youre on your own.':
+      'UFO74: voy a cortar el enlace. desde aquí sigues por tu cuenta.',
+    'move slow. read everything. the truth is in the details.':
+      've despacio. lee todo. la verdad está en los detalles.',
+    '>> CONNECTION IDLE <<':
+      '>> CONEXIÓN EN ESPERA <<',
+    'Type "help" for commands. "help basics" if youre new.':
+      'Escribe "help" para ver comandos. "help basics" si eres nuevo.',
+    'UFO74: new here? type "help basics".':
+      'UFO74: ¿nuevo por aquí? escribe "help basics".',
+    '║  💡 TUTORIAL TIP                          ║':
+      '║  💡 CONSEJO DEL TUTORIAL                  ║',
+    'You found evidence!':
+      '¡Encontraste evidencia!',
+    'Keep searching for more files.':
+      'Sigue buscando más archivos.',
+    'Collect all 5 categories to win.':
+      'Reúne las 5 categorías para ganar.',
+    'ls              List files in current directory':
+      'ls              Lista archivos del directorio actual',
+    'cd <dir>        Change directory':
+      'cd <dir>        Cambia de directorio',
+    'cd ..           Go back one level':
+      'cd ..           Sube un nivel',
+    "open <file>     Read a file's contents":
+      'open <file>     Lee el contenido de un archivo',
+    'last            Re-read last opened file':
+      'last            Vuelve a leer el último archivo abierto',
+    'note <text>     Save a personal note':
+      'note <text>     Guarda una nota personal',
+    'notes           View all your notes':
+      'notes           Muestra todas tus notas',
+    'bookmark <file> Bookmark a file for later':
+      'bookmark <file> Marca un archivo para después',
+    'progress        See your evidence status':
+      'progress        Muestra el estado de tu evidencia',
+    'map             Visualize evidence connections':
+      'map             Visualiza conexiones de evidencia',
+    'help            Show all commands':
+      'help            Muestra todos los comandos',
+    'Collect evidence in all 5 categories:':
+      'Reúne evidencia en las 5 categorías:',
+    '1. Debris Relocation':
+      '1. Reubicación de Restos',
+    '2. Being Containment':
+      '2. Contención de Seres',
+    '3. Telepathic Scouts':
+      '3. Exploradores Telepáticos',
+    '4. International Actors':
+      '4. Actores Internacionales',
+    '5. Transition 2026':
+      '5. Transición 2026',
+    'HOW TO FIND EVIDENCE:':
+      'CÓMO ENCONTRAR EVIDENCIA:',
+    '1. Navigate directories with ls, cd':
+      '1. Navega directorios con ls, cd',
+    '2. Read files with open <filename>':
+      '2. Lee archivos con open <filename>',
+    '3. Decrypt encrypted files':
+      '3. Descifra archivos encriptados',
+    '4. Use "progress" to check status':
+      '4. Usa "progress" para revisar el estado',
+    '• Collect all 5 categories':
+      '• Reúne las 5 categorías',
+    '• Use "leak" to transmit the evidence':
+      '• Usa "leak" para transmitir la evidencia',
+    'Collect evidence in 5 categories:':
+      'Reúne evidencia en 5 categorías:',
+    '• Read carefully - evidence is in the details':
+      '• Lee con atención: la evidencia está en los detalles',
+    '• Use "note" to track important findings':
+      '• Usa "note" para registrar hallazgos importantes',
+    '• Decrypt encrypted files for hidden evidence':
+      '• Descifra archivos encriptados para hallar evidencia oculta',
+    '• Watch your detection level!':
+      '• ¡Vigila tu nivel de detección!',
+    'COMMANDS TO KNOW':
+      'COMANDOS CLAVE',
+    'progress         Check your case status':
+      'progress         Revisa el estado de tu caso',
+    'map              View collected evidence':
+      'map              Muestra la evidencia reunida',
+    'note <text>      Save personal notes':
+      'note <text>      Guarda notas personales',
+    'bookmark <file>  Mark files for later':
+      'bookmark <file>  Marca archivos para después',
+    'BRAZILIAN INTELLIGENCE LEGACY SYSTEM':
+      'SISTEMA LEGADO DE INTELIGENCIA BRASILEÑA',
+    'TERMINAL ACCESS POINT — NODE 7':
+      'PUNTO DE ACCESO TERMINAL — NODO 7',
+    'SYSTEM DATE: JANUARY 1996':
+      'FECHA DEL SISTEMA: ENERO DE 1996',
+    'WARNING: Unauthorized access detected':
+      'ADVERTENCIA: acceso no autorizado detectado',
+    'WARNING: Session logging enabled':
+      'ADVERTENCIA: registro de sesión habilitado',
+    'INCIDENT-RELATED ARCHIVE':
+      'ARCHIVO RELACIONADO CON EL INCIDENTE',
+    'WARNING: Partial access may result in incomplete conclusions.':
+      'ADVERTENCIA: el acceso parcial puede generar conclusiones incompletas.',
     '⚠ RISK INCREASED: Invalid commands draw system attention.':
       '⚠ RIESGO AUMENTADO: los comandos inválidos llaman la atención del sistema.',
     'CRITICAL: INVALID ATTEMPT THRESHOLD EXCEEDED':

@@ -2,6 +2,9 @@ import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { I18nProvider, translateStatic, useI18n } from '../index';
+import en from '../../locales/en.json';
+import ptBr from '../../locales/pt-br.json';
+import es from '../../locales/es.json';
 
 const STORAGE_KEY = 'terminal1996_language';
 
@@ -63,6 +66,52 @@ describe('i18n system', () => {
     expect(result.current.translateRuntimeText('Unknown command: xyz')).toBe('Comando desconocido: xyz');
     expect(result.current.translateRuntimeText('   [Invalid attempts: 3/8]')).toBe(
       '   [Intentos inválidos: 3/8]'
+    );
+  });
+
+  it('keeps locale key parity across en, pt-BR, and es', () => {
+    const enKeys = Object.keys(en).sort();
+    expect(Object.keys(ptBr).sort()).toEqual(enKeys);
+    expect(Object.keys(es).sort()).toEqual(enKeys);
+  });
+
+  it('translates tutorial guidance and command-hint lines for pt-BR', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('pt-BR');
+    });
+
+    expect(result.current.translateRuntimeText('UFO74: new here? type "help basics".')).toBe(
+      'UFO74: é novo por aqui? digite "help basics".'
+    );
+    expect(
+      result.current.translateRuntimeText(
+        '[UFO74]: Close idea, wrong system. Try: ls'
+      )
+    ).toBe('[UFO74]: Ideia certa, sistema errado. Tente: ls');
+    expect(
+      result.current.translateRuntimeText('ls              List files in current directory')
+    ).toBe('ls              Lista arquivos no diretório atual');
+  });
+
+  it('translates tutorial, warning, and boot lines for Spanish', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('es');
+    });
+
+    expect(result.current.translateRuntimeText('[UFO74]: Connection established.')).toBe(
+      '[UFO74]: Conexión establecida.'
+    );
+    expect(
+      result.current.translateRuntimeText(
+        '⚠ RISK INCREASED: Invalid commands draw system attention.'
+      )
+    ).toBe('⚠ RIESGO AUMENTADO: los comandos inválidos llaman la atención del sistema.');
+    expect(result.current.translateRuntimeText('BRAZILIAN INTELLIGENCE LEGACY SYSTEM')).toBe(
+      'SISTEMA LEGADO DE INTELIGENCIA BRASILEÑA'
     );
   });
 });

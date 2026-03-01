@@ -45,7 +45,7 @@
   "menu.options.language": "Idioma",
   "menu.options.back": "[ VOLTAR ]",
   "menu.options.keyHint": "↑↓ Navegar • Enter/Clique Alternar • Esc Voltar",
-  "menu.confirm.deleteSave": "Excluir este save?",
+  "menu.confirm.deleteSave": "Excluir esta sessão salva?",
 
   "options.value.low": "BAIXO",
   "options.value.medium": "MÉDIO",
@@ -126,7 +126,7 @@
   "settings.shortcut.history": "↑/↓ — Histórico de comandos",
   "settings.shortcut.autocomplete": "Tab — Autocompletar",
   "settings.shortcut.close": "Esc — Fechar sobreposições",
-  "settings.shortcut.skip": "Espaço/Enter — Pular streaming",
+  "settings.shortcut.skip": "Espaço/Enter — Pular animação de texto",
   "settings.close": "[ FECHAR ]",
 
   "pause.title": "PAUSADO",
@@ -212,7 +212,7 @@
   "gameOver.restart.header": "REINÍCIO DO TERMINAL",
   "gameOver.restart.status": "REINICIALIZANDO...",
   "gameOver.restart.log1": "Limpando cache da sessão...",
-  "gameOver.restart.log2": "Resetando protocolos de acesso...",
+  "gameOver.restart.log2": "Reiniciando protocolos de acesso...",
   "gameOver.restart.log3": "Eliminando trilha de auditoria...",
   "gameOver.restart.log4": "Reinicializando camada de segurança...",
   "gameOver.restart.log5": "Restaurando estado padrão...",
