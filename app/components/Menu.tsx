@@ -172,6 +172,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         <div className={styles.footerLine}>{t('menu.main.warningUnauthorized')}</div>
         <div className={styles.footerLine}>{t('menu.main.sessionLogging')}</div>
         <div className={styles.keyHint}>{t('menu.main.keyHint')}</div>
+        <div className={styles.footerLine} style={{ marginTop: '1rem', opacity: 0.6 }}>© 2026 Tulio Soria & Arthur Ramos</div>
       </div>
     </div>
   );
