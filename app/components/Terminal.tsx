@@ -2,7 +2,7 @@
 
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { GamePhase, GameState, TerminalEntry } from '../types';
+import { GamePhase, GameState, TerminalEntry, VideoTrigger } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
 import TypewriterText, { isTypableUfo74Content } from './TypewriterText';
@@ -55,6 +55,14 @@ const SecretEnding = dynamic(() => import('./SecretEnding'), { ssr: false });
 const AchievementGallery = dynamic(() => import('./AchievementGallery'), { ssr: false });
 const StatisticsModal = dynamic(() => import('./StatisticsModal'), { ssr: false });
 import styles from './Terminal.module.css';
+
+// Video played before the Turing test overlay appears
+const TURING_TEST_VIDEO: VideoTrigger = {
+  src: '/videos/turing%20test.mp4',
+  title: 'SECURITY_PROTOCOL_TURING.VID',
+  tone: 'surveillance',
+  corrupted: true,
+};
 
 // UFO74 comments after viewing images - keyed by image src
 const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
@@ -214,6 +222,24 @@ export default function Terminal({
     gameState.isReadingFile && 
     gameState.lastFileReadTime && 
     (Date.now() - gameState.lastFileReadTime < FILE_READ_COOLDOWN_MS)
+  );
+
+  // Track whether the Turing test should show after the pre-turing video closes
+  const pendingTuringAfterVideoRef = useRef(false);
+
+  // Wrapped setter: when Turing test is triggered (true), play the video first
+  const setShowTuringTestWrapped = useCallback<React.Dispatch<React.SetStateAction<boolean>>>(
+    (value) => {
+      const newValue = typeof value === 'function' ? value(showTuringTest) : value;
+      if (newValue) {
+        // Play the Turing test video first; the overlay will show when the video closes
+        pendingTuringAfterVideoRef.current = true;
+        setActiveVideo(TURING_TEST_VIDEO);
+      } else {
+        setShowTuringTest(false);
+      }
+    },
+    [showTuringTest, setActiveVideo, setShowTuringTest]
   );
 
   // Track max detection ever reached for Survivor achievement
@@ -466,7 +492,7 @@ export default function Terminal({
   } = useGameActions({
     setGameState,
     setGamePhase,
-    setShowTuringTest,
+    setShowTuringTest: setShowTuringTestWrapped,
     onExitAction,
     playSound,
     triggerFlicker,
@@ -523,7 +549,7 @@ export default function Terminal({
     setShowAttBar,
     setShowAvatar,
     setAvatarCreepyEntrance,
-    setShowTuringTest,
+    setShowTuringTest: setShowTuringTestWrapped,
     setIsShaking,
     setShowFirewallScare,
     setGamePhase,
@@ -598,7 +624,7 @@ export default function Terminal({
     setShowStatistics,
     setShowPauseMenu,
     setShowHeaderMenu,
-    setShowTuringTest,
+    setShowTuringTest: setShowTuringTestWrapped,
     setActiveImage,
     setActiveVideo,
     refs: {
@@ -1354,6 +1380,18 @@ export default function Terminal({
             tone={activeVideo.tone}
             corrupted={activeVideo.corrupted}
             onCloseAction={() => {
+              // Check if this was the pre-Turing test video
+              const wasTuringVideo = pendingTuringAfterVideoRef.current;
+              if (wasTuringVideo) {
+                pendingTuringAfterVideoRef.current = false;
+                setActiveVideo(null);
+                // Show the Turing test overlay after a short delay
+                setTimeout(() => {
+                  setShowTuringTest(true);
+                }, 300);
+                return;
+              }
+
               // Add "Media recovered" message to terminal
               const recoveredMessage = createEntry(
                 'system',

@@ -2209,6 +2209,11 @@ const early_witness_statement: FileNode = {
   status: 'unstable',
   corruptible: true,
   tags: ['witness', 'creature', 'telepathic'],
+  videoTrigger: {
+    src: '/videos/witness_statement_raw.mp4',
+    title: 'WITNESS_DEPOSITION_RAW.VID',
+    tone: 'surveillance',
+  },
   content: [
     '═══════════════════════════════════════════════════════════',
     'WITNESS STATEMENT — RAW TRANSCRIPT',
@@ -2409,6 +2414,12 @@ const autopsy_alpha_log: FileNode = {
     src: '/images/et.png',
     alt: 'Recovered visual - Autopsy subject',
     tone: 'clinical',
+  },
+  videoTrigger: {
+    src: '/videos/autopsy_alph.mp4',
+    title: 'AUTOPSY_VISUAL_LOG_ALFA.VID',
+    tone: 'clinical',
+    corrupted: true,
   },
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2761,6 +2772,12 @@ const colonization_model: FileNode = {
   name: 'colonization_model.red',
   status: 'restricted',
   accessThreshold: 4,
+  videoTrigger: {
+    src: '/videos/colonization_model.mp4',
+    title: 'COLONIZATION_PROJECTION_MODEL.VID',
+    tone: 'eerie',
+    corrupted: true,
+  },
   content: [
     '═══════════════════════════════════════════════════════════',
     'THEORETICAL MODEL — INDIRECT COLONIZATION',
@@ -3041,6 +3058,12 @@ const neural_dump_alfa: FileNode = {
   status: 'encrypted',
   accessThreshold: 3,
   tags: ['telepathic', 'psi', 'neural', 'creature', 'biological', 'encryption'],
+  videoTrigger: {
+    src: '/videos/neural_link.mp4',
+    title: 'NEURAL_LINK_CAPTURE.VID',
+    tone: 'eerie',
+    corrupted: true,
+  },
   securityQuestion: {
     question: 'Subject designation (found in autopsy records):',
     answers: ['alfa', 'alpha', 'subject alfa', 'specimen alfa'],
