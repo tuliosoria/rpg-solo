@@ -71,6 +71,8 @@
   "terminal.save.minutes": "Guardado: hace {{value}}m",
   "terminal.save.hours": "Guardado: hace {{value}}h",
   "terminal.tracker.evidence": "EVIDENCIA:",
+  "terminal.tracker.alienFiles": "Archivos Alienígenas",
+  "terminal.tracker.evidenceFound": "Evidencia Encontrada: [{{count}}/{{total}}]",
   "terminal.tracker.risk": "RIESGO:",
   "terminal.tracker.recovered": "RECUPERADO",
   "terminal.tracker.captured": "CAPTURADO",

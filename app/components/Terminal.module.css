@@ -234,10 +234,21 @@
 .truthsSection {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
   flex: 1 1 auto;
   min-width: 0;
+}
+
+.evidenceTrackerTitle {
+  color: #00cc00;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(0, 200, 0, 0.5);
+}
+
+.evidenceTrackerDivider {
+  color: #00aa00;
+  text-shadow: 0 0 4px rgba(0, 170, 0, 0.45);
 }
 
 .riskSection {
@@ -293,7 +304,6 @@
 .truthCount {
   color: #00ff00;
   font-weight: bold;
-  margin-left: 4px;
   text-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
 }
 

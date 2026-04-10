@@ -173,6 +173,7 @@ export default function Terminal({
     setParanoiaPosition,
     pendingAchievement,
     setPendingAchievement,
+    showEvidenceTracker,
     setShowEvidenceTracker,
     showRiskTracker,
     setShowRiskTracker,
@@ -760,6 +761,7 @@ export default function Terminal({
     return `${attempts}/${MAX_WRONG_ATTEMPTS}`;
   };
 
+  const evidenceFoundCount = gameState.truthsDiscovered?.size || 0;
   const riskInfo = getRiskLevel();
 
   // Render terminal entry
@@ -1145,6 +1147,13 @@ export default function Terminal({
 
         {/* Progress tracker */}
         <div className={styles.progressTracker}>
+          <div className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}>
+            <span className={styles.evidenceTrackerTitle}>{t('terminal.tracker.alienFiles')}</span>
+            <span className={styles.evidenceTrackerDivider}>—</span>
+            <span className={styles.truthCount}>
+              {t('terminal.tracker.evidenceFound', { count: evidenceFoundCount, total: 5 })}
+            </span>
+          </div>
           <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
             <span className={`${styles.riskItem} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}>
               <span className={styles.trackerLabel}>{t('terminal.tracker.risk')}</span>
