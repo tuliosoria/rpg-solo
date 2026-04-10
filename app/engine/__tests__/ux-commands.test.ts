@@ -567,14 +567,16 @@ describe('UX Commands', () => {
       const result = executeCommand('help', state);
 
       expect(result.output.some(e => e.content.includes('TERMINAL COMMANDS'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('  back              Go to previous directory'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  progress          Show investigation progress'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  map               Show evidence connections'))).toBe(false);
     });
 
-    it('should show help for back command', () => {
+    it('should not expose removed mechanics in direct help', () => {
       const state = createTestState();
       const result = executeCommand('help back', state);
 
-      expect(result.output.some(e => e.content.includes('COMMAND: back'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('browser back button'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Unknown command: back'))).toBe(true);
     });
 
     it('should handle unknown command gracefully', () => {
