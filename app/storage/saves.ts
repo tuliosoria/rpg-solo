@@ -246,11 +246,19 @@ function pruneSlotsForQuotaRetry<T extends { id: string }>(
       return false;
     }
 
+    const orderedSlots = [...slots].sort((left, right) => {
+      const leftTimestamp =
+        'timestamp' in left && typeof left.timestamp === 'number' ? left.timestamp : 0;
+      const rightTimestamp =
+        'timestamp' in right && typeof right.timestamp === 'number' ? right.timestamp : 0;
+      return rightTimestamp - leftTimestamp;
+    });
+
     // Free space for the incoming write: keep at most maxSlots - 1 existing items
     // and always drop at least one slot when something already exists.
-    const keepCount = Math.max(0, Math.min(maxSlots - 1, slots.length - 1));
-    const remainingSlots = slots.slice(0, keepCount);
-    const toDelete = slots.slice(keepCount);
+    const keepCount = Math.max(0, Math.min(maxSlots - 1, orderedSlots.length - 1));
+    const remainingSlots = orderedSlots.slice(0, keepCount);
+    const toDelete = orderedSlots.slice(keepCount);
 
     toDelete.forEach(slot => window.localStorage.removeItem(itemPrefix + slot.id));
     window.localStorage.setItem(listKey, JSON.stringify(remainingSlots));
