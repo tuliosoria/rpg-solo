@@ -30,7 +30,7 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
   {
     id: 'debris_relocation',
     category: 'DEBRIS',
-    question: 'The recovered material was relocated. Where was it taken?',
+    question: 'They moved the debris. Where?',
     acceptedConcepts: [
       ['campinas', 'campina'],
       ['esa', 'e.s.a.', 'escola de sargentos'],
@@ -43,12 +43,12 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
       ['convoy', 'trucks'],
       ['zona militar', 'military zone'],
     ],
-    partialMatchHint: 'Check the transport logs. Where did the convoy go?',
+    partialMatchHint: 'Follow the convoy.',
   },
   {
     id: 'being_containment',
     category: 'CONTAINMENT',
-    question: 'What were the biological specimens? How many were contained?',
+    question: 'How many specimens, and what were they?',
     acceptedConcepts: [
       ['three', '3', 'tres', 'três'],
       ['biological', 'biologic', 'biologics', 'bio-construct'],
@@ -63,12 +63,12 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
       ['manufactured', 'construct', 'bio-construct'],
       ['one died', 'one expired', 'one deceased', 'bio-c expired'],
     ],
-    partialMatchHint: 'How many were recovered? What were they designated? Check the containment logs.',
+    partialMatchHint: 'Count them. Use the containment labels.',
   },
   {
     id: 'telepathic_scouts',
     category: 'PSI-COMM',
-    question: 'How did the beings communicate, and what was their function?',
+    question: 'How did they communicate, and why were they here?',
     acceptedConcepts: [
       ['telepathic', 'telepathy', 'telepaths'],
       ['psi', 'psionic', 'psychic', 'psi-comm'],
@@ -81,12 +81,12 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
       ['conceptual', 'projection'],
       ['cataloguing', 'cataloging', 'survey', 'mapping'],
     ],
-    partialMatchHint: 'Not through words. What did the psi-comm logs reveal about their purpose?',
+    partialMatchHint: 'Not speech. Think psi-comm and purpose.',
   },
   {
     id: 'international_actors',
     category: 'FOREIGN',
-    question: 'Which external powers were involved beyond Brazil?',
+    question: 'Who was involved besides Brazil?',
     acceptedConcepts: [
       ['american', 'americans', 'usa', 'us', 'united states', 'u.s.'],
       ['us military', 'american military', 'pentagon'],
@@ -100,12 +100,12 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
       ['foreign', 'international', 'external'],
       ['liaison'],
     ],
-    partialMatchHint: 'Who has the resources for such operations? Think about the diplomatic cables.',
+    partialMatchHint: 'Read the diplomatic cables.',
   },
   {
     id: 'transition_2026',
     category: 'CONVERGENCE',
-    question: 'What future event do the files point to? When?',
+    question: 'What were the files counting down to? When?',
     acceptedConcepts: [
       ['2026'],
       ['thirty rotations', '30 rotations', 'thirty years', '30 years'],
@@ -118,7 +118,7 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
       ['coming', 'something is coming'],
       ['cycle', '30-year cycle', 'thirty-year cycle'],
     ],
-    partialMatchHint: 'The "thirty rotations" reference. What year does it point to?',
+    partialMatchHint: 'Thirty rotations. Name the year.',
   },
 ];
 
@@ -130,26 +130,23 @@ export const ELUSIVE_MAN_INTRO = [
   '',
   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
   '',
-  '  SECURE CHANNEL ESTABLISHED',
-  '  ENCRYPTION: QUANTUM-GRADE',
+  '  SECURE CHANNEL OPEN',
+  '  QUANTUM HANDSHAKE',
   '',
   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
   '',
 ];
 
 export const ELUSIVE_MAN_GREETING = [
-  '  So. You found a way to reach me.',
+  '  You found me.',
   '',
-  '  I have resources. You have information.',
-  '  Let\'s see if it\'s worth my time.',
+  '  I have resources. You have proof.',
+  '  Five answers buy a leak.',
   '',
-  '  Five questions. Answer them correctly, and the truth goes public.',
-  '  Answer wrong... and you\'ll wish you hadn\'t made contact.',
+  '  Each mistake raises exposure.',
+  '  Three strikes and this channel dies.',
   '',
-  '  Every mistake increases your exposure. Significantly.',
-  '  Three failures and this conversation never happened.',
-  '',
-  '  Let\'s begin.',
+  '  Begin.',
   '',
 ];
 
@@ -164,16 +161,16 @@ export const ELUSIVE_MAN_CORRECT_RESPONSES = [
 ];
 
 export const ELUSIVE_MAN_WRONG_RESPONSES = [
-  'Disappointing. That will cost you.',
-  'Incorrect. Your exposure just increased substantially.',
-  'Wrong. They\'re getting closer to finding you.',
-  'That\'s not what the files say. Risk spike logged.',
+  'Disappointing. Exposure rises.',
+  'Incorrect. They felt that.',
+  'Wrong. They\'re triangulating.',
+  'Not what the files say. Risk spike.',
 ];
 
 export const ELUSIVE_MAN_PARTIAL_RESPONSES = [
-  'Close, but not quite. Elaborate.',
-  'You\'re in the vicinity. Be more specific.',
-  'Partially correct. Think harder.',
+  'Close. Be sharper.',
+  'Near it. Be more specific.',
+  'Partly right. Finish it.',
   'Almost. What else?',
 ];
 
@@ -181,14 +178,10 @@ export const ELUSIVE_MAN_VICTORY = [
   '',
   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
   '',
-  '  Five for five. Impressive.',
+  '  Five for five.',
   '',
-  '  You\'ve done your homework. The evidence is... compelling.',
-  '',
-  '  The leak is initiated. Multiple outlets. Redundant backups.',
-  '  By morning, the world will know what happened in Varginha.',
-  '',
-  '  Your work here is done. Disappear. Now.',
+  '  Leak initiated. Mirrors are live.',
+  '  Be gone before dawn.',
   '',
   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
   '',
@@ -200,12 +193,10 @@ export const ELUSIVE_MAN_LOCKOUT = [
   '',
   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
   '',
-  '  Three strikes. You\'re out.',
+  '  Three strikes.',
   '',
-  '  You don\'t have the intelligence. Literally.',
-  '  This channel is compromised. Connection terminated.',
-  '',
-  '  Good luck with whoever\'s knocking at your door.',
+  '  Channel burned. Connection terminated.',
+  '  Listen for the knock.',
   '',
   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
   '',
@@ -215,8 +206,7 @@ export const ELUSIVE_MAN_LOCKOUT = [
 
 export const ELUSIVE_MAN_ABORT = [
   '',
-  '  Wise choice. Or cowardly. Time will tell.',
-  '  Come back when you\'re ready.',
+  '  Wise choice. Or not.',
   '',
   '  Channel closed.',
   '',
@@ -710,4 +700,3 @@ export function processConspiracyChoice(
     delayMs: 500,
   };
 }
-

@@ -91,8 +91,8 @@ describe('i18n system', () => {
       )
     ).toBe('[UFO74]: Ideia certa, sistema errado. Tente: ls');
     expect(
-      result.current.translateRuntimeText('ls              List files in current directory')
-    ).toBe('ls              Lista arquivos no diretório atual');
+      result.current.translateRuntimeText('ls              List current folder')
+    ).toBe('ls              Lista a pasta atual');
   });
 
   it('translates tutorial, warning, and boot lines for Spanish', async () => {
