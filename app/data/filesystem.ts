@@ -3949,7 +3949,6 @@ const ghost_session_log: FileNode = {
     '  > open bio_container.log',
     '  > open autopsy_alpha.log',
     '  > cd /comms/psi',
-    '  > decrypt transcript_core.enc',
     '  > open transcript_core.enc',
     '  > connect autopsy_alpha.log transcript_core.enc',
     '',

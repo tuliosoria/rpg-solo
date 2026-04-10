@@ -4519,9 +4519,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       if (file.securityQuestion) {
         // Security question encrypted file - hint to find answer in system
         const hints = [
-          'UFO74: this file is encrypted, kid. look around for clues to the password.',
-          'UFO74: encrypted. the answer is somewhere in the system. keep digging.',
-          'UFO74: locked tight. check the other files for hints about the security question.',
+          'UFO74: this one still hides behind a recovery phrase. look around for clues first.',
+          'UFO74: the answer is somewhere else in the system. keep digging before you force it.',
+          'UFO74: locked tight. cross-reference the other files before you try the legacy prompt.',
         ];
         output.push(
           createEntry(
@@ -4530,24 +4530,32 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           )
         );
         output.push(
-          createEntry('ufo74', '[UFO74]: use "decrypt ' + args[0] + '" to attempt decryption.')
+          createEntry(
+            'ufo74',
+            '[UFO74]: once you have the answer, the old recovery wrapper is "decrypt ' +
+              args[0] +
+              '".'
+          )
         );
       } else if (file.timedDecrypt) {
         // Timed decrypt file - hint about the decrypt command
         output.push(
           createEntry(
             'ufo74',
-            'UFO74: timed encryption. you gotta be quick with the decrypt command.'
+            'UFO74: timed recovery wrapper. get ready first, then move fast.'
           )
         );
         output.push(
-          createEntry('ufo74', '[UFO74]: use "decrypt ' + args[0] + '" to start the timed challenge.')
+          createEntry(
+            'ufo74',
+            '[UFO74]: when you are ready, start it with "decrypt ' + args[0] + '".'
+          )
         );
       } else {
         // Standard encrypted file
         const hints = [
-          'UFO74: try the decrypt command, kid.',
-          'UFO74: encrypted. use decrypt to crack it open.',
+          'UFO74: sealed, but not impossible. the old recovery wrapper still works here.',
+          'UFO74: legacy lock. if you need it, use the recovery prompt instead of forcing it.',
         ];
         output.push(
           createEntry(
@@ -4556,7 +4564,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           )
         );
         output.push(
-          createEntry('ufo74', '[UFO74]: use "decrypt ' + args[0] + '" to crack it.')
+          createEntry('ufo74', '[UFO74]: legacy wrapper: "decrypt ' + args[0] + '".')
         );
       }
     }
