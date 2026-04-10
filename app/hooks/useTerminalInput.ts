@@ -184,15 +184,7 @@ export function useTerminalInput({
         history: [
           ...prev.history,
           createEntry('system', ''),
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
           ...messages.flatMap(msg => [msg, createEntry('system', '')]),
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
         ],
       }));
       playSound('transmission');
@@ -545,7 +537,7 @@ export function useTerminalInput({
         commandLower === 'open' || commandLower === 'decrypt' || commandLower === 'last';
       setInputValue('');
 
-      const dangerousCommands = ['decrypt', 'recover', 'trace', 'override', 'leak'];
+      const dangerousCommands = ['recover', 'trace', 'override', 'leak'];
       const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
       const systemCommands = ['scan', 'wait', 'hide'];
 

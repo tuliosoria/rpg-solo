@@ -731,7 +731,7 @@ export function useTerminalEffects({
         condition: (s: GameState) => s.sessionCommandCount < 5,
       },
       {
-        hint: "Some files are ENCRYPTED. You'll need 'decrypt' for those.",
+        hint: "Some files still carry legacy encryption headers, but recovered text opens directly.",
         condition: (s: GameState) =>
           (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2,
       },

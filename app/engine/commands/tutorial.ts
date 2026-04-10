@@ -6,18 +6,13 @@ import { createEntry } from './utils';
 // Tutorial messages from UFO74 - shown one at a time
 // Design: explicit early steps, diegetic, natural hacker briefing flow
 export const TUTORIAL_MESSAGES: string[][] = [
-  [
-    '┌─────────────────────────────────────────────────────────┐',
-    '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │',
-    '└─────────────────────────────────────────────────────────┘',
-  ],
   ['UFO74: youre in. stay quiet.'],
   ['UFO74: read-only. use "ls", "cd <folder>", and "open <file>".'],
   ['UFO74: start in internal/. dull files hide live wires.'],
   ['UFO74: the header tracks evidence. when it ticks, youre close.'],
   ['UFO74: dig too hard and they notice. fail a test, youre gone.'],
   ['UFO74: link dies here. trust the details.'],
-  ['>> CONNECTION IDLE <<', '', 'Type "help" for commands. "help basics" if youre new.'],
+  ['', 'Type "help" for commands. "help basics" if youre new.'],
 ];
 
 // Boot sequence for new game (without UFO74 tutorial)
@@ -214,52 +209,13 @@ export function getTutorialMessage(step: number): TerminalEntry[] {
   const messages = TUTORIAL_MESSAGES[step];
   const entries: TerminalEntry[] = [createEntry('system', '')];
 
-  const isLastStep = step === TUTORIAL_MESSAGES.length - 1;
-  const isFirstStep = step === 0;
-
-  // First step shows channel open header
-  if (isFirstStep) {
-    entries.push(
-      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐')
-    );
-    entries.push(
-      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │')
-    );
-    entries.push(
-      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘')
-    );
-    entries.push(createEntry('system', ''));
-  }
-
   for (let i = 0; i < messages.length; i++) {
     const msg = messages[i];
 
-    if (isFirstStep) {
-      // Skip the original header lines (they're replaced above)
-      continue;
-    } else if (isLastStep) {
-      // Last message: first line is channel closed, then system/ufo74 messages
-      if (i === 0) {
-        entries.push(
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐')
-        );
-        entries.push(
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │')
-        );
-        entries.push(
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘')
-        );
-        entries.push(createEntry('system', ''));
-        entries.push(createEntry('system', msg));
-      } else if (msg.startsWith('UFO74:') || msg.startsWith('       ')) {
-        // First-run nudge from UFO74
-        entries.push(createEntry('ufo74', msg));
-      } else {
-        entries.push(createEntry('system', msg));
-      }
-    } else {
-      // All other UFO74 messages use ufo74 type for consistent light blue styling
+    if (msg.startsWith('UFO74:') || msg.startsWith('       ')) {
       entries.push(createEntry('ufo74', msg));
+    } else {
+      entries.push(createEntry('system', msg));
     }
   }
 

@@ -9,6 +9,7 @@ import {
   createFirewallEyeBatch,
   DETECTION_INCREASE_ON_DETONATE,
   getFirewallEyeBatchSize,
+  MAX_CONCURRENT_FIREWALL_EYES,
   speakFirewallVoice,
 } from '../components/FirewallEyes';
 
@@ -83,7 +84,10 @@ export function useGameActions({
   const handleFirewallActivate = useCallback(() => {
     const now = Date.now();
     setGameState(prev => {
-      const batchSize = getFirewallEyeBatchSize(prev.detectionLevel);
+      const batchSize = Math.min(
+        getFirewallEyeBatchSize(prev.detectionLevel),
+        MAX_CONCURRENT_FIREWALL_EYES
+      );
       return {
         ...prev,
         firewallActive: true,
@@ -104,8 +108,19 @@ export function useGameActions({
 
   const handleFirewallEyeBatchSpawn = useCallback(() => {
     const now = Date.now();
+    let spawned = false;
+
     setGameState(prev => {
-      const batchSize = getFirewallEyeBatchSize(prev.detectionLevel);
+      const availableSlots = Math.max(
+        0,
+        MAX_CONCURRENT_FIREWALL_EYES - prev.firewallEyes.length
+      );
+      const batchSize = Math.min(getFirewallEyeBatchSize(prev.detectionLevel), availableSlots);
+      if (batchSize === 0) {
+        return prev;
+      }
+
+      spawned = true;
       const newEyes = [...prev.firewallEyes, ...createFirewallEyeBatch(batchSize)];
 
       const urgencyMessage = prev.flags.neuralLinkAuthenticated
@@ -125,6 +140,11 @@ export function useGameActions({
         history: [...prev.history, urgencyMessage],
       };
     });
+
+    if (!spawned) {
+      return;
+    }
+
     playSound('warning');
     speakFirewallVoice();
   }, [playSound, setGameState]);

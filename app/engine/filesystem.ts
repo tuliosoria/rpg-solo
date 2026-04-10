@@ -89,26 +89,9 @@ export function listDirectory(
       if (!hasAllFlags) continue;
     }
 
-    // Handle restricted files
-    if (child.type === 'file') {
-      const file = child as FileNode;
-      if (file.status === 'restricted' || file.status === 'restricted_briefing') {
-        // Restricted files only visible after override (adminUnlocked) is active
-        if (!state.flags?.adminUnlocked) {
-          continue; // Hide restricted files until override is active
-        }
-        // Override is active - show the file (skip accessThreshold check for restricted files)
-      } else {
-        // Non-restricted files: check access threshold
-        if (child.accessThreshold && state.accessLevel < child.accessThreshold) {
-          continue;
-        }
-      }
-    } else {
-      // Directories: check access threshold
-      if (child.accessThreshold && state.accessLevel < child.accessThreshold) {
-        continue;
-      }
+    // Legacy encrypted/restricted states are now presentation only.
+    if (child.accessThreshold && state.accessLevel < child.accessThreshold) {
+      continue;
     }
 
     // Check if file is deleted
@@ -156,8 +139,8 @@ export function getFileContent(
   let content: string[];
   if (decrypted && file.decryptedFragment && mutation?.decrypted) {
     content = [...file.decryptedFragment];
-  } else if (file.status === 'encrypted' && !mutation?.decrypted) {
-    return ['[ENCRYPTED - DECRYPTION REQUIRED]'];
+  } else if (file.status === 'encrypted' && file.decryptedFragment) {
+    content = [...file.decryptedFragment];
   } else {
     content = [...file.content];
   }
@@ -230,15 +213,6 @@ export function canAccessFile(
 
   if (mutation?.deleted) return { accessible: false, reason: 'FILE DELETED' };
   if (mutation?.locked) return { accessible: false, reason: 'FILE LOCKED' };
-
-  if (file.status === 'restricted' || file.status === 'restricted_briefing') {
-    if (file.accessThreshold && state.accessLevel < file.accessThreshold) {
-      return { accessible: false, reason: 'ACCESS DENIED - CLEARANCE INSUFFICIENT' };
-    }
-    if (!state.flags.adminUnlocked && path.startsWith('/admin')) {
-      return { accessible: false, reason: 'ACCESS DENIED - RESTRICTED ARCHIVE' };
-    }
-  }
 
   return { accessible: true };
 }

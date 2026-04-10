@@ -16,7 +16,7 @@ export const journalist_payments: FileNode = {
   content: [
     '[ENCRYPTED - FINANCIAL RECORDS]',
     '',
-    'Use: decrypt journalist_payments.enc',
+    'Legacy wrapper retired. Open the file to review the recovered record.',
     '',
     'WARNING: Unauthorized access to financial records',
     'is punishable under Article 317.',

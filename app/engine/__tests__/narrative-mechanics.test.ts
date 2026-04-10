@@ -117,32 +117,34 @@ describe('Narrative Mechanics', () => {
     });
   });
 
-  describe('Password Puzzle', () => {
-    it('requires password for ghost_in_machine.enc', () => {
+  describe('Legacy decrypt compatibility', () => {
+    it('opens ghost_in_machine.enc directly without the old password prompt', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
+        accessLevel: 3,
       });
-      // Use absolute path since the file is in /sys
+
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc', state);
-      // Should prompt for password or show file not found if dir not accessible
-      const hasPasswordPrompt = result.output.some(e => e.content.includes('PASSWORD REQUIRED'));
-      const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
-      expect(hasPasswordPrompt || hasFileNotFound).toBe(true);
+      const output = result.output.map(e => e.content).join('\n');
+
+      expect(output).not.toContain('PASSWORD REQUIRED');
+      expect(output).toContain('old decrypt wrappers are retired');
+      expect(output).toContain('FILE: /sys/ghost_in_machine.enc');
     });
 
-    it('rejects wrong password', () => {
+    it('ignores a wrong password and still opens the recovered file', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
+        accessLevel: 3,
       });
+
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc wrongpassword', state);
-      // Should show decryption failed or file not found
-      const hasFailed = result.output.some(
-        e => e.content.includes('DECRYPTION FAILED') || e.content.includes('Invalid password')
-      );
-      const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
-      expect(hasFailed || hasFileNotFound).toBe(true);
+      const output = result.output.map(e => e.content).join('\n');
+
+      expect(output).not.toContain('DECRYPTION FAILED');
+      expect(output).toContain('FILE: /sys/ghost_in_machine.enc');
     });
 
     it('triggers secret ending with correct password', () => {
@@ -206,7 +208,7 @@ describe('Narrative Mechanics', () => {
     });
 
     describe('active_trace.sys', () => {
-      it('triggers countdown when read with sufficient access', () => {
+      it('no longer triggers countdown when read with sufficient access', () => {
         const state = createTestState({
           currentPath: '/sys',
           flags: { adminUnlocked: true },
@@ -222,8 +224,8 @@ describe('Narrative Mechanics', () => {
           e => e.content.includes('Access') || e.content.includes('level')
         );
         if (!hasFileNotFound && !hasAccessDenied) {
-          expect(result.stateChanges.countdownActive).toBe(true);
-          expect(result.stateChanges.countdownEndTime).toBeGreaterThan(Date.now());
+          expect(result.stateChanges.countdownActive).toBeUndefined();
+          expect(result.stateChanges.traceSpikeActive).toBeUndefined();
         }
       });
 
@@ -345,7 +347,7 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('UFO74 Override Protocol Hints', () => {
-    it('suggests override protocol after 3 files read when not unlocked', () => {
+    it('nudges cross-referencing after 3 files read without mentioning override protocol', () => {
       // State where player has read exactly 2 files - reading 3rd should trigger hint
       const state = createTestState({
         currentPath: '/internal/misc',
@@ -361,12 +363,14 @@ describe('Narrative Mechanics', () => {
       // Open 3rd file (this makes filesRead.size === 3 after processing)
       const result = executeCommand('open cafeteria_menu.txt', state);
 
-      // Should include UFO74 hint about override protocol (in pendingUfo74Messages, not output)
+      // Should include the updated cross-reference hint (in pendingUfo74Messages, not output)
       const pendingMessages = result.pendingUfo74Messages || [];
-      const hasOverrideHint = pendingMessages.some(
-        e => e.content.includes('override protocol') || e.content.includes('MORE hidden')
+      const hasCrossReferenceHint = pendingMessages.some(
+        e =>
+          e.content.includes('cross-checking') ||
+          e.content.includes('pattern only shows up when you compare')
       );
-      expect(hasOverrideHint).toBe(true);
+      expect(hasCrossReferenceHint).toBe(true);
       expect(result.stateChanges.flags?.overrideSuggested).toBe(true);
     });
 
@@ -1152,7 +1156,7 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Countdown System', () => {
-    it('countdown is set when reading active_trace.sys', () => {
+    it('reading active_trace.sys stays informational only', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -1162,8 +1166,8 @@ describe('Narrative Mechanics', () => {
         countdownActive: false,
       });
       const result = executeCommand('open active_trace.sys', state);
-      // Should trigger countdown or show file content
       expect(result.output.length).toBeGreaterThan(0);
+      expect(result.stateChanges.countdownActive).toBeUndefined();
     });
   });
 

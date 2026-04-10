@@ -12,7 +12,8 @@ const EYE_WARNING_MS = 2000; // Time before detonation when eye starts pulsing
 const DETECTION_THRESHOLD = 25; // Detection level when firewall activates
 const BATCH_SIZE = 5; // Default eyes spawned per batch
 const HIGH_RISK_BATCH_SIZE = 10;
-const CRITICAL_RISK_BATCH_SIZE = 12;
+const MAX_CONCURRENT_FIREWALL_EYES = 10;
+const CRITICAL_RISK_BATCH_SIZE = MAX_CONCURRENT_FIREWALL_EYES;
 const FIREWALL_EYE_BATCH_SIZES = {
   BASE: BATCH_SIZE,
   HIGH: HIGH_RISK_BATCH_SIZE,
@@ -122,12 +123,26 @@ function FirewallEyesComponent({
   const pauseStartTimeRef = useRef<number | null>(null); // Track when pause started for time adjustment
   const tutorialPauseStartRef = useRef<number | null>(null);
   const tutorialPauseOffsetsRef = useRef<Map<string, number>>(new Map());
+  const tutorialRemainingMsRef = useRef<Map<string, number>>(new Map());
 
   // Calculate whether to show tutorial popup
   // Show if: tutorial not shown yet, firewall active, not disarmed, and eyes exist
   const shouldShowTutorial = !firewallEyesTutorialShown && firewallActive && !firewallDisarmed && eyes.length > 0;
   const [showTutorialPopup, setShowTutorialPopup] = React.useState(shouldShowTutorial);
   const tutorialCallbackFiredRef = useRef(false); // Track if we've notified parent
+
+  if (showTutorialPopup && tutorialPauseStartRef.current === null) {
+    const pauseStart = Date.now();
+    tutorialPauseStartRef.current = pauseStart;
+
+    for (const eye of eyes) {
+      const pauseOffsetMs = tutorialPauseOffsetsRef.current.get(eye.id) ?? 0;
+      tutorialRemainingMsRef.current.set(
+        eye.id,
+        Math.max(0, eye.detonateTime + pauseOffsetMs - pauseStart)
+      );
+    }
+  }
 
   // Determine if spawning should be suppressed
   const isEffectivelyPaused = paused || showTutorialPopup;
@@ -136,7 +151,7 @@ function FirewallEyesComponent({
   // Show tutorial popup when conditions are met
   // Using useEffect to react to prop changes and show popup
   useEffect(() => {
-    if (shouldShowTutorial && !showTutorialPopup) {
+    if (shouldShowTutorial && !showTutorialPopup && !tutorialCallbackFiredRef.current) {
       setShowTutorialPopup(true);
     }
   }, [shouldShowTutorial, showTutorialPopup]);
@@ -152,22 +167,20 @@ function FirewallEyesComponent({
   // Compensate only the eyes that existed while the tutorial popup was blocking input.
   useEffect(() => {
     if (showTutorialPopup) {
-      if (tutorialPauseStartRef.current === null) {
-        tutorialPauseStartRef.current = Date.now();
-      }
       return;
     }
 
     if (tutorialPauseStartRef.current === null) return;
 
-    const pauseDuration = Date.now() - tutorialPauseStartRef.current;
-    if (pauseDuration > 0) {
-      for (const eye of eyes) {
-        tutorialPauseOffsetsRef.current.set(
-          eye.id,
-          (tutorialPauseOffsetsRef.current.get(eye.id) ?? 0) + pauseDuration
-        );
-      }
+    const resumeTime = Date.now();
+    for (const eye of eyes) {
+      const remainingMs = tutorialRemainingMsRef.current.get(eye.id);
+      if (remainingMs === undefined) continue;
+
+      tutorialPauseOffsetsRef.current.set(
+        eye.id,
+        Math.max(0, resumeTime + remainingMs - eye.detonateTime)
+      );
     }
     tutorialPauseStartRef.current = null;
   }, [eyes, showTutorialPopup]);
@@ -196,7 +209,12 @@ function FirewallEyesComponent({
 
   // Spawn eye batch with cooldown timer
   useEffect(() => {
-    if (!firewallActive || firewallDisarmed || shouldSuppressSpawn) {
+    if (
+      !firewallActive ||
+      firewallDisarmed ||
+      shouldSuppressSpawn ||
+      eyes.length >= MAX_CONCURRENT_FIREWALL_EYES
+    ) {
       // Clear spawn timer if firewall is inactive/disarmed/paused/suppressed
       if (spawnTimerRef.current) {
         clearTimeout(spawnTimerRef.current);
@@ -225,7 +243,14 @@ function FirewallEyesComponent({
         clearTimeout(spawnTimerRef.current);
       }
     };
-  }, [firewallActive, firewallDisarmed, lastEyeSpawnTime, shouldSuppressSpawn, onSpawnEyeBatch]);
+  }, [
+    firewallActive,
+    firewallDisarmed,
+    lastEyeSpawnTime,
+    shouldSuppressSpawn,
+    onSpawnEyeBatch,
+    eyes.length,
+  ]);
 
   // Set up detonation timers for each eye
   useEffect(() => {
@@ -265,6 +290,7 @@ function FirewallEyesComponent({
         clearTimeout(timer);
         detonationTimersRef.current.delete(id);
         tutorialPauseOffsetsRef.current.delete(id);
+        tutorialRemainingMsRef.current.delete(id);
       }
     });
 
@@ -282,6 +308,7 @@ function FirewallEyesComponent({
       timersRef.forEach(timer => clearTimeout(timer));
       timersRef.clear();
       tutorialPauseOffsets.clear();
+      tutorialRemainingMsRef.current.clear();
     };
   }, []);
 
@@ -512,6 +539,7 @@ export {
   DETECTION_INCREASE_ON_DETONATE,
   EYE_LIFETIME_MS,
   BATCH_SIZE,
+  MAX_CONCURRENT_FIREWALL_EYES,
   FIREWALL_EYE_BATCH_SIZES,
   FIREWALL_EYE_BATCH_THRESHOLDS,
   SPAWN_COOLDOWN_MS,

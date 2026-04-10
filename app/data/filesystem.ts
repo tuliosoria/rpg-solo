@@ -1188,7 +1188,7 @@ const honeypot_smoking_gun: FileNode = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// TIMED DECRYPTION FILES - Require fast typing under pressure
+// LEGACY-WRAPPED FILES - readable directly in the streamlined build
 // ═══════════════════════════════════════════════════════════════════════════
 
 const emergency_broadcast: FileNode = {
@@ -1196,17 +1196,13 @@ const emergency_broadcast: FileNode = {
   name: 'emergency_broadcast.enc',
   status: 'encrypted',
   accessThreshold: 2,
-  timedDecrypt: {
-    sequence: 'SIGINT-7734-ALPHA',
-    timeLimit: 12000, // 12 seconds
-  },
   content: [
-    '[ENCRYPTED - TIMED DECRYPTION REQUIRED]',
+    '[LEGACY ENCRYPTION HEADER — RECOVERED COPY AVAILABLE]',
     '',
-    'WARNING: This file contains time-sensitive encryption.',
-    'Decryption must be completed within the time window.',
+    'Historical note: this file previously used a timed wrapper.',
+    'Recovered text is now available directly on open.',
     '',
-    'Use: decrypt emergency_broadcast.enc',
+    'Use: open emergency_broadcast.enc',
   ],
   decryptedFragment: [
     '▓▓▓ EMERGENCY BROADCAST — INTERCEPTED ▓▓▓',
@@ -3124,12 +3120,12 @@ const neural_dump_alfa: FileNode = {
     'CLASSIFICATION: COSMIC - PSI-DIVISION',
     '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
     '',
-    'DECRYPTION REQUIRED',
+    'RECOVERED COPY AVAILABLE',
     '',
     'This file contains raw neural capture data from',
     'recovered specimen. Authentication required.',
     '',
-    'Use: decrypt neural_dump_alfa.psi',
+    'Use: open neural_dump_alfa.psi',
   ],
 };
 
@@ -3340,12 +3336,12 @@ const second_deployment_intercept: FileNode = {
     'CLASSIFICATION: ULTRA — SIGNALS DIVISION',
     '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
     '',
-    'DECRYPTION REQUIRED',
+    'RECOVERED COPY AVAILABLE',
     '',
     'This file contains intercepted signal data.',
     'Authentication required for access.',
     '',
-    'Use: decrypt second_deployment.sig',
+    'Use: open second_deployment.sig',
   ],
 };
 

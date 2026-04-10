@@ -870,6 +870,14 @@ export default function Terminal({
         break;
     }
 
+    const isReadListingLine =
+      entry.type === 'output' &&
+      (/\s\[READ\]$/.test(entryContent) || /\s\[READ\]\s+\[~\d+min\]$/.test(entryContent));
+
+    if (isReadListingLine) {
+      className = `${className} ${styles.readLine}`;
+    }
+
     // Typewriter animation for UFO74 text entries
     if (entry.type === 'ufo74' && isTypableUfo74Content(entryContent)) {
       // Currently being typed — animate character by character
