@@ -551,15 +551,14 @@ describe('UX Commands', () => {
       const result = executeCommand('help open', state);
 
       expect(result.output.some(e => e.content.includes('COMMAND: open'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('encrypted'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Opening certain files may increase detection risk.'))).toBe(true);
     });
 
-    it('should show help for decrypt command', () => {
+    it('should not expose removed decrypt help', () => {
       const state = createTestState();
       const result = executeCommand('help decrypt', state);
 
-      expect(result.output.some(e => e.content.includes('COMMAND: decrypt'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('security question'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Unknown command: decrypt'))).toBe(true);
     });
 
     it('should show general help when no argument', () => {
@@ -570,6 +569,11 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('  back              Go to previous directory'))).toBe(false);
       expect(result.output.some(e => e.content.includes('  progress          Show investigation progress'))).toBe(false);
       expect(result.output.some(e => e.content.includes('  map               Show evidence connections'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  decrypt <file>    Attempt decryption of .enc files'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  recover <file>    Attempt file recovery (RISK)'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  trace             Trace system connections (RISK)'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  rewind            Access archive state (RISK)'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  present           Return to present from archive'))).toBe(false);
     });
 
     it('should not expose removed mechanics in direct help', () => {

@@ -250,26 +250,25 @@ describe('Rewind Command - Time Mechanic', () => {
   });
 
   describe('help command', () => {
-    it('should include rewind in help output', () => {
+    it('should not include rewind in help output', () => {
       const result = executeCommand('help', baseState);
       
       const outputText = result.output.map(e => e.content).join('\n');
-      expect(outputText).toContain('rewind');
+      expect(outputText).not.toContain('rewind            Access archive state (RISK)');
     });
 
-    it('should provide detailed help for rewind', () => {
+    it('should not expose detailed help for rewind', () => {
       const result = executeCommand('help rewind', baseState);
       
       const outputText = result.output.map(e => e.content).join('\n');
-      expect(outputText).toContain('COMMAND: rewind');
-      expect(outputText).toContain('archive');
+      expect(outputText).toContain('Unknown command: rewind');
     });
 
-    it('should provide detailed help for present', () => {
+    it('should not expose detailed help for present', () => {
       const result = executeCommand('help present', baseState);
       
       const outputText = result.output.map(e => e.content).join('\n');
-      expect(outputText).toContain('COMMAND: present');
+      expect(outputText).toContain('Unknown command: present');
     });
   });
 });

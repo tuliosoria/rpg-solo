@@ -89,9 +89,9 @@ function createTutorialTipBox(lines: string[]): TerminalEntry[] {
 // Tutorial tips content
 export const TUTORIAL_TIPS: Record<TutorialTipId, string[]> = {
   first_evidence: [
-    'You found evidence!',
+    'Evidence updated.',
     '',
-    'Keep searching for more files.',
+    'Keep reading through the case files.',
     'Collect all 5 categories to win.',
   ],
 };
@@ -163,11 +163,11 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
     createEntry('system', ''),
-    createEntry('output', '  HOW TO FIND EVIDENCE:'),
+    createEntry('output', '  EVIDENCE WORKFLOW:'),
     createEntry('system', ''),
     createEntry('output', '  1. Navigate directories with ls, cd'),
     createEntry('output', '  2. Read files with open <filename>'),
-    createEntry('output', '  3. Decrypt encrypted files'),
+    createEntry('output', '  3. Watch the header counter update'),
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
     createEntry('system', ''),
@@ -200,8 +200,7 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntry('output', '  STRATEGY'),
     createEntry('system', ''),
     createEntry('output', '  • Read carefully - evidence is in the details'),
-    createEntry('output', '  • Use "note" to track important findings'),
-    createEntry('output', '  • Decrypt encrypted files for hidden evidence'),
+    createEntry('output', '  • Use "note" to track important details'),
     createEntry('output', '  • Watch your detection level!'),
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),

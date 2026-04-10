@@ -410,10 +410,10 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       'UFO74: é novo por aqui? digite "help basics".',
     '║  💡 TUTORIAL TIP                          ║':
       '║  💡 DICA DE TUTORIAL                      ║',
-    'You found evidence!':
-      'Você encontrou uma evidência!',
-    'Keep searching for more files.':
-      'Continue procurando por mais arquivos.',
+    'Evidence updated.':
+      'Evidência atualizada.',
+    'Keep reading through the case files.':
+      'Continue lendo os arquivos do caso.',
     'Collect all 5 categories to win.':
       'Colete as 5 categorias para vencer.',
     'ls              List files in current directory':
@@ -446,14 +446,14 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '4. Atores Internacionais',
     '5. Transition 2026':
       '5. Transição 2026',
-    'HOW TO FIND EVIDENCE:':
-      'COMO ENCONTRAR EVIDÊNCIAS:',
+    'EVIDENCE WORKFLOW:':
+      'FLUXO DAS EVIDÊNCIAS:',
     '1. Navigate directories with ls, cd':
       '1. Navegue pelos diretórios com ls, cd',
     '2. Read files with open <filename>':
       '2. Leia arquivos com open <filename>',
-    '3. Decrypt encrypted files':
-      '3. Descriptografe arquivos criptografados',
+    '3. Watch the header counter update':
+      '3. Observe o contador no cabeçalho atualizar',
     '• Collect all 5 categories':
       '• Colete as 5 categorias',
     '• Use "leak" to transmit the evidence':
@@ -462,10 +462,8 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       'Colete evidências em 5 categorias:',
     '• Read carefully - evidence is in the details':
       '• Leia com atenção - as evidências estão nos detalhes',
-    '• Use "note" to track important findings':
-      '• Use "note" para registrar descobertas importantes',
-    '• Decrypt encrypted files for hidden evidence':
-      '• Descriptografe arquivos criptografados para achar evidências ocultas',
+    '• Use "note" to track important details':
+      '• Use "note" para registrar detalhes importantes',
     '• Watch your detection level!':
       '• Fique de olho no nível de detecção!',
     'COMMANDS TO KNOW':
@@ -926,10 +924,10 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       'UFO74: ¿nuevo por aquí? escribe "help basics".',
     '║  💡 TUTORIAL TIP                          ║':
       '║  💡 CONSEJO DEL TUTORIAL                  ║',
-    'You found evidence!':
-      '¡Encontraste evidencia!',
-    'Keep searching for more files.':
-      'Sigue buscando más archivos.',
+    'Evidence updated.':
+      'Evidencia actualizada.',
+    'Keep reading through the case files.':
+      'Sigue leyendo los archivos del caso.',
     'Collect all 5 categories to win.':
       'Reúne las 5 categorías para ganar.',
     'ls              List files in current directory':
@@ -962,14 +960,14 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '4. Actores Internacionales',
     '5. Transition 2026':
       '5. Transición 2026',
-    'HOW TO FIND EVIDENCE:':
-      'CÓMO ENCONTRAR EVIDENCIA:',
+    'EVIDENCE WORKFLOW:':
+      'FLUJO DE EVIDENCIA:',
     '1. Navigate directories with ls, cd':
       '1. Navega directorios con ls, cd',
     '2. Read files with open <filename>':
       '2. Lee archivos con open <filename>',
-    '3. Decrypt encrypted files':
-      '3. Descifra archivos encriptados',
+    '3. Watch the header counter update':
+      '3. Observa cómo se actualiza el contador del encabezado',
     '• Collect all 5 categories':
       '• Reúne las 5 categorías',
     '• Use "leak" to transmit the evidence':
@@ -978,10 +976,8 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       'Reúne evidencia en 5 categorías:',
     '• Read carefully - evidence is in the details':
       '• Lee con atención: la evidencia está en los detalles',
-    '• Use "note" to track important findings':
-      '• Usa "note" para registrar hallazgos importantes',
-    '• Decrypt encrypted files for hidden evidence':
-      '• Descifra archivos encriptados para hallar evidencia oculta',
+    '• Use "note" to track important details':
+      '• Usa "note" para registrar detalles importantes',
     '• Watch your detection level!':
       '• ¡Vigila tu nivel de detección!',
     'COMMANDS TO KNOW':
