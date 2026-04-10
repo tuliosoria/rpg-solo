@@ -1,4 +1,4 @@
-# Terminal 1996
+# Varginha: Terminal 1996
 
 > *January 20, 1996. Varginha, Brazil. Something fell from the sky.*
 
@@ -47,6 +47,8 @@ npm install
 npm run dev
 ```
 
+**Node.js:** `^20.19.0 || >=22.12.0`
+
 Open [http://localhost:3000](http://localhost:3000) to play locally.
 
 ## Desktop App
@@ -72,11 +74,11 @@ app/
 
 ## Tech Stack
 
-- **Next.js 14** + TypeScript
-- **React 18** with CSS Modules
+- **Next.js 15** + TypeScript 5
+- **React 19** with CSS Modules and Tailwind CSS 4
 - **Electron** for desktop builds
 - **Steam SDK** integration
-- **1034+ tests** — Jest & React Testing Library
+- **Vitest** + React Testing Library
 
 ## CI/CD
 

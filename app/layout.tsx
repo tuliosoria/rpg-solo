@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RPG Solo - Terminal Hacking Game",
-  description: "A retro terminal hacking adventure. Explore SHODAN Corp's network, decrypt secrets, and uncover the truth.",
+  title: "Varginha: Terminal 1996",
+  description:
+    "A terminal horror puzzle set during the 1996 Varginha incident. Explore a classified Brazilian intelligence system and uncover the hidden truths before detection catches up.",
 };
 
 export default function RootLayout({

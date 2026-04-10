@@ -235,6 +235,31 @@ function isQuotaExceededError(error: unknown): boolean {
   );
 }
 
+function pruneSlotsForQuotaRetry<T extends { id: string }>(
+  slots: T[],
+  listKey: string,
+  itemPrefix: string,
+  maxSlots: number
+): boolean {
+  try {
+    if (slots.length === 0) {
+      return false;
+    }
+
+    // Free space for the incoming write: keep at most maxSlots - 1 existing items
+    // and always drop at least one slot when something already exists.
+    const keepCount = Math.max(0, Math.min(maxSlots - 1, slots.length - 1));
+    const remainingSlots = slots.slice(0, keepCount);
+    const toDelete = slots.slice(keepCount);
+
+    toDelete.forEach(slot => window.localStorage.removeItem(itemPrefix + slot.id));
+    window.localStorage.setItem(listKey, JSON.stringify(remainingSlots));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Syncs a save to Steam Cloud in the background.
  * @param key - The save key
@@ -342,12 +367,12 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
     // Handle quota exceeded error by cleaning up oldest saves
     if (isQuotaExceededError(e)) {
       const slots = getSaveSlots();
-      // Delete oldest saves to make room (keep only 5 most recent)
-      const toDelete = slots.slice(5);
-      toDelete.forEach(s => window.localStorage.removeItem(SAVE_PREFIX + s.id));
-      // Update the saves list to remove deleted slots
-      const remainingSlots = slots.slice(0, 5);
-      window.localStorage.setItem(SAVES_KEY, JSON.stringify(remainingSlots));
+      const cleanedUp = pruneSlotsForQuotaRetry(slots, SAVES_KEY, SAVE_PREFIX, MAX_SAVE_SLOTS);
+      if (!cleanedUp) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to free storage space for save retry');
+        return null;
+      }
       // Try again
       try {
         window.localStorage.setItem(SAVE_PREFIX + id, serializeState(stateToSave));
@@ -617,12 +642,16 @@ export function saveCheckpoint(state: GameState, reason: string): CheckpointSlot
     window.localStorage.setItem(CHECKPOINT_PREFIX + id, serializeState(stateToSave));
   } catch (e) {
     if (isQuotaExceededError(e)) {
-      // Clean up oldest checkpoints
       const slots = getCheckpointSlots();
-      const toDelete = slots.slice(2); // Keep only 2 most recent
-      toDelete.forEach(s => window.localStorage.removeItem(CHECKPOINT_PREFIX + s.id));
-      const remainingSlots = slots.slice(0, 2);
-      window.localStorage.setItem(CHECKPOINTS_KEY, JSON.stringify(remainingSlots));
+      const cleanedUp = pruneSlotsForQuotaRetry(
+        slots,
+        CHECKPOINTS_KEY,
+        CHECKPOINT_PREFIX,
+        MAX_CHECKPOINT_SAVES
+      );
+      if (!cleanedUp) {
+        return null;
+      }
       // Try again
       try {
         window.localStorage.setItem(CHECKPOINT_PREFIX + id, serializeState(stateToSave));

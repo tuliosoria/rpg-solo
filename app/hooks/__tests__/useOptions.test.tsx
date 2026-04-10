@@ -216,25 +216,25 @@ describe('useOptions', () => {
   });
 
   describe('Body Classes for CRT/Flicker Effects', () => {
-    it('toggles crt-effects-disabled class on body', async () => {
+    it('toggles no-crt class on body', async () => {
       const { result } = renderHook(() => useOptions());
 
       await vi.waitFor(() => expect(result.current.isLoaded).toBe(true));
 
       // Default: CRT on, so no disabled class
-      expect(document.body.classList.contains('crt-effects-disabled')).toBe(false);
+      expect(document.body.classList.contains('no-crt')).toBe(false);
 
       act(() => {
         result.current.setOption('crtEffectsEnabled', false);
       });
 
-      expect(document.body.classList.contains('crt-effects-disabled')).toBe(true);
+      expect(document.body.classList.contains('no-crt')).toBe(true);
 
       act(() => {
         result.current.setOption('crtEffectsEnabled', true);
       });
 
-      expect(document.body.classList.contains('crt-effects-disabled')).toBe(false);
+      expect(document.body.classList.contains('no-crt')).toBe(false);
     });
 
     it('toggles screen-flicker-disabled class on body', async () => {

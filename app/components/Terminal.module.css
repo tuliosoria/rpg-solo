@@ -8,7 +8,7 @@
   color: #00ff00;
   font-family:
     ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  font-size: 15px;
+  font-size: var(--terminal-font-size, 15px);
   line-height: 1.4;
   display: flex;
   flex-direction: column;

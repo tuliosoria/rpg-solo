@@ -121,8 +121,8 @@ describe('SettingsModal', () => {
     expect(screen.getByText('CRT Effects')).toBeInTheDocument();
   });
 
-  it('loads CRT preference from localStorage on mount', async () => {
-    mockStorage['varginha_crt_enabled'] = 'false';
+  it('loads CRT preference from shared options storage on mount', async () => {
+    mockStorage['terminal1996_options'] = JSON.stringify({ crtEffectsEnabled: false });
     
     render(<SettingsModal {...defaultProps} />);
     
@@ -135,7 +135,7 @@ describe('SettingsModal', () => {
     });
   });
 
-  it('toggles CRT effects and saves to localStorage', async () => {
+  it('toggles CRT effects and saves to shared options storage', async () => {
     render(<SettingsModal {...defaultProps} />);
     
     const crtLabel = screen.getByText('CRT Effects');
@@ -151,7 +151,7 @@ describe('SettingsModal', () => {
     await waitFor(() => {
       expect(crtToggle?.textContent).toBe('[ OFF ]');
     });
-    expect(mockStorage['varginha_crt_enabled']).toBe('false');
+    expect(JSON.parse(mockStorage['terminal1996_options']).crtEffectsEnabled).toBe(false);
   });
 
   it('adds no-crt class to body when CRT is disabled', async () => {
@@ -171,7 +171,7 @@ describe('SettingsModal', () => {
 
   it('removes no-crt class from body when CRT is enabled', async () => {
     document.body.classList.add('no-crt');
-    mockStorage['varginha_crt_enabled'] = 'false';
+    mockStorage['terminal1996_options'] = JSON.stringify({ crtEffectsEnabled: false });
     
     render(<SettingsModal {...defaultProps} />);
     

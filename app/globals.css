@@ -6,6 +6,8 @@
   --terminal-green: #00ff00;
   --terminal-dark-green: #006600;
   --terminal-bg: #0a0a0a;
+  --terminal-font-size: 14px;
+  --flicker-intensity: 0.05;
 }
 
 @theme inline {
@@ -30,6 +32,7 @@ html, body {
 body {
   background: var(--background);
   color: var(--foreground);
+  font-size: var(--terminal-font-size);
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
@@ -70,4 +73,14 @@ body.no-crt [class*="glow"]:not(button):not(input),
 body.no-crt [class*="Glow"]:not(button):not(input),
 body.no-crt [class*="crtCurve"] {
   display: none !important;
+}
+
+body:not(.no-crt) [class*="scanlines"],
+body:not(.no-crt) [class*="Scanlines"] {
+  opacity: calc(0.5 + (var(--flicker-intensity) * 5));
+}
+
+body.screen-flicker-disabled [class*="flicker"],
+body.screen-flicker-disabled [class*="Flicker"] {
+  animation: none !important;
 }

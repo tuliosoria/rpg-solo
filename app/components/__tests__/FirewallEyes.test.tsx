@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, act } from '@testing-library/react';
+import { render, act, fireEvent, screen } from '@testing-library/react';
 import FirewallEyes, {
   DETECTION_THRESHOLD,
   SPAWN_COOLDOWN_MS,
@@ -286,5 +286,31 @@ describe('Tutorial Popup', () => {
     // The only element with "eye" in class should be the popup elements, not actual eyes
     const eyeButtons = container.querySelectorAll('button[class*="eye"]');
     expect(eyeButtons.length).toBe(0);
+  });
+
+  it('pauses eye detonation while the tutorial popup is open', () => {
+    const onEyeDetonate = vi.fn();
+
+    render(<FirewallEyes {...baseProps} onEyeDetonate={onEyeDetonate} />);
+
+    act(() => {
+      vi.advanceTimersByTime(9000);
+    });
+
+    expect(onEyeDetonate).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: /GOT IT/i }));
+
+    act(() => {
+      vi.advanceTimersByTime(7999);
+    });
+
+    expect(onEyeDetonate).not.toHaveBeenCalled();
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(onEyeDetonate).toHaveBeenCalledWith('eye-1');
   });
 });

@@ -36,6 +36,24 @@ describe('Rewind Command - Time Mechanic', () => {
       expect(result.stateChanges.archiveTimestamp?.length).toBeGreaterThan(0);
     });
 
+    it('uses the same archive timestamp for the same state', () => {
+      const firstState = {
+        ...baseState,
+        filesRead: new Set<string>(['/comms/intercepts/morse_intercept.log']),
+        commandHistory: ['help', 'ls', 'open morse_intercept.log'],
+      };
+      const secondState = {
+        ...baseState,
+        filesRead: new Set<string>(['/comms/intercepts/morse_intercept.log']),
+        commandHistory: ['help', 'ls', 'open morse_intercept.log'],
+      };
+
+      const first = executeCommand('rewind', firstState);
+      const second = executeCommand('rewind', secondState);
+
+      expect(first.stateChanges.archiveTimestamp).toBe(second.stateChanges.archiveTimestamp);
+    });
+
     it('should increase detection level by 5', () => {
       const result = executeCommand('rewind', baseState);
       

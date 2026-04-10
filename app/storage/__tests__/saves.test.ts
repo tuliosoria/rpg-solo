@@ -25,6 +25,12 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
   };
 }
 
+function createQuotaExceededError(): DOMException {
+  const error = new DOMException('Quota exceeded', 'QuotaExceededError');
+  Object.defineProperty(error, 'code', { value: 22 });
+  return error;
+}
+
 describe('Save/Load System', () => {
   let mockStore: Record<string, string> = {};
 
@@ -379,6 +385,55 @@ describe('Save/Load System', () => {
       expect(slots.length).toBeLessThanOrEqual(10);
     });
 
+    it('drops at least one existing save before retrying a quota-limited write', async () => {
+      const { saveGame, getSaveSlots } = await import('../saves');
+      const state = createTestState();
+      const existingSlots = [];
+
+      for (let i = 0; i < 5; i++) {
+        const slot = saveGame({ ...state, detectionLevel: i }, `Save ${i}`);
+        existingSlots.push(slot);
+        await new Promise(resolve => setTimeout(resolve, 5));
+      }
+
+      const quotaLimitedStorage = {
+        getItem: (key: string) => mockStore[key] || null,
+        setItem: (key: string, value: string) => {
+          const existingSaveCount = Object.keys(mockStore).filter(storedKey =>
+            storedKey.startsWith('terminal1996:save:')
+          ).length;
+
+          if (
+            key.startsWith('terminal1996:save:') &&
+            !(key in mockStore) &&
+            existingSaveCount >= 5
+          ) {
+            throw createQuotaExceededError();
+          }
+
+          mockStore[key] = value;
+        },
+        removeItem: (key: string) => {
+          delete mockStore[key];
+        },
+        clear: () => {
+          mockStore = {};
+        },
+        length: 0,
+        key: () => null,
+      };
+
+      vi.stubGlobal('localStorage', quotaLimitedStorage);
+      vi.stubGlobal('window', { localStorage: quotaLimitedStorage });
+
+      const oldestSlot = existingSlots[existingSlots.length - 1];
+      const newSlot = saveGame({ ...state, detectionLevel: 99 }, 'Newest Save');
+
+      expect(newSlot).not.toBeNull();
+      expect(getSaveSlots()).toHaveLength(5);
+      expect(mockStore[`terminal1996:save:${oldestSlot!.id}`]).toBeUndefined();
+    });
+
     it('preserves slot metadata correctly', async () => {
       const { saveGame } = await import('../saves');
 
@@ -575,6 +630,55 @@ describe('Save/Load System', () => {
 
       // Most recent should be first
       expect(slots[0].reason).toBe('Checkpoint 6');
+    });
+
+    it('drops at least one existing checkpoint before retrying a quota-limited write', async () => {
+      const { saveCheckpoint, getCheckpointSlots } = await import('../saves');
+      const state = createTestState();
+      const existingSlots = [];
+
+      for (let i = 0; i < 2; i++) {
+        const slot = saveCheckpoint({ ...state, detectionLevel: i * 10 }, `Checkpoint ${i}`);
+        existingSlots.push(slot);
+        await new Promise(resolve => setTimeout(resolve, 5));
+      }
+
+      const quotaLimitedStorage = {
+        getItem: (key: string) => mockStore[key] || null,
+        setItem: (key: string, value: string) => {
+          const existingCheckpointCount = Object.keys(mockStore).filter(storedKey =>
+            storedKey.startsWith('terminal1996:checkpoint:')
+          ).length;
+
+          if (
+            key.startsWith('terminal1996:checkpoint:') &&
+            !(key in mockStore) &&
+            existingCheckpointCount >= 2
+          ) {
+            throw createQuotaExceededError();
+          }
+
+          mockStore[key] = value;
+        },
+        removeItem: (key: string) => {
+          delete mockStore[key];
+        },
+        clear: () => {
+          mockStore = {};
+        },
+        length: 0,
+        key: () => null,
+      };
+
+      vi.stubGlobal('localStorage', quotaLimitedStorage);
+      vi.stubGlobal('window', { localStorage: quotaLimitedStorage });
+
+      const oldestSlot = existingSlots[existingSlots.length - 1];
+      const newSlot = saveCheckpoint({ ...state, detectionLevel: 99 }, 'Newest Checkpoint');
+
+      expect(newSlot).not.toBeNull();
+      expect(getCheckpointSlots()).toHaveLength(2);
+      expect(mockStore[`terminal1996:checkpoint:${oldestSlot!.id}`]).toBeUndefined();
     });
 
     it('returns null for non-existent checkpoint', async () => {

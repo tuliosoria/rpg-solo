@@ -17,6 +17,7 @@ import {
 } from '../constants/timing';
 import { uiRandom, uiRandomPick, uiChance } from '../engine/rng';
 import { initVoices } from '../components/FirewallEyes';
+import { applyOptionsToDocument, readStoredOptions } from './useOptions';
 import type { SoundType } from './useSound';
 
 // "They're watching" paranoia messages
@@ -214,27 +215,10 @@ export function useTerminalEffects({
     focusTerminalTarget();
   }, [focusTerminalTarget, shouldRestoreFocus]);
 
-  // Apply CRT preference on mount
+  // Apply stored visual preferences and initialize voice synthesis on mount
   useEffect(() => {
-    try {
-      const crtEnabled = localStorage.getItem('varginha_crt_enabled');
-      if (crtEnabled === 'false') {
-        document.body.classList.add('no-crt');
-      }
-    } catch {
-      // localStorage not available (SSR or test environment)
-    }
-
-    // Initialize voice synthesis early so voices are ready when needed
+    applyOptionsToDocument(readStoredOptions());
     initVoices();
-
-    return () => {
-      try {
-        document.body.classList.remove('no-crt');
-      } catch {
-        // document not available
-      }
-    };
   }, []);
 
   // Update timed decryption countdown

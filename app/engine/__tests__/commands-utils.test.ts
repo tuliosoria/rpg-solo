@@ -1,5 +1,5 @@
 // Commands Edge Cases Tests - additional coverage for commands.ts
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   parseCommand,
   sanitizeCommandInput,
@@ -304,46 +304,25 @@ describe('Command Utilities', () => {
   });
 
   describe('maybeAddTypo', () => {
-    beforeEach(() => {
-      vi.spyOn(Math, 'random');
-    });
-
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
-
     it('returns original text when no typo', () => {
-      vi.mocked(Math.random).mockReturnValue(0.5); // Above 0.1 chance
-
-      const result = maybeAddTypo('hello world', 0.1);
+      const result = maybeAddTypo('hello world', 0);
       expect(result).toEqual(['hello world']);
     });
 
     it('returns typo and correction when triggered', () => {
-      vi.mocked(Math.random).mockReturnValue(0.05); // Below 0.1 chance
-
-      const result = maybeAddTypo('hello world', 0.1);
-
-      if (result.length === 2) {
-        expect(result[1]).toContain('[CORRECTION]');
-      }
+      const result = maybeAddTypo('hello world', 1);
+      expect(result).toHaveLength(2);
+      expect(result[1]).toContain('[CORRECTION]');
     });
 
     it('does not typo short text', () => {
-      vi.mocked(Math.random).mockReturnValue(0.01);
-
-      const result = maybeAddTypo('hi', 0.1);
+      const result = maybeAddTypo('hi', 1);
       expect(result).toEqual(['hi']);
     });
 
     it('respects custom chance parameter', () => {
-      vi.mocked(Math.random).mockReturnValue(0.4);
-
-      const result = maybeAddTypo('hello world', 0.5); // 50% chance
-      // With random = 0.4 < 0.5, should trigger typo
-      if (result.length === 2) {
-        expect(result[1]).toContain('[CORRECTION]');
-      }
+      expect(maybeAddTypo('hello world', 0)).toEqual(['hello world']);
+      expect(maybeAddTypo('hello world', 1)[1]).toContain('[CORRECTION]');
     });
   });
 

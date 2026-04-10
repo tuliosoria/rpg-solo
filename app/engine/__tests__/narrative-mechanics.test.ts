@@ -288,6 +288,28 @@ describe('Narrative Mechanics', () => {
       expect(result.stateChanges.fileMutations).toBeDefined();
       expect(result.triggerFlicker).toBe(true);
     });
+
+    it('uses deterministic corruption targets for the same state', () => {
+      const baseState = createTestState({
+        currentPath: '/tmp',
+        wrongAttempts: 0,
+        filesRead: new Set<string>(),
+        commandHistory: ['cd /tmp', 'ls'],
+      });
+
+      const first = executeCommand('open core_dump_corrupted.bin', {
+        ...baseState,
+        filesRead: new Set(baseState.filesRead),
+        commandHistory: [...baseState.commandHistory],
+      });
+      const second = executeCommand('open core_dump_corrupted.bin', {
+        ...baseState,
+        filesRead: new Set(baseState.filesRead),
+        commandHistory: [...baseState.commandHistory],
+      });
+
+      expect(first.stateChanges.fileMutations).toEqual(second.stateChanges.fileMutations);
+    });
   });
 
   describe('UFO74 Entry Type', () => {
