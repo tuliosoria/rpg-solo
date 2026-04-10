@@ -940,17 +940,6 @@ function checkTruthProgress(
     // Trigger shocked expression on major discovery
     stateChanges.avatarExpression = 'shocked';
 
-    // Show "EVIDENCE FOUND" banner for new discoveries
-    for (const reveal of newReveals) {
-      if (!state.truthsDiscovered.has(reveal)) {
-        // This is a new discovery
-        notices.push(createEntry('system', ''));
-        notices.push(createEntry('warning', '╔═══════════════════════════════════════════╗'));
-        notices.push(createEntry('warning', '║           EVIDENCE FOUND                  ║'));
-        notices.push(createEntry('warning', '╚═══════════════════════════════════════════╝'));
-      }
-    }
-
     // Breather notice - the system recalibrates
     notices.push(createEntry('system', ''));
     notices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));
@@ -3343,17 +3332,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  cd /admin      - Go to absolute path',
     '  cd ..          - Go to parent directory',
   ],
-  back: [
-    'COMMAND: back',
-    '',
-    'Return to the previously visited directory.',
-    '',
-    'Unlike "cd .." which goes to parent, "back" returns',
-    'to wherever you were before, like a browser back button.',
-    '',
-    'USAGE:',
-    '  back           - Go to previous directory',
-  ],
   open: [
     'COMMAND: open <file>',
     '',
@@ -3405,22 +3383,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  bookmark report.txt         - Toggle bookmark on file',
     '',
     'Bookmarked files show a ★ marker in directory listings.',
-  ],
-  progress: [
-    'COMMAND: progress',
-    '',
-    'Show your investigation progress with evidence tiers.',
-    '',
-    'EVIDENCE TIERS:',
-    '  ○ FRAGMENT     - Found by reading a file',
-    '',
-    'WIN CONDITIONS:',
-    '  Collect all 5 evidence categories.',
-    '',
-    'WORKFLOW:',
-    '  1. Read files to discover evidence',
-    '  2. Collect all 5 categories',
-    '  3. Use "leak" to transmit the evidence',
   ],
   status: [
     'COMMAND: status',
@@ -3488,18 +3450,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  tree           - Show directory tree',
-  ],
-  map: [
-    'COMMAND: map',
-    '',
-    'Display your collected evidence.',
-    '',
-    'Shows:',
-    '  - Evidence by category',
-    '  - Files that revealed evidence',
-    '',
-    'USAGE:',
-    '  map            - Show evidence status',
   ],
   tutorial: [
     'COMMAND: tutorial [on|off]',
@@ -3682,10 +3632,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '',
         '  help [cmd]        Display help (or help for specific command)',
         '  status            Display system status',
-        '  progress          Show investigation progress',
         '  ls                List directory contents',
         '  cd <dir>          Change directory',
-        '  back              Go to previous directory',
         '  open <file>       Open and display file contents',
         '  last              Re-display last opened file',
         '  unread            List unread files',
@@ -3700,7 +3648,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  present           Return to present from archive',
         '  chat              Open secure relay channel',
         '  tree              Show directory structure',
-        '  map               Show evidence connections',
         '  morse <text>      Decipher morse code messages',
         '  hint              Request a hint (limited uses)',
         '  leak              Leak collected evidence',

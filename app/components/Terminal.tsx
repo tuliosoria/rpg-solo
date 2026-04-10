@@ -32,7 +32,7 @@ import PauseMenu from './PauseMenu';
 import TutorialSkipPopup from './TutorialSkipPopup';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
-import FirewallEyes from './FirewallEyes';
+import FirewallEyes, { speakCustomFirewallVoice } from './FirewallEyes';
 
 // Lazy-load conditional components for better initial load performance
 const ImageOverlay = dynamic(() => import('./ImageOverlay'), { ssr: false });
@@ -188,6 +188,8 @@ export default function Terminal({
     setTimedDecryptRemaining,
     burnInLines,
     setBurnInLines,
+    evidenceFoundIndicatorKey,
+    setEvidenceFoundIndicatorKey,
   } = useTerminalState(initialState, initialPhase);
   const keypressTimestamps = useRef<number[]>([]);
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -546,6 +548,7 @@ export default function Terminal({
     setShowTuringTest: setShowTuringTestWrapped,
     setIsShaking,
     setShowFirewallScare,
+    setEvidenceFoundIndicatorKey,
     setGamePhase,
     setGameOverReason,
     setShowGameOver,
@@ -661,6 +664,13 @@ export default function Terminal({
     };
   }, [showHeaderMenu, setShowHeaderMenu, focusTerminalInput]);
 
+  useEffect(() => {
+    if (!showGameOver && !gameState.isGameOver) return;
+
+    stopAmbient();
+    speakCustomFirewallVoice('I disconnect you.');
+  }, [gameState.isGameOver, showGameOver, stopAmbient]);
+
   // Refocus input when tutorial skip popup closes
   const prevShowTutorialSkipRef = useRef(showTutorialSkip);
   useEffect(() => {
@@ -716,23 +726,6 @@ export default function Terminal({
     return t('terminal.save.hours', { value: hours });
   };
 
-  // Get evidence symbol for a category
-  const getEvidenceSymbol = (category: string): string => {
-    const discovered = gameState.truthsDiscovered?.has(category);
-    return discovered ? '●' : '□'; // Filled circle if discovered, empty box if not
-  };
-
-  // Get CSS class for evidence
-  const getEvidenceClass = (category: string): string => {
-    const discovered = gameState.truthsDiscovered?.has(category);
-    return discovered ? styles.truthProven : styles.truthMissing;
-  };
-
-  // Get discovered count (for victory condition display)
-  const getDiscoveredCount = (): number => {
-    return gameState.truthsDiscovered?.size || 0;
-  };
-
   // Get risk level display with percentage
   const getRiskLevel = () => {
     const detection = gameState.detectionLevel;
@@ -751,6 +744,7 @@ export default function Terminal({
     return `${attempts}/${MAX_WRONG_ATTEMPTS}`;
   };
 
+  const evidenceFoundCount = gameState.truthsDiscovered?.size || 0;
   const riskInfo = getRiskLevel();
 
   // Render terminal entry
@@ -1139,11 +1133,12 @@ export default function Terminal({
 
         {/* Progress tracker */}
         <div className={styles.progressTracker}>
-          <div
-            className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}
-          >
-            <span className={styles.trackerLabel}>Alien Files</span>
-            <span className={styles.truthCount}>— Evidence Found: [{getDiscoveredCount()}/5]</span>
+          <div className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}>
+            <span className={styles.evidenceTrackerTitle}>{t('terminal.tracker.alienFiles')}</span>
+            <span className={styles.evidenceTrackerDivider}>—</span>
+            <span className={styles.truthCount}>
+              {t('terminal.tracker.evidenceFound', { count: evidenceFoundCount, total: 5 })}
+            </span>
           </div>
           <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
             <span className={`${styles.riskItem} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}>
@@ -1289,6 +1284,7 @@ export default function Terminal({
             detectionLevel={gameState.detectionLevel}
             sessionStability={gameState.sessionStability}
             creepyEntrance={avatarCreepyEntrance}
+            evidenceFoundIndicatorKey={evidenceFoundIndicatorKey}
             onExpressionTimeout={() => {
               setGameState(prev => ({ ...prev, avatarExpression: 'neutral' }));
             }}

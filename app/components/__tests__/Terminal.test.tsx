@@ -4,6 +4,10 @@ import Terminal from '../Terminal';
 import { DEFAULT_GAME_STATE, GameState } from '../../types';
 import { I18nProvider } from '../../i18n';
 
+const { mockSpeakCustomFirewallVoice } = vi.hoisted(() => ({
+  mockSpeakCustomFirewallVoice: vi.fn(),
+}));
+
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
   default: ({
@@ -57,6 +61,18 @@ vi.mock('../../engine/achievements', () => ({
   getAchievements: vi.fn(() => []),
   Achievement: {},
 }));
+
+vi.mock('../../components/FirewallEyes', async () => {
+  const actual = await vi.importActual<typeof import('../../components/FirewallEyes')>(
+    '../../components/FirewallEyes'
+  );
+
+  return {
+    ...actual,
+    default: () => null,
+    speakCustomFirewallVoice: mockSpeakCustomFirewallVoice,
+  };
+});
 
 // Mock useSound hook
 vi.mock('../../hooks/useSound', () => ({
@@ -143,6 +159,34 @@ describe('Terminal Component', () => {
 
     const input = document.querySelector('input');
     expect(input).toBeInTheDocument();
+  });
+
+  it('stops ambient audio and plays the final firewall line on game over', () => {
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          isGameOver: true,
+          gameOverReason: 'Security lockout triggered',
+        }}
+      />
+    );
+
+    expect(mockStopAmbient).toHaveBeenCalled();
+    expect(mockSpeakCustomFirewallVoice).toHaveBeenCalledWith('I disconnect you.');
+  });
+
+  it('renders a compact evidence counter in the HUD without category labels', () => {
+    render(<Terminal {...defaultProps} />);
+
+    expect(screen.getByText('Alien Files')).toBeInTheDocument();
+    expect(screen.getByText('Evidence Found: [0/5]')).toBeInTheDocument();
+    expect(screen.queryByText('Recovered')).not.toBeInTheDocument();
+    expect(screen.queryByText('Captured')).not.toBeInTheDocument();
+    expect(screen.queryByText('Signals')).not.toBeInTheDocument();
+    expect(screen.queryByText('Foreign')).not.toBeInTheDocument();
+    expect(screen.queryByText('Next')).not.toBeInTheDocument();
   });
 
   it('restores focus after closing settings modal', () => {

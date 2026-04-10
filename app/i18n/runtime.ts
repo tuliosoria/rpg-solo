@@ -426,10 +426,6 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       'notes           Mostra todas as suas anotações',
     'bookmark <file> Bookmark a file for later':
       'bookmark <file> Marca um arquivo para depois',
-    'progress        See your evidence status':
-      'progress        Mostra o status das evidências',
-    'map             Visualize evidence connections':
-      'map             Visualiza conexões de evidências',
     'help            Show all commands':
       'help            Mostra todos os comandos',
     'Collect evidence in all 5 categories:':
@@ -452,8 +448,6 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '2. Leia arquivos com open <filename>',
     '3. Decrypt encrypted files':
       '3. Descriptografe arquivos criptografados',
-    '4. Use "progress" to check status':
-      '4. Use "progress" para verificar o status',
     '• Collect all 5 categories':
       '• Colete as 5 categorias',
     '• Use "leak" to transmit the evidence':
@@ -470,10 +464,6 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '• Fique de olho no nível de detecção!',
     'COMMANDS TO KNOW':
       'COMANDOS IMPORTANTES',
-    'progress         Check your case status':
-      'progress         Verifica o status do caso',
-    'map              View collected evidence':
-      'map              Mostra as evidências coletadas',
     'note <text>      Save personal notes':
       'note <text>      Salva anotações pessoais',
     'bookmark <file>  Mark files for later':
@@ -946,10 +936,6 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       'notes           Muestra todas tus notas',
     'bookmark <file> Bookmark a file for later':
       'bookmark <file> Marca un archivo para después',
-    'progress        See your evidence status':
-      'progress        Muestra el estado de tu evidencia',
-    'map             Visualize evidence connections':
-      'map             Visualiza conexiones de evidencia',
     'help            Show all commands':
       'help            Muestra todos los comandos',
     'Collect evidence in all 5 categories:':
@@ -972,8 +958,6 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '2. Lee archivos con open <filename>',
     '3. Decrypt encrypted files':
       '3. Descifra archivos encriptados',
-    '4. Use "progress" to check status':
-      '4. Usa "progress" para revisar el estado',
     '• Collect all 5 categories':
       '• Reúne las 5 categorías',
     '• Use "leak" to transmit the evidence':
@@ -990,10 +974,6 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '• ¡Vigila tu nivel de detección!',
     'COMMANDS TO KNOW':
       'COMANDOS CLAVE',
-    'progress         Check your case status':
-      'progress         Revisa el estado de tu caso',
-    'map              View collected evidence':
-      'map              Muestra la evidencia reunida',
     'note <text>      Save personal notes':
       'note <text>      Guarda notas personales',
     'bookmark <file>  Mark files for later':

@@ -63,6 +63,7 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
   const [showTuringTest, setShowTuringTest] = useState(initialState.turingEvaluationActive);
   const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
   const [burnInLines, setBurnInLines] = useState<string[]>([]);
+  const [evidenceFoundIndicatorKey, setEvidenceFoundIndicatorKey] = useState(0);
 
   // Sync state when a new game state is loaded externally (e.g., checkpoint load)
   // We detect this by checking if the seed or lastSaveTime changed
@@ -86,6 +87,7 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
       
       // Sync Turing test state
       setShowTuringTest(initialState.turingEvaluationActive);
+      setEvidenceFoundIndicatorKey(0);
       
       // Update refs
       prevSeedRef.current = initialState.seed;
@@ -176,5 +178,7 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     setTimedDecryptRemaining,
     burnInLines,
     setBurnInLines,
+    evidenceFoundIndicatorKey,
+    setEvidenceFoundIndicatorKey,
   };
 }

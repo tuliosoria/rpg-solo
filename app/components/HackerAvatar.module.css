@@ -9,6 +9,29 @@
   align-items: center;
 }
 
+.evidenceIndicatorSlot {
+  min-height: 28px;
+  margin-top: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+}
+
+.evidenceFoundIndicator {
+  color: #9dff9d;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(157, 255, 157, 0.5);
+  animation: evidenceBlink 0.45s step-end infinite;
+}
+
+@keyframes evidenceBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.18; }
+}
+
 .tvFrame {
   position: relative;
   width: 198px;
