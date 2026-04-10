@@ -614,7 +614,7 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('open trust_protocol_1993.txt', state);
 
-      expect(result.output.some(e => e.content.includes('TRUST NO ONE'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('SHARE NOTHING BEYOND YOUR SCOPE'))).toBe(true);
     });
 
     it('modem_log_jan96.txt contains IRC chat', () => {
@@ -625,7 +625,7 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('open modem_log_jan96.txt', state);
 
-      expect(result.output.some(e => e.content.includes('UFO74'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('brasnet'))).toBe(true);
       expect(result.output.some(e => e.content.includes('IRC'))).toBe(true);
     });
 

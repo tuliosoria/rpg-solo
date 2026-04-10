@@ -4075,7 +4075,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Check if this is a honeypot/trap file
     const TRAP_FILES = [
       'URGENT_classified_alpha.txt',
-      'LEAKED_alien_autopsy_REAL.dat',
+      'LEAKED_classified_records.dat',
       'FOR_PRESIDENTS_EYES_ONLY.enc',
       'SMOKING_GUN_proof.txt',
     ];

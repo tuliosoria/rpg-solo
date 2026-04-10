@@ -329,9 +329,9 @@ describe('Story Consistency Tests', () => {
           );
 
           // Key physical characteristics from Varginha lore
-          expect(content).toMatch(/1\.2m|height/i);
-          expect(content).toMatch(/grey|gray/i);
-          expect(content).toMatch(/eye|dark/i);
+          expect(content).toMatch(/1\.6m|height/i);
+          expect(content).toMatch(/brown|oily/i);
+          expect(content).toMatch(/eye|red/i);
           expect(content).toMatch(/four\s+digit|digit/i);
         }
       });
@@ -519,7 +519,7 @@ describe('Story Consistency Tests', () => {
 
           // Should mention the review dimensions (maps to truth categories)
           expect(content).toMatch(/physical\s+assets/i);
-          expect(content).toMatch(/biological\s+subjects/i);
+          expect(content).toMatch(/equipment\s+and\s+materiel/i);
           expect(content).toMatch(/communications/i);
           expect(content).toMatch(/oversight/i);
           expect(content).toMatch(/forward\s+risk/i);
