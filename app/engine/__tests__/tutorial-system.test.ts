@@ -10,7 +10,12 @@ import {
   getFirstRunMessage,
 } from '../commands/tutorial';
 import type { TutorialTipId } from '../commands/tutorial';
-import { getTutorialAutocomplete, TutorialStateID } from '../commands/interactiveTutorial';
+import {
+  getTutorialAutocomplete,
+  TUTORIAL_BRIEFING_STEPS,
+  TUTORIAL_INTRO_STEPS,
+  TutorialStateID,
+} from '../commands/interactiveTutorial';
 
 describe('Tutorial System', () => {
   describe('shouldShowTutorialTip', () => {
@@ -123,6 +128,18 @@ describe('Tutorial System', () => {
     it('returns null for wrong tutorial state', () => {
       expect(getTutorialAutocomplete('open c', TutorialStateID.LS_PROMPT)).toBe(null);
       expect(getTutorialAutocomplete('open c', TutorialStateID.CD_PROMPT)).toBe(null);
+    });
+  });
+
+  describe('interactive tutorial copy', () => {
+    it('keeps the live onboarding path concise', () => {
+      const introText = TUTORIAL_INTRO_STEPS.flat().map(entry => entry.content).join('\n');
+      const briefingText = TUTORIAL_BRIEFING_STEPS.flat().map(entry => entry.content).join('\n');
+
+      expect(introText).toContain("[UFO74]: You're in. Stay quiet.");
+      expect(introText).toContain('[UFO74]: Good. Start with `ls`.');
+      expect(briefingText).toContain('[UFO74]: Find 5 truths. The header counts them.');
+      expect(briefingText).toContain('[UFO74]: Type `help` if you stall.');
     });
   });
 });

@@ -608,6 +608,7 @@ export default function Terminal({
     showStatistics,
     showPauseMenu,
     showHeaderMenu,
+    showTutorialSkip,
     isEnterOnlyMode,
     isFirewallPaused,
     suppressPressure,
@@ -1194,7 +1195,7 @@ export default function Terminal({
               onSubmit={handleSubmit}
               style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
             >
-              <button ref={enterOnlyButtonRef} type="submit" autoFocus />
+              <button ref={enterOnlyButtonRef} type="submit" autoFocus={!showTutorialSkip} />
             </form>
             {/* Centered enter prompt - inline in flex layout to prevent overlap */}
             <div className={styles.enterPromptArea}>
@@ -1266,7 +1267,7 @@ export default function Terminal({
               onKeyDown={handleKeyDown}
               className={styles.inputField}
               disabled={isProcessing || gameState.isGameOver}
-              autoFocus
+              autoFocus={!showTutorialSkip}
               autoComplete="off"
               spellCheck={false}
             />

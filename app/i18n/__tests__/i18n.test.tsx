@@ -102,8 +102,8 @@ describe('i18n system', () => {
       result.current.setLanguage('es');
     });
 
-    expect(result.current.translateRuntimeText('[UFO74]: Connection established.')).toBe(
-      '[UFO74]: Conexión establecida.'
+    expect(result.current.translateRuntimeText("[UFO74]: You're in. Stay quiet.")).toBe(
+      '[UFO74]: Ya entraste. Quédate quieto.'
     );
     expect(
       result.current.translateRuntimeText(

@@ -270,76 +270,58 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '[UFO74]: Mesmo comando. cd ..',
     '[UFO74]: Good. You know enough.':
       '[UFO74]: Boa. Você já sabe o suficiente.',
-    '[UFO74]: Your mission: find 5 pieces of evidence.':
-      '[UFO74]: Sua missão: encontrar 5 evidências.',
-    '[UFO74]: Once you have them, leak everything.':
-      '[UFO74]: Quando tiver todas, vaze tudo.',
-    '[UFO74]: But understand the risks.':
-      '[UFO74]: Mas entenda os riscos.',
-    '[UFO74]: Every action you take... they might notice.':
-      '[UFO74]: Cada ação sua... eles podem notar.',
-    "[UFO74]: Risk hits 100%, you're done. They'll find you.":
-      '[UFO74]: Se o risco bater 100%, acabou. Eles te encontram.',
-    '[UFO74]: And you only get 8 attempts.':
-      '[UFO74]: E você só tem 8 tentativas.',
-    '[UFO74]: Fail 8 times, the window closes. Permanently.':
-      '[UFO74]: Se falhar 8 vezes, a janela fecha. Permanentemente.',
-    '[UFO74]: Some files are bait. Opening them spikes detection.':
-      '[UFO74]: Alguns arquivos são isca. Abrir eles aumenta a detecção.',
-    '[UFO74]: Some actions are loud. Others are quiet.':
-      '[UFO74]: Algumas ações fazem barulho. Outras passam batido.',
-    '[UFO74]: Curiosity has a cost here.':
-      '[UFO74]: Curiosidade tem preço aqui.',
-    "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal.":
-      '[UFO74]: Fiz o que pude. Uma última coisa: digite `help` para ver outros comandos do terminal.',
-    '[UFO74]: Good luck, kid.':
-      '[UFO74]: Boa sorte, kid.',
+    '[UFO74]: Find 5 truths. The header counts them.':
+      '[UFO74]: Ache 5 verdades. O cabeçalho conta elas.',
+    '[UFO74]: Loud moves raise risk. Eight bad tries burn the window.':
+      '[UFO74]: Movimentos barulhentos sobem o risco. Oito erros e a janela fecha.',
+    '[UFO74]: Type `help` if you stall.':
+      '[UFO74]: Digite `help` se travar.',
+    '[UFO74]: Good luck.':
+      '[UFO74]: Boa sorte.',
     '[UFO74 has disconnected]':
       '[UFO74 desconectou]',
-    '[UFO74]: Connection established.':
-      '[UFO74]: Conexão estabelecida.',
-    "[UFO74]: Listen carefully. I don't repeat myself.":
-      '[UFO74]: Escuta com atenção. Não repito duas vezes.',
-    "[UFO74]: You're inside their system. Don't panic.":
-      '[UFO74]: Você está dentro do sistema deles. Não entre em pânico.',
-    "[UFO74]: Hey kid! I'll create a user for you so you can investigate.":
-      '[UFO74]: Ei, kid! Vou criar um usuário pra você investigar.',
-    '[UFO74]: You will be... hackerkid.':
+    "[UFO74]: You're in. Stay quiet.":
+      '[UFO74]: Você entrou. Fique quieto.',
+    "[UFO74]: Read-only. Don't touch what you can't explain.":
+      '[UFO74]: Só leitura. Não toque no que você não entende.',
+    "[UFO74]: I'll open a user for you.":
+      '[UFO74]: Vou abrir um usuário pra você.',
+    "[UFO74]: You'll be... hackerkid.":
       '[UFO74]: Você vai ser... hackerkid.',
-    "[UFO74]: First, see what's here.":
-      '[UFO74]: Primeiro, veja o que tem aqui.',
+    "[UFO74]: First, look around.":
+      '[UFO74]: Primeiro, olhe em volta.',
     '[UFO74]: Type `ls`':
       '[UFO74]: Digite `ls`',
-    '[UFO74]: Good. These are the main directories.':
-      '[UFO74]: Boa. Esses são os diretórios principais.',
-    '[UFO74]: Start with internal — it has basic files.':
-      '[UFO74]: Comece por internal — lá ficam os arquivos básicos.',
+    '[UFO74]: Good. Go to internal.':
+      '[UFO74]: Boa. Vá para internal.',
     '[UFO74]: Type `cd internal`':
       '[UFO74]: Digite `cd internal`',
-    "[UFO74]: Multiple folders here. Let's check misc.":
-      '[UFO74]: Tem várias pastas aqui. Vamos ver misc.',
+    '[UFO74]: Now misc.':
+      '[UFO74]: Agora misc.',
     '[UFO74]: Type `cd misc`':
       '[UFO74]: Digite `cd misc`',
-    '[UFO74]: Mundane stuff. Nothing critical.':
-      '[UFO74]: Coisa comum. Nada crítico.',
-    '[UFO74]: Open the cafeteria menu.':
-      '[UFO74]: Abra o cardápio da cafeteria.',
+    '[UFO74]: Noise. Open the cafeteria menu.':
+      '[UFO74]: Ruído. Abra o cardápio da cafeteria.',
     '[UFO74]: Type `open cafeteria_menu_week03.txt`':
       '[UFO74]: Digite `open cafeteria_menu_week03.txt`',
-    '[UFO74]: Or use TAB to autocomplete.':
-      '[UFO74]: Ou use TAB para autocompletar.',
-    '[UFO74]: Riveting.':
-      '[UFO74]: Empolgante.',
-    "[UFO74]: Not everything matters. You'll learn what does.":
-      '[UFO74]: Nem tudo importa. Você vai aprender o que importa.',
-    '[UFO74]: Go back up one level.':
-      '[UFO74]: Volte um nível.',
+    '[UFO74]: TAB works too.':
+      '[UFO74]: TAB também funciona.',
+    '[UFO74]: Enough. Go back up.':
+      '[UFO74]: Chega. Volte um nível.',
     '[UFO74]: Type `cd ..`':
       '[UFO74]: Digite `cd ..`',
-    '[UFO74]: Now go back to root.':
-      '[UFO74]: Agora volte para a raiz.',
-    '[UFO74]: Now the real thing.':
-      '[UFO74]: Agora começa de verdade.',
+    '[UFO74]: One more. Back to root.':
+      '[UFO74]: Mais uma. Volte para a raiz.',
+    '[UFO74]: Real game now.':
+      '[UFO74]: Agora é pra valer.',
+    "[UFO74]: Loud moves raise risk. 100% ends you.":
+      '[UFO74]: Movimentos barulhentos sobem o risco. 100% acaba com você.',
+    '[UFO74]: You get 8 bad tries. Burn them and the window shuts.':
+      '[UFO74]: Você tem 8 tentativas ruins. Gaste elas e a janela fecha.',
+    '[UFO74]: Some files are bait. Curiosity costs.':
+      '[UFO74]: Alguns arquivos são isca. Curiosidade custa caro.',
+    '[UFO74]: Good. Start with `ls`.':
+      '[UFO74]: Boa. Comece com `ls`.',
     '[UFO74]: ...':
       '[UFO74]: ...',
     'CAFETERIA MENU — WEEK 3, JANUARY 1996':
@@ -754,76 +736,58 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '[UFO74]: Mismo comando. cd ..',
     '[UFO74]: Good. You know enough.':
       '[UFO74]: Bien. Ya sabes lo suficiente.',
-    '[UFO74]: Your mission: find 5 pieces of evidence.':
-      '[UFO74]: Tu misión: encontrar 5 evidencias.',
-    '[UFO74]: Once you have them, leak everything.':
-      '[UFO74]: Cuando las tengas, filtra todo.',
-    '[UFO74]: But understand the risks.':
-      '[UFO74]: Pero entiende los riesgos.',
-    '[UFO74]: Every action you take... they might notice.':
-      '[UFO74]: Cada acción que tomes... podrían notarla.',
-    "[UFO74]: Risk hits 100%, you're done. They'll find you.":
-      '[UFO74]: Si el riesgo llega al 100%, se acabó. Te encontrarán.',
-    '[UFO74]: And you only get 8 attempts.':
-      '[UFO74]: Y solo tienes 8 intentos.',
-    '[UFO74]: Fail 8 times, the window closes. Permanently.':
-      '[UFO74]: Si fallas 8 veces, la ventana se cierra. Para siempre.',
-    '[UFO74]: Some files are bait. Opening them spikes detection.':
-      '[UFO74]: Algunos archivos son carnada. Abrirlos dispara la detección.',
-    '[UFO74]: Some actions are loud. Others are quiet.':
-      '[UFO74]: Algunas acciones hacen ruido. Otras son discretas.',
-    '[UFO74]: Curiosity has a cost here.':
-      '[UFO74]: La curiosidad tiene un costo aquí.',
-    "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal.":
-      '[UFO74]: Hice lo que pude. Una última cosa: escribe `help` para ver otros comandos del terminal.',
-    '[UFO74]: Good luck, kid.':
-      '[UFO74]: Suerte, kid.',
+    '[UFO74]: Find 5 truths. The header counts them.':
+      '[UFO74]: Encuentra 5 verdades. El encabezado las cuenta.',
+    '[UFO74]: Loud moves raise risk. Eight bad tries burn the window.':
+      '[UFO74]: Los movimientos ruidosos suben el riesgo. Ocho errores y la ventana se cierra.',
+    '[UFO74]: Type `help` if you stall.':
+      '[UFO74]: Escribe `help` si te atoras.',
+    '[UFO74]: Good luck.':
+      '[UFO74]: Buena suerte.',
     '[UFO74 has disconnected]':
       '[UFO74 se desconectó]',
-    '[UFO74]: Connection established.':
-      '[UFO74]: Conexión establecida.',
-    "[UFO74]: Listen carefully. I don't repeat myself.":
-      '[UFO74]: Escucha con atención. No repito las cosas.',
-    "[UFO74]: You're inside their system. Don't panic.":
-      '[UFO74]: Estás dentro de su sistema. No entres en pánico.',
-    "[UFO74]: Hey kid! I'll create a user for you so you can investigate.":
-      '[UFO74]: ¡Ey, kid! Voy a crear un usuario para que investigues.',
-    '[UFO74]: You will be... hackerkid.':
+    "[UFO74]: You're in. Stay quiet.":
+      '[UFO74]: Ya entraste. Quédate quieto.',
+    "[UFO74]: Read-only. Don't touch what you can't explain.":
+      '[UFO74]: Solo lectura. No toques lo que no puedas explicar.',
+    "[UFO74]: I'll open a user for you.":
+      '[UFO74]: Te abriré un usuario.',
+    "[UFO74]: You'll be... hackerkid.":
       '[UFO74]: Serás... hackerkid.',
-    "[UFO74]: First, see what's here.":
-      '[UFO74]: Primero, mira qué hay aquí.',
+    "[UFO74]: First, look around.":
+      '[UFO74]: Primero, mira alrededor.',
     '[UFO74]: Type `ls`':
       '[UFO74]: Escribe `ls`',
-    '[UFO74]: Good. These are the main directories.':
-      '[UFO74]: Bien. Estos son los directorios principales.',
-    '[UFO74]: Start with internal — it has basic files.':
-      '[UFO74]: Empieza por internal — tiene archivos básicos.',
+    '[UFO74]: Good. Go to internal.':
+      '[UFO74]: Bien. Ve a internal.',
     '[UFO74]: Type `cd internal`':
       '[UFO74]: Escribe `cd internal`',
-    "[UFO74]: Multiple folders here. Let's check misc.":
-      '[UFO74]: Hay varias carpetas aquí. Revisemos misc.',
+    '[UFO74]: Now misc.':
+      '[UFO74]: Ahora misc.',
     '[UFO74]: Type `cd misc`':
       '[UFO74]: Escribe `cd misc`',
-    '[UFO74]: Mundane stuff. Nothing critical.':
-      '[UFO74]: Cosas comunes. Nada crítico.',
-    '[UFO74]: Open the cafeteria menu.':
-      '[UFO74]: Abre el menú de la cafetería.',
+    '[UFO74]: Noise. Open the cafeteria menu.':
+      '[UFO74]: Ruido. Abre el menú de la cafetería.',
     '[UFO74]: Type `open cafeteria_menu_week03.txt`':
       '[UFO74]: Escribe `open cafeteria_menu_week03.txt`',
-    '[UFO74]: Or use TAB to autocomplete.':
-      '[UFO74]: O usa TAB para autocompletar.',
-    '[UFO74]: Riveting.':
-      '[UFO74]: Fascinante.',
-    "[UFO74]: Not everything matters. You'll learn what does.":
-      '[UFO74]: No todo importa. Ya aprenderás qué sí.',
-    '[UFO74]: Go back up one level.':
-      '[UFO74]: Sube un nivel.',
+    '[UFO74]: TAB works too.':
+      '[UFO74]: TAB también sirve.',
+    '[UFO74]: Enough. Go back up.':
+      '[UFO74]: Basta. Sube un nivel.',
     '[UFO74]: Type `cd ..`':
       '[UFO74]: Escribe `cd ..`',
-    '[UFO74]: Now go back to root.':
-      '[UFO74]: Ahora vuelve a la raíz.',
-    '[UFO74]: Now the real thing.':
-      '[UFO74]: Ahora viene lo real.',
+    '[UFO74]: One more. Back to root.':
+      '[UFO74]: Una más. Vuelve a la raíz.',
+    '[UFO74]: Real game now.':
+      '[UFO74]: Ahora va en serio.',
+    "[UFO74]: Loud moves raise risk. 100% ends you.":
+      '[UFO74]: Los movimientos ruidosos suben el riesgo. 100% te acaba.',
+    '[UFO74]: You get 8 bad tries. Burn them and the window shuts.':
+      '[UFO74]: Tienes 8 intentos malos. Quémalos y la ventana se cierra.',
+    '[UFO74]: Some files are bait. Curiosity costs.':
+      '[UFO74]: Algunos archivos son carnada. La curiosidad cuesta.',
+    '[UFO74]: Good. Start with `ls`.':
+      '[UFO74]: Bien. Empieza con `ls`.',
     '[UFO74]: ...':
       '[UFO74]: ...',
     'CAFETERIA MENU — WEEK 3, JANUARY 1996':

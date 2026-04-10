@@ -89,6 +89,7 @@ interface UseTerminalEffectsOptions {
   showStatistics: boolean;
   showPauseMenu: boolean;
   showHeaderMenu: boolean;
+  showTutorialSkip: boolean;
   isEnterOnlyMode: boolean;
   isFirewallPaused: boolean;
   suppressPressure: boolean;
@@ -139,6 +140,7 @@ export function useTerminalEffects({
   showStatistics,
   showPauseMenu,
   showHeaderMenu,
+  showTutorialSkip,
   isEnterOnlyMode,
   isFirewallPaused,
   suppressPressure,
@@ -201,7 +203,8 @@ export function useTerminalEffects({
     !showAchievements &&
     !showStatistics &&
     !showPauseMenu &&
-    !showHeaderMenu;
+    !showHeaderMenu &&
+    !showTutorialSkip;
 
   const focusTerminalTarget = useCallback(() => {
     const target = inputRef.current ?? enterOnlyButtonRef.current;
