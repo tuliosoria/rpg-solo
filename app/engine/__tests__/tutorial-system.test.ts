@@ -132,14 +132,14 @@ describe('Tutorial System', () => {
   });
 
   describe('interactive tutorial copy', () => {
-    it('keeps the live onboarding path concise', () => {
+    it('keeps the live onboarding path on the original tone', () => {
       const introText = TUTORIAL_INTRO_STEPS.flat().map(entry => entry.content).join('\n');
       const briefingText = TUTORIAL_BRIEFING_STEPS.flat().map(entry => entry.content).join('\n');
 
-      expect(introText).toContain("[UFO74]: You're in. Stay quiet.");
-      expect(introText).toContain('[UFO74]: Good. Start with `ls`.');
-      expect(briefingText).toContain('[UFO74]: Find 5 truths. The header counts them.');
-      expect(briefingText).toContain('[UFO74]: Type `help` if you stall.');
+      expect(introText).toContain('[UFO74]: Connection established.');
+      expect(introText).toContain("[UFO74]: Great, now you're in. Let's get to business.");
+      expect(briefingText).toContain('[UFO74]: Your mission: find 5 pieces of evidence.');
+      expect(briefingText).toContain('[UFO74]: Good luck, kid.');
     });
   });
 });

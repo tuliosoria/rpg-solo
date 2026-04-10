@@ -91,8 +91,8 @@ describe('i18n system', () => {
       )
     ).toBe('[UFO74]: Ideia certa, sistema errado. Tente: ls');
     expect(
-      result.current.translateRuntimeText('ls              List current folder')
-    ).toBe('ls              Lista a pasta atual');
+      result.current.translateRuntimeText('ls              List files in current directory')
+    ).toBe('ls              Lista arquivos no diretório atual');
   });
 
   it('translates tutorial, warning, and boot lines for Spanish', async () => {
@@ -102,8 +102,8 @@ describe('i18n system', () => {
       result.current.setLanguage('es');
     });
 
-    expect(result.current.translateRuntimeText("[UFO74]: You're in. Stay quiet.")).toBe(
-      '[UFO74]: Ya entraste. Quédate quieto.'
+    expect(result.current.translateRuntimeText('[UFO74]: Connection established.')).toBe(
+      '[UFO74]: Conexión establecida.'
     );
     expect(
       result.current.translateRuntimeText(

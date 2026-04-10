@@ -30,44 +30,61 @@ export const INITIAL_TUTORIAL_STATE: InteractiveTutorialState = {
 
 export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
   [TutorialStateID.INTRO]: [
-    "[UFO74]: You're in. Stay quiet.",
-    "[UFO74]: Read-only. Don't touch what you can't explain.",
+    '[UFO74]: Connection established.',
+    "[UFO74]: Listen carefully. I don't repeat myself.",
+    "[UFO74]: You're inside their system. Don't panic.",
     '',
-    "[UFO74]: I'll open a user for you.",
-    "[UFO74]: You'll be... hackerkid.",
+    "[UFO74]: Hey kid! I'll create a user for you so you can investigate.",
+    '[UFO74]: You will be... hackerkid.',
   ],
   [TutorialStateID.LS_PROMPT]: [
-    "[UFO74]: First, look around.",
+    "[UFO74]: First, see what's here.",
     '[UFO74]: Type `ls`',
   ],
   [TutorialStateID.CD_PROMPT]: [
-    '[UFO74]: Good. Go to internal.',
+    '[UFO74]: Good. These are the main directories.',
+    '[UFO74]: Start with internal — it has basic files.',
     '[UFO74]: Type `cd internal`',
   ],
   [TutorialStateID.OPEN_PROMPT]: [
-    '[UFO74]: Now misc.',
+    "[UFO74]: Multiple folders here. Let's check misc.",
     '[UFO74]: Type `cd misc`',
   ],
   [TutorialStateID.FILE_DISPLAY]: [
-    '[UFO74]: Noise. Open the cafeteria menu.',
+    '[UFO74]: Mundane stuff. Nothing critical.',
+    '[UFO74]: Open the cafeteria menu.',
     '[UFO74]: Type `open cafeteria_menu_week03.txt`',
-    '[UFO74]: TAB works too.',
+    '[UFO74]: Or use TAB to autocomplete.',
   ],
   [TutorialStateID.CD_BACK_PROMPT]: [
-    '[UFO74]: Enough. Go back up.',
+    '[UFO74]: Riveting.',
+    "[UFO74]: Not everything matters. You'll learn what does.",
+    '[UFO74]: Go back up one level.',
     '[UFO74]: Type `cd ..`',
   ],
   [TutorialStateID.LS_REINFORCE]: [
-    '[UFO74]: One more. Back to root.',
+    '[UFO74]: Now go back to root.',
     '[UFO74]: Type `cd ..`',
   ],
   [TutorialStateID.TUTORIAL_END]: [
-    '[UFO74]: Good. You know enough.',
+    '[UFO74]: Now the real thing.',
     '',
-    '[UFO74]: Find 5 truths. The header counts them.',
-    '[UFO74]: Loud moves raise risk. Eight bad tries burn the window.',
-    "[UFO74]: Type `help` if you stall.",
-    '[UFO74]: Good luck.',
+    '[UFO74]: Your mission: find 5 pieces of evidence.',
+    '[UFO74]: Once you have them, leak everything.',
+    '',
+    '[UFO74]: But understand the risks.',
+    '[UFO74]: Every action you take... they might notice.',
+    "[UFO74]: Risk hits 100%, you're done. They'll find you.",
+    '',
+    '[UFO74]: And you only get 8 attempts.',
+    '[UFO74]: Fail 8 times, the window closes. Permanently.',
+    '',
+    '[UFO74]: Some files are bait. Opening them spikes detection.',
+    '[UFO74]: Some actions are loud. Others are quiet.',
+    '[UFO74]: Curiosity has a cost here.',
+    '',
+    "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal.",
+    '[UFO74]: Good luck, kid.',
     '',
     '[UFO74]: ...',
     '',
@@ -625,7 +642,7 @@ function generateTutorialEndDialogue(): TerminalEntry[] {
   return [
     createEntry('system', ''),
     createEntry('ufo74', '[UFO74]: Good. You know enough.'),
-    createEntry('ufo74', '[UFO74]: Real game now.'),
+    createEntry('ufo74', '[UFO74]: Now the real thing.'),
     createEntry('system', ''),
   ];
 }
@@ -642,28 +659,34 @@ function generateTutorialEndDialogue(): TerminalEntry[] {
 export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
   // Step 0 — Evidence reveal
   [
-    createEntry('ufo74', '[UFO74]: Find 5 truths. The header counts them.'),
+    createEntry('ufo74', '[UFO74]: Your mission: find 5 pieces of evidence.'),
+    createEntry('ufo74', '[UFO74]: Once you have them, leak everything.'),
     createEntry('system', ''),
   ],
   // Step 1
   [
-    createEntry('ufo74', "[UFO74]: Loud moves raise risk. 100% ends you."),
+    createEntry('ufo74', '[UFO74]: But understand the risks.'),
+    createEntry('ufo74', '[UFO74]: Every action you take... they might notice.'),
+    createEntry('ufo74', "[UFO74]: Risk hits 100%, you're done. They'll find you."),
     createEntry('system', ''),
   ],
   // Step 2 — Risk reveal
   [
-    createEntry('ufo74', '[UFO74]: You get 8 bad tries. Burn them and the window shuts.'),
+    createEntry('ufo74', '[UFO74]: And you only get 8 attempts.'),
+    createEntry('ufo74', '[UFO74]: Fail 8 times, the window closes. Permanently.'),
     createEntry('system', ''),
   ],
   // Step 3
   [
-    createEntry('ufo74', '[UFO74]: Some files are bait. Curiosity costs.'),
+    createEntry('ufo74', '[UFO74]: Some files are bait. Opening them spikes detection.'),
+    createEntry('ufo74', '[UFO74]: Some actions are loud. Others are quiet.'),
+    createEntry('ufo74', '[UFO74]: Curiosity has a cost here.'),
     createEntry('system', ''),
   ],
   // Step 4
   [
-    createEntry('ufo74', "[UFO74]: Type `help` if you stall."),
-    createEntry('ufo74', '[UFO74]: Good luck.'),
+    createEntry('ufo74', "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal."),
+    createEntry('ufo74', '[UFO74]: Good luck, kid.'),
     createEntry('system', ''),
   ],
   // Step 5 — Final / disconnect
@@ -683,14 +706,14 @@ export const TUTORIAL_INTRO_STEPS: TerminalEntry[][] = [
   [
     createEntry('system', ''),
     createEntry('ufo74', '[UFO74]: Connection established.'),
-    createEntry('ufo74', "[UFO74]: You're in. Stay quiet."),
-    createEntry('ufo74', "[UFO74]: Read-only. Don't touch what you can't explain."),
+    createEntry('ufo74', "[UFO74]: Listen carefully. I don't repeat myself."),
+    createEntry('ufo74', "[UFO74]: You're inside their system. Don't panic."),
     createEntry('system', ''),
   ],
   // Block 1 — hackerkid creation (triggers avatar animation)
   [
-    createEntry('ufo74', "[UFO74]: I'll open a user for you."),
-    createEntry('ufo74', "[UFO74]: You'll be... hackerkid."),
+    createEntry('ufo74', "[UFO74]: Hey kid! I'll create a user for you so you can investigate."),
+    createEntry('ufo74', '[UFO74]: You will be... hackerkid.'),
     createEntry('system', ''),
   ],
   // Block 2 — User creation animation + context + first command
@@ -702,7 +725,13 @@ export const TUTORIAL_INTRO_STEPS: TerminalEntry[][] = [
     createEntry('system', ''),
     createEntry('notice', '✓ USER hackerkid REGISTERED'),
     createEntry('system', ''),
-    createEntry('ufo74', '[UFO74]: Good. Start with `ls`.'),
+    createEntry('ufo74', "[UFO74]: Great, now you're in. Let's get to business."),
+    createEntry('ufo74', '[UFO74]: We need to explore UFO files here. Brazil, 1996, kid. Varginha!'),
+    createEntry('ufo74', '[UFO74]: Aliens were all over the damn city.'),
+    createEntry('ufo74', "[UFO74]: I'll teach you the basics."),
+    createEntry('system', ''),
+    createEntry('ufo74', "[UFO74]: First, see what's here."),
+    createEntry('ufo74', '[UFO74]: Type `ls`'),
     createEntry('system', ''),
   ],
 ];

@@ -270,58 +270,76 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '[UFO74]: Mesmo comando. cd ..',
     '[UFO74]: Good. You know enough.':
       '[UFO74]: Boa. Você já sabe o suficiente.',
-    '[UFO74]: Find 5 truths. The header counts them.':
-      '[UFO74]: Ache 5 verdades. O cabeçalho conta elas.',
-    '[UFO74]: Loud moves raise risk. Eight bad tries burn the window.':
-      '[UFO74]: Movimentos barulhentos sobem o risco. Oito erros e a janela fecha.',
-    '[UFO74]: Type `help` if you stall.':
-      '[UFO74]: Digite `help` se travar.',
-    '[UFO74]: Good luck.':
-      '[UFO74]: Boa sorte.',
+    '[UFO74]: Your mission: find 5 pieces of evidence.':
+      '[UFO74]: Sua missão: encontrar 5 evidências.',
+    '[UFO74]: Once you have them, leak everything.':
+      '[UFO74]: Quando tiver todas, vaze tudo.',
+    '[UFO74]: But understand the risks.':
+      '[UFO74]: Mas entenda os riscos.',
+    '[UFO74]: Every action you take... they might notice.':
+      '[UFO74]: Cada ação sua... eles podem notar.',
+    "[UFO74]: Risk hits 100%, you're done. They'll find you.":
+      '[UFO74]: Se o risco bater 100%, acabou. Eles te encontram.',
+    '[UFO74]: And you only get 8 attempts.':
+      '[UFO74]: E você só tem 8 tentativas.',
+    '[UFO74]: Fail 8 times, the window closes. Permanently.':
+      '[UFO74]: Se falhar 8 vezes, a janela fecha. Permanentemente.',
+    '[UFO74]: Some files are bait. Opening them spikes detection.':
+      '[UFO74]: Alguns arquivos são isca. Abrir eles aumenta a detecção.',
+    '[UFO74]: Some actions are loud. Others are quiet.':
+      '[UFO74]: Algumas ações fazem barulho. Outras passam batido.',
+    '[UFO74]: Curiosity has a cost here.':
+      '[UFO74]: Curiosidade tem preço aqui.',
+    "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal.":
+      '[UFO74]: Fiz o que pude. Uma última coisa: digite `help` para ver outros comandos do terminal.',
+    '[UFO74]: Good luck, kid.':
+      '[UFO74]: Boa sorte, kid.',
     '[UFO74 has disconnected]':
       '[UFO74 desconectou]',
-    "[UFO74]: You're in. Stay quiet.":
-      '[UFO74]: Você entrou. Fique quieto.',
-    "[UFO74]: Read-only. Don't touch what you can't explain.":
-      '[UFO74]: Só leitura. Não toque no que você não entende.',
-    "[UFO74]: I'll open a user for you.":
-      '[UFO74]: Vou abrir um usuário pra você.',
-    "[UFO74]: You'll be... hackerkid.":
+    '[UFO74]: Connection established.':
+      '[UFO74]: Conexão estabelecida.',
+    "[UFO74]: Listen carefully. I don't repeat myself.":
+      '[UFO74]: Escuta com atenção. Não repito duas vezes.',
+    "[UFO74]: You're inside their system. Don't panic.":
+      '[UFO74]: Você está dentro do sistema deles. Não entre em pânico.',
+    "[UFO74]: Hey kid! I'll create a user for you so you can investigate.":
+      '[UFO74]: Ei, kid! Vou criar um usuário pra você investigar.',
+    '[UFO74]: You will be... hackerkid.':
       '[UFO74]: Você vai ser... hackerkid.',
-    "[UFO74]: First, look around.":
-      '[UFO74]: Primeiro, olhe em volta.',
+    "[UFO74]: First, see what's here.":
+      '[UFO74]: Primeiro, veja o que tem aqui.',
     '[UFO74]: Type `ls`':
       '[UFO74]: Digite `ls`',
-    '[UFO74]: Good. Go to internal.':
-      '[UFO74]: Boa. Vá para internal.',
+    '[UFO74]: Good. These are the main directories.':
+      '[UFO74]: Boa. Esses são os diretórios principais.',
+    '[UFO74]: Start with internal — it has basic files.':
+      '[UFO74]: Comece por internal — lá ficam os arquivos básicos.',
     '[UFO74]: Type `cd internal`':
       '[UFO74]: Digite `cd internal`',
-    '[UFO74]: Now misc.':
-      '[UFO74]: Agora misc.',
+    "[UFO74]: Multiple folders here. Let's check misc.":
+      '[UFO74]: Tem várias pastas aqui. Vamos ver misc.',
     '[UFO74]: Type `cd misc`':
       '[UFO74]: Digite `cd misc`',
-    '[UFO74]: Noise. Open the cafeteria menu.':
-      '[UFO74]: Ruído. Abra o cardápio da cafeteria.',
+    '[UFO74]: Mundane stuff. Nothing critical.':
+      '[UFO74]: Coisa comum. Nada crítico.',
+    '[UFO74]: Open the cafeteria menu.':
+      '[UFO74]: Abra o cardápio da cafeteria.',
     '[UFO74]: Type `open cafeteria_menu_week03.txt`':
       '[UFO74]: Digite `open cafeteria_menu_week03.txt`',
-    '[UFO74]: TAB works too.':
-      '[UFO74]: TAB também funciona.',
-    '[UFO74]: Enough. Go back up.':
-      '[UFO74]: Chega. Volte um nível.',
+    '[UFO74]: Or use TAB to autocomplete.':
+      '[UFO74]: Ou use TAB para autocompletar.',
+    '[UFO74]: Riveting.':
+      '[UFO74]: Empolgante.',
+    "[UFO74]: Not everything matters. You'll learn what does.":
+      '[UFO74]: Nem tudo importa. Você vai aprender o que importa.',
+    '[UFO74]: Go back up one level.':
+      '[UFO74]: Volte um nível.',
     '[UFO74]: Type `cd ..`':
       '[UFO74]: Digite `cd ..`',
-    '[UFO74]: One more. Back to root.':
-      '[UFO74]: Mais uma. Volte para a raiz.',
-    '[UFO74]: Real game now.':
-      '[UFO74]: Agora é pra valer.',
-    "[UFO74]: Loud moves raise risk. 100% ends you.":
-      '[UFO74]: Movimentos barulhentos sobem o risco. 100% acaba com você.',
-    '[UFO74]: You get 8 bad tries. Burn them and the window shuts.':
-      '[UFO74]: Você tem 8 tentativas ruins. Gaste elas e a janela fecha.',
-    '[UFO74]: Some files are bait. Curiosity costs.':
-      '[UFO74]: Alguns arquivos são isca. Curiosidade custa caro.',
-    '[UFO74]: Good. Start with `ls`.':
-      '[UFO74]: Boa. Comece com `ls`.',
+    '[UFO74]: Now go back to root.':
+      '[UFO74]: Agora volte para a raiz.',
+    '[UFO74]: Now the real thing.':
+      '[UFO74]: Agora começa de verdade.',
     '[UFO74]: ...':
       '[UFO74]: ...',
     'CAFETERIA MENU — WEEK 3, JANUARY 1996':
@@ -384,30 +402,32 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       'UFO74: é novo por aqui? digite "help basics".',
     '║  💡 TUTORIAL TIP                          ║':
       '║  💡 DICA DE TUTORIAL                      ║',
-    'Evidence logged.':
-      'Evidência registrada.',
-    'Need 5 truths to leak.':
-      'Você precisa de 5 verdades para vazar.',
-    'ls              List current folder':
-      'ls              Lista a pasta atual',
-    'cd <dir>        Enter folder':
-      'cd <dir>        Entra na pasta',
-    'cd ..           Move up one level':
-      'cd ..           Sobe um nível',
-    'open <file>     Read a file':
-      'open <file>     Lê um arquivo',
-    'last            Reopen last file':
-      'last            Reabre o último arquivo',
-    'note <text>     Save a note':
-      'note <text>     Salva uma nota',
-    'notes           Read saved notes':
-      'notes           Lê notas salvas',
-    'bookmark <file> Save file for later':
-      'bookmark <file> Guarda o arquivo para depois',
-    'help            Show commands':
-      'help            Mostra os comandos',
-    'Build the 5 truths:':
-      'Monte as 5 verdades:',
+    'Evidence updated.':
+      'Evidência atualizada.',
+    'Keep reading through the case files.':
+      'Continue lendo os arquivos do caso.',
+    'Collect all 5 categories to win.':
+      'Colete as 5 categorias para vencer.',
+    'ls              List files in current directory':
+      'ls              Lista arquivos no diretório atual',
+    'cd <dir>        Change directory':
+      'cd <dir>        Muda de diretório',
+    'cd ..           Go back one level':
+      'cd ..           Volta um nível',
+    "open <file>     Read a file's contents":
+      'open <file>     Lê o conteúdo de um arquivo',
+    'last            Re-read last opened file':
+      'last            Reabre o último arquivo lido',
+    'note <text>     Save a personal note':
+      'note <text>     Salva uma anotação pessoal',
+    'notes           View all your notes':
+      'notes           Mostra todas as suas anotações',
+    'bookmark <file> Bookmark a file for later':
+      'bookmark <file> Marca um arquivo para depois',
+    'help            Show all commands':
+      'help            Mostra todos os comandos',
+    'Collect evidence in all 5 categories:':
+      'Colete evidências nas 5 categorias:',
     '1. Debris Relocation':
       '1. Relocação de Destroços',
     '2. Being Containment':
@@ -418,32 +438,32 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '4. Atores Internacionais',
     '5. Transition 2026':
       '5. Transição 2026',
-    WORKFLOW:
-      'FLUXO',
-    '• Explore with ls and cd':
-      '• Explore com ls e cd',
-    '• Read files with open':
-      '• Leia arquivos com open',
-    '• Watch Alien Files in the header':
-      '• Veja Alien Files no cabeçalho',
-    'TO WIN':
-      'PARA VENCER',
-    '• Reach 5/5 evidence':
-      '• Alcance 5/5 evidências',
-    '• Use "leak"':
-      '• Use "leak"',
-    'Expose 5 truths:':
-      'Exponha 5 verdades:',
-    '• Read for patterns, not noise':
-      '• Procure padrões, não ruído',
-    '• Keep notes or bookmarks':
-      '• Guarde notas ou favoritos',
-    '• Stay below critical detection':
-      '• Fique abaixo da detecção crítica',
-    'FINAL STEP':
-      'PASSO FINAL',
-    '• Run "leak" when the tracker hits 5/5':
-      '• Use "leak" quando o marcador chegar a 5/5',
+    'EVIDENCE WORKFLOW:':
+      'FLUXO DAS EVIDÊNCIAS:',
+    '1. Navigate directories with ls, cd':
+      '1. Navegue pelos diretórios com ls, cd',
+    '2. Read files with open <filename>':
+      '2. Leia arquivos com open <filename>',
+    '3. Watch the header counter update':
+      '3. Observe o contador no cabeçalho atualizar',
+    '• Collect all 5 categories':
+      '• Colete as 5 categorias',
+    '• Use "leak" to transmit the evidence':
+      '• Use "leak" para transmitir as evidências',
+    'Collect evidence in 5 categories:':
+      'Colete evidências em 5 categorias:',
+    '• Read carefully - evidence is in the details':
+      '• Leia com atenção - as evidências estão nos detalhes',
+    '• Use "note" to track important details':
+      '• Use "note" para registrar detalhes importantes',
+    '• Watch your detection level!':
+      '• Fique de olho no nível de detecção!',
+    'COMMANDS TO KNOW':
+      'COMANDOS IMPORTANTES',
+    'note <text>      Save personal notes':
+      'note <text>      Salva anotações pessoais',
+    'bookmark <file>  Mark files for later':
+      'bookmark <file>  Marca arquivos para depois',
     'BRAZILIAN INTELLIGENCE LEGACY SYSTEM':
       'SISTEMA LEGADO DE INTELIGÊNCIA BRASILEIRA',
     'TERMINAL ACCESS POINT — NODE 7':
@@ -736,58 +756,76 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '[UFO74]: Mismo comando. cd ..',
     '[UFO74]: Good. You know enough.':
       '[UFO74]: Bien. Ya sabes lo suficiente.',
-    '[UFO74]: Find 5 truths. The header counts them.':
-      '[UFO74]: Encuentra 5 verdades. El encabezado las cuenta.',
-    '[UFO74]: Loud moves raise risk. Eight bad tries burn the window.':
-      '[UFO74]: Los movimientos ruidosos suben el riesgo. Ocho errores y la ventana se cierra.',
-    '[UFO74]: Type `help` if you stall.':
-      '[UFO74]: Escribe `help` si te atoras.',
-    '[UFO74]: Good luck.':
-      '[UFO74]: Buena suerte.',
+    '[UFO74]: Your mission: find 5 pieces of evidence.':
+      '[UFO74]: Tu misión: encontrar 5 evidencias.',
+    '[UFO74]: Once you have them, leak everything.':
+      '[UFO74]: Cuando las tengas, filtra todo.',
+    '[UFO74]: But understand the risks.':
+      '[UFO74]: Pero entiende los riesgos.',
+    '[UFO74]: Every action you take... they might notice.':
+      '[UFO74]: Cada acción que tomes... podrían notarla.',
+    "[UFO74]: Risk hits 100%, you're done. They'll find you.":
+      '[UFO74]: Si el riesgo llega al 100%, se acabó. Te encontrarán.',
+    '[UFO74]: And you only get 8 attempts.':
+      '[UFO74]: Y solo tienes 8 intentos.',
+    '[UFO74]: Fail 8 times, the window closes. Permanently.':
+      '[UFO74]: Si fallas 8 veces, la ventana se cierra. Para siempre.',
+    '[UFO74]: Some files are bait. Opening them spikes detection.':
+      '[UFO74]: Algunos archivos son carnada. Abrirlos dispara la detección.',
+    '[UFO74]: Some actions are loud. Others are quiet.':
+      '[UFO74]: Algunas acciones hacen ruido. Otras son discretas.',
+    '[UFO74]: Curiosity has a cost here.':
+      '[UFO74]: La curiosidad tiene un costo aquí.',
+    "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal.":
+      '[UFO74]: Hice lo que pude. Una última cosa: escribe `help` para ver otros comandos del terminal.',
+    '[UFO74]: Good luck, kid.':
+      '[UFO74]: Suerte, kid.',
     '[UFO74 has disconnected]':
       '[UFO74 se desconectó]',
-    "[UFO74]: You're in. Stay quiet.":
-      '[UFO74]: Ya entraste. Quédate quieto.',
-    "[UFO74]: Read-only. Don't touch what you can't explain.":
-      '[UFO74]: Solo lectura. No toques lo que no puedas explicar.',
-    "[UFO74]: I'll open a user for you.":
-      '[UFO74]: Te abriré un usuario.',
-    "[UFO74]: You'll be... hackerkid.":
+    '[UFO74]: Connection established.':
+      '[UFO74]: Conexión establecida.',
+    "[UFO74]: Listen carefully. I don't repeat myself.":
+      '[UFO74]: Escucha con atención. No repito las cosas.',
+    "[UFO74]: You're inside their system. Don't panic.":
+      '[UFO74]: Estás dentro de su sistema. No entres en pánico.',
+    "[UFO74]: Hey kid! I'll create a user for you so you can investigate.":
+      '[UFO74]: ¡Ey, kid! Voy a crear un usuario para que investigues.',
+    '[UFO74]: You will be... hackerkid.':
       '[UFO74]: Serás... hackerkid.',
-    "[UFO74]: First, look around.":
-      '[UFO74]: Primero, mira alrededor.',
+    "[UFO74]: First, see what's here.":
+      '[UFO74]: Primero, mira qué hay aquí.',
     '[UFO74]: Type `ls`':
       '[UFO74]: Escribe `ls`',
-    '[UFO74]: Good. Go to internal.':
-      '[UFO74]: Bien. Ve a internal.',
+    '[UFO74]: Good. These are the main directories.':
+      '[UFO74]: Bien. Estos son los directorios principales.',
+    '[UFO74]: Start with internal — it has basic files.':
+      '[UFO74]: Empieza por internal — tiene archivos básicos.',
     '[UFO74]: Type `cd internal`':
       '[UFO74]: Escribe `cd internal`',
-    '[UFO74]: Now misc.':
-      '[UFO74]: Ahora misc.',
+    "[UFO74]: Multiple folders here. Let's check misc.":
+      '[UFO74]: Hay varias carpetas aquí. Revisemos misc.',
     '[UFO74]: Type `cd misc`':
       '[UFO74]: Escribe `cd misc`',
-    '[UFO74]: Noise. Open the cafeteria menu.':
-      '[UFO74]: Ruido. Abre el menú de la cafetería.',
+    '[UFO74]: Mundane stuff. Nothing critical.':
+      '[UFO74]: Cosas comunes. Nada crítico.',
+    '[UFO74]: Open the cafeteria menu.':
+      '[UFO74]: Abre el menú de la cafetería.',
     '[UFO74]: Type `open cafeteria_menu_week03.txt`':
       '[UFO74]: Escribe `open cafeteria_menu_week03.txt`',
-    '[UFO74]: TAB works too.':
-      '[UFO74]: TAB también sirve.',
-    '[UFO74]: Enough. Go back up.':
-      '[UFO74]: Basta. Sube un nivel.',
+    '[UFO74]: Or use TAB to autocomplete.':
+      '[UFO74]: O usa TAB para autocompletar.',
+    '[UFO74]: Riveting.':
+      '[UFO74]: Fascinante.',
+    "[UFO74]: Not everything matters. You'll learn what does.":
+      '[UFO74]: No todo importa. Ya aprenderás qué sí.',
+    '[UFO74]: Go back up one level.':
+      '[UFO74]: Sube un nivel.',
     '[UFO74]: Type `cd ..`':
       '[UFO74]: Escribe `cd ..`',
-    '[UFO74]: One more. Back to root.':
-      '[UFO74]: Una más. Vuelve a la raíz.',
-    '[UFO74]: Real game now.':
-      '[UFO74]: Ahora va en serio.',
-    "[UFO74]: Loud moves raise risk. 100% ends you.":
-      '[UFO74]: Los movimientos ruidosos suben el riesgo. 100% te acaba.',
-    '[UFO74]: You get 8 bad tries. Burn them and the window shuts.':
-      '[UFO74]: Tienes 8 intentos malos. Quémalos y la ventana se cierra.',
-    '[UFO74]: Some files are bait. Curiosity costs.':
-      '[UFO74]: Algunos archivos son carnada. La curiosidad cuesta.',
-    '[UFO74]: Good. Start with `ls`.':
-      '[UFO74]: Bien. Empieza con `ls`.',
+    '[UFO74]: Now go back to root.':
+      '[UFO74]: Ahora vuelve a la raíz.',
+    '[UFO74]: Now the real thing.':
+      '[UFO74]: Ahora viene lo real.',
     '[UFO74]: ...':
       '[UFO74]: ...',
     'CAFETERIA MENU — WEEK 3, JANUARY 1996':
@@ -870,30 +908,32 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       'UFO74: ¿nuevo por aquí? escribe "help basics".',
     '║  💡 TUTORIAL TIP                          ║':
       '║  💡 CONSEJO DEL TUTORIAL                  ║',
-    'Evidence logged.':
-      'Evidencia registrada.',
-    'Need 5 truths to leak.':
-      'Necesitas 5 verdades para filtrar.',
-    'ls              List current folder':
-      'ls              Lista la carpeta actual',
-    'cd <dir>        Enter folder':
-      'cd <dir>        Entra en la carpeta',
-    'cd ..           Move up one level':
+    'Evidence updated.':
+      'Evidencia actualizada.',
+    'Keep reading through the case files.':
+      'Sigue leyendo los archivos del caso.',
+    'Collect all 5 categories to win.':
+      'Reúne las 5 categorías para ganar.',
+    'ls              List files in current directory':
+      'ls              Lista archivos del directorio actual',
+    'cd <dir>        Change directory':
+      'cd <dir>        Cambia de directorio',
+    'cd ..           Go back one level':
       'cd ..           Sube un nivel',
-    'open <file>     Read a file':
-      'open <file>     Lee un archivo',
-    'last            Reopen last file':
-      'last            Reabre el último archivo',
-    'note <text>     Save a note':
-      'note <text>     Guarda una nota',
-    'notes           Read saved notes':
-      'notes           Lee tus notas guardadas',
-    'bookmark <file> Save file for later':
-      'bookmark <file> Guarda el archivo para después',
-    'help            Show commands':
-      'help            Muestra los comandos',
-    'Build the 5 truths:':
-      'Arma las 5 verdades:',
+    "open <file>     Read a file's contents":
+      'open <file>     Lee el contenido de un archivo',
+    'last            Re-read last opened file':
+      'last            Vuelve a leer el último archivo abierto',
+    'note <text>     Save a personal note':
+      'note <text>     Guarda una nota personal',
+    'notes           View all your notes':
+      'notes           Muestra todas tus notas',
+    'bookmark <file> Bookmark a file for later':
+      'bookmark <file> Marca un archivo para después',
+    'help            Show all commands':
+      'help            Muestra todos los comandos',
+    'Collect evidence in all 5 categories:':
+      'Reúne evidencia en las 5 categorías:',
     '1. Debris Relocation':
       '1. Reubicación de Restos',
     '2. Being Containment':
@@ -904,32 +944,32 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '4. Actores Internacionales',
     '5. Transition 2026':
       '5. Transición 2026',
-    WORKFLOW:
-      'FLUJO',
-    '• Explore with ls and cd':
-      '• Explora con ls y cd',
-    '• Read files with open':
-      '• Lee archivos con open',
-    '• Watch Alien Files in the header':
-      '• Mira Alien Files en el encabezado',
-    'TO WIN':
-      'PARA GANAR',
-    '• Reach 5/5 evidence':
-      '• Llega a 5/5 de evidencia',
-    '• Use "leak"':
-      '• Usa "leak"',
-    'Expose 5 truths:':
-      'Expón 5 verdades:',
-    '• Read for patterns, not noise':
-      '• Busca patrones, no ruido',
-    '• Keep notes or bookmarks':
-      '• Guarda notas o marcadores',
-    '• Stay below critical detection':
-      '• Mantente bajo la detección crítica',
-    'FINAL STEP':
-      'PASO FINAL',
-    '• Run "leak" when the tracker hits 5/5':
-      '• Usa "leak" cuando el marcador llegue a 5/5',
+    'EVIDENCE WORKFLOW:':
+      'FLUJO DE EVIDENCIA:',
+    '1. Navigate directories with ls, cd':
+      '1. Navega directorios con ls, cd',
+    '2. Read files with open <filename>':
+      '2. Lee archivos con open <filename>',
+    '3. Watch the header counter update':
+      '3. Observa cómo se actualiza el contador del encabezado',
+    '• Collect all 5 categories':
+      '• Reúne las 5 categorías',
+    '• Use "leak" to transmit the evidence':
+      '• Usa "leak" para transmitir la evidencia',
+    'Collect evidence in 5 categories:':
+      'Reúne evidencia en 5 categorías:',
+    '• Read carefully - evidence is in the details':
+      '• Lee con atención: la evidencia está en los detalles',
+    '• Use "note" to track important details':
+      '• Usa "note" para registrar detalles importantes',
+    '• Watch your detection level!':
+      '• ¡Vigila tu nivel de detección!',
+    'COMMANDS TO KNOW':
+      'COMANDOS CLAVE',
+    'note <text>      Save personal notes':
+      'note <text>      Guarda notas personales',
+    'bookmark <file>  Mark files for later':
+      'bookmark <file>  Marca archivos para después',
     'BRAZILIAN INTELLIGENCE LEGACY SYSTEM':
       'SISTEMA LEGADO DE INTELIGENCIA BRASILEÑA',
     'TERMINAL ACCESS POINT — NODE 7':
