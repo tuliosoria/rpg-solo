@@ -2,7 +2,7 @@
 
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { GamePhase, GameState, TerminalEntry, VideoTrigger } from '../types';
+import { GamePhase, GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
 import TypewriterText, { isTypableUfo74Content } from './TypewriterText';
@@ -55,7 +55,6 @@ const SecretEnding = dynamic(() => import('./SecretEnding'), { ssr: false });
 const AchievementGallery = dynamic(() => import('./AchievementGallery'), { ssr: false });
 const StatisticsModal = dynamic(() => import('./StatisticsModal'), { ssr: false });
 import styles from './Terminal.module.css';
-
 
 // UFO74 comments after viewing images - keyed by image src
 const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {

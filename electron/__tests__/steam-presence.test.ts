@@ -122,6 +122,18 @@ describe('Steam Rich Presence Module', () => {
       expect(result.success).toBe(false);
       expect(result.error).toBe('Steam not initialized');
     });
+
+    it('treats isGameOver renderer state as a completed run', () => {
+      steamPresence.initialize(mockSteamClient);
+
+      const result = steamPresence.updateFromGameState({ isGameOver: true, gameWon: true });
+
+      expect(result.success).toBe(true);
+      expect(mockFriends.setRichPresence).toHaveBeenCalledWith(
+        'status',
+        steamPresence.PRESENCE_STATES.ENDING_GOOD
+      );
+    });
   });
 
   describe('graceful degradation', () => {

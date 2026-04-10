@@ -2,6 +2,8 @@
   "name": "varginha-terminal-1996",
   "version": "0.1.0",
   "private": true,
+  "description": "A narrative puzzle game about the 1996 Varginha UFO incident in Brazil.",
+  "author": "Varginha Terminal 1996 contributors",
   "main": "electron/main.js",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
@@ -10,11 +12,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "postinstall": "node scripts/mock-electron.js",
-    "pretest": "node scripts/mock-electron.js",
     "test": "vitest run",
-    "test:watch": "node scripts/mock-electron.js && vitest",
-    "test:coverage": "node scripts/mock-electron.js && vitest run --coverage",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"app/**/*.{ts,tsx}\"",
@@ -31,6 +32,8 @@
   "build": {
     "appId": "com.terminal1996.varginha",
     "productName": "Varginha Terminal 1996",
+    "afterExtract": "electron/after-pack.js",
+    "afterPack": "electron/after-pack.js",
     "directories": {
       "output": "dist"
     },
@@ -59,6 +62,7 @@
     "mac": {
       "target": "dmg",
       "icon": "public/icon.icns",
+      "identity": null,
       "category": "public.app-category.games",
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist"

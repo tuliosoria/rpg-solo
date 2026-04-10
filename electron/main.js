@@ -9,7 +9,7 @@ const isDev = process.env.NODE_ENV === 'development';
 // ============================================================
 // Configure V8 GC for gaming workloads
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512 --expose-gc');
-app.commandLine.appendSwitch('--in-process-gpu'); // Better Steam overlay rendering
+app.commandLine.appendSwitch('in-process-gpu'); // Better Steam overlay rendering
 app.commandLine.appendSwitch('disable-renderer-backgrounding'); // Consistent game loop
 app.commandLine.appendSwitch('disable-background-timer-throttling'); // Prevent timer throttling
 
@@ -221,13 +221,7 @@ function closeSplashWindow() {
 // ============================================================
 
 function setupNetworkMonitoring() {
-  // Check initial status
-  isOnline = require('dns').promises.resolve('steamcommunity.com')
-    .then(() => { isOnline = true; })
-    .catch(() => { isOnline = false; });
-
-  // Periodic network check (every 30 seconds)
-  setInterval(async () => {
+  const refreshNetworkStatus = async () => {
     try {
       await require('dns').promises.resolve('steamcommunity.com');
       const wasOffline = !isOnline;
@@ -257,6 +251,13 @@ function setupNetworkMonitoring() {
         mainWindow.webContents.send('network:status', false);
       }
     }
+  };
+
+  void refreshNetworkStatus();
+
+  // Periodic network check (every 30 seconds)
+  setInterval(() => {
+    void refreshNetworkStatus();
   }, 30000);
 }
 
@@ -485,9 +486,9 @@ function createWindow() {
     };
 
     localServer = http.createServer((req, res) => {
-      // Sanitize URL to prevent path traversal attacks
-      const sanitizedUrl = path.normalize(req.url).replace(/^(\.\.[\/\\])+/, '');
-      let filePath = path.join(outDir, sanitizedUrl === '/' || sanitizedUrl === '\\' ? 'index.html' : sanitizedUrl);
+      const requestUrl = new URL(req.url || '/', 'http://127.0.0.1');
+      const requestPath = path.normalize(decodeURIComponent(requestUrl.pathname)).replace(/^(\.\.[\/\\])+/, '');
+      let filePath = path.join(outDir, requestPath === '/' || requestPath === '\\' ? 'index.html' : requestPath);
       
       // Ensure the resolved path is within outDir
       if (!filePath.startsWith(outDir)) {

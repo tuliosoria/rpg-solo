@@ -197,25 +197,38 @@ function initialize(window) {
 }
 
 /**
+ * Derives the tray tooltip status from the game state.
+ * @param {Object | null | undefined} gameState - Current game state
+ * @returns {string}
+ */
+function getTrayStatus(gameState) {
+  if (!gameState) {
+    return 'In menu';
+  }
+
+  if (gameState.gameOver || gameState.isGameOver) {
+    return gameState.gameWon ? 'Victory!' : 'Game Over';
+  }
+
+  if (gameState.detectionLevel >= 90) {
+    return `⚠️ Detection: ${gameState.detectionLevel}%`;
+  }
+
+  if (gameState.detectionLevel >= 50) {
+    return `Detection: ${gameState.detectionLevel}%`;
+  }
+
+  return 'Investigating...';
+}
+
+/**
  * Updates the tray status from game state.
  * @param {Object} gameState - Current game state
  */
 function updateFromGameState(gameState) {
   if (!tray) return;
 
-  let status;
-  if (!gameState) {
-    status = 'In menu';
-  } else if (gameState.gameOver) {
-    status = gameState.gameWon ? 'Victory!' : 'Game Over';
-  } else if (gameState.detectionLevel >= 90) {
-    status = `⚠️ Detection: ${gameState.detectionLevel}%`;
-  } else if (gameState.detectionLevel >= 50) {
-    status = `Detection: ${gameState.detectionLevel}%`;
-  } else {
-    status = 'Investigating...';
-  }
-
+  const status = getTrayStatus(gameState);
   updateTooltip(status);
   tray.setContextMenu(buildContextMenu());
 }
@@ -260,6 +273,7 @@ function getTray() {
 module.exports = {
   initialize,
   updateTooltip,
+  getTrayStatus,
   updateFromGameState,
   isMinimizeToTrayEnabled,
   setMinimizeToTray,

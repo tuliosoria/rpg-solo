@@ -83,7 +83,7 @@ function updateFromGameState(gameState) {
   // Determine status based on game state
   if (!gameState) {
     status = PRESENCE_STATES.MENU;
-  } else if (gameState.gameOver) {
+  } else if (gameState.gameOver || gameState.isGameOver) {
     status = gameState.gameWon ? PRESENCE_STATES.ENDING_GOOD : PRESENCE_STATES.ENDING_BAD;
   } else if (gameState.detectionLevel >= 90) {
     status = PRESENCE_STATES.CRITICAL;

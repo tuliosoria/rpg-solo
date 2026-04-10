@@ -1,6 +1,65 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+vi.mock('electron', () => ({
+  Tray: vi.fn().mockImplementation(() => ({
+    setToolTip: vi.fn(),
+    setContextMenu: vi.fn(),
+    on: vi.fn(),
+    destroy: vi.fn(),
+  })),
+  Menu: { buildFromTemplate: vi.fn().mockReturnValue({}) },
+  nativeImage: {
+    createFromPath: vi.fn().mockReturnValue({ isEmpty: () => false }),
+    createEmpty: vi.fn().mockReturnValue({ isEmpty: () => false }),
+  },
+  app: {
+    quit: vi.fn(),
+    getPath: vi.fn().mockReturnValue('/mock/path'),
+    getAppPath: vi.fn().mockReturnValue('/mock/app'),
+    whenReady: vi.fn().mockResolvedValue(undefined),
+    on: vi.fn(),
+    isPackaged: false,
+    commandLine: {
+      appendSwitch: vi.fn(),
+    },
+  },
+  screen: {
+    getAllDisplays: vi.fn().mockReturnValue([{ bounds: { x: 0, y: 0, width: 1920, height: 1080 } }]),
+  },
+  BrowserWindow: vi.fn().mockImplementation(() => ({
+    show: vi.fn(),
+    hide: vi.fn(),
+    focus: vi.fn(),
+    close: vi.fn(),
+    loadURL: vi.fn(),
+    loadFile: vi.fn(),
+    once: vi.fn(),
+    on: vi.fn(),
+    isDestroyed: vi.fn().mockReturnValue(false),
+    webContents: {
+      once: vi.fn(),
+      send: vi.fn(),
+      openDevTools: vi.fn(),
+    },
+  })),
+  ipcMain: {
+    handle: vi.fn(),
+    on: vi.fn(),
+  },
+  ipcRenderer: {
+    invoke: vi.fn(),
+    on: vi.fn(),
+    send: vi.fn(),
+  },
+  contextBridge: {
+    exposeInMainWorld: vi.fn(),
+  },
+  crashReporter: {
+    start: vi.fn(),
+  },
+}));
+
 // Guard all browser-only mocks so the setup file works in both jsdom and node environments.
 const isBrowser = typeof window !== 'undefined';
 
@@ -57,11 +116,11 @@ if (isBrowser && !hasUsableStorage(window.localStorage)) {
 // Mock ResizeObserver
 class MockResizeObserver {
   callback: ResizeObserverCallback;
-  
+
   constructor(callback: ResizeObserverCallback) {
     this.callback = callback;
   }
-  
+
   observe(target: Element) {
     // Simulate initial size observation
     this.callback([{
@@ -72,7 +131,7 @@ class MockResizeObserver {
       devicePixelContentBoxSize: [],
     }], this);
   }
-  
+
   unobserve() {}
   disconnect() {}
 }
