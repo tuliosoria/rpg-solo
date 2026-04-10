@@ -4,9 +4,22 @@ import Terminal from '../Terminal';
 import { DEFAULT_GAME_STATE, GameState } from '../../types';
 import { I18nProvider } from '../../i18n';
 
+const { mockSpeakCustomFirewallVoice } = vi.hoisted(() => ({
+  mockSpeakCustomFirewallVoice: vi.fn(),
+}));
+
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
-  default: ({ src, alt, ...props }: { src: string; alt: string }) => (
+  default: ({
+    src,
+    alt,
+    priority: _priority,
+    ...props
+  }: {
+    src: string;
+    alt: string;
+    priority?: boolean;
+  }) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} {...props} />
   ),
@@ -48,6 +61,18 @@ vi.mock('../../engine/achievements', () => ({
   getAchievements: vi.fn(() => []),
   Achievement: {},
 }));
+
+vi.mock('../../components/FirewallEyes', async () => {
+  const actual = await vi.importActual<typeof import('../../components/FirewallEyes')>(
+    '../../components/FirewallEyes'
+  );
+
+  return {
+    ...actual,
+    default: () => null,
+    speakCustomFirewallVoice: mockSpeakCustomFirewallVoice,
+  };
+});
 
 // Mock useSound hook
 vi.mock('../../hooks/useSound', () => ({
@@ -134,6 +159,22 @@ describe('Terminal Component', () => {
 
     const input = document.querySelector('input');
     expect(input).toBeInTheDocument();
+  });
+
+  it('stops ambient audio and plays the final firewall line on game over', () => {
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          isGameOver: true,
+          gameOverReason: 'Security lockout triggered',
+        }}
+      />
+    );
+
+    expect(mockStopAmbient).toHaveBeenCalled();
+    expect(mockSpeakCustomFirewallVoice).toHaveBeenCalledWith('I disconnect you.');
   });
 
   it('restores focus after closing settings modal', () => {

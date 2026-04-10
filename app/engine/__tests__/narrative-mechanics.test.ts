@@ -164,6 +164,22 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Special File Triggers', () => {
+    describe('evidence discovery output', () => {
+      it('does not emit the old evidence banner or category line when a truth is discovered', () => {
+        const state = createTestState({
+          currentPath: '/storage/assets',
+          truthsDiscovered: new Set<string>(),
+          flags: { adminUnlocked: true },
+        });
+
+        const result = executeCommand('open logistics_manifest_fragment.txt', state);
+
+        expect(result.stateChanges.truthsDiscovered?.size).toBeGreaterThan(0);
+        expect(result.output.some(e => e.content.includes('EVIDENCE FOUND'))).toBe(false);
+        expect(result.output.some(e => e.content.includes('Category:'))).toBe(false);
+      });
+    });
+
     describe('maintenance_notes.txt', () => {
       it('unlocks hidden commands when read', () => {
         const state = createTestState({ currentPath: '/internal' });

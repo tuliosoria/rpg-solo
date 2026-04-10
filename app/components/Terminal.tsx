@@ -24,7 +24,7 @@ import {
   useTerminalInput,
   useTerminalState,
 } from '../hooks';
-import { unlockAchievement, Achievement } from '../engine/achievements';
+import { unlockAchievement } from '../engine/achievements';
 import { uiRandomPick } from '../engine/rng';
 import AchievementPopup from './AchievementPopup';
 import SettingsModal from './SettingsModal';
@@ -32,7 +32,7 @@ import PauseMenu from './PauseMenu';
 import TutorialSkipPopup from './TutorialSkipPopup';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
-import FirewallEyes from './FirewallEyes';
+import FirewallEyes, { speakCustomFirewallVoice } from './FirewallEyes';
 
 // Lazy-load conditional components for better initial load performance
 const ImageOverlay = dynamic(() => import('./ImageOverlay'), { ssr: false });
@@ -195,6 +195,8 @@ export default function Terminal({
     setTimedDecryptRemaining,
     burnInLines,
     setBurnInLines,
+    evidenceFoundIndicatorKey,
+    setEvidenceFoundIndicatorKey,
   } = useTerminalState(initialState, initialPhase);
   const keypressTimestamps = useRef<number[]>([]);
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -563,6 +565,7 @@ export default function Terminal({
     setShowTuringTest: setShowTuringTestWrapped,
     setIsShaking,
     setShowFirewallScare,
+    setEvidenceFoundIndicatorKey,
     setGamePhase,
     setGameOverReason,
     setShowGameOver,
@@ -677,6 +680,13 @@ export default function Terminal({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showHeaderMenu, setShowHeaderMenu, focusTerminalInput]);
+
+  useEffect(() => {
+    if (!gameState.isGameOver) return;
+
+    stopAmbient();
+    speakCustomFirewallVoice('I disconnect you.');
+  }, [gameState.isGameOver, stopAmbient]);
 
   // Refocus input when tutorial skip popup closes
   const prevShowTutorialSkipRef = useRef(showTutorialSkip);
@@ -1333,6 +1343,7 @@ export default function Terminal({
             detectionLevel={gameState.detectionLevel}
             sessionStability={gameState.sessionStability}
             creepyEntrance={avatarCreepyEntrance}
+            evidenceFoundIndicatorKey={evidenceFoundIndicatorKey}
             onExpressionTimeout={() => {
               setGameState(prev => ({ ...prev, avatarExpression: 'neutral' }));
             }}

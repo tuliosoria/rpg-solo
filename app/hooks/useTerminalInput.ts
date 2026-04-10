@@ -89,6 +89,7 @@ interface UseTerminalInputOptions {
   setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
   setIsShaking: React.Dispatch<React.SetStateAction<boolean>>;
   setShowFirewallScare: React.Dispatch<React.SetStateAction<boolean>>;
+  setEvidenceFoundIndicatorKey: React.Dispatch<React.SetStateAction<number>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
   setGameOverReason: React.Dispatch<React.SetStateAction<string>>;
   setShowGameOver: React.Dispatch<React.SetStateAction<boolean>>;
@@ -141,6 +142,7 @@ export function useTerminalInput({
   setShowTuringTest,
   setIsShaking,
   setShowFirewallScare,
+  setEvidenceFoundIndicatorKey,
   setGamePhase,
   setGameOverReason,
   setShowGameOver,
@@ -753,6 +755,7 @@ export function useTerminalInput({
       }
 
       if (truthCount > prevTruthCount) {
+        setEvidenceFoundIndicatorKey(prev => prev + 1);
         playSound('fanfare');
         const checkpointReason =
           truthCount === 1
@@ -897,6 +900,7 @@ export function useTerminalInput({
       streamOutput,
       streamStartScrollPos,
       triggerFlicker,
+      setEvidenceFoundIndicatorKey,
     ]
   );
 

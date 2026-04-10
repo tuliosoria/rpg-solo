@@ -946,29 +946,6 @@ function checkTruthProgress(
     // Trigger shocked expression on major discovery
     stateChanges.avatarExpression = 'shocked';
 
-    // Show "EVIDENCE FOUND" banner for new discoveries
-    const categoryLabels: Record<string, string> = {
-      debris_relocation: 'DEBRIS TRANSFER',
-      being_containment: 'BIO CONTAINMENT',
-      telepathic_scouts: 'TELEPATHIC RECON',
-      international_actors: 'INTERNATIONAL',
-      transition_2026: 'TRANSITION 2026',
-    };
-
-    for (const reveal of newReveals) {
-      if (!state.truthsDiscovered.has(reveal)) {
-        // This is a new discovery
-        notices.push(createEntry('system', ''));
-        notices.push(createEntry('warning', '╔═══════════════════════════════════════════╗'));
-        notices.push(createEntry('warning', '║           EVIDENCE FOUND                  ║'));
-        notices.push(createEntry('warning', '╠═══════════════════════════════════════════╣'));
-        notices.push(createEntry('system', ''));
-        notices.push(createEntry('output', `  Category: ${categoryLabels[reveal] || reveal}`));
-        notices.push(createEntry('system', ''));
-        notices.push(createEntry('warning', '╚═══════════════════════════════════════════╝'));
-      }
-    }
-
     // Breather notice - the system recalibrates
     notices.push(createEntry('system', ''));
     notices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));

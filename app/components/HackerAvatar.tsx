@@ -12,6 +12,7 @@ interface HackerAvatarProps {
   detectionLevel: number;
   sessionStability: number;
   creepyEntrance?: boolean;
+  evidenceFoundIndicatorKey?: number;
   onExpressionTimeout?: () => void;
 }
 
@@ -28,13 +29,16 @@ function HackerAvatar({
   detectionLevel: _detectionLevel,
   sessionStability: _sessionStability,
   creepyEntrance = false,
+  evidenceFoundIndicatorKey = 0,
   onExpressionTimeout,
 }: HackerAvatarProps) {
   const [currentExpression, setCurrentExpression] = useState<AvatarExpression>(expression);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showEvidenceFoundIndicator, setShowEvidenceFoundIndicator] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const evidenceFoundTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (expression !== 'neutral') {
@@ -78,6 +82,24 @@ function HackerAvatar({
     };
   }, [expression, onExpressionTimeout]);
 
+  useEffect(() => {
+    if (evidenceFoundIndicatorKey === 0) return;
+
+    setShowEvidenceFoundIndicator(true);
+    if (evidenceFoundTimerRef.current) {
+      clearTimeout(evidenceFoundTimerRef.current);
+    }
+    evidenceFoundTimerRef.current = setTimeout(() => {
+      setShowEvidenceFoundIndicator(false);
+    }, 1600);
+
+    return () => {
+      if (evidenceFoundTimerRef.current) {
+        clearTimeout(evidenceFoundTimerRef.current);
+      }
+    };
+  }, [evidenceFoundIndicatorKey]);
+
   return (
     <FloatingElement
       id="hacker-avatar"
@@ -112,6 +134,11 @@ function HackerAvatar({
             <div className={styles.flicker} />
             <div className={styles.crtCurve} />
           </div>
+          <div className={styles.evidenceIndicatorSlot} aria-live="polite">
+            {showEvidenceFoundIndicator && (
+              <div className={styles.evidenceFoundIndicator}>Evidence Found</div>
+            )}
+          </div>
         </div>
       </div>
     </FloatingElement>
@@ -121,5 +148,7 @@ function HackerAvatar({
 // Memoize to prevent re-renders when only detectionLevel changes
 // Only re-render when expression actually changes
 export default memo(HackerAvatar, (prev, next) => 
-  prev.expression === next.expression && prev.creepyEntrance === next.creepyEntrance
+  prev.expression === next.expression &&
+  prev.creepyEntrance === next.creepyEntrance &&
+  prev.evidenceFoundIndicatorKey === next.evidenceFoundIndicatorKey
 );
