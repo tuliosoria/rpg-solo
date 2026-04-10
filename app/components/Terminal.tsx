@@ -400,10 +400,6 @@ export default function Terminal({
 
     const skipIntroEntries = [
       createEntry('system', ''),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelOpenTop')),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelOpenMiddle')),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelOpenBottom')),
-      createEntry('system', ''),
       createEntry('ufo74', t('terminal.tutorialSkip.connected')),
       createEntry('ufo74', t('terminal.tutorialSkip.alreadyKnow')),
       createEntry('ufo74', t('terminal.tutorialSkip.noHandHolding')),
@@ -420,10 +416,6 @@ export default function Terminal({
       createEntry('ufo74', t('terminal.tutorialSkip.goodLuck')),
       createEntry('system', ''),
       createEntry('ufo74', t('terminal.tutorialSkip.ellipsis')),
-      createEntry('system', ''),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelClosedTop')),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelClosedMiddle')),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelClosedBottom')),
       createEntry('system', ''),
       createEntry('system', t('terminal.tutorialSkip.disconnected')),
       createEntry('system', ''),

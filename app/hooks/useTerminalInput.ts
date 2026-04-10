@@ -199,9 +199,6 @@ export function useTerminalInput({
   const streamOutput = useCallback(
     async (entries: TerminalEntry[], mode: StreamingMode): Promise<void> => {
       if (mode === 'none' || entries.length === 0) {
-        if (entries.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
-          playSound('transmission');
-        }
         setGameState(prev => ({
           ...prev,
           history: [...prev.history, ...entries],
@@ -215,9 +212,6 @@ export function useTerminalInput({
       for (let i = 0; i < entries.length; i++) {
         if (skipStreamingRef.current) {
           const remaining = entries.slice(i);
-          if (remaining.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
-            playSound('transmission');
-          }
           setGameState(prev => ({
             ...prev,
             history: [...prev.history, ...remaining],
@@ -226,10 +220,6 @@ export function useTerminalInput({
         }
 
         const entry = entries[i];
-
-        if (entry.content.includes('>> INCOMING TRANSMISSION <<')) {
-          playSound('transmission');
-        }
 
         setGameState(prev => ({
           ...prev,
