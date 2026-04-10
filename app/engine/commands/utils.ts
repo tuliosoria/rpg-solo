@@ -2,7 +2,7 @@
 
 import { GameState, CommandResult, TerminalEntry } from '../../types';
 import { MAX_COMMAND_INPUT_LENGTH } from '../../constants/limits';
-import { createSeededRng } from '../rng';
+import { createSeededRng, uiChance, uiRandomInt, uiRandomPick } from '../rng';
 import { DETECTION_THRESHOLDS, applyWarmupDetection } from '../../constants/detection';
 
 // Generate unique ID for terminal entries
@@ -152,9 +152,9 @@ export function calculateDelay(state: GameState): number {
 // Check if should trigger flicker based on stability
 export function shouldFlicker(state: GameState): boolean {
   if (state.sessionStability > 80) return false;
-  if (state.sessionStability > 60) return Math.random() < 0.1;
-  if (state.sessionStability > 40) return Math.random() < 0.25;
-  return Math.random() < 0.5;
+  if (state.sessionStability > 60) return uiChance(0.1);
+  if (state.sessionStability > 40) return uiChance(0.25);
+  return uiChance(0.5);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -170,28 +170,28 @@ export function addHesitation(text: string, intensity: number = 1): string[] {
 // Create a typo version of text that will be followed by correction
 // Returns [typo, correction] or [original] if no typo needed
 export function maybeAddTypo(text: string, chance: number = 0.1): string[] {
-  if (Math.random() > chance || text.length < 5) return [text];
+  if (!uiChance(chance) || text.length < 5) return [text];
 
   // Common typo patterns for terminal "personality"
   const typoTypes = [
     // Letter swap
     (s: string) => {
-      const i = Math.floor(Math.random() * (s.length - 2)) + 1;
+      const i = uiRandomInt(1, s.length - 1);
       return s.substring(0, i) + s[i + 1] + s[i] + s.substring(i + 2);
     },
     // Double letter
     (s: string) => {
-      const i = Math.floor(Math.random() * s.length);
+      const i = uiRandomInt(0, s.length);
       return s.substring(0, i) + s[i] + s[i] + s.substring(i + 1);
     },
     // Missing letter
     (s: string) => {
-      const i = Math.floor(Math.random() * s.length);
+      const i = uiRandomInt(0, s.length);
       return s.substring(0, i) + s.substring(i + 1);
     },
   ];
 
-  const typoFn = typoTypes[Math.floor(Math.random() * typoTypes.length)];
+  const typoFn = uiRandomPick(typoTypes);
   const typo = typoFn(text);
 
   // Return typo followed by backspace simulation and correction

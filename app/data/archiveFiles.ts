@@ -2,6 +2,7 @@
 // These contain deleted evidence, unredacted versions, and pre-sanitized reports
 
 import { FileNode } from '../types';
+import { createSeededRng, seededRandomInt } from '../engine/rng';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PAST-ONLY FILES - Only visible when inArchiveMode is true
@@ -728,10 +729,11 @@ export const ARCHIVE_DIRECTORY_ADDITIONS: Record<string, string[]> = {
 };
 
 // Generate a random archive timestamp (formatted like 02:09:12)
-export function generateArchiveTimestamp(): string {
-  const hours = String(Math.floor(Math.random() * 4) + 1).padStart(2, '0'); // 01-04
-  const minutes = String(Math.floor(Math.random() * 60)).padStart(2, '0');
-  const seconds = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+export function generateArchiveTimestamp(seed: number): string {
+  const rng = createSeededRng(seed);
+  const hours = String(seededRandomInt(rng, 1, 5)).padStart(2, '0'); // 01-04
+  const minutes = String(seededRandomInt(rng, 0, 60)).padStart(2, '0');
+  const seconds = String(seededRandomInt(rng, 0, 60)).padStart(2, '0');
   return `${hours}:${minutes}:${seconds}`;
 }
 

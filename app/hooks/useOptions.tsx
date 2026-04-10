@@ -9,34 +9,36 @@
  * @module hooks/useOptions
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  createContext,
+  useContext,
+  type ReactNode,
+} from 'react';
+import type { FlickerIntensity, FontSize, OptionsState } from '../types';
+import { safeGetJSON, safeSetJSON } from '../storage/safeStorage';
 
-// ═══════════════════════════════════════════════════════════════════════════
-// TYPES
-// ═══════════════════════════════════════════════════════════════════════════
-
-export type FlickerIntensity = 'low' | 'medium' | 'high';
-export type FontSize = 'small' | 'medium' | 'large';
-
-export interface OptionsState {
-  // Audio Options
-  masterVolume: number; // 0-100
-  ambientSoundEnabled: boolean;
-  soundEffectsEnabled: boolean;
-  turingVoiceEnabled: boolean;
-
-  // Visual Options
-  crtEffectsEnabled: boolean;
-  screenFlickerEnabled: boolean;
-  flickerIntensity: FlickerIntensity;
-  fontSize: FontSize;
-}
+export type { FlickerIntensity, FontSize, OptionsState } from '../types';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONSTANTS
 // ═══════════════════════════════════════════════════════════════════════════
 
-const STORAGE_KEY = 'terminal1996_options';
+export const OPTIONS_STORAGE_KEY = 'terminal1996_options';
+
+const FONT_SIZE_MAP: Record<FontSize, string> = {
+  small: '12px',
+  medium: '14px',
+  large: '16px',
+};
+
+const FLICKER_INTENSITY_MAP: Record<FlickerIntensity, string> = {
+  low: '0.02',
+  medium: '0.05',
+  high: '0.1',
+};
 
 export const DEFAULT_OPTIONS: OptionsState = {
   // Audio defaults: all ON, volume 100%
@@ -51,6 +53,27 @@ export const DEFAULT_OPTIONS: OptionsState = {
   flickerIntensity: 'medium',
   fontSize: 'medium',
 };
+
+export function readStoredOptions(): OptionsState {
+  const stored = safeGetJSON<Partial<OptionsState>>(OPTIONS_STORAGE_KEY, {});
+  return { ...DEFAULT_OPTIONS, ...stored };
+}
+
+export function persistOptions(options: OptionsState): boolean {
+  return safeSetJSON(OPTIONS_STORAGE_KEY, options);
+}
+
+export function applyOptionsToDocument(options: OptionsState): void {
+  if (typeof document === 'undefined') return;
+
+  document.body.classList.toggle('no-crt', !options.crtEffectsEnabled);
+  document.body.classList.toggle('screen-flicker-disabled', !options.screenFlickerEnabled);
+  document.documentElement.style.setProperty('--terminal-font-size', FONT_SIZE_MAP[options.fontSize]);
+  document.documentElement.style.setProperty(
+    '--flicker-intensity',
+    FLICKER_INTENSITY_MAP[options.flickerIntensity]
+  );
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // HOOK
@@ -69,61 +92,19 @@ export function useOptions(): UseOptionsReturn {
 
   // Load options from localStorage on mount
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as Partial<OptionsState>;
-        // Merge with defaults to handle new options added in updates
-        setOptions({ ...DEFAULT_OPTIONS, ...parsed });
-      }
-    } catch (e) {
-      console.warn('[useOptions] Failed to load options from localStorage:', e);
-    }
+    setOptions(readStoredOptions());
     setIsLoaded(true);
   }, []);
 
-  // Save options to localStorage whenever they change (after initial load)
+  // Save options and apply document classes/variables whenever they change
   useEffect(() => {
     if (isLoaded) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(options));
-      } catch (e) {
-        console.warn('[useOptions] Failed to save options to localStorage:', e);
+      if (!persistOptions(options)) {
+        console.warn('[useOptions] Failed to save options to localStorage');
       }
+      applyOptionsToDocument(options);
     }
   }, [options, isLoaded]);
-
-  // Apply CSS variables for font size
-  useEffect(() => {
-    if (isLoaded) {
-      const root = document.documentElement;
-      const fontSizeMap: Record<FontSize, string> = {
-        small: '12px',
-        medium: '14px',
-        large: '16px',
-      };
-      root.style.setProperty('--terminal-font-size', fontSizeMap[options.fontSize]);
-    }
-  }, [options.fontSize, isLoaded]);
-
-  // Apply CRT effects class to body
-  useEffect(() => {
-    if (isLoaded) {
-      document.body.classList.toggle('crt-effects-disabled', !options.crtEffectsEnabled);
-      document.body.classList.toggle('screen-flicker-disabled', !options.screenFlickerEnabled);
-
-      // Flicker intensity as CSS variable
-      const flickerMap: Record<FlickerIntensity, string> = {
-        low: '0.02',
-        medium: '0.05',
-        high: '0.1',
-      };
-      document.documentElement.style.setProperty(
-        '--flicker-intensity',
-        flickerMap[options.flickerIntensity]
-      );
-    }
-  }, [options.crtEffectsEnabled, options.screenFlickerEnabled, options.flickerIntensity, isLoaded]);
 
   const setOption = useCallback(<K extends keyof OptionsState>(key: K, value: OptionsState[K]) => {
     setOptions(prev => ({ ...prev, [key]: value }));
@@ -144,8 +125,6 @@ export function useOptions(): UseOptionsReturn {
 // ═══════════════════════════════════════════════════════════════════════════
 // CONTEXT (for app-wide access)
 // ═══════════════════════════════════════════════════════════════════════════
-
-import { createContext, useContext, ReactNode } from 'react';
 
 const OptionsContext = createContext<UseOptionsReturn | null>(null);
 

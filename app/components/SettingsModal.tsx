@@ -2,6 +2,12 @@
 
 import React, { useEffect, useState, useCallback, memo } from 'react';
 import { useI18n } from '../i18n';
+import {
+  DEFAULT_OPTIONS,
+  applyOptionsToDocument,
+  persistOptions,
+  readStoredOptions,
+} from '../hooks/useOptions';
 import styles from './SettingsModal.module.css';
 
 interface SettingsModalProps {
@@ -20,23 +26,13 @@ export default memo(function SettingsModal({
   onCloseAction,
 }: SettingsModalProps) {
   const { language, setLanguage, t } = useI18n();
-  // CRT effects state - stored in localStorage
-  const [crtEnabled, setCrtEnabled] = useState(true);
+  const [crtEnabled, setCrtEnabled] = useState(DEFAULT_OPTIONS.crtEffectsEnabled);
 
   // Load CRT preference on mount
   useEffect(() => {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const stored = localStorage.getItem('varginha_crt_enabled');
-        if (stored !== null) {
-          const enabled = stored === 'true';
-          setCrtEnabled(enabled);
-          document.body.classList.toggle('no-crt', !enabled);
-        }
-      }
-    } catch {
-      // localStorage may be unavailable
-    }
+    const storedOptions = readStoredOptions();
+    setCrtEnabled(storedOptions.crtEffectsEnabled);
+    applyOptionsToDocument(storedOptions);
   }, []);
 
   // Handle ESC key to close modal
@@ -58,14 +54,12 @@ export default memo(function SettingsModal({
   const toggleCrt = () => {
     const newValue = !crtEnabled;
     setCrtEnabled(newValue);
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        localStorage.setItem('varginha_crt_enabled', String(newValue));
-      }
-    } catch {
-      // localStorage may be unavailable
-    }
-    document.body.classList.toggle('no-crt', !newValue);
+    const nextOptions = {
+      ...readStoredOptions(),
+      crtEffectsEnabled: newValue,
+    };
+    persistOptions(nextOptions);
+    applyOptionsToDocument(nextOptions);
   };
 
   return (

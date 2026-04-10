@@ -208,10 +208,21 @@ export default function Terminal({
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
   const firewallPauseStartRef = useRef<number | null>(null);
+  const hasBlockingPopup =
+    showSettings ||
+    showAchievements ||
+    showStatistics ||
+    showPauseMenu ||
+    showHeaderMenu ||
+    showTutorialSkip ||
+    showGameOver ||
+    pendingAchievement !== null ||
+    showFirewallScare;
   const isFirewallPaused =
     activeImage !== null ||
     activeVideo !== null ||
     showTuringTest ||
+    hasBlockingPopup ||
     gameState.timedDecryptActive ||
     gameState.traceSpikeActive ||
     gameState.countdownActive;

@@ -130,6 +130,47 @@ export type { TutorialTipId } from './commands/tutorial';
 
 const TRUTH_CATEGORY_SET = new Set<string>(TRUTH_CATEGORIES);
 
+function hashCommandContext(value: string): number {
+  let hash = 0;
+  for (let i = 0; i < value.length; i++) {
+    hash = (hash * 31 + value.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash) || 1;
+}
+
+function createContextRng(
+  state: GameState,
+  ...parts: Array<string | number | boolean | undefined>
+): () => number {
+  const context = parts.map(part => String(part ?? '')).join('|');
+  return createSeededRng((state.seed || 1) + (state.rngState || 1) + hashCommandContext(context));
+}
+
+function contextChance(
+  state: GameState,
+  probability: number,
+  ...parts: Array<string | number | boolean | undefined>
+): boolean {
+  return createContextRng(state, ...parts)() < probability;
+}
+
+function contextRandomInt(
+  state: GameState,
+  min: number,
+  max: number,
+  ...parts: Array<string | number | boolean | undefined>
+): number {
+  return seededRandomInt(createContextRng(state, ...parts), min, max);
+}
+
+function contextRandomPick<T>(
+  state: GameState,
+  items: T[],
+  ...parts: Array<string | number | boolean | undefined>
+): T {
+  return seededRandomPick(createContextRng(state, ...parts), items);
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // SINGULAR IRREVERSIBLE EVENTS - Each can only happen once per run
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1005,9 +1046,26 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
   };
   mutation.decrypted = true;
 
-  // Random corruption on decrypt
-  if (Math.random() < 0.4) {
-    const lineToCorrupt = Math.floor(Math.random() * 8) + 3;
+  // Deterministic corruption on decrypt so save/load does not reshuffle outcomes.
+  if (
+    contextChance(
+      state,
+      0.4,
+      'decrypt-corrupt',
+      filePath,
+      state.commandHistory.length,
+      state.filesRead.size
+    )
+  ) {
+    const lineToCorrupt = contextRandomInt(
+      state,
+      3,
+      11,
+      'decrypt-corrupt-line',
+      filePath,
+      state.commandHistory.length,
+      state.filesRead.size
+    );
     if (!mutation.corruptedLines.includes(lineToCorrupt)) {
       mutation.corruptedLines.push(lineToCorrupt);
     }
@@ -1196,14 +1254,20 @@ function getUFO74FileReaction(
   let messages: TerminalEntry[] = [];
 
   // At degraded trust levels, sometimes use degraded messages instead of normal ones
-  if ((trustLevel === 'cryptic' || trustLevel === 'paranoid') && Math.random() < 0.5) {
-    messages = getUFO74DegradedTrustMessage(trustLevel, filePath);
+  if (
+    (trustLevel === 'cryptic' || trustLevel === 'paranoid') &&
+    contextChance(state, 0.5, 'ufo74-degraded-trust', trustLevel, filePath, messageCount, truthCount)
+  ) {
+    messages = getUFO74DegradedTrustMessage(state, trustLevel, filePath);
     return messages;
   }
 
   // Check for conditional dialogue based on truth discovery order
   const conditionalDialogue = getUFO74ConditionalDialogue(state, filePath);
-  if (conditionalDialogue && Math.random() < 0.6) {
+  if (
+    conditionalDialogue &&
+    contextChance(state, 0.6, 'ufo74-conditional-dialogue', filePath, messageCount, truthCount)
+  ) {
     return conditionalDialogue;
   }
 
@@ -1221,7 +1285,14 @@ function getUFO74FileReaction(
       [createEntry('ufo74', 'UFO74: locked. find the password in other docs.')],
       [createEntry('ufo74', 'UFO74: encrypted. important stuff. crack it.')],
     ];
-    messages = encryptedMessages[Math.floor(Math.random() * encryptedMessages.length)];
+    messages = contextRandomPick(
+      state,
+      encryptedMessages,
+      'ufo74-encrypted-message',
+      filePath,
+      messageCount,
+      truthCount
+    );
   } else if (isFinalMessage) {
     // Final goodbye - keep this one a bit longer for dramatic effect
     messages = [
@@ -1240,17 +1311,31 @@ function getUFO74FileReaction(
       ],
       [createEntry('ufo74', 'UFO74: van outside. finish fast.')],
     ];
-    messages = fleeMessages[Math.floor(Math.random() * fleeMessages.length)];
+    messages = contextRandomPick(
+      state,
+      fleeMessages,
+      'ufo74-flee-message',
+      filePath,
+      messageCount,
+      truthCount
+    );
   } else if (isGettingParanoid) {
     // Getting nervous
     const nervousMessages = [
       [createEntry('ufo74', 'UFO74: youre deep now. its real.')],
       [createEntry('ufo74', 'UFO74: be careful with this info.')],
     ];
-    messages = nervousMessages[Math.floor(Math.random() * nervousMessages.length)];
+    messages = contextRandomPick(
+      state,
+      nervousMessages,
+      'ufo74-nervous-message',
+      filePath,
+      messageCount,
+      truthCount
+    );
   } else {
     // Normal reactions based on file content
-    messages = getUFO74ContentReaction(filePath);
+    messages = getUFO74ContentReaction(state, filePath);
   }
 
   return messages;
@@ -1348,8 +1433,9 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
 
 // Degraded trust dialogue - cryptic/paranoid versions of UFO74
 function getUFO74DegradedTrustMessage(
+  state: GameState,
   trustLevel: 'cautious' | 'paranoid' | 'cryptic',
-  _context: string
+  context: string
 ): TerminalEntry[] {
   if (trustLevel === 'cryptic') {
     // Speaks in riddles, almost incomprehensible
@@ -1358,7 +1444,7 @@ function getUFO74DegradedTrustMessage(
       [createEntry('ufo74', 'UFO74: th3y r3 1ns1d3')],
       [createEntry('ufo74', 'UFO74: ...january... they took everything...')],
     ];
-    return crypticMessages[Math.floor(Math.random() * crypticMessages.length)];
+    return contextRandomPick(state, crypticMessages, 'ufo74-cryptic-message', context);
   }
 
   if (trustLevel === 'paranoid') {
@@ -1368,7 +1454,7 @@ function getUFO74DegradedTrustMessage(
       [createEntry('ufo74', 'UFO74: be fast.')],
       [createEntry('ufo74', 'UFO74: every file you open, they see.')],
     ];
-    return paranoidMessages[Math.floor(Math.random() * paranoidMessages.length)];
+    return contextRandomPick(state, paranoidMessages, 'ufo74-paranoid-message', context);
   }
 
   // Cautious - still helpful but worried
@@ -1376,11 +1462,11 @@ function getUFO74DegradedTrustMessage(
     [createEntry('ufo74', 'UFO74: triggered some flags. careful.')],
     [createEntry('ufo74', 'UFO74: system suspicious. use "wait".')],
   ];
-  return cautiousMessages[Math.floor(Math.random() * cautiousMessages.length)];
+  return contextRandomPick(state, cautiousMessages, 'ufo74-cautious-message', context);
 }
 
 // UFO74 reactions to specific file content
-function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
+function getUFO74ContentReaction(state: GameState, filePath: string): TerminalEntry[] {
   const path = filePath.toLowerCase();
 
   // Reactions to specific directories/files
@@ -1446,7 +1532,7 @@ function getUFO74ContentReaction(filePath: string): TerminalEntry[] {
     [createEntry('ufo74', 'UFO74: noted. try /ops, /storage, /comms.')],
   ];
 
-  return defaultReactions[Math.floor(Math.random() * defaultReactions.length)];
+  return contextRandomPick(state, defaultReactions, 'ufo74-default-reaction', filePath);
 }
 
 // UFO74 explains NOTICE messages
@@ -1557,7 +1643,9 @@ function getIncognitoMessage(
   // unless it's a truth discovery moment (those deserve celebration)
   if (!isTruthDiscovery && !isFirstUnstable) {
     // Only speak 20% of the time when player is progressing normally
-    if (Math.random() > 0.2) return null;
+    if (!contextChance(state, 0.2, 'ufo74-react-to-open', filePath || '', notices?.length || 0)) {
+      return null;
+    }
   }
 
   // If there are notices to explain, prioritize that (but not for encrypted or unstable files)
@@ -1569,7 +1657,11 @@ function getIncognitoMessage(
   // Otherwise react to the file
   if (filePath) {
     // Always comment on encrypted files, first unstable files, or 70% chance otherwise
-    if (isEncryptedAndLocked || isFirstUnstable || Math.random() < 0.7) {
+    if (
+      isEncryptedAndLocked ||
+      isFirstUnstable ||
+      contextChance(state, 0.7, 'ufo74-file-comment', filePath, notices?.length || 0)
+    ) {
       return getUFO74FileReaction(filePath, state, isEncryptedAndLocked, isFirstUnstable);
     }
   }
@@ -2074,6 +2166,7 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
 
 // Track used responses per category to never repeat — with depth adaptation
 function getPrisoner45Response(
+  state: GameState,
   question: string,
   usedResponses: Set<string>,
   questionsAsked: number = 0
@@ -2792,7 +2885,14 @@ function getPrisoner45Response(
         category: 'signal_lost',
       };
     }
-    const response = lostResponses[Math.floor(Math.random() * lostResponses.length)];
+    const response = contextRandomPick(
+      state,
+      lostResponses,
+      'prisoner45-signal-lost',
+      usedResponses.size,
+      question,
+      questionsAsked
+    );
     return { response: [response], valid: false, category: 'signal_lost' };
   }
 
@@ -2835,11 +2935,21 @@ function getPrisoner45Response(
     .filter(r => !usedResponses.has(r));
   
   // 70% chance to pick from current tier if available, 30% from full pool
-  const pickFrom = currentTierResponses.length > 0 && Math.random() < 0.7
-    ? currentTierResponses
-    : unusedResponses;
+  const pickFrom =
+    currentTierResponses.length > 0 &&
+    contextChance(state, 0.7, 'prisoner45-current-tier', category, tier, usedResponses.size, questionsAsked)
+      ? currentTierResponses
+      : unusedResponses;
 
-  const response = pickFrom[Math.floor(Math.random() * pickFrom.length)];
+  const response = contextRandomPick(
+    state,
+    pickFrom,
+    'prisoner45-response',
+    category,
+    tier,
+    usedResponses.size,
+    questionsAsked
+  );
   return { response: [response], valid: true, category };
 }
 
@@ -3013,6 +3123,7 @@ const SCOUT_LINK_RESPONSES: Record<string, string[]> = {
 };
 
 function getScoutLinkResponse(
+  state: GameState,
   input: string,
   usedResponses: Set<string>
 ): { response: string[]; valid: boolean; category: string } {
@@ -3199,7 +3310,13 @@ function getScoutLinkResponse(
     if (lostResponses.length === 0) {
       return { response: ['...[LINK SEVERED]...'], valid: false, category: 'signal_lost' };
     }
-    const response = lostResponses[Math.floor(Math.random() * lostResponses.length)];
+    const response = contextRandomPick(
+      state,
+      lostResponses,
+      'scout-link-signal-lost',
+      usedResponses.size,
+      input
+    );
     return { response: [response], valid: false, category: 'signal_lost' };
   }
 
@@ -3216,7 +3333,14 @@ function getScoutLinkResponse(
   }
 
   // Pick random unused response
-  const response = unusedResponses[Math.floor(Math.random() * unusedResponses.length)];
+  const response = contextRandomPick(
+    state,
+    unusedResponses,
+    'scout-link-response',
+    category,
+    usedResponses.size,
+    input
+  );
   return { response: [response], valid: true, category };
 }
 
@@ -4364,10 +4488,28 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     let triggerFlicker = false;
 
-    if (file.status === 'unstable' && Math.random() < 0.3) {
+    if (
+      file.status === 'unstable' &&
+      contextChance(
+        state,
+        0.3,
+        'unstable-file-corruption',
+        filePath,
+        state.filesRead.size,
+        state.commandHistory.length
+      )
+    ) {
       // Apply corruption on unstable file access
       const newMutation: FileMutation = mutation || { corruptedLines: [], decrypted: false };
-      const lineToCorrupt = Math.floor(Math.random() * 10) + 5;
+      const lineToCorrupt = contextRandomInt(
+        state,
+        5,
+        15,
+        'unstable-file-corruption-line',
+        filePath,
+        state.filesRead.size,
+        state.commandHistory.length
+      );
       if (!newMutation.corruptedLines.includes(lineToCorrupt)) {
         newMutation.corruptedLines.push(lineToCorrupt);
       }
@@ -4562,12 +4704,20 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '/tmp/note_to_self.tmp',
         '/tmp/pattern_recognition.log',
       ];
-      const targetPath = corruptTargets[Math.floor(Math.random() * corruptTargets.length)];
+      const targetPath = contextRandomPick(
+        state,
+        corruptTargets,
+        'core-dump-corrupt-target',
+        filePath,
+        state.filesRead.size
+      );
       const existingMutation = state.fileMutations[targetPath] || {
         corruptedLines: [],
         decrypted: false,
       };
-      existingMutation.corruptedLines.push(Math.floor(Math.random() * 8) + 1);
+      existingMutation.corruptedLines.push(
+        contextRandomInt(state, 1, 9, 'core-dump-corrupt-line', targetPath, state.filesRead.size)
+      );
       stateChanges.fileMutations = {
         ...state.fileMutations,
         ...stateChanges.fileMutations,
@@ -4689,7 +4839,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           'UFO74: encrypted. the answer is somewhere in the system. keep digging.',
           'UFO74: locked tight. check the other files for hints about the security question.',
         ];
-        output.push(createEntry('ufo74', hints[Math.floor(Math.random() * hints.length)]));
+        output.push(
+          createEntry(
+            'ufo74',
+            contextRandomPick(state, hints, 'ufo74-security-question-hint', filePath, state.filesRead.size)
+          )
+        );
         output.push(
           createEntry('ufo74', '[UFO74]: use "decrypt ' + args[0] + '" to attempt decryption.')
         );
@@ -4710,7 +4865,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           'UFO74: try the decrypt command, kid.',
           'UFO74: encrypted. use decrypt to crack it open.',
         ];
-        output.push(createEntry('ufo74', hints[Math.floor(Math.random() * hints.length)]));
+        output.push(
+          createEntry(
+            'ufo74',
+            contextRandomPick(state, hints, 'ufo74-encrypted-hint', filePath, state.filesRead.size)
+          )
+        );
         output.push(
           createEntry('ufo74', '[UFO74]: use "decrypt ' + args[0] + '" to crack it.')
         );
@@ -5446,7 +5606,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // not during chat conversations. Prisoner 45 has a dedicated "password" topic
     // with morse code hints (COLHEITA) that should respond to password questions.
     const usedResponses = state.prisoner45UsedResponses || new Set<string>();
-    const { response, valid, category: _category } = getPrisoner45Response(question, usedResponses, state.prisoner45QuestionsAsked);
+    const { response, valid, category: _category } = getPrisoner45Response(
+      state,
+      question,
+      usedResponses,
+      state.prisoner45QuestionsAsked
+    );
     const newCount = state.prisoner45QuestionsAsked + 1;
     const remaining = 5 - newCount;
 
@@ -5774,7 +5939,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     // Process query
     const query = args.join(' ');
     const usedResponses = state.scoutLinkUsedResponses || new Set<string>();
-    const { response, valid, category: _category } = getScoutLinkResponse(query, usedResponses);
+    const { response, valid, category: _category } = getScoutLinkResponse(
+      state,
+      query,
+      usedResponses
+    );
     const newLinksUsed = scoutLinksUsed + 1;
     const remaining = 4 - newLinksUsed;
 
@@ -7373,7 +7542,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     saveCheckpoint(state, 'Before archive mode');
 
     // Initialize archive mode
-    const timestamp = generateArchiveTimestamp();
+    const timestamp = generateArchiveTimestamp(
+      (state.seed || 1) +
+        (state.rngState || 1) +
+        state.commandHistory.length * 97 +
+        state.filesRead.size * 13
+    );
     const actionsRemaining = 4; // 4 actions before forced return
 
     return {
