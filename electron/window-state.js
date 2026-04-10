@@ -13,6 +13,10 @@ const STATE_FILE = 'window-state.json';
  * @returns {string}
  */
 function getStatePath() {
+  if (!app || typeof app.getPath !== 'function') {
+    return null;
+  }
+
   return path.join(app.getPath('userData'), STATE_FILE);
 }
 
@@ -38,7 +42,14 @@ function isVisibleOnScreen(state) {
     return true;
   }
 
+  if (!screen || typeof screen.getAllDisplays !== 'function') {
+    return true;
+  }
+
   const displays = screen.getAllDisplays();
+  if (!Array.isArray(displays) || displays.length === 0) {
+    return true;
+  }
 
   // Ensure at least 100px of the window is visible on some display
   const minVisibleMargin = 100;
@@ -74,7 +85,21 @@ function constrainToScreen(state) {
   }
 
   // Window would be off-screen, reset position to primary display
-  const primaryDisplay = screen.getPrimaryDisplay();
+  const primaryDisplay =
+    typeof screen?.getPrimaryDisplay === 'function'
+      ? screen.getPrimaryDisplay()
+      : typeof screen?.getAllDisplays === 'function'
+        ? screen.getAllDisplays()[0]
+        : null;
+
+  if (!primaryDisplay?.workArea) {
+    return {
+      ...defaultState,
+      width: state.width,
+      height: state.height,
+    };
+  }
+
   const { workArea } = primaryDisplay;
 
   // Center the window on the primary display
@@ -99,6 +124,10 @@ function constrainToScreen(state) {
 function loadState() {
   try {
     const statePath = getStatePath();
+    if (!statePath) {
+      return { ...defaultState };
+    }
+
     if (fs.existsSync(statePath)) {
       const data = fs.readFileSync(statePath, 'utf-8');
       const state = JSON.parse(data);
@@ -133,6 +162,10 @@ function loadState() {
 function saveState(state) {
   try {
     const statePath = getStatePath();
+    if (!statePath) {
+      return;
+    }
+
     fs.writeFileSync(statePath, JSON.stringify(state, null, 2), 'utf-8');
   } catch (error) {
     console.error('Failed to save window state:', error.message);

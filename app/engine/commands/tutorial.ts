@@ -6,19 +6,17 @@ import { createEntry } from './utils';
 // Tutorial messages from UFO74 - shown one at a time
 // Design: explicit early steps, diegetic, natural hacker briefing flow
 export const TUTORIAL_MESSAGES: string[][] = [
-  [],
-  ['UFO74: youre in. keep it quiet.'],
-  ['UFO74: quick brief. you cant change anything here — read only.'],
-  ['UFO74: type "ls" to see whats in front of you.'],
-  ['UFO74: type "cd <folder>" to go inside. "open <file>" to read.'],
-  ['UFO74: when this channel closes, start with: ls'],
-  ['UFO74: try internal/ first. routine paperwork. low heat.'],
-  ['UFO74: youll see an evidence tracker. it lights up when you prove something.'],
-  ['UFO74: risk meter climbs as you dig. if it spikes, they test you. fail that, youre out.'],
   [
-    'UFO74: im cutting the link. from here, youre on your own.',
-    '       move slow. read everything. the truth is in the details.',
+    '┌─────────────────────────────────────────────────────────┐',
+    '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │',
+    '└─────────────────────────────────────────────────────────┘',
   ],
+  ['UFO74: youre in. stay quiet.'],
+  ['UFO74: read-only. use "ls", "cd <folder>", and "open <file>".'],
+  ['UFO74: start in internal/. dull files hide live wires.'],
+  ['UFO74: the header tracks evidence. when it ticks, youre close.'],
+  ['UFO74: dig too hard and they notice. fail a test, youre gone.'],
+  ['UFO74: link dies here. trust the details.'],
   ['>> CONNECTION IDLE <<', '', 'Type "help" for commands. "help basics" if youre new.'],
 ];
 
@@ -85,10 +83,9 @@ function createTutorialTipBox(lines: string[]): TerminalEntry[] {
 // Tutorial tips content
 export const TUTORIAL_TIPS: Record<TutorialTipId, string[]> = {
   first_evidence: [
-    'You found evidence!',
+    'Evidence logged.',
     '',
-    'Keep searching for more files.',
-    'Collect all 5 categories to win.',
+    'Need 5 truths to leak.',
   ],
 };
 
@@ -122,21 +119,21 @@ export function getHelpBasics(): TerminalEntry[] {
     createEntry('output', '═══════════════════════════════════════════════'),
     createEntry('system', ''),
     createEntry('output', '  NAVIGATION'),
-    createEntry('output', '  ls              List files in current directory'),
-    createEntry('output', '  cd <dir>        Change directory'),
-    createEntry('output', '  cd ..           Go back one level'),
+    createEntry('output', '  ls              List current folder'),
+    createEntry('output', '  cd <dir>        Enter folder'),
+    createEntry('output', '  cd ..           Move up one level'),
     createEntry('system', ''),
     createEntry('output', '  READING'),
-    createEntry('output', "  open <file>     Read a file's contents"),
-    createEntry('output', '  last            Re-read last opened file'),
+    createEntry('output', '  open <file>     Read a file'),
+    createEntry('output', '  last            Reopen last file'),
     createEntry('system', ''),
     createEntry('output', '  TRACKING'),
-    createEntry('output', '  note <text>     Save a personal note'),
-    createEntry('output', '  notes           View all your notes'),
-    createEntry('output', '  bookmark <file> Bookmark a file for later'),
+    createEntry('output', '  note <text>     Save a note'),
+    createEntry('output', '  notes           Read saved notes'),
+    createEntry('output', '  bookmark <file> Save file for later'),
     createEntry('system', ''),
     createEntry('output', '  STATUS'),
-    createEntry('output', '  help            Show all commands'),
+    createEntry('output', '  help            Show commands'),
     createEntry('system', ''),
   ];
 }
@@ -149,7 +146,7 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntry('output', '═══════════════════════════════════════════════'),
     createEntry('system', ''),
     createEntry('output', '  OBJECTIVE'),
-    createEntry('output', '  Collect evidence in all 5 categories:'),
+    createEntry('output', '  Build the 5 truths:'),
     createEntry('system', ''),
     createEntry('output', '  1. Debris Relocation'),
     createEntry('output', '  2. Being Containment'),
@@ -159,18 +156,18 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
     createEntry('system', ''),
-    createEntry('output', '  HOW TO FIND EVIDENCE:'),
+    createEntry('output', '  WORKFLOW'),
     createEntry('system', ''),
-    createEntry('output', '  1. Navigate directories with ls, cd'),
-    createEntry('output', '  2. Read files with open <filename>'),
-    createEntry('output', '  3. Decrypt encrypted files'),
+    createEntry('output', '  • Explore with ls and cd'),
+    createEntry('output', '  • Read files with open'),
+    createEntry('output', '  • Watch Alien Files in the header'),
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
     createEntry('system', ''),
-    createEntry('output', '  WINNING:'),
+    createEntry('output', '  TO WIN'),
     createEntry('system', ''),
-    createEntry('output', '  • Collect all 5 categories'),
-    createEntry('output', '  • Use "leak" to transmit the evidence'),
+    createEntry('output', '  • Reach 5/5 evidence'),
+    createEntry('output', '  • Use "leak"'),
     createEntry('system', ''),
   ];
 }
@@ -183,7 +180,7 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntry('output', '═══════════════════════════════════════════════'),
     createEntry('system', ''),
     createEntry('output', '  OBJECTIVE'),
-    createEntry('output', '  Collect evidence in 5 categories:'),
+    createEntry('output', '  Expose 5 truths:'),
     createEntry('system', ''),
     createEntry('output', '  1. Debris Relocation'),
     createEntry('output', '  2. Being Containment'),
@@ -195,17 +192,15 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntry('system', ''),
     createEntry('output', '  STRATEGY'),
     createEntry('system', ''),
-    createEntry('output', '  • Read carefully - evidence is in the details'),
-    createEntry('output', '  • Use "note" to track important findings'),
-    createEntry('output', '  • Decrypt encrypted files for hidden evidence'),
-    createEntry('output', '  • Watch your detection level!'),
+    createEntry('output', '  • Read for patterns, not noise'),
+    createEntry('output', '  • Keep notes or bookmarks'),
+    createEntry('output', '  • Stay below critical detection'),
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
     createEntry('system', ''),
-    createEntry('output', '  COMMANDS TO KNOW'),
+    createEntry('output', '  FINAL STEP'),
     createEntry('system', ''),
-    createEntry('output', '  note <text>      Save personal notes'),
-    createEntry('output', '  bookmark <file>  Mark files for later'),
+    createEntry('output', '  • Run "leak" when the tracker hits 5/5'),
     createEntry('system', ''),
   ];
 }
@@ -222,9 +217,18 @@ export function getTutorialMessage(step: number): TerminalEntry[] {
   const isLastStep = step === TUTORIAL_MESSAGES.length - 1;
   const isFirstStep = step === 0;
 
-  // First step (no framing)
+  // First step shows channel open header
   if (isFirstStep) {
-    // Nothing extra to add — content is handled below
+    entries.push(
+      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐')
+    );
+    entries.push(
+      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │')
+    );
+    entries.push(
+      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘')
+    );
+    entries.push(createEntry('system', ''));
   }
 
   for (let i = 0; i < messages.length; i++) {
@@ -234,8 +238,18 @@ export function getTutorialMessage(step: number): TerminalEntry[] {
       // Skip the original header lines (they're replaced above)
       continue;
     } else if (isLastStep) {
-      // Last message: show content without channel framing
+      // Last message: first line is channel closed, then system/ufo74 messages
       if (i === 0) {
+        entries.push(
+          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐')
+        );
+        entries.push(
+          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │')
+        );
+        entries.push(
+          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘')
+        );
+        entries.push(createEntry('system', ''));
         entries.push(createEntry('system', msg));
       } else if (msg.startsWith('UFO74:') || msg.startsWith('       ')) {
         // First-run nudge from UFO74

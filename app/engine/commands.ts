@@ -6,6 +6,7 @@ import {
   TerminalEntry,
   TruthCategory,
   TRUTH_CATEGORIES,
+  FileMutation,
   FileNode,
   ImageTrigger,
   VideoTrigger,
@@ -30,6 +31,7 @@ import {
 import {
   ARCHIVE_FILES,
   ARCHIVE_DIRECTORY_ADDITIONS,
+  generateArchiveTimestamp,
   shouldFileDisappear,
 } from '../data/archiveFiles';
 import {
@@ -39,7 +41,6 @@ import {
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES, MAX_DETECTION, applyWarmupDetection, WARMUP_PHASE } from '../constants/detection';
 import { shouldSuppressPressure, shouldSuppressPenalties } from '../constants/atmosphere';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
-
 
 // Import utilities from new module
 import {
@@ -473,7 +474,11 @@ function calculateHostilityIncrease(state: GameState, command: string): number {
   const baseHostility = state.systemHostilityLevel || 0;
 
   // High-risk commands increase hostility
+  if (command === 'trace') return 1;
   if (command === 'recover') return 1;
+  if (command === 'override') return 2;
+  if (command === 'decrypt')
+    return state.detectionLevel > DETECTION_THRESHOLDS.DECRYPT_WARNING ? 1 : 0;
 
   // Detection thresholds trigger hostility
   if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_HIGH && baseHostility < 4) return 1;
@@ -494,9 +499,9 @@ function isMeaningfulAction(
   state: GameState,
   result: { output: TerminalEntry[]; stateChanges: Partial<GameState> }
 ): boolean {
-  // Attempting to open a file is meaningful - even failed attempts show intent
+  // Attempting to open/decrypt a file is meaningful - even failed attempts show intent
   // Player is trying to engage with the game, not wandering aimlessly
-  if (command === 'open') {
+  if (command === 'open' || command === 'decrypt') {
     return true;
   }
 
@@ -1000,6 +1005,198 @@ function checkVictory(state: GameState): boolean {
   return state.truthsDiscovered.size >= 5;
 }
 
+// Helper function to perform actual decryption
+function performDecryption(filePath: string, file: FileNode, state: GameState): CommandResult {
+  // Checkpoint on first successful decryption (major milestone)
+  const isFirstDecryption = !state.flags?.firstDecryptionComplete;
+  if (isFirstDecryption) {
+    saveCheckpoint(state, 'First encrypted file decrypted');
+  }
+
+  // Apply decryption (but with corruption risk)
+  const mutation: FileMutation = state.fileMutations[filePath] || {
+    corruptedLines: [],
+    decrypted: false,
+  };
+  mutation.decrypted = true;
+
+  // Deterministic corruption on decrypt so save/load does not reshuffle outcomes.
+  if (
+    contextChance(
+      state,
+      0.4,
+      'decrypt-corrupt',
+      filePath,
+      state.commandHistory.length,
+      state.filesRead.size
+    )
+  ) {
+    const lineToCorrupt = contextRandomInt(
+      state,
+      3,
+      11,
+      'decrypt-corrupt-line',
+      filePath,
+      state.commandHistory.length,
+      state.filesRead.size
+    );
+    if (!mutation.corruptedLines.includes(lineToCorrupt)) {
+      mutation.corruptedLines.push(lineToCorrupt);
+    }
+  }
+
+  const stateChanges: Partial<GameState> = {
+    fileMutations: {
+      ...state.fileMutations,
+      [filePath]: mutation,
+    },
+    detectionLevel: state.detectionLevel + 8,
+    sessionStability: state.sessionStability - 5,
+    pendingDecryptFile: undefined,
+    // Mark first decryption complete
+    flags: {
+      ...state.flags,
+      firstDecryptionComplete: true,
+    },
+  };
+
+  if (!state.tutorialComplete) {
+    delete stateChanges.detectionLevel;
+    delete stateChanges.sessionStability;
+  }
+
+  // Special handling: Decrypting neural dump unlocks scout link
+  if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
+    stateChanges.flags = { ...stateChanges.flags, scoutLinkUnlocked: true };
+  }
+
+  const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
+
+  // Use evidence revelation system for gradual discovery (one evidence per read)
+  const existingReveals = getFileReveals(filePath) as TruthCategory[];
+  const revelationResult = attemptEvidenceRevelation(
+    filePath,
+    content || [],
+    existingReveals.length > 0 ? existingReveals : undefined,
+    { ...state, ...stateChanges } as GameState
+  );
+
+  let truthNotices: TerminalEntry[] = [];
+
+  if (revelationResult.revealedEvidence) {
+    if (!state.tutorialComplete) {
+      // During tutorial, do not reveal evidence
+      stateChanges.fileEvidenceStates = {
+        ...state.fileEvidenceStates,
+        ...stateChanges.fileEvidenceStates,
+        [filePath]: revelationResult.updatedFileState,
+      };
+    } else if (state.flags?.overrideGateActive) {
+      // Override gate active: suppress further evidence reveals until protocol used
+      stateChanges.fileEvidenceStates = {
+        ...state.fileEvidenceStates,
+        ...stateChanges.fileEvidenceStates,
+        [filePath]: revelationResult.updatedFileState,
+      };
+      truthNotices.push(createEntry('system', ''));
+      truthNotices.push(
+        createEntry('ufo74', 'UFO74: evidence is locked down. you need the override protocol.')
+      );
+      truthNotices.push(createEntry('ufo74', '       dig around /internal/ for credentials.'));
+    } else {
+      const truthResult = checkTruthProgress(
+        { ...state, ...stateChanges } as GameState,
+        [revelationResult.revealedEvidence],
+        filePath
+      );
+      truthNotices = truthResult.notices;
+
+      // Merge truth discovery state changes (includes detection reduction breather)
+      Object.assign(stateChanges, truthResult.stateChanges);
+
+      // Update the file evidence state
+      stateChanges.fileEvidenceStates = {
+        ...state.fileEvidenceStates,
+        ...stateChanges.fileEvidenceStates,
+        [filePath]: revelationResult.updatedFileState,
+      };
+
+      // Hint at more evidences if available
+      if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
+        truthNotices.push(createEntry('system', ''));
+        truthNotices.push(
+          createEntry('system', '[This file may contain additional insights on future reads]')
+        );
+      }
+    }
+  }
+
+  // Check for disturbing content avatar expression
+  if (content) {
+    const disturbingExpression = getDisturbingContentAvatarExpression(content);
+    if (disturbingExpression && !stateChanges.avatarExpression) {
+      stateChanges.avatarExpression = disturbingExpression;
+    }
+  }
+
+  const output = [
+    createEntry('system', 'AUTHENTICATION VERIFIED'),
+    createEntry('system', ''),
+    createEntry('warning', 'WARNING: Partial recovery only'),
+    ...createOutputEntries(['', `FILE: ${filePath}`, '']),
+    ...createOutputEntries(content || ['[DECRYPTION FAILED]']),
+    ...truthNotices,
+  ];
+
+  // Add scout link notice if just unlocked
+  if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
+    output.push(createEntry('system', ''));
+    output.push(createEntry('notice', 'NOTICE: Neural pattern preserved.'));
+    output.push(createEntry('notice', 'NOTICE: Remote link now available.'));
+    output.push(createEntry('system', 'Use: link'));
+  }
+
+  // Check for image trigger - ONLY show if not shown this run
+  let imageTrigger: ImageTrigger | undefined = undefined;
+  if (file.imageTrigger) {
+    const imageId = file.imageTrigger.src;
+    const imagesShown = state.imagesShownThisRun || new Set<string>();
+
+    if (!imagesShown.has(imageId)) {
+      imageTrigger = file.imageTrigger;
+      // Mark this image as shown
+      const newImagesShown = new Set(imagesShown);
+      newImagesShown.add(imageId);
+      stateChanges.imagesShownThisRun = newImagesShown;
+    }
+  }
+
+  // Check for video trigger - ONLY show if not shown this run
+  let videoTrigger: VideoTrigger | undefined = undefined;
+  if (file.videoTrigger) {
+    const videoId = file.videoTrigger.src;
+    const videosShown = state.videosShownThisRun || new Set<string>();
+
+    if (!videosShown.has(videoId)) {
+      videoTrigger = file.videoTrigger;
+      // Mark this video as shown in videosShownThisRun
+      const newVideosShown = new Set(videosShown);
+      newVideosShown.add(videoId);
+      stateChanges.videosShownThisRun = newVideosShown;
+    }
+  }
+
+  return {
+    output,
+    stateChanges,
+    triggerFlicker: true,
+    delayMs: 2000,
+    imageTrigger,
+    videoTrigger,
+    streamingMode: 'slow' as const,
+  };
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // UFO74 - The player's hacker guide who comments on files and eventually flees
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1011,6 +1208,7 @@ function getUFO74FileReaction(
   filePath: string,
   state: GameState,
   isEncryptedAndLocked?: boolean,
+  isFirstUnstable?: boolean
 ): TerminalEntry[] | null {
   const truthCount = state.truthsDiscovered.size;
   const messageCount = state.incognitoMessageCount || 0;
@@ -1047,9 +1245,28 @@ function getUFO74FileReaction(
     return conditionalDialogue;
   }
 
+  // First unstable file warning - takes priority
+  if (isFirstUnstable) {
+    messages = [createEntry('ufo74', 'UFO74: UNSTABLE file. increases risk but worth it.')];
+  }
   // If file is encrypted and not decrypted, show special message
-  if (isEncryptedAndLocked) {
-    messages = [createEntry('ufo74', 'UFO74: this file has encrypted content. interesting.')];
+  else if (isEncryptedAndLocked) {
+    const encryptedMessages = [
+      [
+        createEntry('ufo74', 'UFO74: encrypted. use decrypt <filename>.'),
+        createEntry('ufo74', '       password is probably in another file.'),
+      ],
+      [createEntry('ufo74', 'UFO74: locked. find the password in other docs.')],
+      [createEntry('ufo74', 'UFO74: encrypted. important stuff. crack it.')],
+    ];
+    messages = contextRandomPick(
+      state,
+      encryptedMessages,
+      'ufo74-encrypted-message',
+      filePath,
+      messageCount,
+      truthCount
+    );
   } else if (isFinalMessage) {
     // Final goodbye - keep this one a bit longer for dramatic effect
     messages = [
@@ -1375,6 +1592,7 @@ function getIncognitoMessage(
   filePath?: string,
   notices?: TerminalEntry[],
   isEncryptedAndLocked?: boolean,
+  isFirstUnstable?: boolean
 ): TerminalEntry[] | null {
   // Max 12 messages per session (last one is goodbye)
   if ((state.incognitoMessageCount || 0) >= 12) return null;
@@ -1397,27 +1615,28 @@ function getIncognitoMessage(
 
   // If player is making progress (reading files successfully), stay quiet
   // unless it's a truth discovery moment (those deserve celebration)
-  if (!isTruthDiscovery) {
+  if (!isTruthDiscovery && !isFirstUnstable) {
     // Only speak 20% of the time when player is progressing normally
     if (!contextChance(state, 0.2, 'ufo74-react-to-open', filePath || '', notices?.length || 0)) {
       return null;
     }
   }
 
-  // If there are notices to explain, prioritize that (but not for encrypted files)
-  if (notices && notices.length > 0 && !isEncryptedAndLocked) {
+  // If there are notices to explain, prioritize that (but not for encrypted or unstable files)
+  if (notices && notices.length > 0 && !isEncryptedAndLocked && !isFirstUnstable) {
     const explanation = getUFO74NoticeExplanation(notices);
     if (explanation) return explanation;
   }
 
   // Otherwise react to the file
   if (filePath) {
-    // Always comment on encrypted files, or 70% chance otherwise
+    // Always comment on encrypted files, first unstable files, or 70% chance otherwise
     if (
       isEncryptedAndLocked ||
+      isFirstUnstable ||
       contextChance(state, 0.7, 'ufo74-file-comment', filePath, notices?.length || 0)
     ) {
-      return getUFO74FileReaction(filePath, state, isEncryptedAndLocked);
+      return getUFO74FileReaction(filePath, state, isEncryptedAndLocked, isFirstUnstable);
     }
   }
 
@@ -3145,20 +3364,8 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  open report.txt       - Open a file',
-    '  open classified.enc   - Attempt to open encrypted file',
     '',
-    'NOTE: Some files are encrypted and require the "decrypt" command.',
     'NOTE: Opening certain files may increase detection risk.',
-  ],
-  decrypt: [
-    'COMMAND: decrypt',
-    '',
-    'This command has been decommissioned.',
-  ],
-  recover: [
-    'COMMAND: recover',
-    '',
-    'This command has been decommissioned.',
   ],
   note: [
     'COMMAND: note <text>',
@@ -3220,11 +3427,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'NOTE: The game also auto-saves periodically.',
   ],
-  trace: [
-    'COMMAND: trace',
-    '',
-    'This command has been decommissioned.',
-  ],
   chat: [
     'COMMAND: chat',
     '',
@@ -3268,7 +3470,7 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  tutorial off   - Disable tutorial tips',
     '',
     'When tutorial mode is ON, helpful tips appear at key moments:',
-    '  - After finding your first evidence fragment',
+    '  - After your first evidence update',
     '  - When you discover new evidence categories',
   ],
   morse: [
@@ -3301,24 +3503,14 @@ const COMMAND_HELP: Record<string, string[]> = {
     'Query the system index for files related to a topic.',
     '',
     'USAGE:',
-    '  search anomaly     - Find files mentioning anomalies',
-    '  search creature    - Find creature-related files',
-    '  search telepathy   - Find telepathy/psi files',
+    '  search anomaly     - List files mentioning anomalies',
+    '  search creature    - List creature-related files',
+    '  search telepathy   - List telepathy/psi files',
     '',
     'Returns file NAMES only. You must locate files manually.',
     '',
     'NOTE: Index is unreliable. Some files may be missed.',
     'NOTE: Each search is logged. Use sparingly.',
-  ],
-  rewind: [
-    'COMMAND: rewind',
-    '',
-    'This command has been decommissioned.',
-  ],
-  present: [
-    'COMMAND: present',
-    '',
-    'This command has been decommissioned.',
   ],
   hint: [
     'COMMAND: hint',
@@ -3356,13 +3548,18 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  link <phrase>  - Authenticate with conceptual key',
     '',
     'REQUIREMENTS:',
-    '  Must first decrypt a .psi neural pattern file.',
+    '  Requires a .psi neural pattern file.',
     '  Check /storage/quarantine/ for psi files.',
   ],
   override: [
-    'COMMAND: override',
+    'COMMAND: override protocol <code>',
     '',
-    'This command has been decommissioned.',
+    'Execute administrative override with access code.',
+    '',
+    'USAGE:',
+    '  override protocol <code>',
+    '',
+    'HINT: The access code can be obtained through encrypted channels.',
   ],
   release: [
     'COMMAND: release <target>',
@@ -3444,14 +3641,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  last              Re-display last opened file',
         '  unread            List unread files',
         '  search <keyword>  Query index for related files',
-        '  decrypt <file>    Attempt decryption of .enc files',
-        '  recover <file>    Attempt file recovery (RISK)',
         '  note <text>       Save a personal note',
         '  notes             View all saved notes',
         '  bookmark [file]   Bookmark a file (or view bookmarks)',
-        '  trace             Trace system connections (RISK)',
-        '  rewind            Access archive state (RISK)',
-        '  present           Return to present from archive',
         '  chat              Open secure relay channel',
         '  tree              Show directory structure',
         '  morse <text>      Decipher morse code messages',
@@ -3624,21 +3816,19 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       }
     }
 
-    // Build output entries with per-line types for read/unread distinction
-    const outputEntries: TerminalEntry[] = [];
-
-    // Header with archive indicator if in archive mode
+    // Build header with archive indicator if in archive mode
+    const lines: string[] = [];
     if (state.inArchiveMode) {
-      outputEntries.push(createEntry('output', ''));
-      outputEntries.push(createEntry('output', `▓▓▓ ARCHIVE STATE: ${state.archiveTimestamp} — READ-ONLY MODE ▓▓▓`));
-      outputEntries.push(createEntry('output', `[ARCHIVE: ${state.archiveActionsRemaining} actions remaining]`));
+      lines.push('');
+      lines.push(`▓▓▓ ARCHIVE STATE: ${state.archiveTimestamp} — READ-ONLY MODE ▓▓▓`);
+      lines.push(`[ARCHIVE: ${state.archiveActionsRemaining} actions remaining]`);
     }
-    outputEntries.push(createEntry('output', ''));
-    outputEntries.push(createEntry('output', `Directory: ${state.currentPath}`));
-    outputEntries.push(createEntry('output', ''));
+    lines.push('');
+    lines.push(`Directory: ${state.currentPath}`);
+    lines.push('');
 
     if (allEntries.length === 0) {
-      outputEntries.push(createEntry('output', '  (empty)'));
+      lines.push('  (empty)');
     } else {
       for (const entry of allEntries) {
         let line = `  ${entry.name}`;
@@ -3650,9 +3840,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         if (isArchiveOnly) {
           line = `  [DELETED] ${entry.name}`;
         }
-
-        // Track whether this file has been read (for dim rendering)
-        let isFileRead = false;
 
         // Show markers for files
         if (entry.type === 'file') {
@@ -3671,7 +3858,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           if (!isArchiveOnly) {
             if (state.filesRead?.has(fullPath)) {
               line += ' [READ]';
-              isFileRead = true;
             } else {
               line += ' [UNREAD]';
             }
@@ -3680,7 +3866,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           }
 
           // Reading time estimate (based on content length)
-          const content = isArchiveOnly
+          const content = isArchiveOnly 
             ? getArchiveFileContent(fullPath)
             : getFileContent(fullPath, state);
           if (content && content.length > 0) {
@@ -3716,9 +3902,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         if (!longFormat && entry.status && entry.status !== 'intact') {
           line += ` [${entry.status.toUpperCase()}]`;
         }
-
-        // Use 'dim' type for already-read files, 'output' for everything else
-        outputEntries.push(createEntry(isFileRead ? 'dim' : 'output', line));
+        lines.push(line);
       }
     }
 
@@ -3731,11 +3915,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     });
 
     if (hasEvidenceMarkers) {
-      outputEntries.push(createEntry('output', ''));
-      outputEntries.push(createEntry('output', `  ${EVIDENCE_SYMBOL}=evidence found`));
+      lines.push('');
+      lines.push(`  ${EVIDENCE_SYMBOL}=evidence found`);
     }
 
-    outputEntries.push(createEntry('output', ''));
+    lines.push('');
 
     // Handle archive mode action decrement
     let stateChanges: Partial<GameState> = {
@@ -3750,12 +3934,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     if (state.inArchiveMode) {
       const archiveResult = decrementArchiveAction(state);
       stateChanges = { ...stateChanges, ...archiveResult.stateChanges };
-
+      
       if (archiveResult.forceExit) {
         // Time's up - exit archive mode
         const exitResult = exitArchiveMode(state, 'timeout');
         return {
-          output: [...outputEntries, ...exitResult.output],
+          output: [...createOutputEntries(lines), ...exitResult.output],
           stateChanges: { ...stateChanges, ...exitResult.stateChanges },
           triggerFlicker: exitResult.triggerFlicker,
           delayMs: exitResult.delayMs,
@@ -3764,7 +3948,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     return {
-      output: outputEntries,
+      output: createOutputEntries(lines),
       stateChanges,
       delayMs: calculateDelay(state),
     };
@@ -4174,6 +4358,41 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     let triggerFlicker = false;
 
+    if (
+      file.status === 'unstable' &&
+      contextChance(
+        state,
+        0.3,
+        'unstable-file-corruption',
+        filePath,
+        state.filesRead.size,
+        state.commandHistory.length
+      )
+    ) {
+      // Apply corruption on unstable file access
+      const newMutation: FileMutation = mutation || { corruptedLines: [], decrypted: false };
+      const lineToCorrupt = contextRandomInt(
+        state,
+        5,
+        15,
+        'unstable-file-corruption-line',
+        filePath,
+        state.filesRead.size,
+        state.commandHistory.length
+      );
+      if (!newMutation.corruptedLines.includes(lineToCorrupt)) {
+        newMutation.corruptedLines.push(lineToCorrupt);
+      }
+      stateChanges.fileMutations = {
+        ...state.fileMutations,
+        [filePath]: newMutation,
+      };
+      if (state.tutorialComplete) {
+        stateChanges.sessionStability = state.sessionStability - 3;
+        triggerFlicker = true;
+      }
+    }
+
     const content = getFileContent(filePath, { ...state, ...stateChanges }, mutation?.decrypted);
 
     if (!content) {
@@ -4560,8 +4779,12 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     // Determine streaming mode based on file status
     let streamingMode: 'none' | 'fast' | 'normal' | 'slow' | 'glitchy' = 'normal';
-    if (triggerFlicker) {
+    if (file.status === 'unstable' || triggerFlicker) {
       streamingMode = 'glitchy';
+    } else if (file.status === 'encrypted') {
+      streamingMode = 'slow';
+    } else if (file.status === 'restricted' || file.status === 'restricted_briefing') {
+      streamingMode = 'slow';
     } else if (content.length > 30) {
       streamingMode = 'fast'; // Long files stream faster
     }
@@ -4580,13 +4803,279 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
 
-  decrypt: (_args, _state) => {
-    return {
-      output: [
-        createEntry('system', 'This command has been decommissioned.'),
-      ],
-      stateChanges: {},
-    };
+  decrypt: (args, state) => {
+    if (args.length === 0) {
+      return {
+        output: [createEntry('error', 'ERROR: Specify file')],
+        stateChanges: {},
+      };
+    }
+
+    const filePath = resolvePath(args[0], state.currentPath);
+    const node = getNode(filePath, state);
+
+    if (!node || node.type !== 'file') {
+      return {
+        output: [createEntry('error', 'ERROR: File not found')],
+        stateChanges: {},
+      };
+    }
+
+    const file = node as FileNode;
+
+    if (file.status !== 'encrypted') {
+      return {
+        output: [
+          createEntry('error', 'ERROR: File is not encrypted'),
+          createEntry('system', ''),
+          createEntry('ufo74', '[UFO74]: this ones not encrypted. just use: open ' + args[0]),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    if (!file.decryptedFragment) {
+      return {
+        output: [createEntry('error', 'ERROR: No recoverable data')],
+        stateChanges: {},
+      };
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // TIMED DECRYPTION FILES
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    if (file.timedDecrypt) {
+      // If timed decrypt is active and correct sequence provided
+      if (state.timedDecryptActive && state.timedDecryptFile === filePath) {
+        const providedSequence = args.slice(1).join(' ').toUpperCase().trim();
+        const expectedSequence = file.timedDecrypt.sequence.toUpperCase();
+
+        // Check if time expired
+        if (Date.now() > state.timedDecryptEndTime) {
+          return {
+            output: [
+              createEntry('error', ''),
+              createEntry('error', '▓▓▓ DECRYPTION WINDOW EXPIRED ▓▓▓'),
+              createEntry('error', ''),
+              createEntry('warning', 'Time limit exceeded.'),
+              createEntry('warning', 'Encryption re-initialized.'),
+              createEntry('system', ''),
+              createEntry('system', 'Try again with: decrypt ' + args[0]),
+            ],
+            stateChanges: {
+              timedDecryptActive: false,
+              timedDecryptFile: undefined,
+              timedDecryptSequence: undefined,
+              timedDecryptEndTime: 0,
+              detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 8),
+            },
+          };
+        }
+
+        // Check if sequence matches
+        if (providedSequence === expectedSequence) {
+          // Success! Decrypt the file
+          const output: TerminalEntry[] = [
+            createEntry('system', ''),
+            createEntry('system', '═══════════════════════════════════════════════'),
+            createEntry('system', '     TIMED DECRYPTION SUCCESSFUL              '),
+            createEntry('system', '═══════════════════════════════════════════════'),
+            createEntry('system', ''),
+          ];
+
+          for (const line of file.decryptedFragment) {
+            output.push(createEntry('system', line));
+          }
+
+          return {
+            output,
+            stateChanges: {
+              timedDecryptActive: false,
+              timedDecryptFile: undefined,
+              timedDecryptSequence: undefined,
+              timedDecryptEndTime: 0,
+              flags: { ...state.flags, [`decrypted_${filePath.replace(/\//g, '_')}`]: true },
+              detectionLevel: Math.max(0, state.detectionLevel - 3), // Reward for fast decryption
+              avatarExpression: 'smirk', // Successful decrypt - smirk expression
+            },
+          };
+        } else {
+          return {
+            output: [
+              createEntry('error', 'SEQUENCE MISMATCH'),
+              createEntry('error', ''),
+              createEntry('warning', `Expected: ${expectedSequence}`),
+              createEntry('warning', `Received: ${providedSequence || '(empty)'}`),
+              createEntry('system', ''),
+              createEntry('system', 'Time remaining. Try again.'),
+            ],
+            stateChanges: {
+              detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 3),
+            },
+          };
+        }
+      }
+
+      // Start timed decryption challenge
+      const endTime = Date.now() + file.timedDecrypt.timeLimit;
+      const timeSeconds = Math.floor(file.timedDecrypt.timeLimit / 1000);
+
+      return {
+        output: [
+          createEntry('warning', ''),
+          createEntry('warning', '▓▓▓ TIMED DECRYPTION INITIATED ▓▓▓'),
+          createEntry('warning', ''),
+          createEntry('system', '  This file uses time-locked encryption.'),
+          createEntry('system', '  You must type the sequence before time expires.'),
+          createEntry('system', ''),
+          createEntry('warning', `  TIME LIMIT: ${timeSeconds} seconds`),
+          createEntry('system', ''),
+          createEntry('system', '  ┌─────────────────────────────────────┐'),
+          createEntry('system', `  │  SEQUENCE: ${file.timedDecrypt.sequence}  │`),
+          createEntry('system', '  └─────────────────────────────────────┘'),
+          createEntry('system', ''),
+          createEntry('system', `  Type: decrypt ${args[0]} ${file.timedDecrypt.sequence}`),
+          createEntry('system', ''),
+          createEntry('warning', '  TIMER STARTED'),
+        ],
+        stateChanges: {
+          timedDecryptActive: true,
+          timedDecryptFile: filePath,
+          timedDecryptSequence: file.timedDecrypt.sequence,
+          timedDecryptEndTime: endTime,
+        },
+      };
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PASSWORD-PROTECTED FILES
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    // UFO74 identity file requires password from transfer_authorization.txt
+    if (filePath.includes('ghost_in_machine')) {
+      const password = args[1]?.toLowerCase().trim();
+
+      if (!password) {
+        return {
+          output: [
+            createEntry('warning', '══════════════════════════════════════════════'),
+            createEntry('warning', 'PASSWORD REQUIRED'),
+            createEntry('warning', '══════════════════════════════════════════════'),
+            createEntry('system', ''),
+            createEntry('system', 'Usage: decrypt ghost_in_machine.enc <password>'),
+            createEntry('system', ''),
+            createEntry('ufo74', "[UFO74]: This file... I don't recognize it."),
+            createEntry('ufo74', '[UFO74]: But the encryption pattern looks familiar.'),
+          ],
+          stateChanges: {},
+        };
+      }
+
+      if (password !== 'varginha1996') {
+        const stateChanges: Partial<GameState> = {
+          detectionLevel: state.detectionLevel + 5,
+        };
+
+        if (!state.tutorialComplete) {
+          delete stateChanges.detectionLevel;
+        }
+
+        return {
+          output: [
+            createEntry('error', 'DECRYPTION FAILED'),
+            createEntry('error', 'Invalid password'),
+            createEntry('system', ''),
+            createEntry('ufo74', '[UFO74]: Wrong password. Keep looking.'),
+          ],
+          stateChanges,
+        };
+      }
+
+      // Password correct - trigger secret ending revelation
+      return {
+        output: [
+          createEntry('system', 'DECRYPTION SUCCESSFUL'),
+          createEntry('system', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('warning', ''),
+          createEntry('warning', '   CLASSIFIED PERSONNEL FILE'),
+          createEntry('warning', '   SUBJECT: WITNESS #74 - CODE NAME "UFO74"'),
+          createEntry('warning', ''),
+          createEntry('output', '   Location: Varginha, Minas Gerais'),
+          createEntry('output', '   Date: January 20, 1996'),
+          createEntry('output', '   Status: WITNESS SUPPRESSION FAILED'),
+          createEntry('output', ''),
+          createEntry('output', '   Subject was present during initial'),
+          createEntry('output', '   contact event. Demonstrated unusual'),
+          createEntry('output', '   resistance to memory alteration'),
+          createEntry('output', '   protocols.'),
+          createEntry('output', ''),
+          createEntry('output', '   Subject has since accessed internal'),
+          createEntry('output', '   networks repeatedly. Motivation unclear.'),
+          createEntry('output', '   Possibly seeking validation.'),
+          createEntry('output', ''),
+          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('system', ''),
+          createEntry('ufo74', '[UFO74]: ...'),
+          createEntry('ufo74', '[UFO74]: So you found it.'),
+          createEntry('ufo74', '[UFO74]: I was there. January 1996.'),
+          createEntry('ufo74', '[UFO74]: I saw what they did. What they took.'),
+          createEntry('ufo74', "[UFO74]: I've been inside their systems ever since."),
+          createEntry('ufo74', '[UFO74]: Not for revenge. For proof.'),
+          createEntry('ufo74', "[UFO74]: You have the proof now. Don't let them bury it again."),
+          createEntry('system', ''),
+          createEntry('warning', '▓▓▓ THE WHOLE TRUTH AWAITS ▓▓▓'),
+        ],
+        stateChanges: {
+          // Preserve the reveal output so the UI can transition on the next Enter press.
+          ufo74SecretDiscovered: true,
+        },
+        triggerFlicker: true,
+        delayMs: 3000,
+      };
+    }
+
+    // Check access threshold
+    if (file.accessThreshold && state.accessLevel < file.accessThreshold) {
+      return {
+        output: [
+          createEntry('error', 'ERROR: Decryption failed'),
+          createEntry('warning', 'WARNING: Access level insufficient'),
+        ],
+        stateChanges: state.tutorialComplete
+          ? {
+              detectionLevel: state.detectionLevel + 10,
+              legacyAlertCounter: state.legacyAlertCounter + 1,
+            }
+          : {},
+        delayMs: 1500,
+      };
+    }
+
+    // If file has a security question, require answer
+    if (file.securityQuestion) {
+      return {
+        output: [
+          createEntry('system', 'Initiating decryption protocol...'),
+          createEntry('system', ''),
+          createEntry('warning', '══════════════════════════════════════════════'),
+          createEntry('warning', 'DECRYPTION AUTHENTICATION REQUIRED'),
+          createEntry('warning', '══════════════════════════════════════════════'),
+          createEntry('system', ''),
+          createEntry('system', file.securityQuestion.question),
+          createEntry('system', ''),
+          createEntry('system', 'Enter answer below:'),
+        ],
+        stateChanges: {
+          pendingDecryptFile: filePath,
+        },
+        delayMs: 500,
+      };
+    }
+
+    // No security question - proceed with decryption
+    return performDecryption(filePath, file, state);
   },
 
   recover: (args, state) => {
@@ -4654,21 +5143,244 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     };
   },
 
-  trace: (_args, _state) => {
+  trace: (args, state) => {
+    const output: TerminalEntry[] = [
+      createEntry('system', 'Initiating trace protocol...'),
+      createEntry('output', ''),
+    ];
+
+    // Reveal some structure based on access level
+    if (state.accessLevel < 2) {
+      output.push(createEntry('output', 'TRACE RESULT:'));
+      output.push(createEntry('output', '  /storage/ — ACCESSIBLE'));
+      output.push(createEntry('output', '  /ops/ — PARTIAL'));
+      output.push(createEntry('output', '  /comms/ — ACCESSIBLE'));
+      output.push(createEntry('output', '  /admin/ — RESTRICTED'));
+      output.push(createEntry('warning', ''));
+      output.push(createEntry('warning', 'WARNING: Trace logged. Detection increased.'));
+    } else {
+      output.push(createEntry('output', 'TRACE RESULT:'));
+      output.push(createEntry('output', '  /storage/assets/ — 2 files'));
+      output.push(createEntry('output', '  /storage/quarantine/ — 3 files'));
+      output.push(createEntry('output', '  /ops/prato/ — 1 file'));
+      output.push(createEntry('output', '  /ops/exo/ — 2 files [ELEVATED]'));
+      output.push(createEntry('output', '  /comms/psi/ — 2 files [ENCRYPTED]'));
+      output.push(createEntry('output', '  /admin/ — 7 files [RESTRICTED]'));
+      output.push(createEntry('output', ''));
+      output.push(createEntry('notice', 'NOTICE: Administrative access may be obtainable.'));
+    }
+
+    const stateChanges: Partial<GameState> = {
+      detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'trace', 10), // was 15, reduced for pacing
+      accessLevel: Math.min(state.accessLevel + 1, 3),
+      sessionStability: state.sessionStability - 5,
+    };
+
+    if (!state.tutorialComplete) {
+      delete stateChanges.detectionLevel;
+      delete stateChanges.sessionStability;
+    }
+
     return {
-      output: [
-        createEntry('system', 'This command has been decommissioned.'),
-      ],
-      stateChanges: {},
+      output,
+      stateChanges,
+      triggerFlicker: true,
+      delayMs: 1800,
     };
   },
 
-  override: (_args, _state) => {
+  override: (args, state) => {
+    // Requires: "override protocol <PASSWORD>"
+    if (args.length === 0 || args[0].toLowerCase() !== 'protocol') {
+      // Invalid override syntax - treat as invalid command
+      return createInvalidCommandResult(state, '');
+    }
+
+    // Check if password was provided
+    if (args.length < 2) {
+      const stateChanges: Partial<GameState> = {
+        detectionLevel: state.detectionLevel + 5,
+      };
+
+      if (!state.tutorialComplete) {
+        delete stateChanges.detectionLevel;
+      }
+
+      return {
+        output: [
+          createEntry('system', 'Initiating protocol override...'),
+          createEntry('error', ''),
+          createEntry('error', 'ACCESS DENIED'),
+          createEntry('error', ''),
+          createEntry('warning', 'Protocol override requires authentication code.'),
+          createEntry('warning', 'Usage: override protocol <CODE>'),
+          createEntry('system', ''),
+          createEntry('ufo74', '[UFO74]: try "chat". theres someone in the system who knows the code.'),
+        ],
+        stateChanges,
+        triggerFlicker: true,
+        delayMs: 1500,
+      };
+    }
+
+    const password = args.slice(1).join(' ').toUpperCase();
+    const correctPassword = 'COLHEITA';
+
+    // Track failed attempts
+    const failedAttempts = state.overrideFailedAttempts || 0;
+
+    // Checkpoint before high-risk override protocol attempt (only if first real attempt)
+    if (failedAttempts === 0) {
+      saveCheckpoint(state, 'Before override protocol');
+    }
+
+    // Wrong password
+    if (password !== correctPassword) {
+      const newFailedAttempts = failedAttempts + 1;
+
+      // Too many failed attempts = lockdown
+      if (newFailedAttempts >= 3) {
+        return {
+          output: [
+            createEntry('system', `Verifying code: ${password}...`),
+            createEntry('error', ''),
+            createEntry('error', '═══════════════════════════════════════════════════════════'),
+            createEntry('error', 'SECURITY COUNTERMEASURE ACTIVATED'),
+            createEntry('error', 'MULTIPLE AUTHENTICATION FAILURES DETECTED'),
+            createEntry('error', '═══════════════════════════════════════════════════════════'),
+            createEntry('error', ''),
+            createEntry('error', 'IMMEDIATE SHUTDOWN'),
+            createEntry('error', ''),
+          ],
+          stateChanges: {
+            isGameOver: true,
+            gameOverReason: 'SECURITY LOCKDOWN - AUTHENTICATION FAILURE',
+            wrongAttempts: (state.wrongAttempts || 0) + 1,
+          },
+          triggerFlicker: true,
+          delayMs: 3000,
+        };
+      }
+
+      const stateChanges: Partial<GameState> = {
+        detectionLevel: state.detectionLevel + 10, // was 15, reduced for pacing
+        overrideFailedAttempts: newFailedAttempts,
+        wrongAttempts: (state.wrongAttempts || 0) + 1,
+      };
+
+      // Suppress penalties during tutorial or atmosphere phase
+      if (shouldSuppressPenalties(state)) {
+        delete stateChanges.detectionLevel;
+        delete stateChanges.wrongAttempts;
+      }
+
+      return {
+        output: [
+          createEntry('system', `Verifying code: ${password}...`),
+          createEntry('error', ''),
+          createEntry('error', 'INVALID AUTHENTICATION CODE'),
+          createEntry('error', ''),
+          createEntry(
+            'warning',
+            `WARNING: ${3 - newFailedAttempts} attempt(s) remaining before lockdown`
+          ),
+        ],
+        stateChanges,
+        triggerFlicker: true,
+        delayMs: 1500,
+      };
+    }
+
+    // Correct password!
+    // THE TERRIBLE MISTAKE - Can still trigger at high detection with correct password
+    const rng = createSeededRng(state.rngState);
+    const roll = rng();
+
+    const isTerribleMistakeCondition =
+      state.detectionLevel >= DETECTION_THRESHOLDS.ALERT &&
+      state.truthsDiscovered.size >= 2 &&
+      !state.terribleMistakeTriggered &&
+      roll < 0.35; // 35% chance when conditions are met
+
+    if (isTerribleMistakeCondition) {
+      return {
+        output: [
+          createEntry('system', `Verifying code: ${password}...`),
+          createEntry('system', 'Authentication accepted.'),
+          createEntry('error', ''),
+          createEntry('error', '▓▓▓ CRITICAL BREACH ▓▓▓'),
+          createEntry('error', ''),
+          createEntry('warning', '════════════════════════════════════════════'),
+          createEntry('warning', 'EMERGENCY BUFFER DUMP — DO NOT DISTRIBUTE'),
+          createEntry('warning', '════════════════════════════════════════════'),
+          createEntry('system', ''),
+          createEntry('output', 'RECOVERED FRAGMENT [ORIGIN: UNKNOWN NODE]:'),
+          createEntry('system', ''),
+          createEntry('output', '  ...harvest cycle confirmed...'),
+          createEntry('output', '  ...cognitive extraction: 7.2 billion units...'),
+          createEntry('output', '  ...window activation: IMMINENT...'),
+          createEntry('output', '  ...no intervention possible...'),
+          createEntry('output', '  ...observation terminates upon extraction...'),
+          createEntry('system', ''),
+          createEntry('error', '════════════════════════════════════════════'),
+          createEntry('error', 'PURGE PROTOCOL INITIATED'),
+          createEntry('error', 'SYSTEM WILL TERMINATE IN 8 OPERATIONS'),
+          createEntry('error', '════════════════════════════════════════════'),
+          createEntry('system', ''),
+          createEntry('warning', 'You should not have seen this.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          terribleMistakeTriggered: true,
+          sessionDoomCountdown: 8,
+          flags: {
+            ...state.flags,
+            adminUnlocked: true,
+            forbiddenKnowledge: true,
+            overrideGateActive: false,
+          },
+          accessLevel: 5,
+          detectionLevel: MAX_DETECTION,
+          systemHostilityLevel: 5,
+          rngState: seededRandomInt(rng, 0, 2147483647),
+          avatarExpression: 'angry', // Terrible mistake - angry expression
+        },
+        triggerFlicker: true,
+        delayMs: 4000,
+      };
+    }
+
+    // Success - unlock admin
+    const stateChanges: Partial<GameState> = {
+      flags: { ...state.flags, adminUnlocked: true, overrideGateActive: false },
+      overrideFailedAttempts: 0,
+      accessLevel: 5,
+      detectionLevel: state.detectionLevel + 15, // was 25, reduced for pacing
+      sessionStability: state.sessionStability - 15,
+      systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
+      rngState: seededRandomInt(rng, 0, 2147483647),
+    };
+
+    if (!state.tutorialComplete) {
+      delete stateChanges.detectionLevel;
+      delete stateChanges.sessionStability;
+    }
+
     return {
       output: [
-        createEntry('system', 'This command has been decommissioned.'),
+        createEntry('system', `Verifying code: ${password}...`),
+        createEntry('system', 'Authentication accepted.'),
+        createEntry('warning', ''),
+        createEntry('warning', 'WARNING: Legacy security bypass detected'),
+        createEntry('output', ''),
+        createEntry('notice', 'NOTICE: Administrative archive access granted'),
+        createEntry('notice', 'NOTICE: Elevated clearance applied'),
+        createEntry('output', ''),
+        createEntry('warning', 'WARNING: Session heavily monitored'),
       ],
-      stateChanges: {},
+      stateChanges,
+      triggerFlicker: true,
+      delayMs: 2500,
     };
   },
 
@@ -6669,22 +7381,96 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     return commands.message(args, state);
   },
 
-  rewind: (_args, _state) => {
+  // ═══════════════════════════════════════════════════════════════════════════
+  // REWIND COMMAND - Time mechanic for viewing past filesystem state
+  // ═══════════════════════════════════════════════════════════════════════════
+  rewind: (args, state) => {
+    // Cannot rewind during tutorial
+    if (!state.tutorialComplete) {
+      return {
+        output: [createEntry('system', 'Temporal functions unavailable during transmission.')],
+        stateChanges: {},
+      };
+    }
+
+    // Already in archive mode - show status
+    if (state.inArchiveMode) {
+      return {
+        output: [
+          createEntry('warning', ''),
+          createEntry('warning', `ARCHIVE STATE: ${state.archiveTimestamp} — READ-ONLY MODE`),
+          createEntry('warning', `[ARCHIVE: ${state.archiveActionsRemaining} actions remaining]`),
+          createEntry('warning', ''),
+          createEntry('output', 'You are already viewing the archive.'),
+          createEntry('output', 'Navigate and read files. Memory is fragile.'),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    // Checkpoint before entering archive mode (risky operation)
+    saveCheckpoint(state, 'Before archive mode');
+
+    // Initialize archive mode
+    const timestamp = generateArchiveTimestamp(
+      (state.seed || 1) +
+        (state.rngState || 1) +
+        state.commandHistory.length * 97 +
+        state.filesRead.size * 13
+    );
+    const actionsRemaining = 4; // 4 actions before forced return
+
     return {
       output: [
-        createEntry('system', 'This command has been decommissioned.'),
+        createEntry('system', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
+        createEntry('warning', '              INITIATING TEMPORAL REGRESSION'),
+        createEntry('system', ''),
+        createEntry('system', '                    ... ... ...'),
+        createEntry('system', ''),
+        createEntry('warning', `         ARCHIVE STATE: ${timestamp} — READ-ONLY MODE`),
+        createEntry('system', ''),
+        createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+        createEntry('system', ''),
+        createEntry('output', 'Deleted files are temporarily restored.'),
+        createEntry('output', 'You cannot modify or export anything.'),
+        createEntry('system', ''),
+        createEntry('warning', `[ARCHIVE: ${actionsRemaining} actions remaining]`),
+        createEntry('system', ''),
+        ...createUFO74Message([
+          'UFO74: careful hackerkid. youre walking through echoes.',
+          '       some files only exist in the past now.',
+          '       READ FAST. you cant take anything with you.',
+        ]),
       ],
-      stateChanges: {},
+      stateChanges: {
+        inArchiveMode: true,
+        archiveActionsRemaining: actionsRemaining,
+        archiveTimestamp: timestamp,
+        archiveFilesViewed: new Set<string>(),
+        detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 5), // Suspicious behavior
+      },
+      triggerFlicker: true,
+      delayMs: 2500,
     };
   },
 
-  present: (_args, _state) => {
-    return {
-      output: [
-        createEntry('system', 'This command has been decommissioned.'),
-      ],
-      stateChanges: {},
-    };
+  // Present command - Return from archive mode (or show current state)
+  present: (args, state) => {
+    if (!state.inArchiveMode) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('output', 'You are in the present. Current timeline active.'),
+          createEntry('output', 'Use "rewind" to access archived filesystem state.'),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    // Return to present
+    return exitArchiveMode(state, 'manual');
   },
 };
 
@@ -7104,6 +7890,95 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     };
   }
 
+  // Check for pending decrypt answer
+  if (state.pendingDecryptFile) {
+    const filePath = state.pendingDecryptFile;
+
+    // Cancel decryption if user types cancel
+    if (normalizedInput.toLowerCase().trim() === 'cancel') {
+      return {
+        output: [createEntry('system', 'Decryption cancelled.')],
+        stateChanges: {
+          pendingDecryptFile: undefined,
+        },
+      };
+    }
+
+    const node = getNode(filePath, state);
+
+    if (node && node.type === 'file') {
+      const file = node as FileNode;
+      if (file.securityQuestion) {
+        const answer = normalizedInput.trim().toLowerCase();
+        const validAnswers = file.securityQuestion.answers.map(a => a.toLowerCase());
+
+        if (validAnswers.includes(answer)) {
+          // Correct answer - perform decryption
+          if (!state.tutorialComplete) {
+            return {
+              output: [createEntry('system', 'Decryption unavailable during transmission.')],
+              stateChanges: {},
+            };
+          }
+          return performDecryption(filePath, file, state);
+        } else {
+          // Wrong answer
+          if (!state.tutorialComplete) {
+            return {
+              output: [
+                createEntry('error', 'AUTHENTICATION FAILED'),
+                createEntry('system', ''),
+                createEntry('ufo74', `[UFO74]: ${file.securityQuestion.hint}`),
+                createEntry('system', ''),
+                createEntry('system', 'Enter answer or type "cancel" to abort:'),
+              ],
+              stateChanges: {},
+              delayMs: 500,
+            };
+          }
+
+          const newAlertCounter = state.legacyAlertCounter + 1;
+
+          if (newAlertCounter >= 8) {
+            return {
+              output: [
+                createEntry('error', 'AUTHENTICATION FAILED'),
+                createEntry('error', ''),
+                createEntry('error', '═══════════════════════════════════════════════════════════'),
+                createEntry('error', 'CRITICAL: SECURITY THRESHOLD EXCEEDED'),
+                createEntry('error', '═══════════════════════════════════════════════════════════'),
+                createEntry('error', ''),
+                createEntry('error', 'SYSTEM LOCKDOWN INITIATED'),
+              ],
+              stateChanges: {
+                isGameOver: true,
+                gameOverReason: 'SECURITY LOCKDOWN - FAILED AUTHENTICATION',
+                pendingDecryptFile: undefined,
+              },
+              triggerFlicker: true,
+              delayMs: 2000,
+            };
+          }
+
+          return {
+            output: [
+              createEntry('error', 'AUTHENTICATION FAILED'),
+              createEntry('warning', `WARNING: Invalid attempts: ${newAlertCounter}/8`),
+              createEntry('system', ''),
+              createEntry('ufo74', `[UFO74]: ${file.securityQuestion.hint}`),
+              createEntry('system', ''),
+              createEntry('system', 'Enter answer or type "cancel" to abort:'),
+            ],
+            stateChanges: {
+              legacyAlertCounter: newAlertCounter,
+              detectionLevel: state.detectionLevel + 5,
+            },
+            delayMs: 500,
+          };
+        }
+      }
+    }
+  }
 
   // Check for lockdown
   if (state.legacyAlertCounter >= 10) {
@@ -7118,16 +7993,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       },
     };
   }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // TURING EVALUATION - Handle responses when evaluation is active
-  // NOTE: The TuringTestOverlay component is the primary UI for this feature.
-  // This terminal-based handler serves as a fallback and is used for testing.
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Turing evaluation is now handled by the TuringTestOverlay component.
-  // If turingEvaluationActive is true but the overlay isn't showing,
-  // the player shouldn't be stuck — skip normal command interception.
-  // The overlay handles all A/B/C input via its own keyboard handler.
 
   // ═══════════════════════════════════════════════════════════════════════════
   // ELUSIVE MAN LEAK SEQUENCE - Handle answers during interrogation
@@ -7388,12 +8253,23 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
       // Check if file is encrypted and not yet decrypted
       let isEncryptedAndLocked = false;
+      let isFirstUnstable = false;
       if (filePath) {
         const node = getNode(filePath, state);
         if (node && node.type === 'file') {
           const file = node as FileNode;
           const mutation = state.fileMutations[filePath];
           isEncryptedAndLocked = file.status === 'encrypted' && !mutation?.decrypted;
+
+          // Check if this is the first unstable file
+          if (file.status === 'unstable' && !state.flags.seenUnstableWarning) {
+            isFirstUnstable = true;
+            result.stateChanges.flags = {
+              ...state.flags,
+              ...result.stateChanges.flags,
+              seenUnstableWarning: true,
+            };
+          }
         }
       }
 
@@ -7425,6 +8301,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
             filePath,
             notices,
             isEncryptedAndLocked,
+            isFirstUnstable
           );
 
       if (incognitoMessage) {

@@ -118,33 +118,43 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Password Puzzle', () => {
-    it('decrypt is decommissioned - no password prompt', () => {
+    it('decrypt prompts for a password for ghost_in_machine.enc', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
+        accessLevel: 3,
       });
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc', state);
-      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('PASSWORD REQUIRED'))).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('Usage: decrypt ghost_in_machine.enc <password>'))
+      ).toBe(true);
     });
 
-    it('decrypt is decommissioned - wrong password has no effect', () => {
+    it('decrypt rejects the wrong ghost_in_machine password', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
+        accessLevel: 3,
       });
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc wrongpassword', state);
-      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('DECRYPTION FAILED'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Invalid password'))).toBe(true);
+      expect(result.stateChanges.ufo74SecretDiscovered).toBeUndefined();
+      expect(result.stateChanges.detectionLevel).toBeGreaterThan(state.detectionLevel);
     });
 
-    it('decrypt is decommissioned - correct password has no effect', () => {
+    it('decrypt reveals UFO74 when the ghost_in_machine password is correct', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
+        accessLevel: 3,
       });
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc varginha1996', state);
-      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
-      expect(result.stateChanges.ufo74SecretDiscovered).toBeUndefined();
+      expect(result.output.some(e => e.content.includes('DECRYPTION SUCCESSFUL'))).toBe(true);
+      expect(result.stateChanges.ufo74SecretDiscovered).toBe(true);
       expect(result.skipToPhase).toBeUndefined();
+      expect(result.triggerFlicker).toBe(true);
     });
   });
 
@@ -314,15 +324,15 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('UFO74 Entry Type', () => {
-    it('decrypt is decommissioned - no ufo74 entries generated', () => {
+    it('decrypt ghost_in_machine can emit ufo74 entries', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
+        accessLevel: 3,
       });
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc', state);
-      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
       const ufo74Entries = result.output.filter(e => e.type === 'ufo74');
-      expect(ufo74Entries.length).toBe(0);
+      expect(ufo74Entries.length).toBeGreaterThan(0);
     });
   });
 
@@ -682,7 +692,7 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('trace command is decommissioned', () => {
+    it('trace command reveals network activity', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -690,7 +700,8 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('trace', state);
 
-      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('TRACE RESULT:'))).toBe(true);
+      expect(result.stateChanges.accessLevel).toBe(3);
     });
   });
 
@@ -1008,24 +1019,30 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Trace Command', () => {
-    it('returns decommissioned message at any access level', () => {
+    it('shows a limited topology trace at low access levels', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         accessLevel: 1,
       });
       const result = executeCommand('trace', state);
-      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('/storage/ — ACCESSIBLE'))).toBe(true);
+      expect(result.stateChanges.accessLevel).toBe(2);
     });
 
-    it('returns decommissioned message at higher access level too', () => {
+    it('shows a detailed topology trace at higher access levels', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         accessLevel: 2,
       });
       const result = executeCommand('trace', state);
-      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('/admin/ — 7 files [RESTRICTED]'))).toBe(
+        true
+      );
+      expect(
+        result.output.some(e => e.content.includes('Administrative access may be obtainable.'))
+      ).toBe(true);
     });
   });
 

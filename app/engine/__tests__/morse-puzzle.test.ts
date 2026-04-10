@@ -157,43 +157,55 @@ describe('Morse File Read Flag', () => {
 });
 
 describe('Override Failures', () => {
-  it('should return decommissioned message for override with wrong password', () => {
+  it('tracks failed override attempts for a wrong password', () => {
     const state = createTestState({ wrongAttempts: 0 });
     const result = executeCommand('override protocol WRONGPASS', state);
 
-    expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
-    expect(result.stateChanges.wrongAttempts).toBeUndefined();
+    expect(result.output.some(e => e.content.includes('INVALID AUTHENTICATION CODE'))).toBe(true);
+    expect(result.stateChanges.overrideFailedAttempts).toBe(1);
+    expect(result.stateChanges.wrongAttempts).toBe(1);
   });
 
-  it('should return decommissioned message regardless of attempt history', () => {
+  it('continues counting override failures across attempts', () => {
     const state = createTestState({ wrongAttempts: 2, overrideFailedAttempts: 1 });
     const result = executeCommand('override protocol BADCODE', state);
 
-    expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
-    expect(result.stateChanges.wrongAttempts).toBeUndefined();
+    expect(result.output.some(e => e.content.includes('INVALID AUTHENTICATION CODE'))).toBe(true);
+    expect(result.stateChanges.overrideFailedAttempts).toBe(2);
+    expect(result.stateChanges.wrongAttempts).toBe(3);
   });
 
-  it('should not trigger game over since override is decommissioned', () => {
+  it('locks the session on a third failed override attempt', () => {
     const state = createTestState({ wrongAttempts: 5, overrideFailedAttempts: 2 });
     const result = executeCommand('override protocol WRONG', state);
 
-    expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
-    expect(result.stateChanges.isGameOver).toBeUndefined();
+    expect(result.output.some(e => e.content.includes('SECURITY COUNTERMEASURE ACTIVATED'))).toBe(
+      true
+    );
+    expect(result.stateChanges.isGameOver).toBe(true);
+    expect(result.stateChanges.gameOverReason).toBe('SECURITY LOCKDOWN - AUTHENTICATION FAILURE');
   });
 
-  it('should return decommissioned message with no password provided', () => {
+  it('shows the override usage hint when no password is provided', () => {
     const state = createTestState({ wrongAttempts: 0 });
     const result = executeCommand('override protocol', state);
 
-    expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+    expect(
+      result.output.some(e => e.content.includes('Protocol override requires authentication code.'))
+    ).toBe(true);
     expect(result.stateChanges.wrongAttempts).toBeUndefined();
   });
 
-  it('should return decommissioned message even with correct password', () => {
+  it('unlocks administrative access with the correct override password', () => {
     const state = createTestState({ wrongAttempts: 2 });
     const result = executeCommand('override protocol COLHEITA', state);
 
-    expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+    expect(result.output.some(e => e.content.includes('Authentication accepted.'))).toBe(true);
+    expect(result.output.some(e => e.content.includes('Administrative archive access granted'))).toBe(
+      true
+    );
+    expect(result.stateChanges.flags?.adminUnlocked).toBe(true);
+    expect(result.stateChanges.accessLevel).toBe(5);
     expect(result.stateChanges.wrongAttempts).toBeUndefined();
   });
 });
