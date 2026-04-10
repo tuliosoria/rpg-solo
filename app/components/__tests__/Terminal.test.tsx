@@ -177,6 +177,16 @@ describe('Terminal Component', () => {
     expect(mockSpeakCustomFirewallVoice).toHaveBeenCalledWith('I disconnect you.');
   });
 
+  it('does not render evidence categories in the HUD', () => {
+    render(<Terminal {...defaultProps} />);
+
+    expect(screen.queryByText('Recovered')).not.toBeInTheDocument();
+    expect(screen.queryByText('Captured')).not.toBeInTheDocument();
+    expect(screen.queryByText('Signals')).not.toBeInTheDocument();
+    expect(screen.queryByText('Foreign')).not.toBeInTheDocument();
+    expect(screen.queryByText('Next')).not.toBeInTheDocument();
+  });
+
   it('restores focus after closing settings modal', () => {
     render(<Terminal {...defaultProps} />);
 

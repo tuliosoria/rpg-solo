@@ -19,15 +19,12 @@
 }
 
 .evidenceFoundIndicator {
-  padding: 4px 10px;
-  border: 1px solid rgba(0, 255, 0, 0.7);
-  background: rgba(0, 20, 0, 0.9);
   color: #9dff9d;
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-shadow: 0 0 8px rgba(157, 255, 157, 0.5);
-  animation: evidenceBlink 0.2s step-end 8;
+  animation: evidenceBlink 0.45s step-end infinite;
 }
 
 @keyframes evidenceBlink {

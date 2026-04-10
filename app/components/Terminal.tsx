@@ -173,7 +173,6 @@ export default function Terminal({
     setParanoiaPosition,
     pendingAchievement,
     setPendingAchievement,
-    showEvidenceTracker,
     setShowEvidenceTracker,
     showRiskTracker,
     setShowRiskTracker,
@@ -682,11 +681,11 @@ export default function Terminal({
   }, [showHeaderMenu, setShowHeaderMenu, focusTerminalInput]);
 
   useEffect(() => {
-    if (!gameState.isGameOver) return;
+    if (!showGameOver && !gameState.isGameOver) return;
 
     stopAmbient();
     speakCustomFirewallVoice('I disconnect you.');
-  }, [gameState.isGameOver, stopAmbient]);
+  }, [gameState.isGameOver, showGameOver, stopAmbient]);
 
   // Refocus input when tutorial skip popup closes
   const prevShowTutorialSkipRef = useRef(showTutorialSkip);
@@ -741,23 +740,6 @@ export default function Terminal({
     if (elapsed < 60) return t('terminal.save.minutes', { value: elapsed });
     const hours = Math.floor(elapsed / 60);
     return t('terminal.save.hours', { value: hours });
-  };
-
-  // Get evidence symbol for a category
-  const getEvidenceSymbol = (category: string): string => {
-    const discovered = gameState.truthsDiscovered?.has(category);
-    return discovered ? '●' : '□'; // Filled circle if discovered, empty box if not
-  };
-
-  // Get CSS class for evidence
-  const getEvidenceClass = (category: string): string => {
-    const discovered = gameState.truthsDiscovered?.has(category);
-    return discovered ? styles.truthProven : styles.truthMissing;
-  };
-
-  // Get discovered count (for victory condition display)
-  const getDiscoveredCount = (): number => {
-    return gameState.truthsDiscovered?.size || 0;
   };
 
   // Get risk level display with percentage
@@ -1163,42 +1145,6 @@ export default function Terminal({
 
         {/* Progress tracker */}
         <div className={styles.progressTracker}>
-          <div
-            className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}
-          >
-            <span className={styles.trackerLabel}>{t('terminal.tracker.evidence')}</span>
-            <span
-              className={getEvidenceClass('debris_relocation')}
-              title={t('terminal.tracker.tooltip.recovered')}
-            >
-              {getEvidenceSymbol('debris_relocation')} {t('terminal.tracker.recovered')}
-            </span>
-            <span
-              className={getEvidenceClass('being_containment')}
-              title={t('terminal.tracker.tooltip.captured')}
-            >
-              {getEvidenceSymbol('being_containment')} {t('terminal.tracker.captured')}
-            </span>
-            <span
-              className={getEvidenceClass('telepathic_scouts')}
-              title={t('terminal.tracker.tooltip.signals')}
-            >
-              {getEvidenceSymbol('telepathic_scouts')} {t('terminal.tracker.signals')}
-            </span>
-            <span
-              className={getEvidenceClass('international_actors')}
-              title={t('terminal.tracker.tooltip.foreign')}
-            >
-              {getEvidenceSymbol('international_actors')} {t('terminal.tracker.foreign')}
-            </span>
-            <span
-              className={getEvidenceClass('transition_2026')}
-              title={t('terminal.tracker.tooltip.next')}
-            >
-              {getEvidenceSymbol('transition_2026')} {t('terminal.tracker.next')}
-            </span>
-            <span className={styles.truthCount}>[{getDiscoveredCount()}/5]</span>
-          </div>
           <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
             <span className={`${styles.riskItem} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}>
               <span className={styles.trackerLabel}>{t('terminal.tracker.risk')}</span>
