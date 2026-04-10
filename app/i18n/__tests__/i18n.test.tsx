@@ -93,6 +93,11 @@ describe('i18n system', () => {
     expect(
       result.current.translateRuntimeText('ls              List files in current directory')
     ).toBe('ls              Lista arquivos no diretório atual');
+    expect(
+      result.current.translateRuntimeText(
+        '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.'
+      )
+    ).toBe('[UFO74]: Cuidado, não digite comandos errados no terminal. Na dúvida, digite help.');
   });
 
   it('translates tutorial, warning, and boot lines for Spanish', async () => {
@@ -104,6 +109,13 @@ describe('i18n system', () => {
 
     expect(result.current.translateRuntimeText('[UFO74]: Connection established.')).toBe(
       '[UFO74]: Conexión establecida.'
+    );
+    expect(
+      result.current.translateRuntimeText(
+        '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
+      )
+    ).toBe(
+      '[UFO74]: Escribe comandos incorrectos 8 veces y la ventana se cierra. Para siempre. Así que concéntrate, kid!'
     );
     expect(
       result.current.translateRuntimeText(

@@ -76,15 +76,12 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
     '[UFO74]: Every action you take... they might notice.',
     "[UFO74]: Risk hits 100%, you're done. They'll find you.",
     '',
-    '[UFO74]: And you only get 8 attempts.',
-    '[UFO74]: Fail 8 times, the window closes. Permanently.',
+    '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.',
+    '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!',
     '',
     '[UFO74]: Some files are bait. Opening them spikes detection.',
     '[UFO74]: Some actions are loud. Others are quiet.',
     '[UFO74]: Curiosity has a cost here.',
-    '',
-    "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal.",
-    '[UFO74]: Good luck, kid.',
     '',
     '[UFO74]: ...',
     '',
@@ -670,10 +667,16 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
     createEntry('ufo74', "[UFO74]: Risk hits 100%, you're done. They'll find you."),
     createEntry('system', ''),
   ],
-  // Step 2 — Risk reveal
+  // Step 2 — Attempts reveal
   [
-    createEntry('ufo74', '[UFO74]: And you only get 8 attempts.'),
-    createEntry('ufo74', '[UFO74]: Fail 8 times, the window closes. Permanently.'),
+    createEntry(
+      'ufo74',
+      '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.'
+    ),
+    createEntry(
+      'ufo74',
+      '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
+    ),
     createEntry('system', ''),
   ],
   // Step 3
@@ -683,13 +686,7 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
     createEntry('ufo74', '[UFO74]: Curiosity has a cost here.'),
     createEntry('system', ''),
   ],
-  // Step 4
-  [
-    createEntry('ufo74', "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal."),
-    createEntry('ufo74', '[UFO74]: Good luck, kid.'),
-    createEntry('system', ''),
-  ],
-  // Step 5 — Final / disconnect
+  // Step 4 — Final / disconnect
   [
     createEntry('ufo74', '[UFO74]: ...'),
     createEntry('system', ''),

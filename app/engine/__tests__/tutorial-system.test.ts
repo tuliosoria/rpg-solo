@@ -139,7 +139,12 @@ describe('Tutorial System', () => {
       expect(introText).toContain('[UFO74]: Connection established.');
       expect(introText).toContain("[UFO74]: Great, now you're in. Let's get to business.");
       expect(briefingText).toContain('[UFO74]: Your mission: find 5 pieces of evidence.');
-      expect(briefingText).toContain('[UFO74]: Good luck, kid.');
+      expect(briefingText).toContain(
+        '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.'
+      );
+      expect(briefingText).toContain(
+        '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
+      );
     });
   });
 });

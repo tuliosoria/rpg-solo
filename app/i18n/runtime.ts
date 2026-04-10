@@ -280,10 +280,10 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '[UFO74]: Cada ação sua... eles podem notar.',
     "[UFO74]: Risk hits 100%, you're done. They'll find you.":
       '[UFO74]: Se o risco bater 100%, acabou. Eles te encontram.',
-    '[UFO74]: And you only get 8 attempts.':
-      '[UFO74]: E você só tem 8 tentativas.',
-    '[UFO74]: Fail 8 times, the window closes. Permanently.':
-      '[UFO74]: Se falhar 8 vezes, a janela fecha. Permanentemente.',
+    '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.':
+      '[UFO74]: Cuidado, não digite comandos errados no terminal. Na dúvida, digite help.',
+    '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!':
+      '[UFO74]: Digite comandos errados 8 vezes e a janela se fecha. Permanentemente. Então concentre-se, kid!',
     '[UFO74]: Some files are bait. Opening them spikes detection.':
       '[UFO74]: Alguns arquivos são isca. Abrir eles aumenta a detecção.',
     '[UFO74]: Some actions are loud. Others are quiet.':
@@ -766,10 +766,10 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '[UFO74]: Cada acción que tomes... podrían notarla.',
     "[UFO74]: Risk hits 100%, you're done. They'll find you.":
       '[UFO74]: Si el riesgo llega al 100%, se acabó. Te encontrarán.',
-    '[UFO74]: And you only get 8 attempts.':
-      '[UFO74]: Y solo tienes 8 intentos.',
-    '[UFO74]: Fail 8 times, the window closes. Permanently.':
-      '[UFO74]: Si fallas 8 veces, la ventana se cierra. Para siempre.',
+    '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.':
+      '[UFO74]: Ten cuidado, no escribas comandos incorrectos en el terminal. Si dudas, escribe help.',
+    '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!':
+      '[UFO74]: Escribe comandos incorrectos 8 veces y la ventana se cierra. Para siempre. Así que concéntrate, kid!',
     '[UFO74]: Some files are bait. Opening them spikes detection.':
       '[UFO74]: Algunos archivos son carnada. Abrirlos dispara la detección.',
     '[UFO74]: Some actions are loud. Others are quiet.':
