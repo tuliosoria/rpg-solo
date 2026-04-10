@@ -69,6 +69,19 @@ describe('VideoOverlay', () => {
     expect(defaultProps.onCloseAction).toHaveBeenCalledTimes(1);
   });
 
+  it('only closes once when multiple dismiss actions overlap', () => {
+    render(<VideoOverlay {...defaultProps} />);
+
+    const overlay = document.querySelector('[class*="overlay"]');
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+      fireEvent.click(overlay!);
+    });
+
+    expect(defaultProps.onCloseAction).toHaveBeenCalledTimes(1);
+  });
+
   it('renders play/pause button', async () => {
     render(<VideoOverlay {...defaultProps} />);
 

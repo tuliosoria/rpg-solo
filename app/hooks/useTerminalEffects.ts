@@ -70,6 +70,8 @@ interface TerminalEffectsRefs {
   idleHintTimerRef: React.MutableRefObject<NodeJS.Timeout | null>;
   lastScrollTimeRef: React.MutableRefObject<number>;
   firewallPauseStartRef: React.MutableRefObject<number | null>;
+  timedMechanicPauseStartRef: React.MutableRefObject<number | null>;
+  timedMechanicResumeAdjustmentRef: React.MutableRefObject<number>;
   maxDetectionRef: React.MutableRefObject<number>;
   prevDetectionRef: React.MutableRefObject<number>;
   skipStreamingRef: React.MutableRefObject<boolean>;
@@ -92,6 +94,7 @@ interface UseTerminalEffectsOptions {
   showTutorialSkip: boolean;
   isEnterOnlyMode: boolean;
   isFirewallPaused: boolean;
+  pauseTimedMechanics: boolean;
   suppressPressure: boolean;
   soundEnabled: boolean;
   onEnterPress?: () => void;
@@ -143,6 +146,7 @@ export function useTerminalEffects({
   showTutorialSkip,
   isEnterOnlyMode,
   isFirewallPaused,
+  pauseTimedMechanics,
   suppressPressure,
   soundEnabled,
   onEnterPress,
@@ -186,6 +190,8 @@ export function useTerminalEffects({
     idleHintTimerRef,
     lastScrollTimeRef,
     firewallPauseStartRef,
+    timedMechanicPauseStartRef,
+    timedMechanicResumeAdjustmentRef,
     maxDetectionRef,
     prevDetectionRef,
     skipStreamingRef,
@@ -231,8 +237,19 @@ export function useTerminalEffects({
       return;
     }
 
+    if (pauseTimedMechanics || timedMechanicPauseStartRef.current !== null) {
+      return;
+    }
+
     const updateTimer = () => {
-      const remaining = Math.max(0, gameState.timedDecryptEndTime - Date.now());
+      if (timedMechanicPauseStartRef.current !== null) {
+        return;
+      }
+      const adjustment = timedMechanicResumeAdjustmentRef.current;
+      const remaining = Math.max(0, gameState.timedDecryptEndTime + adjustment - Date.now());
+      if (adjustment > 0) {
+        timedMechanicResumeAdjustmentRef.current = 0;
+      }
       setTimedDecryptRemaining(remaining);
     };
 
@@ -240,7 +257,69 @@ export function useTerminalEffects({
     const interval = setInterval(updateTimer, 100);
 
     return () => clearInterval(interval);
-  }, [gameState.timedDecryptActive, gameState.timedDecryptEndTime, setTimedDecryptRemaining]);
+  }, [
+    gameState.timedDecryptActive,
+    gameState.timedDecryptEndTime,
+    pauseTimedMechanics,
+    setTimedDecryptRemaining,
+    timedMechanicResumeAdjustmentRef,
+  ]);
+
+  // Pause timed mechanics while blocking overlays/popups are open.
+  useEffect(() => {
+    if (!gameState.timedDecryptActive && !gameState.countdownActive) {
+      timedMechanicPauseStartRef.current = null;
+      timedMechanicResumeAdjustmentRef.current = 0;
+      return;
+    }
+
+    if (pauseTimedMechanics) {
+      if (timedMechanicPauseStartRef.current === null) {
+        timedMechanicPauseStartRef.current = Date.now();
+      }
+      return;
+    }
+
+    if (timedMechanicPauseStartRef.current === null) {
+      return;
+    }
+
+    const pauseDuration = Date.now() - timedMechanicPauseStartRef.current;
+    timedMechanicPauseStartRef.current = null;
+    timedMechanicResumeAdjustmentRef.current = pauseDuration;
+
+    if (pauseDuration <= 0) {
+      timedMechanicResumeAdjustmentRef.current = 0;
+      return;
+    }
+
+    setGameState(prev => {
+      let nextState = prev;
+
+      if (prev.timedDecryptActive && prev.timedDecryptEndTime) {
+        nextState = {
+          ...nextState,
+          timedDecryptEndTime: prev.timedDecryptEndTime + pauseDuration,
+        };
+      }
+
+      if (prev.countdownActive && prev.countdownEndTime) {
+        nextState = {
+          ...nextState,
+          countdownEndTime: prev.countdownEndTime + pauseDuration,
+        };
+      }
+
+      return nextState;
+    });
+  }, [
+    gameState.countdownActive,
+    gameState.timedDecryptActive,
+    pauseTimedMechanics,
+    setGameState,
+    timedMechanicPauseStartRef,
+    timedMechanicResumeAdjustmentRef,
+  ]);
 
   // Scroll behavior: during streaming scroll to bottom, after streaming scroll to content start
   useEffect(() => {
@@ -348,6 +427,11 @@ export function useTerminalEffects({
 
     // Suppress glitches during atmosphere phase (no pressure systems)
     if (suppressPressure) return;
+    if (pauseTimedMechanics) {
+      setGlitchActive(false);
+      setGlitchHeavy(false);
+      return;
+    }
 
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
@@ -439,6 +523,7 @@ export function useTerminalEffects({
     playSound,
     setGlitchActive,
     setGlitchHeavy,
+    pauseTimedMechanics,
     suppressPressure,
   ]);
 
@@ -448,6 +533,10 @@ export function useTerminalEffects({
 
     // Suppress paranoia during atmosphere phase (no pressure systems)
     if (suppressPressure) return;
+    if (pauseTimedMechanics) {
+      setParanoiaMessage(null);
+      return;
+    }
 
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
@@ -496,6 +585,7 @@ export function useTerminalEffects({
     playSound,
     setParanoiaMessage,
     setParanoiaPosition,
+    pauseTimedMechanics,
     suppressPressure,
   ]);
 
@@ -613,8 +703,19 @@ export function useTerminalEffects({
       return;
     }
 
+    if (pauseTimedMechanics || timedMechanicPauseStartRef.current !== null) {
+      return;
+    }
+
     const updateCountdown = () => {
-      const remaining = Math.max(0, gameState.countdownEndTime - Date.now());
+      if (timedMechanicPauseStartRef.current !== null) {
+        return;
+      }
+      const adjustment = timedMechanicResumeAdjustmentRef.current;
+      const remaining = Math.max(0, gameState.countdownEndTime + adjustment - Date.now());
+      if (adjustment > 0) {
+        timedMechanicResumeAdjustmentRef.current = 0;
+      }
       const seconds = Math.ceil(remaining / 1000);
 
       if (seconds <= 0) {
@@ -648,10 +749,12 @@ export function useTerminalEffects({
     gameState.countdownActive,
     gameState.countdownEndTime,
     gamePhase,
+    pauseTimedMechanics,
     playSound,
     setCountdownDisplay,
     setGamePhase,
     setGameState,
+    timedMechanicResumeAdjustmentRef,
   ]);
 
   // Keep gameState ref updated
@@ -845,8 +948,14 @@ export function useTerminalEffects({
         } else if (activeImage || activeVideo) {
           setActiveImage(null);
           setActiveVideo(null);
+        } else if (showPauseMenu) {
+          setShowPauseMenu(false);
+          setShowHeaderMenu(false);
         } else {
-          setShowPauseMenu(prev => !prev);
+          if (timedMechanicPauseStartRef.current === null) {
+            timedMechanicPauseStartRef.current = Date.now();
+          }
+          setShowPauseMenu(true);
           setShowHeaderMenu(false);
         }
       }
@@ -863,6 +972,7 @@ export function useTerminalEffects({
     showStatistics,
     activeImage,
     activeVideo,
+    showPauseMenu,
     setShowSettings,
     setShowAchievements,
     setShowStatistics,

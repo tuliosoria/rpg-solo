@@ -210,6 +210,8 @@ export default function Terminal({
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
   const firewallPauseStartRef = useRef<number | null>(null);
+  const timedMechanicPauseStartRef = useRef<number | null>(null);
+  const timedMechanicResumeAdjustmentRef = useRef(0);
   const hasBlockingPopup =
     showSettings ||
     showAchievements ||
@@ -228,6 +230,8 @@ export default function Terminal({
     gameState.timedDecryptActive ||
     gameState.traceSpikeActive ||
     gameState.countdownActive;
+  const pauseTimedMechanics =
+    activeImage !== null || activeVideo !== null || showTuringTest || hasBlockingPopup;
 
   // File reading suppression: consider player "reading" for 15 seconds after file open
   const FILE_READ_COOLDOWN_MS = 15000;
@@ -239,21 +243,102 @@ export default function Terminal({
 
   // Track whether the Turing test should show after the pre-turing video closes
   const pendingTuringAfterVideoRef = useRef(false);
+  const turingVideoActiveRef = useRef(false);
+  const turingOverlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Wrapped setter: when Turing test is triggered (true), play the video first
   const setShowTuringTestWrapped = useCallback<React.Dispatch<React.SetStateAction<boolean>>>(
     (value) => {
-      const newValue = typeof value === 'function' ? value(showTuringTest) : value;
+      const newValue = typeof value === 'function' ? value(uiStateRef.current.showTuringTest) : value;
       if (newValue) {
-        // Play the Turing test video first; the overlay will show when the video closes
+        const currentUiState = uiStateRef.current;
+        if (
+          currentUiState.showTuringTest ||
+          currentUiState.gamePhase !== 'terminal' ||
+          gameStateRef.current.isGameOver ||
+          currentUiState.showGameOver
+        ) {
+          return;
+        }
+
+        // Queue the Turing video so it can start once any blocking UI finishes.
         pendingTuringAfterVideoRef.current = true;
-        setActiveVideo(TURING_TEST_VIDEO);
+        if (
+          currentUiState.activeImage === null &&
+          currentUiState.activeVideo === null &&
+          currentUiState.pendingImage === null &&
+          currentUiState.pendingVideo === null &&
+          !currentUiState.hasBlockingPopup
+        ) {
+          turingVideoActiveRef.current = true;
+          setActiveVideo(currentVideo => currentVideo ?? TURING_TEST_VIDEO);
+        }
       } else {
+        pendingTuringAfterVideoRef.current = false;
+        turingVideoActiveRef.current = false;
+        if (turingOverlayTimeoutRef.current) {
+          clearTimeout(turingOverlayTimeoutRef.current);
+          turingOverlayTimeoutRef.current = null;
+        }
         setShowTuringTest(false);
       }
     },
-    [showTuringTest, setActiveVideo, setShowTuringTest]
+    [setActiveVideo, setShowTuringTest]
   );
+
+  useEffect(() => {
+    if (
+      !pendingTuringAfterVideoRef.current ||
+      turingVideoActiveRef.current ||
+      showTuringTest ||
+      gamePhase !== 'terminal' ||
+      gameState.isGameOver ||
+      showGameOver ||
+      activeImage !== null ||
+      activeVideo !== null ||
+      pendingImage !== null ||
+      pendingVideo !== null ||
+      hasBlockingPopup
+    ) {
+      return;
+    }
+
+    turingVideoActiveRef.current = true;
+    setActiveVideo(currentVideo => currentVideo ?? TURING_TEST_VIDEO);
+  }, [
+    activeImage,
+    activeVideo,
+    gamePhase,
+    gameState.isGameOver,
+    hasBlockingPopup,
+    pendingImage,
+    pendingVideo,
+    setActiveVideo,
+    showGameOver,
+    showTuringTest,
+  ]);
+
+  useEffect(() => {
+    if (gamePhase === 'terminal' && !gameState.isGameOver && !showGameOver) {
+      return;
+    }
+
+    pendingTuringAfterVideoRef.current = false;
+    turingVideoActiveRef.current = false;
+    if (turingOverlayTimeoutRef.current) {
+      clearTimeout(turingOverlayTimeoutRef.current);
+      turingOverlayTimeoutRef.current = null;
+    }
+  }, [gamePhase, gameState.isGameOver, showGameOver]);
+
+  useEffect(() => {
+    return () => {
+      if (turingOverlayTimeoutRef.current) {
+        clearTimeout(turingOverlayTimeoutRef.current);
+        turingOverlayTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   // Track max detection ever reached for Survivor achievement
   const maxDetectionRef = useRef(0);
@@ -282,6 +367,16 @@ export default function Terminal({
   const enterOnlyButtonRef = useRef<HTMLButtonElement>(null);
   const headerMenuRef = useRef<HTMLDivElement>(null);
   const gameStateRef = useRef(gameState);
+  const uiStateRef = useRef({
+    gamePhase,
+    showGameOver,
+    showTuringTest,
+    activeImage,
+    activeVideo,
+    pendingImage,
+    pendingVideo,
+    hasBlockingPopup,
+  });
   const isProcessingRef = useRef(false);
   const skipStreamingRef = useRef(false);
   const streamStartScrollPos = useRef<number | null>(null);
@@ -303,6 +398,28 @@ export default function Terminal({
       }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    uiStateRef.current = {
+      gamePhase,
+      showGameOver,
+      showTuringTest,
+      activeImage,
+      activeVideo,
+      pendingImage,
+      pendingVideo,
+      hasBlockingPopup,
+    };
+  }, [
+    activeImage,
+    activeVideo,
+    gamePhase,
+    hasBlockingPopup,
+    pendingImage,
+    pendingVideo,
+    showGameOver,
+    showTuringTest,
+  ]);
 
   const getEntryContent = useCallback(
     (entry: TerminalEntry): string => {
@@ -603,6 +720,7 @@ export default function Terminal({
     showTutorialSkip,
     isEnterOnlyMode,
     isFirewallPaused,
+    pauseTimedMechanics,
     suppressPressure,
     soundEnabled,
     onEnterPress: handleSubmit,
@@ -644,6 +762,8 @@ export default function Terminal({
       idleHintTimerRef,
       lastScrollTimeRef,
       firewallPauseStartRef,
+      timedMechanicPauseStartRef,
+      timedMechanicResumeAdjustmentRef,
       maxDetectionRef,
       prevDetectionRef,
       skipStreamingRef,
@@ -1353,24 +1473,36 @@ export default function Terminal({
         {/* Video overlay */}
         {activeVideo && (
           <VideoOverlay
-            src={activeVideo.src}
-            title={activeVideo.title}
-            tone={activeVideo.tone}
-            corrupted={activeVideo.corrupted}
-            onCloseAction={() => {
-              // Check if this was the pre-Turing test video
-              const wasTuringVideo = pendingTuringAfterVideoRef.current;
-              if (wasTuringVideo) {
-                pendingTuringAfterVideoRef.current = false;
-                setActiveVideo(null);
-                // Show the Turing test overlay after a short delay
-                setTimeout(() => {
-                  setShowTuringTest(true);
-                }, 300);
-                return;
-              }
+              src={activeVideo.src}
+              title={activeVideo.title}
+              tone={activeVideo.tone}
+              corrupted={activeVideo.corrupted}
+              onCloseAction={() => {
+                // Check if this was the queued pre-Turing test video.
+                const wasTuringVideo =
+                  turingVideoActiveRef.current && activeVideo.src === TURING_TEST_VIDEO.src;
+                if (wasTuringVideo) {
+                  pendingTuringAfterVideoRef.current = false;
+                  turingVideoActiveRef.current = false;
+                  setActiveVideo(null);
+                  // Show the Turing test overlay after a short delay
+                  if (turingOverlayTimeoutRef.current) {
+                    clearTimeout(turingOverlayTimeoutRef.current);
+                  }
+                  turingOverlayTimeoutRef.current = setTimeout(() => {
+                    turingOverlayTimeoutRef.current = null;
+                    if (
+                      uiStateRef.current.gamePhase === 'terminal' &&
+                      !gameStateRef.current.isGameOver &&
+                      !uiStateRef.current.showGameOver
+                    ) {
+                      setShowTuringTest(true);
+                    }
+                  }, 300);
+                  return;
+                }
 
-              // Add "Media recovered" message to terminal
+                // Add "Media recovered" message to terminal
               const recoveredMessage = createEntry(
                 'system',
                 t('terminal.system.mediaRecoveredVideo')
@@ -1384,15 +1516,16 @@ export default function Terminal({
                 }));
                 setPendingUfo74StartMessages(prev => [...prev, ...queuedAfterMediaMessages]);
                 setQueuedAfterMediaMessages([]); // Clear the queue
-              } else {
-                setGameState(prev => ({
-                  ...prev,
+                } else {
+                  setGameState(prev => ({
+                    ...prev,
                   history: [...prev.history, recoveredMessage],
-                }));
-              }
-              setActiveVideo(null);
-              inputRef.current?.focus();
-            }}
+                  }));
+                }
+                turingVideoActiveRef.current = false;
+                setActiveVideo(null);
+                inputRef.current?.focus();
+              }}
           />
         )}
 

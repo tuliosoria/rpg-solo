@@ -162,8 +162,8 @@ export function useGameActions({
 
   const handleFirewallEyeDetonate = useCallback(
     (eyeId: string) => {
-      // We need to determine if Turing test should trigger based on state BEFORE the update
-      // Then trigger it after the state update completes
+      let shouldTriggerTuringTest = false;
+
       setGameState(prev => {
         const updatedEyes = prev.firewallEyes.map(e =>
           e.id === eyeId ? { ...e, isDetonating: true } : e
@@ -180,13 +180,14 @@ export function useGameActions({
           prev.detectionLevel < DETECTION_THRESHOLDS.TURING_TRIGGER && 
           newDetection >= DETECTION_THRESHOLDS.TURING_TRIGGER;
         
-        const shouldTriggerTuringTest = 
+        const willTriggerTuringTest = 
           crossedTuringThreshold &&
           prev.tutorialComplete &&
           prev.truthsDiscovered.size >= 1 &&
           !prev.turingEvaluationActive &&
           !prev.turingEvaluationCompleted &&
           !prev.singularEventsTriggered?.has('turing_evaluation');
+        shouldTriggerTuringTest = willTriggerTuringTest;
 
         const detonateWarning = createEntry(
           'error',
@@ -195,12 +196,8 @@ export function useGameActions({
 
         // Modify UFO74 message based on whether Turing test will trigger
         let ufo74Panic;
-        if (shouldTriggerTuringTest) {
+        if (willTriggerTuringTest) {
           ufo74Panic = createEntry('ufo74', 'UFO74: NO! Detection hit 50% — they\'re initiating Turing eval!');
-          // Schedule Turing test overlay to show after delay
-          setTimeout(() => {
-            setShowTuringTest(true);
-          }, 1500);
         } else if (newDetection >= 80) {
           ufo74Panic = createEntry('ufo74', "UFO74: THEY KNOW! They're tracing us RIGHT NOW!");
         } else if (newDetection >= 60) {
@@ -210,7 +207,7 @@ export function useGameActions({
         }
 
         // Mark Turing evaluation as triggered if applicable
-        const newSingularEvents = shouldTriggerTuringTest
+        const newSingularEvents = willTriggerTuringTest
           ? new Set([...(prev.singularEventsTriggered || []), 'turing_evaluation'])
           : prev.singularEventsTriggered;
 
@@ -220,10 +217,16 @@ export function useGameActions({
           detectionLevel: newDetection,
           avatarExpression: 'scared',
           history: [...prev.history, detonateWarning, ufo74Panic],
-          turingEvaluationActive: shouldTriggerTuringTest ? true : prev.turingEvaluationActive,
+          turingEvaluationActive: willTriggerTuringTest ? true : prev.turingEvaluationActive,
           singularEventsTriggered: newSingularEvents,
         };
       });
+
+      if (shouldTriggerTuringTest) {
+        window.setTimeout(() => {
+          setShowTuringTest(true);
+        }, 1500);
+      }
 
       playSound('error');
       triggerFlicker();
