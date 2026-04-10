@@ -376,12 +376,6 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '[UFO74]: Alienígenas estavam por toda a maldita cidade.',
     "[UFO74]: I'll teach you the basics.":
       '[UFO74]: Vou te ensinar o básico.',
-    '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │':
-      '│ >> TRANSMISSÃO RECEBIDA << CANAL CRIPTOGRAFADO         │',
-    '│         >> ENCRYPTED CHANNEL OPEN <<                    │':
-      '│         >> CANAL CRIPTOGRAFADO ABERTO <<                │',
-    '│         >> ENCRYPTED CHANNEL CLOSED <<                  │':
-      '│         >> CANAL CRIPTOGRAFADO FECHADO <<               │',
     'UFO74: youre in. keep it quiet.':
       'UFO74: você entrou. mantenha discrição.',
     'UFO74: quick brief. you cant change anything here — read only.':
@@ -902,12 +896,6 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '[UFO74]: Había aliens por toda la maldita ciudad.',
     "[UFO74]: I'll teach you the basics.":
       '[UFO74]: Te enseñaré lo básico.',
-    '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │':
-      '│ >> TRANSMISIÓN ENTRANTE << CANAL ENCRIPTADO            │',
-    '│         >> ENCRYPTED CHANNEL OPEN <<                    │':
-      '│         >> CANAL ENCRIPTADO ABIERTO <<                 │',
-    '│         >> ENCRYPTED CHANNEL CLOSED <<                  │':
-      '│         >> CANAL ENCRIPTADO CERRADO <<                 │',
     'UFO74: youre in. keep it quiet.':
       'UFO74: ya entraste. mantén un perfil bajo.',
     'UFO74: quick brief. you cant change anything here — read only.':

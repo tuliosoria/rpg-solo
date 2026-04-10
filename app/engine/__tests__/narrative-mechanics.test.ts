@@ -118,48 +118,33 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Password Puzzle', () => {
-    it('requires password for ghost_in_machine.enc', () => {
+    it('decrypt is decommissioned - no password prompt', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
       });
-      // Use absolute path since the file is in /sys
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc', state);
-      // Should prompt for password or show file not found if dir not accessible
-      const hasPasswordPrompt = result.output.some(e => e.content.includes('PASSWORD REQUIRED'));
-      const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
-      expect(hasPasswordPrompt || hasFileNotFound).toBe(true);
+      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
     });
 
-    it('rejects wrong password', () => {
+    it('decrypt is decommissioned - wrong password has no effect', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
       });
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc wrongpassword', state);
-      // Should show decryption failed or file not found
-      const hasFailed = result.output.some(
-        e => e.content.includes('DECRYPTION FAILED') || e.content.includes('Invalid password')
-      );
-      const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
-      expect(hasFailed || hasFileNotFound).toBe(true);
+      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
     });
 
-    it('triggers secret ending with correct password', () => {
+    it('decrypt is decommissioned - correct password has no effect', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
       });
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc varginha1996', state);
-      // Should succeed or file not found
-      const hasSuccess = result.output.some(e => e.content.includes('DECRYPTION SUCCESSFUL'));
-      const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
-      if (hasSuccess) {
-        expect(result.stateChanges.ufo74SecretDiscovered).toBe(true);
-        expect(result.skipToPhase).toBe('secret_ending');
-      } else {
-        expect(hasFileNotFound).toBe(true);
-      }
+      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+      expect(result.stateChanges.ufo74SecretDiscovered).toBeUndefined();
+      expect(result.skipToPhase).toBeUndefined();
     });
   });
 
@@ -313,18 +298,15 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('UFO74 Entry Type', () => {
-    it('uses ufo74 entry type for UFO74 messages in password prompt', () => {
+    it('decrypt is decommissioned - no ufo74 entries generated', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
       });
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc', state);
-      // Check if UFO74 entries exist (when file is accessible)
-      const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
-      if (!hasFileNotFound) {
-        const ufo74Entries = result.output.filter(e => e.type === 'ufo74');
-        expect(ufo74Entries.length).toBeGreaterThan(0);
-      }
+      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+      const ufo74Entries = result.output.filter(e => e.type === 'ufo74');
+      expect(ufo74Entries.length).toBe(0);
     });
   });
 
@@ -684,7 +666,7 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('trace command shows network activity or traces', () => {
+    it('trace command is decommissioned', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -692,7 +674,7 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('trace', state);
 
-      expect(result.output.length).toBeGreaterThan(0);
+      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
     });
   });
 
@@ -1010,33 +992,24 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Trace Command', () => {
-    it('shows trace results at low access level', () => {
+    it('returns decommissioned message at any access level', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         accessLevel: 1,
       });
       const result = executeCommand('trace', state);
-      expect(
-        result.output.some(
-          e =>
-            e.content.includes('TRACE') ||
-            e.content.includes('ACCESSIBLE') ||
-            e.content.includes('RESTRICTED')
-        )
-      ).toBe(true);
+      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
     });
 
-    it('shows more details at higher access level', () => {
+    it('returns decommissioned message at higher access level too', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         accessLevel: 2,
       });
       const result = executeCommand('trace', state);
-      expect(
-        result.output.some(e => e.content.includes('TRACE') || e.content.includes('files'))
-      ).toBe(true);
+      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
     });
   });
 

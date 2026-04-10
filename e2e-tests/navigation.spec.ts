@@ -188,9 +188,9 @@ test.describe('Filesystem Navigation', () => {
     await screenshot(page, 'nav-cdback-01-from-root');
     
     // Should either stay at root or show appropriate message
-    const atRoot = contentContains(content, 'root') || 
-                   contentContains(content, 'already') ||
-                   !contentContains(content, 'error');
+    const _atRoot = contentContains(content, 'root') || 
+                    contentContains(content, 'already') ||
+                    !contentContains(content, 'error');
 
     // Test cd .. from depth 1
     console.log('\n--- Testing cd .. from depth 1 ---');
@@ -202,8 +202,8 @@ test.describe('Filesystem Navigation', () => {
     await typeCommand(page, 'ls');
     content = await getContent(page);
     // Should be back at root and see top-level directories
-    const backAtRoot = contentContains(content, 'storage') && 
-                       contentContains(content, 'internal');
+    const _backAtRoot = contentContains(content, 'storage') && 
+                        contentContains(content, 'internal');
 
     // Test cd .. from depth 2
     console.log('\n--- Testing cd .. from depth 2 ---');
@@ -216,7 +216,7 @@ test.describe('Filesystem Navigation', () => {
     await typeCommand(page, 'ls');
     content = await getContent(page);
     // Should be in storage and see assets/quarantine
-    const inStorage = contentContains(content, 'assets') || contentContains(content, 'quarantine');
+    const _inStorage = contentContains(content, 'assets') || contentContains(content, 'quarantine');
 
     // Test cd .. from depth 3
     console.log('\n--- Testing cd .. from depth 3 ---');
@@ -232,9 +232,9 @@ test.describe('Filesystem Navigation', () => {
     await screenshot(page, 'nav-cdback-05-after-cdback');
     
     // Should be in internal and see subdirectories
-    const inInternal = contentContains(content, 'protocols') || 
-                       contentContains(content, 'personnel') ||
-                       contentContains(content, 'misc');
+    const _inInternal = contentContains(content, 'protocols') || 
+                        contentContains(content, 'personnel') ||
+                        contentContains(content, 'misc');
 
     // Test multiple cd .. in sequence
     console.log('\n--- Testing multiple cd .. in sequence ---');
@@ -246,8 +246,8 @@ test.describe('Filesystem Navigation', () => {
     await screenshot(page, 'nav-cdback-06-multiple');
     
     // Should be at root
-    const atRootAgain = contentContains(content, 'storage') && 
-                        contentContains(content, 'internal');
+    const _atRootAgain = contentContains(content, 'storage') && 
+                         contentContains(content, 'internal');
 
     console.log('\n========== CD .. TEST COMPLETE ==========\n');
   });
@@ -402,8 +402,8 @@ test.describe('Filesystem Navigation', () => {
     
     await typeCommand(page, 'ls');
     content = await getContent(page);
-    const inStorageAfterMultiple = contentContains(content, 'assets') || 
-                                   contentContains(content, 'quarantine');
+    const _inStorageAfterMultiple = contentContains(content, 'assets') || 
+                                    contentContains(content, 'quarantine');
 
     // Test going above root with many ..
     console.log('\n--- Testing going above root ---');
@@ -444,31 +444,31 @@ test.describe('Filesystem Navigation', () => {
     await typeCommand(page, 'cd /comms');
     
     await typeCommand(page, 'ls');
-    let content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'nav-back-01-in-comms');
 
     // Test back command
     console.log('\n--- Testing back command ---');
     await typeCommand(page, 'back', 'first back');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'nav-back-02-first-back');
     
     await typeCommand(page, 'ls');
-    content = await getContent(page);
+    await getContent(page);
 
     await typeCommand(page, 'back', 'second back');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'nav-back-03-second-back');
     
     await typeCommand(page, 'ls');
-    content = await getContent(page);
+    await getContent(page);
 
     // Test back when no history
     console.log('\n--- Testing back with no history ---');
     // Navigate fresh and try back immediately
     await typeCommand(page, 'cd /');
     await typeCommand(page, 'back', 'back from root');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'nav-back-04-no-history');
 
     console.log('\n========== BACK COMMAND TEST COMPLETE ==========\n');

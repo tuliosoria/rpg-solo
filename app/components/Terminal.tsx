@@ -24,7 +24,7 @@ import {
   useTerminalInput,
   useTerminalState,
 } from '../hooks';
-import { unlockAchievement, Achievement } from '../engine/achievements';
+import { unlockAchievement } from '../engine/achievements';
 import { uiRandomPick } from '../engine/rng';
 import AchievementPopup from './AchievementPopup';
 import SettingsModal from './SettingsModal';
@@ -56,13 +56,6 @@ const AchievementGallery = dynamic(() => import('./AchievementGallery'), { ssr: 
 const StatisticsModal = dynamic(() => import('./StatisticsModal'), { ssr: false });
 import styles from './Terminal.module.css';
 
-// Video played before the Turing test overlay appears
-const TURING_TEST_VIDEO: VideoTrigger = {
-  src: '/videos/turing%20test.mp4',
-  title: 'SECURITY_PROTOCOL_TURING.VID',
-  tone: 'surveillance',
-  corrupted: true,
-};
 
 // UFO74 comments after viewing images - keyed by image src
 const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
@@ -235,22 +228,18 @@ export default function Terminal({
     (Date.now() - gameState.lastFileReadTime < FILE_READ_COOLDOWN_MS)
   );
 
-  // Track whether the Turing test should show after the pre-turing video closes
-  const pendingTuringAfterVideoRef = useRef(false);
-
-  // Wrapped setter: when Turing test is triggered (true), play the video first
+  // Wrapped setter: when Turing test is triggered (true), show the overlay directly
+  // (Previously played a pre-test video, but the video asset was missing)
   const setShowTuringTestWrapped = useCallback<React.Dispatch<React.SetStateAction<boolean>>>(
     (value) => {
       const newValue = typeof value === 'function' ? value(showTuringTest) : value;
       if (newValue) {
-        // Play the Turing test video first; the overlay will show when the video closes
-        pendingTuringAfterVideoRef.current = true;
-        setActiveVideo(TURING_TEST_VIDEO);
+        setShowTuringTest(true);
       } else {
         setShowTuringTest(false);
       }
     },
-    [showTuringTest, setActiveVideo, setShowTuringTest]
+    [showTuringTest, setShowTuringTest]
   );
 
   // Track max detection ever reached for Survivor achievement
@@ -398,10 +387,6 @@ export default function Terminal({
 
     const skipIntroEntries = [
       createEntry('system', ''),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelOpenTop')),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelOpenMiddle')),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelOpenBottom')),
-      createEntry('system', ''),
       createEntry('ufo74', t('terminal.tutorialSkip.connected')),
       createEntry('ufo74', t('terminal.tutorialSkip.alreadyKnow')),
       createEntry('ufo74', t('terminal.tutorialSkip.noHandHolding')),
@@ -418,10 +403,6 @@ export default function Terminal({
       createEntry('ufo74', t('terminal.tutorialSkip.goodLuck')),
       createEntry('system', ''),
       createEntry('ufo74', t('terminal.tutorialSkip.ellipsis')),
-      createEntry('system', ''),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelClosedTop')),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelClosedMiddle')),
-      createEntry('ufo74', t('terminal.tutorialSkip.channelClosedBottom')),
       createEntry('system', ''),
       createEntry('system', t('terminal.tutorialSkip.disconnected')),
       createEntry('system', ''),
@@ -479,14 +460,14 @@ export default function Terminal({
         playSound('success');
       }
     },
-    [playSound]
+    [playSound, setPendingAchievement]
   );
 
   // Trigger flicker effect
   const triggerFlicker = useCallback(() => {
     setFlickerActive(true);
     setTimeout(() => setFlickerActive(false), 300);
-  }, []);
+  }, [setFlickerActive]);
 
   const {
     handleBlackoutComplete,
@@ -504,6 +485,8 @@ export default function Terminal({
     setGameState,
     setGamePhase,
     setShowTuringTest: setShowTuringTestWrapped,
+    setShowGameOver,
+    setGameOverReason,
     onExitAction,
     playSound,
     triggerFlicker,
@@ -530,7 +513,7 @@ export default function Terminal({
       }
       firewallPauseStartRef.current = null;
     }
-  }, []);
+  }, [setGameState]);
 
   const { handleSubmit, handleKeyDown } = useTerminalInput({
     gameState,
@@ -873,6 +856,9 @@ export default function Terminal({
       case 'file':
         className = `${styles.line} ${styles.fileContent}`;
         break;
+      case 'dim':
+        className = `${styles.line} ${styles.dim}`;
+        break;
     }
 
     // Typewriter animation for UFO74 text entries
@@ -1156,38 +1142,8 @@ export default function Terminal({
           <div
             className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}
           >
-            <span className={styles.trackerLabel}>{t('terminal.tracker.evidence')}</span>
-            <span
-              className={getEvidenceClass('debris_relocation')}
-              title={t('terminal.tracker.tooltip.recovered')}
-            >
-              {getEvidenceSymbol('debris_relocation')} {t('terminal.tracker.recovered')}
-            </span>
-            <span
-              className={getEvidenceClass('being_containment')}
-              title={t('terminal.tracker.tooltip.captured')}
-            >
-              {getEvidenceSymbol('being_containment')} {t('terminal.tracker.captured')}
-            </span>
-            <span
-              className={getEvidenceClass('telepathic_scouts')}
-              title={t('terminal.tracker.tooltip.signals')}
-            >
-              {getEvidenceSymbol('telepathic_scouts')} {t('terminal.tracker.signals')}
-            </span>
-            <span
-              className={getEvidenceClass('international_actors')}
-              title={t('terminal.tracker.tooltip.foreign')}
-            >
-              {getEvidenceSymbol('international_actors')} {t('terminal.tracker.foreign')}
-            </span>
-            <span
-              className={getEvidenceClass('transition_2026')}
-              title={t('terminal.tracker.tooltip.next')}
-            >
-              {getEvidenceSymbol('transition_2026')} {t('terminal.tracker.next')}
-            </span>
-            <span className={styles.truthCount}>[{getDiscoveredCount()}/5]</span>
+            <span className={styles.trackerLabel}>Alien Files</span>
+            <span className={styles.truthCount}>— Evidence Found: [{getDiscoveredCount()}/5]</span>
           </div>
           <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
             <span className={`${styles.riskItem} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}>
@@ -1391,18 +1347,6 @@ export default function Terminal({
             tone={activeVideo.tone}
             corrupted={activeVideo.corrupted}
             onCloseAction={() => {
-              // Check if this was the pre-Turing test video
-              const wasTuringVideo = pendingTuringAfterVideoRef.current;
-              if (wasTuringVideo) {
-                pendingTuringAfterVideoRef.current = false;
-                setActiveVideo(null);
-                // Show the Turing test overlay after a short delay
-                setTimeout(() => {
-                  setShowTuringTest(true);
-                }, 300);
-                return;
-              }
-
               // Add "Media recovered" message to terminal
               const recoveredMessage = createEntry(
                 'system',

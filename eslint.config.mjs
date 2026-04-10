@@ -1,18 +1,16 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import nextPlugin from '@next/eslint-plugin-next';
 
 export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  nextPlugin.configs['core-web-vitals'],
   {
     files: ['**/*.{ts,tsx}'],
     plugins: {
-      react: reactPlugin,
       'react-hooks': reactHooksPlugin,
-      '@next/next': nextPlugin,
     },
     languageOptions: {
       parserOptions: {
@@ -21,17 +19,7 @@ export default [
         },
       },
     },
-    settings: {
-      react: {
-        version: 'detect',
-      },
-    },
     rules: {
-      // React rules
-      'react/react-in-jsx-scope': 'off',
-      'react/prop-types': 'off',
-      'react/no-unescaped-entities': 'off',
-
       // React Hooks rules
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
@@ -48,9 +36,6 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
 
-      // Next.js rules
-      '@next/next/no-img-element': 'warn',
-
       // General rules
       'no-console': 'warn',
       'prefer-const': 'error',
@@ -62,6 +47,18 @@ export default [
     rules: {
       // Relax rules for test files
       '@typescript-eslint/no-explicit-any': 'off',
+      'no-console': 'off',
+    },
+  },
+  {
+    files: ['e2e-tests/**/*.{ts,tsx}'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
+    files: ['app/hooks/useOptions.tsx', 'app/components/TuringTestOverlay.tsx', 'app/lib/steamBridge.ts'],
+    rules: {
       'no-console': 'off',
     },
   },

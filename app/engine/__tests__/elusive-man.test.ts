@@ -7,7 +7,6 @@ import {
   normalizeText,
   LEAK_QUESTIONS,
   LEAK_DETECTION_PENALTY,
-  LEAK_MAX_WRONG_ANSWERS,
 } from '../elusiveMan';
 
 const ALL_TRUTHS = new Set(['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026'] as const);

@@ -559,7 +559,7 @@ describe('UX Commands', () => {
       const result = executeCommand('help decrypt', state);
 
       expect(result.output.some(e => e.content.includes('COMMAND: decrypt'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('security question'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
     });
 
     it('should show general help when no argument', () => {

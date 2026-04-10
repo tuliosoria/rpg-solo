@@ -1,5 +1,5 @@
 // Test for search command functionality
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { performSearch, canSearch, getSearchCooldownMessage } from '../searchIndex';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 

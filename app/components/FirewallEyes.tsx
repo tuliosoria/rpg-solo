@@ -11,8 +11,9 @@ const EYE_LIFETIME_MS = 8000; // Time before eye detonates (8 seconds)
 const EYE_WARNING_MS = 2000; // Time before detonation when eye starts pulsing
 const DETECTION_THRESHOLD = 25; // Detection level when firewall activates
 const BATCH_SIZE = 5; // Default eyes spawned per batch
-const HIGH_RISK_BATCH_SIZE = 10;
-const CRITICAL_RISK_BATCH_SIZE = 12;
+const HIGH_RISK_BATCH_SIZE = 8;
+const CRITICAL_RISK_BATCH_SIZE = 10;
+const MAX_CONCURRENT_EYES = 10; // Hard cap on concurrent firewall eyes
 const FIREWALL_EYE_BATCH_SIZES = {
   BASE: BATCH_SIZE,
   HIGH: HIGH_RISK_BATCH_SIZE,
@@ -512,6 +513,7 @@ export {
   DETECTION_INCREASE_ON_DETONATE,
   EYE_LIFETIME_MS,
   BATCH_SIZE,
+  MAX_CONCURRENT_EYES,
   FIREWALL_EYE_BATCH_SIZES,
   FIREWALL_EYE_BATCH_THRESHOLDS,
   SPAWN_COOLDOWN_MS,

@@ -23,9 +23,6 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
 }
 
 describe('Hint System', () => {
-  // Store original Math.random
-  const originalRandom = Math.random;
-
   beforeEach(() => {
     // Mock Math.random for deterministic tests
     vi.spyOn(Math, 'random').mockReturnValue(0.1);

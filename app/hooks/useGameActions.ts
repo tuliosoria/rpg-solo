@@ -8,6 +8,7 @@ import { DETECTION_THRESHOLDS } from '../constants/detection';
 import {
   createFirewallEyeBatch,
   DETECTION_INCREASE_ON_DETONATE,
+  MAX_CONCURRENT_EYES,
   getFirewallEyeBatchSize,
   speakFirewallVoice,
 } from '../components/FirewallEyes';
@@ -16,6 +17,8 @@ interface UseGameActionsOptions {
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
   setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowGameOver: React.Dispatch<React.SetStateAction<boolean>>;
+  setGameOverReason: React.Dispatch<React.SetStateAction<string>>;
   onExitAction: () => void;
   playSound: (sound: SoundType) => void;
   triggerFlicker: () => void;
@@ -25,6 +28,8 @@ export function useGameActions({
   setGameState,
   setGamePhase,
   setShowTuringTest,
+  setShowGameOver,
+  setGameOverReason,
   onExitAction,
   playSound,
   triggerFlicker,
@@ -105,8 +110,16 @@ export function useGameActions({
   const handleFirewallEyeBatchSpawn = useCallback(() => {
     const now = Date.now();
     setGameState(prev => {
+      // Hard cap: don't spawn if already at or above the max
+      const currentEyeCount = prev.firewallEyes.filter(e => !e.isDetonating).length;
+      if (currentEyeCount >= MAX_CONCURRENT_EYES) {
+        return { ...prev, lastEyeSpawnTime: now };
+      }
+
       const batchSize = getFirewallEyeBatchSize(prev.detectionLevel);
-      const newEyes = [...prev.firewallEyes, ...createFirewallEyeBatch(batchSize)];
+      // Clamp batch size so total doesn't exceed the cap
+      const allowedSpawn = Math.min(batchSize, MAX_CONCURRENT_EYES - currentEyeCount);
+      const newEyes = [...prev.firewallEyes, ...createFirewallEyeBatch(allowedSpawn)];
 
       const urgencyMessage = prev.flags.neuralLinkAuthenticated
         ? createEntry(
@@ -189,6 +202,17 @@ export function useGameActions({
           ufo74Panic = createEntry('ufo74', 'UFO74: Damn! You missed one. Stay focused!');
         }
 
+        // Check for game over: detection reached 100% from eye detonation
+        const isGameOver = prev.tutorialComplete && newDetection >= 100 && !prev.isGameOver && !prev.evidencesSaved;
+
+        if (isGameOver) {
+          // Schedule game over UI after state update
+          setTimeout(() => {
+            setGameOverReason('INTRUSION DETECTED - TRACED');
+            setShowGameOver(true);
+          }, 100);
+        }
+
         // Mark Turing evaluation as triggered if applicable
         const newSingularEvents = shouldTriggerTuringTest
           ? new Set([...(prev.singularEventsTriggered || []), 'turing_evaluation'])
@@ -199,7 +223,26 @@ export function useGameActions({
           firewallEyes: updatedEyes,
           detectionLevel: newDetection,
           avatarExpression: 'scared',
-          history: [...prev.history, detonateWarning, ufo74Panic],
+          history: isGameOver
+            ? [
+                ...prev.history,
+                detonateWarning,
+                createEntry('error', ''),
+                createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+                createEntry('error', ''),
+                createEntry('error', '  INTRUSION DETECTED'),
+                createEntry('error', ''),
+                createEntry('error', '  Your connection has been traced.'),
+                createEntry('error', '  Security protocols have been dispatched.'),
+                createEntry('error', ''),
+                createEntry('error', '  >> SESSION TERMINATED <<'),
+                createEntry('error', ''),
+                createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+                createEntry('error', ''),
+              ]
+            : [...prev.history, detonateWarning, ufo74Panic],
+          isGameOver: isGameOver ? true : prev.isGameOver,
+          gameOverReason: isGameOver ? 'INTRUSION DETECTED - TRACED' : prev.gameOverReason,
           turingEvaluationActive: shouldTriggerTuringTest ? true : prev.turingEvaluationActive,
           singularEventsTriggered: newSingularEvents,
         };
@@ -215,7 +258,7 @@ export function useGameActions({
         }));
       }, 500);
     },
-    [playSound, setGameState, setShowTuringTest, triggerFlicker]
+    [playSound, setGameState, setShowTuringTest, setShowGameOver, setGameOverReason, triggerFlicker]
   );
 
   return {

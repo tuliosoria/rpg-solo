@@ -4,6 +4,56 @@ import { vi } from 'vitest';
 // Guard all browser-only mocks so the setup file works in both jsdom and node environments.
 const isBrowser = typeof window !== 'undefined';
 
+function createMemoryStorage(): Storage {
+  const store = new Map<string, string>();
+
+  return {
+    get length() {
+      return store.size;
+    },
+    clear() {
+      store.clear();
+    },
+    getItem(key: string) {
+      return store.has(key) ? store.get(key)! : null;
+    },
+    key(index: number) {
+      return Array.from(store.keys())[index] ?? null;
+    },
+    removeItem(key: string) {
+      store.delete(String(key));
+    },
+    setItem(key: string, value: string) {
+      store.set(String(key), String(value));
+    },
+  };
+}
+
+function hasUsableStorage(storage: unknown): storage is Storage {
+  return Boolean(
+    storage &&
+      typeof storage === 'object' &&
+      typeof (storage as Storage).getItem === 'function' &&
+      typeof (storage as Storage).setItem === 'function' &&
+      typeof (storage as Storage).removeItem === 'function' &&
+      typeof (storage as Storage).clear === 'function'
+  );
+}
+
+if (isBrowser && !hasUsableStorage(window.localStorage)) {
+  const memoryStorage = createMemoryStorage();
+
+  Object.defineProperty(window, 'localStorage', {
+    configurable: true,
+    value: memoryStorage,
+  });
+
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: memoryStorage,
+  });
+}
+
 // Mock ResizeObserver
 class MockResizeObserver {
   callback: ResizeObserverCallback;

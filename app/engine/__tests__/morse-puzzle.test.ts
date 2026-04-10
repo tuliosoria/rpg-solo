@@ -157,55 +157,43 @@ describe('Morse File Read Flag', () => {
 });
 
 describe('Override Failures', () => {
-  it('should increment wrongAttempts on wrong override password', () => {
+  it('should return decommissioned message for override with wrong password', () => {
     const state = createTestState({ wrongAttempts: 0 });
     const result = executeCommand('override protocol WRONGPASS', state);
-    
-    expect(result.stateChanges.wrongAttempts).toBe(1);
-    expect(result.stateChanges.overrideFailedAttempts).toBe(1);
-    expect(result.output.some(e => e.content.includes('INVALID AUTHENTICATION CODE'))).toBe(true);
+
+    expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+    expect(result.stateChanges.wrongAttempts).toBeUndefined();
   });
 
-  it('should accumulate wrongAttempts across multiple override failures', () => {
+  it('should return decommissioned message regardless of attempt history', () => {
     const state = createTestState({ wrongAttempts: 2, overrideFailedAttempts: 1 });
     const result = executeCommand('override protocol BADCODE', state);
-    
-    expect(result.stateChanges.wrongAttempts).toBe(3);
-    expect(result.stateChanges.overrideFailedAttempts).toBe(2);
+
+    expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+    expect(result.stateChanges.wrongAttempts).toBeUndefined();
   });
 
-  it('should trigger override lockout after 3 wrong passwords', () => {
+  it('should not trigger game over since override is decommissioned', () => {
     const state = createTestState({ wrongAttempts: 5, overrideFailedAttempts: 2 });
     const result = executeCommand('override protocol WRONG', state);
-    
-    expect(result.stateChanges.isGameOver).toBe(true);
-    expect(result.stateChanges.gameOverReason).toContain('SECURITY LOCKDOWN');
-    expect(result.stateChanges.wrongAttempts).toBe(6);
+
+    expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
+    expect(result.stateChanges.isGameOver).toBeUndefined();
   });
 
-  it('should show override lockout message even if wrongAttempts reaches 8', () => {
-    // 7 wrong attempts + 3rd override failure = 8, but override lockout should take priority
-    const state = createTestState({ wrongAttempts: 7, overrideFailedAttempts: 2 });
-    const result = executeCommand('override protocol WRONG', state);
-    
-    expect(result.stateChanges.isGameOver).toBe(true);
-    // Should show override-specific message, not generic terminal lockout
-    expect(result.stateChanges.gameOverReason).toContain('SECURITY LOCKDOWN');
-    expect(result.output.some(e => e.content.includes('SECURITY COUNTERMEASURE'))).toBe(true);
-  });
-
-  it('should not increment wrongAttempts when no password provided', () => {
+  it('should return decommissioned message with no password provided', () => {
     const state = createTestState({ wrongAttempts: 0 });
     const result = executeCommand('override protocol', state);
-    
+
+    expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
     expect(result.stateChanges.wrongAttempts).toBeUndefined();
-    expect(result.output.some(e => e.content.includes('ACCESS DENIED'))).toBe(true);
   });
 
-  it('should not increment wrongAttempts on correct password', () => {
+  it('should return decommissioned message even with correct password', () => {
     const state = createTestState({ wrongAttempts: 2 });
     const result = executeCommand('override protocol COLHEITA', state);
-    
+
+    expect(result.output.some(e => e.content.includes('decommissioned'))).toBe(true);
     expect(result.stateChanges.wrongAttempts).toBeUndefined();
   });
 });

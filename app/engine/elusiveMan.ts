@@ -4,7 +4,7 @@
 // real understanding of the evidence they've gathered by answering 5 questions
 // from the Elusive Man - a cold, calculating information broker.
 
-import { GameState, CommandResult, TerminalEntry, TruthCategory } from '../types';
+import { GameState, CommandResult, TerminalEntry } from '../types';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -355,7 +355,7 @@ function createEntry(
 /**
  * Start the leak sequence with the Elusive Man
  */
-export function startLeakSequence(state: GameState): CommandResult {
+export function startLeakSequence(): CommandResult {
   const output: TerminalEntry[] = [];
   
   // Intro sequence
@@ -710,4 +710,3 @@ export function processConspiracyChoice(
     delayMs: 500,
   };
 }
-

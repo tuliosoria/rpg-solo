@@ -346,10 +346,10 @@ export default function Victory({
   detectionLevel = 50,
   maxDetectionReached = 50,
   mathMistakes = 0,
-  evidenceLinks = [],
-  wrongAttempts = 0,
-  choiceLeakPath,
-  rivalInvestigatorActive = false,
+  evidenceLinks: _evidenceLinks = [],
+  wrongAttempts: _wrongAttempts = 0,
+  choiceLeakPath: _choiceLeakPath,
+  rivalInvestigatorActive: _rivalInvestigatorActive = false,
   filesReadCount = 0,
   conspiracyFilesLeaked = false,
   prisoner46Released = false,
@@ -371,20 +371,6 @@ export default function Victory({
   };
   const endingVariant = determineEndingVariant(endingFlags);
   const endingTitle = getEndingTitle(endingVariant);
-
-  const linkCount = evidenceLinks.length;
-  const linkStatus = linkCount >= 3 ? 'Coherent' : linkCount > 0 ? 'Partial' : 'Absent';
-  const attemptsStatus =
-    wrongAttempts === 0 ? 'Perfect' : wrongAttempts <= 2 ? 'Minor errors' : 'Close calls';
-  const releasePath =
-    choiceLeakPath === 'public'
-      ? 'Open networks'
-      : choiceLeakPath === 'covert'
-        ? 'Trusted cells'
-        : 'Unspecified';
-  const interferenceLine = rivalInvestigatorActive
-    ? '  External interference: Rival investigator active'
-    : '  External interference: None recorded';
 
   // Get the narrative for this ending variant
   const victoryText = useMemo(

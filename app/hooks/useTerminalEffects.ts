@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo } from 'react';
-import { TutorialStateID, type GamePhase, type GameState, type ImageTrigger, type VideoTrigger } from '../types';
+import { type GamePhase, type GameState, type ImageTrigger, type VideoTrigger } from '../types';
 import { createEntry } from '../engine/commands';
 import { autoSave } from '../storage/saves';
 import { addPlaytime } from '../storage/statistics';
@@ -154,7 +154,7 @@ export function useTerminalEffects({
   setShowRiskTracker,
   setShowAttBar,
   setShowAvatar,
-  setAvatarCreepyEntrance,
+  setAvatarCreepyEntrance: _setAvatarCreepyEntrance,
   setGamePhase,
   setGameState,
   setGlitchActive,
@@ -287,9 +287,10 @@ export function useTerminalEffects({
 
   // Cleanup typing speed warning timeout on unmount
   useEffect(() => {
+    const warningTimeout = typingSpeedWarningTimeout.current;
     return () => {
-      if (typingSpeedWarningTimeout.current) {
-        clearTimeout(typingSpeedWarningTimeout.current);
+      if (warningTimeout) {
+        clearTimeout(warningTimeout);
       }
     };
   }, [typingSpeedWarningTimeout]);
@@ -326,7 +327,7 @@ export function useTerminalEffects({
     }, AUTOSAVE_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [gameStateRef]);
 
   // Phase transition: when evidencesSaved becomes true, trigger blackout
   // Skip if isGameOver is true to avoid conflicting state (e.g., detection hit 100% on a prior command)
@@ -583,6 +584,8 @@ export function useTerminalEffects({
     setRiskPulse,
     setGameState,
     setShowTuringTest,
+    maxDetectionRef,
+    prevDetectionRef,
   ]);
 
   // Start ambient sound when tutorial completes

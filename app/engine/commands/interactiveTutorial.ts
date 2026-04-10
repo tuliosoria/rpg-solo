@@ -5,7 +5,6 @@
 import { TerminalEntry, GameState, CommandResult, TutorialStateID, InteractiveTutorialState } from '../../types';
 import { createEntry } from './utils';
 import { listDirectory } from '../filesystem';
-import { FILESYSTEM_ROOT } from '../../data/filesystem';
 import { DEFAULT_GAME_STATE } from '../../types';
 
 // Re-export types for convenience
@@ -284,10 +283,6 @@ export function isInTutorialMode(state: GameState): boolean {
  */
 export function generateIntroDialogue(): TerminalEntry[] {
   const entries: TerminalEntry[] = [
-    createEntry('system', ''),
-    createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-    createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-    createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
     createEntry('system', ''),
   ];
 
@@ -699,10 +694,6 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
   [
     createEntry('ufo74', '[UFO74]: ...'),
     createEntry('system', ''),
-    createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-    createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
-    createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-    createEntry('system', ''),
     createEntry('system', '[UFO74 has disconnected]'),
     createEntry('system', ''),
   ],
@@ -712,12 +703,8 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
  * Step-by-step INTRO blocks shown one-at-a-time on Enter
  */
 export const TUTORIAL_INTRO_STEPS: TerminalEntry[][] = [
-  // Block 0 — Encrypted channel open + first contact
+  // Block 0 — First contact
   [
-    createEntry('system', ''),
-    createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-    createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-    createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
     createEntry('system', ''),
     createEntry('ufo74', '[UFO74]: Connection established.'),
     createEntry('ufo74', "[UFO74]: Listen carefully. I don't repeat myself."),

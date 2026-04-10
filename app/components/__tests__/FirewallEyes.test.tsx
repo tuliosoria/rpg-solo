@@ -230,7 +230,7 @@ describe('FirewallEyes', () => {
 });
 
 describe('Tutorial Popup', () => {
-  const baseProps = {
+  const createTutorialProps = () => ({
     detectionLevel: 30,
     firewallActive: true,
     firewallDisarmed: false,
@@ -255,9 +255,20 @@ describe('Tutorial Popup', () => {
     onActivateFirewall: vi.fn(),
     onPauseChanged: vi.fn(),
     onTutorialShown: vi.fn(),
-  };
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   it('shows tutorial popup when eyes first appear and tutorial not shown', () => {
+    const baseProps = createTutorialProps();
     const { container } = render(<FirewallEyes {...baseProps} />);
     
     // Should show the tutorial overlay
@@ -269,6 +280,7 @@ describe('Tutorial Popup', () => {
   });
 
   it('does not show tutorial popup when firewallEyesTutorialShown is true', () => {
+    const baseProps = createTutorialProps();
     const { container } = render(
       <FirewallEyes {...baseProps} firewallEyesTutorialShown={true} />
     );
@@ -279,10 +291,10 @@ describe('Tutorial Popup', () => {
   });
 
   it('hides eyes while tutorial popup is showing', () => {
+    const baseProps = createTutorialProps();
     const { container } = render(<FirewallEyes {...baseProps} />);
     
     // Eyes should NOT be visible while popup is showing
-    const eyes = container.querySelectorAll('[class*="eye"]');
     // The only element with "eye" in class should be the popup elements, not actual eyes
     const eyeButtons = container.querySelectorAll('button[class*="eye"]');
     expect(eyeButtons.length).toBe(0);
@@ -290,8 +302,18 @@ describe('Tutorial Popup', () => {
 
   it('pauses eye detonation while the tutorial popup is open', () => {
     const onEyeDetonate = vi.fn();
+    const baseProps = createTutorialProps();
+    const { rerender } = render(
+      <FirewallEyes {...baseProps} onEyeDetonate={onEyeDetonate} />
+    );
 
-    render(<FirewallEyes {...baseProps} onEyeDetonate={onEyeDetonate} />);
+    rerender(
+      <FirewallEyes
+        {...baseProps}
+        firewallEyesTutorialShown={true}
+        onEyeDetonate={onEyeDetonate}
+      />
+    );
 
     act(() => {
       vi.advanceTimersByTime(9000);
@@ -299,7 +321,9 @@ describe('Tutorial Popup', () => {
 
     expect(onEyeDetonate).not.toHaveBeenCalled();
 
-    fireEvent.click(screen.getByRole('button', { name: /GOT IT/i }));
+    act(() => {
+      fireEvent.click(screen.getByRole('button', { name: /GOT IT/i }));
+    });
 
     act(() => {
       vi.advanceTimersByTime(7999);

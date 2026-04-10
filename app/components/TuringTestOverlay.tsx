@@ -151,7 +151,6 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
 
   // Guard against invalid state - must be after all hooks
   if (isInvalidQuestion) {
-    // eslint-disable-next-line no-console
     console.error('TuringTestOverlay: Invalid question data', { questionIndex, TURING_QUESTIONS });
     return null;
   }

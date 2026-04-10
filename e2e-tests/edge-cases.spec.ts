@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, Page } from '@playwright/test';
 
 const URL = 'https://thankful-grass-0f49be40f.2.azurestaticapps.net';
 
@@ -313,7 +313,7 @@ test.describe('Edge Cases & UI', () => {
     await page.keyboard.press('Enter');
     await page.waitForTimeout(1000);
     const content = await getContent(page);
-    const statusCompleted = contentContains(content, 'status') || contentContains(content, 'logging');
+    const _statusCompleted = contentContains(content, 'status') || contentContains(content, 'logging');
 
     // Clear and test directory autocomplete
     console.log('\n--- Testing directory autocomplete ---');
@@ -437,7 +437,7 @@ test.describe('Edge Cases & UI', () => {
 
     // Verify terminal is responsive again
     await typeCommand(page, 'ls');
-    const content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'edge-overlay-04-responsive');
 
     // Test opening multiple files in sequence

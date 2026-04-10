@@ -596,6 +596,11 @@
   text-shadow: 0 0 6px rgba(0, 255, 0, 0.6);
 }
 
+/* Dim styling for already-read files in directory listings */
+.dim {
+  color: #888888;
+}
+
 /* File content styling - visual container */
 .fileContent {
   color: #00dd00;

@@ -6,11 +6,7 @@ import { createEntry } from './utils';
 // Tutorial messages from UFO74 - shown one at a time
 // Design: explicit early steps, diegetic, natural hacker briefing flow
 export const TUTORIAL_MESSAGES: string[][] = [
-  [
-    '┌─────────────────────────────────────────────────────────┐',
-    '│ >> INCOMING TRANSMISSION << ENCRYPTED CHANNEL          │',
-    '└─────────────────────────────────────────────────────────┘',
-  ],
+  [],
   ['UFO74: youre in. keep it quiet.'],
   ['UFO74: quick brief. you cant change anything here — read only.'],
   ['UFO74: type "ls" to see whats in front of you.'],
@@ -231,18 +227,9 @@ export function getTutorialMessage(step: number): TerminalEntry[] {
   const isLastStep = step === TUTORIAL_MESSAGES.length - 1;
   const isFirstStep = step === 0;
 
-  // First step shows channel open header
+  // First step (no framing)
   if (isFirstStep) {
-    entries.push(
-      createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐')
-    );
-    entries.push(
-      createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │')
-    );
-    entries.push(
-      createEntry('ufo74', '└─────────────────────────────────────────────────────────┘')
-    );
-    entries.push(createEntry('system', ''));
+    // Nothing extra to add — content is handled below
   }
 
   for (let i = 0; i < messages.length; i++) {
@@ -252,18 +239,8 @@ export function getTutorialMessage(step: number): TerminalEntry[] {
       // Skip the original header lines (they're replaced above)
       continue;
     } else if (isLastStep) {
-      // Last message: first line is channel closed, then system/ufo74 messages
+      // Last message: show content without channel framing
       if (i === 0) {
-        entries.push(
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐')
-        );
-        entries.push(
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │')
-        );
-        entries.push(
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘')
-        );
-        entries.push(createEntry('system', ''));
         entries.push(createEntry('system', msg));
       } else if (msg.startsWith('UFO74:') || msg.startsWith('       ')) {
         // First-run nudge from UFO74

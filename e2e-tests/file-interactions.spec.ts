@@ -161,13 +161,13 @@ const FILES_BY_DIRECTORY: Record<string, string[]> = {
 };
 
 // Encrypted files that need decrypt command
-const ENCRYPTED_FILES: Record<string, string[]> = {
+const _ENCRYPTED_FILES: Record<string, string[]> = {
   '/comms/psi': ['transcript_core.enc', 'transcript_limit.enc'],
   '/tmp': ['encoded_transmission.enc'],
 };
 
 // Files that may reveal evidence (based on filesystem analysis)
-const EVIDENCE_FILES = [
+const _EVIDENCE_FILES = [
   '/storage/assets/material_x_analysis.dat',
   '/storage/assets/transport_log_96.txt',
   '/storage/quarantine/bio_container.log',

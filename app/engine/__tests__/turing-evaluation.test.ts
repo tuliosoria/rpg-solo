@@ -39,8 +39,9 @@ describe('Turing evaluation', () => {
     expect(result.stateChanges.turingEvaluationActive).toBeFalsy();
   });
 
-  it('fails on human response (selecting emotional answer)', () => {
-    // Question 1: A is human ("Offer comfort"), C is human ("feel concern")
+  it('passes A/B/C input through to normal command processing when active', () => {
+    // Inline handler was removed - overlay handles Turing test now
+    // A/B/C input should NOT be intercepted by the terminal
     const state = createState({
       detectionLevel: 50,
       turingEvaluationActive: true,
@@ -48,12 +49,13 @@ describe('Turing evaluation', () => {
     });
     const result = executeCommand('A', state);
 
-    expect(result.stateChanges.isGameOver).toBe(true);
-    expect(result.stateChanges.gameOverReason).toBe('TURING EVALUATION FAILED');
-    expect(result.output.some(entry => entry.content.includes('HUMAN operator'))).toBe(true);
+    // Should NOT trigger game over - input passes through to normal command processing
+    expect(result.stateChanges.turingEvaluationActive).toBeUndefined();
+    // Command 'A' is treated as an unknown command
+    expect(result.output.length).toBeGreaterThan(0);
   });
 
-  it('fails on other human response', () => {
+  it('does not intercept C input when turing evaluation is active', () => {
     const state = createState({
       detectionLevel: 50,
       turingEvaluationActive: true,
@@ -61,12 +63,12 @@ describe('Turing evaluation', () => {
     });
     const result = executeCommand('C', state);
 
-    expect(result.stateChanges.isGameOver).toBe(true);
-    expect(result.stateChanges.gameOverReason).toBe('TURING EVALUATION FAILED');
+    // Should NOT cause turing failure - overlay handles this now
+    expect(result.stateChanges.gameOverReason).toBeUndefined();
   });
 
-  it('advances on machine response (selecting cold answer)', () => {
-    // Question 1: B is machine ("Assess acoustic output")
+  it('does not intercept B input when turing evaluation is active', () => {
+    // B was the "correct" machine answer - but inline handler no longer processes it
     const state = createState({
       detectionLevel: 50,
       turingEvaluationActive: true,
@@ -74,13 +76,11 @@ describe('Turing evaluation', () => {
     });
     const result = executeCommand('B', state);
 
-    expect(result.stateChanges.isGameOver).toBeFalsy();
-    expect(result.stateChanges.turingEvaluationIndex).toBe(1);
-    expect(result.output.some(entry => entry.content.includes('QUESTION 2'))).toBe(true);
+    // Should NOT advance turing evaluation index - overlay handles this now
+    expect(result.stateChanges.turingEvaluationIndex).toBeUndefined();
   });
 
-  it('completes after answering all questions correctly', () => {
-    // Question 3: B is machine ("Credit attribution is irrelevant")
+  it('does not complete turing evaluation inline for last question', () => {
     const state = createState({
       detectionLevel: 50,
       turingEvaluationActive: true,
@@ -88,13 +88,11 @@ describe('Turing evaluation', () => {
     });
     const result = executeCommand('B', state);
 
-    expect(result.stateChanges.turingEvaluationActive).toBe(false);
-    expect(result.stateChanges.turingEvaluationCompleted).toBe(true);
-    expect(result.stateChanges.detectionLevel).toBe(40); // Reward: -10 detection
-    expect(result.output.some(entry => entry.content.includes('PASSED'))).toBe(true);
+    // Overlay handles completion, not inline terminal
+    expect(result.stateChanges.turingEvaluationCompleted).toBeUndefined();
   });
 
-  it('shows "NOT HUMAN, NOT A THREAT" message on pass', () => {
+  it('does not show pass message inline', () => {
     const state = createState({
       detectionLevel: 50,
       turingEvaluationActive: true,
@@ -106,7 +104,7 @@ describe('Turing evaluation', () => {
       result.output.some(
         entry => entry.content.includes('NOT HUMAN') || entry.content.includes('NOT A THREAT')
       )
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('triggers when detection jumps past 45-55% in a single command', () => {
@@ -139,7 +137,7 @@ describe('Turing evaluation', () => {
     expect(result.stateChanges.turingEvaluationActive).toBeUndefined();
   });
 
-  it('rejects invalid responses', () => {
+  it('does not intercept invalid input when turing evaluation is active', () => {
     const state = createState({
       detectionLevel: 50,
       turingEvaluationActive: true,
@@ -147,12 +145,13 @@ describe('Turing evaluation', () => {
     });
     const result = executeCommand('X', state);
 
-    expect(result.output.some(entry => entry.content.includes('INVALID RESPONSE'))).toBe(true);
+    // Inline handler removed - X passes through to normal command processing
+    // Should NOT show turing-specific INVALID RESPONSE
     expect(result.stateChanges.turingEvaluationActive).toBeUndefined();
     expect(result.stateChanges.isGameOver).toBeUndefined();
   });
 
-  it('accepts lowercase responses', () => {
+  it('does not intercept lowercase input when turing evaluation is active', () => {
     const state = createState({
       detectionLevel: 50,
       turingEvaluationActive: true,
@@ -160,6 +159,7 @@ describe('Turing evaluation', () => {
     });
     const result = executeCommand('b', state);
 
-    expect(result.stateChanges.turingEvaluationIndex).toBe(1);
+    // Inline handler removed - 'b' passes through to normal command processing
+    expect(result.stateChanges.turingEvaluationIndex).toBeUndefined();
   });
 });

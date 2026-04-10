@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, Page } from '@playwright/test';
 
 const URL = 'https://thankful-grass-0f49be40f.2.azurestaticapps.net';
 

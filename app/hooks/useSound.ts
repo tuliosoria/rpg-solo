@@ -539,7 +539,7 @@ export function useSound() {
           let morseDelay = 0.15; // initial pause
 
           morseLetters.forEach((letter, letterIdx) => {
-            letter.forEach((symbolDuration, symbolIdx) => {
+            letter.forEach(symbolDuration => {
               const d = morseDelay;
               setTimeout(() => {
                 if (audioContextRef.current) {

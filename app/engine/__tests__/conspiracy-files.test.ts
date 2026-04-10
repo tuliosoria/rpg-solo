@@ -92,7 +92,7 @@ describe('Conspiracy Easter Egg Files', () => {
       
       // Second open - should NOT trigger conspiracy reaction (file already seen)
       // Note: May still have other UFO74 messages (like sanitized folder warning)
-      const result2 = executeCommand('open economic_transition_memo.txt', newState);
+      executeCommand('open economic_transition_memo.txt', newState);
       
       // Check if this specific file was marked as seen
       expect(newState.conspiracyFilesSeen.has('/internal/misc/economic_transition_memo.txt')).toBe(true);

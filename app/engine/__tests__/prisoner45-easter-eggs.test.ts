@@ -32,8 +32,8 @@ describe('Prisoner 45 Easter Egg Responses', () => {
     // This test validates the structure exists by importing the module
     it('module loads without errors', async () => {
       // Dynamically import to verify no syntax errors
-      const module = await import('../commands');
-      expect(module).toBeDefined();
+      const commandsModule = await import('../commands');
+      expect(commandsModule).toBeDefined();
     });
   });
 

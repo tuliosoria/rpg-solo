@@ -426,9 +426,11 @@ describe('Save/Load System', () => {
       vi.stubGlobal('localStorage', quotaLimitedStorage);
       vi.stubGlobal('window', { localStorage: quotaLimitedStorage });
 
-      const oldestSlot = existingSlots[existingSlots.length - 1];
+      const currentSlots = getSaveSlots();
+      const oldestSlot = currentSlots[currentSlots.length - 1];
       const newSlot = saveGame({ ...state, detectionLevel: 99 }, 'Newest Save');
 
+      expect(oldestSlot).toBeDefined();
       expect(newSlot).not.toBeNull();
       expect(getSaveSlots()).toHaveLength(5);
       expect(mockStore[`terminal1996:save:${oldestSlot!.id}`]).toBeUndefined();
@@ -673,9 +675,11 @@ describe('Save/Load System', () => {
       vi.stubGlobal('localStorage', quotaLimitedStorage);
       vi.stubGlobal('window', { localStorage: quotaLimitedStorage });
 
-      const oldestSlot = existingSlots[existingSlots.length - 1];
+      const currentSlots = getCheckpointSlots();
+      const oldestSlot = currentSlots[currentSlots.length - 1];
       const newSlot = saveCheckpoint({ ...state, detectionLevel: 99 }, 'Newest Checkpoint');
 
+      expect(oldestSlot).toBeDefined();
       expect(newSlot).not.toBeNull();
       expect(getCheckpointSlots()).toHaveLength(2);
       expect(mockStore[`terminal1996:checkpoint:${oldestSlot!.id}`]).toBeUndefined();
