@@ -118,14 +118,14 @@
 }
 
 .restartHeader {
-  color: #00aa00;
+  color: #5a8a28;
   font-size: 20px;
   letter-spacing: 4px;
   margin-bottom: 20px;
 }
 
 .restartStatus {
-  color: #00ff00;
+  color: #88cc44;
   font-size: 16px;
   margin-bottom: 30px;
 }
@@ -135,27 +135,27 @@
 }
 
 .progressBar {
-  color: #00ff00;
+  color: #88cc44;
   font-size: 14px;
   letter-spacing: 0;
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  text-shadow: 0 0 10px rgba(136, 204, 68, 0.3);
 }
 
 .progressPercent {
-  color: #00aa00;
+  color: #5a8a28;
   font-size: 12px;
   margin-top: 8px;
 }
 
 .restartLog {
   text-align: left;
-  color: #006600;
+  color: #445522;
   font-size: 12px;
   line-height: 1.8;
   margin-top: 30px;
   padding: 15px;
-  border: 1px solid #002200;
+  border: 1px solid #0c1a08;
   background: rgba(0, 10, 0, 0.5);
   min-height: 150px;
 }
@@ -184,15 +184,15 @@
 }
 
 .optionsHeader {
-  color: #00ff00;
+  color: #88cc44;
   font-size: 24px;
   letter-spacing: 4px;
   margin-bottom: 10px;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  text-shadow: 0 0 10px rgba(136, 204, 68, 0.3);
 }
 
 .optionsSubheader {
-  color: #006600;
+  color: #445522;
   font-size: 12px;
   margin-bottom: 30px;
 }
@@ -206,8 +206,8 @@
 
 .optionButton {
   background: transparent;
-  border: 1px solid #004400;
-  color: #00aa00;
+  border: 1px solid #2a3a18;
+  color: #5a8a28;
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 16px;
   padding: 15px 20px;
@@ -219,19 +219,19 @@
 .optionButton:hover,
 .optionButton.selected {
   background: rgba(0, 40, 0, 0.5);
-  border-color: #00aa00;
-  color: #00ff00;
+  border-color: #5a8a28;
+  color: #88cc44;
 }
 
 .checkpointInfo {
   font-size: 11px;
-  color: #006600;
+  color: #445522;
   margin-top: 8px;
   padding-left: 20px;
 }
 
 .optionButton.selected .checkpointInfo {
-  color: #00aa00;
+  color: #5a8a28;
 }
 
 .keyHint {

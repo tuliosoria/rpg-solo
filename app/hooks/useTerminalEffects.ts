@@ -126,6 +126,9 @@ interface UseTerminalEffectsOptions {
   setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
   setActiveVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
+  setInterferenceBurst: React.Dispatch<React.SetStateAction<{ top: number } | null>>;
+  setTerminalStaticLevel: React.Dispatch<React.SetStateAction<number>>;
+  setAlienSilhouetteVisible: React.Dispatch<React.SetStateAction<boolean>>;
   refs: TerminalEffectsRefs;
 }
 
@@ -178,6 +181,9 @@ export function useTerminalEffects({
   setShowTuringTest,
   setActiveImage,
   setActiveVideo,
+  setInterferenceBurst,
+  setTerminalStaticLevel,
+  setAlienSilhouetteVisible,
   refs,
 }: UseTerminalEffectsOptions) {
   const {
@@ -952,6 +958,115 @@ export function useTerminalEffects({
       return () => window.removeEventListener('keydown', handleKeyDown);
     }
   }, [isStreaming, skipStreamingRef]);
+
+  // Random horizontal interference bursts (every 20-40 seconds)
+  useEffect(() => {
+    if (gamePhase !== 'terminal' || gameState.isGameOver) return;
+    if (suppressPressure) return;
+
+    const scheduleNextBurst = () => {
+      // Random interval between 20-40 seconds
+      const delay = 20000 + uiRandom() * 20000;
+      return setTimeout(() => {
+        if (pauseTimedMechanics) return;
+        // Pick a random vertical position for the interference line
+        const top = Math.floor(uiRandom() * 100);
+        setInterferenceBurst({ top });
+        // Clear after the animation duration (120ms)
+        setTimeout(() => setInterferenceBurst(null), 150);
+      }, delay);
+    };
+
+    const timerId = scheduleNextBurst();
+    // Reschedule periodically
+    const interval = setInterval(() => {
+      const delay = 20000 + uiRandom() * 20000;
+      setTimeout(() => {
+        if (pauseTimedMechanics) return;
+        const top = Math.floor(uiRandom() * 100);
+        setInterferenceBurst({ top });
+        setTimeout(() => setInterferenceBurst(null), 150);
+      }, delay);
+    }, 30000); // Check roughly every 30s
+
+    return () => {
+      clearTimeout(timerId);
+      clearInterval(interval);
+    };
+  }, [
+    gamePhase,
+    gameState.isGameOver,
+    pauseTimedMechanics,
+    suppressPressure,
+    setInterferenceBurst,
+  ]);
+
+  // Terminal static at high risk (70%+)
+  useEffect(() => {
+    const detection = gameState.detectionLevel;
+    if (detection >= 85) {
+      setTerminalStaticLevel(2); // intense
+    } else if (detection >= 70) {
+      setTerminalStaticLevel(1); // active
+    } else {
+      setTerminalStaticLevel(0); // off
+    }
+  }, [gameState.detectionLevel, setTerminalStaticLevel]);
+
+  // Alien silhouette in static (appears every 60-120 seconds when static is active)
+  useEffect(() => {
+    if (gamePhase !== 'terminal' || gameState.isGameOver) return;
+    if (gameState.detectionLevel < 70) {
+      setAlienSilhouetteVisible(false);
+      return;
+    }
+
+    let cancelled = false;
+    const activeTimeouts: NodeJS.Timeout[] = [];
+
+    const scheduleAlien = () => {
+      // Random interval between 60-120 seconds
+      const delay = 60000 + uiRandom() * 60000;
+      const t = setTimeout(() => {
+        if (cancelled || pauseTimedMechanics) return;
+        // Show alien silhouette
+        setAlienSilhouetteVisible(true);
+        playSound('static');
+        // Also play omen sound for extra dread
+        setTimeout(() => {
+          if (!cancelled) playSound('omen');
+        }, 500);
+        // Hide after 4-6 seconds
+        const hideDelay = 4000 + uiRandom() * 2000;
+        const hideTimeout = setTimeout(() => {
+          if (!cancelled) setAlienSilhouetteVisible(false);
+        }, hideDelay);
+        activeTimeouts.push(hideTimeout);
+      }, delay);
+      activeTimeouts.push(t);
+      return t;
+    };
+
+    // Schedule first appearance
+    scheduleAlien();
+    // Reschedule on interval
+    const interval = setInterval(() => {
+      if (!cancelled) scheduleAlien();
+    }, 90000); // Re-check every ~90s
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+      activeTimeouts.forEach(t => clearTimeout(t));
+    };
+  }, [
+    gamePhase,
+    gameState.isGameOver,
+    gameState.detectionLevel,
+    pauseTimedMechanics,
+    playSound,
+    setAlienSilhouetteVisible,
+  ]);
 
   // Handle ESC key for pause menu
   useEffect(() => {

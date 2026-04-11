@@ -15,14 +15,14 @@
 
 .modal {
   background: #0a0a0a;
-  border: 1px solid #00ff00;
+  border: 1px solid #88cc44;
   padding: 30px;
   max-width: 450px;
   width: 95%;
   max-height: 80vh;
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  color: #00ff00;
-  box-shadow: 0 0 40px rgba(0, 255, 0, 0.2);
+  color: #88cc44;
+  box-shadow: 0 0 40px rgba(136, 204, 68, 0.2);
   display: flex;
   flex-direction: column;
 }
@@ -40,7 +40,7 @@
 }
 
 .line {
-  color: #006600;
+  color: #445522;
   font-size: 14px;
 }
 
@@ -53,7 +53,7 @@
 .section {
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #003300;
+  border-bottom: 1px solid #1a2a10;
 }
 
 .section:last-child {
@@ -63,7 +63,7 @@
 
 .sectionTitle {
   font-size: 12px;
-  color: #00aa00;
+  color: #5a8a28;
   letter-spacing: 2px;
   margin-bottom: 12px;
 }
@@ -77,14 +77,14 @@
 
 .statLabel {
   font-size: 13px;
-  color: #00cc00;
+  color: #78b838;
 }
 
 .statValue {
   font-size: 14px;
   font-weight: bold;
-  color: #00ff00;
-  text-shadow: 0 0 4px rgba(0, 255, 0, 0.4);
+  color: #88cc44;
+  text-shadow: 0 0 4px rgba(136, 204, 68, 0.4);
 }
 
 .actions {
@@ -100,14 +100,14 @@
   cursor: pointer;
   transition: all 0.2s;
   letter-spacing: 2px;
-  background: rgba(0, 255, 0, 0.1);
-  border: 1px solid #00ff00;
-  color: #00ff00;
+  background: rgba(136, 204, 68, 0.1);
+  border: 1px solid #88cc44;
+  color: #88cc44;
 }
 
 .closeButton:hover {
-  background: rgba(0, 255, 0, 0.2);
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+  background: rgba(136, 204, 68, 0.2);
+  box-shadow: 0 0 15px rgba(136, 204, 68, 0.2);
 }
 
 /* Scrollbar styling */
@@ -116,14 +116,14 @@
 }
 
 .content::-webkit-scrollbar-track {
-  background: #001100;
+  background: #060d04;
 }
 
 .content::-webkit-scrollbar-thumb {
-  background: #003300;
-  border: 1px solid #004400;
+  background: #1a2a10;
+  border: 1px solid #2a3a18;
 }
 
 .content::-webkit-scrollbar-thumb:hover {
-  background: #004400;
+  background: #2a3a18;
 }

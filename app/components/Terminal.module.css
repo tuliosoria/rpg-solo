@@ -4,8 +4,8 @@
   position: relative;
   width: 100%;
   height: 100vh;
-  background: #0a0a0a;
-  color: #00ff00;
+  background: #080a06;
+  color: #88cc44;
   font-family:
     ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: var(--terminal-font-size, 15px);
@@ -13,6 +13,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  text-shadow: 0 0 4px rgba(136, 204, 68, 0.5), 0 0 8px rgba(136, 204, 68, 0.15);
 }
 
 /* Scanlines overlay - GPU accelerated */
@@ -26,8 +27,8 @@
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 255, 0, 0.03) 2px,
-    rgba(0, 255, 0, 0.03) 4px
+    rgba(136, 204, 68, 0.03) 2px,
+    rgba(136, 204, 68, 0.03) 4px
   );
   pointer-events: none;
   z-index: 10;
@@ -44,12 +45,439 @@
   left: 0;
   right: 0;
   bottom: 0;
-  box-shadow: inset 0 0 150px rgba(0, 255, 0, 0.05);
+  box-shadow: inset 0 0 150px rgba(136, 204, 68, 0.04);
   pointer-events: none;
   z-index: 5;
   will-change: opacity;
   transform: translateZ(0);
   contain: strict;
+}
+
+/* Heavy vignette overlay — dark edges, burned corners */
+.vignette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse 70% 60% at 50% 50%,
+    transparent 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.25) 60%,
+    rgba(0, 0, 0, 0.6) 78%,
+    rgba(0, 0, 0, 0.85) 90%,
+    rgba(0, 0, 0, 0.97) 100%
+  );
+  pointer-events: none;
+  z-index: 12;
+  transform: translateZ(0);
+}
+
+/* Corroded edge decay — uneven burned border */
+.edgeDecay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 13;
+  transform: translateZ(0);
+  /* Irregular dark burns at edges using multiple gradients */
+  background:
+    /* Top edge — uneven */
+    linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 1.5%, transparent 4%),
+    /* Bottom edge — heavier */
+    linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.5) 2%, transparent 5%),
+    /* Left edge */
+    linear-gradient(90deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 1.5%, transparent 3.5%),
+    /* Right edge */
+    linear-gradient(270deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 1.5%, transparent 3.5%),
+    /* Extra corner burns */
+    radial-gradient(ellipse at 0% 0%, rgba(0, 0, 0, 0.95) 0%, transparent 12%),
+    radial-gradient(ellipse at 100% 0%, rgba(0, 0, 0, 0.9) 0%, transparent 10%),
+    radial-gradient(ellipse at 0% 100%, rgba(0, 0, 0, 0.95) 0%, transparent 14%),
+    radial-gradient(ellipse at 100% 100%, rgba(0, 0, 0, 0.9) 0%, transparent 11%);
+}
+
+/* Dirty screen overlay — grime, scratches, smudges */
+.dirtyScreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 11;
+  transform: translateZ(0);
+  opacity: 0.08;
+  mix-blend-mode: screen;
+  /* SVG noise filter for grime texture */
+  background:
+    /* Scratches — thin diagonal lines */
+    repeating-linear-gradient(
+      -35deg,
+      transparent,
+      transparent 97px,
+      rgba(136, 204, 68, 0.15) 97px,
+      rgba(136, 204, 68, 0.15) 98px
+    ),
+    repeating-linear-gradient(
+      62deg,
+      transparent,
+      transparent 143px,
+      rgba(200, 200, 180, 0.12) 143px,
+      rgba(200, 200, 180, 0.12) 144px
+    ),
+    repeating-linear-gradient(
+      -78deg,
+      transparent,
+      transparent 211px,
+      rgba(180, 180, 160, 0.1) 211px,
+      rgba(180, 180, 160, 0.1) 212px
+    ),
+    /* Smudge clusters at edges */
+    radial-gradient(ellipse 40% 30% at 5% 15%, rgba(160, 160, 140, 0.25), transparent),
+    radial-gradient(ellipse 35% 45% at 92% 80%, rgba(160, 160, 140, 0.2), transparent),
+    radial-gradient(ellipse 50% 25% at 12% 88%, rgba(140, 140, 120, 0.22), transparent),
+    radial-gradient(ellipse 30% 35% at 88% 12%, rgba(140, 140, 120, 0.18), transparent),
+    /* Center should be relatively clear — more grime at borders */
+    radial-gradient(
+      ellipse 70% 60% at 50% 50%,
+      transparent 0%,
+      transparent 50%,
+      rgba(100, 100, 80, 0.15) 80%,
+      rgba(120, 120, 100, 0.3) 100%
+    );
+}
+
+/* Phosphor hue instability — subtle color drift animation */
+@keyframes phosphorDrift {
+  0%, 100% {
+    filter: none;
+  }
+  15% {
+    filter: hue-rotate(-5deg) saturate(0.9);
+  }
+  30% {
+    filter: none;
+  }
+  47% {
+    filter: hue-rotate(8deg) saturate(1.1) brightness(1.02);
+  }
+  52% {
+    filter: hue-rotate(-3deg) saturate(0.85) brightness(0.98);
+  }
+  68% {
+    filter: none;
+  }
+  82% {
+    filter: hue-rotate(4deg) saturate(0.95) brightness(1.03);
+  }
+  88% {
+    filter: hue-rotate(-2deg) saturate(1.05);
+  }
+}
+
+.phosphorDrift {
+  animation: phosphorDrift 12s ease-in-out infinite;
+  will-change: filter;
+}
+
+/* Phosphor unstable pulse for bright elements (header, risk bar) */
+@keyframes phosphorPulse {
+  0%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 6px rgba(136, 204, 68, 0.6), 0 0 12px rgba(136, 204, 68, 0.2);
+  }
+  10% {
+    opacity: 0.97;
+  }
+  25% {
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(160, 210, 80, 0.7), 0 0 16px rgba(160, 210, 80, 0.25);
+  }
+  40% {
+    opacity: 0.98;
+  }
+  55% {
+    opacity: 1;
+    text-shadow: 0 0 5px rgba(136, 204, 68, 0.5), 0 0 10px rgba(136, 204, 68, 0.15);
+  }
+  70% {
+    opacity: 0.96;
+    text-shadow: 0 0 9px rgba(180, 200, 100, 0.65), 0 0 18px rgba(180, 200, 100, 0.2);
+  }
+  85% {
+    opacity: 1;
+  }
+}
+
+/* Green smoke/vapor particles — sparse, subtle, rising */
+.smokeParticles {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  pointer-events: none;
+  z-index: 6;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.smokeParticles::before,
+.smokeParticles::after {
+  content: '';
+  position: absolute;
+  bottom: -10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(136, 204, 68, 0.04),
+    rgba(136, 204, 68, 0.01) 50%,
+    transparent 70%
+  );
+  filter: blur(20px);
+  will-change: transform, opacity;
+}
+
+.smokeParticles::before {
+  left: 5%;
+  width: 120px;
+  height: 180px;
+  animation: smokeRise1 18s ease-in-out infinite;
+}
+
+.smokeParticles::after {
+  right: 12%;
+  width: 90px;
+  height: 150px;
+  animation: smokeRise2 22s ease-in-out infinite 4s;
+}
+
+@keyframes smokeRise1 {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-200px) translateX(15px) scale(1.3);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-400px) translateX(-10px) scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes smokeRise2 {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.5;
+  }
+  60% {
+    transform: translateY(-180px) translateX(-20px) scale(1.4);
+    opacity: 0.25;
+  }
+  100% {
+    transform: translateY(-350px) translateX(10px) scale(1.7);
+    opacity: 0;
+  }
+}
+
+/* Extra smoke particles via wrapper spans */
+.smokeParticle3,
+.smokeParticle4,
+.smokeParticle5 {
+  position: absolute;
+  bottom: -5%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(136, 204, 68, 0.035),
+    rgba(136, 204, 68, 0.01) 50%,
+    transparent 70%
+  );
+  filter: blur(18px);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.smokeParticle3 {
+  left: 40%;
+  width: 100px;
+  height: 140px;
+  animation: smokeRise3 25s ease-in-out infinite 8s;
+}
+
+.smokeParticle4 {
+  left: 75%;
+  width: 80px;
+  height: 120px;
+  animation: smokeRise1 20s ease-in-out infinite 12s;
+}
+
+.smokeParticle5 {
+  left: 25%;
+  width: 70px;
+  height: 100px;
+  animation: smokeRise2 28s ease-in-out infinite 2s;
+}
+
+@keyframes smokeRise3 {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.8);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.4;
+  }
+  55% {
+    transform: translateY(-220px) translateX(25px) scale(1.2);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(-380px) translateX(-15px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Horizontal interference burst — signal dropout effect */
+.interferenceBurst {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  pointer-events: none;
+  z-index: 14;
+  background: rgba(136, 204, 68, 0.15);
+  animation: interferenceSlide 0.12s steps(2) forwards;
+  will-change: transform;
+}
+
+@keyframes interferenceSlide {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  25% {
+    transform: translateX(8px);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateX(-5px);
+    opacity: 0.6;
+  }
+  75% {
+    transform: translateX(3px);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+}
+
+/* High-risk terminal static — TV white noise overlay */
+.terminalStatic {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 15;
+  transform: translateZ(0);
+  opacity: 0;
+  mix-blend-mode: screen;
+  transition: opacity 0.5s ease;
+  /* Animated static noise using CSS */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  animation: staticJitter 0.1s steps(4) infinite;
+}
+
+.terminalStatic.staticActive {
+  opacity: 0.15;
+}
+
+.terminalStatic.staticIntense {
+  opacity: 0.3;
+}
+
+@keyframes staticJitter {
+  0% { background-position: 0 0; }
+  25% { background-position: -100px -50px; }
+  50% { background-position: 50px -100px; }
+  75% { background-position: -50px 75px; }
+  100% { background-position: 100px -25px; }
+}
+
+/* Alien silhouette that appears within static */
+.alienSilhouette {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 300px;
+  pointer-events: none;
+  z-index: 16;
+  opacity: 0;
+  transition: opacity 3s ease-in;
+  /* Classic grey alien shape using CSS */
+  background: radial-gradient(
+    ellipse 100% 45% at 50% 20%,
+    rgba(200, 200, 200, 0.2) 0%,
+    rgba(200, 200, 200, 0.1) 60%,
+    transparent 100%
+  );
+  filter: blur(2px);
+  mix-blend-mode: screen;
+}
+
+.alienSilhouette.alienVisible {
+  opacity: 1;
+}
+
+.alienSilhouette::before {
+  /* Head — large oval */
+  content: '';
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 90px;
+  border-radius: 50% 50% 45% 45%;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    rgba(220, 220, 220, 0.3) 0%,
+    rgba(180, 180, 180, 0.15) 50%,
+    transparent 100%
+  );
+}
+
+.alienSilhouette::after {
+  /* Eyes — two dark almond shapes */
+  content: '';
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 25px;
+  background:
+    radial-gradient(ellipse 35% 90% at 25% 50%, rgba(0, 0, 0, 0.6) 0%, transparent 100%),
+    radial-gradient(ellipse 35% 90% at 75% 50%, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
 }
 
 /* Flicker animation - GPU accelerated */
@@ -108,18 +536,19 @@
   justify-content: space-between;
   align-items: center;
   padding: 6px 16px;
-  background: #002a00;
-  border-bottom: 2px solid #00ff00;
-  color: #00ff00;
+  background: #0c1a08;
+  border-bottom: 2px solid #6b9930;
+  color: #88cc44;
   font-size: 1.1em;
   font-weight: bold;
   letter-spacing: 0.05em;
   text-shadow:
-    0 0 8px #00ff00,
-    0 0 2px #00ff00;
+    0 0 8px rgba(136, 204, 68, 0.6),
+    0 0 2px rgba(136, 204, 68, 0.4);
   z-index: 3;
   gap: 8px;
   flex-wrap: nowrap;
+  animation: phosphorPulse 8s ease-in-out infinite;
 }
 
 .statusLeft {
@@ -134,19 +563,19 @@
 }
 
 .statusLeft.clickable:hover {
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00;
+  color: #99dd55;
+  text-shadow: 0 0 12px rgba(136, 204, 68, 0.8);
 }
 
 .statusRight {
-  color: #00ff00;
+  color: #88cc44;
   flex-shrink: 0;
   white-space: nowrap;
   margin-left: auto;
 }
 
 .saveIndicator {
-  color: #007700;
+  color: #445522;
   font-size: 0.85em;
   flex-shrink: 1;
   min-width: 0;
@@ -182,9 +611,9 @@
   position: absolute;
   top: 100%;
   left: 32px;
-  background: #001a00;
-  border: 2px solid #00ff00;
-  box-shadow: 0 4px 16px rgba(0, 255, 0, 0.3);
+  background: #060d04;
+  border: 2px solid #6b9930;
+  box-shadow: 0 4px 16px rgba(136, 204, 68, 0.2);
   z-index: 100;
   min-width: 200px;
 }
@@ -195,8 +624,8 @@
   padding: 12px 16px;
   background: transparent;
   border: none;
-  border-bottom: 1px solid #003300;
-  color: #00ff00;
+  border-bottom: 1px solid #1a2a10;
+  color: #88cc44;
   font-family: inherit;
   font-size: 1em;
   text-align: left;
@@ -209,8 +638,8 @@
 }
 
 .menuItem:hover {
-  background: #003300;
-  text-shadow: 0 0 8px #00ff00;
+  background: #1a2a10;
+  text-shadow: 0 0 8px rgba(136, 204, 68, 0.6);
 }
 
 /* Progress tracker */
@@ -221,14 +650,15 @@
   align-items: center;
   padding: 6px 16px;
   padding-right: 140px; /* Make room for hacker avatar */
-  background: #003800;
-  border-bottom: 2px solid #00ff00;
+  background: #0e1c0a;
+  border-bottom: 2px solid #6b9930;
   font-size: 0.95em;
   font-weight: bold;
   z-index: 2;
   gap: 10px;
-  box-shadow: 0 2px 12px 0 #00ff0033;
+  box-shadow: 0 2px 12px 0 rgba(136, 204, 68, 0.12);
   flex-wrap: wrap;
+  animation: phosphorPulse 8s ease-in-out infinite 2s;
 }
 
 .truthsSection {
@@ -241,14 +671,14 @@
 }
 
 .evidenceTrackerTitle {
-  color: #00cc00;
+  color: #78b838;
   font-weight: bold;
-  text-shadow: 0 0 4px rgba(0, 200, 0, 0.5);
+  text-shadow: 0 0 4px rgba(120, 184, 56, 0.5);
 }
 
 .evidenceTrackerDivider {
-  color: #00aa00;
-  text-shadow: 0 0 4px rgba(0, 170, 0, 0.45);
+  color: #5a8a28;
+  text-shadow: 0 0 4px rgba(90, 138, 40, 0.45);
 }
 
 .riskSection {
@@ -273,38 +703,38 @@
 }
 
 .trackerLabel {
-  color: #00cc00;
+  color: #78b838;
   font-weight: bold;
   text-transform: uppercase;
-  text-shadow: 0 0 4px rgba(0, 200, 0, 0.5);
+  text-shadow: 0 0 4px rgba(120, 184, 56, 0.5);
 }
 
 /* Evidence tier: PROVEN (●) - fully verified */
 .truthProven {
-  color: #00ff00;
+  color: #99dd55;
   text-shadow:
-    0 0 12px #00ff00,
-    0 0 2px #00ff00;
+    0 0 12px rgba(153, 221, 85, 0.7),
+    0 0 2px rgba(153, 221, 85, 0.5);
   font-weight: bold;
   font-size: 1.1em;
-  border-bottom: 2px solid #00ff00;
+  border-bottom: 2px solid #88cc44;
   padding: 0 6px;
   border-radius: 3px;
 }
 
 .truthMissing {
-  color: #336633;
-  background: #001a00;
-  border-bottom: 2px dashed #00ff00;
+  color: #334422;
+  background: #060d04;
+  border-bottom: 2px dashed #556633;
   padding: 0 6px;
   border-radius: 3px;
   opacity: 0.7;
 }
 
 .truthCount {
-  color: #00ff00;
+  color: #88cc44;
   font-weight: bold;
-  text-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
+  text-shadow: 0 0 4px rgba(136, 204, 68, 0.6);
 }
 
 .riskLevel {
@@ -319,23 +749,23 @@
   margin-left: 1rem;
   font-weight: bold;
   min-width: 90px;
-  color: #00ff00;
-  text-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
+  color: #88cc44;
+  text-shadow: 0 0 4px rgba(136, 204, 68, 0.5);
   /* Same font-size as riskLevel for consistency */
   font-size: inherit;
 }
 
 /* Risk level colors */
 .minimal {
-  background-color: #00aa00;
-  color: #00ff00;
-  text-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
+  background-color: #5a8a28;
+  color: #88cc44;
+  text-shadow: 0 0 4px rgba(136, 204, 68, 0.5);
 }
 
 .low {
-  background-color: #00cc00;
-  color: #00ff00;
-  text-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
+  background-color: #6b9930;
+  color: #99dd55;
+  text-shadow: 0 0 4px rgba(153, 221, 85, 0.6);
 }
 
 .elevated {
@@ -379,7 +809,7 @@
   50% {
     opacity: 0.7;
     filter: blur(2px);
-    text-shadow: 0 0 20px #00ff00;
+    text-shadow: 0 0 20px rgba(136, 204, 68, 0.7);
   }
   100% {
     opacity: 1;
@@ -551,16 +981,16 @@
 }
 
 .output::-webkit-scrollbar-track {
-  background: #001a00;
+  background: #060d04;
 }
 
 .output::-webkit-scrollbar-thumb {
-  background: #003300;
+  background: #1a2a10;
   border-radius: 4px;
 }
 
 .output::-webkit-scrollbar-thumb:hover {
-  background: #004400;
+  background: #2a3a18;
 }
 
 /* Line styles - optimized with content-visibility */
@@ -574,7 +1004,7 @@
 }
 
 .input {
-  color: #88ff88;
+  color: #99dd55;
 }
 
 .error {
@@ -590,12 +1020,12 @@
 }
 
 .notice {
-  color: #aaffaa;
+  color: #a0cc77;
   font-style: italic;
 }
 
 .readLine {
-  color: #557755;
+  color: #3d5530;
 }
 
 .ufo74 {
@@ -610,9 +1040,9 @@
 }
 
 .tutorialCommand {
-  color: #00ff00;
+  color: #99dd55;
   font-weight: bold;
-  text-shadow: 0 0 6px rgba(0, 255, 0, 0.6);
+  text-shadow: 0 0 6px rgba(153, 221, 85, 0.6);
 }
 
 /* Dim styling for already-read files in directory listings */
@@ -622,10 +1052,10 @@
 
 /* File content styling - visual container */
 .fileContent {
-  color: #00dd00;
+  color: #78b838;
   font-size: 0.92em;
-  background: rgba(0, 40, 0, 0.4);
-  border-left: 2px solid #004400;
+  background: rgba(10, 20, 5, 0.4);
+  border-left: 2px solid #2a3a18;
   padding-left: 12px;
   margin-left: 4px;
   line-height: 1.5;
@@ -673,8 +1103,8 @@
   display: flex;
   align-items: center;
   padding: 10px 16px;
-  background: #001100;
-  border-top: 2px solid #00ff00;
+  background: #060d04;
+  border-top: 2px solid #6b9930;
   z-index: 2;
   flex-shrink: 0; /* Prevent shrinking on small screens */
 }
@@ -685,14 +1115,14 @@
   justify-content: center;
   align-items: center;
   padding: 10px 16px;
-  background: #001100;
-  border-top: 2px solid #00ff00;
+  background: #060d04;
+  border-top: 2px solid #6b9930;
   z-index: 2;
   flex-shrink: 0; /* Prevent shrinking on small screens */
 }
 
 .prompt {
-  color: #00ff00;
+  color: #88cc44;
   margin-right: 8px;
   font-weight: bold;
 }
@@ -702,15 +1132,15 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #00ff00;
+  color: #88cc44;
   font-family: inherit;
   font-size: 1em;
-  caret-color: #00ff00;
+  caret-color: #88cc44;
   padding: 6px 0;
 }
 
 .inputField::placeholder {
-  color: #00aa00;
+  color: #5a8a28;
   opacity: 1;
   animation: placeholderPulse 1.5s ease-in-out infinite;
 }
@@ -731,32 +1161,32 @@
 
 /* Subtle Enter Prompt - inline in enterPromptArea */
 .enterPromptContent {
-  background: rgba(0, 50, 0, 0.9);
-  border: 2px solid rgba(0, 255, 0, 0.8);
+  background: rgba(14, 28, 10, 0.9);
+  border: 2px solid rgba(136, 204, 68, 0.7);
   border-radius: 6px;
-  color: rgba(0, 255, 0, 0.95);
+  color: rgba(136, 204, 68, 0.95);
   font-family: inherit;
   font-size: 1.1em;
   font-weight: bold;
   letter-spacing: 2px;
   padding: 12px 28px;
   cursor: pointer;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+  text-shadow: 0 0 10px rgba(136, 204, 68, 0.5);
   box-shadow:
-    0 0 20px rgba(0, 255, 0, 0.25),
-    inset 0 0 10px rgba(0, 255, 0, 0.1);
+    0 0 20px rgba(136, 204, 68, 0.15),
+    inset 0 0 10px rgba(136, 204, 68, 0.05);
   transition: all 0.2s ease;
   animation: enterPromptPulse 2.5s ease-in-out infinite;
 }
 
 .enterPromptContent:hover {
-  background: rgba(0, 70, 0, 0.95);
-  border-color: rgba(0, 255, 0, 0.9);
-  color: #00ff00;
-  text-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+  background: rgba(20, 38, 14, 0.95);
+  border-color: rgba(136, 204, 68, 0.9);
+  color: #99dd55;
+  text-shadow: 0 0 15px rgba(136, 204, 68, 0.7);
   box-shadow:
-    0 0 30px rgba(0, 255, 0, 0.4),
-    inset 0 0 15px rgba(0, 255, 0, 0.15);
+    0 0 30px rgba(136, 204, 68, 0.25),
+    inset 0 0 15px rgba(136, 204, 68, 0.08);
 }
 
 .enterPromptContent:active {
@@ -778,18 +1208,18 @@
   0%,
   100% {
     opacity: 0.85;
-    box-shadow: 0 0 12px rgba(0, 255, 0, 0.15);
+    box-shadow: 0 0 12px rgba(136, 204, 68, 0.1);
   }
   50% {
     opacity: 1;
-    box-shadow: 0 0 18px rgba(0, 255, 0, 0.25);
+    box-shadow: 0 0 18px rgba(136, 204, 68, 0.18);
   }
 }
 
 /* Inline enter hint at end of output in enter-only mode */
 .enterHintInline {
   display: block;
-  color: rgba(0, 255, 0, 0.7);
+  color: rgba(136, 204, 68, 0.6);
   font-size: 0.85em;
   letter-spacing: 1px;
   padding: 8px 0 4px;
@@ -828,7 +1258,7 @@
 }
 
 .cursor {
-  color: #00ff00;
+  color: #88cc44;
   animation: cursorBlink 1s infinite;
 }
 
@@ -875,7 +1305,7 @@
   pointer-events: none;
   z-index: 1;
   opacity: 0.03;
-  color: #00ff00;
+  color: #88cc44;
   font-family: inherit;
   white-space: pre-wrap;
   overflow: hidden;
@@ -913,7 +1343,7 @@
 }
 
 .timerSequence {
-  color: #00ff00;
+  color: #88cc44;
   font-size: 11px;
   margin-top: 8px;
   letter-spacing: 1px;
@@ -995,6 +1425,14 @@
 
   .inputArea {
     padding: 6px 10px;
+  }
+
+  /* Hide smoke particles on small screens for performance */
+  .smokeParticles,
+  .smokeParticle3,
+  .smokeParticle4,
+  .smokeParticle5 {
+    display: none;
   }
 }
 
@@ -1079,7 +1517,17 @@
   .typingWarningInline,
   .timedDecryptTimerContent,
   .countdownTimerContent,
-  .warmingUp {
+  .warmingUp,
+  .phosphorDrift,
+  .terminalStatic,
+  .smokeParticles::before,
+  .smokeParticles::after,
+  .smokeParticle3,
+  .smokeParticle4,
+  .smokeParticle5,
+  .interferenceBurst,
+  .statusBar,
+  .progressTracker {
     animation: none !important;
     transition: none !important;
   }

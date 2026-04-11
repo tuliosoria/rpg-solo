@@ -132,7 +132,7 @@
 /* Image frame */
 .imageFrame {
   position: relative;
-  border: 2px solid #003300;
+  border: 2px solid #1a2a10;
   background: #000;
   padding: 8px;
   margin-bottom: 16px;
@@ -252,7 +252,7 @@
 
 /* Metadata */
 .metadata {
-  color: #004400;
+  color: #2a3a18;
   font-size: 11px;
   line-height: 1.8;
   text-align: left;

@@ -51,7 +51,7 @@ const ICQChat = dynamic(() => import('./ICQChat'), {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#00ff00',
+        color: '#88cc44',
         fontFamily: 'monospace',
       }}
     >
@@ -198,6 +198,12 @@ export default function Terminal({
     setBurnInLines,
     evidenceFoundIndicatorKey,
     setEvidenceFoundIndicatorKey,
+    interferenceBurst,
+    setInterferenceBurst,
+    terminalStaticLevel,
+    setTerminalStaticLevel,
+    alienSilhouetteVisible,
+    setAlienSilhouetteVisible,
   } = useTerminalState(initialState, initialPhase);
   const keypressTimestamps = useRef<number[]>([]);
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -667,6 +673,9 @@ export default function Terminal({
     setShowTuringTest,
     setActiveImage,
     setActiveVideo,
+    setInterferenceBurst,
+    setTerminalStaticLevel,
+    setAlienSilhouetteVisible,
     refs: {
       outputRef,
       inputRef,
@@ -1017,11 +1026,47 @@ export default function Terminal({
   return (
     <FloatingUIProvider>
       <div
-        className={`${styles.terminal} ${flickerActive ? styles.flicker : ''} ${glitchActive ? styles.glitchActive : ''} ${glitchHeavy ? styles.glitchHeavy : ''} ${isShaking ? styles.shaking : ''} ${isWarmingUp ? styles.warmingUp : ''}`}
+        className={`${styles.terminal} ${styles.phosphorDrift} ${flickerActive ? styles.flicker : ''} ${glitchActive ? styles.glitchActive : ''} ${glitchHeavy ? styles.glitchHeavy : ''} ${isShaking ? styles.shaking : ''} ${isWarmingUp ? styles.warmingUp : ''}`}
         onClick={focusTerminalInput}
       >
         {/* Scanlines overlay */}
         <div className={styles.scanlines} />
+
+        {/* Dirty screen overlay — grime, scratches, smudges */}
+        <div className={styles.dirtyScreen} />
+
+        {/* Heavy vignette — dark edges, burned corners */}
+        <div className={styles.vignette} />
+
+        {/* Corroded edge decay — uneven burned border */}
+        <div className={styles.edgeDecay} />
+
+        {/* Green smoke/vapor particles */}
+        <div className={styles.smokeParticles}>
+          <div className={styles.smokeParticle3} />
+          <div className={styles.smokeParticle4} />
+          <div className={styles.smokeParticle5} />
+        </div>
+
+        {/* Horizontal interference burst */}
+        {interferenceBurst && (
+          <div
+            className={styles.interferenceBurst}
+            style={{ top: `${interferenceBurst.top}%` }}
+          />
+        )}
+
+        {/* Terminal static overlay at high risk */}
+        <div
+          className={`${styles.terminalStatic} ${terminalStaticLevel >= 2 ? styles.staticIntense : terminalStaticLevel >= 1 ? styles.staticActive : ''}`}
+        />
+
+        {/* Alien silhouette within static */}
+        {terminalStaticLevel > 0 && (
+          <div
+            className={`${styles.alienSilhouette} ${alienSilhouetteVisible ? styles.alienVisible : ''}`}
+          />
+        )}
 
         {/* Screen burn-in effect - ghost text from previous outputs */}
         {burnInLines.length > 0 && (

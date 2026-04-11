@@ -15,13 +15,13 @@
 
 .modal {
   background: #0a0a0a;
-  border: 1px solid #00ff00;
+  border: 1px solid #88cc44;
   padding: 30px;
   max-width: 400px;
   width: 90%;
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  color: #00ff00;
-  box-shadow: 0 0 40px rgba(0, 255, 0, 0.2);
+  color: #88cc44;
+  box-shadow: 0 0 40px rgba(136, 204, 68, 0.2);
 }
 
 .header {
@@ -36,7 +36,7 @@
 }
 
 .line {
-  color: #006600;
+  color: #445522;
   font-size: 14px;
 }
 
@@ -52,12 +52,12 @@
   gap: 8px;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #003300;
+  border-bottom: 1px solid #1a2a10;
 }
 
 .label {
   font-size: 14px;
-  color: #00cc00;
+  color: #78b838;
 }
 
 .toggle {
@@ -70,9 +70,9 @@
 }
 
 .toggleOn {
-  background: rgba(0, 255, 0, 0.15);
-  border: 1px solid #00ff00;
-  color: #00ff00;
+  background: rgba(136, 204, 68, 0.15);
+  border: 1px solid #88cc44;
+  color: #88cc44;
 }
 
 .toggleOff {
@@ -82,7 +82,7 @@
 }
 
 .toggle:hover {
-  background: rgba(0, 255, 0, 0.2);
+  background: rgba(136, 204, 68, 0.2);
 }
 
 .sliderContainer {
@@ -96,7 +96,7 @@
   height: 4px;
   -webkit-appearance: none;
   appearance: none;
-  background: #003300;
+  background: #1a2a10;
   outline: none;
   cursor: pointer;
 }
@@ -106,16 +106,16 @@
   appearance: none;
   width: 16px;
   height: 16px;
-  background: #00ff00;
+  background: #88cc44;
   cursor: pointer;
   border-radius: 0;
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+  box-shadow: 0 0 8px rgba(136, 204, 68, 0.5);
 }
 
 .slider::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: #00ff00;
+  background: #88cc44;
   cursor: pointer;
   border: none;
   border-radius: 0;
@@ -128,28 +128,28 @@
 
 .volumeValue {
   font-size: 12px;
-  color: #00aa00;
+  color: #5a8a28;
   min-width: 40px;
   text-align: right;
 }
 
 .hint {
   font-size: 11px;
-  color: #006600;
+  color: #445522;
   margin-left: 8px;
 }
 
 .info {
   font-size: 12px;
-  color: #006600;
+  color: #445522;
   line-height: 1.8;
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #003300;
+  border-top: 1px solid #1a2a10;
 }
 
 .infoLine {
-  color: #00aa00;
+  color: #5a8a28;
   margin-bottom: 8px;
 }
 
@@ -169,12 +169,12 @@
   cursor: pointer;
   transition: all 0.2s;
   letter-spacing: 2px;
-  background: rgba(0, 255, 0, 0.1);
-  border: 1px solid #00ff00;
-  color: #00ff00;
+  background: rgba(136, 204, 68, 0.1);
+  border: 1px solid #88cc44;
+  color: #88cc44;
 }
 
 .closeButton:hover {
-  background: rgba(0, 255, 0, 0.2);
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+  background: rgba(136, 204, 68, 0.2);
+  box-shadow: 0 0 15px rgba(136, 204, 68, 0.2);
 }

@@ -63,6 +63,9 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
   const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
   const [burnInLines, setBurnInLines] = useState<string[]>([]);
   const [evidenceFoundIndicatorKey, setEvidenceFoundIndicatorKey] = useState(0);
+  const [interferenceBurst, setInterferenceBurst] = useState<{ top: number } | null>(null);
+  const [terminalStaticLevel, setTerminalStaticLevel] = useState(0); // 0=off, 1=active, 2=intense
+  const [alienSilhouetteVisible, setAlienSilhouetteVisible] = useState(false);
 
   // Sync state when a new game state is loaded externally (e.g., checkpoint load)
   // We detect this by checking if the seed or lastSaveTime changed
@@ -177,5 +180,11 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     setBurnInLines,
     evidenceFoundIndicatorKey,
     setEvidenceFoundIndicatorKey,
+    interferenceBurst,
+    setInterferenceBurst,
+    terminalStaticLevel,
+    setTerminalStaticLevel,
+    alienSilhouetteVisible,
+    setAlienSilhouetteVisible,
   };
 }
