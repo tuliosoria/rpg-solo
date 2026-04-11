@@ -1,8 +1,61 @@
 // Filesystem resolver and navigation
 
-import { FileSystemNode, FileNode, GameState } from '../types';
+import { FileSystemNode, FileNode, GameState, TRUTH_CATEGORIES, TruthCategory } from '../types';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 import { createSeededRng } from './rng';
+import { analyzeFileEvidencePotential } from './evidenceRevelation';
+
+// Cached set of file paths that can potentially reveal evidence
+let _evidenceBearingFiles: Set<string> | null = null;
+
+function buildEvidenceBearingFiles(): Set<string> {
+  const result = new Set<string>();
+
+  function traverse(node: FileSystemNode, path: string) {
+    if (node.type === 'file') {
+      const file = node as FileNode;
+      const potential = analyzeFileEvidencePotential(
+        path,
+        file.content,
+        file.reveals as TruthCategory[] | undefined
+      );
+      if (potential.length > 0) {
+        result.add(path);
+      }
+    } else {
+      for (const [name, child] of Object.entries(node.children)) {
+        const childPath = path === '/' ? `/${name}` : `${path}/${name}`;
+        traverse(child, childPath);
+      }
+    }
+  }
+
+  traverse(FILESYSTEM_ROOT, '/');
+  return result;
+}
+
+/**
+ * Returns the set of file paths that can potentially reveal evidence.
+ * Cached after first call since the filesystem is static.
+ */
+export function getEvidenceBearingFiles(): Set<string> {
+  if (!_evidenceBearingFiles) {
+    _evidenceBearingFiles = buildEvidenceBearingFiles();
+  }
+  return _evidenceBearingFiles;
+}
+
+/**
+ * Checks if a file should be dynamically locked behind the override protocol.
+ * After the player discovers their first evidence, all remaining evidence-bearing
+ * files that haven't been read yet are gated behind override.
+ */
+export function isEvidenceGated(path: string, state: GameState): boolean {
+  if (state.flags.adminUnlocked) return false;
+  if (state.truthsDiscovered.size === 0) return false;
+  if (state.filesRead.has(path)) return false;
+  return getEvidenceBearingFiles().has(path);
+}
 
 /**
  * Resolves a path (absolute or relative) against a current working path.
@@ -98,6 +151,9 @@ export function listDirectory(
     const fullPath = path === '/' ? `/${name}` : `${path}/${name}`;
     const mutation = state.fileMutations[fullPath];
     if (mutation?.deleted) continue;
+
+    // Hide evidence-bearing files after first evidence (dynamic override lock)
+    if (child.type === 'file' && isEvidenceGated(fullPath, state)) continue;
 
     entries.push({
       name: child.type === 'dir' ? `${name}/` : name,
@@ -213,6 +269,11 @@ export function canAccessFile(
 
   if (mutation?.deleted) return { accessible: false, reason: 'FILE DELETED' };
   if (mutation?.locked) return { accessible: false, reason: 'FILE LOCKED' };
+
+  // Dynamic override lock — evidence-bearing files gated after first evidence
+  if (isEvidenceGated(path, state)) {
+    return { accessible: false, reason: 'ACCESS DENIED — OVERRIDE PROTOCOL REQUIRED' };
+  }
 
   return { accessible: true };
 }

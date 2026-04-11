@@ -201,7 +201,7 @@ describe('Narrative Mechanics', () => {
 
     describe('incident_summary_official.txt', () => {
       it('flags disinformation when read', () => {
-        const state = createTestState({ currentPath: '/internal' });
+        const state = createTestState({ currentPath: '/internal', flags: { adminUnlocked: true } });
         const result = executeCommand('open incident_summary_official.txt', state);
         expect(result.stateChanges.disinformationDiscovered?.has('official_summary')).toBe(true);
       });
@@ -634,6 +634,7 @@ describe('Narrative Mechanics', () => {
         currentPath: '/internal',
         tutorialStep: -1,
         tutorialComplete: true,
+        flags: { adminUnlocked: true },
       });
       const result = executeCommand('open jardim_andere_incident.txt', state);
 
@@ -1406,7 +1407,8 @@ describe('Narrative Mechanics', () => {
         currentPath: '/ops/assessments',
         accessLevel: 2,
         filesRead: new Set<string>(),
-        imagesShownThisRun: new Set<string>(), // Ensure no images shown yet
+        imagesShownThisRun: new Set<string>(),
+        flags: { adminUnlocked: true },
       });
       const result = executeCommand('open foreign_drone_assessment.txt', state);
 
