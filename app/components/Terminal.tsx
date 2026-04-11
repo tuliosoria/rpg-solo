@@ -643,6 +643,21 @@ export default function Terminal({
     }
   }, []);
 
+  // Extend eye timers after tutorial popup dismiss
+  const handleExtendEyeTimers = useCallback((durationMs: number) => {
+    setGameState(prev => ({
+      ...prev,
+      firewallEyes: prev.firewallEyes.map(eye => ({
+        ...eye,
+        detonateTime: eye.detonateTime + durationMs,
+      })),
+      lastEyeSpawnTime:
+        prev.lastEyeSpawnTime > 0
+          ? prev.lastEyeSpawnTime + durationMs
+          : prev.lastEyeSpawnTime,
+    }));
+  }, []);
+
   const { handleSubmit, handleKeyDown } = useTerminalInput({
     gameState,
     gamePhase,
@@ -1140,6 +1155,7 @@ export default function Terminal({
             onSpawnEyeBatch={handleFirewallEyeBatchSpawn}
             onActivateFirewall={handleFirewallActivate}
             onPauseChanged={handleFirewallPauseChanged}
+            onExtendEyeTimers={handleExtendEyeTimers}
             onTutorialShown={() => {
               setGameState(prev => ({
                 ...prev,
