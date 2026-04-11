@@ -1072,36 +1072,32 @@ export default function Terminal({
 
   return (
     <FloatingUIProvider>
-      <div
-        className={`${styles.terminal} ${styles.phosphorDrift} ${flickerActive ? styles.flicker : ''} ${isShaking ? styles.shaking : ''} ${isWarmingUp ? styles.warmingUp : ''}`}
-        onClick={focusTerminalInput}
-      >
-        {/* Scanlines overlay */}
-        <div className={styles.scanlines} />
+      <div className={styles.crtShell}>
+        <div className={styles.crtBezel}>
+          {/* Bezel patina and old-TV wear live outside the game screen */}
+          <div className={styles.scanlines} />
+          <div className={styles.dirtyScreen} />
+          <div className={styles.vignette} />
+          <div className={styles.edgeDecay} />
+          <div className={styles.smokeParticles}>
+            <div className={styles.smokeParticle3} />
+            <div className={styles.smokeParticle4} />
+            <div className={styles.smokeParticle5} />
+          </div>
 
-        {/* Dirty screen overlay — grime, scratches, smudges */}
-        <div className={styles.dirtyScreen} />
-
-        {/* Heavy vignette — dark edges, burned corners */}
-        <div className={styles.vignette} />
-
-        {/* Corroded edge decay — uneven burned border */}
-        <div className={styles.edgeDecay} />
-
-        {/* Green smoke/vapor particles */}
-        <div className={styles.smokeParticles}>
-          <div className={styles.smokeParticle3} />
-          <div className={styles.smokeParticle4} />
-          <div className={styles.smokeParticle5} />
-        </div>
-
-        {/* Horizontal interference burst */}
-        {interferenceBurst && (
-          <div
-            className={styles.interferenceBurst}
-            style={{ top: `${interferenceBurst.top}%` }}
-          />
-        )}
+          <div className={styles.screenViewport}>
+            <div className={styles.screenWarp}>
+              <div
+                className={`${styles.terminal} ${styles.phosphorDrift} ${flickerActive ? styles.flicker : ''} ${isShaking ? styles.shaking : ''} ${isWarmingUp ? styles.warmingUp : ''}`}
+                onClick={focusTerminalInput}
+              >
+                {/* Horizontal interference burst */}
+                {interferenceBurst && (
+                  <div
+                    className={styles.interferenceBurst}
+                    style={{ top: `${interferenceBurst.top}%` }}
+                  />
+                )}
 
         {/* White noise static overlay + alien face materialization */}
         <StaticNoise
@@ -1676,10 +1672,14 @@ export default function Terminal({
           />
         )}
 
-        {/* Tutorial skip popup — shown on fresh new game */}
-        {showTutorialSkip && (
-          <TutorialSkipPopup onSkip={handleTutorialSkip} onContinue={handleTutorialContinue} />
-        )}
+                {/* Tutorial skip popup — shown on fresh new game */}
+                {showTutorialSkip && (
+                  <TutorialSkipPopup onSkip={handleTutorialSkip} onContinue={handleTutorialContinue} />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </FloatingUIProvider>
   );

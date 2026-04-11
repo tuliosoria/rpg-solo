@@ -1,9 +1,139 @@
-/* Terminal 1996 - Terminal Component Styles */
+/* Terminal 1996 - CRT shell and screen */
+
+.crtShell {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 2vw, 26px);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(62, 69, 52, 0.18), transparent 34%),
+    radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.55), transparent 58%),
+    linear-gradient(180deg, #181713 0%, #0d0d0b 45%, #050505 100%);
+}
+
+.crtBezel {
+  position: relative;
+  width: min(96vw, 1500px);
+  height: min(94vh, 980px);
+  padding: clamp(28px, 3vw, 44px);
+  border-radius: clamp(34px, 3vw, 50px);
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, #625b4d 0%, #3a352d 26%, #1d1a17 58%, #0b0a09 100%);
+  box-shadow:
+    0 26px 70px rgba(0, 0, 0, 0.7),
+    0 8px 18px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -28px 44px rgba(0, 0, 0, 0.55),
+    inset 18px 0 28px rgba(255, 255, 255, 0.03),
+    inset -22px 0 34px rgba(0, 0, 0, 0.4);
+}
+
+.crtBezel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 15% 12%, rgba(255, 255, 255, 0.08), transparent 18%),
+    radial-gradient(circle at 85% 82%, rgba(0, 0, 0, 0.35), transparent 22%),
+    repeating-linear-gradient(
+      -16deg,
+      transparent,
+      transparent 11px,
+      rgba(255, 255, 255, 0.012) 11px,
+      rgba(255, 255, 255, 0.012) 12px
+    );
+  opacity: 0.9;
+}
+
+.crtBezel::after {
+  content: '';
+  position: absolute;
+  inset: clamp(10px, 1.2vw, 18px);
+  border-radius: calc(clamp(34px, 3vw, 50px) - 8px);
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -20px 32px rgba(0, 0, 0, 0.35);
+}
+
+.screenViewport {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  padding: clamp(10px, 1vw, 15px);
+  border-radius: clamp(24px, 2.2vw, 34px);
+  background:
+    linear-gradient(180deg, rgba(18, 18, 18, 0.96) 0%, rgba(4, 4, 4, 0.98) 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.8),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 0 0 2px rgba(7, 9, 6, 0.92),
+    inset 0 14px 24px rgba(255, 255, 255, 0.025),
+    inset 0 -20px 36px rgba(0, 0, 0, 0.45);
+}
+
+.screenViewport::before {
+  content: '';
+  position: absolute;
+  inset: clamp(12px, 1.2vw, 18px);
+  border-radius: clamp(22px, 2vw, 30px) / clamp(30px, 3vw, 44px);
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 18%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, transparent 22%),
+    radial-gradient(ellipse 120% 88% at 50% -10%, rgba(255, 255, 255, 0.06), transparent 58%);
+  mix-blend-mode: screen;
+}
+
+.screenWarp {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: clamp(22px, 2vw, 30px) / clamp(30px, 3vw, 44px);
+  background:
+    radial-gradient(
+      ellipse 130% 92% at 50% 45%,
+      rgba(20, 30, 12, 0.08) 0%,
+      rgba(8, 10, 6, 0.02) 46%,
+      rgba(0, 0, 0, 0.24) 100%
+    ),
+    #080a06;
+  transform: perspective(1400px) scaleX(0.982) scaleY(0.968);
+  transform-origin: center center;
+  box-shadow:
+    inset 0 0 0 1px rgba(150, 180, 120, 0.08),
+    inset 0 0 70px rgba(255, 255, 255, 0.02),
+    inset 0 0 140px rgba(0, 0, 0, 0.38);
+}
+
+.screenWarp::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 24px 30px rgba(255, 255, 255, 0.03),
+    inset 0 -34px 48px rgba(0, 0, 0, 0.28),
+    inset 26px 0 36px rgba(0, 0, 0, 0.18),
+    inset -26px 0 36px rgba(0, 0, 0, 0.18);
+}
 
 .terminal {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
   background: #080a06;
   color: #88cc44;
   font-family:
@@ -13,10 +143,11 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  border-radius: inherit;
   text-shadow: 0 0 4px rgba(136, 204, 68, 0.5), 0 0 8px rgba(136, 204, 68, 0.15);
 }
 
-/* Scanlines overlay - GPU accelerated */
+/* Bezel scanlines - live on the casing, not over the gameplay surface */
 .scanlines {
   position: absolute;
   top: 0;
@@ -27,11 +158,11 @@
     0deg,
     transparent,
     transparent 2px,
-    rgba(136, 204, 68, 0.03) 2px,
-    rgba(136, 204, 68, 0.03) 4px
+    rgba(220, 215, 190, 0.035) 2px,
+    rgba(220, 215, 190, 0.035) 4px
   );
   pointer-events: none;
-  z-index: 10;
+  z-index: 2;
   will-change: opacity;
   transform: translateZ(0); /* Force GPU layer */
   contain: strict; /* Isolate paint/layout */
@@ -53,7 +184,7 @@
   contain: strict;
 }
 
-/* Heavy vignette overlay — dark edges, burned corners */
+/* Bezel vignette and shadowing around the screen opening */
 .vignette {
   position: absolute;
   top: 0;
@@ -64,17 +195,17 @@
     ellipse 70% 60% at 50% 50%,
     transparent 0%,
     transparent 40%,
-    rgba(0, 0, 0, 0.25) 60%,
-    rgba(0, 0, 0, 0.6) 78%,
-    rgba(0, 0, 0, 0.85) 90%,
-    rgba(0, 0, 0, 0.97) 100%
+    rgba(0, 0, 0, 0.18) 56%,
+    rgba(0, 0, 0, 0.48) 76%,
+    rgba(0, 0, 0, 0.82) 90%,
+    rgba(0, 0, 0, 0.94) 100%
   );
   pointer-events: none;
-  z-index: 12;
+  z-index: 4;
   transform: translateZ(0);
 }
 
-/* Corroded edge decay — uneven burned border */
+/* Aged bezel wear around the outer plastic */
 .edgeDecay {
   position: absolute;
   top: 0;
@@ -82,26 +213,20 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
-  z-index: 13;
+  z-index: 5;
   transform: translateZ(0);
-  /* Irregular dark burns at edges using multiple gradients */
   background:
-    /* Top edge — uneven */
     linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 1.5%, transparent 4%),
-    /* Bottom edge — heavier */
     linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.5) 2%, transparent 5%),
-    /* Left edge */
     linear-gradient(90deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 1.5%, transparent 3.5%),
-    /* Right edge */
     linear-gradient(270deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 1.5%, transparent 3.5%),
-    /* Extra corner burns */
     radial-gradient(ellipse at 0% 0%, rgba(0, 0, 0, 0.95) 0%, transparent 12%),
     radial-gradient(ellipse at 100% 0%, rgba(0, 0, 0, 0.9) 0%, transparent 10%),
     radial-gradient(ellipse at 0% 100%, rgba(0, 0, 0, 0.95) 0%, transparent 14%),
     radial-gradient(ellipse at 100% 100%, rgba(0, 0, 0, 0.9) 0%, transparent 11%);
 }
 
-/* Dirty screen overlay — grime, scratches, smudges */
+/* Dirty bezel texture — stays off the gameplay surface */
 .dirtyScreen {
   position: absolute;
   top: 0;
@@ -109,19 +234,16 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
-  z-index: 11;
+  z-index: 3;
   transform: translateZ(0);
-  opacity: 0.08;
-  mix-blend-mode: screen;
-  /* SVG noise filter for grime texture */
+  opacity: 0.12;
   background:
-    /* Scratches — thin diagonal lines */
     repeating-linear-gradient(
       -35deg,
       transparent,
       transparent 97px,
-      rgba(136, 204, 68, 0.15) 97px,
-      rgba(136, 204, 68, 0.15) 98px
+      rgba(185, 180, 160, 0.16) 97px,
+      rgba(185, 180, 160, 0.16) 98px
     ),
     repeating-linear-gradient(
       62deg,
@@ -137,17 +259,15 @@
       rgba(180, 180, 160, 0.1) 211px,
       rgba(180, 180, 160, 0.1) 212px
     ),
-    /* Smudge clusters at edges */
     radial-gradient(ellipse 40% 30% at 5% 15%, rgba(160, 160, 140, 0.25), transparent),
     radial-gradient(ellipse 35% 45% at 92% 80%, rgba(160, 160, 140, 0.2), transparent),
     radial-gradient(ellipse 50% 25% at 12% 88%, rgba(140, 140, 120, 0.22), transparent),
     radial-gradient(ellipse 30% 35% at 88% 12%, rgba(140, 140, 120, 0.18), transparent),
-    /* Center should be relatively clear — more grime at borders */
     radial-gradient(
       ellipse 70% 60% at 50% 50%,
       transparent 0%,
-      transparent 50%,
-      rgba(100, 100, 80, 0.15) 80%,
+      transparent 56%,
+      rgba(100, 100, 80, 0.14) 80%,
       rgba(120, 120, 100, 0.3) 100%
     );
 }
