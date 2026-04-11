@@ -103,7 +103,6 @@ function serializeState(state: GameState): string {
       truthsDiscovered: undefined, // Remove legacy field from serialization
       singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
       imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
-      videosShownThisRun: Array.from(state.videosShownThisRun || []),
       categoriesRead: Array.from(state.categoriesRead || []),
       filesRead: Array.from(state.filesRead || []),
       tutorialTipsShown: Array.from(state.tutorialTipsShown || []),
@@ -185,7 +184,6 @@ function deserializeState(json: string): GameState {
       (Array.isArray(parsed.truthsDiscovered) ? parsed.truthsDiscovered.length : 0),
     singularEventsTriggered: new Set(toStringArray(parsed.singularEventsTriggered)),
     imagesShownThisRun: new Set(toStringArray(parsed.imagesShownThisRun)),
-    videosShownThisRun: new Set(toStringArray(parsed.videosShownThisRun)),
     categoriesRead: new Set(toStringArray(parsed.categoriesRead)),
     filesRead: new Set(toStringArray(parsed.filesRead)),
     tutorialTipsShown: new Set(toStringArray(parsed.tutorialTipsShown)),
@@ -519,7 +517,6 @@ export function createNewGame(): GameState {
     evidenceCount: 0,
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
-    videosShownThisRun: new Set(),
     flags,
     tutorialStep: 0,
     tutorialComplete: false,

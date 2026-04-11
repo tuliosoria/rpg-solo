@@ -48,7 +48,6 @@ function createMockGameState(overrides: Partial<GameState> = {}): GameState {
     lastIncognitoTrigger: 0,
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
-    videosShownThisRun: new Set(),
     systemHostilityLevel: 0,
     terribleMistakeTriggered: false,
     sessionDoomCountdown: 0,

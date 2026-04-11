@@ -32,20 +32,18 @@ import {
   type ImageTrigger,
   type StreamingMode,
   type TerminalEntry,
-  type VideoTrigger,
 } from '../types';
 import type { SoundType } from './useSound';
 import { speakCustomFirewallVoice } from '../components/FirewallEyes';
 
 const STREAMING_DELAYS: Record<
   StreamingMode,
-  { base: number; variance: number; glitchChance: number; glitchDelay: number }
+  { base: number; variance: number }
 > = {
-  none: { base: 0, variance: 0, glitchChance: 0, glitchDelay: 0 },
-  fast: { base: 40, variance: 20, glitchChance: 0, glitchDelay: 0 },
-  normal: { base: 80, variance: 30, glitchChance: 0, glitchDelay: 0 },
-  slow: { base: 120, variance: 50, glitchChance: 0.05, glitchDelay: 200 },
-  glitchy: { base: 100, variance: 50, glitchChance: 0.15, glitchDelay: 400 },
+  none: { base: 0, variance: 0 },
+  fast: { base: 40, variance: 20 },
+  normal: { base: 80, variance: 30 },
+  slow: { base: 120, variance: 50 },
 };
 
 type EncryptedChannelState = 'idle' | 'awaiting_open' | 'open' | 'awaiting_close';
@@ -75,7 +73,6 @@ interface UseTerminalInputOptions {
   setHistoryIndex: React.Dispatch<React.SetStateAction<number>>;
   setPendingImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
   setActiveImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
-  setActiveVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
   setPendingUfo74StartMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
   setPendingUfo74Messages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
   setQueuedAfterMediaMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
@@ -126,7 +123,6 @@ export function useTerminalInput({
   setHistoryIndex,
   setPendingImage,
   setActiveImage,
-  setActiveVideo,
   setPendingUfo74StartMessages,
   setPendingUfo74Messages,
   setQueuedAfterMediaMessages,
@@ -223,13 +219,6 @@ export function useTerminalInput({
         }));
 
         let delay = config.base + (uiRandom() * config.variance * 2 - config.variance);
-
-        if (uiChance(config.glitchChance)) {
-          delay += config.glitchDelay;
-          if (config.glitchDelay > 100) {
-            triggerFlicker();
-          }
-        }
 
         if (delay > 0 && i < entries.length - 1) {
           await new Promise(resolve => setTimeout(resolve, delay));
@@ -635,7 +624,7 @@ export function useTerminalInput({
           playSecondVoiceCue();
 
           if (ufo74Messages.length > 0) {
-            if (result.imageTrigger || result.videoTrigger) {
+            if (result.imageTrigger) {
               setQueuedAfterMediaMessages(prev => [...prev, ...ufo74Messages]);
             } else if (shouldDeferUfo74) {
               setPendingUfo74StartMessages(prev => [...prev, ...ufo74Messages]);
@@ -669,7 +658,7 @@ export function useTerminalInput({
         playSecondVoiceCue();
 
         if (ufo74Messages.length > 0) {
-          if (result.imageTrigger || result.videoTrigger) {
+          if (result.imageTrigger) {
             setQueuedAfterMediaMessages(prev => [...prev, ...ufo74Messages]);
           } else if (shouldDeferUfo74) {
             setPendingUfo74StartMessages(prev => [...prev, ...ufo74Messages]);
@@ -685,12 +674,9 @@ export function useTerminalInput({
       if (result.imageTrigger) {
         setPendingImage(result.imageTrigger);
       }
-      if (result.videoTrigger) {
-        setActiveVideo(result.videoTrigger);
-      }
 
       if (result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0) {
-        if (result.imageTrigger || result.videoTrigger) {
+        if (result.imageTrigger) {
           setQueuedAfterMediaMessages(prev => [...prev, ...result.pendingUfo74Messages!]);
         } else if (shouldDeferUfo74) {
           setPendingUfo74StartMessages(prev => [...prev, ...result.pendingUfo74Messages!]);
@@ -848,7 +834,6 @@ export function useTerminalInput({
       pendingUfo74StartMessages,
       playSound,
       setActiveImage,
-      setActiveVideo,
       setBurnInLines,
       setGameOverReason,
       setGamePhase,

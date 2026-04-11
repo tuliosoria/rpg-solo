@@ -7,7 +7,6 @@ import {
   FileMutation,
   FileNode,
   ImageTrigger,
-  VideoTrigger,
 } from '../types';
 import {
   resolvePath,
@@ -495,7 +494,6 @@ function calculateHostilityIncrease(state: GameState, command: string): number {
 
   // High-risk commands increase hostility
   if (command === 'trace') return 1;
-  if (command === 'recover') return 1;
   if (command === 'override') return 2;
   if (command === 'decrypt')
     return state.detectionLevel > DETECTION_THRESHOLDS.DECRYPT_WARNING ? 1 : 0;
@@ -931,40 +929,6 @@ export function isInWarmupPhase(state: GameState): boolean {
   return filesReadCount < WARMUP_PHASE.FILES_READ_THRESHOLD;
 }
 
-// Apply corruption to a random file
-export function applyRandomCorruption(state: GameState): GameState {
-  const rng = createSeededRng(state.rngState);
-  state.rngState = seededRandomInt(rng, 0, 2147483647);
-
-  // Find a corruptible file that isn't already fully corrupted
-  const corruptiblePaths = [
-    '/storage/assets/material_x_analysis.dat',
-    '/storage/quarantine/bio_container.log',
-    '/storage/quarantine/autopsy_alpha.log',
-    '/comms/psi/transcript_core.enc',
-  ];
-
-  const targetPath = seededRandomPick(rng, corruptiblePaths);
-  const mutation = state.fileMutations[targetPath] || {
-    corruptedLines: [],
-    decrypted: false,
-  };
-
-  // Add corruption
-  const lineToCorrupt = seededRandomInt(rng, 3, 15);
-  if (!mutation.corruptedLines.includes(lineToCorrupt)) {
-    mutation.corruptedLines.push(lineToCorrupt);
-  }
-
-  return {
-    ...state,
-    fileMutations: {
-      ...state.fileMutations,
-      [targetPath]: mutation,
-    },
-  };
-}
-
 // Check for victory condition
 function checkVictory(state: GameState): boolean {
   return (state.evidenceCount || 0) >= 5;
@@ -978,37 +942,11 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     saveCheckpoint(state, 'First encrypted file decrypted');
   }
 
-  // Apply decryption (but with corruption risk)
+  // Apply decryption
   const mutation: FileMutation = state.fileMutations[filePath] || {
-    corruptedLines: [],
     decrypted: false,
   };
   mutation.decrypted = true;
-
-  // Deterministic corruption on decrypt so save/load does not reshuffle outcomes.
-  if (
-    contextChance(
-      state,
-      0.4,
-      'decrypt-corrupt',
-      filePath,
-      state.commandHistory.length,
-      state.filesRead.size
-    )
-  ) {
-    const lineToCorrupt = contextRandomInt(
-      state,
-      3,
-      11,
-      'decrypt-corrupt-line',
-      filePath,
-      state.commandHistory.length,
-      state.filesRead.size
-    );
-    if (!mutation.corruptedLines.includes(lineToCorrupt)) {
-      mutation.corruptedLines.push(lineToCorrupt);
-    }
-  }
 
   const stateChanges: Partial<GameState> = {
     fileMutations: {
@@ -1129,28 +1067,12 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
     }
   }
 
-  // Check for video trigger - ONLY show if not shown this run
-  let videoTrigger: VideoTrigger | undefined = undefined;
-  if (file.videoTrigger) {
-    const videoId = file.videoTrigger.src;
-    const videosShown = state.videosShownThisRun || new Set<string>();
-
-    if (!videosShown.has(videoId)) {
-      videoTrigger = file.videoTrigger;
-      // Mark this video as shown in videosShownThisRun
-      const newVideosShown = new Set(videosShown);
-      newVideosShown.add(videoId);
-      stateChanges.videosShownThisRun = newVideosShown;
-    }
-  }
-
   return {
     output,
     stateChanges,
     triggerFlicker: true,
     delayMs: 2000,
     imageTrigger,
-    videoTrigger,
     streamingMode: 'slow' as const,
   };
 }
@@ -4400,36 +4322,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       stateChanges.morseFileRead = true;
     }
 
-    // Corrupted core dump spreads corruption to nearby files
-    if (filePath.includes('core_dump_corrupted') && !isEncryptedAndLocked) {
-      // Corrupt a random file in /tmp
-      const corruptTargets = [
-        '/tmp/session_residue.log',
-        '/tmp/note_to_self.tmp',
-        '/tmp/pattern_recognition.log',
-      ];
-      const targetPath = contextRandomPick(
-        state,
-        corruptTargets,
-        'core-dump-corrupt-target',
-        filePath,
-        state.filesRead.size
-      );
-      const existingMutation = state.fileMutations[targetPath] || {
-        corruptedLines: [],
-        decrypted: false,
-      };
-      existingMutation.corruptedLines.push(
-        contextRandomInt(state, 1, 9, 'core-dump-corrupt-line', targetPath, state.filesRead.size)
-      );
-      stateChanges.fileMutations = {
-        ...state.fileMutations,
-        ...stateChanges.fileMutations,
-        [targetPath]: existingMutation,
-      };
-      triggerFlicker = true;
-    }
-
     // ═══════════════════════════════════════════════════════════════════════════
     // CODED LANGUAGE FILES - UFO74 explains these can't be used as evidence
     // Files in /internal/sanitized/ use euphemisms that provide plausible deniability
@@ -4586,26 +4478,9 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       }
     }
 
-    // Check for video trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
-    let videoTrigger: VideoTrigger | undefined = undefined;
-    if (file.videoTrigger && !isEncryptedAndLocked) {
-      const videoId = file.videoTrigger.src;
-      const videosShown = state.videosShownThisRun || new Set<string>();
-
-      if (!videosShown.has(videoId)) {
-        videoTrigger = file.videoTrigger;
-        // Mark this video as shown in videosShownThisRun
-        const newVideosShown = new Set(videosShown);
-        newVideosShown.add(videoId);
-        stateChanges.videosShownThisRun = newVideosShown;
-      }
-    }
-
-    // Determine streaming mode based on content length and current atmosphere only.
-    let streamingMode: 'none' | 'fast' | 'normal' | 'slow' | 'glitchy' = 'normal';
-    if (triggerFlicker) {
-      streamingMode = 'glitchy';
-    } else if (content.length > 30) {
+    // Determine streaming mode based on content length.
+    let streamingMode: 'none' | 'fast' | 'normal' | 'slow' = 'normal';
+    if (content.length > 30) {
       streamingMode = 'fast'; // Long files stream faster
     }
 
@@ -4615,7 +4490,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       triggerFlicker,
       delayMs: calculateDelay(state),
       imageTrigger,
-      videoTrigger,
       streamingMode,
       checkAchievements: achievementsToCheck.length > 0 ? achievementsToCheck : undefined,
       // Route UFO74 contextual message through encrypted channel (one message per file open)
@@ -4916,71 +4790,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     // No security question - proceed with decryption
     return performDecryption(filePath, file, state);
-  },
-
-  recover: (args, state) => {
-    if (args.length === 0) {
-      return {
-        output: [createEntry('error', 'ERROR: Specify file')],
-        stateChanges: {},
-      };
-    }
-
-    const filePath = resolvePath(args[0], state.currentPath);
-    const node = getNode(filePath, state);
-
-    if (!node || node.type !== 'file') {
-      return {
-        output: [createEntry('error', 'ERROR: File not found')],
-        stateChanges: {},
-      };
-    }
-
-    const mutation = state.fileMutations[filePath];
-
-    if (!mutation || mutation.corruptedLines.length === 0) {
-      return {
-        output: [createEntry('output', 'File integrity nominal. No recovery needed.')],
-        stateChanges: {},
-      };
-    }
-
-    // Recover one corruption but damage another file
-    const recoveredLine = mutation.corruptedLines.pop();
-
-    // Apply corruption to another file
-    let newState = {
-      ...state,
-      fileMutations: {
-        ...state.fileMutations,
-        [filePath]: mutation,
-      },
-    };
-    newState = applyRandomCorruption(newState);
-
-    const output = [
-      createEntry('system', 'Initiating recovery protocol...'),
-      createEntry('output', `Recovered data at line ${recoveredLine}`),
-      createEntry('warning', 'WARNING: Collateral integrity loss detected'),
-    ];
-
-    const stateChanges: Partial<GameState> = {
-      ...newState,
-      detectionLevel: state.detectionLevel + applyDetectionVariance(state, 'recover', 8), // was 12, reduced for pacing
-      sessionStability: state.sessionStability - 8,
-    };
-
-    if (!state.tutorialComplete) {
-      delete stateChanges.detectionLevel;
-      delete stateChanges.sessionStability;
-    }
-
-    return {
-      output,
-      stateChanges,
-      triggerFlicker: true,
-      delayMs: 2500,
-    };
   },
 
   trace: (args, state) => {
@@ -6717,7 +6526,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'hide_used']),
         systemHostilityLevel: Math.min(5, (state.systemHostilityLevel || 0) + 2),
       },
-      streamingMode: 'glitchy',
+      streamingMode: 'slow',
       delayMs: 3000,
       triggerFlicker: true,
     };

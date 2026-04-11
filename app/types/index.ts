@@ -66,12 +66,6 @@ export interface ImageTrigger {
   durationMs?: number;
 }
 
-export interface VideoTrigger {
-  src: string;
-  title: string;
-  tone: ImageTone;
-  corrupted?: boolean;
-}
 
 export interface SecurityQuestion {
   question: string;
@@ -135,9 +129,7 @@ export interface FileNode {
   reveals?: string[]; // Truth categories this file contributes to
   accessThreshold?: number; // Required access level
   requiredFlags?: string[]; // Required flags to appear
-  corruptible?: boolean;
   imageTrigger?: ImageTrigger; // Image to display when file is accessed
-  videoTrigger?: VideoTrigger; // Video to display when file is accessed
   securityQuestion?: SecurityQuestion; // Required to decrypt
   timedDecrypt?: { sequence: string; timeLimit: number }; // Timed decryption challenge
   tags?: FileTag[]; // Search index tags for the search command
@@ -154,8 +146,6 @@ export interface DirectoryNode {
 export type FileSystemNode = FileNode | DirectoryNode;
 
 export interface FileMutation {
-  corruptedLines: number[]; // Line indices replaced with [DATA LOSS]
-  truncatedLine?: number; // Line index truncated mid-word
   deleted?: boolean;
   locked?: boolean;
   decrypted?: boolean;
@@ -244,9 +234,6 @@ export interface GameState {
 
   // Images shown this run (each image shown at most once)
   imagesShownThisRun: Set<string>;
-
-  // Videos shown this run (each video shown at most once)
-  videosShownThisRun: Set<string>;
 
   // System personality degradation (affects tone as risk increases)
   systemHostilityLevel: number; // 0-5, increases with risky actions
@@ -443,7 +430,7 @@ export interface CheckpointSlot {
   detectionLevel: number;
 }
 
-export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow' | 'glitchy';
+export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow';
 export type GamePhase =
   | 'terminal'
   | 'blackout'
@@ -461,12 +448,11 @@ export interface CommandResult {
   triggerFlicker?: boolean;
   delayMs?: number;
   imageTrigger?: ImageTrigger;
-  videoTrigger?: VideoTrigger;
   streamingMode?: StreamingMode; // How to stream the output
   skipToPhase?: GamePhase; // GOD mode: skip directly to a phase
   checkAchievements?: string[]; // Achievement IDs to check
   triggerTuringTest?: boolean; // Show Turing test overlay
-  pendingUfo74Messages?: TerminalEntry[]; // UFO74 messages to show after image/video closes
+  pendingUfo74Messages?: TerminalEntry[]; // UFO74 messages to show after image closes
   soundTrigger?: 'evidence' | 'error' | 'morse'; // Sound effect to play
 }
 
@@ -507,7 +493,6 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   lastIncognitoTrigger: 0,
   singularEventsTriggered: new Set(),
   imagesShownThisRun: new Set(),
-  videosShownThisRun: new Set(),
   systemHostilityLevel: 0,
   terribleMistakeTriggered: false,
   sessionDoomCountdown: 0,

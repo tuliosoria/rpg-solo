@@ -105,7 +105,6 @@
   "terminal.firewall.scare": "TE VEO",
   "terminal.redaction.classified": "CLASIFICADO",
   "terminal.system.mediaRecoveredVisual": "[SISTEMA: medio recuperado. Datos visuales archivados en el registro de sesión.]",
-  "terminal.system.mediaRecoveredVideo": "[SISTEMA: medio recuperado. Datos de video archivados en el registro de sesión.]",
   "terminal.turing.passed.header": "  EVALUACIÓN TURING: APROBADA",
   "terminal.turing.passed.line1": "  EL SUJETO NO ES HUMANO, NO ES UNA AMENAZA",
   "terminal.turing.passed.line2": "  Identidad verificada como proceso autorizado del terminal.",

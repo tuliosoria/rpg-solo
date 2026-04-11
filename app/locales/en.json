@@ -105,7 +105,6 @@
   "terminal.firewall.scare": "I SEE YOU",
   "terminal.redaction.classified": "CLASSIFIED",
   "terminal.system.mediaRecoveredVisual": "[SYSTEM: Media recovered. Visual data archived to session log.]",
-  "terminal.system.mediaRecoveredVideo": "[SYSTEM: Media recovered. Video data archived to session log.]",
   "terminal.turing.passed.header": "  TURING EVALUATION: PASSED",
   "terminal.turing.passed.line1": "  SUBJECT IS NOT HUMAN, NOT A THREAT",
   "terminal.turing.passed.line2": "  Identity verified as authorized terminal process.",

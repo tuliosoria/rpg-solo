@@ -56,11 +56,6 @@ const neuralClusterMemo: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-  videoTrigger: {
-    src: 'https://drive.google.com/uc?export=download&id=1Gzqrt1QNqC5OuXjxo7U5NopTuZVwXcI7',
-    title: 'NEURAL_CLUSTER_MEMO_RECOVERY.VID',
-    tone: 'surveillance',
-  },
   accessThreshold: 4, // Only visible after override
   requiredFlags: ['adminUnlocked'],
 };

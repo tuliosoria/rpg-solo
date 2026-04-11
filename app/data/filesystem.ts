@@ -1541,7 +1541,6 @@ const logistics_manifest_fragment: FileNode = {
   type: 'file',
   name: 'logistics_manifest_fragment.txt',
   status: 'unstable',
-  corruptible: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'LOGISTICS MANIFEST — PARTIAL RECOVERY',
@@ -1571,7 +1570,6 @@ const signal_analysis_partial: FileNode = {
   type: 'file',
   name: 'signal_analysis_partial.txt',
   status: 'unstable',
-  corruptible: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'SIGNAL ANALYSIS — PRELIMINARY',
@@ -2226,13 +2224,7 @@ const early_witness_statement: FileNode = {
   type: 'file',
   name: 'witness_statement_raw.txt',
   status: 'unstable',
-  corruptible: true,
   tags: ['witness', 'creature', 'telepathic'],
-  videoTrigger: {
-    src: '/videos/witness_statement_raw.mp4',
-    title: 'WITNESS_DEPOSITION_RAW.VID',
-    tone: 'surveillance',
-  },
   content: [
     '═══════════════════════════════════════════════════════════',
     'WITNESS STATEMENT — RAW TRANSCRIPT',
@@ -2268,7 +2260,6 @@ const initial_response_orders: FileNode = {
   type: 'file',
   name: 'initial_response_orders.txt',
   status: 'unstable',
-  corruptible: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'EMERGENCY ORDERS — INITIAL RESPONSE',
@@ -2345,7 +2336,6 @@ const material_x_analysis: FileNode = {
   name: 'material_x_analysis.dat',
   status: 'restricted',
   accessThreshold: 2,
-  corruptible: true,
   tags: ['debris', 'spacecraft', 'crash', 'experiment', 'classified'],
   imageTrigger: {
     src: '/images/crash.png',
@@ -2386,7 +2376,6 @@ const bio_container_log: FileNode = {
   type: 'file',
   name: 'bio_container.log',
   status: 'unstable',
-  corruptible: true,
   tags: ['creature', 'biological', 'containment', 'medical', 'specimen'],
   imageTrigger: {
     src: '/images/et.png',
@@ -2427,18 +2416,11 @@ const autopsy_alpha_log: FileNode = {
   name: 'autopsy_alpha.log',
   status: 'restricted',
   accessThreshold: 2,
-  corruptible: true,
   tags: ['autopsy', 'creature', 'biological', 'medical', 'specimen', 'classified'],
   imageTrigger: {
     src: '/images/et.png',
     alt: 'Recovered visual - Autopsy subject',
     tone: 'clinical',
-  },
-  videoTrigger: {
-    src: '/videos/autopsy_alph.mp4',
-    title: 'AUTOPSY_VISUAL_LOG_ALFA.VID',
-    tone: 'clinical',
-    corrupted: true,
   },
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2516,7 +2498,6 @@ const transcript_core: FileNode = {
   type: 'file',
   name: 'transcript_core.enc',
   status: 'encrypted',
-  corruptible: true,
   tags: ['telepathic', 'psi', 'signal', 'communication', 'creature', 'encryption'],
   imageTrigger: {
     src: '/images/et-scared.png',
@@ -2818,12 +2799,6 @@ const colonization_model: FileNode = {
   name: 'colonization_model.red',
   status: 'restricted',
   accessThreshold: 4,
-  videoTrigger: {
-    src: '/videos/colonization_model.mp4',
-    title: 'COLONIZATION_PROJECTION_MODEL.VID',
-    tone: 'eerie',
-    corrupted: true,
-  },
   content: [
     '═══════════════════════════════════════════════════════════',
     'ASSESSMENT — INDIRECT COLONIZATION MODEL',
@@ -3172,12 +3147,6 @@ const neural_dump_alfa: FileNode = {
   status: 'encrypted',
   accessThreshold: 3,
   tags: ['telepathic', 'psi', 'neural', 'creature', 'biological', 'encryption'],
-  videoTrigger: {
-    src: '/videos/neural_link.mp4',
-    title: 'NEURAL_LINK_CAPTURE.VID',
-    tone: 'eerie',
-    corrupted: true,
-  },
   securityQuestion: {
     question: 'Subject designation (found in autopsy records):',
     answers: ['alfa', 'alpha', 'subject alfa', 'specimen alfa'],
@@ -4259,13 +4228,6 @@ const surveillance_footage_recovery: FileNode = {
     '',
     'WARNING: Visual content may cause disorientation.',
   ],
-  videoTrigger: {
-    src: '/videos/Et dissect.mp4',
-    title: 'CONTAINMENT_CAM_07_RECOVERY.VID',
-    tone: 'surveillance',
-    corrupted: true,
-  },
-  corruptible: true,
 };
 
 // Restricted comms file describing the neural cluster experiment

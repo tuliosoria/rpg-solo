@@ -36,7 +36,6 @@ import FirewallEyes, { speakCustomFirewallVoice } from './FirewallEyes';
 
 // Lazy-load conditional components for better initial load performance
 const ImageOverlay = dynamic(() => import('./ImageOverlay'), { ssr: false });
-const VideoOverlay = dynamic(() => import('./VideoOverlay'), { ssr: false });
 const TuringTestOverlay = dynamic(() => import('./TuringTestOverlay'), { ssr: false });
 const GameOver = dynamic(() => import('./GameOver'), { ssr: false });
 const Blackout = dynamic(() => import('./Blackout'), { ssr: false });
@@ -130,8 +129,6 @@ export default function Terminal({
     setHistoryIndex,
     activeImage,
     setActiveImage,
-    activeVideo,
-    setActiveVideo,
     pendingImage,
     setPendingImage,
     showGameOver,
@@ -160,10 +157,6 @@ export default function Terminal({
     setGamePhase,
     countdownDisplay,
     setCountdownDisplay,
-    glitchActive,
-    setGlitchActive,
-    glitchHeavy,
-    setGlitchHeavy,
     isShaking,
     setIsShaking,
     isWarmingUp,
@@ -231,14 +224,13 @@ export default function Terminal({
     showFirewallScare;
   const isFirewallPaused =
     activeImage !== null ||
-    activeVideo !== null ||
     showTuringTest ||
     hasBlockingPopup ||
     gameState.timedDecryptActive ||
     gameState.traceSpikeActive ||
     gameState.countdownActive;
   const pauseTimedMechanics =
-    activeImage !== null || activeVideo !== null || showTuringTest || hasBlockingPopup;
+    activeImage !== null || showTuringTest || hasBlockingPopup;
 
   // File reading suppression: consider player "reading" for 15 seconds after file open
   const FILE_READ_COOLDOWN_MS = 15000;
@@ -281,7 +273,6 @@ export default function Terminal({
     showGameOver,
     showTuringTest,
     activeImage,
-    activeVideo,
     pendingImage,
     hasBlockingPopup,
   });
@@ -313,13 +304,11 @@ export default function Terminal({
       showGameOver,
       showTuringTest,
       activeImage,
-      activeVideo,
       pendingImage,
       hasBlockingPopup,
     };
   }, [
     activeImage,
-    activeVideo,
     gamePhase,
     hasBlockingPopup,
     pendingImage,
@@ -583,7 +572,6 @@ export default function Terminal({
     setHistoryIndex,
     setPendingImage,
     setActiveImage,
-    setActiveVideo,
     setPendingUfo74StartMessages,
     setPendingUfo74Messages,
     setQueuedAfterMediaMessages,
@@ -632,7 +620,6 @@ export default function Terminal({
     isWarmingUp,
     showTuringTest,
     activeImage,
-    activeVideo,
     showSettings,
     showAchievements,
     showStatistics,
@@ -658,8 +645,6 @@ export default function Terminal({
     setAvatarCreepyEntrance,
     setGamePhase,
     setGameState,
-    setGlitchActive,
-    setGlitchHeavy,
     setParanoiaPosition,
     setParanoiaMessage,
     setRiskPulse,
@@ -672,7 +657,6 @@ export default function Terminal({
     setShowHeaderMenu,
     setShowTuringTest,
     setActiveImage,
-    setActiveVideo,
     setInterferenceBurst,
     setTerminalStaticLevel,
     setAlienSilhouetteVisible,
@@ -1026,7 +1010,7 @@ export default function Terminal({
   return (
     <FloatingUIProvider>
       <div
-        className={`${styles.terminal} ${styles.phosphorDrift} ${flickerActive ? styles.flicker : ''} ${glitchActive ? styles.glitchActive : ''} ${glitchHeavy ? styles.glitchHeavy : ''} ${isShaking ? styles.shaking : ''} ${isWarmingUp ? styles.warmingUp : ''}`}
+        className={`${styles.terminal} ${styles.phosphorDrift} ${flickerActive ? styles.flicker : ''} ${isShaking ? styles.shaking : ''} ${isWarmingUp ? styles.warmingUp : ''}`}
         onClick={focusTerminalInput}
       >
         {/* Scanlines overlay */}
@@ -1451,40 +1435,6 @@ export default function Terminal({
                 setPendingUfo74StartMessages(prev => [...prev, ...allUfo74Messages]);
               }
               setActiveImage(null);
-              inputRef.current?.focus();
-            }}
-          />
-        )}
-
-        {/* Video overlay */}
-        {activeVideo && (
-          <VideoOverlay
-            src={activeVideo.src}
-            title={activeVideo.title}
-            tone={activeVideo.tone}
-            corrupted={activeVideo.corrupted}
-            onCloseAction={() => {
-              // Add "Media recovered" message to terminal
-              const recoveredMessage = createEntry(
-                'system',
-                t('terminal.system.mediaRecoveredVideo')
-              );
-
-              // Check for queued UFO74 messages from the command result
-              if (queuedAfterMediaMessages.length > 0) {
-                setGameState(prev => ({
-                  ...prev,
-                  history: [...prev.history, recoveredMessage],
-                }));
-                setPendingUfo74StartMessages(prev => [...prev, ...queuedAfterMediaMessages]);
-                setQueuedAfterMediaMessages([]); // Clear the queue
-              } else {
-                setGameState(prev => ({
-                  ...prev,
-                  history: [...prev.history, recoveredMessage],
-                }));
-              }
-              setActiveVideo(null);
               inputRef.current?.focus();
             }}
           />

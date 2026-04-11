@@ -7,7 +7,6 @@ import type {
   GameState,
   ImageTrigger,
   TerminalEntry,
-  VideoTrigger,
 } from '../types';
 
 type EncryptedChannelState = 'idle' | 'awaiting_open' | 'open' | 'awaiting_close';
@@ -26,7 +25,6 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
   const [flickerActive, setFlickerActive] = useState(false);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [activeImage, setActiveImage] = useState<ImageTrigger | null>(null);
-  const [activeVideo, setActiveVideo] = useState<VideoTrigger | null>(null);
   const [pendingImage, setPendingImage] = useState<ImageTrigger | null>(null);
   const [showGameOver, setShowGameOver] = useState(
     initialState.isGameOver && initialPhase === 'terminal'
@@ -44,8 +42,6 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     useState<EncryptedChannelState>('idle');
   const [gamePhase, setGamePhase] = useState<GamePhase>(initialPhase);
   const [countdownDisplay, setCountdownDisplay] = useState<string | null>(null);
-  const [glitchActive, setGlitchActive] = useState(false);
-  const [glitchHeavy, setGlitchHeavy] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [isWarmingUp, setIsWarmingUp] = useState(initialState.history.length === 0);
   const [paranoiaMessage, setParanoiaMessage] = useState<string | null>(null);
@@ -112,8 +108,6 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     setHistoryIndex,
     activeImage,
     setActiveImage,
-    activeVideo,
-    setActiveVideo,
     pendingImage,
     setPendingImage,
     showGameOver,
@@ -142,10 +136,6 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     setGamePhase,
     countdownDisplay,
     setCountdownDisplay,
-    glitchActive,
-    setGlitchActive,
-    glitchHeavy,
-    setGlitchHeavy,
     isShaking,
     setIsShaking,
     isWarmingUp,

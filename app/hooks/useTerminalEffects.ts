@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
-import { type GamePhase, type GameState, type ImageTrigger, type VideoTrigger } from '../types';
+import { type GamePhase, type GameState, type ImageTrigger } from '../types';
 import { createEntry } from '../engine/commands';
 import { autoSave } from '../storage/saves';
 import { addPlaytime } from '../storage/statistics';
@@ -10,8 +10,6 @@ import { AUTOSAVE_INTERVAL_MS } from '../constants/timing';
 import {
   BLACKOUT_TRANSITION_DELAY_MS,
   CRT_WARMUP_DURATION_MS,
-  GLITCH_DURATIONS,
-  GLITCH_TIMING,
   PARANOIA_TIMING,
   RISK_PULSE_DURATION_MS,
 } from '../constants/timing';
@@ -85,7 +83,6 @@ interface UseTerminalEffectsOptions {
   isWarmingUp: boolean;
   showTuringTest: boolean;
   activeImage: ImageTrigger | null;
-  activeVideo: VideoTrigger | null;
   showSettings: boolean;
   showAchievements: boolean;
   showStatistics: boolean;
@@ -111,8 +108,6 @@ interface UseTerminalEffectsOptions {
   setAvatarCreepyEntrance: React.Dispatch<React.SetStateAction<boolean>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
-  setGlitchActive: React.Dispatch<React.SetStateAction<boolean>>;
-  setGlitchHeavy: React.Dispatch<React.SetStateAction<boolean>>;
   setParanoiaPosition: React.Dispatch<React.SetStateAction<{ top: number; left: number }>>;
   setParanoiaMessage: React.Dispatch<React.SetStateAction<string | null>>;
   setRiskPulse: React.Dispatch<React.SetStateAction<boolean>>;
@@ -125,7 +120,6 @@ interface UseTerminalEffectsOptions {
   setShowHeaderMenu: React.Dispatch<React.SetStateAction<boolean>>;
   setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
-  setActiveVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
   setInterferenceBurst: React.Dispatch<React.SetStateAction<{ top: number } | null>>;
   setTerminalStaticLevel: React.Dispatch<React.SetStateAction<number>>;
   setAlienSilhouetteVisible: React.Dispatch<React.SetStateAction<boolean>>;
@@ -140,7 +134,6 @@ export function useTerminalEffects({
   isWarmingUp,
   showTuringTest,
   activeImage,
-  activeVideo,
   showSettings,
   showAchievements,
   showStatistics,
@@ -166,8 +159,6 @@ export function useTerminalEffects({
   setAvatarCreepyEntrance: _setAvatarCreepyEntrance,
   setGamePhase,
   setGameState,
-  setGlitchActive,
-  setGlitchHeavy,
   setParanoiaPosition,
   setParanoiaMessage,
   setRiskPulse,
@@ -180,7 +171,6 @@ export function useTerminalEffects({
   setShowHeaderMenu,
   setShowTuringTest,
   setActiveImage,
-  setActiveVideo,
   setInterferenceBurst,
   setTerminalStaticLevel,
   setAlienSilhouetteVisible,
@@ -210,7 +200,6 @@ export function useTerminalEffects({
     !isStreaming &&
     !showTuringTest &&
     !activeImage &&
-    !activeVideo &&
     !showSettings &&
     !showAchievements &&
     !showStatistics &&
@@ -444,112 +433,6 @@ export function useTerminalEffects({
     }
   }, [gameState.evidencesSaved, gamePhase, gameState.isGameOver, setGamePhase]);
 
-  // Random glitch effects based on detection level - INTENSITY SCALING
-  useEffect(() => {
-    if (gamePhase !== 'terminal' || gameState.isGameOver) return;
-
-    // Suppress glitches during atmosphere phase (no pressure systems)
-    if (suppressPressure) return;
-    if (pauseTimedMechanics) {
-      setGlitchActive(false);
-      setGlitchHeavy(false);
-      return;
-    }
-
-    const detection = gameState.detectionLevel;
-    const paranoiaBoost = gameState.paranoiaLevel || 0;
-    // Higher detection = more frequent AND more intense glitches
-    // Scaled intensity: at 20%: rare light, at 50%: occasional medium, at 80%+: frequent heavy
-    const glitchChance =
-      detection > 20 ? (detection - 20) * 0.35 + paranoiaBoost * 0.15 : paranoiaBoost * 0.15;
-
-    // Check interval scales with detection (faster at higher levels)
-    const checkInterval = Math.max(
-      GLITCH_TIMING.MIN_INTERVAL_MS,
-      GLITCH_TIMING.BASE_INTERVAL_MS -
-        detection * GLITCH_TIMING.DETECTION_FACTOR -
-        paranoiaBoost * GLITCH_TIMING.VARIANCE_FACTOR
-    );
-
-    // Track all active timeouts for cleanup and cancelled flag for nested callbacks
-    const activeTimeouts: NodeJS.Timeout[] = [];
-    let cancelled = false;
-
-    const interval = setInterval(() => {
-      if (cancelled) return;
-      if (uiRandom() * 100 < glitchChance) {
-        if (detection >= 80) {
-          // Critical glitch - screen shake, heavy effects, sound
-          setGlitchHeavy(true);
-          playSound('glitch');
-          playSound('static');
-          const t1 = setTimeout(() => {
-            if (cancelled) return;
-            setGlitchHeavy(false);
-            // Double glitch at very high detection
-            if (detection >= 90 && uiChance(0.5)) {
-              const t2 = setTimeout(() => {
-                if (cancelled) return;
-                setGlitchHeavy(true);
-                playSound('glitch');
-                const t3 = setTimeout(() => {
-                  if (cancelled) return;
-                  setGlitchHeavy(false);
-                }, GLITCH_DURATIONS.MEDIUM);
-                activeTimeouts.push(t3);
-              }, GLITCH_DURATIONS.LIGHT);
-              activeTimeouts.push(t2);
-            }
-          }, GLITCH_DURATIONS.CRITICAL);
-          activeTimeouts.push(t1);
-        } else if (detection >= 60) {
-          // Heavy glitch at high detection
-          setGlitchHeavy(true);
-          playSound('glitch');
-          const t = setTimeout(() => {
-            if (cancelled) return;
-            setGlitchHeavy(false);
-          }, GLITCH_DURATIONS.HEAVY);
-          activeTimeouts.push(t);
-        } else if (detection >= 40) {
-          // Medium glitch - longer duration
-          setGlitchActive(true);
-          playSound('static');
-          const t = setTimeout(() => {
-            if (cancelled) return;
-            setGlitchActive(false);
-          }, GLITCH_DURATIONS.MEDIUM + 100);
-          activeTimeouts.push(t);
-        } else {
-          // Light glitch
-          setGlitchActive(true);
-          playSound('static');
-          const t = setTimeout(() => {
-            if (cancelled) return;
-            setGlitchActive(false);
-          }, GLITCH_DURATIONS.LIGHT);
-          activeTimeouts.push(t);
-        }
-      }
-    }, checkInterval);
-
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-      activeTimeouts.forEach(t => clearTimeout(t));
-    };
-  }, [
-    gameState.detectionLevel,
-    gameState.paranoiaLevel,
-    gameState.isGameOver,
-    gamePhase,
-    playSound,
-    setGlitchActive,
-    setGlitchHeavy,
-    pauseTimedMechanics,
-    suppressPressure,
-  ]);
-
   // "They're watching" paranoia messages
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
@@ -640,7 +523,7 @@ export function useTerminalEffects({
       // Trigger screen shake on large detection increase (10+)
       if (current - prev >= 10) {
         setIsShaking(true);
-        setTimeout(() => setIsShaking(false), GLITCH_DURATIONS.SCREEN_SHAKE);
+        setTimeout(() => setIsShaking(false), 300);
       }
 
       // Check if Turing test should trigger (detection crossed 50% threshold)
@@ -1080,9 +963,8 @@ export function useTerminalEffects({
           setShowSettings(false);
           setShowAchievements(false);
           setShowStatistics(false);
-        } else if (activeImage || activeVideo) {
+        } else if (activeImage) {
           setActiveImage(null);
-          setActiveVideo(null);
         } else if (showPauseMenu) {
           setShowPauseMenu(false);
           setShowHeaderMenu(false);
@@ -1106,13 +988,11 @@ export function useTerminalEffects({
     showAchievements,
     showStatistics,
     activeImage,
-    activeVideo,
     showPauseMenu,
     setShowSettings,
     setShowAchievements,
     setShowStatistics,
     setActiveImage,
-    setActiveVideo,
     setShowPauseMenu,
     setShowHeaderMenu,
     timedMechanicPauseStartRef,

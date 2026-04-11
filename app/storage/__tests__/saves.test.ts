@@ -11,7 +11,6 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
     evidenceCount: 0,
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
-    videosShownThisRun: new Set(),
     categoriesRead: new Set(),
     filesRead: new Set(),
     prisoner45UsedResponses: new Set(),
@@ -59,24 +58,6 @@ describe('Save/Load System', () => {
   });
 
   describe('serialization round-trip', () => {
-    it('preserves videosShownThisRun through save/load cycle', async () => {
-      const { saveGame, loadGame } = await import('../saves');
-
-      const state = createTestState({
-        videosShownThisRun: new Set(['video1.mp4', 'video2.mp4']),
-      });
-
-      const slot = saveGame(state, 'Test Save');
-      expect(slot).not.toBeNull();
-
-      const loaded = loadGame(slot!.id);
-      expect(loaded).not.toBeNull();
-      expect(loaded!.videosShownThisRun).toBeInstanceOf(Set);
-      expect(loaded!.videosShownThisRun.has('video1.mp4')).toBe(true);
-      expect(loaded!.videosShownThisRun.has('video2.mp4')).toBe(true);
-      expect(loaded!.videosShownThisRun.size).toBe(2);
-    });
-
     it('preserves imagesShownThisRun through save/load cycle', async () => {
       const { saveGame, loadGame } = await import('../saves');
 
@@ -98,7 +79,6 @@ describe('Save/Load System', () => {
         evidenceCount: 2,
         singularEventsTriggered: new Set(['event1']),
         imagesShownThisRun: new Set(['img1']),
-        videosShownThisRun: new Set(['vid1']),
         categoriesRead: new Set(['cat1', 'cat2', 'cat3']),
         filesRead: new Set(['file1']),
         tutorialTipsShown: new Set(['first_evidence']),
@@ -129,8 +109,8 @@ describe('Save/Load System', () => {
       const slot = saveGame(state, 'Test Save');
       const loaded = loadGame(slot!.id);
 
-      expect(loaded!.videosShownThisRun).toBeInstanceOf(Set);
-      expect(loaded!.videosShownThisRun.size).toBe(0);
+      expect(loaded!.imagesShownThisRun).toBeInstanceOf(Set);
+      expect(loaded!.imagesShownThisRun.size).toBe(0);
     });
   });
 
@@ -138,13 +118,13 @@ describe('Save/Load System', () => {
     it('provides default values for new fields when loading old saves', async () => {
       const { loadGame } = await import('../saves');
 
-      // Simulate an old save without videosShownThisRun
+      // Simulate an old save without newer fields
       const oldSaveData = {
         currentPath: '/',
         detectionLevel: 50,
         accessLevel: 3,
         evidenceCount: 1,
-        // Missing: videosShownThisRun, categoriesRead, etc.
+        // Missing: categoriesRead, etc.
       };
 
       mockStore['terminal1996:save:old_save'] = JSON.stringify(oldSaveData);
@@ -153,8 +133,8 @@ describe('Save/Load System', () => {
 
       expect(loaded).not.toBeNull();
       // Should get default values from DEFAULT_GAME_STATE spread
-      expect(loaded!.videosShownThisRun).toBeInstanceOf(Set);
-      expect(loaded!.videosShownThisRun.size).toBe(0);
+      expect(loaded!.imagesShownThisRun).toBeInstanceOf(Set);
+      expect(loaded!.imagesShownThisRun.size).toBe(0);
     });
   });
 
@@ -209,15 +189,6 @@ describe('Save/Load System', () => {
   });
 
   describe('createNewGame', () => {
-    it('initializes videosShownThisRun as empty Set', async () => {
-      const { createNewGame } = await import('../saves');
-
-      const newGame = createNewGame();
-
-      expect(newGame.videosShownThisRun).toBeInstanceOf(Set);
-      expect(newGame.videosShownThisRun.size).toBe(0);
-    });
-
     it('initializes imagesShownThisRun as empty Set', async () => {
       const { createNewGame } = await import('../saves');
 
@@ -235,7 +206,6 @@ describe('Save/Load System', () => {
       expect(typeof newGame.evidenceCount).toBe('number');
       expect(newGame.singularEventsTriggered).toBeInstanceOf(Set);
       expect(newGame.imagesShownThisRun).toBeInstanceOf(Set);
-      expect(newGame.videosShownThisRun).toBeInstanceOf(Set);
     });
 
     it('sets tutorialComplete to false for new games', async () => {

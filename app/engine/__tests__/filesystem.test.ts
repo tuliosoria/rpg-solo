@@ -183,7 +183,7 @@ describe('Filesystem', () => {
     it('denies access to deleted files', () => {
       const state = createTestState({
         fileMutations: {
-          '/internal/protocols/incident_review_protocol.txt': { deleted: true, corruptedLines: [] },
+          '/internal/protocols/incident_review_protocol.txt': { deleted: true },
         },
       });
       const result = canAccessFile('/internal/protocols/incident_review_protocol.txt', state);
@@ -194,7 +194,7 @@ describe('Filesystem', () => {
     it('denies access to locked files', () => {
       const state = createTestState({
         fileMutations: {
-          '/internal/protocols/incident_review_protocol.txt': { locked: true, corruptedLines: [] },
+          '/internal/protocols/incident_review_protocol.txt': { locked: true },
         },
       });
       const result = canAccessFile('/internal/protocols/incident_review_protocol.txt', state);

@@ -826,11 +826,6 @@ export const animal_deaths_report: FileNode = {
   name: 'animal_deaths_report.txt',
   status: 'restricted',
   accessThreshold: 2,
-  videoTrigger: {
-    src: 'https://drive.google.com/uc?export=download&id=1Zv171WIevm0hV3Lb6iDjLG42ZNrJo6Sh',
-    title: 'ZOO_INCIDENT_SURVEILLANCE.VID',
-    tone: 'surveillance',
-  },
   content: [
     '═══════════════════════════════════════════════════════════',
     'INCIDENT REPORT — ZOOLÓGICO MUNICIPAL DE VARGINHA',

@@ -291,41 +291,6 @@ describe('Narrative Mechanics', () => {
     });
   });
 
-  describe('File Corruption Spread', () => {
-    it('corrupts nearby files when reading core_dump_corrupted.bin', () => {
-      const state = createTestState({
-        currentPath: '/tmp',
-        wrongAttempts: 0,
-      });
-      const result = executeCommand('open core_dump_corrupted.bin', state);
-      // Should have corruption applied to a random file
-      expect(result.stateChanges.fileMutations).toBeDefined();
-      expect(result.triggerFlicker).toBe(true);
-    });
-
-    it('uses deterministic corruption targets for the same state', () => {
-      const baseState = createTestState({
-        currentPath: '/tmp',
-        wrongAttempts: 0,
-        filesRead: new Set<string>(),
-        commandHistory: ['cd /tmp', 'ls'],
-      });
-
-      const first = executeCommand('open core_dump_corrupted.bin', {
-        ...baseState,
-        filesRead: new Set(baseState.filesRead),
-        commandHistory: [...baseState.commandHistory],
-      });
-      const second = executeCommand('open core_dump_corrupted.bin', {
-        ...baseState,
-        filesRead: new Set(baseState.filesRead),
-        commandHistory: [...baseState.commandHistory],
-      });
-
-      expect(first.stateChanges.fileMutations).toEqual(second.stateChanges.fileMutations);
-    });
-  });
-
   describe('UFO74 Entry Type', () => {
     it('decrypt ghost_in_machine can emit ufo74 entries', () => {
       const state = createTestState({
@@ -980,37 +945,6 @@ describe('Narrative Mechanics', () => {
       const result = executeCommand('run purge_trace.sh', state);
       // Should either clear countdown or show error
       expect(result.output.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe('Recover Command', () => {
-    it('shows error when no file specified', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-      });
-      const result = executeCommand('recover', state);
-      expect(
-        result.output.some(e => e.content.includes('ERROR') || e.content.includes('Specify'))
-      ).toBe(true);
-    });
-
-    it('attempts recovery on corrupted file', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-        currentPath: '/tmp',
-      });
-      const result = executeCommand('recover some_file.txt', state);
-      // Should attempt recovery or report file not found
-      expect(
-        result.output.some(
-          e =>
-            e.content.includes('ERROR') ||
-            e.content.includes('not found') ||
-            e.content.includes('recovery')
-        )
-      ).toBe(true);
     });
   });
 

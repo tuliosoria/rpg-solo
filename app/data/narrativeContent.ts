@@ -301,5 +301,4 @@ export const unstable_core_dump: FileNode = {
     '>> READING THIS FILE HAS DESTABILIZED NEARBY DATA <<',
     '═══════════════════════════════════════════════════════════',
   ],
-  corruptible: true,
 };
