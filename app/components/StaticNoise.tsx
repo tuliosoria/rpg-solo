@@ -22,6 +22,7 @@ const StaticNoise = memo(function StaticNoise({
   intensity,
   alienVisible,
 }: StaticNoiseProps) {
+  const isActive = intensity > 0;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const alienDataRef = useRef<ImageData | null>(null);
   const alienOpacityRef = useRef(0);
@@ -62,6 +63,11 @@ const StaticNoise = memo(function StaticNoise({
 
   // Main animation loop — reads all dynamic values from refs
   useEffect(() => {
+    if (!isActive) {
+      alienOpacityRef.current = 0;
+      return;
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -128,9 +134,9 @@ const StaticNoise = memo(function StaticNoise({
 
     animFrameRef.current = requestAnimationFrame(render);
     return () => cancelAnimationFrame(animFrameRef.current);
-  }, []);
+  }, [isActive]);
 
-  if (intensity <= 0) return null;
+  if (!isActive) return null;
 
   // Keep the static legible at all times: transparent at low levels,
   // stronger near 100% detection, but never opaque enough to replace text.

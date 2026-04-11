@@ -34,8 +34,8 @@
 
 .tvFrame {
   position: relative;
-  width: 198px;
-  height: 264px;
+  width: 139px;
+  height: 185px;
   background: #111;
   border: 3px solid #88cc44;
   overflow: hidden;
@@ -192,8 +192,8 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .tvFrame {
-    width: 118px;
-    height: 152px;
+    width: 83px;
+    height: 106px;
   }
 }
 

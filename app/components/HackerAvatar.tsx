@@ -121,8 +121,8 @@ function HackerAvatar({
               <Image
                 src={EXPRESSION_IMAGES[currentExpression]}
                 alt="Hacker avatar"
-                width={264}
-                height={351}
+                width={185}
+                height={246}
                 className={styles.avatarImage}
                 priority
               />

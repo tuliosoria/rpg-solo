@@ -276,7 +276,7 @@ describe('Terminal Component', () => {
   it('shows the deploy version in the header', () => {
     render(<Terminal {...defaultProps} />);
 
-    expect(screen.getByText('v001')).toBeInTheDocument();
+    expect(screen.getByText('v002')).toBeInTheDocument();
   });
 
   it('accepts user input', () => {

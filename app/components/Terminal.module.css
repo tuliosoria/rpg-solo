@@ -936,6 +936,8 @@
 .output {
   flex: 1;
   overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   padding: 8px 12px;
   /* Bottom padding handled by flex layout - no extra needed since buttons are inline */
   padding-bottom: 8px;
@@ -945,20 +947,9 @@
 }
 
 .output::-webkit-scrollbar {
-  width: 8px;
-}
-
-.output::-webkit-scrollbar-track {
-  background: #060d04;
-}
-
-.output::-webkit-scrollbar-thumb {
-  background: #1a2a10;
-  border-radius: 4px;
-}
-
-.output::-webkit-scrollbar-thumb:hover {
-  background: #2a3a18;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* Line styles - optimized with content-visibility */
