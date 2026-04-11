@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useCallback, useState, useEffect } from 'react';
+import React, { useRef, useCallback, useState, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { GamePhase, GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
@@ -100,6 +100,36 @@ const deriveGamePhase = (state: GameState): GamePhase => {
   return 'terminal';
 };
 
+const isBlankSystemSpacer = (entry: TerminalEntry) =>
+  entry.type === 'system' && entry.content.trim().length === 0;
+
+const getNearestNonSpacerEntry = (
+  entries: readonly TerminalEntry[],
+  startIndex: number,
+  direction: -1 | 1
+): TerminalEntry | undefined => {
+  let index = startIndex + direction;
+
+  while (index >= 0 && index < entries.length) {
+    const candidate = entries[index];
+    if (!isBlankSystemSpacer(candidate)) {
+      return candidate;
+    }
+    index += direction;
+  }
+
+  return undefined;
+};
+
+const shouldSuppressUfo74Spacer = (
+  entry: TerminalEntry,
+  index: number,
+  entries: readonly TerminalEntry[]
+) =>
+  isBlankSystemSpacer(entry) &&
+  (getNearestNonSpacerEntry(entries, index, -1)?.type === 'ufo74' ||
+    getNearestNonSpacerEntry(entries, index, 1)?.type === 'ufo74');
+
 interface TerminalProps {
   initialState: GameState;
   onExitAction: () => void;
@@ -108,7 +138,8 @@ interface TerminalProps {
 }
 
 // Increment this on each deploy so playtest screenshots always show the build under review.
-const DEPLOY_VERSION = 'v008';
+const DEPLOY_VERSION = 'v009';
+const SCREEN_OVERLAY_BOUNDS = { position: 'absolute' as const, inset: 0 };
 
 export default function Terminal({
   initialState,
@@ -330,6 +361,25 @@ export default function Terminal({
       return translateRuntimeText(entry.content);
     },
     [t, translateRuntimeText]
+  );
+
+  const visibleHistory = useMemo(
+    () =>
+      gameState.history
+        .filter((entry, index, entries) => !shouldSuppressUfo74Spacer(entry, index, entries))
+        .filter(entry => {
+          if (entry.type !== 'ufo74') {
+            return true;
+          }
+
+          const entryContent = getEntryContent(entry);
+          return (
+            !isTypableUfo74Content(entryContent) ||
+            entry.id === activeTypingId ||
+            animatedEntriesRef.current.has(entry.id)
+          );
+        }),
+    [gameState.history, activeTypingId, getEntryContent]
   );
 
   // Detect new UFO74 text entries and add them to the typing queue
@@ -878,7 +928,7 @@ export default function Terminal({
     return <>{parts}</>;
   };
 
-  const renderEntry = (entry: TerminalEntry) => {
+  const renderEntry = (entry: TerminalEntry, nextEntry?: TerminalEntry) => {
     let className = styles.line;
     const entryContent = getEntryContent(entry);
 
@@ -899,7 +949,7 @@ export default function Terminal({
         className = `${styles.line} ${styles.notice}`;
         break;
       case 'ufo74':
-        className = `${styles.line} ${styles.ufo74}`;
+        className = `${styles.line} ${styles.ufo74} ${styles.ufo74Flush}`;
         break;
       case 'file':
         className = `${styles.line} ${styles.fileContent}`;
@@ -907,6 +957,10 @@ export default function Terminal({
       case 'dim':
         className = `${styles.line} ${styles.dim}`;
         break;
+    }
+
+    if (nextEntry?.type === 'ufo74') {
+      className = `${className} ${styles.flushBeforeUfo74}`;
     }
 
     const isReadListingLine = entry.type === 'output' && /\s\[READ\]/.test(entryContent);
@@ -930,10 +984,6 @@ export default function Terminal({
             />
           </div>
         );
-      }
-      // Not yet animated — hide until its turn (covers queued AND not-yet-detected entries)
-      if (!animatedEntriesRef.current.has(entry.id)) {
-        return null;
       }
     }
 
@@ -1270,7 +1320,7 @@ export default function Terminal({
           aria-live="polite"
           aria-relevant="additions"
         >
-          {gameState.history.map(renderEntry)}
+          {visibleHistory.map((entry, index) => renderEntry(entry, visibleHistory[index + 1]))}
           {isProcessing && (
             <div className={`${styles.line} ${styles.processing}`}>{t('terminal.processing')}</div>
           )}
@@ -1446,7 +1496,11 @@ export default function Terminal({
 
         {/* Firewall Scare overlay */}
         {showFirewallScare && (
-          <div className={styles.firewallScareOverlay} role="alert">
+          <div
+            className={styles.firewallScareOverlay}
+            style={SCREEN_OVERLAY_BOUNDS}
+            role="alert"
+          >
             <div className={styles.firewallScareEye}>
               <div className={styles.firewallScareIris} />
               <div className={styles.firewallScarePupil} />

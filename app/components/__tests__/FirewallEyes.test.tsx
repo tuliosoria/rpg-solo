@@ -8,6 +8,7 @@ import FirewallEyes, {
   MAX_CONCURRENT_FIREWALL_EYES,
   getFirewallEyeBatchSize,
 } from '../FirewallEyes';
+import styles from '../FirewallEyes.module.css';
 import type { FirewallEye } from '../../types';
 
 describe('FirewallEyes', () => {
@@ -332,6 +333,20 @@ describe('Tutorial Popup', () => {
     
     // Should have called onTutorialShown
     expect(baseProps.onTutorialShown).toHaveBeenCalledTimes(1);
+  });
+
+  it('anchors the firewall tutorial overlay to the terminal container instead of the viewport', () => {
+    const baseProps = createTutorialProps();
+    const { container } = render(<FirewallEyes {...baseProps} />);
+
+    const firewallContainer = container.querySelector(`.${styles.firewallContainer}`);
+    const overlay = container.querySelector(`.${styles.tutorialOverlay}`);
+
+    expect(firewallContainer).not.toBeNull();
+    expect(overlay).not.toBeNull();
+    expect(overlay?.parentElement).toBe(firewallContainer);
+    expect(firewallContainer).toHaveStyle({ position: 'absolute', inset: '0' });
+    expect(overlay).toHaveStyle({ position: 'absolute', inset: '0' });
   });
 
   it('does not show tutorial popup when firewallEyesTutorialShown is true', () => {

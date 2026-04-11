@@ -27,6 +27,7 @@ const FIREWALL_EYE_BATCH_THRESHOLDS = {
 } as const;
 const SPAWN_COOLDOWN_MS = 90000; // 90 seconds cooldown between spawns
 const DETECTION_INCREASE_ON_DETONATE = 5; // Risk increase when eye detonates
+const SCREEN_OVERLAY_BOUNDS = { position: 'absolute' as const, inset: 0 };
 
 export function getFirewallEyeBatchSize(detectionLevel: number): number {
   if (detectionLevel >= FIREWALL_EYE_BATCH_THRESHOLDS.CRITICAL) {
@@ -317,10 +318,10 @@ function FirewallEyesComponent({
   };
 
   return (
-    <div className={styles.firewallContainer}>
+    <div className={styles.firewallContainer} style={SCREEN_OVERLAY_BOUNDS}>
       {/* Tutorial popup - first time firewall eyes spawn */}
       {showTutorialPopup && (
-        <div className={styles.tutorialOverlay}>
+        <div className={styles.tutorialOverlay} style={SCREEN_OVERLAY_BOUNDS}>
           <div className={styles.tutorialPopup}>
             <div className={styles.tutorialHeader}>
               {t('firewall.tutorial.header')}
@@ -332,7 +333,7 @@ function FirewallEyesComponent({
               className={styles.tutorialButton}
               onClick={handleTutorialDismiss}
               autoFocus
-             >
+            >
               {t('firewall.tutorial.button')}
             </button>
           </div>

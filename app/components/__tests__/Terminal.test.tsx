@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import Terminal from '../Terminal';
 import styles from '../Terminal.module.css';
-import { DEFAULT_GAME_STATE, GameState } from '../../types';
+import { DEFAULT_GAME_STATE, GameState, TutorialStateID } from '../../types';
 import { I18nProvider } from '../../i18n';
 import { AUTOSAVE_INTERVAL_MS } from '../../constants/timing';
 import * as rngModule from '../../engine/rng';
@@ -176,6 +176,77 @@ describe('Terminal Component', () => {
 
     const input = document.querySelector('input');
     expect(input).toBeInTheDocument();
+  });
+
+  it('renders UFO74 runs flush without spacer entries', () => {
+    const ufo74State = {
+      ...defaultProps.initialState,
+      history: [
+        {
+          id: 'before-ufo74',
+          type: 'system',
+          content: 'PREVIOUS LINE',
+          timestamp: 1,
+        },
+        {
+          id: 'blank-before-ufo74',
+          type: 'system',
+          content: '',
+          timestamp: 2,
+        },
+        {
+          id: 'second-blank-before-ufo74',
+          type: 'system',
+          content: '',
+          timestamp: 3,
+        },
+        {
+          id: 'ufo74-line-one',
+          type: 'ufo74',
+          content: '│ UFO74: first line',
+          timestamp: 4,
+        },
+        {
+          id: 'blank-between-ufo74',
+          type: 'system',
+          content: '',
+          timestamp: 5,
+        },
+        {
+          id: 'ufo74-line-two',
+          type: 'ufo74',
+          content: '│ UFO74: second line',
+          timestamp: 6,
+        },
+        {
+          id: 'blank-after-ufo74',
+          type: 'system',
+          content: '',
+          timestamp: 7,
+        },
+        {
+          id: 'after-ufo74',
+          type: 'system',
+          content: 'NEXT LINE',
+          timestamp: 8,
+        },
+      ],
+    } as GameState;
+
+    const { container } = render(<Terminal {...defaultProps} initialState={ufo74State} />);
+
+    const output = container.querySelector(`.${styles.output}`);
+    const outputLines = Array.from(output?.children ?? []);
+
+    expect(outputLines.map(line => line.textContent ?? '')).toEqual([
+      'PREVIOUS LINE',
+      '│ UFO74: first line',
+      '│ UFO74: second line',
+      'NEXT LINE',
+    ]);
+    expect(outputLines[0]).toHaveClass(styles.flushBeforeUfo74);
+    expect(outputLines[1]).toHaveClass(styles.ufo74Flush);
+    expect(outputLines[2]).toHaveClass(styles.ufo74Flush);
   });
 
   it('keeps terminal text unchanged when high-risk static is active', () => {
@@ -383,7 +454,7 @@ describe('Terminal Component', () => {
   it('shows the deploy version in the header', () => {
     render(<Terminal {...defaultProps} />);
 
-    expect(screen.getByText('v008')).toBeInTheDocument();
+    expect(screen.getByText('v009')).toBeInTheDocument();
   });
 
   it('accepts user input', () => {
@@ -643,7 +714,7 @@ describe('Terminal Component', () => {
       detectionLevel: 55,
     } as GameState;
 
-    render(<Terminal {...defaultProps} initialState={delayedState} />);
+    const { container } = render(<Terminal {...defaultProps} initialState={delayedState} />);
 
     const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
 
@@ -670,7 +741,19 @@ describe('Terminal Component', () => {
       await Promise.resolve();
     });
 
-    expect(document.querySelector('.line.ufo74')).not.toBeNull();
+    const output = container.querySelector(`.${styles.output}`);
+    const ufo74Lines = Array.from(output?.querySelectorAll<HTMLElement>(`.${styles.ufo74Flush}`) ?? []);
+
+    expect(ufo74Lines.length).toBeGreaterThan(0);
+    expect(ufo74Lines[0]).toBeDefined();
+    expect(ufo74Lines[0]?.previousElementSibling).not.toBeNull();
+    expect(ufo74Lines[0]?.previousElementSibling).toHaveClass(styles.flushBeforeUfo74);
+    expect(
+      ufo74Lines.some(
+        line =>
+          line.previousElementSibling?.textContent === '' || line.nextElementSibling?.textContent === ''
+      )
+    ).toBe(false);
   });
 
   it('completes file processing after pausing during the command delay', async () => {
@@ -907,6 +990,46 @@ describe('Terminal Component', () => {
       // Tutorial should still be in progress (button still visible)
       // The button advances the tutorial step by step
       expect(screen.getByRole('button', { name: /↵/ })).toBeInTheDocument();
+    });
+
+    it('anchors the tutorial firewall scare overlay to the terminal screen', () => {
+      const tutorialScareState = {
+        ...DEFAULT_GAME_STATE,
+        seed: 12345,
+        rngState: 12345,
+        sessionStartTime: Date.now(),
+        tutorialComplete: false,
+        tutorialStep: 0,
+        currentPath: '/internal/misc',
+        interactiveTutorialState: {
+          current: TutorialStateID.CD_BACK_PROMPT,
+          failCount: 0,
+          nudgeShown: false,
+          inputLocked: false,
+          dialogueComplete: true,
+        },
+      } as GameState;
+
+      const { container } = render(<Terminal {...defaultProps} initialState={tutorialScareState} />);
+
+      const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
+
+      act(() => {
+        fireEvent.change(input, { target: { value: 'cd ..' } });
+      });
+
+      const form = input.closest('form');
+
+      act(() => {
+        fireEvent.submit(form!);
+      });
+
+      const overlay = container.querySelector(`.${styles.firewallScareOverlay}`);
+      const terminalScreen = container.querySelector(`.${styles.terminal}`);
+
+      expect(overlay).toBeInTheDocument();
+      expect(overlay?.parentElement).toBe(terminalScreen);
+      expect(overlay).toHaveStyle({ position: 'absolute', inset: '0' });
     });
   });
 

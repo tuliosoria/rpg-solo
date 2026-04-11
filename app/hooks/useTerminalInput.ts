@@ -173,11 +173,7 @@ export function useTerminalInput({
         ...prev,
         // Mark first UFO74 contact
         flags: { ...prev.flags, firstUfo74Contact: true },
-        history: [
-          ...prev.history,
-          createEntry('system', ''),
-          ...messages.flatMap(msg => [msg, createEntry('system', '')]),
-        ],
+        history: [...prev.history, ...messages],
       }));
       playSound('transmission');
       playSound('message');

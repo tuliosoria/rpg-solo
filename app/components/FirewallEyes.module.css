@@ -1,13 +1,11 @@
 /* Firewall Eyes - Hostile surveillance entities */
 
 .firewallContainer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: absolute;
+  inset: 0;
   pointer-events: none;
   z-index: 40;
+  border-radius: inherit;
   contain: layout style; /* Isolate from main document */
 }
 
@@ -257,17 +255,15 @@
 
 /* Tutorial overlay - first-time popup */
 .tutorialOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: absolute;
+  inset: 0;
   background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
   pointer-events: auto;
+  border-radius: inherit;
   animation: overlayFadeIn 0.3s ease-out;
 }
 

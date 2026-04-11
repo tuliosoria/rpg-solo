@@ -1058,9 +1058,14 @@
   font-size: 1em; /* Consistent with terminal font size */
 }
 
-/* Remove gap between consecutive UFO74 messages */
-.ufo74 + .ufo74 {
-  margin-top: -1px;
+.ufo74Flush {
+  min-height: 0;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.flushBeforeUfo74 {
+  margin-bottom: 0;
 }
 
 .tutorialCommand {
@@ -1573,17 +1578,15 @@
 /* ===== Firewall Scare Overlay ===== */
 
 .firewallScareOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  position: absolute;
+  inset: 0;
   background: rgba(0, 0, 0, 0.92);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 10000;
+  border-radius: inherit;
   animation: firewallScareFlash 1.5s ease-out forwards;
 }
 
