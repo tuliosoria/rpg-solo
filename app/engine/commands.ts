@@ -8096,6 +8096,16 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // Find command handler
   const handler = commands[command];
 
+  // Catch common typo: "cd.." without a space
+  if (!handler && (command === 'cd..' || command === 'cd...' || input.startsWith('cd..'))) {
+    return {
+      output: [
+        createEntry('ufo74', '[UFO74]: hey careful, to go back use cd .. (with a space after cd)'),
+      ],
+      stateChanges: {},
+    };
+  }
+
   if (!handler) {
     // Increment legacy alert counter for invalid commands
     if (!state.tutorialComplete) {
