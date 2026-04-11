@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef, memo } from 'react';
 import Image from 'next/image';
 import styles from './HackerAvatar.module.css';
 import { FloatingElement } from './FloatingUI';
+import { useI18n } from '../i18n';
 
 export type AvatarExpression = 'neutral' | 'shocked' | 'scared' | 'angry' | 'smirk';
 
@@ -32,6 +33,7 @@ function HackerAvatar({
   evidenceFoundIndicatorKey = 0,
   onExpressionTimeout,
 }: HackerAvatarProps) {
+  const { translateRuntimeText } = useI18n();
   const [currentExpression, setCurrentExpression] = useState<AvatarExpression>(expression);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showEvidenceFoundIndicator, setShowEvidenceFoundIndicator] = useState(false);
@@ -120,7 +122,7 @@ function HackerAvatar({
             >
               <Image
                 src={EXPRESSION_IMAGES[currentExpression]}
-                alt="Hacker avatar"
+                alt={translateRuntimeText('Hacker avatar')}
                 width={185}
                 height={246}
                 className={styles.avatarImage}
@@ -136,7 +138,7 @@ function HackerAvatar({
           </div>
           <div className={styles.evidenceIndicatorSlot} aria-live="polite">
             {showEvidenceFoundIndicator && (
-              <div className={styles.evidenceFoundIndicator}>Evidence Found</div>
+              <div className={styles.evidenceFoundIndicator}>{translateRuntimeText('Evidence Found')}</div>
             )}
           </div>
         </div>

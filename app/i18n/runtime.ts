@@ -506,7 +506,313 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'SESSION TERMINATED':
       'SESSÃO ENCERRADA',
     'INVALID ATTEMPT THRESHOLD':
-      'LIMITE DE TENTATIVAS INVÁLIDAS'
+      'LIMITE DE TENTATIVAS INVÁLIDAS',
+
+    // ── BadEnding narrative ──
+    'SYSTEM: Unauthorized access attempt logged.':
+      'SISTEMA: tentativa de acesso não autorizado registrada.',
+    'SYSTEM: Terminal session terminated.':
+      'SISTEMA: sessão do terminal encerrada.',
+    'SYSTEM: User credentials flagged for review.':
+      'SISTEMA: credenciais do usuário sinalizadas para revisão.',
+    'The screen flickers. Your connection drops.':
+      'A tela treme. Sua conexão cai.',
+    'Somewhere in a government building, an alarm sounds.':
+      'Em algum lugar de um prédio do governo, um alarme soa.',
+    'A printer spits out your session logs.':
+      'Uma impressora cospe os logs da sua sessão.',
+    'Someone reaches for a phone.':
+      'Alguém pega o telefone.',
+    'You were so close to the truth.':
+      'Você estava tão perto da verdade.',
+    'But they were watching.':
+      'Mas eles estavam observando.',
+    'They are always watching.':
+      'Eles estão sempre observando.',
+    '>> SESSION TERMINATED <<':
+      '>> SESSÃO ENCERRADA <<',
+    'TERMINATION REASON:':
+      'MOTIVO DO ENCERRAMENTO:',
+    'DETECTION THRESHOLD EXCEEDED':
+      'LIMITE DE DETECÇÃO EXCEDIDO',
+
+    // ── NeutralEnding narrative ──
+    'The system detected your activity.':
+      'O sistema detectou sua atividade.',
+    'Emergency protocols activated.':
+      'Protocolos de emergência ativados.',
+    'UFO74 managed to disconnect you before they traced the signal.':
+      'UFO74 conseguiu te desconectar antes que rastreassem o sinal.',
+    'You escaped. But at a cost.':
+      'Você escapou. Mas com um custo.',
+    'The evidence you collected...':
+      'As evidências que você coletou...',
+    'The files you found...':
+      'Os arquivos que você encontrou...',
+    'All of it was purged in the emergency disconnect.':
+      'Tudo foi expurgado na desconexão de emergência.',
+    'The truth slipped through your fingers.':
+      'A verdade escapou por entre seus dedos.',
+    'UFO74: sorry kid. had to pull the plug.':
+      'UFO74: desculpa, kid. tive que puxar a tomada.',
+    'UFO74: they were too close.':
+      'UFO74: eles estavam perto demais.',
+    'UFO74: maybe next time we will be faster.':
+      'UFO74: talvez da próxima vez a gente seja mais rápido.',
+    'UFO74: the truth is still out there.':
+      'UFO74: a verdade ainda está lá fora.',
+    'UFO74: waiting.':
+      'UFO74: esperando.',
+    'You survived. But the mission failed.':
+      'Você sobreviveu. Mas a missão falhou.',
+    'The governments continue their cover-up.':
+      'Os governos continuam o encobrimento.',
+    'The Varginha incident remains buried.':
+      'O incidente de Varginha continua enterrado.',
+    'For now.':
+      'Por enquanto.',
+    '>> MISSION INCOMPLETE <<':
+      '>> MISSÃO INCOMPLETA <<',
+
+    // ── SecretEnding narrative ──
+    'You found it. The file I never wanted you to see.':
+      'Você encontrou. O arquivo que eu nunca quis que você visse.',
+    'My name is not UFO74.':
+      'Meu nome não é UFO74.',
+    'In January 1996, I was a young military analyst.':
+      'Em janeiro de 1996, eu era um jovem analista militar.',
+    'Stationed at Base Aérea de Guarulhos.':
+      'Lotado na Base Aérea de Guarulhos.',
+    'I was 23 years old.':
+      'Eu tinha 23 anos.',
+    'When the call came about Varginha, I was one of the first':
+      'Quando veio o chamado sobre Varginha, eu fui um dos primeiros',
+    'to process the initial reports. I saw the photographs.':
+      'a processar os relatórios iniciais. Eu vi as fotografias.',
+    'I read the field notes. I watched the videos.':
+      'Li as notas de campo. Assisti aos vídeos.',
+    'And I saw what they did to the witnesses.':
+      'E vi o que fizeram com as testemunhas.',
+    'Sergeant Marco Cherese. Officer João Marcos.':
+      'Sargento Marco Cherese. Oficial João Marcos.',
+    'Hospital workers who asked questions.':
+      'Funcionários do hospital que fizeram perguntas.',
+    'Journalists who got too close.':
+      'Jornalistas que chegaram perto demais.',
+    'Some were silenced. Some were discredited.':
+      'Alguns foram silenciados. Outros, desacreditados.',
+    'Some simply... disappeared.':
+      'Alguns simplesmente... desapareceram.',
+    'I spent the next 30 years building this system.':
+      'Passei os próximos 30 anos construindo este sistema.',
+    'Waiting for someone brave enough to find the truth.':
+      'Esperando alguém corajoso o bastante para encontrar a verdade.',
+    'Waiting for someone like you.':
+      'Esperando alguém como você.',
+    'The evidence you saved is real.':
+      'As evidências que você salvou são reais.',
+    'But now you know something more.':
+      'Mas agora você sabe algo mais.',
+    'You know that I was there.':
+      'Você sabe que eu estava lá.',
+    'I saw them. The beings. Alive.':
+      'Eu os vi. Os seres. Vivos.',
+    'And I have never been the same.':
+      'E nunca mais fui o mesmo.',
+    'My real name is Carlos Eduardo Ferreira.':
+      'Meu nome verdadeiro é Carlos Eduardo Ferreira.',
+    'Former 2nd Lieutenant, Brazilian Air Force.':
+      'Ex-segundo-tenente da Força Aérea Brasileira.',
+    'Whistleblower. Survivor. Ghost in the machine.':
+      'Denunciante. Sobrevivente. Fantasma na máquina.',
+    'Thank you for listening.':
+      'Obrigado por ouvir.',
+    'Thank you for believing.':
+      'Obrigado por acreditar.',
+    'The truth needed a witness.':
+      'A verdade precisava de uma testemunha.',
+    'Now it has two.':
+      'Agora tem duas.',
+
+    // ── endings.ts — 8 ending variants ──
+    // controlled_disclosure
+    'The leak burned bright for two weeks.':
+      'O vazamento ardeu intenso por duas semanas.',
+    'Panels argued. Officials stalled.':
+      'Painéis debateram. Autoridades enrolaram.',
+    'Then the feed drifted elsewhere.':
+      'Depois a atenção migrou para outro lugar.',
+    'But the archive spread anyway.':
+      'Mas o arquivo se espalhou mesmo assim.',
+    'Copied. Mirrored. Waiting.':
+      'Copiado. Espelhado. Esperando.',
+    'The truth escaped. Belief did not.':
+      'A verdade escapou. A crença, não.',
+    'You opened the vault. The world only glanced inside.':
+      'Você abriu o cofre. O mundo só deu uma espiada.',
+    // global_panic
+    'You leaked the black files too.':
+      'Você vazou os arquivos negros também.',
+    'Markets lurched. Cabinets fell.':
+      'Mercados desabaram. Governos caíram.',
+    'Every screen spawned a new paranoia.':
+      'Cada tela gerou uma nova paranoia.',
+    'Truth hit too fast and turned to fire.':
+      'A verdade veio rápido demais e virou fogo.',
+    'By winter, panic had a flag.':
+      'Antes do inverno, o pânico já tinha bandeira.',
+    'Everything surfaced. Nothing stayed stable.':
+      'Tudo veio à tona. Nada ficou estável.',
+    // undeniable_confirmation
+    'Prisoner 46 appeared live three days later.':
+      'O Prisioneiro 46 apareceu ao vivo três dias depois.',
+    'No panel could explain it away.':
+      'Nenhum painel conseguiu explicar.',
+    '"We observed. We prepared. You were never alone."':
+      '"Nós observamos. Nos preparamos. Vocês nunca estiveram sozinhos."',
+    'Contact protocols formed within weeks.':
+      'Protocolos de contato foram formados em semanas.',
+    'Humanity lost the right to pretend.':
+      'A humanidade perdeu o direito de fingir.',
+    'The witness spoke. Doubt broke.':
+      'A testemunha falou. A dúvida quebrou.',
+    // total_collapse
+    'You gave them the witness and the hidden machinery behind it.':
+      'Você deu a eles a testemunha e a maquinaria oculta por trás de tudo.',
+    'Cities answered with riots, not wonder.':
+      'Cidades responderam com tumultos, não admiração.',
+    'The visitors watched humanity break on live television.':
+      'Os visitantes assistiram a humanidade se partir na TV ao vivo.',
+    '"Not ready," they said, and stepped back into the dark.':
+      '"Não estão prontos", disseram, e recuaram para a escuridão.',
+    'Proof arrived with every secret at once. Humanity buckled.':
+      'A prova chegou com todos os segredos de uma vez. A humanidade cedeu.',
+    // personal_contamination
+    'The leak landed. Most people shrugged and kept moving.':
+      'O vazamento caiu. A maioria deu de ombros e seguiu em frente.',
+    'You should have felt relief.':
+      'Você deveria ter sentido alívio.',
+    'Instead the link stayed open.':
+      'Mas o link continuou aberto.',
+    'A second pulse lives just behind your own.':
+      'Um segundo pulso vive logo atrás do seu.',
+    '▓▓▓ NEURAL ECHO DETECTED ▓▓▓':
+      '▓▓▓ ECO NEURAL DETECTADO ▓▓▓',
+    '...we kept the door ajar...':
+      '...mantivemos a porta entreaberta...',
+    '...thirty rotations is not far...':
+      '...trinta rotações não é longe...',
+    '...when we return, you will know us...':
+      '...quando retornarmos, vocês nos reconhecerão...',
+    'The archive escaped the system. Something else escaped into you.':
+      'O arquivo escapou do sistema. Algo mais escapou para dentro de você.',
+    // paranoid_awakening
+    'The conspiracy files detonated. Institutions split at the seams.':
+      'Os arquivos da conspiração detonaram. Instituições se abriram nas costuras.',
+    'The link let you see the pattern inside the panic.':
+      'O link te deixou ver o padrão dentro do pânico.',
+    'You try to warn people.':
+      'Você tenta avisar as pessoas.',
+    'You sound insane. Maybe you are.':
+      'Você parece insano. Talvez esteja.',
+    '▓▓▓ NEURAL CONTAMINATION ACTIVE ▓▓▓':
+      '▓▓▓ CONTAMINAÇÃO NEURAL ATIVA ▓▓▓',
+    '...you see the pattern now...':
+      '...agora você vê o padrão...',
+    '...collapse is part of the signal...':
+      '...o colapso faz parte do sinal...',
+    '...clarity hurts, doesnt it...':
+      '...clareza dói, não é...',
+    'You exposed the lie and swallowed its rhythm.':
+      'Você expôs a mentira e engoliu seu ritmo.',
+    // witnessed_truth
+    'Prisoner 46 spoke. Humanity believed.':
+      'O Prisioneiro 46 falou. A humanidade acreditou.',
+    'The link let you hear what the translator softened.':
+      'O link te deixou ouvir o que o tradutor suavizou.',
+    'The planet celebrated first contact.':
+      'O planeta celebrou o primeiro contato.',
+    'You heard the warning beneath it.':
+      'Você ouviu o aviso por baixo de tudo.',
+    '▓▓▓ NEURAL RESONANCE ACTIVE ▓▓▓':
+      '▓▓▓ RESSONÂNCIA NEURAL ATIVA ▓▓▓',
+    '...you catch the meaning between meanings...':
+      '...você capta o sentido entre os sentidos...',
+    '...bridge and burden...':
+      '...ponte e fardo...',
+    '...do not close your mind again...':
+      '...não feche sua mente de novo...',
+    'The truth stood before the world. It stayed inside you.':
+      'A verdade ficou diante do mundo. Ficou dentro de você.',
+    // complete_revelation
+    'Everything surfaced at once.':
+      'Tudo veio à tona de uma vez.',
+    'The witness spoke. The black files opened.':
+      'A testemunha falou. Os arquivos negros se abriram.',
+    'The link made you the voice between species.':
+      'O link fez de você a voz entre espécies.',
+    'The 2026 transition bent around your signal.':
+      'A transição de 2026 se curvou ao redor do seu sinal.',
+    'History did not end. It changed shape.':
+      'A história não acabou. Mudou de forma.',
+    '▓▓▓ FULL INTEGRATION ACHIEVED ▓▓▓':
+      '▓▓▓ INTEGRAÇÃO COMPLETA ALCANÇADA ▓▓▓',
+    '...pattern accepted...':
+      '...padrão aceito...',
+    '...translator, host, ambassador...':
+      '...tradutor, hospedeiro, embaixador...',
+    '...welcome between worlds...':
+      '...bem-vindo entre mundos...',
+    'Every seal broke. You became the breach and the bridge.':
+      'Todos os selos se romperam. Você se tornou a brecha e a ponte.',
+    // ending epilogue prefix
+    '>> ENDING: CONTROLLED DISCLOSURE <<':
+      '>> FINAL: DIVULGAÇÃO CONTROLADA <<',
+    '>> ENDING: GLOBAL PANIC <<':
+      '>> FINAL: PÂNICO GLOBAL <<',
+    '>> ENDING: UNDENIABLE CONFIRMATION <<':
+      '>> FINAL: CONFIRMAÇÃO IRREFUTÁVEL <<',
+    '>> ENDING: TOTAL COLLAPSE <<':
+      '>> FINAL: COLAPSO TOTAL <<',
+    '>> ENDING: PERSONAL CONTAMINATION <<':
+      '>> FINAL: CONTAMINAÇÃO PESSOAL <<',
+    '>> ENDING: PARANOID AWAKENING <<':
+      '>> FINAL: DESPERTAR PARANOICO <<',
+    '>> ENDING: WITNESSED TRUTH <<':
+      '>> FINAL: VERDADE TESTEMUNHADA <<',
+    '>> ENDING: COMPLETE REVELATION <<':
+      '>> FINAL: REVELAÇÃO COMPLETA <<',
+
+    // ── HackerAvatar ──
+    'Hacker avatar': 'Avatar do hacker',
+    'Evidence Found': 'Evidência Encontrada',
+
+    // ── gameOverReason strings ──
+    'ELUSIVE MAN LOCKOUT - INSUFFICIENT INTELLIGENCE':
+      'BLOQUEIO DO HOMEM ELUSIVO - INTELIGÊNCIA INSUFICIENTE',
+    'INTRUSION DETECTED - TRACED':
+      'INTRUSÃO DETECTADA - RASTREADO',
+    'TRACE WINDOW EXPIRED':
+      'JANELA DE RASTREIO EXPIROU',
+    'SESSION ARCHIVED':
+      'SESSÃO ARQUIVADA',
+    'SECURITY LOCKDOWN - AUTHENTICATION FAILURE':
+      'BLOQUEIO DE SEGURANÇA - FALHA DE AUTENTICAÇÃO',
+    'NEUTRAL ENDING - DISCONNECTED':
+      'FINAL NEUTRO - DESCONECTADO',
+    'FIREWALL — TREE SCAN ON ELEVATED SESSION':
+      'FIREWALL — VARREDURA EM SESSÃO ELEVADA',
+    'INVALID INPUT THRESHOLD':
+      'LIMITE DE ENTRADAS INVÁLIDAS',
+    'PURGE PROTOCOL - FORBIDDEN KNOWLEDGE':
+      'PROTOCOLO DE EXPURGO - CONHECIMENTO PROIBIDO',
+    'SECURITY LOCKDOWN - FAILED AUTHENTICATION':
+      'BLOQUEIO DE SEGURANÇA - AUTENTICAÇÃO FALHOU',
+    LOCKDOWN: 'BLOQUEIO',
+    'GOD MODE - BAD ENDING':
+      'MODO DEUS - FINAL RUIM',
+    'GOD MODE - NEUTRAL ENDING':
+      'MODO DEUS - FINAL NEUTRO'
   },
   es: {
     'Speed Demon': 'Demonio de la Velocidad',
@@ -1031,6 +1337,312 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'SESSION TERMINATED':
       'SESIÓN TERMINADA',
     'INVALID ATTEMPT THRESHOLD':
-      'UMBRAL DE INTENTOS INVÁLIDOS'
+      'UMBRAL DE INTENTOS INVÁLIDOS',
+
+    // ── BadEnding narrative ──
+    'SYSTEM: Unauthorized access attempt logged.':
+      'SISTEMA: intento de acceso no autorizado registrado.',
+    'SYSTEM: Terminal session terminated.':
+      'SISTEMA: sesión del terminal terminada.',
+    'SYSTEM: User credentials flagged for review.':
+      'SISTEMA: credenciales del usuario marcadas para revisión.',
+    'The screen flickers. Your connection drops.':
+      'La pantalla parpadea. Tu conexión cae.',
+    'Somewhere in a government building, an alarm sounds.':
+      'En algún lugar de un edificio del gobierno, suena una alarma.',
+    'A printer spits out your session logs.':
+      'Una impresora escupe los registros de tu sesión.',
+    'Someone reaches for a phone.':
+      'Alguien toma el teléfono.',
+    'You were so close to the truth.':
+      'Estabas tan cerca de la verdad.',
+    'But they were watching.':
+      'Pero te estaban observando.',
+    'They are always watching.':
+      'Siempre están observando.',
+    '>> SESSION TERMINATED <<':
+      '>> SESIÓN TERMINADA <<',
+    'TERMINATION REASON:':
+      'MOTIVO DE TERMINACIÓN:',
+    'DETECTION THRESHOLD EXCEEDED':
+      'UMBRAL DE DETECCIÓN EXCEDIDO',
+
+    // ── NeutralEnding narrative ──
+    'The system detected your activity.':
+      'El sistema detectó tu actividad.',
+    'Emergency protocols activated.':
+      'Protocolos de emergencia activados.',
+    'UFO74 managed to disconnect you before they traced the signal.':
+      'UFO74 logró desconectarte antes de que rastrearan la señal.',
+    'You escaped. But at a cost.':
+      'Escapaste. Pero a un costo.',
+    'The evidence you collected...':
+      'La evidencia que recolectaste...',
+    'The files you found...':
+      'Los archivos que encontraste...',
+    'All of it was purged in the emergency disconnect.':
+      'Todo fue purgado en la desconexión de emergencia.',
+    'The truth slipped through your fingers.':
+      'La verdad se escurrió entre tus dedos.',
+    'UFO74: sorry kid. had to pull the plug.':
+      'UFO74: lo siento, kid. tuve que cortar la conexión.',
+    'UFO74: they were too close.':
+      'UFO74: estaban demasiado cerca.',
+    'UFO74: maybe next time we will be faster.':
+      'UFO74: quizá la próxima vez seamos más rápidos.',
+    'UFO74: the truth is still out there.':
+      'UFO74: la verdad sigue ahí afuera.',
+    'UFO74: waiting.':
+      'UFO74: esperando.',
+    'You survived. But the mission failed.':
+      'Sobreviviste. Pero la misión fracasó.',
+    'The governments continue their cover-up.':
+      'Los gobiernos continúan el encubrimiento.',
+    'The Varginha incident remains buried.':
+      'El incidente de Varginha sigue enterrado.',
+    'For now.':
+      'Por ahora.',
+    '>> MISSION INCOMPLETE <<':
+      '>> MISIÓN INCOMPLETA <<',
+
+    // ── SecretEnding narrative ──
+    'You found it. The file I never wanted you to see.':
+      'Lo encontraste. El archivo que nunca quise que vieras.',
+    'My name is not UFO74.':
+      'Mi nombre no es UFO74.',
+    'In January 1996, I was a young military analyst.':
+      'En enero de 1996, yo era un joven analista militar.',
+    'Stationed at Base Aérea de Guarulhos.':
+      'Destinado en la Base Aérea de Guarulhos.',
+    'I was 23 years old.':
+      'Tenía 23 años.',
+    'When the call came about Varginha, I was one of the first':
+      'Cuando llegó la llamada sobre Varginha, fui uno de los primeros',
+    'to process the initial reports. I saw the photographs.':
+      'en procesar los informes iniciales. Vi las fotografías.',
+    'I read the field notes. I watched the videos.':
+      'Leí las notas de campo. Vi los videos.',
+    'And I saw what they did to the witnesses.':
+      'Y vi lo que les hicieron a los testigos.',
+    'Sergeant Marco Cherese. Officer João Marcos.':
+      'Sargento Marco Cherese. Oficial João Marcos.',
+    'Hospital workers who asked questions.':
+      'Trabajadores del hospital que hicieron preguntas.',
+    'Journalists who got too close.':
+      'Periodistas que se acercaron demasiado.',
+    'Some were silenced. Some were discredited.':
+      'Algunos fueron silenciados. Otros, desacreditados.',
+    'Some simply... disappeared.':
+      'Algunos simplemente... desaparecieron.',
+    'I spent the next 30 years building this system.':
+      'Pasé los siguientes 30 años construyendo este sistema.',
+    'Waiting for someone brave enough to find the truth.':
+      'Esperando a alguien lo bastante valiente para encontrar la verdad.',
+    'Waiting for someone like you.':
+      'Esperando a alguien como tú.',
+    'The evidence you saved is real.':
+      'La evidencia que guardaste es real.',
+    'But now you know something more.':
+      'Pero ahora sabes algo más.',
+    'You know that I was there.':
+      'Sabes que yo estuve ahí.',
+    'I saw them. The beings. Alive.':
+      'Los vi. A los seres. Vivos.',
+    'And I have never been the same.':
+      'Y nunca volví a ser el mismo.',
+    'My real name is Carlos Eduardo Ferreira.':
+      'Mi nombre real es Carlos Eduardo Ferreira.',
+    'Former 2nd Lieutenant, Brazilian Air Force.':
+      'Exsubteniente de la Fuerza Aérea Brasileña.',
+    'Whistleblower. Survivor. Ghost in the machine.':
+      'Denunciante. Superviviente. Fantasma en la máquina.',
+    'Thank you for listening.':
+      'Gracias por escuchar.',
+    'Thank you for believing.':
+      'Gracias por creer.',
+    'The truth needed a witness.':
+      'La verdad necesitaba un testigo.',
+    'Now it has two.':
+      'Ahora tiene dos.',
+
+    // ── endings.ts — 8 ending variants ──
+    // controlled_disclosure
+    'The leak burned bright for two weeks.':
+      'La filtración ardió con fuerza durante dos semanas.',
+    'Panels argued. Officials stalled.':
+      'Los paneles debatieron. Los funcionarios postergaron.',
+    'Then the feed drifted elsewhere.':
+      'Luego la atención migró a otro lugar.',
+    'But the archive spread anyway.':
+      'Pero el archivo se propagó de todos modos.',
+    'Copied. Mirrored. Waiting.':
+      'Copiado. Replicado. Esperando.',
+    'The truth escaped. Belief did not.':
+      'La verdad escapó. La creencia, no.',
+    'You opened the vault. The world only glanced inside.':
+      'Abriste la bóveda. El mundo solo echó un vistazo.',
+    // global_panic
+    'You leaked the black files too.':
+      'También filtraste los archivos negros.',
+    'Markets lurched. Cabinets fell.':
+      'Los mercados se desplomaron. Gobiernos cayeron.',
+    'Every screen spawned a new paranoia.':
+      'Cada pantalla generó una nueva paranoia.',
+    'Truth hit too fast and turned to fire.':
+      'La verdad llegó demasiado rápido y se convirtió en fuego.',
+    'By winter, panic had a flag.':
+      'Para el invierno, el pánico ya tenía bandera.',
+    'Everything surfaced. Nothing stayed stable.':
+      'Todo salió a la superficie. Nada se mantuvo estable.',
+    // undeniable_confirmation
+    'Prisoner 46 appeared live three days later.':
+      'El Prisionero 46 apareció en vivo tres días después.',
+    'No panel could explain it away.':
+      'Ningún panel pudo dar una explicación.',
+    '"We observed. We prepared. You were never alone."':
+      '"Observamos. Nos preparamos. Nunca estuvieron solos."',
+    'Contact protocols formed within weeks.':
+      'Protocolos de contacto se formaron en semanas.',
+    'Humanity lost the right to pretend.':
+      'La humanidad perdió el derecho a fingir.',
+    'The witness spoke. Doubt broke.':
+      'El testigo habló. La duda se quebró.',
+    // total_collapse
+    'You gave them the witness and the hidden machinery behind it.':
+      'Les diste al testigo y la maquinaria oculta detrás de todo.',
+    'Cities answered with riots, not wonder.':
+      'Las ciudades respondieron con disturbios, no con asombro.',
+    'The visitors watched humanity break on live television.':
+      'Los visitantes observaron a la humanidad quebrarse en TV en vivo.',
+    '"Not ready," they said, and stepped back into the dark.':
+      '"No están listos", dijeron, y retrocedieron a la oscuridad.',
+    'Proof arrived with every secret at once. Humanity buckled.':
+      'La prueba llegó con todos los secretos a la vez. La humanidad se doblegó.',
+    // personal_contamination
+    'The leak landed. Most people shrugged and kept moving.':
+      'La filtración llegó. La mayoría se encogió de hombros y siguió adelante.',
+    'You should have felt relief.':
+      'Deberías haber sentido alivio.',
+    'Instead the link stayed open.':
+      'Pero el enlace se mantuvo abierto.',
+    'A second pulse lives just behind your own.':
+      'Un segundo pulso vive justo detrás del tuyo.',
+    '▓▓▓ NEURAL ECHO DETECTED ▓▓▓':
+      '▓▓▓ ECO NEURAL DETECTADO ▓▓▓',
+    '...we kept the door ajar...':
+      '...mantuvimos la puerta entreabierta...',
+    '...thirty rotations is not far...':
+      '...treinta rotaciones no es lejos...',
+    '...when we return, you will know us...':
+      '...cuando regresemos, nos reconocerán...',
+    'The archive escaped the system. Something else escaped into you.':
+      'El archivo escapó del sistema. Algo más escapó hacia ti.',
+    // paranoid_awakening
+    'The conspiracy files detonated. Institutions split at the seams.':
+      'Los archivos de la conspiración detonaron. Las instituciones se abrieron por las costuras.',
+    'The link let you see the pattern inside the panic.':
+      'El enlace te dejó ver el patrón dentro del pánico.',
+    'You try to warn people.':
+      'Intentas advertir a la gente.',
+    'You sound insane. Maybe you are.':
+      'Suenas demente. Quizá lo estés.',
+    '▓▓▓ NEURAL CONTAMINATION ACTIVE ▓▓▓':
+      '▓▓▓ CONTAMINACIÓN NEURAL ACTIVA ▓▓▓',
+    '...you see the pattern now...':
+      '...ahora ves el patrón...',
+    '...collapse is part of the signal...':
+      '...el colapso es parte de la señal...',
+    '...clarity hurts, doesnt it...':
+      '...la claridad duele, verdad...',
+    'You exposed the lie and swallowed its rhythm.':
+      'Expusiste la mentira y tragaste su ritmo.',
+    // witnessed_truth
+    'Prisoner 46 spoke. Humanity believed.':
+      'El Prisionero 46 habló. La humanidad creyó.',
+    'The link let you hear what the translator softened.':
+      'El enlace te dejó oír lo que el traductor suavizó.',
+    'The planet celebrated first contact.':
+      'El planeta celebró el primer contacto.',
+    'You heard the warning beneath it.':
+      'Escuchaste la advertencia debajo de todo.',
+    '▓▓▓ NEURAL RESONANCE ACTIVE ▓▓▓':
+      '▓▓▓ RESONANCIA NEURAL ACTIVA ▓▓▓',
+    '...you catch the meaning between meanings...':
+      '...captas el sentido entre los sentidos...',
+    '...bridge and burden...':
+      '...puente y carga...',
+    '...do not close your mind again...':
+      '...no cierres tu mente de nuevo...',
+    'The truth stood before the world. It stayed inside you.':
+      'La verdad se presentó ante el mundo. Se quedó dentro de ti.',
+    // complete_revelation
+    'Everything surfaced at once.':
+      'Todo salió a la superficie de golpe.',
+    'The witness spoke. The black files opened.':
+      'El testigo habló. Los archivos negros se abrieron.',
+    'The link made you the voice between species.':
+      'El enlace te convirtió en la voz entre especies.',
+    'The 2026 transition bent around your signal.':
+      'La transición de 2026 se curvó alrededor de tu señal.',
+    'History did not end. It changed shape.':
+      'La historia no terminó. Cambió de forma.',
+    '▓▓▓ FULL INTEGRATION ACHIEVED ▓▓▓':
+      '▓▓▓ INTEGRACIÓN COMPLETA ALCANZADA ▓▓▓',
+    '...pattern accepted...':
+      '...patrón aceptado...',
+    '...translator, host, ambassador...':
+      '...traductor, huésped, embajador...',
+    '...welcome between worlds...':
+      '...bienvenido entre mundos...',
+    'Every seal broke. You became the breach and the bridge.':
+      'Todos los sellos se rompieron. Te convertiste en la brecha y el puente.',
+    // ending epilogue prefix
+    '>> ENDING: CONTROLLED DISCLOSURE <<':
+      '>> FINAL: DIVULGACIÓN CONTROLADA <<',
+    '>> ENDING: GLOBAL PANIC <<':
+      '>> FINAL: PÁNICO GLOBAL <<',
+    '>> ENDING: UNDENIABLE CONFIRMATION <<':
+      '>> FINAL: CONFIRMACIÓN INNEGABLE <<',
+    '>> ENDING: TOTAL COLLAPSE <<':
+      '>> FINAL: COLAPSO TOTAL <<',
+    '>> ENDING: PERSONAL CONTAMINATION <<':
+      '>> FINAL: CONTAMINACIÓN PERSONAL <<',
+    '>> ENDING: PARANOID AWAKENING <<':
+      '>> FINAL: DESPERTAR PARANOICO <<',
+    '>> ENDING: WITNESSED TRUTH <<':
+      '>> FINAL: VERDAD PRESENCIADA <<',
+    '>> ENDING: COMPLETE REVELATION <<':
+      '>> FINAL: REVELACIÓN COMPLETA <<',
+
+    // ── HackerAvatar ──
+    'Hacker avatar': 'Avatar del hacker',
+    'Evidence Found': 'Evidencia Encontrada',
+
+    // ── gameOverReason strings ──
+    'ELUSIVE MAN LOCKOUT - INSUFFICIENT INTELLIGENCE':
+      'BLOQUEO DEL HOMBRE ELUSIVO - INTELIGENCIA INSUFICIENTE',
+    'INTRUSION DETECTED - TRACED':
+      'INTRUSIÓN DETECTADA - RASTREADO',
+    'TRACE WINDOW EXPIRED':
+      'VENTANA DE RASTREO EXPIRADA',
+    'SESSION ARCHIVED':
+      'SESIÓN ARCHIVADA',
+    'SECURITY LOCKDOWN - AUTHENTICATION FAILURE':
+      'BLOQUEO DE SEGURIDAD - FALLO DE AUTENTICACIÓN',
+    'NEUTRAL ENDING - DISCONNECTED':
+      'FINAL NEUTRAL - DESCONECTADO',
+    'FIREWALL — TREE SCAN ON ELEVATED SESSION':
+      'FIREWALL — ESCANEO EN SESIÓN ELEVADA',
+    'INVALID INPUT THRESHOLD':
+      'UMBRAL DE ENTRADAS INVÁLIDAS',
+    'PURGE PROTOCOL - FORBIDDEN KNOWLEDGE':
+      'PROTOCOLO DE PURGA - CONOCIMIENTO PROHIBIDO',
+    'SECURITY LOCKDOWN - FAILED AUTHENTICATION':
+      'BLOQUEO DE SEGURIDAD - AUTENTICACIÓN FALLIDA',
+    LOCKDOWN: 'BLOQUEO',
+    'GOD MODE - BAD ENDING':
+      'MODO DIOS - FINAL MALO',
+    'GOD MODE - NEUTRAL ENDING':
+      'MODO DIOS - FINAL NEUTRAL'
   }
 };
