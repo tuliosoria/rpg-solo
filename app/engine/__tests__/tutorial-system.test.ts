@@ -4,9 +4,6 @@ import { describe, it, expect } from 'vitest';
 import {
   getTutorialTip,
   shouldShowTutorialTip,
-  getHelpBasics,
-  getHelpEvidence,
-  getHelpWinning,
   getFirstRunMessage,
 } from '../commands/tutorial';
 import type { TutorialTipId } from '../commands/tutorial';
@@ -51,47 +48,6 @@ describe('Tutorial System', () => {
       const entries = getTutorialTip('first_evidence');
       const hasHeader = entries.some(e => e.content.includes('TUTORIAL TIP'));
       expect(hasHeader).toBe(true);
-    });
-  });
-
-  describe('getHelpBasics', () => {
-    it('returns formatted help entries', () => {
-      const entries = getHelpBasics();
-      expect(entries.length).toBeGreaterThan(0);
-
-      // Check for expected content
-      const allContent = entries.map(e => e.content).join('\n');
-      expect(allContent).toContain('B A S I C S');
-      expect(allContent).toContain('NAVIGATION');
-      expect(allContent).toContain('ls');
-      expect(allContent).toContain('cd');
-      expect(allContent).toContain('open');
-    });
-  });
-
-  describe('getHelpEvidence', () => {
-    it('returns formatted help entries about evidence', () => {
-      const entries = getHelpEvidence();
-      expect(entries.length).toBeGreaterThan(0);
-
-      const allContent = entries.map(e => e.content).join('\n');
-      expect(allContent).toContain('E V I D E N C E');
-      expect(allContent).toContain('OBJECTIVE');
-    });
-  });
-
-  describe('getHelpWinning', () => {
-    it('returns formatted help entries about winning', () => {
-      const entries = getHelpWinning();
-      expect(entries.length).toBeGreaterThan(0);
-
-      const allContent = entries.map(e => e.content).join('\n');
-      expect(allContent).toContain('H O W   T O   W I N');
-      expect(allContent).toContain('Debris Relocation');
-      expect(allContent).toContain('Being Containment');
-      expect(allContent).toContain('Telepathic Scouts');
-      expect(allContent).toContain('International Actors');
-      expect(allContent).toContain('Transition 2026');
     });
   });
 

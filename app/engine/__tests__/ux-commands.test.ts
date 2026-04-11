@@ -595,15 +595,6 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('  present           Return to present from archive'))).toBe(false);
     });
 
-    it('should show recovery help for survival commands', () => {
-      const state = createTestState();
-      const result = executeCommand('help recovery', state);
-
-      expect(result.output.some(e => e.content.includes('R E C O V E R Y'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('wait'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('hide'))).toBe(true);
-    });
-
     it('should not expose removed mechanics in direct help', () => {
       const state = createTestState();
       const result = executeCommand('help back', state);

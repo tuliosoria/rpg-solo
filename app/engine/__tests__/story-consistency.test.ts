@@ -24,9 +24,6 @@ import {
   FileSystemNode,
 } from '../../types';
 import {
-  getHelpBasics,
-  getHelpEvidence,
-  getHelpWinning,
   getFirstRunMessage,
 } from '../commands/tutorial';
 
@@ -446,36 +443,6 @@ describe('Story Consistency Tests', () => {
 
   describe('4. Player Understanding', () => {
     describe('Tutorial Messages', () => {
-      it('help basics explains core navigation commands', () => {
-        const entries = getHelpBasics();
-        const content = entries.map(e => e.content).join('\n');
-
-        expect(content).toContain('ls');
-        expect(content).toContain('cd');
-        expect(content).toContain('open');
-        expect(content).toContain('wait');
-        // decrypt is an advanced command, not in basics
-      });
-
-      it('help evidence explains the evidence system', () => {
-        const entries = getHelpEvidence();
-        const content = entries.map(e => e.content).join('\n');
-
-        expect(content).toMatch(/evidence|truth|discover/i);
-      });
-
-      it('help winning explains victory conditions', () => {
-        const entries = getHelpWinning();
-        const content = entries.map(e => e.content).join('\n');
-
-        // Should mention the 5 truths
-        expect(content).toContain('Debris Relocation');
-        expect(content).toContain('Being Containment');
-        expect(content).toContain('Telepathic Scouts');
-        expect(content).toContain('International Actors');
-        expect(content).toContain('Transition 2026');
-      });
-
       it('first run message welcomes player appropriately', () => {
         const entries = getFirstRunMessage();
         const content = entries.map(e => e.content).join('\n');

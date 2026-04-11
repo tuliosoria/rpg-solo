@@ -59,10 +59,6 @@ import {
 import {
   getTutorialTip,
   shouldShowTutorialTip,
-  getHelpBasics,
-  getHelpEvidence,
-  getHelpRecovery,
-  getHelpWinning,
 } from './commands/tutorial';
 
 // Import interactive tutorial system
@@ -125,10 +121,6 @@ export {
   getFirstRunMessage,
   getTutorialTip,
   shouldShowTutorialTip,
-  getHelpBasics,
-  getHelpEvidence,
-  getHelpRecovery,
-  getHelpWinning,
 } from './commands/tutorial';
 export type { TutorialTipId } from './commands/tutorial';
 
@@ -3672,35 +3664,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
       // Show leak help even before evidence is found — command is visible but locked
 
-      // Special help topics
-      if (cmdName === 'basics') {
-        return {
-          output: getHelpBasics(),
-          stateChanges: {},
-        };
-      }
-
-      if (cmdName === 'evidence') {
-        return {
-          output: getHelpEvidence(),
-          stateChanges: {},
-        };
-      }
-
-      if (cmdName === 'recovery') {
-        return {
-          output: getHelpRecovery(),
-          stateChanges: {},
-        };
-      }
-
-      if (cmdName === 'winning') {
-        return {
-          output: getHelpWinning(),
-          stateChanges: {},
-        };
-      }
-
       const details = COMMAND_HELP[cmdName];
 
       if (details) {
@@ -3748,6 +3711,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  wait              Lower detection briefly (limited)',
         '  hide              Emergency escape at 90% risk',
         '  leak              Leak collected evidence',
+        '  override protocol <code>  Execute admin override',
         '  tutorial [on/off] Toggle tutorial tips or replay intro',
         '  save              Save current session',
         '  clear             Clear terminal display',
@@ -3755,8 +3719,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  ↑/↓ arrows        Navigate command history',
         '  Tab               Autocomplete commands and files',
         '  Ctrl+L            Clear terminal',
-        '',
-        'GUIDES:  help basics | help evidence | help recovery | help winning',
         '',
       ];
 
