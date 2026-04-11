@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './ImageOverlay.module.css';
 import { uiChance, uiRandomInt } from '../engine/rng';
 import { useI18n } from '../i18n';
@@ -27,7 +27,24 @@ export default function ImageOverlay({
   const [flickering, setFlickering] = useState(true);
   const [initialShock, setInitialShock] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('landscape');
   const flickerResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasClosedRef = useRef(false);
+
+  const handleClose = useCallback(() => {
+    if (hasClosedRef.current) return;
+    hasClosedRef.current = true;
+    onCloseAction();
+  }, [onCloseAction]);
+
+  // Detect image orientation for adaptive sizing
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      setOrientation(img.naturalWidth >= img.naturalHeight ? 'landscape' : 'portrait');
+    };
+    img.src = src;
+  }, [src]);
 
   useEffect(() => {
     // SUDDEN appearance - immediate flash then image
@@ -58,7 +75,7 @@ export default function ImageOverlay({
 
     // Auto-close after duration for shock effect
     const autoClose = setTimeout(() => {
-      onCloseAction();
+      handleClose();
     }, durationMs);
 
     return () => {
@@ -71,19 +88,19 @@ export default function ImageOverlay({
         flickerResetTimeoutRef.current = null;
       }
     };
-  }, [onCloseAction, durationMs]);
+  }, [durationMs, handleClose]);
 
   // Close on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
-        onCloseAction();
+        handleClose();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onCloseAction]);
+  }, [handleClose]);
 
   return (
     <div
@@ -91,7 +108,7 @@ export default function ImageOverlay({
       role="dialog"
       aria-modal="true"
       aria-label={t('imageOverlay.aria', { value: alt })}
-      onClick={onCloseAction}
+      onClick={handleClose}
     >
       {/* Scanlines */}
       <div className={styles.scanlines} />
@@ -101,7 +118,7 @@ export default function ImageOverlay({
         className={`${styles.glow} ${tone === 'clinical' ? styles.greenGlow : styles.amberGlow}`}
       />
 
-      <div className={styles.container}>
+      <div className={`${styles.container} ${orientation === 'portrait' ? styles.portraitContainer : styles.landscapeContainer}`}>
         {/* Header - minimal, no decoration */}
         <div className={styles.header}>
           <span className={styles.headerText}>

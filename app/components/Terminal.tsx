@@ -6,7 +6,7 @@ import { GamePhase, GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
 import TypewriterText, { isTypableUfo74Content } from './TypewriterText';
-import { loadCheckpoint, saveCheckpoint } from '../storage/saves';
+import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import { useI18n, translateStatic } from '../i18n';
@@ -123,8 +123,6 @@ export default function Terminal({
     setActiveVideo,
     pendingImage,
     setPendingImage,
-    pendingVideo,
-    setPendingVideo,
     showGameOver,
     setShowGameOver,
     gameOverReason,
@@ -202,6 +200,8 @@ export default function Terminal({
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
   const firewallPauseStartRef = useRef<number | null>(null);
+  const timedMechanicPauseStartRef = useRef<number | null>(null);
+  const timedMechanicResumeAdjustmentRef = useRef(0);
   const hasBlockingPopup =
     showSettings ||
     showAchievements ||
@@ -220,6 +220,8 @@ export default function Terminal({
     gameState.timedDecryptActive ||
     gameState.traceSpikeActive ||
     gameState.countdownActive;
+  const pauseTimedMechanics =
+    activeImage !== null || activeVideo !== null || showTuringTest || hasBlockingPopup;
 
   // File reading suppression: consider player "reading" for 15 seconds after file open
   const FILE_READ_COOLDOWN_MS = 15000;
@@ -227,20 +229,6 @@ export default function Terminal({
     gameState.isReadingFile && 
     gameState.lastFileReadTime && 
     (Date.now() - gameState.lastFileReadTime < FILE_READ_COOLDOWN_MS)
-  );
-
-  // Wrapped setter: when Turing test is triggered (true), show the overlay directly
-  // (Previously played a pre-test video, but the video asset was missing)
-  const setShowTuringTestWrapped = useCallback<React.Dispatch<React.SetStateAction<boolean>>>(
-    (value) => {
-      const newValue = typeof value === 'function' ? value(showTuringTest) : value;
-      if (newValue) {
-        setShowTuringTest(true);
-      } else {
-        setShowTuringTest(false);
-      }
-    },
-    [showTuringTest, setShowTuringTest]
   );
 
   // Track max detection ever reached for Survivor achievement
@@ -270,6 +258,15 @@ export default function Terminal({
   const enterOnlyButtonRef = useRef<HTMLButtonElement>(null);
   const headerMenuRef = useRef<HTMLDivElement>(null);
   const gameStateRef = useRef(gameState);
+  const uiStateRef = useRef({
+    gamePhase,
+    showGameOver,
+    showTuringTest,
+    activeImage,
+    activeVideo,
+    pendingImage,
+    hasBlockingPopup,
+  });
   const isProcessingRef = useRef(false);
   const skipStreamingRef = useRef(false);
   const streamStartScrollPos = useRef<number | null>(null);
@@ -291,6 +288,26 @@ export default function Terminal({
       }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    uiStateRef.current = {
+      gamePhase,
+      showGameOver,
+      showTuringTest,
+      activeImage,
+      activeVideo,
+      pendingImage,
+      hasBlockingPopup,
+    };
+  }, [
+    activeImage,
+    activeVideo,
+    gamePhase,
+    hasBlockingPopup,
+    pendingImage,
+    showGameOver,
+    showTuringTest,
+  ]);
 
   const getEntryContent = useCallback(
     (entry: TerminalEntry): string => {
@@ -377,7 +394,6 @@ export default function Terminal({
     (!gameState.tutorialComplete && !isInteractiveTutorialInput) ||
     encryptedChannelState !== 'idle' ||
     !!pendingImage ||
-    !!pendingVideo ||
     pendingUfo74StartMessages.length > 0 ||
     isTyping ||
     (gameState.ufo74SecretDiscovered && gamePhase === 'terminal');
@@ -485,7 +501,7 @@ export default function Terminal({
   } = useGameActions({
     setGameState,
     setGamePhase,
-    setShowTuringTest: setShowTuringTestWrapped,
+    setShowTuringTest,
     setShowGameOver,
     setGameOverReason,
     onExitAction,
@@ -516,6 +532,21 @@ export default function Terminal({
     }
   }, [setGameState]);
 
+  // Extend eye timers after tutorial popup dismiss
+  const handleExtendEyeTimers = useCallback((durationMs: number) => {
+    setGameState(prev => ({
+      ...prev,
+      firewallEyes: prev.firewallEyes.map(eye => ({
+        ...eye,
+        detonateTime: eye.detonateTime + durationMs,
+      })),
+      lastEyeSpawnTime:
+        prev.lastEyeSpawnTime > 0
+          ? prev.lastEyeSpawnTime + durationMs
+          : prev.lastEyeSpawnTime,
+    }));
+  }, []);
+
   const { handleSubmit, handleKeyDown } = useTerminalInput({
     gameState,
     gamePhase,
@@ -523,7 +554,6 @@ export default function Terminal({
     isProcessing,
     showTuringTest,
     pendingImage,
-    pendingVideo,
     pendingUfo74StartMessages,
     pendingUfo74Messages,
     historyIndex,
@@ -533,7 +563,6 @@ export default function Terminal({
     setIsStreaming,
     setHistoryIndex,
     setPendingImage,
-    setPendingVideo,
     setActiveImage,
     setActiveVideo,
     setPendingUfo74StartMessages,
@@ -544,7 +573,7 @@ export default function Terminal({
     setShowAttBar,
     setShowAvatar,
     setAvatarCreepyEntrance,
-    setShowTuringTest: setShowTuringTestWrapped,
+    setShowTuringTest,
     setIsShaking,
     setShowFirewallScare,
     setEvidenceFoundIndicatorKey,
@@ -590,8 +619,10 @@ export default function Terminal({
     showStatistics,
     showPauseMenu,
     showHeaderMenu,
+    showTutorialSkip,
     isEnterOnlyMode,
     isFirewallPaused,
+    pauseTimedMechanics,
     suppressPressure,
     soundEnabled,
     onEnterPress: handleSubmit,
@@ -620,7 +651,7 @@ export default function Terminal({
     setShowStatistics,
     setShowPauseMenu,
     setShowHeaderMenu,
-    setShowTuringTest: setShowTuringTestWrapped,
+    setShowTuringTest,
     setActiveImage,
     setActiveVideo,
     refs: {
@@ -633,6 +664,8 @@ export default function Terminal({
       idleHintTimerRef,
       lastScrollTimeRef,
       firewallPauseStartRef,
+      timedMechanicPauseStartRef,
+      timedMechanicResumeAdjustmentRef,
       maxDetectionRef,
       prevDetectionRef,
       skipStreamingRef,
@@ -854,6 +887,14 @@ export default function Terminal({
         break;
     }
 
+    const isReadListingLine =
+      entry.type === 'output' &&
+      /\s\[READ\]/.test(entryContent);
+
+    if (isReadListingLine) {
+      className = `${className} ${styles.readLine}`;
+    }
+
     // Typewriter animation for UFO74 text entries
     if (entry.type === 'ufo74' && isTypableUfo74Content(entryContent)) {
       // Currently being typed — animate character by character
@@ -1004,6 +1045,7 @@ export default function Terminal({
             onSpawnEyeBatch={handleFirewallEyeBatchSpawn}
             onActivateFirewall={handleFirewallActivate}
             onPauseChanged={handleFirewallPauseChanged}
+            onExtendEyeTimers={handleExtendEyeTimers}
             onTutorialShown={() => {
               setGameState(prev => ({
                 ...prev,
@@ -1179,7 +1221,7 @@ export default function Terminal({
               onSubmit={handleSubmit}
               style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
             >
-              <button ref={enterOnlyButtonRef} type="submit" autoFocus />
+              <button ref={enterOnlyButtonRef} type="submit" autoFocus={!showTutorialSkip} />
             </form>
             {/* Centered enter prompt - inline in flex layout to prevent overlap */}
             <div className={styles.enterPromptArea}>
@@ -1196,7 +1238,7 @@ export default function Terminal({
                     ? t('terminal.enter.close')
                     : encryptedChannelState !== 'idle'
                       ? t('terminal.enter.respond')
-                      : pendingImage || pendingVideo
+                      : pendingImage
                         ? t('terminal.enter.view')
                         : t('terminal.enter.continue')}
                 </span>
@@ -1251,7 +1293,7 @@ export default function Terminal({
               onKeyDown={handleKeyDown}
               className={styles.inputField}
               disabled={isProcessing || gameState.isGameOver}
-              autoFocus
+              autoFocus={!showTutorialSkip}
               autoComplete="off"
               spellCheck={false}
             />
@@ -1498,6 +1540,7 @@ export default function Terminal({
         {/* Pause menu */}
         {showPauseMenu && (
           <PauseMenu
+            canLoadAction={getLatestCheckpoint() !== null}
             onResumeAction={() => {
               setShowPauseMenu(false);
               setTimeout(focusTerminalInput, 0);
@@ -1508,8 +1551,26 @@ export default function Terminal({
               setTimeout(focusTerminalInput, 0);
             }}
             onLoadAction={() => {
+              const latestCheckpoint = getLatestCheckpoint();
               setShowPauseMenu(false);
-              onExitAction();
+              if (!latestCheckpoint) {
+                setTimeout(focusTerminalInput, 0);
+                return;
+              }
+
+              if (onLoadCheckpointAction) {
+                onLoadCheckpointAction(latestCheckpoint.id);
+              } else {
+                const loadedState = loadCheckpoint(latestCheckpoint.id);
+                if (loadedState) {
+                  setGameState({
+                    ...loadedState,
+                    isGameOver: false,
+                    gameOverReason: undefined,
+                  });
+                  setGamePhase('terminal');
+                }
+              }
             }}
             onSettingsAction={() => {
               setShowPauseMenu(false);

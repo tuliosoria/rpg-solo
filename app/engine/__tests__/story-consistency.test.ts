@@ -24,9 +24,6 @@ import {
   FileSystemNode,
 } from '../../types';
 import {
-  getHelpBasics,
-  getHelpEvidence,
-  getHelpWinning,
   getFirstRunMessage,
 } from '../commands/tutorial';
 
@@ -329,9 +326,9 @@ describe('Story Consistency Tests', () => {
           );
 
           // Key physical characteristics from Varginha lore
-          expect(content).toMatch(/1\.2m|height/i);
-          expect(content).toMatch(/grey|gray/i);
-          expect(content).toMatch(/eye|dark/i);
+          expect(content).toMatch(/1\.6m|height/i);
+          expect(content).toMatch(/brown|oily/i);
+          expect(content).toMatch(/eye|red/i);
           expect(content).toMatch(/four\s+digit|digit/i);
         }
       });
@@ -446,35 +443,6 @@ describe('Story Consistency Tests', () => {
 
   describe('4. Player Understanding', () => {
     describe('Tutorial Messages', () => {
-      it('help basics explains core navigation commands', () => {
-        const entries = getHelpBasics();
-        const content = entries.map(e => e.content).join('\n');
-
-        expect(content).toContain('ls');
-        expect(content).toContain('cd');
-        expect(content).toContain('open');
-        // decrypt is an advanced command, not in basics
-      });
-
-      it('help evidence explains the evidence system', () => {
-        const entries = getHelpEvidence();
-        const content = entries.map(e => e.content).join('\n');
-
-        expect(content).toMatch(/evidence|truth|discover/i);
-      });
-
-      it('help winning explains victory conditions', () => {
-        const entries = getHelpWinning();
-        const content = entries.map(e => e.content).join('\n');
-
-        // Should mention the 5 truths
-        expect(content).toContain('Debris Relocation');
-        expect(content).toContain('Being Containment');
-        expect(content).toContain('Telepathic Scouts');
-        expect(content).toContain('International Actors');
-        expect(content).toContain('Transition 2026');
-      });
-
       it('first run message welcomes player appropriately', () => {
         const entries = getFirstRunMessage();
         const content = entries.map(e => e.content).join('\n');
@@ -519,7 +487,7 @@ describe('Story Consistency Tests', () => {
 
           // Should mention the review dimensions (maps to truth categories)
           expect(content).toMatch(/physical\s+assets/i);
-          expect(content).toMatch(/biological\s+subjects/i);
+          expect(content).toMatch(/equipment\s+and\s+materiel/i);
           expect(content).toMatch(/communications/i);
           expect(content).toMatch(/oversight/i);
           expect(content).toMatch(/forward\s+risk/i);

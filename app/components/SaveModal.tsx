@@ -16,6 +16,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
   const { language, t } = useI18n();
   const [slotName, setSlotName] = useState('');
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Handle ESC key to close modal
   const handleKeyDown = useCallback(
@@ -35,10 +36,21 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
 
   const handleSave = useCallback(() => {
     setSaving(true);
+    setSaveError(null);
     const locale = language === 'pt-BR' ? 'pt-BR' : language === 'es' ? 'es' : 'en-US';
     const name = slotName.trim() || t('save.defaultName', { value: new Date().toLocaleString(locale) });
-    saveGame(gameState, name);
+    const savedSlot = saveGame(gameState, name);
     setSaving(false);
+    if (!savedSlot) {
+      setSaveError(
+        t(
+          'save.error.failed',
+          undefined,
+          'SAVE FAILED — Storage unavailable. Free some space or try a different browser mode.'
+        )
+      );
+      return;
+    }
     onSavedAction();
   }, [gameState, language, onSavedAction, slotName, t]);
 
@@ -55,7 +67,12 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
           <input
             type="text"
             value={slotName}
-            onChange={e => setSlotName(e.target.value)}
+            onChange={e => {
+              setSlotName(e.target.value);
+              if (saveError) {
+                setSaveError(null);
+              }
+            }}
             placeholder={t('save.defaultName', {
               value: new Date().toLocaleString(
                 language === 'pt-BR' ? 'pt-BR' : language === 'es' ? 'es' : 'en-US'
@@ -71,6 +88,11 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
               {t('save.progress')}: {gameState.truthsDiscovered.size}/5 {t('save.progressSuffix')}
             </div>
           </div>
+          {saveError && (
+            <div className={styles.error} role="alert">
+              {saveError}
+            </div>
+          )}
         </div>
 
         <div className={styles.actions}>

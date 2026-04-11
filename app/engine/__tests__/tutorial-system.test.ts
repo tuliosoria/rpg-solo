@@ -4,13 +4,15 @@ import { describe, it, expect } from 'vitest';
 import {
   getTutorialTip,
   shouldShowTutorialTip,
-  getHelpBasics,
-  getHelpEvidence,
-  getHelpWinning,
   getFirstRunMessage,
 } from '../commands/tutorial';
 import type { TutorialTipId } from '../commands/tutorial';
-import { getTutorialAutocomplete, TutorialStateID } from '../commands/interactiveTutorial';
+import {
+  getTutorialAutocomplete,
+  TUTORIAL_BRIEFING_STEPS,
+  TUTORIAL_INTRO_STEPS,
+  TutorialStateID,
+} from '../commands/interactiveTutorial';
 
 describe('Tutorial System', () => {
   describe('shouldShowTutorialTip', () => {
@@ -49,47 +51,6 @@ describe('Tutorial System', () => {
     });
   });
 
-  describe('getHelpBasics', () => {
-    it('returns formatted help entries', () => {
-      const entries = getHelpBasics();
-      expect(entries.length).toBeGreaterThan(0);
-
-      // Check for expected content
-      const allContent = entries.map(e => e.content).join('\n');
-      expect(allContent).toContain('B A S I C S');
-      expect(allContent).toContain('NAVIGATION');
-      expect(allContent).toContain('ls');
-      expect(allContent).toContain('cd');
-      expect(allContent).toContain('open');
-    });
-  });
-
-  describe('getHelpEvidence', () => {
-    it('returns formatted help entries about evidence', () => {
-      const entries = getHelpEvidence();
-      expect(entries.length).toBeGreaterThan(0);
-
-      const allContent = entries.map(e => e.content).join('\n');
-      expect(allContent).toContain('E V I D E N C E');
-      expect(allContent).toContain('OBJECTIVE');
-    });
-  });
-
-  describe('getHelpWinning', () => {
-    it('returns formatted help entries about winning', () => {
-      const entries = getHelpWinning();
-      expect(entries.length).toBeGreaterThan(0);
-
-      const allContent = entries.map(e => e.content).join('\n');
-      expect(allContent).toContain('H O W   T O   W I N');
-      expect(allContent).toContain('Debris Relocation');
-      expect(allContent).toContain('Being Containment');
-      expect(allContent).toContain('Telepathic Scouts');
-      expect(allContent).toContain('International Actors');
-      expect(allContent).toContain('Transition 2026');
-    });
-  });
-
   describe('getFirstRunMessage', () => {
     it('returns a friendly first-run message', () => {
       const entries = getFirstRunMessage();
@@ -123,6 +84,23 @@ describe('Tutorial System', () => {
     it('returns null for wrong tutorial state', () => {
       expect(getTutorialAutocomplete('open c', TutorialStateID.LS_PROMPT)).toBe(null);
       expect(getTutorialAutocomplete('open c', TutorialStateID.CD_PROMPT)).toBe(null);
+    });
+  });
+
+  describe('interactive tutorial copy', () => {
+    it('keeps the live onboarding path on the original tone', () => {
+      const introText = TUTORIAL_INTRO_STEPS.flat().map(entry => entry.content).join('\n');
+      const briefingText = TUTORIAL_BRIEFING_STEPS.flat().map(entry => entry.content).join('\n');
+
+      expect(introText).toContain('[UFO74]: Connection established.');
+      expect(introText).toContain("[UFO74]: Great, now you're in. Let's get to business.");
+      expect(briefingText).toContain('[UFO74]: Your mission: find 5 pieces of evidence.');
+      expect(briefingText).toContain(
+        '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.'
+      );
+      expect(briefingText).toContain(
+        '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
+      );
     });
   });
 });

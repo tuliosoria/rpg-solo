@@ -5,6 +5,7 @@ import FirewallEyes, {
   SPAWN_COOLDOWN_MS,
   FIREWALL_EYE_BATCH_SIZES,
   FIREWALL_EYE_BATCH_THRESHOLDS,
+  MAX_CONCURRENT_FIREWALL_EYES,
   getFirewallEyeBatchSize,
 } from '../FirewallEyes';
 import type { FirewallEye } from '../../types';
@@ -178,6 +179,35 @@ describe('FirewallEyes', () => {
     expect(onSpawnEyeBatch).not.toHaveBeenCalled();
   });
 
+  it('does not schedule another batch when the max eye cap is already reached', () => {
+    const onSpawnEyeBatch = vi.fn();
+    const now = Date.now();
+    const eyes = Array.from({ length: MAX_CONCURRENT_FIREWALL_EYES }, (_, index) => ({
+      id: `eye-${index}`,
+      x: 10 + index,
+      y: 20 + index,
+      spawnTime: now,
+      detonateTime: now + 5000,
+      isDetonating: false,
+    }));
+
+    render(
+      <FirewallEyes
+        {...baseProps}
+        firewallActive={true}
+        eyes={eyes}
+        lastEyeSpawnTime={now - SPAWN_COOLDOWN_MS - 1}
+        onSpawnEyeBatch={onSpawnEyeBatch}
+      />
+    );
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    expect(onSpawnEyeBatch).not.toHaveBeenCalled();
+  });
+
   it('detonates eyes when their timers expire', () => {
     const onEyeDetonate = vi.fn();
     const now = Date.now();
@@ -221,7 +251,7 @@ describe('FirewallEyes', () => {
       );
     });
 
-    it('returns 12 at 85% risk', () => {
+    it('returns 10 at 85% risk', () => {
       expect(getFirewallEyeBatchSize(FIREWALL_EYE_BATCH_THRESHOLDS.CRITICAL)).toBe(
         FIREWALL_EYE_BATCH_SIZES.CRITICAL
       );
@@ -255,6 +285,16 @@ describe('Tutorial Popup', () => {
     onActivateFirewall: vi.fn(),
     onPauseChanged: vi.fn(),
     onTutorialShown: vi.fn(),
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   beforeEach(() => {
@@ -326,13 +366,7 @@ describe('Tutorial Popup', () => {
     });
 
     act(() => {
-      vi.advanceTimersByTime(7999);
-    });
-
-    expect(onEyeDetonate).not.toHaveBeenCalled();
-
-    act(() => {
-      vi.advanceTimersByTime(1);
+      vi.runOnlyPendingTimers();
     });
 
     expect(onEyeDetonate).toHaveBeenCalledWith('eye-1');

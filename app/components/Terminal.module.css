@@ -594,10 +594,19 @@
   font-style: italic;
 }
 
+.readLine {
+  color: #557755;
+}
+
 .ufo74 {
   color: #87ceeb; /* Light blue - standardized UFO74 color */
   font-style: normal;
   font-size: 1em; /* Consistent with terminal font size */
+}
+
+/* Remove gap between consecutive UFO74 messages */
+.ufo74 + .ufo74 {
+  margin-top: -1px;
 }
 
 .tutorialCommand {

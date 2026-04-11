@@ -65,7 +65,6 @@ interface UseTerminalInputOptions {
   isProcessing: boolean;
   showTuringTest: boolean;
   pendingImage: ImageTrigger | null;
-  pendingVideo: VideoTrigger | null;
   pendingUfo74StartMessages: TerminalEntry[];
   pendingUfo74Messages: TerminalEntry[];
   historyIndex: number;
@@ -75,7 +74,6 @@ interface UseTerminalInputOptions {
   setIsStreaming: React.Dispatch<React.SetStateAction<boolean>>;
   setHistoryIndex: React.Dispatch<React.SetStateAction<number>>;
   setPendingImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
-  setPendingVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
   setActiveImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
   setActiveVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
   setPendingUfo74StartMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
@@ -118,7 +116,6 @@ export function useTerminalInput({
   isProcessing,
   showTuringTest,
   pendingImage,
-  pendingVideo,
   pendingUfo74StartMessages,
   pendingUfo74Messages,
   historyIndex,
@@ -128,7 +125,6 @@ export function useTerminalInput({
   setIsStreaming,
   setHistoryIndex,
   setPendingImage,
-  setPendingVideo,
   setActiveImage,
   setActiveVideo,
   setPendingUfo74StartMessages,
@@ -199,9 +195,6 @@ export function useTerminalInput({
   const streamOutput = useCallback(
     async (entries: TerminalEntry[], mode: StreamingMode): Promise<void> => {
       if (mode === 'none' || entries.length === 0) {
-        if (entries.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
-          playSound('transmission');
-        }
         setGameState(prev => ({
           ...prev,
           history: [...prev.history, ...entries],
@@ -215,9 +208,6 @@ export function useTerminalInput({
       for (let i = 0; i < entries.length; i++) {
         if (skipStreamingRef.current) {
           const remaining = entries.slice(i);
-          if (remaining.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
-            playSound('transmission');
-          }
           setGameState(prev => ({
             ...prev,
             history: [...prev.history, ...remaining],
@@ -226,10 +216,6 @@ export function useTerminalInput({
         }
 
         const entry = entries[i];
-
-        if (entry.content.includes('>> INCOMING TRANSMISSION <<')) {
-          playSound('transmission');
-        }
 
         setGameState(prev => ({
           ...prev,
@@ -270,12 +256,6 @@ export function useTerminalInput({
         setActiveImage(pendingImage);
         setPendingImage(null);
         playSound('creepy');
-        return;
-      }
-
-      if (pendingVideo && !trimmedInput) {
-        setActiveVideo(pendingVideo);
-        setPendingVideo(null);
         return;
       }
 
@@ -531,13 +511,16 @@ export function useTerminalInput({
 
       if (isProcessingRef.current || isProcessing || showTuringTest || !trimmedInput) return;
 
+      // Block input during Turing evaluation transition (overlay not yet visible)
+      if (gameState.turingEvaluationActive && !showTuringTest) return;
+
       const command = trimmedInput;
       const commandLower = command.toLowerCase().split(' ')[0];
       const shouldDeferUfo74 =
         commandLower === 'open' || commandLower === 'decrypt' || commandLower === 'last';
       setInputValue('');
 
-      const dangerousCommands = ['decrypt', 'recover', 'trace', 'override', 'leak'];
+      const dangerousCommands = ['recover', 'trace', 'override', 'leak'];
       const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
       const systemCommands = ['scan', 'wait', 'hide'];
 
@@ -582,6 +565,19 @@ export function useTerminalInput({
       incrementStatistic('commandsTyped');
 
       const result = executeCommand(inputValue, newState);
+      const previousSingularEvents = newState.singularEventsTriggered || new Set<string>();
+      const nextSingularEvents =
+        result.stateChanges.singularEventsTriggered || previousSingularEvents;
+      const didTriggerSecondVoice =
+        !previousSingularEvents.has('second_voice') && nextSingularEvents.has('second_voice');
+      const playSecondVoiceCue = () => {
+        if (!didTriggerSecondVoice) return;
+
+        // Fire only when the actual one-time event lands in history, so the cue stays sparse
+        // and follows the unsettling text instead of preceding it.
+        setTimeout(() => playSound('omen'), 120);
+        setTimeout(() => playSound('static'), 320);
+      };
 
       if (result.delayMs) {
         await new Promise(resolve => setTimeout(resolve, result.delayMs));
@@ -608,6 +604,7 @@ export function useTerminalInput({
           ...intermediateState,
           history: result.stateChanges.history,
         });
+        playSecondVoiceCue();
         isProcessingRef.current = false;
         setIsProcessing(false);
       } else if (streamingMode !== 'none' && result.output.length > 0) {
@@ -623,16 +620,9 @@ export function useTerminalInput({
         try {
           await streamOutput(streamableOutput, streamingMode);
 
-          if (result.imageTrigger || result.videoTrigger) {
+          if (result.imageTrigger) {
             const pendingMediaMessages: TerminalEntry[] = [];
             if (result.imageTrigger) {
-              pendingMediaMessages.push(
-                createEntry('warning', ''),
-                createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-                createEntry('system', '')
-              );
-            }
-            if (result.videoTrigger) {
               pendingMediaMessages.push(
                 createEntry('warning', ''),
                 createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
@@ -644,6 +634,8 @@ export function useTerminalInput({
               history: [...prev.history, ...pendingMediaMessages],
             }));
           }
+
+          playSecondVoiceCue();
 
           if (ufo74Messages.length > 0) {
             if (result.imageTrigger || result.videoTrigger) {
@@ -672,18 +664,12 @@ export function useTerminalInput({
             createEntry('system', '')
           );
         }
-        if (result.videoTrigger) {
-          pendingMediaMessages.push(
-            createEntry('warning', ''),
-            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-            createEntry('system', '')
-          );
-        }
 
         setGameState({
           ...intermediateState,
           history: [...newState.history, ...otherOutput, ...pendingMediaMessages],
         });
+        playSecondVoiceCue();
 
         if (ufo74Messages.length > 0) {
           if (result.imageTrigger || result.videoTrigger) {
@@ -703,7 +689,7 @@ export function useTerminalInput({
         setPendingImage(result.imageTrigger);
       }
       if (result.videoTrigger) {
-        setPendingVideo(result.videoTrigger);
+        setActiveVideo(result.videoTrigger);
       }
 
       if (result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0) {
@@ -863,7 +849,6 @@ export function useTerminalInput({
       pendingImage,
       pendingUfo74Messages,
       pendingUfo74StartMessages,
-      pendingVideo,
       playSound,
       setActiveImage,
       setActiveVideo,
@@ -878,7 +863,6 @@ export function useTerminalInput({
       setPendingImage,
       setPendingUfo74Messages,
       setPendingUfo74StartMessages,
-      setPendingVideo,
       setQueuedAfterMediaMessages,
       setShowEvidenceTracker,
       setShowAttBar,

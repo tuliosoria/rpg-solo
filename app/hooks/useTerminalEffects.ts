@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
 import { type GamePhase, type GameState, type ImageTrigger, type VideoTrigger } from '../types';
 import { createEntry } from '../engine/commands';
 import { autoSave } from '../storage/saves';
@@ -70,6 +70,8 @@ interface TerminalEffectsRefs {
   idleHintTimerRef: React.MutableRefObject<NodeJS.Timeout | null>;
   lastScrollTimeRef: React.MutableRefObject<number>;
   firewallPauseStartRef: React.MutableRefObject<number | null>;
+  timedMechanicPauseStartRef: React.MutableRefObject<number | null>;
+  timedMechanicResumeAdjustmentRef: React.MutableRefObject<number>;
   maxDetectionRef: React.MutableRefObject<number>;
   prevDetectionRef: React.MutableRefObject<number>;
   skipStreamingRef: React.MutableRefObject<boolean>;
@@ -89,8 +91,10 @@ interface UseTerminalEffectsOptions {
   showStatistics: boolean;
   showPauseMenu: boolean;
   showHeaderMenu: boolean;
+  showTutorialSkip: boolean;
   isEnterOnlyMode: boolean;
   isFirewallPaused: boolean;
+  pauseTimedMechanics: boolean;
   suppressPressure: boolean;
   soundEnabled: boolean;
   onEnterPress?: () => void;
@@ -139,8 +143,10 @@ export function useTerminalEffects({
   showStatistics,
   showPauseMenu,
   showHeaderMenu,
+  showTutorialSkip,
   isEnterOnlyMode,
   isFirewallPaused,
+  pauseTimedMechanics,
   suppressPressure,
   soundEnabled,
   onEnterPress,
@@ -184,6 +190,8 @@ export function useTerminalEffects({
     idleHintTimerRef,
     lastScrollTimeRef,
     firewallPauseStartRef,
+    timedMechanicPauseStartRef,
+    timedMechanicResumeAdjustmentRef,
     maxDetectionRef,
     prevDetectionRef,
     skipStreamingRef,
@@ -201,14 +209,17 @@ export function useTerminalEffects({
     !showAchievements &&
     !showStatistics &&
     !showPauseMenu &&
-    !showHeaderMenu;
+    !showHeaderMenu &&
+    !showTutorialSkip;
 
   const focusTerminalTarget = useCallback(() => {
-    const target = inputRef.current ?? enterOnlyButtonRef.current;
+    const target = isEnterOnlyMode
+      ? enterOnlyButtonRef.current ?? inputRef.current
+      : inputRef.current ?? enterOnlyButtonRef.current;
     if (!target) return;
     if (document.activeElement === target) return;
     target.focus();
-  }, [enterOnlyButtonRef, inputRef]);
+  }, [enterOnlyButtonRef, inputRef, isEnterOnlyMode]);
 
   const focusTerminalInput = useCallback(() => {
     if (!shouldRestoreFocus) return;
@@ -228,8 +239,19 @@ export function useTerminalEffects({
       return;
     }
 
+    if (pauseTimedMechanics || timedMechanicPauseStartRef.current !== null) {
+      return;
+    }
+
     const updateTimer = () => {
-      const remaining = Math.max(0, gameState.timedDecryptEndTime - Date.now());
+      if (timedMechanicPauseStartRef.current !== null) {
+        return;
+      }
+      const adjustment = timedMechanicResumeAdjustmentRef.current;
+      const remaining = Math.max(0, gameState.timedDecryptEndTime + adjustment - Date.now());
+      if (adjustment > 0) {
+        timedMechanicResumeAdjustmentRef.current = 0;
+      }
       setTimedDecryptRemaining(remaining);
     };
 
@@ -237,7 +259,69 @@ export function useTerminalEffects({
     const interval = setInterval(updateTimer, 100);
 
     return () => clearInterval(interval);
-  }, [gameState.timedDecryptActive, gameState.timedDecryptEndTime, setTimedDecryptRemaining]);
+  }, [
+    gameState.timedDecryptActive,
+    gameState.timedDecryptEndTime,
+    pauseTimedMechanics,
+    setTimedDecryptRemaining,
+    timedMechanicResumeAdjustmentRef,
+  ]);
+
+  // Pause timed mechanics while blocking overlays/popups are open.
+  useEffect(() => {
+    if (!gameState.timedDecryptActive && !gameState.countdownActive) {
+      timedMechanicPauseStartRef.current = null;
+      timedMechanicResumeAdjustmentRef.current = 0;
+      return;
+    }
+
+    if (pauseTimedMechanics) {
+      if (timedMechanicPauseStartRef.current === null) {
+        timedMechanicPauseStartRef.current = Date.now();
+      }
+      return;
+    }
+
+    if (timedMechanicPauseStartRef.current === null) {
+      return;
+    }
+
+    const pauseDuration = Date.now() - timedMechanicPauseStartRef.current;
+    timedMechanicPauseStartRef.current = null;
+    timedMechanicResumeAdjustmentRef.current = pauseDuration;
+
+    if (pauseDuration <= 0) {
+      timedMechanicResumeAdjustmentRef.current = 0;
+      return;
+    }
+
+    setGameState(prev => {
+      let nextState = prev;
+
+      if (prev.timedDecryptActive && prev.timedDecryptEndTime) {
+        nextState = {
+          ...nextState,
+          timedDecryptEndTime: prev.timedDecryptEndTime + pauseDuration,
+        };
+      }
+
+      if (prev.countdownActive && prev.countdownEndTime) {
+        nextState = {
+          ...nextState,
+          countdownEndTime: prev.countdownEndTime + pauseDuration,
+        };
+      }
+
+      return nextState;
+    });
+  }, [
+    gameState.countdownActive,
+    gameState.timedDecryptActive,
+    pauseTimedMechanics,
+    setGameState,
+    timedMechanicPauseStartRef,
+    timedMechanicResumeAdjustmentRef,
+  ]);
 
   // Scroll behavior: during streaming scroll to bottom, after streaming scroll to content start
   useEffect(() => {
@@ -247,10 +331,14 @@ export function useTerminalEffects({
         outputRef.current.scrollTop = outputRef.current.scrollHeight;
       } else if (streamStartScrollPos.current !== null) {
         // Streaming just completed - scroll back to where content started
-        outputRef.current.scrollTo({
-          top: streamStartScrollPos.current,
-          behavior: 'smooth',
-        });
+        if (typeof outputRef.current.scrollTo === 'function') {
+          outputRef.current.scrollTo({
+            top: streamStartScrollPos.current,
+            behavior: 'smooth',
+          });
+        } else {
+          outputRef.current.scrollTop = streamStartScrollPos.current;
+        }
         streamStartScrollPos.current = null;
       } else {
         // Normal operation - scroll to bottom
@@ -277,7 +365,7 @@ export function useTerminalEffects({
   }, [inputRef]);
 
   // Restore focus after overlays close or mode changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!shouldRestoreFocus) return;
     const timeout = window.setTimeout(() => {
       focusTerminalTarget();
@@ -346,6 +434,11 @@ export function useTerminalEffects({
 
     // Suppress glitches during atmosphere phase (no pressure systems)
     if (suppressPressure) return;
+    if (pauseTimedMechanics) {
+      setGlitchActive(false);
+      setGlitchHeavy(false);
+      return;
+    }
 
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
@@ -437,6 +530,7 @@ export function useTerminalEffects({
     playSound,
     setGlitchActive,
     setGlitchHeavy,
+    pauseTimedMechanics,
     suppressPressure,
   ]);
 
@@ -446,6 +540,10 @@ export function useTerminalEffects({
 
     // Suppress paranoia during atmosphere phase (no pressure systems)
     if (suppressPressure) return;
+    if (pauseTimedMechanics) {
+      setParanoiaMessage(null);
+      return;
+    }
 
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
@@ -494,6 +592,7 @@ export function useTerminalEffects({
     playSound,
     setParanoiaMessage,
     setParanoiaPosition,
+    pauseTimedMechanics,
     suppressPressure,
   ]);
 
@@ -613,8 +712,19 @@ export function useTerminalEffects({
       return;
     }
 
+    if (pauseTimedMechanics || timedMechanicPauseStartRef.current !== null) {
+      return;
+    }
+
     const updateCountdown = () => {
-      const remaining = Math.max(0, gameState.countdownEndTime - Date.now());
+      if (timedMechanicPauseStartRef.current !== null) {
+        return;
+      }
+      const adjustment = timedMechanicResumeAdjustmentRef.current;
+      const remaining = Math.max(0, gameState.countdownEndTime + adjustment - Date.now());
+      if (adjustment > 0) {
+        timedMechanicResumeAdjustmentRef.current = 0;
+      }
       const seconds = Math.ceil(remaining / 1000);
 
       if (seconds <= 0) {
@@ -648,10 +758,12 @@ export function useTerminalEffects({
     gameState.countdownActive,
     gameState.countdownEndTime,
     gamePhase,
+    pauseTimedMechanics,
     playSound,
     setCountdownDisplay,
     setGamePhase,
     setGameState,
+    timedMechanicResumeAdjustmentRef,
   ]);
 
   // Keep gameState ref updated
@@ -731,7 +843,7 @@ export function useTerminalEffects({
         condition: (s: GameState) => s.sessionCommandCount < 5,
       },
       {
-        hint: "Some files are ENCRYPTED. You'll need 'decrypt' for those.",
+        hint: "Some files still carry legacy encryption headers, but recovered text opens directly.",
         condition: (s: GameState) =>
           (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2,
       },
@@ -845,8 +957,14 @@ export function useTerminalEffects({
         } else if (activeImage || activeVideo) {
           setActiveImage(null);
           setActiveVideo(null);
+        } else if (showPauseMenu) {
+          setShowPauseMenu(false);
+          setShowHeaderMenu(false);
         } else {
-          setShowPauseMenu(prev => !prev);
+          if (timedMechanicPauseStartRef.current === null) {
+            timedMechanicPauseStartRef.current = Date.now();
+          }
+          setShowPauseMenu(true);
           setShowHeaderMenu(false);
         }
       }
@@ -863,6 +981,7 @@ export function useTerminalEffects({
     showStatistics,
     activeImage,
     activeVideo,
+    showPauseMenu,
     setShowSettings,
     setShowAchievements,
     setShowStatistics,
@@ -874,7 +993,7 @@ export function useTerminalEffects({
 
   // Handle Enter key in enter-only mode (tutorial intro, encrypted channel, pending media)
   // This is needed because the hidden form button approach is unreliable across browsers
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isEnterOnlyMode || !onEnterPress) return;
     if (isStreaming || isProcessing || showTuringTest || gameState.isGameOver) return;
     if (showSettings || showAchievements || showStatistics || showPauseMenu) return;

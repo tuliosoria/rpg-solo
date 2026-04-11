@@ -149,6 +149,17 @@ describe('ImageOverlay', () => {
 
       expect(defaultProps.onCloseAction).toHaveBeenCalledTimes(1);
     });
+
+    it('only closes once when manual and timed dismissal overlap', () => {
+      render(<ImageOverlay {...defaultProps} durationMs={1000} />);
+
+      act(() => {
+        fireEvent.keyDown(window, { key: 'Escape' });
+        vi.advanceTimersByTime(1100);
+      });
+
+      expect(defaultProps.onCloseAction).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('Click Interaction', () => {

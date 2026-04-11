@@ -181,7 +181,7 @@ export interface GameState {
   wrongAttempts: number; // 0-8 (wrong commands/auth failures, 8 = game over)
   accessLevel: number; // 0-5
   sessionStability: number; // 100-0
-  legacyAlertCounter: number; // 0-10
+  legacyAlertCounter: number; // 0-8 invalid command attempts before lockdown
 
   // Flags for game progression
   flags: Record<string, boolean>;
@@ -331,6 +331,9 @@ export interface GameState {
   // Cipher puzzle state
   pendingCipherFile?: string; // File awaiting cipher solution
   cipherAttempts: number; // Wrong attempts on current cipher
+
+  // Tree command confirmation
+  pendingTreeConfirm?: boolean; // True when waiting for tree confirmation
 
   // Morse code puzzle state
   morseFileRead: boolean; // True after reading morse_intercept.sig

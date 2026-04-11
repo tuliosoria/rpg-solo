@@ -430,6 +430,188 @@ describe('Terminal Component', () => {
     expect(input).toHaveFocus();
   });
 
+  it('restores enter-only follow-up prompts after closing the pause menu', async () => {
+    const delayedState = {
+      ...defaultProps.initialState,
+      detectionLevel: 55,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={delayedState} />);
+
+    const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
+
+    act(() => {
+      fireEvent.change(input, {
+        target: { value: 'open /internal/incident_summary_official.txt' },
+      });
+      fireEvent.submit(input.closest('form')!);
+    });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10000);
+    });
+
+    expect(screen.queryByText(/Processing\.\.\./i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Press Enter ↵ to proceed/i)).toBeInTheDocument();
+    expect(document.querySelector('.line.ufo74')).toBeNull();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.getByText(/PAUSED/i)).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.queryByText(/PAUSED/i)).not.toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(document.querySelector('.line.ufo74')).not.toBeNull();
+  });
+
+  it('advances enter-only prompts from a global Enter key press', async () => {
+    const delayedState = {
+      ...defaultProps.initialState,
+      detectionLevel: 55,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={delayedState} />);
+
+    const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
+
+    act(() => {
+      fireEvent.change(input, {
+        target: { value: 'open /internal/incident_summary_official.txt' },
+      });
+      fireEvent.submit(input.closest('form')!);
+    });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10000);
+    });
+
+    expect(screen.queryByText(/Processing\.\.\./i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Press Enter ↵ to proceed/i)).toBeInTheDocument();
+    expect(document.querySelector('.line.ufo74')).toBeNull();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(document.querySelector('.line.ufo74')).not.toBeNull();
+  });
+
+  it('completes file processing after pausing during the command delay', async () => {
+    const delayedState = {
+      ...defaultProps.initialState,
+      detectionLevel: 55,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={delayedState} />);
+
+    const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
+
+    act(() => {
+      fireEvent.change(input, {
+        target: { value: 'open /internal/incident_summary_official.txt' },
+      });
+      fireEvent.submit(input.closest('form')!);
+    });
+
+    expect(screen.getByText(/Processing\.\.\./i)).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.getByText(/PAUSED/i)).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.queryByText(/PAUSED/i)).not.toBeInTheDocument();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10000);
+    });
+
+    expect(screen.queryByText(/Processing\.\.\./i)).not.toBeInTheDocument();
+
+    expect(screen.getAllByText(/OFFICIAL INCIDENT SUMMARY/i).length).toBeGreaterThan(0);
+  });
+
+  it('pauses the timed decrypt window while the pause menu is open', () => {
+    const timedDecryptState = {
+      ...defaultProps.initialState,
+      timedDecryptActive: true,
+      timedDecryptEndTime: Date.now() + 5000,
+      timedDecryptSequence: '0426',
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={timedDecryptState} />);
+
+    const timerBeforePause = screen.getByText(/\d+\.\ds/).textContent;
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.getByText(/PAUSED/i)).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+
+    expect(screen.getByText(timerBeforePause ?? '')).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+      vi.advanceTimersByTime(100);
+    });
+
+    const timerAfterResume = screen.getByText(/\d+\.\ds/).textContent ?? '0.0s';
+    expect(Number.parseFloat(timerAfterResume)).toBeGreaterThan(2.5);
+  });
+
+  it('does not expire the countdown immediately after resuming from pause', () => {
+    const countdownState = {
+      ...defaultProps.initialState,
+      countdownActive: true,
+      countdownEndTime: Date.now() + 1000,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={countdownState} />);
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+      vi.advanceTimersByTime(2500);
+    });
+
+    expect(screen.getByText(/PAUSED/i)).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+      vi.advanceTimersByTime(50);
+    });
+
+    expect(screen.queryByText(/PAUSED/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/CONNECTION LOST/i)).not.toBeInTheDocument();
+  });
+
   it('shows status bar with system information', () => {
     render(<Terminal {...defaultProps} />);
 

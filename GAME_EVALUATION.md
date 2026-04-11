@@ -6,6 +6,8 @@
 **Build Analyzed:** v0.1.0 (main branch)  
 **Test Coverage:** 1082/1083 tests passing  
 
+> **Historical note:** This evaluation describes an earlier build. Since then, the main branch has simplified the core flow and retired `rewind`/`present` from normal play, while reducing reliance on `decrypt` as a headline mechanic.
+
 ---
 
 ## Executive Summary

@@ -117,31 +117,34 @@ describe('Narrative Mechanics', () => {
     });
   });
 
-  describe('Password Puzzle', () => {
-    it('decrypt prompts for a password for ghost_in_machine.enc', () => {
+  describe('Legacy decrypt compatibility', () => {
+    it('opens ghost_in_machine.enc directly without the old password prompt', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
         accessLevel: 3,
       });
+
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc', state);
-      expect(result.output.some(e => e.content.includes('PASSWORD REQUIRED'))).toBe(true);
-      expect(
-        result.output.some(e => e.content.includes('Usage: decrypt ghost_in_machine.enc <password>'))
-      ).toBe(true);
+      const output = result.output.map(e => e.content).join('\n');
+
+      expect(output).not.toContain('PASSWORD REQUIRED');
+      expect(output).toContain('old decrypt wrappers are retired');
+      expect(output).toContain('FILE: /sys/ghost_in_machine.enc');
     });
 
-    it('decrypt rejects the wrong ghost_in_machine password', () => {
+    it('ignores a wrong password and still opens the recovered file', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
         accessLevel: 3,
       });
+
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc wrongpassword', state);
-      expect(result.output.some(e => e.content.includes('DECRYPTION FAILED'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('Invalid password'))).toBe(true);
-      expect(result.stateChanges.ufo74SecretDiscovered).toBeUndefined();
-      expect(result.stateChanges.detectionLevel).toBeGreaterThan(state.detectionLevel);
+      const output = result.output.map(e => e.content).join('\n');
+
+      expect(output).not.toContain('DECRYPTION FAILED');
+      expect(output).toContain('FILE: /sys/ghost_in_machine.enc');
     });
 
     it('decrypt reveals UFO74 when the ghost_in_machine password is correct', () => {
@@ -194,14 +197,14 @@ describe('Narrative Mechanics', () => {
 
     describe('incident_summary_official.txt', () => {
       it('flags disinformation when read', () => {
-        const state = createTestState({ currentPath: '/internal' });
+        const state = createTestState({ currentPath: '/internal', flags: { adminUnlocked: true } });
         const result = executeCommand('open incident_summary_official.txt', state);
         expect(result.stateChanges.disinformationDiscovered?.has('official_summary')).toBe(true);
       });
     });
 
     describe('active_trace.sys', () => {
-      it('triggers countdown when read with sufficient access', () => {
+      it('no longer triggers countdown when read with sufficient access', () => {
         const state = createTestState({
           currentPath: '/sys',
           flags: { adminUnlocked: true },
@@ -217,8 +220,8 @@ describe('Narrative Mechanics', () => {
           e => e.content.includes('Access') || e.content.includes('level')
         );
         if (!hasFileNotFound && !hasAccessDenied) {
-          expect(result.stateChanges.countdownActive).toBe(true);
-          expect(result.stateChanges.countdownEndTime).toBeGreaterThan(Date.now());
+          expect(result.stateChanges.countdownActive).toBeUndefined();
+          expect(result.stateChanges.traceSpikeActive).toBeUndefined();
         }
       });
 
@@ -337,7 +340,7 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('UFO74 Override Protocol Hints', () => {
-    it('suggests override protocol after 3 files read when not unlocked', () => {
+    it('nudges cross-referencing after 3 files read without mentioning override protocol', () => {
       // State where player has read exactly 2 files - reading 3rd should trigger hint
       const state = createTestState({
         currentPath: '/internal/misc',
@@ -353,12 +356,14 @@ describe('Narrative Mechanics', () => {
       // Open 3rd file (this makes filesRead.size === 3 after processing)
       const result = executeCommand('open cafeteria_menu.txt', state);
 
-      // Should include UFO74 hint about override protocol (in pendingUfo74Messages, not output)
+      // Should include the updated cross-reference hint (in pendingUfo74Messages, not output)
       const pendingMessages = result.pendingUfo74Messages || [];
-      const hasOverrideHint = pendingMessages.some(
-        e => e.content.includes('override protocol') || e.content.includes('MORE hidden')
+      const hasCrossReferenceHint = pendingMessages.some(
+        e =>
+          e.content.includes('cross-checking') ||
+          e.content.includes('pattern only shows up when you compare')
       );
-      expect(hasOverrideHint).toBe(true);
+      expect(hasCrossReferenceHint).toBe(true);
       expect(result.stateChanges.flags?.overrideSuggested).toBe(true);
     });
 
@@ -602,7 +607,7 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('open trust_protocol_1993.txt', state);
 
-      expect(result.output.some(e => e.content.includes('TRUST NO ONE'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('SHARE NOTHING BEYOND YOUR SCOPE'))).toBe(true);
     });
 
     it('modem_log_jan96.txt contains IRC chat', () => {
@@ -613,7 +618,7 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('open modem_log_jan96.txt', state);
 
-      expect(result.output.some(e => e.content.includes('UFO74'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('brasnet'))).toBe(true);
       expect(result.output.some(e => e.content.includes('IRC'))).toBe(true);
     });
 
@@ -622,6 +627,7 @@ describe('Narrative Mechanics', () => {
         currentPath: '/internal',
         tutorialStep: -1,
         tutorialComplete: true,
+        flags: { adminUnlocked: true },
       });
       const result = executeCommand('open jardim_andere_incident.txt', state);
 
@@ -1142,7 +1148,7 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Countdown System', () => {
-    it('countdown is set when reading active_trace.sys', () => {
+    it('reading active_trace.sys stays informational only', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -1152,8 +1158,8 @@ describe('Narrative Mechanics', () => {
         countdownActive: false,
       });
       const result = executeCommand('open active_trace.sys', state);
-      // Should trigger countdown or show file content
       expect(result.output.length).toBeGreaterThan(0);
+      expect(result.stateChanges.countdownActive).toBeUndefined();
     });
   });
 
@@ -1392,7 +1398,8 @@ describe('Narrative Mechanics', () => {
         currentPath: '/ops/assessments',
         accessLevel: 2,
         filesRead: new Set<string>(),
-        imagesShownThisRun: new Set<string>(), // Ensure no images shown yet
+        imagesShownThisRun: new Set<string>(),
+        flags: { adminUnlocked: true },
       });
       const result = executeCommand('open foreign_drone_assessment.txt', state);
 

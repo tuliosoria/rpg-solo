@@ -25,20 +25,21 @@ Three days ago, Brazilian Air Defense tracked an unidentified object descending 
 
 ## Commands
 
-Navigate the classified archive:
+Common terminal commands in the current build:
 
 | Command | Description |
 |---------|-------------|
 | `ls` | List directory contents |
 | `cd <dir>` | Change directory |
 | `open <file>` | Read a file |
-| `decrypt <file>` | Decrypt classified documents |
 | `search <keyword>` | Search the file index (32 tag categories) |
-| `rewind` | Enter archive state — view deleted files (4 actions) |
+| `hint` | Ask UFO74 for a nudge at a cost |
+| `wait` | Lower heat and let the system settle |
 | `leak` | Interrogate the Elusive Man (5 questions only) |
-| `checkpoint` | Save current session |
-| `load` | Restore a saved session |
+| `chat <message>` | Ask the system or Prisoner 45 questions |
 | `help` | Display command reference |
+
+Legacy builds mentioned `decrypt` and `rewind` as core mechanics; the live experience now centers on direct investigation and cross-referencing files instead.
 
 ## Getting Started
 

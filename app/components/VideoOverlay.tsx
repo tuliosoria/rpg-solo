@@ -37,6 +37,13 @@ export default function VideoOverlay({
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const flickerResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasClosedRef = useRef(false);
+
+  const handleClose = useCallback(() => {
+    if (hasClosedRef.current) return;
+    hasClosedRef.current = true;
+    onCloseAction();
+  }, [onCloseAction]);
 
   useEffect(() => {
     // SUDDEN appearance - immediate flash then video
@@ -102,7 +109,7 @@ export default function VideoOverlay({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onCloseAction();
+        handleClose();
       } else if (e.key === ' ' || e.key === 'Enter') {
         e.preventDefault();
         togglePlayPause();
@@ -111,7 +118,7 @@ export default function VideoOverlay({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onCloseAction, togglePlayPause]);
+  }, [handleClose, togglePlayPause]);
 
   const handleTimeUpdate = useCallback(() => {
     if (videoRef.current) {
@@ -175,7 +182,7 @@ export default function VideoOverlay({
       aria-label={t('videoOverlay.aria', { value: title })}
       onClick={e => {
         if (e.target === e.currentTarget) {
-          onCloseAction();
+          handleClose();
         }
       }}
     >

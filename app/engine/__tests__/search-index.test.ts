@@ -63,7 +63,7 @@ describe('Search Index System', () => {
     });
 
     it('should return results for "2026" keyword', () => {
-      const state = createTestState();
+      const state = createTestState({ flags: { adminUnlocked: true } });
       const results = performSearch('2026', state);
       expect(results.length).toBeGreaterThan(0);
     });

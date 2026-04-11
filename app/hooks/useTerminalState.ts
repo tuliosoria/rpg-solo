@@ -28,7 +28,6 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
   const [activeImage, setActiveImage] = useState<ImageTrigger | null>(null);
   const [activeVideo, setActiveVideo] = useState<VideoTrigger | null>(null);
   const [pendingImage, setPendingImage] = useState<ImageTrigger | null>(null);
-  const [pendingVideo, setPendingVideo] = useState<VideoTrigger | null>(null);
   const [showGameOver, setShowGameOver] = useState(
     initialState.isGameOver && initialPhase === 'terminal'
   );
@@ -114,8 +113,6 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     setActiveVideo,
     pendingImage,
     setPendingImage,
-    pendingVideo,
-    setPendingVideo,
     showGameOver,
     setShowGameOver,
     gameOverReason,

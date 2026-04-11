@@ -1,338 +1,46 @@
 // Hint System for Terminal 1996
-// Provides cryptic, context-aware hints without revealing specific files or answers
+// Provides a curated pool of exactly 8 hints, never repeating
 
-import { GameState, TruthCategory, TRUTH_CATEGORIES, TerminalEntry } from '../types';
+import { GameState, TerminalEntry } from '../types';
 import { createEntry, createEntryI18n } from './commands/utils';
-
-// Rewind reminder configuration
-export const REWIND_REMINDER_CONFIG = {
-  minFilesReadBeforeReminder: 8, // Don't remind too early
-  maxRemindersPerSession: 1, // Don't spam
-};
 
 // Hint configuration
 export const HINT_CONFIG = {
-  maxHints: 4, // Limited hints per run
+  maxHints: 8, // Exactly 8 hints total, never repeat
   detectionPenalty: 4, // +4 detection after tutorial (hidden from player)
 };
 
-// Truth category -> vague hint mapping
-// These hints guide thinking, not actions
-const TRUTH_HINTS: Record<TruthCategory, string[]> = {
-  debris_relocation: [
-    'Physical evidence was divided, not destroyed.',
-    'The wreckage traveled to multiple destinations.',
-    'Transport records hold clues about material distribution.',
-    'Cargo moved in different directions that week.',
-  ],
-  being_containment: [
-    'Not everything at the site was wreckage.',
-    'Medical containment requires living subjects.',
-    'Some recovery operations involved more than debris.',
-    'Quarantine protocols suggest survivors.',
-  ],
-  telepathic_scouts: [
-    'Communication happened without spoken words.',
-    'Signal analysis revealed unusual patterns.',
-    'The visitors were not explorers in the traditional sense.',
-    'Neural activity preceded verbal contact.',
-  ],
-  international_actors: [
-    'Brazil was not alone in the response.',
-    'Diplomatic channels activated faster than expected.',
-    'Foreign expertise arrived remarkably quickly.',
-    'Coordination suggests prior agreements.',
-  ],
-  transition_2026: [
-    'The timeline extends decades into the future.',
-    'Thirty years is a significant interval.',
-    'Some documents reference a convergence window.',
-    'The end date is not when it ends—it begins.',
-  ],
-};
-
-// Directory exploration hints
-const DIRECTORY_HINTS: Record<string, string[]> = {
-  '/storage/': [
-    'Storage logs track more than inventory.',
-    'Asset manifests reveal movement patterns.',
-    'Physical evidence leaves paper trails.',
-  ],
-  '/comms/': [
-    'Communication channels hold encrypted secrets.',
-    'Not all intercepts are routine.',
-    'Some signals defy conventional analysis.',
-  ],
-  '/ops/': [
-    'Operations involved more than cleanup.',
-    'Quarantine suggests something needed containing.',
-    'Recovery teams had specialized equipment.',
-  ],
-  '/admin/': [
-    'Administrative access reveals higher clearance docs.',
-    'Internal memos speak more freely.',
-    'Protocol documents reference unusual procedures.',
-  ],
-  '/internal/': [
-    'Internal protocols define expected behaviors.',
-    'Access credentials may be documented internally.',
-    'Standard procedures sometimes hide exceptions.',
-  ],
-};
-
-// General progress hints based on game state
-const PROGRESS_HINTS = {
-  noFilesRead: [
-    'You have not examined any files yet.',
-    'Knowledge requires investigation.',
-    'The filesystem contains answers.',
-  ],
-  fewFilesRead: [
-    'You have only scratched the surface.',
-    'Many directories remain unexplored.',
-    'Persistence reveals patterns.',
-  ],
-  noTruthsFound: [
-    'Evidence exists, but you have not recognized it.',
-    'The pieces are there. You must see the connections.',
-    'Read deeper. Question what you read.',
-  ],
-  someTruthsFound: [
-    'You are assembling the picture.',
-    'Cross-reference what you have learned.',
-    'Some truths illuminate others.',
-  ],
-  nearComplete: [
-    'You are close to understanding.',
-    'One or two pieces remain hidden.',
-    'The full picture is almost visible.',
-  ],
-};
-
-// Rewind reminder messages - contextual hints about the rewind command
-const REWIND_REMINDER_HINTS: string[] = [
-  "hey, don't forget you can use 'rewind' to roll back the system clock. some files were deleted... but not in the past.",
-  "stuck? try 'rewind'. the archive state lets you see what they tried to erase.",
-  "the archive timestamp is earlier than now. some evidence only exists in the past. use 'rewind'.",
-  "deleted files aren't really gone. they're just... not here yet. try 'rewind'.",
+// Fixed pool of 8 curated hints — ordered from basic to advanced
+const HINT_POOL: string[] = [
+  'the filesystem contains answers.',
+  'have you thought about using tree?',
+  'check /storage/ for transport logs.',
+  'if risk is too high, you can use wait.',
+  'some files are encrypted — look for clues on how to decode them.',
+  'morse code is not just noise.',
+  'pay attention to cross-references between files.',
+  'the good stuff is behind override — we need to find the password.',
 ];
 
 const HINT_I18N_BY_TEXT: Record<string, string> = {
-  'Physical evidence was divided, not destroyed.': 'engine.hints.truth.debris.1',
-  'The wreckage traveled to multiple destinations.': 'engine.hints.truth.debris.2',
-  'Transport records hold clues about material distribution.': 'engine.hints.truth.debris.3',
-  'Cargo moved in different directions that week.': 'engine.hints.truth.debris.4',
-
-  'Not everything at the site was wreckage.': 'engine.hints.truth.containment.1',
-  'Medical containment requires living subjects.': 'engine.hints.truth.containment.2',
-  'Some recovery operations involved more than debris.': 'engine.hints.truth.containment.3',
-  'Quarantine protocols suggest survivors.': 'engine.hints.truth.containment.4',
-
-  'Communication happened without spoken words.': 'engine.hints.truth.telepathic.1',
-  'Signal analysis revealed unusual patterns.': 'engine.hints.truth.telepathic.2',
-  'The visitors were not explorers in the traditional sense.': 'engine.hints.truth.telepathic.3',
-  'Neural activity preceded verbal contact.': 'engine.hints.truth.telepathic.4',
-
-  'Brazil was not alone in the response.': 'engine.hints.truth.international.1',
-  'Diplomatic channels activated faster than expected.': 'engine.hints.truth.international.2',
-  'Foreign expertise arrived remarkably quickly.': 'engine.hints.truth.international.3',
-  'Coordination suggests prior agreements.': 'engine.hints.truth.international.4',
-
-  'The timeline extends decades into the future.': 'engine.hints.truth.transition.1',
-  'Thirty years is a significant interval.': 'engine.hints.truth.transition.2',
-  'Some documents reference a convergence window.': 'engine.hints.truth.transition.3',
-  'The end date is not when it ends—it begins.': 'engine.hints.truth.transition.4',
-
-  'Storage logs track more than inventory.': 'engine.hints.directory.storage.1',
-  'Asset manifests reveal movement patterns.': 'engine.hints.directory.storage.2',
-  'Physical evidence leaves paper trails.': 'engine.hints.directory.storage.3',
-
-  'Communication channels hold encrypted secrets.': 'engine.hints.directory.comms.1',
-  'Not all intercepts are routine.': 'engine.hints.directory.comms.2',
-  'Some signals defy conventional analysis.': 'engine.hints.directory.comms.3',
-
-  'Operations involved more than cleanup.': 'engine.hints.directory.ops.1',
-  'Quarantine suggests something needed containing.': 'engine.hints.directory.ops.2',
-  'Recovery teams had specialized equipment.': 'engine.hints.directory.ops.3',
-
-  'Administrative access reveals higher clearance docs.': 'engine.hints.directory.admin.1',
-  'Internal memos speak more freely.': 'engine.hints.directory.admin.2',
-  'Protocol documents reference unusual procedures.': 'engine.hints.directory.admin.3',
-
-  'Internal protocols define expected behaviors.': 'engine.hints.directory.internal.1',
-  'Access credentials may be documented internally.': 'engine.hints.directory.internal.2',
-  'Standard procedures sometimes hide exceptions.': 'engine.hints.directory.internal.3',
-
-  'You have not examined any files yet.': 'engine.hints.progress.noFiles.1',
-  'Knowledge requires investigation.': 'engine.hints.progress.noFiles.2',
-  'The filesystem contains answers.': 'engine.hints.progress.noFiles.3',
-
-  'You have only scratched the surface.': 'engine.hints.progress.fewFiles.1',
-  'Many directories remain unexplored.': 'engine.hints.progress.fewFiles.2',
-  'Persistence reveals patterns.': 'engine.hints.progress.fewFiles.3',
-
-  'Evidence exists, but you have not recognized it.': 'engine.hints.progress.noTruths.1',
-  'The pieces are there. You must see the connections.': 'engine.hints.progress.noTruths.2',
-  'Read deeper. Question what you read.': 'engine.hints.progress.noTruths.3',
-
-  'You are assembling the picture.': 'engine.hints.progress.someTruths.1',
-  'Cross-reference what you have learned.': 'engine.hints.progress.someTruths.2',
-  'Some truths illuminate others.': 'engine.hints.progress.someTruths.3',
-
-  'You are close to understanding.': 'engine.hints.progress.nearComplete.1',
-  'One or two pieces remain hidden.': 'engine.hints.progress.nearComplete.2',
-  'The full picture is almost visible.': 'engine.hints.progress.nearComplete.3',
-
-  "hey, don't forget you can use 'rewind' to roll back the system clock. some files were deleted... but not in the past.":
-    'engine.hints.rewind.1',
-  "stuck? try 'rewind'. the archive state lets you see what they tried to erase.":
-    'engine.hints.rewind.2',
-  "the archive timestamp is earlier than now. some evidence only exists in the past. use 'rewind'.":
-    'engine.hints.rewind.3',
-  "deleted files aren't really gone. they're just... not here yet. try 'rewind'.":
-    'engine.hints.rewind.4',
+  'the filesystem contains answers.': 'engine.hints.pool.1',
+  'have you thought about using tree?': 'engine.hints.pool.2',
+  'check /storage/ for transport logs.': 'engine.hints.pool.3',
+  'if risk is too high, you can use wait.': 'engine.hints.pool.4',
+  'some files are encrypted — look for clues on how to decode them.': 'engine.hints.pool.5',
+  'morse code is not just noise.': 'engine.hints.pool.6',
+  'pay attention to cross-references between files.': 'engine.hints.pool.7',
+  'the good stuff is behind override — we need to find the password.': 'engine.hints.pool.8',
 };
 
 /**
- * Determine if we should show a rewind reminder to the player.
- * Conditions:
- * - Tutorial must be complete (rewind unlocked)
- * - Player hasn't used rewind yet (no archive files read)
- * - Player has read enough files to potentially be stuck
- * - Player is missing some truths (still has reason to explore)
- * - Haven't shown reminder too many times
- */
-function shouldShowRewindReminder(
-  state: GameState,
-  filesReadCount: number,
-  truthCount: number
-): boolean {
-  // Must have completed tutorial (rewind is unlocked post-tutorial)
-  if (!state.tutorialComplete) {
-    return false;
-  }
-
-  // Check if player has already used rewind (read archive files)
-  const filesRead = state.filesRead || new Set<string>();
-  const archiveFilePaths = [
-    '/storage/quarantine/witness_statement_original.txt',
-    '/storage/assets/directive_alpha_draft.txt',
-    '/comms/deleted_comms_log.txt',
-    '/internal/personnel_file_costa.txt',
-    '/internal/project_seed_memo.txt',
-    '/ops/medical/autopsy_notes_unredacted.txt',
-  ];
-  const hasReadArchiveFile = archiveFilePaths.some(path => filesRead.has(path));
-  
-  // If they've already used rewind and read archive files, no need to remind
-  if (hasReadArchiveFile) {
-    return false;
-  }
-
-  // Check if we've already shown the reminder this session
-  const rewindRemindersShown = state.rewindRemindersShown || 0;
-  if (rewindRemindersShown >= REWIND_REMINDER_CONFIG.maxRemindersPerSession) {
-    return false;
-  }
-
-  // Only show if player has read enough files (not too early)
-  if (filesReadCount < REWIND_REMINDER_CONFIG.minFilesReadBeforeReminder) {
-    return false;
-  }
-
-  // Show if player is missing truths and hasn't tried rewind
-  // This suggests they might benefit from seeing deleted files
-  if (truthCount < 3) {
-    return true;
-  }
-
-  return false;
-}
-
-/**
- * Analyze player progress and generate a contextual hint.
- * Returns null if no relevant hint can be generated.
+ * Get the next hint from the pool (sequential, never repeats).
+ * Returns null if all hints have been given.
  */
 export function analyzeProgressForHint(state: GameState): string | null {
-  const filesRead = state.filesRead || new Set<string>();
-  const truthsDiscovered = state.truthsDiscovered || new Set<string>();
-  const filesReadCount = filesRead.size;
-  const truthCount = truthsDiscovered.size;
-
-  // Track which directories the player has explored
-  const exploredDirs = {
-    storage: false,
-    comms: false,
-    ops: false,
-    admin: false,
-    internal: false,
-  };
-
-  for (const filePath of filesRead) {
-    if (filePath.includes('/storage/')) exploredDirs.storage = true;
-    if (filePath.includes('/comms/')) exploredDirs.comms = true;
-    if (filePath.includes('/ops/')) exploredDirs.ops = true;
-    if (filePath.includes('/admin/')) exploredDirs.admin = true;
-    if (filePath.includes('/internal/')) exploredDirs.internal = true;
-  }
-
-  // Priority 1: If player has read very few files
-  if (filesReadCount < 3) {
-    return pickRandom(PROGRESS_HINTS.noFilesRead);
-  }
-
-  // Priority 1.5: Rewind reminder - suggest rewind if player hasn't used it yet
-  // and has read enough files to potentially be stuck
-  if (shouldShowRewindReminder(state, filesReadCount, truthCount)) {
-    return pickRandom(REWIND_REMINDER_HINTS);
-  }
-
-  // Priority 2: Guide toward unexplored directories that contain evidence
-  // Only suggest directories relevant to truths not yet discovered
-  const missingTruths = TRUTH_CATEGORIES.filter(t => !truthsDiscovered.has(t));
-
-  // Map truths to directories
-  const truthDirectories: Record<TruthCategory, string[]> = {
-    debris_relocation: ['/storage/'],
-    being_containment: ['/ops/', '/storage/'],
-    telepathic_scouts: ['/comms/'],
-    international_actors: ['/comms/', '/admin/'],
-    transition_2026: ['/admin/', '/comms/'],
-  };
-
-  // Find unexplored directories that contain missing truths
-  for (const truth of missingTruths) {
-    const relevantDirs = truthDirectories[truth];
-    for (const dir of relevantDirs) {
-      const dirKey = dir.replace(/\//g, '') as keyof typeof exploredDirs;
-      if (!exploredDirs[dirKey] && DIRECTORY_HINTS[dir]) {
-        return pickRandom(DIRECTORY_HINTS[dir]);
-      }
-    }
-  }
-
-  // Priority 3: Hint about specific missing truths (vaguely)
-  if (missingTruths.length > 0) {
-    // Pick a random missing truth and give a vague hint
-    const targetTruth = pickRandom(missingTruths);
-    return pickRandom(TRUTH_HINTS[targetTruth]);
-  }
-
-  // Priority 4: Progress-based hints
-  if (truthCount === 0) {
-    return pickRandom(PROGRESS_HINTS.noTruthsFound);
-  } else if (truthCount < 3) {
-    return pickRandom(PROGRESS_HINTS.someTruthsFound);
-  } else if (truthCount >= 4) {
-    return pickRandom(PROGRESS_HINTS.nearComplete);
-  }
-
-  // Fallback: generic exploration hint
-  if (filesReadCount < 10) {
-    return pickRandom(PROGRESS_HINTS.fewFilesRead);
-  }
-
-  return null;
+  const hintsUsed = state.hintsUsed || 0;
+  if (hintsUsed >= HINT_POOL.length) return null;
+  return HINT_POOL[hintsUsed];
 }
 
 /**
@@ -398,12 +106,6 @@ export function generateHintOutput(state: GameState): {
     hintsUsed: hintsUsed + 1,
   };
 
-  // Track if this was a rewind reminder
-  const isRewindReminder = REWIND_REMINDER_HINTS.includes(hint);
-  if (isRewindReminder) {
-    stateChanges.rewindRemindersShown = (state.rewindRemindersShown || 0) + 1;
-  }
-
   // Apply detection penalty if tutorial is complete (hidden from player)
   if (state.tutorialComplete) {
     stateChanges.detectionLevel = Math.min(
@@ -431,11 +133,4 @@ export function generateHintOutput(state: GameState): {
     ],
     stateChanges,
   };
-}
-
-/**
- * Helper to pick a random element from an array.
- */
-function pickRandom<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
 }

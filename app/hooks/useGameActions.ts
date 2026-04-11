@@ -8,8 +8,8 @@ import { DETECTION_THRESHOLDS } from '../constants/detection';
 import {
   createFirewallEyeBatch,
   DETECTION_INCREASE_ON_DETONATE,
-  MAX_CONCURRENT_EYES,
   getFirewallEyeBatchSize,
+  MAX_CONCURRENT_FIREWALL_EYES,
   speakFirewallVoice,
 } from '../components/FirewallEyes';
 
@@ -88,7 +88,10 @@ export function useGameActions({
   const handleFirewallActivate = useCallback(() => {
     const now = Date.now();
     setGameState(prev => {
-      const batchSize = getFirewallEyeBatchSize(prev.detectionLevel);
+      const batchSize = Math.min(
+        getFirewallEyeBatchSize(prev.detectionLevel),
+        MAX_CONCURRENT_FIREWALL_EYES
+      );
       return {
         ...prev,
         firewallActive: true,
@@ -109,17 +112,20 @@ export function useGameActions({
 
   const handleFirewallEyeBatchSpawn = useCallback(() => {
     const now = Date.now();
+    let spawned = false;
+
     setGameState(prev => {
-      // Hard cap: don't spawn if already at or above the max
-      const currentEyeCount = prev.firewallEyes.filter(e => !e.isDetonating).length;
-      if (currentEyeCount >= MAX_CONCURRENT_EYES) {
-        return { ...prev, lastEyeSpawnTime: now };
+      const availableSlots = Math.max(
+        0,
+        MAX_CONCURRENT_FIREWALL_EYES - prev.firewallEyes.length
+      );
+      const batchSize = Math.min(getFirewallEyeBatchSize(prev.detectionLevel), availableSlots);
+      if (batchSize === 0) {
+        return prev;
       }
 
-      const batchSize = getFirewallEyeBatchSize(prev.detectionLevel);
-      // Clamp batch size so total doesn't exceed the cap
-      const allowedSpawn = Math.min(batchSize, MAX_CONCURRENT_EYES - currentEyeCount);
-      const newEyes = [...prev.firewallEyes, ...createFirewallEyeBatch(allowedSpawn)];
+      spawned = true;
+      const newEyes = [...prev.firewallEyes, ...createFirewallEyeBatch(batchSize)];
 
       const urgencyMessage = prev.flags.neuralLinkAuthenticated
         ? createEntry(
@@ -138,6 +144,11 @@ export function useGameActions({
         history: [...prev.history, urgencyMessage],
       };
     });
+
+    if (!spawned) {
+      return;
+    }
+
     playSound('warning');
     speakFirewallVoice();
   }, [playSound, setGameState]);
@@ -155,31 +166,33 @@ export function useGameActions({
 
   const handleFirewallEyeDetonate = useCallback(
     (eyeId: string) => {
-      // We need to determine if Turing test should trigger based on state BEFORE the update
-      // Then trigger it after the state update completes
+      let shouldTriggerTuringTest = false;
+      let shouldShowGameOver = false;
+
       setGameState(prev => {
         const updatedEyes = prev.firewallEyes.map(e =>
           e.id === eyeId ? { ...e, isDetonating: true } : e
         );
 
         const newDetection = Math.min(100, prev.detectionLevel + DETECTION_INCREASE_ON_DETONATE);
-        
+
         // Check if we should trigger the Turing test:
         // - Detection just crossed the TURING_TRIGGER threshold (50%)
         // - Player has discovered at least 1 truth
         // - Turing test hasn't been triggered or completed yet
         // - Tutorial is complete
-        const crossedTuringThreshold = 
-          prev.detectionLevel < DETECTION_THRESHOLDS.TURING_TRIGGER && 
+        const crossedTuringThreshold =
+          prev.detectionLevel < DETECTION_THRESHOLDS.TURING_TRIGGER &&
           newDetection >= DETECTION_THRESHOLDS.TURING_TRIGGER;
-        
-        const shouldTriggerTuringTest = 
+
+        const willTriggerTuringTest =
           crossedTuringThreshold &&
           prev.tutorialComplete &&
           prev.truthsDiscovered.size >= 1 &&
           !prev.turingEvaluationActive &&
           !prev.turingEvaluationCompleted &&
           !prev.singularEventsTriggered?.has('turing_evaluation');
+        shouldTriggerTuringTest = willTriggerTuringTest;
 
         const detonateWarning = createEntry(
           'error',
@@ -188,12 +201,8 @@ export function useGameActions({
 
         // Modify UFO74 message based on whether Turing test will trigger
         let ufo74Panic;
-        if (shouldTriggerTuringTest) {
+        if (willTriggerTuringTest) {
           ufo74Panic = createEntry('ufo74', 'UFO74: NO! Detection hit 50% — they\'re initiating Turing eval!');
-          // Schedule Turing test overlay to show after delay
-          setTimeout(() => {
-            setShowTuringTest(true);
-          }, 1500);
         } else if (newDetection >= 80) {
           ufo74Panic = createEntry('ufo74', "UFO74: THEY KNOW! They're tracing us RIGHT NOW!");
         } else if (newDetection >= 60) {
@@ -203,18 +212,15 @@ export function useGameActions({
         }
 
         // Check for game over: detection reached 100% from eye detonation
-        const isGameOver = prev.tutorialComplete && newDetection >= 100 && !prev.isGameOver && !prev.evidencesSaved;
-
-        if (isGameOver) {
-          // Schedule game over UI after state update
-          setTimeout(() => {
-            setGameOverReason('INTRUSION DETECTED - TRACED');
-            setShowGameOver(true);
-          }, 100);
-        }
+        const isGameOver =
+          prev.tutorialComplete &&
+          newDetection >= 100 &&
+          !prev.isGameOver &&
+          !prev.evidencesSaved;
+        shouldShowGameOver = isGameOver;
 
         // Mark Turing evaluation as triggered if applicable
-        const newSingularEvents = shouldTriggerTuringTest
+        const newSingularEvents = willTriggerTuringTest
           ? new Set([...(prev.singularEventsTriggered || []), 'turing_evaluation'])
           : prev.singularEventsTriggered;
 
@@ -243,10 +249,23 @@ export function useGameActions({
             : [...prev.history, detonateWarning, ufo74Panic],
           isGameOver: isGameOver ? true : prev.isGameOver,
           gameOverReason: isGameOver ? 'INTRUSION DETECTED - TRACED' : prev.gameOverReason,
-          turingEvaluationActive: shouldTriggerTuringTest ? true : prev.turingEvaluationActive,
+          turingEvaluationActive: willTriggerTuringTest ? true : prev.turingEvaluationActive,
           singularEventsTriggered: newSingularEvents,
         };
       });
+
+      if (shouldTriggerTuringTest) {
+        window.setTimeout(() => {
+          setShowTuringTest(true);
+        }, 1500);
+      }
+
+      if (shouldShowGameOver) {
+        window.setTimeout(() => {
+          setGameOverReason('INTRUSION DETECTED - TRACED');
+          setShowGameOver(true);
+        }, 100);
+      }
 
       playSound('error');
       triggerFlicker();

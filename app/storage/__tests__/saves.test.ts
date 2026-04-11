@@ -426,8 +426,9 @@ describe('Save/Load System', () => {
       vi.stubGlobal('localStorage', quotaLimitedStorage);
       vi.stubGlobal('window', { localStorage: quotaLimitedStorage });
 
-      const currentSlots = getSaveSlots();
-      const oldestSlot = currentSlots[currentSlots.length - 1];
+      const oldestSlot = existingSlots
+        .filter((slot): slot is NonNullable<typeof slot> => slot !== null)
+        .sort((left, right) => left.timestamp - right.timestamp)[0];
       const newSlot = saveGame({ ...state, detectionLevel: 99 }, 'Newest Save');
 
       expect(oldestSlot).toBeDefined();
@@ -675,8 +676,9 @@ describe('Save/Load System', () => {
       vi.stubGlobal('localStorage', quotaLimitedStorage);
       vi.stubGlobal('window', { localStorage: quotaLimitedStorage });
 
-      const currentSlots = getCheckpointSlots();
-      const oldestSlot = currentSlots[currentSlots.length - 1];
+      const oldestSlot = existingSlots
+        .filter((slot): slot is NonNullable<typeof slot> => slot !== null)
+        .sort((left, right) => left.timestamp - right.timestamp)[0];
       const newSlot = saveCheckpoint({ ...state, detectionLevel: 99 }, 'Newest Checkpoint');
 
       expect(oldestSlot).toBeDefined();
