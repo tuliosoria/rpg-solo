@@ -55,6 +55,18 @@ describe('Evidence Revelation System', () => {
 
       expect(isDisturbingContent(content)).toBe(true);
     });
+
+    it('detects witness encounter details from the Jardim Andere report', () => {
+      const content = [
+        'WITNESS ACCOUNT (SUMMARY):',
+        'Subjects observed crouching figure approximately 1.6m in height.',
+        'Dark brown skin described as "oily." Three prominent ridges on cranium. Large red eyes. Strong ammonia-like odor noted.',
+        'Subjects fled scene. One reported temporary paralysis.',
+        'Another claimed "feeling its thoughts".',
+      ];
+
+      expect(isDisturbingContent(content)).toBe(true);
+    });
   });
 
   describe('getDisturbingContentAvatarExpression', () => {
@@ -80,6 +92,20 @@ describe('Evidence Revelation System', () => {
       const expression = getDisturbingContentAvatarExpression(content);
 
       expect(expression).toBe('shocked');
+    });
+
+    it('returns scared for witness encounter reports with creature details', () => {
+      const content = [
+        'WITNESS ACCOUNT (SUMMARY):',
+        'Subjects observed crouching creature approximately 1.6m in height.',
+        'Dark brown skin described as "oily." Three prominent ridges on cranium. Large red eyes. Strong ammonia-like odor noted.',
+        'Subjects fled scene. One reported temporary paralysis.',
+        'Another claimed "feeling its thoughts".',
+      ];
+
+      const expression = getDisturbingContentAvatarExpression(content);
+
+      expect(expression).toBe('scared');
     });
 
     it('returns null for mundane content', () => {

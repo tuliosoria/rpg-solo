@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import Terminal from '../Terminal';
+import styles from '../Terminal.module.css';
 import { DEFAULT_GAME_STATE, GameState } from '../../types';
 import { I18nProvider } from '../../i18n';
 import { AUTOSAVE_INTERVAL_MS } from '../../constants/timing';
@@ -382,7 +383,7 @@ describe('Terminal Component', () => {
   it('shows the deploy version in the header', () => {
     render(<Terminal {...defaultProps} />);
 
-    expect(screen.getByText('v006')).toBeInTheDocument();
+    expect(screen.getByText('v007')).toBeInTheDocument();
   });
 
   it('accepts user input', () => {
@@ -797,7 +798,11 @@ describe('Terminal Component', () => {
       vi.advanceTimersByTime(AUTOSAVE_INTERVAL_MS);
     });
 
-    expect(screen.getByText(/Saved: <1m ago/i)).toBeInTheDocument();
+    const saveIndicator = screen.getByText(/Saved: <1m ago/i);
+
+    expect(saveIndicator).toBeInTheDocument();
+    expect(saveIndicator).toHaveAttribute('aria-live', 'polite');
+    expect(saveIndicator).toHaveClass(styles.saveIndicator);
   });
 
   it('renders ICQ chat when icqPhase is active', async () => {

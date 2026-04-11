@@ -10,6 +10,14 @@ import { GameState } from '../types';
  * Keywords that indicate disturbing/frightening content
  * Files matching these trigger avatar reactions
  */
+const WITNESS_ENCOUNTER_PATTERNS: RegExp[] = [
+  /red\s+eyes/i,
+  /ammonia(?:-like)?\s+odor/i,
+  /temporary\s+paralysis/i,
+  /feel(?:ing)?\s+(?:its|their)\s+thoughts/i,
+  /three\s+(?:prominent\s+)?ridges(?:\s+on\s+cranium)?/i,
+];
+
 const DISTURBING_CONTENT_PATTERNS: RegExp[] = [
   /creature/i,
   /autopsy/i,
@@ -33,6 +41,21 @@ const DISTURBING_CONTENT_PATTERNS: RegExp[] = [
   /horror/i,
   /terrif/i,
   /frighten/i,
+  ...WITNESS_ENCOUNTER_PATTERNS,
+];
+
+const VERY_DISTURBING_PATTERNS: RegExp[] = [
+  /autopsy/i,
+  /non[\s-]?human/i,
+  /creature/i,
+  /specimen.*expire/i,
+  /terminate/i,
+  /doom/i,
+  /scream/i,
+  /red\s+eyes/i,
+  /ammonia(?:-like)?\s+odor/i,
+  /temporary\s+paralysis/i,
+  /feel(?:ing)?\s+(?:its|their)\s+thoughts/i,
 ];
 
 /**
@@ -64,17 +87,7 @@ export function getDisturbingContentAvatarExpression(
   const contentText = fileContent.join(' ');
 
   // Very disturbing patterns that trigger 'scared'
-  const veryDisturbingPatterns = [
-    /autopsy/i,
-    /non[\s-]?human/i,
-    /creature/i,
-    /specimen.*expire/i,
-    /terminate/i,
-    /doom/i,
-    /scream/i,
-  ];
-
-  const isVeryDisturbing = veryDisturbingPatterns.some(p => p.test(contentText));
+  const isVeryDisturbing = VERY_DISTURBING_PATTERNS.some(p => p.test(contentText));
 
   return isVeryDisturbing ? 'scared' : 'shocked';
 }

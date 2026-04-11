@@ -595,6 +595,20 @@ describe('Narrative Mechanics', () => {
       expect(result.output.some(e => e.content.includes('Jardim Andere'))).toBe(true);
       expect(result.output.some(e => e.content.includes('20-JAN-1996'))).toBe(true);
     });
+
+    it('jardim_andere_incident.txt logs evidence on first read', () => {
+      const state = createTestState({
+        currentPath: '/internal',
+        tutorialStep: -1,
+        tutorialComplete: true,
+        evidenceCount: 0,
+      });
+      const result = executeCommand('open jardim_andere_incident.txt', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(1);
+      expect(result.stateChanges.avatarExpression).toBe('scared');
+      expect(result.stateChanges.filesRead?.has('/internal/jardim_andere_incident.txt')).toBe(true);
+    });
   });
 
   describe('Advanced Commands', () => {
