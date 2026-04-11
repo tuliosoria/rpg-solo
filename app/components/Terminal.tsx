@@ -107,60 +107,6 @@ interface TerminalProps {
   onLoadCheckpointAction?: (slotId: string) => void;
 }
 
-// Characters used for text corruption — avoids █ to not conflict with redaction rendering
-const STATIC_CHARS = '░▒▓▄▀■□▪▫╌╍╎╏┃━';
-
-/**
- * Deterministically corrupt text based on noise intensity and entry ID.
- * Creates the "terminal losing signal" effect with scattered block characters
- * and occasional line truncation at higher intensities.
- */
-function corruptText(text: string, intensity: number, entryId: string): string {
-  if (intensity <= 0 || !text.trim()) return text;
-
-  // Deterministic hash from entry ID
-  let hash = 0;
-  for (let i = 0; i < entryId.length; i++) {
-    hash = ((hash << 5) - hash + entryId.charCodeAt(i)) | 0;
-  }
-
-  const chars = text.split('');
-  const result: string[] = [];
-
-  for (let i = 0; i < chars.length; i++) {
-    if (chars[i] === ' ' || chars[i] === '\n') {
-      result.push(chars[i]);
-      continue;
-    }
-
-    // Deterministic pseudo-random per character position using hash mixing
-    const v = ((hash * 2654435761 + i * 2246822519) >>> 0) % 1000;
-    // At intensity 1.0, ~35% of non-space chars get corrupted
-    const threshold = intensity * 350;
-
-    if (v < threshold) {
-      const charIdx = ((hash * 31 + i * 17) >>> 0) % STATIC_CHARS.length;
-      result.push(STATIC_CHARS[charIdx]);
-    } else {
-      result.push(chars[i]);
-    }
-  }
-
-  // Line truncation at higher intensity (above ~80% detection)
-  if (intensity > 0.35) {
-    const truncChance = (intensity - 0.35) * 1.2;
-    const truncHash = ((hash * 43 + 7919) >>> 0) % 100;
-    if (truncHash < truncChance * 40) {
-      const keepRatio = Math.max(0.15, 1 - intensity * 0.65);
-      const keepLen = Math.max(2, Math.floor(result.length * keepRatio));
-      const tail = Math.min(6, Math.max(1, result.length - keepLen));
-      return result.slice(0, keepLen).join('') + '▓'.repeat(tail);
-    }
-  }
-
-  return result.join('');
-}
-
 export default function Terminal({
   initialState,
   onExitAction,
@@ -924,17 +870,9 @@ export default function Terminal({
     return <>{parts}</>;
   };
 
-  // Noise intensity for text corruption (0-1 ramp from 70-100% detection)
-  const noiseIntensity = Math.max(0, Math.min(1, (gameState.detectionLevel - 70) / 30));
-
   const renderEntry = (entry: TerminalEntry) => {
     let className = styles.line;
-    let entryContent = getEntryContent(entry);
-
-    // Apply text corruption when risk is high — terminal losing signal
-    if (noiseIntensity > 0) {
-      entryContent = corruptText(entryContent, noiseIntensity, entry.id);
-    }
+    const entryContent = getEntryContent(entry);
 
     switch (entry.type) {
       case 'input':

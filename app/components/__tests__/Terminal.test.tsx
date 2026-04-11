@@ -166,6 +166,30 @@ describe('Terminal Component', () => {
     expect(input).toBeInTheDocument();
   });
 
+  it('keeps terminal text unchanged when high-risk static is active', () => {
+    const readableLine = 'READABLE STATIC TEST LINE';
+
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 90,
+          history: [
+            {
+              id: 'static-readable-line',
+              type: 'system',
+              content: readableLine,
+              timestamp: Date.now(),
+            },
+          ],
+        }}
+      />
+    );
+
+    expect(screen.getByText(readableLine)).toBeInTheDocument();
+  });
+
   it('mounts firewall eyes even while atmosphere suppression is active', () => {
     render(
       <Terminal

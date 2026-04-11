@@ -11,6 +11,8 @@
   image-rendering: crisp-edges;
   transition: opacity 2s ease;
   transform: translateZ(0);
+  mix-blend-mode: screen;
+  filter: blur(0.2px) contrast(1.08);
 }
 
 @media (prefers-reduced-motion: reduce) {
