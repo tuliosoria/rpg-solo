@@ -893,10 +893,11 @@ export function useTerminalEffects({
     setTerminalStaticLevel(intensity);
   }, [gameState.detectionLevel, setTerminalStaticLevel]);
 
-  // Alien silhouette in static (appears every 60-180 seconds when static is active)
+  // Alien silhouette in static (appears every 60-180 seconds while high-risk static is active)
   useEffect(() => {
+    const staticActive = gameState.detectionLevel >= 70;
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
-    if (gameState.detectionLevel < 70) {
+    if (!staticActive) {
       setAlienSilhouetteVisible(false);
       return;
     }
@@ -938,7 +939,7 @@ export function useTerminalEffects({
   }, [
     gamePhase,
     gameState.isGameOver,
-    gameState.detectionLevel,
+    gameState.detectionLevel >= 70,
     pauseTimedMechanics,
     playSound,
     setAlienSilhouetteVisible,

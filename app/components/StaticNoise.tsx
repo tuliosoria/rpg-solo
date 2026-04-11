@@ -14,7 +14,7 @@ const CANVAS_SIZE = 200;
 const FRAME_INTERVAL = 83; // ~12fps for authentic TV static feel
 const ALIEN_FADE_IN_STEP = 0.0045; // ~5.5s to reach max at 12fps
 const ALIEN_FADE_OUT_STEP = 0.012; // ~2.1s to disappear
-const ALIEN_MAX_OPACITY = 0.12;
+const ALIEN_MAX_OPACITY = 0.18;
 const BASE_NOISE_OPACITY = 0.015;
 const MAX_NOISE_OPACITY = 0.22;
 
@@ -46,7 +46,7 @@ const StaticNoise = memo(function StaticNoise({
 
       // Crop to the facial region and render it smaller than the full overlay,
       // so it feels glimpsed inside the static rather than stamped on the screen.
-      ctx.filter = 'grayscale(100%) contrast(1.85) brightness(0.28)';
+      ctx.filter = 'grayscale(100%) contrast(2.2) brightness(0.52)';
       const srcX = img.width * 0.12;
       const srcY = img.height * 0.0;
       const srcW = img.width * 0.76;
@@ -109,12 +109,17 @@ const StaticNoise = memo(function StaticNoise({
             if (alienData && alienOp > 0.005) {
               const alienBrightness = alienData[i]; // grayscale: R=G=B
               const alienAlpha = alienData[i + 3] / 255;
+              const featureStrength = alienAlpha * Math.max(0, (alienBrightness - 26) / 229);
 
               // Per-pixel random threshold creates organic emergence —
               // the face "forms" from the noise as more pixels cross the threshold
-              if (Math.random() < alienOp * alienAlpha * 1.8) {
-                const blend = 0.35 + Math.random() * 0.4;
-                const v = alienBrightness * blend + noise * (1 - blend);
+              if (featureStrength > 0.01 && Math.random() < alienOp * featureStrength * 2.4) {
+                const blend = 0.52 + featureStrength * 0.28 + Math.random() * 0.12;
+                const highlight = Math.min(
+                  255,
+                  alienBrightness + 20 + featureStrength * 48
+                );
+                const v = highlight * blend + noise * (1 - blend);
                 data[i] = data[i + 1] = data[i + 2] = v;
               } else {
                 data[i] = data[i + 1] = data[i + 2] = noise;

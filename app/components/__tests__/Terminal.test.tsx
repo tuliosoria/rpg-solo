@@ -4,10 +4,12 @@ import Terminal from '../Terminal';
 import { DEFAULT_GAME_STATE, GameState } from '../../types';
 import { I18nProvider } from '../../i18n';
 import { AUTOSAVE_INTERVAL_MS } from '../../constants/timing';
+import * as rngModule from '../../engine/rng';
 
-const { mockSpeakCustomFirewallVoice, mockFirewallEyes } = vi.hoisted(() => ({
+const { mockSpeakCustomFirewallVoice, mockFirewallEyes, mockStaticNoise } = vi.hoisted(() => ({
   mockSpeakCustomFirewallVoice: vi.fn(),
   mockFirewallEyes: vi.fn(),
+  mockStaticNoise: vi.fn(),
 }));
 
 // Mock Next.js Image component
@@ -78,6 +80,13 @@ vi.mock('../../components/FirewallEyes', async () => {
     speakCustomFirewallVoice: mockSpeakCustomFirewallVoice,
   };
 });
+
+vi.mock('../../components/StaticNoise', () => ({
+  default: (props: unknown) => {
+    mockStaticNoise(props);
+    return <div data-testid="static-noise" />;
+  },
+}));
 
 // Mock useSound hook
 vi.mock('../../hooks/useSound', () => ({
@@ -190,6 +199,46 @@ describe('Terminal Component', () => {
     expect(screen.getByText(readableLine)).toBeInTheDocument();
   });
 
+  it('does not reset the alien silhouette timer on high-risk detection changes', () => {
+    const randomSpy = vi.spyOn(rngModule, 'uiRandom').mockReturnValue(0);
+
+    const { rerender } = render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 75,
+        }}
+      />
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(30000);
+    });
+
+    rerender(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 80,
+        }}
+      />
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(30001);
+    });
+
+    expect(
+      mockStaticNoise.mock.calls.some(
+        ([props]) => (props as { alienVisible?: boolean }).alienVisible === true
+      )
+    ).toBe(true);
+
+    randomSpy.mockRestore();
+  });
+
   it('mounts firewall eyes even while atmosphere suppression is active', () => {
     render(
       <Terminal
@@ -276,7 +325,7 @@ describe('Terminal Component', () => {
   it('shows the deploy version in the header', () => {
     render(<Terminal {...defaultProps} />);
 
-    expect(screen.getByText('v002')).toBeInTheDocument();
+    expect(screen.getByText('v003')).toBeInTheDocument();
   });
 
   it('accepts user input', () => {
