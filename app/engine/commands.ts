@@ -7215,9 +7215,26 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       alienPreviewUntil: Date.now() + 12000,
     },
   });
+  const createLeakReadyEvidenceResult = (title = '═══ LEAK-READY EVIDENCE ARMED ═══') => ({
+    output: [
+      createEntry('system', title),
+      createEntry('output', 'Evidence count set to 5/5'),
+      createEntry('output', 'Leak path ready — use "leak" or run "save_evidence.sh".'),
+      createEntry('system', ''),
+      createEntry('output', 'Use "god save" to trigger the blackout phase instead.'),
+    ],
+    stateChanges: {
+      evidenceCount: 5,
+      flags: { ...state.flags, nearVictory: true, allEvidenceCollected: true },
+    },
+  });
 
   if (lowerInput === 'god alien') {
     return createAlienPreviewResult();
+  }
+
+  if (lowerInput === 'god evidences') {
+    return createLeakReadyEvidenceResult();
   }
 
   if (lowerInput === 'iddqd') {
@@ -7284,18 +7301,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     }
 
     if (godCmd === 'evidence') {
-      return {
-        output: [
-          createEntry('system', '═══ ALL EVIDENCE UNLOCKED ═══'),
-          createEntry('output', 'Evidence count set to 5/5'),
-          createEntry('system', ''),
-          createEntry('output', 'Use "god save" to trigger the save phase.'),
-        ],
-        stateChanges: {
-          evidenceCount: 5,
-          flags: { ...state.flags, allEvidenceCollected: true },
-        },
-      };
+      return createLeakReadyEvidenceResult('═══ ALL EVIDENCE UNLOCKED ═══');
+    }
+
+    if (godCmd === 'evidences') {
+      return createLeakReadyEvidenceResult();
     }
 
     if (godCmd === 'save') {

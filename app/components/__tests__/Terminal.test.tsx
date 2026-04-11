@@ -35,6 +35,7 @@ const mockStartAmbient = vi.fn();
 const mockStopAmbient = vi.fn();
 const mockToggleSound = vi.fn();
 const mockUpdateAmbientTension = vi.fn();
+const mockSetAmbientDisturbance = vi.fn();
 const mockSetMasterVolume = vi.fn();
 const mockSpeak = vi.fn();
 const mockSetMusicPlaybackRate = vi.fn();
@@ -97,6 +98,7 @@ vi.mock('../../hooks/useSound', () => ({
     stopAmbient: mockStopAmbient,
     toggleSound: mockToggleSound,
     updateAmbientTension: mockUpdateAmbientTension,
+    setAmbientDisturbance: mockSetAmbientDisturbance,
     soundEnabled: mockSoundEnabled,
     masterVolume: 0.5,
     setMasterVolume: mockSetMasterVolume,
@@ -264,6 +266,36 @@ describe('Terminal Component', () => {
     ).toBe(true);
   });
 
+  it('spikes ambient disturbance while the alien silhouette is visible and restores it after', () => {
+    const randomSpy = vi.spyOn(rngModule, 'uiRandom').mockReturnValue(0);
+
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 75,
+        }}
+      />
+    );
+
+    mockSetAmbientDisturbance.mockClear();
+
+    act(() => {
+      vi.advanceTimersByTime(30001);
+    });
+
+    expect(mockSetAmbientDisturbance).toHaveBeenCalledWith(1);
+
+    act(() => {
+      vi.advanceTimersByTime(5001);
+    });
+
+    expect(mockSetAmbientDisturbance).toHaveBeenLastCalledWith(0);
+
+    randomSpy.mockRestore();
+  });
+
   it('mounts firewall eyes even while atmosphere suppression is active', () => {
     render(
       <Terminal
@@ -350,7 +382,7 @@ describe('Terminal Component', () => {
   it('shows the deploy version in the header', () => {
     render(<Terminal {...defaultProps} />);
 
-    expect(screen.getByText('v005')).toBeInTheDocument();
+    expect(screen.getByText('v006')).toBeInTheDocument();
   });
 
   it('accepts user input', () => {

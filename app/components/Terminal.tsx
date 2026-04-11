@@ -108,7 +108,7 @@ interface TerminalProps {
 }
 
 // Increment this on each deploy so playtest screenshots always show the build under review.
-const DEPLOY_VERSION = 'v005';
+const DEPLOY_VERSION = 'v006';
 
 export default function Terminal({
   initialState,
@@ -258,6 +258,7 @@ export default function Terminal({
     stopAmbient,
     toggleSound,
     updateAmbientTension,
+    setAmbientDisturbance,
     soundEnabled,
     masterVolume,
     setMasterVolume,
@@ -681,6 +682,10 @@ export default function Terminal({
       skipStreamingRef,
     },
   });
+
+  useEffect(() => {
+    setAmbientDisturbance(alienSilhouetteVisible ? 1 : 0);
+  }, [alienSilhouetteVisible, setAmbientDisturbance]);
 
   // Click-outside handler for header menu - closes menu and refocuses input
   useEffect(() => {

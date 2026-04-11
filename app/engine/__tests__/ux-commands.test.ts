@@ -277,6 +277,48 @@ describe('UX Commands', () => {
     });
   });
 
+  describe('god evidences command', () => {
+    it('fills all evidence slots and leaves the game ready for leak without requiring iddqd first', () => {
+      const state = createTestState({ evidenceCount: 1, flags: {} });
+      const result = executeCommand('god evidences', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(5);
+      expect(result.stateChanges.flags).toMatchObject({
+        nearVictory: true,
+        allEvidenceCollected: true,
+      });
+      expect(result.stateChanges.evidencesSaved).toBeUndefined();
+      expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
+
+      const readyState = {
+        ...state,
+        ...result.stateChanges,
+        flags: { ...state.flags, ...(result.stateChanges.flags || {}) },
+      } as GameState;
+      const leakResult = executeCommand('leak', readyState);
+
+      expect(leakResult.stateChanges.inLeakSequence).toBe(true);
+      expect(
+        leakResult.output.some(
+          e => e.content.includes('SECURE CHANNEL') || e.content.includes('I have resources')
+        )
+      ).toBe(true);
+    });
+
+    it('keeps god evidence compatible inside god mode', () => {
+      const state = createTestState({ godMode: true, evidenceCount: 0, flags: {} });
+      const result = executeCommand('god evidence', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(5);
+      expect(result.stateChanges.flags).toMatchObject({
+        nearVictory: true,
+        allEvidenceCollected: true,
+      });
+      expect(result.output.some(e => e.content.includes('ALL EVIDENCE UNLOCKED'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
+    });
+  });
+
   describe('god alien command', () => {
     it('sets detection to 70 and arms an alien preview without requiring iddqd first', () => {
       const state = createTestState({ detectionLevel: 12 });

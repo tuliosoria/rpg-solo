@@ -151,6 +151,8 @@ export function useSound() {
   const ambientSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const ambientFilterRef = useRef<BiquadFilterNode | null>(null);
   const ambientGainRef = useRef<GainNode | null>(null);
+  const ambientTensionLevelRef = useRef(0);
+  const ambientDisturbanceRef = useRef(0);
   // Ambient music refs
   const musicElementRef = useRef<HTMLAudioElement | null>(null);
   const musicGainRef = useRef<GainNode | null>(null);
@@ -199,6 +201,37 @@ export function useSound() {
     }
     return audioContextRef.current;
   }, []);
+
+  const syncAmbientProfile = useCallback(
+    (rampSeconds: number) => {
+      const audioContext = audioContextRef.current;
+      const filter = ambientFilterRef.current;
+      const gain = ambientGainRef.current;
+
+      if (!audioContext || !filter || !gain) return;
+
+      const detectionRatio = Math.max(0, Math.min(1, ambientTensionLevelRef.current / 100));
+      const disturbance = Math.max(0, Math.min(1, ambientDisturbanceRef.current));
+      const baseVolume = SOUND_CONFIG.ambient.volume * masterVolume;
+      const normalVolume = baseVolume + detectionRatio * (baseVolume * 1.5);
+      const targetTime = audioContext.currentTime + Math.max(rampSeconds, 0.01);
+
+      // Let more high-frequency hiss through and raise the resonance when the
+      // silhouette appears, then settle back to the base tension profile.
+      const frequency = 200 + detectionRatio * 600 + disturbance * 2200;
+      const q = 1 + detectionRatio * 7 + disturbance * 12;
+      const volume = normalVolume * (1 + disturbance * 0.65);
+
+      filter.frequency.cancelScheduledValues?.(audioContext.currentTime);
+      filter.Q.cancelScheduledValues?.(audioContext.currentTime);
+      gain.gain.cancelScheduledValues?.(audioContext.currentTime);
+
+      filter.frequency.linearRampToValueAtTime(frequency, targetTime);
+      filter.Q.linearRampToValueAtTime(q, targetTime);
+      gain.gain.linearRampToValueAtTime(volume, targetTime);
+    },
+    [masterVolume]
+  );
 
   // Play a key-specific sound with pitch variation based on key type
   const playKeySound = useCallback(
@@ -728,6 +761,10 @@ export function useSound() {
     }
   }, [masterVolume]);
 
+  useEffect(() => {
+    syncAmbientProfile(0.15);
+  }, [masterVolume, syncAmbientProfile]);
+
   // Start ambient background drone
   const startAmbient = useCallback(() => {
     if (!ambientEnabled || ambientSourceRef.current) return;
@@ -759,44 +796,34 @@ export function useSound() {
     ambientSourceRef.current = noiseSource;
     ambientFilterRef.current = noiseFilter;
     ambientGainRef.current = noiseGain;
+    syncAmbientProfile(0.01);
 
     // Also start background music
     startMusic();
-  }, [ambientEnabled, masterVolume, initAudio, startMusic]);
+  }, [ambientEnabled, masterVolume, initAudio, startMusic, syncAmbientProfile]);
 
   // Update ambient tension based on detection level
   // Lower detection = calm low-frequency hum
   // Higher detection = more intense, higher-pitched, louder drone
   const updateAmbientTension = useCallback(
     (detectionLevel: number) => {
-      const audioContext = audioContextRef.current;
-      const filter = ambientFilterRef.current;
-      const gain = ambientGainRef.current;
-
-      if (!audioContext || !filter || !gain) return;
-
-      // Calculate filter frequency: 200Hz at 0%, 800Hz at 100%
-      const baseFreq = 200;
-      const maxFreq = 800;
-      const freq = baseFreq + (detectionLevel / 100) * (maxFreq - baseFreq);
-
-      // Calculate Q (resonance): subtle at low, sharper at high detection
-      const baseQ = 1;
-      const maxQ = 8;
-      const q = baseQ + (detectionLevel / 100) * (maxQ - baseQ);
-
-      // Calculate volume: slightly louder as tension rises
-      const baseVolume = SOUND_CONFIG.ambient.volume * masterVolume;
-      const maxVolume = baseVolume * 2.5;
-      const volume = baseVolume + (detectionLevel / 100) * (maxVolume - baseVolume);
-
-      // Smooth transitions
-      const now = audioContext.currentTime;
-      filter.frequency.linearRampToValueAtTime(freq, now + 0.5);
-      filter.Q.linearRampToValueAtTime(q, now + 0.5);
-      gain.gain.linearRampToValueAtTime(volume, now + 0.5);
+      ambientTensionLevelRef.current = Math.max(0, Math.min(100, detectionLevel));
+      syncAmbientProfile(0.5);
     },
-    [masterVolume]
+    [syncAmbientProfile]
+  );
+
+  const setAmbientDisturbance = useCallback(
+    (level: number) => {
+      const clampedLevel = Math.max(0, Math.min(1, level));
+      const previousLevel = ambientDisturbanceRef.current;
+      ambientDisturbanceRef.current = clampedLevel;
+
+      if (previousLevel === clampedLevel) return;
+
+      syncAmbientProfile(clampedLevel > previousLevel ? 0.12 : 0.3);
+    },
+    [syncAmbientProfile]
   );
 
   // Stop ambient noise drone
@@ -878,6 +905,7 @@ export function useSound() {
     stopAmbient,
     toggleSound,
     updateAmbientTension,
+    setAmbientDisturbance,
     setMusicPlaybackRate,
     speak,
     soundEnabled,
