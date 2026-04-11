@@ -31,7 +31,7 @@ describe('PauseMenu', () => {
 
       expect(screen.getByRole('button', { name: /RESUME GAME/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /SAVE SESSION/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /LOAD SESSION/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /LOAD CHECKPOINT/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /SETTINGS/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /EXIT TO MENU/i })).toBeInTheDocument();
     });
@@ -61,7 +61,7 @@ describe('PauseMenu', () => {
     it('calls onLoadAction when clicking LOAD', () => {
       render(<PauseMenu {...defaultProps} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /LOAD SESSION/i }));
+      fireEvent.click(screen.getByRole('button', { name: /LOAD CHECKPOINT/i }));
 
       expect(defaultProps.onLoadAction).toHaveBeenCalledTimes(1);
     });
@@ -233,10 +233,16 @@ describe('PauseMenu', () => {
     it('updates selection on mouse hover', () => {
       render(<PauseMenu {...defaultProps} />);
 
-      const loadButton = screen.getByRole('button', { name: /LOAD SESSION/i });
+      const loadButton = screen.getByRole('button', { name: /LOAD CHECKPOINT/i });
       fireEvent.mouseEnter(loadButton);
 
       expect(loadButton.textContent).toContain('▶');
+    });
+
+    it('hides checkpoint loading when no checkpoint is available', () => {
+      render(<PauseMenu {...defaultProps} canLoadAction={false} />);
+
+      expect(screen.queryByRole('button', { name: /LOAD CHECKPOINT/i })).not.toBeInTheDocument();
     });
 
     it('updates selection on mouse hover in confirmation', () => {

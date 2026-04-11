@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { GameState } from '../types';
-import { createNewGame, loadGame, loadCheckpoint } from '../storage/saves';
+import { createNewGame, loadGameAsync, loadCheckpoint } from '../storage/saves';
 import { useGlobalErrorHandler } from '../hooks/useGlobalErrorHandler';
 import { I18nProvider } from '../i18n';
 import ErrorBoundary from './ErrorBoundary';
@@ -25,12 +25,14 @@ function HomeContentInner() {
     setView('game');
   }, []);
 
-  const handleLoadGame = useCallback((slotId: string) => {
-    const loadedState = loadGame(slotId);
+  const handleLoadGame = useCallback(async (slotId: string) => {
+    const loadedState = await loadGameAsync(slotId);
     if (loadedState) {
       setGameState(loadedState);
       setView('game');
+      return true;
     }
+    return false;
   }, []);
 
   const handleLoadCheckpoint = useCallback((slotId: string) => {

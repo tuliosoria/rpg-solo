@@ -13,6 +13,7 @@ describe('useSound', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    window.localStorage.clear();
     originalAudioContext = window.AudioContext;
 
     // Create spies
@@ -103,7 +104,7 @@ describe('useSound', () => {
     it('starts with default master volume', () => {
       const { result } = renderHook(() => useSound());
 
-      expect(result.current.masterVolume).toBe(0.5);
+      expect(result.current.masterVolume).toBe(1);
     });
   });
 
@@ -259,12 +260,13 @@ describe('useSound', () => {
       expect(createBiquadFilterSpy).toHaveBeenCalled();
     });
 
-    it('does not start ambient when sound is disabled', () => {
-      const { result } = renderHook(() => useSound());
+    it('does not start ambient when ambient audio is disabled in saved options', () => {
+      window.localStorage.setItem(
+        'terminal1996_options',
+        JSON.stringify({ ambientSoundEnabled: false })
+      );
 
-      act(() => {
-        result.current.toggleSound();
-      });
+      const { result } = renderHook(() => useSound());
 
       act(() => {
         result.current.startAmbient();

@@ -583,6 +583,8 @@ describe('UX Commands', () => {
       const result = executeCommand('help', state);
 
       expect(result.output.some(e => e.content.includes('TERMINAL COMMANDS'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('wait'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('hide'))).toBe(true);
       expect(result.output.some(e => e.content.includes('  back              Go to previous directory'))).toBe(false);
       expect(result.output.some(e => e.content.includes('  progress          Show investigation progress'))).toBe(false);
       expect(result.output.some(e => e.content.includes('  map               Show evidence connections'))).toBe(false);
@@ -591,6 +593,15 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('  trace             Trace system connections (RISK)'))).toBe(false);
       expect(result.output.some(e => e.content.includes('  rewind            Access archive state (RISK)'))).toBe(false);
       expect(result.output.some(e => e.content.includes('  present           Return to present from archive'))).toBe(false);
+    });
+
+    it('should show recovery help for survival commands', () => {
+      const state = createTestState();
+      const result = executeCommand('help recovery', state);
+
+      expect(result.output.some(e => e.content.includes('R E C O V E R Y'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('wait'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('hide'))).toBe(true);
     });
 
     it('should not expose removed mechanics in direct help', () => {
@@ -606,6 +617,21 @@ describe('UX Commands', () => {
 
       // Should show general help or error message
       expect(result.output.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('status guidance', () => {
+    it('surfaces evidence progress and recovery advice when pressure is high', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        detectionLevel: 88,
+        waitUsesRemaining: 2,
+        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
+      });
+      const result = executeCommand('status', state);
+
+      expect(result.output.some(e => e.content.includes('EVIDENCE: 2/5'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('RECOVERY: "wait" can buy time'))).toBe(true);
     });
   });
 

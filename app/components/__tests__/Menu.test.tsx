@@ -406,6 +406,34 @@ describe('Menu', () => {
       const ambientRow = screen.getByText('Ambient Sound').closest('div');
       expect(ambientRow?.className).toContain('selected');
     });
+
+    it('lets keyboard users toggle options with Enter', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      fireEvent.keyDown(window, { key: 'ArrowDown' });
+
+      const ambientRow = screen.getByText('Ambient Sound').closest('div');
+      const wasEnabled = ambientRow?.textContent?.includes('ON');
+
+      fireEvent.keyDown(window, { key: 'Enter' });
+
+      expect(ambientRow).toHaveTextContent(wasEnabled ? 'OFF' : 'ON');
+    });
+
+    it('lets keyboard users adjust volume with arrow keys', () => {
+      render(<Menu {...defaultProps} />);
+      fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
+
+      const slider = screen.getByRole('slider') as HTMLInputElement;
+      const initialValue = Number(slider.value);
+
+      fireEvent.keyDown(window, { key: 'ArrowLeft' });
+      expect(Number(slider.value)).toBe(Math.max(0, initialValue - 10));
+
+      fireEvent.keyDown(window, { key: 'ArrowRight' });
+      expect(Number(slider.value)).toBe(initialValue);
+    });
   });
 
   describe('Detection Level Styling', () => {

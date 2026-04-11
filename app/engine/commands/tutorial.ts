@@ -136,6 +136,9 @@ export function getHelpBasics(): TerminalEntry[] {
     createEntry('system', ''),
     createEntry('output', '  STATUS'),
     createEntry('output', '  help            Show all commands'),
+    createEntry('output', '  status          Check risk and session pressure'),
+    createEntry('output', '  wait            Lower risk briefly (limited uses)'),
+    createEntry('output', '  help recovery   Learn the emergency recovery options'),
     createEntry('system', ''),
   ];
 }
@@ -197,6 +200,8 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntry('output', '  • Read carefully - evidence is in the details'),
     createEntry('output', '  • Use "note" to track important details'),
     createEntry('output', '  • Watch your detection level!'),
+    createEntry('output', '  • If risk spikes, use "wait" to buy time'),
+    createEntry('output', '  • At 90% risk, "hide" becomes a one-time escape'),
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
     createEntry('system', ''),
@@ -204,6 +209,30 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntry('system', ''),
     createEntry('output', '  note <text>      Save personal notes'),
     createEntry('output', '  bookmark <file>  Mark files for later'),
+    createEntry('system', ''),
+  ];
+}
+
+export function getHelpRecovery(): TerminalEntry[] {
+  return [
+    createEntry('system', ''),
+    createEntry('output', '═══════════════════════════════════════════════'),
+    createEntry('output', '  R E C O V E R Y   &   S T E A L T H'),
+    createEntry('output', '═══════════════════════════════════════════════'),
+    createEntry('system', ''),
+    createEntry('output', '  wait'),
+    createEntry('output', '    Lowers detection for a moment.'),
+    createEntry('output', '    Limited to 3 uses per run.'),
+    createEntry('system', ''),
+    createEntry('output', '  hide'),
+    createEntry('output', '    Unlocks automatically at 90% risk.'),
+    createEntry('output', '    Gives you one emergency escape, but hurts stability.'),
+    createEntry('system', ''),
+    createEntry('output', '  status'),
+    createEntry('output', '    Shows your current pressure and available recovery options.'),
+    createEntry('system', ''),
+    createEntry('output', '  RULE OF THUMB'),
+    createEntry('output', '    If the tracker turns red, slow down and recover before digging deeper.'),
     createEntry('system', ''),
   ];
 }

@@ -40,6 +40,7 @@ import {
 } from '../data/conspiracyFiles';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES, MAX_DETECTION, applyWarmupDetection, WARMUP_PHASE } from '../constants/detection';
 import { shouldSuppressPressure, shouldSuppressPenalties } from '../constants/atmosphere';
+import { MAX_WRONG_ATTEMPTS } from '../constants/gameplay';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
 import { TURING_QUESTIONS } from '../constants/turing';
 
@@ -60,6 +61,7 @@ import {
   shouldShowTutorialTip,
   getHelpBasics,
   getHelpEvidence,
+  getHelpRecovery,
   getHelpWinning,
 } from './commands/tutorial';
 
@@ -125,6 +127,7 @@ export {
   shouldShowTutorialTip,
   getHelpBasics,
   getHelpEvidence,
+  getHelpRecovery,
   getHelpWinning,
 } from './commands/tutorial';
 export type { TutorialTipId } from './commands/tutorial';
@@ -3529,6 +3532,7 @@ const COMMAND_HELP: Record<string, string[]> = {
     'Limited uses per session (3).',
     'Strategic use can help avoid detection.',
   ],
+  hide: ['COMMAND: hide', 'USAGE:', '  hide           - Emergency escape at 90% risk'],
   link: [
     'COMMAND: link [phrase]',
     '',
@@ -3587,6 +3591,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         };
       }
 
+      if (cmdName === 'recovery') {
+        return {
+          output: getHelpRecovery(),
+          stateChanges: {},
+        };
+      }
+
       if (cmdName === 'winning') {
         return {
           output: getHelpWinning(),
@@ -3639,6 +3650,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  tree              Show directory structure',
         '  morse <text>      Decipher morse code messages',
         '  hint              Request a hint (limited uses)',
+        '  wait              Lower detection briefly (limited)',
+        '  hide              Emergency escape at 90% risk',
         '  leak              Leak collected evidence',
         '  tutorial [on/off] Toggle tutorial tips or replay intro',
         '  save              Save current session',
@@ -3648,7 +3661,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  Tab               Autocomplete commands and files',
         '  Ctrl+L            Clear terminal',
         '',
-        'GUIDES:  help basics | help evidence | help winning',
+        'GUIDES:  help basics | help evidence | help recovery | help winning',
         '',
         '═══════════════════════════════════════════════════════════',
         '',
@@ -3721,6 +3734,28 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       lines.push('  ACCESS: Elevated');
     } else {
       lines.push('  ACCESS: Administrative');
+    }
+
+    const evidenceCount = state.truthsDiscovered?.size || 0;
+    lines.push(`  EVIDENCE: ${evidenceCount}/5 categories confirmed`);
+
+    if (evidenceCount >= 5 && state.flags.allEvidenceCollected) {
+      lines.push('  OBJECTIVE: Evidence complete — use "leak" when ready.');
+    } else if (evidenceCount > 0) {
+      lines.push('  OBJECTIVE: Keep reading. Every category strengthens the case.');
+    } else {
+      lines.push('  OBJECTIVE: Start opening files and build the evidence tracker.');
+    }
+
+    if (state.detectionLevel >= DETECTION_THRESHOLDS.HIDE_AVAILABLE && !state.singularEventsTriggered?.has('hide_used')) {
+      lines.push('  RECOVERY: "hide" is available now.');
+    } else if (state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH) {
+      const waitsLeft = state.waitUsesRemaining || 0;
+      if (waitsLeft > 0) {
+        lines.push(`  RECOVERY: "wait" can buy time (${waitsLeft} left).`);
+      } else {
+        lines.push('  RECOVERY: No wait uses remaining.');
+      }
     }
 
     // System attitude indicator at high hostility
@@ -7826,7 +7861,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
 
   // Check for lockdown
-  if (state.legacyAlertCounter >= 10) {
+  if (state.legacyAlertCounter >= MAX_WRONG_ATTEMPTS) {
     return {
       output: [
         createEntry('error', 'SYSTEM LOCKDOWN'),

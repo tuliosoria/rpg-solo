@@ -14,6 +14,7 @@
  */
 
 import { useCallback, useRef, useEffect, useState } from 'react';
+import { DEFAULT_OPTIONS, OPTIONS_CHANGED_EVENT, persistOptions, readStoredOptions } from './useOptions';
 
 /**
  * Available sound effect types.
@@ -153,8 +154,35 @@ export function useSound() {
   const musicGainRef = useRef<GainNode | null>(null);
   const musicSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const musicTrackIndexRef = useRef(0);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [masterVolume, setMasterVolume] = useState(0.5);
+  const [soundEnabled, setSoundEnabled] = useState(DEFAULT_OPTIONS.soundEffectsEnabled);
+  const [ambientEnabled, setAmbientEnabled] = useState(DEFAULT_OPTIONS.ambientSoundEnabled);
+  const [turingVoiceEnabled, setTuringVoiceEnabled] = useState(DEFAULT_OPTIONS.turingVoiceEnabled);
+  const [masterVolume, setMasterVolumeState] = useState(DEFAULT_OPTIONS.masterVolume / 100);
+
+  const syncAudioOptions = useCallback(() => {
+    const storedOptions = readStoredOptions();
+    setSoundEnabled(storedOptions.soundEffectsEnabled);
+    setAmbientEnabled(storedOptions.ambientSoundEnabled);
+    setTuringVoiceEnabled(storedOptions.turingVoiceEnabled);
+    setMasterVolumeState(storedOptions.masterVolume / 100);
+  }, []);
+
+  useEffect(() => {
+    syncAudioOptions();
+
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const handleStorageSync = () => syncAudioOptions();
+    window.addEventListener('storage', handleStorageSync);
+    window.addEventListener(OPTIONS_CHANGED_EVENT, handleStorageSync);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageSync);
+      window.removeEventListener(OPTIONS_CHANGED_EVENT, handleStorageSync);
+    };
+  }, [syncAudioOptions]);
 
   // Initialize audio context on first interaction
   const initAudio = useCallback(() => {
@@ -599,7 +627,7 @@ export function useSound() {
   // ═══════════════════════════════════════════════════════════════════════════
 
   const startMusic = useCallback(() => {
-    if (!soundEnabled || musicElementRef.current) return;
+    if (!ambientEnabled || musicElementRef.current) return;
 
     const audioContext = initAudio();
     if (!audioContext) return;
@@ -635,7 +663,7 @@ export function useSound() {
     } catch {
       // Audio/MediaElementSource not available (e.g. test environment)
     }
-  }, [soundEnabled, masterVolume, initAudio]);
+  }, [ambientEnabled, masterVolume, initAudio]);
 
   const stopMusic = useCallback(() => {
     if (musicElementRef.current) {
@@ -662,7 +690,7 @@ export function useSound() {
 
   // Start ambient background drone
   const startAmbient = useCallback(() => {
-    if (!soundEnabled || ambientSourceRef.current) return;
+    if (!ambientEnabled || ambientSourceRef.current) return;
 
     const audioContext = initAudio();
     if (!audioContext) return;
@@ -694,7 +722,7 @@ export function useSound() {
 
     // Also start background music
     startMusic();
-  }, [soundEnabled, masterVolume, initAudio, startMusic]);
+  }, [ambientEnabled, masterVolume, initAudio, startMusic]);
 
   // Update ambient tension based on detection level
   // Lower detection = calm low-frequency hum
@@ -746,15 +774,32 @@ export function useSound() {
     stopMusic();
   }, [stopMusic]);
 
+  useEffect(() => {
+    if (!ambientEnabled) {
+      stopAmbient();
+    }
+  }, [ambientEnabled, stopAmbient]);
+
   // Toggle sound on/off
   const toggleSound = useCallback(() => {
     setSoundEnabled(prev => {
-      if (prev) {
-        stopAmbient();
-      }
-      return !prev;
+      const next = !prev;
+      persistOptions({
+        ...readStoredOptions(),
+        soundEffectsEnabled: next,
+      });
+      return next;
     });
-  }, [stopAmbient]);
+  }, []);
+
+  const setMasterVolume = useCallback((volume: number) => {
+    const clampedVolume = Math.max(0, Math.min(1, volume));
+    setMasterVolumeState(clampedVolume);
+    persistOptions({
+      ...readStoredOptions(),
+      masterVolume: Math.round(clampedVolume * 100),
+    });
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -776,7 +821,7 @@ export function useSound() {
 
   // Speak text using Web Speech API (for Firewall voice)
   const speak = useCallback((text: string, options?: { rate?: number; pitch?: number }) => {
-    if (!soundEnabled || typeof window === 'undefined' || !window.speechSynthesis) return;
+    if (!turingVoiceEnabled || typeof window === 'undefined' || !window.speechSynthesis) return;
     
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = options?.rate ?? 0.8; // Slow, menacing
@@ -784,7 +829,7 @@ export function useSound() {
     utterance.volume = masterVolume;
     
     speechSynthesis.speak(utterance);
-  }, [soundEnabled, masterVolume]);
+  }, [turingVoiceEnabled, masterVolume]);
 
   return {
     playSound,

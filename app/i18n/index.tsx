@@ -20,6 +20,10 @@ const LOCALES: Record<Language, LocaleDictionary> = {
   es,
 };
 
+function normalizeRuntimePresentation(text: string): string {
+  return text.replace(/^\[UFO74\]:\s*/, 'UFO74: ');
+}
+
 function normalizeLanguage(value: string | null | undefined): Language {
   if (!value) return 'en';
   if (value === 'pt-br' || value === 'pt-BR') return 'pt-BR';
@@ -104,16 +108,19 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   const translateRuntimeText = useCallback(
     (text: string) => {
-      if (language === 'en' || !text) return text;
+      if (!text) return text;
+      if (language === 'en') return normalizeRuntimePresentation(text);
       const unknownCommandPrefix = 'Unknown command: ';
       if (text.startsWith(unknownCommandPrefix)) {
-        return t('runtime.unknownCommand', { value: text.slice(unknownCommandPrefix.length) }, text);
+        return normalizeRuntimePresentation(
+          t('runtime.unknownCommand', { value: text.slice(unknownCommandPrefix.length) }, text)
+        );
       }
       if (text === 'ERROR: Unknown command') {
-        return t('runtime.errorUnknownCommand', undefined, text);
+        return normalizeRuntimePresentation(t('runtime.errorUnknownCommand', undefined, text));
       }
       if (text === 'INPUT TOO LONG') {
-        return t('runtime.inputTooLong', undefined, text);
+        return normalizeRuntimePresentation(t('runtime.inputTooLong', undefined, text));
       }
       const invalidAttemptsMatch = text.match(/^(\s*)\[Invalid attempts: (\d+)\/8\]$/);
       if (invalidAttemptsMatch) {
@@ -124,7 +131,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         return `${t('runtime.directoryPrefix')}: ${directoryMatch[1]}`;
       }
       const translated = RUNTIME_TRANSLATIONS[language][text];
-      return translated ?? text;
+      return normalizeRuntimePresentation(translated ?? text);
     },
     [language, t]
   );

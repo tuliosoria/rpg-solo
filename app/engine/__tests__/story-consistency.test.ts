@@ -453,6 +453,7 @@ describe('Story Consistency Tests', () => {
         expect(content).toContain('ls');
         expect(content).toContain('cd');
         expect(content).toContain('open');
+        expect(content).toContain('wait');
         // decrypt is an advanced command, not in basics
       });
 

@@ -30,6 +30,14 @@ describe('SaveModal', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(saveGame).mockReturnValue({
+      id: 'save-1',
+      name: 'Test Save',
+      timestamp: Date.now(),
+      currentPath: '/home/hackerkid',
+      truthCount: 2,
+      detectionLevel: 25,
+    });
   });
 
   afterEach(() => {
@@ -105,6 +113,17 @@ describe('SaveModal', () => {
       fireEvent.click(screen.getByRole('button', { name: /SAVE/i }));
 
       expect(saveGame).toHaveBeenCalledWith(defaultProps.gameState, 'My Save');
+    });
+
+    it('shows an error and stays open when saving fails', () => {
+      vi.mocked(saveGame).mockReturnValue(null);
+
+      render(<SaveModal {...defaultProps} />);
+
+      fireEvent.click(screen.getByRole('button', { name: /SAVE/i }));
+
+      expect(defaultProps.onSavedAction).not.toHaveBeenCalled();
+      expect(screen.getByRole('alert')).toHaveTextContent(/SAVE FAILED/i);
     });
   });
 

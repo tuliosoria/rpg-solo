@@ -10,6 +10,7 @@ interface PauseMenuProps {
   onLoadAction: () => void;
   onSettingsAction: () => void;
   onExitAction: () => void;
+  canLoadAction?: boolean;
 }
 
 export default memo(function PauseMenu({
@@ -18,6 +19,7 @@ export default memo(function PauseMenu({
   onLoadAction,
   onSettingsAction,
   onExitAction,
+  canLoadAction = true,
 }: PauseMenuProps) {
   const { t } = useI18n();
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -27,8 +29,10 @@ export default memo(function PauseMenu({
     () =>
       showExitConfirm
         ? ['confirm_exit', 'cancel_exit']
-        : ['resume', 'save', 'load', 'settings', 'exit'],
-    [showExitConfirm]
+        : canLoadAction
+          ? ['resume', 'save', 'load', 'settings', 'exit']
+          : ['resume', 'save', 'settings', 'exit'],
+    [canLoadAction, showExitConfirm]
   );
 
   // Handle keyboard navigation
@@ -73,7 +77,7 @@ export default memo(function PauseMenu({
           e.preventDefault();
           if (showExitConfirm) {
             setShowExitConfirm(false);
-            setSelectedIndex(4);
+            setSelectedIndex(canLoadAction ? 4 : 3);
           } else {
             onResumeAction();
           }
@@ -84,6 +88,7 @@ export default memo(function PauseMenu({
       menuItems,
       selectedIndex,
       showExitConfirm,
+      canLoadAction,
       onResumeAction,
       onSaveAction,
       onLoadAction,
@@ -149,51 +154,53 @@ export default memo(function PauseMenu({
           </div>
 
         <div className={styles.options}>
-          <button
-            className={`${styles.menuButton} ${selectedIndex === 0 ? styles.selected : ''}`}
-            tabIndex={-1}
-            onMouseDown={e => e.preventDefault()}
-            onClick={onResumeAction}
-            onMouseEnter={() => setSelectedIndex(0)}
-          >
-            {selectedIndex === 0 ? '▶ ' : '  '}{t('pause.resume')}
-          </button>
-          <button
-            className={`${styles.menuButton} ${selectedIndex === 1 ? styles.selected : ''}`}
-            tabIndex={-1}
-            onMouseDown={e => e.preventDefault()}
-            onClick={onSaveAction}
-            onMouseEnter={() => setSelectedIndex(1)}
-          >
-            {selectedIndex === 1 ? '▶ ' : '  '}{t('pause.save')}
-          </button>
-          <button
-            className={`${styles.menuButton} ${selectedIndex === 2 ? styles.selected : ''}`}
-            tabIndex={-1}
-            onMouseDown={e => e.preventDefault()}
-            onClick={onLoadAction}
-            onMouseEnter={() => setSelectedIndex(2)}
-          >
-            {selectedIndex === 2 ? '▶ ' : '  '}{t('pause.load')}
-          </button>
-          <button
-            className={`${styles.menuButton} ${selectedIndex === 3 ? styles.selected : ''}`}
-            tabIndex={-1}
-            onMouseDown={e => e.preventDefault()}
-            onClick={onSettingsAction}
-            onMouseEnter={() => setSelectedIndex(3)}
-          >
-            {selectedIndex === 3 ? '▶ ' : '  '}{t('pause.settings')}
-          </button>
-          <button
-            className={`${styles.menuButton} ${styles.exitButton} ${selectedIndex === 4 ? styles.selected : ''}`}
-            tabIndex={-1}
-            onMouseDown={e => e.preventDefault()}
-            onClick={handleExitClick}
-            onMouseEnter={() => setSelectedIndex(4)}
-          >
-            {selectedIndex === 4 ? '▶ ' : '  '}{t('pause.exit')}
-          </button>
+            <button
+              className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('resume') ? styles.selected : ''}`}
+              tabIndex={-1}
+              onMouseDown={e => e.preventDefault()}
+              onClick={onResumeAction}
+              onMouseEnter={() => setSelectedIndex(menuItems.indexOf('resume'))}
+            >
+              {selectedIndex === menuItems.indexOf('resume') ? '▶ ' : '  '}{t('pause.resume')}
+            </button>
+            <button
+              className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('save') ? styles.selected : ''}`}
+              tabIndex={-1}
+              onMouseDown={e => e.preventDefault()}
+              onClick={onSaveAction}
+              onMouseEnter={() => setSelectedIndex(menuItems.indexOf('save'))}
+            >
+              {selectedIndex === menuItems.indexOf('save') ? '▶ ' : '  '}{t('pause.save')}
+            </button>
+            {canLoadAction && (
+              <button
+                className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('load') ? styles.selected : ''}`}
+                tabIndex={-1}
+                onMouseDown={e => e.preventDefault()}
+                onClick={onLoadAction}
+                onMouseEnter={() => setSelectedIndex(menuItems.indexOf('load'))}
+              >
+                {selectedIndex === menuItems.indexOf('load') ? '▶ ' : '  '}{t('pause.load')}
+              </button>
+            )}
+            <button
+              className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('settings') ? styles.selected : ''}`}
+              tabIndex={-1}
+              onMouseDown={e => e.preventDefault()}
+              onClick={onSettingsAction}
+              onMouseEnter={() => setSelectedIndex(menuItems.indexOf('settings'))}
+            >
+              {selectedIndex === menuItems.indexOf('settings') ? '▶ ' : '  '}{t('pause.settings')}
+            </button>
+            <button
+              className={`${styles.menuButton} ${styles.exitButton} ${selectedIndex === menuItems.indexOf('exit') ? styles.selected : ''}`}
+              tabIndex={-1}
+              onMouseDown={e => e.preventDefault()}
+              onClick={handleExitClick}
+              onMouseEnter={() => setSelectedIndex(menuItems.indexOf('exit'))}
+            >
+              {selectedIndex === menuItems.indexOf('exit') ? '▶ ' : '  '}{t('pause.exit')}
+            </button>
         </div>
 
         <div className={styles.hint}>{t('pause.hint')}</div>

@@ -9,7 +9,7 @@ import styles from './Menu.module.css';
 
 interface MenuProps {
   onNewGameAction: () => void;
-  onLoadGameAction: (slotId: string) => void;
+  onLoadGameAction: (slotId: string) => void | boolean | Promise<void | boolean>;
 }
 
 type Screen = 'main' | 'load' | 'credits' | 'options';
@@ -19,17 +19,110 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
   const [saves, setSaves] = useState<SaveSlot[]>([]);
   const [flickerActive, setFlickerActive] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [loadingSaveId, setLoadingSaveId] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Options state
   const { options, setOption } = useOptions();
   const { language, setLanguage, t } = useI18n();
 
-  const cycleLanguage = useCallback(() => {
+  const cycleLanguage = useCallback((direction: 1 | -1 = 1) => {
     const ordered = ['en', 'pt-BR', 'es'] as const;
     const currentIndex = ordered.indexOf(language);
-    const nextIndex = (currentIndex + 1) % ordered.length;
+    const nextIndex = (currentIndex + direction + ordered.length) % ordered.length;
     setLanguage(ordered[nextIndex]);
   }, [language, setLanguage]);
+
+  const adjustOptionValue = useCallback(
+    (index: number, direction: 1 | -1 = 1) => {
+      const flickerOptions: FlickerIntensity[] = ['low', 'medium', 'high'];
+      const fontSizeOptions: FontSize[] = ['small', 'medium', 'large'];
+
+      switch (index) {
+        case 0:
+          setOption('masterVolume', Math.max(0, Math.min(100, options.masterVolume + direction * 10)));
+          break;
+        case 1:
+          setOption('ambientSoundEnabled', !options.ambientSoundEnabled);
+          break;
+        case 2:
+          setOption('soundEffectsEnabled', !options.soundEffectsEnabled);
+          break;
+        case 3:
+          setOption('turingVoiceEnabled', !options.turingVoiceEnabled);
+          break;
+        case 4:
+          setOption('crtEffectsEnabled', !options.crtEffectsEnabled);
+          break;
+        case 5:
+          setOption('screenFlickerEnabled', !options.screenFlickerEnabled);
+          break;
+        case 6:
+          if (options.screenFlickerEnabled) {
+            const currentIdx = flickerOptions.indexOf(options.flickerIntensity);
+            const nextIdx = (currentIdx + direction + flickerOptions.length) % flickerOptions.length;
+            setOption('flickerIntensity', flickerOptions[nextIdx]);
+          }
+          break;
+        case 7: {
+          const currentIdx = fontSizeOptions.indexOf(options.fontSize);
+          const nextIdx = (currentIdx + direction + fontSizeOptions.length) % fontSizeOptions.length;
+          setOption('fontSize', fontSizeOptions[nextIdx]);
+          break;
+        }
+        case 8:
+          cycleLanguage(direction);
+          break;
+        default:
+          break;
+      }
+    },
+    [cycleLanguage, options, setOption]
+  );
+
+  const handleLoadSelection = useCallback(
+    (slotId: string) => {
+      if (loadingSaveId) return;
+
+      const showLoadError = () => {
+        setLoadError(
+          t('menu.load.failed', undefined, 'Unable to load this session. The save may be missing or corrupted.')
+        );
+        setLoadingSaveId(current => (current === slotId ? null : current));
+      };
+
+      setLoadError(null);
+      setLoadingSaveId(slotId);
+
+      try {
+        const result = onLoadGameAction(slotId);
+        if (result && typeof (result as Promise<boolean | void>).then === 'function') {
+          void Promise.resolve(result)
+            .then(loaded => {
+              if (loaded === false) {
+                showLoadError();
+                return;
+              }
+              setLoadingSaveId(current => (current === slotId ? null : current));
+            })
+            .catch(() => {
+              showLoadError();
+            });
+          return;
+        }
+
+        if (result === false) {
+          showLoadError();
+          return;
+        }
+
+        setLoadingSaveId(current => (current === slotId ? null : current));
+      } catch {
+        showLoadError();
+      }
+    },
+    [loadingSaveId, onLoadGameAction, t]
+  );
 
   // Refs for menu buttons for focus management
   const mainMenuRef = useRef<HTMLDivElement>(null);
@@ -40,6 +133,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
     if (screen === 'load') {
       setSaves(getSaveSlots());
       setSelectedIndex(0);
+      setLoadError(null);
+      setLoadingSaveId(null);
     }
   }, [screen]);
 
@@ -63,6 +158,18 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         screen === 'main' ? 3 : screen === 'load' ? (saves.length > 0 ? saves.length : 0) : screen === 'options' ? 9 : 0;
 
       switch (e.key) {
+        case 'ArrowLeft':
+          if (screen === 'options') {
+            e.preventDefault();
+            adjustOptionValue(selectedIndex, -1);
+          }
+          break;
+        case 'ArrowRight':
+          if (screen === 'options') {
+            e.preventDefault();
+            adjustOptionValue(selectedIndex, 1);
+          }
+          break;
         case 'ArrowUp':
           e.preventDefault();
           setSelectedIndex(prev => (prev > 0 ? prev - 1 : maxIndex));
@@ -80,18 +187,17 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             else if (selectedIndex === 3) setScreen('credits');
           } else if (screen === 'load') {
             if (saves.length > 0 && selectedIndex < saves.length) {
-              onLoadGameAction(saves[selectedIndex].id);
+              void handleLoadSelection(saves[selectedIndex].id);
             } else if (selectedIndex === saves.length || saves.length === 0) {
               setScreen('main');
             }
           } else if (screen === 'credits') {
             setScreen('main');
           } else if (screen === 'options') {
-            // Options screen - Back button is last
             if (selectedIndex === 9) {
               setScreen('main');
-            } else if (selectedIndex === 8) {
-              cycleLanguage();
+            } else {
+              adjustOptionValue(selectedIndex, 1);
             }
           }
           break;
@@ -103,7 +209,14 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
           break;
       }
     },
-    [screen, selectedIndex, saves, onNewGameAction, onLoadGameAction, cycleLanguage]
+    [
+      screen,
+      selectedIndex,
+      saves,
+      onNewGameAction,
+      handleLoadSelection,
+      adjustOptionValue,
+    ]
   );
 
   useEffect(() => {
@@ -192,12 +305,17 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             <div
               key={slot.id}
               className={`${styles.saveSlot} ${selectedIndex === index ? styles.selected : ''}`}
-              onClick={() => onLoadGameAction(slot.id)}
+              onClick={() => {
+                void handleLoadSelection(slot.id);
+              }}
               onMouseEnter={() => setSelectedIndex(index)}
             >
               <div className={styles.saveSelector}>{selectedIndex === index ? '▶' : ' '}</div>
               <div className={styles.saveContent}>
-                <div className={styles.saveName}>{slot.name}</div>
+                <div className={styles.saveName}>
+                  {slot.name}
+                  {loadingSaveId === slot.id ? ` ${t('menu.load.loading', undefined, '[ LOADING... ]')}` : ''}
+                </div>
                 <div className={styles.saveInfo}>
                   <span>{t('menu.load.path')}: {slot.currentPath}</span>
                   <span>{t('menu.load.progress')}: {slot.truthCount}/5</span>
@@ -223,6 +341,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         )}
       </div>
 
+      {loadError && <div className={styles.noSaves} role="alert">{loadError}</div>}
+
       <button
         className={`${styles.backButton} ${selectedIndex === saves.length ? styles.selected : ''}`}
         onClick={() => setScreen('main')}
@@ -230,7 +350,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
       >
         {selectedIndex === saves.length ? '▶ ' : '  '}{t('menu.load.back')}
       </button>
-      <div className={styles.keyHint}>{t('menu.load.keyHint')}</div>
+      <div className={styles.keyHint}>
+        {loadingSaveId ? t('menu.load.loading', undefined, '[ LOADING... ]') : t('menu.load.keyHint')}
+      </div>
     </div>
   );
 
@@ -437,7 +559,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             <div
               className={`${styles.optionRow} ${selectedIndex === 8 ? styles.selected : ''}`}
               onMouseEnter={() => setSelectedIndex(8)}
-              onClick={cycleLanguage}
+              onClick={() => cycleLanguage()}
             >
               <span className={styles.optionLabel}>{t('menu.options.language')}</span>
               <span className={styles.optionSelect}>

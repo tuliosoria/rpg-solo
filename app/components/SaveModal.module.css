@@ -77,6 +77,16 @@
   line-height: 1.8;
 }
 
+.error {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1px solid #662222;
+  background: rgba(255, 80, 80, 0.08);
+  color: #ff8a8a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .actions {
   display: flex;
   gap: 16px;

@@ -6,7 +6,7 @@ import { GamePhase, GameState, TerminalEntry, VideoTrigger } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
 import TypewriterText, { isTypableUfo74Content } from './TypewriterText';
-import { loadCheckpoint, saveCheckpoint } from '../storage/saves';
+import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import { useI18n, translateStatic } from '../i18n';
@@ -1659,6 +1659,7 @@ export default function Terminal({
         {/* Pause menu */}
         {showPauseMenu && (
           <PauseMenu
+            canLoadAction={getLatestCheckpoint() !== null}
             onResumeAction={() => {
               setShowPauseMenu(false);
               setTimeout(focusTerminalInput, 0);
@@ -1669,8 +1670,26 @@ export default function Terminal({
               setTimeout(focusTerminalInput, 0);
             }}
             onLoadAction={() => {
+              const latestCheckpoint = getLatestCheckpoint();
               setShowPauseMenu(false);
-              onExitAction();
+              if (!latestCheckpoint) {
+                setTimeout(focusTerminalInput, 0);
+                return;
+              }
+
+              if (onLoadCheckpointAction) {
+                onLoadCheckpointAction(latestCheckpoint.id);
+              } else {
+                const loadedState = loadCheckpoint(latestCheckpoint.id);
+                if (loadedState) {
+                  setGameState({
+                    ...loadedState,
+                    isGameOver: false,
+                    gameOverReason: undefined,
+                  });
+                  setGamePhase('terminal');
+                }
+              }
             }}
             onSettingsAction={() => {
               setShowPauseMenu(false);
