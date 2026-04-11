@@ -273,6 +273,12 @@ describe('Terminal Component', () => {
     expect(screen.getByText(/TERMINAL 1996/i)).toBeInTheDocument();
   });
 
+  it('shows the deploy version in the header', () => {
+    render(<Terminal {...defaultProps} />);
+
+    expect(screen.getByText('v001')).toBeInTheDocument();
+  });
+
   it('accepts user input', () => {
     render(<Terminal {...defaultProps} />);
 

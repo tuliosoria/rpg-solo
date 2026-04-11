@@ -585,6 +585,19 @@
   white-space: nowrap;
 }
 
+.versionTag {
+  display: inline-block;
+  margin-left: 0.55rem;
+  padding: 0.08rem 0.42rem;
+  border: 1px solid rgba(136, 204, 68, 0.4);
+  border-radius: 999px;
+  font-size: 0.72em;
+  letter-spacing: 0.12em;
+  color: #a8d86a;
+  background: rgba(136, 204, 68, 0.1);
+  vertical-align: middle;
+}
+
 .statusLeft.clickable {
   cursor: pointer;
   transition: color 0.2s;

@@ -107,6 +107,9 @@ interface TerminalProps {
   onLoadCheckpointAction?: (slotId: string) => void;
 }
 
+// Increment this on each deploy so playtest screenshots always show the build under review.
+const DEPLOY_VERSION = 'v001';
+
 export default function Terminal({
   initialState,
   onExitAction,
@@ -1123,7 +1126,8 @@ export default function Terminal({
               }
             }}
           >
-            {t('terminal.header.title')} ▼
+            {t('terminal.header.title')} <span className={styles.versionTag}>{DEPLOY_VERSION}</span>{' '}
+            ▼
           </span>
           {/* ESC button */}
           <button
