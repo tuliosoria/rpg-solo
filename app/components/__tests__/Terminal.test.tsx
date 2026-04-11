@@ -213,7 +213,7 @@ describe('Terminal Component', () => {
     );
 
     act(() => {
-      vi.advanceTimersByTime(30000);
+      vi.advanceTimersByTime(15000);
     });
 
     rerender(
@@ -227,7 +227,7 @@ describe('Terminal Component', () => {
     );
 
     act(() => {
-      vi.advanceTimersByTime(30001);
+      vi.advanceTimersByTime(15001);
     });
 
     expect(
@@ -350,7 +350,7 @@ describe('Terminal Component', () => {
   it('shows the deploy version in the header', () => {
     render(<Terminal {...defaultProps} />);
 
-    expect(screen.getByText('v004')).toBeInTheDocument();
+    expect(screen.getByText('v005')).toBeInTheDocument();
   });
 
   it('accepts user input', () => {

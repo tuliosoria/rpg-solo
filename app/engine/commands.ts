@@ -7204,6 +7204,21 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // ═══════════════════════════════════════════════════════════════════════════
 
   const lowerInput = normalizedInput.trim().toLowerCase();
+  const createAlienPreviewResult = () => ({
+    output: [
+      createEntry('system', '═══ ALIEN PREVIEW ARMED ═══'),
+      createEntry('output', 'detectionLevel = 70'),
+      createEntry('output', 'Forced alien silhouette preview active for 12 seconds.'),
+    ],
+    stateChanges: {
+      detectionLevel: 70,
+      alienPreviewUntil: Date.now() + 12000,
+    },
+  });
+
+  if (lowerInput === 'god alien') {
+    return createAlienPreviewResult();
+  }
 
   if (lowerInput === 'iddqd') {
     if (state.godMode) {
@@ -7378,17 +7393,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     }
 
     if (godCmd === 'alien') {
-      return {
-        output: [
-          createEntry('system', '═══ ALIEN PREVIEW ARMED ═══'),
-          createEntry('output', 'detectionLevel = 70'),
-          createEntry('output', 'Forced alien silhouette preview active for 12 seconds.'),
-        ],
-        stateChanges: {
-          detectionLevel: 70,
-          alienPreviewUntil: Date.now() + 12000,
-        },
-      };
+      return createAlienPreviewResult();
     }
 
     if (godCmd === 'doom') {

@@ -291,6 +291,9 @@ describe('Elusive Man Leak Mechanic', () => {
       const result = executeCommand('wrong', state);
       
       expect(result.stateChanges.detectionLevel).toBe(100);
+      expect(result.stateChanges.isGameOver).toBe(true);
+      expect(result.stateChanges.gameOverReason).toBe('INTRUSION DETECTED - TRACED');
+      expect(result.stateChanges.inLeakSequence).toBe(false);
     });
   });
 });

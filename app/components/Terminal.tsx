@@ -108,7 +108,7 @@ interface TerminalProps {
 }
 
 // Increment this on each deploy so playtest screenshots always show the build under review.
-const DEPLOY_VERSION = 'v004';
+const DEPLOY_VERSION = 'v005';
 
 export default function Terminal({
   initialState,

@@ -278,8 +278,8 @@ describe('UX Commands', () => {
   });
 
   describe('god alien command', () => {
-    it('sets detection to 70 and arms an alien preview in god mode', () => {
-      const state = createTestState({ godMode: true, detectionLevel: 12 });
+    it('sets detection to 70 and arms an alien preview without requiring iddqd first', () => {
+      const state = createTestState({ detectionLevel: 12 });
       const before = Date.now();
       const result = executeCommand('god alien', state);
 

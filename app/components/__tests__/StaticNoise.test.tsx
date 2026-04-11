@@ -44,4 +44,19 @@ describe('StaticNoise', () => {
       expect(canvas?.height).toBe(200);
     });
   });
+
+  it('boosts overlay visibility while the alien silhouette is active at low intensity', async () => {
+    const { container, rerender } = render(<StaticNoise intensity={0.08} alienVisible={false} />);
+
+    await waitFor(() => {
+      expect(container.querySelector('canvas')).not.toBeNull();
+    });
+
+    const canvas = container.querySelector('canvas') as HTMLCanvasElement;
+    const baselineOpacity = Number.parseFloat(canvas.style.opacity);
+
+    rerender(<StaticNoise intensity={0.08} alienVisible={true} />);
+
+    expect(Number.parseFloat(canvas.style.opacity)).toBeGreaterThan(baselineOpacity);
+  });
 });

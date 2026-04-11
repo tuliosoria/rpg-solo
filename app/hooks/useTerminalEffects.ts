@@ -58,6 +58,8 @@ const PARANOIA_MESSAGES = [
   'INFO: This session will be... remembered',
 ];
 
+const ALIEN_MANIFESTATION_INTERVAL_MS = 30000;
+
 interface TerminalEffectsRefs {
   outputRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
@@ -894,10 +896,10 @@ export function useTerminalEffects({
     setTerminalStaticLevel(intensity);
   }, [gameState.detectionLevel, setTerminalStaticLevel]);
 
-  // Alien silhouette in static (appears every 60-180 seconds while high-risk static is active)
+  // Alien silhouette in static (appears every 30 seconds while high-risk static is active)
   useEffect(() => {
     const staticActive = gameState.detectionLevel >= 70;
-    const previewRemaining = Math.max(0, gameState.alienPreviewUntil - Date.now());
+    const previewRemaining = Math.max(0, (gameState.alienPreviewUntil ?? 0) - Date.now());
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
     if (!staticActive && previewRemaining <= 0) {
       setAlienSilhouetteVisible(false);
@@ -927,7 +929,7 @@ export function useTerminalEffects({
     };
 
     const scheduleAlien = (delayOverride?: number) => {
-      const delay = delayOverride ?? 60000 + uiRandom() * 120000;
+      const delay = delayOverride ?? ALIEN_MANIFESTATION_INTERVAL_MS;
       const t = setTimeout(() => {
         if (cancelled) return;
         if (pauseTimedMechanics) {
@@ -937,7 +939,7 @@ export function useTerminalEffects({
 
         const hideDelay = startManifestation();
         if (hideDelay !== undefined && !cancelled) {
-          scheduleAlien(hideDelay + 60000 + uiRandom() * 120000);
+          scheduleAlien(ALIEN_MANIFESTATION_INTERVAL_MS);
         }
       }, delay);
       activeTimeouts.push(t);
@@ -946,7 +948,7 @@ export function useTerminalEffects({
     if (previewRemaining > 0) {
       startManifestation(previewRemaining);
       if (staticActive) {
-        scheduleAlien(previewRemaining + 60000 + uiRandom() * 120000);
+        scheduleAlien(ALIEN_MANIFESTATION_INTERVAL_MS);
       }
     } else if (staticActive) {
       scheduleAlien();

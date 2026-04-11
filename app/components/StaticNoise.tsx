@@ -14,9 +14,11 @@ const CANVAS_SIZE = 200;
 const FRAME_INTERVAL = 83; // ~12fps for authentic TV static feel
 const ALIEN_FADE_IN_STEP = 0.0045; // ~5.5s to reach max at 12fps
 const ALIEN_FADE_OUT_STEP = 0.012; // ~2.1s to disappear
-const ALIEN_MAX_OPACITY = 0.18;
+const ALIEN_MAX_OPACITY = 0.22;
 const BASE_NOISE_OPACITY = 0.015;
 const MAX_NOISE_OPACITY = 0.22;
+const ALIEN_VISIBILITY_BOOST = 0.07;
+const MAX_ALIEN_CANVAS_OPACITY = 0.28;
 
 const StaticNoise = memo(function StaticNoise({
   intensity,
@@ -46,7 +48,7 @@ const StaticNoise = memo(function StaticNoise({
 
       // Crop to the facial region and render it smaller than the full overlay,
       // so it feels glimpsed inside the static rather than stamped on the screen.
-      ctx.filter = 'grayscale(100%) contrast(2.2) brightness(0.52)';
+      ctx.filter = 'grayscale(100%) contrast(2.35) brightness(0.64)';
       const srcX = img.width * 0.12;
       const srcY = img.height * 0.0;
       const srcW = img.width * 0.76;
@@ -146,8 +148,10 @@ const StaticNoise = memo(function StaticNoise({
   // Keep the static legible at all times: transparent at low levels,
   // stronger near 100% detection, but never opaque enough to replace text.
   const canvasOpacity = Math.min(
-    MAX_NOISE_OPACITY,
-    BASE_NOISE_OPACITY + intensity * intensity * (MAX_NOISE_OPACITY - BASE_NOISE_OPACITY)
+    alienVisible ? MAX_ALIEN_CANVAS_OPACITY : MAX_NOISE_OPACITY,
+    BASE_NOISE_OPACITY +
+      intensity * intensity * (MAX_NOISE_OPACITY - BASE_NOISE_OPACITY) +
+      (alienVisible ? ALIEN_VISIBILITY_BOOST : 0)
   );
 
   return (

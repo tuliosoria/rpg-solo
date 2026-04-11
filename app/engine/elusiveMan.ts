@@ -569,6 +569,36 @@ export function processLeakAnswer(
       skipToPhase: 'bad_ending',
     };
   }
+
+  if (newDetection >= 100) {
+    output.push(createEntry('error', ''));
+    output.push(createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'));
+    output.push(createEntry('error', ''));
+    output.push(createEntry('error', '  INTRUSION DETECTED'));
+    output.push(createEntry('error', ''));
+    output.push(createEntry('error', '  Your connection has been traced.'));
+    output.push(createEntry('error', '  Security protocols have been dispatched.'));
+    output.push(createEntry('error', ''));
+    output.push(createEntry('error', '  >> SESSION TERMINATED <<'));
+    output.push(createEntry('error', ''));
+    output.push(createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'));
+    output.push(createEntry('error', ''));
+
+    return {
+      output,
+      stateChanges: {
+        inLeakSequence: false,
+        currentLeakQuestion: 0,
+        leakWrongAnswers: newWrongAnswers,
+        leakAnswers: newAnswers,
+        detectionLevel: newDetection,
+        isGameOver: true,
+        gameOverReason: 'INTRUSION DETECTED - TRACED',
+      },
+      delayMs: 800,
+      triggerFlicker: true,
+    };
+  }
   
   // Continue with same question
   output.push(createEntry('system', ''));
