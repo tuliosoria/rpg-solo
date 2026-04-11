@@ -3,6 +3,7 @@ import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
 import Terminal from '../Terminal';
 import { DEFAULT_GAME_STATE, GameState } from '../../types';
 import { I18nProvider } from '../../i18n';
+import { AUTOSAVE_INTERVAL_MS } from '../../constants/timing';
 
 const { mockSpeakCustomFirewallVoice } = vi.hoisted(() => ({
   mockSpeakCustomFirewallVoice: vi.fn(),
@@ -38,7 +39,7 @@ let mockSoundEnabled = false;
 
 // Mock the storage modules
 vi.mock('../../storage/saves', () => ({
-  autoSave: vi.fn(),
+  autoSave: vi.fn(() => Date.now()),
   loadGameState: vi.fn(),
   saveGameState: vi.fn(),
   saveCheckpoint: vi.fn(),
@@ -628,6 +629,18 @@ describe('Terminal Component', () => {
     render(<Terminal {...defaultProps} initialState={highDetectionState} />);
 
     expect(screen.getByText(/AUDIT.*ACTIVE/i)).toBeInTheDocument();
+  });
+
+  it('shows the save indicator after an autosave runs', () => {
+    render(<Terminal {...defaultProps} />);
+
+    expect(screen.queryByText(/Saved: <1m ago/i)).not.toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(AUTOSAVE_INTERVAL_MS);
+    });
+
+    expect(screen.getByText(/Saved: <1m ago/i)).toBeInTheDocument();
   });
 
   it('renders ICQ chat when icqPhase is active', async () => {

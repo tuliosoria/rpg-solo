@@ -29,12 +29,7 @@ import {
   SAVE_VERSION,
 } from '../constants/limits';
 import { MAX_DETECTION } from '../constants/detection';
-import {
-  isCloudAvailable,
-  cloudSave,
-  cloudLoad,
-  cloudDelete,
-} from '../lib/steamBridge';
+import { isCloudAvailable, cloudSave, cloudLoad, cloudDelete } from '../lib/steamBridge';
 
 const SAVES_KEY = 'terminal1996:saves';
 const SAVE_PREFIX = 'terminal1996:save:';
@@ -544,18 +539,21 @@ export function createNewGame(): GameState {
  * Also syncs to Steam Cloud when available.
  * @param state - The game state to auto-save
  */
-export function autoSave(state: GameState): void {
-  if (!isBrowserWithStorage()) return;
+export function autoSave(state: GameState): number | null {
+  if (!isBrowserWithStorage()) return null;
 
   try {
-    const stateToSave = { ...state, lastSaveTime: Date.now() };
+    const savedAt = Date.now();
+    const stateToSave = { ...state, lastSaveTime: savedAt };
     const serialized = serializeState(stateToSave);
     window.localStorage.setItem('terminal1996:autosave', serialized);
 
     // Sync to Steam Cloud in the background
     syncSaveToCloud('autosave', serialized);
+    return savedAt;
   } catch {
     // localStorage may be full or unavailable
+    return null;
   }
 }
 

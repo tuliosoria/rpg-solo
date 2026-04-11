@@ -153,6 +153,8 @@
   "pause.confirm.yes": "YES, EXIT",
   "pause.confirm.no": "NO, CONTINUE",
   "pause.confirm.hint": "↑↓ Navigate • Enter Select • Esc Cancel",
+  "pause.loadConfirm.title": "LOAD CHECKPOINT?",
+  "pause.loadConfirm.yes": "YES, LOAD",
   "save.title": "SAVE SESSION",
   "save.nameLabel": "Session Name (optional):",
   "save.defaultName": "Session {{value}}",

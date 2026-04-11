@@ -43,7 +43,18 @@ const Blackout = dynamic(() => import('./Blackout'), { ssr: false });
 const ICQChat = dynamic(() => import('./ICQChat'), {
   ssr: false,
   loading: () => (
-    <div style={{ width: '100%', height: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
+    <div
+      style={{
+        width: '100%',
+        height: '100vh',
+        background: '#000',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#00ff00',
+        fontFamily: 'monospace',
+      }}
+    >
       {translateStatic('terminal.loading.icq')}
     </div>
   ),
@@ -194,8 +205,8 @@ export default function Terminal({
   // Tutorial skip popup — show only on fresh new games (not loaded saves)
   const [showTutorialSkip, setShowTutorialSkip] = useState(
     !initialState.tutorialComplete &&
-    initialState.tutorialStep === 0 &&
-    initialState.interactiveTutorialState?.current === TutorialStateID.INTRO
+      initialState.tutorialStep === 0 &&
+      initialState.interactiveTutorialState?.current === TutorialStateID.INTRO
   );
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
@@ -226,9 +237,9 @@ export default function Terminal({
   // File reading suppression: consider player "reading" for 15 seconds after file open
   const FILE_READ_COOLDOWN_MS = 15000;
   const isReadingFile = Boolean(
-    gameState.isReadingFile && 
-    gameState.lastFileReadTime && 
-    (Date.now() - gameState.lastFileReadTime < FILE_READ_COOLDOWN_MS)
+    gameState.isReadingFile &&
+    gameState.lastFileReadTime &&
+    Date.now() - gameState.lastFileReadTime < FILE_READ_COOLDOWN_MS
   );
 
   // Track max detection ever reached for Survivor achievement
@@ -251,7 +262,8 @@ export default function Terminal({
   } = useSound();
 
   // Autocomplete hook
-  const { getCompletions, completeInput, markTabPressed, consumeTabPressed } = useAutocomplete(gameState);
+  const { getCompletions, completeInput, markTabPressed, consumeTabPressed } =
+    useAutocomplete(gameState);
 
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -510,27 +522,30 @@ export default function Terminal({
   });
 
   // Handle firewall pause state changes (extends timers when overlays close)
-  const handleFirewallPauseChanged = useCallback((paused: boolean) => {
-    if (!paused && firewallPauseStartRef.current !== null) {
-      // Pause ended - extend timers by the pause duration
-      const pauseDuration = Date.now() - firewallPauseStartRef.current;
-      if (pauseDuration > 100) {
-        // Only adjust if pause was significant
-        setGameState(prev => ({
-          ...prev,
-          firewallEyes: prev.firewallEyes.map(eye => ({
-            ...eye,
-            detonateTime: eye.detonateTime + pauseDuration,
-          })),
-          lastEyeSpawnTime:
-            prev.lastEyeSpawnTime > 0
-              ? prev.lastEyeSpawnTime + pauseDuration
-              : prev.lastEyeSpawnTime,
-        }));
+  const handleFirewallPauseChanged = useCallback(
+    (paused: boolean) => {
+      if (!paused && firewallPauseStartRef.current !== null) {
+        // Pause ended - extend timers by the pause duration
+        const pauseDuration = Date.now() - firewallPauseStartRef.current;
+        if (pauseDuration > 100) {
+          // Only adjust if pause was significant
+          setGameState(prev => ({
+            ...prev,
+            firewallEyes: prev.firewallEyes.map(eye => ({
+              ...eye,
+              detonateTime: eye.detonateTime + pauseDuration,
+            })),
+            lastEyeSpawnTime:
+              prev.lastEyeSpawnTime > 0
+                ? prev.lastEyeSpawnTime + pauseDuration
+                : prev.lastEyeSpawnTime,
+          }));
+        }
+        firewallPauseStartRef.current = null;
       }
-      firewallPauseStartRef.current = null;
-    }
-  }, [setGameState]);
+    },
+    [setGameState]
+  );
 
   // Extend eye timers after tutorial popup dismiss
   const handleExtendEyeTimers = useCallback((durationMs: number) => {
@@ -541,9 +556,7 @@ export default function Terminal({
         detonateTime: eye.detonateTime + durationMs,
       })),
       lastEyeSpawnTime:
-        prev.lastEyeSpawnTime > 0
-          ? prev.lastEyeSpawnTime + durationMs
-          : prev.lastEyeSpawnTime,
+        prev.lastEyeSpawnTime > 0 ? prev.lastEyeSpawnTime + durationMs : prev.lastEyeSpawnTime,
     }));
   }, []);
 
@@ -762,9 +775,11 @@ export default function Terminal({
   const getRiskLevel = () => {
     const detection = gameState.detectionLevel;
     const percent = `${detection}%`;
-    if (detection >= 80) return { level: t('terminal.risk.critical', { percent }), color: 'critical' };
+    if (detection >= 80)
+      return { level: t('terminal.risk.critical', { percent }), color: 'critical' };
     if (detection >= 60) return { level: t('terminal.risk.high', { percent }), color: 'high' };
-    if (detection >= 40) return { level: t('terminal.risk.elevated', { percent }), color: 'elevated' };
+    if (detection >= 40)
+      return { level: t('terminal.risk.elevated', { percent }), color: 'elevated' };
     if (detection >= 20) return { level: t('terminal.risk.low', { percent }), color: 'low' };
     return { level: t('terminal.risk.minimal', { percent }), color: 'minimal' };
   };
@@ -778,6 +793,7 @@ export default function Terminal({
 
   const evidenceFoundCount = gameState.truthsDiscovered?.size || 0;
   const riskInfo = getRiskLevel();
+  const saveIndicator = getSaveIndicator();
 
   // Render terminal entry
   // Render text with redaction styling (████████)
@@ -802,7 +818,11 @@ export default function Terminal({
       }
       // Add the redacted part with special styling (use match.index for stable key)
       parts.push(
-        <span key={`redact-${match.index}`} className={styles.redacted} title={t('terminal.redaction.classified')}>
+        <span
+          key={`redact-${match.index}`}
+          className={styles.redacted}
+          title={t('terminal.redaction.classified')}
+        >
           {match[0]}
         </span>
       );
@@ -887,9 +907,7 @@ export default function Terminal({
         break;
     }
 
-    const isReadListingLine =
-      entry.type === 'output' &&
-      /\s\[READ\]/.test(entryContent);
+    const isReadListingLine = entry.type === 'output' && /\s\[READ\]/.test(entryContent);
 
     if (isReadListingLine) {
       className = `${className} ${styles.readLine}`;
@@ -919,7 +937,9 @@ export default function Terminal({
 
     return (
       <div key={entry.id} className={className}>
-        {entry.type === 'ufo74' ? renderCommandHighlights(entryContent) : renderTextWithRedactions(entryContent)}
+        {entry.type === 'ufo74'
+          ? renderCommandHighlights(entryContent)
+          : renderTextWithRedactions(entryContent)}
       </div>
     );
   };
@@ -1093,12 +1113,21 @@ export default function Terminal({
           >
             ESC
           </button>
-          {getSaveIndicator() && <span className={styles.saveIndicator}>{getSaveIndicator()}</span>}
+          {saveIndicator && (
+            <span aria-live="polite" className={styles.saveIndicator}>
+              {saveIndicator}
+            </span>
+          )}
           <span className={styles.statusRight}>{getStatusBar()}</span>
 
           {/* Dropdown menu */}
           {showHeaderMenu && (
-            <div ref={headerMenuRef} className={styles.headerMenu} id="terminal-header-menu" role="menu">
+            <div
+              ref={headerMenuRef}
+              className={styles.headerMenu}
+              id="terminal-header-menu"
+              role="menu"
+            >
               <button
                 className={styles.menuItem}
                 tabIndex={-1}
@@ -1174,7 +1203,9 @@ export default function Terminal({
 
         {/* Progress tracker */}
         <div className={styles.progressTracker}>
-          <div className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}>
+          <div
+            className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}
+          >
             <span className={styles.evidenceTrackerTitle}>{t('terminal.tracker.alienFiles')}</span>
             <span className={styles.evidenceTrackerDivider}>—</span>
             <span className={styles.truthCount}>
@@ -1182,13 +1213,17 @@ export default function Terminal({
             </span>
           </div>
           <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
-            <span className={`${styles.riskItem} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}>
+            <span
+              className={`${styles.riskItem} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}
+            >
               <span className={styles.trackerLabel}>{t('terminal.tracker.risk')}</span>
               <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
                 {riskInfo.level}
               </span>
             </span>
-            <span className={`${styles.attItem} ${showAttBar ? styles.trackerVisible : styles.trackerHidden}`}>
+            <span
+              className={`${styles.attItem} ${showAttBar ? styles.trackerVisible : styles.trackerHidden}`}
+            >
               <span className={styles.memoryLevel}>ATT: {getAttemptsDisplay()}</span>
             </span>
           </div>
@@ -1312,7 +1347,7 @@ export default function Terminal({
               <div className={styles.timerLabel}>{t('terminal.timer.decryptWindow')}</div>
               <div className={styles.timerValue}>{(timedDecryptRemaining / 1000).toFixed(1)}s</div>
               <div className={styles.timerSequence}>
-                {t('terminal.timer.sequence', { value: gameState.timedDecryptSequence ?? "" })}
+                {t('terminal.timer.sequence', { value: gameState.timedDecryptSequence ?? '' })}
               </div>
             </div>
           </FloatingElement>
@@ -1482,7 +1517,7 @@ export default function Terminal({
           <GameOver
             reason={gameOverReason}
             onMainMenuAction={onExitAction}
-            onLoadCheckpointAction={(slotId) => {
+            onLoadCheckpointAction={slotId => {
               if (onLoadCheckpointAction) {
                 onLoadCheckpointAction(slotId);
               } else {
@@ -1525,17 +1560,23 @@ export default function Terminal({
 
         {/* Achievement gallery */}
         {showAchievements && (
-          <AchievementGallery onCloseAction={() => {
-            setShowAchievements(false);
-            setTimeout(focusTerminalInput, 0);
-          }} />
+          <AchievementGallery
+            onCloseAction={() => {
+              setShowAchievements(false);
+              setTimeout(focusTerminalInput, 0);
+            }}
+          />
         )}
 
         {/* Statistics modal */}
-        {showStatistics && <StatisticsModal onCloseAction={() => {
-          setShowStatistics(false);
-          setTimeout(focusTerminalInput, 0);
-        }} />}
+        {showStatistics && (
+          <StatisticsModal
+            onCloseAction={() => {
+              setShowStatistics(false);
+              setTimeout(focusTerminalInput, 0);
+            }}
+          />
+        )}
 
         {/* Pause menu */}
         {showPauseMenu && (
@@ -1585,10 +1626,7 @@ export default function Terminal({
 
         {/* Tutorial skip popup — shown on fresh new game */}
         {showTutorialSkip && (
-          <TutorialSkipPopup
-            onSkip={handleTutorialSkip}
-            onContinue={handleTutorialContinue}
-          />
+          <TutorialSkipPopup onSkip={handleTutorialSkip} onContinue={handleTutorialContinue} />
         )}
       </div>
     </FloatingUIProvider>

@@ -13,6 +13,8 @@ interface PauseMenuProps {
   canLoadAction?: boolean;
 }
 
+type ConfirmMode = 'exit' | 'load' | null;
+
 export default memo(function PauseMenu({
   onResumeAction,
   onSaveAction,
@@ -22,20 +24,56 @@ export default memo(function PauseMenu({
   canLoadAction = true,
 }: PauseMenuProps) {
   const { t } = useI18n();
-  const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [confirmMode, setConfirmMode] = useState<ConfirmMode>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const isConfirming = confirmMode !== null;
 
   const menuItems = useMemo(
     () =>
-      showExitConfirm
-        ? ['confirm_exit', 'cancel_exit']
+      isConfirming
+        ? ['confirm', 'cancel']
         : canLoadAction
           ? ['resume', 'save', 'load', 'settings', 'exit']
           : ['resume', 'save', 'settings', 'exit'],
-    [canLoadAction, showExitConfirm]
+    [canLoadAction, isConfirming]
   );
 
-  // Handle keyboard navigation
+  const restoreMenuSelection = useCallback(
+    (mode: Exclude<ConfirmMode, null>) => {
+      if (mode === 'load') {
+        setSelectedIndex(2);
+        return;
+      }
+
+      setSelectedIndex(canLoadAction ? 4 : 3);
+    },
+    [canLoadAction]
+  );
+
+  const closeConfirm = useCallback(
+    (mode: Exclude<ConfirmMode, null>) => {
+      setConfirmMode(null);
+      restoreMenuSelection(mode);
+    },
+    [restoreMenuSelection]
+  );
+
+  const openConfirm = useCallback((mode: Exclude<ConfirmMode, null>) => {
+    setConfirmMode(mode);
+    setSelectedIndex(1); // Default to "No" for safety
+  }, []);
+
+  const handleConfirmAction = useCallback(() => {
+    if (confirmMode === 'exit') {
+      onExitAction();
+      return;
+    }
+
+    if (confirmMode === 'load') {
+      onLoadAction();
+    }
+  }, [confirmMode, onExitAction, onLoadAction]);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       switch (e.key) {
@@ -49,9 +87,12 @@ export default memo(function PauseMenu({
           break;
         case 'Enter':
           e.preventDefault();
-          if (showExitConfirm) {
-            if (selectedIndex === 0) onExitAction();
-            else setShowExitConfirm(false);
+          if (confirmMode) {
+            if (selectedIndex === 0) {
+              handleConfirmAction();
+            } else {
+              closeConfirm(confirmMode);
+            }
           } else {
             switch (menuItems[selectedIndex]) {
               case 'resume':
@@ -61,23 +102,21 @@ export default memo(function PauseMenu({
                 onSaveAction();
                 break;
               case 'load':
-                onLoadAction();
+                openConfirm('load');
                 break;
               case 'settings':
                 onSettingsAction();
                 break;
               case 'exit':
-                setShowExitConfirm(true);
-                setSelectedIndex(1);
+                openConfirm('exit');
                 break;
             }
           }
           break;
         case 'Escape':
           e.preventDefault();
-          if (showExitConfirm) {
-            setShowExitConfirm(false);
-            setSelectedIndex(canLoadAction ? 4 : 3);
+          if (confirmMode) {
+            closeConfirm(confirmMode);
           } else {
             onResumeAction();
           }
@@ -87,13 +126,13 @@ export default memo(function PauseMenu({
     [
       menuItems,
       selectedIndex,
-      showExitConfirm,
-      canLoadAction,
+      confirmMode,
+      closeConfirm,
+      handleConfirmAction,
       onResumeAction,
       onSaveAction,
-      onLoadAction,
       onSettingsAction,
-      onExitAction,
+      openConfirm,
     ]
   );
 
@@ -102,17 +141,15 @@ export default memo(function PauseMenu({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  const handleExitClick = () => {
-    setShowExitConfirm(true);
-    setSelectedIndex(1); // Default to "No" for safety
-  };
+  if (confirmMode) {
+    const titleKey = confirmMode === 'load' ? 'pause.loadConfirm.title' : 'pause.confirm.title';
+    const yesKey = confirmMode === 'load' ? 'pause.loadConfirm.yes' : 'pause.confirm.yes';
 
-  if (showExitConfirm) {
     return (
       <div className={styles.overlay}>
         <div className={styles.menu} onClick={e => e.stopPropagation()}>
           <div className={styles.header}>
-            <h2>{t('pause.confirm.title')}</h2>
+            <h2>{t(titleKey)}</h2>
             <div className={styles.line}>═══════════════════════════</div>
           </div>
 
@@ -123,19 +160,21 @@ export default memo(function PauseMenu({
               className={`${styles.menuButton} ${styles.exitButton} ${selectedIndex === 0 ? styles.selected : ''}`}
               tabIndex={-1}
               onMouseDown={e => e.preventDefault()}
-              onClick={onExitAction}
+              onClick={handleConfirmAction}
               onMouseEnter={() => setSelectedIndex(0)}
             >
-              {selectedIndex === 0 ? '▶ ' : '  '}{t('pause.confirm.yes')}
+              {selectedIndex === 0 ? '▶ ' : '  '}
+              {t(yesKey)}
             </button>
             <button
               className={`${styles.menuButton} ${selectedIndex === 1 ? styles.selected : ''}`}
               tabIndex={-1}
               onMouseDown={e => e.preventDefault()}
-              onClick={() => setShowExitConfirm(false)}
+              onClick={() => closeConfirm(confirmMode)}
               onMouseEnter={() => setSelectedIndex(1)}
             >
-              {selectedIndex === 1 ? '▶ ' : '  '}{t('pause.confirm.no')}
+              {selectedIndex === 1 ? '▶ ' : '  '}
+              {t('pause.confirm.no')}
             </button>
           </div>
 
@@ -147,60 +186,65 @@ export default memo(function PauseMenu({
 
   return (
     <div className={styles.overlay} onClick={onResumeAction}>
-        <div className={styles.menu} onClick={e => e.stopPropagation()}>
-          <div className={styles.header}>
+      <div className={styles.menu} onClick={e => e.stopPropagation()}>
+        <div className={styles.header}>
           <h2>{t('pause.title')}</h2>
-            <div className={styles.line}>═══════════════════════════</div>
-          </div>
+          <div className={styles.line}>═══════════════════════════</div>
+        </div>
 
         <div className={styles.options}>
+          <button
+            className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('resume') ? styles.selected : ''}`}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={onResumeAction}
+            onMouseEnter={() => setSelectedIndex(menuItems.indexOf('resume'))}
+          >
+            {selectedIndex === menuItems.indexOf('resume') ? '▶ ' : '  '}
+            {t('pause.resume')}
+          </button>
+          <button
+            className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('save') ? styles.selected : ''}`}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={onSaveAction}
+            onMouseEnter={() => setSelectedIndex(menuItems.indexOf('save'))}
+          >
+            {selectedIndex === menuItems.indexOf('save') ? '▶ ' : '  '}
+            {t('pause.save')}
+          </button>
+          {canLoadAction && (
             <button
-              className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('resume') ? styles.selected : ''}`}
+              className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('load') ? styles.selected : ''}`}
               tabIndex={-1}
               onMouseDown={e => e.preventDefault()}
-              onClick={onResumeAction}
-              onMouseEnter={() => setSelectedIndex(menuItems.indexOf('resume'))}
+              onClick={() => openConfirm('load')}
+              onMouseEnter={() => setSelectedIndex(menuItems.indexOf('load'))}
             >
-              {selectedIndex === menuItems.indexOf('resume') ? '▶ ' : '  '}{t('pause.resume')}
+              {selectedIndex === menuItems.indexOf('load') ? '▶ ' : '  '}
+              {t('pause.load')}
             </button>
-            <button
-              className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('save') ? styles.selected : ''}`}
-              tabIndex={-1}
-              onMouseDown={e => e.preventDefault()}
-              onClick={onSaveAction}
-              onMouseEnter={() => setSelectedIndex(menuItems.indexOf('save'))}
-            >
-              {selectedIndex === menuItems.indexOf('save') ? '▶ ' : '  '}{t('pause.save')}
-            </button>
-            {canLoadAction && (
-              <button
-                className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('load') ? styles.selected : ''}`}
-                tabIndex={-1}
-                onMouseDown={e => e.preventDefault()}
-                onClick={onLoadAction}
-                onMouseEnter={() => setSelectedIndex(menuItems.indexOf('load'))}
-              >
-                {selectedIndex === menuItems.indexOf('load') ? '▶ ' : '  '}{t('pause.load')}
-              </button>
-            )}
-            <button
-              className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('settings') ? styles.selected : ''}`}
-              tabIndex={-1}
-              onMouseDown={e => e.preventDefault()}
-              onClick={onSettingsAction}
-              onMouseEnter={() => setSelectedIndex(menuItems.indexOf('settings'))}
-            >
-              {selectedIndex === menuItems.indexOf('settings') ? '▶ ' : '  '}{t('pause.settings')}
-            </button>
-            <button
-              className={`${styles.menuButton} ${styles.exitButton} ${selectedIndex === menuItems.indexOf('exit') ? styles.selected : ''}`}
-              tabIndex={-1}
-              onMouseDown={e => e.preventDefault()}
-              onClick={handleExitClick}
-              onMouseEnter={() => setSelectedIndex(menuItems.indexOf('exit'))}
-            >
-              {selectedIndex === menuItems.indexOf('exit') ? '▶ ' : '  '}{t('pause.exit')}
-            </button>
+          )}
+          <button
+            className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('settings') ? styles.selected : ''}`}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={onSettingsAction}
+            onMouseEnter={() => setSelectedIndex(menuItems.indexOf('settings'))}
+          >
+            {selectedIndex === menuItems.indexOf('settings') ? '▶ ' : '  '}
+            {t('pause.settings')}
+          </button>
+          <button
+            className={`${styles.menuButton} ${styles.exitButton} ${selectedIndex === menuItems.indexOf('exit') ? styles.selected : ''}`}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={() => openConfirm('exit')}
+            onMouseEnter={() => setSelectedIndex(menuItems.indexOf('exit'))}
+          >
+            {selectedIndex === menuItems.indexOf('exit') ? '▶ ' : '  '}
+            {t('pause.exit')}
+          </button>
         </div>
 
         <div className={styles.hint}>{t('pause.hint')}</div>

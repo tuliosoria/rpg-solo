@@ -214,8 +214,8 @@ export function useTerminalEffects({
 
   const focusTerminalTarget = useCallback(() => {
     const target = isEnterOnlyMode
-      ? enterOnlyButtonRef.current ?? inputRef.current
-      : inputRef.current ?? enterOnlyButtonRef.current;
+      ? (enterOnlyButtonRef.current ?? inputRef.current)
+      : (inputRef.current ?? enterOnlyButtonRef.current);
     if (!target) return;
     if (document.activeElement === target) return;
     target.focus();
@@ -399,7 +399,13 @@ export function useTerminalEffects({
       setShowAttBar(true);
       setShowAvatar(true);
     }
-  }, [gameState.tutorialComplete, setShowEvidenceTracker, setShowRiskTracker, setShowAttBar, setShowAvatar]);
+  }, [
+    gameState.tutorialComplete,
+    setShowEvidenceTracker,
+    setShowRiskTracker,
+    setShowAttBar,
+    setShowAvatar,
+  ]);
 
   // Avatar entrance is now triggered by INTRO block 1 in useTerminalInput
 
@@ -408,14 +414,17 @@ export function useTerminalEffects({
     const interval = setInterval(() => {
       const currentState = gameStateRef.current;
       if (!currentState.isGameOver) {
-        autoSave(currentState);
+        const savedAt = autoSave(currentState);
+        if (typeof savedAt === 'number') {
+          setGameState(prev => ({ ...prev, lastSaveTime: savedAt }));
+        }
         // Track playtime every autosave interval
         addPlaytime(AUTOSAVE_INTERVAL_MS);
       }
     }, AUTOSAVE_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, [gameStateRef]);
+  }, [gameStateRef, setGameState]);
 
   // Phase transition: when evidencesSaved becomes true, trigger blackout
   // Skip if isGameOver is true to avoid conflicting state (e.g., detection hit 100% on a prior command)
@@ -626,13 +635,13 @@ export function useTerminalEffects({
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), GLITCH_DURATIONS.SCREEN_SHAKE);
       }
-      
+
       // Check if Turing test should trigger (detection crossed 50% threshold)
       // This catches cases where detection increases from any source (including firewall eyes)
-      const crossedTuringThreshold = 
-        prev < DETECTION_THRESHOLDS.TURING_TRIGGER && 
+      const crossedTuringThreshold =
+        prev < DETECTION_THRESHOLDS.TURING_TRIGGER &&
         current >= DETECTION_THRESHOLDS.TURING_TRIGGER;
-      
+
       if (
         crossedTuringThreshold &&
         gameState.tutorialComplete &&
@@ -660,7 +669,7 @@ export function useTerminalEffects({
             createEntry('system', ''),
           ],
         }));
-        
+
         // Trigger flicker and show Turing test overlay after delay
         setTimeout(() => {
           setShowTuringTest(true);
@@ -843,7 +852,7 @@ export function useTerminalEffects({
         condition: (s: GameState) => s.sessionCommandCount < 5,
       },
       {
-        hint: "Some files still carry legacy encryption headers, but recovered text opens directly.",
+        hint: 'Some files still carry legacy encryption headers, but recovered text opens directly.',
         condition: (s: GameState) =>
           (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2,
       },

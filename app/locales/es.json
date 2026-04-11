@@ -153,6 +153,8 @@
   "pause.confirm.yes": "SÍ, SALIR",
   "pause.confirm.no": "NO, CONTINUAR",
   "pause.confirm.hint": "↑↓ Navegar • Enter Seleccionar • Esc Cancelar",
+  "pause.loadConfirm.title": "¿CARGAR CHECKPOINT?",
+  "pause.loadConfirm.yes": "SÍ, CARGAR",
   "save.title": "GUARDAR SESIÓN",
   "save.nameLabel": "Nombre de sesión (opcional):",
   "save.defaultName": "Sesión {{value}}",
