@@ -13,7 +13,7 @@ import {
   PARANOIA_TIMING,
   RISK_PULSE_DURATION_MS,
 } from '../constants/timing';
-import { uiRandom, uiRandomPick, uiChance } from '../engine/rng';
+import { uiRandom, uiRandomPick } from '../engine/rng';
 import { initVoices } from '../components/FirewallEyes';
 import { applyOptionsToDocument, readStoredOptions } from './useOptions';
 import type { SoundType } from './useSound';
@@ -886,19 +886,14 @@ export function useTerminalEffects({
     setInterferenceBurst,
   ]);
 
-  // Terminal static at high risk (70%+)
+  // Terminal noise intensity — continuous 0-1 ramp from 70% to 100% detection
   useEffect(() => {
     const detection = gameState.detectionLevel;
-    if (detection >= 85) {
-      setTerminalStaticLevel(2); // intense
-    } else if (detection >= 70) {
-      setTerminalStaticLevel(1); // active
-    } else {
-      setTerminalStaticLevel(0); // off
-    }
+    const intensity = Math.max(0, Math.min(1, (detection - 70) / 30));
+    setTerminalStaticLevel(intensity);
   }, [gameState.detectionLevel, setTerminalStaticLevel]);
 
-  // Alien silhouette in static (appears every 60-120 seconds when static is active)
+  // Alien silhouette in static (appears every 60-180 seconds when static is active)
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
     if (gameState.detectionLevel < 70) {
@@ -910,21 +905,23 @@ export function useTerminalEffects({
     const activeTimeouts: NodeJS.Timeout[] = [];
 
     const scheduleAlien = () => {
-      // Random interval between 60-120 seconds
-      const delay = 60000 + uiRandom() * 60000;
+      // Random interval between 60-180 seconds
+      const delay = 60000 + uiRandom() * 120000;
       const t = setTimeout(() => {
         if (cancelled || pauseTimedMechanics) return;
-        // Show alien silhouette
         setAlienSilhouetteVisible(true);
         playSound('static');
-        // Also play omen sound for extra dread
         setTimeout(() => {
           if (!cancelled) playSound('omen');
-        }, 500);
-        // Hide after 4-6 seconds
-        const hideDelay = 4000 + uiRandom() * 2000;
+        }, 1500);
+        // Show for 5-8 seconds then fade out
+        const hideDelay = 5000 + uiRandom() * 3000;
         const hideTimeout = setTimeout(() => {
-          if (!cancelled) setAlienSilhouetteVisible(false);
+          if (!cancelled) {
+            setAlienSilhouetteVisible(false);
+            // Schedule next appearance
+            if (!cancelled) scheduleAlien();
+          }
         }, hideDelay);
         activeTimeouts.push(hideTimeout);
       }, delay);
@@ -932,16 +929,10 @@ export function useTerminalEffects({
       return t;
     };
 
-    // Schedule first appearance
     scheduleAlien();
-    // Reschedule on interval
-    const interval = setInterval(() => {
-      if (!cancelled) scheduleAlien();
-    }, 90000); // Re-check every ~90s
 
     return () => {
       cancelled = true;
-      clearInterval(interval);
       activeTimeouts.forEach(t => clearTimeout(t));
     };
   }, [

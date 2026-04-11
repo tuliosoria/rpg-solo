@@ -141,7 +141,7 @@ function contextChance(
   return createContextRng(state, ...parts)() < probability;
 }
 
-function contextRandomInt(
+function _contextRandomInt(
   state: GameState,
   min: number,
   max: number,
@@ -4169,7 +4169,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       delete stateChanges.detectionLevel;
     }
 
-    let triggerFlicker = false;
+    const triggerFlicker = false;
 
     const content = getFileContent(filePath, { ...state, ...stateChanges }, mutation?.decrypted);
 

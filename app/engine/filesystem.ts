@@ -2,7 +2,6 @@
 
 import { FileSystemNode, FileNode, GameState } from '../types';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
-import { createSeededRng } from './rng';
 import { isDisturbingContent } from './evidenceRevelation';
 
 // Cached set of file paths that can potentially reveal evidence

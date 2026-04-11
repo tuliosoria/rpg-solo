@@ -24,7 +24,7 @@ import {
   MAX_COMMAND_INPUT_LENGTH,
 } from '../constants/limits';
 import { NIGHT_OWL_DURATION_MS } from '../constants/timing';
-import { uiRandom, uiChance } from '../engine/rng';
+import { uiRandom } from '../engine/rng';
 import {
   TutorialStateID,
   type GamePhase,
@@ -218,7 +218,7 @@ export function useTerminalInput({
           history: [...prev.history, entry],
         }));
 
-        let delay = config.base + (uiRandom() * config.variance * 2 - config.variance);
+        const delay = config.base + (uiRandom() * config.variance * 2 - config.variance);
 
         if (delay > 0 && i < entries.length - 1) {
           await new Promise(resolve => setTimeout(resolve, delay));

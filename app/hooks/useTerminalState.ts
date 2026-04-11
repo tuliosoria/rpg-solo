@@ -60,7 +60,7 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
   const [burnInLines, setBurnInLines] = useState<string[]>([]);
   const [evidenceFoundIndicatorKey, setEvidenceFoundIndicatorKey] = useState(0);
   const [interferenceBurst, setInterferenceBurst] = useState<{ top: number } | null>(null);
-  const [terminalStaticLevel, setTerminalStaticLevel] = useState(0); // 0=off, 1=active, 2=intense
+  const [terminalStaticLevel, setTerminalStaticLevel] = useState(0); // 0-1 continuous noise intensity
   const [alienSilhouetteVisible, setAlienSilhouetteVisible] = useState(false);
 
   // Sync state when a new game state is loaded externally (e.g., checkpoint load)
