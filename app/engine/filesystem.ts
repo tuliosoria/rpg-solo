@@ -1,9 +1,9 @@
 // Filesystem resolver and navigation
 
-import { FileSystemNode, FileNode, GameState, TRUTH_CATEGORIES, TruthCategory } from '../types';
+import { FileSystemNode, FileNode, GameState } from '../types';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 import { createSeededRng } from './rng';
-import { analyzeFileEvidencePotential } from './evidenceRevelation';
+import { isDisturbingContent } from './evidenceRevelation';
 
 // Cached set of file paths that can potentially reveal evidence
 let _evidenceBearingFiles: Set<string> | null = null;
@@ -14,12 +14,7 @@ function buildEvidenceBearingFiles(): Set<string> {
   function traverse(node: FileSystemNode, path: string) {
     if (node.type === 'file') {
       const file = node as FileNode;
-      const potential = analyzeFileEvidencePotential(
-        path,
-        file.content,
-        file.reveals as TruthCategory[] | undefined
-      );
-      if (potential.length > 0) {
+      if (isDisturbingContent(file.content)) {
         result.add(path);
       }
     } else {
@@ -52,7 +47,7 @@ export function getEvidenceBearingFiles(): Set<string> {
  */
 export function isEvidenceGated(path: string, state: GameState): boolean {
   if (state.flags.adminUnlocked) return false;
-  if (state.truthsDiscovered.size === 0) return false;
+  if (state.evidenceCount === 0) return false;
   if (state.filesRead.has(path)) return false;
   return getEvidenceBearingFiles().has(path);
 }
@@ -276,29 +271,6 @@ export function canAccessFile(
   }
 
   return { accessible: true };
-}
-
-/**
- * Gets the truth categories that a file can reveal when read.
- * @param path - The absolute path to the file
- * @returns Array of truth category IDs the file can reveal
- */
-export function getFileReveals(path: string): string[] {
-  const segments = path.split('/').filter(Boolean);
-  let current: FileSystemNode = FILESYSTEM_ROOT;
-
-  for (const segment of segments) {
-    if (current.type !== 'dir') return [];
-    const child: FileSystemNode | undefined = current.children[segment];
-    if (!child) return [];
-    current = child;
-  }
-
-  if (current.type === 'file') {
-    return (current as FileNode).reveals || [];
-  }
-
-  return [];
 }
 
 /**

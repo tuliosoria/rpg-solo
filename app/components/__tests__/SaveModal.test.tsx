@@ -17,7 +17,7 @@ describe('SaveModal', () => {
     rngState: 12345,
     sessionStartTime: Date.now(),
     currentPath: '/home/hackerkid',
-    truthsDiscovered: new Set(['truth1', 'truth2']),
+    evidenceCount: 2,
     detectionLevel: 25,
     ...overrides,
   });
@@ -167,7 +167,7 @@ describe('SaveModal', () => {
   describe('Game State Display', () => {
     it('displays correct truth count', () => {
       const gameState = createMockGameState({
-        truthsDiscovered: new Set(['t1', 't2', 't3', 't4']),
+        evidenceCount: 4,
       });
 
       render(<SaveModal {...defaultProps} gameState={gameState} />);

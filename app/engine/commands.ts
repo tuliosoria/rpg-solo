@@ -4,8 +4,6 @@ import {
   GameState,
   CommandResult,
   TerminalEntry,
-  TruthCategory,
-  TRUTH_CATEGORIES,
   FileMutation,
   FileNode,
   ImageTrigger,
@@ -17,14 +15,12 @@ import {
   listDirectory,
   getFileContent,
   canAccessFile,
-  getFileReveals,
 } from './filesystem';
 import { createSeededRng, seededRandomInt, seededRandomPick } from './rng';
 import {
-  attemptEvidenceRevelation,
+  isDisturbingContent,
   countEvidence,
   getCaseStrengthDescription,
-  getFileEvidenceSymbol,
   getDisturbingContentAvatarExpression,
   EVIDENCE_SYMBOL,
 } from './evidenceRevelation';
@@ -121,7 +117,6 @@ export {
 } from './commands/tutorial';
 export type { TutorialTipId } from './commands/tutorial';
 
-const TRUTH_CATEGORY_SET = new Set<string>(TRUTH_CATEGORIES);
 
 function hashCommandContext(value: string): number {
   let hash = 0;
@@ -193,7 +188,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (!state.tutorialComplete) return false;
       return (
         state.detectionLevel >= DETECTION_THRESHOLDS.TURING_WARNING &&
-        state.truthsDiscovered.size >= 1
+        state.evidenceCount >= 1
       );
     },
     execute: state => {
@@ -229,7 +224,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (!state.tutorialComplete) return false;
       return (
         state.detectionLevel >= DETECTION_THRESHOLDS.TURING_TRIGGER &&
-        state.truthsDiscovered.size >= 1
+        state.evidenceCount >= 1
       );
     },
     execute: state => {
@@ -340,7 +335,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (shouldSuppressPressure(state)) return false;
       if (!['status', 'help', 'ls'].includes(command)) return false;
       return (
-        state.truthsDiscovered.has('telepathic_scouts') &&
+        state.evidenceCount >= 2 &&
         hasReadPsiMaterial(state) &&
         state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_MED
       );
@@ -369,7 +364,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('watcher_ack')) return false;
       if (shouldSuppressPressure(state)) return false;
       return (
-        state.truthsDiscovered.size >= 3 &&
+        state.evidenceCount >= 3 &&
         state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_TRUTHS
       );
     },
@@ -536,8 +531,8 @@ function isMeaningfulAction(
   }
 
   // Discovering truth is definitely meaningful
-  const updatedTruths = result.stateChanges.truthsDiscovered;
-  if (updatedTruths instanceof Set && updatedTruths.size > state.truthsDiscovered.size) {
+  const updatedEvidenceCount = result.stateChanges.evidenceCount;
+  if (typeof updatedEvidenceCount === 'number' && updatedEvidenceCount > (state.evidenceCount || 0)) {
     return true;
   }
 
@@ -593,7 +588,7 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
 // Generate contextual hints based on what player hasn't explored yet
 function getContextualExplorationHints(state: GameState): string | null {
   const filesRead = state.filesRead || new Set<string>();
-  const truthsDiscovered = state.truthsDiscovered || new Set<string>();
+  const truthsCount = state.evidenceCount || 0;
   const prisoner45Used = state.prisoner45QuestionsAsked > 0;
 
   // Check for unexplored areas and give targeted hints
@@ -622,15 +617,15 @@ function getContextualExplorationHints(state: GameState): string | null {
   } = readFlags;
 
   // Prioritized hints based on what's missing
-  if (!hasReadStorage && !truthsDiscovered.has('debris_relocation')) {
+  if (!hasReadStorage && truthsCount < 1) {
     return 'check /storage/ for transport logs.';
   }
 
-  if (!hasReadOps && !truthsDiscovered.has('being_containment')) {
+  if (!hasReadOps && truthsCount < 2) {
     return '/ops/ has quarantine records.';
   }
 
-  if (!hasReadComms && !truthsDiscovered.has('telepathic_scouts')) {
+  if (!hasReadComms && truthsCount < 3) {
     return '/comms/psi/ has weird signal stuff.';
   }
 
@@ -638,7 +633,7 @@ function getContextualExplorationHints(state: GameState): string | null {
     return 'try "chat". someones in here.';
   }
 
-  if (!hasReadAdmin && truthsDiscovered.size >= 2 && state.accessLevel >= 3) {
+  if (!hasReadAdmin && truthsCount >= 2 && state.accessLevel >= 3) {
     return 'you have clearance. check /admin/.';
   }
 
@@ -661,13 +656,13 @@ function hasReadPsiMaterial(state: GameState): boolean {
 }
 
 function getObserverStatusLines(state: GameState): string[] {
-  const truths = state.truthsDiscovered || new Set<string>();
+  const evidCount = state.evidenceCount || 0;
   const psiExposed = hasReadPsiMaterial(state);
   const lines: string[] = [];
 
   if (
     psiExposed &&
-    truths.has('telepathic_scouts') &&
+    evidCount >= 2 &&
     state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_MED
   ) {
     lines.push('  SIGNAL: Residual echo persists in relay buffer.');
@@ -686,7 +681,7 @@ function getObserverStatusLines(state: GameState): string[] {
   }
 
   if (
-    truths.has('being_containment') &&
+    evidCount >= 3 &&
     state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH
   ) {
     lines.push('  NOTICE: Query pattern resembles prior containment interviews.');
@@ -970,114 +965,9 @@ export function applyRandomCorruption(state: GameState): GameState {
   };
 }
 
-// Check truth progress and generate notices
-function checkTruthProgress(
-  state: GameState,
-  newReveals: string[],
-  sourceFilePath?: string // The file that revealed the evidence
-): { notices: TerminalEntry[]; stateChanges: Partial<GameState> } {
-  const notices: TerminalEntry[] = [];
-  const stateChanges: Partial<GameState> = {};
-  const previousCount = state.truthsDiscovered.size;
-
-  // Create a new Set to avoid mutating the original state
-  const updatedTruths = new Set(state.truthsDiscovered);
-  for (const reveal of newReveals) {
-    if (TRUTH_CATEGORY_SET.has(reveal)) {
-      updatedTruths.add(reveal);
-    }
-  }
-
-  const newCount = updatedTruths.size;
-
-  // Update evidence states to track which files revealed evidence
-  const updatedStates = { ...state.evidenceStates };
-  for (const reveal of newReveals) {
-    if (TRUTH_CATEGORY_SET.has(reveal)) {
-      if (!updatedStates[reveal]) {
-        updatedStates[reveal] = {
-          linkedFiles: sourceFilePath ? [sourceFilePath] : [],
-        };
-      } else if (sourceFilePath && !updatedStates[reveal].linkedFiles.includes(sourceFilePath)) {
-        updatedStates[reveal] = {
-          linkedFiles: [...updatedStates[reveal].linkedFiles, sourceFilePath],
-        };
-      }
-    }
-  }
-
-  // Always update states if we had reveals
-  if (newReveals.length > 0) {
-    stateChanges.evidenceStates = updatedStates;
-  }
-
-  // Only update if we found new truths
-  if (newCount > previousCount) {
-    stateChanges.truthsDiscovered = updatedTruths;
-    // TRUTH DISCOVERY BREATHER: Major revelation distracts the watchers
-    // Trigger shocked expression on major discovery
-    stateChanges.avatarExpression = 'shocked';
-
-    // Breather notice - the system recalibrates
-    notices.push(createEntry('system', ''));
-    notices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));
-
-    // TUTORIAL TIP: First evidence discovered
-    if (newCount === 1 && previousCount === 0) {
-      // Show tutorial tip if tutorial mode is enabled
-      if (
-        shouldShowTutorialTip(
-          'first_evidence',
-          state.interactiveTutorialMode,
-          state.tutorialTipsShown || new Set()
-        )
-      ) {
-        notices.push(...getTutorialTip('first_evidence'));
-        const newTipsShown = new Set(state.tutorialTipsShown || []);
-        newTipsShown.add('first_evidence');
-        stateChanges.tutorialTipsShown = newTipsShown;
-      }
-
-      // NOTE: UFO74 "nice find" is shown by the override gate block in the open handler
-      // to avoid duplicate messages. No additional notice needed here.
-    }
-
-    // Additional milestone acknowledgments (never say "progress")
-    if (newCount === 2 && previousCount < 2) {
-      notices.push(createEntry('notice', ''));
-      notices.push(createEntry('notice', 'SYSTEM: Independent verification detected.'));
-    }
-
-    if (newCount === 4 && previousCount < 4) {
-      notices.push(createEntry('notice', ''));
-      notices.push(createEntry('notice', 'NOTICE: Documentation threshold approaching.'));
-    }
-
-    if (newCount === 5 && previousCount < 5) {
-      notices.push(createEntry('notice', ''));
-      notices.push(createEntry('notice', '▓▓▓ ALL EVIDENCE CATEGORIES DOCUMENTED ▓▓▓'));
-      notices.push(...createUFO74Message([
-        'UFO74: all five confirmed. we need to get this out.',
-        '       type: leak',
-        '       do it NOW before they cut the connection.',
-      ]));
-    }
-
-    // Check for near-victory
-    if (newCount >= 4 && !state.flags.nearVictory) {
-      stateChanges.flags = { ...state.flags, ...stateChanges.flags, nearVictory: true };
-    }
-    if (newCount >= 5 && !state.flags.allEvidenceCollected) {
-      stateChanges.flags = { ...state.flags, ...stateChanges.flags, allEvidenceCollected: true };
-    }
-  }
-
-  return { notices, stateChanges };
-}
-
 // Check for victory condition
 function checkVictory(state: GameState): boolean {
-  return state.truthsDiscovered.size >= 5;
+  return (state.evidenceCount || 0) >= 5;
 }
 
 // Helper function to perform actual decryption
@@ -1147,58 +1037,63 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
 
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
 
-  // Use evidence revelation system for gradual discovery (one evidence per read)
-  const existingReveals = getFileReveals(filePath) as TruthCategory[];
-  const revelationResult = attemptEvidenceRevelation(
-    filePath,
-    content || [],
-    existingReveals.length > 0 ? existingReveals : undefined,
-    { ...state, ...stateChanges } as GameState
-  );
-
   let truthNotices: TerminalEntry[] = [];
 
-  if (revelationResult.revealedEvidence) {
-    if (!state.tutorialComplete) {
-      // During tutorial, do not reveal evidence
-      stateChanges.fileEvidenceStates = {
-        ...state.fileEvidenceStates,
-        ...stateChanges.fileEvidenceStates,
-        [filePath]: revelationResult.updatedFileState,
-      };
-    } else {
-      const truthResult = checkTruthProgress(
-        { ...state, ...stateChanges } as GameState,
-        [revelationResult.revealedEvidence],
-        filePath
-      );
-      truthNotices = truthResult.notices;
-
-      // Merge truth discovery state changes (includes detection reduction breather)
-      Object.assign(stateChanges, truthResult.stateChanges);
-
-      // Update the file evidence state
-      stateChanges.fileEvidenceStates = {
-        ...state.fileEvidenceStates,
-        ...stateChanges.fileEvidenceStates,
-        [filePath]: revelationResult.updatedFileState,
-      };
-
-      // Hint at more evidences if available
-      if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
-        truthNotices.push(createEntry('system', ''));
-        truthNotices.push(
-          createEntry('system', '[This file may contain additional insights on future reads]')
-        );
-      }
-    }
-  }
-
-  // Check for disturbing content avatar expression
+  // Check for disturbing content avatar expression and increment evidence counter
   if (content) {
     const disturbingExpression = getDisturbingContentAvatarExpression(content);
     if (disturbingExpression && !stateChanges.avatarExpression) {
       stateChanges.avatarExpression = disturbingExpression;
+    }
+    // Increment evidence counter when scared reaction triggers on a new file
+    if (disturbingExpression === 'scared' && state.tutorialComplete && !state.filesRead.has(filePath)) {
+      const currentCount = stateChanges.evidenceCount ?? state.evidenceCount ?? 0;
+      const newCount = Math.min(5, currentCount + 1);
+      if (newCount > currentCount) {
+        stateChanges.evidenceCount = newCount;
+        stateChanges.avatarExpression = 'scared';
+
+        truthNotices.push(createEntry('system', ''));
+        truthNotices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));
+
+        if (newCount === 1) {
+          if (
+            shouldShowTutorialTip(
+              'first_evidence',
+              state.interactiveTutorialMode,
+              state.tutorialTipsShown || new Set()
+            )
+          ) {
+            truthNotices.push(...getTutorialTip('first_evidence'));
+            const newTipsShown = new Set(state.tutorialTipsShown || []);
+            newTipsShown.add('first_evidence');
+            stateChanges.tutorialTipsShown = newTipsShown;
+          }
+        }
+        if (newCount === 2) {
+          truthNotices.push(createEntry('notice', ''));
+          truthNotices.push(createEntry('notice', 'SYSTEM: Independent verification detected.'));
+        }
+        if (newCount === 4) {
+          truthNotices.push(createEntry('notice', ''));
+          truthNotices.push(createEntry('notice', 'NOTICE: Documentation threshold approaching.'));
+        }
+        if (newCount === 5) {
+          truthNotices.push(createEntry('notice', ''));
+          truthNotices.push(createEntry('notice', '▓▓▓ ALL EVIDENCE CATEGORIES DOCUMENTED ▓▓▓'));
+          truthNotices.push(...createUFO74Message([
+            'UFO74: all five confirmed. we need to get this out.',
+            '       type: leak',
+            '       do it NOW before they cut the connection.',
+          ]));
+        }
+        if (newCount >= 4 && !state.flags.nearVictory) {
+          stateChanges.flags = { ...state.flags, ...stateChanges.flags, nearVictory: true };
+        }
+        if (newCount >= 5 && !state.flags.allEvidenceCollected) {
+          stateChanges.flags = { ...state.flags, ...stateChanges.flags, allEvidenceCollected: true };
+        }
+      }
     }
   }
 
@@ -1273,7 +1168,7 @@ function getUFO74FileReaction(
   isEncryptedAndLocked?: boolean,
   isFirstUnstable?: boolean
 ): TerminalEntry[] | null {
-  const truthCount = state.truthsDiscovered.size;
+  const truthCount = state.evidenceCount || 0;
   const messageCount = state.incognitoMessageCount || 0;
 
   // After 12 messages, UFO74 is gone
@@ -1396,16 +1291,14 @@ function getUFO74TrustLevel(state: GameState): 'trusting' | 'cautious' | 'parano
   return 'trusting'; // Normal helpful UFO74
 }
 
-// Get conditional UFO74 dialogue based on which truths discovered first
+// Get conditional UFO74 dialogue based on evidence count and file path
 function getUFO74ConditionalDialogue(state: GameState, filePath: string): TerminalEntry[] | null {
-  const truthCount = state.truthsDiscovered?.size || 0;
+  const truthCount = state.evidenceCount || 0;
   const path = filePath.toLowerCase();
 
-  // Special messages when player finds truths in certain orders
-  const truths = state.truthsDiscovered || new Set();
-
+  // Psi-related file when player has some evidence
   if (
-    truths.has('telepathic_scouts') &&
+    truthCount >= 2 &&
     (path.includes('psi') || path.includes('transcript') || path.includes('neural'))
   ) {
     return contextRandomPick(
@@ -1421,46 +1314,45 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
     );
   }
 
-  // If they found telepathy first and now finding containment
+  // Bio/containment files
   if (
-    truths.has('telepathic_scouts') &&
-    !truths.has('being_containment') &&
+    truthCount >= 1 &&
+    truthCount < 3 &&
     (path.includes('bio') || path.includes('containment') || path.includes('quarantine'))
   ) {
     return [createEntry('ufo74', 'UFO74: telepathy + captured... did they CHOOSE this?')];
   }
 
-  // If they found international involvement first and now finding 2026
+  // 2026/transition files
   if (
-    truths.has('international_actors') &&
-    !truths.has('transition_2026') &&
+    truthCount >= 2 &&
+    truthCount < 4 &&
     (path.includes('2026') || path.includes('window') || path.includes('transition'))
   ) {
     return [createEntry('ufo74', 'UFO74: all countries agreed on 2026? bigger than politics.')];
   }
 
-  // If they found debris first and now finding beings
+  // Autopsy/specimen files
   if (
-    truths.has('debris_relocation') &&
-    !truths.has('being_containment') &&
+    truthCount >= 1 &&
+    truthCount < 3 &&
     (path.includes('autopsy') || path.includes('specimen') || path.includes('bio'))
   ) {
     return [createEntry('ufo74', 'UFO74: ship pieces first, now the CREW. someone survived.')];
   }
 
-  // NEW: If they found beings first and now finding international actors
+  // Diplomatic/foreign files
   if (
-    truths.has('being_containment') &&
-    !truths.has('international_actors') &&
+    truthCount >= 2 &&
+    truthCount < 4 &&
     (path.includes('liaison') || path.includes('diplomatic') || path.includes('foreign'))
   ) {
     return [createEntry('ufo74', 'UFO74: captured alive, then SHARED? whos coordinating this?')];
   }
 
-  // NEW: If they found 2026 first and now finding telepathy
+  // Telepathy files later in game
   if (
-    truths.has('transition_2026') &&
-    !truths.has('telepathic_scouts') &&
+    truthCount >= 3 &&
     (path.includes('psi') || path.includes('telepat') || path.includes('neural'))
   ) {
     return [
@@ -3721,7 +3613,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     if (
       hasReadPsiMaterial(state) &&
-      state.truthsDiscovered.has('telepathic_scouts') &&
+      (state.evidenceCount || 0) >= 2 &&
       state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_MED
     ) {
       helpLines.push('NOTICE: If assistance appears before you finish typing, do not repeat it.');
@@ -3803,8 +3695,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       lines.push('  ACCESS: Administrative');
     }
 
-    const evidenceCount = state.truthsDiscovered?.size || 0;
-    lines.push(`  EVIDENCE: ${evidenceCount}/5 categories confirmed`);
+    const evidenceCount = state.evidenceCount || 0;
+    lines.push(`  EVIDENCE: ${evidenceCount}/5 confirmed`);
 
     if (evidenceCount >= 5 && state.flags.allEvidenceCollected) {
       lines.push('  OBJECTIVE: Evidence complete — use "leak" when ready.');
@@ -3925,10 +3817,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
               entry.status
             );
 
-          // Evidence indicator (before other markers)
-          const evidenceSymbol = getFileEvidenceSymbol(fullPath, state);
-          if (evidenceSymbol) {
-            line = `  [${evidenceSymbol}] ${entry.name}`;
+          // Evidence indicator: show for disturbing files the player has read
+          const fileContent = getFileContent(fullPath, state);
+          const hasEvidenceMark = fileContent && state.filesRead?.has(fullPath) && isDisturbingContent(fileContent);
+          if (hasEvidenceMark) {
+            line = `  [${EVIDENCE_SYMBOL}] ${entry.name}`;
           }
 
           if (state.bookmarkedFiles?.has(fullPath)) {
@@ -3942,9 +3835,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           }
 
           // Reading time estimate (based on content length)
-          const content = getFileContent(fullPath, state);
-          if (content && content.length > 0) {
-            const wordCount = content.join(' ').split(/\s+/).length;
+          if (fileContent && fileContent.length > 0) {
+            const wordCount = fileContent.join(' ').split(/\s+/).length;
             const readingMinutes = Math.ceil(wordCount / 200); // ~200 words per minute
             if (readingMinutes >= 2) {
               line += ` [~${readingMinutes}min]`;
@@ -3955,13 +3847,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
           if (longFormat) {
             // Prominent status tag
             if (showStatusTag) {
-              const prefix = evidenceSymbol ? `  [${evidenceSymbol}] ` : '  ';
+              const prefix = hasEvidenceMark ? `  [${EVIDENCE_SYMBOL}] ` : '  ';
               const statusLabel = (entry.status ?? 'intact').toUpperCase();
               line = `${prefix}${entry.name}  [${statusLabel}]`;
             }
 
-            if (content && content.length > 0) {
-              const firstLine = content.find(l => l.trim().length > 0) || '';
+            if (fileContent && fileContent.length > 0) {
+              const firstLine = fileContent.find(l => l.trim().length > 0) || '';
               const preview = firstLine.length > 30 ? firstLine.slice(0, 27) + '...' : firstLine;
               if (preview) {
                 line += `  "${preview}"`;
@@ -3989,7 +3881,8 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       if (entry.type !== 'file') return false;
       const fullPath =
         state.currentPath === '/' ? `/${entry.name}` : `${state.currentPath}/${entry.name}`;
-      return getFileEvidenceSymbol(fullPath, state) !== null;
+      const fc = getFileContent(fullPath, state);
+      return fc && state.filesRead?.has(fullPath) && isDisturbingContent(fc);
     });
 
     if (hasEvidenceMarkers) {
@@ -4367,62 +4260,62 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     const isEncryptedAndLocked = false;
 
-    // Check for reveals - ONLY if file is not encrypted or has been decrypted
-    // Uses the new evidence revelation system that reveals only ONE evidence per read
+    // Check for reveals and disturbing content
     let notices: ReturnType<typeof createEntry>[] = [];
     if (!isEncryptedAndLocked) {
-      // Get existing reveals defined in the file (for backwards compatibility)
-      const existingReveals = getFileReveals(filePath) as TruthCategory[];
-
-      // Use the evidence revelation system for gradual, one-at-a-time discovery
-      const revelationResult = attemptEvidenceRevelation(
-        filePath,
-        content,
-        existingReveals.length > 0 ? existingReveals : undefined,
-        { ...state, ...stateChanges } as GameState
-      );
-
-      // If an evidence was revealed, process it through the truth system
-      if (revelationResult.revealedEvidence) {
-        if (!state.tutorialComplete) {
-          // During tutorial, do not reveal evidence
-          stateChanges.fileEvidenceStates = {
-            ...state.fileEvidenceStates,
-            ...stateChanges.fileEvidenceStates,
-            [filePath]: revelationResult.updatedFileState,
-          };
-        } else {
-          const truthResult = checkTruthProgress(
-            { ...state, ...stateChanges } as GameState,
-            [revelationResult.revealedEvidence],
-            filePath
-          );
-          notices = truthResult.notices;
-
-          // Merge truth discovery state changes (includes detection reduction breather)
-          Object.assign(stateChanges, truthResult.stateChanges);
-
-          // Update the file evidence state in game state
-          stateChanges.fileEvidenceStates = {
-            ...state.fileEvidenceStates,
-            ...stateChanges.fileEvidenceStates,
-            [filePath]: revelationResult.updatedFileState,
-          };
-
-          // If file has more unrevealed evidences, hint at it
-          if (revelationResult.hasMoreEvidences && revelationResult.isNewTruth) {
-            notices.push(createEntry('system', ''));
-            notices.push(
-              createEntry('system', '[This file may contain additional insights on future reads]')
-            );
-          }
-        }
-      }
-
       // Check if file content is disturbing and should trigger avatar expression
       const disturbingExpression = getDisturbingContentAvatarExpression(content);
       if (disturbingExpression && !stateChanges.avatarExpression) {
         stateChanges.avatarExpression = disturbingExpression;
+      }
+      // Increment evidence counter when scared reaction triggers on a new file
+      if (disturbingExpression === 'scared' && state.tutorialComplete && !state.filesRead.has(filePath)) {
+        const currentCount = stateChanges.evidenceCount ?? state.evidenceCount ?? 0;
+        const newCount = Math.min(5, currentCount + 1);
+        if (newCount > currentCount) {
+          stateChanges.evidenceCount = newCount;
+
+          notices.push(createEntry('system', ''));
+          notices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));
+
+          if (newCount === 1) {
+            if (
+              shouldShowTutorialTip(
+                'first_evidence',
+                state.interactiveTutorialMode,
+                state.tutorialTipsShown || new Set()
+              )
+            ) {
+              notices.push(...getTutorialTip('first_evidence'));
+              const newTipsShown = new Set(state.tutorialTipsShown || []);
+              newTipsShown.add('first_evidence');
+              stateChanges.tutorialTipsShown = newTipsShown;
+            }
+          }
+          if (newCount === 2) {
+            notices.push(createEntry('notice', ''));
+            notices.push(createEntry('notice', 'SYSTEM: Independent verification detected.'));
+          }
+          if (newCount === 4) {
+            notices.push(createEntry('notice', ''));
+            notices.push(createEntry('notice', 'NOTICE: Documentation threshold approaching.'));
+          }
+          if (newCount === 5) {
+            notices.push(createEntry('notice', ''));
+            notices.push(createEntry('notice', '▓▓▓ ALL EVIDENCE CATEGORIES DOCUMENTED ▓▓▓'));
+            notices.push(...createUFO74Message([
+              'UFO74: all five confirmed. we need to get this out.',
+              '       type: leak',
+              '       do it NOW before they cut the connection.',
+            ]));
+          }
+          if (newCount >= 4 && !state.flags.nearVictory) {
+            stateChanges.flags = { ...state.flags, ...stateChanges.flags, nearVictory: true };
+          }
+          if (newCount >= 5 && !state.flags.allEvidenceCollected) {
+            stateChanges.flags = { ...state.flags, ...stateChanges.flags, allEvidenceCollected: true };
+          }
+        }
       }
     }
 
@@ -5245,7 +5138,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     const isTerribleMistakeCondition =
       state.detectionLevel >= DETECTION_THRESHOLDS.ALERT &&
-      state.truthsDiscovered.size >= 2 &&
+      (state.evidenceCount || 0) >= 2 &&
       !state.terribleMistakeTriggered &&
       roll < 0.35; // 35% chance when conditions are met
 
@@ -6061,16 +5954,16 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       };
     }
 
-    // Require all 5 evidence categories before allowing leak
-    const allFound = state.truthsDiscovered.size >= 5 && state.flags.allEvidenceCollected;
+    // Require all 5 evidence before allowing leak
+    const allFound = (state.evidenceCount || 0) >= 5 && state.flags.allEvidenceCollected;
     if (!allFound) {
-      const found = state.truthsDiscovered.size;
+      const found = state.evidenceCount || 0;
       return {
         output: [
           createEntry('error', 'LEAK BLOCKED — INSUFFICIENT EVIDENCE'),
           createEntry('system', ''),
-          createEntry('system', `  Evidence categories documented: ${found}/5`),
-          createEntry('system', '  All five categories must be confirmed before'),
+          createEntry('system', `  Evidence documented: ${found}/5`),
+          createEntry('system', '  All five must be confirmed before'),
           createEntry('system', '  the leak channel can be opened.'),
           createEntry('system', ''),
           createEntry('ufo74', '[UFO74]: not yet. we need ALL five pieces or nobody will believe us.'),
@@ -7054,49 +6947,17 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('system', ''),
     ];
 
-    // Collect all evidence files across categories
-    const allEvidenceFiles: string[] = [];
-    const categories = [
-      'debris_relocation',
-      'being_containment',
-      'telepathic_scouts',
-      'international_actors',
-      'transition_2026',
-    ] as const;
-
-    for (const category of categories) {
-      const evidenceState = state.evidenceStates?.[category];
-      if (evidenceState?.linkedFiles) {
-        allEvidenceFiles.push(...evidenceState.linkedFiles);
-      }
-    }
-
-    // Show evidence files collected (no spoilers - just filenames)
+    // Show evidence count
     output.push(createEntry('system', '  EVIDENCE COLLECTED:'));
     output.push(createEntry('system', ''));
-
-    if (allEvidenceFiles.length === 0) {
-      output.push(createEntry('output', '    No evidence files collected yet.'));
-      output.push(createEntry('system', ''));
-      output.push(createEntry('system', '    Read files to discover evidence.'));
-    } else {
-      // Show unique filenames only
-      const uniqueFiles = [...new Set(allEvidenceFiles)];
-      for (const filePath of uniqueFiles.slice(0, 12)) {
-        const fileName = filePath.split('/').pop() || filePath;
-        output.push(createEntry('output', `    ■ ${fileName}`));
-      }
-      if (uniqueFiles.length > 12) {
-        output.push(createEntry('system', `    ... and ${uniqueFiles.length - 12} more`));
-      }
-    }
-
+    output.push(createEntry('output', `    Evidence Found: ${evidenceCount}/5`));
     output.push(createEntry('system', ''));
+
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
 
     // Case strength summary (neutral phrasing)
     output.push(createEntry('system', ''));
-    output.push(createEntry('output', `  CASE STATUS: ${evidenceCount}/5 categories discovered`));
+    output.push(createEntry('output', `  CASE STATUS: ${evidenceCount}/5 evidence confirmed`));
     output.push(createEntry('system', `  STRENGTH: ${caseStrength}`));
     output.push(createEntry('system', ''));
 
@@ -7151,53 +7012,21 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       createEntry('system', ''),
     ];
 
-    // Show evidence by category
-    output.push(createEntry('system', '  EVIDENCE BY CATEGORY:'));
+    // Show evidence status
+    output.push(createEntry('system', '  EVIDENCE STATUS:'));
     output.push(createEntry('system', ''));
-
-    const categoryLabels: Record<string, string> = {
-      debris_relocation: 'DEBRIS TRANSFER',
-      being_containment: 'BIO CONTAINMENT',
-      telepathic_scouts: 'TELEPATHIC RECON',
-      international_actors: 'INTERNATIONAL',
-      transition_2026: 'TRANSITION 2026',
-    };
-
-    for (const category of TRUTH_CATEGORIES) {
-      const discovered = state.truthsDiscovered?.has(category);
-      const symbol = discovered ? EVIDENCE_SYMBOL : '○';
-      const status = discovered ? 'CONFIRMED' : 'PENDING';
-
+    for (let i = 1; i <= 5; i++) {
+      const symbol = i <= evidenceCount ? EVIDENCE_SYMBOL : '○';
+      const status = i <= evidenceCount ? 'CONFIRMED' : 'PENDING';
       output.push(
         createEntry(
-          discovered ? 'output' : 'system',
-          `  ${symbol} ${categoryLabels[category]} — ${status}`
+          i <= evidenceCount ? 'output' : 'system',
+          `  ${symbol} EVIDENCE #${i} — ${status}`
         )
       );
     }
 
     output.push(createEntry('system', ''));
-
-    // Show files that revealed evidence
-    const filesWithEvidence: string[] = [];
-    for (const [filePath, fileState] of Object.entries(state.fileEvidenceStates || {})) {
-      if (fileState.revealedEvidences?.length > 0) {
-        filesWithEvidence.push(filePath);
-      }
-    }
-
-    if (filesWithEvidence.length > 0) {
-      output.push(createEntry('system', '  ─────────────────────────────────────────────'));
-      output.push(createEntry('system', '  KEY FILES LOGGED:'));
-      filesWithEvidence.slice(0, 8).forEach(file => {
-        const fileName = file.split('/').pop() || '';
-        output.push(createEntry('output', `    • ${fileName}`));
-      });
-      if (filesWithEvidence.length > 8) {
-        output.push(createEntry('system', `    ... and ${filesWithEvidence.length - 8} more`));
-      }
-      output.push(createEntry('system', ''));
-    }
 
     // Summary
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
@@ -7633,27 +7462,15 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     }
 
     if (godCmd === 'evidence') {
-      const allTruths: TruthCategory[] = [
-        'debris_relocation',
-        'being_containment',
-        'telepathic_scouts',
-        'international_actors',
-        'transition_2026',
-      ];
-      const newTruths = new Set<TruthCategory>(allTruths);
       return {
         output: [
           createEntry('system', '═══ ALL EVIDENCE UNLOCKED ═══'),
-          createEntry('output', '✓ debris_relocation'),
-          createEntry('output', '✓ being_containment'),
-          createEntry('output', '✓ telepathic_scouts'),
-          createEntry('output', '✓ international_actors'),
-          createEntry('output', '✓ transition_2026'),
+          createEntry('output', 'Evidence count set to 5/5'),
           createEntry('system', ''),
           createEntry('output', 'Use "god save" to trigger the save phase.'),
         ],
         stateChanges: {
-          truthsDiscovered: newTruths,
+          evidenceCount: 5,
           flags: { ...state.flags, allEvidenceCollected: true },
         },
       };
@@ -7705,7 +7522,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntry('output', 'All progress cleared. Reload recommended.'),
         ],
         stateChanges: {
-          truthsDiscovered: new Set<TruthCategory>(),
+          evidenceCount: 0,
           evidencesSaved: false,
           icqPhase: false,
           gameWon: false,
@@ -7720,12 +7537,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     }
 
     if (godCmd === 'status') {
-      const truths = Array.from(state.truthsDiscovered || []);
+      const evidCount = state.evidenceCount || 0;
       return {
         output: [
           createEntry('system', '═══ GAME STATUS ═══'),
-          createEntry('output', `Evidence found: ${truths.length}/5`),
-          createEntry('output', `  ${truths.join(', ') || '(none)'}`),
+          createEntry('output', `Evidence found: ${evidCount}/5`),
           createEntry('output', `evidencesSaved: ${state.evidencesSaved}`),
           createEntry('output', `icqPhase: ${state.icqPhase}`),
           createEntry('output', `gameWon: ${state.gameWon}`),
@@ -8260,7 +8076,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         : getIncognitoMessage(
             {
               ...state,
-              truthsDiscovered: state.truthsDiscovered,
+              evidenceCount: state.evidenceCount,
               incognitoMessageCount: state.incognitoMessageCount || 0,
               lastIncognitoTrigger: state.lastIncognitoTrigger || 0,
             } as GameState,

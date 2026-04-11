@@ -791,7 +791,7 @@ export default function Terminal({
     return `${attempts}/${MAX_WRONG_ATTEMPTS}`;
   };
 
-  const evidenceFoundCount = gameState.truthsDiscovered?.size || 0;
+  const evidenceFoundCount = gameState.evidenceCount || 0;
   const riskInfo = getRiskLevel();
   const saveIndicator = getSaveIndicator();
 

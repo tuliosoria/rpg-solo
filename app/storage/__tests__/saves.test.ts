@@ -8,7 +8,7 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
     seed: 12345,
     rngState: 12345,
     sessionStartTime: Date.now(),
-    truthsDiscovered: new Set(),
+    evidenceCount: 0,
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
     videosShownThisRun: new Set(),
@@ -95,7 +95,7 @@ describe('Save/Load System', () => {
       const { saveGame, loadGame } = await import('../saves');
 
       const state = createTestState({
-        truthsDiscovered: new Set(['truth1', 'truth2']),
+        evidenceCount: 2,
         singularEventsTriggered: new Set(['event1']),
         imagesShownThisRun: new Set(['img1']),
         videosShownThisRun: new Set(['vid1']),
@@ -114,7 +114,7 @@ describe('Save/Load System', () => {
       const slot = saveGame(state, 'Test Save');
       const loaded = loadGame(slot!.id);
 
-      expect(loaded!.truthsDiscovered.size).toBe(2);
+      expect(loaded!.evidenceCount).toBe(2);
       expect(loaded!.singularEventsTriggered.size).toBe(1);
       expect(loaded!.categoriesRead.size).toBe(3);
       expect(loaded!.passwordsFound.size).toBe(2);
@@ -143,7 +143,7 @@ describe('Save/Load System', () => {
         currentPath: '/',
         detectionLevel: 50,
         accessLevel: 3,
-        truthsDiscovered: ['truth1'],
+        evidenceCount: 1,
         // Missing: videosShownThisRun, categoriesRead, etc.
       };
 
@@ -232,7 +232,7 @@ describe('Save/Load System', () => {
 
       const newGame = createNewGame();
 
-      expect(newGame.truthsDiscovered).toBeInstanceOf(Set);
+      expect(typeof newGame.evidenceCount).toBe('number');
       expect(newGame.singularEventsTriggered).toBeInstanceOf(Set);
       expect(newGame.imagesShownThisRun).toBeInstanceOf(Set);
       expect(newGame.videosShownThisRun).toBeInstanceOf(Set);
@@ -335,7 +335,7 @@ describe('Save/Load System', () => {
 
       const state = createTestState({
         detectionLevel: 42,
-        truthsDiscovered: new Set(['debris_relocation']),
+        evidenceCount: 1,
       });
 
       autoSave(state);
@@ -343,7 +343,7 @@ describe('Save/Load System', () => {
       const loaded = loadAutoSave();
       expect(loaded).not.toBeNull();
       expect(loaded!.detectionLevel).toBe(42);
-      expect(loaded!.truthsDiscovered.has('debris_relocation')).toBe(true);
+      expect(loaded!.evidenceCount).toBe(1);
     });
 
     it('returns null when no autosave exists', async () => {
@@ -443,7 +443,7 @@ describe('Save/Load System', () => {
       const state = createTestState({
         currentPath: '/admin/classified',
         detectionLevel: 75,
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
+        evidenceCount: 2,
       });
 
       const slot = saveGame(state, 'My Save');
@@ -551,7 +551,7 @@ describe('Save/Load System', () => {
         currentPath: '/storage',
         detectionLevel: 30,
         accessLevel: 2,
-        truthsDiscovered: ['truth1'],
+        evidenceCount: 1,
         history: [],
         commandHistory: [],
       };
@@ -563,8 +563,8 @@ describe('Save/Load System', () => {
       expect(loaded).not.toBeNull();
       expect(loaded!.currentPath).toBe('/storage');
       expect(loaded!.detectionLevel).toBe(30);
-      expect(loaded!.truthsDiscovered).toBeInstanceOf(Set);
-      expect(loaded!.truthsDiscovered.has('truth1')).toBe(true);
+      expect(typeof loaded!.evidenceCount).toBe('number');
+      expect(loaded!.evidenceCount).toBe(1);
     });
 
     it('handles versioned saves correctly', async () => {
@@ -596,7 +596,7 @@ describe('Save/Load System', () => {
 
       const state = createTestState({
         detectionLevel: 25,
-        truthsDiscovered: new Set(['debris_relocation']),
+        evidenceCount: 1,
       });
 
       const slot = saveCheckpoint(state, 'First evidence');
@@ -607,7 +607,7 @@ describe('Save/Load System', () => {
       const loaded = loadCheckpoint(slot!.id);
       expect(loaded).not.toBeNull();
       expect(loaded!.detectionLevel).toBe(25);
-      expect(loaded!.truthsDiscovered.has('debris_relocation')).toBe(true);
+      expect(loaded!.evidenceCount).toBe(1);
 
       const slots = getCheckpointSlots();
       expect(slots.length).toBe(1);

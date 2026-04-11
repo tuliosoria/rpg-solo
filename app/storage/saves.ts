@@ -99,7 +99,8 @@ function serializeState(state: GameState): string {
     version: SAVE_VERSION,
     state: {
       ...state,
-      truthsDiscovered: Array.from(state.truthsDiscovered),
+      // evidenceCount is just a number, no conversion needed
+      truthsDiscovered: undefined, // Remove legacy field from serialization
       singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
       imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
       videosShownThisRun: Array.from(state.videosShownThisRun || []),
@@ -179,7 +180,9 @@ function deserializeState(json: string): GameState {
     wrongAttempts: clampNumber(baseState.wrongAttempts, DEFAULT_GAME_STATE.wrongAttempts, 0, 8),
     flags: toPlainObject(baseState.flags) as Record<string, boolean>,
     fileMutations: toPlainObject(baseState.fileMutations) as Record<string, FileMutation>,
-    truthsDiscovered: new Set(toStringArray(parsed.truthsDiscovered)),
+    // Backward compatibility: if loading old save with truthsDiscovered, convert to evidenceCount
+    evidenceCount: typeof parsed.evidenceCount === 'number' ? parsed.evidenceCount :
+      (Array.isArray(parsed.truthsDiscovered) ? parsed.truthsDiscovered.length : 0),
     singularEventsTriggered: new Set(toStringArray(parsed.singularEventsTriggered)),
     imagesShownThisRun: new Set(toStringArray(parsed.imagesShownThisRun)),
     videosShownThisRun: new Set(toStringArray(parsed.videosShownThisRun)),
@@ -193,8 +196,6 @@ function deserializeState(json: string): GameState {
     passwordsFound: new Set(toStringArray(parsed.passwordsFound)),
     bookmarkedFiles: new Set(toStringArray(parsed.bookmarkedFiles)),
     trapsTriggered: new Set(toStringArray(parsed.trapsTriggered)),
-    // Ensure fileEvidenceStates is initialized (plain object, no Set conversion needed)
-    fileEvidenceStates: toPlainObject(baseState.fileEvidenceStates) as Record<string, unknown>,
     // Limit command history to last MAX_COMMAND_HISTORY_SIZE entries
     commandHistory: toStringArray(parsed.commandHistory).slice(-MAX_COMMAND_HISTORY_SIZE),
     history: Array.isArray(baseState.history)
@@ -357,7 +358,7 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
     name,
     timestamp: now,
     currentPath: state.currentPath,
-    truthCount: state.truthsDiscovered.size,
+    truthCount: state.evidenceCount || 0,
     detectionLevel: state.detectionLevel,
   };
 
@@ -515,7 +516,7 @@ export function createNewGame(): GameState {
     rngState: seed,
     sessionStartTime: Date.now(),
     history: bootSequence,
-    truthsDiscovered: new Set(),
+    evidenceCount: 0,
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
     videosShownThisRun: new Set(),
@@ -638,7 +639,7 @@ export function saveCheckpoint(state: GameState, reason: string): CheckpointSlot
     reason,
     timestamp: now,
     currentPath: state.currentPath,
-    truthCount: state.truthsDiscovered.size,
+    truthCount: state.evidenceCount || 0,
     detectionLevel: state.detectionLevel,
   };
 

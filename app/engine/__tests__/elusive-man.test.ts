@@ -9,8 +9,6 @@ import {
   LEAK_DETECTION_PENALTY,
 } from '../elusiveMan';
 
-const ALL_TRUTHS = new Set(['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026'] as const);
-
 const createState = (overrides: Partial<GameState> = {}): GameState => ({
   ...DEFAULT_GAME_STATE,
   seed: 12345,
@@ -18,7 +16,7 @@ const createState = (overrides: Partial<GameState> = {}): GameState => ({
   sessionStartTime: Date.now(),
   tutorialStep: -1,
   tutorialComplete: true,
-  truthsDiscovered: ALL_TRUTHS,
+  evidenceCount: 5,
   flags: { allEvidenceCollected: true },
   ...overrides,
 });

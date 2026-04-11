@@ -17,7 +17,7 @@ describe('Turing evaluation', () => {
   it('triggers when detection enters the 45-55% range', () => {
     const state = createState({
       detectionLevel: 50,
-      truthsDiscovered: new Set(['some_truth']),
+      evidenceCount: 1,
       // Warning must have been shown first for Turing test to trigger
       singularEventsTriggered: new Set(['turing_warning']),
     });
@@ -32,7 +32,7 @@ describe('Turing evaluation', () => {
   it('does not trigger if no truths discovered', () => {
     const state = createState({
       detectionLevel: 50,
-      truthsDiscovered: new Set(),
+      evidenceCount: 0,
     });
     const result = executeCommand('help', state);
 
@@ -112,7 +112,7 @@ describe('Turing evaluation', () => {
     const state = createState({
       detectionLevel: 44,
       currentPath: '/tmp',
-      truthsDiscovered: new Set(['some_truth']),
+      evidenceCount: 1,
       singularEventsTriggered: new Set(['turing_warning']),
     });
 
@@ -126,7 +126,7 @@ describe('Turing evaluation', () => {
   it('only triggers once per game', () => {
     const state = createState({
       detectionLevel: 50,
-      truthsDiscovered: new Set(['some_truth']),
+      evidenceCount: 1,
       singularEventsTriggered: new Set(['turing_warning', 'turing_evaluation']),
       turingEvaluationCompleted: true,
     });

@@ -511,9 +511,6 @@ export function useTerminalInput({
 
       if (isProcessingRef.current || isProcessing || showTuringTest || !trimmedInput) return;
 
-      // Block input during Turing evaluation transition (overlay not yet visible)
-      if (gameState.turingEvaluationActive && !showTuringTest) return;
-
       const command = trimmedInput;
       const commandLower = command.toLowerCase().split(' ')[0];
       const shouldDeferUfo74 =
@@ -591,7 +588,7 @@ export function useTerminalInput({
 
       const stateChangesWithoutHistory = {
         ...result.stateChanges,
-        truthsDiscovered: result.stateChanges.truthsDiscovered || newState.truthsDiscovered,
+        evidenceCount: result.stateChanges.evidenceCount ?? newState.evidenceCount,
       };
 
       const intermediateState: GameState = {
@@ -723,8 +720,8 @@ export function useTerminalInput({
         return;
       }
 
-      const truthCount = intermediateState.truthsDiscovered?.size || 0;
-      const prevTruthCount = gameState.truthsDiscovered?.size || 0;
+      const truthCount = intermediateState.evidenceCount || 0;
+      const prevTruthCount = gameState.evidenceCount || 0;
 
       const filesReadCount = intermediateState.filesRead?.size || 0;
       const prevFilesReadCount = gameState.filesRead?.size || 0;

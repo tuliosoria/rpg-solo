@@ -4,7 +4,7 @@ import {
   analyzeProgressForHint, 
   HINT_CONFIG 
 } from '../hintSystem';
-import { GameState, TruthCategory, DEFAULT_GAME_STATE } from '../../types';
+import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
 // Create a minimal game state for testing
 function createTestState(overrides: Partial<GameState> = {}): GameState {
@@ -14,7 +14,7 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
     rngState: 12345,
     sessionStartTime: Date.now(),
     filesRead: new Set<string>(),
-    truthsDiscovered: new Set<TruthCategory>(),
+    evidenceCount: 0,
     hintsUsed: 0,
     tutorialComplete: false,
     detectionLevel: 0,
@@ -127,7 +127,7 @@ describe('Hint System', () => {
           '/ops/file3.txt',
           '/ops/file4.txt',
         ]),
-        truthsDiscovered: new Set<TruthCategory>(['being_containment']),
+        evidenceCount: 1,
       });
       const hint = analyzeProgressForHint(state);
 
@@ -144,7 +144,7 @@ describe('Hint System', () => {
           '/admin/file1.txt',
           '/internal/file1.txt',
         ]),
-        truthsDiscovered: new Set<TruthCategory>(['debris_relocation', 'being_containment']),
+        evidenceCount: 2,
       });
       const hint = analyzeProgressForHint(state);
 
@@ -161,12 +161,7 @@ describe('Hint System', () => {
           '/admin/file1.txt',
           '/internal/file1.txt',
         ]),
-        truthsDiscovered: new Set<TruthCategory>([
-          'debris_relocation',
-          'being_containment',
-          'telepathic_scouts',
-          'international_actors',
-        ]),
+        evidenceCount: 4,
       });
       const hint = analyzeProgressForHint(state);
 
@@ -188,13 +183,7 @@ describe('Hint System', () => {
           '/internal/file2.txt',
           '/extra/file.txt',
         ]),
-        truthsDiscovered: new Set<TruthCategory>([
-          'debris_relocation',
-          'being_containment',
-          'telepathic_scouts',
-          'international_actors',
-          'transition_2026',
-        ]),
+        evidenceCount: 5,
       });
       const hint = analyzeProgressForHint(state);
 

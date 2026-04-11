@@ -194,60 +194,44 @@ describe('useGameSelectors', () => {
   });
 
   describe('useEvidenceState', () => {
-    it('returns empty state for no truths discovered', () => {
+    it('returns zero count for undefined evidence', () => {
       const { result } = renderHook(() => useEvidenceState(undefined));
       
       expect(result.current.count).toBe(0);
-      expect(result.current.categories.every(c => !c.discovered)).toBe(true);
-      expect(result.current.categories.every(c => c.symbol === '□')).toBe(true);
     });
 
     it('counts discovered truths correctly', () => {
-      const truths = new Set(['debris_relocation', 'telepathic_scouts']);
-      const { result } = renderHook(() => useEvidenceState(truths));
+      const { result } = renderHook(() => useEvidenceState(2));
       
       expect(result.current.count).toBe(2);
     });
 
-    it('marks discovered categories with filled symbol', () => {
-      const truths = new Set(['debris_relocation']);
-      const { result } = renderHook(() => useEvidenceState(truths));
+    it('returns correct count for single evidence', () => {
+      const { result } = renderHook(() => useEvidenceState(1));
       
-      const debrisCategory = result.current.categories.find(c => c.id === 'debris_relocation');
-      expect(debrisCategory?.discovered).toBe(true);
-      expect(debrisCategory?.symbol).toBe('●');
+      expect(result.current.count).toBe(1);
     });
 
-    it('marks undiscovered categories with empty symbol', () => {
-      const truths = new Set(['debris_relocation']);
-      const { result } = renderHook(() => useEvidenceState(truths));
+    it('returns correct count for all evidence', () => {
+      const { result } = renderHook(() => useEvidenceState(5));
       
-      const otherCategory = result.current.categories.find(c => c.id === 'being_containment');
-      expect(otherCategory?.discovered).toBe(false);
-      expect(otherCategory?.symbol).toBe('□');
+      expect(result.current.count).toBe(5);
     });
 
-    it('tracks all five evidence categories', () => {
-      const { result } = renderHook(() => useEvidenceState(new Set()));
+    it('returns zero count for zero evidence', () => {
+      const { result } = renderHook(() => useEvidenceState(0));
       
-      const categoryIds = result.current.categories.map(c => c.id);
-      expect(categoryIds).toContain('debris_relocation');
-      expect(categoryIds).toContain('being_containment');
-      expect(categoryIds).toContain('telepathic_scouts');
-      expect(categoryIds).toContain('international_actors');
-      expect(categoryIds).toContain('transition_2026');
-      expect(result.current.categories.length).toBe(5);
+      expect(result.current.count).toBe(0);
     });
 
     it('is memoized - same input returns same reference', () => {
-      const truths = new Set(['debris_relocation']);
       const { result, rerender } = renderHook(
         ({ t }) => useEvidenceState(t), 
-        { initialProps: { t: truths } }
+        { initialProps: { t: 1 as number } }
       );
 
       const firstResult = result.current;
-      rerender({ t: truths });
+      rerender({ t: 1 });
       const secondResult = result.current;
 
       expect(firstResult).toBe(secondResult);

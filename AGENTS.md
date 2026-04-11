@@ -38,23 +38,18 @@ The terminal aesthetic serves multiple purposes:
 ### Why Detection Increases Are Inevitable
 The game is designed so that **you cannot avoid detection entirely**—only manage it. This was an intentional design choice to create tension. Even "safe" actions like reading files increment detection by 1-3%. Players who try to be perfectly stealthy will eventually realize the game wants them to take risks.
 
-### The Five Truths System
-The five `TruthCategory` values aren't arbitrary—they map to the core conspiracy claims:
-- `debris_relocation` — The crashed craft was real and its pieces were hidden
-- `being_containment` — Living beings were captured (not just bodies)
-- `telepathic_scouts` — The beings communicated mentally; they were reconnaissance units
-- `international_actors` — The US and others were involved, not just Brazil
-- `transition_2026` — A future event/activation is predicted (ties to "30-year cycle" theories)
+### The Evidence System
+Evidence discovery uses a simple counter (`evidenceCount: 0-5`). Every time the Kid avatar shows a scared reaction (triggered by reading files with disturbing content), one evidence is released (counter increments by 1, capped at 5). Finding 5 triggers the win condition. There are no categories, types, or classification of any kind — just a counter.
 
 ### UFO74: The Ally System
 UFO74 is the player's only friend in the system—a hacker who guides them. Design principles:
 - **Trust degrades** if the player triggers too many warnings
 - **Has a secret identity** — UFO74 was actually present during the 1996 incident (discoverable via password puzzle)
 - At very low trust, hints emerge that "UFO74" might be multiple people (paranoia mechanic)
-- Messages adapt to which truths the player has discovered
+- Messages adapt to the player's evidence count
 
-### The Evidence Revelation System
-Players don't just "find" truths—they must **recognize patterns** across multiple files. The `reveals` array on FileNode tells the engine which truth categories a file contributes to. Reading a single file rarely completes a truth; players need 2-3 corroborating files.
+### How Evidence Works
+Files with disturbing content (matching patterns in `isDisturbingContent()`) trigger avatar reactions. If the reaction is `scared` and the file hasn't been read before, `evidenceCount` increments by 1. The `getDisturbingContentAvatarExpression()` function determines whether content triggers `shocked` or `scared` expressions.
 
 ---
 
@@ -179,10 +174,10 @@ The terminal itself has a personality that degrades as detection rises:
 
 | If you need to... | Do this |
 |---|---|
-| Add a new file to the game | Edit `app/data/filesystem.ts`, add FileNode with `reveals` |
+| Add a new file to the game | Edit `app/data/filesystem.ts`, add FileNode |
 | Adjust difficulty | Edit values in `app/constants/detection.ts` |
 | Add a new command | Edit `app/engine/commands.ts`, add handler |
-| Add a new truth category | Update `TRUTH_CATEGORIES` in `app/types/index.ts` (requires extensive content work) |
+| Adjust evidence count | Set `evidenceCount` in `app/types/index.ts` DEFAULT_GAME_STATE |
 | Debug state issues | Check `DEFAULT_GAME_STATE` in `app/types/index.ts` |
 | Add UFO74 dialogue | See dialogue arrays in `app/engine/commands/` subdirectory |
 

@@ -18,7 +18,6 @@ import { executeCommand } from '../commands';
 import {
   GameState,
   DEFAULT_GAME_STATE,
-  TRUTH_CATEGORIES,
   FileNode,
   DirectoryNode,
   FileSystemNode,
@@ -392,14 +391,6 @@ describe('Story Consistency Tests', () => {
       });
     });
 
-    describe('Evidence Tiers', () => {
-      it('all 5 truth categories exist in the ruleset', () => {
-        for (const truth of TRUTH_CATEGORIES) {
-          expect(typeof truth).toBe('string');
-        }
-      });
-    });
-
     describe('File Paths and Directory Structure', () => {
       it('directory structure is logical and thematic', () => {
         const expectedDirectories = [
@@ -496,15 +487,6 @@ describe('Story Consistency Tests', () => {
     });
 
     describe('Victory/Failure Conditions', () => {
-      it('5 truth categories are properly defined', () => {
-        expect(TRUTH_CATEGORIES).toHaveLength(5);
-        expect(TRUTH_CATEGORIES).toContain('debris_relocation');
-        expect(TRUTH_CATEGORIES).toContain('being_containment');
-        expect(TRUTH_CATEGORIES).toContain('telepathic_scouts');
-        expect(TRUTH_CATEGORIES).toContain('international_actors');
-        expect(TRUTH_CATEGORIES).toContain('transition_2026');
-      });
-
       it('detection level reaching 100 triggers game over', () => {
         const state = createTestState({
           tutorialStep: -1,
@@ -536,13 +518,7 @@ describe('Story Consistency Tests', () => {
         const state = createTestState({
           tutorialStep: -1,
           tutorialComplete: true,
-          truthsDiscovered: new Set([
-            'debris_relocation',
-            'being_containment',
-            'telepathic_scouts',
-            'international_actors',
-            'transition_2026',
-          ]),
+          evidenceCount: 5,
         });
 
         // Status should show system information
@@ -769,7 +745,7 @@ describe('Story Consistency Tests', () => {
         const state = createTestState({
           tutorialStep: -1,
           tutorialComplete: true,
-          truthsDiscovered: new Set(TRUTH_CATEGORIES),
+          evidenceCount: 5,
           flags: { allEvidenceCollected: true },
         });
 

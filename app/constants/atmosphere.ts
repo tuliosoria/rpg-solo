@@ -94,7 +94,7 @@ export function countMeaningfulFilesRead(state: GameState): number {
  * Check if player has discovered any evidence (truths).
  */
 export function hasFirstEvidence(state: GameState): boolean {
-  return (state.truthsDiscovered?.size || 0) > 0;
+  return (state.evidenceCount || 0) > 0;
 }
 
 /**

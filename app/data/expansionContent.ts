@@ -1008,7 +1008,6 @@ export const chereze_incident_report: FileNode = {
   name: 'contact_incident_report.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['cover_up'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'INCIDENT REPORT — OFFICER [CLASSIFIED]',

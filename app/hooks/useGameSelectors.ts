@@ -77,26 +77,14 @@ export function useSaveIndicator(lastSaveTime: number | undefined) {
 /**
  * Get memoized evidence discovery state
  */
-export function useEvidenceState(truthsDiscovered: Set<string> | undefined) {
+export function useEvidenceState(evidenceCount: number | undefined) {
   return useMemo(() => {
-    const discovered = truthsDiscovered ?? new Set<string>();
-    const categories = [
-      'debris_relocation',
-      'being_containment', 
-      'telepathic_scouts',
-      'international_actors',
-      'transition_2026',
-    ] as const;
+    const count = evidenceCount ?? 0;
     
     return {
-      count: discovered.size,
-      categories: categories.map(cat => ({
-        id: cat,
-        discovered: discovered.has(cat),
-        symbol: discovered.has(cat) ? '●' : '□',
-      })),
+      count,
     };
-  }, [truthsDiscovered]);
+  }, [evidenceCount]);
 }
 
 /**

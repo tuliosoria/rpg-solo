@@ -241,17 +241,13 @@ describe('UX Commands', () => {
 
     it('should show discovered truths', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
-        evidenceStates: {
-          debris_relocation: { linkedFiles: ['/test.txt'] },
-          being_containment: { linkedFiles: ['/a.txt', '/b.txt'] },
-        },
+        evidenceCount: 2,
       });
       const result = executeCommand('progress', state);
 
-      // New format shows file names instead of category spoilers
+      // New format shows evidence count
       expect(
-        result.output.some(e => e.content.includes('test.txt') || e.content.includes('a.txt'))
+        result.output.some(e => e.content.includes('2/5'))
       ).toBe(true);
     });
 
@@ -617,11 +613,7 @@ describe('UX Commands', () => {
         tutorialComplete: true,
         detectionLevel: 88,
         waitUsesRemaining: 2,
-        truthsDiscovered: new Set([
-          'debris_relocation',
-          'being_containment',
-          'telepathic_scouts',
-        ]),
+        evidenceCount: 3,
         filesRead: new Set(['/comms/psi/transcript_core.enc']),
       });
       const result = executeCommand('status', state);
@@ -635,7 +627,7 @@ describe('UX Commands', () => {
       const state = createTestState({
         tutorialComplete: true,
         detectionLevel: 60,
-        truthsDiscovered: new Set(['telepathic_scouts']),
+        evidenceCount: 2,
         filesRead: new Set(['/comms/psi/transcript_core.enc']),
         singularEventsTriggered: new Set(['turing_warning', 'turing_evaluation']),
       });
@@ -649,7 +641,7 @@ describe('UX Commands', () => {
       const state = createTestState({
         tutorialComplete: true,
         detectionLevel: 62,
-        truthsDiscovered: new Set(['telepathic_scouts']),
+        evidenceCount: 1,
         filesRead: new Set(['/storage/witness_statement_raw.txt']),
       });
 
@@ -687,13 +679,7 @@ describe('UX Commands', () => {
       const state = createTestState({
         currentPath: '/ops/assessments',
         filesRead: new Set(['/ops/assessments/debris_analysis.txt']),
-        fileEvidenceStates: {
-          '/ops/assessments/debris_analysis.txt': {
-            potentialEvidences: ['debris_relocation', 'being_containment'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-        truthsDiscovered: new Set(['debris_relocation']),
+        evidenceCount: 1,
       });
 
       // Re-read the file
@@ -712,7 +698,6 @@ describe('UX Commands', () => {
     it('should persist evidence states across multiple file operations', () => {
       const state = createTestState({
         currentPath: '/internal/protocols',
-        fileEvidenceStates: {},
       });
 
       // Open a file - should initialize evidence state
@@ -738,7 +723,6 @@ describe('UX Commands', () => {
     it('should handle files in liaison directory', () => {
       const state = createTestState({
         currentPath: '/comms/liaison',
-        fileEvidenceStates: {},
       });
 
       // Open file that could have multiple evidence types

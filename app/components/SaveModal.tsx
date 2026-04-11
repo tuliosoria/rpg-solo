@@ -85,7 +85,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
           <div className={styles.info}>
             <div>{t('save.path')}: {gameState.currentPath}</div>
             <div>
-              {t('save.progress')}: {gameState.truthsDiscovered.size}/5 {t('save.progressSuffix')}
+              {t('save.progress')}: {gameState.evidenceCount || 0}/5 {t('save.progressSuffix')}
             </div>
           </div>
           {saveError && (

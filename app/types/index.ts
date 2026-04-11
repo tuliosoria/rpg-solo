@@ -192,8 +192,8 @@ export interface GameState {
   // Scout link usage tracking
   scoutLinksUsed: number;
 
-  // Truth categories discovered (5 required for victory)
-  truthsDiscovered: Set<string>;
+  // Evidence counter (0-5, reaching 5 triggers win condition)
+  evidenceCount: number;
 
   // Files the player has opened/read
   filesRead: Set<string>;
@@ -357,13 +357,7 @@ export interface GameState {
   // Evidence linking system
   evidenceLinks: Array<[string, string]>; // Pairs of linked file paths
 
-  // Evidence revelation system - tracks which evidences each file has revealed
-  // Key: file path, Value: evidence state for that file
-  fileEvidenceStates: Record<string, FileEvidenceState>;
 
-  // Evidence tracking - simplified (no tiers)
-  // Key: TruthCategory, Value: evidence state for that category
-  evidenceStates: Record<string, EvidenceState>;
 
   // Timed decryption state
   timedDecryptActive: boolean;
@@ -476,28 +470,7 @@ export interface CommandResult {
   soundTrigger?: 'evidence' | 'error' | 'morse'; // Sound effect to play
 }
 
-export const TRUTH_CATEGORIES = [
-  'debris_relocation', // Spacecraft debris were split and relocated
-  'being_containment', // Non-human beings were contained and transferred
-  'telepathic_scouts', // Beings communicated telepathically and were reconnaissance bio-constructs
-  'international_actors', // International actors were involved beyond Brazil
-  'transition_2026', // A future transition/activation window converges on 2026
-] as const;
 
-export type TruthCategory = (typeof TRUTH_CATEGORIES)[number];
-
-// Evidence tracking - simplified to just track which files revealed evidence
-export interface EvidenceState {
-  linkedFiles: string[]; // Files that revealed this evidence
-}
-
-// Evidence Revelation System types
-export interface FileEvidenceState {
-  // All evidences this file can potentially reveal (determined by content analysis)
-  potentialEvidences: TruthCategory[];
-  // Evidences already revealed from this file in current playthrough
-  revealedEvidences: TruthCategory[];
-}
 
 export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionStartTime'> = {
   currentPath: '/',
@@ -512,7 +485,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   flags: {},
   overrideFailedAttempts: 0,
   scoutLinksUsed: 0,
-  truthsDiscovered: new Set(),
+  evidenceCount: 0,
   filesRead: new Set(),
   conspiracyFilesSeen: new Set(),
   fileMutations: {},
@@ -609,10 +582,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   hideAvailable: false,
   // Evidence linking
   evidenceLinks: [],
-  // Evidence revelation system
-  fileEvidenceStates: {},
-  // Evidence tracking
-  evidenceStates: {},
+
   // Timed decryption
   timedDecryptActive: false,
   timedDecryptFile: undefined,

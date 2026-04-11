@@ -645,7 +645,7 @@ export function useTerminalEffects({
       if (
         crossedTuringThreshold &&
         gameState.tutorialComplete &&
-        gameState.truthsDiscovered.size >= 1 &&
+        (gameState.evidenceCount || 0) >= 1 &&
         !gameState.turingEvaluationActive &&
         !gameState.turingEvaluationCompleted &&
         !gameState.singularEventsTriggered?.has('turing_evaluation') &&
@@ -681,7 +681,7 @@ export function useTerminalEffects({
   }, [
     gameState.detectionLevel,
     gameState.tutorialComplete,
-    gameState.truthsDiscovered.size,
+    gameState.evidenceCount,
     gameState.turingEvaluationActive,
     gameState.turingEvaluationCompleted,
     gameState.singularEventsTriggered,
@@ -810,12 +810,12 @@ export function useTerminalEffects({
       {
         hint: 'You need evidence. Look for files that seem... off.',
         condition: (s: GameState) =>
-          (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 3,
+          (s.evidenceCount || 0) === 0 && (s.filesRead?.size || 0) >= 3,
       },
       {
         hint: 'Some documents contradict the official narrative. Find them.',
         condition: (s: GameState) =>
-          (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 5,
+          (s.evidenceCount || 0) === 0 && (s.filesRead?.size || 0) >= 5,
       },
       {
         hint: 'Have you checked /internal?',
@@ -854,11 +854,11 @@ export function useTerminalEffects({
       {
         hint: 'Some files still carry legacy encryption headers, but recovered text opens directly.',
         condition: (s: GameState) =>
-          (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2,
+          (s.categoriesRead?.size || 0) >= 2 && (s.evidenceCount || 0) < 2,
       },
       {
         hint: "Try the 'progress' command to see what you've found.",
-        condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 1,
+        condition: (s: GameState) => (s.evidenceCount || 0) >= 1,
       },
       {
         hint: "Don't forget: 'note' saves reminders, 'bookmark' saves files.",

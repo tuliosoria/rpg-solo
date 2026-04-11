@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { createEntry } from '../engine/commands';
 import type { GamePhase, GameState } from '../types';
 import type { SoundType } from './useSound';
@@ -164,120 +164,135 @@ export function useGameActions({
     [playSound, setGameState]
   );
 
+  // Batch detonation: accumulate eye IDs and flush together
+  const pendingDetonationsRef = useRef<string[]>([]);
+  const detonationFlushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flushDetonations = useCallback(() => {
+    detonationFlushTimerRef.current = null;
+    const eyeIds = pendingDetonationsRef.current.splice(0);
+    if (eyeIds.length === 0) return;
+
+    const missCount = eyeIds.length;
+    let shouldTriggerTuringTest = false;
+    let shouldShowGameOver = false;
+
+    setGameState(prev => {
+      const updatedEyes = prev.firewallEyes.map(e =>
+        eyeIds.includes(e.id) ? { ...e, isDetonating: true } : e
+      );
+
+      const totalIncrease = DETECTION_INCREASE_ON_DETONATE * missCount;
+      const newDetection = Math.min(100, prev.detectionLevel + totalIncrease);
+
+      const crossedTuringThreshold =
+        prev.detectionLevel < DETECTION_THRESHOLDS.TURING_TRIGGER &&
+        newDetection >= DETECTION_THRESHOLDS.TURING_TRIGGER;
+
+      const willTriggerTuringTest =
+        crossedTuringThreshold &&
+        prev.tutorialComplete &&
+        (prev.evidenceCount || 0) >= 1 &&
+        !prev.turingEvaluationActive &&
+        !prev.turingEvaluationCompleted &&
+        !prev.singularEventsTriggered?.has('turing_evaluation');
+      shouldTriggerTuringTest = willTriggerTuringTest;
+
+      // Check for game over: detection reached 100% from eye detonation
+      const isGameOver =
+        prev.tutorialComplete &&
+        newDetection >= 100 &&
+        !prev.isGameOver &&
+        !prev.evidencesSaved;
+      shouldShowGameOver = isGameOver;
+
+      const detonateWarning = createEntry(
+        'error',
+        `[FIREWALL] ${missCount} surveillance node${missCount > 1 ? 's' : ''} reported. Detection increased to ${newDetection}%`
+      );
+
+      const missWord = missCount === 1 ? 'one' : missCount === 2 ? 'two' : missCount === 3 ? 'three' : String(missCount);
+      let ufo74Panic;
+      if (willTriggerTuringTest) {
+        ufo74Panic = createEntry('ufo74', 'UFO74: NO! Detection hit 50% — they\'re initiating Turing eval!');
+      } else if (newDetection >= 80) {
+        ufo74Panic = createEntry('ufo74', "UFO74: THEY KNOW! They're tracing us RIGHT NOW!");
+      } else if (newDetection >= 60) {
+        ufo74Panic = createEntry('ufo74', `UFO74: That one got through! Be faster, kid!`);
+      } else if (missCount === 1) {
+        ufo74Panic = createEntry('ufo74', 'UFO74: Damn! You missed one. Stay focused!');
+      } else {
+        ufo74Panic = createEntry('ufo74', `UFO74: Damn! You missed ${missWord} eyes. Stay focused.`);
+      }
+
+      const newSingularEvents = willTriggerTuringTest
+        ? new Set([...(prev.singularEventsTriggered || []), 'turing_evaluation'])
+        : prev.singularEventsTriggered;
+
+      return {
+        ...prev,
+        firewallEyes: updatedEyes,
+        detectionLevel: newDetection,
+        avatarExpression: 'scared',
+        evidenceCount: Math.min(5, (prev.evidenceCount || 0) + 1),
+        history: isGameOver
+          ? [
+              ...prev.history,
+              detonateWarning,
+              createEntry('error', ''),
+              createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+              createEntry('error', ''),
+              createEntry('error', '  INTRUSION DETECTED'),
+              createEntry('error', ''),
+              createEntry('error', '  Your connection has been traced.'),
+              createEntry('error', '  Security protocols have been dispatched.'),
+              createEntry('error', ''),
+              createEntry('error', '  >> SESSION TERMINATED <<'),
+              createEntry('error', ''),
+              createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+              createEntry('error', ''),
+            ]
+          : [...prev.history, detonateWarning, ufo74Panic],
+        isGameOver: isGameOver ? true : prev.isGameOver,
+        gameOverReason: isGameOver ? 'INTRUSION DETECTED - TRACED' : prev.gameOverReason,
+        turingEvaluationActive: willTriggerTuringTest ? true : prev.turingEvaluationActive,
+        singularEventsTriggered: newSingularEvents,
+      };
+    });
+
+    if (shouldTriggerTuringTest) {
+      window.setTimeout(() => {
+        setShowTuringTest(true);
+      }, 1500);
+    }
+
+    if (shouldShowGameOver) {
+      window.setTimeout(() => {
+        setGameOverReason('INTRUSION DETECTED - TRACED');
+        setShowGameOver(true);
+      }, 100);
+    }
+
+    playSound('error');
+    triggerFlicker();
+
+    setTimeout(() => {
+      setGameState(prev => ({
+        ...prev,
+        firewallEyes: prev.firewallEyes.filter(e => !eyeIds.includes(e.id)),
+      }));
+    }, 500);
+  }, [playSound, setGameState, setShowTuringTest, setShowGameOver, setGameOverReason, triggerFlicker]);
+
   const handleFirewallEyeDetonate = useCallback(
     (eyeId: string) => {
-      let shouldTriggerTuringTest = false;
-      let shouldShowGameOver = false;
-
-      setGameState(prev => {
-        const updatedEyes = prev.firewallEyes.map(e =>
-          e.id === eyeId ? { ...e, isDetonating: true } : e
-        );
-
-        const newDetection = Math.min(100, prev.detectionLevel + DETECTION_INCREASE_ON_DETONATE);
-
-        // Check if we should trigger the Turing test:
-        // - Detection just crossed the TURING_TRIGGER threshold (50%)
-        // - Player has discovered at least 1 truth
-        // - Turing test hasn't been triggered or completed yet
-        // - Tutorial is complete
-        const crossedTuringThreshold =
-          prev.detectionLevel < DETECTION_THRESHOLDS.TURING_TRIGGER &&
-          newDetection >= DETECTION_THRESHOLDS.TURING_TRIGGER;
-
-        const willTriggerTuringTest =
-          crossedTuringThreshold &&
-          prev.tutorialComplete &&
-          prev.truthsDiscovered.size >= 1 &&
-          !prev.turingEvaluationActive &&
-          !prev.turingEvaluationCompleted &&
-          !prev.singularEventsTriggered?.has('turing_evaluation');
-        shouldTriggerTuringTest = willTriggerTuringTest;
-
-        const detonateWarning = createEntry(
-          'error',
-          `[FIREWALL] Surveillance node reported. Detection increased to ${newDetection}%`
-        );
-
-        // Modify UFO74 message based on whether Turing test will trigger
-        let ufo74Panic;
-        if (willTriggerTuringTest) {
-          ufo74Panic = createEntry('ufo74', 'UFO74: NO! Detection hit 50% — they\'re initiating Turing eval!');
-        } else if (newDetection >= 80) {
-          ufo74Panic = createEntry('ufo74', "UFO74: THEY KNOW! They're tracing us RIGHT NOW!");
-        } else if (newDetection >= 60) {
-          ufo74Panic = createEntry('ufo74', 'UFO74: That one got through! Be faster, kid!');
-        } else {
-          ufo74Panic = createEntry('ufo74', 'UFO74: Damn! You missed one. Stay focused!');
-        }
-
-        // Check for game over: detection reached 100% from eye detonation
-        const isGameOver =
-          prev.tutorialComplete &&
-          newDetection >= 100 &&
-          !prev.isGameOver &&
-          !prev.evidencesSaved;
-        shouldShowGameOver = isGameOver;
-
-        // Mark Turing evaluation as triggered if applicable
-        const newSingularEvents = willTriggerTuringTest
-          ? new Set([...(prev.singularEventsTriggered || []), 'turing_evaluation'])
-          : prev.singularEventsTriggered;
-
-        return {
-          ...prev,
-          firewallEyes: updatedEyes,
-          detectionLevel: newDetection,
-          avatarExpression: 'scared',
-          history: isGameOver
-            ? [
-                ...prev.history,
-                detonateWarning,
-                createEntry('error', ''),
-                createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-                createEntry('error', ''),
-                createEntry('error', '  INTRUSION DETECTED'),
-                createEntry('error', ''),
-                createEntry('error', '  Your connection has been traced.'),
-                createEntry('error', '  Security protocols have been dispatched.'),
-                createEntry('error', ''),
-                createEntry('error', '  >> SESSION TERMINATED <<'),
-                createEntry('error', ''),
-                createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-                createEntry('error', ''),
-              ]
-            : [...prev.history, detonateWarning, ufo74Panic],
-          isGameOver: isGameOver ? true : prev.isGameOver,
-          gameOverReason: isGameOver ? 'INTRUSION DETECTED - TRACED' : prev.gameOverReason,
-          turingEvaluationActive: willTriggerTuringTest ? true : prev.turingEvaluationActive,
-          singularEventsTriggered: newSingularEvents,
-        };
-      });
-
-      if (shouldTriggerTuringTest) {
-        window.setTimeout(() => {
-          setShowTuringTest(true);
-        }, 1500);
+      pendingDetonationsRef.current.push(eyeId);
+      // Debounce: flush after 100ms to batch simultaneous detonations
+      if (!detonationFlushTimerRef.current) {
+        detonationFlushTimerRef.current = setTimeout(flushDetonations, 100);
       }
-
-      if (shouldShowGameOver) {
-        window.setTimeout(() => {
-          setGameOverReason('INTRUSION DETECTED - TRACED');
-          setShowGameOver(true);
-        }, 100);
-      }
-
-      playSound('error');
-      triggerFlicker();
-
-      setTimeout(() => {
-        setGameState(prev => ({
-          ...prev,
-          firewallEyes: prev.firewallEyes.filter(e => e.id !== eyeId),
-        }));
-      }, 500);
     },
-    [playSound, setGameState, setShowTuringTest, setShowGameOver, setGameOverReason, triggerFlicker]
+    [flushDetonations]
   );
 
   return {
