@@ -332,6 +332,9 @@ export interface GameState {
   pendingCipherFile?: string; // File awaiting cipher solution
   cipherAttempts: number; // Wrong attempts on current cipher
 
+  // Tree command confirmation
+  pendingTreeConfirm?: boolean; // True when waiting for tree confirmation
+
   // Morse code puzzle state
   morseFileRead: boolean; // True after reading morse_intercept.sig
   morseMessageAttempts: number; // Wrong attempts on morse message (max 3)

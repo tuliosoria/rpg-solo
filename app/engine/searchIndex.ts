@@ -1,9 +1,16 @@
 // Search Index System for Terminal 1996
 // Provides keyword-based search across the filesystem with intentional imperfections
 
-import { FileNode, FileTag, GameState } from '../types';
+import { FileNode, FileTag, GameState, FileSystemNode } from '../types';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 import { createSeededRng } from './rng';
+
+// Blocked trigger words — searching these returns a warning instead of results
+const BLOCKED_SEARCH_TERMS = new Set([
+  'alien', 'aliens', 'space', 'spaceship', 'ship', 'autopsy',
+  'extraterrestrial', 'et', 'ufo', 'ufos', 'saucer', 'abduction',
+  'probe', 'invasion', 'martian', 'roswell', 'area51',
+]);
 
 // Synonym mapping - allows related terms to find tagged files
 // When user searches for a term, we also match files tagged with its synonyms
@@ -149,17 +156,41 @@ interface FileWithTags {
 }
 
 /**
- * Recursively collects all files with their tags from the filesystem
+ * Check if a search term is blocked
+ */
+export function isBlockedSearchTerm(keyword: string): boolean {
+  return BLOCKED_SEARCH_TERMS.has(keyword.toLowerCase());
+}
+
+/**
+ * Checks whether a node (or any ancestor) requires adminUnlocked
+ */
+function isAdminLocked(node: FileSystemNode, ancestors: FileSystemNode[]): boolean {
+  if (node.requiredFlags?.includes('adminUnlocked')) return true;
+  return ancestors.some(a => a.requiredFlags?.includes('adminUnlocked'));
+}
+
+/**
+ * Recursively collects all files with their tags from the filesystem.
+ * When adminUnlocked is false, files behind adminUnlocked gates are excluded.
  */
 function collectAllFilesWithTags(
   node: typeof FILESYSTEM_ROOT,
-  currentPath: string = ''
+  currentPath: string = '',
+  adminUnlocked: boolean = true,
+  ancestors: FileSystemNode[] = []
 ): FileWithTags[] {
   const files: FileWithTags[] = [];
   
   if (node.type === 'dir') {
     for (const [name, child] of Object.entries(node.children)) {
       const childPath = currentPath ? `${currentPath}/${name}` : `/${name}`;
+
+      // Skip admin-locked nodes when override hasn't been used
+      if (!adminUnlocked && isAdminLocked(child, ancestors)) {
+        continue;
+      }
+
       if (child.type === 'file') {
         const fileNode = child as FileNode;
         files.push({
@@ -168,7 +199,7 @@ function collectAllFilesWithTags(
           tags: fileNode.tags || [],
         });
       } else {
-        files.push(...collectAllFilesWithTags(child, childPath));
+        files.push(...collectAllFilesWithTags(child, childPath, adminUnlocked, [...ancestors, node]));
       }
     }
   }
@@ -232,7 +263,8 @@ export function performSearch(
     return [];
   }
   
-  const allFiles = collectAllFilesWithTags(FILESYSTEM_ROOT);
+  const adminUnlocked = !!state.flags?.adminUnlocked;
+  const allFiles = collectAllFilesWithTags(FILESYSTEM_ROOT, '', adminUnlocked);
   const results: SearchResult[] = [];
   const seenFilenames = new Set<string>();
   

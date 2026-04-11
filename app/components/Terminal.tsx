@@ -984,7 +984,7 @@ export default function Terminal({
 
     const isReadListingLine =
       entry.type === 'output' &&
-      (/\s\[READ\]$/.test(entryContent) || /\s\[READ\]\s+\[~\d+min\]$/.test(entryContent));
+      /\s\[READ\]/.test(entryContent);
 
     if (isReadListingLine) {
       className = `${className} ${styles.readLine}`;

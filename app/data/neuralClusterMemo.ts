@@ -17,7 +17,7 @@ const neuralClusterMemo: FileNode = {
     'A neural lattice was mapped from the dissected cranium',
     'of specimen P-45 and replicated in silicon. Three cranial',
     'ridges corresponded to dense synaptic structures with no',
-    'mammalian analogue. Dr. Badan Palhares noted the tissue',
+    'mammalian analogue. The attending pathologist noted the tissue',
     'continued generating theta pulses 14 hours post-mortem.',
     '',
     'The emulated cluster stores and emits memory fragments',

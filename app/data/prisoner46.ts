@@ -170,7 +170,7 @@ export const prisoner46_containment_specs: FileNode = {
     '  Subject has demonstrated ability to influence',
     '  electronic systems at close range.',
     '',
-    '  CONTACT WARNING: Sgt. Marco Eli Chereze (MP)',
+    '  CONTACT WARNING: A military police sergeant',
     '  made unprotected physical contact 20-JAN-1996.',
     '  Died of systemic immune collapse 15-FEB-1996.',
     '  Cause officially listed as pneumonia.',

@@ -27,6 +27,7 @@ export default function ImageOverlay({
   const [flickering, setFlickering] = useState(true);
   const [initialShock, setInitialShock] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('landscape');
   const flickerResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasClosedRef = useRef(false);
 
@@ -35,6 +36,15 @@ export default function ImageOverlay({
     hasClosedRef.current = true;
     onCloseAction();
   }, [onCloseAction]);
+
+  // Detect image orientation for adaptive sizing
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      setOrientation(img.naturalWidth >= img.naturalHeight ? 'landscape' : 'portrait');
+    };
+    img.src = src;
+  }, [src]);
 
   useEffect(() => {
     // SUDDEN appearance - immediate flash then image
@@ -108,7 +118,7 @@ export default function ImageOverlay({
         className={`${styles.glow} ${tone === 'clinical' ? styles.greenGlow : styles.amberGlow}`}
       />
 
-      <div className={styles.container}>
+      <div className={`${styles.container} ${orientation === 'portrait' ? styles.portraitContainer : styles.landscapeContainer}`}>
         {/* Header - minimal, no decoration */}
         <div className={styles.header}>
           <span className={styles.headerText}>

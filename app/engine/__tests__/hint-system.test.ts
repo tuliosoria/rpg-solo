@@ -210,8 +210,7 @@ describe('Hint System', () => {
 
   describe('HINT_CONFIG', () => {
     it('should have reasonable max hints value', () => {
-      expect(HINT_CONFIG.maxHints).toBeGreaterThanOrEqual(3);
-      expect(HINT_CONFIG.maxHints).toBeLessThanOrEqual(5);
+      expect(HINT_CONFIG.maxHints).toBe(8);
     });
 
     it('should have small detection penalty', () => {

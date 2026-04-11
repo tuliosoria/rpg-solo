@@ -103,13 +103,23 @@
 .container {
   position: relative;
   z-index: 215;
-  max-width: 700px;
-  width: 90%;
   text-align: center;
-  height: 90vh;
-  max-height: 90vh;
   display: flex;
   flex-direction: column;
+}
+
+.landscapeContainer {
+  max-width: 80vw;
+  width: 80vw;
+  height: auto;
+  max-height: 85vh;
+}
+
+.portraitContainer {
+  max-width: 45vw;
+  width: 45vw;
+  height: auto;
+  max-height: 90vh;
 }
 
 /* Header */
@@ -267,8 +277,14 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .container {
+  .landscapeContainer {
     width: 95%;
+    max-width: 95vw;
+  }
+
+  .portraitContainer {
+    width: 75%;
+    max-width: 75vw;
   }
 
   .headerText {

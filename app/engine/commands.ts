@@ -74,6 +74,7 @@ import {
   performSearch,
   canSearch,
   getSearchCooldownMessage,
+  isBlockedSearchTerm,
 } from './searchIndex';
 
 // Import Elusive Man leak system
@@ -6268,6 +6269,18 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     const keyword = args.join(' ').trim().toLowerCase();
 
+    // Block obvious trigger words
+    if (isBlockedSearchTerm(keyword)) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('warning', 'SEARCH BLOCKED — Term flagged by content filter.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
     // Perform search
     const results = performSearch(keyword, state);
 
@@ -6371,6 +6384,45 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
   },
 
   tree: (args, state) => {
+    // Post-override: tree fails and triggers Firewall (game over)
+    if (state.flags?.adminUnlocked) {
+      return {
+        output: [
+          createEntry('error', ''),
+          createEntry('error', '═══════════════════════════════════════════════════════════'),
+          createEntry('error', 'FIREWALL TRIGGERED'),
+          createEntry('error', '═══════════════════════════════════════════════════════════'),
+          createEntry('error', ''),
+          createEntry('error', 'Full index scan detected on elevated session.'),
+          createEntry('error', 'Connection severed.'),
+          createEntry('error', ''),
+        ],
+        stateChanges: {
+          isGameOver: true,
+          gameOverReason: 'FIREWALL — TREE SCAN ON ELEVATED SESSION',
+        },
+        triggerFlicker: true,
+        delayMs: 2000,
+      };
+    }
+
+    // Confirmation gate: first tree call shows warning, second executes
+    if (!state.pendingTreeConfirm) {
+      return {
+        output: [
+          createEntry('warning', ''),
+          createEntry('warning', '[HackerKid]: Hey kid, are you sure you want to use tree?'),
+          createEntry('warning', '  It will expose all files but it will spike your risk significantly.'),
+          createEntry('warning', ''),
+          createEntry('system', 'Type tree again to confirm.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          pendingTreeConfirm: true,
+        },
+      };
+    }
+
     // Display directory tree structure
     const buildTree = (path: string, prefix: string, depth: number): string[] => {
       if (depth > 2) return []; // Limit depth to 2 levels
@@ -6386,13 +6438,11 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         const childPrefix = isLast ? '    ' : '│   ';
 
         if (entry.type === 'dir') {
-          // entry.name from listDirectory already has trailing / for dirs
-          const dirName = entry.name.replace(/\/$/, ''); // Remove trailing slash
+          const dirName = entry.name.replace(/\/$/, '');
           lines.push(`${prefix}${connector}${dirName}/`);
           const childPath = path === '/' ? `/${dirName}` : `${path}/${dirName}`;
           lines.push(...buildTree(childPath, prefix + childPrefix, depth + 1));
         } else {
-          // Show file with status indicator
           let marker = '';
           const fullPath = path === '/' ? `/${entry.name}` : `${path}/${entry.name}`;
           if (state.filesRead?.has(fullPath)) {
@@ -6404,6 +6454,13 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
       return lines;
     };
+
+    // +30% detection increase
+    const detectionIncrease = 30;
+    const newDetection = Math.min(
+      MAX_DETECTION,
+      state.detectionLevel + detectionIncrease
+    );
 
     const treeLines = [
       '',
@@ -6422,7 +6479,10 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
 
     return {
       output: createOutputEntries(treeLines),
-      stateChanges: {},
+      stateChanges: {
+        detectionLevel: newDetection,
+        pendingTreeConfirm: false,
+      },
     };
   },
 
@@ -8022,6 +8082,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
 
   const result = handler(args, state);
+
+  // Clear pending tree confirmation when any non-tree command is executed
+  if (command !== 'tree' && state.pendingTreeConfirm) {
+    result.stateChanges.pendingTreeConfirm = false;
+  }
 
   if (traceSpikeWarning) {
     result.output = [traceSpikeWarning, ...result.output];
