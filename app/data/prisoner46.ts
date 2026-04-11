@@ -15,7 +15,6 @@ export const prisoner46_manifest: FileNode = {
   type: 'file',
   name: 'prisoner46_manifest.enc',
   status: 'encrypted',
-  tags: ['classified', 'quarantine', 'high-security'],
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -74,7 +73,6 @@ export const prisoner46_neural_log: FileNode = {
   type: 'file',
   name: 'p46_neural_activity.log',
   status: 'intact',
-  tags: ['classified', 'psi-comm', 'quarantine'],
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -125,7 +123,6 @@ export const prisoner46_containment_specs: FileNode = {
   type: 'file',
   name: 'p46_containment_specs.dat',
   status: 'intact',
-  tags: ['classified', 'technical', 'quarantine'],
   accessThreshold: 3,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -184,7 +181,6 @@ export const prisoner46_interview_transcript: FileNode = {
   type: 'file',
   name: 'p46_interview_001.txt',
   status: 'corrupted',
-  tags: ['classified', 'interview', 'psi-comm'],
   accessThreshold: 5,
   content: [
     '═══════════════════════════════════════════════════════════',

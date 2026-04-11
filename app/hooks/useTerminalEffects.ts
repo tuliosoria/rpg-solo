@@ -897,8 +897,9 @@ export function useTerminalEffects({
   }, [gameState.detectionLevel, setTerminalStaticLevel]);
 
   // Alien silhouette in static (appears every 30 seconds while high-risk static is active)
+  const isHighRiskStatic = gameState.detectionLevel >= 70;
   useEffect(() => {
-    const staticActive = gameState.detectionLevel >= 70;
+    const staticActive = isHighRiskStatic;
     const previewRemaining = Math.max(0, (gameState.alienPreviewUntil ?? 0) - Date.now());
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
     if (!staticActive && previewRemaining <= 0) {
@@ -961,7 +962,7 @@ export function useTerminalEffects({
   }, [
     gamePhase,
     gameState.isGameOver,
-    gameState.detectionLevel >= 70,
+    isHighRiskStatic,
     gameState.alienPreviewUntil,
     pauseTimedMechanics,
     playSound,

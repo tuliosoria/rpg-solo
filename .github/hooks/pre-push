@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# pre-push hook — remind the developer to bump DEPLOY_VERSION
+#
+# Install:
+#   cp .github/hooks/pre-push .git/hooks/pre-push
+#   chmod +x .git/hooks/pre-push
+#
+# This hook checks whether DEPLOY_VERSION in Terminal.tsx was
+# incremented compared to the remote branch. If not, it prints
+# a warning but does NOT block the push.
+
+TERMINAL_FILE="app/components/Terminal.tsx"
+
+# Extract DEPLOY_VERSION from a git ref ($1 = ref, empty = working tree)
+get_version() {
+  if [ -z "$1" ]; then
+    grep -oP "const DEPLOY_VERSION = 'v\K[0-9]+" "$TERMINAL_FILE" 2>/dev/null
+  else
+    git show "$1:$TERMINAL_FILE" 2>/dev/null | grep -oP "const DEPLOY_VERSION = 'v\K[0-9]+"
+  fi
+}
+
+# Determine the remote ref we're pushing to
+remote="$1"
+while read local_ref local_oid remote_ref remote_oid; do
+  # Only check the first ref being pushed
+  REMOTE_REF="$remote_ref"
+  break
+done
+
+LOCAL_VER=$(get_version "")
+REMOTE_VER=$(get_version "$REMOTE_REF" 2>/dev/null)
+
+if [ -z "$LOCAL_VER" ]; then
+  echo "⚠️  pre-push: Could not read DEPLOY_VERSION from $TERMINAL_FILE"
+  exit 0
+fi
+
+if [ -n "$REMOTE_VER" ] && [ "$LOCAL_VER" -le "$REMOTE_VER" ]; then
+  echo ""
+  echo "╔══════════════════════════════════════════════════════════╗"
+  echo "║  ⚠️  DEPLOY_VERSION was NOT incremented!                ║"
+  echo "║                                                          ║"
+  echo "║  Current: v$(printf '%03d' "$LOCAL_VER")    Remote: v$(printf '%03d' "$REMOTE_VER")                       ║"
+  echo "║                                                          ║"
+  echo "║  Run the version-bump skill or manually update           ║"
+  echo "║  DEPLOY_VERSION in app/components/Terminal.tsx            ║"
+  echo "╚══════════════════════════════════════════════════════════╝"
+  echo ""
+fi
+
+# Always allow the push (warning only)
+exit 0

@@ -61,7 +61,7 @@ export const witness_statement_original: FileNode = {
     'REASON: "Witness reliability compromised by stress"',
     '───────────────────────────────────────────────────────────',
   ],
-  tags: ['witness', 'cover-up', 'creature'],
+
 };
 
 export const directive_alpha_draft: FileNode = {
@@ -111,7 +111,7 @@ export const directive_alpha_draft: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-  tags: ['classified', 'cover-up', 'creature', '2026'],
+
 };
 
 export const deleted_comms_log: FileNode = {
@@ -172,7 +172,7 @@ export const deleted_comms_log: FileNode = {
     'AUTHORIZATION: [SIGNATURE EXPUNGED]',
     '───────────────────────────────────────────────────────────',
   ],
-  tags: ['communication', 'cover-up', 'creature', 'telepathic'],
+
 };
 
 export const personnel_file_costa: FileNode = {
@@ -230,7 +230,7 @@ export const personnel_file_costa: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-  tags: ['administrative', 'cover-up', 'telepathic', 'psi', '2026'],
+
 };
 
 export const project_seed_memo: FileNode = {
@@ -296,7 +296,7 @@ export const project_seed_memo: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-  tags: ['classified', 'cover-up', 'creature', 'telepathic', '2026', 'international'],
+
 };
 
 export const autopsy_notes_unredacted: FileNode = {
@@ -367,7 +367,7 @@ export const autopsy_notes_unredacted: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-  tags: ['autopsy', 'creature', 'medical', 'classified'],
+
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -436,7 +436,7 @@ export const transfer_manifest_deleted: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-  tags: ['classified', 'debris', 'transport', 'campinas'],
+
 };
 
 export const bio_containment_log_deleted: FileNode = {
@@ -492,7 +492,7 @@ export const bio_containment_log_deleted: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-  tags: ['classified', 'creature', 'containment', 'medical'],
+
 };
 
 export const psi_analysis_classified: FileNode = {
@@ -560,7 +560,7 @@ export const psi_analysis_classified: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-  tags: ['classified', 'telepathic', 'psi', 'scout', 'creature'],
+
 };
 
 export const foreign_liaison_cable_deleted: FileNode = {
@@ -624,7 +624,7 @@ export const foreign_liaison_cable_deleted: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-  tags: ['classified', 'international', 'diplomatic', 'cia', 'cover-up'],
+
 };
 
 export const convergence_model_draft: FileNode = {
@@ -690,7 +690,7 @@ export const convergence_model_draft: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-  tags: ['classified', '2026', 'convergence', 'transition', 'telepathic'],
+
 };
 
 // Map of archive files by their full paths

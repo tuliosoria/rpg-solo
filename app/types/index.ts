@@ -73,52 +73,7 @@ export interface SecurityQuestion {
   hint: string; // Where to find the answer
 }
 
-// Tags for the search index system
-export type FileTag =
-  | 'creature'
-  | 'foreign'
-  | 'biological'
-  | 'signal'
-  | 'debris'
-  | 'medical'
-  | 'containment'
-  | 'telepathic'
-  | 'transport'
-  | 'cover-up'
-  | 'witness'
-  | 'journalist'
-  | 'military'
-  | 'government'
-  | 'autopsy'
-  | 'spacecraft'
-  | 'crash'
-  | 'communication'
-  | 'encryption'
-  | 'administrative'
-  | 'routine'
-  | 'classified'
-  | 'timeline'
-  | '2026'
-  | 'psi'
-  | 'neural'
-  | 'experiment'
-  | 'international'
-  | 'security'
-  | 'surveillance'
-  | 'hospital'
-  | 'specimen'
-  | 'campinas'
-  | 'convergence'
-  | 'transition'
-  | 'diplomatic'
-  | 'cia'
-  | 'scout'
-  | 'conspiracy'
-  | 'quarantine'
-  | 'high-security'
-  | 'psi-comm'
-  | 'technical'
-  | 'interview';
+
 
 export interface FileNode {
   type: 'file';
@@ -132,7 +87,6 @@ export interface FileNode {
   imageTrigger?: ImageTrigger; // Image to display when file is accessed
   securityQuestion?: SecurityQuestion; // Required to decrypt
   timedDecrypt?: { sequence: string; timeLimit: number }; // Timed decryption challenge
-  tags?: FileTag[]; // Search index tags for the search command
 }
 
 export interface DirectoryNode {
@@ -380,9 +334,6 @@ export interface GameState {
   // Save tracking
   lastSaveTime: number;
 
-  // Search command state
-  lastSearchTime: number; // Timestamp of last search command (for cooldown)
-
   // Firewall Eyes system
   firewallActive: boolean; // True when detection >= 25%
   firewallEyes: FirewallEye[]; // Active hostile eyes on screen
@@ -596,8 +547,6 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   avatarExpression: 'neutral',
   // Save tracking
   lastSaveTime: 0,
-  // Search command state
-  lastSearchTime: 0,
   // Firewall Eyes system
   firewallActive: false,
   firewallEyes: [],

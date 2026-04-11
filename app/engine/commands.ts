@@ -63,14 +63,6 @@ import {
   processTutorialInput,
 } from './commands/interactiveTutorial';
 
-// Import search index system
-import {
-  performSearch,
-  canSearch,
-  getSearchCooldownMessage,
-  isBlockedSearchTerm,
-} from './searchIndex';
-
 // Import Elusive Man leak system
 import {
   isInLeakSequence,
@@ -3420,21 +3412,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'WARNING: This action triggers the endgame sequence.',
   ],
-  search: [
-    'COMMAND: search <keyword>',
-    '',
-    'Query the system index for files related to a topic.',
-    '',
-    'USAGE:',
-    '  search anomaly     - List files mentioning anomalies',
-    '  search creature    - List creature-related files',
-    '  search telepathy   - List telepathy/psi files',
-    '',
-    'Returns file NAMES only. You must locate files manually.',
-    '',
-    'NOTE: Index is unreliable. Some files may be missed.',
-    'NOTE: Each search is logged. Use sparingly.',
-  ],
   hint: [
     'COMMAND: hint',
     '',
@@ -3541,7 +3518,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '  open <file>       Open and display file contents',
         '  last              Re-display last opened file',
         '  unread            List unread files',
-        '  search <keyword>  Query index for related files',
         '  note <text>       Save a personal note',
         '  notes             View all saved notes',
         '  bookmark [file]   Bookmark a file (or view bookmarks)',
@@ -6027,98 +6003,6 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     return generateHintOutput(state);
   },
 
-  search: (args, state) => {
-    // Check if keyword provided
-    if (args.length === 0) {
-      return {
-        output: [
-          createEntry('error', 'SYNTAX: search <keyword>'),
-          createEntry('system', 'Example: search anomaly'),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    // Check cooldown
-    if (!canSearch(state)) {
-      return {
-        output: [
-          createEntry('warning', getSearchCooldownMessage()),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    // Checkpoint on first search command (player learning the system)
-    if (!state.lastSearchTime) {
-      saveCheckpoint(state, 'First search command');
-    }
-
-    const keyword = args.join(' ').trim().toLowerCase();
-
-    // Block obvious trigger words
-    if (isBlockedSearchTerm(keyword)) {
-      return {
-        output: [
-          createEntry('system', ''),
-          createEntry('warning', 'SEARCH BLOCKED — Term flagged by content filter.'),
-          createEntry('system', ''),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    // Perform search
-    const results = performSearch(keyword, state);
-
-    // Calculate detection increase (+2 base)
-    const detectionIncrease = 2;
-    const newDetection = Math.min(
-      MAX_DETECTION,
-      state.detectionLevel + detectionIncrease
-    );
-
-    const stateChanges: Partial<GameState> = {
-      lastSearchTime: Date.now(),
-      detectionLevel: newDetection,
-    };
-
-    // Build output
-    const output: TerminalEntry[] = [
-      createEntry('system', ''),
-      createEntry('system', `SEARCH RESULTS — "${keyword}"`),
-      createEntry('system', '─────────────────────────────────────────'),
-    ];
-
-    if (results.length === 0) {
-      output.push(createEntry('output', ''));
-      output.push(createEntry('output', '  No matching entries found.'));
-      output.push(createEntry('output', ''));
-      output.push(createEntry('system', '  [Index may be incomplete]'));
-    } else {
-      output.push(createEntry('output', ''));
-      for (const result of results) {
-        if (result.isCorrupted) {
-          output.push(createEntry('warning', `  • ${result.filename}`));
-        } else {
-          output.push(createEntry('output', `  • ${result.filename}`));
-        }
-      }
-      output.push(createEntry('output', ''));
-      output.push(createEntry('system', `  ${results.length} result(s) found`));
-    }
-
-    output.push(createEntry('system', '─────────────────────────────────────────'));
-    output.push(createEntry('system', ''));
-    // Detection feedback - subtle but present
-    output.push(createEntry('notice', 'NOTICE: Index access registered.'));
-    output.push(createEntry('system', ''));
-
-    return {
-      output,
-      stateChanges,
-    };
-  },
 
   tutorial: (args, _state) => {
     // Handle tutorial on/off toggle

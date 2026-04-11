@@ -23,6 +23,9 @@ describe('useGameActions', () => {
   it('does not award evidence when firewall eyes detonate', () => {
     let state: GameState = {
       ...DEFAULT_GAME_STATE,
+      seed: 1,
+      rngState: 1,
+      sessionStartTime: Date.now(),
       tutorialComplete: true,
       detectionLevel: 30,
       evidenceCount: 0,

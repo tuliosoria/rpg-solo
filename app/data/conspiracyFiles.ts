@@ -28,7 +28,6 @@ export const economic_transition_memo: FileNode = {
   type: 'file',
   name: 'economic_transition_memo.txt',
   status: 'intact',
-  tags: ['conspiracy', 'government', 'classified'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'INTERNAL MEMORANDUM — ECONOMIC RESEARCH DIVISION',
@@ -85,7 +84,6 @@ export const apollo_media_guidelines: FileNode = {
   type: 'file',
   name: 'apollo_media_guidelines.pdf',
   status: 'intact',
-  tags: ['conspiracy', 'government', 'military'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'PUBLIC AFFAIRS GUIDANCE — LUNAR PROGRAM DOCUMENTATION',
@@ -141,7 +139,6 @@ export const weather_pattern_intervention: FileNode = {
   type: 'file',
   name: 'weather_pattern_intervention.log',
   status: 'intact',
-  tags: ['conspiracy', 'military', 'experiment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'PROJECT CIRRUS — OPERATIONAL LOG',
@@ -190,7 +187,6 @@ export const behavioral_compliance_study: FileNode = {
   type: 'file',
   name: 'behavioral_compliance_study.dat',
   status: 'intact',
-  tags: ['conspiracy', 'experiment', 'surveillance'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'CONSUMER BEHAVIOR RESEARCH — ACOUSTIC INFLUENCE STUDY',
@@ -246,7 +242,6 @@ export const infrastructure_blackout_simulation: FileNode = {
   type: 'file',
   name: 'infrastructure_blackout_simulation.txt',
   status: 'intact',
-  tags: ['conspiracy', 'government', 'security'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'EXERCISE DARK WINTER — SIMULATION RESULTS',
@@ -307,7 +302,6 @@ export const avian_tracking_program: FileNode = {
   type: 'file',
   name: 'avian_tracking_program.csv',
   status: 'intact',
-  tags: ['conspiracy', 'surveillance', 'experiment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'CONTINENTAL AVIAN SURVEILLANCE NETWORK',
@@ -355,7 +349,6 @@ export const consumer_device_listening: FileNode = {
   type: 'file',
   name: 'consumer_device_listening.memo',
   status: 'intact',
-  tags: ['conspiracy', 'surveillance', 'experiment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'TECHNICAL ASSESSMENT — PASSIVE AUDIO COLLECTION',
@@ -414,7 +407,6 @@ export const archival_photo_replacement: FileNode = {
   type: 'file',
   name: 'archival_photo_replacement.notice',
   status: 'intact',
-  tags: ['conspiracy', 'government', 'cover-up'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'NATIONAL ARCHIVES — DOCUMENT MANAGEMENT DIRECTIVE',
@@ -471,7 +463,6 @@ export const education_curriculum_revision: FileNode = {
   type: 'file',
   name: 'education_curriculum_revision.doc',
   status: 'intact',
-  tags: ['conspiracy', 'government', 'administrative'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'CURRICULUM ADVISORY COMMITTEE — WORKING NOTES',
@@ -532,7 +523,6 @@ export const satellite_light_reflection: FileNode = {
   type: 'file',
   name: 'satellite_light_reflection_trials.txt',
   status: 'intact',
-  tags: ['conspiracy', 'military', 'experiment'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'PROJECT NIGHTLIGHT — FEASIBILITY ASSESSMENT',
