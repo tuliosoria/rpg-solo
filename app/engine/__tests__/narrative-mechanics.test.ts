@@ -1299,7 +1299,7 @@ describe('Narrative Mechanics', () => {
 
       // Should have imageTrigger with et-brain.png
       expect(result.imageTrigger).toBeDefined();
-      expect(result.imageTrigger?.src).toBe('/images/et-brain.png');
+      expect(result.imageTrigger?.src).toBe('/images/et-brain.webp');
     });
 
     it('does not show image on subsequent link queries', () => {
@@ -1330,7 +1330,7 @@ describe('Narrative Mechanics', () => {
       const result = executeCommand('open foreign_drone_assessment.txt', state);
 
       expect(result.imageTrigger).toBeDefined();
-      expect(result.imageTrigger?.src).toBe('/images/drone.png');
+      expect(result.imageTrigger?.src).toBe('/images/drone.webp');
     });
 
     it('foreign_drone_assessment.txt logs evidence and scares the avatar on first read', () => {
@@ -1384,7 +1384,7 @@ describe('Narrative Mechanics', () => {
       const result = executeCommand('open field_report_delta.txt', state);
 
       expect(result.imageTrigger).toBeDefined();
-      expect(result.imageTrigger?.src).toBe('/images/prato-delta.png');
+      expect(result.imageTrigger?.src).toBe('/images/prato-delta.webp');
     });
   });
 
@@ -1428,7 +1428,7 @@ describe('Narrative Mechanics', () => {
       expect(result.stateChanges.detectionLevel).toBe(35); // 20 + 15
       expect(result.triggerFlicker).toBe(true);
       expect(result.imageTrigger).toBeDefined();
-      expect(result.imageTrigger?.src).toBe('/images/et-standing.png');
+      expect(result.imageTrigger?.src).toBe('/images/et-standing.webp');
     });
 
     it('accepts various P46 target formats', () => {

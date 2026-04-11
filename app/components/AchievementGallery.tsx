@@ -1,8 +1,9 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, useRef } from 'react';
 import { ACHIEVEMENTS, getUnlockedAchievements } from '../engine/achievements';
 import { useI18n } from '../i18n';
+import { useFocusTrap } from '../hooks';
 import styles from './AchievementGallery.module.css';
 
 interface AchievementGalleryProps {
@@ -12,6 +13,8 @@ interface AchievementGalleryProps {
 export default memo(function AchievementGallery({ onCloseAction }: AchievementGalleryProps) {
   const { t, translateRuntimeText } = useI18n();
   const unlockedIds = getUnlockedAchievements();
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef);
 
   const visibleAchievements = ACHIEVEMENTS.map(achievement => {
     const isUnlocked = unlockedIds.has(achievement.id);
@@ -33,7 +36,7 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
 
   return (
     <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="achievements-title">
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 id="achievements-title">{t('achievement.gallery.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>

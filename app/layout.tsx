@@ -1,16 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Varginha: Terminal 1996",
@@ -33,7 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="antialiased"
+        // suppressHydrationWarning is required because Next.js injects attributes
+        // (e.g. class, style) into <body> at runtime for font-loading and theming,
+        // which differ from the server-rendered HTML and would trigger a React
+        // hydration mismatch warning without this flag.
         suppressHydrationWarning={true}
       >
         {children}

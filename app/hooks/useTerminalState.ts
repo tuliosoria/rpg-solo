@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useReducer, useCallback } from 'react';
 import type { Achievement } from '../engine/achievements';
 import type {
   GamePhase,
@@ -11,57 +11,425 @@ import type {
 
 type EncryptedChannelState = 'idle' | 'awaiting_open' | 'open' | 'awaiting_close';
 
+// ═══════════════════════════════════════════════════════════════════════════
+// UI STATE (overlays, modals, visibility toggles)
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface UIState {
+  showGameOver: boolean;
+  gameOverReason: string;
+  showHeaderMenu: boolean;
+  showSettings: boolean;
+  showAchievements: boolean;
+  showStatistics: boolean;
+  showPauseMenu: boolean;
+  showEvidenceTracker: boolean;
+  showRiskTracker: boolean;
+  showAttBar: boolean;
+  showAvatar: boolean;
+  avatarCreepyEntrance: boolean;
+  showFirewallScare: boolean;
+  showTuringTest: boolean;
+  riskPulse: boolean;
+  typingSpeedWarning: boolean;
+  alienSilhouetteVisible: boolean;
+}
+
+type UIAction =
+  | { type: 'SET_SHOW_GAME_OVER'; payload: boolean }
+  | { type: 'SET_GAME_OVER_REASON'; payload: string }
+  | { type: 'SET_SHOW_HEADER_MENU'; payload: boolean }
+  | { type: 'SET_SHOW_SETTINGS'; payload: boolean }
+  | { type: 'SET_SHOW_ACHIEVEMENTS'; payload: boolean }
+  | { type: 'SET_SHOW_STATISTICS'; payload: boolean }
+  | { type: 'SET_SHOW_PAUSE_MENU'; payload: boolean }
+  | { type: 'SET_SHOW_EVIDENCE_TRACKER'; payload: boolean }
+  | { type: 'SET_SHOW_RISK_TRACKER'; payload: boolean }
+  | { type: 'SET_SHOW_ATT_BAR'; payload: boolean }
+  | { type: 'SET_SHOW_AVATAR'; payload: boolean }
+  | { type: 'SET_AVATAR_CREEPY_ENTRANCE'; payload: boolean }
+  | { type: 'SET_SHOW_FIREWALL_SCARE'; payload: boolean }
+  | { type: 'SET_SHOW_TURING_TEST'; payload: boolean }
+  | { type: 'SET_RISK_PULSE'; payload: boolean }
+  | { type: 'SET_TYPING_SPEED_WARNING'; payload: boolean }
+  | { type: 'SET_ALIEN_SILHOUETTE_VISIBLE'; payload: boolean };
+
+function uiReducer(state: UIState, action: UIAction): UIState {
+  switch (action.type) {
+    case 'SET_SHOW_GAME_OVER': return { ...state, showGameOver: action.payload };
+    case 'SET_GAME_OVER_REASON': return { ...state, gameOverReason: action.payload };
+    case 'SET_SHOW_HEADER_MENU': return { ...state, showHeaderMenu: action.payload };
+    case 'SET_SHOW_SETTINGS': return { ...state, showSettings: action.payload };
+    case 'SET_SHOW_ACHIEVEMENTS': return { ...state, showAchievements: action.payload };
+    case 'SET_SHOW_STATISTICS': return { ...state, showStatistics: action.payload };
+    case 'SET_SHOW_PAUSE_MENU': return { ...state, showPauseMenu: action.payload };
+    case 'SET_SHOW_EVIDENCE_TRACKER': return { ...state, showEvidenceTracker: action.payload };
+    case 'SET_SHOW_RISK_TRACKER': return { ...state, showRiskTracker: action.payload };
+    case 'SET_SHOW_ATT_BAR': return { ...state, showAttBar: action.payload };
+    case 'SET_SHOW_AVATAR': return { ...state, showAvatar: action.payload };
+    case 'SET_AVATAR_CREEPY_ENTRANCE': return { ...state, avatarCreepyEntrance: action.payload };
+    case 'SET_SHOW_FIREWALL_SCARE': return { ...state, showFirewallScare: action.payload };
+    case 'SET_SHOW_TURING_TEST': return { ...state, showTuringTest: action.payload };
+    case 'SET_RISK_PULSE': return { ...state, riskPulse: action.payload };
+    case 'SET_TYPING_SPEED_WARNING': return { ...state, typingSpeedWarning: action.payload };
+    case 'SET_ALIEN_SILHOUETTE_VISIBLE': return { ...state, alienSilhouetteVisible: action.payload };
+    default: return state;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// GAME PHASE STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface GamePhaseState {
+  gamePhase: GamePhase;
+  encryptedChannelState: EncryptedChannelState;
+  isProcessing: boolean;
+  isStreaming: boolean;
+  isWarmingUp: boolean;
+  isShaking: boolean;
+  flickerActive: boolean;
+  countdownDisplay: string | null;
+  timedDecryptRemaining: number;
+  terminalStaticLevel: number;
+  burnInLines: string[];
+  interferenceBurst: { top: number } | null;
+  paranoiaMessage: string | null;
+  paranoiaPosition: { top: number; left: number };
+}
+
+type GamePhaseAction =
+  | { type: 'SET_GAME_PHASE'; payload: GamePhase }
+  | { type: 'SET_ENCRYPTED_CHANNEL_STATE'; payload: EncryptedChannelState }
+  | { type: 'SET_IS_PROCESSING'; payload: boolean }
+  | { type: 'SET_IS_STREAMING'; payload: boolean }
+  | { type: 'SET_IS_WARMING_UP'; payload: boolean }
+  | { type: 'SET_IS_SHAKING'; payload: boolean }
+  | { type: 'SET_FLICKER_ACTIVE'; payload: boolean }
+  | { type: 'SET_COUNTDOWN_DISPLAY'; payload: string | null }
+  | { type: 'SET_TIMED_DECRYPT_REMAINING'; payload: number }
+  | { type: 'SET_TERMINAL_STATIC_LEVEL'; payload: number }
+  | { type: 'SET_BURN_IN_LINES'; payload: string[] }
+  | { type: 'SET_INTERFERENCE_BURST'; payload: { top: number } | null }
+  | { type: 'SET_PARANOIA_MESSAGE'; payload: string | null }
+  | { type: 'SET_PARANOIA_POSITION'; payload: { top: number; left: number } };
+
+function gamePhaseReducer(state: GamePhaseState, action: GamePhaseAction): GamePhaseState {
+  switch (action.type) {
+    case 'SET_GAME_PHASE': return { ...state, gamePhase: action.payload };
+    case 'SET_ENCRYPTED_CHANNEL_STATE': return { ...state, encryptedChannelState: action.payload };
+    case 'SET_IS_PROCESSING': return { ...state, isProcessing: action.payload };
+    case 'SET_IS_STREAMING': return { ...state, isStreaming: action.payload };
+    case 'SET_IS_WARMING_UP': return { ...state, isWarmingUp: action.payload };
+    case 'SET_IS_SHAKING': return { ...state, isShaking: action.payload };
+    case 'SET_FLICKER_ACTIVE': return { ...state, flickerActive: action.payload };
+    case 'SET_COUNTDOWN_DISPLAY': return { ...state, countdownDisplay: action.payload };
+    case 'SET_TIMED_DECRYPT_REMAINING': return { ...state, timedDecryptRemaining: action.payload };
+    case 'SET_TERMINAL_STATIC_LEVEL': return { ...state, terminalStaticLevel: action.payload };
+    case 'SET_BURN_IN_LINES': return { ...state, burnInLines: action.payload };
+    case 'SET_INTERFERENCE_BURST': return { ...state, interferenceBurst: action.payload };
+    case 'SET_PARANOIA_MESSAGE': return { ...state, paranoiaMessage: action.payload };
+    case 'SET_PARANOIA_POSITION': return { ...state, paranoiaPosition: action.payload };
+    default: return state;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TRACKER / DISPLAY STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface TrackerState {
+  inputValue: string;
+  historyIndex: number;
+  activeImage: ImageTrigger | null;
+  pendingImage: ImageTrigger | null;
+  pendingUfo74Messages: TerminalEntry[];
+  queuedAfterMediaMessages: TerminalEntry[];
+  pendingUfo74StartMessages: TerminalEntry[];
+  pendingAchievement: Achievement | null;
+  evidenceFoundIndicatorKey: number;
+}
+
+type TrackerAction =
+  | { type: 'SET_INPUT_VALUE'; payload: string }
+  | { type: 'SET_HISTORY_INDEX'; payload: number }
+  | { type: 'SET_ACTIVE_IMAGE'; payload: ImageTrigger | null }
+  | { type: 'SET_PENDING_IMAGE'; payload: ImageTrigger | null }
+  | { type: 'SET_PENDING_UFO74_MESSAGES'; payload: TerminalEntry[] }
+  | { type: 'SET_QUEUED_AFTER_MEDIA_MESSAGES'; payload: TerminalEntry[] }
+  | { type: 'SET_PENDING_UFO74_START_MESSAGES'; payload: TerminalEntry[] }
+  | { type: 'SET_PENDING_ACHIEVEMENT'; payload: Achievement | null }
+  | { type: 'SET_EVIDENCE_FOUND_INDICATOR_KEY'; payload: number };
+
+function trackerReducer(state: TrackerState, action: TrackerAction): TrackerState {
+  switch (action.type) {
+    case 'SET_INPUT_VALUE': return { ...state, inputValue: action.payload };
+    case 'SET_HISTORY_INDEX': return { ...state, historyIndex: action.payload };
+    case 'SET_ACTIVE_IMAGE': return { ...state, activeImage: action.payload };
+    case 'SET_PENDING_IMAGE': return { ...state, pendingImage: action.payload };
+    case 'SET_PENDING_UFO74_MESSAGES': return { ...state, pendingUfo74Messages: action.payload };
+    case 'SET_QUEUED_AFTER_MEDIA_MESSAGES': return { ...state, queuedAfterMediaMessages: action.payload };
+    case 'SET_PENDING_UFO74_START_MESSAGES': return { ...state, pendingUfo74StartMessages: action.payload };
+    case 'SET_PENDING_ACHIEVEMENT': return { ...state, pendingAchievement: action.payload };
+    case 'SET_EVIDENCE_FOUND_INDICATOR_KEY': return { ...state, evidenceFoundIndicatorKey: action.payload };
+    default: return state;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// HOOK
+// ═══════════════════════════════════════════════════════════════════════════
+
 export function useTerminalState(initialState: GameState, initialPhase: GamePhase) {
   const [gameState, setGameState] = useState<GameState>(initialState);
-  
+
   // Track if this is the first render to avoid running sync effect on mount
   const isFirstRender = useRef(true);
   // Track the seed to detect when a different game state is passed in (e.g., checkpoint load)
   const prevSeedRef = useRef(initialState.seed);
   const prevLastSaveTimeRef = useRef(initialState.lastSaveTime);
-  const [inputValue, setInputValue] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [flickerActive, setFlickerActive] = useState(false);
-  const [historyIndex, setHistoryIndex] = useState(-1);
-  const [activeImage, setActiveImage] = useState<ImageTrigger | null>(null);
-  const [pendingImage, setPendingImage] = useState<ImageTrigger | null>(null);
-  const [showGameOver, setShowGameOver] = useState(
-    initialState.isGameOver && initialPhase === 'terminal'
-  );
-  const [gameOverReason, setGameOverReason] = useState(initialState.gameOverReason || '');
-  const [showHeaderMenu, setShowHeaderMenu] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showAchievements, setShowAchievements] = useState(false);
-  const [showStatistics, setShowStatistics] = useState(false);
-  const [showPauseMenu, setShowPauseMenu] = useState(false);
-  const [pendingUfo74Messages, setPendingUfo74Messages] = useState<TerminalEntry[]>([]);
-  const [queuedAfterMediaMessages, setQueuedAfterMediaMessages] = useState<TerminalEntry[]>([]);
-  const [pendingUfo74StartMessages, setPendingUfo74StartMessages] = useState<TerminalEntry[]>([]);
-  const [encryptedChannelState, setEncryptedChannelState] =
-    useState<EncryptedChannelState>('idle');
-  const [gamePhase, setGamePhase] = useState<GamePhase>(initialPhase);
-  const [countdownDisplay, setCountdownDisplay] = useState<string | null>(null);
-  const [isShaking, setIsShaking] = useState(false);
-  const [isWarmingUp, setIsWarmingUp] = useState(initialState.history.length === 0);
-  const [paranoiaMessage, setParanoiaMessage] = useState<string | null>(null);
-  const [paranoiaPosition, setParanoiaPosition] = useState({ top: 0, left: 0 });
-  const [pendingAchievement, setPendingAchievement] = useState<Achievement | null>(null);
-  const [showEvidenceTracker, setShowEvidenceTracker] = useState(false);
-  const [showRiskTracker, setShowRiskTracker] = useState(false);
-  const [showAttBar, setShowAttBar] = useState(false);
-  const [showAvatar, setShowAvatar] = useState(false);
-  const [avatarCreepyEntrance, setAvatarCreepyEntrance] = useState(false);
-  const [showFirewallScare, setShowFirewallScare] = useState(false);
-  const [riskPulse, setRiskPulse] = useState(false);
-  const [typingSpeedWarning, setTypingSpeedWarning] = useState(false);
-  const [showTuringTest, setShowTuringTest] = useState(initialState.turingEvaluationActive);
-  const [timedDecryptRemaining, setTimedDecryptRemaining] = useState(0);
-  const [burnInLines, setBurnInLines] = useState<string[]>([]);
-  const [evidenceFoundIndicatorKey, setEvidenceFoundIndicatorKey] = useState(0);
-  const [interferenceBurst, setInterferenceBurst] = useState<{ top: number } | null>(null);
-  const [terminalStaticLevel, setTerminalStaticLevel] = useState(0); // 0-1 continuous noise intensity
-  const [alienSilhouetteVisible, setAlienSilhouetteVisible] = useState(false);
+
+  // ── UI State ──────────────────────────────────────────────────────────
+
+  const [uiState, uiDispatch] = useReducer(uiReducer, {
+    showGameOver: initialState.isGameOver && initialPhase === 'terminal',
+    gameOverReason: initialState.gameOverReason || '',
+    showHeaderMenu: false,
+    showSettings: false,
+    showAchievements: false,
+    showStatistics: false,
+    showPauseMenu: false,
+    showEvidenceTracker: false,
+    showRiskTracker: false,
+    showAttBar: false,
+    showAvatar: false,
+    avatarCreepyEntrance: false,
+    showFirewallScare: false,
+    showTuringTest: initialState.turingEvaluationActive,
+    riskPulse: false,
+    typingSpeedWarning: false,
+    alienSilhouetteVisible: false,
+  });
+
+  // Keep a ref to current state so setter callbacks remain stable (no deps on state values)
+  const uiStateRef = useRef(uiState);
+  uiStateRef.current = uiState;
+
+  // ── Game Phase State ──────────────────────────────────────────────────
+
+  const [phaseState, phaseDispatch] = useReducer(gamePhaseReducer, {
+    gamePhase: initialPhase,
+    encryptedChannelState: 'idle' as EncryptedChannelState,
+    isProcessing: false,
+    isStreaming: false,
+    isWarmingUp: initialState.history.length === 0,
+    isShaking: false,
+    flickerActive: false,
+    countdownDisplay: null,
+    timedDecryptRemaining: 0,
+    terminalStaticLevel: 0,
+    burnInLines: [],
+    interferenceBurst: null,
+    paranoiaMessage: null,
+    paranoiaPosition: { top: 0, left: 0 },
+  });
+
+  const phaseStateRef = useRef(phaseState);
+  phaseStateRef.current = phaseState;
+
+  // ── Tracker / Display State ───────────────────────────────────────────
+
+  const [trackerState, trackerDispatch] = useReducer(trackerReducer, {
+    inputValue: '',
+    historyIndex: -1,
+    activeImage: null,
+    pendingImage: null,
+    pendingUfo74Messages: [],
+    queuedAfterMediaMessages: [],
+    pendingUfo74StartMessages: [],
+    pendingAchievement: null,
+    evidenceFoundIndicatorKey: 0,
+  });
+
+  const trackerStateRef = useRef(trackerState);
+  trackerStateRef.current = trackerState;
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // UI STATE WRAPPER SETTERS
+  // Callbacks use uiStateRef so they stay referentially stable like useState setters.
+  // ═══════════════════════════════════════════════════════════════════════
+
+  const setShowGameOver = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_GAME_OVER', payload: typeof value === 'function' ? value(uiStateRef.current.showGameOver) : value });
+  }, []);
+
+  const setGameOverReason = useCallback((value: string | ((prev: string) => string)) => {
+    uiDispatch({ type: 'SET_GAME_OVER_REASON', payload: typeof value === 'function' ? value(uiStateRef.current.gameOverReason) : value });
+  }, []);
+
+  const setShowHeaderMenu = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_HEADER_MENU', payload: typeof value === 'function' ? value(uiStateRef.current.showHeaderMenu) : value });
+  }, []);
+
+  const setShowSettings = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_SETTINGS', payload: typeof value === 'function' ? value(uiStateRef.current.showSettings) : value });
+  }, []);
+
+  const setShowAchievements = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_ACHIEVEMENTS', payload: typeof value === 'function' ? value(uiStateRef.current.showAchievements) : value });
+  }, []);
+
+  const setShowStatistics = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_STATISTICS', payload: typeof value === 'function' ? value(uiStateRef.current.showStatistics) : value });
+  }, []);
+
+  const setShowPauseMenu = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_PAUSE_MENU', payload: typeof value === 'function' ? value(uiStateRef.current.showPauseMenu) : value });
+  }, []);
+
+  const setShowEvidenceTracker = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_EVIDENCE_TRACKER', payload: typeof value === 'function' ? value(uiStateRef.current.showEvidenceTracker) : value });
+  }, []);
+
+  const setShowRiskTracker = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_RISK_TRACKER', payload: typeof value === 'function' ? value(uiStateRef.current.showRiskTracker) : value });
+  }, []);
+
+  const setShowAttBar = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_ATT_BAR', payload: typeof value === 'function' ? value(uiStateRef.current.showAttBar) : value });
+  }, []);
+
+  const setShowAvatar = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_AVATAR', payload: typeof value === 'function' ? value(uiStateRef.current.showAvatar) : value });
+  }, []);
+
+  const setAvatarCreepyEntrance = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_AVATAR_CREEPY_ENTRANCE', payload: typeof value === 'function' ? value(uiStateRef.current.avatarCreepyEntrance) : value });
+  }, []);
+
+  const setShowFirewallScare = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_FIREWALL_SCARE', payload: typeof value === 'function' ? value(uiStateRef.current.showFirewallScare) : value });
+  }, []);
+
+  const setShowTuringTest = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_SHOW_TURING_TEST', payload: typeof value === 'function' ? value(uiStateRef.current.showTuringTest) : value });
+  }, []);
+
+  const setRiskPulse = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_RISK_PULSE', payload: typeof value === 'function' ? value(uiStateRef.current.riskPulse) : value });
+  }, []);
+
+  const setTypingSpeedWarning = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_TYPING_SPEED_WARNING', payload: typeof value === 'function' ? value(uiStateRef.current.typingSpeedWarning) : value });
+  }, []);
+
+  const setAlienSilhouetteVisible = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    uiDispatch({ type: 'SET_ALIEN_SILHOUETTE_VISIBLE', payload: typeof value === 'function' ? value(uiStateRef.current.alienSilhouetteVisible) : value });
+  }, []);
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // GAME PHASE STATE WRAPPER SETTERS
+  // ═══════════════════════════════════════════════════════════════════════
+
+  const setGamePhase = useCallback((value: GamePhase | ((prev: GamePhase) => GamePhase)) => {
+    phaseDispatch({ type: 'SET_GAME_PHASE', payload: typeof value === 'function' ? value(phaseStateRef.current.gamePhase) : value });
+  }, []);
+
+  const setEncryptedChannelState = useCallback((value: EncryptedChannelState | ((prev: EncryptedChannelState) => EncryptedChannelState)) => {
+    phaseDispatch({ type: 'SET_ENCRYPTED_CHANNEL_STATE', payload: typeof value === 'function' ? value(phaseStateRef.current.encryptedChannelState) : value });
+  }, []);
+
+  const setIsProcessing = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    phaseDispatch({ type: 'SET_IS_PROCESSING', payload: typeof value === 'function' ? value(phaseStateRef.current.isProcessing) : value });
+  }, []);
+
+  const setIsStreaming = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    phaseDispatch({ type: 'SET_IS_STREAMING', payload: typeof value === 'function' ? value(phaseStateRef.current.isStreaming) : value });
+  }, []);
+
+  const setIsWarmingUp = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    phaseDispatch({ type: 'SET_IS_WARMING_UP', payload: typeof value === 'function' ? value(phaseStateRef.current.isWarmingUp) : value });
+  }, []);
+
+  const setIsShaking = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    phaseDispatch({ type: 'SET_IS_SHAKING', payload: typeof value === 'function' ? value(phaseStateRef.current.isShaking) : value });
+  }, []);
+
+  const setFlickerActive = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    phaseDispatch({ type: 'SET_FLICKER_ACTIVE', payload: typeof value === 'function' ? value(phaseStateRef.current.flickerActive) : value });
+  }, []);
+
+  const setCountdownDisplay = useCallback((value: string | null | ((prev: string | null) => string | null)) => {
+    phaseDispatch({ type: 'SET_COUNTDOWN_DISPLAY', payload: typeof value === 'function' ? value(phaseStateRef.current.countdownDisplay) : value });
+  }, []);
+
+  const setTimedDecryptRemaining = useCallback((value: number | ((prev: number) => number)) => {
+    phaseDispatch({ type: 'SET_TIMED_DECRYPT_REMAINING', payload: typeof value === 'function' ? value(phaseStateRef.current.timedDecryptRemaining) : value });
+  }, []);
+
+  const setTerminalStaticLevel = useCallback((value: number | ((prev: number) => number)) => {
+    phaseDispatch({ type: 'SET_TERMINAL_STATIC_LEVEL', payload: typeof value === 'function' ? value(phaseStateRef.current.terminalStaticLevel) : value });
+  }, []);
+
+  const setBurnInLines = useCallback((value: string[] | ((prev: string[]) => string[])) => {
+    phaseDispatch({ type: 'SET_BURN_IN_LINES', payload: typeof value === 'function' ? value(phaseStateRef.current.burnInLines) : value });
+  }, []);
+
+  const setInterferenceBurst = useCallback((value: { top: number } | null | ((prev: { top: number } | null) => { top: number } | null)) => {
+    phaseDispatch({ type: 'SET_INTERFERENCE_BURST', payload: typeof value === 'function' ? value(phaseStateRef.current.interferenceBurst) : value });
+  }, []);
+
+  const setParanoiaMessage = useCallback((value: string | null | ((prev: string | null) => string | null)) => {
+    phaseDispatch({ type: 'SET_PARANOIA_MESSAGE', payload: typeof value === 'function' ? value(phaseStateRef.current.paranoiaMessage) : value });
+  }, []);
+
+  const setParanoiaPosition = useCallback((value: { top: number; left: number } | ((prev: { top: number; left: number }) => { top: number; left: number })) => {
+    phaseDispatch({ type: 'SET_PARANOIA_POSITION', payload: typeof value === 'function' ? value(phaseStateRef.current.paranoiaPosition) : value });
+  }, []);
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // TRACKER / DISPLAY STATE WRAPPER SETTERS
+  // ═══════════════════════════════════════════════════════════════════════
+
+  const setInputValue = useCallback((value: string | ((prev: string) => string)) => {
+    trackerDispatch({ type: 'SET_INPUT_VALUE', payload: typeof value === 'function' ? value(trackerStateRef.current.inputValue) : value });
+  }, []);
+
+  const setHistoryIndex = useCallback((value: number | ((prev: number) => number)) => {
+    trackerDispatch({ type: 'SET_HISTORY_INDEX', payload: typeof value === 'function' ? value(trackerStateRef.current.historyIndex) : value });
+  }, []);
+
+  const setActiveImage = useCallback((value: ImageTrigger | null | ((prev: ImageTrigger | null) => ImageTrigger | null)) => {
+    trackerDispatch({ type: 'SET_ACTIVE_IMAGE', payload: typeof value === 'function' ? value(trackerStateRef.current.activeImage) : value });
+  }, []);
+
+  const setPendingImage = useCallback((value: ImageTrigger | null | ((prev: ImageTrigger | null) => ImageTrigger | null)) => {
+    trackerDispatch({ type: 'SET_PENDING_IMAGE', payload: typeof value === 'function' ? value(trackerStateRef.current.pendingImage) : value });
+  }, []);
+
+  const setPendingUfo74Messages = useCallback((value: TerminalEntry[] | ((prev: TerminalEntry[]) => TerminalEntry[])) => {
+    trackerDispatch({ type: 'SET_PENDING_UFO74_MESSAGES', payload: typeof value === 'function' ? value(trackerStateRef.current.pendingUfo74Messages) : value });
+  }, []);
+
+  const setQueuedAfterMediaMessages = useCallback((value: TerminalEntry[] | ((prev: TerminalEntry[]) => TerminalEntry[])) => {
+    trackerDispatch({ type: 'SET_QUEUED_AFTER_MEDIA_MESSAGES', payload: typeof value === 'function' ? value(trackerStateRef.current.queuedAfterMediaMessages) : value });
+  }, []);
+
+  const setPendingUfo74StartMessages = useCallback((value: TerminalEntry[] | ((prev: TerminalEntry[]) => TerminalEntry[])) => {
+    trackerDispatch({ type: 'SET_PENDING_UFO74_START_MESSAGES', payload: typeof value === 'function' ? value(trackerStateRef.current.pendingUfo74StartMessages) : value });
+  }, []);
+
+  const setPendingAchievement = useCallback((value: Achievement | null | ((prev: Achievement | null) => Achievement | null)) => {
+    trackerDispatch({ type: 'SET_PENDING_ACHIEVEMENT', payload: typeof value === 'function' ? value(trackerStateRef.current.pendingAchievement) : value });
+  }, []);
+
+  const setEvidenceFoundIndicatorKey = useCallback((value: number | ((prev: number) => number)) => {
+    trackerDispatch({ type: 'SET_EVIDENCE_FOUND_INDICATOR_KEY', payload: typeof value === 'function' ? value(trackerStateRef.current.evidenceFoundIndicatorKey) : value });
+  }, []);
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // SYNC EFFECT (checkpoint load)
+  // ═══════════════════════════════════════════════════════════════════════
 
   // Sync state when a new game state is loaded externally (e.g., checkpoint load)
   // We detect this by checking if the seed or lastSaveTime changed
@@ -70,23 +438,23 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
       isFirstRender.current = false;
       return;
     }
-    
+
     // Detect if this is a different game state (checkpoint load or game load)
     const seedChanged = initialState.seed !== prevSeedRef.current;
     const saveTimeChanged = initialState.lastSaveTime !== prevLastSaveTimeRef.current;
-    
+
     if (seedChanged || saveTimeChanged) {
       // Update the internal game state to match the new initial state
       setGameState(initialState);
-      
+
       // Sync game over state
-      setShowGameOver(initialState.isGameOver && initialPhase === 'terminal');
-      setGameOverReason(initialState.gameOverReason || '');
-      
+      uiDispatch({ type: 'SET_SHOW_GAME_OVER', payload: initialState.isGameOver && initialPhase === 'terminal' });
+      uiDispatch({ type: 'SET_GAME_OVER_REASON', payload: initialState.gameOverReason || '' });
+
       // Sync Turing test state
-      setShowTuringTest(initialState.turingEvaluationActive);
-      setEvidenceFoundIndicatorKey(0);
-      
+      uiDispatch({ type: 'SET_SHOW_TURING_TEST', payload: initialState.turingEvaluationActive });
+      trackerDispatch({ type: 'SET_EVIDENCE_FOUND_INDICATOR_KEY', payload: 0 });
+
       // Update refs
       prevSeedRef.current = initialState.seed;
       prevLastSaveTimeRef.current = initialState.lastSaveTime;
@@ -96,85 +464,85 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
   return {
     gameState,
     setGameState,
-    inputValue,
+    inputValue: trackerState.inputValue,
     setInputValue,
-    isProcessing,
+    isProcessing: phaseState.isProcessing,
     setIsProcessing,
-    isStreaming,
+    isStreaming: phaseState.isStreaming,
     setIsStreaming,
-    flickerActive,
+    flickerActive: phaseState.flickerActive,
     setFlickerActive,
-    historyIndex,
+    historyIndex: trackerState.historyIndex,
     setHistoryIndex,
-    activeImage,
+    activeImage: trackerState.activeImage,
     setActiveImage,
-    pendingImage,
+    pendingImage: trackerState.pendingImage,
     setPendingImage,
-    showGameOver,
+    showGameOver: uiState.showGameOver,
     setShowGameOver,
-    gameOverReason,
+    gameOverReason: uiState.gameOverReason,
     setGameOverReason,
-    showHeaderMenu,
+    showHeaderMenu: uiState.showHeaderMenu,
     setShowHeaderMenu,
-    showSettings,
+    showSettings: uiState.showSettings,
     setShowSettings,
-    showAchievements,
+    showAchievements: uiState.showAchievements,
     setShowAchievements,
-    showStatistics,
+    showStatistics: uiState.showStatistics,
     setShowStatistics,
-    showPauseMenu,
+    showPauseMenu: uiState.showPauseMenu,
     setShowPauseMenu,
-    pendingUfo74Messages,
+    pendingUfo74Messages: trackerState.pendingUfo74Messages,
     setPendingUfo74Messages,
-    queuedAfterMediaMessages,
+    queuedAfterMediaMessages: trackerState.queuedAfterMediaMessages,
     setQueuedAfterMediaMessages,
-    pendingUfo74StartMessages,
+    pendingUfo74StartMessages: trackerState.pendingUfo74StartMessages,
     setPendingUfo74StartMessages,
-    encryptedChannelState,
+    encryptedChannelState: phaseState.encryptedChannelState,
     setEncryptedChannelState,
-    gamePhase,
+    gamePhase: phaseState.gamePhase,
     setGamePhase,
-    countdownDisplay,
+    countdownDisplay: phaseState.countdownDisplay,
     setCountdownDisplay,
-    isShaking,
+    isShaking: phaseState.isShaking,
     setIsShaking,
-    isWarmingUp,
+    isWarmingUp: phaseState.isWarmingUp,
     setIsWarmingUp,
-    paranoiaMessage,
+    paranoiaMessage: phaseState.paranoiaMessage,
     setParanoiaMessage,
-    paranoiaPosition,
+    paranoiaPosition: phaseState.paranoiaPosition,
     setParanoiaPosition,
-    pendingAchievement,
+    pendingAchievement: trackerState.pendingAchievement,
     setPendingAchievement,
-    showEvidenceTracker,
+    showEvidenceTracker: uiState.showEvidenceTracker,
     setShowEvidenceTracker,
-    showRiskTracker,
+    showRiskTracker: uiState.showRiskTracker,
     setShowRiskTracker,
-    showAttBar,
+    showAttBar: uiState.showAttBar,
     setShowAttBar,
-    showAvatar,
+    showAvatar: uiState.showAvatar,
     setShowAvatar,
-    avatarCreepyEntrance,
+    avatarCreepyEntrance: uiState.avatarCreepyEntrance,
     setAvatarCreepyEntrance,
-    showFirewallScare,
+    showFirewallScare: uiState.showFirewallScare,
     setShowFirewallScare,
-    riskPulse,
+    riskPulse: uiState.riskPulse,
     setRiskPulse,
-    typingSpeedWarning,
+    typingSpeedWarning: uiState.typingSpeedWarning,
     setTypingSpeedWarning,
-    showTuringTest,
+    showTuringTest: uiState.showTuringTest,
     setShowTuringTest,
-    timedDecryptRemaining,
+    timedDecryptRemaining: phaseState.timedDecryptRemaining,
     setTimedDecryptRemaining,
-    burnInLines,
+    burnInLines: phaseState.burnInLines,
     setBurnInLines,
-    evidenceFoundIndicatorKey,
+    evidenceFoundIndicatorKey: trackerState.evidenceFoundIndicatorKey,
     setEvidenceFoundIndicatorKey,
-    interferenceBurst,
+    interferenceBurst: phaseState.interferenceBurst,
     setInterferenceBurst,
-    terminalStaticLevel,
+    terminalStaticLevel: phaseState.terminalStaticLevel,
     setTerminalStaticLevel,
-    alienSilhouetteVisible,
+    alienSilhouetteVisible: uiState.alienSilhouetteVisible,
     setAlienSilhouetteVisible,
   };
 }

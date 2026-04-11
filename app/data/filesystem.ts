@@ -1429,7 +1429,7 @@ const foreign_drone_theory: FileNode = {
   status: 'intact',
   reveals: ['debris-relocation'],
   imageTrigger: {
-    src: '/images/drone.png',
+    src: '/images/drone.webp',
     alt: 'Recovered visual - Foreign drone analysis',
     tone: 'surveillance',
   },
@@ -2337,7 +2337,7 @@ const material_x_analysis: FileNode = {
   accessThreshold: 2,
   reveals: ['debris-relocation'],
   imageTrigger: {
-    src: '/images/crash.png',
+    src: '/images/crash.webp',
     alt: 'Recovered visual - Crash site material',
     tone: 'surveillance',
   },
@@ -2377,7 +2377,7 @@ const bio_container_log: FileNode = {
   status: 'unstable',
   reveals: ['being-containment'],
   imageTrigger: {
-    src: '/images/et.png',
+    src: '/images/et.webp',
     alt: 'Recovered visual - Bio containment',
     tone: 'clinical',
     corrupted: true,
@@ -2417,7 +2417,7 @@ const autopsy_alpha_log: FileNode = {
   accessThreshold: 2,
   reveals: ['being-containment'],
   imageTrigger: {
-    src: '/images/et.png',
+    src: '/images/et.webp',
     alt: 'Recovered visual - Autopsy subject',
     tone: 'clinical',
   },
@@ -2499,7 +2499,7 @@ const transcript_core: FileNode = {
   status: 'encrypted',
   reveals: ['telepathic-scouts'],
   imageTrigger: {
-    src: '/images/et-scared.png',
+    src: '/images/et-scared.webp',
     alt: 'Recovered visual - Subject during transmission',
     tone: 'clinical',
     corrupted: true,
@@ -2582,7 +2582,7 @@ const field_report_delta: FileNode = {
   status: 'intact',
   reveals: ['international-actors'],
   imageTrigger: {
-    src: '/images/prato-delta.png',
+    src: '/images/prato-delta.webp',
     alt: 'Recovered visual - Operation Prato Delta field report',
     tone: 'surveillance',
   },
@@ -3057,7 +3057,7 @@ const bio_program_overview: FileNode = {
   status: 'restricted',
   accessThreshold: 4,
   imageTrigger: {
-    src: '/images/bio-program.png',
+    src: '/images/bio-program.webp',
     alt: 'Bio-Assessment Initiative - Recovered specimen documentation',
     tone: 'clinical',
   },
@@ -3375,7 +3375,7 @@ const second_deployment_intercept: FileNode = {
     hint: 'Referenced in multiple classified documents',
   },
   imageTrigger: {
-    src: '/images/second-ship.png',
+    src: '/images/second-ship.webp',
     alt: 'Signal analysis showing second deployment trajectory',
     tone: 'surveillance',
   },
@@ -3533,7 +3533,7 @@ const extraction_mechanism: FileNode = {
   status: 'restricted',
   accessThreshold: 4,
   imageTrigger: {
-    src: '/images/extraction.png',
+    src: '/images/extraction.webp',
     alt: 'Energy Extraction Model - Theoretical visualization',
     tone: 'clinical',
   },

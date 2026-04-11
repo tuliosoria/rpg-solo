@@ -188,7 +188,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
           {/* Turing Test Image */}
           <div className={styles.imageContainer}>
             <Image
-              src="/images/turing-test.png"
+              src="/images/turing-test.webp"
               alt={t('turing.image.resultAlt')}
               width={120}
               height={120}
@@ -234,7 +234,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
         {/* Turing Test Image */}
         <div className={styles.imageContainer}>
           <Image
-            src="/images/turing-test.png"
+            src="/images/turing-test.webp"
             alt={t('turing.image.protocolAlt')}
             width={160}
             height={160}

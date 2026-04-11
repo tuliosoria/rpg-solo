@@ -281,7 +281,7 @@ async function syncSaveToCloud(key: string, data: string): Promise<void> {
     const cloudAvailable = await isCloudAvailable();
     if (cloudAvailable) {
       const result = await cloudSave(key, data);
-      if (result.success) {
+      if (result.success && process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line no-console
         console.log(`Synced save ${key} to Steam Cloud`);
       }

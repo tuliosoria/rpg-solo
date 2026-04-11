@@ -293,6 +293,7 @@ export interface GameState {
 
   // Stealth recovery system
   waitUsesRemaining: number; // Max 3 per run, resets on new game
+  lastWaitTime: number; // Timestamp of last wait command use (for 5s cooldown)
   hideAvailable: boolean; // Becomes true at 90+ detection
 
   // Evidence linking system
@@ -518,6 +519,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   idleHintsGiven: 0,
   // Stealth recovery
   waitUsesRemaining: 3,
+  lastWaitTime: 0,
   hideAvailable: false,
   // Evidence linking
   evidenceLinks: [],

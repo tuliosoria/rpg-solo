@@ -1,8 +1,9 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, useRef } from 'react';
 import { getStatistics, formatPlaytime } from '../storage/statistics';
 import { useI18n } from '../i18n';
+import { useFocusTrap } from '../hooks';
 import styles from './StatisticsModal.module.css';
 
 interface StatisticsModalProps {
@@ -12,6 +13,8 @@ interface StatisticsModalProps {
 export default memo(function StatisticsModal({ onCloseAction }: StatisticsModalProps) {
   const { t } = useI18n();
   const stats = getStatistics();
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef);
 
   const totalEndings =
     stats.endingsAchieved.good +
@@ -21,7 +24,7 @@ export default memo(function StatisticsModal({ onCloseAction }: StatisticsModalP
 
   return (
     <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="statistics-title">
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 id="statistics-title">{t('stats.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>

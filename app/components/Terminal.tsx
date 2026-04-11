@@ -34,6 +34,9 @@ import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 import FirewallEyes, { speakCustomFirewallVoice } from './FirewallEyes';
 
+// Read version from package.json for display in the status bar
+import packageJson from '../../package.json';
+
 // Lazy-load conditional components for better initial load performance
 const ImageOverlay = dynamic(() => import('./ImageOverlay'), { ssr: false });
 const TuringTestOverlay = dynamic(() => import('./TuringTestOverlay'), { ssr: false });
@@ -69,22 +72,22 @@ import styles from './Terminal.module.css';
 
 // UFO74 comments after viewing images - keyed by image src
 const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
-  '/images/crash.png': [
+  '/images/crash.webp': [
     'UFO74: that wreckage... wrong metallurgy.',
     'UFO74: they moved fast. knew what to hide.',
   ],
-  '/images/et.png': [
+  '/images/et.webp': [
     'UFO74: seen that face in dreams.',
     'UFO74: not fear in those eyes. recognition.',
   ],
-  '/images/et-scared.png': [
+  '/images/et-scared.webp': [
     'UFO74: during transmission, something reached back.',
     'UFO74: let itself be captured.',
   ],
-  '/images/second-ship.png': ['UFO74: SECOND one? they were arriving.'],
-  '/images/drone.png': ['UFO74: no propulsion. no control surfaces. yet it flies.'],
-  '/images/prato-delta.png': ['UFO74: three recovery sites. shipped everything out.'],
-  '/images/et-brain.png': [
+  '/images/second-ship.webp': ['UFO74: SECOND one? they were arriving.'],
+  '/images/drone.webp': ['UFO74: no propulsion. no control surfaces. yet it flies.'],
+  '/images/prato-delta.webp': ['UFO74: three recovery sites. shipped everything out.'],
+  '/images/et-brain.webp': [
     'UFO74: neural density off the charts.',
     'UFO74: some patterns travel both ways. careful.',
   ],
@@ -137,8 +140,8 @@ interface TerminalProps {
   onLoadCheckpointAction?: (slotId: string) => void;
 }
 
-// Increment this on each deploy so playtest screenshots always show the build under review.
-const DEPLOY_VERSION = 'v009';
+// Version pulled from package.json so deploys always reflect the current build.
+const DEPLOY_VERSION = `v${packageJson.version}`;
 const SCREEN_OVERLAY_BOUNDS = { position: 'absolute' as const, inset: 0 };
 
 export default function Terminal({
@@ -322,17 +325,19 @@ export default function Terminal({
   const typingQueueRef = useRef<string[]>([]);
   const queuedSetRef = useRef(new Set<string>());
   const [activeTypingId, setActiveTypingId] = useState<string | null>(null);
-  const initializedRef = useRef(false);
 
-  // On first render, mark all existing entries as already animated
-  useEffect(() => {
-    if (!initializedRef.current) {
-      initializedRef.current = true;
-      for (const entry of gameState.history) {
-        animatedEntriesRef.current.add(entry.id);
-      }
+  // On first render, mark all existing history entries as already animated so
+  // they don't re-trigger the typewriter effect. We use a ref initialized lazily
+  // on mount (via initializedRef) rather than a useEffect, avoiding an
+  // exhaustive-deps lint suppression. Subsequent new entries are tracked by the
+  // history-watching effect below.
+  const initializedRef = useRef(false);
+  if (!initializedRef.current) {
+    initializedRef.current = true;
+    for (const entry of gameState.history) {
+      animatedEntriesRef.current.add(entry.id);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }
 
   useEffect(() => {
     uiStateRef.current = {
@@ -406,6 +411,22 @@ export default function Terminal({
       const nextId = typingQueueRef.current.shift()!;
       queuedSetRef.current.delete(nextId);
       setActiveTypingId(nextId);
+    }
+
+    // Prune animatedEntriesRef to avoid unbounded growth when history is truncated.
+    // Keep only IDs still present in the current history.
+    if (animatedEntriesRef.current.size > gameState.history.length + 50) {
+      const currentIds = new Set(gameState.history.map(e => e.id));
+      for (const id of animatedEntriesRef.current) {
+        if (!currentIds.has(id)) {
+          animatedEntriesRef.current.delete(id);
+        }
+      }
+      for (const id of queuedSetRef.current) {
+        if (!currentIds.has(id)) {
+          queuedSetRef.current.delete(id);
+        }
+      }
     }
   }, [gameState.history, activeTypingId, getEntryContent]);
 
@@ -1232,7 +1253,7 @@ export default function Terminal({
                   onExitAction();
                 }}
               >
-                {t('terminal.menu.load')}
+                {t('terminal.menu.return')}
               </button>
               <button
                 className={styles.menuItem}
@@ -1268,17 +1289,6 @@ export default function Terminal({
                 }}
               >
                 {t('terminal.menu.statistics')}
-              </button>
-              <button
-                className={styles.menuItem}
-                tabIndex={-1}
-                onMouseDown={e => e.preventDefault()}
-                onClick={() => {
-                  setShowHeaderMenu(false);
-                  onExitAction();
-                }}
-              >
-                {t('terminal.menu.return')}
               </button>
             </div>
           )}

@@ -38,7 +38,7 @@ const StaticNoise = memo(function StaticNoise({
   // Pre-load and process alien face into grayscale pixel data
   useEffect(() => {
     const img = new Image();
-    img.src = '/images/bio-program.png';
+    img.src = '/images/bio-program.webp';
     img.onload = () => {
       const offscreen = document.createElement('canvas');
       offscreen.width = CANVAS_SIZE;

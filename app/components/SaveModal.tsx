@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { GameState } from '../types';
 import { saveGame } from '../storage/saves';
 import { useI18n } from '../i18n';
+import { useFocusTrap } from '../hooks';
 import styles from './SaveModal.module.css';
 
 interface SaveModalProps {
@@ -17,6 +18,8 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
   const [slotName, setSlotName] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef);
 
   // Handle ESC key to close modal
   const handleKeyDown = useCallback(
@@ -56,7 +59,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
 
   return (
     <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="savemodal-title">
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 id="savemodal-title">{t('save.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>

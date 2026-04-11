@@ -16,6 +16,7 @@
  * - **useGlobalErrorHandler** – Global error and rejection handling
  * - **useGameSelectors** – Memoized selectors for game state
  * - **useOptions** – Game options state and persistence
+ * - **useFocusTrap** – Keyboard focus trapping for modal dialogs
  */
 export { useAutocomplete, type AutocompleteResult } from './useAutocomplete';
 export { useGameActions } from './useGameActions';
@@ -43,3 +44,4 @@ export {
   type FontSize,
   type UseOptionsReturn,
 } from './useOptions';
+export { useFocusTrap } from './useFocusTrap';
