@@ -53,6 +53,21 @@ describe('FirewallEyes', () => {
     expect(onActivateFirewall).toHaveBeenCalledTimes(1);
   });
 
+  it('still activates the firewall while a file is being read', () => {
+    const onActivateFirewall = vi.fn();
+
+    render(
+      <FirewallEyes
+        {...baseProps}
+        detectionLevel={DETECTION_THRESHOLD}
+        isReadingFile={true}
+        onActivateFirewall={onActivateFirewall}
+      />
+    );
+
+    expect(onActivateFirewall).toHaveBeenCalledTimes(1);
+  });
+
   it('spawns an eye batch once the cooldown has elapsed', () => {
     const onSpawnEyeBatch = vi.fn();
     const now = Date.now();

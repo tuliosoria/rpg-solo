@@ -5,8 +5,9 @@ import { DEFAULT_GAME_STATE, GameState } from '../../types';
 import { I18nProvider } from '../../i18n';
 import { AUTOSAVE_INTERVAL_MS } from '../../constants/timing';
 
-const { mockSpeakCustomFirewallVoice } = vi.hoisted(() => ({
+const { mockSpeakCustomFirewallVoice, mockFirewallEyes } = vi.hoisted(() => ({
   mockSpeakCustomFirewallVoice: vi.fn(),
+  mockFirewallEyes: vi.fn(),
 }));
 
 // Mock Next.js Image component
@@ -70,7 +71,10 @@ vi.mock('../../components/FirewallEyes', async () => {
 
   return {
     ...actual,
-    default: () => null,
+    default: (props: unknown) => {
+      mockFirewallEyes(props);
+      return <div data-testid="firewall-eyes" />;
+    },
     speakCustomFirewallVoice: mockSpeakCustomFirewallVoice,
   };
 });
@@ -160,6 +164,23 @@ describe('Terminal Component', () => {
 
     const input = document.querySelector('input');
     expect(input).toBeInTheDocument();
+  });
+
+  it('mounts firewall eyes even while atmosphere suppression is active', () => {
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 25,
+          evidenceCount: 0,
+          filesRead: new Set(),
+        }}
+      />
+    );
+
+    expect(screen.getByTestId('firewall-eyes')).toBeInTheDocument();
+    expect(mockFirewallEyes).toHaveBeenCalled();
   });
 
   it('stops ambient audio and plays the final firewall line on game over', () => {

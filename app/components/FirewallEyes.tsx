@@ -132,6 +132,7 @@ function FirewallEyesComponent({
   // Determine if spawning should be suppressed
   const isEffectivelyPaused = paused || showTutorialPopup;
   const shouldSuppressSpawn = isEffectivelyPaused || turingTestActive || isReadingFile;
+  const shouldDelayActivation = isEffectivelyPaused || turingTestActive;
 
   // Show tutorial popup when conditions are met
   // Using useEffect to react to prop changes and show popup
@@ -150,12 +151,18 @@ function FirewallEyesComponent({
     }
   }, [showTutorialPopup, onTutorialShown]);
 
-  // Activate firewall when detection reaches threshold (delay if paused)
+  // Activate firewall when detection reaches threshold.
+  // Reading a file should not block the first trigger; only active overlays should.
   useEffect(() => {
-    if (!firewallActive && !firewallDisarmed && detectionLevel >= DETECTION_THRESHOLD && !shouldSuppressSpawn) {
+    if (
+      !firewallActive &&
+      !firewallDisarmed &&
+      detectionLevel >= DETECTION_THRESHOLD &&
+      !shouldDelayActivation
+    ) {
       onActivateFirewall();
     }
-  }, [detectionLevel, firewallActive, firewallDisarmed, shouldSuppressSpawn, onActivateFirewall]);
+  }, [detectionLevel, firewallActive, firewallDisarmed, shouldDelayActivation, onActivateFirewall]);
 
   // Track pause state to notify parent for time adjustments
   useEffect(() => {

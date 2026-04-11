@@ -1134,8 +1134,8 @@ export default function Terminal({
           </div>
         )}
 
-        {/* Firewall Eyes - hostile surveillance entities (suppressed during atmosphere phase) */}
-        {gameState.tutorialComplete && !gameState.isGameOver && !suppressPressure && (
+        {/* Firewall Eyes - hostile surveillance entities */}
+        {gameState.tutorialComplete && !gameState.isGameOver && (
           <FirewallEyes
             detectionLevel={gameState.detectionLevel}
             firewallActive={gameState.firewallActive}

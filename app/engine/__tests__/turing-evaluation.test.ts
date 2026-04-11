@@ -137,6 +137,20 @@ describe('Turing evaluation', () => {
     expect(result.stateChanges.turingEvaluationActive).toBeUndefined();
   });
 
+  it('triggers even during the UFO74 cooldown window', () => {
+    const state = createState({
+      detectionLevel: 50,
+      evidenceCount: 1,
+      singularEventsTriggered: new Set(['turing_warning']),
+      ufo74DisengageTime: Date.now(),
+    });
+
+    const result = executeCommand('help', state);
+
+    expect(result.stateChanges.turingEvaluationActive).toBe(true);
+    expect(result.triggerTuringTest).toBe(true);
+  });
+
   it('does not intercept invalid input when turing evaluation is active', () => {
     const state = createState({
       detectionLevel: 50,

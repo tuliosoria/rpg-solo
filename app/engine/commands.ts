@@ -181,8 +181,6 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('turing_warning')) return false;
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
-      // Suppress during atmosphere phase and cooldown period
-      if (shouldSuppressPressure(state)) return false;
       // Trigger at detection level 45% (TURING_WARNING threshold)
       if (!state.tutorialComplete) return false;
       return (
@@ -216,8 +214,6 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('turing_evaluation')) return false;
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
-      // Suppress during atmosphere phase and cooldown period
-      if (shouldSuppressPressure(state)) return false;
       // Trigger EXACTLY at detection level 50% (TURING_TRIGGER threshold)
       // Must have at least 1 truth and warning shown (but we make warning trigger first)
       if (!state.tutorialComplete) return false;
