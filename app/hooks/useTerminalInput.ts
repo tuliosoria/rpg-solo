@@ -65,7 +65,6 @@ interface UseTerminalInputOptions {
   isProcessing: boolean;
   showTuringTest: boolean;
   pendingImage: ImageTrigger | null;
-  pendingVideo: VideoTrigger | null;
   pendingUfo74StartMessages: TerminalEntry[];
   pendingUfo74Messages: TerminalEntry[];
   historyIndex: number;
@@ -75,7 +74,6 @@ interface UseTerminalInputOptions {
   setIsStreaming: React.Dispatch<React.SetStateAction<boolean>>;
   setHistoryIndex: React.Dispatch<React.SetStateAction<number>>;
   setPendingImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
-  setPendingVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
   setActiveImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
   setActiveVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
   setPendingUfo74StartMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
@@ -118,7 +116,6 @@ export function useTerminalInput({
   isProcessing,
   showTuringTest,
   pendingImage,
-  pendingVideo,
   pendingUfo74StartMessages,
   pendingUfo74Messages,
   historyIndex,
@@ -128,7 +125,6 @@ export function useTerminalInput({
   setIsStreaming,
   setHistoryIndex,
   setPendingImage,
-  setPendingVideo,
   setActiveImage,
   setActiveVideo,
   setPendingUfo74StartMessages,
@@ -260,12 +256,6 @@ export function useTerminalInput({
         setActiveImage(pendingImage);
         setPendingImage(null);
         playSound('creepy');
-        return;
-      }
-
-      if (pendingVideo && !trimmedInput) {
-        setActiveVideo(pendingVideo);
-        setPendingVideo(null);
         return;
       }
 
@@ -521,6 +511,9 @@ export function useTerminalInput({
 
       if (isProcessingRef.current || isProcessing || showTuringTest || !trimmedInput) return;
 
+      // Block input during Turing evaluation transition (overlay not yet visible)
+      if (gameState.turingEvaluationActive && !showTuringTest) return;
+
       const command = trimmedInput;
       const commandLower = command.toLowerCase().split(' ')[0];
       const shouldDeferUfo74 =
@@ -627,16 +620,9 @@ export function useTerminalInput({
         try {
           await streamOutput(streamableOutput, streamingMode);
 
-          if (result.imageTrigger || result.videoTrigger) {
+          if (result.imageTrigger) {
             const pendingMediaMessages: TerminalEntry[] = [];
             if (result.imageTrigger) {
-              pendingMediaMessages.push(
-                createEntry('warning', ''),
-                createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-                createEntry('system', '')
-              );
-            }
-            if (result.videoTrigger) {
               pendingMediaMessages.push(
                 createEntry('warning', ''),
                 createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
@@ -678,13 +664,6 @@ export function useTerminalInput({
             createEntry('system', '')
           );
         }
-        if (result.videoTrigger) {
-          pendingMediaMessages.push(
-            createEntry('warning', ''),
-            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-            createEntry('system', '')
-          );
-        }
 
         setGameState({
           ...intermediateState,
@@ -710,7 +689,7 @@ export function useTerminalInput({
         setPendingImage(result.imageTrigger);
       }
       if (result.videoTrigger) {
-        setPendingVideo(result.videoTrigger);
+        setActiveVideo(result.videoTrigger);
       }
 
       if (result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0) {
@@ -870,7 +849,6 @@ export function useTerminalInput({
       pendingImage,
       pendingUfo74Messages,
       pendingUfo74StartMessages,
-      pendingVideo,
       playSound,
       setActiveImage,
       setActiveVideo,
@@ -886,7 +864,6 @@ export function useTerminalInput({
       setPendingImage,
       setPendingUfo74Messages,
       setPendingUfo74StartMessages,
-      setPendingVideo,
       setQueuedAfterMediaMessages,
       setShowEvidenceTracker,
       setShowGameOver,
