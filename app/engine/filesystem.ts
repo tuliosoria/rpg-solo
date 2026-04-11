@@ -259,7 +259,7 @@ export function canAccessFile(
   if (!node) return { accessible: false, reason: 'FILE NOT FOUND' };
   if (node.type !== 'file') return { accessible: false, reason: 'NOT A FILE' };
 
-  const file = node as FileNode;
+  const _file = node as FileNode;
   const mutation = state.fileMutations[path];
 
   if (mutation?.deleted) return { accessible: false, reason: 'FILE DELETED' };

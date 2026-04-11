@@ -564,7 +564,7 @@ export default function Terminal({
       lastEyeSpawnTime:
         prev.lastEyeSpawnTime > 0 ? prev.lastEyeSpawnTime + durationMs : prev.lastEyeSpawnTime,
     }));
-  }, []);
+  }, [setGameState]);
 
   const { handleSubmit, handleKeyDown } = useTerminalInput({
     gameState,

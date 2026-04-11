@@ -5,7 +5,7 @@ import {
 } from '../evidenceRevelation';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
-const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
+const _createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   ...DEFAULT_GAME_STATE,
   seed: 12345,
   rngState: 12345,

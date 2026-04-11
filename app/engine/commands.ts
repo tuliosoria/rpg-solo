@@ -27,8 +27,8 @@ import {
 import {
   ARCHIVE_FILES,
   ARCHIVE_DIRECTORY_ADDITIONS,
-  generateArchiveTimestamp,
-  shouldFileDisappear,
+  generateArchiveTimestamp as _generateArchiveTimestamp,
+  shouldFileDisappear as _shouldFileDisappear,
 } from '../data/archiveFiles';
 import {
   UFO74_CONSPIRACY_REACTIONS,
@@ -773,7 +773,7 @@ function applyDetectionVariance(state: GameState, command: string, baseIncrease:
  * Exit archive mode and return to present.
  * Called either manually via 'present' command or automatically when actions run out.
  */
-function exitArchiveMode(state: GameState, reason: 'manual' | 'timeout' | 'file_lost'): CommandResult {
+function _exitArchiveMode(state: GameState, reason: 'manual' | 'timeout' | 'file_lost'): CommandResult {
   const filesViewed = state.archiveFilesViewed?.size || 0;
   
   if (reason === 'timeout') {
@@ -855,7 +855,7 @@ function exitArchiveMode(state: GameState, reason: 'manual' | 'timeout' | 'file_
  * Decrement archive actions and check if we need to exit.
  * Returns state changes including forced exit if needed.
  */
-function decrementArchiveAction(state: GameState): {
+function _decrementArchiveAction(state: GameState): {
   stateChanges: Partial<GameState>;
   forceExit: boolean;
 } {
@@ -886,7 +886,7 @@ function decrementArchiveAction(state: GameState): {
  * Get archive-only files for a directory path.
  * Returns additional file entries that only exist in archive mode.
  */
-function getArchiveFilesForDirectory(dirPath: string): { name: string; type: 'file'; status: string }[] {
+function _getArchiveFilesForDirectory(dirPath: string): { name: string; type: 'file'; status: string }[] {
   const additions = ARCHIVE_DIRECTORY_ADDITIONS[dirPath];
   if (!additions) return [];
   
@@ -907,7 +907,7 @@ function isArchiveOnlyFile(filePath: string): boolean {
 /**
  * Get content of an archive-only file.
  */
-function getArchiveFileContent(filePath: string): string[] | null {
+function _getArchiveFileContent(filePath: string): string[] | null {
   const file = ARCHIVE_FILES[filePath];
   if (!file) return null;
   return [...file.content];
@@ -1037,7 +1037,7 @@ function performDecryption(filePath: string, file: FileNode, state: GameState): 
 
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
 
-  let truthNotices: TerminalEntry[] = [];
+  const truthNotices: TerminalEntry[] = [];
 
   // Check for disturbing content avatar expression and increment evidence counter
   if (content) {
@@ -4261,7 +4261,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     const isEncryptedAndLocked = false;
 
     // Check for reveals and disturbing content
-    let notices: ReturnType<typeof createEntry>[] = [];
+    const notices: ReturnType<typeof createEntry>[] = [];
     if (!isEncryptedAndLocked) {
       // Check if file content is disturbing and should trigger avatar expression
       const disturbingExpression = getDisturbingContentAvatarExpression(content);

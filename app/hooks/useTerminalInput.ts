@@ -236,7 +236,7 @@ export function useTerminalInput({
         }
       }
     },
-    [playSound, setGameState, skipStreamingRef, triggerFlicker]
+    [setGameState, skipStreamingRef, triggerFlicker]
   );
 
   const handleSubmit = useCallback(

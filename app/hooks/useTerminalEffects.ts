@@ -270,6 +270,7 @@ export function useTerminalEffects({
     gameState.timedDecryptEndTime,
     pauseTimedMechanics,
     setTimedDecryptRemaining,
+    timedMechanicPauseStartRef,
     timedMechanicResumeAdjustmentRef,
   ]);
 
@@ -778,6 +779,7 @@ export function useTerminalEffects({
     setCountdownDisplay,
     setGamePhase,
     setGameState,
+    timedMechanicPauseStartRef,
     timedMechanicResumeAdjustmentRef,
   ]);
 
@@ -1113,9 +1115,8 @@ export function useTerminalEffects({
     setActiveVideo,
     setShowPauseMenu,
     setShowHeaderMenu,
-  ]);
-
-  // Handle Enter key in enter-only mode (tutorial intro, encrypted channel, pending media)
+    timedMechanicPauseStartRef,
+  ]);  // Handle Enter key in enter-only mode (tutorial intro, encrypted channel, pending media)
   // This is needed because the hidden form button approach is unreliable across browsers
   useLayoutEffect(() => {
     if (!isEnterOnlyMode || !onEnterPress) return;

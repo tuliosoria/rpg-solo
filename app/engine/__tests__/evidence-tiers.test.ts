@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 import {
   countEvidence,
   getCaseStrengthDescription,
-  EVIDENCE_SYMBOL,
+  EVIDENCE_SYMBOL as _EVIDENCE_SYMBOL,
 } from '../evidenceRevelation';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
