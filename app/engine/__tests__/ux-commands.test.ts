@@ -277,6 +277,18 @@ describe('UX Commands', () => {
     });
   });
 
+  describe('god alien command', () => {
+    it('sets detection to 70 and arms an alien preview in god mode', () => {
+      const state = createTestState({ godMode: true, detectionLevel: 12 });
+      const before = Date.now();
+      const result = executeCommand('god alien', state);
+
+      expect(result.stateChanges.detectionLevel).toBe(70);
+      expect(result.stateChanges.alienPreviewUntil).toBeGreaterThan(before);
+      expect(result.output.some(e => e.content.includes('ALIEN PREVIEW ARMED'))).toBe(true);
+    });
+  });
+
   describe('ls command enhancements', () => {
     it('should show bookmark star for bookmarked files', () => {
       const state = createTestState({

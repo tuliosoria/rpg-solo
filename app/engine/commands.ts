@@ -7229,6 +7229,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         createEntry('output', '  god victory  - Jump to victory screen'),
         createEntry('output', '  god reset    - Reset game state'),
         createEntry('output', '  god status   - Show current game state'),
+        createEntry('output', '  god alien    - Set risk to 70 and force alien preview'),
         createEntry('system', ''),
         createEntry('output', 'Type "iddqd" again to deactivate.'),
       ],
@@ -7258,6 +7259,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntry('output', 'god reset     - Reset to fresh game state'),
           createEntry('output', 'god status    - Show current game flags'),
           createEntry('output', 'god stable    - Set stability to 100, detection to 0'),
+          createEntry('output', 'god alien     - Set detection to 70 and force alien preview'),
           createEntry('output', 'god doom      - Disable doom countdown'),
           createEntry('output', ''),
           createEntry('system', 'Type "iddqd" to toggle god mode off.'),
@@ -7371,6 +7373,20 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {
           sessionStability: 100,
           detectionLevel: 0,
+        },
+      };
+    }
+
+    if (godCmd === 'alien') {
+      return {
+        output: [
+          createEntry('system', '═══ ALIEN PREVIEW ARMED ═══'),
+          createEntry('output', 'detectionLevel = 70'),
+          createEntry('output', 'Forced alien silhouette preview active for 12 seconds.'),
+        ],
+        stateChanges: {
+          detectionLevel: 70,
+          alienPreviewUntil: Date.now() + 12000,
         },
       };
     }

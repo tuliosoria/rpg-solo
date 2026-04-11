@@ -367,6 +367,9 @@ export interface GameState {
   // Screen burn-in content
   burnInContent: string[]; // Recent significant outputs for ghost effect
 
+  // Alien silhouette test preview
+  alienPreviewUntil: number; // Timestamp until forced silhouette preview stays visible
+
   // Epilogue unlocked
   epilogueUnlocked: boolean;
   rivalInvestigatorActive: boolean; // Rival actor tracking the trail
@@ -584,6 +587,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   fastTypingWarnings: 0,
   // Screen burn-in
   burnInContent: [],
+  // Alien silhouette test preview
+  alienPreviewUntil: 0,
   // Epilogue
   epilogueUnlocked: false,
   rivalInvestigatorActive: false,

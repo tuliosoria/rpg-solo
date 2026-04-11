@@ -239,6 +239,31 @@ describe('Terminal Component', () => {
     randomSpy.mockRestore();
   });
 
+  it('forces the alien silhouette visible during preview mode at 70 detection', () => {
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 70,
+          alienPreviewUntil: Date.now() + 10000,
+        }}
+      />
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(
+      mockStaticNoise.mock.calls.some(
+        ([props]) =>
+          (props as { alienVisible?: boolean; intensity?: number }).alienVisible === true &&
+          ((props as { intensity?: number }).intensity ?? 0) > 0
+      )
+    ).toBe(true);
+  });
+
   it('mounts firewall eyes even while atmosphere suppression is active', () => {
     render(
       <Terminal
@@ -325,7 +350,7 @@ describe('Terminal Component', () => {
   it('shows the deploy version in the header', () => {
     render(<Terminal {...defaultProps} />);
 
-    expect(screen.getByText('v003')).toBeInTheDocument();
+    expect(screen.getByText('v004')).toBeInTheDocument();
   });
 
   it('accepts user input', () => {

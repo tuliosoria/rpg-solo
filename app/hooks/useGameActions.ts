@@ -234,7 +234,6 @@ export function useGameActions({
         firewallEyes: updatedEyes,
         detectionLevel: newDetection,
         avatarExpression: 'scared',
-        evidenceCount: Math.min(5, (prev.evidenceCount || 0) + 1),
         history: isGameOver
           ? [
               ...prev.history,

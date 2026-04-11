@@ -889,15 +889,17 @@ export function useTerminalEffects({
   // Terminal noise intensity — continuous 0-1 ramp from 70% to 100% detection
   useEffect(() => {
     const detection = gameState.detectionLevel;
-    const intensity = Math.max(0, Math.min(1, (detection - 70) / 30));
+    const intensity =
+      detection < 70 ? 0 : Math.min(1, 0.08 + ((detection - 70) / 30) * 0.92);
     setTerminalStaticLevel(intensity);
   }, [gameState.detectionLevel, setTerminalStaticLevel]);
 
   // Alien silhouette in static (appears every 60-180 seconds while high-risk static is active)
   useEffect(() => {
     const staticActive = gameState.detectionLevel >= 70;
+    const previewRemaining = Math.max(0, gameState.alienPreviewUntil - Date.now());
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
-    if (!staticActive) {
+    if (!staticActive && previewRemaining <= 0) {
       setAlienSilhouetteVisible(false);
       return;
     }
@@ -905,32 +907,50 @@ export function useTerminalEffects({
     let cancelled = false;
     const activeTimeouts: NodeJS.Timeout[] = [];
 
-    const scheduleAlien = () => {
-      // Random interval between 60-180 seconds
-      const delay = 60000 + uiRandom() * 120000;
-      const t = setTimeout(() => {
-        if (cancelled || pauseTimedMechanics) return;
-        setAlienSilhouetteVisible(true);
-        playSound('static');
-        setTimeout(() => {
-          if (!cancelled) playSound('omen');
-        }, 1500);
-        // Show for 5-8 seconds then fade out
-        const hideDelay = 5000 + uiRandom() * 3000;
-        const hideTimeout = setTimeout(() => {
-          if (!cancelled) {
-            setAlienSilhouetteVisible(false);
-            // Schedule next appearance
-            if (!cancelled) scheduleAlien();
-          }
-        }, hideDelay);
-        activeTimeouts.push(hideTimeout);
-      }, delay);
-      activeTimeouts.push(t);
-      return t;
+    const startManifestation = (durationMs?: number) => {
+      if (cancelled || pauseTimedMechanics) return;
+      setAlienSilhouetteVisible(true);
+      playSound('static');
+      const omenTimeout = setTimeout(() => {
+        if (!cancelled) playSound('omen');
+      }, 1500);
+      activeTimeouts.push(omenTimeout);
+
+      const hideDelay = durationMs ?? 5000 + uiRandom() * 3000;
+      const hideTimeout = setTimeout(() => {
+        if (!cancelled) {
+          setAlienSilhouetteVisible(false);
+        }
+      }, hideDelay);
+      activeTimeouts.push(hideTimeout);
+      return hideDelay;
     };
 
-    scheduleAlien();
+    const scheduleAlien = (delayOverride?: number) => {
+      const delay = delayOverride ?? 60000 + uiRandom() * 120000;
+      const t = setTimeout(() => {
+        if (cancelled) return;
+        if (pauseTimedMechanics) {
+          scheduleAlien(5000);
+          return;
+        }
+
+        const hideDelay = startManifestation();
+        if (hideDelay !== undefined && !cancelled) {
+          scheduleAlien(hideDelay + 60000 + uiRandom() * 120000);
+        }
+      }, delay);
+      activeTimeouts.push(t);
+    };
+
+    if (previewRemaining > 0) {
+      startManifestation(previewRemaining);
+      if (staticActive) {
+        scheduleAlien(previewRemaining + 60000 + uiRandom() * 120000);
+      }
+    } else if (staticActive) {
+      scheduleAlien();
+    }
 
     return () => {
       cancelled = true;
@@ -940,6 +960,7 @@ export function useTerminalEffects({
     gamePhase,
     gameState.isGameOver,
     gameState.detectionLevel >= 70,
+    gameState.alienPreviewUntil,
     pauseTimedMechanics,
     playSound,
     setAlienSilhouetteVisible,
