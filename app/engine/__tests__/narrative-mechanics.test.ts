@@ -568,7 +568,9 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('open trust_protocol_1993.txt', state);
 
-      expect(result.output.some(e => e.content.includes('SHARE NOTHING BEYOND YOUR SCOPE'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('SHARE NOTHING BEYOND YOUR SCOPE'))).toBe(
+        true
+      );
     });
 
     it('modem_log_jan96.txt contains IRC chat', () => {
@@ -1261,9 +1263,7 @@ describe('Narrative Mechanics', () => {
       // Evidence count of 5 should allow the leak command
       const result = executeCommand('leak', state);
       // Should NOT show "INSUFFICIENT EVIDENCE"
-      expect(
-        result.output.some(e => e.content.includes('INSUFFICIENT EVIDENCE'))
-      ).toBe(false);
+      expect(result.output.some(e => e.content.includes('INSUFFICIENT EVIDENCE'))).toBe(false);
     });
 
     it('blocks leak when evidenceCount < 5', () => {
@@ -1280,7 +1280,9 @@ describe('Narrative Mechanics', () => {
       const result = executeCommand('leak', state);
       // Should show insufficient evidence
       expect(
-        result.output.some(e => e.content.includes('INSUFFICIENT EVIDENCE') || e.content.includes('3/5'))
+        result.output.some(
+          e => e.content.includes('INSUFFICIENT EVIDENCE') || e.content.includes('3/5')
+        )
       ).toBe(true);
     });
   });
@@ -1331,6 +1333,44 @@ describe('Narrative Mechanics', () => {
       expect(result.imageTrigger?.src).toBe('/images/drone.png');
     });
 
+    it('foreign_drone_assessment.txt logs evidence and scares the avatar on first read', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/ops/assessments',
+        accessLevel: 2,
+        evidenceCount: 0,
+        filesRead: new Set<string>(),
+        imagesShownThisRun: new Set<string>(),
+        flags: { adminUnlocked: true },
+      });
+
+      const result = executeCommand('open foreign_drone_assessment.txt', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(1);
+      expect(result.stateChanges.avatarExpression).toBe('scared');
+      expect(
+        result.stateChanges.filesRead?.has('/ops/assessments/foreign_drone_assessment.txt')
+      ).toBe(true);
+    });
+
+    it('does not double count debris evidence across multiple corroborating files', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/storage/assets',
+        accessLevel: 2,
+        evidenceCount: 1,
+        filesRead: new Set<string>(['/ops/assessments/foreign_drone_assessment.txt']),
+        flags: { adminUnlocked: true },
+      });
+
+      const result = executeCommand('open material_x_analysis.dat', state);
+
+      expect(result.stateChanges.evidenceCount).toBeUndefined();
+      expect(result.stateChanges.avatarExpression).not.toBe('scared');
+    });
+
     it('field_report_delta.txt has prato-delta image trigger', () => {
       const state = createTestState({
         tutorialStep: -1,
@@ -1367,9 +1407,11 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('release p46', state);
 
-      expect(result.output.some(e => 
-        e.content.includes('not found') || e.content.includes('not available')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e => e.content.includes('not found') || e.content.includes('not available')
+        )
+      ).toBe(true);
     });
 
     it('successfully releases P46 when files discovered', () => {
@@ -1416,9 +1458,9 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('release p46', state);
 
-      expect(result.output.some(e => 
-        e.content.includes('ALREADY') || e.content.includes('already')
-      )).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('ALREADY') || e.content.includes('already'))
+      ).toBe(true);
       // Should not set the flag again
       expect(result.stateChanges.flags?.prisoner46Released).toBeUndefined();
     });

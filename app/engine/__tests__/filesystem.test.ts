@@ -4,6 +4,7 @@ import {
   getNode,
   listDirectory,
   canAccessFile,
+  isEvidenceGated,
   fuzzyMatchFilename,
   findFilesMatching,
   smartResolvePath,
@@ -167,6 +168,15 @@ describe('Filesystem', () => {
   });
 
   describe('canAccessFile', () => {
+    it('gates unread evidence files when evidence is derived from filesRead', () => {
+      const state = createTestState({
+        evidenceCount: 0,
+        filesRead: new Set<string>(['/ops/assessments/foreign_drone_assessment.txt']),
+      });
+
+      expect(isEvidenceGated('/comms/intercepts/regional_summary_jan96.txt', state)).toBe(true);
+    });
+
     it('allows access to normal files', () => {
       const state = createTestState();
       const result = canAccessFile('/internal/protocols/incident_review_protocol.txt', state);
@@ -334,7 +344,10 @@ describe('Filesystem', () => {
     it('respects access level when searching', () => {
       // Low access level should not find admin files
       const lowAccessState = createTestState({ accessLevel: 1 });
-      const highAccessState = createTestState({ accessLevel: 5, flags: { adminUnlocked: true, tracePurgeUsed: true } });
+      const highAccessState = createTestState({
+        accessLevel: 5,
+        flags: { adminUnlocked: true, tracePurgeUsed: true },
+      });
 
       const lowMatches = findFilesMatching('trace_purge_memo', lowAccessState);
       const highMatches = findFilesMatching('trace_purge_memo', highAccessState);

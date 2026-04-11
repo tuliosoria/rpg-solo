@@ -2,7 +2,7 @@
 
 import { FileSystemNode, FileNode, GameState } from '../types';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
-import { isDisturbingContent } from './evidenceRevelation';
+import { countEvidence, isEvidenceFile } from './evidenceRevelation';
 
 // Cached set of file paths that can potentially reveal evidence
 let _evidenceBearingFiles: Set<string> | null = null;
@@ -13,7 +13,7 @@ function buildEvidenceBearingFiles(): Set<string> {
   function traverse(node: FileSystemNode, path: string) {
     if (node.type === 'file') {
       const file = node as FileNode;
-      if (isDisturbingContent(file.content)) {
+      if (isEvidenceFile(file, path)) {
         result.add(path);
       }
     } else {
@@ -46,7 +46,7 @@ export function getEvidenceBearingFiles(): Set<string> {
  */
 export function isEvidenceGated(path: string, state: GameState): boolean {
   if (state.flags.adminUnlocked) return false;
-  if (state.evidenceCount === 0) return false;
+  if (countEvidence(state) === 0) return false;
   if (state.filesRead.has(path)) return false;
   return getEvidenceBearingFiles().has(path);
 }

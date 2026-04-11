@@ -1,10 +1,11 @@
 // Evidence Revelation System for Terminal 1996
 //
-// Simplified system: evidence is a simple counter (0-5).
-// Every time the Kid avatar shows a scared reaction, one evidence is released.
-// Finding 5 triggers the win condition.
+// Evidence tracks the five core truths hidden across the filesystem.
+// Disturbing files can still drive avatar reactions, but only evidence-bearing
+// files should advance the evidence counter.
 
-import { GameState } from '../types';
+import { FILESYSTEM_ROOT } from '../data/filesystem';
+import { FileNode, FileSystemNode, GameState } from '../types';
 
 /**
  * Keywords that indicate disturbing/frightening content
@@ -58,6 +59,75 @@ const VERY_DISTURBING_PATTERNS: RegExp[] = [
   /feel(?:ing)?\s+(?:its|their)\s+thoughts/i,
 ];
 
+export const EVIDENCE_TRUTHS = [
+  'debris-relocation',
+  'being-containment',
+  'telepathic-scouts',
+  'international-actors',
+  'transition-2026',
+] as const;
+
+export type EvidenceTruth = (typeof EVIDENCE_TRUTHS)[number];
+
+const VALID_EVIDENCE_TRUTHS = new Set<string>(EVIDENCE_TRUTHS);
+
+function isEvidenceTruth(value: string): value is EvidenceTruth {
+  return VALID_EVIDENCE_TRUTHS.has(value);
+}
+
+function getStaticNode(path: string): FileSystemNode | null {
+  const segments = path.split('/').filter(Boolean);
+  let current: FileSystemNode = FILESYSTEM_ROOT;
+
+  for (const segment of segments) {
+    if (current.type !== 'dir') return null;
+    const child: FileSystemNode | undefined = current.children[segment];
+    if (!child) return null;
+    current = child;
+  }
+
+  return current;
+}
+
+function uniqueTruths(truths: EvidenceTruth[]): EvidenceTruth[] {
+  return [...new Set(truths)];
+}
+
+export function getEvidenceTruthsForFile(
+  file: Pick<FileNode, 'content' | 'reveals'>,
+  _filePath?: string
+): EvidenceTruth[] {
+  return uniqueTruths((file.reveals || []).filter(isEvidenceTruth));
+}
+
+export function getEvidenceTruthsForPath(path: string): EvidenceTruth[] {
+  const node = getStaticNode(path);
+  if (!node || node.type !== 'file') {
+    return [];
+  }
+
+  return getEvidenceTruthsForFile(node as FileNode, path);
+}
+
+export function getDiscoveredEvidenceTruths(paths: Iterable<string>): Set<EvidenceTruth> {
+  const truths = new Set<EvidenceTruth>();
+
+  for (const path of paths) {
+    for (const truth of getEvidenceTruthsForPath(path)) {
+      truths.add(truth);
+    }
+  }
+
+  return truths;
+}
+
+export function isEvidenceFile(
+  file: Pick<FileNode, 'content' | 'reveals'>,
+  filePath?: string
+): boolean {
+  return getEvidenceTruthsForFile(file, filePath).length > 0;
+}
+
 /**
  * Check if file content is disturbing/frightening.
  */
@@ -99,7 +169,9 @@ export const EVIDENCE_SYMBOL = '●';
  * Count total evidence discovered.
  */
 export function countEvidence(state: GameState): number {
-  return state.evidenceCount || 0;
+  const storedCount = state.evidenceCount || 0;
+  const discoveredCount = getDiscoveredEvidenceTruths(state.filesRead || []).size;
+  return Math.max(storedCount, discoveredCount);
 }
 
 /**

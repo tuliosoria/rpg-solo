@@ -58,6 +58,20 @@ describe('Save/Load System', () => {
   });
 
   describe('serialization round-trip', () => {
+    it('uses derived truth count in save slot metadata', async () => {
+      const { saveGame } = await import('../saves');
+
+      const state = createTestState({
+        evidenceCount: 0,
+        filesRead: new Set(['/comms/intercepts/regional_summary_jan96.txt']),
+      });
+
+      const slot = saveGame(state, 'Test Save');
+
+      expect(slot).not.toBeNull();
+      expect(slot!.truthCount).toBe(1);
+    });
+
     it('preserves imagesShownThisRun through save/load cycle', async () => {
       const { saveGame, loadGame } = await import('../saves');
 
@@ -135,6 +149,25 @@ describe('Save/Load System', () => {
       // Should get default values from DEFAULT_GAME_STATE spread
       expect(loaded!.imagesShownThisRun).toBeInstanceOf(Set);
       expect(loaded!.imagesShownThisRun.size).toBe(0);
+    });
+
+    it('rebuilds evidenceCount from filesRead when stale save data undercounts truths', async () => {
+      const { loadGame } = await import('../saves');
+
+      const oldSaveData = {
+        currentPath: '/',
+        detectionLevel: 50,
+        accessLevel: 4,
+        evidenceCount: 0,
+        filesRead: ['/comms/intercepts/regional_summary_jan96.txt', '/admin/thirty_year_cycle.txt'],
+      };
+
+      mockStore['terminal1996:save:stale_truths'] = JSON.stringify(oldSaveData);
+
+      const loaded = loadGame('stale_truths');
+
+      expect(loaded).not.toBeNull();
+      expect(loaded!.evidenceCount).toBe(2);
     });
   });
 
@@ -557,12 +590,8 @@ describe('Save/Load System', () => {
 
   describe('checkpoint system', () => {
     it('saves and loads checkpoints correctly', async () => {
-      const {
-        saveCheckpoint,
-        loadCheckpoint,
-        getCheckpointSlots,
-        getLatestCheckpoint,
-      } = await import('../saves');
+      const { saveCheckpoint, loadCheckpoint, getCheckpointSlots, getLatestCheckpoint } =
+        await import('../saves');
 
       const state = createTestState({
         detectionLevel: 25,

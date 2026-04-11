@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   isDisturbingContent,
   getDisturbingContentAvatarExpression,
+  getDiscoveredEvidenceTruths,
+  getEvidenceTruthsForPath,
 } from '../evidenceRevelation';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
@@ -66,6 +68,41 @@ describe('Evidence Revelation System', () => {
       ];
 
       expect(isDisturbingContent(content)).toBe(true);
+    });
+  });
+
+  describe('evidence truth classification', () => {
+    it('classifies foreign_drone_assessment.txt as recoverable evidence', () => {
+      expect(getEvidenceTruthsForPath('/ops/assessments/foreign_drone_assessment.txt')).toEqual([
+        'debris-relocation',
+      ]);
+    });
+
+    it('classifies additional designated audit files by truth category', () => {
+      expect(getEvidenceTruthsForPath('/comms/intercepts/regional_summary_jan96.txt')).toEqual([
+        'international-actors',
+      ]);
+      expect(getEvidenceTruthsForPath('/admin/thirty_year_cycle.txt')).toEqual(['transition-2026']);
+    });
+
+    it('does not double count multiple files from the same truth category', () => {
+      const truths = getDiscoveredEvidenceTruths([
+        '/ops/assessments/foreign_drone_assessment.txt',
+        '/storage/assets/material_x_analysis.dat',
+      ]);
+
+      expect(truths.size).toBe(1);
+      expect(truths.has('debris-relocation')).toBe(true);
+    });
+
+    it('deduplicates corroborating international actor files', () => {
+      const truths = getDiscoveredEvidenceTruths([
+        '/comms/intercepts/regional_summary_jan96.txt',
+        '/comms/liaison/foreign_liaison_note.txt',
+      ]);
+
+      expect(truths.size).toBe(1);
+      expect(truths.has('international-actors')).toBe(true);
     });
   });
 

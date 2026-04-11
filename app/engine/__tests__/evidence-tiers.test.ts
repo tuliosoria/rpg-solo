@@ -46,6 +46,34 @@ describe('Simplified Evidence System', () => {
       expect(count).toBe(0);
     });
 
+    it('should derive discovered evidence from evidence-bearing files', () => {
+      const state = createTestState({
+        evidenceCount: 0,
+        filesRead: new Set([
+          '/ops/assessments/foreign_drone_assessment.txt',
+          '/storage/assets/material_x_analysis.dat',
+        ]),
+      });
+
+      const count = countEvidence(state);
+
+      expect(count).toBe(1);
+    });
+
+    it('should count distinct truths from newly designated evidence files', () => {
+      const state = createTestState({
+        evidenceCount: 0,
+        filesRead: new Set([
+          '/comms/intercepts/regional_summary_jan96.txt',
+          '/admin/thirty_year_cycle.txt',
+        ]),
+      });
+
+      const count = countEvidence(state);
+
+      expect(count).toBe(2);
+    });
+
     it('should return 5 when all evidence discovered', () => {
       const state = createTestState({
         evidenceCount: 5,

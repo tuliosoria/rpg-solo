@@ -29,6 +29,7 @@ import {
   SAVE_VERSION,
 } from '../constants/limits';
 import { MAX_DETECTION } from '../constants/detection';
+import { countEvidence } from '../engine/evidenceRevelation';
 import { isCloudAvailable, cloudSave, cloudLoad, cloudDelete } from '../lib/steamBridge';
 
 const SAVES_KEY = 'terminal1996:saves';
@@ -95,11 +96,12 @@ function normalizeSeed(value: unknown): number | null {
 
 // Serialize GameState (handle Set conversion)
 function serializeState(state: GameState): string {
+  const evidenceCount = countEvidence(state);
   const data: VersionedSaveData = {
     version: SAVE_VERSION,
     state: {
       ...state,
-      // evidenceCount is just a number, no conversion needed
+      evidenceCount,
       truthsDiscovered: undefined, // Remove legacy field from serialization
       singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
       imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
@@ -146,7 +148,7 @@ function deserializeState(json: string): GameState {
   const normalizedSeed = normalizeSeed(baseState.seed) ?? generateSeed();
   const normalizedRngState = normalizeSeed(baseState.rngState) ?? normalizedSeed;
 
-  return {
+  const state = {
     ...baseState,
     seed: normalizedSeed,
     rngState: normalizedRngState,
@@ -180,8 +182,12 @@ function deserializeState(json: string): GameState {
     flags: toPlainObject(baseState.flags) as Record<string, boolean>,
     fileMutations: toPlainObject(baseState.fileMutations) as Record<string, FileMutation>,
     // Backward compatibility: if loading old save with truthsDiscovered, convert to evidenceCount
-    evidenceCount: typeof parsed.evidenceCount === 'number' ? parsed.evidenceCount :
-      (Array.isArray(parsed.truthsDiscovered) ? parsed.truthsDiscovered.length : 0),
+    evidenceCount:
+      typeof parsed.evidenceCount === 'number'
+        ? parsed.evidenceCount
+        : Array.isArray(parsed.truthsDiscovered)
+          ? parsed.truthsDiscovered.length
+          : 0,
     singularEventsTriggered: new Set(toStringArray(parsed.singularEventsTriggered)),
     imagesShownThisRun: new Set(toStringArray(parsed.imagesShownThisRun)),
     categoriesRead: new Set(toStringArray(parsed.categoriesRead)),
@@ -202,6 +208,9 @@ function deserializeState(json: string): GameState {
     evidenceLinks: Array.isArray(baseState.evidenceLinks) ? baseState.evidenceLinks : [],
     icqMessages: Array.isArray(baseState.icqMessages) ? baseState.icqMessages : [],
   } as GameState;
+
+  state.evidenceCount = countEvidence(state);
+  return state;
 }
 
 // Check if we're in a browser with real localStorage
@@ -350,13 +359,14 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
   const id = `save_${Date.now()}`;
   const name = slotName || `Session ${new Date().toLocaleString()}`;
   const now = Date.now();
+  const evidenceCount = countEvidence(state);
 
   const slot: SaveSlot = {
     id,
     name,
     timestamp: now,
     currentPath: state.currentPath,
-    truthCount: state.evidenceCount || 0,
+    truthCount: evidenceCount,
     detectionLevel: state.detectionLevel,
   };
 
@@ -630,13 +640,14 @@ export function saveCheckpoint(state: GameState, reason: string): CheckpointSlot
 
   const id = `checkpoint_${Date.now()}`;
   const now = Date.now();
+  const evidenceCount = countEvidence(state);
 
   const slot: CheckpointSlot = {
     id,
     reason,
     timestamp: now,
     currentPath: state.currentPath,
-    truthCount: state.evidenceCount || 0,
+    truthCount: evidenceCount,
     detectionLevel: state.detectionLevel,
   };
 

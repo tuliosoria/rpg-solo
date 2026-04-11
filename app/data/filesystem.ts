@@ -337,7 +337,7 @@ const morse_intercept: FileNode = {
     '  used by ground teams but NOT from any authorized unit.',
     '',
     '  Signal pre-dates official COMINT sweep by 6 hours.',
-    '  Believe this is a field operator\'s authentication code.',
+    "  Believe this is a field operator's authentication code.",
     '',
     '  NOTE: Cross-reference with admin override credentials.',
     '  Decode may yield system access passphrase.',
@@ -409,6 +409,7 @@ const regional_summary_jan96: FileNode = {
   type: 'file',
   name: 'regional_summary_jan96.txt',
   status: 'intact',
+  reveals: ['international-actors'],
   tags: ['military', 'government', 'administrative'],
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -1430,6 +1431,7 @@ const foreign_drone_theory: FileNode = {
   type: 'file',
   name: 'foreign_drone_assessment.txt',
   status: 'intact',
+  reveals: ['debris-relocation'],
   imageTrigger: {
     src: '/images/drone.png',
     alt: 'Recovered visual - Foreign drone analysis',
@@ -1499,6 +1501,7 @@ const industrial_accident_theory: FileNode = {
   type: 'file',
   name: 'industrial_accident_theory.txt',
   status: 'intact',
+  reveals: ['debris-relocation'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ALTERNATIVE ASSESSMENT — INDUSTRIAL ORIGIN',
@@ -1600,6 +1603,7 @@ const foreign_liaison_note: FileNode = {
   name: 'foreign_liaison_note.txt',
   status: 'restricted',
   accessThreshold: 2,
+  reveals: ['international-actors'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'LIAISON NOTE — FOREIGN COORDINATION',
@@ -1634,6 +1638,7 @@ const encrypted_diplomatic_cable: FileNode = {
   name: 'diplomatic_cable_23jan.enc',
   status: 'encrypted',
   accessThreshold: 2,
+  reveals: ['international-actors'],
   tags: ['international', 'foreign', 'government', 'classified', 'encryption'],
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -1691,6 +1696,7 @@ const standing_orders_multinational: FileNode = {
   name: 'standing_orders_multinational.txt',
   status: 'restricted',
   accessThreshold: 3,
+  reveals: ['international-actors'],
   tags: ['international', 'foreign', 'government', 'military', 'classified', 'cover-up'],
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2081,6 +2087,7 @@ const thirty_year_cycle_analysis: FileNode = {
   name: 'thirty_year_cycle.txt',
   status: 'restricted',
   accessThreshold: 4,
+  reveals: ['transition-2026'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'ANALYSIS — THIRTY-YEAR CYCLE HYPOTHESIS',
@@ -2300,6 +2307,7 @@ const transport_log_96: FileNode = {
   type: 'file',
   name: 'transport_log_96.txt',
   status: 'intact',
+  reveals: ['debris-relocation'],
   tags: ['transport', 'debris', 'military', 'crash', 'international'],
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2336,6 +2344,7 @@ const material_x_analysis: FileNode = {
   name: 'material_x_analysis.dat',
   status: 'restricted',
   accessThreshold: 2,
+  reveals: ['debris-relocation'],
   tags: ['debris', 'spacecraft', 'crash', 'experiment', 'classified'],
   imageTrigger: {
     src: '/images/crash.png',
@@ -2376,6 +2385,7 @@ const bio_container_log: FileNode = {
   type: 'file',
   name: 'bio_container.log',
   status: 'unstable',
+  reveals: ['being-containment'],
   tags: ['creature', 'biological', 'containment', 'medical', 'specimen'],
   imageTrigger: {
     src: '/images/et.png',
@@ -2416,6 +2426,7 @@ const autopsy_alpha_log: FileNode = {
   name: 'autopsy_alpha.log',
   status: 'restricted',
   accessThreshold: 2,
+  reveals: ['being-containment'],
   tags: ['autopsy', 'creature', 'biological', 'medical', 'specimen', 'classified'],
   imageTrigger: {
     src: '/images/et.png',
@@ -2462,6 +2473,7 @@ const autopsy_addendum_psi: FileNode = {
   name: 'autopsy_addendum_psi.txt',
   status: 'restricted',
   accessThreshold: 3,
+  reveals: ['telepathic-scouts'],
   tags: ['autopsy', 'medical', 'telepathic', 'psi', 'neural', 'creature'],
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2498,6 +2510,7 @@ const transcript_core: FileNode = {
   type: 'file',
   name: 'transcript_core.enc',
   status: 'encrypted',
+  reveals: ['telepathic-scouts'],
   tags: ['telepathic', 'psi', 'signal', 'communication', 'creature', 'encryption'],
   imageTrigger: {
     src: '/images/et-scared.png',
@@ -2581,6 +2594,7 @@ const field_report_delta: FileNode = {
   type: 'file',
   name: 'field_report_delta.txt',
   status: 'intact',
+  reveals: ['international-actors'],
   tags: ['military', 'crash', 'creature', 'witness'],
   imageTrigger: {
     src: '/images/prato-delta.png',
@@ -2710,6 +2724,7 @@ const threat_window: FileNode = {
   name: 'threat_window.red',
   status: 'restricted',
   accessThreshold: 4,
+  reveals: ['transition-2026'],
   tags: ['2026', 'timeline', 'classified', 'government'],
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -3146,6 +3161,7 @@ const neural_dump_alfa: FileNode = {
   name: 'neural_dump_alfa.psi',
   status: 'encrypted',
   accessThreshold: 3,
+  reveals: ['telepathic-scouts'],
   tags: ['telepathic', 'psi', 'neural', 'creature', 'biological', 'encryption'],
   securityQuestion: {
     question: 'Subject designation (found in autopsy records):',
@@ -3223,6 +3239,7 @@ const psi_analysis_report: FileNode = {
   name: 'psi_analysis_report.txt',
   status: 'restricted',
   accessThreshold: 3,
+  reveals: ['telepathic-scouts'],
   tags: ['telepathic', 'psi', 'neural', 'creature', 'experiment'],
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -3370,6 +3387,7 @@ const second_deployment_intercept: FileNode = {
   status: 'encrypted',
   accessThreshold: 5,
   requiredFlags: ['adminUnlocked'],
+  reveals: ['transition-2026'],
   securityQuestion: {
     question: 'Year of projected transition window:',
     answers: ['2026', 'twenty twenty six', 'twenty-twenty-six'],
@@ -3564,7 +3582,7 @@ const extraction_mechanism: FileNode = {
     '  Fragment 1: "higher cognition increases yield"',
     '  Fragment 2: reference to population density — billions',
     '',
-    'Our linguist insists these are not the scouts\' thoughts.',
+    "Our linguist insists these are not the scouts' thoughts.",
     'They are instructions. Received. Embedded. Like firmware.',
     '',
     '───────────────────────────────────────────────────────────',
@@ -3709,6 +3727,7 @@ const jardim_andere_report: FileNode = {
   type: 'file',
   name: 'jardim_andere_incident.txt',
   status: 'intact',
+  reveals: ['being-containment'],
   tags: ['witness', 'creature', 'crash', 'military'],
   content: [
     '═══════════════════════════════════════════════════════════',
