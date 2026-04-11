@@ -10,7 +10,6 @@ import {
 import {
   resolvePath,
   getNode,
-  getFileContent,
 } from './filesystem';
 import { MAX_DETECTION } from '../constants/detection';
 import { MAX_WRONG_ATTEMPTS } from '../constants/gameplay';
@@ -19,7 +18,6 @@ import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
 // Import utilities
 import {
   createEntry,
-  createOutputEntries,
   sanitizeCommandInput,
   parseCommand,
 } from './commands/utils';
@@ -46,13 +44,7 @@ import {
   checkWanderingState,
   getIncognitoMessage,
   performDecryption,
-  isArchiveOnlyFile,
-  getWarmupAdjustedDetection,
 } from './commands/helpers';
-
-import { createSeededRng, seededRandomInt } from './rng';
-import { DETECTION_THRESHOLDS } from '../constants/detection';
-import { saveCheckpoint } from '../storage/saves';
 
 // Import the combined commands registry from domain modules
 import { commands } from './commands/index';

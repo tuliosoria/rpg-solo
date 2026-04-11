@@ -1,6 +1,6 @@
 // Navigation commands: last, back, map, wait, hide
 
-import { GameState, CommandResult, TerminalEntry } from '../../types';
+import { TerminalEntry } from '../../types';
 import { canAccessFile, getFileContent } from '../filesystem';
 import { countEvidence, EVIDENCE_SYMBOL } from '../evidenceRevelation';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES } from '../../constants/detection';

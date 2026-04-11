@@ -17,7 +17,6 @@ import {
 } from '../evidenceRevelation';
 import {
   ARCHIVE_FILES,
-  ARCHIVE_DIRECTORY_ADDITIONS,
 } from '../../data/archiveFiles';
 import { DETECTION_THRESHOLDS, MAX_DETECTION, applyWarmupDetection, WARMUP_PHASE } from '../../constants/detection';
 import { shouldSuppressPressure } from '../../constants/atmosphere';

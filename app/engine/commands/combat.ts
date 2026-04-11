@@ -1,6 +1,6 @@
 // Combat/confrontation commands: override, trace
 
-import { GameState, CommandResult, TerminalEntry } from '../../types';
+import { GameState, TerminalEntry } from '../../types';
 import { createSeededRng, seededRandomInt } from '../rng';
 import { DETECTION_THRESHOLDS, MAX_DETECTION } from '../../constants/detection';
 import { shouldSuppressPenalties } from '../../constants/atmosphere';

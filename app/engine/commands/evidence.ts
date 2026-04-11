@@ -1,6 +1,5 @@
 // Evidence commands: leak
 
-import { GameState, CommandResult } from '../../types';
 import { createEntry } from './utils';
 import { saveCheckpoint } from '../../storage/saves';
 import {

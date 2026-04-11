@@ -1,6 +1,6 @@
 // System commands: help, status, clear, hint, tutorial, save
 
-import { GameState, CommandResult, TerminalEntry } from '../../types';
+import { GameState } from '../../types';
 import {
   createEntry,
   createOutputEntries,

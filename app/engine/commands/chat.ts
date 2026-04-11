@@ -1,6 +1,6 @@
 // Chat/communication commands: chat, link, message, morse
 
-import { GameState, CommandResult, TerminalEntry, ImageTrigger } from '../../types';
+import { GameState, TerminalEntry } from '../../types';
 import { shouldSuppressPenalties } from '../../constants/atmosphere';
 import {
   createEntry,

@@ -1,6 +1,5 @@
 // Archive commands: script, run, rewind, present
 
-import { GameState, CommandResult, TerminalEntry } from '../../types';
 import {
   createEntry,
   createUFO74Message,

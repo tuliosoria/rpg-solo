@@ -1,6 +1,6 @@
 // Inventory/management commands: note, notes, bookmark, unread, progress, scan, decode, disconnect, release
 
-import { GameState, CommandResult, TerminalEntry } from '../../types';
+import { TerminalEntry } from '../../types';
 import {
   resolvePath,
   getNode,

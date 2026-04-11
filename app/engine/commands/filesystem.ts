@@ -2,7 +2,6 @@
 
 import {
   GameState,
-  CommandResult,
   TerminalEntry,
   FileNode,
   ImageTrigger,
