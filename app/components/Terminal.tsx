@@ -1021,11 +1021,11 @@ export default function Terminal({
       <div className={styles.crtShell}>
         <div className={styles.crtBezel}>
           {/* Bezel patina and old-TV wear live outside the game screen */}
-          <div className={styles.scanlines} />
-          <div className={styles.dirtyScreen} />
-          <div className={styles.vignette} />
-          <div className={styles.edgeDecay} />
-          <div className={styles.smokeParticles}>
+          <div className={styles.scanlines} aria-hidden="true" />
+          <div className={styles.dirtyScreen} aria-hidden="true" />
+          <div className={styles.vignette} aria-hidden="true" />
+          <div className={styles.edgeDecay} aria-hidden="true" />
+          <div className={styles.smokeParticles} aria-hidden="true">
             <div className={styles.smokeParticle3} />
             <div className={styles.smokeParticle4} />
             <div className={styles.smokeParticle5} />
@@ -1049,11 +1049,12 @@ export default function Terminal({
         <StaticNoise
           intensity={terminalStaticLevel}
           alienVisible={alienSilhouetteVisible}
+          aria-hidden="true"
         />
 
         {/* Screen burn-in effect - ghost text from previous outputs */}
         {burnInLines.length > 0 && (
-          <div className={styles.burnIn}>
+          <div className={styles.burnIn} aria-hidden="true">
             {burnInLines.map((line, i) => (
               <div
                 key={i}
@@ -1071,6 +1072,8 @@ export default function Terminal({
           <div
             className={styles.paranoiaMessage}
             style={{ top: paranoiaPosition.top, left: paranoiaPosition.left }}
+            role="alert"
+            aria-live="assertive"
           >
             {translateRuntimeText(paranoiaMessage)}
           </div>
@@ -1139,6 +1142,7 @@ export default function Terminal({
             className={styles.escButton}
             onClick={() => setShowPauseMenu(true)}
             title={t('terminal.pause.title')}
+            aria-label="Pause menu"
           >
             ESC
           </button>
@@ -1442,7 +1446,7 @@ export default function Terminal({
 
         {/* Firewall Scare overlay */}
         {showFirewallScare && (
-          <div className={styles.firewallScareOverlay}>
+          <div className={styles.firewallScareOverlay} role="alert">
             <div className={styles.firewallScareEye}>
               <div className={styles.firewallScareIris} />
               <div className={styles.firewallScarePupil} />
@@ -1549,6 +1553,10 @@ export default function Terminal({
             onCloseAction={() => {
               setShowSettings(false);
               setTimeout(focusTerminalInput, 0);
+            }}
+            onResetDefaults={() => {
+              if (!soundEnabled) toggleSound();
+              setMasterVolume(1);
             }}
           />
         )}

@@ -159,7 +159,7 @@
 
 .actions {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .closeButton {
@@ -177,4 +177,21 @@
 .closeButton:hover {
   background: rgba(136, 204, 68, 0.2);
   box-shadow: 0 0 15px rgba(136, 204, 68, 0.2);
+}
+
+.resetButton {
+  padding: 12px 24px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 2px;
+  background: transparent;
+  border: 1px solid #cc4444;
+  color: #cc4444;
+}
+
+.resetButton:hover {
+  background: rgba(204, 68, 68, 0.15);
+  box-shadow: 0 0 15px rgba(204, 68, 68, 0.2);
 }

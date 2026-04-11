@@ -146,10 +146,10 @@ export default memo(function PauseMenu({
     const yesKey = confirmMode === 'load' ? 'pause.loadConfirm.yes' : 'pause.confirm.yes';
 
     return (
-      <div className={styles.overlay}>
+      <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="pausemenu-title">
         <div className={styles.menu} onClick={e => e.stopPropagation()}>
           <div className={styles.header}>
-            <h2>{t(titleKey)}</h2>
+            <h2 id="pausemenu-title">{t(titleKey)}</h2>
             <div className={styles.line}>═══════════════════════════</div>
           </div>
 
@@ -185,10 +185,10 @@ export default memo(function PauseMenu({
   }
 
   return (
-    <div className={styles.overlay} onClick={onResumeAction}>
+    <div className={styles.overlay} onClick={onResumeAction} role="dialog" aria-modal="true" aria-labelledby="pausemenu-title">
       <div className={styles.menu} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>{t('pause.title')}</h2>
+          <h2 id="pausemenu-title">{t('pause.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
         </div>
 

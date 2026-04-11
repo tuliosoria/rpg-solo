@@ -55,10 +55,10 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
   }, [gameState, language, onSavedAction, slotName, t]);
 
   return (
-    <div className={styles.overlay} onClick={onCloseAction}>
+    <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="savemodal-title">
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>{t('save.title')}</h2>
+          <h2 id="savemodal-title">{t('save.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
         </div>
 

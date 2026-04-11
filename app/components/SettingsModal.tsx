@@ -16,6 +16,7 @@ interface SettingsModalProps {
   onToggleSound: () => void;
   onVolumeChange: (volume: number) => void;
   onCloseAction: () => void;
+  onResetDefaults: () => void;
 }
 
 export default memo(function SettingsModal({
@@ -24,6 +25,7 @@ export default memo(function SettingsModal({
   onToggleSound,
   onVolumeChange,
   onCloseAction,
+  onResetDefaults,
 }: SettingsModalProps) {
   const { language, setLanguage, t } = useI18n();
   const [crtEnabled, setCrtEnabled] = useState(DEFAULT_OPTIONS.crtEffectsEnabled);
@@ -62,11 +64,19 @@ export default memo(function SettingsModal({
     applyOptionsToDocument(nextOptions);
   };
 
+  const handleResetDefaults = useCallback(() => {
+    const defaults = { ...DEFAULT_OPTIONS };
+    setCrtEnabled(defaults.crtEffectsEnabled);
+    persistOptions(defaults);
+    applyOptionsToDocument(defaults);
+    onResetDefaults();
+  }, [onResetDefaults]);
+
   return (
-    <div className={styles.overlay} onClick={onCloseAction}>
+    <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="settings-title">
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>{t('settings.title')}</h2>
+          <h2 id="settings-title">{t('settings.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
         </div>
 
@@ -153,6 +163,14 @@ export default memo(function SettingsModal({
         </div>
 
         <div className={styles.actions}>
+          <button
+            className={styles.resetButton}
+            tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={handleResetDefaults}
+          >
+            {t('settings.resetDefaults')}
+          </button>
           <button
             className={styles.closeButton}
             tabIndex={-1}

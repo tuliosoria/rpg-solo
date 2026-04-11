@@ -140,6 +140,7 @@
   "settings.shortcut.close": "Esc — Cerrar superposiciones",
   "settings.shortcut.skip": "Espacio/Enter — Saltar animación de texto",
   "settings.close": "[ CERRAR ]",
+  "settings.resetDefaults": "[ RESTABLECER ]",
   "pause.title": "PAUSADO",
   "pause.resume": "REANUDAR PARTIDA",
   "pause.save": "GUARDAR SESIÓN",

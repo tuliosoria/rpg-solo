@@ -20,10 +20,10 @@ export default memo(function StatisticsModal({ onCloseAction }: StatisticsModalP
     stats.endingsAchieved.secret;
 
   return (
-    <div className={styles.overlay} onClick={onCloseAction}>
+    <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="statistics-title">
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>{t('stats.title')}</h2>
+          <h2 id="statistics-title">{t('stats.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
         </div>
 

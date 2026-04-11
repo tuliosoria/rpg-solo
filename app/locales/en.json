@@ -140,6 +140,7 @@
   "settings.shortcut.close": "Esc — Close overlays",
   "settings.shortcut.skip": "Space/Enter — Skip streaming",
   "settings.close": "[ CLOSE ]",
+  "settings.resetDefaults": "[ RESET DEFAULTS ]",
   "pause.title": "PAUSED",
   "pause.resume": "RESUME GAME",
   "pause.save": "SAVE SESSION",

@@ -32,10 +32,10 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
   const totalCount = ACHIEVEMENTS.length;
 
   return (
-    <div className={styles.overlay} onClick={onCloseAction}>
+    <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="achievements-title">
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>{t('achievement.gallery.title')}</h2>
+          <h2 id="achievements-title">{t('achievement.gallery.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
           <div className={styles.progress}>
             {t('achievement.gallery.progress', { unlocked: unlockedCount, total: totalCount })}

@@ -351,3 +351,9 @@
     transform: translateY(0) scale(1);
   }
 }
+
+@media (max-width: 768px) {
+  .eye { width: 76px; height: 76px; }
+  .eyeInner { width: 44px; height: 44px; }
+  .eyePupil { width: 16px; height: 16px; }
+}

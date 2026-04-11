@@ -832,6 +832,67 @@
   animation: criticalPulse 1s ease-in-out infinite;
 }
 
+/* Colorblind-safe shape indicators for risk levels */
+.minimal::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  vertical-align: middle;
+  border: 2px solid currentColor;
+  background: transparent;
+}
+
+.low::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  vertical-align: middle;
+  border: 2px solid currentColor;
+  background: linear-gradient(to right, currentColor 50%, transparent 50%);
+}
+
+.elevated::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  vertical-align: middle;
+  background: currentColor;
+}
+
+.high::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  vertical-align: middle;
+  background: currentColor;
+  box-shadow: 0 0 0 2px transparent, 0 0 0 3px currentColor;
+}
+
+.critical::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  vertical-align: middle;
+  background: currentColor;
+  box-shadow: 0 0 0 2px transparent, 0 0 0 3px currentColor, 0 0 0 5px transparent, 0 0 0 6px currentColor;
+  animation: criticalShapePulse 1s ease-in-out infinite;
+}
+
+@keyframes criticalShapePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 /* Tracker reveal animations */
 .trackerHidden {
   opacity: 0;
@@ -1388,6 +1449,10 @@
 
   .inputArea {
     padding: 6px 10px;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    background: #0a0a0a;
   }
 
   /* Hide smoke particles on small screens for performance */
@@ -1396,6 +1461,17 @@
   .smokeParticle4,
   .smokeParticle5 {
     display: none;
+  }
+
+  .escButton {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 16px;
+  }
+
+  .menuItem {
+    min-height: 44px;
+    padding: 10px 16px;
   }
 }
 
