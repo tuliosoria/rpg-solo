@@ -344,6 +344,35 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     }),
   },
   {
+    // SECOND VOICE - a delayed, subtle mismatch after psi exposure
+    id: 'second_voice',
+    trigger: (state, command) => {
+      if (state.singularEventsTriggered?.has('second_voice')) return false;
+      if (shouldSuppressPressure(state)) return false;
+      if (!['status', 'help', 'ls'].includes(command)) return false;
+      return (
+        state.truthsDiscovered.has('telepathic_scouts') &&
+        hasReadPsiMaterial(state) &&
+        state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_MED
+      );
+    },
+    execute: state => ({
+      output: [
+        createEntry('system', ''),
+        createEntry('warning', '[RESPONSE TIMING MISMATCH]'),
+        createEntry('output', 'Reply buffer opened before command log update.'),
+        createEntry('ufo74', 'UFO74: if you get a second answer from this terminal, dont answer it back.'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {
+        singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'second_voice']),
+        paranoiaLevel: Math.min(100, (state.paranoiaLevel || 0) + 12),
+      },
+      delayMs: 1800,
+      triggerFlicker: true,
+    }),
+  },
+  {
     // THE WATCHER ACKNOWLEDGMENT - After discovering 3+ truths, system acknowledges awareness
     // Suppressed during atmosphere phase and cooldown
     id: 'watcher_ack',
@@ -625,6 +654,56 @@ function getContextualExplorationHints(state: GameState): string | null {
   }
 
   return null;
+}
+
+function hasReadPsiMaterial(state: GameState): boolean {
+  for (const filePath of state.filesRead || []) {
+    const lower = filePath.toLowerCase();
+    if (
+      lower.includes('/comms/psi/') ||
+      lower.includes('transcript') ||
+      lower.includes('psi') ||
+      lower.includes('neural')
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getObserverStatusLines(state: GameState): string[] {
+  const truths = state.truthsDiscovered || new Set<string>();
+  const psiExposed = hasReadPsiMaterial(state);
+  const lines: string[] = [];
+
+  if (
+    psiExposed &&
+    truths.has('telepathic_scouts') &&
+    state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_MED
+  ) {
+    lines.push('  SIGNAL: Residual echo persists in relay buffer.');
+
+    if (state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH) {
+      lines.push('  NOTE: One response arrived before keystroke registration.');
+    } else {
+      lines.push('  NOTE: Command cadence is being mirrored faintly.');
+    }
+
+    return lines;
+  }
+
+  if (psiExposed && state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_LOW) {
+    lines.push('  SIGNAL: Background carrier present. Source unresolved.');
+  }
+
+  if (
+    truths.has('being_containment') &&
+    state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH
+  ) {
+    lines.push('  NOTICE: Query pattern resembles prior containment interviews.');
+  }
+
+  return lines;
 }
 
 // Check if player seems lost and return appropriate nudge
@@ -1335,6 +1414,23 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
 
   // Special messages when player finds truths in certain orders
   const truths = state.truthsDiscovered || new Set();
+
+  if (
+    truths.has('telepathic_scouts') &&
+    (path.includes('psi') || path.includes('transcript') || path.includes('neural'))
+  ) {
+    return contextRandomPick(
+      state,
+      [
+        [createEntry('ufo74', 'UFO74: if the terminal starts using your wording, stop typing.')],
+        [createEntry('ufo74', 'UFO74: dont mirror anything back from the psi files.')],
+        [createEntry('ufo74', 'UFO74: if another line answers before i do, ignore it.')],
+      ],
+      'ufo74-telepathy-aftershock',
+      filePath,
+      truthCount
+    );
+  }
 
   // If they found telepathy first and now finding containment
   if (
@@ -3569,7 +3665,7 @@ const COMMAND_HELP: Record<string, string[]> = {
 };
 
 const commands: Record<string, (args: string[], state: GameState) => CommandResult> = {
-  help: (args, _state) => {
+  help: (args, state) => {
     // If a specific command is requested, show detailed help
     if (args.length > 0) {
       const cmdName = args[0].toLowerCase();
@@ -3628,8 +3724,7 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
     }
 
     // Default: show all commands
-    return {
-      output: createOutputEntries([
+    const helpLines = [
         '',
         '═══════════════════════════════════════════════════════════',
         'TERMINAL COMMANDS',
@@ -3663,9 +3758,22 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
         '',
         'GUIDES:  help basics | help evidence | help recovery | help winning',
         '',
-        '═══════════════════════════════════════════════════════════',
-        '',
-      ]),
+      ];
+
+    if (
+      hasReadPsiMaterial(state) &&
+      state.truthsDiscovered.has('telepathic_scouts') &&
+      state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_MED
+    ) {
+      helpLines.push('NOTICE: If assistance appears before you finish typing, do not repeat it.');
+      helpLines.push('');
+    }
+
+    helpLines.push('═══════════════════════════════════════════════════════════');
+    helpLines.push('');
+
+    return {
+      output: createOutputEntries(helpLines),
       stateChanges: {},
     };
   },
@@ -3758,13 +3866,19 @@ const commands: Record<string, (args: string[], state: GameState) => CommandResu
       }
     }
 
+    const observerLines = getObserverStatusLines(state);
+    if (observerLines.length > 0) {
+      lines.push('');
+      lines.push(...observerLines);
+    }
+
     // System attitude indicator at high hostility
     if (hostility >= 4) {
       lines.push('');
-      lines.push('  SYSTEM ATTITUDE: Non-cooperative');
+      lines.push('  SYSTEM ATTITUDE: Studying you');
     } else if (hostility >= 2) {
       lines.push('');
-      lines.push('  SYSTEM ATTITUDE: Monitored');
+      lines.push('  SYSTEM ATTITUDE: Listening');
     }
 
     // Terrible Mistake indicator

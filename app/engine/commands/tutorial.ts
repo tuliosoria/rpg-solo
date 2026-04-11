@@ -233,6 +233,7 @@ export function getHelpRecovery(): TerminalEntry[] {
     createEntry('system', ''),
     createEntry('output', '  RULE OF THUMB'),
     createEntry('output', '    If the tracker turns red, slow down and recover before digging deeper.'),
+    createEntry('output', '    If the terminal replies too early, stop and wait it out.'),
     createEntry('system', ''),
   ];
 }

@@ -394,6 +394,31 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       'Digite "help" para ver os comandos. "help basics" se for iniciante.',
     'UFO74: new here? type "help basics".':
       'UFO74: é novo por aqui? digite "help basics".',
+    '  SIGNAL: Residual echo persists in relay buffer.':
+      '  SINAL: eco residual persiste no buffer do relay.',
+    '  NOTE: One response arrived before keystroke registration.':
+      '  NOTA: uma resposta chegou antes do registro da tecla.',
+    '  NOTE: Command cadence is being mirrored faintly.':
+      '  NOTA: a cadência dos comandos está sendo espelhada levemente.',
+    '  SIGNAL: Background carrier present. Source unresolved.':
+      '  SINAL: portadora de fundo presente. Fonte não resolvida.',
+    '  NOTICE: Query pattern resembles prior containment interviews.':
+      '  AVISO: o padrão das consultas se assemelha a entrevistas de contenção anteriores.',
+    '  SYSTEM ATTITUDE: Studying you': '  ATITUDE DO SISTEMA: Estudando você',
+    '  SYSTEM ATTITUDE: Listening': '  ATITUDE DO SISTEMA: Escutando',
+    'NOTICE: If assistance appears before you finish typing, do not repeat it.':
+      'AVISO: se a ajuda aparecer antes de você terminar de digitar, não a repita.',
+    '[RESPONSE TIMING MISMATCH]': '[DIVERGÊNCIA NO TEMPO DE RESPOSTA]',
+    'Reply buffer opened before command log update.':
+      'O buffer de resposta abriu antes da atualização do log de comando.',
+    'UFO74: if you get a second answer from this terminal, dont answer it back.':
+      'UFO74: se você receber uma segunda resposta deste terminal, não responda.',
+    'UFO74: if the terminal starts using your wording, stop typing.':
+      'UFO74: se o terminal começar a usar as suas palavras, pare de digitar.',
+    'UFO74: dont mirror anything back from the psi files.':
+      'UFO74: não devolva nada dos arquivos psi.',
+    'UFO74: if another line answers before i do, ignore it.':
+      'UFO74: se outra linha responder antes de mim, ignore.',
     '║  💡 TUTORIAL TIP                          ║':
       '║  💡 DICA DE TUTORIAL                      ║',
     'Evidence updated.':
@@ -894,6 +919,31 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       'Escribe "help" para ver comandos. "help basics" si eres nuevo.',
     'UFO74: new here? type "help basics".':
       'UFO74: ¿nuevo por aquí? escribe "help basics".',
+    '  SIGNAL: Residual echo persists in relay buffer.':
+      '  SEÑAL: persiste un eco residual en el búfer del enlace.',
+    '  NOTE: One response arrived before keystroke registration.':
+      '  NOTA: una respuesta llegó antes del registro de la tecla.',
+    '  NOTE: Command cadence is being mirrored faintly.':
+      '  NOTA: la cadencia de los comandos se está reflejando débilmente.',
+    '  SIGNAL: Background carrier present. Source unresolved.':
+      '  SEÑAL: portadora de fondo presente. Origen no resuelto.',
+    '  NOTICE: Query pattern resembles prior containment interviews.':
+      '  AVISO: el patrón de consulta se parece a entrevistas de contención previas.',
+    '  SYSTEM ATTITUDE: Studying you': '  ACTITUD DEL SISTEMA: Estudiándote',
+    '  SYSTEM ATTITUDE: Listening': '  ACTITUD DEL SISTEMA: Escuchando',
+    'NOTICE: If assistance appears before you finish typing, do not repeat it.':
+      'AVISO: si la ayuda aparece antes de que termines de escribir, no la repitas.',
+    '[RESPONSE TIMING MISMATCH]': '[DESAJUSTE EN EL TIEMPO DE RESPUESTA]',
+    'Reply buffer opened before command log update.':
+      'El búfer de respuesta se abrió antes de la actualización del registro de comandos.',
+    'UFO74: if you get a second answer from this terminal, dont answer it back.':
+      'UFO74: si recibes una segunda respuesta de este terminal, no la respondas.',
+    'UFO74: if the terminal starts using your wording, stop typing.':
+      'UFO74: si el terminal empieza a usar tus mismas palabras, deja de escribir.',
+    'UFO74: dont mirror anything back from the psi files.':
+      'UFO74: no devuelvas nada de los archivos psi.',
+    'UFO74: if another line answers before i do, ignore it.':
+      'UFO74: si otra línea responde antes que yo, ignórala.',
     '║  💡 TUTORIAL TIP                          ║':
       '║  💡 CONSEJO DEL TUTORIAL                  ║',
     'Evidence updated.':

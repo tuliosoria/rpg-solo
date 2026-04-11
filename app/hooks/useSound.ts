@@ -34,6 +34,7 @@ export type SoundType =
   | 'typing'
   | 'transmission'
   | 'creepy' // Unsettling avatar entrance
+  | 'omen' // Sparse, low-volume unease cue
   | 'fanfare' // Zelda-like celebration sound
   | 'morse'; // Morse code transmission beeps
 
@@ -59,6 +60,7 @@ const SOUND_CONFIG: Record<SoundType, SoundConfig> = {
   typing: { volume: 0.08 }, // Stream typing sound
   transmission: { volume: 0.35 }, // UFO74 transmission banner
   creepy: { volume: 0.45 }, // Unsettling avatar entrance
+  omen: { volume: 0.1 }, // Brief whisper/static pulse for subtle dread
   fanfare: { volume: 0.5 }, // Zelda-like celebration
   morse: { volume: 0.4 }, // Morse code transmission beeps
 };
@@ -492,6 +494,44 @@ export function useSound() {
           thumpGain.connect(audioContext.destination);
           thumpOsc.start(t + 0.02);
           thumpOsc.stop(t + 0.25);
+          break;
+        }
+
+        case 'omen': {
+          // Very sparse "something is slightly wrong" cue:
+          // a soft filtered static breath plus a faint descending tone.
+          const t = audioContext.currentTime;
+
+          const noiseBuffer = createNoiseBuffer(audioContext, 0.16);
+          const noiseSource = audioContext.createBufferSource();
+          const noiseGain = audioContext.createGain();
+          const noiseFilter = audioContext.createBiquadFilter();
+
+          noiseSource.buffer = noiseBuffer;
+          noiseFilter.type = 'bandpass';
+          noiseFilter.frequency.setValueAtTime(1400, t);
+          noiseFilter.Q.setValueAtTime(1.8, t);
+          noiseGain.gain.setValueAtTime(0.0001, t);
+          noiseGain.gain.linearRampToValueAtTime(volume * 0.35, t + 0.03);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+
+          noiseSource.connect(noiseFilter);
+          noiseFilter.connect(noiseGain);
+          noiseGain.connect(audioContext.destination);
+          noiseSource.start(t);
+          noiseSource.stop(t + 0.16);
+
+          const osc = audioContext.createOscillator();
+          const oscGain = audioContext.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(360, t);
+          oscGain.gain.setValueAtTime(0.0001, t);
+          oscGain.gain.linearRampToValueAtTime(volume * 0.22, t + 0.025);
+          oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
+          osc.connect(oscGain);
+          oscGain.connect(audioContext.destination);
+          osc.start(t);
+          osc.stop(t + 0.24);
           break;
         }
 

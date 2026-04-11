@@ -572,6 +572,19 @@ export function useTerminalInput({
       incrementStatistic('commandsTyped');
 
       const result = executeCommand(inputValue, newState);
+      const previousSingularEvents = newState.singularEventsTriggered || new Set<string>();
+      const nextSingularEvents =
+        result.stateChanges.singularEventsTriggered || previousSingularEvents;
+      const didTriggerSecondVoice =
+        !previousSingularEvents.has('second_voice') && nextSingularEvents.has('second_voice');
+      const playSecondVoiceCue = () => {
+        if (!didTriggerSecondVoice) return;
+
+        // Fire only when the actual one-time event lands in history, so the cue stays sparse
+        // and follows the unsettling text instead of preceding it.
+        setTimeout(() => playSound('omen'), 120);
+        setTimeout(() => playSound('static'), 320);
+      };
 
       if (result.delayMs) {
         await new Promise(resolve => setTimeout(resolve, result.delayMs));
@@ -598,6 +611,7 @@ export function useTerminalInput({
           ...intermediateState,
           history: result.stateChanges.history,
         });
+        playSecondVoiceCue();
         isProcessingRef.current = false;
         setIsProcessing(false);
       } else if (streamingMode !== 'none' && result.output.length > 0) {
@@ -634,6 +648,8 @@ export function useTerminalInput({
               history: [...prev.history, ...pendingMediaMessages],
             }));
           }
+
+          playSecondVoiceCue();
 
           if (ufo74Messages.length > 0) {
             if (result.imageTrigger || result.videoTrigger) {
@@ -674,6 +690,7 @@ export function useTerminalInput({
           ...intermediateState,
           history: [...newState.history, ...otherOutput, ...pendingMediaMessages],
         });
+        playSecondVoiceCue();
 
         if (ufo74Messages.length > 0) {
           if (result.imageTrigger || result.videoTrigger) {

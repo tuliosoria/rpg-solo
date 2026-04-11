@@ -410,5 +410,15 @@ describe('useSound', () => {
       expect(createOscillatorSpy).toHaveBeenCalled();
       vi.useRealTimers();
     });
+
+    it('plays omen sound', () => {
+      const { result } = renderHook(() => useSound());
+
+      act(() => {
+        result.current.playSound('omen');
+      });
+
+      expect(createOscillatorSpy).toHaveBeenCalled();
+    });
   });
 });

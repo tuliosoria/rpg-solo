@@ -626,12 +626,51 @@ describe('UX Commands', () => {
         tutorialComplete: true,
         detectionLevel: 88,
         waitUsesRemaining: 2,
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
+        truthsDiscovered: new Set([
+          'debris_relocation',
+          'being_containment',
+          'telepathic_scouts',
+        ]),
+        filesRead: new Set(['/comms/psi/transcript_core.enc']),
       });
       const result = executeCommand('status', state);
 
-      expect(result.output.some(e => e.content.includes('EVIDENCE: 2/5'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('EVIDENCE: 3/5'))).toBe(true);
       expect(result.output.some(e => e.content.includes('RECOVERY: "wait" can buy time'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('SIGNAL: Residual echo persists'))).toBe(true);
+    });
+
+    it('can trigger a delayed second-voice warning after psi exposure', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        detectionLevel: 60,
+        truthsDiscovered: new Set(['telepathic_scouts']),
+        filesRead: new Set(['/comms/psi/transcript_core.enc']),
+        singularEventsTriggered: new Set(['turing_warning', 'turing_evaluation']),
+      });
+      const result = executeCommand('help', state);
+
+      expect(result.output.some(e => e.content.includes('[RESPONSE TIMING MISMATCH]'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('dont answer it back'))).toBe(true);
+    });
+
+    it('keeps observer cues hidden until psi material has actually been read', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        detectionLevel: 62,
+        truthsDiscovered: new Set(['telepathic_scouts']),
+        filesRead: new Set(['/storage/witness_statement_raw.txt']),
+      });
+
+      const statusResult = executeCommand('status', state);
+      const helpResult = executeCommand('help', state);
+
+      expect(statusResult.output.some(e => e.content.includes('Residual echo persists'))).toBe(false);
+      expect(
+        helpResult.output.some(e =>
+          e.content.includes('If assistance appears before you finish typing')
+        )
+      ).toBe(false);
     });
   });
 
