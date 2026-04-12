@@ -1,9 +1,11 @@
 # Electron Builder Configuration
 # https://www.electron.build/configuration/configuration
 
-appId: com.varginha.terminal1996
-productName: "Varginha: Terminal 1996"
+appId: com.terminal1996.varginha
+productName: "Varginha Terminal 1996"
 copyright: "Copyright © 2026"
+afterExtract: electron/after-pack.js
+afterPack: electron/after-pack.js
 
 # Directories
 directories:
@@ -14,11 +16,19 @@ directories:
 files:
   - electron/**/*
   - out/**/*
+  - public/icon.png
+  - public/icon.ico
+  - public/icon.icns
   - "!**/*.map"
   - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
   - "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}"
   - "!**/node_modules/*.d.ts"
   - "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}"
+
+protocols:
+  - name: Varginha Terminal Protocol
+    schemes:
+      - varginha
 
 # Unpack native modules from asar for compatibility
 asar: true
@@ -33,15 +43,15 @@ win:
     - target: nsis
       arch:
         - x64
-  icon: build/icon.ico
+  icon: public/icon.ico
   artifactName: "${productName}-${version}-win-${arch}.${ext}"
 
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
-  installerIcon: build/icon.ico
-  uninstallerIcon: build/icon.ico
-  installerHeaderIcon: build/icon.ico
+  installerIcon: public/icon.ico
+  uninstallerIcon: public/icon.ico
+  installerHeaderIcon: public/icon.ico
   createDesktopShortcut: true
   createStartMenuShortcut: true
   shortcutName: "Varginha: Terminal 1996"
@@ -53,7 +63,7 @@ mac:
       arch:
         - x64
         - arm64
-  icon: build/icon.icns
+  icon: public/icon.icns
   category: public.app-category.games
   artifactName: "${productName}-${version}-mac-${arch}.${ext}"
   hardenedRuntime: true
@@ -79,7 +89,7 @@ linux:
     - target: deb
       arch:
         - x64
-  icon: build/icon.png
+  icon: public/icon.png
   category: Game
   artifactName: "${productName}-${version}-linux-${arch}.${ext}"
   synopsis: "A narrative puzzle game about the 1996 Varginha UFO incident"

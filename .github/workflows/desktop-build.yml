@@ -42,24 +42,15 @@ jobs:
 
       - name: Build Electron (Windows)
         if: matrix.platform == 'win'
-        run: npx electron-builder --win --x64
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --config electron-builder.yml --win --x64 --publish never
 
       - name: Build Electron (macOS)
         if: matrix.platform == 'mac'
-        run: npx electron-builder --mac --x64 --arm64
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # For code signing (optional):
-          # CSC_LINK: ${{ secrets.MAC_CERTIFICATE }}
-          # CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+        run: npx electron-builder --config electron-builder.yml --mac --x64 --arm64 --publish never
 
       - name: Build Electron (Linux)
         if: matrix.platform == 'linux'
-        run: npx electron-builder --linux --x64
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --config electron-builder.yml --linux --x64 --publish never
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
