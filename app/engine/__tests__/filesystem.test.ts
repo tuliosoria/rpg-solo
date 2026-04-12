@@ -154,7 +154,7 @@ describe('Filesystem', () => {
     });
 
     it('shows late-stage tmp files once evidence milestones are reached', () => {
-      const state = createTestState({ evidenceCount: 5 });
+      const state = createTestState({ evidenceCount: 10 });
       const entries = listDirectory('/tmp', state);
       expect(entries!.some(e => e.name === 'coherence_threshold.log')).toBe(true);
       expect(entries!.some(e => e.name === 'session_residue.log')).toBe(true);

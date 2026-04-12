@@ -931,21 +931,21 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('run save_evidence.sh redirects to leak command (Elusive Man)', () => {
+    it('run save_evidence.sh redirects to leak command (direct-to-ICQ)', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/tmp',
-        evidenceCount: 5,
+        evidenceCount: 10,
       });
       const result = executeCommand('run save_evidence.sh', state);
-      // Should trigger the Elusive Man leak sequence
+      // Should trigger the direct-to-ICQ leak transmission
       expect(
         result.output.some(
-          e => e.content.includes('I have resources') || e.content.includes('SECURE CHANNEL')
+          e => e.content.includes('TRANSMISSION SUCCESSFUL') || e.content.includes('LEAK TRANSMISSION')
         )
       ).toBe(true);
-      expect(result.stateChanges.inLeakSequence).toBe(true);
+      expect(result.stateChanges.icqPhase).toBe(true);
     });
 
     it('executes purge_trace.sh to clear countdown', () => {
@@ -1050,20 +1050,21 @@ describe('Narrative Mechanics', () => {
       expect(result.stateChanges.inLeakSequence).toBeUndefined();
     });
 
-    it('triggers Elusive Man interrogation when all evidence found', () => {
+    it('triggers direct-to-ICQ leak when all evidence found', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        evidenceCount: 5,
+        evidenceCount: 10,
       });
       const result = executeCommand('leak', state);
-      // Should trigger the Elusive Man leak sequence
+      // Should trigger the direct-to-ICQ leak transmission
       expect(
         result.output.some(
-          e => e.content.includes('I have resources') || e.content.includes('SECURE CHANNEL')
+          e => e.content.includes('TRANSMISSION SUCCESSFUL') || e.content.includes('LEAK TRANSMISSION')
         )
       ).toBe(true);
-      expect(result.stateChanges.inLeakSequence).toBe(true);
+      expect(result.stateChanges.icqPhase).toBe(true);
+      expect(result.skipToPhase).toBe('icq');
     });
   });
 
@@ -1246,7 +1247,24 @@ describe('Narrative Mechanics', () => {
       expect(state.evidenceCount).toBe(0);
     });
 
-    it('win condition is evidenceCount >= 5', () => {
+    it('win condition is evidenceCount >= 10', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/ops/exo',
+        accessLevel: 4,
+        evidenceCount: 10,
+        flags: { adminUnlocked: true },
+        filesRead: new Set<string>(),
+      });
+
+      // Evidence count of 10 should allow the leak command
+      const result = executeCommand('leak', state);
+      // Should NOT show "INSUFFICIENT EVIDENCE"
+      expect(result.output.some(e => e.content.includes('INSUFFICIENT EVIDENCE'))).toBe(false);
+    });
+
+    it('blocks leak when evidenceCount < 10', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -1257,28 +1275,11 @@ describe('Narrative Mechanics', () => {
         filesRead: new Set<string>(),
       });
 
-      // Evidence count of 5 should allow the leak command
-      const result = executeCommand('leak', state);
-      // Should NOT show "INSUFFICIENT EVIDENCE"
-      expect(result.output.some(e => e.content.includes('INSUFFICIENT EVIDENCE'))).toBe(false);
-    });
-
-    it('blocks leak when evidenceCount < 5', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-        currentPath: '/ops/exo',
-        accessLevel: 4,
-        evidenceCount: 3,
-        flags: { adminUnlocked: true },
-        filesRead: new Set<string>(),
-      });
-
       const result = executeCommand('leak', state);
       // Should show insufficient evidence
       expect(
         result.output.some(
-          e => e.content.includes('INSUFFICIENT EVIDENCE') || e.content.includes('3/5')
+          e => e.content.includes('INSUFFICIENT EVIDENCE') || e.content.includes('5/10')
         )
       ).toBe(true);
     });

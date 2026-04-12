@@ -28,10 +28,8 @@ import {
   processTutorialInput,
 } from './commands/interactiveTutorial';
 
-// Import Elusive Man leak system
+// Import Elusive Man leak system (conspiracy choice kept for save compat)
 import {
-  isInLeakSequence,
-  processLeakAnswer,
   isPendingConspiracyChoice,
   processConspiracyChoice,
 } from './elusiveMan';
@@ -613,14 +611,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // ELUSIVE MAN LEAK SEQUENCE
-  // ═══════════════════════════════════════════════════════════════════════════
-  if (isInLeakSequence(state)) {
-    return processLeakAnswer(normalizedInput, state);
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // CONSPIRACY FILES CHOICE
+  // CONSPIRACY FILES CHOICE (legacy — kept for save compatibility)
   // ═══════════════════════════════════════════════════════════════════════════
   if (isPendingConspiracyChoice(state)) {
     return processConspiracyChoice(normalizedInput, state);

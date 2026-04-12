@@ -735,14 +735,14 @@ describe('Story Consistency Tests', () => {
         const state = createTestState({
           tutorialStep: -1,
           tutorialComplete: true,
-          evidenceCount: 5,
+          evidenceCount: 10,
         });
 
         const result = executeCommand('leak', state);
 
-        // Should start leak sequence with Elusive Man
-        expect(result.stateChanges.inLeakSequence).toBe(true);
-        expect(result.stateChanges.currentLeakQuestion).toBe(0);
+        // Should go directly to ICQ phase (no more Elusive Man questions)
+        expect(result.stateChanges.icqPhase).toBe(true);
+        expect(result.skipToPhase).toBe('icq');
       });
 
       it('secret ending triggered by finding UFO74 identity', () => {

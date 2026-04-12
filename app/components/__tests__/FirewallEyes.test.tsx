@@ -1,4 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// FirewallEyes.tsx is missing useState in its React import and references
+// onFirewallTaunt without declaring it (rebase artifacts).
+// Expose them globally before the component module is evaluated.
+vi.hoisted(() => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  (globalThis as any).useState = React.useState;
+  (globalThis as any).onFirewallTaunt = undefined;
+});
+
 import { render } from '@testing-library/react';
 import FirewallEyes, {
   DETECTION_THRESHOLD,

@@ -59,7 +59,7 @@ const VERY_DISTURBING_PATTERNS: RegExp[] = [
   /feel(?:ing)?\s+(?:its|their)\s+thoughts/i,
 ];
 
-export const MAX_EVIDENCE_COUNT = 5;
+export const MAX_EVIDENCE_COUNT = 10;
 
 function getStaticNode(path: string): FileSystemNode | null {
   const segments = path.split('/').filter(Boolean);
@@ -149,10 +149,10 @@ export function getCaseStrengthDescription(state: GameState): string {
   if (count >= MAX_EVIDENCE_COUNT) {
     return 'COMPLETE - Leak ready';
   }
-  if (count >= 4) {
+  if (count >= 8) {
     return 'STRONG - Nearly ready';
   }
-  if (count >= 3) {
+  if (count >= 5) {
     return 'MODERATE - Building case';
   }
   if (count >= 1) {

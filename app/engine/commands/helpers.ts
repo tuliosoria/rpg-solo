@@ -817,13 +817,17 @@ export function applyEvidenceDiscovery(
   }
   if (newCount === 4) {
     notices.push(createEntry('notice', ''));
+    notices.push(createEntry('notice', 'NOTICE: Evidence count growing. Keep digging.'));
+  }
+  if (newCount === 7) {
+    notices.push(createEntry('notice', ''));
     notices.push(createEntry('notice', 'NOTICE: Leak package almost ready.'));
   }
   if (newCount === MAX_EVIDENCE_COUNT) {
     notices.push(createEntry('notice', ''));
     notices.push(createEntry('notice', '▓▓▓ LEAK PACKAGE READY ▓▓▓'));
     notices.push(...createUFO74Message([
-      'UFO74: five files logged. leak path is live.',
+      'UFO74: ten files logged. leak path is live.',
       '       type: leak',
       '       do it NOW before they cut the connection.',
     ]));

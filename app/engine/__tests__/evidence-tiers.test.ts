@@ -74,7 +74,7 @@ describe('Simplified Evidence System', () => {
       expect(count).toBe(2);
     });
 
-    it('should cap discovered evidence at 5', () => {
+    it('should cap discovered evidence at 10', () => {
       const state = createTestState({
         evidenceCount: 0,
         filesRead: new Set([
@@ -89,14 +89,15 @@ describe('Simplified Evidence System', () => {
 
       const count = countEvidence(state);
 
-      expect(count).toBe(5);
+      // 6 evidence files read, all counted (cap is 10)
+      expect(count).toBe(6);
     });
   });
 
   describe('getCaseStrengthDescription', () => {
-    it('should return COMPLETE for 5 evidence', () => {
+    it('should return COMPLETE for 10 evidence', () => {
       const state = createTestState({
-        evidenceCount: 5,
+        evidenceCount: 10,
       });
 
       const description = getCaseStrengthDescription(state);
@@ -104,9 +105,9 @@ describe('Simplified Evidence System', () => {
       expect(description).toContain('COMPLETE');
     });
 
-    it('should return STRONG for 4 evidence', () => {
+    it('should return STRONG for 8 evidence', () => {
       const state = createTestState({
-        evidenceCount: 4,
+        evidenceCount: 8,
       });
 
       const description = getCaseStrengthDescription(state);
@@ -114,9 +115,9 @@ describe('Simplified Evidence System', () => {
       expect(description).toContain('STRONG');
     });
 
-    it('should return MODERATE for 3 evidence', () => {
+    it('should return MODERATE for 5 evidence', () => {
       const state = createTestState({
-        evidenceCount: 3,
+        evidenceCount: 5,
       });
 
       const description = getCaseStrengthDescription(state);

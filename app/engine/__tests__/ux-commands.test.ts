@@ -287,6 +287,7 @@ describe('UX Commands', () => {
       expect(result.stateChanges.evidencesSaved).toBeUndefined();
       expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
 
+      // With evidenceCount 5 (god evidences gives 5), leak requires 10 — should be blocked
       const readyState = {
         ...state,
         ...result.stateChanges,
@@ -294,10 +295,9 @@ describe('UX Commands', () => {
       } as GameState;
       const leakResult = executeCommand('leak', readyState);
 
-      expect(leakResult.stateChanges.inLeakSequence).toBe(true);
       expect(
         leakResult.output.some(
-          e => e.content.includes('SECURE CHANNEL') || e.content.includes('I have resources')
+          e => e.content.includes('INSUFFICIENT EVIDENCE')
         )
       ).toBe(true);
     });
