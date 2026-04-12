@@ -111,6 +111,11 @@ const AUTOPSY_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
+const THEY_ARE_ALREADY_HERE_VIDEO_SRC = new URL(
+  '../../videos/they-are-already-here.mp4',
+  import.meta.url
+).toString();
+
 const EVIDENCE_VIDEO_PROMPT_TEXT = 'There is a video attached to this file. Open video? [yes] [no]';
 
 const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
@@ -120,11 +125,17 @@ const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
     videoSrc: JARDIM_ANDERE_INCIDENT_VIDEO_SRC,
     videoTitle: 'jardim_andere_incident.mp4',
   },
-  '/storage/records/logistics_manifest_fragment.txt': {
-    filePath: '/storage/records/logistics_manifest_fragment.txt',
+  '/storage/assets/logistics_manifest_fragment.txt': {
+    filePath: '/storage/assets/logistics_manifest_fragment.txt',
     fileName: 'logistics_manifest_fragment.txt',
     videoSrc: AUTOPSY_VIDEO_SRC,
     videoTitle: 'autopsy.mp4',
+  },
+  '/admin/energy_extraction_theory.txt': {
+    filePath: '/admin/energy_extraction_theory.txt',
+    fileName: 'energy_extraction_theory.txt',
+    videoSrc: THEY_ARE_ALREADY_HERE_VIDEO_SRC,
+    videoTitle: 'they-are-already-here.mp4',
   },
 };
 
@@ -406,7 +417,8 @@ export default function Terminal({
     const closingVideo = activeEvidenceVideo;
     setActiveEvidenceVideo(null);
     if (closingVideo?.filePath === '/internal/jardim_andere_incident.txt' ||
-        closingVideo?.filePath === '/storage/records/logistics_manifest_fragment.txt') {
+        closingVideo?.filePath === '/storage/assets/logistics_manifest_fragment.txt' ||
+        closingVideo?.filePath === '/admin/energy_extraction_theory.txt') {
       appendPendingUfo74StartMessages([
         createEntry('ufo74', 'UFO74: damn. what the f*** is that, kid?'),
         createEntry('ufo74', 'UFO74: save it. we\'re going to have to leak this thing.'),
