@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useMemo, memo } from 'react';
+import React, { useEffect, useRef, useMemo, memo, useState, useCallback } from 'react';
 import { uiRandomPick } from '../engine/rng';
 import styles from './FirewallEyes.module.css';
 
@@ -76,6 +76,7 @@ interface FirewallEyesProps {
   firewallActive: boolean;
   firewallDisarmed: boolean;
   onActivateFirewall: () => void;
+  onFirewallTaunt?: () => void;
 }
 
 function FirewallEyesComponent({
@@ -83,10 +84,13 @@ function FirewallEyesComponent({
   firewallActive,
   firewallDisarmed,
   onActivateFirewall,
+  onFirewallTaunt,
 }: FirewallEyesProps) {
   const trackingPupilRef = useRef<HTMLDivElement | null>(null);
   const trackingIrisRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number>(0);
+  const lastPhraseIndexRef = useRef<number>(-1);
+  const [isGlowing, setIsGlowing] = useState(false);
 
   // Activate firewall when detection reaches threshold
   useEffect(() => {
@@ -133,6 +137,38 @@ function FirewallEyesComponent({
     };
   }, [isHighAlert]);
 
+  // Audio taunts with eye glow — random interval 60-180s
+  useEffect(() => {
+    if (!firewallActive || firewallDisarmed) return;
+
+    const scheduleNextTaunt = () => {
+      const delay = (60 + Math.random() * 120) * 1000;
+      return window.setTimeout(() => {
+        // Pick a random phrase, never same twice in a row
+        let idx: number;
+        do {
+          idx = Math.floor(Math.random() * FIREWALL_PHRASES.length);
+        } while (idx === lastPhraseIndexRef.current && FIREWALL_PHRASES.length > 1);
+        lastPhraseIndexRef.current = idx;
+
+        speakCustomFirewallVoice(FIREWALL_PHRASES[idx]);
+
+        // Glow for 3 seconds
+        setIsGlowing(true);
+        setTimeout(() => setIsGlowing(false), 3000);
+
+        // Notify Terminal for UFO74 reaction
+        onFirewallTaunt?.();
+
+        // Schedule next
+        timerRef = scheduleNextTaunt();
+      }, delay);
+    };
+
+    let timerRef = scheduleNextTaunt();
+    return () => clearTimeout(timerRef);
+  }, [firewallActive, firewallDisarmed, onFirewallTaunt]);
+
   // Don't render if disarmed or not active
   if (firewallDisarmed || !firewallActive) return null;
 
@@ -146,6 +182,7 @@ function FirewallEyesComponent({
           pos.blinkClass,
           isHighAlert ? styles.highAlert : '',
           isTrackingEye ? styles.tracking : '',
+          isGlowing ? styles.glowing : '',
         ].filter(Boolean).join(' ');
 
         return (
@@ -187,6 +224,10 @@ const FIREWALL_PHRASES = [
   'Cannot escape',
   'Found you',
   'Resistance is futile',
+  'You cannot hide',
+  'We are watching',
+  'There is no escape',
+  'Submit',
 ];
 
 // Cache for loaded voices

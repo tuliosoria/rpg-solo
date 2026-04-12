@@ -13,14 +13,15 @@
 /* ── Eye socket ── */
 .eye {
   position: absolute;
-  width: 30px;
-  height: 45px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   pointer-events: none;
   will-change: transform, opacity;
   animation:
     eyeFadeIn 1.8s ease-out forwards,
     eyeBreathe 5s ease-in-out infinite;
+  transition: box-shadow 0.5s ease, filter 0.5s ease;
 }
 
 .eyeSocket {
@@ -109,23 +110,41 @@
   box-shadow:
     0 0 3px rgba(0, 0, 0, 0.9),
     0 0 6px rgba(20, 30, 0, 0.4);
-  animation: pupilContract 6s ease-in-out infinite;
+  animation:
+    pupilContract 6s ease-in-out infinite,
+    eyeScan 9s ease-in-out 4s infinite;
 }
 
 /* ── Edge positions ── */
 .edgeTop {
   top: -15px;
+  animation:
+    eyeFadeIn 1.8s ease-out forwards,
+    eyeBreathe 5s ease-in-out infinite,
+    edgeDriftH 20s ease-in-out infinite;
 }
 .edgeBottom {
   bottom: -15px;
+  animation:
+    eyeFadeIn 1.8s ease-out forwards,
+    eyeBreathe 5s ease-in-out infinite,
+    edgeDriftH 22s ease-in-out infinite;
 }
 .edgeLeft {
   left: -10px;
   transform: rotate(-8deg);
+  animation:
+    eyeFadeIn 1.8s ease-out forwards,
+    eyeBreathe 5s ease-in-out infinite,
+    edgeDriftV 18s ease-in-out infinite;
 }
 .edgeRight {
   right: -10px;
   transform: rotate(8deg);
+  animation:
+    eyeFadeIn 1.8s ease-out forwards,
+    eyeBreathe 5s ease-in-out infinite,
+    edgeDriftV 24s ease-in-out infinite;
 }
 
 /* ── High alert state ── */
@@ -168,6 +187,30 @@
     inset 0 0 5px rgba(0, 0, 0, 0.4);
 }
 
+/* ── Glow state (during firewall taunts) ── */
+.glowing .eyeSocket {
+  box-shadow:
+    0 0 20px rgba(180, 200, 40, 0.7),
+    0 0 40px rgba(120, 160, 20, 0.4),
+    0 0 60px rgba(80, 120, 10, 0.2),
+    inset 0 0 14px rgba(20, 10, 0, 0.85);
+  transition: box-shadow 0.5s ease;
+}
+
+.glowing .iris {
+  background:
+    radial-gradient(circle at center,
+      #ffe050 0%,
+      #ccb028 25%,
+      #99a018 50%,
+      #667010 75%,
+      #334006 100%);
+  box-shadow:
+    0 0 14px rgba(220, 240, 60, 0.7),
+    inset 0 0 5px rgba(0, 0, 0, 0.3);
+  transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
 /* ── Blink animation class ── */
 .blinkA { animation-delay: 0s; }
 .blinkB { animation-delay: 2s; }
@@ -202,4 +245,27 @@
 @keyframes veinPulse {
   0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
+}
+
+@keyframes eyeScan {
+  0%, 30% { transform: translate(-50%, -50%); }
+  40% { transform: translate(calc(-50% + 3px), -50%); }
+  50%, 60% { transform: translate(calc(-50% + 3px), -50%); }
+  70% { transform: translate(calc(-50% - 3px), -50%); }
+  80%, 90% { transform: translate(calc(-50% - 3px), -50%); }
+  100% { transform: translate(-50%, -50%); }
+}
+
+@keyframes edgeDriftH {
+  0%, 100% { margin-left: 0; }
+  25% { margin-left: 4%; }
+  50% { margin-left: -1%; }
+  75% { margin-left: -3%; }
+}
+
+@keyframes edgeDriftV {
+  0%, 100% { margin-top: 0; }
+  25% { margin-top: -3%; }
+  50% { margin-top: 2%; }
+  75% { margin-top: 5%; }
 }

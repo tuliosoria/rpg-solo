@@ -737,6 +737,31 @@ export default function Terminal({
     },
   });
 
+  // UFO74 reactions to firewall taunts
+  const UFO74_FIREWALL_REACTIONS = useMemo(() => [
+    "UFO74: damn. the firewall is almost onto us.",
+    "UFO74: risk is climbing. stay low.",
+    "UFO74: it heard something. don't move.",
+    "UFO74: we need to move faster. it's getting closer.",
+    "UFO74: keep your head down. it's scanning.",
+    "UFO74: that thing knows we're here.",
+    "UFO74: don't react. it feeds on attention.",
+  ], []);
+
+  const lastUfo74ReactionIndexRef = useRef<number>(-1);
+
+  const handleFirewallTaunt = useCallback(() => {
+    let idx: number;
+    do {
+      idx = Math.floor(Math.random() * UFO74_FIREWALL_REACTIONS.length);
+    } while (idx === lastUfo74ReactionIndexRef.current && UFO74_FIREWALL_REACTIONS.length > 1);
+    lastUfo74ReactionIndexRef.current = idx;
+
+    appendPendingUfo74StartMessages([
+      createEntry('ufo74', UFO74_FIREWALL_REACTIONS[idx]),
+    ]);
+  }, [UFO74_FIREWALL_REACTIONS, appendPendingUfo74StartMessages]);
+
   const handleSubmit = useCallback(
     async (e?: React.SyntheticEvent) => {
       e?.preventDefault?.();
@@ -1328,6 +1353,7 @@ export default function Terminal({
             firewallActive={gameState.firewallActive}
             firewallDisarmed={gameState.firewallDisarmed}
             onActivateFirewall={handleFirewallActivate}
+            onFirewallTaunt={handleFirewallTaunt}
           />
         )}
 
