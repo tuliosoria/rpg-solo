@@ -33,7 +33,7 @@ describe('Window State Module', () => {
 
   beforeEach(() => {
     vi.resetModules();
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+     
     windowState = require('../window-state');
   });
 

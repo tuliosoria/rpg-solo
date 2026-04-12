@@ -9,6 +9,7 @@
 // - neuralLinkAuthenticated: Player connected to the alien neural link
 
 import { GameState, TerminalEntry } from '../types';
+import { generateEntryId } from './commands/utils';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ENDING TYPES
@@ -312,7 +313,7 @@ export function createEndingEntries(ending: EndingResult): TerminalEntry[] {
   const entries: TerminalEntry[] = [];
 
   const createEntry = (type: TerminalEntry['type'], content: string): TerminalEntry => ({
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    id: generateEntryId(),
     type,
     content,
     timestamp: Date.now(),
@@ -359,11 +360,4 @@ export function getEndingTitle(variant: EndingVariant): string {
  */
 export function hasDiscoveredConspiracyFiles(state: GameState): boolean {
   return state.conspiracyFilesSeen.size > 0;
-}
-
-/**
- * Get list of conspiracy files the player has seen
- */
-export function getSeenConspiracyFiles(state: GameState): string[] {
-  return Array.from(state.conspiracyFilesSeen);
 }

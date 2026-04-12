@@ -499,7 +499,7 @@ export function onTrayNewGame(callback: () => void): void {
 }
 
 // ============================================================
-// Export default object for convenience
+// Export grouped bridge API for convenience
 // ============================================================
 
 export const steamBridge = {
@@ -537,5 +537,3 @@ export const steamBridge = {
   updateTrayStatus,
   onTrayNewGame,
 };
-
-export default steamBridge;

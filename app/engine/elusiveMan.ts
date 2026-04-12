@@ -5,6 +5,7 @@
 // from the Elusive Man - a cold, calculating information broker.
 
 import { GameState, CommandResult, TerminalEntry } from '../types';
+import { generateEntryId } from './commands/utils';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -308,14 +309,6 @@ export function isInLeakSequence(state: GameState): boolean {
 }
 
 /**
- * Get the current leak question (0-indexed)
- */
-export function getCurrentLeakQuestion(state: GameState): LeakQuestion | null {
-  const index = state.currentLeakQuestion ?? 0;
-  return LEAK_QUESTIONS[index] ?? null;
-}
-
-/**
  * Get a random response from an array (deterministic based on state)
  */
 function getRandomResponse(responses: string[], index: number): string {
@@ -331,7 +324,7 @@ function createEntry(
   content: string
 ): TerminalEntry {
   return {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    id: generateEntryId(),
     type,
     content,
     timestamp: Date.now(),

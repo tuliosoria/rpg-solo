@@ -7,7 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { mockTrayInstance, mockTrayConstructor, mockBuildMenu } = vi.hoisted(() => {
+const { mockTrayConstructor, mockBuildMenu } = vi.hoisted(() => {
   const trayInstance = {
     setToolTip: vi.fn(),
     setContextMenu: vi.fn(),
@@ -16,7 +16,6 @@ const { mockTrayInstance, mockTrayConstructor, mockBuildMenu } = vi.hoisted(() =
   };
 
   return {
-    mockTrayInstance: trayInstance,
     mockTrayConstructor: vi.fn().mockImplementation(() => trayInstance),
     mockBuildMenu: vi.fn().mockReturnValue({}),
   };
@@ -43,7 +42,7 @@ describe('System Tray Module', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+     
     trayModule = require('../tray');
   });
 

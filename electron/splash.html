@@ -25,24 +25,23 @@
     </div>
   </div>
   <script>
-    // Update loading status from main process
-    const { ipcRenderer } = require('electron');
-    
-    ipcRenderer.on('splash:status', (event, status) => {
+    const splashAPI = window.splashAPI;
+
+    splashAPI?.onStatus((status) => {
       const loadingText = document.querySelector('.loading-text');
       if (loadingText) {
         loadingText.textContent = status;
       }
     });
-    
-    ipcRenderer.on('splash:progress', (event, percent) => {
+
+    splashAPI?.onProgress((percent) => {
       const loadingFill = document.querySelector('.loading-fill');
       if (loadingFill) {
         loadingFill.style.width = `${percent}%`;
       }
     });
-    
-    ipcRenderer.on('splash:offline', (event, isOffline) => {
+
+    splashAPI?.onOffline((isOffline) => {
       const indicator = document.getElementById('offline-indicator');
       if (indicator) {
         indicator.classList.toggle('visible', isOffline);

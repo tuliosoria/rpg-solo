@@ -19,7 +19,7 @@ const mockSteamClient = {
 };
 
 // Import the module - use dynamic import for CommonJS compatibility
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+ 
 const steamAchievements = require('../steam-achievements') as typeof import('../steam-achievements');
 
 describe('Steam Achievements Bridge', () => {

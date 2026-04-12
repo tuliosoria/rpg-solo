@@ -3,6 +3,23 @@ import tseslint from 'typescript-eslint';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import nextPlugin from '@next/eslint-plugin-next';
 
+const electronGlobals = {
+  __dirname: 'readonly',
+  __filename: 'readonly',
+  Buffer: 'readonly',
+  URL: 'readonly',
+  clearInterval: 'readonly',
+  clearTimeout: 'readonly',
+  console: 'readonly',
+  global: 'readonly',
+  module: 'readonly',
+  process: 'readonly',
+  require: 'readonly',
+  setImmediate: 'readonly',
+  setInterval: 'readonly',
+  setTimeout: 'readonly',
+};
+
 export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -57,6 +74,23 @@ export default [
     },
   },
   {
+    files: ['electron/**/*.{js,ts}'],
+    languageOptions: {
+      globals: electronGlobals,
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-console': 'off',
+    },
+  },
+  {
+    files: ['electron/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'commonjs',
+    },
+  },
+  {
     files: ['app/hooks/useOptions.tsx', 'app/components/TuringTestOverlay.tsx', 'app/lib/steamBridge.ts'],
     rules: {
       'no-console': 'off',
@@ -68,7 +102,6 @@ export default [
       'node_modules/**',
       'out/**',
       'coverage/**',
-      'electron/**',
       '*.config.js',
       '*.config.ts',
       'next-env.d.ts',

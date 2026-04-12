@@ -1,123 +1,113 @@
-import { test, Page } from '@playwright/test';
-
-const URL = 'https://thankful-grass-0f49be40f.2.azurestaticapps.net';
-
-// Helper to type a command and press Enter
-async function typeCommand(page: Page, command: string, stepName: string) {
-  console.log(`  ⏳ ${stepName}: Typing "${command}"...`);
-  await page.keyboard.type(command, { delay: 50 });
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(1500); // Wait for terminal to process
-  console.log(`  ✅ ${stepName}: Completed`);
-}
-
-// Helper to just press Enter
-async function pressEnter(page: Page, stepName: string) {
-  console.log(`  ⏳ ${stepName}: Pressing Enter...`);
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(1500);
-  console.log(`  ✅ ${stepName}: Completed`);
-}
+import { test, expect } from '@playwright/test';
+import {
+  BASE_URL,
+  contentContains,
+  getContent,
+  pressEnter,
+  screenshot,
+  typeCommand,
+} from './helpers';
 
 test.describe('Tutorial Flow E2E Test', () => {
-  test('complete tutorial from start to finish', async ({ page }) => {
-    // Configure longer timeout for the entire test
-    test.setTimeout(120000);
+  test('completes the current tutorial flow and unlocks gameplay', async ({ page }) => {
+    test.setTimeout(180000);
 
-    let stepNumber = 0;
-    const reportStep = (name: string, success: boolean, details?: string) => {
-      stepNumber++;
-      const status = success ? '✅ PASS' : '❌ FAIL';
-      console.log(`\nStep ${stepNumber}: ${name} - ${status}`);
-      if (details) console.log(`  Details: ${details}`);
-    };
+    console.log('\n========== TUTORIAL E2E TEST ==========\n');
+    console.log(`Navigating to: ${BASE_URL}`);
 
-    try {
-      // Step 1: Load the page
-      console.log('\n========== TUTORIAL E2E TEST ==========\n');
-      console.log(`Navigating to: ${URL}`);
-      await page.goto(URL, { waitUntil: 'networkidle', timeout: 30000 });
-      reportStep('Load page', true);
+    await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 30000 });
+    await page.waitForTimeout(3000);
 
-      // Step 2: Wait for terminal to be ready - look for terminal content
-      console.log('\nWaiting for terminal to be ready...');
-      // Wait for the page to have some interactive content
-      await page.waitForTimeout(3000);
-      
-      // Try to find terminal or main content area
-      const bodyContent = await page.textContent('body');
-      const hasContent = bodyContent && bodyContent.length > 100;
-      reportStep('Terminal ready', hasContent, `Page has content: ${hasContent}`);
+    let content = await getContent(page);
+    expect(content).toContain('BRAZILIAN INTELLIGENCE LEGACY SYSTEM');
+    expect(content).toContain('SYSTEM DATE: JANUARY 1996');
+    await screenshot(page, '01-initial-state');
 
-      // Take a screenshot of initial state
-      await page.screenshot({ path: 'e2e-tests/screenshots/01-initial-state.png' });
+    await pressEnter(page, 'Intro step 1');
+    content = await getContent(page);
+    expect(content).toContain('Connection established.');
+    expect(content).toContain("You're inside their system.");
+    await screenshot(page, '02-after-intro-step-1');
 
-      // Step 3: Press Enter to start (for intro screen if present)
-      console.log('\nStep: Press Enter to start...');
-      await page.keyboard.press('Enter');
-      await page.waitForTimeout(2000);
-      reportStep('Press Enter to start', true);
-      await page.screenshot({ path: 'e2e-tests/screenshots/02-after-enter.png' });
+    await pressEnter(page, 'Intro step 2');
+    content = await getContent(page);
+    expect(content).toContain('You will be... hackerkid.');
+    await screenshot(page, '03-after-intro-step-2');
 
-      // Step 4: Type 'ls' and press Enter
-      console.log('\nStep: Type ls command...');
-      await typeCommand(page, 'ls', 'ls command');
-      reportStep('Type ls', true);
-      await page.screenshot({ path: 'e2e-tests/screenshots/03-after-ls.png' });
+    await pressEnter(page, 'Intro step 3');
+    content = await getContent(page);
+    expect(content).toContain('USER hackerkid REGISTERED');
+    expect(content).toContain('Type `ls`');
+    await screenshot(page, '04-after-intro-step-3');
 
-      // Step 5: Type 'cd files' and press Enter
-      console.log('\nStep: Type cd files command...');
-      await typeCommand(page, 'cd files', 'cd files command');
-      reportStep('Type cd files', true);
-      await page.screenshot({ path: 'e2e-tests/screenshots/04-after-cd-files.png' });
+    await typeCommand(page, 'ls', 'Tutorial command: ls');
+    content = await getContent(page);
+    expect(contentContains(content, 'Directory: /')).toBe(true);
+    expect(contentContains(content, 'storage')).toBe(true);
+    expect(contentContains(content, 'internal')).toBe(true);
+    await screenshot(page, '05-after-ls');
 
-      // Step 6: Type 'open cafeteria_menu' and press Enter
-      console.log('\nStep: Type open cafeteria_menu command...');
-      await typeCommand(page, 'open cafeteria_menu', 'open cafeteria_menu command');
-      reportStep('Open cafeteria_menu', true);
-      await page.screenshot({ path: 'e2e-tests/screenshots/05-after-open-cafeteria.png' });
+    await typeCommand(page, 'cd internal', 'Tutorial command: cd internal');
+    content = await getContent(page);
+    expect(contentContains(content, 'Directory: /internal')).toBe(true);
+    expect(contentContains(content, 'misc')).toBe(true);
+    await screenshot(page, '06-after-cd-internal');
 
-      // Step 7: Press Enter to continue after reading
-      console.log('\nStep: Press Enter to continue after reading...');
-      await page.waitForTimeout(1000);
-      await pressEnter(page, 'Continue after reading');
-      reportStep('Press Enter to continue', true);
-      await page.screenshot({ path: 'e2e-tests/screenshots/06-after-continue.png' });
+    await typeCommand(page, 'cd misc', 'Tutorial command: cd misc');
+    content = await getContent(page);
+    expect(contentContains(content, 'Directory: /internal/misc')).toBe(true);
+    expect(contentContains(content, 'cafeteria_menu_week03.txt')).toBe(true);
+    await screenshot(page, '07-after-cd-misc');
 
-      // Step 8: Type 'cd ..' and press Enter
-      console.log('\nStep: Type cd .. command...');
-      await typeCommand(page, 'cd ..', 'cd .. command');
-      reportStep('Type cd ..', true);
-      await page.screenshot({ path: 'e2e-tests/screenshots/07-after-cd-back.png' });
+    await typeCommand(
+      page,
+      'open cafeteria_menu_week03.txt',
+      'Tutorial command: open cafeteria_menu_week03.txt'
+    );
+    content = await getContent(page);
+    expect(content).toContain('CAFETERIA MENU — WEEK 3, JANUARY 1996');
+    expect(content).toContain('Coffee machine still OUT OF SERVICE.');
+    await screenshot(page, '08-after-open-cafeteria');
 
-      // Step 9: Type 'ls' and press Enter
-      console.log('\nStep: Type final ls command...');
-      await typeCommand(page, 'ls', 'final ls command');
-      reportStep('Type final ls', true);
-      await page.screenshot({ path: 'e2e-tests/screenshots/08-after-final-ls.png' });
+    await typeCommand(page, 'cd ..', 'Tutorial command: cd ..');
+    content = await getContent(page);
+    expect(contentContains(content, '/internal>')).toBe(true);
+    expect(contentContains(content, 'Now go back to root')).toBe(true);
+    await screenshot(page, '09-after-first-cd-back');
 
-      // Step 10: Verify tutorial completes - look for objectives or completion indicators
-      console.log('\nStep: Verify tutorial completion...');
-      await page.waitForTimeout(2000);
-      
-      const finalContent = await page.textContent('body');
-      // Check for various indicators that tutorial completed
-      const hasObjectives = finalContent?.toLowerCase().includes('objective') || 
-                           finalContent?.toLowerCase().includes('mission') ||
-                           finalContent?.toLowerCase().includes('complete') ||
-                           finalContent?.toLowerCase().includes('truth');
-      
-      await page.screenshot({ path: 'e2e-tests/screenshots/09-final-state.png' });
-      reportStep('Tutorial completion verification', true, `Content indicators found: ${hasObjectives}`);
+    await typeCommand(page, 'cd ..', 'Tutorial command: cd .. again');
+    content = await getContent(page);
+    expect(content).toContain('Good. You know enough.');
+    expect(content).toContain('Now the real thing.');
+    await screenshot(page, '10-after-second-cd-back');
 
-      console.log('\n========== TEST COMPLETE ==========\n');
-      console.log('All steps executed successfully!');
-      console.log('Screenshots saved to: e2e-tests/screenshots/');
+    await pressEnter(page, 'Briefing step 1');
+    content = await getContent(page);
+    expect(content).toContain('Your mission: find 5 pieces of evidence.');
 
-    } catch (error) {
-      console.error('\n❌ TEST FAILED:', error);
-      await page.screenshot({ path: 'e2e-tests/screenshots/error-state.png' });
-      throw error;
-    }
+    await pressEnter(page, 'Briefing step 2');
+    content = await getContent(page);
+    expect(content).toContain('Risk hits 100%');
+
+    await pressEnter(page, 'Briefing step 3');
+    content = await getContent(page);
+    expect(content).toContain('Type wrong commands 8 times');
+
+    await pressEnter(page, 'Briefing step 4');
+    content = await getContent(page);
+    expect(content).toContain('Some files are bait.');
+
+    await pressEnter(page, 'Briefing step 5');
+    content = await getContent(page);
+    expect(content).toContain('[UFO74 has disconnected]');
+    await screenshot(page, '11-after-briefing');
+
+    await typeCommand(page, 'ls', 'Post-tutorial ls');
+    content = await getContent(page);
+    expect(contentContains(content, 'storage')).toBe(true);
+    expect(contentContains(content, 'ops')).toBe(true);
+    expect(contentContains(content, 'comms')).toBe(true);
+    expect(contentContains(content, 'internal')).toBe(true);
+    await screenshot(page, '12-after-post-tutorial-ls');
   });
 });

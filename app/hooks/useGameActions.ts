@@ -20,12 +20,12 @@ interface UseGameActionsOptions {
 export function useGameActions({
   setGameState,
   setGamePhase,
-  setShowTuringTest,
-  setShowGameOver,
-  setGameOverReason,
+  setShowTuringTest: _setShowTuringTest,
+  setShowGameOver: _setShowGameOver,
+  setGameOverReason: _setGameOverReason,
   onExitAction,
   playSound,
-  triggerFlicker,
+  triggerFlicker: _triggerFlicker,
 }: UseGameActionsOptions) {
   const handleBlackoutComplete = useCallback(() => {
     setGamePhase('icq');

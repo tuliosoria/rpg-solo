@@ -18,7 +18,7 @@ const mockSteamClient = {
 };
 
 // Import the module - use dynamic import for CommonJS compatibility
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+ 
 const steamPresence = require('../steam-presence') as typeof import('../steam-presence');
 
 describe('Steam Rich Presence Module', () => {
@@ -98,7 +98,7 @@ describe('Steam Rich Presence Module', () => {
     it('returns empty string initially', () => {
       // Import a fresh instance to avoid test pollution
       vi.resetModules();
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+       
       const freshSteamPresence = require('../steam-presence');
       expect(freshSteamPresence.getCurrentPresence()).toBe('');
     });

@@ -55,7 +55,6 @@ function isVisibleOnScreen(state) {
   const minVisibleMargin = 100;
 
   return displays.some((display) => {
-    const { bounds } = display;
     const { workArea } = display;
 
     // Check if window overlaps with the work area (excluding taskbar, etc.)
