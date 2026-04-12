@@ -124,6 +124,11 @@ const TRANSPORT_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
+const TURING_TEST_VIDEO_SRC = new URL(
+  '../../videos/turing test.mp4',
+  import.meta.url
+).toString();
+
 const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
   '/internal/jardim_andere_incident.txt': {
     filePath: '/internal/jardim_andere_incident.txt',
@@ -331,6 +336,7 @@ export default function Terminal({
   const [activeEvidenceVideo, setActiveEvidenceVideo] = useState<EvidenceVideoAttachment | null>(
     null
   );
+  const [activeTuringVideo, setActiveTuringVideo] = useState(false);
   const pendingEvidenceVideoCheckRef = useRef<{
     attachment: EvidenceVideoAttachment;
     previousEvidenceCount: number;
@@ -349,7 +355,8 @@ export default function Terminal({
     showGameOver ||
     activeEvidenceVideo !== null ||
     pendingAchievement !== null ||
-    showFirewallScare;
+    showFirewallScare ||
+    activeTuringVideo;
   const pauseTimedMechanics =
     activeImage !== null || showTuringTest || hasBlockingPopup;
 
@@ -594,6 +601,10 @@ export default function Terminal({
     triggerFlicker,
   });
 
+  const onTuringTestTrigger = useCallback(() => {
+    setActiveTuringVideo(true);
+  }, []);
+
   const { handleSubmit: baseHandleSubmit, handleKeyDown } = useTerminalInput({
     gameState,
     gamePhase,
@@ -631,6 +642,7 @@ export default function Terminal({
     setShowGameOver,
     setBurnInLines,
     setEncryptedChannelState,
+    onTuringTestTrigger,
     onExitAction,
     onSaveRequestAction,
     playSound,
@@ -882,6 +894,28 @@ export default function Terminal({
       window.removeEventListener('keydown', handleVideoEscape, true);
     };
   }, [activeEvidenceVideo, closeEvidenceVideo]);
+
+  useEffect(() => {
+    if (!activeTuringVideo) {
+      return;
+    }
+
+    const handleTuringVideoEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      setActiveTuringVideo(false);
+      setShowTuringTest(true);
+    };
+
+    window.addEventListener('keydown', handleTuringVideoEscape, true);
+    return () => {
+      window.removeEventListener('keydown', handleTuringVideoEscape, true);
+    };
+  }, [activeTuringVideo, setShowTuringTest]);
 
   // Click-outside handler for header menu - closes menu and refocuses input
   useEffect(() => {
@@ -1383,7 +1417,7 @@ export default function Terminal({
             <span className={styles.evidenceTrackerTitle}>{t('terminal.tracker.alienFiles')}</span>
             <span className={styles.evidenceTrackerDivider}>—</span>
             <span className={styles.truthCount}>
-              {t('terminal.tracker.evidenceFound', { count: evidenceFoundCount, total: 5 })}
+              {t('terminal.tracker.evidenceFound', { count: evidenceFoundCount, total: 10 })}
             </span>
           </div>
           <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
@@ -1646,6 +1680,131 @@ export default function Terminal({
                 <button
                   type="button"
                   onClick={closeEvidenceVideo}
+                  style={{
+                    border: '1px solid #88cc44',
+                    background: 'transparent',
+                    color: '#88cc44',
+                    padding: '0.35rem 0.85rem',
+                    fontFamily: 'VT323, monospace',
+                    fontSize: '1.1rem',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {t('common.close')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Turing test video */}
+        {activeTuringVideo && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Turing Test Video"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 2500,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '1.5rem',
+              background: 'rgba(0, 0, 0, 0.92)',
+            }}
+          >
+            <div
+              style={{
+                width: 'min(960px, 100%)',
+                maxHeight: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+                padding: '1rem',
+                background: '#040704',
+                border: '1px solid #88cc44',
+                boxShadow: '0 0 30px rgba(136, 204, 68, 0.18)',
+              }}
+            >
+              <div
+                style={{
+                  color: '#88cc44',
+                  fontFamily: 'VT323, monospace',
+                  fontSize: '1.6rem',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {t('videoOverlay.attachedTitle', { value: 'turing_test.mp4' })}
+              </div>
+              <div style={{ position: 'relative', width: '100%' }}>
+                <video
+                  key={TURING_TEST_VIDEO_SRC}
+                  src={TURING_TEST_VIDEO_SRC}
+                  controls
+                  autoPlay
+                  playsInline
+                  onEnded={() => {
+                    setActiveTuringVideo(false);
+                    setShowTuringTest(true);
+                  }}
+                  style={{
+                    width: '100%',
+                    maxHeight: '70vh',
+                    background: '#000',
+                    filter: 'sepia(100%) saturate(300%) brightness(70%) hue-rotate(70deg)',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)',
+                    pointerEvents: 'none',
+                    zIndex: 1,
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    boxShadow: 'inset 0 0 60px rgba(0,255,0,0.1)',
+                    pointerEvents: 'none',
+                    zIndex: 2,
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+                    opacity: 0.06,
+                    pointerEvents: 'none',
+                    mixBlendMode: 'overlay',
+                    zIndex: 3,
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  color: '#88cc44',
+                  fontFamily: 'VT323, monospace',
+                  fontSize: '1.1rem',
+                }}
+              >
+                <span>{t('videoOverlay.returnHint')}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTuringVideo(false);
+                    setShowTuringTest(true);
+                  }}
                   style={{
                     border: '1px solid #88cc44',
                     background: 'transparent',

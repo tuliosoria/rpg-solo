@@ -93,6 +93,7 @@ interface UseTerminalInputOptions {
   setShowGameOver: React.Dispatch<React.SetStateAction<boolean>>;
   setBurnInLines: React.Dispatch<React.SetStateAction<string[]>>;
   setEncryptedChannelState: React.Dispatch<React.SetStateAction<EncryptedChannelState>>;
+  onTuringTestTrigger: () => void;
   onExitAction: () => void;
   onSaveRequestAction: (state: GameState) => void;
   playSound: (sound: SoundType) => void;
@@ -142,6 +143,7 @@ export function useTerminalInput({
   setShowGameOver,
   setBurnInLines,
   setEncryptedChannelState,
+  onTuringTestTrigger,
   onExitAction,
   onSaveRequestAction,
   playSound,
@@ -695,7 +697,7 @@ export function useTerminalInput({
 
       if (result.triggerTuringTest) {
         setTimeout(() => {
-          setShowTuringTest(true);
+          onTuringTestTrigger();
         }, 1500);
       }
 
@@ -865,6 +867,7 @@ export function useTerminalInput({
       setShowRiskTracker,
       setShowTuringTest,
       showTuringTest,
+      onTuringTestTrigger,
       inputRef,
       skipStreamingRef,
       startAmbient,

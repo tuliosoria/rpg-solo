@@ -247,7 +247,7 @@ describe('UX Commands', () => {
 
       // New format shows evidence count
       expect(
-        result.output.some(e => e.content.includes('2/5'))
+        result.output.some(e => e.content.includes('2/10'))
       ).toBe(true);
     });
 
@@ -282,12 +282,12 @@ describe('UX Commands', () => {
       const state = createTestState({ evidenceCount: 1, flags: {} });
       const result = executeCommand('god evidences', state);
 
-      expect(result.stateChanges.evidenceCount).toBe(5);
+      expect(result.stateChanges.evidenceCount).toBe(10);
       expect(result.stateChanges.flags).toBeUndefined();
       expect(result.stateChanges.evidencesSaved).toBeUndefined();
       expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
 
-      // With evidenceCount 5 (god evidences gives 5), leak requires 10 — should be blocked
+      // With evidenceCount 10 (god evidences gives 10), leak should proceed
       const readyState = {
         ...state,
         ...result.stateChanges,
@@ -299,14 +299,14 @@ describe('UX Commands', () => {
         leakResult.output.some(
           e => e.content.includes('INSUFFICIENT EVIDENCE')
         )
-      ).toBe(true);
+      ).toBe(false);
     });
 
     it('keeps god evidence compatible inside god mode', () => {
       const state = createTestState({ godMode: true, evidenceCount: 0, flags: {} });
       const result = executeCommand('god evidence', state);
 
-      expect(result.stateChanges.evidenceCount).toBe(5);
+      expect(result.stateChanges.evidenceCount).toBe(10);
       expect(result.stateChanges.flags).toBeUndefined();
       expect(result.output.some(e => e.content.includes('ALL EVIDENCE UNLOCKED'))).toBe(true);
       expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
@@ -666,7 +666,7 @@ describe('UX Commands', () => {
       });
       const result = executeCommand('status', state);
 
-      expect(result.output.some(e => e.content.includes('EVIDENCE: 3/5'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('EVIDENCE: 3/10'))).toBe(true);
       expect(result.output.some(e => e.content.includes('RECOVERY: "wait" can buy time'))).toBe(true);
       expect(result.output.some(e => e.content.includes('SIGNAL: Residual echo persists'))).toBe(true);
     });

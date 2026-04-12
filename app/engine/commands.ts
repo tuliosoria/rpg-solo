@@ -281,7 +281,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       createEntryI18n(
         'output',
         'engine.commands.core.evidence_count_set_to_5_5',
-        'Evidence count set to 5/5'
+        'Evidence count set to 10/10'
       ),
       createEntryI18n(
         'output',
@@ -296,7 +296,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       ),
     ],
     stateChanges: {
-      evidenceCount: 5,
+      evidenceCount: 10,
     },
   });
 
@@ -341,7 +341,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         createEntryI18n(
           'output',
           'engine.commands.core.god_evidence_unlock_all_5_evidence_pieces',
-          '  god evidence - Unlock all 5 evidence pieces'
+          '  god evidence - Unlock all 10 evidence pieces'
         ),
         createEntryI18n(
           'output',
@@ -405,7 +405,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntryI18n(
             'output',
             'engine.commands.core.god_evidence_discover_all_5_evidence_pieces',
-            'god evidence  - Discover all 5 evidence pieces'
+            'god evidence  - Discover all 10 evidence pieces'
           ),
           createEntryI18n(
             'output',
@@ -590,7 +590,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       return {
         output: [
           createEntryI18n('system', 'engine.commands.core.game_status', '═══ GAME STATUS ═══'),
-          createEntry('output', `Evidence found: ${evidCount}/5`),
+          createEntry('output', `Evidence found: ${evidCount}/10`),
           createEntry('output', `evidencesSaved: ${state.evidencesSaved}`),
           createEntry('output', `icqPhase: ${state.icqPhase}`),
           createEntry('output', `gameWon: ${state.gameWon}`),

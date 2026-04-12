@@ -238,7 +238,7 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.collect_evidence_in_all_5_categories',
-      '  Collect evidence in all 5 categories:'
+      '  Collect evidence in all categories:'
     ),
     createEntry('system', ''),
     createEntryI18n(
@@ -312,7 +312,7 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.collect_evidence_in_5_categories',
-      '  Collect evidence in 5 categories:'
+      '  Collect evidence in all categories:'
     ),
     createEntry('system', ''),
     createEntryI18n(

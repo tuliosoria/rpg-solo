@@ -300,14 +300,14 @@ export const inventoryCommands: CommandRegistry = {
       )
     );
     output.push(createEntry('system', ''));
-    output.push(createEntry('output', `    Evidence Found: ${evidenceCount}/5`));
+    output.push(createEntry('output', `    Evidence Found: ${evidenceCount}/10`));
     output.push(createEntry('system', ''));
 
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
 
     // Case strength summary (neutral phrasing)
     output.push(createEntry('system', ''));
-    output.push(createEntry('output', `  CASE STATUS: ${evidenceCount}/5 evidence confirmed`));
+    output.push(createEntry('output', `  CASE STATUS: ${evidenceCount}/10 evidence confirmed`));
     output.push(createEntry('system', `  STRENGTH: ${caseStrength}`));
     output.push(createEntry('system', ''));
 

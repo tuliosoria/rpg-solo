@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(10px, 1.8vw, 24px);
+  padding: clamp(4px, 0.8vw, 10px);
   box-sizing: border-box;
   overflow: hidden;
   border-radius: inherit;
@@ -82,16 +82,13 @@
   position: relative;
   z-index: 215;
   width: 100%;
-  max-width: 40rem;
+  max-width: 36rem;
   max-height: 100%;
-  padding: clamp(14px, 1.8vw, 20px);
+  padding: clamp(6px, 1vw, 12px);
   box-sizing: border-box;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 1.4vh, 18px);
-  scrollbar-width: thin;
-  overscroll-behavior: contain;
+  gap: clamp(4px, 0.6vh, 8px);
 }
 
 /* Turing Test Image */
@@ -101,11 +98,11 @@
 }
 
 .turingImage {
-  width: clamp(96px, 14vw, 148px);
-  max-height: min(18vh, 148px);
+  width: clamp(48px, 7vw, 72px);
+  max-height: min(9vh, 72px);
   height: auto;
-  border: 2px solid #ff6600;
-  box-shadow: 0 0 20px rgba(255, 100, 0, 0.3);
+  border: 1px solid #ff6600;
+  box-shadow: 0 0 10px rgba(255, 100, 0, 0.3);
   filter: sepia(20%) contrast(1.1);
 }
 
@@ -116,7 +113,7 @@
 
 .headerLine {
   color: #ff6600;
-  font-size: clamp(9px, 0.82vw, 12px);
+  font-size: clamp(7px, 0.7vw, 9px);
   letter-spacing: clamp(0.5px, 0.08vw, 1px);
   overflow: hidden;
   white-space: nowrap;
@@ -124,10 +121,10 @@
 
 .headerTitle {
   color: #ff9900;
-  font-size: clamp(13px, 1.35vw, 16px);
+  font-size: clamp(10px, 1vw, 13px);
   font-weight: bold;
-  letter-spacing: clamp(1px, 0.26vw, 3px);
-  padding: 6px 0;
+  letter-spacing: clamp(1px, 0.2vw, 2px);
+  padding: 2px 0;
   animation: warningPulse 2s infinite;
 }
 
@@ -144,10 +141,10 @@
 /* Instructions */
 .instructions {
   color: #888;
-  font-size: clamp(11px, 0.95vw, 13px);
-  line-height: 1.6;
+  font-size: clamp(8px, 0.75vw, 10px);
+  line-height: 1.3;
   text-align: center;
-  padding: clamp(10px, 1.2vw, 12px);
+  padding: clamp(4px, 0.6vw, 6px);
   border: 1px solid #333;
   background: rgba(30, 30, 30, 0.5);
 }
@@ -155,44 +152,44 @@
 .instructionHighlight {
   color: #ffaa00;
   font-weight: bold;
-  margin-top: 6px;
+  margin-top: 2px;
 }
 
 /* Progress */
 .progress {
   color: #666;
-  font-size: clamp(10px, 0.88vw, 12px);
+  font-size: clamp(8px, 0.7vw, 10px);
   text-align: center;
-  letter-spacing: clamp(1px, 0.18vw, 2px);
+  letter-spacing: clamp(1px, 0.14vw, 2px);
 }
 
 /* Question Box */
 .questionBox {
-  border: 2px solid #ff6600;
+  border: 1px solid #ff6600;
   background: rgba(40, 20, 0, 0.3);
-  padding: clamp(14px, 1.6vw, 20px);
+  padding: clamp(6px, 0.8vw, 10px);
 }
 
 .questionPrompt {
   color: #ffcc00;
-  font-size: clamp(13px, 1.08vw, 15px);
-  line-height: 1.5;
+  font-size: clamp(9px, 0.85vw, 11px);
+  line-height: 1.3;
   text-align: center;
-  margin-bottom: clamp(14px, 2vh, 20px);
-  padding: 0 4px;
+  margin-bottom: clamp(4px, 0.8vh, 8px);
+  padding: 0 2px;
 }
 
 /* Options */
 .options {
   display: flex;
   flex-direction: column;
-  gap: clamp(8px, 1vh, 12px);
+  gap: clamp(3px, 0.4vh, 5px);
 }
 
 .option {
   display: flex;
   align-items: flex-start;
-  padding: clamp(10px, 1.2vw, 12px) clamp(12px, 1.5vw, 16px);
+  padding: clamp(4px, 0.5vw, 6px) clamp(6px, 0.8vw, 8px);
   border: 1px solid #444;
   background: rgba(20, 20, 20, 0.8);
   cursor: pointer;
@@ -207,14 +204,15 @@
 .optionLetter {
   color: #ff9900;
   font-weight: bold;
-  margin-right: 10px;
-  min-width: 18px;
+  margin-right: 6px;
+  min-width: 14px;
+  font-size: clamp(9px, 0.8vw, 11px);
 }
 
 .optionText {
   color: #ccc;
-  font-size: clamp(12px, 1vw, 14px);
-  line-height: 1.45;
+  font-size: clamp(8px, 0.78vw, 10px);
+  line-height: 1.3;
 }
 
 .optionSelected {
@@ -245,9 +243,9 @@
 /* Feedback */
 .feedback {
   text-align: center;
-  font-size: clamp(12px, 0.95vw, 14px);
-  padding: 10px;
-  letter-spacing: clamp(1px, 0.18vw, 2px);
+  font-size: clamp(8px, 0.75vw, 10px);
+  padding: 4px;
+  letter-spacing: clamp(1px, 0.14vw, 2px);
   animation: feedbackPulse 0.5s ease-out;
 }
 
@@ -265,7 +263,7 @@
 /* Footer */
 .footer {
   color: #666;
-  font-size: clamp(10px, 0.88vw, 12px);
+  font-size: clamp(8px, 0.7vw, 10px);
   text-align: center;
   letter-spacing: 1px;
   animation: blink 1.5s infinite;
@@ -284,102 +282,102 @@
 
 /* Result screen */
 .resultBox {
-  border: 2px solid #ff6600;
+  border: 1px solid #ff6600;
   background: rgba(20, 10, 0, 0.9);
-  padding: clamp(20px, 2.6vw, 32px) clamp(16px, 2.2vw, 26px);
+  padding: clamp(8px, 1.2vw, 14px) clamp(8px, 1vw, 12px);
   text-align: center;
 }
 
 .resultHeader {
   color: #ff9900;
-  font-size: clamp(15px, 1.45vw, 18px);
+  font-size: clamp(11px, 1.1vw, 14px);
   font-weight: bold;
-  letter-spacing: clamp(1px, 0.26vw, 3px);
-  margin-bottom: 18px;
+  letter-spacing: clamp(1px, 0.2vw, 2px);
+  margin-bottom: 6px;
 }
 
 .resultScore {
   color: #888;
-  font-size: clamp(12px, 0.95vw, 14px);
-  margin-bottom: 18px;
-  letter-spacing: clamp(1px, 0.18vw, 2px);
+  font-size: clamp(9px, 0.8vw, 11px);
+  margin-bottom: 6px;
+  letter-spacing: clamp(1px, 0.14vw, 2px);
 }
 
 .resultPass {
   color: #88cc44;
-  font-size: clamp(12px, 1vw, 14px);
-  padding: clamp(12px, 1.5vw, 16px);
+  font-size: clamp(9px, 0.8vw, 11px);
+  padding: clamp(4px, 0.6vw, 8px);
   border: 1px solid #445522;
   background: rgba(0, 40, 0, 0.3);
-  margin-bottom: 18px;
+  margin-bottom: 6px;
 }
 
 .resultFail {
   color: #ff4444;
-  font-size: clamp(12px, 1vw, 14px);
-  padding: clamp(12px, 1.5vw, 16px);
+  font-size: clamp(9px, 0.8vw, 11px);
+  padding: clamp(4px, 0.6vw, 8px);
   border: 1px solid #660000;
   background: rgba(40, 0, 0, 0.3);
-  margin-bottom: 18px;
+  margin-bottom: 6px;
 }
 
 .resultPrompt {
   color: #666;
-  font-size: clamp(10px, 0.88vw, 12px);
+  font-size: clamp(8px, 0.7vw, 10px);
   animation: blink 1.5s infinite;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .overlay {
-    padding: 10px;
+    padding: 4px;
   }
 
   .container {
-    padding: 12px;
-    gap: 10px;
+    padding: 6px;
+    gap: 4px;
   }
 
   .headerTitle {
-    font-size: 12px;
-    letter-spacing: 1.5px;
+    font-size: 10px;
+    letter-spacing: 1px;
   }
 
   .questionPrompt {
-    font-size: 13px;
+    font-size: 9px;
   }
 
   .optionText {
-    font-size: 12px;
+    font-size: 8px;
   }
 
   .instructions {
-    font-size: 11px;
-    line-height: 1.45;
+    font-size: 8px;
+    line-height: 1.2;
   }
 }
 
 @media (max-height: 820px) {
   .overlay {
-    padding: 10px;
+    padding: 4px;
   }
 
   .container {
-    max-width: 36rem;
-    padding: 12px;
-    gap: 10px;
+    max-width: 32rem;
+    padding: 6px;
+    gap: 4px;
   }
 
   .turingImage {
-    width: clamp(82px, 11vh, 120px);
-    max-height: 15vh;
+    width: clamp(40px, 6vh, 60px);
+    max-height: 8vh;
   }
 
   .questionBox {
-    padding: 12px;
+    padding: 6px;
   }
 
   .resultBox {
-    padding: 16px 14px;
+    padding: 8px 6px;
   }
 }

@@ -62,7 +62,7 @@ describe('SaveModal', () => {
       render(<SaveModal {...defaultProps} />);
 
       expect(screen.getByText('Current Path: /home/hackerkid')).toBeInTheDocument();
-      expect(screen.getByText('Progress: 2/5 evidence')).toBeInTheDocument();
+      expect(screen.getByText('Progress: 2/10 evidence')).toBeInTheDocument();
     });
 
     it('shows SAVE and CANCEL buttons', () => {
@@ -172,7 +172,7 @@ describe('SaveModal', () => {
 
       render(<SaveModal {...defaultProps} gameState={gameState} />);
 
-      expect(screen.getByText('Progress: 4/5 evidence')).toBeInTheDocument();
+      expect(screen.getByText('Progress: 4/10 evidence')).toBeInTheDocument();
     });
 
     it('displays correct path', () => {

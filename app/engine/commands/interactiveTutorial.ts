@@ -68,7 +68,7 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
   [TutorialStateID.TUTORIAL_END]: [
     '[UFO74]: Now the real thing.',
     '',
-    '[UFO74]: Your mission: find 5 pieces of evidence.',
+    '[UFO74]: Your mission: find 10 pieces of evidence.',
     '[UFO74]: Once you have them, leak everything.',
     '',
     '[UFO74]: But understand the risks.',
@@ -665,8 +665,8 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
   [
     createEntryI18n(
       'ufo74',
-      'engine.commands.interactiveTutorial.ufo74_your_mission_find_5_pieces_of_evidence',
-      '[UFO74]: Your mission: find 5 pieces of evidence.'
+      'engine.commands.interactiveTutorial.ufo74_your_mission_find_10_pieces_of_evidence',
+      '[UFO74]: Your mission: find 10 pieces of evidence.'
     ),
     createEntryI18n(
       'ufo74',

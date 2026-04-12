@@ -105,7 +105,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     'truth_seeker',
     'truth_seeker',
     'Truth Seeker',
-    'Collect 5 evidence files',
+    'Collect 10 evidence files',
     '👁️'
   ),
   createAchievement('doom_fan', 'doom_fan', 'IDDQD', 'Activate god mode', '🎮', true),

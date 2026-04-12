@@ -1,7 +1,7 @@
 // Elusive Man Leak Mechanic for Terminal 1996
 //
 // This system handles the final leak sequence where the player must demonstrate
-// real understanding of the evidence they've gathered by answering 5 questions
+// real understanding of the evidence they've gathered by answering questions
 // from the Elusive Man - a cold, calculating information broker.
 
 import { GameState, CommandResult, TerminalEntry } from '../types';
@@ -212,7 +212,7 @@ const ELUSIVE_MAN_VICTORY_FALLBACK = [
   '',
   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
   '',
-  '  Five for five.',
+  '  Ten for ten.',
   '',
   '  Leak initiated. Mirrors are live.',
   '  Be gone before dawn.',

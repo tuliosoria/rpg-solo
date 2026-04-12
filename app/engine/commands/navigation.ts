@@ -193,7 +193,7 @@ export const navigationCommands: CommandRegistry = {
 
     // Summary
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
-    output.push(createEntry('system', `  PROGRESS: ${evidenceCount}/5 evidence links confirmed`));
+    output.push(createEntry('system', `  PROGRESS: ${evidenceCount}/10 evidence links confirmed`));
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '╚═══════════════════════════════════════════════════════╝'));
 

@@ -318,7 +318,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
                 </div>
                 <div className={styles.saveInfo}>
                   <span>{t('menu.load.path')}: {slot.currentPath}</span>
-                  <span>{t('menu.load.progress')}: {slot.truthCount}/5</span>
+                  <span>{t('menu.load.progress')}: {slot.truthCount}/10</span>
                   <span
                     className={
                       slot.detectionLevel >= 80

@@ -187,7 +187,7 @@ const COMMAND_HELP: Record<string, string[]> = {
     'USAGE:',
     '  leak            - Initiate evidence leak',
     '',
-    'REQUIREMENT: All 5 evidence categories must be collected first.',
+    'REQUIREMENT: All 10 evidence files must be collected first.',
     '',
     'WARNING: This action triggers the endgame sequence.',
   ],
@@ -407,9 +407,9 @@ export const systemCommands: CommandRegistry = {
     }
 
     const evidenceCount = countEvidence(state);
-    lines.push(`  EVIDENCE: ${evidenceCount}/5 confirmed`);
+    lines.push(`  EVIDENCE: ${evidenceCount}/10 confirmed`);
 
-    if (evidenceCount >= 5) {
+    if (evidenceCount >= 10) {
       lines.push('  OBJECTIVE: Evidence complete — use "leak" when ready.');
     } else if (evidenceCount > 0) {
       lines.push('  OBJECTIVE: Keep reading. Each evidence file strengthens the case.');

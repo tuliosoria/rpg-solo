@@ -405,7 +405,7 @@ describe('Terminal Component', () => {
     render(<Terminal {...defaultProps} />);
 
     expect(screen.getByText('Alien Files')).toBeInTheDocument();
-    expect(screen.getByText('Evidence Found: [0/5]')).toBeInTheDocument();
+    expect(screen.getByText('Evidence Found: [0/10]')).toBeInTheDocument();
     expect(screen.queryByText('Recovered')).not.toBeInTheDocument();
     expect(screen.queryByText('Captured')).not.toBeInTheDocument();
     expect(screen.queryByText('Signals')).not.toBeInTheDocument();

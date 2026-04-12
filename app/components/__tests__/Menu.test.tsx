@@ -164,7 +164,7 @@ describe('Menu', () => {
       fireEvent.click(screen.getByRole('button', { name: /LOAD GAME/i }));
 
       expect(screen.getByText('Test Save')).toBeInTheDocument();
-      expect(screen.getByText(/Progress: 3\/5/)).toBeInTheDocument();
+      expect(screen.getByText(/Progress: 3\/10/)).toBeInTheDocument();
       expect(screen.getByText(/Risk: 45%/)).toBeInTheDocument();
     });
 
