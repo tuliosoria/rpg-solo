@@ -1428,7 +1428,7 @@ describe('Narrative Mechanics', () => {
       expect(result.stateChanges.detectionLevel).toBe(35); // 20 + 15
       expect(result.triggerFlicker).toBe(true);
       expect(result.imageTrigger).toBeDefined();
-      expect(result.imageTrigger?.src).toBe('/images/et-standing.webp');
+      expect(result.imageTrigger?.src).toBe('/images/et.webp');
     });
 
     it('accepts various P46 target formats', () => {

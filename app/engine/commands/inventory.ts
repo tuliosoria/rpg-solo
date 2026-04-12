@@ -500,7 +500,7 @@ export const inventoryCommands: CommandRegistry = {
       delayMs: 3000,
       triggerFlicker: true,
       imageTrigger: {
-        src: '/images/et-standing.webp',
+        src: '/images/et.webp',
         alt: 'Prisoner 46 - The surviving Varginha being',
         tone: 'eerie',
       },

@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { createEntry } from '../engine/commands';
 import type { GamePhase, GameState } from '../types';
 import type { SoundType } from './useSound';
+import { appendToHistory } from '../lib/appendToHistory';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import {
   createFirewallEyeBatch,
@@ -106,7 +107,7 @@ export function useGameActions({
     );
     setGameState(prev => ({
       ...prev,
-      history: [...prev.history, firewallWarning],
+      history: appendToHistory(prev.history, firewallWarning),
     }));
   }, [playSound, setGameState]);
 
@@ -141,7 +142,7 @@ export function useGameActions({
         ...prev,
         firewallEyes: newEyes,
         lastEyeSpawnTime: now,
-        history: [...prev.history, urgencyMessage],
+        history: appendToHistory(prev.history, urgencyMessage),
       };
     });
 
@@ -167,6 +168,7 @@ export function useGameActions({
   // Batch detonation: accumulate eye IDs and flush together
   const pendingDetonationsRef = useRef<string[]>([]);
   const detonationFlushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeTimersRef = useRef<Set<ReturnType<typeof setTimeout> | number>>(new Set());
 
   const flushDetonations = useCallback(() => {
     detonationFlushTimerRef.current = null;
@@ -235,8 +237,8 @@ export function useGameActions({
         detectionLevel: newDetection,
         avatarExpression: 'scared',
         history: isGameOver
-          ? [
-              ...prev.history,
+          ? appendToHistory(
+              prev.history,
               detonateWarning,
               createEntry('error', ''),
               createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
@@ -250,8 +252,8 @@ export function useGameActions({
               createEntry('error', ''),
               createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
               createEntry('error', ''),
-            ]
-          : [...prev.history, detonateWarning, ufo74Panic],
+            )
+          : appendToHistory(prev.history, detonateWarning, ufo74Panic),
         isGameOver: isGameOver ? true : prev.isGameOver,
         gameOverReason: isGameOver ? 'INTRUSION DETECTED - TRACED' : prev.gameOverReason,
         turingEvaluationActive: willTriggerTuringTest ? true : prev.turingEvaluationActive,
@@ -260,27 +262,33 @@ export function useGameActions({
     });
 
     if (shouldTriggerTuringTest) {
-      window.setTimeout(() => {
+      const t1 = window.setTimeout(() => {
+        activeTimersRef.current.delete(t1);
         setShowTuringTest(true);
       }, 1500);
+      activeTimersRef.current.add(t1);
     }
 
     if (shouldShowGameOver) {
-      window.setTimeout(() => {
+      const t2 = window.setTimeout(() => {
+        activeTimersRef.current.delete(t2);
         setGameOverReason('INTRUSION DETECTED - TRACED');
         setShowGameOver(true);
       }, 100);
+      activeTimersRef.current.add(t2);
     }
 
     playSound('error');
     triggerFlicker();
 
-    setTimeout(() => {
+    const t3 = setTimeout(() => {
+      activeTimersRef.current.delete(t3);
       setGameState(prev => ({
         ...prev,
         firewallEyes: prev.firewallEyes.filter(e => !eyeIds.includes(e.id)),
       }));
     }, 500);
+    activeTimersRef.current.add(t3);
   }, [playSound, setGameState, setShowTuringTest, setShowGameOver, setGameOverReason, triggerFlicker]);
 
   const handleFirewallEyeDetonate = useCallback(
@@ -293,6 +301,21 @@ export function useGameActions({
     },
     [flushDetonations]
   );
+
+  // Cleanup timer handles on unmount or reset/load
+  useEffect(() => {
+    const timers = activeTimersRef.current;
+    return () => {
+      if (detonationFlushTimerRef.current) {
+        clearTimeout(detonationFlushTimerRef.current);
+        detonationFlushTimerRef.current = null;
+      }
+      for (const t of timers) {
+        clearTimeout(t);
+      }
+      timers.clear();
+    };
+  }, []);
 
   return {
     handleBlackoutComplete,

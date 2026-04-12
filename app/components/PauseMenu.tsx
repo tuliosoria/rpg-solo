@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useCallback, useLayoutEffect, memo, useMemo } from 'react';
+import React, { useState, useCallback, useLayoutEffect, useRef, memo, useMemo } from 'react';
 import { useI18n } from '../i18n';
+import { useFocusTrap } from '../hooks';
 import styles from './PauseMenu.module.css';
 
 interface PauseMenuProps {
@@ -24,6 +25,8 @@ export default memo(function PauseMenu({
   canLoadAction = true,
 }: PauseMenuProps) {
   const { t } = useI18n();
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef);
   const [confirmMode, setConfirmMode] = useState<ConfirmMode>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const isConfirming = confirmMode !== null;
@@ -147,7 +150,7 @@ export default memo(function PauseMenu({
 
     return (
       <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="pausemenu-title">
-        <div className={styles.menu} onClick={e => e.stopPropagation()}>
+        <div className={styles.menu} ref={modalRef} onClick={e => e.stopPropagation()}>
           <div className={styles.header}>
             <h2 id="pausemenu-title">{t(titleKey)}</h2>
             <div className={styles.line}>═══════════════════════════</div>
@@ -158,7 +161,7 @@ export default memo(function PauseMenu({
           <div className={styles.options}>
             <button
               className={`${styles.menuButton} ${styles.exitButton} ${selectedIndex === 0 ? styles.selected : ''}`}
-              tabIndex={-1}
+              tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={handleConfirmAction}
               onMouseEnter={() => setSelectedIndex(0)}
@@ -168,7 +171,7 @@ export default memo(function PauseMenu({
             </button>
             <button
               className={`${styles.menuButton} ${selectedIndex === 1 ? styles.selected : ''}`}
-              tabIndex={-1}
+              tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={() => closeConfirm(confirmMode)}
               onMouseEnter={() => setSelectedIndex(1)}
@@ -186,7 +189,7 @@ export default memo(function PauseMenu({
 
   return (
     <div className={styles.overlay} onClick={onResumeAction} role="dialog" aria-modal="true" aria-labelledby="pausemenu-title">
-      <div className={styles.menu} onClick={e => e.stopPropagation()}>
+      <div className={styles.menu} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 id="pausemenu-title">{t('pause.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
@@ -195,7 +198,7 @@ export default memo(function PauseMenu({
         <div className={styles.options}>
           <button
             className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('resume') ? styles.selected : ''}`}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onResumeAction}
             onMouseEnter={() => setSelectedIndex(menuItems.indexOf('resume'))}
@@ -205,7 +208,7 @@ export default memo(function PauseMenu({
           </button>
           <button
             className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('save') ? styles.selected : ''}`}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onSaveAction}
             onMouseEnter={() => setSelectedIndex(menuItems.indexOf('save'))}
@@ -216,7 +219,7 @@ export default memo(function PauseMenu({
           {canLoadAction && (
             <button
               className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('load') ? styles.selected : ''}`}
-              tabIndex={-1}
+              tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={() => openConfirm('load')}
               onMouseEnter={() => setSelectedIndex(menuItems.indexOf('load'))}
@@ -227,7 +230,7 @@ export default memo(function PauseMenu({
           )}
           <button
             className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('settings') ? styles.selected : ''}`}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onSettingsAction}
             onMouseEnter={() => setSelectedIndex(menuItems.indexOf('settings'))}
@@ -237,7 +240,7 @@ export default memo(function PauseMenu({
           </button>
           <button
             className={`${styles.menuButton} ${styles.exitButton} ${selectedIndex === menuItems.indexOf('exit') ? styles.selected : ''}`}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={() => openConfirm('exit')}
             onMouseEnter={() => setSelectedIndex(menuItems.indexOf('exit'))}

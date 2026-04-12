@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, memo } from 'react';
+import React, { useEffect, useState, useCallback, useRef, memo } from 'react';
 import { useI18n } from '../i18n';
+import { useFocusTrap } from '../hooks';
 import {
   DEFAULT_OPTIONS,
   applyOptionsToDocument,
@@ -28,6 +29,8 @@ export default memo(function SettingsModal({
   onResetDefaults,
 }: SettingsModalProps) {
   const { language, setLanguage, t } = useI18n();
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef);
   const [crtEnabled, setCrtEnabled] = useState(DEFAULT_OPTIONS.crtEffectsEnabled);
 
   // Load CRT preference on mount
@@ -74,7 +77,7 @@ export default memo(function SettingsModal({
 
   return (
     <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="settings-title">
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 id="settings-title">{t('settings.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
@@ -86,7 +89,7 @@ export default memo(function SettingsModal({
             <label className={styles.label}>{t('settings.soundEffects')}</label>
             <button
               className={`${styles.toggle} ${soundEnabled ? styles.toggleOn : styles.toggleOff}`}
-              tabIndex={-1}
+              tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={onToggleSound}
             >
@@ -107,7 +110,7 @@ export default memo(function SettingsModal({
                 value={masterVolume * 100}
                 onChange={e => onVolumeChange(parseInt(e.target.value) / 100)}
                 className={styles.slider}
-                tabIndex={-1}
+                tabIndex={0}
                 disabled={!soundEnabled}
               />
               <span className={styles.volumeValue}>{Math.round(masterVolume * 100)}%</span>
@@ -119,7 +122,7 @@ export default memo(function SettingsModal({
             <label className={styles.label}>{t('settings.crtEffects')}</label>
             <button
               className={`${styles.toggle} ${crtEnabled ? styles.toggleOn : styles.toggleOff}`}
-              tabIndex={-1}
+              tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={toggleCrt}
             >
@@ -135,7 +138,7 @@ export default memo(function SettingsModal({
             <label className={styles.label}>{t('settings.language')}</label>
             <button
               className={styles.toggle}
-              tabIndex={-1}
+              tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={() => {
                 const ordered = ['en', 'pt-BR', 'es'] as const;
@@ -165,7 +168,7 @@ export default memo(function SettingsModal({
         <div className={styles.actions}>
           <button
             className={styles.resetButton}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={handleResetDefaults}
           >
@@ -173,7 +176,7 @@ export default memo(function SettingsModal({
           </button>
           <button
             className={styles.closeButton}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onCloseAction}
           >

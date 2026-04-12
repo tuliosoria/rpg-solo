@@ -115,6 +115,28 @@ describe('Save/Load System', () => {
       expect(loaded!.tutorialTipsShown.size).toBe(1);
     });
 
+    it('preserves conspiracyFilesSeen and archiveFilesViewed through save/load cycle', async () => {
+      const { saveGame, loadGame } = await import('../saves');
+
+      const state = createTestState({
+        conspiracyFilesSeen: new Set(['file_a.txt', 'file_b.txt']),
+        archiveFilesViewed: new Set(['/archive/doc1.txt', '/archive/doc2.txt', '/archive/doc3.txt']),
+      });
+
+      const slot = saveGame(state, 'Conspiracy Test');
+      const loaded = loadGame(slot!.id);
+
+      expect(loaded!.conspiracyFilesSeen).toBeInstanceOf(Set);
+      expect(loaded!.conspiracyFilesSeen.size).toBe(2);
+      expect(loaded!.conspiracyFilesSeen.has('file_a.txt')).toBe(true);
+      expect(loaded!.conspiracyFilesSeen.has('file_b.txt')).toBe(true);
+
+      expect(loaded!.archiveFilesViewed).toBeInstanceOf(Set);
+      expect(loaded!.archiveFilesViewed.size).toBe(3);
+      expect(loaded!.archiveFilesViewed.has('/archive/doc1.txt')).toBe(true);
+      expect(loaded!.archiveFilesViewed.has('/archive/doc3.txt')).toBe(true);
+    });
+
     it('handles empty Sets correctly', async () => {
       const { saveGame, loadGame } = await import('../saves');
 

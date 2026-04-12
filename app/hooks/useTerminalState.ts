@@ -52,7 +52,8 @@ type UIAction =
   | { type: 'SET_SHOW_TURING_TEST'; payload: boolean }
   | { type: 'SET_RISK_PULSE'; payload: boolean }
   | { type: 'SET_TYPING_SPEED_WARNING'; payload: boolean }
-  | { type: 'SET_ALIEN_SILHOUETTE_VISIBLE'; payload: boolean };
+  | { type: 'SET_ALIEN_SILHOUETTE_VISIBLE'; payload: boolean }
+  | { type: 'RESET_UI'; payload: UIState };
 
 function uiReducer(state: UIState, action: UIAction): UIState {
   switch (action.type) {
@@ -73,6 +74,7 @@ function uiReducer(state: UIState, action: UIAction): UIState {
     case 'SET_RISK_PULSE': return { ...state, riskPulse: action.payload };
     case 'SET_TYPING_SPEED_WARNING': return { ...state, typingSpeedWarning: action.payload };
     case 'SET_ALIEN_SILHOUETTE_VISIBLE': return { ...state, alienSilhouetteVisible: action.payload };
+    case 'RESET_UI': return action.payload;
     default: return state;
   }
 }
@@ -112,7 +114,8 @@ type GamePhaseAction =
   | { type: 'SET_BURN_IN_LINES'; payload: string[] }
   | { type: 'SET_INTERFERENCE_BURST'; payload: { top: number } | null }
   | { type: 'SET_PARANOIA_MESSAGE'; payload: string | null }
-  | { type: 'SET_PARANOIA_POSITION'; payload: { top: number; left: number } };
+  | { type: 'SET_PARANOIA_POSITION'; payload: { top: number; left: number } }
+  | { type: 'RESET_GAME_PHASE'; payload: GamePhaseState };
 
 function gamePhaseReducer(state: GamePhaseState, action: GamePhaseAction): GamePhaseState {
   switch (action.type) {
@@ -130,6 +133,7 @@ function gamePhaseReducer(state: GamePhaseState, action: GamePhaseAction): GameP
     case 'SET_INTERFERENCE_BURST': return { ...state, interferenceBurst: action.payload };
     case 'SET_PARANOIA_MESSAGE': return { ...state, paranoiaMessage: action.payload };
     case 'SET_PARANOIA_POSITION': return { ...state, paranoiaPosition: action.payload };
+    case 'RESET_GAME_PHASE': return action.payload;
     default: return state;
   }
 }
@@ -158,8 +162,12 @@ type TrackerAction =
   | { type: 'SET_PENDING_UFO74_MESSAGES'; payload: TerminalEntry[] }
   | { type: 'SET_QUEUED_AFTER_MEDIA_MESSAGES'; payload: TerminalEntry[] }
   | { type: 'SET_PENDING_UFO74_START_MESSAGES'; payload: TerminalEntry[] }
+  | { type: 'APPEND_PENDING_UFO74_MESSAGES'; payload: TerminalEntry[] }
+  | { type: 'APPEND_QUEUED_AFTER_MEDIA_MESSAGES'; payload: TerminalEntry[] }
+  | { type: 'APPEND_PENDING_UFO74_START_MESSAGES'; payload: TerminalEntry[] }
   | { type: 'SET_PENDING_ACHIEVEMENT'; payload: Achievement | null }
-  | { type: 'SET_EVIDENCE_FOUND_INDICATOR_KEY'; payload: number };
+  | { type: 'SET_EVIDENCE_FOUND_INDICATOR_KEY'; payload: number }
+  | { type: 'RESET_TRACKER'; payload: TrackerState };
 
 function trackerReducer(state: TrackerState, action: TrackerAction): TrackerState {
   switch (action.type) {
@@ -170,8 +178,12 @@ function trackerReducer(state: TrackerState, action: TrackerAction): TrackerStat
     case 'SET_PENDING_UFO74_MESSAGES': return { ...state, pendingUfo74Messages: action.payload };
     case 'SET_QUEUED_AFTER_MEDIA_MESSAGES': return { ...state, queuedAfterMediaMessages: action.payload };
     case 'SET_PENDING_UFO74_START_MESSAGES': return { ...state, pendingUfo74StartMessages: action.payload };
+    case 'APPEND_PENDING_UFO74_MESSAGES': return { ...state, pendingUfo74Messages: [...state.pendingUfo74Messages, ...action.payload] };
+    case 'APPEND_QUEUED_AFTER_MEDIA_MESSAGES': return { ...state, queuedAfterMediaMessages: [...state.queuedAfterMediaMessages, ...action.payload] };
+    case 'APPEND_PENDING_UFO74_START_MESSAGES': return { ...state, pendingUfo74StartMessages: [...state.pendingUfo74StartMessages, ...action.payload] };
     case 'SET_PENDING_ACHIEVEMENT': return { ...state, pendingAchievement: action.payload };
     case 'SET_EVIDENCE_FOUND_INDICATOR_KEY': return { ...state, evidenceFoundIndicatorKey: action.payload };
+    case 'RESET_TRACKER': return action.payload;
     default: return state;
   }
 }
@@ -411,12 +423,24 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     trackerDispatch({ type: 'SET_PENDING_UFO74_MESSAGES', payload: typeof value === 'function' ? value(trackerStateRef.current.pendingUfo74Messages) : value });
   }, []);
 
+  const appendPendingUfo74Messages = useCallback((items: TerminalEntry[]) => {
+    trackerDispatch({ type: 'APPEND_PENDING_UFO74_MESSAGES', payload: items });
+  }, []);
+
   const setQueuedAfterMediaMessages = useCallback((value: TerminalEntry[] | ((prev: TerminalEntry[]) => TerminalEntry[])) => {
     trackerDispatch({ type: 'SET_QUEUED_AFTER_MEDIA_MESSAGES', payload: typeof value === 'function' ? value(trackerStateRef.current.queuedAfterMediaMessages) : value });
   }, []);
 
+  const appendQueuedAfterMediaMessages = useCallback((items: TerminalEntry[]) => {
+    trackerDispatch({ type: 'APPEND_QUEUED_AFTER_MEDIA_MESSAGES', payload: items });
+  }, []);
+
   const setPendingUfo74StartMessages = useCallback((value: TerminalEntry[] | ((prev: TerminalEntry[]) => TerminalEntry[])) => {
     trackerDispatch({ type: 'SET_PENDING_UFO74_START_MESSAGES', payload: typeof value === 'function' ? value(trackerStateRef.current.pendingUfo74StartMessages) : value });
+  }, []);
+
+  const appendPendingUfo74StartMessages = useCallback((items: TerminalEntry[]) => {
+    trackerDispatch({ type: 'APPEND_PENDING_UFO74_START_MESSAGES', payload: items });
   }, []);
 
   const setPendingAchievement = useCallback((value: Achievement | null | ((prev: Achievement | null) => Achievement | null)) => {
@@ -447,13 +471,55 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
       // Update the internal game state to match the new initial state
       setGameState(initialState);
 
-      // Sync game over state
-      uiDispatch({ type: 'SET_SHOW_GAME_OVER', payload: initialState.isGameOver && initialPhase === 'terminal' });
-      uiDispatch({ type: 'SET_GAME_OVER_REASON', payload: initialState.gameOverReason || '' });
+      // Reset all reducer state to clear stale UI from previous session
+      uiDispatch({ type: 'RESET_UI', payload: {
+        showGameOver: initialState.isGameOver && initialPhase === 'terminal',
+        gameOverReason: initialState.gameOverReason || '',
+        showHeaderMenu: false,
+        showSettings: false,
+        showAchievements: false,
+        showStatistics: false,
+        showPauseMenu: false,
+        showEvidenceTracker: false,
+        showRiskTracker: false,
+        showAttBar: false,
+        showAvatar: false,
+        avatarCreepyEntrance: false,
+        showFirewallScare: false,
+        showTuringTest: initialState.turingEvaluationActive,
+        riskPulse: false,
+        typingSpeedWarning: false,
+        alienSilhouetteVisible: false,
+      }});
 
-      // Sync Turing test state
-      uiDispatch({ type: 'SET_SHOW_TURING_TEST', payload: initialState.turingEvaluationActive });
-      trackerDispatch({ type: 'SET_EVIDENCE_FOUND_INDICATOR_KEY', payload: 0 });
+      phaseDispatch({ type: 'RESET_GAME_PHASE', payload: {
+        gamePhase: initialPhase,
+        encryptedChannelState: 'idle' as EncryptedChannelState,
+        isProcessing: false,
+        isStreaming: false,
+        isWarmingUp: false,
+        isShaking: false,
+        flickerActive: false,
+        countdownDisplay: null,
+        timedDecryptRemaining: 0,
+        terminalStaticLevel: 0,
+        burnInLines: [],
+        interferenceBurst: null,
+        paranoiaMessage: null,
+        paranoiaPosition: { top: 0, left: 0 },
+      }});
+
+      trackerDispatch({ type: 'RESET_TRACKER', payload: {
+        inputValue: '',
+        historyIndex: -1,
+        activeImage: null,
+        pendingImage: null,
+        pendingUfo74Messages: [],
+        queuedAfterMediaMessages: [],
+        pendingUfo74StartMessages: [],
+        pendingAchievement: null,
+        evidenceFoundIndicatorKey: 0,
+      }});
 
       // Update refs
       prevSeedRef.current = initialState.seed;
@@ -494,10 +560,13 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     setShowPauseMenu,
     pendingUfo74Messages: trackerState.pendingUfo74Messages,
     setPendingUfo74Messages,
+    appendPendingUfo74Messages,
     queuedAfterMediaMessages: trackerState.queuedAfterMediaMessages,
     setQueuedAfterMediaMessages,
+    appendQueuedAfterMediaMessages,
     pendingUfo74StartMessages: trackerState.pendingUfo74StartMessages,
     setPendingUfo74StartMessages,
+    appendPendingUfo74StartMessages,
     encryptedChannelState: phaseState.encryptedChannelState,
     setEncryptedChannelState,
     gamePhase: phaseState.gamePhase,

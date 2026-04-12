@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
 import { type GamePhase, type GameState, type ImageTrigger } from '../types';
 import { createEntry } from '../engine/commands';
+import { appendToHistory } from '../lib/appendToHistory';
 import { autoSave } from '../storage/saves';
 import { addPlaytime } from '../storage/statistics';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
@@ -552,14 +553,14 @@ export function useTerminalEffects({
             ...(prevState.singularEventsTriggered || []),
             'turing_evaluation',
           ]),
-          history: [
-            ...prevState.history,
+          history: appendToHistory(
+            prevState.history,
             createEntry('system', ''),
             createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
             createEntry('warning', '        SECURITY PROTOCOL: TURING EVALUATION INITIATED'),
             createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
             createEntry('system', ''),
-          ],
+          ),
         }));
 
         // Trigger flicker and show Turing test overlay after delay
@@ -798,7 +799,7 @@ export function useTerminalEffects({
       const hintEntry = createEntry('ufo74', `[UFO74]: ${hint.hint}`);
       setGameState(prev => ({
         ...prev,
-        history: [...prev.history, hintEntry],
+        history: appendToHistory(prev.history, hintEntry),
         idleHintsGiven: (prev.idleHintsGiven || 0) + 1,
         lastActivityTime: Date.now(),
       }));

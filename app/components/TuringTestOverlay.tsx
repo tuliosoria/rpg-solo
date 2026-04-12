@@ -275,17 +275,18 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
               const showWrong = showFeedback && isSelected && !option.isMachine;
 
               return (
-                <div
+                <button
                   key={option.letter}
-                  className={`${styles.option} 
-                    ${isSelected ? styles.optionSelected : ''} 
-                    ${showCorrect ? styles.optionCorrect : ''} 
+                  type="button"
+                  className={`${styles.option}
+                    ${isSelected ? styles.optionSelected : ''}
+                    ${showCorrect ? styles.optionCorrect : ''}
                     ${showWrong ? styles.optionWrong : ''}`}
                   onClick={() => handleSelect(option.letter)}
                 >
                   <span className={styles.optionLetter}>{option.letter}.</span>
                   <span className={styles.optionText}>{translateRuntimeText(option.text)}</span>
-                </div>
+                </button>
               );
             })}
           </div>

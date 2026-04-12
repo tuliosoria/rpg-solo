@@ -824,10 +824,13 @@ export const filesystemCommands: CommandRegistry = {
 
     const legacyPassword = args[1]?.toLowerCase().trim();
 
-    // Decrypt is kept only as a legacy compatibility alias.
-    // Normal access now goes through `open`; the old password path remains
-    // solely for the hidden UFO74 secret ending.
-    if (!(filePath.includes('ghost_in_machine') && legacyPassword === 'varginha1996')) {
+    // Preserve the full decrypt flow for files with securityQuestion or timedDecrypt,
+    // and for the hidden UFO74 secret ending (ghost_in_machine + varginha1996).
+    // Only redirect to open() for plain encrypted files without special decrypt logic.
+    const isGhostSecret = filePath.includes('ghost_in_machine') && legacyPassword === 'varginha1996';
+    const hasSpecialDecrypt = !!file.securityQuestion || !!file.timedDecrypt;
+
+    if (!isGhostSecret && !hasSpecialDecrypt) {
       const openResult = commandsRef!.open([args[0]], state);
       return {
         ...openResult,

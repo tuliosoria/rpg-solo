@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useRef } from 'react';
+import React, { memo, useRef, useEffect, useCallback } from 'react';
 import { ACHIEVEMENTS, getUnlockedAchievements } from '../engine/achievements';
 import { useI18n } from '../i18n';
 import { useFocusTrap } from '../hooks';
@@ -15,6 +15,21 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
   const unlockedIds = getUnlockedAchievements();
   const modalRef = useRef<HTMLDivElement>(null);
   useFocusTrap(modalRef);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onCloseAction();
+      }
+    },
+    [onCloseAction]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   const visibleAchievements = ACHIEVEMENTS.map(achievement => {
     const isUnlocked = unlockedIds.has(achievement.id);
@@ -65,7 +80,7 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
         <div className={styles.actions}>
           <button
             className={styles.closeButton}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onCloseAction}
           >

@@ -19,7 +19,6 @@ import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { saveCheckpoint } from '../storage/saves';
 import { incrementStatistic } from '../storage/statistics';
 import {
-  MAX_HISTORY_SIZE,
   MAX_COMMAND_HISTORY_SIZE,
   MAX_COMMAND_INPUT_LENGTH,
 } from '../constants/limits';
@@ -34,6 +33,7 @@ import {
   type TerminalEntry,
 } from '../types';
 import type { SoundType } from './useSound';
+import { appendToHistory } from '../lib/appendToHistory';
 import { speakCustomFirewallVoice } from '../components/FirewallEyes';
 
 const STREAMING_DELAYS: Record<
@@ -74,8 +74,11 @@ interface UseTerminalInputOptions {
   setPendingImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
   setActiveImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
   setPendingUfo74StartMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
+  appendPendingUfo74StartMessages: (items: TerminalEntry[]) => void;
   setPendingUfo74Messages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
+  appendPendingUfo74Messages: (items: TerminalEntry[]) => void;
   setQueuedAfterMediaMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
+  appendQueuedAfterMediaMessages: (items: TerminalEntry[]) => void;
   setShowEvidenceTracker: React.Dispatch<React.SetStateAction<boolean>>;
   setShowRiskTracker: React.Dispatch<React.SetStateAction<boolean>>;
   setShowAttBar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -124,8 +127,9 @@ export function useTerminalInput({
   setPendingImage,
   setActiveImage,
   setPendingUfo74StartMessages,
+  appendPendingUfo74StartMessages,
   setPendingUfo74Messages,
-  setQueuedAfterMediaMessages,
+  appendQueuedAfterMediaMessages,
   setShowEvidenceTracker,
   setShowRiskTracker,
   setShowAttBar,
@@ -359,20 +363,22 @@ export function useTerminalInput({
 
             if (isLastStep) {
               // Briefing complete → transition to GAME_ACTIVE
-              const newState = {
-                ...gameState,
-                history: [...gameState.history, ...stepEntries],
-                tutorialStep: -1,
-                tutorialComplete: true,
-                interactiveTutorialState: {
-                  ...tutorialState,
-                  current: TutorialStateID.GAME_ACTIVE,
-                  inputLocked: false,
-                },
-                currentPath: '/',
-              };
-              setGameState(newState);
-              saveCheckpoint(newState, 'Tutorial complete');
+              setGameState(prev => {
+                const newState = {
+                  ...prev,
+                  history: [...prev.history, ...stepEntries],
+                  tutorialStep: -1,
+                  tutorialComplete: true,
+                  interactiveTutorialState: {
+                    ...tutorialState,
+                    current: TutorialStateID.GAME_ACTIVE,
+                    inputLocked: false,
+                  },
+                  currentPath: '/',
+                };
+                saveCheckpoint(newState, 'Tutorial complete');
+                return newState;
+              });
             } else {
               setGameState(prev => ({
                 ...prev,
@@ -474,14 +480,16 @@ export function useTerminalInput({
         }
 
         if (nextStep >= TUTORIAL_MESSAGES.length) {
-          const newState = {
-            ...gameState,
-            history: [...gameState.history, ...tutorialEntries],
-            tutorialStep: -1,
-            tutorialComplete: true,
-          };
-          setGameState(newState);
-          saveCheckpoint(newState, 'Tutorial complete');
+          setGameState(prev => {
+            const newState = {
+              ...prev,
+              history: [...prev.history, ...tutorialEntries],
+              tutorialStep: -1,
+              tutorialComplete: true,
+            };
+            saveCheckpoint(newState, 'Tutorial complete');
+            return newState;
+          });
         } else {
           setGameState(prev => ({
             ...prev,
@@ -519,13 +527,9 @@ export function useTerminalInput({
       setHistoryIndex(-1);
 
       const inputEntry = createEntry('input', `> ${command}`);
-      const trimmedHistory =
-        gameState.history.length >= MAX_HISTORY_SIZE
-          ? gameState.history.slice(-MAX_HISTORY_SIZE + 1)
-          : gameState.history;
       const newState: GameState = {
         ...gameState,
-        history: [...trimmedHistory, inputEntry],
+        history: appendToHistory(gameState.history, inputEntry),
         commandHistory: [command, ...gameState.commandHistory.slice(0, MAX_COMMAND_HISTORY_SIZE - 1)],
       };
 
@@ -582,10 +586,11 @@ export function useTerminalInput({
       };
 
       if (result.stateChanges.history !== undefined) {
-        setGameState({
-          ...intermediateState,
-          history: result.stateChanges.history,
-        });
+        setGameState(prev => ({
+          ...prev,
+          ...stateChangesWithoutHistory,
+          history: result.stateChanges.history!,
+        }));
         playSecondVoiceCue();
         isProcessingRef.current = false;
         setIsProcessing(false);
@@ -597,7 +602,10 @@ export function useTerminalInput({
           streamStartScrollPos.current = outputRef.current.scrollHeight;
         }
         setIsStreaming(true);
-        setGameState(intermediateState);
+        setGameState(prev => ({
+          ...prev,
+          ...stateChangesWithoutHistory,
+        }));
 
         try {
           await streamOutput(streamableOutput, streamingMode);
@@ -621,9 +629,9 @@ export function useTerminalInput({
 
           if (ufo74Messages.length > 0) {
             if (result.imageTrigger) {
-              setQueuedAfterMediaMessages(prev => [...prev, ...ufo74Messages]);
+              appendQueuedAfterMediaMessages(ufo74Messages);
             } else if (shouldDeferUfo74) {
-              setPendingUfo74StartMessages(prev => [...prev, ...ufo74Messages]);
+              appendPendingUfo74StartMessages(ufo74Messages);
             } else {
               openEncryptedChannelWithMessages(ufo74Messages);
             }
@@ -647,17 +655,18 @@ export function useTerminalInput({
           );
         }
 
-        setGameState({
-          ...intermediateState,
-          history: [...newState.history, ...otherOutput, ...pendingMediaMessages],
-        });
+        setGameState(prev => ({
+          ...prev,
+          ...stateChangesWithoutHistory,
+          history: [...prev.history, ...otherOutput, ...pendingMediaMessages],
+        }));
         playSecondVoiceCue();
 
         if (ufo74Messages.length > 0) {
           if (result.imageTrigger) {
-            setQueuedAfterMediaMessages(prev => [...prev, ...ufo74Messages]);
+            appendQueuedAfterMediaMessages(ufo74Messages);
           } else if (shouldDeferUfo74) {
-            setPendingUfo74StartMessages(prev => [...prev, ...ufo74Messages]);
+            appendPendingUfo74StartMessages(ufo74Messages);
           } else {
             openEncryptedChannelWithMessages(ufo74Messages);
           }
@@ -673,9 +682,9 @@ export function useTerminalInput({
 
       if (result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0) {
         if (result.imageTrigger) {
-          setQueuedAfterMediaMessages(prev => [...prev, ...result.pendingUfo74Messages!]);
+          appendQueuedAfterMediaMessages(result.pendingUfo74Messages);
         } else if (shouldDeferUfo74) {
-          setPendingUfo74StartMessages(prev => [...prev, ...result.pendingUfo74Messages!]);
+          appendPendingUfo74StartMessages(result.pendingUfo74Messages);
         } else {
           openEncryptedChannelWithMessages(result.pendingUfo74Messages);
         }
@@ -841,7 +850,8 @@ export function useTerminalInput({
       setPendingImage,
       setPendingUfo74Messages,
       setPendingUfo74StartMessages,
-      setQueuedAfterMediaMessages,
+      appendPendingUfo74StartMessages,
+      appendQueuedAfterMediaMessages,
       setShowEvidenceTracker,
       setShowAttBar,
       setShowAvatar,

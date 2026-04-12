@@ -185,10 +185,13 @@ export default function Terminal({
     setShowPauseMenu,
     pendingUfo74Messages,
     setPendingUfo74Messages,
+    appendPendingUfo74Messages,
     queuedAfterMediaMessages,
     setQueuedAfterMediaMessages,
+    appendQueuedAfterMediaMessages,
     pendingUfo74StartMessages,
     setPendingUfo74StartMessages,
+    appendPendingUfo74StartMessages,
     encryptedChannelState,
     setEncryptedChannelState,
     gamePhase,
@@ -649,8 +652,11 @@ export default function Terminal({
     setPendingImage,
     setActiveImage,
     setPendingUfo74StartMessages,
+    appendPendingUfo74StartMessages,
     setPendingUfo74Messages,
+    appendPendingUfo74Messages,
     setQueuedAfterMediaMessages,
+    appendQueuedAfterMediaMessages,
     setShowEvidenceTracker,
     setShowRiskTracker,
     setShowAttBar,
@@ -1496,7 +1502,7 @@ export default function Terminal({
                 history: [...prev.history, recoveredMessage],
               }));
               if (allUfo74Messages.length > 0) {
-                setPendingUfo74StartMessages(prev => [...prev, ...allUfo74Messages]);
+                appendPendingUfo74StartMessages(allUfo74Messages);
               }
               setActiveImage(null);
               inputRef.current?.focus();

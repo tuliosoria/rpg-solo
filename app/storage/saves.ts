@@ -115,6 +115,8 @@ function serializeState(state: GameState): string {
       passwordsFound: Array.from(state.passwordsFound || []),
       bookmarkedFiles: Array.from(state.bookmarkedFiles || []),
       trapsTriggered: Array.from(state.trapsTriggered || []),
+      conspiracyFilesSeen: Array.from(state.conspiracyFilesSeen || []),
+      archiveFilesViewed: Array.from(state.archiveFilesViewed || []),
       // Limit history size to prevent quota issues
       history: state.history.slice(-MAX_HISTORY_SIZE),
     },
@@ -200,6 +202,8 @@ function deserializeState(json: string): GameState {
     passwordsFound: new Set(toStringArray(parsed.passwordsFound)),
     bookmarkedFiles: new Set(toStringArray(parsed.bookmarkedFiles)),
     trapsTriggered: new Set(toStringArray(parsed.trapsTriggered)),
+    conspiracyFilesSeen: new Set(toStringArray(parsed.conspiracyFilesSeen)),
+    archiveFilesViewed: new Set(toStringArray(parsed.archiveFilesViewed)),
     // Limit command history to last MAX_COMMAND_HISTORY_SIZE entries
     commandHistory: toStringArray(parsed.commandHistory).slice(-MAX_COMMAND_HISTORY_SIZE),
     history: Array.isArray(baseState.history)

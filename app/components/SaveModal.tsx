@@ -101,7 +101,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
         <div className={styles.actions}>
           <button
             className={styles.saveButton}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={handleSave}
             disabled={saving}
@@ -110,7 +110,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
           </button>
           <button
             className={styles.cancelButton}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onCloseAction}
           >
