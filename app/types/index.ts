@@ -337,11 +337,7 @@ export interface GameState {
 
   // Firewall Eyes system
   firewallActive: boolean; // True when detection >= 25%
-  firewallEyes: FirewallEye[]; // Active hostile eyes on screen
   firewallDisarmed: boolean; // True if player used neural link to disable
-  lastEyeSpawnDetection: number; // Detection level when last eye spawned (for 10% increments)
-  lastEyeSpawnTime: number; // Timestamp of last eye batch spawn (for 1 min cooldown)
-  firewallEyesTutorialShown: boolean; // True after first-time tutorial popup shown
 
   // File reading state (for firewall eye spawn suppression)
   isReadingFile: boolean; // True while a file is being displayed
@@ -357,15 +353,7 @@ export interface GameState {
   archiveFilesViewed: Set<string>; // Files accessed during this archive session
 }
 
-// Firewall Eye entity
-export interface FirewallEye {
-  id: string;
-  x: number; // Position as percentage (0-100)
-  y: number; // Position as percentage (0-100)
-  spawnTime: number; // Timestamp when spawned
-  detonateTime: number; // Timestamp when it will detonate
-  isDetonating: boolean; // True during detonation animation
-}
+// Firewall Eye entity removed — eyes are now purely ambient (non-interactive)
 
 export interface SaveSlot {
   id: string;
@@ -551,11 +539,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   lastSaveTime: 0,
   // Firewall Eyes system
   firewallActive: false,
-  firewallEyes: [],
   firewallDisarmed: false,
-  lastEyeSpawnDetection: 0,
-  lastEyeSpawnTime: 0,
-  firewallEyesTutorialShown: false,
   // File reading state
   isReadingFile: false,
   lastFileReadTime: 0,

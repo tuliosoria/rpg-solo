@@ -118,12 +118,8 @@ export function useFirewallState(gameState: GameState) {
   return useMemo(() => ({
     active: gameState.firewallActive,
     disarmed: gameState.firewallDisarmed,
-    eyeCount: gameState.firewallEyes.length,
-    lastSpawnTime: gameState.lastEyeSpawnTime,
   }), [
     gameState.firewallActive,
     gameState.firewallDisarmed,
-    gameState.firewallEyes.length,
-    gameState.lastEyeSpawnTime,
   ]);
 }

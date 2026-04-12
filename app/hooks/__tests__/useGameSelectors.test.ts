@@ -60,8 +60,6 @@ function createMockGameState(overrides: Partial<GameState> = {}): GameState {
     lastHintCommandCount: 0,
     firewallActive: false,
     firewallDisarmed: false,
-    firewallEyes: [],
-    lastEyeSpawnTime: 0,
     paranoiaLevel: 0,
     ...overrides,
   } as GameState;
@@ -283,16 +281,12 @@ describe('useGameSelectors', () => {
       const gameState = createMockGameState({
         firewallActive: true,
         firewallDisarmed: false,
-        firewallEyes: [{ id: '1' }, { id: '2' }] as any,
-        lastEyeSpawnTime: 123456,
       });
 
       const { result } = renderHook(() => useFirewallState(gameState));
 
       expect(result.current.active).toBe(true);
       expect(result.current.disarmed).toBe(false);
-      expect(result.current.eyeCount).toBe(2);
-      expect(result.current.lastSpawnTime).toBe(123456);
     });
 
     it('reflects disarmed state', () => {

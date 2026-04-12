@@ -1,412 +1,183 @@
 'use client';
 
-import React, { useEffect, useCallback, useRef, memo } from 'react';
-import { FirewallEye } from '../types';
-import { uiRandom, uiRandomPick } from '../engine/rng';
-import { useI18n } from '../i18n';
+import React, { useEffect, useRef, useMemo, memo } from 'react';
+import { uiRandomPick } from '../engine/rng';
 import styles from './FirewallEyes.module.css';
 
-// Configuration
-const EYE_LIFETIME_MS = 8000; // Time before eye detonates (8 seconds)
-const EYE_WARNING_MS = 2000; // Time before detonation when eye starts pulsing
-const DETECTION_THRESHOLD = 25; // Detection level when firewall activates
-const BATCH_SIZE = 5; // Default eyes spawned per batch
-const HIGH_RISK_BATCH_SIZE = 8;
-const MAX_CONCURRENT_FIREWALL_EYES = 10;
-const CRITICAL_RISK_BATCH_SIZE = MAX_CONCURRENT_FIREWALL_EYES;
-const FIREWALL_EYE_BATCH_SIZES = {
-  BASE: BATCH_SIZE,
-  HIGH: HIGH_RISK_BATCH_SIZE,
-  CRITICAL: CRITICAL_RISK_BATCH_SIZE,
-} as const;
-const HIGH_RISK_THRESHOLD = 75;
-const CRITICAL_RISK_THRESHOLD = 85;
-const FIREWALL_EYE_BATCH_THRESHOLDS = {
-  HIGH: HIGH_RISK_THRESHOLD,
-  CRITICAL: CRITICAL_RISK_THRESHOLD,
-} as const;
-const SPAWN_COOLDOWN_MS = 90000; // 90 seconds cooldown between spawns
-const DETECTION_INCREASE_ON_DETONATE = 5; // Risk increase when eye detonates
+// Detection threshold for firewall activation
+const DETECTION_THRESHOLD = 25;
 const SCREEN_OVERLAY_BOUNDS = { position: 'absolute' as const, inset: 0 };
 
-export function getFirewallEyeBatchSize(detectionLevel: number): number {
-  if (detectionLevel >= FIREWALL_EYE_BATCH_THRESHOLDS.CRITICAL) {
-    return FIREWALL_EYE_BATCH_SIZES.CRITICAL;
+// Detection band → eye count
+function getEyeCount(detectionLevel: number): number {
+  if (detectionLevel >= 90) return 10;
+  if (detectionLevel >= 80) return 8;
+  if (detectionLevel >= 60) return 6;
+  if (detectionLevel >= 40) return 4;
+  if (detectionLevel >= 25) return 2;
+  return 0;
+}
+
+// Detection band key — changes only at thresholds
+function getDetectionBand(detectionLevel: number): number {
+  if (detectionLevel >= 90) return 90;
+  if (detectionLevel >= 80) return 80;
+  if (detectionLevel >= 60) return 60;
+  if (detectionLevel >= 40) return 40;
+  if (detectionLevel >= 25) return 25;
+  return 0;
+}
+
+// Predefined edge positions — first N selected based on eye count
+interface EyePosition {
+  edge: 'top' | 'bottom' | 'left' | 'right';
+  offset: string; // CSS value along the edge
+  blinkClass: string;
+}
+
+const EDGE_POSITIONS: EyePosition[] = [
+  { edge: 'top', offset: '25%', blinkClass: styles.blinkA },
+  { edge: 'bottom', offset: '70%', blinkClass: styles.blinkB },
+  { edge: 'right', offset: '35%', blinkClass: styles.blinkC },
+  { edge: 'left', offset: '60%', blinkClass: styles.blinkA },
+  { edge: 'top', offset: '65%', blinkClass: styles.blinkB },
+  { edge: 'bottom', offset: '30%', blinkClass: styles.blinkC },
+  { edge: 'left', offset: '25%', blinkClass: styles.blinkA },
+  { edge: 'right', offset: '75%', blinkClass: styles.blinkB },
+  { edge: 'top', offset: '85%', blinkClass: styles.blinkC },
+  { edge: 'bottom', offset: '50%', blinkClass: styles.blinkA },
+];
+
+function getEdgeStyle(pos: EyePosition): React.CSSProperties {
+  switch (pos.edge) {
+    case 'top':
+      return { left: pos.offset };
+    case 'bottom':
+      return { left: pos.offset };
+    case 'left':
+      return { top: pos.offset };
+    case 'right':
+      return { top: pos.offset };
   }
-  if (detectionLevel >= FIREWALL_EYE_BATCH_THRESHOLDS.HIGH) {
-    return FIREWALL_EYE_BATCH_SIZES.HIGH;
+}
+
+function getEdgeClassName(edge: string): string {
+  switch (edge) {
+    case 'top': return styles.edgeTop;
+    case 'bottom': return styles.edgeBottom;
+    case 'left': return styles.edgeLeft;
+    case 'right': return styles.edgeRight;
+    default: return '';
   }
-  return FIREWALL_EYE_BATCH_SIZES.BASE;
 }
 
 interface FirewallEyesProps {
   detectionLevel: number;
   firewallActive: boolean;
   firewallDisarmed: boolean;
-  eyes: FirewallEye[];
-  lastEyeSpawnTime: number;
-  paused: boolean; // Pause timers during blocking overlays/popups
-  turingTestActive: boolean; // Don't spawn during Turing test
-  isReadingFile: boolean; // Don't spawn while player is reading a file
-  firewallEyesTutorialShown: boolean; // Track if tutorial has been shown
-  onEyeClick: (eyeId: string) => void;
-  onEyeDetonate: (eyeId: string) => void;
-  onSpawnEyeBatch: () => void;
   onActivateFirewall: () => void;
-  onPauseChanged?: (paused: boolean) => void; // Callback when pause state changes
-  onTutorialShown?: () => void; // Callback when tutorial popup is shown
-  onExtendEyeTimers?: (durationMs: number) => void; // Extend eye deadlines after tutorial pause
 }
-
-// Memoized single eye component to prevent unnecessary re-renders
-interface SingleEyeProps {
-  eye: FirewallEye;
-  now: number;
-  onEyeClick: (eyeId: string, e: React.MouseEvent) => void;
-  ariaLabel: string;
-  titleLabel: string;
-}
-
-const SingleEye = memo(function SingleEye({
-  eye,
-  now,
-  onEyeClick,
-  ariaLabel,
-  titleLabel,
-}: SingleEyeProps) {
-  const timeUntilDetonate = eye.detonateTime - now;
-  const isWarning = timeUntilDetonate <= EYE_WARNING_MS && timeUntilDetonate > 0;
-  const isCritical = timeUntilDetonate <= 1000 && timeUntilDetonate > 0;
-
-  return (
-    <button
-      key={eye.id}
-      className={`${styles.eye} ${isWarning ? styles.warning : ''} ${isCritical ? styles.critical : ''} ${eye.isDetonating ? styles.detonating : ''}`}
-      style={{
-        left: `${eye.x}%`,
-        top: `${eye.y}%`,
-      }}
-      onClick={e => onEyeClick(eye.id, e)}
-      aria-label={ariaLabel}
-      title={titleLabel}
-    >
-      <div className={styles.eyeInner}>
-        <div className={styles.eyePupil} />
-      </div>
-      {isWarning && (
-        <div className={styles.countdown}>{Math.ceil(timeUntilDetonate / 1000)}</div>
-      )}
-    </button>
-  );
-});
 
 function FirewallEyesComponent({
   detectionLevel,
   firewallActive,
   firewallDisarmed,
-  eyes,
-  lastEyeSpawnTime,
-  paused,
-  turingTestActive,
-  isReadingFile,
-  firewallEyesTutorialShown,
-  onEyeClick,
-  onEyeDetonate,
-  onSpawnEyeBatch,
   onActivateFirewall,
-  onPauseChanged,
-  onTutorialShown,
-  onExtendEyeTimers,
 }: FirewallEyesProps) {
-  const { t } = useI18n();
-  const detonationTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
-  const spawnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pauseStartTimeRef = useRef<number | null>(null); // Track when pause started for time adjustment
-  const tutorialPauseStartRef = useRef<number | null>(null);
+  const trackingPupilRef = useRef<HTMLDivElement | null>(null);
+  const trackingIrisRef = useRef<HTMLDivElement | null>(null);
+  const rafRef = useRef<number>(0);
 
-  // Calculate whether to show tutorial popup
-  // Show if: tutorial not shown yet, firewall active, not disarmed, and eyes exist
-  const shouldShowTutorial = !firewallEyesTutorialShown && firewallActive && !firewallDisarmed && eyes.length > 0;
-  const [showTutorialPopup, setShowTutorialPopup] = React.useState(shouldShowTutorial);
-  const tutorialCallbackFiredRef = useRef(false); // Track if we've notified parent
-
-  // Determine if spawning should be suppressed
-  const isEffectivelyPaused = paused || showTutorialPopup;
-  const shouldSuppressSpawn = isEffectivelyPaused || turingTestActive || isReadingFile;
-  const shouldDelayActivation = isEffectivelyPaused || turingTestActive;
-
-  // Show tutorial popup when conditions are met
-  // Using useEffect to react to prop changes and show popup
+  // Activate firewall when detection reaches threshold
   useEffect(() => {
-    if (shouldShowTutorial && !showTutorialPopup && !tutorialCallbackFiredRef.current) {
-      tutorialPauseStartRef.current = Date.now();
-      setShowTutorialPopup(true);
-    }
-  }, [shouldShowTutorial, showTutorialPopup]);
-
-  // Notify parent that tutorial was shown (only once)
-  useEffect(() => {
-    if (showTutorialPopup && !tutorialCallbackFiredRef.current) {
-      tutorialCallbackFiredRef.current = true;
-      onTutorialShown?.();
-    }
-  }, [showTutorialPopup, onTutorialShown]);
-
-  // Activate firewall when detection reaches threshold.
-  // Reading a file should not block the first trigger; only active overlays should.
-  useEffect(() => {
-    if (
-      !firewallActive &&
-      !firewallDisarmed &&
-      detectionLevel >= DETECTION_THRESHOLD &&
-      !shouldDelayActivation
-    ) {
+    if (!firewallActive && !firewallDisarmed && detectionLevel >= DETECTION_THRESHOLD) {
       onActivateFirewall();
     }
-  }, [detectionLevel, firewallActive, firewallDisarmed, shouldDelayActivation, onActivateFirewall]);
+  }, [detectionLevel, firewallActive, firewallDisarmed, onActivateFirewall]);
 
-  // Track pause state to notify parent for time adjustments
+  const band = getDetectionBand(detectionLevel);
+  const eyeCount = useMemo(() => getEyeCount(detectionLevel), [band]); // eslint-disable-line react-hooks/exhaustive-deps
+  const positions = useMemo(() => EDGE_POSITIONS.slice(0, eyeCount), [eyeCount]);
+
+  const isHighAlert = detectionLevel >= 80;
+
+  // Cursor tracking for one eye at ≥80% detection (via refs, no state)
   useEffect(() => {
-    if (paused) {
-      // Record when pause started
-      pauseStartTimeRef.current = Date.now();
-    } else if (pauseStartTimeRef.current !== null) {
-      // Pause ended - notify parent to adjust eye times
-      const pauseDuration = Date.now() - pauseStartTimeRef.current;
-      if (onPauseChanged && pauseDuration > 100) {
-        onPauseChanged(false); // Signal parent to extend eye detonation times
-      }
-      pauseStartTimeRef.current = null;
-    }
-  }, [paused, onPauseChanged]);
+    if (!isHighAlert) return;
 
-  // Spawn eye batch with cooldown timer
-  useEffect(() => {
-    if (
-      !firewallActive ||
-      firewallDisarmed ||
-      shouldSuppressSpawn ||
-      eyes.length >= MAX_CONCURRENT_FIREWALL_EYES
-    ) {
-      // Clear spawn timer if firewall is inactive/disarmed/paused/suppressed
-      if (spawnTimerRef.current) {
-        clearTimeout(spawnTimerRef.current);
-        spawnTimerRef.current = null;
-      }
-      return;
-    }
+    const onMouseMove = (e: MouseEvent) => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        const pupil = trackingPupilRef.current;
+        const iris = trackingIrisRef.current;
+        if (!pupil || !iris) return;
 
-    // Calculate time until next spawn is allowed
-    const now = Date.now();
-    const timeSinceLastSpawn = now - lastEyeSpawnTime;
-    const timeUntilNextSpawn = Math.max(0, SPAWN_COOLDOWN_MS - timeSinceLastSpawn);
-
-    // Clear any existing spawn timer
-    if (spawnTimerRef.current) {
-      clearTimeout(spawnTimerRef.current);
-    }
-
-    // Set timer for next spawn batch
-    spawnTimerRef.current = setTimeout(() => {
-      onSpawnEyeBatch();
-    }, timeUntilNextSpawn);
-
-    return () => {
-      if (spawnTimerRef.current) {
-        clearTimeout(spawnTimerRef.current);
-      }
+        const rect = iris.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = e.clientX - cx;
+        const dy = e.clientY - cy;
+        const maxShift = 4;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const clamp = Math.min(1, dist / 200);
+        const tx = (dx / dist) * maxShift * clamp;
+        const ty = (dy / dist) * maxShift * clamp;
+        pupil.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px))`;
+      });
     };
-  }, [
-    firewallActive,
-    firewallDisarmed,
-    lastEyeSpawnTime,
-    shouldSuppressSpawn,
-    onSpawnEyeBatch,
-    eyes.length,
-  ]);
 
-  // Set up detonation timers for each eye
-  useEffect(() => {
-    if (firewallDisarmed || isEffectivelyPaused) {
-      // Clear all timers if firewall is disarmed or paused
-      detonationTimersRef.current.forEach(timer => clearTimeout(timer));
-      detonationTimersRef.current.clear();
-      return;
-    }
-
-    const now = Date.now();
-
-    for (const eye of eyes) {
-      // Skip if timer already set or eye is detonating
-      if (detonationTimersRef.current.has(eye.id) || eye.isDetonating) continue;
-
-      const timeUntilDetonate = eye.detonateTime - now;
-
-      if (timeUntilDetonate <= 0) {
-        // Should have already detonated
-        onEyeDetonate(eye.id);
-      } else {
-        // Set timer for detonation
-        const timer = setTimeout(() => {
-          onEyeDetonate(eye.id);
-          detonationTimersRef.current.delete(eye.id);
-        }, timeUntilDetonate);
-
-        detonationTimersRef.current.set(eye.id, timer);
-      }
-    }
-
-    // Cleanup timers for removed eyes only (not all timers)
-    detonationTimersRef.current.forEach((timer, id) => {
-      if (!eyes.find(e => e.id === id)) {
-        clearTimeout(timer);
-        detonationTimersRef.current.delete(id);
-      }
-    });
-
-    // Only cleanup all timers on actual unmount, not on re-renders
-    // The ref persists across renders, so we don't want to clear timers
-    // every time the eyes array changes
-  }, [eyes, firewallDisarmed, isEffectivelyPaused, onEyeDetonate]);
-
-  // Separate cleanup effect for unmount only
-  useEffect(() => {
-    const timersRef = detonationTimersRef.current;
+    window.addEventListener('mousemove', onMouseMove);
     return () => {
-      // Cleanup all timers on unmount
-      timersRef.forEach(timer => clearTimeout(timer));
-      timersRef.clear();
+      window.removeEventListener('mousemove', onMouseMove);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [isHighAlert]);
 
-  // Handle click on eye
-  const handleEyeClick = useCallback(
-    (eyeId: string, e: React.MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-
-      // Clear the detonation timer
-      const timer = detonationTimersRef.current.get(eyeId);
-      if (timer) {
-        clearTimeout(timer);
-        detonationTimersRef.current.delete(eyeId);
-      }
-
-      onEyeClick(eyeId);
-    },
-    [onEyeClick]
-  );
-
-  // Don't render if firewall is disarmed or not active
-  if (firewallDisarmed || !firewallActive || (eyes.length === 0 && !showTutorialPopup)) {
-    return null;
-  }
-
-  const now = Date.now();
-
-  // Handle tutorial popup dismiss
-  const handleTutorialDismiss = () => {
-    // Extend eye deadlines by the tutorial pause duration
-    if (tutorialPauseStartRef.current !== null) {
-      const pauseDuration = Date.now() - tutorialPauseStartRef.current;
-      if (pauseDuration > 0) {
-        onExtendEyeTimers?.(pauseDuration);
-      }
-      tutorialPauseStartRef.current = null;
-    }
-    setShowTutorialPopup(false);
-  };
+  // Don't render if disarmed or not active
+  if (firewallDisarmed || !firewallActive) return null;
 
   return (
     <div className={styles.firewallContainer} style={SCREEN_OVERLAY_BOUNDS}>
-      {/* Tutorial popup - first time firewall eyes spawn */}
-      {showTutorialPopup && (
-        <div className={styles.tutorialOverlay} style={SCREEN_OVERLAY_BOUNDS}>
-          <div className={styles.tutorialPopup}>
-            <div className={styles.tutorialHeader}>
-              {t('firewall.tutorial.header')}
+      {positions.map((pos, i) => {
+        const isTrackingEye = isHighAlert && i === 0;
+        const eyeClasses = [
+          styles.eye,
+          getEdgeClassName(pos.edge),
+          pos.blinkClass,
+          isHighAlert ? styles.highAlert : '',
+          isTrackingEye ? styles.tracking : '',
+        ].filter(Boolean).join(' ');
+
+        return (
+          <div
+            key={`fw-eye-${i}`}
+            className={eyeClasses}
+            style={{
+              ...getEdgeStyle(pos),
+              animationDelay: `${i * 0.3}s`,
+            }}
+            data-testid="firewall-ambient-eye"
+          >
+            <div className={styles.eyeSocket}>
+              <div
+                className={styles.iris}
+                ref={isTrackingEye ? trackingIrisRef : undefined}
+              >
+                <div
+                  className={styles.pupil}
+                  ref={isTrackingEye ? trackingPupilRef : undefined}
+                />
+              </div>
             </div>
-            <div className={styles.tutorialMessage}>
-              {t('firewall.tutorial.message')}
-            </div>
-            <button
-              className={styles.tutorialButton}
-              onClick={handleTutorialDismiss}
-              autoFocus
-            >
-              {t('firewall.tutorial.button')}
-            </button>
           </div>
-        </div>
-      )}
-      
-      {/* Only render eyes when tutorial is dismissed or not showing - using memoized SingleEye */}
-      {!showTutorialPopup && eyes.map(eye => (
-        <SingleEye
-          key={eye.id}
-          eye={eye}
-          now={now}
-          onEyeClick={handleEyeClick}
-          ariaLabel={t('firewall.eye.aria')}
-          titleLabel={t('firewall.eye.title')}
-        />
-      ))}
+        );
+      })}
     </div>
   );
 }
 
-// Wrap with memo for performance
 const FirewallEyes = memo(FirewallEyesComponent);
 export default FirewallEyes;
-
-// Utility function to create a new eye
-export function createFirewallEye(): FirewallEye {
-  const now = Date.now();
-
-  // Generate random position avoiding edges and the avatar region (top-right corner)
-  // Avatar is at approximately right: 15px, top: 190px, size ~200x280px
-  // In percentage terms, avatar occupies roughly x: 80-100%, y: 15-35% of viewport
-  let x: number;
-  let y: number;
-  const maxAttempts = 10;
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    x = 10 + uiRandom() * 80; // 10-90% horizontal
-    y = 20 + uiRandom() * 60; // 20-80% vertical (avoid header/footer)
-
-    // Check if position overlaps with avatar region (x > 75% and y < 40%)
-    const inAvatarZone = x > 75 && y < 40;
-    if (!inAvatarZone) {
-      break;
-    }
-    // If we're in avatar zone, regenerate (last attempt uses whatever we got but shifted)
-    if (attempt === maxAttempts - 1) {
-      x = 10 + uiRandom() * 65; // Force left of avatar region
-    }
-  }
-
-  const randomSegment = Math.floor(uiRandom() * 36 ** 8)
-    .toString(36)
-    .padStart(8, '0');
-
-  return {
-    id: `eye-${Date.now()}-${randomSegment}`,
-    x: x!,
-    y: y!,
-    spawnTime: now,
-    detonateTime: now + EYE_LIFETIME_MS,
-    isDetonating: false,
-  };
-}
-
-// Create a batch of eyes at once
-export function createFirewallEyeBatch(count: number = BATCH_SIZE): FirewallEye[] {
-  const eyes: FirewallEye[] = [];
-  for (let i = 0; i < count; i++) {
-    eyes.push(createFirewallEye());
-  }
-  return eyes;
-}
 
 // Creepy voice phrases for firewall eyes
 const FIREWALL_PHRASES = [
@@ -439,11 +210,6 @@ export function initVoices(): void {
     cachedVoices = speechSynthesis.getVoices();
     voicesLoaded = true;
   });
-}
-
-// Speak a creepy robotic voice when firewall eyes spawn
-export function speakFirewallVoice(): void {
-  speakCustomFirewallVoice(uiRandomPick(FIREWALL_PHRASES));
 }
 
 // Speak a specific phrase in creepy robotic voice
@@ -508,13 +274,4 @@ export function speakCustomFirewallVoice(phrase: string): void {
 }
 
 // Export constants for use elsewhere
-export {
-  DETECTION_THRESHOLD,
-  DETECTION_INCREASE_ON_DETONATE,
-  EYE_LIFETIME_MS,
-  BATCH_SIZE,
-  MAX_CONCURRENT_FIREWALL_EYES,
-  FIREWALL_EYE_BATCH_SIZES,
-  FIREWALL_EYE_BATCH_THRESHOLDS,
-  SPAWN_COOLDOWN_MS,
-};
+export { DETECTION_THRESHOLD, FIREWALL_PHRASES };

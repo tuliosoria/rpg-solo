@@ -70,7 +70,6 @@ interface TerminalEffectsRefs {
   typingSpeedWarningTimeout: React.MutableRefObject<NodeJS.Timeout | null>;
   idleHintTimerRef: React.MutableRefObject<NodeJS.Timeout | null>;
   lastScrollTimeRef: React.MutableRefObject<number>;
-  firewallPauseStartRef: React.MutableRefObject<number | null>;
   timedMechanicPauseStartRef: React.MutableRefObject<number | null>;
   timedMechanicResumeAdjustmentRef: React.MutableRefObject<number>;
   maxDetectionRef: React.MutableRefObject<number>;
@@ -93,7 +92,6 @@ interface UseTerminalEffectsOptions {
   showHeaderMenu: boolean;
   showTutorialSkip: boolean;
   isEnterOnlyMode: boolean;
-  isFirewallPaused: boolean;
   pauseTimedMechanics: boolean;
   suppressPressure: boolean;
   soundEnabled: boolean;
@@ -144,7 +142,6 @@ export function useTerminalEffects({
   showHeaderMenu,
   showTutorialSkip,
   isEnterOnlyMode,
-  isFirewallPaused,
   pauseTimedMechanics,
   suppressPressure,
   soundEnabled,
@@ -188,7 +185,6 @@ export function useTerminalEffects({
     typingSpeedWarningTimeout,
     idleHintTimerRef,
     lastScrollTimeRef,
-    firewallPauseStartRef,
     timedMechanicPauseStartRef,
     timedMechanicResumeAdjustmentRef,
     maxDetectionRef,
@@ -824,13 +820,6 @@ export function useTerminalEffects({
     idleHintTimerRef,
     lastScrollTimeRef,
   ]);
-
-  // Track when firewall pause starts (media or Turing Test)
-  useEffect(() => {
-    if (isFirewallPaused && firewallPauseStartRef.current === null) {
-      firewallPauseStartRef.current = Date.now();
-    }
-  }, [isFirewallPaused, firewallPauseStartRef]);
 
   // Handle skip streaming (spacebar/enter during streaming)
   useEffect(() => {

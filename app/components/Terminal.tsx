@@ -307,7 +307,6 @@ export default function Terminal({
   } | null>(null);
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
-  const firewallPauseStartRef = useRef<number | null>(null);
   const timedMechanicPauseStartRef = useRef<number | null>(null);
   const timedMechanicResumeAdjustmentRef = useRef(0);
   const hasBlockingPopup =
@@ -321,23 +320,8 @@ export default function Terminal({
     activeEvidenceVideo !== null ||
     pendingAchievement !== null ||
     showFirewallScare;
-  const isFirewallPaused =
-    activeImage !== null ||
-    showTuringTest ||
-    hasBlockingPopup ||
-    gameState.timedDecryptActive ||
-    gameState.traceSpikeActive ||
-    gameState.countdownActive;
   const pauseTimedMechanics =
     activeImage !== null || showTuringTest || hasBlockingPopup;
-
-  // File reading suppression: consider player "reading" for 15 seconds after file open
-  const FILE_READ_COOLDOWN_MS = 15000;
-  const isReadingFile = Boolean(
-    gameState.isReadingFile &&
-    gameState.lastFileReadTime &&
-    Date.now() - gameState.lastFileReadTime < FILE_READ_COOLDOWN_MS
-  );
 
   // Track max detection ever reached for Survivor achievement
   const maxDetectionRef = useRef(0);
@@ -671,9 +655,6 @@ export default function Terminal({
     handleIcqFilesSent,
     handleRestart,
     handleFirewallActivate,
-    handleFirewallEyeBatchSpawn,
-    handleFirewallEyeClick,
-    handleFirewallEyeDetonate,
   } = useGameActions({
     setGameState,
     setGamePhase,
@@ -684,45 +665,6 @@ export default function Terminal({
     playSound,
     triggerFlicker,
   });
-
-  // Handle firewall pause state changes (extends timers when overlays close)
-  const handleFirewallPauseChanged = useCallback(
-    (paused: boolean) => {
-      if (!paused && firewallPauseStartRef.current !== null) {
-        // Pause ended - extend timers by the pause duration
-        const pauseDuration = Date.now() - firewallPauseStartRef.current;
-        if (pauseDuration > 100) {
-          // Only adjust if pause was significant
-          setGameState(prev => ({
-            ...prev,
-            firewallEyes: prev.firewallEyes.map(eye => ({
-              ...eye,
-              detonateTime: eye.detonateTime + pauseDuration,
-            })),
-            lastEyeSpawnTime:
-              prev.lastEyeSpawnTime > 0
-                ? prev.lastEyeSpawnTime + pauseDuration
-                : prev.lastEyeSpawnTime,
-          }));
-        }
-        firewallPauseStartRef.current = null;
-      }
-    },
-    [setGameState]
-  );
-
-  // Extend eye timers after tutorial popup dismiss
-  const handleExtendEyeTimers = useCallback((durationMs: number) => {
-    setGameState(prev => ({
-      ...prev,
-      firewallEyes: prev.firewallEyes.map(eye => ({
-        ...eye,
-        detonateTime: eye.detonateTime + durationMs,
-      })),
-      lastEyeSpawnTime:
-        prev.lastEyeSpawnTime > 0 ? prev.lastEyeSpawnTime + durationMs : prev.lastEyeSpawnTime,
-    }));
-  }, [setGameState]);
 
   const { handleSubmit: baseHandleSubmit, handleKeyDown } = useTerminalInput({
     gameState,
@@ -872,7 +814,6 @@ export default function Terminal({
     showHeaderMenu,
     showTutorialSkip,
     isEnterOnlyMode,
-    isFirewallPaused,
     pauseTimedMechanics,
     suppressPressure,
     soundEnabled,
@@ -914,7 +855,6 @@ export default function Terminal({
       typingSpeedWarningTimeout,
       idleHintTimerRef,
       lastScrollTimeRef,
-      firewallPauseStartRef,
       timedMechanicPauseStartRef,
       timedMechanicResumeAdjustmentRef,
       maxDetectionRef,
@@ -1027,16 +967,6 @@ export default function Terminal({
     }
     prevShowTutorialSkipRef.current = showTutorialSkip;
   }, [showTutorialSkip, focusTerminalInput]);
-
-  // Wrapper for firewall eye click - auto-focus input after clicking an eye
-  const handleFirewallEyeClickWithFocus = useCallback(
-    (eyeId: string) => {
-      handleFirewallEyeClick(eyeId);
-      // Re-focus the terminal input so user can type immediately
-      focusTerminalInput();
-    },
-    [handleFirewallEyeClick, focusTerminalInput]
-  );
 
   // Get status bar content
   const getStatusBar = () => {
@@ -1379,30 +1309,13 @@ export default function Terminal({
           </div>
         )}
 
-        {/* Firewall Eyes - hostile surveillance entities */}
+        {/* Firewall Eyes - ambient Lovecraftian watchers */}
         {gameState.tutorialComplete && !gameState.isGameOver && (
           <FirewallEyes
             detectionLevel={gameState.detectionLevel}
             firewallActive={gameState.firewallActive}
             firewallDisarmed={gameState.firewallDisarmed}
-            eyes={gameState.firewallEyes}
-            lastEyeSpawnTime={gameState.lastEyeSpawnTime}
-            paused={isFirewallPaused}
-            turingTestActive={showTuringTest || gameState.turingEvaluationActive}
-            isReadingFile={isReadingFile}
-            firewallEyesTutorialShown={gameState.firewallEyesTutorialShown}
-            onEyeClick={handleFirewallEyeClickWithFocus}
-            onEyeDetonate={handleFirewallEyeDetonate}
-            onSpawnEyeBatch={handleFirewallEyeBatchSpawn}
             onActivateFirewall={handleFirewallActivate}
-            onPauseChanged={handleFirewallPauseChanged}
-            onExtendEyeTimers={handleExtendEyeTimers}
-            onTutorialShown={() => {
-              setGameState(prev => ({
-                ...prev,
-                firewallEyesTutorialShown: true,
-              }));
-            }}
           />
         )}
 

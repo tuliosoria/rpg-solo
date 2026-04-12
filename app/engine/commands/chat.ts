@@ -2013,7 +2013,6 @@ export const chatCommands: CommandRegistry = {
       const stateChanges: Partial<GameState> = {
         firewallDisarmed: true,
         firewallActive: false,
-        firewallEyes: [],
         detectionLevel: Math.max(0, state.detectionLevel - 15),
         scoutLinksUsed: (state.scoutLinksUsed || 0) + 1,
       };

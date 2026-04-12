@@ -668,23 +668,13 @@ describe('Story Consistency Tests', () => {
         expect(state.detectionLevel).toBeGreaterThanOrEqual(25);
       });
 
-      it('firewall eyes can spawn and threaten player', () => {
+      it('firewall watches over player at elevated detection', () => {
         const state = createTestState({
           detectionLevel: 50,
           firewallActive: true,
-          firewallEyes: [
-            {
-              id: 'eye-1',
-              x: 50,
-              y: 50,
-              spawnTime: Date.now(),
-              detonateTime: Date.now() + 30000,
-              isDetonating: false,
-            },
-          ],
         });
 
-        expect(state.firewallEyes.length).toBeGreaterThan(0);
+        expect(state.firewallActive).toBe(true);
       });
 
       it('firewall can be disarmed via neural link', () => {
