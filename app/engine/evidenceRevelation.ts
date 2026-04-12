@@ -5,6 +5,7 @@
 // still drive avatar reactions independently from evidence counting.
 
 import { FILESYSTEM_ROOT } from '../data/filesystem';
+import { translateStatic } from '../i18n';
 import { FileNode, FileSystemNode, GameState } from '../types';
 
 /**
@@ -147,16 +148,16 @@ export function getCaseStrengthDescription(state: GameState): string {
   const count = countEvidence(state);
 
   if (count >= MAX_EVIDENCE_COUNT) {
-    return 'COMPLETE - Leak ready';
+    return translateStatic('evidence.caseStrength.complete');
   }
   if (count >= 8) {
-    return 'STRONG - Nearly ready';
+    return translateStatic('evidence.caseStrength.strong');
   }
   if (count >= 5) {
-    return 'MODERATE - Building case';
+    return translateStatic('evidence.caseStrength.moderate');
   }
   if (count >= 1) {
-    return 'DEVELOPING - Keep searching';
+    return translateStatic('evidence.caseStrength.developing');
   }
-  return 'NONE - No evidence yet';
+  return translateStatic('evidence.caseStrength.none');
 }

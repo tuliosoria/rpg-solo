@@ -114,8 +114,6 @@ const THEY_ARE_ALREADY_HERE_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
-const EVIDENCE_VIDEO_PROMPT_TEXT = 'There is a video attached to this file. Open video? [yes] [no]';
-
 const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
   '/internal/jardim_andere_incident.txt': {
     filePath: '/internal/jardim_andere_incident.txt',
@@ -400,12 +398,12 @@ export default function Terminal({
         closingVideo?.filePath === '/storage/assets/logistics_manifest_fragment.txt' ||
         closingVideo?.filePath === '/admin/energy_extraction_theory.txt') {
       appendPendingUfo74StartMessages([
-        createEntry('ufo74', 'UFO74: damn. what the f*** is that, kid?'),
-        createEntry('ufo74', 'UFO74: save it. we\'re going to have to leak this thing.'),
+        createEntry('ufo74', t('terminal.video.ufoReaction1')),
+        createEntry('ufo74', t('terminal.video.ufoReaction2')),
       ]);
     }
     setTimeout(() => inputRef.current?.focus(), 0);
-  }, [activeEvidenceVideo, appendPendingUfo74StartMessages]);
+  }, [activeEvidenceVideo, appendPendingUfo74StartMessages, t]);
 
   const getEntryContent = useCallback(
     (entry: TerminalEntry): string => {
@@ -689,7 +687,7 @@ export default function Terminal({
           history: [
             ...prev.history,
             createEntry('input', trimmedInput),
-            createEntry('error', 'ERROR: Type "yes" or "no".'),
+            createEntry('error', t('terminal.video.invalidChoice')),
           ],
         }));
         setInputValue('');
@@ -715,6 +713,7 @@ export default function Terminal({
       pendingEvidenceVideoPrompt,
       setGameState,
       setInputValue,
+      t,
     ]
   );
 
@@ -804,7 +803,7 @@ export default function Terminal({
         history: [
           ...prev.history,
           createEntry('system', ''),
-          createEntry('notice', EVIDENCE_VIDEO_PROMPT_TEXT),
+          createEntry('notice', t('terminal.video.prompt')),
         ],
       }));
       setPendingEvidenceVideoPrompt(pendingCheck.attachment);
@@ -820,6 +819,7 @@ export default function Terminal({
     pendingEvidenceVideoPrompt,
     pendingImage,
     setGameState,
+    t,
   ]);
 
   useEffect(() => {
@@ -875,8 +875,8 @@ export default function Terminal({
     if (!showGameOver && !gameState.isGameOver) return;
 
     stopAmbient();
-    speakCustomFirewallVoice('I disconnect you.');
-  }, [gameState.isGameOver, showGameOver, stopAmbient]);
+    speakCustomFirewallVoice(t('firewall.voice.disconnect'));
+  }, [gameState.isGameOver, showGameOver, stopAmbient, t]);
 
   // Refocus input when tutorial skip popup closes
   const prevShowTutorialSkipRef = useRef(showTutorialSkip);
@@ -1258,7 +1258,7 @@ export default function Terminal({
             className={styles.escButton}
             onClick={() => setShowPauseMenu(true)}
             title={t('terminal.pause.title')}
-            aria-label="Pause menu"
+            aria-label={t('terminal.pause.aria')}
           >
             ESC
           </button>
@@ -1362,7 +1362,9 @@ export default function Terminal({
             <span
               className={`${styles.attItem} ${showAttBar ? styles.trackerVisible : styles.trackerHidden}`}
             >
-              <span className={styles.memoryLevel}>ATT: {getAttemptsDisplay()}</span>
+              <span className={styles.memoryLevel}>
+                {t('terminal.tracker.alerts')} {getAttemptsDisplay()}
+              </span>
             </span>
           </div>
         </div>
@@ -1509,7 +1511,7 @@ export default function Terminal({
           <div
             role="dialog"
             aria-modal="true"
-            aria-label={`Recovered video: ${activeEvidenceVideo.videoTitle}`}
+            aria-label={t('videoOverlay.aria', { value: activeEvidenceVideo.videoTitle })}
             style={{
               position: 'absolute',
               inset: 0,
@@ -1543,7 +1545,7 @@ export default function Terminal({
                   textTransform: 'uppercase',
                 }}
               >
-                Attached Video - {activeEvidenceVideo.videoTitle}
+                {t('videoOverlay.attachedTitle', { value: activeEvidenceVideo.videoTitle })}
               </div>
               {/* Video with CRT/terminal overlay */}
               <div style={{ position: 'relative', width: '100%' }}>
@@ -1604,7 +1606,7 @@ export default function Terminal({
                   fontSize: '1.1rem',
                 }}
               >
-                <span>Press Esc or close to return to the terminal.</span>
+                <span>{t('videoOverlay.returnHint')}</span>
                 <button
                   type="button"
                   onClick={closeEvidenceVideo}
@@ -1619,7 +1621,7 @@ export default function Terminal({
                     cursor: 'pointer',
                   }}
                 >
-                  Close
+                  {t('common.close')}
                 </button>
               </div>
             </div>

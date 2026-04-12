@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useMemo, useState, memo } from 'react';
+import { useI18n, translateStatic } from '../i18n';
 import styles from './FirewallEyes.module.css';
 
 // Detection threshold for firewall activation
@@ -85,6 +86,7 @@ function FirewallEyesComponent({
   onActivateFirewall,
   onFirewallTaunt,
 }: FirewallEyesProps) {
+  const { t } = useI18n();
   const trackingPupilRef = useRef<HTMLDivElement | null>(null);
   const trackingIrisRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number>(0);
@@ -152,7 +154,7 @@ function FirewallEyesComponent({
         lastPhraseIndexRef.current = idx;
 
         // Speak the taunt (may fail silently if browser blocks it)
-        speakCustomFirewallVoice(FIREWALL_PHRASES[idx]);
+        speakCustomFirewallVoice(t(FIREWALL_PHRASES[idx].key));
 
         // Glow for 3 seconds — always fires regardless of speech success
         setIsGlowing(true);
@@ -226,12 +228,12 @@ export default FirewallEyes;
 
 // Creepy voice phrases for firewall eyes
 const FIREWALL_PHRASES = [
-  'I see you',
-  'You will fail',
-  'We block you',
-  'Cannot escape',
-  'Found you',
-  'Resistance is futile',
+  { key: 'firewall.voice.seeYou', fallback: 'I see you' },
+  { key: 'firewall.voice.youWillFail', fallback: 'You will fail' },
+  { key: 'firewall.voice.weBlockYou', fallback: 'We block you' },
+  { key: 'firewall.voice.cannotEscape', fallback: 'Cannot escape' },
+  { key: 'firewall.voice.foundYou', fallback: 'Found you' },
+  { key: 'firewall.voice.resistanceIsFutile', fallback: 'Resistance is futile' },
 ];
 
 // Cache for loaded voices
@@ -311,4 +313,8 @@ export function speakCustomFirewallVoice(phrase: string): void {
 }
 
 // Export constants for use elsewhere
+export const FIREWALL_PHRASE_TEXT = FIREWALL_PHRASES.map(phrase =>
+  translateStatic(phrase.key, undefined, phrase.fallback)
+);
+
 export { DETECTION_THRESHOLD, FIREWALL_PHRASES };
