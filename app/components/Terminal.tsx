@@ -6,7 +6,7 @@ import { GamePhase, GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
 import { resolvePath } from '../engine/filesystem';
-import TypewriterText, { isTypableUfo74Content } from './TypewriterText';
+
 import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
@@ -33,7 +33,7 @@ import PauseMenu from './PauseMenu';
 import TutorialSkipPopup from './TutorialSkipPopup';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
-import FirewallEyes, { speakCustomFirewallVoice } from './FirewallEyes';
+import FirewallEyes, { speakCustomFirewallVoice, unlockSpeechSynthesis } from './FirewallEyes';
 
 // Read version from package.json for display in the status bar
 import packageJson from '../../package.json';
@@ -376,25 +376,6 @@ export default function Terminal({
   const streamStartScrollPos = useRef<number | null>(null);
   const suppressPressure = shouldSuppressPressure(gameState);
 
-  // --- UFO74 typewriter animation state ---
-  const animatedEntriesRef = useRef(new Set<string>());
-  const typingQueueRef = useRef<string[]>([]);
-  const queuedSetRef = useRef(new Set<string>());
-  const [activeTypingId, setActiveTypingId] = useState<string | null>(null);
-
-  // On first render, mark all existing history entries as already animated so
-  // they don't re-trigger the typewriter effect. We use a ref initialized lazily
-  // on mount (via initializedRef) rather than a useEffect, avoiding an
-  // exhaustive-deps lint suppression. Subsequent new entries are tracked by the
-  // history-watching effect below.
-  const initializedRef = useRef(false);
-  if (!initializedRef.current) {
-    initializedRef.current = true;
-    for (const entry of gameState.history) {
-      animatedEntriesRef.current.add(entry.id);
-    }
-  }
-
   useEffect(() => {
     uiStateRef.current = {
       gamePhase,
@@ -441,103 +422,11 @@ export default function Terminal({
   const visibleHistory = useMemo(
     () =>
       gameState.history
-        .filter((entry, index, entries) => !shouldSuppressUfo74Spacer(entry, index, entries))
-        .filter(entry => {
-          if (entry.type !== 'ufo74') {
-            return true;
-          }
-
-          const entryContent = getEntryContent(entry);
-          return (
-            !isTypableUfo74Content(entryContent) ||
-            entry.id === activeTypingId ||
-            animatedEntriesRef.current.has(entry.id)
-          );
-        }),
-    [gameState.history, activeTypingId, getEntryContent]
+        .filter((entry, index, entries) => !shouldSuppressUfo74Spacer(entry, index, entries)),
+    [gameState.history]
   );
 
-  // Detect new UFO74 text entries and add them to the typing queue
-  useEffect(() => {
-    let hasNew = false;
-    for (const entry of gameState.history) {
-      // Skip entries we already know about
-      if (animatedEntriesRef.current.has(entry.id) || queuedSetRef.current.has(entry.id)) continue;
-      if (entry.id === activeTypingId) continue;
-
-      if (entry.type === 'ufo74' && isTypableUfo74Content(getEntryContent(entry))) {
-        // New typable UFO74 entry — add to queue
-        typingQueueRef.current.push(entry.id);
-        queuedSetRef.current.add(entry.id);
-        hasNew = true;
-      } else {
-        // Non-typable entry — mark as animated immediately
-        animatedEntriesRef.current.add(entry.id);
-      }
-    }
-
-    // Start typing if nothing is currently active
-    if (hasNew && !activeTypingId && typingQueueRef.current.length > 0) {
-      const nextId = typingQueueRef.current.shift()!;
-      queuedSetRef.current.delete(nextId);
-      setActiveTypingId(nextId);
-    }
-
-    // Prune animatedEntriesRef to avoid unbounded growth when history is truncated.
-    // Keep only IDs still present in the current history.
-    if (animatedEntriesRef.current.size > gameState.history.length + 50) {
-      const currentIds = new Set(gameState.history.map(e => e.id));
-      for (const id of animatedEntriesRef.current) {
-        if (!currentIds.has(id)) {
-          animatedEntriesRef.current.delete(id);
-        }
-      }
-      for (const id of queuedSetRef.current) {
-        if (!currentIds.has(id)) {
-          queuedSetRef.current.delete(id);
-        }
-      }
-    }
-  }, [gameState.history, activeTypingId, getEntryContent]);
-
-  // Handle typewriter completion — move to next in queue or clear
-  const handleTypingComplete = useCallback(() => {
-    // Mark current entry as animated
-    if (activeTypingId) {
-      animatedEntriesRef.current.add(activeTypingId);
-    }
-    // Start the next queued entry, or clear
-    if (typingQueueRef.current.length > 0) {
-      const nextId = typingQueueRef.current.shift()!;
-      queuedSetRef.current.delete(nextId);
-      setActiveTypingId(nextId);
-    } else {
-      setActiveTypingId(null);
-    }
-  }, [activeTypingId]);
-
-  // Skip all pending typewriter animations (called on Enter)
-  const skipAllTyping = useCallback(() => {
-    if (activeTypingId) {
-      animatedEntriesRef.current.add(activeTypingId);
-    }
-    for (const id of typingQueueRef.current) {
-      animatedEntriesRef.current.add(id);
-    }
-    typingQueueRef.current = [];
-    queuedSetRef.current.clear();
-    setActiveTypingId(null);
-  }, [activeTypingId]);
-
-  // Auto-scroll output during typewriter animation
-  const handleTypingTick = useCallback(() => {
-    if (outputRef.current) {
-      outputRef.current.scrollTop = outputRef.current.scrollHeight;
-    }
-  }, []);
-
   // Auto-scroll to bottom whenever new history entries are added or UI state changes
-  // (e.g., enter-only prompt appearing after typing/UFO74 messages finish)
   useEffect(() => {
     if (outputRef.current) {
       requestAnimationFrame(() => {
@@ -548,14 +437,9 @@ export default function Terminal({
     }
   }, [
     gameState.history.length,
-    activeTypingId,
-    pendingUfo74StartMessages.length,
     pendingImage,
     encryptedChannelState,
   ]);
-
-  // Whether a typewriter animation is currently in progress
-  const isTyping = activeTypingId !== null || typingQueueRef.current.length > 0;
 
   const isInteractiveTutorialInput =
     !!gameState.interactiveTutorialState &&
@@ -567,7 +451,6 @@ export default function Terminal({
     encryptedChannelState !== 'idle' ||
     !!pendingImage ||
     pendingUfo74StartMessages.length > 0 ||
-    isTyping ||
     (gameState.ufo74SecretDiscovered && gamePhase === 'terminal'));
 
   // Handle tutorial skip — replicate full tutorial completion state
@@ -717,8 +600,6 @@ export default function Terminal({
     setEncryptedChannelState,
     onExitAction,
     onSaveRequestAction,
-    isTyping,
-    skipAllTyping,
     playSound,
     playKeySound,
     startAmbient,
@@ -765,6 +646,9 @@ export default function Terminal({
   const handleSubmit = useCallback(
     async (e?: React.SyntheticEvent) => {
       e?.preventDefault?.();
+
+      // Unlock speech synthesis on first user gesture (browser autoplay policy)
+      unlockSpeechSynthesis();
 
       if (activeEvidenceVideo) {
         return;
@@ -1184,24 +1068,6 @@ export default function Terminal({
 
     if (isReadListingLine) {
       className = `${className} ${styles.readLine}`;
-    }
-
-    // Typewriter animation for UFO74 text entries
-    if (entry.type === 'ufo74' && isTypableUfo74Content(entryContent)) {
-      // Currently being typed — animate character by character
-      if (entry.id === activeTypingId) {
-        return (
-          <div key={entry.id} className={className}>
-            <TypewriterText
-              text={entryContent}
-              speed={30}
-              onComplete={handleTypingComplete}
-              onTick={handleTypingTick}
-              renderContent={renderCommandHighlights}
-            />
-          </div>
-        );
-      }
     }
 
     return (

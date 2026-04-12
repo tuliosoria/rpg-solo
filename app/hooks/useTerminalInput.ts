@@ -95,8 +95,6 @@ interface UseTerminalInputOptions {
   setEncryptedChannelState: React.Dispatch<React.SetStateAction<EncryptedChannelState>>;
   onExitAction: () => void;
   onSaveRequestAction: (state: GameState) => void;
-  isTyping: boolean;
-  skipAllTyping: () => void;
   playSound: (sound: SoundType) => void;
   playKeySound: (key: string) => void;
   startAmbient: () => void;
@@ -146,8 +144,6 @@ export function useTerminalInput({
   setEncryptedChannelState,
   onExitAction,
   onSaveRequestAction,
-  isTyping,
-  skipAllTyping,
   playSound,
   playKeySound,
   startAmbient,
@@ -234,12 +230,6 @@ export function useTerminalInput({
 
       const sanitizedInput = sanitizeCommandInput(inputValue, MAX_COMMAND_INPUT_LENGTH);
       const trimmedInput = sanitizedInput.value.trim();
-
-      // If UFO74 typewriter animation is in progress, skip it on Enter
-      if (isTyping && !trimmedInput) {
-        skipAllTyping();
-        return;
-      }
 
       if (pendingImage && !trimmedInput) {
         setActiveImage(pendingImage);
@@ -862,8 +852,6 @@ export function useTerminalInput({
       setShowRiskTracker,
       setShowTuringTest,
       showTuringTest,
-      skipAllTyping,
-      isTyping,
       inputRef,
       skipStreamingRef,
       startAmbient,

@@ -86,6 +86,9 @@ function FirewallEyesComponent({
   const trackingPupilRef = useRef<HTMLDivElement | null>(null);
   const trackingIrisRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number>(0);
+  const lastPhraseIndexRef = useRef<number>(-1);
+  const tauntTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isGlowing, setIsGlowing] = useState(false);
 
   // Activate firewall when detection reaches threshold
   useEffect(() => {
@@ -132,6 +135,45 @@ function FirewallEyesComponent({
     };
   }, [isHighAlert]);
 
+  // Audio taunts with eye glow — random interval 60-180s
+  useEffect(() => {
+    if (!firewallActive || firewallDisarmed) return;
+
+    const scheduleTaunt = () => {
+      const delay = (60 + Math.random() * 120) * 1000;
+      tauntTimerRef.current = setTimeout(() => {
+        // Pick a random phrase, never same twice in a row
+        let idx: number;
+        do {
+          idx = Math.floor(Math.random() * FIREWALL_PHRASES.length);
+        } while (idx === lastPhraseIndexRef.current && FIREWALL_PHRASES.length > 1);
+        lastPhraseIndexRef.current = idx;
+
+        // Speak the taunt (may fail silently if browser blocks it)
+        speakCustomFirewallVoice(FIREWALL_PHRASES[idx]);
+
+        // Glow for 3 seconds — always fires regardless of speech success
+        setIsGlowing(true);
+        setTimeout(() => setIsGlowing(false), 3000);
+
+        // Notify Terminal for UFO74 reaction — always fires
+        onFirewallTaunt?.();
+
+        // Schedule next taunt
+        scheduleTaunt();
+      }, delay);
+    };
+
+    scheduleTaunt();
+
+    return () => {
+      if (tauntTimerRef.current !== null) {
+        clearTimeout(tauntTimerRef.current);
+        tauntTimerRef.current = null;
+      }
+    };
+  }, [firewallActive, firewallDisarmed, onFirewallTaunt]);
+
   // Don't render if disarmed or not active
   if (firewallDisarmed || !firewallActive) return null;
 
@@ -145,6 +187,7 @@ function FirewallEyesComponent({
           pos.blinkClass,
           isHighAlert ? styles.highAlert : '',
           isTrackingEye ? styles.tracking : '',
+          isGlowing ? styles.glowing : '',
         ].filter(Boolean).join(' ');
 
         return (
@@ -191,6 +234,7 @@ const FIREWALL_PHRASES = [
 // Cache for loaded voices
 let cachedVoices: SpeechSynthesisVoice[] = [];
 let voicesLoaded = false;
+let speechUnlocked = false;
 
 // Initialize voices - must be called early to preload
 export function initVoices(): void {
@@ -211,24 +255,33 @@ export function initVoices(): void {
   });
 }
 
+// Unlock speech synthesis — must be called from a user gesture (click/keydown)
+// to satisfy browser autoplay policy. Without this, timer-based speech is blocked.
+export function unlockSpeechSynthesis(): void {
+  if (speechUnlocked || typeof window === 'undefined' || !window.speechSynthesis) {
+    return;
+  }
+  const silent = new SpeechSynthesisUtterance('');
+  silent.volume = 0;
+  speechSynthesis.speak(silent);
+  speechUnlocked = true;
+}
+
 // Speak a specific phrase in creepy robotic voice
 export function speakCustomFirewallVoice(phrase: string): void {
-  // Check if speech synthesis is available
   if (typeof window === 'undefined' || !window.speechSynthesis) {
     return;
   }
 
-  // Cancel any ongoing speech first
-  speechSynthesis.cancel();
+  try {
+    speechSynthesis.cancel();
 
-  // Helper to configure and speak an utterance
-  const doSpeak = () => {
     const utterance = new SpeechSynthesisUtterance(phrase);
-    utterance.pitch = 0.3; // Very low/deep
-    utterance.rate = 0.5; // Very slow for creepy effect
-    utterance.volume = 1.0; // Full volume
+    utterance.pitch = 0.3;
+    utterance.rate = 0.5;
+    utterance.volume = 1.0;
 
-    // Always try to get fresh voices if cache is empty
+    // Refresh voices if cache is empty
     let voices = cachedVoices;
     if (!voices.length) {
       voices = speechSynthesis.getVoices();
@@ -238,7 +291,6 @@ export function speakCustomFirewallVoice(phrase: string): void {
       }
     }
 
-    // Try to find a deep/male voice
     const deepVoice = voices.find(
       v =>
         v.name.toLowerCase().includes('male') ||
@@ -250,25 +302,8 @@ export function speakCustomFirewallVoice(phrase: string): void {
     }
 
     speechSynthesis.speak(utterance);
-  };
-
-  // If voices aren't loaded yet, wait for them then speak
-  if (!voicesLoaded && speechSynthesis.getVoices().length === 0) {
-    const onVoicesReady = () => {
-      cachedVoices = speechSynthesis.getVoices();
-      voicesLoaded = true;
-      speechSynthesis.removeEventListener('voiceschanged', onVoicesReady);
-      doSpeak();
-    };
-    speechSynthesis.addEventListener('voiceschanged', onVoicesReady);
-    // Fallback: speak after a short delay even without voices
-    setTimeout(() => {
-      speechSynthesis.removeEventListener('voiceschanged', onVoicesReady);
-      doSpeak();
-    }, 300);
-  } else {
-    // Voices available — small delay for Chrome bug workaround
-    setTimeout(doSpeak, 100);
+  } catch {
+    // Speech failed — glow + UFO74 reaction still fire from the caller
   }
 }
 
