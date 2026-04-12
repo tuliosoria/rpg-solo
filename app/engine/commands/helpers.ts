@@ -33,6 +33,112 @@ import { getFileContent } from '../filesystem';
 import { saveCheckpoint } from '../../storage/saves';
 
 // ═══════════════════════════════════════════════════════════════════════════
+// UFO74 EVIDENCE REACTIONS
+// ═══════════════════════════════════════════════════════════════════════════
+
+const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
+  'alpha_journal.log': 'that journal. the scientist lost his mind. but he was right about everything.',
+  'alpha_neural_connection.psi': 'they made contact. they actually made contact. and then it spoke back.',
+  'alpha_autopsy_addendum.txt': 'an autopsy on something that was still alive. these people were insane.',
+  'jardim_andere_incident.txt': 'that is the original field report. the one they tried to destroy.',
+  'incident_summary_official.txt': 'the official version. compare it to what we have. they rewrote everything.',
+  'audio_transcript_brief.txt': 'audio transcript. listen to how calm they sound. they practiced this.',
+  'material_x_analysis.dat': 'material analysis. whatever they found, it is not from here.',
+  'transport_log_96.txt': 'transport records. they moved everything in the middle of the night.',
+  'logistics_manifest_fragment.txt': 'manifest fragment. they shipped something weighing 112 kilos through diplomatic channels.',
+  'integrity_hashes.dat': 'integrity hashes. they were tracking which files had been tampered with.',
+  'bio_container.log': 'containment log. they kept it in a sealed unit for eleven days.',
+  'autopsy_alpha.log': 'an autopsy report. official. classified. exactly what we needed.',
+  'autopsy_addendum_psi.txt': 'neurological addendum. the brain was still active after death. still active.',
+  'witness_statement_raw.txt': 'raw witness statement. before they got to her. before the edits.',
+  'neural_dump_alfa.psi': 'neural recording. they captured whatever was still firing in that brain.',
+  'specimen_purpose_analysis.txt': 'purpose analysis. they were trying to figure out what it was FOR.',
+  'surveillance_recovery.vid': 'surveillance footage. someone saved this before the purge.',
+  'field_report_delta.txt': 'field report from prato. 1977. this has been going on for decades.',
+  'operation_prato_original.txt': 'operation prato. the air force ran this in 77. they documented everything and then buried it.',
+  'initial_response_orders.txt': 'response orders. standard military protocol for something very not standard.',
+  'colares_incident_log_77.txt': 'colares 77. dozens of sightings. hundreds of witnesses. all silenced.',
+  'patrol_observation_shift_04.txt': 'patrol observation. soldiers describing what they saw. you can feel the fear.',
+  'medical_effects_brief_77.txt': 'medical effects. burns on the skin. radiation marks. from light beams.',
+  'photo_archive_register_77.txt': 'photo archive. they had photos. had. past tense.',
+  'retrospective_scan_assessment.red': 'retrospective assessment. someone connected 77 to 96. same pattern.',
+  'scout_variants.meta': 'scout classification. they categorized different types. as in plural.',
+  'energy_node_assessment.txt': 'energy assessment. propulsion system we cannot replicate. not even close.',
+  'signal_analysis_partial.txt': 'signal fragment. partial decryption. whatever this says, they did not want us reading it.',
+  'aircraft_incident_report.txt': 'aircraft incident report. their first cover story. it did not hold.',
+  'foreign_drone_assessment.txt': 'drone theory. the one they floated before anyone knew what a drone was.',
+  'industrial_accident_theory.txt': 'industrial accident. their fallback explanation. paper thin.',
+  'witness_visit_log.txt': 'witness visit log. they visited every single one. every single one.',
+  'debriefing_protocol.txt': 'debriefing protocol. that is a polite word for what they did to those people.',
+  'witness_subjects_file.txt': 'the silva sisters file. three girls. teenagers. and the military went after them.',
+  'recantation_001.txt': 'recantation form. they made witnesses sign this. under threat.',
+  'animal_deaths_report.txt': 'animal deaths at the zoo. same week. same area. not a coincidence.',
+  'veterinarian_silencing.txt': 'they silenced the veterinarian. the one who asked too many questions.',
+  'contamination_theory.txt': 'contamination theory. the story they fed to the press about the dead animals.',
+  'contact_incident_report.txt': 'chereze. the officer who touched it. dead within weeks. and they covered it up.',
+  'autopsy_suppression.txt': 'autopsy suppression. they blocked the examination of a dead officer. why.',
+  'family_compensation.txt': 'family compensation. they paid the family to stay quiet. blood money.',
+  'transcript_core.enc': 'encrypted transmission. the core transcript. this is what they were saying.',
+  'transcript_limit.enc': 'second transcript. they intercepted more than one. they kept intercepting.',
+  'psi_analysis_report.txt': 'signal analysis. the pattern is structured. it is language. it is definitely language.',
+  'foreign_liaison_note.txt': 'foreign liaison. other governments knew. they all knew.',
+  'diplomatic_cable_23jan.enc': 'diplomatic cable. encrypted. sent three days after the incident.',
+  'standing_orders_multinational.txt': 'multinational protocol. six countries. coordinated. this goes so far beyond brazil.',
+  'medical_examiner_query.txt': 'medical examiner query. someone was asking the wrong questions.',
+  'neural_cluster_experiment.red': 'neural cluster experiment. they built an interface. they tried to talk to it.',
+  'intercept_summary_dec95.txt': 'december 95 intercepts. a month before varginha. they knew something was coming.',
+  'regional_summary_jan96.txt': 'january 96 summary. the week before contact. activity was off the charts.',
+  'morse_intercept.sig': 'morse intercept. someone was sending morse. but not in any known protocol.',
+  'journalist_payments.enc': 'journalist payments. encrypted. they paid the press to look the other way.',
+  'media_contacts.txt': 'media contacts list. every journalist they had in their pocket.',
+  'kill_story_memo.txt': 'kill story memo. direct order to suppress coverage. signed and dated.',
+  'tv_coverage_report.txt': 'tv coverage report. they were monitoring every broadcast. every mention.',
+  'foreign_press_alert.txt': 'foreign press alert. international media was picking it up. they panicked.',
+  'neural_cluster_memo.txt': 'neural cluster memo. they replicated alien neural tissue in silicon. it worked.',
+  'threat_window.red': 'threat window. a timeline for something they cannot stop.',
+  'internal_note_07.txt': 'internal note. someone higher up was asking for updates. daily.',
+  'bio_program_overview.red': 'bio program overview. the entire operation. funded. authorized. hidden.',
+  'colonization_model.red': 'colonization model. not invasion. colonization. the difference matters.',
+  'ethics_exception_03.txt': 'ethics exception. they waived the rules. officially. to do what they did.',
+  'window_alignment.meta': 'window alignment data. the timing is not random. it never was.',
+  'briefing_watchers_1996.txt': 'executive briefing. someone very senior read this. and approved everything.',
+  'weather_balloon_memo.txt': 'weather balloon memo. the oldest lie in the book.',
+  'parallel_incidents_global.txt': 'parallel incidents. same thing happened in other countries. same year.',
+  'thirty_year_cycle.txt': 'thirty year cycle. 1966. 1996. 2026. the pattern does not stop.',
+  'energy_extraction_theory.txt': 'that document. whoever wrote it understood what is happening. and it broke them.',
+  'non_arrival_colonization.txt': 'non-arrival colonization. they do not need to come here. they are already taking what they want.',
+  'window_clarification.red': 'window clarification. the dates are specific. and close.',
+  'extraction_mechanism.red': 'extraction mechanism. the process is automated. we never even notice.',
+  'second_deployment.sig': 'second deployment signal. there was a second wave. there was always going to be a second wave.',
+  'neural_fragment.dat': 'neural fragment. reconstructed. whatever this was thinking, they captured it.',
+  'emergency_broadcast.enc': 'emergency broadcast. encrypted. whoever sent this was not expecting to send it.',
+  'redaction_override_memo.txt': 'redaction override. someone had the authority to unlock everything. and used it.',
+  'trace_purge_memo.txt': 'trace purge memo. the order to erase everything. we got here just in time.',
+  'mudinho_dossier.txt': 'mudinho dossier. a planted witness. they fabricated the whole thing.',
+  'alternative_explanations.txt': 'alternative explanations. a menu of lies. pick one and sell it.',
+  'media_talking_points.txt': 'talking points. scripted answers for every question. word for word.',
+  'cargo_transfer_memo.txt': 'cargo memo. everything in code. "agricultural equipment" means what you think it means.',
+  'visitor_briefing.txt': 'visitor briefing. coded language. they had a word for everything.',
+  'asset_disposition_report.txt': 'asset disposition. where they moved everything. hidden in plain language.',
+  'terminology_guide.txt': 'terminology guide. a dictionary of lies. every real word replaced.',
+};
+
+const GENERIC_EVIDENCE_REACTIONS: string[] = [
+  'kid. that is insane. save that.',
+  'good stuff. we are going to need this for the leak.',
+  'damn. they really buried this one.',
+  'you found it. i knew it was in there.',
+  'this is exactly what we came for. keep going.',
+  'they are going to hate that you found that.',
+  'one more like that and we blow this wide open.',
+  'save everything. do not skip a single file.',
+  'that one is going straight into the leak package.',
+  'this is why they locked this system down.',
+];
+
+let lastGenericReactionIndex = -1;
+
+// ═══════════════════════════════════════════════════════════════════════════
 // CONTEXT RNG - Deterministic random based on game state and context
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -673,6 +779,20 @@ export function applyEvidenceDiscovery(
 
   stateChanges.evidenceCount = newCount;
   stateChanges.avatarExpression = 'scared';
+
+  // UFO74 reacts to the specific evidence found
+  const specificReaction = EVIDENCE_UFO74_REACTIONS[file.name];
+  if (specificReaction) {
+    notices.push(createEntry('ufo74', `UFO74: ${specificReaction}`));
+  } else {
+    // Fallback: pick from generic pool, never repeating consecutively
+    let idx = Math.floor(Math.random() * GENERIC_EVIDENCE_REACTIONS.length);
+    if (idx === lastGenericReactionIndex && GENERIC_EVIDENCE_REACTIONS.length > 1) {
+      idx = (idx + 1) % GENERIC_EVIDENCE_REACTIONS.length;
+    }
+    lastGenericReactionIndex = idx;
+    notices.push(createEntry('ufo74', `UFO74: ${GENERIC_EVIDENCE_REACTIONS[idx]}`));
+  }
 
   notices.push(createEntry('system', ''));
   notices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));
