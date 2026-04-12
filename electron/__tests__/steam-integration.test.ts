@@ -128,7 +128,8 @@ describe('Steam Integration', () => {
     it('saves game state to Steam Cloud', () => {
       const gameState = JSON.stringify({
         currentPath: '/home/ghost',
-        truthsDiscovered: ['truth1', 'truth2'],
+        evidenceCount: 2,
+        filesRead: ['/storage/debris/manifest.txt', '/ops/exo/incident_report.txt'],
         detectionLevel: 25,
       });
 
@@ -141,7 +142,8 @@ describe('Steam Integration', () => {
     it('loads game state from Steam Cloud', () => {
       const gameState = {
         currentPath: '/home/ghost',
-        truthsDiscovered: ['truth1', 'truth2'],
+        evidenceCount: 2,
+        filesRead: ['/storage/debris/manifest.txt', '/ops/exo/incident_report.txt'],
         detectionLevel: 25,
       };
 

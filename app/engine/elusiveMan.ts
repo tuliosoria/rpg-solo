@@ -474,7 +474,6 @@ export function processLeakAnswer(
             flags: {
               ...state.flags,
               leakSuccessful: true,
-              allEvidenceCollected: true,
             },
           },
           delayMs: 2000,
@@ -496,7 +495,6 @@ export function processLeakAnswer(
           flags: {
             ...state.flags,
             leakSuccessful: true,
-            allEvidenceCollected: true,
           },
         },
         delayMs: 2000,

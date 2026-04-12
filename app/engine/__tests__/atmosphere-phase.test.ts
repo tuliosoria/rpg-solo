@@ -67,12 +67,12 @@ describe('Atmosphere Phase System', () => {
   });
 
   describe('hasFirstEvidence', () => {
-    it('returns false when no truths discovered', () => {
+    it('returns false when no evidence is discovered', () => {
       const state = createTestState({ evidenceCount: 0 });
       expect(hasFirstEvidence(state)).toBe(false);
     });
 
-    it('returns true when any truth discovered', () => {
+    it('returns true when any evidence is discovered', () => {
       const state = createTestState({ evidenceCount: 1 });
       expect(hasFirstEvidence(state)).toBe(true);
     });

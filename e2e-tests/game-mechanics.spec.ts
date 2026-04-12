@@ -287,7 +287,7 @@ test.describe('Game Mechanics', () => {
     console.log(`  Initial evidence count: ${initialEvidence || 0}`);
 
     // Open files that should reveal evidence
-    // Based on the truth categories:
+    // Based on the simplified evidence file pool:
     // - debris_relocation: material_x_analysis.dat, transport_log_96.txt
     // - being_containment: bio_container.log, autopsy_alpha.log
     // - telepathic_scouts: psi_analysis_report.txt, transcript_core.enc

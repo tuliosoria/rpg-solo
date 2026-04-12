@@ -17,7 +17,6 @@ const createState = (overrides: Partial<GameState> = {}): GameState => ({
   tutorialStep: -1,
   tutorialComplete: true,
   evidenceCount: 5,
-  flags: { allEvidenceCollected: true },
   ...overrides,
 });
 

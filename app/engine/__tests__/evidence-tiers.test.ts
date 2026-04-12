@@ -57,14 +57,14 @@ describe('Simplified Evidence System', () => {
 
       const count = countEvidence(state);
 
-      expect(count).toBe(1);
+      expect(count).toBe(2);
     });
 
-    it('should count distinct truths from newly designated evidence files', () => {
+    it('should count newly designated evidence files like bio_program_overview.red', () => {
       const state = createTestState({
         evidenceCount: 0,
         filesRead: new Set([
-          '/comms/intercepts/regional_summary_jan96.txt',
+          '/admin/bio_program_overview.red',
           '/admin/thirty_year_cycle.txt',
         ]),
       });
@@ -74,9 +74,17 @@ describe('Simplified Evidence System', () => {
       expect(count).toBe(2);
     });
 
-    it('should return 5 when all evidence discovered', () => {
+    it('should cap discovered evidence at 5', () => {
       const state = createTestState({
-        evidenceCount: 5,
+        evidenceCount: 0,
+        filesRead: new Set([
+          '/ops/assessments/foreign_drone_assessment.txt',
+          '/storage/assets/material_x_analysis.dat',
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/autopsy_alpha.log',
+          '/comms/intercepts/regional_summary_jan96.txt',
+          '/admin/bio_program_overview.red',
+        ]),
       });
 
       const count = countEvidence(state);

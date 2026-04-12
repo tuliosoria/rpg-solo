@@ -711,8 +711,8 @@ export function useTerminalInput({
         return;
       }
 
-      const truthCount = intermediateState.evidenceCount || 0;
-      const prevTruthCount = gameState.evidenceCount || 0;
+      const evidenceCount = intermediateState.evidenceCount || 0;
+      const prevEvidenceCount = gameState.evidenceCount || 0;
 
       const filesReadCount = intermediateState.filesRead?.size || 0;
       const prevFilesReadCount = gameState.filesRead?.size || 0;
@@ -720,23 +720,23 @@ export function useTerminalInput({
         incrementStatistic('filesRead');
       }
 
-      if (truthCount > prevTruthCount) {
+      if (evidenceCount > prevEvidenceCount) {
         setEvidenceFoundIndicatorKey(prev => prev + 1);
         playSound('fanfare');
         const checkpointReason =
-          truthCount === 1
+          evidenceCount === 1
             ? 'First evidence'
-            : truthCount === 5
+            : evidenceCount === 5
               ? 'All evidence found'
-              : `Evidence ${truthCount}/5`;
+              : `Evidence ${evidenceCount}/5`;
         saveCheckpoint(intermediateState, checkpointReason);
       }
 
-      if (truthCount > 0 && prevTruthCount === 0) {
+      if (evidenceCount > 0 && prevEvidenceCount === 0) {
         checkAchievement('first_blood');
       }
 
-      if (truthCount === 5 && prevTruthCount < 5) {
+      if (evidenceCount === 5 && prevEvidenceCount < 5) {
         checkAchievement('truth_seeker');
       }
 

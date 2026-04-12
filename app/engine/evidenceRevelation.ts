@@ -1,8 +1,8 @@
 // Evidence Revelation System for Terminal 1996
 //
-// Evidence tracks the five core truths hidden across the filesystem.
-// Disturbing files can still drive avatar reactions, but only evidence-bearing
-// files should advance the evidence counter.
+// Evidence is now a simple file counter: the first time the player opens an
+// evidence file, it counts as one piece of evidence. Disturbing files can
+// still drive avatar reactions independently from evidence counting.
 
 import { FILESYSTEM_ROOT } from '../data/filesystem';
 import { FileNode, FileSystemNode, GameState } from '../types';
@@ -59,21 +59,7 @@ const VERY_DISTURBING_PATTERNS: RegExp[] = [
   /feel(?:ing)?\s+(?:its|their)\s+thoughts/i,
 ];
 
-export const EVIDENCE_TRUTHS = [
-  'debris-relocation',
-  'being-containment',
-  'telepathic-scouts',
-  'international-actors',
-  'transition-2026',
-] as const;
-
-export type EvidenceTruth = (typeof EVIDENCE_TRUTHS)[number];
-
-const VALID_EVIDENCE_TRUTHS = new Set<string>(EVIDENCE_TRUTHS);
-
-function isEvidenceTruth(value: string): value is EvidenceTruth {
-  return VALID_EVIDENCE_TRUTHS.has(value);
-}
+export const MAX_EVIDENCE_COUNT = 5;
 
 function getStaticNode(path: string): FileSystemNode | null {
   const segments = path.split('/').filter(Boolean);
@@ -89,43 +75,25 @@ function getStaticNode(path: string): FileSystemNode | null {
   return current;
 }
 
-function uniqueTruths(truths: EvidenceTruth[]): EvidenceTruth[] {
-  return [...new Set(truths)];
+export function isEvidenceFile(file: Pick<FileNode, 'isEvidence'>): boolean {
+  return file.isEvidence === true;
 }
 
-export function getEvidenceTruthsForFile(
-  file: Pick<FileNode, 'content' | 'reveals'>,
-  _filePath?: string
-): EvidenceTruth[] {
-  return uniqueTruths((file.reveals || []).filter(isEvidenceTruth));
-}
-
-export function getEvidenceTruthsForPath(path: string): EvidenceTruth[] {
+export function isEvidencePath(path: string): boolean {
   const node = getStaticNode(path);
-  if (!node || node.type !== 'file') {
-    return [];
-  }
-
-  return getEvidenceTruthsForFile(node as FileNode, path);
+  return !!node && node.type === 'file' && isEvidenceFile(node as FileNode);
 }
 
-export function getDiscoveredEvidenceTruths(paths: Iterable<string>): Set<EvidenceTruth> {
-  const truths = new Set<EvidenceTruth>();
+export function getDiscoveredEvidenceFiles(paths: Iterable<string>): Set<string> {
+  const discovered = new Set<string>();
 
   for (const path of paths) {
-    for (const truth of getEvidenceTruthsForPath(path)) {
-      truths.add(truth);
+    if (isEvidencePath(path)) {
+      discovered.add(path);
     }
   }
 
-  return truths;
-}
-
-export function isEvidenceFile(
-  file: Pick<FileNode, 'content' | 'reveals'>,
-  filePath?: string
-): boolean {
-  return getEvidenceTruthsForFile(file, filePath).length > 0;
+  return discovered;
 }
 
 /**
@@ -135,9 +103,7 @@ export function isDisturbingContent(fileContent: string[]): boolean {
   const contentText = fileContent.join(' ');
 
   // Count how many disturbing patterns match
-  const matchCount = DISTURBING_CONTENT_PATTERNS.filter(pattern =>
-    pattern.test(contentText)
-  ).length;
+  const matchCount = DISTURBING_CONTENT_PATTERNS.filter(pattern => pattern.test(contentText)).length;
 
   // Consider disturbing if 2+ patterns match
   return matchCount >= 2;
@@ -169,9 +135,9 @@ export const EVIDENCE_SYMBOL = '●';
  * Count total evidence discovered.
  */
 export function countEvidence(state: GameState): number {
-  const storedCount = state.evidenceCount || 0;
-  const discoveredCount = getDiscoveredEvidenceTruths(state.filesRead || []).size;
-  return Math.max(storedCount, discoveredCount);
+  const storedCount = Math.max(0, state.evidenceCount || 0);
+  const discoveredCount = getDiscoveredEvidenceFiles(state.filesRead || []).size;
+  return Math.min(MAX_EVIDENCE_COUNT, Math.max(storedCount, discoveredCount));
 }
 
 /**
@@ -180,11 +146,11 @@ export function countEvidence(state: GameState): number {
 export function getCaseStrengthDescription(state: GameState): string {
   const count = countEvidence(state);
 
-  if (count >= 5) {
-    return 'COMPLETE - All evidence documented';
+  if (count >= MAX_EVIDENCE_COUNT) {
+    return 'COMPLETE - Leak ready';
   }
   if (count >= 4) {
-    return 'STRONG - Nearly complete';
+    return 'STRONG - Nearly ready';
   }
   if (count >= 3) {
     return 'MODERATE - Building case';

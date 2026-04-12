@@ -8,13 +8,7 @@ const REPO_ROOT = path.join(__dirname, '..');
 const DATA_ROOT = path.join(REPO_ROOT, 'app', 'data');
 const ANALYSIS_JSON_PATH = path.join(REPO_ROOT, 'story-analysis-report.json');
 const REPORT_MARKDOWN_PATH = path.join(REPO_ROOT, 'STORY-REPORT.md');
-const TRUTH_CATEGORIES = [
-  'debris_relocation',
-  'being_containment',
-  'telepathic_scouts',
-  'international_actors',
-  'transition_2026',
-];
+const EVIDENCE_MARKER_PATTERN = /isEvidence:\s*true/g;
 
 function findDataFiles(dir = DATA_ROOT) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
@@ -42,7 +36,6 @@ function parseQuotedList(block) {
 
 function analyzeFilesystemSources() {
   const files = findDataFiles();
-  const revealCounts = Object.fromEntries(TRUTH_CATEGORIES.map(category => [category, 0]));
   const statusCounts = {};
   const requiredFlags = new Set();
   const fileSummaries = [];
@@ -53,6 +46,7 @@ function analyzeFilesystemSources() {
   let videoTriggerCount = 0;
   let encryptedNodeCount = 0;
   let conditionalNodeCount = 0;
+  let evidenceFileCount = 0;
 
   for (const filePath of files) {
     const source = fs.readFileSync(filePath, 'utf8');
@@ -61,7 +55,7 @@ function analyzeFilesystemSources() {
     const fileNodes = collectMatches(source, /:\s*FileNode\s*=\s*{/g).length;
     const directoryNodes = collectMatches(source, /:\s*DirectoryNode\s*=\s*{/g).length;
     const statuses = collectMatches(source, /status:\s*'([^']+)'/g).map(match => match[1]);
-    const revealBlocks = collectMatches(source, /reveals:\s*\[([\s\S]*?)\]/g).map(match => match[1]);
+    const evidenceMarkers = collectMatches(source, EVIDENCE_MARKER_PATTERN).length;
     const flagBlocks = collectMatches(source, /requiredFlags:\s*\[([\s\S]*?)\]/g).map(match => match[1]);
     const imageTriggers = collectMatches(source, /imageTrigger:\s*{/g).length;
     const videoTriggers = collectMatches(source, /videoTrigger:\s*{/g).length;
@@ -70,6 +64,7 @@ function analyzeFilesystemSources() {
     directoryNodeCount += directoryNodes;
     imageTriggerCount += imageTriggers;
     videoTriggerCount += videoTriggers;
+    evidenceFileCount += evidenceMarkers;
 
     for (const status of statuses) {
       statusCounts[status] = (statusCounts[status] || 0) + 1;
@@ -78,14 +73,6 @@ function analyzeFilesystemSources() {
       }
       if (status === 'conditional') {
         conditionalNodeCount += 1;
-      }
-    }
-
-    for (const revealBlock of revealBlocks) {
-      for (const category of parseQuotedList(revealBlock)) {
-        if (category in revealCounts) {
-          revealCounts[category] += 1;
-        }
       }
     }
 
@@ -119,7 +106,7 @@ function analyzeFilesystemSources() {
     conditionalNodeCount,
     requiredFlagCount: requiredFlags.size,
     requiredFlags: Array.from(requiredFlags).sort(),
-    revealCounts,
+    evidenceFileCount,
     statusCounts,
     largestSourceFiles: fileSummaries.slice(0, 10),
   };
@@ -134,9 +121,7 @@ function formatMarkdownReport(analysis) {
     .map(source => `| ${source.path} | ${source.lines} | ${source.fileNodes} | ${source.directoryNodes} |`)
     .join('\n');
 
-  const truthCoverage = Object.entries(analysis.revealCounts)
-    .map(([category, count]) => `- **${category}**: ${count} files`)
-    .join('\n');
+  const evidenceCoverage = `- Evidence-marked files: ${analysis.evidenceFileCount}`;
 
   const statuses = Object.entries(analysis.statusCounts)
     .sort(([left], [right]) => left.localeCompare(right))
@@ -158,8 +143,8 @@ Generated at ${analysis.generatedAt}
 - Video triggers: ${analysis.videoTriggerCount}
 - Distinct required flags: ${analysis.requiredFlagCount}
 
-## Truth Coverage
-${truthCoverage}
+## Evidence Coverage
+${evidenceCoverage}
 
 ## Status Distribution
 ${statuses}

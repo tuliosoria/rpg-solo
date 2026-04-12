@@ -81,7 +81,7 @@ export interface FileNode {
   status: FileStatus;
   content: string[];
   decryptedFragment?: string[];
-  reveals?: string[]; // Truth categories this file contributes to
+  isEvidence?: boolean; // Opening this file logs one piece of evidence
   accessThreshold?: number; // Required access level
   requiredFlags?: string[]; // Required flags to appear
   imageTrigger?: ImageTrigger; // Image to display when file is accessed

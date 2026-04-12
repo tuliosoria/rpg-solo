@@ -239,7 +239,7 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('EVIDENCE COLLECTED'))).toBe(true);
     });
 
-    it('should show discovered truths', () => {
+    it('should show discovered evidence count', () => {
       const state = createTestState({
         evidenceCount: 2,
       });
@@ -283,10 +283,7 @@ describe('UX Commands', () => {
       const result = executeCommand('god evidences', state);
 
       expect(result.stateChanges.evidenceCount).toBe(5);
-      expect(result.stateChanges.flags).toMatchObject({
-        nearVictory: true,
-        allEvidenceCollected: true,
-      });
+      expect(result.stateChanges.flags).toBeUndefined();
       expect(result.stateChanges.evidencesSaved).toBeUndefined();
       expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
 
@@ -310,10 +307,7 @@ describe('UX Commands', () => {
       const result = executeCommand('god evidence', state);
 
       expect(result.stateChanges.evidenceCount).toBe(5);
-      expect(result.stateChanges.flags).toMatchObject({
-        nearVictory: true,
-        allEvidenceCollected: true,
-      });
+      expect(result.stateChanges.flags).toBeUndefined();
       expect(result.output.some(e => e.content.includes('ALL EVIDENCE UNLOCKED'))).toBe(true);
       expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
     });

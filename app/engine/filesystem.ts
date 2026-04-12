@@ -2,7 +2,7 @@
 
 import { FileSystemNode, FileNode, GameState } from '../types';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
-import { countEvidence, isEvidenceFile } from './evidenceRevelation';
+import { countEvidence, isEvidenceFile, MAX_EVIDENCE_COUNT } from './evidenceRevelation';
 
 // Cached set of file paths that can potentially reveal evidence
 let _evidenceBearingFiles: Set<string> | null = null;
@@ -13,7 +13,7 @@ function buildEvidenceBearingFiles(): Set<string> {
   function traverse(node: FileSystemNode, path: string) {
     if (node.type === 'file') {
       const file = node as FileNode;
-      if (isEvidenceFile(file, path)) {
+      if (isEvidenceFile(file)) {
         result.add(path);
       }
     } else {
@@ -39,16 +39,36 @@ export function getEvidenceBearingFiles(): Set<string> {
   return _evidenceBearingFiles;
 }
 
-/**
- * Checks if a file should be dynamically locked behind the override protocol.
- * After the player discovers their first evidence, all remaining evidence-bearing
- * files that haven't been read yet are gated behind override.
- */
-export function isEvidenceGated(path: string, state: GameState): boolean {
-  if (state.flags.adminUnlocked) return false;
-  if (countEvidence(state) === 0) return false;
-  if (state.filesRead.has(path)) return false;
-  return getEvidenceBearingFiles().has(path);
+function countExploredPrimarySectors(state: GameState): number {
+  const sectors = new Set<string>();
+
+  for (const path of state.filesRead || []) {
+    if (path.startsWith('/storage/')) sectors.add('storage');
+    if (path.startsWith('/ops/')) sectors.add('ops');
+    if (path.startsWith('/comms/')) sectors.add('comms');
+  }
+
+  return sectors.size;
+}
+
+function isProgressVisible(path: string, state: GameState): boolean {
+  if (state.filesRead?.has(path)) {
+    return true;
+  }
+
+  if (path === '/tmp/pattern_recognition.log') {
+    return countExploredPrimarySectors(state) >= 3;
+  }
+
+  if (path === '/tmp/coherence_threshold.log' || path === '/tmp/session_residue.log') {
+    return countEvidence(state) >= 4;
+  }
+
+  if (path === '/tmp/save_evidence.sh') {
+    return countEvidence(state) >= MAX_EVIDENCE_COUNT;
+  }
+
+  return true;
 }
 
 /**
@@ -111,6 +131,10 @@ export function getNode(path: string, state: GameState): FileSystemNode | null {
     current = child;
   }
 
+  if (current.type === 'file' && !isProgressVisible(path, state)) {
+    return null;
+  }
+
   return current;
 }
 
@@ -145,9 +169,7 @@ export function listDirectory(
     const fullPath = path === '/' ? `/${name}` : `${path}/${name}`;
     const mutation = state.fileMutations[fullPath];
     if (mutation?.deleted) continue;
-
-    // Hide evidence-bearing files after first evidence (dynamic override lock)
-    if (child.type === 'file' && isEvidenceGated(fullPath, state)) continue;
+    if (child.type === 'file' && !isProgressVisible(fullPath, state)) continue;
 
     entries.push({
       name: child.type === 'dir' ? `${name}/` : name,
@@ -217,11 +239,6 @@ export function canAccessFile(
 
   if (mutation?.deleted) return { accessible: false, reason: 'FILE DELETED' };
   if (mutation?.locked) return { accessible: false, reason: 'FILE LOCKED' };
-
-  // Dynamic override lock — evidence-bearing files gated after first evidence
-  if (isEvidenceGated(path, state)) {
-    return { accessible: false, reason: 'ACCESS DENIED — OVERRIDE PROTOCOL REQUIRED' };
-  }
 
   return { accessible: true };
 }

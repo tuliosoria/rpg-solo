@@ -18,7 +18,7 @@ const HINT_POOL: string[] = [
   'if risk is too high, you can use wait.',
   'some files are encrypted — look for clues on how to decode them.',
   'morse code is not just noise.',
-  'pay attention to cross-references between files.',
+  'the good files are scattered across /storage, /ops, and /comms.',
   'the good stuff is behind override — we need to find the password.',
 ];
 
@@ -29,7 +29,7 @@ const HINT_I18N_BY_TEXT: Record<string, string> = {
   'if risk is too high, you can use wait.': 'engine.hints.pool.4',
   'some files are encrypted — look for clues on how to decode them.': 'engine.hints.pool.5',
   'morse code is not just noise.': 'engine.hints.pool.6',
-  'pay attention to cross-references between files.': 'engine.hints.pool.7',
+  'the good files are scattered across /storage, /ops, and /comms.': 'engine.hints.pool.7',
   'the good stuff is behind override — we need to find the password.': 'engine.hints.pool.8',
 };
 
@@ -91,7 +91,7 @@ export function generateHintOutput(state: GameState): {
         createEntryI18n(
           'ufo74',
           'engine.hints.progress.line2',
-          '       keep exploring. the truth is in the files.'
+          '       keep exploring. the evidence is in the files.'
         ),
         createEntry('system', ''),
       ],

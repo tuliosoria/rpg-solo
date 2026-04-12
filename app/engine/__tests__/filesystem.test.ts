@@ -4,7 +4,6 @@ import {
   getNode,
   listDirectory,
   canAccessFile,
-  isEvidenceGated,
   fuzzyMatchFilename,
   findFilesMatching,
   smartResolvePath,
@@ -126,6 +125,42 @@ describe('Filesystem', () => {
       expect(entries!.some(e => e.name === 'ghost_session.log')).toBe(true);
     });
 
+    it('hides pattern recognition log until three primary sectors are explored', () => {
+      const state = createTestState({
+        filesRead: new Set(['/storage/debris/manifest.txt', '/ops/exo/incident_report.txt']),
+      });
+      const entries = listDirectory('/tmp', state);
+      expect(entries!.some(e => e.name === 'pattern_recognition.log')).toBe(false);
+    });
+
+    it('shows pattern recognition log after storage, ops, and comms have all been explored', () => {
+      const state = createTestState({
+        filesRead: new Set([
+          '/storage/debris/manifest.txt',
+          '/ops/exo/incident_report.txt',
+          '/comms/intercepts/relay_ping.log',
+        ]),
+      });
+      const entries = listDirectory('/tmp', state);
+      expect(entries!.some(e => e.name === 'pattern_recognition.log')).toBe(true);
+    });
+
+    it('hides coherence and leak files until evidence thresholds are reached', () => {
+      const state = createTestState({ evidenceCount: 3 });
+      const entries = listDirectory('/tmp', state);
+      expect(entries!.some(e => e.name === 'coherence_threshold.log')).toBe(false);
+      expect(entries!.some(e => e.name === 'session_residue.log')).toBe(false);
+      expect(entries!.some(e => e.name === 'save_evidence.sh')).toBe(false);
+    });
+
+    it('shows late-stage tmp files once evidence milestones are reached', () => {
+      const state = createTestState({ evidenceCount: 5 });
+      const entries = listDirectory('/tmp', state);
+      expect(entries!.some(e => e.name === 'coherence_threshold.log')).toBe(true);
+      expect(entries!.some(e => e.name === 'session_residue.log')).toBe(true);
+      expect(entries!.some(e => e.name === 'save_evidence.sh')).toBe(true);
+    });
+
     it('hides trace purge memo until trace purge', () => {
       const state = createTestState({ accessLevel: 3, flags: { adminUnlocked: true } });
       const entries = listDirectory('/admin', state);
@@ -168,13 +203,15 @@ describe('Filesystem', () => {
   });
 
   describe('canAccessFile', () => {
-    it('gates unread evidence files when evidence is derived from filesRead', () => {
+    it('keeps unread evidence files accessible after other evidence is found', () => {
       const state = createTestState({
         evidenceCount: 0,
         filesRead: new Set<string>(['/ops/assessments/foreign_drone_assessment.txt']),
       });
 
-      expect(isEvidenceGated('/comms/intercepts/regional_summary_jan96.txt', state)).toBe(true);
+      expect(canAccessFile('/comms/intercepts/regional_summary_jan96.txt', state)).toEqual({
+        accessible: true,
+      });
     });
 
     it('allows access to normal files', () => {

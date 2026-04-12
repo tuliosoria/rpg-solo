@@ -406,7 +406,7 @@ const regional_summary_jan96: FileNode = {
   type: 'file',
   name: 'regional_summary_jan96.txt',
   status: 'intact',
-  reveals: ['international-actors'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'REGIONAL INTELLIGENCE SUMMARY — JANUARY 1996',
@@ -1427,7 +1427,7 @@ const foreign_drone_theory: FileNode = {
   type: 'file',
   name: 'foreign_drone_assessment.txt',
   status: 'intact',
-  reveals: ['debris-relocation'],
+  isEvidence: true,
   imageTrigger: {
     src: '/images/drone.webp',
     alt: 'Recovered visual - Foreign drone analysis',
@@ -1497,7 +1497,7 @@ const industrial_accident_theory: FileNode = {
   type: 'file',
   name: 'industrial_accident_theory.txt',
   status: 'intact',
-  reveals: ['debris-relocation'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'ALTERNATIVE ASSESSMENT — INDUSTRIAL ORIGIN',
@@ -1533,7 +1533,7 @@ const industrial_accident_theory: FileNode = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// MULTI-STEP INFERENCE FILES - Truths requiring cross-reference
+// MULTI-STEP INFERENCE FILES - Linked evidence across multiple files
 // ═══════════════════════════════════════════════════════════════════════════
 
 const logistics_manifest_fragment: FileNode = {
@@ -1599,7 +1599,7 @@ const foreign_liaison_note: FileNode = {
   name: 'foreign_liaison_note.txt',
   status: 'restricted',
   accessThreshold: 2,
-  reveals: ['international-actors'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'LIAISON NOTE — FOREIGN COORDINATION',
@@ -1634,7 +1634,7 @@ const encrypted_diplomatic_cable: FileNode = {
   name: 'diplomatic_cable_23jan.enc',
   status: 'encrypted',
   accessThreshold: 2,
-  reveals: ['international-actors'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'ENCRYPTED CABLE — PRIORITY ALPHA',
@@ -1691,7 +1691,7 @@ const standing_orders_multinational: FileNode = {
   name: 'standing_orders_multinational.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['international-actors'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'STANDING ORDERS — MULTINATIONAL RECOVERY PROTOCOL',
@@ -1777,28 +1777,23 @@ const medical_examiner_query: FileNode = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// CONDITIONAL CONTENT - Files that appear based on player progress
+// CONDITIONAL CONTENT - Files that appear based on simple progress thresholds
 // ═══════════════════════════════════════════════════════════════════════════
 
 const pattern_recognition_note: FileNode = {
   type: 'file',
   name: 'pattern_recognition.log',
   status: 'intact',
-  requiredFlags: ['readMultipleCategories'], // Appears after reading 3+ categories
   content: [
     '═══════════════════════════════════════════════════════════',
     'SYSTEM LOG — PATTERN RECOGNITION',
     'TIMESTAMP: [CURRENT SESSION]',
     '═══════════════════════════════════════════════════════════',
     '',
-    'Cross-referencing detected.',
+    'Broad file sweep detected.',
     '',
-    'User has accessed:',
-    '  - Storage sector files',
-    '  - Communications sector files',
-    '  - Operations sector files',
-    '',
-    'Pattern: Systematic reconstruction attempt.',
+    'User has touched multiple sectors of the system.',
+    'Pattern: Persistent review of scattered records.',
     '',
     'NOTE: Additional archives may be available.',
     '      Check /admin directory if access permits.',
@@ -1811,24 +1806,22 @@ const coherence_threshold_memo: FileNode = {
   type: 'file',
   name: 'coherence_threshold.log',
   status: 'intact',
-  requiredFlags: ['nearVictory'], // Appears when 4+ truths discovered
   content: [
     '═══════════════════════════════════════════════════════════',
     'SYSTEM ALERT — COHERENCE THRESHOLD',
     'PRIORITY: ELEVATED',
     '═══════════════════════════════════════════════════════════',
     '',
-    'User has achieved significant model coherence.',
+    'User has logged substantial evidence.',
     '',
-    'Documentation coverage:',
-    '  [■■■■□] 80%+ categories confirmed',
+    'Evidence tracker approaching completion.',
+    'Leak risk rising.',
     '',
     'System recommendation:',
-    '  Archive session for institutional preservation.',
-    '  Comprehensive documentation serves future analysis.',
+    '  Preserve session artifacts.',
+    '  Expect emergency export attempts.',
     '',
-    'NOTE: Final category may require administrative access.',
-    '      Use "override protocol" if necessary.',
+    'NOTE: Final evidence may require administrative access.',
     '',
     '═══════════════════════════════════════════════════════════',
   ],
@@ -2080,7 +2073,7 @@ const thirty_year_cycle_analysis: FileNode = {
   name: 'thirty_year_cycle.txt',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['transition-2026'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'ANALYSIS — THIRTY-YEAR CYCLE HYPOTHESIS',
@@ -2299,7 +2292,7 @@ const transport_log_96: FileNode = {
   type: 'file',
   name: 'transport_log_96.txt',
   status: 'intact',
-  reveals: ['debris-relocation'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'TRANSPORT LOG — OPERATION PRATO EXTENSION',
@@ -2335,7 +2328,7 @@ const material_x_analysis: FileNode = {
   name: 'material_x_analysis.dat',
   status: 'restricted',
   accessThreshold: 2,
-  reveals: ['debris-relocation'],
+  isEvidence: true,
   imageTrigger: {
     src: '/images/crash.webp',
     alt: 'Recovered visual - Crash site material',
@@ -2375,7 +2368,7 @@ const bio_container_log: FileNode = {
   type: 'file',
   name: 'bio_container.log',
   status: 'unstable',
-  reveals: ['being-containment'],
+  isEvidence: true,
   imageTrigger: {
     src: '/images/et.webp',
     alt: 'Recovered visual - Bio containment',
@@ -2415,7 +2408,7 @@ const autopsy_alpha_log: FileNode = {
   name: 'autopsy_alpha.log',
   status: 'restricted',
   accessThreshold: 2,
-  reveals: ['being-containment'],
+  isEvidence: true,
   imageTrigger: {
     src: '/images/et.webp',
     alt: 'Recovered visual - Autopsy subject',
@@ -2461,7 +2454,7 @@ const autopsy_addendum_psi: FileNode = {
   name: 'autopsy_addendum_psi.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['telepathic-scouts'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'ADDENDUM PSI — NEURAL ASSESSMENT',
@@ -2497,7 +2490,7 @@ const transcript_core: FileNode = {
   type: 'file',
   name: 'transcript_core.enc',
   status: 'encrypted',
-  reveals: ['telepathic-scouts'],
+  isEvidence: true,
   imageTrigger: {
     src: '/images/et-scared.webp',
     alt: 'Recovered visual - Subject during transmission',
@@ -2580,7 +2573,7 @@ const field_report_delta: FileNode = {
   type: 'file',
   name: 'field_report_delta.txt',
   status: 'intact',
-  reveals: ['international-actors'],
+  isEvidence: true,
   imageTrigger: {
     src: '/images/prato-delta.webp',
     alt: 'Recovered visual - Operation Prato Delta field report',
@@ -2708,7 +2701,7 @@ const threat_window: FileNode = {
   name: 'threat_window.red',
   status: 'restricted',
   accessThreshold: 4,
-  reveals: ['transition-2026'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'THREAT ASSESSMENT — TRANSITION WINDOW',
@@ -2999,25 +2992,20 @@ const session_residue: FileNode = {
   type: 'file',
   name: 'session_residue.log',
   status: 'conditional',
-  requiredFlags: ['nearVictory'],
   content: [
     '═══════════════════════════════════════════════════════════',
     'SESSION RESIDUE — AUTOMATED LOG',
     '═══════════════════════════════════════════════════════════',
     '',
-    'Multiple access attempts detected.',
-    'Cross-reference pattern indicates systematic inquiry.',
+    'Multiple evidence file accesses detected.',
+    'Review pattern indicates deliberate collection.',
     '',
-    'Accessed categories:',
-    '  [DEBRIS CHAIN]     — Verified',
-    '  [CONTAINMENT]      — Verified',
-    '  [PSI-CAPABILITY]   — Verified',
-    '  [FOREIGN ACTORS]   — Verified',
-    '  [TEMPORAL WINDOW]  — Verified',
+    'Temporary cache contains enough material to',
+    'support an external leak attempt.',
     '',
-    'CONCLUSION: User has achieved sufficient model coherence.',
+    'CONCLUSION: Session risk elevated.',
     '',
-    'NOTICE: This session will be archived.',
+    'NOTICE: Export behavior expected.',
     '',
     '═══════════════════════════════════════════════════════════',
   ],
@@ -3056,6 +3044,7 @@ const bio_program_overview: FileNode = {
   name: 'bio_program_overview.red',
   status: 'restricted',
   accessThreshold: 4,
+  isEvidence: true,
   imageTrigger: {
     src: '/images/bio-program.webp',
     alt: 'Bio-Assessment Initiative - Recovered specimen documentation',
@@ -3144,7 +3133,7 @@ const neural_dump_alfa: FileNode = {
   name: 'neural_dump_alfa.psi',
   status: 'encrypted',
   accessThreshold: 3,
-  reveals: ['telepathic-scouts'],
+  isEvidence: true,
   securityQuestion: {
     question: 'Subject designation (found in autopsy records):',
     answers: ['alfa', 'alpha', 'subject alfa', 'specimen alfa'],
@@ -3221,7 +3210,7 @@ const psi_analysis_report: FileNode = {
   name: 'psi_analysis_report.txt',
   status: 'restricted',
   accessThreshold: 3,
-  reveals: ['telepathic-scouts'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'REPORT — PSI-COMMUNICATION ANALYSIS',
@@ -3368,7 +3357,7 @@ const second_deployment_intercept: FileNode = {
   status: 'encrypted',
   accessThreshold: 5,
   requiredFlags: ['adminUnlocked'],
-  reveals: ['transition-2026'],
+  isEvidence: true,
   securityQuestion: {
     question: 'Year of projected transition window:',
     answers: ['2026', 'twenty twenty six', 'twenty-twenty-six'],
@@ -3708,7 +3697,7 @@ const jardim_andere_report: FileNode = {
   type: 'file',
   name: 'jardim_andere_incident.txt',
   status: 'intact',
-  reveals: ['being-containment'],
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'FIELD REPORT — INITIAL CONTACT',
@@ -3938,12 +3927,11 @@ const cafeteria_menu_jan96: FileNode = {
   ],
 };
 
-// Save evidence script - hidden in /tmp, appears when all 5 truths are discovered
+// Save evidence script - hidden in /tmp until all 5 evidence files are logged
 const save_evidence_script: FileNode = {
   type: 'file',
   name: 'save_evidence.sh',
   status: 'intact',
-  requiredFlags: ['allEvidenceCollected'],
   content: [
     '#!/bin/bash',
     '# ═══════════════════════════════════════════════════════════',
@@ -4271,7 +4259,7 @@ const cargo_transfer_memo: FileNode = {
   type: 'file',
   name: 'cargo_transfer_memo.txt',
   status: 'intact',
-  // NO reveals - coded language cannot be used as evidence
+  // Not evidence - coded language cannot be used as evidence
   content: [
     '═══════════════════════════════════════════════════════════',
     'INTERNAL MEMO — CARGO TRANSFER COORDINATION',
@@ -4310,7 +4298,7 @@ const visitor_briefing: FileNode = {
   type: 'file',
   name: 'visitor_briefing.txt',
   status: 'intact',
-  // NO reveals - coded language cannot be used as evidence
+  // Not evidence - coded language cannot be used as evidence
   content: [
     '═══════════════════════════════════════════════════════════',
     'SECURITY BRIEFING — VISITING DELEGATION',
@@ -4347,7 +4335,7 @@ const asset_disposition_report: FileNode = {
   type: 'file',
   name: 'asset_disposition_report.txt',
   status: 'intact',
-  // NO reveals - coded language cannot be used as evidence
+  // Not evidence - coded language cannot be used as evidence
   content: [
     '═══════════════════════════════════════════════════════════',
     'ASSET DISPOSITION REPORT',
@@ -4383,7 +4371,7 @@ const euphemism_reference: FileNode = {
   type: 'file',
   name: 'terminology_guide.txt',
   status: 'intact',
-  // NO reveals - this is standard classification vocabulary
+  // Not evidence - this is standard classification vocabulary
   content: [
     '═══════════════════════════════════════════════════════════',
     'APPROVED TERMINOLOGY REFERENCE',

@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   isDisturbingContent,
   getDisturbingContentAvatarExpression,
-  getDiscoveredEvidenceTruths,
-  getEvidenceTruthsForPath,
+  getDiscoveredEvidenceFiles,
+  isEvidencePath,
 } from '../evidenceRevelation';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
@@ -71,38 +71,34 @@ describe('Evidence Revelation System', () => {
     });
   });
 
-  describe('evidence truth classification', () => {
-    it('classifies foreign_drone_assessment.txt as recoverable evidence', () => {
-      expect(getEvidenceTruthsForPath('/ops/assessments/foreign_drone_assessment.txt')).toEqual([
-        'debris-relocation',
-      ]);
+  describe('evidence file detection', () => {
+    it('flags foreign_drone_assessment.txt as evidence', () => {
+      expect(isEvidencePath('/ops/assessments/foreign_drone_assessment.txt')).toBe(true);
     });
 
-    it('classifies additional designated audit files by truth category', () => {
-      expect(getEvidenceTruthsForPath('/comms/intercepts/regional_summary_jan96.txt')).toEqual([
-        'international-actors',
-      ]);
-      expect(getEvidenceTruthsForPath('/admin/thirty_year_cycle.txt')).toEqual(['transition-2026']);
+    it('includes bio_program_overview.red in the evidence pool', () => {
+      expect(isEvidencePath('/admin/bio_program_overview.red')).toBe(true);
     });
 
-    it('does not double count multiple files from the same truth category', () => {
-      const truths = getDiscoveredEvidenceTruths([
+    it('counts each evidence file separately, even if they used to share a category', () => {
+      const discovered = getDiscoveredEvidenceFiles([
         '/ops/assessments/foreign_drone_assessment.txt',
         '/storage/assets/material_x_analysis.dat',
       ]);
 
-      expect(truths.size).toBe(1);
-      expect(truths.has('debris-relocation')).toBe(true);
+      expect(discovered.size).toBe(2);
+      expect(discovered.has('/ops/assessments/foreign_drone_assessment.txt')).toBe(true);
+      expect(discovered.has('/storage/assets/material_x_analysis.dat')).toBe(true);
     });
 
-    it('deduplicates corroborating international actor files', () => {
-      const truths = getDiscoveredEvidenceTruths([
+    it('deduplicates rereads of the same evidence file path', () => {
+      const discovered = getDiscoveredEvidenceFiles([
         '/comms/intercepts/regional_summary_jan96.txt',
-        '/comms/liaison/foreign_liaison_note.txt',
+        '/comms/intercepts/regional_summary_jan96.txt',
       ]);
 
-      expect(truths.size).toBe(1);
-      expect(truths.has('international-actors')).toBe(true);
+      expect(discovered.size).toBe(1);
+      expect(discovered.has('/comms/intercepts/regional_summary_jan96.txt')).toBe(true);
     });
   });
 

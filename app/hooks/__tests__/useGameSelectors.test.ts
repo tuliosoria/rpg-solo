@@ -25,7 +25,6 @@ function createMockGameState(overrides: Partial<GameState> = {}): GameState {
     flags: {},
     overrideFailedAttempts: 0,
     scoutLinksUsed: 0,
-    truthsDiscovered: new Set(),
     filesRead: new Set(),
     conspiracyFilesSeen: new Set(),
     fileMutations: {},
@@ -199,7 +198,7 @@ describe('useGameSelectors', () => {
       expect(result.current.count).toBe(0);
     });
 
-    it('counts discovered truths correctly', () => {
+    it('counts discovered evidence correctly', () => {
       const { result } = renderHook(() => useEvidenceState(2));
       
       expect(result.current.count).toBe(2);

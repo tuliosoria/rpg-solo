@@ -58,12 +58,12 @@ describe('Save/Load System', () => {
   });
 
   describe('serialization round-trip', () => {
-    it('uses derived truth count in save slot metadata', async () => {
+    it('uses derived evidence count in save slot metadata', async () => {
       const { saveGame } = await import('../saves');
 
       const state = createTestState({
         evidenceCount: 0,
-        filesRead: new Set(['/comms/intercepts/regional_summary_jan96.txt']),
+        filesRead: new Set(['/admin/bio_program_overview.red']),
       });
 
       const slot = saveGame(state, 'Test Save');
@@ -94,7 +94,10 @@ describe('Save/Load System', () => {
         singularEventsTriggered: new Set(['event1']),
         imagesShownThisRun: new Set(['img1']),
         categoriesRead: new Set(['cat1', 'cat2', 'cat3']),
-        filesRead: new Set(['file1']),
+        filesRead: new Set([
+          '/ops/assessments/foreign_drone_assessment.txt',
+          '/storage/assets/material_x_analysis.dat',
+        ]),
         tutorialTipsShown: new Set(['first_evidence']),
         prisoner45UsedResponses: new Set(['resp1']),
         scoutLinkUsedResponses: new Set(['scout1']),
@@ -173,7 +176,7 @@ describe('Save/Load System', () => {
       expect(loaded!.imagesShownThisRun.size).toBe(0);
     });
 
-    it('rebuilds evidenceCount from filesRead when stale save data undercounts truths', async () => {
+    it('rebuilds evidenceCount from filesRead when stale save data undercounts evidence files', async () => {
       const { loadGame } = await import('../saves');
 
       const oldSaveData = {
@@ -181,7 +184,10 @@ describe('Save/Load System', () => {
         detectionLevel: 50,
         accessLevel: 4,
         evidenceCount: 0,
-        filesRead: ['/comms/intercepts/regional_summary_jan96.txt', '/admin/thirty_year_cycle.txt'],
+        filesRead: [
+          '/ops/assessments/foreign_drone_assessment.txt',
+          '/storage/assets/material_x_analysis.dat',
+        ],
       };
 
       mockStore['terminal1996:save:stale_truths'] = JSON.stringify(oldSaveData);

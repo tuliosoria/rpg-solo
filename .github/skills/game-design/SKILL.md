@@ -65,7 +65,8 @@ dataIntegrity: number;       // 100-0
 accessLevel: number;         // 0-5
 sessionStability: number;    // 100-0
 systemHostility: number;     // 0-5
-truthsDiscovered: Set<string>;
+evidenceCount: number;       // 0-5
+filesRead: Set<string>;
 singularEventsTriggered: Set<string>;
 ```
 

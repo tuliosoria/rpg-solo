@@ -7,7 +7,7 @@
  * These tests verify:
  * 1. Story timeline consistency (January 1996 references)
  * 2. Character/entity consistency (UFO74, government entities)
- * 3. Evidence/document coherence (cross-references, evidence tiers)
+ * 3. Evidence/document coherence (multi-file links, evidence coverage)
  * 4. Player understanding (tutorials, hints, victory conditions)
  * 5. Narrative mechanics (risk system, Turing Test, firewall threats)
  */
@@ -476,7 +476,7 @@ describe('Story Consistency Tests', () => {
         if (reviewFile) {
           const content = reviewFile.content.join('\n');
 
-          // Should mention the review dimensions (maps to truth categories)
+          // Should mention the review dimensions that structure the investigation
           expect(content).toMatch(/physical\s+assets/i);
           expect(content).toMatch(/equipment\s+and\s+materiel/i);
           expect(content).toMatch(/communications/i);
@@ -514,7 +514,7 @@ describe('Story Consistency Tests', () => {
         expect(result.stateChanges.isGameOver).toBe(true);
       });
 
-      it('discovering all 5 truths enables leak command', () => {
+      it('discovering all 5 evidence files enables leak command', () => {
         const state = createTestState({
           tutorialStep: -1,
           tutorialComplete: true,
@@ -746,7 +746,6 @@ describe('Story Consistency Tests', () => {
           tutorialStep: -1,
           tutorialComplete: true,
           evidenceCount: 5,
-          flags: { allEvidenceCollected: true },
         });
 
         const result = executeCommand('leak', state);

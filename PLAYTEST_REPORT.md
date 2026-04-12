@@ -70,7 +70,7 @@
 
 **Status:** VERIFIED
 
-All 5 truth categories discoverable:
+All 5 evidence milestones discoverable:
 
 1. **Debris Relocation** - Physical asset recovery/transport
 2. **Being Containment** - Non-human biological subjects

@@ -69,7 +69,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'truth_seeker',
     name: 'Truth Seeker',
-    description: 'Uncover all 5 truth categories',
+    description: 'Collect 5 evidence files',
     icon: '👁️',
   },
   {

@@ -29,7 +29,7 @@ import {
   SAVE_VERSION,
 } from '../constants/limits';
 import { MAX_DETECTION } from '../constants/detection';
-import { countEvidence } from '../engine/evidenceRevelation';
+import { countEvidence, MAX_EVIDENCE_COUNT } from '../engine/evidenceRevelation';
 import { isCloudAvailable, cloudSave, cloudLoad, cloudDelete } from '../lib/steamBridge';
 
 const SAVES_KEY = 'terminal1996:saves';
@@ -102,7 +102,6 @@ function serializeState(state: GameState): string {
     state: {
       ...state,
       evidenceCount,
-      truthsDiscovered: undefined, // Remove legacy field from serialization
       singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
       imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
       categoriesRead: Array.from(state.categoriesRead || []),
@@ -149,6 +148,7 @@ function deserializeState(json: string): GameState {
 
   const normalizedSeed = normalizeSeed(baseState.seed) ?? generateSeed();
   const normalizedRngState = normalizeSeed(baseState.rngState) ?? normalizedSeed;
+  const parsedFilesRead = toStringArray(parsed.filesRead);
 
   const state = {
     ...baseState,
@@ -183,17 +183,11 @@ function deserializeState(json: string): GameState {
     wrongAttempts: clampNumber(baseState.wrongAttempts, DEFAULT_GAME_STATE.wrongAttempts, 0, 8),
     flags: toPlainObject(baseState.flags) as Record<string, boolean>,
     fileMutations: toPlainObject(baseState.fileMutations) as Record<string, FileMutation>,
-    // Backward compatibility: if loading old save with truthsDiscovered, convert to evidenceCount
-    evidenceCount:
-      typeof parsed.evidenceCount === 'number'
-        ? parsed.evidenceCount
-        : Array.isArray(parsed.truthsDiscovered)
-          ? parsed.truthsDiscovered.length
-          : 0,
+    evidenceCount: clampNumber(parsed.evidenceCount, 0, 0, MAX_EVIDENCE_COUNT),
     singularEventsTriggered: new Set(toStringArray(parsed.singularEventsTriggered)),
     imagesShownThisRun: new Set(toStringArray(parsed.imagesShownThisRun)),
     categoriesRead: new Set(toStringArray(parsed.categoriesRead)),
-    filesRead: new Set(toStringArray(parsed.filesRead)),
+    filesRead: new Set(parsedFilesRead),
     tutorialTipsShown: new Set(toStringArray(parsed.tutorialTipsShown)),
     prisoner45UsedResponses: new Set(toStringArray(parsed.prisoner45UsedResponses)),
     scoutLinkUsedResponses: new Set(toStringArray(parsed.scoutLinkUsedResponses)),
@@ -213,7 +207,10 @@ function deserializeState(json: string): GameState {
     icqMessages: Array.isArray(baseState.icqMessages) ? baseState.icqMessages : [],
   } as GameState;
 
-  state.evidenceCount = countEvidence(state);
+  state.evidenceCount =
+    parsedFilesRead.length > 0
+      ? countEvidence({ ...state, evidenceCount: 0 })
+      : countEvidence(state);
   return state;
 }
 

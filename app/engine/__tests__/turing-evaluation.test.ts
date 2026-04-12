@@ -29,7 +29,7 @@ describe('Turing evaluation', () => {
     expect(result.triggerTuringTest).toBe(true);
   });
 
-  it('does not trigger if no truths discovered', () => {
+  it('does not trigger if no evidence is discovered', () => {
     const state = createState({
       detectionLevel: 50,
       evidenceCount: 0,

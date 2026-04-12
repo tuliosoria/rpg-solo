@@ -372,7 +372,7 @@ export const autopsy_notes_unredacted: FileNode = {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ADMIN ARCHIVE FILES — Only visible in /admin during rewind after override protocol
-// These contain the most damning deleted evidence, one per truth category
+// These contain the most damning deleted evidence recovered during rewind
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const transfer_manifest_deleted: FileNode = {

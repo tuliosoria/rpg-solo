@@ -66,7 +66,7 @@ The command system successfully replicates a terminal experience while remaining
 
 **Evaluation: Very Good**
 
-The progression is tied to evidence discovery across 5 truth categories:
+The progression is tied to first-open evidence discovery across 5 key files:
 
 1. **Debris Relocation** - Physical evidence transport
 2. **Being Containment** - Biological subjects  

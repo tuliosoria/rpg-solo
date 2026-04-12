@@ -305,7 +305,7 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('UFO74 Override Protocol Hints', () => {
-    it('nudges cross-referencing after 3 files read without mentioning override protocol', () => {
+    it('nudges players toward the main evidence directories after 3 files read', () => {
       // State where player has read exactly 2 files - reading 3rd should trigger hint
       const state = createTestState({
         currentPath: '/internal/misc',
@@ -321,14 +321,14 @@ describe('Narrative Mechanics', () => {
       // Open 3rd file (this makes filesRead.size === 3 after processing)
       const result = executeCommand('open cafeteria_menu.txt', state);
 
-      // Should include the updated cross-reference hint (in pendingUfo74Messages, not output)
+      // Should include the updated exploration hint (in pendingUfo74Messages, not output)
       const pendingMessages = result.pendingUfo74Messages || [];
-      const hasCrossReferenceHint = pendingMessages.some(
+      const hasDirectoryHint = pendingMessages.some(
         e =>
-          e.content.includes('cross-checking') ||
-          e.content.includes('pattern only shows up when you compare')
+          e.content.includes('start digging through /storage, /ops, and /comms.') ||
+          e.content.includes('good files are scattered all over the system')
       );
-      expect(hasCrossReferenceHint).toBe(true);
+      expect(hasDirectoryHint).toBe(true);
       expect(result.stateChanges.flags?.overrideSuggested).toBe(true);
     });
 
@@ -936,7 +936,6 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/tmp',
-        flags: { allEvidenceCollected: true },
         evidenceCount: 5,
       });
       const result = executeCommand('run save_evidence.sh', state);
@@ -1040,7 +1039,6 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        flags: { allEvidenceCollected: false },
       });
       const result = executeCommand('leak', state);
       // Should be blocked — not enough evidence
@@ -1056,7 +1054,6 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        flags: { allEvidenceCollected: true },
         evidenceCount: 5,
       });
       const result = executeCommand('leak', state);
@@ -1256,7 +1253,7 @@ describe('Narrative Mechanics', () => {
         currentPath: '/ops/exo',
         accessLevel: 4,
         evidenceCount: 5,
-        flags: { adminUnlocked: true, allEvidenceCollected: true },
+        flags: { adminUnlocked: true },
         filesRead: new Set<string>(),
       });
 
@@ -1354,7 +1351,7 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('does not double count debris evidence across multiple corroborating files', () => {
+    it('counts each evidence file separately even when they cover similar material', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -1367,8 +1364,25 @@ describe('Narrative Mechanics', () => {
 
       const result = executeCommand('open material_x_analysis.dat', state);
 
-      expect(result.stateChanges.evidenceCount).toBeUndefined();
-      expect(result.stateChanges.avatarExpression).not.toBe('scared');
+      expect(result.stateChanges.evidenceCount).toBe(2);
+      expect(result.stateChanges.avatarExpression).toBe('scared');
+    });
+
+    it('bio_program_overview.red logs evidence on first read', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/admin',
+        accessLevel: 4,
+        evidenceCount: 0,
+        filesRead: new Set<string>(),
+        flags: { adminUnlocked: true },
+      });
+
+      const result = executeCommand('open bio_program_overview.red', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(1);
+      expect(result.stateChanges.filesRead?.has('/admin/bio_program_overview.red')).toBe(true);
     });
 
     it('field_report_delta.txt has prato-delta image trigger', () => {
