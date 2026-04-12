@@ -1,4 +1,5 @@
 import type { Language } from './index';
+import { RUNTIME_DATA_TRANSLATIONS } from './runtimeDataTranslations';
 import { RUNTIME_COMMAND_SUPPLEMENT } from './runtimeCommandSupplement';
 
 type RuntimeDictionary = Record<string, string>;
@@ -15245,9 +15246,11 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
   'pt-BR': {
     ...RUNTIME_TRANSLATIONS_PRE_WAVE_4['pt-BR'],
     ...RUNTIME_TRANSLATIONS_WAVE_4['pt-BR'],
+    ...RUNTIME_DATA_TRANSLATIONS['pt-BR'],
   },
   es: {
     ...RUNTIME_TRANSLATIONS_PRE_WAVE_4.es,
     ...RUNTIME_TRANSLATIONS_WAVE_4.es,
+    ...RUNTIME_DATA_TRANSLATIONS.es,
   },
 };
