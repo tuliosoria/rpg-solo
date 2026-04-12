@@ -17138,17 +17138,42 @@ const RUNTIME_TRANSLATIONS_WAVE_2: Record<Exclude<Language, 'en'>, RuntimeDictio
   },
 };
 
+const RUNTIME_TRANSLATIONS_WAVE_4: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
+  'pt-BR': {
+    'Recovered visual - Foreign drone analysis':
+      'Visual recuperado - Análise de drone estrangeiro',
+    'Recovered visual - Crash site material':
+      'Visual recuperado - Material do local da queda',
+    'Recovered visual - Bio containment':
+      'Visual recuperado - Contenção biológica',
+    'Recovered visual - Autopsy subject':
+      'Visual recuperado - Sujeito da autópsia',
+  },
+  es: {
+    'Recovered visual - Foreign drone analysis':
+      'Visual recuperado - Análisis de dron extranjero',
+    'Recovered visual - Crash site material':
+      'Visual recuperado - Material del sitio del impacto',
+    'Recovered visual - Bio containment':
+      'Visual recuperado - Contención biológica',
+    'Recovered visual - Autopsy subject':
+      'Visual recuperado - Sujeto de la autopsia',
+  },
+};
+
 export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
   'pt-BR': {
     ...BASE_RUNTIME_TRANSLATIONS['pt-BR'],
     ...RUNTIME_TRANSLATIONS_SUPPLEMENTAL['pt-BR'],
     ...RUNTIME_COMMAND_SUPPLEMENT['pt-BR'],
     ...RUNTIME_TRANSLATIONS_WAVE_2['pt-BR'],
+    ...RUNTIME_TRANSLATIONS_WAVE_4['pt-BR'],
   },
   es: {
     ...BASE_RUNTIME_TRANSLATIONS.es,
     ...RUNTIME_TRANSLATIONS_SUPPLEMENTAL.es,
     ...RUNTIME_COMMAND_SUPPLEMENT.es,
     ...RUNTIME_TRANSLATIONS_WAVE_2.es,
+    ...RUNTIME_TRANSLATIONS_WAVE_4.es,
   },
 };
