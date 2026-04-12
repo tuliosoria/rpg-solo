@@ -1540,6 +1540,7 @@ const logistics_manifest_fragment: FileNode = {
   type: 'file',
   name: 'logistics_manifest_fragment.txt',
   status: 'unstable',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'LOGISTICS MANIFEST — PARTIAL RECOVERY',
