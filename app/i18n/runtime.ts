@@ -12849,24 +12849,24 @@ const RUNTIME_TRANSLATIONS_WAVE_2: Record<Exclude<Language, 'en'>, RuntimeDictio
     'Assessment:': 'Avaliação:',
     'AUDIO FILE: /audio/morse_intercept.wav': 'ARQUIVO DE ÁUDIO: /audio/morse_intercept.wav',
     'AV-3847,Columba livia,NORTHEAST,94%,AUDIO/VIDEO':
-      'AV-3847,Columba livia,NORTHEAST,94%,AUDIO/VIDEO',
+      'AV-3847,Columba livia,NORDESTE,94%,ÁUDIO/VÍDEO',
     'AV-3848,Columba livia,NORTHEAST,91%,AUDIO/VIDEO':
-      'AV-3848,Columba livia,NORTHEAST,91%,AUDIO/VIDEO',
+      'AV-3848,Columba livia,NORDESTE,91%,ÁUDIO/VÍDEO',
     'AV-4102,Sturnus vulgaris,MIDWEST,88%,AUDIO ONLY':
-      'AV-4102,Sturnus vulgaris,MIDWEST,88%,AUDIO ONLY',
+      'AV-4102,Sturnus vulgaris,CENTRO-OESTE,88%,APENAS ÁUDIO',
     'AV-4103,Sturnus vulgaris,MIDWEST,92%,AUDIO ONLY':
-      'AV-4103,Sturnus vulgaris,MIDWEST,92%,AUDIO ONLY',
+      'AV-4103,Sturnus vulgaris,CENTRO-OESTE,92%,APENAS ÁUDIO',
     'AV-4104,Sturnus vulgaris,MIDWEST,86%,AUDIO/VIDEO':
-      'AV-4104,Sturnus vulgaris,MIDWEST,86%,AUDIO/VIDEO',
+      'AV-4104,Sturnus vulgaris,CENTRO-OESTE,86%,ÁUDIO/VÍDEO',
     'AV-5001,Corvus brachyrhynchos,WEST,95%,FULL SUITE':
-      'AV-5001,Corvus brachyrhynchos,WEST,95%,FULL SUITE',
+      'AV-5001,Corvus brachyrhynchos,OESTE,95%,PACOTE COMPLETO',
     'AV-5002,Corvus brachyrhynchos,WEST,89%,FULL SUITE':
-      'AV-5002,Corvus brachyrhynchos,WEST,89%,FULL SUITE',
+      'AV-5002,Corvus brachyrhynchos,OESTE,89%,PACOTE COMPLETO',
     'AV-6110,Turdus migratorius,SOUTH,91%,AUDIO/VIDEO':
-      'AV-6110,Turdus migratorius,SOUTH,91%,AUDIO/VIDEO',
+      'AV-6110,Turdus migratorius,SUL,91%,ÁUDIO/VÍDEO',
     'AV-6111,Turdus migratorius,SOUTH,93%,AUDIO/VIDEO':
-      'AV-6111,Turdus migratorius,SOUTH,93%,AUDIO/VIDEO',
-    'AV-6112,Turdus migratorius,SOUTH,87%,THERMAL': 'AV-6112,Turdus migratorius,SOUTH,87%,THERMAL',
+      'AV-6111,Turdus migratorius,SUL,93%,ÁUDIO/VÍDEO',
+    'AV-6112,Turdus migratorius,SOUTH,87%,THERMAL': 'AV-6112,Turdus migratorius,SUL,87%,TÉRMICO',
     'CLERK: T. SANTOS': 'ESCRITURÁRIO: T. SANTOS',
     CONTAINMENT: 'CONTENÇÃO',
     'Continue.': 'Continue.',
@@ -13093,24 +13093,24 @@ const RUNTIME_TRANSLATIONS_WAVE_2: Record<Exclude<Language, 'en'>, RuntimeDictio
     'Assessment:': 'Evaluación:',
     'AUDIO FILE: /audio/morse_intercept.wav': 'ARCHIVO DE AUDIO: /audio/morse_intercept.wav',
     'AV-3847,Columba livia,NORTHEAST,94%,AUDIO/VIDEO':
-      'AV-3847,Columba livia,NORTHEAST,94%,AUDIO/VIDEO',
+      'AV-3847,Columba livia,NORESTE,94%,AUDIO/VIDEO',
     'AV-3848,Columba livia,NORTHEAST,91%,AUDIO/VIDEO':
-      'AV-3848,Columba livia,NORTHEAST,91%,AUDIO/VIDEO',
+      'AV-3848,Columba livia,NORESTE,91%,AUDIO/VIDEO',
     'AV-4102,Sturnus vulgaris,MIDWEST,88%,AUDIO ONLY':
-      'AV-4102,Sturnus vulgaris,MIDWEST,88%,AUDIO ONLY',
+      'AV-4102,Sturnus vulgaris,MEDIO OESTE,88%,SOLO AUDIO',
     'AV-4103,Sturnus vulgaris,MIDWEST,92%,AUDIO ONLY':
-      'AV-4103,Sturnus vulgaris,MIDWEST,92%,AUDIO ONLY',
+      'AV-4103,Sturnus vulgaris,MEDIO OESTE,92%,SOLO AUDIO',
     'AV-4104,Sturnus vulgaris,MIDWEST,86%,AUDIO/VIDEO':
-      'AV-4104,Sturnus vulgaris,MIDWEST,86%,AUDIO/VIDEO',
+      'AV-4104,Sturnus vulgaris,MEDIO OESTE,86%,AUDIO/VIDEO',
     'AV-5001,Corvus brachyrhynchos,WEST,95%,FULL SUITE':
-      'AV-5001,Corvus brachyrhynchos,WEST,95%,FULL SUITE',
+      'AV-5001,Corvus brachyrhynchos,OESTE,95%,PAQUETE COMPLETO',
     'AV-5002,Corvus brachyrhynchos,WEST,89%,FULL SUITE':
-      'AV-5002,Corvus brachyrhynchos,WEST,89%,FULL SUITE',
+      'AV-5002,Corvus brachyrhynchos,OESTE,89%,PAQUETE COMPLETO',
     'AV-6110,Turdus migratorius,SOUTH,91%,AUDIO/VIDEO':
-      'AV-6110,Turdus migratorius,SOUTH,91%,AUDIO/VIDEO',
+      'AV-6110,Turdus migratorius,SUR,91%,AUDIO/VIDEO',
     'AV-6111,Turdus migratorius,SOUTH,93%,AUDIO/VIDEO':
-      'AV-6111,Turdus migratorius,SOUTH,93%,AUDIO/VIDEO',
-    'AV-6112,Turdus migratorius,SOUTH,87%,THERMAL': 'AV-6112,Turdus migratorius,SOUTH,87%,THERMAL',
+      'AV-6111,Turdus migratorius,SUR,93%,AUDIO/VIDEO',
+    'AV-6112,Turdus migratorius,SOUTH,87%,THERMAL': 'AV-6112,Turdus migratorius,SUR,87%,TÉRMICO',
     'CLERK: T. SANTOS': 'EMPLEADO: T. SANTOS',
     CONTAINMENT: 'CONTENCIÓN',
     'Continue.': 'Continúa.',
