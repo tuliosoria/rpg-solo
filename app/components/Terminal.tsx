@@ -106,6 +106,11 @@ const JARDIM_ANDERE_INCIDENT_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
+const AUTOPSY_VIDEO_SRC = new URL(
+  '../../videos/autopsy.mp4',
+  import.meta.url
+).toString();
+
 const EVIDENCE_VIDEO_PROMPT_TEXT = 'There is a video attached to this file. Open video? [yes] [no]';
 
 const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
@@ -114,6 +119,12 @@ const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
     fileName: 'jardim_andere_incident.txt',
     videoSrc: JARDIM_ANDERE_INCIDENT_VIDEO_SRC,
     videoTitle: 'jardim_andere_incident.mp4',
+  },
+  '/storage/records/logistics_manifest_fragment.txt': {
+    filePath: '/storage/records/logistics_manifest_fragment.txt',
+    fileName: 'logistics_manifest_fragment.txt',
+    videoSrc: AUTOPSY_VIDEO_SRC,
+    videoTitle: 'autopsy.mp4',
   },
 };
 
@@ -410,7 +421,8 @@ export default function Terminal({
   const closeEvidenceVideo = useCallback(() => {
     const closingVideo = activeEvidenceVideo;
     setActiveEvidenceVideo(null);
-    if (closingVideo?.filePath === '/internal/jardim_andere_incident.txt') {
+    if (closingVideo?.filePath === '/internal/jardim_andere_incident.txt' ||
+        closingVideo?.filePath === '/storage/records/logistics_manifest_fragment.txt') {
       appendPendingUfo74StartMessages([
         createEntry('ufo74', 'UFO74: damn. what the f*** is that, kid?'),
         createEntry('ufo74', 'UFO74: save it. we\'re going to have to leak this thing.'),
