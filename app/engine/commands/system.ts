@@ -1,10 +1,7 @@
 // System commands: help, status, clear, hint, tutorial, save
 
 import { GameState } from '../../types';
-import {
-  createEntry,
-  createOutputEntries,
-} from './utils';
+import { createEntry, createEntryI18n, createOutputEntries } from './utils';
 import {
   checkVictory,
   getObserverStatusLines,
@@ -279,7 +276,11 @@ export const systemCommands: CommandRegistry = {
         return {
           output: [
             createEntry('error', `Unknown command: ${cmdName}`),
-            createEntry('system', 'Type "help" to see all available commands.'),
+            createEntryI18n(
+              'system',
+              'engine.commands.system.type_help_to_see_all_available_commands',
+              'Type "help" to see all available commands.'
+            ),
           ],
           stateChanges: {},
         };
@@ -288,38 +289,38 @@ export const systemCommands: CommandRegistry = {
 
     // Default: show all commands
     const helpLines = [
-        '',
-        '═══════════════════════════════════════════════════════════',
-        'TERMINAL COMMANDS',
-        '═══════════════════════════════════════════════════════════',
-        '',
-        '  help [cmd]        Display help (or help for specific command)',
-        '  status            Display system status',
-        '  ls                List directory contents',
-        '  cd <dir>          Change directory',
-        '  open <file>       Open and display file contents',
-        '  last              Re-display last opened file',
-        '  unread            List unread files',
-        '  note <text>       Save a personal note',
-        '  notes             View all saved notes',
-        '  bookmark [file]   Bookmark a file (or view bookmarks)',
-        '  chat              Open secure relay channel',
-        '  tree              Show directory structure',
-        '  morse <text>      Decipher morse code messages',
-        '  hint              Request a hint (limited uses)',
-        '  wait              Lower detection briefly (limited)',
-        '  hide              Emergency escape at 90% risk',
-        '  leak              Leak collected evidence',
-        '  override protocol <code>  Execute admin override',
-        '  tutorial [on/off] Toggle tutorial tips or replay intro',
-        '  save              Save current session',
-        '  clear             Clear terminal display',
-        '',
-        '  ↑/↓ arrows        Navigate command history',
-        '  Tab               Autocomplete commands and files',
-        '  Ctrl+L            Clear terminal',
-        '',
-      ];
+      '',
+      '═══════════════════════════════════════════════════════════',
+      'TERMINAL COMMANDS',
+      '═══════════════════════════════════════════════════════════',
+      '',
+      '  help [cmd]        Display help (or help for specific command)',
+      '  status            Display system status',
+      '  ls                List directory contents',
+      '  cd <dir>          Change directory',
+      '  open <file>       Open and display file contents',
+      '  last              Re-display last opened file',
+      '  unread            List unread files',
+      '  note <text>       Save a personal note',
+      '  notes             View all saved notes',
+      '  bookmark [file]   Bookmark a file (or view bookmarks)',
+      '  chat              Open secure relay channel',
+      '  tree              Show directory structure',
+      '  morse <text>      Decipher morse code messages',
+      '  hint              Request a hint (limited uses)',
+      '  wait              Lower detection briefly (limited)',
+      '  hide              Emergency escape at 90% risk',
+      '  leak              Leak collected evidence',
+      '  override protocol <code>  Execute admin override',
+      '  tutorial [on/off] Toggle tutorial tips or replay intro',
+      '  save              Save current session',
+      '  clear             Clear terminal display',
+      '',
+      '  ↑/↓ arrows        Navigate command history',
+      '  Tab               Autocomplete commands and files',
+      '  Ctrl+L            Clear terminal',
+      '',
+    ];
 
     if (
       hasReadPsiMaterial(state) &&
@@ -416,7 +417,10 @@ export const systemCommands: CommandRegistry = {
       lines.push('  OBJECTIVE: Start opening files and build the evidence tracker.');
     }
 
-    if (state.detectionLevel >= DETECTION_THRESHOLDS.HIDE_AVAILABLE && !state.singularEventsTriggered?.has('hide_used')) {
+    if (
+      state.detectionLevel >= DETECTION_THRESHOLDS.HIDE_AVAILABLE &&
+      !state.singularEventsTriggered?.has('hide_used')
+    ) {
       lines.push('  RECOVERY: "hide" is available now.');
     } else if (state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH) {
       const waitsLeft = state.waitUsesRemaining || 0;
@@ -515,9 +519,21 @@ export const systemCommands: CommandRegistry = {
         return {
           output: [
             createEntry('system', ''),
-            createEntry('notice', 'TUTORIAL MODE: ENABLED'),
-            createEntry('output', "I'll show extra tips as you explore."),
-            createEntry('output', 'Type "tutorial off" anytime to disable.'),
+            createEntryI18n(
+              'notice',
+              'engine.commands.system.tutorial_mode_enabled',
+              'TUTORIAL MODE: ENABLED'
+            ),
+            createEntryI18n(
+              'output',
+              'engine.commands.system.i_ll_show_extra_tips_as_you_explore',
+              "I'll show extra tips as you explore."
+            ),
+            createEntryI18n(
+              'output',
+              'engine.commands.system.type_tutorial_off_anytime_to_disable',
+              'Type "tutorial off" anytime to disable.'
+            ),
             createEntry('system', ''),
           ],
           stateChanges: {
@@ -530,8 +546,16 @@ export const systemCommands: CommandRegistry = {
         return {
           output: [
             createEntry('system', ''),
-            createEntry('notice', 'TUTORIAL MODE: DISABLED'),
-            createEntry('output', "You're on your own now. Good luck kid."),
+            createEntryI18n(
+              'notice',
+              'engine.commands.system.tutorial_mode_disabled',
+              'TUTORIAL MODE: DISABLED'
+            ),
+            createEntryI18n(
+              'output',
+              'engine.commands.system.you_re_on_your_own_now_good_luck_kid',
+              "You're on your own now. Good luck kid."
+            ),
             createEntry('system', ''),
           ],
           stateChanges: {
@@ -545,7 +569,11 @@ export const systemCommands: CommandRegistry = {
     return {
       output: [
         createEntry('system', ''),
-        createEntry('system', 'Restarting tutorial sequence...'),
+        createEntryI18n(
+          'system',
+          'engine.commands.system.restarting_tutorial_sequence',
+          'Restarting tutorial sequence...'
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {
@@ -560,8 +588,16 @@ export const systemCommands: CommandRegistry = {
     // Save is handled at UI level, but acknowledge here
     return {
       output: [
-        createEntry('system', 'SESSION SAVE REQUESTED'),
-        createEntry('output', 'Use menu to confirm save slot.'),
+        createEntryI18n(
+          'system',
+          'engine.commands.system.session_save_requested',
+          'SESSION SAVE REQUESTED'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.system.use_menu_to_confirm_save_slot',
+          'Use menu to confirm save slot.'
+        ),
       ],
       stateChanges: {
         flags: { ...state.flags, saveRequested: true },

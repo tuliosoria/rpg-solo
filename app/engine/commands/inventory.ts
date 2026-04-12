@@ -1,18 +1,10 @@
 // Inventory/management commands: note, notes, bookmark, unread, progress, scan, decode, disconnect, release
 
 import { TerminalEntry } from '../../types';
-import {
-  resolvePath,
-  getNode,
-  listDirectory,
-  canAccessFile,
-} from '../filesystem';
+import { resolvePath, getNode, listDirectory, canAccessFile } from '../filesystem';
 import { countEvidence, getCaseStrengthDescription } from '../evidenceRevelation';
 import { DETECTION_THRESHOLDS, MAX_DETECTION } from '../../constants/detection';
-import {
-  createEntry,
-  createInvalidCommandResult,
-} from './utils';
+import { createEntry, createEntryI18n, createInvalidCommandResult } from './utils';
 import {
   ALPHA_RELEASE_INTRO,
   ALPHA_RELEASE_SEQUENCE,
@@ -27,9 +19,21 @@ export const inventoryCommands: CommandRegistry = {
     if (args.length === 0) {
       return {
         output: [
-          createEntry('error', 'ERROR: Specify note text'),
-          createEntry('system', 'Usage: note <your text>'),
-          createEntry('system', 'Example: note password might be varginha1996'),
+          createEntryI18n(
+            'error',
+            'engine.commands.inventory.error_specify_note_text',
+            'ERROR: Specify note text'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.usage_note_your_text',
+            'Usage: note <your text>'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.example_note_password_might_be_varginha1996',
+            'Example: note password might be varginha1996'
+          ),
         ],
         stateChanges: {},
       };
@@ -55,8 +59,16 @@ export const inventoryCommands: CommandRegistry = {
     if (notes.length === 0) {
       return {
         output: [
-          createEntry('system', 'No notes saved yet'),
-          createEntry('system', 'Use: note <text> to save a note'),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.no_notes_saved_yet',
+            'No notes saved yet'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.use_note_text_to_save_a_note',
+            'Use: note <text> to save a note'
+          ),
         ],
         stateChanges: {},
       };
@@ -65,7 +77,11 @@ export const inventoryCommands: CommandRegistry = {
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '═════════════════════════════════════════'),
-      createEntry('system', '                 YOUR NOTES              '),
+      createEntryI18n(
+        'system',
+        'engine.commands.inventory.your_notes',
+        '                 YOUR NOTES              '
+      ),
       createEntry('system', '═════════════════════════════════════════'),
       createEntry('system', ''),
     ];
@@ -96,8 +112,16 @@ export const inventoryCommands: CommandRegistry = {
       if (bookmarks.size === 0) {
         return {
           output: [
-            createEntry('system', 'No bookmarks saved'),
-            createEntry('system', 'Usage: bookmark <filename> to bookmark a file'),
+            createEntryI18n(
+              'system',
+              'engine.commands.inventory.no_bookmarks_saved',
+              'No bookmarks saved'
+            ),
+            createEntryI18n(
+              'system',
+              'engine.commands.inventory.usage_bookmark_filename_to_bookmark_a_file',
+              'Usage: bookmark <filename> to bookmark a file'
+            ),
           ],
           stateChanges: {},
         };
@@ -106,7 +130,11 @@ export const inventoryCommands: CommandRegistry = {
       const output: TerminalEntry[] = [
         createEntry('system', ''),
         createEntry('system', '═══════════════════════════════════════'),
-        createEntry('system', '             BOOKMARKED FILES          '),
+        createEntryI18n(
+          'system',
+          'engine.commands.inventory.bookmarked_files',
+          '             BOOKMARKED FILES          '
+        ),
         createEntry('system', '═══════════════════════════════════════'),
         createEntry('system', ''),
       ];
@@ -152,7 +180,11 @@ export const inventoryCommands: CommandRegistry = {
     return {
       output: [
         createEntry('system', `Bookmarked: ${filePath}`),
-        createEntry('system', 'Use "bookmark" to view all bookmarks'),
+        createEntryI18n(
+          'system',
+          'engine.commands.inventory.use_bookmark_to_view_all_bookmarks',
+          'Use "bookmark" to view all bookmarks'
+        ),
       ],
       stateChanges: { bookmarkedFiles: bookmarks },
       checkAchievements: newBookmarkCount >= 5 ? ['bookworm'] : undefined,
@@ -196,8 +228,16 @@ export const inventoryCommands: CommandRegistry = {
     if (unreadFiles.length === 0) {
       return {
         output: [
-          createEntry('system', 'All accessible files have been read!'),
-          createEntry('system', 'Some files may require higher access levels.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.all_accessible_files_have_been_read',
+            'All accessible files have been read!'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.some_files_may_require_higher_access_levels',
+            'Some files may require higher access levels.'
+          ),
         ],
         stateChanges: {},
       };
@@ -242,13 +282,23 @@ export const inventoryCommands: CommandRegistry = {
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
-      createEntry('system', '║            INVESTIGATION PROGRESS                     ║'),
+      createEntryI18n(
+        'system',
+        'engine.commands.inventory.investigation_progress',
+        '║            INVESTIGATION PROGRESS                     ║'
+      ),
       createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
       createEntry('system', ''),
     ];
 
     // Show evidence count
-    output.push(createEntry('system', '  EVIDENCE COLLECTED:'));
+    output.push(
+      createEntryI18n(
+        'system',
+        'engine.commands.inventory.evidence_collected',
+        '  EVIDENCE COLLECTED:'
+      )
+    );
     output.push(createEntry('system', ''));
     output.push(createEntry('output', `    Evidence Found: ${evidenceCount}/5`));
     output.push(createEntry('system', ''));
@@ -263,16 +313,34 @@ export const inventoryCommands: CommandRegistry = {
 
     // Session Statistics
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
-    output.push(createEntry('system', '  SESSION STATISTICS:'));
+    output.push(
+      createEntryI18n(
+        'system',
+        'engine.commands.inventory.session_statistics',
+        '  SESSION STATISTICS:'
+      )
+    );
     output.push(createEntry('output', `    Files examined: ${filesReadCount}`));
     output.push(createEntry('output', `    Bookmarks: ${bookmarksCount}  |  Notes: ${notesCount}`));
     output.push(createEntry('system', ''));
 
     // Detection warning
     if (state.detectionLevel >= DETECTION_THRESHOLDS.ALERT) {
-      output.push(createEntry('error', '  ⚠ CRITICAL: Detection level dangerously high'));
+      output.push(
+        createEntryI18n(
+          'error',
+          'engine.commands.inventory.critical_detection_level_dangerously_high',
+          '  ⚠ CRITICAL: Detection level dangerously high'
+        )
+      );
     } else if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_LOW) {
-      output.push(createEntry('warning', '  ⚠ WARNING: Detection level elevated'));
+      output.push(
+        createEntryI18n(
+          'warning',
+          'engine.commands.inventory.warning_detection_level_elevated',
+          '  ⚠ WARNING: Detection level elevated'
+        )
+      );
     }
 
     output.push(createEntry('system', ''));
@@ -294,13 +362,33 @@ export const inventoryCommands: CommandRegistry = {
     return {
       output: [
         createEntry('system', ''),
-        createEntry('warning', '  ▓ DEEP SCAN INITIATED ▓'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.inventory.deep_scan_initiated',
+          '  ▓ DEEP SCAN INITIATED ▓'
+        ),
         createEntry('system', ''),
-        createEntry('system', '  Scanning for hidden filesystem entries...'),
-        createEntry('system', '  Revealing masked nodes...'),
+        createEntryI18n(
+          'system',
+          'engine.commands.inventory.scanning_for_hidden_filesystem_entries',
+          '  Scanning for hidden filesystem entries...'
+        ),
+        createEntryI18n(
+          'system',
+          'engine.commands.inventory.revealing_masked_nodes',
+          '  Revealing masked nodes...'
+        ),
         createEntry('warning', ''),
-        createEntry('warning', '  [!] Scan complete. Hidden paths may now be visible.'),
-        createEntry('warning', '  [!] Detection risk: ELEVATED'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.inventory.scan_complete_hidden_paths_may_now_be_visible',
+          '  [!] Scan complete. Hidden paths may now be visible.'
+        ),
+        createEntryI18n(
+          'warning',
+          'engine.commands.inventory.detection_risk_elevated',
+          '  [!] Detection risk: ELEVATED'
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {
@@ -321,7 +409,13 @@ export const inventoryCommands: CommandRegistry = {
 
     if (!attempt) {
       return {
-        output: [createEntry('system', 'Usage: decode <text>')],
+        output: [
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.usage_decode_text',
+            'Usage: decode <text>'
+          ),
+        ],
         stateChanges: {},
       };
     }
@@ -336,11 +430,27 @@ export const inventoryCommands: CommandRegistry = {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: Decryption successful.'),
-          createEntry('ufo74', '[UFO74]: "The truth is not what they told you."'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.inventory.ufo74_decryption_successful',
+            '[UFO74]: Decryption successful.'
+          ),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.inventory.ufo74_the_truth_is_not_what_they_told_you',
+            '[UFO74]: "The truth is not what they told you."'
+          ),
           createEntry('warning', ''),
-          createEntry('ufo74', '[UFO74]: You understand now. The official reports...'),
-          createEntry('ufo74', '[UFO74]: They were never meant to be accurate.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.inventory.ufo74_you_understand_now_the_official_reports',
+            '[UFO74]: You understand now. The official reports...'
+          ),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.inventory.ufo74_they_were_never_meant_to_be_accurate',
+            '[UFO74]: They were never meant to be accurate.'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {
@@ -357,15 +467,29 @@ export const inventoryCommands: CommandRegistry = {
     if (cipherAttempts >= 3) {
       return {
         output: [
-          createEntry('ufo74', '[UFO74]: Still struggling with the cipher?'),
-          createEntry('ufo74', '[UFO74]: Try applying ROT13. Classic but effective.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.inventory.ufo74_still_struggling_with_the_cipher',
+            '[UFO74]: Still struggling with the cipher?'
+          ),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.inventory.ufo74_try_applying_rot13_classic_but_effective',
+            '[UFO74]: Try applying ROT13. Classic but effective.'
+          ),
         ],
         stateChanges: { cipherAttempts },
       };
     }
 
     return {
-      output: [createEntry('system', 'Decryption failed. Pattern not recognized.')],
+      output: [
+        createEntryI18n(
+          'system',
+          'engine.commands.inventory.decryption_failed_pattern_not_recognized',
+          'Decryption failed. Pattern not recognized.'
+        ),
+      ],
       stateChanges: { cipherAttempts },
     };
   },
@@ -381,13 +505,21 @@ export const inventoryCommands: CommandRegistry = {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('warning', 'DISCONNECTING...'),
+          createEntryI18n('warning', 'engine.commands.inventory.disconnecting', 'DISCONNECTING...'),
           createEntry('error', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('warning', ''),
-          createEntry('warning', 'Connection severed.'),
-          createEntry('warning', 'Evidence not saved. Files lost in disconnection.'),
-          createEntry('warning', 'You escaped... but the truth remains buried.'),
+          createEntryI18n('warning', 'runtime.connectionSevered', 'Connection severed.'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.inventory.evidence_not_saved_files_lost_in_disconnection',
+            'Evidence not saved. Files lost in disconnection.'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.inventory.you_escaped_but_the_truth_remains_buried',
+            'You escaped... but the truth remains buried.'
+          ),
           createEntry('error', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
         ],
@@ -404,8 +536,16 @@ export const inventoryCommands: CommandRegistry = {
 
     return {
       output: [
-        createEntry('system', 'Cannot disconnect — connection transfer in progress.'),
-        createEntry('warning', 'Evidence files are being relayed. Stand by.'),
+        createEntryI18n(
+          'system',
+          'engine.commands.inventory.cannot_disconnect_connection_transfer_in_progress',
+          'Cannot disconnect — connection transfer in progress.'
+        ),
+        createEntryI18n(
+          'warning',
+          'engine.commands.inventory.evidence_files_are_being_relayed_stand_by',
+          'Evidence files are being relayed. Stand by.'
+        ),
       ],
       stateChanges: {},
     };
@@ -413,30 +553,38 @@ export const inventoryCommands: CommandRegistry = {
 
   release: (args, state) => {
     const target = args.join(' ').toLowerCase().trim();
-    
+
     // Check for ALPHA variants
     const validTargets = ['alpha', 'codename alpha', 'subject alpha'];
     const isReleasingAlpha = validTargets.some(t => target.includes(t));
-    
+
     if (!isReleasingAlpha) {
       // Not releasing ALPHA - show generic error
       return {
         output: [
           createEntry('system', ''),
-          createEntry('error', 'RELEASE COMMAND REQUIRES TARGET'),
+          createEntryI18n(
+            'error',
+            'engine.commands.inventory.release_command_requires_target',
+            'RELEASE COMMAND REQUIRES TARGET'
+          ),
           createEntry('system', ''),
-          createEntry('system', 'Usage: release <subject_id>'),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.usage_release_subject_id',
+            'Usage: release <subject_id>'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {},
       };
     }
-    
+
     // Check if player has discovered ALPHA files
-    const hasDiscoveredAlpha = Array.from(state.filesRead).some(f => 
-      f.includes('alpha_journal') || f.includes('alpha_neural') || f.includes('alpha_autopsy')
+    const hasDiscoveredAlpha = Array.from(state.filesRead).some(
+      f => f.includes('alpha_journal') || f.includes('alpha_neural') || f.includes('alpha_autopsy')
     );
-    
+
     if (!hasDiscoveredAlpha) {
       const output = ALPHA_FILE_NOT_FOUND.map(line =>
         createEntry(line.includes('ERROR') ? 'error' : 'system', line)
@@ -446,7 +594,7 @@ export const inventoryCommands: CommandRegistry = {
         stateChanges: {},
       };
     }
-    
+
     // Check if already released
     if (state.flags.alphaReleased) {
       const output = ALPHA_ALREADY_RELEASED.map(line =>
@@ -457,37 +605,48 @@ export const inventoryCommands: CommandRegistry = {
         stateChanges: {},
       };
     }
-    
+
     // Execute release!
     const output: TerminalEntry[] = [];
-    
+
     // Intro
     for (const line of ALPHA_RELEASE_INTRO) {
-      output.push(createEntry(line.includes('▓') ? 'warning' : line.includes('COMMAND') ? 'notice' : 'system', line));
+      output.push(
+        createEntry(
+          line.includes('▓') ? 'warning' : line.includes('COMMAND') ? 'notice' : 'system',
+          line
+        )
+      );
     }
-    
+
     // Sequence
     for (const line of ALPHA_RELEASE_SEQUENCE) {
-      output.push(createEntry(
-        line.includes('WARNING') ? 'error' :
-        line.includes('>') ? 'notice' :
-        'output',
-        line
-      ));
+      output.push(
+        createEntry(
+          line.includes('WARNING') ? 'error' : line.includes('>') ? 'notice' : 'output',
+          line
+        )
+      );
     }
-    
+
     // Success
     for (const line of ALPHA_RELEASE_SUCCESS) {
-      output.push(createEntry(
-        line.includes('▓▓▓') ? 'notice' :
-        line.includes('UFO74:') ? 'ufo74' :
-        line.includes('═') ? 'warning' :
-        line.startsWith('  ...') ? 'warning' :
-        'output',
-        line
-      ));
+      output.push(
+        createEntry(
+          line.includes('▓▓▓')
+            ? 'notice'
+            : line.includes('UFO74:')
+              ? 'ufo74'
+              : line.includes('═')
+                ? 'warning'
+                : line.startsWith('  ...')
+                  ? 'warning'
+                  : 'output',
+          line
+        )
+      );
     }
-    
+
     return {
       output,
       stateChanges: {

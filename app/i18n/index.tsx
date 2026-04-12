@@ -357,6 +357,28 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           : 'runtime.waitRemaining.other';
         return applyLeadingWhitespace(waitRemainingMatch, key, { value: waitRemainingMatch[2] }, text);
       }
+      const leakDetectionDeltaMatch = text.match(/^DETECTION:\s*\+(\d+)%$/);
+      if (leakDetectionDeltaMatch) {
+        return t('runtime.leakDetectionDelta', { value: leakDetectionDeltaMatch[1] }, text);
+      }
+      const wrongAnswersMatch = text.match(/^Wrong answers:\s*(\d+)\/(\d+)$/);
+      if (wrongAnswersMatch) {
+        return t(
+          'runtime.wrongAnswers',
+          { current: wrongAnswersMatch[1], total: wrongAnswersMatch[2] },
+          text
+        );
+      }
+      const conspiracyDocumentsCachedMatch = text.match(
+        /^You have (\d+) conspiracy document\(s\) in your cache\.$/
+      );
+      if (conspiracyDocumentsCachedMatch) {
+        return t(
+          'runtime.conspiracyDocumentsCached',
+          { value: conspiracyDocumentsCachedMatch[1] },
+          text
+        );
+      }
       const questionProgressMatch = text.match(/^(\s*)Question:\s*(\d+)\/(\d+)$/);
       if (questionProgressMatch) {
         return applyLeadingWhitespace(
@@ -470,7 +492,31 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         return t('runtime.scriptNotFound', { value: scriptNotFoundMatch[1] }, text);
       }
       const translated = RUNTIME_TRANSLATIONS[language][text];
-      return normalizeRuntimePresentation(translated ?? text);
+      if (translated !== undefined) {
+        return normalizeRuntimePresentation(translated);
+      }
+      const quotedLineMatch = text.match(/^(\s*)"(.+)"$/);
+      if (quotedLineMatch) {
+        const translatedInner = translateRuntimeText(quotedLineMatch[2]);
+        if (translatedInner !== quotedLineMatch[2]) {
+          return normalizeRuntimePresentation(`${quotedLineMatch[1]}"${translatedInner}"`);
+        }
+      }
+      const bracketedLineMatch = text.match(/^(\s*)\[(.+)\]$/);
+      if (bracketedLineMatch) {
+        const translatedInner = translateRuntimeText(bracketedLineMatch[2]);
+        if (translatedInner !== bracketedLineMatch[2]) {
+          return normalizeRuntimePresentation(`${bracketedLineMatch[1]}[${translatedInner}]`);
+        }
+      }
+      const leadingWhitespaceMatch = text.match(/^(\s+)(.+)$/);
+      if (leadingWhitespaceMatch) {
+        const translatedInner = translateRuntimeText(leadingWhitespaceMatch[2]);
+        if (translatedInner !== leadingWhitespaceMatch[2]) {
+          return normalizeRuntimePresentation(`${leadingWhitespaceMatch[1]}${translatedInner}`);
+        }
+      }
+      return normalizeRuntimePresentation(text);
     },
     [language, t]
   );

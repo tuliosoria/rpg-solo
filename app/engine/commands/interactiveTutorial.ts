@@ -2,8 +2,14 @@
 // Based on SHODAN-tutorial-spec.md
 // Implements gated input system where UFO74 guides player through commands
 
-import { TerminalEntry, GameState, CommandResult, TutorialStateID, InteractiveTutorialState } from '../../types';
-import { createEntry } from './utils';
+import {
+  TerminalEntry,
+  GameState,
+  CommandResult,
+  TutorialStateID,
+  InteractiveTutorialState,
+} from '../../types';
+import { createEntry, createEntryI18n } from './utils';
 import { listDirectory } from '../filesystem';
 import { DEFAULT_GAME_STATE } from '../../types';
 
@@ -36,10 +42,7 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
     "[UFO74]: Hey kid! I'll create a user for you so you can investigate.",
     '[UFO74]: You will be... hackerkid.',
   ],
-  [TutorialStateID.LS_PROMPT]: [
-    "[UFO74]: First, see what's here.",
-    '[UFO74]: Type `ls`',
-  ],
+  [TutorialStateID.LS_PROMPT]: ["[UFO74]: First, see what's here.", '[UFO74]: Type `ls`'],
   [TutorialStateID.CD_PROMPT]: [
     '[UFO74]: Good. These are the main directories.',
     '[UFO74]: Start with internal — it has basic files.',
@@ -61,10 +64,7 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
     '[UFO74]: Go back up one level.',
     '[UFO74]: Type `cd ..`',
   ],
-  [TutorialStateID.LS_REINFORCE]: [
-    '[UFO74]: Now go back to root.',
-    '[UFO74]: Type `cd ..`',
-  ],
+  [TutorialStateID.LS_REINFORCE]: ['[UFO74]: Now go back to root.', '[UFO74]: Type `cd ..`'],
   [TutorialStateID.TUTORIAL_END]: [
     '[UFO74]: Now the real thing.',
     '',
@@ -221,10 +221,7 @@ export function validateTutorialInput(
 /**
  * Get autocomplete suggestion for current tutorial state
  */
-export function getTutorialAutocomplete(
-  input: string,
-  state: TutorialStateID
-): string | null {
+export function getTutorialAutocomplete(input: string, state: TutorialStateID): string | null {
   const normalized = normalizeInput(input);
 
   if (state === TutorialStateID.FILE_DISPLAY) {
@@ -269,7 +266,7 @@ export function isTutorialInputState(state: TutorialStateID): boolean {
 export function isInTutorialMode(state: GameState): boolean {
   // If tutorialComplete is set, we're past the tutorial
   if (state.tutorialComplete) return false;
-  
+
   const tutorialState = state.interactiveTutorialState;
   if (!tutorialState) return false;
   return tutorialState.current !== TutorialStateID.GAME_ACTIVE;
@@ -356,7 +353,7 @@ export function processTutorialInput(
     return {
       output: [
         createEntry('input', `> ${input}`),
-        createEntry('error', 'INPUT TOO LONG'),
+        createEntryI18n('error', 'runtime.inputTooLong', 'INPUT TOO LONG'),
         createEntry('system', ''),
       ],
       stateChanges: {},
@@ -442,7 +439,9 @@ function handleValidInput(
       // Go back to /internal
       currentPath = '/internal';
       entries.push(createEntry('system', ''));
-      entries.push(createEntry('output', '/internal>'));
+      entries.push(
+        createEntryI18n('output', 'engine.commands.interactiveTutorial.internal', '/internal>')
+      );
       entries.push(createEntry('system', ''));
       nextState = TutorialStateID.LS_REINFORCE;
       // Add LS_REINFORCE dialogue
@@ -453,7 +452,7 @@ function handleValidInput(
       // Go back to root
       currentPath = '/';
       entries.push(createEntry('system', ''));
-      entries.push(createEntry('output', '/>'));
+      entries.push(createEntryI18n('output', 'engine.commands.interactiveTutorial.text', '/>'));
       entries.push(createEntry('system', ''));
       // Show opening briefing lines, then enter step-by-step mode
       entries.push(...generateTutorialEndDialogue());
@@ -465,7 +464,8 @@ function handleValidInput(
     current: nextState,
     failCount: 0,
     nudgeShown: false,
-    inputLocked: nextState === TutorialStateID.GAME_ACTIVE ? false : !isTutorialInputState(nextState),
+    inputLocked:
+      nextState === TutorialStateID.GAME_ACTIVE ? false : !isTutorialInputState(nextState),
     dialogueComplete: true,
   };
 
@@ -521,7 +521,7 @@ function getTutorialHint(input: string, state: TutorialStateID): string {
         return '[UFO74]: Wrong folder. Type: cd internal';
       }
       if (normalized === 'ls') {
-        return "[UFO74]: You already see the folders. Navigate into one. Type: cd internal";
+        return '[UFO74]: You already see the folders. Navigate into one. Type: cd internal';
       }
       if (normalized.startsWith('open ')) {
         return "[UFO74]: Can't open a folder. Navigate into it. Type: cd internal";
@@ -589,7 +589,7 @@ function getTutorialHint(input: string, state: TutorialStateID): string {
         return '[UFO74]: Back to root. Type: cd ..';
       }
       if (normalized === 'ls') {
-        return "[UFO74]: One more step back first. Type: cd ..";
+        return '[UFO74]: One more step back first. Type: cd ..';
       }
       return '[UFO74]: Same as before. Type: cd ..';
     }
@@ -637,8 +637,16 @@ function generateTutorialEndDialogue(): TerminalEntry[] {
   // Only show the opening line — the rest is delivered step-by-step
   return [
     createEntry('system', ''),
-    createEntry('ufo74', '[UFO74]: Good. You know enough.'),
-    createEntry('ufo74', '[UFO74]: Now the real thing.'),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_good_you_know_enough',
+      '[UFO74]: Good. You know enough.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_now_the_real_thing',
+      '[UFO74]: Now the real thing.'
+    ),
     createEntry('system', ''),
   ];
 }
@@ -655,41 +663,75 @@ function generateTutorialEndDialogue(): TerminalEntry[] {
 export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
   // Step 0 — Evidence reveal
   [
-    createEntry('ufo74', '[UFO74]: Your mission: find 5 pieces of evidence.'),
-    createEntry('ufo74', '[UFO74]: Once you have them, leak everything.'),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_your_mission_find_5_pieces_of_evidence',
+      '[UFO74]: Your mission: find 5 pieces of evidence.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_once_you_have_them_leak_everything',
+      '[UFO74]: Once you have them, leak everything.'
+    ),
     createEntry('system', ''),
   ],
   // Step 1
   [
-    createEntry('ufo74', '[UFO74]: But understand the risks.'),
-    createEntry('ufo74', '[UFO74]: Every action you take... they might notice.'),
-    createEntry('ufo74', "[UFO74]: Risk hits 100%, you're done. They'll find you."),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_but_understand_the_risks',
+      '[UFO74]: But understand the risks.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_every_action_you_take_they_might_notice',
+      '[UFO74]: Every action you take... they might notice.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_risk_hits_100_you_re_done_they_ll_find_you',
+      "[UFO74]: Risk hits 100%, you're done. They'll find you."
+    ),
     createEntry('system', ''),
   ],
   // Step 2 — Attempts reveal
   [
-    createEntry(
+    createEntryI18n(
       'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_be_careful_do_not_type_wrong_commands_on_the_terminal_',
       '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.'
     ),
-    createEntry(
+    createEntryI18n(
       'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_type_wrong_commands_8_times_the_window_closes_permanen',
       '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
     ),
     createEntry('system', ''),
   ],
   // Step 3
   [
-    createEntry('ufo74', '[UFO74]: Some files are bait. Opening them spikes detection.'),
-    createEntry('ufo74', '[UFO74]: Some actions are loud. Others are quiet.'),
-    createEntry('ufo74', '[UFO74]: Curiosity has a cost here.'),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_some_files_are_bait_opening_them_spikes_detection',
+      '[UFO74]: Some files are bait. Opening them spikes detection.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_some_actions_are_loud_others_are_quiet',
+      '[UFO74]: Some actions are loud. Others are quiet.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_curiosity_has_a_cost_here',
+      '[UFO74]: Curiosity has a cost here.'
+    ),
     createEntry('system', ''),
   ],
   // Step 4 — Final / disconnect
   [
-    createEntry('ufo74', '[UFO74]: ...'),
+    createEntryI18n('ufo74', 'terminal.tutorialSkip.ellipsis', '[UFO74]: ...'),
     createEntry('system', ''),
-    createEntry('system', '[UFO74 has disconnected]'),
+    createEntryI18n('system', 'terminal.tutorialSkip.disconnected', '[UFO74 has disconnected]'),
     createEntry('system', ''),
   ],
 ];
@@ -701,33 +743,81 @@ export const TUTORIAL_INTRO_STEPS: TerminalEntry[][] = [
   // Block 0 — First contact
   [
     createEntry('system', ''),
-    createEntry('ufo74', '[UFO74]: Connection established.'),
-    createEntry('ufo74', "[UFO74]: Listen carefully. I don't repeat myself."),
-    createEntry('ufo74', "[UFO74]: You're inside their system. Don't panic."),
+    createEntryI18n('ufo74', 'terminal.tutorialSkip.connected', '[UFO74]: Connection established.'),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_listen_carefully_i_don_t_repeat_myself',
+      "[UFO74]: Listen carefully. I don't repeat myself."
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_you_re_inside_their_system_don_t_panic',
+      "[UFO74]: You're inside their system. Don't panic."
+    ),
     createEntry('system', ''),
   ],
   // Block 1 — hackerkid creation (triggers avatar animation)
   [
-    createEntry('ufo74', "[UFO74]: Hey kid! I'll create a user for you so you can investigate."),
-    createEntry('ufo74', '[UFO74]: You will be... hackerkid.'),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_hey_kid_i_ll_create_a_user_for_you_so_you_can_investig',
+      "[UFO74]: Hey kid! I'll create a user for you so you can investigate."
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_you_will_be_hackerkid',
+      '[UFO74]: You will be... hackerkid.'
+    ),
     createEntry('system', ''),
   ],
   // Block 2 — User creation animation + context + first command
   [
-    createEntry('system', '> CREATING USER PROFILE...'),
-    createEntry('system', '> USERNAME: hackerkid'),
-    createEntry('system', '> ACCESS LEVEL: 1 [PROVISIONAL]'),
-    createEntry('system', '> STATUS: ACTIVE'),
+    createEntryI18n('system', 'terminal.tutorialSkip.createProfile', '> CREATING USER PROFILE...'),
+    createEntryI18n('system', 'terminal.tutorialSkip.username', '> USERNAME: hackerkid'),
+    createEntryI18n(
+      'system',
+      'terminal.tutorialSkip.accessLevel',
+      '> ACCESS LEVEL: 1 [PROVISIONAL]'
+    ),
+    createEntryI18n('system', 'terminal.tutorialSkip.statusActive', '> STATUS: ACTIVE'),
     createEntry('system', ''),
-    createEntry('notice', '✓ USER hackerkid REGISTERED'),
+    createEntryI18n(
+      'notice',
+      'terminal.tutorialSkip.userRegistered',
+      '✓ USER hackerkid REGISTERED'
+    ),
     createEntry('system', ''),
-    createEntry('ufo74', "[UFO74]: Great, now you're in. Let's get to business."),
-    createEntry('ufo74', '[UFO74]: We need to explore UFO files here. Brazil, 1996, kid. Varginha!'),
-    createEntry('ufo74', '[UFO74]: Aliens were all over the damn city.'),
-    createEntry('ufo74', "[UFO74]: I'll teach you the basics."),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_great_now_you_re_in_let_s_get_to_business',
+      "[UFO74]: Great, now you're in. Let's get to business."
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_we_need_to_explore_ufo_files_here_brazil_1996_kid_varg',
+      '[UFO74]: We need to explore UFO files here. Brazil, 1996, kid. Varginha!'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_aliens_were_all_over_the_damn_city',
+      '[UFO74]: Aliens were all over the damn city.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_i_ll_teach_you_the_basics',
+      "[UFO74]: I'll teach you the basics."
+    ),
     createEntry('system', ''),
-    createEntry('ufo74', "[UFO74]: First, see what's here."),
-    createEntry('ufo74', '[UFO74]: Type `ls`'),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_first_see_what_s_here',
+      "[UFO74]: First, see what's here."
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_type_ls',
+      '[UFO74]: Type `ls`'
+    ),
     createEntry('system', ''),
   ],
 ];
@@ -752,11 +842,23 @@ export function getInitialTutorialOutput(): TerminalEntry[] {
   return [
     createEntry('system', ''),
     createEntry('system', '═══════════════════════════════════════════════════════════'),
-    createEntry('system', 'BRAZILIAN INTELLIGENCE LEGACY SYSTEM'),
-    createEntry('system', 'TERMINAL ACCESS POINT — NODE 7'),
+    createEntryI18n(
+      'system',
+      'engine.commands.interactiveTutorial.brazilian_intelligence_legacy_system',
+      'BRAZILIAN INTELLIGENCE LEGACY SYSTEM'
+    ),
+    createEntryI18n(
+      'system',
+      'engine.commands.interactiveTutorial.terminal_access_point_node_7',
+      'TERMINAL ACCESS POINT — NODE 7'
+    ),
     createEntry('system', '═══════════════════════════════════════════════════════════'),
     createEntry('system', ''),
-    createEntry('system', 'SYSTEM DATE: JANUARY 1996'),
+    createEntryI18n(
+      'system',
+      'engine.commands.interactiveTutorial.system_date_january_1996',
+      'SYSTEM DATE: JANUARY 1996'
+    ),
     createEntry('system', ''),
   ];
 }

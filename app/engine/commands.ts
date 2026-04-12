@@ -1,38 +1,20 @@
 // Command parser and execution engine for Terminal 1996
 // Command handlers are split into domain modules under ./commands/
 
-import {
-  GameState,
-  CommandResult,
-  TerminalEntry,
-  FileNode,
-} from '../types';
-import {
-  resolvePath,
-  getNode,
-} from './filesystem';
+import { GameState, CommandResult, TerminalEntry, FileNode } from '../types';
+import { resolvePath, getNode } from './filesystem';
 import { MAX_DETECTION } from '../constants/detection';
 import { MAX_WRONG_ATTEMPTS } from '../constants/gameplay';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
 
 // Import utilities
-import {
-  createEntry,
-  sanitizeCommandInput,
-  parseCommand,
-} from './commands/utils';
+import { createEntry, createEntryI18n, sanitizeCommandInput, parseCommand } from './commands/utils';
 
 // Import interactive tutorial system
-import {
-  isInTutorialMode,
-  processTutorialInput,
-} from './commands/interactiveTutorial';
+import { isInTutorialMode, processTutorialInput } from './commands/interactiveTutorial';
 
 // Import Elusive Man leak system (conspiracy choice kept for save compat)
-import {
-  isPendingConspiracyChoice,
-  processConspiracyChoice,
-} from './elusiveMan';
+import { isPendingConspiracyChoice, processConspiracyChoice } from './elusiveMan';
 
 // Import helpers used by executeCommand
 import {
@@ -86,11 +68,23 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         output: [
           createEntry('error', ''),
           createEntry('error', '═══════════════════════════════════════════════════════════'),
-          createEntry('error', 'CRITICAL: INPUT LENGTH THRESHOLD EXCEEDED'),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.critical_input_length_threshold_exceeded',
+            'CRITICAL: INPUT LENGTH THRESHOLD EXCEEDED'
+          ),
           createEntry('error', '═══════════════════════════════════════════════════════════'),
           createEntry('error', ''),
-          createEntry('error', 'SYSTEM LOCKDOWN INITIATED'),
-          createEntry('error', 'SESSION TERMINATED'),
+          createEntryI18n(
+            'error',
+            'engine.invalidAttemptThreshold.lockdown',
+            'SYSTEM LOCKDOWN INITIATED'
+          ),
+          createEntryI18n(
+            'error',
+            'engine.invalidAttemptThreshold.terminated',
+            'SESSION TERMINATED'
+          ),
           createEntry('error', ''),
         ],
         stateChanges: {
@@ -105,7 +99,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     if (nextDetection >= MAX_DETECTION) {
       return {
         output: [
-          createEntry('error', 'ERROR: INPUT TOO LONG'),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.error_input_too_long',
+            'ERROR: INPUT TOO LONG'
+          ),
           createEntry('warning', ''),
           createEntry(
             'warning',
@@ -114,12 +112,28 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntry('error', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('error', ''),
-          createEntry('error', '  INTRUSION DETECTED'),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.intrusion_detected',
+            '  INTRUSION DETECTED'
+          ),
           createEntry('error', ''),
-          createEntry('error', '  Your connection has been traced.'),
-          createEntry('error', '  Security protocols have been dispatched.'),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.your_connection_has_been_traced',
+            '  Your connection has been traced.'
+          ),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.security_protocols_have_been_dispatched',
+            '  Security protocols have been dispatched.'
+          ),
           createEntry('error', ''),
-          createEntry('error', '  >> SESSION TERMINATED <<'),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.session_terminated',
+            '  >> SESSION TERMINATED <<'
+          ),
           createEntry('error', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('error', ''),
@@ -136,7 +150,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
     return {
       output: [
-        createEntry('error', 'ERROR: INPUT TOO LONG'),
+        createEntryI18n(
+          'error',
+          'engine.commands.core.error_input_too_long',
+          'ERROR: INPUT TOO LONG'
+        ),
         createEntry('warning', ''),
         createEntry('warning', `Maximum command length is ${MAX_COMMAND_INPUT_LENGTH} characters.`),
         createEntry('system', `   [Invalid attempts: ${newAlertCounter}/8]`),
@@ -154,7 +172,9 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // Check for game over
   if (state.isGameOver) {
     return {
-      output: [createEntry('error', 'SESSION TERMINATED')],
+      output: [
+        createEntryI18n('error', 'engine.invalidAttemptThreshold.terminated', 'SESSION TERMINATED'),
+      ],
       stateChanges: {},
     };
   }
@@ -171,7 +191,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // ═══════════════════════════════════════════════════════════════════════════
   const traceSpikeWarning =
     state.traceSpikeActive && state.countdownActive && state.countdownTriggeredBy === 'trace_spike'
-      ? createEntry('warning', '[TRACE SPIKE ACTIVE]')
+      ? createEntryI18n(
+          'warning',
+          'engine.commands.core.trace_spike_active',
+          '[TRACE SPIKE ACTIVE]'
+        )
       : null;
 
   // Track doom countdown decrement for later injection into result
@@ -188,11 +212,27 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntry('error', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('error', ''),
-          createEntry('error', '                    PURGE PROTOCOL COMPLETE'),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.purge_protocol_complete',
+            '                    PURGE PROTOCOL COMPLETE'
+          ),
           createEntry('error', ''),
-          createEntry('warning', '          You saw what you should not have seen.'),
-          createEntry('warning', '          The knowledge is yours to keep.'),
-          createEntry('warning', '          But this session is now closed.'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.core.you_saw_what_you_should_not_have_seen',
+            '          You saw what you should not have seen.'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.core.the_knowledge_is_yours_to_keep',
+            '          The knowledge is yours to keep.'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.core.but_this_session_is_now_closed',
+            '          But this session is now closed.'
+          ),
           createEntry('error', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('error', ''),
@@ -218,9 +258,17 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   const lowerInput = normalizedInput.trim().toLowerCase();
   const createAlienPreviewResult = () => ({
     output: [
-      createEntry('system', '═══ ALIEN PREVIEW ARMED ═══'),
-      createEntry('output', 'detectionLevel = 70'),
-      createEntry('output', 'Forced alien silhouette preview active for 12 seconds.'),
+      createEntryI18n(
+        'system',
+        'engine.commands.core.alien_preview_armed',
+        '═══ ALIEN PREVIEW ARMED ═══'
+      ),
+      createEntryI18n('output', 'engine.commands.core.detectionlevel_70', 'detectionLevel = 70'),
+      createEntryI18n(
+        'output',
+        'engine.commands.core.forced_alien_silhouette_preview_active_for_12_seconds',
+        'Forced alien silhouette preview active for 12 seconds.'
+      ),
     ],
     stateChanges: {
       detectionLevel: 70,
@@ -230,10 +278,22 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   const createLeakReadyEvidenceResult = (title = '═══ LEAK-READY EVIDENCE ARMED ═══') => ({
     output: [
       createEntry('system', title),
-      createEntry('output', 'Evidence count set to 5/5'),
-      createEntry('output', 'Leak path ready — use "leak" or run "save_evidence.sh".'),
+      createEntryI18n(
+        'output',
+        'engine.commands.core.evidence_count_set_to_5_5',
+        'Evidence count set to 5/5'
+      ),
+      createEntryI18n(
+        'output',
+        'engine.commands.core.leak_path_ready_use_leak_or_run_save_evidence_sh',
+        'Leak path ready — use "leak" or run "save_evidence.sh".'
+      ),
       createEntry('system', ''),
-      createEntry('output', 'Use "god save" to trigger the blackout phase instead.'),
+      createEntryI18n(
+        'output',
+        'engine.commands.core.use_god_save_to_trigger_the_blackout_phase_instead',
+        'Use "god save" to trigger the blackout phase instead.'
+      ),
     ],
     stateChanges: {
       evidenceCount: 5,
@@ -253,7 +313,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('warning', '▓▓▓ GOD MODE DEACTIVATED ▓▓▓'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.core.god_mode_deactivated',
+            '▓▓▓ GOD MODE DEACTIVATED ▓▓▓'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: { godMode: false },
@@ -262,19 +326,59 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     return {
       output: [
         createEntry('system', ''),
-        createEntry('warning', '▓▓▓ GOD MODE ACTIVATED ▓▓▓'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.core.god_mode_activated',
+          '▓▓▓ GOD MODE ACTIVATED ▓▓▓'
+        ),
         createEntry('system', ''),
-        createEntry('output', 'Available commands:'),
-        createEntry('output', '  god help     - Show all god mode commands'),
-        createEntry('output', '  god evidence - Unlock all 5 evidence pieces'),
-        createEntry('output', '  god save     - Trigger evidence saved (→ blackout)'),
-        createEntry('output', '  god icq      - Jump to ICQ phase'),
-        createEntry('output', '  god victory  - Jump to victory screen'),
-        createEntry('output', '  god reset    - Reset game state'),
-        createEntry('output', '  god status   - Show current game state'),
-        createEntry('output', '  god alien    - Set risk to 70 and force alien preview'),
+        createEntryI18n('output', 'engine.commands.core.available_commands', 'Available commands:'),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.god_help_show_all_god_mode_commands',
+          '  god help     - Show all god mode commands'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.god_evidence_unlock_all_5_evidence_pieces',
+          '  god evidence - Unlock all 5 evidence pieces'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.god_save_trigger_evidence_saved_blackout',
+          '  god save     - Trigger evidence saved (→ blackout)'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.god_icq_jump_to_icq_phase',
+          '  god icq      - Jump to ICQ phase'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.god_victory_jump_to_victory_screen',
+          '  god victory  - Jump to victory screen'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.god_reset_reset_game_state',
+          '  god reset    - Reset game state'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.god_status_show_current_game_state',
+          '  god status   - Show current game state'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.god_alien_set_risk_to_70_and_force_alien_preview',
+          '  god alien    - Set risk to 70 and force alien preview'
+        ),
         createEntry('system', ''),
-        createEntry('output', 'Type "iddqd" again to deactivate.'),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.type_iddqd_again_to_deactivate',
+          'Type "iddqd" again to deactivate.'
+        ),
       ],
       stateChanges: { godMode: true },
     };
@@ -287,25 +391,93 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     if (godCmd === 'help') {
       return {
         output: [
-          createEntry('system', '═══ GOD MODE COMMANDS ═══'),
+          createEntryI18n(
+            'system',
+            'engine.commands.core.god_mode_commands',
+            '═══ GOD MODE COMMANDS ═══'
+          ),
           createEntry('output', ''),
-          createEntry('output', 'god help      - Show this help'),
-          createEntry('output', 'god evidence  - Discover all 5 evidence pieces'),
-          createEntry('output', 'god save      - Set evidencesSaved flag (triggers blackout)'),
-          createEntry('output', 'god icq       - Jump directly to ICQ phase'),
-          createEntry('output', 'god victory   - Jump directly to victory screen'),
-          createEntry('output', 'god bad       - Jump to bad ending (caught)'),
-          createEntry('output', 'god neutral   - Jump to neutral ending (escaped)'),
-          createEntry('output', 'god secret    - Jump to secret ending (UFO74 identity)'),
-          createEntry('output', 'god countdown - Start 2-minute countdown'),
-          createEntry('output', 'god unlock    - Unlock hidden commands & passwords'),
-          createEntry('output', 'god reset     - Reset to fresh game state'),
-          createEntry('output', 'god status    - Show current game flags'),
-          createEntry('output', 'god stable    - Set stability to 100, detection to 0'),
-          createEntry('output', 'god alien     - Set detection to 70 and force alien preview'),
-          createEntry('output', 'god doom      - Disable doom countdown'),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_help_show_this_help',
+            'god help      - Show this help'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_evidence_discover_all_5_evidence_pieces',
+            'god evidence  - Discover all 5 evidence pieces'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_save_set_evidencessaved_flag_triggers_blackout',
+            'god save      - Set evidencesSaved flag (triggers blackout)'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_icq_jump_directly_to_icq_phase',
+            'god icq       - Jump directly to ICQ phase'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_victory_jump_directly_to_victory_screen',
+            'god victory   - Jump directly to victory screen'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_bad_jump_to_bad_ending_caught',
+            'god bad       - Jump to bad ending (caught)'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_neutral_jump_to_neutral_ending_escaped',
+            'god neutral   - Jump to neutral ending (escaped)'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_secret_jump_to_secret_ending_ufo74_identity',
+            'god secret    - Jump to secret ending (UFO74 identity)'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_countdown_start_2_minute_countdown',
+            'god countdown - Start 2-minute countdown'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_unlock_unlock_hidden_commands_passwords',
+            'god unlock    - Unlock hidden commands & passwords'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_reset_reset_to_fresh_game_state',
+            'god reset     - Reset to fresh game state'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_status_show_current_game_flags',
+            'god status    - Show current game flags'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_stable_set_stability_to_100_detection_to_0',
+            'god stable    - Set stability to 100, detection to 0'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_alien_set_detection_to_70_and_force_alien_preview',
+            'god alien     - Set detection to 70 and force alien preview'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_doom_disable_doom_countdown',
+            'god doom      - Disable doom countdown'
+          ),
           createEntry('output', ''),
-          createEntry('system', 'Type "iddqd" to toggle god mode off.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.core.type_iddqd_to_toggle_god_mode_off',
+            'Type "iddqd" to toggle god mode off.'
+          ),
         ],
         stateChanges: {},
       };
@@ -322,9 +494,21 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     if (godCmd === 'save') {
       return {
         output: [
-          createEntry('system', '═══ EVIDENCE SAVED ═══'),
-          createEntry('output', 'evidencesSaved = true'),
-          createEntry('output', 'Blackout transition will trigger in 3 seconds...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.core.evidence_saved',
+            '═══ EVIDENCE SAVED ═══'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.evidencessaved_true',
+            'evidencesSaved = true'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.blackout_transition_will_trigger_in_3_seconds',
+            'Blackout transition will trigger in 3 seconds...'
+          ),
         ],
         stateChanges: {
           evidencesSaved: true,
@@ -336,8 +520,16 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     if (godCmd === 'icq') {
       return {
         output: [
-          createEntry('system', '═══ JUMPING TO ICQ PHASE ═══'),
-          createEntry('output', 'Terminal will transition to ICQ chat...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.core.jumping_to_icq_phase',
+            '═══ JUMPING TO ICQ PHASE ═══'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.terminal_will_transition_to_icq_chat',
+            'Terminal will transition to ICQ chat...'
+          ),
         ],
         stateChanges: {
           evidencesSaved: true,
@@ -349,7 +541,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
     if (godCmd === 'victory') {
       return {
-        output: [createEntry('system', '═══ JUMPING TO VICTORY ═══')],
+        output: [
+          createEntryI18n(
+            'system',
+            'engine.commands.core.jumping_to_victory',
+            '═══ JUMPING TO VICTORY ═══'
+          ),
+        ],
         stateChanges: {
           gameWon: true,
           endingType: 'good',
@@ -361,8 +559,16 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     if (godCmd === 'reset') {
       return {
         output: [
-          createEntry('system', '═══ GAME STATE RESET ═══'),
-          createEntry('output', 'All progress cleared. Reload recommended.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.core.game_state_reset',
+            '═══ GAME STATE RESET ═══'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.all_progress_cleared_reload_recommended',
+            'All progress cleared. Reload recommended.'
+          ),
         ],
         stateChanges: {
           evidenceCount: 0,
@@ -383,7 +589,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       const evidCount = state.evidenceCount || 0;
       return {
         output: [
-          createEntry('system', '═══ GAME STATUS ═══'),
+          createEntryI18n('system', 'engine.commands.core.game_status', '═══ GAME STATUS ═══'),
           createEntry('output', `Evidence found: ${evidCount}/5`),
           createEntry('output', `evidencesSaved: ${state.evidencesSaved}`),
           createEntry('output', `icqPhase: ${state.icqPhase}`),
@@ -402,9 +608,17 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     if (godCmd === 'stable') {
       return {
         output: [
-          createEntry('system', '═══ STABILITY MAXED ═══'),
-          createEntry('output', 'sessionStability = 100'),
-          createEntry('output', 'detectionLevel = 0'),
+          createEntryI18n(
+            'system',
+            'engine.commands.core.stability_maxed',
+            '═══ STABILITY MAXED ═══'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.sessionstability_100',
+            'sessionStability = 100'
+          ),
+          createEntryI18n('output', 'engine.commands.core.detectionlevel_0', 'detectionLevel = 0'),
         ],
         stateChanges: {
           sessionStability: 100,
@@ -420,9 +634,17 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     if (godCmd === 'doom') {
       return {
         output: [
-          createEntry('system', '═══ DOOM DISABLED ═══'),
-          createEntry('output', 'terribleMistakeTriggered = false'),
-          createEntry('output', 'sessionDoomCountdown = 0'),
+          createEntryI18n('system', 'engine.commands.core.doom_disabled', '═══ DOOM DISABLED ═══'),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.terriblemistaketriggered_false',
+            'terribleMistakeTriggered = false'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.sessiondoomcountdown_0',
+            'sessionDoomCountdown = 0'
+          ),
         ],
         stateChanges: {
           terribleMistakeTriggered: false,
@@ -434,7 +656,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     // New ending shortcuts
     if (godCmd === 'bad') {
       return {
-        output: [createEntry('system', '═══ JUMPING TO BAD ENDING ═══')],
+        output: [
+          createEntryI18n(
+            'system',
+            'engine.commands.core.jumping_to_bad_ending',
+            '═══ JUMPING TO BAD ENDING ═══'
+          ),
+        ],
         stateChanges: {
           isGameOver: true,
           gameOverReason: 'GOD MODE - BAD ENDING',
@@ -446,7 +674,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
     if (godCmd === 'neutral') {
       return {
-        output: [createEntry('system', '═══ JUMPING TO NEUTRAL ENDING ═══')],
+        output: [
+          createEntryI18n(
+            'system',
+            'engine.commands.core.jumping_to_neutral_ending',
+            '═══ JUMPING TO NEUTRAL ENDING ═══'
+          ),
+        ],
         stateChanges: {
           isGameOver: true,
           gameOverReason: 'GOD MODE - NEUTRAL ENDING',
@@ -458,7 +692,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
     if (godCmd === 'secret') {
       return {
-        output: [createEntry('system', '═══ JUMPING TO SECRET ENDING ═══')],
+        output: [
+          createEntryI18n(
+            'system',
+            'engine.commands.core.jumping_to_secret_ending',
+            '═══ JUMPING TO SECRET ENDING ═══'
+          ),
+        ],
         stateChanges: {
           ufo74SecretDiscovered: true,
           endingType: 'secret',
@@ -471,8 +711,16 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     if (godCmd === 'countdown') {
       return {
         output: [
-          createEntry('system', '═══ COUNTDOWN ACTIVATED ═══'),
-          createEntry('output', 'You have 2 minutes before they trace you.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.core.countdown_activated',
+            '═══ COUNTDOWN ACTIVATED ═══'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.you_have_2_minutes_before_they_trace_you',
+            'You have 2 minutes before they trace you.'
+          ),
         ],
         stateChanges: {
           countdownActive: true,
@@ -484,10 +732,22 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     if (godCmd === 'unlock') {
       return {
         output: [
-          createEntry('system', '═══ ALL HIDDEN FEATURES UNLOCKED ═══'),
-          createEntry('output', '✓ Hidden commands: disconnect, scan, decode'),
-          createEntry('output', '✓ Password found: varginha1996'),
-          createEntry('output', '✓ Admin flag set'),
+          createEntryI18n(
+            'system',
+            'engine.commands.core.all_hidden_features_unlocked',
+            '═══ ALL HIDDEN FEATURES UNLOCKED ═══'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.hidden_commands_disconnect_scan_decode',
+            '✓ Hidden commands: disconnect, scan, decode'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.password_found_varginha1996',
+            '✓ Password found: varginha1996'
+          ),
+          createEntryI18n('output', 'engine.commands.core.admin_flag_set', '✓ Admin flag set'),
         ],
         stateChanges: {
           hiddenCommandsDiscovered: new Set(['disconnect', 'scan', 'decode']),
@@ -500,7 +760,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     return {
       output: [
         createEntry('error', `Unknown god command: ${godCmd}`),
-        createEntry('output', 'Type "god help" for available commands.'),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.type_god_help_for_available_commands',
+          'Type "god help" for available commands.'
+        ),
       ],
       stateChanges: {},
     };
@@ -513,7 +777,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     // Cancel decryption if user types cancel
     if (normalizedInput.toLowerCase().trim() === 'cancel') {
       return {
-        output: [createEntry('system', 'Decryption cancelled.')],
+        output: [
+          createEntryI18n(
+            'system',
+            'engine.commands.core.decryption_cancelled',
+            'Decryption cancelled.'
+          ),
+        ],
         stateChanges: {
           pendingDecryptFile: undefined,
         },
@@ -532,7 +802,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           // Correct answer - perform decryption
           if (!state.tutorialComplete) {
             return {
-              output: [createEntry('system', 'Decryption unavailable during transmission.')],
+              output: [
+                createEntryI18n(
+                  'system',
+                  'engine.commands.core.decryption_unavailable_during_transmission',
+                  'Decryption unavailable during transmission.'
+                ),
+              ],
               stateChanges: {},
             };
           }
@@ -542,11 +818,19 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           if (!state.tutorialComplete) {
             return {
               output: [
-                createEntry('error', 'AUTHENTICATION FAILED'),
+                createEntryI18n(
+                  'error',
+                  'engine.commands.core.authentication_failed',
+                  'AUTHENTICATION FAILED'
+                ),
                 createEntry('system', ''),
                 createEntry('ufo74', `[UFO74]: ${file.securityQuestion.hint}`),
                 createEntry('system', ''),
-                createEntry('system', 'Enter answer or type "cancel" to abort:'),
+                createEntryI18n(
+                  'system',
+                  'engine.commands.core.enter_answer_or_type_cancel_to_abort',
+                  'Enter answer or type "cancel" to abort:'
+                ),
               ],
               stateChanges: {},
               delayMs: 500,
@@ -558,13 +842,25 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           if (newAlertCounter >= 8) {
             return {
               output: [
-                createEntry('error', 'AUTHENTICATION FAILED'),
+                createEntryI18n(
+                  'error',
+                  'engine.commands.core.authentication_failed',
+                  'AUTHENTICATION FAILED'
+                ),
                 createEntry('error', ''),
                 createEntry('error', '═══════════════════════════════════════════════════════════'),
-                createEntry('error', 'CRITICAL: SECURITY THRESHOLD EXCEEDED'),
+                createEntryI18n(
+                  'error',
+                  'engine.commands.core.critical_security_threshold_exceeded',
+                  'CRITICAL: SECURITY THRESHOLD EXCEEDED'
+                ),
                 createEntry('error', '═══════════════════════════════════════════════════════════'),
                 createEntry('error', ''),
-                createEntry('error', 'SYSTEM LOCKDOWN INITIATED'),
+                createEntryI18n(
+                  'error',
+                  'engine.invalidAttemptThreshold.lockdown',
+                  'SYSTEM LOCKDOWN INITIATED'
+                ),
               ],
               stateChanges: {
                 isGameOver: true,
@@ -578,12 +874,20 @@ export function executeCommand(input: string, state: GameState): CommandResult {
 
           return {
             output: [
-              createEntry('error', 'AUTHENTICATION FAILED'),
+              createEntryI18n(
+                'error',
+                'engine.commands.core.authentication_failed',
+                'AUTHENTICATION FAILED'
+              ),
               createEntry('warning', `WARNING: Invalid attempts: ${newAlertCounter}/8`),
               createEntry('system', ''),
               createEntry('ufo74', `[UFO74]: ${file.securityQuestion.hint}`),
               createEntry('system', ''),
-              createEntry('system', 'Enter answer or type "cancel" to abort:'),
+              createEntryI18n(
+                'system',
+                'engine.commands.core.enter_answer_or_type_cancel_to_abort',
+                'Enter answer or type "cancel" to abort:'
+              ),
             ],
             stateChanges: {
               legacyAlertCounter: newAlertCounter,
@@ -600,8 +904,12 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   if (state.legacyAlertCounter >= MAX_WRONG_ATTEMPTS) {
     return {
       output: [
-        createEntry('error', 'SYSTEM LOCKDOWN'),
-        createEntry('error', 'NO FURTHER COMMANDS ACCEPTED'),
+        createEntryI18n('error', 'engine.commands.core.system_lockdown', 'SYSTEM LOCKDOWN'),
+        createEntryI18n(
+          'error',
+          'engine.commands.core.no_further_commands_accepted',
+          'NO FURTHER COMMANDS ACCEPTED'
+        ),
       ],
       stateChanges: {
         isGameOver: true,
@@ -626,7 +934,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   if (command === 'override') {
     if (!state.tutorialComplete) {
       return {
-        output: [createEntry('system', 'Override protocol unavailable during transmission.')],
+        output: [
+          createEntryI18n(
+            'system',
+            'engine.commands.core.override_protocol_unavailable_during_transmission',
+            'Override protocol unavailable during transmission.'
+          ),
+        ],
         stateChanges: {},
       };
     }
@@ -640,7 +954,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   if (!handler && (command === 'cd..' || command === 'cd...' || input.startsWith('cd..'))) {
     return {
       output: [
-        createEntry('ufo74', '[UFO74]: hey careful, to go back use cd .. (with a space after cd)'),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.core.ufo74_hey_careful_to_go_back_use_cd_with_a_space_after_cd',
+          '[UFO74]: hey careful, to go back use cd .. (with a space after cd)'
+        ),
       ],
       stateChanges: {},
     };
@@ -662,11 +980,23 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         output: [
           createEntry('error', ''),
           createEntry('error', '═══════════════════════════════════════════════════════════'),
-          createEntry('error', 'CRITICAL: INVALID ATTEMPT THRESHOLD EXCEEDED'),
+          createEntryI18n(
+            'error',
+            'engine.invalidAttemptThreshold.exceeded',
+            'CRITICAL: INVALID ATTEMPT THRESHOLD EXCEEDED'
+          ),
           createEntry('error', '═══════════════════════════════════════════════════════════'),
           createEntry('error', ''),
-          createEntry('error', 'SYSTEM LOCKDOWN INITIATED'),
-          createEntry('error', 'SESSION TERMINATED'),
+          createEntryI18n(
+            'error',
+            'engine.invalidAttemptThreshold.lockdown',
+            'SYSTEM LOCKDOWN INITIATED'
+          ),
+          createEntryI18n(
+            'error',
+            'engine.invalidAttemptThreshold.terminated',
+            'SESSION TERMINATED'
+          ),
           createEntry('error', ''),
         ],
         stateChanges: {
@@ -684,12 +1014,28 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntry('error', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('error', ''),
-          createEntry('error', '  INTRUSION DETECTED'),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.intrusion_detected',
+            '  INTRUSION DETECTED'
+          ),
           createEntry('error', ''),
-          createEntry('error', '  Your connection has been traced.'),
-          createEntry('error', '  Security protocols have been dispatched.'),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.your_connection_has_been_traced',
+            '  Your connection has been traced.'
+          ),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.security_protocols_have_been_dispatched',
+            '  Security protocols have been dispatched.'
+          ),
           createEntry('error', ''),
-          createEntry('error', '  >> SESSION TERMINATED <<'),
+          createEntryI18n(
+            'error',
+            'engine.commands.core.session_terminated',
+            '  >> SESSION TERMINATED <<'
+          ),
           createEntry('error', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('error', ''),
@@ -711,25 +1057,46 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     const output: TerminalEntry[] = [
       ...tips,
       createEntry('warning', ''),
-      createEntry('warning', '⚠ RISK INCREASED: Invalid commands draw system attention.'),
+      createEntryI18n(
+        'warning',
+        'engine.invalidCommand.riskIncreased',
+        '⚠ RISK INCREASED: Invalid commands draw system attention.'
+      ),
       createEntry('system', `   [Invalid attempts: ${newAlertCounter}/8]`),
     ];
 
     // After 3 wrong commands, UFO74 steps in to help
     if (newAlertCounter === 3) {
       output.push(createEntry('system', ''));
-      output.push(createEntry('ufo74', 'UFO74: hey kid, youre fumbling. let me help.'));
       output.push(
-        createEntry(
+        createEntryI18n(
           'ufo74',
+          'engine.commands.core.ufo74_hey_kid_youre_fumbling_let_me_help',
+          'UFO74: hey kid, youre fumbling. let me help.'
+        )
+      );
+      output.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.core.ufo74_try_these_ls_to_see_files_cd_dir_to_move_open_file_to_',
           'UFO74: try these: "ls" to see files, "cd <dir>" to move, "open <file>" to read.'
         )
       );
-      output.push(createEntry('ufo74', 'UFO74: type "help" if youre lost.'));
+      output.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.core.ufo74_type_help_if_youre_lost',
+          'UFO74: type "help" if youre lost.'
+        )
+      );
     } else if (newAlertCounter >= 5) {
       output.push(createEntry('system', ''));
       output.push(
-        createEntry('ufo74', 'UFO74: careful. too many mistakes and theyll lock you out.')
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.core.ufo74_careful_too_many_mistakes_and_theyll_lock_you_out',
+          'UFO74: careful. too many mistakes and theyll lock you out.'
+        )
       );
     }
 
@@ -822,8 +1189,16 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       ]);
       result.output = [
         ...result.output,
-        createEntry('ufo74', 'UFO74: hey kid, risk is getting too high.'),
-        createEntry('ufo74', 'UFO74: use "wait" to lay low and bring the risk down.'),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.core.ufo74_hey_kid_risk_is_getting_too_high',
+          'UFO74: hey kid, risk is getting too high.'
+        ),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.core.ufo74_use_wait_to_lay_low_and_bring_the_risk_down',
+          'UFO74: use "wait" to lay low and bring the risk down.'
+        ),
       ];
     }
   }
@@ -886,7 +1261,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
                 entry.content.includes('SYSTEM:'))
           );
 
-      const alreadyHasPendingMessages = result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0;
+      const alreadyHasPendingMessages =
+        result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0;
 
       const incognitoMessage = alreadyHasPendingMessages
         ? null
@@ -948,8 +1324,12 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       ...result.output,
       createEntry('system', ''),
       createEntry('warning', '────────────────────────────────────────'),
-      createEntry('warning', '  STATUS: SUSPICIOUS'),
-      createEntry('warning', '  System monitoring increased.'),
+      createEntryI18n('warning', 'engine.commands.core.status_suspicious', '  STATUS: SUSPICIOUS'),
+      createEntryI18n(
+        'warning',
+        'engine.commands.core.system_monitoring_increased',
+        '  System monitoring increased.'
+      ),
       createEntry('warning', '────────────────────────────────────────'),
     ];
   }
@@ -959,11 +1339,19 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       ...result.output,
       createEntry('system', ''),
       createEntry('error', '════════════════════════════════════════'),
-      createEntry('error', '  STATUS: ALERT'),
-      createEntry('warning', '  Active countermeasures online.'),
+      createEntryI18n('error', 'engine.commands.core.status_alert', '  STATUS: ALERT'),
+      createEntryI18n(
+        'warning',
+        'engine.commands.core.active_countermeasures_online',
+        '  Active countermeasures online.'
+      ),
       createEntry('error', '════════════════════════════════════════'),
       createEntry('system', ''),
-      createEntry('ufo74', '>> careful. theyre paying attention now. <<'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.careful_theyre_paying_attention_now',
+        '>> careful. theyre paying attention now. <<'
+      ),
     ];
   }
 
@@ -972,12 +1360,24 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       ...result.output,
       createEntry('system', ''),
       createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-      createEntry('error', '  STATUS: CRITICAL'),
-      createEntry('error', '  Trace protocols active.'),
+      createEntryI18n('error', 'engine.commands.core.status_critical', '  STATUS: CRITICAL'),
+      createEntryI18n(
+        'error',
+        'engine.commands.core.trace_protocols_active',
+        '  Trace protocols active.'
+      ),
       createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
       createEntry('system', ''),
-      createEntry('ufo74', '>> STOP. youre about to get burned. <<'),
-      createEntry('ufo74', '>> use "wait" to lay low. you have limited uses. <<'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.stop_youre_about_to_get_burned',
+        '>> STOP. youre about to get burned. <<'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.use_wait_to_lay_low_you_have_limited_uses',
+        '>> use "wait" to lay low. you have limited uses. <<'
+      ),
     ];
     result.triggerFlicker = true;
     result.stateChanges.avatarExpression = 'scared';
@@ -988,11 +1388,23 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       ...result.output,
       createEntry('system', ''),
       createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-      createEntry('error', '  STATUS: IMMINENT DETECTION'),
-      createEntry('error', '  Countermeasures locking on.'),
+      createEntryI18n(
+        'error',
+        'engine.commands.core.status_imminent_detection',
+        '  STATUS: IMMINENT DETECTION'
+      ),
+      createEntryI18n(
+        'error',
+        'engine.commands.core.countermeasures_locking_on',
+        '  Countermeasures locking on.'
+      ),
       createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
       createEntry('system', ''),
-      createEntry('ufo74', '>> EMERGENCY. type "hide" NOW. one chance. <<'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.emergency_type_hide_now_one_chance',
+        '>> EMERGENCY. type "hide" NOW. one chance. <<'
+      ),
     ];
     result.stateChanges.hideAvailable = true;
     result.triggerFlicker = true;
@@ -1001,17 +1413,34 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // ═══════════════════════════════════════════════════════════════════════════
   // MAX DETECTION GAME OVER
   // ═══════════════════════════════════════════════════════════════════════════
-  if (state.tutorialComplete && newDetection >= MAX_DETECTION && !result.stateChanges.isGameOver && !result.stateChanges.evidencesSaved) {
+  if (
+    state.tutorialComplete &&
+    newDetection >= MAX_DETECTION &&
+    !result.stateChanges.isGameOver &&
+    !result.stateChanges.evidencesSaved
+  ) {
     result.output = [
       createEntry('error', ''),
       createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
       createEntry('error', ''),
-      createEntry('error', '  INTRUSION DETECTED'),
+      createEntryI18n('error', 'engine.commands.core.intrusion_detected', '  INTRUSION DETECTED'),
       createEntry('error', ''),
-      createEntry('error', '  Your connection has been traced.'),
-      createEntry('error', '  Security protocols have been dispatched.'),
+      createEntryI18n(
+        'error',
+        'engine.commands.core.your_connection_has_been_traced',
+        '  Your connection has been traced.'
+      ),
+      createEntryI18n(
+        'error',
+        'engine.commands.core.security_protocols_have_been_dispatched',
+        '  Security protocols have been dispatched.'
+      ),
       createEntry('error', ''),
-      createEntry('error', '  >> SESSION TERMINATED <<'),
+      createEntryI18n(
+        'error',
+        'engine.commands.core.session_terminated',
+        '  >> SESSION TERMINATED <<'
+      ),
       createEntry('error', ''),
       createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
       createEntry('error', ''),
@@ -1030,10 +1459,18 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       createEntry('error', ''),
       createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
       createEntry('error', ''),
-      createEntry('error', '  TERMINAL LOCKOUT'),
+      createEntryI18n('error', 'engine.commands.core.terminal_lockout', '  TERMINAL LOCKOUT'),
       createEntry('error', ''),
-      createEntry('error', '  Too many failed authentication attempts.'),
-      createEntry('error', '  Session terminated by security protocol.'),
+      createEntryI18n(
+        'error',
+        'engine.commands.core.too_many_failed_authentication_attempts',
+        '  Too many failed authentication attempts.'
+      ),
+      createEntryI18n(
+        'error',
+        'engine.commands.core.session_terminated_by_security_protocol',
+        '  Session terminated by security protocol.'
+      ),
       createEntry('error', ''),
       createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
       createEntry('error', ''),
@@ -1051,7 +1488,11 @@ function getCommandTip(command: string, args: string[], state: GameState): Termi
   if (command === 'dir' || command === 'list' || command === 'show') {
     return [
       createEntry('system', ''),
-      createEntry('ufo74', '[UFO74]: try "ls" to list directory contents.'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.ufo74_try_ls_to_list_directory_contents',
+        '[UFO74]: try "ls" to list directory contents.'
+      ),
       createEntry('system', ''),
     ];
   }
@@ -1126,7 +1567,11 @@ function getCommandTip(command: string, args: string[], state: GameState): Termi
   if (command === 'quit' || command === 'exit' || command === 'logout' || command === 'bye') {
     return [
       createEntry('system', ''),
-      createEntry('ufo74', '[UFO74]: press [ESC] to exit. or type "save" first if you want to keep your progress.'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.ufo74_press_esc_to_exit_or_type_save_first_if_you_want_to_ke',
+        '[UFO74]: press [ESC] to exit. or type "save" first if you want to keep your progress.'
+      ),
       createEntry('system', ''),
     ];
   }
@@ -1134,7 +1579,11 @@ function getCommandTip(command: string, args: string[], state: GameState): Termi
   if (command === 'unlock' || command === 'access' || command === 'sudo' || command === 'admin') {
     return [
       createEntry('system', ''),
-      createEntry('ufo74', '[UFO74]: you need the override protocol for that. dangerous stuff.'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.ufo74_you_need_the_override_protocol_for_that_dangerous_stuf',
+        '[UFO74]: you need the override protocol for that. dangerous stuff.'
+      ),
       createEntry('system', ''),
     ];
   }
@@ -1142,7 +1591,11 @@ function getCommandTip(command: string, args: string[], state: GameState): Termi
   if (command === 'back' || command === 'up' || command === '..') {
     return [
       createEntry('system', ''),
-      createEntry('ufo74', '[UFO74]: use "cd .." to go to parent directory.'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.ufo74_use_cd_to_go_to_parent_directory',
+        '[UFO74]: use "cd .." to go to parent directory.'
+      ),
       createEntry('system', ''),
     ];
   }
@@ -1150,7 +1603,11 @@ function getCommandTip(command: string, args: string[], state: GameState): Termi
   if (command === 'info' || command === 'about' || command === 'whoami' || command === 'who') {
     return [
       createEntry('system', ''),
-      createEntry('ufo74', '[UFO74]: try "status" or "help" kid.'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.ufo74_try_status_or_help_kid',
+        '[UFO74]: try "status" or "help" kid.'
+      ),
       createEntry('system', ''),
     ];
   }
@@ -1159,7 +1616,11 @@ function getCommandTip(command: string, args: string[], state: GameState): Termi
     createEntry('system', ''),
     createEntry('system', `Command not recognized: ${command}`),
     createEntry('system', ''),
-    createEntry('ufo74', '[UFO74]: type "help" to see what you can do.'),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.core.ufo74_type_help_to_see_what_you_can_do',
+      '[UFO74]: type "help" to see what you can do.'
+    ),
     createEntry('system', ''),
   ];
 }

@@ -1,9 +1,6 @@
 // Archive commands: script, run, rewind, present
 
-import {
-  createEntry,
-  createUFO74Message,
-} from './utils';
+import { createEntry, createEntryI18n, createUFO74Message } from './utils';
 import type { CommandRegistry } from './types';
 
 // Forward reference to commands registry (needed for run -> leak redirect)
@@ -17,17 +14,37 @@ export const archiveCommands: CommandRegistry = {
     if (args.length === 0) {
       return {
         output: [
-          createEntry('system', 'SCRIPT EXECUTOR v1.7'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.script_executor_v1_7',
+            'SCRIPT EXECUTOR v1.7'
+          ),
           createEntry('system', ''),
-          createEntry('system', 'Usage: script <script_content>'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.usage_script_script_content',
+            'Usage: script <script_content>'
+          ),
           createEntry('system', ''),
-          createEntry('system', 'Required format:'),
-          createEntry('system', '  INIT;TARGET=<path>;EXEC'),
+          createEntryI18n('system', 'engine.commands.archive.required_format', 'Required format:'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.init_target_path_exec',
+            '  INIT;TARGET=<path>;EXEC'
+          ),
           createEntry('system', ''),
-          createEntry('system', 'Example:'),
-          createEntry('system', '  script INIT;TARGET=/admin/neural_fragment.dat;EXEC'),
+          createEntryI18n('system', 'engine.commands.archive.example', 'Example:'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.script_init_target_admin_neural_fragment_dat_exec',
+            '  script INIT;TARGET=/admin/neural_fragment.dat;EXEC'
+          ),
           createEntry('system', ''),
-          createEntry('system', 'See /tmp/data_reconstruction.util for available targets.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.see_tmp_data_reconstruction_util_for_available_targets',
+            'See /tmp/data_reconstruction.util for available targets.'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {},
@@ -44,10 +61,14 @@ export const archiveCommands: CommandRegistry = {
     if (!hasInit || !hasExec) {
       return {
         output: [
-          createEntry('system', 'Parsing script...'),
+          createEntryI18n('system', 'engine.commands.archive.parsing_script', 'Parsing script...'),
           createEntry('error', ''),
-          createEntry('error', 'SYNTAX ERROR'),
-          createEntry('error', 'Script must contain INIT and EXEC commands.'),
+          createEntryI18n('error', 'engine.commands.archive.syntax_error', 'SYNTAX ERROR'),
+          createEntryI18n(
+            'error',
+            'engine.commands.archive.script_must_contain_init_and_exec_commands',
+            'Script must contain INIT and EXEC commands.'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 2 } : {},
@@ -57,10 +78,14 @@ export const archiveCommands: CommandRegistry = {
     if (!targetMatch) {
       return {
         output: [
-          createEntry('system', 'Parsing script...'),
+          createEntryI18n('system', 'engine.commands.archive.parsing_script', 'Parsing script...'),
           createEntry('error', ''),
-          createEntry('error', 'SYNTAX ERROR'),
-          createEntry('error', 'Script must specify TARGET=<path>'),
+          createEntryI18n('error', 'engine.commands.archive.syntax_error', 'SYNTAX ERROR'),
+          createEntryI18n(
+            'error',
+            'engine.commands.archive.script_must_specify_target_path',
+            'Script must specify TARGET=<path>'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 2 } : {},
@@ -73,20 +98,48 @@ export const archiveCommands: CommandRegistry = {
     if (target.includes('neural_fragment') || target.includes('/admin/neural')) {
       return {
         output: [
-          createEntry('system', 'Parsing script...'),
-          createEntry('system', 'INIT... OK'),
-          createEntry('system', 'TARGET=/admin/neural_fragment.dat... LOCATED'),
-          createEntry('system', 'EXEC... RUNNING'),
+          createEntryI18n('system', 'engine.commands.archive.parsing_script', 'Parsing script...'),
+          createEntryI18n('system', 'engine.commands.archive.init_ok', 'INIT... OK'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.target_admin_neural_fragment_dat_located',
+            'TARGET=/admin/neural_fragment.dat... LOCATED'
+          ),
+          createEntryI18n('system', 'engine.commands.archive.exec_running', 'EXEC... RUNNING'),
           createEntry('warning', ''),
-          createEntry('warning', '▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.archive.reconstruction_in_progress',
+            '▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓'
+          ),
           createEntry('warning', ''),
-          createEntry('system', 'Recovering fragmented sectors...'),
-          createEntry('system', 'Rebuilding data structure...'),
-          createEntry('system', 'Validating integrity...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.recovering_fragmented_sectors',
+            'Recovering fragmented sectors...'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.rebuilding_data_structure',
+            'Rebuilding data structure...'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.validating_integrity',
+            'Validating integrity...'
+          ),
           createEntry('notice', ''),
-          createEntry('notice', 'RECONSTRUCTION SUCCESSFUL'),
+          createEntryI18n(
+            'notice',
+            'engine.commands.archive.reconstruction_successful',
+            'RECONSTRUCTION SUCCESSFUL'
+          ),
           createEntry('notice', ''),
-          createEntry('system', 'File /admin/neural_fragment.dat is now accessible.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.file_admin_neural_fragment_dat_is_now_accessible',
+            'File /admin/neural_fragment.dat is now accessible.'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: state.tutorialComplete
@@ -105,22 +158,58 @@ export const archiveCommands: CommandRegistry = {
     if (target.includes('psi_residue') || target.includes('/comms/psi')) {
       return {
         output: [
-          createEntry('system', 'Parsing script...'),
-          createEntry('system', 'INIT... OK'),
-          createEntry('system', 'TARGET=/comms/psi_residue.log... LOCATED'),
-          createEntry('system', 'EXEC... RUNNING'),
+          createEntryI18n('system', 'engine.commands.archive.parsing_script', 'Parsing script...'),
+          createEntryI18n('system', 'engine.commands.archive.init_ok', 'INIT... OK'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.target_comms_psi_residue_log_located',
+            'TARGET=/comms/psi_residue.log... LOCATED'
+          ),
+          createEntryI18n('system', 'engine.commands.archive.exec_running', 'EXEC... RUNNING'),
           createEntry('warning', ''),
-          createEntry('warning', '▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.archive.reconstruction_in_progress',
+            '▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓'
+          ),
           createEntry('warning', ''),
-          createEntry('system', 'Recovering fragmented sectors...'),
-          createEntry('error', 'ERROR: Corruption too severe'),
-          createEntry('error', 'Partial recovery only:'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.recovering_fragmented_sectors',
+            'Recovering fragmented sectors...'
+          ),
+          createEntryI18n(
+            'error',
+            'engine.commands.archive.error_corruption_too_severe',
+            'ERROR: Corruption too severe'
+          ),
+          createEntryI18n(
+            'error',
+            'engine.commands.archive.partial_recovery_only',
+            'Partial recovery only:'
+          ),
           createEntry('system', ''),
-          createEntry('output', '...they see through us...'),
-          createEntry('output', '...we are not the first world...'),
-          createEntry('output', '...we will not be the last...'),
+          createEntryI18n(
+            'output',
+            'engine.commands.archive.they_see_through_us',
+            '...they see through us...'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.archive.we_are_not_the_first_world',
+            '...we are not the first world...'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.archive.we_will_not_be_the_last',
+            '...we will not be the last...'
+          ),
           createEntry('system', ''),
-          createEntry('warning', 'RECONSTRUCTION PARTIAL — FILE LOST'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.archive.reconstruction_partial_file_lost',
+            'RECONSTRUCTION PARTIAL — FILE LOST'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 10 } : {},
@@ -132,12 +221,16 @@ export const archiveCommands: CommandRegistry = {
     // Invalid target
     return {
       output: [
-        createEntry('system', 'Parsing script...'),
-        createEntry('system', 'INIT... OK'),
+        createEntryI18n('system', 'engine.commands.archive.parsing_script', 'Parsing script...'),
+        createEntryI18n('system', 'engine.commands.archive.init_ok', 'INIT... OK'),
         createEntry('system', `TARGET=${target}... SEARCHING`),
         createEntry('error', ''),
-        createEntry('error', 'TARGET NOT FOUND'),
-        createEntry('error', 'Specified path does not contain reconstructable data.'),
+        createEntryI18n('error', 'engine.commands.archive.target_not_found', 'TARGET NOT FOUND'),
+        createEntryI18n(
+          'error',
+          'engine.commands.archive.specified_path_does_not_contain_reconstructable_data',
+          'Specified path does not contain reconstructable data.'
+        ),
         createEntry('system', ''),
       ],
       stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 3 } : {},
@@ -148,8 +241,16 @@ export const archiveCommands: CommandRegistry = {
     if (args.length === 0) {
       return {
         output: [
-          createEntry('system', 'USAGE: run <script>'),
-          createEntry('system', 'Example: run purge_trace.sh'),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.usage_run_script',
+            'USAGE: run <script>'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.example_run_purge_trace_sh',
+            'Example: run purge_trace.sh'
+          ),
         ],
         stateChanges: {},
       };
@@ -166,8 +267,16 @@ export const archiveCommands: CommandRegistry = {
       if (!state.traceSpikeActive) {
         return {
           output: [
-            createEntry('error', 'EXECUTION FAILED'),
-            createEntry('system', 'No active trace detected.'),
+            createEntryI18n(
+              'error',
+              'engine.commands.archive.execution_failed',
+              'EXECUTION FAILED'
+            ),
+            createEntryI18n(
+              'system',
+              'engine.commands.archive.no_active_trace_detected',
+              'No active trace detected.'
+            ),
           ],
           stateChanges: {},
         };
@@ -175,11 +284,27 @@ export const archiveCommands: CommandRegistry = {
 
       return {
         output: [
-          createEntry('warning', 'TRACE PURGE UTILITY'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.archive.trace_purge_utility',
+            'TRACE PURGE UTILITY'
+          ),
           createEntry('system', ''),
-          createEntry('output', '[OK] Trace buffers wiped'),
-          createEntry('output', '[OK] Session log truncated'),
-          createEntry('warning', 'NOTICE: Countermeasures reset'),
+          createEntryI18n(
+            'output',
+            'engine.commands.archive.ok_trace_buffers_wiped',
+            '[OK] Trace buffers wiped'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.archive.ok_session_log_truncated',
+            '[OK] Session log truncated'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.archive.notice_countermeasures_reset',
+            'NOTICE: Countermeasures reset'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: state.tutorialComplete
@@ -205,7 +330,7 @@ export const archiveCommands: CommandRegistry = {
 
     return {
       output: [
-        createEntry('error', 'EXECUTION FAILED'),
+        createEntryI18n('error', 'engine.commands.archive.execution_failed', 'EXECUTION FAILED'),
         createEntry('system', `Script not found: ${args[0]}`),
       ],
       stateChanges: {},
@@ -216,7 +341,11 @@ export const archiveCommands: CommandRegistry = {
     return {
       output: [
         createEntry('system', ''),
-        createEntry('warning', 'ARCHIVE MODE HAS BEEN RETIRED'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.archive.archive_mode_has_been_retired',
+          'ARCHIVE MODE HAS BEEN RETIRED'
+        ),
         createEntry('system', ''),
         ...createUFO74Message([
           'UFO74: no more time tricks, hackerkid.',
@@ -237,8 +366,16 @@ export const archiveCommands: CommandRegistry = {
     return {
       output: [
         createEntry('system', ''),
-        createEntry('output', 'Current timeline active.'),
-        createEntry('output', 'Archive mode is no longer available in this build.'),
+        createEntryI18n(
+          'output',
+          'engine.commands.archive.current_timeline_active',
+          'Current timeline active.'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.archive.archive_mode_is_no_longer_available_in_this_build',
+          'Archive mode is no longer available in this build.'
+        ),
       ],
       stateChanges: state.inArchiveMode
         ? {

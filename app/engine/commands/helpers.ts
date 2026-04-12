@@ -15,20 +15,16 @@ import {
   isEvidenceFile,
   MAX_EVIDENCE_COUNT,
 } from '../evidenceRevelation';
+import { ARCHIVE_FILES } from '../../data/archiveFiles';
 import {
-  ARCHIVE_FILES,
-} from '../../data/archiveFiles';
-import { DETECTION_THRESHOLDS, MAX_DETECTION, applyWarmupDetection, WARMUP_PHASE } from '../../constants/detection';
+  DETECTION_THRESHOLDS,
+  MAX_DETECTION,
+  applyWarmupDetection,
+  WARMUP_PHASE,
+} from '../../constants/detection';
 import { shouldSuppressPressure } from '../../constants/atmosphere';
-import {
-  createEntry,
-  createOutputEntries,
-  createUFO74Message,
-} from './utils';
-import {
-  getTutorialTip,
-  shouldShowTutorialTip,
-} from './tutorial';
+import { createEntry, createEntryI18n, createOutputEntries, createUFO74Message } from './utils';
+import { getTutorialTip, shouldShowTutorialTip } from './tutorial';
 import { getFileContent } from '../filesystem';
 import { saveCheckpoint } from '../../storage/saves';
 
@@ -37,89 +33,143 @@ import { saveCheckpoint } from '../../storage/saves';
 // ═══════════════════════════════════════════════════════════════════════════
 
 const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
-  'alpha_journal.log': 'that journal. the scientist lost his mind. but he was right about everything.',
-  'alpha_neural_connection.psi': 'they made contact. they actually made contact. and then it spoke back.',
-  'alpha_autopsy_addendum.txt': 'an autopsy on something that was still alive. these people were insane.',
+  'alpha_journal.log':
+    'that journal. the scientist lost his mind. but he was right about everything.',
+  'alpha_neural_connection.psi':
+    'they made contact. they actually made contact. and then it spoke back.',
+  'alpha_autopsy_addendum.txt':
+    'an autopsy on something that was still alive. these people were insane.',
   'jardim_andere_incident.txt': 'that is the original field report. the one they tried to destroy.',
-  'incident_summary_official.txt': 'the official version. compare it to what we have. they rewrote everything.',
-  'audio_transcript_brief.txt': 'audio transcript. listen to how calm they sound. they practiced this.',
+  'incident_summary_official.txt':
+    'the official version. compare it to what we have. they rewrote everything.',
+  'audio_transcript_brief.txt':
+    'audio transcript. listen to how calm they sound. they practiced this.',
   'material_x_analysis.dat': 'material analysis. whatever they found, it is not from here.',
   'transport_log_96.txt': 'transport records. they moved everything in the middle of the night.',
-  'logistics_manifest_fragment.txt': 'manifest fragment. they shipped something weighing 112 kilos through diplomatic channels.',
-  'integrity_hashes.dat': 'integrity hashes. they were tracking which files had been tampered with.',
+  'logistics_manifest_fragment.txt':
+    'manifest fragment. they shipped something weighing 112 kilos through diplomatic channels.',
+  'integrity_hashes.dat':
+    'integrity hashes. they were tracking which files had been tampered with.',
   'bio_container.log': 'containment log. they kept it in a sealed unit for eleven days.',
   'autopsy_alpha.log': 'an autopsy report. official. classified. exactly what we needed.',
-  'autopsy_addendum_psi.txt': 'neurological addendum. the brain was still active after death. still active.',
+  'autopsy_addendum_psi.txt':
+    'neurological addendum. the brain was still active after death. still active.',
   'witness_statement_raw.txt': 'raw witness statement. before they got to her. before the edits.',
-  'neural_dump_alfa.psi': 'neural recording. they captured whatever was still firing in that brain.',
-  'specimen_purpose_analysis.txt': 'purpose analysis. they were trying to figure out what it was FOR.',
+  'neural_dump_alfa.psi':
+    'neural recording. they captured whatever was still firing in that brain.',
+  'specimen_purpose_analysis.txt':
+    'purpose analysis. they were trying to figure out what it was FOR.',
   'surveillance_recovery.vid': 'surveillance footage. someone saved this before the purge.',
   'field_report_delta.txt': 'field report from prato. 1977. this has been going on for decades.',
-  'operation_prato_original.txt': 'operation prato. the air force ran this in 77. they documented everything and then buried it.',
-  'initial_response_orders.txt': 'response orders. standard military protocol for something very not standard.',
-  'colares_incident_log_77.txt': 'colares 77. dozens of sightings. hundreds of witnesses. all silenced.',
-  'patrol_observation_shift_04.txt': 'patrol observation. soldiers describing what they saw. you can feel the fear.',
-  'medical_effects_brief_77.txt': 'medical effects. burns on the skin. radiation marks. from light beams.',
+  'operation_prato_original.txt':
+    'operation prato. the air force ran this in 77. they documented everything and then buried it.',
+  'initial_response_orders.txt':
+    'response orders. standard military protocol for something very not standard.',
+  'colares_incident_log_77.txt':
+    'colares 77. dozens of sightings. hundreds of witnesses. all silenced.',
+  'patrol_observation_shift_04.txt':
+    'patrol observation. soldiers describing what they saw. you can feel the fear.',
+  'medical_effects_brief_77.txt':
+    'medical effects. burns on the skin. radiation marks. from light beams.',
   'photo_archive_register_77.txt': 'photo archive. they had photos. had. past tense.',
-  'retrospective_scan_assessment.red': 'retrospective assessment. someone connected 77 to 96. same pattern.',
+  'retrospective_scan_assessment.red':
+    'retrospective assessment. someone connected 77 to 96. same pattern.',
   'scout_variants.meta': 'scout classification. they categorized different types. as in plural.',
-  'energy_node_assessment.txt': 'energy assessment. propulsion system we cannot replicate. not even close.',
-  'signal_analysis_partial.txt': 'signal fragment. partial decryption. whatever this says, they did not want us reading it.',
-  'aircraft_incident_report.txt': 'aircraft incident report. their first cover story. it did not hold.',
-  'foreign_drone_assessment.txt': 'drone theory. the one they floated before anyone knew what a drone was.',
+  'energy_node_assessment.txt':
+    'energy assessment. propulsion system we cannot replicate. not even close.',
+  'signal_analysis_partial.txt':
+    'signal fragment. partial decryption. whatever this says, they did not want us reading it.',
+  'aircraft_incident_report.txt':
+    'aircraft incident report. their first cover story. it did not hold.',
+  'foreign_drone_assessment.txt':
+    'drone theory. the one they floated before anyone knew what a drone was.',
   'industrial_accident_theory.txt': 'industrial accident. their fallback explanation. paper thin.',
   'witness_visit_log.txt': 'witness visit log. they visited every single one. every single one.',
-  'debriefing_protocol.txt': 'debriefing protocol. that is a polite word for what they did to those people.',
-  'witness_subjects_file.txt': 'the silva sisters file. three girls. teenagers. and the military went after them.',
+  'debriefing_protocol.txt':
+    'debriefing protocol. that is a polite word for what they did to those people.',
+  'witness_subjects_file.txt':
+    'the silva sisters file. three girls. teenagers. and the military went after them.',
   'recantation_001.txt': 'recantation form. they made witnesses sign this. under threat.',
   'animal_deaths_report.txt': 'animal deaths at the zoo. same week. same area. not a coincidence.',
-  'veterinarian_silencing.txt': 'they silenced the veterinarian. the one who asked too many questions.',
-  'contamination_theory.txt': 'contamination theory. the story they fed to the press about the dead animals.',
-  'contact_incident_report.txt': 'chereze. the officer who touched it. dead within weeks. and they covered it up.',
-  'autopsy_suppression.txt': 'autopsy suppression. they blocked the examination of a dead officer. why.',
-  'family_compensation.txt': 'family compensation. they paid the family to stay quiet. blood money.',
-  'transcript_core.enc': 'encrypted transmission. the core transcript. this is what they were saying.',
-  'transcript_limit.enc': 'second transcript. they intercepted more than one. they kept intercepting.',
-  'psi_analysis_report.txt': 'signal analysis. the pattern is structured. it is language. it is definitely language.',
+  'veterinarian_silencing.txt':
+    'they silenced the veterinarian. the one who asked too many questions.',
+  'contamination_theory.txt':
+    'contamination theory. the story they fed to the press about the dead animals.',
+  'contact_incident_report.txt':
+    'chereze. the officer who touched it. dead within weeks. and they covered it up.',
+  'autopsy_suppression.txt':
+    'autopsy suppression. they blocked the examination of a dead officer. why.',
+  'family_compensation.txt':
+    'family compensation. they paid the family to stay quiet. blood money.',
+  'transcript_core.enc':
+    'encrypted transmission. the core transcript. this is what they were saying.',
+  'transcript_limit.enc':
+    'second transcript. they intercepted more than one. they kept intercepting.',
+  'psi_analysis_report.txt':
+    'signal analysis. the pattern is structured. it is language. it is definitely language.',
   'foreign_liaison_note.txt': 'foreign liaison. other governments knew. they all knew.',
   'diplomatic_cable_23jan.enc': 'diplomatic cable. encrypted. sent three days after the incident.',
-  'standing_orders_multinational.txt': 'multinational protocol. six countries. coordinated. this goes so far beyond brazil.',
+  'standing_orders_multinational.txt':
+    'multinational protocol. six countries. coordinated. this goes so far beyond brazil.',
   'medical_examiner_query.txt': 'medical examiner query. someone was asking the wrong questions.',
-  'neural_cluster_experiment.red': 'neural cluster experiment. they built an interface. they tried to talk to it.',
-  'intercept_summary_dec95.txt': 'december 95 intercepts. a month before varginha. they knew something was coming.',
-  'regional_summary_jan96.txt': 'january 96 summary. the week before contact. activity was off the charts.',
-  'morse_intercept.sig': 'morse intercept. someone was sending morse. but not in any known protocol.',
-  'journalist_payments.enc': 'journalist payments. encrypted. they paid the press to look the other way.',
+  'neural_cluster_experiment.red':
+    'neural cluster experiment. they built an interface. they tried to talk to it.',
+  'intercept_summary_dec95.txt':
+    'december 95 intercepts. a month before varginha. they knew something was coming.',
+  'regional_summary_jan96.txt':
+    'january 96 summary. the week before contact. activity was off the charts.',
+  'morse_intercept.sig':
+    'morse intercept. someone was sending morse. but not in any known protocol.',
+  'journalist_payments.enc':
+    'journalist payments. encrypted. they paid the press to look the other way.',
   'media_contacts.txt': 'media contacts list. every journalist they had in their pocket.',
   'kill_story_memo.txt': 'kill story memo. direct order to suppress coverage. signed and dated.',
-  'tv_coverage_report.txt': 'tv coverage report. they were monitoring every broadcast. every mention.',
-  'foreign_press_alert.txt': 'foreign press alert. international media was picking it up. they panicked.',
-  'neural_cluster_memo.txt': 'neural cluster memo. they replicated alien neural tissue in silicon. it worked.',
+  'tv_coverage_report.txt':
+    'tv coverage report. they were monitoring every broadcast. every mention.',
+  'foreign_press_alert.txt':
+    'foreign press alert. international media was picking it up. they panicked.',
+  'neural_cluster_memo.txt':
+    'neural cluster memo. they replicated alien neural tissue in silicon. it worked.',
   'threat_window.red': 'threat window. a timeline for something they cannot stop.',
   'internal_note_07.txt': 'internal note. someone higher up was asking for updates. daily.',
-  'bio_program_overview.red': 'bio program overview. the entire operation. funded. authorized. hidden.',
-  'colonization_model.red': 'colonization model. not invasion. colonization. the difference matters.',
-  'ethics_exception_03.txt': 'ethics exception. they waived the rules. officially. to do what they did.',
+  'bio_program_overview.red':
+    'bio program overview. the entire operation. funded. authorized. hidden.',
+  'colonization_model.red':
+    'colonization model. not invasion. colonization. the difference matters.',
+  'ethics_exception_03.txt':
+    'ethics exception. they waived the rules. officially. to do what they did.',
   'window_alignment.meta': 'window alignment data. the timing is not random. it never was.',
-  'briefing_watchers_1996.txt': 'executive briefing. someone very senior read this. and approved everything.',
+  'briefing_watchers_1996.txt':
+    'executive briefing. someone very senior read this. and approved everything.',
   'weather_balloon_memo.txt': 'weather balloon memo. the oldest lie in the book.',
-  'parallel_incidents_global.txt': 'parallel incidents. same thing happened in other countries. same year.',
+  'parallel_incidents_global.txt':
+    'parallel incidents. same thing happened in other countries. same year.',
   'thirty_year_cycle.txt': 'thirty year cycle. 1966. 1996. 2026. the pattern does not stop.',
-  'energy_extraction_theory.txt': 'that document. whoever wrote it understood what is happening. and it broke them.',
-  'non_arrival_colonization.txt': 'non-arrival colonization. they do not need to come here. they are already taking what they want.',
+  'energy_extraction_theory.txt':
+    'that document. whoever wrote it understood what is happening. and it broke them.',
+  'non_arrival_colonization.txt':
+    'non-arrival colonization. they do not need to come here. they are already taking what they want.',
   'window_clarification.red': 'window clarification. the dates are specific. and close.',
-  'extraction_mechanism.red': 'extraction mechanism. the process is automated. we never even notice.',
-  'second_deployment.sig': 'second deployment signal. there was a second wave. there was always going to be a second wave.',
-  'neural_fragment.dat': 'neural fragment. reconstructed. whatever this was thinking, they captured it.',
-  'emergency_broadcast.enc': 'emergency broadcast. encrypted. whoever sent this was not expecting to send it.',
-  'redaction_override_memo.txt': 'redaction override. someone had the authority to unlock everything. and used it.',
-  'trace_purge_memo.txt': 'trace purge memo. the order to erase everything. we got here just in time.',
+  'extraction_mechanism.red':
+    'extraction mechanism. the process is automated. we never even notice.',
+  'second_deployment.sig':
+    'second deployment signal. there was a second wave. there was always going to be a second wave.',
+  'neural_fragment.dat':
+    'neural fragment. reconstructed. whatever this was thinking, they captured it.',
+  'emergency_broadcast.enc':
+    'emergency broadcast. encrypted. whoever sent this was not expecting to send it.',
+  'redaction_override_memo.txt':
+    'redaction override. someone had the authority to unlock everything. and used it.',
+  'trace_purge_memo.txt':
+    'trace purge memo. the order to erase everything. we got here just in time.',
   'mudinho_dossier.txt': 'mudinho dossier. a planted witness. they fabricated the whole thing.',
   'alternative_explanations.txt': 'alternative explanations. a menu of lies. pick one and sell it.',
   'media_talking_points.txt': 'talking points. scripted answers for every question. word for word.',
-  'cargo_transfer_memo.txt': 'cargo memo. everything in code. "agricultural equipment" means what you think it means.',
+  'cargo_transfer_memo.txt':
+    'cargo memo. everything in code. "agricultural equipment" means what you think it means.',
   'visitor_briefing.txt': 'visitor briefing. coded language. they had a word for everything.',
-  'asset_disposition_report.txt': 'asset disposition. where they moved everything. hidden in plain language.',
+  'asset_disposition_report.txt':
+    'asset disposition. where they moved everything. hidden in plain language.',
   'terminology_guide.txt': 'terminology guide. a dictionary of lies. every real word replaced.',
 };
 
@@ -209,15 +259,22 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.turingEvaluationActive) return false;
       if (!state.tutorialComplete) return false;
       return (
-        state.detectionLevel >= DETECTION_THRESHOLDS.TURING_WARNING &&
-        state.evidenceCount >= 1
+        state.detectionLevel >= DETECTION_THRESHOLDS.TURING_WARNING && state.evidenceCount >= 1
       );
     },
     execute: state => {
       return {
         output: [
-          createEntry('ufo74', 'UFO74: careful kid, they\'re getting suspicious.'),
-          createEntry('ufo74', '       if you hit 50% you\'ll have to prove you\'re human.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.helpers.ufo74_careful_kid_they_re_getting_suspicious',
+            "UFO74: careful kid, they're getting suspicious."
+          ),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.helpers.if_you_hit_50_you_ll_have_to_prove_you_re_human',
+            "       if you hit 50% you'll have to prove you're human."
+          ),
         ],
         stateChanges: {
           singularEventsTriggered: new Set([
@@ -238,8 +295,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.turingEvaluationActive) return false;
       if (!state.tutorialComplete) return false;
       return (
-        state.detectionLevel >= DETECTION_THRESHOLDS.TURING_TRIGGER &&
-        state.evidenceCount >= 1
+        state.detectionLevel >= DETECTION_THRESHOLDS.TURING_TRIGGER && state.evidenceCount >= 1
       );
     },
     execute: state => {
@@ -247,7 +303,11 @@ const SINGULAR_EVENTS: SingularEvent[] = [
         output: [
           createEntry('system', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-          createEntry('warning', '        SECURITY PROTOCOL: TURING EVALUATION INITIATED'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.helpers.security_protocol_turing_evaluation_initiated',
+            '        SECURITY PROTOCOL: TURING EVALUATION INITIATED'
+          ),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('system', ''),
         ],
@@ -283,9 +343,17 @@ const SINGULAR_EVENTS: SingularEvent[] = [
         createEntry('system', ''),
         createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
         createEntry('system', ''),
-        createEntry('warning', '                    [SIGNAL ECHO DETECTED]'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.helpers.signal_echo_detected',
+          '                    [SIGNAL ECHO DETECTED]'
+        ),
         createEntry('system', ''),
-        createEntry('output', '                    ...we see you seeing...'),
+        createEntryI18n(
+          'output',
+          'engine.commands.helpers.we_see_you_seeing',
+          '                    ...we see you seeing...'
+        ),
         createEntry('system', ''),
         createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
         createEntry('system', ''),
@@ -318,17 +386,29 @@ const SINGULAR_EVENTS: SingularEvent[] = [
         createEntry('system', ''),
         createEntry('system', ''),
         createEntry('system', ''),
-        createEntry('system', '            .'),
+        createEntryI18n('system', 'engine.commands.helpers.text', '            .'),
         createEntry('system', ''),
         createEntry('system', ''),
         createEntry('system', ''),
-        createEntry('system', '                              .'),
+        createEntryI18n(
+          'system',
+          'engine.commands.helpers.text_2',
+          '                              .'
+        ),
         createEntry('system', ''),
         createEntry('system', ''),
-        createEntry('warning', '                                              .'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.helpers.text_3',
+          '                                              .'
+        ),
         createEntry('system', ''),
         createEntry('system', ''),
-        createEntry('error', 'SESSION OBSERVATION LEVEL: ELEVATED'),
+        createEntryI18n(
+          'error',
+          'engine.commands.helpers.session_observation_level_elevated',
+          'SESSION OBSERVATION LEVEL: ELEVATED'
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {
@@ -356,13 +436,28 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     execute: state => ({
       output: [
         createEntry('system', ''),
-        createEntry('warning', '[RESPONSE TIMING MISMATCH]'),
-        createEntry('output', 'Reply buffer opened before command log update.'),
-        createEntry('ufo74', 'UFO74: if you get a second answer from this terminal, dont answer it back.'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.helpers.response_timing_mismatch',
+          '[RESPONSE TIMING MISMATCH]'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.helpers.reply_buffer_opened_before_command_log_update',
+          'Reply buffer opened before command log update.'
+        ),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_if_you_get_a_second_answer_from_this_terminal_dont_ans',
+          'UFO74: if you get a second answer from this terminal, dont answer it back.'
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {
-        singularEventsTriggered: new Set([...(state.singularEventsTriggered || []), 'second_voice']),
+        singularEventsTriggered: new Set([
+          ...(state.singularEventsTriggered || []),
+          'second_voice',
+        ]),
         paranoiaLevel: Math.min(100, (state.paranoiaLevel || 0) + 12),
       },
       delayMs: 1800,
@@ -376,8 +471,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.singularEventsTriggered?.has('watcher_ack')) return false;
       if (shouldSuppressPressure(state)) return false;
       return (
-        state.evidenceCount >= 3 &&
-        state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_TRUTHS
+        state.evidenceCount >= 3 && state.detectionLevel >= DETECTION_THRESHOLDS.WANDERING_TRUTHS
       );
     },
     execute: state => ({
@@ -385,12 +479,28 @@ const SINGULAR_EVENTS: SingularEvent[] = [
         createEntry('system', ''),
         createEntry('error', '─────────────────────────────────────────'),
         createEntry('system', ''),
-        createEntry('warning', 'NOTICE: Your inquiry has been noted.'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.helpers.notice_your_inquiry_has_been_noted',
+          'NOTICE: Your inquiry has been noted.'
+        ),
         createEntry('system', ''),
-        createEntry('output', 'Pattern analysis: SYSTEMATIC'),
-        createEntry('output', 'Intent classification: RECONSTRUCTION'),
+        createEntryI18n(
+          'output',
+          'engine.commands.helpers.pattern_analysis_systematic',
+          'Pattern analysis: SYSTEMATIC'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.helpers.intent_classification_reconstruction',
+          'Intent classification: RECONSTRUCTION'
+        ),
         createEntry('system', ''),
-        createEntry('warning', 'Observation continues.'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.helpers.observation_continues',
+          'Observation continues.'
+        ),
         createEntry('system', ''),
         createEntry('error', '─────────────────────────────────────────'),
         createEntry('system', ''),
@@ -418,12 +528,28 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       output: [
         createEntry('system', ''),
         createEntry('warning', '─────────────────────────────────────────'),
-        createEntry('warning', 'NOTICE: Parallel investigation detected'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.helpers.notice_parallel_investigation_detected',
+          'NOTICE: Parallel investigation detected'
+        ),
         createEntry('system', ''),
-        createEntry('output', 'A competing analyst is pulling records.'),
-        createEntry('output', 'Chain-of-custody locks engaged on key files.'),
+        createEntryI18n(
+          'output',
+          'engine.commands.helpers.a_competing_analyst_is_pulling_records',
+          'A competing analyst is pulling records.'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.helpers.chain_of_custody_locks_engaged_on_key_files',
+          'Chain-of-custody locks engaged on key files.'
+        ),
         createEntry('system', ''),
-        createEntry('warning', 'Maintain discretion. Expect delays.'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.helpers.maintain_discretion_expect_delays',
+          'Maintain discretion. Expect delays.'
+        ),
         createEntry('warning', '─────────────────────────────────────────'),
         createEntry('system', ''),
       ],
@@ -486,7 +612,10 @@ function getHostileSystemMessage(hostilityLevel: number, normalMessage: string):
   return normalMessage;
 }
 
-export function applyHostileFiltering(entries: TerminalEntry[], hostilityLevel: number): TerminalEntry[] {
+export function applyHostileFiltering(
+  entries: TerminalEntry[],
+  hostilityLevel: number
+): TerminalEntry[] {
   if (hostilityLevel <= 1) return entries;
 
   return entries
@@ -529,7 +658,10 @@ function isMeaningfulAction(
     return true;
   }
   const updatedEvidenceCount = result.stateChanges.evidenceCount;
-  if (typeof updatedEvidenceCount === 'number' && updatedEvidenceCount > (state.evidenceCount || 0)) {
+  if (
+    typeof updatedEvidenceCount === 'number' &&
+    updatedEvidenceCount > (state.evidenceCount || 0)
+  ) {
     return true;
   }
   if (result.stateChanges.accessLevel && result.stateChanges.accessLevel > state.accessLevel) {
@@ -543,29 +675,73 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
 
   if (level === 0) {
     const hints: TerminalEntry[] = [
-      createEntry('ufo74', 'UFO74: hey. need a hint?'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_hey_need_a_hint',
+        'UFO74: hey. need a hint?'
+      ),
     ];
     if (contextualHints) {
       hints.push(createEntry('ufo74', `UFO74: ${contextualHints}`));
     } else {
-      hints.push(createEntry('ufo74', 'UFO74: READ the files. "open <filename>".'));
-      hints.push(createEntry('ufo74', '       theres a protocol doc in /internal/.'));
+      hints.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_read_the_files_open_filename',
+          'UFO74: READ the files. "open <filename>".'
+        )
+      );
+      hints.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.theres_a_protocol_doc_in_internal',
+          '       theres a protocol doc in /internal/.'
+        )
+      );
     }
     return hints;
   } else if (level === 1) {
     return [
-      createEntry('ufo74', 'UFO74: look for evidence in:'),
-      createEntry('output', '       /storage/, /ops/quarantine/, /comms/'),
-      createEntry('ufo74', 'UFO74: the index knows more than they want you to find.'),
-      createEntry('ufo74', '       try: search <keyword>'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_look_for_evidence_in',
+        'UFO74: look for evidence in:'
+      ),
+      createEntryI18n(
+        'output',
+        'engine.commands.helpers.storage_ops_quarantine_comms',
+        '       /storage/, /ops/quarantine/, /comms/'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_the_index_knows_more_than_they_want_you_to_find',
+        'UFO74: the index knows more than they want you to find.'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.try_search_keyword',
+        '       try: search <keyword>'
+      ),
     ];
   } else {
     return [
-      createEntry('ufo74', 'UFO74: last hint:'),
-      createEntry('output', '       1. cd <directory>'),
-      createEntry('output', '       2. ls'),
-      createEntry('output', '       3. open <filename>'),
-      createEntry('ufo74', 'UFO74: january 96. find the pieces.'),
+      createEntryI18n('ufo74', 'engine.commands.helpers.ufo74_last_hint', 'UFO74: last hint:'),
+      createEntryI18n(
+        'output',
+        'engine.commands.helpers.1_cd_directory',
+        '       1. cd <directory>'
+      ),
+      createEntryI18n('output', 'engine.commands.helpers.2_ls', '       2. ls'),
+      createEntryI18n(
+        'output',
+        'engine.commands.helpers.3_open_filename',
+        '       3. open <filename>'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_january_96_find_the_pieces',
+        'UFO74: january 96. find the pieces.'
+      ),
     ];
   }
 }
@@ -637,11 +813,7 @@ export function getObserverStatusLines(state: GameState): string[] {
   const psiExposed = hasReadPsiMaterial(state);
   const lines: string[] = [];
 
-  if (
-    psiExposed &&
-    evidCount >= 2 &&
-    state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_MED
-  ) {
+  if (psiExposed && evidCount >= 2 && state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_MED) {
     lines.push('  SIGNAL: Residual echo persists in relay buffer.');
     if (state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH) {
       lines.push('  NOTE: One response arrived before keystroke registration.');
@@ -655,10 +827,7 @@ export function getObserverStatusLines(state: GameState): string[] {
     lines.push('  SIGNAL: Background carrier present. Source unresolved.');
   }
 
-  if (
-    evidCount >= 3 &&
-    state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH
-  ) {
+  if (evidCount >= 3 && state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH) {
     lines.push('  NOTICE: Query pattern resembles prior containment interviews.');
   }
 
@@ -718,7 +887,11 @@ function getCommandDetectionMultiplier(state: GameState, command: string): numbe
   return 1.0;
 }
 
-export function applyDetectionVariance(state: GameState, command: string, baseIncrease: number): number {
+export function applyDetectionVariance(
+  state: GameState,
+  command: string,
+  baseIncrease: number
+): number {
   const multiplier = getCommandDetectionMultiplier(state, command);
   return Math.floor(baseIncrease * multiplier);
 }
@@ -795,7 +968,13 @@ export function applyEvidenceDiscovery(
   }
 
   notices.push(createEntry('system', ''));
-  notices.push(createEntry('system', '[System recalibrating... attention momentarily diverted]'));
+  notices.push(
+    createEntryI18n(
+      'system',
+      'engine.commands.helpers.system_recalibrating_attention_momentarily_diverted',
+      '[System recalibrating... attention momentarily diverted]'
+    )
+  );
 
   if (newCount === 1) {
     if (
@@ -813,24 +992,50 @@ export function applyEvidenceDiscovery(
   }
   if (newCount === 2) {
     notices.push(createEntry('notice', ''));
-    notices.push(createEntry('notice', 'SYSTEM: Evidence archive updated.'));
+    notices.push(
+      createEntryI18n(
+        'notice',
+        'engine.commands.helpers.system_evidence_archive_updated',
+        'SYSTEM: Evidence archive updated.'
+      )
+    );
   }
   if (newCount === 4) {
     notices.push(createEntry('notice', ''));
-    notices.push(createEntry('notice', 'NOTICE: Evidence count growing. Keep digging.'));
+    notices.push(
+      createEntryI18n(
+        'notice',
+        'engine.commands.helpers.notice_evidence_count_growing_keep_digging',
+        'NOTICE: Evidence count growing. Keep digging.'
+      )
+    );
   }
   if (newCount === 7) {
     notices.push(createEntry('notice', ''));
-    notices.push(createEntry('notice', 'NOTICE: Leak package almost ready.'));
+    notices.push(
+      createEntryI18n(
+        'notice',
+        'engine.commands.helpers.notice_leak_package_almost_ready',
+        'NOTICE: Leak package almost ready.'
+      )
+    );
   }
   if (newCount === MAX_EVIDENCE_COUNT) {
     notices.push(createEntry('notice', ''));
-    notices.push(createEntry('notice', '▓▓▓ LEAK PACKAGE READY ▓▓▓'));
-    notices.push(...createUFO74Message([
-      'UFO74: ten files logged. leak path is live.',
-      '       type: leak',
-      '       do it NOW before they cut the connection.',
-    ]));
+    notices.push(
+      createEntryI18n(
+        'notice',
+        'engine.commands.helpers.leak_package_ready',
+        '▓▓▓ LEAK PACKAGE READY ▓▓▓'
+      )
+    );
+    notices.push(
+      ...createUFO74Message([
+        'UFO74: ten files logged. leak path is live.',
+        '       type: leak',
+        '       do it NOW before they cut the connection.',
+      ])
+    );
   }
 }
 
@@ -838,7 +1043,11 @@ export function applyEvidenceDiscovery(
 // DECRYPTION HELPER
 // ═══════════════════════════════════════════════════════════════════════════
 
-export function performDecryption(filePath: string, file: FileNode, state: GameState): CommandResult {
+export function performDecryption(
+  filePath: string,
+  file: FileNode,
+  state: GameState
+): CommandResult {
   const isFirstDecryption = !state.flags?.firstDecryptionComplete;
   if (isFirstDecryption) {
     saveCheckpoint(state, 'First encrypted file decrypted');
@@ -881,9 +1090,17 @@ export function performDecryption(filePath: string, file: FileNode, state: GameS
   applyEvidenceDiscovery(state, stateChanges, filePath, file, content, truthNotices);
 
   const output = [
-    createEntry('system', 'AUTHENTICATION VERIFIED'),
+    createEntryI18n(
+      'system',
+      'engine.commands.helpers.authentication_verified',
+      'AUTHENTICATION VERIFIED'
+    ),
     createEntry('system', ''),
-    createEntry('warning', 'WARNING: Partial recovery only'),
+    createEntryI18n(
+      'warning',
+      'engine.commands.helpers.warning_partial_recovery_only',
+      'WARNING: Partial recovery only'
+    ),
     ...createOutputEntries(['', `FILE: ${filePath}`, '']),
     ...createOutputEntries(content || ['[DECRYPTION FAILED]']),
     ...truthNotices,
@@ -891,9 +1108,21 @@ export function performDecryption(filePath: string, file: FileNode, state: GameS
 
   if (filePath.includes('neural_dump') || filePath.includes('.psi')) {
     output.push(createEntry('system', ''));
-    output.push(createEntry('notice', 'NOTICE: Neural pattern preserved.'));
-    output.push(createEntry('notice', 'NOTICE: Remote link now available.'));
-    output.push(createEntry('system', 'Use: link'));
+    output.push(
+      createEntryI18n(
+        'notice',
+        'engine.commands.helpers.notice_neural_pattern_preserved',
+        'NOTICE: Neural pattern preserved.'
+      )
+    );
+    output.push(
+      createEntryI18n(
+        'notice',
+        'engine.commands.helpers.notice_remote_link_now_available',
+        'NOTICE: Remote link now available.'
+      )
+    );
+    output.push(createEntryI18n('system', 'engine.commands.helpers.use_link', 'Use: link'));
   }
 
   let imageTrigger: ImageTrigger | undefined = undefined;
@@ -947,9 +1176,27 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
     return contextRandomPick(
       state,
       [
-        [createEntry('ufo74', 'UFO74: if the terminal starts using your wording, stop typing.')],
-        [createEntry('ufo74', 'UFO74: dont mirror anything back from the psi files.')],
-        [createEntry('ufo74', 'UFO74: if another line answers before i do, ignore it.')],
+        [
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.helpers.ufo74_if_the_terminal_starts_using_your_wording_stop_typing',
+            'UFO74: if the terminal starts using your wording, stop typing.'
+          ),
+        ],
+        [
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.helpers.ufo74_dont_mirror_anything_back_from_the_psi_files',
+            'UFO74: dont mirror anything back from the psi files.'
+          ),
+        ],
+        [
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.helpers.ufo74_if_another_line_answers_before_i_do_ignore_it',
+            'UFO74: if another line answers before i do, ignore it.'
+          ),
+        ],
       ],
       'ufo74-telepathy-aftershock',
       filePath,
@@ -962,7 +1209,13 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
     truthCount < 3 &&
     (path.includes('bio') || path.includes('containment') || path.includes('quarantine'))
   ) {
-    return [createEntry('ufo74', 'UFO74: telepathy + captured... did they CHOOSE this?')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_telepathy_captured_did_they_choose_this',
+        'UFO74: telepathy + captured... did they CHOOSE this?'
+      ),
+    ];
   }
 
   if (
@@ -970,7 +1223,13 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
     truthCount < 4 &&
     (path.includes('2026') || path.includes('window') || path.includes('transition'))
   ) {
-    return [createEntry('ufo74', 'UFO74: all countries agreed on 2026? bigger than politics.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_all_countries_agreed_on_2026_bigger_than_politics',
+        'UFO74: all countries agreed on 2026? bigger than politics.'
+      ),
+    ];
   }
 
   if (
@@ -978,7 +1237,13 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
     truthCount < 3 &&
     (path.includes('autopsy') || path.includes('specimen') || path.includes('bio'))
   ) {
-    return [createEntry('ufo74', 'UFO74: ship pieces first, now the CREW. someone survived.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_ship_pieces_first_now_the_crew_someone_survived',
+        'UFO74: ship pieces first, now the CREW. someone survived.'
+      ),
+    ];
   }
 
   if (
@@ -986,7 +1251,13 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
     truthCount < 4 &&
     (path.includes('liaison') || path.includes('diplomatic') || path.includes('foreign'))
   ) {
-    return [createEntry('ufo74', 'UFO74: captured alive, then SHARED? whos coordinating this?')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_captured_alive_then_shared_whos_coordinating_this',
+        'UFO74: captured alive, then SHARED? whos coordinating this?'
+      ),
+    ];
   }
 
   if (
@@ -994,7 +1265,11 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
     (path.includes('psi') || path.includes('telepat') || path.includes('neural'))
   ) {
     return [
-      createEntry('ufo74', 'UFO74: knew about 2026 before reading minds? or did THEY tell us?'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_knew_about_2026_before_reading_minds_or_did_they_tell_',
+        'UFO74: knew about 2026 before reading minds? or did THEY tell us?'
+      ),
     ];
   }
 
@@ -1002,11 +1277,23 @@ function getUFO74ConditionalDialogue(state: GameState, filePath: string): Termin
     state.evidenceLinks?.length === 1 &&
     !state.singularEventsTriggered?.has('ufo74_first_link')
   ) {
-    return [createEntry('ufo74', 'UFO74: connecting dots. good.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_connecting_dots_good',
+        'UFO74: connecting dots. good.'
+      ),
+    ];
   }
 
   if (truthCount >= 4) {
-    return [createEntry('ufo74', 'UFO74: almost there. one more piece.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_almost_there_one_more_piece',
+        'UFO74: almost there. one more piece.'
+      ),
+    ];
   }
 
   return null;
@@ -1019,25 +1306,67 @@ function getUFO74DegradedTrustMessage(
 ): TerminalEntry[] {
   if (trustLevel === 'cryptic') {
     const crypticMessages = [
-      [createEntry('ufo74', 'UFO74: walls listen. find the thread.')],
-      [createEntry('ufo74', 'UFO74: th3y r3 1ns1d3')],
-      [createEntry('ufo74', 'UFO74: ...january... they took everything...')],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_walls_listen_find_the_thread',
+          'UFO74: walls listen. find the thread.'
+        ),
+      ],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_th3y_r3_1ns1d3',
+          'UFO74: th3y r3 1ns1d3'
+        ),
+      ],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_january_they_took_everything',
+          'UFO74: ...january... they took everything...'
+        ),
+      ],
     ];
     return contextRandomPick(state, crypticMessages, 'ufo74-cryptic-message', context);
   }
 
   if (trustLevel === 'paranoid') {
     const paranoidMessages = [
-      [createEntry('ufo74', 'UFO74: theyre scanning. cant talk.')],
-      [createEntry('ufo74', 'UFO74: be fast.')],
-      [createEntry('ufo74', 'UFO74: every file you open, they see.')],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_theyre_scanning_cant_talk',
+          'UFO74: theyre scanning. cant talk.'
+        ),
+      ],
+      [createEntryI18n('ufo74', 'engine.commands.helpers.ufo74_be_fast', 'UFO74: be fast.')],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_every_file_you_open_they_see',
+          'UFO74: every file you open, they see.'
+        ),
+      ],
     ];
     return contextRandomPick(state, paranoidMessages, 'ufo74-paranoid-message', context);
   }
 
   const cautiousMessages = [
-    [createEntry('ufo74', 'UFO74: triggered some flags. careful.')],
-    [createEntry('ufo74', 'UFO74: system suspicious. use "wait".')],
+    [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_triggered_some_flags_careful',
+        'UFO74: triggered some flags. careful.'
+      ),
+    ],
+    [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_system_suspicious_use_wait',
+        'UFO74: system suspicious. use "wait".'
+      ),
+    ],
   ];
   return contextRandomPick(state, cautiousMessages, 'ufo74-cautious-message', context);
 }
@@ -1046,19 +1375,49 @@ function getUFO74ContentReaction(state: GameState, filePath: string): TerminalEn
   const path = filePath.toLowerCase();
 
   if (path.includes('autopsy') || path.includes('medical')) {
-    return [createEntry('ufo74', 'UFO74: autopsy report. not human.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_autopsy_report_not_human',
+        'UFO74: autopsy report. not human.'
+      ),
+    ];
   }
   if (path.includes('transport') || path.includes('logistics') || path.includes('manifest')) {
-    return [createEntry('ufo74', 'UFO74: transport log. they split up the evidence.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_transport_log_they_split_up_the_evidence',
+        'UFO74: transport log. they split up the evidence.'
+      ),
+    ];
   }
   if (path.includes('transcript') || path.includes('psi') || path.includes('neural')) {
-    return [createEntry('ufo74', 'UFO74: they were communicating. telepathically.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_they_were_communicating_telepathically',
+        'UFO74: they were communicating. telepathically.'
+      ),
+    ];
   }
   if (path.includes('/comms/intercepts/')) {
-    return [createEntry('ufo74', 'UFO74: routine intercepts. signal in the noise.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_routine_intercepts_signal_in_the_noise',
+        'UFO74: routine intercepts. signal in the noise.'
+      ),
+    ];
   }
   if (path.includes('foreign') || path.includes('liaison') || path.includes('international')) {
-    return [createEntry('ufo74', 'UFO74: other countries involved. coordinated cover-up.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_other_countries_involved_coordinated_cover_up',
+        'UFO74: other countries involved. coordinated cover-up.'
+      ),
+    ];
   }
   if (
     path.includes('2026') ||
@@ -1066,10 +1425,22 @@ function getUFO74ContentReaction(state: GameState, filePath: string): TerminalEn
     path.includes('transition') ||
     path.includes('threat')
   ) {
-    return [createEntry('ufo74', 'UFO74: 2026. something coming. thats why they buried it.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_2026_something_coming_thats_why_they_buried_it',
+        'UFO74: 2026. something coming. thats why they buried it.'
+      ),
+    ];
   }
   if (path.includes('bio') || path.includes('containment') || path.includes('quarantine')) {
-    return [createEntry('ufo74', 'UFO74: containment. they captured them.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_containment_they_captured_them',
+        'UFO74: containment. they captured them.'
+      ),
+    ];
   }
   if (
     path.includes('crash') ||
@@ -1077,23 +1448,65 @@ function getUFO74ContentReaction(state: GameState, filePath: string): TerminalEn
     path.includes('material') ||
     path.includes('sample')
   ) {
-    return [createEntry('ufo74', 'UFO74: physical evidence. smoking gun.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_physical_evidence_smoking_gun',
+        'UFO74: physical evidence. smoking gun.'
+      ),
+    ];
   }
   if (path.includes('balloon') || path.includes('drone') || path.includes('aircraft_incident')) {
-    return [createEntry('ufo74', 'UFO74: cover story. the real material is buried deeper.')];
+    return [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_cover_story_the_real_material_is_buried_deeper',
+        'UFO74: cover story. the real material is buried deeper.'
+      ),
+    ];
   }
   if (path.includes('morse_intercept')) {
     return [
-      createEntry('ufo74', 'UFO74: morse code. decipher it.'),
-      createEntry('ufo74', '       might be the override passphrase.'),
-      createEntry('ufo74', '       use: message <answer>'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_morse_code_decipher_it',
+        'UFO74: morse code. decipher it.'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.might_be_the_override_passphrase',
+        '       might be the override passphrase.'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.use_message_answer',
+        '       use: message <answer>'
+      ),
     ];
   }
 
   const defaultReactions = [
-    [createEntry('ufo74', 'UFO74: interesting. keep digging.')],
-    [createEntry('ufo74', 'UFO74: good. every file matters.')],
-    [createEntry('ufo74', 'UFO74: noted. try /ops, /storage, /comms.')],
+    [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_interesting_keep_digging',
+        'UFO74: interesting. keep digging.'
+      ),
+    ],
+    [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_good_every_file_matters',
+        'UFO74: good. every file matters.'
+      ),
+    ],
+    [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_noted_try_ops_storage_comms',
+        'UFO74: noted. try /ops, /storage, /comms.'
+      ),
+    ],
   ];
 
   return contextRandomPick(state, defaultReactions, 'ufo74-default-reaction', filePath);
@@ -1120,7 +1533,15 @@ function getUFO74FileReaction(
 
   if (
     (trustLevel === 'cryptic' || trustLevel === 'paranoid') &&
-    contextChance(state, 0.5, 'ufo74-degraded-trust', trustLevel, filePath, messageCount, truthCount)
+    contextChance(
+      state,
+      0.5,
+      'ufo74-degraded-trust',
+      trustLevel,
+      filePath,
+      messageCount,
+      truthCount
+    )
   ) {
     messages = getUFO74DegradedTrustMessage(state, trustLevel, filePath);
     return messages;
@@ -1135,14 +1556,36 @@ function getUFO74FileReaction(
   }
 
   if (isFirstUnstable) {
-    messages = [createEntry('ufo74', 'UFO74: messy copy, but it should still read clean enough.')];
+    messages = [
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_messy_copy_but_it_should_still_read_clean_enough',
+        'UFO74: messy copy, but it should still read clean enough.'
+      ),
+    ];
   } else if (isEncryptedAndLocked) {
     const encryptedMessages = [
       [
-        createEntry('ufo74', 'UFO74: old wrapper on this file. readable layer is still intact.'),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_old_wrapper_on_this_file_readable_layer_is_still_intac',
+          'UFO74: old wrapper on this file. readable layer is still intact.'
+        ),
       ],
-      [createEntry('ufo74', 'UFO74: legacy encryption tag. just keep reading closely.')],
-      [createEntry('ufo74', 'UFO74: noisy shell, but the evidence is still there.')],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_legacy_encryption_tag_just_keep_reading_closely',
+          'UFO74: legacy encryption tag. just keep reading closely.'
+        ),
+      ],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_noisy_shell_but_the_evidence_is_still_there',
+          'UFO74: noisy shell, but the evidence is still there.'
+        ),
+      ],
     ];
     messages = contextRandomPick(
       state,
@@ -1154,19 +1597,51 @@ function getUFO74FileReaction(
     );
   } else if (isFinalMessage) {
     messages = [
-      createEntry('ufo74', 'UFO74: someones at my door.'),
-      createEntry('ufo74', '       not police. they dont knock like that.'),
-      createEntry('ufo74', 'UFO74: tell everyone what you found.'),
-      createEntry('ufo74', '       goodbye hackerkid.'),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_someones_at_my_door',
+        'UFO74: someones at my door.'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.not_police_they_dont_knock_like_that',
+        '       not police. they dont knock like that.'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_tell_everyone_what_you_found',
+        'UFO74: tell everyone what you found.'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.goodbye_hackerkid',
+        '       goodbye hackerkid.'
+      ),
     ];
   } else if (isAboutToFlee) {
     const fleeMessages = [
-      [createEntry('ufo74', 'UFO74: hearing noises. stay alert.')],
       [
-        createEntry('ufo74', 'UFO74: my connection dropped. footsteps upstairs.'),
-        createEntry('ufo74', '       i live alone.'),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_hearing_noises_stay_alert',
+          'UFO74: hearing noises. stay alert.'
+        ),
       ],
-      [createEntry('ufo74', 'UFO74: van outside. finish fast.')],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_my_connection_dropped_footsteps_upstairs',
+          'UFO74: my connection dropped. footsteps upstairs.'
+        ),
+        createEntryI18n('ufo74', 'engine.commands.helpers.i_live_alone', '       i live alone.'),
+      ],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_van_outside_finish_fast',
+          'UFO74: van outside. finish fast.'
+        ),
+      ],
     ];
     messages = contextRandomPick(
       state,
@@ -1178,8 +1653,20 @@ function getUFO74FileReaction(
     );
   } else if (isGettingParanoid) {
     const nervousMessages = [
-      [createEntry('ufo74', 'UFO74: youre deep now. its real.')],
-      [createEntry('ufo74', 'UFO74: be careful with this info.')],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_youre_deep_now_its_real',
+          'UFO74: youre deep now. its real.'
+        ),
+      ],
+      [
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_be_careful_with_this_info',
+          'UFO74: be careful with this info.'
+        ),
+      ],
     ];
     messages = contextRandomPick(
       state,
@@ -1210,7 +1697,7 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
 
   const explanations: TerminalEntry[] = [
     createEntry('system', ''),
-    createEntry('warning', '>> UFO74 <<'),
+    createEntryI18n('warning', 'engine.commands.helpers.ufo74', '>> UFO74 <<'),
     createEntry('system', ''),
   ];
 
@@ -1220,7 +1707,13 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
       notice.includes('Asset chain') ||
       notice.includes('Relocation')
     ) {
-      explanations.push(createEntry('ufo74', 'UFO74: physical debris confirmed.'));
+      explanations.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_physical_debris_confirmed',
+          'UFO74: physical debris confirmed.'
+        )
+      );
       break;
     }
     if (
@@ -1228,7 +1721,13 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
       notice.includes('Specimen') ||
       notice.includes('Containment')
     ) {
-      explanations.push(createEntry('ufo74', 'UFO74: bio specimens confirmed.'));
+      explanations.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_bio_specimens_confirmed',
+          'UFO74: bio specimens confirmed.'
+        )
+      );
       break;
     }
     if (
@@ -1236,7 +1735,13 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
       notice.includes('Foreign') ||
       notice.includes('External')
     ) {
-      explanations.push(createEntry('ufo74', 'UFO74: international involvement.'));
+      explanations.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_international_involvement',
+          'UFO74: international involvement.'
+        )
+      );
       break;
     }
     if (
@@ -1244,7 +1749,13 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
       notice.includes('Signal') ||
       notice.includes('Communication')
     ) {
-      explanations.push(createEntry('ufo74', 'UFO74: communication evidence.'));
+      explanations.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_communication_evidence',
+          'UFO74: communication evidence.'
+        )
+      );
       break;
     }
     if (
@@ -1252,15 +1763,33 @@ function getUFO74NoticeExplanation(notices: TerminalEntry[]): TerminalEntry[] | 
       notice.includes('Transition') ||
       notice.includes('Chronological')
     ) {
-      explanations.push(createEntry('ufo74', 'UFO74: 2026 timeline.'));
+      explanations.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_2026_timeline',
+          'UFO74: 2026 timeline.'
+        )
+      );
       break;
     }
     if (notice.includes('Independent verification') || notice.includes('verification')) {
-      explanations.push(createEntry('ufo74', 'UFO74: two pieces confirm each other.'));
+      explanations.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_two_pieces_confirm_each_other',
+          'UFO74: two pieces confirm each other.'
+        )
+      );
       break;
     }
     if (notice.includes('Sufficient documentation') || notice.includes('threshold')) {
-      explanations.push(createEntry('ufo74', 'UFO74: almost there.'));
+      explanations.push(
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.helpers.ufo74_almost_there',
+          'UFO74: almost there.'
+        )
+      );
       break;
     }
   }

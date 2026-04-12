@@ -69,6 +69,29 @@ describe('i18n system', () => {
     );
   });
 
+  it('translates leak-sequence wrapped runtime lines for pt-BR', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('pt-BR');
+    });
+
+    expect(result.current.translateRuntimeText('  [DEBRIS]')).toBe('  [DESTROÇOS]');
+    expect(result.current.translateRuntimeText('  "They moved the debris. Where?"')).toBe(
+      '  "Eles moveram os destroços. Para onde?"'
+    );
+    expect(result.current.translateRuntimeText('  Acceptable.')).toBe('  Aceitável.');
+    expect(result.current.translateRuntimeText('  [DETECTION: +18%]')).toBe('  [DETECÇÃO: +18%]');
+    expect(result.current.translateRuntimeText('  [Wrong answers: 2/3]')).toBe(
+      '  [Respostas erradas: 2/3]'
+    );
+    expect(
+      result.current.translateRuntimeText(
+        '  You have 3 conspiracy document(s) in your cache.'
+      )
+    ).toBe('  Você tem 3 documento(s) da conspiração no seu cache.');
+  });
+
   it('keeps locale key parity across en, pt-BR, and es', () => {
     const enKeys = Object.keys(en).sort();
     expect(Object.keys(ptBr).sort()).toEqual(enKeys);

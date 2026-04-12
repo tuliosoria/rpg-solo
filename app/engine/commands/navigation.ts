@@ -4,12 +4,8 @@ import { TerminalEntry } from '../../types';
 import { canAccessFile, getFileContent } from '../filesystem';
 import { countEvidence, EVIDENCE_SYMBOL } from '../evidenceRevelation';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES } from '../../constants/detection';
-import {
-  createEntry,
-} from './utils';
-import {
-  getWarmupAdjustedDetection,
-} from './helpers';
+import { createEntry, createEntryI18n } from './utils';
+import { getWarmupAdjustedDetection } from './helpers';
 import type { CommandRegistry } from './types';
 
 export const navigationCommands: CommandRegistry = {
@@ -18,8 +14,16 @@ export const navigationCommands: CommandRegistry = {
     if (!state.lastOpenedFile) {
       return {
         output: [
-          createEntry('error', 'ERROR: No file opened yet'),
-          createEntry('ufo74', '[UFO74]: use "open <filename>" to read a file first.'),
+          createEntryI18n(
+            'error',
+            'engine.commands.navigation.error_no_file_opened_yet',
+            'ERROR: No file opened yet'
+          ),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.navigation.ufo74_use_open_filename_to_read_a_file_first',
+            '[UFO74]: use "open <filename>" to read a file first.'
+          ),
         ],
         stateChanges: {},
       };
@@ -36,7 +40,13 @@ export const navigationCommands: CommandRegistry = {
     const content = getFileContent(state.lastOpenedFile, state);
     if (!content) {
       return {
-        output: [createEntry('error', 'ERROR: File content no longer available')],
+        output: [
+          createEntryI18n(
+            'error',
+            'engine.commands.navigation.error_file_content_no_longer_available',
+            'ERROR: File content no longer available'
+          ),
+        ],
         stateChanges: {},
       };
     }
@@ -64,7 +74,13 @@ export const navigationCommands: CommandRegistry = {
       // Fallback to parent directory if no history
       if (state.currentPath === '/') {
         return {
-          output: [createEntry('system', 'Already at root directory. No navigation history.')],
+          output: [
+            createEntryI18n(
+              'system',
+              'engine.commands.navigation.already_at_root_directory_no_navigation_history',
+              'Already at root directory. No navigation history.'
+            ),
+          ],
           stateChanges: {},
         };
       }
@@ -75,7 +91,11 @@ export const navigationCommands: CommandRegistry = {
       return {
         output: [
           createEntry('output', `Changed to: ${newPath}`),
-          createEntry('ufo74', '[UFO74]: use "cd" to build navigation history for the "back" command.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.navigation.ufo74_use_cd_to_build_navigation_history_for_the_back_comman',
+            '[UFO74]: use "cd" to build navigation history for the "back" command.'
+          ),
         ],
         stateChanges: state.tutorialComplete
           ? {
@@ -116,12 +136,24 @@ export const navigationCommands: CommandRegistry = {
         output: [
           createEntry('system', ''),
           createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
-          createEntry('system', '║                  EVIDENCE MAP                         ║'),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.evidence_map',
+            '║                  EVIDENCE MAP                         ║'
+          ),
           createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
           createEntry('system', ''),
-          createEntry('system', '  No evidence logged yet.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.no_evidence_logged_yet',
+            '  No evidence logged yet.'
+          ),
           createEntry('system', ''),
-          createEntry('system', '  Read files to log corroborating evidence.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.read_files_to_log_corroborating_evidence',
+            '  Read files to log corroborating evidence.'
+          ),
           createEntry('system', ''),
           createEntry('system', '╚═══════════════════════════════════════════════════════╝'),
         ],
@@ -132,13 +164,19 @@ export const navigationCommands: CommandRegistry = {
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
-      createEntry('system', '║                  EVIDENCE MAP                         ║'),
+      createEntryI18n(
+        'system',
+        'engine.commands.navigation.evidence_map',
+        '║                  EVIDENCE MAP                         ║'
+      ),
       createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
       createEntry('system', ''),
     ];
 
     // Show evidence status
-    output.push(createEntry('system', '  EVIDENCE STATUS:'));
+    output.push(
+      createEntryI18n('system', 'engine.commands.navigation.evidence_status', '  EVIDENCE STATUS:')
+    );
     output.push(createEntry('system', ''));
     for (let i = 1; i <= 5; i++) {
       const symbol = i <= evidenceCount ? EVIDENCE_SYMBOL : '○';
@@ -168,8 +206,16 @@ export const navigationCommands: CommandRegistry = {
     if (usesRemaining <= 0) {
       return {
         output: [
-          createEntry('warning', 'Cannot wait any longer.'),
-          createEntry('system', 'The system is too alert. Staying still would be suspicious.'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.navigation.cannot_wait_any_longer',
+            'Cannot wait any longer.'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.the_system_is_too_alert_staying_still_would_be_suspicious',
+            'The system is too alert. Staying still would be suspicious.'
+          ),
         ],
         stateChanges: {},
       };
@@ -183,7 +229,10 @@ export const navigationCommands: CommandRegistry = {
       const remaining = Math.ceil((WAIT_COOLDOWN_MS - timeSinceLastWait) / 1000);
       return {
         output: [
-          createEntry('system', `Too soon. Wait ${remaining} second${remaining === 1 ? '' : 's'} before trying again.`),
+          createEntry(
+            'system',
+            `Too soon. Wait ${remaining} second${remaining === 1 ? '' : 's'} before trying again.`
+          ),
         ],
         stateChanges: {},
       };
@@ -192,8 +241,16 @@ export const navigationCommands: CommandRegistry = {
     if (state.detectionLevel <= DETECTION_THRESHOLDS.GHOST_MAX) {
       return {
         output: [
-          createEntry('system', 'Detection level already minimal.'),
-          createEntry('system', 'No need to wait.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.detection_level_already_minimal',
+            'Detection level already minimal.'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.no_need_to_wait',
+            'No need to wait.'
+          ),
         ],
         stateChanges: {},
       };
@@ -211,18 +268,40 @@ export const navigationCommands: CommandRegistry = {
 
     const messages: TerminalEntry[] = [
       createEntry('system', ''),
-      createEntry('system', '    . . .'),
+      createEntryI18n('system', 'engine.commands.navigation.text', '    . . .'),
       createEntry('system', ''),
-      createEntry('system', '    [Holding position... monitoring suspended]'),
+      createEntryI18n(
+        'system',
+        'engine.commands.navigation.holding_position_monitoring_suspended',
+        '    [Holding position... monitoring suspended]'
+      ),
       createEntry('system', ''),
     ];
 
     if (newHostility >= 3) {
-      messages.push(createEntry('warning', '    The system grows impatient.'));
+      messages.push(
+        createEntryI18n(
+          'warning',
+          'engine.commands.navigation.the_system_grows_impatient',
+          '    The system grows impatient.'
+        )
+      );
     } else if (newHostility >= 2) {
-      messages.push(createEntry('system', '    Something is still watching.'));
+      messages.push(
+        createEntryI18n(
+          'system',
+          'engine.commands.navigation.something_is_still_watching',
+          '    Something is still watching.'
+        )
+      );
     } else {
-      messages.push(createEntry('system', '    Attention drifts elsewhere.'));
+      messages.push(
+        createEntryI18n(
+          'system',
+          'engine.commands.navigation.attention_drifts_elsewhere',
+          '    Attention drifts elsewhere.'
+        )
+      );
     }
 
     messages.push(createEntry('system', ''));
@@ -251,8 +330,16 @@ export const navigationCommands: CommandRegistry = {
     if (state.detectionLevel < DETECTION_THRESHOLDS.HIDE_AVAILABLE) {
       return {
         output: [
-          createEntry('error', 'Command not recognized: hide'),
-          createEntry('system', 'Type "help" for available commands'),
+          createEntryI18n(
+            'error',
+            'engine.commands.navigation.command_not_recognized_hide',
+            'Command not recognized: hide'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.type_help_for_available_commands',
+            'Type "help" for available commands'
+          ),
         ],
         stateChanges: {},
       };
@@ -270,9 +357,21 @@ export const navigationCommands: CommandRegistry = {
     if (state.singularEventsTriggered?.has('hide_used')) {
       return {
         output: [
-          createEntry('error', 'Cannot hide again.'),
-          createEntry('warning', 'They know your patterns now.'),
-          createEntry('system', 'There is no second escape.'),
+          createEntryI18n(
+            'error',
+            'engine.commands.navigation.cannot_hide_again',
+            'Cannot hide again.'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.navigation.they_know_your_patterns_now',
+            'They know your patterns now.'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.there_is_no_second_escape',
+            'There is no second escape.'
+          ),
         ],
         stateChanges: {},
       };
@@ -285,18 +384,50 @@ export const navigationCommands: CommandRegistry = {
     return {
       output: [
         createEntry('system', ''),
-        createEntry('warning', '▓▓▓ EMERGENCY PROTOCOL ENGAGED ▓▓▓'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.navigation.emergency_protocol_engaged',
+          '▓▓▓ EMERGENCY PROTOCOL ENGAGED ▓▓▓'
+        ),
         createEntry('system', ''),
-        createEntry('system', '    Routing through backup channels...'),
-        createEntry('system', '    Fragmenting connection signature...'),
-        createEntry('system', '    Deploying decoy packets...'),
+        createEntryI18n(
+          'system',
+          'engine.commands.navigation.routing_through_backup_channels',
+          '    Routing through backup channels...'
+        ),
+        createEntryI18n(
+          'system',
+          'engine.commands.navigation.fragmenting_connection_signature',
+          '    Fragmenting connection signature...'
+        ),
+        createEntryI18n(
+          'system',
+          'engine.commands.navigation.deploying_decoy_packets',
+          '    Deploying decoy packets...'
+        ),
         createEntry('system', ''),
-        createEntry('system', '    [CONNECTION DESTABILIZED]'),
+        createEntryI18n(
+          'system',
+          'engine.commands.navigation.connection_destabilized',
+          '    [CONNECTION DESTABILIZED]'
+        ),
         createEntry('system', ''),
-        createEntry('output', '    You slip back into the shadows.'),
-        createEntry('warning', '    Session stability compromised.'),
+        createEntryI18n(
+          'output',
+          'engine.commands.navigation.you_slip_back_into_the_shadows',
+          '    You slip back into the shadows.'
+        ),
+        createEntryI18n(
+          'warning',
+          'engine.commands.navigation.session_stability_compromised',
+          '    Session stability compromised.'
+        ),
         createEntry('system', ''),
-        createEntry('ufo74', '    >> close call. dont push your luck. <<'),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.navigation.close_call_dont_push_your_luck',
+          '    >> close call. dont push your luck. <<'
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {

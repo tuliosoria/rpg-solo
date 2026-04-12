@@ -1,11 +1,6 @@
 // Filesystem commands: ls, cd, open, decrypt, tree
 
-import {
-  GameState,
-  TerminalEntry,
-  FileNode,
-  ImageTrigger,
-} from '../../types';
+import { GameState, TerminalEntry, FileNode, ImageTrigger } from '../../types';
 import {
   resolvePath,
   getNode,
@@ -16,13 +11,11 @@ import {
 } from '../filesystem';
 import { createSeededRng, seededRandomInt } from '../rng';
 import { EVIDENCE_SYMBOL } from '../evidenceRevelation';
-import {
-  UFO74_CONSPIRACY_REACTIONS,
-  CONSPIRACY_FILE_NAMES,
-} from '../../data/conspiracyFiles';
+import { UFO74_CONSPIRACY_REACTIONS, CONSPIRACY_FILE_NAMES } from '../../data/conspiracyFiles';
 import { MAX_DETECTION } from '../../constants/detection';
 import {
   createEntry,
+  createEntryI18n,
   createOutputEntries,
   calculateDelay,
   createUFO74Message,
@@ -51,7 +44,13 @@ export const filesystemCommands: CommandRegistry = {
 
     if (!entries) {
       return {
-        output: [createEntry('error', 'ERROR: Cannot read directory')],
+        output: [
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_cannot_read_directory',
+            'ERROR: Cannot read directory'
+          ),
+        ],
         stateChanges: {},
       };
     }
@@ -184,10 +183,15 @@ export const filesystemCommands: CommandRegistry = {
     if (args.length === 0) {
       return {
         output: [
-          createEntry('error', 'ERROR: Specify directory'),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_specify_directory',
+            'ERROR: Specify directory'
+          ),
           createEntry('system', ''),
-          createEntry(
+          createEntryI18n(
             'ufo74',
+            'engine.commands.filesystem.ufo74_use_ls_to_see_directories_then_cd_dirname_to_enter_one',
             '[UFO74]: use "ls" to see directories, then "cd <dirname>" to enter one.'
           ),
         ],
@@ -211,7 +215,11 @@ export const filesystemCommands: CommandRegistry = {
         output: [
           createEntry('error', `ERROR: Directory not found: ${args[0]}`),
           createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: use "ls" to see whats in the current directory.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_use_ls_to_see_whats_in_the_current_directory',
+            '[UFO74]: use "ls" to see whats in the current directory.'
+          ),
         ],
         stateChanges,
       };
@@ -221,7 +229,11 @@ export const filesystemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('error', `ERROR: Not a directory: ${args[0]}`),
-          createEntry('system', `  HINT: 'cd' is used for directories only.`),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.hint_cd_is_used_for_directories_only',
+            `  HINT: 'cd' is used for directories only.`
+          ),
           createEntry('system', `  To read a file use 'cat ${args[0]}' or 'open ${args[0]}'.`),
           createEntry('system', ''),
           createEntry('ufo74', '[UFO74]: thats a file. try: open ' + args[0]),
@@ -255,10 +267,15 @@ export const filesystemCommands: CommandRegistry = {
     if (args.length === 0) {
       return {
         output: [
-          createEntry('error', 'ERROR: Specify file'),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_specify_file',
+            'ERROR: Specify file'
+          ),
           createEntry('system', ''),
-          createEntry(
+          createEntryI18n(
             'ufo74',
+            'engine.commands.filesystem.ufo74_use_ls_to_see_files_then_open_filename_to_read_one',
             '[UFO74]: use "ls" to see files, then "open <filename>" to read one.'
           ),
         ],
@@ -272,9 +289,17 @@ export const filesystemCommands: CommandRegistry = {
     if (isArchiveOnlyFile(filePath)) {
       return {
         output: [
-          createEntry('error', 'ERROR: File not found'),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_file_not_found',
+            'ERROR: File not found'
+          ),
           createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: use "ls" to see whats here.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_use_ls_to_see_whats_here',
+            '[UFO74]: use "ls" to see whats here.'
+          ),
         ],
         stateChanges: state.inArchiveMode
           ? {
@@ -313,7 +338,11 @@ export const filesystemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('error', `ERROR: ${args[0]} is a directory`),
-          createEntry('system', `  HINT: 'open' is used for files only.`),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.hint_open_is_used_for_files_only',
+            `  HINT: 'open' is used for files only.`
+          ),
           createEntry('system', `  To explore a directory use 'cd ${args[0]}' then 'ls'.`),
           createEntry('system', ''),
           createEntry('ufo74', '[UFO74]: thats a directory. use: cd ' + args[0]),
@@ -325,9 +354,17 @@ export const filesystemCommands: CommandRegistry = {
     if (!node || node.type !== 'file') {
       return {
         output: [
-          createEntry('error', 'ERROR: File not found'),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_file_not_found',
+            'ERROR: File not found'
+          ),
           createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: use "ls" to see whats here.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_use_ls_to_see_whats_here',
+            '[UFO74]: use "ls" to see whats here.'
+          ),
         ],
         stateChanges: {},
       };
@@ -360,7 +397,11 @@ export const filesystemCommands: CommandRegistry = {
             createEntry('system', ''),
             ...(content || []).map(line => createEntry('file', line)),
             createEntry('system', ''),
-            createEntry('warning', 'UFO74: you already fell for this trap, kid. lets move on.'),
+            createEntryI18n(
+              'warning',
+              'engine.commands.filesystem.ufo74_you_already_fell_for_this_trap_kid_lets_move_on',
+              'UFO74: you already fell for this trap, kid. lets move on.'
+            ),
           ],
           stateChanges: state.tutorialComplete
             ? {
@@ -382,18 +423,46 @@ export const filesystemCommands: CommandRegistry = {
         trapOutput.push(
           createEntry('system', ''),
           createEntry('warning', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('warning', '│ >> UFO74 << URGENT                                      │'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.filesystem.ufo74_urgent',
+            '│ >> UFO74 << URGENT                                      │'
+          ),
           createEntry('warning', '└─────────────────────────────────────────────────────────┘'),
           createEntry('system', ''),
-          createEntry('ufo74', 'UFO74: HACKERKID NO!'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_hackerkid_no',
+            'UFO74: HACKERKID NO!'
+          ),
           createEntry('output', ''),
-          createEntry('ufo74', 'UFO74: that was a honeypot! a trap file!'),
-          createEntry('output', '       they plant those to catch people like us.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_that_was_a_honeypot_a_trap_file',
+            'UFO74: that was a honeypot! a trap file!'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.they_plant_those_to_catch_people_like_us',
+            '       they plant those to catch people like us.'
+          ),
           createEntry('output', ''),
-          createEntry('ufo74', 'UFO74: real evidence is NEVER labeled that obviously.'),
-          createEntry('output', '       "SMOKING GUN"? "PRESIDENTS EYES"? come on...'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_real_evidence_is_never_labeled_that_obviously',
+            'UFO74: real evidence is NEVER labeled that obviously.'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.smoking_gun_presidents_eyes_come_on',
+            '       "SMOKING GUN"? "PRESIDENTS EYES"? come on...'
+          ),
           createEntry('output', ''),
-          createEntry('ufo74', 'UFO74: your detection just spiked. be more careful!'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_your_detection_just_spiked_be_more_careful',
+            'UFO74: your detection just spiked. be more careful!'
+          ),
           createEntry('system', '')
         );
       }
@@ -429,7 +498,13 @@ export const filesystemCommands: CommandRegistry = {
       const content = getFileContent(filePath, state, state.fileMutations[filePath]?.decrypted);
       if (!content) {
         return {
-          output: [createEntry('error', 'ERROR: Cannot read file')],
+          output: [
+            createEntryI18n(
+              'error',
+              'engine.commands.filesystem.error_cannot_read_file',
+              'ERROR: Cannot read file'
+            ),
+          ],
           stateChanges: {},
         };
       }
@@ -441,7 +516,11 @@ export const filesystemCommands: CommandRegistry = {
         createEntry('system', ''),
         ...content.map(line => createEntry('file', line)),
         createEntry('system', ''),
-        createEntry('warning', 'UFO74: you already read this file, kid. lets move on.'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.filesystem.ufo74_you_already_read_this_file_kid_lets_move_on',
+          'UFO74: you already read this file, kid. lets move on.'
+        ),
       ];
 
       return {
@@ -480,14 +559,21 @@ export const filesystemCommands: CommandRegistry = {
 
       // Add subtle system message
       safeFileNotice.push(createEntry('system', ''));
-      safeFileNotice.push(createEntry('system', '[SYSTEM: access pattern normalized]'));
+      safeFileNotice.push(
+        createEntryI18n(
+          'system',
+          'engine.commands.filesystem.system_access_pattern_normalized',
+          '[SYSTEM: access pattern normalized]'
+        )
+      );
 
       // Occasionally add UFO74 comment (roughly 1 in 4 safe file reads)
       const showUFO74 = seededRandomInt(rng, 0, 3) === 0;
       if (showUFO74) {
         safeFileNotice.push(
-          createEntry(
+          createEntryI18n(
             'ufo74',
+            'engine.commands.filesystem.ufo74_good_thinking_kid_reading_the_boring_stuff_keeps_you_l',
             'UFO74: good thinking, kid. reading the boring stuff keeps you looking like a regular user.'
           )
         );
@@ -496,9 +582,10 @@ export const filesystemCommands: CommandRegistry = {
 
     // Legacy unstable/encrypted/restricted mechanics are now presentation only.
     const stateChanges: Partial<GameState> = {
-      detectionLevel: detectionChange > 0 
-        ? getWarmupAdjustedDetection(state, detectionChange)
-        : state.detectionLevel + detectionChange, // Safe file reduction - no warmup needed
+      detectionLevel:
+        detectionChange > 0
+          ? getWarmupAdjustedDetection(state, detectionChange)
+          : state.detectionLevel + detectionChange, // Safe file reduction - no warmup needed
       filesRead,
       lastOpenedFile: filePath, // Track for 'last' command
       isReadingFile: true, // Mark as reading file (suppresses firewall eyes)
@@ -515,7 +602,13 @@ export const filesystemCommands: CommandRegistry = {
 
     if (!content) {
       return {
-        output: [createEntry('error', 'ERROR: Cannot read file')],
+        output: [
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_cannot_read_file',
+            'ERROR: Cannot read file'
+          ),
+        ],
         stateChanges,
       };
     }
@@ -593,7 +686,13 @@ export const filesystemCommands: CommandRegistry = {
     ) {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, redactionOverrideSolved: true };
       notices.push(createEntry('notice', ''));
-      notices.push(createEntry('notice', 'NOTICE: Redaction sequence reconciled.'));
+      notices.push(
+        createEntryI18n(
+          'notice',
+          'engine.commands.filesystem.notice_redaction_sequence_reconciled',
+          'NOTICE: Redaction sequence reconciled.'
+        )
+      );
     }
 
     if (filePath.includes('trace_purge_memo') && !isEncryptedAndLocked) {
@@ -633,17 +732,17 @@ export const filesystemCommands: CommandRegistry = {
     // ═══════════════════════════════════════════════════════════════════════════
     const isConspiracyFile = CONSPIRACY_FILE_NAMES.includes(fileName);
     const conspiracyFilesSeen = new Set(state.conspiracyFilesSeen || []);
-    
+
     if (isConspiracyFile && !conspiracyFilesSeen.has(filePath) && !isEncryptedAndLocked) {
       // Mark this conspiracy file as seen
       conspiracyFilesSeen.add(filePath);
       stateChanges.conspiracyFilesSeen = conspiracyFilesSeen;
-      
+
       // Pick a random UFO74 reaction (seeded for consistency using file path hash)
       const conspiracyRng = createSeededRng((state.seed || 0) + filePath.length * 7);
       const reactionIndex = seededRandomInt(conspiracyRng, 0, UFO74_CONSPIRACY_REACTIONS.length);
       const reaction = UFO74_CONSPIRACY_REACTIONS[reactionIndex];
-      
+
       ufo74ContextMessage = createUFO74Message(reaction);
     }
 
@@ -674,8 +773,9 @@ export const filesystemCommands: CommandRegistry = {
         // UFO74 hint: all files read in this subdirectory — overrides previous messages
         if (state.currentPath !== '/' && state.tutorialComplete) {
           ufo74ContextMessage = [
-            createEntry(
+            createEntryI18n(
               'ufo74',
+              'engine.commands.filesystem.ufo74_you_read_all_we_could_here_use_cd_to_go_back_up_to_exp',
               '[UFO74]: you read all we could here, use `cd ..` to go back up to explore other folders kid.'
             ),
           ];
@@ -703,7 +803,13 @@ export const filesystemCommands: CommandRegistry = {
         output.push(
           createEntry(
             'ufo74',
-            contextRandomPick(state, hints, 'ufo74-security-question-hint', filePath, state.filesRead.size)
+            contextRandomPick(
+              state,
+              hints,
+              'ufo74-security-question-hint',
+              filePath,
+              state.filesRead.size
+            )
           )
         );
         output.push(
@@ -717,8 +823,9 @@ export const filesystemCommands: CommandRegistry = {
       } else if (file.timedDecrypt) {
         // Timed decrypt file - hint about the decrypt command
         output.push(
-          createEntry(
+          createEntryI18n(
             'ufo74',
+            'engine.commands.filesystem.ufo74_timed_recovery_wrapper_get_ready_first_then_move_fast',
             'UFO74: timed recovery wrapper. get ready first, then move fast.'
           )
         );
@@ -740,9 +847,7 @@ export const filesystemCommands: CommandRegistry = {
             contextRandomPick(state, hints, 'ufo74-encrypted-hint', filePath, state.filesRead.size)
           )
         );
-        output.push(
-          createEntry('ufo74', '[UFO74]: legacy wrapper: "decrypt ' + args[0] + '".')
-        );
+        output.push(createEntry('ufo74', '[UFO74]: legacy wrapper: "decrypt ' + args[0] + '".'));
       }
     }
 
@@ -783,7 +888,13 @@ export const filesystemCommands: CommandRegistry = {
   decrypt: (args, state) => {
     if (args.length === 0) {
       return {
-        output: [createEntry('error', 'ERROR: Specify file')],
+        output: [
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_specify_file',
+            'ERROR: Specify file'
+          ),
+        ],
         stateChanges: {},
       };
     }
@@ -793,7 +904,13 @@ export const filesystemCommands: CommandRegistry = {
 
     if (!node || node.type !== 'file') {
       return {
-        output: [createEntry('error', 'ERROR: File not found')],
+        output: [
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_file_not_found',
+            'ERROR: File not found'
+          ),
+        ],
         stateChanges: {},
       };
     }
@@ -803,7 +920,11 @@ export const filesystemCommands: CommandRegistry = {
     if (file.status !== 'encrypted') {
       return {
         output: [
-          createEntry('error', 'ERROR: File is not encrypted'),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_file_is_not_encrypted',
+            'ERROR: File is not encrypted'
+          ),
           createEntry('system', ''),
           createEntry('ufo74', '[UFO74]: this ones not encrypted. just use: open ' + args[0]),
         ],
@@ -813,7 +934,13 @@ export const filesystemCommands: CommandRegistry = {
 
     if (!file.decryptedFragment) {
       return {
-        output: [createEntry('error', 'ERROR: No recoverable data')],
+        output: [
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_no_recoverable_data',
+            'ERROR: No recoverable data'
+          ),
+        ],
         stateChanges: {},
       };
     }
@@ -823,7 +950,8 @@ export const filesystemCommands: CommandRegistry = {
     // Preserve the full decrypt flow for files with securityQuestion or timedDecrypt,
     // and for the hidden UFO74 secret ending (ghost_in_machine + varginha1996).
     // Only redirect to open() for plain encrypted files without special decrypt logic.
-    const isGhostSecret = filePath.includes('ghost_in_machine') && legacyPassword === 'varginha1996';
+    const isGhostSecret =
+      filePath.includes('ghost_in_machine') && legacyPassword === 'varginha1996';
     const hasSpecialDecrypt = !!file.securityQuestion || !!file.timedDecrypt;
 
     if (!isGhostSecret && !hasSpecialDecrypt) {
@@ -832,8 +960,9 @@ export const filesystemCommands: CommandRegistry = {
         ...openResult,
         output: [
           createEntry('system', ''),
-          createEntry(
+          createEntryI18n(
             'ufo74',
+            'engine.commands.filesystem.ufo74_old_decrypt_wrappers_are_retired_opening_the_recovered',
             '[UFO74]: old decrypt wrappers are retired. opening the recovered file directly.'
           ),
           ...openResult.output,
@@ -856,10 +985,22 @@ export const filesystemCommands: CommandRegistry = {
           return {
             output: [
               createEntry('error', ''),
-              createEntry('error', '▓▓▓ DECRYPTION WINDOW EXPIRED ▓▓▓'),
+              createEntryI18n(
+                'error',
+                'engine.commands.filesystem.decryption_window_expired',
+                '▓▓▓ DECRYPTION WINDOW EXPIRED ▓▓▓'
+              ),
               createEntry('error', ''),
-              createEntry('warning', 'Time limit exceeded.'),
-              createEntry('warning', 'Encryption re-initialized.'),
+              createEntryI18n(
+                'warning',
+                'engine.commands.filesystem.time_limit_exceeded',
+                'Time limit exceeded.'
+              ),
+              createEntryI18n(
+                'warning',
+                'engine.commands.filesystem.encryption_re_initialized',
+                'Encryption re-initialized.'
+              ),
               createEntry('system', ''),
               createEntry('system', 'Try again with: decrypt ' + args[0]),
             ],
@@ -879,7 +1020,11 @@ export const filesystemCommands: CommandRegistry = {
           const output: TerminalEntry[] = [
             createEntry('system', ''),
             createEntry('system', '═══════════════════════════════════════════════'),
-            createEntry('system', '     TIMED DECRYPTION SUCCESSFUL              '),
+            createEntryI18n(
+              'system',
+              'engine.commands.filesystem.timed_decryption_successful',
+              '     TIMED DECRYPTION SUCCESSFUL              '
+            ),
             createEntry('system', '═══════════════════════════════════════════════'),
             createEntry('system', ''),
           ];
@@ -903,12 +1048,16 @@ export const filesystemCommands: CommandRegistry = {
         } else {
           return {
             output: [
-              createEntry('error', 'SEQUENCE MISMATCH'),
+              createEntryI18n('error', 'runtime.sequenceMismatch', 'SEQUENCE MISMATCH'),
               createEntry('error', ''),
               createEntry('warning', `Expected: ${expectedSequence}`),
               createEntry('warning', `Received: ${providedSequence || '(empty)'}`),
               createEntry('system', ''),
-              createEntry('system', 'Time remaining. Try again.'),
+              createEntryI18n(
+                'system',
+                'engine.commands.filesystem.time_remaining_try_again',
+                'Time remaining. Try again.'
+              ),
             ],
             stateChanges: {
               detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 3),
@@ -924,10 +1073,22 @@ export const filesystemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('warning', ''),
-          createEntry('warning', '▓▓▓ TIMED DECRYPTION INITIATED ▓▓▓'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.filesystem.timed_decryption_initiated',
+            '▓▓▓ TIMED DECRYPTION INITIATED ▓▓▓'
+          ),
           createEntry('warning', ''),
-          createEntry('system', '  This file uses time-locked encryption.'),
-          createEntry('system', '  You must type the sequence before time expires.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.this_file_uses_time_locked_encryption',
+            '  This file uses time-locked encryption.'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.you_must_type_the_sequence_before_time_expires',
+            '  You must type the sequence before time expires.'
+          ),
           createEntry('system', ''),
           createEntry('warning', `  TIME LIMIT: ${timeSeconds} seconds`),
           createEntry('system', ''),
@@ -937,7 +1098,7 @@ export const filesystemCommands: CommandRegistry = {
           createEntry('system', ''),
           createEntry('system', `  Type: decrypt ${args[0]} ${file.timedDecrypt.sequence}`),
           createEntry('system', ''),
-          createEntry('warning', '  TIMER STARTED'),
+          createEntryI18n('warning', 'engine.commands.filesystem.timer_started', '  TIMER STARTED'),
         ],
         stateChanges: {
           timedDecryptActive: true,
@@ -960,13 +1121,29 @@ export const filesystemCommands: CommandRegistry = {
         return {
           output: [
             createEntry('warning', '══════════════════════════════════════════════'),
-            createEntry('warning', 'PASSWORD REQUIRED'),
+            createEntryI18n(
+              'warning',
+              'engine.commands.filesystem.password_required',
+              'PASSWORD REQUIRED'
+            ),
             createEntry('warning', '══════════════════════════════════════════════'),
             createEntry('system', ''),
-            createEntry('system', 'Usage: decrypt ghost_in_machine.enc <password>'),
+            createEntryI18n(
+              'system',
+              'engine.commands.filesystem.usage_decrypt_ghost_in_machine_enc_password',
+              'Usage: decrypt ghost_in_machine.enc <password>'
+            ),
             createEntry('system', ''),
-            createEntry('ufo74', "[UFO74]: This file... I don't recognize it."),
-            createEntry('ufo74', '[UFO74]: But the encryption pattern looks familiar.'),
+            createEntryI18n(
+              'ufo74',
+              'engine.commands.filesystem.ufo74_this_file_i_don_t_recognize_it',
+              "[UFO74]: This file... I don't recognize it."
+            ),
+            createEntryI18n(
+              'ufo74',
+              'engine.commands.filesystem.ufo74_but_the_encryption_pattern_looks_familiar',
+              '[UFO74]: But the encryption pattern looks familiar.'
+            ),
           ],
           stateChanges: {},
         };
@@ -983,10 +1160,18 @@ export const filesystemCommands: CommandRegistry = {
 
         return {
           output: [
-            createEntry('error', 'DECRYPTION FAILED'),
-            createEntry('error', 'Invalid password'),
+            createEntryI18n('error', 'engine.commands.chat.decryption_failed', 'DECRYPTION FAILED'),
+            createEntryI18n(
+              'error',
+              'engine.commands.filesystem.invalid_password',
+              'Invalid password'
+            ),
             createEntry('system', ''),
-            createEntry('ufo74', '[UFO74]: Wrong password. Keep looking.'),
+            createEntryI18n(
+              'ufo74',
+              'engine.commands.filesystem.ufo74_wrong_password_keep_looking',
+              '[UFO74]: Wrong password. Keep looking.'
+            ),
           ],
           stateChanges,
         };
@@ -995,37 +1180,113 @@ export const filesystemCommands: CommandRegistry = {
       // Password correct - trigger secret ending revelation
       return {
         output: [
-          createEntry('system', 'DECRYPTION SUCCESSFUL'),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.decryption_successful',
+            'DECRYPTION SUCCESSFUL'
+          ),
           createEntry('system', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('warning', ''),
-          createEntry('warning', '   CLASSIFIED PERSONNEL FILE'),
-          createEntry('warning', '   SUBJECT: WITNESS #74 - CODE NAME "UFO74"'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.filesystem.classified_personnel_file',
+            '   CLASSIFIED PERSONNEL FILE'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.filesystem.subject_witness_74_code_name_ufo74',
+            '   SUBJECT: WITNESS #74 - CODE NAME "UFO74"'
+          ),
           createEntry('warning', ''),
-          createEntry('output', '   Location: Varginha, Minas Gerais'),
-          createEntry('output', '   Date: January 20, 1996'),
-          createEntry('output', '   Status: WITNESS SUPPRESSION FAILED'),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.location_varginha_minas_gerais',
+            '   Location: Varginha, Minas Gerais'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.date_january_20_1996',
+            '   Date: January 20, 1996'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.status_witness_suppression_failed',
+            '   Status: WITNESS SUPPRESSION FAILED'
+          ),
           createEntry('output', ''),
-          createEntry('output', '   Subject was present during initial'),
-          createEntry('output', '   contact event. Demonstrated unusual'),
-          createEntry('output', '   resistance to memory alteration'),
-          createEntry('output', '   protocols.'),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.subject_was_present_during_initial',
+            '   Subject was present during initial'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.contact_event_demonstrated_unusual',
+            '   contact event. Demonstrated unusual'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.resistance_to_memory_alteration',
+            '   resistance to memory alteration'
+          ),
+          createEntryI18n('output', 'engine.commands.filesystem.protocols', '   protocols.'),
           createEntry('output', ''),
-          createEntry('output', '   Subject has since accessed internal'),
-          createEntry('output', '   networks repeatedly. Motivation unclear.'),
-          createEntry('output', '   Possibly seeking validation.'),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.subject_has_since_accessed_internal',
+            '   Subject has since accessed internal'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.networks_repeatedly_motivation_unclear',
+            '   networks repeatedly. Motivation unclear.'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.possibly_seeking_validation',
+            '   Possibly seeking validation.'
+          ),
           createEntry('output', ''),
           createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: ...'),
-          createEntry('ufo74', '[UFO74]: So you found it.'),
-          createEntry('ufo74', '[UFO74]: I was there. January 1996.'),
-          createEntry('ufo74', '[UFO74]: I saw what they did. What they took.'),
-          createEntry('ufo74', "[UFO74]: I've been inside their systems ever since."),
-          createEntry('ufo74', '[UFO74]: Not for revenge. For proof.'),
-          createEntry('ufo74', "[UFO74]: You have the proof now. Don't let them bury it again."),
+          createEntryI18n('ufo74', 'terminal.tutorialSkip.ellipsis', '[UFO74]: ...'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_so_you_found_it',
+            '[UFO74]: So you found it.'
+          ),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_i_was_there_january_1996',
+            '[UFO74]: I was there. January 1996.'
+          ),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_i_saw_what_they_did_what_they_took',
+            '[UFO74]: I saw what they did. What they took.'
+          ),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_i_ve_been_inside_their_systems_ever_since',
+            "[UFO74]: I've been inside their systems ever since."
+          ),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_not_for_revenge_for_proof',
+            '[UFO74]: Not for revenge. For proof.'
+          ),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74_you_have_the_proof_now_don_t_let_them_bury_it_again',
+            "[UFO74]: You have the proof now. Don't let them bury it again."
+          ),
           createEntry('system', ''),
-          createEntry('warning', '▓▓▓ THE WHOLE TRUTH AWAITS ▓▓▓'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.filesystem.the_whole_truth_awaits',
+            '▓▓▓ THE WHOLE TRUTH AWAITS ▓▓▓'
+          ),
         ],
         stateChanges: {
           // Preserve the reveal output so the UI can transition on the next Enter press.
@@ -1040,8 +1301,16 @@ export const filesystemCommands: CommandRegistry = {
     if (file.accessThreshold && state.accessLevel < file.accessThreshold) {
       return {
         output: [
-          createEntry('error', 'ERROR: Decryption failed'),
-          createEntry('warning', 'WARNING: Access level insufficient'),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.error_decryption_failed',
+            'ERROR: Decryption failed'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.filesystem.warning_access_level_insufficient',
+            'WARNING: Access level insufficient'
+          ),
         ],
         stateChanges: state.tutorialComplete
           ? {
@@ -1057,15 +1326,27 @@ export const filesystemCommands: CommandRegistry = {
     if (file.securityQuestion) {
       return {
         output: [
-          createEntry('system', 'Initiating decryption protocol...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.initiating_decryption_protocol',
+            'Initiating decryption protocol...'
+          ),
           createEntry('system', ''),
           createEntry('warning', '══════════════════════════════════════════════'),
-          createEntry('warning', 'DECRYPTION AUTHENTICATION REQUIRED'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.filesystem.decryption_authentication_required',
+            'DECRYPTION AUTHENTICATION REQUIRED'
+          ),
           createEntry('warning', '══════════════════════════════════════════════'),
           createEntry('system', ''),
           createEntry('system', file.securityQuestion.question),
           createEntry('system', ''),
-          createEntry('system', 'Enter answer below:'),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.enter_answer_below',
+            'Enter answer below:'
+          ),
         ],
         stateChanges: {
           pendingDecryptFile: filePath,
@@ -1085,11 +1366,15 @@ export const filesystemCommands: CommandRegistry = {
         output: [
           createEntry('error', ''),
           createEntry('error', '═══════════════════════════════════════════════════════════'),
-          createEntry('error', 'FIREWALL TRIGGERED'),
+          createEntryI18n('error', 'runtime.firewallTriggered', 'FIREWALL TRIGGERED'),
           createEntry('error', '═══════════════════════════════════════════════════════════'),
           createEntry('error', ''),
-          createEntry('error', 'Full index scan detected on elevated session.'),
-          createEntry('error', 'Connection severed.'),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.full_index_scan_detected_on_elevated_session',
+            'Full index scan detected on elevated session.'
+          ),
+          createEntryI18n('error', 'runtime.connectionSevered', 'Connection severed.'),
           createEntry('error', ''),
         ],
         stateChanges: {
@@ -1106,10 +1391,22 @@ export const filesystemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('warning', ''),
-          createEntry('warning', '[HackerKid]: Hey kid, are you sure you want to use tree?'),
-          createEntry('warning', '  It will expose all files but it will spike your risk significantly.'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.filesystem.hackerkid_hey_kid_are_you_sure_you_want_to_use_tree',
+            '[HackerKid]: Hey kid, are you sure you want to use tree?'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.filesystem.it_will_expose_all_files_but_it_will_spike_your_risk_signifi',
+            '  It will expose all files but it will spike your risk significantly.'
+          ),
           createEntry('warning', ''),
-          createEntry('system', 'Type tree again to confirm.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.type_tree_again_to_confirm',
+            'Type tree again to confirm.'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {
@@ -1152,10 +1449,7 @@ export const filesystemCommands: CommandRegistry = {
 
     // +30% detection increase
     const detectionIncrease = 30;
-    const newDetection = Math.min(
-      MAX_DETECTION,
-      state.detectionLevel + detectionIncrease
-    );
+    const newDetection = Math.min(MAX_DETECTION, state.detectionLevel + detectionIncrease);
 
     const treeLines = [
       '',

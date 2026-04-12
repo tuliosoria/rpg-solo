@@ -1,6 +1,6 @@
 // Evidence commands: leak
 
-import { createEntry } from './utils';
+import { createEntry, createEntryI18n } from './utils';
 import { saveCheckpoint } from '../../storage/saves';
 import { countEvidence, MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
 import type { CommandRegistry } from './types';
@@ -13,13 +13,29 @@ export const evidenceCommands: CommandRegistry = {
       const found = countEvidence(state);
       return {
         output: [
-          createEntry('error', 'LEAK BLOCKED — INSUFFICIENT EVIDENCE'),
+          createEntryI18n(
+            'error',
+            'engine.commands.evidence.leak_blocked_insufficient_evidence',
+            'LEAK BLOCKED — INSUFFICIENT EVIDENCE'
+          ),
           createEntry('system', ''),
           createEntry('system', `  Evidence documented: ${found}/${MAX_EVIDENCE_COUNT}`),
-          createEntry('system', '  All ten must be confirmed before'),
-          createEntry('system', '  the leak channel can be opened.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.all_ten_must_be_confirmed_before',
+            '  All ten must be confirmed before'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.the_leak_channel_can_be_opened',
+            '  the leak channel can be opened.'
+          ),
           createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: not yet. we need more. ten pieces minimum or nobody will believe us.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.evidence.ufo74_not_yet_we_need_more_ten_pieces_minimum_or_nobody_will',
+            '[UFO74]: not yet. we need more. ten pieces minimum or nobody will believe us.'
+          ),
         ],
         stateChanges: {},
       };
@@ -34,19 +50,43 @@ export const evidenceCommands: CommandRegistry = {
         createEntry('system', ''),
         createEntry('notice', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
         createEntry('notice', ''),
-        createEntry('notice', '  LEAK TRANSMISSION INITIATED'),
+        createEntryI18n(
+          'notice',
+          'engine.commands.evidence.leak_transmission_initiated',
+          '  LEAK TRANSMISSION INITIATED'
+        ),
         createEntry('notice', ''),
-        createEntry('notice', '  Compiling evidence package...'),
+        createEntryI18n(
+          'notice',
+          'engine.commands.evidence.compiling_evidence_package',
+          '  Compiling evidence package...'
+        ),
         createEntry('notice', `  ${MAX_EVIDENCE_COUNT} files confirmed.`),
-        createEntry('notice', '  Encrypting for distribution...'),
-        createEntry('notice', '  Channel open.'),
+        createEntryI18n(
+          'notice',
+          'engine.commands.evidence.encrypting_for_distribution',
+          '  Encrypting for distribution...'
+        ),
+        createEntryI18n('notice', 'engine.commands.evidence.channel_open', '  Channel open.'),
         createEntry('notice', ''),
-        createEntry('notice', '  TRANSMISSION SUCCESSFUL.'),
+        createEntryI18n(
+          'notice',
+          'engine.commands.evidence.transmission_successful',
+          '  TRANSMISSION SUCCESSFUL.'
+        ),
         createEntry('notice', ''),
         createEntry('notice', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
         createEntry('system', ''),
-        createEntry('ufo74', '[UFO74]: it is done. the world will know.'),
-        createEntry('ufo74', '         someone wants to talk to you.'),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.evidence.ufo74_it_is_done_the_world_will_know',
+          '[UFO74]: it is done. the world will know.'
+        ),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.evidence.someone_wants_to_talk_to_you',
+          '         someone wants to talk to you.'
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {

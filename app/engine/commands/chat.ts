@@ -2,14 +2,8 @@
 
 import { GameState, TerminalEntry } from '../../types';
 import { shouldSuppressPenalties } from '../../constants/atmosphere';
-import {
-  createEntry,
-  createUFO74Message,
-} from './utils';
-import {
-  contextChance,
-  contextRandomPick,
-} from './helpers';
+import { createEntry, createEntryI18n, createUFO74Message } from './utils';
+import { contextChance, contextRandomPick } from './helpers';
 import type { CommandRegistry } from './types';
 
 // Forward reference to commands registry (needed for morse -> message redirect)
@@ -56,7 +50,7 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
     ],
     [
       'PRISONER_45> I saw them take the bodies. Three of them. Still warm.',
-      "PRISONER_45> The smell... ammonia and rotting flowers. I still smell it in my sleep.",
+      'PRISONER_45> The smell... ammonia and rotting flowers. I still smell it in my sleep.',
       'PRISONER_45> Three creatures. Only one survived the crash. It screamed without opening its mouth.',
       'PRISONER_45> We had orders. Contain. Deny. Disappear. Some of us disappeared too.',
       'PRISONER_45> The firefighters got there first. Corporal Marco. He touched one. Dead within a year.',
@@ -185,7 +179,7 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
     [
       "PRISONER_45> Use it carefully. Once you type override protocol <answer>, they'll know you're inside the real system.",
       'PRISONER_45> The harvest begins and ends with that word. Some words have power. This one has too much.',
-      "PRISONER_45> I can only say it in code: -.-. --- .-.. .... . .. - .-  ...the creature taught me. Decode it.",
+      'PRISONER_45> I can only say it in code: -.-. --- .-.. .... . .. - .-  ...the creature taught me. Decode it.',
     ],
   ],
   military: [
@@ -203,7 +197,7 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
     [
       'PRISONER_45> I had COSMIC clearance. It goes higher. There are levels that have no name. Only numbers.',
       'PRISONER_45> Fort Detrick sent a biocontainment team. They took samples from the living creature. It let them. It CHOSE to let them.',
-      "PRISONER_45> Colonel Olimpio Wanderley died 8 years later. Heart failure. His heart was fine. I saw the REAL autopsy report. His brain was... reorganized.",
+      'PRISONER_45> Colonel Olimpio Wanderley died 8 years later. Heart failure. His heart was fine. I saw the REAL autopsy report. His brain was... reorganized.',
       'PRISONER_45> The Campinas military base. Sub-level 4. The surviving creature lived there for 3 weeks. Everyone on that level changed.',
     ],
   ],
@@ -235,13 +229,13 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
     [
       'PRISONER_45> Their bodies failed. But something transmitted first. Like uploading a file before the server crashes.',
       "PRISONER_45> I've seen the data. Consciousness extraction is real. They've been doing it for millennia.",
-      "PRISONER_45> I watched one expire. It smiled. Not with relief. With COMPLETION. It had finished its job.",
+      'PRISONER_45> I watched one expire. It smiled. Not with relief. With COMPLETION. It had finished its job.',
     ],
     [
       'PRISONER_45> When they harvest, you keep experiencing. Forever. Consciousness without body. Without time. Without end.',
       "PRISONER_45> Death would be mercy. They don't offer mercy. They offer CONTINUATION.",
-      "PRISONER_45> Marco Cherese. Military police. First to touch one. Dead 7 months later. The autopsy found something GROWING in his temporal lobe. Still active.",
-      "PRISONER_45> The doctors at Humanitas. The nurses. The janitor who mopped the room after. All dead within 5 years. All from different causes. All with the same expression frozen on their faces.",
+      'PRISONER_45> Marco Cherese. Military police. First to touch one. Dead 7 months later. The autopsy found something GROWING in his temporal lobe. Still active.',
+      'PRISONER_45> The doctors at Humanitas. The nurses. The janitor who mopped the room after. All dead within 5 years. All from different causes. All with the same expression frozen on their faces.',
     ],
   ],
   god: [
@@ -277,7 +271,7 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
     ],
     [
       'PRISONER_45> Cover stories always have holes. Why did three fire trucks respond to a "homeless person sighting"?',
-      "PRISONER_45> The disinformation agents are in the UFO community too. They push the craziest theories to discredit everything. Flat earth, reptilians. Noise to drown the signal.",
+      'PRISONER_45> The disinformation agents are in the UFO community too. They push the craziest theories to discredit everything. Flat earth, reptilians. Noise to drown the signal.',
       'PRISONER_45> I helped write some of the cover stories. Before I knew the full truth. Before I became inconvenient.',
       'PRISONER_45> The official timeline has a 6-hour gap on January 20th. Nobody asks about those 6 hours. WHAT HAPPENED IN THOSE 6 HOURS.',
     ],
@@ -328,7 +322,7 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
     ],
     [
       'PRISONER_45> Liliane, Valquiria, Katia. Three teenage girls. They saw it crouching by the wall. Oily brown skin. Those red eyes.',
-      "PRISONER_45> The creature had three protrusions on its head. Not horns. Sensory organs. It was SCANNING them.",
+      'PRISONER_45> The creature had three protrusions on its head. Not horns. Sensory organs. It was SCANNING them.',
       'PRISONER_45> The girls ran screaming. The creature watched them go. It could have followed. It chose not to. It had what it needed.',
       'PRISONER_45> Every witness was visited afterward. Men in suits. Not Brazilian suits. American tailoring. They all signed papers they never received copies of.',
     ],
@@ -349,7 +343,7 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
       "PRISONER_45> The worst part isn't what they do. It's that they do it calmly. Efficiently. Without malice. Like farmers.",
       "PRISONER_45> Don't be afraid of the dark. Be afraid of what can see in it. They see everything.",
       'PRISONER_45> Fear is their food too. Not metaphorically. The chemical signature of fear... they collect it. Store it.',
-      "PRISONER_45> I stopped being afraid when I realized fear has no function here. There is nothing to flee from. There is nowhere to go. Just acceptance.",
+      'PRISONER_45> I stopped being afraid when I realized fear has no function here. There is nothing to flee from. There is nowhere to go. Just acceptance.',
     ],
     [
       "PRISONER_45> The real horror isn't the creatures. It's us. What we agreed to. What our governments signed. In our name. With our future.",
@@ -361,11 +355,11 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
   sound: [
     [
       'PRISONER_45> The sounds... yes. A low hum. Below hearing. You feel it in your teeth.',
-      "PRISONER_45> Clicking. Not mechanical. Organic. Like something speaking in a language made of bone.",
+      'PRISONER_45> Clicking. Not mechanical. Organic. Like something speaking in a language made of bone.',
       'PRISONER_45> Frequencies. The creatures operate on frequencies we barely register.',
     ],
     [
-      "PRISONER_45> The craft emitted a tone. 14.6 Hz. Below human hearing range. But your body hears it. Your cells vibrate. DNA unwinds.",
+      'PRISONER_45> The craft emitted a tone. 14.6 Hz. Below human hearing range. But your body hears it. Your cells vibrate. DNA unwinds.',
       'PRISONER_45> Witnesses near the crash site reported nosebleeds. Nausea. Time distortion. All symptoms of infrasound exposure.',
       'PRISONER_45> In Colares, 1977, the light beams made a sound. Witnesses described it as "singing glass". The same sound was recorded in Varginha.',
       'PRISONER_45> The surviving creature could generate tones that opened locks. Disrupted electronics. Stopped hearts.',
@@ -1283,13 +1277,22 @@ function getPrisoner45Response(
   }
 
   // Prefer higher-tier (scarier) responses when available
-  const currentTierResponses = (categoryResponses[Math.min(tier, categoryResponses.length - 1)] as string[])
-    .filter(r => !usedResponses.has(r));
-  
+  const currentTierResponses = (
+    categoryResponses[Math.min(tier, categoryResponses.length - 1)] as string[]
+  ).filter(r => !usedResponses.has(r));
+
   // 70% chance to pick from current tier if available, 30% from full pool
   const pickFrom =
     currentTierResponses.length > 0 &&
-    contextChance(state, 0.7, 'prisoner45-current-tier', category, tier, usedResponses.size, questionsAsked)
+    contextChance(
+      state,
+      0.7,
+      'prisoner45-current-tier',
+      category,
+      tier,
+      usedResponses.size,
+      questionsAsked
+    )
       ? currentTierResponses
       : unusedResponses;
 
@@ -1702,10 +1705,18 @@ export const chatCommands: CommandRegistry = {
     if (state.prisoner45Disconnected) {
       return {
         output: [
-          createEntry('system', 'Connecting to secure relay...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.connecting_to_secure_relay',
+            'Connecting to secure relay...'
+          ),
           createEntry('error', ''),
-          createEntry('error', 'CONNECTION TERMINATED'),
-          createEntry('error', 'RELAY NODE OFFLINE'),
+          createEntryI18n(
+            'error',
+            'engine.commands.chat.connection_terminated',
+            'CONNECTION TERMINATED'
+          ),
+          createEntryI18n('error', 'engine.commands.chat.relay_node_offline', 'RELAY NODE OFFLINE'),
           createEntry('system', ''),
         ],
         stateChanges: {},
@@ -1717,15 +1728,35 @@ export const chatCommands: CommandRegistry = {
     if (state.prisoner45QuestionsAsked >= 5) {
       return {
         output: [
-          createEntry('system', 'Connecting to secure relay...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.connecting_to_secure_relay',
+            'Connecting to secure relay...'
+          ),
           createEntry('warning', ''),
           createEntry('warning', '─────────────────────────────────────────'),
-          createEntry('warning', "PRISONER_45> They're cutting the line."),
-          createEntry('warning', 'PRISONER_45> Remember what I told you.'),
-          createEntry('warning', "PRISONER_45> 2026. Don't forget."),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.prisoner_45_they_re_cutting_the_line',
+            "PRISONER_45> They're cutting the line."
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.prisoner_45_remember_what_i_told_you',
+            'PRISONER_45> Remember what I told you.'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.prisoner_45_2026_don_t_forget',
+            "PRISONER_45> 2026. Don't forget."
+          ),
           createEntry('warning', '─────────────────────────────────────────'),
           createEntry('error', ''),
-          createEntry('error', 'CONNECTION TERMINATED BY REMOTE'),
+          createEntryI18n(
+            'error',
+            'engine.commands.chat.connection_terminated_by_remote',
+            'CONNECTION TERMINATED BY REMOTE'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: state.tutorialComplete
@@ -1746,10 +1777,18 @@ export const chatCommands: CommandRegistry = {
       const remaining = 5 - state.prisoner45QuestionsAsked;
       return {
         output: [
-          createEntry('system', 'Connecting to secure relay...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.connecting_to_secure_relay',
+            'Connecting to secure relay...'
+          ),
           createEntry('system', ''),
           createEntry('warning', '─────────────────────────────────────────'),
-          createEntry('warning', 'ENCRYPTED RELAY ESTABLISHED'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.encrypted_relay_established',
+            'ENCRYPTED RELAY ESTABLISHED'
+          ),
           createEntry('warning', '─────────────────────────────────────────'),
           createEntry('system', ''),
           // ASCII art of Prisoner 45
@@ -1766,13 +1805,29 @@ export const chatCommands: CommandRegistry = {
           createEntry('output', '           ▀█▄░░░░░░░▄█▀'),
           createEntry('output', '             ▀▀▀▀▀▀▀▀▀'),
           createEntry('system', ''),
-          createEntry('system', 'PRISONER_45 connected'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.prisoner_45_connected',
+            'PRISONER_45 connected'
+          ),
           createEntry('system', `[${remaining} questions remaining before trace lockout]`),
           createEntry('system', ''),
-          createEntry('output', 'PRISONER_45> ...you found this channel.'),
-          createEntry('output', "PRISONER_45> I don't know how long we have."),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.prisoner_45_you_found_this_channel',
+            'PRISONER_45> ...you found this channel.'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.prisoner_45_i_don_t_know_how_long_we_have',
+            "PRISONER_45> I don't know how long we have."
+          ),
           createEntry('system', ''),
-          createEntry('system', 'Use: chat <your question>'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.use_chat_your_question',
+            'Use: chat <your question>'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 3 } : {},
@@ -1782,19 +1837,18 @@ export const chatCommands: CommandRegistry = {
 
     // Process question
     const question = args.join(' ');
-    
+
     // NOTE: UFO74 decrypt hints should NOT intercept chat sessions.
     // The chat command routes ONLY to Prisoner 45 responses.
     // UFO74 decrypt hints are only for when players are stuck on decrypt commands,
     // not during chat conversations. Prisoner 45 has a dedicated "password" topic
     // with morse code hints (COLHEITA) that should respond to password questions.
     const usedResponses = state.prisoner45UsedResponses || new Set<string>();
-    const { response, valid, category: _category } = getPrisoner45Response(
-      state,
-      question,
-      usedResponses,
-      state.prisoner45QuestionsAsked
-    );
+    const {
+      response,
+      valid,
+      category: _category,
+    } = getPrisoner45Response(state, question, usedResponses, state.prisoner45QuestionsAsked);
     const newCount = state.prisoner45QuestionsAsked + 1;
     const remaining = 5 - newCount;
 
@@ -1816,7 +1870,13 @@ export const chatCommands: CommandRegistry = {
       if (remaining > 0) {
         output.push(createEntry('warning', `[${remaining} questions remaining]`));
       } else {
-        output.push(createEntry('warning', '[CONNECTION UNSTABLE]'));
+        output.push(
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.connection_unstable',
+            '[CONNECTION UNSTABLE]'
+          )
+        );
       }
 
       output.push(createEntry('system', ''));
@@ -1852,7 +1912,13 @@ export const chatCommands: CommandRegistry = {
     if (remaining > 0) {
       output.push(createEntry('system', `[${remaining} questions remaining]`));
     } else {
-      output.push(createEntry('warning', '[CONNECTION UNSTABLE]'));
+      output.push(
+        createEntryI18n(
+          'warning',
+          'engine.commands.chat.connection_unstable',
+          '[CONNECTION UNSTABLE]'
+        )
+      );
     }
 
     output.push(createEntry('system', ''));
@@ -1878,12 +1944,24 @@ export const chatCommands: CommandRegistry = {
     if (!state.flags.scoutLinkUnlocked) {
       return {
         output: [
-          createEntry('system', 'Initiating psi-comm bridge...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.initiating_psi_comm_bridge',
+            'Initiating psi-comm bridge...'
+          ),
           createEntry('error', ''),
-          createEntry('error', 'ACCESS DENIED'),
-          createEntry('error', 'NO VALID NEURAL PATTERN LOADED'),
+          createEntryI18n('error', 'engine.commands.chat.access_denied', 'ACCESS DENIED'),
+          createEntryI18n(
+            'error',
+            'engine.commands.chat.no_valid_neural_pattern_loaded',
+            'NO VALID NEURAL PATTERN LOADED'
+          ),
           createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: you need a neural pattern first. check quarantine for .psi files.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.chat.ufo74_you_need_a_neural_pattern_first_check_quarantine_for_p',
+            '[UFO74]: you need a neural pattern first. check quarantine for .psi files.'
+          ),
           createEntry('system', ''),
           createEntry('system', ''),
         ],
@@ -1908,18 +1986,38 @@ export const chatCommands: CommandRegistry = {
         // Show password prompt
         return {
           output: [
-            createEntry('system', 'Initiating psi-comm bridge...'),
+            createEntryI18n(
+              'system',
+              'engine.commands.chat.initiating_psi_comm_bridge',
+              'Initiating psi-comm bridge...'
+            ),
             createEntry('warning', ''),
             createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-            createEntry('warning', '▓ NEURAL LINK AUTHENTICATION REQUIRED    ▓'),
+            createEntryI18n(
+              'warning',
+              'engine.commands.chat.neural_link_authentication_required',
+              '▓ NEURAL LINK AUTHENTICATION REQUIRED    ▓'
+            ),
             createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
             createEntry('system', ''),
-            createEntry('output', 'Neural pattern locked. Conceptual key required.'),
+            createEntryI18n(
+              'output',
+              'engine.commands.chat.neural_pattern_locked_conceptual_key_required',
+              'Neural pattern locked. Conceptual key required.'
+            ),
             createEntry('output', ''),
-            createEntry('system', 'Enter authentication phrase:'),
-            createEntry('system', '  > link <phrase>'),
+            createEntryI18n(
+              'system',
+              'engine.commands.chat.enter_authentication_phrase',
+              'Enter authentication phrase:'
+            ),
+            createEntryI18n('system', 'engine.commands.chat.link_phrase', '  > link <phrase>'),
             createEntry('system', ''),
-            createEntry('ufo74', '[UFO74]: check the psi analysis reports. the key is conceptual.'),
+            createEntryI18n(
+              'ufo74',
+              'engine.commands.chat.ufo74_check_the_psi_analysis_reports_the_key_is_conceptual',
+              '[UFO74]: check the psi analysis reports. the key is conceptual.'
+            ),
             createEntry('system', ''),
           ],
           stateChanges: {},
@@ -1932,18 +2030,50 @@ export const chatCommands: CommandRegistry = {
         // Password correct - authenticate
         return {
           output: [
-            createEntry('system', 'Verifying conceptual key...'),
+            createEntryI18n(
+              'system',
+              'engine.commands.chat.verifying_conceptual_key',
+              'Verifying conceptual key...'
+            ),
             createEntry('warning', ''),
-            createEntry('notice', '▓▓▓ AUTHENTICATION ACCEPTED ▓▓▓'),
+            createEntryI18n(
+              'notice',
+              'engine.commands.chat.authentication_accepted',
+              '▓▓▓ AUTHENTICATION ACCEPTED ▓▓▓'
+            ),
             createEntry('warning', ''),
-            createEntry('output', '...the pattern... recognizes...'),
-            createEntry('output', '...you understand... the directive...'),
-            createEntry('output', '...connection... authorized...'),
+            createEntryI18n(
+              'output',
+              'engine.commands.chat.the_pattern_recognizes',
+              '...the pattern... recognizes...'
+            ),
+            createEntryI18n(
+              'output',
+              'engine.commands.chat.you_understand_the_directive',
+              '...you understand... the directive...'
+            ),
+            createEntryI18n(
+              'output',
+              'engine.commands.chat.connection_authorized',
+              '...connection... authorized...'
+            ),
             createEntry('system', ''),
-            createEntry('notice', 'NEURAL LINK ESTABLISHED'),
+            createEntryI18n(
+              'notice',
+              'engine.commands.chat.neural_link_established',
+              'NEURAL LINK ESTABLISHED'
+            ),
             createEntry('system', ''),
-            createEntry('system', 'Use: link              - Query the consciousness'),
-            createEntry('system', 'Use: link disarm       - Attempt to disable firewall'),
+            createEntryI18n(
+              'system',
+              'engine.commands.chat.use_link_query_the_consciousness',
+              'Use: link              - Query the consciousness'
+            ),
+            createEntryI18n(
+              'system',
+              'engine.commands.chat.use_link_disarm_attempt_to_disable_firewall',
+              'Use: link disarm       - Attempt to disable firewall'
+            ),
             createEntry('system', ''),
           ],
           stateChanges: state.tutorialComplete
@@ -1966,14 +2096,34 @@ export const chatCommands: CommandRegistry = {
         // Password incorrect
         return {
           output: [
-            createEntry('system', 'Verifying conceptual key...'),
+            createEntryI18n(
+              'system',
+              'engine.commands.chat.verifying_conceptual_key',
+              'Verifying conceptual key...'
+            ),
             createEntry('error', ''),
-            createEntry('error', '▓▓▓ AUTHENTICATION FAILED ▓▓▓'),
+            createEntryI18n(
+              'error',
+              'engine.commands.chat.authentication_failed',
+              '▓▓▓ AUTHENTICATION FAILED ▓▓▓'
+            ),
             createEntry('error', ''),
-            createEntry('warning', '...pattern... rejects... wrong concept...'),
+            createEntryI18n(
+              'warning',
+              'engine.commands.chat.pattern_rejects_wrong_concept',
+              '...pattern... rejects... wrong concept...'
+            ),
             createEntry('system', ''),
-            createEntry('system', 'The neural pattern did not recognize your phrase.'),
-            createEntry('system', 'Review psi-comm documentation for the correct key.'),
+            createEntryI18n(
+              'system',
+              'engine.commands.chat.the_neural_pattern_did_not_recognize_your_phrase',
+              'The neural pattern did not recognize your phrase.'
+            ),
+            createEntryI18n(
+              'system',
+              'engine.commands.chat.review_psi_comm_documentation_for_the_correct_key',
+              'Review psi-comm documentation for the correct key.'
+            ),
             createEntry('system', ''),
           ],
           stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 3 } : {},
@@ -1989,8 +2139,16 @@ export const chatCommands: CommandRegistry = {
         return {
           output: [
             createEntry('system', ''),
-            createEntry('output', '...firewall... already... silenced...'),
-            createEntry('output', '...the eyes... no longer... watch...'),
+            createEntryI18n(
+              'output',
+              'engine.commands.chat.firewall_already_silenced',
+              '...firewall... already... silenced...'
+            ),
+            createEntryI18n(
+              'output',
+              'engine.commands.chat.the_eyes_no_longer_watch',
+              '...the eyes... no longer... watch...'
+            ),
             createEntry('system', ''),
           ],
           stateChanges: {},
@@ -2001,8 +2159,16 @@ export const chatCommands: CommandRegistry = {
         return {
           output: [
             createEntry('system', ''),
-            createEntry('output', '...no threat... detected...'),
-            createEntry('output', '...the watchers... have not... awakened...'),
+            createEntryI18n(
+              'output',
+              'engine.commands.chat.no_threat_detected',
+              '...no threat... detected...'
+            ),
+            createEntryI18n(
+              'output',
+              'engine.commands.chat.the_watchers_have_not_awakened',
+              '...the watchers... have not... awakened...'
+            ),
             createEntry('system', ''),
           ],
           stateChanges: {},
@@ -2023,18 +2189,50 @@ export const chatCommands: CommandRegistry = {
 
       return {
         output: [
-          createEntry('system', 'Initiating firewall countermeasure...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.initiating_firewall_countermeasure',
+            'Initiating firewall countermeasure...'
+          ),
           createEntry('warning', ''),
-          createEntry('warning', '▓▓▓ NEURAL INFILTRATION ACTIVE ▓▓▓'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.neural_infiltration_active',
+            '▓▓▓ NEURAL INFILTRATION ACTIVE ▓▓▓'
+          ),
           createEntry('warning', ''),
-          createEntry('output', '...reaching... into... their system...'),
-          createEntry('output', '...the firewall... sees us... but cannot...'),
-          createEntry('output', '...we are... older... than their code...'),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.reaching_into_their_system',
+            '...reaching... into... their system...'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.the_firewall_sees_us_but_cannot',
+            '...the firewall... sees us... but cannot...'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.we_are_older_than_their_code',
+            '...we are... older... than their code...'
+          ),
           createEntry('system', ''),
-          createEntry('notice', '▓▓▓ FIREWALL NEUTRALIZED ▓▓▓'),
+          createEntryI18n(
+            'notice',
+            'engine.commands.chat.firewall_neutralized',
+            '▓▓▓ FIREWALL NEUTRALIZED ▓▓▓'
+          ),
           createEntry('system', ''),
-          createEntry('output', '...the eyes... close... permanently...'),
-          createEntry('output', '...you are... hidden... for now...'),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.the_eyes_close_permanently',
+            '...the eyes... close... permanently...'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.you_are_hidden_for_now',
+            '...you are... hidden... for now...'
+          ),
           createEntry('system', ''),
         ],
         stateChanges,
@@ -2057,15 +2255,39 @@ export const chatCommands: CommandRegistry = {
 
       return {
         output: [
-          createEntry('system', 'Initiating psi-comm bridge...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.initiating_psi_comm_bridge',
+            'Initiating psi-comm bridge...'
+          ),
           createEntry('error', ''),
-          createEntry('error', '▓▓▓ NEURAL PATTERN DEGRADED ▓▓▓'),
+          createEntryI18n(
+            'error',
+            'engine.commands.chat.neural_pattern_degraded',
+            '▓▓▓ NEURAL PATTERN DEGRADED ▓▓▓'
+          ),
           createEntry('error', ''),
-          createEntry('warning', '...pattern... fading...'),
-          createEntry('warning', '...consciousness... dispersing...'),
-          createEntry('warning', '...we... were... watching...'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.pattern_fading',
+            '...pattern... fading...'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.consciousness_dispersing',
+            '...consciousness... dispersing...'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.we_were_watching',
+            '...we... were... watching...'
+          ),
           createEntry('error', ''),
-          createEntry('error', 'LINK TERMINATED — PATTERN EXHAUSTED'),
+          createEntryI18n(
+            'error',
+            'engine.commands.chat.link_terminated_pattern_exhausted',
+            'LINK TERMINATED — PATTERN EXHAUSTED'
+          ),
           createEntry('system', ''),
         ],
         stateChanges,
@@ -2087,20 +2309,48 @@ export const chatCommands: CommandRegistry = {
 
       return {
         output: [
-          createEntry('system', 'Initiating psi-comm bridge...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.initiating_psi_comm_bridge',
+            'Initiating psi-comm bridge...'
+          ),
           createEntry('warning', ''),
           createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-          createEntry('warning', '▓ WARNING: NEURAL PATTERN LINK ACTIVE    ▓'),
-          createEntry('warning', '▓ COGNITIVE CONTAMINATION RISK: HIGH     ▓'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.warning_neural_pattern_link_active',
+            '▓ WARNING: NEURAL PATTERN LINK ACTIVE    ▓'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.cognitive_contamination_risk_high',
+            '▓ COGNITIVE CONTAMINATION RISK: HIGH     ▓'
+          ),
           createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
           createEntry('system', ''),
-          createEntry('output', '...connection... established...'),
-          createEntry('output', '...we... perceive... you...'),
-          createEntry('output', '...your questions... imprecise... but understood...'),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.connection_established',
+            '...connection... established...'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.we_perceive_you',
+            '...we... perceive... you...'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.your_questions_imprecise_but_understood',
+            '...your questions... imprecise... but understood...'
+          ),
           createEntry('system', ''),
           createEntry('system', `[Pattern stability: ${remaining} queries remaining]`),
           createEntry('system', ''),
-          createEntry('system', 'Use: link <thought or question>'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.use_link_thought_or_question',
+            'Use: link <thought or question>'
+          ),
           createEntry('system', ''),
         ],
         stateChanges,
@@ -2117,11 +2367,11 @@ export const chatCommands: CommandRegistry = {
     // Process query
     const query = args.join(' ');
     const usedResponses = state.scoutLinkUsedResponses || new Set<string>();
-    const { response, valid, category: _category } = getScoutLinkResponse(
-      state,
-      query,
-      usedResponses
-    );
+    const {
+      response,
+      valid,
+      category: _category,
+    } = getScoutLinkResponse(state, query, usedResponses);
     const newLinksUsed = scoutLinksUsed + 1;
     const remaining = 4 - newLinksUsed;
 
@@ -2135,7 +2385,13 @@ export const chatCommands: CommandRegistry = {
 
     // Signal lost - no keyword match (still costs a query)
     if (!valid) {
-      output.push(createEntry('warning', '[NEURAL BRIDGE UNSTABLE]'));
+      output.push(
+        createEntryI18n(
+          'warning',
+          'engine.commands.chat.neural_bridge_unstable',
+          '[NEURAL BRIDGE UNSTABLE]'
+        )
+      );
       output.push(createEntry('system', ''));
       for (const line of response) {
         output.push(createEntry('warning', line));
@@ -2145,7 +2401,13 @@ export const chatCommands: CommandRegistry = {
       if (remaining > 0) {
         output.push(createEntry('system', `[Pattern stability: ${remaining} queries remaining]`));
       } else {
-        output.push(createEntry('warning', '[PATTERN DESTABILIZING]'));
+        output.push(
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.pattern_destabilizing',
+            '[PATTERN DESTABILIZING]'
+          )
+        );
       }
 
       output.push(createEntry('system', ''));
@@ -2170,7 +2432,13 @@ export const chatCommands: CommandRegistry = {
       };
     }
 
-    output.push(createEntry('warning', '[NEURAL BRIDGE ACTIVE]'));
+    output.push(
+      createEntryI18n(
+        'warning',
+        'engine.commands.chat.neural_bridge_active',
+        '[NEURAL BRIDGE ACTIVE]'
+      )
+    );
     output.push(createEntry('system', ''));
 
     for (const line of response) {
@@ -2182,7 +2450,13 @@ export const chatCommands: CommandRegistry = {
     if (remaining > 0) {
       output.push(createEntry('system', `[Pattern stability: ${remaining} queries remaining]`));
     } else {
-      output.push(createEntry('warning', '[PATTERN DESTABILIZING]'));
+      output.push(
+        createEntryI18n(
+          'warning',
+          'engine.commands.chat.pattern_destabilizing',
+          '[PATTERN DESTABILIZING]'
+        )
+      );
     }
 
     output.push(createEntry('system', ''));
@@ -2212,10 +2486,22 @@ export const chatCommands: CommandRegistry = {
     if (!state.morseFileRead) {
       return {
         output: [
-          createEntry('error', 'ERROR: No pending message to decipher'),
+          createEntryI18n(
+            'error',
+            'engine.commands.chat.error_no_pending_message_to_decipher',
+            'ERROR: No pending message to decipher'
+          ),
           createEntry('system', ''),
-          createEntry('output', 'Read an intercepted signal file first.'),
-          createEntry('output', 'Check /comms/intercepts/ for signal files.'),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.read_an_intercepted_signal_file_first',
+            'Read an intercepted signal file first.'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.check_comms_intercepts_for_signal_files',
+            'Check /comms/intercepts/ for signal files.'
+          ),
         ],
         stateChanges: {},
       };
@@ -2226,7 +2512,11 @@ export const chatCommands: CommandRegistry = {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('output', 'Message already deciphered: COLHEITA'),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.message_already_deciphered_colheita',
+            'Message already deciphered: COLHEITA'
+          ),
           ...createUFO74Message([
             'UFO74: you already cracked it, hackerkid.',
             '       the message was "COLHEITA".',
@@ -2242,9 +2532,17 @@ export const chatCommands: CommandRegistry = {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('error', 'Decryption attempts exhausted.'),
+          createEntryI18n(
+            'error',
+            'engine.commands.chat.decryption_attempts_exhausted',
+            'Decryption attempts exhausted.'
+          ),
           createEntry('system', ''),
-          createEntry('output', 'The intercepted message was: COLHEITA'),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.the_intercepted_message_was_colheita',
+            'The intercepted message was: COLHEITA'
+          ),
           ...createUFO74Message([
             'UFO74: you missed it, kid. but now you know.',
             '       "COLHEITA" — try it with the override protocol.',
@@ -2259,8 +2557,16 @@ export const chatCommands: CommandRegistry = {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('output', 'Enter your deciphered message.'),
-          createEntry('output', 'Usage: message <deciphered text>'),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.enter_your_deciphered_message',
+            'Enter your deciphered message.'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.usage_message_deciphered_text',
+            'Usage: message <deciphered text>'
+          ),
           createEntry('system', ''),
           createEntry('system', `[Attempts remaining: ${attemptsRemaining}]`),
           createEntry('system', ''),
@@ -2283,7 +2589,11 @@ export const chatCommands: CommandRegistry = {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('system', '▓▓▓ MESSAGE DECIPHERED ▓▓▓'),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.message_deciphered',
+            '▓▓▓ MESSAGE DECIPHERED ▓▓▓'
+          ),
           createEntry('system', ''),
           createEntry('warning', `  DECODED: ${correct}`),
           ...createUFO74Message([
@@ -2318,10 +2628,14 @@ export const chatCommands: CommandRegistry = {
       return {
         output: [
           createEntry('error', ''),
-          createEntry('error', 'DECRYPTION FAILED'),
+          createEntryI18n('error', 'engine.commands.chat.decryption_failed', 'DECRYPTION FAILED'),
           createEntry('error', ''),
           createEntry('warning', `Your answer: ${guess}`),
-          createEntry('warning', 'Maximum attempts exceeded.'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.maximum_attempts_exceeded',
+            'Maximum attempts exceeded.'
+          ),
           ...createUFO74Message([
             'UFO74: damn. you ran out of tries hackerkid.',
             '       the message was "COLHEITA" — means "HARVEST".',
@@ -2337,7 +2651,7 @@ export const chatCommands: CommandRegistry = {
     return {
       output: [
         createEntry('warning', ''),
-        createEntry('warning', 'INCORRECT'),
+        createEntryI18n('warning', 'engine.commands.chat.incorrect', 'INCORRECT'),
         createEntry('warning', `Your answer: ${guess}`),
         createEntry('system', ''),
         createEntry('system', `[Attempts remaining: ${attemptsRemaining}]`),
@@ -2360,7 +2674,11 @@ export const chatCommands: CommandRegistry = {
         return {
           output: [
             createEntry('system', ''),
-            createEntry('output', 'No morse code puzzle active.'),
+            createEntryI18n(
+              'output',
+              'engine.commands.chat.no_morse_code_puzzle_active',
+              'No morse code puzzle active.'
+            ),
           ],
           stateChanges: {},
         };
@@ -2368,8 +2686,16 @@ export const chatCommands: CommandRegistry = {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('output', 'Morse code entry cancelled.'),
-          createEntry('output', 'You can try again later with "morse <message>".'),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.morse_code_entry_cancelled',
+            'Morse code entry cancelled.'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.chat.you_can_try_again_later_with_morse_message',
+            'You can try again later with "morse <message>".'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {},
