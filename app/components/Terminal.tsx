@@ -408,9 +408,16 @@ export default function Terminal({
   ]);
 
   const closeEvidenceVideo = useCallback(() => {
+    const closingVideo = activeEvidenceVideo;
     setActiveEvidenceVideo(null);
+    if (closingVideo?.filePath === '/internal/jardim_andere_incident.txt') {
+      appendPendingUfo74StartMessages([
+        createEntry('ufo74', 'UFO74: damn. what the f*** is that, kid?'),
+        createEntry('ufo74', 'UFO74: save it. we\'re going to have to leak this thing.'),
+      ]);
+    }
     setTimeout(() => inputRef.current?.focus(), 0);
-  }, []);
+  }, [activeEvidenceVideo, appendPendingUfo74StartMessages]);
 
   const getEntryContent = useCallback(
     (entry: TerminalEntry): string => {
