@@ -521,6 +521,17 @@ export default function Terminal({
     }
   }, []);
 
+  // Auto-scroll to bottom whenever new history entries are added
+  useEffect(() => {
+    if (outputRef.current) {
+      requestAnimationFrame(() => {
+        if (outputRef.current) {
+          outputRef.current.scrollTop = outputRef.current.scrollHeight;
+        }
+      });
+    }
+  }, [gameState.history.length]);
+
   // Whether a typewriter animation is currently in progress
   const isTyping = activeTypingId !== null || typingQueueRef.current.length > 0;
 
@@ -529,12 +540,13 @@ export default function Terminal({
     !gameState.tutorialComplete &&
     isTutorialInputState(gameState.interactiveTutorialState.current);
   const isEnterOnlyMode =
-    (!gameState.tutorialComplete && !isInteractiveTutorialInput) ||
+    !pendingEvidenceVideoPrompt &&
+    ((!gameState.tutorialComplete && !isInteractiveTutorialInput) ||
     encryptedChannelState !== 'idle' ||
     !!pendingImage ||
     pendingUfo74StartMessages.length > 0 ||
     isTyping ||
-    (gameState.ufo74SecretDiscovered && gamePhase === 'terminal');
+    (gameState.ufo74SecretDiscovered && gamePhase === 'terminal'));
 
   // Handle tutorial skip — replicate full tutorial completion state
   const handleTutorialSkip = useCallback(() => {
