@@ -1467,6 +1467,7 @@ const weather_balloon_memo: FileNode = {
   type: 'file',
   name: 'weather_balloon_memo.txt',
   status: 'intact',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'INTERNAL MEMORANDUM — PUBLIC AFFAIRS',
@@ -1569,6 +1570,7 @@ const signal_analysis_partial: FileNode = {
   type: 'file',
   name: 'signal_analysis_partial.txt',
   status: 'unstable',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'SIGNAL ANALYSIS — PRELIMINARY',
@@ -1742,6 +1744,7 @@ const medical_examiner_query: FileNode = {
   type: 'file',
   name: 'medical_examiner_query.txt',
   status: 'intact',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'QUERY — REGIONAL MEDICAL EXAMINER',
@@ -1835,6 +1838,7 @@ const operation_prato_original: FileNode = {
   type: 'file',
   name: 'operation_prato_original.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 3,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -1873,6 +1877,7 @@ const prato_incident_log_77: FileNode = {
   type: 'file',
   name: 'colares_incident_log_77.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -1907,6 +1912,7 @@ const prato_patrol_observation_77: FileNode = {
   type: 'file',
   name: 'patrol_observation_shift_04.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -1941,6 +1947,7 @@ const prato_medical_effects_77: FileNode = {
   type: 'file',
   name: 'medical_effects_brief_77.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -1972,6 +1979,7 @@ const prato_photo_archive_77: FileNode = {
   type: 'file',
   name: 'photo_archive_register_77.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2001,6 +2009,7 @@ const prato_retrospective_assessment: FileNode = {
   type: 'file',
   name: 'retrospective_scan_assessment.red',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 5,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2108,6 +2117,7 @@ const energy_extraction_theory: FileNode = {
   type: 'file',
   name: 'energy_extraction_theory.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2153,6 +2163,7 @@ const non_arrival_colonization: FileNode = {
   type: 'file',
   name: 'non_arrival_colonization.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 5,
   requiredFlags: ['adminUnlocked'],
   content: [
@@ -2217,6 +2228,7 @@ const early_witness_statement: FileNode = {
   type: 'file',
   name: 'witness_statement_raw.txt',
   status: 'unstable',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'WITNESS STATEMENT — RAW TRANSCRIPT',
@@ -2252,6 +2264,7 @@ const initial_response_orders: FileNode = {
   type: 'file',
   name: 'initial_response_orders.txt',
   status: 'unstable',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'EMERGENCY ORDERS — INITIAL RESPONSE',
@@ -2538,6 +2551,7 @@ const transcript_limit: FileNode = {
   type: 'file',
   name: 'transcript_limit.enc',
   status: 'encrypted',
+  isEvidence: true,
   accessThreshold: 3,
   securityQuestion: {
     question: 'SECURITY CHECK: How many subjects were recovered total?',
@@ -2613,6 +2627,7 @@ const scout_variants_meta: FileNode = {
   type: 'file',
   name: 'scout_variants.meta',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 3,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2648,6 +2663,7 @@ const energy_node_assessment: FileNode = {
   type: 'file',
   name: 'energy_node_assessment.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2789,6 +2805,7 @@ const colonization_model: FileNode = {
   type: 'file',
   name: 'colonization_model.red',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -2867,6 +2884,7 @@ const briefing_watchers_1996: FileNode = {
   type: 'file',
   name: 'briefing_watchers_1996.txt',
   status: 'restricted_briefing',
+  isEvidence: true,
   accessThreshold: 5,
   requiredFlags: ['adminUnlocked'],
   content: [
@@ -3015,6 +3033,7 @@ const ethics_exception: FileNode = {
   type: 'file',
   name: 'ethics_exception_03.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 3,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -3084,6 +3103,7 @@ const window_alignment: FileNode = {
   type: 'file',
   name: 'window_alignment.meta',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -3284,6 +3304,7 @@ const specimen_purpose_analysis: FileNode = {
   type: 'file',
   name: 'specimen_purpose_analysis.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 3,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -3436,6 +3457,7 @@ const window_clarification: FileNode = {
   type: 'file',
   name: 'window_clarification.red',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -3520,6 +3542,7 @@ const extraction_mechanism: FileNode = {
   type: 'file',
   name: 'extraction_mechanism.red',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   imageTrigger: {
     src: '/images/extraction.webp',
@@ -4122,6 +4145,7 @@ const audio_transcript_brief: FileNode = {
   type: 'file',
   name: 'audio_transcript_brief.txt',
   status: 'intact',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'AUDIO TRANSCRIPT — SECURITY HOTLINE',
@@ -4148,6 +4172,7 @@ const reconstructed_neural: FileNode = {
   type: 'file',
   name: 'neural_fragment.dat',
   status: 'intact',
+  isEvidence: true,
   accessThreshold: 4,
   requiredFlags: ['scriptExecuted'],
   content: [
@@ -4198,6 +4223,7 @@ const surveillance_footage_recovery: FileNode = {
   type: 'file',
   name: 'surveillance_recovery.vid',
   status: 'unstable',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'RECOVERED VIDEO DATA - PARTIAL',
@@ -4222,6 +4248,7 @@ const neural_cluster_experiment: FileNode = {
   type: 'file',
   name: 'neural_cluster_experiment.red',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 4,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -4259,6 +4286,7 @@ const cargo_transfer_memo: FileNode = {
   type: 'file',
   name: 'cargo_transfer_memo.txt',
   status: 'intact',
+  isEvidence: true,
   // Not evidence - coded language cannot be used as evidence
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -4298,6 +4326,7 @@ const visitor_briefing: FileNode = {
   type: 'file',
   name: 'visitor_briefing.txt',
   status: 'intact',
+  isEvidence: true,
   // Not evidence - coded language cannot be used as evidence
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -4335,6 +4364,7 @@ const asset_disposition_report: FileNode = {
   type: 'file',
   name: 'asset_disposition_report.txt',
   status: 'intact',
+  isEvidence: true,
   // Not evidence - coded language cannot be used as evidence
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -4371,6 +4401,7 @@ const euphemism_reference: FileNode = {
   type: 'file',
   name: 'terminology_guide.txt',
   status: 'intact',
+  isEvidence: true,
   // Not evidence - this is standard classification vocabulary
   content: [
     '═══════════════════════════════════════════════════════════',

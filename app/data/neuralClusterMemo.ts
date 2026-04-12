@@ -7,6 +7,7 @@ const neuralClusterMemo: FileNode = {
   type: 'file',
   name: 'neural_cluster_memo.txt',
   status: 'restricted',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'MEMO: Neural Cluster Initiative',

@@ -20,6 +20,7 @@ export const alpha_journal_day01: FileNode = {
   name: 'alpha_journal_day01.log',
   status: 'encrypted',
   accessThreshold: 4,
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'FIELD JOURNAL — MAJ. M.A. FERREIRA',
@@ -78,6 +79,7 @@ export const alpha_journal_day08: FileNode = {
   name: 'alpha_journal_day08.log',
   status: 'intact',
   accessThreshold: 4,
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'FIELD JOURNAL — MAJ. M.A. FERREIRA',
@@ -145,6 +147,7 @@ export const alpha_neural_connection: FileNode = {
   name: 'alpha_neural_connection.psi',
   status: 'intact',
   accessThreshold: 3,
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'FIELD JOURNAL — MAJ. M.A. FERREIRA',
@@ -226,6 +229,7 @@ export const alpha_autopsy_addendum: FileNode = {
   name: 'alpha_autopsy_addendum.txt',
   status: 'corrupted',
   accessThreshold: 5,
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'FIELD JOURNAL — MAJ. M.A. FERREIRA',

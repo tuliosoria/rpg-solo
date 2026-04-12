@@ -180,6 +180,7 @@ export const official_summary_report: FileNode = {
   type: 'file',
   name: 'incident_summary_official.txt',
   status: 'intact',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'OFFICIAL INCIDENT SUMMARY',

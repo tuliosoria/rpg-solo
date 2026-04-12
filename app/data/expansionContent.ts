@@ -12,6 +12,7 @@ export const journalist_payments: FileNode = {
   type: 'file',
   name: 'journalist_payments.enc',
   status: 'encrypted',
+  isEvidence: true,
   accessThreshold: 3,
   content: [
     '[ENCRYPTED - FINANCIAL RECORDS]',
@@ -73,6 +74,7 @@ export const media_contacts: FileNode = {
   type: 'file',
   name: 'media_contacts.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 2,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -141,6 +143,7 @@ export const kill_story_memo: FileNode = {
   type: 'file',
   name: 'kill_story_memo.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 2,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -199,6 +202,7 @@ export const tv_coverage_report: FileNode = {
   type: 'file',
   name: 'tv_coverage_report.txt',
   status: 'intact',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'INTELLIGENCE REPORT — TV COVERAGE THREAT',
@@ -245,6 +249,7 @@ export const foreign_press_alert: FileNode = {
   type: 'file',
   name: 'foreign_press_alert.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 2,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -311,6 +316,7 @@ export const witness_visit_log: FileNode = {
   type: 'file',
   name: 'witness_visit_log.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 2,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -393,6 +399,7 @@ export const debriefing_protocol: FileNode = {
   type: 'file',
   name: 'debriefing_protocol.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 2,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -472,6 +479,7 @@ export const silva_sisters_file: FileNode = {
   type: 'file',
   name: 'witness_subjects_file.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 2,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -555,6 +563,7 @@ export const recantation_form_001: FileNode = {
   type: 'file',
   name: 'recantation_001.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 3,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -605,6 +614,7 @@ export const mudinho_dossier: FileNode = {
   type: 'file',
   name: 'mudinho_dossier.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 2,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -676,6 +686,7 @@ export const alternative_explanations: FileNode = {
   type: 'file',
   name: 'alternative_explanations.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 2,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -755,6 +766,7 @@ export const media_talking_points: FileNode = {
   type: 'file',
   name: 'media_talking_points.txt',
   status: 'intact',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'MEDIA TALKING POINTS — VARGINHA INCIDENT',
@@ -825,6 +837,7 @@ export const animal_deaths_report: FileNode = {
   type: 'file',
   name: 'animal_deaths_report.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 2,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -891,6 +904,7 @@ export const veterinarian_silencing: FileNode = {
   type: 'file',
   name: 'veterinarian_silencing.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 3,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -949,6 +963,7 @@ export const contamination_theory: FileNode = {
   type: 'file',
   name: 'contamination_theory.txt',
   status: 'intact',
+  isEvidence: true,
   content: [
     '═══════════════════════════════════════════════════════════',
     'OFFICIAL EXPLANATION — ZOO ANIMAL DEATHS',
@@ -1002,6 +1017,7 @@ export const chereze_incident_report: FileNode = {
   type: 'file',
   name: 'contact_incident_report.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 3,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -1085,6 +1101,7 @@ export const autopsy_suppression: FileNode = {
   type: 'file',
   name: 'autopsy_suppression.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 3,
   content: [
     '═══════════════════════════════════════════════════════════',
@@ -1146,6 +1163,7 @@ export const family_compensation: FileNode = {
   type: 'file',
   name: 'family_compensation.txt',
   status: 'restricted',
+  isEvidence: true,
   accessThreshold: 2,
   content: [
     '═══════════════════════════════════════════════════════════',
