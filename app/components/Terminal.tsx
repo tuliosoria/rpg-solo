@@ -540,7 +540,8 @@ export default function Terminal({
     }
   }, []);
 
-  // Auto-scroll to bottom whenever new history entries are added
+  // Auto-scroll to bottom whenever new history entries are added or UI state changes
+  // (e.g., enter-only prompt appearing after typing/UFO74 messages finish)
   useEffect(() => {
     if (outputRef.current) {
       requestAnimationFrame(() => {
@@ -549,7 +550,13 @@ export default function Terminal({
         }
       });
     }
-  }, [gameState.history.length]);
+  }, [
+    gameState.history.length,
+    activeTypingId,
+    pendingUfo74StartMessages.length,
+    pendingImage,
+    encryptedChannelState,
+  ]);
 
   // Whether a typewriter animation is currently in progress
   const isTyping = activeTypingId !== null || typingQueueRef.current.length > 0;
