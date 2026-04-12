@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { GamePhase, GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
+import { resolvePath } from '../engine/filesystem';
 import TypewriterText, { isTypableUfo74Content } from './TypewriterText';
 import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
@@ -91,6 +92,42 @@ const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
     'UFO74: neural density off the charts.',
     'UFO74: some patterns travel both ways. careful.',
   ],
+};
+
+interface EvidenceVideoAttachment {
+  filePath: string;
+  fileName: string;
+  videoSrc: string;
+  videoTitle: string;
+}
+
+const JARDIM_ANDERE_INCIDENT_VIDEO_SRC = new URL(
+  '../../videos/jardim_andere_incident.mp4',
+  import.meta.url
+).toString();
+
+const EVIDENCE_VIDEO_PROMPT_TEXT = 'There is a video attached to this file. Open video? [yes] [no]';
+
+const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
+  '/internal/jardim_andere_incident.txt': {
+    filePath: '/internal/jardim_andere_incident.txt',
+    fileName: 'jardim_andere_incident.txt',
+    videoSrc: JARDIM_ANDERE_INCIDENT_VIDEO_SRC,
+    videoTitle: 'jardim_andere_incident.mp4',
+  },
+};
+
+const getEvidenceVideoAttachment = (
+  commandInput: string,
+  currentPath: string
+): EvidenceVideoAttachment | null => {
+  const match = /^open\s+(.+)$/i.exec(commandInput.trim());
+  if (!match) {
+    return null;
+  }
+
+  const filePath = resolvePath(match[1].trim(), currentPath);
+  return EVIDENCE_VIDEO_ATTACHMENTS[filePath] ?? null;
 };
 
 const deriveGamePhase = (state: GameState): GamePhase => {
@@ -248,6 +285,15 @@ export default function Terminal({
       initialState.tutorialStep === 0 &&
       initialState.interactiveTutorialState?.current === TutorialStateID.INTRO
   );
+  const [pendingEvidenceVideoPrompt, setPendingEvidenceVideoPrompt] =
+    useState<EvidenceVideoAttachment | null>(null);
+  const [activeEvidenceVideo, setActiveEvidenceVideo] = useState<EvidenceVideoAttachment | null>(
+    null
+  );
+  const pendingEvidenceVideoCheckRef = useRef<{
+    attachment: EvidenceVideoAttachment;
+    previousEvidenceCount: number;
+  } | null>(null);
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
   const firewallPauseStartRef = useRef<number | null>(null);
@@ -261,6 +307,7 @@ export default function Terminal({
     showHeaderMenu ||
     showTutorialSkip ||
     showGameOver ||
+    activeEvidenceVideo !== null ||
     pendingAchievement !== null ||
     showFirewallScare;
   const isFirewallPaused =
@@ -359,6 +406,11 @@ export default function Terminal({
     showGameOver,
     showTuringTest,
   ]);
+
+  const closeEvidenceVideo = useCallback(() => {
+    setActiveEvidenceVideo(null);
+    setTimeout(() => inputRef.current?.focus(), 0);
+  }, []);
 
   const getEntryContent = useCallback(
     (entry: TerminalEntry): string => {
@@ -634,7 +686,7 @@ export default function Terminal({
     }));
   }, [setGameState]);
 
-  const { handleSubmit, handleKeyDown } = useTerminalInput({
+  const { handleSubmit: baseHandleSubmit, handleKeyDown } = useTerminalInput({
     gameState,
     gamePhase,
     inputValue,
@@ -692,6 +744,79 @@ export default function Terminal({
       isProcessingRef,
     },
   });
+
+  const handleSubmit = useCallback(
+    async (e?: React.SyntheticEvent) => {
+      e?.preventDefault?.();
+
+      if (activeEvidenceVideo) {
+        return;
+      }
+
+      const trimmedInput = inputValue.trim();
+
+      if (pendingEvidenceVideoPrompt) {
+        if (!trimmedInput) {
+          return;
+        }
+
+        const normalizedInput = trimmedInput.toLowerCase();
+
+        if (normalizedInput === 'yes') {
+          setGameState(prev => ({
+            ...prev,
+            history: [...prev.history, createEntry('input', trimmedInput)],
+          }));
+          setInputValue('');
+          setPendingEvidenceVideoPrompt(null);
+          setActiveEvidenceVideo(pendingEvidenceVideoPrompt);
+          return;
+        }
+
+        if (normalizedInput === 'no') {
+          setGameState(prev => ({
+            ...prev,
+            history: [...prev.history, createEntry('input', trimmedInput)],
+          }));
+          setInputValue('');
+          setPendingEvidenceVideoPrompt(null);
+          setTimeout(() => inputRef.current?.focus(), 0);
+          return;
+        }
+
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            createEntry('input', trimmedInput),
+            createEntry('error', 'ERROR: Type "yes" or "no".'),
+          ],
+        }));
+        setInputValue('');
+        return;
+      }
+
+      const attachment = getEvidenceVideoAttachment(trimmedInput, gameState.currentPath);
+      pendingEvidenceVideoCheckRef.current = attachment
+        ? {
+            attachment,
+            previousEvidenceCount: gameState.evidenceCount || 0,
+          }
+        : null;
+
+      await baseHandleSubmit(e);
+    },
+    [
+      activeEvidenceVideo,
+      baseHandleSubmit,
+      gameState.currentPath,
+      gameState.evidenceCount,
+      inputValue,
+      pendingEvidenceVideoPrompt,
+      setGameState,
+      setInputValue,
+    ]
+  );
 
   // Effects hook - MUST be called before any conditional returns (React rules of hooks)
   const { focusTerminalInput } = useTerminalEffects({
@@ -761,8 +886,68 @@ export default function Terminal({
   });
 
   useEffect(() => {
+    const pendingCheck = pendingEvidenceVideoCheckRef.current;
+
+    if (
+      !pendingCheck ||
+      isProcessing ||
+      isStreaming ||
+      activeImage !== null ||
+      pendingImage !== null ||
+      pendingEvidenceVideoPrompt !== null ||
+      activeEvidenceVideo !== null
+    ) {
+      return;
+    }
+
+    if ((gameState.evidenceCount || 0) > pendingCheck.previousEvidenceCount) {
+      setGameState(prev => ({
+        ...prev,
+        history: [
+          ...prev.history,
+          createEntry('system', ''),
+          createEntry('notice', EVIDENCE_VIDEO_PROMPT_TEXT),
+        ],
+      }));
+      setPendingEvidenceVideoPrompt(pendingCheck.attachment);
+    }
+
+    pendingEvidenceVideoCheckRef.current = null;
+  }, [
+    activeEvidenceVideo,
+    activeImage,
+    gameState.evidenceCount,
+    isProcessing,
+    isStreaming,
+    pendingEvidenceVideoPrompt,
+    pendingImage,
+    setGameState,
+  ]);
+
+  useEffect(() => {
     setAmbientDisturbance(alienSilhouetteVisible ? 1 : 0);
   }, [alienSilhouetteVisible, setAmbientDisturbance]);
+
+  useEffect(() => {
+    if (!activeEvidenceVideo) {
+      return;
+    }
+
+    const handleVideoEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      closeEvidenceVideo();
+    };
+
+    window.addEventListener('keydown', handleVideoEscape, true);
+    return () => {
+      window.removeEventListener('keydown', handleVideoEscape, true);
+    };
+  }, [activeEvidenceVideo, closeEvidenceVideo]);
 
   // Click-outside handler for header menu - closes menu and refocuses input
   useEffect(() => {
@@ -1426,7 +1611,7 @@ export default function Terminal({
               }}
               onKeyDown={handleKeyDown}
               className={styles.inputField}
-              disabled={isProcessing || gameState.isGameOver}
+              disabled={isProcessing || gameState.isGameOver || activeEvidenceVideo !== null}
               autoFocus={!showTutorialSkip}
               autoComplete="off"
               spellCheck={false}
@@ -1464,6 +1649,91 @@ export default function Terminal({
               setGameState(prev => ({ ...prev, avatarExpression: 'neutral' }));
             }}
           />
+        )}
+
+        {activeEvidenceVideo && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Recovered video: ${activeEvidenceVideo.videoTitle}`}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 2500,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '1.5rem',
+              background: 'rgba(0, 0, 0, 0.92)',
+            }}
+          >
+            <div
+              style={{
+                width: 'min(960px, 100%)',
+                maxHeight: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+                padding: '1rem',
+                background: '#040704',
+                border: '1px solid #88cc44',
+                boxShadow: '0 0 30px rgba(136, 204, 68, 0.18)',
+              }}
+            >
+              <div
+                style={{
+                  color: '#88cc44',
+                  fontFamily: 'VT323, monospace',
+                  fontSize: '1.6rem',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Attached Video - {activeEvidenceVideo.videoTitle}
+              </div>
+              <video
+                key={activeEvidenceVideo.videoSrc}
+                src={activeEvidenceVideo.videoSrc}
+                controls
+                autoPlay
+                playsInline
+                style={{
+                  width: '100%',
+                  maxHeight: '70vh',
+                  background: '#000',
+                }}
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  color: '#88cc44',
+                  fontFamily: 'VT323, monospace',
+                  fontSize: '1.1rem',
+                }}
+              >
+                <span>Press Esc or close to return to the terminal.</span>
+                <button
+                  type="button"
+                  onClick={closeEvidenceVideo}
+                  style={{
+                    border: '1px solid #88cc44',
+                    background: 'transparent',
+                    color: '#88cc44',
+                    padding: '0.35rem 0.85rem',
+                    fontFamily: 'VT323, monospace',
+                    fontSize: '1.1rem',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Image overlay */}
