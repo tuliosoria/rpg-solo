@@ -157,6 +157,16 @@ export function useTerminalInput({
 }: UseTerminalInputOptions) {
   const { outputRef, inputRef, streamStartScrollPos, skipStreamingRef, isProcessingRef } = refs;
 
+  const scrollToBottom = useCallback(() => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (outputRef.current) {
+          outputRef.current.scrollTop = outputRef.current.scrollHeight;
+        }
+      });
+    });
+  }, [outputRef]);
+
   const openEncryptedChannelWithMessages = useCallback(
     (messages: TerminalEntry[]) => {
       if (messages.length === 0) return;
@@ -582,6 +592,7 @@ export function useTerminalInput({
           history: result.stateChanges.history!,
         }));
         playSecondVoiceCue();
+        scrollToBottom();
         isProcessingRef.current = false;
         setIsProcessing(false);
       } else if (streamingMode !== 'none' && result.output.length > 0) {
@@ -631,6 +642,7 @@ export function useTerminalInput({
           isProcessingRef.current = false;
           setIsProcessing(false);
           skipStreamingRef.current = false;
+          scrollToBottom();
         }
       } else {
         const ufo74Messages = result.output.filter((e: TerminalEntry) => e.type === 'ufo74');
@@ -651,6 +663,7 @@ export function useTerminalInput({
           history: [...prev.history, ...otherOutput, ...pendingMediaMessages],
         }));
         playSecondVoiceCue();
+        scrollToBottom();
 
         if (ufo74Messages.length > 0) {
           if (result.imageTrigger) {

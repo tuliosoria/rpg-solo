@@ -114,6 +114,16 @@ const THEY_ARE_ALREADY_HERE_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
+const UFO74_VIDEO_SRC = new URL(
+  '../../videos/UFO74.mp4',
+  import.meta.url
+).toString();
+
+const TRANSPORT_VIDEO_SRC = new URL(
+  '../../videos/transport.mp4',
+  import.meta.url
+).toString();
+
 const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
   '/internal/jardim_andere_incident.txt': {
     filePath: '/internal/jardim_andere_incident.txt',
@@ -132,6 +142,18 @@ const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
     fileName: 'energy_extraction_theory.txt',
     videoSrc: THEY_ARE_ALREADY_HERE_VIDEO_SRC,
     videoTitle: 'they-are-already-here.mp4',
+  },
+  '/sys/ghost_in_machine.enc': {
+    filePath: '/sys/ghost_in_machine.enc',
+    fileName: 'ghost_in_machine.enc',
+    videoSrc: UFO74_VIDEO_SRC,
+    videoTitle: 'UFO74.mp4',
+  },
+  '/storage/assets/transport_log_96.txt': {
+    filePath: '/storage/assets/transport_log_96.txt',
+    fileName: 'transport_log_96.txt',
+    videoSrc: TRANSPORT_VIDEO_SRC,
+    videoTitle: 'transport.mp4',
   },
 };
 
@@ -394,7 +416,17 @@ export default function Terminal({
   const closeEvidenceVideo = useCallback(() => {
     const closingVideo = activeEvidenceVideo;
     setActiveEvidenceVideo(null);
-    if (closingVideo?.filePath === '/internal/jardim_andere_incident.txt' ||
+    if (closingVideo?.filePath === '/sys/ghost_in_machine.enc') {
+      appendPendingUfo74StartMessages([
+        createEntry('ufo74', 'UFO74: ...that is me. that is what i am.'),
+        createEntry('ufo74', 'UFO74: kid. do not tell anyone you saw that.'),
+      ]);
+    } else if (closingVideo?.filePath === '/storage/assets/transport_log_96.txt') {
+      appendPendingUfo74StartMessages([
+        createEntry('ufo74', 'UFO74: they moved it at night. of course they did.'),
+        createEntry('ufo74', 'UFO74: save that. every detail matters.'),
+      ]);
+    } else if (closingVideo?.filePath === '/internal/jardim_andere_incident.txt' ||
         closingVideo?.filePath === '/storage/assets/logistics_manifest_fragment.txt' ||
         closingVideo?.filePath === '/admin/energy_extraction_theory.txt') {
       appendPendingUfo74StartMessages([
@@ -426,13 +458,17 @@ export default function Terminal({
   // Auto-scroll to bottom whenever new history entries are added or UI state changes
   useEffect(() => {
     if (outputRef.current) {
+      // Double rAF ensures DOM has painted before measuring scrollHeight
       requestAnimationFrame(() => {
-        if (outputRef.current) {
-          outputRef.current.scrollTop = outputRef.current.scrollHeight;
-        }
+        requestAnimationFrame(() => {
+          if (outputRef.current) {
+            outputRef.current.scrollTop = outputRef.current.scrollHeight;
+          }
+        });
       });
     }
   }, [
+    visibleHistory.length,
     gameState.history.length,
     pendingImage,
     encryptedChannelState,
