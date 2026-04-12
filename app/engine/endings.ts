@@ -9,6 +9,7 @@
 // - neuralLinkAuthenticated: Player connected to the alien neural link
 
 import { GameState, TerminalEntry } from '../types';
+import { translateStatic } from '../i18n';
 import { generateEntryId } from './commands/utils';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -91,16 +92,142 @@ export function getEndingFlags(state: GameState): EndingFlags {
 
 const ENDING_DIVIDER = '═══════════════════════════════════════════════════════════';
 
-const ENDING_TITLES: Record<EndingVariant, string> = {
-  controlled_disclosure: 'CONTROLLED DISCLOSURE',
-  global_panic: 'GLOBAL PANIC',
-  undeniable_confirmation: 'UNDENIABLE CONFIRMATION',
-  total_collapse: 'TOTAL COLLAPSE',
-  personal_contamination: 'PERSONAL CONTAMINATION',
-  paranoid_awakening: 'PARANOID AWAKENING',
-  witnessed_truth: 'WITNESSED TRUTH',
-  complete_revelation: 'COMPLETE REVELATION',
+interface EndingContentTemplate {
+  title: string;
+  narrative: string[];
+  personalAftermath?: [string, ...string[]];
+  epilogueSummary: string;
+}
+
+const ENDING_CONTENT_FALLBACKS: Record<EndingVariant, EndingContentTemplate> = {
+  controlled_disclosure: {
+    title: 'CONTROLLED DISCLOSURE',
+    narrative: [
+      'The leak burned bright for two weeks.',
+      'Panels argued. Officials stalled.',
+      'Then the feed drifted elsewhere.',
+      '',
+      'But the archive spread anyway.',
+      'Copied. Mirrored. Waiting.',
+      '',
+      'The truth escaped. Belief did not.',
+    ],
+    epilogueSummary: 'You opened the vault. The world only glanced inside.',
+  },
+  global_panic: {
+    title: 'GLOBAL PANIC',
+    narrative: [
+      'You leaked the black files too.',
+      'Markets lurched. Cabinets fell.',
+      'Every screen spawned a new paranoia.',
+      '',
+      'Truth hit too fast and turned to fire.',
+      'By winter, panic had a flag.',
+    ],
+    epilogueSummary: 'Everything surfaced. Nothing stayed stable.',
+  },
+  undeniable_confirmation: {
+    title: 'UNDENIABLE CONFIRMATION',
+    narrative: [
+      'ALPHA appeared live three days later.',
+      'No panel could explain it away.',
+      '"We observed. We prepared. You were never alone."',
+      '',
+      'Contact protocols formed within weeks.',
+      'Humanity lost the right to pretend.',
+    ],
+    epilogueSummary: 'The witness spoke. Doubt broke.',
+  },
+  total_collapse: {
+    title: 'TOTAL COLLAPSE',
+    narrative: [
+      'You gave them the witness and the hidden machinery behind it.',
+      'Cities answered with riots, not wonder.',
+      '',
+      'The visitors watched humanity break on live television.',
+      '"Not ready," they said, and stepped back into the dark.',
+    ],
+    epilogueSummary: 'Proof arrived with every secret at once. Humanity buckled.',
+  },
+  personal_contamination: {
+    title: 'PERSONAL CONTAMINATION',
+    narrative: [
+      'The leak landed. Most people shrugged and kept moving.',
+      'You should have felt relief.',
+      '',
+      'Instead the link stayed open.',
+      'A second pulse lives just behind your own.',
+    ],
+    personalAftermath: [
+      '▓▓▓ NEURAL ECHO DETECTED ▓▓▓',
+      '...we kept the door ajar...',
+      '...thirty rotations is not far...',
+      '...when we return, you will know us...',
+    ],
+    epilogueSummary: 'The archive escaped the system. Something else escaped into you.',
+  },
+  paranoid_awakening: {
+    title: 'PARANOID AWAKENING',
+    narrative: [
+      'The conspiracy files detonated. Institutions split at the seams.',
+      'The link let you see the pattern inside the panic.',
+      '',
+      'You try to warn people.',
+      'You sound insane. Maybe you are.',
+    ],
+    personalAftermath: [
+      '▓▓▓ NEURAL CONTAMINATION ACTIVE ▓▓▓',
+      '...you see the pattern now...',
+      '...collapse is part of the signal...',
+      '...clarity hurts, doesnt it...',
+    ],
+    epilogueSummary: 'You exposed the lie and swallowed its rhythm.',
+  },
+  witnessed_truth: {
+    title: 'WITNESSED TRUTH',
+    narrative: [
+      'ALPHA spoke. Humanity believed.',
+      'The link let you hear what the translator softened.',
+      '',
+      'The planet celebrated first contact.',
+      'You heard the warning beneath it.',
+    ],
+    personalAftermath: [
+      '▓▓▓ NEURAL RESONANCE ACTIVE ▓▓▓',
+      '...you catch the meaning between meanings...',
+      '...bridge and burden...',
+      '...do not close your mind again...',
+    ],
+    epilogueSummary: 'The truth stood before the world. It stayed inside you.',
+  },
+  complete_revelation: {
+    title: 'COMPLETE REVELATION',
+    narrative: [
+      'Everything surfaced at once.',
+      'The witness spoke. The black files opened.',
+      'The link made you the voice between species.',
+      '',
+      'The 2026 transition bent around your signal.',
+      'History did not end. It changed shape.',
+    ],
+    personalAftermath: [
+      '▓▓▓ FULL INTEGRATION ACHIEVED ▓▓▓',
+      '...pattern accepted...',
+      '...translator, host, ambassador...',
+      '...welcome between worlds...',
+    ],
+    epilogueSummary: 'Every seal broke. You became the breach and the bridge.',
+  },
 };
+
+function translateEndingBlock(key: string, fallbackLines: string[]): string[] {
+  return translateStatic(key, undefined, fallbackLines.join('\n')).split('\n');
+}
+
+function getEndingTitleText(variant: EndingVariant): string {
+  const fallback = ENDING_CONTENT_FALLBACKS[variant].title;
+  return translateStatic(`engine.endings.${variant}.title`, undefined, fallback);
+}
 
 function buildEpilogue(summary: string, title: string): string[] {
   return [
@@ -114,7 +241,11 @@ function buildEpilogue(summary: string, title: string): string[] {
   ];
 }
 
-function buildNeuralAftermath(header: string, lines: string[]): string[] {
+function buildNeuralAftermath(variant: EndingVariant, fallbackLines: [string, ...string[]]): string[] {
+  const [header, ...lines] = translateEndingBlock(
+    `engine.endings.${variant}.personalAftermath`,
+    [...fallbackLines]
+  );
   return [
     '',
     header,
@@ -124,153 +255,31 @@ function buildNeuralAftermath(header: string, lines: string[]): string[] {
   ];
 }
 
-const ENDING_CONTENT: Record<EndingVariant, Omit<EndingResult, 'variant' | 'flags'>> = {
-  controlled_disclosure: {
-    title: ENDING_TITLES.controlled_disclosure,
-    worldAftermath: [
-      'The leak burned bright for two weeks.',
-      'Panels argued. Officials stalled.',
-      'Then the feed drifted elsewhere.',
-      '',
-      'But the archive spread anyway.',
-      'Copied. Mirrored. Waiting.',
-      '',
-      'The truth escaped. Belief did not.',
-    ],
-    epilogue: buildEpilogue(
-      'You opened the vault. The world only glanced inside.',
-      ENDING_TITLES.controlled_disclosure
-    ),
-  },
+function getEndingContent(variant: EndingVariant): Omit<EndingResult, 'variant' | 'flags'> {
+  const fallback = ENDING_CONTENT_FALLBACKS[variant];
+  const title = getEndingTitleText(variant);
+  const worldAftermath = translateEndingBlock(
+    `engine.endings.${variant}.narrative`,
+    fallback.narrative
+  );
+  const personalAftermath = fallback.personalAftermath
+    ? buildNeuralAftermath(variant, fallback.personalAftermath)
+    : undefined;
 
-  global_panic: {
-    title: ENDING_TITLES.global_panic,
-    worldAftermath: [
-      'You leaked the black files too.',
-      'Markets lurched. Cabinets fell.',
-      'Every screen spawned a new paranoia.',
-      '',
-      'Truth hit too fast and turned to fire.',
-      'By winter, panic had a flag.',
-    ],
+  return {
+    title,
+    worldAftermath,
+    personalAftermath,
     epilogue: buildEpilogue(
-      'Everything surfaced. Nothing stayed stable.',
-      ENDING_TITLES.global_panic
+      translateStatic(
+        `engine.endings.${variant}.epilogueSummary`,
+        undefined,
+        fallback.epilogueSummary
+      ),
+      title
     ),
-  },
-
-  undeniable_confirmation: {
-    title: ENDING_TITLES.undeniable_confirmation,
-    worldAftermath: [
-      'ALPHA appeared live three days later.',
-      'No panel could explain it away.',
-      '"We observed. We prepared. You were never alone."',
-      '',
-      'Contact protocols formed within weeks.',
-      'Humanity lost the right to pretend.',
-    ],
-    epilogue: buildEpilogue(
-      'The witness spoke. Doubt broke.',
-      ENDING_TITLES.undeniable_confirmation
-    ),
-  },
-
-  total_collapse: {
-    title: ENDING_TITLES.total_collapse,
-    worldAftermath: [
-      'You gave them the witness and the hidden machinery behind it.',
-      'Cities answered with riots, not wonder.',
-      '',
-      'The visitors watched humanity break on live television.',
-      '"Not ready," they said, and stepped back into the dark.',
-    ],
-    epilogue: buildEpilogue(
-      'Proof arrived with every secret at once. Humanity buckled.',
-      ENDING_TITLES.total_collapse
-    ),
-  },
-
-  personal_contamination: {
-    title: ENDING_TITLES.personal_contamination,
-    worldAftermath: [
-      'The leak landed. Most people shrugged and kept moving.',
-      'You should have felt relief.',
-      '',
-      'Instead the link stayed open.',
-      'A second pulse lives just behind your own.',
-    ],
-    personalAftermath: buildNeuralAftermath('▓▓▓ NEURAL ECHO DETECTED ▓▓▓', [
-      '...we kept the door ajar...',
-      '...thirty rotations is not far...',
-      '...when we return, you will know us...',
-    ]),
-    epilogue: buildEpilogue(
-      'The archive escaped the system. Something else escaped into you.',
-      ENDING_TITLES.personal_contamination
-    ),
-  },
-
-  paranoid_awakening: {
-    title: ENDING_TITLES.paranoid_awakening,
-    worldAftermath: [
-      'The conspiracy files detonated. Institutions split at the seams.',
-      'The link let you see the pattern inside the panic.',
-      '',
-      'You try to warn people.',
-      'You sound insane. Maybe you are.',
-    ],
-    personalAftermath: buildNeuralAftermath('▓▓▓ NEURAL CONTAMINATION ACTIVE ▓▓▓', [
-      '...you see the pattern now...',
-      '...collapse is part of the signal...',
-      '...clarity hurts, doesnt it...',
-    ]),
-    epilogue: buildEpilogue(
-      'You exposed the lie and swallowed its rhythm.',
-      ENDING_TITLES.paranoid_awakening
-    ),
-  },
-
-  witnessed_truth: {
-    title: ENDING_TITLES.witnessed_truth,
-    worldAftermath: [
-      'ALPHA spoke. Humanity believed.',
-      'The link let you hear what the translator softened.',
-      '',
-      'The planet celebrated first contact.',
-      'You heard the warning beneath it.',
-    ],
-    personalAftermath: buildNeuralAftermath('▓▓▓ NEURAL RESONANCE ACTIVE ▓▓▓', [
-      '...you catch the meaning between meanings...',
-      '...bridge and burden...',
-      '...do not close your mind again...',
-    ]),
-    epilogue: buildEpilogue(
-      'The truth stood before the world. It stayed inside you.',
-      ENDING_TITLES.witnessed_truth
-    ),
-  },
-
-  complete_revelation: {
-    title: ENDING_TITLES.complete_revelation,
-    worldAftermath: [
-      'Everything surfaced at once.',
-      'The witness spoke. The black files opened.',
-      'The link made you the voice between species.',
-      '',
-      'The 2026 transition bent around your signal.',
-      'History did not end. It changed shape.',
-    ],
-    personalAftermath: buildNeuralAftermath('▓▓▓ FULL INTEGRATION ACHIEVED ▓▓▓', [
-      '...pattern accepted...',
-      '...translator, host, ambassador...',
-      '...welcome between worlds...',
-    ]),
-    epilogue: buildEpilogue(
-      'Every seal broke. You became the breach and the bridge.',
-      ENDING_TITLES.complete_revelation
-    ),
-  },
-};
+  };
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ENDING GENERATION
@@ -282,7 +291,7 @@ const ENDING_CONTENT: Record<EndingVariant, Omit<EndingResult, 'variant' | 'flag
 export function generateEnding(state: GameState): EndingResult {
   const flags = getEndingFlags(state);
   const variant = determineEndingVariant(flags);
-  const content = ENDING_CONTENT[variant];
+  const content = getEndingContent(variant);
 
   return {
     variant,
@@ -292,7 +301,7 @@ export function generateEnding(state: GameState): EndingResult {
 }
 
 export function getEndingNarrativeLines(variant: EndingVariant): string[] {
-  const ending = ENDING_CONTENT[variant];
+  const ending = getEndingContent(variant);
   return [
     ENDING_DIVIDER,
     '',
@@ -352,7 +361,7 @@ export function createEndingEntries(ending: EndingResult): TerminalEntry[] {
  * Get the ending title for display
  */
 export function getEndingTitle(variant: EndingVariant): string {
-  return ENDING_TITLES[variant];
+  return getEndingTitleText(variant);
 }
 
 /**

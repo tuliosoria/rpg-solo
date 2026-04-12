@@ -5,6 +5,7 @@
 // from the Elusive Man - a cold, calculating information broker.
 
 import { GameState, CommandResult, TerminalEntry } from '../types';
+import { translateStatic } from '../i18n';
 import { generateEntryId } from './commands/utils';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -27,12 +28,44 @@ export interface LeakQuestion {
   partialMatchHint: string; // Response when close but not quite
 }
 
+type TranslationValues = Record<string, string | number>;
+
+function tElusive(key: string, fallback: string, values?: TranslationValues): string {
+  return translateStatic(`engine.elusiveMan.${key}`, values, fallback);
+}
+
+function tElusiveLines(key: string, fallback: string[]): string[] {
+  return tElusive(key, fallback.join('\n')).split('\n');
+}
+
+function createLeakQuestion(
+  id: string,
+  categoryFallback: string,
+  questionFallback: string,
+  acceptedConcepts: string[][],
+  partialMatchHintFallback: string
+): LeakQuestion {
+  return {
+    id,
+    get category() {
+      return tElusive(`questions.${id}.category`, categoryFallback);
+    },
+    get question() {
+      return tElusive(`questions.${id}.question`, questionFallback);
+    },
+    acceptedConcepts,
+    get partialMatchHint() {
+      return tElusive(`questions.${id}.partialMatchHint`, partialMatchHintFallback);
+    },
+  };
+}
+
 export const LEAK_QUESTIONS: LeakQuestion[] = [
-  {
-    id: 'debris_relocation',
-    category: 'DEBRIS',
-    question: 'They moved the debris. Where?',
-    acceptedConcepts: [
+  createLeakQuestion(
+    'debris_relocation',
+    'DEBRIS',
+    'They moved the debris. Where?',
+    [
       ['campinas', 'campina'],
       ['esa', 'e.s.a.', 'escola de sargentos'],
       ['military base', 'army base', 'air base', 'base militar'],
@@ -44,13 +77,13 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
       ['convoy', 'trucks'],
       ['zona militar', 'military zone'],
     ],
-    partialMatchHint: 'Follow the convoy.',
-  },
-  {
-    id: 'being_containment',
-    category: 'CONTAINMENT',
-    question: 'How many specimens, and what were they?',
-    acceptedConcepts: [
+    'Follow the convoy.'
+  ),
+  createLeakQuestion(
+    'being_containment',
+    'CONTAINMENT',
+    'How many specimens, and what were they?',
+    [
       ['three', '3', 'tres', 'três'],
       ['biological', 'biologic', 'biologics', 'bio-construct'],
       ['bio-a', 'bio-b', 'bio-c'],
@@ -64,13 +97,13 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
       ['manufactured', 'construct', 'bio-construct'],
       ['one died', 'one expired', 'one deceased', 'bio-c expired'],
     ],
-    partialMatchHint: 'Count them. Use the containment labels.',
-  },
-  {
-    id: 'telepathic_scouts',
-    category: 'PSI-COMM',
-    question: 'How did they communicate, and why were they here?',
-    acceptedConcepts: [
+    'Count them. Use the containment labels.'
+  ),
+  createLeakQuestion(
+    'telepathic_scouts',
+    'PSI-COMM',
+    'How did they communicate, and why were they here?',
+    [
       ['telepathic', 'telepathy', 'telepaths'],
       ['psi', 'psionic', 'psychic', 'psi-comm'],
       ['neural', 'neurological', 'theta-wave', 'eeg'],
@@ -82,13 +115,13 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
       ['conceptual', 'projection'],
       ['cataloguing', 'cataloging', 'survey', 'mapping'],
     ],
-    partialMatchHint: 'Not speech. Think psi-comm and purpose.',
-  },
-  {
-    id: 'international_actors',
-    category: 'FOREIGN',
-    question: 'Who was involved besides Brazil?',
-    acceptedConcepts: [
+    'Not speech. Think psi-comm and purpose.'
+  ),
+  createLeakQuestion(
+    'international_actors',
+    'FOREIGN',
+    'Who was involved besides Brazil?',
+    [
       ['american', 'americans', 'usa', 'us', 'united states', 'u.s.'],
       ['us military', 'american military', 'pentagon'],
       ['langley', 'cia', 'central intelligence'],
@@ -101,13 +134,13 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
       ['foreign', 'international', 'external'],
       ['liaison'],
     ],
-    partialMatchHint: 'Read the diplomatic cables.',
-  },
-  {
-    id: 'transition_2026',
-    category: 'CONVERGENCE',
-    question: 'What were the files counting down to? When?',
-    acceptedConcepts: [
+    'Read the diplomatic cables.'
+  ),
+  createLeakQuestion(
+    'transition_2026',
+    'CONVERGENCE',
+    'What were the files counting down to? When?',
+    [
       ['2026'],
       ['thirty rotations', '30 rotations', 'thirty years', '30 years'],
       ['transition', 'convergence', 'activation'],
@@ -119,15 +152,15 @@ export const LEAK_QUESTIONS: LeakQuestion[] = [
       ['coming', 'something is coming'],
       ['cycle', '30-year cycle', 'thirty-year cycle'],
     ],
-    partialMatchHint: 'Thirty rotations. Name the year.',
-  },
+    'Thirty rotations. Name the year.'
+  ),
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ELUSIVE MAN DIALOGUE
 // ═══════════════════════════════════════════════════════════════════════════
 
-export const ELUSIVE_MAN_INTRO = [
+const ELUSIVE_MAN_INTRO_FALLBACK = [
   '',
   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
   '',
@@ -138,7 +171,7 @@ export const ELUSIVE_MAN_INTRO = [
   '',
 ];
 
-export const ELUSIVE_MAN_GREETING = [
+const ELUSIVE_MAN_GREETING_FALLBACK = [
   '  You found me.',
   '',
   '  I have resources. You have proof.',
@@ -151,7 +184,7 @@ export const ELUSIVE_MAN_GREETING = [
   '',
 ];
 
-export const ELUSIVE_MAN_CORRECT_RESPONSES = [
+const ELUSIVE_MAN_CORRECT_RESPONSES_FALLBACK = [
   'Acceptable.',
   'Continue.',
   'Correct.',
@@ -161,21 +194,21 @@ export const ELUSIVE_MAN_CORRECT_RESPONSES = [
   'Verified.',
 ];
 
-export const ELUSIVE_MAN_WRONG_RESPONSES = [
+const ELUSIVE_MAN_WRONG_RESPONSES_FALLBACK = [
   'Disappointing. Exposure rises.',
   'Incorrect. They felt that.',
   'Wrong. They\'re triangulating.',
   'Not what the files say. Risk spike.',
 ];
 
-export const ELUSIVE_MAN_PARTIAL_RESPONSES = [
+const ELUSIVE_MAN_PARTIAL_RESPONSES_FALLBACK = [
   'Close. Be sharper.',
   'Near it. Be more specific.',
   'Partly right. Finish it.',
   'Almost. What else?',
 ];
 
-export const ELUSIVE_MAN_VICTORY = [
+const ELUSIVE_MAN_VICTORY_FALLBACK = [
   '',
   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
   '',
@@ -190,7 +223,7 @@ export const ELUSIVE_MAN_VICTORY = [
   '',
 ];
 
-export const ELUSIVE_MAN_LOCKOUT = [
+const ELUSIVE_MAN_LOCKOUT_FALLBACK = [
   '',
   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',
   '',
@@ -205,13 +238,45 @@ export const ELUSIVE_MAN_LOCKOUT = [
   '',
 ];
 
-export const ELUSIVE_MAN_ABORT = [
+const ELUSIVE_MAN_ABORT_FALLBACK = [
   '',
   '  Wise choice. Or not.',
   '',
   '  Channel closed.',
   '',
 ];
+
+function getElusiveManIntro(): string[] {
+  return tElusiveLines('intro', ELUSIVE_MAN_INTRO_FALLBACK);
+}
+
+function getElusiveManGreeting(): string[] {
+  return tElusiveLines('greeting', ELUSIVE_MAN_GREETING_FALLBACK);
+}
+
+function getElusiveManCorrectResponses(): string[] {
+  return tElusiveLines('correctResponses', ELUSIVE_MAN_CORRECT_RESPONSES_FALLBACK);
+}
+
+function getElusiveManWrongResponses(): string[] {
+  return tElusiveLines('wrongResponses', ELUSIVE_MAN_WRONG_RESPONSES_FALLBACK);
+}
+
+function getElusiveManPartialResponses(): string[] {
+  return tElusiveLines('partialResponses', ELUSIVE_MAN_PARTIAL_RESPONSES_FALLBACK);
+}
+
+function getElusiveManVictory(): string[] {
+  return tElusiveLines('victory', ELUSIVE_MAN_VICTORY_FALLBACK);
+}
+
+function getElusiveManLockout(): string[] {
+  return tElusiveLines('lockout', ELUSIVE_MAN_LOCKOUT_FALLBACK);
+}
+
+function getElusiveManAbort(): string[] {
+  return tElusiveLines('abort', ELUSIVE_MAN_ABORT_FALLBACK);
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SEMANTIC MATCHING
@@ -342,12 +407,12 @@ export function startLeakSequence(): CommandResult {
   const output: TerminalEntry[] = [];
   
   // Intro sequence
-  for (const line of ELUSIVE_MAN_INTRO) {
+  for (const line of getElusiveManIntro()) {
     output.push(createEntry(line.includes('▓') ? 'warning' : 'system', line));
   }
   
   // Greeting
-  for (const line of ELUSIVE_MAN_GREETING) {
+  for (const line of getElusiveManGreeting()) {
     output.push(createEntry('output', `  ${line}`));
   }
   
@@ -357,7 +422,15 @@ export function startLeakSequence(): CommandResult {
   output.push(createEntry('warning', `  [${firstQuestion.category}]`));
   output.push(createEntry('output', `  "${firstQuestion.question}"`));
   output.push(createEntry('system', ''));
-  output.push(createEntry('system', '  Type your answer, or "abort" to disconnect.'));
+  output.push(
+    createEntry(
+      'system',
+      tElusive(
+        'answerPrompt',
+        '  Type your answer, or "abort" to disconnect.'
+      )
+    )
+  );
   output.push(createEntry('system', ''));
   
   return {
@@ -389,7 +462,7 @@ export function processLeakAnswer(
   if (!question) {
     // Shouldn't happen, but handle gracefully
     return {
-      output: [createEntry('error', 'Sequence error. Connection lost.')],
+      output: [createEntry('error', tElusive('sequenceError', 'Sequence error. Connection lost.'))],
       stateChanges: {
         inLeakSequence: false,
         currentLeakQuestion: 0,
@@ -401,7 +474,7 @@ export function processLeakAnswer(
   // Check for abort
   const normalizedAnswer = normalizeText(answer);
   if (normalizedAnswer === 'abort' || normalizedAnswer === 'cancel' || normalizedAnswer === 'quit') {
-    for (const line of ELUSIVE_MAN_ABORT) {
+    for (const line of getElusiveManAbort()) {
       output.push(createEntry('output', line));
     }
     return {
@@ -424,15 +497,20 @@ export function processLeakAnswer(
     // Correct answer
     const responseIndex = currentIndex;
     output.push(createEntry('system', ''));
-    output.push(createEntry('notice', `  ${getRandomResponse(ELUSIVE_MAN_CORRECT_RESPONSES, responseIndex)}`));
+    output.push(
+      createEntry(
+        'notice',
+        `  ${getRandomResponse(getElusiveManCorrectResponses(), responseIndex)}`
+      )
+    );
     
     const nextIndex = currentIndex + 1;
     
     if (nextIndex >= LEAK_QUESTIONS.length) {
       // All questions answered correctly!
       output.push(createEntry('system', ''));
-      for (const line of ELUSIVE_MAN_VICTORY) {
-        output.push(createEntry(line.includes('▓') || line.includes('SUCCESSFUL') ? 'notice' : 'output', line));
+      for (const line of getElusiveManVictory()) {
+        output.push(createEntry(line.includes('▓') || line.includes('>>') ? 'notice' : 'output', line));
       }
       
       // Check if player has conspiracy files to optionally leak
@@ -443,15 +521,61 @@ export function processLeakAnswer(
         output.push(createEntry('system', ''));
         output.push(createEntry('warning', '═══════════════════════════════════════════════════════════'));
         output.push(createEntry('system', ''));
-        output.push(createEntry('notice', '  ADDITIONAL FILES DETECTED'));
+        output.push(
+          createEntry(
+            'notice',
+            tElusive('additionalFilesDetected', '  ADDITIONAL FILES DETECTED')
+          )
+        );
         output.push(createEntry('system', ''));
-        output.push(createEntry('output', `  You have ${state.conspiracyFilesSeen.size} conspiracy document(s) in your cache.`));
-        output.push(createEntry('output', '  These expose government operations beyond the alien evidence.'));
+        output.push(
+          createEntry(
+            'output',
+            tElusive(
+              'conspiracyChoice.cacheCount',
+              '  You have {{count}} conspiracy document(s) in your cache.',
+              { count: state.conspiracyFilesSeen.size }
+            )
+          )
+        );
+        output.push(
+          createEntry(
+            'output',
+            tElusive(
+              'conspiracyChoice.exposureWarning',
+              '  These expose government operations beyond the alien evidence.'
+            )
+          )
+        );
         output.push(createEntry('system', ''));
-        output.push(createEntry('warning', '  WARNING: Releasing these may cause widespread panic.'));
+        output.push(
+          createEntry(
+            'warning',
+            tElusive(
+              'conspiracyChoice.panicWarning',
+              '  WARNING: Releasing these may cause widespread panic.'
+            )
+          )
+        );
         output.push(createEntry('system', ''));
-        output.push(createEntry('output', '  Type "leak all" to release everything.'));
-        output.push(createEntry('output', '  Type "continue" to proceed with alien evidence only.'));
+        output.push(
+          createEntry(
+            'output',
+            tElusive(
+              'conspiracyChoice.releaseEverything',
+              '  Type "leak all" to release everything.'
+            )
+          )
+        );
+        output.push(
+          createEntry(
+            'output',
+            tElusive(
+              'conspiracyChoice.alienOnly',
+              '  Type "continue" to proceed with alien evidence only.'
+            )
+          )
+        );
         output.push(createEntry('system', ''));
         
         return {
@@ -516,7 +640,12 @@ export function processLeakAnswer(
   if (evaluation.isPartialMatch) {
     // Partial match - give a hint but don't penalize
     output.push(createEntry('system', ''));
-    output.push(createEntry('warning', `  ${getRandomResponse(ELUSIVE_MAN_PARTIAL_RESPONSES, currentIndex)}`));
+    output.push(
+      createEntry(
+        'warning',
+        `  ${getRandomResponse(getElusiveManPartialResponses(), currentIndex)}`
+      )
+    );
     output.push(createEntry('output', `  ${question.partialMatchHint}`));
     output.push(createEntry('system', ''));
     
@@ -532,15 +661,38 @@ export function processLeakAnswer(
   const newDetection = Math.min(100, (state.detectionLevel ?? 0) + LEAK_DETECTION_PENALTY);
   
   output.push(createEntry('system', ''));
-  output.push(createEntry('error', `  ${getRandomResponse(ELUSIVE_MAN_WRONG_RESPONSES, newWrongAnswers)}`));
-  output.push(createEntry('warning', `  [DETECTION: +${LEAK_DETECTION_PENALTY}%]`));
-  output.push(createEntry('system', `  [Wrong answers: ${newWrongAnswers}/${LEAK_MAX_WRONG_ANSWERS}]`));
+  output.push(
+    createEntry(
+      'error',
+      `  ${getRandomResponse(getElusiveManWrongResponses(), newWrongAnswers)}`
+    )
+  );
+  output.push(
+    createEntry(
+      'warning',
+      tElusive(
+        'detectionIncrease',
+        '  [DETECTION: +{{value}}%]',
+        { value: LEAK_DETECTION_PENALTY }
+      )
+    )
+  );
+  output.push(
+    createEntry(
+      'system',
+      tElusive(
+        'wrongAnswersCounter',
+        '  [Wrong answers: {{current}}/{{total}}]',
+        { current: newWrongAnswers, total: LEAK_MAX_WRONG_ANSWERS }
+      )
+    )
+  );
   
   if (newWrongAnswers >= LEAK_MAX_WRONG_ANSWERS) {
     // Game over - too many wrong answers
     output.push(createEntry('system', ''));
-    for (const line of ELUSIVE_MAN_LOCKOUT) {
-      output.push(createEntry(line.includes('▓') || line.includes('LOCKOUT') ? 'error' : 'output', line));
+    for (const line of getElusiveManLockout()) {
+      output.push(createEntry(line.includes('▓') || line.includes('>>') ? 'error' : 'output', line));
     }
     
     return {
@@ -565,12 +717,19 @@ export function processLeakAnswer(
     output.push(createEntry('error', ''));
     output.push(createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'));
     output.push(createEntry('error', ''));
-    output.push(createEntry('error', '  INTRUSION DETECTED'));
+    output.push(createEntry('error', tElusive('intrusionDetected', '  INTRUSION DETECTED')));
     output.push(createEntry('error', ''));
-    output.push(createEntry('error', '  Your connection has been traced.'));
-    output.push(createEntry('error', '  Security protocols have been dispatched.'));
+    output.push(
+      createEntry('error', tElusive('tracedConnection', '  Your connection has been traced.'))
+    );
+    output.push(
+      createEntry(
+        'error',
+        tElusive('securityDispatched', '  Security protocols have been dispatched.')
+      )
+    );
     output.push(createEntry('error', ''));
-    output.push(createEntry('error', '  >> SESSION TERMINATED <<'));
+    output.push(createEntry('error', tElusive('sessionTerminated', '  >> SESSION TERMINATED <<')));
     output.push(createEntry('error', ''));
     output.push(createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'));
     output.push(createEntry('error', ''));
@@ -593,7 +752,7 @@ export function processLeakAnswer(
   
   // Continue with same question
   output.push(createEntry('system', ''));
-  output.push(createEntry('output', '  Try again.'));
+  output.push(createEntry('output', tElusive('tryAgain', '  Try again.')));
   output.push(createEntry('system', ''));
   
   return {
@@ -620,9 +779,15 @@ export function getLeakStatus(state: GameState): string[] {
   
   return [
     '',
-    '═══ ELUSIVE MAN INTERROGATION ═══',
-    `  Question: ${currentIndex + 1}/${LEAK_QUESTIONS.length}`,
-    `  Errors: ${wrongAnswers}/${LEAK_MAX_WRONG_ANSWERS}`,
+    tElusive('status.header', '═══ ELUSIVE MAN INTERROGATION ═══'),
+    tElusive('status.question', '  Question: {{current}}/{{total}}', {
+      current: currentIndex + 1,
+      total: LEAK_QUESTIONS.length,
+    }),
+    tElusive('status.errors', '  Errors: {{current}}/{{total}}', {
+      current: wrongAnswers,
+      total: LEAK_MAX_WRONG_ANSWERS,
+    }),
     '═════════════════════════════════',
   ];
 }
@@ -653,19 +818,84 @@ export function processConspiracyChoice(
     output.push(createEntry('system', ''));
     output.push(createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'));
     output.push(createEntry('system', ''));
-    output.push(createEntry('notice', '  FULL DISCLOSURE INITIATED'));
+    output.push(
+      createEntry(
+        'notice',
+        tElusive('conspiracyChoice.fullDisclosure', '  FULL DISCLOSURE INITIATED')
+      )
+    );
     output.push(createEntry('system', ''));
-    output.push(createEntry('output', '  Uploading conspiracy documents...'));
-    output.push(createEntry('output', '  Economic manipulation memos... SENT'));
-    output.push(createEntry('output', '  Surveillance programs... SENT'));
-    output.push(createEntry('output', '  Weather modification logs... SENT'));
-    output.push(createEntry('output', '  Historical revisionism records... SENT'));
+    output.push(
+      createEntry(
+        'output',
+        tElusive('conspiracyChoice.uploading', '  Uploading conspiracy documents...')
+      )
+    );
+    output.push(
+      createEntry(
+        'output',
+        tElusive(
+          'conspiracyChoice.economicSent',
+          '  Economic manipulation memos... SENT'
+        )
+      )
+    );
+    output.push(
+      createEntry(
+        'output',
+        tElusive('conspiracyChoice.surveillanceSent', '  Surveillance programs... SENT')
+      )
+    );
+    output.push(
+      createEntry(
+        'output',
+        tElusive('conspiracyChoice.weatherSent', '  Weather modification logs... SENT')
+      )
+    );
+    output.push(
+      createEntry(
+        'output',
+        tElusive(
+          'conspiracyChoice.revisionismSent',
+          '  Historical revisionism records... SENT'
+        )
+      )
+    );
     output.push(createEntry('system', ''));
-    output.push(createEntry('warning', '  EVERYTHING IS OUT THERE NOW.'));
+    output.push(
+      createEntry(
+        'warning',
+        tElusive('conspiracyChoice.everythingOut', '  EVERYTHING IS OUT THERE NOW.')
+      )
+    );
     output.push(createEntry('system', ''));
-    output.push(createEntry('error', 'UFO74: jesus christ, kid. you just blew it all open.'));
-    output.push(createEntry('error', '       the aliens AND the conspiracies.'));
-    output.push(createEntry('error', '       the world is gonna lose its mind.'));
+    output.push(
+      createEntry(
+        'error',
+        tElusive(
+          'conspiracyChoice.ufo74Line1',
+          'UFO74: jesus christ, kid. you just blew it all open.'
+        )
+      )
+    );
+    output.push(
+      createEntry(
+        'error',
+        tElusive(
+          'conspiracyChoice.ufo74Line2',
+          '       the aliens AND the conspiracies.'
+        )
+      )
+    );
+    output.push(
+      createEntry(
+        'error',
+        tElusive(
+          'conspiracyChoice.ufo74Line3',
+          '       the world is gonna lose its mind.'
+        )
+      )
+    );
     output.push(createEntry('system', ''));
     
     return {
@@ -688,10 +918,31 @@ export function processConspiracyChoice(
   if (continueKeywords.some(kw => normalizedAnswer.includes(kw))) {
     // Player chose NOT to leak conspiracy files
     output.push(createEntry('system', ''));
-    output.push(createEntry('notice', '  Understood. Proceeding with alien evidence only.'));
+    output.push(
+      createEntry(
+        'notice',
+        tElusive(
+          'conspiracyChoice.alienOnlyConfirmed',
+          '  Understood. Proceeding with alien evidence only.'
+        )
+      )
+    );
     output.push(createEntry('system', ''));
-    output.push(createEntry('output', 'UFO74: smart choice. one bombshell at a time.'));
-    output.push(createEntry('output', '       the conspiracy stuff can wait.'));
+    output.push(
+      createEntry(
+        'output',
+        tElusive(
+          'conspiracyChoice.smartChoice',
+          'UFO74: smart choice. one bombshell at a time.'
+        )
+      )
+    );
+    output.push(
+      createEntry(
+        'output',
+        tElusive('conspiracyChoice.waitLine', '       the conspiracy stuff can wait.')
+      )
+    );
     output.push(createEntry('system', ''));
     
     return {
@@ -710,9 +961,27 @@ export function processConspiracyChoice(
   
   // Unclear response
   output.push(createEntry('system', ''));
-  output.push(createEntry('warning', '  Please clarify:'));
-  output.push(createEntry('output', '  Type "leak all" to release ALL documents.'));
-  output.push(createEntry('output', '  Type "continue" to proceed with alien evidence only.'));
+  output.push(
+    createEntry('warning', tElusive('conspiracyChoice.pleaseClarify', '  Please clarify:'))
+  );
+  output.push(
+    createEntry(
+      'output',
+      tElusive(
+        'conspiracyChoice.releaseAllDocuments',
+        '  Type "leak all" to release ALL documents.'
+      )
+    )
+  );
+  output.push(
+    createEntry(
+      'output',
+      tElusive(
+        'conspiracyChoice.alienOnly',
+        '  Type "continue" to proceed with alien evidence only.'
+      )
+    )
+  );
   output.push(createEntry('system', ''));
   
   return {

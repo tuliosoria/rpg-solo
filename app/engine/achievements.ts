@@ -1,5 +1,6 @@
 // Achievement definitions and tracking
 
+import { translateStatic } from '../i18n';
 import { safeGetJSON, safeSetJSON, safeRemoveItem } from '../storage/safeStorage';
 import { unlockAchievement as steamUnlockAchievement } from '../lib/steamBridge';
 
@@ -11,188 +12,233 @@ export interface Achievement {
   secret?: boolean; // Hidden until unlocked
 }
 
+function createAchievement(
+  id: string,
+  key: string,
+  fallbackName: string,
+  fallbackDescription: string,
+  icon: string,
+  secret: boolean = false
+): Achievement {
+  return {
+    id,
+    get name() {
+      return translateStatic(`engine.achievements.${key}.name`, undefined, fallbackName);
+    },
+    get description() {
+      return translateStatic(
+        `engine.achievements.${key}.description`,
+        undefined,
+        fallbackDescription
+      );
+    },
+    icon,
+    ...(secret ? { secret: true } : {}),
+  };
+}
+
 export const ACHIEVEMENTS: Achievement[] = [
-  {
-    id: 'speed_demon',
-    name: 'Speed Demon',
-    description: 'Complete the game in under 50 commands',
-    icon: '⚡',
-  },
-  {
-    id: 'ghost',
-    name: 'Ghost Protocol',
-    description: 'Win with detection level under 20%',
-    icon: '👻',
-  },
-  {
-    id: 'completionist',
-    name: 'Completionist',
-    description: 'Read every accessible file in the system',
-    icon: '📚',
-  },
-  {
-    id: 'pacifist',
-    name: 'Pacifist',
-    description: 'Never trigger a warning or alert',
-    icon: '🕊️',
-  },
-  {
-    id: 'curious',
-    name: 'Curious Mind',
-    description: 'Find all easter eggs',
-    icon: '🔍',
-  },
-  {
-    id: 'first_blood',
-    name: 'First Blood',
-    description: 'Discover your first evidence',
-    icon: '🩸',
-  },
-  {
-    id: 'hacker',
-    name: 'Elite Hacker',
-    description: 'Decrypt 5 encrypted files',
-    icon: '💀',
-  },
-  {
-    id: 'survivor',
-    name: 'Survivor',
-    description: 'Complete the game after reaching critical detection',
-    icon: '🎖️',
-  },
-  {
-    id: 'mathematician',
-    name: 'Mathematician',
-    description: 'Solve all equations on first try',
-    icon: '🧮',
-  },
-  {
-    id: 'truth_seeker',
-    name: 'Truth Seeker',
-    description: 'Collect 5 evidence files',
-    icon: '👁️',
-  },
-  {
-    id: 'doom_fan',
-    name: 'IDDQD',
-    description: 'Activate god mode',
-    icon: '🎮',
-    secret: true,
-  },
-  {
-    id: 'persistent',
-    name: 'Persistent',
-    description: 'Continue playing after a game over',
-    icon: '💪',
-  },
+  createAchievement(
+    'speed_demon',
+    'speed_demon',
+    'Speed Demon',
+    'Complete the game in under 50 commands',
+    '⚡'
+  ),
+  createAchievement(
+    'ghost',
+    'ghost',
+    'Ghost Protocol',
+    'Win with detection level under 20%',
+    '👻'
+  ),
+  createAchievement(
+    'completionist',
+    'completionist',
+    'Completionist',
+    'Read every accessible file in the system',
+    '📚'
+  ),
+  createAchievement(
+    'pacifist',
+    'pacifist',
+    'Pacifist',
+    'Never trigger a warning or alert',
+    '🕊️'
+  ),
+  createAchievement(
+    'curious',
+    'curious',
+    'Curious Mind',
+    'Find all easter eggs',
+    '🔍'
+  ),
+  createAchievement(
+    'first_blood',
+    'first_blood',
+    'First Blood',
+    'Discover your first evidence',
+    '🩸'
+  ),
+  createAchievement(
+    'hacker',
+    'hacker',
+    'Elite Hacker',
+    'Decrypt 5 encrypted files',
+    '💀'
+  ),
+  createAchievement(
+    'survivor',
+    'survivor',
+    'Survivor',
+    'Complete the game after reaching critical detection',
+    '🎖️'
+  ),
+  createAchievement(
+    'mathematician',
+    'mathematician',
+    'Mathematician',
+    'Solve all equations on first try',
+    '🧮'
+  ),
+  createAchievement(
+    'truth_seeker',
+    'truth_seeker',
+    'Truth Seeker',
+    'Collect 5 evidence files',
+    '👁️'
+  ),
+  createAchievement('doom_fan', 'doom_fan', 'IDDQD', 'Activate god mode', '🎮', true),
+  createAchievement(
+    'persistent',
+    'persistent',
+    'Persistent',
+    'Continue playing after a game over',
+    '💪'
+  ),
   // Hidden achievements
-  {
-    id: 'archivist',
-    name: 'Archivist',
-    description: 'Read every file in a folder with 3+ files',
-    icon: '📁',
-    secret: true,
-  },
-  {
-    id: 'paranoid',
-    name: 'Paranoid',
-    description: 'Check system status 10+ times',
-    icon: '👀',
-    secret: true,
-  },
-  {
-    id: 'bookworm',
-    name: 'Bookworm',
-    description: 'Bookmark 5+ files',
-    icon: '🔖',
-    secret: true,
-  },
-  {
-    id: 'night_owl',
-    name: 'Night Owl',
-    description: 'Play for over 30 minutes in a single session',
-    icon: '🦉',
-    secret: true,
-  },
+  createAchievement(
+    'archivist',
+    'archivist',
+    'Archivist',
+    'Read every file in a folder with 3+ files',
+    '📁',
+    true
+  ),
+  createAchievement(
+    'paranoid',
+    'paranoid',
+    'Paranoid',
+    'Check system status 10+ times',
+    '👀',
+    true
+  ),
+  createAchievement(
+    'bookworm',
+    'bookworm',
+    'Bookworm',
+    'Bookmark 5+ files',
+    '🔖',
+    true
+  ),
+  createAchievement(
+    'night_owl',
+    'night_owl',
+    'Night Owl',
+    'Play for over 30 minutes in a single session',
+    '🦉',
+    true
+  ),
   // Multiple endings achievements
-  {
-    id: 'liberator',
-    name: 'Liberator',
-    description: 'Release ALPHA from containment',
-    icon: '🛸',
-    secret: true,
-  },
-  {
-    id: 'whistleblower',
-    name: 'Whistleblower',
-    description: 'Leak the conspiracy files to the world',
-    icon: '📢',
-    secret: true,
-  },
-  {
-    id: 'linked',
-    name: 'Neural Link',
-    description: 'Connect to the alien consciousness',
-    icon: '🧠',
-    secret: true,
-  },
-  {
-    id: 'revelator',
-    name: 'Complete Revelation',
-    description: 'Achieve the ultimate ending with all modifiers',
-    icon: '✨',
-    secret: true,
-  },
+  createAchievement(
+    'liberator',
+    'liberator',
+    'Liberator',
+    'Release ALPHA from containment',
+    '🛸',
+    true
+  ),
+  createAchievement(
+    'whistleblower',
+    'whistleblower',
+    'Whistleblower',
+    'Leak the conspiracy files to the world',
+    '📢',
+    true
+  ),
+  createAchievement(
+    'linked',
+    'linked',
+    'Neural Link',
+    'Connect to the alien consciousness',
+    '🧠',
+    true
+  ),
+  createAchievement(
+    'revelator',
+    'revelator',
+    'Complete Revelation',
+    'Achieve the ultimate ending with all modifiers',
+    '✨',
+    true
+  ),
   // Individual ending achievements (one per ending variant)
-  {
-    id: 'ending_controlled_disclosure',
-    name: 'Controlled Disclosure',
-    description: 'Complete the game with a clean leak',
-    icon: '📰',
-    secret: true,
-  },
-  {
-    id: 'ending_global_panic',
-    name: 'Global Panic',
-    description: 'Leak conspiracy files and watch the world burn',
-    icon: '🔥',
-    secret: true,
-  },
-  {
-    id: 'ending_undeniable_confirmation',
-    name: 'Undeniable Proof',
-    description: 'Release ALPHA and prove aliens exist',
-    icon: '👽',
-    secret: true,
-  },
-  {
-    id: 'ending_total_collapse',
-    name: 'Total Collapse',
-    description: 'Release ALPHA and leak conspiracies',
-    icon: '💥',
-    secret: true,
-  },
-  {
-    id: 'ending_personal_contamination',
-    name: 'Personal Contamination',
-    description: 'Use the neural link and feel the alien presence',
-    icon: '🧠',
-    secret: true,
-  },
-  {
-    id: 'ending_paranoid_awakening',
-    name: 'Paranoid Awakening',
-    description: 'Leak conspiracies while neurally linked',
-    icon: '👁️',
-    secret: true,
-  },
-  {
-    id: 'ending_witnessed_truth',
-    name: 'Witnessed Truth',
-    description: 'Release ALPHA while neurally linked',
-    icon: '🌌',
-    secret: true,
-  },
+  createAchievement(
+    'ending_controlled_disclosure',
+    'ending_controlled_disclosure',
+    'Controlled Disclosure',
+    'Complete the game with a clean leak',
+    '📰',
+    true
+  ),
+  createAchievement(
+    'ending_global_panic',
+    'ending_global_panic',
+    'Global Panic',
+    'Leak conspiracy files and watch the world burn',
+    '🔥',
+    true
+  ),
+  createAchievement(
+    'ending_undeniable_confirmation',
+    'ending_undeniable_confirmation',
+    'Undeniable Proof',
+    'Release ALPHA and prove aliens exist',
+    '👽',
+    true
+  ),
+  createAchievement(
+    'ending_total_collapse',
+    'ending_total_collapse',
+    'Total Collapse',
+    'Release ALPHA and leak conspiracies',
+    '💥',
+    true
+  ),
+  createAchievement(
+    'ending_personal_contamination',
+    'ending_personal_contamination',
+    'Personal Contamination',
+    'Use the neural link and feel the alien presence',
+    '🧠',
+    true
+  ),
+  createAchievement(
+    'ending_paranoid_awakening',
+    'ending_paranoid_awakening',
+    'Paranoid Awakening',
+    'Leak conspiracies while neurally linked',
+    '👁️',
+    true
+  ),
+  createAchievement(
+    'ending_witnessed_truth',
+    'ending_witnessed_truth',
+    'Witnessed Truth',
+    'Release ALPHA while neurally linked',
+    '🌌',
+    true
+  ),
 ];
 
 const VALID_ACHIEVEMENT_IDS = new Set(ACHIEVEMENTS.map(a => a.id));
