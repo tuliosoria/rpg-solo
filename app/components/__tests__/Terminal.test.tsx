@@ -454,7 +454,9 @@ describe('Terminal Component', () => {
   it('shows the deploy version in the header', () => {
     render(<Terminal {...defaultProps} />);
 
-    expect(screen.getByText('v0.1.0')).toBeInTheDocument();
+    // Version is computed from git commit count at build time (v0.{count}.0)
+    const versionTag = screen.getByText(/^v0\.\d+\.0$/);
+    expect(versionTag).toBeInTheDocument();
   });
 
   it('accepts user input', () => {

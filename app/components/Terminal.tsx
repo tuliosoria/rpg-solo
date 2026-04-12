@@ -35,8 +35,6 @@ import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 import FirewallEyes, { speakCustomFirewallVoice, unlockSpeechSynthesis } from './FirewallEyes';
 
-// Read version from package.json for display in the status bar
-import packageJson from '../../package.json';
 
 // Lazy-load conditional components for better initial load performance
 const ImageOverlay = dynamic(() => import('./ImageOverlay'), { ssr: false });
@@ -199,8 +197,9 @@ interface TerminalProps {
   onLoadCheckpointAction?: (slotId: string) => void;
 }
 
-// Version pulled from package.json so deploys always reflect the current build.
-const DEPLOY_VERSION = `v${packageJson.version}`;
+// Build version from git commit count; commit SHA available on hover
+const DEPLOY_VERSION = `v0.${process.env.NEXT_PUBLIC_BUILD_NUMBER || '0'}.0`;
+const COMMIT_SHA = process.env.NEXT_PUBLIC_COMMIT_SHA || 'unknown';
 const SCREEN_OVERLAY_BOUNDS = { position: 'absolute' as const, inset: 0 };
 
 export default function Terminal({
@@ -1251,7 +1250,7 @@ export default function Terminal({
               }
             }}
           >
-            {t('terminal.header.title')} <span className={styles.versionTag}>{DEPLOY_VERSION}</span>{' '}
+            {t('terminal.header.title')} <span className={styles.versionTag} title={COMMIT_SHA}>{DEPLOY_VERSION}</span>{' '}
             ▼
           </span>
           {/* ESC button */}
