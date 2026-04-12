@@ -540,10 +540,6 @@ export const filesystemCommands: CommandRegistry = {
     if (filePath.startsWith('/admin/')) categoriesRead.add('admin');
     if (filePath.startsWith('/internal/')) categoriesRead.add('internal');
 
-    // Check if player has read multiple categories (unlocks pattern recognition files)
-    if (categoriesRead.size >= 3 && !state.flags['readMultipleCategories']) {
-      stateChanges.flags = { ...state.flags, readMultipleCategories: true };
-    }
     stateChanges.categoriesRead = categoriesRead;
 
     // ═══════════════════════════════════════════════════════════════════════════
@@ -651,13 +647,13 @@ export const filesystemCommands: CommandRegistry = {
       ufo74ContextMessage = createUFO74Message(reaction);
     }
 
-    // After a few reads, nudge players toward cross-referencing instead of the old override gate.
+    // After a few reads, nudge players toward the key evidence-heavy directories.
     const totalFilesRead = filesRead.size;
     if (totalFilesRead === 3 && !state.flags.overrideSuggested && !state.flags.adminUnlocked) {
       ufo74ContextMessage = createUFO74Message([
         'UFO74: good pace, hackerkid.',
-        '       start cross-checking /storage, /ops, and /comms.',
-        '       the pattern only shows up when you compare them.',
+        '       start digging through /storage, /ops, and /comms.',
+        '       the good files are scattered all over the system.',
       ]);
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideSuggested: true };
     }
@@ -702,7 +698,7 @@ export const filesystemCommands: CommandRegistry = {
         const hints = [
           'UFO74: this one still hides behind a recovery phrase. look around for clues first.',
           'UFO74: the answer is somewhere else in the system. keep digging before you force it.',
-          'UFO74: locked tight. cross-reference the other files before you try the legacy prompt.',
+          'UFO74: locked tight. find the answer somewhere else before you try the legacy prompt.',
         ];
         output.push(
           createEntry(

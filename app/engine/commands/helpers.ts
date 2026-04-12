@@ -11,9 +11,9 @@ import {
 import { createSeededRng, seededRandomInt, seededRandomPick } from '../rng';
 import {
   countEvidence,
-  getDiscoveredEvidenceTruths,
   getDisturbingContentAvatarExpression,
-  getEvidenceTruthsForFile,
+  isEvidenceFile,
+  MAX_EVIDENCE_COUNT,
 } from '../evidenceRevelation';
 import {
   ARCHIVE_FILES,
@@ -636,7 +636,7 @@ export function isInWarmupPhase(state: GameState): boolean {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function checkVictory(state: GameState): boolean {
-  return countEvidence(state) >= 5;
+  return countEvidence(state) >= MAX_EVIDENCE_COUNT;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -660,24 +660,12 @@ export function applyEvidenceDiscovery(
     stateChanges.avatarExpression = disturbingExpression;
   }
 
-  if (!state.tutorialComplete || state.filesRead.has(filePath)) {
+  if (!state.tutorialComplete || state.filesRead.has(filePath) || !isEvidenceFile(file)) {
     return;
   }
 
-  const discoveredTruths = getDiscoveredEvidenceTruths(state.filesRead || []);
-  const newTruths = getEvidenceTruthsForFile(file, filePath).filter(
-    truth => !discoveredTruths.has(truth)
-  );
-
-  if (newTruths.length === 0) {
-    return;
-  }
-
-  const currentCount = Math.max(
-    stateChanges.evidenceCount ?? state.evidenceCount ?? 0,
-    discoveredTruths.size
-  );
-  const newCount = Math.min(5, currentCount + newTruths.length);
+  const currentCount = countEvidence(state);
+  const newCount = Math.min(MAX_EVIDENCE_COUNT, currentCount + 1);
 
   if (newCount <= currentCount) {
     return;
@@ -705,26 +693,20 @@ export function applyEvidenceDiscovery(
   }
   if (newCount === 2) {
     notices.push(createEntry('notice', ''));
-    notices.push(createEntry('notice', 'SYSTEM: Independent verification detected.'));
+    notices.push(createEntry('notice', 'SYSTEM: Evidence archive updated.'));
   }
   if (newCount === 4) {
     notices.push(createEntry('notice', ''));
-    notices.push(createEntry('notice', 'NOTICE: Documentation threshold approaching.'));
+    notices.push(createEntry('notice', 'NOTICE: Leak package almost ready.'));
   }
-  if (newCount === 5) {
+  if (newCount === MAX_EVIDENCE_COUNT) {
     notices.push(createEntry('notice', ''));
-    notices.push(createEntry('notice', '▓▓▓ ALL EVIDENCE CATEGORIES DOCUMENTED ▓▓▓'));
+    notices.push(createEntry('notice', '▓▓▓ LEAK PACKAGE READY ▓▓▓'));
     notices.push(...createUFO74Message([
-      'UFO74: all five confirmed. we need to get this out.',
+      'UFO74: five files logged. leak path is live.',
       '       type: leak',
       '       do it NOW before they cut the connection.',
     ]));
-  }
-  if (newCount >= 4 && !state.flags.nearVictory) {
-    stateChanges.flags = { ...state.flags, ...stateChanges.flags, nearVictory: true };
-  }
-  if (newCount >= 5 && !state.flags.allEvidenceCollected) {
-    stateChanges.flags = { ...state.flags, ...stateChanges.flags, allEvidenceCollected: true };
   }
 }
 

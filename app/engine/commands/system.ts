@@ -12,6 +12,7 @@ import {
   hasReadPsiMaterial,
 } from './helpers';
 import { DETECTION_THRESHOLDS } from '../../constants/detection';
+import { countEvidence } from '../evidenceRevelation';
 import { generateHintOutput } from '../hintSystem';
 import type { CommandRegistry } from './types';
 
@@ -404,13 +405,13 @@ export const systemCommands: CommandRegistry = {
       lines.push('  ACCESS: Administrative');
     }
 
-    const evidenceCount = state.evidenceCount || 0;
+    const evidenceCount = countEvidence(state);
     lines.push(`  EVIDENCE: ${evidenceCount}/5 confirmed`);
 
-    if (evidenceCount >= 5 && state.flags.allEvidenceCollected) {
+    if (evidenceCount >= 5) {
       lines.push('  OBJECTIVE: Evidence complete — use "leak" when ready.');
     } else if (evidenceCount > 0) {
-      lines.push('  OBJECTIVE: Keep reading. Every category strengthens the case.');
+      lines.push('  OBJECTIVE: Keep reading. Each evidence file strengthens the case.');
     } else {
       lines.push('  OBJECTIVE: Start opening files and build the evidence tracker.');
     }

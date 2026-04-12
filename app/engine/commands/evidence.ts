@@ -2,6 +2,7 @@
 
 import { createEntry } from './utils';
 import { saveCheckpoint } from '../../storage/saves';
+import { countEvidence, MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
 import {
   startLeakSequence,
 } from '../elusiveMan';
@@ -21,9 +22,9 @@ export const evidenceCommands: CommandRegistry = {
     }
 
     // Require all 5 evidence before allowing leak
-    const allFound = (state.evidenceCount || 0) >= 5 && state.flags.allEvidenceCollected;
+    const allFound = countEvidence(state) >= MAX_EVIDENCE_COUNT;
     if (!allFound) {
-      const found = state.evidenceCount || 0;
+      const found = countEvidence(state);
       return {
         output: [
           createEntry('error', 'LEAK BLOCKED — INSUFFICIENT EVIDENCE'),
