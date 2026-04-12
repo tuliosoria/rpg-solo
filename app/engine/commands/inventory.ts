@@ -14,12 +14,12 @@ import {
   createInvalidCommandResult,
 } from './utils';
 import {
-  PRISONER46_RELEASE_INTRO,
-  PRISONER46_RELEASE_SEQUENCE,
-  PRISONER46_RELEASE_SUCCESS,
-  PRISONER46_ALREADY_RELEASED,
-  PRISONER46_FILE_NOT_FOUND,
-} from '../../data/prisoner46';
+  ALPHA_RELEASE_INTRO,
+  ALPHA_RELEASE_SEQUENCE,
+  ALPHA_RELEASE_SUCCESS,
+  ALPHA_ALREADY_RELEASED,
+  ALPHA_FILE_NOT_FOUND,
+} from '../../data/alpha';
 import type { CommandRegistry } from './types';
 
 export const inventoryCommands: CommandRegistry = {
@@ -414,12 +414,12 @@ export const inventoryCommands: CommandRegistry = {
   release: (args, state) => {
     const target = args.join(' ').toLowerCase().trim();
     
-    // Check for P46 / prisoner46 variants
-    const validTargets = ['p46', 'prisoner46', 'prisoner 46', 'p-46'];
-    const isReleasingP46 = validTargets.some(t => target.includes(t));
+    // Check for ALPHA variants
+    const validTargets = ['alpha', 'codename alpha', 'subject alpha'];
+    const isReleasingAlpha = validTargets.some(t => target.includes(t));
     
-    if (!isReleasingP46) {
-      // Not releasing P46 - show generic error
+    if (!isReleasingAlpha) {
+      // Not releasing ALPHA - show generic error
       return {
         output: [
           createEntry('system', ''),
@@ -432,13 +432,13 @@ export const inventoryCommands: CommandRegistry = {
       };
     }
     
-    // Check if player has discovered Prisoner 46 files
-    const hasDiscoveredP46 = Array.from(state.filesRead).some(f => 
-      f.includes('prisoner46') || f.includes('p46_')
+    // Check if player has discovered ALPHA files
+    const hasDiscoveredAlpha = Array.from(state.filesRead).some(f => 
+      f.includes('alpha_journal') || f.includes('alpha_neural') || f.includes('alpha_autopsy')
     );
     
-    if (!hasDiscoveredP46) {
-      const output = PRISONER46_FILE_NOT_FOUND.map(line =>
+    if (!hasDiscoveredAlpha) {
+      const output = ALPHA_FILE_NOT_FOUND.map(line =>
         createEntry(line.includes('ERROR') ? 'error' : 'system', line)
       );
       return {
@@ -448,8 +448,8 @@ export const inventoryCommands: CommandRegistry = {
     }
     
     // Check if already released
-    if (state.flags.prisoner46Released) {
-      const output = PRISONER46_ALREADY_RELEASED.map(line =>
+    if (state.flags.alphaReleased) {
+      const output = ALPHA_ALREADY_RELEASED.map(line =>
         createEntry(line.includes('ERROR') ? 'error' : 'system', line)
       );
       return {
@@ -462,12 +462,12 @@ export const inventoryCommands: CommandRegistry = {
     const output: TerminalEntry[] = [];
     
     // Intro
-    for (const line of PRISONER46_RELEASE_INTRO) {
+    for (const line of ALPHA_RELEASE_INTRO) {
       output.push(createEntry(line.includes('▓') ? 'warning' : line.includes('COMMAND') ? 'notice' : 'system', line));
     }
     
     // Sequence
-    for (const line of PRISONER46_RELEASE_SEQUENCE) {
+    for (const line of ALPHA_RELEASE_SEQUENCE) {
       output.push(createEntry(
         line.includes('WARNING') ? 'error' :
         line.includes('>') ? 'notice' :
@@ -477,7 +477,7 @@ export const inventoryCommands: CommandRegistry = {
     }
     
     // Success
-    for (const line of PRISONER46_RELEASE_SUCCESS) {
+    for (const line of ALPHA_RELEASE_SUCCESS) {
       output.push(createEntry(
         line.includes('▓▓▓') ? 'notice' :
         line.includes('UFO74:') ? 'ufo74' :
@@ -493,7 +493,7 @@ export const inventoryCommands: CommandRegistry = {
       stateChanges: {
         flags: {
           ...state.flags,
-          prisoner46Released: true,
+          alphaReleased: true,
         },
         detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 15),
       },
@@ -501,7 +501,7 @@ export const inventoryCommands: CommandRegistry = {
       triggerFlicker: true,
       imageTrigger: {
         src: '/images/et.webp',
-        alt: 'Prisoner 46 - The surviving Varginha being',
+        alt: 'ALPHA - The surviving Varginha being',
         tone: 'eerie',
       },
     };

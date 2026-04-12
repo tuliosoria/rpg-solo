@@ -37,11 +37,11 @@ import {
   satellite_light_reflection,
 } from './conspiracyFiles';
 import {
-  prisoner46_manifest,
-  prisoner46_neural_log,
-  prisoner46_containment_specs,
-  prisoner46_interview_transcript,
-} from './prisoner46';
+  alpha_journal_day01,
+  alpha_journal_day08,
+  alpha_neural_connection,
+  alpha_autopsy_addendum,
+} from './alpha';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // INSTITUTIONAL FRAMING - Implicit guidance through bureaucratic language
@@ -4446,11 +4446,11 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'neural_dump_alfa.psi': neural_dump_alfa,
             'specimen_purpose_analysis.txt': specimen_purpose_analysis,
             'surveillance_recovery.vid': surveillance_footage_recovery,
-            // Prisoner 46 files - hints at the surviving alien in containment
-            'prisoner46_manifest.enc': prisoner46_manifest,
-            'p46_neural_activity.log': prisoner46_neural_log,
-            'p46_containment_specs.dat': prisoner46_containment_specs,
-            'p46_interview_001.txt': prisoner46_interview_transcript,
+            // ALPHA files - field journal of Maj. Ferreira documenting the surviving alien
+            'alpha_journal_day01.log': alpha_journal_day01,
+            'alpha_journal_day08.log': alpha_journal_day08,
+            'alpha_neural_connection.psi': alpha_neural_connection,
+            'alpha_autopsy_addendum.txt': alpha_autopsy_addendum,
           },
         },
       },

@@ -5,7 +5,7 @@
 //
 // Ending modifiers:
 // - conspiracyFilesLeaked: Player chose to leak discovered conspiracy files
-// - prisoner46Released: Player found and released Prisoner 46 (the surviving alien)
+// - alphaReleased: Player found and released ALPHA (the surviving alien)
 // - neuralLinkAuthenticated: Player connected to the alien neural link
 
 import { GameState, TerminalEntry } from '../types';
@@ -17,7 +17,7 @@ import { GameState, TerminalEntry } from '../types';
 export type EndingVariant =
   | 'controlled_disclosure'   // Clean leak, world debates
   | 'global_panic'            // Chaos, conspiracy files leaked
-  | 'undeniable_confirmation' // Prisoner 46 testimony
+  | 'undeniable_confirmation' // ALPHA testimony
   | 'total_collapse'          // Everything + conspiracy files
   | 'personal_contamination'  // Clean leak but neural link used
   | 'paranoid_awakening'      // Chaos + neural contamination
@@ -26,7 +26,7 @@ export type EndingVariant =
 
 export interface EndingFlags {
   conspiracyFilesLeaked: boolean;
-  prisoner46Released: boolean;
+  alphaReleased: boolean;
   neuralLinkAuthenticated: boolean;
 }
 
@@ -47,27 +47,27 @@ export interface EndingResult {
  * Determine which ending variant the player gets based on their flags
  */
 export function determineEndingVariant(flags: EndingFlags): EndingVariant {
-  const { conspiracyFilesLeaked, prisoner46Released, neuralLinkAuthenticated } = flags;
+  const { conspiracyFilesLeaked, alphaReleased, neuralLinkAuthenticated } = flags;
 
-  if (conspiracyFilesLeaked && prisoner46Released && neuralLinkAuthenticated) {
+  if (conspiracyFilesLeaked && alphaReleased && neuralLinkAuthenticated) {
     return 'complete_revelation';
   }
-  if (!conspiracyFilesLeaked && prisoner46Released && neuralLinkAuthenticated) {
+  if (!conspiracyFilesLeaked && alphaReleased && neuralLinkAuthenticated) {
     return 'witnessed_truth';
   }
-  if (conspiracyFilesLeaked && !prisoner46Released && neuralLinkAuthenticated) {
+  if (conspiracyFilesLeaked && !alphaReleased && neuralLinkAuthenticated) {
     return 'paranoid_awakening';
   }
-  if (!conspiracyFilesLeaked && !prisoner46Released && neuralLinkAuthenticated) {
+  if (!conspiracyFilesLeaked && !alphaReleased && neuralLinkAuthenticated) {
     return 'personal_contamination';
   }
-  if (conspiracyFilesLeaked && prisoner46Released && !neuralLinkAuthenticated) {
+  if (conspiracyFilesLeaked && alphaReleased && !neuralLinkAuthenticated) {
     return 'total_collapse';
   }
-  if (!conspiracyFilesLeaked && prisoner46Released && !neuralLinkAuthenticated) {
+  if (!conspiracyFilesLeaked && alphaReleased && !neuralLinkAuthenticated) {
     return 'undeniable_confirmation';
   }
-  if (conspiracyFilesLeaked && !prisoner46Released && !neuralLinkAuthenticated) {
+  if (conspiracyFilesLeaked && !alphaReleased && !neuralLinkAuthenticated) {
     return 'global_panic';
   }
   return 'controlled_disclosure';
@@ -79,7 +79,7 @@ export function determineEndingVariant(flags: EndingFlags): EndingVariant {
 export function getEndingFlags(state: GameState): EndingFlags {
   return {
     conspiracyFilesLeaked: state.flags.conspiracyFilesLeaked === true,
-    prisoner46Released: state.flags.prisoner46Released === true,
+    alphaReleased: state.flags.alphaReleased === true,
     neuralLinkAuthenticated: state.flags.neuralLinkAuthenticated === true,
   };
 }
@@ -161,7 +161,7 @@ const ENDING_CONTENT: Record<EndingVariant, Omit<EndingResult, 'variant' | 'flag
   undeniable_confirmation: {
     title: ENDING_TITLES.undeniable_confirmation,
     worldAftermath: [
-      'Prisoner 46 appeared live three days later.',
+      'ALPHA appeared live three days later.',
       'No panel could explain it away.',
       '"We observed. We prepared. You were never alone."',
       '',
@@ -232,7 +232,7 @@ const ENDING_CONTENT: Record<EndingVariant, Omit<EndingResult, 'variant' | 'flag
   witnessed_truth: {
     title: ENDING_TITLES.witnessed_truth,
     worldAftermath: [
-      'Prisoner 46 spoke. Humanity believed.',
+      'ALPHA spoke. Humanity believed.',
       'The link let you hear what the translator softened.',
       '',
       'The planet celebrated first contact.',

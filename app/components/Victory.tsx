@@ -26,7 +26,7 @@ interface VictoryProps {
   filesReadCount?: number;
   // Ending modifier flags
   conspiracyFilesLeaked?: boolean;
-  prisoner46Released?: boolean;
+  alphaReleased?: boolean;
   neuralLinkAuthenticated?: boolean;
 }
 
@@ -42,7 +42,7 @@ export default function Victory({
   rivalInvestigatorActive: _rivalInvestigatorActive = false,
   filesReadCount = 0,
   conspiracyFilesLeaked = false,
-  prisoner46Released = false,
+  alphaReleased = false,
   neuralLinkAuthenticated = false,
 }: VictoryProps) {
   const { t, translateRuntimeText } = useI18n();
@@ -56,7 +56,7 @@ export default function Victory({
   // Determine ending variant based on flags
   const endingFlags: EndingFlags = {
     conspiracyFilesLeaked,
-    prisoner46Released,
+    alphaReleased,
     neuralLinkAuthenticated,
   };
   const endingVariant = determineEndingVariant(endingFlags);
@@ -111,7 +111,7 @@ export default function Victory({
     }
 
     // New achievements for special endings
-    if (prisoner46Released) {
+    if (alphaReleased) {
       const result = unlockAchievement('liberator');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
@@ -126,7 +126,7 @@ export default function Victory({
       if (result?.isNew) newAchievements.push(result.achievement);
     }
 
-    if (conspiracyFilesLeaked && prisoner46Released && neuralLinkAuthenticated) {
+    if (conspiracyFilesLeaked && alphaReleased && neuralLinkAuthenticated) {
       const result = unlockAchievement('revelator');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
@@ -137,7 +137,7 @@ export default function Victory({
     if (endingResult?.isNew) newAchievements.push(endingResult.achievement);
 
     setAchievements(newAchievements);
-  }, [commandCount, detectionLevel, maxDetectionReached, mathMistakes, filesReadCount, conspiracyFilesLeaked, prisoner46Released, neuralLinkAuthenticated, endingVariant]);
+  }, [commandCount, detectionLevel, maxDetectionReached, mathMistakes, filesReadCount, conspiracyFilesLeaked, alphaReleased, neuralLinkAuthenticated, endingVariant]);
 
   // Show achievements one by one
   useEffect(() => {

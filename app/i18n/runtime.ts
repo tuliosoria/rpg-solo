@@ -35,7 +35,7 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'Night Owl': 'Coruja Noturna',
     'Play for over 30 minutes in a single session': 'Jogue por mais de 30 minutos em uma única sessão',
     Liberator: 'Libertador',
-    'Release Prisoner 46 from containment': 'Liberte o Prisioneiro 46 da contenção',
+    'Release ALPHA from containment': 'Liberte ALPHA da contenção',
     Whistleblower: 'Denunciante',
     'Leak the conspiracy files to the world': 'Vaze os arquivos da conspiração para o mundo',
     'Neural Link': 'Link Neural',
@@ -47,15 +47,15 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'Global Panic': 'Pânico Global',
     'Leak conspiracy files and watch the world burn': 'Vaze arquivos da conspiração e veja o mundo queimar',
     'Undeniable Proof': 'Prova Irrefutável',
-    'Release Prisoner 46 and prove aliens exist': 'Liberte o Prisioneiro 46 e prove que alienígenas existem',
+    'Release ALPHA and prove aliens exist': 'Liberte ALPHA e prove que alienígenas existem',
     'Total Collapse': 'Colapso Total',
-    'Release Prisoner 46 and leak conspiracies': 'Liberte o Prisioneiro 46 e vaze conspirações',
+    'Release ALPHA and leak conspiracies': 'Liberte ALPHA e vaze conspirações',
     'Personal Contamination': 'Contaminação Pessoal',
     'Use the neural link and feel the alien presence': 'Use o link neural e sinta a presença alienígena',
     'Paranoid Awakening': 'Despertar Paranoico',
     'Leak conspiracies while neurally linked': 'Vaze conspirações enquanto conectado neuralmente',
     'Witnessed Truth': 'Verdade Testemunhada',
-    'Release Prisoner 46 while neurally linked': 'Liberte o Prisioneiro 46 enquanto conectado neuralmente',
+    'Release ALPHA while neurally linked': 'Liberte ALPHA enquanto conectado neuralmente',
 
     'UFO74: that wreckage... wrong metallurgy.': 'UFO74: aqueles destroços... metalurgia errada.',
     'UFO74: they moved fast. knew what to hide.': 'UFO74: se moveram rápido. sabiam o que esconder.',
@@ -664,8 +664,8 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'Everything surfaced. Nothing stayed stable.':
       'Tudo veio à tona. Nada ficou estável.',
     // undeniable_confirmation
-    'Prisoner 46 appeared live three days later.':
-      'O Prisioneiro 46 apareceu ao vivo três dias depois.',
+    'ALPHA appeared live three days later.':
+      'ALPHA apareceu ao vivo três dias depois.',
     'No panel could explain it away.':
       'Nenhum painel conseguiu explicar.',
     '"We observed. We prepared. You were never alone."':
@@ -726,8 +726,8 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'You exposed the lie and swallowed its rhythm.':
       'Você expôs a mentira e engoliu seu ritmo.',
     // witnessed_truth
-    'Prisoner 46 spoke. Humanity believed.':
-      'O Prisioneiro 46 falou. A humanidade acreditou.',
+    'ALPHA spoke. Humanity believed.':
+      'ALPHA falou. A humanidade acreditou.',
     'The link let you hear what the translator softened.':
       'O link te deixou ouvir o que o tradutor suavizou.',
     'The planet celebrated first contact.':
@@ -846,7 +846,7 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'Night Owl': 'Búho Nocturno',
     'Play for over 30 minutes in a single session': 'Juega más de 30 minutos en una sola sesión',
     Liberator: 'Liberador',
-    'Release Prisoner 46 from containment': 'Libera al Prisionero 46 de la contención',
+    'Release ALPHA from containment': 'Libera a ALPHA de la contención',
     Whistleblower: 'Denunciante',
     'Leak the conspiracy files to the world': 'Filtra los archivos de conspiración al mundo',
     'Neural Link': 'Enlace Neural',
@@ -858,15 +858,15 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'Global Panic': 'Pánico Global',
     'Leak conspiracy files and watch the world burn': 'Filtra archivos de conspiración y mira arder el mundo',
     'Undeniable Proof': 'Prueba Innegable',
-    'Release Prisoner 46 and prove aliens exist': 'Libera al Prisionero 46 y prueba que existen los alienígenas',
+    'Release ALPHA and prove aliens exist': 'Libera a ALPHA y prueba que existen los alienígenas',
     'Total Collapse': 'Colapso Total',
-    'Release Prisoner 46 and leak conspiracies': 'Libera al Prisionero 46 y filtra conspiraciones',
+    'Release ALPHA and leak conspiracies': 'Libera a ALPHA y filtra conspiraciones',
     'Personal Contamination': 'Contaminación Personal',
     'Use the neural link and feel the alien presence': 'Usa el enlace neural y siente la presencia alienígena',
     'Paranoid Awakening': 'Despertar Paranoico',
     'Leak conspiracies while neurally linked': 'Filtra conspiraciones mientras estás enlazado neuralmente',
     'Witnessed Truth': 'Verdad Presenciada',
-    'Release Prisoner 46 while neurally linked': 'Libera al Prisionero 46 mientras estás enlazado neuralmente',
+    'Release ALPHA while neurally linked': 'Libera a ALPHA mientras estás enlazado neuralmente',
 
     'UFO74: that wreckage... wrong metallurgy.': 'UFO74: esos restos... metalurgia equivocada.',
     'UFO74: they moved fast. knew what to hide.': 'UFO74: se movieron rápido. sabían qué ocultar.',
@@ -1495,8 +1495,8 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'Everything surfaced. Nothing stayed stable.':
       'Todo salió a la superficie. Nada se mantuvo estable.',
     // undeniable_confirmation
-    'Prisoner 46 appeared live three days later.':
-      'El Prisionero 46 apareció en vivo tres días después.',
+    'ALPHA appeared live three days later.':
+      'ALPHA apareció en vivo tres días después.',
     'No panel could explain it away.':
       'Ningún panel pudo dar una explicación.',
     '"We observed. We prepared. You were never alone."':
@@ -1557,8 +1557,8 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     'You exposed the lie and swallowed its rhythm.':
       'Expusiste la mentira y tragaste su ritmo.',
     // witnessed_truth
-    'Prisoner 46 spoke. Humanity believed.':
-      'El Prisionero 46 habló. La humanidad creyó.',
+    'ALPHA spoke. Humanity believed.':
+      'ALPHA habló. La humanidad creyó.',
     'The link let you hear what the translator softened.':
       'El enlace te dejó oír lo que el traductor suavizó.',
     'The planet celebrated first contact.':

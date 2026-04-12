@@ -1402,7 +1402,7 @@ describe('Narrative Mechanics', () => {
     });
   });
 
-  describe('Prisoner 46 Release Command', () => {
+  describe('ALPHA Release Command', () => {
     it('shows error when no target provided', () => {
       const state = createTestState({
         tutorialStep: -1,
@@ -1413,13 +1413,13 @@ describe('Narrative Mechanics', () => {
       expect(result.output.some(e => e.content.includes('REQUIRES TARGET'))).toBe(true);
     });
 
-    it('shows file not found when P46 files not discovered', () => {
+    it('shows file not found when ALPHA files not discovered', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         filesRead: new Set<string>(),
       });
-      const result = executeCommand('release p46', state);
+      const result = executeCommand('release alpha', state);
 
       expect(
         result.output.some(
@@ -1428,66 +1428,66 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('successfully releases P46 when files discovered', () => {
+    it('successfully releases ALPHA when files discovered', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/prisoner46_manifest.enc']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal_day01.log']),
         detectionLevel: 20,
         flags: {},
       });
-      const result = executeCommand('release p46', state);
+      const result = executeCommand('release alpha', state);
 
-      expect(result.stateChanges.flags?.prisoner46Released).toBe(true);
+      expect(result.stateChanges.flags?.alphaReleased).toBe(true);
       expect(result.stateChanges.detectionLevel).toBe(35); // 20 + 15
       expect(result.triggerFlicker).toBe(true);
       expect(result.imageTrigger).toBeDefined();
       expect(result.imageTrigger?.src).toBe('/images/et.webp');
     });
 
-    it('accepts various P46 target formats', () => {
+    it('accepts various ALPHA target formats', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/p46_neural_activity.log']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal_day08.log']),
         detectionLevel: 10,
         flags: {},
       });
 
       // Test different target formats
-      const formats = ['p46', 'P46', 'prisoner46', 'prisoner 46', 'p-46'];
+      const formats = ['alpha', 'Alpha', 'ALPHA', 'codename alpha', 'subject alpha'];
       for (const format of formats) {
         const testState = { ...state, flags: {} };
         const result = executeCommand(`release ${format}`, testState);
-        expect(result.stateChanges.flags?.prisoner46Released).toBe(true);
+        expect(result.stateChanges.flags?.alphaReleased).toBe(true);
       }
     });
 
-    it('shows already released message when P46 already released', () => {
+    it('shows already released message when ALPHA already released', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/prisoner46_manifest.enc']),
-        flags: { prisoner46Released: true },
+        filesRead: new Set(['/storage/quarantine/alpha_journal_day01.log']),
+        flags: { alphaReleased: true },
       });
-      const result = executeCommand('release p46', state);
+      const result = executeCommand('release alpha', state);
 
       expect(
         result.output.some(e => e.content.includes('ALREADY') || e.content.includes('already'))
       ).toBe(true);
       // Should not set the flag again
-      expect(result.stateChanges.flags?.prisoner46Released).toBeUndefined();
+      expect(result.stateChanges.flags?.alphaReleased).toBeUndefined();
     });
 
-    it('caps detection at 100 when releasing P46', () => {
+    it('caps detection at 100 when releasing ALPHA', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/prisoner46_manifest.enc']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal_day01.log']),
         detectionLevel: 90,
         flags: {},
       });
-      const result = executeCommand('release p46', state);
+      const result = executeCommand('release alpha', state);
 
       expect(result.stateChanges.detectionLevel).toBe(100);
     });
@@ -1496,10 +1496,10 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/prisoner46_manifest.enc']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal_day01.log']),
         flags: {},
       });
-      const result = executeCommand('release p46', state);
+      const result = executeCommand('release alpha', state);
 
       expect(result.output.some(e => e.type === 'ufo74')).toBe(true);
     });

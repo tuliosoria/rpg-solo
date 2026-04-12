@@ -1241,7 +1241,7 @@ export default function Terminal({
         filesReadCount={gameState.filesRead?.size || 0}
         // Multiple endings flags
         conspiracyFilesLeaked={gameState.flags?.conspiracyFilesLeaked || false}
-        prisoner46Released={gameState.flags?.prisoner46Released || false}
+        alphaReleased={gameState.flags?.alphaReleased || false}
         neuralLinkAuthenticated={gameState.flags?.neuralLinkAuthenticated || false}
       />
     );

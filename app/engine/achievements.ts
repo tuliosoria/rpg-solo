@@ -118,7 +118,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'liberator',
     name: 'Liberator',
-    description: 'Release Prisoner 46 from containment',
+    description: 'Release ALPHA from containment',
     icon: '🛸',
     secret: true,
   },
@@ -161,14 +161,14 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'ending_undeniable_confirmation',
     name: 'Undeniable Proof',
-    description: 'Release Prisoner 46 and prove aliens exist',
+    description: 'Release ALPHA and prove aliens exist',
     icon: '👽',
     secret: true,
   },
   {
     id: 'ending_total_collapse',
     name: 'Total Collapse',
-    description: 'Release Prisoner 46 and leak conspiracies',
+    description: 'Release ALPHA and leak conspiracies',
     icon: '💥',
     secret: true,
   },
@@ -189,7 +189,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'ending_witnessed_truth',
     name: 'Witnessed Truth',
-    description: 'Release Prisoner 46 while neurally linked',
+    description: 'Release ALPHA while neurally linked',
     icon: '🌌',
     secret: true,
   },
