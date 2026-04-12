@@ -21,7 +21,6 @@ export {
   calculateDelay,
   shouldFlicker,
   addHesitation,
-  maybeAddTypo,
   createUFO74Message,
 } from './utils';
 

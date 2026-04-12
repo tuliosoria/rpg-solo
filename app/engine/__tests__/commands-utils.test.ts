@@ -9,7 +9,6 @@ import {
   calculateDelay,
   shouldFlicker,
   addHesitation,
-  maybeAddTypo,
   createInvalidCommandResult,
 } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
@@ -300,29 +299,6 @@ describe('Command Utilities', () => {
     it('handles intensity of 0', () => {
       const result = addHesitation('text', 0);
       expect(result[0].length).toBeGreaterThanOrEqual(3); // Minimum 1 dot, repeated 3 times
-    });
-  });
-
-  describe('maybeAddTypo', () => {
-    it('returns original text when no typo', () => {
-      const result = maybeAddTypo('hello world', 0);
-      expect(result).toEqual(['hello world']);
-    });
-
-    it('returns typo and correction when triggered', () => {
-      const result = maybeAddTypo('hello world', 1);
-      expect(result).toHaveLength(2);
-      expect(result[1]).toContain('[CORRECTION]');
-    });
-
-    it('does not typo short text', () => {
-      const result = maybeAddTypo('hi', 1);
-      expect(result).toEqual(['hi']);
-    });
-
-    it('respects custom chance parameter', () => {
-      expect(maybeAddTypo('hello world', 0)).toEqual(['hello world']);
-      expect(maybeAddTypo('hello world', 1)[1]).toContain('[CORRECTION]');
     });
   });
 

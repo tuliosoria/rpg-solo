@@ -60,7 +60,6 @@ export {
   calculateDelay,
   shouldFlicker,
   addHesitation,
-  maybeAddTypo,
   createUFO74Message,
 } from './commands/utils';
 
@@ -833,8 +832,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       result.output = [
         ...result.output,
         createEntry('ufo74', 'UFO74: hey kid, risk is getting too high.'),
-        createEntry('ufo74', 'UFO74: the terminal is starting to malfunction. you see it right?'),
-        createEntry('ufo74', 'UFO74: text gets corrupted when detection is this high.'),
         createEntry('ufo74', 'UFO74: use "wait" to lay low and bring the risk down.'),
       ];
     }
