@@ -1432,7 +1432,7 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/alpha_journal_day01.log']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal.log']),
         detectionLevel: 20,
         flags: {},
       });
@@ -1449,7 +1449,7 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/alpha_journal_day08.log']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal.log']),
         detectionLevel: 10,
         flags: {},
       });
@@ -1467,7 +1467,7 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/alpha_journal_day01.log']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal.log']),
         flags: { alphaReleased: true },
       });
       const result = executeCommand('release alpha', state);
@@ -1483,7 +1483,7 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/alpha_journal_day01.log']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal.log']),
         detectionLevel: 90,
         flags: {},
       });
@@ -1496,7 +1496,7 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/alpha_journal_day01.log']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal.log']),
         flags: {},
       });
       const result = executeCommand('release alpha', state);

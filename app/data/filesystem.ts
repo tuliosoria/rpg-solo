@@ -37,8 +37,7 @@ import {
   satellite_light_reflection,
 } from './conspiracyFiles';
 import {
-  alpha_journal_day01,
-  alpha_journal_day08,
+  alpha_journal,
   alpha_neural_connection,
   alpha_autopsy_addendum,
 } from './alpha';
@@ -4478,8 +4477,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
             'specimen_purpose_analysis.txt': specimen_purpose_analysis,
             'surveillance_recovery.vid': surveillance_footage_recovery,
             // ALPHA files - field journal of Maj. Ferreira documenting the surviving alien
-            'alpha_journal_day01.log': alpha_journal_day01,
-            'alpha_journal_day08.log': alpha_journal_day08,
+            'alpha_journal.log': alpha_journal,
             'alpha_neural_connection.psi': alpha_neural_connection,
             'alpha_autopsy_addendum.txt': alpha_autopsy_addendum,
           },

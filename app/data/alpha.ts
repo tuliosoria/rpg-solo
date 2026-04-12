@@ -15,9 +15,9 @@ import { FileNode } from '../types';
 // Field journal entries documenting the surviving alien in containment
 // ═══════════════════════════════════════════════════════════════════════════
 
-export const alpha_journal_day01: FileNode = {
+export const alpha_journal: FileNode = {
   type: 'file',
-  name: 'alpha_journal_day01.log',
+  name: 'alpha_journal.log',
   status: 'encrypted',
   accessThreshold: 4,
   isEvidence: true,
@@ -69,23 +69,6 @@ export const alpha_journal_day01: FileNode = {
     'Something I cannot name.',
     '',
     '───────────────────────────────────────────────────────────',
-    'Classification: ULTRA — Eyes only',
-    '═══════════════════════════════════════════════════════════',
-  ],
-};
-
-export const alpha_journal_day08: FileNode = {
-  type: 'file',
-  name: 'alpha_journal_day08.log',
-  status: 'intact',
-  accessThreshold: 4,
-  isEvidence: true,
-  content: [
-    '═══════════════════════════════════════════════════════════',
-    'FIELD JOURNAL — MAJ. M.A. FERREIRA',
-    'CPEX — SITE 7, SUBLEVEL 4',
-    'CLASSIFICATION: ULTRA',
-    '═══════════════════════════════════════════════════════════',
     '',
     '25 JANUARY 1996',
     '',
@@ -297,8 +280,7 @@ export const alpha_autopsy_addendum: FileNode = {
 
 // Array of all ALPHA files
 export const ALPHA_FILES = [
-  alpha_journal_day01,
-  alpha_journal_day08,
+  alpha_journal,
   alpha_neural_connection,
   alpha_autopsy_addendum,
 ];
