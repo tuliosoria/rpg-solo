@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "description": "A narrative puzzle game about the 1996 Varginha UFO incident in Brazil.",
-  "author": "Varginha Terminal 1996 contributors",
+  "author": {
+    "name": "Varginha Terminal 1996 contributors",
+    "email": "dev@varginha1996.com"
+  },
   "main": "electron/main.js",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
