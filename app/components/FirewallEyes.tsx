@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useMemo, memo } from 'react';
+import React, { useEffect, useRef, useMemo, useState, memo } from 'react';
 import styles from './FirewallEyes.module.css';
 
 // Detection threshold for firewall activation
@@ -75,6 +75,7 @@ interface FirewallEyesProps {
   firewallActive: boolean;
   firewallDisarmed: boolean;
   onActivateFirewall: () => void;
+  onFirewallTaunt?: () => void;
 }
 
 function FirewallEyesComponent({
@@ -82,6 +83,7 @@ function FirewallEyesComponent({
   firewallActive,
   firewallDisarmed,
   onActivateFirewall,
+  onFirewallTaunt,
 }: FirewallEyesProps) {
   const trackingPupilRef = useRef<HTMLDivElement | null>(null);
   const trackingIrisRef = useRef<HTMLDivElement | null>(null);
@@ -172,7 +174,8 @@ function FirewallEyesComponent({
         tauntTimerRef.current = null;
       }
     };
-  }, [firewallActive, firewallDisarmed, onFirewallTaunt]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firewallActive, firewallDisarmed]);
 
   // Don't render if disarmed or not active
   if (firewallDisarmed || !firewallActive) return null;
@@ -233,7 +236,7 @@ const FIREWALL_PHRASES = [
 
 // Cache for loaded voices
 let cachedVoices: SpeechSynthesisVoice[] = [];
-let voicesLoaded = false;
+let _voicesLoaded = false;
 let speechUnlocked = false;
 
 // Initialize voices - must be called early to preload
@@ -245,13 +248,13 @@ export function initVoices(): void {
   // Try to get voices immediately
   cachedVoices = speechSynthesis.getVoices();
   if (cachedVoices.length > 0) {
-    voicesLoaded = true;
+    _voicesLoaded = true;
   }
 
   // Also listen for voiceschanged event (fires when voices are ready)
   speechSynthesis.addEventListener('voiceschanged', () => {
     cachedVoices = speechSynthesis.getVoices();
-    voicesLoaded = true;
+    _voicesLoaded = true;
   });
 }
 
@@ -287,7 +290,7 @@ export function speakCustomFirewallVoice(phrase: string): void {
       voices = speechSynthesis.getVoices();
       if (voices.length) {
         cachedVoices = voices;
-        voicesLoaded = true;
+        _voicesLoaded = true;
       }
     }
 

@@ -6,7 +6,6 @@ import {
   evaluateAnswer,
   normalizeText,
   LEAK_QUESTIONS,
-  LEAK_DETECTION_PENALTY,
 } from '../elusiveMan';
 
 const createState = (overrides: Partial<GameState> = {}): GameState => ({
