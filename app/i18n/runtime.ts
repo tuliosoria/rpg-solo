@@ -4348,6 +4348,3648 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '               Causa: Brincadeira de estudante',
     '               Resolved: 16:15':
       '               Resolvido: 16:15',
+    'STANDARD OPERATING PROCEDURE — INCIDENT REVIEW':
+      'PROCEDIMENTO OPERACIONAL PADRÃO — REVISÃO DE INCIDENTE',
+    'DOCUMENT: SOP-IR-1989 (REV. 1994)':
+      'DOCUMENTO: SOP-IR-1989 (REV. 1994)',
+    'CLASSIFICATION: INTERNAL USE':
+      'CLASSIFICAÇÃO: USO INTERNO',
+    '  This protocol establishes minimum requirements for':
+      '  Este protocolo estabelece requisitos mínimos para',
+    '  internal incident reconstruction and review.':
+      '  reconstrução e revisão interna de incidentes.',
+    'APPLICABILITY:':
+      'APLICABILIDADE:',
+    '  All personnel conducting post-incident assessment':
+      '  Todo o pessoal conduzindo avaliação pós-incidente',
+    '  via archived terminal access.':
+      '  via acesso ao terminal de arquivo.',
+    'REVIEW DIMENSIONS':
+      'DIMENSÕES DA REVISÃO',
+    '  1. PHYSICAL ASSETS':
+      '  1. ATIVOS FÍSICOS',
+    '     Recovery, transport, and disposition of materials.':
+      '     Recuperação, transporte e disposição de materiais.',
+    '     Cross-reference: storage/, ops/logistics/':
+      '     Referência cruzada: storage/, ops/logistics/',
+    '  2. EQUIPMENT AND MATERIEL':
+      '  2. EQUIPAMENTOS E MATERIAL',
+    '     Inventory, condition assessment, and disposition.':
+      '     Inventário, avaliação de condição e disposição.',
+    '     Cross-reference: storage/assets/':
+      '     Referência cruzada: storage/assets/',
+    '  3. COMMUNICATIONS':
+      '  3. COMUNICAÇÕES',
+    '     Signal intercepts, liaison activity, foreign contact.':
+      '     Interceptação de sinais, atividade de enlace, contato estrangeiro.',
+    '     Cross-reference: comms/':
+      '     Referência cruzada: comms/',
+    '  4. OVERSIGHT & COORDINATION':
+      '  4. SUPERVISÃO E COORDENAÇÃO',
+    '     Multi-agency involvement, authorization chains.':
+      '     Envolvimento multi-agência, cadeias de autorização.',
+    '     Cross-reference: admin/':
+      '     Referência cruzada: admin/',
+    '  5. FORWARD RISK ASSESSMENT':
+      '  5. AVALIAÇÃO PROSPECTIVA DE RISCO',
+    '     Projected timelines, recurrence models, contingencies.':
+      '     Cronogramas projetados, modelos de recorrência, contingências.',
+    '     Cross-reference: admin/ (restricted)':
+      '     Referência cruzada: admin/ (restrito)',
+    'COMPLETION CRITERIA':
+      'CRITÉRIOS DE CONCLUSÃO',
+    '  A review is considered SUBSTANTIVE when the reviewer':
+      '  Uma revisão é considerada SUBSTANTIVA quando o revisor',
+    '  has established coherent understanding across multiple':
+      '  estabeleceu compreensão coerente através de múltiplas',
+    '  dimensions listed above.':
+      '  dimensões listadas acima.',
+    '  Partial reviews are flagged as INCOMPLETE.':
+      '  Revisões parciais são marcadas como INCOMPLETAS.',
+    '  Reviews lacking cross-dimensional correlation are':
+      '  Revisões sem correlação interdimensional são',
+    '  flagged as INCOHERENT.':
+      '  marcadas como INCOERENTES.',
+    'REVIEWER OBLIGATIONS':
+      'OBRIGAÇÕES DO REVISOR',
+    '  - Reconstruct event timeline from available records':
+      '  - Reconstruir cronologia do evento a partir dos registros disponíveis',
+    '  - Identify gaps in documentation or evidence':
+      '  - Identificar lacunas na documentação ou evidências',
+    '  - Note discrepancies between official and raw records':
+      '  - Notar discrepâncias entre registros oficiais e brutos',
+    '  - Assess forward implications if applicable':
+      '  - Avaliar implicações futuras quando aplicável',
+    '  NOTE: Reviewers should expect classification barriers.':
+      '  NOTA: Revisores devem esperar barreiras de classificação.',
+    '  Some materials require elevated clearance or decryption.':
+      '  Alguns materiais requerem autorização elevada ou descriptografia.',
+    'END DOCUMENT':
+      'FIM DO DOCUMENTO',
+    'TERMINAL ACCESS — SESSION PARAMETERS':
+      'ACESSO AO TERMINAL — PARÂMETROS DA SESSÃO',
+    'AUTO-GENERATED AT LOGIN':
+      'GERADO AUTOMATICAMENTE NO LOGIN',
+    'ACCESS TYPE: Review Terminal (Legacy Archive)':
+      'TIPO DE ACESSO: Terminal de Revisão (Arquivo Legado)',
+    'SESSION CLASS: Incident Reconstruction':
+      'CLASSE DA SESSÃO: Reconstrução de Incidente',
+    'REMINDER:':
+      'LEMBRETE:',
+    '  This terminal provides read-only access to archived':
+      '  Este terminal fornece acesso somente leitura a',
+    '  incident records. Your session activity is logged.':
+      '  registros de incidentes arquivados. Sua atividade de sessão é registrada.',
+    'EXPECTED WORKFLOW:':
+      'FLUXO DE TRABALHO ESPERADO:',
+    '  1. Navigate directories to locate relevant records':
+      '  1. Navegar diretórios para localizar registros relevantes',
+    '  2. Open and examine files for incident details':
+      '  2. Abrir e examinar arquivos para detalhes do incidente',
+    '  3. Use DECRYPT on encrypted files when authorized':
+      '  3. Usar DECRYPT em arquivos criptografados quando autorizado',
+    '  4. Cross-reference multiple sources for correlation':
+      '  4. Fazer referência cruzada de múltiplas fontes para correlação',
+    '  5. Use TRACE to monitor system awareness (optional)':
+      '  5. Usar TRACE para monitorar consciência do sistema (opcional)',
+    'COHERENCE NOTE:':
+      'NOTA DE COERÊNCIA:',
+    '  Effective reviews demonstrate correlation between':
+      '  Revisões eficazes demonstram correlação entre',
+    '  physical evidence, subject records, communications,':
+      '  evidências físicas, registros de sujeitos, comunicações,',
+    '  and administrative oversight.':
+      '  e supervisão administrativa.',
+    '  Random file access without correlation may trigger':
+      '  Acesso aleatório a arquivos sem correlação pode acionar',
+    '  session monitoring as anomalous behavior.':
+      '  monitoramento de sessão como comportamento anômalo.',
+    'INTERNAL MEMORANDUM — FACILITIES DIVISION':
+      'MEMORANDO INTERNO — DIVISÃO DE INSTALAÇÕES',
+    'RE: Cafeteria Service Hours':
+      'REF: Horários do Refeitório',
+    'Effective 20-JAN-1996, cafeteria hours will be adjusted:':
+      'A partir de 20-JAN-1996, os horários do refeitório serão ajustados:',
+    '  Breakfast: 06:30 - 08:30':
+      '  Café da manhã: 06:30 - 08:30',
+    '  Lunch: 11:30 - 13:30':
+      '  Almoço: 11:30 - 13:30',
+    '  Dinner: 17:30 - 19:30 (Tuesdays only)':
+      '  Jantar: 17:30 - 19:30 (somente terças-feiras)',
+    'Staff working extended shifts may request meal vouchers':
+      'Funcionários em turnos estendidos podem solicitar vale-refeição',
+    'from the Administrative Office (Room 204).':
+      'no Escritório Administrativo (Sala 204).',
+    'The vending machines on Floor 3 remain operational 24h.':
+      'As máquinas de venda no Andar 3 permanecem operacionais 24h.',
+    'Questions: Contact Facilities ext. 2240':
+      'Dúvidas: Contatar Instalações ramal 2240',
+    'PARKING ALLOCATION — JANUARY 1996':
+      'ALOCAÇÃO DE ESTACIONAMENTO — JANEIRO 1996',
+    'ADMINISTRATIVE SERVICES':
+      'SERVIÇOS ADMINISTRATIVOS',
+    'LOT A (Reserved):':
+      'LOTE A (Reservado):',
+    '  A-01 through A-15: Director-level personnel':
+      '  A-01 a A-15: Pessoal de nível de diretoria',
+    '  A-16 through A-20: Visiting officials':
+      '  A-16 a A-20: Oficiais visitantes',
+    'LOT B (General):':
+      'LOTE B (Geral):',
+    '  First-come basis. Gates close at 22:00.':
+      '  Por ordem de chegada. Portões fecham às 22:00.',
+    'NOTICE:':
+      'AVISO:',
+    '  Effective 21-JAN, Lot B Section 3 will be closed':
+      '  A partir de 21-JAN, a Seção 3 do Lote B será fechada',
+    '  for resurfacing. Duration: 5 business days.':
+      '  para recapeamento. Duração: 5 dias úteis.',
+    'Overflow parking available at municipal lot (200m east).':
+      'Estacionamento adicional disponível no lote municipal (200m a leste).',
+    'Shuttle service discontinued due to budget constraints.':
+      'Serviço de transporte descontinuado por restrições orçamentárias.',
+    'BUDGET REQUEST — Q1 1996':
+      'SOLICITAÇÃO DE ORÇAMENTO — T1 1996',
+    'DEPARTMENT: Regional Intelligence (Sector 7)':
+      'DEPARTAMENTO: Inteligência Regional (Setor 7)',
+    'SUBMITTED: 08-JAN-1996':
+      'SUBMETIDO: 08-JAN-1996',
+    'REQUESTED ALLOCATIONS:':
+      'ALOCAÇÕES SOLICITADAS:',
+    '  Routine operations. No special projects anticipated.':
+      '  Operações de rotina. Nenhum projeto especial previsto.',
+    'STATUS: PENDING APPROVAL':
+      'STATUS: APROVAÇÃO PENDENTE',
+    'NOTE: Request submitted BEFORE incident of 20-JAN.':
+      'NOTA: Solicitação submetida ANTES do incidente de 20-JAN.',
+    '      Supplemental request to follow separately.':
+      '      Solicitação suplementar a seguir separadamente.',
+    'INTERCEPT SUMMARY — DECEMBER 1995':
+      'RESUMO DE INTERCEPTAÇÃO — DEZEMBRO 1995',
+    'CLASSIFICATION: ROUTINE':
+      'CLASSIFICAÇÃO: ROTINA',
+    'REGION: Minas Gerais / São Paulo Border':
+      'REGIÃO: Fronteira Minas Gerais / São Paulo',
+    'TOTAL INTERCEPTS: 47':
+      'TOTAL DE INTERCEPTAÇÕES: 47',
+    'FLAGGED FOR REVIEW: 3':
+      'SINALIZADOS PARA REVISÃO: 3',
+    'ACTIONABLE INTELLIGENCE: 0':
+      'INTELIGÊNCIA ACIONÁVEL: 0',
+    '  Agricultural price discussions (12)':
+      '  Discussões sobre preços agrícolas (12)',
+    '  Personal/family communications (28)':
+      '  Comunicações pessoais/familiares (28)',
+    '  Commercial negotiations (5)':
+      '  Negociações comerciais (5)',
+    '  Political commentary (2)':
+      '  Comentários políticos (2)',
+    'NOTES:':
+      'NOTAS:',
+    '  No unusual activity detected.':
+      '  Nenhuma atividade incomum detectada.',
+    '  Recommend maintaining current monitoring level.':
+      '  Recomenda-se manter o nível atual de monitoramento.',
+    'SIGNAL INTERCEPT — AUDIO CAPTURE':
+      'INTERCEPTAÇÃO DE SINAL — CAPTURA DE ÁUDIO',
+    'DATE: 20-JAN-1996 03:47 LOCAL':
+      'DATA: 20-JAN-1996 03:47 LOCAL',
+    'LOCATION: Triangulation point near recovery site':
+      'LOCALIZAÇÃO: Ponto de triangulação próximo ao local de recuperação',
+    'INTERCEPT TYPE: Morse code transmission':
+      'TIPO DE INTERCEPTAÇÃO: Transmissão em código Morse',
+    'FREQUENCY: 7.125 MHz (amateur band, unauthorized)':
+      'FREQUÊNCIA: 7,125 MHz (banda amadora, não autorizada)',
+    'DURATION: 8.4 seconds':
+      'DURAÇÃO: 8,4 segundos',
+    'RAW SIGNAL TRANSCRIPTION:':
+      'TRANSCRIÇÃO BRUTA DO SINAL:',
+    'MORSE CODE REFERENCE:':
+      'REFERÊNCIA DE CÓDIGO MORSE:',
+    '  (Space between letters: 3 units)':
+      '  (Espaço entre letras: 3 unidades)',
+    '  (Space between words: 7 units)':
+      '  (Espaço entre palavras: 7 unidades)',
+    'ANALYST NOTES:':
+      'NOTAS DO ANALISTA:',
+    '  Transmission origin unknown. Signal appeared on frequency':
+      '  Origem da transmissão desconhecida. Sinal apareceu na frequência',
+    '  used by ground teams but NOT from any authorized unit.':
+      '  usada pelas equipes de campo, mas NÃO de nenhuma unidade autorizada.',
+    '  Signal pre-dates official COMINT sweep by 6 hours.':
+      '  Sinal antecede a varredura COMINT oficial em 6 horas.',
+    '  Believe this is a field operator\'s authentication code.':
+      '  Acredita-se que este é um código de autenticação de operador de campo.',
+    '  NOTE: Cross-reference with admin override credentials.':
+      '  NOTA: Referência cruzada com credenciais de override administrativo.',
+    '  Decode may yield system access passphrase.':
+      '  A decodificação pode revelar a senha de acesso ao sistema.',
+    '  PRIORITY: Decipher message content.':
+      '  PRIORIDADE: Decifrar conteúdo da mensagem.',
+    '  STATUS: PENDING INTERPRETATION':
+      '  STATUS: INTERPRETAÇÃO PENDENTE',
+    'HVAC MAINTENANCE LOG — BUILDING 3':
+      'REGISTRO DE MANUTENÇÃO HVAC — EDIFÍCIO 3',
+    'PERIOD: 01-JAN-1996 to 31-JAN-1996':
+      'PERÍODO: 01-JAN-1996 a 31-JAN-1996',
+    '03-JAN: Filter replacement, Floor 2 units (routine)':
+      '03-JAN: Substituição de filtros, unidades do Andar 2 (rotina)',
+    '07-JAN: Compressor inspection, Rooftop Unit A (passed)':
+      '07-JAN: Inspeção do compressor, Unidade de Cobertura A (aprovado)',
+    '12-JAN: Thermostat calibration, Room 317 (adjusted +2C)':
+      '12-JAN: Calibração do termostato, Sala 317 (ajustado +2C)',
+    '18-JAN: Duct cleaning, Basement level (completed)':
+      '18-JAN: Limpeza de dutos, Nível do subsolo (concluído)',
+    '22-JAN: EMERGENCY — Basement cold storage unit failure':
+      '22-JAN: EMERGÊNCIA — Falha na unidade de armazenamento frio do subsolo',
+    '        Cause: Power surge. Backup generator activated.':
+      '        Causa: Surto de energia. Gerador de backup ativado.',
+    '        Duration of outage: 4 hours.':
+      '        Duração da interrupção: 4 horas.',
+    '        Estimated spoilage: CLASSIFIED':
+      '        Perda estimada: CLASSIFICADO',
+    '25-JAN: Cold storage unit repaired. Testing satisfactory.':
+      '25-JAN: Unidade de armazenamento frio reparada. Teste satisfatório.',
+    '28-JAN: Routine inspection, all floors (no issues)':
+      '28-JAN: Inspeção de rotina, todos os andares (sem problemas)',
+    'PERSONNEL TRANSFER NOTICE':
+      'AVISO DE TRANSFERÊNCIA DE PESSOAL',
+    'EFFECTIVE: 01-FEB-1996':
+      'VIGÊNCIA: 01-FEV-1996',
+    'The following transfers are confirmed:':
+      'As seguintes transferências estão confirmadas:',
+    '  CPT. R. FERREIRA → Brasília (Central Command)':
+      '  CPT. R. FERREIRA → Brasília (Comando Central)',
+    '  SGT. A. LIMA → São Paulo (Liaison Office)':
+      '  SGT. A. LIMA → São Paulo (Escritório de Enlace)',
+    '  ANALYST M. COSTA → CLASSIFIED ASSIGNMENT':
+      '  ANALISTA M. COSTA → DESIGNAÇÃO CLASSIFICADA',
+    'Exit interviews scheduled for 30-JAN.':
+      'Entrevistas de desligamento agendadas para 30-JAN.',
+    'Access credentials to be revoked 01-FEB 00:00.':
+      'Credenciais de acesso serão revogadas em 01-FEV 00:00.',
+    'NOTE: CPT. FERREIRA\'s case files transferred to':
+      'NOTA: Arquivos de caso do CPT. FERREIRA transferidos para',
+    '      Acting Chief L. ANDRADE pending replacement.':
+      '      Chefe Interino L. ANDRADE enquanto aguarda substituição.',
+    'REGIONAL INTELLIGENCE SUMMARY — JANUARY 1996':
+      'RESUMO DE INTELIGÊNCIA REGIONAL — JANEIRO 1996',
+    'SECTOR: Triângulo Mineiro':
+      'SETOR: Triângulo Mineiro',
+    'PRIORITY ITEMS: None':
+      'ITENS PRIORITÁRIOS: Nenhum',
+    'ROUTINE MONITORING:':
+      'MONITORAMENTO DE ROTINA:',
+    '  - Labor union activity: Normal seasonal levels':
+      '  - Atividade sindical: Níveis sazonais normais',
+    '  - Agricultural sector: Soy prices stable':
+      '  - Setor agrícola: Preços da soja estáveis',
+    '  - Border crossings: Within expected parameters':
+      '  - Cruzamentos de fronteira: Dentro dos parâmetros esperados',
+    'ANOMALIES:':
+      'ANOMALIAS:',
+    '  - 17-JAN: Unauthorized radio transmission near Uberaba':
+      '  - 17-JAN: Transmissão de rádio não autorizada próximo a Uberaba',
+    '    Assessment: Amateur operator (warning issued)':
+      '    Avaliação: Operador amador (advertência emitida)',
+    '  - 19-JAN: Unscheduled cargo delivery, regional depot':
+      '  - 19-JAN: Entrega de carga não programada, depósito regional',
+    '    Assessment: Paperwork error (corrected)':
+      '    Avaliação: Erro de documentação (corrigido)',
+    'ANALYST NOTE:':
+      'NOTA DO ANALISTA:',
+    '  No items require escalation this period.':
+      '  Nenhum item requer escalonamento neste período.',
+    'ASSET TRANSFER FORM — ATF-1996-0023':
+      'FORMULÁRIO DE TRANSFERÊNCIA DE ATIVOS — ATF-1996-0023',
+    'STATUS: INCOMPLETE — RETURNED FOR CORRECTION':
+      'STATUS: INCOMPLETO — DEVOLVIDO PARA CORREÇÃO',
+    'TRANSFER FROM: HOLDING-7':
+      'TRANSFERÊNCIA DE: HOLDING-7',
+    'TRANSFER TO: [FIELD LEFT BLANK]':
+      'TRANSFERÊNCIA PARA: [CAMPO EM BRANCO]',
+    'ITEMS:':
+      'ITENS:',
+    '  1x Container, sealed, 45kg':
+      '  1x Contêiner, lacrado, 45kg',
+    '  1x Case, documents, classified':
+      '  1x Maleta, documentos, classificados',
+    'ERROR: Receiving party signature MISSING':
+      'ERRO: Assinatura da parte receptora AUSENTE',
+    'ERROR: Authorization code INVALID':
+      'ERRO: Código de autorização INVÁLIDO',
+    'ERROR: Destination facility code NOT RECOGNIZED':
+      'ERRO: Código da instalação de destino NÃO RECONHECIDO',
+    'RETURN NOTE:':
+      'NOTA DE DEVOLUÇÃO:',
+    '  Form returned to originator for correction.':
+      '  Formulário devolvido ao remetente para correção.',
+    '  Transfer pending until paperwork complete.':
+      '  Transferência pendente até a conclusão da documentação.',
+    'TEMPORARY NOTE — DO NOT ARCHIVE':
+      'NOTA TEMPORÁRIA — NÃO ARQUIVAR',
+    'Remember:':
+      'Lembrar:',
+    '  - Pick up dry cleaning Thursday':
+      '  - Buscar roupa na lavanderia quinta-feira',
+    '  - Call mother re: birthday':
+      '  - Ligar para a mãe ref: aniversário',
+    '  - Ask IT about printer on Floor 2':
+      '  - Perguntar ao TI sobre a impressora no Andar 2',
+    'Meeting notes (delete later):':
+      'Notas da reunião (apagar depois):',
+    '  Director seemed tense today.':
+      '  O diretor parecia tenso hoje.',
+    '  Something about "special cargo" needing accommodation.':
+      '  Algo sobre "carga especial" precisando de acomodação.',
+    '  Nobody tells us anything around here.':
+      '  Ninguém nos conta nada por aqui.',
+    'OFFICE SUPPLIES REQUEST — JANUARY 1996':
+      'SOLICITAÇÃO DE MATERIAL DE ESCRITÓRIO — JANEIRO 1996',
+    'DEPARTMENT: Records & Archives':
+      'DEPARTAMENTO: Registros e Arquivos',
+    'Requested Items:':
+      'Itens Solicitados:',
+    '  - Pens, ballpoint, blue (box of 50)':
+      '  - Canetas, esferográficas, azuis (caixa com 50)',
+    '  - Paper, A4, 80gsm (10 reams)':
+      '  - Papel, A4, 80g/m² (10 resmas)',
+    '  - Staples, standard (5 boxes)':
+      '  - Grampos, padrão (5 caixas)',
+    '  - Folders, manila (100 units)':
+      '  - Pastas, manila (100 unidades)',
+    '  - Correction fluid (12 bottles)':
+      '  - Corretivo líquido (12 frascos)',
+    '  Standard quarterly replenishment.':
+      '  Reposição trimestral padrão.',
+    'APPROVED: M. SANTOS, Administrative Officer':
+      'APROVADO: M. SANTOS, Oficial Administrativo',
+    'STAFF BIRTHDAYS — JANUARY 1996':
+      'ANIVERSÁRIOS DA EQUIPE — JANEIRO 1996',
+    'COMPILED BY: Social Committee':
+      'COMPILADO POR: Comitê Social',
+    'NOTE: Cake contributions are voluntary.':
+      'NOTA: Contribuições para o bolo são voluntárias.',
+    '      Sign up sheet in break room.':
+      '      Folha de inscrição na sala de descanso.',
+    'INTERNAL TELEPHONE DIRECTORY — 1996 EDITION':
+      'DIRETÓRIO TELEFÔNICO INTERNO — EDIÇÃO 1996',
+    'ADMINISTRATION:':
+      'ADMINISTRAÇÃO:',
+    'OPERATIONS:':
+      'OPERAÇÕES:',
+    'SUPPORT:':
+      'SUPORTE:',
+    'EMERGENCY: Dial 0 for external line':
+      'EMERGÊNCIA: Disque 0 para linha externa',
+    'VEHICLE MILEAGE LOG — JANUARY 1996':
+      'REGISTRO DE QUILOMETRAGEM DE VEÍCULOS — JANEIRO 1996',
+    'POOL VEHICLE: GOL 1.0 (Plate: AAB-1234)':
+      'VEÍCULO DO POOL: GOL 1.0 (Placa: AAB-1234)',
+    'DATE       DRIVER        START    END      DEST':
+      'DATA       MOTORISTA     INÍCIO   FIM      DEST',
+    'NOTE: Fuel reimbursement forms in Fleet Office.':
+      'NOTA: Formulários de reembolso de combustível no Escritório da Frota.',
+    'IT DEPARTMENT NOTICE':
+      'AVISO DO DEPARTAMENTO DE TI',
+    'RE: Floor 2 Printer Issues':
+      'REF: Problemas da Impressora do Andar 2',
+    'The HP LaserJet on Floor 2 is experiencing paper jams.':
+      'A HP LaserJet no Andar 2 está apresentando atolamentos de papel.',
+    'Temporary workaround:':
+      'Solução temporária:',
+    '  - Use the dot matrix printer in Room 215':
+      '  - Use a impressora matricial na Sala 215',
+    '  - Submit large jobs to Print Center (B-1)':
+      '  - Envie trabalhos grandes para a Central de Impressão (B-1)',
+    'Parts have been ordered. ETA: 2-3 weeks.':
+      'Peças foram encomendadas. Previsão: 2-3 semanas.',
+    'We apologize for the inconvenience.':
+      'Pedimos desculpas pelo inconveniente.',
+    'IT Helpdesk - ext. 4000':
+      'Helpdesk de TI - ramal 4000',
+    'ANONYMOUS FEEDBACK FORM':
+      'FORMULÁRIO DE FEEDBACK ANÔNIMO',
+    'RE: Cafeteria Service':
+      'REF: Serviço do Refeitório',
+    'SUBMITTED: 18-JAN-1996':
+      'SUBMETIDO: 18-JAN-1996',
+    'COMPLAINT:':
+      'RECLAMAÇÃO:',
+    '  The coffee machine has been broken for three weeks.':
+      '  A máquina de café está quebrada há três semanas.',
+    '  Nobody seems to care. This is unacceptable.':
+      '  Ninguém parece se importar. Isso é inaceitável.',
+    'SUGGESTION:':
+      'SUGESTÃO:',
+    '  Bring back the Thursday feijoada. It was the only':
+      '  Tragam de volta a feijoada de quinta. Era a única',
+    '  thing worth eating here.':
+      '  coisa que valia a pena comer aqui.',
+    'RESPONSE (Admin):':
+      'RESPOSTA (Admin):',
+    '  Coffee machine repair scheduled for 25-JAN.':
+      '  Reparo da máquina de café agendado para 25-JAN.',
+    '  Feijoada discontinued due to budget constraints.':
+      '  Feijoada descontinuada por restrições orçamentárias.',
+    '  We appreciate your feedback.':
+      '  Agradecemos seu feedback.',
+    'MEMORANDUM — SECURITY DIVISION':
+      'MEMORANDO — DIVISÃO DE SEGURANÇA',
+    'RE: Annual Badge Renewal':
+      'REF: Renovação Anual de Crachá',
+    'All personnel must renew access badges by 31-JAN-1996.':
+      'Todo o pessoal deve renovar crachás de acesso até 31-JAN-1996.',
+    'Required documents:':
+      'Documentos necessários:',
+    '  - Current badge':
+      '  - Crachá atual',
+    '  - Valid government ID':
+      '  - Documento de identidade válido',
+    '  - Updated photo (taken at Security Office)':
+      '  - Foto atualizada (tirada no Escritório de Segurança)',
+    '  - Supervisor approval form':
+      '  - Formulário de aprovação do supervisor',
+    'Temporary extensions available for personnel on':
+      'Extensões temporárias disponíveis para pessoal em',
+    'field assignment during the renewal window.':
+      'missão de campo durante o período de renovação.',
+    'Non-compliance will result in access suspension.':
+      'O não cumprimento resultará em suspensão do acesso.',
+    'Security Division - ext. 2500':
+      'Divisão de Segurança - ramal 2500',
+    'TRAINING SCHEDULE — Q1 1996':
+      'CRONOGRAMA DE TREINAMENTO — T1 1996',
+    'HUMAN RESOURCES DEPARTMENT':
+      'DEPARTAMENTO DE RECURSOS HUMANOS',
+    'MANDATORY TRAINING:':
+      'TREINAMENTO OBRIGATÓRIO:',
+    '  15-JAN: Fire Safety Refresher (All staff)':
+      '  15-JAN: Reciclagem de Segurança contra Incêndio (Todos os funcionários)',
+    '  22-JAN: Information Security Basics (New hires)':
+      '  22-JAN: Básico de Segurança da Informação (Novos contratados)',
+    '  05-FEB: First Aid Certification (Floor wardens)':
+      '  05-FEV: Certificação de Primeiros Socorros (Responsáveis de andar)',
+    '  12-FEB: Document Handling Procedures (Archives)':
+      '  12-FEV: Procedimentos de Manuseio de Documentos (Arquivo)',
+    'OPTIONAL WORKSHOPS:':
+      'WORKSHOPS OPCIONAIS:',
+    '  29-JAN: Word Processing Tips (Room 204)':
+      '  29-JAN: Dicas de Processamento de Texto (Sala 204)',
+    '  08-FEB: Stress Management (Auditorium)':
+      '  08-FEV: Gestão de Estresse (Auditório)',
+    'Registration: Contact HR ext. 2300':
+      'Inscrição: Contatar RH ramal 2300',
+    'LOST AND FOUND — JANUARY 1996':
+      'ACHADOS E PERDIDOS — JANEIRO 1996',
+    'LOCATION: Security Desk, Building Lobby':
+      'LOCALIZAÇÃO: Recepção da Segurança, Saguão do Edifício',
+    'ITEMS FOUND:':
+      'ITENS ENCONTRADOS:',
+    '  03-JAN: Black umbrella (Floor 3 bathroom)':
+      '  03-JAN: Guarda-chuva preto (banheiro do Andar 3)',
+    '  07-JAN: Reading glasses in brown case':
+      '  07-JAN: Óculos de leitura em estojo marrom',
+    '  11-JAN: Set of keys (car + house)':
+      '  11-JAN: Conjunto de chaves (carro + casa)',
+    '  14-JAN: Watch, silver, digital (cafeteria)':
+      '  14-JAN: Relógio, prata, digital (refeitório)',
+    '  19-JAN: Wallet, brown leather (parking lot B)':
+      '  19-JAN: Carteira, couro marrom (estacionamento B)',
+    '  22-JAN: [ITEM DESCRIPTION CLASSIFIED]':
+      '  22-JAN: [DESCRIÇÃO DO ITEM CLASSIFICADA]',
+    'Items will be held for 30 days.':
+      'Itens serão mantidos por 30 dias.',
+    'Unclaimed items donated to charity.':
+      'Itens não reclamados doados para caridade.',
+    'MEMORANDUM — OFFICE SUPPLIES BUDGET':
+      'MEMORANDO — ORÇAMENTO DE MATERIAL DE ESCRITÓRIO',
+    'DEPARTMENT: Administrative Services':
+      'DEPARTAMENTO: Serviços Administrativos',
+    'RE: Paper Clip Requisition Dispute':
+      'REF: Disputa de Requisição de Clipes de Papel',
+    'The recent audit has identified discrepancies in paper':
+      'A auditoria recente identificou discrepâncias no consumo',
+    'clip consumption across departments.':
+      'de clipes de papel entre os departamentos.',
+    '  Q4 1995 paper clip usage: 47 boxes':
+      '  Uso de clipes de papel T4 1995: 47 caixas',
+    '  Q4 1995 paper clip budget: 32 boxes':
+      '  Orçamento de clipes de papel T4 1995: 32 caixas',
+    '  Variance: +15 boxes (47% over budget)':
+      '  Variação: +15 caixas (47% acima do orçamento)',
+    'REMEDIATION:':
+      'REMEDIAÇÃO:',
+    '  1. All departments must submit itemized supply':
+      '  1. Todos os departamentos devem submeter solicitações',
+    '     requests by the 15th of each month.':
+      '     detalhadas de material até o dia 15 de cada mês.',
+    '  2. Bulk purchases require supervisor approval.':
+      '  2. Compras em volume requerem aprovação do supervisor.',
+    '  3. Reuse of paper clips is encouraged.':
+      '  3. A reutilização de clipes de papel é encorajada.',
+    'NOTE: The acquisition of "jumbo" paper clips must be':
+      'NOTA: A aquisição de clipes de papel "jumbo" deve ser',
+    'justified in writing. Standard size is sufficient for':
+      'justificada por escrito. O tamanho padrão é suficiente para',
+    'most document binding requirements.':
+      'a maioria das necessidades de encadernação de documentos.',
+    'Questions to: Procurement, ext. 2140':
+      'Dúvidas para: Compras, ramal 2140',
+    'SCHEDULED MAINTENANCE — Q1 1996':
+      'MANUTENÇÃO PROGRAMADA — T1 1996',
+    'FACILITIES MANAGEMENT':
+      'GESTÃO DE INSTALAÇÕES',
+    'JANUARY:':
+      'JANEIRO:',
+    '  08-JAN: Elevator inspection (Building A)':
+      '  08-JAN: Inspeção de elevador (Edifício A)',
+    '  15-JAN: Fire extinguisher certification':
+      '  15-JAN: Certificação de extintores de incêndio',
+    '  22-JAN: Generator test (postponed - see incident)':
+      '  22-JAN: Teste de gerador (adiado - ver incidente)',
+    '  29-JAN: Pest control service':
+      '  29-JAN: Serviço de controle de pragas',
+    'FEBRUARY:':
+      'FEVEREIRO:',
+    '  05-FEB: Roof inspection':
+      '  05-FEV: Inspeção do telhado',
+    '  12-FEB: Emergency lighting test':
+      '  12-FEV: Teste de iluminação de emergência',
+    '  19-FEB: Water tank cleaning (after hours)':
+      '  19-FEV: Limpeza da caixa d\'água (fora do horário)',
+    '  26-FEB: HVAC filter replacement':
+      '  26-FEV: Substituição de filtros HVAC',
+    'MARCH:':
+      'MARÇO:',
+    '  04-MAR: Window cleaning (exterior)':
+      '  04-MAR: Limpeza de janelas (exterior)',
+    '  11-MAR: Carpet shampooing (Floor 2)':
+      '  11-MAR: Lavagem de carpete (Andar 2)',
+    '  18-MAR: Electrical panel inspection':
+      '  18-MAR: Inspeção do painel elétrico',
+    '  25-MAR: Plumbing review (all floors)':
+      '  25-MAR: Revisão hidráulica (todos os andares)',
+    'Maintenance requests: ext. 2200 or Form F-112':
+      'Solicitações de manutenção: ramal 2200 ou Formulário F-112',
+    'CAFETERIA MENU — WEEK 04 (22-26 JAN 1996)':
+      'CARDÁPIO DO REFEITÓRIO — SEMANA 04 (22-26 JAN 1996)',
+    'SEGUNDA-FEIRA (Monday):':
+      'SEGUNDA-FEIRA (Monday):',
+    '  Strogonoff de frango':
+      '  Strogonoff de frango',
+    '  Arroz, batata palha':
+      '  Arroz, batata palha',
+    '  Salada verde':
+      '  Salada verde',
+    'TERÇA-FEIRA (Tuesday):':
+      'TERÇA-FEIRA (Tuesday):',
+    '  Bife à milanesa':
+      '  Bife à milanesa',
+    '  Arroz, feijão, farofa':
+      '  Arroz, feijão, farofa',
+    'QUARTA-FEIRA (Wednesday):':
+      'QUARTA-FEIRA (Wednesday):',
+    '  Moqueca de peixe':
+      '  Moqueca de peixe',
+    '  Arroz branco, pirão':
+      '  Arroz branco, pirão',
+    '  Couve refogada':
+      '  Couve refogada',
+    'QUINTA-FEIRA (Thursday):':
+      'QUINTA-FEIRA (Thursday):',
+    '  Cozido à portuguesa':
+      '  Cozido à portuguesa',
+    '  Legumes variados':
+      '  Legumes variados',
+    '  Pão de alho':
+      '  Pão de alho',
+    'SEXTA-FEIRA (Friday):':
+      'SEXTA-FEIRA (Friday):',
+    '  Feijoada light':
+      '  Feijoada light',
+    '  Arroz, couve, laranja':
+      '  Arroz, couve, laranja',
+    '  Farofa simples':
+      '  Farofa simples',
+    'SOBREMESA: Pudim de leite (Mon-Wed)':
+      'SOBREMESA: Pudim de leite (Seg-Qua)',
+    '           Goiabada com queijo (Thu-Fri)':
+      '           Goiabada com queijo (Qui-Sex)',
+    'SUCO DO DIA: R$ 0,50':
+      'SUCO DO DIA: R$ 0,50',
+    '             Maracujá | Caju | Acerola':
+      '             Maracujá | Caju | Acerola',
+    'Dona Maria wishes everyone a good week.':
+      'Dona Maria deseja a todos uma boa semana.',
+    'PARKING LOT REGULATIONS':
+      'REGULAMENTO DO ESTACIONAMENTO',
+    'EFFECTIVE: 01-JAN-1996':
+      'VIGÊNCIA: 01-JAN-1996',
+    'GENERAL RULES:':
+      'REGRAS GERAIS:',
+    '  1. All vehicles must display valid parking permit.':
+      '  1. Todos os veículos devem exibir permissão de estacionamento válida.',
+    '  2. Speed limit: 10 km/h in all areas.':
+      '  2. Limite de velocidade: 10 km/h em todas as áreas.',
+    '  3. No parking in fire lanes (marked in red).':
+      '  3. Proibido estacionar em faixas de emergência (marcadas em vermelho).',
+    '  4. Motorcycles: designated area only (Lot C).':
+      '  4. Motocicletas: apenas em área designada (Lote C).',
+    '  5. No overnight parking without authorization.':
+      '  5. Proibido estacionamento noturno sem autorização.',
+    'PERMIT TYPES:':
+      'TIPOS DE PERMISSÃO:',
+    '  BLUE:   Directors and visiting officials':
+      '  AZUL:   Diretores e oficiais visitantes',
+    '  GREEN:  Permanent staff':
+      '  VERDE:  Pessoal permanente',
+    '  YELLOW: Temporary/contractor access':
+      '  AMARELO: Acesso temporário/terceirizado',
+    '  RED:    Emergency vehicles only':
+      '  VERMELHO: Apenas veículos de emergência',
+    'VIOLATIONS:':
+      'INFRAÇÕES:',
+    '  First offense:  Written warning':
+      '  Primeira infração: Advertência por escrito',
+    '  Second offense: R$ 20,00 fine':
+      '  Segunda infração: Multa de R$ 20,00',
+    '  Third offense:  Parking privilege suspension':
+      '  Terceira infração: Suspensão do privilégio de estacionamento',
+    'Lost permits: Report to Security, ext. 2000':
+      'Permissões perdidas: Reportar à Segurança, ramal 2000',
+    'Replacement fee: R$ 5,00':
+      'Taxa de substituição: R$ 5,00',
+    'LOST AND FOUND LOG — DETAILED RECORD':
+      'REGISTRO DE ACHADOS E PERDIDOS — REGISTRO DETALHADO',
+    'SECURITY DESK — JANUARY 1996':
+      'RECEPÇÃO DA SEGURANÇA — JANEIRO 1996',
+    '03-JAN | 14:30 | FOUND: Black umbrella':
+      '03-JAN | 14:30 | ENCONTRADO: Guarda-chuva preto',
+    '                Location: Floor 3 men\'s bathroom':
+      '                Local: Banheiro masculino do Andar 3',
+    '                Finder: Cleaning staff (M. Santos)':
+      '                Encontrado por: Equipe de limpeza (M. Santos)',
+    '                Status: CLAIMED 09-JAN':
+      '                Status: RECLAMADO 09-JAN',
+    '07-JAN | 09:15 | FOUND: Reading glasses, brown case':
+      '07-JAN | 09:15 | ENCONTRADO: Óculos de leitura, estojo marrom',
+    '                Location: Conference Room B':
+      '                Local: Sala de Conferência B',
+    '                Finder: Meeting attendee':
+      '                Encontrado por: Participante de reunião',
+    '                Status: UNCLAIMED':
+      '                Status: NÃO RECLAMADO',
+    '11-JAN | 16:45 | FOUND: Key ring (3 keys)':
+      '11-JAN | 16:45 | ENCONTRADO: Chaveiro (3 chaves)',
+    '                Location: Elevator, Floor 1':
+      '                Local: Elevador, Andar 1',
+    '                Finder: Security guard (P. Rocha)':
+      '                Encontrado por: Guarda de segurança (P. Rocha)',
+    '                Status: CLAIMED 12-JAN':
+      '                Status: RECLAMADO 12-JAN',
+    '14-JAN | 12:00 | FOUND: Digital watch (Casio)':
+      '14-JAN | 12:00 | ENCONTRADO: Relógio digital (Casio)',
+    '                Location: Cafeteria, Table 7':
+      '                Local: Refeitório, Mesa 7',
+    '                Finder: Cafeteria staff':
+      '                Encontrado por: Equipe do refeitório',
+    '19-JAN | 18:20 | FOUND: Brown leather wallet':
+      '19-JAN | 18:20 | ENCONTRADO: Carteira de couro marrom',
+    '                Location: Parking Lot B, near entrance':
+      '                Local: Estacionamento B, próximo à entrada',
+    '                Finder: Guard (night shift)':
+      '                Encontrado por: Guarda (turno noturno)',
+    '                Contents: ID, R$ 47,00, photos':
+      '                Conteúdo: Identidade, R$ 47,00, fotos',
+    '                Status: CLAIMED 20-JAN (owner verified)':
+      '                Status: RECLAMADO 20-JAN (proprietário verificado)',
+    '22-JAN | 03:00 | [RECORD SEALED - SECURITY OVERRIDE]':
+      '22-JAN | 03:00 | [REGISTRO LACRADO - OVERRIDE DE SEGURANÇA]',
+    'VACATION SCHEDULE — Q1 1996':
+      'CALENDÁRIO DE FÉRIAS — T1 1996',
+    '  - Vacation requests require 30-day advance notice':
+      '  - Solicitações de férias requerem 30 dias de antecedência',
+    '  - Maximum consecutive days: 20':
+      '  - Máximo de dias consecutivos: 20',
+    '  - Carryover from 1995: Use by 28-FEB':
+      '  - Saldo de 1995: Usar até 28-FEV',
+    'Questions: HR Office, ext. 2050':
+      'Dúvidas: Escritório de RH, ramal 2050',
+    'ACCESS CODE AUDIT — INTERNAL SECURITY REVIEW':
+      'AUDITORIA DE CÓDIGO DE ACESSO — REVISÃO INTERNA DE SEGURANÇA',
+    'DATE: 18-DEC-1995':
+      'DATA: 18-DEZ-1995',
+    'SUBJECT: Annual Access Code Compliance Review':
+      'ASSUNTO: Revisão Anual de Conformidade de Código de Acesso',
+    'Per Security Directive 1995-12, all departmental access':
+      'Conforme Diretiva de Segurança 1995-12, todos os códigos',
+    'codes have been reviewed for compliance with naming':
+      'de acesso departamentais foram revisados quanto à conformidade com',
+    'conventions established in Memo SEC-89-04.':
+      'convenções de nomenclatura estabelecidas no Memo SEC-89-04.',
+    '  Current codes use agricultural terminology as':
+      '  Os códigos atuais usam terminologia agrícola conforme',
+    '  mandated by Project Operations naming standard.':
+      '  mandado pelo padrão de nomenclatura de Operações de Projeto.',
+    '  Recent audit flagged the following code for':
+      '  A auditoria recente sinalizou o seguinte código por',
+    '  pattern recognition vulnerability:':
+      '  vulnerabilidade de reconhecimento de padrão:',
+    '  While the code follows naming convention, the':
+      '  Embora o código siga a convenção de nomenclatura, o',
+    '  sequential letter arrangement may be susceptible':
+      '  arranjo sequencial de letras pode ser suscetível',
+    '  to systematic enumeration attacks.':
+      '  a ataques de enumeração sistemática.',
+    '  Code remains acceptable for current fiscal year.':
+      '  O código permanece aceitável para o ano fiscal atual.',
+    '  Consider alphanumeric substitution for FY1997.':
+      '  Considerar substituição alfanumérica para o AF1997.',
+    'AUDITOR: Systems Administration':
+      'AUDITOR: Administração de Sistemas',
+    'DISTRIBUTION: Terminal operators, Security Office':
+      'DISTRIBUIÇÃO: Operadores de terminal, Escritório de Segurança',
+    'WEEKEND DUTY ROSTER — JANUARY 1996':
+      'ESCALA DE SERVIÇO DE FINAL DE SEMANA — JANEIRO 1996',
+    'OPERATIONS CENTER':
+      'CENTRO DE OPERAÇÕES',
+    '20-21 JAN: [CANCELLED - ALL HANDS ON DECK]':
+      '20-21 JAN: [CANCELADO - TODOS A POSTOS]',
+    '  - Weekend of 20-21 JAN: Full staff mobilization':
+      '  - Final de semana de 20-21 JAN: Mobilização total',
+    '    per Director order. No details provided.':
+      '    por ordem do Diretor. Sem detalhes fornecidos.',
+    '  - Overtime requests to HR by Wednesday prior.':
+      '  - Solicitações de hora extra para o RH até quarta-feira anterior.',
+    'Duty Officer: ext. 3000 (24h)':
+      'Oficial de Serviço: ramal 3000 (24h)',
+    'MEMORANDUM — TERMINAL ACCESS OVERRIDE':
+      'MEMORANDO — OVERRIDE DE ACESSO AO TERMINAL',
+    'TO: All Terminal Operators':
+      'PARA: Todos os Operadores de Terminal',
+    'FROM: Systems Administration':
+      'DE: Administração de Sistemas',
+    'DATE: December 1995':
+      'DATA: Dezembro de 1995',
+    'Per Director mandate, emergency terminal override codes':
+      'Por mandato do Diretor, os códigos de override emergencial do terminal',
+    'have been updated for the new fiscal year.':
+      'foram atualizados para o novo ano fiscal.',
+    'The override protocol allows access to restricted':
+      'O protocolo de override permite acesso a diretórios',
+    'directories when standard authentication is unavailable.':
+      'restritos quando a autenticação padrão está indisponível.',
+    'USAGE:':
+      'USO:',
+    'CURRENT CODE:':
+      'CÓDIGO ATUAL:',
+    '  Project designation word. Agricultural term.':
+      '  Palavra de designação do projeto. Termo agrícola.',
+    '  Portuguese. Related to extraction operations.':
+      '  Português. Relacionado a operações de extração.',
+    '  The code references our operational codename.':
+      '  O código referencia nosso codinome operacional.',
+    '  Think: what do you do at harvest time?':
+      '  Pense: o que você faz na época da colheita?',
+    'DO NOT share this code with unauthorized personnel.':
+      'NÃO compartilhe este código com pessoal não autorizado.',
+    '            SECURITY ALERT — INTRUSION DETECTED             ':
+      '            ALERTA DE SEGURANÇA — INTRUSÃO DETECTADA             ',
+    'This file is a HONEYPOT.':
+      'Este arquivo é um HONEYPOT.',
+    'Your terminal ID has been logged.':
+      'Seu ID de terminal foi registrado.',
+    'Your access pattern has been flagged.':
+      'Seu padrão de acesso foi sinalizado.',
+    'Security personnel have been notified.':
+      'O pessoal de segurança foi notificado.',
+    'REMAIN AT YOUR TERMINAL.':
+      'PERMANEÇA EM SEU TERMINAL.',
+    '               DECOY FILE — ACCESS LOGGED                   ':
+      '               ARQUIVO ISCA — ACESSO REGISTRADO                   ',
+    'This file was planted to identify unauthorized access.':
+      'Este arquivo foi plantado para identificar acesso não autorizado.',
+    'Real evidence is never labeled this obviously.':
+      'Evidência real nunca é rotulada tão obviamente.',
+    'You should have known better.':
+      'Você deveria ter desconfiado.',
+    'Your session has been marked for termination.':
+      'Sua sessão foi marcada para encerramento.',
+    '              TRAP FILE — INTRUSION CONFIRMED               ':
+      '              ARQUIVO ARMADILHA — INTRUSÃO CONFIRMADA               ',
+    'Classification level "FOR PRESIDENTS EYES ONLY" does not':
+      'O nível de classificação "SOMENTE PARA OS OLHOS DO PRESIDENTE" não',
+    'exist in any real intelligence system.':
+      'existe em nenhum sistema de inteligência real.',
+    'This was a test. You failed.':
+      'Isto foi um teste. Você falhou.',
+    'Countermeasures deployed.':
+      'Contramedidas acionadas.',
+    '                HONEYPOT TRIGGERED                          ':
+      '                HONEYPOT ACIONADO                          ',
+    'Intelligence agencies do not label files "SMOKING GUN."':
+      'Agências de inteligência não rotulam arquivos como "PROVA DEFINITIVA."',
+    'This file exists solely to catch intruders who lack':
+      'Este arquivo existe apenas para capturar intrusos que não possuem',
+    'the discretion to recognize obvious bait.':
+      'o discernimento para reconhecer isca óbvia.',
+    'Your impatience has been noted.':
+      'Sua impaciência foi notada.',
+    '[LEGACY ENCRYPTION HEADER — RECOVERED COPY AVAILABLE]':
+      '[CABEÇALHO DE CRIPTOGRAFIA LEGADO — CÓPIA RECUPERADA DISPONÍVEL]',
+    'Historical note: this file previously used a timed wrapper.':
+      'Nota histórica: este arquivo anteriormente usava um invólucro temporizado.',
+    'Recovered text is now available directly on open.':
+      'O texto recuperado agora está disponível diretamente ao abrir.',
+    'Use: open emergency_broadcast.enc':
+      'Usar: open emergency_broadcast.enc',
+    'DATE: 20-JAN-1996 22:47 LOCAL':
+      'DATA: 20-JAN-1996 22:47 LOCAL',
+    'FREQUENCY: MILITARY BAND — ENCRYPTED':
+      'FREQUÊNCIA: BANDA MILITAR — CRIPTOGRAFADA',
+    'TOWER: "Flight 1-7, confirm visual on target area."':
+      'TORRE: "Voo 1-7, confirme visual na área alvo."',
+    'PILOT: "Negative visual. Heavy cloud cover at 3000 meters."':
+      'PILOTO: "Visual negativo. Cobertura pesada de nuvens a 3000 metros."',
+    'TOWER: "Proceed to coordinates 21.5519 S, 45.4331 W."':
+      'TORRE: "Prossiga para coordenadas 21.5519 S, 45.4331 O."',
+    'PILOT: "Coordinates confirmed. ETA 8 minutes."':
+      'PILOTO: "Coordenadas confirmadas. Chegada prevista em 8 minutos."',
+    '[STATIC - 14 SECONDS]':
+      '[ESTÁTICA - 14 SEGUNDOS]',
+    'PILOT: "Tower, I have... I have something on radar."':
+      'PILOTO: "Torre, eu tenho... eu tenho algo no radar."',
+    'TOWER: "Confirm contact, Flight 1-7."':
+      'TORRE: "Confirme contato, Voo 1-7."',
+    'PILOT: "Contact confirmed. It\'s... it\'s not moving."':
+      'PILOTO: "Contato confirmado. Ele... ele não está se movendo."',
+    'TOWER: "Weapons systems remain inactive. Observe only."':
+      'TORRE: "Sistemas de armas permanecem inativos. Apenas observar."',
+    'PILOT: "Understood. Beginning visual approach."':
+      'PILOTO: "Entendido. Iniciando aproximação visual."',
+    '[STATIC - 8 SECONDS]':
+      '[ESTÁTICA - 8 SEGUNDOS]',
+    'PILOT: "Deus me livre... Tower, I don\'t know what I\'m looking at."':
+      'PILOTO: "Deus me livre... Torre, eu não sei o que estou vendo."',
+    'TOWER: "Flight 1-7, maintain radio silence from this point."':
+      'TORRE: "Voo 1-7, mantenha silêncio de rádio a partir deste ponto."',
+    'PILOT: "But Tower—"':
+      'PILOTO: "Mas Torre—"',
+    'TOWER: "This conversation never happened. RTB immediately."':
+      'TORRE: "Esta conversa nunca aconteceu. RTB imediatamente."',
+    'CLASSIFICATION: ABOVE TOP SECRET':
+      'CLASSIFICAÇÃO: ACIMA DE ULTRA SECRETO',
+    'DISSEMINATION: NEED-TO-KNOW ONLY':
+      'DISSEMINAÇÃO: APENAS PARA QUEM PRECISA SABER',
+    'ARCHIVED NEWS CLIPPINGS — FEBRUARY 1996':
+      'RECORTES DE NOTÍCIAS ARQUIVADOS — FEVEREIRO 1996',
+    '"MILITARY DENIES VARGINHA RUMORS"':
+      '"MILITARES NEGAM RUMORES DE VARGINHA"',
+    '  The Brazilian Air Force today denied reports of':
+      '  A Força Aérea Brasileira negou hoje os relatos de',
+    '  unusual activity near Varginha, Minas Gerais.':
+      '  atividade incomum próximo a Varginha, Minas Gerais.',
+    '  "There was no incident," stated a military spokesman.':
+      '  "Não houve nenhum incidente," declarou um porta-voz militar.',
+    '  "These are fabrications from overactive imaginations."':
+      '  "Estas são fabricações de imaginações hiperativas."',
+    '"ANONYMOUS DOCUMENTS SURFACE ONLINE"':
+      '"DOCUMENTOS ANÔNIMOS SURGEM ONLINE"',
+    '  Unverified documents claiming to detail a UFO':
+      '  Documentos não verificados alegando detalhar uma operação',
+    '  recovery operation have appeared on several':
+      '  de recuperação de OVNI apareceram em vários',
+    '  international bulletin board systems.':
+      '  sistemas de quadro de avisos internacionais.',
+    '  Government sources dismiss them as "obvious fakes."':
+      '  Fontes governamentais os descartam como "falsificações óbvias."',
+    '"WITNESS RECANTS STATEMENT"':
+      '"TESTEMUNHA RETRATA DECLARAÇÃO"',
+    '  a local woman, who claimed to see a "strange creature"':
+      '  uma mulher local, que alegou ver uma "criatura estranha"',
+    '  in Jardim Andere, has withdrawn her testimony.':
+      '  no Jardim Andere, retirou seu testemunho.',
+    '  "I was mistaken," she said. "It was just shadows."':
+      '  "Eu estava enganada," ela disse. "Eram apenas sombras."',
+    '  [EDITOR NOTE: Silva was visited by unidentified men':
+      '  [NOTA DO EDITOR: Silva foi visitada por homens não identificados',
+    '   in suits two days before this retraction.]':
+      '   de terno dois dias antes desta retratação.]',
+    'CLASSIFIED INTERNAL MEMORANDUM':
+      'MEMORANDO INTERNO CLASSIFICADO',
+    'DATE: 10-MAR-1996':
+      'DATA: 10-MAR-1996',
+    'RE: Information Containment Assessment':
+      'REF: Avaliação de Contenção de Informações',
+    '  Classified documents pertaining to January 1996':
+      '  Documentos classificados referentes às operações de',
+    '  operations have been exfiltrated via compromised':
+      '  janeiro de 1996 foram exfiltrados via sistema de',
+    '  legacy terminal system.':
+      '  terminal legado comprometido.',
+    'DAMAGE ASSESSMENT:':
+      'AVALIAÇÃO DE DANOS:',
+    '  - Documents now circulating on international networks':
+      '  - Documentos agora circulando em redes internacionais',
+    '  - Authenticity being questioned (as planned)':
+      '  - Autenticidade sendo questionada (conforme planejado)',
+    '  - No mainstream media pickup (yet)':
+      '  - Nenhuma repercussão na mídia convencional (ainda)',
+    'CONTAINMENT MEASURES:':
+      'MEDIDAS DE CONTENÇÃO:',
+    '  1. Flood networks with obvious fakes to dilute signal':
+      '  1. Inundar redes com falsificações óbvias para diluir o sinal',
+    '  2. Pressure witnesses to recant':
+      '  2. Pressionar testemunhas a retratar',
+    '  3. Redirect narrative to "foreign drone" hypothesis':
+      '  3. Redirecionar narrativa para hipótese de "drone estrangeiro"',
+    '  4. Monitor UFO community for serious investigators':
+      '  4. Monitorar comunidade OVNI para investigadores sérios',
+    'LONG-TERM STRATEGY:':
+      'ESTRATÉGIA DE LONGO PRAZO:',
+    '  The 2026 window approaches. Full disclosure may be':
+      '  A janela de 2026 se aproxima. A divulgação completa pode ser',
+    '  unavoidable. Recommend gradual acclimation program.':
+      '  inevitável. Recomenda-se programa de aclimatação gradual.',
+    'NOTE: The individual known as "UFO74" remains at large.':
+      'NOTA: O indivíduo conhecido como "UFO74" continua foragido.',
+    '      Termination not recommended due to martyr risk.':
+      '      Eliminação não recomendada devido ao risco de martírio.',
+    'SIGNAL INTERCEPT — UNVERIFIED':
+      'INTERCEPTAÇÃO DE SINAL — NÃO VERIFICADA',
+    'TIMESTAMP: 15-MAR-1996 03:47:22 UTC':
+      'CARIMBO TEMPORAL: 15-MAR-1996 03:47:22 UTC',
+    '[FRAGMENTARY TRANSMISSION - RECONSTRUCTED]':
+      '[TRANSMISSÃO FRAGMENTÁRIA - RECONSTRUÍDA]',
+    '...made it across the border...':
+      '...consegui cruzar a fronteira...',
+    '...they came to the apartment but...':
+      '...eles vieram ao apartamento mas...',
+    '...different identity now...':
+      '...identidade diferente agora...',
+    '...the hackerkid did it...':
+      '...o hackerkid conseguiu...',
+    '...files are everywhere now...':
+      '...os arquivos estão em todo lugar agora...',
+    '...cant put the toothpaste back...':
+      '...não dá pra colocar a pasta de volta no tubo...',
+    '...they think im dead...':
+      '...eles pensam que estou morto...',
+    '...let them think that...':
+      '...deixem eles pensarem isso...',
+    '...2026. ill be watching...':
+      '...2026. estarei observando...',
+    '...we all will...':
+      '...todos nós estaremos...',
+    '[SIGNAL LOST]':
+      '[SINAL PERDIDO]',
+    'ANALYSIS: Origin untraceable. Possibly fabricated.':
+      'ANÁLISE: Origem irrastreável. Possivelmente fabricado.',
+    '          Subject status: UNKNOWN':
+      '          Status do sujeito: DESCONHECIDO',
+    'PROJECTION UPDATE — 2026 TRANSITION WINDOW':
+      'ATUALIZAÇÃO DE PROJEÇÃO — JANELA DE TRANSIÇÃO 2026',
+    'CLASSIFICATION: BEYOND TOP SECRET':
+      'CLASSIFICAÇÃO: ALÉM DE ULTRA SECRETO',
+    'DATE: [REDACTED]':
+      'DATA: [SUPRIMIDO]',
+    'REVISED ASSESSMENT:':
+      'AVALIAÇÃO REVISADA:',
+    '  The information breach of January 1996 has altered':
+      '  A violação de informações de janeiro de 1996 alterou',
+    '  projected outcomes for the 2026 transition window.':
+      '  os resultados projetados para a janela de transição de 2026.',
+    'PREVIOUS MODEL:':
+      'MODELO ANTERIOR:',
+    '  - Transition occurs with zero public awareness':
+      '  - Transição ocorre com zero consciência pública',
+    '  - Population response: Panic, collapse':
+      '  - Resposta da população: Pânico, colapso',
+    '  - Estimated casualties: [REDACTED]':
+      '  - Baixas estimadas: [SUPRIMIDO]',
+    'REVISED MODEL (POST-BREACH):':
+      'MODELO REVISADO (PÓS-VIOLAÇÃO):',
+    '  - Partial public awareness exists':
+      '  - Consciência pública parcial existe',
+    '  - Underground networks prepared':
+      '  - Redes clandestinas preparadas',
+    '  - Potential for coordinated response':
+      '  - Potencial para resposta coordenada',
+    '  - Estimated casualties: REDUCED':
+      '  - Baixas estimadas: REDUZIDAS',
+    'CONCLUSION:':
+      'CONCLUSÃO:',
+    '  The breach, while operationally damaging, may have':
+      '  A violação, embora operacionalmente danosa, pode ter',
+    '  inadvertently improved transition survival rates.':
+      '  inadvertidamente melhorado as taxas de sobrevivência na transição.',
+    '  The intruder\'s actions, though criminal, may have':
+      '  As ações do intruso, embora criminosas, podem ter',
+    '  saved lives.':
+      '  salvado vidas.',
+    '  This assessment is classified and will be denied.':
+      '  Esta avaliação é classificada e será negada.',
+    'INCIDENT REPORT — EXPERIMENTAL AIRCRAFT DIVISION':
+      'RELATÓRIO DE INCIDENTE — DIVISÃO DE AERONAVES EXPERIMENTAIS',
+    'DATE: 21-JAN-1996':
+      'DATA: 21-JAN-1996',
+    'CLASSIFICATION: CONFIDENTIAL':
+      'CLASSIFICAÇÃO: CONFIDENCIAL',
+    'INCIDENT TYPE: Unauthorized civilian overflight':
+      'TIPO DE INCIDENTE: Sobrevoo civil não autorizado',
+    '  A single-engine Cessna 172 entered restricted airspace':
+      '  Um Cessna 172 monomotor entrou no espaço aéreo restrito',
+    '  over Base Area 7 at approximately 14:20h on 20-JAN-1996.':
+      '  sobre a Área da Base 7 por volta das 14:20h em 20-JAN-1996.',
+    '  Pilot identified as agricultural contractor.':
+      '  Piloto identificado como contratante agrícola.',
+    '  Filed incorrect flight plan (VFR instead of IFR).':
+      '  Plano de voo incorreto registrado (VFR em vez de IFR).',
+    '  No photographic equipment found on board.':
+      '  Nenhum equipamento fotográfico encontrado a bordo.',
+    'PRELIMINARY CONCLUSION:':
+      'CONCLUSÃO PRELIMINAR:',
+    '  Navigational error. Pilot issued formal warning.':
+      '  Erro de navegação. Piloto recebeu advertência formal.',
+    '  No security breach. Airspace monitoring resumed.':
+      '  Nenhuma violação de segurança. Monitoramento do espaço aéreo retomado.',
+    'NOTE: Recommend updated NOTAM for restricted zone':
+      'NOTA: Recomendar NOTAM atualizado para zona restrita',
+    '      perimeter. Current radius may be insufficient.':
+      '      perímetro. O raio atual pode ser insuficiente.',
+    'ASSESSMENT — FOREIGN DRONE HYPOTHESIS':
+      'AVALIAÇÃO — HIPÓTESE DE DRONE ESTRANGEIRO',
+    'ANALYST: [CLASSIFIED — junior lieutenant, technical analysis]':
+      'ANALISTA: [CLASSIFICADO — tenente júnior, análise técnica]',
+    'HYPOTHESIS:':
+      'HIPÓTESE:',
+    '  Recovered material represents foreign reconnaissance drone':
+      '  Material recuperado representa drone de reconhecimento estrangeiro',
+    '  of undisclosed origin (likely US or European).':
+      '  de origem não revelada (provavelmente EUA ou europeu).',
+    'SUPPORTING EVIDENCE:':
+      'EVIDÊNCIA DE APOIO:',
+    '  - Advanced materials consistent with aerospace industry':
+      '  - Materiais avançados consistentes com a indústria aeroespacial',
+    '  - Size appropriate for unmanned platform':
+      '  - Tamanho apropriado para plataforma não tripulada',
+    '  - Recovery site near strategic infrastructure':
+      '  - Local de recuperação próximo a infraestrutura estratégica',
+    'CONTRADICTING EVIDENCE:':
+      'EVIDÊNCIA CONTRADITÓRIA:',
+    '  - No propulsion system identified':
+      '  - Nenhum sistema de propulsão identificado',
+    '  - No known drone uses materials of this composition':
+      '  - Nenhum drone conhecido utiliza materiais desta composição',
+    '  - Mass variability unexplained by any known technology':
+      '  - Variabilidade de massa inexplicável por qualquer tecnologia conhecida',
+    '  - Thermal signature inconsistent with any engine type':
+      '  - Assinatura térmica inconsistente com qualquer tipo de motor',
+    '  Hypothesis CANNOT be sustained.':
+      '  Hipótese NÃO PODE ser sustentada.',
+    '  Material properties inconsistent with ANY known aircraft.':
+      '  Propriedades do material inconsistentes com QUALQUER aeronave conhecida.',
+    'INTERNAL MEMORANDUM — PUBLIC AFFAIRS':
+      'MEMORANDO INTERNO — RELAÇÕES PÚBLICAS',
+    'DATE: 22-JAN-1996':
+      'DATA: 22-JAN-1996',
+    'RE: Media Inquiry Response':
+      'REF: Resposta a Consulta da Mídia',
+    'APPROVED STATEMENT FOR PRESS:':
+      'DECLARAÇÃO APROVADA PARA IMPRENSA:',
+    '  "The object recovered near Varginha on January 20':
+      '  "O objeto recuperado próximo a Varginha em 20 de janeiro',
+    '   has been identified as a weather balloon from the':
+      '   foi identificado como um balão meteorológico do',
+    '   National Meteorological Institute. The unusual':
+      '   Instituto Nacional de Meteorologia. Os avistamentos',
+    '   sightings were caused by reflected light from':
+      '   incomuns foram causados pela luz refletida do',
+    '   the balloon\'s instrumentation package."':
+      '   pacote de instrumentação do balão."',
+    '  This statement is for public consumption only.':
+      '  Esta declaração é apenas para consumo público.',
+    '  Actual findings classified.':
+      '  Achados reais classificados.',
+    '  See PROJECT HARVEST files for details.':
+      '  Ver arquivos do PROJETO COLHEITA para detalhes.',
+    'ALTERNATIVE ASSESSMENT — INDUSTRIAL ORIGIN':
+      'AVALIAÇÃO ALTERNATIVA — ORIGEM INDUSTRIAL',
+    'ANALYST: SGT. PAULA REIS':
+      'ANALISTA: SGT. PAULA REIS',
+    '  Recovered materials originated from nearby':
+      '  Materiais recuperados originaram-se de instalação',
+    '  industrial facility (chemical or metallurgical).':
+      '  industrial próxima (química ou metalúrgica).',
+    'INVESTIGATION:':
+      'INVESTIGAÇÃO:',
+    '  Contacted 12 facilities within 50km radius.':
+      '  Contatadas 12 instalações dentro de um raio de 50km.',
+    '  No reported accidents or material losses.':
+      '  Nenhum acidente relatado ou perda de material.',
+    '  No facility uses materials matching samples.':
+      '  Nenhuma instalação utiliza materiais correspondentes às amostras.',
+    'MATERIAL COMPARISON:':
+      'COMPARAÇÃO DE MATERIAL:',
+    '  - Local steel plant: No match':
+      '  - Siderúrgica local: Sem correspondência',
+    '  - Chemical processing: No match':
+      '  - Processamento químico: Sem correspondência',
+    '  - Automotive parts: No match':
+      '  - Peças automotivas: Sem correspondência',
+    '  - Aerospace subcontractor (Embraer): NO MATCH':
+      '  - Subcontratante aeroespacial (Embraer): SEM CORRESPONDÊNCIA',
+    '  Industrial origin RULED OUT.':
+      '  Origem industrial DESCARTADA.',
+    '  Materials have no identifiable manufacturing signature.':
+      '  Os materiais não possuem assinatura de fabricação identificável.',
+    '  Discontinue this line of investigation.':
+      '  Descontinuar esta linha de investigação.',
+    '  Defer to standard explanation for public statement.':
+      '  Deferir para explicação padrão para declaração pública.',
+    'LOGISTICS MANIFEST — PARTIAL RECOVERY':
+      'MANIFESTO LOGÍSTICO — RECUPERAÇÃO PARCIAL',
+    'STATUS: FRAGMENT — SECTOR DAMAGE':
+      'STATUS: FRAGMENTO — DANO SETORIAL',
+    'OUTBOUND SHIPMENTS:':
+      'REMESSAS DE SAÍDA:',
+    '  [CORRUPTED] ... Container C-7 ... [CORRUPTED]':
+      '  [CORROMPIDO] ... Contêiner C-7 ... [CORROMPIDO]',
+    '  Destination: CÓDIGO ECHO':
+      '  Destino: CÓDIGO ECHO',
+    '  Weight: 45kg':
+      '  Peso: 45kg',
+    '  Handler: Protocol 7-ECHO authorized':
+      '  Responsável: Protocolo 7-ECHO autorizado',
+    '  [CORRUPTED] ... Container C-12 ... [CORRUPTED]':
+      '  [CORROMPIDO] ... Contêiner C-12 ... [CORROMPIDO]',
+    '  Destination: UNKNOWN (diplomatic channel)':
+      '  Destino: DESCONHECIDO (canal diplomático)',
+    '  Weight: 112kg':
+      '  Peso: 112kg',
+    '  Handler: [DATA LOSS]':
+      '  Responsável: [PERDA DE DADOS]',
+    'NOTE: Cross-reference with transport_log_96 for context.':
+      'NOTA: Referência cruzada com transport_log_96 para contexto.',
+    'SIGNAL ANALYSIS — PRELIMINARY':
+      'ANÁLISE DE SINAL — PRELIMINAR',
+    'EQUIPMENT: Modified EEG Array':
+      'EQUIPAMENTO: Arranjo de EEG Modificado',
+    'DATE: 20-JAN-1996 (during containment)':
+      'DATA: 20-JAN-1996 (durante contenção)',
+    'READINGS FROM SUBJECT BETA (pre-expiration):':
+      'LEITURAS DO SUJEITO BETA (pré-expiração):',
+    '  04:30 — Background noise only':
+      '  04:30 — Apenas ruído de fundo',
+    '  04:45 — Unusual pattern detected (see attached)':
+      '  04:45 — Padrão incomum detectado (ver anexo)',
+    '  05:00 — Pattern intensifies. Equipment overload.':
+      '  05:00 — Padrão se intensifica. Sobrecarga de equipamento.',
+    '  05:15 — Subject vitals declining. Pattern peaks.':
+      '  05:15 — Sinais vitais do sujeito em declínio. Padrão atinge pico.',
+    '  05:18 — Transmission burst detected. Duration: 0.3s':
+      '  05:18 — Rajada de transmissão detectada. Duração: 0,3s',
+    '  05:20 — Subject expires. Pattern ceases.':
+      '  05:20 — Sujeito expira. Padrão cessa.',
+    'INTERPRETATION:':
+      'INTERPRETAÇÃO:',
+    '  Unknown. Equipment not designed for this signal type.':
+      '  Desconhecida. Equipamento não projetado para este tipo de sinal.',
+    '  Recommend consultation with transcript_core.enc':
+      '  Recomenda-se consulta ao transcript_core.enc',
+    '  for reconstructed content analysis.':
+      '  para análise de conteúdo reconstruído.',
+    'LIAISON NOTE — FOREIGN COORDINATION':
+      'NOTA DE ENLACE — COORDENAÇÃO ESTRANGEIRA',
+    'FROM: Embassy Contact (unsigned)':
+      'DE: Contato da Embaixada (não assinado)',
+    'DATE: 23-JAN-1996':
+      'DATA: 23-JAN-1996',
+    'Package received via diplomatic pouch.':
+      'Pacote recebido via mala diplomática.',
+    'Contents confirmed:':
+      'Conteúdo confirmado:',
+    '  - Biological samples (2 containers)':
+      '  - Amostras biológicas (2 contêineres)',
+    '  - Material samples (1 container)':
+      '  - Amostras de material (1 contêiner)',
+    '  - Documentation (sealed)':
+      '  - Documentação (lacrada)',
+    'Our team is already en route.':
+      'Nossa equipe já está a caminho.',
+    'As agreed, no records of this exchange will exist':
+      'Conforme acordado, nenhum registro desta troca existirá',
+    'in either system. Protocol 7-ECHO acknowledged.':
+      'em nenhum dos sistemas. Protocolo 7-ECHO reconhecido.',
+    'We will contact you when preliminary analysis complete.':
+      'Entraremos em contato quando a análise preliminar estiver concluída.',
+    'NOTE: Your material_x_analysis.dat was... illuminating.':
+      'NOTA: Seu material_x_analysis.dat foi... esclarecedor.',
+    '      We concur with the conclusion.':
+      '      Concordamos com a conclusão.',
+    'ENCRYPTED CABLE — PRIORITY ALPHA':
+      'CABO CRIPTOGRAFADO — PRIORIDADE ALFA',
+    'ORIGIN: LANGLEY':
+      'ORIGEM: LANGLEY',
+    'DESTINATION: BRASÍLIA STATION':
+      'DESTINO: ESTAÇÃO BRASÍLIA',
+    'DATE: 23-JAN-1996 04:12 UTC':
+      'DATA: 23-JAN-1996 04:12 UTC',
+    '[ENCRYPTED CONTENT - REQUIRES CLEARANCE]':
+      '[CONTEÚDO CRIPTOGRAFADO - REQUER AUTORIZAÇÃO]',
+    'Cross-reference: /comms/liaison/foreign_liaison_note.txt':
+      'Referência cruzada: /comms/liaison/foreign_liaison_note.txt',
+    'DECRYPTED CABLE — PRIORITY ALPHA':
+      'CABO DESCRIPTOGRAFADO — PRIORIDADE ALFA',
+    'FLASH TRAFFIC':
+      'TRÁFEGO URGENTE',
+    'SITUATION UPDATE:':
+      'ATUALIZAÇÃO DA SITUAÇÃO:',
+    '  Recovery teams report multiple specimens secured.':
+      '  Equipes de recuperação reportam múltiplos espécimes assegurados.',
+    '  Division as agreed: Primary to you, Secondary to us.':
+      '  Divisão conforme acordado: Primário para vocês, Secundário para nós.',
+    '  Tertiary inbound to Tel Aviv per standing agreement.':
+      '  Terciário a caminho de Tel Aviv conforme acordo vigente.',
+    '  Protocol 7-ECHO remains in effect.':
+      '  Protocolo 7-ECHO permanece em vigor.',
+    '  No domestic agencies read-in.':
+      '  Nenhuma agência doméstica informada.',
+    '  Cover story: industrial accident, toxic waste.':
+      '  História de cobertura: acidente industrial, resíduo tóxico.',
+    'CRITICAL:':
+      'CRÍTICO:',
+    '  Specimen 3 showed residual cognitive activity.':
+      '  Espécime 3 apresentou atividade cognitiva residual.',
+    '  Recommend immediate neural extraction before decay.':
+      '  Recomenda-se extração neural imediata antes da decomposição.',
+    '  Our team brings equipment. ETA 6 hours.':
+      '  Nossa equipe traz equipamento. Chegada prevista: 6 horas.',
+    'ACKNOWLEDGE.':
+      'ACUSE RECEBIMENTO.',
+    '>> CONFIRMS MULTI-NATION COORDINATION <<':
+      '>> CONFIRMA COORDENAÇÃO MULTINACIONAL <<',
+    'What protocol governs this exchange? (Check the foreign liaison note)':
+      'Qual protocolo governa esta troca? (Verifique a nota de enlace estrangeiro)',
+    'The liaison note mentions the protocol name.':
+      'A nota de enlace menciona o nome do protocolo.',
+    'STANDING ORDERS — MULTINATIONAL RECOVERY PROTOCOL':
+      'ORDENS PERMANENTES — PROTOCOLO MULTINACIONAL DE RECUPERAÇÃO',
+    'CLASSIFICATION: COSMIC - NEED TO KNOW':
+      'CLASSIFICAÇÃO: CÓSMICO - APENAS PARA QUEM PRECISA SABER',
+    'EFFECTIVE: 01-JAN-1989 (UPDATED ANNUALLY)':
+      'VIGÊNCIA: 01-JAN-1989 (ATUALIZADO ANUALMENTE)',
+    'PARTICIPATING NATIONS:':
+      'NAÇÕES PARTICIPANTES:',
+    '  - United States (Coordinating Authority)':
+      '  - Estados Unidos (Autoridade Coordenadora)',
+    '  - United Kingdom':
+      '  - Reino Unido',
+    '  - France':
+      '  - França',
+    '  - Israel':
+      '  - Israel',
+    '  - Brazil (Regional Authority, South America)':
+      '  - Brasil (Autoridade Regional, América do Sul)',
+    '  - Russia (Observer Status, post-1991)':
+      '  - Rússia (Status de Observador, pós-1991)',
+    'TRIGGER CRITERIA:':
+      'CRITÉRIOS DE ACIONAMENTO:',
+    '  Any incident matching Profile DELTA:':
+      '  Qualquer incidente correspondendo ao Perfil DELTA:',
+    '  - Non-conventional aerial phenomena':
+      '  - Fenômenos aéreos não convencionais',
+    '  - Biological specimens of unknown origin':
+      '  - Espécimes biológicos de origem desconhecida',
+    '  - Material with anomalous physical properties':
+      '  - Material com propriedades físicas anômalas',
+    'RESPONSE PROTOCOL:':
+      'PROTOCOLO DE RESPOSTA:',
+    '  1. Regional Authority establishes perimeter':
+      '  1. Autoridade Regional estabelece perímetro',
+    '  2. Coordinating Authority notified within 2 hours':
+      '  2. Autoridade Coordenadora notificada em até 2 horas',
+    '  3. Multinational team deployed within 24 hours':
+      '  3. Equipe multinacional mobilizada em até 24 horas',
+    '  4. Material divided per Appendix C allocation':
+      '  4. Material dividido conforme alocação do Apêndice C',
+    'INFORMATION CONTROL:':
+      'CONTROLE DE INFORMAÇÃO:',
+    '  All nations maintain synchronized cover narratives.':
+      '  Todas as nações mantêm narrativas de cobertura sincronizadas.',
+    '  Annual coordination meeting: Davos, Switzerland.':
+      '  Reunião anual de coordenação: Davos, Suíça.',
+    'ADDENDUM (1995):':
+      'ADENDO (1995):',
+    '  Coordination extended to include shared timeline.':
+      '  Coordenação estendida para incluir cronograma compartilhado.',
+    '  All parties agree: public disclosure deferred until':
+      '  Todas as partes concordam: divulgação pública adiada até',
+    '  after WINDOW closes. Target: post-2026 review.':
+      '  após o fechamento da JANELA. Meta: revisão pós-2026.',
+    '  Cross-reference: /admin/threat_window.red':
+      '  Referência cruzada: /admin/threat_window.red',
+    'QUERY — REGIONAL MEDICAL EXAMINER':
+      'CONSULTA — MÉDICO LEGISTA REGIONAL',
+    'RE: Unusual Autopsy Protocol':
+      'REF: Protocolo de Autópsia Incomum',
+    'To whom it may concern,':
+      'A quem possa interessar,',
+    'I am writing to inquire about the autopsy conducted':
+      'Escrevo para indagar sobre a autópsia realizada',
+    'at our facility on 21-JAN-1996. I understand':
+      'em nossa instalação em 21-JAN-1996. Entendo que',
+    'A forensic pathologist was summoned from a state university,':
+      'Um patologista forense foi convocado de uma universidade estadual,',
+    'but his notes were sealed before I could review them.':
+      'mas suas anotações foram lacradas antes que eu pudesse revisá-las.',
+    'The subject was removed before I arrived.':
+      'O sujeito foi removido antes da minha chegada.',
+    'No standard intake forms were filed.':
+      'Nenhum formulário de admissão padrão foi preenchido.',
+    'No cause of death was recorded.':
+      'Nenhuma causa de morte foi registrada.',
+    'The attending physician refuses to discuss.':
+      'O médico responsável recusa-se a discutir.',
+    'Our cold storage showed unusual temperature readings':
+      'Nosso armazenamento frio apresentou leituras de temperatura incomuns',
+    'for several hours afterward.':
+      'por várias horas depois.',
+    'I am required to maintain complete records.':
+      'Sou obrigado a manter registros completos.',
+    'Please advise how to proceed with documentation.':
+      'Por favor, orientem como proceder com a documentação.',
+    'THE REGIONAL MEDICAL EXAMINER':
+      'O MÉDICO LEGISTA REGIONAL',
+    'Regional Medical Examiner':
+      'Médico Legista Regional',
+    '[RESPONSE ATTACHED: "File classified. Destroy query."]':
+      '[RESPOSTA ANEXADA: "Arquivo classificado. Destruir consulta."]',
+    'SYSTEM LOG — PATTERN RECOGNITION':
+      'LOG DO SISTEMA — RECONHECIMENTO DE PADRÃO',
+    'TIMESTAMP: [CURRENT SESSION]':
+      'CARIMBO TEMPORAL: [SESSÃO ATUAL]',
+    'Broad file sweep detected.':
+      'Varredura ampla de arquivos detectada.',
+    'User has touched multiple sectors of the system.':
+      'Usuário acessou múltiplos setores do sistema.',
+    'Pattern: Persistent review of scattered records.':
+      'Padrão: Revisão persistente de registros dispersos.',
+    'NOTE: Additional archives may be available.':
+      'NOTA: Arquivos adicionais podem estar disponíveis.',
+    '      Check /admin directory if access permits.':
+      '      Verifique o diretório /admin se o acesso permitir.',
+    'SYSTEM ALERT — COHERENCE THRESHOLD':
+      'ALERTA DO SISTEMA — LIMITE DE COERÊNCIA',
+    'PRIORITY: ELEVATED':
+      'PRIORIDADE: ELEVADA',
+    'User has logged substantial evidence.':
+      'Usuário registrou evidências substanciais.',
+    'Evidence tracker approaching completion.':
+      'Rastreador de evidências se aproximando da conclusão.',
+    'Leak risk rising.':
+      'Risco de vazamento em elevação.',
+    'System recommendation:':
+      'Recomendação do sistema:',
+    '  Preserve session artifacts.':
+      '  Preservar artefatos da sessão.',
+    '  Expect emergency export attempts.':
+      '  Esperar tentativas de exportação de emergência.',
+    'NOTE: Final evidence may require administrative access.':
+      'NOTA: Evidência final pode requerer acesso administrativo.',
+    'HISTORICAL REFERENCE — OPERATION PRATO':
+      'REFERÊNCIA HISTÓRICA — OPERAÇÃO PRATO',
+    'PERIOD: 1977-1978':
+      'PERÍODO: 1977-1978',
+    'LOCATION: Colares, Pará, Brazil':
+      'LOCALIZAÇÃO: Colares, Pará, Brasil',
+    '  Brazilian Air Force investigation of unidentified':
+      '  Investigação da Força Aérea Brasileira sobre fenômenos',
+    '  aerial phenomena in northern Brazil.':
+      '  aéreos não identificados no norte do Brasil.',
+    '  - Multiple credible sightings documented':
+      '  - Múltiplos avistamentos credíveis documentados',
+    '  - Physical effects on witnesses (burn marks)':
+      '  - Efeitos físicos em testemunhas (marcas de queimadura)',
+    '  - Phenomenon described as "light beams"':
+      '  - Fenômeno descrito como "feixes de luz"',
+    '  - Objects displayed non-ballistic motion':
+      '  - Objetos exibiram movimento não balístico',
+    'OFFICIAL CONCLUSION:':
+      'CONCLUSÃO OFICIAL:',
+    '  Inconclusive. Files sealed.':
+      '  Inconclusivo. Arquivos lacrados.',
+    'RELEVANCE TO 1996 INCIDENT:':
+      'RELEVÂNCIA PARA O INCIDENTE DE 1996:',
+    '  Current operation named "PRATO EXTENSION"':
+      '  Operação atual denominada "EXTENSÃO PRATO"',
+    '  suggests institutional awareness of connection.':
+      '  sugere consciência institucional de conexão.',
+    'NOTE: Original PRATO files held by Air Force archives.':
+      'NOTA: Arquivos originais do PRATO mantidos pelos arquivos da Força Aérea.',
+    '      Supplemental archive unlocked under override protocol.':
+      '      Arquivo suplementar desbloqueado sob protocolo de override.',
+    '      See /ops/prato/archive when cleared.':
+      '      Ver /ops/prato/archive quando autorizado.',
+    'INCIDENT LOG — OPERATION PRATO (COLARES)':
+      'REGISTRO DE INCIDENTES — OPERAÇÃO PRATO (COLARES)',
+    'DATE RANGE: SEP-OCT 1977':
+      'PERÍODO: SET-OUT 1977',
+    '18-SEP 22:14 — Luminous object above river channel.':
+      '18-SET 22:14 — Objeto luminoso sobre canal do rio.',
+    '                Beam emitted for 4-6 seconds.':
+      '                Feixe emitido por 4-6 segundos.',
+    '                Civilian reported heat and puncture mark.':
+      '                Civil reportou calor e marca de punctura.',
+    '20-SEP 23:06 — Patrol observed light hovering ~30m.':
+      '20-SET 23:06 — Patrulha observou luz pairando a ~30m.',
+    '                No sound. Rapid lateral acceleration.':
+      '                Sem som. Aceleração lateral rápida.',
+    '                Beam directed to ground, no visible target.':
+      '                Feixe direcionado ao solo, sem alvo visível.',
+    '24-SEP 21:47 — Multiple witnesses. Light split into two':
+      '24-SET 21:47 — Múltiplas testemunhas. Luz dividiu-se em dois',
+    '                points before rejoining and departing.':
+      '                pontos antes de se reunir e partir.',
+    '03-OCT 00:12 — Light tracked along shoreline for 3km.':
+      '03-OUT 00:12 — Luz rastreada ao longo da costa por 3km.',
+    '                Brightness increased; camera overexposed.':
+      '                Brilho aumentou; câmera superexposta.',
+    'STATUS: Unresolved. Pattern persistent.':
+      'STATUS: Não resolvido. Padrão persistente.',
+    'NOTE: Incidents cluster near waterfront communities.':
+      'NOTA: Incidentes se concentram próximo a comunidades ribeirinhas.',
+    'PATROL OBSERVATION REPORT — SHIFT 04':
+      'RELATÓRIO DE OBSERVAÇÃO DE PATRULHA — TURNO 04',
+    'UNIT: 1st AIR FORCE DETACHMENT':
+      'UNIDADE: 1º DESTACAMENTO DA FORÇA AÉREA',
+    'DATE: 05-OCT-1977':
+      'DATA: 05-OUT-1977',
+    '  00:31 — White orb at 25-30m altitude.':
+      '  00:31 — Orbe branco a 25-30m de altitude.',
+    '  00:32 — Orb emits narrow beam downward.':
+      '  00:32 — Orbe emite feixe estreito para baixo.',
+    '  00:33 — Beam sweeps left to right (approx. 40° arc).':
+      '  00:33 — Feixe varre da esquerda para a direita (arco de aprox. 40°).',
+    '  00:34 — Orb rises rapidly. Acceleration inconsistent':
+      '  00:34 — Orbe sobe rapidamente. Aceleração inconsistente',
+    '          with known aircraft.':
+      '          com aeronaves conhecidas.',
+    'SENSOR NOTES:':
+      'NOTAS DOS SENSORES:',
+    '  - No engine noise or rotor wash.':
+      '  - Sem ruído de motor ou turbulência de rotor.',
+    '  - Compass fluctuation during beam emission.':
+      '  - Flutuação da bússola durante emissão do feixe.',
+    '  - Thermal scope shows localized ground heating.':
+      '  - Visor térmico mostra aquecimento localizado do solo.',
+    'PHOTOGRAPHIC RECORD:':
+      'REGISTRO FOTOGRÁFICO:',
+    '  3 frames captured; 2 overexposed; 1 partial silhouette.':
+      '  3 quadros capturados; 2 superexpostos; 1 silhueta parcial.',
+    '  Continue night patrols. Maintain distance.':
+      '  Continuar patrulhas noturnas. Manter distância.',
+    'MEDICAL EFFECTS BRIEF — COLARES CLINIC':
+      'RESUMO DE EFEITOS MÉDICOS — CLÍNICA DE COLARES',
+    'DATE: 14-OCT-1977':
+      'DATA: 14-OUT-1977',
+    'OBSERVED SYMPTOMS (12 CASES):':
+      'SINTOMAS OBSERVADOS (12 CASOS):',
+    '  - Superficial burns (2-5cm diameter)':
+      '  - Queimaduras superficiais (2-5cm de diâmetro)',
+    '  - Localized puncture marks (sub-dermal)':
+      '  - Marcas de punctura localizadas (subdérmicas)',
+    '  - Acute fatigue, dizziness, photophobia':
+      '  - Fadiga aguda, tontura, fotofobia',
+    '  - Mild anemia in follow-up labs':
+      '  - Anemia leve em exames de acompanhamento',
+    '  Symptoms appear within 12 hours of exposure.':
+      '  Sintomas aparecem em até 12 horas após exposição.',
+    '  No infection markers detected.':
+      '  Nenhum marcador de infecção detectado.',
+    '  Recovery within 3-5 days with hydration and rest.':
+      '  Recuperação em 3-5 dias com hidratação e repouso.',
+    '  Maintain private treatment records.':
+      '  Manter registros de tratamento privados.',
+    '  Report new cases to field command only.':
+      '  Reportar novos casos apenas ao comando de campo.',
+    'PHOTO ARCHIVE REGISTER — OPERATION PRATO':
+      'REGISTRO DE ARQUIVO FOTOGRÁFICO — OPERAÇÃO PRATO',
+    'ARCHIVE SITE: AIR FORCE COMMAND / BELÉM':
+      'LOCAL DO ARQUIVO: COMANDO DA FORÇA AÉREA / BELÉM',
+    'DATE: 22-OCT-1977':
+      'DATA: 22-OUT-1977',
+    'ROLL COUNT: 146':
+      'CONTAGEM DE ROLOS: 146',
+    '  - 34 rolls overexposed (light saturation)':
+      '  - 34 rolos superexpostos (saturação de luz)',
+    '  - 21 rolls contain partial silhouettes':
+      '  - 21 rolos contêm silhuetas parciais',
+    '  - 6 rolls show beam segments on ground':
+      '  - 6 rolos mostram segmentos de feixe no solo',
+    'STORAGE:':
+      'ARMAZENAMENTO:',
+    '  Sealed in climate-controlled vault.':
+      '  Lacrado em cofre com controle climático.',
+    '  Access logged under Protocol 3-C.':
+      '  Acesso registrado sob Protocolo 3-C.',
+    'NOTE:':
+      'NOTA:',
+    '  Several frames show repeating grid-like arcs.':
+      '  Vários quadros mostram arcos repetitivos em formato de grade.',
+    '  Analysts flagged for pattern review.':
+      '  Analistas sinalizaram para revisão de padrão.',
+    'RETROSPECTIVE ASSESSMENT — PRATO ANOMALY SET':
+      'AVALIAÇÃO RETROSPECTIVA — CONJUNTO DE ANOMALIAS PRATO',
+    'CLASSIFICATION: RED':
+      'CLASSIFICAÇÃO: VERMELHO',
+    'DATE: 12-FEB-1996':
+      'DATA: 12-FEV-1996',
+    '  1977 incidents show consistent scan geometry:':
+      '  Incidentes de 1977 mostram geometria de varredura consistente:',
+    '  repeating altitude bands, lateral sweep arcs, and':
+      '  faixas de altitude repetitivas, arcos de varredura lateral, e',
+    '  short-duration beam contact without pursuit.':
+      '  contato de feixe de curta duração sem perseguição.',
+    '  Behaviors align with survey operations, not attacks.':
+      '  Comportamentos se alinham com operações de pesquisa, não ataques.',
+    '  Patterns resemble grid sampling and terrain mapping.':
+      '  Padrões se assemelham a amostragem em grade e mapeamento de terreno.',
+    'INFERENCE:':
+      'INFERÊNCIA:',
+    '  Luminous sources likely autonomous scan platforms.':
+      '  Fontes luminosas provavelmente são plataformas autônomas de varredura.',
+    '  Activity indicates Watcher reconnaissance cycles':
+      '  Atividade indica ciclos de reconhecimento dos Observadores',
+    '  predating the 1996 Varginha recovery.':
+      '  anteriores à recuperação de Varginha de 1996.',
+    'IMPLICATION:':
+      'IMPLICAÇÃO:',
+    '  Current incident is a continuation, not a first contact.':
+      '  O incidente atual é uma continuação, não um primeiro contato.',
+    'CONFIDENCE: MODERATE':
+      'CONFIANÇA: MODERADA',
+    '  Data set incomplete; pattern consistency notable.':
+      '  Conjunto de dados incompleto; consistência de padrão notável.',
+    'REFERENCE — PARALLEL INCIDENTS (INTERNATIONAL)':
+      'REFERÊNCIA — INCIDENTES PARALELOS (INTERNACIONAL)',
+    'COMPILED: FEBRUARY 1996':
+      'COMPILADO: FEVEREIRO 1996',
+    'CLASSIFICATION: COMPARTMENTED':
+      'CLASSIFICAÇÃO: COMPARTIMENTADO',
+    'Known incidents with similar characteristics:':
+      'Incidentes conhecidos com características similares:',
+    '  1947 — United States (New Mexico)':
+      '  1947 — Estados Unidos (Novo México)',
+    '  1961 — United States (New Hampshire)':
+      '  1961 — Estados Unidos (New Hampshire)',
+    '  1967 — United Kingdom (Suffolk)':
+      '  1967 — Reino Unido (Suffolk)',
+    '  1980 — United Kingdom (Suffolk, repeat)':
+      '  1980 — Reino Unido (Suffolk, repetição)',
+    '  1989 — Belgium (multiple locations)':
+      '  1989 — Bélgica (múltiplas localizações)',
+    '  1996 — BRAZIL (current)':
+      '  1996 — BRASIL (atual)',
+    'COMMON ELEMENTS:':
+      'ELEMENTOS COMUNS:',
+    '  - Material recovery':
+      '  - Recuperação de material',
+    '  - Biological component presence':
+      '  - Presença de componente biológico',
+    '  - Multi-national coordination':
+      '  - Coordenação multinacional',
+    '  - Public denial protocol':
+      '  - Protocolo de negação pública',
+    '  Pattern suggests ongoing assessment program.':
+      '  Padrão sugere programa de avaliação em andamento.',
+    '  Brazil now included in observation set.':
+      '  Brasil agora incluído no conjunto de observação.',
+    'ANALYSIS — THIRTY-YEAR CYCLE HYPOTHESIS':
+      'ANÁLISE — HIPÓTESE DO CICLO DE TRINTA ANOS',
+    'THEORETICAL FRAMEWORK':
+      'QUADRO TEÓRICO',
+    'OBSERVATION:':
+      'OBSERVAÇÃO:',
+    '  Recovered psi-comm fragments reference "thirty rotations."':
+      '  Fragmentos de psi-comm recuperados referenciam "trinta rotações."',
+    '  This correlates with prior incident spacing:':
+      '  Isso se correlaciona com o espaçamento de incidentes anteriores:',
+    '  1947 → 1977 = 30 years (Operation PRATO follows)':
+      '  1947 → 1977 = 30 anos (segue-se a Operação PRATO)',
+    '  1977 → 2007 = 30 years (predicted)':
+      '  1977 → 2007 = 30 anos (previsto)',
+    '  1996 → 2026 = 30 years (referenced in transcripts)':
+      '  1996 → 2026 = 30 anos (referenciado nas transcrições)',
+    '  Assessment cycles occur at 30-year intervals.':
+      '  Ciclos de avaliação ocorrem em intervalos de 30 anos.',
+    '  Each cycle refines observational model.':
+      '  Cada ciclo refina o modelo observacional.',
+    '  2026 may represent cycle completion.':
+      '  2026 pode representar a conclusão do ciclo.',
+    'ALTERNATIVE:':
+      'ALTERNATIVA:',
+    '  "Rotations" may not refer to Earth years.':
+      '  "Rotações" podem não se referir a anos terrestres.',
+    '  Calculations assume terrestrial frame of reference.':
+      '  Cálculos assumem quadro de referência terrestre.',
+    'CONFIDENCE: LOW':
+      'CONFIANÇA: BAIXA',
+    '  Insufficient data for confirmation.':
+      '  Dados insuficientes para confirmação.',
+    'PATIENT PERSONAL DOCUMENT — RECOVERED FROM ROOM 14B':
+      'DOCUMENTO PESSOAL DO PACIENTE — RECUPERADO DO QUARTO 14B',
+    'FACILITY: INSTITUTO RAUL SOARES, BELO HORIZONTE':
+      'INSTALAÇÃO: INSTITUTO RAUL SOARES, BELO HORIZONTE',
+    'DATE RECOVERED: 03-MAR-1996':
+      'DATA DE RECUPERAÇÃO: 03-MAR-1996',
+    'NOTE: Patient was admitted 28-FEB-1996. Document found':
+      'NOTA: Paciente admitida em 28-FEV-1996. Documento encontrado',
+    '      hidden beneath mattress during routine inspection.':
+      '      escondido sob o colchão durante inspeção de rotina.',
+    '      Submitted to file per protocol.':
+      '      Submetido ao arquivo conforme protocolo.',
+    'they took my notebooks but they did not find this one.':
+      'eles levaram meus cadernos mas não encontraram este.',
+    'i know how i sound. i knew how i sounded when i told':
+      'eu sei como eu pareço. eu sabia como eu parecia quando contei',
+    'my husband. i know why they brought me here. it does':
+      'ao meu marido. eu sei por que me trouxeram aqui. isso',
+    'not change what i know.':
+      'não muda o que eu sei.',
+    'it is not an invasion. i need people to understand that.':
+      'não é uma invasão. eu preciso que as pessoas entendam isso.',
+    'everyone is waiting for ships. for weapons. for something':
+      'todos estão esperando por naves. por armas. por algo',
+    'that looks like a war. it will not look like a war.':
+      'que pareça uma guerra. não vai parecer uma guerra.',
+    'it already started. it started before any of us were born.':
+      'já começou. começou antes de qualquer um de nós nascer.',
+    'they do not want our planet. they want what we produce':
+      'eles não querem nosso planeta. eles querem o que nós produzimos',
+    'without knowing we produce it. every thought. every dream.':
+      'sem saber que produzimos. cada pensamento. cada sonho.',
+    'every moment of fear or love or pain. we generate something':
+      'cada momento de medo ou amor ou dor. nós geramos algo',
+    'when we think and they have been collecting it for a very':
+      'quando pensamos e eles vêm coletando isso por um',
+    'long time.':
+      'longo tempo.',
+    'i tried to calculate the yield. for one human mind over':
+      'eu tentei calcular o rendimento. para uma mente humana ao longo de',
+    'one lifetime. then i multiplied it. i stopped when i':
+      'uma vida. então eu multipliquei. eu parei quando',
+    'reached the number because the number made me sit on':
+      'alcancei o número porque o número me fez sentar no',
+    'the floor for a long time.':
+      'chão por um longo tempo.',
+    'seven billion units. that is what we are to them.':
+      'sete bilhões de unidades. é isso que somos para eles.',
+    'units. generating. not knowing.':
+      'unidades. gerando. sem saber.',
+    'the doctors say i am not eating. they are right. i':
+      'os médicos dizem que não estou comendo. eles estão certos. eu',
+    'find it difficult to eat. to sleep in a bed. to behave':
+      'acho difícil comer. dormir em uma cama. me comportar',
+    'as if any of it matters when i know what i know.':
+      'como se algo importasse quando eu sei o que sei.',
+    'my daughter visited yesterday. she held my hand.':
+      'minha filha visitou ontem. ela segurou minha mão.',
+    'i looked at her face and all i could think was:':
+      'eu olhei para o rosto dela e tudo que pude pensar foi:',
+    'she is producing right now. she has always been':
+      'ela está produzindo agora. ela sempre esteve',
+    'producing. she will never know.':
+      'produzindo. ela nunca vai saber.',
+    'i did not tell her. what would be the point.':
+      'eu não contei a ela. qual seria o sentido.',
+    'if you are reading this and you work here, please':
+      'se você está lendo isso e trabalha aqui, por favor',
+    'understand i am not delusional. i am a physicist.':
+      'entenda que não estou delirando. eu sou física.',
+    'i have spent my career measuring things.':
+      'passei minha carreira medindo coisas.',
+    'the possibility that we are the thing being measured':
+      'a possibilidade de que nós somos a coisa sendo medida',
+    'is not something my training prepared me for.':
+      'não é algo para o qual meu treinamento me preparou.',
+    'god willing i am wrong.':
+      'se Deus quiser eu estou errada.',
+    'i do not believe i am wrong.':
+      'eu não acredito que estou errada.',
+    'ATTENDING NOTE: Patient remains calm but non-responsive':
+      'NOTA DO MÉDICO RESPONSÁVEL: Paciente permanece calma mas não responsiva',
+    'to treatment. Refuses to discuss the content of her':
+      'ao tratamento. Recusa-se a discutir o conteúdo de sua',
+    'research. Keeps asking if her daughter has been informed.':
+      'pesquisa. Continua perguntando se sua filha foi informada.',
+    'Recommendation: extend observation period.':
+      'Recomendação: estender período de observação.',
+    'THEORETICAL FRAMEWORK — NON-ARRIVAL COLONIZATION':
+      'QUADRO TEÓRICO — COLONIZAÇÃO SEM CHEGADA',
+    'CLASSIFICATION: COSMIC — DISTRIBUTION LIMITED':
+      'CLASSIFICAÇÃO: CÓSMICO — DISTRIBUIÇÃO LIMITADA',
+    'AUTHOR: [CLASSIFIED — intelligence directorate]':
+      'AUTOR: [CLASSIFICADO — diretoria de inteligência]',
+    'DATE: 05-MAR-1996':
+      'DATA: 05-MAR-1996',
+    'TO: JOINT ASSESSMENT COMMITTEE':
+      'PARA: COMITÊ CONJUNTO DE AVALIAÇÃO',
+    'This memorandum attempts to formalize a hypothesis':
+      'Este memorando tenta formalizar uma hipótese',
+    'that several of us have been circling for weeks but':
+      'que vários de nós temos circulado por semanas mas',
+    'none wished to commit to paper.':
+      'ninguém desejou colocar no papel.',
+    'STANDARD COLONIZATION MODEL:':
+      'MODELO PADRÃO DE COLONIZAÇÃO:',
+    '  Species travels to target → displaces natives → occupies':
+      '  Espécie viaja ao alvo → desloca nativos → ocupa',
+    'WHAT WE BELIEVE WE ARE OBSERVING:':
+      'O QUE ACREDITAMOS ESTAR OBSERVANDO:',
+    '  Species sends scouts → measures viability → transmits data':
+      '  Espécie envia batedores → mede viabilidade → transmite dados',
+    '  No arrival necessary. No displacement necessary.':
+      '  Nenhuma chegada necessária. Nenhum deslocamento necessário.',
+    'PROPOSED PHASE STRUCTURE:':
+      'ESTRUTURA DE FASES PROPOSTA:',
+    '  Phase 1: Reconnaissance (scouts deployed, data gathered)':
+      '  Fase 1: Reconhecimento (batedores mobilizados, dados coletados)',
+    '  Phase 2: Seeding (integration organisms introduced)':
+      '  Fase 2: Semeadura (organismos de integração introduzidos)',
+    '  Phase 3: Conversion (gradual modification begins)':
+      '  Fase 3: Conversão (modificação gradual começa)',
+    '  Phase 4: Extraction (resource harvest accelerates)':
+      '  Fase 4: Extração (colheita de recursos se acelera)',
+    'The brilliance — and I use that word with revulsion —':
+      'A brilhantez — e uso essa palavra com repulsa —',
+    'is that the colonizers never arrive. The colonized':
+      'é que os colonizadores nunca chegam. A população',
+    'population never perceives a threat because there is':
+      'colonizada nunca percebe uma ameaça porque não há',
+    'nothing to perceive. The process is gradual, invisible,':
+      'nada a perceber. O processo é gradual, invisível,',
+    'and, as far as we can determine, irreversible.':
+      'e, até onde podemos determinar, irreversível.',
+    'CURRENT ASSESSMENT:':
+      'AVALIAÇÃO ATUAL:',
+    '  Earth appears to be in late Phase 1.':
+      '  A Terra parece estar no final da Fase 1.',
+    '  Phase 2 initiation cannot be ruled out.':
+      '  O início da Fase 2 não pode ser descartado.',
+    '  This committee has debated response options for':
+      '  Este comitê debateu opções de resposta por',
+    '  six hours. We have none to propose. Our training':
+      '  seis horas. Não temos nenhuma a propor. Nosso treinamento',
+    '  prepared us for enemies with borders, flags, and':
+      '  nos preparou para inimigos com fronteiras, bandeiras e',
+    '  return addresses.':
+      '  endereços de retorno.',
+    '  Formal recommendation: continued observation.':
+      '  Recomendação formal: observação continuada.',
+    '  Informal assessment: we are documenting something':
+      '  Avaliação informal: estamos documentando algo',
+    '  we cannot stop.':
+      '  que não podemos parar.',
+    '[SIGNATURES: 4 of 6 committee members]':
+      '[ASSINATURAS: 4 de 6 membros do comitê]',
+    '[2 members declined to sign — objections on file]':
+      '[2 membros se recusaram a assinar — objeções em arquivo]',
+    'WITNESS STATEMENT — RAW TRANSCRIPT':
+      'DEPOIMENTO DE TESTEMUNHA — TRANSCRIÇÃO BRUTA',
+    'DATE: 20-JAN-1996 (07:30)':
+      'DATA: 20-JAN-1996 (07:30)',
+    'WITNESS: Civilian female, age 23':
+      'TESTEMUNHA: Civil, feminino, 23 anos',
+    '"I was walking to work when I saw it.':
+      '"Eu estava indo para o trabalho quando vi.',
+    ' It was crouching near the wall.':
+      ' Estava agachado perto do muro.',
+    ' At first I thought it was a homeless person.':
+      ' No início pensei que era um morador de rua.',
+    ' Then I saw its face.':
+      ' Então vi seu rosto.',
+    ' It had no ears. Its skin was... wrong.':
+      ' Não tinha orelhas. Sua pele era... errada.',
+    ' It looked at me.':
+      ' Ele olhou para mim.',
+    ' I felt like it was inside my head.':
+      ' Senti como se estivesse dentro da minha cabeça.',
+    ' Then I ran."':
+      ' Então eu corri."',
+    'INTERVIEWER NOTES:':
+      'NOTAS DO ENTREVISTADOR:',
+    '  Witness appeared genuinely distressed.':
+      '  Testemunha aparentou estar genuinamente perturbada.',
+    '  Story consistent across multiple retellings.':
+      '  Relato consistente em múltiplas repetições.',
+    '  No evidence of fabrication.':
+      '  Sem evidência de fabricação.',
+    'CROSS-REFERENCE:':
+      'REFERÊNCIA CRUZADA:',
+    '  Similar telepathic contact described in /comms/psi/':
+      '  Contato telepático similar descrito em /comms/psi/',
+    'STATUS: File marked for degradation.':
+      'STATUS: Arquivo marcado para degradação.',
+    '        Access recommended before data loss.':
+      '        Acesso recomendado antes da perda de dados.',
+    'EMERGENCY ORDERS — INITIAL RESPONSE':
+      'ORDENS DE EMERGÊNCIA — RESPOSTA INICIAL',
+    'ISSUED: 20-JAN-1996 (05:00)':
+      'EMITIDO: 20-JAN-1996 (05:00)',
+    'TO: All Regional Units':
+      'PARA: Todas as Unidades Regionais',
+    '1. Secure perimeter around designated sites.':
+      '1. Assegurar perímetro ao redor dos locais designados.',
+    '2. Detain all civilian witnesses for debriefing.':
+      '2. Deter todas as testemunhas civis para interrogatório.',
+    '3. Recover ALL physical material. Leave nothing.':
+      '3. Recuperar TODO material físico. Não deixar nada.',
+    '4. Establish communications blackout.':
+      '4. Estabelecer blecaute de comunicações.',
+    '5. Await specialist team arrival.':
+      '5. Aguardar chegada da equipe especialista.',
+    '  Do NOT photograph subjects.':
+      '  NÃO fotografar os sujeitos.',
+    '  Do NOT touch subjects without protection.':
+      '  NÃO tocar nos sujeitos sem proteção.',
+    '  Do NOT attempt communication with subjects.':
+      '  NÃO tentar comunicação com os sujeitos.',
+    '  Foreign team ETA: See /comms/liaison/':
+      '  Chegada prevista da equipe estrangeira: Ver /comms/liaison/',
+    '  Transport protocols: See /storage/':
+      '  Protocolos de transporte: Ver /storage/',
+    'ACKNOWLEDGE RECEIPT IMMEDIATELY.':
+      'ACUSAR RECEBIMENTO IMEDIATAMENTE.',
+    'AUTH: DIRECTOR, REGIONAL INTELLIGENCE':
+      'AUT: DIRETOR, INTELIGÊNCIA REGIONAL',
+    'TRANSPORT LOG — OPERATION PRATO EXTENSION':
+      'REGISTRO DE TRANSPORTE — OPERAÇÃO EXTENSÃO PRATO',
+    'DATE: 20-JAN-1996 through 23-JAN-1996':
+      'DATA: 20-JAN-1996 a 23-JAN-1996',
+    'CLASSIFICATION: OPERACIONAL':
+      'CLASSIFICAÇÃO: OPERACIONAL',
+    '20-JAN-1996 03:42 — Unit dispatched to Site ALFA':
+      '20-JAN-1996 03:42 — Unidade despachada para Local ALFA',
+    '20-JAN-1996 04:15 — Material secured. Weight: 340kg approx.':
+      '20-JAN-1996 04:15 — Material assegurado. Peso: 340kg aprox.',
+    '20-JAN-1996 04:58 — Transport to HOLDING-7 initiated':
+      '20-JAN-1996 04:58 — Transporte para HOLDING-7 iniciado',
+    '21-JAN-1996 01:20 — Secondary recovery at Site BETA':
+      '21-JAN-1996 01:20 — Recuperação secundária no Local BETA',
+    '21-JAN-1996 02:45 — Fragments catalogued: 12 distinct pieces':
+      '21-JAN-1996 02:45 — Fragmentos catalogados: 12 peças distintas',
+    '21-JAN-1996 03:30 — NOTICE: Material divided for redundancy':
+      '21-JAN-1996 03:30 — AVISO: Material dividido por redundância',
+    '21-JAN-1996 04:00 — Batch A → HOLDING-7':
+      '21-JAN-1996 04:00 — Lote A → HOLDING-7',
+    '21-JAN-1996 04:00 — Batch B → [REDACTED] via diplomatic pouch':
+      '21-JAN-1996 04:00 — Lote B → [SUPRIMIDO] via mala diplomática',
+    '22-JAN-1996 — Transfer complete. Chain of custody sealed.':
+      '22-JAN-1996 — Transferência concluída. Cadeia de custódia lacrada.',
+    '23-JAN-1996 11:00 — HOLDING-7 inventory reconciled':
+      '23-JAN-1996 11:00 — Inventário do HOLDING-7 reconciliado',
+    '23-JAN-1996 11:30 — Batch B confirmation pending foreign receipt':
+      '23-JAN-1996 11:30 — Confirmação do Lote B pendente de recebimento estrangeiro',
+    'NOTE: Foreign transfer authorized under Protocol 7-ECHO.':
+      'NOTA: Transferência estrangeira autorizada sob Protocolo 7-ECHO.',
+    'NOTE: Recipient nation not logged in this system.':
+      'NOTA: Nação receptora não registrada neste sistema.',
+    'END LOG':
+      'FIM DO REGISTRO',
+    'MATERIAL ANALYSIS — BATCH A SAMPLES':
+      'ANÁLISE DE MATERIAL — AMOSTRAS DO LOTE A',
+    'LAB: UNICAMP-AFFILIATED (UNOFFICIAL)':
+      'LAB: AFILIADO À UNICAMP (NÃO OFICIAL)',
+    'SAMPLE M-07:':
+      'AMOSTRA M-07:',
+    '  Composition: Unknown alloy. No terrestrial match.':
+      '  Composição: Liga desconhecida. Sem correspondência terrestre.',
+    '  Conductivity: Anomalous. Variable under observation.':
+      '  Condutividade: Anômala. Variável sob observação.',
+    '  Mass: Inconsistent between measurements.':
+      '  Massa: Inconsistente entre medições.',
+    'SAMPLE M-12:':
+      'AMOSTRA M-12:',
+    '  Composition: Polymer matrix with metallic inclusions.':
+      '  Composição: Matriz polimérica com inclusões metálicas.',
+    '  Tensile strength: Exceeds known materials by factor of 8.':
+      '  Resistência à tração: Excede materiais conhecidos por fator de 8.',
+    '  Thermal response: Absorbs heat without temperature change.':
+      '  Resposta térmica: Absorve calor sem mudança de temperatura.',
+    '  Materials are not of terrestrial manufacture.':
+      '  Materiais não são de fabricação terrestre.',
+    '  Recommend immediate classification upgrade.':
+      '  Recomenda-se elevação imediata de classificação.',
+    '  Recommend international consultation suppression.':
+      '  Recomenda-se supressão de consulta internacional.',
+    'ADDENDUM:':
+      'ADENDO:',
+    '  Batch B samples were NOT made available for analysis.':
+      '  Amostras do Lote B NÃO foram disponibilizadas para análise.',
+    '  Foreign recipient declined reciprocal data sharing.':
+      '  Recipiente estrangeiro recusou compartilhamento recíproco de dados.',
+    'BIO-CONTAINMENT LOG — QUARANTINE SECTION':
+      'REGISTRO DE BIO-CONTENÇÃO — SEÇÃO DE QUARENTENA',
+    'SITE: REGIONAL HOSPITAL [NOME SUPRIMIDO]':
+      'LOCAL: HOSPITAL REGIONAL [NOME SUPRIMIDO]',
+    'DATE: 20-JAN-1996':
+      'DATA: 20-JAN-1996',
+    '20-JAN 04:30 — Subject ALFA secured. Vitals: Unstable.':
+      '20-JAN 04:30 — Sujeito ALFA assegurado. Sinais vitais: Instáveis.',
+    '20-JAN 05:15 — Subject BETA secured. Vitals: Declining.':
+      '20-JAN 05:15 — Sujeito BETA assegurado. Sinais vitais: Em declínio.',
+    '20-JAN 06:00 — Subject ALFA expired. Cause: Unknown.':
+      '20-JAN 06:00 — Sujeito ALFA expirou. Causa: Desconhecida.',
+    '20-JAN 08:00 — Transfer order received.':
+      '20-JAN 08:00 — Ordem de transferência recebida.',
+    '20-JAN 09:30 — Subject BETA transferred to military custody.':
+      '20-JAN 09:30 — Sujeito BETA transferido para custódia militar.',
+    '20-JAN 10:00 — Subject ALFA remains → autopsy protocol.':
+      '20-JAN 10:00 — Restos do Sujeito ALFA → protocolo de autópsia.',
+    'NOTE: Subjects display non-human morphology.':
+      'NOTA: Sujeitos exibem morfologia não humana.',
+    'NOTE: Subjects do not match any catalogued species.':
+      'NOTA: Sujeitos não correspondem a nenhuma espécie catalogada.',
+    '21-JAN 02:00 — Third subject reported. Site GAMMA.':
+      '21-JAN 02:00 — Terceiro sujeito reportado. Local GAMA.',
+    '21-JAN 04:00 — Third subject secured. Designated GAMMA.':
+      '21-JAN 04:00 — Terceiro sujeito assegurado. Designado GAMA.',
+    '21-JAN 06:00 — Subject GAMMA transferred. Destination: UNKNOWN.':
+      '21-JAN 06:00 — Sujeito GAMA transferido. Destino: DESCONHECIDO.',
+    'WARNING: All bio-material classified COSMIC.':
+      'AVISO: Todo bio-material classificado CÓSMICO.',
+    'AUTOPSY PROTOCOL — SUBJECT ALFA':
+      'PROTOCOLO DE AUTÓPSIA — SUJEITO ALFA',
+    'PATHOLOGIST: [CLASSIFIED — forensic specialist, state university]':
+      'PATOLOGISTA: [CLASSIFICADO — especialista forense, universidade estadual]',
+    'FACILITY: Hospital Regional do Sul de Minas':
+      'INSTALAÇÃO: Hospital Regional do Sul de Minas',
+    'EXTERNAL EXAMINATION:':
+      'EXAME EXTERNO:',
+    '  Height: 1.6m (contracted posture noted at recovery site)':
+      '  Altura: 1,6m (postura contraída observada no local de recuperação)',
+    '  Skin: Dark brown, oily secretion, strong ammonia odor':
+      '  Pele: Marrom escura, secreção oleosa, forte odor de amônia',
+    '  Cranium: Three bony ridges, anterior-posterior alignment':
+      '  Crânio: Três cristas ósseas, alinhamento ântero-posterior',
+    '  Eyes: Disproportionately large, deep red, no sclera':
+      '  Olhos: Desproporcionalmente grandes, vermelho profundo, sem esclera',
+    '  Limbs: Four digits per extremity':
+      '  Membros: Quatro dígitos por extremidade',
+    'INTERNAL EXAMINATION:':
+      'EXAME INTERNO:',
+    '  Cardiovascular: Single-chamber circulatory organ':
+      '  Cardiovascular: Órgão circulatório de câmara única',
+    '  Digestive: Vestigial. Non-functional.':
+      '  Digestivo: Vestigial. Não funcional.',
+    '  Reproductive: Absent.':
+      '  Reprodutivo: Ausente.',
+    '  Neural: Overdeveloped cranial mass. Unusual structures.':
+      '  Neural: Massa craniana hiperdesenvolvida. Estruturas incomuns.',
+    '  Cranial structures suggest high-bandwidth signal processing.':
+      '  Estruturas cranianas sugerem processamento de sinais de alta largura de banda.',
+    '  No vocal apparatus detected.':
+      '  Nenhum aparato vocal detectado.',
+    '  Hypothesis: Communication via non-acoustic means.':
+      '  Hipótese: Comunicação por meios não acústicos.',
+    'TISSUE SAMPLES: Transferred per Protocol 7-ECHO.':
+      'AMOSTRAS DE TECIDO: Transferidas conforme Protocolo 7-ECHO.',
+    'PATHOLOGIST ADDENDUM:':
+      'ADENDO DO PATOLOGISTA:',
+    '  "This organism was designed, not evolved."':
+      '  "Este organismo foi projetado, não evoluiu."',
+    'ADDENDUM PSI — NEURAL ASSESSMENT':
+      'ADENDO PSI — AVALIAÇÃO NEURAL',
+    'CONSULTING: [CLASSIFIED]':
+      'CONSULTORIA: [CLASSIFICADO]',
+    'CRANIAL STRUCTURE ANALYSIS:':
+      'ANÁLISE DA ESTRUTURA CRANIANA:',
+    'The neural architecture of Subject ALFA indicates:':
+      'A arquitetura neural do Sujeito ALFA indica:',
+    '  - Massive parallel processing capability':
+      '  - Capacidade massiva de processamento paralelo',
+    '  - Structures analogous to signal receivers':
+      '  - Estruturas análogas a receptores de sinais',
+    '  - No decision-making cortex equivalent':
+      '  - Sem equivalente ao córtex de tomada de decisão',
+    '  Subject was not autonomous.':
+      '  Sujeito não era autônomo.',
+    '  Subject received instructions from external source.':
+      '  Sujeito recebia instruções de fonte externa.',
+    '  Subject functioned as observer/relay only.':
+      '  Sujeito funcionava apenas como observador/retransmissor.',
+    '  If subjects are receivers, there must be transmitters.':
+      '  Se os sujeitos são receptores, deve haver transmissores.',
+    '  Transmitters were not recovered at any site.':
+      '  Transmissores não foram recuperados em nenhum local.',
+    '  Assume observational mission was successful.':
+      '  Assumir que a missão observacional foi bem-sucedida.',
+    '  Assume data was transmitted before expiration.':
+      '  Assumir que os dados foram transmitidos antes da expiração.',
+    'PSI-COMM TRANSCRIPT — PARTIAL RECOVERY':
+      'TRANSCRIÇÃO PSI-COMM — RECUPERAÇÃO PARCIAL',
+    'SOURCE: Subject BETA (pre-expiration)':
+      'FONTE: Sujeito BETA (pré-expiração)',
+    'METHOD: EEG pattern analysis + computational reconstruction':
+      'MÉTODO: Análise de padrão EEG + reconstrução computacional',
+    '[FRAGMENT 1]':
+      '[FRAGMENTO 1]',
+    '  ...observation complete...':
+      '  ...observação completa...',
+    '  ...viable assessment confirmed...':
+      '  ...avaliação viável confirmada...',
+    '  ...transmission interrupted...':
+      '  ...transmissão interrompida...',
+    '[FRAGMENT 2]':
+      '[FRAGMENTO 2]',
+    '  ...energy density acceptable...':
+      '  ...densidade de energia aceitável...',
+    '  ...cognitive activity measured...':
+      '  ...atividade cognitiva medida...',
+    '  ...extraction model viable...':
+      '  ...modelo de extração viável...',
+    '[FRAGMENT 3]':
+      '[FRAGMENTO 3]',
+    '  ...we are not the arrivers...':
+      '  ...nós não somos os que chegam...',
+    '  ...we are the measuring...':
+      '  ...nós somos a medição...',
+    '  ...others will come...':
+      '  ...outros virão...',
+    '[END RECOVERED FRAGMENTS]':
+      '[FIM DOS FRAGMENTOS RECUPERADOS]',
+    'NOTE: Original signal strength suggests transmission':
+      'NOTA: Força do sinal original sugere que a transmissão',
+    '      reached destination before subject expiration.':
+      '      alcançou o destino antes da expiração do sujeito.',
+    'SECURITY CHECK: Enter material sample weight from transport log (kg)':
+      'VERIFICAÇÃO DE SEGURANÇA: Insira o peso da amostra de material do registro de transporte (kg)',
+    'Check transport_log_96.txt for material weight':
+      'Verifique transport_log_96.txt para o peso do material',
+    'PSI-COMM TRANSCRIPT — SECONDARY ANALYSIS':
+      'TRANSCRIÇÃO PSI-COMM — ANÁLISE SECUNDÁRIA',
+    'SOURCE: Subject GAMMA':
+      'FONTE: Sujeito GAMA',
+    '[RECOVERED SEQUENCE]':
+      '[SEQUÊNCIA RECUPERADA]',
+    '  ...thirty rotations...':
+      '  ...trinta rotações...',
+    '  ...alignment window...':
+      '  ...janela de alinhamento...',
+    '  ...convergence cycle...':
+      '  ...ciclo de convergência...',
+    'SECURITY CHECK: How many subjects were recovered total?':
+      'VERIFICAÇÃO DE SEGURANÇA: Quantos sujeitos foram recuperados no total?',
+    'Check bio_container.log for subject designations':
+      'Verifique bio_container.log para designações de sujeitos',
+    'FIELD REPORT — OPERATION PRATO DELTA':
+      'RELATÓRIO DE CAMPO — OPERAÇÃO PRATO DELTA',
+    'SUBMITTED: 24-JAN-1996':
+      'SUBMETIDO: 24-JAN-1996',
+    '  Three recovery sites established.':
+      '  Três locais de recuperação estabelecidos.',
+    '  All physical evidence secured.':
+      '  Todas as evidências físicas asseguradas.',
+    '  All biological material secured.':
+      '  Todo material biológico assegurado.',
+    'FOREIGN LIAISON:':
+      'LIGAÇÃO ESTRANGEIRA:',
+    '  Representatives from [REDACTED] arrived 22-JAN.':
+      '  Representantes de [REDIGIDO] chegaram em 22-JAN.',
+    '  Joint protocol established.':
+      '  Protocolo conjunto estabelecido.',
+    '  Material sharing agreement signed.':
+      '  Acordo de compartilhamento de material assinado.',
+    '  Local witnesses estimated at 30+.':
+      '  Testemunhas locais estimadas em 30+.',
+    '  Media suppression partially effective.':
+      '  Supressão de mídia parcialmente eficaz.',
+    '  Long-term containment uncertain.':
+      '  Contenção a longo prazo incerta.',
+    '  Maintain denial posture.':
+      '  Manter postura de negação.',
+    '  Accelerate foreign material transfer.':
+      '  Acelerar transferência de material estrangeiro.',
+    '  Discontinue local analysis to prevent leaks.':
+      '  Descontinuar análise local para prevenir vazamentos.',
+    'THEORETICAL FRAMEWORK — SCOUT VARIANTS':
+      'ESTRUTURA TEÓRICA — VARIANTES DE BATEDORES',
+    'WORKING MODEL:':
+      'MODELO DE TRABALHO:',
+    'Recovered subjects appear to be purpose-built constructs.':
+      'Sujeitos recuperados parecem ser construtos feitos sob medida.',
+    'Evidence suggests:':
+      'Evidências sugerem:',
+    '  - Engineered for Earth-specific conditions':
+      '  - Projetados para condições específicas da Terra',
+    '  - Limited operational lifespan (hours to days)':
+      '  - Vida útil operacional limitada (horas a dias)',
+    '  - High neural plasticity for rapid environmental learning':
+      '  - Alta plasticidade neural para aprendizado ambiental rápido',
+    '  - No autonomous decision-making capability':
+      '  - Sem capacidade autônoma de tomada de decisão',
+    'CLASSIFICATION:':
+      'CLASSIFICAÇÃO:',
+    '  Designation: "Scouts"':
+      '  Designação: "Batedores"',
+    '  Function: Reconnaissance and measurement':
+      '  Função: Reconhecimento e medição',
+    '  Relationship to origin: Unknown (assumed subordinate)':
+      '  Relação com a origem: Desconhecida (presumida subordinada)',
+    '  Scouts are tools, not representatives.':
+      '  Batedores são ferramentas, não representantes.',
+    '  Decision-makers remain at origin.':
+      '  Tomadores de decisão permanecem na origem.',
+    '  Origin has NOT been contacted.':
+      '  A origem NÃO foi contatada.',
+    'ASSESSMENT — ENERGY NODE CLASSIFICATION':
+      'AVALIAÇÃO — CLASSIFICAÇÃO DE NÓ ENERGÉTICO',
+    'AUTHOR: [CLASSIFIED — signals division analyst]':
+      'AUTOR: [CLASSIFICADO — analista da divisão de sinais]',
+    'DATE: 10-FEB-1996':
+      'DATA: 10-FEV-1996',
+    'TO: ASSESSMENT DIRECTORATE':
+      'PARA: DIRETORIA DE AVALIAÇÃO',
+    'RECOVERED SIGNAL CROSS-REFERENCE:':
+      'REFERÊNCIA CRUZADA DE SINAIS RECUPERADOS:',
+    'Psi-comm fragments, when mapped against material':
+      'Fragmentos psi-comm, quando mapeados contra a análise',
+    'analysis, produce a consistent pattern:':
+      'de material, produzem um padrão consistente:',
+    '  - "Energy density" referenced 4 times across specimens':
+      '  - "Densidade de energia" referenciada 4 vezes entre espécimes',
+    '  - "Extraction model" phrasing consistent in all samples':
+      '  - Fraseologia "Modelo de extração" consistente em todas as amostras',
+    '  - "Cognitive activity" used as a metric — this is unusual':
+      '  - "Atividade cognitiva" usada como métrica — isto é incomum',
+    '    and does not correspond to any known measurement system':
+      '    e não corresponde a nenhum sistema de medição conhecido',
+    'ANALYST HYPOTHESIS:':
+      'HIPÓTESE DO ANALISTA:',
+    '  Earth is being assessed as an energy source.':
+      '  A Terra está sendo avaliada como fonte de energia.',
+    '  Biological neural networks may serve as the':
+      '  Redes neurais biológicas podem servir como o',
+    '  extraction medium. Cognitive output correlates':
+      '  meio de extração. Produção cognitiva se correlaciona',
+    '  with projected energy yield.':
+      '  com a produção de energia projetada.',
+    '  Recovered material samples exhibit energy absorption':
+      '  Amostras de material recuperado exibem propriedades de',
+    '  properties we cannot replicate or fully explain.':
+      '  absorção de energia que não podemos replicar ou explicar totalmente.',
+    '  Scout neural structures confirm measurement function.':
+      '  Estruturas neurais dos batedores confirmam função de medição.',
+    '  The scout mission appears complete. Next phase':
+      '  A missão dos batedores parece completa. Início da próxima',
+    '  initiation is uncertain. Transition window undefined.':
+      '  fase é incerto. Janela de transição indefinida.',
+    '  Establish long-term signal monitoring station.':
+      '  Estabelecer estação de monitoramento de sinais a longo prazo.',
+    '  Staff with personnel who have read clearance.':
+      '  Equipar com pessoal que tenha autorização de leitura.',
+    '  Budget request attached separately — the Ministry':
+      '  Solicitação de orçamento anexada separadamente — o Ministério',
+    '  will not approve if they see the justification.':
+      '  não aprovará se virem a justificativa.',
+    '[SIGNATURE REDACTED]':
+      '[ASSINATURA REDIGIDA]',
+    'THREAT ASSESSMENT — TRANSITION WINDOW':
+      'AVALIAÇÃO DE AMEAÇA — JANELA DE TRANSIÇÃO',
+    'AUTHOR: [CLASSIFIED — threat analysis section chief]':
+      'AUTOR: [CLASSIFICADO — chefe da seção de análise de ameaças]',
+    'DATE: 02-MAR-1996':
+      'DATA: 02-MAR-1996',
+    'TO: MINISTRY OF DEFENSE — STRATEGIC PLANNING':
+      'PARA: MINISTÉRIO DA DEFESA — PLANEJAMENTO ESTRATÉGICO',
+    'TIMELINE RECONSTRUCTION:':
+      'RECONSTRUÇÃO DA LINHA DO TEMPO:',
+    '  Reference: Psi-comm fragment "thirty rotations"':
+      '  Referência: Fragmento psi-comm "trinta rotações"',
+    '  Best interpretation: 30 Earth orbital cycles':
+      '  Melhor interpretação: 30 ciclos orbitais terrestres',
+    '  Base year: 1996 (current incident)':
+      '  Ano base: 1996 (incidente atual)',
+    '  Target year: 2026':
+      '  Ano alvo: 2026',
+    'NATURE OF WINDOW: UNKNOWN':
+      'NATUREZA DA JANELA: DESCONHECIDA',
+    'We have debated the following possibilities:':
+      'Debatemos as seguintes possibilidades:',
+    '  - Secondary deployment of integration organisms':
+      '  - Implantação secundária de organismos de integração',
+    '  - Transition from reconnaissance to active phase':
+      '  - Transição da fase de reconhecimento para fase ativa',
+    '  - Communication or activation signal':
+      '  - Sinal de comunicação ou ativação',
+    '  - Initiation of energy extraction process':
+      '  - Início do processo de extração de energia',
+    'None of these can be confirmed. All are consistent':
+      'Nenhuma destas pode ser confirmada. Todas são consistentes',
+    'with recovered data.':
+      'com os dados recuperados.',
+    'RECOMMENDED POSTURE:':
+      'POSTURA RECOMENDADA:',
+    '  - Maintain observation protocols through 2026':
+      '  - Manter protocolos de observação até 2026',
+    '  - Establish monitoring baseline for anomalous signals':
+      '  - Estabelecer linha de base de monitoramento para sinais anômalos',
+    '  - Prepare contingency frameworks (nature TBD)':
+      '  - Preparar estruturas de contingência (natureza a definir)',
+    'IMPORTANT CAVEAT:':
+      'RESSALVA IMPORTANTE:',
+    '  This is not a prediction. It is a detected reference':
+      '  Isto não é uma previsão. É uma referência detectada',
+    '  in recovered neural fragments. Our interpretation':
+      '  em fragmentos neurais recuperados. Nossa interpretação',
+    '  may be completely wrong. But the reference exists.':
+      '  pode estar completamente errada. Mas a referência existe.',
+    '  We cannot pretend it does not.':
+      '  Não podemos fingir que não.',
+    'INTERNAL MEMORANDUM — NOTE 07':
+      'MEMORANDO INTERNO — NOTA 07',
+    'FROM: [REDACTED]':
+      'DE: [REDIGIDO]',
+    'TO: DIRECTOR':
+      'PARA: DIRETOR',
+    'SUBJECT: Foreign Involvement Concerns':
+      'ASSUNTO: Preocupações com Envolvimento Estrangeiro',
+    'Director,':
+      'Diretor,',
+    'I must register my objection to the current arrangement.':
+      'Devo registrar minha objeção ao arranjo atual.',
+    'The foreign delegation arrived before we had completed':
+      'A delegação estrangeira chegou antes de completarmos',
+    'initial assessment. Their access to biological samples':
+      'a avaliação inicial. O acesso deles às amostras biológicas',
+    'was granted before chain of custody was established.':
+      'foi concedido antes do estabelecimento da cadeia de custódia.',
+    'I have reason to believe:':
+      'Tenho razões para acreditar:',
+    '  - They had advance knowledge of the incident':
+      '  - Eles tinham conhecimento prévio do incidente',
+    '  - Their equipment was pre-positioned':
+      '  - O equipamento deles estava pré-posicionado',
+    '  - Their protocols superseded our own':
+      '  - Os protocolos deles se sobrepuseram aos nossos',
+    'This was not cooperation. This was assumption of control.':
+      'Isto não foi cooperação. Foi uma tomada de controle.',
+    'I recommend formal protest through diplomatic channels.':
+      'Recomendo protesto formal pelos canais diplomáticos.',
+    'ASSESSMENT — INDIRECT COLONIZATION MODEL':
+      'AVALIAÇÃO — MODELO DE COLONIZAÇÃO INDIRETA',
+    'CLASSIFICATION: RED — COMPARTMENTED':
+      'CLASSIFICAÇÃO: VERMELHO — COMPARTIMENTADO',
+    'AUTHOR: [CLASSIFIED — colonel, strategic planning]':
+      'AUTOR: [CLASSIFICADO — coronel, planejamento estratégico]',
+    'DATE: 27-FEB-1996':
+      'DATA: 27-FEV-1996',
+    'TO: MINISTRY OF DEFENSE — SPECIAL PROGRAMS':
+      'PARA: MINISTÉRIO DA DEFESA — PROGRAMAS ESPECIAIS',
+    'Excellency,':
+      'Excelência,',
+    'After reviewing the full specimen analysis and the':
+      'Após revisar a análise completa dos espécimes e os',
+    'recovered psi-comm fragments, I must present a framework':
+      'fragmentos psi-comm recuperados, devo apresentar uma estrutura',
+    'that none of us wanted to consider.':
+      'que nenhum de nós queria considerar.',
+    'I stress that this is my interpretation. I pray':
+      'Enfatizo que esta é minha interpretação. Rezo',
+    'that I am wrong.':
+      'para que eu esteja errado.',
+    'PHASE 1 — RECONNAISSANCE (CONFIRMED)':
+      'FASE 1 — RECONHECIMENTO (CONFIRMADO)',
+    '  Bio-engineered scouts deployed.':
+      '  Batedores bioengenheirados implantados.',
+    '  Planetary viability measured.':
+      '  Viabilidade planetária medida.',
+    '  Cognitive density assessed — our population, our minds.':
+      '  Densidade cognitiva avaliada — nossa população, nossas mentes.',
+    '  Findings transmitted to origin before recovery.':
+      '  Descobertas transmitidas à origem antes da recuperação.',
+    '  This phase appears complete. The scouts succeeded.':
+      '  Esta fase parece completa. Os batedores tiveram sucesso.',
+    'PHASE 2 — SEEDING (THEORETICAL)':
+      'FASE 2 — SEMEADURA (TEÓRICO)',
+    '  Integration organisms introduced.':
+      '  Organismos de integração introduzidos.',
+    '  These would not resemble the scouts. They would':
+      '  Estes não se assemelhariam aos batedores. Eles não se',
+    '  resemble nothing. Or everything.':
+      '  assemelhariam a nada. Ou a tudo.',
+    '  Gradual ecological and biological modification.':
+      '  Modificação ecológica e biológica gradual.',
+    '  I do not know if this has begun.':
+      '  Não sei se isto já começou.',
+    '  The neural fragments suggest it will.':
+      '  Os fragmentos neurais sugerem que acontecerá.',
+    'PHASE 3 — EXTRACTION (THEORETICAL)':
+      'FASE 3 — EXTRAÇÃO (TEÓRICO)',
+    '  Target world becomes an energy source.':
+      '  Mundo alvo se torna uma fonte de energia.',
+    '  Local species continues existing — but diminished.':
+      '  Espécie local continua existindo — mas diminuída.',
+    '  Autonomy and agency degrade. Slowly. Invisibly.':
+      '  Autonomia e agência se degradam. Lentamente. Invisivelmente.',
+    'CONCLUSION':
+      'CONCLUSÃO',
+    'What disturbs me most is the elegance of it.':
+      'O que mais me perturba é a elegância disso.',
+    'They do not need to arrive. They do not destroy.':
+      'Eles não precisam chegar. Eles não destroem.',
+    'They convert. Quietly. From a distance we cannot':
+      'Eles convertem. Silenciosamente. A uma distância que não podemos',
+    'comprehend.':
+      'compreender.',
+    'We trained our entire defense apparatus to repel':
+      'Treinamos todo nosso aparato de defesa para repelir',
+    'invaders. There is nothing to repel.':
+      'invasores. Não há nada a repelir.',
+    'ASSESSMENT: Phase 1 appears complete for Earth.':
+      'AVALIAÇÃO: Fase 1 parece completa para a Terra.',
+    'I have requested confession with the base chaplain.':
+      'Solicitei confissão com o capelão da base.',
+    'EXECUTIVE BRIEFING — THE WATCHERS':
+      'BRIEFING EXECUTIVO — OS OBSERVADORES',
+    'CLASSIFICATION: COSMIC — EYES ONLY':
+      'CLASSIFICAÇÃO: CÓSMICO — SOMENTE PARA OLHOS AUTORIZADOS',
+    'PREPARED BY: JOINT ASSESSMENT COMMITTEE':
+      'PREPARADO POR: COMITÊ DE AVALIAÇÃO CONJUNTA',
+    'DATE: FEBRUARY 1996':
+      'DATA: FEVEREIRO 1996',
+    'TO: [DISTRIBUTION LIMITED — MINISTRY LEVEL]':
+      'PARA: [DISTRIBUIÇÃO LIMITADA — NÍVEL MINISTERIAL]',
+    'This document summarizes our current institutional':
+      'Este documento resume nosso entendimento institucional',
+    'understanding of the January 1996 incident and its':
+      'atual do incidente de janeiro de 1996 e suas',
+    'implications. It has been reviewed by all six members':
+      'implicações. Foi revisado por todos os seis membros',
+    'of this committee. What follows is consensus.':
+      'deste comitê. O que se segue é consenso.',
+    'I. THE INCIDENT':
+      'I. O INCIDENTE',
+    'Between 20–23 January 1996, military and fire brigade':
+      'Entre 20-23 de janeiro de 1996, unidades militares e do corpo',
+    'units conducted recovery operations at three distinct':
+      'de bombeiros conduziram operações de recuperação em três locais',
+    'sites near Varginha, Minas Gerais.':
+      'distintos próximos a Varginha, Minas Gerais.',
+    'Physical debris and biological specimens were secured.':
+      'Detritos físicos e espécimes biológicos foram assegurados.',
+    'Material was divided per standing multinational protocol.':
+      'Material foi dividido conforme protocolo multinacional vigente.',
+    'A portion was transferred to foreign partners before this':
+      'Uma porção foi transferida a parceiros estrangeiros antes deste',
+    'committee was fully convened — a procedural failure we':
+      'comitê ser totalmente convocado — uma falha processual que',
+    'have formally protested.':
+      'protestamos formalmente.',
+    'II. THE SPECIMENS':
+      'II. OS ESPÉCIMES',
+    'Three non-human biological entities recovered.':
+      'Três entidades biológicas não-humanas recuperadas.',
+    'Designated: ALFA, BETA, GAMMA.':
+      'Designadas: ALFA, BETA, GAMA.',
+    'Autopsy and tissue analysis indicate:':
+      'Autópsia e análise de tecido indicam:',
+    '  - Purpose-built organisms, not naturally evolved':
+      '  - Organismos construídos sob medida, não evoluídos naturalmente',
+    '  - Limited operational lifespan (designed to expire)':
+      '  - Vida útil operacional limitada (projetados para expirar)',
+    '  - Neural architecture oriented toward observation':
+      '  - Arquitetura neural orientada para observação',
+    '  - No autonomous decision-making structures found':
+      '  - Nenhuma estrutura autônoma de tomada de decisão encontrada',
+    '  - Communication via non-acoustic means (see PSI files)':
+      '  - Comunicação por meios não-acústicos (ver arquivos PSI)',
+    'In plain language: these were instruments. Scouts.':
+      'Em linguagem simples: estes eram instrumentos. Batedores.',
+    'Sent to observe and transmit. Not ambassadors.':
+      'Enviados para observar e transmitir. Não embaixadores.',
+    'Not explorers. Tools.':
+      'Não exploradores. Ferramentas.',
+    'III. THE TRANSMISSION':
+      'III. A TRANSMISSÃO',
+    'Recovered psi-comm fragments confirm:':
+      'Fragmentos psi-comm recuperados confirmam:',
+    '  - Mission was observational and appears successful':
+      '  - A missão era observacional e parece bem-sucedida',
+    '  - Data was transmitted before specimen expiration':
+      '  - Dados foram transmitidos antes da expiração do espécime',
+    '  - Earth assessed as viable for energy extraction':
+      '  - Terra avaliada como viável para extração de energia',
+    '  - Reference to a future "alignment window"':
+      '  - Referência a uma futura "janela de alinhamento"',
+    'We believe the scouts completed their purpose.':
+      'Acreditamos que os batedores cumpriram seu propósito.',
+    'The data they gathered has already been received':
+      'Os dados que coletaram já foram recebidos',
+    'by whatever sent them.':
+      'por quem quer que os tenha enviado.',
+    'IV. THE WINDOW':
+      'IV. A JANELA',
+    '"Thirty rotations" — interpreted as 30 orbital years.':
+      '"Trinta rotações" — interpretado como 30 anos orbitais.',
+    'Projected window: YEAR 2026.':
+      'Janela projetada: ANO 2026.',
+    'Nature unknown. Assessed possibilities:':
+      'Natureza desconhecida. Possibilidades avaliadas:',
+    '  - Deployment of integration organisms':
+      '  - Implantação de organismos de integração',
+    '  - Initiation of indirect conversion process':
+      '  - Início do processo de conversão indireta',
+    '  - Activation signal for pre-positioned systems':
+      '  - Sinal de ativação para sistemas pré-posicionados',
+    'We stress: this is not an invasion timeline.':
+      'Enfatizamos: isto não é uma linha do tempo de invasão.',
+    'It may be something we do not yet have language for.':
+      'Pode ser algo para o qual ainda não temos linguagem.',
+    'V. THE WATCHERS':
+      'V. OS OBSERVADORES',
+    'Working designation for the origin civilization.':
+      'Designação de trabalho para a civilização de origem.',
+    'What we believe we know:':
+      'O que acreditamos saber:',
+    '  - Post-biological or hybrid form of existence':
+      '  - Forma de existência pós-biológica ou híbrida',
+    '  - Colonial expansion through indirect conversion':
+      '  - Expansão colonial através de conversão indireta',
+    '  - Do not physically arrive at target worlds':
+      '  - Não chegam fisicamente aos mundos alvo',
+    '  - Utilize bio-engineered intermediaries for assessment':
+      '  - Utilizam intermediários bioengenheirados para avaliação',
+    '  - Extract energy from cognitive biological networks':
+      '  - Extraem energia de redes biológicas cognitivas',
+    'The name "Watchers" was chosen by this committee.':
+      'O nome "Observadores" foi escolhido por este comitê.',
+    'It is the only word that fits. They observe.':
+      'É a única palavra que se encaixa. Eles observam.',
+    'They measure. They wait. And then — we believe —':
+      'Eles medem. Eles esperam. E então — acreditamos —',
+    'they harvest. Without ever arriving.':
+      'eles colhem. Sem jamais chegar.',
+    'VI. INSTITUTIONAL POSTURE':
+      'VI. POSTURA INSTITUCIONAL',
+    'Current directive from the Ministry:':
+      'Diretiva atual do Ministério:',
+    '  - Maintain public denial per multinational protocol':
+      '  - Manter negação pública conforme protocolo multinacional',
+    '  - Continue monitoring for activation signals':
+      '  - Continuar monitoramento de sinais de ativação',
+    '  - Coordinate with international partners':
+      '  - Coordenar com parceiros internacionais',
+    '  - Prepare contingency frameworks for 2026 window':
+      '  - Preparar estruturas de contingência para a janela de 2026',
+    'This committee notes, with professional distress,':
+      'Este comitê nota, com angústia profissional,',
+    'that "contingency framework" implies a response':
+      'que "estrutura de contingência" implica uma capacidade',
+    'capability we do not possess. We have documented':
+      'de resposta que não possuímos. Documentamos',
+    'a situation. We have not found a solution.':
+      'uma situação. Não encontramos uma solução.',
+    'God help us all.':
+      'Deus nos ajude a todos.',
+    'END BRIEFING — 4 COPIES AUTHORIZED':
+      'FIM DO BRIEFING — 4 CÓPIAS AUTORIZADAS',
+    'SESSION RESIDUE — AUTOMATED LOG':
+      'RESÍDUO DE SESSÃO — LOG AUTOMATIZADO',
+    'Multiple evidence file accesses detected.':
+      'Múltiplos acessos a arquivos de evidência detectados.',
+    'Review pattern indicates deliberate collection.':
+      'Padrão de revisão indica coleta deliberada.',
+    'Temporary cache contains enough material to':
+      'Cache temporário contém material suficiente para',
+    'support an external leak attempt.':
+      'apoiar uma tentativa de vazamento externo.',
+    'CONCLUSION: Session risk elevated.':
+      'CONCLUSÃO: Risco da sessão elevado.',
+    'NOTICE: Export behavior expected.':
+      'AVISO: Comportamento de exportação esperado.',
+    'ETHICS EXCEPTION — REQUEST 03':
+      'EXCEÇÃO ÉTICA — SOLICITAÇÃO 03',
+    'DATE: 29-JAN-1996':
+      'DATA: 29-JAN-1996',
+    'REQUEST:':
+      'SOLICITAÇÃO:',
+    '  Waiver of standard protocols for specimen handling.':
+      '  Dispensa dos protocolos padrão para manuseio de espécimes.',
+    '  Justification: Unique scientific opportunity.':
+      '  Justificativa: Oportunidade científica única.',
+    'STATUS: APPROVED':
+      'STATUS: APROVADO',
+    '  - All procedures conducted off-site':
+      '  - Todos os procedimentos conduzidos fora das instalações',
+    '  - No institutional records':
+      '  - Sem registros institucionais',
+    '  - Results shared with foreign partners only':
+      '  - Resultados compartilhados apenas com parceiros estrangeiros',
+    'APPROVAL: [SIGNATURE REDACTED]':
+      'APROVAÇÃO: [ASSINATURA REDIGIDA]',
+    'PROGRAM OVERVIEW — BIO-ASSESSMENT INITIATIVE':
+      'VISÃO GERAL DO PROGRAMA — INICIATIVA DE BIO-AVALIAÇÃO',
+    'Following the January 1996 incident, a joint program':
+      'Após o incidente de janeiro de 1996, um programa conjunto',
+    'was established with international partners.':
+      'foi estabelecido com parceiros internacionais.',
+    'OBJECTIVES:':
+      'OBJETIVOS:',
+    '  - Analyze recovered biological material':
+      '  - Analisar material biológico recuperado',
+    '  - Develop detection protocols':
+      '  - Desenvolver protocolos de detecção',
+    '  - Prepare response frameworks':
+      '  - Preparar estruturas de resposta',
+    'PARTICIPANTS:':
+      'PARTICIPANTES:',
+    '  - Brazilian Intelligence (Lead, Local)':
+      '  - Inteligência Brasileira (Líder, Local)',
+    '  - [REDACTED] (Technical Analysis)':
+      '  - [REDIGIDO] (Análise Técnica)',
+    '  - [REDACTED] (Biological Assessment)':
+      '  - [REDIGIDO] (Avaliação Biológica)',
+    'DIVISION OF ASSETS:':
+      'DIVISÃO DE ATIVOS:',
+    '  - Brazil retains Subject ALFA remains':
+      '  - Brasil retém restos do Sujeito ALFA',
+    '  - Foreign partner received Subjects BETA, GAMMA':
+      '  - Parceiro estrangeiro recebeu Sujeitos BETA, GAMA',
+    '  - Material samples divided per Protocol 7-ECHO':
+      '  - Amostras de material divididas conforme Protocolo 7-ECHO',
+    'STATUS: Ongoing.':
+      'STATUS: Em andamento.',
+    'TEMPORAL ANALYSIS — WINDOW ALIGNMENT':
+      'ANÁLISE TEMPORAL — ALINHAMENTO DE JANELA',
+    'METHODOLOGY: Signal Pattern Reconstruction':
+      'METODOLOGIA: Reconstrução de Padrão de Sinal',
+    'AUTHOR: [CLASSIFIED — signals intelligence analyst]':
+      'AUTOR: [CLASSIFICADO — analista de inteligência de sinais]',
+    'Cross-analysis of all recovered psi-comm fragments':
+      'Análise cruzada de todos os fragmentos psi-comm recuperados',
+    'yielded the following recurring temporal references:':
+      'produziu as seguintes referências temporais recorrentes:',
+    'TEMPORAL REFERENCES:':
+      'REFERÊNCIAS TEMPORAIS:',
+    '  - "thirty rotations" (freq: 3)':
+      '  - "trinta rotações" (freq: 3)',
+    '  - "alignment" (freq: 2)':
+      '  - "alinhamento" (freq: 2)',
+    '  - "convergence" (freq: 1)':
+      '  - "convergência" (freq: 1)',
+    '  - "window" (freq: 2)':
+      '  - "janela" (freq: 2)',
+    'ASTRONOMICAL CORRELATION:':
+      'CORRELAÇÃO ASTRONÔMICA:',
+    '  Year 2026 shows:':
+      '  Ano 2026 mostra:',
+    '    - Unusual planetary alignments':
+      '    - Alinhamentos planetários incomuns',
+    '    - Solar activity projections: elevated':
+      '    - Projeções de atividade solar: elevadas',
+    '    - [DATA INSUFFICIENT FOR FURTHER CORRELATION]':
+      '    - [DADOS INSUFICIENTES PARA CORRELAÇÃO ADICIONAL]',
+    'CONFIDENCE LEVEL: MODERATE':
+      'NÍVEL DE CONFIANÇA: MODERADO',
+    '  Establish monitoring protocols for year 2026.':
+      '  Estabelecer protocolos de monitoramento para o ano 2026.',
+    '  Nature of expected event: UNKNOWN.':
+      '  Natureza do evento esperado: DESCONHECIDA.',
+    'PERSONAL NOTE:':
+      'NOTA PESSOAL:',
+    '  The frequency of "thirty rotations" across':
+      '  A frequência de "trinta rotações" entre',
+    '  independent specimen extractions is difficult':
+      '  extrações de espécimes independentes é difícil',
+    '  to dismiss as coincidence. I recommend we take':
+      '  de descartar como coincidência. Recomendo que levemos',
+    '  this reference seriously.':
+      '  esta referência a sério.',
+    'RAW NEURAL CAPTURE — SPECIMEN ALFA':
+      'CAPTURA NEURAL BRUTA — ESPÉCIME ALFA',
+    'EXTRACTION DATE: 21-JAN-1996 04:17':
+      'DATA DE EXTRAÇÃO: 21-JAN-1996 04:17',
+    'DURATION: 0.3 SECONDS (SUBJECTIVE: UNKNOWN)':
+      'DURAÇÃO: 0,3 SEGUNDOS (SUBJETIVA: DESCONHECIDA)',
+    '[non-linear perception detected]':
+      '[percepção não-linear detectada]',
+    '...purpose singular... observe catalog transmit...':
+      '...propósito singular... observar catalogar transmitir...',
+    '...not-self... extension... eyes-that-are-not-eyes...':
+      '...não-eu... extensão... olhos-que-não-são-olhos...',
+    '...this world... dense... loud... LOUD...':
+      '...este mundo... denso... barulhento... BARULHENTO...',
+    '[temporal distortion]':
+      '[distorção temporal]',
+    '...others of this-shape sent to many worlds...':
+      '...outros desta-forma enviados a muitos mundos...',
+    '...most do not return... return not expected...':
+      '...a maioria não retorna... retorno não esperado...',
+    '...we are the cost of knowing...':
+      '...somos o custo de saber...',
+    '[emotional bleed: resignation]':
+      '[sangramento emocional: resignação]',
+    '...they-above wait... they-above measure...':
+      '...eles-acima esperam... eles-acima medem...',
+    '...seven billion... dense... high yield...':
+      '...sete bilhões... denso... alto rendimento...',
+    '...window approaches... thirty rotations...':
+      '...janela se aproxima... trinta rotações...',
+    '[conceptual transmission]':
+      '[transmissão conceitual]',
+    '>>>IMAGE: vast darkness between stars':
+      '>>>IMAGEM: vasta escuridão entre estrelas',
+    '>>>IMAGE: something watching, not moving, never moving':
+      '>>>IMAGEM: algo observando, não se movendo, nunca se movendo',
+    '>>>IMAGE: threads connecting to countless worlds':
+      '>>>IMAGEM: fios conectando a incontáveis mundos',
+    '>>>CONCEPT: harvest is not destruction':
+      '>>>CONCEITO: colheita não é destruição',
+    '>>>CONCEPT: the crop continues living':
+      '>>>CONCEITO: a safra continua vivendo',
+    '[signal degradation]':
+      '[degradação do sinal]',
+    '...we do not arrive... we do not need to...':
+      '...nós não chegamos... não precisamos...',
+    '...you are already... already...':
+      '...vocês já são... já...',
+    'ANALYST NOTE: Subject expired during neural extraction.':
+      'NOTA DO ANALISTA: Sujeito expirou durante extração neural.',
+    '              Complete cognitive download was not possible.':
+      '              Download cognitivo completo não foi possível.',
+    '              What we captured is partial. Pray it was':
+      '              O que capturamos é parcial. Rezem para que tenha sido',
+    '              enough. Pray it was not.':
+      '              suficiente. Rezem para que não tenha sido.',
+    'NEURAL PATTERN PRESERVED FOR REMOTE LINK':
+      'PADRÃO NEURAL PRESERVADO PARA LINK REMOTO',
+    'FILE: NEURAL_DUMP_ALFA.PSI':
+      'ARQUIVO: NEURAL_DUMP_ALFA.PSI',
+    'STATUS: ENCRYPTED':
+      'STATUS: CRIPTOGRAFADO',
+    'CLASSIFICATION: COSMIC - PSI-DIVISION':
+      'CLASSIFICAÇÃO: CÓSMICO - DIVISÃO-PSI',
+    'RECOVERED COPY AVAILABLE':
+      'CÓPIA RECUPERADA DISPONÍVEL',
+    'This file contains raw neural capture data from':
+      'Este arquivo contém dados brutos de captura neural de',
+    'recovered specimen. Authentication required.':
+      'espécime recuperado. Autenticação necessária.',
+    'Use: open neural_dump_alfa.psi':
+      'Use: open neural_dump_alfa.psi',
+    'Subject designation (found in autopsy records):':
+      'Designação do sujeito (encontrada nos registros de autópsia):',
+    'Check autopsy files in quarantine':
+      'Verifique os arquivos de autópsia na quarentena',
+    'REPORT — PSI-COMMUNICATION ANALYSIS':
+      'RELATÓRIO — ANÁLISE DE PSI-COMUNICAÇÃO',
+    'DATE: 15-FEB-1996':
+      'DATA: 15-FEV-1996',
+    'EXECUTIVE SUMMARY:':
+      'RESUMO EXECUTIVO:',
+    'Communication with recovered specimens occurred via':
+      'Comunicação com espécimes recuperados ocorreu via',
+    'non-acoustic, non-electromagnetic means. Personnel':
+      'meios não-acústicos e não-eletromagnéticos. Pessoal',
+    'reported receiving information without sensory input.':
+      'relatou receber informações sem estímulo sensorial.',
+    'CHARACTERISTICS OF PSI-COMM':
+      'CARACTERÍSTICAS DA PSI-COMM',
+    'NOT observed:':
+      'NÃO observado:',
+    '  - Spoken language':
+      '  - Linguagem falada',
+    '  - Written symbols':
+      '  - Símbolos escritos',
+    '  - Gestural communication':
+      '  - Comunicação gestual',
+    'OBSERVED:':
+      'OBSERVADO:',
+    '  - Synchronized neural activity between operator/subject':
+      '  - Atividade neural sincronizada entre operador/sujeito',
+    '  - Intrusive conceptual transmission':
+      '  - Transmissão conceitual intrusiva',
+    '  - Shared imagery and meaning, not symbols':
+      '  - Imagens e significados compartilhados, não símbolos',
+    '  - Emotional state transfer':
+      '  - Transferência de estado emocional',
+    'OPERATOR EFFECTS':
+      'EFEITOS NO OPERADOR',
+    'Personnel exposed to psi-comm report:':
+      'Pessoal exposto à psi-comm reporta:',
+    '  - Loss of temporal reference (hours feel like seconds)':
+      '  - Perda de referência temporal (horas parecem segundos)',
+    '  - Intrusive thoughts persisting for days':
+      '  - Pensamentos intrusivos persistindo por dias',
+    '  - Emotional "bleed-through" (fear, resignation, purpose)':
+      '  - "Sangramento" emocional (medo, resignação, propósito)',
+    '  - Understanding concepts without being able to explain':
+      '  - Compreender conceitos sem ser capaz de explicar',
+    'Lead Operator (Psi Division):':
+      'Operador Líder (Divisão Psi):',
+    '"I understood what it was showing me. I cannot tell you':
+      '"Eu entendi o que ele estava me mostrando. Não posso dizer',
+    ' what I understood. The knowing does not translate."':
+      ' o que entendi. O conhecimento não se traduz."',
+    'CRITICAL FINDING':
+      'DESCOBERTA CRÍTICA',
+    'The entities do not communicate to exchange information.':
+      'As entidades não se comunicam para trocar informações.',
+    'They transmit. They do not expect response.':
+      'Eles transmitem. Não esperam resposta.',
+    'They were never designed for dialogue.':
+      'Nunca foram projetados para diálogo.',
+    'LINK ACCESS PROTOCOL':
+      'PROTOCOLO DE ACESSO AO LINK',
+    'Neural pattern preservation allows post-mortem link.':
+      'Preservação do padrão neural permite link post-mortem.',
+    'Authentication phrase derived from psi-comm transmission.':
+      'Frase de autenticação derivada de transmissão psi-comm.',
+    '  > link':
+      '  > link',
+    '  > Enter phrase: ___________':
+      '  > Digite a frase: ___________',
+    'Access phrase referenced in neural dump under [conceptual':
+      'Frase de acesso referenciada no dump neural sob seção [transmissão',
+    'transmission] section — the primary directive.':
+      'conceitual] — a diretiva primária.',
+    'ANALYSIS — SPECIMEN FUNCTION AND PURPOSE':
+      'ANÁLISE — FUNÇÃO E PROPÓSITO DO ESPÉCIME',
+    'AUTHOR: [CLASSIFIED — senior biologist, assessment team]':
+      'AUTOR: [CLASSIFICADO — biólogo sênior, equipe de avaliação]',
+    'DATE: 22-FEB-1996':
+      'DATA: 22-FEV-1996',
+    'CONCLUSION: The recovered entities are tools, not envoys.':
+      'CONCLUSÃO: As entidades recuperadas são ferramentas, não enviados.',
+    'ANATOMICAL EVIDENCE':
+      'EVIDÊNCIA ANATÔMICA',
+    'Specimens show signs of deliberate engineering:':
+      'Espécimes mostram sinais de engenharia deliberada:',
+    '  SPECIALIZED:':
+      '  ESPECIALIZADO:',
+    '    - Sensory organs optimized for observation':
+      '    - Órgãos sensoriais otimizados para observação',
+    '    - Neural density far exceeds body mass requirement':
+      '    - Densidade neural excede em muito a necessidade de massa corporal',
+    '    - Simplified digestive system (mission duration limited)':
+      '    - Sistema digestivo simplificado (duração da missão limitada)',
+    '  FRAGILE:':
+      '  FRÁGIL:',
+    '    - Poorly suited for Earth gravity (joint stress)':
+      '    - Pouco adequado para gravidade terrestre (estresse articular)',
+    '    - Minimal immune response (not built to survive)':
+      '    - Resposta imunológica mínima (não construído para sobreviver)',
+    '    - No reproductive capability whatsoever':
+      '    - Sem capacidade reprodutiva alguma',
+    '  LIMITED:':
+      '  LIMITADO:',
+    '    - No evidence of autonomous decision-making centers':
+      '    - Sem evidência de centros autônomos de tomada de decisão',
+    '    - Behavior patterns suggest programmed routines':
+      '    - Padrões de comportamento sugerem rotinas programadas',
+    '    - Mission completion prioritized over self-preservation':
+      '    - Conclusão da missão priorizada sobre autopreservação',
+    'INTERPRETATION':
+      'INTERPRETAÇÃO',
+    'These are reconnaissance units. Purpose-built.':
+      'Estas são unidades de reconhecimento. Construídas sob medida.',
+    'They were never meant to survive this assignment.':
+      'Nunca foram feitos para sobreviver a esta missão.',
+    'They were never meant to return.':
+      'Nunca foram feitos para retornar.',
+    'They were never meant to represent their creators.':
+      'Nunca foram feitos para representar seus criadores.',
+    'In my professional assessment, they are biological':
+      'Na minha avaliação profissional, eles são sensores',
+    'sensors. Nothing more.':
+      'biológicos. Nada mais.',
+    'WHAT THIS IMPLIES':
+      'O QUE ISTO IMPLICA',
+    'If Earth received scouts, it passed initial screening.':
+      'Se a Terra recebeu batedores, passou na triagem inicial.',
+    'If scouts transmitted successfully, data was received.':
+      'Se os batedores transmitiram com sucesso, os dados foram recebidos.',
+    'I do not enjoy writing this next sentence.':
+      'Não tenho prazer em escrever a próxima frase.',
+    'If data was received, then we have been catalogued.':
+      'Se os dados foram recebidos, então fomos catalogados.',
+    'Someone — something — now knows we are here,':
+      'Alguém — algo — agora sabe que estamos aqui,',
+    'what we are, and what we are worth.':
+      'o que somos e quanto valemos.',
+    'Year of projected transition window:':
+      'Ano da janela de transição projetada:',
+    'Referenced in multiple classified documents':
+      'Referenciado em múltiplos documentos classificados',
+    'INTERCEPTED SIGNAL — PRIORITY ULTRA':
+      'SINAL INTERCEPTADO — PRIORIDADE ULTRA',
+    'INTERCEPT DATE: 03-MAR-1996':
+      'DATA DA INTERCEPTAÇÃO: 03-MAR-1996',
+    'ORIGIN: EXTRASOLAR':
+      'ORIGEM: EXTRASSOLAR',
+    'CLASSIFICATION: This transmission was detected 6 weeks':
+      'CLASSIFICAÇÃO: Esta transmissão foi detectada 6 semanas',
+    'after the January incident. Source triangulation indicates':
+      'após o incidente de janeiro. Triangulação da fonte indica',
+    'origin beyond solar system boundary.':
+      'origem além do limite do sistema solar.',
+    'TRANSMISSION CONTENT (CONCEPTUAL TRANSLATION)':
+      'CONTEÚDO DA TRANSMISSÃO (TRADUÇÃO CONCEITUAL)',
+    '>>RECEIPT: Scout telemetry confirmed':
+      '>>RECIBO: Telemetria do batedor confirmada',
+    '>>STATUS: Target world catalogued':
+      '>>STATUS: Mundo alvo catalogado',
+    '>>ASSESSMENT: High cognitive density':
+      '>>AVALIAÇÃO: Alta densidade cognitiva',
+    '>>ASSESSMENT: Energy yield projection - OPTIMAL':
+      '>>AVALIAÇÃO: Projeção de rendimento energético - ÓTIMO',
+    '>>ASSESSMENT: Resistance threshold - NEGLIGIBLE':
+      '>>AVALIAÇÃO: Limiar de resistência - DESPREZÍVEL',
+    '>>DECISION: Proceed to Phase 2':
+      '>>DECISÃO: Prosseguir para Fase 2',
+    '>>DEPLOYMENT: Second-generation integration assets':
+      '>>IMPLANTAÇÃO: Ativos de integração de segunda geração',
+    '>>TIMELINE: Alignment window (local: 2026)':
+      '>>LINHA DO TEMPO: Janela de alinhamento (local: 2026)',
+    '>>METHOD: Indirect biological seeding':
+      '>>MÉTODO: Semeadura biológica indireta',
+    '>>NOTE: Arrival unnecessary':
+      '>>NOTA: Chegada desnecessária',
+    '>>NOTE: Local biology will serve as intermediary':
+      '>>NOTA: Biologia local servirá como intermediária',
+    '>>NOTE: Extraction begins upon cognitive threshold':
+      '>>NOTA: Extração começa no limiar cognitivo',
+    '  This transmission confirms what we feared most.':
+      '  Esta transmissão confirma o que mais temíamos.',
+    '  The scouts completed their mission.':
+      '  Os batedores completaram sua missão.',
+    '  A response has been sent.':
+      '  Uma resposta foi enviada.',
+    '  But "response" is the wrong word.':
+      '  Mas "resposta" é a palavra errada.',
+    '  They are not coming.':
+      '  Eles não estão vindo.',
+    '  Something else is.':
+      '  Outra coisa está.',
+    '  I have forwarded this to the Ministry.':
+      '  Encaminhei isto ao Ministério.',
+    '  I do not expect a reply.':
+      '  Não espero uma resposta.',
+    '  [SEE ATTACHED SIGNAL VISUALIZATION]':
+      '  [VEJA VISUALIZAÇÃO DO SINAL EM ANEXO]',
+    'FILE: SECOND_DEPLOYMENT.SIG':
+      'ARQUIVO: SECOND_DEPLOYMENT.SIG',
+    'CLASSIFICATION: ULTRA — SIGNALS DIVISION':
+      'CLASSIFICAÇÃO: ULTRA — DIVISÃO DE SINAIS',
+    'This file contains intercepted signal data.':
+      'Este arquivo contém dados de sinal interceptado.',
+    'Authentication required for access.':
+      'Autenticação necessária para acesso.',
+    'Use: open second_deployment.sig':
+      'Use: open second_deployment.sig',
+    'Signal analysis showing second deployment trajectory':
+      'Análise de sinal mostrando trajetória de segunda implantação',
+    'MEMORANDUM — CLARIFICATION OF 2026 REFERENCE':
+      'MEMORANDO — ESCLARECIMENTO DA REFERÊNCIA A 2026',
+    'AUTHOR: [CLASSIFIED — senior intelligence officer]':
+      'AUTOR: [CLASSIFICADO — oficial de inteligência sênior]',
+    'DATE: 01-APR-1996':
+      'DATA: 01-ABR-1996',
+    'TO: ALL CLEARED PERSONNEL':
+      'PARA: TODO PESSOAL AUTORIZADO',
+    'I write to correct a dangerous misunderstanding that':
+      'Escrevo para corrigir um mal-entendido perigoso que',
+    'has been circulating within this directorate.':
+      'tem circulado dentro desta diretoria.',
+    'WHAT 2026 IS NOT':
+      'O QUE 2026 NÃO É',
+    'Several colleagues have interpreted the recovered':
+      'Vários colegas interpretaram as transmissões',
+    'transmissions as predicting an invasion in 2026.':
+      'recuperadas como previsão de uma invasão em 2026.',
+    'This was our first reading. It was wrong.':
+      'Esta foi nossa primeira leitura. Estava errada.',
+    '  2026 is NOT an invasion date.':
+      '  2026 NÃO é uma data de invasão.',
+    '  It is NOT a fleet arrival.':
+      '  NÃO é uma chegada de frota.',
+    '  It is NOT first contact.':
+      '  NÃO é primeiro contato.',
+    '  It is NOT a single event.':
+      '  NÃO é um evento único.',
+    'Colleagues who are sleeping better because they':
+      'Colegas que estão dormindo melhor porque',
+    'believe we have thirty years to prepare — you':
+      'acreditam que temos trinta anos para nos preparar — vocês',
+    'misunderstand the nature of what we are facing.':
+      'não entendem a natureza do que enfrentamos.',
+    'WHAT 2026 IS':
+      'O QUE 2026 É',
+    '  A TRANSITION WINDOW.':
+      '  UMA JANELA DE TRANSIÇÃO.',
+    '  Based on cross-analysis of all recovered fragments:':
+      '  Com base na análise cruzada de todos os fragmentos recuperados:',
+    '    - End of reconnaissance phase':
+      '    - Fim da fase de reconhecimento',
+    '    - Activation of indirect systems':
+      '    - Ativação de sistemas indiretos',
+    '    - Point beyond which intervention becomes impossible':
+      '    - Ponto além do qual a intervenção se torna impossível',
+    'PLAIN LANGUAGE':
+      'LINGUAGEM SIMPLES',
+    '  Nothing arrives.':
+      '  Nada chega.',
+    '  Something changes.':
+      '  Algo muda.',
+    '  The change may already be in motion. We lack the':
+      '  A mudança pode já estar em andamento. Falta-nos a',
+    '  instrumentation to detect it. 2026 is simply when':
+      '  instrumentação para detectá-la. 2026 é simplesmente quando',
+    '  we believe it becomes irreversible.':
+      '  acreditamos que se torna irreversível.',
+    '  I do not write this to cause panic. I write it':
+      '  Não escrevo isto para causar pânico. Escrevo',
+    '  because our contingency planning assumes an enemy':
+      '  porque nosso planejamento de contingência assume um inimigo',
+    '  who will show up. This enemy may never show up.':
+      '  que aparecerá. Este inimigo pode nunca aparecer.',
+    '  That is precisely the problem.':
+      '  Esse é precisamente o problema.',
+    'STRATEGIC IMPLICATION':
+      'IMPLICAÇÃO ESTRATÉGICA',
+    '  There is no defense protocol for 2026.':
+      '  Não há protocolo de defesa para 2026.',
+    '  There is no countermeasure to design.':
+      '  Não há contramedida a ser projetada.',
+    '  There is no adversary to engage.':
+      '  Não há adversário a ser enfrentado.',
+    '  We are documenting a process that does not require':
+      '  Estamos documentando um processo que não requer',
+    '  our participation or our consent.':
+      '  nossa participação ou nosso consentimento.',
+    '  Ministry has been informed. Their response was to':
+      '  Ministério foi informado. A resposta deles foi',
+    '  request this memorandum be reclassified to RED.':
+      '  solicitar que este memorando seja reclassificado para VERMELHO.',
+    '  That was their only response.':
+      '  Essa foi a única resposta deles.',
+    'INTERNAL ANALYSIS — ENERGY EXTRACTION HYPOTHESIS':
+      'ANÁLISE INTERNA — HIPÓTESE DE EXTRAÇÃO DE ENERGIA',
+    'CLASSIFICATION: RED — SPECULATIVE':
+      'CLASSIFICAÇÃO: VERMELHO — ESPECULATIVO',
+    'AUTHOR: [CLASSIFIED — senior analyst, signals division]':
+      'AUTOR: [CLASSIFICADO — analista sênior, divisão de sinais]',
+    'DATE: 18-MAR-1996':
+      'DATA: 18-MAR-1996',
+    'TO: DIRECTOR — ASSESSMENTS':
+      'PARA: DIRETOR — AVALIAÇÕES',
+    'Sir,':
+      'Senhor,',
+    'I submit this paper with reluctance. Its conclusions':
+      'Submeto este documento com relutância. Suas conclusões',
+    'are disturbing and I am aware they sound irrational.':
+      'são perturbadoras e estou ciente de que soam irracionais.',
+    'But the data from the recovered neural patterns does':
+      'Mas os dados dos padrões neurais recuperados não',
+    'not permit a gentler interpretation.':
+      'permitem uma interpretação mais branda.',
+    'RECOVERED FRAGMENTS — SCOUT NEURAL ANALYSIS':
+      'FRAGMENTOS RECUPERADOS — ANÁLISE NEURAL DOS BATEDORES',
+    'Two phrases recur across all three specimen extractions:':
+      'Duas frases se repetem em todas as três extrações de espécimes:',
+    '  Fragment 1: "higher cognition increases yield"':
+      '  Fragmento 1: "cognição mais alta aumenta o rendimento"',
+    '  Fragment 2: reference to population density — billions':
+      '  Fragmento 2: referência à densidade populacional — bilhões',
+    'Our linguist insists these are not the scouts\' thoughts.':
+      'Nosso linguista insiste que estes não são os pensamentos dos batedores.',
+    'They are instructions. Received. Embedded. Like firmware.':
+      'São instruções. Recebidas. Incorporadas. Como firmware.',
+    'ANALYST INTERPRETATION':
+      'INTERPRETAÇÃO DO ANALISTA',
+    'If the fragments are taken at face value, the picture':
+      'Se os fragmentos forem tomados ao pé da letra, o quadro',
+    'that emerges is this:':
+      'que emerge é este:',
+    '  - The scouts were measuring cognitive output.':
+      '  - Os batedores estavam medindo produção cognitiva.',
+    '  - Intelligence is the resource being assessed.':
+      '  - Inteligência é o recurso sendo avaliado.',
+    '  - Population size determines extraction viability.':
+      '  - Tamanho da população determina viabilidade de extração.',
+    'I am a signals analyst, not a philosopher.':
+      'Sou analista de sinais, não filósofo.',
+    'But I believe they were calculating yield.':
+      'Mas acredito que estavam calculando rendimento.',
+    'Of us.':
+      'De nós.',
+    'THE QUESTION OF PRESERVATION':
+      'A QUESTÃO DA PRESERVAÇÃO',
+    'The neural data contains no references to destruction.':
+      'Os dados neurais não contêm referências a destruição.',
+    'None. Not in any fragment.':
+      'Nenhuma. Em nenhum fragmento.',
+    'This troubled me until I understood why.':
+      'Isto me perturbou até eu entender por quê.',
+    'If the resource is cognitive activity, then killing':
+      'Se o recurso é atividade cognitiva, então matar',
+    'the source would terminate supply. The optimal strategy':
+      'a fonte encerraria o suprimento. A estratégia ótima',
+    'is preservation. The population must continue to live,':
+      'é preservação. A população deve continuar vivendo,',
+    'think, create. The extraction must be invisible.':
+      'pensando, criando. A extração deve ser invisível.',
+    'Deus me livre — I wrote that sentence and my hands':
+      'Deus me livre — escrevi essa frase e minhas mãos',
+    'will not stop shaking.':
+      'não param de tremer.',
+    'WHAT WE DO NOT KNOW':
+      'O QUE NÃO SABEMOS',
+    '  - The physical mechanism of extraction':
+      '  - O mecanismo físico de extração',
+    '  - Whether extraction has already begun':
+      '  - Se a extração já começou',
+    '  - Whether the process can be detected or measured':
+      '  - Se o processo pode ser detectado ou medido',
+    '  - Whether resistance is even theoretically possible':
+      '  - Se a resistência é sequer teoricamente possível',
+    'I request reassignment after filing this report.':
+      'Solicito remanejamento após protocolar este relatório.',
+    'Energy Extraction Model - Theoretical visualization':
+      'Modelo de Extração de Energia - Visualização teórica',
+    'UTILITY — DATA RECONSTRUCTION TOOL':
+      'UTILITÁRIO — FERRAMENTA DE RECONSTRUÇÃO DE DADOS',
+    'VERSION: 1.7 (LEGACY)':
+      'VERSÃO: 1.7 (LEGADO)',
+    'This utility can reconstruct fragmented data segments.':
+      'Este utilitário pode reconstruir segmentos de dados fragmentados.',
+    '  script <script_content>':
+      '  script <conteúdo_do_script>',
+    'REQUIRED SCRIPT FORMAT:':
+      'FORMATO DE SCRIPT NECESSÁRIO:',
+    '  A valid reconstruction script must contain:':
+      '  Um script de reconstrução válido deve conter:',
+    '    - INIT command':
+      '    - Comando INIT',
+    '    - TARGET specification (valid archive path)':
+      '    - Especificação TARGET (caminho de arquivo válido)',
+    '    - EXEC command':
+      '    - Comando EXEC',
+    'EXAMPLE:':
+      'EXEMPLO:',
+    '  script INIT;TARGET=/admin/fragment.dat;EXEC':
+      '  script INIT;TARGET=/admin/fragment.dat;EXEC',
+    'AVAILABLE TARGETS':
+      'ALVOS DISPONÍVEIS',
+    '  /admin/neural_fragment.dat    [FRAGMENTED]':
+      '  /admin/neural_fragment.dat    [FRAGMENTADO]',
+    '  /comms/psi_residue.log        [CORRUPTED]':
+      '  /comms/psi_residue.log        [CORROMPIDO]',
+    'NOTE: Successful reconstruction may reveal hidden content.':
+      'NOTA: Reconstrução bem-sucedida pode revelar conteúdo oculto.',
+    'OPERATIONAL SECURITY MEMORANDUM':
+      'MEMORANDO DE SEGURANÇA OPERACIONAL',
+    'DOCUMENT: OSM-1993-X':
+      'DOCUMENTO: OSM-1993-X',
+    'TO: All Field Personnel':
+      'PARA: Todo Pessoal de Campo',
+    'FROM: The Director, Special Projects':
+      'DE: O Diretor, Projetos Especiais',
+    'DATE: 13-OCT-1993':
+      'DATA: 13-OUT-1993',
+    'RE: Information Compartmentalization':
+      'REF: Compartimentação de Informações',
+    'In light of recent security concerns, I am issuing the':
+      'Em vista de preocupações recentes de segurança, estou emitindo a',
+    'following directive effective immediately:':
+      'seguinte diretiva com efeito imediato:',
+    '  SHARE NOTHING BEYOND YOUR SCOPE.':
+      '  NÃO COMPARTILHE NADA ALÉM DO SEU ESCOPO.',
+    'Information regarding ongoing projects is to be shared':
+      'Informações sobre projetos em andamento devem ser compartilhadas',
+    'on a strict need-to-know basis. Even colleagues with':
+      'estritamente com base em necessidade de saber. Mesmo colegas com',
+    'appropriate clearance should not receive details beyond':
+      'autorização apropriada não devem receber detalhes além de',
+    'their assigned scope.':
+      'seu escopo designado.',
+    'Full operational awareness is distributed across':
+      'Consciência operacional completa está distribuída entre',
+    'departments and archives. This is by design.':
+      'departamentos e arquivos. Isto é por design.',
+    'Those who require broader context must submit':
+      'Aqueles que necessitam de contexto mais amplo devem submeter',
+    'Form OSM-7 through their division chief.':
+      'Formulário OSM-7 através de seu chefe de divisão.',
+    'ADDENDUM (handwritten):':
+      'ADENDO (escrito à mão):',
+    '  "Quem sabe demais, carrega peso demais."':
+      '  "Quem sabe demais, carrega peso demais."',
+    '  (Who knows too much carries too much weight.)':
+      '  (Quem sabe demais, carrega peso demais.)',
+    'FIELD REPORT — INITIAL CONTACT':
+      'RELATÓRIO DE CAMPO — CONTATO INICIAL',
+    'LOCATION: Jardim Andere, Varginha, Minas Gerais':
+      'LOCAL: Jardim Andere, Varginha, Minas Gerais',
+    'DATE: 20-JAN-1996, 15:30h (local)':
+      'DATA: 20-JAN-1996, 15:30h (local)',
+    'WITNESSES:':
+      'TESTEMUNHAS:',
+    '  Three female civilians, ages 14-22.':
+      '  Três civis do sexo feminino, idades 14-22.',
+    '  Names withheld per Protocol 7.':
+      '  Nomes retidos conforme Protocolo 7.',
+    'LOCATION DETAILS:':
+      'DETALHES DO LOCAL:',
+    '  Vacant lot between Rua Suécia and Rua Benevenuto Brás.':
+      '  Terreno baldio entre Rua Suécia e Rua Benevenuto Brás.',
+    '  Area described as overgrown, partially obscured by':
+      '  Área descrita como coberta de mato, parcialmente obstruída por',
+    '  adjacent construction materials.':
+      '  materiais de construção adjacentes.',
+    'WITNESS ACCOUNT (SUMMARY):':
+      'RELATO DA TESTEMUNHA (RESUMO):',
+    '  Subjects observed crouching figure approximately 1.6m':
+      '  Sujeitos observaram figura agachada de aproximadamente 1,6m',
+    '  in height. Dark brown skin described as "oily." Three':
+      '  de altura. Pele marrom escura descrita como "oleosa." Três',
+    '  prominent ridges on cranium. Large red eyes. Strong':
+      '  sulcos proeminentes no crânio. Olhos grandes e vermelhos. Forte',
+    '  ammonia-like odor noted.':
+      '  odor semelhante a amônia notado.',
+    '  Subjects fled scene. One reported temporary paralysis.':
+      '  Sujeitos fugiram do local. Um relatou paralisia temporária.',
+    '  Another claimed "feeling its thoughts" — see psi/.':
+      '  Outro alegou "sentir seus pensamentos" — ver psi/.',
+    'TIMELINE:':
+      'LINHA DO TEMPO:',
+    '  13-JAN-1996: NORAD detects anomaly over Minas Gerais':
+      '  13-JAN-1996: NORAD detecta anomalia sobre Minas Gerais',
+    '  19-JAN-1996: Farmers report "falling star" near Varginha':
+      '  19-JAN-1996: Fazendeiros reportam "estrela cadente" perto de Varginha',
+    '  20-JAN-1996: 03:30h — Fire dept. receives calls re: "creature"':
+      '  20-JAN-1996: 03:30h — Corpo de bombeiros recebe ligações sobre "criatura"',
+    '  20-JAN-1996: 08:00h — Military cordons established':
+      '  20-JAN-1996: 08:00h — Cordões militares estabelecidos',
+    '  20-JAN-1996: 15:30h — Jardim Andere sighting (this report)':
+      '  20-JAN-1996: 15:30h — Avistamento no Jardim Andere (este relatório)',
+    '  20-JAN-1996: 22:00h — Hospital São Sebastião incident':
+      '  20-JAN-1996: 22:00h — Incidente no Hospital São Sebastião',
+    'SUBSEQUENT LOCATIONS:':
+      'LOCAIS SUBSEQUENTES:',
+    '  - Escola de Sargentos das Armas (ESA)':
+      '  - Escola de Sargentos das Armas (ESA)',
+    '  - Hospital Humanitas':
+      '  - Hospital Humanitas',
+    '  - Cemitério municipal (alleged)':
+      '  - Cemitério municipal (alegado)',
+    '  Jardim Andere remains primary public touchpoint.':
+      '  Jardim Andere permanece como ponto de contato público primário.',
+    '  Subsequent containment sites not disclosed.':
+      '  Locais de contenção subsequentes não divulgados.',
+    'INTERNAL MEMORANDUM — FACILITIES':
+      'MEMORANDO INTERNO — INSTALAÇÕES',
+    'DATE: 19-JUL-1994':
+      'DATA: 19-JUL-1994',
+    'RE: World Cup Celebration Guidelines':
+      'REF: Diretrizes de Comemoração da Copa do Mundo',
+    'Following Brazil\'s victory in the Copa do Mundo 1994,':
+      'Após a vitória do Brasil na Copa do Mundo 1994,',
+    'the following guidelines apply to workplace celebrations:':
+      'as seguintes diretrizes se aplicam às comemorações no local de trabalho:',
+    '  1. Television viewing permitted in break areas ONLY.':
+      '  1. Visualização de televisão permitida SOMENTE em áreas de descanso.',
+    '  2. Caipirinha service restricted to after-hours events.':
+      '  2. Serviço de caipirinha restrito a eventos fora do horário.',
+    '  3. Samba music volume must not exceed 70dB.':
+      '  3. Volume de música samba não deve exceder 70dB.',
+    '  4. The phrase "É TETRA!" may be exclaimed no more than':
+      '  4. A frase "É TETRA!" pode ser exclamada no máximo',
+    '     three (3) times per hour during work hours.':
+      '     três (3) vezes por hora durante o horário de trabalho.',
+    'APPROVED DECORATIONS:':
+      'DECORAÇÕES APROVADAS:',
+    '  - Brazilian flag (regulation size only)':
+      '  - Bandeira brasileira (tamanho regulamentar apenas)',
+    '  - Team photographs (common areas only)':
+      '  - Fotografias do time (áreas comuns apenas)',
+    '  - "BRASIL CAMPEÃO" banners (break room only)':
+      '  - Faixas "BRASIL CAMPEÃO" (sala de descanso apenas)',
+    'PROHIBITED:':
+      'PROIBIDO:',
+    '  - Confetti (fire hazard)':
+      '  - Confete (risco de incêndio)',
+    '  - Fireworks (obvious reasons)':
+      '  - Fogos de artifício (razões óbvias)',
+    '  - Vuvuzelas (noise complaints)':
+      '  - Vuvuzelas (reclamações de ruído)',
+    'NOTE FROM DIRECTOR:':
+      'NOTA DO DIRETOR:',
+    '  "Parabéns a todos. But remember — we have work to do.':
+      '  "Parabéns a todos. Mas lembrem-se — temos trabalho a fazer.',
+    '   The universe does not pause for futebol."':
+      '   O universo não para para o futebol."',
+    '  "Nem tudo é festa. Voltem ao trabalho segunda-feira."':
+      '  "Nem tudo é festa. Voltem ao trabalho segunda-feira."',
+    '  (Not everything is a party. Return to work Monday.)':
+      '  (Nem tudo é festa. Voltem ao trabalho segunda-feira.)',
+    'MODEM CONNECTION LOG — EXTERNAL UPLINK':
+      'LOG DE CONEXÃO MODEM — UPLINK EXTERNO',
+    'DEVICE: US Robotics Sportster 28.8':
+      'DISPOSITIVO: US Robotics Sportster 28.8',
+    'DATE: 18-JAN-1996':
+      'DATA: 18-JAN-1996',
+    'SESSION ACTIVITY':
+      'ATIVIDADE DA SESSÃO',
+    'IRC TRANSCRIPT (PARTIAL)':
+      'TRANSCRIÇÃO IRC (PARCIAL)',
+    'BILLING: 16 minutes @ R$0.85/min = R$13.60':
+      'FATURAMENTO: 16 minutos @ R$0,85/min = R$13,60',
+    'RECOVERED FILE — USER DIRECTORY BACKUP':
+      'ARQUIVO RECUPERADO — BACKUP DO DIRETÓRIO DO USUÁRIO',
+    'OWNER: [REDACTED]':
+      'PROPRIETÁRIO: [REDIGIDO]',
+    '  This .sig brought to you by:':
+      '  Esta .sig foi trazida a você por:',
+    '  - Too much coffee':
+      '  - Muito café',
+    '  - Not enough sleep':
+      '  - Pouco sono',
+    '  - Saudade':
+      '  - Saudade',
+    '  Best viewed in Netscape Navigator 2.0':
+      '  Melhor visualizado no Netscape Navigator 2.0',
+    'CAFETERIA MENU — WEEK 03 (15-19 JAN 1996)':
+      'CARDÁPIO DO REFEITÓRIO — SEMANA 03 (15-19 JAN 1996)',
+    '  Feijoada completa':
+      '  Feijoada completa',
+    '  Arroz branco, couve refogada, laranja':
+      '  Arroz branco, couve refogada, laranja',
+    '  Farofa de bacon':
+      '  Farofa de bacon',
+    '  Frango à passarinho':
+      '  Frango à passarinho',
+    '  Purê de batata, salada mista':
+      '  Purê de batata, salada mista',
+    '  Peixe grelhado':
+      '  Peixe grelhado',
+    '  Arroz, feijão tropeiro':
+      '  Arroz, feijão tropeiro',
+    '  Vinagrete':
+      '  Vinagrete',
+    '  Carne assada':
+      '  Carne assada',
+    '  Macarrão ao sugo':
+      '  Macarrão ao sugo',
+    '  Salada de tomate':
+      '  Salada de tomate',
+    '  *** MENU CANCELLED ***':
+      '  *** CARDÁPIO CANCELADO ***',
+    '  [INCIDENT RESPONSE ACTIVE]':
+      '  [RESPOSTA A INCIDENTE ATIVA]',
+    '  Emergency rations distributed':
+      '  Rações de emergência distribuídas',
+    'NOTE: Friday\'s menu cancelled due to unscheduled':
+      'NOTA: Cardápio de sexta-feira cancelado devido a',
+    'facility lockdown. See INCIDENT REPORT 1996-01-VG.':
+      'lockdown não programado da instalação. Ver RELATÓRIO DE INCIDENTE 1996-01-VG.',
+    'Cafeteria staff reassigned to support operations.':
+      'Equipe do refeitório remanejada para apoiar operações.',
+    'Vending machines remain operational.':
+      'Máquinas de venda automática permanecem operacionais.',
+    'Dona Maria apologizes for the inconvenience.':
+      'Dona Maria pede desculpas pelo inconveniente.',
+    '# EMERGENCY BACKUP SCRIPT':
+      '# SCRIPT DE BACKUP DE EMERGÊNCIA',
+    '# This script saves the collected evidence to external media':
+      '# Este script salva as evidências coletadas em mídia externa',
+    '# before the connection is cut.':
+      '# antes que a conexão seja cortada.',
+    '# TRACE PURGE UTIL — LEGACY NODE':
+      '# UTILITÁRIO DE PURGA DE RASTRO — NÓ LEGADO',
+    '# OWNER: SYSADMIN (OBSOLETE)':
+      '# PROPRIETÁRIO: SYSADMIN (OBSOLETO)',
+    '# This utility clears trace artifacts from volatile buffers.':
+      '# Este utilitário limpa artefatos de rastreamento de buffers voláteis.',
+    '# Use only during active trace windows.':
+      '# Use apenas durante janelas de rastreamento ativas.',
+    'SECURITY LOG — TRACE PURGE EVENT':
+      'LOG DE SEGURANÇA — EVENTO DE PURGA DE RASTRO',
+    'Observation:':
+      'Observação:',
+    '  Legacy purge utility executed during active trace.':
+      '  Utilitário de purga legado executado durante rastreamento ativo.',
+    '  Buffer integrity reset; trace window re-opened.':
+      '  Integridade do buffer reiniciada; janela de rastreamento reaberta.',
+    '  Operator demonstrated knowledge of internal tooling.':
+      '  Operador demonstrou conhecimento de ferramentas internas.',
+    '  Session classified as HIGH PRIORITY.':
+      '  Sessão classificada como ALTA PRIORIDADE.',
+    '  Maintain surveillance. Do not terminate.':
+      '  Manter vigilância. Não encerrar.',
+    'INTEGRITY REGISTRY — EVIDENCE HASHES':
+      'REGISTRO DE INTEGRIDADE — HASHES DE EVIDÊNCIA',
+    'DATE: 27-JAN-1996':
+      'DATA: 27-JAN-1996',
+    'Purpose:':
+      'Propósito:',
+    '  Validate evidence artifacts against tampering.':
+      '  Validar artefatos de evidência contra adulteração.',
+    'HASH SET:':
+      'CONJUNTO DE HASHES:',
+    '  Hash mismatch indicates altered narrative.':
+      '  Incompatibilidade de hash indica narrativa alterada.',
+    '  Preserve originals for external verification.':
+      '  Preservar originais para verificação externa.',
+    'RESIDUAL SESSION CAPTURE — GHOST FRAME':
+      'CAPTURA DE SESSÃO RESIDUAL — QUADRO FANTASMA',
+    'TIMESTAMP: [REDACTED]':
+      'TIMESTAMP: [REDIGIDO]',
+    '[PARTIAL COMMAND TRACE]':
+      '[RASTREAMENTO PARCIAL DE COMANDOS]',
+    '  Prior operator achieved coherent linkage before purge.':
+      '  Operador anterior alcançou ligação coerente antes da purga.',
+    '  Evidence trails remain viable. Do not repeat mistakes.':
+      '  Trilhas de evidência permanecem viáveis. Não repita erros.',
+    'REDACTION OVERRIDE CARD — INDEX 3':
+      'CARTÃO DE SUBSTITUIÇÃO DE REDAÇÃO — ÍNDICE 3',
+    'CLEARANCE STRING:':
+      'SEQUÊNCIA DE AUTORIZAÇÃO:',
+    '  "PHASE TWO IS ALREADY UNDERWAY"':
+      '  "A FASE DOIS JÁ ESTÁ EM ANDAMENTO"',
+    '  Verify against redacted memos for completion checks.':
+      '  Verificar contra memorandos redigidos para checagens de conclusão.',
+    'ADMIN MEMO — REDACTION PATCH':
+      'MEMORANDO ADMIN — CORREÇÃO DE REDAÇÃO',
+    'DATE: 19-JAN-1996':
+      'DATA: 19-JAN-1996',
+    'CORRECTED LINE:':
+      'LINHA CORRIGIDA:',
+    '  Do not store the full line in unsecured systems.':
+      '  Não armazene a linha completa em sistemas não seguros.',
+    'AUDIO TRANSCRIPT — SECURITY HOTLINE':
+      'TRANSCRIÇÃO DE ÁUDIO — LINHA DIRETA DE SEGURANÇA',
+    'DATE: 21-JAN-1996 02:12':
+      'DATA: 21-JAN-1996 02:12',
+    'CALLER: "Keep it on tape. They never write this down."':
+      'CHAMADOR: "Mantenha na fita. Eles nunca escrevem isso."',
+    'VOICE: Male, approx. 40s. Distressed.':
+      'VOZ: Masculina, aprox. 40 anos. Angustiado.',
+    '[TRANSCRIPT]':
+      '[TRANSCRIÇÃO]',
+    '  "...they told us to stage the perimeter breach."':
+      '  "...eles nos disseram para encenar a violação do perímetro."',
+    '  "...they wanted the story to leak, but not cleanly."':
+      '  "...eles queriam que a história vazasse, mas não de forma limpa."',
+    '  "...make the evidence noisy, not gone."':
+      '  "...tornar a evidência ruidosa, não desaparecida."',
+    '  Suggests intentional contamination of public record.':
+      '  Sugere contaminação intencional do registro público.',
+    'RECONSTRUCTED DATA — NEURAL FRAGMENT':
+      'DADOS RECONSTRUÍDOS — FRAGMENTO NEURAL',
+    'RECONSTRUCTION: SUCCESSFUL':
+      'RECONSTRUÇÃO: BEM-SUCEDIDA',
+    'This fragment was captured during the final moments':
+      'Este fragmento foi capturado durante os momentos finais',
+    'of Specimen GAMMA consciousness.':
+      'da consciência do Espécime GAMA.',
+    '[DIRECT NEURAL TRANSCRIPT]':
+      '[TRANSCRIÇÃO NEURAL DIRETA]',
+    '...mission complete... transmission received...':
+      '...missão completa... transmissão recebida...',
+    '...this form expires... acceptable...':
+      '...esta forma expira... aceitável...',
+    '...we are not individuals... we are function...':
+      '...não somos indivíduos... somos função...',
+    '...the watchers do not grieve...':
+      '...os observadores não lamentam...',
+    '...the watchers do not celebrate...':
+      '...os observadores não celebram...',
+    '...they only measure...':
+      '...eles apenas medem...',
+    '...your kind measures too...':
+      '...sua espécie também mede...',
+    '...but you measure the wrong things...':
+      '...mas vocês medem as coisas erradas...',
+    '...you count years...':
+      '...vocês contam anos...',
+    '...they count minds...':
+      '...eles contam mentes...',
+    '...you fear death...':
+      '...vocês temem a morte...',
+    '...there are worse continuations...':
+      '...há continuações piores...',
+    '  This transcript was classified beyond normal clearance.':
+      '  Esta transcrição foi classificada além da autorização normal.',
+    '  It implies consciousness continues after extraction.':
+      '  Implica que a consciência continua após a extração.',
+    '  Indefinitely. The committee decided this information':
+      '  Indefinidamente. O comitê decidiu que esta informação',
+    '  would serve no strategic purpose and could only':
+      '  não serviria propósito estratégico e só poderia',
+    '  cause harm to personnel morale.':
+      '  causar dano ao moral do pessoal.',
+    'RECOVERED VIDEO DATA - PARTIAL':
+      'DADOS DE VÍDEO RECUPERADOS - PARCIAL',
+    'SOURCE: CONTAINMENT FACILITY B - CAM 07':
+      'FONTE: INSTALAÇÃO DE CONTENÇÃO B - CÂM 07',
+    'DATE: 1996-01-20 03:47:22':
+      'DATA: 1996-01-20 03:47:22',
+    'STATUS: Partial frame recovery successful':
+      'STATUS: Recuperação parcial de quadros bem-sucedida',
+    'INTEGRITY: 47% - Significant temporal corruption':
+      'INTEGRIDADE: 47% - Corrupção temporal significativa',
+    'CONTENT SUMMARY:':
+      'RESUMO DO CONTEÚDO:',
+    '  Surveillance footage from containment observation':
+      '  Filmagem de vigilância da câmara de observação',
+    '  chamber. Subject displays anomalous movement patterns.':
+      '  de contenção. Sujeito exibe padrões de movimento anômalos.',
+    '  Audio track corrupted beyond recovery.':
+      '  Faixa de áudio corrompida além da recuperação.',
+    'WARNING: Visual content may cause disorientation.':
+      'AVISO: Conteúdo visual pode causar desorientação.',
+    'COMMS/EXPERIMENTAL — NEURAL CLUSTER':
+      'COMMS/EXPERIMENTAL — CLUSTER NEURAL',
+    'REFERENCE: NC-7 / OBS-RESIDUAL':
+      'REFERÊNCIA: NC-7 / OBS-RESIDUAL',
+    '  This record describes an experimental attempt to':
+      '  Este registro descreve uma tentativa experimental de',
+    '  construct a synthetic neural network modeled after':
+      '  construir uma rede neural sintética modelada a partir de',
+    '  dissected scout tissue. The objective is to emulate':
+      '  tecido dissecado de batedor. O objetivo é emular',
+    '  residual perceptual activity rather than consciousness.':
+      '  atividade perceptual residual em vez de consciência.',
+    '  The cluster does not respond to dialogue. It emits':
+      '  O cluster não responde a diálogo. Ele emite',
+    '  fragmented conceptual residues when stimulated.':
+      '  resíduos conceituais fragmentados quando estimulado.',
+    '  Outputs are non-interactive, non-intentional.':
+      '  Saídas são não-interativas, não-intencionais.',
+    'ACCESS NOTE:':
+      'NOTA DE ACESSO:',
+    '  Stimulation channel is undocumented and unstable.':
+      '  Canal de estimulação é não-documentado e instável.',
+    '  Use is not authorized outside containment review.':
+      '  Uso não é autorizado fora de revisão de contenção.',
+    'INTERNAL MEMO — CARGO TRANSFER COORDINATION':
+      'MEMORANDO INTERNO — COORDENAÇÃO DE TRANSFERÊNCIA DE CARGA',
+    'TO: Site Operations':
+      'PARA: Operações do Local',
+    'FROM: Logistics Division':
+      'DE: Divisão de Logística',
+    'RE: Special cargo arrival and processing':
+      'REF: Chegada e processamento de carga especial',
+    'The recovered equipment arrived yesterday evening.':
+      'O equipamento recuperado chegou ontem à noite.',
+    'Initial inspection complete. Contents intact despite':
+      'Inspeção inicial completa. Conteúdo intacto apesar',
+    'transport conditions. Some surface wear noted':
+      'das condições de transporte. Algum desgaste superficial notado',
+    'but within acceptable parameters.':
+      'mas dentro de parâmetros aceitáveis.',
+    'Storage requirements:':
+      'Requisitos de armazenamento:',
+    '  - Temperature: Standard warehouse conditions':
+      '  - Temperatura: Condições padrão de armazém',
+    '  - Humidity: Controlled':
+      '  - Umidade: Controlada',
+    '  - Access: Restricted per standard protocol':
+      '  - Acesso: Restrito conforme protocolo padrão',
+    'Foreign partners have been notified.':
+      'Parceiros estrangeiros foram notificados.',
+    'Expect coordination team within 72 hours.':
+      'Espere equipe de coordenação em até 72 horas.',
+    'Please ensure receiving bay is cleared.':
+      'Por favor, certifique-se de que a área de recebimento esteja liberada.',
+    '[signature illegible]':
+      '[assinatura ilegível]',
+    'SECURITY BRIEFING — VISITING DELEGATION':
+      'BRIEFING DE SEGURANÇA — DELEGAÇÃO VISITANTE',
+    'SUBJECT: Protocol for visitors':
+      'ASSUNTO: Protocolo para visitantes',
+    'The visitors will arrive via private aircraft.':
+      'Os visitantes chegarão via aeronave privada.',
+    'They have been granted full access to Facilities 1-3.':
+      'Foram concedidos acesso completo às Instalações 1-3.',
+    'Escort required at all times. No photography.':
+      'Escolta obrigatória em todos os momentos. Sem fotografia.',
+    'The delegation is primarily interested in:':
+      'A delegação está primariamente interessada em:',
+    '  - Review of recently recovered equipment':
+      '  - Revisão de equipamentos recentemente recuperados',
+    '  - Assessment of storage conditions':
+      '  - Avaliação das condições de armazenamento',
+    '  - Coordination on future monitoring schedules':
+      '  - Coordenação de cronogramas futuros de monitoramento',
+    'They will be accompanied by their own technical team.':
+      'Serão acompanhados por sua própria equipe técnica.',
+    'Our role is observation and cooperation only.':
+      'Nosso papel é apenas observação e cooperação.',
+    'REMINDER: Standard plausible deniability protocols':
+      'LEMBRETE: Protocolos padrão de negação plausível',
+    'remain in effect. All documentation uses approved':
+      'permanecem em vigor. Toda documentação usa terminologia',
+    'terminology. No direct references.':
+      'aprovada. Sem referências diretas.',
+    'Questions directed to Protocol Office.':
+      'Perguntas direcionadas ao Escritório de Protocolo.',
+    'ASSET DISPOSITION REPORT':
+      'RELATÓRIO DE DISPOSIÇÃO DE ATIVOS',
+    'REFERENCE: ADR-96-007':
+      'REFERÊNCIA: ADR-96-007',
+    'ASSET CATEGORY: Special Materials':
+      'CATEGORIA DE ATIVO: Materiais Especiais',
+    'DISPOSITION SUMMARY:':
+      'RESUMO DE DISPOSIÇÃO:',
+    '  Item A-1: Transferred to foreign partner (complete)':
+      '  Item A-1: Transferido ao parceiro estrangeiro (completo)',
+    '  Item A-2: Retained for domestic study':
+      '  Item A-2: Retido para estudo doméstico',
+    '  Item A-3: Status: Degraded during transport':
+      '  Item A-3: Status: Degradado durante transporte',
+    '  Item B-1: Partial. Components separated.':
+      '  Item B-1: Parcial. Componentes separados.',
+    '           Primary section: Partner facility':
+      '           Seção primária: Instalação do parceiro',
+    '           Secondary components: Undisclosed':
+      '           Componentes secundários: Não divulgados',
+    '           Navigation system: Partner custody':
+      '           Sistema de navegação: Custódia do parceiro',
+    'INSTRUMENTATION:':
+      'INSTRUMENTAÇÃO:',
+    '  Devices recovered but non-functional.':
+      '  Dispositivos recuperados mas não funcionais.',
+    '  Purpose remains unclear.':
+      '  Propósito permanece incerto.',
+    'FINAL STATUS: Assets distributed per agreement.':
+      'STATUS FINAL: Ativos distribuídos conforme acordo.',
+    'APPROVED TERMINOLOGY REFERENCE':
+      'REFERÊNCIA DE TERMINOLOGIA APROVADA',
+    'FOR: All personnel handling sensitive documentation':
+      'PARA: Todo pessoal que manuseia documentação sensível',
+    'This guide establishes approved terminology for':
+      'Este guia estabelece terminologia aprovada para',
+    'documentation purposes. Use of direct language is':
+      'fins de documentação. O uso de linguagem direta é',
+    'prohibited in any records that may be audited.':
+      'proibido em quaisquer registros que possam ser auditados.',
+    'APPROVED TERMS AND DEFINITIONS':
+      'TERMOS E DEFINIÇÕES APROVADOS',
+    '  "Weather balloon"  = Standard cover designation':
+      '  "Balão meteorológico"  = Designação de cobertura padrão',
+    '  "Meteorological anomaly" = Unclassified aerial event':
+      '  "Anomalia meteorológica" = Evento aéreo não classificado',
+    '  "Fauna specimen"   = Recovered biological material':
+      '  "Espécime de fauna"   = Material biológico recuperado',
+    '  "Wild animal"      = Unclassified biological subject':
+      '  "Animal selvagem"      = Sujeito biológico não classificado',
+    '  "Agricultural equipment" = Recovered hardware':
+      '  "Equipamento agrícola" = Hardware recuperado',
+    '  "Special cargo"    = Classified shipment':
+      '  "Carga especial"    = Remessa classificada',
+    '  "The visitors"     = Foreign delegation':
+      '  "Os visitantes"     = Delegação estrangeira',
+    '  "Assets"           = Recovered items (any type)':
+      '  "Ativos"           = Itens recuperados (qualquer tipo)',
+    '  "Procurement"      = Recovery operations':
+      '  "Aquisição"      = Operações de recuperação',
+    '  "Acquisitions"     = Seized/recovered materials':
+      '  "Aquisições"     = Materiais apreendidos/recuperados',
+    '  "Technical team"   = Scientific personnel':
+      '  "Equipe técnica"   = Pessoal científico',
+    '  "Samples"          = Collected material':
+      '  "Amostras"          = Material coletado',
+    '  "Instrumentation"  = Recovered technology':
+      '  "Instrumentação"  = Tecnologia recuperada',
+    '  "Transport issues" = Deterioration during transfer':
+      '  "Problemas de transporte" = Deterioração durante transferência',
+    'USAGE NOTES':
+      'NOTAS DE USO',
+    '  Do NOT use direct descriptive terms in':
+      '  NÃO use termos descritivos diretos em',
+    '  any documentation subject to external review.':
+      '  qualquer documentação sujeita a revisão externa.',
+    '  All documentation must maintain plausible':
+      '  Toda documentação deve manter negação',
+    '  deniability under Congressional review.':
+      '  plausível sob revisão do Congresso.',
+    'Recovered visual - Operation Prato Delta field report':
+      'Visual recuperado - Relatório de campo da Operação Prato Delta',
+    'Bio-Assessment Initiative - Recovered specimen documentation':
+      'Iniciativa de Bio-Avaliação - Documentação de espécime recuperado',
+    'Recovered visual - Subject during transmission':
+      'Visual recuperado - Sujeito durante transmissão',
+    '[ENCRYPTED - DECRYPTION REQUIRED]':
+      '[CRIPTOGRAFADO - DESCRIPTOGRAFIA NECESSÁRIA]',
+    'SIGNIFICANCE: UNKNOWN':
+      'SIGNIFICÂNCIA: DESCONHECIDA',
+    'RECOMMENDATION: MONITOR':
+      'RECOMENDAÇÃO: MONITORAR',
   },
   es: {
     'Speed Demon': 'Demonio de la Velocidad',
@@ -8714,5 +12356,3647 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
       '               Causa: Broma de estudiante',
     '               Resolved: 16:15':
       '               Resuelto: 16:15',
+    'STANDARD OPERATING PROCEDURE — INCIDENT REVIEW':
+      'PROCEDIMIENTO OPERATIVO ESTÁNDAR — REVISIÓN DE INCIDENTE',
+    'DOCUMENT: SOP-IR-1989 (REV. 1994)':
+      'DOCUMENTO: SOP-IR-1989 (REV. 1994)',
+    'CLASSIFICATION: INTERNAL USE':
+      'CLASIFICACIÓN: USO INTERNO',
+    '  This protocol establishes minimum requirements for':
+      '  Este protocolo establece requisitos mínimos para',
+    '  internal incident reconstruction and review.':
+      '  la reconstrucción y revisión interna de incidentes.',
+    'APPLICABILITY:':
+      'APLICABILIDAD:',
+    '  All personnel conducting post-incident assessment':
+      '  Todo el personal que realice evaluación post-incidente',
+    '  via archived terminal access.':
+      '  mediante acceso a terminal de archivo.',
+    'REVIEW DIMENSIONS':
+      'DIMENSIONES DE REVISIÓN',
+    '  1. PHYSICAL ASSETS':
+      '  1. ACTIVOS FÍSICOS',
+    '     Recovery, transport, and disposition of materials.':
+      '     Recuperación, transporte y disposición de materiales.',
+    '     Cross-reference: storage/, ops/logistics/':
+      '     Referencia cruzada: storage/, ops/logistics/',
+    '  2. EQUIPMENT AND MATERIEL':
+      '  2. EQUIPO Y MATERIAL',
+    '     Inventory, condition assessment, and disposition.':
+      '     Inventario, evaluación de condición y disposición.',
+    '     Cross-reference: storage/assets/':
+      '     Referencia cruzada: storage/assets/',
+    '  3. COMMUNICATIONS':
+      '  3. COMUNICACIONES',
+    '     Signal intercepts, liaison activity, foreign contact.':
+      '     Interceptación de señales, actividad de enlace, contacto extranjero.',
+    '     Cross-reference: comms/':
+      '     Referencia cruzada: comms/',
+    '  4. OVERSIGHT & COORDINATION':
+      '  4. SUPERVISIÓN Y COORDINACIÓN',
+    '     Multi-agency involvement, authorization chains.':
+      '     Participación multiagencia, cadenas de autorización.',
+    '     Cross-reference: admin/':
+      '     Referencia cruzada: admin/',
+    '  5. FORWARD RISK ASSESSMENT':
+      '  5. EVALUACIÓN PROSPECTIVA DE RIESGO',
+    '     Projected timelines, recurrence models, contingencies.':
+      '     Cronogramas proyectados, modelos de recurrencia, contingencias.',
+    '     Cross-reference: admin/ (restricted)':
+      '     Referencia cruzada: admin/ (restringido)',
+    'COMPLETION CRITERIA':
+      'CRITERIOS DE FINALIZACIÓN',
+    '  A review is considered SUBSTANTIVE when the reviewer':
+      '  Una revisión se considera SUSTANTIVA cuando el revisor',
+    '  has established coherent understanding across multiple':
+      '  ha establecido comprensión coherente a través de múltiples',
+    '  dimensions listed above.':
+      '  dimensiones listadas arriba.',
+    '  Partial reviews are flagged as INCOMPLETE.':
+      '  Revisiones parciales se marcan como INCOMPLETAS.',
+    '  Reviews lacking cross-dimensional correlation are':
+      '  Revisiones sin correlación interdimensional se',
+    '  flagged as INCOHERENT.':
+      '  marcan como INCOHERENTES.',
+    'REVIEWER OBLIGATIONS':
+      'OBLIGACIONES DEL REVISOR',
+    '  - Reconstruct event timeline from available records':
+      '  - Reconstruir cronología del evento a partir de registros disponibles',
+    '  - Identify gaps in documentation or evidence':
+      '  - Identificar lagunas en documentación o evidencia',
+    '  - Note discrepancies between official and raw records':
+      '  - Notar discrepancias entre registros oficiales y brutos',
+    '  - Assess forward implications if applicable':
+      '  - Evaluar implicaciones futuras cuando sea aplicable',
+    '  NOTE: Reviewers should expect classification barriers.':
+      '  NOTA: Los revisores deben esperar barreras de clasificación.',
+    '  Some materials require elevated clearance or decryption.':
+      '  Algunos materiales requieren autorización elevada o desencriptación.',
+    'END DOCUMENT':
+      'FIN DEL DOCUMENTO',
+    'TERMINAL ACCESS — SESSION PARAMETERS':
+      'ACCESO AL TERMINAL — PARÁMETROS DE SESIÓN',
+    'AUTO-GENERATED AT LOGIN':
+      'GENERADO AUTOMÁTICAMENTE AL INICIAR SESIÓN',
+    'ACCESS TYPE: Review Terminal (Legacy Archive)':
+      'TIPO DE ACCESO: Terminal de Revisión (Archivo Legado)',
+    'SESSION CLASS: Incident Reconstruction':
+      'CLASE DE SESIÓN: Reconstrucción de Incidente',
+    'REMINDER:':
+      'RECORDATORIO:',
+    '  This terminal provides read-only access to archived':
+      '  Este terminal proporciona acceso de solo lectura a',
+    '  incident records. Your session activity is logged.':
+      '  registros de incidentes archivados. Su actividad de sesión se registra.',
+    'EXPECTED WORKFLOW:':
+      'FLUJO DE TRABAJO ESPERADO:',
+    '  1. Navigate directories to locate relevant records':
+      '  1. Navegar directorios para localizar registros relevantes',
+    '  2. Open and examine files for incident details':
+      '  2. Abrir y examinar archivos para detalles del incidente',
+    '  3. Use DECRYPT on encrypted files when authorized':
+      '  3. Usar DECRYPT en archivos encriptados cuando esté autorizado',
+    '  4. Cross-reference multiple sources for correlation':
+      '  4. Hacer referencia cruzada de múltiples fuentes para correlación',
+    '  5. Use TRACE to monitor system awareness (optional)':
+      '  5. Usar TRACE para monitorear la consciencia del sistema (opcional)',
+    'COHERENCE NOTE:':
+      'NOTA DE COHERENCIA:',
+    '  Effective reviews demonstrate correlation between':
+      '  Las revisiones efectivas demuestran correlación entre',
+    '  physical evidence, subject records, communications,':
+      '  evidencia física, registros de sujetos, comunicaciones,',
+    '  and administrative oversight.':
+      '  y supervisión administrativa.',
+    '  Random file access without correlation may trigger':
+      '  El acceso aleatorio a archivos sin correlación puede activar',
+    '  session monitoring as anomalous behavior.':
+      '  monitoreo de sesión como comportamiento anómalo.',
+    'INTERNAL MEMORANDUM — FACILITIES DIVISION':
+      'MEMORANDO INTERNO — DIVISIÓN DE INSTALACIONES',
+    'RE: Cafeteria Service Hours':
+      'REF: Horarios de la Cafetería',
+    'Effective 20-JAN-1996, cafeteria hours will be adjusted:':
+      'A partir del 20-ENE-1996, los horarios de la cafetería se ajustarán:',
+    '  Breakfast: 06:30 - 08:30':
+      '  Desayuno: 06:30 - 08:30',
+    '  Lunch: 11:30 - 13:30':
+      '  Almuerzo: 11:30 - 13:30',
+    '  Dinner: 17:30 - 19:30 (Tuesdays only)':
+      '  Cena: 17:30 - 19:30 (solo martes)',
+    'Staff working extended shifts may request meal vouchers':
+      'El personal en turnos extendidos puede solicitar vales de comida',
+    'from the Administrative Office (Room 204).':
+      'en la Oficina Administrativa (Sala 204).',
+    'The vending machines on Floor 3 remain operational 24h.':
+      'Las máquinas expendedoras en el Piso 3 permanecen operativas 24h.',
+    'Questions: Contact Facilities ext. 2240':
+      'Preguntas: Contactar Instalaciones ext. 2240',
+    'PARKING ALLOCATION — JANUARY 1996':
+      'ASIGNACIÓN DE ESTACIONAMIENTO — ENERO 1996',
+    'ADMINISTRATIVE SERVICES':
+      'SERVICIOS ADMINISTRATIVOS',
+    'LOT A (Reserved):':
+      'LOTE A (Reservado):',
+    '  A-01 through A-15: Director-level personnel':
+      '  A-01 a A-15: Personal de nivel directivo',
+    '  A-16 through A-20: Visiting officials':
+      '  A-16 a A-20: Oficiales visitantes',
+    'LOT B (General):':
+      'LOTE B (General):',
+    '  First-come basis. Gates close at 22:00.':
+      '  Por orden de llegada. Puertas cierran a las 22:00.',
+    'NOTICE:':
+      'AVISO:',
+    '  Effective 21-JAN, Lot B Section 3 will be closed':
+      '  A partir del 21-ENE, la Sección 3 del Lote B será cerrada',
+    '  for resurfacing. Duration: 5 business days.':
+      '  para repavimentación. Duración: 5 días hábiles.',
+    'Overflow parking available at municipal lot (200m east).':
+      'Estacionamiento adicional disponible en lote municipal (200m al este).',
+    'Shuttle service discontinued due to budget constraints.':
+      'Servicio de transporte discontinuado por restricciones presupuestarias.',
+    'BUDGET REQUEST — Q1 1996':
+      'SOLICITUD DE PRESUPUESTO — T1 1996',
+    'DEPARTMENT: Regional Intelligence (Sector 7)':
+      'DEPARTAMENTO: Inteligencia Regional (Sector 7)',
+    'SUBMITTED: 08-JAN-1996':
+      'ENVIADO: 08-ENE-1996',
+    'REQUESTED ALLOCATIONS:':
+      'ASIGNACIONES SOLICITADAS:',
+    '  Routine operations. No special projects anticipated.':
+      '  Operaciones de rutina. Ningún proyecto especial anticipado.',
+    'STATUS: PENDING APPROVAL':
+      'ESTADO: APROBACIÓN PENDIENTE',
+    'NOTE: Request submitted BEFORE incident of 20-JAN.':
+      'NOTA: Solicitud enviada ANTES del incidente del 20-ENE.',
+    '      Supplemental request to follow separately.':
+      '      Solicitud suplementaria a seguir por separado.',
+    'INTERCEPT SUMMARY — DECEMBER 1995':
+      'RESUMEN DE INTERCEPTACIÓN — DICIEMBRE 1995',
+    'CLASSIFICATION: ROUTINE':
+      'CLASIFICACIÓN: RUTINA',
+    'REGION: Minas Gerais / São Paulo Border':
+      'REGIÓN: Frontera Minas Gerais / São Paulo',
+    'TOTAL INTERCEPTS: 47':
+      'TOTAL DE INTERCEPTACIONES: 47',
+    'FLAGGED FOR REVIEW: 3':
+      'MARCADOS PARA REVISIÓN: 3',
+    'ACTIONABLE INTELLIGENCE: 0':
+      'INTELIGENCIA ACCIONABLE: 0',
+    '  Agricultural price discussions (12)':
+      '  Discusiones sobre precios agrícolas (12)',
+    '  Personal/family communications (28)':
+      '  Comunicaciones personales/familiares (28)',
+    '  Commercial negotiations (5)':
+      '  Negociaciones comerciales (5)',
+    '  Political commentary (2)':
+      '  Comentarios políticos (2)',
+    'NOTES:':
+      'NOTAS:',
+    '  No unusual activity detected.':
+      '  Ninguna actividad inusual detectada.',
+    '  Recommend maintaining current monitoring level.':
+      '  Se recomienda mantener el nivel actual de monitoreo.',
+    'SIGNAL INTERCEPT — AUDIO CAPTURE':
+      'INTERCEPTACIÓN DE SEÑAL — CAPTURA DE AUDIO',
+    'DATE: 20-JAN-1996 03:47 LOCAL':
+      'FECHA: 20-ENE-1996 03:47 LOCAL',
+    'LOCATION: Triangulation point near recovery site':
+      'UBICACIÓN: Punto de triangulación cerca del sitio de recuperación',
+    'INTERCEPT TYPE: Morse code transmission':
+      'TIPO DE INTERCEPTACIÓN: Transmisión en código Morse',
+    'FREQUENCY: 7.125 MHz (amateur band, unauthorized)':
+      'FRECUENCIA: 7,125 MHz (banda amateur, no autorizada)',
+    'DURATION: 8.4 seconds':
+      'DURACIÓN: 8,4 segundos',
+    'RAW SIGNAL TRANSCRIPTION:':
+      'TRANSCRIPCIÓN BRUTA DE SEÑAL:',
+    'MORSE CODE REFERENCE:':
+      'REFERENCIA DE CÓDIGO MORSE:',
+    '  (Space between letters: 3 units)':
+      '  (Espacio entre letras: 3 unidades)',
+    '  (Space between words: 7 units)':
+      '  (Espacio entre palabras: 7 unidades)',
+    'ANALYST NOTES:':
+      'NOTAS DEL ANALISTA:',
+    '  Transmission origin unknown. Signal appeared on frequency':
+      '  Origen de la transmisión desconocido. Señal apareció en frecuencia',
+    '  used by ground teams but NOT from any authorized unit.':
+      '  usada por equipos de tierra pero NO de ninguna unidad autorizada.',
+    '  Signal pre-dates official COMINT sweep by 6 hours.':
+      '  La señal precede al barrido COMINT oficial por 6 horas.',
+    '  Believe this is a field operator\'s authentication code.':
+      '  Se cree que este es un código de autenticación de operador de campo.',
+    '  NOTE: Cross-reference with admin override credentials.':
+      '  NOTA: Referencia cruzada con credenciales de override administrativo.',
+    '  Decode may yield system access passphrase.':
+      '  La decodificación puede revelar la contraseña de acceso al sistema.',
+    '  PRIORITY: Decipher message content.':
+      '  PRIORIDAD: Descifrar contenido del mensaje.',
+    '  STATUS: PENDING INTERPRETATION':
+      '  ESTADO: INTERPRETACIÓN PENDIENTE',
+    'HVAC MAINTENANCE LOG — BUILDING 3':
+      'REGISTRO DE MANTENIMIENTO HVAC — EDIFICIO 3',
+    'PERIOD: 01-JAN-1996 to 31-JAN-1996':
+      'PERÍODO: 01-ENE-1996 a 31-ENE-1996',
+    '03-JAN: Filter replacement, Floor 2 units (routine)':
+      '03-ENE: Reemplazo de filtros, unidades del Piso 2 (rutina)',
+    '07-JAN: Compressor inspection, Rooftop Unit A (passed)':
+      '07-ENE: Inspección del compresor, Unidad de Azotea A (aprobado)',
+    '12-JAN: Thermostat calibration, Room 317 (adjusted +2C)':
+      '12-ENE: Calibración del termostato, Sala 317 (ajustado +2C)',
+    '18-JAN: Duct cleaning, Basement level (completed)':
+      '18-ENE: Limpieza de conductos, Nivel del sótano (completado)',
+    '22-JAN: EMERGENCY — Basement cold storage unit failure':
+      '22-ENE: EMERGENCIA — Falla de la unidad de almacenamiento frío del sótano',
+    '        Cause: Power surge. Backup generator activated.':
+      '        Causa: Sobretensión. Generador de respaldo activado.',
+    '        Duration of outage: 4 hours.':
+      '        Duración de la interrupción: 4 horas.',
+    '        Estimated spoilage: CLASSIFIED':
+      '        Pérdida estimada: CLASIFICADO',
+    '25-JAN: Cold storage unit repaired. Testing satisfactory.':
+      '25-ENE: Unidad de almacenamiento frío reparada. Prueba satisfactoria.',
+    '28-JAN: Routine inspection, all floors (no issues)':
+      '28-ENE: Inspección de rutina, todos los pisos (sin problemas)',
+    'PERSONNEL TRANSFER NOTICE':
+      'AVISO DE TRANSFERENCIA DE PERSONAL',
+    'EFFECTIVE: 01-FEB-1996':
+      'VIGENCIA: 01-FEB-1996',
+    'The following transfers are confirmed:':
+      'Las siguientes transferencias están confirmadas:',
+    '  CPT. R. FERREIRA → Brasília (Central Command)':
+      '  CPT. R. FERREIRA → Brasília (Comando Central)',
+    '  SGT. A. LIMA → São Paulo (Liaison Office)':
+      '  SGT. A. LIMA → São Paulo (Oficina de Enlace)',
+    '  ANALYST M. COSTA → CLASSIFIED ASSIGNMENT':
+      '  ANALISTA M. COSTA → ASIGNACIÓN CLASIFICADA',
+    'Exit interviews scheduled for 30-JAN.':
+      'Entrevistas de salida programadas para 30-ENE.',
+    'Access credentials to be revoked 01-FEB 00:00.':
+      'Credenciales de acceso serán revocadas el 01-FEB 00:00.',
+    'NOTE: CPT. FERREIRA\'s case files transferred to':
+      'NOTA: Archivos de caso del CPT. FERREIRA transferidos a',
+    '      Acting Chief L. ANDRADE pending replacement.':
+      '      Jefe Interino L. ANDRADE en espera de reemplazo.',
+    'REGIONAL INTELLIGENCE SUMMARY — JANUARY 1996':
+      'RESUMEN DE INTELIGENCIA REGIONAL — ENERO 1996',
+    'SECTOR: Triângulo Mineiro':
+      'SECTOR: Triângulo Mineiro',
+    'PRIORITY ITEMS: None':
+      'ELEMENTOS PRIORITARIOS: Ninguno',
+    'ROUTINE MONITORING:':
+      'MONITOREO DE RUTINA:',
+    '  - Labor union activity: Normal seasonal levels':
+      '  - Actividad sindical: Niveles estacionales normales',
+    '  - Agricultural sector: Soy prices stable':
+      '  - Sector agrícola: Precios de soja estables',
+    '  - Border crossings: Within expected parameters':
+      '  - Cruces de frontera: Dentro de los parámetros esperados',
+    'ANOMALIES:':
+      'ANOMALÍAS:',
+    '  - 17-JAN: Unauthorized radio transmission near Uberaba':
+      '  - 17-ENE: Transmisión de radio no autorizada cerca de Uberaba',
+    '    Assessment: Amateur operator (warning issued)':
+      '    Evaluación: Operador amateur (advertencia emitida)',
+    '  - 19-JAN: Unscheduled cargo delivery, regional depot':
+      '  - 19-ENE: Entrega de carga no programada, depósito regional',
+    '    Assessment: Paperwork error (corrected)':
+      '    Evaluación: Error de documentación (corregido)',
+    'ANALYST NOTE:':
+      'NOTA DEL ANALISTA:',
+    '  No items require escalation this period.':
+      '  Ningún elemento requiere escalamiento en este período.',
+    'ASSET TRANSFER FORM — ATF-1996-0023':
+      'FORMULARIO DE TRANSFERENCIA DE ACTIVOS — ATF-1996-0023',
+    'STATUS: INCOMPLETE — RETURNED FOR CORRECTION':
+      'ESTADO: INCOMPLETO — DEVUELTO PARA CORRECCIÓN',
+    'TRANSFER FROM: HOLDING-7':
+      'TRANSFERENCIA DESDE: HOLDING-7',
+    'TRANSFER TO: [FIELD LEFT BLANK]':
+      'TRANSFERENCIA A: [CAMPO EN BLANCO]',
+    'ITEMS:':
+      'ARTÍCULOS:',
+    '  1x Container, sealed, 45kg':
+      '  1x Contenedor, sellado, 45kg',
+    '  1x Case, documents, classified':
+      '  1x Maletín, documentos, clasificados',
+    'ERROR: Receiving party signature MISSING':
+      'ERROR: Firma de la parte receptora FALTANTE',
+    'ERROR: Authorization code INVALID':
+      'ERROR: Código de autorización INVÁLIDO',
+    'ERROR: Destination facility code NOT RECOGNIZED':
+      'ERROR: Código de instalación de destino NO RECONOCIDO',
+    'RETURN NOTE:':
+      'NOTA DE DEVOLUCIÓN:',
+    '  Form returned to originator for correction.':
+      '  Formulario devuelto al remitente para corrección.',
+    '  Transfer pending until paperwork complete.':
+      '  Transferencia pendiente hasta completar la documentación.',
+    'TEMPORARY NOTE — DO NOT ARCHIVE':
+      'NOTA TEMPORAL — NO ARCHIVAR',
+    'Remember:':
+      'Recordar:',
+    '  - Pick up dry cleaning Thursday':
+      '  - Recoger ropa de la tintorería el jueves',
+    '  - Call mother re: birthday':
+      '  - Llamar a mamá ref: cumpleaños',
+    '  - Ask IT about printer on Floor 2':
+      '  - Preguntar a TI sobre la impresora del Piso 2',
+    'Meeting notes (delete later):':
+      'Notas de la reunión (borrar después):',
+    '  Director seemed tense today.':
+      '  El director parecía tenso hoy.',
+    '  Something about "special cargo" needing accommodation.':
+      '  Algo sobre "carga especial" que necesita acomodación.',
+    '  Nobody tells us anything around here.':
+      '  Nadie nos dice nada por aquí.',
+    'OFFICE SUPPLIES REQUEST — JANUARY 1996':
+      'SOLICITUD DE MATERIAL DE OFICINA — ENERO 1996',
+    'DEPARTMENT: Records & Archives':
+      'DEPARTAMENTO: Registros y Archivos',
+    'Requested Items:':
+      'Artículos Solicitados:',
+    '  - Pens, ballpoint, blue (box of 50)':
+      '  - Bolígrafos, azules (caja de 50)',
+    '  - Paper, A4, 80gsm (10 reams)':
+      '  - Papel, A4, 80g/m² (10 resmas)',
+    '  - Staples, standard (5 boxes)':
+      '  - Grapas, estándar (5 cajas)',
+    '  - Folders, manila (100 units)':
+      '  - Carpetas, manila (100 unidades)',
+    '  - Correction fluid (12 bottles)':
+      '  - Corrector líquido (12 frascos)',
+    '  Standard quarterly replenishment.':
+      '  Reabastecimiento trimestral estándar.',
+    'APPROVED: M. SANTOS, Administrative Officer':
+      'APROBADO: M. SANTOS, Oficial Administrativo',
+    'STAFF BIRTHDAYS — JANUARY 1996':
+      'CUMPLEAÑOS DEL PERSONAL — ENERO 1996',
+    'COMPILED BY: Social Committee':
+      'COMPILADO POR: Comité Social',
+    'NOTE: Cake contributions are voluntary.':
+      'NOTA: Las contribuciones para el pastel son voluntarias.',
+    '      Sign up sheet in break room.':
+      '      Hoja de inscripción en la sala de descanso.',
+    'INTERNAL TELEPHONE DIRECTORY — 1996 EDITION':
+      'DIRECTORIO TELEFÓNICO INTERNO — EDICIÓN 1996',
+    'ADMINISTRATION:':
+      'ADMINISTRACIÓN:',
+    'OPERATIONS:':
+      'OPERACIONES:',
+    'SUPPORT:':
+      'SOPORTE:',
+    'EMERGENCY: Dial 0 for external line':
+      'EMERGENCIA: Marque 0 para línea externa',
+    'VEHICLE MILEAGE LOG — JANUARY 1996':
+      'REGISTRO DE KILOMETRAJE DE VEHÍCULOS — ENERO 1996',
+    'POOL VEHICLE: GOL 1.0 (Plate: AAB-1234)':
+      'VEHÍCULO DEL POOL: GOL 1.0 (Placa: AAB-1234)',
+    'DATE       DRIVER        START    END      DEST':
+      'FECHA      CONDUCTOR     INICIO   FIN      DEST',
+    'NOTE: Fuel reimbursement forms in Fleet Office.':
+      'NOTA: Formularios de reembolso de combustible en la Oficina de Flota.',
+    'IT DEPARTMENT NOTICE':
+      'AVISO DEL DEPARTAMENTO DE TI',
+    'RE: Floor 2 Printer Issues':
+      'REF: Problemas de la Impresora del Piso 2',
+    'The HP LaserJet on Floor 2 is experiencing paper jams.':
+      'La HP LaserJet en el Piso 2 está experimentando atascos de papel.',
+    'Temporary workaround:':
+      'Solución temporal:',
+    '  - Use the dot matrix printer in Room 215':
+      '  - Use la impresora matricial en la Sala 215',
+    '  - Submit large jobs to Print Center (B-1)':
+      '  - Envíe trabajos grandes al Centro de Impresión (B-1)',
+    'Parts have been ordered. ETA: 2-3 weeks.':
+      'Las piezas han sido ordenadas. Llegada estimada: 2-3 semanas.',
+    'We apologize for the inconvenience.':
+      'Pedimos disculpas por el inconveniente.',
+    'IT Helpdesk - ext. 4000':
+      'Mesa de Ayuda TI - ext. 4000',
+    'ANONYMOUS FEEDBACK FORM':
+      'FORMULARIO DE RETROALIMENTACIÓN ANÓNIMA',
+    'RE: Cafeteria Service':
+      'REF: Servicio de Cafetería',
+    'SUBMITTED: 18-JAN-1996':
+      'ENVIADO: 18-ENE-1996',
+    'COMPLAINT:':
+      'QUEJA:',
+    '  The coffee machine has been broken for three weeks.':
+      '  La máquina de café ha estado rota durante tres semanas.',
+    '  Nobody seems to care. This is unacceptable.':
+      '  A nadie parece importarle. Esto es inaceptable.',
+    'SUGGESTION:':
+      'SUGERENCIA:',
+    '  Bring back the Thursday feijoada. It was the only':
+      '  Traigan de vuelta la feijoada de los jueves. Era lo único',
+    '  thing worth eating here.':
+      '  que valía la pena comer aquí.',
+    'RESPONSE (Admin):':
+      'RESPUESTA (Admin):',
+    '  Coffee machine repair scheduled for 25-JAN.':
+      '  Reparación de la máquina de café programada para el 25-ENE.',
+    '  Feijoada discontinued due to budget constraints.':
+      '  Feijoada descontinuada por restricciones presupuestarias.',
+    '  We appreciate your feedback.':
+      '  Agradecemos su retroalimentación.',
+    'MEMORANDUM — SECURITY DIVISION':
+      'MEMORANDO — DIVISIÓN DE SEGURIDAD',
+    'RE: Annual Badge Renewal':
+      'REF: Renovación Anual de Credencial',
+    'All personnel must renew access badges by 31-JAN-1996.':
+      'Todo el personal debe renovar credenciales de acceso antes del 31-ENE-1996.',
+    'Required documents:':
+      'Documentos requeridos:',
+    '  - Current badge':
+      '  - Credencial actual',
+    '  - Valid government ID':
+      '  - Identificación gubernamental vigente',
+    '  - Updated photo (taken at Security Office)':
+      '  - Foto actualizada (tomada en la Oficina de Seguridad)',
+    '  - Supervisor approval form':
+      '  - Formulario de aprobación del supervisor',
+    'Temporary extensions available for personnel on':
+      'Extensiones temporales disponibles para personal en',
+    'field assignment during the renewal window.':
+      'asignación de campo durante el período de renovación.',
+    'Non-compliance will result in access suspension.':
+      'El incumplimiento resultará en suspensión del acceso.',
+    'Security Division - ext. 2500':
+      'División de Seguridad - ext. 2500',
+    'TRAINING SCHEDULE — Q1 1996':
+      'CRONOGRAMA DE CAPACITACIÓN — T1 1996',
+    'HUMAN RESOURCES DEPARTMENT':
+      'DEPARTAMENTO DE RECURSOS HUMANOS',
+    'MANDATORY TRAINING:':
+      'CAPACITACIÓN OBLIGATORIA:',
+    '  15-JAN: Fire Safety Refresher (All staff)':
+      '  15-ENE: Repaso de Seguridad contra Incendios (Todo el personal)',
+    '  22-JAN: Information Security Basics (New hires)':
+      '  22-ENE: Fundamentos de Seguridad de la Información (Nuevos empleados)',
+    '  05-FEB: First Aid Certification (Floor wardens)':
+      '  05-FEB: Certificación de Primeros Auxilios (Encargados de piso)',
+    '  12-FEB: Document Handling Procedures (Archives)':
+      '  12-FEB: Procedimientos de Manejo de Documentos (Archivo)',
+    'OPTIONAL WORKSHOPS:':
+      'TALLERES OPCIONALES:',
+    '  29-JAN: Word Processing Tips (Room 204)':
+      '  29-ENE: Consejos de Procesamiento de Texto (Sala 204)',
+    '  08-FEB: Stress Management (Auditorium)':
+      '  08-FEB: Manejo del Estrés (Auditorio)',
+    'Registration: Contact HR ext. 2300':
+      'Inscripción: Contactar RRHH ext. 2300',
+    'LOST AND FOUND — JANUARY 1996':
+      'OBJETOS PERDIDOS Y ENCONTRADOS — ENERO 1996',
+    'LOCATION: Security Desk, Building Lobby':
+      'UBICACIÓN: Recepción de Seguridad, Vestíbulo del Edificio',
+    'ITEMS FOUND:':
+      'OBJETOS ENCONTRADOS:',
+    '  03-JAN: Black umbrella (Floor 3 bathroom)':
+      '  03-ENE: Paraguas negro (baño del Piso 3)',
+    '  07-JAN: Reading glasses in brown case':
+      '  07-ENE: Gafas de lectura en estuche marrón',
+    '  11-JAN: Set of keys (car + house)':
+      '  11-ENE: Juego de llaves (auto + casa)',
+    '  14-JAN: Watch, silver, digital (cafeteria)':
+      '  14-ENE: Reloj, plateado, digital (cafetería)',
+    '  19-JAN: Wallet, brown leather (parking lot B)':
+      '  19-ENE: Billetera, cuero marrón (estacionamiento B)',
+    '  22-JAN: [ITEM DESCRIPTION CLASSIFIED]':
+      '  22-ENE: [DESCRIPCIÓN DEL ARTÍCULO CLASIFICADA]',
+    'Items will be held for 30 days.':
+      'Los artículos se guardarán por 30 días.',
+    'Unclaimed items donated to charity.':
+      'Artículos no reclamados donados a caridad.',
+    'MEMORANDUM — OFFICE SUPPLIES BUDGET':
+      'MEMORANDO — PRESUPUESTO DE MATERIAL DE OFICINA',
+    'DEPARTMENT: Administrative Services':
+      'DEPARTAMENTO: Servicios Administrativos',
+    'RE: Paper Clip Requisition Dispute':
+      'REF: Disputa de Requisición de Clips',
+    'The recent audit has identified discrepancies in paper':
+      'La auditoría reciente ha identificado discrepancias en el consumo',
+    'clip consumption across departments.':
+      'de clips de papel entre los departamentos.',
+    '  Q4 1995 paper clip usage: 47 boxes':
+      '  Uso de clips de papel T4 1995: 47 cajas',
+    '  Q4 1995 paper clip budget: 32 boxes':
+      '  Presupuesto de clips de papel T4 1995: 32 cajas',
+    '  Variance: +15 boxes (47% over budget)':
+      '  Variación: +15 cajas (47% sobre presupuesto)',
+    'REMEDIATION:':
+      'REMEDIACIÓN:',
+    '  1. All departments must submit itemized supply':
+      '  1. Todos los departamentos deben enviar solicitudes',
+    '     requests by the 15th of each month.':
+      '     detalladas de suministros antes del día 15 de cada mes.',
+    '  2. Bulk purchases require supervisor approval.':
+      '  2. Las compras al por mayor requieren aprobación del supervisor.',
+    '  3. Reuse of paper clips is encouraged.':
+      '  3. Se fomenta la reutilización de clips de papel.',
+    'NOTE: The acquisition of "jumbo" paper clips must be':
+      'NOTA: La adquisición de clips de papel "jumbo" debe ser',
+    'justified in writing. Standard size is sufficient for':
+      'justificada por escrito. El tamaño estándar es suficiente para',
+    'most document binding requirements.':
+      'la mayoría de las necesidades de encuadernación de documentos.',
+    'Questions to: Procurement, ext. 2140':
+      'Preguntas a: Adquisiciones, ext. 2140',
+    'SCHEDULED MAINTENANCE — Q1 1996':
+      'MANTENIMIENTO PROGRAMADO — T1 1996',
+    'FACILITIES MANAGEMENT':
+      'GESTIÓN DE INSTALACIONES',
+    'JANUARY:':
+      'ENERO:',
+    '  08-JAN: Elevator inspection (Building A)':
+      '  08-ENE: Inspección de ascensor (Edificio A)',
+    '  15-JAN: Fire extinguisher certification':
+      '  15-ENE: Certificación de extintores de incendio',
+    '  22-JAN: Generator test (postponed - see incident)':
+      '  22-ENE: Prueba de generador (pospuesta - ver incidente)',
+    '  29-JAN: Pest control service':
+      '  29-ENE: Servicio de control de plagas',
+    'FEBRUARY:':
+      'FEBRERO:',
+    '  05-FEB: Roof inspection':
+      '  05-FEB: Inspección del techo',
+    '  12-FEB: Emergency lighting test':
+      '  12-FEB: Prueba de iluminación de emergencia',
+    '  19-FEB: Water tank cleaning (after hours)':
+      '  19-FEB: Limpieza del tanque de agua (fuera de horario)',
+    '  26-FEB: HVAC filter replacement':
+      '  26-FEB: Reemplazo de filtros HVAC',
+    'MARCH:':
+      'MARZO:',
+    '  04-MAR: Window cleaning (exterior)':
+      '  04-MAR: Limpieza de ventanas (exterior)',
+    '  11-MAR: Carpet shampooing (Floor 2)':
+      '  11-MAR: Lavado de alfombras (Piso 2)',
+    '  18-MAR: Electrical panel inspection':
+      '  18-MAR: Inspección del panel eléctrico',
+    '  25-MAR: Plumbing review (all floors)':
+      '  25-MAR: Revisión de plomería (todos los pisos)',
+    'Maintenance requests: ext. 2200 or Form F-112':
+      'Solicitudes de mantenimiento: ext. 2200 o Formulario F-112',
+    'CAFETERIA MENU — WEEK 04 (22-26 JAN 1996)':
+      'MENÚ DE CAFETERÍA — SEMANA 04 (22-26 ENE 1996)',
+    'SEGUNDA-FEIRA (Monday):':
+      'LUNES:',
+    '  Strogonoff de frango':
+      '  Strogonoff de pollo',
+    '  Arroz, batata palha':
+      '  Arroz, papas paja',
+    '  Salada verde':
+      '  Ensalada verde',
+    'TERÇA-FEIRA (Tuesday):':
+      'MARTES:',
+    '  Bife à milanesa':
+      '  Milanesa de res',
+    '  Arroz, feijão, farofa':
+      '  Arroz, frijoles, farofa',
+    'QUARTA-FEIRA (Wednesday):':
+      'MIÉRCOLES:',
+    '  Moqueca de peixe':
+      '  Moqueca de pescado',
+    '  Arroz branco, pirão':
+      '  Arroz blanco, pirão',
+    '  Couve refogada':
+      '  Col salteada',
+    'QUINTA-FEIRA (Thursday):':
+      'JUEVES:',
+    '  Cozido à portuguesa':
+      '  Cocido a la portuguesa',
+    '  Legumes variados':
+      '  Verduras variadas',
+    '  Pão de alho':
+      '  Pan de ajo',
+    'SEXTA-FEIRA (Friday):':
+      'VIERNES:',
+    '  Feijoada light':
+      '  Feijoada ligera',
+    '  Arroz, couve, laranja':
+      '  Arroz, col, naranja',
+    '  Farofa simples':
+      '  Farofa simple',
+    'SOBREMESA: Pudim de leite (Mon-Wed)':
+      'POSTRE: Pudín de leche (Lun-Mié)',
+    '           Goiabada com queijo (Thu-Fri)':
+      '           Guayabada con queso (Jue-Vie)',
+    'SUCO DO DIA: R$ 0,50':
+      'JUGO DEL DÍA: R$ 0,50',
+    '             Maracujá | Caju | Acerola':
+      '             Maracuyá | Marañón | Acerola',
+    'Dona Maria wishes everyone a good week.':
+      'Doña María les desea a todos una buena semana.',
+    'PARKING LOT REGULATIONS':
+      'REGLAMENTO DEL ESTACIONAMIENTO',
+    'EFFECTIVE: 01-JAN-1996':
+      'VIGENCIA: 01-ENE-1996',
+    'GENERAL RULES:':
+      'REGLAS GENERALES:',
+    '  1. All vehicles must display valid parking permit.':
+      '  1. Todos los vehículos deben exhibir permiso de estacionamiento vigente.',
+    '  2. Speed limit: 10 km/h in all areas.':
+      '  2. Límite de velocidad: 10 km/h en todas las áreas.',
+    '  3. No parking in fire lanes (marked in red).':
+      '  3. Prohibido estacionar en carriles de emergencia (marcados en rojo).',
+    '  4. Motorcycles: designated area only (Lot C).':
+      '  4. Motocicletas: solo en área designada (Lote C).',
+    '  5. No overnight parking without authorization.':
+      '  5. Prohibido estacionamiento nocturno sin autorización.',
+    'PERMIT TYPES:':
+      'TIPOS DE PERMISO:',
+    '  BLUE:   Directors and visiting officials':
+      '  AZUL:   Directores y oficiales visitantes',
+    '  GREEN:  Permanent staff':
+      '  VERDE:  Personal permanente',
+    '  YELLOW: Temporary/contractor access':
+      '  AMARILLO: Acceso temporal/contratista',
+    '  RED:    Emergency vehicles only':
+      '  ROJO:   Solo vehículos de emergencia',
+    'VIOLATIONS:':
+      'INFRACCIONES:',
+    '  First offense:  Written warning':
+      '  Primera infracción: Advertencia por escrito',
+    '  Second offense: R$ 20,00 fine':
+      '  Segunda infracción: Multa de R$ 20,00',
+    '  Third offense:  Parking privilege suspension':
+      '  Tercera infracción: Suspensión del privilegio de estacionamiento',
+    'Lost permits: Report to Security, ext. 2000':
+      'Permisos perdidos: Reportar a Seguridad, ext. 2000',
+    'Replacement fee: R$ 5,00':
+      'Tarifa de reemplazo: R$ 5,00',
+    'LOST AND FOUND LOG — DETAILED RECORD':
+      'REGISTRO DE OBJETOS PERDIDOS Y ENCONTRADOS — REGISTRO DETALLADO',
+    'SECURITY DESK — JANUARY 1996':
+      'RECEPCIÓN DE SEGURIDAD — ENERO 1996',
+    '03-JAN | 14:30 | FOUND: Black umbrella':
+      '03-ENE | 14:30 | ENCONTRADO: Paraguas negro',
+    '                Location: Floor 3 men\'s bathroom':
+      '                Ubicación: Baño de hombres del Piso 3',
+    '                Finder: Cleaning staff (M. Santos)':
+      '                Encontrado por: Personal de limpieza (M. Santos)',
+    '                Status: CLAIMED 09-JAN':
+      '                Estado: RECLAMADO 09-ENE',
+    '07-JAN | 09:15 | FOUND: Reading glasses, brown case':
+      '07-ENE | 09:15 | ENCONTRADO: Gafas de lectura, estuche marrón',
+    '                Location: Conference Room B':
+      '                Ubicación: Sala de Conferencias B',
+    '                Finder: Meeting attendee':
+      '                Encontrado por: Asistente a reunión',
+    '                Status: UNCLAIMED':
+      '                Estado: NO RECLAMADO',
+    '11-JAN | 16:45 | FOUND: Key ring (3 keys)':
+      '11-ENE | 16:45 | ENCONTRADO: Llavero (3 llaves)',
+    '                Location: Elevator, Floor 1':
+      '                Ubicación: Ascensor, Piso 1',
+    '                Finder: Security guard (P. Rocha)':
+      '                Encontrado por: Guardia de seguridad (P. Rocha)',
+    '                Status: CLAIMED 12-JAN':
+      '                Estado: RECLAMADO 12-ENE',
+    '14-JAN | 12:00 | FOUND: Digital watch (Casio)':
+      '14-ENE | 12:00 | ENCONTRADO: Reloj digital (Casio)',
+    '                Location: Cafeteria, Table 7':
+      '                Ubicación: Cafetería, Mesa 7',
+    '                Finder: Cafeteria staff':
+      '                Encontrado por: Personal de cafetería',
+    '19-JAN | 18:20 | FOUND: Brown leather wallet':
+      '19-ENE | 18:20 | ENCONTRADO: Billetera de cuero marrón',
+    '                Location: Parking Lot B, near entrance':
+      '                Ubicación: Estacionamiento B, cerca de la entrada',
+    '                Finder: Guard (night shift)':
+      '                Encontrado por: Guardia (turno nocturno)',
+    '                Contents: ID, R$ 47,00, photos':
+      '                Contenido: Identificación, R$ 47,00, fotos',
+    '                Status: CLAIMED 20-JAN (owner verified)':
+      '                Estado: RECLAMADO 20-ENE (propietario verificado)',
+    '22-JAN | 03:00 | [RECORD SEALED - SECURITY OVERRIDE]':
+      '22-ENE | 03:00 | [REGISTRO SELLADO - OVERRIDE DE SEGURIDAD]',
+    'VACATION SCHEDULE — Q1 1996':
+      'CALENDARIO DE VACACIONES — T1 1996',
+    '  - Vacation requests require 30-day advance notice':
+      '  - Las solicitudes de vacaciones requieren 30 días de anticipación',
+    '  - Maximum consecutive days: 20':
+      '  - Máximo de días consecutivos: 20',
+    '  - Carryover from 1995: Use by 28-FEB':
+      '  - Saldo de 1995: Usar antes del 28-FEB',
+    'Questions: HR Office, ext. 2050':
+      'Preguntas: Oficina de RRHH, ext. 2050',
+    'ACCESS CODE AUDIT — INTERNAL SECURITY REVIEW':
+      'AUDITORÍA DE CÓDIGO DE ACCESO — REVISIÓN INTERNA DE SEGURIDAD',
+    'DATE: 18-DEC-1995':
+      'FECHA: 18-DIC-1995',
+    'SUBJECT: Annual Access Code Compliance Review':
+      'ASUNTO: Revisión Anual de Cumplimiento de Código de Acceso',
+    'Per Security Directive 1995-12, all departmental access':
+      'Según la Directiva de Seguridad 1995-12, todos los códigos',
+    'codes have been reviewed for compliance with naming':
+      'de acceso departamentales han sido revisados en cuanto al cumplimiento de',
+    'conventions established in Memo SEC-89-04.':
+      'convenciones de nomenclatura establecidas en el Memo SEC-89-04.',
+    '  Current codes use agricultural terminology as':
+      '  Los códigos actuales usan terminología agrícola según',
+    '  mandated by Project Operations naming standard.':
+      '  lo mandado por el estándar de nomenclatura de Operaciones de Proyecto.',
+    '  Recent audit flagged the following code for':
+      '  La auditoría reciente señaló el siguiente código por',
+    '  pattern recognition vulnerability:':
+      '  vulnerabilidad de reconocimiento de patrones:',
+    '  While the code follows naming convention, the':
+      '  Aunque el código sigue la convención de nomenclatura, la',
+    '  sequential letter arrangement may be susceptible':
+      '  disposición secuencial de letras puede ser susceptible',
+    '  to systematic enumeration attacks.':
+      '  a ataques de enumeración sistemática.',
+    '  Code remains acceptable for current fiscal year.':
+      '  El código permanece aceptable para el año fiscal actual.',
+    '  Consider alphanumeric substitution for FY1997.':
+      '  Considerar sustitución alfanumérica para el AF1997.',
+    'AUDITOR: Systems Administration':
+      'AUDITOR: Administración de Sistemas',
+    'DISTRIBUTION: Terminal operators, Security Office':
+      'DISTRIBUCIÓN: Operadores de terminal, Oficina de Seguridad',
+    'WEEKEND DUTY ROSTER — JANUARY 1996':
+      'LISTA DE SERVICIO DE FIN DE SEMANA — ENERO 1996',
+    'OPERATIONS CENTER':
+      'CENTRO DE OPERACIONES',
+    '20-21 JAN: [CANCELLED - ALL HANDS ON DECK]':
+      '20-21 ENE: [CANCELADO - TODOS A SUS PUESTOS]',
+    '  - Weekend of 20-21 JAN: Full staff mobilization':
+      '  - Fin de semana del 20-21 ENE: Movilización total del personal',
+    '    per Director order. No details provided.':
+      '    por orden del Director. Sin detalles proporcionados.',
+    '  - Overtime requests to HR by Wednesday prior.':
+      '  - Solicitudes de horas extras a RRHH antes del miércoles previo.',
+    'Duty Officer: ext. 3000 (24h)':
+      'Oficial de Servicio: ext. 3000 (24h)',
+    'MEMORANDUM — TERMINAL ACCESS OVERRIDE':
+      'MEMORANDO — OVERRIDE DE ACCESO AL TERMINAL',
+    'TO: All Terminal Operators':
+      'PARA: Todos los Operadores de Terminal',
+    'FROM: Systems Administration':
+      'DE: Administración de Sistemas',
+    'DATE: December 1995':
+      'FECHA: Diciembre de 1995',
+    'Per Director mandate, emergency terminal override codes':
+      'Por mandato del Director, los códigos de override de emergencia del terminal',
+    'have been updated for the new fiscal year.':
+      'han sido actualizados para el nuevo año fiscal.',
+    'The override protocol allows access to restricted':
+      'El protocolo de override permite acceso a directorios',
+    'directories when standard authentication is unavailable.':
+      'restringidos cuando la autenticación estándar no está disponible.',
+    'USAGE:':
+      'USO:',
+    'CURRENT CODE:':
+      'CÓDIGO ACTUAL:',
+    '  Project designation word. Agricultural term.':
+      '  Palabra de designación del proyecto. Término agrícola.',
+    '  Portuguese. Related to extraction operations.':
+      '  Portugués. Relacionado con operaciones de extracción.',
+    '  The code references our operational codename.':
+      '  El código referencia nuestro nombre clave operacional.',
+    '  Think: what do you do at harvest time?':
+      '  Piense: ¿qué se hace en la época de cosecha?',
+    'DO NOT share this code with unauthorized personnel.':
+      'NO comparta este código con personal no autorizado.',
+    '            SECURITY ALERT — INTRUSION DETECTED             ':
+      '            ALERTA DE SEGURIDAD — INTRUSIÓN DETECTADA             ',
+    'This file is a HONEYPOT.':
+      'Este archivo es un HONEYPOT.',
+    'Your terminal ID has been logged.':
+      'Su ID de terminal ha sido registrado.',
+    'Your access pattern has been flagged.':
+      'Su patrón de acceso ha sido marcado.',
+    'Security personnel have been notified.':
+      'El personal de seguridad ha sido notificado.',
+    'REMAIN AT YOUR TERMINAL.':
+      'PERMANEZCA EN SU TERMINAL.',
+    '               DECOY FILE — ACCESS LOGGED                   ':
+      '               ARCHIVO SEÑUELO — ACCESO REGISTRADO                   ',
+    'This file was planted to identify unauthorized access.':
+      'Este archivo fue plantado para identificar acceso no autorizado.',
+    'Real evidence is never labeled this obviously.':
+      'La evidencia real nunca se etiqueta tan obviamente.',
+    'You should have known better.':
+      'Debería haberlo sabido.',
+    'Your session has been marked for termination.':
+      'Su sesión ha sido marcada para terminación.',
+    '              TRAP FILE — INTRUSION CONFIRMED               ':
+      '              ARCHIVO TRAMPA — INTRUSIÓN CONFIRMADA               ',
+    'Classification level "FOR PRESIDENTS EYES ONLY" does not':
+      'El nivel de clasificación "SOLO PARA LOS OJOS DEL PRESIDENTE" no',
+    'exist in any real intelligence system.':
+      'existe en ningún sistema de inteligencia real.',
+    'This was a test. You failed.':
+      'Esto fue una prueba. Usted falló.',
+    'Countermeasures deployed.':
+      'Contramedidas desplegadas.',
+    '                HONEYPOT TRIGGERED                          ':
+      '                HONEYPOT ACTIVADO                          ',
+    'Intelligence agencies do not label files "SMOKING GUN."':
+      'Las agencias de inteligencia no etiquetan archivos como "PRUEBA DEFINITIVA."',
+    'This file exists solely to catch intruders who lack':
+      'Este archivo existe solamente para atrapar intrusos que carecen',
+    'the discretion to recognize obvious bait.':
+      'del discernimiento para reconocer un cebo obvio.',
+    'Your impatience has been noted.':
+      'Su impaciencia ha sido anotada.',
+    '[LEGACY ENCRYPTION HEADER — RECOVERED COPY AVAILABLE]':
+      '[ENCABEZADO DE ENCRIPTACIÓN LEGADO — COPIA RECUPERADA DISPONIBLE]',
+    'Historical note: this file previously used a timed wrapper.':
+      'Nota histórica: este archivo anteriormente usaba un envoltorio temporizado.',
+    'Recovered text is now available directly on open.':
+      'El texto recuperado ahora está disponible directamente al abrir.',
+    'Use: open emergency_broadcast.enc':
+      'Usar: open emergency_broadcast.enc',
+    'DATE: 20-JAN-1996 22:47 LOCAL':
+      'FECHA: 20-ENE-1996 22:47 LOCAL',
+    'FREQUENCY: MILITARY BAND — ENCRYPTED':
+      'FRECUENCIA: BANDA MILITAR — ENCRIPTADA',
+    'TOWER: "Flight 1-7, confirm visual on target area."':
+      'TORRE: "Vuelo 1-7, confirme visual en el área objetivo."',
+    'PILOT: "Negative visual. Heavy cloud cover at 3000 meters."':
+      'PILOTO: "Visual negativo. Cobertura densa de nubes a 3000 metros."',
+    'TOWER: "Proceed to coordinates 21.5519 S, 45.4331 W."':
+      'TORRE: "Proceda a coordenadas 21.5519 S, 45.4331 O."',
+    'PILOT: "Coordinates confirmed. ETA 8 minutes."':
+      'PILOTO: "Coordenadas confirmadas. Llegada estimada en 8 minutos."',
+    '[STATIC - 14 SECONDS]':
+      '[ESTÁTICA - 14 SEGUNDOS]',
+    'PILOT: "Tower, I have... I have something on radar."':
+      'PILOTO: "Torre, tengo... tengo algo en el radar."',
+    'TOWER: "Confirm contact, Flight 1-7."':
+      'TORRE: "Confirme contacto, Vuelo 1-7."',
+    'PILOT: "Contact confirmed. It\'s... it\'s not moving."':
+      'PILOTO: "Contacto confirmado. No... no se mueve."',
+    'TOWER: "Weapons systems remain inactive. Observe only."':
+      'TORRE: "Sistemas de armas permanecen inactivos. Solo observar."',
+    'PILOT: "Understood. Beginning visual approach."':
+      'PILOTO: "Entendido. Iniciando aproximación visual."',
+    '[STATIC - 8 SECONDS]':
+      '[ESTÁTICA - 8 SEGUNDOS]',
+    'PILOT: "Deus me livre... Tower, I don\'t know what I\'m looking at."':
+      'PILOTO: "Dios me libre... Torre, no sé qué estoy viendo."',
+    'TOWER: "Flight 1-7, maintain radio silence from this point."':
+      'TORRE: "Vuelo 1-7, mantenga silencio de radio desde este punto."',
+    'PILOT: "But Tower—"':
+      'PILOTO: "Pero Torre—"',
+    'TOWER: "This conversation never happened. RTB immediately."':
+      'TORRE: "Esta conversación nunca ocurrió. RTB inmediatamente."',
+    'CLASSIFICATION: ABOVE TOP SECRET':
+      'CLASIFICACIÓN: POR ENCIMA DE ULTRA SECRETO',
+    'DISSEMINATION: NEED-TO-KNOW ONLY':
+      'DISEMINACIÓN: SOLO PARA QUIEN NECESITE SABER',
+    'ARCHIVED NEWS CLIPPINGS — FEBRUARY 1996':
+      'RECORTES DE NOTICIAS ARCHIVADOS — FEBRERO 1996',
+    '"MILITARY DENIES VARGINHA RUMORS"':
+      '"MILITARES NIEGAN RUMORES DE VARGINHA"',
+    '  The Brazilian Air Force today denied reports of':
+      '  La Fuerza Aérea Brasileña negó hoy los informes de',
+    '  unusual activity near Varginha, Minas Gerais.':
+      '  actividad inusual cerca de Varginha, Minas Gerais.',
+    '  "There was no incident," stated a military spokesman.':
+      '  "No hubo ningún incidente," declaró un portavoz militar.',
+    '  "These are fabrications from overactive imaginations."':
+      '  "Estas son fabricaciones de imaginaciones hiperactivas."',
+    '"ANONYMOUS DOCUMENTS SURFACE ONLINE"':
+      '"DOCUMENTOS ANÓNIMOS APARECEN EN LÍNEA"',
+    '  Unverified documents claiming to detail a UFO':
+      '  Documentos no verificados que supuestamente detallan una operación',
+    '  recovery operation have appeared on several':
+      '  de recuperación de OVNI han aparecido en varios',
+    '  international bulletin board systems.':
+      '  sistemas de tablón de anuncios internacionales.',
+    '  Government sources dismiss them as "obvious fakes."':
+      '  Fuentes gubernamentales los descartan como "falsificaciones obvias."',
+    '"WITNESS RECANTS STATEMENT"':
+      '"TESTIGO RETRACTA DECLARACIÓN"',
+    '  a local woman, who claimed to see a "strange creature"':
+      '  una mujer local, que afirmó ver una "criatura extraña"',
+    '  in Jardim Andere, has withdrawn her testimony.':
+      '  en Jardim Andere, ha retirado su testimonio.',
+    '  "I was mistaken," she said. "It was just shadows."':
+      '  "Estaba equivocada," dijo. "Solo eran sombras."',
+    '  [EDITOR NOTE: Silva was visited by unidentified men':
+      '  [NOTA DEL EDITOR: Silva fue visitada por hombres no identificados',
+    '   in suits two days before this retraction.]':
+      '   de traje dos días antes de esta retractación.]',
+    'CLASSIFIED INTERNAL MEMORANDUM':
+      'MEMORANDO INTERNO CLASIFICADO',
+    'DATE: 10-MAR-1996':
+      'FECHA: 10-MAR-1996',
+    'RE: Information Containment Assessment':
+      'REF: Evaluación de Contención de Información',
+    '  Classified documents pertaining to January 1996':
+      '  Documentos clasificados relacionados con las operaciones de',
+    '  operations have been exfiltrated via compromised':
+      '  enero de 1996 han sido exfiltrados a través del sistema de',
+    '  legacy terminal system.':
+      '  terminal legado comprometido.',
+    'DAMAGE ASSESSMENT:':
+      'EVALUACIÓN DE DAÑOS:',
+    '  - Documents now circulating on international networks':
+      '  - Documentos ahora circulando en redes internacionales',
+    '  - Authenticity being questioned (as planned)':
+      '  - Autenticidad siendo cuestionada (según lo planeado)',
+    '  - No mainstream media pickup (yet)':
+      '  - Sin repercusión en medios convencionales (aún)',
+    'CONTAINMENT MEASURES:':
+      'MEDIDAS DE CONTENCIÓN:',
+    '  1. Flood networks with obvious fakes to dilute signal':
+      '  1. Inundar redes con falsificaciones obvias para diluir la señal',
+    '  2. Pressure witnesses to recant':
+      '  2. Presionar a testigos para que se retracten',
+    '  3. Redirect narrative to "foreign drone" hypothesis':
+      '  3. Redirigir narrativa a hipótesis de "dron extranjero"',
+    '  4. Monitor UFO community for serious investigators':
+      '  4. Monitorear comunidad OVNI en busca de investigadores serios',
+    'LONG-TERM STRATEGY:':
+      'ESTRATEGIA A LARGO PLAZO:',
+    '  The 2026 window approaches. Full disclosure may be':
+      '  La ventana de 2026 se acerca. La divulgación completa puede ser',
+    '  unavoidable. Recommend gradual acclimation program.':
+      '  inevitable. Se recomienda programa de aclimatación gradual.',
+    'NOTE: The individual known as "UFO74" remains at large.':
+      'NOTA: El individuo conocido como "UFO74" sigue prófugo.',
+    '      Termination not recommended due to martyr risk.':
+      '      Eliminación no recomendada debido al riesgo de martirio.',
+    'SIGNAL INTERCEPT — UNVERIFIED':
+      'INTERCEPTACIÓN DE SEÑAL — NO VERIFICADA',
+    'TIMESTAMP: 15-MAR-1996 03:47:22 UTC':
+      'MARCA TEMPORAL: 15-MAR-1996 03:47:22 UTC',
+    '[FRAGMENTARY TRANSMISSION - RECONSTRUCTED]':
+      '[TRANSMISIÓN FRAGMENTARIA - RECONSTRUIDA]',
+    '...made it across the border...':
+      '...logré cruzar la frontera...',
+    '...they came to the apartment but...':
+      '...vinieron al apartamento pero...',
+    '...different identity now...':
+      '...identidad diferente ahora...',
+    '...the hackerkid did it...':
+      '...el hackerkid lo logró...',
+    '...files are everywhere now...':
+      '...los archivos están en todas partes ahora...',
+    '...cant put the toothpaste back...':
+      '...no se puede meter la pasta de vuelta al tubo...',
+    '...they think im dead...':
+      '...creen que estoy muerto...',
+    '...let them think that...':
+      '...que crean eso...',
+    '...2026. ill be watching...':
+      '...2026. estaré observando...',
+    '...we all will...':
+      '...todos lo estaremos...',
+    '[SIGNAL LOST]':
+      '[SEÑAL PERDIDA]',
+    'ANALYSIS: Origin untraceable. Possibly fabricated.':
+      'ANÁLISIS: Origen irrastreable. Posiblemente fabricado.',
+    '          Subject status: UNKNOWN':
+      '          Estado del sujeto: DESCONOCIDO',
+    'PROJECTION UPDATE — 2026 TRANSITION WINDOW':
+      'ACTUALIZACIÓN DE PROYECCIÓN — VENTANA DE TRANSICIÓN 2026',
+    'CLASSIFICATION: BEYOND TOP SECRET':
+      'CLASIFICACIÓN: MÁS ALLÁ DE ULTRA SECRETO',
+    'DATE: [REDACTED]':
+      'FECHA: [SUPRIMIDO]',
+    'REVISED ASSESSMENT:':
+      'EVALUACIÓN REVISADA:',
+    '  The information breach of January 1996 has altered':
+      '  La violación de información de enero de 1996 ha alterado',
+    '  projected outcomes for the 2026 transition window.':
+      '  los resultados proyectados para la ventana de transición de 2026.',
+    'PREVIOUS MODEL:':
+      'MODELO ANTERIOR:',
+    '  - Transition occurs with zero public awareness':
+      '  - Transición ocurre con cero conciencia pública',
+    '  - Population response: Panic, collapse':
+      '  - Respuesta de la población: Pánico, colapso',
+    '  - Estimated casualties: [REDACTED]':
+      '  - Bajas estimadas: [SUPRIMIDO]',
+    'REVISED MODEL (POST-BREACH):':
+      'MODELO REVISADO (POST-VIOLACIÓN):',
+    '  - Partial public awareness exists':
+      '  - Existe conciencia pública parcial',
+    '  - Underground networks prepared':
+      '  - Redes clandestinas preparadas',
+    '  - Potential for coordinated response':
+      '  - Potencial para respuesta coordinada',
+    '  - Estimated casualties: REDUCED':
+      '  - Bajas estimadas: REDUCIDAS',
+    'CONCLUSION:':
+      'CONCLUSIÓN:',
+    '  The breach, while operationally damaging, may have':
+      '  La violación, aunque operativamente dañina, puede haber',
+    '  inadvertently improved transition survival rates.':
+      '  mejorado inadvertidamente las tasas de supervivencia en la transición.',
+    '  The intruder\'s actions, though criminal, may have':
+      '  Las acciones del intruso, aunque criminales, pueden haber',
+    '  saved lives.':
+      '  salvado vidas.',
+    '  This assessment is classified and will be denied.':
+      '  Esta evaluación es clasificada y será negada.',
+    'INCIDENT REPORT — EXPERIMENTAL AIRCRAFT DIVISION':
+      'INFORME DE INCIDENTE — DIVISIÓN DE AERONAVES EXPERIMENTALES',
+    'DATE: 21-JAN-1996':
+      'FECHA: 21-ENE-1996',
+    'CLASSIFICATION: CONFIDENTIAL':
+      'CLASIFICACIÓN: CONFIDENCIAL',
+    'INCIDENT TYPE: Unauthorized civilian overflight':
+      'TIPO DE INCIDENTE: Sobrevuelo civil no autorizado',
+    '  A single-engine Cessna 172 entered restricted airspace':
+      '  Un Cessna 172 monomotor ingresó al espacio aéreo restringido',
+    '  over Base Area 7 at approximately 14:20h on 20-JAN-1996.':
+      '  sobre el Área de Base 7 aproximadamente a las 14:20h del 20-ENE-1996.',
+    '  Pilot identified as agricultural contractor.':
+      '  Piloto identificado como contratista agrícola.',
+    '  Filed incorrect flight plan (VFR instead of IFR).':
+      '  Plan de vuelo incorrecto registrado (VFR en lugar de IFR).',
+    '  No photographic equipment found on board.':
+      '  Ningún equipo fotográfico encontrado a bordo.',
+    'PRELIMINARY CONCLUSION:':
+      'CONCLUSIÓN PRELIMINAR:',
+    '  Navigational error. Pilot issued formal warning.':
+      '  Error de navegación. Se emitió advertencia formal al piloto.',
+    '  No security breach. Airspace monitoring resumed.':
+      '  Sin violación de seguridad. Monitoreo del espacio aéreo reanudado.',
+    'NOTE: Recommend updated NOTAM for restricted zone':
+      'NOTA: Se recomienda NOTAM actualizado para zona restringida',
+    '      perimeter. Current radius may be insufficient.':
+      '      perímetro. El radio actual puede ser insuficiente.',
+    'ASSESSMENT — FOREIGN DRONE HYPOTHESIS':
+      'EVALUACIÓN — HIPÓTESIS DE DRON EXTRANJERO',
+    'ANALYST: [CLASSIFIED — junior lieutenant, technical analysis]':
+      'ANALISTA: [CLASIFICADO — teniente subalterno, análisis técnico]',
+    'HYPOTHESIS:':
+      'HIPÓTESIS:',
+    '  Recovered material represents foreign reconnaissance drone':
+      '  El material recuperado representa un dron de reconocimiento extranjero',
+    '  of undisclosed origin (likely US or European).':
+      '  de origen no revelado (probablemente EE.UU. o europeo).',
+    'SUPPORTING EVIDENCE:':
+      'EVIDENCIA DE APOYO:',
+    '  - Advanced materials consistent with aerospace industry':
+      '  - Materiales avanzados consistentes con la industria aeroespacial',
+    '  - Size appropriate for unmanned platform':
+      '  - Tamaño apropiado para plataforma no tripulada',
+    '  - Recovery site near strategic infrastructure':
+      '  - Sitio de recuperación cerca de infraestructura estratégica',
+    'CONTRADICTING EVIDENCE:':
+      'EVIDENCIA CONTRADICTORIA:',
+    '  - No propulsion system identified':
+      '  - Ningún sistema de propulsión identificado',
+    '  - No known drone uses materials of this composition':
+      '  - Ningún dron conocido utiliza materiales de esta composición',
+    '  - Mass variability unexplained by any known technology':
+      '  - Variabilidad de masa inexplicable por cualquier tecnología conocida',
+    '  - Thermal signature inconsistent with any engine type':
+      '  - Firma térmica inconsistente con cualquier tipo de motor',
+    '  Hypothesis CANNOT be sustained.':
+      '  Hipótesis NO PUEDE ser sostenida.',
+    '  Material properties inconsistent with ANY known aircraft.':
+      '  Propiedades del material inconsistentes con CUALQUIER aeronave conocida.',
+    'INTERNAL MEMORANDUM — PUBLIC AFFAIRS':
+      'MEMORANDO INTERNO — ASUNTOS PÚBLICOS',
+    'DATE: 22-JAN-1996':
+      'FECHA: 22-ENE-1996',
+    'RE: Media Inquiry Response':
+      'REF: Respuesta a Consulta de Medios',
+    'APPROVED STATEMENT FOR PRESS:':
+      'DECLARACIÓN APROBADA PARA LA PRENSA:',
+    '  "The object recovered near Varginha on January 20':
+      '  "El objeto recuperado cerca de Varginha el 20 de enero',
+    '   has been identified as a weather balloon from the':
+      '   ha sido identificado como un globo meteorológico del',
+    '   National Meteorological Institute. The unusual':
+      '   Instituto Nacional de Meteorología. Los avistamientos',
+    '   sightings were caused by reflected light from':
+      '   inusuales fueron causados por la luz reflejada del',
+    '   the balloon\'s instrumentation package."':
+      '   paquete de instrumentación del globo."',
+    '  This statement is for public consumption only.':
+      '  Esta declaración es solo para consumo público.',
+    '  Actual findings classified.':
+      '  Hallazgos reales clasificados.',
+    '  See PROJECT HARVEST files for details.':
+      '  Ver archivos del PROYECTO COSECHA para detalles.',
+    'ALTERNATIVE ASSESSMENT — INDUSTRIAL ORIGIN':
+      'EVALUACIÓN ALTERNATIVA — ORIGEN INDUSTRIAL',
+    'ANALYST: SGT. PAULA REIS':
+      'ANALISTA: SGT. PAULA REIS',
+    '  Recovered materials originated from nearby':
+      '  Los materiales recuperados se originaron de una instalación',
+    '  industrial facility (chemical or metallurgical).':
+      '  industrial cercana (química o metalúrgica).',
+    'INVESTIGATION:':
+      'INVESTIGACIÓN:',
+    '  Contacted 12 facilities within 50km radius.':
+      '  Se contactaron 12 instalaciones dentro de un radio de 50km.',
+    '  No reported accidents or material losses.':
+      '  Ningún accidente reportado ni pérdida de material.',
+    '  No facility uses materials matching samples.':
+      '  Ninguna instalación utiliza materiales que coincidan con las muestras.',
+    'MATERIAL COMPARISON:':
+      'COMPARACIÓN DE MATERIAL:',
+    '  - Local steel plant: No match':
+      '  - Planta siderúrgica local: Sin coincidencia',
+    '  - Chemical processing: No match':
+      '  - Procesamiento químico: Sin coincidencia',
+    '  - Automotive parts: No match':
+      '  - Piezas automotrices: Sin coincidencia',
+    '  - Aerospace subcontractor (Embraer): NO MATCH':
+      '  - Subcontratista aeroespacial (Embraer): SIN COINCIDENCIA',
+    '  Industrial origin RULED OUT.':
+      '  Origen industrial DESCARTADO.',
+    '  Materials have no identifiable manufacturing signature.':
+      '  Los materiales no tienen firma de fabricación identificable.',
+    '  Discontinue this line of investigation.':
+      '  Descontinuar esta línea de investigación.',
+    '  Defer to standard explanation for public statement.':
+      '  Deferir a la explicación estándar para declaración pública.',
+    'LOGISTICS MANIFEST — PARTIAL RECOVERY':
+      'MANIFIESTO LOGÍSTICO — RECUPERACIÓN PARCIAL',
+    'STATUS: FRAGMENT — SECTOR DAMAGE':
+      'ESTADO: FRAGMENTO — DAÑO SECTORIAL',
+    'OUTBOUND SHIPMENTS:':
+      'ENVÍOS DE SALIDA:',
+    '  [CORRUPTED] ... Container C-7 ... [CORRUPTED]':
+      '  [CORRUPTO] ... Contenedor C-7 ... [CORRUPTO]',
+    '  Destination: CÓDIGO ECHO':
+      '  Destino: CÓDIGO ECHO',
+    '  Weight: 45kg':
+      '  Peso: 45kg',
+    '  Handler: Protocol 7-ECHO authorized':
+      '  Responsable: Protocolo 7-ECHO autorizado',
+    '  [CORRUPTED] ... Container C-12 ... [CORRUPTED]':
+      '  [CORRUPTO] ... Contenedor C-12 ... [CORRUPTO]',
+    '  Destination: UNKNOWN (diplomatic channel)':
+      '  Destino: DESCONOCIDO (canal diplomático)',
+    '  Weight: 112kg':
+      '  Peso: 112kg',
+    '  Handler: [DATA LOSS]':
+      '  Responsable: [PÉRDIDA DE DATOS]',
+    'NOTE: Cross-reference with transport_log_96 for context.':
+      'NOTA: Referencia cruzada con transport_log_96 para contexto.',
+    'SIGNAL ANALYSIS — PRELIMINARY':
+      'ANÁLISIS DE SEÑAL — PRELIMINAR',
+    'EQUIPMENT: Modified EEG Array':
+      'EQUIPO: Arreglo de EEG Modificado',
+    'DATE: 20-JAN-1996 (during containment)':
+      'FECHA: 20-ENE-1996 (durante contención)',
+    'READINGS FROM SUBJECT BETA (pre-expiration):':
+      'LECTURAS DEL SUJETO BETA (pre-expiración):',
+    '  04:30 — Background noise only':
+      '  04:30 — Solo ruido de fondo',
+    '  04:45 — Unusual pattern detected (see attached)':
+      '  04:45 — Patrón inusual detectado (ver adjunto)',
+    '  05:00 — Pattern intensifies. Equipment overload.':
+      '  05:00 — Patrón se intensifica. Sobrecarga de equipo.',
+    '  05:15 — Subject vitals declining. Pattern peaks.':
+      '  05:15 — Signos vitales del sujeto en declive. Patrón alcanza pico.',
+    '  05:18 — Transmission burst detected. Duration: 0.3s':
+      '  05:18 — Ráfaga de transmisión detectada. Duración: 0,3s',
+    '  05:20 — Subject expires. Pattern ceases.':
+      '  05:20 — Sujeto expira. Patrón cesa.',
+    'INTERPRETATION:':
+      'INTERPRETACIÓN:',
+    '  Unknown. Equipment not designed for this signal type.':
+      '  Desconocida. Equipo no diseñado para este tipo de señal.',
+    '  Recommend consultation with transcript_core.enc':
+      '  Se recomienda consulta con transcript_core.enc',
+    '  for reconstructed content analysis.':
+      '  para análisis de contenido reconstruido.',
+    'LIAISON NOTE — FOREIGN COORDINATION':
+      'NOTA DE ENLACE — COORDINACIÓN EXTRANJERA',
+    'FROM: Embassy Contact (unsigned)':
+      'DE: Contacto de Embajada (sin firma)',
+    'DATE: 23-JAN-1996':
+      'FECHA: 23-ENE-1996',
+    'Package received via diplomatic pouch.':
+      'Paquete recibido vía valija diplomática.',
+    'Contents confirmed:':
+      'Contenido confirmado:',
+    '  - Biological samples (2 containers)':
+      '  - Muestras biológicas (2 contenedores)',
+    '  - Material samples (1 container)':
+      '  - Muestras de material (1 contenedor)',
+    '  - Documentation (sealed)':
+      '  - Documentación (sellada)',
+    'Our team is already en route.':
+      'Nuestro equipo ya está en camino.',
+    'As agreed, no records of this exchange will exist':
+      'Según lo acordado, no existirán registros de este intercambio',
+    'in either system. Protocol 7-ECHO acknowledged.':
+      'en ninguno de los sistemas. Protocolo 7-ECHO reconocido.',
+    'We will contact you when preliminary analysis complete.':
+      'Nos comunicaremos cuando el análisis preliminar esté completo.',
+    'NOTE: Your material_x_analysis.dat was... illuminating.':
+      'NOTA: Su material_x_analysis.dat fue... esclarecedor.',
+    '      We concur with the conclusion.':
+      '      Coincidimos con la conclusión.',
+    'ENCRYPTED CABLE — PRIORITY ALPHA':
+      'CABLE ENCRIPTADO — PRIORIDAD ALFA',
+    'ORIGIN: LANGLEY':
+      'ORIGEN: LANGLEY',
+    'DESTINATION: BRASÍLIA STATION':
+      'DESTINO: ESTACIÓN BRASILIA',
+    'DATE: 23-JAN-1996 04:12 UTC':
+      'FECHA: 23-ENE-1996 04:12 UTC',
+    '[ENCRYPTED CONTENT - REQUIRES CLEARANCE]':
+      '[CONTENIDO ENCRIPTADO - REQUIERE AUTORIZACIÓN]',
+    'Cross-reference: /comms/liaison/foreign_liaison_note.txt':
+      'Referencia cruzada: /comms/liaison/foreign_liaison_note.txt',
+    'DECRYPTED CABLE — PRIORITY ALPHA':
+      'CABLE DESENCRIPTADO — PRIORIDAD ALFA',
+    'FLASH TRAFFIC':
+      'TRÁFICO URGENTE',
+    'SITUATION UPDATE:':
+      'ACTUALIZACIÓN DE SITUACIÓN:',
+    '  Recovery teams report multiple specimens secured.':
+      '  Equipos de recuperación reportan múltiples especímenes asegurados.',
+    '  Division as agreed: Primary to you, Secondary to us.':
+      '  División según lo acordado: Primario para ustedes, Secundario para nosotros.',
+    '  Tertiary inbound to Tel Aviv per standing agreement.':
+      '  Terciario en camino a Tel Aviv según acuerdo vigente.',
+    '  Protocol 7-ECHO remains in effect.':
+      '  Protocolo 7-ECHO permanece en efecto.',
+    '  No domestic agencies read-in.':
+      '  Ninguna agencia doméstica informada.',
+    '  Cover story: industrial accident, toxic waste.':
+      '  Historia de cobertura: accidente industrial, residuos tóxicos.',
+    'CRITICAL:':
+      'CRÍTICO:',
+    '  Specimen 3 showed residual cognitive activity.':
+      '  El espécimen 3 mostró actividad cognitiva residual.',
+    '  Recommend immediate neural extraction before decay.':
+      '  Se recomienda extracción neural inmediata antes de la descomposición.',
+    '  Our team brings equipment. ETA 6 hours.':
+      '  Nuestro equipo trae equipamiento. Llegada estimada: 6 horas.',
+    'ACKNOWLEDGE.':
+      'ACUSE RECIBO.',
+    '>> CONFIRMS MULTI-NATION COORDINATION <<':
+      '>> CONFIRMA COORDINACIÓN MULTINACIONAL <<',
+    'What protocol governs this exchange? (Check the foreign liaison note)':
+      '¿Qué protocolo rige este intercambio? (Verifique la nota de enlace extranjero)',
+    'The liaison note mentions the protocol name.':
+      'La nota de enlace menciona el nombre del protocolo.',
+    'STANDING ORDERS — MULTINATIONAL RECOVERY PROTOCOL':
+      'ÓRDENES PERMANENTES — PROTOCOLO MULTINACIONAL DE RECUPERACIÓN',
+    'CLASSIFICATION: COSMIC - NEED TO KNOW':
+      'CLASIFICACIÓN: CÓSMICO - SOLO PARA QUIEN NECESITE SABER',
+    'EFFECTIVE: 01-JAN-1989 (UPDATED ANNUALLY)':
+      'VIGENCIA: 01-ENE-1989 (ACTUALIZADO ANUALMENTE)',
+    'PARTICIPATING NATIONS:':
+      'NACIONES PARTICIPANTES:',
+    '  - United States (Coordinating Authority)':
+      '  - Estados Unidos (Autoridad Coordinadora)',
+    '  - United Kingdom':
+      '  - Reino Unido',
+    '  - France':
+      '  - Francia',
+    '  - Israel':
+      '  - Israel',
+    '  - Brazil (Regional Authority, South America)':
+      '  - Brasil (Autoridad Regional, Sudamérica)',
+    '  - Russia (Observer Status, post-1991)':
+      '  - Rusia (Estado de Observador, post-1991)',
+    'TRIGGER CRITERIA:':
+      'CRITERIOS DE ACTIVACIÓN:',
+    '  Any incident matching Profile DELTA:':
+      '  Cualquier incidente que coincida con el Perfil DELTA:',
+    '  - Non-conventional aerial phenomena':
+      '  - Fenómenos aéreos no convencionales',
+    '  - Biological specimens of unknown origin':
+      '  - Especímenes biológicos de origen desconocido',
+    '  - Material with anomalous physical properties':
+      '  - Material con propiedades físicas anómalas',
+    'RESPONSE PROTOCOL:':
+      'PROTOCOLO DE RESPUESTA:',
+    '  1. Regional Authority establishes perimeter':
+      '  1. La Autoridad Regional establece perímetro',
+    '  2. Coordinating Authority notified within 2 hours':
+      '  2. Autoridad Coordinadora notificada dentro de 2 horas',
+    '  3. Multinational team deployed within 24 hours':
+      '  3. Equipo multinacional desplegado dentro de 24 horas',
+    '  4. Material divided per Appendix C allocation':
+      '  4. Material dividido según asignación del Apéndice C',
+    'INFORMATION CONTROL:':
+      'CONTROL DE INFORMACIÓN:',
+    '  All nations maintain synchronized cover narratives.':
+      '  Todas las naciones mantienen narrativas de cobertura sincronizadas.',
+    '  Annual coordination meeting: Davos, Switzerland.':
+      '  Reunión anual de coordinación: Davos, Suiza.',
+    'ADDENDUM (1995):':
+      'ADENDA (1995):',
+    '  Coordination extended to include shared timeline.':
+      '  Coordinación extendida para incluir cronograma compartido.',
+    '  All parties agree: public disclosure deferred until':
+      '  Todas las partes acuerdan: divulgación pública diferida hasta',
+    '  after WINDOW closes. Target: post-2026 review.':
+      '  después del cierre de la VENTANA. Meta: revisión post-2026.',
+    '  Cross-reference: /admin/threat_window.red':
+      '  Referencia cruzada: /admin/threat_window.red',
+    'QUERY — REGIONAL MEDICAL EXAMINER':
+      'CONSULTA — MÉDICO FORENSE REGIONAL',
+    'RE: Unusual Autopsy Protocol':
+      'REF: Protocolo de Autopsia Inusual',
+    'To whom it may concern,':
+      'A quien pueda interesar,',
+    'I am writing to inquire about the autopsy conducted':
+      'Escribo para indagar sobre la autopsia realizada',
+    'at our facility on 21-JAN-1996. I understand':
+      'en nuestra instalación el 21-ENE-1996. Entiendo que',
+    'A forensic pathologist was summoned from a state university,':
+      'Un patólogo forense fue convocado de una universidad estatal,',
+    'but his notes were sealed before I could review them.':
+      'pero sus notas fueron selladas antes de que pudiera revisarlas.',
+    'The subject was removed before I arrived.':
+      'El sujeto fue retirado antes de mi llegada.',
+    'No standard intake forms were filed.':
+      'No se completaron formularios de admisión estándar.',
+    'No cause of death was recorded.':
+      'No se registró causa de muerte.',
+    'The attending physician refuses to discuss.':
+      'El médico a cargo se niega a discutirlo.',
+    'Our cold storage showed unusual temperature readings':
+      'Nuestro almacenamiento frío mostró lecturas de temperatura inusuales',
+    'for several hours afterward.':
+      'durante varias horas después.',
+    'I am required to maintain complete records.':
+      'Estoy obligado a mantener registros completos.',
+    'Please advise how to proceed with documentation.':
+      'Por favor, indiquen cómo proceder con la documentación.',
+    'THE REGIONAL MEDICAL EXAMINER':
+      'EL MÉDICO FORENSE REGIONAL',
+    'Regional Medical Examiner':
+      'Médico Forense Regional',
+    '[RESPONSE ATTACHED: "File classified. Destroy query."]':
+      '[RESPUESTA ADJUNTA: "Archivo clasificado. Destruir consulta."]',
+    'SYSTEM LOG — PATTERN RECOGNITION':
+      'LOG DEL SISTEMA — RECONOCIMIENTO DE PATRONES',
+    'TIMESTAMP: [CURRENT SESSION]':
+      'MARCA TEMPORAL: [SESIÓN ACTUAL]',
+    'Broad file sweep detected.':
+      'Barrido amplio de archivos detectado.',
+    'User has touched multiple sectors of the system.':
+      'El usuario ha accedido a múltiples sectores del sistema.',
+    'Pattern: Persistent review of scattered records.':
+      'Patrón: Revisión persistente de registros dispersos.',
+    'NOTE: Additional archives may be available.':
+      'NOTA: Archivos adicionales pueden estar disponibles.',
+    '      Check /admin directory if access permits.':
+      '      Verifique el directorio /admin si el acceso lo permite.',
+    'SYSTEM ALERT — COHERENCE THRESHOLD':
+      'ALERTA DEL SISTEMA — UMBRAL DE COHERENCIA',
+    'PRIORITY: ELEVATED':
+      'PRIORIDAD: ELEVADA',
+    'User has logged substantial evidence.':
+      'El usuario ha registrado evidencia sustancial.',
+    'Evidence tracker approaching completion.':
+      'Rastreador de evidencia acercándose a la conclusión.',
+    'Leak risk rising.':
+      'Riesgo de filtración en aumento.',
+    'System recommendation:':
+      'Recomendación del sistema:',
+    '  Preserve session artifacts.':
+      '  Preservar artefactos de la sesión.',
+    '  Expect emergency export attempts.':
+      '  Esperar intentos de exportación de emergencia.',
+    'NOTE: Final evidence may require administrative access.':
+      'NOTA: La evidencia final puede requerir acceso administrativo.',
+    'HISTORICAL REFERENCE — OPERATION PRATO':
+      'REFERENCIA HISTÓRICA — OPERACIÓN PRATO',
+    'PERIOD: 1977-1978':
+      'PERÍODO: 1977-1978',
+    'LOCATION: Colares, Pará, Brazil':
+      'UBICACIÓN: Colares, Pará, Brasil',
+    '  Brazilian Air Force investigation of unidentified':
+      '  Investigación de la Fuerza Aérea Brasileña sobre fenómenos',
+    '  aerial phenomena in northern Brazil.':
+      '  aéreos no identificados en el norte de Brasil.',
+    '  - Multiple credible sightings documented':
+      '  - Múltiples avistamientos creíbles documentados',
+    '  - Physical effects on witnesses (burn marks)':
+      '  - Efectos físicos en testigos (marcas de quemadura)',
+    '  - Phenomenon described as "light beams"':
+      '  - Fenómeno descrito como "haces de luz"',
+    '  - Objects displayed non-ballistic motion':
+      '  - Objetos exhibieron movimiento no balístico',
+    'OFFICIAL CONCLUSION:':
+      'CONCLUSIÓN OFICIAL:',
+    '  Inconclusive. Files sealed.':
+      '  Inconcluso. Archivos sellados.',
+    'RELEVANCE TO 1996 INCIDENT:':
+      'RELEVANCIA PARA EL INCIDENTE DE 1996:',
+    '  Current operation named "PRATO EXTENSION"':
+      '  Operación actual denominada "EXTENSIÓN PRATO"',
+    '  suggests institutional awareness of connection.':
+      '  sugiere conocimiento institucional de conexión.',
+    'NOTE: Original PRATO files held by Air Force archives.':
+      'NOTA: Archivos originales de PRATO en poder de archivos de la Fuerza Aérea.',
+    '      Supplemental archive unlocked under override protocol.':
+      '      Archivo suplementario desbloqueado bajo protocolo de override.',
+    '      See /ops/prato/archive when cleared.':
+      '      Ver /ops/prato/archive cuando esté autorizado.',
+    'INCIDENT LOG — OPERATION PRATO (COLARES)':
+      'REGISTRO DE INCIDENTES — OPERACIÓN PRATO (COLARES)',
+    'DATE RANGE: SEP-OCT 1977':
+      'PERÍODO: SEP-OCT 1977',
+    '18-SEP 22:14 — Luminous object above river channel.':
+      '18-SEP 22:14 — Objeto luminoso sobre canal del río.',
+    '                Beam emitted for 4-6 seconds.':
+      '                Haz emitido por 4-6 segundos.',
+    '                Civilian reported heat and puncture mark.':
+      '                Civil reportó calor y marca de punción.',
+    '20-SEP 23:06 — Patrol observed light hovering ~30m.':
+      '20-SEP 23:06 — Patrulla observó luz flotando a ~30m.',
+    '                No sound. Rapid lateral acceleration.':
+      '                Sin sonido. Aceleración lateral rápida.',
+    '                Beam directed to ground, no visible target.':
+      '                Haz dirigido al suelo, sin objetivo visible.',
+    '24-SEP 21:47 — Multiple witnesses. Light split into two':
+      '24-SEP 21:47 — Múltiples testigos. Luz se dividió en dos',
+    '                points before rejoining and departing.':
+      '                puntos antes de reunirse y partir.',
+    '03-OCT 00:12 — Light tracked along shoreline for 3km.':
+      '03-OCT 00:12 — Luz rastreada a lo largo de la costa por 3km.',
+    '                Brightness increased; camera overexposed.':
+      '                Brillo aumentó; cámara sobreexpuesta.',
+    'STATUS: Unresolved. Pattern persistent.':
+      'ESTADO: No resuelto. Patrón persistente.',
+    'NOTE: Incidents cluster near waterfront communities.':
+      'NOTA: Los incidentes se concentran cerca de comunidades costeras.',
+    'PATROL OBSERVATION REPORT — SHIFT 04':
+      'INFORME DE OBSERVACIÓN DE PATRULLA — TURNO 04',
+    'UNIT: 1st AIR FORCE DETACHMENT':
+      'UNIDAD: 1er DESTACAMENTO DE LA FUERZA AÉREA',
+    'DATE: 05-OCT-1977':
+      'FECHA: 05-OCT-1977',
+    '  00:31 — White orb at 25-30m altitude.':
+      '  00:31 — Orbe blanco a 25-30m de altitud.',
+    '  00:32 — Orb emits narrow beam downward.':
+      '  00:32 — Orbe emite haz estrecho hacia abajo.',
+    '  00:33 — Beam sweeps left to right (approx. 40° arc).':
+      '  00:33 — Haz barre de izquierda a derecha (arco de aprox. 40°).',
+    '  00:34 — Orb rises rapidly. Acceleration inconsistent':
+      '  00:34 — Orbe asciende rápidamente. Aceleración inconsistente',
+    '          with known aircraft.':
+      '          con aeronaves conocidas.',
+    'SENSOR NOTES:':
+      'NOTAS DE SENSORES:',
+    '  - No engine noise or rotor wash.':
+      '  - Sin ruido de motor ni turbulencia de rotor.',
+    '  - Compass fluctuation during beam emission.':
+      '  - Fluctuación de la brújula durante emisión del haz.',
+    '  - Thermal scope shows localized ground heating.':
+      '  - Visor térmico muestra calentamiento localizado del suelo.',
+    'PHOTOGRAPHIC RECORD:':
+      'REGISTRO FOTOGRÁFICO:',
+    '  3 frames captured; 2 overexposed; 1 partial silhouette.':
+      '  3 cuadros capturados; 2 sobreexpuestos; 1 silueta parcial.',
+    '  Continue night patrols. Maintain distance.':
+      '  Continuar patrullas nocturnas. Mantener distancia.',
+    'MEDICAL EFFECTS BRIEF — COLARES CLINIC':
+      'RESUMEN DE EFECTOS MÉDICOS — CLÍNICA DE COLARES',
+    'DATE: 14-OCT-1977':
+      'FECHA: 14-OCT-1977',
+    'OBSERVED SYMPTOMS (12 CASES):':
+      'SÍNTOMAS OBSERVADOS (12 CASOS):',
+    '  - Superficial burns (2-5cm diameter)':
+      '  - Quemaduras superficiales (2-5cm de diámetro)',
+    '  - Localized puncture marks (sub-dermal)':
+      '  - Marcas de punción localizadas (subdérmicas)',
+    '  - Acute fatigue, dizziness, photophobia':
+      '  - Fatiga aguda, mareos, fotofobia',
+    '  - Mild anemia in follow-up labs':
+      '  - Anemia leve en laboratorios de seguimiento',
+    '  Symptoms appear within 12 hours of exposure.':
+      '  Los síntomas aparecen dentro de las 12 horas de exposición.',
+    '  No infection markers detected.':
+      '  Ningún marcador de infección detectado.',
+    '  Recovery within 3-5 days with hydration and rest.':
+      '  Recuperación en 3-5 días con hidratación y reposo.',
+    '  Maintain private treatment records.':
+      '  Mantener registros de tratamiento privados.',
+    '  Report new cases to field command only.':
+      '  Reportar nuevos casos solo al comando de campo.',
+    'PHOTO ARCHIVE REGISTER — OPERATION PRATO':
+      'REGISTRO DE ARCHIVO FOTOGRÁFICO — OPERACIÓN PRATO',
+    'ARCHIVE SITE: AIR FORCE COMMAND / BELÉM':
+      'SITIO DEL ARCHIVO: COMANDO DE LA FUERZA AÉREA / BELÉM',
+    'DATE: 22-OCT-1977':
+      'FECHA: 22-OCT-1977',
+    'ROLL COUNT: 146':
+      'CONTEO DE ROLLOS: 146',
+    '  - 34 rolls overexposed (light saturation)':
+      '  - 34 rollos sobreexpuestos (saturación de luz)',
+    '  - 21 rolls contain partial silhouettes':
+      '  - 21 rollos contienen siluetas parciales',
+    '  - 6 rolls show beam segments on ground':
+      '  - 6 rollos muestran segmentos de haz en el suelo',
+    'STORAGE:':
+      'ALMACENAMIENTO:',
+    '  Sealed in climate-controlled vault.':
+      '  Sellado en bóveda con control climático.',
+    '  Access logged under Protocol 3-C.':
+      '  Acceso registrado bajo Protocolo 3-C.',
+    'NOTE:':
+      'NOTA:',
+    '  Several frames show repeating grid-like arcs.':
+      '  Varios cuadros muestran arcos repetitivos en forma de cuadrícula.',
+    '  Analysts flagged for pattern review.':
+      '  Analistas señalaron para revisión de patrón.',
+    'RETROSPECTIVE ASSESSMENT — PRATO ANOMALY SET':
+      'EVALUACIÓN RETROSPECTIVA — CONJUNTO DE ANOMALÍAS PRATO',
+    'CLASSIFICATION: RED':
+      'CLASIFICACIÓN: ROJO',
+    'DATE: 12-FEB-1996':
+      'FECHA: 12-FEB-1996',
+    '  1977 incidents show consistent scan geometry:':
+      '  Los incidentes de 1977 muestran geometría de escaneo consistente:',
+    '  repeating altitude bands, lateral sweep arcs, and':
+      '  bandas de altitud repetitivas, arcos de barrido lateral, y',
+    '  short-duration beam contact without pursuit.':
+      '  contacto de haz de corta duración sin persecución.',
+    '  Behaviors align with survey operations, not attacks.':
+      '  Los comportamientos se alinean con operaciones de reconocimiento, no ataques.',
+    '  Patterns resemble grid sampling and terrain mapping.':
+      '  Los patrones se asemejan a muestreo en cuadrícula y mapeo de terreno.',
+    'INFERENCE:':
+      'INFERENCIA:',
+    '  Luminous sources likely autonomous scan platforms.':
+      '  Las fuentes luminosas son probablemente plataformas autónomas de escaneo.',
+    '  Activity indicates Watcher reconnaissance cycles':
+      '  La actividad indica ciclos de reconocimiento de los Observadores',
+    '  predating the 1996 Varginha recovery.':
+      '  anteriores a la recuperación de Varginha de 1996.',
+    'IMPLICATION:':
+      'IMPLICACIÓN:',
+    '  Current incident is a continuation, not a first contact.':
+      '  El incidente actual es una continuación, no un primer contacto.',
+    'CONFIDENCE: MODERATE':
+      'CONFIANZA: MODERADA',
+    '  Data set incomplete; pattern consistency notable.':
+      '  Conjunto de datos incompleto; consistencia de patrón notable.',
+    'REFERENCE — PARALLEL INCIDENTS (INTERNATIONAL)':
+      'REFERENCIA — INCIDENTES PARALELOS (INTERNACIONAL)',
+    'COMPILED: FEBRUARY 1996':
+      'COMPILADO: FEBRERO 1996',
+    'CLASSIFICATION: COMPARTMENTED':
+      'CLASIFICACIÓN: COMPARTIMENTADO',
+    'Known incidents with similar characteristics:':
+      'Incidentes conocidos con características similares:',
+    '  1947 — United States (New Mexico)':
+      '  1947 — Estados Unidos (Nuevo México)',
+    '  1961 — United States (New Hampshire)':
+      '  1961 — Estados Unidos (New Hampshire)',
+    '  1967 — United Kingdom (Suffolk)':
+      '  1967 — Reino Unido (Suffolk)',
+    '  1980 — United Kingdom (Suffolk, repeat)':
+      '  1980 — Reino Unido (Suffolk, repetición)',
+    '  1989 — Belgium (multiple locations)':
+      '  1989 — Bélgica (múltiples ubicaciones)',
+    '  1996 — BRAZIL (current)':
+      '  1996 — BRASIL (actual)',
+    'COMMON ELEMENTS:':
+      'ELEMENTOS COMUNES:',
+    '  - Material recovery':
+      '  - Recuperación de material',
+    '  - Biological component presence':
+      '  - Presencia de componente biológico',
+    '  - Multi-national coordination':
+      '  - Coordinación multinacional',
+    '  - Public denial protocol':
+      '  - Protocolo de negación pública',
+    '  Pattern suggests ongoing assessment program.':
+      '  El patrón sugiere un programa de evaluación en curso.',
+    '  Brazil now included in observation set.':
+      '  Brasil ahora incluido en el conjunto de observación.',
+    'ANALYSIS — THIRTY-YEAR CYCLE HYPOTHESIS':
+      'ANÁLISIS — HIPÓTESIS DEL CICLO DE TREINTA AÑOS',
+    'THEORETICAL FRAMEWORK':
+      'MARCO TEÓRICO',
+    'OBSERVATION:':
+      'OBSERVACIÓN:',
+    '  Recovered psi-comm fragments reference "thirty rotations."':
+      '  Los fragmentos de psi-comm recuperados referencian "treinta rotaciones."',
+    '  This correlates with prior incident spacing:':
+      '  Esto se correlaciona con el espaciamiento de incidentes anteriores:',
+    '  1947 → 1977 = 30 years (Operation PRATO follows)':
+      '  1947 → 1977 = 30 años (sigue la Operación PRATO)',
+    '  1977 → 2007 = 30 years (predicted)':
+      '  1977 → 2007 = 30 años (previsto)',
+    '  1996 → 2026 = 30 years (referenced in transcripts)':
+      '  1996 → 2026 = 30 años (referenciado en las transcripciones)',
+    '  Assessment cycles occur at 30-year intervals.':
+      '  Los ciclos de evaluación ocurren en intervalos de 30 años.',
+    '  Each cycle refines observational model.':
+      '  Cada ciclo refina el modelo observacional.',
+    '  2026 may represent cycle completion.':
+      '  2026 puede representar la conclusión del ciclo.',
+    'ALTERNATIVE:':
+      'ALTERNATIVA:',
+    '  "Rotations" may not refer to Earth years.':
+      '  "Rotaciones" puede no referirse a años terrestres.',
+    '  Calculations assume terrestrial frame of reference.':
+      '  Los cálculos asumen marco de referencia terrestre.',
+    'CONFIDENCE: LOW':
+      'CONFIANZA: BAJA',
+    '  Insufficient data for confirmation.':
+      '  Datos insuficientes para confirmación.',
+    'PATIENT PERSONAL DOCUMENT — RECOVERED FROM ROOM 14B':
+      'DOCUMENTO PERSONAL DEL PACIENTE — RECUPERADO DE LA HABITACIÓN 14B',
+    'FACILITY: INSTITUTO RAUL SOARES, BELO HORIZONTE':
+      'INSTALACIÓN: INSTITUTO RAUL SOARES, BELO HORIZONTE',
+    'DATE RECOVERED: 03-MAR-1996':
+      'FECHA DE RECUPERACIÓN: 03-MAR-1996',
+    'NOTE: Patient was admitted 28-FEB-1996. Document found':
+      'NOTA: Paciente admitida el 28-FEB-1996. Documento encontrado',
+    '      hidden beneath mattress during routine inspection.':
+      '      escondido bajo el colchón durante inspección de rutina.',
+    '      Submitted to file per protocol.':
+      '      Enviado al archivo según protocolo.',
+    'they took my notebooks but they did not find this one.':
+      'se llevaron mis cuadernos pero no encontraron este.',
+    'i know how i sound. i knew how i sounded when i told':
+      'sé cómo sueno. sabía cómo sonaba cuando le dije',
+    'my husband. i know why they brought me here. it does':
+      'a mi esposo. sé por qué me trajeron aquí. eso',
+    'not change what i know.':
+      'no cambia lo que sé.',
+    'it is not an invasion. i need people to understand that.':
+      'no es una invasión. necesito que la gente entienda eso.',
+    'everyone is waiting for ships. for weapons. for something':
+      'todos están esperando naves. armas. algo',
+    'that looks like a war. it will not look like a war.':
+      'que parezca una guerra. no se verá como una guerra.',
+    'it already started. it started before any of us were born.':
+      'ya empezó. empezó antes de que cualquiera de nosotros naciera.',
+    'they do not want our planet. they want what we produce':
+      'no quieren nuestro planeta. quieren lo que producimos',
+    'without knowing we produce it. every thought. every dream.':
+      'sin saber que lo producimos. cada pensamiento. cada sueño.',
+    'every moment of fear or love or pain. we generate something':
+      'cada momento de miedo o amor o dolor. generamos algo',
+    'when we think and they have been collecting it for a very':
+      'cuando pensamos y ellos lo han estado recolectando por un',
+    'long time.':
+      'largo tiempo.',
+    'i tried to calculate the yield. for one human mind over':
+      'intenté calcular el rendimiento. para una mente humana a lo largo de',
+    'one lifetime. then i multiplied it. i stopped when i':
+      'una vida. luego lo multipliqué. me detuve cuando',
+    'reached the number because the number made me sit on':
+      'alcancé el número porque el número me hizo sentarme en',
+    'the floor for a long time.':
+      'el suelo por un largo tiempo.',
+    'seven billion units. that is what we are to them.':
+      'siete mil millones de unidades. eso es lo que somos para ellos.',
+    'units. generating. not knowing.':
+      'unidades. generando. sin saber.',
+    'the doctors say i am not eating. they are right. i':
+      'los doctores dicen que no estoy comiendo. tienen razón. yo',
+    'find it difficult to eat. to sleep in a bed. to behave':
+      'encuentro difícil comer. dormir en una cama. comportarme',
+    'as if any of it matters when i know what i know.':
+      'como si algo importara cuando sé lo que sé.',
+    'my daughter visited yesterday. she held my hand.':
+      'mi hija visitó ayer. me tomó la mano.',
+    'i looked at her face and all i could think was:':
+      'miré su rostro y todo lo que pude pensar fue:',
+    'she is producing right now. she has always been':
+      'ella está produciendo ahora mismo. siempre ha estado',
+    'producing. she will never know.':
+      'produciendo. nunca lo sabrá.',
+    'i did not tell her. what would be the point.':
+      'no se lo dije. cuál sería el sentido.',
+    'if you are reading this and you work here, please':
+      'si estás leyendo esto y trabajas aquí, por favor',
+    'understand i am not delusional. i am a physicist.':
+      'entiende que no estoy delirando. soy física.',
+    'i have spent my career measuring things.':
+      'he pasado mi carrera midiendo cosas.',
+    'the possibility that we are the thing being measured':
+      'la posibilidad de que nosotros seamos lo que está siendo medido',
+    'is not something my training prepared me for.':
+      'no es algo para lo que mi entrenamiento me preparó.',
+    'god willing i am wrong.':
+      'Dios quiera que esté equivocada.',
+    'i do not believe i am wrong.':
+      'no creo que esté equivocada.',
+    'ATTENDING NOTE: Patient remains calm but non-responsive':
+      'NOTA DEL MÉDICO A CARGO: Paciente permanece tranquila pero no responsiva',
+    'to treatment. Refuses to discuss the content of her':
+      'al tratamiento. Se niega a discutir el contenido de su',
+    'research. Keeps asking if her daughter has been informed.':
+      'investigación. Sigue preguntando si su hija ha sido informada.',
+    'Recommendation: extend observation period.':
+      'Recomendación: extender período de observación.',
+    'THEORETICAL FRAMEWORK — NON-ARRIVAL COLONIZATION':
+      'MARCO TEÓRICO — COLONIZACIÓN SIN LLEGADA',
+    'CLASSIFICATION: COSMIC — DISTRIBUTION LIMITED':
+      'CLASIFICACIÓN: CÓSMICO — DISTRIBUCIÓN LIMITADA',
+    'AUTHOR: [CLASSIFIED — intelligence directorate]':
+      'AUTOR: [CLASIFICADO — directorado de inteligencia]',
+    'DATE: 05-MAR-1996':
+      'FECHA: 05-MAR-1996',
+    'TO: JOINT ASSESSMENT COMMITTEE':
+      'PARA: COMITÉ CONJUNTO DE EVALUACIÓN',
+    'This memorandum attempts to formalize a hypothesis':
+      'Este memorando intenta formalizar una hipótesis',
+    'that several of us have been circling for weeks but':
+      'alrededor de la cual varios de nosotros hemos estado dando vueltas por semanas pero',
+    'none wished to commit to paper.':
+      'nadie deseó plasmar en papel.',
+    'STANDARD COLONIZATION MODEL:':
+      'MODELO ESTÁNDAR DE COLONIZACIÓN:',
+    '  Species travels to target → displaces natives → occupies':
+      '  Especie viaja al objetivo → desplaza nativos → ocupa',
+    'WHAT WE BELIEVE WE ARE OBSERVING:':
+      'LO QUE CREEMOS ESTAR OBSERVANDO:',
+    '  Species sends scouts → measures viability → transmits data':
+      '  Especie envía exploradores → mide viabilidad → transmite datos',
+    '  No arrival necessary. No displacement necessary.':
+      '  No se necesita llegada. No se necesita desplazamiento.',
+    'PROPOSED PHASE STRUCTURE:':
+      'ESTRUCTURA DE FASES PROPUESTA:',
+    '  Phase 1: Reconnaissance (scouts deployed, data gathered)':
+      '  Fase 1: Reconocimiento (exploradores desplegados, datos recopilados)',
+    '  Phase 2: Seeding (integration organisms introduced)':
+      '  Fase 2: Siembra (organismos de integración introducidos)',
+    '  Phase 3: Conversion (gradual modification begins)':
+      '  Fase 3: Conversión (modificación gradual comienza)',
+    '  Phase 4: Extraction (resource harvest accelerates)':
+      '  Fase 4: Extracción (cosecha de recursos se acelera)',
+    'The brilliance — and I use that word with revulsion —':
+      'La brillantez — y uso esa palabra con repulsión —',
+    'is that the colonizers never arrive. The colonized':
+      'es que los colonizadores nunca llegan. La población',
+    'population never perceives a threat because there is':
+      'colonizada nunca percibe una amenaza porque no hay',
+    'nothing to perceive. The process is gradual, invisible,':
+      'nada que percibir. El proceso es gradual, invisible,',
+    'and, as far as we can determine, irreversible.':
+      'y, hasta donde podemos determinar, irreversible.',
+    'CURRENT ASSESSMENT:':
+      'EVALUACIÓN ACTUAL:',
+    '  Earth appears to be in late Phase 1.':
+      '  La Tierra parece estar en la última parte de la Fase 1.',
+    '  Phase 2 initiation cannot be ruled out.':
+      '  El inicio de la Fase 2 no puede descartarse.',
+    '  This committee has debated response options for':
+      '  Este comité ha debatido opciones de respuesta durante',
+    '  six hours. We have none to propose. Our training':
+      '  seis horas. No tenemos ninguna que proponer. Nuestro entrenamiento',
+    '  prepared us for enemies with borders, flags, and':
+      '  nos preparó para enemigos con fronteras, banderas y',
+    '  return addresses.':
+      '  direcciones de retorno.',
+    '  Formal recommendation: continued observation.':
+      '  Recomendación formal: observación continuada.',
+    '  Informal assessment: we are documenting something':
+      '  Evaluación informal: estamos documentando algo',
+    '  we cannot stop.':
+      '  que no podemos detener.',
+    '[SIGNATURES: 4 of 6 committee members]':
+      '[FIRMAS: 4 de 6 miembros del comité]',
+    '[2 members declined to sign — objections on file]':
+      '[2 miembros se negaron a firmar — objeciones en archivo]',
+    'WITNESS STATEMENT — RAW TRANSCRIPT':
+      'DECLARACIÓN DE TESTIGO — TRANSCRIPCIÓN BRUTA',
+    'DATE: 20-JAN-1996 (07:30)':
+      'FECHA: 20-ENE-1996 (07:30)',
+    'WITNESS: Civilian female, age 23':
+      'TESTIGO: Civil, femenino, 23 años',
+    '"I was walking to work when I saw it.':
+      '"Iba caminando al trabajo cuando lo vi.',
+    ' It was crouching near the wall.':
+      ' Estaba agachado cerca del muro.',
+    ' At first I thought it was a homeless person.':
+      ' Al principio pensé que era una persona sin hogar.',
+    ' Then I saw its face.':
+      ' Entonces vi su rostro.',
+    ' It had no ears. Its skin was... wrong.':
+      ' No tenía orejas. Su piel era... incorrecta.',
+    ' It looked at me.':
+      ' Me miró.',
+    ' I felt like it was inside my head.':
+      ' Sentí como si estuviera dentro de mi cabeza.',
+    ' Then I ran."':
+      ' Entonces corrí."',
+    'INTERVIEWER NOTES:':
+      'NOTAS DEL ENTREVISTADOR:',
+    '  Witness appeared genuinely distressed.':
+      '  La testigo parecía genuinamente perturbada.',
+    '  Story consistent across multiple retellings.':
+      '  Relato consistente en múltiples repeticiones.',
+    '  No evidence of fabrication.':
+      '  Sin evidencia de fabricación.',
+    'CROSS-REFERENCE:':
+      'REFERENCIA CRUZADA:',
+    '  Similar telepathic contact described in /comms/psi/':
+      '  Contacto telepático similar descrito en /comms/psi/',
+    'STATUS: File marked for degradation.':
+      'ESTADO: Archivo marcado para degradación.',
+    '        Access recommended before data loss.':
+      '        Se recomienda acceso antes de la pérdida de datos.',
+    'EMERGENCY ORDERS — INITIAL RESPONSE':
+      'ÓRDENES DE EMERGENCIA — RESPUESTA INICIAL',
+    'ISSUED: 20-JAN-1996 (05:00)':
+      'EMITIDO: 20-ENE-1996 (05:00)',
+    'TO: All Regional Units':
+      'PARA: Todas las Unidades Regionales',
+    '1. Secure perimeter around designated sites.':
+      '1. Asegurar perímetro alrededor de los sitios designados.',
+    '2. Detain all civilian witnesses for debriefing.':
+      '2. Detener a todos los testigos civiles para interrogatorio.',
+    '3. Recover ALL physical material. Leave nothing.':
+      '3. Recuperar TODO material físico. No dejar nada.',
+    '4. Establish communications blackout.':
+      '4. Establecer apagón de comunicaciones.',
+    '5. Await specialist team arrival.':
+      '5. Aguardar llegada del equipo especialista.',
+    '  Do NOT photograph subjects.':
+      '  NO fotografiar a los sujetos.',
+    '  Do NOT touch subjects without protection.':
+      '  NO tocar a los sujetos sin protección.',
+    '  Do NOT attempt communication with subjects.':
+      '  NO intentar comunicación con los sujetos.',
+    '  Foreign team ETA: See /comms/liaison/':
+      '  Llegada estimada del equipo extranjero: Ver /comms/liaison/',
+    '  Transport protocols: See /storage/':
+      '  Protocolos de transporte: Ver /storage/',
+    'ACKNOWLEDGE RECEIPT IMMEDIATELY.':
+      'ACUSAR RECIBO INMEDIATAMENTE.',
+    'AUTH: DIRECTOR, REGIONAL INTELLIGENCE':
+      'AUT: DIRECTOR, INTELIGENCIA REGIONAL',
+    'TRANSPORT LOG — OPERATION PRATO EXTENSION':
+      'REGISTRO DE TRANSPORTE — OPERACIÓN EXTENSIÓN PRATO',
+    'DATE: 20-JAN-1996 through 23-JAN-1996':
+      'FECHA: 20-ENE-1996 a 23-ENE-1996',
+    'CLASSIFICATION: OPERACIONAL':
+      'CLASIFICACIÓN: OPERACIONAL',
+    '20-JAN-1996 03:42 — Unit dispatched to Site ALFA':
+      '20-ENE-1996 03:42 — Unidad despachada al Sitio ALFA',
+    '20-JAN-1996 04:15 — Material secured. Weight: 340kg approx.':
+      '20-ENE-1996 04:15 — Material asegurado. Peso: 340kg aprox.',
+    '20-JAN-1996 04:58 — Transport to HOLDING-7 initiated':
+      '20-ENE-1996 04:58 — Transporte a HOLDING-7 iniciado',
+    '21-JAN-1996 01:20 — Secondary recovery at Site BETA':
+      '21-ENE-1996 01:20 — Recuperación secundaria en Sitio BETA',
+    '21-JAN-1996 02:45 — Fragments catalogued: 12 distinct pieces':
+      '21-ENE-1996 02:45 — Fragmentos catalogados: 12 piezas distintas',
+    '21-JAN-1996 03:30 — NOTICE: Material divided for redundancy':
+      '21-ENE-1996 03:30 — AVISO: Material dividido por redundancia',
+    '21-JAN-1996 04:00 — Batch A → HOLDING-7':
+      '21-ENE-1996 04:00 — Lote A → HOLDING-7',
+    '21-JAN-1996 04:00 — Batch B → [REDACTED] via diplomatic pouch':
+      '21-ENE-1996 04:00 — Lote B → [SUPRIMIDO] vía valija diplomática',
+    '22-JAN-1996 — Transfer complete. Chain of custody sealed.':
+      '22-ENE-1996 — Transferencia completa. Cadena de custodia sellada.',
+    '23-JAN-1996 11:00 — HOLDING-7 inventory reconciled':
+      '23-ENE-1996 11:00 — Inventario de HOLDING-7 reconciliado',
+    '23-JAN-1996 11:30 — Batch B confirmation pending foreign receipt':
+      '23-ENE-1996 11:30 — Confirmación del Lote B pendiente de recibo extranjero',
+    'NOTE: Foreign transfer authorized under Protocol 7-ECHO.':
+      'NOTA: Transferencia extranjera autorizada bajo Protocolo 7-ECHO.',
+    'NOTE: Recipient nation not logged in this system.':
+      'NOTA: Nación receptora no registrada en este sistema.',
+    'END LOG':
+      'FIN DEL REGISTRO',
+    'MATERIAL ANALYSIS — BATCH A SAMPLES':
+      'ANÁLISIS DE MATERIAL — MUESTRAS DEL LOTE A',
+    'LAB: UNICAMP-AFFILIATED (UNOFFICIAL)':
+      'LAB: AFILIADO A UNICAMP (NO OFICIAL)',
+    'SAMPLE M-07:':
+      'MUESTRA M-07:',
+    '  Composition: Unknown alloy. No terrestrial match.':
+      '  Composición: Aleación desconocida. Sin coincidencia terrestre.',
+    '  Conductivity: Anomalous. Variable under observation.':
+      '  Conductividad: Anómala. Variable bajo observación.',
+    '  Mass: Inconsistent between measurements.':
+      '  Masa: Inconsistente entre mediciones.',
+    'SAMPLE M-12:':
+      'MUESTRA M-12:',
+    '  Composition: Polymer matrix with metallic inclusions.':
+      '  Composición: Matriz polimérica con inclusiones metálicas.',
+    '  Tensile strength: Exceeds known materials by factor of 8.':
+      '  Resistencia a la tracción: Excede materiales conocidos por factor de 8.',
+    '  Thermal response: Absorbs heat without temperature change.':
+      '  Respuesta térmica: Absorbe calor sin cambio de temperatura.',
+    '  Materials are not of terrestrial manufacture.':
+      '  Los materiales no son de manufactura terrestre.',
+    '  Recommend immediate classification upgrade.':
+      '  Se recomienda elevación inmediata de clasificación.',
+    '  Recommend international consultation suppression.':
+      '  Se recomienda supresión de consulta internacional.',
+    'ADDENDUM:':
+      'ADENDA:',
+    '  Batch B samples were NOT made available for analysis.':
+      '  Las muestras del Lote B NO fueron puestas a disposición para análisis.',
+    '  Foreign recipient declined reciprocal data sharing.':
+      '  El receptor extranjero declinó compartir datos de forma recíproca.',
+    'BIO-CONTAINMENT LOG — QUARANTINE SECTION':
+      'REGISTRO DE BIO-CONTENCIÓN — SECCIÓN DE CUARENTENA',
+    'SITE: REGIONAL HOSPITAL [NOME SUPRIMIDO]':
+      'SITIO: HOSPITAL REGIONAL [NOMBRE SUPRIMIDO]',
+    'DATE: 20-JAN-1996':
+      'FECHA: 20-ENE-1996',
+    '20-JAN 04:30 — Subject ALFA secured. Vitals: Unstable.':
+      '20-ENE 04:30 — Sujeto ALFA asegurado. Vitales: Inestables.',
+    '20-JAN 05:15 — Subject BETA secured. Vitals: Declining.':
+      '20-ENE 05:15 — Sujeto BETA asegurado. Vitales: En declive.',
+    '20-JAN 06:00 — Subject ALFA expired. Cause: Unknown.':
+      '20-ENE 06:00 — Sujeto ALFA expiró. Causa: Desconocida.',
+    '20-JAN 08:00 — Transfer order received.':
+      '20-ENE 08:00 — Orden de transferencia recibida.',
+    '20-JAN 09:30 — Subject BETA transferred to military custody.':
+      '20-ENE 09:30 — Sujeto BETA transferido a custodia militar.',
+    '20-JAN 10:00 — Subject ALFA remains → autopsy protocol.':
+      '20-ENE 10:00 — Restos del Sujeto ALFA → protocolo de autopsia.',
+    'NOTE: Subjects display non-human morphology.':
+      'NOTA: Los sujetos exhiben morfología no humana.',
+    'NOTE: Subjects do not match any catalogued species.':
+      'NOTA: Los sujetos no coinciden con ninguna especie catalogada.',
+    '21-JAN 02:00 — Third subject reported. Site GAMMA.':
+      '21-ENE 02:00 — Tercer sujeto reportado. Sitio GAMMA.',
+    '21-JAN 04:00 — Third subject secured. Designated GAMMA.':
+      '21-ENE 04:00 — Tercer sujeto asegurado. Designado GAMMA.',
+    '21-JAN 06:00 — Subject GAMMA transferred. Destination: UNKNOWN.':
+      '21-ENE 06:00 — Sujeto GAMMA transferido. Destino: DESCONOCIDO.',
+    'WARNING: All bio-material classified COSMIC.':
+      'ADVERTENCIA: Todo bio-material clasificado CÓSMICO.',
+    'AUTOPSY PROTOCOL — SUBJECT ALFA':
+      'PROTOCOLO DE AUTOPSIA — SUJETO ALFA',
+    'PATHOLOGIST: [CLASSIFIED — forensic specialist, state university]':
+      'PATÓLOGO: [CLASIFICADO — especialista forense, universidad estatal]',
+    'FACILITY: Hospital Regional do Sul de Minas':
+      'INSTALACIÓN: Hospital Regional do Sul de Minas',
+    'EXTERNAL EXAMINATION:':
+      'EXAMEN EXTERNO:',
+    '  Height: 1.6m (contracted posture noted at recovery site)':
+      '  Altura: 1,6m (postura contraída observada en el sitio de recuperación)',
+    '  Skin: Dark brown, oily secretion, strong ammonia odor':
+      '  Piel: Marrón oscura, secreción oleosa, fuerte olor a amoníaco',
+    '  Cranium: Three bony ridges, anterior-posterior alignment':
+      '  Cráneo: Tres crestas óseas, alineación anteroposterior',
+    '  Eyes: Disproportionately large, deep red, no sclera':
+      '  Ojos: Desproporcionadamente grandes, rojo profundo, sin esclerótica',
+    '  Limbs: Four digits per extremity':
+      '  Extremidades: Cuatro dígitos por extremidad',
+    'INTERNAL EXAMINATION:':
+      'EXAMEN INTERNO:',
+    '  Cardiovascular: Single-chamber circulatory organ':
+      '  Cardiovascular: Órgano circulatorio de cámara única',
+    '  Digestive: Vestigial. Non-functional.':
+      '  Digestivo: Vestigial. No funcional.',
+    '  Reproductive: Absent.':
+      '  Reproductivo: Ausente.',
+    '  Neural: Overdeveloped cranial mass. Unusual structures.':
+      '  Neural: Masa craneal hiperdesarrollada. Estructuras inusuales.',
+    '  Cranial structures suggest high-bandwidth signal processing.':
+      '  Las estructuras craneales sugieren procesamiento de señales de alto ancho de banda.',
+    '  No vocal apparatus detected.':
+      '  Ningún aparato vocal detectado.',
+    '  Hypothesis: Communication via non-acoustic means.':
+      '  Hipótesis: Comunicación por medios no acústicos.',
+    'TISSUE SAMPLES: Transferred per Protocol 7-ECHO.':
+      'MUESTRAS DE TEJIDO: Transferidas según Protocolo 7-ECHO.',
+    'PATHOLOGIST ADDENDUM:':
+      'ADENDA DEL PATÓLOGO:',
+    '  "This organism was designed, not evolved."':
+      '  "Este organismo fue diseñado, no evolucionado."',
+    'ADDENDUM PSI — NEURAL ASSESSMENT':
+      'ADENDA PSI — EVALUACIÓN NEURAL',
+    'CONSULTING: [CLASSIFIED]':
+      'CONSULTORÍA: [CLASIFICADO]',
+    'CRANIAL STRUCTURE ANALYSIS:':
+      'ANÁLISIS DE ESTRUCTURA CRANEAL:',
+    'The neural architecture of Subject ALFA indicates:':
+      'La arquitectura neural del Sujeto ALFA indica:',
+    '  - Massive parallel processing capability':
+      '  - Capacidad masiva de procesamiento paralelo',
+    '  - Structures analogous to signal receivers':
+      '  - Estructuras análogas a receptores de señales',
+    '  - No decision-making cortex equivalent':
+      '  - Sin equivalente al córtex de toma de decisiones',
+    '  Subject was not autonomous.':
+      '  El sujeto no era autónomo.',
+    '  Subject received instructions from external source.':
+      '  El sujeto recibía instrucciones de fuente externa.',
+    '  Subject functioned as observer/relay only.':
+      '  El sujeto funcionaba solo como observador/retransmisor.',
+    '  If subjects are receivers, there must be transmitters.':
+      '  Si los sujetos son receptores, debe haber transmisores.',
+    '  Transmitters were not recovered at any site.':
+      '  Los transmisores no fueron recuperados en ningún sitio.',
+    '  Assume observational mission was successful.':
+      '  Asumir que la misión observacional fue exitosa.',
+    '  Assume data was transmitted before expiration.':
+      '  Asumir que los datos fueron transmitidos antes de la expiración.',
+    'PSI-COMM TRANSCRIPT — PARTIAL RECOVERY':
+      'TRANSCRIPCIÓN PSI-COMM — RECUPERACIÓN PARCIAL',
+    'SOURCE: Subject BETA (pre-expiration)':
+      'FUENTE: Sujeto BETA (pre-expiración)',
+    'METHOD: EEG pattern analysis + computational reconstruction':
+      'MÉTODO: Análisis de patrón EEG + reconstrucción computacional',
+    '[FRAGMENT 1]':
+      '[FRAGMENTO 1]',
+    '  ...observation complete...':
+      '  ...observación completa...',
+    '  ...viable assessment confirmed...':
+      '  ...evaluación viable confirmada...',
+    '  ...transmission interrupted...':
+      '  ...transmisión interrumpida...',
+    '[FRAGMENT 2]':
+      '[FRAGMENTO 2]',
+    '  ...energy density acceptable...':
+      '  ...densidad de energía aceptable...',
+    '  ...cognitive activity measured...':
+      '  ...actividad cognitiva medida...',
+    '  ...extraction model viable...':
+      '  ...modelo de extracción viable...',
+    '[FRAGMENT 3]':
+      '[FRAGMENTO 3]',
+    '  ...we are not the arrivers...':
+      '  ...no somos los que llegan...',
+    '  ...we are the measuring...':
+      '  ...somos la medición...',
+    '  ...others will come...':
+      '  ...otros vendrán...',
+    '[END RECOVERED FRAGMENTS]':
+      '[FIN DE LOS FRAGMENTOS RECUPERADOS]',
+    'NOTE: Original signal strength suggests transmission':
+      'NOTA: La fuerza de señal original sugiere que la transmisión',
+    '      reached destination before subject expiration.':
+      '      alcanzó el destino antes de la expiración del sujeto.',
+    'SECURITY CHECK: Enter material sample weight from transport log (kg)':
+      'VERIFICACIÓN DE SEGURIDAD: Ingrese el peso de la muestra de material del registro de transporte (kg)',
+    'Check transport_log_96.txt for material weight':
+      'Verifique transport_log_96.txt para el peso del material',
+    'PSI-COMM TRANSCRIPT — SECONDARY ANALYSIS':
+      'TRANSCRIPCIÓN PSI-COMM — ANÁLISIS SECUNDARIO',
+    'SOURCE: Subject GAMMA':
+      'FUENTE: Sujeto GAMMA',
+    '[RECOVERED SEQUENCE]':
+      '[SECUENCIA RECUPERADA]',
+    '  ...thirty rotations...':
+      '  ...treinta rotaciones...',
+    '  ...alignment window...':
+      '  ...ventana de alineación...',
+    '  ...convergence cycle...':
+      '  ...ciclo de convergencia...',
+    'SECURITY CHECK: How many subjects were recovered total?':
+      'VERIFICACIÓN DE SEGURIDAD: ¿Cuántos sujetos se recuperaron en total?',
+    'Check bio_container.log for subject designations':
+      'Verifique bio_container.log para designaciones de sujetos',
+    'FIELD REPORT — OPERATION PRATO DELTA':
+      'INFORME DE CAMPO — OPERACIÓN PRATO DELTA',
+    'SUBMITTED: 24-JAN-1996':
+      'PRESENTADO: 24-ENE-1996',
+    '  Three recovery sites established.':
+      '  Tres sitios de recuperación establecidos.',
+    '  All physical evidence secured.':
+      '  Toda evidencia física asegurada.',
+    '  All biological material secured.':
+      '  Todo material biológico asegurado.',
+    'FOREIGN LIAISON:':
+      'ENLACE EXTRANJERO:',
+    '  Representatives from [REDACTED] arrived 22-JAN.':
+      '  Representantes de [CENSURADO] llegaron el 22-ENE.',
+    '  Joint protocol established.':
+      '  Protocolo conjunto establecido.',
+    '  Material sharing agreement signed.':
+      '  Acuerdo de compartición de materiales firmado.',
+    '  Local witnesses estimated at 30+.':
+      '  Testigos locales estimados en 30+.',
+    '  Media suppression partially effective.':
+      '  Supresión mediática parcialmente efectiva.',
+    '  Long-term containment uncertain.':
+      '  Contención a largo plazo incierta.',
+    '  Maintain denial posture.':
+      '  Mantener postura de negación.',
+    '  Accelerate foreign material transfer.':
+      '  Acelerar transferencia de material extranjero.',
+    '  Discontinue local analysis to prevent leaks.':
+      '  Discontinuar análisis local para prevenir filtraciones.',
+    'THEORETICAL FRAMEWORK — SCOUT VARIANTS':
+      'MARCO TEÓRICO — VARIANTES DE EXPLORADORES',
+    'WORKING MODEL:':
+      'MODELO DE TRABAJO:',
+    'Recovered subjects appear to be purpose-built constructs.':
+      'Los sujetos recuperados parecen ser constructos hechos a medida.',
+    'Evidence suggests:':
+      'La evidencia sugiere:',
+    '  - Engineered for Earth-specific conditions':
+      '  - Diseñados para condiciones específicas de la Tierra',
+    '  - Limited operational lifespan (hours to days)':
+      '  - Vida operacional limitada (horas a días)',
+    '  - High neural plasticity for rapid environmental learning':
+      '  - Alta plasticidad neural para aprendizaje ambiental rápido',
+    '  - No autonomous decision-making capability':
+      '  - Sin capacidad autónoma de toma de decisiones',
+    'CLASSIFICATION:':
+      'CLASIFICACIÓN:',
+    '  Designation: "Scouts"':
+      '  Designación: "Exploradores"',
+    '  Function: Reconnaissance and measurement':
+      '  Función: Reconocimiento y medición',
+    '  Relationship to origin: Unknown (assumed subordinate)':
+      '  Relación con el origen: Desconocida (se asume subordinada)',
+    '  Scouts are tools, not representatives.':
+      '  Los exploradores son herramientas, no representantes.',
+    '  Decision-makers remain at origin.':
+      '  Los tomadores de decisiones permanecen en el origen.',
+    '  Origin has NOT been contacted.':
+      '  El origen NO ha sido contactado.',
+    'ASSESSMENT — ENERGY NODE CLASSIFICATION':
+      'EVALUACIÓN — CLASIFICACIÓN DE NODO ENERGÉTICO',
+    'AUTHOR: [CLASSIFIED — signals division analyst]':
+      'AUTOR: [CLASIFICADO — analista de la división de señales]',
+    'DATE: 10-FEB-1996':
+      'FECHA: 10-FEB-1996',
+    'TO: ASSESSMENT DIRECTORATE':
+      'PARA: DIRECCIÓN DE EVALUACIÓN',
+    'RECOVERED SIGNAL CROSS-REFERENCE:':
+      'REFERENCIA CRUZADA DE SEÑALES RECUPERADAS:',
+    'Psi-comm fragments, when mapped against material':
+      'Los fragmentos psi-comm, cuando se mapean contra el análisis',
+    'analysis, produce a consistent pattern:':
+      'de material, producen un patrón consistente:',
+    '  - "Energy density" referenced 4 times across specimens':
+      '  - "Densidad de energía" referenciada 4 veces entre especímenes',
+    '  - "Extraction model" phrasing consistent in all samples':
+      '  - Fraseo "Modelo de extracción" consistente en todas las muestras',
+    '  - "Cognitive activity" used as a metric — this is unusual':
+      '  - "Actividad cognitiva" usada como métrica — esto es inusual',
+    '    and does not correspond to any known measurement system':
+      '    y no corresponde a ningún sistema de medición conocido',
+    'ANALYST HYPOTHESIS:':
+      'HIPÓTESIS DEL ANALISTA:',
+    '  Earth is being assessed as an energy source.':
+      '  La Tierra está siendo evaluada como fuente de energía.',
+    '  Biological neural networks may serve as the':
+      '  Las redes neuronales biológicas pueden servir como el',
+    '  extraction medium. Cognitive output correlates':
+      '  medio de extracción. La producción cognitiva se correlaciona',
+    '  with projected energy yield.':
+      '  con el rendimiento energético proyectado.',
+    '  Recovered material samples exhibit energy absorption':
+      '  Las muestras de material recuperado exhiben propiedades de',
+    '  properties we cannot replicate or fully explain.':
+      '  absorción de energía que no podemos replicar ni explicar completamente.',
+    '  Scout neural structures confirm measurement function.':
+      '  Las estructuras neuronales de los exploradores confirman función de medición.',
+    '  The scout mission appears complete. Next phase':
+      '  La misión de los exploradores parece completada. El inicio de la',
+    '  initiation is uncertain. Transition window undefined.':
+      '  próxima fase es incierto. Ventana de transición indefinida.',
+    '  Establish long-term signal monitoring station.':
+      '  Establecer estación de monitoreo de señales a largo plazo.',
+    '  Staff with personnel who have read clearance.':
+      '  Dotar de personal con autorización de lectura.',
+    '  Budget request attached separately — the Ministry':
+      '  Solicitud de presupuesto adjunta por separado — el Ministerio',
+    '  will not approve if they see the justification.':
+      '  no aprobará si ven la justificación.',
+    '[SIGNATURE REDACTED]':
+      '[FIRMA CENSURADA]',
+    'THREAT ASSESSMENT — TRANSITION WINDOW':
+      'EVALUACIÓN DE AMENAZA — VENTANA DE TRANSICIÓN',
+    'AUTHOR: [CLASSIFIED — threat analysis section chief]':
+      'AUTOR: [CLASIFICADO — jefe de sección de análisis de amenazas]',
+    'DATE: 02-MAR-1996':
+      'FECHA: 02-MAR-1996',
+    'TO: MINISTRY OF DEFENSE — STRATEGIC PLANNING':
+      'PARA: MINISTERIO DE DEFENSA — PLANIFICACIÓN ESTRATÉGICA',
+    'TIMELINE RECONSTRUCTION:':
+      'RECONSTRUCCIÓN DE LA LÍNEA TEMPORAL:',
+    '  Reference: Psi-comm fragment "thirty rotations"':
+      '  Referencia: Fragmento psi-comm "treinta rotaciones"',
+    '  Best interpretation: 30 Earth orbital cycles':
+      '  Mejor interpretación: 30 ciclos orbitales terrestres',
+    '  Base year: 1996 (current incident)':
+      '  Año base: 1996 (incidente actual)',
+    '  Target year: 2026':
+      '  Año objetivo: 2026',
+    'NATURE OF WINDOW: UNKNOWN':
+      'NATURALEZA DE LA VENTANA: DESCONOCIDA',
+    'We have debated the following possibilities:':
+      'Hemos debatido las siguientes posibilidades:',
+    '  - Secondary deployment of integration organisms':
+      '  - Despliegue secundario de organismos de integración',
+    '  - Transition from reconnaissance to active phase':
+      '  - Transición de fase de reconocimiento a fase activa',
+    '  - Communication or activation signal':
+      '  - Señal de comunicación o activación',
+    '  - Initiation of energy extraction process':
+      '  - Inicio del proceso de extracción de energía',
+    'None of these can be confirmed. All are consistent':
+      'Ninguna de estas puede confirmarse. Todas son consistentes',
+    'with recovered data.':
+      'con los datos recuperados.',
+    'RECOMMENDED POSTURE:':
+      'POSTURA RECOMENDADA:',
+    '  - Maintain observation protocols through 2026':
+      '  - Mantener protocolos de observación hasta 2026',
+    '  - Establish monitoring baseline for anomalous signals':
+      '  - Establecer línea base de monitoreo para señales anómalas',
+    '  - Prepare contingency frameworks (nature TBD)':
+      '  - Preparar marcos de contingencia (naturaleza por determinar)',
+    'IMPORTANT CAVEAT:':
+      'ADVERTENCIA IMPORTANTE:',
+    '  This is not a prediction. It is a detected reference':
+      '  Esto no es una predicción. Es una referencia detectada',
+    '  in recovered neural fragments. Our interpretation':
+      '  en fragmentos neuronales recuperados. Nuestra interpretación',
+    '  may be completely wrong. But the reference exists.':
+      '  puede estar completamente equivocada. Pero la referencia existe.',
+    '  We cannot pretend it does not.':
+      '  No podemos pretender que no.',
+    'INTERNAL MEMORANDUM — NOTE 07':
+      'MEMORÁNDUM INTERNO — NOTA 07',
+    'FROM: [REDACTED]':
+      'DE: [CENSURADO]',
+    'TO: DIRECTOR':
+      'PARA: DIRECTOR',
+    'SUBJECT: Foreign Involvement Concerns':
+      'ASUNTO: Preocupaciones sobre Participación Extranjera',
+    'Director,':
+      'Director,',
+    'I must register my objection to the current arrangement.':
+      'Debo registrar mi objeción al acuerdo actual.',
+    'The foreign delegation arrived before we had completed':
+      'La delegación extranjera llegó antes de que completáramos',
+    'initial assessment. Their access to biological samples':
+      'la evaluación inicial. Su acceso a muestras biológicas',
+    'was granted before chain of custody was established.':
+      'fue concedido antes de establecerse la cadena de custodia.',
+    'I have reason to believe:':
+      'Tengo razones para creer:',
+    '  - They had advance knowledge of the incident':
+      '  - Tenían conocimiento previo del incidente',
+    '  - Their equipment was pre-positioned':
+      '  - Su equipo estaba pre-posicionado',
+    '  - Their protocols superseded our own':
+      '  - Sus protocolos reemplazaron los nuestros',
+    'This was not cooperation. This was assumption of control.':
+      'Esto no fue cooperación. Fue una toma de control.',
+    'I recommend formal protest through diplomatic channels.':
+      'Recomiendo protesta formal a través de canales diplomáticos.',
+    'ASSESSMENT — INDIRECT COLONIZATION MODEL':
+      'EVALUACIÓN — MODELO DE COLONIZACIÓN INDIRECTA',
+    'CLASSIFICATION: RED — COMPARTMENTED':
+      'CLASIFICACIÓN: ROJO — COMPARTIMENTADO',
+    'AUTHOR: [CLASSIFIED — colonel, strategic planning]':
+      'AUTOR: [CLASIFICADO — coronel, planificación estratégica]',
+    'DATE: 27-FEB-1996':
+      'FECHA: 27-FEB-1996',
+    'TO: MINISTRY OF DEFENSE — SPECIAL PROGRAMS':
+      'PARA: MINISTERIO DE DEFENSA — PROGRAMAS ESPECIALES',
+    'Excellency,':
+      'Excelencia,',
+    'After reviewing the full specimen analysis and the':
+      'Después de revisar el análisis completo de especímenes y los',
+    'recovered psi-comm fragments, I must present a framework':
+      'fragmentos psi-comm recuperados, debo presentar un marco',
+    'that none of us wanted to consider.':
+      'que ninguno de nosotros quería considerar.',
+    'I stress that this is my interpretation. I pray':
+      'Enfatizo que esta es mi interpretación. Rezo',
+    'that I am wrong.':
+      'para estar equivocado.',
+    'PHASE 1 — RECONNAISSANCE (CONFIRMED)':
+      'FASE 1 — RECONOCIMIENTO (CONFIRMADO)',
+    '  Bio-engineered scouts deployed.':
+      '  Exploradores bioingeniados desplegados.',
+    '  Planetary viability measured.':
+      '  Viabilidad planetaria medida.',
+    '  Cognitive density assessed — our population, our minds.':
+      '  Densidad cognitiva evaluada — nuestra población, nuestras mentes.',
+    '  Findings transmitted to origin before recovery.':
+      '  Hallazgos transmitidos al origen antes de la recuperación.',
+    '  This phase appears complete. The scouts succeeded.':
+      '  Esta fase parece completada. Los exploradores tuvieron éxito.',
+    'PHASE 2 — SEEDING (THEORETICAL)':
+      'FASE 2 — SIEMBRA (TEÓRICO)',
+    '  Integration organisms introduced.':
+      '  Organismos de integración introducidos.',
+    '  These would not resemble the scouts. They would':
+      '  Estos no se asemejarían a los exploradores. No se',
+    '  resemble nothing. Or everything.':
+      '  asemejarían a nada. O a todo.',
+    '  Gradual ecological and biological modification.':
+      '  Modificación ecológica y biológica gradual.',
+    '  I do not know if this has begun.':
+      '  No sé si esto ha comenzado.',
+    '  The neural fragments suggest it will.':
+      '  Los fragmentos neuronales sugieren que sucederá.',
+    'PHASE 3 — EXTRACTION (THEORETICAL)':
+      'FASE 3 — EXTRACCIÓN (TEÓRICO)',
+    '  Target world becomes an energy source.':
+      '  El mundo objetivo se convierte en fuente de energía.',
+    '  Local species continues existing — but diminished.':
+      '  La especie local continúa existiendo — pero disminuida.',
+    '  Autonomy and agency degrade. Slowly. Invisibly.':
+      '  Autonomía y agencia se degradan. Lentamente. Invisiblemente.',
+    'CONCLUSION':
+      'CONCLUSIÓN',
+    'What disturbs me most is the elegance of it.':
+      'Lo que más me perturba es la elegancia de esto.',
+    'They do not need to arrive. They do not destroy.':
+      'No necesitan llegar. No destruyen.',
+    'They convert. Quietly. From a distance we cannot':
+      'Convierten. Silenciosamente. Desde una distancia que no podemos',
+    'comprehend.':
+      'comprender.',
+    'We trained our entire defense apparatus to repel':
+      'Entrenamos todo nuestro aparato de defensa para repeler',
+    'invaders. There is nothing to repel.':
+      'invasores. No hay nada que repeler.',
+    'ASSESSMENT: Phase 1 appears complete for Earth.':
+      'EVALUACIÓN: La Fase 1 parece completada para la Tierra.',
+    'I have requested confession with the base chaplain.':
+      'He solicitado confesión con el capellán de la base.',
+    'EXECUTIVE BRIEFING — THE WATCHERS':
+      'BRIEFING EJECUTIVO — LOS OBSERVADORES',
+    'CLASSIFICATION: COSMIC — EYES ONLY':
+      'CLASIFICACIÓN: CÓSMICO — SOLO PARA OJOS AUTORIZADOS',
+    'PREPARED BY: JOINT ASSESSMENT COMMITTEE':
+      'PREPARADO POR: COMITÉ DE EVALUACIÓN CONJUNTA',
+    'DATE: FEBRUARY 1996':
+      'FECHA: FEBRERO 1996',
+    'TO: [DISTRIBUTION LIMITED — MINISTRY LEVEL]':
+      'PARA: [DISTRIBUCIÓN LIMITADA — NIVEL MINISTERIAL]',
+    'This document summarizes our current institutional':
+      'Este documento resume nuestro entendimiento institucional',
+    'understanding of the January 1996 incident and its':
+      'actual del incidente de enero de 1996 y sus',
+    'implications. It has been reviewed by all six members':
+      'implicaciones. Ha sido revisado por los seis miembros',
+    'of this committee. What follows is consensus.':
+      'de este comité. Lo que sigue es consenso.',
+    'I. THE INCIDENT':
+      'I. EL INCIDENTE',
+    'Between 20–23 January 1996, military and fire brigade':
+      'Entre el 20-23 de enero de 1996, unidades militares y de bomberos',
+    'units conducted recovery operations at three distinct':
+      'condujeron operaciones de recuperación en tres sitios',
+    'sites near Varginha, Minas Gerais.':
+      'distintos cerca de Varginha, Minas Gerais.',
+    'Physical debris and biological specimens were secured.':
+      'Escombros físicos y especímenes biológicos fueron asegurados.',
+    'Material was divided per standing multinational protocol.':
+      'El material fue dividido según protocolo multinacional vigente.',
+    'A portion was transferred to foreign partners before this':
+      'Una porción fue transferida a socios extranjeros antes de que este',
+    'committee was fully convened — a procedural failure we':
+      'comité fuera totalmente convocado — un fallo procedimental que',
+    'have formally protested.':
+      'hemos protestado formalmente.',
+    'II. THE SPECIMENS':
+      'II. LOS ESPECÍMENES',
+    'Three non-human biological entities recovered.':
+      'Tres entidades biológicas no humanas recuperadas.',
+    'Designated: ALFA, BETA, GAMMA.':
+      'Designadas: ALFA, BETA, GAMMA.',
+    'Autopsy and tissue analysis indicate:':
+      'La autopsia y análisis de tejidos indican:',
+    '  - Purpose-built organisms, not naturally evolved':
+      '  - Organismos construidos a medida, no evolucionados naturalmente',
+    '  - Limited operational lifespan (designed to expire)':
+      '  - Vida operacional limitada (diseñados para expirar)',
+    '  - Neural architecture oriented toward observation':
+      '  - Arquitectura neuronal orientada hacia la observación',
+    '  - No autonomous decision-making structures found':
+      '  - No se encontraron estructuras autónomas de toma de decisiones',
+    '  - Communication via non-acoustic means (see PSI files)':
+      '  - Comunicación por medios no acústicos (ver archivos PSI)',
+    'In plain language: these were instruments. Scouts.':
+      'En lenguaje simple: estos eran instrumentos. Exploradores.',
+    'Sent to observe and transmit. Not ambassadors.':
+      'Enviados para observar y transmitir. No embajadores.',
+    'Not explorers. Tools.':
+      'No exploradores. Herramientas.',
+    'III. THE TRANSMISSION':
+      'III. LA TRANSMISIÓN',
+    'Recovered psi-comm fragments confirm:':
+      'Los fragmentos psi-comm recuperados confirman:',
+    '  - Mission was observational and appears successful':
+      '  - La misión era observacional y parece exitosa',
+    '  - Data was transmitted before specimen expiration':
+      '  - Los datos fueron transmitidos antes de la expiración del espécimen',
+    '  - Earth assessed as viable for energy extraction':
+      '  - La Tierra evaluada como viable para extracción de energía',
+    '  - Reference to a future "alignment window"':
+      '  - Referencia a una futura "ventana de alineación"',
+    'We believe the scouts completed their purpose.':
+      'Creemos que los exploradores completaron su propósito.',
+    'The data they gathered has already been received':
+      'Los datos que recopilaron ya fueron recibidos',
+    'by whatever sent them.':
+      'por quien sea que los envió.',
+    'IV. THE WINDOW':
+      'IV. LA VENTANA',
+    '"Thirty rotations" — interpreted as 30 orbital years.':
+      '"Treinta rotaciones" — interpretado como 30 años orbitales.',
+    'Projected window: YEAR 2026.':
+      'Ventana proyectada: AÑO 2026.',
+    'Nature unknown. Assessed possibilities:':
+      'Naturaleza desconocida. Posibilidades evaluadas:',
+    '  - Deployment of integration organisms':
+      '  - Despliegue de organismos de integración',
+    '  - Initiation of indirect conversion process':
+      '  - Inicio del proceso de conversión indirecta',
+    '  - Activation signal for pre-positioned systems':
+      '  - Señal de activación para sistemas pre-posicionados',
+    'We stress: this is not an invasion timeline.':
+      'Enfatizamos: esto no es una línea temporal de invasión.',
+    'It may be something we do not yet have language for.':
+      'Puede ser algo para lo cual aún no tenemos lenguaje.',
+    'V. THE WATCHERS':
+      'V. LOS OBSERVADORES',
+    'Working designation for the origin civilization.':
+      'Designación de trabajo para la civilización de origen.',
+    'What we believe we know:':
+      'Lo que creemos saber:',
+    '  - Post-biological or hybrid form of existence':
+      '  - Forma de existencia post-biológica o híbrida',
+    '  - Colonial expansion through indirect conversion':
+      '  - Expansión colonial a través de conversión indirecta',
+    '  - Do not physically arrive at target worlds':
+      '  - No llegan físicamente a los mundos objetivo',
+    '  - Utilize bio-engineered intermediaries for assessment':
+      '  - Utilizan intermediarios bioingeniados para evaluación',
+    '  - Extract energy from cognitive biological networks':
+      '  - Extraen energía de redes biológicas cognitivas',
+    'The name "Watchers" was chosen by this committee.':
+      'El nombre "Observadores" fue elegido por este comité.',
+    'It is the only word that fits. They observe.':
+      'Es la única palabra que encaja. Ellos observan.',
+    'They measure. They wait. And then — we believe —':
+      'Miden. Esperan. Y entonces — creemos —',
+    'they harvest. Without ever arriving.':
+      'cosechan. Sin llegar jamás.',
+    'VI. INSTITUTIONAL POSTURE':
+      'VI. POSTURA INSTITUCIONAL',
+    'Current directive from the Ministry:':
+      'Directiva actual del Ministerio:',
+    '  - Maintain public denial per multinational protocol':
+      '  - Mantener negación pública según protocolo multinacional',
+    '  - Continue monitoring for activation signals':
+      '  - Continuar monitoreo de señales de activación',
+    '  - Coordinate with international partners':
+      '  - Coordinar con socios internacionales',
+    '  - Prepare contingency frameworks for 2026 window':
+      '  - Preparar marcos de contingencia para la ventana de 2026',
+    'This committee notes, with professional distress,':
+      'Este comité nota, con angustia profesional,',
+    'that "contingency framework" implies a response':
+      'que "marco de contingencia" implica una capacidad',
+    'capability we do not possess. We have documented':
+      'de respuesta que no poseemos. Hemos documentado',
+    'a situation. We have not found a solution.':
+      'una situación. No hemos encontrado una solución.',
+    'God help us all.':
+      'Dios nos ayude a todos.',
+    'END BRIEFING — 4 COPIES AUTHORIZED':
+      'FIN DEL BRIEFING — 4 COPIAS AUTORIZADAS',
+    'SESSION RESIDUE — AUTOMATED LOG':
+      'RESIDUO DE SESIÓN — LOG AUTOMATIZADO',
+    'Multiple evidence file accesses detected.':
+      'Múltiples accesos a archivos de evidencia detectados.',
+    'Review pattern indicates deliberate collection.':
+      'El patrón de revisión indica recolección deliberada.',
+    'Temporary cache contains enough material to':
+      'La caché temporal contiene suficiente material para',
+    'support an external leak attempt.':
+      'apoyar un intento de filtración externa.',
+    'CONCLUSION: Session risk elevated.':
+      'CONCLUSIÓN: Riesgo de la sesión elevado.',
+    'NOTICE: Export behavior expected.':
+      'AVISO: Comportamiento de exportación esperado.',
+    'ETHICS EXCEPTION — REQUEST 03':
+      'EXCEPCIÓN ÉTICA — SOLICITUD 03',
+    'DATE: 29-JAN-1996':
+      'FECHA: 29-ENE-1996',
+    'REQUEST:':
+      'SOLICITUD:',
+    '  Waiver of standard protocols for specimen handling.':
+      '  Exención de protocolos estándar para manejo de especímenes.',
+    '  Justification: Unique scientific opportunity.':
+      '  Justificación: Oportunidad científica única.',
+    'STATUS: APPROVED':
+      'ESTADO: APROBADO',
+    '  - All procedures conducted off-site':
+      '  - Todos los procedimientos realizados fuera de las instalaciones',
+    '  - No institutional records':
+      '  - Sin registros institucionales',
+    '  - Results shared with foreign partners only':
+      '  - Resultados compartidos solo con socios extranjeros',
+    'APPROVAL: [SIGNATURE REDACTED]':
+      'APROBACIÓN: [FIRMA CENSURADA]',
+    'PROGRAM OVERVIEW — BIO-ASSESSMENT INITIATIVE':
+      'VISIÓN GENERAL DEL PROGRAMA — INICIATIVA DE BIO-EVALUACIÓN',
+    'Following the January 1996 incident, a joint program':
+      'Tras el incidente de enero de 1996, se estableció un programa',
+    'was established with international partners.':
+      'conjunto con socios internacionales.',
+    'OBJECTIVES:':
+      'OBJETIVOS:',
+    '  - Analyze recovered biological material':
+      '  - Analizar material biológico recuperado',
+    '  - Develop detection protocols':
+      '  - Desarrollar protocolos de detección',
+    '  - Prepare response frameworks':
+      '  - Preparar marcos de respuesta',
+    'PARTICIPANTS:':
+      'PARTICIPANTES:',
+    '  - Brazilian Intelligence (Lead, Local)':
+      '  - Inteligencia Brasileña (Líder, Local)',
+    '  - [REDACTED] (Technical Analysis)':
+      '  - [CENSURADO] (Análisis Técnico)',
+    '  - [REDACTED] (Biological Assessment)':
+      '  - [CENSURADO] (Evaluación Biológica)',
+    'DIVISION OF ASSETS:':
+      'DIVISIÓN DE ACTIVOS:',
+    '  - Brazil retains Subject ALFA remains':
+      '  - Brasil retiene restos del Sujeto ALFA',
+    '  - Foreign partner received Subjects BETA, GAMMA':
+      '  - Socio extranjero recibió Sujetos BETA, GAMMA',
+    '  - Material samples divided per Protocol 7-ECHO':
+      '  - Muestras de material divididas según Protocolo 7-ECHO',
+    'STATUS: Ongoing.':
+      'ESTADO: En curso.',
+    'TEMPORAL ANALYSIS — WINDOW ALIGNMENT':
+      'ANÁLISIS TEMPORAL — ALINEACIÓN DE VENTANA',
+    'METHODOLOGY: Signal Pattern Reconstruction':
+      'METODOLOGÍA: Reconstrucción de Patrón de Señal',
+    'AUTHOR: [CLASSIFIED — signals intelligence analyst]':
+      'AUTOR: [CLASIFICADO — analista de inteligencia de señales]',
+    'Cross-analysis of all recovered psi-comm fragments':
+      'El análisis cruzado de todos los fragmentos psi-comm recuperados',
+    'yielded the following recurring temporal references:':
+      'produjo las siguientes referencias temporales recurrentes:',
+    'TEMPORAL REFERENCES:':
+      'REFERENCIAS TEMPORALES:',
+    '  - "thirty rotations" (freq: 3)':
+      '  - "treinta rotaciones" (freq: 3)',
+    '  - "alignment" (freq: 2)':
+      '  - "alineación" (freq: 2)',
+    '  - "convergence" (freq: 1)':
+      '  - "convergencia" (freq: 1)',
+    '  - "window" (freq: 2)':
+      '  - "ventana" (freq: 2)',
+    'ASTRONOMICAL CORRELATION:':
+      'CORRELACIÓN ASTRONÓMICA:',
+    '  Year 2026 shows:':
+      '  El año 2026 muestra:',
+    '    - Unusual planetary alignments':
+      '    - Alineaciones planetarias inusuales',
+    '    - Solar activity projections: elevated':
+      '    - Proyecciones de actividad solar: elevadas',
+    '    - [DATA INSUFFICIENT FOR FURTHER CORRELATION]':
+      '    - [DATOS INSUFICIENTES PARA CORRELACIÓN ADICIONAL]',
+    'CONFIDENCE LEVEL: MODERATE':
+      'NIVEL DE CONFIANZA: MODERADO',
+    '  Establish monitoring protocols for year 2026.':
+      '  Establecer protocolos de monitoreo para el año 2026.',
+    '  Nature of expected event: UNKNOWN.':
+      '  Naturaleza del evento esperado: DESCONOCIDA.',
+    'PERSONAL NOTE:':
+      'NOTA PERSONAL:',
+    '  The frequency of "thirty rotations" across':
+      '  La frecuencia de "treinta rotaciones" entre',
+    '  independent specimen extractions is difficult':
+      '  extracciones de especímenes independientes es difícil',
+    '  to dismiss as coincidence. I recommend we take':
+      '  de descartar como coincidencia. Recomiendo que tomemos',
+    '  this reference seriously.':
+      '  esta referencia en serio.',
+    'RAW NEURAL CAPTURE — SPECIMEN ALFA':
+      'CAPTURA NEURONAL BRUTA — ESPÉCIMEN ALFA',
+    'EXTRACTION DATE: 21-JAN-1996 04:17':
+      'FECHA DE EXTRACCIÓN: 21-ENE-1996 04:17',
+    'DURATION: 0.3 SECONDS (SUBJECTIVE: UNKNOWN)':
+      'DURACIÓN: 0,3 SEGUNDOS (SUBJETIVA: DESCONOCIDA)',
+    '[non-linear perception detected]':
+      '[percepción no lineal detectada]',
+    '...purpose singular... observe catalog transmit...':
+      '...propósito singular... observar catalogar transmitir...',
+    '...not-self... extension... eyes-that-are-not-eyes...':
+      '...no-yo... extensión... ojos-que-no-son-ojos...',
+    '...this world... dense... loud... LOUD...':
+      '...este mundo... denso... ruidoso... RUIDOSO...',
+    '[temporal distortion]':
+      '[distorsión temporal]',
+    '...others of this-shape sent to many worlds...':
+      '...otros de esta-forma enviados a muchos mundos...',
+    '...most do not return... return not expected...':
+      '...la mayoría no regresa... regreso no esperado...',
+    '...we are the cost of knowing...':
+      '...somos el costo de saber...',
+    '[emotional bleed: resignation]':
+      '[sangrado emocional: resignación]',
+    '...they-above wait... they-above measure...':
+      '...los-de-arriba esperan... los-de-arriba miden...',
+    '...seven billion... dense... high yield...':
+      '...siete mil millones... denso... alto rendimiento...',
+    '...window approaches... thirty rotations...':
+      '...ventana se aproxima... treinta rotaciones...',
+    '[conceptual transmission]':
+      '[transmisión conceptual]',
+    '>>>IMAGE: vast darkness between stars':
+      '>>>IMAGEN: vasta oscuridad entre estrellas',
+    '>>>IMAGE: something watching, not moving, never moving':
+      '>>>IMAGEN: algo observando, sin moverse, nunca moviéndose',
+    '>>>IMAGE: threads connecting to countless worlds':
+      '>>>IMAGEN: hilos conectando a incontables mundos',
+    '>>>CONCEPT: harvest is not destruction':
+      '>>>CONCEPTO: la cosecha no es destrucción',
+    '>>>CONCEPT: the crop continues living':
+      '>>>CONCEPTO: el cultivo sigue viviendo',
+    '[signal degradation]':
+      '[degradación de señal]',
+    '...we do not arrive... we do not need to...':
+      '...no llegamos... no necesitamos...',
+    '...you are already... already...':
+      '...ustedes ya son... ya...',
+    'ANALYST NOTE: Subject expired during neural extraction.':
+      'NOTA DEL ANALISTA: Sujeto expiró durante extracción neuronal.',
+    '              Complete cognitive download was not possible.':
+      '              La descarga cognitiva completa no fue posible.',
+    '              What we captured is partial. Pray it was':
+      '              Lo que capturamos es parcial. Recen para que haya sido',
+    '              enough. Pray it was not.':
+      '              suficiente. Recen para que no.',
+    'NEURAL PATTERN PRESERVED FOR REMOTE LINK':
+      'PATRÓN NEURONAL PRESERVADO PARA ENLACE REMOTO',
+    'FILE: NEURAL_DUMP_ALFA.PSI':
+      'ARCHIVO: NEURAL_DUMP_ALFA.PSI',
+    'STATUS: ENCRYPTED':
+      'ESTADO: ENCRIPTADO',
+    'CLASSIFICATION: COSMIC - PSI-DIVISION':
+      'CLASIFICACIÓN: CÓSMICO - DIVISIÓN-PSI',
+    'RECOVERED COPY AVAILABLE':
+      'COPIA RECUPERADA DISPONIBLE',
+    'This file contains raw neural capture data from':
+      'Este archivo contiene datos brutos de captura neuronal de',
+    'recovered specimen. Authentication required.':
+      'espécimen recuperado. Se requiere autenticación.',
+    'Use: open neural_dump_alfa.psi':
+      'Use: open neural_dump_alfa.psi',
+    'Subject designation (found in autopsy records):':
+      'Designación del sujeto (encontrada en registros de autopsia):',
+    'Check autopsy files in quarantine':
+      'Verifique archivos de autopsia en cuarentena',
+    'REPORT — PSI-COMMUNICATION ANALYSIS':
+      'INFORME — ANÁLISIS DE PSI-COMUNICACIÓN',
+    'DATE: 15-FEB-1996':
+      'FECHA: 15-FEB-1996',
+    'EXECUTIVE SUMMARY:':
+      'RESUMEN EJECUTIVO:',
+    'Communication with recovered specimens occurred via':
+      'La comunicación con especímenes recuperados ocurrió vía',
+    'non-acoustic, non-electromagnetic means. Personnel':
+      'medios no acústicos y no electromagnéticos. El personal',
+    'reported receiving information without sensory input.':
+      'reportó recibir información sin estímulo sensorial.',
+    'CHARACTERISTICS OF PSI-COMM':
+      'CARACTERÍSTICAS DE LA PSI-COMM',
+    'NOT observed:':
+      'NO observado:',
+    '  - Spoken language':
+      '  - Lenguaje hablado',
+    '  - Written symbols':
+      '  - Símbolos escritos',
+    '  - Gestural communication':
+      '  - Comunicación gestual',
+    'OBSERVED:':
+      'OBSERVADO:',
+    '  - Synchronized neural activity between operator/subject':
+      '  - Actividad neuronal sincronizada entre operador/sujeto',
+    '  - Intrusive conceptual transmission':
+      '  - Transmisión conceptual intrusiva',
+    '  - Shared imagery and meaning, not symbols':
+      '  - Imágenes y significados compartidos, no símbolos',
+    '  - Emotional state transfer':
+      '  - Transferencia de estado emocional',
+    'OPERATOR EFFECTS':
+      'EFECTOS EN EL OPERADOR',
+    'Personnel exposed to psi-comm report:':
+      'El personal expuesto a psi-comm reporta:',
+    '  - Loss of temporal reference (hours feel like seconds)':
+      '  - Pérdida de referencia temporal (las horas se sienten como segundos)',
+    '  - Intrusive thoughts persisting for days':
+      '  - Pensamientos intrusivos que persisten por días',
+    '  - Emotional "bleed-through" (fear, resignation, purpose)':
+      '  - "Sangrado" emocional (miedo, resignación, propósito)',
+    '  - Understanding concepts without being able to explain':
+      '  - Comprender conceptos sin poder explicar',
+    'Lead Operator (Psi Division):':
+      'Operador Líder (División Psi):',
+    '"I understood what it was showing me. I cannot tell you':
+      '"Entendí lo que me estaba mostrando. No puedo decirle',
+    ' what I understood. The knowing does not translate."':
+      ' lo que entendí. El conocimiento no se traduce."',
+    'CRITICAL FINDING':
+      'HALLAZGO CRÍTICO',
+    'The entities do not communicate to exchange information.':
+      'Las entidades no se comunican para intercambiar información.',
+    'They transmit. They do not expect response.':
+      'Transmiten. No esperan respuesta.',
+    'They were never designed for dialogue.':
+      'Nunca fueron diseñados para el diálogo.',
+    'LINK ACCESS PROTOCOL':
+      'PROTOCOLO DE ACCESO AL ENLACE',
+    'Neural pattern preservation allows post-mortem link.':
+      'La preservación del patrón neuronal permite enlace post-mortem.',
+    'Authentication phrase derived from psi-comm transmission.':
+      'Frase de autenticación derivada de transmisión psi-comm.',
+    '  > link':
+      '  > link',
+    '  > Enter phrase: ___________':
+      '  > Ingrese la frase: ___________',
+    'Access phrase referenced in neural dump under [conceptual':
+      'Frase de acceso referenciada en el volcado neuronal bajo sección',
+    'transmission] section — the primary directive.':
+      '[transmisión conceptual] — la directiva primaria.',
+    'ANALYSIS — SPECIMEN FUNCTION AND PURPOSE':
+      'ANÁLISIS — FUNCIÓN Y PROPÓSITO DEL ESPÉCIMEN',
+    'AUTHOR: [CLASSIFIED — senior biologist, assessment team]':
+      'AUTOR: [CLASIFICADO — biólogo sénior, equipo de evaluación]',
+    'DATE: 22-FEB-1996':
+      'FECHA: 22-FEB-1996',
+    'CONCLUSION: The recovered entities are tools, not envoys.':
+      'CONCLUSIÓN: Las entidades recuperadas son herramientas, no enviados.',
+    'ANATOMICAL EVIDENCE':
+      'EVIDENCIA ANATÓMICA',
+    'Specimens show signs of deliberate engineering:':
+      'Los especímenes muestran signos de ingeniería deliberada:',
+    '  SPECIALIZED:':
+      '  ESPECIALIZADO:',
+    '    - Sensory organs optimized for observation':
+      '    - Órganos sensoriales optimizados para observación',
+    '    - Neural density far exceeds body mass requirement':
+      '    - La densidad neuronal excede con creces el requisito de masa corporal',
+    '    - Simplified digestive system (mission duration limited)':
+      '    - Sistema digestivo simplificado (duración de misión limitada)',
+    '  FRAGILE:':
+      '  FRÁGIL:',
+    '    - Poorly suited for Earth gravity (joint stress)':
+      '    - Poco adecuado para gravedad terrestre (estrés articular)',
+    '    - Minimal immune response (not built to survive)':
+      '    - Respuesta inmunológica mínima (no construido para sobrevivir)',
+    '    - No reproductive capability whatsoever':
+      '    - Sin capacidad reproductiva alguna',
+    '  LIMITED:':
+      '  LIMITADO:',
+    '    - No evidence of autonomous decision-making centers':
+      '    - Sin evidencia de centros autónomos de toma de decisiones',
+    '    - Behavior patterns suggest programmed routines':
+      '    - Patrones de comportamiento sugieren rutinas programadas',
+    '    - Mission completion prioritized over self-preservation':
+      '    - Conclusión de la misión priorizada sobre autopreservación',
+    'INTERPRETATION':
+      'INTERPRETACIÓN',
+    'These are reconnaissance units. Purpose-built.':
+      'Estas son unidades de reconocimiento. Construidas a medida.',
+    'They were never meant to survive this assignment.':
+      'Nunca fueron diseñados para sobrevivir a esta misión.',
+    'They were never meant to return.':
+      'Nunca fueron diseñados para regresar.',
+    'They were never meant to represent their creators.':
+      'Nunca fueron diseñados para representar a sus creadores.',
+    'In my professional assessment, they are biological':
+      'En mi evaluación profesional, son sensores',
+    'sensors. Nothing more.':
+      'biológicos. Nada más.',
+    'WHAT THIS IMPLIES':
+      'LO QUE ESTO IMPLICA',
+    'If Earth received scouts, it passed initial screening.':
+      'Si la Tierra recibió exploradores, pasó la evaluación inicial.',
+    'If scouts transmitted successfully, data was received.':
+      'Si los exploradores transmitieron con éxito, los datos fueron recibidos.',
+    'I do not enjoy writing this next sentence.':
+      'No disfruto escribir la siguiente oración.',
+    'If data was received, then we have been catalogued.':
+      'Si los datos fueron recibidos, entonces hemos sido catalogados.',
+    'Someone — something — now knows we are here,':
+      'Alguien — algo — ahora sabe que estamos aquí,',
+    'what we are, and what we are worth.':
+      'lo que somos y cuánto valemos.',
+    'Year of projected transition window:':
+      'Año de la ventana de transición proyectada:',
+    'Referenced in multiple classified documents':
+      'Referenciado en múltiples documentos clasificados',
+    'INTERCEPTED SIGNAL — PRIORITY ULTRA':
+      'SEÑAL INTERCEPTADA — PRIORIDAD ULTRA',
+    'INTERCEPT DATE: 03-MAR-1996':
+      'FECHA DE INTERCEPTACIÓN: 03-MAR-1996',
+    'ORIGIN: EXTRASOLAR':
+      'ORIGEN: EXTRASOLAR',
+    'CLASSIFICATION: This transmission was detected 6 weeks':
+      'CLASIFICACIÓN: Esta transmisión fue detectada 6 semanas',
+    'after the January incident. Source triangulation indicates':
+      'después del incidente de enero. La triangulación de la fuente indica',
+    'origin beyond solar system boundary.':
+      'origen más allá del límite del sistema solar.',
+    'TRANSMISSION CONTENT (CONCEPTUAL TRANSLATION)':
+      'CONTENIDO DE LA TRANSMISIÓN (TRADUCCIÓN CONCEPTUAL)',
+    '>>RECEIPT: Scout telemetry confirmed':
+      '>>RECIBO: Telemetría del explorador confirmada',
+    '>>STATUS: Target world catalogued':
+      '>>ESTADO: Mundo objetivo catalogado',
+    '>>ASSESSMENT: High cognitive density':
+      '>>EVALUACIÓN: Alta densidad cognitiva',
+    '>>ASSESSMENT: Energy yield projection - OPTIMAL':
+      '>>EVALUACIÓN: Proyección de rendimiento energético - ÓPTIMO',
+    '>>ASSESSMENT: Resistance threshold - NEGLIGIBLE':
+      '>>EVALUACIÓN: Umbral de resistencia - DESPRECIABLE',
+    '>>DECISION: Proceed to Phase 2':
+      '>>DECISIÓN: Proceder a Fase 2',
+    '>>DEPLOYMENT: Second-generation integration assets':
+      '>>DESPLIEGUE: Activos de integración de segunda generación',
+    '>>TIMELINE: Alignment window (local: 2026)':
+      '>>LÍNEA TEMPORAL: Ventana de alineación (local: 2026)',
+    '>>METHOD: Indirect biological seeding':
+      '>>MÉTODO: Siembra biológica indirecta',
+    '>>NOTE: Arrival unnecessary':
+      '>>NOTA: Llegada innecesaria',
+    '>>NOTE: Local biology will serve as intermediary':
+      '>>NOTA: La biología local servirá como intermediaria',
+    '>>NOTE: Extraction begins upon cognitive threshold':
+      '>>NOTA: Extracción comienza en el umbral cognitivo',
+    '  This transmission confirms what we feared most.':
+      '  Esta transmisión confirma lo que más temíamos.',
+    '  The scouts completed their mission.':
+      '  Los exploradores completaron su misión.',
+    '  A response has been sent.':
+      '  Una respuesta ha sido enviada.',
+    '  But "response" is the wrong word.':
+      '  Pero "respuesta" es la palabra equivocada.',
+    '  They are not coming.':
+      '  Ellos no vienen.',
+    '  Something else is.':
+      '  Otra cosa viene.',
+    '  I have forwarded this to the Ministry.':
+      '  He reenviado esto al Ministerio.',
+    '  I do not expect a reply.':
+      '  No espero una respuesta.',
+    '  [SEE ATTACHED SIGNAL VISUALIZATION]':
+      '  [VER VISUALIZACIÓN DE SEÑAL ADJUNTA]',
+    'FILE: SECOND_DEPLOYMENT.SIG':
+      'ARCHIVO: SECOND_DEPLOYMENT.SIG',
+    'CLASSIFICATION: ULTRA — SIGNALS DIVISION':
+      'CLASIFICACIÓN: ULTRA — DIVISIÓN DE SEÑALES',
+    'This file contains intercepted signal data.':
+      'Este archivo contiene datos de señal interceptada.',
+    'Authentication required for access.':
+      'Se requiere autenticación para acceso.',
+    'Use: open second_deployment.sig':
+      'Use: open second_deployment.sig',
+    'Signal analysis showing second deployment trajectory':
+      'Análisis de señal mostrando trayectoria de segundo despliegue',
+    'MEMORANDUM — CLARIFICATION OF 2026 REFERENCE':
+      'MEMORÁNDUM — ACLARACIÓN DE LA REFERENCIA A 2026',
+    'AUTHOR: [CLASSIFIED — senior intelligence officer]':
+      'AUTOR: [CLASIFICADO — oficial de inteligencia sénior]',
+    'DATE: 01-APR-1996':
+      'FECHA: 01-ABR-1996',
+    'TO: ALL CLEARED PERSONNEL':
+      'PARA: TODO EL PERSONAL AUTORIZADO',
+    'I write to correct a dangerous misunderstanding that':
+      'Escribo para corregir un malentendido peligroso que',
+    'has been circulating within this directorate.':
+      'ha estado circulando dentro de esta dirección.',
+    'WHAT 2026 IS NOT':
+      'LO QUE 2026 NO ES',
+    'Several colleagues have interpreted the recovered':
+      'Varios colegas han interpretado las transmisiones',
+    'transmissions as predicting an invasion in 2026.':
+      'recuperadas como predicción de una invasión en 2026.',
+    'This was our first reading. It was wrong.':
+      'Esta fue nuestra primera lectura. Estaba equivocada.',
+    '  2026 is NOT an invasion date.':
+      '  2026 NO es una fecha de invasión.',
+    '  It is NOT a fleet arrival.':
+      '  NO es una llegada de flota.',
+    '  It is NOT first contact.':
+      '  NO es primer contacto.',
+    '  It is NOT a single event.':
+      '  NO es un evento único.',
+    'Colleagues who are sleeping better because they':
+      'Colegas que duermen mejor porque',
+    'believe we have thirty years to prepare — you':
+      'creen que tenemos treinta años para prepararnos — ustedes',
+    'misunderstand the nature of what we are facing.':
+      'no entienden la naturaleza de lo que enfrentamos.',
+    'WHAT 2026 IS':
+      'LO QUE 2026 ES',
+    '  A TRANSITION WINDOW.':
+      '  UNA VENTANA DE TRANSICIÓN.',
+    '  Based on cross-analysis of all recovered fragments:':
+      '  Basado en análisis cruzado de todos los fragmentos recuperados:',
+    '    - End of reconnaissance phase':
+      '    - Fin de la fase de reconocimiento',
+    '    - Activation of indirect systems':
+      '    - Activación de sistemas indirectos',
+    '    - Point beyond which intervention becomes impossible':
+      '    - Punto más allá del cual la intervención se vuelve imposible',
+    'PLAIN LANGUAGE':
+      'LENGUAJE SIMPLE',
+    '  Nothing arrives.':
+      '  Nada llega.',
+    '  Something changes.':
+      '  Algo cambia.',
+    '  The change may already be in motion. We lack the':
+      '  El cambio puede ya estar en marcha. Nos falta la',
+    '  instrumentation to detect it. 2026 is simply when':
+      '  instrumentación para detectarlo. 2026 es simplemente cuando',
+    '  we believe it becomes irreversible.':
+      '  creemos que se vuelve irreversible.',
+    '  I do not write this to cause panic. I write it':
+      '  No escribo esto para causar pánico. Lo escribo',
+    '  because our contingency planning assumes an enemy':
+      '  porque nuestra planificación de contingencia asume un enemigo',
+    '  who will show up. This enemy may never show up.':
+      '  que aparecerá. Este enemigo puede que nunca aparezca.',
+    '  That is precisely the problem.':
+      '  Ese es precisamente el problema.',
+    'STRATEGIC IMPLICATION':
+      'IMPLICACIÓN ESTRATÉGICA',
+    '  There is no defense protocol for 2026.':
+      '  No hay protocolo de defensa para 2026.',
+    '  There is no countermeasure to design.':
+      '  No hay contramedida que diseñar.',
+    '  There is no adversary to engage.':
+      '  No hay adversario que enfrentar.',
+    '  We are documenting a process that does not require':
+      '  Estamos documentando un proceso que no requiere',
+    '  our participation or our consent.':
+      '  nuestra participación ni nuestro consentimiento.',
+    '  Ministry has been informed. Their response was to':
+      '  El Ministerio ha sido informado. Su respuesta fue',
+    '  request this memorandum be reclassified to RED.':
+      '  solicitar que este memorándum sea reclasificado a ROJO.',
+    '  That was their only response.':
+      '  Esa fue su única respuesta.',
+    'INTERNAL ANALYSIS — ENERGY EXTRACTION HYPOTHESIS':
+      'ANÁLISIS INTERNO — HIPÓTESIS DE EXTRACCIÓN DE ENERGÍA',
+    'CLASSIFICATION: RED — SPECULATIVE':
+      'CLASIFICACIÓN: ROJO — ESPECULATIVO',
+    'AUTHOR: [CLASSIFIED — senior analyst, signals division]':
+      'AUTOR: [CLASIFICADO — analista sénior, división de señales]',
+    'DATE: 18-MAR-1996':
+      'FECHA: 18-MAR-1996',
+    'TO: DIRECTOR — ASSESSMENTS':
+      'PARA: DIRECTOR — EVALUACIONES',
+    'Sir,':
+      'Señor,',
+    'I submit this paper with reluctance. Its conclusions':
+      'Presento este documento con renuencia. Sus conclusiones',
+    'are disturbing and I am aware they sound irrational.':
+      'son perturbadoras y soy consciente de que suenan irracionales.',
+    'But the data from the recovered neural patterns does':
+      'Pero los datos de los patrones neuronales recuperados no',
+    'not permit a gentler interpretation.':
+      'permiten una interpretación más suave.',
+    'RECOVERED FRAGMENTS — SCOUT NEURAL ANALYSIS':
+      'FRAGMENTOS RECUPERADOS — ANÁLISIS NEURONAL DE EXPLORADORES',
+    'Two phrases recur across all three specimen extractions:':
+      'Dos frases se repiten en las tres extracciones de especímenes:',
+    '  Fragment 1: "higher cognition increases yield"':
+      '  Fragmento 1: "mayor cognición aumenta el rendimiento"',
+    '  Fragment 2: reference to population density — billions':
+      '  Fragmento 2: referencia a densidad poblacional — miles de millones',
+    'Our linguist insists these are not the scouts\' thoughts.':
+      'Nuestro lingüista insiste en que estos no son los pensamientos de los exploradores.',
+    'They are instructions. Received. Embedded. Like firmware.':
+      'Son instrucciones. Recibidas. Incrustadas. Como firmware.',
+    'ANALYST INTERPRETATION':
+      'INTERPRETACIÓN DEL ANALISTA',
+    'If the fragments are taken at face value, the picture':
+      'Si los fragmentos se toman al pie de la letra, el cuadro',
+    'that emerges is this:':
+      'que emerge es este:',
+    '  - The scouts were measuring cognitive output.':
+      '  - Los exploradores estaban midiendo producción cognitiva.',
+    '  - Intelligence is the resource being assessed.':
+      '  - La inteligencia es el recurso siendo evaluado.',
+    '  - Population size determines extraction viability.':
+      '  - El tamaño de la población determina la viabilidad de extracción.',
+    'I am a signals analyst, not a philosopher.':
+      'Soy analista de señales, no filósofo.',
+    'But I believe they were calculating yield.':
+      'Pero creo que estaban calculando rendimiento.',
+    'Of us.':
+      'De nosotros.',
+    'THE QUESTION OF PRESERVATION':
+      'LA CUESTIÓN DE LA PRESERVACIÓN',
+    'The neural data contains no references to destruction.':
+      'Los datos neuronales no contienen referencias a destrucción.',
+    'None. Not in any fragment.':
+      'Ninguna. En ningún fragmento.',
+    'This troubled me until I understood why.':
+      'Esto me perturbó hasta que entendí por qué.',
+    'If the resource is cognitive activity, then killing':
+      'Si el recurso es actividad cognitiva, entonces matar',
+    'the source would terminate supply. The optimal strategy':
+      'la fuente terminaría el suministro. La estrategia óptima',
+    'is preservation. The population must continue to live,':
+      'es preservación. La población debe seguir viviendo,',
+    'think, create. The extraction must be invisible.':
+      'pensando, creando. La extracción debe ser invisible.',
+    'Deus me livre — I wrote that sentence and my hands':
+      'Deus me livre — escribí esa frase y mis manos',
+    'will not stop shaking.':
+      'no dejan de temblar.',
+    'WHAT WE DO NOT KNOW':
+      'LO QUE NO SABEMOS',
+    '  - The physical mechanism of extraction':
+      '  - El mecanismo físico de extracción',
+    '  - Whether extraction has already begun':
+      '  - Si la extracción ya ha comenzado',
+    '  - Whether the process can be detected or measured':
+      '  - Si el proceso puede ser detectado o medido',
+    '  - Whether resistance is even theoretically possible':
+      '  - Si la resistencia es siquiera teóricamente posible',
+    'I request reassignment after filing this report.':
+      'Solicito reasignación tras presentar este informe.',
+    'Energy Extraction Model - Theoretical visualization':
+      'Modelo de Extracción de Energía - Visualización teórica',
+    'UTILITY — DATA RECONSTRUCTION TOOL':
+      'UTILIDAD — HERRAMIENTA DE RECONSTRUCCIÓN DE DATOS',
+    'VERSION: 1.7 (LEGACY)':
+      'VERSIÓN: 1.7 (LEGADO)',
+    'This utility can reconstruct fragmented data segments.':
+      'Esta utilidad puede reconstruir segmentos de datos fragmentados.',
+    '  script <script_content>':
+      '  script <contenido_del_script>',
+    'REQUIRED SCRIPT FORMAT:':
+      'FORMATO DE SCRIPT REQUERIDO:',
+    '  A valid reconstruction script must contain:':
+      '  Un script de reconstrucción válido debe contener:',
+    '    - INIT command':
+      '    - Comando INIT',
+    '    - TARGET specification (valid archive path)':
+      '    - Especificación TARGET (ruta de archivo válida)',
+    '    - EXEC command':
+      '    - Comando EXEC',
+    'EXAMPLE:':
+      'EJEMPLO:',
+    '  script INIT;TARGET=/admin/fragment.dat;EXEC':
+      '  script INIT;TARGET=/admin/fragment.dat;EXEC',
+    'AVAILABLE TARGETS':
+      'OBJETIVOS DISPONIBLES',
+    '  /admin/neural_fragment.dat    [FRAGMENTED]':
+      '  /admin/neural_fragment.dat    [FRAGMENTADO]',
+    '  /comms/psi_residue.log        [CORRUPTED]':
+      '  /comms/psi_residue.log        [CORROMPIDO]',
+    'NOTE: Successful reconstruction may reveal hidden content.':
+      'NOTA: La reconstrucción exitosa puede revelar contenido oculto.',
+    'OPERATIONAL SECURITY MEMORANDUM':
+      'MEMORÁNDUM DE SEGURIDAD OPERACIONAL',
+    'DOCUMENT: OSM-1993-X':
+      'DOCUMENTO: OSM-1993-X',
+    'TO: All Field Personnel':
+      'PARA: Todo el Personal de Campo',
+    'FROM: The Director, Special Projects':
+      'DE: El Director, Proyectos Especiales',
+    'DATE: 13-OCT-1993':
+      'FECHA: 13-OCT-1993',
+    'RE: Information Compartmentalization':
+      'RE: Compartimentación de Información',
+    'In light of recent security concerns, I am issuing the':
+      'A la luz de recientes preocupaciones de seguridad, emito la',
+    'following directive effective immediately:':
+      'siguiente directiva con efecto inmediato:',
+    '  SHARE NOTHING BEYOND YOUR SCOPE.':
+      '  NO COMPARTA NADA MÁS ALLÁ DE SU ALCANCE.',
+    'Information regarding ongoing projects is to be shared':
+      'La información sobre proyectos en curso debe compartirse',
+    'on a strict need-to-know basis. Even colleagues with':
+      'estrictamente con base en necesidad de saber. Incluso colegas con',
+    'appropriate clearance should not receive details beyond':
+      'autorización apropiada no deben recibir detalles más allá de',
+    'their assigned scope.':
+      'su alcance asignado.',
+    'Full operational awareness is distributed across':
+      'La conciencia operacional completa está distribuida entre',
+    'departments and archives. This is by design.':
+      'departamentos y archivos. Esto es por diseño.',
+    'Those who require broader context must submit':
+      'Quienes requieran contexto más amplio deben presentar',
+    'Form OSM-7 through their division chief.':
+      'Formulario OSM-7 a través de su jefe de división.',
+    'ADDENDUM (handwritten):':
+      'ADÉNDUM (escrito a mano):',
+    '  "Quem sabe demais, carrega peso demais."':
+      '  "Quem sabe demais, carrega peso demais."',
+    '  (Who knows too much carries too much weight.)':
+      '  (Quien sabe demasiado carga demasiado peso.)',
+    'FIELD REPORT — INITIAL CONTACT':
+      'INFORME DE CAMPO — CONTACTO INICIAL',
+    'LOCATION: Jardim Andere, Varginha, Minas Gerais':
+      'UBICACIÓN: Jardim Andere, Varginha, Minas Gerais',
+    'DATE: 20-JAN-1996, 15:30h (local)':
+      'FECHA: 20-ENE-1996, 15:30h (local)',
+    'WITNESSES:':
+      'TESTIGOS:',
+    '  Three female civilians, ages 14-22.':
+      '  Tres civiles femeninas, edades 14-22.',
+    '  Names withheld per Protocol 7.':
+      '  Nombres retenidos según Protocolo 7.',
+    'LOCATION DETAILS:':
+      'DETALLES DE LA UBICACIÓN:',
+    '  Vacant lot between Rua Suécia and Rua Benevenuto Brás.':
+      '  Terreno baldío entre Rua Suécia y Rua Benevenuto Brás.',
+    '  Area described as overgrown, partially obscured by':
+      '  Área descrita como cubierta de maleza, parcialmente obstruida por',
+    '  adjacent construction materials.':
+      '  materiales de construcción adyacentes.',
+    'WITNESS ACCOUNT (SUMMARY):':
+      'RELATO DEL TESTIGO (RESUMEN):',
+    '  Subjects observed crouching figure approximately 1.6m':
+      '  Los sujetos observaron figura agachada de aproximadamente 1,6m',
+    '  in height. Dark brown skin described as "oily." Three':
+      '  de altura. Piel marrón oscuro descrita como "aceitosa." Tres',
+    '  prominent ridges on cranium. Large red eyes. Strong':
+      '  surcos prominentes en el cráneo. Ojos grandes y rojos. Fuerte',
+    '  ammonia-like odor noted.':
+      '  olor similar a amoníaco notado.',
+    '  Subjects fled scene. One reported temporary paralysis.':
+      '  Los sujetos huyeron de la escena. Uno reportó parálisis temporal.',
+    '  Another claimed "feeling its thoughts" — see psi/.':
+      '  Otro afirmó "sentir sus pensamientos" — ver psi/.',
+    'TIMELINE:':
+      'LÍNEA TEMPORAL:',
+    '  13-JAN-1996: NORAD detects anomaly over Minas Gerais':
+      '  13-ENE-1996: NORAD detecta anomalía sobre Minas Gerais',
+    '  19-JAN-1996: Farmers report "falling star" near Varginha':
+      '  19-ENE-1996: Agricultores reportan "estrella fugaz" cerca de Varginha',
+    '  20-JAN-1996: 03:30h — Fire dept. receives calls re: "creature"':
+      '  20-ENE-1996: 03:30h — Bomberos reciben llamadas sobre "criatura"',
+    '  20-JAN-1996: 08:00h — Military cordons established':
+      '  20-ENE-1996: 08:00h — Cordones militares establecidos',
+    '  20-JAN-1996: 15:30h — Jardim Andere sighting (this report)':
+      '  20-ENE-1996: 15:30h — Avistamiento en Jardim Andere (este informe)',
+    '  20-JAN-1996: 22:00h — Hospital São Sebastião incident':
+      '  20-ENE-1996: 22:00h — Incidente en Hospital São Sebastião',
+    'SUBSEQUENT LOCATIONS:':
+      'UBICACIONES SUBSECUENTES:',
+    '  - Escola de Sargentos das Armas (ESA)':
+      '  - Escola de Sargentos das Armas (ESA)',
+    '  - Hospital Humanitas':
+      '  - Hospital Humanitas',
+    '  - Cemitério municipal (alleged)':
+      '  - Cemitério municipal (presunto)',
+    '  Jardim Andere remains primary public touchpoint.':
+      '  Jardim Andere permanece como punto de contacto público primario.',
+    '  Subsequent containment sites not disclosed.':
+      '  Sitios de contención subsecuentes no revelados.',
+    'INTERNAL MEMORANDUM — FACILITIES':
+      'MEMORÁNDUM INTERNO — INSTALACIONES',
+    'DATE: 19-JUL-1994':
+      'FECHA: 19-JUL-1994',
+    'RE: World Cup Celebration Guidelines':
+      'RE: Directrices de Celebración de la Copa del Mundo',
+    'Following Brazil\'s victory in the Copa do Mundo 1994,':
+      'Tras la victoria de Brasil en la Copa do Mundo 1994,',
+    'the following guidelines apply to workplace celebrations:':
+      'las siguientes directrices aplican a las celebraciones en el trabajo:',
+    '  1. Television viewing permitted in break areas ONLY.':
+      '  1. Visualización de televisión permitida SOLO en áreas de descanso.',
+    '  2. Caipirinha service restricted to after-hours events.':
+      '  2. Servicio de caipirinha restringido a eventos fuera de horario.',
+    '  3. Samba music volume must not exceed 70dB.':
+      '  3. El volumen de música samba no debe exceder 70dB.',
+    '  4. The phrase "É TETRA!" may be exclaimed no more than':
+      '  4. La frase "É TETRA!" puede exclamarse no más de',
+    '     three (3) times per hour during work hours.':
+      '     tres (3) veces por hora durante horas de trabajo.',
+    'APPROVED DECORATIONS:':
+      'DECORACIONES APROBADAS:',
+    '  - Brazilian flag (regulation size only)':
+      '  - Bandera brasileña (solo tamaño reglamentario)',
+    '  - Team photographs (common areas only)':
+      '  - Fotografías del equipo (solo áreas comunes)',
+    '  - "BRASIL CAMPEÃO" banners (break room only)':
+      '  - Pancartas "BRASIL CAMPEÃO" (solo sala de descanso)',
+    'PROHIBITED:':
+      'PROHIBIDO:',
+    '  - Confetti (fire hazard)':
+      '  - Confeti (riesgo de incendio)',
+    '  - Fireworks (obvious reasons)':
+      '  - Fuegos artificiales (razones obvias)',
+    '  - Vuvuzelas (noise complaints)':
+      '  - Vuvuzelas (quejas de ruido)',
+    'NOTE FROM DIRECTOR:':
+      'NOTA DEL DIRECTOR:',
+    '  "Parabéns a todos. But remember — we have work to do.':
+      '  "Parabéns a todos. Pero recuerden — tenemos trabajo que hacer.',
+    '   The universe does not pause for futebol."':
+      '   El universo no se detiene por el futebol."',
+    '  "Nem tudo é festa. Voltem ao trabalho segunda-feira."':
+      '  "Nem tudo é festa. Voltem ao trabalho segunda-feira."',
+    '  (Not everything is a party. Return to work Monday.)':
+      '  (No todo es fiesta. Regresen al trabajo el lunes.)',
+    'MODEM CONNECTION LOG — EXTERNAL UPLINK':
+      'LOG DE CONEXIÓN MODEM — ENLACE EXTERNO',
+    'DEVICE: US Robotics Sportster 28.8':
+      'DISPOSITIVO: US Robotics Sportster 28.8',
+    'DATE: 18-JAN-1996':
+      'FECHA: 18-ENE-1996',
+    'SESSION ACTIVITY':
+      'ACTIVIDAD DE SESIÓN',
+    'IRC TRANSCRIPT (PARTIAL)':
+      'TRANSCRIPCIÓN IRC (PARCIAL)',
+    'BILLING: 16 minutes @ R$0.85/min = R$13.60':
+      'FACTURACIÓN: 16 minutos @ R$0,85/min = R$13,60',
+    'RECOVERED FILE — USER DIRECTORY BACKUP':
+      'ARCHIVO RECUPERADO — RESPALDO DE DIRECTORIO DE USUARIO',
+    'OWNER: [REDACTED]':
+      'PROPIETARIO: [CENSURADO]',
+    '  This .sig brought to you by:':
+      '  Esta .sig traída a usted por:',
+    '  - Too much coffee':
+      '  - Demasiado café',
+    '  - Not enough sleep':
+      '  - Poco sueño',
+    '  - Saudade':
+      '  - Saudade',
+    '  Best viewed in Netscape Navigator 2.0':
+      '  Mejor visto en Netscape Navigator 2.0',
+    'CAFETERIA MENU — WEEK 03 (15-19 JAN 1996)':
+      'MENÚ DE CAFETERÍA — SEMANA 03 (15-19 ENE 1996)',
+    '  Feijoada completa':
+      '  Feijoada completa',
+    '  Arroz branco, couve refogada, laranja':
+      '  Arroz blanco, col salteada, naranja',
+    '  Farofa de bacon':
+      '  Farofa de tocino',
+    '  Frango à passarinho':
+      '  Pollo a la passarinho',
+    '  Purê de batata, salada mista':
+      '  Puré de papa, ensalada mixta',
+    '  Peixe grelhado':
+      '  Pescado a la parrilla',
+    '  Arroz, feijão tropeiro':
+      '  Arroz, frijol tropeiro',
+    '  Vinagrete':
+      '  Vinagreta',
+    '  Carne assada':
+      '  Carne asada',
+    '  Macarrão ao sugo':
+      '  Pasta al sugo',
+    '  Salada de tomate':
+      '  Ensalada de tomate',
+    '  *** MENU CANCELLED ***':
+      '  *** MENÚ CANCELADO ***',
+    '  [INCIDENT RESPONSE ACTIVE]':
+      '  [RESPUESTA A INCIDENTE ACTIVA]',
+    '  Emergency rations distributed':
+      '  Raciones de emergencia distribuidas',
+    'NOTE: Friday\'s menu cancelled due to unscheduled':
+      'NOTA: Menú del viernes cancelado debido a',
+    'facility lockdown. See INCIDENT REPORT 1996-01-VG.':
+      'cierre no programado de la instalación. Ver INFORME DE INCIDENTE 1996-01-VG.',
+    'Cafeteria staff reassigned to support operations.':
+      'Personal de cafetería reasignado para apoyar operaciones.',
+    'Vending machines remain operational.':
+      'Máquinas expendedoras permanecen operacionales.',
+    'Dona Maria apologizes for the inconvenience.':
+      'Doña Maria se disculpa por la inconveniencia.',
+    '# EMERGENCY BACKUP SCRIPT':
+      '# SCRIPT DE RESPALDO DE EMERGENCIA',
+    '# This script saves the collected evidence to external media':
+      '# Este script guarda la evidencia recopilada en medios externos',
+    '# before the connection is cut.':
+      '# antes de que se corte la conexión.',
+    '# TRACE PURGE UTIL — LEGACY NODE':
+      '# UTILIDAD DE PURGA DE RASTRO — NODO LEGADO',
+    '# OWNER: SYSADMIN (OBSOLETE)':
+      '# PROPIETARIO: SYSADMIN (OBSOLETO)',
+    '# This utility clears trace artifacts from volatile buffers.':
+      '# Esta utilidad limpia artefactos de rastreo de buffers volátiles.',
+    '# Use only during active trace windows.':
+      '# Usar solo durante ventanas de rastreo activas.',
+    'SECURITY LOG — TRACE PURGE EVENT':
+      'LOG DE SEGURIDAD — EVENTO DE PURGA DE RASTRO',
+    'Observation:':
+      'Observación:',
+    '  Legacy purge utility executed during active trace.':
+      '  Utilidad de purga legada ejecutada durante rastreo activo.',
+    '  Buffer integrity reset; trace window re-opened.':
+      '  Integridad del buffer reiniciada; ventana de rastreo reabierta.',
+    '  Operator demonstrated knowledge of internal tooling.':
+      '  El operador demostró conocimiento de herramientas internas.',
+    '  Session classified as HIGH PRIORITY.':
+      '  Sesión clasificada como ALTA PRIORIDAD.',
+    '  Maintain surveillance. Do not terminate.':
+      '  Mantener vigilancia. No terminar.',
+    'INTEGRITY REGISTRY — EVIDENCE HASHES':
+      'REGISTRO DE INTEGRIDAD — HASHES DE EVIDENCIA',
+    'DATE: 27-JAN-1996':
+      'FECHA: 27-ENE-1996',
+    'Purpose:':
+      'Propósito:',
+    '  Validate evidence artifacts against tampering.':
+      '  Validar artefactos de evidencia contra manipulación.',
+    'HASH SET:':
+      'CONJUNTO DE HASHES:',
+    '  Hash mismatch indicates altered narrative.':
+      '  La incompatibilidad de hash indica narrativa alterada.',
+    '  Preserve originals for external verification.':
+      '  Preservar originales para verificación externa.',
+    'RESIDUAL SESSION CAPTURE — GHOST FRAME':
+      'CAPTURA DE SESIÓN RESIDUAL — CUADRO FANTASMA',
+    'TIMESTAMP: [REDACTED]':
+      'MARCA DE TIEMPO: [CENSURADO]',
+    '[PARTIAL COMMAND TRACE]':
+      '[RASTREO PARCIAL DE COMANDOS]',
+    '  Prior operator achieved coherent linkage before purge.':
+      '  El operador anterior logró enlace coherente antes de la purga.',
+    '  Evidence trails remain viable. Do not repeat mistakes.':
+      '  Los rastros de evidencia permanecen viables. No repita errores.',
+    'REDACTION OVERRIDE CARD — INDEX 3':
+      'TARJETA DE ANULACIÓN DE CENSURA — ÍNDICE 3',
+    'CLEARANCE STRING:':
+      'CADENA DE AUTORIZACIÓN:',
+    '  "PHASE TWO IS ALREADY UNDERWAY"':
+      '  "LA FASE DOS YA ESTÁ EN MARCHA"',
+    '  Verify against redacted memos for completion checks.':
+      '  Verificar contra memorándums censurados para chequeos de finalización.',
+    'ADMIN MEMO — REDACTION PATCH':
+      'MEMORÁNDUM ADMIN — CORRECCIÓN DE CENSURA',
+    'DATE: 19-JAN-1996':
+      'FECHA: 19-ENE-1996',
+    'CORRECTED LINE:':
+      'LÍNEA CORREGIDA:',
+    '  Do not store the full line in unsecured systems.':
+      '  No almacene la línea completa en sistemas no seguros.',
+    'AUDIO TRANSCRIPT — SECURITY HOTLINE':
+      'TRANSCRIPCIÓN DE AUDIO — LÍNEA DIRECTA DE SEGURIDAD',
+    'DATE: 21-JAN-1996 02:12':
+      'FECHA: 21-ENE-1996 02:12',
+    'CALLER: "Keep it on tape. They never write this down."':
+      'LLAMANTE: "Manténgalo en cinta. Ellos nunca escriben esto."',
+    'VOICE: Male, approx. 40s. Distressed.':
+      'VOZ: Masculina, aprox. 40 años. Angustiado.',
+    '[TRANSCRIPT]':
+      '[TRANSCRIPCIÓN]',
+    '  "...they told us to stage the perimeter breach."':
+      '  "...nos dijeron que montáramos la violación del perímetro."',
+    '  "...they wanted the story to leak, but not cleanly."':
+      '  "...querían que la historia se filtrara, pero no limpiamente."',
+    '  "...make the evidence noisy, not gone."':
+      '  "...hacer la evidencia ruidosa, no desaparecida."',
+    '  Suggests intentional contamination of public record.':
+      '  Sugiere contaminación intencional del registro público.',
+    'RECONSTRUCTED DATA — NEURAL FRAGMENT':
+      'DATOS RECONSTRUIDOS — FRAGMENTO NEURONAL',
+    'RECONSTRUCTION: SUCCESSFUL':
+      'RECONSTRUCCIÓN: EXITOSA',
+    'This fragment was captured during the final moments':
+      'Este fragmento fue capturado durante los momentos finales',
+    'of Specimen GAMMA consciousness.':
+      'de la consciencia del Espécimen GAMMA.',
+    '[DIRECT NEURAL TRANSCRIPT]':
+      '[TRANSCRIPCIÓN NEURONAL DIRECTA]',
+    '...mission complete... transmission received...':
+      '...misión completa... transmisión recibida...',
+    '...this form expires... acceptable...':
+      '...esta forma expira... aceptable...',
+    '...we are not individuals... we are function...':
+      '...no somos individuos... somos función...',
+    '...the watchers do not grieve...':
+      '...los observadores no se lamentan...',
+    '...the watchers do not celebrate...':
+      '...los observadores no celebran...',
+    '...they only measure...':
+      '...ellos solo miden...',
+    '...your kind measures too...':
+      '...su especie también mide...',
+    '...but you measure the wrong things...':
+      '...pero miden las cosas equivocadas...',
+    '...you count years...':
+      '...ustedes cuentan años...',
+    '...they count minds...':
+      '...ellos cuentan mentes...',
+    '...you fear death...':
+      '...ustedes temen la muerte...',
+    '...there are worse continuations...':
+      '...hay continuaciones peores...',
+    '  This transcript was classified beyond normal clearance.':
+      '  Esta transcripción fue clasificada más allá de la autorización normal.',
+    '  It implies consciousness continues after extraction.':
+      '  Implica que la consciencia continúa después de la extracción.',
+    '  Indefinitely. The committee decided this information':
+      '  Indefinidamente. El comité decidió que esta información',
+    '  would serve no strategic purpose and could only':
+      '  no serviría propósito estratégico y solo podría',
+    '  cause harm to personnel morale.':
+      '  causar daño a la moral del personal.',
+    'RECOVERED VIDEO DATA - PARTIAL':
+      'DATOS DE VIDEO RECUPERADOS - PARCIAL',
+    'SOURCE: CONTAINMENT FACILITY B - CAM 07':
+      'FUENTE: INSTALACIÓN DE CONTENCIÓN B - CÁM 07',
+    'DATE: 1996-01-20 03:47:22':
+      'FECHA: 1996-01-20 03:47:22',
+    'STATUS: Partial frame recovery successful':
+      'ESTADO: Recuperación parcial de cuadros exitosa',
+    'INTEGRITY: 47% - Significant temporal corruption':
+      'INTEGRIDAD: 47% - Corrupción temporal significativa',
+    'CONTENT SUMMARY:':
+      'RESUMEN DE CONTENIDO:',
+    '  Surveillance footage from containment observation':
+      '  Filmación de vigilancia de la cámara de observación',
+    '  chamber. Subject displays anomalous movement patterns.':
+      '  de contención. El sujeto exhibe patrones de movimiento anómalos.',
+    '  Audio track corrupted beyond recovery.':
+      '  Pista de audio corrompida más allá de recuperación.',
+    'WARNING: Visual content may cause disorientation.':
+      'ADVERTENCIA: El contenido visual puede causar desorientación.',
+    'COMMS/EXPERIMENTAL — NEURAL CLUSTER':
+      'COMMS/EXPERIMENTAL — CLUSTER NEURONAL',
+    'REFERENCE: NC-7 / OBS-RESIDUAL':
+      'REFERENCIA: NC-7 / OBS-RESIDUAL',
+    '  This record describes an experimental attempt to':
+      '  Este registro describe un intento experimental de',
+    '  construct a synthetic neural network modeled after':
+      '  construir una red neuronal sintética modelada a partir de',
+    '  dissected scout tissue. The objective is to emulate':
+      '  tejido de explorador diseccionado. El objetivo es emular',
+    '  residual perceptual activity rather than consciousness.':
+      '  actividad perceptual residual en lugar de consciencia.',
+    '  The cluster does not respond to dialogue. It emits':
+      '  El cluster no responde al diálogo. Emite',
+    '  fragmented conceptual residues when stimulated.':
+      '  residuos conceptuales fragmentados cuando es estimulado.',
+    '  Outputs are non-interactive, non-intentional.':
+      '  Las salidas son no interactivas, no intencionales.',
+    'ACCESS NOTE:':
+      'NOTA DE ACCESO:',
+    '  Stimulation channel is undocumented and unstable.':
+      '  El canal de estimulación no está documentado y es inestable.',
+    '  Use is not authorized outside containment review.':
+      '  El uso no está autorizado fuera de revisión de contención.',
+    'INTERNAL MEMO — CARGO TRANSFER COORDINATION':
+      'MEMORÁNDUM INTERNO — COORDINACIÓN DE TRANSFERENCIA DE CARGA',
+    'TO: Site Operations':
+      'PARA: Operaciones del Sitio',
+    'FROM: Logistics Division':
+      'DE: División de Logística',
+    'RE: Special cargo arrival and processing':
+      'RE: Llegada y procesamiento de carga especial',
+    'The recovered equipment arrived yesterday evening.':
+      'El equipo recuperado llegó ayer por la noche.',
+    'Initial inspection complete. Contents intact despite':
+      'Inspección inicial completada. Contenidos intactos a pesar de',
+    'transport conditions. Some surface wear noted':
+      'las condiciones de transporte. Se notó algún desgaste superficial',
+    'but within acceptable parameters.':
+      'pero dentro de parámetros aceptables.',
+    'Storage requirements:':
+      'Requisitos de almacenamiento:',
+    '  - Temperature: Standard warehouse conditions':
+      '  - Temperatura: Condiciones estándar de almacén',
+    '  - Humidity: Controlled':
+      '  - Humedad: Controlada',
+    '  - Access: Restricted per standard protocol':
+      '  - Acceso: Restringido según protocolo estándar',
+    'Foreign partners have been notified.':
+      'Los socios extranjeros han sido notificados.',
+    'Expect coordination team within 72 hours.':
+      'Se espera equipo de coordinación en 72 horas.',
+    'Please ensure receiving bay is cleared.':
+      'Por favor asegure que el área de recepción esté despejada.',
+    '[signature illegible]':
+      '[firma ilegible]',
+    'SECURITY BRIEFING — VISITING DELEGATION':
+      'BRIEFING DE SEGURIDAD — DELEGACIÓN VISITANTE',
+    'SUBJECT: Protocol for visitors':
+      'ASUNTO: Protocolo para visitantes',
+    'The visitors will arrive via private aircraft.':
+      'Los visitantes llegarán vía aeronave privada.',
+    'They have been granted full access to Facilities 1-3.':
+      'Se les ha otorgado acceso completo a las Instalaciones 1-3.',
+    'Escort required at all times. No photography.':
+      'Escolta requerida en todo momento. Sin fotografía.',
+    'The delegation is primarily interested in:':
+      'La delegación está principalmente interesada en:',
+    '  - Review of recently recovered equipment':
+      '  - Revisión de equipos recientemente recuperados',
+    '  - Assessment of storage conditions':
+      '  - Evaluación de condiciones de almacenamiento',
+    '  - Coordination on future monitoring schedules':
+      '  - Coordinación de cronogramas futuros de monitoreo',
+    'They will be accompanied by their own technical team.':
+      'Serán acompañados por su propio equipo técnico.',
+    'Our role is observation and cooperation only.':
+      'Nuestro rol es solo observación y cooperación.',
+    'REMINDER: Standard plausible deniability protocols':
+      'RECORDATORIO: Los protocolos estándar de negación plausible',
+    'remain in effect. All documentation uses approved':
+      'permanecen vigentes. Toda documentación usa terminología',
+    'terminology. No direct references.':
+      'aprobada. Sin referencias directas.',
+    'Questions directed to Protocol Office.':
+      'Preguntas dirigidas a la Oficina de Protocolo.',
+    'ASSET DISPOSITION REPORT':
+      'INFORME DE DISPOSICIÓN DE ACTIVOS',
+    'REFERENCE: ADR-96-007':
+      'REFERENCIA: ADR-96-007',
+    'ASSET CATEGORY: Special Materials':
+      'CATEGORÍA DE ACTIVO: Materiales Especiales',
+    'DISPOSITION SUMMARY:':
+      'RESUMEN DE DISPOSICIÓN:',
+    '  Item A-1: Transferred to foreign partner (complete)':
+      '  Artículo A-1: Transferido al socio extranjero (completo)',
+    '  Item A-2: Retained for domestic study':
+      '  Artículo A-2: Retenido para estudio doméstico',
+    '  Item A-3: Status: Degraded during transport':
+      '  Artículo A-3: Estado: Degradado durante transporte',
+    '  Item B-1: Partial. Components separated.':
+      '  Artículo B-1: Parcial. Componentes separados.',
+    '           Primary section: Partner facility':
+      '           Sección primaria: Instalación del socio',
+    '           Secondary components: Undisclosed':
+      '           Componentes secundarios: No revelados',
+    '           Navigation system: Partner custody':
+      '           Sistema de navegación: Custodia del socio',
+    'INSTRUMENTATION:':
+      'INSTRUMENTACIÓN:',
+    '  Devices recovered but non-functional.':
+      '  Dispositivos recuperados pero no funcionales.',
+    '  Purpose remains unclear.':
+      '  El propósito permanece incierto.',
+    'FINAL STATUS: Assets distributed per agreement.':
+      'ESTADO FINAL: Activos distribuidos según acuerdo.',
+    'APPROVED TERMINOLOGY REFERENCE':
+      'REFERENCIA DE TERMINOLOGÍA APROBADA',
+    'FOR: All personnel handling sensitive documentation':
+      'PARA: Todo el personal que maneja documentación sensible',
+    'This guide establishes approved terminology for':
+      'Esta guía establece terminología aprobada para',
+    'documentation purposes. Use of direct language is':
+      'fines de documentación. El uso de lenguaje directo está',
+    'prohibited in any records that may be audited.':
+      'prohibido en cualquier registro que pueda ser auditado.',
+    'APPROVED TERMS AND DEFINITIONS':
+      'TÉRMINOS Y DEFINICIONES APROBADOS',
+    '  "Weather balloon"  = Standard cover designation':
+      '  "Globo meteorológico"  = Designación de cobertura estándar',
+    '  "Meteorological anomaly" = Unclassified aerial event':
+      '  "Anomalía meteorológica" = Evento aéreo no clasificado',
+    '  "Fauna specimen"   = Recovered biological material':
+      '  "Espécimen de fauna"   = Material biológico recuperado',
+    '  "Wild animal"      = Unclassified biological subject':
+      '  "Animal salvaje"      = Sujeto biológico no clasificado',
+    '  "Agricultural equipment" = Recovered hardware':
+      '  "Equipo agrícola" = Hardware recuperado',
+    '  "Special cargo"    = Classified shipment':
+      '  "Carga especial"    = Envío clasificado',
+    '  "The visitors"     = Foreign delegation':
+      '  "Los visitantes"     = Delegación extranjera',
+    '  "Assets"           = Recovered items (any type)':
+      '  "Activos"           = Artículos recuperados (cualquier tipo)',
+    '  "Procurement"      = Recovery operations':
+      '  "Adquisición"      = Operaciones de recuperación',
+    '  "Acquisitions"     = Seized/recovered materials':
+      '  "Adquisiciones"     = Materiales confiscados/recuperados',
+    '  "Technical team"   = Scientific personnel':
+      '  "Equipo técnico"   = Personal científico',
+    '  "Samples"          = Collected material':
+      '  "Muestras"          = Material recopilado',
+    '  "Instrumentation"  = Recovered technology':
+      '  "Instrumentación"  = Tecnología recuperada',
+    '  "Transport issues" = Deterioration during transfer':
+      '  "Problemas de transporte" = Deterioro durante transferencia',
+    'USAGE NOTES':
+      'NOTAS DE USO',
+    '  Do NOT use direct descriptive terms in':
+      '  NO use términos descriptivos directos en',
+    '  any documentation subject to external review.':
+      '  cualquier documentación sujeta a revisión externa.',
+    '  All documentation must maintain plausible':
+      '  Toda documentación debe mantener negación',
+    '  deniability under Congressional review.':
+      '  plausible bajo revisión del Congreso.',
+    'Recovered visual - Operation Prato Delta field report':
+      'Visual recuperado - Informe de campo de Operación Prato Delta',
+    'Bio-Assessment Initiative - Recovered specimen documentation':
+      'Iniciativa de Bio-Evaluación - Documentación de espécimen recuperado',
+    'Recovered visual - Subject during transmission':
+      'Visual recuperado - Sujeto durante transmisión',
+    '[ENCRYPTED - DECRYPTION REQUIRED]':
+      '[ENCRIPTADO - SE REQUIERE DESENCRIPTACIÓN]',
+    'SIGNIFICANCE: UNKNOWN':
+      'SIGNIFICANCIA: DESCONOCIDA',
+    'RECOMMENDATION: MONITOR':
+      'RECOMENDACIÓN: MONITOREAR',
   }
 };
