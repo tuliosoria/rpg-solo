@@ -166,7 +166,8 @@ const getEvidenceVideoAttachment = (
   commandInput: string,
   currentPath: string
 ): EvidenceVideoAttachment | null => {
-  const match = /^open\s+(.+)$/i.exec(commandInput.trim());
+  // Match open, cat, or decrypt commands (decrypt may have extra args like password)
+  const match = /^(?:open|cat|decrypt)\s+(\S+)/i.exec(commandInput.trim());
   if (!match) {
     return null;
   }
