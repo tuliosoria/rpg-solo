@@ -340,7 +340,6 @@ export default function Terminal({
   const [activeTuringVideo, setActiveTuringVideo] = useState(false);
   const pendingEvidenceVideoCheckRef = useRef<{
     attachment: EvidenceVideoAttachment;
-    previousEvidenceCount: number;
   } | null>(null);
   const idleHintTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
@@ -745,10 +744,7 @@ export default function Terminal({
 
       const attachment = getEvidenceVideoAttachment(trimmedInput, gameState.currentPath);
       pendingEvidenceVideoCheckRef.current = attachment
-        ? {
-            attachment,
-            previousEvidenceCount: gameState.evidenceCount || 0,
-          }
+        ? { attachment }
         : null;
 
       await baseHandleSubmit(e);
@@ -757,7 +753,6 @@ export default function Terminal({
       activeEvidenceVideo,
       baseHandleSubmit,
       gameState.currentPath,
-      gameState.evidenceCount,
       inputValue,
       pendingEvidenceVideoPrompt,
       setGameState,
@@ -846,23 +841,20 @@ export default function Terminal({
       return;
     }
 
-    if ((gameState.evidenceCount || 0) > pendingCheck.previousEvidenceCount) {
-      setGameState(prev => ({
-        ...prev,
-        history: [
-          ...prev.history,
-          createEntry('system', ''),
-          createEntry('notice', t('terminal.video.prompt')),
-        ],
-      }));
-      setPendingEvidenceVideoPrompt(pendingCheck.attachment);
-    }
+    setGameState(prev => ({
+      ...prev,
+      history: [
+        ...prev.history,
+        createEntry('system', ''),
+        createEntry('notice', t('terminal.video.prompt')),
+      ],
+    }));
+    setPendingEvidenceVideoPrompt(pendingCheck.attachment);
 
     pendingEvidenceVideoCheckRef.current = null;
   }, [
     activeEvidenceVideo,
     activeImage,
-    gameState.evidenceCount,
     isProcessing,
     isStreaming,
     pendingEvidenceVideoPrompt,
