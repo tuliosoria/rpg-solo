@@ -287,6 +287,34 @@ export const systemCommands: CommandRegistry = {
       }
     }
 
+    // During lockdown, show lockdown-specific help
+    if (state.firewallLockdownActive) {
+      return {
+        output: createOutputEntries([
+          '',
+          '═══════════════════════════════════════════════════════════',
+          '⚠ FIREWALL LOCKDOWN — LIMITED COMMANDS',
+          '═══════════════════════════════════════════════════════════',
+          '',
+          '  scan              View firewall nodes and security questions',
+          '  disable <n> <a>   Disable a node with the correct answer',
+          '  ls                List directory contents',
+          '  cd <dir>          Change directory',
+          '  back              Return to previous directory',
+          '  status            Display system status',
+          '  map               View evidence progress',
+          '  help              Display this help',
+          '  clear             Clear terminal display',
+          '',
+          '  All other commands are BLOCKED until lockdown is lifted.',
+          '',
+          '═══════════════════════════════════════════════════════════',
+          '',
+        ]),
+        stateChanges: {},
+      };
+    }
+
     // Default: show all commands
     const helpLines = [
       '',
@@ -408,6 +436,12 @@ export const systemCommands: CommandRegistry = {
 
     const evidenceCount = countEvidence(state);
     lines.push(`  EVIDENCE: ${evidenceCount}/10 confirmed`);
+
+    // Firewall lockdown status
+    if (state.firewallLockdownActive) {
+      const nodesLeft = 3 - (state.firewallNodesDisabled?.length || 0);
+      lines.push(`  FIREWALL: LOCKDOWN — ${nodesLeft} node${nodesLeft !== 1 ? 's' : ''} remaining`);
+    }
 
     if (evidenceCount >= 10) {
       lines.push('  OBJECTIVE: Evidence complete — use "leak" when ready.');

@@ -339,6 +339,11 @@ export interface GameState {
   firewallActive: boolean; // True when detection >= 25%
   firewallDisarmed: boolean; // True if player used neural link to disable
 
+  // Firewall Lockdown system — triggers at 5 evidence, blocks file access until 3 nodes disabled
+  firewallLockdownActive: boolean;
+  firewallLockdownTriggered: boolean; // One-shot flag: don't re-trigger after save/load
+  firewallNodesDisabled: string[]; // IDs of disabled nodes: 'alpha', 'beta', 'gamma'
+
   // File reading state (for firewall eye spawn suppression)
   isReadingFile: boolean; // True while a file is being displayed
   lastFileReadTime: number; // Timestamp when last file read completed
@@ -540,6 +545,10 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   // Firewall Eyes system
   firewallActive: false,
   firewallDisarmed: false,
+  // Firewall Lockdown system
+  firewallLockdownActive: false,
+  firewallLockdownTriggered: false,
+  firewallNodesDisabled: [],
   // File reading state
   isReadingFile: false,
   lastFileReadTime: 0,

@@ -26,6 +26,15 @@ import {
   performDecryption,
 } from './commands/helpers';
 
+// Import firewall lockdown utilities
+import {
+  LOCKDOWN_EVIDENCE_THRESHOLD,
+  LOCKDOWN_ALLOWED_COMMANDS,
+  LOCKDOWN_DETECTION_TICK,
+  generateLockdownSequence,
+  scanNodes,
+} from './commands/firewallLockdown';
+
 // Import the combined commands registry from domain modules
 import { commands } from './commands/index';
 
@@ -947,6 +956,49 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     return commands.override(args, state);
   }
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FIREWALL LOCKDOWN — block disallowed commands and override scan
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (state.firewallLockdownActive) {
+    // Override scan to show firewall nodes during lockdown
+    if (command === 'scan') {
+      return {
+        output: scanNodes(state),
+        stateChanges: {
+          detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + LOCKDOWN_DETECTION_TICK),
+        },
+      };
+    }
+
+    // Block disallowed commands
+    if (!LOCKDOWN_ALLOWED_COMMANDS.has(command)) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntryI18n(
+            'error',
+            'engine.firewall.access_denied',
+            '  FIREWALL: ACCESS DENIED'
+          ),
+          createEntryI18n(
+            'warning',
+            'engine.firewall.lockdown_hint',
+            '  Disable all security nodes to restore access.'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.firewall.lockdown_scan_hint',
+            '  Use "scan" to view active nodes.'
+          ),
+          createEntry('system', ''),
+        ],
+        stateChanges: {
+          detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + LOCKDOWN_DETECTION_TICK),
+        },
+      };
+    }
+  }
+
   // Find command handler
   const handler = commands[command];
 
@@ -1304,6 +1356,34 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       ...result.stateChanges,
       ...wanderingCheck.stateChanges,
     };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FIREWALL LOCKDOWN TRIGGER — activates when evidence reaches threshold
+  // ═══════════════════════════════════════════════════════════════════════════
+  const effectiveEvidence = result.stateChanges.evidenceCount ?? state.evidenceCount ?? 0;
+  if (
+    state.tutorialComplete &&
+    !state.firewallLockdownTriggered &&
+    !result.stateChanges.firewallLockdownTriggered &&
+    effectiveEvidence >= LOCKDOWN_EVIDENCE_THRESHOLD
+  ) {
+    result.stateChanges.firewallLockdownActive = true;
+    result.stateChanges.firewallLockdownTriggered = true;
+    result.stateChanges.firewallNodesDisabled = [];
+    result.output = [...result.output, ...generateLockdownSequence()];
+    result.triggerFlicker = true;
+  }
+
+  // Add detection tick during active lockdown (for commands that weren't already blocked)
+  if (
+    state.firewallLockdownActive &&
+    !result.stateChanges.firewallLockdownActive &&
+    command !== 'disable' &&
+    command !== 'scan'
+  ) {
+    const currentDet = result.stateChanges.detectionLevel ?? state.detectionLevel;
+    result.stateChanges.detectionLevel = Math.min(MAX_DETECTION, currentDet + LOCKDOWN_DETECTION_TICK);
   }
 
   // ═══════════════════════════════════════════════════════════════════════════

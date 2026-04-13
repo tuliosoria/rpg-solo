@@ -9,6 +9,7 @@ import { chatCommands, setCommandsRef as setChatRef } from './chat';
 import { archiveCommands, setCommandsRef as setArchiveRef } from './archive';
 import { navigationCommands } from './navigation';
 import { inventoryCommands } from './inventory';
+import { firewallLockdownCommands } from './firewallLockdown';
 
 // Re-export from existing modules for backward compatibility
 export {
@@ -48,6 +49,15 @@ export {
   getWarmupAdjustedDetection,
 } from './helpers';
 
+// Re-export firewall lockdown utilities for use in commands.ts
+export {
+  LOCKDOWN_EVIDENCE_THRESHOLD,
+  LOCKDOWN_ALLOWED_COMMANDS,
+  LOCKDOWN_DETECTION_TICK,
+  generateLockdownSequence,
+  scanNodes,
+} from './firewallLockdown';
+
 // Re-export types
 export type { CommandHandler, CommandRegistry } from './types';
 
@@ -61,6 +71,7 @@ export const commands: CommandRegistry = {
   ...archiveCommands,
   ...navigationCommands,
   ...inventoryCommands,
+  ...firewallLockdownCommands,
 };
 
 // Wire up cross-references now that all commands are assembled
