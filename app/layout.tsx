@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
+import en from "./locales/en.json";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Varginha: Terminal 1996",
-  description:
-    "A terminal horror puzzle set during the 1996 Varginha incident. Explore a classified Brazilian intelligence system and uncover the hidden truths before detection catches up.",
+  title: en["meta.title"],
+  description: en["meta.description"],
 };
 
 export const viewport = {

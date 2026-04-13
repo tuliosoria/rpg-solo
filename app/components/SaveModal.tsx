@@ -45,13 +45,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
     const savedSlot = saveGame(gameState, name);
     setSaving(false);
     if (!savedSlot) {
-      setSaveError(
-        t(
-          'save.error.failed',
-          undefined,
-          'SAVE FAILED — Storage unavailable. Free some space or try a different browser mode.'
-        )
-      );
+      setSaveError(t('save.error.failed'));
       return;
     }
     onSavedAction();

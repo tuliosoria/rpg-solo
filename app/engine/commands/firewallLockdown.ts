@@ -5,6 +5,7 @@
 import type { CommandRegistry } from './types';
 import type { GameState, TerminalEntry } from '../../types';
 import { createEntry, createEntryI18n } from './utils';
+import { translateStatic } from '../../i18n';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // NODE DEFINITIONS
@@ -12,28 +13,36 @@ import { createEntry, createEntryI18n } from './utils';
 
 export interface FirewallNode {
   id: string;
-  name: string;
-  question: string;
+  nameKey: string;
+  nameFallback: string;
+  questionKey: string;
+  questionFallback: string;
   answer: string; // lowercase
 }
 
 export const FIREWALL_NODES: FirewallNode[] = [
   {
     id: 'alpha',
-    name: 'NODE ALPHA',
-    question: 'In which Brazilian city did the 1996 incident occur?',
+    nameKey: 'engine.firewall.node.alpha.name',
+    nameFallback: 'NODE ALPHA',
+    questionKey: 'engine.firewall.node.alpha.question',
+    questionFallback: 'In which Brazilian city did the 1996 incident occur?',
     answer: 'varginha',
   },
   {
     id: 'beta',
-    name: 'NODE BETA',
-    question: 'What year did the contact event take place?',
+    nameKey: 'engine.firewall.node.beta.name',
+    nameFallback: 'NODE BETA',
+    questionKey: 'engine.firewall.node.beta.question',
+    questionFallback: 'What year did the contact event take place?',
     answer: '1996',
   },
   {
     id: 'gamma',
-    name: 'NODE GAMMA',
-    question: 'What is the code name of the witness who guides you?',
+    nameKey: 'engine.firewall.node.gamma.name',
+    nameFallback: 'NODE GAMMA',
+    questionKey: 'engine.firewall.node.gamma.question',
+    questionFallback: 'What is the code name of the witness who guides you?',
     answer: 'ufo74',
   },
 ];
@@ -57,6 +66,14 @@ export const LOCKDOWN_ALLOWED_COMMANDS = new Set([
 
 // Detection increase per command during lockdown
 export const LOCKDOWN_DETECTION_TICK = 2;
+
+function getNodeName(node: FirewallNode): string {
+  return translateStatic(node.nameKey, undefined, node.nameFallback);
+}
+
+function getNodeQuestion(node: FirewallNode): string {
+  return translateStatic(node.questionKey, undefined, node.questionFallback);
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // LOCKDOWN TRIGGER OUTPUT
@@ -155,6 +172,7 @@ export function generateLockdownBypassSequence(): TerminalEntry[] {
 
 function scanNodes(state: GameState): TerminalEntry[] {
   const disabled = new Set(state.firewallNodesDisabled || []);
+  const totalNodes = FIREWALL_NODES.length;
   const output: TerminalEntry[] = [
     createEntry('system', ''),
     createEntry('warning', '════════════════════════════════════════════════'),
@@ -169,22 +187,54 @@ function scanNodes(state: GameState): TerminalEntry[] {
 
   for (const node of FIREWALL_NODES) {
     const isDisabled = disabled.has(node.id);
-    const statusLabel = isDisabled ? '✓ DISABLED' : '✗ ACTIVE';
+    const nodeName = getNodeName(node);
+    const question = getNodeQuestion(node);
+    const statusLabel = translateStatic(
+      isDisabled
+        ? 'engine.firewall.scan.statusDisabled'
+        : 'engine.firewall.scan.statusActive'
+    );
     const entryType = isDisabled ? 'output' : 'error';
 
-    output.push(createEntry(entryType, `  ${node.name} — ${statusLabel}`));
+    output.push(
+      createEntryI18n(
+        entryType,
+        'engine.firewall.scan.nodeStatus',
+        `  ${nodeName} — ${statusLabel}`,
+        { node: nodeName, status: statusLabel }
+      )
+    );
 
     if (!isDisabled) {
-      output.push(createEntry('system', `    Security question: ${node.question}`));
-      output.push(createEntry('system', `    → disable ${node.id} <answer>`));
+      output.push(
+        createEntryI18n(
+          'system',
+          'engine.firewall.scan.securityQuestion',
+          `    Security question: ${question}`,
+          { question }
+        )
+      );
+      output.push(
+        createEntryI18n(
+          'system',
+          'engine.firewall.scan.disableHint',
+          `    → disable ${node.id} <answer>`,
+          { nodeId: node.id }
+        )
+      );
     }
 
     output.push(createEntry('system', ''));
   }
 
-  const remaining = FIREWALL_NODES.length - disabled.size;
+  const remaining = totalNodes - disabled.size;
   output.push(
-    createEntry('warning', `  Nodes remaining: ${remaining}/${FIREWALL_NODES.length}`)
+    createEntryI18n(
+      'warning',
+      'engine.firewall.scan.nodesRemaining',
+      `  Nodes remaining: ${remaining}/${totalNodes}`,
+      { current: remaining, total: totalNodes }
+    )
   );
   output.push(createEntry('system', ''));
 
@@ -240,15 +290,22 @@ export const firewallLockdownCommands: CommandRegistry = {
 
     const node = FIREWALL_NODES.find(n => n.id === nodeId);
     if (!node) {
+      const validNodes = FIREWALL_NODES.map(n => n.id).join(', ');
       return {
         output: [
           createEntry('system', ''),
           createEntryI18n(
             'error',
             'engine.firewall.unknown_node',
-            `Unknown node: ${nodeId}`
+            `Unknown node: ${nodeId}`,
+            { value: nodeId }
           ),
-          createEntry('system', `  Valid nodes: ${FIREWALL_NODES.map(n => n.id).join(', ')}`),
+          createEntryI18n(
+            'system',
+            'engine.firewall.unknown_node.validNodes',
+            `  Valid nodes: ${validNodes}`,
+            { value: validNodes }
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {},
@@ -257,10 +314,16 @@ export const firewallLockdownCommands: CommandRegistry = {
 
     const disabled = new Set(state.firewallNodesDisabled || []);
     if (disabled.has(node.id)) {
+      const nodeName = getNodeName(node);
       return {
         output: [
           createEntry('system', ''),
-          createEntry('output', `  ${node.name} is already disabled.`),
+          createEntryI18n(
+            'output',
+            'engine.firewall.nodeAlreadyDisabled',
+            `  ${nodeName} is already disabled.`,
+            { node: nodeName }
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {},
@@ -268,6 +331,7 @@ export const firewallLockdownCommands: CommandRegistry = {
     }
 
     if (passphrase !== node.answer) {
+      const question = getNodeQuestion(node);
       return {
         output: [
           createEntry('system', ''),
@@ -276,7 +340,12 @@ export const firewallLockdownCommands: CommandRegistry = {
             'engine.firewall.wrong_answer',
             '  ACCESS DENIED — incorrect answer.'
           ),
-          createEntry('system', `  Security question: ${node.question}`),
+          createEntryI18n(
+            'system',
+            'engine.firewall.scan.securityQuestion',
+            `  Security question: ${question}`,
+            { question }
+          ),
           createEntry('system', ''),
           createEntryI18n(
             'ufo74',
@@ -294,10 +363,16 @@ export const firewallLockdownCommands: CommandRegistry = {
     // Correct answer — disable the node
     const newDisabled = [...(state.firewallNodesDisabled || []), node.id];
     const allDisabled = newDisabled.length >= FIREWALL_NODES.length;
+    const nodeName = getNodeName(node);
 
     const output: TerminalEntry[] = [
       createEntry('system', ''),
-      createEntry('output', `  ${node.name} — DISABLED ✓`),
+      createEntryI18n(
+        'output',
+        'engine.firewall.nodeDisabled',
+        `  ${nodeName} — DISABLED ✓`,
+        { node: nodeName }
+      ),
       createEntry('system', ''),
     ];
 
@@ -306,8 +381,13 @@ export const firewallLockdownCommands: CommandRegistry = {
       output.push(
         createEntryI18n(
           'ufo74',
-          'engine.firewall.ufo74_node_down',
-          `[UFO74]: one down. ${remaining} node${remaining > 1 ? 's' : ''} left.`
+          remaining === 1
+            ? 'engine.firewall.ufo74_node_down_singular'
+            : 'engine.firewall.ufo74_node_down_plural',
+          remaining === 1
+            ? '[UFO74]: one down. 1 node left.'
+            : `[UFO74]: one down. ${remaining} nodes left.`,
+          { remaining }
         )
       );
       output.push(createEntry('system', ''));

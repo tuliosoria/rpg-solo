@@ -661,6 +661,7 @@ export const inventoryCommands: CommandRegistry = {
       imageTrigger: {
         src: '/images/et.webp',
         alt: 'ALPHA - The surviving Varginha being',
+        altKey: 'media.alt.alphaSurvivor',
         tone: 'eerie',
       },
     };

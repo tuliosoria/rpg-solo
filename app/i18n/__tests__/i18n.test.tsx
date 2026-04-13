@@ -92,6 +92,32 @@ describe('i18n system', () => {
     ).toBe('  Você tem 3 documento(s) da conspiração no seu cache.');
   });
 
+  it('translates bookmark and listing runtime patterns for pt-BR', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('pt-BR');
+    });
+
+    expect(result.current.translateRuntimeText('Bookmarked: /internal/protocols/session_objectives.txt')).toBe(
+      'Favoritado: /internal/protocols/session_objectives.txt'
+    );
+    expect(
+      result.current.translateRuntimeText('Bookmark removed: /internal/protocols/session_objectives.txt')
+    ).toBe('Favorito removido: /internal/protocols/session_objectives.txt');
+    expect(
+      result.current.translateRuntimeText('            UNREAD FILES (12)          ')
+    ).toBe('            ARQUIVOS NÃO LIDOS (12)          ');
+    expect(
+      result.current.translateRuntimeText(
+        '  session_objectives.txt [READ] [~3min] [RESTRICTED_BRIEFING]'
+      )
+    ).toBe('  session_objectives.txt [LIDO] [~3 min] [BRIEFING RESTRITO]');
+    expect(result.current.translateRuntimeText('  ●=evidence logged')).toBe(
+      '  ●=evidência registrada'
+    );
+  });
+
   it('keeps locale key parity across en, pt-BR, and es', () => {
     const enKeys = Object.keys(en).sort();
     expect(Object.keys(ptBr).sort()).toEqual(enKeys);

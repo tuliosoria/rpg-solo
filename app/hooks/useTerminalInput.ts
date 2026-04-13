@@ -8,6 +8,7 @@ import {
   TUTORIAL_MESSAGES,
   sanitizeCommandInput,
 } from '../engine/commands';
+import { createEntryI18n } from '../engine/commands/utils';
 import {
   isInTutorialMode,
   processTutorialInput,
@@ -35,6 +36,7 @@ import {
 import type { SoundType } from './useSound';
 import { appendToHistory } from '../lib/appendToHistory';
 import { speakCustomFirewallVoice } from '../components/FirewallEyes';
+import { translateStatic } from '../i18n';
 
 const STREAMING_DELAYS: Record<
   StreamingMode,
@@ -177,7 +179,7 @@ export function useTerminalInput({
       if (!gameState.flags?.firstUfo74Contact) {
         saveCheckpoint(
           { ...gameState, flags: { ...gameState.flags, firstUfo74Contact: true } },
-          'First UFO74 contact'
+          translateStatic('checkpoint.reason.firstUfo74Contact', undefined, 'First UFO74 contact')
         );
       }
 
@@ -378,7 +380,10 @@ export function useTerminalInput({
                   },
                   currentPath: '/',
                 };
-                saveCheckpoint(newState, 'Tutorial complete');
+                saveCheckpoint(
+                  newState,
+                  translateStatic('checkpoint.reason.tutorialComplete', undefined, 'Tutorial complete')
+                );
                 return newState;
               });
             } else {
@@ -436,11 +441,27 @@ export function useTerminalInput({
                 history: [
                   ...prev.history,
                   createEntry('system', ''),
-                  createEntry('ufo74', '[UFO74]: ⚠️  Hey kid, that\'s the FIREWALL.'),
-                  createEntry('ufo74', '[UFO74]: We better not mess with that crazy thing.'),
-                  createEntry('ufo74', '[UFO74]: █▓▒░ BE CAREFUL ░▒▓█'),
+                  createEntryI18n(
+                    'ufo74',
+                    'hooks.useTerminalInput.firewallWarning.1',
+                    "[UFO74]: ⚠️  Hey kid, that's the FIREWALL."
+                  ),
+                  createEntryI18n(
+                    'ufo74',
+                    'hooks.useTerminalInput.firewallWarning.2',
+                    '[UFO74]: We better not mess with that crazy thing.'
+                  ),
+                  createEntryI18n(
+                    'ufo74',
+                    'hooks.useTerminalInput.firewallWarning.3',
+                    '[UFO74]: █▓▒░ BE CAREFUL ░▒▓█'
+                  ),
                   createEntry('system', ''),
-                  createEntry('ufo74', '[UFO74]: Let\'s try `cd ..` again.'),
+                  createEntryI18n(
+                    'ufo74',
+                    'hooks.useTerminalInput.firewallWarning.4',
+                    "[UFO74]: Let's try `cd ..` again."
+                  ),
                   createEntry('system', ''),
                 ],
               }));
@@ -459,7 +480,11 @@ export function useTerminalInput({
         gameState.tutorialStep >= 0
       ) {
         if (trimmedInput) {
-          const errorEntry = createEntry('error', 'ERROR: Incoming transmission in progress.');
+          const errorEntry = createEntryI18n(
+            'error',
+            'hooks.useTerminalInput.incomingTransmissionInProgress',
+            'ERROR: Incoming transmission in progress.'
+          );
           setGameState(prev => ({
             ...prev,
             history: [...prev.history, errorEntry],
@@ -489,7 +514,10 @@ export function useTerminalInput({
               tutorialStep: -1,
               tutorialComplete: true,
             };
-            saveCheckpoint(newState, 'Tutorial complete');
+            saveCheckpoint(
+              newState,
+              translateStatic('checkpoint.reason.tutorialComplete', undefined, 'Tutorial complete')
+            );
             return newState;
           });
         } else {
@@ -618,7 +646,11 @@ export function useTerminalInput({
             if (result.imageTrigger) {
               pendingMediaMessages.push(
                 createEntry('warning', ''),
-                createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+                createEntryI18n(
+                  'warning',
+                  'hooks.useTerminalInput.partialRecoveryAvailable',
+                  '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'
+                ),
                 createEntry('system', '')
               );
             }
@@ -654,7 +686,11 @@ export function useTerminalInput({
         if (result.imageTrigger) {
           pendingMediaMessages.push(
             createEntry('warning', ''),
-            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+            createEntryI18n(
+              'warning',
+              'hooks.useTerminalInput.partialRecoveryAvailable',
+              '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'
+            ),
             createEntry('system', '')
           );
         }
@@ -710,7 +746,14 @@ export function useTerminalInput({
       }
 
       if (intermediateState.isGameOver) {
-        setGameOverReason(intermediateState.gameOverReason || 'CRITICAL SYSTEM FAILURE');
+        setGameOverReason(
+          intermediateState.gameOverReason ||
+            translateStatic(
+              'gameOver.reason.criticalSystemFailure',
+              undefined,
+              'CRITICAL SYSTEM FAILURE'
+            )
+        );
         setShowGameOver(true);
         playSound('error');
         return;
@@ -730,10 +773,14 @@ export function useTerminalInput({
         playSound('fanfare');
         const checkpointReason =
           evidenceCount === 1
-            ? 'First evidence'
+            ? translateStatic('checkpoint.reason.firstEvidence', undefined, 'First evidence')
             : evidenceCount === 5
-              ? 'All evidence found'
-              : `Evidence ${evidenceCount}/5`;
+              ? translateStatic('checkpoint.reason.allEvidenceFound', undefined, 'All evidence found')
+              : translateStatic(
+                  'checkpoint.reason.evidenceProgress',
+                  { count: evidenceCount },
+                  `Evidence ${evidenceCount}/5`
+                );
         saveCheckpoint(intermediateState, checkpointReason);
       }
 
@@ -746,11 +793,25 @@ export function useTerminalInput({
       }
 
       if (intermediateState.accessLevel > gameState.accessLevel && intermediateState.accessLevel >= 2) {
-        saveCheckpoint(intermediateState, `Access level ${intermediateState.accessLevel}`);
+        saveCheckpoint(
+          intermediateState,
+          translateStatic(
+            'checkpoint.reason.accessLevel',
+            { value: intermediateState.accessLevel },
+            `Access level ${intermediateState.accessLevel}`
+          )
+        );
       }
 
       if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
-        saveCheckpoint(intermediateState, 'Admin access unlocked');
+        saveCheckpoint(
+          intermediateState,
+          translateStatic(
+            'checkpoint.reason.adminAccessUnlocked',
+            undefined,
+            'Admin access unlocked'
+          )
+        );
       }
 
       // Checkpoint when detection approaches critical threshold (80%+)
@@ -765,7 +826,14 @@ export function useTerminalInput({
           ...intermediateState,
           flags: { ...intermediateState.flags, criticalDetectionCheckpointed: true },
         };
-        saveCheckpoint(stateWithFlag, 'Detection approaching critical');
+        saveCheckpoint(
+          stateWithFlag,
+          translateStatic(
+            'checkpoint.reason.detectionApproachingCritical',
+            undefined,
+            'Detection approaching critical'
+          )
+        );
         // Update the intermediate state so the flag persists
         setGameState(prev => ({
           ...prev,

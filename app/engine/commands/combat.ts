@@ -7,6 +7,7 @@ import { shouldSuppressPenalties } from '../../constants/atmosphere';
 import { createEntry, createEntryI18n, createInvalidCommandResult } from './utils';
 import { applyDetectionVariance } from './helpers';
 import { saveCheckpoint } from '../../storage/saves';
+import { translateStatic } from '../../i18n';
 import type { CommandRegistry } from './types';
 
 export const combatCommands: CommandRegistry = {
@@ -190,7 +191,7 @@ export const combatCommands: CommandRegistry = {
 
     // Checkpoint before high-risk override protocol attempt (only if first real attempt)
     if (failedAttempts === 0) {
-      saveCheckpoint(state, 'Before override protocol');
+      saveCheckpoint(state, translateStatic('checkpoint.reason.beforeOverrideProtocol'));
     }
 
     // Wrong password

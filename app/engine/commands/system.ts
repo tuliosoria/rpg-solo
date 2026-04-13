@@ -12,6 +12,13 @@ import { DETECTION_THRESHOLDS } from '../../constants/detection';
 import { countEvidence } from '../evidenceRevelation';
 import { generateHintOutput } from '../hintSystem';
 import type { CommandRegistry } from './types';
+import { translateStatic } from '../../i18n';
+
+type TranslationValues = Record<string, string | number>;
+
+function tSystem(key: string, fallback: string, values?: TranslationValues): string {
+  return translateStatic(`engine.commands.system.${key}`, values, fallback);
+}
 
 // Detailed help for individual commands
 const COMMAND_HELP: Record<string, string[]> = {
@@ -289,28 +296,39 @@ export const systemCommands: CommandRegistry = {
 
     // During lockdown, show lockdown-specific help
     if (state.firewallLockdownActive) {
+      const lockdownLines = [
+        '',
+        '═══════════════════════════════════════════════════════════',
+        tSystem('lockdownHelp.title', '⚠ FIREWALL LOCKDOWN — LIMITED COMMANDS'),
+        '═══════════════════════════════════════════════════════════',
+        '',
+        tSystem(
+          'lockdownHelp.scan',
+          '  scan              View firewall nodes and security questions'
+        ),
+        tSystem(
+          'lockdownHelp.disable',
+          '  disable <n> <a>   Disable a node with the correct answer'
+        ),
+        tSystem('lockdownHelp.ls', '  ls                List directory contents'),
+        tSystem('lockdownHelp.cd', '  cd <dir>          Change directory'),
+        tSystem('lockdownHelp.back', '  back              Return to previous directory'),
+        tSystem('lockdownHelp.status', '  status            Display system status'),
+        tSystem('lockdownHelp.map', '  map               View evidence progress'),
+        tSystem('lockdownHelp.help', '  help              Display this help'),
+        tSystem('lockdownHelp.clear', '  clear             Clear terminal display'),
+        '',
+        tSystem(
+          'lockdownHelp.blocked',
+          '  All other commands are BLOCKED until lockdown is lifted.'
+        ),
+        '',
+        '═══════════════════════════════════════════════════════════',
+        '',
+      ];
+
       return {
-        output: createOutputEntries([
-          '',
-          '═══════════════════════════════════════════════════════════',
-          '⚠ FIREWALL LOCKDOWN — LIMITED COMMANDS',
-          '═══════════════════════════════════════════════════════════',
-          '',
-          '  scan              View firewall nodes and security questions',
-          '  disable <n> <a>   Disable a node with the correct answer',
-          '  ls                List directory contents',
-          '  cd <dir>          Change directory',
-          '  back              Return to previous directory',
-          '  status            Display system status',
-          '  map               View evidence progress',
-          '  help              Display this help',
-          '  clear             Clear terminal display',
-          '',
-          '  All other commands are BLOCKED until lockdown is lifted.',
-          '',
-          '═══════════════════════════════════════════════════════════',
-          '',
-        ]),
+        output: createOutputEntries(lockdownLines),
         stateChanges: {},
       };
     }
@@ -319,34 +337,37 @@ export const systemCommands: CommandRegistry = {
     const helpLines = [
       '',
       '═══════════════════════════════════════════════════════════',
-      'TERMINAL COMMANDS',
+      tSystem('helpMenu.title', 'TERMINAL COMMANDS'),
       '═══════════════════════════════════════════════════════════',
       '',
-      '  help [cmd]        Display help (or help for specific command)',
-      '  status            Display system status',
-      '  ls                List directory contents',
-      '  cd <dir>          Change directory',
-      '  open <file>       Open and display file contents',
-      '  last              Re-display last opened file',
-      '  unread            List unread files',
-      '  note <text>       Save a personal note',
-      '  notes             View all saved notes',
-      '  bookmark [file]   Bookmark a file (or view bookmarks)',
-      '  chat              Open secure relay channel',
-      '  tree              Show directory structure',
-      '  morse <text>      Decipher morse code messages',
-      '  hint              Request a hint (limited uses)',
-      '  wait              Lower detection briefly (limited)',
-      '  hide              Emergency escape at 90% risk',
-      '  leak              Leak collected evidence',
-      '  override protocol <code>  Execute admin override',
-      '  tutorial [on/off] Toggle tutorial tips or replay intro',
-      '  save              Save current session',
-      '  clear             Clear terminal display',
+      tSystem('helpMenu.help', '  help [cmd]        Display help (or help for specific command)'),
+      tSystem('helpMenu.status', '  status            Display system status'),
+      tSystem('helpMenu.ls', '  ls                List directory contents'),
+      tSystem('helpMenu.cd', '  cd <dir>          Change directory'),
+      tSystem('helpMenu.open', '  open <file>       Open and display file contents'),
+      tSystem('helpMenu.last', '  last              Re-display last opened file'),
+      tSystem('helpMenu.unread', '  unread            List unread files'),
+      tSystem('helpMenu.note', '  note <text>       Save a personal note'),
+      tSystem('helpMenu.notes', '  notes             View all saved notes'),
+      tSystem('helpMenu.bookmark', '  bookmark [file]   Bookmark a file (or view bookmarks)'),
+      tSystem('helpMenu.chat', '  chat              Open secure relay channel'),
+      tSystem('helpMenu.tree', '  tree              Show directory structure'),
+      tSystem('helpMenu.morse', '  morse <text>      Decipher morse code messages'),
+      tSystem('helpMenu.hint', '  hint              Request a hint (limited uses)'),
+      tSystem('helpMenu.wait', '  wait              Lower detection briefly (limited)'),
+      tSystem('helpMenu.hide', '  hide              Emergency escape at 90% risk'),
+      tSystem('helpMenu.leak', '  leak              Leak collected evidence'),
+      tSystem(
+        'helpMenu.override',
+        '  override protocol <code>  Execute admin override'
+      ),
+      tSystem('helpMenu.tutorial', '  tutorial [on/off] Toggle tutorial tips or replay intro'),
+      tSystem('helpMenu.save', '  save              Save current session'),
+      tSystem('helpMenu.clear', '  clear             Clear terminal display'),
       '',
-      '  ↑/↓ arrows        Navigate command history',
-      '  Tab               Autocomplete commands and files',
-      '  Ctrl+L            Clear terminal',
+      tSystem('helpMenu.historyArrows', '  ↑/↓ arrows        Navigate command history'),
+      tSystem('helpMenu.tab', '  Tab               Autocomplete commands and files'),
+      tSystem('helpMenu.ctrlL', '  Ctrl+L            Clear terminal'),
       '',
     ];
 
@@ -355,7 +376,12 @@ export const systemCommands: CommandRegistry = {
       (state.evidenceCount || 0) >= 2 &&
       state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_MED
     ) {
-      helpLines.push('NOTICE: If assistance appears before you finish typing, do not repeat it.');
+      helpLines.push(
+        tSystem(
+          'helpMenu.noticeAssistance',
+          'NOTICE: If assistance appears before you finish typing, do not repeat it.'
+        )
+      );
       helpLines.push('');
     }
 
@@ -374,94 +400,146 @@ export const systemCommands: CommandRegistry = {
     const lines = [
       '',
       '═══════════════════════════════════════════════════════════',
-      'SYSTEM STATUS',
+      tSystem('status.title', 'SYSTEM STATUS'),
       '═══════════════════════════════════════════════════════════',
       '',
     ];
 
     // Detection surfacing - becomes more terse at high hostility
     if (state.detectionLevel < DETECTION_THRESHOLDS.STATUS_LOW) {
-      lines.push(hostility >= 3 ? '  LOGGING: Nominal' : '  LOGGING: Nominal');
+      lines.push(tSystem('status.logging.nominal', '  LOGGING: Nominal'));
     } else if (state.detectionLevel < DETECTION_THRESHOLDS.STATUS_MED) {
-      lines.push(hostility >= 3 ? '  LOGGING: Active' : '  LOGGING: Active monitoring enabled');
+      lines.push(
+        hostility >= 3
+          ? tSystem('status.logging.activeShort', '  LOGGING: Active')
+          : tSystem('status.logging.active', '  LOGGING: Active monitoring enabled')
+      );
     } else if (state.detectionLevel < DETECTION_THRESHOLDS.STATUS_HIGH) {
       lines.push(
-        hostility >= 3 ? '  LOGGING: FLAGGED' : '  LOGGING: WARNING — Audit trail flagged'
+        hostility >= 3
+          ? tSystem('status.logging.flaggedShort', '  LOGGING: FLAGGED')
+          : tSystem('status.logging.flagged', '  LOGGING: WARNING — Audit trail flagged')
       );
     } else {
       lines.push(
-        hostility >= 3 ? '  LOGGING: CRITICAL' : '  LOGGING: CRITICAL — Countermeasures engaged'
+        hostility >= 3
+          ? tSystem('status.logging.criticalShort', '  LOGGING: CRITICAL')
+          : tSystem('status.logging.critical', '  LOGGING: CRITICAL — Countermeasures engaged')
       );
     }
 
     // Attempts tracking - show remaining wrong attempts allowed
     const attemptsRemaining = 8 - (state.wrongAttempts || 0);
     if (attemptsRemaining >= 6) {
-      lines.push(hostility >= 3 ? '  TOLERANCE: Normal' : '  SYSTEM TOLERANCE: Normal');
+      lines.push(
+        hostility >= 3
+          ? tSystem('status.tolerance.normalShort', '  TOLERANCE: Normal')
+          : tSystem('status.tolerance.normal', '  SYSTEM TOLERANCE: Normal')
+      );
     } else if (attemptsRemaining >= 3) {
       lines.push(
-        hostility >= 3 ? '  TOLERANCE: Reduced' : '  SYSTEM TOLERANCE: Reduced — Errors noted'
+        hostility >= 3
+          ? tSystem('status.tolerance.reducedShort', '  TOLERANCE: Reduced')
+          : tSystem('status.tolerance.reduced', '  SYSTEM TOLERANCE: Reduced — Errors noted')
       );
     } else if (attemptsRemaining >= 1) {
       lines.push(
         hostility >= 3
-          ? '  TOLERANCE: CRITICAL'
-          : '  SYSTEM TOLERANCE: CRITICAL — Few attempts remaining'
+          ? tSystem('status.tolerance.criticalShort', '  TOLERANCE: CRITICAL')
+          : tSystem(
+              'status.tolerance.critical',
+              '  SYSTEM TOLERANCE: CRITICAL — Few attempts remaining'
+            )
       );
     } else {
       lines.push(
-        hostility >= 3 ? '  TOLERANCE: NONE' : '  SYSTEM TOLERANCE: EXHAUSTED — Lockdown imminent'
+        hostility >= 3
+          ? tSystem('status.tolerance.noneShort', '  TOLERANCE: NONE')
+          : tSystem(
+              'status.tolerance.exhausted',
+              '  SYSTEM TOLERANCE: EXHAUSTED — Lockdown imminent'
+            )
       );
     }
 
     // Session stability
     if (state.sessionStability > 80) {
-      lines.push(hostility >= 3 ? '  SESSION: Connected' : '  SESSION: Connected');
+      lines.push(tSystem('status.session.connected', '  SESSION: Connected'));
     } else if (state.sessionStability > 50) {
-      lines.push(hostility >= 3 ? '  SESSION: Intermittent' : '  SESSION: Intermittent');
+      lines.push(tSystem('status.session.intermittent', '  SESSION: Intermittent'));
     } else {
       lines.push(
-        hostility >= 3 ? '  SESSION: UNSTABLE' : '  SESSION: UNSTABLE — Connection degrading'
+        hostility >= 3
+          ? tSystem('status.session.unstableShort', '  SESSION: UNSTABLE')
+          : tSystem('status.session.unstable', '  SESSION: UNSTABLE — Connection degrading')
       );
     }
 
     // Access level (vague)
     if (state.accessLevel <= 1) {
-      lines.push('  ACCESS: Standard');
+      lines.push(tSystem('status.access.standard', '  ACCESS: Standard'));
     } else if (state.accessLevel <= 3) {
-      lines.push('  ACCESS: Elevated');
+      lines.push(tSystem('status.access.elevated', '  ACCESS: Elevated'));
     } else {
-      lines.push('  ACCESS: Administrative');
+      lines.push(tSystem('status.access.administrative', '  ACCESS: Administrative'));
     }
 
     const evidenceCount = countEvidence(state);
-    lines.push(`  EVIDENCE: ${evidenceCount}/10 confirmed`);
+    lines.push(
+      tSystem('status.evidenceConfirmed', '  EVIDENCE: {{count}}/10 confirmed', {
+        count: evidenceCount,
+      })
+    );
 
     // Firewall lockdown status
     if (state.firewallLockdownActive) {
       const nodesLeft = 3 - (state.firewallNodesDisabled?.length || 0);
-      lines.push(`  FIREWALL: LOCKDOWN — ${nodesLeft} node${nodesLeft !== 1 ? 's' : ''} remaining`);
+      lines.push(
+        tSystem(
+          nodesLeft === 1 ? 'status.firewallLockdown.one' : 'status.firewallLockdown.other',
+          `  FIREWALL: LOCKDOWN — ${nodesLeft} node${nodesLeft === 1 ? '' : 's'} remaining`,
+          { value: nodesLeft }
+        )
+      );
     }
 
     if (evidenceCount >= 10) {
-      lines.push('  OBJECTIVE: Evidence complete — use "leak" when ready.');
+      lines.push(
+        tSystem('status.objective.complete', '  OBJECTIVE: Evidence complete — use "leak" when ready.')
+      );
     } else if (evidenceCount > 0) {
-      lines.push('  OBJECTIVE: Keep reading. Each evidence file strengthens the case.');
+      lines.push(
+        tSystem(
+          'status.objective.progress',
+          '  OBJECTIVE: Keep reading. Each evidence file strengthens the case.'
+        )
+      );
     } else {
-      lines.push('  OBJECTIVE: Start opening files and build the evidence tracker.');
+      lines.push(
+        tSystem(
+          'status.objective.start',
+          '  OBJECTIVE: Start opening files and build the evidence tracker.'
+        )
+      );
     }
 
     if (
       state.detectionLevel >= DETECTION_THRESHOLDS.HIDE_AVAILABLE &&
       !state.singularEventsTriggered?.has('hide_used')
     ) {
-      lines.push('  RECOVERY: "hide" is available now.');
+      lines.push(tSystem('status.recovery.hideAvailable', '  RECOVERY: "hide" is available now.'));
     } else if (state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH) {
       const waitsLeft = state.waitUsesRemaining || 0;
       if (waitsLeft > 0) {
-        lines.push(`  RECOVERY: "wait" can buy time (${waitsLeft} left).`);
+        lines.push(
+          tSystem(
+            waitsLeft === 1 ? 'status.recovery.waitAvailable.one' : 'status.recovery.waitAvailable.other',
+            `  RECOVERY: "wait" can buy time (${waitsLeft} left).`,
+            { value: waitsLeft }
+          )
+        );
       } else {
-        lines.push('  RECOVERY: No wait uses remaining.');
+        lines.push(tSystem('status.recovery.none', '  RECOVERY: No wait uses remaining.'));
       }
     }
 
@@ -474,35 +552,41 @@ export const systemCommands: CommandRegistry = {
     // System attitude indicator at high hostility
     if (hostility >= 4) {
       lines.push('');
-      lines.push('  SYSTEM ATTITUDE: Studying you');
+      lines.push(tSystem('status.attitude.studying', '  SYSTEM ATTITUDE: Studying you'));
     } else if (hostility >= 2) {
       lines.push('');
-      lines.push('  SYSTEM ATTITUDE: Listening');
+      lines.push(tSystem('status.attitude.listening', '  SYSTEM ATTITUDE: Listening'));
     }
 
     // Terrible Mistake indicator
     if (state.terribleMistakeTriggered) {
       lines.push('');
-      lines.push('  ▓▓▓ PURGE PROTOCOL: ACTIVE ▓▓▓');
+      lines.push(tSystem('status.purgeActive', '  ▓▓▓ PURGE PROTOCOL: ACTIVE ▓▓▓'));
       if (state.sessionDoomCountdown > 0) {
-        lines.push(`  OPERATIONS REMAINING: ${state.sessionDoomCountdown}`);
+        lines.push(
+          tSystem(
+            'status.operationsRemaining',
+            `  OPERATIONS REMAINING: ${state.sessionDoomCountdown}`,
+            { value: state.sessionDoomCountdown }
+          )
+        );
       }
     }
 
     lines.push('');
-    lines.push(`  CURRENT PATH: ${state.currentPath}`);
+    lines.push(tSystem('status.currentPath', `  CURRENT PATH: ${state.currentPath}`, { value: state.currentPath }));
     lines.push('');
     lines.push('═══════════════════════════════════════════════════════════');
 
     // Victory check
     if (checkVictory(state)) {
       lines.push('');
-      lines.push('SESSION ARCHIVED');
+      lines.push(tSystem('status.sessionArchived', 'SESSION ARCHIVED'));
       return {
         output: createOutputEntries(lines),
         stateChanges: {
           isGameOver: true,
-          gameOverReason: 'SESSION ARCHIVED',
+          gameOverReason: tSystem('status.sessionArchived', 'SESSION ARCHIVED'),
           flags: { ...state.flags, sessionArchived: true },
         },
       };

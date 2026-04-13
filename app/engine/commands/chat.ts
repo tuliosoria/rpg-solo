@@ -2087,6 +2087,7 @@ export const chatCommands: CommandRegistry = {
           imageTrigger: {
             src: '/images/et-brain.webp',
             alt: 'Neural pattern link - Scout consciousness interface',
+            altKey: 'media.alt.neuralPatternLink',
             tone: 'clinical',
           },
           triggerFlicker: true,
@@ -2357,6 +2358,7 @@ export const chatCommands: CommandRegistry = {
         imageTrigger: {
           src: '/images/et-brain.webp',
           alt: 'Neural pattern link - Scout consciousness interface',
+          altKey: 'media.alt.neuralPatternLink',
           tone: 'clinical',
         },
         triggerFlicker: true,

@@ -3,6 +3,7 @@
 import { createEntry, createEntryI18n } from './utils';
 import { saveCheckpoint } from '../../storage/saves';
 import { countEvidence, MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
+import { translateStatic } from '../../i18n';
 import type { CommandRegistry } from './types';
 
 export const evidenceCommands: CommandRegistry = {
@@ -42,7 +43,7 @@ export const evidenceCommands: CommandRegistry = {
     }
 
     // Checkpoint before leak
-    saveCheckpoint(state, 'Before leak transmission');
+    saveCheckpoint(state, translateStatic('checkpoint.reason.beforeLeakTransmission'));
 
     // Skip questions — go straight to ICQ phase
     return {

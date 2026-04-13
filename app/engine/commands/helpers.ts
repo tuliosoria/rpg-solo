@@ -27,6 +27,7 @@ import { createEntry, createEntryI18n, createOutputEntries, createUFO74Message }
 import { getTutorialTip, shouldShowTutorialTip } from './tutorial';
 import { getFileContent } from '../filesystem';
 import { saveCheckpoint } from '../../storage/saves';
+import { translateStatic } from '../../i18n';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // UFO74 EVIDENCE REACTIONS
@@ -682,7 +683,7 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
       ),
     ];
     if (contextualHints) {
-      hints.push(createEntry('ufo74', `UFO74: ${contextualHints}`));
+      hints.push(createEntryI18n('ufo74', contextualHints.key, contextualHints.fallback));
     } else {
       hints.push(
         createEntryI18n(
@@ -746,7 +747,12 @@ function getWanderingNotice(level: number, state?: GameState): TerminalEntry[] {
   }
 }
 
-function getContextualExplorationHints(state: GameState): string | null {
+interface ContextualExplorationHint {
+  key: string;
+  fallback: string;
+}
+
+function getContextualExplorationHints(state: GameState): ContextualExplorationHint | null {
   const filesRead = state.filesRead || new Set<string>();
   const truthsCount = state.evidenceCount || 0;
   const prisoner45Used = state.prisoner45QuestionsAsked > 0;
@@ -776,19 +782,34 @@ function getContextualExplorationHints(state: GameState): string | null {
   } = readFlags;
 
   if (!hasReadStorage && truthsCount < 1) {
-    return 'check /storage/ for transport logs.';
+    return {
+      key: 'engine.commands.helpers.contextHint.storage',
+      fallback: 'UFO74: check /storage/ for transport logs.',
+    };
   }
   if (!hasReadOps && truthsCount < 2) {
-    return '/ops/ has quarantine records.';
+    return {
+      key: 'engine.commands.helpers.contextHint.ops',
+      fallback: 'UFO74: /ops/ has quarantine records.',
+    };
   }
   if (!hasReadComms && truthsCount < 3) {
-    return '/comms/psi/ has weird signal stuff.';
+    return {
+      key: 'engine.commands.helpers.contextHint.comms',
+      fallback: 'UFO74: /comms/psi/ has weird signal stuff.',
+    };
   }
   if (!prisoner45Used && state.tutorialComplete) {
-    return 'try "chat". someones in here.';
+    return {
+      key: 'engine.commands.helpers.contextHint.chat',
+      fallback: 'UFO74: try "chat". someones in here.',
+    };
   }
   if (!hasReadAdmin && truthsCount >= 2 && state.accessLevel >= 3) {
-    return 'you have clearance. check /admin/.';
+    return {
+      key: 'engine.commands.helpers.contextHint.admin',
+      fallback: 'UFO74: you have clearance. check /admin/.',
+    };
   }
   return null;
 }
@@ -1050,7 +1071,7 @@ export function performDecryption(
 ): CommandResult {
   const isFirstDecryption = !state.flags?.firstDecryptionComplete;
   if (isFirstDecryption) {
-    saveCheckpoint(state, 'First encrypted file decrypted');
+    saveCheckpoint(state, translateStatic('checkpoint.reason.firstEncryptedFileDecrypted'));
   }
 
   const mutation: FileMutation = state.fileMutations[filePath] || {

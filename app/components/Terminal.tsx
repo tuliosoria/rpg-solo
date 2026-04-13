@@ -69,28 +69,37 @@ const AchievementGallery = dynamic(() => import('./AchievementGallery'), { ssr: 
 const StatisticsModal = dynamic(() => import('./StatisticsModal'), { ssr: false });
 import styles from './Terminal.module.css';
 
-// UFO74 comments after viewing images - keyed by image src
-const UFO74_IMAGE_COMMENTS: Record<string, string[]> = {
+const UFO74_IMAGE_COMMENT_KEYS: Record<string, string[]> = {
   '/images/crash.webp': [
-    'UFO74: that wreckage... wrong metallurgy.',
-    'UFO74: they moved fast. knew what to hide.',
+    'terminal.imageComment.crash1',
+    'terminal.imageComment.crash2',
   ],
   '/images/et.webp': [
-    'UFO74: seen that face in dreams.',
-    'UFO74: not fear in those eyes. recognition.',
+    'terminal.imageComment.et1',
+    'terminal.imageComment.et2',
   ],
   '/images/et-scared.webp': [
-    'UFO74: during transmission, something reached back.',
-    'UFO74: let itself be captured.',
+    'terminal.imageComment.etScared1',
+    'terminal.imageComment.etScared2',
   ],
-  '/images/second-ship.webp': ['UFO74: SECOND one? they were arriving.'],
-  '/images/drone.webp': ['UFO74: no propulsion. no control surfaces. yet it flies.'],
-  '/images/prato-delta.webp': ['UFO74: three recovery sites. shipped everything out.'],
+  '/images/second-ship.webp': ['terminal.imageComment.secondShip1'],
+  '/images/drone.webp': ['terminal.imageComment.drone1'],
+  '/images/prato-delta.webp': ['terminal.imageComment.pratoDelta1'],
   '/images/et-brain.webp': [
-    'UFO74: neural density off the charts.',
-    'UFO74: some patterns travel both ways. careful.',
+    'terminal.imageComment.etBrain1',
+    'terminal.imageComment.etBrain2',
   ],
 };
+
+const UFO74_FIREWALL_REACTION_KEYS = [
+  'terminal.firewallReaction.1',
+  'terminal.firewallReaction.2',
+  'terminal.firewallReaction.3',
+  'terminal.firewallReaction.4',
+  'terminal.firewallReaction.5',
+  'terminal.firewallReaction.6',
+  'terminal.firewallReaction.7',
+] as const;
 
 interface EvidenceVideoAttachment {
   filePath: string;
@@ -161,6 +170,23 @@ const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
     videoTitle: 'transport.mp4',
   },
 };
+
+const AFFIRMATIVE_VIDEO_PROMPT_INPUTS = new Set(['y', 'yes', 's', 'sim', 'si', 'sí']);
+const NEGATIVE_VIDEO_PROMPT_INPUTS = new Set(['n', 'no', 'nao', 'não']);
+
+export function normalizeVideoPromptChoice(input: string): 'yes' | 'no' | null {
+  const normalized = input.trim().toLowerCase();
+
+  if (AFFIRMATIVE_VIDEO_PROMPT_INPUTS.has(normalized)) {
+    return 'yes';
+  }
+
+  if (NEGATIVE_VIDEO_PROMPT_INPUTS.has(normalized)) {
+    return 'no';
+  }
+
+  return null;
+}
 
 const getEvidenceVideoAttachment = (
   commandInput: string,
@@ -425,13 +451,13 @@ export default function Terminal({
     setActiveEvidenceVideo(null);
     if (closingVideo?.filePath === '/sys/ghost_in_machine.enc') {
       appendPendingUfo74StartMessages([
-        createEntry('ufo74', 'UFO74: ...that is me. that is what i am.'),
-        createEntry('ufo74', 'UFO74: kid. do not tell anyone you saw that.'),
+        createEntry('ufo74', t('terminal.video.closeComment.identity1')),
+        createEntry('ufo74', t('terminal.video.closeComment.identity2')),
       ]);
     } else if (closingVideo?.filePath === '/storage/assets/transport_log_96.txt') {
       appendPendingUfo74StartMessages([
-        createEntry('ufo74', 'UFO74: they moved it at night. of course they did.'),
-        createEntry('ufo74', 'UFO74: save that. every detail matters.'),
+        createEntry('ufo74', t('terminal.video.closeComment.transport1')),
+        createEntry('ufo74', t('terminal.video.closeComment.transport2')),
       ]);
     } else if (closingVideo?.filePath === '/internal/jardim_andere_incident.txt' ||
         closingVideo?.filePath === '/storage/assets/logistics_manifest_fragment.txt' ||
@@ -547,7 +573,7 @@ export default function Terminal({
     startAmbient();
 
     // Save checkpoint
-    saveCheckpoint(newState, 'Tutorial skipped');
+    saveCheckpoint(newState, t('checkpoint.reason.tutorialSkipped'));
   }, [
     gameState,
     setGameState,
@@ -663,30 +689,19 @@ export default function Terminal({
     },
   });
 
-  // UFO74 reactions to firewall taunts
-  const UFO74_FIREWALL_REACTIONS = useMemo(() => [
-    "UFO74: damn. the firewall is almost onto us.",
-    "UFO74: risk is climbing. stay low.",
-    "UFO74: it heard something. don't move.",
-    "UFO74: we need to move faster. it's getting closer.",
-    "UFO74: keep your head down. it's scanning.",
-    "UFO74: that thing knows we're here.",
-    "UFO74: don't react. it feeds on attention.",
-  ], []);
-
   const lastUfo74ReactionIndexRef = useRef<number>(-1);
 
   const handleFirewallTaunt = useCallback(() => {
     let idx: number;
     do {
-      idx = Math.floor(Math.random() * UFO74_FIREWALL_REACTIONS.length);
-    } while (idx === lastUfo74ReactionIndexRef.current && UFO74_FIREWALL_REACTIONS.length > 1);
+      idx = Math.floor(Math.random() * UFO74_FIREWALL_REACTION_KEYS.length);
+    } while (idx === lastUfo74ReactionIndexRef.current && UFO74_FIREWALL_REACTION_KEYS.length > 1);
     lastUfo74ReactionIndexRef.current = idx;
 
     appendPendingUfo74StartMessages([
-      createEntry('ufo74', UFO74_FIREWALL_REACTIONS[idx]),
+      createEntry('ufo74', t(UFO74_FIREWALL_REACTION_KEYS[idx])),
     ]);
-  }, [UFO74_FIREWALL_REACTIONS, appendPendingUfo74StartMessages]);
+  }, [appendPendingUfo74StartMessages, t]);
 
   const handleSubmit = useCallback(
     async (e?: React.SyntheticEvent) => {
@@ -706,7 +721,7 @@ export default function Terminal({
           return;
         }
 
-        const normalizedInput = trimmedInput.toLowerCase();
+        const normalizedInput = normalizeVideoPromptChoice(trimmedInput);
 
         if (normalizedInput === 'yes') {
           setGameState(prev => ({
@@ -1126,7 +1141,7 @@ export default function Terminal({
       className = `${className} ${styles.flushBeforeUfo74}`;
     }
 
-    const isReadListingLine = entry.type === 'output' && /\s\[READ\]/.test(entryContent);
+    const isReadListingLine = entry.type === 'output' && /\s\[READ\]/.test(entry.content);
 
     if (isReadListingLine) {
       className = `${className} ${styles.readLine}`;
@@ -1696,7 +1711,7 @@ export default function Terminal({
           <div
             role="dialog"
             aria-modal="true"
-            aria-label="Turing Test Video"
+            aria-label={t('videoOverlay.turingAria')}
             style={{
               position: 'absolute',
               inset: 0,
@@ -1821,6 +1836,7 @@ export default function Terminal({
           <ImageOverlay
             src={activeImage.src}
             alt={activeImage.alt}
+            altKey={activeImage.altKey}
             tone={activeImage.tone}
             corrupted={activeImage.corrupted}
             onCloseAction={() => {
@@ -1840,11 +1856,10 @@ export default function Terminal({
               }
 
               // Then add image-specific comments
-              const imageComments = UFO74_IMAGE_COMMENTS[activeImage.src];
-              if (imageComments && imageComments.length > 0) {
-                // Pick a random comment for variety
-                const ufo74Comment = uiRandomPick(imageComments);
-                allUfo74Messages.push(createEntry('ufo74', ufo74Comment));
+              const imageCommentKeys = UFO74_IMAGE_COMMENT_KEYS[activeImage.src];
+              if (imageCommentKeys && imageCommentKeys.length > 0) {
+                const commentKey = uiRandomPick(imageCommentKeys);
+                allUfo74Messages.push(createEntry('ufo74', t(commentKey)));
               }
 
               setGameState(prev => ({

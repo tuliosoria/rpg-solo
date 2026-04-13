@@ -8,6 +8,7 @@ import { useI18n } from '../i18n';
 interface ImageOverlayProps {
   src: string;
   alt: string;
+  altKey?: string;
   tone: 'clinical' | 'surveillance' | 'eerie';
   onCloseAction: () => void;
   corrupted?: boolean;
@@ -17,12 +18,14 @@ interface ImageOverlayProps {
 export default function ImageOverlay({
   src,
   alt,
+  altKey,
   tone,
   onCloseAction,
   corrupted = false,
   durationMs = 8000,
 }: ImageOverlayProps) {
   const { t } = useI18n();
+  const resolvedAlt = altKey ? t(altKey, undefined, alt) : alt;
   const [visible, setVisible] = useState(false);
   const [flickering, setFlickering] = useState(true);
   const [initialShock, setInitialShock] = useState(true);
@@ -107,7 +110,7 @@ export default function ImageOverlay({
       className={`${styles.overlay} ${flickering ? styles.flickering : ''} ${initialShock ? styles.initialShock : ''}`}
       role="dialog"
       aria-modal="true"
-      aria-label={t('imageOverlay.aria', { value: alt })}
+      aria-label={t('imageOverlay.aria', { value: resolvedAlt })}
       onClick={handleClose}
     >
       {/* Scanlines */}
@@ -135,7 +138,7 @@ export default function ImageOverlay({
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={src}
-                alt={alt}
+                alt={resolvedAlt}
                 className={styles.image}
                 onError={() => setError(t('imageOverlay.error'))}
               />

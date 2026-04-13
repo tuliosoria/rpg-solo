@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { createEntry } from '../engine/commands';
+import { createEntryI18n } from '../engine/commands/utils';
 import type { GamePhase, GameState } from '../types';
 import type { SoundType } from './useSound';
 import { appendToHistory } from '../lib/appendToHistory';
@@ -84,8 +84,9 @@ export function useGameActions({
       firewallActive: true,
     }));
     playSound('alert');
-    const firewallWarning = createEntry(
+    const firewallWarning = createEntryI18n(
       'ufo74',
+      'hooks.gameActions.firewallWarning',
       'UFO74: ...they see us. the watchers are here.'
     );
     setGameState(prev => ({

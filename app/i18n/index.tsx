@@ -20,6 +20,23 @@ const LOCALES: Record<Language, LocaleDictionary> = {
   es,
 };
 
+const INLINE_RUNTIME_TAG_KEYS = {
+  READ: 'runtime.readLabel',
+  UNREAD: 'runtime.unreadLabel',
+  CORRUPTED: 'runtime.fileStatus.corrupted',
+  ENCRYPTED: 'runtime.fileStatus.encrypted',
+  RESTRICTED: 'runtime.fileStatus.restricted',
+  RESTRICTED_BRIEFING: 'runtime.fileStatus.restrictedBriefing',
+  UNSTABLE: 'runtime.fileStatus.unstable',
+  CONDITIONAL: 'runtime.fileStatus.conditional',
+} as const;
+
+type InlineRuntimeTag = keyof typeof INLINE_RUNTIME_TAG_KEYS;
+
+function isInlineRuntimeTag(value: string): value is InlineRuntimeTag {
+  return Object.prototype.hasOwnProperty.call(INLINE_RUNTIME_TAG_KEYS, value);
+}
+
 function normalizeRuntimePresentation(text: string): string {
   return text.replace(/^\[UFO74\]:\s*/, 'UFO74: ');
 }
@@ -205,6 +222,30 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       const notesTotalMatch = text.match(/^\[(\d+)\s+notes total - use "notes" to view\]$/);
       if (notesTotalMatch) {
         return t('runtime.notesTotal', { value: notesTotalMatch[1] }, text);
+      }
+      const bookmarkRemovedMatch = text.match(/^Bookmark removed:\s*(.+)$/);
+      if (bookmarkRemovedMatch) {
+        return t('runtime.bookmarkRemoved', { value: bookmarkRemovedMatch[1] }, text);
+      }
+      const bookmarkedMatch = text.match(/^Bookmarked:\s*(.+)$/);
+      if (bookmarkedMatch) {
+        return t('runtime.bookmarked', { value: bookmarkedMatch[1] }, text);
+      }
+      const unreadFilesHeaderMatch = text.match(/^(\s*)UNREAD FILES \((\d+)\)(\s*)$/);
+      if (unreadFilesHeaderMatch) {
+        return `${unreadFilesHeaderMatch[1]}${t(
+          'runtime.unreadFilesHeader',
+          { value: unreadFilesHeaderMatch[2] },
+          `UNREAD FILES (${unreadFilesHeaderMatch[2]})`
+        )}${unreadFilesHeaderMatch[3]}`;
+      }
+      const evidenceLegendMatch = text.match(/^(\s*)([^=\s]+)=evidence logged$/);
+      if (evidenceLegendMatch) {
+        return `${evidenceLegendMatch[1]}${t(
+          'runtime.evidenceLegend',
+          { symbol: evidenceLegendMatch[2] },
+          `${evidenceLegendMatch[2]}=evidence logged`
+        )}`;
       }
       const evidenceFoundMatch = text.match(/^Evidence found:\s*(\d+)\/(\d+)$/);
       if (evidenceFoundMatch) {
@@ -494,6 +535,23 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       const translated = RUNTIME_TRANSLATIONS[language][text];
       if (translated !== undefined) {
         return normalizeRuntimePresentation(translated);
+      }
+      const translatedInlineTags = text
+        .replace(
+          /\[(READ|UNREAD|CORRUPTED|ENCRYPTED|RESTRICTED|RESTRICTED_BRIEFING|UNSTABLE|CONDITIONAL)\]/g,
+          (match, tag: string) => {
+            if (!isInlineRuntimeTag(tag)) {
+              return match;
+            }
+
+            return t(INLINE_RUNTIME_TAG_KEYS[tag], undefined, match);
+          }
+        )
+        .replace(/\[~(\d+)min\]/g, (_, value: string) =>
+          t('runtime.readingEstimate', { value }, `[~${value}min]`)
+        );
+      if (translatedInlineTags !== text) {
+        return normalizeRuntimePresentation(translatedInlineTags);
       }
       const quotedLineMatch = text.match(/^(\s*)"(.+)"$/);
       if (quotedLineMatch) {

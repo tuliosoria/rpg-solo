@@ -1430,6 +1430,7 @@ const foreign_drone_theory: FileNode = {
   imageTrigger: {
     src: '/images/drone.webp',
     alt: 'Recovered visual - Foreign drone analysis',
+    altKey: 'media.alt.foreignDroneAnalysis',
     tone: 'surveillance',
   },
   content: [
@@ -2371,6 +2372,7 @@ const material_x_analysis: FileNode = {
   imageTrigger: {
     src: '/images/crash.webp',
     alt: 'Recovered visual - Crash site material',
+    altKey: 'media.alt.crashSiteMaterial',
     tone: 'surveillance',
   },
   content: [
@@ -2411,6 +2413,7 @@ const bio_container_log: FileNode = {
   imageTrigger: {
     src: '/images/et.webp',
     alt: 'Recovered visual - Bio containment',
+    altKey: 'media.alt.bioContainment',
     tone: 'clinical',
     corrupted: true,
   },
@@ -2451,6 +2454,7 @@ const autopsy_alpha_log: FileNode = {
   imageTrigger: {
     src: '/images/et.webp',
     alt: 'Recovered visual - Autopsy subject',
+    altKey: 'media.alt.autopsySubject',
     tone: 'clinical',
   },
   content: [
@@ -2533,6 +2537,7 @@ const transcript_core: FileNode = {
   imageTrigger: {
     src: '/images/et-scared.webp',
     alt: 'Recovered visual - Subject during transmission',
+    altKey: 'media.alt.subjectDuringTransmission',
     tone: 'clinical',
     corrupted: true,
   },
@@ -2617,6 +2622,7 @@ const field_report_delta: FileNode = {
   imageTrigger: {
     src: '/images/prato-delta.webp',
     alt: 'Recovered visual - Operation Prato Delta field report',
+    altKey: 'media.alt.operationPratoDeltaFieldReport',
     tone: 'surveillance',
   },
   content: [
@@ -3093,6 +3099,7 @@ const bio_program_overview: FileNode = {
   imageTrigger: {
     src: '/images/bio-program.webp',
     alt: 'Bio-Assessment Initiative - Recovered specimen documentation',
+    altKey: 'media.alt.bioAssessmentInitiative',
     tone: 'clinical',
   },
   content: [
@@ -3413,6 +3420,7 @@ const second_deployment_intercept: FileNode = {
   imageTrigger: {
     src: '/images/second-ship.webp',
     alt: 'Signal analysis showing second deployment trajectory',
+    altKey: 'media.alt.secondDeploymentTrajectory',
     tone: 'surveillance',
   },
   decryptedFragment: [
@@ -3573,6 +3581,7 @@ const extraction_mechanism: FileNode = {
   imageTrigger: {
     src: '/images/extraction.webp',
     alt: 'Energy Extraction Model - Theoretical visualization',
+    altKey: 'media.alt.energyExtractionModel',
     tone: 'clinical',
   },
   content: [

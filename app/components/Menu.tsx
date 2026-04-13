@@ -85,9 +85,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
       if (loadingSaveId) return;
 
       const showLoadError = () => {
-        setLoadError(
-          t('menu.load.failed', undefined, 'Unable to load this session. The save may be missing or corrupted.')
-        );
+        setLoadError(t('menu.load.failed'));
         setLoadingSaveId(current => (current === slotId ? null : current));
       };
 
@@ -285,7 +283,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         <div className={styles.footerLine}>{t('menu.main.warningUnauthorized')}</div>
         <div className={styles.footerLine}>{t('menu.main.sessionLogging')}</div>
         <div className={styles.keyHint}>{t('menu.main.keyHint')}</div>
-        <div className={styles.footerLine} style={{ marginTop: '1rem', opacity: 0.6 }}>© 2026 Tulio Soria & Arthur Ramos</div>
+        <div className={styles.footerLine} style={{ marginTop: '1rem', opacity: 0.6 }}>
+          {t('menu.footer.copyright')}
+        </div>
       </div>
     </div>
   );
@@ -314,7 +314,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
               <div className={styles.saveContent}>
                 <div className={styles.saveName}>
                   {slot.name}
-                  {loadingSaveId === slot.id ? ` ${t('menu.load.loading', undefined, '[ LOADING... ]')}` : ''}
+                  {loadingSaveId === slot.id ? ` ${t('menu.load.loading')}` : ''}
                 </div>
                 <div className={styles.saveInfo}>
                   <span>{t('menu.load.path')}: {slot.currentPath}</span>
@@ -351,7 +351,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         {selectedIndex === saves.length ? '▶ ' : '  '}{t('menu.load.back')}
       </button>
       <div className={styles.keyHint}>
-        {loadingSaveId ? t('menu.load.loading', undefined, '[ LOADING... ]') : t('menu.load.keyHint')}
+        {loadingSaveId ? t('menu.load.loading') : t('menu.load.keyHint')}
       </div>
     </div>
   );
@@ -395,7 +395,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         </div>
 
         <div className={styles.creditSection}>
-          <div className={styles.creditValue}>© 2026 Tulio Soria & Arthur Ramos. All rights reserved.</div>
+          <div className={styles.creditValue}>{t('menu.credits.copyright')}</div>
         </div>
       </div>
 

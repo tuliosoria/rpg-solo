@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
 import { type GamePhase, type GameState, type ImageTrigger } from '../types';
 import { createEntry } from '../engine/commands';
+import { createEntryI18n } from '../engine/commands/utils';
 import { appendToHistory } from '../lib/appendToHistory';
 import { autoSave } from '../storage/saves';
 import { addPlaytime } from '../storage/statistics';
@@ -18,45 +19,63 @@ import { uiRandom, uiRandomPick } from '../engine/rng';
 import { initVoices } from '../components/FirewallEyes';
 import { applyOptionsToDocument, readStoredOptions } from './useOptions';
 import type { SoundType } from './useSound';
+import { useI18n } from '../i18n';
 
 // "They're watching" paranoia messages
-const PARANOIA_MESSAGES = [
-  'TRACE DETECTED: External observer connected',
-  'WARNING: Packet inspection in progress',
-  'NOTICE: Session being monitored',
-  'ALERT: Unauthorized access attempt logged',
-  'SYSTEM: Someone else is in the system',
-  'ANOMALY: Data exfiltration detected',
-  'CAUTION: Your keystrokes are being recorded',
-  'INFO: Connection routed through unknown node',
-  'WARNING: Firewall breach attempt detected',
-  'NOTICE: Session flagged for review',
-  'ALERT: Third-party listener identified',
-  'SYSTEM: Memory dump in progress',
-  'TRACE: Unknown process accessing your session',
-  'NOTICE: Query patterns being analyzed',
-  'WARNING: Session duration exceeds normal parameters',
-  'SYSTEM: Behavioral profile update in progress',
-  'ALERT: File access sequence flagged as anomalous',
-  'CAUTION: Terminal output being mirrored',
-  'INFO: Your IP has been logged for review',
-  'NOTICE: Command history archived to external server',
-  'WARNING: They know where you are',
-  'ALERT: Physical location triangulated',
-  'SYSTEM: Dispatch notification pending',
-  'NOTICE: Someone just accessed your personnel file',
-  'CAUTION: Your screen is being watched',
-  'WARNING: Audio capture device detected',
-  'ALERT: Camera feed request intercepted',
-  'SYSTEM: Facial recognition scan initiated',
-  'SIGNAL: ...they remember you from before...',
-  'TRACE: Pattern matches previous intruder',
-  'NOTICE: The watchers have been notified',
-  'ALERT: You were expected',
-  'SYSTEM: Countermeasures initializing',
-  'WARNING: Too late to disconnect cleanly',
-  'CAUTION: Your curiosity has been noted',
-  'INFO: This session will be... remembered',
+interface LocalizedTerminalCopy {
+  key: string;
+  fallback: string;
+}
+
+const PARANOIA_MESSAGES: LocalizedTerminalCopy[] = [
+  { key: 'terminal.paranoia.1', fallback: 'TRACE DETECTED: External observer connected' },
+  { key: 'terminal.paranoia.2', fallback: 'WARNING: Packet inspection in progress' },
+  { key: 'terminal.paranoia.3', fallback: 'NOTICE: Session being monitored' },
+  { key: 'terminal.paranoia.4', fallback: 'ALERT: Unauthorized access attempt logged' },
+  { key: 'terminal.paranoia.5', fallback: 'SYSTEM: Someone else is in the system' },
+  { key: 'terminal.paranoia.6', fallback: 'ANOMALY: Data exfiltration detected' },
+  { key: 'terminal.paranoia.7', fallback: 'CAUTION: Your keystrokes are being recorded' },
+  { key: 'terminal.paranoia.8', fallback: 'INFO: Connection routed through unknown node' },
+  { key: 'terminal.paranoia.9', fallback: 'WARNING: Firewall breach attempt detected' },
+  { key: 'terminal.paranoia.10', fallback: 'NOTICE: Session flagged for review' },
+  { key: 'terminal.paranoia.11', fallback: 'ALERT: Third-party listener identified' },
+  { key: 'terminal.paranoia.12', fallback: 'SYSTEM: Memory dump in progress' },
+  { key: 'terminal.paranoia.13', fallback: 'TRACE: Unknown process accessing your session' },
+  { key: 'terminal.paranoia.14', fallback: 'NOTICE: Query patterns being analyzed' },
+  {
+    key: 'terminal.paranoia.15',
+    fallback: 'WARNING: Session duration exceeds normal parameters',
+  },
+  { key: 'terminal.paranoia.16', fallback: 'SYSTEM: Behavioral profile update in progress' },
+  {
+    key: 'terminal.paranoia.17',
+    fallback: 'ALERT: File access sequence flagged as anomalous',
+  },
+  { key: 'terminal.paranoia.18', fallback: 'CAUTION: Terminal output being mirrored' },
+  { key: 'terminal.paranoia.19', fallback: 'INFO: Your IP has been logged for review' },
+  {
+    key: 'terminal.paranoia.20',
+    fallback: 'NOTICE: Command history archived to external server',
+  },
+  { key: 'terminal.paranoia.21', fallback: 'WARNING: They know where you are' },
+  { key: 'terminal.paranoia.22', fallback: 'ALERT: Physical location triangulated' },
+  { key: 'terminal.paranoia.23', fallback: 'SYSTEM: Dispatch notification pending' },
+  {
+    key: 'terminal.paranoia.24',
+    fallback: 'NOTICE: Someone just accessed your personnel file',
+  },
+  { key: 'terminal.paranoia.25', fallback: 'CAUTION: Your screen is being watched' },
+  { key: 'terminal.paranoia.26', fallback: 'WARNING: Audio capture device detected' },
+  { key: 'terminal.paranoia.27', fallback: 'ALERT: Camera feed request intercepted' },
+  { key: 'terminal.paranoia.28', fallback: 'SYSTEM: Facial recognition scan initiated' },
+  { key: 'terminal.paranoia.29', fallback: 'SIGNAL: ...they remember you from before...' },
+  { key: 'terminal.paranoia.30', fallback: 'TRACE: Pattern matches previous intruder' },
+  { key: 'terminal.paranoia.31', fallback: 'NOTICE: The watchers have been notified' },
+  { key: 'terminal.paranoia.32', fallback: 'ALERT: You were expected' },
+  { key: 'terminal.paranoia.33', fallback: 'SYSTEM: Countermeasures initializing' },
+  { key: 'terminal.paranoia.34', fallback: 'WARNING: Too late to disconnect cleanly' },
+  { key: 'terminal.paranoia.35', fallback: 'CAUTION: Your curiosity has been noted' },
+  { key: 'terminal.paranoia.36', fallback: 'INFO: This session will be... remembered' },
 ];
 
 const ALIEN_MANIFESTATION_INTERVAL_MS = 30000;
@@ -191,6 +210,7 @@ export function useTerminalEffects({
     prevDetectionRef,
     skipStreamingRef,
   } = refs;
+  const { t } = useI18n();
 
   const shouldRestoreFocus =
     gamePhase === 'terminal' &&
@@ -468,7 +488,7 @@ export function useTerminalEffects({
       const left = 50 + uiRandom() * Math.max(0, maxLeft - 50);
 
       setParanoiaPosition({ top, left });
-      setParanoiaMessage(message);
+      setParanoiaMessage(t(message.key, undefined, message.fallback));
       playSound('warning');
 
       // Clear after animation
@@ -492,6 +512,7 @@ export function useTerminalEffects({
     setParanoiaPosition,
     pauseTimedMechanics,
     suppressPressure,
+    t,
   ]);
 
   // Track detection level changes for sound/visual alerts AND Turing test trigger
@@ -553,7 +574,11 @@ export function useTerminalEffects({
             prevState.history,
             createEntry('system', ''),
             createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-            createEntry('warning', '        SECURITY PROTOCOL: TURING EVALUATION INITIATED'),
+            createEntryI18n(
+              'warning',
+              'engine.commands.helpers.security_protocol_turing_evaluation_initiated',
+              '        SECURITY PROTOCOL: TURING EVALUATION INITIATED'
+            ),
             createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
             createEntry('system', ''),
           ),
@@ -684,79 +709,96 @@ export function useTerminalEffects({
   }, [outputRef, lastScrollTimeRef]);
 
   const idleHints = useMemo(
-    (): { hint: string; condition: (s: GameState) => boolean }[] => [
+    (): Array<LocalizedTerminalCopy & { condition: (s: GameState) => boolean }> => [
       {
-        hint: "Use 'ls' to see what's in the current directory.",
+        key: 'terminal.idleHint.1',
+        fallback: "Use 'ls' to see what's in the current directory.",
         condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
       },
       {
-        hint: "Try 'open' on a .txt file to read it.",
+        key: 'terminal.idleHint.2',
+        fallback: "Try 'open' on a .txt file to read it.",
         condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
       },
       {
-        hint: "Navigation tip: 'cd' changes directories. Start exploring.",
+        key: 'terminal.idleHint.3',
+        fallback: "Navigation tip: 'cd' changes directories. Start exploring.",
         condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
       },
       {
-        hint: 'You need evidence. Look for files that seem... off.',
+        key: 'terminal.idleHint.4',
+        fallback: 'You need evidence. Look for files that seem... off.',
         condition: (s: GameState) =>
           (s.evidenceCount || 0) === 0 && (s.filesRead?.size || 0) >= 3,
       },
       {
-        hint: 'Some documents contradict the official narrative. Find them.',
+        key: 'terminal.idleHint.5',
+        fallback: 'Some documents contradict the official narrative. Find them.',
         condition: (s: GameState) =>
           (s.evidenceCount || 0) === 0 && (s.filesRead?.size || 0) >= 5,
       },
       {
-        hint: 'Have you checked /internal?',
+        key: 'terminal.idleHint.6',
+        fallback: 'Have you checked /internal?',
         condition: (s: GameState) =>
           s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt'),
       },
       {
-        hint: 'The /comms directory might have useful intel.',
+        key: 'terminal.idleHint.7',
+        fallback: 'The /comms directory might have useful intel.',
         condition: (s: GameState) =>
           !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt'),
       },
       {
-        hint: "Detection is high. The 'wait' command lets time pass safely.",
+        key: 'terminal.idleHint.8',
+        fallback: "Detection is high. The 'wait' command lets time pass safely.",
         condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HOSTILITY_MED,
       },
       {
-        hint: "They're watching closely. Consider using 'wait' to reduce suspicion.",
+        key: 'terminal.idleHint.9',
+        fallback: "They're watching closely. Consider using 'wait' to reduce suspicion.",
         condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.ALERT,
       },
       {
-        hint: "CAUTION: Detection critical. 'wait' might buy you time.",
+        key: 'terminal.idleHint.10',
+        fallback: "CAUTION: Detection critical. 'wait' might buy you time.",
         condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HEAVY_GLITCH,
       },
       {
-        hint: "You've seen a lot. There may be... deeper access available.",
+        key: 'terminal.idleHint.11',
+        fallback: "You've seen a lot. There may be... deeper access available.",
         condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.adminUnlocked,
       },
       {
-        hint: "Some commands aren't listed. Keep digging.",
+        key: 'terminal.idleHint.12',
+        fallback: "Some commands aren't listed. Keep digging.",
         condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.adminUnlocked,
       },
       {
-        hint: "Use 'ls' to see what's in the current directory.",
+        key: 'terminal.idleHint.13',
+        fallback: "Use 'ls' to see what's in the current directory.",
         condition: (s: GameState) => s.sessionCommandCount < 5,
       },
       {
-        hint: 'Some files still carry legacy encryption headers, but recovered text opens directly.',
+        key: 'terminal.idleHint.14',
+        fallback: 'Some files still carry legacy encryption headers, but recovered text opens directly.',
         condition: (s: GameState) =>
           (s.categoriesRead?.size || 0) >= 2 && (s.evidenceCount || 0) < 2,
       },
       {
-        hint: "Try the 'progress' command to see what you've found.",
+        key: 'terminal.idleHint.15',
+        fallback: "Try the 'progress' command to see what you've found.",
         condition: (s: GameState) => (s.evidenceCount || 0) >= 1,
       },
       {
-        hint: "Don't forget: 'note' saves reminders, 'bookmark' saves files.",
+        key: 'terminal.idleHint.16',
+        fallback: "Don't forget: 'note' saves reminders, 'bookmark' saves files.",
         condition: (s: GameState) =>
           (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0,
       },
       {
-        hint: "Check 'unread' to see what you haven't opened yet.",
+        key: 'terminal.idleHint.17',
+        fallback: "Check 'unread' to see what you haven't opened yet.",
         condition: (s: GameState) => (s.filesRead?.size || 0) >= 3,
       },
     ],
@@ -792,7 +834,10 @@ export function useTerminalEffects({
       const hint = uiRandomPick(applicableHints);
 
       // Add UFO74 hint to terminal
-      const hintEntry = createEntry('ufo74', `[UFO74]: ${hint.hint}`);
+      const hintEntry = createEntry(
+        'ufo74',
+        `[UFO74]: ${t(hint.key, undefined, hint.fallback)}`
+      );
       setGameState(prev => ({
         ...prev,
         history: appendToHistory(prev.history, hintEntry),
@@ -819,6 +864,7 @@ export function useTerminalEffects({
     gameStateRef,
     idleHintTimerRef,
     lastScrollTimeRef,
+    t,
   ]);
 
   // Handle skip streaming (spacebar/enter during streaming)

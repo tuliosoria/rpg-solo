@@ -61,6 +61,7 @@ export type ImageTone = 'clinical' | 'surveillance' | 'eerie';
 export interface ImageTrigger {
   src: string;
   alt: string;
+  altKey?: string;
   tone: ImageTone;
   corrupted?: boolean;
   durationMs?: number;

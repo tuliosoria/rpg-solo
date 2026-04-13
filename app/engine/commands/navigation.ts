@@ -180,11 +180,14 @@ export const navigationCommands: CommandRegistry = {
     output.push(createEntry('system', ''));
     for (let i = 1; i <= 5; i++) {
       const symbol = i <= evidenceCount ? EVIDENCE_SYMBOL : '○';
-      const status = i <= evidenceCount ? 'CONFIRMED' : 'PENDING';
       output.push(
-        createEntry(
+        createEntryI18n(
           i <= evidenceCount ? 'output' : 'system',
-          `  ${symbol} EVIDENCE #${i} — ${status}`
+          i <= evidenceCount
+            ? 'engine.commands.navigation.evidence_status.confirmed'
+            : 'engine.commands.navigation.evidence_status.pending',
+          `  ${symbol} EVIDENCE #${i} — ${i <= evidenceCount ? 'CONFIRMED' : 'PENDING'}`,
+          { symbol, index: i }
         )
       );
     }
@@ -193,7 +196,14 @@ export const navigationCommands: CommandRegistry = {
 
     // Summary
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
-    output.push(createEntry('system', `  PROGRESS: ${evidenceCount}/10 evidence links confirmed`));
+    output.push(
+      createEntryI18n(
+        'system',
+        'engine.commands.navigation.progress',
+        `  PROGRESS: ${evidenceCount}/10 evidence links confirmed`,
+        { count: evidenceCount }
+      )
+    );
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '╚═══════════════════════════════════════════════════════╝'));
 

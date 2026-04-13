@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
-import Terminal from '../Terminal';
+import Terminal, { normalizeVideoPromptChoice } from '../Terminal';
 import styles from '../Terminal.module.css';
 import { DEFAULT_GAME_STATE, GameState, TutorialStateID } from '../../types';
 import { I18nProvider } from '../../i18n';
@@ -176,6 +176,15 @@ describe('Terminal Component', () => {
 
     const input = document.querySelector('input');
     expect(input).toBeInTheDocument();
+  });
+
+  it('accepts localized video prompt responses', () => {
+    expect(normalizeVideoPromptChoice('yes')).toBe('yes');
+    expect(normalizeVideoPromptChoice('sim')).toBe('yes');
+    expect(normalizeVideoPromptChoice('sí')).toBe('yes');
+    expect(normalizeVideoPromptChoice('no')).toBe('no');
+    expect(normalizeVideoPromptChoice('não')).toBe('no');
+    expect(normalizeVideoPromptChoice('maybe')).toBeNull();
   });
 
   it('renders UFO74 runs flush without spacer entries', () => {
