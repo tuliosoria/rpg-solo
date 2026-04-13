@@ -20,6 +20,7 @@ jobs:
         with:
           submodules: true
           lfs: false
+          fetch-depth: 0  # Full history so git rev-list --count HEAD returns the real commit count
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
