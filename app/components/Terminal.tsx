@@ -659,7 +659,6 @@ export default function Terminal({
     setShowAttBar,
     setShowAvatar,
     setAvatarCreepyEntrance,
-    setShowTuringTest,
     setIsShaking,
     setShowFirewallScare,
     setEvidenceFoundIndicatorKey,

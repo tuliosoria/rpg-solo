@@ -86,7 +86,6 @@ interface UseTerminalInputOptions {
   setShowAttBar: React.Dispatch<React.SetStateAction<boolean>>;
   setShowAvatar: React.Dispatch<React.SetStateAction<boolean>>;
   setAvatarCreepyEntrance: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
   setIsShaking: React.Dispatch<React.SetStateAction<boolean>>;
   setShowFirewallScare: React.Dispatch<React.SetStateAction<boolean>>;
   setEvidenceFoundIndicatorKey: React.Dispatch<React.SetStateAction<number>>;
@@ -136,7 +135,6 @@ export function useTerminalInput({
   setShowAttBar,
   setShowAvatar,
   setAvatarCreepyEntrance,
-  setShowTuringTest,
   setIsShaking,
   setShowFirewallScare,
   setEvidenceFoundIndicatorKey,
@@ -933,7 +931,6 @@ export function useTerminalInput({
       setShowFirewallScare,
       setShowGameOver,
       setShowRiskTracker,
-      setShowTuringTest,
       showTuringTest,
       onTuringTestTrigger,
       inputRef,
@@ -941,6 +938,7 @@ export function useTerminalInput({
       startAmbient,
       streamOutput,
       streamStartScrollPos,
+      scrollToBottom,
       triggerFlicker,
       setEvidenceFoundIndicatorKey,
     ]
