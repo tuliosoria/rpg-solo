@@ -332,7 +332,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
     trigger: (state, command, args) => {
       if (state.singularEventsTriggered?.has('the_echo')) return false;
       if (shouldSuppressPressure(state)) return false;
-      if (command !== 'open' && command !== 'decrypt') return false;
+      if (command !== 'open') return false;
       const path = args[0]?.toLowerCase() || '';
       return (
         (path.includes('psi') || path.includes('transcript')) &&
@@ -632,9 +632,6 @@ export function calculateHostilityIncrease(state: GameState, command: string): n
 
   if (command === 'trace') return 1;
   if (command === 'override') return 2;
-  if (command === 'decrypt')
-    return state.detectionLevel > DETECTION_THRESHOLDS.DECRYPT_WARNING ? 1 : 0;
-
   if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_HIGH && baseHostility < 4) return 1;
   if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_MED && baseHostility < 3) return 1;
   if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_LOW && baseHostility < 2) return 1;
@@ -652,7 +649,7 @@ function isMeaningfulAction(
   state: GameState,
   result: { output: TerminalEntry[]; stateChanges: Partial<GameState> }
 ): boolean {
-  if (command === 'open' || command === 'decrypt') {
+  if (command === 'open') {
     return true;
   }
   if (command === 'cd' || command === 'ls' || command === 'cat' || command === 'read') {

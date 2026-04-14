@@ -6,7 +6,7 @@ import { GamePhase, GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
 import { getEndingFlags } from '../engine/endings';
-import { resolvePath } from '../engine/filesystem';
+import { getAllAccessibleFiles, resolvePath } from '../engine/filesystem';
 
 import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
@@ -193,8 +193,8 @@ const getEvidenceVideoAttachment = (
   commandInput: string,
   currentPath: string
 ): EvidenceVideoAttachment | null => {
-  // Match open, cat, or decrypt commands (decrypt may have extra args like password)
-  const match = /^(?:open|cat|decrypt)\s+(\S+)/i.exec(commandInput.trim());
+  // Match file-reading commands that can surface attached media prompts.
+  const match = /^(?:open|cat)\s+(\S+)/i.exec(commandInput.trim());
   if (!match) {
     return null;
   }
@@ -250,10 +250,20 @@ interface TerminalProps {
   onLoadCheckpointAction?: (slotId: string) => void;
 }
 
-// Build version from git commit count; commit SHA available on hover
-const DEPLOY_VERSION = `v0.${process.env.NEXT_PUBLIC_BUILD_NUMBER || '0'}.0`;
+const BUILD_NUMBER = process.env.NEXT_PUBLIC_BUILD_NUMBER;
 const COMMIT_SHA = process.env.NEXT_PUBLIC_COMMIT_SHA || 'unknown';
+const HAS_BUILD_METADATA = !!BUILD_NUMBER && /^\d+$/.test(BUILD_NUMBER) && COMMIT_SHA !== 'unknown';
+const DEPLOY_VERSION = HAS_BUILD_METADATA ? `v0.${BUILD_NUMBER}.0` : 'dev-local';
+const VERSION_TOOLTIP = HAS_BUILD_METADATA ? COMMIT_SHA : 'local build';
 const SCREEN_OVERLAY_BOUNDS = { position: 'absolute' as const, inset: 0 };
+
+function shouldShowTutorialSkipPopup(state: GameState): boolean {
+  return (
+    !state.tutorialComplete &&
+    state.tutorialStep === 0 &&
+    state.interactiveTutorialState?.current === TutorialStateID.INTRO
+  );
+}
 
 export default function Terminal({
   initialState,
@@ -355,9 +365,7 @@ export default function Terminal({
 
   // Tutorial skip popup — show only on fresh new games (not loaded saves)
   const [showTutorialSkip, setShowTutorialSkip] = useState(
-    !initialState.tutorialComplete &&
-      initialState.tutorialStep === 0 &&
-      initialState.interactiveTutorialState?.current === TutorialStateID.INTRO
+    shouldShowTutorialSkipPopup(initialState)
   );
   const [pendingEvidenceVideoPrompt, setPendingEvidenceVideoPrompt] =
     useState<EvidenceVideoAttachment | null>(null);
@@ -372,6 +380,7 @@ export default function Terminal({
   const lastScrollTimeRef = useRef<number>(0);
   const timedMechanicPauseStartRef = useRef<number | null>(null);
   const timedMechanicResumeAdjustmentRef = useRef(0);
+  const turingOverlayTimeoutRef = useRef<number | null>(null);
   const hasBlockingPopup =
     showSettings ||
     showAchievements ||
@@ -428,6 +437,12 @@ export default function Terminal({
   const skipStreamingRef = useRef(false);
   const streamStartScrollPos = useRef<number | null>(null);
   const suppressPressure = shouldSuppressPressure(gameState);
+
+  useEffect(() => {
+    setShowTutorialSkip(shouldShowTutorialSkipPopup(initialState));
+  }, [initialState]);
+
+  const totalReadableFiles = useMemo(() => getAllAccessibleFiles(gameState).length, [gameState]);
 
   useEffect(() => {
     uiStateRef.current = {
@@ -615,6 +630,7 @@ export default function Terminal({
     handleIcqMathMistake,
     handleIcqLeakChoice,
     handleIcqFilesSent,
+    handleIcqStateSync,
     handleRestart,
     handleFirewallActivate,
   } = useGameActions({
@@ -838,6 +854,8 @@ export default function Terminal({
       maxDetectionRef,
       prevDetectionRef,
       skipStreamingRef,
+      uiStateRef,
+      turingOverlayTimeoutRef,
     },
   });
 
@@ -1164,12 +1182,20 @@ export default function Terminal({
   if (gamePhase === 'icq') {
     return (
       <ICQChat
+        key={`${gameState.seed}:${gameState.lastSaveTime}`}
         onVictoryAction={handleVictory}
         initialTrust={gameState.icqTrust}
+        initialMessages={gameState.icqMessages}
+        initialPhase={gameState.icqConversationPhase}
+        initialQuestion={gameState.currentMathQuestion}
+        initialQuestionWrongAttempts={gameState.icqCurrentWrongAttempts}
+        initialFilesSent={gameState.filesSent}
+        initialLeakChoice={gameState.choiceLeakPath}
         onTrustChange={handleIcqTrustChange}
         onMathMistake={handleIcqMathMistake}
         onLeakChoice={handleIcqLeakChoice}
         onFilesSent={handleIcqFilesSent}
+        onStateChange={handleIcqStateSync}
       />
     );
   }
@@ -1188,6 +1214,7 @@ export default function Terminal({
         choiceLeakPath={gameState.choiceLeakPath}
         rivalInvestigatorActive={gameState.rivalInvestigatorActive}
         filesReadCount={gameState.filesRead?.size || 0}
+        totalReadableFiles={totalReadableFiles}
         // Multiple endings flags
         conspiracyFilesLeaked={endingFlags.conspiracyFilesLeaked}
         alphaReleased={endingFlags.alphaReleased}
@@ -1329,7 +1356,10 @@ export default function Terminal({
               }
             }}
           >
-            {t('terminal.header.title')} <span className={styles.versionTag} title={COMMIT_SHA}>{DEPLOY_VERSION}</span>{' '}
+            {t('terminal.header.title')}{' '}
+            <span className={styles.versionTag} title={VERSION_TOOLTIP}>
+              {DEPLOY_VERSION}
+            </span>{' '}
             ▼
           </span>
           {/* ESC button */}

@@ -3,9 +3,17 @@
 import { useCallback } from 'react';
 import { createEntryI18n } from '../engine/commands/utils';
 import { hasDiscoveredConspiracyFiles } from '../engine/endings';
-import type { GamePhase, GameState } from '../types';
+import type { GamePhase, GameState, ICQPhase } from '../types';
 import type { SoundType } from './useSound';
 import { appendToHistory } from '../lib/appendToHistory';
+
+interface ICQProgressSnapshot {
+  messages: GameState['icqMessages'];
+  phase: ICQPhase;
+  currentQuestion: number;
+  currentWrongAttempts: number;
+  trust: number;
+}
 
 interface UseGameActionsOptions {
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
@@ -80,6 +88,21 @@ export function useGameActions({
     setGameState(prev => ({ ...prev, filesSent: true }));
   }, [setGameState]);
 
+  const handleIcqStateSync = useCallback(
+    ({ messages, phase, currentQuestion, currentWrongAttempts, trust }: ICQProgressSnapshot) => {
+      setGameState(prev => ({
+        ...prev,
+        icqMessages: messages,
+        icqConversationPhase: phase,
+        currentMathQuestion: currentQuestion,
+        mathQuestionsAnswered: Math.min(currentQuestion, 3),
+        icqCurrentWrongAttempts: currentWrongAttempts,
+        icqTrust: trust,
+      }));
+    },
+    [setGameState]
+  );
+
   const handleRestart = useCallback(() => {
     onExitAction();
   }, [onExitAction]);
@@ -108,6 +131,7 @@ export function useGameActions({
     handleIcqMathMistake,
     handleIcqLeakChoice,
     handleIcqFilesSent,
+    handleIcqStateSync,
     handleRestart,
     handleFirewallActivate,
   };

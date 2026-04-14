@@ -101,8 +101,8 @@ describe('Victory Component', () => {
     expect(unlockAchievement).not.toHaveBeenCalledWith('mathematician');
   });
 
-  it('checks for completionist achievement when filesRead >= 80', () => {
-    render(<Victory {...defaultProps} filesReadCount={85} />);
+  it('checks for completionist achievement when all readable files are found', () => {
+    render(<Victory {...defaultProps} filesReadCount={85} totalReadableFiles={85} />);
     
     expect(unlockAchievement).toHaveBeenCalledWith('completionist');
   });

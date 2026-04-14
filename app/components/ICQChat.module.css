@@ -209,6 +209,24 @@
   cursor: pointer;
 }
 
+.speedButton {
+  padding: 5px 10px;
+  font-family: inherit;
+  font-size: 11px;
+  background: #e8e8e8;
+  border: 2px outset #dfdfdf;
+  cursor: pointer;
+  min-width: 72px;
+}
+
+.speedButton:hover {
+  background: #f0f0f0;
+}
+
+.speedButton:active {
+  border-style: inset;
+}
+
 .sendButton:hover:not(:disabled) {
   background: #d0d0d0;
 }

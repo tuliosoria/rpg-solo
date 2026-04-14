@@ -85,6 +85,14 @@ interface TerminalEffectsRefs {
   inputRef: React.RefObject<HTMLInputElement | null>;
   enterOnlyButtonRef: React.RefObject<HTMLButtonElement | null>;
   gameStateRef: React.MutableRefObject<GameState>;
+  uiStateRef: React.MutableRefObject<{
+    gamePhase: GamePhase;
+    showGameOver: boolean;
+    showTuringTest: boolean;
+    activeImage: ImageTrigger | null;
+    pendingImage: ImageTrigger | null;
+    hasBlockingPopup: boolean;
+  }>;
   streamStartScrollPos: React.MutableRefObject<number | null>;
   typingSpeedWarningTimeout: React.MutableRefObject<NodeJS.Timeout | null>;
   idleHintTimerRef: React.MutableRefObject<NodeJS.Timeout | null>;
@@ -94,6 +102,7 @@ interface TerminalEffectsRefs {
   maxDetectionRef: React.MutableRefObject<number>;
   prevDetectionRef: React.MutableRefObject<number>;
   skipStreamingRef: React.MutableRefObject<boolean>;
+  turingOverlayTimeoutRef: React.MutableRefObject<number | null>;
 }
 
 interface UseTerminalEffectsOptions {
@@ -200,6 +209,7 @@ export function useTerminalEffects({
     inputRef,
     enterOnlyButtonRef,
     gameStateRef,
+    uiStateRef,
     streamStartScrollPos,
     typingSpeedWarningTimeout,
     idleHintTimerRef,
@@ -209,6 +219,7 @@ export function useTerminalEffects({
     maxDetectionRef,
     prevDetectionRef,
     skipStreamingRef,
+    turingOverlayTimeoutRef,
   } = refs;
   const { t } = useI18n();
 
@@ -261,11 +272,7 @@ export function useTerminalEffects({
       if (timedMechanicPauseStartRef.current !== null) {
         return;
       }
-      const adjustment = timedMechanicResumeAdjustmentRef.current;
-      const remaining = Math.max(0, gameState.timedDecryptEndTime + adjustment - Date.now());
-      if (adjustment > 0) {
-        timedMechanicResumeAdjustmentRef.current = 0;
-      }
+      const remaining = Math.max(0, gameState.timedDecryptEndTime - Date.now());
       setTimedDecryptRemaining(remaining);
     };
 
@@ -303,7 +310,7 @@ export function useTerminalEffects({
 
     const pauseDuration = Date.now() - timedMechanicPauseStartRef.current;
     timedMechanicPauseStartRef.current = null;
-    timedMechanicResumeAdjustmentRef.current = pauseDuration;
+    timedMechanicResumeAdjustmentRef.current = 0;
 
     if (pauseDuration <= 0) {
       timedMechanicResumeAdjustmentRef.current = 0;
@@ -428,7 +435,9 @@ export function useTerminalEffects({
   useEffect(() => {
     const interval = setInterval(() => {
       const currentState = gameStateRef.current;
-      if (!currentState.isGameOver) {
+      const isActivePlayPhase =
+        gamePhase === 'terminal' || gamePhase === 'blackout' || gamePhase === 'icq';
+      if (isActivePlayPhase && !currentState.isGameOver && !currentState.gameWon) {
         const savedAt = autoSave(currentState);
         if (typeof savedAt === 'number') {
           setGameState(prev => ({ ...prev, lastSaveTime: savedAt }));
@@ -439,7 +448,7 @@ export function useTerminalEffects({
     }, AUTOSAVE_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, [gameStateRef, setGameState]);
+  }, [gamePhase, gameStateRef, setGameState]);
 
   // Phase transition: when evidencesSaved becomes true, trigger blackout
   // Skip if isGameOver is true to avoid conflicting state (e.g., detection hit 100% on a prior command)
@@ -585,7 +594,26 @@ export function useTerminalEffects({
         }));
 
         // Trigger flicker and show Turing test overlay after delay
-        setTimeout(() => {
+        if (turingOverlayTimeoutRef.current !== null) {
+          window.clearTimeout(turingOverlayTimeoutRef.current);
+        }
+        turingOverlayTimeoutRef.current = window.setTimeout(() => {
+          turingOverlayTimeoutRef.current = null;
+          const currentUi = uiStateRef.current;
+          const latestState = gameStateRef.current;
+          if (
+            currentUi.gamePhase !== 'terminal' ||
+            currentUi.showGameOver ||
+            currentUi.showTuringTest ||
+            currentUi.activeImage ||
+            currentUi.pendingImage ||
+            currentUi.hasBlockingPopup ||
+            latestState.isGameOver ||
+            latestState.gameWon ||
+            !latestState.turingEvaluationActive
+          ) {
+            return;
+          }
           setShowTuringTest(true);
         }, 1500);
       }
@@ -606,9 +634,20 @@ export function useTerminalEffects({
     setRiskPulse,
     setGameState,
     setShowTuringTest,
+    gameStateRef,
     maxDetectionRef,
     prevDetectionRef,
+    turingOverlayTimeoutRef,
+    uiStateRef,
   ]);
+
+  useEffect(() => {
+    return () => {
+      if (turingOverlayTimeoutRef.current !== null) {
+        window.clearTimeout(turingOverlayTimeoutRef.current);
+      }
+    };
+  }, [turingOverlayTimeoutRef]);
 
   // Start ambient sound when tutorial completes
   // Note: We DON'T stop ambient during Turing test - TuringTestOverlay accelerates the music to 1.5x
@@ -643,11 +682,7 @@ export function useTerminalEffects({
       if (timedMechanicPauseStartRef.current !== null) {
         return;
       }
-      const adjustment = timedMechanicResumeAdjustmentRef.current;
-      const remaining = Math.max(0, gameState.countdownEndTime + adjustment - Date.now());
-      if (adjustment > 0) {
-        timedMechanicResumeAdjustmentRef.current = 0;
-      }
+      const remaining = Math.max(0, gameState.countdownEndTime - Date.now());
       const seconds = Math.ceil(remaining / 1000);
 
       if (seconds <= 0) {

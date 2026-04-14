@@ -24,6 +24,7 @@ interface VictoryProps {
   choiceLeakPath?: 'public' | 'covert';
   rivalInvestigatorActive?: boolean;
   filesReadCount?: number;
+  totalReadableFiles?: number;
   // Ending modifier flags
   conspiracyFilesLeaked?: boolean;
   alphaReleased?: boolean;
@@ -41,6 +42,7 @@ export default function Victory({
   choiceLeakPath: _choiceLeakPath,
   rivalInvestigatorActive: _rivalInvestigatorActive = false,
   filesReadCount = 0,
+  totalReadableFiles = 0,
   conspiracyFilesLeaked = false,
   alphaReleased = false,
   neuralLinkAuthenticated = false,
@@ -103,9 +105,8 @@ export default function Victory({
       if (result?.isNew) newAchievements.push(result.achievement);
     }
 
-    // Completionist - read every readable file (roughly 80 files in system)
-    const TOTAL_READABLE_FILES = 80; // Approximate count of accessible files
-    if (filesReadCount >= TOTAL_READABLE_FILES) {
+    // Completionist - read every currently accessible file in the run.
+    if (totalReadableFiles > 0 && filesReadCount >= totalReadableFiles) {
       const result = unlockAchievement('completionist');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
@@ -137,7 +138,18 @@ export default function Victory({
     if (endingResult?.isNew) newAchievements.push(endingResult.achievement);
 
     setAchievements(newAchievements);
-  }, [commandCount, detectionLevel, maxDetectionReached, mathMistakes, filesReadCount, conspiracyFilesLeaked, alphaReleased, neuralLinkAuthenticated, endingVariant]);
+  }, [
+    commandCount,
+    detectionLevel,
+    maxDetectionReached,
+    mathMistakes,
+    filesReadCount,
+    totalReadableFiles,
+    conspiracyFilesLeaked,
+    alphaReleased,
+    neuralLinkAuthenticated,
+    endingVariant,
+  ]);
 
   // Show achievements one by one
   useEffect(() => {

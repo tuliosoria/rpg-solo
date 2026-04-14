@@ -1549,7 +1549,11 @@
   .smokeParticle5,
   .interferenceBurst,
   .statusBar,
-  .progressTracker {
+  .progressTracker,
+  .firewallScareOverlay,
+  .firewallScareEye,
+  .firewallScarePupil,
+  .firewallScareText {
     animation: none !important;
     transition: none !important;
   }

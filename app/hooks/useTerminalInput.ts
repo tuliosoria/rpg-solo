@@ -535,8 +535,7 @@ export function useTerminalInput({
 
       const command = trimmedInput;
       const commandLower = command.toLowerCase().split(' ')[0];
-      const shouldDeferUfo74 =
-        commandLower === 'open' || commandLower === 'decrypt' || commandLower === 'last';
+      const shouldDeferUfo74 = commandLower === 'open' || commandLower === 'last';
       setInputValue('');
 
       const dangerousCommands = ['recover', 'trace', 'override', 'leak'];
@@ -843,14 +842,6 @@ export function useTerminalInput({
         }));
       }
 
-      if (
-        gameState.timedDecryptActive &&
-        !intermediateState.timedDecryptActive &&
-        intermediateState.avatarExpression === 'smirk'
-      ) {
-        playSound('fanfare');
-      }
-
       if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
         playSound('fanfare');
       }
@@ -965,7 +956,7 @@ export function useTerminalInput({
         if (completions.length > 1) {
           const parts = inputValue.trimStart().split(/\s+/);
           const cmd = parts[0]?.toLowerCase();
-          const isFileCommand = cmd === 'open' || cmd === 'decrypt';
+          const isFileCommand = cmd === 'open';
 
           const completionLines: string[] = [];
           completionLines.push(completions.join('  '));

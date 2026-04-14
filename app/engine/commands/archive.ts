@@ -264,7 +264,7 @@ export const archiveCommands: CommandRegistry = {
     }
 
     if (scriptName === 'purge_trace.sh') {
-      if (!state.traceSpikeActive) {
+      if (!state.flags?.traceMonitorReviewed) {
         return {
           output: [
             createEntryI18n(

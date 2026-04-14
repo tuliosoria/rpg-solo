@@ -4025,7 +4025,7 @@ const purge_trace_script: FileNode = {
   type: 'file',
   name: 'purge_trace.sh',
   status: 'intact',
-  requiredFlags: ['traceSpikeActive'],
+  requiredFlags: ['traceMonitorReviewed'],
   content: [
     '#!/bin/bash',
     '# ═══════════════════════════════════════════════════════════',
@@ -4034,7 +4034,7 @@ const purge_trace_script: FileNode = {
     '# ═══════════════════════════════════════════════════════════',
     '',
     '# This utility clears trace artifacts from volatile buffers.',
-    '# Use only during active trace windows.',
+    '# Review active_trace.sys before using this archived utility.',
     '',
     'echo "PURGE: Initiating trace buffer wipe..."',
     'echo ""',

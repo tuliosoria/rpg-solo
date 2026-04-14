@@ -5,10 +5,11 @@ import Menu from '../Menu';
 // Mock the storage module
 vi.mock('../../storage/saves', () => ({
   getSaveSlots: vi.fn(() => []),
+  getSaveSlotsAsync: vi.fn(async () => []),
   deleteSave: vi.fn(),
 }));
 
-import { getSaveSlots, deleteSave } from '../../storage/saves';
+import { getSaveSlots, getSaveSlotsAsync, deleteSave } from '../../storage/saves';
 
 describe('Menu', () => {
   const defaultProps = {
@@ -19,6 +20,7 @@ describe('Menu', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(getSaveSlots).mockReturnValue([]);
+    vi.mocked(getSaveSlotsAsync).mockResolvedValue([]);
   });
 
   afterEach(() => {

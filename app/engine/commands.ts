@@ -23,7 +23,6 @@ import {
   applyHostileFiltering,
   checkWanderingState,
   getIncognitoMessage,
-  performDecryption,
 } from './commands/helpers';
 
 // Import firewall lockdown utilities
@@ -779,136 +778,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     };
   }
 
-  // Check for pending decrypt answer
-  if (state.pendingDecryptFile) {
-    const filePath = state.pendingDecryptFile;
-
-    // Cancel decryption if user types cancel
-    if (normalizedInput.toLowerCase().trim() === 'cancel') {
-      return {
-        output: [
-          createEntryI18n(
-            'system',
-            'engine.commands.core.decryption_cancelled',
-            'Decryption cancelled.'
-          ),
-        ],
-        stateChanges: {
-          pendingDecryptFile: undefined,
-        },
-      };
-    }
-
-    const node = getNode(filePath, state);
-
-    if (node && node.type === 'file') {
-      const file = node as FileNode;
-      if (file.securityQuestion) {
-        const answer = normalizedInput.trim().toLowerCase();
-        const validAnswers = file.securityQuestion.answers.map(a => a.toLowerCase());
-
-        if (validAnswers.includes(answer)) {
-          // Correct answer - perform decryption
-          if (!state.tutorialComplete) {
-            return {
-              output: [
-                createEntryI18n(
-                  'system',
-                  'engine.commands.core.decryption_unavailable_during_transmission',
-                  'Decryption unavailable during transmission.'
-                ),
-              ],
-              stateChanges: {},
-            };
-          }
-          return performDecryption(filePath, file, state);
-        } else {
-          // Wrong answer
-          if (!state.tutorialComplete) {
-            return {
-              output: [
-                createEntryI18n(
-                  'error',
-                  'engine.commands.core.authentication_failed',
-                  'AUTHENTICATION FAILED'
-                ),
-                createEntry('system', ''),
-                createEntry('ufo74', `[UFO74]: ${file.securityQuestion.hint}`),
-                createEntry('system', ''),
-                createEntryI18n(
-                  'system',
-                  'engine.commands.core.enter_answer_or_type_cancel_to_abort',
-                  'Enter answer or type "cancel" to abort:'
-                ),
-              ],
-              stateChanges: {},
-              delayMs: 500,
-            };
-          }
-
-          const newAlertCounter = state.legacyAlertCounter + 1;
-
-          if (newAlertCounter >= 8) {
-            return {
-              output: [
-                createEntryI18n(
-                  'error',
-                  'engine.commands.core.authentication_failed',
-                  'AUTHENTICATION FAILED'
-                ),
-                createEntry('error', ''),
-                createEntry('error', '═══════════════════════════════════════════════════════════'),
-                createEntryI18n(
-                  'error',
-                  'engine.commands.core.critical_security_threshold_exceeded',
-                  'CRITICAL: SECURITY THRESHOLD EXCEEDED'
-                ),
-                createEntry('error', '═══════════════════════════════════════════════════════════'),
-                createEntry('error', ''),
-                createEntryI18n(
-                  'error',
-                  'engine.invalidAttemptThreshold.lockdown',
-                  'SYSTEM LOCKDOWN INITIATED'
-                ),
-              ],
-              stateChanges: {
-                isGameOver: true,
-                gameOverReason: 'SECURITY LOCKDOWN - FAILED AUTHENTICATION',
-                pendingDecryptFile: undefined,
-              },
-              triggerFlicker: true,
-              delayMs: 2000,
-            };
-          }
-
-          return {
-            output: [
-              createEntryI18n(
-                'error',
-                'engine.commands.core.authentication_failed',
-                'AUTHENTICATION FAILED'
-              ),
-              createEntry('warning', `WARNING: Invalid attempts: ${newAlertCounter}/8`),
-              createEntry('system', ''),
-              createEntry('ufo74', `[UFO74]: ${file.securityQuestion.hint}`),
-              createEntry('system', ''),
-              createEntryI18n(
-                'system',
-                'engine.commands.core.enter_answer_or_type_cancel_to_abort',
-                'Enter answer or type "cancel" to abort:'
-              ),
-            ],
-            stateChanges: {
-              legacyAlertCounter: newAlertCounter,
-              detectionLevel: state.detectionLevel + 5,
-            },
-            delayMs: 500,
-          };
-        }
-      }
-    }
-  }
-
   // Check for lockdown
   if (state.legacyAlertCounter >= MAX_WRONG_ATTEMPTS) {
     return {
@@ -937,6 +806,21 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   // Empty command
   if (!command) {
     return { output: [], stateChanges: {} };
+  }
+
+  if (command === 'decrypt') {
+    const target = args[0] || '<filename>';
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntry(
+          'ufo74',
+          `[UFO74]: decrypt is retired. use: open ${target}${args.length > 0 ? '' : ' to read recovered files.'}`
+        ),
+        createEntry('system', ''),
+      ],
+      stateChanges: {},
+    };
   }
 
   // Handle "override protocol" as special case
@@ -1279,7 +1163,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   }
 
   // Check if we should add an incognito message after reading important files
-  if (command === 'open' || command === 'decrypt') {
+  if (command === 'open') {
     const wasSuccessfulRead = !result.output.some(entry => entry.type === 'error');
 
     if (wasSuccessfulRead) {

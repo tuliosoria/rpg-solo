@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SaveSlot, FlickerIntensity, FontSize } from '../types';
-import { getSaveSlots, deleteSave } from '../storage/saves';
+import { getSaveSlots, getSaveSlotsAsync, deleteSave } from '../storage/saves';
 import { useOptions } from '../hooks/useOptions';
 import { useI18n } from '../i18n';
 import styles from './Menu.module.css';
@@ -167,12 +167,24 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
 
   // Load saves when showing load screen
   useEffect(() => {
+    let cancelled = false;
+
     if (screen === 'load') {
       setSaves(getSaveSlots());
       setSelectedIndex(0);
       setLoadError(null);
       setLoadingSaveId(null);
+
+      void getSaveSlotsAsync().then(slots => {
+        if (!cancelled) {
+          setSaves(slots);
+        }
+      });
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [screen]);
 
   // Reset selection when changing screens

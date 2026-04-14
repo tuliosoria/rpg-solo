@@ -30,7 +30,7 @@ import {
 } from '../constants/limits';
 import { MAX_DETECTION } from '../constants/detection';
 import { countEvidence, MAX_EVIDENCE_COUNT } from '../engine/evidenceRevelation';
-import { isCloudAvailable, cloudSave, cloudLoad, cloudDelete } from '../lib/steamBridge';
+import { isCloudAvailable, cloudSave, cloudLoad, cloudDelete, cloudList } from '../lib/steamBridge';
 import { safeSetJSON } from './safeStorage';
 
 const SAVES_KEY = 'terminal1996:saves';
@@ -156,6 +156,13 @@ function deserializeState(json: string): GameState {
   const normalizedSeed = normalizeSeed(baseState.seed) ?? generateSeed();
   const normalizedRngState = normalizeSeed(baseState.rngState) ?? normalizedSeed;
   const parsedFilesRead = toStringArray(parsed.filesRead);
+  const normalizedFlags = toPlainObject(baseState.flags) as Record<string, boolean>;
+
+  if (parsedFilesRead.includes('/sys/active_trace.sys')) {
+    normalizedFlags.traceMonitorReviewed = true;
+  }
+
+  const shouldClearLegacyTraceCountdown = baseState.countdownTriggeredBy === 'trace_spike';
 
   const state = {
     ...baseState,
@@ -188,7 +195,7 @@ function deserializeState(json: string): GameState {
       10
     ),
     wrongAttempts: clampNumber(baseState.wrongAttempts, DEFAULT_GAME_STATE.wrongAttempts, 0, 8),
-    flags: toPlainObject(baseState.flags) as Record<string, boolean>,
+    flags: normalizedFlags,
     fileMutations: toPlainObject(baseState.fileMutations) as Record<string, FileMutation>,
     evidenceCount: clampNumber(parsed.evidenceCount, 0, 0, MAX_EVIDENCE_COUNT),
     singularEventsTriggered: new Set(toStringArray(parsed.singularEventsTriggered)),
@@ -212,6 +219,23 @@ function deserializeState(json: string): GameState {
       : DEFAULT_GAME_STATE.history,
     evidenceLinks: Array.isArray(baseState.evidenceLinks) ? baseState.evidenceLinks : [],
     icqMessages: Array.isArray(baseState.icqMessages) ? baseState.icqMessages : [],
+    ufo74SecretDiscovered:
+      !!baseState.ufo74SecretDiscovered || parsedFilesRead.includes('/sys/ghost_in_machine.enc'),
+    pendingDecryptFile: undefined,
+    timedDecryptActive: false,
+    timedDecryptFile: undefined,
+    timedDecryptSequence: undefined,
+    timedDecryptEndTime: 0,
+    traceSpikeActive: false,
+    countdownActive: shouldClearLegacyTraceCountdown ? false : !!baseState.countdownActive,
+    countdownEndTime: shouldClearLegacyTraceCountdown
+      ? 0
+      : clampNumber(baseState.countdownEndTime, DEFAULT_GAME_STATE.countdownEndTime, 0, Number.MAX_SAFE_INTEGER),
+    countdownTriggeredBy: shouldClearLegacyTraceCountdown
+      ? undefined
+      : typeof baseState.countdownTriggeredBy === 'string'
+        ? baseState.countdownTriggeredBy
+        : undefined,
   } as GameState;
 
   state.evidenceCount =
@@ -434,6 +458,69 @@ export function getSaveSlots(): SaveSlot[] {
     return JSON.parse(raw);
   } catch {
     return [];
+  }
+}
+
+function sortSaveSlots(slots: SaveSlot[]): SaveSlot[] {
+  return [...slots].sort((a, b) => b.timestamp - a.timestamp);
+}
+
+function buildRecoveredCloudSlot(slotId: string, state: GameState): SaveSlot {
+  const timestamp = state.lastSaveTime || state.sessionStartTime || Date.now();
+  return {
+    id: slotId,
+    name: `Recovered ${new Date(timestamp).toLocaleString()}`,
+    timestamp,
+    currentPath: state.currentPath,
+    truthCount: countEvidence(state),
+    detectionLevel: state.detectionLevel,
+  };
+}
+
+export async function getSaveSlotsAsync(signal?: AbortSignal): Promise<SaveSlot[]> {
+  const localSlots = sortSaveSlots(getSaveSlots());
+  if (signal?.aborted) return localSlots;
+
+  try {
+    const cloudAvailable = await isCloudAvailable();
+    if (!cloudAvailable || signal?.aborted) {
+      return localSlots;
+    }
+
+    const cloudResult = await cloudList();
+    if (!cloudResult.success || signal?.aborted) {
+      return localSlots;
+    }
+
+    const seenSlotIds = new Set(localSlots.map(slot => slot.id));
+    const missingCloudSlotIds = cloudResult.files
+      .map(file => file.key)
+      .filter(key => key.startsWith('save_') && !seenSlotIds.has(key));
+
+    if (missingCloudSlotIds.length === 0) {
+      return localSlots;
+    }
+
+    const recoveredSlots = (
+      await Promise.all(
+        missingCloudSlotIds.map(async slotId => {
+          if (signal?.aborted) return null;
+          const cloudData = await loadSaveFromCloud(slotId);
+          if (!cloudData || signal?.aborted) return null;
+
+          try {
+            const state = deserializeState(cloudData);
+            return buildRecoveredCloudSlot(slotId, state);
+          } catch {
+            return null;
+          }
+        })
+      )
+    ).filter((slot): slot is SaveSlot => slot !== null);
+
+    return sortSaveSlots([...localSlots, ...recoveredSlots]);
+  } catch {
+    return localSlots;
   }
 }
 

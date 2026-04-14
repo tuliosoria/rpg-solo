@@ -118,7 +118,7 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Legacy decrypt compatibility', () => {
-    it('opens ghost_in_machine.enc directly without the old password prompt', () => {
+    it('redirects decrypt to open without the old password prompt', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
@@ -129,11 +129,11 @@ describe('Narrative Mechanics', () => {
       const output = result.output.map(e => e.content).join('\n');
 
       expect(output).not.toContain('PASSWORD REQUIRED');
-      expect(output).toContain('old decrypt wrappers are retired');
-      expect(output).toContain('FILE: /sys/ghost_in_machine.enc');
+      expect(output).toContain('decrypt is retired');
+      expect(output).toContain('open /sys/ghost_in_machine.enc');
     });
 
-    it('ignores a wrong password and still opens the recovered file', () => {
+    it('ignores legacy password arguments and still redirects to open', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
@@ -144,20 +144,22 @@ describe('Narrative Mechanics', () => {
       const output = result.output.map(e => e.content).join('\n');
 
       expect(output).not.toContain('DECRYPTION FAILED');
-      expect(output).toContain('FILE: /sys/ghost_in_machine.enc');
+      expect(output).toContain('open /sys/ghost_in_machine.enc');
     });
 
-    it('decrypt reveals UFO74 when the ghost_in_machine password is correct', () => {
+    it('opening ghost_in_machine reveals UFO74 without a separate decrypt step', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
         accessLevel: 3,
       });
-      const result = executeCommand('decrypt /sys/ghost_in_machine.enc varginha1996', state);
-      expect(result.output.some(e => e.content.includes('DECRYPTION SUCCESSFUL'))).toBe(true);
+      const result = executeCommand('open /sys/ghost_in_machine.enc', state);
+      expect(result.output.some(e => e.content.includes('FILE: /sys/ghost_in_machine.enc'))).toBe(
+        true
+      );
       expect(result.stateChanges.ufo74SecretDiscovered).toBe(true);
       expect(result.skipToPhase).toBeUndefined();
-      expect(result.triggerFlicker).toBe(true);
+      expect(result.triggerFlicker).toBe(false);
     });
   });
 
@@ -309,7 +311,7 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('UFO74 Entry Type', () => {
-    it('decrypt ghost_in_machine can emit ufo74 entries', () => {
+    it('legacy decrypt compatibility still emits a UFO74 hint', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
@@ -985,11 +987,11 @@ describe('Narrative Mechanics', () => {
         currentPath: '/tmp',
         countdownActive: true,
         countdownTriggeredBy: 'trace_spike',
-        traceSpikeActive: true,
+        flags: { traceMonitorReviewed: true },
       });
       const result = executeCommand('run purge_trace.sh', state);
-      // Should either clear countdown or show error
-      expect(result.output.length).toBeGreaterThan(0);
+      expect(result.stateChanges.countdownActive).toBe(false);
+      expect(result.stateChanges.tracePurgeUsed).toBe(true);
     });
   });
 

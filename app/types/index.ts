@@ -239,9 +239,11 @@ export interface GameState {
   evidencesSaved: boolean; // True after running save script
   icqPhase: boolean; // True when in ICQ chat mode
   icqMessages: { sender: 'player' | 'teen' | 'system'; text: string; timestamp?: string }[]; // Chat history
+  icqConversationPhase: ICQPhase; // Current ICQ conversation phase for save/load resume
   mathQuestionsAnswered: number; // 0-3, how many equations solved
   currentMathQuestion: number; // Current equation index
   mathQuestionWrong: number; // Wrong attempts on current question
+  icqCurrentWrongAttempts: number; // Wrong attempts within the active ICQ math prompt
   filesSent: boolean; // True after convincing teenager
   gameWon: boolean; // True on victory
   choiceLeakPath?: 'public' | 'covert'; // Final evidence delivery choice
@@ -390,6 +392,7 @@ export type GamePhase =
   | 'secret_ending';
 
 export type EndingType = 'bad' | 'neutral' | 'good' | 'secret';
+export type ICQPhase = 'intro' | 'scared' | 'bargain' | 'math' | 'leak' | 'sending' | 'victory';
 
 export interface CommandResult {
   output: TerminalEntry[];
@@ -473,9 +476,11 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   evidencesSaved: false,
   icqPhase: false,
   icqMessages: [],
+  icqConversationPhase: 'intro',
   mathQuestionsAnswered: 0,
   currentMathQuestion: 0,
   mathQuestionWrong: 0,
+  icqCurrentWrongAttempts: 0,
   filesSent: false,
   gameWon: false,
   choiceLeakPath: undefined,

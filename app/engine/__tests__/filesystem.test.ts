@@ -82,8 +82,8 @@ describe('Filesystem', () => {
       expect(node).not.toBeNull();
     });
 
-    it('resolves requiredFlags against top-level boolean state fields', () => {
-      const state = createTestState({ traceSpikeActive: true });
+    it('resolves requiredFlags against live trace review flags', () => {
+      const state = createTestState({ flags: { traceMonitorReviewed: true } });
       const node = getNode('/tmp/purge_trace.sh', state);
 
       expect(node).not.toBeNull();

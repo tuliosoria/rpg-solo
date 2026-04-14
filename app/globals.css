@@ -39,9 +39,13 @@ body {
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
-/* Remove default focus outlines, we'll style our own */
-*:focus {
+*:focus:not(:focus-visible) {
   outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--terminal-bright-green);
+  outline-offset: 2px;
 }
 
 /* Selection styling */

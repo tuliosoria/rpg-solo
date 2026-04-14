@@ -13,6 +13,7 @@ import { countEvidence } from '../evidenceRevelation';
 import { generateHintOutput } from '../hintSystem';
 import type { CommandRegistry } from './types';
 import { translateStatic } from '../../i18n';
+import { getHelpBasics } from './tutorial';
 
 type TranslationValues = Record<string, string | number>;
 
@@ -29,6 +30,7 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  help           - Show all commands',
+    '  help basics    - Show the new-player guide',
     '  help ls        - Show detailed help for "ls"',
     '  help open      - Show detailed help for "open"',
   ],
@@ -267,6 +269,12 @@ export const systemCommands: CommandRegistry = {
       const cmdName = args[0].toLowerCase();
 
       // Show leak help even before evidence is found — command is visible but locked
+      if (cmdName === 'basics') {
+        return {
+          output: getHelpBasics(),
+          stateChanges: {},
+        };
+      }
 
       const details = COMMAND_HELP[cmdName];
 
@@ -341,6 +349,7 @@ export const systemCommands: CommandRegistry = {
       '═══════════════════════════════════════════════════════════',
       '',
       tSystem('helpMenu.help', '  help [cmd]        Display help (or help for specific command)'),
+      tSystem('helpMenu.basics', '  help basics      Starter guide for first-time players'),
       tSystem('helpMenu.status', '  status            Display system status'),
       tSystem('helpMenu.ls', '  ls                List directory contents'),
       tSystem('helpMenu.cd', '  cd <dir>          Change directory'),

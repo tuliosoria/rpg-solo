@@ -1,4 +1,4 @@
-// Filesystem commands: ls, cd, open, decrypt, tree
+// Filesystem commands: ls, cd, open, tree
 
 import { GameState, TerminalEntry, FileNode, ImageTrigger } from '../../types';
 import {
@@ -23,17 +23,11 @@ import {
 import {
   getWarmupAdjustedDetection,
   applyEvidenceDiscovery,
-  performDecryption,
-  contextRandomPick,
   isArchiveOnlyFile,
 } from './helpers';
 import type { CommandRegistry } from './types';
 
-// Forward reference to commands registry (needed for decrypt -> open redirect)
-let commandsRef: CommandRegistry | null = null;
-export function setCommandsRef(cmds: CommandRegistry) {
-  commandsRef = cmds;
-}
+export function setCommandsRef(_cmds: CommandRegistry) {}
 
 export const filesystemCommands: CommandRegistry = {
   ls: (args, state) => {
@@ -523,13 +517,19 @@ export const filesystemCommands: CommandRegistry = {
         ),
       ];
 
+      const rereadStateChanges: Partial<GameState> = state.tutorialComplete
+        ? {
+            detectionLevel: getWarmupAdjustedDetection(state, 1), // Less detection for re-read
+          }
+        : {};
+
+      if (filePath.includes('ghost_in_machine') && !state.ufo74SecretDiscovered) {
+        rereadStateChanges.ufo74SecretDiscovered = true;
+      }
+
       return {
         output,
-        stateChanges: state.tutorialComplete
-          ? {
-              detectionLevel: getWarmupAdjustedDetection(state, 1), // Less detection for re-read
-            }
-          : {},
+        stateChanges: rereadStateChanges,
         streamingMode: 'fast',
       };
     }
@@ -667,6 +667,10 @@ export const filesystemCommands: CommandRegistry = {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, traceMonitorReviewed: true };
     }
 
+    if (filePath.includes('ghost_in_machine') && !isEncryptedAndLocked) {
+      stateChanges.ufo74SecretDiscovered = true;
+    }
+
     if (filePath.includes('integrity_hashes') && !isEncryptedAndLocked) {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, tamperEvidenceNoted: true };
     }
@@ -790,67 +794,6 @@ export const filesystemCommands: CommandRegistry = {
       ...safeFileNotice,
     ];
 
-    // Add encryption hints for locked encrypted files
-    if (isEncryptedAndLocked) {
-      output.push(createEntry('system', ''));
-      if (file.securityQuestion) {
-        // Security question encrypted file - hint to find answer in system
-        const hints = [
-          'UFO74: this one still hides behind a recovery phrase. look around for clues first.',
-          'UFO74: the answer is somewhere else in the system. keep digging before you force it.',
-          'UFO74: locked tight. find the answer somewhere else before you try the legacy prompt.',
-        ];
-        output.push(
-          createEntry(
-            'ufo74',
-            contextRandomPick(
-              state,
-              hints,
-              'ufo74-security-question-hint',
-              filePath,
-              state.filesRead.size
-            )
-          )
-        );
-        output.push(
-          createEntry(
-            'ufo74',
-            '[UFO74]: once you have the answer, the old recovery wrapper is "decrypt ' +
-              args[0] +
-              '".'
-          )
-        );
-      } else if (file.timedDecrypt) {
-        // Timed decrypt file - hint about the decrypt command
-        output.push(
-          createEntryI18n(
-            'ufo74',
-            'engine.commands.filesystem.ufo74_timed_recovery_wrapper_get_ready_first_then_move_fast',
-            'UFO74: timed recovery wrapper. get ready first, then move fast.'
-          )
-        );
-        output.push(
-          createEntry(
-            'ufo74',
-            '[UFO74]: when you are ready, start it with "decrypt ' + args[0] + '".'
-          )
-        );
-      } else {
-        // Standard encrypted file
-        const hints = [
-          'UFO74: sealed, but not impossible. the old recovery wrapper still works here.',
-          'UFO74: legacy lock. if you need it, use the recovery prompt instead of forcing it.',
-        ];
-        output.push(
-          createEntry(
-            'ufo74',
-            contextRandomPick(state, hints, 'ufo74-encrypted-hint', filePath, state.filesRead.size)
-          )
-        );
-        output.push(createEntry('ufo74', '[UFO74]: legacy wrapper: "decrypt ' + args[0] + '".'));
-      }
-    }
-
     // Check for image trigger - ONLY show if file is decrypted (or not encrypted) AND not shown this run
     let imageTrigger: ImageTrigger | undefined = undefined;
     if (file.imageTrigger && !isEncryptedAndLocked) {
@@ -883,480 +826,6 @@ export const filesystemCommands: CommandRegistry = {
       // Route UFO74 contextual message through encrypted channel (one message per file open)
       pendingUfo74Messages: ufo74ContextMessage || undefined,
     };
-  },
-
-  decrypt: (args, state) => {
-    if (args.length === 0) {
-      return {
-        output: [
-          createEntryI18n(
-            'error',
-            'engine.commands.filesystem.error_specify_file',
-            'ERROR: Specify file'
-          ),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    const filePath = resolvePath(args[0], state.currentPath);
-    const node = getNode(filePath, state);
-
-    if (!node || node.type !== 'file') {
-      return {
-        output: [
-          createEntryI18n(
-            'error',
-            'engine.commands.filesystem.error_file_not_found',
-            'ERROR: File not found'
-          ),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    const file = node as FileNode;
-
-    if (file.status !== 'encrypted') {
-      return {
-        output: [
-          createEntryI18n(
-            'error',
-            'engine.commands.filesystem.error_file_is_not_encrypted',
-            'ERROR: File is not encrypted'
-          ),
-          createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: this ones not encrypted. just use: open ' + args[0]),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    if (!file.decryptedFragment) {
-      return {
-        output: [
-          createEntryI18n(
-            'error',
-            'engine.commands.filesystem.error_no_recoverable_data',
-            'ERROR: No recoverable data'
-          ),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    const legacyPassword = args[1]?.toLowerCase().trim();
-
-    // Preserve the full decrypt flow for files with securityQuestion or timedDecrypt,
-    // and for the hidden UFO74 secret ending (ghost_in_machine + varginha1996).
-    // Only redirect to open() for plain encrypted files without special decrypt logic.
-    const isGhostSecret =
-      filePath.includes('ghost_in_machine') && legacyPassword === 'varginha1996';
-    const hasSpecialDecrypt = !!file.securityQuestion || !!file.timedDecrypt;
-
-    if (!isGhostSecret && !hasSpecialDecrypt) {
-      const openResult = commandsRef!.open([args[0]], state);
-      return {
-        ...openResult,
-        output: [
-          createEntry('system', ''),
-          createEntryI18n(
-            'ufo74',
-            'engine.commands.filesystem.ufo74_old_decrypt_wrappers_are_retired_opening_the_recovered',
-            '[UFO74]: old decrypt wrappers are retired. opening the recovered file directly.'
-          ),
-          ...openResult.output,
-        ],
-      };
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // TIMED DECRYPTION FILES
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    if (file.timedDecrypt) {
-      // If timed decrypt is active and correct sequence provided
-      if (state.timedDecryptActive && state.timedDecryptFile === filePath) {
-        const providedSequence = args.slice(1).join(' ').toUpperCase().trim();
-        const expectedSequence = file.timedDecrypt.sequence.toUpperCase();
-
-        // Check if time expired
-        if (Date.now() > state.timedDecryptEndTime) {
-          return {
-            output: [
-              createEntry('error', ''),
-              createEntryI18n(
-                'error',
-                'engine.commands.filesystem.decryption_window_expired',
-                '▓▓▓ DECRYPTION WINDOW EXPIRED ▓▓▓'
-              ),
-              createEntry('error', ''),
-              createEntryI18n(
-                'warning',
-                'engine.commands.filesystem.time_limit_exceeded',
-                'Time limit exceeded.'
-              ),
-              createEntryI18n(
-                'warning',
-                'engine.commands.filesystem.encryption_re_initialized',
-                'Encryption re-initialized.'
-              ),
-              createEntry('system', ''),
-              createEntry('system', 'Try again with: decrypt ' + args[0]),
-            ],
-            stateChanges: {
-              timedDecryptActive: false,
-              timedDecryptFile: undefined,
-              timedDecryptSequence: undefined,
-              timedDecryptEndTime: 0,
-              detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 8),
-            },
-          };
-        }
-
-        // Check if sequence matches
-        if (providedSequence === expectedSequence) {
-          // Success! Decrypt the file
-          const output: TerminalEntry[] = [
-            createEntry('system', ''),
-            createEntry('system', '═══════════════════════════════════════════════'),
-            createEntryI18n(
-              'system',
-              'engine.commands.filesystem.timed_decryption_successful',
-              '     TIMED DECRYPTION SUCCESSFUL              '
-            ),
-            createEntry('system', '═══════════════════════════════════════════════'),
-            createEntry('system', ''),
-          ];
-
-          for (const line of file.decryptedFragment) {
-            output.push(createEntry('system', line));
-          }
-
-          return {
-            output,
-            stateChanges: {
-              timedDecryptActive: false,
-              timedDecryptFile: undefined,
-              timedDecryptSequence: undefined,
-              timedDecryptEndTime: 0,
-              flags: { ...state.flags, [`decrypted_${filePath.replace(/\//g, '_')}`]: true },
-              detectionLevel: Math.max(0, state.detectionLevel - 3), // Reward for fast decryption
-              avatarExpression: 'smirk', // Successful decrypt - smirk expression
-            },
-          };
-        } else {
-          return {
-            output: [
-              createEntryI18n('error', 'runtime.sequenceMismatch', 'SEQUENCE MISMATCH'),
-              createEntry('error', ''),
-              createEntry('warning', `Expected: ${expectedSequence}`),
-              createEntry('warning', `Received: ${providedSequence || '(empty)'}`),
-              createEntry('system', ''),
-              createEntryI18n(
-                'system',
-                'engine.commands.filesystem.time_remaining_try_again',
-                'Time remaining. Try again.'
-              ),
-            ],
-            stateChanges: {
-              detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 3),
-            },
-          };
-        }
-      }
-
-      // Start timed decryption challenge
-      const endTime = Date.now() + file.timedDecrypt.timeLimit;
-      const timeSeconds = Math.floor(file.timedDecrypt.timeLimit / 1000);
-
-      return {
-        output: [
-          createEntry('warning', ''),
-          createEntryI18n(
-            'warning',
-            'engine.commands.filesystem.timed_decryption_initiated',
-            '▓▓▓ TIMED DECRYPTION INITIATED ▓▓▓'
-          ),
-          createEntry('warning', ''),
-          createEntryI18n(
-            'system',
-            'engine.commands.filesystem.this_file_uses_time_locked_encryption',
-            '  This file uses time-locked encryption.'
-          ),
-          createEntryI18n(
-            'system',
-            'engine.commands.filesystem.you_must_type_the_sequence_before_time_expires',
-            '  You must type the sequence before time expires.'
-          ),
-          createEntry('system', ''),
-          createEntry('warning', `  TIME LIMIT: ${timeSeconds} seconds`),
-          createEntry('system', ''),
-          createEntry('system', '  ┌─────────────────────────────────────┐'),
-          createEntry('system', `  │  SEQUENCE: ${file.timedDecrypt.sequence}  │`),
-          createEntry('system', '  └─────────────────────────────────────┘'),
-          createEntry('system', ''),
-          createEntry('system', `  Type: decrypt ${args[0]} ${file.timedDecrypt.sequence}`),
-          createEntry('system', ''),
-          createEntryI18n('warning', 'engine.commands.filesystem.timer_started', '  TIMER STARTED'),
-        ],
-        stateChanges: {
-          timedDecryptActive: true,
-          timedDecryptFile: filePath,
-          timedDecryptSequence: file.timedDecrypt.sequence,
-          timedDecryptEndTime: endTime,
-        },
-      };
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // PASSWORD-PROTECTED FILES
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    // UFO74 identity file requires password from transfer_authorization.txt
-    if (filePath.includes('ghost_in_machine')) {
-      const password = args[1]?.toLowerCase().trim();
-
-      if (!password) {
-        return {
-          output: [
-            createEntry('warning', '══════════════════════════════════════════════'),
-            createEntryI18n(
-              'warning',
-              'engine.commands.filesystem.password_required',
-              'PASSWORD REQUIRED'
-            ),
-            createEntry('warning', '══════════════════════════════════════════════'),
-            createEntry('system', ''),
-            createEntryI18n(
-              'system',
-              'engine.commands.filesystem.usage_decrypt_ghost_in_machine_enc_password',
-              'Usage: decrypt ghost_in_machine.enc <password>'
-            ),
-            createEntry('system', ''),
-            createEntryI18n(
-              'ufo74',
-              'engine.commands.filesystem.ufo74_this_file_i_don_t_recognize_it',
-              "[UFO74]: This file... I don't recognize it."
-            ),
-            createEntryI18n(
-              'ufo74',
-              'engine.commands.filesystem.ufo74_but_the_encryption_pattern_looks_familiar',
-              '[UFO74]: But the encryption pattern looks familiar.'
-            ),
-          ],
-          stateChanges: {},
-        };
-      }
-
-      if (password !== 'varginha1996') {
-        const stateChanges: Partial<GameState> = {
-          detectionLevel: state.detectionLevel + 5,
-        };
-
-        if (!state.tutorialComplete) {
-          delete stateChanges.detectionLevel;
-        }
-
-        return {
-          output: [
-            createEntryI18n('error', 'engine.commands.chat.decryption_failed', 'DECRYPTION FAILED'),
-            createEntryI18n(
-              'error',
-              'engine.commands.filesystem.invalid_password',
-              'Invalid password'
-            ),
-            createEntry('system', ''),
-            createEntryI18n(
-              'ufo74',
-              'engine.commands.filesystem.ufo74_wrong_password_keep_looking',
-              '[UFO74]: Wrong password. Keep looking.'
-            ),
-          ],
-          stateChanges,
-        };
-      }
-
-      // Password correct - trigger secret ending revelation
-      return {
-        output: [
-          createEntryI18n(
-            'system',
-            'engine.commands.filesystem.decryption_successful',
-            'DECRYPTION SUCCESSFUL'
-          ),
-          createEntry('system', ''),
-          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-          createEntry('warning', ''),
-          createEntryI18n(
-            'warning',
-            'engine.commands.filesystem.classified_personnel_file',
-            '   CLASSIFIED PERSONNEL FILE'
-          ),
-          createEntryI18n(
-            'warning',
-            'engine.commands.filesystem.subject_witness_74_code_name_ufo74',
-            '   SUBJECT: WITNESS #74 - CODE NAME "UFO74"'
-          ),
-          createEntry('warning', ''),
-          createEntryI18n(
-            'output',
-            'engine.commands.filesystem.location_varginha_minas_gerais',
-            '   Location: Varginha, Minas Gerais'
-          ),
-          createEntryI18n(
-            'output',
-            'engine.commands.filesystem.date_january_20_1996',
-            '   Date: January 20, 1996'
-          ),
-          createEntryI18n(
-            'output',
-            'engine.commands.filesystem.status_witness_suppression_failed',
-            '   Status: WITNESS SUPPRESSION FAILED'
-          ),
-          createEntry('output', ''),
-          createEntryI18n(
-            'output',
-            'engine.commands.filesystem.subject_was_present_during_initial',
-            '   Subject was present during initial'
-          ),
-          createEntryI18n(
-            'output',
-            'engine.commands.filesystem.contact_event_demonstrated_unusual',
-            '   contact event. Demonstrated unusual'
-          ),
-          createEntryI18n(
-            'output',
-            'engine.commands.filesystem.resistance_to_memory_alteration',
-            '   resistance to memory alteration'
-          ),
-          createEntryI18n('output', 'engine.commands.filesystem.protocols', '   protocols.'),
-          createEntry('output', ''),
-          createEntryI18n(
-            'output',
-            'engine.commands.filesystem.subject_has_since_accessed_internal',
-            '   Subject has since accessed internal'
-          ),
-          createEntryI18n(
-            'output',
-            'engine.commands.filesystem.networks_repeatedly_motivation_unclear',
-            '   networks repeatedly. Motivation unclear.'
-          ),
-          createEntryI18n(
-            'output',
-            'engine.commands.filesystem.possibly_seeking_validation',
-            '   Possibly seeking validation.'
-          ),
-          createEntry('output', ''),
-          createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-          createEntry('system', ''),
-          createEntryI18n('ufo74', 'terminal.tutorialSkip.ellipsis', '[UFO74]: ...'),
-          createEntryI18n(
-            'ufo74',
-            'engine.commands.filesystem.ufo74_so_you_found_it',
-            '[UFO74]: So you found it.'
-          ),
-          createEntryI18n(
-            'ufo74',
-            'engine.commands.filesystem.ufo74_i_was_there_january_1996',
-            '[UFO74]: I was there. January 1996.'
-          ),
-          createEntryI18n(
-            'ufo74',
-            'engine.commands.filesystem.ufo74_i_saw_what_they_did_what_they_took',
-            '[UFO74]: I saw what they did. What they took.'
-          ),
-          createEntryI18n(
-            'ufo74',
-            'engine.commands.filesystem.ufo74_i_ve_been_inside_their_systems_ever_since',
-            "[UFO74]: I've been inside their systems ever since."
-          ),
-          createEntryI18n(
-            'ufo74',
-            'engine.commands.filesystem.ufo74_not_for_revenge_for_proof',
-            '[UFO74]: Not for revenge. For proof.'
-          ),
-          createEntryI18n(
-            'ufo74',
-            'engine.commands.filesystem.ufo74_you_have_the_proof_now_don_t_let_them_bury_it_again',
-            "[UFO74]: You have the proof now. Don't let them bury it again."
-          ),
-          createEntry('system', ''),
-          createEntryI18n(
-            'warning',
-            'engine.commands.filesystem.the_whole_truth_awaits',
-            '▓▓▓ THE WHOLE TRUTH AWAITS ▓▓▓'
-          ),
-        ],
-        stateChanges: {
-          // Preserve the reveal output so the UI can transition on the next Enter press.
-          ufo74SecretDiscovered: true,
-        },
-        triggerFlicker: true,
-        delayMs: 3000,
-      };
-    }
-
-    // Check access threshold
-    if (file.accessThreshold && state.accessLevel < file.accessThreshold) {
-      return {
-        output: [
-          createEntryI18n(
-            'error',
-            'engine.commands.filesystem.error_decryption_failed',
-            'ERROR: Decryption failed'
-          ),
-          createEntryI18n(
-            'warning',
-            'engine.commands.filesystem.warning_access_level_insufficient',
-            'WARNING: Access level insufficient'
-          ),
-        ],
-        stateChanges: state.tutorialComplete
-          ? {
-              detectionLevel: state.detectionLevel + 10,
-              legacyAlertCounter: state.legacyAlertCounter + 1,
-            }
-          : {},
-        delayMs: 1500,
-      };
-    }
-
-    // If file has a security question, require answer
-    if (file.securityQuestion) {
-      return {
-        output: [
-          createEntryI18n(
-            'system',
-            'engine.commands.filesystem.initiating_decryption_protocol',
-            'Initiating decryption protocol...'
-          ),
-          createEntry('system', ''),
-          createEntry('warning', '══════════════════════════════════════════════'),
-          createEntryI18n(
-            'warning',
-            'engine.commands.filesystem.decryption_authentication_required',
-            'DECRYPTION AUTHENTICATION REQUIRED'
-          ),
-          createEntry('warning', '══════════════════════════════════════════════'),
-          createEntry('system', ''),
-          createEntry('system', file.securityQuestion.question),
-          createEntry('system', ''),
-          createEntryI18n(
-            'system',
-            'engine.commands.filesystem.enter_answer_below',
-            'Enter answer below:'
-          ),
-        ],
-        stateChanges: {
-          pendingDecryptFile: filePath,
-        },
-        delayMs: 500,
-      };
-    }
-
-    // No security question - proceed with decryption
-    return performDecryption(filePath, file, state);
   },
 
   tree: (args, state) => {
