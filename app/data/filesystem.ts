@@ -3985,7 +3985,7 @@ const cafeteria_menu_jan96: FileNode = {
   ],
 };
 
-// Save evidence script - hidden in /tmp until all 5 evidence files are logged
+// Save evidence script - hidden in /tmp until all 10 evidence files are logged
 const save_evidence_script: FileNode = {
   type: 'file',
   name: 'save_evidence.sh',

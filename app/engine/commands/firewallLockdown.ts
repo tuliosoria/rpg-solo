@@ -1,4 +1,4 @@
-// Firewall Lockdown system — mid-game gate at 5 evidence
+// Firewall Lockdown system — mid-game gate at 5 evidence (LOCKDOWN_EVIDENCE_THRESHOLD)
 // Player must find and disable 3 firewall nodes to resume file access.
 // Each node has an obvious security question tied to the game's lore.
 
