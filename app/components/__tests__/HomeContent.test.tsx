@@ -5,10 +5,16 @@ import { DEFAULT_GAME_STATE, GameState } from '../../types';
 
 vi.mock('next/dynamic', () => ({
   default: () =>
-    function DynamicMock(props: { initialState?: { currentPath?: string } }) {
+    function DynamicMock(props: {
+      initialState?: { currentPath?: string };
+      onExitAction?: () => void;
+    }) {
       return (
-        <div data-testid="dynamic-component">
-          {props.initialState?.currentPath ?? 'dynamic-component'}
+        <div>
+          <div data-testid="dynamic-component">
+            {props.initialState?.currentPath ?? 'dynamic-component'}
+          </div>
+          {props.onExitAction && <button onClick={props.onExitAction}>exit</button>}
         </div>
       );
     },
@@ -110,5 +116,19 @@ describe('HomeContent', () => {
     });
 
     expect(screen.getByTestId('dynamic-component')).toHaveTextContent('/new-game');
+  });
+
+  it('loads a saved game successfully and can return to the menu', async () => {
+    vi.mocked(loadGameAsync).mockResolvedValue(createGameState('/loaded-save'));
+
+    render(<HomeContent />);
+
+    fireEvent.click(screen.getByRole('button', { name: /load save/i }));
+
+    expect(await screen.findByTestId('dynamic-component')).toHaveTextContent('/loaded-save');
+
+    fireEvent.click(screen.getByRole('button', { name: /exit/i }));
+
+    expect(screen.getByRole('button', { name: /load save/i })).toBeInTheDocument();
   });
 });

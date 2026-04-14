@@ -151,6 +151,34 @@ describe('Save/Load System', () => {
       expect(loaded!.imagesShownThisRun).toBeInstanceOf(Set);
       expect(loaded!.imagesShownThisRun.size).toBe(0);
     });
+
+    it('loads a saved game through loadGameAsync', async () => {
+      const { saveGame, loadGameAsync } = await import('../saves');
+
+      const state = createTestState({
+        currentPath: '/storage/quarantine',
+        detectionLevel: 42,
+      });
+
+      const slot = saveGame(state, 'Async Save');
+      const loaded = await loadGameAsync(slot!.id);
+
+      expect(loaded).not.toBeNull();
+      expect(loaded!.currentPath).toBe('/storage/quarantine');
+      expect(loaded!.detectionLevel).toBe(42);
+    });
+
+    it('returns null from loadGameAsync when the request has already been aborted', async () => {
+      const { saveGame, loadGameAsync } = await import('../saves');
+      const controller = new AbortController();
+
+      const slot = saveGame(createTestState(), 'Aborted Async Save');
+      controller.abort();
+
+      const loaded = await loadGameAsync(slot!.id, controller.signal);
+
+      expect(loaded).toBeNull();
+    });
   });
 
   describe('save migration support', () => {
