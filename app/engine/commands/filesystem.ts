@@ -553,7 +553,7 @@ export const filesystemCommands: CommandRegistry = {
     if (isSafeFile && state.detectionLevel > DETECTION_FLOOR) {
       // Reduce detection by 1-2 points instead of increasing
       const rng = createSeededRng((state.seed || 0) + filePath.length * 100);
-      const reduction = seededRandomInt(rng, 1, 2);
+      const reduction = seededRandomInt(rng, 1, 3);
       const newDetection = Math.max(DETECTION_FLOOR, state.detectionLevel - reduction);
       detectionChange = newDetection - state.detectionLevel; // Will be negative
 
@@ -568,7 +568,7 @@ export const filesystemCommands: CommandRegistry = {
       );
 
       // Occasionally add UFO74 comment (roughly 1 in 4 safe file reads)
-      const showUFO74 = seededRandomInt(rng, 0, 3) === 0;
+      const showUFO74 = seededRandomInt(rng, 0, 4) === 0;
       if (showUFO74) {
         safeFileNotice.push(
           createEntryI18n(

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { GameState } from '../types';
 import { createNewGame, loadGameAsync, loadCheckpoint } from '../storage/saves';
@@ -18,15 +18,28 @@ function HomeContentInner() {
   const [view, setView] = useState<View>('menu');
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const loadRequestIdRef = useRef(0);
+
+  const invalidatePendingLoads = useCallback(() => {
+    loadRequestIdRef.current += 1;
+  }, []);
 
   const handleNewGame = useCallback(() => {
+    invalidatePendingLoads();
     const newState = createNewGame();
     setGameState(newState);
     setView('game');
-  }, []);
+  }, [invalidatePendingLoads]);
 
-  const handleLoadGame = useCallback(async (slotId: string) => {
-    const loadedState = await loadGameAsync(slotId);
+  const handleLoadGame = useCallback(async (slotId: string, signal?: AbortSignal) => {
+    const requestId = loadRequestIdRef.current + 1;
+    loadRequestIdRef.current = requestId;
+    const loadedState = await loadGameAsync(slotId, signal);
+
+    if (signal?.aborted || requestId !== loadRequestIdRef.current) {
+      return false;
+    }
+
     if (loadedState) {
       setGameState(loadedState);
       setView('game');
@@ -36,6 +49,7 @@ function HomeContentInner() {
   }, []);
 
   const handleLoadCheckpoint = useCallback((slotId: string) => {
+    invalidatePendingLoads();
     const loadedState = loadCheckpoint(slotId);
     if (loadedState) {
       // Reset game over state when loading checkpoint
@@ -46,12 +60,13 @@ function HomeContentInner() {
       });
       setView('game');
     }
-  }, []);
+  }, [invalidatePendingLoads]);
 
   const handleExit = useCallback(() => {
+    invalidatePendingLoads();
     setView('menu');
     setGameState(null);
-  }, []);
+  }, [invalidatePendingLoads]);
 
   const handleSaveRequest = useCallback((state: GameState) => {
     setGameState(state);

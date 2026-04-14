@@ -79,8 +79,16 @@ export function determineEndingVariant(flags: EndingFlags): EndingVariant {
  * Get the ending flags from the game state
  */
 export function getEndingFlags(state: GameState): EndingFlags {
+  const hasExplicitConspiracyChoice = Object.prototype.hasOwnProperty.call(
+    state.flags,
+    'conspiracyFilesLeaked'
+  );
+  const conspiracyFilesLeaked = hasExplicitConspiracyChoice
+    ? state.flags.conspiracyFilesLeaked === true
+    : state.choiceLeakPath === 'public' && hasDiscoveredConspiracyFiles(state);
+
   return {
-    conspiracyFilesLeaked: state.flags.conspiracyFilesLeaked === true,
+    conspiracyFilesLeaked,
     alphaReleased: state.flags.alphaReleased === true,
     neuralLinkAuthenticated: state.flags.neuralLinkAuthenticated === true,
   };

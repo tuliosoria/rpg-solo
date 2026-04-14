@@ -185,7 +185,37 @@ describe('Menu', () => {
       fireEvent.click(screen.getByRole('button', { name: /LOAD GAME/i }));
       fireEvent.click(screen.getByText('Test Save'));
 
-      expect(defaultProps.onLoadGameAction).toHaveBeenCalledWith('save-1');
+      expect(defaultProps.onLoadGameAction).toHaveBeenCalledWith('save-1', expect.any(AbortSignal));
+    });
+
+    it('aborts a pending load when returning to the main menu', () => {
+      vi.mocked(getSaveSlots).mockReturnValue([
+        {
+          id: 'save-1',
+          name: 'Test Save',
+          timestamp: Date.now(),
+          currentPath: '/home/hackerkid',
+          truthCount: 3,
+          detectionLevel: 45,
+        },
+      ]);
+      let loadSignal: AbortSignal | undefined;
+      const onLoadGameAction = vi.fn((_slotId: string, signal?: AbortSignal) => {
+        loadSignal = signal;
+        return new Promise<boolean>(() => {});
+      });
+
+      render(<Menu {...defaultProps} onLoadGameAction={onLoadGameAction} />);
+
+      fireEvent.click(screen.getByRole('button', { name: /LOAD GAME/i }));
+      fireEvent.click(screen.getByText('Test Save'));
+
+      expect(loadSignal?.aborted).toBe(false);
+
+      fireEvent.click(screen.getByRole('button', { name: /BACK/i }));
+
+      expect(loadSignal?.aborted).toBe(true);
+      expect(screen.getByText('VARGINHA')).toBeInTheDocument();
     });
 
     it('shows delete button on save slots', () => {

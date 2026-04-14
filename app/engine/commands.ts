@@ -289,7 +289,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       createEntry('system', title),
       createEntryI18n(
         'output',
-        'engine.commands.core.evidence_count_set_to_5_5',
+        'engine.commands.core.evidence_count_set_to_10_10',
         'Evidence count set to 10/10'
       ),
       createEntryI18n(

@@ -37,6 +37,12 @@ const SAVES_KEY = 'terminal1996:saves';
 const SAVE_PREFIX = 'terminal1996:save:';
 const CHECKPOINTS_KEY = 'terminal1996:checkpoints';
 const CHECKPOINT_PREFIX = 'terminal1996:checkpoint:';
+let checkpointIdCounter = 0;
+
+function createCheckpointId(timestamp: number): string {
+  checkpointIdCounter += 1;
+  return `checkpoint_${timestamp}_${checkpointIdCounter}`;
+}
 
 // Interface for versioned save data
 interface VersionedSaveData {
@@ -502,17 +508,23 @@ export function loadGame(slotId: string): GameState | null {
  * Loads a saved game state by slot ID, with async Steam Cloud support.
  * Attempts to load from Steam Cloud first, falls back to localStorage.
  * @param slotId - The unique identifier of the save slot
+ * @param signal - Optional abort signal for ignoring stale load requests
  * @returns The deserialized GameState, or null if not found
  */
-export async function loadGameAsync(slotId: string): Promise<GameState | null> {
-  if (!isBrowserWithStorage()) return null;
+export async function loadGameAsync(
+  slotId: string,
+  signal?: AbortSignal
+): Promise<GameState | null> {
+  if (!isBrowserWithStorage() || signal?.aborted) return null;
 
   try {
     // Try Steam Cloud first
     const cloudData = await loadSaveFromCloud(slotId);
+    if (signal?.aborted) return null;
     if (cloudData) {
       try {
         const cloudState = deserializeState(cloudData);
+        if (signal?.aborted) return null;
         // Also update localStorage with cloud data for offline access
         window.localStorage.setItem(SAVE_PREFIX + slotId, cloudData);
         return cloudState;
@@ -522,8 +534,9 @@ export async function loadGameAsync(slotId: string): Promise<GameState | null> {
     }
 
     // Fall back to localStorage
+    if (signal?.aborted) return null;
     const raw = window.localStorage.getItem(SAVE_PREFIX + slotId);
-    if (!raw) return null;
+    if (signal?.aborted || !raw) return null;
     return deserializeState(raw);
   } catch {
     return null;
@@ -697,8 +710,8 @@ export function getCheckpointSlots(): CheckpointSlot[] {
 export function saveCheckpoint(state: GameState, reason: string): CheckpointSlot | null {
   if (!isBrowserWithStorage()) return null;
 
-  const id = `checkpoint_${Date.now()}`;
   const now = Date.now();
+  const id = createCheckpointId(now);
   const evidenceCount = countEvidence(state);
 
   const slot: CheckpointSlot = {

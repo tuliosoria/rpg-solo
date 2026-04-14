@@ -123,6 +123,48 @@ describe('Multiple Endings System', () => {
         neuralLinkAuthenticated: false,
       });
     });
+
+    it('falls back to the public ICQ leak choice when conspiracy files were discovered', () => {
+      const state = createTestState({
+        flags: {},
+        choiceLeakPath: 'public',
+        conspiracyFilesSeen: new Set(['/internal/misc/economic_transition_memo.txt']),
+      });
+
+      expect(getEndingFlags(state)).toEqual({
+        conspiracyFilesLeaked: true,
+        alphaReleased: false,
+        neuralLinkAuthenticated: false,
+      });
+    });
+
+    it('does not infer conspiracy leakage without discovered conspiracy files', () => {
+      const state = createTestState({
+        flags: {},
+        choiceLeakPath: 'public',
+        conspiracyFilesSeen: new Set<string>(),
+      });
+
+      expect(getEndingFlags(state)).toEqual({
+        conspiracyFilesLeaked: false,
+        alphaReleased: false,
+        neuralLinkAuthenticated: false,
+      });
+    });
+
+    it('prefers an explicit conspiracyFilesLeaked flag over legacy leak-choice fallback', () => {
+      const state = createTestState({
+        flags: { conspiracyFilesLeaked: false },
+        choiceLeakPath: 'public',
+        conspiracyFilesSeen: new Set(['/internal/misc/economic_transition_memo.txt']),
+      });
+
+      expect(getEndingFlags(state)).toEqual({
+        conspiracyFilesLeaked: false,
+        alphaReleased: false,
+        neuralLinkAuthenticated: false,
+      });
+    });
   });
 
   describe('generateEnding', () => {

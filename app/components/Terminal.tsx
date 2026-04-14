@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { GamePhase, GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
+import { getEndingFlags } from '../engine/endings';
 import { resolvePath } from '../engine/filesystem';
 
 import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
@@ -1174,6 +1175,7 @@ export default function Terminal({
   }
 
   if (gamePhase === 'victory') {
+    const endingFlags = getEndingFlags(gameState);
     return (
       <Victory
         onRestartAction={handleRestart}
@@ -1187,9 +1189,9 @@ export default function Terminal({
         rivalInvestigatorActive={gameState.rivalInvestigatorActive}
         filesReadCount={gameState.filesRead?.size || 0}
         // Multiple endings flags
-        conspiracyFilesLeaked={gameState.flags?.conspiracyFilesLeaked || false}
-        alphaReleased={gameState.flags?.alphaReleased || false}
-        neuralLinkAuthenticated={gameState.flags?.neuralLinkAuthenticated || false}
+        conspiracyFilesLeaked={endingFlags.conspiracyFilesLeaked}
+        alphaReleased={endingFlags.alphaReleased}
+        neuralLinkAuthenticated={endingFlags.neuralLinkAuthenticated}
       />
     );
   }

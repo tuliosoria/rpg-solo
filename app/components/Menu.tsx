@@ -9,7 +9,10 @@ import styles from './Menu.module.css';
 
 interface MenuProps {
   onNewGameAction: () => void;
-  onLoadGameAction: (slotId: string) => void | boolean | Promise<void | boolean>;
+  onLoadGameAction: (
+    slotId: string,
+    signal?: AbortSignal
+  ) => void | boolean | Promise<void | boolean>;
 }
 
 type Screen = 'main' | 'load' | 'credits' | 'options';
@@ -21,6 +24,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loadingSaveId, setLoadingSaveId] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const loadAbortControllerRef = useRef<AbortController | null>(null);
 
   // Options state
   const { options, setOption } = useOptions();
@@ -80,28 +84,60 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
     [cycleLanguage, options, setOption]
   );
 
+  const abortPendingLoad = useCallback(() => {
+    loadAbortControllerRef.current?.abort();
+    loadAbortControllerRef.current = null;
+  }, []);
+
+  const handleReturnToMain = useCallback(() => {
+    abortPendingLoad();
+    setLoadingSaveId(null);
+    setLoadError(null);
+    setScreen('main');
+  }, [abortPendingLoad]);
+
+  const handleStartNewGame = useCallback(() => {
+    abortPendingLoad();
+    setLoadingSaveId(null);
+    setLoadError(null);
+    onNewGameAction();
+  }, [abortPendingLoad, onNewGameAction]);
+
   const handleLoadSelection = useCallback(
     (slotId: string) => {
       if (loadingSaveId) return;
-
-      const showLoadError = () => {
-        setLoadError(t('menu.load.failed'));
+      const controller = new AbortController();
+      const isCurrentLoad = () => loadAbortControllerRef.current === controller;
+      const clearCurrentLoad = () => {
+        if (!isCurrentLoad()) return;
+        loadAbortControllerRef.current = null;
         setLoadingSaveId(current => (current === slotId ? null : current));
       };
 
+      const showLoadError = () => {
+        if (controller.signal.aborted || !isCurrentLoad()) return;
+        setLoadError(t('menu.load.failed'));
+        clearCurrentLoad();
+      };
+
+      abortPendingLoad();
+      loadAbortControllerRef.current = controller;
       setLoadError(null);
       setLoadingSaveId(slotId);
 
       try {
-        const result = onLoadGameAction(slotId);
+        const result = onLoadGameAction(slotId, controller.signal);
         if (result && typeof (result as Promise<boolean | void>).then === 'function') {
           void Promise.resolve(result)
             .then(loaded => {
+              if (controller.signal.aborted || !isCurrentLoad()) {
+                return;
+              }
               if (loaded === false) {
                 showLoadError();
                 return;
               }
-              setLoadingSaveId(current => (current === slotId ? null : current));
+              clearCurrentLoad();
             })
             .catch(() => {
               showLoadError();
@@ -109,17 +145,20 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
           return;
         }
 
+        if (controller.signal.aborted || !isCurrentLoad()) {
+          return;
+        }
         if (result === false) {
           showLoadError();
           return;
         }
 
-        setLoadingSaveId(current => (current === slotId ? null : current));
+        clearCurrentLoad();
       } catch {
         showLoadError();
       }
     },
-    [loadingSaveId, onLoadGameAction, t]
+    [abortPendingLoad, loadingSaveId, onLoadGameAction, t]
   );
 
   // Refs for menu buttons for focus management
@@ -179,7 +218,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         case 'Enter':
           e.preventDefault();
           if (screen === 'main') {
-            if (selectedIndex === 0) onNewGameAction();
+            if (selectedIndex === 0) handleStartNewGame();
             else if (selectedIndex === 1) setScreen('load');
             else if (selectedIndex === 2) setScreen('options');
             else if (selectedIndex === 3) setScreen('credits');
@@ -187,7 +226,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             if (saves.length > 0 && selectedIndex < saves.length) {
               void handleLoadSelection(saves[selectedIndex].id);
             } else if (selectedIndex === saves.length || saves.length === 0) {
-              setScreen('main');
+              handleReturnToMain();
             }
           } else if (screen === 'credits') {
             setScreen('main');
@@ -202,7 +241,11 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         case 'Escape':
           e.preventDefault();
           if (screen !== 'main') {
-            setScreen('main');
+            if (screen === 'load') {
+              handleReturnToMain();
+            } else {
+              setScreen('main');
+            }
           }
           break;
       }
@@ -211,7 +254,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
       screen,
       selectedIndex,
       saves,
-      onNewGameAction,
+      handleStartNewGame,
+      handleReturnToMain,
       handleLoadSelection,
       adjustOptionValue,
     ]
@@ -221,6 +265,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
+
+  useEffect(() => () => abortPendingLoad(), [abortPendingLoad]);
 
   const handleDelete = (slotId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -248,7 +294,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
       <div className={styles.menuOptions}>
         <button
           className={`${styles.menuButton} ${selectedIndex === 0 ? styles.selected : ''}`}
-          onClick={onNewGameAction}
+          onClick={handleStartNewGame}
           onMouseEnter={() => setSelectedIndex(0)}
         >
           {selectedIndex === 0 ? '▶ ' : '  '}{t('menu.main.newGame')}
@@ -345,7 +391,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
 
       <button
         className={`${styles.backButton} ${selectedIndex === saves.length ? styles.selected : ''}`}
-        onClick={() => setScreen('main')}
+        onClick={handleReturnToMain}
         onMouseEnter={() => setSelectedIndex(saves.length)}
       >
         {selectedIndex === saves.length ? '▶ ' : '  '}{t('menu.load.back')}

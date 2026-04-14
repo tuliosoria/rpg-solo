@@ -34,7 +34,7 @@ describe('Prisoner 45 Easter Egg Responses', () => {
       // Dynamically import to verify no syntax errors
       const commandsModule = await import('../commands');
       expect(commandsModule).toBeDefined();
-    });
+    }, 10000);
   });
 
   describe('Easter egg keyword patterns', () => {

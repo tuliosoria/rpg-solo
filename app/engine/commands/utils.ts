@@ -2,7 +2,7 @@
 
 import { GameState, CommandResult, TerminalEntry } from '../../types';
 import { MAX_COMMAND_INPUT_LENGTH } from '../../constants/limits';
-import { createSeededRng, uiChance } from '../rng';
+import { createSeededRng, uiChance, uiRandomInt, uiRandomPick } from '../rng';
 import { DETECTION_THRESHOLDS, applyWarmupDetection } from '../../constants/detection';
 
 // Generate unique ID for terminal entries
@@ -158,7 +158,7 @@ export function shouldFlicker(state: GameState): boolean {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// TERMINAL PERSONALITY
+// TERMINAL PERSONALITY - Typos that self-correct, hesitation for scary content
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Add hesitation dots before scary/classified content
@@ -167,6 +167,36 @@ export function addHesitation(text: string, intensity: number = 1): string[] {
   return [dots + dots + dots, text];
 }
 
+// Create a typo version of text that will be followed by correction
+// Returns [typo, correction] or [original] if no typo needed
+export function maybeAddTypo(text: string, chance: number = 0.1): string[] {
+  if (!uiChance(chance) || text.length < 5) return [text];
+
+  // Common typo patterns for terminal "personality"
+  const typoTypes = [
+    // Letter swap
+    (s: string) => {
+      const i = uiRandomInt(1, s.length - 1);
+      return s.substring(0, i) + s[i + 1] + s[i] + s.substring(i + 2);
+    },
+    // Double letter
+    (s: string) => {
+      const i = uiRandomInt(0, s.length);
+      return s.substring(0, i) + s[i] + s[i] + s.substring(i + 1);
+    },
+    // Missing letter
+    (s: string) => {
+      const i = uiRandomInt(0, s.length);
+      return s.substring(0, i) + s.substring(i + 1);
+    },
+  ];
+
+  const typoFn = uiRandomPick(typoTypes);
+  const typo = typoFn(text);
+
+  // Return typo followed by backspace simulation and correction
+  return [typo, `[CORRECTION] ${text}`];
+}
 
 // Wrap UFO74 messages with transmission banner
 // Note: With the new encrypted channel system, these messages will be queued

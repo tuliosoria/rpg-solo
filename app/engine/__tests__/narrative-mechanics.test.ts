@@ -187,6 +187,23 @@ describe('Narrative Mechanics', () => {
       });
     });
 
+    describe('safe internal files', () => {
+      it('can reduce detection by two points on a deterministic safe-file read', () => {
+        const state = createTestState({
+          seed: 1,
+          rngState: 1,
+          currentPath: '/internal/admin',
+          detectionLevel: 20,
+        });
+        const result = executeCommand('open maintenance_schedule.txt', state);
+
+        expect(result.stateChanges.detectionLevel).toBe(18);
+        expect(
+          result.output.some(e => e.content.includes('[SYSTEM: access pattern normalized]'))
+        ).toBe(true);
+      });
+    });
+
     describe('transfer_authorization.txt', () => {
       it('reveals password when read', () => {
         const state = createTestState({ currentPath: '/internal/personnel' });
@@ -534,6 +551,19 @@ describe('Narrative Mechanics', () => {
 
       expect(result.output.some(e => e.content.includes('SYSTEM STATUS'))).toBe(true);
       expect(result.output.some(e => e.content.includes('LOGGING'))).toBe(true);
+    });
+
+    it('status command does not end the session after all evidence is found', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        evidenceCount: 10,
+      });
+      const result = executeCommand('status', state);
+
+      expect(result.output.some(e => e.content.includes('SESSION ARCHIVED'))).toBe(true);
+      expect(result.stateChanges.isGameOver).toBeUndefined();
+      expect(result.stateChanges.gameOverReason).toBeUndefined();
     });
 
     it('cd command changes directory', () => {

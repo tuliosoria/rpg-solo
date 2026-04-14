@@ -151,6 +151,34 @@ describe('Save/Load System', () => {
       expect(loaded!.imagesShownThisRun).toBeInstanceOf(Set);
       expect(loaded!.imagesShownThisRun.size).toBe(0);
     });
+
+    it('loads a saved game through loadGameAsync', async () => {
+      const { saveGame, loadGameAsync } = await import('../saves');
+
+      const state = createTestState({
+        currentPath: '/storage/quarantine',
+        detectionLevel: 42,
+      });
+
+      const slot = saveGame(state, 'Async Save');
+      const loaded = await loadGameAsync(slot!.id);
+
+      expect(loaded).not.toBeNull();
+      expect(loaded!.currentPath).toBe('/storage/quarantine');
+      expect(loaded!.detectionLevel).toBe(42);
+    });
+
+    it('returns null from loadGameAsync when the request has already been aborted', async () => {
+      const { saveGame, loadGameAsync } = await import('../saves');
+      const controller = new AbortController();
+
+      const slot = saveGame(createTestState(), 'Aborted Async Save');
+      controller.abort();
+
+      const loaded = await loadGameAsync(slot!.id, controller.signal);
+
+      expect(loaded).toBeNull();
+    });
   });
 
   describe('save migration support', () => {
@@ -660,6 +688,22 @@ describe('Save/Load System', () => {
 
       // Most recent should be first
       expect(slots[0].reason).toBe('Checkpoint 6');
+    });
+
+    it('creates unique checkpoint ids when multiple checkpoints land in the same millisecond', async () => {
+      const { saveCheckpoint, getCheckpointSlots } = await import('../saves');
+      const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(1_700_000_000_000);
+      const state = createTestState();
+
+      const first = saveCheckpoint(state, 'Checkpoint A');
+      const second = saveCheckpoint(state, 'Checkpoint B');
+
+      expect(first).not.toBeNull();
+      expect(second).not.toBeNull();
+      expect(first!.id).not.toBe(second!.id);
+      expect(getCheckpointSlots().map(slot => slot.id)).toEqual([second!.id, first!.id]);
+
+      nowSpy.mockRestore();
     });
 
     it('drops at least one existing checkpoint before retrying a quota-limited write', async () => {
