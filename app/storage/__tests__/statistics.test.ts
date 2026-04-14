@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // We need to isolate tests by clearing localStorage before each test
 // and by resetting the module state
@@ -6,10 +6,21 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 describe('Statistics Storage', () => {
   // Store for mock
   let mockStore: Record<string, string> = {};
+  let originalLocalStorage: Storage;
+
+  const installLocalStorageMock = (mockLocalStorage: Storage) => {
+    vi.stubGlobal('localStorage', mockLocalStorage);
+    Object.defineProperty(window, 'localStorage', {
+      value: mockLocalStorage,
+      writable: true,
+      configurable: true,
+    });
+  };
 
   beforeEach(async () => {
     // Clear the mock store
     mockStore = {};
+    originalLocalStorage = window.localStorage;
     
     // Reset modules to ensure fresh imports
     vi.resetModules();
@@ -24,8 +35,16 @@ describe('Statistics Storage', () => {
       key: () => null,
     };
     
-    // Mock localStorage globally
-    vi.stubGlobal('localStorage', mockLocalStorage);
+    installLocalStorageMock(mockLocalStorage as Storage);
+  });
+
+  afterEach(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: originalLocalStorage,
+      writable: true,
+      configurable: true,
+    });
+    vi.unstubAllGlobals();
   });
 
   describe('getStatistics', () => {

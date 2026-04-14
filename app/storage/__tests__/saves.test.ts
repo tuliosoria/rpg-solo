@@ -1,5 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { DEFAULT_GAME_STATE, GameState } from '../../types';
+
+type StorageMock = Pick<Storage, 'getItem' | 'setItem' | 'removeItem' | 'clear' | 'length' | 'key'>;
 
 // Helper to create a valid test state with required fields
 function createTestState(overrides: Partial<GameState> = {}): GameState {
@@ -33,12 +35,23 @@ function createQuotaExceededError(): DOMException {
 
 describe('Save/Load System', () => {
   let mockStore: Record<string, string> = {};
+  let originalLocalStorage: Storage;
+
+  const installLocalStorageMock = (localStorageMock: StorageMock) => {
+    vi.stubGlobal('localStorage', localStorageMock);
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+      writable: true,
+      configurable: true,
+    });
+  };
 
   beforeEach(async () => {
     mockStore = {};
     vi.resetModules();
+    originalLocalStorage = window.localStorage;
 
-    const mockLocalStorage = {
+    const mockLocalStorage: StorageMock = {
       getItem: (key: string) => mockStore[key] || null,
       setItem: (key: string, value: string) => {
         mockStore[key] = value;
@@ -53,9 +66,16 @@ describe('Save/Load System', () => {
       key: () => null,
     };
 
-    vi.stubGlobal('localStorage', mockLocalStorage);
-    vi.stubGlobal('document', {});
-    vi.stubGlobal('window', { localStorage: mockLocalStorage });
+    installLocalStorageMock(mockLocalStorage);
+  });
+
+  afterEach(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: originalLocalStorage,
+      writable: true,
+      configurable: true,
+    });
+    vi.unstubAllGlobals();
   });
 
   describe('serialization round-trip', () => {
@@ -423,10 +443,10 @@ describe('Save/Load System', () => {
         key: () => null,
       };
 
-      vi.stubGlobal('localStorage', quotaLimitedStorage);
-      vi.stubGlobal('window', { localStorage: quotaLimitedStorage });
+      installLocalStorageMock(quotaLimitedStorage);
 
-      const oldestSlot = existingSlots[existingSlots.length - 1];
+      const oldestSlot = getSaveSlots().at(-1);
+      expect(oldestSlot).toBeDefined();
       const newSlot = saveGame({ ...state, detectionLevel: 99 }, 'Newest Save');
 
       expect(newSlot).not.toBeNull();
@@ -473,8 +493,7 @@ describe('Save/Load System', () => {
         length: 0,
         key: () => null,
       };
-      vi.stubGlobal('localStorage', mockLocalStorage);
-      vi.stubGlobal('window', { localStorage: mockLocalStorage });
+      installLocalStorageMock(mockLocalStorage);
 
       const { getSaveSlots } = await import('../saves');
 
@@ -670,10 +689,10 @@ describe('Save/Load System', () => {
         key: () => null,
       };
 
-      vi.stubGlobal('localStorage', quotaLimitedStorage);
-      vi.stubGlobal('window', { localStorage: quotaLimitedStorage });
+      installLocalStorageMock(quotaLimitedStorage);
 
-      const oldestSlot = existingSlots[existingSlots.length - 1];
+      const oldestSlot = getCheckpointSlots().at(-1);
+      expect(oldestSlot).toBeDefined();
       const newSlot = saveCheckpoint({ ...state, detectionLevel: 99 }, 'Newest Checkpoint');
 
       expect(newSlot).not.toBeNull();
@@ -737,8 +756,7 @@ describe('Save/Load System', () => {
         length: 0,
         key: () => null,
       };
-      vi.stubGlobal('localStorage', mockLocalStorage);
-      vi.stubGlobal('window', { localStorage: mockLocalStorage });
+      installLocalStorageMock(mockLocalStorage);
 
       const { getCheckpointSlots, getLatestCheckpoint } = await import('../saves');
 

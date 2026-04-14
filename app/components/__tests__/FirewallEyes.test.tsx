@@ -230,7 +230,7 @@ describe('FirewallEyes', () => {
 });
 
 describe('Tutorial Popup', () => {
-  const baseProps = {
+  const createBaseProps = () => ({
     detectionLevel: 30,
     firewallActive: true,
     firewallDisarmed: false,
@@ -255,34 +255,45 @@ describe('Tutorial Popup', () => {
     onActivateFirewall: vi.fn(),
     onPauseChanged: vi.fn(),
     onTutorialShown: vi.fn(),
-  };
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   it('shows tutorial popup when eyes first appear and tutorial not shown', () => {
-    const { container } = render(<FirewallEyes {...baseProps} />);
-    
+    const props = createBaseProps();
+    const { container } = render(<FirewallEyes {...props} />);
+
     // Should show the tutorial overlay
     const overlay = container.querySelector('[class*="tutorialOverlay"]');
     expect(overlay).not.toBeNull();
-    
+
     // Should have called onTutorialShown
-    expect(baseProps.onTutorialShown).toHaveBeenCalledTimes(1);
+    expect(props.onTutorialShown).toHaveBeenCalledTimes(1);
   });
 
   it('does not show tutorial popup when firewallEyesTutorialShown is true', () => {
+    const props = createBaseProps();
     const { container } = render(
-      <FirewallEyes {...baseProps} firewallEyesTutorialShown={true} />
+      <FirewallEyes {...props} firewallEyesTutorialShown={true} />
     );
-    
+
     // Should NOT show the tutorial overlay
     const overlay = container.querySelector('[class*="tutorialOverlay"]');
     expect(overlay).toBeNull();
   });
 
   it('hides eyes while tutorial popup is showing', () => {
-    const { container } = render(<FirewallEyes {...baseProps} />);
-    
+    const { container } = render(<FirewallEyes {...createBaseProps()} />);
+
     // Eyes should NOT be visible while popup is showing
-    const eyes = container.querySelectorAll('[class*="eye"]');
     // The only element with "eye" in class should be the popup elements, not actual eyes
     const eyeButtons = container.querySelectorAll('button[class*="eye"]');
     expect(eyeButtons.length).toBe(0);
@@ -290,8 +301,18 @@ describe('Tutorial Popup', () => {
 
   it('pauses eye detonation while the tutorial popup is open', () => {
     const onEyeDetonate = vi.fn();
+    const props = createBaseProps();
+    const { rerender } = render(
+      <FirewallEyes {...props} onEyeDetonate={onEyeDetonate} />
+    );
 
-    render(<FirewallEyes {...baseProps} onEyeDetonate={onEyeDetonate} />);
+    rerender(
+      <FirewallEyes
+        {...props}
+        firewallEyesTutorialShown={true}
+        onEyeDetonate={onEyeDetonate}
+      />
+    );
 
     act(() => {
       vi.advanceTimersByTime(9000);
