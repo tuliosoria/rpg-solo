@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback, useRef, memo } from 'react';
 import { useI18n } from '../i18n';
 import { useFocusTrap } from '../hooks';
+import type { TextSpeed } from '../types';
 import {
   DEFAULT_OPTIONS,
   applyOptionsToDocument,
@@ -32,11 +33,13 @@ export default memo(function SettingsModal({
   const modalRef = useRef<HTMLDivElement>(null);
   useFocusTrap(modalRef);
   const [crtEnabled, setCrtEnabled] = useState(DEFAULT_OPTIONS.crtEffectsEnabled);
+  const [textSpeed, setTextSpeed] = useState<TextSpeed>(DEFAULT_OPTIONS.textSpeed);
 
   // Load CRT preference on mount
   useEffect(() => {
     const storedOptions = readStoredOptions();
     setCrtEnabled(storedOptions.crtEffectsEnabled);
+    setTextSpeed(storedOptions.textSpeed);
     applyOptionsToDocument(storedOptions);
   }, []);
 
@@ -70,10 +73,22 @@ export default memo(function SettingsModal({
   const handleResetDefaults = useCallback(() => {
     const defaults = { ...DEFAULT_OPTIONS };
     setCrtEnabled(defaults.crtEffectsEnabled);
+    setTextSpeed(defaults.textSpeed);
     persistOptions(defaults);
     applyOptionsToDocument(defaults);
     onResetDefaults();
   }, [onResetDefaults]);
+
+  const cycleTextSpeed = () => {
+    const textSpeedOptions: TextSpeed[] = ['slow', 'normal', 'fast', 'instant'];
+    const currentIdx = textSpeedOptions.indexOf(textSpeed);
+    const nextSpeed = textSpeedOptions[(currentIdx + 1) % textSpeedOptions.length];
+    setTextSpeed(nextSpeed);
+    persistOptions({
+      ...readStoredOptions(),
+      textSpeed: nextSpeed,
+    });
+  };
 
   return (
     <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="settings-title">
@@ -153,6 +168,25 @@ export default memo(function SettingsModal({
                   ? t('language.pt-BR')
                   : t('language.es')}
             </button>
+          </div>
+
+          <div className={styles.setting}>
+            <label className={styles.label}>{t('settings.textSpeed')}</label>
+            <button
+              className={styles.toggle}
+              tabIndex={0}
+              onMouseDown={e => e.preventDefault()}
+              onClick={cycleTextSpeed}
+            >
+              {textSpeed === 'slow'
+                ? t('options.value.slow')
+                : textSpeed === 'fast'
+                  ? t('options.value.fast')
+                  : textSpeed === 'instant'
+                    ? t('options.value.instant')
+                    : t('options.value.normal')}
+            </button>
+            <span className={styles.hint}>{t('settings.textSpeedHint')}</span>
           </div>
 
           {/* Info */}

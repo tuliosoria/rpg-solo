@@ -1,7 +1,15 @@
-// Inventory/management commands: note, notes, bookmark, unread, progress, scan, decode, disconnect, release
+// Inventory/management commands: note, notes, bookmark, unread, progress, search, scan, decode, disconnect, release
 
-import { TerminalEntry } from '../../types';
-import { resolvePath, getNode, listDirectory, canAccessFile } from '../filesystem';
+import { GameState, TerminalEntry } from '../../types';
+import {
+  resolvePath,
+  getNode,
+  listDirectory,
+  canAccessFile,
+  getAllAccessibleFiles,
+  getFileContent,
+  fuzzyMatchFilename,
+} from '../filesystem';
 import { countEvidence, getCaseStrengthDescription } from '../evidenceRevelation';
 import { DETECTION_THRESHOLDS, MAX_DETECTION } from '../../constants/detection';
 import { createEntry, createEntryI18n, createInvalidCommandResult } from './utils';
@@ -13,6 +21,87 @@ import {
   ALPHA_FILE_NOT_FOUND,
 } from '../../data/alpha';
 import type { CommandRegistry } from './types';
+
+const SEARCH_RESULT_LIMIT = 8;
+const SEARCH_DETECTION_PENALTY = 2;
+
+type SearchMatchKind = 'filename' | 'path' | 'content' | 'fuzzy';
+
+interface SearchMatch {
+  path: string;
+  filename: string;
+  kind: SearchMatchKind;
+  preview?: string;
+}
+
+function getSearchPreview(content: string[], query: string): string | null {
+  const normalizedQuery = query.toLowerCase();
+
+  for (const line of content) {
+    const normalizedLine = line.replace(/\s+/g, ' ').trim();
+    if (normalizedLine.length === 0) {
+      continue;
+    }
+    if (!normalizedLine.toLowerCase().includes(normalizedQuery)) {
+      continue;
+    }
+
+    return normalizedLine.length > 76 ? `${normalizedLine.slice(0, 73)}...` : normalizedLine;
+  }
+
+  return null;
+}
+
+function findSearchMatches(query: string, state: GameState): SearchMatch[] {
+  const normalizedQuery = query.toLowerCase();
+  const matches: SearchMatch[] = [];
+
+  for (const path of getAllAccessibleFiles(state)) {
+    const filename = path.split('/').pop() || path;
+    const filenameMatch = fuzzyMatchFilename(filename, query);
+    const pathMatch = path.toLowerCase().includes(normalizedQuery);
+    const content = getFileContent(path, state) || [];
+    const preview = getSearchPreview(content, normalizedQuery);
+
+    let kind: SearchMatchKind | null = null;
+    if (filenameMatch === 'exact' || filenameMatch === 'contains') {
+      kind = 'filename';
+    } else if (pathMatch) {
+      kind = 'path';
+    } else if (preview) {
+      kind = 'content';
+    } else if (filenameMatch === 'fuzzy') {
+      kind = 'fuzzy';
+    }
+
+    if (!kind) {
+      continue;
+    }
+
+    matches.push({
+      path,
+      filename,
+      kind,
+      preview: preview ?? undefined,
+    });
+  }
+
+  const matchOrder: Record<SearchMatchKind, number> = {
+    filename: 0,
+    path: 1,
+    content: 2,
+    fuzzy: 3,
+  };
+
+  return matches.sort((left, right) => {
+    const rankDifference = matchOrder[left.kind] - matchOrder[right.kind];
+    if (rankDifference !== 0) {
+      return rankDifference;
+    }
+
+    return left.path.localeCompare(right.path);
+  });
+}
 
 export const inventoryCommands: CommandRegistry = {
   note: (args, state) => {
@@ -348,6 +437,116 @@ export const inventoryCommands: CommandRegistry = {
     output.push(createEntry('system', ''));
 
     return { output, stateChanges: {} };
+  },
+
+  search: (args, state) => {
+    const query = args.join(' ').trim();
+
+    if (query.length === 0) {
+      return {
+        output: [
+          createEntryI18n(
+            'error',
+            'engine.commands.inventory.error_specify_search_term',
+            'ERROR: Specify a search term'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.usage_search_keyword',
+            'Usage: search <keyword>'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.example_search_terms',
+            'Examples: search crash | search quarantine | search 2026'
+          ),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    const matches = findSearchMatches(query, state);
+    const limitedMatches = matches.slice(0, SEARCH_RESULT_LIMIT);
+    const nextDetection = Math.min(MAX_DETECTION, state.detectionLevel + SEARCH_DETECTION_PENALTY);
+
+    if (limitedMatches.length === 0) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('system', '═══════════════════════════════════════'),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.search_results',
+            '              SEARCH RESULTS           '
+          ),
+          createEntry('system', '═══════════════════════════════════════'),
+          createEntry('system', ''),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.no_search_results',
+            'No accessible files matched "{{value}}".',
+            { value: query }
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.search_try_broader_terms',
+            'Try broader terms, "tree", or "unread" to widen the search.'
+          ),
+          createEntry('system', ''),
+        ],
+        stateChanges: { detectionLevel: nextDetection },
+      };
+    }
+
+    const output: TerminalEntry[] = [
+      createEntry('system', ''),
+      createEntry('system', '═══════════════════════════════════════'),
+      createEntryI18n(
+        'system',
+        'engine.commands.inventory.search_results',
+        '              SEARCH RESULTS           '
+      ),
+      createEntry('system', '═══════════════════════════════════════'),
+      createEntry('system', ''),
+      createEntry('output', `  QUERY: ${query}`),
+      createEntry('system', ''),
+    ];
+
+    limitedMatches.forEach((match, index) => {
+      const kindLabel =
+        match.kind === 'filename'
+          ? 'NAME'
+          : match.kind === 'path'
+            ? 'PATH'
+            : match.kind === 'content'
+              ? 'TEXT'
+              : 'FUZZY';
+
+      output.push(createEntry('output', `  ${index + 1}. ${match.path} [${kindLabel}]`));
+      if (match.preview && match.kind === 'content') {
+        output.push(createEntry('system', `      "${match.preview}"`));
+      }
+    });
+
+    if (matches.length > limitedMatches.length) {
+      output.push(createEntry('system', ''));
+      output.push(createEntry('system', `  ... and ${matches.length - limitedMatches.length} more`));
+    }
+
+    output.push(createEntry('system', ''));
+    output.push(
+      createEntryI18n(
+        'system',
+        'engine.commands.inventory.search_open_tip',
+        'Use "open <path>" to inspect a result or "bookmark <path>" to save it.'
+      )
+    );
+    output.push(createEntry('system', ''));
+
+    return {
+      output,
+      stateChanges: { detectionLevel: nextDetection },
+    };
   },
 
   scan: (args, state) => {

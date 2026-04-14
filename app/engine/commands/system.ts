@@ -110,6 +110,14 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  - System tolerance (wrong attempts remaining)',
     '  - Session stability',
   ],
+  progress: [
+    'COMMAND: progress',
+    '',
+    'Review your evidence total, case strength, and session notes at a glance.',
+    '',
+    'USAGE:',
+    '  progress       - Show a spoiler-light investigation recap',
+  ],
   clear: [
     'COMMAND: clear',
     '',
@@ -154,6 +162,20 @@ const COMMAND_HELP: Record<string, string[]> = {
     'USAGE:',
     '  unread         - Show unread files',
   ],
+  search: [
+    'COMMAND: search <keyword>',
+    '',
+    'Search accessible filenames, paths, and document text for a keyword.',
+    '',
+    'USAGE:',
+    '  search crash       - Find crash-related files',
+    '  search quarantine  - Find containment leads',
+    '  search 2026        - Find transition references',
+    '',
+    'NOTES:',
+    '  - Searches only what your current access can already reveal',
+    '  - Results can be opened directly with "open <path>"',
+  ],
   tree: [
     'COMMAND: tree',
     '',
@@ -174,7 +196,7 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'When tutorial mode is ON, helpful tips appear at key moments:',
     '  - After your first evidence update',
-    '  - When you discover new evidence categories',
+    '  - When the case reaches major evidence milestones',
   ],
   morse: [
     'COMMAND: morse',
@@ -209,8 +231,8 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  hint              - Receive a contextual hint',
     '',
     'NOTES:',
-    '  - Hints are LIMITED (4 per run)',
-    '  - Hints are vague — they guide thinking, not actions',
+    '  - Hints are LIMITED (8 per run)',
+    '  - Hints react to your progress, risk, and missing leads',
     '  - Cannot reveal specific file names or answers',
     '',
     'Use sparingly. Trust your own analysis.',
@@ -351,9 +373,11 @@ export const systemCommands: CommandRegistry = {
       tSystem('helpMenu.help', '  help [cmd]        Display help (or help for specific command)'),
       tSystem('helpMenu.basics', '  help basics      Starter guide for first-time players'),
       tSystem('helpMenu.status', '  status            Display system status'),
+      tSystem('helpMenu.progress', '  progress          Review evidence and session recap'),
       tSystem('helpMenu.ls', '  ls                List directory contents'),
       tSystem('helpMenu.cd', '  cd <dir>          Change directory'),
       tSystem('helpMenu.open', '  open <file>       Open and display file contents'),
+      tSystem('helpMenu.search', '  search <term>     Search visible files and contents'),
       tSystem('helpMenu.last', '  last              Re-display last opened file'),
       tSystem('helpMenu.unread', '  unread            List unread files'),
       tSystem('helpMenu.note', '  note <text>       Save a personal note'),
@@ -514,20 +538,23 @@ export const systemCommands: CommandRegistry = {
 
     if (evidenceCount >= 10) {
       lines.push(
-        tSystem('status.objective.complete', '  OBJECTIVE: Evidence complete — use "leak" when ready.')
+        tSystem(
+          'status.objective.complete',
+          '  OBJECTIVE: Evidence complete — review with "progress", then use "leak" when ready.'
+        )
       );
     } else if (evidenceCount > 0) {
       lines.push(
         tSystem(
           'status.objective.progress',
-          '  OBJECTIVE: Keep reading. Each evidence file strengthens the case.'
+          '  OBJECTIVE: Keep building the case. Use "progress", "unread", and "bookmark" to stay organized.'
         )
       );
     } else {
       lines.push(
         tSystem(
           'status.objective.start',
-          '  OBJECTIVE: Start opening files and build the evidence tracker.'
+          '  OBJECTIVE: Start opening files. "help basics" and "search <term>" are safe ways to orient yourself.'
         )
       );
     }

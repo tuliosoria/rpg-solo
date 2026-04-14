@@ -33,6 +33,7 @@ import {
   type ImageTrigger,
   type StreamingMode,
   type TerminalEntry,
+  type TextSpeed,
 } from '../types';
 import type { SoundType } from './useSound';
 import { appendToHistory } from '../lib/appendToHistory';
@@ -48,6 +49,101 @@ const STREAMING_DELAYS: Record<
   normal: { base: 80, variance: 30 },
   slow: { base: 120, variance: 50 },
 };
+
+const TEXT_SPEED_MULTIPLIER: Record<TextSpeed, number> = {
+  slow: 1.5,
+  normal: 1,
+  fast: 0.6,
+  instant: 0,
+};
+
+function getStreamingDelayConfig(
+  mode: StreamingMode,
+  textSpeed: TextSpeed
+): { base: number; variance: number } {
+  if (mode === 'none' || textSpeed === 'instant') {
+    return STREAMING_DELAYS.none;
+  }
+
+  const config = STREAMING_DELAYS[mode];
+  const multiplier = TEXT_SPEED_MULTIPLIER[textSpeed];
+
+  return {
+    base: Math.round(config.base * multiplier),
+    variance: Math.round(config.variance * multiplier),
+  };
+}
+
+function getEvidenceMilestoneMessages(
+  previousEvidenceCount: number,
+  evidenceCount: number
+): TerminalEntry[] {
+  if (evidenceCount <= previousEvidenceCount) {
+    return [];
+  }
+
+  if (previousEvidenceCount < 1 && evidenceCount >= 1) {
+    return [
+      createEntryI18n(
+        'ufo74',
+        'hooks.useTerminalInput.milestone.1.line1',
+        'UFO74: good. first confirmation logged.'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'hooks.useTerminalInput.milestone.1.line2',
+        '       run "progress" if you need a clean recap.'
+      ),
+    ];
+  }
+
+  if (previousEvidenceCount < 4 && evidenceCount >= 4) {
+    return [
+      createEntryI18n(
+        'ufo74',
+        'hooks.useTerminalInput.milestone.4.line1',
+        'UFO74: thats enough to see the outline of the case.'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'hooks.useTerminalInput.milestone.4.line2',
+        '       use "search <term>" or "unread" to chase the gaps.'
+      ),
+    ];
+  }
+
+  if (previousEvidenceCount < 7 && evidenceCount >= 7) {
+    return [
+      createEntryI18n(
+        'ufo74',
+        'hooks.useTerminalInput.milestone.7.line1',
+        'UFO74: now bookmark the pieces that actually connect.'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'hooks.useTerminalInput.milestone.7.line2',
+        '       if risk spikes, recover first. then finish the pattern.'
+      ),
+    ];
+  }
+
+  if (previousEvidenceCount < MAX_EVIDENCE_COUNT && evidenceCount >= MAX_EVIDENCE_COUNT) {
+    return [
+      createEntryI18n(
+        'ufo74',
+        'hooks.useTerminalInput.milestone.10.line1',
+        'UFO74: thats the full set. the leak is real now.'
+      ),
+      createEntryI18n(
+        'ufo74',
+        'hooks.useTerminalInput.milestone.10.line2',
+        '       review with "progress". when youre ready, use "leak".'
+      ),
+    ];
+  }
+
+  return [];
+}
 
 type EncryptedChannelState = 'idle' | 'awaiting_open' | 'open' | 'awaiting_close';
 
@@ -69,6 +165,7 @@ interface UseTerminalInputOptions {
   pendingUfo74StartMessages: TerminalEntry[];
   pendingUfo74Messages: TerminalEntry[];
   historyIndex: number;
+  textSpeed: TextSpeed;
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -120,6 +217,7 @@ export function useTerminalInput({
   pendingUfo74StartMessages,
   pendingUfo74Messages,
   historyIndex,
+  textSpeed,
   setGameState,
   setInputValue,
   setIsProcessing,
@@ -130,6 +228,7 @@ export function useTerminalInput({
   setPendingUfo74StartMessages,
   appendPendingUfo74StartMessages,
   setPendingUfo74Messages,
+  appendPendingUfo74Messages,
   appendQueuedAfterMediaMessages,
   setShowEvidenceTracker,
   setShowRiskTracker,
@@ -207,7 +306,7 @@ export function useTerminalInput({
         return;
       }
 
-      const config = STREAMING_DELAYS[mode];
+      const config = getStreamingDelayConfig(mode, textSpeed);
       skipStreamingRef.current = false;
 
       for (let i = 0; i < entries.length; i++) {
@@ -234,7 +333,7 @@ export function useTerminalInput({
         }
       }
     },
-    [setGameState, skipStreamingRef]
+    [setGameState, skipStreamingRef, textSpeed]
   );
 
   const handleSubmit = useCallback(
@@ -539,7 +638,17 @@ export function useTerminalInput({
       setInputValue('');
 
       const dangerousCommands = ['recover', 'trace', 'override', 'leak'];
-      const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
+      const quietCommands = [
+        'help',
+        'status',
+        'ls',
+        'cd',
+        'back',
+        'notes',
+        'bookmark',
+        'progress',
+        'search',
+      ];
       const systemCommands = ['scan', 'wait', 'hide'];
 
       if (dangerousCommands.includes(commandLower)) {
@@ -777,9 +886,13 @@ export function useTerminalInput({
               : translateStatic(
                   'checkpoint.reason.evidenceProgress',
                   { count: evidenceCount },
-                  `Evidence ${evidenceCount}/${MAX_EVIDENCE_COUNT}`
+                 `Evidence ${evidenceCount}/${MAX_EVIDENCE_COUNT}`
                 );
         saveCheckpoint(intermediateState, checkpointReason);
+        const milestoneMessages = getEvidenceMilestoneMessages(prevEvidenceCount, evidenceCount);
+        if (milestoneMessages.length > 0) {
+          appendPendingUfo74Messages(milestoneMessages);
+        }
       }
 
       if (evidenceCount > 0 && prevEvidenceCount === 0) {
@@ -917,6 +1030,7 @@ export function useTerminalInput({
       setPendingUfo74Messages,
       setPendingUfo74StartMessages,
       appendPendingUfo74StartMessages,
+      appendPendingUfo74Messages,
       appendQueuedAfterMediaMessages,
       setShowEvidenceTracker,
       setShowAttBar,

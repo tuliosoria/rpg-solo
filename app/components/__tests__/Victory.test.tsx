@@ -24,6 +24,7 @@ describe('Victory Component', () => {
     mathMistakes: 0,
     evidenceLinks: [] as Array<[string, string]>,
     wrongAttempts: 0,
+    evidenceCount: 6,
     filesReadCount: 20,
   };
 
@@ -35,6 +36,16 @@ describe('Victory Component', () => {
   afterEach(() => {
     vi.useRealTimers();
   });
+
+  function advanceToCredits(textSpeed: 'normal' | 'instant' = 'normal') {
+    act(() => {
+      vi.advanceTimersByTime(textSpeed === 'instant' ? 150 : 1600);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(textSpeed === 'instant' ? 400 : 10000);
+    });
+  }
 
   it('renders without crashing', () => {
     render(<Victory {...defaultProps} />);
@@ -148,5 +159,32 @@ describe('Victory Component', () => {
       fireEvent.click(restartButton);
       expect(defaultProps.onRestartAction).toHaveBeenCalled();
     }
+  });
+
+  it('shows a post-run dossier in the credits phase', () => {
+    render(
+      <Victory
+        {...defaultProps}
+        choiceLeakPath="public"
+        conspiracyFilesLeaked={true}
+        alphaReleased={false}
+        neuralLinkAuthenticated={false}
+        totalReadableFiles={30}
+      />
+    );
+
+    advanceToCredits();
+
+    expect(screen.getByText('POST-RUN DOSSIER')).toBeInTheDocument();
+    expect(screen.getByText('Evidence confirmed')).toBeInTheDocument();
+    expect(screen.getByText('Public broadcast')).toBeInTheDocument();
+  });
+
+  it('supports instant text speed for the ending flow', () => {
+    render(<Victory {...defaultProps} textSpeed="instant" totalReadableFiles={20} />);
+
+    advanceToCredits('instant');
+
+    expect(screen.getByText('POST-RUN DOSSIER')).toBeInTheDocument();
   });
 });

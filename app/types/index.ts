@@ -6,6 +6,7 @@
 
 export type FlickerIntensity = 'low' | 'medium' | 'high';
 export type FontSize = 'small' | 'medium' | 'large';
+export type TextSpeed = 'slow' | 'normal' | 'fast' | 'instant';
 
 export interface OptionsState {
   // Audio Options
@@ -19,6 +20,9 @@ export interface OptionsState {
   screenFlickerEnabled: boolean;
   flickerIntensity: FlickerIntensity;
   fontSize: FontSize;
+
+  // Pacing Options
+  textSpeed: TextSpeed;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -137,7 +141,7 @@ export interface GameState {
   // Scout link usage tracking
   scoutLinksUsed: number;
 
-  // Evidence counter (0-5, reaching 5 triggers win condition)
+  // Evidence counter (0-10, reaching 10 unlocks leak readiness)
   evidenceCount: number;
 
   // Files the player has opened/read
@@ -212,7 +216,7 @@ export interface GameState {
   lastDirectoriesVisited: string[]; // Recent directory history for pattern detection
 
   // Hint system
-  hintsUsed: number; // How many hints the player has requested (max 4)
+  hintsUsed: number; // How many hints the player has requested (max 8)
   rewindRemindersShown: number; // How many rewind reminders shown this session (max 1)
 
   // Tutorial state (UFO74 intro messages)

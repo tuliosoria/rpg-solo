@@ -1,12 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { 
-  generateHintOutput, 
-  analyzeProgressForHint, 
-  HINT_CONFIG 
-} from '../hintSystem';
+import { describe, it, expect } from 'vitest';
+import { generateHintOutput, analyzeProgressForHint, HINT_CONFIG } from '../hintSystem';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
-// Create a minimal game state for testing
 function createTestState(overrides: Partial<GameState> = {}): GameState {
   return {
     ...DEFAULT_GAME_STATE,
@@ -23,17 +18,8 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
 }
 
 describe('Hint System', () => {
-  beforeEach(() => {
-    // Mock Math.random for deterministic tests
-    vi.spyOn(Math, 'random').mockReturnValue(0.1);
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   describe('generateHintOutput', () => {
-    it('should return a hint when hints are available', () => {
+    it('returns a hint when hints are available', () => {
       const state = createTestState({ tutorialComplete: true });
       const result = generateHintOutput(state);
 
@@ -42,16 +28,15 @@ describe('Hint System', () => {
       expect(result.stateChanges.hintsUsed).toBe(1);
     });
 
-    it('should show hints remaining count', () => {
+    it('shows hints remaining count', () => {
       const state = createTestState({ hintsUsed: 1, tutorialComplete: true });
       const result = generateHintOutput(state);
 
-      // Should show "2 HINTS REMAINING" (4 max - 1 used - 1 current = 2)
       const remainingEntry = result.output.find(e => e.content.includes('REMAINING'));
       expect(remainingEntry).toBeDefined();
     });
 
-    it('should attach i18n keys to hint protocol entries', () => {
+    it('attaches i18n keys to hint protocol entries', () => {
       const state = createTestState({ tutorialComplete: true });
       const result = generateHintOutput(state);
 
@@ -61,7 +46,7 @@ describe('Hint System', () => {
       expect(result.output.find(e => e.type === 'ufo74' && e.content.includes('UFO74:'))?.i18nKey).toBeDefined();
     });
 
-    it('should refuse hints when exhausted', () => {
+    it('refuses hints when exhausted', () => {
       const state = createTestState({ hintsUsed: HINT_CONFIG.maxHints });
       const result = generateHintOutput(state);
 
@@ -69,37 +54,37 @@ describe('Hint System', () => {
       expect(result.stateChanges.hintsUsed).toBeUndefined();
     });
 
-    it('should increase detection after tutorial is complete', () => {
-      const state = createTestState({ 
-        tutorialComplete: true, 
-        detectionLevel: 10 
+    it('increases detection after the tutorial is complete', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        detectionLevel: 10,
       });
       const result = generateHintOutput(state);
 
       expect(result.stateChanges.detectionLevel).toBe(10 + HINT_CONFIG.detectionPenalty);
     });
 
-    it('should NOT increase detection during tutorial', () => {
-      const state = createTestState({ 
-        tutorialComplete: false, 
-        detectionLevel: 10 
+    it('does not increase detection during tutorial', () => {
+      const state = createTestState({
+        tutorialComplete: false,
+        detectionLevel: 10,
       });
       const result = generateHintOutput(state);
 
       expect(result.stateChanges.detectionLevel).toBeUndefined();
     });
 
-    it('should cap detection at 100', () => {
-      const state = createTestState({ 
-        tutorialComplete: true, 
-        detectionLevel: 98 
+    it('caps detection at 100', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        detectionLevel: 98,
       });
       const result = generateHintOutput(state);
 
       expect(result.stateChanges.detectionLevel).toBe(100);
     });
 
-    it('should deliver hints through UFO74 channel', () => {
+    it('delivers hints through UFO74 channel', () => {
       const state = createTestState({ tutorialComplete: true });
       const result = generateHintOutput(state);
 
@@ -108,130 +93,100 @@ describe('Hint System', () => {
   });
 
   describe('analyzeProgressForHint', () => {
-    it('should suggest reading files when few files read', () => {
-      const state = createTestState({ 
-        filesRead: new Set(['one.txt', 'two.txt']),
-      });
-      const hint = analyzeProgressForHint(state);
+    it('guides brand-new players toward opening files', () => {
+      const hint = analyzeProgressForHint(createTestState());
 
-      expect(hint).toBeDefined();
-      // Should be a "no files read" type hint
-      expect(hint).toBeTruthy();
+      expect(hint?.primary.key.startsWith('engine.hints.progress.noFiles')).toBe(true);
+      expect(hint?.followUp?.key).toBe('engine.hints.action.start');
     });
 
-    it('should guide toward unexplored directories for missing evidence', () => {
-      const state = createTestState({
-        filesRead: new Set([
-          '/ops/file1.txt',
-          '/ops/file2.txt',
-          '/ops/file3.txt',
-          '/ops/file4.txt',
-        ]),
-        evidenceCount: 1,
-      });
-      const hint = analyzeProgressForHint(state);
+    it('guides players toward unexplored sectors', () => {
+      const hint = analyzeProgressForHint(
+        createTestState({
+          filesRead: new Set(['/ops/file1.txt', '/ops/file2.txt', '/internal/file3.txt']),
+          evidenceCount: 1,
+        })
+      );
 
-      expect(hint).toBeDefined();
-      // Should potentially hint at storage, comms, or admin since those are unexplored
+      expect(hint?.primary.key.startsWith('engine.hints.directory.storage')).toBe(true);
     });
 
-    it('should give evidence-focused hints when directories are explored but evidence is missing', () => {
-      const state = createTestState({
-        filesRead: new Set([
-          '/storage/file1.txt',
-          '/comms/file1.txt',
-          '/ops/file1.txt',
-          '/admin/file1.txt',
-          '/internal/file1.txt',
-        ]),
-        evidenceCount: 2,
-      });
-      const hint = analyzeProgressForHint(state);
+    it('prioritizes morse guidance when an intercept is open but unsolved', () => {
+      const hint = analyzeProgressForHint(
+        createTestState({
+          filesRead: new Set(['/comms/psi/morse_intercept.sig']),
+          morseFileRead: true,
+          morseMessageSolved: false,
+          evidenceCount: 3,
+        })
+      );
 
-      expect(hint).toBeDefined();
-      // Should give a hint about one of the missing evidence leads
+      expect(hint?.followUp?.key).toBe('engine.hints.action.morse');
     });
 
-    it('should indicate near completion when 4+ evidence files are found', () => {
-      const state = createTestState({
-        filesRead: new Set([
-          '/storage/file1.txt',
-          '/comms/file1.txt',
-          '/ops/file1.txt',
-          '/admin/file1.txt',
-          '/internal/file1.txt',
-        ]),
-        evidenceCount: 4,
-      });
-      const hint = analyzeProgressForHint(state);
+    it('guides toward admin after clearance is unlocked', () => {
+      const hint = analyzeProgressForHint(
+        createTestState({
+          filesRead: new Set(['/storage/log1.txt', '/ops/log2.txt', '/comms/log3.txt']),
+          evidenceCount: 6,
+          accessLevel: 3,
+          flags: { adminUnlocked: true },
+        })
+      );
 
-      expect(hint).toBeDefined();
+      expect(hint?.primary.key.startsWith('engine.hints.directory.admin')).toBe(true);
+      expect(hint?.followUp?.key).toBe('engine.hints.action.admin');
     });
 
-    it('should return null when all evidence is discovered', () => {
-      const state = createTestState({
-        filesRead: new Set([
-          '/storage/file1.txt',
-          '/comms/file1.txt',
-          '/ops/file1.txt',
-          '/admin/file1.txt',
-          '/internal/file1.txt',
-          '/storage/file2.txt',
-          '/comms/file2.txt',
-          '/ops/file2.txt',
-          '/admin/file2.txt',
-          '/internal/file2.txt',
-          '/extra/file.txt',
-        ]),
-        evidenceCount: 5,
-      });
-      const hint = analyzeProgressForHint(state);
+    it('guides leak-ready players toward the endgame', () => {
+      const hint = analyzeProgressForHint(
+        createTestState({
+          evidenceCount: 10,
+          filesRead: new Set(['/storage/a.txt', '/ops/b.txt', '/comms/c.txt']),
+        })
+      );
 
-      // When all evidence is found and many files are read, should return null
-      // (though the function may still give generic hints)
-      // The test is more about coverage than specific behavior here
-      expect(hint === null || typeof hint === 'string').toBe(true);
+      expect(hint?.followUp?.key).toBe('engine.hints.action.leak');
     });
   });
 
   describe('HINT_CONFIG', () => {
-    it('should have reasonable max hints value', () => {
+    it('has reasonable max hints value', () => {
       expect(HINT_CONFIG.maxHints).toBe(8);
     });
 
-    it('should have small detection penalty', () => {
+    it('has small detection penalty', () => {
       expect(HINT_CONFIG.detectionPenalty).toBeGreaterThanOrEqual(3);
       expect(HINT_CONFIG.detectionPenalty).toBeLessThanOrEqual(5);
     });
   });
 
   describe('Hint Output Format', () => {
-    it('should never reveal specific file names', () => {
+    it('never reveals specific file names', () => {
       const state = createTestState({ tutorialComplete: true });
-      
-      // Generate multiple hints and check none contain file paths
-      for (let i = 0; i < 10; i++) {
-        vi.spyOn(Math, 'random').mockReturnValue(i / 10);
-        const result = generateHintOutput({ ...state, hintsUsed: 0 });
-        
-        for (const entry of result.output) {
-          // Should not contain file extensions or paths
-          expect(entry.content).not.toMatch(/\.(txt|enc|log|dat|sig)$/i);
-          expect(entry.content).not.toMatch(/\/\w+\/\w+\.\w+/);
-        }
+      const result = generateHintOutput(state);
+
+      for (const entry of result.output) {
+        expect(entry.content).not.toMatch(/\.(txt|enc|log|dat|sig)$/i);
+        expect(entry.content).not.toMatch(/\/\w+\/\w+\.\w+/);
       }
     });
 
-    it('should feel cryptic and guide thinking', () => {
-      const state = createTestState({ 
-        tutorialComplete: true,
-        filesRead: new Set(['/ops/file1.txt', '/ops/file2.txt', '/ops/file3.txt']),
-      });
-      const result = generateHintOutput(state);
+    it('stays contextual as the case advances', () => {
+      const result = generateHintOutput(
+        createTestState({
+          tutorialComplete: true,
+          filesRead: new Set(['/storage/a.txt', '/ops/b.txt', '/comms/c.txt', '/admin/d.txt']),
+          evidenceCount: 7,
+          accessLevel: 3,
+          flags: { adminUnlocked: true },
+          prisoner45QuestionsAsked: 1,
+        })
+      );
 
-      // Hints should be delivered via UFO74
       const ufo74Entries = result.output.filter(e => e.type === 'ufo74');
       expect(ufo74Entries.length).toBeGreaterThan(0);
+      expect(ufo74Entries.some(entry => entry.content.includes('progress'))).toBe(true);
     });
   });
 });

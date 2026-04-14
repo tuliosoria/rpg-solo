@@ -32,7 +32,10 @@ Common terminal commands in the current build:
 | `ls` | List directory contents |
 | `cd <dir>` | Change directory |
 | `open <file>` | Read a file |
-| `search <keyword>` | Search the file index (32 tag categories) |
+| `search <keyword>` | Search accessible file names, paths, and document text |
+| `progress` | Review your evidence total and session recap |
+| `unread` | List accessible files you have not opened yet |
+| `bookmark <file>` | Save a file path for quick reference |
 | `hint` | Ask UFO74 for a nudge at a cost |
 | `wait` | Lower heat and let the system settle |
 | `leak` | Interrogate the Elusive Man (5 questions only) |

@@ -97,6 +97,10 @@
   position: fixed;
   bottom: 40px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 
 .restartButton {
@@ -128,6 +132,50 @@
   font-size: 11px;
   margin-top: 5px;
   letter-spacing: 2px;
+}
+
+.dossier {
+  width: min(620px, calc(100vw - 48px));
+  border: 1px solid rgba(136, 204, 68, 0.45);
+  background: rgba(5, 12, 4, 0.92);
+  padding: 16px 18px;
+  text-align: left;
+  box-shadow: 0 0 24px rgba(136, 204, 68, 0.12);
+}
+
+.dossierTitle {
+  color: #ffd700;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  margin-bottom: 12px;
+}
+
+.dossierSubtitle {
+  color: #00aaaa;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.dossierRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 4px 0;
+  color: #88cc44;
+}
+
+.dossierRow span:last-child {
+  color: #d8f5b8;
+  text-align: right;
+}
+
+.dossierSuggestion {
+  color: #88cc44;
+  line-height: 1.5;
+  margin: 4px 0;
 }
 
 .warningLine {

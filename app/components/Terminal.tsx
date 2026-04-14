@@ -12,6 +12,7 @@ import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import { useI18n, translateStatic } from '../i18n';
+import { OPTIONS_CHANGED_EVENT, readStoredOptions } from '../hooks/useOptions';
 import {
   MAX_WRONG_ATTEMPTS,
   SUSPICIOUS_TYPING_SPEED,
@@ -28,6 +29,7 @@ import {
 } from '../hooks';
 import { unlockAchievement } from '../engine/achievements';
 import { uiRandomPick } from '../engine/rng';
+import type { TextSpeed } from '../types';
 import AchievementPopup from './AchievementPopup';
 import SettingsModal from './SettingsModal';
 import PauseMenu from './PauseMenu';
@@ -415,6 +417,17 @@ export default function Terminal({
     masterVolume,
     setMasterVolume,
   } = useSound();
+  const [textSpeed, setTextSpeed] = useState<TextSpeed>(() => readStoredOptions().textSpeed);
+
+  useEffect(() => {
+    const syncTextSpeed = () => {
+      setTextSpeed(readStoredOptions().textSpeed);
+    };
+
+    syncTextSpeed();
+    window.addEventListener(OPTIONS_CHANGED_EVENT, syncTextSpeed);
+    return () => window.removeEventListener(OPTIONS_CHANGED_EVENT, syncTextSpeed);
+  }, []);
 
   // Autocomplete hook
   const { getCompletions, completeInput, markTabPressed, consumeTabPressed } =
@@ -658,6 +671,7 @@ export default function Terminal({
     pendingUfo74StartMessages,
     pendingUfo74Messages,
     historyIndex,
+    textSpeed,
     setGameState,
     setInputValue,
     setIsProcessing,
@@ -1213,12 +1227,14 @@ export default function Terminal({
         wrongAttempts={gameState.wrongAttempts}
         choiceLeakPath={gameState.choiceLeakPath}
         rivalInvestigatorActive={gameState.rivalInvestigatorActive}
+        evidenceCount={gameState.evidenceCount}
         filesReadCount={gameState.filesRead?.size || 0}
         totalReadableFiles={totalReadableFiles}
         // Multiple endings flags
         conspiracyFilesLeaked={endingFlags.conspiracyFilesLeaked}
         alphaReleased={endingFlags.alphaReleased}
         neuralLinkAuthenticated={endingFlags.neuralLinkAuthenticated}
+        textSpeed={textSpeed}
       />
     );
   }
@@ -1537,6 +1553,7 @@ export default function Terminal({
               type="text"
               value={inputValue}
               aria-label={t('terminal.input.aria')}
+              placeholder={t('terminal.input.placeholder')}
               onChange={e => {
                 const newValue = e.target.value;
                 setInputValue(newValue);

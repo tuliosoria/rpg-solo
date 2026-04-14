@@ -122,6 +122,12 @@ describe('SettingsModal', () => {
     expect(screen.getByText('CRT Effects')).toBeInTheDocument();
   });
 
+  it('displays text speed control', () => {
+    render(<SettingsModal {...defaultProps} />);
+
+    expect(screen.getByText('Text Speed')).toBeInTheDocument();
+  });
+
   it('loads CRT preference from shared options storage on mount', async () => {
     mockStorage['terminal1996_options'] = JSON.stringify({ crtEffectsEnabled: false });
     
@@ -194,6 +200,23 @@ describe('SettingsModal', () => {
     await waitFor(() => {
       expect(document.body.classList.contains('no-crt')).toBe(false);
     });
+  });
+
+  it('cycles text speed and saves to shared options storage', async () => {
+    render(<SettingsModal {...defaultProps} />);
+
+    const label = screen.getByText('Text Speed');
+    const row = label.closest('[class*="setting"]');
+    const toggle = row?.querySelector('button');
+
+    expect(toggle?.textContent).toBe('NORMAL');
+
+    fireEvent.click(toggle!);
+
+    await waitFor(() => {
+      expect(toggle?.textContent).toBe('FAST');
+    });
+    expect(JSON.parse(mockStorage['terminal1996_options']).textSpeed).toBe('fast');
   });
 
   it('displays keyboard shortcuts info', () => {

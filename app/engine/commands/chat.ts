@@ -152,11 +152,11 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
       "PRISONER_45> Document everything. They can't erase all copies.",
     ],
     [
-      'PRISONER_45> The override code. That opens everything. Ask me about the PASSWORD.',
-      "PRISONER_45> Don't trust the obvious files. Look deeper. The real evidence hides in plain sight.",
-      "PRISONER_45> If enough people know, they can't complete the transition.",
-      'PRISONER_45> Find the encrypted files. Decrypt them. The truth is layered.',
-    ],
+        'PRISONER_45> The override code. That opens everything. Ask me about the PASSWORD.',
+        "PRISONER_45> Don't trust the obvious files. Look deeper. The real evidence hides in plain sight.",
+        "PRISONER_45> If enough people know, they can't complete the transition.",
+        'PRISONER_45> Find the buried files. Cross-reference them. The truth is layered.',
+      ],
     [
       'PRISONER_45> Before the window opens in 2026. Before the harvest. SPREAD THE TRUTH.',
       "PRISONER_45> You're already helping. By listening. Your awareness creates interference in their signal.",

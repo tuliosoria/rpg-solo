@@ -20,7 +20,7 @@ import {
 import type { FlickerIntensity, FontSize, OptionsState } from '../types';
 import { safeGetJSON, safeSetJSON } from '../storage/safeStorage';
 
-export type { FlickerIntensity, FontSize, OptionsState } from '../types';
+export type { FlickerIntensity, FontSize, OptionsState, TextSpeed } from '../types';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -53,6 +53,9 @@ export const DEFAULT_OPTIONS: OptionsState = {
   screenFlickerEnabled: true,
   flickerIntensity: 'medium',
   fontSize: 'medium',
+
+  // Pacing defaults
+  textSpeed: 'normal',
 };
 
 export function readStoredOptions(): OptionsState {

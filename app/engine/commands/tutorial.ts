@@ -3,22 +3,97 @@
 import { TerminalEntry } from '../../types';
 import { createEntry, createEntryI18n } from './utils';
 
+type TutorialMessageLine = {
+  kind: 'system' | 'ufo74';
+  fallback: string;
+  key?: string;
+};
+
+type TutorialTipLine = {
+  fallback: string;
+  key?: string;
+};
+
 // Tutorial messages from UFO74 - shown one at a time
 // Design: explicit early steps, diegetic, natural hacker briefing flow
-export const TUTORIAL_MESSAGES: string[][] = [
-  ['UFO74: youre in. keep it quiet.'],
-  ['UFO74: quick brief. you cant change anything here — read only.'],
-  ['UFO74: type "ls" to see whats in front of you.'],
-  ['UFO74: type "cd <folder>" to go inside. "open <file>" to read.'],
-  ['UFO74: when this channel closes, start with: ls'],
-  ['UFO74: try internal/ first. routine paperwork. low heat.'],
-  ['UFO74: youll see an evidence tracker. it lights up when you prove something.'],
-  ['UFO74: risk meter climbs as you dig. if it spikes, they test you. fail that, youre out.'],
+export const TUTORIAL_MESSAGES: TutorialMessageLine[][] = [
   [
-    'UFO74: im cutting the link. from here, youre on your own.',
-    '       move slow. read everything. the truth is in the details.',
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.0.line1',
+      fallback: 'UFO74: youre in. keep it quiet.',
+    },
   ],
-  ['', 'Type "help" for commands. "help basics" if youre new.'],
+  [
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.1.line1',
+      fallback: 'UFO74: quick brief. you cant change anything here — read only.',
+    },
+  ],
+  [
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.2.line1',
+      fallback: 'UFO74: type "ls" to see whats in front of you.',
+    },
+  ],
+  [
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.3.line1',
+      fallback: 'UFO74: type "cd <folder>" to go inside. "open <file>" to read.',
+    },
+  ],
+  [
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.4.line1',
+      fallback: 'UFO74: when this channel closes, start with: ls',
+    },
+  ],
+  [
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.5.line1',
+      fallback: 'UFO74: try internal/ first. routine paperwork. low heat.',
+    },
+  ],
+  [
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.6.line1',
+      fallback: 'UFO74: youll see an evidence tracker. it lights up when you prove something.',
+    },
+  ],
+  [
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.7.line1',
+      fallback:
+        'UFO74: risk meter climbs as you dig. if it spikes, they test you. fail that, youre out.',
+    },
+  ],
+  [
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.8.line1',
+      fallback: 'UFO74: im cutting the link. from here, youre on your own.',
+    },
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.8.line2',
+      fallback: '       move slow. read everything. the truth is in the details.',
+    },
+  ],
+  [
+    { kind: 'system', fallback: '' },
+    {
+      kind: 'system',
+      key: 'engine.commands.tutorial.message.9.line2',
+      fallback: 'Type "help" for commands. "help basics" if youre new.',
+    },
+  ],
 ];
 
 // Boot sequence for new game (without UFO74 tutorial)
@@ -93,7 +168,7 @@ export function getFirstRunMessage(): TerminalEntry[] {
 export type TutorialTipId = 'first_evidence';
 
 // Helper to create boxed tutorial tips
-function createTutorialTipBox(lines: string[]): TerminalEntry[] {
+function createTutorialTipBox(lines: TutorialTipLine[]): TerminalEntry[] {
   const width = 43;
   const entries: TerminalEntry[] = [
     createEntry('system', ''),
@@ -102,9 +177,12 @@ function createTutorialTipBox(lines: string[]): TerminalEntry[] {
   ];
 
   for (const line of lines) {
-    const paddedLine = '  ' + line;
+    const paddedLine = '  ' + line.fallback;
     const padding = Math.max(0, width - paddedLine.length);
-    entries.push(createEntry('notice', '║' + paddedLine + ' '.repeat(padding) + '║'));
+    const content = '║' + paddedLine + ' '.repeat(padding) + '║';
+    entries.push(
+      line.key ? createEntryI18n('notice', line.key, content) : createEntry('notice', content)
+    );
   }
 
   entries.push(createEntry('notice', '╚' + '═'.repeat(width) + '╝'));
@@ -114,12 +192,21 @@ function createTutorialTipBox(lines: string[]): TerminalEntry[] {
 }
 
 // Tutorial tips content
-export const TUTORIAL_TIPS: Record<TutorialTipId, string[]> = {
+export const TUTORIAL_TIPS: Record<TutorialTipId, TutorialTipLine[]> = {
   first_evidence: [
-    'Evidence updated.',
-    '',
-    'Keep reading through the case files.',
-    'Collect all 5 categories to win.',
+    {
+      key: 'engine.commands.tutorial.tip.first_evidence.line1',
+      fallback: 'Evidence updated.',
+    },
+    { fallback: '' },
+    {
+      key: 'engine.commands.tutorial.tip.first_evidence.line3',
+      fallback: 'Use "progress" if you want a clean recap.',
+    },
+    {
+      key: 'engine.commands.tutorial.tip.first_evidence.line4',
+      fallback: 'Reach 10/10 evidence to unlock the leak.',
+    },
   ],
 };
 
@@ -180,6 +267,11 @@ export function getHelpBasics(): TerminalEntry[] {
       'engine.commands.tutorial.last_re_read_last_opened_file',
       '  last            Re-read last opened file'
     ),
+    createEntryI18n(
+      'output',
+      'engine.commands.tutorial.search_term_scan_accessible_files_and_text',
+      '  search <term>   Scan accessible files and text'
+    ),
     createEntry('system', ''),
     createEntryI18n('output', 'engine.commands.tutorial.tracking', '  TRACKING'),
     createEntryI18n(
@@ -196,6 +288,16 @@ export function getHelpBasics(): TerminalEntry[] {
       'output',
       'engine.commands.tutorial.bookmark_file_bookmark_a_file_for_later',
       '  bookmark <file> Bookmark a file for later'
+    ),
+    createEntryI18n(
+      'output',
+      'engine.commands.tutorial.progress_review_case_summary',
+      '  progress        Review your case summary'
+    ),
+    createEntryI18n(
+      'output',
+      'engine.commands.tutorial.unread_list_files_you_have_not_opened',
+      '  unread          List files you have not opened'
     ),
     createEntry('system', ''),
     createEntryI18n('output', 'engine.commands.tutorial.status', '  STATUS'),
@@ -237,8 +339,8 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntryI18n('output', 'engine.commands.tutorial.objective', '  OBJECTIVE'),
     createEntryI18n(
       'output',
-      'engine.commands.tutorial.collect_evidence_in_all_5_categories',
-      '  Collect evidence in all categories:'
+      'engine.commands.tutorial.collect_10_evidence_files_to_expose_5_truths',
+      '  Collect 10 evidence files to expose 5 core truths:'
     ),
     createEntry('system', ''),
     createEntryI18n(
@@ -289,8 +391,8 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntry('system', ''),
     createEntryI18n(
       'output',
-      'engine.commands.tutorial.collect_all_5_categories',
-      '  • Collect all 5 categories'
+      'engine.commands.tutorial.reach_10_of_10_evidence',
+      '  • Reach 10/10 evidence'
     ),
     createEntryI18n(
       'output',
@@ -311,8 +413,8 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntryI18n('output', 'engine.commands.tutorial.objective', '  OBJECTIVE'),
     createEntryI18n(
       'output',
-      'engine.commands.tutorial.collect_evidence_in_5_categories',
-      '  Collect evidence in all categories:'
+      'engine.commands.tutorial.collect_10_evidence_files_to_expose_5_truths',
+      '  Collect 10 evidence files to expose 5 core truths:'
     ),
     createEntry('system', ''),
     createEntryI18n(
@@ -380,6 +482,21 @@ export function getHelpWinning(): TerminalEntry[] {
       'output',
       'engine.commands.tutorial.bookmark_file_mark_files_for_later',
       '  bookmark <file>  Mark files for later'
+    ),
+    createEntryI18n(
+      'output',
+      'engine.commands.tutorial.search_term_scan_accessible_files_and_text',
+      '  search <term>   Scan accessible files and text'
+    ),
+    createEntryI18n(
+      'output',
+      'engine.commands.tutorial.progress_review_case_summary',
+      '  progress        Review your case summary'
+    ),
+    createEntryI18n(
+      'output',
+      'engine.commands.tutorial.unread_list_files_you_have_not_opened',
+      '  unread          List files you have not opened'
     ),
     createEntry('system', ''),
   ];
@@ -451,14 +568,13 @@ export function getTutorialMessage(step: number): TerminalEntry[] {
   const messages = TUTORIAL_MESSAGES[step];
   const entries: TerminalEntry[] = [createEntry('system', '')];
 
-  for (let i = 0; i < messages.length; i++) {
-    const msg = messages[i];
-
-    if (msg.startsWith('UFO74:') || msg.startsWith('       ')) {
-      entries.push(createEntry('ufo74', msg));
-    } else {
-      entries.push(createEntry('system', msg));
+  for (const message of messages) {
+    if (message.key) {
+      entries.push(createEntryI18n(message.kind, message.key, message.fallback));
+      continue;
     }
+
+    entries.push(createEntry(message.kind, message.fallback));
   }
 
   // Add blank line after each step (enter prompt is now handled by UI)

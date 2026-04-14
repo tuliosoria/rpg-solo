@@ -69,6 +69,7 @@ function createOptions(gameState: GameState, inputValue = 'status') {
     gameState,
     gamePhase: 'terminal' as const,
     inputValue,
+    textSpeed: 'normal' as const,
     isProcessing: false,
     showTuringTest: false,
     pendingImage: null,

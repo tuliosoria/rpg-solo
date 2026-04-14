@@ -3264,8 +3264,8 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       '  - Avaliar implicações futuras quando aplicável',
     '  NOTE: Reviewers should expect classification barriers.':
       '  NOTA: Revisores devem esperar barreiras de classificação.',
-    '  Some materials require elevated clearance or decryption.':
-      '  Alguns materiais requerem autorização elevada ou descriptografia.',
+    '  Some materials require elevated clearance or recovered access.':
+      '  Alguns materiais exigem autorização elevada ou acesso recuperado.',
     'END DOCUMENT': 'FIM DO DOCUMENTO',
     'TERMINAL ACCESS — SESSION PARAMETERS': 'ACESSO AO TERMINAL — PARÂMETROS DA SESSÃO',
     'AUTO-GENERATED AT LOGIN': 'GERADO AUTOMATICAMENTE NO LOGIN',
@@ -3282,8 +3282,8 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       '  1. Navegar diretórios para localizar registros relevantes',
     '  2. Open and examine files for incident details':
       '  2. Abrir e examinar arquivos para detalhes do incidente',
-    '  3. Use DECRYPT on encrypted files when authorized':
-      '  3. Usar DECRYPT em arquivos criptografados quando autorizado',
+    '  3. Open recovered files directly when access allows':
+      '  3. Abra arquivos recuperados diretamente quando o acesso permitir',
     '  4. Cross-reference multiple sources for correlation':
       '  4. Fazer referência cruzada de múltiplas fontes para correlação',
     '  5. Use TRACE to monitor system awareness (optional)':
@@ -9137,8 +9137,8 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       '  - Evaluar implicaciones futuras cuando sea aplicable',
     '  NOTE: Reviewers should expect classification barriers.':
       '  NOTA: Los revisores deben esperar barreras de clasificación.',
-    '  Some materials require elevated clearance or decryption.':
-      '  Algunos materiales requieren autorización elevada o desencriptación.',
+    '  Some materials require elevated clearance or recovered access.':
+      '  Algunos materiales requieren autorización elevada o acceso recuperado.',
     'END DOCUMENT': 'FIN DEL DOCUMENTO',
     'TERMINAL ACCESS — SESSION PARAMETERS': 'ACCESO AL TERMINAL — PARÁMETROS DE SESIÓN',
     'AUTO-GENERATED AT LOGIN': 'GENERADO AUTOMÁTICAMENTE AL INICIAR SESIÓN',
@@ -9155,8 +9155,8 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       '  1. Navegar directorios para localizar registros relevantes',
     '  2. Open and examine files for incident details':
       '  2. Abrir y examinar archivos para detalles del incidente',
-    '  3. Use DECRYPT on encrypted files when authorized':
-      '  3. Usar DECRYPT en archivos encriptados cuando esté autorizado',
+    '  3. Open recovered files directly when access allows':
+      '  3. Abre archivos recuperados directamente cuando el acceso lo permita',
     '  4. Cross-reference multiple sources for correlation':
       '  4. Hacer referencia cruzada de múltiples fuentes para correlación',
     '  5. Use TRACE to monitor system awareness (optional)':
@@ -13226,7 +13226,7 @@ const RUNTIME_TRANSLATIONS_WAVE_4_KEYS = [
   '  - Note discrepancies between official and raw records',
   '  - Assess forward implications if applicable',
   '  NOTE: Reviewers should expect classification barriers.',
-  '  Some materials require elevated clearance or decryption.',
+  '  Some materials require elevated clearance or recovered access.',
   'END DOCUMENT',
   'TERMINAL ACCESS — SESSION PARAMETERS',
   'AUTO-GENERATED AT LOGIN',
@@ -13238,7 +13238,7 @@ const RUNTIME_TRANSLATIONS_WAVE_4_KEYS = [
   'EXPECTED WORKFLOW:',
   '  1. Navigate directories to locate relevant records',
   '  2. Open and examine files for incident details',
-  '  3. Use DECRYPT on encrypted files when authorized',
+  '  3. Open recovered files directly when access allows',
   '  4. Cross-reference multiple sources for correlation',
   '  5. Use TRACE to monitor system awareness (optional)',
   'COHERENCE NOTE:',

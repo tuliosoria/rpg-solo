@@ -277,6 +277,42 @@ describe('UX Commands', () => {
     });
   });
 
+  describe('search command', () => {
+    it('shows usage when no term is provided', () => {
+      const state = createTestState();
+      const result = executeCommand('search', state);
+
+      expect(result.output.some(e => e.content.includes('Specify a search term'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Usage: search <keyword>'))).toBe(true);
+    });
+
+    it('finds files by filename', () => {
+      const state = createTestState();
+      const result = executeCommand('search session_objectives', state);
+
+      expect(result.output.some(e => e.content.includes('SEARCH RESULTS'))).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))
+      ).toBe(true);
+    });
+
+    it('finds files by content', () => {
+      const state = createTestState();
+      const result = executeCommand('search coherence', state);
+
+      expect(
+        result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))
+      ).toBe(true);
+    });
+
+    it('adds a small detection penalty when searching', () => {
+      const state = createTestState({ detectionLevel: 10 });
+      const result = executeCommand('search crash', state);
+
+      expect(result.stateChanges.detectionLevel).toBe(12);
+    });
+  });
+
   describe('god evidences command', () => {
     it('fills all evidence slots and leaves the game ready for leak without requiring iddqd first', () => {
       const state = createTestState({ evidenceCount: 1, flags: {} });

@@ -12,6 +12,17 @@ import {
   getEndingNarrativeLines,
   getEndingTitle,
 } from '../engine/endings';
+import type { TextSpeed } from '../types';
+
+const VICTORY_TIMINGS: Record<
+  TextSpeed,
+  { introDelay: number; lineDelay: number; creditsDelay: number }
+> = {
+  slow: { introDelay: 2200, lineDelay: 420, creditsDelay: 2600 },
+  normal: { introDelay: 1500, lineDelay: 300, creditsDelay: 2000 },
+  fast: { introDelay: 900, lineDelay: 180, creditsDelay: 1200 },
+  instant: { introDelay: 120, lineDelay: 0, creditsDelay: 300 },
+};
 
 interface VictoryProps {
   onRestartAction: () => void;
@@ -23,12 +34,14 @@ interface VictoryProps {
   wrongAttempts?: number;
   choiceLeakPath?: 'public' | 'covert';
   rivalInvestigatorActive?: boolean;
+  evidenceCount?: number;
   filesReadCount?: number;
   totalReadableFiles?: number;
   // Ending modifier flags
   conspiracyFilesLeaked?: boolean;
   alphaReleased?: boolean;
   neuralLinkAuthenticated?: boolean;
+  textSpeed?: TextSpeed;
 }
 
 export default function Victory({
@@ -41,11 +54,13 @@ export default function Victory({
   wrongAttempts: _wrongAttempts = 0,
   choiceLeakPath: _choiceLeakPath,
   rivalInvestigatorActive: _rivalInvestigatorActive = false,
+  evidenceCount = 0,
   filesReadCount = 0,
   totalReadableFiles = 0,
   conspiracyFilesLeaked = false,
   alphaReleased = false,
   neuralLinkAuthenticated = false,
+  textSpeed = 'normal',
 }: VictoryProps) {
   const { t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'intro' | 'message' | 'credits'>('intro');
@@ -69,6 +84,39 @@ export default function Victory({
     () => getEndingNarrativeLines(endingVariant),
     [endingVariant]
   );
+  const timings = VICTORY_TIMINGS[textSpeed];
+  const leakPathLabel =
+    _choiceLeakPath === 'public'
+      ? t('ending.dossier.path.public')
+      : _choiceLeakPath === 'covert'
+        ? t('ending.dossier.path.covert')
+        : t('ending.dossier.path.unknown');
+  const replaySuggestions = useMemo(() => {
+    const suggestions: string[] = [];
+
+    if (!conspiracyFilesLeaked) {
+      suggestions.push(t('ending.dossier.replay.public'));
+    }
+    if (!alphaReleased) {
+      suggestions.push(t('ending.dossier.replay.alpha'));
+    }
+    if (!neuralLinkAuthenticated) {
+      suggestions.push(t('ending.dossier.replay.link'));
+    }
+    if (_choiceLeakPath !== 'covert') {
+      suggestions.push(t('ending.dossier.replay.covert'));
+    }
+
+    if (suggestions.length === 0 && (conspiracyFilesLeaked || alphaReleased || neuralLinkAuthenticated)) {
+      suggestions.push(t('ending.dossier.replay.cleaner'));
+    }
+
+    if (suggestions.length === 0) {
+      suggestions.push(t('ending.dossier.replay.complete'));
+    }
+
+    return suggestions.slice(0, 2);
+  }, [alphaReleased, conspiracyFilesLeaked, neuralLinkAuthenticated, _choiceLeakPath, t]);
 
   // Check for achievements on mount
   useEffect(() => {
@@ -167,13 +215,25 @@ export default function Victory({
   useEffect(() => {
     const timer = setTimeout(() => {
       setPhase('message');
-    }, 1500);
+    }, timings.introDelay);
     return () => clearTimeout(timer);
-  }, []);
+  }, [timings.introDelay]);
 
   // Show text lines
   useEffect(() => {
     if (phase !== 'message') return;
+
+    setTextLines([]);
+
+    if (timings.lineDelay === 0) {
+      setTextLines(victoryText);
+      creditsTimerRef.current = setTimeout(() => setPhase('credits'), timings.creditsDelay);
+      return () => {
+        if (creditsTimerRef.current) {
+          clearTimeout(creditsTimerRef.current);
+        }
+      };
+    }
 
     let lineIndex = 0;
     const interval = setInterval(() => {
@@ -182,13 +242,16 @@ export default function Victory({
         if (creditsTimerRef.current) {
           clearTimeout(creditsTimerRef.current);
         }
-        creditsTimerRef.current = setTimeout(() => setPhase('credits'), 2000);
+        creditsTimerRef.current = setTimeout(() => setPhase('credits'), timings.creditsDelay);
         return;
       }
 
-      setTextLines(prev => [...prev, victoryText[lineIndex]]);
+      const nextLine = victoryText[lineIndex];
+      if (typeof nextLine === 'string') {
+        setTextLines(prev => [...prev, nextLine]);
+      }
       lineIndex++;
-    }, 300);
+    }, timings.lineDelay);
 
     return () => {
       clearInterval(interval);
@@ -196,7 +259,7 @@ export default function Victory({
         clearTimeout(creditsTimerRef.current);
       }
     };
-  }, [phase, victoryText]);
+  }, [phase, timings.creditsDelay, timings.lineDelay, victoryText]);
 
   return (
     <div className={styles.container}>
@@ -237,6 +300,60 @@ export default function Victory({
 
       {phase === 'credits' && (
         <div className={styles.credits}>
+          <div className={styles.dossier}>
+            <div className={styles.dossierTitle}>{t('ending.dossier.title')}</div>
+
+            <div className={styles.dossierRow}>
+              <span>{t('ending.dossier.evidence')}</span>
+              <span>{evidenceCount}/10</span>
+            </div>
+            <div className={styles.dossierRow}>
+              <span>{t('ending.dossier.filesReviewed')}</span>
+              <span>
+                {filesReadCount}/{Math.max(totalReadableFiles, filesReadCount)}
+              </span>
+            </div>
+            <div className={styles.dossierRow}>
+              <span>{t('ending.dossier.maxDetection')}</span>
+              <span>{maxDetectionReached}%</span>
+            </div>
+            <div className={styles.dossierRow}>
+              <span>{t('ending.dossier.leakPath')}</span>
+              <span>{leakPathLabel}</span>
+            </div>
+            <div className={styles.dossierRow}>
+              <span>{t('ending.dossier.blackFiles')}</span>
+              <span>
+                {conspiracyFilesLeaked
+                  ? t('ending.dossier.blackFiles.leaked')
+                  : t('ending.dossier.blackFiles.sealed')}
+              </span>
+            </div>
+            <div className={styles.dossierRow}>
+              <span>{t('ending.dossier.alpha')}</span>
+              <span>
+                {alphaReleased
+                  ? t('ending.dossier.alpha.released')
+                  : t('ending.dossier.alpha.contained')}
+              </span>
+            </div>
+            <div className={styles.dossierRow}>
+              <span>{t('ending.dossier.neuralLink')}</span>
+              <span>
+                {neuralLinkAuthenticated
+                  ? t('ending.dossier.neuralLink.authenticated')
+                  : t('ending.dossier.neuralLink.unused')}
+              </span>
+            </div>
+
+            <div className={styles.dossierSubtitle}>{t('ending.dossier.replayTitle')}</div>
+            {replaySuggestions.map(suggestion => (
+              <div key={suggestion} className={styles.dossierSuggestion}>
+                {suggestion}
+              </div>
+            ))}
+          </div>
+
           <button className={styles.restartButton} onClick={onRestartAction}>
             {t('ending.playAgain')}
           </button>

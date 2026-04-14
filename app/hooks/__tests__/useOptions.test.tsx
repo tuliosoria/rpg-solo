@@ -56,6 +56,12 @@ describe('useOptions', () => {
 
       expect(result.current.options.fontSize).toBe('medium');
     });
+
+    it('has text speed set to normal by default', () => {
+      const { result } = renderHook(() => useOptions());
+
+      expect(result.current.options.textSpeed).toBe('normal');
+    });
   });
 
   describe('localStorage Persistence', () => {
@@ -108,6 +114,7 @@ describe('useOptions', () => {
       // Should have defaults for missing keys
       expect(result.current.options.flickerIntensity).toBe('medium');
       expect(result.current.options.fontSize).toBe('medium');
+      expect(result.current.options.textSpeed).toBe('normal');
     });
   });
 
@@ -158,6 +165,18 @@ describe('useOptions', () => {
       });
 
       expect(result.current.options.fontSize).toBe('small');
+    });
+
+    it('setOption updates textSpeed', async () => {
+      const { result } = renderHook(() => useOptions());
+
+      await vi.waitFor(() => expect(result.current.isLoaded).toBe(true));
+
+      act(() => {
+        result.current.setOption('textSpeed', 'fast');
+      });
+
+      expect(result.current.options.textSpeed).toBe('fast');
     });
 
     it('resetOptions restores all defaults', async () => {

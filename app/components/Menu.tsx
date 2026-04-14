@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { SaveSlot, FlickerIntensity, FontSize } from '../types';
+import { SaveSlot, FlickerIntensity, FontSize, TextSpeed } from '../types';
 import { getSaveSlots, getSaveSlotsAsync, deleteSave } from '../storage/saves';
 import { useOptions } from '../hooks/useOptions';
 import { useI18n } from '../i18n';
@@ -41,6 +41,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
     (index: number, direction: 1 | -1 = 1) => {
       const flickerOptions: FlickerIntensity[] = ['low', 'medium', 'high'];
       const fontSizeOptions: FontSize[] = ['small', 'medium', 'large'];
+      const textSpeedOptions: TextSpeed[] = ['slow', 'normal', 'fast', 'instant'];
 
       switch (index) {
         case 0:
@@ -74,7 +75,14 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
           setOption('fontSize', fontSizeOptions[nextIdx]);
           break;
         }
-        case 8:
+        case 8: {
+          const currentIdx = textSpeedOptions.indexOf(options.textSpeed);
+          const nextIdx =
+            (currentIdx + direction + textSpeedOptions.length) % textSpeedOptions.length;
+          setOption('textSpeed', textSpeedOptions[nextIdx]);
+          break;
+        }
+        case 9:
           cycleLanguage(direction);
           break;
         default:
@@ -204,7 +212,13 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
     (e: KeyboardEvent) => {
       // Main menu has 4 items now: NEW GAME, LOAD GAME, OPTIONS, CREDITS
       const maxIndex =
-        screen === 'main' ? 3 : screen === 'load' ? (saves.length > 0 ? saves.length : 0) : screen === 'options' ? 9 : 0;
+        screen === 'main'
+          ? 3
+          : screen === 'load'
+            ? (saves.length > 0 ? saves.length : 0)
+            : screen === 'options'
+              ? 10
+              : 0;
 
       switch (e.key) {
         case 'ArrowLeft':
@@ -243,7 +257,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
           } else if (screen === 'credits') {
             setScreen('main');
           } else if (screen === 'options') {
-            if (selectedIndex === 9) {
+            if (selectedIndex === 10) {
               setScreen('main');
             } else {
               adjustOptionValue(selectedIndex, 1);
@@ -470,6 +484,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
   const renderOptions = () => {
     const flickerOptions: FlickerIntensity[] = ['low', 'medium', 'high'];
     const fontSizeOptions: FontSize[] = ['small', 'medium', 'large'];
+    const textSpeedOptions: TextSpeed[] = ['slow', 'normal', 'fast', 'instant'];
 
     return (
       <div className={styles.menuContent}>
@@ -613,10 +628,34 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
               </span>
             </div>
 
-            {/* Language Select */}
+            {/* Text Speed Select */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 8 ? styles.selected : ''}`}
               onMouseEnter={() => setSelectedIndex(8)}
+              onClick={() => {
+                const currentIdx = textSpeedOptions.indexOf(options.textSpeed);
+                const nextIdx = (currentIdx + 1) % textSpeedOptions.length;
+                setOption('textSpeed', textSpeedOptions[nextIdx]);
+              }}
+            >
+              <span className={styles.optionLabel}>{t('menu.options.textSpeed')}</span>
+              <span className={styles.optionSelect}>
+                {'< '}
+                {options.textSpeed === 'slow'
+                  ? t('options.value.slow')
+                  : options.textSpeed === 'fast'
+                    ? t('options.value.fast')
+                    : options.textSpeed === 'instant'
+                      ? t('options.value.instant')
+                      : t('options.value.normal')}
+                {' >'}
+              </span>
+            </div>
+
+            {/* Language Select */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 9 ? styles.selected : ''}`}
+              onMouseEnter={() => setSelectedIndex(9)}
               onClick={() => cycleLanguage()}
             >
               <span className={styles.optionLabel}>{t('menu.options.language')}</span>
@@ -634,11 +673,11 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         </div>
 
         <button
-          className={`${styles.backButton} ${selectedIndex === 9 ? styles.selected : ''}`}
+          className={`${styles.backButton} ${selectedIndex === 10 ? styles.selected : ''}`}
           onClick={() => setScreen('main')}
-          onMouseEnter={() => setSelectedIndex(9)}
+          onMouseEnter={() => setSelectedIndex(10)}
         >
-          {selectedIndex === 9 ? '▶ ' : '  '}{t('menu.options.back')}
+          {selectedIndex === 10 ? '▶ ' : '  '}{t('menu.options.back')}
         </button>
         <div className={styles.keyHint}>{t('menu.options.keyHint')}</div>
       </div>
