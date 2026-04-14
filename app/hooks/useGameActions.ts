@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 import { createEntryI18n } from '../engine/commands/utils';
+import { hasDiscoveredConspiracyFiles } from '../engine/endings';
 import type { GamePhase, GameState } from '../types';
 import type { SoundType } from './useSound';
 import { appendToHistory } from '../lib/appendToHistory';
@@ -64,7 +65,12 @@ export function useGameActions({
       setGameState(prev => ({
         ...prev,
         choiceLeakPath: choice,
-        flags: { ...prev.flags, leakExecuted: true },
+        flags: {
+          ...prev.flags,
+          leakExecuted: true,
+          conspiracyFilesLeaked:
+            choice === 'public' && hasDiscoveredConspiracyFiles(prev),
+        },
       }));
     },
     [setGameState]
