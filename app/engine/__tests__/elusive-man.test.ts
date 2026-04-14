@@ -6,11 +6,7 @@ import {
   evaluateAnswer,
   normalizeText,
   LEAK_QUESTIONS,
-  LEAK_DETECTION_PENALTY,
-  LEAK_MAX_WRONG_ANSWERS,
 } from '../elusiveMan';
-
-const ALL_TRUTHS = new Set(['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026'] as const);
 
 const createState = (overrides: Partial<GameState> = {}): GameState => ({
   ...DEFAULT_GAME_STATE,
@@ -19,8 +15,7 @@ const createState = (overrides: Partial<GameState> = {}): GameState => ({
   sessionStartTime: Date.now(),
   tutorialStep: -1,
   tutorialComplete: true,
-  truthsDiscovered: ALL_TRUTHS,
-  flags: { allEvidenceCollected: true },
+  evidenceCount: 5,
   ...overrides,
 });
 
@@ -125,175 +120,43 @@ describe('Elusive Man Leak Mechanic', () => {
     });
   });
 
-  describe('Leak command integration', () => {
-    it('starts leak sequence when leak command is used', () => {
-      const state = createState();
+  describe('Leak command integration (direct-to-ICQ)', () => {
+    it('blocks leak when evidence is insufficient', () => {
+      const state = createState({ evidenceCount: 5 });
       const result = executeCommand('leak', state);
 
-      expect(result.stateChanges.inLeakSequence).toBe(true);
-      expect(result.stateChanges.currentLeakQuestion).toBe(0);
-      expect(result.stateChanges.leakWrongAnswers).toBe(0);
-      expect(result.output.some(e => e.content.includes('I have resources'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('[DEBRIS]'))).toBe(true);
+      expect(result.stateChanges.icqPhase).toBeUndefined();
+      expect(
+        result.output.some(e => e.content.includes('INSUFFICIENT EVIDENCE'))
+      ).toBe(true);
     });
 
-    it('processes correct answers and advances questions', () => {
-      const state = createState({
-        inLeakSequence: true,
-        currentLeakQuestion: 0,
-        leakWrongAnswers: 0,
-        leakAnswers: [],
-      });
+    it('skips to ICQ phase when all 10 evidence collected', () => {
+      const state = createState({ evidenceCount: 10 });
+      const result = executeCommand('leak', state);
 
-      const result = executeCommand('campinas', state);
-
-      expect(result.stateChanges.currentLeakQuestion).toBe(1);
-      expect(result.output.some(e => e.content.includes('[CONTAINMENT]'))).toBe(true);
+      expect(result.stateChanges.icqPhase).toBe(true);
+      expect(result.stateChanges.evidencesSaved).toBe(true);
+      expect(result.skipToPhase).toBe('icq');
+      expect(
+        result.output.some(e => e.content.includes('TRANSMISSION SUCCESSFUL'))
+      ).toBe(true);
     });
 
-    it('increases detection on wrong answers', () => {
-      const state = createState({
-        inLeakSequence: true,
-        currentLeakQuestion: 0,
-        leakWrongAnswers: 0,
-        leakAnswers: [],
-        detectionLevel: 10,
-      });
+    it('sets leakSuccessful flag on successful leak', () => {
+      const state = createState({ evidenceCount: 10 });
+      const result = executeCommand('leak', state);
 
-      // Short wrong answer to avoid partial match (needs to be <10 chars or <2 words)
-      const result = executeCommand('no', state);
-
-      expect(result.stateChanges.leakWrongAnswers).toBe(1);
-      expect(result.stateChanges.detectionLevel).toBe(10 + LEAK_DETECTION_PENALTY);
-      expect(result.output.some(e => e.content.includes('Disappointing') || e.content.includes('Incorrect') || e.content.includes('Wrong'))).toBe(true);
+      expect(result.stateChanges.flags?.leakSuccessful).toBe(true);
     });
 
-    it('triggers game over on 3 wrong answers', () => {
-      const state = createState({
-        inLeakSequence: true,
-        currentLeakQuestion: 0,
-        leakWrongAnswers: 2, // Already 2 wrong
-        leakAnswers: ['wrong1', 'wrong2'],
-        detectionLevel: 40,
-      });
+    it('shows evidence count in blocked message', () => {
+      const state = createState({ evidenceCount: 3 });
+      const result = executeCommand('leak', state);
 
-      // Short wrong answer
-      const result = executeCommand('xyz', state);
-
-      expect(result.stateChanges.isGameOver).toBe(true);
-      expect(result.stateChanges.endingType).toBe('bad');
-      expect(result.stateChanges.gameOverReason).toContain('LOCKOUT');
-      expect(result.output.some(e => e.content.includes('Three strikes'))).toBe(true);
-    });
-
-    it('triggers victory when all 5 questions answered correctly', () => {
-      const state = createState({
-        inLeakSequence: true,
-        currentLeakQuestion: 4, // Last question (CONVERGENCE)
-        leakWrongAnswers: 0,
-        leakAnswers: ['campinas', 'three specimens', 'telepathic scouts', 'CIA'],
-      });
-
-      // Answer the CONVERGENCE question
-      const result = executeCommand('2026', state);
-
-      expect(result.stateChanges.gameWon).toBe(true);
-      expect(result.stateChanges.endingType).toBe('good');
-      expect(result.stateChanges.inLeakSequence).toBe(false);
-      expect(result.output.some(e => e.content.includes('LEAK SUCCESSFUL'))).toBe(true);
-    });
-
-    it('allows abort during sequence', () => {
-      const state = createState({
-        inLeakSequence: true,
-        currentLeakQuestion: 2,
-        leakWrongAnswers: 1,
-        leakAnswers: ['campinas', 'three specimens'],
-      });
-
-      const result = executeCommand('abort', state);
-
-      expect(result.stateChanges.inLeakSequence).toBe(false);
-      expect(result.stateChanges.isGameOver).toBeFalsy();
-      expect(result.output.some(e => e.content.includes('Wise choice') || e.content.includes('Channel closed'))).toBe(true);
-    });
-
-    it('shows partial match hint for close but wrong answers', () => {
-      const state = createState({
-        inLeakSequence: true,
-        currentLeakQuestion: 0,
-        leakWrongAnswers: 0,
-        leakAnswers: [],
-      });
-
-      // Long answer that doesn't match but shows effort
-      const result = executeCommand('they came here from space to do something important', state);
-
-      // Should be partial match, not wrong
-      expect(result.stateChanges.leakWrongAnswers).toBeUndefined();
-      expect(result.output.some(e => 
-        e.content.includes('Close') || 
-        e.content.includes('Elaborate') ||
-        e.content.includes('vicinity')
-      )).toBe(true);
-    });
-  });
-
-  describe('Edge cases', () => {
-    it('handles empty input during leak sequence', () => {
-      const state = createState({
-        inLeakSequence: true,
-        currentLeakQuestion: 0,
-        leakWrongAnswers: 0,
-        leakAnswers: [],
-      });
-
-      // Empty input should be treated as wrong
-      const result = executeCommand('', state);
-      
-      // Should stay in sequence, not crash
-      expect(result).toBeDefined();
-    });
-
-    it('preserves leak state across multiple wrong answers until limit', () => {
-      let state = createState({
-        inLeakSequence: true,
-        currentLeakQuestion: 0,
-        leakWrongAnswers: 0,
-        leakAnswers: [],
-        detectionLevel: 0,
-      });
-
-      // First wrong answer (short to avoid partial match)
-      let result = executeCommand('nope', state);
-      expect(result.stateChanges.leakWrongAnswers).toBe(1);
-      expect(result.stateChanges.isGameOver).toBeFalsy();
-
-      // Second wrong answer
-      state = { ...state, ...result.stateChanges } as GameState;
-      result = executeCommand('nope', state);
-      expect(result.stateChanges.leakWrongAnswers).toBe(2);
-      expect(result.stateChanges.isGameOver).toBeFalsy();
-
-      // Third wrong answer - game over
-      state = { ...state, ...result.stateChanges } as GameState;
-      result = executeCommand('nope', state);
-      expect(result.stateChanges.leakWrongAnswers).toBe(3);
-      expect(result.stateChanges.isGameOver).toBe(true);
-    });
-
-    it('detection caps at 100', () => {
-      const state = createState({
-        inLeakSequence: true,
-        currentLeakQuestion: 0,
-        leakWrongAnswers: 0,
-        leakAnswers: [],
-        detectionLevel: 95,
-      });
-
-      const result = executeCommand('wrong', state);
-      
-      expect(result.stateChanges.detectionLevel).toBe(100);
+      expect(
+        result.output.some(e => e.content.includes('3/10'))
+      ).toBe(true);
     });
   });
 });

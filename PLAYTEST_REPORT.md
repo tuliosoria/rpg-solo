@@ -5,6 +5,8 @@
 **Tester:** Mordin (Sub-agent)
 **Tests Passed:** 1121/1121 ✅
 
+> **Historical note:** This report reflects a pre-simplification build. The current main branch has retired the old `rewind`/`present` loop and no longer treats `decrypt` as the primary investigation mechanic.
+
 ---
 
 ## PLAYTEST METHODOLOGY RESULTS
@@ -68,7 +70,7 @@
 
 **Status:** VERIFIED
 
-All 5 truth categories discoverable:
+All 5 evidence milestones discoverable:
 
 1. **Debris Relocation** - Physical asset recovery/transport
 2. **Being Containment** - Non-human biological subjects

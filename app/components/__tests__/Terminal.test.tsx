@@ -1,12 +1,30 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
-import Terminal from '../Terminal';
-import { DEFAULT_GAME_STATE, GameState } from '../../types';
+import Terminal, { normalizeVideoPromptChoice } from '../Terminal';
+import styles from '../Terminal.module.css';
+import { DEFAULT_GAME_STATE, GameState, TutorialStateID } from '../../types';
 import { I18nProvider } from '../../i18n';
+import { AUTOSAVE_INTERVAL_MS } from '../../constants/timing';
+import * as rngModule from '../../engine/rng';
+
+const { mockSpeakCustomFirewallVoice, mockFirewallEyes, mockStaticNoise } = vi.hoisted(() => ({
+  mockSpeakCustomFirewallVoice: vi.fn(),
+  mockFirewallEyes: vi.fn(),
+  mockStaticNoise: vi.fn(),
+}));
 
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
-  default: ({ src, alt, ...props }: { src: string; alt: string }) => (
+  default: ({
+    src,
+    alt,
+    priority: _priority,
+    ...props
+  }: {
+    src: string;
+    alt: string;
+    priority?: boolean;
+  }) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} {...props} />
   ),
@@ -18,6 +36,7 @@ const mockStartAmbient = vi.fn();
 const mockStopAmbient = vi.fn();
 const mockToggleSound = vi.fn();
 const mockUpdateAmbientTension = vi.fn();
+const mockSetAmbientDisturbance = vi.fn();
 const mockSetMasterVolume = vi.fn();
 const mockSpeak = vi.fn();
 const mockSetMusicPlaybackRate = vi.fn();
@@ -25,7 +44,7 @@ let mockSoundEnabled = false;
 
 // Mock the storage modules
 vi.mock('../../storage/saves', () => ({
-  autoSave: vi.fn(),
+  autoSave: vi.fn(() => Date.now()),
   loadGameState: vi.fn(),
   saveGameState: vi.fn(),
   saveCheckpoint: vi.fn(),
@@ -49,6 +68,28 @@ vi.mock('../../engine/achievements', () => ({
   Achievement: {},
 }));
 
+vi.mock('../../components/FirewallEyes', async () => {
+  const actual = await vi.importActual<typeof import('../../components/FirewallEyes')>(
+    '../../components/FirewallEyes'
+  );
+
+  return {
+    ...actual,
+    default: (props: unknown) => {
+      mockFirewallEyes(props);
+      return <div data-testid="firewall-eyes" />;
+    },
+    speakCustomFirewallVoice: mockSpeakCustomFirewallVoice,
+  };
+});
+
+vi.mock('../../components/StaticNoise', () => ({
+  default: (props: unknown) => {
+    mockStaticNoise(props);
+    return <div data-testid="static-noise" />;
+  },
+}));
+
 // Mock useSound hook
 vi.mock('../../hooks/useSound', () => ({
   useSound: () => ({
@@ -58,6 +99,7 @@ vi.mock('../../hooks/useSound', () => ({
     stopAmbient: mockStopAmbient,
     toggleSound: mockToggleSound,
     updateAmbientTension: mockUpdateAmbientTension,
+    setAmbientDisturbance: mockSetAmbientDisturbance,
     soundEnabled: mockSoundEnabled,
     masterVolume: 0.5,
     setMasterVolume: mockSetMasterVolume,
@@ -136,6 +178,250 @@ describe('Terminal Component', () => {
     expect(input).toBeInTheDocument();
   });
 
+  it('accepts localized video prompt responses', () => {
+    expect(normalizeVideoPromptChoice('yes')).toBe('yes');
+    expect(normalizeVideoPromptChoice('sim')).toBe('yes');
+    expect(normalizeVideoPromptChoice('sí')).toBe('yes');
+    expect(normalizeVideoPromptChoice('no')).toBe('no');
+    expect(normalizeVideoPromptChoice('não')).toBe('no');
+    expect(normalizeVideoPromptChoice('maybe')).toBeNull();
+  });
+
+  it('renders UFO74 runs flush without spacer entries', () => {
+    const ufo74State = {
+      ...defaultProps.initialState,
+      history: [
+        {
+          id: 'before-ufo74',
+          type: 'system',
+          content: 'PREVIOUS LINE',
+          timestamp: 1,
+        },
+        {
+          id: 'blank-before-ufo74',
+          type: 'system',
+          content: '',
+          timestamp: 2,
+        },
+        {
+          id: 'second-blank-before-ufo74',
+          type: 'system',
+          content: '',
+          timestamp: 3,
+        },
+        {
+          id: 'ufo74-line-one',
+          type: 'ufo74',
+          content: '│ UFO74: first line',
+          timestamp: 4,
+        },
+        {
+          id: 'blank-between-ufo74',
+          type: 'system',
+          content: '',
+          timestamp: 5,
+        },
+        {
+          id: 'ufo74-line-two',
+          type: 'ufo74',
+          content: '│ UFO74: second line',
+          timestamp: 6,
+        },
+        {
+          id: 'blank-after-ufo74',
+          type: 'system',
+          content: '',
+          timestamp: 7,
+        },
+        {
+          id: 'after-ufo74',
+          type: 'system',
+          content: 'NEXT LINE',
+          timestamp: 8,
+        },
+      ],
+    } as GameState;
+
+    const { container } = render(<Terminal {...defaultProps} initialState={ufo74State} />);
+
+    const output = container.querySelector(`.${styles.output}`);
+    const outputLines = Array.from(output?.children ?? []);
+
+    expect(outputLines.map(line => line.textContent ?? '')).toEqual([
+      'PREVIOUS LINE',
+      '│ UFO74: first line',
+      '│ UFO74: second line',
+      'NEXT LINE',
+    ]);
+    expect(outputLines[0]).toHaveClass(styles.flushBeforeUfo74);
+    expect(outputLines[1]).toHaveClass(styles.ufo74Flush);
+    expect(outputLines[2]).toHaveClass(styles.ufo74Flush);
+  });
+
+  it('keeps terminal text unchanged when high-risk static is active', () => {
+    const readableLine = 'READABLE STATIC TEST LINE';
+
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 90,
+          history: [
+            {
+              id: 'static-readable-line',
+              type: 'system',
+              content: readableLine,
+              timestamp: Date.now(),
+            },
+          ],
+        }}
+      />
+    );
+
+    expect(screen.getByText(readableLine)).toBeInTheDocument();
+  });
+
+  it('does not reset the alien silhouette timer on high-risk detection changes', () => {
+    const randomSpy = vi.spyOn(rngModule, 'uiRandom').mockReturnValue(0);
+
+    const { rerender } = render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 75,
+        }}
+      />
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(15000);
+    });
+
+    rerender(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 80,
+        }}
+      />
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(15001);
+    });
+
+    expect(
+      mockStaticNoise.mock.calls.some(
+        ([props]) => (props as { alienVisible?: boolean }).alienVisible === true
+      )
+    ).toBe(true);
+
+    randomSpy.mockRestore();
+  });
+
+  it('forces the alien silhouette visible during preview mode at 70 detection', () => {
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 70,
+          alienPreviewUntil: Date.now() + 10000,
+        }}
+      />
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(
+      mockStaticNoise.mock.calls.some(
+        ([props]) =>
+          (props as { alienVisible?: boolean; intensity?: number }).alienVisible === true &&
+          ((props as { intensity?: number }).intensity ?? 0) > 0
+      )
+    ).toBe(true);
+  });
+
+  it('spikes ambient disturbance while the alien silhouette is visible and restores it after', () => {
+    const randomSpy = vi.spyOn(rngModule, 'uiRandom').mockReturnValue(0);
+
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 75,
+        }}
+      />
+    );
+
+    mockSetAmbientDisturbance.mockClear();
+
+    act(() => {
+      vi.advanceTimersByTime(30001);
+    });
+
+    expect(mockSetAmbientDisturbance).toHaveBeenCalledWith(1);
+
+    act(() => {
+      vi.advanceTimersByTime(5001);
+    });
+
+    expect(mockSetAmbientDisturbance).toHaveBeenLastCalledWith(0);
+
+    randomSpy.mockRestore();
+  });
+
+  it('mounts firewall eyes even while atmosphere suppression is active', () => {
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          detectionLevel: 25,
+          evidenceCount: 0,
+          filesRead: new Set(),
+        }}
+      />
+    );
+
+    expect(screen.getByTestId('firewall-eyes')).toBeInTheDocument();
+    expect(mockFirewallEyes).toHaveBeenCalled();
+  });
+
+  it('stops ambient audio and plays the final firewall line on game over', () => {
+    render(
+      <Terminal
+        {...defaultProps}
+        initialState={{
+          ...defaultProps.initialState,
+          isGameOver: true,
+          gameOverReason: 'Security lockout triggered',
+        }}
+      />
+    );
+
+    expect(mockStopAmbient).toHaveBeenCalled();
+    expect(mockSpeakCustomFirewallVoice).toHaveBeenCalledWith('I disconnect you.');
+  });
+
+  it('renders a compact evidence counter in the HUD without category labels', () => {
+    render(<Terminal {...defaultProps} />);
+
+    expect(screen.getByText('Alien Files')).toBeInTheDocument();
+    expect(screen.getByText('Evidence Found: [0/10]')).toBeInTheDocument();
+    expect(screen.queryByText('Recovered')).not.toBeInTheDocument();
+    expect(screen.queryByText('Captured')).not.toBeInTheDocument();
+    expect(screen.queryByText('Signals')).not.toBeInTheDocument();
+    expect(screen.queryByText('Foreign')).not.toBeInTheDocument();
+    expect(screen.queryByText('Next')).not.toBeInTheDocument();
+  });
+
   it('restores focus after closing settings modal', () => {
     render(<Terminal {...defaultProps} />);
 
@@ -172,6 +458,14 @@ describe('Terminal Component', () => {
 
     // Terminal should have header with system info
     expect(screen.getByText(/TERMINAL 1996/i)).toBeInTheDocument();
+  });
+
+  it('shows the deploy version in the header', () => {
+    render(<Terminal {...defaultProps} />);
+
+    // Version is computed from git commit count at build time (v0.{count}.0)
+    const versionTag = screen.getByText(/^v0\.\d+\.0$/);
+    expect(versionTag).toBeInTheDocument();
   });
 
   it('accepts user input', () => {
@@ -377,6 +671,200 @@ describe('Terminal Component', () => {
     expect(input).toHaveFocus();
   });
 
+  it('restores enter-only follow-up prompts after closing the pause menu', async () => {
+    const delayedState = {
+      ...defaultProps.initialState,
+      detectionLevel: 55,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={delayedState} />);
+
+    const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
+
+    act(() => {
+      fireEvent.change(input, {
+        target: { value: 'open /internal/incident_summary_official.txt' },
+      });
+      fireEvent.submit(input.closest('form')!);
+    });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10000);
+    });
+
+    expect(screen.queryByText(/Processing\.\.\./i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Press Enter ↵ to proceed/i)).toBeInTheDocument();
+    expect(document.querySelector('.line.ufo74')).toBeNull();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.getByText(/PAUSED/i)).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.queryByText(/PAUSED/i)).not.toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(document.querySelector('.line.ufo74')).not.toBeNull();
+  });
+
+  it('advances enter-only prompts from a global Enter key press', async () => {
+    const delayedState = {
+      ...defaultProps.initialState,
+      detectionLevel: 55,
+    } as GameState;
+
+    const { container } = render(<Terminal {...defaultProps} initialState={delayedState} />);
+
+    const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
+
+    act(() => {
+      fireEvent.change(input, {
+        target: { value: 'open /internal/incident_summary_official.txt' },
+      });
+      fireEvent.submit(input.closest('form')!);
+    });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10000);
+    });
+
+    expect(screen.queryByText(/Processing\.\.\./i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Press Enter ↵ to proceed/i)).toBeInTheDocument();
+    expect(document.querySelector('.line.ufo74')).toBeNull();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const output = container.querySelector(`.${styles.output}`);
+    const ufo74Lines = Array.from(output?.querySelectorAll<HTMLElement>(`.${styles.ufo74Flush}`) ?? []);
+
+    expect(ufo74Lines.length).toBeGreaterThan(0);
+    expect(ufo74Lines[0]).toBeDefined();
+    expect(ufo74Lines[0]?.previousElementSibling).not.toBeNull();
+    expect(ufo74Lines[0]?.previousElementSibling).toHaveClass(styles.flushBeforeUfo74);
+    expect(
+      ufo74Lines.some(
+        line =>
+          line.previousElementSibling?.textContent === '' || line.nextElementSibling?.textContent === ''
+      )
+    ).toBe(false);
+  });
+
+  it('completes file processing after pausing during the command delay', async () => {
+    const delayedState = {
+      ...defaultProps.initialState,
+      detectionLevel: 55,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={delayedState} />);
+
+    const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
+
+    act(() => {
+      fireEvent.change(input, {
+        target: { value: 'open /internal/incident_summary_official.txt' },
+      });
+      fireEvent.submit(input.closest('form')!);
+    });
+
+    expect(screen.getByText(/Processing\.\.\./i)).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.getByText(/PAUSED/i)).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.queryByText(/PAUSED/i)).not.toBeInTheDocument();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10000);
+    });
+
+    expect(screen.queryByText(/Processing\.\.\./i)).not.toBeInTheDocument();
+
+    expect(screen.getAllByText(/OFFICIAL INCIDENT SUMMARY/i).length).toBeGreaterThan(0);
+  });
+
+  it('pauses the timed decrypt window while the pause menu is open', () => {
+    const timedDecryptState = {
+      ...defaultProps.initialState,
+      timedDecryptActive: true,
+      timedDecryptEndTime: Date.now() + 5000,
+      timedDecryptSequence: '0426',
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={timedDecryptState} />);
+
+    const timerBeforePause = screen.getByText(/\d+\.\ds/).textContent;
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.getByText(/PAUSED/i)).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+
+    expect(screen.getByText(timerBeforePause ?? '')).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+      vi.advanceTimersByTime(100);
+    });
+
+    const timerAfterResume = screen.getByText(/\d+\.\ds/).textContent ?? '0.0s';
+    expect(Number.parseFloat(timerAfterResume)).toBeGreaterThan(2.5);
+  });
+
+  it('does not expire the countdown immediately after resuming from pause', () => {
+    const countdownState = {
+      ...defaultProps.initialState,
+      countdownActive: true,
+      countdownEndTime: Date.now() + 1000,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={countdownState} />);
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+      vi.advanceTimersByTime(2500);
+    });
+
+    expect(screen.getByText(/PAUSED/i)).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+      vi.advanceTimersByTime(50);
+    });
+
+    expect(screen.queryByText(/PAUSED/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/CONNECTION LOST/i)).not.toBeInTheDocument();
+  });
+
   it('shows status bar with system information', () => {
     render(<Terminal {...defaultProps} />);
 
@@ -393,6 +881,22 @@ describe('Terminal Component', () => {
     render(<Terminal {...defaultProps} initialState={highDetectionState} />);
 
     expect(screen.getByText(/AUDIT.*ACTIVE/i)).toBeInTheDocument();
+  });
+
+  it('shows the save indicator after an autosave runs', () => {
+    render(<Terminal {...defaultProps} />);
+
+    expect(screen.queryByText(/Saved: <1m ago/i)).not.toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(AUTOSAVE_INTERVAL_MS);
+    });
+
+    const saveIndicator = screen.getByText(/Saved: <1m ago/i);
+
+    expect(saveIndicator).toBeInTheDocument();
+    expect(saveIndicator).toHaveAttribute('aria-live', 'polite');
+    expect(saveIndicator).toHaveClass(styles.saveIndicator);
   });
 
   it('renders ICQ chat when icqPhase is active', async () => {
@@ -497,6 +1001,46 @@ describe('Terminal Component', () => {
       // Tutorial should still be in progress (button still visible)
       // The button advances the tutorial step by step
       expect(screen.getByRole('button', { name: /↵/ })).toBeInTheDocument();
+    });
+
+    it('anchors the tutorial firewall scare overlay to the terminal screen', () => {
+      const tutorialScareState = {
+        ...DEFAULT_GAME_STATE,
+        seed: 12345,
+        rngState: 12345,
+        sessionStartTime: Date.now(),
+        tutorialComplete: false,
+        tutorialStep: 0,
+        currentPath: '/internal/misc',
+        interactiveTutorialState: {
+          current: TutorialStateID.CD_BACK_PROMPT,
+          failCount: 0,
+          nudgeShown: false,
+          inputLocked: false,
+          dialogueComplete: true,
+        },
+      } as GameState;
+
+      const { container } = render(<Terminal {...defaultProps} initialState={tutorialScareState} />);
+
+      const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
+
+      act(() => {
+        fireEvent.change(input, { target: { value: 'cd ..' } });
+      });
+
+      const form = input.closest('form');
+
+      act(() => {
+        fireEvent.submit(form!);
+      });
+
+      const overlay = container.querySelector(`.${styles.firewallScareOverlay}`);
+      const terminalScreen = container.querySelector(`.${styles.terminal}`);
+
+      expect(overlay).toBeInTheDocument();
+      expect(overlay?.parentElement).toBe(terminalScreen);
+      expect(overlay).toHaveStyle({ position: 'absolute', inset: '0' });
     });
   });
 

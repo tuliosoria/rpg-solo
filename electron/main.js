@@ -4,12 +4,18 @@ const fs = require('fs');
 
 const isDev = process.env.NODE_ENV === 'development';
 
+function devLog(...args) {
+  if (isDev) {
+    console.log(...args);
+  }
+}
+
 // ============================================================
 // STARTUP OPTIMIZATION: Memory management flags
 // ============================================================
 // Configure V8 GC for gaming workloads
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512 --expose-gc');
-app.commandLine.appendSwitch('--in-process-gpu'); // Better Steam overlay rendering
+app.commandLine.appendSwitch('in-process-gpu'); // Better Steam overlay rendering
 app.commandLine.appendSwitch('disable-renderer-backgrounding'); // Consistent game loop
 app.commandLine.appendSwitch('disable-background-timer-throttling'); // Prevent timer throttling
 
@@ -59,14 +65,22 @@ let pendingSteamSync = [];
 // Startup timing
 const startupTime = Date.now();
 function logStartupTime(phase) {
-  if (isDev) {
-    console.log(`[Startup] ${phase}: ${Date.now() - startupTime}ms`);
-  }
+  devLog(`[Startup] ${phase}: ${Date.now() - startupTime}ms`);
 }
 
-// Steam App ID - Replace with your actual Steam App ID
-// For development/testing, use 480 (Spacewar test app)
-const STEAM_APP_ID = process.env.STEAM_APP_ID || '480';
+function getSteamAppId() {
+  if (isDev) {
+    return process.env.STEAM_APP_ID || '480';
+  }
+
+  if (!process.env.STEAM_APP_ID) {
+    throw new Error('STEAM_APP_ID is required in production');
+  }
+
+  return process.env.STEAM_APP_ID;
+}
+
+const STEAM_APP_ID = getSteamAppId();
 
 // Mark app as not quitting (for tray minimize)
 app.isQuitting = false;
@@ -184,8 +198,10 @@ function createSplashWindow() {
     skipTaskbar: true,
     show: false,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false, // Allow IPC in splash
+      preload: path.join(__dirname, 'splash-preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
     },
   });
 
@@ -221,13 +237,7 @@ function closeSplashWindow() {
 // ============================================================
 
 function setupNetworkMonitoring() {
-  // Check initial status
-  isOnline = require('dns').promises.resolve('steamcommunity.com')
-    .then(() => { isOnline = true; })
-    .catch(() => { isOnline = false; });
-
-  // Periodic network check (every 30 seconds)
-  setInterval(async () => {
+  const refreshNetworkStatus = async () => {
     try {
       await require('dns').promises.resolve('steamcommunity.com');
       const wasOffline = !isOnline;
@@ -235,7 +245,7 @@ function setupNetworkMonitoring() {
       
       // Process pending sync operations when back online
       if (wasOffline && pendingSteamSync.length > 0) {
-        console.log(`Back online, processing ${pendingSteamSync.length} pending Steam operations`);
+        devLog(`Back online, processing ${pendingSteamSync.length} pending Steam operations`);
         const pending = [...pendingSteamSync];
         pendingSteamSync = [];
         for (const op of pending) {
@@ -251,12 +261,25 @@ function setupNetworkMonitoring() {
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('network:status', true);
       }
+      if (splashWindow && !splashWindow.isDestroyed()) {
+        splashWindow.webContents.send('splash:offline', false);
+      }
     } catch {
       isOnline = false;
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('network:status', false);
       }
+      if (splashWindow && !splashWindow.isDestroyed()) {
+        splashWindow.webContents.send('splash:offline', true);
+      }
     }
+  };
+
+  void refreshNetworkStatus();
+
+  // Periodic network check (every 30 seconds)
+  setInterval(() => {
+    void refreshNetworkStatus();
   }, 30000);
 }
 
@@ -282,9 +305,11 @@ function setupMemoryManagement() {
         global.gc();
         if (isDev) {
           const used = process.memoryUsage();
-          console.log(`[GC] Memory: ${Math.round(used.heapUsed / 1024 / 1024)}MB / ${Math.round(used.heapTotal / 1024 / 1024)}MB`);
+          devLog(
+            `[GC] Memory: ${Math.round(used.heapUsed / 1024 / 1024)}MB / ${Math.round(used.heapTotal / 1024 / 1024)}MB`
+          );
         }
-      } catch (e) {
+      } catch {
         // GC not available, ignore
       }
     }
@@ -294,7 +319,9 @@ function setupMemoryManagement() {
   if (isDev) {
     setInterval(() => {
       const used = process.memoryUsage();
-      console.log(`[Memory] Heap: ${Math.round(used.heapUsed / 1024 / 1024)}MB, RSS: ${Math.round(used.rss / 1024 / 1024)}MB`);
+      devLog(
+        `[Memory] Heap: ${Math.round(used.heapUsed / 1024 / 1024)}MB, RSS: ${Math.round(used.rss / 1024 / 1024)}MB`
+      );
     }, 60000);
   }
 }
@@ -324,8 +351,8 @@ function initializeSteam() {
 
     if (steamClient) {
       steamInitialized = true;
-      console.log('Steam initialized successfully');
-      console.log('Steam App ID:', STEAM_APP_ID);
+      devLog('Steam initialized successfully');
+      devLog('Steam App ID:', STEAM_APP_ID);
 
       // Initialize sub-modules with the client
       steamAchievements.initialize(steamClient);
@@ -335,30 +362,18 @@ function initializeSteam() {
       // Mark Steam as ready and run pending operations
       markSteamReady();
 
-      // Log some Steam info for debugging
-      try {
-        const localPlayer = steamClient.localplayer;
-        if (localPlayer) {
-          console.log('Steam user:', localPlayer.getName());
-        }
-      } catch (e) {
-        if (isDev) {
-          console.debug('Could not get Steam user info:', e.message);
-        }
-      }
-
       logStartupTime('Steam initialized');
       return true;
     }
   } catch (error) {
     console.error('Steam initialization failed:', error.message);
-    console.log('Running without Steam integration');
+    devLog('Running without Steam integration');
 
     // Handle specific Steam initialization failures
     if (error.message.includes('SteamAPI_Init')) {
-      console.log('Hint: Ensure Steam client is running');
+      devLog('Hint: Ensure Steam client is running');
     } else if (error.message.includes('steamworks.js')) {
-      console.log('Hint: Native module may need rebuilding');
+      devLog('Hint: Native module may need rebuilding');
     }
   }
 
@@ -384,7 +399,7 @@ function shutdownSteam() {
       steamInitialized = false;
       steamReady = false;
       pendingSteamOperations = [];
-      console.log('Steam shutdown complete');
+      devLog('Steam shutdown complete');
     } catch (error) {
       console.error('Error during Steam shutdown:', error);
     }
@@ -485,9 +500,17 @@ function createWindow() {
     };
 
     localServer = http.createServer((req, res) => {
-      // Sanitize URL to prevent path traversal attacks
-      const sanitizedUrl = path.normalize(req.url).replace(/^(\.\.[\/\\])+/, '');
-      let filePath = path.join(outDir, sanitizedUrl === '/' || sanitizedUrl === '\\' ? 'index.html' : sanitizedUrl);
+      const requestUrl = new URL(req.url || '/', 'http://127.0.0.1');
+      let decodedPathname;
+      try {
+        decodedPathname = decodeURIComponent(requestUrl.pathname);
+      } catch {
+        res.writeHead(400);
+        res.end('Bad request');
+        return;
+      }
+      const requestPath = path.normalize(decodedPathname).replace(/^(\.\.[/\\])+/, '');
+      let filePath = path.join(outDir, requestPath === '/' || requestPath === '\\' ? 'index.html' : requestPath);
       
       // Ensure the resolved path is within outDir
       if (!filePath.startsWith(outDir)) {
@@ -788,27 +811,32 @@ app.on('before-quit', () => {
 
 function setupAutoUpdater() {
   if (isDev) {
-    console.log('Auto-updater disabled in development');
+    devLog('Auto-updater disabled in development');
     return;
   }
 
   try {
     const { autoUpdater } = require('electron-updater');
 
-    autoUpdater.logger = console;
+    autoUpdater.logger = {
+      info: (...args) => devLog(...args),
+      warn: (...args) => devLog(...args),
+      error: (...args) => console.error(...args),
+      debug: (...args) => devLog(...args),
+    };
     autoUpdater.autoDownload = true;
     autoUpdater.autoInstallOnAppQuit = true;
 
     autoUpdater.on('checking-for-update', () => {
-      console.log('Checking for updates...');
+      devLog('Checking for updates...');
     });
 
     autoUpdater.on('update-available', (info) => {
-      console.log('Update available:', info.version);
+      devLog('Update available:', info.version);
     });
 
     autoUpdater.on('update-not-available', () => {
-      console.log('App is up to date');
+      devLog('App is up to date');
     });
 
     autoUpdater.on('error', (err) => {
@@ -816,11 +844,11 @@ function setupAutoUpdater() {
     });
 
     autoUpdater.on('download-progress', (progress) => {
-      console.log(`Download progress: ${progress.percent.toFixed(1)}%`);
+      devLog(`Download progress: ${progress.percent.toFixed(1)}%`);
     });
 
     autoUpdater.on('update-downloaded', (info) => {
-      console.log('Update downloaded:', info.version);
+      devLog('Update downloaded:', info.version);
       // Will install on next app quit
     });
 
@@ -835,7 +863,7 @@ function setupAutoUpdater() {
     }, 15000); // 15 seconds after startup (increased from 10)
   } catch (error) {
     // electron-updater not installed or other error
-    console.log('Auto-updater not available:', error.message);
+    devLog('Auto-updater not available:', error.message);
   }
 }
 
@@ -855,7 +883,7 @@ function setupCrashReporter() {
       ignoreSystemCrashHandler: false,
     });
 
-    console.log('Crash reporter initialized');
+    devLog('Crash reporter initialized');
   } catch (error) {
     console.error('Crash reporter setup failed:', error.message);
   }

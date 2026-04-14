@@ -60,6 +60,7 @@ vi.mock('electron', () => ({
   },
 }));
 
+// Guard all browser-only mocks so the setup file works in both jsdom and node environments.
 const isBrowser = typeof window !== 'undefined';
 
 function createMemoryStorage(): Storage {
@@ -112,6 +113,7 @@ if (isBrowser && !hasUsableStorage(window.localStorage)) {
   });
 }
 
+// Mock ResizeObserver
 class MockResizeObserver {
   callback: ResizeObserverCallback;
 
@@ -120,6 +122,7 @@ class MockResizeObserver {
   }
 
   observe(target: Element) {
+    // Simulate initial size observation
     this.callback([{
       target,
       contentRect: { height: 50, width: 100 } as DOMRectReadOnly,
@@ -138,6 +141,7 @@ if (typeof globalThis.ResizeObserver === 'undefined') {
 }
 
 if (isBrowser) {
+  // Mock window.matchMedia
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation(query => ({
@@ -153,6 +157,7 @@ if (isBrowser) {
   });
 }
 
+// Mock HTMLMediaElement
 if (typeof HTMLMediaElement !== 'undefined') {
   Object.defineProperty(HTMLMediaElement.prototype, 'play', {
     configurable: true,

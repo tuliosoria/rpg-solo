@@ -6,9 +6,7 @@ import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 import {
-  createFirewallEye,
   DETECTION_THRESHOLD,
-  DETECTION_INCREASE_ON_DETONATE,
 } from '../../components/FirewallEyes';
 
 // Helper to create a test state
@@ -22,49 +20,10 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
   } as GameState;
 }
 
-describe('Firewall Eyes System', () => {
-  describe('createFirewallEye', () => {
-    it('creates an eye with valid properties', () => {
-      const eye = createFirewallEye();
-
-      expect(eye.id).toBeDefined();
-      expect(eye.x).toBeGreaterThanOrEqual(10);
-      expect(eye.x).toBeLessThanOrEqual(90);
-      expect(eye.y).toBeGreaterThanOrEqual(20);
-      expect(eye.y).toBeLessThanOrEqual(80);
-      expect(eye.spawnTime).toBeLessThanOrEqual(Date.now());
-      expect(eye.detonateTime).toBeGreaterThan(eye.spawnTime);
-      expect(eye.isDetonating).toBe(false);
-    });
-
-    it('creates unique eye IDs', () => {
-      const eye1 = createFirewallEye();
-      const eye2 = createFirewallEye();
-
-      expect(eye1.id).not.toBe(eye2.id);
-    });
-
-    it('avoids spawning in avatar region (top-right corner)', () => {
-      // Create many eyes and verify none spawn in avatar zone (x > 75% and y < 40%)
-      const eyes = [];
-      for (let i = 0; i < 100; i++) {
-        eyes.push(createFirewallEye());
-      }
-
-      for (const eye of eyes) {
-        const inAvatarZone = eye.x > 75 && eye.y < 40;
-        expect(inAvatarZone).toBe(false);
-      }
-    });
-  });
-
+describe('Firewall System', () => {
   describe('Firewall constants', () => {
     it('has detection threshold of 25%', () => {
       expect(DETECTION_THRESHOLD).toBe(25);
-    });
-
-    it('increases detection by 5% on detonation', () => {
-      expect(DETECTION_INCREASE_ON_DETONATE).toBe(5);
     });
   });
 });
@@ -159,7 +118,6 @@ describe('Neural Link Command', () => {
         tutorialComplete: true,
         flags: { scoutLinkUnlocked: true, neuralLinkAuthenticated: true },
         firewallActive: true,
-        firewallEyes: [createFirewallEye()],
         detectionLevel: 50,
       });
 
@@ -168,7 +126,6 @@ describe('Neural Link Command', () => {
       expect(result.output.some(e => e.content.includes('FIREWALL NEUTRALIZED'))).toBe(true);
       expect(result.stateChanges.firewallDisarmed).toBe(true);
       expect(result.stateChanges.firewallActive).toBe(false);
-      expect(result.stateChanges.firewallEyes).toEqual([]);
     });
 
     it('reduces detection level when disarming firewall', () => {
@@ -177,7 +134,6 @@ describe('Neural Link Command', () => {
         tutorialComplete: true,
         flags: { scoutLinkUnlocked: true, neuralLinkAuthenticated: true },
         firewallActive: true,
-        firewallEyes: [createFirewallEye()],
         detectionLevel: 50,
       });
 

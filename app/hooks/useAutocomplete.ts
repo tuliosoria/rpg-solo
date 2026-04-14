@@ -23,8 +23,6 @@ const COMMANDS = [
   'open',
   'last',
   'unread',
-  'decrypt',
-  'recover',
   'note',
   'notes',
   'bookmark',
@@ -42,7 +40,7 @@ const COMMANDS = [
   'message',
 ];
 
-const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'decrypt', 'recover', 'run', 'bookmark'];
+const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'run', 'bookmark'];
 
 /**
  * Result of an autocomplete query.

@@ -14,21 +14,6 @@ export const GAME_OVER_DELAY_MS = 1500;
 export const TUTORIAL_REVEAL_DELAY_MS = 300;
 
 // Visual effects
-export const GLITCH_DURATIONS = {
-  LIGHT: 200,
-  MEDIUM: 300,
-  HEAVY: 500,
-  CRITICAL: 600,
-  SCREEN_SHAKE: 300,
-} as const;
-
-export const GLITCH_TIMING = {
-  MIN_INTERVAL_MS: 1200,
-  BASE_INTERVAL_MS: 4000,
-  DETECTION_FACTOR: 25,    // Divisor for detection-based timing
-  VARIANCE_FACTOR: 10,     // Divisor for random variance
-} as const;
-
 export const FLICKER_DURATION_MS = 300;
 export const RISK_PULSE_DURATION_MS = 600;
 

@@ -29,12 +29,9 @@ import {
   SAVE_VERSION,
 } from '../constants/limits';
 import { MAX_DETECTION } from '../constants/detection';
-import {
-  isCloudAvailable,
-  cloudSave,
-  cloudLoad,
-  cloudDelete,
-} from '../lib/steamBridge';
+import { countEvidence, MAX_EVIDENCE_COUNT } from '../engine/evidenceRevelation';
+import { isCloudAvailable, cloudSave, cloudLoad, cloudDelete } from '../lib/steamBridge';
+import { safeSetJSON } from './safeStorage';
 
 const SAVES_KEY = 'terminal1996:saves';
 const SAVE_PREFIX = 'terminal1996:save:';
@@ -100,14 +97,14 @@ function normalizeSeed(value: unknown): number | null {
 
 // Serialize GameState (handle Set conversion)
 function serializeState(state: GameState): string {
+  const evidenceCount = countEvidence(state);
   const data: VersionedSaveData = {
     version: SAVE_VERSION,
     state: {
       ...state,
-      truthsDiscovered: Array.from(state.truthsDiscovered),
+      evidenceCount,
       singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
       imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
-      videosShownThisRun: Array.from(state.videosShownThisRun || []),
       categoriesRead: Array.from(state.categoriesRead || []),
       filesRead: Array.from(state.filesRead || []),
       tutorialTipsShown: Array.from(state.tutorialTipsShown || []),
@@ -118,6 +115,8 @@ function serializeState(state: GameState): string {
       passwordsFound: Array.from(state.passwordsFound || []),
       bookmarkedFiles: Array.from(state.bookmarkedFiles || []),
       trapsTriggered: Array.from(state.trapsTriggered || []),
+      conspiracyFilesSeen: Array.from(state.conspiracyFilesSeen || []),
+      archiveFilesViewed: Array.from(state.archiveFilesViewed || []),
       // Limit history size to prevent quota issues
       history: state.history.slice(-MAX_HISTORY_SIZE),
     },
@@ -150,8 +149,9 @@ function deserializeState(json: string): GameState {
 
   const normalizedSeed = normalizeSeed(baseState.seed) ?? generateSeed();
   const normalizedRngState = normalizeSeed(baseState.rngState) ?? normalizedSeed;
+  const parsedFilesRead = toStringArray(parsed.filesRead);
 
-  return {
+  const state = {
     ...baseState,
     seed: normalizedSeed,
     rngState: normalizedRngState,
@@ -184,12 +184,11 @@ function deserializeState(json: string): GameState {
     wrongAttempts: clampNumber(baseState.wrongAttempts, DEFAULT_GAME_STATE.wrongAttempts, 0, 8),
     flags: toPlainObject(baseState.flags) as Record<string, boolean>,
     fileMutations: toPlainObject(baseState.fileMutations) as Record<string, FileMutation>,
-    truthsDiscovered: new Set(toStringArray(parsed.truthsDiscovered)),
+    evidenceCount: clampNumber(parsed.evidenceCount, 0, 0, MAX_EVIDENCE_COUNT),
     singularEventsTriggered: new Set(toStringArray(parsed.singularEventsTriggered)),
     imagesShownThisRun: new Set(toStringArray(parsed.imagesShownThisRun)),
-    videosShownThisRun: new Set(toStringArray(parsed.videosShownThisRun)),
     categoriesRead: new Set(toStringArray(parsed.categoriesRead)),
-    filesRead: new Set(toStringArray(parsed.filesRead)),
+    filesRead: new Set(parsedFilesRead),
     tutorialTipsShown: new Set(toStringArray(parsed.tutorialTipsShown)),
     prisoner45UsedResponses: new Set(toStringArray(parsed.prisoner45UsedResponses)),
     scoutLinkUsedResponses: new Set(toStringArray(parsed.scoutLinkUsedResponses)),
@@ -198,8 +197,8 @@ function deserializeState(json: string): GameState {
     passwordsFound: new Set(toStringArray(parsed.passwordsFound)),
     bookmarkedFiles: new Set(toStringArray(parsed.bookmarkedFiles)),
     trapsTriggered: new Set(toStringArray(parsed.trapsTriggered)),
-    // Ensure fileEvidenceStates is initialized (plain object, no Set conversion needed)
-    fileEvidenceStates: toPlainObject(baseState.fileEvidenceStates) as Record<string, unknown>,
+    conspiracyFilesSeen: new Set(toStringArray(parsed.conspiracyFilesSeen)),
+    archiveFilesViewed: new Set(toStringArray(parsed.archiveFilesViewed)),
     // Limit command history to last MAX_COMMAND_HISTORY_SIZE entries
     commandHistory: toStringArray(parsed.commandHistory).slice(-MAX_COMMAND_HISTORY_SIZE),
     history: Array.isArray(baseState.history)
@@ -208,6 +207,12 @@ function deserializeState(json: string): GameState {
     evidenceLinks: Array.isArray(baseState.evidenceLinks) ? baseState.evidenceLinks : [],
     icqMessages: Array.isArray(baseState.icqMessages) ? baseState.icqMessages : [],
   } as GameState;
+
+  state.evidenceCount =
+    parsedFilesRead.length > 0
+      ? countEvidence({ ...state, evidenceCount: 0 })
+      : countEvidence(state);
+  return state;
 }
 
 // Check if we're in a browser with real localStorage
@@ -235,6 +240,27 @@ function isQuotaExceededError(error: unknown): boolean {
   );
 }
 
+interface SlotStorageConfig<T extends { id: string }> {
+  itemPrefix: string;
+  listKey: string;
+  maxSlots: number;
+  readSlots: () => T[];
+}
+
+function persistSlotMetadata<T>(listKey: string, slots: T[]): boolean {
+  return safeSetJSON(listKey, slots);
+}
+
+function removeSlotPayloads<T extends { id: string }>(slots: T[], itemPrefix: string): void {
+  slots.forEach(slot => {
+    try {
+      window.localStorage.removeItem(itemPrefix + slot.id);
+    } catch {
+      // Ignore removal errors
+    }
+  });
+}
+
 function pruneSlotsForQuotaRetry<T extends { id: string }>(
   slots: T[],
   listKey: string,
@@ -246,18 +272,88 @@ function pruneSlotsForQuotaRetry<T extends { id: string }>(
       return false;
     }
 
+    const orderedSlots = [...slots].sort((left, right) => {
+      const leftTimestamp =
+        'timestamp' in left && typeof left.timestamp === 'number' ? left.timestamp : 0;
+      const rightTimestamp =
+        'timestamp' in right && typeof right.timestamp === 'number' ? right.timestamp : 0;
+      return rightTimestamp - leftTimestamp;
+    });
+
     // Free space for the incoming write: keep at most maxSlots - 1 existing items
     // and always drop at least one slot when something already exists.
-    const keepCount = Math.max(0, Math.min(maxSlots - 1, slots.length - 1));
-    const remainingSlots = slots.slice(0, keepCount);
-    const toDelete = slots.slice(keepCount);
+    const keepCount = Math.max(0, Math.min(maxSlots - 1, orderedSlots.length - 1));
+    const remainingSlots = orderedSlots.slice(0, keepCount);
+    const toDelete = orderedSlots.slice(keepCount);
 
-    toDelete.forEach(slot => window.localStorage.removeItem(itemPrefix + slot.id));
-    window.localStorage.setItem(listKey, JSON.stringify(remainingSlots));
-    return true;
+    removeSlotPayloads(toDelete, itemPrefix);
+    return persistSlotMetadata(listKey, remainingSlots);
   } catch {
     return false;
   }
+}
+
+function persistSlotDataWithQuotaRetry<T extends { id: string }>(
+  itemKey: string,
+  serializedState: string,
+  config: SlotStorageConfig<T>,
+  failureLabel: string
+): boolean {
+  try {
+    window.localStorage.setItem(itemKey, serializedState);
+    return true;
+  } catch (error) {
+    if (!isQuotaExceededError(error)) {
+      // eslint-disable-next-line no-console
+      console.error(`Failed to ${failureLabel}:`, error);
+      return false;
+    }
+
+    const cleanedUp = pruneSlotsForQuotaRetry(
+      config.readSlots(),
+      config.listKey,
+      config.itemPrefix,
+      config.maxSlots
+    );
+
+    if (!cleanedUp) {
+      // eslint-disable-next-line no-console
+      console.error(`Failed to free storage space for ${failureLabel} retry`);
+      return false;
+    }
+
+    try {
+      window.localStorage.setItem(itemKey, serializedState);
+      return true;
+    } catch {
+      // eslint-disable-next-line no-console
+      console.error(`Failed to ${failureLabel}: storage quota exceeded`);
+      return false;
+    }
+  }
+}
+
+function persistLimitedSlotList<T extends { id: string }>(
+  slot: T,
+  config: SlotStorageConfig<T>
+): boolean {
+  const slots = config.readSlots();
+  slots.unshift(slot);
+
+  const overflowSlots = slots.slice(config.maxSlots);
+  if (overflowSlots.length > 0) {
+    removeSlotPayloads(overflowSlots, config.itemPrefix);
+  }
+
+  return persistSlotMetadata(config.listKey, slots.slice(0, config.maxSlots));
+}
+
+function removeSlotMetadata<T extends { id: string }>(
+  slotId: string,
+  config: SlotStorageConfig<T>
+): boolean {
+  const remainingSlots = config.readSlots().filter(slot => slot.id !== slotId);
+  return persistSlotMetadata(config.listKey, remainingSlots);
 }
 
 /**
@@ -270,7 +366,7 @@ async function syncSaveToCloud(key: string, data: string): Promise<void> {
     const cloudAvailable = await isCloudAvailable();
     if (cloudAvailable) {
       const result = await cloudSave(key, data);
-      if (result.success) {
+      if (result.success && process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line no-console
         console.log(`Synced save ${key} to Steam Cloud`);
       }
@@ -348,66 +444,38 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
   const id = `save_${Date.now()}`;
   const name = slotName || `Session ${new Date().toLocaleString()}`;
   const now = Date.now();
+  const evidenceCount = countEvidence(state);
 
   const slot: SaveSlot = {
     id,
     name,
     timestamp: now,
     currentPath: state.currentPath,
-    truthCount: state.truthsDiscovered.size,
+    truthCount: evidenceCount,
     detectionLevel: state.detectionLevel,
   };
 
   // Save the state with updated lastSaveTime
   const stateToSave = { ...state, lastSaveTime: now };
+  const serializedState = serializeState(stateToSave);
+  const saveStorageConfig: SlotStorageConfig<SaveSlot> = {
+    itemPrefix: SAVE_PREFIX,
+    listKey: SAVES_KEY,
+    maxSlots: MAX_SAVE_SLOTS,
+    readSlots: getSaveSlots,
+  };
 
-  try {
-    window.localStorage.setItem(SAVE_PREFIX + id, serializeState(stateToSave));
-  } catch (e) {
-    // Handle quota exceeded error by cleaning up oldest saves
-    if (isQuotaExceededError(e)) {
-      const slots = getSaveSlots();
-      const cleanedUp = pruneSlotsForQuotaRetry(slots, SAVES_KEY, SAVE_PREFIX, MAX_SAVE_SLOTS);
-      if (!cleanedUp) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to free storage space for save retry');
-        return null;
-      }
-      // Try again
-      try {
-        window.localStorage.setItem(SAVE_PREFIX + id, serializeState(stateToSave));
-      } catch {
-        // eslint-disable-next-line no-console
-        console.error('Failed to save game: storage quota exceeded');
-        return null;
-      }
-    } else {
-      // eslint-disable-next-line no-console
-      console.error('Failed to save game:', e);
-      return null;
-    }
+  if (!persistSlotDataWithQuotaRetry(SAVE_PREFIX + id, serializedState, saveStorageConfig, 'save game')) {
+    return null;
   }
 
-  // Update saves list
-  const slots = getSaveSlots();
-  slots.unshift(slot); // Add to front
-
-  // Keep only last MAX_SAVE_SLOTS saves, delete orphaned save data
-  if (slots.length > MAX_SAVE_SLOTS) {
-    const orphanedSlots = slots.slice(MAX_SAVE_SLOTS);
-    orphanedSlots.forEach(s => {
-      try {
-        window.localStorage.removeItem(SAVE_PREFIX + s.id);
-      } catch {
-        // Ignore removal errors
-      }
-    });
+  if (!persistLimitedSlotList(slot, saveStorageConfig)) {
+    removeSlotPayloads([slot], SAVE_PREFIX);
+    return null;
   }
-  const trimmedSlots = slots.slice(0, MAX_SAVE_SLOTS);
-  window.localStorage.setItem(SAVES_KEY, JSON.stringify(trimmedSlots));
 
   // Sync to Steam Cloud in the background (fire and forget)
-  syncSaveToCloud(id, serializeState(stateToSave));
+  syncSaveToCloud(id, serializedState);
 
   return slot;
 }
@@ -472,9 +540,12 @@ export function deleteSave(slotId: string): void {
 
   try {
     window.localStorage.removeItem(SAVE_PREFIX + slotId);
-
-    const slots = getSaveSlots().filter(s => s.id !== slotId);
-    window.localStorage.setItem(SAVES_KEY, JSON.stringify(slots));
+    removeSlotMetadata(slotId, {
+      itemPrefix: SAVE_PREFIX,
+      listKey: SAVES_KEY,
+      maxSlots: MAX_SAVE_SLOTS,
+      readSlots: getSaveSlots,
+    });
 
     // Also delete from Steam Cloud (fire and forget)
     deleteSaveFromCloud(slotId);
@@ -512,10 +583,9 @@ export function createNewGame(): GameState {
     rngState: seed,
     sessionStartTime: Date.now(),
     history: bootSequence,
-    truthsDiscovered: new Set(),
+    evidenceCount: 0,
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
-    videosShownThisRun: new Set(),
     flags,
     tutorialStep: 0,
     tutorialComplete: false,
@@ -536,18 +606,21 @@ export function createNewGame(): GameState {
  * Also syncs to Steam Cloud when available.
  * @param state - The game state to auto-save
  */
-export function autoSave(state: GameState): void {
-  if (!isBrowserWithStorage()) return;
+export function autoSave(state: GameState): number | null {
+  if (!isBrowserWithStorage()) return null;
 
   try {
-    const stateToSave = { ...state, lastSaveTime: Date.now() };
+    const savedAt = Date.now();
+    const stateToSave = { ...state, lastSaveTime: savedAt };
     const serialized = serializeState(stateToSave);
     window.localStorage.setItem('terminal1996:autosave', serialized);
 
     // Sync to Steam Cloud in the background
     syncSaveToCloud('autosave', serialized);
+    return savedAt;
   } catch {
     // localStorage may be full or unavailable
+    return null;
   }
 }
 
@@ -626,60 +699,41 @@ export function saveCheckpoint(state: GameState, reason: string): CheckpointSlot
 
   const id = `checkpoint_${Date.now()}`;
   const now = Date.now();
+  const evidenceCount = countEvidence(state);
 
   const slot: CheckpointSlot = {
     id,
     reason,
     timestamp: now,
     currentPath: state.currentPath,
-    truthCount: state.truthsDiscovered.size,
+    truthCount: evidenceCount,
     detectionLevel: state.detectionLevel,
   };
 
   const stateToSave = { ...state, lastSaveTime: now };
+  const serializedState = serializeState(stateToSave);
+  const checkpointStorageConfig: SlotStorageConfig<CheckpointSlot> = {
+    itemPrefix: CHECKPOINT_PREFIX,
+    listKey: CHECKPOINTS_KEY,
+    maxSlots: MAX_CHECKPOINT_SAVES,
+    readSlots: getCheckpointSlots,
+  };
 
-  try {
-    window.localStorage.setItem(CHECKPOINT_PREFIX + id, serializeState(stateToSave));
-  } catch (e) {
-    if (isQuotaExceededError(e)) {
-      const slots = getCheckpointSlots();
-      const cleanedUp = pruneSlotsForQuotaRetry(
-        slots,
-        CHECKPOINTS_KEY,
-        CHECKPOINT_PREFIX,
-        MAX_CHECKPOINT_SAVES
-      );
-      if (!cleanedUp) {
-        return null;
-      }
-      // Try again
-      try {
-        window.localStorage.setItem(CHECKPOINT_PREFIX + id, serializeState(stateToSave));
-      } catch {
-        return null;
-      }
-    } else {
-      return null;
-    }
+  if (
+    !persistSlotDataWithQuotaRetry(
+      CHECKPOINT_PREFIX + id,
+      serializedState,
+      checkpointStorageConfig,
+      'save checkpoint'
+    )
+  ) {
+    return null;
   }
 
-  // Update checkpoints list
-  const slots = getCheckpointSlots();
-  slots.unshift(slot);
-
-  // Keep only MAX_CHECKPOINT_SAVES, delete orphaned checkpoint data
-  if (slots.length > MAX_CHECKPOINT_SAVES) {
-    const orphanedSlots = slots.slice(MAX_CHECKPOINT_SAVES);
-    orphanedSlots.forEach(s => {
-      try {
-        window.localStorage.removeItem(CHECKPOINT_PREFIX + s.id);
-      } catch {
-        // Ignore removal errors
-      }
-    });
+  if (!persistLimitedSlotList(slot, checkpointStorageConfig)) {
+    removeSlotPayloads([slot], CHECKPOINT_PREFIX);
+    return null;
   }
-  const trimmedSlots = slots.slice(0, MAX_CHECKPOINT_SAVES);
-  window.localStorage.setItem(CHECKPOINTS_KEY, JSON.stringify(trimmedSlots));
 
   return slot;
 }
@@ -719,9 +773,12 @@ export function deleteCheckpoint(slotId: string): void {
 
   try {
     window.localStorage.removeItem(CHECKPOINT_PREFIX + slotId);
-
-    const slots = getCheckpointSlots().filter(s => s.id !== slotId);
-    window.localStorage.setItem(CHECKPOINTS_KEY, JSON.stringify(slots));
+    removeSlotMetadata(slotId, {
+      itemPrefix: CHECKPOINT_PREFIX,
+      listKey: CHECKPOINTS_KEY,
+      maxSlots: MAX_CHECKPOINT_SAVES,
+      readSlots: getCheckpointSlots,
+    });
   } catch {
     // localStorage may be unavailable
   }

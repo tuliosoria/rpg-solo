@@ -1,11 +1,14 @@
 'use client';
 
+'use client';
+
 /**
  * Memoized selectors for game state to reduce re-renders.
  * Use these instead of accessing gameState directly in components.
  */
 
 import { useMemo } from 'react';
+import { useI18n } from '../i18n';
 import { GameState } from '../types';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { MAX_WRONG_ATTEMPTS } from '../constants/gameplay';
@@ -14,42 +17,58 @@ import { MAX_WRONG_ATTEMPTS } from '../constants/gameplay';
  * Get memoized risk level info
  */
 export function useRiskLevel(detectionLevel: number) {
+  const { t } = useI18n();
+
   return useMemo(() => {
     const percent = `${detectionLevel}%`;
-    if (detectionLevel >= 80) return { level: `CRITICAL ${percent}`, color: 'critical' as const };
-    if (detectionLevel >= 60) return { level: `HIGH ${percent}`, color: 'high' as const };
-    if (detectionLevel >= 40) return { level: `ELEVATED ${percent}`, color: 'elevated' as const };
-    if (detectionLevel >= 20) return { level: `LOW ${percent}`, color: 'low' as const };
-    return { level: `MINIMAL ${percent}`, color: 'minimal' as const };
-  }, [detectionLevel]);
+    if (detectionLevel >= 80) {
+      return { level: t('terminal.risk.critical', { percent }), color: 'critical' as const };
+    }
+    if (detectionLevel >= 60) {
+      return { level: t('terminal.risk.high', { percent }), color: 'high' as const };
+    }
+    if (detectionLevel >= 40) {
+      return { level: t('terminal.risk.elevated', { percent }), color: 'elevated' as const };
+    }
+    if (detectionLevel >= 20) {
+      return { level: t('terminal.risk.low', { percent }), color: 'low' as const };
+    }
+    return { level: t('terminal.risk.minimal', { percent }), color: 'minimal' as const };
+  }, [detectionLevel, t]);
 }
 
 /**
  * Get memoized status bar content
  */
 export function useStatusBar(gameState: GameState) {
+  const { t, translateRuntimeText } = useI18n();
+
   return useMemo(() => {
     const parts: string[] = [];
 
     if (gameState.detectionLevel >= DETECTION_THRESHOLDS.SUSPICIOUS) {
-      parts.push('AUDIT: ACTIVE');
+      parts.push(t('terminal.status.auditActive'));
     }
     if (gameState.sessionStability < 50) {
-      parts.push('SESSION: UNSTABLE');
+      parts.push(t('terminal.status.sessionUnstable'));
     }
     if (gameState.flags.adminUnlocked) {
-      parts.push('ACCESS: ADMIN');
+      parts.push(t('terminal.status.accessAdmin'));
     }
     if (gameState.paranoiaLevel >= 40) {
-      parts.push('PARANOIA: ELEVATED');
+      parts.push(t('terminal.status.paranoiaElevated'));
     } else if (gameState.paranoiaLevel >= 15) {
-      parts.push('PARANOIA: ACTIVE');
+      parts.push(t('terminal.status.paranoiaActive'));
     }
     if (gameState.isGameOver) {
-      parts.push(gameState.gameOverReason || 'TERMINATED');
+      parts.push(
+        gameState.gameOverReason
+          ? translateRuntimeText(gameState.gameOverReason)
+          : t('terminal.status.terminated')
+      );
     }
 
-    return parts.join(' │ ') || 'SYSTEM NOMINAL';
+    return parts.join(' │ ') || t('terminal.status.systemNominal');
   }, [
     gameState.detectionLevel,
     gameState.sessionStability,
@@ -57,6 +76,8 @@ export function useStatusBar(gameState: GameState) {
     gameState.paranoiaLevel,
     gameState.isGameOver,
     gameState.gameOverReason,
+    t,
+    translateRuntimeText,
   ]);
 }
 
@@ -64,39 +85,29 @@ export function useStatusBar(gameState: GameState) {
  * Get memoized save indicator
  */
 export function useSaveIndicator(lastSaveTime: number | undefined) {
+  const { t } = useI18n();
+
   return useMemo(() => {
     if (!lastSaveTime) return null;
     const elapsed = Math.floor((Date.now() - lastSaveTime) / 60000);
-    if (elapsed < 1) return 'Saved: <1m ago';
-    if (elapsed < 60) return `Saved: ${elapsed}m ago`;
+    if (elapsed < 1) return t('terminal.save.justNow');
+    if (elapsed < 60) return t('terminal.save.minutes', { value: elapsed });
     const hours = Math.floor(elapsed / 60);
-    return `Saved: ${hours}h ago`;
-  }, [lastSaveTime]);
+    return t('terminal.save.hours', { value: hours });
+  }, [lastSaveTime, t]);
 }
 
 /**
  * Get memoized evidence discovery state
  */
-export function useEvidenceState(truthsDiscovered: Set<string> | undefined) {
+export function useEvidenceState(evidenceCount: number | undefined) {
   return useMemo(() => {
-    const discovered = truthsDiscovered ?? new Set<string>();
-    const categories = [
-      'debris_relocation',
-      'being_containment', 
-      'telepathic_scouts',
-      'international_actors',
-      'transition_2026',
-    ] as const;
+    const count = evidenceCount ?? 0;
     
     return {
-      count: discovered.size,
-      categories: categories.map(cat => ({
-        id: cat,
-        discovered: discovered.has(cat),
-        symbol: discovered.has(cat) ? '●' : '□',
-      })),
+      count,
     };
-  }, [truthsDiscovered]);
+  }, [evidenceCount]);
 }
 
 /**
@@ -130,12 +141,8 @@ export function useFirewallState(gameState: GameState) {
   return useMemo(() => ({
     active: gameState.firewallActive,
     disarmed: gameState.firewallDisarmed,
-    eyeCount: gameState.firewallEyes.length,
-    lastSpawnTime: gameState.lastEyeSpawnTime,
   }), [
     gameState.firewallActive,
     gameState.firewallDisarmed,
-    gameState.firewallEyes.length,
-    gameState.lastEyeSpawnTime,
   ]);
 }

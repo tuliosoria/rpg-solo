@@ -7,8 +7,8 @@
 }
 
 body {
-  background: #0a0a0a;
-  color: #00ff00;
+  background: #080a06;
+  color: #88cc44;
   font-family: 'Courier New', monospace;
   height: 100vh;
   width: 100vw;
@@ -54,7 +54,7 @@ body {
   transform: translate(-50%, -50%);
   width: 200px;
   height: 200px;
-  background: radial-gradient(circle, rgba(0, 255, 0, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(136, 204, 68, 0.15) 0%, transparent 70%);
   animation: pulse 2s ease-in-out infinite;
   pointer-events: none;
 }
@@ -74,10 +74,10 @@ body {
   font-size: 48px;
   font-weight: bold;
   letter-spacing: 12px;
-  text-shadow: 
-    0 0 10px rgba(0, 255, 0, 0.8),
-    0 0 20px rgba(0, 255, 0, 0.4),
-    0 0 30px rgba(0, 255, 0, 0.2);
+  text-shadow:
+    0 0 10px rgba(136, 204, 68, 0.8),
+    0 0 20px rgba(136, 204, 68, 0.4),
+    0 0 30px rgba(136, 204, 68, 0.2);
   animation: flicker 3s ease-in-out infinite;
   margin-bottom: 8px;
 }
@@ -85,9 +85,9 @@ body {
 .game-subtitle {
   font-size: 18px;
   letter-spacing: 8px;
-  color: #00cc00;
+  color: #78b838;
   opacity: 0.8;
-  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  text-shadow: 0 0 5px rgba(136, 204, 68, 0.5);
 }
 
 @keyframes flicker {
@@ -119,7 +119,7 @@ body {
 .loading-bar {
   width: 100%;
   height: 4px;
-  background: rgba(0, 255, 0, 0.2);
+  background: rgba(136, 204, 68, 0.2);
   border-radius: 2px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -128,8 +128,8 @@ body {
 .loading-fill {
   width: 0%;
   height: 100%;
-  background: linear-gradient(90deg, #00ff00, #00cc00);
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  background: linear-gradient(90deg, #88cc44, #78b838);
+  box-shadow: 0 0 10px rgba(136, 204, 68, 0.5);
   transition: width 0.3s ease-out;
   animation: loadingPulse 1.5s ease-in-out infinite;
 }
@@ -146,7 +146,7 @@ body {
 .loading-text {
   font-size: 12px;
   letter-spacing: 2px;
-  color: #00aa00;
+  color: #5a8a28;
   text-transform: uppercase;
 }
 

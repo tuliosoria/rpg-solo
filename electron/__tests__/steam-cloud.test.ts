@@ -25,7 +25,7 @@ const mockSteamClient = {
 };
 
 // Import the module - use dynamic import for CommonJS compatibility
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+ 
 const steamCloud = require('../steam-cloud') as typeof import('../steam-cloud');
 
 describe('Steam Cloud Bridge', () => {

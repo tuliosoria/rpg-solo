@@ -2,7 +2,74 @@
 
 import { FileSystemNode, FileNode, GameState } from '../types';
 import { FILESYSTEM_ROOT } from '../data/filesystem';
-import { createSeededRng } from './rng';
+import { countEvidence, isEvidenceFile, MAX_EVIDENCE_COUNT } from './evidenceRevelation';
+
+// Cached set of file paths that can potentially reveal evidence
+let _evidenceBearingFiles: Set<string> | null = null;
+
+function buildEvidenceBearingFiles(): Set<string> {
+  const result = new Set<string>();
+
+  function traverse(node: FileSystemNode, path: string) {
+    if (node.type === 'file') {
+      const file = node as FileNode;
+      if (isEvidenceFile(file)) {
+        result.add(path);
+      }
+    } else {
+      for (const [name, child] of Object.entries(node.children)) {
+        const childPath = path === '/' ? `/${name}` : `${path}/${name}`;
+        traverse(child, childPath);
+      }
+    }
+  }
+
+  traverse(FILESYSTEM_ROOT, '/');
+  return result;
+}
+
+/**
+ * Returns the set of file paths that can potentially reveal evidence.
+ * Cached after first call since the filesystem is static.
+ */
+export function getEvidenceBearingFiles(): Set<string> {
+  if (!_evidenceBearingFiles) {
+    _evidenceBearingFiles = buildEvidenceBearingFiles();
+  }
+  return _evidenceBearingFiles;
+}
+
+function countExploredPrimarySectors(state: GameState): number {
+  const sectors = new Set<string>();
+
+  for (const path of state.filesRead || []) {
+    if (path.startsWith('/storage/')) sectors.add('storage');
+    if (path.startsWith('/ops/')) sectors.add('ops');
+    if (path.startsWith('/comms/')) sectors.add('comms');
+  }
+
+  return sectors.size;
+}
+
+function isProgressVisible(path: string, state: GameState): boolean {
+  if (state.filesRead?.has(path)) {
+    return true;
+  }
+
+  if (path === '/tmp/pattern_recognition.log') {
+    return countExploredPrimarySectors(state) >= 3;
+  }
+
+  if (path === '/tmp/coherence_threshold.log' || path === '/tmp/session_residue.log') {
+    return countEvidence(state) >= 4;
+  }
+
+  if (path === '/tmp/save_evidence.sh') {
+    return countEvidence(state) >= MAX_EVIDENCE_COUNT;
+  }
+
+  return true;
+}
 
 /**
  * Resolves a path (absolute or relative) against a current working path.
@@ -64,6 +131,10 @@ export function getNode(path: string, state: GameState): FileSystemNode | null {
     current = child;
   }
 
+  if (current.type === 'file' && !isProgressVisible(path, state)) {
+    return null;
+  }
+
   return current;
 }
 
@@ -89,32 +160,16 @@ export function listDirectory(
       if (!hasAllFlags) continue;
     }
 
-    // Handle restricted files
-    if (child.type === 'file') {
-      const file = child as FileNode;
-      if (file.status === 'restricted' || file.status === 'restricted_briefing') {
-        // Restricted files only visible after override (adminUnlocked) is active
-        if (!state.flags?.adminUnlocked) {
-          continue; // Hide restricted files until override is active
-        }
-        // Override is active - show the file (skip accessThreshold check for restricted files)
-      } else {
-        // Non-restricted files: check access threshold
-        if (child.accessThreshold && state.accessLevel < child.accessThreshold) {
-          continue;
-        }
-      }
-    } else {
-      // Directories: check access threshold
-      if (child.accessThreshold && state.accessLevel < child.accessThreshold) {
-        continue;
-      }
+    // Legacy encrypted/restricted states are now presentation only.
+    if (child.accessThreshold && state.accessLevel < child.accessThreshold) {
+      continue;
     }
 
     // Check if file is deleted
     const fullPath = path === '/' ? `/${name}` : `${path}/${name}`;
     const mutation = state.fileMutations[fullPath];
     if (mutation?.deleted) continue;
+    if (child.type === 'file' && !isProgressVisible(fullPath, state)) continue;
 
     entries.push({
       name: child.type === 'dir' ? `${name}/` : name,
@@ -156,56 +211,10 @@ export function getFileContent(
   let content: string[];
   if (decrypted && file.decryptedFragment && mutation?.decrypted) {
     content = [...file.decryptedFragment];
-  } else if (file.status === 'encrypted' && !mutation?.decrypted) {
-    return ['[ENCRYPTED - DECRYPTION REQUIRED]'];
+  } else if (file.status === 'encrypted' && file.decryptedFragment) {
+    content = [...file.decryptedFragment];
   } else {
     content = [...file.content];
-  }
-
-  // Time-sensitive content degradation
-  // Files with 'time_sensitive' in content become partially corrupted after 30 commands
-  const commandCount = state.sessionCommandCount || 0;
-  const isTimeSensitive = file.content.some(
-    (line: string) =>
-      line.includes('TIME-SENSITIVE') ||
-      line.includes('[EARLY SESSION ONLY]') ||
-      path.includes('early_') ||
-      path.includes('initial_')
-  );
-
-  if (isTimeSensitive && commandCount > 30) {
-    // Progressively corrupt time-sensitive files
-    const corruptionLevel = Math.min(Math.floor((commandCount - 30) / 10), 5);
-    // Use seeded RNG based on path hash and command count for deterministic corruption
-    const pathHash = path.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const rng = createSeededRng(state.seed + pathHash + commandCount);
-    content = content.map((line: string, idx: number) => {
-      if (idx === 0 || idx === content.length - 1) return line; // Keep first/last line
-      if (rng() < corruptionLevel * 0.15) {
-        return '[DATA DEGRADED - RETRIEVAL WINDOW EXCEEDED]';
-      }
-      return line;
-    });
-
-    if (corruptionLevel >= 3) {
-      content.push('');
-      content.push('[WARNING: File integrity compromised due to delayed access]');
-    }
-  }
-
-  // Apply mutations (corruption)
-  if (mutation) {
-    for (const lineIdx of mutation.corruptedLines || []) {
-      if (lineIdx < content.length) {
-        content[lineIdx] = '[DATA LOSS]';
-      }
-    }
-
-    if (mutation.truncatedLine !== undefined && mutation.truncatedLine < content.length) {
-      const line = content[mutation.truncatedLine];
-      const cutPoint = Math.floor(line.length * 0.4);
-      content[mutation.truncatedLine] = line.substring(0, cutPoint) + '—[CORRUPTION]';
-    }
   }
 
   return content;
@@ -225,45 +234,13 @@ export function canAccessFile(
   if (!node) return { accessible: false, reason: 'FILE NOT FOUND' };
   if (node.type !== 'file') return { accessible: false, reason: 'NOT A FILE' };
 
-  const file = node as FileNode;
+  const _file = node as FileNode;
   const mutation = state.fileMutations[path];
 
   if (mutation?.deleted) return { accessible: false, reason: 'FILE DELETED' };
   if (mutation?.locked) return { accessible: false, reason: 'FILE LOCKED' };
 
-  if (file.status === 'restricted' || file.status === 'restricted_briefing') {
-    if (file.accessThreshold && state.accessLevel < file.accessThreshold) {
-      return { accessible: false, reason: 'ACCESS DENIED - CLEARANCE INSUFFICIENT' };
-    }
-    if (!state.flags.adminUnlocked && path.startsWith('/admin')) {
-      return { accessible: false, reason: 'ACCESS DENIED - RESTRICTED ARCHIVE' };
-    }
-  }
-
   return { accessible: true };
-}
-
-/**
- * Gets the truth categories that a file can reveal when read.
- * @param path - The absolute path to the file
- * @returns Array of truth category IDs the file can reveal
- */
-export function getFileReveals(path: string): string[] {
-  const segments = path.split('/').filter(Boolean);
-  let current: FileSystemNode = FILESYSTEM_ROOT;
-
-  for (const segment of segments) {
-    if (current.type !== 'dir') return [];
-    const child: FileSystemNode | undefined = current.children[segment];
-    if (!child) return [];
-    current = child;
-  }
-
-  if (current.type === 'file') {
-    return (current as FileNode).reveals || [];
-  }
-
-  return [];
 }
 
 /**

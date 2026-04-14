@@ -38,7 +38,7 @@ export default function BadEnding({
       '║                                                           ║',
       '╚═══════════════════════════════════════════════════════════╝',
       '',
-      `TERMINATION REASON: ${reason}`,
+      `TERMINATION_REASON: ${reason}`,
       '',
       '───────────────────────────────────────────────────────────',
       '',
@@ -128,7 +128,7 @@ export default function BadEnding({
               className={
                 line.startsWith('╔') || line.startsWith('╚') || line.startsWith('║')
                   ? styles.boxLine
-                  : line.startsWith('TERMINATION')
+                  : line.startsWith('TERMINATION_REASON:')
                     ? styles.errorLine
                     : line.startsWith('SYSTEM:')
                       ? styles.systemLine
@@ -139,7 +139,9 @@ export default function BadEnding({
                           : styles.textLine
               }
             >
-              {translateRuntimeText(line)}
+              {line.startsWith('TERMINATION_REASON:')
+                ? `${translateRuntimeText('TERMINATION REASON:')} ${translateRuntimeText(line.slice('TERMINATION_REASON: '.length))}`
+                : translateRuntimeText(line)}
             </div>
           ))}
         </div>

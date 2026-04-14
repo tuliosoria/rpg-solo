@@ -244,8 +244,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onNewGame: (callback) => {
       try {
         ipcRenderer.on('tray:newGame', callback);
+        return () => ipcRenderer.removeListener('tray:newGame', callback);
       } catch (error) {
         console.error('Failed to register tray:newGame listener:', error.message);
+        return () => {};
       }
     },
   },
@@ -273,9 +275,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
      */
     onUpdateAvailable: (callback) => {
       try {
-        ipcRenderer.on('update:available', (event, info) => callback(info));
+        const handler = (event, info) => callback(info);
+        ipcRenderer.on('update:available', handler);
+        return () => ipcRenderer.removeListener('update:available', handler);
       } catch (error) {
         console.error('Failed to register update:available listener:', error.message);
+        return () => {};
       }
     },
 
@@ -285,9 +290,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
      */
     onUpdateProgress: (callback) => {
       try {
-        ipcRenderer.on('update:progress', (event, progress) => callback(progress));
+        const handler = (event, progress) => callback(progress);
+        ipcRenderer.on('update:progress', handler);
+        return () => ipcRenderer.removeListener('update:progress', handler);
       } catch (error) {
         console.error('Failed to register update:progress listener:', error.message);
+        return () => {};
       }
     },
 
@@ -297,9 +305,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
      */
     onUpdateDownloaded: (callback) => {
       try {
-        ipcRenderer.on('update:downloaded', (event, info) => callback(info));
+        const handler = (event, info) => callback(info);
+        ipcRenderer.on('update:downloaded', handler);
+        return () => ipcRenderer.removeListener('update:downloaded', handler);
       } catch (error) {
         console.error('Failed to register update:downloaded listener:', error.message);
+        return () => {};
       }
     },
   },
@@ -315,9 +326,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
      */
     onLoadSave: (callback) => {
       try {
-        ipcRenderer.on('deep-link:load-save', (event, saveId) => callback(saveId));
+        const handler = (event, saveId) => callback(saveId);
+        ipcRenderer.on('deep-link:load-save', handler);
+        return () => ipcRenderer.removeListener('deep-link:load-save', handler);
       } catch (error) {
         console.error('Failed to register deep-link:load-save listener:', error.message);
+        return () => {};
       }
     },
   },
@@ -333,9 +347,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
      */
     onNewGame: (callback) => {
       try {
-        ipcRenderer.on('menu:new-game', () => callback());
+        const handler = () => callback();
+        ipcRenderer.on('menu:new-game', handler);
+        return () => ipcRenderer.removeListener('menu:new-game', handler);
       } catch (error) {
         console.error('Failed to register menu:new-game listener:', error.message);
+        return () => {};
       }
     },
 
@@ -345,9 +362,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
      */
     onLoadGame: (callback) => {
       try {
-        ipcRenderer.on('menu:load-game', () => callback());
+        const handler = () => callback();
+        ipcRenderer.on('menu:load-game', handler);
+        return () => ipcRenderer.removeListener('menu:load-game', handler);
       } catch (error) {
         console.error('Failed to register menu:load-game listener:', error.message);
+        return () => {};
       }
     },
 
@@ -357,9 +377,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
      */
     onSaveGame: (callback) => {
       try {
-        ipcRenderer.on('menu:save-game', () => callback());
+        const handler = () => callback();
+        ipcRenderer.on('menu:save-game', handler);
+        return () => ipcRenderer.removeListener('menu:save-game', handler);
       } catch (error) {
         console.error('Failed to register menu:save-game listener:', error.message);
+        return () => {};
       }
     },
   },

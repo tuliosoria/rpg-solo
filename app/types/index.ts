@@ -61,17 +61,12 @@ export type ImageTone = 'clinical' | 'surveillance' | 'eerie';
 export interface ImageTrigger {
   src: string;
   alt: string;
+  altKey?: string;
   tone: ImageTone;
   corrupted?: boolean;
   durationMs?: number;
 }
 
-export interface VideoTrigger {
-  src: string;
-  title: string;
-  tone: ImageTone;
-  corrupted?: boolean;
-}
 
 export interface SecurityQuestion {
   question: string;
@@ -79,52 +74,7 @@ export interface SecurityQuestion {
   hint: string; // Where to find the answer
 }
 
-// Tags for the search index system
-export type FileTag =
-  | 'creature'
-  | 'foreign'
-  | 'biological'
-  | 'signal'
-  | 'debris'
-  | 'medical'
-  | 'containment'
-  | 'telepathic'
-  | 'transport'
-  | 'cover-up'
-  | 'witness'
-  | 'journalist'
-  | 'military'
-  | 'government'
-  | 'autopsy'
-  | 'spacecraft'
-  | 'crash'
-  | 'communication'
-  | 'encryption'
-  | 'administrative'
-  | 'routine'
-  | 'classified'
-  | 'timeline'
-  | '2026'
-  | 'psi'
-  | 'neural'
-  | 'experiment'
-  | 'international'
-  | 'security'
-  | 'surveillance'
-  | 'hospital'
-  | 'specimen'
-  | 'campinas'
-  | 'convergence'
-  | 'transition'
-  | 'diplomatic'
-  | 'cia'
-  | 'scout'
-  | 'conspiracy'
-  | 'quarantine'
-  | 'high-security'
-  | 'psi-comm'
-  | 'technical'
-  | 'interview';
+
 
 export interface FileNode {
   type: 'file';
@@ -132,15 +82,12 @@ export interface FileNode {
   status: FileStatus;
   content: string[];
   decryptedFragment?: string[];
-  reveals?: string[]; // Truth categories this file contributes to
+  isEvidence?: boolean; // Opening this file logs one piece of evidence
   accessThreshold?: number; // Required access level
   requiredFlags?: string[]; // Required flags to appear
-  corruptible?: boolean;
   imageTrigger?: ImageTrigger; // Image to display when file is accessed
-  videoTrigger?: VideoTrigger; // Video to display when file is accessed
   securityQuestion?: SecurityQuestion; // Required to decrypt
   timedDecrypt?: { sequence: string; timeLimit: number }; // Timed decryption challenge
-  tags?: FileTag[]; // Search index tags for the search command
 }
 
 export interface DirectoryNode {
@@ -154,8 +101,6 @@ export interface DirectoryNode {
 export type FileSystemNode = FileNode | DirectoryNode;
 
 export interface FileMutation {
-  corruptedLines: number[]; // Line indices replaced with [DATA LOSS]
-  truncatedLine?: number; // Line index truncated mid-word
   deleted?: boolean;
   locked?: boolean;
   decrypted?: boolean;
@@ -163,7 +108,7 @@ export interface FileMutation {
 
 export interface TerminalEntry {
   id: string;
-  type: 'input' | 'output' | 'system' | 'warning' | 'error' | 'notice' | 'ufo74' | 'file';
+  type: 'input' | 'output' | 'system' | 'warning' | 'error' | 'notice' | 'ufo74' | 'file' | 'dim';
   content: string;
   i18nKey?: string;
   i18nValues?: Record<string, string | number>;
@@ -181,7 +126,7 @@ export interface GameState {
   wrongAttempts: number; // 0-8 (wrong commands/auth failures, 8 = game over)
   accessLevel: number; // 0-5
   sessionStability: number; // 100-0
-  legacyAlertCounter: number; // 0-10
+  legacyAlertCounter: number; // 0-8 invalid command attempts before lockdown
 
   // Flags for game progression
   flags: Record<string, boolean>;
@@ -192,8 +137,8 @@ export interface GameState {
   // Scout link usage tracking
   scoutLinksUsed: number;
 
-  // Truth categories discovered (5 required for victory)
-  truthsDiscovered: Set<string>;
+  // Evidence counter (0-5, reaching 5 triggers win condition)
+  evidenceCount: number;
 
   // Files the player has opened/read
   filesRead: Set<string>;
@@ -244,9 +189,6 @@ export interface GameState {
 
   // Images shown this run (each image shown at most once)
   imagesShownThisRun: Set<string>;
-
-  // Videos shown this run (each video shown at most once)
-  videosShownThisRun: Set<string>;
 
   // System personality degradation (affects tone as risk increases)
   systemHostilityLevel: number; // 0-5, increases with risky actions
@@ -332,6 +274,9 @@ export interface GameState {
   pendingCipherFile?: string; // File awaiting cipher solution
   cipherAttempts: number; // Wrong attempts on current cipher
 
+  // Tree command confirmation
+  pendingTreeConfirm?: boolean; // True when waiting for tree confirmation
+
   // Morse code puzzle state
   morseFileRead: boolean; // True after reading morse_intercept.sig
   morseMessageAttempts: number; // Wrong attempts on morse message (max 3)
@@ -349,18 +294,13 @@ export interface GameState {
 
   // Stealth recovery system
   waitUsesRemaining: number; // Max 3 per run, resets on new game
+  lastWaitTime: number; // Timestamp of last wait command use (for 5s cooldown)
   hideAvailable: boolean; // Becomes true at 90+ detection
 
   // Evidence linking system
   evidenceLinks: Array<[string, string]>; // Pairs of linked file paths
 
-  // Evidence revelation system - tracks which evidences each file has revealed
-  // Key: file path, Value: evidence state for that file
-  fileEvidenceStates: Record<string, FileEvidenceState>;
 
-  // Evidence tracking - simplified (no tiers)
-  // Key: TruthCategory, Value: evidence state for that category
-  evidenceStates: Record<string, EvidenceState>;
 
   // Timed decryption state
   timedDecryptActive: boolean;
@@ -383,6 +323,9 @@ export interface GameState {
   // Screen burn-in content
   burnInContent: string[]; // Recent significant outputs for ghost effect
 
+  // Alien silhouette test preview
+  alienPreviewUntil: number; // Timestamp until forced silhouette preview stays visible
+
   // Epilogue unlocked
   epilogueUnlocked: boolean;
   rivalInvestigatorActive: boolean; // Rival actor tracking the trail
@@ -393,16 +336,14 @@ export interface GameState {
   // Save tracking
   lastSaveTime: number;
 
-  // Search command state
-  lastSearchTime: number; // Timestamp of last search command (for cooldown)
-
   // Firewall Eyes system
   firewallActive: boolean; // True when detection >= 25%
-  firewallEyes: FirewallEye[]; // Active hostile eyes on screen
   firewallDisarmed: boolean; // True if player used neural link to disable
-  lastEyeSpawnDetection: number; // Detection level when last eye spawned (for 10% increments)
-  lastEyeSpawnTime: number; // Timestamp of last eye batch spawn (for 1 min cooldown)
-  firewallEyesTutorialShown: boolean; // True after first-time tutorial popup shown
+
+  // Firewall Lockdown system — triggers at 5 evidence, blocks file access until 3 nodes disabled
+  firewallLockdownActive: boolean;
+  firewallLockdownTriggered: boolean; // One-shot flag: don't re-trigger after save/load
+  firewallNodesDisabled: string[]; // IDs of disabled nodes: 'alpha', 'beta', 'gamma'
 
   // File reading state (for firewall eye spawn suppression)
   isReadingFile: boolean; // True while a file is being displayed
@@ -418,15 +359,7 @@ export interface GameState {
   archiveFilesViewed: Set<string>; // Files accessed during this archive session
 }
 
-// Firewall Eye entity
-export interface FirewallEye {
-  id: string;
-  x: number; // Position as percentage (0-100)
-  y: number; // Position as percentage (0-100)
-  spawnTime: number; // Timestamp when spawned
-  detonateTime: number; // Timestamp when it will detonate
-  isDetonating: boolean; // True during detonation animation
-}
+// Firewall Eye entity removed — eyes are now purely ambient (non-interactive)
 
 export interface SaveSlot {
   id: string;
@@ -446,7 +379,7 @@ export interface CheckpointSlot {
   detectionLevel: number;
 }
 
-export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow' | 'glitchy';
+export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow';
 export type GamePhase =
   | 'terminal'
   | 'blackout'
@@ -464,37 +397,15 @@ export interface CommandResult {
   triggerFlicker?: boolean;
   delayMs?: number;
   imageTrigger?: ImageTrigger;
-  videoTrigger?: VideoTrigger;
   streamingMode?: StreamingMode; // How to stream the output
   skipToPhase?: GamePhase; // GOD mode: skip directly to a phase
   checkAchievements?: string[]; // Achievement IDs to check
   triggerTuringTest?: boolean; // Show Turing test overlay
-  pendingUfo74Messages?: TerminalEntry[]; // UFO74 messages to show after image/video closes
+  pendingUfo74Messages?: TerminalEntry[]; // UFO74 messages to show after image closes
   soundTrigger?: 'evidence' | 'error' | 'morse'; // Sound effect to play
 }
 
-export const TRUTH_CATEGORIES = [
-  'debris_relocation', // Spacecraft debris were split and relocated
-  'being_containment', // Non-human beings were contained and transferred
-  'telepathic_scouts', // Beings communicated telepathically and were reconnaissance bio-constructs
-  'international_actors', // International actors were involved beyond Brazil
-  'transition_2026', // A future transition/activation window converges on 2026
-] as const;
 
-export type TruthCategory = (typeof TRUTH_CATEGORIES)[number];
-
-// Evidence tracking - simplified to just track which files revealed evidence
-export interface EvidenceState {
-  linkedFiles: string[]; // Files that revealed this evidence
-}
-
-// Evidence Revelation System types
-export interface FileEvidenceState {
-  // All evidences this file can potentially reveal (determined by content analysis)
-  potentialEvidences: TruthCategory[];
-  // Evidences already revealed from this file in current playthrough
-  revealedEvidences: TruthCategory[];
-}
 
 export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionStartTime'> = {
   currentPath: '/',
@@ -509,7 +420,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   flags: {},
   overrideFailedAttempts: 0,
   scoutLinksUsed: 0,
-  truthsDiscovered: new Set(),
+  evidenceCount: 0,
   filesRead: new Set(),
   conspiracyFilesSeen: new Set(),
   fileMutations: {},
@@ -531,7 +442,6 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   lastIncognitoTrigger: 0,
   singularEventsTriggered: new Set(),
   imagesShownThisRun: new Set(),
-  videosShownThisRun: new Set(),
   systemHostilityLevel: 0,
   terribleMistakeTriggered: false,
   sessionDoomCountdown: 0,
@@ -603,13 +513,11 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   idleHintsGiven: 0,
   // Stealth recovery
   waitUsesRemaining: 3,
+  lastWaitTime: 0,
   hideAvailable: false,
   // Evidence linking
   evidenceLinks: [],
-  // Evidence revelation system
-  fileEvidenceStates: {},
-  // Evidence tracking
-  evidenceStates: {},
+
   // Timed decryption
   timedDecryptActive: false,
   timedDecryptFile: undefined,
@@ -626,6 +534,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   fastTypingWarnings: 0,
   // Screen burn-in
   burnInContent: [],
+  // Alien silhouette test preview
+  alienPreviewUntil: 0,
   // Epilogue
   epilogueUnlocked: false,
   rivalInvestigatorActive: false,
@@ -633,15 +543,13 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   avatarExpression: 'neutral',
   // Save tracking
   lastSaveTime: 0,
-  // Search command state
-  lastSearchTime: 0,
   // Firewall Eyes system
   firewallActive: false,
-  firewallEyes: [],
   firewallDisarmed: false,
-  lastEyeSpawnDetection: 0,
-  lastEyeSpawnTime: 0,
-  firewallEyesTutorialShown: false,
+  // Firewall Lockdown system
+  firewallLockdownActive: false,
+  firewallLockdownTriggered: false,
+  firewallNodesDisabled: [],
   // File reading state
   isReadingFile: false,
   lastFileReadTime: 0,

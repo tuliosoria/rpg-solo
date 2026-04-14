@@ -1,91 +1,14 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import {
+  contentContains,
+  createBugTracker,
+  getContent,
+  screenshot,
+  startGame,
+  typeCommand,
+} from './helpers';
 
-const URL = 'https://thankful-grass-0f49be40f.2.azurestaticapps.net';
-
-// Bug tracking
-interface Bug {
-  id: number;
-  title: string;
-  steps: string[];
-  expected: string;
-  actual: string;
-  screenshot?: string;
-  severity: 'critical' | 'major' | 'minor' | 'cosmetic';
-}
-
-const bugs: Bug[] = [];
-let bugCounter = 0;
-
-function logBug(bug: Omit<Bug, 'id'>): Bug {
-  const newBug = { ...bug, id: ++bugCounter };
-  bugs.push(newBug);
-  console.log(`\n🐛 BUG #${newBug.id}: ${newBug.title}`);
-  console.log(`   Severity: ${newBug.severity}`);
-  console.log(`   Steps: ${newBug.steps.join(' → ')}`);
-  console.log(`   Expected: ${newBug.expected}`);
-  console.log(`   Actual: ${newBug.actual}`);
-  if (newBug.screenshot) console.log(`   Screenshot: ${newBug.screenshot}`);
-  return newBug;
-}
-
-// Helper to type a command and press Enter
-async function typeCommand(page: Page, command: string, stepName?: string) {
-  if (stepName) console.log(`  ⏳ ${stepName}: Typing "${command}"...`);
-  await page.keyboard.type(command, { delay: 30 });
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(1500);
-  if (stepName) console.log(`  ✅ ${stepName}: Completed`);
-}
-
-// Helper to get page content
-async function getContent(page: Page): Promise<string> {
-  return (await page.textContent('body')) || '';
-}
-
-// Helper to check if content contains text (case insensitive)
-function contentContains(content: string, text: string): boolean {
-  return content.toLowerCase().includes(text.toLowerCase());
-}
-
-// Helper to take screenshot
-async function screenshot(page: Page, name: string): Promise<string> {
-  const path = `e2e-tests/screenshots/${name}.png`;
-  await page.screenshot({ path });
-  return path;
-}
-
-// Helper to start the game (complete tutorial quickly)
-async function startGame(page: Page) {
-  console.log('  🎮 Starting game and completing tutorial...');
-  await page.goto(URL, { waitUntil: 'networkidle', timeout: 30000 });
-  await page.waitForTimeout(3000);
-  
-  // Press Enter to start
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(2000);
-  
-  // Complete tutorial: ls → cd files → open cafeteria_menu → Enter → cd ..
-  await typeCommand(page, 'ls');
-  await typeCommand(page, 'cd files');
-  
-  // Check if we're in tutorial - if "files" doesn't exist, we might be in a different state
-  const content = await getContent(page);
-  if (contentContains(content, 'no such directory') || contentContains(content, 'not found')) {
-    // Try internal/misc which should have cafeteria_menu
-    await typeCommand(page, 'cd internal');
-    await typeCommand(page, 'cd misc');
-  }
-  
-  await typeCommand(page, 'open cafeteria_menu');
-  await page.waitForTimeout(1000);
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(1500);
-  await typeCommand(page, 'cd ..');
-  await typeCommand(page, 'cd ..');
-  await typeCommand(page, 'ls');
-  
-  console.log('  ✅ Tutorial completed, game active');
-}
+const { bugs, logBug, reportBugs } = createBugTracker('Command');
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TEST SUITE: ALL COMMANDS
@@ -225,7 +148,7 @@ test.describe('Command Tests', () => {
     await typeCommand(page, 'notes', 'notes command');
     content = await getContent(page);
     await screenshot(page, 'commands-11-notes');
-    const hasNote = contentContains(content, 'test note') || contentContains(content, 'note');
+    const _hasNote = contentContains(content, 'test note') || contentContains(content, 'note');
 
     // Test bookmark system
     console.log('\n--- Testing bookmark system ---');
@@ -291,9 +214,9 @@ test.describe('Command Tests', () => {
     await screenshot(page, 'file-commands-03-last');
     
     // Should re-display last file
-    const hasLastFile = contentContains(content, 're-reading') || 
-                       contentContains(content, 'cafeteria') ||
-                       contentContains(content, 'menu');
+    const _hasLastFile = contentContains(content, 're-reading') || 
+                        contentContains(content, 'cafeteria') ||
+                        contentContains(content, 'menu');
 
     // Navigate to comms for encrypted files
     console.log('\n--- Testing decrypt command ---');
@@ -394,10 +317,10 @@ test.describe('Command Tests', () => {
     content = await getContent(page);
     await screenshot(page, 'invalid-05-open-noargs');
     
-    const hasOpenUsage = contentContains(content, 'usage') || 
-                        contentContains(content, 'specify') ||
-                        contentContains(content, 'filename') ||
-                        contentContains(content, 'file');
+    const _hasOpenUsage = contentContains(content, 'usage') || 
+                         contentContains(content, 'specify') ||
+                         contentContains(content, 'filename') ||
+                         contentContains(content, 'file');
 
     // Test note with no text
     console.log('\n--- Testing note with no text ---');
@@ -442,12 +365,12 @@ test.describe('Command Tests', () => {
     await screenshot(page, 'special-01-chat');
     
     // Chat might open a channel or show a message
-    const hasChatResponse = contentContains(content, 'ufo74') || 
-                           contentContains(content, 'channel') ||
-                           contentContains(content, 'relay') ||
-                           contentContains(content, 'secure') ||
-                           contentContains(content, 'connection') ||
-                           contentContains(content, 'message');
+    const _hasChatResponse = contentContains(content, 'ufo74') || 
+                            contentContains(content, 'channel') ||
+                            contentContains(content, 'relay') ||
+                            contentContains(content, 'secure') ||
+                            contentContains(content, 'connection') ||
+                            contentContains(content, 'message');
 
     // Test trace command (risky)
     console.log('\n--- Testing trace command ---');
@@ -455,10 +378,10 @@ test.describe('Command Tests', () => {
     content = await getContent(page);
     await screenshot(page, 'special-02-trace');
     
-    const hasTraceResponse = contentContains(content, 'trace') || 
-                            contentContains(content, 'connection') ||
-                            contentContains(content, 'risk') ||
-                            contentContains(content, 'system');
+    const _hasTraceResponse = contentContains(content, 'trace') || 
+                             contentContains(content, 'connection') ||
+                             contentContains(content, 'risk') ||
+                             contentContains(content, 'system');
 
     // Check status after trace (detection should increase)
     await typeCommand(page, 'status', 'status after trace');
@@ -471,10 +394,10 @@ test.describe('Command Tests', () => {
     content = await getContent(page);
     await screenshot(page, 'special-04-save');
     
-    const hasSaveResponse = contentContains(content, 'save') || 
-                           contentContains(content, 'session') ||
-                           contentContains(content, 'stored') ||
-                           contentContains(content, 'checkpoint');
+    const _hasSaveResponse = contentContains(content, 'save') || 
+                            contentContains(content, 'session') ||
+                            contentContains(content, 'stored') ||
+                            contentContains(content, 'checkpoint');
 
     console.log('\n========== SPECIAL COMMANDS TEST COMPLETE ==========\n');
   });
@@ -491,10 +414,10 @@ test.describe('Command Tests', () => {
     let content = await getContent(page);
     await screenshot(page, 'help-01-basics');
     
-    const hasBasicsHelp = contentContains(content, 'navigation') || 
-                         contentContains(content, 'command') ||
-                         contentContains(content, 'file') ||
-                         contentContains(content, 'basic');
+    const _hasBasicsHelp = contentContains(content, 'navigation') || 
+                          contentContains(content, 'command') ||
+                          contentContains(content, 'file') ||
+                          contentContains(content, 'basic');
 
     // Test help evidence
     console.log('\n--- Testing help evidence ---');
@@ -502,9 +425,9 @@ test.describe('Command Tests', () => {
     content = await getContent(page);
     await screenshot(page, 'help-02-evidence');
     
-    const hasEvidenceHelp = contentContains(content, 'evidence') || 
-                           contentContains(content, 'truth') ||
-                           contentContains(content, 'discover');
+    const _hasEvidenceHelp = contentContains(content, 'evidence') || 
+                            contentContains(content, 'truth') ||
+                            contentContains(content, 'discover');
 
     // Test help winning
     console.log('\n--- Testing help winning ---');
@@ -512,10 +435,10 @@ test.describe('Command Tests', () => {
     content = await getContent(page);
     await screenshot(page, 'help-03-winning');
     
-    const hasWinningHelp = contentContains(content, 'win') || 
-                          contentContains(content, 'victory') ||
-                          contentContains(content, 'complete') ||
-                          contentContains(content, 'goal');
+    const _hasWinningHelp = contentContains(content, 'win') || 
+                           contentContains(content, 'victory') ||
+                           contentContains(content, 'complete') ||
+                           contentContains(content, 'goal');
 
     // Test help with specific command
     console.log('\n--- Testing help ls ---');
@@ -552,7 +475,7 @@ test.describe('Edge Cases', () => {
     console.log('\n--- Testing empty input ---');
     await page.keyboard.press('Enter');
     await page.waitForTimeout(1000);
-    let content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'edge-01-empty');
     // Should not crash or error
 
@@ -560,23 +483,23 @@ test.describe('Edge Cases', () => {
     console.log('\n--- Testing very long input ---');
     const longInput = 'a'.repeat(500);
     await typeCommand(page, longInput, 'very long input');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'edge-02-long-input');
     // Check for proper handling (truncation or error)
 
     // Test special characters
     console.log('\n--- Testing special characters ---');
     await typeCommand(page, '!@#$%^&*()', 'special chars');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'edge-03-special-chars');
 
     await typeCommand(page, '<script>alert(1)</script>', 'XSS attempt');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'edge-04-xss');
     // Should not execute script, just show as text or error
 
     await typeCommand(page, '../../../etc/passwd', 'path traversal');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'edge-05-path-traversal');
 
     // Test rapid commands
@@ -592,21 +515,21 @@ test.describe('Edge Cases', () => {
     // Test command with extra spaces
     console.log('\n--- Testing extra spaces ---');
     await typeCommand(page, '  ls  ', 'extra spaces');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'edge-07-extra-spaces');
 
     await typeCommand(page, 'cd    storage', 'multiple spaces');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'edge-08-multiple-spaces');
 
     // Test case sensitivity
     console.log('\n--- Testing case sensitivity ---');
     await typeCommand(page, 'LS', 'uppercase LS');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'edge-09-uppercase');
     
     await typeCommand(page, 'HELP', 'uppercase HELP');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'edge-10-uppercase-help');
 
     console.log('\n========== EDGE CASES TEST COMPLETE ==========\n');
@@ -660,15 +583,7 @@ test.describe('Edge Cases', () => {
 });
 
 // Export bugs for report generation
-test.afterAll(async () => {
-  if (bugs.length > 0) {
-    console.log('\n═══════════════════════════════════════════════════════════');
-    console.log(`BUGS FOUND: ${bugs.length}`);
-    console.log('═══════════════════════════════════════════════════════════\n');
-    bugs.forEach(bug => {
-      console.log(`#${bug.id} [${bug.severity.toUpperCase()}] ${bug.title}`);
-    });
-  } else {
-    console.log('\n✅ No bugs found during testing!\n');
-  }
+test.afterAll(() => {
+  reportBugs();
+  expect(bugs).toHaveLength(0);
 });

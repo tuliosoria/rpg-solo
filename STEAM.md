@@ -76,7 +76,7 @@ Game achievements are mapped to Steam achievements in `electron/steam-achievemen
 | `hacker` | `ELITE_HACKER` | Decrypt 5 encrypted files |
 | `survivor` | `SURVIVOR` | Complete the game after reaching critical detection |
 | `mathematician` | `MATHEMATICIAN` | Solve all equations on first try |
-| `truth_seeker` | `TRUTH_SEEKER` | Uncover all 5 truth categories |
+| `truth_seeker` | `TRUTH_SEEKER` | Uncover all 5 evidence files |
 | `doom_fan` | `IDDQD` | Activate god mode (secret) |
 | `persistent` | `PERSISTENT` | Continue playing after a game over |
 | `archivist` | `ARCHIVIST` | Read every file in a folder with 3+ files (secret) |

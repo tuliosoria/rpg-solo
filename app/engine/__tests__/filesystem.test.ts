@@ -125,6 +125,42 @@ describe('Filesystem', () => {
       expect(entries!.some(e => e.name === 'ghost_session.log')).toBe(true);
     });
 
+    it('hides pattern recognition log until three primary sectors are explored', () => {
+      const state = createTestState({
+        filesRead: new Set(['/storage/debris/manifest.txt', '/ops/exo/incident_report.txt']),
+      });
+      const entries = listDirectory('/tmp', state);
+      expect(entries!.some(e => e.name === 'pattern_recognition.log')).toBe(false);
+    });
+
+    it('shows pattern recognition log after storage, ops, and comms have all been explored', () => {
+      const state = createTestState({
+        filesRead: new Set([
+          '/storage/debris/manifest.txt',
+          '/ops/exo/incident_report.txt',
+          '/comms/intercepts/relay_ping.log',
+        ]),
+      });
+      const entries = listDirectory('/tmp', state);
+      expect(entries!.some(e => e.name === 'pattern_recognition.log')).toBe(true);
+    });
+
+    it('hides coherence and leak files until evidence thresholds are reached', () => {
+      const state = createTestState({ evidenceCount: 3 });
+      const entries = listDirectory('/tmp', state);
+      expect(entries!.some(e => e.name === 'coherence_threshold.log')).toBe(false);
+      expect(entries!.some(e => e.name === 'session_residue.log')).toBe(false);
+      expect(entries!.some(e => e.name === 'save_evidence.sh')).toBe(false);
+    });
+
+    it('shows late-stage tmp files once evidence milestones are reached', () => {
+      const state = createTestState({ evidenceCount: 10 });
+      const entries = listDirectory('/tmp', state);
+      expect(entries!.some(e => e.name === 'coherence_threshold.log')).toBe(true);
+      expect(entries!.some(e => e.name === 'session_residue.log')).toBe(true);
+      expect(entries!.some(e => e.name === 'save_evidence.sh')).toBe(true);
+    });
+
     it('hides trace purge memo until trace purge', () => {
       const state = createTestState({ accessLevel: 3, flags: { adminUnlocked: true } });
       const entries = listDirectory('/admin', state);
@@ -167,6 +203,17 @@ describe('Filesystem', () => {
   });
 
   describe('canAccessFile', () => {
+    it('keeps unread evidence files accessible after other evidence is found', () => {
+      const state = createTestState({
+        evidenceCount: 0,
+        filesRead: new Set<string>(['/ops/assessments/foreign_drone_assessment.txt']),
+      });
+
+      expect(canAccessFile('/comms/intercepts/regional_summary_jan96.txt', state)).toEqual({
+        accessible: true,
+      });
+    });
+
     it('allows access to normal files', () => {
       const state = createTestState();
       const result = canAccessFile('/internal/protocols/incident_review_protocol.txt', state);
@@ -183,7 +230,7 @@ describe('Filesystem', () => {
     it('denies access to deleted files', () => {
       const state = createTestState({
         fileMutations: {
-          '/internal/protocols/incident_review_protocol.txt': { deleted: true, corruptedLines: [] },
+          '/internal/protocols/incident_review_protocol.txt': { deleted: true },
         },
       });
       const result = canAccessFile('/internal/protocols/incident_review_protocol.txt', state);
@@ -194,7 +241,7 @@ describe('Filesystem', () => {
     it('denies access to locked files', () => {
       const state = createTestState({
         fileMutations: {
-          '/internal/protocols/incident_review_protocol.txt': { locked: true, corruptedLines: [] },
+          '/internal/protocols/incident_review_protocol.txt': { locked: true },
         },
       });
       const result = canAccessFile('/internal/protocols/incident_review_protocol.txt', state);
@@ -334,7 +381,10 @@ describe('Filesystem', () => {
     it('respects access level when searching', () => {
       // Low access level should not find admin files
       const lowAccessState = createTestState({ accessLevel: 1 });
-      const highAccessState = createTestState({ accessLevel: 5, flags: { adminUnlocked: true, tracePurgeUsed: true } });
+      const highAccessState = createTestState({
+        accessLevel: 5,
+        flags: { adminUnlocked: true, tracePurgeUsed: true },
+      });
 
       const lowMatches = findFilesMatching('trace_purge_memo', lowAccessState);
       const highMatches = findFilesMatching('trace_purge_memo', highAccessState);

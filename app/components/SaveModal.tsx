@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { GameState } from '../types';
 import { saveGame } from '../storage/saves';
 import { useI18n } from '../i18n';
+import { useFocusTrap } from '../hooks';
 import styles from './SaveModal.module.css';
 
 interface SaveModalProps {
@@ -16,6 +17,9 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
   const { language, t } = useI18n();
   const [slotName, setSlotName] = useState('');
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef);
 
   // Handle ESC key to close modal
   const handleKeyDown = useCallback(
@@ -35,18 +39,23 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
 
   const handleSave = useCallback(() => {
     setSaving(true);
+    setSaveError(null);
     const locale = language === 'pt-BR' ? 'pt-BR' : language === 'es' ? 'es' : 'en-US';
     const name = slotName.trim() || t('save.defaultName', { value: new Date().toLocaleString(locale) });
-    saveGame(gameState, name);
+    const savedSlot = saveGame(gameState, name);
     setSaving(false);
+    if (!savedSlot) {
+      setSaveError(t('save.error.failed'));
+      return;
+    }
     onSavedAction();
   }, [gameState, language, onSavedAction, slotName, t]);
 
   return (
-    <div className={styles.overlay} onClick={onCloseAction}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+    <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="savemodal-title">
+      <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>{t('save.title')}</h2>
+          <h2 id="savemodal-title">{t('save.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
         </div>
 
@@ -55,7 +64,12 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
           <input
             type="text"
             value={slotName}
-            onChange={e => setSlotName(e.target.value)}
+            onChange={e => {
+              setSlotName(e.target.value);
+              if (saveError) {
+                setSaveError(null);
+              }
+            }}
             placeholder={t('save.defaultName', {
               value: new Date().toLocaleString(
                 language === 'pt-BR' ? 'pt-BR' : language === 'es' ? 'es' : 'en-US'
@@ -68,15 +82,20 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
           <div className={styles.info}>
             <div>{t('save.path')}: {gameState.currentPath}</div>
             <div>
-              {t('save.progress')}: {gameState.truthsDiscovered.size}/5 {t('save.progressSuffix')}
+              {t('save.progress')}: {gameState.evidenceCount || 0}/10 {t('save.progressSuffix')}
             </div>
           </div>
+          {saveError && (
+            <div className={styles.error} role="alert">
+              {saveError}
+            </div>
+          )}
         </div>
 
         <div className={styles.actions}>
           <button
             className={styles.saveButton}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={handleSave}
             disabled={saving}
@@ -85,7 +104,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
           </button>
           <button
             className={styles.cancelButton}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onCloseAction}
           >

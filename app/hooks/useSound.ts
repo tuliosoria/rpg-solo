@@ -14,6 +14,7 @@
  */
 
 import { useCallback, useRef, useEffect, useState } from 'react';
+import { DEFAULT_OPTIONS, OPTIONS_CHANGED_EVENT, persistOptions, readStoredOptions } from './useOptions';
 
 /**
  * Available sound effect types.
@@ -33,6 +34,7 @@ export type SoundType =
   | 'typing'
   | 'transmission'
   | 'creepy' // Unsettling avatar entrance
+  | 'omen' // Sparse, low-volume unease cue
   | 'fanfare' // Zelda-like celebration sound
   | 'morse'; // Morse code transmission beeps
 
@@ -58,6 +60,7 @@ const SOUND_CONFIG: Record<SoundType, SoundConfig> = {
   typing: { volume: 0.08 }, // Stream typing sound
   transmission: { volume: 0.35 }, // UFO74 transmission banner
   creepy: { volume: 0.45 }, // Unsettling avatar entrance
+  omen: { volume: 0.1 }, // Brief whisper/static pulse for subtle dread
   fanfare: { volume: 0.5 }, // Zelda-like celebration
   morse: { volume: 0.4 }, // Morse code transmission beeps
 };
@@ -148,13 +151,42 @@ export function useSound() {
   const ambientSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const ambientFilterRef = useRef<BiquadFilterNode | null>(null);
   const ambientGainRef = useRef<GainNode | null>(null);
+  const ambientTensionLevelRef = useRef(0);
+  const ambientDisturbanceRef = useRef(0);
   // Ambient music refs
   const musicElementRef = useRef<HTMLAudioElement | null>(null);
   const musicGainRef = useRef<GainNode | null>(null);
   const musicSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const musicTrackIndexRef = useRef(0);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [masterVolume, setMasterVolume] = useState(0.5);
+  const [soundEnabled, setSoundEnabled] = useState(DEFAULT_OPTIONS.soundEffectsEnabled);
+  const [ambientEnabled, setAmbientEnabled] = useState(DEFAULT_OPTIONS.ambientSoundEnabled);
+  const [turingVoiceEnabled, setTuringVoiceEnabled] = useState(DEFAULT_OPTIONS.turingVoiceEnabled);
+  const [masterVolume, setMasterVolumeState] = useState(DEFAULT_OPTIONS.masterVolume / 100);
+
+  const syncAudioOptions = useCallback(() => {
+    const storedOptions = readStoredOptions();
+    setSoundEnabled(storedOptions.soundEffectsEnabled);
+    setAmbientEnabled(storedOptions.ambientSoundEnabled);
+    setTuringVoiceEnabled(storedOptions.turingVoiceEnabled);
+    setMasterVolumeState(storedOptions.masterVolume / 100);
+  }, []);
+
+  useEffect(() => {
+    syncAudioOptions();
+
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const handleStorageSync = () => syncAudioOptions();
+    window.addEventListener('storage', handleStorageSync);
+    window.addEventListener(OPTIONS_CHANGED_EVENT, handleStorageSync);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageSync);
+      window.removeEventListener(OPTIONS_CHANGED_EVENT, handleStorageSync);
+    };
+  }, [syncAudioOptions]);
 
   // Initialize audio context on first interaction
   const initAudio = useCallback(() => {
@@ -169,6 +201,37 @@ export function useSound() {
     }
     return audioContextRef.current;
   }, []);
+
+  const syncAmbientProfile = useCallback(
+    (rampSeconds: number) => {
+      const audioContext = audioContextRef.current;
+      const filter = ambientFilterRef.current;
+      const gain = ambientGainRef.current;
+
+      if (!audioContext || !filter || !gain) return;
+
+      const detectionRatio = Math.max(0, Math.min(1, ambientTensionLevelRef.current / 100));
+      const disturbance = Math.max(0, Math.min(1, ambientDisturbanceRef.current));
+      const baseVolume = SOUND_CONFIG.ambient.volume * masterVolume;
+      const normalVolume = baseVolume + detectionRatio * (baseVolume * 1.5);
+      const targetTime = audioContext.currentTime + Math.max(rampSeconds, 0.01);
+
+      // Let more high-frequency hiss through and raise the resonance when the
+      // silhouette appears, then settle back to the base tension profile.
+      const frequency = 200 + detectionRatio * 600 + disturbance * 2200;
+      const q = 1 + detectionRatio * 7 + disturbance * 12;
+      const volume = normalVolume * (1 + disturbance * 0.65);
+
+      filter.frequency.cancelScheduledValues?.(audioContext.currentTime);
+      filter.Q.cancelScheduledValues?.(audioContext.currentTime);
+      gain.gain.cancelScheduledValues?.(audioContext.currentTime);
+
+      filter.frequency.linearRampToValueAtTime(frequency, targetTime);
+      filter.Q.linearRampToValueAtTime(q, targetTime);
+      gain.gain.linearRampToValueAtTime(volume, targetTime);
+    },
+    [masterVolume]
+  );
 
   // Play a key-specific sound with pitch variation based on key type
   const playKeySound = useCallback(
@@ -467,6 +530,44 @@ export function useSound() {
           break;
         }
 
+        case 'omen': {
+          // Very sparse "something is slightly wrong" cue:
+          // a soft filtered static breath plus a faint descending tone.
+          const t = audioContext.currentTime;
+
+          const noiseBuffer = createNoiseBuffer(audioContext, 0.16);
+          const noiseSource = audioContext.createBufferSource();
+          const noiseGain = audioContext.createGain();
+          const noiseFilter = audioContext.createBiquadFilter();
+
+          noiseSource.buffer = noiseBuffer;
+          noiseFilter.type = 'bandpass';
+          noiseFilter.frequency.setValueAtTime(1400, t);
+          noiseFilter.Q.setValueAtTime(1.8, t);
+          noiseGain.gain.setValueAtTime(0.0001, t);
+          noiseGain.gain.linearRampToValueAtTime(volume * 0.35, t + 0.03);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+
+          noiseSource.connect(noiseFilter);
+          noiseFilter.connect(noiseGain);
+          noiseGain.connect(audioContext.destination);
+          noiseSource.start(t);
+          noiseSource.stop(t + 0.16);
+
+          const osc = audioContext.createOscillator();
+          const oscGain = audioContext.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(360, t);
+          oscGain.gain.setValueAtTime(0.0001, t);
+          oscGain.gain.linearRampToValueAtTime(volume * 0.22, t + 0.025);
+          oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
+          osc.connect(oscGain);
+          oscGain.connect(audioContext.destination);
+          osc.start(t);
+          osc.stop(t + 0.24);
+          break;
+        }
+
         case 'fanfare': {
           // Zelda-like item get fanfare: Ta-ra-ra-ra-ta-ta-ta-ram!
           // Notes: E5, E5, E5, E5, C5, D5, E5 with triumphant ending
@@ -539,7 +640,7 @@ export function useSound() {
           let morseDelay = 0.15; // initial pause
 
           morseLetters.forEach((letter, letterIdx) => {
-            letter.forEach((symbolDuration, symbolIdx) => {
+            letter.forEach(symbolDuration => {
               const d = morseDelay;
               setTimeout(() => {
                 if (audioContextRef.current) {
@@ -599,7 +700,7 @@ export function useSound() {
   // ═══════════════════════════════════════════════════════════════════════════
 
   const startMusic = useCallback(() => {
-    if (!soundEnabled || musicElementRef.current) return;
+    if (!ambientEnabled || musicElementRef.current) return;
 
     const audioContext = initAudio();
     if (!audioContext) return;
@@ -635,7 +736,7 @@ export function useSound() {
     } catch {
       // Audio/MediaElementSource not available (e.g. test environment)
     }
-  }, [soundEnabled, masterVolume, initAudio]);
+  }, [ambientEnabled, masterVolume, initAudio]);
 
   const stopMusic = useCallback(() => {
     if (musicElementRef.current) {
@@ -660,9 +761,13 @@ export function useSound() {
     }
   }, [masterVolume]);
 
+  useEffect(() => {
+    syncAmbientProfile(0.15);
+  }, [masterVolume, syncAmbientProfile]);
+
   // Start ambient background drone
   const startAmbient = useCallback(() => {
-    if (!soundEnabled || ambientSourceRef.current) return;
+    if (!ambientEnabled || ambientSourceRef.current) return;
 
     const audioContext = initAudio();
     if (!audioContext) return;
@@ -691,44 +796,34 @@ export function useSound() {
     ambientSourceRef.current = noiseSource;
     ambientFilterRef.current = noiseFilter;
     ambientGainRef.current = noiseGain;
+    syncAmbientProfile(0.01);
 
     // Also start background music
     startMusic();
-  }, [soundEnabled, masterVolume, initAudio, startMusic]);
+  }, [ambientEnabled, masterVolume, initAudio, startMusic, syncAmbientProfile]);
 
   // Update ambient tension based on detection level
   // Lower detection = calm low-frequency hum
   // Higher detection = more intense, higher-pitched, louder drone
   const updateAmbientTension = useCallback(
     (detectionLevel: number) => {
-      const audioContext = audioContextRef.current;
-      const filter = ambientFilterRef.current;
-      const gain = ambientGainRef.current;
-
-      if (!audioContext || !filter || !gain) return;
-
-      // Calculate filter frequency: 200Hz at 0%, 800Hz at 100%
-      const baseFreq = 200;
-      const maxFreq = 800;
-      const freq = baseFreq + (detectionLevel / 100) * (maxFreq - baseFreq);
-
-      // Calculate Q (resonance): subtle at low, sharper at high detection
-      const baseQ = 1;
-      const maxQ = 8;
-      const q = baseQ + (detectionLevel / 100) * (maxQ - baseQ);
-
-      // Calculate volume: slightly louder as tension rises
-      const baseVolume = SOUND_CONFIG.ambient.volume * masterVolume;
-      const maxVolume = baseVolume * 2.5;
-      const volume = baseVolume + (detectionLevel / 100) * (maxVolume - baseVolume);
-
-      // Smooth transitions
-      const now = audioContext.currentTime;
-      filter.frequency.linearRampToValueAtTime(freq, now + 0.5);
-      filter.Q.linearRampToValueAtTime(q, now + 0.5);
-      gain.gain.linearRampToValueAtTime(volume, now + 0.5);
+      ambientTensionLevelRef.current = Math.max(0, Math.min(100, detectionLevel));
+      syncAmbientProfile(0.5);
     },
-    [masterVolume]
+    [syncAmbientProfile]
+  );
+
+  const setAmbientDisturbance = useCallback(
+    (level: number) => {
+      const clampedLevel = Math.max(0, Math.min(1, level));
+      const previousLevel = ambientDisturbanceRef.current;
+      ambientDisturbanceRef.current = clampedLevel;
+
+      if (previousLevel === clampedLevel) return;
+
+      syncAmbientProfile(clampedLevel > previousLevel ? 0.12 : 0.3);
+    },
+    [syncAmbientProfile]
   );
 
   // Stop ambient noise drone
@@ -746,15 +841,32 @@ export function useSound() {
     stopMusic();
   }, [stopMusic]);
 
+  useEffect(() => {
+    if (!ambientEnabled) {
+      stopAmbient();
+    }
+  }, [ambientEnabled, stopAmbient]);
+
   // Toggle sound on/off
   const toggleSound = useCallback(() => {
     setSoundEnabled(prev => {
-      if (prev) {
-        stopAmbient();
-      }
-      return !prev;
+      const next = !prev;
+      persistOptions({
+        ...readStoredOptions(),
+        soundEffectsEnabled: next,
+      });
+      return next;
     });
-  }, [stopAmbient]);
+  }, []);
+
+  const setMasterVolume = useCallback((volume: number) => {
+    const clampedVolume = Math.max(0, Math.min(1, volume));
+    setMasterVolumeState(clampedVolume);
+    persistOptions({
+      ...readStoredOptions(),
+      masterVolume: Math.round(clampedVolume * 100),
+    });
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -776,7 +888,7 @@ export function useSound() {
 
   // Speak text using Web Speech API (for Firewall voice)
   const speak = useCallback((text: string, options?: { rate?: number; pitch?: number }) => {
-    if (!soundEnabled || typeof window === 'undefined' || !window.speechSynthesis) return;
+    if (!turingVoiceEnabled || typeof window === 'undefined' || !window.speechSynthesis) return;
     
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = options?.rate ?? 0.8; // Slow, menacing
@@ -784,7 +896,7 @@ export function useSound() {
     utterance.volume = masterVolume;
     
     speechSynthesis.speak(utterance);
-  }, [soundEnabled, masterVolume]);
+  }, [turingVoiceEnabled, masterVolume]);
 
   return {
     playSound,
@@ -793,6 +905,7 @@ export function useSound() {
     stopAmbient,
     toggleSound,
     updateAmbientTension,
+    setAmbientDisturbance,
     setMusicPlaybackRate,
     speak,
     soundEnabled,

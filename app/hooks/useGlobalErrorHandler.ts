@@ -14,6 +14,25 @@
 
 import { useEffect } from 'react';
 
+function isKnownSafeRejection(error: unknown, message: string): boolean {
+  const safeErrorNames = new Set(['AbortError', 'QuotaExceededError', 'SecurityError']);
+
+  if (error instanceof Error && safeErrorNames.has(error.name)) {
+    return true;
+  }
+
+  const safePatterns = [
+    'AbortError',
+    'The operation was aborted',
+    'localStorage',
+    'IndexedDB',
+    'QuotaExceeded',
+    'SecurityError',
+  ];
+
+  return safePatterns.some(pattern => message.includes(pattern));
+}
+
 /**
  * Hook to set up global handlers for unhandled promise rejections
  * and uncaught errors that occur outside of React's error boundary.
@@ -22,12 +41,14 @@ export function useGlobalErrorHandler() {
   useEffect(() => {
     // Handle unhandled promise rejections
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      // Prevent the default browser behavior (logging to console)
-      // We'll handle it ourselves
-      event.preventDefault();
-
       const error = event.reason;
       const errorMessage = error instanceof Error ? error.message : String(error);
+      const shouldSuppress = isKnownSafeRejection(error, errorMessage);
+
+      if (shouldSuppress) {
+        // Prevent duplicate console noise for rejections we intentionally tolerate.
+        event.preventDefault();
+      }
 
       // Log in development
       if (process.env.NODE_ENV === 'development') {
@@ -39,16 +60,10 @@ export function useGlobalErrorHandler() {
       // or notification. For now, we log and suppress to prevent crashes.
       // The error boundary will catch React-specific errors.
 
-      // Check if this is a critical error that needs user attention
-      const criticalPatterns = ['localStorage', 'IndexedDB', 'QuotaExceeded', 'SecurityError'];
-
-      const isCritical = criticalPatterns.some(pattern => errorMessage.includes(pattern));
-
-      if (isCritical) {
-        // Could dispatch to a global state or show a notification
-        // For now, just ensure we don't crash
+      if (shouldSuppress) {
+        // Could dispatch to a global state or show a notification.
         // eslint-disable-next-line no-console
-        console.warn('Critical async error occurred, but app should continue:', errorMessage);
+        console.warn('Suppressed known-safe async error:', errorMessage);
       }
     };
 
@@ -70,5 +85,3 @@ export function useGlobalErrorHandler() {
     };
   }, []);
 }
-
-export default useGlobalErrorHandler;

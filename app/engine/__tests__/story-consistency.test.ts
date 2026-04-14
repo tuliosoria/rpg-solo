@@ -7,7 +7,7 @@
  * These tests verify:
  * 1. Story timeline consistency (January 1996 references)
  * 2. Character/entity consistency (UFO74, government entities)
- * 3. Evidence/document coherence (cross-references, evidence tiers)
+ * 3. Evidence/document coherence (multi-file links, evidence coverage)
  * 4. Player understanding (tutorials, hints, victory conditions)
  * 5. Narrative mechanics (risk system, Turing Test, firewall threats)
  */
@@ -18,15 +18,11 @@ import { executeCommand } from '../commands';
 import {
   GameState,
   DEFAULT_GAME_STATE,
-  TRUTH_CATEGORIES,
   FileNode,
   DirectoryNode,
   FileSystemNode,
 } from '../../types';
 import {
-  getHelpBasics,
-  getHelpEvidence,
-  getHelpWinning,
   getFirstRunMessage,
 } from '../commands/tutorial';
 
@@ -329,9 +325,9 @@ describe('Story Consistency Tests', () => {
           );
 
           // Key physical characteristics from Varginha lore
-          expect(content).toMatch(/1\.2m|height/i);
-          expect(content).toMatch(/grey|gray/i);
-          expect(content).toMatch(/eye|dark/i);
+          expect(content).toMatch(/1\.6m|height/i);
+          expect(content).toMatch(/brown|oily/i);
+          expect(content).toMatch(/eye|red/i);
           expect(content).toMatch(/four\s+digit|digit/i);
         }
       });
@@ -395,14 +391,6 @@ describe('Story Consistency Tests', () => {
       });
     });
 
-    describe('Evidence Tiers', () => {
-      it('all 5 truth categories exist in the ruleset', () => {
-        for (const truth of TRUTH_CATEGORIES) {
-          expect(typeof truth).toBe('string');
-        }
-      });
-    });
-
     describe('File Paths and Directory Structure', () => {
       it('directory structure is logical and thematic', () => {
         const expectedDirectories = [
@@ -446,35 +434,6 @@ describe('Story Consistency Tests', () => {
 
   describe('4. Player Understanding', () => {
     describe('Tutorial Messages', () => {
-      it('help basics explains core navigation commands', () => {
-        const entries = getHelpBasics();
-        const content = entries.map(e => e.content).join('\n');
-
-        expect(content).toContain('ls');
-        expect(content).toContain('cd');
-        expect(content).toContain('open');
-        // decrypt is an advanced command, not in basics
-      });
-
-      it('help evidence explains the evidence system', () => {
-        const entries = getHelpEvidence();
-        const content = entries.map(e => e.content).join('\n');
-
-        expect(content).toMatch(/evidence|truth|discover/i);
-      });
-
-      it('help winning explains victory conditions', () => {
-        const entries = getHelpWinning();
-        const content = entries.map(e => e.content).join('\n');
-
-        // Should mention the 5 truths
-        expect(content).toContain('Debris Relocation');
-        expect(content).toContain('Being Containment');
-        expect(content).toContain('Telepathic Scouts');
-        expect(content).toContain('International Actors');
-        expect(content).toContain('Transition 2026');
-      });
-
       it('first run message welcomes player appropriately', () => {
         const entries = getFirstRunMessage();
         const content = entries.map(e => e.content).join('\n');
@@ -517,9 +476,9 @@ describe('Story Consistency Tests', () => {
         if (reviewFile) {
           const content = reviewFile.content.join('\n');
 
-          // Should mention the review dimensions (maps to truth categories)
+          // Should mention the review dimensions that structure the investigation
           expect(content).toMatch(/physical\s+assets/i);
-          expect(content).toMatch(/biological\s+subjects/i);
+          expect(content).toMatch(/equipment\s+and\s+materiel/i);
           expect(content).toMatch(/communications/i);
           expect(content).toMatch(/oversight/i);
           expect(content).toMatch(/forward\s+risk/i);
@@ -528,15 +487,6 @@ describe('Story Consistency Tests', () => {
     });
 
     describe('Victory/Failure Conditions', () => {
-      it('5 truth categories are properly defined', () => {
-        expect(TRUTH_CATEGORIES).toHaveLength(5);
-        expect(TRUTH_CATEGORIES).toContain('debris_relocation');
-        expect(TRUTH_CATEGORIES).toContain('being_containment');
-        expect(TRUTH_CATEGORIES).toContain('telepathic_scouts');
-        expect(TRUTH_CATEGORIES).toContain('international_actors');
-        expect(TRUTH_CATEGORIES).toContain('transition_2026');
-      });
-
       it('detection level reaching 100 triggers game over', () => {
         const state = createTestState({
           tutorialStep: -1,
@@ -564,17 +514,11 @@ describe('Story Consistency Tests', () => {
         expect(result.stateChanges.isGameOver).toBe(true);
       });
 
-      it('discovering all 5 truths enables leak command', () => {
+      it('discovering all 5 evidence files enables leak command', () => {
         const state = createTestState({
           tutorialStep: -1,
           tutorialComplete: true,
-          truthsDiscovered: new Set([
-            'debris_relocation',
-            'being_containment',
-            'telepathic_scouts',
-            'international_actors',
-            'transition_2026',
-          ]),
+          evidenceCount: 5,
         });
 
         // Status should show system information
@@ -724,23 +668,13 @@ describe('Story Consistency Tests', () => {
         expect(state.detectionLevel).toBeGreaterThanOrEqual(25);
       });
 
-      it('firewall eyes can spawn and threaten player', () => {
+      it('firewall watches over player at elevated detection', () => {
         const state = createTestState({
           detectionLevel: 50,
           firewallActive: true,
-          firewallEyes: [
-            {
-              id: 'eye-1',
-              x: 50,
-              y: 50,
-              spawnTime: Date.now(),
-              detonateTime: Date.now() + 30000,
-              isDetonating: false,
-            },
-          ],
         });
 
-        expect(state.firewallEyes.length).toBeGreaterThan(0);
+        expect(state.firewallActive).toBe(true);
       });
 
       it('firewall can be disarmed via neural link', () => {
@@ -801,15 +735,14 @@ describe('Story Consistency Tests', () => {
         const state = createTestState({
           tutorialStep: -1,
           tutorialComplete: true,
-          truthsDiscovered: new Set(TRUTH_CATEGORIES),
-          flags: { allEvidenceCollected: true },
+          evidenceCount: 10,
         });
 
         const result = executeCommand('leak', state);
 
-        // Should start leak sequence with Elusive Man
-        expect(result.stateChanges.inLeakSequence).toBe(true);
-        expect(result.stateChanges.currentLeakQuestion).toBe(0);
+        // Should go directly to ICQ phase (no more Elusive Man questions)
+        expect(result.stateChanges.icqPhase).toBe(true);
+        expect(result.skipToPhase).toBe('icq');
       });
 
       it('secret ending triggered by finding UFO74 identity', () => {

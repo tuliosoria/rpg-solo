@@ -25,7 +25,7 @@ describe('Multiple Endings System', () => {
     it('returns controlled_disclosure when no modifiers are active', () => {
       const flags: EndingFlags = {
         conspiracyFilesLeaked: false,
-        prisoner46Released: false,
+        alphaReleased: false,
         neuralLinkAuthenticated: false,
       };
       expect(determineEndingVariant(flags)).toBe('controlled_disclosure');
@@ -34,25 +34,25 @@ describe('Multiple Endings System', () => {
     it('returns global_panic when only conspiracy files are leaked', () => {
       const flags: EndingFlags = {
         conspiracyFilesLeaked: true,
-        prisoner46Released: false,
+        alphaReleased: false,
         neuralLinkAuthenticated: false,
       };
       expect(determineEndingVariant(flags)).toBe('global_panic');
     });
 
-    it('returns undeniable_confirmation when only prisoner 46 is released', () => {
+    it('returns undeniable_confirmation when only ALPHA is released', () => {
       const flags: EndingFlags = {
         conspiracyFilesLeaked: false,
-        prisoner46Released: true,
+        alphaReleased: true,
         neuralLinkAuthenticated: false,
       };
       expect(determineEndingVariant(flags)).toBe('undeniable_confirmation');
     });
 
-    it('returns total_collapse when conspiracy + prisoner 46', () => {
+    it('returns total_collapse when conspiracy + ALPHA', () => {
       const flags: EndingFlags = {
         conspiracyFilesLeaked: true,
-        prisoner46Released: true,
+        alphaReleased: true,
         neuralLinkAuthenticated: false,
       };
       expect(determineEndingVariant(flags)).toBe('total_collapse');
@@ -61,7 +61,7 @@ describe('Multiple Endings System', () => {
     it('returns personal_contamination when only neural link is used', () => {
       const flags: EndingFlags = {
         conspiracyFilesLeaked: false,
-        prisoner46Released: false,
+        alphaReleased: false,
         neuralLinkAuthenticated: true,
       };
       expect(determineEndingVariant(flags)).toBe('personal_contamination');
@@ -70,16 +70,16 @@ describe('Multiple Endings System', () => {
     it('returns paranoid_awakening when conspiracy + neural link', () => {
       const flags: EndingFlags = {
         conspiracyFilesLeaked: true,
-        prisoner46Released: false,
+        alphaReleased: false,
         neuralLinkAuthenticated: true,
       };
       expect(determineEndingVariant(flags)).toBe('paranoid_awakening');
     });
 
-    it('returns witnessed_truth when prisoner 46 + neural link', () => {
+    it('returns witnessed_truth when ALPHA + neural link', () => {
       const flags: EndingFlags = {
         conspiracyFilesLeaked: false,
-        prisoner46Released: true,
+        alphaReleased: true,
         neuralLinkAuthenticated: true,
       };
       expect(determineEndingVariant(flags)).toBe('witnessed_truth');
@@ -88,7 +88,7 @@ describe('Multiple Endings System', () => {
     it('returns complete_revelation when all modifiers are active', () => {
       const flags: EndingFlags = {
         conspiracyFilesLeaked: true,
-        prisoner46Released: true,
+        alphaReleased: true,
         neuralLinkAuthenticated: true,
       };
       expect(determineEndingVariant(flags)).toBe('complete_revelation');
@@ -100,14 +100,14 @@ describe('Multiple Endings System', () => {
       const state = createTestState({
         flags: {
           conspiracyFilesLeaked: true,
-          prisoner46Released: false,
+          alphaReleased: false,
           neuralLinkAuthenticated: true,
         },
       });
       const flags = getEndingFlags(state);
       expect(flags).toEqual({
         conspiracyFilesLeaked: true,
-        prisoner46Released: false,
+        alphaReleased: false,
         neuralLinkAuthenticated: true,
       });
     });
@@ -119,7 +119,7 @@ describe('Multiple Endings System', () => {
       const flags = getEndingFlags(state);
       expect(flags).toEqual({
         conspiracyFilesLeaked: false,
-        prisoner46Released: false,
+        alphaReleased: false,
         neuralLinkAuthenticated: false,
       });
     });
@@ -130,7 +130,7 @@ describe('Multiple Endings System', () => {
       const state = createTestState({
         flags: {
           conspiracyFilesLeaked: true,
-          prisoner46Released: true,
+          alphaReleased: true,
           neuralLinkAuthenticated: true,
         },
       });
@@ -223,7 +223,7 @@ describe('Multiple Endings System', () => {
       it(`conspiracy=${c}, prisoner=${p}, neural=${n} → ${expected}`, () => {
         const flags: EndingFlags = {
           conspiracyFilesLeaked: c,
-          prisoner46Released: p,
+          alphaReleased: p,
           neuralLinkAuthenticated: n,
         };
         expect(determineEndingVariant(flags)).toBe(expected);

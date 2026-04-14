@@ -2,19 +2,22 @@
 
 :root {
   --background: #0a0a0a;
-  --foreground: #00ff00;
-  --terminal-green: #00ff00;
-  --terminal-dark-green: #006600;
-  --terminal-bg: #0a0a0a;
+  --foreground: #88cc44;
+  --terminal-green: #88cc44;
+  --terminal-bright-green: #99dd55;
+  --terminal-dark-green: #445522;
+  --terminal-dim-green: #556633;
+  --terminal-bg: #080a06;
   --terminal-font-size: 14px;
   --flicker-intensity: 0.05;
+  --phosphor-glow: 0 0 4px rgba(136, 204, 68, 0.6), 0 0 8px rgba(136, 204, 68, 0.3), 0 0 16px rgba(136, 204, 68, 0.1);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --font-mono: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
 * {
@@ -43,8 +46,8 @@ body {
 
 /* Selection styling */
 ::selection {
-  background: rgba(0, 255, 0, 0.3);
-  color: #00ff00;
+  background: rgba(136, 204, 68, 0.3);
+  color: #88cc44;
 }
 
 /* Scrollbar styling for webkit browsers */
@@ -54,16 +57,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #001a00;
+  background: #060d04;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #003300;
+  background: #1a2a10;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #004400;
+  background: #2a3a18;
 }
 
 /* CRT Effects Toggle - when body has .no-crt, hide all scanlines and glow effects */

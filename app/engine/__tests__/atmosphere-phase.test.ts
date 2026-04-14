@@ -67,13 +67,13 @@ describe('Atmosphere Phase System', () => {
   });
 
   describe('hasFirstEvidence', () => {
-    it('returns false when no truths discovered', () => {
-      const state = createTestState({ truthsDiscovered: new Set() });
+    it('returns false when no evidence is discovered', () => {
+      const state = createTestState({ evidenceCount: 0 });
       expect(hasFirstEvidence(state)).toBe(false);
     });
 
-    it('returns true when any truth discovered', () => {
-      const state = createTestState({ truthsDiscovered: new Set(['debris_relocation']) });
+    it('returns true when any evidence is discovered', () => {
+      const state = createTestState({ evidenceCount: 1 });
       expect(hasFirstEvidence(state)).toBe(true);
     });
   });
@@ -83,7 +83,7 @@ describe('Atmosphere Phase System', () => {
       const state = createTestState({
         tutorialComplete: false,
         tutorialStep: 0,
-        truthsDiscovered: new Set(),
+        evidenceCount: 0,
         filesRead: new Set(),
       });
       expect(isInAtmospherePhase(state)).toBe(false);
@@ -91,7 +91,7 @@ describe('Atmosphere Phase System', () => {
 
     it('returns true after tutorial with no evidence and few files', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(),
+        evidenceCount: 0,
         filesRead: new Set(['/storage/file1.txt', '/storage/file2.txt']),
       });
       expect(isInAtmospherePhase(state)).toBe(true);
@@ -99,7 +99,7 @@ describe('Atmosphere Phase System', () => {
 
     it('returns false once first evidence is discovered', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(['being_containment']),
+        evidenceCount: 1,
         filesRead: new Set(['/storage/file1.txt']),
       });
       expect(isInAtmospherePhase(state)).toBe(false);
@@ -111,7 +111,7 @@ describe('Atmosphere Phase System', () => {
         meaningfulFiles.add(`/storage/file${i}.txt`);
       }
       const state = createTestState({
-        truthsDiscovered: new Set(),
+        evidenceCount: 0,
         filesRead: meaningfulFiles,
       });
       expect(isInAtmospherePhase(state)).toBe(false);
@@ -124,7 +124,7 @@ describe('Atmosphere Phase System', () => {
         mundaneFiles.add(`/logs/access${i}.log`);
       }
       const state = createTestState({
-        truthsDiscovered: new Set(),
+        evidenceCount: 0,
         filesRead: mundaneFiles,
       });
       expect(isInAtmospherePhase(state)).toBe(true);
@@ -163,7 +163,7 @@ describe('Atmosphere Phase System', () => {
 
     it('suppresses during atmosphere phase', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(),
+        evidenceCount: 0,
         filesRead: new Set(),
       });
       expect(shouldSuppressPressure(state)).toBe(true);
@@ -171,7 +171,7 @@ describe('Atmosphere Phase System', () => {
 
     it('suppresses during cooldown', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation']), // Past atmosphere phase
+        evidenceCount: 1, // Past atmosphere phase
         ufo74DisengageTime: Date.now() - 10000, // In cooldown
       });
       expect(shouldSuppressPressure(state)).toBe(true);
@@ -179,7 +179,7 @@ describe('Atmosphere Phase System', () => {
 
     it('does not suppress after atmosphere phase and cooldown', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation']),
+        evidenceCount: 1,
         ufo74DisengageTime: 0,
       });
       expect(shouldSuppressPressure(state)).toBe(false);
@@ -196,7 +196,7 @@ describe('Atmosphere Phase System', () => {
 
     it('suppresses during atmosphere phase', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(),
+        evidenceCount: 0,
         filesRead: new Set(),
       });
       expect(shouldSuppressPenalties(state)).toBe(true);
@@ -204,7 +204,7 @@ describe('Atmosphere Phase System', () => {
 
     it('does not suppress after atmosphere phase', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(['being_containment']),
+        evidenceCount: 1,
       });
       expect(shouldSuppressPenalties(state)).toBe(false);
     });
@@ -216,7 +216,7 @@ describe('Atmosphere Phase Integration', () => {
     // Simulate early game: tutorial complete, no evidence, few files
     const state = createTestState({
       filesRead: new Set(['/storage/memo.txt', '/storage/log.txt']),
-      truthsDiscovered: new Set(),
+      evidenceCount: 0,
       detectionLevel: 30, // Would normally trigger glitches/paranoia
     });
 
@@ -231,7 +231,7 @@ describe('Atmosphere Phase Integration', () => {
   it('activates pressure systems after evidence discovery', () => {
     const state = createTestState({
       filesRead: new Set(['/storage/critical_report.txt']),
-      truthsDiscovered: new Set(['telepathic_scouts']),
+      evidenceCount: 1,
       detectionLevel: 40,
     });
 

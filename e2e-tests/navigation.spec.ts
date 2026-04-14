@@ -1,81 +1,14 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import {
+  contentContains,
+  createBugTracker,
+  getContent,
+  screenshot,
+  startGame,
+  typeCommand,
+} from './helpers';
 
-const URL = 'https://thankful-grass-0f49be40f.2.azurestaticapps.net';
-
-// Bug tracking
-interface Bug {
-  id: number;
-  title: string;
-  steps: string[];
-  expected: string;
-  actual: string;
-  screenshot?: string;
-  severity: 'critical' | 'major' | 'minor' | 'cosmetic';
-}
-
-const bugs: Bug[] = [];
-let bugCounter = 0;
-
-function logBug(bug: Omit<Bug, 'id'>): Bug {
-  const newBug = { ...bug, id: ++bugCounter };
-  bugs.push(newBug);
-  console.log(`\n🐛 BUG #${newBug.id}: ${newBug.title}`);
-  console.log(`   Severity: ${newBug.severity}`);
-  console.log(`   Steps: ${newBug.steps.join(' → ')}`);
-  console.log(`   Expected: ${newBug.expected}`);
-  console.log(`   Actual: ${newBug.actual}`);
-  if (newBug.screenshot) console.log(`   Screenshot: ${newBug.screenshot}`);
-  return newBug;
-}
-
-// Helper to type a command and press Enter
-async function typeCommand(page: Page, command: string, stepName?: string) {
-  if (stepName) console.log(`  ⏳ ${stepName}: "${command}"...`);
-  await page.keyboard.type(command, { delay: 30 });
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(1500);
-  if (stepName) console.log(`  ✅ ${stepName}: Done`);
-}
-
-// Helper to get page content
-async function getContent(page: Page): Promise<string> {
-  return (await page.textContent('body')) || '';
-}
-
-// Helper to check if content contains text (case insensitive)
-function contentContains(content: string, text: string): boolean {
-  return content.toLowerCase().includes(text.toLowerCase());
-}
-
-// Helper to take screenshot
-async function screenshot(page: Page, name: string): Promise<string> {
-  const path = `e2e-tests/screenshots/${name}.png`;
-  await page.screenshot({ path });
-  return path;
-}
-
-// Helper to start the game and complete tutorial
-async function startGame(page: Page) {
-  console.log('  🎮 Starting game...');
-  await page.goto(URL, { waitUntil: 'networkidle', timeout: 30000 });
-  await page.waitForTimeout(3000);
-  
-  // Press Enter to start
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(2000);
-  
-  // Complete tutorial quickly
-  await typeCommand(page, 'ls');
-  await typeCommand(page, 'cd internal');
-  await typeCommand(page, 'cd misc');
-  await typeCommand(page, 'open cafeteria_menu');
-  await page.waitForTimeout(1000);
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(1500);
-  await typeCommand(page, 'cd /');
-  
-  console.log('  ✅ Game started, at root');
-}
+const { bugs, logBug, reportBugs } = createBugTracker('Navigation');
 
 // Directory structure based on filesystem analysis
 const ACCESSIBLE_DIRECTORIES = [
@@ -188,9 +121,9 @@ test.describe('Filesystem Navigation', () => {
     await screenshot(page, 'nav-cdback-01-from-root');
     
     // Should either stay at root or show appropriate message
-    const atRoot = contentContains(content, 'root') || 
-                   contentContains(content, 'already') ||
-                   !contentContains(content, 'error');
+    const _atRoot = contentContains(content, 'root') || 
+                    contentContains(content, 'already') ||
+                    !contentContains(content, 'error');
 
     // Test cd .. from depth 1
     console.log('\n--- Testing cd .. from depth 1 ---');
@@ -202,8 +135,8 @@ test.describe('Filesystem Navigation', () => {
     await typeCommand(page, 'ls');
     content = await getContent(page);
     // Should be back at root and see top-level directories
-    const backAtRoot = contentContains(content, 'storage') && 
-                       contentContains(content, 'internal');
+    const _backAtRoot = contentContains(content, 'storage') && 
+                        contentContains(content, 'internal');
 
     // Test cd .. from depth 2
     console.log('\n--- Testing cd .. from depth 2 ---');
@@ -216,7 +149,7 @@ test.describe('Filesystem Navigation', () => {
     await typeCommand(page, 'ls');
     content = await getContent(page);
     // Should be in storage and see assets/quarantine
-    const inStorage = contentContains(content, 'assets') || contentContains(content, 'quarantine');
+    const _inStorage = contentContains(content, 'assets') || contentContains(content, 'quarantine');
 
     // Test cd .. from depth 3
     console.log('\n--- Testing cd .. from depth 3 ---');
@@ -232,9 +165,9 @@ test.describe('Filesystem Navigation', () => {
     await screenshot(page, 'nav-cdback-05-after-cdback');
     
     // Should be in internal and see subdirectories
-    const inInternal = contentContains(content, 'protocols') || 
-                       contentContains(content, 'personnel') ||
-                       contentContains(content, 'misc');
+    const _inInternal = contentContains(content, 'protocols') || 
+                        contentContains(content, 'personnel') ||
+                        contentContains(content, 'misc');
 
     // Test multiple cd .. in sequence
     console.log('\n--- Testing multiple cd .. in sequence ---');
@@ -246,8 +179,8 @@ test.describe('Filesystem Navigation', () => {
     await screenshot(page, 'nav-cdback-06-multiple');
     
     // Should be at root
-    const atRootAgain = contentContains(content, 'storage') && 
-                        contentContains(content, 'internal');
+    const _atRootAgain = contentContains(content, 'storage') && 
+                         contentContains(content, 'internal');
 
     console.log('\n========== CD .. TEST COMPLETE ==========\n');
   });
@@ -402,8 +335,8 @@ test.describe('Filesystem Navigation', () => {
     
     await typeCommand(page, 'ls');
     content = await getContent(page);
-    const inStorageAfterMultiple = contentContains(content, 'assets') || 
-                                   contentContains(content, 'quarantine');
+    const _inStorageAfterMultiple = contentContains(content, 'assets') || 
+                                    contentContains(content, 'quarantine');
 
     // Test going above root with many ..
     console.log('\n--- Testing going above root ---');
@@ -444,31 +377,31 @@ test.describe('Filesystem Navigation', () => {
     await typeCommand(page, 'cd /comms');
     
     await typeCommand(page, 'ls');
-    let content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'nav-back-01-in-comms');
 
     // Test back command
     console.log('\n--- Testing back command ---');
     await typeCommand(page, 'back', 'first back');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'nav-back-02-first-back');
     
     await typeCommand(page, 'ls');
-    content = await getContent(page);
+    await getContent(page);
 
     await typeCommand(page, 'back', 'second back');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'nav-back-03-second-back');
     
     await typeCommand(page, 'ls');
-    content = await getContent(page);
+    await getContent(page);
 
     // Test back when no history
     console.log('\n--- Testing back with no history ---');
     // Navigate fresh and try back immediately
     await typeCommand(page, 'cd /');
     await typeCommand(page, 'back', 'back from root');
-    content = await getContent(page);
+    await getContent(page);
     await screenshot(page, 'nav-back-04-no-history');
 
     console.log('\n========== BACK COMMAND TEST COMPLETE ==========\n');
@@ -536,15 +469,7 @@ test.describe('Filesystem Navigation', () => {
 });
 
 // Export bugs for report generation
-test.afterAll(async () => {
-  if (bugs.length > 0) {
-    console.log('\n═══════════════════════════════════════════════════════════');
-    console.log(`NAVIGATION BUGS FOUND: ${bugs.length}`);
-    console.log('═══════════════════════════════════════════════════════════\n');
-    bugs.forEach(bug => {
-      console.log(`#${bug.id} [${bug.severity.toUpperCase()}] ${bug.title}`);
-    });
-  } else {
-    console.log('\n✅ No navigation bugs found!\n');
-  }
+test.afterAll(() => {
+  reportBugs();
+  expect(bugs).toHaveLength(0);
 });

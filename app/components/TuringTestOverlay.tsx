@@ -13,6 +13,19 @@ interface TuringTestOverlayProps {
   onCorrectAnswer?: () => void;
 }
 
+const OVERLAY_LAYOUT_STYLE: React.CSSProperties = {
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
+
+const CONTAINER_LAYOUT_STYLE: React.CSSProperties = {
+  width: '100%',
+  maxHeight: '100%',
+};
+
 export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: TuringTestOverlayProps) {
   const { t, translateRuntimeText } = useI18n();
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -27,23 +40,23 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
 
   // Safely get current question with fallback
   const currentQuestion = TURING_QUESTIONS[questionIndex] || TURING_QUESTIONS[0];
-  
+
   // Check for invalid question data
   const isInvalidQuestion = !currentQuestion || !currentQuestion.options;
 
   // Turing Test start effects: voice + music speed
   useEffect(() => {
     if (isInvalidQuestion) return;
-    
+
     // Firewall speaks with menacing voice
     speak(t('turing.voice.welcome'), { rate: 0.7, pitch: 0.3 });
-    
+
     // Accelerate background music to 1.5x for intensity
     setMusicPlaybackRate(1.5);
-    
+
     // Play alert sound for dramatic effect
     playSound('alert');
-    
+
     // Reset music speed when component unmounts
     return () => {
       setMusicPlaybackRate(1.0);
@@ -126,7 +139,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
   // Keyboard controls
   useEffect(() => {
     if (isInvalidQuestion) return;
-    
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (showResult) {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -151,7 +164,6 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
 
   // Guard against invalid state - must be after all hooks
   if (isInvalidQuestion) {
-    // eslint-disable-next-line no-console
     console.error('TuringTestOverlay: Invalid question data', { questionIndex, TURING_QUESTIONS });
     return null;
   }
@@ -160,35 +172,43 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
   if (showResult) {
     const passed = correctAnswers === 3;
     return (
-      <div className={`${styles.overlay} ${flickering ? styles.flickering : ''}`}>
+      <div
+        data-testid="turing-test-overlay"
+        className={`${styles.overlay} ${flickering ? styles.flickering : ''}`}
+        style={OVERLAY_LAYOUT_STYLE}
+      >
         <div className={styles.scanlines} />
         <div className={styles.glow} />
 
-        <div className={styles.container}>
+        <div
+          data-testid="turing-test-container"
+          className={styles.container}
+          style={CONTAINER_LAYOUT_STYLE}
+        >
           {/* Turing Test Image */}
           <div className={styles.imageContainer}>
             <Image
-              src="/images/turing-test.png"
+              src="/images/turing-test.webp"
               alt={t('turing.image.resultAlt')}
-              width={150}
-              height={150}
+              width={120}
+              height={120}
               className={styles.turingImage}
               priority
             />
           </div>
 
-            <div className={styles.resultBox}>
-              <div className={styles.resultHeader}>
-                {passed ? t('turing.result.complete') : t('turing.result.failed')}
-              </div>
+          <div className={styles.resultBox}>
+            <div className={styles.resultHeader}>
+              {passed ? t('turing.result.complete') : t('turing.result.failed')}
+            </div>
 
-              <div className={styles.resultScore}>{t('turing.result.score', { value: correctAnswers })}</div>
+            <div className={styles.resultScore}>
+              {t('turing.result.score', { value: correctAnswers })}
+            </div>
 
-              <div className={passed ? styles.resultPass : styles.resultFail}>
-                {passed
-                  ? t('turing.result.passLine')
-                  : t('turing.result.failLine')}
-              </div>
+            <div className={passed ? styles.resultPass : styles.resultFail}>
+              {passed ? t('turing.result.passLine') : t('turing.result.failLine')}
+            </div>
 
             <div className={styles.resultPrompt}>↵</div>
           </div>
@@ -198,18 +218,26 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
   }
 
   return (
-    <div className={`${styles.overlay} ${flickering ? styles.flickering : ''}`}>
+    <div
+      data-testid="turing-test-overlay"
+      className={`${styles.overlay} ${flickering ? styles.flickering : ''}`}
+      style={OVERLAY_LAYOUT_STYLE}
+    >
       <div className={styles.scanlines} />
       <div className={styles.glow} />
 
-      <div className={styles.container}>
+      <div
+        data-testid="turing-test-container"
+        className={styles.container}
+        style={CONTAINER_LAYOUT_STYLE}
+      >
         {/* Turing Test Image */}
         <div className={styles.imageContainer}>
           <Image
-            src="/images/turing-test.png"
+            src="/images/turing-test.webp"
             alt={t('turing.image.protocolAlt')}
-            width={200}
-            height={200}
+            width={160}
+            height={160}
             className={styles.turingImage}
             priority
           />
@@ -226,9 +254,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
         <div className={styles.instructions}>
           <div>{t('turing.instructions.notice')}</div>
           <div>{t('turing.instructions.prove')}</div>
-          <div className={styles.instructionHighlight}>
-            {t('turing.instructions.select')}
-          </div>
+          <div className={styles.instructionHighlight}>{t('turing.instructions.select')}</div>
         </div>
 
         {/* Progress */}
@@ -238,7 +264,9 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
 
         {/* Question Box */}
         <div className={styles.questionBox}>
-          <div className={styles.questionPrompt}>"{translateRuntimeText(currentQuestion.prompt)}"</div>
+          <div className={styles.questionPrompt}>
+            "{translateRuntimeText(currentQuestion.prompt)}"
+          </div>
 
           <div className={styles.options}>
             {currentQuestion.options.map(option => {
@@ -247,17 +275,18 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
               const showWrong = showFeedback && isSelected && !option.isMachine;
 
               return (
-                <div
+                <button
                   key={option.letter}
-                  className={`${styles.option} 
-                    ${isSelected ? styles.optionSelected : ''} 
-                    ${showCorrect ? styles.optionCorrect : ''} 
+                  type="button"
+                  className={`${styles.option}
+                    ${isSelected ? styles.optionSelected : ''}
+                    ${showCorrect ? styles.optionCorrect : ''}
                     ${showWrong ? styles.optionWrong : ''}`}
                   onClick={() => handleSelect(option.letter)}
                 >
                   <span className={styles.optionLetter}>{option.letter}.</span>
                   <span className={styles.optionText}>{translateRuntimeText(option.text)}</span>
-                </div>
+                </button>
               );
             })}
           </div>

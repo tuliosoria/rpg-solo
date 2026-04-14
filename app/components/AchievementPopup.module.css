@@ -3,13 +3,13 @@
   align-items: center;
   gap: 16px;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #001a00 0%, #002a00 100%);
-  border: 2px solid #00ff00;
+  background: linear-gradient(135deg, #060d04 0%, #0c1a08 100%);
+  border: 2px solid #88cc44;
   border-radius: 8px;
   box-shadow: 
-    0 0 20px rgba(0, 255, 0, 0.3),
-    0 0 40px rgba(0, 255, 0, 0.1),
-    inset 0 0 20px rgba(0, 255, 0, 0.05);
+    0 0 20px rgba(136, 204, 68, 0.3),
+    0 0 40px rgba(136, 204, 68, 0.1),
+    inset 0 0 20px rgba(136, 204, 68, 0.05);
   z-index: 250;
   cursor: pointer;
   max-width: 350px;
@@ -32,7 +32,7 @@
 
 .icon {
   font-size: 48px;
-  filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.5));
+  filter: drop-shadow(0 0 8px rgba(136, 204, 68, 0.5));
   animation: iconPulse 1s ease-in-out infinite;
 }
 
@@ -49,7 +49,7 @@
 
 .header {
   font-size: 10px;
-  color: #00aa00;
+  color: #5a8a28;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -57,13 +57,13 @@
 .name {
   font-size: 18px;
   font-weight: bold;
-  color: #00ff00;
-  text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+  color: #88cc44;
+  text-shadow: 0 0 8px rgba(136, 204, 68, 0.5);
 }
 
 .description {
   font-size: 12px;
-  color: #88ff88;
+  color: #99dd55;
   opacity: 0.8;
 }
 
@@ -79,8 +79,8 @@
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 255, 0, 0.03) 2px,
-    rgba(0, 255, 0, 0.03) 4px
+    rgba(136, 204, 68, 0.03) 2px,
+    rgba(136, 204, 68, 0.03) 4px
   );
   pointer-events: none;
   border-radius: 6px;

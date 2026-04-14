@@ -4,7 +4,7 @@ import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
 // Helper to create a test state
-// NOTE: Set truthsDiscovered to exit atmosphere phase so penalties apply
+// NOTE: Set evidenceCount to exit atmosphere phase so penalties apply
 const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   ...DEFAULT_GAME_STATE,
   seed: 12345,
@@ -12,7 +12,7 @@ const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   sessionStartTime: Date.now(),
   tutorialStep: -1,
   tutorialComplete: true,
-  truthsDiscovered: new Set(['debris_relocation']), // Exit atmosphere phase
+  evidenceCount: 1, // Exit atmosphere phase
   ...overrides,
 });
 
@@ -157,55 +157,55 @@ describe('Morse File Read Flag', () => {
 });
 
 describe('Override Failures', () => {
-  it('should increment wrongAttempts on wrong override password', () => {
+  it('tracks failed override attempts for a wrong password', () => {
     const state = createTestState({ wrongAttempts: 0 });
     const result = executeCommand('override protocol WRONGPASS', state);
-    
-    expect(result.stateChanges.wrongAttempts).toBe(1);
-    expect(result.stateChanges.overrideFailedAttempts).toBe(1);
+
     expect(result.output.some(e => e.content.includes('INVALID AUTHENTICATION CODE'))).toBe(true);
+    expect(result.stateChanges.overrideFailedAttempts).toBe(1);
+    expect(result.stateChanges.wrongAttempts).toBe(1);
   });
 
-  it('should accumulate wrongAttempts across multiple override failures', () => {
+  it('continues counting override failures across attempts', () => {
     const state = createTestState({ wrongAttempts: 2, overrideFailedAttempts: 1 });
     const result = executeCommand('override protocol BADCODE', state);
-    
-    expect(result.stateChanges.wrongAttempts).toBe(3);
+
+    expect(result.output.some(e => e.content.includes('INVALID AUTHENTICATION CODE'))).toBe(true);
     expect(result.stateChanges.overrideFailedAttempts).toBe(2);
+    expect(result.stateChanges.wrongAttempts).toBe(3);
   });
 
-  it('should trigger override lockout after 3 wrong passwords', () => {
+  it('locks the session on a third failed override attempt', () => {
     const state = createTestState({ wrongAttempts: 5, overrideFailedAttempts: 2 });
     const result = executeCommand('override protocol WRONG', state);
-    
+
+    expect(result.output.some(e => e.content.includes('SECURITY COUNTERMEASURE ACTIVATED'))).toBe(
+      true
+    );
     expect(result.stateChanges.isGameOver).toBe(true);
-    expect(result.stateChanges.gameOverReason).toContain('SECURITY LOCKDOWN');
-    expect(result.stateChanges.wrongAttempts).toBe(6);
+    expect(result.stateChanges.gameOverReason).toBe('SECURITY LOCKDOWN - AUTHENTICATION FAILURE');
   });
 
-  it('should show override lockout message even if wrongAttempts reaches 8', () => {
-    // 7 wrong attempts + 3rd override failure = 8, but override lockout should take priority
-    const state = createTestState({ wrongAttempts: 7, overrideFailedAttempts: 2 });
-    const result = executeCommand('override protocol WRONG', state);
-    
-    expect(result.stateChanges.isGameOver).toBe(true);
-    // Should show override-specific message, not generic terminal lockout
-    expect(result.stateChanges.gameOverReason).toContain('SECURITY LOCKDOWN');
-    expect(result.output.some(e => e.content.includes('SECURITY COUNTERMEASURE'))).toBe(true);
-  });
-
-  it('should not increment wrongAttempts when no password provided', () => {
+  it('shows the override usage hint when no password is provided', () => {
     const state = createTestState({ wrongAttempts: 0 });
     const result = executeCommand('override protocol', state);
-    
+
+    expect(
+      result.output.some(e => e.content.includes('Protocol override requires authentication code.'))
+    ).toBe(true);
     expect(result.stateChanges.wrongAttempts).toBeUndefined();
-    expect(result.output.some(e => e.content.includes('ACCESS DENIED'))).toBe(true);
   });
 
-  it('should not increment wrongAttempts on correct password', () => {
+  it('unlocks administrative access with the correct override password', () => {
     const state = createTestState({ wrongAttempts: 2 });
     const result = executeCommand('override protocol COLHEITA', state);
-    
+
+    expect(result.output.some(e => e.content.includes('Authentication accepted.'))).toBe(true);
+    expect(result.output.some(e => e.content.includes('Administrative archive access granted'))).toBe(
+      true
+    );
+    expect(result.stateChanges.flags?.adminUnlocked).toBe(true);
+    expect(result.stateChanges.accessLevel).toBe(5);
     expect(result.stateChanges.wrongAttempts).toBeUndefined();
   });
 });

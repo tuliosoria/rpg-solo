@@ -9,12 +9,9 @@ import { describe, it, expect } from 'vitest';
 import {
   countEvidence,
   getCaseStrengthDescription,
-  fileHasEvidence,
-  getFileEvidenceSymbol,
-  initializeEvidence,
-  EVIDENCE_SYMBOL,
+  EVIDENCE_SYMBOL as _EVIDENCE_SYMBOL,
 } from '../evidenceRevelation';
-import { GameState, DEFAULT_GAME_STATE, TRUTH_CATEGORIES } from '../../types';
+import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
 // Helper to create a test state
 function createTestState(overrides: Partial<GameState> = {}): GameState {
@@ -28,33 +25,10 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
 }
 
 describe('Simplified Evidence System', () => {
-  describe('initializeEvidence', () => {
-    it('should create evidence state for new evidence', () => {
-      const state = createTestState();
-      const result = initializeEvidence('debris_relocation', '/storage/test.txt', state);
-
-      expect(result.linkedFiles).toContain('/storage/test.txt');
-    });
-
-    it('should add file to existing evidence state', () => {
-      const state = createTestState({
-        evidenceStates: {
-          debris_relocation: {
-            linkedFiles: ['/existing.txt'],
-          },
-        },
-      });
-      const result = initializeEvidence('debris_relocation', '/new.txt', state);
-
-      expect(result.linkedFiles).toContain('/existing.txt');
-      expect(result.linkedFiles).toContain('/new.txt');
-    });
-  });
-
   describe('countEvidence', () => {
     it('should count discovered evidence correctly', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment', 'telepathic_scouts']),
+        evidenceCount: 3,
       });
 
       const count = countEvidence(state);
@@ -64,7 +38,7 @@ describe('Simplified Evidence System', () => {
 
     it('should return 0 for no discovered evidence', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(),
+        evidenceCount: 0,
       });
 
       const count = countEvidence(state);
@@ -72,21 +46,58 @@ describe('Simplified Evidence System', () => {
       expect(count).toBe(0);
     });
 
-    it('should return 5 when all evidence discovered', () => {
+    it('should derive discovered evidence from evidence-bearing files', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(TRUTH_CATEGORIES),
+        evidenceCount: 0,
+        filesRead: new Set([
+          '/ops/assessments/foreign_drone_assessment.txt',
+          '/storage/assets/material_x_analysis.dat',
+        ]),
       });
 
       const count = countEvidence(state);
 
-      expect(count).toBe(5);
+      expect(count).toBe(2);
+    });
+
+    it('should count newly designated evidence files like bio_program_overview.red', () => {
+      const state = createTestState({
+        evidenceCount: 0,
+        filesRead: new Set([
+          '/admin/bio_program_overview.red',
+          '/admin/thirty_year_cycle.txt',
+        ]),
+      });
+
+      const count = countEvidence(state);
+
+      expect(count).toBe(2);
+    });
+
+    it('should cap discovered evidence at 10', () => {
+      const state = createTestState({
+        evidenceCount: 0,
+        filesRead: new Set([
+          '/ops/assessments/foreign_drone_assessment.txt',
+          '/storage/assets/material_x_analysis.dat',
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/autopsy_alpha.log',
+          '/comms/intercepts/regional_summary_jan96.txt',
+          '/admin/bio_program_overview.red',
+        ]),
+      });
+
+      const count = countEvidence(state);
+
+      // 6 evidence files read, all counted (cap is 10)
+      expect(count).toBe(6);
     });
   });
 
   describe('getCaseStrengthDescription', () => {
-    it('should return COMPLETE for 5 evidence', () => {
+    it('should return COMPLETE for 10 evidence', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(TRUTH_CATEGORIES),
+        evidenceCount: 10,
       });
 
       const description = getCaseStrengthDescription(state);
@@ -94,14 +105,9 @@ describe('Simplified Evidence System', () => {
       expect(description).toContain('COMPLETE');
     });
 
-    it('should return STRONG for 4 evidence', () => {
+    it('should return STRONG for 8 evidence', () => {
       const state = createTestState({
-        truthsDiscovered: new Set([
-          'debris_relocation',
-          'being_containment',
-          'telepathic_scouts',
-          'international_actors',
-        ]),
+        evidenceCount: 8,
       });
 
       const description = getCaseStrengthDescription(state);
@@ -109,9 +115,9 @@ describe('Simplified Evidence System', () => {
       expect(description).toContain('STRONG');
     });
 
-    it('should return MODERATE for 3 evidence', () => {
+    it('should return MODERATE for 5 evidence', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment', 'telepathic_scouts']),
+        evidenceCount: 5,
       });
 
       const description = getCaseStrengthDescription(state);
@@ -121,7 +127,7 @@ describe('Simplified Evidence System', () => {
 
     it('should return DEVELOPING for 1-2 evidence', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation']),
+        evidenceCount: 1,
       });
 
       const description = getCaseStrengthDescription(state);
@@ -131,67 +137,12 @@ describe('Simplified Evidence System', () => {
 
     it('should return NONE for no evidence', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(),
+        evidenceCount: 0,
       });
 
       const description = getCaseStrengthDescription(state);
 
       expect(description).toContain('NONE');
-    });
-  });
-
-  describe('fileHasEvidence', () => {
-    it('should return true for files with revealed evidence', () => {
-      const state = createTestState({
-        fileEvidenceStates: {
-          '/test.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-      });
-
-      expect(fileHasEvidence('/test.txt', state)).toBe(true);
-    });
-
-    it('should return false for files without evidence', () => {
-      const state = createTestState();
-
-      expect(fileHasEvidence('/unknown.txt', state)).toBe(false);
-    });
-
-    it('should return false for files with no revealed evidence', () => {
-      const state = createTestState({
-        fileEvidenceStates: {
-          '/test.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: [],
-          },
-        },
-      });
-
-      expect(fileHasEvidence('/test.txt', state)).toBe(false);
-    });
-  });
-
-  describe('getFileEvidenceSymbol', () => {
-    it('should return evidence symbol for files with evidence', () => {
-      const state = createTestState({
-        fileEvidenceStates: {
-          '/test.txt': {
-            potentialEvidences: ['debris_relocation'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-      });
-
-      expect(getFileEvidenceSymbol('/test.txt', state)).toBe(EVIDENCE_SYMBOL);
-    });
-
-    it('should return null for files without evidence', () => {
-      const state = createTestState();
-
-      expect(getFileEvidenceSymbol('/unknown.txt', state)).toBeNull();
     });
   });
 });

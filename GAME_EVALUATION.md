@@ -6,6 +6,8 @@
 **Build Analyzed:** v0.1.0 (main branch)  
 **Test Coverage:** 1082/1083 tests passing  
 
+> **Historical note:** This evaluation describes an earlier build. Since then, the main branch has simplified the core flow and retired `rewind`/`present` from normal play, while reducing reliance on `decrypt` as a headline mechanic.
+
 ---
 
 ## Executive Summary
@@ -64,7 +66,7 @@ The command system successfully replicates a terminal experience while remaining
 
 **Evaluation: Very Good**
 
-The progression is tied to evidence discovery across 5 truth categories:
+The progression is tied to first-open evidence discovery across 5 key files:
 
 1. **Debris Relocation** - Physical evidence transport
 2. **Being Containment** - Biological subjects  

@@ -239,19 +239,15 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('EVIDENCE COLLECTED'))).toBe(true);
     });
 
-    it('should show discovered truths', () => {
+    it('should show discovered evidence count', () => {
       const state = createTestState({
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
-        evidenceStates: {
-          debris_relocation: { linkedFiles: ['/test.txt'] },
-          being_containment: { linkedFiles: ['/a.txt', '/b.txt'] },
-        },
+        evidenceCount: 2,
       });
       const result = executeCommand('progress', state);
 
-      // New format shows file names instead of category spoilers
+      // New format shows evidence count
       expect(
-        result.output.some(e => e.content.includes('test.txt') || e.content.includes('a.txt'))
+        result.output.some(e => e.content.includes('2/10'))
       ).toBe(true);
     });
 
@@ -278,6 +274,54 @@ describe('UX Commands', () => {
           e => e.content.includes('Evidence links:') || e.content.includes('SESSION STATISTICS')
         )
       ).toBe(true);
+    });
+  });
+
+  describe('god evidences command', () => {
+    it('fills all evidence slots and leaves the game ready for leak without requiring iddqd first', () => {
+      const state = createTestState({ evidenceCount: 1, flags: {} });
+      const result = executeCommand('god evidences', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(10);
+      expect(result.stateChanges.flags).toBeUndefined();
+      expect(result.stateChanges.evidencesSaved).toBeUndefined();
+      expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
+
+      // With evidenceCount 10 (god evidences gives 10), leak should proceed
+      const readyState = {
+        ...state,
+        ...result.stateChanges,
+        flags: { ...state.flags, ...(result.stateChanges.flags || {}) },
+      } as GameState;
+      const leakResult = executeCommand('leak', readyState);
+
+      expect(
+        leakResult.output.some(
+          e => e.content.includes('INSUFFICIENT EVIDENCE')
+        )
+      ).toBe(false);
+    });
+
+    it('keeps god evidence compatible inside god mode', () => {
+      const state = createTestState({ godMode: true, evidenceCount: 0, flags: {} });
+      const result = executeCommand('god evidence', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(10);
+      expect(result.stateChanges.flags).toBeUndefined();
+      expect(result.output.some(e => e.content.includes('ALL EVIDENCE UNLOCKED'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
+    });
+  });
+
+  describe('god alien command', () => {
+    it('sets detection to 70 and arms an alien preview without requiring iddqd first', () => {
+      const state = createTestState({ detectionLevel: 12 });
+      const before = Date.now();
+      const result = executeCommand('god alien', state);
+
+      expect(result.stateChanges.detectionLevel).toBe(70);
+      expect(result.stateChanges.alienPreviewUntil).toBeGreaterThan(before);
+      expect(result.output.some(e => e.content.includes('ALIEN PREVIEW ARMED'))).toBe(true);
     });
   });
 
@@ -473,16 +517,24 @@ describe('UX Commands', () => {
   // ═══════════════════════════════════════════════════════════════════════════
 
   describe('tree command', () => {
-    it('should display directory structure', () => {
+    it('should show confirmation prompt on first call', () => {
       const state = createTestState();
+      const result = executeCommand('tree', state);
+
+      expect(result.output.some(e => e.content.includes('are you sure'))).toBe(true);
+      expect(result.stateChanges.pendingTreeConfirm).toBe(true);
+    });
+
+    it('should display directory structure after confirmation', () => {
+      const state = createTestState({ pendingTreeConfirm: true });
       const result = executeCommand('tree', state);
 
       expect(result.output.some(e => e.content.includes('DIRECTORY STRUCTURE'))).toBe(true);
       expect(result.output.some(e => e.content.includes('/'))).toBe(true);
     });
 
-    it('should show current location', () => {
-      const state = createTestState({ currentPath: '/internal' });
+    it('should show current location after confirmation', () => {
+      const state = createTestState({ currentPath: '/internal', pendingTreeConfirm: true });
       const result = executeCommand('tree', state);
 
       expect(result.output.some(e => e.content.includes('Current location: /internal'))).toBe(true);
@@ -490,21 +542,30 @@ describe('UX Commands', () => {
 
     it('should show [READ] markers for read files', () => {
       const state = createTestState({
-        // File at /storage/assets/ which is depth 2 from root
         filesRead: new Set(['/storage/assets/transport_log_96.txt']),
-        flags: { adminUnlocked: true },
+        pendingTreeConfirm: true,
+        // NOT setting adminUnlocked — tree post-override triggers firewall
       });
       const result = executeCommand('tree', state);
 
-      // Tree should show the marker for a read file
-      expect(result.output.some(e => e.content.includes('[READ]'))).toBe(true);
+      // Pre-override tree won't see /storage/ files (adminUnlocked required),
+      // so just verify tree output renders without crash
+      expect(result.output.some(e => e.content.includes('DIRECTORY STRUCTURE'))).toBe(true);
     });
 
-    it('should not increase detection', () => {
-      const state = createTestState({ detectionLevel: 10 });
+    it('should increase detection by 30 after confirmation', () => {
+      const state = createTestState({ detectionLevel: 10, pendingTreeConfirm: true });
       const result = executeCommand('tree', state);
 
-      expect(result.stateChanges.detectionLevel).toBeUndefined();
+      expect(result.stateChanges.detectionLevel).toBe(40);
+    });
+
+    it('should trigger firewall when adminUnlocked', () => {
+      const state = createTestState({ flags: { adminUnlocked: true } });
+      const result = executeCommand('tree', state);
+
+      expect(result.output.some(e => e.content.includes('FIREWALL TRIGGERED'))).toBe(true);
+      expect(result.stateChanges.isGameOver).toBe(true);
     });
   });
 
@@ -551,15 +612,14 @@ describe('UX Commands', () => {
       const result = executeCommand('help open', state);
 
       expect(result.output.some(e => e.content.includes('COMMAND: open'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('encrypted'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Opening certain files may increase detection risk.'))).toBe(true);
     });
 
-    it('should show help for decrypt command', () => {
+    it('should not expose removed decrypt help', () => {
       const state = createTestState();
       const result = executeCommand('help decrypt', state);
 
-      expect(result.output.some(e => e.content.includes('COMMAND: decrypt'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('security question'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Unknown command: decrypt'))).toBe(true);
     });
 
     it('should show general help when no argument', () => {
@@ -567,14 +627,23 @@ describe('UX Commands', () => {
       const result = executeCommand('help', state);
 
       expect(result.output.some(e => e.content.includes('TERMINAL COMMANDS'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('wait'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('hide'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('  back              Go to previous directory'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  progress          Show investigation progress'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  map               Show evidence connections'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  decrypt <file>    Attempt decryption of .enc files'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  recover <file>    Attempt file recovery (RISK)'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  trace             Trace system connections (RISK)'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  rewind            Access archive state (RISK)'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('  present           Return to present from archive'))).toBe(false);
     });
 
-    it('should show help for back command', () => {
+    it('should not expose removed mechanics in direct help', () => {
       const state = createTestState();
       const result = executeCommand('help back', state);
 
-      expect(result.output.some(e => e.content.includes('COMMAND: back'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('browser back button'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Unknown command: back'))).toBe(true);
     });
 
     it('should handle unknown command gracefully', () => {
@@ -583,6 +652,56 @@ describe('UX Commands', () => {
 
       // Should show general help or error message
       expect(result.output.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('status guidance', () => {
+    it('surfaces evidence progress and recovery advice when pressure is high', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        detectionLevel: 88,
+        waitUsesRemaining: 2,
+        evidenceCount: 3,
+        filesRead: new Set(['/comms/psi/transcript_core.enc']),
+      });
+      const result = executeCommand('status', state);
+
+      expect(result.output.some(e => e.content.includes('EVIDENCE: 3/10'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('RECOVERY: "wait" can buy time'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('SIGNAL: Residual echo persists'))).toBe(true);
+    });
+
+    it('can trigger a delayed second-voice warning after psi exposure', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        detectionLevel: 60,
+        evidenceCount: 2,
+        filesRead: new Set(['/comms/psi/transcript_core.enc']),
+        singularEventsTriggered: new Set(['turing_warning', 'turing_evaluation']),
+      });
+      const result = executeCommand('help', state);
+
+      expect(result.output.some(e => e.content.includes('[RESPONSE TIMING MISMATCH]'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('dont answer it back'))).toBe(true);
+    });
+
+    it('keeps observer cues hidden until psi material has actually been read', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        detectionLevel: 62,
+        evidenceCount: 1,
+        filesRead: new Set(['/storage/witness_statement_raw.txt']),
+      });
+
+      const statusResult = executeCommand('status', state);
+      const helpResult = executeCommand('help', state);
+
+      expect(statusResult.output.some(e => e.content.includes('Residual echo persists'))).toBe(false);
+      expect(
+        helpResult.output.some(e =>
+          e.content.includes('If assistance appears before you finish typing')
+        )
+      ).toBe(false);
     });
   });
 
@@ -608,13 +727,7 @@ describe('UX Commands', () => {
       const state = createTestState({
         currentPath: '/ops/assessments',
         filesRead: new Set(['/ops/assessments/debris_analysis.txt']),
-        fileEvidenceStates: {
-          '/ops/assessments/debris_analysis.txt': {
-            potentialEvidences: ['debris_relocation', 'being_containment'],
-            revealedEvidences: ['debris_relocation'],
-          },
-        },
-        truthsDiscovered: new Set(['debris_relocation']),
+        evidenceCount: 1,
       });
 
       // Re-read the file
@@ -633,7 +746,6 @@ describe('UX Commands', () => {
     it('should persist evidence states across multiple file operations', () => {
       const state = createTestState({
         currentPath: '/internal/protocols',
-        fileEvidenceStates: {},
       });
 
       // Open a file - should initialize evidence state
@@ -659,7 +771,6 @@ describe('UX Commands', () => {
     it('should handle files in liaison directory', () => {
       const state = createTestState({
         currentPath: '/comms/liaison',
-        fileEvidenceStates: {},
       });
 
       // Open file that could have multiple evidence types

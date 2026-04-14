@@ -1,8 +1,9 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, useRef, useEffect, useCallback } from 'react';
 import { ACHIEVEMENTS, getUnlockedAchievements } from '../engine/achievements';
 import { useI18n } from '../i18n';
+import { useFocusTrap } from '../hooks';
 import styles from './AchievementGallery.module.css';
 
 interface AchievementGalleryProps {
@@ -12,6 +13,23 @@ interface AchievementGalleryProps {
 export default memo(function AchievementGallery({ onCloseAction }: AchievementGalleryProps) {
   const { t, translateRuntimeText } = useI18n();
   const unlockedIds = getUnlockedAchievements();
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onCloseAction();
+      }
+    },
+    [onCloseAction]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   const visibleAchievements = ACHIEVEMENTS.map(achievement => {
     const isUnlocked = unlockedIds.has(achievement.id);
@@ -32,10 +50,10 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
   const totalCount = ACHIEVEMENTS.length;
 
   return (
-    <div className={styles.overlay} onClick={onCloseAction}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+    <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="achievements-title">
+      <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>{t('achievement.gallery.title')}</h2>
+          <h2 id="achievements-title">{t('achievement.gallery.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
           <div className={styles.progress}>
             {t('achievement.gallery.progress', { unlocked: unlockedCount, total: totalCount })}
@@ -62,7 +80,7 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
         <div className={styles.actions}>
           <button
             className={styles.closeButton}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onCloseAction}
           >

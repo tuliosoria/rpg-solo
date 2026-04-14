@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for accurate version number
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -37,32 +39,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install real Electron for desktop build
-        run: npm install electron@latest --save-dev --ignore-scripts
-
       - name: Build Next.js
         run: npm run build
 
       - name: Build Electron (Windows)
         if: matrix.platform == 'win'
-        run: npx electron-builder --win --x64
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --config electron-builder.yml --win --x64 --publish never
 
       - name: Build Electron (macOS)
         if: matrix.platform == 'mac'
-        run: npx electron-builder --mac --x64 --arm64
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # For code signing (optional):
-          # CSC_LINK: ${{ secrets.MAC_CERTIFICATE }}
-          # CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+        run: npx electron-builder --config electron-builder.yml --mac --x64 --arm64 --publish never
 
       - name: Build Electron (Linux)
         if: matrix.platform == 'linux'
-        run: npx electron-builder --linux --x64
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --config electron-builder.yml --linux --x64 --publish never
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

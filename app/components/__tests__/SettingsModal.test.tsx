@@ -9,6 +9,7 @@ describe('SettingsModal', () => {
     onToggleSound: vi.fn(),
     onVolumeChange: vi.fn(),
     onCloseAction: vi.fn(),
+    onResetDefaults: vi.fn(),
   };
 
   let mockStorage: Record<string, string>;

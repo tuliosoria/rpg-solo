@@ -1,23 +1,28 @@
 /* Terminal 1996 - Turing Test Overlay Styles */
 
 .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   background: rgba(0, 0, 0, 0.98);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: clamp(4px, 0.8vw, 10px);
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: inherit;
+  isolation: isolate;
   z-index: 200;
-  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-family:
+    ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   animation: fadeIn 0.2s ease-out;
 }
 
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .flickering {
@@ -25,11 +30,21 @@
 }
 
 @keyframes screenFlicker {
-  0% { opacity: 1; }
-  25% { opacity: 0.3; }
-  50% { opacity: 0.9; }
-  75% { opacity: 0.4; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  75% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* Scanlines */
@@ -66,62 +81,70 @@
 .container {
   position: relative;
   z-index: 215;
-  max-width: 700px;
-  width: 90%;
-  padding: 20px;
-  max-height: 90vh;
-  overflow-y: auto;
+  width: 100%;
+  max-width: 36rem;
+  max-height: 100%;
+  padding: clamp(6px, 1vw, 12px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.6vh, 8px);
 }
 
 /* Turing Test Image */
 .imageContainer {
   display: flex;
   justify-content: center;
-  margin-bottom: 16px;
 }
 
 .turingImage {
-  width: 180px;
+  width: clamp(48px, 7vw, 72px);
+  max-height: min(9vh, 72px);
   height: auto;
-  border: 2px solid #ff6600;
-  box-shadow: 0 0 20px rgba(255, 100, 0, 0.3);
+  border: 1px solid #ff6600;
+  box-shadow: 0 0 10px rgba(255, 100, 0, 0.3);
   filter: sepia(20%) contrast(1.1);
 }
 
 /* Header */
 .header {
   text-align: center;
-  margin-bottom: 24px;
 }
 
 .headerLine {
   color: #ff6600;
-  font-size: 12px;
-  letter-spacing: 1px;
+  font-size: clamp(7px, 0.7vw, 9px);
+  letter-spacing: clamp(0.5px, 0.08vw, 1px);
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .headerTitle {
   color: #ff9900;
-  font-size: 16px;
+  font-size: clamp(10px, 1vw, 13px);
   font-weight: bold;
-  letter-spacing: 3px;
-  padding: 8px 0;
+  letter-spacing: clamp(1px, 0.2vw, 2px);
+  padding: 2px 0;
   animation: warningPulse 2s infinite;
 }
 
 @keyframes warningPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* Instructions */
 .instructions {
   color: #888;
-  font-size: 13px;
-  line-height: 1.8;
+  font-size: clamp(8px, 0.75vw, 10px);
+  line-height: 1.3;
   text-align: center;
-  margin-bottom: 20px;
-  padding: 12px;
+  padding: clamp(4px, 0.6vw, 6px);
   border: 1px solid #333;
   background: rgba(30, 30, 30, 0.5);
 }
@@ -129,46 +152,44 @@
 .instructionHighlight {
   color: #ffaa00;
   font-weight: bold;
-  margin-top: 8px;
+  margin-top: 2px;
 }
 
 /* Progress */
 .progress {
   color: #666;
-  font-size: 12px;
+  font-size: clamp(8px, 0.7vw, 10px);
   text-align: center;
-  margin-bottom: 16px;
-  letter-spacing: 2px;
+  letter-spacing: clamp(1px, 0.14vw, 2px);
 }
 
 /* Question Box */
 .questionBox {
-  border: 2px solid #ff6600;
+  border: 1px solid #ff6600;
   background: rgba(40, 20, 0, 0.3);
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: clamp(6px, 0.8vw, 10px);
 }
 
 .questionPrompt {
   color: #ffcc00;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: clamp(9px, 0.85vw, 11px);
+  line-height: 1.3;
   text-align: center;
-  margin-bottom: 24px;
-  padding: 0 10px;
+  margin-bottom: clamp(4px, 0.8vh, 8px);
+  padding: 0 2px;
 }
 
 /* Options */
 .options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: clamp(3px, 0.4vh, 5px);
 }
 
 .option {
   display: flex;
   align-items: flex-start;
-  padding: 12px 16px;
+  padding: clamp(4px, 0.5vw, 6px) clamp(6px, 0.8vw, 8px);
   border: 1px solid #444;
   background: rgba(20, 20, 20, 0.8);
   cursor: pointer;
@@ -183,14 +204,15 @@
 .optionLetter {
   color: #ff9900;
   font-weight: bold;
-  margin-right: 12px;
-  min-width: 20px;
+  margin-right: 6px;
+  min-width: 14px;
+  font-size: clamp(9px, 0.8vw, 11px);
 }
 
 .optionText {
   color: #ccc;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: clamp(8px, 0.78vw, 10px);
+  line-height: 1.3;
 }
 
 .optionSelected {
@@ -199,13 +221,13 @@
 }
 
 .optionCorrect {
-  border-color: #00ff00 !important;
+  border-color: #88cc44 !important;
   background: rgba(0, 60, 0, 0.4) !important;
 }
 
 .optionCorrect .optionLetter,
 .optionCorrect .optionText {
-  color: #00ff00;
+  color: #88cc44;
 }
 
 .optionWrong {
@@ -221,100 +243,141 @@
 /* Feedback */
 .feedback {
   text-align: center;
-  font-size: 14px;
-  padding: 12px;
-  margin-bottom: 16px;
-  letter-spacing: 2px;
+  font-size: clamp(8px, 0.75vw, 10px);
+  padding: 4px;
+  letter-spacing: clamp(1px, 0.14vw, 2px);
   animation: feedbackPulse 0.5s ease-out;
 }
 
 @keyframes feedbackPulse {
-  0% { opacity: 0; transform: scale(0.9); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Footer */
 .footer {
   color: #666;
-  font-size: 12px;
+  font-size: clamp(8px, 0.7vw, 10px);
   text-align: center;
   letter-spacing: 1px;
   animation: blink 1.5s infinite;
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0.3; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0.3;
+  }
 }
 
 /* Result screen */
 .resultBox {
-  border: 2px solid #ff6600;
+  border: 1px solid #ff6600;
   background: rgba(20, 10, 0, 0.9);
-  padding: 40px 30px;
+  padding: clamp(8px, 1.2vw, 14px) clamp(8px, 1vw, 12px);
   text-align: center;
 }
 
 .resultHeader {
   color: #ff9900;
-  font-size: 18px;
+  font-size: clamp(11px, 1.1vw, 14px);
   font-weight: bold;
-  letter-spacing: 3px;
-  margin-bottom: 24px;
+  letter-spacing: clamp(1px, 0.2vw, 2px);
+  margin-bottom: 6px;
 }
 
 .resultScore {
   color: #888;
-  font-size: 14px;
-  margin-bottom: 20px;
-  letter-spacing: 2px;
+  font-size: clamp(9px, 0.8vw, 11px);
+  margin-bottom: 6px;
+  letter-spacing: clamp(1px, 0.14vw, 2px);
 }
 
 .resultPass {
-  color: #00ff00;
-  font-size: 14px;
-  padding: 16px;
-  border: 1px solid #006600;
+  color: #88cc44;
+  font-size: clamp(9px, 0.8vw, 11px);
+  padding: clamp(4px, 0.6vw, 8px);
+  border: 1px solid #445522;
   background: rgba(0, 40, 0, 0.3);
-  margin-bottom: 24px;
+  margin-bottom: 6px;
 }
 
 .resultFail {
   color: #ff4444;
-  font-size: 14px;
-  padding: 16px;
+  font-size: clamp(9px, 0.8vw, 11px);
+  padding: clamp(4px, 0.6vw, 8px);
   border: 1px solid #660000;
   background: rgba(40, 0, 0, 0.3);
-  margin-bottom: 24px;
+  margin-bottom: 6px;
 }
 
 .resultPrompt {
   color: #666;
-  font-size: 12px;
+  font-size: clamp(8px, 0.7vw, 10px);
   animation: blink 1.5s infinite;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
+  .overlay {
+    padding: 4px;
+  }
+
   .container {
-    width: 95%;
-    padding: 15px;
+    padding: 6px;
+    gap: 4px;
   }
-  
+
   .headerTitle {
-    font-size: 13px;
-    letter-spacing: 2px;
+    font-size: 10px;
+    letter-spacing: 1px;
   }
-  
+
   .questionPrompt {
-    font-size: 14px;
+    font-size: 9px;
   }
-  
+
   .optionText {
-    font-size: 13px;
+    font-size: 8px;
   }
-  
+
   .instructions {
-    font-size: 12px;
+    font-size: 8px;
+    line-height: 1.2;
+  }
+}
+
+@media (max-height: 820px) {
+  .overlay {
+    padding: 4px;
+  }
+
+  .container {
+    max-width: 32rem;
+    padding: 6px;
+    gap: 4px;
+  }
+
+  .turingImage {
+    width: clamp(40px, 6vh, 60px);
+    max-height: 8vh;
+  }
+
+  .questionBox {
+    padding: 6px;
+  }
+
+  .resultBox {
+    padding: 8px 6px;
   }
 }

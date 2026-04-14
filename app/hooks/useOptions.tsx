@@ -27,6 +27,7 @@ export type { FlickerIntensity, FontSize, OptionsState } from '../types';
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const OPTIONS_STORAGE_KEY = 'terminal1996_options';
+export const OPTIONS_CHANGED_EVENT = 'terminal1996:options-changed';
 
 const FONT_SIZE_MAP: Record<FontSize, string> = {
   small: '12px',
@@ -60,7 +61,11 @@ export function readStoredOptions(): OptionsState {
 }
 
 export function persistOptions(options: OptionsState): boolean {
-  return safeSetJSON(OPTIONS_STORAGE_KEY, options);
+  const saved = safeSetJSON(OPTIONS_STORAGE_KEY, options);
+  if (saved && typeof window !== 'undefined') {
+    window.dispatchEvent(new Event(OPTIONS_CHANGED_EVENT));
+  }
+  return saved;
 }
 
 export function applyOptionsToDocument(options: OptionsState): void {

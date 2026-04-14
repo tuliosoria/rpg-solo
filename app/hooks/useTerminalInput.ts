@@ -8,6 +8,7 @@ import {
   TUTORIAL_MESSAGES,
   sanitizeCommandInput,
 } from '../engine/commands';
+import { createEntryI18n } from '../engine/commands/utils';
 import {
   isInTutorialMode,
   processTutorialInput,
@@ -19,12 +20,11 @@ import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { saveCheckpoint } from '../storage/saves';
 import { incrementStatistic } from '../storage/statistics';
 import {
-  MAX_HISTORY_SIZE,
   MAX_COMMAND_HISTORY_SIZE,
   MAX_COMMAND_INPUT_LENGTH,
 } from '../constants/limits';
 import { NIGHT_OWL_DURATION_MS } from '../constants/timing';
-import { uiRandom, uiChance } from '../engine/rng';
+import { uiRandom } from '../engine/rng';
 import {
   TutorialStateID,
   type GamePhase,
@@ -32,20 +32,20 @@ import {
   type ImageTrigger,
   type StreamingMode,
   type TerminalEntry,
-  type VideoTrigger,
 } from '../types';
 import type { SoundType } from './useSound';
+import { appendToHistory } from '../lib/appendToHistory';
 import { speakCustomFirewallVoice } from '../components/FirewallEyes';
+import { translateStatic } from '../i18n';
 
 const STREAMING_DELAYS: Record<
   StreamingMode,
-  { base: number; variance: number; glitchChance: number; glitchDelay: number }
+  { base: number; variance: number }
 > = {
-  none: { base: 0, variance: 0, glitchChance: 0, glitchDelay: 0 },
-  fast: { base: 40, variance: 20, glitchChance: 0, glitchDelay: 0 },
-  normal: { base: 80, variance: 30, glitchChance: 0, glitchDelay: 0 },
-  slow: { base: 120, variance: 50, glitchChance: 0.05, glitchDelay: 200 },
-  glitchy: { base: 100, variance: 50, glitchChance: 0.15, glitchDelay: 400 },
+  none: { base: 0, variance: 0 },
+  fast: { base: 40, variance: 20 },
+  normal: { base: 80, variance: 30 },
+  slow: { base: 120, variance: 50 },
 };
 
 type EncryptedChannelState = 'idle' | 'awaiting_open' | 'open' | 'awaiting_close';
@@ -65,7 +65,6 @@ interface UseTerminalInputOptions {
   isProcessing: boolean;
   showTuringTest: boolean;
   pendingImage: ImageTrigger | null;
-  pendingVideo: VideoTrigger | null;
   pendingUfo74StartMessages: TerminalEntry[];
   pendingUfo74Messages: TerminalEntry[];
   historyIndex: number;
@@ -75,29 +74,29 @@ interface UseTerminalInputOptions {
   setIsStreaming: React.Dispatch<React.SetStateAction<boolean>>;
   setHistoryIndex: React.Dispatch<React.SetStateAction<number>>;
   setPendingImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
-  setPendingVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
   setActiveImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
-  setActiveVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
   setPendingUfo74StartMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
+  appendPendingUfo74StartMessages: (items: TerminalEntry[]) => void;
   setPendingUfo74Messages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
+  appendPendingUfo74Messages: (items: TerminalEntry[]) => void;
   setQueuedAfterMediaMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
+  appendQueuedAfterMediaMessages: (items: TerminalEntry[]) => void;
   setShowEvidenceTracker: React.Dispatch<React.SetStateAction<boolean>>;
   setShowRiskTracker: React.Dispatch<React.SetStateAction<boolean>>;
   setShowAttBar: React.Dispatch<React.SetStateAction<boolean>>;
   setShowAvatar: React.Dispatch<React.SetStateAction<boolean>>;
   setAvatarCreepyEntrance: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
   setIsShaking: React.Dispatch<React.SetStateAction<boolean>>;
   setShowFirewallScare: React.Dispatch<React.SetStateAction<boolean>>;
+  setEvidenceFoundIndicatorKey: React.Dispatch<React.SetStateAction<number>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
   setGameOverReason: React.Dispatch<React.SetStateAction<string>>;
   setShowGameOver: React.Dispatch<React.SetStateAction<boolean>>;
   setBurnInLines: React.Dispatch<React.SetStateAction<string[]>>;
   setEncryptedChannelState: React.Dispatch<React.SetStateAction<EncryptedChannelState>>;
+  onTuringTestTrigger: () => void;
   onExitAction: () => void;
   onSaveRequestAction: (state: GameState) => void;
-  isTyping: boolean;
-  skipAllTyping: () => void;
   playSound: (sound: SoundType) => void;
   playKeySound: (key: string) => void;
   startAmbient: () => void;
@@ -117,7 +116,6 @@ export function useTerminalInput({
   isProcessing,
   showTuringTest,
   pendingImage,
-  pendingVideo,
   pendingUfo74StartMessages,
   pendingUfo74Messages,
   historyIndex,
@@ -127,29 +125,27 @@ export function useTerminalInput({
   setIsStreaming,
   setHistoryIndex,
   setPendingImage,
-  setPendingVideo,
   setActiveImage,
-  setActiveVideo,
   setPendingUfo74StartMessages,
+  appendPendingUfo74StartMessages,
   setPendingUfo74Messages,
-  setQueuedAfterMediaMessages,
+  appendQueuedAfterMediaMessages,
   setShowEvidenceTracker,
   setShowRiskTracker,
   setShowAttBar,
   setShowAvatar,
   setAvatarCreepyEntrance,
-  setShowTuringTest,
   setIsShaking,
   setShowFirewallScare,
+  setEvidenceFoundIndicatorKey,
   setGamePhase,
   setGameOverReason,
   setShowGameOver,
   setBurnInLines,
   setEncryptedChannelState,
+  onTuringTestTrigger,
   onExitAction,
   onSaveRequestAction,
-  isTyping,
-  skipAllTyping,
   playSound,
   playKeySound,
   startAmbient,
@@ -163,6 +159,16 @@ export function useTerminalInput({
 }: UseTerminalInputOptions) {
   const { outputRef, inputRef, streamStartScrollPos, skipStreamingRef, isProcessingRef } = refs;
 
+  const scrollToBottom = useCallback(() => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (outputRef.current) {
+          outputRef.current.scrollTop = outputRef.current.scrollHeight;
+        }
+      });
+    });
+  }, [outputRef]);
+
   const openEncryptedChannelWithMessages = useCallback(
     (messages: TerminalEntry[]) => {
       if (messages.length === 0) return;
@@ -171,7 +177,7 @@ export function useTerminalInput({
       if (!gameState.flags?.firstUfo74Contact) {
         saveCheckpoint(
           { ...gameState, flags: { ...gameState.flags, firstUfo74Contact: true } },
-          'First UFO74 contact'
+          translateStatic('checkpoint.reason.firstUfo74Contact', undefined, 'First UFO74 contact')
         );
       }
 
@@ -179,19 +185,7 @@ export function useTerminalInput({
         ...prev,
         // Mark first UFO74 contact
         flags: { ...prev.flags, firstUfo74Contact: true },
-        history: [
-          ...prev.history,
-          createEntry('system', ''),
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL OPEN <<                    │'),
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
-          ...messages.flatMap(msg => [msg, createEntry('system', '')]),
-          createEntry('ufo74', '┌─────────────────────────────────────────────────────────┐'),
-          createEntry('ufo74', '│         >> ENCRYPTED CHANNEL CLOSED <<                  │'),
-          createEntry('ufo74', '└─────────────────────────────────────────────────────────┘'),
-          createEntry('system', ''),
-        ],
+        history: [...prev.history, ...messages],
       }));
       playSound('transmission');
       playSound('message');
@@ -205,9 +199,6 @@ export function useTerminalInput({
   const streamOutput = useCallback(
     async (entries: TerminalEntry[], mode: StreamingMode): Promise<void> => {
       if (mode === 'none' || entries.length === 0) {
-        if (entries.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
-          playSound('transmission');
-        }
         setGameState(prev => ({
           ...prev,
           history: [...prev.history, ...entries],
@@ -221,9 +212,6 @@ export function useTerminalInput({
       for (let i = 0; i < entries.length; i++) {
         if (skipStreamingRef.current) {
           const remaining = entries.slice(i);
-          if (remaining.some(e => e.content.includes('>> INCOMING TRANSMISSION <<'))) {
-            playSound('transmission');
-          }
           setGameState(prev => ({
             ...prev,
             history: [...prev.history, ...remaining],
@@ -233,30 +221,19 @@ export function useTerminalInput({
 
         const entry = entries[i];
 
-        if (entry.content.includes('>> INCOMING TRANSMISSION <<')) {
-          playSound('transmission');
-        }
-
         setGameState(prev => ({
           ...prev,
           history: [...prev.history, entry],
         }));
 
-        let delay = config.base + (uiRandom() * config.variance * 2 - config.variance);
-
-        if (uiChance(config.glitchChance)) {
-          delay += config.glitchDelay;
-          if (config.glitchDelay > 100) {
-            triggerFlicker();
-          }
-        }
+        const delay = config.base + (uiRandom() * config.variance * 2 - config.variance);
 
         if (delay > 0 && i < entries.length - 1) {
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
     },
-    [playSound, setGameState, skipStreamingRef, triggerFlicker]
+    [setGameState, skipStreamingRef]
   );
 
   const handleSubmit = useCallback(
@@ -266,22 +243,10 @@ export function useTerminalInput({
       const sanitizedInput = sanitizeCommandInput(inputValue, MAX_COMMAND_INPUT_LENGTH);
       const trimmedInput = sanitizedInput.value.trim();
 
-      // If UFO74 typewriter animation is in progress, skip it on Enter
-      if (isTyping && !trimmedInput) {
-        skipAllTyping();
-        return;
-      }
-
       if (pendingImage && !trimmedInput) {
         setActiveImage(pendingImage);
         setPendingImage(null);
         playSound('creepy');
-        return;
-      }
-
-      if (pendingVideo && !trimmedInput) {
-        setActiveVideo(pendingVideo);
-        setPendingVideo(null);
         return;
       }
 
@@ -400,20 +365,25 @@ export function useTerminalInput({
 
             if (isLastStep) {
               // Briefing complete → transition to GAME_ACTIVE
-              const newState = {
-                ...gameState,
-                history: [...gameState.history, ...stepEntries],
-                tutorialStep: -1,
-                tutorialComplete: true,
-                interactiveTutorialState: {
-                  ...tutorialState,
-                  current: TutorialStateID.GAME_ACTIVE,
-                  inputLocked: false,
-                },
-                currentPath: '/',
-              };
-              setGameState(newState);
-              saveCheckpoint(newState, 'Tutorial complete');
+              setGameState(prev => {
+                const newState = {
+                  ...prev,
+                  history: [...prev.history, ...stepEntries],
+                  tutorialStep: -1,
+                  tutorialComplete: true,
+                  interactiveTutorialState: {
+                    ...tutorialState,
+                    current: TutorialStateID.GAME_ACTIVE,
+                    inputLocked: false,
+                  },
+                  currentPath: '/',
+                };
+                saveCheckpoint(
+                  newState,
+                  translateStatic('checkpoint.reason.tutorialComplete', undefined, 'Tutorial complete')
+                );
+                return newState;
+              });
             } else {
               setGameState(prev => ({
                 ...prev,
@@ -469,11 +439,27 @@ export function useTerminalInput({
                 history: [
                   ...prev.history,
                   createEntry('system', ''),
-                  createEntry('ufo74', '[UFO74]: ⚠️  Hey kid, that\'s the FIREWALL.'),
-                  createEntry('ufo74', '[UFO74]: We better not mess with that crazy thing.'),
-                  createEntry('ufo74', '[UFO74]: █▓▒░ BE CAREFUL ░▒▓█'),
+                  createEntryI18n(
+                    'ufo74',
+                    'hooks.useTerminalInput.firewallWarning.1',
+                    "[UFO74]: ⚠️  Hey kid, that's the FIREWALL."
+                  ),
+                  createEntryI18n(
+                    'ufo74',
+                    'hooks.useTerminalInput.firewallWarning.2',
+                    '[UFO74]: We better not mess with that crazy thing.'
+                  ),
+                  createEntryI18n(
+                    'ufo74',
+                    'hooks.useTerminalInput.firewallWarning.3',
+                    '[UFO74]: █▓▒░ BE CAREFUL ░▒▓█'
+                  ),
                   createEntry('system', ''),
-                  createEntry('ufo74', '[UFO74]: Let\'s try `cd ..` again.'),
+                  createEntryI18n(
+                    'ufo74',
+                    'hooks.useTerminalInput.firewallWarning.4',
+                    "[UFO74]: Let's try `cd ..` again."
+                  ),
                   createEntry('system', ''),
                 ],
               }));
@@ -492,7 +478,11 @@ export function useTerminalInput({
         gameState.tutorialStep >= 0
       ) {
         if (trimmedInput) {
-          const errorEntry = createEntry('error', 'ERROR: Incoming transmission in progress.');
+          const errorEntry = createEntryI18n(
+            'error',
+            'hooks.useTerminalInput.incomingTransmissionInProgress',
+            'ERROR: Incoming transmission in progress.'
+          );
           setGameState(prev => ({
             ...prev,
             history: [...prev.history, errorEntry],
@@ -515,14 +505,19 @@ export function useTerminalInput({
         }
 
         if (nextStep >= TUTORIAL_MESSAGES.length) {
-          const newState = {
-            ...gameState,
-            history: [...gameState.history, ...tutorialEntries],
-            tutorialStep: -1,
-            tutorialComplete: true,
-          };
-          setGameState(newState);
-          saveCheckpoint(newState, 'Tutorial complete');
+          setGameState(prev => {
+            const newState = {
+              ...prev,
+              history: [...prev.history, ...tutorialEntries],
+              tutorialStep: -1,
+              tutorialComplete: true,
+            };
+            saveCheckpoint(
+              newState,
+              translateStatic('checkpoint.reason.tutorialComplete', undefined, 'Tutorial complete')
+            );
+            return newState;
+          });
         } else {
           setGameState(prev => ({
             ...prev,
@@ -543,7 +538,7 @@ export function useTerminalInput({
         commandLower === 'open' || commandLower === 'decrypt' || commandLower === 'last';
       setInputValue('');
 
-      const dangerousCommands = ['decrypt', 'recover', 'trace', 'override', 'leak'];
+      const dangerousCommands = ['recover', 'trace', 'override', 'leak'];
       const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'bookmark', 'progress'];
       const systemCommands = ['scan', 'wait', 'hide'];
 
@@ -560,13 +555,9 @@ export function useTerminalInput({
       setHistoryIndex(-1);
 
       const inputEntry = createEntry('input', `> ${command}`);
-      const trimmedHistory =
-        gameState.history.length >= MAX_HISTORY_SIZE
-          ? gameState.history.slice(-MAX_HISTORY_SIZE + 1)
-          : gameState.history;
       const newState: GameState = {
         ...gameState,
-        history: [...trimmedHistory, inputEntry],
+        history: appendToHistory(gameState.history, inputEntry),
         commandHistory: [command, ...gameState.commandHistory.slice(0, MAX_COMMAND_HISTORY_SIZE - 1)],
       };
 
@@ -588,6 +579,19 @@ export function useTerminalInput({
       incrementStatistic('commandsTyped');
 
       const result = executeCommand(inputValue, newState);
+      const previousSingularEvents = newState.singularEventsTriggered || new Set<string>();
+      const nextSingularEvents =
+        result.stateChanges.singularEventsTriggered || previousSingularEvents;
+      const didTriggerSecondVoice =
+        !previousSingularEvents.has('second_voice') && nextSingularEvents.has('second_voice');
+      const playSecondVoiceCue = () => {
+        if (!didTriggerSecondVoice) return;
+
+        // Fire only when the actual one-time event lands in history, so the cue stays sparse
+        // and follows the unsettling text instead of preceding it.
+        setTimeout(() => playSound('omen'), 120);
+        setTimeout(() => playSound('static'), 320);
+      };
 
       if (result.delayMs) {
         await new Promise(resolve => setTimeout(resolve, result.delayMs));
@@ -601,7 +605,7 @@ export function useTerminalInput({
 
       const stateChangesWithoutHistory = {
         ...result.stateChanges,
-        truthsDiscovered: result.stateChanges.truthsDiscovered || newState.truthsDiscovered,
+        evidenceCount: result.stateChanges.evidenceCount ?? newState.evidenceCount,
       };
 
       const intermediateState: GameState = {
@@ -610,10 +614,13 @@ export function useTerminalInput({
       };
 
       if (result.stateChanges.history !== undefined) {
-        setGameState({
-          ...intermediateState,
-          history: result.stateChanges.history,
-        });
+        setGameState(prev => ({
+          ...prev,
+          ...stateChangesWithoutHistory,
+          history: result.stateChanges.history!,
+        }));
+        playSecondVoiceCue();
+        scrollToBottom();
         isProcessingRef.current = false;
         setIsProcessing(false);
       } else if (streamingMode !== 'none' && result.output.length > 0) {
@@ -624,24 +631,24 @@ export function useTerminalInput({
           streamStartScrollPos.current = outputRef.current.scrollHeight;
         }
         setIsStreaming(true);
-        setGameState(intermediateState);
+        setGameState(prev => ({
+          ...prev,
+          ...stateChangesWithoutHistory,
+        }));
 
         try {
           await streamOutput(streamableOutput, streamingMode);
 
-          if (result.imageTrigger || result.videoTrigger) {
+          if (result.imageTrigger) {
             const pendingMediaMessages: TerminalEntry[] = [];
             if (result.imageTrigger) {
               pendingMediaMessages.push(
                 createEntry('warning', ''),
-                createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-                createEntry('system', '')
-              );
-            }
-            if (result.videoTrigger) {
-              pendingMediaMessages.push(
-                createEntry('warning', ''),
-                createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+                createEntryI18n(
+                  'warning',
+                  'hooks.useTerminalInput.partialRecoveryAvailable',
+                  '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'
+                ),
                 createEntry('system', '')
               );
             }
@@ -651,11 +658,13 @@ export function useTerminalInput({
             }));
           }
 
+          playSecondVoiceCue();
+
           if (ufo74Messages.length > 0) {
-            if (result.imageTrigger || result.videoTrigger) {
-              setQueuedAfterMediaMessages(prev => [...prev, ...ufo74Messages]);
+            if (result.imageTrigger) {
+              appendQueuedAfterMediaMessages(ufo74Messages);
             } else if (shouldDeferUfo74) {
-              setPendingUfo74StartMessages(prev => [...prev, ...ufo74Messages]);
+              appendPendingUfo74StartMessages(ufo74Messages);
             } else {
               openEncryptedChannelWithMessages(ufo74Messages);
             }
@@ -665,6 +674,7 @@ export function useTerminalInput({
           isProcessingRef.current = false;
           setIsProcessing(false);
           skipStreamingRef.current = false;
+          scrollToBottom();
         }
       } else {
         const ufo74Messages = result.output.filter((e: TerminalEntry) => e.type === 'ufo74');
@@ -674,28 +684,28 @@ export function useTerminalInput({
         if (result.imageTrigger) {
           pendingMediaMessages.push(
             createEntry('warning', ''),
-            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
-            createEntry('system', '')
-          );
-        }
-        if (result.videoTrigger) {
-          pendingMediaMessages.push(
-            createEntry('warning', ''),
-            createEntry('warning', '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'),
+            createEntryI18n(
+              'warning',
+              'hooks.useTerminalInput.partialRecoveryAvailable',
+              '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓'
+            ),
             createEntry('system', '')
           );
         }
 
-        setGameState({
-          ...intermediateState,
-          history: [...newState.history, ...otherOutput, ...pendingMediaMessages],
-        });
+        setGameState(prev => ({
+          ...prev,
+          ...stateChangesWithoutHistory,
+          history: [...prev.history, ...otherOutput, ...pendingMediaMessages],
+        }));
+        playSecondVoiceCue();
+        scrollToBottom();
 
         if (ufo74Messages.length > 0) {
-          if (result.imageTrigger || result.videoTrigger) {
-            setQueuedAfterMediaMessages(prev => [...prev, ...ufo74Messages]);
+          if (result.imageTrigger) {
+            appendQueuedAfterMediaMessages(ufo74Messages);
           } else if (shouldDeferUfo74) {
-            setPendingUfo74StartMessages(prev => [...prev, ...ufo74Messages]);
+            appendPendingUfo74StartMessages(ufo74Messages);
           } else {
             openEncryptedChannelWithMessages(ufo74Messages);
           }
@@ -708,15 +718,12 @@ export function useTerminalInput({
       if (result.imageTrigger) {
         setPendingImage(result.imageTrigger);
       }
-      if (result.videoTrigger) {
-        setPendingVideo(result.videoTrigger);
-      }
 
       if (result.pendingUfo74Messages && result.pendingUfo74Messages.length > 0) {
-        if (result.imageTrigger || result.videoTrigger) {
-          setQueuedAfterMediaMessages(prev => [...prev, ...result.pendingUfo74Messages!]);
+        if (result.imageTrigger) {
+          appendQueuedAfterMediaMessages(result.pendingUfo74Messages);
         } else if (shouldDeferUfo74) {
-          setPendingUfo74StartMessages(prev => [...prev, ...result.pendingUfo74Messages!]);
+          appendPendingUfo74StartMessages(result.pendingUfo74Messages);
         } else {
           openEncryptedChannelWithMessages(result.pendingUfo74Messages);
         }
@@ -724,7 +731,7 @@ export function useTerminalInput({
 
       if (result.triggerTuringTest) {
         setTimeout(() => {
-          setShowTuringTest(true);
+          onTuringTestTrigger();
         }, 1500);
       }
 
@@ -737,14 +744,21 @@ export function useTerminalInput({
       }
 
       if (intermediateState.isGameOver) {
-        setGameOverReason(intermediateState.gameOverReason || 'CRITICAL SYSTEM FAILURE');
+        setGameOverReason(
+          intermediateState.gameOverReason ||
+            translateStatic(
+              'gameOver.reason.criticalSystemFailure',
+              undefined,
+              'CRITICAL SYSTEM FAILURE'
+            )
+        );
         setShowGameOver(true);
         playSound('error');
         return;
       }
 
-      const truthCount = intermediateState.truthsDiscovered?.size || 0;
-      const prevTruthCount = gameState.truthsDiscovered?.size || 0;
+      const evidenceCount = intermediateState.evidenceCount || 0;
+      const prevEvidenceCount = gameState.evidenceCount || 0;
 
       const filesReadCount = intermediateState.filesRead?.size || 0;
       const prevFilesReadCount = gameState.filesRead?.size || 0;
@@ -752,31 +766,50 @@ export function useTerminalInput({
         incrementStatistic('filesRead');
       }
 
-      if (truthCount > prevTruthCount) {
+      if (evidenceCount > prevEvidenceCount) {
+        setEvidenceFoundIndicatorKey(prev => prev + 1);
         playSound('fanfare');
         const checkpointReason =
-          truthCount === 1
-            ? 'First evidence'
-            : truthCount === 5
-              ? 'All evidence found'
-              : `Evidence ${truthCount}/5`;
+          evidenceCount === 1
+            ? translateStatic('checkpoint.reason.firstEvidence', undefined, 'First evidence')
+            : evidenceCount === 5
+              ? translateStatic('checkpoint.reason.allEvidenceFound', undefined, 'All evidence found')
+              : translateStatic(
+                  'checkpoint.reason.evidenceProgress',
+                  { count: evidenceCount },
+                  `Evidence ${evidenceCount}/5`
+                );
         saveCheckpoint(intermediateState, checkpointReason);
       }
 
-      if (truthCount > 0 && prevTruthCount === 0) {
+      if (evidenceCount > 0 && prevEvidenceCount === 0) {
         checkAchievement('first_blood');
       }
 
-      if (truthCount === 5 && prevTruthCount < 5) {
+      if (evidenceCount === 5 && prevEvidenceCount < 5) {
         checkAchievement('truth_seeker');
       }
 
       if (intermediateState.accessLevel > gameState.accessLevel && intermediateState.accessLevel >= 2) {
-        saveCheckpoint(intermediateState, `Access level ${intermediateState.accessLevel}`);
+        saveCheckpoint(
+          intermediateState,
+          translateStatic(
+            'checkpoint.reason.accessLevel',
+            { value: intermediateState.accessLevel },
+            `Access level ${intermediateState.accessLevel}`
+          )
+        );
       }
 
       if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
-        saveCheckpoint(intermediateState, 'Admin access unlocked');
+        saveCheckpoint(
+          intermediateState,
+          translateStatic(
+            'checkpoint.reason.adminAccessUnlocked',
+            undefined,
+            'Admin access unlocked'
+          )
+        );
       }
 
       // Checkpoint when detection approaches critical threshold (80%+)
@@ -791,7 +824,14 @@ export function useTerminalInput({
           ...intermediateState,
           flags: { ...intermediateState.flags, criticalDetectionCheckpointed: true },
         };
-        saveCheckpoint(stateWithFlag, 'Detection approaching critical');
+        saveCheckpoint(
+          stateWithFlag,
+          translateStatic(
+            'checkpoint.reason.detectionApproachingCritical',
+            undefined,
+            'Detection approaching critical'
+          )
+        );
         // Update the intermediate state so the flag persists
         setGameState(prev => ({
           ...prev,
@@ -868,12 +908,9 @@ export function useTerminalInput({
       pendingImage,
       pendingUfo74Messages,
       pendingUfo74StartMessages,
-      pendingVideo,
       playSound,
       setActiveImage,
-      setActiveVideo,
       setBurnInLines,
-      setEncryptedChannelState,
       setGameOverReason,
       setGamePhase,
       setGameState,
@@ -884,19 +921,26 @@ export function useTerminalInput({
       setPendingImage,
       setPendingUfo74Messages,
       setPendingUfo74StartMessages,
-      setPendingVideo,
-      setQueuedAfterMediaMessages,
+      appendPendingUfo74StartMessages,
+      appendQueuedAfterMediaMessages,
       setShowEvidenceTracker,
+      setShowAttBar,
+      setShowAvatar,
+      setAvatarCreepyEntrance,
+      setIsShaking,
+      setShowFirewallScare,
       setShowGameOver,
       setShowRiskTracker,
-      setShowTuringTest,
       showTuringTest,
-      skipAllTyping,
-      isTyping,
+      onTuringTestTrigger,
+      inputRef,
       skipStreamingRef,
+      startAmbient,
       streamOutput,
       streamStartScrollPos,
+      scrollToBottom,
       triggerFlicker,
+      setEvidenceFoundIndicatorKey,
     ]
   );
 

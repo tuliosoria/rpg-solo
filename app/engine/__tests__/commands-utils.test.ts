@@ -9,9 +9,9 @@ import {
   calculateDelay,
   shouldFlicker,
   addHesitation,
-  maybeAddTypo,
   createInvalidCommandResult,
 } from '../commands';
+import { maybeAddTypo } from '../commands/utils';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
 // Helper to create a test state

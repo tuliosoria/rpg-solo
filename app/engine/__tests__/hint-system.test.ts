@@ -4,7 +4,7 @@ import {
   analyzeProgressForHint, 
   HINT_CONFIG 
 } from '../hintSystem';
-import { GameState, TruthCategory, DEFAULT_GAME_STATE } from '../../types';
+import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
 // Create a minimal game state for testing
 function createTestState(overrides: Partial<GameState> = {}): GameState {
@@ -14,7 +14,7 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
     rngState: 12345,
     sessionStartTime: Date.now(),
     filesRead: new Set<string>(),
-    truthsDiscovered: new Set<TruthCategory>(),
+    evidenceCount: 0,
     hintsUsed: 0,
     tutorialComplete: false,
     detectionLevel: 0,
@@ -23,9 +23,6 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
 }
 
 describe('Hint System', () => {
-  // Store original Math.random
-  const originalRandom = Math.random;
-
   beforeEach(() => {
     // Mock Math.random for deterministic tests
     vi.spyOn(Math, 'random').mockReturnValue(0.1);
@@ -122,7 +119,7 @@ describe('Hint System', () => {
       expect(hint).toBeTruthy();
     });
 
-    it('should guide toward unexplored directories for missing truths', () => {
+    it('should guide toward unexplored directories for missing evidence', () => {
       const state = createTestState({
         filesRead: new Set([
           '/ops/file1.txt',
@@ -130,7 +127,7 @@ describe('Hint System', () => {
           '/ops/file3.txt',
           '/ops/file4.txt',
         ]),
-        truthsDiscovered: new Set<TruthCategory>(['being_containment']),
+        evidenceCount: 1,
       });
       const hint = analyzeProgressForHint(state);
 
@@ -138,7 +135,7 @@ describe('Hint System', () => {
       // Should potentially hint at storage, comms, or admin since those are unexplored
     });
 
-    it('should give truth-specific hints when directories explored but truth missing', () => {
+    it('should give evidence-focused hints when directories are explored but evidence is missing', () => {
       const state = createTestState({
         filesRead: new Set([
           '/storage/file1.txt',
@@ -147,15 +144,15 @@ describe('Hint System', () => {
           '/admin/file1.txt',
           '/internal/file1.txt',
         ]),
-        truthsDiscovered: new Set<TruthCategory>(['debris_relocation', 'being_containment']),
+        evidenceCount: 2,
       });
       const hint = analyzeProgressForHint(state);
 
       expect(hint).toBeDefined();
-      // Should give a hint about one of the missing truths
+      // Should give a hint about one of the missing evidence leads
     });
 
-    it('should indicate near completion when 4+ truths found', () => {
+    it('should indicate near completion when 4+ evidence files are found', () => {
       const state = createTestState({
         filesRead: new Set([
           '/storage/file1.txt',
@@ -164,19 +161,14 @@ describe('Hint System', () => {
           '/admin/file1.txt',
           '/internal/file1.txt',
         ]),
-        truthsDiscovered: new Set<TruthCategory>([
-          'debris_relocation',
-          'being_containment',
-          'telepathic_scouts',
-          'international_actors',
-        ]),
+        evidenceCount: 4,
       });
       const hint = analyzeProgressForHint(state);
 
       expect(hint).toBeDefined();
     });
 
-    it('should return null when all truths discovered', () => {
+    it('should return null when all evidence is discovered', () => {
       const state = createTestState({
         filesRead: new Set([
           '/storage/file1.txt',
@@ -191,17 +183,11 @@ describe('Hint System', () => {
           '/internal/file2.txt',
           '/extra/file.txt',
         ]),
-        truthsDiscovered: new Set<TruthCategory>([
-          'debris_relocation',
-          'being_containment',
-          'telepathic_scouts',
-          'international_actors',
-          'transition_2026',
-        ]),
+        evidenceCount: 5,
       });
       const hint = analyzeProgressForHint(state);
 
-      // When all truths found and many files read, should return null
+      // When all evidence is found and many files are read, should return null
       // (though the function may still give generic hints)
       // The test is more about coverage than specific behavior here
       expect(hint === null || typeof hint === 'string').toBe(true);
@@ -210,8 +196,7 @@ describe('Hint System', () => {
 
   describe('HINT_CONFIG', () => {
     it('should have reasonable max hints value', () => {
-      expect(HINT_CONFIG.maxHints).toBeGreaterThanOrEqual(3);
-      expect(HINT_CONFIG.maxHints).toBeLessThanOrEqual(5);
+      expect(HINT_CONFIG.maxHints).toBe(8);
     });
 
     it('should have small detection penalty', () => {

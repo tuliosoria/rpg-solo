@@ -13,6 +13,7 @@ describe('useSound', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    window.localStorage.clear();
     originalAudioContext = window.AudioContext;
 
     // Create spies
@@ -92,6 +93,7 @@ describe('useSound', () => {
       expect(result.current.stopAmbient).toBeInstanceOf(Function);
       expect(result.current.toggleSound).toBeInstanceOf(Function);
       expect(result.current.updateAmbientTension).toBeInstanceOf(Function);
+      expect(result.current.setAmbientDisturbance).toBeInstanceOf(Function);
     });
 
     it('starts with sound enabled', () => {
@@ -103,7 +105,7 @@ describe('useSound', () => {
     it('starts with default master volume', () => {
       const { result } = renderHook(() => useSound());
 
-      expect(result.current.masterVolume).toBe(0.5);
+      expect(result.current.masterVolume).toBe(1);
     });
   });
 
@@ -259,12 +261,13 @@ describe('useSound', () => {
       expect(createBiquadFilterSpy).toHaveBeenCalled();
     });
 
-    it('does not start ambient when sound is disabled', () => {
-      const { result } = renderHook(() => useSound());
+    it('does not start ambient when ambient audio is disabled in saved options', () => {
+      window.localStorage.setItem(
+        'terminal1996_options',
+        JSON.stringify({ ambientSoundEnabled: false })
+      );
 
-      act(() => {
-        result.current.toggleSound();
-      });
+      const { result } = renderHook(() => useSound());
 
       act(() => {
         result.current.startAmbient();
@@ -301,6 +304,72 @@ describe('useSound', () => {
 
       // Should not throw
       expect(createBiquadFilterSpy).toHaveBeenCalled();
+    });
+
+    it('spikes ambient noise while disturbed and restores the baseline profile afterwards', () => {
+      const { result } = renderHook(() => useSound());
+
+      act(() => {
+        result.current.startAmbient();
+        result.current.updateAmbientTension(70);
+      });
+
+      const ambientFilter = createBiquadFilterSpy.mock.results[0]?.value as {
+        frequency: { linearRampToValueAtTime: ReturnType<typeof vi.fn> };
+        Q: { linearRampToValueAtTime: ReturnType<typeof vi.fn> };
+      };
+      const ambientGain = createGainSpy.mock.results[0]?.value as {
+        gain: { linearRampToValueAtTime: ReturnType<typeof vi.fn> };
+      };
+
+      const [baseFrequency, baseFrequencyTime] =
+        ambientFilter.frequency.linearRampToValueAtTime.mock.calls.at(-1) ?? [];
+      const [baseQ, baseQTime] = ambientFilter.Q.linearRampToValueAtTime.mock.calls.at(-1) ?? [];
+      const [baseVolume, baseVolumeTime] =
+        ambientGain.gain.linearRampToValueAtTime.mock.calls.at(-1) ?? [];
+
+      expect(baseFrequency).toBeCloseTo(620);
+      expect(baseFrequencyTime).toBeCloseTo(0.5);
+      expect(baseQ).toBeCloseTo(5.9);
+      expect(baseQTime).toBeCloseTo(0.5);
+      expect(baseVolume).toBeCloseTo(0.164);
+      expect(baseVolumeTime).toBeCloseTo(0.5);
+
+      act(() => {
+        result.current.setAmbientDisturbance(1);
+      });
+
+      const [disturbFrequency, disturbFrequencyTime] =
+        ambientFilter.frequency.linearRampToValueAtTime.mock.calls.at(-1) ?? [];
+      const [disturbQ, disturbQTime] =
+        ambientFilter.Q.linearRampToValueAtTime.mock.calls.at(-1) ?? [];
+      const [disturbVolume, disturbVolumeTime] =
+        ambientGain.gain.linearRampToValueAtTime.mock.calls.at(-1) ?? [];
+
+      expect(disturbFrequency).toBeCloseTo(2820);
+      expect(disturbFrequencyTime).toBeCloseTo(0.12);
+      expect(disturbQ).toBeCloseTo(17.9);
+      expect(disturbQTime).toBeCloseTo(0.12);
+      expect(disturbVolume).toBeCloseTo(0.2706);
+      expect(disturbVolumeTime).toBeCloseTo(0.12);
+
+      act(() => {
+        result.current.setAmbientDisturbance(0);
+      });
+
+      const [restoredFrequency, restoredFrequencyTime] =
+        ambientFilter.frequency.linearRampToValueAtTime.mock.calls.at(-1) ?? [];
+      const [restoredQ, restoredQTime] =
+        ambientFilter.Q.linearRampToValueAtTime.mock.calls.at(-1) ?? [];
+      const [restoredVolume, restoredVolumeTime] =
+        ambientGain.gain.linearRampToValueAtTime.mock.calls.at(-1) ?? [];
+
+      expect(restoredFrequency).toBeCloseTo(620);
+      expect(restoredFrequencyTime).toBeCloseTo(0.3);
+      expect(restoredQ).toBeCloseTo(5.9);
+      expect(restoredQTime).toBeCloseTo(0.3);
+      expect(restoredVolume).toBeCloseTo(0.164);
+      expect(restoredVolumeTime).toBeCloseTo(0.3);
     });
   });
 
@@ -407,6 +476,16 @@ describe('useSound', () => {
 
       expect(createOscillatorSpy).toHaveBeenCalled();
       vi.useRealTimers();
+    });
+
+    it('plays omen sound', () => {
+      const { result } = renderHook(() => useSound());
+
+      act(() => {
+        result.current.playSound('omen');
+      });
+
+      expect(createOscillatorSpy).toHaveBeenCalled();
     });
   });
 });

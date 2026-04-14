@@ -18,7 +18,7 @@ const mockSteamClient = {
 };
 
 // Import the module - use dynamic import for CommonJS compatibility
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+ 
 const steamPresence = require('../steam-presence') as typeof import('../steam-presence');
 
 describe('Steam Rich Presence Module', () => {
@@ -98,7 +98,7 @@ describe('Steam Rich Presence Module', () => {
     it('returns empty string initially', () => {
       // Import a fresh instance to avoid test pollution
       vi.resetModules();
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+       
       const freshSteamPresence = require('../steam-presence');
       expect(freshSteamPresence.getCurrentPresence()).toBe('');
     });
@@ -121,6 +121,18 @@ describe('Steam Rich Presence Module', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Steam not initialized');
+    });
+
+    it('treats isGameOver renderer state as a completed run', () => {
+      steamPresence.initialize(mockSteamClient);
+
+      const result = steamPresence.updateFromGameState({ isGameOver: true, gameWon: true });
+
+      expect(result.success).toBe(true);
+      expect(mockFriends.setRichPresence).toHaveBeenCalledWith(
+        'status',
+        steamPresence.PRESENCE_STATES.ENDING_GOOD
+      );
     });
   });
 

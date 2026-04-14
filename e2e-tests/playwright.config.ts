@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000';
+
 export default defineConfig({
   testDir: '.',
   fullyParallel: false,
@@ -9,7 +11,7 @@ export default defineConfig({
   reporter: 'list',
   timeout: 120000,
   use: {
-    baseURL: 'https://thankful-grass-0f49be40f.2.azurestaticapps.net',
+    baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     headless: true,

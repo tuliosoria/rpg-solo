@@ -17,7 +17,7 @@ describe('SaveModal', () => {
     rngState: 12345,
     sessionStartTime: Date.now(),
     currentPath: '/home/hackerkid',
-    truthsDiscovered: new Set(['truth1', 'truth2']),
+    evidenceCount: 2,
     detectionLevel: 25,
     ...overrides,
   });
@@ -30,6 +30,14 @@ describe('SaveModal', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(saveGame).mockReturnValue({
+      id: 'save-1',
+      name: 'Test Save',
+      timestamp: Date.now(),
+      currentPath: '/home/hackerkid',
+      truthCount: 2,
+      detectionLevel: 25,
+    });
   });
 
   afterEach(() => {
@@ -54,7 +62,7 @@ describe('SaveModal', () => {
       render(<SaveModal {...defaultProps} />);
 
       expect(screen.getByText('Current Path: /home/hackerkid')).toBeInTheDocument();
-      expect(screen.getByText('Progress: 2/5 truths')).toBeInTheDocument();
+      expect(screen.getByText('Progress: 2/10 evidence')).toBeInTheDocument();
     });
 
     it('shows SAVE and CANCEL buttons', () => {
@@ -106,6 +114,17 @@ describe('SaveModal', () => {
 
       expect(saveGame).toHaveBeenCalledWith(defaultProps.gameState, 'My Save');
     });
+
+    it('shows an error and stays open when saving fails', () => {
+      vi.mocked(saveGame).mockReturnValue(null);
+
+      render(<SaveModal {...defaultProps} />);
+
+      fireEvent.click(screen.getByRole('button', { name: /SAVE/i }));
+
+      expect(defaultProps.onSavedAction).not.toHaveBeenCalled();
+      expect(screen.getByRole('alert')).toHaveTextContent(/SAVE FAILED/i);
+    });
   });
 
   describe('Close Functionality', () => {
@@ -146,14 +165,14 @@ describe('SaveModal', () => {
   });
 
   describe('Game State Display', () => {
-    it('displays correct truth count', () => {
+    it('displays correct evidence count', () => {
       const gameState = createMockGameState({
-        truthsDiscovered: new Set(['t1', 't2', 't3', 't4']),
+        evidenceCount: 4,
       });
 
       render(<SaveModal {...defaultProps} gameState={gameState} />);
 
-      expect(screen.getByText('Progress: 4/5 truths')).toBeInTheDocument();
+      expect(screen.getByText('Progress: 4/10 evidence')).toBeInTheDocument();
     });
 
     it('displays correct path', () => {

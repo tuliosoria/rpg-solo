@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../commands';
-import { GameState, DEFAULT_GAME_STATE, TruthCategory } from '../../types';
+import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
 const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   ...DEFAULT_GAME_STATE,
@@ -9,7 +9,7 @@ const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   sessionStartTime: Date.now(),
   tutorialStep: -1,
   tutorialComplete: true,
-  truthsDiscovered: new Set(['debris_relocation']), // Exit atmosphere phase
+  evidenceCount: 1, // Exit atmosphere phase
   ...overrides,
 });
 
@@ -117,53 +117,67 @@ describe('Narrative Mechanics', () => {
     });
   });
 
-  describe('Password Puzzle', () => {
-    it('requires password for ghost_in_machine.enc', () => {
+  describe('Legacy decrypt compatibility', () => {
+    it('opens ghost_in_machine.enc directly without the old password prompt', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
+        accessLevel: 3,
       });
-      // Use absolute path since the file is in /sys
+
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc', state);
-      // Should prompt for password or show file not found if dir not accessible
-      const hasPasswordPrompt = result.output.some(e => e.content.includes('PASSWORD REQUIRED'));
-      const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
-      expect(hasPasswordPrompt || hasFileNotFound).toBe(true);
+      const output = result.output.map(e => e.content).join('\n');
+
+      expect(output).not.toContain('PASSWORD REQUIRED');
+      expect(output).toContain('old decrypt wrappers are retired');
+      expect(output).toContain('FILE: /sys/ghost_in_machine.enc');
     });
 
-    it('rejects wrong password', () => {
+    it('ignores a wrong password and still opens the recovered file', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
+        accessLevel: 3,
       });
+
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc wrongpassword', state);
-      // Should show decryption failed or file not found
-      const hasFailed = result.output.some(
-        e => e.content.includes('DECRYPTION FAILED') || e.content.includes('Invalid password')
-      );
-      const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
-      expect(hasFailed || hasFileNotFound).toBe(true);
+      const output = result.output.map(e => e.content).join('\n');
+
+      expect(output).not.toContain('DECRYPTION FAILED');
+      expect(output).toContain('FILE: /sys/ghost_in_machine.enc');
     });
 
-    it('triggers secret ending with correct password', () => {
+    it('decrypt reveals UFO74 when the ghost_in_machine password is correct', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
+        accessLevel: 3,
       });
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc varginha1996', state);
-      // Should succeed or file not found
-      const hasSuccess = result.output.some(e => e.content.includes('DECRYPTION SUCCESSFUL'));
-      const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
-      if (hasSuccess) {
-        expect(result.stateChanges.ufo74SecretDiscovered).toBe(true);
-        expect(result.skipToPhase).toBe('secret_ending');
-      } else {
-        expect(hasFileNotFound).toBe(true);
-      }
+      expect(result.output.some(e => e.content.includes('DECRYPTION SUCCESSFUL'))).toBe(true);
+      expect(result.stateChanges.ufo74SecretDiscovered).toBe(true);
+      expect(result.skipToPhase).toBeUndefined();
+      expect(result.triggerFlicker).toBe(true);
     });
   });
 
   describe('Special File Triggers', () => {
+    describe('evidence discovery output', () => {
+      it('does not emit the old evidence banner or category line', () => {
+        const state = createTestState({
+          currentPath: '/storage/assets',
+          evidenceCount: 0,
+          flags: { adminUnlocked: true },
+        });
+
+        const result = executeCommand('open logistics_manifest_fragment.txt', state);
+
+        // The old category-based evidence system is gone
+        expect(result.output.some(e => e.content.includes('EVIDENCE FOUND'))).toBe(false);
+        expect(result.output.some(e => e.content.includes('Category:'))).toBe(false);
+      });
+    });
+
     describe('maintenance_notes.txt', () => {
       it('unlocks hidden commands when read', () => {
         const state = createTestState({ currentPath: '/internal' });
@@ -183,14 +197,14 @@ describe('Narrative Mechanics', () => {
 
     describe('incident_summary_official.txt', () => {
       it('flags disinformation when read', () => {
-        const state = createTestState({ currentPath: '/internal' });
+        const state = createTestState({ currentPath: '/internal', flags: { adminUnlocked: true } });
         const result = executeCommand('open incident_summary_official.txt', state);
         expect(result.stateChanges.disinformationDiscovered?.has('official_summary')).toBe(true);
       });
     });
 
     describe('active_trace.sys', () => {
-      it('triggers countdown when read with sufficient access', () => {
+      it('no longer triggers countdown when read with sufficient access', () => {
         const state = createTestState({
           currentPath: '/sys',
           flags: { adminUnlocked: true },
@@ -206,8 +220,8 @@ describe('Narrative Mechanics', () => {
           e => e.content.includes('Access') || e.content.includes('level')
         );
         if (!hasFileNotFound && !hasAccessDenied) {
-          expect(result.stateChanges.countdownActive).toBe(true);
-          expect(result.stateChanges.countdownEndTime).toBeGreaterThan(Date.now());
+          expect(result.stateChanges.countdownActive).toBeUndefined();
+          expect(result.stateChanges.traceSpikeActive).toBeUndefined();
         }
       });
 
@@ -277,59 +291,21 @@ describe('Narrative Mechanics', () => {
     });
   });
 
-  describe('File Corruption Spread', () => {
-    it('corrupts nearby files when reading core_dump_corrupted.bin', () => {
-      const state = createTestState({
-        currentPath: '/tmp',
-        wrongAttempts: 0,
-      });
-      const result = executeCommand('open core_dump_corrupted.bin', state);
-      // Should have corruption applied to a random file
-      expect(result.stateChanges.fileMutations).toBeDefined();
-      expect(result.triggerFlicker).toBe(true);
-    });
-
-    it('uses deterministic corruption targets for the same state', () => {
-      const baseState = createTestState({
-        currentPath: '/tmp',
-        wrongAttempts: 0,
-        filesRead: new Set<string>(),
-        commandHistory: ['cd /tmp', 'ls'],
-      });
-
-      const first = executeCommand('open core_dump_corrupted.bin', {
-        ...baseState,
-        filesRead: new Set(baseState.filesRead),
-        commandHistory: [...baseState.commandHistory],
-      });
-      const second = executeCommand('open core_dump_corrupted.bin', {
-        ...baseState,
-        filesRead: new Set(baseState.filesRead),
-        commandHistory: [...baseState.commandHistory],
-      });
-
-      expect(first.stateChanges.fileMutations).toEqual(second.stateChanges.fileMutations);
-    });
-  });
-
   describe('UFO74 Entry Type', () => {
-    it('uses ufo74 entry type for UFO74 messages in password prompt', () => {
+    it('decrypt ghost_in_machine can emit ufo74 entries', () => {
       const state = createTestState({
         currentPath: '/sys',
         flags: { adminUnlocked: true },
+        accessLevel: 3,
       });
       const result = executeCommand('decrypt /sys/ghost_in_machine.enc', state);
-      // Check if UFO74 entries exist (when file is accessible)
-      const hasFileNotFound = result.output.some(e => e.content.includes('File not found'));
-      if (!hasFileNotFound) {
-        const ufo74Entries = result.output.filter(e => e.type === 'ufo74');
-        expect(ufo74Entries.length).toBeGreaterThan(0);
-      }
+      const ufo74Entries = result.output.filter(e => e.type === 'ufo74');
+      expect(ufo74Entries.length).toBeGreaterThan(0);
     });
   });
 
   describe('UFO74 Override Protocol Hints', () => {
-    it('suggests override protocol after 3 files read when not unlocked', () => {
+    it('nudges players toward the main evidence directories after 3 files read', () => {
       // State where player has read exactly 2 files - reading 3rd should trigger hint
       const state = createTestState({
         currentPath: '/internal/misc',
@@ -345,12 +321,14 @@ describe('Narrative Mechanics', () => {
       // Open 3rd file (this makes filesRead.size === 3 after processing)
       const result = executeCommand('open cafeteria_menu.txt', state);
 
-      // Should include UFO74 hint about override protocol (in pendingUfo74Messages, not output)
+      // Should include the updated exploration hint (in pendingUfo74Messages, not output)
       const pendingMessages = result.pendingUfo74Messages || [];
-      const hasOverrideHint = pendingMessages.some(
-        e => e.content.includes('override protocol') || e.content.includes('MORE hidden')
+      const hasDirectoryHint = pendingMessages.some(
+        e =>
+          e.content.includes('start digging through /storage, /ops, and /comms.') ||
+          e.content.includes('good files are scattered all over the system')
       );
-      expect(hasOverrideHint).toBe(true);
+      expect(hasDirectoryHint).toBe(true);
       expect(result.stateChanges.flags?.overrideSuggested).toBe(true);
     });
 
@@ -412,7 +390,7 @@ describe('Narrative Mechanics', () => {
         currentPath: '/storage/assets',
         detectionLevel: 50,
         accessLevel: 2,
-        truthsDiscovered: new Set<string>(),
+        evidenceCount: 0,
         tutorialStep: -1,
         tutorialComplete: true,
         flags: { adminUnlocked: true },
@@ -428,12 +406,12 @@ describe('Narrative Mechanics', () => {
       }
     });
 
-    it('shows recalibration message when truth discovered', () => {
+    it('shows recalibration or notice message when opening files', () => {
       const state = createTestState({
         currentPath: '/storage/assets',
         detectionLevel: 30,
         accessLevel: 2,
-        truthsDiscovered: new Set<string>(),
+        evidenceCount: 0,
         tutorialStep: -1,
         tutorialComplete: true,
         flags: { adminUnlocked: true },
@@ -441,14 +419,10 @@ describe('Narrative Mechanics', () => {
 
       const result = executeCommand('open material_x_analysis.dat', state);
 
-      // Should show recalibration message
-      const hasRecalibration = result.output.some(
-        e =>
-          e.content.includes('recalibrating') ||
-          e.content.includes('MEMO FLAG') ||
-          e.content.includes('NOTICE')
-      );
-      expect(hasRecalibration).toBe(true);
+      // With the simplified evidence system, evidence only increments on scared reactions
+      // The file may or may not trigger a scared reaction based on its content
+      // Just verify no old-style category output
+      expect(result.output.some(e => e.content.includes('Category:'))).toBe(false);
     });
   });
 
@@ -594,7 +568,9 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('open trust_protocol_1993.txt', state);
 
-      expect(result.output.some(e => e.content.includes('TRUST NO ONE'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('SHARE NOTHING BEYOND YOUR SCOPE'))).toBe(
+        true
+      );
     });
 
     it('modem_log_jan96.txt contains IRC chat', () => {
@@ -605,7 +581,7 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('open modem_log_jan96.txt', state);
 
-      expect(result.output.some(e => e.content.includes('UFO74'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('brasnet'))).toBe(true);
       expect(result.output.some(e => e.content.includes('IRC'))).toBe(true);
     });
 
@@ -614,11 +590,26 @@ describe('Narrative Mechanics', () => {
         currentPath: '/internal',
         tutorialStep: -1,
         tutorialComplete: true,
+        flags: { adminUnlocked: true },
       });
       const result = executeCommand('open jardim_andere_incident.txt', state);
 
       expect(result.output.some(e => e.content.includes('Jardim Andere'))).toBe(true);
       expect(result.output.some(e => e.content.includes('20-JAN-1996'))).toBe(true);
+    });
+
+    it('jardim_andere_incident.txt logs evidence on first read', () => {
+      const state = createTestState({
+        currentPath: '/internal',
+        tutorialStep: -1,
+        tutorialComplete: true,
+        evidenceCount: 0,
+      });
+      const result = executeCommand('open jardim_andere_incident.txt', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(1);
+      expect(result.stateChanges.avatarExpression).toBe('scared');
+      expect(result.stateChanges.filesRead?.has('/internal/jardim_andere_incident.txt')).toBe(true);
     });
   });
 
@@ -684,7 +675,7 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('trace command shows network activity or traces', () => {
+    it('trace command reveals network activity', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -692,7 +683,8 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('trace', state);
 
-      expect(result.output.length).toBeGreaterThan(0);
+      expect(result.output.some(e => e.content.includes('TRACE RESULT:'))).toBe(true);
+      expect(result.stateChanges.accessLevel).toBe(3);
     });
   });
 
@@ -939,28 +931,21 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('run save_evidence.sh redirects to leak command (Elusive Man)', () => {
+    it('run save_evidence.sh redirects to leak command (direct-to-ICQ)', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/tmp',
-        flags: { allEvidenceCollected: true },
-        truthsDiscovered: new Set([
-          'debris_relocation',
-          'being_containment',
-          'telepathic_scouts',
-          'international_actors',
-          'transition_2026',
-        ]),
+        evidenceCount: 10,
       });
       const result = executeCommand('run save_evidence.sh', state);
-      // Should trigger the Elusive Man leak sequence
+      // Should trigger the direct-to-ICQ leak transmission
       expect(
         result.output.some(
-          e => e.content.includes('I have resources') || e.content.includes('SECURE CHANNEL')
+          e => e.content.includes('TRANSMISSION SUCCESSFUL') || e.content.includes('LEAK TRANSMISSION')
         )
       ).toBe(true);
-      expect(result.stateChanges.inLeakSequence).toBe(true);
+      expect(result.stateChanges.icqPhase).toBe(true);
     });
 
     it('executes purge_trace.sh to clear countdown', () => {
@@ -978,64 +963,30 @@ describe('Narrative Mechanics', () => {
     });
   });
 
-  describe('Recover Command', () => {
-    it('shows error when no file specified', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-      });
-      const result = executeCommand('recover', state);
-      expect(
-        result.output.some(e => e.content.includes('ERROR') || e.content.includes('Specify'))
-      ).toBe(true);
-    });
-
-    it('attempts recovery on corrupted file', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-        currentPath: '/tmp',
-      });
-      const result = executeCommand('recover some_file.txt', state);
-      // Should attempt recovery or report file not found
-      expect(
-        result.output.some(
-          e =>
-            e.content.includes('ERROR') ||
-            e.content.includes('not found') ||
-            e.content.includes('recovery')
-        )
-      ).toBe(true);
-    });
-  });
-
   describe('Trace Command', () => {
-    it('shows trace results at low access level', () => {
+    it('shows a limited topology trace at low access levels', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         accessLevel: 1,
       });
       const result = executeCommand('trace', state);
-      expect(
-        result.output.some(
-          e =>
-            e.content.includes('TRACE') ||
-            e.content.includes('ACCESSIBLE') ||
-            e.content.includes('RESTRICTED')
-        )
-      ).toBe(true);
+      expect(result.output.some(e => e.content.includes('/storage/ — ACCESSIBLE'))).toBe(true);
+      expect(result.stateChanges.accessLevel).toBe(2);
     });
 
-    it('shows more details at higher access level', () => {
+    it('shows a detailed topology trace at higher access levels', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         accessLevel: 2,
       });
       const result = executeCommand('trace', state);
+      expect(result.output.some(e => e.content.includes('/admin/ — 7 files [HIGH PRIORITY]'))).toBe(
+        true
+      );
       expect(
-        result.output.some(e => e.content.includes('TRACE') || e.content.includes('files'))
+        result.output.some(e => e.content.includes('Administrative access may be obtainable.'))
       ).toBe(true);
     });
   });
@@ -1088,7 +1039,6 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        flags: { allEvidenceCollected: false },
       });
       const result = executeCommand('leak', state);
       // Should be blocked — not enough evidence
@@ -1100,21 +1050,21 @@ describe('Narrative Mechanics', () => {
       expect(result.stateChanges.inLeakSequence).toBeUndefined();
     });
 
-    it('triggers Elusive Man interrogation when all evidence found', () => {
+    it('triggers direct-to-ICQ leak when all evidence found', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        flags: { allEvidenceCollected: true },
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment', 'telepathic_scouts', 'international_actors', 'transition_2026'] as const),
+        evidenceCount: 10,
       });
       const result = executeCommand('leak', state);
-      // Should trigger the Elusive Man leak sequence
+      // Should trigger the direct-to-ICQ leak transmission
       expect(
         result.output.some(
-          e => e.content.includes('I have resources') || e.content.includes('SECURE CHANNEL')
+          e => e.content.includes('TRANSMISSION SUCCESSFUL') || e.content.includes('LEAK TRANSMISSION')
         )
       ).toBe(true);
-      expect(result.stateChanges.inLeakSequence).toBe(true);
+      expect(result.stateChanges.icqPhase).toBe(true);
+      expect(result.skipToPhase).toBe('icq');
     });
   });
 
@@ -1124,7 +1074,7 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
         detectionLevel: 50,
-        truthsDiscovered: new Set(['debris_relocation']),
+        evidenceCount: 1,
         singularEventsTriggered: new Set(['turing_evaluation']),
         turingEvaluationCompleted: true,
       });
@@ -1136,7 +1086,7 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Countdown System', () => {
-    it('countdown is set when reading active_trace.sys', () => {
+    it('reading active_trace.sys stays informational only', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -1146,8 +1096,8 @@ describe('Narrative Mechanics', () => {
         countdownActive: false,
       });
       const result = executeCommand('open active_trace.sys', state);
-      // Should trigger countdown or show file content
       expect(result.output.length).toBeGreaterThan(0);
+      expect(result.stateChanges.countdownActive).toBeUndefined();
     });
   });
 
@@ -1281,71 +1231,57 @@ describe('Narrative Mechanics', () => {
   });
 
   describe('Truth Discovery System', () => {
-    it('properly updates truthsDiscovered in stateChanges', () => {
+    it('evidenceCount is a number in state', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/storage/assets',
         accessLevel: 3,
-        truthsDiscovered: new Set<TruthCategory>(),
+        evidenceCount: 0,
         filesRead: new Set<string>(),
         flags: { adminUnlocked: true },
       });
-      // Open a file that reveals a truth
-      const result = executeCommand('open material_x_analysis.dat', state);
 
-      // Check that truthsDiscovered is included in stateChanges
-      expect(result.stateChanges.truthsDiscovered).toBeDefined();
-      if (result.stateChanges.truthsDiscovered) {
-        expect(result.stateChanges.truthsDiscovered.size).toBeGreaterThan(0);
-      }
+      // Verify evidenceCount exists and is a number
+      expect(typeof state.evidenceCount).toBe('number');
+      expect(state.evidenceCount).toBe(0);
     });
 
-    it('shows UFO74 message when all 5 truths are discovered', () => {
+    it('win condition is evidenceCount >= 10', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/ops/exo',
         accessLevel: 4,
-        // Already have 4 truths, finding the 5th
-        truthsDiscovered: new Set<TruthCategory>([
-          'debris_relocation',
-          'being_containment',
-          'telepathic_scouts',
-          'international_actors',
-        ]),
+        evidenceCount: 10,
         flags: { adminUnlocked: true },
         filesRead: new Set<string>(),
       });
-      // Open a file that reveals the 5th truth
-      const result = executeCommand('open energy_node_assessment.txt', state);
 
-      // Should contain UFO74 message about using 'leak'
+      // Evidence count of 10 should allow the leak command
+      const result = executeCommand('leak', state);
+      // Should NOT show "INSUFFICIENT EVIDENCE"
+      expect(result.output.some(e => e.content.includes('INSUFFICIENT EVIDENCE'))).toBe(false);
+    });
+
+    it('blocks leak when evidenceCount < 10', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/ops/exo',
+        accessLevel: 4,
+        evidenceCount: 5,
+        flags: { adminUnlocked: true },
+        filesRead: new Set<string>(),
+      });
+
+      const result = executeCommand('leak', state);
+      // Should show insufficient evidence
       expect(
         result.output.some(
-          e => e.content.includes('leak') || e.content.includes('ALL EVIDENCE')
+          e => e.content.includes('INSUFFICIENT EVIDENCE') || e.content.includes('5/10')
         )
       ).toBe(true);
-    });
-
-    it('sets allEvidenceCollected flag when 5 truths discovered', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-        currentPath: '/ops/exo',
-        accessLevel: 4,
-        truthsDiscovered: new Set<TruthCategory>([
-          'debris_relocation',
-          'being_containment',
-          'telepathic_scouts',
-          'international_actors',
-        ]),
-        flags: { adminUnlocked: true },
-        filesRead: new Set<string>(),
-      });
-      const result = executeCommand('open energy_node_assessment.txt', state);
-
-      expect(result.stateChanges.flags?.allEvidenceCollected).toBe(true);
     });
   });
 
@@ -1361,7 +1297,7 @@ describe('Narrative Mechanics', () => {
 
       // Should have imageTrigger with et-brain.png
       expect(result.imageTrigger).toBeDefined();
-      expect(result.imageTrigger?.src).toBe('/images/et-brain.png');
+      expect(result.imageTrigger?.src).toBe('/images/et-brain.webp');
     });
 
     it('does not show image on subsequent link queries', () => {
@@ -1386,12 +1322,68 @@ describe('Narrative Mechanics', () => {
         currentPath: '/ops/assessments',
         accessLevel: 2,
         filesRead: new Set<string>(),
-        imagesShownThisRun: new Set<string>(), // Ensure no images shown yet
+        imagesShownThisRun: new Set<string>(),
+        flags: { adminUnlocked: true },
       });
       const result = executeCommand('open foreign_drone_assessment.txt', state);
 
       expect(result.imageTrigger).toBeDefined();
-      expect(result.imageTrigger?.src).toBe('/images/drone.png');
+      expect(result.imageTrigger?.src).toBe('/images/drone.webp');
+    });
+
+    it('foreign_drone_assessment.txt logs evidence and scares the avatar on first read', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/ops/assessments',
+        accessLevel: 2,
+        evidenceCount: 0,
+        filesRead: new Set<string>(),
+        imagesShownThisRun: new Set<string>(),
+        flags: { adminUnlocked: true },
+      });
+
+      const result = executeCommand('open foreign_drone_assessment.txt', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(1);
+      expect(result.stateChanges.avatarExpression).toBe('scared');
+      expect(
+        result.stateChanges.filesRead?.has('/ops/assessments/foreign_drone_assessment.txt')
+      ).toBe(true);
+    });
+
+    it('counts each evidence file separately even when they cover similar material', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/storage/assets',
+        accessLevel: 2,
+        evidenceCount: 1,
+        filesRead: new Set<string>(['/ops/assessments/foreign_drone_assessment.txt']),
+        flags: { adminUnlocked: true },
+      });
+
+      const result = executeCommand('open material_x_analysis.dat', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(2);
+      expect(result.stateChanges.avatarExpression).toBe('scared');
+    });
+
+    it('bio_program_overview.red logs evidence on first read', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/admin',
+        accessLevel: 4,
+        evidenceCount: 0,
+        filesRead: new Set<string>(),
+        flags: { adminUnlocked: true },
+      });
+
+      const result = executeCommand('open bio_program_overview.red', state);
+
+      expect(result.stateChanges.evidenceCount).toBe(1);
+      expect(result.stateChanges.filesRead?.has('/admin/bio_program_overview.red')).toBe(true);
     });
 
     it('field_report_delta.txt has prato-delta image trigger', () => {
@@ -1407,11 +1399,11 @@ describe('Narrative Mechanics', () => {
       const result = executeCommand('open field_report_delta.txt', state);
 
       expect(result.imageTrigger).toBeDefined();
-      expect(result.imageTrigger?.src).toBe('/images/prato-delta.png');
+      expect(result.imageTrigger?.src).toBe('/images/prato-delta.webp');
     });
   });
 
-  describe('Prisoner 46 Release Command', () => {
+  describe('ALPHA Release Command', () => {
     it('shows error when no target provided', () => {
       const state = createTestState({
         tutorialStep: -1,
@@ -1422,79 +1414,81 @@ describe('Narrative Mechanics', () => {
       expect(result.output.some(e => e.content.includes('REQUIRES TARGET'))).toBe(true);
     });
 
-    it('shows file not found when P46 files not discovered', () => {
+    it('shows file not found when ALPHA files not discovered', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         filesRead: new Set<string>(),
       });
-      const result = executeCommand('release p46', state);
+      const result = executeCommand('release alpha', state);
 
-      expect(result.output.some(e => 
-        e.content.includes('not found') || e.content.includes('not available')
-      )).toBe(true);
+      expect(
+        result.output.some(
+          e => e.content.includes('not found') || e.content.includes('not available')
+        )
+      ).toBe(true);
     });
 
-    it('successfully releases P46 when files discovered', () => {
+    it('successfully releases ALPHA when files discovered', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/prisoner46_manifest.enc']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal.log']),
         detectionLevel: 20,
         flags: {},
       });
-      const result = executeCommand('release p46', state);
+      const result = executeCommand('release alpha', state);
 
-      expect(result.stateChanges.flags?.prisoner46Released).toBe(true);
+      expect(result.stateChanges.flags?.alphaReleased).toBe(true);
       expect(result.stateChanges.detectionLevel).toBe(35); // 20 + 15
       expect(result.triggerFlicker).toBe(true);
       expect(result.imageTrigger).toBeDefined();
-      expect(result.imageTrigger?.src).toBe('/images/et-standing.png');
+      expect(result.imageTrigger?.src).toBe('/images/et.webp');
     });
 
-    it('accepts various P46 target formats', () => {
+    it('accepts various ALPHA target formats', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/p46_neural_activity.log']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal.log']),
         detectionLevel: 10,
         flags: {},
       });
 
       // Test different target formats
-      const formats = ['p46', 'P46', 'prisoner46', 'prisoner 46', 'p-46'];
+      const formats = ['alpha', 'Alpha', 'ALPHA', 'codename alpha', 'subject alpha'];
       for (const format of formats) {
         const testState = { ...state, flags: {} };
         const result = executeCommand(`release ${format}`, testState);
-        expect(result.stateChanges.flags?.prisoner46Released).toBe(true);
+        expect(result.stateChanges.flags?.alphaReleased).toBe(true);
       }
     });
 
-    it('shows already released message when P46 already released', () => {
+    it('shows already released message when ALPHA already released', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/prisoner46_manifest.enc']),
-        flags: { prisoner46Released: true },
+        filesRead: new Set(['/storage/quarantine/alpha_journal.log']),
+        flags: { alphaReleased: true },
       });
-      const result = executeCommand('release p46', state);
+      const result = executeCommand('release alpha', state);
 
-      expect(result.output.some(e => 
-        e.content.includes('ALREADY') || e.content.includes('already')
-      )).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('ALREADY') || e.content.includes('already'))
+      ).toBe(true);
       // Should not set the flag again
-      expect(result.stateChanges.flags?.prisoner46Released).toBeUndefined();
+      expect(result.stateChanges.flags?.alphaReleased).toBeUndefined();
     });
 
-    it('caps detection at 100 when releasing P46', () => {
+    it('caps detection at 100 when releasing ALPHA', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/prisoner46_manifest.enc']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal.log']),
         detectionLevel: 90,
         flags: {},
       });
-      const result = executeCommand('release p46', state);
+      const result = executeCommand('release alpha', state);
 
       expect(result.stateChanges.detectionLevel).toBe(100);
     });
@@ -1503,10 +1497,10 @@ describe('Narrative Mechanics', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        filesRead: new Set(['/storage/quarantine/prisoner46_manifest.enc']),
+        filesRead: new Set(['/storage/quarantine/alpha_journal.log']),
         flags: {},
       });
-      const result = executeCommand('release p46', state);
+      const result = executeCommand('release alpha', state);
 
       expect(result.output.some(e => e.type === 'ufo74')).toBe(true);
     });

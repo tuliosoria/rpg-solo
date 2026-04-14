@@ -1,8 +1,9 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, useRef, useEffect, useCallback } from 'react';
 import { getStatistics, formatPlaytime } from '../storage/statistics';
 import { useI18n } from '../i18n';
+import { useFocusTrap } from '../hooks';
 import styles from './StatisticsModal.module.css';
 
 interface StatisticsModalProps {
@@ -12,6 +13,23 @@ interface StatisticsModalProps {
 export default memo(function StatisticsModal({ onCloseAction }: StatisticsModalProps) {
   const { t } = useI18n();
   const stats = getStatistics();
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onCloseAction();
+      }
+    },
+    [onCloseAction]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   const totalEndings =
     stats.endingsAchieved.good +
@@ -20,10 +38,10 @@ export default memo(function StatisticsModal({ onCloseAction }: StatisticsModalP
     stats.endingsAchieved.secret;
 
   return (
-    <div className={styles.overlay} onClick={onCloseAction}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+    <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="statistics-title">
+      <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>{t('stats.title')}</h2>
+          <h2 id="statistics-title">{t('stats.title')}</h2>
           <div className={styles.line}>═══════════════════════════</div>
         </div>
 
@@ -96,7 +114,7 @@ export default memo(function StatisticsModal({ onCloseAction }: StatisticsModalP
         <div className={styles.actions}>
           <button
             className={styles.closeButton}
-            tabIndex={-1}
+            tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onCloseAction}
           >

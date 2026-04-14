@@ -31,7 +31,7 @@ describe('PauseMenu', () => {
 
       expect(screen.getByRole('button', { name: /RESUME GAME/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /SAVE SESSION/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /LOAD SESSION/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /LOAD CHECKPOINT/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /SETTINGS/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /EXIT TO MENU/i })).toBeInTheDocument();
     });
@@ -58,12 +58,14 @@ describe('PauseMenu', () => {
       expect(defaultProps.onSaveAction).toHaveBeenCalledTimes(1);
     });
 
-    it('calls onLoadAction when clicking LOAD', () => {
+    it('shows load confirmation when clicking LOAD', () => {
       render(<PauseMenu {...defaultProps} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /LOAD SESSION/i }));
+      fireEvent.click(screen.getByRole('button', { name: /LOAD CHECKPOINT/i }));
 
-      expect(defaultProps.onLoadAction).toHaveBeenCalledTimes(1);
+      expect(defaultProps.onLoadAction).not.toHaveBeenCalled();
+      expect(screen.getByText('LOAD CHECKPOINT?')).toBeInTheDocument();
+      expect(screen.getByText('Unsaved progress will be lost.')).toBeInTheDocument();
     });
 
     it('calls onSettingsAction when clicking SETTINGS', () => {
@@ -229,14 +231,69 @@ describe('PauseMenu', () => {
     });
   });
 
+  describe('Load Confirmation', () => {
+    it('shows confirmation dialog when LOAD is selected with Enter', () => {
+      render(<PauseMenu {...defaultProps} />);
+
+      fireEvent.keyDown(window, { key: 'ArrowDown' });
+      fireEvent.keyDown(window, { key: 'ArrowDown' });
+      fireEvent.keyDown(window, { key: 'Enter' });
+
+      expect(screen.getByText('LOAD CHECKPOINT?')).toBeInTheDocument();
+    });
+
+    it('defaults to NO option in load confirmation dialog', () => {
+      render(<PauseMenu {...defaultProps} />);
+
+      fireEvent.click(screen.getByRole('button', { name: /LOAD CHECKPOINT/i }));
+
+      const noButton = screen.getByRole('button', { name: /NO, CONTINUE/i });
+      expect(noButton.textContent).toContain('▶');
+    });
+
+    it('calls onLoadAction when confirming load', () => {
+      render(<PauseMenu {...defaultProps} />);
+
+      fireEvent.click(screen.getByRole('button', { name: /LOAD CHECKPOINT/i }));
+      fireEvent.click(screen.getByRole('button', { name: /YES, LOAD/i }));
+
+      expect(defaultProps.onLoadAction).toHaveBeenCalledTimes(1);
+    });
+
+    it('returns to pause menu when canceling load', () => {
+      render(<PauseMenu {...defaultProps} />);
+
+      fireEvent.click(screen.getByRole('button', { name: /LOAD CHECKPOINT/i }));
+      fireEvent.click(screen.getByRole('button', { name: /NO, CONTINUE/i }));
+
+      expect(screen.getByText('PAUSED')).toBeInTheDocument();
+      expect(screen.queryByText('LOAD CHECKPOINT?')).not.toBeInTheDocument();
+    });
+
+    it('returns to pause menu on Escape from load confirmation', () => {
+      render(<PauseMenu {...defaultProps} />);
+
+      fireEvent.click(screen.getByRole('button', { name: /LOAD CHECKPOINT/i }));
+      fireEvent.keyDown(window, { key: 'Escape' });
+
+      expect(screen.getByText('PAUSED')).toBeInTheDocument();
+    });
+  });
+
   describe('Mouse Interaction', () => {
     it('updates selection on mouse hover', () => {
       render(<PauseMenu {...defaultProps} />);
 
-      const loadButton = screen.getByRole('button', { name: /LOAD SESSION/i });
+      const loadButton = screen.getByRole('button', { name: /LOAD CHECKPOINT/i });
       fireEvent.mouseEnter(loadButton);
 
       expect(loadButton.textContent).toContain('▶');
+    });
+
+    it('hides checkpoint loading when no checkpoint is available', () => {
+      render(<PauseMenu {...defaultProps} canLoadAction={false} />);
+
+      expect(screen.queryByRole('button', { name: /LOAD CHECKPOINT/i })).not.toBeInTheDocument();
     });
 
     it('updates selection on mouse hover in confirmation', () => {

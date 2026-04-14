@@ -20,6 +20,7 @@ jobs:
         with:
           submodules: true
           lfs: false
+          fetch-depth: 0  # Full history so git rev-list --count HEAD returns the real commit count
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -42,7 +43,7 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/out"
+          app_location: "out"
           skip_app_build: true
 
   close_pull_request:

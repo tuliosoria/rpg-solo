@@ -1,7 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { DEFAULT_GAME_STATE, GameState } from '../../types';
-
-type StorageMock = Pick<Storage, 'getItem' | 'setItem' | 'removeItem' | 'clear' | 'length' | 'key'>;
 
 // Helper to create a valid test state with required fields
 function createTestState(overrides: Partial<GameState> = {}): GameState {
@@ -10,10 +8,9 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
     seed: 12345,
     rngState: 12345,
     sessionStartTime: Date.now(),
-    truthsDiscovered: new Set(),
+    evidenceCount: 0,
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
-    videosShownThisRun: new Set(),
     categoriesRead: new Set(),
     filesRead: new Set(),
     prisoner45UsedResponses: new Set(),
@@ -35,23 +32,12 @@ function createQuotaExceededError(): DOMException {
 
 describe('Save/Load System', () => {
   let mockStore: Record<string, string> = {};
-  let originalLocalStorage: Storage;
-
-  const installLocalStorageMock = (localStorageMock: StorageMock) => {
-    vi.stubGlobal('localStorage', localStorageMock);
-    Object.defineProperty(window, 'localStorage', {
-      value: localStorageMock,
-      writable: true,
-      configurable: true,
-    });
-  };
 
   beforeEach(async () => {
     mockStore = {};
     vi.resetModules();
-    originalLocalStorage = window.localStorage;
 
-    const mockLocalStorage: StorageMock = {
+    const mockLocalStorage = {
       getItem: (key: string) => mockStore[key] || null,
       setItem: (key: string, value: string) => {
         mockStore[key] = value;
@@ -66,35 +52,24 @@ describe('Save/Load System', () => {
       key: () => null,
     };
 
-    installLocalStorageMock(mockLocalStorage);
-  });
-
-  afterEach(() => {
-    Object.defineProperty(window, 'localStorage', {
-      value: originalLocalStorage,
-      writable: true,
-      configurable: true,
-    });
-    vi.unstubAllGlobals();
+    vi.stubGlobal('localStorage', mockLocalStorage);
+    vi.stubGlobal('document', {});
+    vi.stubGlobal('window', { localStorage: mockLocalStorage });
   });
 
   describe('serialization round-trip', () => {
-    it('preserves videosShownThisRun through save/load cycle', async () => {
-      const { saveGame, loadGame } = await import('../saves');
+    it('uses derived evidence count in save slot metadata', async () => {
+      const { saveGame } = await import('../saves');
 
       const state = createTestState({
-        videosShownThisRun: new Set(['video1.mp4', 'video2.mp4']),
+        evidenceCount: 0,
+        filesRead: new Set(['/admin/bio_program_overview.red']),
       });
 
       const slot = saveGame(state, 'Test Save');
-      expect(slot).not.toBeNull();
 
-      const loaded = loadGame(slot!.id);
-      expect(loaded).not.toBeNull();
-      expect(loaded!.videosShownThisRun).toBeInstanceOf(Set);
-      expect(loaded!.videosShownThisRun.has('video1.mp4')).toBe(true);
-      expect(loaded!.videosShownThisRun.has('video2.mp4')).toBe(true);
-      expect(loaded!.videosShownThisRun.size).toBe(2);
+      expect(slot).not.toBeNull();
+      expect(slot!.truthCount).toBe(1);
     });
 
     it('preserves imagesShownThisRun through save/load cycle', async () => {
@@ -115,12 +90,14 @@ describe('Save/Load System', () => {
       const { saveGame, loadGame } = await import('../saves');
 
       const state = createTestState({
-        truthsDiscovered: new Set(['truth1', 'truth2']),
+        evidenceCount: 2,
         singularEventsTriggered: new Set(['event1']),
         imagesShownThisRun: new Set(['img1']),
-        videosShownThisRun: new Set(['vid1']),
         categoriesRead: new Set(['cat1', 'cat2', 'cat3']),
-        filesRead: new Set(['file1']),
+        filesRead: new Set([
+          '/ops/assessments/foreign_drone_assessment.txt',
+          '/storage/assets/material_x_analysis.dat',
+        ]),
         tutorialTipsShown: new Set(['first_evidence']),
         prisoner45UsedResponses: new Set(['resp1']),
         scoutLinkUsedResponses: new Set(['scout1']),
@@ -134,11 +111,33 @@ describe('Save/Load System', () => {
       const slot = saveGame(state, 'Test Save');
       const loaded = loadGame(slot!.id);
 
-      expect(loaded!.truthsDiscovered.size).toBe(2);
+      expect(loaded!.evidenceCount).toBe(2);
       expect(loaded!.singularEventsTriggered.size).toBe(1);
       expect(loaded!.categoriesRead.size).toBe(3);
       expect(loaded!.passwordsFound.size).toBe(2);
       expect(loaded!.tutorialTipsShown.size).toBe(1);
+    });
+
+    it('preserves conspiracyFilesSeen and archiveFilesViewed through save/load cycle', async () => {
+      const { saveGame, loadGame } = await import('../saves');
+
+      const state = createTestState({
+        conspiracyFilesSeen: new Set(['file_a.txt', 'file_b.txt']),
+        archiveFilesViewed: new Set(['/archive/doc1.txt', '/archive/doc2.txt', '/archive/doc3.txt']),
+      });
+
+      const slot = saveGame(state, 'Conspiracy Test');
+      const loaded = loadGame(slot!.id);
+
+      expect(loaded!.conspiracyFilesSeen).toBeInstanceOf(Set);
+      expect(loaded!.conspiracyFilesSeen.size).toBe(2);
+      expect(loaded!.conspiracyFilesSeen.has('file_a.txt')).toBe(true);
+      expect(loaded!.conspiracyFilesSeen.has('file_b.txt')).toBe(true);
+
+      expect(loaded!.archiveFilesViewed).toBeInstanceOf(Set);
+      expect(loaded!.archiveFilesViewed.size).toBe(3);
+      expect(loaded!.archiveFilesViewed.has('/archive/doc1.txt')).toBe(true);
+      expect(loaded!.archiveFilesViewed.has('/archive/doc3.txt')).toBe(true);
     });
 
     it('handles empty Sets correctly', async () => {
@@ -149,8 +148,8 @@ describe('Save/Load System', () => {
       const slot = saveGame(state, 'Test Save');
       const loaded = loadGame(slot!.id);
 
-      expect(loaded!.videosShownThisRun).toBeInstanceOf(Set);
-      expect(loaded!.videosShownThisRun.size).toBe(0);
+      expect(loaded!.imagesShownThisRun).toBeInstanceOf(Set);
+      expect(loaded!.imagesShownThisRun.size).toBe(0);
     });
   });
 
@@ -158,13 +157,13 @@ describe('Save/Load System', () => {
     it('provides default values for new fields when loading old saves', async () => {
       const { loadGame } = await import('../saves');
 
-      // Simulate an old save without videosShownThisRun
+      // Simulate an old save without newer fields
       const oldSaveData = {
         currentPath: '/',
         detectionLevel: 50,
         accessLevel: 3,
-        truthsDiscovered: ['truth1'],
-        // Missing: videosShownThisRun, categoriesRead, etc.
+        evidenceCount: 1,
+        // Missing: categoriesRead, etc.
       };
 
       mockStore['terminal1996:save:old_save'] = JSON.stringify(oldSaveData);
@@ -173,8 +172,30 @@ describe('Save/Load System', () => {
 
       expect(loaded).not.toBeNull();
       // Should get default values from DEFAULT_GAME_STATE spread
-      expect(loaded!.videosShownThisRun).toBeInstanceOf(Set);
-      expect(loaded!.videosShownThisRun.size).toBe(0);
+      expect(loaded!.imagesShownThisRun).toBeInstanceOf(Set);
+      expect(loaded!.imagesShownThisRun.size).toBe(0);
+    });
+
+    it('rebuilds evidenceCount from filesRead when stale save data undercounts evidence files', async () => {
+      const { loadGame } = await import('../saves');
+
+      const oldSaveData = {
+        currentPath: '/',
+        detectionLevel: 50,
+        accessLevel: 4,
+        evidenceCount: 0,
+        filesRead: [
+          '/ops/assessments/foreign_drone_assessment.txt',
+          '/storage/assets/material_x_analysis.dat',
+        ],
+      };
+
+      mockStore['terminal1996:save:stale_truths'] = JSON.stringify(oldSaveData);
+
+      const loaded = loadGame('stale_truths');
+
+      expect(loaded).not.toBeNull();
+      expect(loaded!.evidenceCount).toBe(2);
     });
   });
 
@@ -229,15 +250,6 @@ describe('Save/Load System', () => {
   });
 
   describe('createNewGame', () => {
-    it('initializes videosShownThisRun as empty Set', async () => {
-      const { createNewGame } = await import('../saves');
-
-      const newGame = createNewGame();
-
-      expect(newGame.videosShownThisRun).toBeInstanceOf(Set);
-      expect(newGame.videosShownThisRun.size).toBe(0);
-    });
-
     it('initializes imagesShownThisRun as empty Set', async () => {
       const { createNewGame } = await import('../saves');
 
@@ -252,10 +264,9 @@ describe('Save/Load System', () => {
 
       const newGame = createNewGame();
 
-      expect(newGame.truthsDiscovered).toBeInstanceOf(Set);
+      expect(typeof newGame.evidenceCount).toBe('number');
       expect(newGame.singularEventsTriggered).toBeInstanceOf(Set);
       expect(newGame.imagesShownThisRun).toBeInstanceOf(Set);
-      expect(newGame.videosShownThisRun).toBeInstanceOf(Set);
     });
 
     it('sets tutorialComplete to false for new games', async () => {
@@ -355,7 +366,7 @@ describe('Save/Load System', () => {
 
       const state = createTestState({
         detectionLevel: 42,
-        truthsDiscovered: new Set(['debris_relocation']),
+        evidenceCount: 1,
       });
 
       autoSave(state);
@@ -363,7 +374,7 @@ describe('Save/Load System', () => {
       const loaded = loadAutoSave();
       expect(loaded).not.toBeNull();
       expect(loaded!.detectionLevel).toBe(42);
-      expect(loaded!.truthsDiscovered.has('debris_relocation')).toBe(true);
+      expect(loaded!.evidenceCount).toBe(1);
     });
 
     it('returns null when no autosave exists', async () => {
@@ -443,12 +454,15 @@ describe('Save/Load System', () => {
         key: () => null,
       };
 
-      installLocalStorageMock(quotaLimitedStorage);
+      vi.stubGlobal('localStorage', quotaLimitedStorage);
+      vi.stubGlobal('window', { localStorage: quotaLimitedStorage });
 
-      const oldestSlot = getSaveSlots().at(-1);
-      expect(oldestSlot).toBeDefined();
+      const oldestSlot = existingSlots
+        .filter((slot): slot is NonNullable<typeof slot> => slot !== null)
+        .sort((left, right) => left.timestamp - right.timestamp)[0];
       const newSlot = saveGame({ ...state, detectionLevel: 99 }, 'Newest Save');
 
+      expect(oldestSlot).toBeDefined();
       expect(newSlot).not.toBeNull();
       expect(getSaveSlots()).toHaveLength(5);
       expect(mockStore[`terminal1996:save:${oldestSlot!.id}`]).toBeUndefined();
@@ -460,7 +474,7 @@ describe('Save/Load System', () => {
       const state = createTestState({
         currentPath: '/admin/classified',
         detectionLevel: 75,
-        truthsDiscovered: new Set(['debris_relocation', 'being_containment']),
+        evidenceCount: 2,
       });
 
       const slot = saveGame(state, 'My Save');
@@ -493,7 +507,8 @@ describe('Save/Load System', () => {
         length: 0,
         key: () => null,
       };
-      installLocalStorageMock(mockLocalStorage);
+      vi.stubGlobal('localStorage', mockLocalStorage);
+      vi.stubGlobal('window', { localStorage: mockLocalStorage });
 
       const { getSaveSlots } = await import('../saves');
 
@@ -567,7 +582,7 @@ describe('Save/Load System', () => {
         currentPath: '/storage',
         detectionLevel: 30,
         accessLevel: 2,
-        truthsDiscovered: ['truth1'],
+        evidenceCount: 1,
         history: [],
         commandHistory: [],
       };
@@ -579,8 +594,8 @@ describe('Save/Load System', () => {
       expect(loaded).not.toBeNull();
       expect(loaded!.currentPath).toBe('/storage');
       expect(loaded!.detectionLevel).toBe(30);
-      expect(loaded!.truthsDiscovered).toBeInstanceOf(Set);
-      expect(loaded!.truthsDiscovered.has('truth1')).toBe(true);
+      expect(typeof loaded!.evidenceCount).toBe('number');
+      expect(loaded!.evidenceCount).toBe(1);
     });
 
     it('handles versioned saves correctly', async () => {
@@ -603,16 +618,12 @@ describe('Save/Load System', () => {
 
   describe('checkpoint system', () => {
     it('saves and loads checkpoints correctly', async () => {
-      const {
-        saveCheckpoint,
-        loadCheckpoint,
-        getCheckpointSlots,
-        getLatestCheckpoint,
-      } = await import('../saves');
+      const { saveCheckpoint, loadCheckpoint, getCheckpointSlots, getLatestCheckpoint } =
+        await import('../saves');
 
       const state = createTestState({
         detectionLevel: 25,
-        truthsDiscovered: new Set(['debris_relocation']),
+        evidenceCount: 1,
       });
 
       const slot = saveCheckpoint(state, 'First evidence');
@@ -623,7 +634,7 @@ describe('Save/Load System', () => {
       const loaded = loadCheckpoint(slot!.id);
       expect(loaded).not.toBeNull();
       expect(loaded!.detectionLevel).toBe(25);
-      expect(loaded!.truthsDiscovered.has('debris_relocation')).toBe(true);
+      expect(loaded!.evidenceCount).toBe(1);
 
       const slots = getCheckpointSlots();
       expect(slots.length).toBe(1);
@@ -689,12 +700,15 @@ describe('Save/Load System', () => {
         key: () => null,
       };
 
-      installLocalStorageMock(quotaLimitedStorage);
+      vi.stubGlobal('localStorage', quotaLimitedStorage);
+      vi.stubGlobal('window', { localStorage: quotaLimitedStorage });
 
-      const oldestSlot = getCheckpointSlots().at(-1);
-      expect(oldestSlot).toBeDefined();
+      const oldestSlot = existingSlots
+        .filter((slot): slot is NonNullable<typeof slot> => slot !== null)
+        .sort((left, right) => left.timestamp - right.timestamp)[0];
       const newSlot = saveCheckpoint({ ...state, detectionLevel: 99 }, 'Newest Checkpoint');
 
+      expect(oldestSlot).toBeDefined();
       expect(newSlot).not.toBeNull();
       expect(getCheckpointSlots()).toHaveLength(2);
       expect(mockStore[`terminal1996:checkpoint:${oldestSlot!.id}`]).toBeUndefined();
@@ -756,7 +770,8 @@ describe('Save/Load System', () => {
         length: 0,
         key: () => null,
       };
-      installLocalStorageMock(mockLocalStorage);
+      vi.stubGlobal('localStorage', mockLocalStorage);
+      vi.stubGlobal('window', { localStorage: mockLocalStorage });
 
       const { getCheckpointSlots, getLatestCheckpoint } = await import('../saves');
 

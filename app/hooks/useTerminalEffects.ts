@@ -1,8 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useMemo } from 'react';
-import { TutorialStateID, type GamePhase, type GameState, type ImageTrigger, type VideoTrigger } from '../types';
+import { useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
+import { type GamePhase, type GameState, type ImageTrigger } from '../types';
 import { createEntry } from '../engine/commands';
+import { createEntryI18n } from '../engine/commands/utils';
+import { appendToHistory } from '../lib/appendToHistory';
 import { autoSave } from '../storage/saves';
 import { addPlaytime } from '../storage/statistics';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
@@ -10,55 +12,73 @@ import { AUTOSAVE_INTERVAL_MS } from '../constants/timing';
 import {
   BLACKOUT_TRANSITION_DELAY_MS,
   CRT_WARMUP_DURATION_MS,
-  GLITCH_DURATIONS,
-  GLITCH_TIMING,
   PARANOIA_TIMING,
   RISK_PULSE_DURATION_MS,
 } from '../constants/timing';
-import { uiRandom, uiRandomPick, uiChance } from '../engine/rng';
+import { uiRandom, uiRandomPick } from '../engine/rng';
 import { initVoices } from '../components/FirewallEyes';
 import { applyOptionsToDocument, readStoredOptions } from './useOptions';
 import type { SoundType } from './useSound';
+import { useI18n } from '../i18n';
 
 // "They're watching" paranoia messages
-const PARANOIA_MESSAGES = [
-  'TRACE DETECTED: External observer connected',
-  'WARNING: Packet inspection in progress',
-  'NOTICE: Session being monitored',
-  'ALERT: Unauthorized access attempt logged',
-  'SYSTEM: Someone else is in the system',
-  'ANOMALY: Data exfiltration detected',
-  'CAUTION: Your keystrokes are being recorded',
-  'INFO: Connection routed through unknown node',
-  'WARNING: Firewall breach attempt detected',
-  'NOTICE: Session flagged for review',
-  'ALERT: Third-party listener identified',
-  'SYSTEM: Memory dump in progress',
-  'TRACE: Unknown process accessing your session',
-  'NOTICE: Query patterns being analyzed',
-  'WARNING: Session duration exceeds normal parameters',
-  'SYSTEM: Behavioral profile update in progress',
-  'ALERT: File access sequence flagged as anomalous',
-  'CAUTION: Terminal output being mirrored',
-  'INFO: Your IP has been logged for review',
-  'NOTICE: Command history archived to external server',
-  'WARNING: They know where you are',
-  'ALERT: Physical location triangulated',
-  'SYSTEM: Dispatch notification pending',
-  'NOTICE: Someone just accessed your personnel file',
-  'CAUTION: Your screen is being watched',
-  'WARNING: Audio capture device detected',
-  'ALERT: Camera feed request intercepted',
-  'SYSTEM: Facial recognition scan initiated',
-  'SIGNAL: ...they remember you from before...',
-  'TRACE: Pattern matches previous intruder',
-  'NOTICE: The watchers have been notified',
-  'ALERT: You were expected',
-  'SYSTEM: Countermeasures initializing',
-  'WARNING: Too late to disconnect cleanly',
-  'CAUTION: Your curiosity has been noted',
-  'INFO: This session will be... remembered',
+interface LocalizedTerminalCopy {
+  key: string;
+  fallback: string;
+}
+
+const PARANOIA_MESSAGES: LocalizedTerminalCopy[] = [
+  { key: 'terminal.paranoia.1', fallback: 'TRACE DETECTED: External observer connected' },
+  { key: 'terminal.paranoia.2', fallback: 'WARNING: Packet inspection in progress' },
+  { key: 'terminal.paranoia.3', fallback: 'NOTICE: Session being monitored' },
+  { key: 'terminal.paranoia.4', fallback: 'ALERT: Unauthorized access attempt logged' },
+  { key: 'terminal.paranoia.5', fallback: 'SYSTEM: Someone else is in the system' },
+  { key: 'terminal.paranoia.6', fallback: 'ANOMALY: Data exfiltration detected' },
+  { key: 'terminal.paranoia.7', fallback: 'CAUTION: Your keystrokes are being recorded' },
+  { key: 'terminal.paranoia.8', fallback: 'INFO: Connection routed through unknown node' },
+  { key: 'terminal.paranoia.9', fallback: 'WARNING: Firewall breach attempt detected' },
+  { key: 'terminal.paranoia.10', fallback: 'NOTICE: Session flagged for review' },
+  { key: 'terminal.paranoia.11', fallback: 'ALERT: Third-party listener identified' },
+  { key: 'terminal.paranoia.12', fallback: 'SYSTEM: Memory dump in progress' },
+  { key: 'terminal.paranoia.13', fallback: 'TRACE: Unknown process accessing your session' },
+  { key: 'terminal.paranoia.14', fallback: 'NOTICE: Query patterns being analyzed' },
+  {
+    key: 'terminal.paranoia.15',
+    fallback: 'WARNING: Session duration exceeds normal parameters',
+  },
+  { key: 'terminal.paranoia.16', fallback: 'SYSTEM: Behavioral profile update in progress' },
+  {
+    key: 'terminal.paranoia.17',
+    fallback: 'ALERT: File access sequence flagged as anomalous',
+  },
+  { key: 'terminal.paranoia.18', fallback: 'CAUTION: Terminal output being mirrored' },
+  { key: 'terminal.paranoia.19', fallback: 'INFO: Your IP has been logged for review' },
+  {
+    key: 'terminal.paranoia.20',
+    fallback: 'NOTICE: Command history archived to external server',
+  },
+  { key: 'terminal.paranoia.21', fallback: 'WARNING: They know where you are' },
+  { key: 'terminal.paranoia.22', fallback: 'ALERT: Physical location triangulated' },
+  { key: 'terminal.paranoia.23', fallback: 'SYSTEM: Dispatch notification pending' },
+  {
+    key: 'terminal.paranoia.24',
+    fallback: 'NOTICE: Someone just accessed your personnel file',
+  },
+  { key: 'terminal.paranoia.25', fallback: 'CAUTION: Your screen is being watched' },
+  { key: 'terminal.paranoia.26', fallback: 'WARNING: Audio capture device detected' },
+  { key: 'terminal.paranoia.27', fallback: 'ALERT: Camera feed request intercepted' },
+  { key: 'terminal.paranoia.28', fallback: 'SYSTEM: Facial recognition scan initiated' },
+  { key: 'terminal.paranoia.29', fallback: 'SIGNAL: ...they remember you from before...' },
+  { key: 'terminal.paranoia.30', fallback: 'TRACE: Pattern matches previous intruder' },
+  { key: 'terminal.paranoia.31', fallback: 'NOTICE: The watchers have been notified' },
+  { key: 'terminal.paranoia.32', fallback: 'ALERT: You were expected' },
+  { key: 'terminal.paranoia.33', fallback: 'SYSTEM: Countermeasures initializing' },
+  { key: 'terminal.paranoia.34', fallback: 'WARNING: Too late to disconnect cleanly' },
+  { key: 'terminal.paranoia.35', fallback: 'CAUTION: Your curiosity has been noted' },
+  { key: 'terminal.paranoia.36', fallback: 'INFO: This session will be... remembered' },
 ];
+
+const ALIEN_MANIFESTATION_INTERVAL_MS = 30000;
 
 interface TerminalEffectsRefs {
   outputRef: React.RefObject<HTMLDivElement | null>;
@@ -69,7 +89,8 @@ interface TerminalEffectsRefs {
   typingSpeedWarningTimeout: React.MutableRefObject<NodeJS.Timeout | null>;
   idleHintTimerRef: React.MutableRefObject<NodeJS.Timeout | null>;
   lastScrollTimeRef: React.MutableRefObject<number>;
-  firewallPauseStartRef: React.MutableRefObject<number | null>;
+  timedMechanicPauseStartRef: React.MutableRefObject<number | null>;
+  timedMechanicResumeAdjustmentRef: React.MutableRefObject<number>;
   maxDetectionRef: React.MutableRefObject<number>;
   prevDetectionRef: React.MutableRefObject<number>;
   skipStreamingRef: React.MutableRefObject<boolean>;
@@ -83,14 +104,14 @@ interface UseTerminalEffectsOptions {
   isWarmingUp: boolean;
   showTuringTest: boolean;
   activeImage: ImageTrigger | null;
-  activeVideo: VideoTrigger | null;
   showSettings: boolean;
   showAchievements: boolean;
   showStatistics: boolean;
   showPauseMenu: boolean;
   showHeaderMenu: boolean;
+  showTutorialSkip: boolean;
   isEnterOnlyMode: boolean;
-  isFirewallPaused: boolean;
+  pauseTimedMechanics: boolean;
   suppressPressure: boolean;
   soundEnabled: boolean;
   onEnterPress?: () => void;
@@ -107,8 +128,6 @@ interface UseTerminalEffectsOptions {
   setAvatarCreepyEntrance: React.Dispatch<React.SetStateAction<boolean>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
-  setGlitchActive: React.Dispatch<React.SetStateAction<boolean>>;
-  setGlitchHeavy: React.Dispatch<React.SetStateAction<boolean>>;
   setParanoiaPosition: React.Dispatch<React.SetStateAction<{ top: number; left: number }>>;
   setParanoiaMessage: React.Dispatch<React.SetStateAction<string | null>>;
   setRiskPulse: React.Dispatch<React.SetStateAction<boolean>>;
@@ -121,7 +140,9 @@ interface UseTerminalEffectsOptions {
   setShowHeaderMenu: React.Dispatch<React.SetStateAction<boolean>>;
   setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveImage: React.Dispatch<React.SetStateAction<ImageTrigger | null>>;
-  setActiveVideo: React.Dispatch<React.SetStateAction<VideoTrigger | null>>;
+  setInterferenceBurst: React.Dispatch<React.SetStateAction<{ top: number } | null>>;
+  setTerminalStaticLevel: React.Dispatch<React.SetStateAction<number>>;
+  setAlienSilhouetteVisible: React.Dispatch<React.SetStateAction<boolean>>;
   refs: TerminalEffectsRefs;
 }
 
@@ -133,14 +154,14 @@ export function useTerminalEffects({
   isWarmingUp,
   showTuringTest,
   activeImage,
-  activeVideo,
   showSettings,
   showAchievements,
   showStatistics,
   showPauseMenu,
   showHeaderMenu,
+  showTutorialSkip,
   isEnterOnlyMode,
-  isFirewallPaused,
+  pauseTimedMechanics,
   suppressPressure,
   soundEnabled,
   onEnterPress,
@@ -154,11 +175,9 @@ export function useTerminalEffects({
   setShowRiskTracker,
   setShowAttBar,
   setShowAvatar,
-  setAvatarCreepyEntrance,
+  setAvatarCreepyEntrance: _setAvatarCreepyEntrance,
   setGamePhase,
   setGameState,
-  setGlitchActive,
-  setGlitchHeavy,
   setParanoiaPosition,
   setParanoiaMessage,
   setRiskPulse,
@@ -171,7 +190,9 @@ export function useTerminalEffects({
   setShowHeaderMenu,
   setShowTuringTest,
   setActiveImage,
-  setActiveVideo,
+  setInterferenceBurst,
+  setTerminalStaticLevel,
+  setAlienSilhouetteVisible,
   refs,
 }: UseTerminalEffectsOptions) {
   const {
@@ -183,11 +204,13 @@ export function useTerminalEffects({
     typingSpeedWarningTimeout,
     idleHintTimerRef,
     lastScrollTimeRef,
-    firewallPauseStartRef,
+    timedMechanicPauseStartRef,
+    timedMechanicResumeAdjustmentRef,
     maxDetectionRef,
     prevDetectionRef,
     skipStreamingRef,
   } = refs;
+  const { t } = useI18n();
 
   const shouldRestoreFocus =
     gamePhase === 'terminal' &&
@@ -196,19 +219,21 @@ export function useTerminalEffects({
     !isStreaming &&
     !showTuringTest &&
     !activeImage &&
-    !activeVideo &&
     !showSettings &&
     !showAchievements &&
     !showStatistics &&
     !showPauseMenu &&
-    !showHeaderMenu;
+    !showHeaderMenu &&
+    !showTutorialSkip;
 
   const focusTerminalTarget = useCallback(() => {
-    const target = inputRef.current ?? enterOnlyButtonRef.current;
+    const target = isEnterOnlyMode
+      ? (enterOnlyButtonRef.current ?? inputRef.current)
+      : (inputRef.current ?? enterOnlyButtonRef.current);
     if (!target) return;
     if (document.activeElement === target) return;
     target.focus();
-  }, [enterOnlyButtonRef, inputRef]);
+  }, [enterOnlyButtonRef, inputRef, isEnterOnlyMode]);
 
   const focusTerminalInput = useCallback(() => {
     if (!shouldRestoreFocus) return;
@@ -228,8 +253,19 @@ export function useTerminalEffects({
       return;
     }
 
+    if (pauseTimedMechanics || timedMechanicPauseStartRef.current !== null) {
+      return;
+    }
+
     const updateTimer = () => {
-      const remaining = Math.max(0, gameState.timedDecryptEndTime - Date.now());
+      if (timedMechanicPauseStartRef.current !== null) {
+        return;
+      }
+      const adjustment = timedMechanicResumeAdjustmentRef.current;
+      const remaining = Math.max(0, gameState.timedDecryptEndTime + adjustment - Date.now());
+      if (adjustment > 0) {
+        timedMechanicResumeAdjustmentRef.current = 0;
+      }
       setTimedDecryptRemaining(remaining);
     };
 
@@ -237,7 +273,70 @@ export function useTerminalEffects({
     const interval = setInterval(updateTimer, 100);
 
     return () => clearInterval(interval);
-  }, [gameState.timedDecryptActive, gameState.timedDecryptEndTime, setTimedDecryptRemaining]);
+  }, [
+    gameState.timedDecryptActive,
+    gameState.timedDecryptEndTime,
+    pauseTimedMechanics,
+    setTimedDecryptRemaining,
+    timedMechanicPauseStartRef,
+    timedMechanicResumeAdjustmentRef,
+  ]);
+
+  // Pause timed mechanics while blocking overlays/popups are open.
+  useEffect(() => {
+    if (!gameState.timedDecryptActive && !gameState.countdownActive) {
+      timedMechanicPauseStartRef.current = null;
+      timedMechanicResumeAdjustmentRef.current = 0;
+      return;
+    }
+
+    if (pauseTimedMechanics) {
+      if (timedMechanicPauseStartRef.current === null) {
+        timedMechanicPauseStartRef.current = Date.now();
+      }
+      return;
+    }
+
+    if (timedMechanicPauseStartRef.current === null) {
+      return;
+    }
+
+    const pauseDuration = Date.now() - timedMechanicPauseStartRef.current;
+    timedMechanicPauseStartRef.current = null;
+    timedMechanicResumeAdjustmentRef.current = pauseDuration;
+
+    if (pauseDuration <= 0) {
+      timedMechanicResumeAdjustmentRef.current = 0;
+      return;
+    }
+
+    setGameState(prev => {
+      let nextState = prev;
+
+      if (prev.timedDecryptActive && prev.timedDecryptEndTime) {
+        nextState = {
+          ...nextState,
+          timedDecryptEndTime: prev.timedDecryptEndTime + pauseDuration,
+        };
+      }
+
+      if (prev.countdownActive && prev.countdownEndTime) {
+        nextState = {
+          ...nextState,
+          countdownEndTime: prev.countdownEndTime + pauseDuration,
+        };
+      }
+
+      return nextState;
+    });
+  }, [
+    gameState.countdownActive,
+    gameState.timedDecryptActive,
+    pauseTimedMechanics,
+    setGameState,
+    timedMechanicPauseStartRef,
+    timedMechanicResumeAdjustmentRef,
+  ]);
 
   // Scroll behavior: during streaming scroll to bottom, after streaming scroll to content start
   useEffect(() => {
@@ -247,10 +346,14 @@ export function useTerminalEffects({
         outputRef.current.scrollTop = outputRef.current.scrollHeight;
       } else if (streamStartScrollPos.current !== null) {
         // Streaming just completed - scroll back to where content started
-        outputRef.current.scrollTo({
-          top: streamStartScrollPos.current,
-          behavior: 'smooth',
-        });
+        if (typeof outputRef.current.scrollTo === 'function') {
+          outputRef.current.scrollTo({
+            top: streamStartScrollPos.current,
+            behavior: 'smooth',
+          });
+        } else {
+          outputRef.current.scrollTop = streamStartScrollPos.current;
+        }
         streamStartScrollPos.current = null;
       } else {
         // Normal operation - scroll to bottom
@@ -277,7 +380,7 @@ export function useTerminalEffects({
   }, [inputRef]);
 
   // Restore focus after overlays close or mode changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!shouldRestoreFocus) return;
     const timeout = window.setTimeout(() => {
       focusTerminalTarget();
@@ -287,9 +390,10 @@ export function useTerminalEffects({
 
   // Cleanup typing speed warning timeout on unmount
   useEffect(() => {
+    const warningTimeout = typingSpeedWarningTimeout.current;
     return () => {
-      if (typingSpeedWarningTimeout.current) {
-        clearTimeout(typingSpeedWarningTimeout.current);
+      if (warningTimeout) {
+        clearTimeout(warningTimeout);
       }
     };
   }, [typingSpeedWarningTimeout]);
@@ -310,7 +414,13 @@ export function useTerminalEffects({
       setShowAttBar(true);
       setShowAvatar(true);
     }
-  }, [gameState.tutorialComplete, setShowEvidenceTracker, setShowRiskTracker, setShowAttBar, setShowAvatar]);
+  }, [
+    gameState.tutorialComplete,
+    setShowEvidenceTracker,
+    setShowRiskTracker,
+    setShowAttBar,
+    setShowAvatar,
+  ]);
 
   // Avatar entrance is now triggered by INTRO block 1 in useTerminalInput
 
@@ -319,14 +429,17 @@ export function useTerminalEffects({
     const interval = setInterval(() => {
       const currentState = gameStateRef.current;
       if (!currentState.isGameOver) {
-        autoSave(currentState);
+        const savedAt = autoSave(currentState);
+        if (typeof savedAt === 'number') {
+          setGameState(prev => ({ ...prev, lastSaveTime: savedAt }));
+        }
         // Track playtime every autosave interval
         addPlaytime(AUTOSAVE_INTERVAL_MS);
       }
     }, AUTOSAVE_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [gameStateRef, setGameState]);
 
   // Phase transition: when evidencesSaved becomes true, trigger blackout
   // Skip if isGameOver is true to avoid conflicting state (e.g., detection hit 100% on a prior command)
@@ -339,112 +452,16 @@ export function useTerminalEffects({
     }
   }, [gameState.evidencesSaved, gamePhase, gameState.isGameOver, setGamePhase]);
 
-  // Random glitch effects based on detection level - INTENSITY SCALING
-  useEffect(() => {
-    if (gamePhase !== 'terminal' || gameState.isGameOver) return;
-
-    // Suppress glitches during atmosphere phase (no pressure systems)
-    if (suppressPressure) return;
-
-    const detection = gameState.detectionLevel;
-    const paranoiaBoost = gameState.paranoiaLevel || 0;
-    // Higher detection = more frequent AND more intense glitches
-    // Scaled intensity: at 20%: rare light, at 50%: occasional medium, at 80%+: frequent heavy
-    const glitchChance =
-      detection > 20 ? (detection - 20) * 0.35 + paranoiaBoost * 0.15 : paranoiaBoost * 0.15;
-
-    // Check interval scales with detection (faster at higher levels)
-    const checkInterval = Math.max(
-      GLITCH_TIMING.MIN_INTERVAL_MS,
-      GLITCH_TIMING.BASE_INTERVAL_MS -
-        detection * GLITCH_TIMING.DETECTION_FACTOR -
-        paranoiaBoost * GLITCH_TIMING.VARIANCE_FACTOR
-    );
-
-    // Track all active timeouts for cleanup and cancelled flag for nested callbacks
-    const activeTimeouts: NodeJS.Timeout[] = [];
-    let cancelled = false;
-
-    const interval = setInterval(() => {
-      if (cancelled) return;
-      if (uiRandom() * 100 < glitchChance) {
-        if (detection >= 80) {
-          // Critical glitch - screen shake, heavy effects, sound
-          setGlitchHeavy(true);
-          playSound('glitch');
-          playSound('static');
-          const t1 = setTimeout(() => {
-            if (cancelled) return;
-            setGlitchHeavy(false);
-            // Double glitch at very high detection
-            if (detection >= 90 && uiChance(0.5)) {
-              const t2 = setTimeout(() => {
-                if (cancelled) return;
-                setGlitchHeavy(true);
-                playSound('glitch');
-                const t3 = setTimeout(() => {
-                  if (cancelled) return;
-                  setGlitchHeavy(false);
-                }, GLITCH_DURATIONS.MEDIUM);
-                activeTimeouts.push(t3);
-              }, GLITCH_DURATIONS.LIGHT);
-              activeTimeouts.push(t2);
-            }
-          }, GLITCH_DURATIONS.CRITICAL);
-          activeTimeouts.push(t1);
-        } else if (detection >= 60) {
-          // Heavy glitch at high detection
-          setGlitchHeavy(true);
-          playSound('glitch');
-          const t = setTimeout(() => {
-            if (cancelled) return;
-            setGlitchHeavy(false);
-          }, GLITCH_DURATIONS.HEAVY);
-          activeTimeouts.push(t);
-        } else if (detection >= 40) {
-          // Medium glitch - longer duration
-          setGlitchActive(true);
-          playSound('static');
-          const t = setTimeout(() => {
-            if (cancelled) return;
-            setGlitchActive(false);
-          }, GLITCH_DURATIONS.MEDIUM + 100);
-          activeTimeouts.push(t);
-        } else {
-          // Light glitch
-          setGlitchActive(true);
-          playSound('static');
-          const t = setTimeout(() => {
-            if (cancelled) return;
-            setGlitchActive(false);
-          }, GLITCH_DURATIONS.LIGHT);
-          activeTimeouts.push(t);
-        }
-      }
-    }, checkInterval);
-
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-      activeTimeouts.forEach(t => clearTimeout(t));
-    };
-  }, [
-    gameState.detectionLevel,
-    gameState.paranoiaLevel,
-    gameState.isGameOver,
-    gamePhase,
-    playSound,
-    setGlitchActive,
-    setGlitchHeavy,
-    suppressPressure,
-  ]);
-
   // "They're watching" paranoia messages
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
 
     // Suppress paranoia during atmosphere phase (no pressure systems)
     if (suppressPressure) return;
+    if (pauseTimedMechanics) {
+      setParanoiaMessage(null);
+      return;
+    }
 
     const detection = gameState.detectionLevel;
     const paranoiaBoost = gameState.paranoiaLevel || 0;
@@ -471,7 +488,7 @@ export function useTerminalEffects({
       const left = 50 + uiRandom() * Math.max(0, maxLeft - 50);
 
       setParanoiaPosition({ top, left });
-      setParanoiaMessage(message);
+      setParanoiaMessage(t(message.key, undefined, message.fallback));
       playSound('warning');
 
       // Clear after animation
@@ -493,7 +510,9 @@ export function useTerminalEffects({
     playSound,
     setParanoiaMessage,
     setParanoiaPosition,
+    pauseTimedMechanics,
     suppressPressure,
+    t,
   ]);
 
   // Track detection level changes for sound/visual alerts AND Turing test trigger
@@ -524,19 +543,19 @@ export function useTerminalEffects({
       // Trigger screen shake on large detection increase (10+)
       if (current - prev >= 10) {
         setIsShaking(true);
-        setTimeout(() => setIsShaking(false), GLITCH_DURATIONS.SCREEN_SHAKE);
+        setTimeout(() => setIsShaking(false), 300);
       }
-      
+
       // Check if Turing test should trigger (detection crossed 50% threshold)
       // This catches cases where detection increases from any source (including firewall eyes)
-      const crossedTuringThreshold = 
-        prev < DETECTION_THRESHOLDS.TURING_TRIGGER && 
+      const crossedTuringThreshold =
+        prev < DETECTION_THRESHOLDS.TURING_TRIGGER &&
         current >= DETECTION_THRESHOLDS.TURING_TRIGGER;
-      
+
       if (
         crossedTuringThreshold &&
         gameState.tutorialComplete &&
-        gameState.truthsDiscovered.size >= 1 &&
+        (gameState.evidenceCount || 0) >= 1 &&
         !gameState.turingEvaluationActive &&
         !gameState.turingEvaluationCompleted &&
         !gameState.singularEventsTriggered?.has('turing_evaluation') &&
@@ -551,16 +570,20 @@ export function useTerminalEffects({
             ...(prevState.singularEventsTriggered || []),
             'turing_evaluation',
           ]),
-          history: [
-            ...prevState.history,
+          history: appendToHistory(
+            prevState.history,
             createEntry('system', ''),
             createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-            createEntry('warning', '        SECURITY PROTOCOL: TURING EVALUATION INITIATED'),
+            createEntryI18n(
+              'warning',
+              'engine.commands.helpers.security_protocol_turing_evaluation_initiated',
+              '        SECURITY PROTOCOL: TURING EVALUATION INITIATED'
+            ),
             createEntry('error', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
             createEntry('system', ''),
-          ],
+          ),
         }));
-        
+
         // Trigger flicker and show Turing test overlay after delay
         setTimeout(() => {
           setShowTuringTest(true);
@@ -572,7 +595,7 @@ export function useTerminalEffects({
   }, [
     gameState.detectionLevel,
     gameState.tutorialComplete,
-    gameState.truthsDiscovered.size,
+    gameState.evidenceCount,
     gameState.turingEvaluationActive,
     gameState.turingEvaluationCompleted,
     gameState.singularEventsTriggered,
@@ -583,6 +606,8 @@ export function useTerminalEffects({
     setRiskPulse,
     setGameState,
     setShowTuringTest,
+    maxDetectionRef,
+    prevDetectionRef,
   ]);
 
   // Start ambient sound when tutorial completes
@@ -610,8 +635,19 @@ export function useTerminalEffects({
       return;
     }
 
+    if (pauseTimedMechanics || timedMechanicPauseStartRef.current !== null) {
+      return;
+    }
+
     const updateCountdown = () => {
-      const remaining = Math.max(0, gameState.countdownEndTime - Date.now());
+      if (timedMechanicPauseStartRef.current !== null) {
+        return;
+      }
+      const adjustment = timedMechanicResumeAdjustmentRef.current;
+      const remaining = Math.max(0, gameState.countdownEndTime + adjustment - Date.now());
+      if (adjustment > 0) {
+        timedMechanicResumeAdjustmentRef.current = 0;
+      }
       const seconds = Math.ceil(remaining / 1000);
 
       if (seconds <= 0) {
@@ -645,10 +681,13 @@ export function useTerminalEffects({
     gameState.countdownActive,
     gameState.countdownEndTime,
     gamePhase,
+    pauseTimedMechanics,
     playSound,
     setCountdownDisplay,
     setGamePhase,
     setGameState,
+    timedMechanicPauseStartRef,
+    timedMechanicResumeAdjustmentRef,
   ]);
 
   // Keep gameState ref updated
@@ -670,79 +709,96 @@ export function useTerminalEffects({
   }, [outputRef, lastScrollTimeRef]);
 
   const idleHints = useMemo(
-    (): { hint: string; condition: (s: GameState) => boolean }[] => [
+    (): Array<LocalizedTerminalCopy & { condition: (s: GameState) => boolean }> => [
       {
-        hint: "Use 'ls' to see what's in the current directory.",
+        key: 'terminal.idleHint.1',
+        fallback: "Use 'ls' to see what's in the current directory.",
         condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
       },
       {
-        hint: "Try 'open' on a .txt file to read it.",
+        key: 'terminal.idleHint.2',
+        fallback: "Try 'open' on a .txt file to read it.",
         condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
       },
       {
-        hint: "Navigation tip: 'cd' changes directories. Start exploring.",
+        key: 'terminal.idleHint.3',
+        fallback: "Navigation tip: 'cd' changes directories. Start exploring.",
         condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
       },
       {
-        hint: 'You need evidence. Look for files that seem... off.',
+        key: 'terminal.idleHint.4',
+        fallback: 'You need evidence. Look for files that seem... off.',
         condition: (s: GameState) =>
-          (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 3,
+          (s.evidenceCount || 0) === 0 && (s.filesRead?.size || 0) >= 3,
       },
       {
-        hint: 'Some documents contradict the official narrative. Find them.',
+        key: 'terminal.idleHint.5',
+        fallback: 'Some documents contradict the official narrative. Find them.',
         condition: (s: GameState) =>
-          (s.truthsDiscovered?.size || 0) === 0 && (s.filesRead?.size || 0) >= 5,
+          (s.evidenceCount || 0) === 0 && (s.filesRead?.size || 0) >= 5,
       },
       {
-        hint: 'Have you checked /internal?',
+        key: 'terminal.idleHint.6',
+        fallback: 'Have you checked /internal?',
         condition: (s: GameState) =>
           s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt'),
       },
       {
-        hint: 'The /comms directory might have useful intel.',
+        key: 'terminal.idleHint.7',
+        fallback: 'The /comms directory might have useful intel.',
         condition: (s: GameState) =>
           !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt'),
       },
       {
-        hint: "Detection is high. The 'wait' command lets time pass safely.",
+        key: 'terminal.idleHint.8',
+        fallback: "Detection is high. The 'wait' command lets time pass safely.",
         condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HOSTILITY_MED,
       },
       {
-        hint: "They're watching closely. Consider using 'wait' to reduce suspicion.",
+        key: 'terminal.idleHint.9',
+        fallback: "They're watching closely. Consider using 'wait' to reduce suspicion.",
         condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.ALERT,
       },
       {
-        hint: "CAUTION: Detection critical. 'wait' might buy you time.",
+        key: 'terminal.idleHint.10',
+        fallback: "CAUTION: Detection critical. 'wait' might buy you time.",
         condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HEAVY_GLITCH,
       },
       {
-        hint: "You've seen a lot. There may be... deeper access available.",
+        key: 'terminal.idleHint.11',
+        fallback: "You've seen a lot. There may be... deeper access available.",
         condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.adminUnlocked,
       },
       {
-        hint: "Some commands aren't listed. Keep digging.",
+        key: 'terminal.idleHint.12',
+        fallback: "Some commands aren't listed. Keep digging.",
         condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.adminUnlocked,
       },
       {
-        hint: "Use 'ls' to see what's in the current directory.",
+        key: 'terminal.idleHint.13',
+        fallback: "Use 'ls' to see what's in the current directory.",
         condition: (s: GameState) => s.sessionCommandCount < 5,
       },
       {
-        hint: "Some files are ENCRYPTED. You'll need 'decrypt' for those.",
+        key: 'terminal.idleHint.14',
+        fallback: 'Some files still carry legacy encryption headers, but recovered text opens directly.',
         condition: (s: GameState) =>
-          (s.categoriesRead?.size || 0) >= 2 && (s.truthsDiscovered?.size || 0) < 2,
+          (s.categoriesRead?.size || 0) >= 2 && (s.evidenceCount || 0) < 2,
       },
       {
-        hint: "Try the 'progress' command to see what you've found.",
-        condition: (s: GameState) => (s.truthsDiscovered?.size || 0) >= 1,
+        key: 'terminal.idleHint.15',
+        fallback: "Try the 'progress' command to see what you've found.",
+        condition: (s: GameState) => (s.evidenceCount || 0) >= 1,
       },
       {
-        hint: "Don't forget: 'note' saves reminders, 'bookmark' saves files.",
+        key: 'terminal.idleHint.16',
+        fallback: "Don't forget: 'note' saves reminders, 'bookmark' saves files.",
         condition: (s: GameState) =>
           (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0,
       },
       {
-        hint: "Check 'unread' to see what you haven't opened yet.",
+        key: 'terminal.idleHint.17',
+        fallback: "Check 'unread' to see what you haven't opened yet.",
         condition: (s: GameState) => (s.filesRead?.size || 0) >= 3,
       },
     ],
@@ -778,10 +834,13 @@ export function useTerminalEffects({
       const hint = uiRandomPick(applicableHints);
 
       // Add UFO74 hint to terminal
-      const hintEntry = createEntry('ufo74', `[UFO74]: ${hint.hint}`);
+      const hintEntry = createEntry(
+        'ufo74',
+        `[UFO74]: ${t(hint.key, undefined, hint.fallback)}`
+      );
       setGameState(prev => ({
         ...prev,
-        history: [...prev.history, hintEntry],
+        history: appendToHistory(prev.history, hintEntry),
         idleHintsGiven: (prev.idleHintsGiven || 0) + 1,
         lastActivityTime: Date.now(),
       }));
@@ -805,14 +864,8 @@ export function useTerminalEffects({
     gameStateRef,
     idleHintTimerRef,
     lastScrollTimeRef,
+    t,
   ]);
-
-  // Track when firewall pause starts (media or Turing Test)
-  useEffect(() => {
-    if (isFirewallPaused && firewallPauseStartRef.current === null) {
-      firewallPauseStartRef.current = Date.now();
-    }
-  }, [isFirewallPaused, firewallPauseStartRef]);
 
   // Handle skip streaming (spacebar/enter during streaming)
   useEffect(() => {
@@ -829,6 +882,129 @@ export function useTerminalEffects({
     }
   }, [isStreaming, skipStreamingRef]);
 
+  // Random horizontal interference bursts (every 20-40 seconds)
+  useEffect(() => {
+    if (gamePhase !== 'terminal' || gameState.isGameOver) return;
+    if (suppressPressure) return;
+
+    const scheduleNextBurst = () => {
+      // Random interval between 20-40 seconds
+      const delay = 20000 + uiRandom() * 20000;
+      return setTimeout(() => {
+        if (pauseTimedMechanics) return;
+        // Pick a random vertical position for the interference line
+        const top = Math.floor(uiRandom() * 100);
+        setInterferenceBurst({ top });
+        // Clear after the animation duration (120ms)
+        setTimeout(() => setInterferenceBurst(null), 150);
+      }, delay);
+    };
+
+    const timerId = scheduleNextBurst();
+    // Reschedule periodically
+    const interval = setInterval(() => {
+      const delay = 20000 + uiRandom() * 20000;
+      setTimeout(() => {
+        if (pauseTimedMechanics) return;
+        const top = Math.floor(uiRandom() * 100);
+        setInterferenceBurst({ top });
+        setTimeout(() => setInterferenceBurst(null), 150);
+      }, delay);
+    }, 30000); // Check roughly every 30s
+
+    return () => {
+      clearTimeout(timerId);
+      clearInterval(interval);
+    };
+  }, [
+    gamePhase,
+    gameState.isGameOver,
+    pauseTimedMechanics,
+    suppressPressure,
+    setInterferenceBurst,
+  ]);
+
+  // Terminal noise intensity — continuous 0-1 ramp from 70% to 100% detection
+  useEffect(() => {
+    const detection = gameState.detectionLevel;
+    const intensity =
+      detection < 70 ? 0 : Math.min(1, 0.08 + ((detection - 70) / 30) * 0.92);
+    setTerminalStaticLevel(intensity);
+  }, [gameState.detectionLevel, setTerminalStaticLevel]);
+
+  // Alien silhouette in static (appears every 30 seconds while high-risk static is active)
+  const isHighRiskStatic = gameState.detectionLevel >= 70;
+  useEffect(() => {
+    const staticActive = isHighRiskStatic;
+    const previewRemaining = Math.max(0, (gameState.alienPreviewUntil ?? 0) - Date.now());
+    if (gamePhase !== 'terminal' || gameState.isGameOver) return;
+    if (!staticActive && previewRemaining <= 0) {
+      setAlienSilhouetteVisible(false);
+      return;
+    }
+
+    let cancelled = false;
+    const activeTimeouts: NodeJS.Timeout[] = [];
+
+    const startManifestation = (durationMs?: number) => {
+      if (cancelled || pauseTimedMechanics) return;
+      setAlienSilhouetteVisible(true);
+      playSound('static');
+      const omenTimeout = setTimeout(() => {
+        if (!cancelled) playSound('omen');
+      }, 1500);
+      activeTimeouts.push(omenTimeout);
+
+      const hideDelay = durationMs ?? 5000 + uiRandom() * 3000;
+      const hideTimeout = setTimeout(() => {
+        if (!cancelled) {
+          setAlienSilhouetteVisible(false);
+        }
+      }, hideDelay);
+      activeTimeouts.push(hideTimeout);
+      return hideDelay;
+    };
+
+    const scheduleAlien = (delayOverride?: number) => {
+      const delay = delayOverride ?? ALIEN_MANIFESTATION_INTERVAL_MS;
+      const t = setTimeout(() => {
+        if (cancelled) return;
+        if (pauseTimedMechanics) {
+          scheduleAlien(5000);
+          return;
+        }
+
+        const hideDelay = startManifestation();
+        if (hideDelay !== undefined && !cancelled) {
+          scheduleAlien(ALIEN_MANIFESTATION_INTERVAL_MS);
+        }
+      }, delay);
+      activeTimeouts.push(t);
+    };
+
+    if (previewRemaining > 0) {
+      startManifestation(previewRemaining);
+      if (staticActive) {
+        scheduleAlien(ALIEN_MANIFESTATION_INTERVAL_MS);
+      }
+    } else if (staticActive) {
+      scheduleAlien();
+    }
+
+    return () => {
+      cancelled = true;
+      activeTimeouts.forEach(t => clearTimeout(t));
+    };
+  }, [
+    gamePhase,
+    gameState.isGameOver,
+    isHighRiskStatic,
+    gameState.alienPreviewUntil,
+    pauseTimedMechanics,
+    playSound,
+    setAlienSilhouetteVisible,
+  ]);
+
   // Handle ESC key for pause menu
   useEffect(() => {
     const handleEscKey = (e: KeyboardEvent) => {
@@ -839,11 +1015,16 @@ export function useTerminalEffects({
           setShowSettings(false);
           setShowAchievements(false);
           setShowStatistics(false);
-        } else if (activeImage || activeVideo) {
+        } else if (activeImage) {
           setActiveImage(null);
-          setActiveVideo(null);
+        } else if (showPauseMenu) {
+          setShowPauseMenu(false);
+          setShowHeaderMenu(false);
         } else {
-          setShowPauseMenu(prev => !prev);
+          if (timedMechanicPauseStartRef.current === null) {
+            timedMechanicPauseStartRef.current = Date.now();
+          }
+          setShowPauseMenu(true);
           setShowHeaderMenu(false);
         }
       }
@@ -859,19 +1040,17 @@ export function useTerminalEffects({
     showAchievements,
     showStatistics,
     activeImage,
-    activeVideo,
+    showPauseMenu,
     setShowSettings,
     setShowAchievements,
     setShowStatistics,
     setActiveImage,
-    setActiveVideo,
     setShowPauseMenu,
     setShowHeaderMenu,
-  ]);
-
-  // Handle Enter key in enter-only mode (tutorial intro, encrypted channel, pending media)
+    timedMechanicPauseStartRef,
+  ]);  // Handle Enter key in enter-only mode (tutorial intro, encrypted channel, pending media)
   // This is needed because the hidden form button approach is unreliable across browsers
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isEnterOnlyMode || !onEnterPress) return;
     if (isStreaming || isProcessing || showTuringTest || gameState.isGameOver) return;
     if (showSettings || showAchievements || showStatistics || showPauseMenu) return;
