@@ -81,6 +81,14 @@ describe('Filesystem', () => {
       const node = getNode('/admin', state);
       expect(node).not.toBeNull();
     });
+
+    it('resolves requiredFlags against top-level boolean state fields', () => {
+      const state = createTestState({ traceSpikeActive: true });
+      const node = getNode('/tmp/purge_trace.sh', state);
+
+      expect(node).not.toBeNull();
+      expect(node?.type).toBe('file');
+    });
   });
 
   describe('listDirectory', () => {
@@ -123,6 +131,14 @@ describe('Filesystem', () => {
       const state = createTestState({ flags: { ghostSessionAvailable: true } });
       const entries = listDirectory('/tmp', state);
       expect(entries!.some(e => e.name === 'ghost_session.log')).toBe(true);
+    });
+
+    it('shows epilogue directories gated by top-level boolean state fields', () => {
+      const state = createTestState({ epilogueUnlocked: true });
+      const entries = listDirectory('/aftermath', state);
+
+      expect(entries).not.toBeNull();
+      expect(entries!.some(e => e.name === 'news_archive_feb96.txt')).toBe(true);
     });
 
     it('hides pattern recognition log until three primary sectors are explored', () => {

@@ -584,11 +584,7 @@ export const systemCommands: CommandRegistry = {
       lines.push(tSystem('status.sessionArchived', 'SESSION ARCHIVED'));
       return {
         output: createOutputEntries(lines),
-        stateChanges: {
-          isGameOver: true,
-          gameOverReason: tSystem('status.sessionArchived', 'SESSION ARCHIVED'),
-          flags: { ...state.flags, sessionArchived: true },
-        },
+        stateChanges: {},
       };
     }
 

@@ -17,6 +17,7 @@ import {
   TUTORIAL_BRIEFING_STEPS,
 } from '../engine/commands/interactiveTutorial';
 import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
+import { MAX_EVIDENCE_COUNT } from '../engine/evidenceRevelation';
 import { saveCheckpoint } from '../storage/saves';
 import { incrementStatistic } from '../storage/statistics';
 import {
@@ -772,12 +773,12 @@ export function useTerminalInput({
         const checkpointReason =
           evidenceCount === 1
             ? translateStatic('checkpoint.reason.firstEvidence', undefined, 'First evidence')
-            : evidenceCount === 5
+            : evidenceCount === MAX_EVIDENCE_COUNT
               ? translateStatic('checkpoint.reason.allEvidenceFound', undefined, 'All evidence found')
               : translateStatic(
                   'checkpoint.reason.evidenceProgress',
                   { count: evidenceCount },
-                  `Evidence ${evidenceCount}/5`
+                  `Evidence ${evidenceCount}/${MAX_EVIDENCE_COUNT}`
                 );
         saveCheckpoint(intermediateState, checkpointReason);
       }
@@ -786,7 +787,10 @@ export function useTerminalInput({
         checkAchievement('first_blood');
       }
 
-      if (evidenceCount === 5 && prevEvidenceCount < 5) {
+      if (
+        evidenceCount === MAX_EVIDENCE_COUNT &&
+        prevEvidenceCount < MAX_EVIDENCE_COUNT
+      ) {
         checkAchievement('truth_seeker');
       }
 

@@ -39,6 +39,16 @@ export function getEvidenceBearingFiles(): Set<string> {
   return _evidenceBearingFiles;
 }
 
+function hasRequiredFlag(state: GameState, flag: string): boolean {
+  const nestedFlagValue = state.flags[flag];
+  if (typeof nestedFlagValue === 'boolean') {
+    return nestedFlagValue;
+  }
+
+  const topLevelValue = Reflect.get(state, flag);
+  return typeof topLevelValue === 'boolean' ? topLevelValue : false;
+}
+
 function countExploredPrimarySectors(state: GameState): number {
   const sectors = new Set<string>();
 
@@ -120,7 +130,7 @@ export function getNode(path: string, state: GameState): FileSystemNode | null {
 
     // Check access requirements
     if (child.requiredFlags) {
-      const hasAllFlags = child.requiredFlags.every((f: string) => state.flags[f]);
+      const hasAllFlags = child.requiredFlags.every((flag: string) => hasRequiredFlag(state, flag));
       if (!hasAllFlags) return null;
     }
 
@@ -156,7 +166,7 @@ export function listDirectory(
   for (const [name, child] of Object.entries(node.children)) {
     // Check visibility requirements for required flags
     if (child.requiredFlags) {
-      const hasAllFlags = child.requiredFlags.every(f => state.flags[f]);
+      const hasAllFlags = child.requiredFlags.every(flag => hasRequiredFlag(state, flag));
       if (!hasAllFlags) continue;
     }
 

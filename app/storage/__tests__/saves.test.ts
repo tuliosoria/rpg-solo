@@ -662,6 +662,22 @@ describe('Save/Load System', () => {
       expect(slots[0].reason).toBe('Checkpoint 6');
     });
 
+    it('creates unique checkpoint ids when multiple checkpoints land in the same millisecond', async () => {
+      const { saveCheckpoint, getCheckpointSlots } = await import('../saves');
+      const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(1_700_000_000_000);
+      const state = createTestState();
+
+      const first = saveCheckpoint(state, 'Checkpoint A');
+      const second = saveCheckpoint(state, 'Checkpoint B');
+
+      expect(first).not.toBeNull();
+      expect(second).not.toBeNull();
+      expect(first!.id).not.toBe(second!.id);
+      expect(getCheckpointSlots().map(slot => slot.id)).toEqual([second!.id, first!.id]);
+
+      nowSpy.mockRestore();
+    });
+
     it('drops at least one existing checkpoint before retrying a quota-limited write', async () => {
       const { saveCheckpoint, getCheckpointSlots } = await import('../saves');
       const state = createTestState();
