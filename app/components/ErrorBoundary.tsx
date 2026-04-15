@@ -74,8 +74,8 @@ export class ErrorBoundary extends Component<Props, State> {
                 {translateStatic('errorBoundary.subtext')}
               </p>
             </div>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details className={styles.details}>
+            {this.state.error && (
+              <details className={styles.details} open>
                 <summary>{translateStatic('errorBoundary.details')}</summary>
                 <pre className={styles.errorStack}>
                   {this.state.error.toString()}

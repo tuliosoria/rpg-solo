@@ -82,8 +82,15 @@ export default function Victory({
   const endingTitle = getEndingTitle(resolvedEndingId);
 
   const ending = ENDINGS[resolvedEndingId];
-  const aol = ending.aol;
-  const timings = AOL_TIMINGS[textSpeed];
+  const aol = ending?.aol ?? {
+    headline: 'BREAKING NEWS',
+    subheadline: 'Story developing...',
+    body: ['Details are still emerging.'],
+    url: 'http://www.aol.com/news/',
+    imageAlt: '[Image unavailable]',
+    visitorCount: 0,
+  };
+  const timings = AOL_TIMINGS[textSpeed] ?? AOL_TIMINGS.normal;
 
   const leakPathLabel = t('ending.dossier.path.unknown');
   const replaySuggestions = useMemo(() => {
@@ -105,45 +112,52 @@ export default function Victory({
   useEffect(() => {
     if (hasRecordedEnding.current) return;
     hasRecordedEnding.current = true;
-    recordEnding('good', commandCount, detectionLevel);
+    try {
+      recordEnding('good', commandCount, detectionLevel);
+    } catch {
+      // Statistics recording is non-critical
+    }
 
     const newAchievements: Achievement[] = [];
-
-    if (commandCount < 50) {
-      const result = unlockAchievement('speed_demon');
-      if (result?.isNew) newAchievements.push(result.achievement);
+    try {
+      if (commandCount < 50) {
+        const result = unlockAchievement('speed_demon');
+        if (result?.isNew) newAchievements.push(result.achievement);
+      }
+      if (detectionLevel < 20) {
+        const result = unlockAchievement('ghost');
+        if (result?.isNew) newAchievements.push(result.achievement);
+      }
+      if (maxDetectionReached >= 80) {
+        const result = unlockAchievement('survivor');
+        if (result?.isNew) newAchievements.push(result.achievement);
+      }
+      if (totalReadableFiles > 0 && filesReadCount >= totalReadableFiles) {
+        const result = unlockAchievement('completionist');
+        if (result?.isNew) newAchievements.push(result.achievement);
+      }
+      if (hasReleasedAlpha) {
+        const result = unlockAchievement('liberator');
+        if (result?.isNew) newAchievements.push(result.achievement);
+      }
+      if (hasLeakedFiles) {
+        const result = unlockAchievement('whistleblower');
+        if (result?.isNew) newAchievements.push(result.achievement);
+      }
+      if (hasNeuralLink) {
+        const result = unlockAchievement('linked');
+        if (result?.isNew) newAchievements.push(result.achievement);
+      }
+      if (hasLeakedFiles && hasReleasedAlpha && hasNeuralLink) {
+        const result = unlockAchievement('revelator');
+        if (result?.isNew) newAchievements.push(result.achievement);
+      }
+      const endingAchievementId = `ending_${resolvedEndingId}`;
+      const endingResult = unlockAchievement(endingAchievementId);
+      if (endingResult?.isNew) newAchievements.push(endingResult.achievement);
+    } catch {
+      // Achievement unlocking is non-critical
     }
-    if (detectionLevel < 20) {
-      const result = unlockAchievement('ghost');
-      if (result?.isNew) newAchievements.push(result.achievement);
-    }
-    if (maxDetectionReached >= 80) {
-      const result = unlockAchievement('survivor');
-      if (result?.isNew) newAchievements.push(result.achievement);
-    }
-    if (totalReadableFiles > 0 && filesReadCount >= totalReadableFiles) {
-      const result = unlockAchievement('completionist');
-      if (result?.isNew) newAchievements.push(result.achievement);
-    }
-    if (hasReleasedAlpha) {
-      const result = unlockAchievement('liberator');
-      if (result?.isNew) newAchievements.push(result.achievement);
-    }
-    if (hasLeakedFiles) {
-      const result = unlockAchievement('whistleblower');
-      if (result?.isNew) newAchievements.push(result.achievement);
-    }
-    if (hasNeuralLink) {
-      const result = unlockAchievement('linked');
-      if (result?.isNew) newAchievements.push(result.achievement);
-    }
-    if (hasLeakedFiles && hasReleasedAlpha && hasNeuralLink) {
-      const result = unlockAchievement('revelator');
-      if (result?.isNew) newAchievements.push(result.achievement);
-    }
-    const endingAchievementId = `ending_${resolvedEndingId}`;
-    const endingResult = unlockAchievement(endingAchievementId);
-    if (endingResult?.isNew) newAchievements.push(endingResult.achievement);
 
     setAchievements(newAchievements);
   }, [
@@ -320,7 +334,7 @@ export default function Victory({
               >
                 <hr className={styles.thinRule} />
                 <div className={styles.editorNote}>
-                  <em>Editor&apos;s note: {ending.ufo74_final}</em>
+                  <em>Editor&apos;s note: {ending?.ufo74_final ?? ''}</em>
                 </div>
               </div>
 
