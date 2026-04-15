@@ -30,6 +30,7 @@ export interface AolPresentation {
   body: string[];
   url: string;
   imageAlt: string;
+  imageSrc?: string;
   visitorCount: number;
 }
 
@@ -285,6 +286,7 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       ],
       url: 'http://www.aol.com/news/world/brazil_ufo_hoax_0196.htm',
       imageAlt: 'photo_unverified_document.jpg (43 KB)',
+      imageSrc: '/images/endings/ridiculed.jpg',
       visitorCount: 1247,
     },
   },
@@ -307,6 +309,7 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       ],
       url: 'http://www.aol.com/news/world/brazil_leak_officer_id.htm',
       imageAlt: 'ferreira_service_photo_CLASSIFIED.jpg (unable to load)',
+      imageSrc: '/images/endings/ufo74_exposed.jpg',
       visitorCount: 89341,
     },
   },
@@ -329,6 +332,7 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       ],
       url: 'http://www.aol.com/news/science/30year_cycle_atmospheric.htm',
       imageAlt: 'convergence_chart_draft.gif (image not available)',
+      imageSrc: '/images/endings/the_2026_warning.jpg',
       visitorCount: 156782,
     },
   },
@@ -351,6 +355,7 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       ],
       url: 'http://www.aol.com/news/world/brazil_military_coverup.htm',
       imageAlt: 'transport_log_scan_96.jpg (connection timed out)',
+      imageSrc: '/images/endings/government_scandal.jpg',
       visitorCount: 234519,
     },
   },
@@ -373,6 +378,7 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       ],
       url: 'http://www.aol.com/news/world/brazil_containment_logs.htm',
       imageAlt: 'bio_container_photo_EXPUNGED.jpg (file not found)',
+      imageSrc: '/images/endings/prisoner_45_freed.jpg',
       visitorCount: 67823,
     },
   },
@@ -395,6 +401,7 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       ],
       url: 'http://www.aol.com/news/science/colonization_theory_leaked.htm',
       imageAlt: 'extraction_diagram_classified.gif (access denied)',
+      imageSrc: '/images/endings/harvest_understood.jpg',
       visitorCount: 45192,
     },
   },
@@ -417,6 +424,7 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       ],
       url: 'http://www.aol.com/news/world/varginha_files_14million.htm',
       imageAlt: 'download_counter_screenshot.gif (server busy)',
+      imageSrc: '/images/endings/nothing_changes.jpg',
       visitorCount: 14023847,
     },
   },

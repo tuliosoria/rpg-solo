@@ -337,15 +337,31 @@ export default function Victory({
                 </p>
               ))}
 
-              {/* Broken Image */}
+              {/* Photo */}
               <div
-                className={`${sectionClass} ${styles.brokenImage}`}
+                className={`${sectionClass} ${aol.imageSrc ? styles.newsPhoto : styles.brokenImage}`}
                 style={staggerDelay(4 + aol.body.length)}
-                aria-hidden="true"
               >
-                <div className={styles.brokenImageIcon}>✕</div>
-                <div className={styles.brokenImageLabel}>{aol.imageAlt}</div>
-                <div className={styles.imageCredit}>Photo: Associated Press Wire Service</div>
+                {aol.imageSrc ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={aol.imageSrc}
+                      alt={aol.imageAlt}
+                      className={styles.newsPhotoImg}
+                    />
+                    <div className={styles.imageCaption}>
+                      {aol.imageAlt}
+                    </div>
+                    <div className={styles.imageCredit}>Photo: Associated Press Wire Service</div>
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.brokenImageIcon} aria-hidden="true">✕</div>
+                    <div className={styles.brokenImageLabel}>{aol.imageAlt}</div>
+                    <div className={styles.imageCredit}>Photo: Associated Press Wire Service</div>
+                  </>
+                )}
               </div>
 
               {/* UFO74 Wire Footer */}
