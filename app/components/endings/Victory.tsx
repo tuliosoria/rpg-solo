@@ -9,20 +9,19 @@ import { useI18n } from '../../i18n';
 import {
   EndingId,
   ENDINGS,
-  getEndingNarrativeLines,
   getEndingTitle,
 } from '../../engine/endings';
 import type { EndingFlags } from '../../engine/endings';
 import type { TextSpeed } from '../../types';
 
-const VICTORY_TIMINGS: Record<
+const AOL_TIMINGS: Record<
   TextSpeed,
-  { introDelay: number; lineDelay: number; creditsDelay: number }
+  { loadingDuration: number; staggerBase: number; dossierDelay: number }
 > = {
-  slow: { introDelay: 2200, lineDelay: 420, creditsDelay: 2600 },
-  normal: { introDelay: 1500, lineDelay: 300, creditsDelay: 2000 },
-  fast: { introDelay: 900, lineDelay: 180, creditsDelay: 1200 },
-  instant: { introDelay: 120, lineDelay: 0, creditsDelay: 300 },
+  slow: { loadingDuration: 3500, staggerBase: 500, dossierDelay: 3000 },
+  normal: { loadingDuration: 2500, staggerBase: 350, dossierDelay: 2000 },
+  fast: { loadingDuration: 1200, staggerBase: 150, dossierDelay: 1000 },
+  instant: { loadingDuration: 0, staggerBase: 0, dossierDelay: 0 },
 };
 
 interface VictoryProps {
@@ -35,7 +34,6 @@ interface VictoryProps {
   totalReadableFiles?: number;
   endingId?: EndingId;
   endingFlags?: EndingFlags;
-  // Legacy ending modifier flags (fallback if endingId not set)
   conspiracyFilesLeaked?: boolean;
   alphaReleased?: boolean;
   neuralLinkAuthenticated?: boolean;
@@ -57,19 +55,20 @@ export default function Victory({
   neuralLinkAuthenticated = false,
   textSpeed = 'normal',
 }: VictoryProps) {
-  const { t, translateRuntimeText } = useI18n();
-  const [phase, setPhase] = useState<'intro' | 'message' | 'credits'>('intro');
-  const [textLines, setTextLines] = useState<string[]>([]);
+  const { t } = useI18n();
+  const isInstant = textSpeed === 'instant';
+  const [phase, setPhase] = useState<'loading' | 'page' | 'complete'>(
+    isInstant ? 'complete' : 'loading'
+  );
+  const [loadingProgress, setLoadingProgress] = useState(isInstant ? 100 : 0);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null);
   const hasRecordedEnding = useRef(false);
-  const creditsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const restartButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Use endingId directly if provided; fall back to ENDINGS keys check
   const resolvedEndingId: EndingId = endingId && endingId in ENDINGS
     ? endingId
-    : 'incomplete_picture'; // safe fallback
+    : 'incomplete_picture';
   const resolvedEndingFlags = endingFlags ?? {
     conspiracyFilesLeaked,
     alphaReleased,
@@ -82,113 +81,77 @@ export default function Victory({
   } = resolvedEndingFlags;
   const endingTitle = getEndingTitle(resolvedEndingId);
 
-  // Get the narrative for this ending
-  const victoryText = useMemo(
-    () => getEndingNarrativeLines(resolvedEndingId),
-    [resolvedEndingId]
-  );
-  const timings = VICTORY_TIMINGS[textSpeed];
+  const ending = ENDINGS[resolvedEndingId];
+  const aol = ending.aol;
+  const timings = AOL_TIMINGS[textSpeed];
+
   const leakPathLabel = t('ending.dossier.path.unknown');
   const replaySuggestions = useMemo(() => {
     const suggestions: string[] = [];
-
-    if (!hasLeakedFiles) {
-      suggestions.push(t('ending.dossier.replay.public'));
-    }
-    if (!hasReleasedAlpha) {
-      suggestions.push(t('ending.dossier.replay.alpha'));
-    }
-    if (!hasNeuralLink) {
-      suggestions.push(t('ending.dossier.replay.link'));
-    }
+    if (!hasLeakedFiles) suggestions.push(t('ending.dossier.replay.public'));
+    if (!hasReleasedAlpha) suggestions.push(t('ending.dossier.replay.alpha'));
+    if (!hasNeuralLink) suggestions.push(t('ending.dossier.replay.link'));
     suggestions.push(t('ending.dossier.replay.covert'));
-
     if (suggestions.length === 0 && (hasLeakedFiles || hasReleasedAlpha || hasNeuralLink)) {
       suggestions.push(t('ending.dossier.replay.cleaner'));
     }
-
     if (suggestions.length === 0) {
       suggestions.push(t('ending.dossier.replay.complete'));
     }
-
     return suggestions.slice(0, 2);
   }, [hasLeakedFiles, hasNeuralLink, hasReleasedAlpha, t]);
 
-  // Check for achievements on mount
+  // ── Achievement system (preserved from original) ──
   useEffect(() => {
-    // Prevent duplicate recording if effect runs multiple times
     if (hasRecordedEnding.current) return;
     hasRecordedEnding.current = true;
-
-    // Record the good ending in statistics (with variant info)
     recordEnding('good', commandCount, detectionLevel);
 
     const newAchievements: Achievement[] = [];
 
-    // Speed Demon - under 50 commands
     if (commandCount < 50) {
       const result = unlockAchievement('speed_demon');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
-
-    // Ghost Protocol - low final detection
     if (detectionLevel < 20) {
       const result = unlockAchievement('ghost');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
-
-    // Survivor - won after ever reaching critical detection
     if (maxDetectionReached >= 80) {
       const result = unlockAchievement('survivor');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
-
-    // Completionist - read every currently accessible file in the run.
     if (totalReadableFiles > 0 && filesReadCount >= totalReadableFiles) {
       const result = unlockAchievement('completionist');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
-
-    // New achievements for special endings
     if (hasReleasedAlpha) {
       const result = unlockAchievement('liberator');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
-
     if (hasLeakedFiles) {
       const result = unlockAchievement('whistleblower');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
-
     if (hasNeuralLink) {
       const result = unlockAchievement('linked');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
-
     if (hasLeakedFiles && hasReleasedAlpha && hasNeuralLink) {
       const result = unlockAchievement('revelator');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
-
-    // Unlock ending-specific achievement based on the ending
     const endingAchievementId = `ending_${resolvedEndingId}`;
     const endingResult = unlockAchievement(endingAchievementId);
     if (endingResult?.isNew) newAchievements.push(endingResult.achievement);
 
     setAchievements(newAchievements);
   }, [
-    commandCount,
-    detectionLevel,
-    maxDetectionReached,
-    filesReadCount,
-    totalReadableFiles,
-    hasLeakedFiles,
-    hasReleasedAlpha,
-    hasNeuralLink,
-    resolvedEndingId,
+    commandCount, detectionLevel, maxDetectionReached,
+    filesReadCount, totalReadableFiles,
+    hasLeakedFiles, hasReleasedAlpha, hasNeuralLink, resolvedEndingId,
   ]);
 
-  // Show achievements one by one
   useEffect(() => {
     if (achievements.length > 0 && !currentAchievement) {
       setCurrentAchievement(achievements[0]);
@@ -200,168 +163,261 @@ export default function Victory({
     setCurrentAchievement(null);
   };
 
+  // ── Loading phase: fake progress bar ──
   useEffect(() => {
-    if (phase === 'credits') {
+    if (phase !== 'loading') return;
+    const duration = timings.loadingDuration;
+    const steps = 20;
+    const interval = duration / steps;
+    let step = 0;
+    const timer = setInterval(() => {
+      step++;
+      setLoadingProgress(Math.min(100, Math.round((step / steps) * 100)));
+      if (step >= steps) {
+        clearInterval(timer);
+        setPhase('page');
+      }
+    }, interval);
+    return () => clearInterval(timer);
+  }, [phase, timings.loadingDuration]);
+
+  // ── Page → complete: wait for stagger animations + dossier delay ──
+  useEffect(() => {
+    if (phase !== 'page') return;
+    const totalStagger = timings.staggerBase * (6 + aol.body.length);
+    const timer = setTimeout(() => setPhase('complete'), totalStagger + timings.dossierDelay);
+    return () => clearTimeout(timer);
+  }, [phase, timings.staggerBase, timings.dossierDelay, aol.body.length]);
+
+  // ── Focus restart button when complete ──
+  useEffect(() => {
+    if (phase === 'complete') {
       restartButtonRef.current?.focus();
     }
   }, [phase]);
 
-  // Intro phase
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPhase('message');
-    }, timings.introDelay);
-    return () => clearTimeout(timer);
-  }, [timings.introDelay]);
+  const staggerDelay = (index: number): React.CSSProperties =>
+    isInstant ? {} : { animationDelay: `${index * timings.staggerBase}ms` };
 
-  // Show text lines
-  useEffect(() => {
-    if (phase !== 'message') return;
-
-    setTextLines([]);
-
-    if (timings.lineDelay === 0) {
-      setTextLines(victoryText);
-      creditsTimerRef.current = setTimeout(() => setPhase('credits'), timings.creditsDelay);
-      return () => {
-        if (creditsTimerRef.current) {
-          clearTimeout(creditsTimerRef.current);
-        }
-      };
-    }
-
-    let lineIndex = 0;
-    const interval = setInterval(() => {
-      if (lineIndex >= victoryText.length) {
-        clearInterval(interval);
-        if (creditsTimerRef.current) {
-          clearTimeout(creditsTimerRef.current);
-        }
-        creditsTimerRef.current = setTimeout(() => setPhase('credits'), timings.creditsDelay);
-        return;
-      }
-
-      const nextLine = victoryText[lineIndex];
-      if (typeof nextLine === 'string') {
-        setTextLines(prev => [...prev, nextLine]);
-      }
-      lineIndex++;
-    }, timings.lineDelay);
-
-    return () => {
-      clearInterval(interval);
-      if (creditsTimerRef.current) {
-        clearTimeout(creditsTimerRef.current);
-      }
-    };
-  }, [phase, timings.creditsDelay, timings.lineDelay, victoryText]);
+  const sectionClass = isInstant
+    ? styles.sectionInstant
+    : styles.section;
 
   return (
     <div className={styles.container} role="dialog" aria-modal="true" aria-label={endingTitle}>
-      <div className={styles.scanlines} />
-
-      {phase === 'intro' && (
-        <div className={styles.introContent}>
-          <div className={styles.introTitle}>🌟</div>
+      <div className={styles.browserWindow}>
+        {/* ── Title Bar ── */}
+        <div className={styles.titleBar} aria-hidden="true">
+          <span className={styles.titleBarText}>
+            Netscape - [AOL News: Breaking Report]
+          </span>
+          <div className={styles.windowControls}>
+            <span className={styles.windowBtn}>_</span>
+            <span className={styles.windowBtn}>□</span>
+            <span className={styles.windowBtn}>✕</span>
+          </div>
         </div>
-      )}
 
-      {(phase === 'message' || phase === 'credits') && (
-        <div className={styles.messageContent} role="status" aria-live="polite">
-          {textLines.map((line, index) => (
-            <div
-              key={index}
-              className={
-                line.startsWith('═')
-                  ? styles.divider
-                  : line.startsWith('UFO74:')
-                    ? styles.ufoLine
-                    : line.startsWith('>>')
-                      ? styles.systemLine
-                      : line.includes('▓▓▓')
-                        ? styles.warningLine
-                        : line.startsWith('...')
-                          ? styles.alienLine
-                          : line === endingTitle
-                            ? styles.title
-                            : styles.textLine
-              }
-            >
-              {translateRuntimeText(line)}
+        {/* ── Menu Bar ── */}
+        <div className={styles.menuBar} aria-hidden="true">
+          <span>File</span><span>Edit</span><span>View</span>
+          <span>Go</span><span>Bookmarks</span><span>Options</span>
+          <span>Directory</span><span>Help</span>
+        </div>
+
+        {/* ── Toolbar ── */}
+        <div className={styles.toolbar} aria-hidden="true">
+          <span className={styles.navBtn}>◄ Back</span>
+          <span className={styles.navBtn}>► Forward</span>
+          <span className={styles.navBtn}>⟲ Reload</span>
+          <span className={styles.navBtn}>🏠 Home</span>
+          <span className={styles.navBtn}>🔍 Search</span>
+        </div>
+
+        {/* ── Address Bar ── */}
+        <div className={styles.addressBar} aria-hidden="true">
+          <span className={styles.locationLabel}>Location:</span>
+          <div className={styles.urlField}>{aol.url}</div>
+        </div>
+
+        {/* ── Content Area ── */}
+        <div className={styles.contentArea}>
+          {phase === 'loading' ? (
+            <div className={styles.loadingScreen}>
+              <div className={styles.loadingText}>
+                Transferring data from www.aol.com...
+              </div>
+              <div className={styles.progressBarTrack}>
+                <div
+                  className={styles.progressBarFill}
+                  style={{ width: `${loadingProgress}%` }}
+                />
+              </div>
             </div>
-          ))}
-
-          {phase === 'credits' && (
-            <div className={styles.credits}>
-              <div className={styles.dossier}>
-                <div className={styles.dossierTitle}>{t('ending.dossier.title')}</div>
-
-                <dl className={styles.dossierList}>
-                  <div className={styles.dossierRow}>
-                    <dt>{t('ending.dossier.evidence')}</dt>
-                    <dd>{evidenceCount}/10</dd>
-                  </div>
-                  <div className={styles.dossierRow}>
-                    <dt>{t('ending.dossier.filesReviewed')}</dt>
-                    <dd>
-                      {filesReadCount}/{Math.max(totalReadableFiles, filesReadCount)}
-                    </dd>
-                  </div>
-                  <div className={styles.dossierRow}>
-                    <dt>{t('ending.dossier.maxDetection')}</dt>
-                    <dd>{maxDetectionReached}%</dd>
-                  </div>
-                  <div className={styles.dossierRow}>
-                    <dt>{t('ending.dossier.leakPath')}</dt>
-                    <dd>{leakPathLabel}</dd>
-                  </div>
-                  <div className={styles.dossierRow}>
-                    <dt>{t('ending.dossier.blackFiles')}</dt>
-                    <dd>
-                      {hasLeakedFiles
-                        ? t('ending.dossier.blackFiles.leaked')
-                        : t('ending.dossier.blackFiles.sealed')}
-                    </dd>
-                  </div>
-                  <div className={styles.dossierRow}>
-                    <dt>{t('ending.dossier.alpha')}</dt>
-                    <dd>
-                      {hasReleasedAlpha
-                        ? t('ending.dossier.alpha.released')
-                        : t('ending.dossier.alpha.contained')}
-                    </dd>
-                  </div>
-                  <div className={styles.dossierRow}>
-                    <dt>{t('ending.dossier.neuralLink')}</dt>
-                    <dd>
-                      {hasNeuralLink
-                        ? t('ending.dossier.neuralLink.authenticated')
-                        : t('ending.dossier.neuralLink.unused')}
-                    </dd>
-                  </div>
-                </dl>
-
-                <div className={styles.dossierSubtitle}>{t('ending.dossier.replayTitle')}</div>
-                {replaySuggestions.map(suggestion => (
-                  <div key={suggestion} className={styles.dossierSuggestion}>
-                    {suggestion}
-                  </div>
-                ))}
+          ) : (
+            <div className={styles.pageContent} role="article">
+              {/* Breaking News Banner */}
+              <div
+                className={`${sectionClass} ${styles.banner}`}
+                style={staggerDelay(0)}
+                aria-hidden="true"
+              >
+                <span className={styles.blink}>★★★ BREAKING NEWS ★★★</span>
               </div>
 
-              <button
-                ref={restartButtonRef}
-                className={styles.restartButton}
-                onClick={onRestartAction}
+              {/* Pixel Divider */}
+              <hr
+                className={`${sectionClass} ${styles.pixelDivider}`}
+                style={staggerDelay(1)}
+                aria-hidden="true"
+              />
+
+              {/* Marquee */}
+              <div
+                className={`${sectionClass} ${styles.marqueeContainer}`}
+                style={staggerDelay(2)}
+                aria-hidden="true"
               >
-                {t('ending.playAgain')}
-              </button>
-              <div className={styles.creditText}>VARGINHA: TERMINAL 1996</div>
-              <div className={styles.endingType}>{translateRuntimeText(endingTitle)}</div>
+                <div className={styles.marqueeTrack}>
+                  <span className={styles.marqueeText}>{aol.subheadline}</span>
+                </div>
+              </div>
+
+              {/* Headline */}
+              <h1
+                className={`${sectionClass} ${styles.headline}`}
+                style={staggerDelay(3)}
+              >
+                {aol.headline}
+              </h1>
+
+              {/* Body Paragraphs */}
+              {aol.body.map((paragraph, i) => (
+                <p
+                  key={i}
+                  className={`${sectionClass} ${styles.bodyText}`}
+                  style={staggerDelay(4 + i)}
+                >
+                  {paragraph}
+                </p>
+              ))}
+
+              {/* Broken Image */}
+              <div
+                className={`${sectionClass} ${styles.brokenImage}`}
+                style={staggerDelay(4 + aol.body.length)}
+                aria-hidden="true"
+              >
+                <div className={styles.brokenImageIcon}>✕</div>
+                <div className={styles.brokenImageLabel}>{aol.imageAlt}</div>
+                <div className={styles.imageCredit}>Photo: Associated Press Wire Service</div>
+              </div>
+
+              {/* UFO74 Wire Footer */}
+              <div
+                className={`${sectionClass} ${styles.wireFooter}`}
+                style={staggerDelay(5 + aol.body.length)}
+              >
+                <hr className={styles.thinRule} />
+                <div className={styles.editorNote}>
+                  <em>Editor&apos;s note: {ending.ufo74_final}</em>
+                </div>
+              </div>
+
+              {/* ── Dossier + Footer (visible in complete phase) ── */}
+              {phase === 'complete' && (
+                <>
+                  <hr className={styles.pixelDivider} />
+
+                  <div className={styles.dossier}>
+                    <div className={styles.dossierTitle}>{t('ending.dossier.title')}</div>
+
+                    <dl className={styles.dossierList}>
+                      <div className={styles.dossierRow}>
+                        <dt>{t('ending.dossier.evidence')}</dt>
+                        <dd>{evidenceCount}/10</dd>
+                      </div>
+                      <div className={styles.dossierRow}>
+                        <dt>{t('ending.dossier.filesReviewed')}</dt>
+                        <dd>{filesReadCount}/{Math.max(totalReadableFiles, filesReadCount)}</dd>
+                      </div>
+                      <div className={styles.dossierRow}>
+                        <dt>{t('ending.dossier.maxDetection')}</dt>
+                        <dd>{maxDetectionReached}%</dd>
+                      </div>
+                      <div className={styles.dossierRow}>
+                        <dt>{t('ending.dossier.leakPath')}</dt>
+                        <dd>{leakPathLabel}</dd>
+                      </div>
+                      <div className={styles.dossierRow}>
+                        <dt>{t('ending.dossier.blackFiles')}</dt>
+                        <dd>
+                          {hasLeakedFiles
+                            ? t('ending.dossier.blackFiles.leaked')
+                            : t('ending.dossier.blackFiles.sealed')}
+                        </dd>
+                      </div>
+                      <div className={styles.dossierRow}>
+                        <dt>{t('ending.dossier.alpha')}</dt>
+                        <dd>
+                          {hasReleasedAlpha
+                            ? t('ending.dossier.alpha.released')
+                            : t('ending.dossier.alpha.contained')}
+                        </dd>
+                      </div>
+                      <div className={styles.dossierRow}>
+                        <dt>{t('ending.dossier.neuralLink')}</dt>
+                        <dd>
+                          {hasNeuralLink
+                            ? t('ending.dossier.neuralLink.authenticated')
+                            : t('ending.dossier.neuralLink.unused')}
+                        </dd>
+                      </div>
+                    </dl>
+
+                    <div className={styles.dossierSubtitle}>{t('ending.dossier.replayTitle')}</div>
+                    {replaySuggestions.map(suggestion => (
+                      <div key={suggestion} className={styles.dossierSuggestion}>
+                        {suggestion}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Visitor Counter */}
+                  <div className={styles.visitorCounter} aria-hidden="true">
+                    <span className={styles.counterIcon}>📊</span>
+                    You are visitor #{aol.visitorCount.toLocaleString()}
+                  </div>
+
+                  <div className={styles.bestViewed} aria-hidden="true">
+                    Best viewed in Netscape Navigator 3.0 at 800×600
+                  </div>
+
+                  <button
+                    ref={restartButtonRef}
+                    className={styles.restartButton}
+                    onClick={onRestartAction}
+                  >
+                    {t('ending.playAgain')}
+                  </button>
+
+                  <div className={styles.creditText}>VARGINHA: TERMINAL 1996</div>
+                  <div className={styles.endingType}>{endingTitle}</div>
+                </>
+              )}
             </div>
           )}
         </div>
-      )}
+
+        {/* ── Status Bar ── */}
+        <div className={styles.statusBar} aria-hidden="true">
+          <span>
+            {phase === 'loading'
+              ? `Transferring data... ${loadingProgress}%`
+              : 'Document: Done'}
+          </span>
+        </div>
+      </div>
 
       {/* Achievement popup */}
       {currentAchievement && (

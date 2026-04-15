@@ -34,19 +34,20 @@ describe('Victory Component', () => {
     vi.useRealTimers();
   });
 
-  function advanceToCredits(textSpeed: 'normal' | 'instant' = 'normal') {
+  function advanceToComplete(textSpeed: 'normal' | 'instant' = 'normal') {
+    if (textSpeed === 'instant') return; // instant starts at 'complete'
+    // Advance through loading phase (2500ms for normal)
     act(() => {
-      vi.advanceTimersByTime(textSpeed === 'instant' ? 150 : 1600);
+      vi.advanceTimersByTime(3000);
     });
-
+    // Advance through page → complete transition
     act(() => {
-      vi.advanceTimersByTime(textSpeed === 'instant' ? 400 : 10000);
+      vi.advanceTimersByTime(10000);
     });
   }
 
   it('renders without crashing', () => {
     render(<Victory {...defaultProps} />);
-    // Component should render
     expect(document.body).toBeTruthy();
   });
 
@@ -60,10 +61,8 @@ describe('Victory Component', () => {
   it('only records ending once even if props change', () => {
     const { rerender } = render(<Victory {...defaultProps} />);
     
-    // Re-render with different props
     rerender(<Victory {...defaultProps} commandCount={150} />);
     
-    // Should still only be called once
     expect(recordEnding).toHaveBeenCalledTimes(1);
   });
 
@@ -133,14 +132,12 @@ describe('Victory Component', () => {
   it('progresses through phases with timers', async () => {
     render(<Victory {...defaultProps} />);
     
-    // Initial phase should be 'intro'
-    // Advance through intro phase
+    // Advance through loading phase
     act(() => {
       vi.advanceTimersByTime(3000);
     });
     
-    // Should eventually show credits or message content
-    // This tests that the component doesn't crash during phase transitions
+    // Should eventually show page content
     expect(document.body).toBeTruthy();
   });
 
@@ -149,23 +146,20 @@ describe('Victory Component', () => {
     
     // Fast-forward through all phases
     act(() => {
-      vi.advanceTimersByTime(30000); // 30 seconds should be enough
+      vi.advanceTimersByTime(30000);
     });
     
-    // Restart button should eventually appear
-    // Note: We're just checking the component survives all phase transitions
     expect(document.body).toBeTruthy();
   });
 
   it('calls onRestartAction when restart is clicked', async () => {
     render(<Victory {...defaultProps} />);
     
-    // Fast-forward to final phase
+    // Fast-forward to complete phase
     act(() => {
       vi.advanceTimersByTime(60000);
     });
     
-    // Try to find and click the restart button
     const restartButton = screen.queryByText(/play again/i) || screen.queryByText(/restart/i);
     if (restartButton) {
       fireEvent.click(restartButton);
@@ -173,7 +167,7 @@ describe('Victory Component', () => {
     }
   });
 
-  it('shows a post-run dossier in the credits phase', () => {
+  it('shows a post-run dossier in the complete phase', () => {
     render(
       <Victory
         {...defaultProps}
@@ -184,7 +178,7 @@ describe('Victory Component', () => {
       />
     );
 
-    advanceToCredits();
+    advanceToComplete();
 
     expect(screen.getByText('POST-RUN DOSSIER')).toBeInTheDocument();
     expect(screen.getByText('Evidence confirmed')).toBeInTheDocument();
@@ -194,18 +188,38 @@ describe('Victory Component', () => {
   it('supports instant text speed for the ending flow', () => {
     render(<Victory {...defaultProps} textSpeed="instant" totalReadableFiles={20} />);
 
-    advanceToCredits('instant');
+    advanceToComplete('instant');
 
     expect(screen.getByText('POST-RUN DOSSIER')).toBeInTheDocument();
   });
 
-  it('keeps the dossier inside the scrollable message region and focuses replay', () => {
-    render(<Victory {...defaultProps} totalReadableFiles={20} />);
+  it('keeps the dossier inside the scrollable content area and focuses replay', () => {
+    render(<Victory {...defaultProps} totalReadableFiles={20} textSpeed="instant" />);
 
-    advanceToCredits();
+    advanceToComplete('instant');
 
     const dossierTitle = screen.getByText('POST-RUN DOSSIER');
-    expect(dossierTitle.closest('[class*="messageContent"]')).toBeTruthy();
+    expect(dossierTitle.closest('[class*="contentArea"]')).toBeTruthy();
     expect(screen.getByRole('button', { name: /play again/i })).toHaveFocus();
+  });
+
+  it('renders AOL breaking news headline for a specific ending', () => {
+    render(<Victory {...defaultProps} endingId="ridiculed" textSpeed="instant" />);
+
+    expect(screen.getByText(/INTERNET HOAX ALERT/i)).toBeInTheDocument();
+  });
+
+  it('shows browser chrome elements', () => {
+    render(<Victory {...defaultProps} textSpeed="instant" />);
+
+    expect(screen.getByText(/AOL News: Breaking Report/)).toBeInTheDocument();
+    expect(screen.getByText('Location:')).toBeInTheDocument();
+    expect(screen.getByText('Document: Done')).toBeInTheDocument();
+  });
+
+  it('shows loading screen before page content', () => {
+    render(<Victory {...defaultProps} textSpeed="normal" />);
+
+    expect(screen.getByText(/Transferring data from www\.aol\.com/)).toBeInTheDocument();
   });
 });

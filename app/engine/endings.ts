@@ -24,12 +24,22 @@ export type EndingId =
   | 'secret_ending'
   | 'real_ending';
 
+export interface AolPresentation {
+  headline: string;
+  subheadline: string;
+  body: string[];
+  url: string;
+  imageAlt: string;
+  visitorCount: number;
+}
+
 export interface GameEnding {
   id: EndingId;
   title: string;
   subtitle: string;
   narrative: string[];
   ufo74_final: string;
+  aol: AolPresentation;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -265,6 +275,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'The archive rots on a server in São Paulo. Nobody downloads it. The password expires. Varginha remains a punchline.',
     ],
     ufo74_final: 'you gave them noise. they needed signal.',
+    aol: {
+      headline: "INTERNET HOAX ALERT: 'CLASSIFIED UFO FILES' FROM BRAZIL DISMISSED AS PRANK",
+      subheadline: "USAF spokesperson calls documents 'creative fiction' — Brazilian Air Force declines comment — Internet forums debate authenticity",
+      body: [
+        "VARGINHA, Brazil (AP) — A collection of documents purporting to be classified military files about an alleged 'unidentified flying object' incident in southern Brazil surfaced on several Internet bulletin boards late Tuesday, drawing immediate skepticism from experts and officials alike.",
+        "The files, which appear to describe military operations in the city of Varginha in January of this year, were reportedly obtained through an unauthorized computer intrusion. Air Force officials in Brasília declined to comment, noting only that the documents 'do not correspond to any known military operation.'",
+        "Dr. Harold Simmons of the Center for Scientific Inquiry called the documents 'an elaborate but ultimately unconvincing fabrication,' pointing to what he described as 'inconsistencies in formatting and terminology that suggest a civilian author with limited military knowledge.'",
+      ],
+      url: 'http://www.aol.com/news/world/brazil_ufo_hoax_0196.htm',
+      imageAlt: 'photo_unverified_document.jpg (43 KB)',
+      visitorCount: 1247,
+    },
   },
   ufo74_exposed: {
     title: 'UFO74 EXPOSED',
@@ -275,6 +297,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'The Air Force opens an internal inquiry. Three generals retire early. The archive survives because it was already everywhere. UFO74 is no longer a call sign. It is a name.',
     ],
     ufo74_final: 'you found me. now finish what i started.',
+    aol: {
+      headline: 'MILITARY OFFICER IDENTIFIED AS SOURCE OF CLASSIFIED BRAZILIAN DATA LEAK',
+      subheadline: "Carlos E. Ferreira, Brazilian Air Force intelligence — service record confirmed — three generals request early retirement",
+      body: [
+        "BRASÍLIA, Brazil (Reuters) — A decrypted computer file circulating on the Internet has identified a Brazilian Air Force intelligence officer as the source of a massive unauthorized disclosure of classified military documents, according to officials familiar with the matter.",
+        "The officer, identified as Carlos Eduardo Ferreira, was reportedly stationed at Guarulhos Air Base during the period described in the leaked files. Military intelligence confirmed the service record within hours of the file's release, though a spokesperson declined to comment on the substance of the allegations.",
+        "Three senior Air Force generals have submitted requests for early retirement in what analysts describe as an attempt to distance themselves from the growing scandal. The leaked archive, which Ferreira allegedly maintained for decades, contains documents related to military operations in southern Minas Gerais state.",
+      ],
+      url: 'http://www.aol.com/news/world/brazil_leak_officer_id.htm',
+      imageAlt: 'ferreira_service_photo_CLASSIFIED.jpg (unable to load)',
+      visitorCount: 89341,
+    },
   },
   the_2026_warning: {
     title: 'THE 2026 WARNING',
@@ -285,6 +319,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'The public does not panic because the public does not understand logarithmic signal propagation. Those who do understand have gone very quiet.',
     ],
     ufo74_final: 'the window is real. you gave them time.',
+    aol: {
+      headline: 'SCIENTISTS IDENTIFY 30-YEAR PATTERN IN UNEXPLAINED ATMOSPHERIC EVENTS',
+      subheadline: "Next predicted occurrence: September 2026 — private aerospace firms reportedly repositioning satellite arrays — no official comment",
+      body: [
+        "GENEVA, Switzerland (AP) — Physicists at three independent research institutions have confirmed the existence of a thirty-year cyclical pattern in atmospheric anomaly data, according to a joint preliminary report released Wednesday. The pattern, if validated, would predict a significant event window in late 2026.",
+        "The analysis was prompted by documents leaked from a Brazilian military archive earlier this month. While the researchers declined to speculate on the nature of the anomalies, they confirmed the mathematical model described in the leaked files is 'internally consistent and statistically significant.'",
+        "Several private aerospace companies have begun what industry sources describe as 'precautionary repositioning' of satellite monitoring arrays, though none would confirm a connection to the leaked data. The Brazilian government has issued no statement.",
+      ],
+      url: 'http://www.aol.com/news/science/30year_cycle_atmospheric.htm',
+      imageAlt: 'convergence_chart_draft.gif (image not available)',
+      visitorCount: 156782,
+    },
   },
   government_scandal: {
     title: 'BRAZILIAN GOVERNMENT SCANDAL',
@@ -295,6 +341,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'The question shifts. It is no longer about what landed. It is about who authorized the silence, who paid for it, and where the bodies went.',
     ],
     ufo74_final: 'they will sacrifice officers to protect the secret.',
+    aol: {
+      headline: 'LEAKED DOCUMENTS REVEAL MASSIVE BRAZILIAN MILITARY OPERATION IN VARGINHA',
+      subheadline: "Transport logs and response orders prove classified mobilization — three colonels subpoenaed — Congressional inquiry opens in Brasília",
+      body: [
+        "BRASÍLIA, Brazil (AP) — Classified military documents leaked to the Internet this week reveal what appears to be a large-scale Brazilian Army operation in the southern city of Varginha in January 1996, involving troop movements, vehicle requisitions, and command orders that were never disclosed to the public or to civilian authorities.",
+        "The documents include transport logs, incident reports signed by officers whose service records contain no reference to the operation, and response orders authorizing the cordoning of a residential area described only as 'the Jardim Andere site.' The purpose of the operation is not specified in any of the recovered files.",
+        "Three colonels have been subpoenaed to testify before a Congressional committee in Brasília. One has reportedly refused. The Ministry of Defense issued a brief statement calling the documents 'unverified' but did not deny their authenticity.",
+      ],
+      url: 'http://www.aol.com/news/world/brazil_military_coverup.htm',
+      imageAlt: 'transport_log_scan_96.jpg (connection timed out)',
+      visitorCount: 234519,
+    },
   },
   prisoner_45_freed: {
     title: 'PRISONER 45 FREED',
@@ -305,6 +363,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'A São Paulo judge orders the military to produce "all biological materials recovered January 1996." The military responds that no such materials exist. The containment logs say otherwise.',
     ],
     ufo74_final: 'it was never a specimen. it was a prisoner.',
+    aol: {
+      headline: "CLASSIFIED LOGS DESCRIBE 'NON-HUMAN ENTITY' DETAINED IN MILITARY FACILITY",
+      subheadline: "Bio-containment records leaked — handlers reported 'cognitive intrusion' — São Paulo judge demands military disclosure",
+      body: [
+        "SÃO PAULO, Brazil (UPI) — Leaked bio-containment records from a Brazilian military facility describe what personnel referred to as a 'detained biological intelligence' held for eleven days in a Faraday-shielded chamber, according to documents released on the World Wide Web late Thursday.",
+        "The logs, which include ethics exception forms signed by a medical committee, describe handlers experiencing 'persistent headaches and reported cognitive intrusion events' during the detention period. The entity, designated as 'Specimen Alpha' in some documents and 'Prisoner 45' in others, is described as exhibiting 'responsive behavior inconsistent with any known terrestrial species.'",
+        "A judge in São Paulo has ordered the military to produce 'all biological materials recovered in January 1996.' The military responded Friday that no such materials exist. The leaked containment logs appear to contradict this statement directly.",
+      ],
+      url: 'http://www.aol.com/news/world/brazil_containment_logs.htm',
+      imageAlt: 'bio_container_photo_EXPUNGED.jpg (file not found)',
+      visitorCount: 67823,
+    },
   },
   harvest_understood: {
     title: 'THE HARVEST UNDERSTOOD',
@@ -315,6 +385,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'Nobody wants to say the word "colonization" on television. They use "resource assessment" instead. It means the same thing.',
     ],
     ufo74_final: 'they do not need to come here. they never did.',
+    aol: {
+      headline: "LEAKED THEORY DESCRIBES 'COLONIZATION WITHOUT ARRIVAL' BY UNKNOWN INTELLIGENCE",
+      subheadline: "Three universities confirm energy mathematics — 'internally consistent,' researchers say — no government comment",
+      body: [
+        "CAMBRIDGE, Mass. (AP) — Documents leaked from a classified Brazilian military archive describe a theoretical model for what the files term 'non-arrival colonization' — a process by which an unknown intelligence could extract resources from a planetary system without physical presence or direct contact, according to an analysis published Thursday by researchers at MIT.",
+        "Three universities have now independently reviewed the leaked extraction model and confirmed that its energy mathematics are, in the words of one physicist, 'disturbingly sound.' The model describes a thirty-year seeding cycle that researchers say aligns with observed neurological data from the Brazilian military's own classified medical files.",
+        "No government has issued a formal response. Television commentators have avoided the word 'colonization,' preferring the term 'resource assessment.' Scientists familiar with the data say the distinction is academic.",
+      ],
+      url: 'http://www.aol.com/news/science/colonization_theory_leaked.htm',
+      imageAlt: 'extraction_diagram_classified.gif (access denied)',
+      visitorCount: 45192,
+    },
   },
   nothing_changes: {
     title: 'NOTHING CHANGES',
@@ -325,6 +407,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'The files remain available. Downloaded fourteen million times. Cited in zero policy changes. The truth is free and weightless.',
     ],
     ufo74_final: 'you proved everything. it was not enough.',
+    aol: {
+      headline: 'VARGINHA FILES DOWNLOADED 14 MILLION TIMES; GOVERNMENTS WORLDWIDE SILENT',
+      subheadline: "Evidence called 'compelling' by experts — zero policy changes — election coverage resumes",
+      body: [
+        "NEW YORK (AP) — The collection of classified military documents known as the 'Varginha Files' has been downloaded more than fourteen million times since its release on the Internet two weeks ago, making it one of the most widely distributed document leaks in the brief history of the World Wide Web. Despite this, no government has issued a formal response.",
+        "Panels of experts convened at universities in four countries have called the evidence 'compelling' and 'worthy of official investigation.' Footage from the original incident has circulated on cable news networks for approximately twelve days before being displaced by coverage of ongoing elections and financial markets.",
+        "The files remain freely available on multiple mirror sites. Analysts note that the unprecedented volume of downloads has produced no measurable political or policy impact. 'The truth is out there,' noted one commentator. 'It turns out that is not sufficient.'",
+      ],
+      url: 'http://www.aol.com/news/world/varginha_files_14million.htm',
+      imageAlt: 'download_counter_screenshot.gif (server busy)',
+      visitorCount: 14023847,
+    },
   },
   incomplete_picture: {
     title: 'INCOMPLETE PICTURE',
@@ -335,6 +429,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'You had the pieces. You did not assemble the picture.',
     ],
     ufo74_final: 'scattered evidence is the same as no evidence.',
+    aol: {
+      headline: "LEAKED MILITARY DOCUMENTS FAIL TO SUPPORT UFO CLAIMS, SAY ANALYSTS",
+      subheadline: "Debunkers dismantle evidence in 72 hours — 'each file has innocent explanation' — military issues no denial",
+      body: [
+        "WASHINGTON (AP) — A collection of documents leaked from a Brazilian military archive and purporting to describe contact with a non-human intelligence has been largely discredited by independent analysts, who say the files, while possibly authentic, fail to tell a coherent story.",
+        "The leak contains medical reports, transport logs, and communications intercepts, but analysts say no thread connects them into a meaningful narrative. 'Each document, taken individually, has an innocent explanation,' said Dr. James Whitfield of Georgetown University. 'Taken together, they prove nothing more than that the Brazilian military generates paperwork.'",
+        "The Brazilian Air Force has issued no official denial, which analysts interpret not as confirmation but as an indication that the documents do not warrant response. Several Internet forums that initially promoted the files have moved on to other topics.",
+      ],
+      url: 'http://www.aol.com/news/world/brazil_ufo_debunked.htm',
+      imageAlt: 'scattered_documents_photo.jpg (404 Not Found)',
+      visitorCount: 3891,
+    },
   },
   wrong_story: {
     title: 'THE WRONG STORY',
@@ -345,6 +451,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'You exposed a scandal. The wrong one.',
     ],
     ufo74_final: 'you found the lie but missed the truth behind it.',
+    aol: {
+      headline: 'MILITARY BUDGET SCANDAL UNCOVERED IN LEAKED BRAZILIAN DOCUMENTS',
+      subheadline: "Three officials face embezzlement charges — journalist wins award for exposé — actual UFO claims ignored",
+      body: [
+        "BRASÍLIA, Brazil (Reuters) — Classified documents leaked from a Brazilian military installation have led not to the confirmation of extraterrestrial contact, as the anonymous source apparently intended, but to the exposure of a significant financial corruption network within the armed forces.",
+        "The leaked files contain detailed budget memoranda, media payment records, and what prosecutors describe as 'a systematic program to suppress unfavorable news coverage through direct payments to journalists.' Three senior military officials now face embezzlement and fraud charges. A reporter for Folha de São Paulo has been awarded the Maria Moors Cabot Prize for her coverage of the scandal.",
+        "Notably absent from the dossier are any substantive references to the alleged non-human contact that the leaker appeared to be documenting. Analysts describe the collection as 'accidentally important for entirely the wrong reasons.'",
+      ],
+      url: 'http://www.aol.com/news/world/brazil_budget_scandal.htm',
+      imageAlt: 'budget_memo_redacted.gif (file corrupted)',
+      visitorCount: 178234,
+    },
   },
   hackerkid_caught: {
     title: 'HACKERKID CAUGHT',
@@ -355,6 +473,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'The decoy system was built for people exactly like you. Eager. Careless. Loud.',
     ],
     ufo74_final: 'i tried to warn you. real secrets whisper.',
+    aol: {
+      headline: 'COMPUTER HACKER ARRESTED AFTER DOWNLOADING MILITARY DECOY FILES',
+      subheadline: "Cybersecurity trap worked 'exactly as designed' — suspect traced in 90 minutes — federal charges pending",
+      body: [
+        "BRASÍLIA, Brazil (AP) — Brazilian military cybersecurity personnel have arrested an individual suspected of unauthorized intrusion into a classified computer network after the suspect downloaded files that had been deliberately planted as tracking devices, officials confirmed Saturday.",
+        "The files, with titles such as 'URGENT_classified_alpha' and 'FOR_PRESIDENTS_EYES_ONLY,' were designed to appeal to inexperienced intruders and contained embedded tracking mechanisms that allowed military technicians to identify the suspect's terminal within ninety minutes of the initial download.",
+        "A military spokesperson confirmed that the decoy system, which has been in place since 1994, was built specifically to identify and apprehend 'unsophisticated intrusion attempts.' The suspect's collected files were quarantined before reaching any external recipient. Federal prosecutors have been notified.",
+      ],
+      url: 'http://www.aol.com/news/tech/hacker_military_decoy.htm',
+      imageAlt: 'suspect_terminal_photo.jpg (CLASSIFIED)',
+      visitorCount: 12,
+    },
   },
   secret_ending: {
     title: 'THE FERREIRA PROTOCOL',
@@ -366,6 +496,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'He built this for thirty years. He built it for you.',
     ],
     ufo74_final: 'you assembled everything. i can rest now.',
+    aol: {
+      headline: "MULTINATIONAL GOVERNMENTS ESTABLISH FIRST 'CONTACT PROTOCOL' BASED ON LEAKED ARCHIVE",
+      subheadline: "Three allied nations request neural data — 2026 threat window enters official assessment — Ferreira archive authenticated",
+      body: [
+        "UNITED NATIONS, New York (AP) — Representatives of three allied governments have formally requested access to neural interface data contained in a leaked Brazilian military archive, marking what diplomats describe as the first official acknowledgment that the documents may describe genuine non-human contact.",
+        "The archive, compiled over thirty years by Brazilian Air Force intelligence officer Carlos Eduardo Ferreira, contains identity verification documents, neural connection data, and a convergence model that projects a significant event window in September 2026. Intelligence analysts say the combination was deliberately designed to form 'a single argument no committee can dismiss.'",
+        "The Brazilian Air Force has confirmed Ferreira's service record. The 2026 projection has entered official threat assessment documents in at least two NATO member states. Sources describe the emerging multinational response as 'the first contact protocol' — a framework for coordinated government action in response to verified non-human intelligence.",
+      ],
+      url: 'http://www.aol.com/news/world/contact_protocol_established.htm',
+      imageAlt: 'ferreira_protocol_document.jpg (RESTRICTED)',
+      visitorCount: 1,
+    },
   },
   real_ending: {
     title: 'UNDENIABLE',
@@ -376,6 +518,18 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
       'The response, when it comes, is seven words: "The matter is under renewed investigation." Those seven words change everything. Denial is no longer the official position. Thirty years of silence end with a single sentence.',
     ],
     ufo74_final: 'they cannot unsay those seven words.',
+    aol: {
+      headline: "BRAZIL BREAKS SILENCE: 'THE MATTER IS UNDER RENEWED INVESTIGATION'",
+      subheadline: "Seven words end thirty years of official denial — international press demands full disclosure — dossier called 'undeniable'",
+      body: [
+        "BRASÍLIA, Brazil (AP) — The Brazilian government has issued its first official acknowledgment of the 1996 Varginha incident, stating in a seven-word response that 'the matter is under renewed investigation.' The statement, released seventy-two hours after the most comprehensive dossier of evidence ever assembled reached international press outlets, effectively ends three decades of official denial.",
+        "The dossier combines field journals establishing direct contact, autopsy records confirming non-human biology, independent witness testimony verifying the timeline, and military transport logs documenting the coverup. International press agencies describe the evidence as 'presenting facts in a sequence that permits only one conclusion.'",
+        "Analysts note that the carefully worded response stops short of confirming extraterrestrial contact but represents a fundamental shift in the government's position. 'They cannot unsay those seven words,' noted one diplomatic observer. 'Denial is no longer the official position. Everything changes from here.'",
+      ],
+      url: 'http://www.aol.com/news/world/brazil_renewed_investigation.htm',
+      imageAlt: 'official_statement_brasilia.jpg (loading...)',
+      visitorCount: 847291,
+    },
   },
 };
 
