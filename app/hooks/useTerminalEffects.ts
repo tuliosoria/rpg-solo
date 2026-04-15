@@ -849,6 +849,10 @@ export function useTerminalEffects({
       clearTimeout(idleHintTimerRef.current);
     }
 
+    // Don't restart timer if the last entry was from UFO74 (prevents stacking idle messages)
+    const lastEntry = gameState.history[gameState.history.length - 1];
+    if (lastEntry?.type === 'ufo74') return;
+
     // Set new idle timer (2 minutes)
     idleHintTimerRef.current = setTimeout(() => {
       // Skip if user scrolled recently (within last 30 seconds - they're reading)
