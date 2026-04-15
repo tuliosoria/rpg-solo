@@ -42,6 +42,7 @@ import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 import FirewallEyes from './FirewallEyes';
 import { speakCustomFirewallVoice, unlockSpeechSynthesis } from '../lib/firewallVoice';
+import { clearPresence, updatePresence } from '../lib/steamBridge';
 import {
   UFO74_IMAGE_COMMENT_KEYS,
   UFO74_FIREWALL_REACTION_KEYS,
@@ -271,6 +272,27 @@ export default function Terminal({
   }, [initialState]);
 
   const totalReadableFiles = useMemo(() => getAllAccessibleFiles(gameState).length, [gameState]);
+  const steamPresenceState = useMemo(
+    () => ({
+      currentPath: gameState.currentPath,
+      detectionLevel: gameState.detectionLevel,
+      gameOver: gameState.isGameOver || gamePhase === 'bad_ending' || gamePhase === 'neutral_ending',
+      gameWon: gameState.gameWon || gamePhase === 'victory' || gamePhase === 'secret_ending',
+      gamePhase,
+      savedCount: gameState.savedFiles?.size || 0,
+      filesReadCount: gameState.filesRead?.size || 0,
+      isGameOver: gameState.isGameOver,
+    }),
+    [
+      gamePhase,
+      gameState.currentPath,
+      gameState.detectionLevel,
+      gameState.filesRead,
+      gameState.gameWon,
+      gameState.isGameOver,
+      gameState.savedFiles,
+    ]
+  );
 
   useEffect(() => {
     uiStateRef.current = {
@@ -289,6 +311,16 @@ export default function Terminal({
     showGameOver,
     showTuringTest,
   ]);
+
+  useEffect(() => {
+    void updatePresence(steamPresenceState);
+  }, [steamPresenceState]);
+
+  useEffect(() => {
+    return () => {
+      void clearPresence();
+    };
+  }, []);
 
   const closeEvidenceVideo = useCallback(() => {
     const closingVideo = activeEvidenceVideo;

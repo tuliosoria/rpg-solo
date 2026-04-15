@@ -97,6 +97,22 @@ export function getDiscoveredEvidenceFiles(paths: Iterable<string>): Set<string>
   return discovered;
 }
 
+function collectEvidencePaths(node: FileSystemNode, currentPath = ''): string[] {
+  if (node.type === 'file') {
+    return isEvidenceFile(node) ? [currentPath] : [];
+  }
+
+  return Object.entries(node.children).flatMap(([name, child]) =>
+    collectEvidencePaths(child, currentPath ? `${currentPath}/${name}` : `/${name}`)
+  );
+}
+
+const ALL_EVIDENCE_PATHS = collectEvidencePaths(FILESYSTEM_ROOT);
+
+export function getAllEvidencePaths(): string[] {
+  return [...ALL_EVIDENCE_PATHS];
+}
+
 /**
  * Check if file content is disturbing/frightening.
  */

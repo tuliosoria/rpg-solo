@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 import { MAX_COMMAND_INPUT_LENGTH } from '../../constants/limits';
+import { determineEnding } from '../endings';
 
 // Helper to create a test state
 const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
@@ -380,6 +381,33 @@ describe('UX Commands', () => {
       expect(result.stateChanges.flags).toBeUndefined();
       expect(result.output.some(e => e.content.includes('ALL EVIDENCE UNLOCKED'))).toBe(true);
       expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
+    });
+  });
+
+  describe('god random command', () => {
+    it('builds a random 10-file dossier and jumps to the resolved victory ending', () => {
+      const state = createTestState({ godMode: true, savedFiles: new Set(), filesRead: new Set() });
+      const result = executeCommand('god random', state);
+      const savedFiles = result.stateChanges.savedFiles;
+
+      expect(result.skipToPhase).toBe('victory');
+      expect(result.stateChanges.gameWon).toBe(true);
+      expect(result.stateChanges.evidencesSaved).toBe(true);
+      expect(savedFiles?.size).toBe(10);
+      expect(result.stateChanges.filesRead?.size).toBeGreaterThanOrEqual(10);
+      expect(result.stateChanges.endingId).toBe(determineEnding(savedFiles ?? new Set()));
+      expect(result.output.some(e => e.content.includes('RANDOM DOSSIER GENERATED'))).toBe(true);
+    });
+
+    it('uses the current seeded state so the same run produces the same random dossier', () => {
+      const state = createTestState({ godMode: true, sessionCommandCount: 27 });
+      const first = executeCommand('god random', state);
+      const second = executeCommand('god random', state);
+
+      expect([...((first.stateChanges.savedFiles as Set<string>) ?? [])]).toEqual([
+        ...((second.stateChanges.savedFiles as Set<string>) ?? []),
+      ]);
+      expect(first.stateChanges.endingId).toBe(second.stateChanges.endingId);
     });
   });
 

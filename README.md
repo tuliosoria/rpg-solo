@@ -21,7 +21,7 @@ Three days ago, Brazilian Air Defense tracked an unidentified object descending 
 - 🔀 **Multiple endings** — Your choices determine what truth you uncover
 - 🎵 **Atmospheric soundtrack** — 4 ambient tracks that respond to tension
 - 💾 **Save system** — Checkpoint your progress, load when needed
-- 🎮 **Steam integration** — Achievements, cloud saves, rich presence
+- 🎮 **Steam integration** — Achievements, cloud saves, and live presence in Electron builds when Steam is available
 
 ## Commands
 
@@ -63,7 +63,7 @@ Available for Windows, macOS, and Linux via Electron:
 npm run electron:build
 ```
 
-Features system tray integration and native notifications.
+The local desktop build uses the same `electron-builder.yml` config as CI. Steam features degrade gracefully when no App ID or Steam client is available, and tray minimize remains optional instead of hijacking close by default.
 
 ## Project Structure
 
@@ -88,8 +88,8 @@ app/
 
 GitHub Actions validates every commit:
 - ✅ Unit & integration tests
-- ✅ Build validation (web, desktop, Steam)
-- ✅ Security audits
+- ✅ Web production build
+- ✅ Cross-platform desktop packaging
 
 ## Builds
 
@@ -97,7 +97,7 @@ GitHub Actions validates every commit:
 |----------|--------|
 | Web | Azure Static Apps |
 | Desktop | Windows, macOS, Linux |
-| Steam | Windows, macOS, Linux |
+| Steam | Electron build with Steamworks features when `STEAM_APP_ID` is configured |
 
 ---
 

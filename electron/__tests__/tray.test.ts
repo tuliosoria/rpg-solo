@@ -63,7 +63,7 @@ describe('System Tray Module', () => {
 
   it('handles minimize to tray settings', () => {
     // Test default state
-    expect(trayModule.isMinimizeToTrayEnabled()).toBe(true);
+    expect(trayModule.isMinimizeToTrayEnabled()).toBe(false);
 
     // Test setting
     trayModule.setMinimizeToTray(false);

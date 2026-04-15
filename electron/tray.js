@@ -8,7 +8,7 @@ const path = require('path');
 let tray = null;
 let mainWindow = null;
 let currentStatus = 'Idle';
-let minimizeToTray = true;
+let minimizeToTray = false;
 
 /**
  * Gets the tray icon path based on platform and packaging state.

@@ -1,201 +1,132 @@
 # Steam Integration
 
-This document describes how the Steam integration works in the Electron version of the game.
+This document describes the Steam-facing desktop integration for the Electron build.
 
 ## Overview
 
-The game uses [steamworks.js](https://github.com/nicobrinkkemper/steamworks.js) to integrate with Steam for:
+The game uses [steamworks.js](https://github.com/nicobrinkkemper/steamworks.js) for:
 
-- **Achievements**: Sync game achievements to Steam
-- **Cloud Saves**: Save/load game data to Steam Cloud
-- **Overlay**: Access Steam overlay from within the game
+- **Achievements** - Sync local achievement unlocks to Steam
+- **Cloud Saves** - Mirror save data into Steam Cloud when available
+- **Rich Presence** - Reflect live investigation/detection state in the Steam friends list
+- **Overlay** - Open Steam dialogs from the desktop build
+- **Tray Status** - Mirror the same state in the desktop tray tooltip while the app is running
 
-## Requirements
+## App ID behavior
 
-### For Development
+`electron/main.js` resolves the Steam App ID in this order:
 
-1. **Steam Client**: Steam must be running on your machine
-2. **steam_appid.txt**: Create a file named `steam_appid.txt` in the project root containing your Steam App ID (or `480` for testing with Spacewar)
+1. `STEAM_APP_ID` environment variable
+2. Development fallback: `480`
+3. Production fallback: **disable Steam features and continue launching**
 
-### For Production
+That means packaged builds no longer crash when an App ID is missing. They simply run without Steam integration until `STEAM_APP_ID` is configured.
 
-1. Set the `STEAM_APP_ID` environment variable or update the default in `electron/main.js`
-2. Configure achievements in Steamworks Partner dashboard to match the mapping in `electron/steam-achievements.js`
-3. Enable Steam Cloud in Steamworks Partner dashboard
+## Local testing
 
-## Testing Locally
+### Without Steam running
 
-### Without Steam Running
-
-The game gracefully degrades when Steam is not available:
+Steam integration is optional. The app continues to work locally and falls back to browser/local-storage behavior.
 
 ```bash
-# Run tests (mocks Steam APIs)
 npm test -- electron/__tests__/
 ```
 
-### With Steam Running
+### With Steam running
 
-1. Create `steam_appid.txt` in project root:
-   ```
-   480
-   ```
-   (Use `480` for Spacewar test app, or your actual App ID)
+1. Start Steam and sign in.
+2. Optionally set `STEAM_APP_ID` to your real app ID. If you do nothing, development uses `480`.
+3. Run:
 
-2. Start Steam and log in
+```bash
+npm run electron:dev
+```
 
-3. Run the Electron app:
-   ```bash
-   npm run electron:dev
-   ```
+4. Confirm the console prints `Steam initialized successfully`.
 
-4. Check console for "Steam initialized successfully"
+## Production packaging
 
-## Steam App ID Configuration
+Use the standard Electron packaging script:
 
-The Steam App ID can be configured in several ways (in order of precedence):
+```bash
+npm run electron:build
+```
 
-1. **Environment variable**: `STEAM_APP_ID=123456 npm run electron:dev`
-2. **Default in code**: Edit `STEAM_APP_ID` constant in `electron/main.js`
-3. **steam_appid.txt**: File in project root (for development only)
+That script now points explicitly at `electron-builder.yml`, so local desktop builds use the same packaging config as CI.
 
-For production builds, always use the environment variable or update the code.
+For a Steam-enabled packaged build:
 
-## Achievement Mapping
+1. Set `STEAM_APP_ID`
+2. Configure Steam achievements to match `electron/steam-achievements.js`
+3. Enable Steam Cloud in Steamworks Partner
+4. Upload store/achievement art in Steamworks Partner
 
-Game achievements are mapped to Steam achievements in `electron/steam-achievements.js`:
+## Update policy
+
+When Steam initializes successfully, the Electron auto-updater is intentionally disabled. Steam should remain the source of truth for updates on Steam-distributed installs.
+
+Non-Steam desktop builds can still use the GitHub-backed updater path.
+
+## Achievement mapping
+
+Game achievements are mapped to Steam achievements in `electron/steam-achievements.js`.
 
 | Game ID | Steam API Name | Description |
-|---------|---------------|-------------|
+|---------|----------------|-------------|
 | `speed_demon` | `SPEED_DEMON` | Complete the game in under 50 commands |
 | `ghost` | `GHOST_PROTOCOL` | Win with detection level under 20% |
 | `completionist` | `COMPLETIONIST` | Read every accessible file in the system |
-| `first_blood` | `FIRST_BLOOD` | Discover your first evidence |
+| `first_blood` | `FIRST_BLOOD` | Save your first file to the dossier |
 | `survivor` | `SURVIVOR` | Complete the game after reaching critical detection |
-| `truth_seeker` | `TRUTH_SEEKER` | Collect 10 evidence files |
-| `doom_fan` | `IDDQD` | Activate god mode (secret) |
-| `archivist` | `ARCHIVIST` | Read every file in a folder with 3+ files (secret) |
-| `paranoid` | `PARANOID` | Check system status 10+ times (secret) |
-| `bookworm` | `BOOKWORM` | Bookmark 5+ files (secret) |
-| `night_owl` | `NIGHT_OWL` | Play for over 30 minutes (secret) |
-| `liberator` | `LIBERATOR` | Release ALPHA from containment (secret) |
-| `whistleblower` | `WHISTLEBLOWER` | Leak the conspiracy files to the world (secret) |
-| `linked` | `LINKED` | Connect to the alien consciousness (secret) |
-| `revelator` | `REVELATOR` | Achieve the ultimate ending with all modifiers (secret) |
-| `ending_ridiculed` | `ENDING_RIDICULED` | Reach the ending where the dossier is dismissed as noise (secret) |
-| `ending_ufo74_exposed` | `ENDING_UFO74_EXPOSED` | Reveal UFO74's identity to the world (secret) |
-| `ending_the_2026_warning` | `ENDING_THE_2026_WARNING` | Publish the convergence warning before the next window opens (secret) |
-| `ending_government_scandal` | `ENDING_GOVERNMENT_SCANDAL` | Expose the military cover-up as a national scandal (secret) |
-| `ending_prisoner_45_freed` | `ENDING_PRISONER_45_FREED` | Reveal the containment of Prisoner 45 (secret) |
-| `ending_harvest_understood` | `ENDING_HARVEST_UNDERSTOOD` | Expose the colonization and extraction model (secret) |
-| `ending_nothing_changes` | `ENDING_NOTHING_CHANGES` | Prove the truth, only to watch the world move on (secret) |
-| `ending_incomplete_picture` | `ENDING_INCOMPLETE_PICTURE` | Reach an ending with real evidence but no coherent case (secret) |
-| `ending_wrong_story` | `ENDING_WRONG_STORY` | Expose a scandal while missing the truth underneath (secret) |
-| `ending_hackerkid_caught` | `ENDING_HACKERKID_CAUGHT` | Trigger the honeypot ending (secret) |
-| `ending_secret_ending` | `ENDING_SECRET_ENDING` | Assemble UFO74's full protocol and secure the secret ending (secret) |
-| `ending_real_ending` | `ENDING_REAL_ENDING` | Assemble the dossier that forces a renewed investigation (secret) |
+| `truth_seeker` | `TRUTH_SEEKER` | Save 10 files to the dossier |
+| `doom_fan` | `IDDQD` | Activate god mode |
+| `archivist` | `ARCHIVIST` | Read every file in a folder with 3+ files |
+| `paranoid` | `PARANOID` | Check system status 10+ times |
+| `bookworm` | `BOOKWORM` | Bookmark 5+ files |
+| `night_owl` | `NIGHT_OWL` | Play for over 30 minutes |
+| `liberator` | `LIBERATOR` | Release ALPHA from containment |
+| `whistleblower` | `WHISTLEBLOWER` | Leak the dossier successfully |
+| `linked` | `LINKED` | Connect to the alien consciousness |
+| `revelator` | `REVELATOR` | Reach the ultimate ending with all modifiers |
+| `ending_ridiculed` | `ENDING_RIDICULED` | Reach the ridiculed dossier ending |
+| `ending_ufo74_exposed` | `ENDING_UFO74_EXPOSED` | Reveal UFO74's identity |
+| `ending_the_2026_warning` | `ENDING_THE_2026_WARNING` | Publish the 2026 convergence warning |
+| `ending_government_scandal` | `ENDING_GOVERNMENT_SCANDAL` | Expose the military cover-up |
+| `ending_prisoner_45_freed` | `ENDING_PRISONER_45_FREED` | Reveal the containment of Prisoner 45 |
+| `ending_harvest_understood` | `ENDING_HARVEST_UNDERSTOOD` | Expose the extraction model |
+| `ending_nothing_changes` | `ENDING_NOTHING_CHANGES` | Prove the truth and watch the world ignore it |
+| `ending_incomplete_picture` | `ENDING_INCOMPLETE_PICTURE` | Leak real evidence without a coherent case |
+| `ending_wrong_story` | `ENDING_WRONG_STORY` | Expose the wrong scandal |
+| `ending_hackerkid_caught` | `ENDING_HACKERKID_CAUGHT` | Trigger the honeypot ending |
+| `ending_secret_ending` | `ENDING_SECRET_ENDING` | Assemble the Ferreira protocol |
+| `ending_real_ending` | `ENDING_REAL_ENDING` | Assemble the undeniable dossier |
 
-### Setting Up Achievements in Steamworks
+## Cloud saves
 
-1. Go to Steamworks Partner > Your App > Stats & Achievements
-2. Create achievements matching the "Steam API Name" column above
-3. For secret achievements, check "Hidden" option
-4. Upload achievement icons (64x64 pixels recommended)
+Steam Cloud files are prefixed with `terminal1996_`:
 
-## Cloud Saves
+- `terminal1996_autosave`
+- `terminal1996_save_<timestamp>`
+- `terminal1996_achievements`
 
-### File Naming
+If Steam Cloud is unavailable, the game continues to use local storage.
 
-Cloud save files are prefixed with `terminal1996_` to avoid conflicts:
+## Release checklist
 
-- `terminal1996_autosave` - Auto-save data
-- `terminal1996_save_<timestamp>` - Manual saves
-- `terminal1996_achievements` - Achievement sync data
+- Configure `STEAM_APP_ID`
+- Verify Steam achievements and hidden-achievement flags
+- Verify Steam Cloud quota/settings
+- Verify packaged desktop build starts with Steam running
+- Verify packaged desktop build still starts without Steam/App ID
+- Upload store assets and capsule art in Steamworks Partner
+- Smoke-test overlay, achievement unlocks, and a cloud save round-trip
 
-### Quota
+## Relevant files
 
-Steam Cloud has a default quota of 100MB per game. Check quota usage:
-
-```javascript
-const quota = await window.electronAPI.steamCloud.getQuota();
-console.log(`Used: ${quota.totalBytes - quota.availableBytes} / ${quota.totalBytes}`);
-```
-
-## API Reference
-
-### From Renderer Process (via preload)
-
-```javascript
-// Check if Steam is available
-const isAvailable = await window.electronAPI.steam.isAvailable();
-
-// Get player name
-const name = await window.electronAPI.steam.getPlayerName();
-
-// Unlock achievement
-const result = await window.electronAPI.steamAchievements.unlock('speed_demon');
-// Returns: { success: true } or { success: false, error: '...' }
-
-// Check achievement status
-const status = await window.electronAPI.steamAchievements.isUnlocked('ghost');
-// Returns: { success: true, unlocked: true/false }
-
-// Save to cloud
-const saveResult = await window.electronAPI.steamCloud.save('savegame', jsonString);
-// Returns: { success: true, filename: 'terminal1996_savegame' }
-
-// Load from cloud
-const loadResult = await window.electronAPI.steamCloud.load('savegame');
-// Returns: { success: true, data: '...' } or { success: false, error: '...' }
-
-// Open Steam overlay
-await window.electronAPI.steamOverlay.activate('achievements');
-// Valid dialogs: 'friends', 'community', 'players', 'settings', 
-//                'officialgamegroup', 'stats', 'achievements'
-```
-
-## Graceful Degradation
-
-The integration is designed to work even when Steam is unavailable:
-
-1. **Steam not running**: All Steam API calls return `{ success: false, error: 'Steam not initialized' }`
-2. **Cloud disabled**: Cloud operations fail gracefully, game uses localStorage fallback
-3. **Network issues**: Operations that fail return appropriate error messages
-
-Always check `success` before using results:
-
-```javascript
-const result = await window.electronAPI.steamAchievements.unlock('speed_demon');
-if (!result.success) {
-  console.log('Steam achievement sync failed:', result.error);
-  // Achievement is still saved locally
-}
-```
-
-## Troubleshooting
-
-### "Steam not initialized"
-
-- Ensure Steam is running
-- Check that `steam_appid.txt` exists with valid App ID
-- Verify the app isn't already running in another process
-
-### Achievements not syncing
-
-- Verify achievement names match Steamworks dashboard exactly
-- Check that achievements are published (not draft) in Steamworks
-- Ensure user owns the game (or use test App ID 480)
-
-### Cloud saves not working
-
-- Check Steam Cloud is enabled in Steam Settings > Cloud
-- Verify cloud is enabled for this game in Steamworks dashboard
-- Check quota hasn't been exceeded
-
-## Files
-
-- `electron/main.js` - Steam initialization and IPC handlers
-- `electron/preload.js` - Steam APIs exposed to renderer
+- `electron/main.js` - Steam initialization, IPC, updater gating
+- `electron/preload.js` - Renderer-safe Steam/Desktop bridge
 - `electron/steam-achievements.js` - Achievement mapping and sync
-- `electron/steam-cloud.js` - Cloud save/load functionality
-- `electron/__tests__/` - Test files for Steam integration
+- `electron/steam-cloud.js` - Cloud save/load
+- `electron/steam-presence.js` - Rich Presence mapping
+- `electron/tray.js` - Tray integration and status mirroring
+- `electron-builder.yml` - Canonical desktop packaging config

@@ -148,6 +148,36 @@ export interface TrayAPI {
   onNewGame: (callback: () => void) => void;
 }
 
+export interface AppAPI {
+  /**
+   * Gets the packaged application version string.
+   */
+  getVersion: () => Promise<string | null>;
+
+  /**
+   * Triggers a manual update check when the desktop updater is available.
+   */
+  checkForUpdates: () => Promise<{ available: boolean; version?: string; error?: string }>;
+
+  /**
+   * Registers a callback for update-available events.
+   * Returns an unsubscribe function.
+   */
+  onUpdateAvailable: (callback: (info: { version?: string }) => void) => () => void;
+
+  /**
+   * Registers a callback for update download progress.
+   * Returns an unsubscribe function.
+   */
+  onUpdateProgress: (callback: (progress: { percent?: number }) => void) => () => void;
+
+  /**
+   * Registers a callback for update-downloaded events.
+   * Returns an unsubscribe function.
+   */
+  onUpdateDownloaded: (callback: (info: { version?: string }) => void) => () => void;
+}
+
 export interface ElectronAPI {
   /**
    * The current platform (darwin, win32, linux).
@@ -183,6 +213,11 @@ export interface ElectronAPI {
    * System tray API.
    */
   tray: TrayAPI;
+
+  /**
+   * Desktop application metadata and updater events.
+   */
+  app: AppAPI;
 }
 
 declare global {

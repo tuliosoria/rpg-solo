@@ -6,6 +6,9 @@ import { resolvePath, getNode } from './filesystem';
 import { MAX_DETECTION } from '../constants/detection';
 import { MAX_WRONG_ATTEMPTS } from '../constants/gameplay';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
+import { MAX_EVIDENCE_COUNT, getAllEvidencePaths } from './evidenceRevelation';
+import { determineEnding, type EndingId } from './endings';
+import { createSeededRng, seededShuffle } from './rng';
 
 // Import utilities
 import { createEntry, createEntryI18n, sanitizeCommandInput, parseCommand } from './commands/utils';
@@ -64,6 +67,21 @@ const DEBUG_LEAK_READY_DOSSIER_FILES = [
   '/ops/prato/initial_response_orders.txt',
   '/admin/thirty_year_cycle.txt',
   '/admin/colonization_model.red',
+];
+const GOD_RANDOM_SEED_SALT = 0x52414e44;
+const DEBUG_ENDING_LIST: EndingId[] = [
+  'ridiculed',
+  'ufo74_exposed',
+  'the_2026_warning',
+  'government_scandal',
+  'prisoner_45_freed',
+  'harvest_understood',
+  'nothing_changes',
+  'incomplete_picture',
+  'wrong_story',
+  'hackerkid_caught',
+  'secret_ending',
+  'real_ending',
 ];
 
 // Main command executor
@@ -309,6 +327,63 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       savedFiles: new Set(DEBUG_LEAK_READY_DOSSIER_FILES),
     },
   });
+  const createRandomDossierResult = () => {
+    const evidencePaths = getAllEvidencePaths();
+    const selectionCount = Math.min(MAX_EVIDENCE_COUNT, evidencePaths.length);
+    const randomSeed = ((state.rngState || state.seed || 1) ^ GOD_RANDOM_SEED_SALT) +
+      (state.sessionCommandCount || 0);
+    const rng = createSeededRng(randomSeed);
+    const selectedFiles = seededShuffle(rng, evidencePaths).slice(0, selectionCount);
+    const savedFiles = new Set(selectedFiles);
+    const endingId = determineEnding(savedFiles);
+
+    return {
+      output: [
+        createEntryI18n(
+          'system',
+          'engine.commands.core.random_dossier_generated',
+          '═══ RANDOM DOSSIER GENERATED ═══'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.random_dossier_selected_count',
+          'Selected {{count}} evidence files for the dossier.',
+          { count: selectionCount }
+        ),
+        ...selectedFiles.map(filePath => createEntry('output', `  ${filePath}`)),
+        createEntry('output', ''),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.random_dossier_resolved_ending',
+          'Resolved ending: {{ending}}',
+          { ending: endingId }
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.random_dossier_jumping_to_victory',
+          'Jumping directly to the resolved dossier ending...'
+        ),
+      ],
+      stateChanges: {
+        evidenceCount: selectionCount,
+        filesRead: new Set([...(state.filesRead || []), ...selectedFiles]),
+        savedFiles,
+        evidencesSaved: true,
+        gameWon: true,
+        isGameOver: false,
+        gameOverReason: undefined,
+        endingType: 'good' as const,
+        endingId,
+        ufo74SecretDiscovered: endingId === 'secret_ending',
+        flags: {
+          ...state.flags,
+          evidencesSaved: true,
+          leakSuccessful: true,
+        },
+      },
+      skipToPhase: 'victory' as const,
+    };
+  };
 
   if (lowerInput === 'god alien') {
     return createAlienPreviewResult();
@@ -357,6 +432,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           'output',
           'engine.commands.core.god_save_trigger_evidence_saved_blackout',
           '  god save     - Trigger evidence saved (→ blackout)'
+        ),
+        createEntryI18n(
+          'output',
+          'engine.commands.core.god_random_generate_random_dossier_ending',
+          '  god random   - Generate a random 10-file dossier ending'
         ),
         createEntryI18n(
           'output',
@@ -421,6 +501,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
             'output',
             'engine.commands.core.god_save_set_evidencessaved_flag_triggers_blackout',
             'god save      - Set evidencesSaved flag (triggers blackout)'
+          ),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_random_generate_random_dossier_ending_help',
+            'god random    - Generate a random 10-file dossier ending'
           ),
           createEntryI18n(
             'output',
@@ -527,27 +612,17 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       };
     }
 
+    if (godCmd === 'random') {
+      return createRandomDossierResult();
+    }
+
     if (godCmd === 'ending' || godCmd.startsWith('ending ')) {
       const endingArg = godCmd.slice(7).trim();
-      const ENDING_LIST: string[] = [
-        'ridiculed',          // 1
-        'ufo74_exposed',      // 2
-        'the_2026_warning',   // 3
-        'government_scandal', // 4
-        'prisoner_45_freed',  // 5
-        'harvest_understood', // 6
-        'nothing_changes',    // 7
-        'incomplete_picture', // 8
-        'wrong_story',        // 9
-        'hackerkid_caught',   // 10
-        'secret_ending',      // 11
-        'real_ending',        // 12
-      ];
 
       // If a number is provided, map it to an ending
       const num = parseInt(endingArg, 10);
-      if (endingArg && num >= 1 && num <= ENDING_LIST.length) {
-        const targetEnding = ENDING_LIST[num - 1];
+      if (endingArg && num >= 1 && num <= DEBUG_ENDING_LIST.length) {
+        const targetEnding = DEBUG_ENDING_LIST[num - 1];
         // Secret ending goes to secret_ending phase
         if (targetEnding === 'secret_ending') {
           return {
@@ -578,8 +653,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       }
 
       // If a name is provided, match it directly
-      if (endingArg && ENDING_LIST.includes(endingArg as typeof ENDING_LIST[number])) {
-        const targetEnding = endingArg as typeof ENDING_LIST[number];
+      if (endingArg && DEBUG_ENDING_LIST.includes(endingArg as EndingId)) {
+        const targetEnding = endingArg as EndingId;
         if (targetEnding === 'secret_ending') {
           return {
             output: [
@@ -615,7 +690,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntry('output', ''),
           createEntry('output', 'Usage: god ending <number|name>'),
           createEntry('output', ''),
-          ...ENDING_LIST.map((id, i) =>
+          ...DEBUG_ENDING_LIST.map((id, i) =>
             createEntry('output', `  ${i + 1}. ${id}`)
           ),
           createEntry('output', ''),

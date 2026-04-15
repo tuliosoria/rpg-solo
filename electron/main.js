@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
 function devLog(...args) {
   if (isDev) {
@@ -27,6 +27,7 @@ let steamCloud = null;
 let steamPresence = null;
 let windowState = null;
 let tray = null;
+let autoUpdaterInstance = null;
 
 function loadWindowModules() {
   if (!windowState) {
@@ -69,18 +70,25 @@ function logStartupTime(phase) {
 }
 
 function getSteamAppId() {
+  const configuredAppId = process.env.STEAM_APP_ID?.trim();
+  if (configuredAppId) {
+    return configuredAppId;
+  }
+
   if (isDev) {
-    return process.env.STEAM_APP_ID || '480';
+    return '480';
   }
 
-  if (!process.env.STEAM_APP_ID) {
-    throw new Error('STEAM_APP_ID is required in production');
-  }
-
-  return process.env.STEAM_APP_ID;
+  return null;
 }
 
 const STEAM_APP_ID = getSteamAppId();
+
+function sendToRenderer(channel, payload) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send(channel, payload);
+  }
+}
 
 // Mark app as not quitting (for tray minimize)
 app.isQuitting = false;
@@ -340,14 +348,27 @@ function initializeSteam() {
   updateSplashStatus('Connecting to Steam...', 60);
   
   try {
+    if (!STEAM_APP_ID) {
+      devLog('STEAM_APP_ID not configured; Steam integration disabled for this build');
+      loadSteamModules();
+      markSteamReady();
+      logStartupTime('Steam skipped (no app id)');
+      return false;
+    }
+
     // Lazy load Steam modules
     loadSteamModules();
     
     // steamworks.js uses dynamic require for native bindings
     const steamworks = require('steamworks.js');
+    const parsedAppId = Number.parseInt(STEAM_APP_ID, 10);
+
+    if (!Number.isInteger(parsedAppId) || parsedAppId <= 0) {
+      throw new Error(`Invalid STEAM_APP_ID: ${STEAM_APP_ID}`);
+    }
 
     // Try to initialize with our app ID
-    steamClient = steamworks.init(parseInt(STEAM_APP_ID, 10));
+    steamClient = steamworks.init(parsedAppId);
 
     if (steamClient) {
       steamInitialized = true;
@@ -555,6 +576,36 @@ function createWindow() {
 // ============================================================
 // IPC Handlers for Steam functionality
 // ============================================================
+
+ipcMain.handle('app:getVersion', () => app.getVersion());
+
+ipcMain.handle('app:checkForUpdates', async () => {
+  if (isDev) {
+    return { available: false, error: 'Auto-updater disabled in development' };
+  }
+
+  if (steamInitialized) {
+    return { available: false, error: 'Auto-updater disabled while running under Steam' };
+  }
+
+  if (!autoUpdaterInstance) {
+    return { available: false, error: 'Auto-updater unavailable' };
+  }
+
+  try {
+    const result = await autoUpdaterInstance.checkForUpdates();
+    const version = result?.updateInfo?.version;
+    return {
+      available: Boolean(version && version !== app.getVersion()),
+      version,
+    };
+  } catch (error) {
+    return {
+      available: false,
+      error: error.message,
+    };
+  }
+});
 
 // Steam status
 ipcMain.handle('steam:isAvailable', () => {
@@ -815,8 +866,14 @@ function setupAutoUpdater() {
     return;
   }
 
+  if (steamInitialized) {
+    devLog('Auto-updater disabled while running under Steam');
+    return;
+  }
+
   try {
     const { autoUpdater } = require('electron-updater');
+    autoUpdaterInstance = autoUpdater;
 
     autoUpdater.logger = {
       info: (...args) => devLog(...args),
@@ -833,6 +890,7 @@ function setupAutoUpdater() {
 
     autoUpdater.on('update-available', (info) => {
       devLog('Update available:', info.version);
+      sendToRenderer('update:available', info);
     });
 
     autoUpdater.on('update-not-available', () => {
@@ -845,10 +903,12 @@ function setupAutoUpdater() {
 
     autoUpdater.on('download-progress', (progress) => {
       devLog(`Download progress: ${progress.percent.toFixed(1)}%`);
+      sendToRenderer('update:progress', progress);
     });
 
     autoUpdater.on('update-downloaded', (info) => {
       devLog('Update downloaded:', info.version);
+      sendToRenderer('update:downloaded', info);
       // Will install on next app quit
     });
 
@@ -863,6 +923,7 @@ function setupAutoUpdater() {
     }, 15000); // 15 seconds after startup (increased from 10)
   } catch (error) {
     // electron-updater not installed or other error
+    autoUpdaterInstance = null;
     devLog('Auto-updater not available:', error.message);
   }
 }

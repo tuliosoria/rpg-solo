@@ -15,9 +15,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test": "vitest run --configLoader runner",
+    "test:watch": "vitest --configLoader runner",
+    "test:coverage": "vitest run --configLoader runner --coverage",
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -29,58 +29,8 @@
     "generate-report": "node scripts/generate-report.js",
     "shrink-story": "node scripts/shrink_and_spice_story.js",
     "validate-fundamentals": "node scripts/story_validator.js",
-    "electron:dev": "NODE_ENV=development electron .",
-    "electron:build": "next build && electron-builder --win --mac --linux"
-  },
-  "build": {
-    "appId": "com.terminal1996.varginha",
-    "productName": "Varginha Terminal 1996",
-    "afterExtract": "electron/after-pack.js",
-    "afterPack": "electron/after-pack.js",
-    "directories": {
-      "output": "dist"
-    },
-    "files": [
-      "electron/**/*",
-      "out/**/*",
-      "public/icon.png"
-    ],
-    "protocols": [
-      {
-        "name": "Varginha Terminal Protocol",
-        "schemes": [
-          "varginha"
-        ]
-      }
-    ],
-    "publish": {
-      "provider": "github",
-      "owner": "tuliosoria",
-      "repo": "rpg-solo"
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "public/icon.ico"
-    },
-    "mac": {
-      "target": "dmg",
-      "icon": "public/icon.icns",
-      "identity": null,
-      "category": "public.app-category.games",
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist"
-    },
-    "linux": {
-      "target": "AppImage",
-      "icon": "public/icon.png",
-      "category": "Game"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
-    }
+    "electron:dev": "electron .",
+    "electron:build": "next build && electron-builder --config electron-builder.yml --win --mac --linux"
   },
   "dependencies": {
     "electron-updater": "^6.3.9",
