@@ -332,7 +332,7 @@ export default function Terminal({
         createEntry('ufo74', t('terminal.video.closeComment.prisoner45_1')),
         createEntry('ufo74', t('terminal.video.closeComment.prisoner45_2')),
       ]);
-    } else if (closingVideo?.filePath === '/sys/ghost_in_machine.enc') {
+    } else if (closingVideo?.filePath === '/internal/ghost_in_machine.enc') {
       appendPendingUfo74StartMessages([
         createEntry('ufo74', t('terminal.video.closeComment.identity1')),
         createEntry('ufo74', t('terminal.video.closeComment.identity2')),

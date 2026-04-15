@@ -116,8 +116,8 @@ export const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment>
     videoSrc: THEY_ARE_ALREADY_HERE_VIDEO_SRC,
     videoTitle: 'they-are-already-here.mp4',
   },
-  '/sys/ghost_in_machine.enc': {
-    filePath: '/sys/ghost_in_machine.enc',
+  '/internal/ghost_in_machine.enc': {
+    filePath: '/internal/ghost_in_machine.enc',
     fileName: 'ghost_in_machine.enc',
     videoSrc: UFO74_VIDEO_SRC,
     videoTitle: 'UFO74.mp4',

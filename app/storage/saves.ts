@@ -254,7 +254,7 @@ function deserializeState(json: string): GameState {
       : DEFAULT_GAME_STATE.history,
     evidenceLinks: Array.isArray(baseState.evidenceLinks) ? baseState.evidenceLinks : [],
     ufo74SecretDiscovered:
-      !!baseState.ufo74SecretDiscovered || parsedFilesRead.includes('/sys/ghost_in_machine.enc'),
+      !!baseState.ufo74SecretDiscovered || parsedFilesRead.includes('/internal/ghost_in_machine.enc'),
     pendingDecryptFile: undefined,
     timedDecryptActive: false,
     timedDecryptFile: undefined,

@@ -3543,6 +3543,7 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         'audio_transcript_brief.txt': audio_transcript_brief,
         // The ONE alien-related file available pre-override — real incident field report
         'jardim_andere_incident.txt': jardim_andere_report,
+        'ghost_in_machine.enc': ufo74_identity_file,
         'redaction_keycard.txt': redaction_keycard,
         'override_protocol_memo.txt': override_protocol_memo,
         'maintenance_notes.txt': system_maintenance_notes,
@@ -3679,7 +3680,6 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
       name: 'sys',
       requiredFlags: ['adminUnlocked'],
       children: {
-        'ghost_in_machine.enc': ufo74_identity_file,
         'active_trace.sys': intrusion_detected_file,
       },
     },

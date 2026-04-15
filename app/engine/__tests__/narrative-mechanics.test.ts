@@ -125,12 +125,12 @@ describe('Narrative Mechanics', () => {
         accessLevel: 3,
       });
 
-      const result = executeCommand('decrypt /sys/ghost_in_machine.enc', state);
+      const result = executeCommand('decrypt /internal/ghost_in_machine.enc', state);
       const output = result.output.map(e => e.content).join('\n');
 
       expect(output).not.toContain('PASSWORD REQUIRED');
       expect(output).toContain('decrypt is retired');
-      expect(output).toContain('open /sys/ghost_in_machine.enc');
+      expect(output).toContain('open /internal/ghost_in_machine.enc');
     });
 
     it('ignores legacy password arguments and still redirects to open', () => {
@@ -140,11 +140,11 @@ describe('Narrative Mechanics', () => {
         accessLevel: 3,
       });
 
-      const result = executeCommand('decrypt /sys/ghost_in_machine.enc wrongpassword', state);
+      const result = executeCommand('decrypt /internal/ghost_in_machine.enc wrongpassword', state);
       const output = result.output.map(e => e.content).join('\n');
 
       expect(output).not.toContain('DECRYPTION FAILED');
-      expect(output).toContain('open /sys/ghost_in_machine.enc');
+      expect(output).toContain('open /internal/ghost_in_machine.enc');
     });
 
     it('opening ghost_in_machine reveals UFO74 without a separate decrypt step', () => {
@@ -153,8 +153,8 @@ describe('Narrative Mechanics', () => {
         flags: { adminUnlocked: true },
         accessLevel: 3,
       });
-      const result = executeCommand('open /sys/ghost_in_machine.enc', state);
-      expect(result.output.some(e => e.content.includes('FILE: /sys/ghost_in_machine.enc'))).toBe(
+      const result = executeCommand('open /internal/ghost_in_machine.enc', state);
+      expect(result.output.some(e => e.content.includes('FILE: /internal/ghost_in_machine.enc'))).toBe(
         true
       );
       expect(result.stateChanges.ufo74SecretDiscovered).toBe(true);
@@ -317,7 +317,7 @@ describe('Narrative Mechanics', () => {
         flags: { adminUnlocked: true },
         accessLevel: 3,
       });
-      const result = executeCommand('decrypt /sys/ghost_in_machine.enc', state);
+      const result = executeCommand('decrypt /internal/ghost_in_machine.enc', state);
       const ufo74Entries = result.output.filter(e => e.type === 'ufo74');
       expect(ufo74Entries.length).toBeGreaterThan(0);
     });
