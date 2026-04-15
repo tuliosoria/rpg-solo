@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
-import { getEndingFlags } from '../engine/endings';
+import type { EndingId } from '../engine/endings';
 import { getAllAccessibleFiles } from '../engine/filesystem';
 
 import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
@@ -254,6 +254,7 @@ export default function Terminal({
   const enterOnlyButtonRef = useRef<HTMLButtonElement>(null);
   const headerMenuRef = useRef<HTMLDivElement>(null);
   const gameStateRef = useRef(gameState);
+  gameStateRef.current = gameState;
   const uiStateRef = useRef({
     gamePhase,
     showGameOver,
@@ -460,6 +461,7 @@ export default function Terminal({
   } = useGameActions({
     setGameState,
     setGamePhase,
+    gameStateRef,
     onExitAction,
     playSound,
   });
@@ -957,19 +959,16 @@ export default function Terminal({
   }
 
   if (gamePhase === 'victory') {
-    const endingFlags = getEndingFlags(gameState);
     return (
       <Victory
         onRestartAction={handleRestart}
         commandCount={gameState.sessionCommandCount}
         detectionLevel={gameState.detectionLevel}
         maxDetectionReached={maxDetectionRef.current}
-        evidenceCount={gameState.evidenceCount}
+        evidenceCount={gameState.savedFiles?.size || 0}
         filesReadCount={gameState.filesRead?.size || 0}
         totalReadableFiles={totalReadableFiles}
-        conspiracyFilesLeaked={endingFlags.conspiracyFilesLeaked}
-        alphaReleased={endingFlags.alphaReleased}
-        neuralLinkAuthenticated={endingFlags.neuralLinkAuthenticated}
+        endingId={gameState.endingId as EndingId | undefined}
         textSpeed={textSpeed}
       />
     );

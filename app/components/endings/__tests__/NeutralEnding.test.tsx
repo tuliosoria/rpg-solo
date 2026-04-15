@@ -3,7 +3,7 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import NeutralEnding from '../NeutralEnding';
 
 // Mock the statistics module
-vi.mock('../../storage/statistics', () => ({
+vi.mock('../../../storage/statistics', () => ({
   recordEnding: vi.fn(),
 }));
 

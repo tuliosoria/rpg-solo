@@ -3,12 +3,12 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import Victory from '../Victory';
 
 // Mock the statistics module
-vi.mock('../../storage/statistics', () => ({
+vi.mock('../../../storage/statistics', () => ({
   recordEnding: vi.fn(),
 }));
 
 // Mock the achievements module
-vi.mock('../../engine/achievements', () => ({
+vi.mock('../../../engine/achievements', () => ({
   unlockAchievement: vi.fn(() => null),
 }));
 

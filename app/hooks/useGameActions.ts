@@ -1,14 +1,16 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, type MutableRefObject } from 'react';
 import { createEntryI18n } from '../engine/commands/utils';
 import type { GamePhase, GameState } from '../types';
 import type { SoundType } from './useSound';
 import { appendToHistory } from '../lib/appendToHistory';
+import { determineEnding } from '../engine/endings';
 
 interface UseGameActionsOptions {
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
+  gameStateRef: MutableRefObject<GameState>;
   onExitAction: () => void;
   playSound: (sound: SoundType) => void;
 }
@@ -16,18 +18,26 @@ interface UseGameActionsOptions {
 export function useGameActions({
   setGameState,
   setGamePhase,
+  gameStateRef,
   onExitAction,
   playSound,
 }: UseGameActionsOptions) {
   const handleBlackoutComplete = useCallback(() => {
+    // Evaluate the player's dossier and determine the correct ending
+    // All 12 dossier endings render through Victory.tsx which has the ENDINGS system
+    const currentState = gameStateRef.current;
+    const endingId = determineEnding(currentState.savedFiles);
+
     setGamePhase('victory');
     setGameState(prev => ({
       ...prev,
       gameWon: true,
       isGameOver: false,
       gameOverReason: undefined,
+      endingType: 'good',
+      endingId,
     }));
-  }, [setGamePhase, setGameState]);
+  }, [setGamePhase, setGameState, gameStateRef]);
 
   const handleVictory = useCallback(() => {
     setGamePhase('victory');

@@ -1,9 +1,8 @@
 // Hint System for Terminal 1996
-// Provides state-aware UFO74 hints without revealing exact file answers.
+// Context-aware UFO74 hints that evaluate full game state before speaking.
 
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { GameState, TerminalEntry } from '../types';
-import { countEvidence, MAX_EVIDENCE_COUNT } from './evidenceRevelation';
 import { createEntry, createEntryI18n } from './commands/utils';
 
 // Hint configuration
@@ -33,97 +32,64 @@ function hasReadPathPrefix(state: GameState, prefix: string): boolean {
       return true;
     }
   }
-
   return false;
 }
 
 /**
- * Analyze player progress and return the most useful hint for the current state.
+ * Analyze player progress and return the most contextual hint for the current state.
+ *
+ * Priority order:
+ *   1. Leak ready (10+ saved files) — only valid message is the leak prompt
+ *   2. Critical risk — only valid message is about risk
+ *   3. Morse puzzle pending — specific mechanic hint
+ *   4. Exploration guidance — based on directories not yet visited
+ *   5. Override hint — if enough files read but admin not unlocked
+ *   6. General progress — based on files read and saved
+ *   7. Silence — when state is ambiguous, return null
  */
 export function analyzeProgressForHint(state: GameState): HintDescriptor | null {
   const hintsUsed = state.hintsUsed || 0;
   const filesReadCount = state.filesRead?.size || 0;
-  const evidenceCount = countEvidence(state);
+  const savedCount = state.savedFiles?.size || 0;
   const waitUsesRemaining = state.waitUsesRemaining || 0;
-  const hasReadStorage = hasReadPathPrefix(state, '/storage/');
-  const hasReadOps = hasReadPathPrefix(state, '/ops/');
-  const hasReadComms = hasReadPathPrefix(state, '/comms/');
-  const hasReadAdmin = hasReadPathPrefix(state, '/admin/');
   const adminUnlocked = state.flags?.adminUnlocked === true || state.accessLevel >= 3;
 
-  if (!state.gameWon && evidenceCount >= MAX_EVIDENCE_COUNT) {
-    return {
-      primary: pickHintVariant(hintsUsed, [
-        {
-          key: 'engine.hints.progress.nearComplete.1',
-          fallback: 'UFO74: You are close to understanding.',
-        },
-        {
-          key: 'engine.hints.progress.nearComplete.3',
-          fallback: 'UFO74: The full picture is almost visible.',
-        },
-      ]),
-      followUp: {
-        key: 'engine.hints.action.leak',
-        fallback: '       review with "progress", then use "leak" when you are ready.',
-      },
-    };
-  }
-
-  if (state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH && waitUsesRemaining > 0) {
+  // ─── Priority 1: Leak ready — 10+ files saved ───
+  // The only valid message at this point is the leak prompt.
+  if (!state.gameWon && savedCount >= 10) {
     return {
       primary: {
-        key: 'engine.hints.action.recoverHeader',
-        fallback: 'UFO74: dont get greedy. the system is awake now.',
-      },
-      followUp: {
-        key: waitUsesRemaining === 1 ? 'engine.hints.action.recover.one' : 'engine.hints.action.recover.other',
-        fallback: `       cool the heat first. "wait" still has ${waitUsesRemaining} use${
-          waitUsesRemaining === 1 ? '' : 's'
-        } left.`,
-        values: { value: waitUsesRemaining },
+        key: 'engine.hints.leak.ready',
+        fallback: 'UFO74: kid. you have enough. type "leak" when you are ready.',
       },
     };
   }
 
-  if (filesReadCount === 0) {
+  // ─── Priority 2: Critical detection — survival is the only topic ───
+  if (state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_HIGH) {
+    if (waitUsesRemaining > 0) {
+      return {
+        primary: {
+          key: 'engine.hints.action.recoverHeader',
+          fallback: 'UFO74: dont get greedy. the system is awake now.',
+        },
+        followUp: {
+          key: waitUsesRemaining === 1 ? 'engine.hints.action.recover.one' : 'engine.hints.action.recover.other',
+          fallback: `       cool the heat first. "wait" still has ${waitUsesRemaining} use${waitUsesRemaining === 1 ? '' : 's'} left.`,
+          values: { value: waitUsesRemaining },
+        },
+      };
+    }
+    // No wait uses left — just warn
     return {
-      primary: pickHintVariant(hintsUsed, [
-        {
-          key: 'engine.hints.progress.noFiles.1',
-          fallback: 'UFO74: You have not examined any files yet.',
-        },
-        {
-          key: 'engine.hints.progress.noFiles.3',
-          fallback: 'UFO74: The filesystem contains answers.',
-        },
-      ]),
-      followUp: {
-        key: 'engine.hints.action.start.openRoutineFile',
-        fallback: '       start small: "ls", then "open" something routine.',
+      primary: {
+        key: 'engine.hints.risk.critical',
+        fallback: 'UFO74: they are watching everything. move fast or get out.',
       },
     };
   }
 
-  if (filesReadCount < 4 && evidenceCount === 0) {
-    return {
-      primary: pickHintVariant(hintsUsed, [
-        {
-          key: 'engine.hints.progress.fewFiles.1',
-          fallback: 'UFO74: You have only scratched the surface.',
-        },
-        {
-          key: 'engine.hints.progress.fewFiles.2',
-          fallback: 'UFO74: Many directories remain unexplored.',
-        },
-      ]),
-      followUp: {
-        key: 'engine.hints.action.start.useTreeAndSearch',
-        fallback: '       use "tree" for the map, then "search <term>" if you need a lead.',
-      },
-    };
-  }
-
+  // ─── Priority 3: Morse puzzle pending ───
   if (state.morseFileRead && !state.morseMessageSolved) {
     return {
       primary: pickHintVariant(hintsUsed, [
@@ -143,7 +109,54 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
     };
   }
 
-  if (!hasReadStorage && evidenceCount < 3) {
+  // ─── Priority 4: Player hasn't read anything yet ───
+  if (filesReadCount === 0) {
+    return {
+      primary: pickHintVariant(hintsUsed, [
+        {
+          key: 'engine.hints.progress.noFiles.1',
+          fallback: 'UFO74: You have not examined any files yet.',
+        },
+        {
+          key: 'engine.hints.progress.noFiles.3',
+          fallback: 'UFO74: The filesystem contains answers.',
+        },
+      ]),
+      followUp: {
+        key: 'engine.hints.action.start.openRoutineFile',
+        fallback: '       start small: "ls", then "open" something routine.',
+      },
+    };
+  }
+
+  // ─── Priority 5: Very early — few files read, nothing saved ───
+  if (filesReadCount < 4 && savedCount === 0) {
+    return {
+      primary: pickHintVariant(hintsUsed, [
+        {
+          key: 'engine.hints.progress.fewFiles.1',
+          fallback: 'UFO74: You have only scratched the surface.',
+        },
+        {
+          key: 'engine.hints.progress.fewFiles.2',
+          fallback: 'UFO74: Many directories remain unexplored.',
+        },
+      ]),
+      followUp: {
+        key: 'engine.hints.action.start.useTreeAndSearch',
+        fallback: '       use "tree" for the map, then "search <term>" if you need a lead.',
+      },
+    };
+  }
+
+  // ─── Priority 6: Directory exploration hints ───
+  // Only suggest directories the player hasn't explored yet
+  const hasReadStorage = hasReadPathPrefix(state, '/storage/');
+  const hasReadOps = hasReadPathPrefix(state, '/ops/');
+  const hasReadComms = hasReadPathPrefix(state, '/comms/');
+  const hasReadAdmin = hasReadPathPrefix(state, '/admin/');
+
+  if (!hasReadStorage && savedCount < 3) {
     return {
       primary: pickHintVariant(hintsUsed, [
         {
@@ -162,7 +175,7 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
     };
   }
 
-  if (!hasReadOps && evidenceCount < 5) {
+  if (!hasReadOps && savedCount < 5) {
     return {
       primary: pickHintVariant(hintsUsed, [
         {
@@ -181,7 +194,7 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
     };
   }
 
-  if (!hasReadComms && evidenceCount < 7) {
+  if (!hasReadComms && savedCount < 7) {
     return {
       primary: pickHintVariant(hintsUsed, [
         {
@@ -200,7 +213,8 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
     };
   }
 
-  if (!adminUnlocked && evidenceCount >= 4) {
+  // ─── Priority 7: Override hint — enough reading but admin locked ───
+  if (!adminUnlocked && filesReadCount >= 8) {
     return {
       primary: pickHintVariant(hintsUsed, [
         {
@@ -219,6 +233,7 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
     };
   }
 
+  // ─── Priority 8: Admin unlocked but not explored ───
   if (adminUnlocked && !hasReadAdmin) {
     return {
       primary: pickHintVariant(hintsUsed, [
@@ -238,7 +253,8 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
     };
   }
 
-  if (state.prisoner45QuestionsAsked === 0 && evidenceCount >= 2) {
+  // ─── Priority 9: Prisoner 45 not yet contacted ───
+  if (state.prisoner45QuestionsAsked === 0 && filesReadCount >= 4) {
     return {
       primary: pickHintVariant(hintsUsed, [
         {
@@ -257,12 +273,13 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
     };
   }
 
-  if (evidenceCount >= 7) {
+  // ─── Priority 10: Near leak threshold ───
+  if (savedCount >= 7) {
     return {
       primary: pickHintVariant(hintsUsed, [
         {
           key: 'engine.hints.progress.nearComplete.2',
-          fallback: 'UFO74: One or two pieces remain hidden.',
+          fallback: 'UFO74: almost there. a few more files in the dossier.',
         },
         {
           key: 'engine.hints.progress.nearComplete.3',
@@ -271,12 +288,13 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
       ]),
       followUp: {
         key: 'engine.hints.action.review.looseThreads',
-        fallback: '       use "progress", "bookmark", and "unread" to find the loose threads.',
+        fallback: '       use "progress" to review your dossier. save what matters.',
       },
     };
   }
 
-  if (evidenceCount > 0) {
+  // ─── Priority 11: Has some saved files ───
+  if (savedCount > 0) {
     return {
       primary: pickHintVariant(hintsUsed, [
         {
@@ -290,27 +308,13 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
       ]),
       followUp: {
         key: 'engine.hints.action.review.searchGaps',
-        fallback: '       run "progress" for the recap, then search the gaps instead of rereading everything.',
+        fallback: '       run "progress" for the recap, then search the gaps.',
       },
     };
   }
 
-  return {
-    primary: pickHintVariant(hintsUsed, [
-      {
-        key: 'engine.hints.progress.noTruths.1',
-        fallback: 'UFO74: Evidence exists, but you have not recognized it.',
-      },
-      {
-        key: 'engine.hints.progress.noTruths.3',
-        fallback: 'UFO74: Read deeper. Question what you read.',
-      },
-    ]),
-    followUp: {
-      key: 'engine.hints.action.start.widenSearch',
-      fallback: '       widen the search. different sectors answer different parts of the case.',
-    },
-  };
+  // ─── Default: silence is better than noise ───
+  return null;
 }
 
 /**

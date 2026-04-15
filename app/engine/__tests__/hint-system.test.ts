@@ -110,7 +110,7 @@ describe('Hint System', () => {
       expect(hint?.followUp?.key).toBe('engine.hints.action.start.useTreeAndSearch');
     });
 
-    it('uses a separate fallback key when no evidence has clicked yet', () => {
+    it('returns null when all exploration is done and no saves yet — silence is better', () => {
       const hint = analyzeProgressForHint(
         createTestState({
           filesRead: new Set([
@@ -121,19 +121,19 @@ describe('Hint System', () => {
           ]),
           accessLevel: 3,
           flags: { adminUnlocked: true },
-          evidenceCount: 0,
           prisoner45QuestionsAsked: 1,
         })
       );
 
-      expect(hint?.followUp?.key).toBe('engine.hints.action.start.widenSearch');
+      // With all dirs explored and prisoner contacted, but nothing saved, silence
+      expect(hint).toBeNull();
     });
 
     it('guides players toward unexplored sectors', () => {
       const hint = analyzeProgressForHint(
         createTestState({
-          filesRead: new Set(['/ops/file1.txt', '/ops/file2.txt', '/internal/file3.txt']),
-          evidenceCount: 1,
+          filesRead: new Set(['/ops/file1.txt', '/ops/file2.txt', '/internal/file3.txt', '/internal/file4.txt']),
+          savedFiles: new Set(['file1.txt']),
         })
       );
 
@@ -156,10 +156,16 @@ describe('Hint System', () => {
     it('guides toward admin after clearance is unlocked', () => {
       const hint = analyzeProgressForHint(
         createTestState({
-          filesRead: new Set(['/storage/log1.txt', '/ops/log2.txt', '/comms/log3.txt']),
-          evidenceCount: 6,
+          filesRead: new Set([
+            '/storage/log1.txt', '/storage/log2.txt',
+            '/ops/log2.txt', '/ops/log3.txt',
+            '/comms/log3.txt', '/comms/log4.txt',
+            '/internal/log5.txt', '/internal/log6.txt',
+          ]),
+          savedFiles: new Set(['file1.txt', 'file2.txt', 'file3.txt', 'file4.txt', 'file5.txt']),
           accessLevel: 3,
           flags: { adminUnlocked: true },
+          prisoner45QuestionsAsked: 1,
         })
       );
 
@@ -168,14 +174,16 @@ describe('Hint System', () => {
     });
 
     it('guides leak-ready players toward the endgame', () => {
+      const savedSet = new Set<string>();
+      for (let i = 0; i < 10; i++) savedSet.add(`file${i}.txt`);
       const hint = analyzeProgressForHint(
         createTestState({
-          evidenceCount: 10,
+          savedFiles: savedSet,
           filesRead: new Set(['/storage/a.txt', '/ops/b.txt', '/comms/c.txt']),
         })
       );
 
-      expect(hint?.followUp?.key).toBe('engine.hints.action.leak');
+      expect(hint?.primary.key).toBe('engine.hints.leak.ready');
     });
 
     it('keeps late-stage review guidance distinct from mid-run recap guidance', () => {
@@ -189,7 +197,7 @@ describe('Hint System', () => {
           ]),
           accessLevel: 3,
           flags: { adminUnlocked: true },
-          evidenceCount: 7,
+          savedFiles: new Set(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']),
           prisoner45QuestionsAsked: 1,
         })
       );
@@ -203,7 +211,7 @@ describe('Hint System', () => {
           ]),
           accessLevel: 3,
           flags: { adminUnlocked: true },
-          evidenceCount: 2,
+          savedFiles: new Set(['a', 'b']),
           prisoner45QuestionsAsked: 1,
         })
       );
@@ -240,7 +248,7 @@ describe('Hint System', () => {
         createTestState({
           tutorialComplete: true,
           filesRead: new Set(['/storage/a.txt', '/ops/b.txt', '/comms/c.txt', '/admin/d.txt']),
-          evidenceCount: 7,
+          savedFiles: new Set(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']),
           accessLevel: 3,
           flags: { adminUnlocked: true },
           prisoner45QuestionsAsked: 1,

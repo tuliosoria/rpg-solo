@@ -7,8 +7,8 @@ import { recordEnding } from '../../storage/statistics';
 import AchievementPopup from '../overlays/AchievementPopup';
 import { useI18n } from '../../i18n';
 import {
-  EndingFlags,
-  determineEndingVariant,
+  EndingId,
+  ENDINGS,
   getEndingNarrativeLines,
   getEndingTitle,
 } from '../../engine/endings';
@@ -32,7 +32,8 @@ interface VictoryProps {
   evidenceCount?: number;
   filesReadCount?: number;
   totalReadableFiles?: number;
-  // Ending modifier flags
+  endingId?: EndingId;
+  // Legacy ending modifier flags (fallback if endingId not set)
   conspiracyFilesLeaked?: boolean;
   alphaReleased?: boolean;
   neuralLinkAuthenticated?: boolean;
@@ -47,6 +48,7 @@ export default function Victory({
   evidenceCount = 0,
   filesReadCount = 0,
   totalReadableFiles = 0,
+  endingId,
   conspiracyFilesLeaked = false,
   alphaReleased = false,
   neuralLinkAuthenticated = false,
@@ -61,19 +63,16 @@ export default function Victory({
   const creditsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const restartButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Determine ending variant based on flags
-  const endingFlags: EndingFlags = {
-    conspiracyFilesLeaked,
-    alphaReleased,
-    neuralLinkAuthenticated,
-  };
-  const endingVariant = determineEndingVariant(endingFlags);
-  const endingTitle = getEndingTitle(endingVariant);
+  // Use endingId directly if provided; fall back to ENDINGS keys check
+  const resolvedEndingId: EndingId = endingId && endingId in ENDINGS
+    ? endingId
+    : 'incomplete_picture'; // safe fallback
+  const endingTitle = getEndingTitle(resolvedEndingId);
 
-  // Get the narrative for this ending variant
+  // Get the narrative for this ending
   const victoryText = useMemo(
-    () => getEndingNarrativeLines(endingVariant),
-    [endingVariant]
+    () => getEndingNarrativeLines(resolvedEndingId),
+    [resolvedEndingId]
   );
   const timings = VICTORY_TIMINGS[textSpeed];
   const leakPathLabel = t('ending.dossier.path.unknown');
@@ -158,8 +157,8 @@ export default function Victory({
       if (result?.isNew) newAchievements.push(result.achievement);
     }
 
-    // Unlock ending-specific achievement based on the ending variant
-    const endingAchievementId = `ending_${endingVariant}`;
+    // Unlock ending-specific achievement based on the ending
+    const endingAchievementId = `ending_${resolvedEndingId}`;
     const endingResult = unlockAchievement(endingAchievementId);
     if (endingResult?.isNew) newAchievements.push(endingResult.achievement);
 
@@ -173,7 +172,7 @@ export default function Victory({
     conspiracyFilesLeaked,
     alphaReleased,
     neuralLinkAuthenticated,
-    endingVariant,
+    resolvedEndingId,
   ]);
 
   // Show achievements one by one
