@@ -104,6 +104,7 @@
   "terminal.enter.continue": "Press Enter ↵ to continue",
   "terminal.input.aria": "Terminal command input",
   "terminal.input.placeholder": "Try: help, ls, progress, search crash",
+  "terminal.beginnerTip": "Try: help, ls, cd, progress, search, and other commands",
   "terminal.typing.warning": "SUSPICIOUS TYPING PATTERN DETECTED",
   "terminal.timer.traceActive": "⚠️ TRACE ACTIVE",
   "terminal.timer.decryptWindow": "DECRYPTION WINDOW",

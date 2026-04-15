@@ -1337,7 +1337,13 @@ export default function Terminal({
             </div>
           </>
         ) : (
-          <form onSubmit={handleSubmit} className={styles.inputArea}>
+          <>
+            {!gameState.flags?.adminUnlocked && (
+              <div className={styles.beginnerTip}>
+                {t('terminal.beginnerTip')}
+              </div>
+            )}
+            <form onSubmit={handleSubmit} className={styles.inputArea}>
             <span className={styles.prompt}>&gt;</span>
             <input
               ref={inputRef}
@@ -1395,6 +1401,7 @@ export default function Terminal({
               <span className={styles.typingWarningInline}>{t('terminal.typing.warning')}</span>
             )}
           </form>
+          </>
         )}
 
         {/* Timed decryption timer overlay */}

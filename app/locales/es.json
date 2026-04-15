@@ -104,6 +104,7 @@
   "terminal.enter.continue": "Presiona Enter ↵ para continuar",
   "terminal.input.aria": "Entrada de comandos del terminal",
   "terminal.input.placeholder": "Prueba: help, ls, progress, search crash",
+  "terminal.beginnerTip": "Prueba: help, ls, cd, progress, search, y otros comandos",
   "terminal.typing.warning": "PATRÓN DE ESCRITURA SOSPECHOSO DETECTADO",
   "terminal.timer.traceActive": "⚠️ TRAZA ACTIVA",
   "terminal.timer.decryptWindow": "VENTANA DE DESCIFRADO",

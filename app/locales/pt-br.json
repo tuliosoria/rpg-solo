@@ -104,6 +104,7 @@
   "terminal.enter.continue": "Pressione Enter ↵ para continuar",
   "terminal.input.aria": "Entrada de comando do terminal",
   "terminal.input.placeholder": "Tente: help, ls, progress, search crash",
+  "terminal.beginnerTip": "Tente: help, ls, cd, progress, search, e outros comandos",
   "terminal.typing.warning": "PADRÃO DE DIGITAÇÃO SUSPEITO DETECTADO",
   "terminal.timer.traceActive": "⚠️ RASTREIO ATIVO",
   "terminal.timer.decryptWindow": "JANELA DE DESCRIPTOGRAFIA",
