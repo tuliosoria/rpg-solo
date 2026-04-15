@@ -134,7 +134,7 @@ const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'threat_window.red': 'threat window. a timeline for something they cannot stop.',
   'internal_note_07.txt': 'internal note. someone higher up was asking for updates. daily.',
   'bio_program_overview.red':
-    'bio program overview. the entire operation. funded. authorized. hidden.',
+    'analyze biological material? that thing looks like a good old alien to me, kid.',
   'colonization_model.red':
     'colonization model. not invasion. colonization. the difference matters.',
   'ethics_exception_03.txt':
