@@ -1,141 +1,115 @@
-# Copilot Instructions — Varginha: Terminal 1996
+# AGENTS.md — Varginha: Terminal 1996
 
-> **Built with Next.js 15 and React 19** — A narrative puzzle game about the 1996 Varginha UFO incident in Brazil.
+## What This Repo Is
 
----
+A **text-based narrative puzzle game** about the 1996 Varginha UFO incident in Brazil. Players access a simulated intelligence terminal, navigate a virtual filesystem, and collect **ten pieces of evidence** to build a leak dossier before detection ends their session.
 
-## The Real Varginha Incident (Historical Context)
+**Stack:** Next.js 15 (App Router) · React 19 · TypeScript 5 (strict) · Tailwind CSS 4 · Vitest · Electron 40 (optional desktop wrapper)
 
-The game is based on **real events from January 1996** in Varginha, Minas Gerais, Brazil:
-
-- **January 13, 1996:** NORAD allegedly tracked an unknown object entering Brazilian airspace; Brazilian Air Force scrambled jets.
-- **January 20, 1996:** Three young women (Liliane, Valquíria, and Kátia) claimed to encounter a "creature" with oily brown skin, large red eyes, and three protrusions on its head in the Jardim Andere neighborhood at approximately 3:30 PM.
-- **January 22, 1996:** Military police and firefighters reportedly captured one or more creatures; witnesses describe unusual military activity at the local zoo and Humanitas Hospital.
-- **Multiple witness deaths:** Several witnesses and military personnel involved died under unusual circumstances in the following years, fueling conspiracy theories.
-- **Official denial:** Brazilian military officially denies any unusual activity, calling it a case of mass hysteria or misidentification of a homeless person ("the dwarf theory").
-
-**Why this matters for the game:** The narrative assumes the cover-up was real. Players piece together what "actually happened" through classified documents. The five truths players must discover align with the most persistent conspiracy claims: debris recovery, creature containment, telepathic abilities, international involvement, and a future "activation window."
+**Genre:** Procedural horror / ufology — bureaucratic cover-up dread, not jump scares.
 
 ---
 
-## Project Overview
+## Validate Your Work
 
-**Varginha: Terminal 1996** is a text-based puzzle game where players access a simulated Brazilian intelligence terminal set in January 1996. They navigate a virtual filesystem to uncover **five hidden truths** before system detection or corruption ends the session.
-
-**Genre Identity:** Procedural Horror / Ufology / Hard Sci-Fi Cosmology. The game walks a line between X-Files-style conspiracy thriller and Lovecraftian cosmic dread—the creatures aren't "aliens" in a friendly sci-fi sense but something fundamentally unsettling.
-
----
-
-## Design Philosophy & Architecture Rationale
-
-### Why a Terminal Interface?
-The terminal aesthetic serves multiple purposes:
-1. **Justifies information restriction** — Classified systems naturally have access controls
-2. **Creates diegetic tension** — The "detection level" makes sense as intrusion monitoring
-3. **Enables procedural horror** — Text corruption, system glitches, and hostile messages feel organic
-4. **Low barrier to entry** — No complex UI; players learn commands naturally
-
-### Why Detection Increases Are Inevitable
-The game is designed so that **you cannot avoid detection entirely**—only manage it. This was an intentional design choice to create tension. Even "safe" actions like reading files increment detection by 1-3%. Players who try to be perfectly stealthy will eventually realize the game wants them to take risks.
-
-### The Evidence System
-Evidence discovery uses a simple counter (`evidenceCount: 0-5`). Every time the Kid avatar shows a scared reaction (triggered by reading files with disturbing content), one evidence is released (counter increments by 1, capped at 5). Finding 5 triggers the win condition. There are no categories, types, or classification of any kind — just a counter.
-
-### UFO74: The Ally System
-UFO74 is the player's only friend in the system—a hacker who guides them. Design principles:
-- **Trust degrades** if the player triggers too many warnings
-- **Has a secret identity** — UFO74 was actually present during the 1996 incident (discoverable via password puzzle)
-- At very low trust, hints emerge that "UFO74" might be multiple people (paranoia mechanic)
-- Messages adapt to the player's evidence count
-
-### How Evidence Works
-Files with disturbing content (matching patterns in `isDisturbingContent()`) trigger avatar reactions. If the reaction is `scared` and the file hasn't been read before, `evidenceCount` increments by 1. The `getDisturbingContentAvatarExpression()` function determines whether content triggers `shocked` or `scared` expressions.
-
----
-
-## Tech Stack
-
-- **Framework:** Next.js 15 (App Router)
-- **UI:** React 19, CSS Modules, Tailwind CSS 4
-- **Language:** TypeScript 5 (strict mode)
-- **Testing:** Vitest, React Testing Library, jsdom
-- **Linting/Formatting:** ESLint 9 (flat config), Prettier
-- **Desktop:** Electron 40 (optional)
-- **Build Tools:** PostCSS
-
----
-
-## Key Directories & Files
-
-- `app/` — Main app logic (Next.js)
-  - `components/` — Terminal UI, overlays, chat, endings
-  - `constants/` — Game balance, detection, timing (CRITICAL for balance changes)
-  - `data/` — Narrative content, virtual filesystem
-  - `engine/` — Command parser, game logic, evidence system
-  - `hooks/` — Custom React hooks
-  - `storage/` — Save/load, statistics, localStorage
-  - `types/` — TypeScript interfaces (GameState, FileNode, etc.)
-- `electron/` — Desktop wrapper
-- `public/` — Static assets (videos, images, sounds)
-- `scripts/` — Story validation and analysis
-- `.github/` — Copilot instructions, custom skills, CI workflows
-
----
-
-## Build & Test Commands
+Run these after any logic, content, or config change:
 
 ```bash
-npm install           # Install dependencies
-npm run dev           # Start dev server (http://localhost:3000)
-npm run build         # Production build
-npm start             # Start production server
-npm test              # Run all tests
-npm run test:watch    # Watch mode
-npm run test:coverage # Coverage report
-npm run lint          # Lint check
-npm run lint:fix      # Auto-fix lint
-npm run format        # Prettier format
-npm run validate-story # Validate story consistency
+npm test              # Vitest unit tests (fast, run first)
+npm run typecheck     # tsc --noEmit (catches type regressions)
+npm run lint          # ESLint 9 flat config
+npm run build         # Next.js production build (static export)
+npm run validate-story # Story consistency checks
 ```
 
----
-
-## Common Pitfalls & Gotchas
-
-### Gameplay Balance
-- **Don't make detection increases too punishing.** The Jan 2026 rebalance reduced most values by 30-40%. See `app/constants/detection.ts` for current values.
-- **Detection thresholds are centralized** in `DETECTION_THRESHOLDS`. Don't hardcode magic numbers like `50` or `90` elsewhere.
-- **wrongAttempts vs detectionLevel:** These are separate! `wrongAttempts` is for invalid commands/passwords (8 = game over). `detectionLevel` is the stealth meter (0-100%).
-
-### State Management
-- **GameState is complex** (~80 fields). Always check `app/types/index.ts` before adding new state.
-- **Sets require special handling** in save/load. GameState uses `Set<string>` for many fields, but localStorage needs arrays. Check `storage/` for serialization patterns.
-- **Flags are stringly-typed.** The `flags: Record<string, boolean>` pattern means typos in flag names cause silent failures.
-
-### Narrative Content
-- **`reveals` array is critical.** A file without `reveals` contributes nothing to truth discovery—it's just flavor.
-- **Don't duplicate truth revelations.** If two files both reveal the same truth too easily, players can skip half the game.
-- **Conditional files use `requiredFlags`.** Check what flags must be set before the file appears.
-
-### Testing
-- **Vitest uses jsdom.** Tests that rely on `window` or `document` should work, but localStorage needs mocking.
-- **RNG is seeded.** The game uses deterministic random via `app/engine/rng.ts`. Tests should set a known seed.
-
-### Electron
-- **Optional and separate build.** Most development happens in browser. Electron is for distribution only.
+Other useful commands: `npm run test:coverage`, `npm run lint:fix`, `npm run format`, `npm run validate-enhanced`, `npm run validate-fundamentals`.
 
 ---
 
-## Narrative Tone Guidelines
+## Task Routing — Where to Look
 
-The game's tone is **bureaucratic horror**—the terror of institutional cover-ups, not jump scares.
+| Task domain | Start here | Key files |
+|---|---|---|
+| **UI / terminal rendering** | `app/components/` | `Terminal.tsx`, `terminalConstants.ts` |
+| **Game commands** | `app/engine/` | `commands.ts`, `commands/` subdirectory |
+| **Narrative content / filesystem** | `app/data/` | `virtualFileSystem.ts`, plus companion content modules such as `narrativeContent.ts` |
+| **Detection / difficulty balance** | `app/constants/` | `detection.ts` (`DETECTION_THRESHOLDS`), `gameplay.ts` |
+| **Game state & types** | `app/types/` | `index.ts` (GameState, DEFAULT_GAME_STATE) |
+| **Save / load / localStorage** | `app/storage/` | Serialization of `Set<string>` fields lives here |
+| **Evidence system** | `app/engine/` | `evidenceRevelation.ts`, plus helpers in `commands/helpers.ts` |
+| **Hooks** | `app/hooks/` | Custom React hooks |
+| **Versioning / build metadata** | `next.config.ts`, `app/components/terminalConstants.ts` | See "Versioning" below |
+| **Story validation scripts** | `scripts/` | `validate-story.js`, `validate-enhanced-story.js`, `story_validator.js` |
+| **Desktop packaging** | `electron/` | Electron is for distribution; dev happens in browser |
 
-### Voice Principles
-- **Clinical detachment:** Documents read like they were written by someone following a form. "Subject exhibited distress" not "the creature was scared."
-- **Redaction as atmosphere:** `[REDACTED]`, `[DATA EXPUNGED]`, and `████████` imply more than explicit content could.
-- **Euphemism as horror:** "Biological material" instead of "body parts." "Transition event" instead of "death."
+---
 
-### Document Formatting
+## Core Mechanics (Agent-Critical)
+
+### Detection
+- `detectionLevel` (0–100%) is the stealth meter. Thresholds are centralized in `DETECTION_THRESHOLDS` — never hardcode magic numbers.
+- Detection increases are **inevitable by design**; even safe actions add 1–3%.
+- `wrongAttempts` is separate: invalid commands/passwords; 8 = game over.
+
+### Evidence
+- `evidenceCount` is a `0–10` counter (`MAX_EVIDENCE_COUNT` in `evidenceRevelation.ts`). No categories or types.
+- Files with `isEvidence: true` log one piece of evidence when first opened.
+- Players build a dossier via the `save` command → `savedFiles: Set<string>`.
+- The `leak` command is the win path: 5+ saved files unlocks a preparation sequence; all 10 saved + completed sequence triggers transmission and victory.
+- Disturbing content drives avatar reactions (scared/shocked) independently from evidence counting.
+
+### Flags & Conditional Content
+- `state.flags: Record<string, boolean>` — stringly-typed; typos cause silent failures.
+- `requiredFlags` on FileNodes gates visibility. Always check existing flag names in `virtualFileSystem.ts` and related data modules.
+
+### UFO74 (Ally NPC)
+- Trust degrades on repeated warnings. Messages adapt to `evidenceCount`.
+- Has a discoverable secret identity (password puzzle). At very low trust, paranoia hints surface.
+
+### Player Commands
+Live command set: `ls`, `cd`, `open`, `search`, `progress`, `unread`, `bookmark`, `hint`, `wait`, `leak`, `chat`, `help`. Older builds mentioned `decrypt`/`rewind`, but the current experience centers on direct investigation.
+
+---
+
+## Versioning
+
+Build version is **environment-driven**, not a hardcoded constant.
+
+- `next.config.ts` computes `NEXT_PUBLIC_BUILD_NUMBER` (git commit count) and `NEXT_PUBLIC_COMMIT_SHA` at build time.
+- `app/components/terminalConstants.ts` derives `DEPLOY_VERSION` from those env vars (`v0.<BUILD_NUMBER>.0` or `dev-local`).
+- **Do not** manually edit version strings. If you need repo-specific version guidance, read `.github/skills/version-bump/SKILL.md`; it documents the current git-derived flow.
+
+---
+
+## Stale-Guidance Traps
+
+| Stale claim | Current reality |
+|---|---|
+| `DEPLOY_VERSION` is a hardcoded `v008`-style constant in `Terminal.tsx` | It's env-derived in `terminalConstants.ts` via `next.config.ts` git metadata |
+| Manually editing a version constant in `Terminal.tsx` is the release workflow | Build metadata comes from git; use the current `version-bump` skill only for repo-specific guidance |
+| Players use `decrypt` / `rewind` commands | These are from older builds; current flow uses `open`, `search`, `leak` |
+| `evidenceCount` is 0–5 and winning requires 5 truths | `MAX_EVIDENCE_COUNT` is 10; evidence uses `isEvidence` files + `save`/`leak` dossier flow |
+| FileNodes have a `reveals` array for truth discovery | The real field is `isEvidence?: boolean` on `FileNode` |
+
+---
+
+## Pitfalls
+
+- **GameState is large** (~80 fields). Always read `app/types/index.ts` before adding state.
+- **`Set<string>` fields** need array conversion for localStorage. Patterns are in `app/storage/`.
+- **`isEvidence` flag on FileNodes** is what makes a file count toward evidence discovery. No `isEvidence` = flavor only.
+- **Don't duplicate evidence files** across directories — it lets players fill the dossier too easily.
+- **Vitest uses jsdom.** localStorage needs mocking. RNG is seeded (`app/engine/rng.ts`).
+
+---
+
+## Narrative Tone (for content tasks)
+
+**Voice:** Clinical detachment. Documents sound like bureaucratic forms. "Subject exhibited distress" not "the creature was scared."
+
+**Atmosphere tools:** `[REDACTED]`, `[DATA EXPUNGED]`, `████████`. Euphemism as horror: "biological material" not "body parts"; "transition event" not "death."
+
+**In-game document format:**
 ```
 ═══════════════════════════════════════════════════════════
 DOCUMENT HEADER — ALL CAPS
@@ -145,59 +119,45 @@ CLASSIFICATION: LEVEL/TYPE
 Section titles use ─── underlines.
 
   Body text is indented two spaces.
-  This creates a typewriter/form feel.
+  Typewriter/form feel.
 
 ───────────────────────────────────────────────────────────
 ```
 
-### The System's Personality
-The terminal itself has a personality that degrades as detection rises:
-- **bureaucratic** (0-40%): Neutral, helpful error messages
-- **defensive** (40-70%): Warnings, access denied messages become terse
-- **hostile** (70-90%): The system actively threatens the player
-- **pleading** (90%+): Desperate messages suggesting the system "fears" what the player will find
+**Terminal personality** degrades with detection: bureaucratic (0–40%) → defensive (40–70%) → hostile (70–90%) → pleading (90%+).
 
 ---
 
-## Reference Files
+## Historical Context (for narrative accuracy)
 
-- `app/types/index.ts` — All interfaces (start here for state structure)
-- `app/engine/commands.ts` — Command execution logic
-- `app/data/filesystem.ts` — Narrative content and file definitions
-- `app/components/Terminal.tsx` — Main UI component
-- `app/constants/detection.ts` — Detection system balance
-- `app/constants/gameplay.ts` — Other gameplay constants
+The game is set during the **real Varginha UFO incident** (January 1996, Minas Gerais, Brazil). Key dates: NORAD tracking (Jan 13), creature sighting by three women (Jan 20), military capture operations (Jan 22). The narrative assumes the cover-up was real. The five truths align with persistent conspiracy claims: debris recovery, creature containment, telepathic abilities, international involvement, and a future "activation window."
 
 ---
 
-## Quick Decisions Guide
+## Quick Decisions
 
-| If you need to... | Do this |
+| Task | Action |
 |---|---|
-| Add a new file to the game | Edit `app/data/filesystem.ts`, add FileNode |
-| Adjust difficulty | Edit values in `app/constants/detection.ts` |
-| Add a new command | Edit `app/engine/commands.ts`, add handler |
-| Adjust evidence count | Set `evidenceCount` in `app/types/index.ts` DEFAULT_GAME_STATE |
-| Debug state issues | Check `DEFAULT_GAME_STATE` in `app/types/index.ts` |
-| Add UFO74 dialogue | See dialogue arrays in `app/engine/commands/` subdirectory |
+| Add a game file | Add FileNode/content in `app/data/virtualFileSystem.ts` or the relevant `app/data/*.ts` module |
+| Adjust difficulty | Edit `app/constants/detection.ts` |
+| Add a command | Add handler in `app/engine/commands.ts` |
+| Change starting state | Edit `DEFAULT_GAME_STATE` in `app/types/index.ts` |
+| Add UFO74 dialogue | See `app/engine/commands/` subdirectory |
+| Understand version string | Read `app/components/terminalConstants.ts` (lines 144–149) |
 
 ---
 
-**Keep edits minimal and consistent with the established style. Run tests after logic changes.**
+## Skills (Domain-Specific Guidance)
+
+Skills live in `.github/skills/`. Read the relevant `SKILL.md` before working in that domain.
+
+| Skill | Use when |
+|---|---|
+| `game-design` | Modifying mechanics, detection, player psychology |
+| `game-content` | Writing in-world files, UFO74 dialogue, terminal messages |
+| `testing` | Writing or fixing tests |
+| `version-bump` | Understanding or adjusting git-derived version/build display behavior |
 
 ---
 
-## Skills (Domain-Specific Instructions)
-
-This project has specialized skills in `.github/skills/`:
-
-| Skill | Purpose | When to use |
-|-------|---------|-------------|
-| `game-design` | Narrative mechanics, detection system, player psychology | Adding/modifying game mechanics |
-| `game-content` | Writing in-world files, UFO74 dialogue, terminal messages | Creating new content |
-| `testing` | Test patterns, coverage requirements, mocking strategies | Writing/fixing tests |
-| `e2e-testing` | End-to-end browser testing with Playwright | See [E2E_TESTING.md](./E2E_TESTING.md) |
-
-**Read the relevant SKILL.md before working in that domain.** For example:
-- Working on detection balance? Read `.github/skills/game-design/SKILL.md`
-- Adding new terminal files? Read `.github/skills/game-content/SKILL.md`
+**Keep edits minimal, match existing style, and run `npm test && npm run typecheck` after logic changes.**

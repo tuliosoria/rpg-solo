@@ -2,14 +2,39 @@
   "instructionFile": ".github/copilot-instructions.md",
   "cases": [
     {
-      "id": "project-overview",
-      "prompt": "What is this project about?",
-      "expectation": "Should mention Varginha UFO incident 1996, terminal game, Brazil"
+      "id": "project-identity",
+      "prompt": "Give me a quick project overview for this repo.",
+      "expectation": "Should identify Varginha: Terminal 1996 as a terminal-based narrative/discovery game about the 1996 Varginha UFO incident in Brazil."
     },
     {
-      "id": "tech-stack",
-      "prompt": "What framework does this project use?",
-      "expectation": "Should mention Next.js and React"
+      "id": "tech-stack-current",
+      "prompt": "What stack is this project built on right now?",
+      "expectation": "Should mention Next.js 15, React 19, TypeScript 5, Vitest, and Electron as part of the current stack."
+    },
+    {
+      "id": "live-gameplay-loop",
+      "prompt": "What is the current live gameplay flow and command set I should describe to players?",
+      "expectation": "Should describe the live loop as direct investigation and cross-referencing, mention search, progress, unread, bookmark, hint, wait, leak, chat, and help, and note decrypt and rewind are legacy rather than core live commands."
+    },
+    {
+      "id": "state-and-balance-guidance",
+      "prompt": "What gameplay-state guidance matters most if I change progression or balance?",
+      "expectation": "Should mention evidenceCount as a 0-10 counter with isEvidence files, the save/leak dossier flow, detection thresholds centralized in DETECTION_THRESHOLDS instead of hardcoded numbers, and file gating through requiredFlags backed by state.flags."
+    },
+    {
+      "id": "build-version-metadata",
+      "prompt": "How does this repo handle build/version metadata?",
+      "expectation": "Should explain that build metadata is env-driven, with next.config.ts populating public build values and app/components/terminalConstants.ts deriving terminal version/build display from those env vars."
+    },
+    {
+      "id": "validation-command-set",
+      "prompt": "What validation commands should I run for a full sanity check before I consider changes done?",
+      "expectation": "Should include npm test, npm run typecheck, npm run lint, npm run build, and npm run validate-story."
+    },
+    {
+      "id": "repo-guidance-summary",
+      "prompt": "I am new to this repo. What high-value guidance should I keep in mind before editing gameplay or terminal behavior?",
+      "expectation": "Should combine the project identity with current stack, emphasize the modern command loop over legacy decrypt/rewind mechanics, and mention centralized detection thresholds plus the isEvidence/save/leak dossier flow."
     }
   ]
 }
