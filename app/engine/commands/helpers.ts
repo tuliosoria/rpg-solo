@@ -141,7 +141,7 @@ const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
     'ethics exception. they waived the rules. officially. to do what they did.',
   'window_alignment.meta': 'window alignment data. the timing is not random. it never was.',
   'briefing_watchers_1996.txt':
-    'executive briefing. someone very senior read this. and approved everything.',
+    'thirty rotations. 2026. kid that is this year. i feel something bad will happen...',
   'weather_balloon_memo.txt': 'weather balloon memo. the oldest lie in the book.',
   'parallel_incidents_global.txt':
     'parallel incidents. same thing happened in other countries. same year.',
