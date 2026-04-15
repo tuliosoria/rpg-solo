@@ -11,7 +11,7 @@ import { getAllAccessibleFiles, resolvePath } from '../engine/filesystem';
 import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
-import { useI18n, translateStatic } from '../i18n';
+import { useI18n } from '../i18n';
 import { OPTIONS_CHANGED_EVENT, readStoredOptions } from '../hooks/useOptions';
 import {
   MAX_WRONG_ATTEMPTS,
@@ -619,7 +619,6 @@ export default function Terminal({
 
   const {
     handleBlackoutComplete,
-    handleVictory,
     handleRestart,
     handleFirewallActivate,
   } = useGameActions({
@@ -1975,7 +1974,11 @@ export default function Terminal({
                 // Fallback: load checkpoint inline
                 const loadedState = loadCheckpoint(slotId);
                 if (loadedState) {
-                  setGameState(loadedState);
+                  setGameState({
+                    ...loadedState,
+                    isGameOver: false,
+                    gameOverReason: undefined,
+                  });
                   setShowGameOver(false);
                   setGamePhase('terminal');
                 }

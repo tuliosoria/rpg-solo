@@ -38,6 +38,10 @@ vi.mock('../../storage/saves', () => ({
   loadCheckpoint: vi.fn(),
 }));
 
+vi.mock('../../storage/statistics', () => ({
+  incrementStatistic: vi.fn(),
+}));
+
 vi.mock('../Menu', () => {
   let controller: AbortController | null = null;
 
@@ -53,6 +57,7 @@ vi.mock('../Menu', () => {
       ) => void | boolean | Promise<void | boolean>;
     }) => (
       <div>
+        <button onClick={onNewGameAction}>new game</button>
         <button
           onClick={() => {
             controller = new AbortController();
@@ -76,6 +81,7 @@ vi.mock('../Menu', () => {
 
 import HomeContent from '../HomeContent';
 import { createNewGame, loadGameAsync } from '../../storage/saves';
+import { incrementStatistic } from '../../storage/statistics';
 
 function createGameState(currentPath: string): GameState {
   return {
@@ -115,6 +121,15 @@ describe('HomeContent', () => {
       await pendingLoad;
     });
 
+    expect(screen.getByTestId('dynamic-component')).toHaveTextContent('/new-game');
+  });
+
+  it('records a started game when the player begins a new session', () => {
+    render(<HomeContent />);
+
+    fireEvent.click(screen.getByRole('button', { name: /^new game$/i }));
+
+    expect(incrementStatistic).toHaveBeenCalledWith('gamesPlayed');
     expect(screen.getByTestId('dynamic-component')).toHaveTextContent('/new-game');
   });
 

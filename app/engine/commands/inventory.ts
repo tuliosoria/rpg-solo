@@ -10,7 +10,7 @@ import {
   getFileContent,
   fuzzyMatchFilename,
 } from '../filesystem';
-import { DETECTION_THRESHOLDS, MAX_DETECTION } from '../../constants/detection';
+import { MAX_DETECTION } from '../../constants/detection';
 import { createEntry, createEntryI18n, createInvalidCommandResult } from './utils';
 import {
   ALPHA_RELEASE_INTRO,

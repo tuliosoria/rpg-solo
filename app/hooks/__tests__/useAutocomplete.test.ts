@@ -21,7 +21,20 @@ describe('useAutocomplete', () => {
     const completions = result.current.getCompletions('');
 
     expect(completions).toEqual(
-      expect.arrayContaining(['search', 'hint', 'wait', 'hide', 'morse'])
+      expect.arrayContaining(['search', 'hint', 'wait', 'hide', 'morse', 'unsave'])
     );
+  });
+
+  it('completes file arguments for save and unsave commands', () => {
+    const { result } = renderHook(() =>
+      useAutocomplete(
+        createTestState({
+          currentPath: '/ops/assessments',
+        })
+      )
+    );
+
+    expect(result.current.getCompletions('save fo')).toContain('foreign_drone_assessment.txt');
+    expect(result.current.getCompletions('unsave fo')).toContain('foreign_drone_assessment.txt');
   });
 });

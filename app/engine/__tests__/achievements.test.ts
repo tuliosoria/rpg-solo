@@ -39,6 +39,8 @@ describe('Achievements', () => {
       expect(ACHIEVEMENTS.find(a => a.id === 'speed_demon')).toBeDefined();
       expect(ACHIEVEMENTS.find(a => a.id === 'ghost')).toBeDefined();
       expect(ACHIEVEMENTS.find(a => a.id === 'truth_seeker')).toBeDefined();
+      expect(ACHIEVEMENTS.find(a => a.id === 'ending_real_ending')).toBeDefined();
+      expect(ACHIEVEMENTS.find(a => a.id === 'ending_controlled_disclosure')).toBeUndefined();
     });
 
     it('has unique IDs', () => {

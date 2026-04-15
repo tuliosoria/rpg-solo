@@ -513,16 +513,22 @@ describe('Story Consistency Tests', () => {
         expect(result.stateChanges.isGameOver).toBe(true);
       });
 
-      it('discovering all 5 evidence files enables leak command', () => {
+      it('saving five files unlocks leak preparation', () => {
         const state = createTestState({
           tutorialStep: -1,
           tutorialComplete: true,
-          evidenceCount: 5,
+          savedFiles: new Set([
+            '/internal/audio_transcript_brief.txt',
+            '/internal/jardim_andere_incident.txt',
+            '/internal/misc/incident_report_1996_01_VG.txt',
+            '/storage/quarantine/bio_container.log',
+            '/storage/quarantine/autopsy_alpha.log',
+          ]),
         });
 
-        // Status should show system information
-        const result = executeCommand('status', state);
-        expect(result.output.some(e => /SYSTEM STATUS|LOGGING/i.test(e.content))).toBe(true);
+        const result = executeCommand('leak', state);
+        expect(result.output.some(e => e.content.includes('LEAK CHANNEL ENCRYPTED'))).toBe(true);
+        expect(result.output.some(e => e.content.includes('INSUFFICIENT EVIDENCE'))).toBe(false);
       });
     });
 
@@ -734,14 +740,28 @@ describe('Story Consistency Tests', () => {
         const state = createTestState({
           tutorialStep: -1,
           tutorialComplete: true,
-          evidenceCount: 10,
+          savedFiles: new Set([
+            '/internal/audio_transcript_brief.txt',
+            '/internal/jardim_andere_incident.txt',
+            '/internal/misc/incident_report_1996_01_VG.txt',
+            '/storage/quarantine/bio_container.log',
+            '/storage/quarantine/autopsy_alpha.log',
+            '/storage/quarantine/witness_statement_raw.txt',
+            '/ops/prato/archive/patrol_observation_shift_04.txt',
+            '/ops/prato/initial_response_orders.txt',
+            '/admin/thirty_year_cycle.txt',
+            '/admin/colonization_model.red',
+          ]),
+          leakSequenceGenerated: true,
+          leakSequenceProgress: 3,
+          leakSequence: ['verify alpha', 'mask 21', 'broadcast ghost'],
         });
 
         const result = executeCommand('leak', state);
 
-        // Should go directly to ICQ phase (no more Elusive Man questions)
-        expect(result.stateChanges.icqPhase).toBe(true);
-        expect(result.skipToPhase).toBe('icq');
+        expect(result.output.some(e => e.content.includes('TRANSMISSION SUCCESSFUL'))).toBe(true);
+        expect(result.stateChanges.gameWon).toBe(true);
+        expect(result.stateChanges.flags?.leakSuccessful).toBe(true);
       });
 
       it('secret ending triggered by finding UFO74 identity', () => {

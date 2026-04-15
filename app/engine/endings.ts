@@ -5,7 +5,6 @@
 // the best-matching ending based on priority order.
 
 import { GameState, TerminalEntry } from '../types';
-import { translateStatic } from '../i18n';
 import { generateEntryId } from './commands/utils';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -394,10 +393,7 @@ export function getEnding(savedFiles: Set<string>): GameEnding {
 // BACKWARD-COMPATIBLE EXPORTS — Used by Victory.tsx, Terminal.tsx, etc.
 // ═══════════════════════════════════════════════════════════════════════════
 
-export type EndingVariant = EndingId
-  | 'controlled_disclosure' | 'global_panic' | 'undeniable_confirmation'
-  | 'total_collapse' | 'personal_contamination' | 'paranoid_awakening'
-  | 'witnessed_truth' | 'complete_revelation';
+export type EndingVariant = EndingId;
 
 export interface EndingFlags {
   conspiracyFilesLeaked: boolean;

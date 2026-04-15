@@ -205,7 +205,7 @@ export const TUTORIAL_TIPS: Record<TutorialTipId, TutorialTipLine[]> = {
     },
     {
       key: 'engine.commands.tutorial.tip.first_evidence.line4',
-      fallback: 'Reach 10/10 evidence to unlock the leak.',
+      fallback: 'Save 10 files to unlock the leak.',
     },
   ],
 };

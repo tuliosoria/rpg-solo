@@ -109,6 +109,23 @@ describe('Statistics Storage', () => {
       expect(stats.highestDetectionSurvived).toBe(0);
     });
 
+    it('fills in missing ending buckets when older statistics only stored a partial endings map', async () => {
+      const { getStatistics } = await import('../statistics');
+
+      mockStore['rpg-solo-statistics'] = JSON.stringify({
+        endingsAchieved: { good: 2 },
+      });
+
+      const stats = getStatistics();
+
+      expect(stats.endingsAchieved).toEqual({
+        good: 2,
+        bad: 0,
+        neutral: 0,
+        secret: 0,
+      });
+    });
+
     it('returns defaults on JSON parse error', async () => {
       const { getStatistics } = await import('../statistics');
       

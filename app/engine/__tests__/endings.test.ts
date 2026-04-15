@@ -1,18 +1,16 @@
-// Tests for the multiple endings system
-
 import { describe, it, expect } from 'vitest';
 import {
-  EndingFlags,
-  EndingVariant,
+  type EndingFlags,
+  type EndingId,
+  determineEnding,
   determineEndingVariant,
-  getEndingFlags,
   generateEnding,
+  getEndingFlags,
   getEndingTitle,
   hasDiscoveredConspiracyFiles,
 } from '../endings';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
-// Helper to create test state
 function createTestState(overrides: Partial<GameState> = {}): GameState {
   return {
     ...DEFAULT_GAME_STATE,
@@ -20,83 +18,151 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
   } as GameState;
 }
 
-describe('Multiple Endings System', () => {
+function dossier(...fileNames: string[]): Set<string> {
+  return new Set(fileNames.map(fileName => `/archive/${fileName}`));
+}
+
+const REPRESENTATIVE_DOSSIERS: Record<EndingId, Set<string>> = {
+  ridiculed: dossier(
+    'witness_statement_raw.txt',
+    'witness_statement_original.txt',
+    'witness_visit_log.txt'
+  ),
+  ufo74_exposed: dossier('ghost_in_machine.enc', 'audio_transcript_brief.txt'),
+  the_2026_warning: dossier('thirty_year_cycle.txt', 'projection_update_2026.txt'),
+  government_scandal: dossier(
+    'incident_report_1996_01_VG.txt',
+    'initial_response_orders.txt',
+    'transport_log_96.txt',
+    'jardim_andere_incident.txt'
+  ),
+  prisoner_45_freed: dossier(
+    'neural_cluster_experiment.red',
+    'neural_cluster_memo.txt',
+    'witness_statement_raw.txt'
+  ),
+  harvest_understood: dossier('extraction_mechanism.red', 'colonization_model.red'),
+  nothing_changes: dossier(
+    'audio_transcript_brief.txt',
+    'alpha_journal.log',
+    'autopsy_alpha.log',
+    'incident_report_1996_01_VG.txt'
+  ),
+  incomplete_picture: dossier('audio_transcript_brief.txt', 'alpha_journal.log'),
+  wrong_story: dossier(
+    'journalist_payments.enc',
+    'media_contacts.txt',
+    'budget_request_q1_96.txt',
+    'cafeteria_menu_week03.txt',
+    'parking_allocation_jan96.txt'
+  ),
+  hackerkid_caught: dossier('URGENT_classified_alpha.txt', 'SMOKING_GUN_proof.txt'),
+  secret_ending: dossier(
+    'ghost_in_machine.enc',
+    'alpha_neural_connection.psi',
+    'thirty_year_cycle.txt',
+    'convergence_model_draft.txt'
+  ),
+  real_ending: dossier(
+    'audio_transcript_brief.txt',
+    'alpha_journal.log',
+    'autopsy_alpha.log',
+    'bio_container.log',
+    'witness_statement_raw.txt',
+    'incident_report_1996_01_VG.txt',
+    'initial_response_orders.txt'
+  ),
+};
+
+describe('Endings', () => {
+  describe('determineEnding', () => {
+    Object.entries(REPRESENTATIVE_DOSSIERS).forEach(([endingId, savedFiles]) => {
+      it(`reaches ${endingId}`, () => {
+        expect(determineEnding(savedFiles)).toBe(endingId);
+      });
+    });
+  });
+
   describe('determineEndingVariant', () => {
-    it('returns controlled_disclosure when no modifiers are active', () => {
-      const flags: EndingFlags = {
-        conspiracyFilesLeaked: false,
-        alphaReleased: false,
-        neuralLinkAuthenticated: false,
-      };
-      expect(determineEndingVariant(flags)).toBe('controlled_disclosure');
-    });
+    const combinations: Array<{ flags: EndingFlags; expected: EndingId }> = [
+      {
+        flags: {
+          conspiracyFilesLeaked: false,
+          alphaReleased: false,
+          neuralLinkAuthenticated: false,
+        },
+        expected: 'incomplete_picture',
+      },
+      {
+        flags: {
+          conspiracyFilesLeaked: true,
+          alphaReleased: false,
+          neuralLinkAuthenticated: false,
+        },
+        expected: 'government_scandal',
+      },
+      {
+        flags: {
+          conspiracyFilesLeaked: false,
+          alphaReleased: true,
+          neuralLinkAuthenticated: false,
+        },
+        expected: 'prisoner_45_freed',
+      },
+      {
+        flags: {
+          conspiracyFilesLeaked: true,
+          alphaReleased: true,
+          neuralLinkAuthenticated: false,
+        },
+        expected: 'real_ending',
+      },
+      {
+        flags: {
+          conspiracyFilesLeaked: false,
+          alphaReleased: false,
+          neuralLinkAuthenticated: true,
+        },
+        expected: 'ridiculed',
+      },
+      {
+        flags: {
+          conspiracyFilesLeaked: true,
+          alphaReleased: false,
+          neuralLinkAuthenticated: true,
+        },
+        expected: 'government_scandal',
+      },
+      {
+        flags: {
+          conspiracyFilesLeaked: false,
+          alphaReleased: true,
+          neuralLinkAuthenticated: true,
+        },
+        expected: 'prisoner_45_freed',
+      },
+      {
+        flags: {
+          conspiracyFilesLeaked: true,
+          alphaReleased: true,
+          neuralLinkAuthenticated: true,
+        },
+        expected: 'real_ending',
+      },
+    ];
 
-    it('returns global_panic when only conspiracy files are leaked', () => {
-      const flags: EndingFlags = {
-        conspiracyFilesLeaked: true,
-        alphaReleased: false,
-        neuralLinkAuthenticated: false,
-      };
-      expect(determineEndingVariant(flags)).toBe('global_panic');
-    });
-
-    it('returns undeniable_confirmation when only ALPHA is released', () => {
-      const flags: EndingFlags = {
-        conspiracyFilesLeaked: false,
-        alphaReleased: true,
-        neuralLinkAuthenticated: false,
-      };
-      expect(determineEndingVariant(flags)).toBe('undeniable_confirmation');
-    });
-
-    it('returns total_collapse when conspiracy + ALPHA', () => {
-      const flags: EndingFlags = {
-        conspiracyFilesLeaked: true,
-        alphaReleased: true,
-        neuralLinkAuthenticated: false,
-      };
-      expect(determineEndingVariant(flags)).toBe('total_collapse');
-    });
-
-    it('returns personal_contamination when only neural link is used', () => {
-      const flags: EndingFlags = {
-        conspiracyFilesLeaked: false,
-        alphaReleased: false,
-        neuralLinkAuthenticated: true,
-      };
-      expect(determineEndingVariant(flags)).toBe('personal_contamination');
-    });
-
-    it('returns paranoid_awakening when conspiracy + neural link', () => {
-      const flags: EndingFlags = {
-        conspiracyFilesLeaked: true,
-        alphaReleased: false,
-        neuralLinkAuthenticated: true,
-      };
-      expect(determineEndingVariant(flags)).toBe('paranoid_awakening');
-    });
-
-    it('returns witnessed_truth when ALPHA + neural link', () => {
-      const flags: EndingFlags = {
-        conspiracyFilesLeaked: false,
-        alphaReleased: true,
-        neuralLinkAuthenticated: true,
-      };
-      expect(determineEndingVariant(flags)).toBe('witnessed_truth');
-    });
-
-    it('returns complete_revelation when all modifiers are active', () => {
-      const flags: EndingFlags = {
-        conspiracyFilesLeaked: true,
-        alphaReleased: true,
-        neuralLinkAuthenticated: true,
-      };
-      expect(determineEndingVariant(flags)).toBe('complete_revelation');
+    combinations.forEach(({ flags, expected }) => {
+      it(
+        `maps flags (${String(flags.conspiracyFilesLeaked)}, ${String(flags.alphaReleased)}, ${String(flags.neuralLinkAuthenticated)}) to ${expected}`,
+        () => {
+          expect(determineEndingVariant(flags)).toBe(expected);
+        }
+      );
     });
   });
 
   describe('getEndingFlags', () => {
-    it('extracts flags from game state', () => {
+    it('extracts explicit flags from game state', () => {
       const state = createTestState({
         flags: {
           conspiracyFilesLeaked: true,
@@ -104,8 +170,8 @@ describe('Multiple Endings System', () => {
           neuralLinkAuthenticated: true,
         },
       });
-      const flags = getEndingFlags(state);
-      expect(flags).toEqual({
+
+      expect(getEndingFlags(state)).toEqual({
         conspiracyFilesLeaked: true,
         alphaReleased: false,
         neuralLinkAuthenticated: true,
@@ -113,18 +179,14 @@ describe('Multiple Endings System', () => {
     });
 
     it('defaults missing flags to false', () => {
-      const state = createTestState({
-        flags: {},
-      });
-      const flags = getEndingFlags(state);
-      expect(flags).toEqual({
+      expect(getEndingFlags(createTestState({ flags: {} }))).toEqual({
         conspiracyFilesLeaked: false,
         alphaReleased: false,
         neuralLinkAuthenticated: false,
       });
     });
 
-    it('falls back to the public ICQ leak choice when conspiracy files were discovered', () => {
+    it('falls back to the public leak choice when conspiracy files were discovered', () => {
       const state = createTestState({
         flags: {},
         choiceLeakPath: 'public',
@@ -152,7 +214,7 @@ describe('Multiple Endings System', () => {
       });
     });
 
-    it('prefers an explicit conspiracyFilesLeaked flag over legacy leak-choice fallback', () => {
+    it('prefers an explicit conspiracyFilesLeaked flag over the legacy leak-choice fallback', () => {
       const state = createTestState({
         flags: { conspiracyFilesLeaked: false },
         choiceLeakPath: 'public',
@@ -168,108 +230,72 @@ describe('Multiple Endings System', () => {
   });
 
   describe('generateEnding', () => {
-    it('generates complete ending result', () => {
-      const state = createTestState({
-        flags: {
-          conspiracyFilesLeaked: true,
-          alphaReleased: true,
-          neuralLinkAuthenticated: true,
-        },
+    it('builds the ending from the saved dossier rather than legacy modifier flags', () => {
+      const ending = generateEnding(
+        createTestState({
+          savedFiles: REPRESENTATIVE_DOSSIERS.wrong_story,
+          flags: {
+            conspiracyFilesLeaked: true,
+            alphaReleased: true,
+            neuralLinkAuthenticated: true,
+          },
+        })
+      );
+
+      expect(ending.variant).toBe('wrong_story');
+      expect(ending.title).toBe('THE WRONG STORY');
+      expect(ending.flags).toEqual({
+        conspiracyFilesLeaked: true,
+        alphaReleased: true,
+        neuralLinkAuthenticated: true,
       });
-      const ending = generateEnding(state);
-      
-      expect(ending.variant).toBe('complete_revelation');
-      expect(ending.title).toBe('COMPLETE REVELATION');
-      expect(ending.worldAftermath).toBeInstanceOf(Array);
       expect(ending.worldAftermath.length).toBeGreaterThan(0);
-      expect(ending.personalAftermath).toBeInstanceOf(Array); // Has neural link content
-      expect(ending.epilogue).toBeInstanceOf(Array);
-    });
-
-    it('controlled disclosure has no personal aftermath', () => {
-      const state = createTestState({
-        flags: {},
-      });
-      const ending = generateEnding(state);
-      
-      expect(ending.variant).toBe('controlled_disclosure');
       expect(ending.personalAftermath).toBeUndefined();
+      expect(ending.epilogue).toContain('>> ENDING: THE WRONG STORY <<');
     });
 
-    it('neural link endings have personal aftermath', () => {
-      const state = createTestState({
-        flags: {
-          neuralLinkAuthenticated: true,
-        },
-      });
-      const ending = generateEnding(state);
-      
-      expect(ending.variant).toBe('personal_contamination');
-      expect(ending.personalAftermath).toBeDefined();
-      expect(ending.personalAftermath!.length).toBeGreaterThan(0);
+    it('produces the real ending when the dossier is comprehensive', () => {
+      const ending = generateEnding(
+        createTestState({
+          savedFiles: REPRESENTATIVE_DOSSIERS.real_ending,
+          flags: {
+            conspiracyFilesLeaked: true,
+            alphaReleased: true,
+            neuralLinkAuthenticated: false,
+          },
+        })
+      );
+
+      expect(ending.variant).toBe('real_ending');
+      expect(ending.title).toBe('UNDENIABLE');
+      expect(ending.worldAftermath.length).toBeGreaterThan(0);
+      expect(ending.epilogue).toContain('The dossier that could not be ignored.');
     });
   });
 
   describe('getEndingTitle', () => {
-    const variants: EndingVariant[] = [
-      'controlled_disclosure',
-      'global_panic',
-      'undeniable_confirmation',
-      'total_collapse',
-      'personal_contamination',
-      'paranoid_awakening',
-      'witnessed_truth',
-      'complete_revelation',
-    ];
-
-    variants.forEach(variant => {
-      it(`returns title for ${variant}`, () => {
-        const title = getEndingTitle(variant);
+    (Object.keys(REPRESENTATIVE_DOSSIERS) as EndingId[]).forEach(endingId => {
+      it(`returns a title for ${endingId}`, () => {
+        const title = getEndingTitle(endingId);
         expect(title).toBeTruthy();
         expect(typeof title).toBe('string');
-        expect(title.length).toBeGreaterThan(0);
       });
     });
   });
 
   describe('hasDiscoveredConspiracyFiles', () => {
-    it('returns false when no conspiracy files seen', () => {
-      const state = createTestState({
-        conspiracyFilesSeen: new Set<string>(),
-      });
-      expect(hasDiscoveredConspiracyFiles(state)).toBe(false);
+    it('returns false when no conspiracy files were seen', () => {
+      expect(
+        hasDiscoveredConspiracyFiles(createTestState({ conspiracyFilesSeen: new Set<string>() }))
+      ).toBe(false);
     });
 
-    it('returns true when conspiracy files have been seen', () => {
-      const state = createTestState({
-        conspiracyFilesSeen: new Set(['economic_transition_memo.txt']),
-      });
-      expect(hasDiscoveredConspiracyFiles(state)).toBe(true);
-    });
-  });
-
-  describe('Ending combinations coverage', () => {
-    // Test all 8 combinations explicitly
-    const combinations = [
-      { c: false, p: false, n: false, expected: 'controlled_disclosure' },
-      { c: true, p: false, n: false, expected: 'global_panic' },
-      { c: false, p: true, n: false, expected: 'undeniable_confirmation' },
-      { c: true, p: true, n: false, expected: 'total_collapse' },
-      { c: false, p: false, n: true, expected: 'personal_contamination' },
-      { c: true, p: false, n: true, expected: 'paranoid_awakening' },
-      { c: false, p: true, n: true, expected: 'witnessed_truth' },
-      { c: true, p: true, n: true, expected: 'complete_revelation' },
-    ] as const;
-
-    combinations.forEach(({ c, p, n, expected }) => {
-      it(`conspiracy=${c}, prisoner=${p}, neural=${n} → ${expected}`, () => {
-        const flags: EndingFlags = {
-          conspiracyFilesLeaked: c,
-          alphaReleased: p,
-          neuralLinkAuthenticated: n,
-        };
-        expect(determineEndingVariant(flags)).toBe(expected);
-      });
+    it('returns true when conspiracy files were seen', () => {
+      expect(
+        hasDiscoveredConspiracyFiles(
+          createTestState({ conspiracyFilesSeen: new Set(['economic_transition_memo.txt']) })
+        )
+      ).toBe(true);
     });
   });
 });

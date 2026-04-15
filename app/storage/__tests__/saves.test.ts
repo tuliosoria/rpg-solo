@@ -1,6 +1,19 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { DEFAULT_GAME_STATE, GameState } from '../../types';
 
+vi.mock('../../lib/steamBridge', () => ({
+  isCloudAvailable: vi.fn(async () => false),
+  cloudSave: vi.fn(async () => ({ success: true })),
+  cloudLoad: vi.fn(async () => ({ success: false, data: null })),
+  cloudDelete: vi.fn(async () => ({ success: true })),
+  cloudList: vi.fn(async () => ({ success: true, files: [] })),
+}));
+
+const EVIDENCE_PATHS = {
+  cycle: '/admin/thirty_year_cycle.txt',
+  prato: '/ops/prato/archive/patrol_observation_shift_04.txt',
+} as const;
+
 // Helper to create a valid test state with required fields
 function createTestState(overrides: Partial<GameState> = {}): GameState {
   return {
@@ -32,10 +45,15 @@ function createQuotaExceededError(): DOMException {
 
 describe('Save/Load System', () => {
   let mockStore: Record<string, string> = {};
+  let steamBridge: typeof import('../../lib/steamBridge');
 
   beforeEach(async () => {
     mockStore = {};
     vi.resetModules();
+    steamBridge = await import('../../lib/steamBridge');
+    vi.mocked(steamBridge.isCloudAvailable).mockResolvedValue(false);
+    vi.mocked(steamBridge.cloudLoad).mockResolvedValue({ success: false, data: null });
+    vi.mocked(steamBridge.cloudList).mockResolvedValue({ success: true, files: [] });
 
     const mockLocalStorage = {
       getItem: (key: string) => mockStore[key] || null,
@@ -58,12 +76,11 @@ describe('Save/Load System', () => {
   });
 
   describe('serialization round-trip', () => {
-    it('uses derived evidence count in save slot metadata', async () => {
+    it('uses dossier file count in save slot metadata', async () => {
       const { saveGame } = await import('../saves');
 
       const state = createTestState({
-        evidenceCount: 0,
-        filesRead: new Set(['/admin/bio_program_overview.red']),
+        savedFiles: new Set([EVIDENCE_PATHS.cycle]),
       });
 
       const slot = saveGame(state, 'Test Save');
@@ -94,10 +111,8 @@ describe('Save/Load System', () => {
         singularEventsTriggered: new Set(['event1']),
         imagesShownThisRun: new Set(['img1']),
         categoriesRead: new Set(['cat1', 'cat2', 'cat3']),
-        filesRead: new Set([
-          '/ops/assessments/foreign_drone_assessment.txt',
-          '/storage/assets/material_x_analysis.dat',
-        ]),
+        filesRead: new Set([EVIDENCE_PATHS.cycle, EVIDENCE_PATHS.prato]),
+        savedFiles: new Set([EVIDENCE_PATHS.cycle, EVIDENCE_PATHS.prato]),
         tutorialTipsShown: new Set(['first_evidence']),
         prisoner45UsedResponses: new Set(['resp1']),
         scoutLinkUsedResponses: new Set(['scout1']),
@@ -112,6 +127,8 @@ describe('Save/Load System', () => {
       const loaded = loadGame(slot!.id);
 
       expect(loaded!.evidenceCount).toBe(2);
+      expect(loaded!.savedFiles).toBeInstanceOf(Set);
+      expect(loaded!.savedFiles.size).toBe(2);
       expect(loaded!.singularEventsTriggered.size).toBe(1);
       expect(loaded!.categoriesRead.size).toBe(3);
       expect(loaded!.passwordsFound.size).toBe(2);
@@ -179,6 +196,79 @@ describe('Save/Load System', () => {
 
       expect(loaded).toBeNull();
     });
+
+    it('returns a cloud-loaded save even when local caching fails', async () => {
+      const { saveGame, loadGameAsync } = await import('../saves');
+      const state = createTestState({
+        currentPath: '/storage/quarantine',
+        detectionLevel: 42,
+      });
+      const slot = saveGame(state, 'Cloud Save');
+      const payloadKey = `terminal1996:save:${slot!.id}`;
+      const raw = mockStore[payloadKey];
+
+      delete mockStore[payloadKey];
+
+      const failingStorage = {
+        getItem: (key: string) => mockStore[key] || null,
+        setItem: (key: string, value: string) => {
+          if (key === payloadKey) {
+            throw createQuotaExceededError();
+          }
+          mockStore[key] = value;
+        },
+        removeItem: (key: string) => {
+          delete mockStore[key];
+        },
+        clear: () => {
+          mockStore = {};
+        },
+        length: 0,
+        key: () => null,
+      };
+
+      vi.stubGlobal('localStorage', failingStorage);
+      vi.stubGlobal('document', {});
+      vi.stubGlobal('window', { localStorage: failingStorage });
+      vi.mocked(steamBridge.isCloudAvailable).mockResolvedValue(true);
+      vi.mocked(steamBridge.cloudLoad).mockResolvedValue({ success: true, data: raw });
+
+      const loaded = await loadGameAsync(slot!.id);
+
+      expect(loaded).not.toBeNull();
+      expect(loaded!.currentPath).toBe('/storage/quarantine');
+      expect(mockStore[payloadKey]).toBeUndefined();
+    });
+
+    it('persists metadata for a recovered cloud-only save after loading it', async () => {
+      const { saveGame, loadGameAsync, getSaveSlots } = await import('../saves');
+      const state = createTestState({
+        currentPath: '/storage/quarantine',
+        detectionLevel: 37,
+        filesRead: new Set([EVIDENCE_PATHS.cycle]),
+        savedFiles: new Set([EVIDENCE_PATHS.cycle]),
+      });
+      const slot = saveGame(state, 'Cloud Save');
+      const payloadKey = `terminal1996:save:${slot!.id}`;
+      const raw = mockStore[payloadKey];
+
+      mockStore = {};
+      vi.mocked(steamBridge.isCloudAvailable).mockResolvedValue(true);
+      vi.mocked(steamBridge.cloudLoad).mockResolvedValue({ success: true, data: raw });
+
+      const loaded = await loadGameAsync(slot!.id);
+
+      expect(loaded).not.toBeNull();
+      expect(getSaveSlots()).toEqual([
+        expect.objectContaining({
+          id: slot!.id,
+          name: 'Recovered Save',
+          currentPath: '/storage/quarantine',
+          detectionLevel: 37,
+          truthCount: 1,
+        }),
+      ]);
+    });
   });
 
   describe('save migration support', () => {
@@ -212,10 +302,7 @@ describe('Save/Load System', () => {
         detectionLevel: 50,
         accessLevel: 4,
         evidenceCount: 0,
-        filesRead: [
-          '/ops/assessments/foreign_drone_assessment.txt',
-          '/storage/assets/material_x_analysis.dat',
-        ],
+        filesRead: [EVIDENCE_PATHS.cycle, EVIDENCE_PATHS.prato],
       };
 
       mockStore['terminal1996:save:stale_truths'] = JSON.stringify(oldSaveData);
@@ -502,7 +589,7 @@ describe('Save/Load System', () => {
       const state = createTestState({
         currentPath: '/admin/classified',
         detectionLevel: 75,
-        evidenceCount: 2,
+        savedFiles: new Set([EVIDENCE_PATHS.cycle, EVIDENCE_PATHS.prato]),
       });
 
       const slot = saveGame(state, 'My Save');
@@ -560,6 +647,30 @@ describe('Save/Load System', () => {
       expect(slots[0].name).toBe('Third Save');
       expect(slots[1].name).toBe('Second Save');
       expect(slots[2].name).toBe('First Save');
+    });
+
+    it('localizes recovered cloud slot names in the active language', async () => {
+      const { saveGame, getSaveSlotsAsync } = await import('../saves');
+      const slot = saveGame(createTestState(), 'Cloud Save');
+      const payloadKey = `terminal1996:save:${slot!.id}`;
+      const raw = mockStore[payloadKey];
+
+      mockStore = { terminal1996_language: 'es' };
+      vi.mocked(steamBridge.isCloudAvailable).mockResolvedValue(true);
+      vi.mocked(steamBridge.cloudList).mockResolvedValue({
+        success: true,
+        files: [{ key: slot!.id, filename: `${slot!.id}.json`, size: raw.length }],
+      });
+      vi.mocked(steamBridge.cloudLoad).mockResolvedValue({ success: true, data: raw });
+
+      const slots = await getSaveSlotsAsync();
+
+      expect(slots[0]).toEqual(
+        expect.objectContaining({
+          id: slot!.id,
+          name: 'Sesión recuperada',
+        })
+      );
     });
   });
 
@@ -652,6 +763,7 @@ describe('Save/Load System', () => {
       const state = createTestState({
         detectionLevel: 25,
         evidenceCount: 1,
+        savedFiles: new Set([EVIDENCE_PATHS.cycle]),
       });
 
       const slot = saveCheckpoint(state, 'First evidence');

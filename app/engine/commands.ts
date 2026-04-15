@@ -55,6 +55,19 @@ export type { TutorialTipId } from './commands/tutorial';
 // Re-export isInWarmupPhase for backward compatibility
 export { isInWarmupPhase } from './commands/helpers';
 
+const DEBUG_LEAK_READY_DOSSIER_FILES = [
+  '/internal/audio_transcript_brief.txt',
+  '/internal/jardim_andere_incident.txt',
+  '/internal/misc/incident_report_1996_01_VG.txt',
+  '/storage/quarantine/bio_container.log',
+  '/storage/quarantine/autopsy_alpha.log',
+  '/storage/quarantine/witness_statement_raw.txt',
+  '/ops/prato/archive/patrol_observation_shift_04.txt',
+  '/ops/prato/initial_response_orders.txt',
+  '/admin/thirty_year_cycle.txt',
+  '/admin/colonization_model.red',
+];
+
 // Main command executor
 export function executeCommand(input: string, state: GameState): CommandResult {
   const sanitizedInput = sanitizeCommandInput(input, MAX_COMMAND_INPUT_LENGTH);
@@ -295,6 +308,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     ],
     stateChanges: {
       evidenceCount: 10,
+      savedFiles: new Set(DEBUG_LEAK_READY_DOSSIER_FILES),
     },
   });
 

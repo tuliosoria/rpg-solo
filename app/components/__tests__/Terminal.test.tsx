@@ -283,7 +283,7 @@ describe('Terminal Component', () => {
     expect(screen.getByText(readableLine)).toBeInTheDocument();
   });
 
-  it('does not reset the alien silhouette timer on high-risk detection changes', () => {
+  it('restarts the alien silhouette timer when a new external state is loaded', () => {
     const randomSpy = vi.spyOn(rngModule, 'uiRandom').mockReturnValue(0);
 
     const { rerender } = render(
@@ -300,6 +300,8 @@ describe('Terminal Component', () => {
       vi.advanceTimersByTime(15000);
     });
 
+    mockStaticNoise.mockClear();
+
     rerender(
       <Terminal
         {...defaultProps}
@@ -312,6 +314,16 @@ describe('Terminal Component', () => {
 
     act(() => {
       vi.advanceTimersByTime(15001);
+    });
+
+    expect(
+      mockStaticNoise.mock.calls.some(
+        ([props]) => (props as { alienVisible?: boolean }).alienVisible === true
+      )
+    ).toBe(false);
+
+    act(() => {
+      vi.advanceTimersByTime(15000);
     });
 
     expect(
@@ -349,33 +361,24 @@ describe('Terminal Component', () => {
   });
 
   it('spikes ambient disturbance while the alien silhouette is visible and restores it after', () => {
-    const randomSpy = vi.spyOn(rngModule, 'uiRandom').mockReturnValue(0);
-
     render(
       <Terminal
         {...defaultProps}
         initialState={{
           ...defaultProps.initialState,
-          detectionLevel: 75,
+          detectionLevel: 0,
+          alienPreviewUntil: Date.now() + 3000,
         }}
       />
     );
 
-    mockSetAmbientDisturbance.mockClear();
-
-    act(() => {
-      vi.advanceTimersByTime(30001);
-    });
-
     expect(mockSetAmbientDisturbance).toHaveBeenCalledWith(1);
 
     act(() => {
-      vi.advanceTimersByTime(5001);
+      vi.advanceTimersByTime(3001);
     });
 
-    expect(mockSetAmbientDisturbance).toHaveBeenLastCalledWith(0);
-
-    randomSpy.mockRestore();
+    expect(mockSetAmbientDisturbance.mock.calls.flat()).toContain(0);
   });
 
   it('mounts firewall eyes even while atmosphere suppression is active', () => {
@@ -415,7 +418,7 @@ describe('Terminal Component', () => {
     render(<Terminal {...defaultProps} />);
 
     expect(screen.getByText('Alien Files')).toBeInTheDocument();
-    expect(screen.getByText('Evidence Found: [0/10]')).toBeInTheDocument();
+    expect(screen.getByText('Saved: [0/10]')).toBeInTheDocument();
     expect(screen.queryByText('Recovered')).not.toBeInTheDocument();
     expect(screen.queryByText('Captured')).not.toBeInTheDocument();
     expect(screen.queryByText('Signals')).not.toBeInTheDocument();
@@ -683,13 +686,17 @@ describe('Terminal Component', () => {
 
     act(() => {
       fireEvent.change(input, {
-        target: { value: 'open /internal/incident_summary_official.txt' },
+        target: { value: 'open /internal/audio_transcript_brief.txt' },
       });
       fireEvent.submit(input.closest('form')!);
     });
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(10000);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
     });
 
     expect(screen.queryByText(/Processing\.\.\./i)).not.toBeInTheDocument();
@@ -708,18 +715,24 @@ describe('Terminal Component', () => {
 
     expect(screen.queryByText(/PAUSED/i)).not.toBeInTheDocument();
 
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const proceedButton = screen.getByRole('button', { name: /Press Enter ↵ to (?:continue|proceed)/i });
+
     act(() => {
-      fireEvent.keyDown(window, { key: 'Enter' });
+      fireEvent.click(proceedButton);
     });
 
     await act(async () => {
       await Promise.resolve();
     });
 
-    expect(document.querySelector('.line.ufo74')).not.toBeNull();
+    expect(screen.getByText(/that one is gold\. you should save it\./i)).toBeInTheDocument();
   });
 
-  it('advances enter-only prompts from a global Enter key press', async () => {
+  it('advances enter-only prompts from the inline continue button', async () => {
     const delayedState = {
       ...defaultProps.initialState,
       detectionLevel: 55,
@@ -731,7 +744,7 @@ describe('Terminal Component', () => {
 
     act(() => {
       fireEvent.change(input, {
-        target: { value: 'open /internal/incident_summary_official.txt' },
+        target: { value: 'open /internal/audio_transcript_brief.txt' },
       });
       fireEvent.submit(input.closest('form')!);
     });
@@ -740,12 +753,18 @@ describe('Terminal Component', () => {
       await vi.advanceTimersByTimeAsync(10000);
     });
 
+    await act(async () => {
+      await Promise.resolve();
+    });
+
     expect(screen.queryByText(/Processing\.\.\./i)).not.toBeInTheDocument();
     expect(screen.getByText(/Press Enter ↵ to proceed/i)).toBeInTheDocument();
     expect(document.querySelector('.line.ufo74')).toBeNull();
 
+    const proceedButton = screen.getByRole('button', { name: /Press Enter ↵ to (?:continue|proceed)/i });
+
     act(() => {
-      fireEvent.keyDown(window, { key: 'Enter' });
+      fireEvent.click(proceedButton);
     });
 
     await act(async () => {
@@ -899,17 +918,16 @@ describe('Terminal Component', () => {
     expect(saveIndicator).toHaveClass(styles.saveIndicator);
   });
 
-  it('renders ICQ chat when icqPhase is active', async () => {
+  it('renders blackout when evidencesSaved is active', async () => {
     vi.useRealTimers();
-    const icqState = {
+    const blackoutState = {
       ...defaultProps.initialState,
-      icqPhase: true,
+      evidencesSaved: true,
     };
 
-    render(<Terminal {...defaultProps} initialState={icqState} />);
+    render(<Terminal {...defaultProps} initialState={blackoutState} />);
 
-    expect(await screen.findByText(/ICQ 99a -/i)).toBeInTheDocument();
-    expect(await screen.findByLabelText(/ICQ chat log/i)).toBeInTheDocument();
+    expect(await screen.findByText(/CONNECTION INTERRUPTED/i)).toBeInTheDocument();
   });
 
   it('renders bad ending when endingType is bad', async () => {

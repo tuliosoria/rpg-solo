@@ -4,6 +4,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { GameState } from '../types';
 import { createNewGame, loadGameAsync, loadCheckpoint } from '../storage/saves';
+import { incrementStatistic } from '../storage/statistics';
 import { useGlobalErrorHandler } from '../hooks/useGlobalErrorHandler';
 import { I18nProvider } from '../i18n';
 import ErrorBoundary from './ErrorBoundary';
@@ -17,6 +18,7 @@ type View = 'menu' | 'game';
 function HomeContentInner() {
   const [view, setView] = useState<View>('menu');
   const [gameState, setGameState] = useState<GameState | null>(null);
+  const [saveRequestState, setSaveRequestState] = useState<GameState | null>(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const loadRequestIdRef = useRef(0);
 
@@ -27,7 +29,10 @@ function HomeContentInner() {
   const handleNewGame = useCallback(() => {
     invalidatePendingLoads();
     const newState = createNewGame();
+    incrementStatistic('gamesPlayed');
     setGameState(newState);
+    setSaveRequestState(null);
+    setShowSaveModal(false);
     setView('game');
   }, [invalidatePendingLoads]);
 
@@ -42,6 +47,8 @@ function HomeContentInner() {
 
     if (loadedState) {
       setGameState(loadedState);
+      setSaveRequestState(null);
+      setShowSaveModal(false);
       setView('game');
       return true;
     }
@@ -58,6 +65,8 @@ function HomeContentInner() {
         isGameOver: false,
         gameOverReason: undefined,
       });
+      setSaveRequestState(null);
+      setShowSaveModal(false);
       setView('game');
     }
   }, [invalidatePendingLoads]);
@@ -66,15 +75,18 @@ function HomeContentInner() {
     invalidatePendingLoads();
     setView('menu');
     setGameState(null);
+    setSaveRequestState(null);
+    setShowSaveModal(false);
   }, [invalidatePendingLoads]);
 
   const handleSaveRequest = useCallback((state: GameState) => {
-    setGameState(state);
+    setSaveRequestState(state);
     setShowSaveModal(true);
   }, []);
 
   const handleSaved = useCallback(() => {
     setShowSaveModal(false);
+    setSaveRequestState(null);
   }, []);
 
   if (view === 'menu') {
@@ -92,8 +104,11 @@ function HomeContentInner() {
         />
         {showSaveModal && (
           <SaveModal
-            gameState={gameState}
-            onCloseAction={() => setShowSaveModal(false)}
+            gameState={saveRequestState ?? gameState}
+            onCloseAction={() => {
+              setShowSaveModal(false);
+              setSaveRequestState(null);
+            }}
             onSavedAction={handleSaved}
           />
         )}

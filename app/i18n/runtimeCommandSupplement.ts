@@ -102,11 +102,19 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: clear': 'COMANDO: clear',
     '  clear          - Clear screen': '  clear          - Limpa a tela',
     'SHORTCUT: Ctrl+L': 'ATALHO: Ctrl+L',
-    'COMMAND: save': 'COMANDO: save',
-    'Manually save your current session.': 'Salva manualmente sua sessão atual.',
-    '  save           - Save to a new slot': '  save           - Salva em um novo slot',
-    'NOTE: The game also auto-saves periodically.':
-      'NOTA: O jogo também faz auto-save periodicamente.',
+    'COMMAND: save <filename>': 'COMANDO: save <filename>',
+    'Save a file to your dossier for the leak.':
+      'Salve um arquivo no seu dossiê para o vazamento.',
+    'You must have read the file first.':
+      'Você precisa abrir e ler o arquivo antes de salvá-lo.',
+    '  save report.txt    - Save report.txt to dossier':
+      '  save report.txt    - Salva report.txt no dossiê',
+    'NOTE: Your dossier can hold up to 10 files.':
+      'NOTA: Seu dossiê pode guardar até 10 arquivos.',
+    'COMMAND: unsave <filename>': 'COMANDO: unsave <filename>',
+    'Remove a file from your dossier.': 'Remova um arquivo do seu dossiê.',
+    '  unsave report.txt  - Remove report.txt from dossier':
+      '  unsave report.txt  - Remove report.txt do dossiê',
     'COMMAND: chat': 'COMANDO: chat',
     'Open the secure relay channel to communicate with contacts.':
       'Abre o canal de retransmissão segura para se comunicar com contatos.',
@@ -158,7 +166,11 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  morse cancel     - Cancel current morse entry':
       '  morse cancel     - Cancela a entrada atual de morse',
     'COMMAND: leak': 'COMANDO: leak',
-    '  leak            - Initiate evidence leak': '  leak            - Inicia o vazamento das evidências',
+    'Attempt to leak your saved dossier to external channels.':
+      'Tenta vazar seu dossiê salvo para canais externos.',
+    '  leak            - Initiate dossier leak': '  leak            - Inicia o vazamento do dossiê',
+    'REQUIREMENT: Save 10 files to your dossier first.':
+      'REQUISITO: Salve 10 arquivos no seu dossiê primeiro.',
     'COMMAND: wait': 'COMANDO: wait',
     '  wait           - Reduce detection by ~10%':
       '  wait           - Reduz a detecção em ~10%',
@@ -676,11 +688,19 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: clear': 'COMANDO: clear',
     '  clear          - Clear screen': '  clear          - Limpia la pantalla',
     'SHORTCUT: Ctrl+L': 'ATAJO: Ctrl+L',
-    'COMMAND: save': 'COMANDO: save',
-    'Manually save your current session.': 'Guarda manualmente tu sesión actual.',
-    '  save           - Save to a new slot': '  save           - Guarda en una nueva ranura',
-    'NOTE: The game also auto-saves periodically.':
-      'NOTA: El juego también hace auto-guardados periódicos.',
+    'COMMAND: save <filename>': 'COMANDO: save <filename>',
+    'Save a file to your dossier for the leak.':
+      'Guarda un archivo en tu dossier para la filtración.',
+    'You must have read the file first.':
+      'Debes haber leído el archivo antes de guardarlo.',
+    '  save report.txt    - Save report.txt to dossier':
+      '  save report.txt    - Guarda report.txt en el dossier',
+    'NOTE: Your dossier can hold up to 10 files.':
+      'NOTA: Tu dossier puede guardar hasta 10 archivos.',
+    'COMMAND: unsave <filename>': 'COMANDO: unsave <filename>',
+    'Remove a file from your dossier.': 'Quita un archivo de tu dossier.',
+    '  unsave report.txt  - Remove report.txt from dossier':
+      '  unsave report.txt  - Quita report.txt del dossier',
     'COMMAND: chat': 'COMANDO: chat',
     'Open the secure relay channel to communicate with contacts.':
       'Abre el canal seguro de retransmisión para comunicarte con contactos.',
@@ -732,7 +752,11 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  morse cancel     - Cancel current morse entry':
       '  morse cancel     - Cancela la entrada morse actual',
     'COMMAND: leak': 'COMANDO: leak',
-    '  leak            - Initiate evidence leak': '  leak            - Inicia la filtración de evidencia',
+    'Attempt to leak your saved dossier to external channels.':
+      'Intenta filtrar tu dossier guardado hacia canales externos.',
+    '  leak            - Initiate dossier leak': '  leak            - Inicia la filtración del dossier',
+    'REQUIREMENT: Save 10 files to your dossier first.':
+      'REQUISITO: Guarda primero 10 archivos en tu dossier.',
     'COMMAND: wait': 'COMANDO: wait',
     '  wait           - Reduce detection by ~10%':
       '  wait           - Reduce la detección en ~10%',

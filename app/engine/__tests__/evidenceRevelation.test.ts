@@ -72,33 +72,33 @@ describe('Evidence Revelation System', () => {
   });
 
   describe('evidence file detection', () => {
-    it('flags foreign_drone_assessment.txt as evidence', () => {
-      expect(isEvidencePath('/ops/assessments/foreign_drone_assessment.txt')).toBe(true);
+    it('flags jardim_andere_incident.txt as evidence', () => {
+      expect(isEvidencePath('/internal/jardim_andere_incident.txt')).toBe(true);
     });
 
-    it('includes bio_program_overview.red in the evidence pool', () => {
-      expect(isEvidencePath('/admin/bio_program_overview.red')).toBe(true);
+    it('includes thirty_year_cycle.txt in the evidence pool', () => {
+      expect(isEvidencePath('/admin/thirty_year_cycle.txt')).toBe(true);
     });
 
     it('counts each evidence file separately, even if they used to share a category', () => {
       const discovered = getDiscoveredEvidenceFiles([
-        '/ops/assessments/foreign_drone_assessment.txt',
-        '/storage/assets/material_x_analysis.dat',
+        '/internal/jardim_andere_incident.txt',
+        '/storage/quarantine/bio_container.log',
       ]);
 
       expect(discovered.size).toBe(2);
-      expect(discovered.has('/ops/assessments/foreign_drone_assessment.txt')).toBe(true);
-      expect(discovered.has('/storage/assets/material_x_analysis.dat')).toBe(true);
+      expect(discovered.has('/internal/jardim_andere_incident.txt')).toBe(true);
+      expect(discovered.has('/storage/quarantine/bio_container.log')).toBe(true);
     });
 
     it('deduplicates rereads of the same evidence file path', () => {
       const discovered = getDiscoveredEvidenceFiles([
-        '/comms/intercepts/regional_summary_jan96.txt',
-        '/comms/intercepts/regional_summary_jan96.txt',
+        '/storage/quarantine/autopsy_alpha.log',
+        '/storage/quarantine/autopsy_alpha.log',
       ]);
 
       expect(discovered.size).toBe(1);
-      expect(discovered.has('/comms/intercepts/regional_summary_jan96.txt')).toBe(true);
+      expect(discovered.has('/storage/quarantine/autopsy_alpha.log')).toBe(true);
     });
   });
 

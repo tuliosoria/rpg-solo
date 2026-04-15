@@ -191,6 +191,24 @@ describe('i18n system', () => {
     ).toBe('Revise as opções de recuperação de emergência que podem manter a sessão viva.');
   });
 
+  it('translates the dossier save help detail lines for pt-BR', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('pt-BR');
+    });
+
+    expect(result.current.translateRuntimeText('COMMAND: save <filename>')).toBe(
+      'COMANDO: save <filename>'
+    );
+    expect(
+      result.current.translateRuntimeText('Save a file to your dossier for the leak.')
+    ).toBe('Salve um arquivo no seu dossiê para o vazamento.');
+    expect(result.current.translateRuntimeText('COMMAND: unsave <filename>')).toBe(
+      'COMANDO: unsave <filename>'
+    );
+  });
+
   it('translates tutorial, warning, and boot lines for Spanish', async () => {
     const { result } = renderHook(() => useI18n(), { wrapper });
 
@@ -215,6 +233,22 @@ describe('i18n system', () => {
     ).toBe('⚠ RIESGO AUMENTADO: los comandos inválidos llaman la atención del sistema.');
     expect(result.current.translateRuntimeText('BRAZILIAN INTELLIGENCE LEGACY SYSTEM')).toBe(
       'SISTEMA LEGADO DE INTELIGENCIA BRASILEÑA'
+    );
+  });
+
+  it('translates the updated exit hint for Spanish', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('es');
+    });
+
+    expect(
+      result.current.t(
+        'engine.commands.core.ufo74_press_esc_to_exit_or_type_save_first_if_you_want_to_ke'
+      )
+    ).toBe(
+      '[UFO74]: presiona [ESC] para salir. usa el menú de pausa si quieres guardar tu progreso primero.'
     );
   });
 

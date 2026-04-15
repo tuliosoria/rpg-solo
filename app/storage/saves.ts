@@ -32,6 +32,7 @@ import { MAX_DETECTION } from '../constants/detection';
 import { countEvidence, MAX_EVIDENCE_COUNT } from '../engine/evidenceRevelation';
 import { isCloudAvailable, cloudSave, cloudLoad, cloudDelete, cloudList } from '../lib/steamBridge';
 import { safeSetJSON } from './safeStorage';
+import { translateStatic } from '../i18n';
 
 const SAVES_KEY = 'terminal1996:saves';
 const SAVE_PREFIX = 'terminal1996:save:';
@@ -42,6 +43,29 @@ let checkpointIdCounter = 0;
 function createCheckpointId(timestamp: number): string {
   checkpointIdCounter += 1;
   return `checkpoint_${timestamp}_${checkpointIdCounter}`;
+}
+
+function createDefaultSaveName(timestamp: number): string {
+  const formattedTimestamp = new Date(timestamp).toLocaleString();
+  return translateStatic(
+    'save.defaultName',
+    { value: formattedTimestamp },
+    `Session ${formattedTimestamp}`
+  );
+}
+
+function countSavedFiles(state: {
+  savedFiles?: GameState['savedFiles'] | string[] | null;
+}): number {
+  if (state.savedFiles instanceof Set) {
+    return state.savedFiles.size;
+  }
+
+  if (Array.isArray(state.savedFiles)) {
+    return state.savedFiles.length;
+  }
+
+  return 0;
 }
 
 // Interface for versioned save data
@@ -123,6 +147,7 @@ function serializeState(state: GameState): string {
       trapsTriggered: Array.from(state.trapsTriggered || []),
       conspiracyFilesSeen: Array.from(state.conspiracyFilesSeen || []),
       archiveFilesViewed: Array.from(state.archiveFilesViewed || []),
+      savedFiles: Array.from(state.savedFiles || []),
       // Limit history size to prevent quota issues
       history: state.history.slice(-MAX_HISTORY_SIZE),
     },
@@ -163,6 +188,16 @@ function deserializeState(json: string): GameState {
   }
 
   const shouldClearLegacyTraceCountdown = baseState.countdownTriggeredBy === 'trace_spike';
+  const rawCountdownEndTime = clampNumber(
+    baseState.countdownEndTime,
+    DEFAULT_GAME_STATE.countdownEndTime,
+    0,
+    Number.MAX_SAFE_INTEGER
+  );
+  const shouldClearExpiredCountdown =
+    !!baseState.countdownActive &&
+    rawCountdownEndTime > 0 &&
+    rawCountdownEndTime <= Date.now();
 
   const state = {
     ...baseState,
@@ -212,6 +247,7 @@ function deserializeState(json: string): GameState {
     trapsTriggered: new Set(toStringArray(parsed.trapsTriggered)),
     conspiracyFilesSeen: new Set(toStringArray(parsed.conspiracyFilesSeen)),
     archiveFilesViewed: new Set(toStringArray(parsed.archiveFilesViewed)),
+    savedFiles: new Set(toStringArray(parsed.savedFiles)),
     // Limit command history to last MAX_COMMAND_HISTORY_SIZE entries
     commandHistory: toStringArray(parsed.commandHistory).slice(-MAX_COMMAND_HISTORY_SIZE),
     history: Array.isArray(baseState.history)
@@ -227,11 +263,15 @@ function deserializeState(json: string): GameState {
     timedDecryptSequence: undefined,
     timedDecryptEndTime: 0,
     traceSpikeActive: false,
-    countdownActive: shouldClearLegacyTraceCountdown ? false : !!baseState.countdownActive,
-    countdownEndTime: shouldClearLegacyTraceCountdown
+    countdownActive:
+      shouldClearLegacyTraceCountdown || shouldClearExpiredCountdown
+        ? false
+        : !!baseState.countdownActive,
+    countdownEndTime:
+      shouldClearLegacyTraceCountdown || shouldClearExpiredCountdown
       ? 0
-      : clampNumber(baseState.countdownEndTime, DEFAULT_GAME_STATE.countdownEndTime, 0, Number.MAX_SAFE_INTEGER),
-    countdownTriggeredBy: shouldClearLegacyTraceCountdown
+      : rawCountdownEndTime,
+    countdownTriggeredBy: shouldClearLegacyTraceCountdown || shouldClearExpiredCountdown
       ? undefined
       : typeof baseState.countdownTriggeredBy === 'string'
         ? baseState.countdownTriggeredBy
@@ -469,12 +509,24 @@ function buildRecoveredCloudSlot(slotId: string, state: GameState): SaveSlot {
   const timestamp = state.lastSaveTime || state.sessionStartTime || Date.now();
   return {
     id: slotId,
-    name: `Recovered ${new Date(timestamp).toLocaleString()}`,
+    name: translateStatic('save.recoveredName', undefined, 'Recovered Save'),
     timestamp,
     currentPath: state.currentPath,
-    truthCount: countEvidence(state),
+    truthCount: countSavedFiles(state),
     detectionLevel: state.detectionLevel,
   };
+}
+
+function persistRecoveredSaveSlot(slot: SaveSlot): void {
+  const existingSlots = getSaveSlots().filter(existing => existing.id !== slot.id);
+  const nextSlots = [slot, ...existingSlots];
+  const overflowSlots = nextSlots.slice(MAX_SAVE_SLOTS);
+
+  if (overflowSlots.length > 0) {
+    removeSlotPayloads(overflowSlots, SAVE_PREFIX);
+  }
+
+  persistSlotMetadata(SAVES_KEY, nextSlots.slice(0, MAX_SAVE_SLOTS));
 }
 
 export async function getSaveSlotsAsync(signal?: AbortSignal): Promise<SaveSlot[]> {
@@ -535,16 +587,16 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
   if (!isBrowserWithStorage()) return null;
 
   const id = `save_${Date.now()}`;
-  const name = slotName || `Session ${new Date().toLocaleString()}`;
   const now = Date.now();
-  const evidenceCount = countEvidence(state);
+  const name = slotName || createDefaultSaveName(now);
+  const savedFileCount = countSavedFiles(state);
 
   const slot: SaveSlot = {
     id,
     name,
     timestamp: now,
     currentPath: state.currentPath,
-    truthCount: evidenceCount,
+    truthCount: savedFileCount,
     detectionLevel: state.detectionLevel,
   };
 
@@ -612,8 +664,23 @@ export async function loadGameAsync(
       try {
         const cloudState = deserializeState(cloudData);
         if (signal?.aborted) return null;
-        // Also update localStorage with cloud data for offline access
-        window.localStorage.setItem(SAVE_PREFIX + slotId, cloudData);
+
+        const saveStorageConfig: SlotStorageConfig<SaveSlot> = {
+          itemPrefix: SAVE_PREFIX,
+          listKey: SAVES_KEY,
+          maxSlots: MAX_SAVE_SLOTS,
+          readSlots: getSaveSlots,
+        };
+        const cachedLocally = persistSlotDataWithQuotaRetry(
+          SAVE_PREFIX + slotId,
+          cloudData,
+          saveStorageConfig,
+          'cache cloud save'
+        );
+        if (cachedLocally) {
+          persistRecoveredSaveSlot(buildRecoveredCloudSlot(slotId, cloudState));
+        }
+
         return cloudState;
       } catch {
         // Cloud data corrupted, fall back to localStorage
@@ -754,8 +821,12 @@ export async function loadAutoSaveAsync(): Promise<GameState | null> {
     if (cloudData) {
       try {
         const cloudState = deserializeState(cloudData);
-        // Also update localStorage with cloud data for offline access
-        window.localStorage.setItem('terminal1996:autosave', cloudData);
+        try {
+          window.localStorage.setItem('terminal1996:autosave', cloudData);
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to cache autosave locally:', error);
+        }
         return cloudState;
       } catch {
         // Cloud data corrupted, fall back to localStorage
@@ -799,14 +870,14 @@ export function saveCheckpoint(state: GameState, reason: string): CheckpointSlot
 
   const now = Date.now();
   const id = createCheckpointId(now);
-  const evidenceCount = countEvidence(state);
+  const savedFileCount = countSavedFiles(state);
 
   const slot: CheckpointSlot = {
     id,
     reason,
     timestamp: now,
     currentPath: state.currentPath,
-    truthCount: evidenceCount,
+    truthCount: savedFileCount,
     detectionLevel: state.detectionLevel,
   };
 

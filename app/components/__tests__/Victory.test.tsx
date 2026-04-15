@@ -118,6 +118,12 @@ describe('Victory Component', () => {
     expect(unlockAchievement).toHaveBeenCalledWith('completionist');
   });
 
+  it('checks the dossier-based ending achievement for the resolved ending variant', () => {
+    render(<Victory {...defaultProps} />);
+
+    expect(unlockAchievement).toHaveBeenCalledWith('ending_incomplete_picture');
+  });
+
   it('progresses through phases with timers', async () => {
     render(<Victory {...defaultProps} />);
     

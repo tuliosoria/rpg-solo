@@ -18,6 +18,7 @@ describe('SaveModal', () => {
     sessionStartTime: Date.now(),
     currentPath: '/home/hackerkid',
     evidenceCount: 2,
+    savedFiles: new Set(['/admin/thirty_year_cycle.txt', '/ops/prato/archive/patrol_observation_shift_04.txt']),
     detectionLevel: 25,
     ...overrides,
   });
@@ -62,7 +63,7 @@ describe('SaveModal', () => {
       render(<SaveModal {...defaultProps} />);
 
       expect(screen.getByText('Current Path: /home/hackerkid')).toBeInTheDocument();
-      expect(screen.getByText('Progress: 2/10 evidence')).toBeInTheDocument();
+      expect(screen.getByText('Progress: 2/10 files saved')).toBeInTheDocument();
     });
 
     it('shows SAVE and CANCEL buttons', () => {
@@ -165,14 +166,19 @@ describe('SaveModal', () => {
   });
 
   describe('Game State Display', () => {
-    it('displays correct evidence count', () => {
+    it('displays correct dossier progress', () => {
       const gameState = createMockGameState({
-        evidenceCount: 4,
+        savedFiles: new Set([
+          '/admin/thirty_year_cycle.txt',
+          '/ops/prato/archive/patrol_observation_shift_04.txt',
+          '/storage/assets/material_x_analysis.dat',
+          '/admin/bio_program_overview.red',
+        ]),
       });
 
       render(<SaveModal {...defaultProps} gameState={gameState} />);
 
-      expect(screen.getByText('Progress: 4/10 evidence')).toBeInTheDocument();
+      expect(screen.getByText('Progress: 4/10 files saved')).toBeInTheDocument();
     });
 
     it('displays correct path', () => {

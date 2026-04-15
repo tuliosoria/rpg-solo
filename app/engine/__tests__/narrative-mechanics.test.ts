@@ -963,21 +963,28 @@ describe('Narrative Mechanics', () => {
       ).toBe(true);
     });
 
-    it('run save_evidence.sh redirects to leak command (direct-to-ICQ)', () => {
+    it('run save_evidence.sh redirects to the leak preparation flow', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/tmp',
-        evidenceCount: 10,
+        savedFiles: new Set([
+          '/internal/audio_transcript_brief.txt',
+          '/internal/jardim_andere_incident.txt',
+          '/internal/misc/incident_report_1996_01_VG.txt',
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/autopsy_alpha.log',
+          '/storage/quarantine/witness_statement_raw.txt',
+          '/ops/prato/archive/patrol_observation_shift_04.txt',
+          '/ops/prato/initial_response_orders.txt',
+          '/admin/thirty_year_cycle.txt',
+          '/admin/colonization_model.red',
+        ]),
       });
       const result = executeCommand('run save_evidence.sh', state);
-      // Should trigger the direct-to-ICQ leak transmission
-      expect(
-        result.output.some(
-          e => e.content.includes('TRANSMISSION SUCCESSFUL') || e.content.includes('LEAK TRANSMISSION')
-        )
-      ).toBe(true);
-      expect(result.stateChanges.icqPhase).toBe(true);
+      expect(result.output.some(e => e.content.includes('LEAK CHANNEL ENCRYPTED'))).toBe(true);
+      expect(result.stateChanges.leakSequenceGenerated).toBe(true);
+      expect(result.stateChanges.icqPhase).toBeUndefined();
     });
 
     it('executes purge_trace.sh to clear countdown', () => {
@@ -1082,21 +1089,30 @@ describe('Narrative Mechanics', () => {
       expect(result.stateChanges.icqPhase).toBeUndefined();
     });
 
-    it('triggers direct-to-ICQ leak when all evidence found', () => {
+    it('transmits successfully once the dossier is complete and the leak sequence is prepared', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        evidenceCount: 10,
+        savedFiles: new Set([
+          '/internal/audio_transcript_brief.txt',
+          '/internal/jardim_andere_incident.txt',
+          '/internal/misc/incident_report_1996_01_VG.txt',
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/autopsy_alpha.log',
+          '/storage/quarantine/witness_statement_raw.txt',
+          '/ops/prato/archive/patrol_observation_shift_04.txt',
+          '/ops/prato/initial_response_orders.txt',
+          '/admin/thirty_year_cycle.txt',
+          '/admin/colonization_model.red',
+        ]),
+        leakSequenceGenerated: true,
+        leakSequenceProgress: 3,
+        leakSequence: ['verify alpha', 'mask 21', 'broadcast ghost'],
       });
       const result = executeCommand('leak', state);
-      // Should trigger the direct-to-ICQ leak transmission
-      expect(
-        result.output.some(
-          e => e.content.includes('TRANSMISSION SUCCESSFUL') || e.content.includes('LEAK TRANSMISSION')
-        )
-      ).toBe(true);
-      expect(result.stateChanges.icqPhase).toBe(true);
-      expect(result.skipToPhase).toBe('icq');
+      expect(result.output.some(e => e.content.includes('TRANSMISSION SUCCESSFUL'))).toBe(true);
+      expect(result.stateChanges.gameWon).toBe(true);
+      expect(result.stateChanges.flags?.leakSuccessful).toBe(true);
     });
   });
 
@@ -1279,39 +1295,52 @@ describe('Narrative Mechanics', () => {
       expect(state.evidenceCount).toBe(0);
     });
 
-    it('win condition is evidenceCount >= 10', () => {
+    it('a full dossier of 10 files avoids the insufficient-evidence block', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/ops/exo',
         accessLevel: 4,
-        evidenceCount: 10,
+        savedFiles: new Set([
+          '/internal/audio_transcript_brief.txt',
+          '/internal/jardim_andere_incident.txt',
+          '/internal/misc/incident_report_1996_01_VG.txt',
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/autopsy_alpha.log',
+          '/storage/quarantine/witness_statement_raw.txt',
+          '/ops/prato/archive/patrol_observation_shift_04.txt',
+          '/ops/prato/initial_response_orders.txt',
+          '/admin/thirty_year_cycle.txt',
+          '/admin/colonization_model.red',
+        ]),
         flags: { adminUnlocked: true },
         filesRead: new Set<string>(),
       });
 
-      // Evidence count of 10 should allow the leak command
       const result = executeCommand('leak', state);
-      // Should NOT show "INSUFFICIENT EVIDENCE"
       expect(result.output.some(e => e.content.includes('INSUFFICIENT EVIDENCE'))).toBe(false);
     });
 
-    it('blocks leak when evidenceCount < 10', () => {
+    it('blocks leak when fewer than five files are saved to the dossier', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/ops/exo',
         accessLevel: 4,
-        evidenceCount: 5,
+        savedFiles: new Set([
+          '/internal/audio_transcript_brief.txt',
+          '/internal/jardim_andere_incident.txt',
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/autopsy_alpha.log',
+        ]),
         flags: { adminUnlocked: true },
         filesRead: new Set<string>(),
       });
 
       const result = executeCommand('leak', state);
-      // Should show insufficient evidence
       expect(
         result.output.some(
-          e => e.content.includes('INSUFFICIENT EVIDENCE') || e.content.includes('5/10')
+          e => e.content.includes('INSUFFICIENT EVIDENCE') || e.content.includes('4/10')
         )
       ).toBe(true);
     });
@@ -1363,11 +1392,11 @@ describe('Narrative Mechanics', () => {
       expect(result.imageTrigger?.src).toBe('/images/drone.webp');
     });
 
-    it('foreign_drone_assessment.txt logs evidence and scares the avatar on first read', () => {
+    it('bio_container.log logs evidence and scares the avatar on first read', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        currentPath: '/ops/assessments',
+        currentPath: '/storage/quarantine',
         accessLevel: 2,
         evidenceCount: 0,
         filesRead: new Set<string>(),
@@ -1375,33 +1404,31 @@ describe('Narrative Mechanics', () => {
         flags: { adminUnlocked: true },
       });
 
-      const result = executeCommand('open foreign_drone_assessment.txt', state);
+      const result = executeCommand('open bio_container.log', state);
 
       expect(result.stateChanges.evidenceCount).toBe(1);
       expect(result.stateChanges.avatarExpression).toBe('scared');
-      expect(
-        result.stateChanges.filesRead?.has('/ops/assessments/foreign_drone_assessment.txt')
-      ).toBe(true);
+      expect(result.stateChanges.filesRead?.has('/storage/quarantine/bio_container.log')).toBe(true);
     });
 
     it('counts each evidence file separately even when they cover similar material', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
-        currentPath: '/storage/assets',
+        currentPath: '/storage/quarantine',
         accessLevel: 2,
         evidenceCount: 1,
-        filesRead: new Set<string>(['/ops/assessments/foreign_drone_assessment.txt']),
+        filesRead: new Set<string>(['/storage/quarantine/bio_container.log']),
         flags: { adminUnlocked: true },
       });
 
-      const result = executeCommand('open material_x_analysis.dat', state);
+      const result = executeCommand('open autopsy_alpha.log', state);
 
       expect(result.stateChanges.evidenceCount).toBe(2);
       expect(result.stateChanges.avatarExpression).toBe('scared');
     });
 
-    it('bio_program_overview.red logs evidence on first read', () => {
+    it('bio_program_overview.red still triggers its image without counting as evidence', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -1414,8 +1441,9 @@ describe('Narrative Mechanics', () => {
 
       const result = executeCommand('open bio_program_overview.red', state);
 
-      expect(result.stateChanges.evidenceCount).toBe(1);
+      expect(result.stateChanges.evidenceCount).toBeUndefined();
       expect(result.stateChanges.filesRead?.has('/admin/bio_program_overview.red')).toBe(true);
+      expect(result.imageTrigger?.src).toBe('/images/bio-program.webp');
     });
 
     it('field_report_delta.txt has prato-delta image trigger', () => {

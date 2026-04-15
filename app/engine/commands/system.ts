@@ -234,12 +234,12 @@ const COMMAND_HELP: Record<string, string[]> = {
   leak: [
     'COMMAND: leak',
     '',
-    'Attempt to leak collected evidence to external channels.',
+    'Attempt to leak your saved dossier to external channels.',
     '',
     'USAGE:',
-    '  leak            - Initiate evidence leak',
+    '  leak            - Initiate dossier leak',
     '',
-    'REQUIREMENT: All 10 evidence files must be collected first.',
+    'REQUIREMENT: Save 10 files to your dossier first.',
     '',
     'WARNING: This action triggers the endgame sequence.',
   ],
@@ -382,7 +382,7 @@ export const systemCommands: CommandRegistry = {
       tSystem('helpMenu.hint', '  hint              Request a hint (limited uses)'),
       tSystem('helpMenu.wait', '  wait              Lower detection briefly (limited)'),
       tSystem('helpMenu.hide', '  hide              Emergency escape at 90% risk'),
-      tSystem('helpMenu.leak', '  leak              Leak collected evidence'),
+      tSystem('helpMenu.leak', '  leak              Leak your saved dossier'),
       tSystem(
         'helpMenu.override',
         '  override protocol <code>  Execute admin override'
@@ -518,11 +518,20 @@ export const systemCommands: CommandRegistry = {
       })
     );
 
-    if (evidenceCount >= 10) {
+    const savedFileCount = state.savedFiles?.size || 0;
+    if (savedFileCount >= 10) {
       lines.push(
         tSystem(
           'status.objective.complete',
-          '  OBJECTIVE: Evidence complete — review with "progress", then use "leak" when ready.'
+          '  OBJECTIVE: Dossier complete — review with "progress", then use "leak" when ready.'
+        )
+      );
+    } else if (evidenceCount >= 10) {
+      lines.push(
+        tSystem(
+          'status.objective.dossierIncomplete',
+          '  OBJECTIVE: Evidence complete — save {{count}} more file(s) to your dossier before using "leak".',
+          { count: 10 - savedFileCount }
         )
       );
     } else if (evidenceCount > 0) {
@@ -722,11 +731,22 @@ export const systemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('system', '  USAGE: save <filename>'),
-          createEntry('system', '  Saves a file to your dossier for the leak.'),
-          createEntry('system', '  You must have read the file first.'),
+          createEntry('system', tSystem('save.usage', '  USAGE: save <filename>')),
+          createEntry(
+            'system',
+            tSystem('save.description', '  Save a file to your dossier for the leak.')
+          ),
+          createEntry(
+            'system',
+            tSystem('save.readFirst', '  You must have read the file first.')
+          ),
           createEntry('system', ''),
-          createEntry('system', `  Dossier: ${state.savedFiles.size}/10 files saved`),
+          createEntry(
+            'system',
+            tSystem('save.dossierCountDetailed', '  Dossier: {{count}}/10 files saved', {
+              count: state.savedFiles.size,
+            })
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {},
@@ -745,8 +765,17 @@ export const systemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('error', ''),
-          createEntry('error', '  FILE NOT FOUND IN MEMORY'),
-          createEntry('error', '  You must open and read a file before saving it.'),
+          createEntry(
+            'error',
+            tSystem('save.fileNotFoundTitle', '  FILE NOT FOUND IN MEMORY')
+          ),
+          createEntry(
+            'error',
+            tSystem(
+              'save.fileNotFoundBody',
+              '  You must open and read a file before saving it.'
+            )
+          ),
           createEntry('error', ''),
         ],
         stateChanges: {},
@@ -760,8 +789,14 @@ export const systemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('warning', ''),
-          createEntry('warning', '  FILE ALREADY IN DOSSIER'),
-          createEntry('warning', `  ${filePath.split('/').pop()}`),
+          createEntry(
+            'warning',
+            tSystem('save.alreadySavedTitle', '  FILE ALREADY IN DOSSIER')
+          ),
+          createEntry(
+            'warning',
+            tSystem('save.fileLabel', '  {{file}}', { file: filePath.split('/').pop() || filename })
+          ),
           createEntry('warning', ''),
         ],
         stateChanges: {},
@@ -773,8 +808,11 @@ export const systemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('warning', ''),
-          createEntry('warning', '  DOSSIER FULL — 10/10 FILES SAVED'),
-          createEntry('warning', '  Use "unsave <filename>" to make room.'),
+          createEntry('warning', tSystem('save.fullTitle', '  DOSSIER FULL — 10/10 FILES SAVED')),
+          createEntry(
+            'warning',
+            tSystem('save.fullBody', '  Use "unsave <filename>" to make room.')
+          ),
           createEntry('warning', ''),
         ],
         stateChanges: {},
@@ -787,14 +825,22 @@ export const systemCommands: CommandRegistry = {
 
     const output = [
       createEntry('system', ''),
-      createEntry('system', `  ◉ FILE SAVED TO DOSSIER: ${filePath.split('/').pop()}`),
-      createEntry('system', `  Dossier: ${newSavedFiles.size}/10`),
+      createEntry(
+        'system',
+        tSystem('save.savedFile', '  ◉ FILE SAVED TO DOSSIER: {{file}}', {
+          file: filePath.split('/').pop() || filename,
+        })
+      ),
+      createEntry(
+        'system',
+        tSystem('save.dossierCount', '  Dossier: {{count}}/10', { count: newSavedFiles.size })
+      ),
       createEntry('system', ''),
     ];
 
     const stateChanges: Partial<GameState> = {
       savedFiles: newSavedFiles,
-      avatarExpression: 'smirk' as any,
+      avatarExpression: 'smirk',
     };
 
     // Build result with sound trigger
@@ -807,7 +853,13 @@ export const systemCommands: CommandRegistry = {
     // After 10th save, add UFO74 message
     if (newSavedFiles.size === 10) {
       result.pendingUfo74Messages = [
-        createEntry('ufo74', 'UFO74: kid. you have enough. type "leak" when you are ready.'),
+        createEntry(
+          'ufo74',
+          tSystem(
+            'save.readyToLeak',
+            'UFO74: kid. you have enough. type "leak" when you are ready.'
+          )
+        ),
       ];
     }
 
@@ -819,8 +871,11 @@ export const systemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('system', ''),
-          createEntry('system', '  USAGE: unsave <filename>'),
-          createEntry('system', '  Removes a file from your dossier.'),
+          createEntry('system', tSystem('unsave.usage', '  USAGE: unsave <filename>')),
+          createEntry(
+            'system',
+            tSystem('unsave.description', '  Remove a file from your dossier.')
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {},
@@ -837,7 +892,7 @@ export const systemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('error', ''),
-          createEntry('error', '  FILE NOT IN DOSSIER'),
+          createEntry('error', tSystem('unsave.fileNotFoundTitle', '  FILE NOT IN DOSSIER')),
           createEntry('error', ''),
         ],
         stateChanges: {},
@@ -851,8 +906,16 @@ export const systemCommands: CommandRegistry = {
     return {
       output: [
         createEntry('system', ''),
-        createEntry('system', `  ◎ FILE REMOVED FROM DOSSIER: ${filePath.split('/').pop()}`),
-        createEntry('system', `  Dossier: ${newSavedFiles.size}/10`),
+        createEntry(
+          'system',
+          tSystem('unsave.removedFile', '  ◎ FILE REMOVED FROM DOSSIER: {{file}}', {
+            file: filePath.split('/').pop() || filename,
+          })
+        ),
+        createEntry(
+          'system',
+          tSystem('save.dossierCount', '  Dossier: {{count}}/10', { count: newSavedFiles.size })
+        ),
         createEntry('system', ''),
       ],
       stateChanges: { savedFiles: newSavedFiles },

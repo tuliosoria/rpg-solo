@@ -197,9 +197,10 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
 
   // Track if this is the first render to avoid running sync effect on mount
   const isFirstRender = useRef(true);
-  // Track the seed to detect when a different game state is passed in (e.g., checkpoint load)
-  const prevSeedRef = useRef(initialState.seed);
-  const prevLastSaveTimeRef = useRef(initialState.lastSaveTime);
+  // HomeContent only changes initialState when the active session is replaced
+  // (new game, load save, or load checkpoint), so a new object means we should
+  // fully reset the terminal even if the checkpoint metadata is unchanged.
+  const prevInitialStateRef = useRef(initialState);
 
   // ── UI State ──────────────────────────────────────────────────────────
 
@@ -455,19 +456,14 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
   // SYNC EFFECT (checkpoint load)
   // ═══════════════════════════════════════════════════════════════════════
 
-  // Sync state when a new game state is loaded externally (e.g., checkpoint load)
-  // We detect this by checking if the seed or lastSaveTime changed
+  // Sync state when a new game state is loaded externally (e.g., checkpoint load).
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
 
-    // Detect if this is a different game state (checkpoint load or game load)
-    const seedChanged = initialState.seed !== prevSeedRef.current;
-    const saveTimeChanged = initialState.lastSaveTime !== prevLastSaveTimeRef.current;
-
-    if (seedChanged || saveTimeChanged) {
+    if (initialState !== prevInitialStateRef.current) {
       // Update the internal game state to match the new initial state
       setGameState(initialState);
 
@@ -522,8 +518,7 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
       }});
 
       // Update refs
-      prevSeedRef.current = initialState.seed;
-      prevLastSaveTimeRef.current = initialState.lastSaveTime;
+      prevInitialStateRef.current = initialState;
     }
   }, [initialState, initialPhase]);
 

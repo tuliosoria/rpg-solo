@@ -26,6 +26,7 @@ const COMMANDS = [
   'note',
   'notes',
   'bookmark',
+  'unsave',
   'trace',
   'chat',
   'clear',
@@ -45,7 +46,7 @@ const COMMANDS = [
   'morse',
 ];
 
-const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'run', 'bookmark'];
+const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'run', 'bookmark', 'save', 'unsave'];
 
 /**
  * Result of an autocomplete query.

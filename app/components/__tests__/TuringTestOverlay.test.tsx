@@ -98,7 +98,7 @@ describe('TuringTestOverlay', () => {
   it('shows the first question initially', () => {
     render(<TuringTestOverlay onComplete={mockOnComplete} />);
 
-    expect(screen.getByText('"Test question 1?"')).toBeInTheDocument();
+    expect(screen.getByText(/Test question 1\?/)).toBeInTheDocument();
     expect(screen.getByText('QUESTION 1 of 3')).toBeInTheDocument();
   });
 
@@ -143,7 +143,7 @@ describe('TuringTestOverlay', () => {
     });
 
     // Should now show question 2
-    expect(screen.getByText('"Test question 2?"')).toBeInTheDocument();
+    expect(screen.getByText(/Test question 2\?/)).toBeInTheDocument();
     expect(screen.getByText('QUESTION 2 of 3')).toBeInTheDocument();
   });
 

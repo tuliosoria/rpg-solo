@@ -82,7 +82,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
           <div className={styles.info}>
             <div>{t('save.path')}: {gameState.currentPath}</div>
             <div>
-              {t('save.progress')}: {gameState.evidenceCount || 0}/10 {t('save.progressSuffix')}
+              {t('save.progress')}: {gameState.savedFiles.size}/10 {t('save.progressSuffix')}
             </div>
           </div>
           {saveError && (

@@ -50,14 +50,24 @@ const DEFAULT_STATISTICS: GameStatistics = {
   lastPlayed: 0,
 };
 
+function mergeStatistics(partial: Partial<GameStatistics>): GameStatistics {
+  return {
+    ...DEFAULT_STATISTICS,
+    ...partial,
+    endingsAchieved: {
+      ...DEFAULT_STATISTICS.endingsAchieved,
+      ...(partial.endingsAchieved ?? {}),
+    },
+  };
+}
+
 /**
  * Retrieves all player statistics, merging with defaults for any missing fields.
  * @returns Complete GameStatistics object
  */
 export function getStatistics(): GameStatistics {
   const stored = safeGetJSON<Partial<GameStatistics>>(STATISTICS_KEY, {});
-  // Merge with defaults to handle new fields
-  return { ...DEFAULT_STATISTICS, ...stored };
+  return mergeStatistics(stored);
 }
 
 /**
@@ -76,7 +86,14 @@ export function saveStatistics(stats: GameStatistics): void {
  */
 export function updateStatistics(updates: Partial<GameStatistics>): GameStatistics {
   const current = getStatistics();
-  const updated = { ...current, ...updates, lastPlayed: Date.now() };
+  const updated = mergeStatistics({
+    ...current,
+    ...updates,
+    endingsAchieved: updates.endingsAchieved
+      ? { ...current.endingsAchieved, ...updates.endingsAchieved }
+      : current.endingsAchieved,
+    lastPlayed: Date.now(),
+  });
   saveStatistics(updated);
   return updated;
 }

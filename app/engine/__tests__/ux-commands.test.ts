@@ -235,45 +235,53 @@ describe('UX Commands', () => {
       const state = createTestState();
       const result = executeCommand('progress', state);
 
-      expect(result.output.some(e => e.content.includes('INVESTIGATION PROGRESS'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('EVIDENCE COLLECTED'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('DOSSIER — LEAK PREPARATION'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Files saved: 0/10'))).toBe(true);
     });
 
-    it('should show discovered evidence count', () => {
+    it('should show saved dossier file count', () => {
       const state = createTestState({
-        evidenceCount: 2,
+        savedFiles: new Set([
+          '/internal/audio_transcript_brief.txt',
+          '/storage/quarantine/bio_container.log',
+        ]),
       });
       const result = executeCommand('progress', state);
 
-      // New format shows evidence count
-      expect(
-        result.output.some(e => e.content.includes('2/10'))
-      ).toBe(true);
+      expect(result.output.some(e => e.content.includes('Files saved: 2/10'))).toBe(true);
     });
 
-    it('should show detection warning at high levels', () => {
-      const state = createTestState({ detectionLevel: 75 });
-      const result = executeCommand('progress', state);
-
-      expect(result.output.some(e => e.content.includes('Detection level dangerously high'))).toBe(
-        true
-      );
-    });
-
-    it('should show session statistics', () => {
+    it('shows dossier completion when all 10 files are saved', () => {
       const state = createTestState({
-        filesRead: new Set(['/test1.txt', '/test2.txt']),
-        sessionCommandCount: 50,
+        savedFiles: new Set([
+          '/internal/audio_transcript_brief.txt',
+          '/internal/jardim_andere_incident.txt',
+          '/internal/misc/incident_report_1996_01_VG.txt',
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/autopsy_alpha.log',
+          '/storage/quarantine/witness_statement_raw.txt',
+          '/ops/prato/archive/patrol_observation_shift_04.txt',
+          '/ops/prato/initial_response_orders.txt',
+          '/admin/thirty_year_cycle.txt',
+          '/admin/colonization_model.red',
+        ]),
       });
       const result = executeCommand('progress', state);
 
-      expect(result.output.some(e => e.content.includes('Files examined: 2'))).toBe(true);
-      // Commands executed is no longer shown; check for evidence links instead
-      expect(
-        result.output.some(
-          e => e.content.includes('Evidence links:') || e.content.includes('SESSION STATISTICS')
-        )
-      ).toBe(true);
+      expect(result.output.some(e => e.content.includes('DOSSIER COMPLETE'))).toBe(true);
+    });
+
+    it('lists the saved file names in the dossier', () => {
+      const state = createTestState({
+        savedFiles: new Set([
+          '/internal/audio_transcript_brief.txt',
+          '/storage/quarantine/bio_container.log',
+        ]),
+      });
+      const result = executeCommand('progress', state);
+
+      expect(result.output.some(e => e.content.includes('audio_transcript_brief.txt'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('bio_container.log'))).toBe(true);
     });
   });
 
@@ -304,11 +312,9 @@ describe('UX Commands', () => {
 
     it('finds files by content', () => {
       const state = createTestState();
-      const result = executeCommand('search coherence', state);
+      const result = executeCommand('search anomalous', state);
 
-      expect(
-        result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))
-      ).toBe(true);
+      expect(result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))).toBe(true);
     });
 
     it('adds a small detection penalty when searching', () => {
@@ -349,6 +355,7 @@ describe('UX Commands', () => {
       const result = executeCommand('god evidences', state);
 
       expect(result.stateChanges.evidenceCount).toBe(10);
+      expect(result.stateChanges.savedFiles?.size).toBe(10);
       expect(result.stateChanges.flags).toBeUndefined();
       expect(result.stateChanges.evidencesSaved).toBeUndefined();
       expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);
@@ -361,11 +368,7 @@ describe('UX Commands', () => {
       } as GameState;
       const leakResult = executeCommand('leak', readyState);
 
-      expect(
-        leakResult.output.some(
-          e => e.content.includes('INSUFFICIENT EVIDENCE')
-        )
-      ).toBe(false);
+      expect(leakResult.output.some(e => e.content.includes('INSUFFICIENT EVIDENCE'))).toBe(false);
     });
 
     it('keeps god evidence compatible inside god mode', () => {
@@ -373,6 +376,7 @@ describe('UX Commands', () => {
       const result = executeCommand('god evidence', state);
 
       expect(result.stateChanges.evidenceCount).toBe(10);
+      expect(result.stateChanges.savedFiles?.size).toBe(10);
       expect(result.stateChanges.flags).toBeUndefined();
       expect(result.output.some(e => e.content.includes('ALL EVIDENCE UNLOCKED'))).toBe(true);
       expect(result.output.some(e => e.content.includes('Leak path ready'))).toBe(true);

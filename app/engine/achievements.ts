@@ -3,6 +3,7 @@
 import { translateStatic } from '../i18n';
 import { safeGetJSON, safeSetJSON, safeRemoveItem } from '../storage/safeStorage';
 import { unlockAchievement as steamUnlockAchievement } from '../lib/steamBridge';
+import type { EndingId } from './endings';
 
 export interface Achievement {
   id: string;
@@ -37,6 +38,66 @@ function createAchievement(
   };
 }
 
+const DOSSIER_ENDING_ACHIEVEMENTS = [
+  ['ridiculed', 'Ridiculed', 'Reach the ending where the dossier is dismissed as noise', '📰'],
+  ['ufo74_exposed', 'UFO74 Exposed', "Reveal UFO74's identity to the world", '📡'],
+  [
+    'the_2026_warning',
+    'The 2026 Warning',
+    'Publish the convergence warning before the next window opens',
+    '⏳',
+  ],
+  [
+    'government_scandal',
+    'Government Scandal',
+    'Expose the military cover-up as a national scandal',
+    '⚖️',
+  ],
+  [
+    'prisoner_45_freed',
+    'Prisoner 45 Freed',
+    'Reveal the containment of Prisoner 45',
+    '🔓',
+  ],
+  [
+    'harvest_understood',
+    'Harvest Understood',
+    'Expose the colonization and extraction model',
+    '🌾',
+  ],
+  [
+    'nothing_changes',
+    'Nothing Changes',
+    'Prove the truth, only to watch the world move on',
+    '🕳️',
+  ],
+  [
+    'incomplete_picture',
+    'Incomplete Picture',
+    'Reach an ending with real evidence but no coherent case',
+    '🧩',
+  ],
+  [
+    'wrong_story',
+    'The Wrong Story',
+    'Expose a scandal while missing the truth underneath',
+    '🧾',
+  ],
+  ['hackerkid_caught', 'HackerKid Caught', 'Trigger the honeypot ending', '🚨'],
+  [
+    'secret_ending',
+    'The Ferreira Protocol',
+    "Assemble UFO74's full protocol and secure the secret ending",
+    '🔐',
+  ],
+  [
+    'real_ending',
+    'Undeniable',
+    'Assemble the dossier that forces a renewed investigation',
+    '🌐',
+  ],
+] as const satisfies ReadonlyArray<readonly [EndingId, string, string, string]>;
+
 export const ACHIEVEMENTS: Achievement[] = [
   createAchievement(
     'speed_demon',
@@ -60,32 +121,11 @@ export const ACHIEVEMENTS: Achievement[] = [
     '📚'
   ),
   createAchievement(
-    'pacifist',
-    'pacifist',
-    'Pacifist',
-    'Never trigger a warning or alert',
-    '🕊️'
-  ),
-  createAchievement(
-    'curious',
-    'curious',
-    'Curious Mind',
-    'Find all easter eggs',
-    '🔍'
-  ),
-  createAchievement(
     'first_blood',
     'first_blood',
     'First Blood',
     'Discover your first evidence',
     '🩸'
-  ),
-  createAchievement(
-    'hacker',
-    'hacker',
-    'Elite Hacker',
-    'Decrypt 5 encrypted files',
-    '💀'
   ),
   createAchievement(
     'survivor',
@@ -109,14 +149,6 @@ export const ACHIEVEMENTS: Achievement[] = [
     '👁️'
   ),
   createAchievement('doom_fan', 'doom_fan', 'IDDQD', 'Activate god mode', '🎮', true),
-  createAchievement(
-    'persistent',
-    'persistent',
-    'Persistent',
-    'Continue playing after a game over',
-    '💪'
-  ),
-  // Hidden achievements
   createAchievement(
     'archivist',
     'archivist',
@@ -149,7 +181,6 @@ export const ACHIEVEMENTS: Achievement[] = [
     '🦉',
     true
   ),
-  // Multiple endings achievements
   createAchievement(
     'liberator',
     'liberator',
@@ -182,62 +213,8 @@ export const ACHIEVEMENTS: Achievement[] = [
     '✨',
     true
   ),
-  // Individual ending achievements (one per ending variant)
-  createAchievement(
-    'ending_controlled_disclosure',
-    'ending_controlled_disclosure',
-    'Controlled Disclosure',
-    'Complete the game with a clean leak',
-    '📰',
-    true
-  ),
-  createAchievement(
-    'ending_global_panic',
-    'ending_global_panic',
-    'Global Panic',
-    'Leak conspiracy files and watch the world burn',
-    '🔥',
-    true
-  ),
-  createAchievement(
-    'ending_undeniable_confirmation',
-    'ending_undeniable_confirmation',
-    'Undeniable Proof',
-    'Release ALPHA and prove aliens exist',
-    '👽',
-    true
-  ),
-  createAchievement(
-    'ending_total_collapse',
-    'ending_total_collapse',
-    'Total Collapse',
-    'Release ALPHA and leak conspiracies',
-    '💥',
-    true
-  ),
-  createAchievement(
-    'ending_personal_contamination',
-    'ending_personal_contamination',
-    'Personal Contamination',
-    'Use the neural link and feel the alien presence',
-    '🧠',
-    true
-  ),
-  createAchievement(
-    'ending_paranoid_awakening',
-    'ending_paranoid_awakening',
-    'Paranoid Awakening',
-    'Leak conspiracies while neurally linked',
-    '👁️',
-    true
-  ),
-  createAchievement(
-    'ending_witnessed_truth',
-    'ending_witnessed_truth',
-    'Witnessed Truth',
-    'Release ALPHA while neurally linked',
-    '🌌',
-    true
+  ...DOSSIER_ENDING_ACHIEVEMENTS.map(([id, fallbackName, fallbackDescription, icon]) =>
+    createAchievement(`ending_${id}`, `ending_${id}`, fallbackName, fallbackDescription, icon, true)
   ),
 ];
 

@@ -50,8 +50,8 @@ describe('Simplified Evidence System', () => {
       const state = createTestState({
         evidenceCount: 0,
         filesRead: new Set([
-          '/ops/assessments/foreign_drone_assessment.txt',
-          '/storage/assets/material_x_analysis.dat',
+          '/internal/jardim_andere_incident.txt',
+          '/storage/quarantine/bio_container.log',
         ]),
       });
 
@@ -60,37 +60,37 @@ describe('Simplified Evidence System', () => {
       expect(count).toBe(2);
     });
 
-    it('should count newly designated evidence files like bio_program_overview.red', () => {
+    it('should count currently designated evidence files like thirty_year_cycle.txt', () => {
       const state = createTestState({
         evidenceCount: 0,
         filesRead: new Set([
-          '/admin/bio_program_overview.red',
+          '/admin/thirty_year_cycle.txt',
           '/admin/thirty_year_cycle.txt',
         ]),
       });
 
       const count = countEvidence(state);
 
-      expect(count).toBe(2);
+      expect(count).toBe(1);
     });
 
-    it('should cap discovered evidence at 10', () => {
+    it('should cap stored evidence progress at 10', () => {
       const state = createTestState({
-        evidenceCount: 0,
+        evidenceCount: 12,
         filesRead: new Set([
-          '/ops/assessments/foreign_drone_assessment.txt',
-          '/storage/assets/material_x_analysis.dat',
+          '/internal/jardim_andere_incident.txt',
+          '/internal/misc/incident_report_1996_01_VG.txt',
           '/storage/quarantine/bio_container.log',
           '/storage/quarantine/autopsy_alpha.log',
-          '/comms/intercepts/regional_summary_jan96.txt',
-          '/admin/bio_program_overview.red',
+          '/ops/prato/archive/patrol_observation_shift_04.txt',
+          '/admin/colonization_model.red',
+          '/admin/thirty_year_cycle.txt',
         ]),
       });
 
       const count = countEvidence(state);
 
-      // 6 evidence files read, all counted (cap is 10)
-      expect(count).toBe(6);
+      expect(count).toBe(10);
     });
   });
 
