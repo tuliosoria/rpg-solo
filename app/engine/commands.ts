@@ -361,7 +361,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         createEntryI18n(
           'output',
           'engine.commands.core.god_ending_jump_to_ending_phase',
-          '  god ending   - Jump to ending phase'
+          '  god ending <n> - Jump to specific ending (1-12)'
         ),
         createEntryI18n(
           'output',
@@ -425,7 +425,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntryI18n(
             'output',
             'engine.commands.core.god_ending_jump_directly_to_ending_phase',
-            'god ending    - Jump directly to ending phase'
+            'god ending <n> - Jump to specific ending (1-12)'
           ),
           createEntryI18n(
             'output',
@@ -527,25 +527,99 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       };
     }
 
-    if (godCmd === 'ending') {
+    if (godCmd === 'ending' || godCmd.startsWith('ending ')) {
+      const endingArg = godCmd.slice(7).trim();
+      const ENDING_LIST: string[] = [
+        'ridiculed',          // 1
+        'ufo74_exposed',      // 2
+        'the_2026_warning',   // 3
+        'government_scandal', // 4
+        'prisoner_45_freed',  // 5
+        'harvest_understood', // 6
+        'nothing_changes',    // 7
+        'incomplete_picture', // 8
+        'wrong_story',        // 9
+        'hackerkid_caught',   // 10
+        'secret_ending',      // 11
+        'real_ending',        // 12
+      ];
+
+      // If a number is provided, map it to an ending
+      const num = parseInt(endingArg, 10);
+      if (endingArg && num >= 1 && num <= ENDING_LIST.length) {
+        const targetEnding = ENDING_LIST[num - 1];
+        // Secret ending goes to secret_ending phase
+        if (targetEnding === 'secret_ending') {
+          return {
+            output: [
+              createEntry('system', `═══ JUMPING TO ENDING #${num}: ${targetEnding} ═══`),
+            ],
+            stateChanges: {
+              ufo74SecretDiscovered: true,
+              endingType: 'secret',
+              endingId: targetEnding,
+              isGameOver: true,
+            },
+            skipToPhase: 'secret_ending' as const,
+          };
+        }
+        return {
+          output: [
+            createEntry('system', `═══ JUMPING TO ENDING #${num}: ${targetEnding} ═══`),
+          ],
+          stateChanges: {
+            evidencesSaved: true,
+            gameWon: true,
+            endingId: targetEnding,
+          },
+          skipToPhase: 'victory' as const,
+        };
+      }
+
+      // If a name is provided, match it directly
+      if (endingArg && ENDING_LIST.includes(endingArg as typeof ENDING_LIST[number])) {
+        const targetEnding = endingArg as typeof ENDING_LIST[number];
+        if (targetEnding === 'secret_ending') {
+          return {
+            output: [
+              createEntry('system', `═══ JUMPING TO ENDING: ${targetEnding} ═══`),
+            ],
+            stateChanges: {
+              ufo74SecretDiscovered: true,
+              endingType: 'secret',
+              endingId: targetEnding,
+              isGameOver: true,
+            },
+            skipToPhase: 'secret_ending' as const,
+          };
+        }
+        return {
+          output: [
+            createEntry('system', `═══ JUMPING TO ENDING: ${targetEnding} ═══`),
+          ],
+          stateChanges: {
+            evidencesSaved: true,
+            gameWon: true,
+            endingId: targetEnding,
+          },
+          skipToPhase: 'victory' as const,
+        };
+      }
+
+      // No argument or invalid — show the list
       return {
         output: [
-          createEntryI18n(
-            'system',
-            'engine.commands.core.jumping_to_ending_phase',
-            '═══ JUMPING TO ENDING PHASE ═══'
+          createEntry('system', '═══ ENDING SELECTOR ═══'),
+          createEntry('output', ''),
+          createEntry('output', 'Usage: god ending <number|name>'),
+          createEntry('output', ''),
+          ...ENDING_LIST.map((id, i) =>
+            createEntry('output', `  ${i + 1}. ${id}`)
           ),
-          createEntryI18n(
-            'output',
-            'engine.commands.core.terminal_will_transition_to_ending',
-            'Terminal will transition to ending...'
-          ),
+          createEntry('output', ''),
+          createEntry('output', 'Example: god ending 1'),
         ],
-        stateChanges: {
-          evidencesSaved: true,
-          gameWon: true,
-        },
-        skipToPhase: 'victory' as const,
+        stateChanges: {},
       };
     }
 
