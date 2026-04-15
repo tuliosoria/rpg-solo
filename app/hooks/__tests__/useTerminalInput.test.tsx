@@ -105,6 +105,7 @@ function createOptions(gameState: GameState, inputValue = 'status') {
     setBurnInLines: vi.fn(),
     setEncryptedChannelState: vi.fn(),
     onTuringTestTrigger: vi.fn(),
+    onFirewallTaunt: vi.fn(),
     onExitAction: vi.fn(),
     onSaveRequestAction: vi.fn(),
     playSound: vi.fn(),

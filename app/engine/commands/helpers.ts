@@ -44,7 +44,7 @@ const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'incident_summary_official.txt':
     'the official version. compare it to what we have. they rewrote everything.',
   'audio_transcript_brief.txt':
-    'audio transcript. listen to how calm they sound. they practiced this.',
+    'interesting kid. we can leak this. not a clear evidence — but they were really hiding something.',
   'material_x_analysis.dat': 'material analysis. whatever they found, it is not from here.',
   'transport_log_96.txt': 'transport records. they moved everything in the middle of the night.',
   'logistics_manifest_fragment.txt':

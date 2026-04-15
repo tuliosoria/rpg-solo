@@ -402,6 +402,7 @@ export interface CommandResult {
   triggerTuringTest?: boolean; // Show Turing test overlay
   pendingUfo74Messages?: TerminalEntry[]; // UFO74 messages to show after image closes
   soundTrigger?: 'evidence' | 'error' | 'morse'; // Sound effect to play
+  triggerFirewallTaunt?: boolean; // Trigger firewall audio + glow (blocked search, etc.)
 }
 
 

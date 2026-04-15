@@ -662,6 +662,13 @@ export default function Terminal({
     setActiveTuringVideo(true);
   }, []);
 
+  const [firewallGlowTrigger, setFirewallGlowTrigger] = useState(0);
+
+  const triggerExternalFirewallTaunt = useCallback(() => {
+    speakCustomFirewallVoice('');
+    setFirewallGlowTrigger(c => c + 1);
+  }, []);
+
   const { handleSubmit: baseHandleSubmit, handleKeyDown } = useTerminalInput({
     gameState,
     gamePhase,
@@ -700,6 +707,7 @@ export default function Terminal({
     setBurnInLines,
     setEncryptedChannelState,
     onTuringTestTrigger,
+    onFirewallTaunt: triggerExternalFirewallTaunt,
     onExitAction,
     onSaveRequestAction,
     playSound,
@@ -1343,6 +1351,7 @@ export default function Terminal({
             firewallDisarmed={gameState.firewallDisarmed}
             onActivateFirewall={handleFirewallActivate}
             onFirewallTaunt={handleFirewallTaunt}
+            externalGlowTrigger={firewallGlowTrigger}
           />
         )}
 

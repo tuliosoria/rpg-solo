@@ -77,6 +77,7 @@ interface FirewallEyesProps {
   firewallDisarmed: boolean;
   onActivateFirewall: () => void;
   onFirewallTaunt?: () => void;
+  externalGlowTrigger?: number;
 }
 
 function FirewallEyesComponent({
@@ -85,6 +86,7 @@ function FirewallEyesComponent({
   firewallDisarmed,
   onActivateFirewall,
   onFirewallTaunt,
+  externalGlowTrigger,
 }: FirewallEyesProps) {
   const { t } = useI18n();
   const trackingPupilRef = useRef<HTMLDivElement | null>(null);
@@ -178,6 +180,14 @@ function FirewallEyesComponent({
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firewallActive, firewallDisarmed]);
+
+  // External glow trigger (e.g. blocked search term)
+  useEffect(() => {
+    if (!externalGlowTrigger) return;
+    setIsGlowing(true);
+    const timer = setTimeout(() => setIsGlowing(false), 3000);
+    return () => clearTimeout(timer);
+  }, [externalGlowTrigger]);
 
   // Don't render if disarmed or not active
   if (firewallDisarmed || !firewallActive) return null;

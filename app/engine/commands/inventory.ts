@@ -24,6 +24,20 @@ import type { CommandRegistry } from './types';
 
 const SEARCH_RESULT_LIMIT = 8;
 const SEARCH_DETECTION_PENALTY = 2;
+const BLOCKED_SEARCH_PENALTY = 5;
+
+const BLOCKED_SEARCH_TERMS = [
+  'alien', 'aliens', 'ufo', 'ufos', 'classified', 'spaceship', 'spaceships',
+  'et', 'extraterrestrial', 'extraterrestrials', 'creature', 'creatures',
+  'varginha', 'saucer', 'saucers', 'coverup', 'cover-up', 'cover up',
+  'ovni', 'ovnis', 'disco voador', 'extraterrestre', 'extraterrestres',
+  'criatura', 'criaturas', 'encobrimento',
+];
+
+function isBlockedSearchTerm(query: string): boolean {
+  const lower = query.toLowerCase();
+  return BLOCKED_SEARCH_TERMS.some(term => lower === term || lower.includes(term));
+}
 
 type SearchMatchKind = 'filename' | 'path' | 'content' | 'fuzzy';
 
@@ -462,6 +476,30 @@ export const inventoryCommands: CommandRegistry = {
           ),
         ],
         stateChanges: {},
+      };
+    }
+
+    if (isBlockedSearchTerm(query)) {
+      const nextDetection = Math.min(MAX_DETECTION, state.detectionLevel + BLOCKED_SEARCH_PENALTY);
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('system', '═══════════════════════════════════════'),
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.search_results',
+            '              SEARCH RESULTS           '
+          ),
+          createEntry('system', '═══════════════════════════════════════'),
+          createEntry('system', ''),
+          createEntry('error', `  QUERY REJECTED — "${query}"`),
+          createEntry('system', ''),
+        ],
+        stateChanges: { detectionLevel: nextDetection },
+        triggerFirewallTaunt: true,
+        pendingUfo74Messages: [
+          createEntry('ufo74', 'UFO74: careful. they flag those words. use what you find, not what you search.'),
+        ],
       };
     }
 

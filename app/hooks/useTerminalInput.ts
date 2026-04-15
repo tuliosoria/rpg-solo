@@ -193,6 +193,7 @@ interface UseTerminalInputOptions {
   setBurnInLines: React.Dispatch<React.SetStateAction<string[]>>;
   setEncryptedChannelState: React.Dispatch<React.SetStateAction<EncryptedChannelState>>;
   onTuringTestTrigger: () => void;
+  onFirewallTaunt: () => void;
   onExitAction: () => void;
   onSaveRequestAction: (state: GameState) => void;
   playSound: (sound: SoundType) => void;
@@ -244,6 +245,7 @@ export function useTerminalInput({
   setBurnInLines,
   setEncryptedChannelState,
   onTuringTestTrigger,
+  onFirewallTaunt,
   onExitAction,
   onSaveRequestAction,
   playSound,
@@ -844,6 +846,10 @@ export function useTerminalInput({
         }, 1500);
       }
 
+      if (result.triggerFirewallTaunt) {
+        onFirewallTaunt();
+      }
+
       if (result.skipToPhase) {
         setGamePhase(result.skipToPhase);
         isProcessingRef.current = false;
@@ -1042,6 +1048,7 @@ export function useTerminalInput({
       setShowRiskTracker,
       showTuringTest,
       onTuringTestTrigger,
+      onFirewallTaunt,
       inputRef,
       skipStreamingRef,
       startAmbient,
