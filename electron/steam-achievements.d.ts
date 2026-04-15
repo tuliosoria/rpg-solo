@@ -15,19 +15,30 @@ export interface AchievementMap {
   speed_demon: string;
   ghost: string;
   completionist: string;
-  pacifist: string;
-  curious: string;
   first_blood: string;
-  hacker: string;
   survivor: string;
-  mathematician: string;
   truth_seeker: string;
   doom_fan: string;
-  persistent: string;
   archivist: string;
   paranoid: string;
   bookworm: string;
   night_owl: string;
+  liberator: string;
+  whistleblower: string;
+  linked: string;
+  revelator: string;
+  ending_ridiculed: string;
+  ending_ufo74_exposed: string;
+  ending_the_2026_warning: string;
+  ending_government_scandal: string;
+  ending_prisoner_45_freed: string;
+  ending_harvest_understood: string;
+  ending_nothing_changes: string;
+  ending_incomplete_picture: string;
+  ending_wrong_story: string;
+  ending_hackerkid_caught: string;
+  ending_secret_ending: string;
+  ending_real_ending: string;
 }
 
 export interface UnlockResult {

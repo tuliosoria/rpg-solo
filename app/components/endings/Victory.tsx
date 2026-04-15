@@ -12,6 +12,7 @@ import {
   getEndingNarrativeLines,
   getEndingTitle,
 } from '../../engine/endings';
+import type { EndingFlags } from '../../engine/endings';
 import type { TextSpeed } from '../../types';
 
 const VICTORY_TIMINGS: Record<
@@ -33,6 +34,7 @@ interface VictoryProps {
   filesReadCount?: number;
   totalReadableFiles?: number;
   endingId?: EndingId;
+  endingFlags?: EndingFlags;
   // Legacy ending modifier flags (fallback if endingId not set)
   conspiracyFilesLeaked?: boolean;
   alphaReleased?: boolean;
@@ -49,6 +51,7 @@ export default function Victory({
   filesReadCount = 0,
   totalReadableFiles = 0,
   endingId,
+  endingFlags,
   conspiracyFilesLeaked = false,
   alphaReleased = false,
   neuralLinkAuthenticated = false,
@@ -67,6 +70,16 @@ export default function Victory({
   const resolvedEndingId: EndingId = endingId && endingId in ENDINGS
     ? endingId
     : 'incomplete_picture'; // safe fallback
+  const resolvedEndingFlags = endingFlags ?? {
+    conspiracyFilesLeaked,
+    alphaReleased,
+    neuralLinkAuthenticated,
+  };
+  const {
+    conspiracyFilesLeaked: hasLeakedFiles,
+    alphaReleased: hasReleasedAlpha,
+    neuralLinkAuthenticated: hasNeuralLink,
+  } = resolvedEndingFlags;
   const endingTitle = getEndingTitle(resolvedEndingId);
 
   // Get the narrative for this ending
@@ -79,18 +92,18 @@ export default function Victory({
   const replaySuggestions = useMemo(() => {
     const suggestions: string[] = [];
 
-    if (!conspiracyFilesLeaked) {
+    if (!hasLeakedFiles) {
       suggestions.push(t('ending.dossier.replay.public'));
     }
-    if (!alphaReleased) {
+    if (!hasReleasedAlpha) {
       suggestions.push(t('ending.dossier.replay.alpha'));
     }
-    if (!neuralLinkAuthenticated) {
+    if (!hasNeuralLink) {
       suggestions.push(t('ending.dossier.replay.link'));
     }
     suggestions.push(t('ending.dossier.replay.covert'));
 
-    if (suggestions.length === 0 && (conspiracyFilesLeaked || alphaReleased || neuralLinkAuthenticated)) {
+    if (suggestions.length === 0 && (hasLeakedFiles || hasReleasedAlpha || hasNeuralLink)) {
       suggestions.push(t('ending.dossier.replay.cleaner'));
     }
 
@@ -99,7 +112,7 @@ export default function Victory({
     }
 
     return suggestions.slice(0, 2);
-  }, [alphaReleased, conspiracyFilesLeaked, neuralLinkAuthenticated, t]);
+  }, [hasLeakedFiles, hasNeuralLink, hasReleasedAlpha, t]);
 
   // Check for achievements on mount
   useEffect(() => {
@@ -137,22 +150,22 @@ export default function Victory({
     }
 
     // New achievements for special endings
-    if (alphaReleased) {
+    if (hasReleasedAlpha) {
       const result = unlockAchievement('liberator');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
 
-    if (conspiracyFilesLeaked) {
+    if (hasLeakedFiles) {
       const result = unlockAchievement('whistleblower');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
 
-    if (neuralLinkAuthenticated) {
+    if (hasNeuralLink) {
       const result = unlockAchievement('linked');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
 
-    if (conspiracyFilesLeaked && alphaReleased && neuralLinkAuthenticated) {
+    if (hasLeakedFiles && hasReleasedAlpha && hasNeuralLink) {
       const result = unlockAchievement('revelator');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
@@ -169,9 +182,9 @@ export default function Victory({
     maxDetectionReached,
     filesReadCount,
     totalReadableFiles,
-    conspiracyFilesLeaked,
-    alphaReleased,
-    neuralLinkAuthenticated,
+    hasLeakedFiles,
+    hasReleasedAlpha,
+    hasNeuralLink,
     resolvedEndingId,
   ]);
 
@@ -305,7 +318,7 @@ export default function Victory({
                   <div className={styles.dossierRow}>
                     <dt>{t('ending.dossier.blackFiles')}</dt>
                     <dd>
-                      {conspiracyFilesLeaked
+                      {hasLeakedFiles
                         ? t('ending.dossier.blackFiles.leaked')
                         : t('ending.dossier.blackFiles.sealed')}
                     </dd>
@@ -313,7 +326,7 @@ export default function Victory({
                   <div className={styles.dossierRow}>
                     <dt>{t('ending.dossier.alpha')}</dt>
                     <dd>
-                      {alphaReleased
+                      {hasReleasedAlpha
                         ? t('ending.dossier.alpha.released')
                         : t('ending.dossier.alpha.contained')}
                     </dd>
@@ -321,7 +334,7 @@ export default function Victory({
                   <div className={styles.dossierRow}>
                     <dt>{t('ending.dossier.neuralLink')}</dt>
                     <dd>
-                      {neuralLinkAuthenticated
+                      {hasNeuralLink
                         ? t('ending.dossier.neuralLink.authenticated')
                         : t('ending.dossier.neuralLink.unused')}
                     </dd>

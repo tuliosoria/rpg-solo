@@ -6,6 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { ACHIEVEMENTS } from '../../app/engine/achievements';
 
 // Mock the steamworks client
 const mockAchievement = {
@@ -39,33 +40,18 @@ describe('Steam Achievements Bridge', () => {
       expect(map.completionist).toBe('COMPLETIONIST');
       expect(map.first_blood).toBe('FIRST_BLOOD');
       expect(map.truth_seeker).toBe('TRUTH_SEEKER');
+      expect(map.liberator).toBe('LIBERATOR');
+      expect(map.ending_real_ending).toBe('ENDING_REAL_ENDING');
     });
 
-    it('has mappings for all expected achievements', () => {
-      const expectedAchievements = [
-        'speed_demon',
-        'ghost',
-        'completionist',
-        'pacifist',
-        'curious',
-        'first_blood',
-        'hacker',
-        'survivor',
-        'mathematician',
-        'truth_seeker',
-        'doom_fan',
-        'persistent',
-        'archivist',
-        'paranoid',
-        'bookworm',
-        'night_owl',
-      ];
-
+    it('has mappings for every current in-game achievement and no stale IDs', () => {
+      const expectedAchievements = ACHIEVEMENTS.map(achievement => achievement.id).sort();
       const map = steamAchievements.ACHIEVEMENT_MAP;
-      expectedAchievements.forEach(id => {
-        expect(map[id]).toBeDefined();
-        expect(typeof map[id]).toBe('string');
-      });
+
+      expect(Object.keys(map).sort()).toEqual(expectedAchievements);
+      expect(map.mathematician).toBeUndefined();
+      expect(map.pacifist).toBeUndefined();
+      expect(map.hacker).toBeUndefined();
     });
   });
 
@@ -189,7 +175,9 @@ describe('Steam Achievements Bridge', () => {
       expect(achievements).toContain('speed_demon');
       expect(achievements).toContain('ghost');
       expect(achievements).toContain('truth_seeker');
-      expect(achievements.length).toBeGreaterThanOrEqual(16);
+      expect(achievements).toContain('ending_real_ending');
+      expect(achievements).toContain('liberator');
+      expect(achievements.sort()).toEqual(ACHIEVEMENTS.map(achievement => achievement.id).sort());
     });
   });
 

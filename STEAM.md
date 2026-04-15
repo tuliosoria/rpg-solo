@@ -70,19 +70,30 @@ Game achievements are mapped to Steam achievements in `electron/steam-achievemen
 | `speed_demon` | `SPEED_DEMON` | Complete the game in under 50 commands |
 | `ghost` | `GHOST_PROTOCOL` | Win with detection level under 20% |
 | `completionist` | `COMPLETIONIST` | Read every accessible file in the system |
-| `pacifist` | `PACIFIST` | Never trigger a warning or alert |
-| `curious` | `CURIOUS_MIND` | Find all easter eggs |
 | `first_blood` | `FIRST_BLOOD` | Discover your first evidence |
-| `hacker` | `ELITE_HACKER` | Decrypt 5 encrypted files |
 | `survivor` | `SURVIVOR` | Complete the game after reaching critical detection |
-| `mathematician` | `MATHEMATICIAN` | Solve all equations on first try |
-| `truth_seeker` | `TRUTH_SEEKER` | Uncover all 5 evidence files |
+| `truth_seeker` | `TRUTH_SEEKER` | Collect 10 evidence files |
 | `doom_fan` | `IDDQD` | Activate god mode (secret) |
-| `persistent` | `PERSISTENT` | Continue playing after a game over |
 | `archivist` | `ARCHIVIST` | Read every file in a folder with 3+ files (secret) |
 | `paranoid` | `PARANOID` | Check system status 10+ times (secret) |
 | `bookworm` | `BOOKWORM` | Bookmark 5+ files (secret) |
 | `night_owl` | `NIGHT_OWL` | Play for over 30 minutes (secret) |
+| `liberator` | `LIBERATOR` | Release ALPHA from containment (secret) |
+| `whistleblower` | `WHISTLEBLOWER` | Leak the conspiracy files to the world (secret) |
+| `linked` | `LINKED` | Connect to the alien consciousness (secret) |
+| `revelator` | `REVELATOR` | Achieve the ultimate ending with all modifiers (secret) |
+| `ending_ridiculed` | `ENDING_RIDICULED` | Reach the ending where the dossier is dismissed as noise (secret) |
+| `ending_ufo74_exposed` | `ENDING_UFO74_EXPOSED` | Reveal UFO74's identity to the world (secret) |
+| `ending_the_2026_warning` | `ENDING_THE_2026_WARNING` | Publish the convergence warning before the next window opens (secret) |
+| `ending_government_scandal` | `ENDING_GOVERNMENT_SCANDAL` | Expose the military cover-up as a national scandal (secret) |
+| `ending_prisoner_45_freed` | `ENDING_PRISONER_45_FREED` | Reveal the containment of Prisoner 45 (secret) |
+| `ending_harvest_understood` | `ENDING_HARVEST_UNDERSTOOD` | Expose the colonization and extraction model (secret) |
+| `ending_nothing_changes` | `ENDING_NOTHING_CHANGES` | Prove the truth, only to watch the world move on (secret) |
+| `ending_incomplete_picture` | `ENDING_INCOMPLETE_PICTURE` | Reach an ending with real evidence but no coherent case (secret) |
+| `ending_wrong_story` | `ENDING_WRONG_STORY` | Expose a scandal while missing the truth underneath (secret) |
+| `ending_hackerkid_caught` | `ENDING_HACKERKID_CAUGHT` | Trigger the honeypot ending (secret) |
+| `ending_secret_ending` | `ENDING_SECRET_ENDING` | Assemble UFO74's full protocol and secure the secret ending (secret) |
+| `ending_real_ending` | `ENDING_REAL_ENDING` | Assemble the dossier that forces a renewed investigation (secret) |
 
 ### Setting Up Achievements in Steamworks
 

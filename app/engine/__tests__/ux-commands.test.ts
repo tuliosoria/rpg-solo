@@ -738,7 +738,7 @@ describe('UX Commands', () => {
   });
 
   describe('status guidance', () => {
-    it('surfaces evidence progress and recovery advice when pressure is high', () => {
+    it('surfaces dossier progress and recovery advice when pressure is high', () => {
       const state = createTestState({
         tutorialComplete: true,
         detectionLevel: 88,
@@ -749,7 +749,7 @@ describe('UX Commands', () => {
       });
       const result = executeCommand('status', state);
 
-      expect(result.output.some(e => e.content.includes('EVIDENCE: 3/10'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('3/10'))).toBe(true);
       expect(result.output.some(e => e.content.includes('RECOVERY: "wait" can buy time'))).toBe(true);
       expect(result.output.some(e => e.content.includes('SIGNAL: Residual echo persists'))).toBe(true);
     });

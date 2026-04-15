@@ -185,6 +185,45 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: release <target>': 'COMANDO: release <target>',
     'NOTE: Requires discovery of containment manifests.':
       'NOTA: Requer descoberta dos manifestos de contenção.',
+    'COMMAND: back': 'COMANDO: back',
+    'Return to the previous directory in your navigation history.':
+      'Retorna ao diretório anterior no seu histórico de navegação.',
+    '  back             - Go to last visited directory':
+      '  back             - Vai para o último diretório visitado',
+    'NOTE: Requires at least one "cd" in your session history.':
+      'NOTA: Requer pelo menos um "cd" no histórico da sessão.',
+    'COMMAND: map': 'COMANDO: map',
+    'Display the files currently saved to your dossier.':
+      'Exibe os arquivos atualmente salvos no seu dossiê.',
+    '  map              - Review dossier slots and saved files':
+      '  map              - Revê os slots do dossiê e os arquivos salvos',
+    'COMMAND: trace': 'COMANDO: trace',
+    'Initiate a trace protocol on the system.':
+      'Inicia um protocolo de rastreamento no sistema.',
+    '  trace            - Probe accessible directories':
+      '  trace            - Sonda diretórios acessíveis',
+    'NOTE: Results depend on your current access level.':
+      'NOTA: Os resultados dependem do seu nível de acesso atual.',
+    'COMMAND: script <script_content>': 'COMANDO: script <script_content>',
+    'Execute a reconstruction script against a target path.':
+      'Executa um script de reconstrução contra um caminho alvo.',
+    '  script INIT;TARGET=/admin/neural_fragment.dat;EXEC':
+      '  script INIT;TARGET=/admin/neural_fragment.dat;EXEC',
+    'NOTE: Check /tmp/data_reconstruction.util for valid targets.':
+      'NOTA: Verifique /tmp/data_reconstruction.util para alvos válidos.',
+    'COMMAND: run <script>': 'COMANDO: run <script>',
+    'Execute a system script.': 'Executa um script do sistema.',
+    '  run purge_trace.sh   - Run the trace purge utility':
+      '  run purge_trace.sh   - Executa o utilitário de limpeza de rastros',
+    'NOTE: Some scripts appear only after the relevant files are visible.':
+      'NOTA: Alguns scripts só aparecem depois que os arquivos relevantes ficam visíveis.',
+    'COMMAND: rewind': 'COMANDO: rewind',
+    'Archive mode has been retired.': 'O modo de arquivo foi aposentado.',
+    'Previously allowed rewinding to earlier timestamps.':
+      'Antes permitia retroceder para timestamps anteriores.',
+    'COMMAND: present': 'COMANDO: present',
+    'Returns to the current timeline (no-op in current build).':
+      'Retorna para a linha do tempo atual (sem efeito nesta build).',
     '  last              Re-display last opened file':
       '  last              Exibe novamente o último arquivo aberto',
 
@@ -771,6 +810,45 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: release <target>': 'COMANDO: release <target>',
     'NOTE: Requires discovery of containment manifests.':
       'NOTA: Requiere descubrir los manifiestos de contención.',
+    'COMMAND: back': 'COMANDO: back',
+    'Return to the previous directory in your navigation history.':
+      'Vuelve al directorio anterior en tu historial de navegación.',
+    '  back             - Go to last visited directory':
+      '  back             - Va al último directorio visitado',
+    'NOTE: Requires at least one "cd" in your session history.':
+      'NOTA: Requiere al menos un "cd" en el historial de la sesión.',
+    'COMMAND: map': 'COMANDO: map',
+    'Display the files currently saved to your dossier.':
+      'Muestra los archivos guardados actualmente en tu dossier.',
+    '  map              - Review dossier slots and saved files':
+      '  map              - Revisa los espacios del dossier y los archivos guardados',
+    'COMMAND: trace': 'COMANDO: trace',
+    'Initiate a trace protocol on the system.':
+      'Inicia un protocolo de rastreo en el sistema.',
+    '  trace            - Probe accessible directories':
+      '  trace            - Sondea directorios accesibles',
+    'NOTE: Results depend on your current access level.':
+      'NOTA: Los resultados dependen de tu nivel de acceso actual.',
+    'COMMAND: script <script_content>': 'COMANDO: script <script_content>',
+    'Execute a reconstruction script against a target path.':
+      'Ejecuta un script de reconstrucción contra una ruta objetivo.',
+    '  script INIT;TARGET=/admin/neural_fragment.dat;EXEC':
+      '  script INIT;TARGET=/admin/neural_fragment.dat;EXEC',
+    'NOTE: Check /tmp/data_reconstruction.util for valid targets.':
+      'NOTA: Revisa /tmp/data_reconstruction.util para ver objetivos válidos.',
+    'COMMAND: run <script>': 'COMANDO: run <script>',
+    'Execute a system script.': 'Ejecuta un script del sistema.',
+    '  run purge_trace.sh   - Run the trace purge utility':
+      '  run purge_trace.sh   - Ejecuta la utilidad de purga de rastros',
+    'NOTE: Some scripts appear only after the relevant files are visible.':
+      'NOTA: Algunos scripts solo aparecen después de que los archivos relevantes sean visibles.',
+    'COMMAND: rewind': 'COMANDO: rewind',
+    'Archive mode has been retired.': 'El modo archivo fue retirado.',
+    'Previously allowed rewinding to earlier timestamps.':
+      'Antes permitía retroceder a marcas de tiempo anteriores.',
+    'COMMAND: present': 'COMANDO: present',
+    'Returns to the current timeline (no-op in current build).':
+      'Vuelve a la línea temporal actual (sin efecto en la build actual).',
     '  last              Re-display last opened file':
       '  last              Vuelve a mostrar el último archivo abierto',
 

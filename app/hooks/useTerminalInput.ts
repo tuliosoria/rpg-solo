@@ -132,12 +132,12 @@ function getEvidenceMilestoneMessages(
       createEntryI18n(
         'ufo74',
         'hooks.useTerminalInput.milestone.10.line1',
-        'UFO74: thats the full set. the leak is real now.'
+        'UFO74: thats the full set. now choose what goes in the dossier.'
       ),
       createEntryI18n(
         'ufo74',
         'hooks.useTerminalInput.milestone.10.line2',
-        '       review with "progress". when youre ready, use "leak".'
+        '       use "save <file>" until progress reads 10/10, then "leak".'
       ),
     ];
   }

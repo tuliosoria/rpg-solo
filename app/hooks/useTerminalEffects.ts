@@ -841,6 +841,8 @@ export function useTerminalEffects({
     []
   );
 
+  const lastHistoryEntryType = gameState.history[gameState.history.length - 1]?.type;
+
   useEffect(() => {
     if (gamePhase !== 'terminal' || gameState.isGameOver || gameState.tutorialStep >= 0) return;
 
@@ -850,8 +852,7 @@ export function useTerminalEffects({
     }
 
     // Don't restart timer if the last entry was from UFO74 (prevents stacking idle messages)
-    const lastEntry = gameState.history[gameState.history.length - 1];
-    if (lastEntry?.type === 'ufo74') return;
+    if (lastHistoryEntryType === 'ufo74') return;
 
     // Set new idle timer (2 minutes)
     idleHintTimerRef.current = setTimeout(() => {
@@ -894,7 +895,7 @@ export function useTerminalEffects({
       }
     };
   }, [
-    gameState.history.length,
+    gameState.history,
     gamePhase,
     gameState.isGameOver,
     gameState.tutorialStep,
@@ -903,6 +904,7 @@ export function useTerminalEffects({
     setGameState,
     gameStateRef,
     idleHintTimerRef,
+    lastHistoryEntryType,
     lastScrollTimeRef,
     t,
   ]);

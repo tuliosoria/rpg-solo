@@ -135,13 +135,6 @@ export const ACHIEVEMENTS: Achievement[] = [
     '🎖️'
   ),
   createAchievement(
-    'mathematician',
-    'mathematician',
-    'Mathematician',
-    'Solve all equations on first try',
-    '🧮'
-  ),
-  createAchievement(
     'truth_seeker',
     'truth_seeker',
     'Truth Seeker',

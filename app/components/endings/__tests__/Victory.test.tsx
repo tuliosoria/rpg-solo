@@ -109,6 +109,27 @@ describe('Victory Component', () => {
     expect(unlockAchievement).toHaveBeenCalledWith('ending_incomplete_picture');
   });
 
+  it('uses runtime endingFlags to unlock modifier achievements', () => {
+    render(
+      <Victory
+        {...defaultProps}
+        conspiracyFilesLeaked={false}
+        alphaReleased={false}
+        neuralLinkAuthenticated={false}
+        endingFlags={{
+          conspiracyFilesLeaked: true,
+          alphaReleased: true,
+          neuralLinkAuthenticated: true,
+        }}
+      />
+    );
+
+    expect(unlockAchievement).toHaveBeenCalledWith('whistleblower');
+    expect(unlockAchievement).toHaveBeenCalledWith('liberator');
+    expect(unlockAchievement).toHaveBeenCalledWith('linked');
+    expect(unlockAchievement).toHaveBeenCalledWith('revelator');
+  });
+
   it('progresses through phases with timers', async () => {
     render(<Victory {...defaultProps} />);
     

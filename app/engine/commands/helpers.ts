@@ -23,7 +23,7 @@ import {
   WARMUP_PHASE,
 } from '../../constants/detection';
 import { shouldSuppressPressure } from '../../constants/atmosphere';
-import { createEntry, createEntryI18n, createOutputEntries, createUFO74Message } from './utils';
+import { createEntry, createEntryI18n, createOutputEntries } from './utils';
 import { getTutorialTip, shouldShowTutorialTip } from './tutorial';
 import { getFileContent } from '../filesystem';
 import { saveCheckpoint } from '../../storage/saves';
@@ -1203,16 +1203,30 @@ export function applyEvidenceDiscovery(
     notices.push(
       createEntryI18n(
         'notice',
-        'engine.commands.helpers.leak_package_ready',
-        '▓▓▓ LEAK PACKAGE READY ▓▓▓'
+        'engine.commands.helpers.evidence_log_complete',
+        '▓▓▓ EVIDENCE LOG COMPLETE ▓▓▓'
       )
     );
     notices.push(
-      ...createUFO74Message([
-        'UFO74: ten files logged. leak path is live.',
-        '       type: leak',
-        '       do it NOW before they cut the connection.',
-      ])
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_evidence_log_complete_line1',
+        'UFO74: thats the full set logged. now build the dossier.'
+      )
+    );
+    notices.push(
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_evidence_log_complete_line2',
+        '       use "save <file>" until the dossier reads 10/10.'
+      )
+    );
+    notices.push(
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.helpers.ufo74_evidence_log_complete_line3',
+        '       then type: leak'
+      )
     );
   }
 }

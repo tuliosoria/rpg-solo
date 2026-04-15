@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
-import type { EndingId } from '../engine/endings';
+import { getEndingFlags, type EndingId } from '../engine/endings';
 import { getAllAccessibleFiles } from '../engine/filesystem';
 
 import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
@@ -1020,6 +1020,7 @@ export default function Terminal({
         filesReadCount={gameState.filesRead?.size || 0}
         totalReadableFiles={totalReadableFiles}
         endingId={gameState.endingId as EndingId | undefined}
+        endingFlags={getEndingFlags(gameState)}
         textSpeed={textSpeed}
       />
     );

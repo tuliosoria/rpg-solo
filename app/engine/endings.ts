@@ -391,15 +391,6 @@ export interface EndingFlags {
   neuralLinkAuthenticated: boolean;
 }
 
-export interface EndingResult {
-  variant: EndingVariant;
-  title: string;
-  flags: EndingFlags;
-  worldAftermath: string[];
-  personalAftermath?: string[];
-  epilogue: string[];
-}
-
 const ENDING_DIVIDER = '═══════════════════════════════════════════════════════════';
 
 /**
@@ -446,27 +437,6 @@ export function getEndingFlags(state: GameState): EndingFlags {
   };
 }
 
-function endingToLegacyResult(id: EndingId, flags: EndingFlags): EndingResult {
-  const ending = ENDINGS[id];
-  return {
-    variant: id,
-    title: ending.title,
-    flags,
-    worldAftermath: [...ending.narrative],
-    personalAftermath: undefined,
-    epilogue: [
-      '',
-      ENDING_DIVIDER,
-      '',
-      ending.subtitle,
-      '',
-      `>> ENDING: ${ending.title} <<`,
-      '',
-      `[UFO74]: ${ending.ufo74_final}`,
-      '',
-    ],
-  };
-}
 
 export function getEndingTitle(variant: EndingVariant): string {
   const ending = (ENDINGS as Record<string, Omit<GameEnding, 'id'>>)[variant];

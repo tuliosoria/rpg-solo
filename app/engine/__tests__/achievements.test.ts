@@ -39,8 +39,10 @@ describe('Achievements', () => {
       expect(ACHIEVEMENTS.find(a => a.id === 'speed_demon')).toBeDefined();
       expect(ACHIEVEMENTS.find(a => a.id === 'ghost')).toBeDefined();
       expect(ACHIEVEMENTS.find(a => a.id === 'truth_seeker')).toBeDefined();
+      expect(ACHIEVEMENTS.find(a => a.id === 'liberator')).toBeDefined();
       expect(ACHIEVEMENTS.find(a => a.id === 'ending_real_ending')).toBeDefined();
       expect(ACHIEVEMENTS.find(a => a.id === 'ending_controlled_disclosure')).toBeUndefined();
+      expect(ACHIEVEMENTS.find(a => a.id === 'mathematician')).toBeUndefined();
     });
 
     it('has unique IDs', () => {
@@ -70,6 +72,20 @@ describe('Achievements', () => {
       const unlocked = getUnlockedAchievements();
       expect(unlocked.has('speed_demon')).toBe(true);
       expect(unlocked.has('ghost')).toBe(true);
+      expect(unlocked.size).toBe(2);
+    });
+
+    it('filters out stale achievement IDs that no longer exist', () => {
+      localStorageMock.setItem(
+        'rpg-solo-achievements',
+        JSON.stringify(['speed_demon', 'mathematician', 'ending_real_ending'])
+      );
+
+      const unlocked = getUnlockedAchievements();
+
+      expect(unlocked.has('speed_demon')).toBe(true);
+      expect(unlocked.has('ending_real_ending')).toBe(true);
+      expect(unlocked.has('mathematician')).toBe(false);
       expect(unlocked.size).toBe(2);
     });
 

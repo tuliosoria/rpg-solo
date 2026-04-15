@@ -183,7 +183,7 @@ describe('Steam Integration', () => {
     });
 
     it('unlocks multiple achievements in sequence', () => {
-      const achievementIds = ['first_blood', 'hacker', 'survivor', 'truth_seeker'];
+      const achievementIds = ['first_blood', 'liberator', 'survivor', 'truth_seeker'];
 
       achievementIds.forEach(id => {
         const result = steamAchievements.unlock(id);

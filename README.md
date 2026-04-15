@@ -33,7 +33,7 @@ Common terminal commands in the current build:
 | `cd <dir>` | Change directory |
 | `open <file>` | Read a file |
 | `search <keyword>` | Search accessible file names, paths, and document text |
-| `progress` | Review your evidence total and session recap |
+| `progress` | Review your saved dossier and session recap |
 | `unread` | List accessible files you have not opened yet |
 | `bookmark <file>` | Save a file path for quick reference |
 | `hint` | Ask UFO74 for a nudge at a cost |
