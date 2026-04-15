@@ -9,7 +9,7 @@ import {
   hasReadPsiMaterial,
 } from './helpers';
 import { DETECTION_THRESHOLDS } from '../../constants/detection';
-import { countEvidence } from '../evidenceRevelation';
+
 import { generateHintOutput } from '../hintSystem';
 import type { CommandRegistry } from './types';
 import { translateStatic } from '../../i18n';
@@ -113,10 +113,10 @@ const COMMAND_HELP: Record<string, string[]> = {
   progress: [
     'COMMAND: progress',
     '',
-    'Review your evidence total, case strength, and session notes at a glance.',
+    'Review the files saved to your dossier.',
     '',
     'USAGE:',
-    '  progress       - Show a spoiler-light investigation recap',
+    '  progress       - Show your saved files and dossier status',
   ],
   clear: [
     'COMMAND: clear',
@@ -400,7 +400,7 @@ export const systemCommands: CommandRegistry = {
 
     if (
       hasReadPsiMaterial(state) &&
-      (state.evidenceCount || 0) >= 2 &&
+      (state.savedFiles?.size || 0) >= 2 &&
       state.detectionLevel >= DETECTION_THRESHOLDS.STATUS_MED
     ) {
       helpLines.push(
@@ -511,34 +511,25 @@ export const systemCommands: CommandRegistry = {
       lines.push(tSystem('status.access.administrative', '  ACCESS: Administrative'));
     }
 
-    const evidenceCount = countEvidence(state);
+    const savedCount = state.savedFiles?.size || 0;
     lines.push(
-      tSystem('status.evidenceConfirmed', '  EVIDENCE: {{count}}/10 confirmed', {
-        count: evidenceCount,
+      tSystem('status.evidenceConfirmed', '  DOSSIER: {{count}}/10 files saved', {
+        count: savedCount,
       })
     );
 
-    const savedFileCount = state.savedFiles?.size || 0;
-    if (savedFileCount >= 10) {
+    if (savedCount >= 10) {
       lines.push(
         tSystem(
           'status.objective.complete',
           '  OBJECTIVE: Dossier complete — review with "progress", then use "leak" when ready.'
         )
       );
-    } else if (evidenceCount >= 10) {
-      lines.push(
-        tSystem(
-          'status.objective.dossierIncomplete',
-          '  OBJECTIVE: Evidence complete — save {{count}} more file(s) to your dossier before using "leak".',
-          { count: 10 - savedFileCount }
-        )
-      );
-    } else if (evidenceCount > 0) {
+    } else if (savedCount > 0) {
       lines.push(
         tSystem(
           'status.objective.progress',
-          '  OBJECTIVE: Keep building the case. Use "progress", "unread", and "bookmark" to stay organized.'
+          '  OBJECTIVE: Keep building the dossier. Use "save <file>" after reading.'
         )
       );
     } else {

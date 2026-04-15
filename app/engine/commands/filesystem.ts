@@ -22,7 +22,6 @@ import {
 } from './utils';
 import {
   getWarmupAdjustedDetection,
-  applyEvidenceDiscovery,
   isArchiveOnlyFile,
 } from './helpers';
 import type { CommandRegistry } from './types';
@@ -621,9 +620,6 @@ export const filesystemCommands: CommandRegistry = {
 
     // Check for reveals and disturbing content
     const notices: ReturnType<typeof createEntry>[] = [];
-    if (!isEncryptedAndLocked) {
-      applyEvidenceDiscovery(state, stateChanges, filePath, file, content, notices);
-    }
 
     // Track content category based on file path
     const categoriesRead = new Set(state.categoriesRead || []);

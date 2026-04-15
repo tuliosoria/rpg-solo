@@ -2,7 +2,7 @@
 
 import { TerminalEntry } from '../../types';
 import { canAccessFile, getFileContent } from '../filesystem';
-import { countEvidence, EVIDENCE_SYMBOL } from '../evidenceRevelation';
+import { EVIDENCE_SYMBOL } from '../evidenceRevelation';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES } from '../../constants/detection';
 import { createEntry, createEntryI18n } from './utils';
 import { getWarmupAdjustedDetection } from './helpers';
@@ -128,32 +128,20 @@ export const navigationCommands: CommandRegistry = {
   },
 
   map: (args, state) => {
-    // Display collected evidence status
-    const evidenceCount = countEvidence(state);
+    const savedCount = state.savedFiles?.size || 0;
+    const savedFiles = state.savedFiles ? [...state.savedFiles] : [];
 
-    if (evidenceCount === 0) {
+    if (savedCount === 0) {
       return {
         output: [
           createEntry('system', ''),
           createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
-          createEntryI18n(
-            'system',
-            'engine.commands.navigation.evidence_map',
-            '║                  EVIDENCE MAP                         ║'
-          ),
+          createEntry('system', '║                  DOSSIER MAP                          ║'),
           createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
           createEntry('system', ''),
-          createEntryI18n(
-            'system',
-            'engine.commands.navigation.no_evidence_logged_yet',
-            '  No evidence logged yet.'
-          ),
+          createEntry('system', '  No files saved yet.'),
           createEntry('system', ''),
-          createEntryI18n(
-            'system',
-            'engine.commands.navigation.read_files_to_log_corroborating_evidence',
-            '  Read files to log corroborating evidence.'
-          ),
+          createEntry('system', '  Use "save <filename>" after reading a file.'),
           createEntry('system', ''),
           createEntry('system', '╚═══════════════════════════════════════════════════════╝'),
         ],
@@ -164,46 +152,28 @@ export const navigationCommands: CommandRegistry = {
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
-      createEntryI18n(
-        'system',
-        'engine.commands.navigation.evidence_map',
-        '║                  EVIDENCE MAP                         ║'
-      ),
+      createEntry('system', '║                  DOSSIER MAP                          ║'),
       createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
+      createEntry('system', ''),
+      createEntry('system', '  SAVED FILES:'),
       createEntry('system', ''),
     ];
 
-    // Show evidence status
-    output.push(
-      createEntryI18n('system', 'engine.commands.navigation.evidence_status', '  EVIDENCE STATUS:')
-    );
-    output.push(createEntry('system', ''));
-    for (let i = 1; i <= 5; i++) {
-      const symbol = i <= evidenceCount ? EVIDENCE_SYMBOL : '○';
-      output.push(
-        createEntryI18n(
-          i <= evidenceCount ? 'output' : 'system',
-          i <= evidenceCount
-            ? 'engine.commands.navigation.evidence_status.confirmed'
-            : 'engine.commands.navigation.evidence_status.pending',
-          `  ${symbol} EVIDENCE #${i} — ${i <= evidenceCount ? 'CONFIRMED' : 'PENDING'}`,
-          { symbol, index: i }
-        )
-      );
+    for (let i = 1; i <= 10; i++) {
+      if (i <= savedCount) {
+        const fileName = savedFiles[i - 1]?.split('/').pop() || '?';
+        output.push(createEntry('output', `  ${EVIDENCE_SYMBOL} ${i.toString().padStart(2, ' ')}. ${fileName}`));
+      } else {
+        output.push(createEntry('system', `  ○ ${i.toString().padStart(2, ' ')}. ─────────`));
+      }
     }
 
     output.push(createEntry('system', ''));
-
-    // Summary
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
-    output.push(
-      createEntryI18n(
-        'system',
-        'engine.commands.navigation.progress',
-        `  PROGRESS: ${evidenceCount}/10 evidence links confirmed`,
-        { count: evidenceCount }
-      )
-    );
+    output.push(createEntry('system', `  DOSSIER: ${savedCount}/10 files saved`));
+    if (savedCount >= 10) {
+      output.push(createEntry('notice', '  READY — type "leak" when prepared.'));
+    }
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '╚═══════════════════════════════════════════════════════╝'));
 

@@ -193,7 +193,7 @@ export function determineEnding(savedFiles: Set<string>): EndingId {
   const fileNames = files.map(f => f.split('/').pop() || '');
 
   const countCategory = (category: string[]): number =>
-    fileNames.filter(f => category.some(c => f === c || f.includes(c) || c.includes(f))).length;
+    fileNames.filter(f => category.includes(f)).length;
 
   const hasGhostMachine = fileNames.some(f => f.includes('ghost_in_machine'));
   const hasAlphaNeural = countCategory(FILE_CATEGORIES.alpha_neural) > 0;
