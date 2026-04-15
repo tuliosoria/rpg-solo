@@ -296,6 +296,16 @@ export function getHelpBasics(): TerminalEntry[] {
     ),
     createEntryI18n(
       'output',
+      'engine.commands.tutorial.save_file_save_to_dossier',
+      '  save <file>     Save a file to your dossier'
+    ),
+    createEntryI18n(
+      'output',
+      'engine.commands.tutorial.unsave_file_remove_from_dossier',
+      '  unsave <file>   Remove a file from your dossier'
+    ),
+    createEntryI18n(
+      'output',
       'engine.commands.tutorial.unread_list_files_you_have_not_opened',
       '  unread          List files you have not opened'
     ),

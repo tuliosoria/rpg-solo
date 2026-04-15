@@ -621,9 +621,10 @@ export const filesystemCommands: CommandRegistry = {
 
     // Check for reveals and disturbing content
     const notices: ReturnType<typeof createEntry>[] = [];
-    if (!isEncryptedAndLocked) {
-      applyEvidenceDiscovery(state, stateChanges, filePath, file, content, notices);
-    }
+    // Evidence discovery removed — replaced by manual save command
+    // if (!isEncryptedAndLocked) {
+    //   applyEvidenceDiscovery(state, stateChanges, filePath, file, content, notices);
+    // }
 
     // Track content category based on file path
     const categoriesRead = new Set(state.categoriesRead || []);
@@ -751,6 +752,29 @@ export const filesystemCommands: CommandRegistry = {
       const reaction = UFO74_CONSPIRACY_REACTIONS[reactionIndex];
 
       ufo74ContextMessage = createUFO74Message(reaction);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // UFO74 SAVE HINTS — contextual nudges for specific files before override
+    // ═══════════════════════════════════════════════════════════════════════════
+    if (!ufo74ContextMessage && !state.flags?.adminUnlocked) {
+      const saveHints: Record<string, string[]> = {
+        'audio_transcript_brief.txt': [
+          'UFO74: kid. that one is gold. you should save it.',
+        ],
+        'autopsy_protocol_v2.txt': [
+          'UFO74: that is exactly the kind of thing we need. save it.',
+        ],
+        'incident_report_1996_01_VG.txt': [
+          'UFO74: careful. that file could change everything. save it before they purge it.',
+        ],
+      };
+
+      const hintFileName = filePath.split('/').pop() || '';
+      const hint = saveHints[hintFileName];
+      if (hint && !state.savedFiles.has(filePath)) {
+        ufo74ContextMessage = hint.map(line => createEntry('ufo74', line));
+      }
     }
 
     // After a few reads, nudge players toward the key evidence-heavy directories.

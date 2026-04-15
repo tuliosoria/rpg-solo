@@ -147,6 +147,12 @@ export interface GameState {
   // Files the player has opened/read
   filesRead: Set<string>;
 
+  // Files saved to dossier via the save command
+  savedFiles: Set<string>;
+
+  // Ending ID after leak
+  endingId?: string;
+
   // Conspiracy easter egg files seen (triggers UFO74 reactions)
   conspiracyFilesSeen: Set<string>;
 
@@ -422,6 +428,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   scoutLinksUsed: 0,
   evidenceCount: 0,
   filesRead: new Set(),
+  savedFiles: new Set(),
+  endingId: undefined,
   conspiracyFilesSeen: new Set(),
   fileMutations: {},
   isGameOver: false,

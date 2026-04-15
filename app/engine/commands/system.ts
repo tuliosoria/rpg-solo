@@ -1,6 +1,6 @@
-// System commands: help, status, clear, hint, tutorial, save
+// System commands: help, status, clear, hint, tutorial, save, unsave
 
-import { GameState } from '../../types';
+import { GameState, CommandResult } from '../../types';
 import { createEntry, createEntryI18n, createOutputEntries } from './utils';
 import {
   checkVictory,
@@ -129,14 +129,23 @@ const COMMAND_HELP: Record<string, string[]> = {
     'SHORTCUT: Ctrl+L',
   ],
   save: [
-    'COMMAND: save',
+    'COMMAND: save <filename>',
     '',
-    'Manually save your current session.',
+    'Save a file to your dossier for the leak.',
+    'You must have read the file first.',
     '',
     'USAGE:',
-    '  save           - Save to a new slot',
+    '  save report.txt    - Save report.txt to dossier',
     '',
-    'NOTE: The game also auto-saves periodically.',
+    'NOTE: Your dossier can hold up to 10 files.',
+  ],
+  unsave: [
+    'COMMAND: unsave <filename>',
+    '',
+    'Remove a file from your dossier.',
+    '',
+    'USAGE:',
+    '  unsave report.txt  - Remove report.txt from dossier',
   ],
   chat: [
     'COMMAND: chat',
@@ -286,8 +295,7 @@ const COMMAND_HELP: Record<string, string[]> = {
 
 export const systemCommands: CommandRegistry = {
   help: (args, state) => {
-    const evidenceFound = countEvidence(state);
-    if (evidenceFound >= 5) {
+    if (state.savedFiles.size >= 5) {
       return {
         output: [
           createEntry('warning', ''),
@@ -368,7 +376,8 @@ export const systemCommands: CommandRegistry = {
         '  override protocol <code>  Execute admin override'
       ),
       tSystem('helpMenu.tutorial', '  tutorial [on/off] Toggle tutorial tips or replay intro'),
-      tSystem('helpMenu.save', '  save              Save current session'),
+      tSystem('helpMenu.save', '  save <file>       Save a file to your dossier'),
+      tSystem('helpMenu.unsave', '  unsave <file>     Remove a file from your dossier'),
       tSystem('helpMenu.clear', '  clear             Clear terminal display'),
       '',
       tSystem('helpMenu.historyArrows', '  ↑/↓ arrows        Navigate command history'),
@@ -696,23 +705,145 @@ export const systemCommands: CommandRegistry = {
   },
 
   save: (args, state) => {
-    // Save is handled at UI level, but acknowledge here
+    // No args = show usage
+    if (args.length === 0) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('system', '  USAGE: save <filename>'),
+          createEntry('system', '  Saves a file to your dossier for the leak.'),
+          createEntry('system', '  You must have read the file first.'),
+          createEntry('system', ''),
+          createEntry('system', `  Dossier: ${state.savedFiles.size}/10 files saved`),
+          createEntry('system', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    const filename = args.join(' ').trim();
+
+    // Find the file in filesRead that matches
+    const matchingPaths = [...state.filesRead].filter(path => {
+      const name = path.split('/').pop() || '';
+      return name.toLowerCase() === filename.toLowerCase() || path.toLowerCase().endsWith('/' + filename.toLowerCase());
+    });
+
+    if (matchingPaths.length === 0) {
+      return {
+        output: [
+          createEntry('error', ''),
+          createEntry('error', '  FILE NOT FOUND IN MEMORY'),
+          createEntry('error', '  You must open and read a file before saving it.'),
+          createEntry('error', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    const filePath = matchingPaths[0]; // Use first match
+
+    // Check if already saved
+    if (state.savedFiles.has(filePath)) {
+      return {
+        output: [
+          createEntry('warning', ''),
+          createEntry('warning', '  FILE ALREADY IN DOSSIER'),
+          createEntry('warning', `  ${filePath.split('/').pop()}`),
+          createEntry('warning', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    // Check if dossier is full
+    if (state.savedFiles.size >= 10) {
+      return {
+        output: [
+          createEntry('warning', ''),
+          createEntry('warning', '  DOSSIER FULL — 10/10 FILES SAVED'),
+          createEntry('warning', '  Use "unsave <filename>" to make room.'),
+          createEntry('warning', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    // Save the file
+    const newSavedFiles = new Set(state.savedFiles);
+    newSavedFiles.add(filePath);
+
+    const output = [
+      createEntry('system', ''),
+      createEntry('system', `  ◉ FILE SAVED TO DOSSIER: ${filePath.split('/').pop()}`),
+      createEntry('system', `  Dossier: ${newSavedFiles.size}/10`),
+      createEntry('system', ''),
+    ];
+
+    const stateChanges: Partial<GameState> = {
+      savedFiles: newSavedFiles,
+      avatarExpression: 'smirk' as any,
+    };
+
+    // Build result with sound trigger
+    const result: CommandResult = {
+      output,
+      stateChanges,
+      soundTrigger: 'evidence',
+    };
+
+    // After 10th save, add UFO74 message
+    if (newSavedFiles.size === 10) {
+      result.pendingUfo74Messages = [
+        createEntry('ufo74', 'UFO74: kid. you have enough. type "leak" when you are ready.'),
+      ];
+    }
+
+    return result;
+  },
+
+  unsave: (args, state) => {
+    if (args.length === 0) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntry('system', '  USAGE: unsave <filename>'),
+          createEntry('system', '  Removes a file from your dossier.'),
+          createEntry('system', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    const filename = args.join(' ').trim();
+    const matchingPaths = [...state.savedFiles].filter(path => {
+      const name = path.split('/').pop() || '';
+      return name.toLowerCase() === filename.toLowerCase();
+    });
+
+    if (matchingPaths.length === 0) {
+      return {
+        output: [
+          createEntry('error', ''),
+          createEntry('error', '  FILE NOT IN DOSSIER'),
+          createEntry('error', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    const filePath = matchingPaths[0];
+    const newSavedFiles = new Set(state.savedFiles);
+    newSavedFiles.delete(filePath);
+
     return {
       output: [
-        createEntryI18n(
-          'system',
-          'engine.commands.system.session_save_requested',
-          'SESSION SAVE REQUESTED'
-        ),
-        createEntryI18n(
-          'output',
-          'engine.commands.system.use_menu_to_confirm_save_slot',
-          'Use menu to confirm save slot.'
-        ),
+        createEntry('system', ''),
+        createEntry('system', `  ◎ FILE REMOVED FROM DOSSIER: ${filePath.split('/').pop()}`),
+        createEntry('system', `  Dossier: ${newSavedFiles.size}/10`),
+        createEntry('system', ''),
       ],
-      stateChanges: {
-        flags: { ...state.flags, saveRequested: true },
-      },
+      stateChanges: { savedFiles: newSavedFiles },
     };
   },
 };

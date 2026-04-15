@@ -45,25 +45,6 @@ const TuringTestOverlay = dynamic(() => import('./TuringTestOverlay'), { ssr: fa
 const GameOver = dynamic(() => import('./GameOver'), { ssr: false });
 const Blackout = dynamic(() => import('./Blackout'), { ssr: false });
 const StaticNoise = dynamic(() => import('./StaticNoise'), { ssr: false });
-const ICQChat = dynamic(() => import('./ICQChat'), {
-  ssr: false,
-  loading: () => (
-    <div
-      style={{
-        width: '100%',
-        height: '100vh',
-        background: '#000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#88cc44',
-        fontFamily: 'monospace',
-      }}
-    >
-      {translateStatic('terminal.loading.icq')}
-    </div>
-  ),
-});
 const Victory = dynamic(() => import('./Victory'), { ssr: false });
 const BadEnding = dynamic(() => import('./BadEnding'), { ssr: false });
 const NeutralEnding = dynamic(() => import('./NeutralEnding'), { ssr: false });
@@ -210,7 +191,6 @@ const deriveGamePhase = (state: GameState): GamePhase => {
   if (state.endingType === 'neutral') return 'neutral_ending';
   if (state.endingType === 'secret') return 'secret_ending';
   if (state.gameWon || state.endingType === 'good') return 'victory';
-  if (state.icqPhase) return 'icq';
   if (state.evidencesSaved) return 'blackout';
   return 'terminal';
 };
@@ -640,11 +620,6 @@ export default function Terminal({
   const {
     handleBlackoutComplete,
     handleVictory,
-    handleIcqTrustChange,
-    handleIcqMathMistake,
-    handleIcqLeakChoice,
-    handleIcqFilesSent,
-    handleIcqStateSync,
     handleRestart,
     handleFirewallActivate,
   } = useGameActions({
@@ -1063,7 +1038,7 @@ export default function Terminal({
     return `${attempts}/${MAX_WRONG_ATTEMPTS}`;
   };
 
-  const evidenceFoundCount = gameState.evidenceCount || 0;
+  const savedCount = gameState.savedFiles?.size || 0;
   const riskInfo = getRiskLevel();
   const saveIndicator = getSaveIndicator();
 
@@ -1201,27 +1176,6 @@ export default function Terminal({
   // Render different phases
   if (gamePhase === 'blackout') {
     return <Blackout onCompleteAction={handleBlackoutComplete} />;
-  }
-
-  if (gamePhase === 'icq') {
-    return (
-      <ICQChat
-        key={`${gameState.seed}:${gameState.lastSaveTime}`}
-        onVictoryAction={handleVictory}
-        initialTrust={gameState.icqTrust}
-        initialMessages={gameState.icqMessages}
-        initialPhase={gameState.icqConversationPhase}
-        initialQuestion={gameState.currentMathQuestion}
-        initialQuestionWrongAttempts={gameState.icqCurrentWrongAttempts}
-        initialFilesSent={gameState.filesSent}
-        initialLeakChoice={gameState.choiceLeakPath}
-        onTrustChange={handleIcqTrustChange}
-        onMathMistake={handleIcqMathMistake}
-        onLeakChoice={handleIcqLeakChoice}
-        onFilesSent={handleIcqFilesSent}
-        onStateChange={handleIcqStateSync}
-      />
-    );
   }
 
   if (gamePhase === 'victory') {
@@ -1483,7 +1437,7 @@ export default function Terminal({
             <span className={styles.evidenceTrackerTitle}>{t('terminal.tracker.alienFiles')}</span>
             <span className={styles.evidenceTrackerDivider}>—</span>
             <span className={styles.truthCount}>
-              {t('terminal.tracker.evidenceFound', { count: evidenceFoundCount, total: 10 })}
+              {t('terminal.tracker.evidenceFound', { count: savedCount, total: 10 })}
             </span>
           </div>
           <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>

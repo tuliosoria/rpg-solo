@@ -2,7 +2,7 @@
 
 import { createEntry, createEntryI18n } from './utils';
 import { saveCheckpoint } from '../../storage/saves';
-import { countEvidence, MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
+import { MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
 import { translateStatic } from '../../i18n';
 import { createSeededRng, seededShuffle } from '../rng';
 import type { CommandRegistry } from './types';
@@ -103,10 +103,10 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
 
 export const evidenceCommands: CommandRegistry = {
   leak: (args, state) => {
-    const found = countEvidence(state);
+    const savedCount = (state.savedFiles?.size || 0);
 
-    // Below 5 evidence: standard block message
-    if (found < EVIDENCE_THRESHOLD_FOR_SEQUENCE) {
+    // Below 5 saved files: standard block message
+    if (savedCount < EVIDENCE_THRESHOLD_FOR_SEQUENCE) {
       return {
         output: [
           createEntryI18n(
@@ -115,7 +115,7 @@ export const evidenceCommands: CommandRegistry = {
             'LEAK BLOCKED — INSUFFICIENT EVIDENCE'
           ),
           createEntry('system', ''),
-          createEntry('system', `  Evidence documented: ${found}/${MAX_EVIDENCE_COUNT}`),
+          createEntry('system', `  Files saved: ${savedCount}/${MAX_EVIDENCE_COUNT}`),
           createEntryI18n(
             'system',
             'engine.commands.evidence.all_ten_must_be_confirmed_before',
@@ -163,65 +163,31 @@ export const evidenceCommands: CommandRegistry = {
 
     // "leak" with no subcommand
 
-    // Sequence complete AND all 10 evidence: execute leak
-    if (progress >= 3 && found >= MAX_EVIDENCE_COUNT) {
+    // Sequence complete AND all 10 files saved: execute leak
+    if (progress >= 3 && savedCount >= MAX_EVIDENCE_COUNT) {
       saveCheckpoint(state, translateStatic('checkpoint.reason.beforeLeakTransmission'));
 
       return {
         output: [
           createEntry('system', ''),
-          createEntry('notice', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-          createEntry('notice', ''),
-          createEntryI18n(
-            'notice',
-            'engine.commands.evidence.leak_transmission_initiated',
-            '  LEAK TRANSMISSION INITIATED'
-          ),
-          createEntry('notice', ''),
-          createEntryI18n(
-            'notice',
-            'engine.commands.evidence.compiling_evidence_package',
-            '  Compiling evidence package...'
-          ),
-          createEntry('notice', `  ${MAX_EVIDENCE_COUNT} files confirmed.`),
-          createEntryI18n(
-            'notice',
-            'engine.commands.evidence.encrypting_for_distribution',
-            '  Encrypting for distribution...'
-          ),
-          createEntryI18n('notice', 'engine.commands.evidence.channel_open', '  Channel open.'),
-          createEntry('notice', ''),
-          createEntryI18n(
-            'notice',
-            'engine.commands.evidence.transmission_successful',
-            '  TRANSMISSION SUCCESSFUL.'
-          ),
-          createEntry('notice', ''),
-          createEntry('notice', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
+          createEntry('system', '═══════════════════════════════════════'),
+          createEntry('system', '  LEAK TRANSMISSION INITIATED'),
+          createEntry('system', '═══════════════════════════════════════'),
           createEntry('system', ''),
-          createEntryI18n(
-            'ufo74',
-            'engine.commands.evidence.ufo74_it_is_done_the_world_will_know',
-            '[UFO74]: it is done. the world will know.'
-          ),
-          createEntryI18n(
-            'ufo74',
-            'engine.commands.evidence.someone_wants_to_talk_to_you',
-            '         someone wants to talk to you.'
-          ),
+          createEntry('system', '  Compiling dossier... ' + savedCount + ' files confirmed.'),
+          createEntry('system', '  Encrypting for distribution...'),
+          createEntry('system', '  Channel open.'),
+          createEntry('system', ''),
+          createEntry('system', '  TRANSMISSION SUCCESSFUL.'),
           createEntry('system', ''),
         ],
         stateChanges: {
           evidencesSaved: true,
-          icqPhase: true,
-          flags: {
-            ...state.flags,
-            leakSuccessful: true,
-          },
+          flags: { ...state.flags, leakSuccessful: true },
+          gameWon: true,
         },
         delayMs: 2000,
         triggerFlicker: true,
-        skipToPhase: 'icq' as const,
       };
     }
 
@@ -232,8 +198,8 @@ export const evidenceCommands: CommandRegistry = {
           createEntry('notice', ''),
           createEntry('notice', '  LEAK CHANNEL READY — awaiting full evidence package.'),
           createEntry('system', ''),
-          createEntry('system', `  Evidence documented: ${found}/${MAX_EVIDENCE_COUNT}`),
-          createEntry('system', '  Collect all 10 evidence files, then run "leak" again.'),
+          createEntry('system', `  Files saved: ${savedCount}/${MAX_EVIDENCE_COUNT}`),
+          createEntry('system', '  Save all 10 files, then run "leak" again.'),
           createEntry('system', ''),
           createEntry('ufo74', '[UFO74]: channel is prepped. just need the rest of the files.'),
           createEntry('system', ''),

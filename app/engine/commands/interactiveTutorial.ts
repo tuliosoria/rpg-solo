@@ -68,8 +68,11 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
   [TutorialStateID.TUTORIAL_END]: [
     '[UFO74]: Now the real thing.',
     '',
-    '[UFO74]: Your mission: find 10 pieces of evidence.',
-    '[UFO74]: Once you have them, leak everything.',
+    '[UFO74]: Your mission: save 10 files to your dossier.',
+    '[UFO74]: Use `save <filename>` after reading a file.',
+    '[UFO74]: Changed your mind? `unsave <filename>` removes it.',
+    '[UFO74]: Check your progress with `progress`.',
+    '[UFO74]: Once your dossier has 10 files, type `leak`.',
     '',
     '[UFO74]: But understand the risks.',
     '[UFO74]: Every action you take... they might notice.',
@@ -666,12 +669,27 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
     createEntryI18n(
       'ufo74',
       'engine.commands.interactiveTutorial.ufo74_your_mission_find_10_pieces_of_evidence',
-      '[UFO74]: Your mission: find 10 pieces of evidence.'
+      '[UFO74]: Your mission: save 10 files to your dossier.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_use_save_filename',
+      '[UFO74]: Use `save <filename>` after reading a file.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_use_unsave_filename',
+      '[UFO74]: Changed your mind? `unsave <filename>` removes it.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_check_progress',
+      '[UFO74]: Check your progress with `progress`.'
     ),
     createEntryI18n(
       'ufo74',
       'engine.commands.interactiveTutorial.ufo74_once_you_have_them_leak_everything',
-      '[UFO74]: Once you have them, leak everything.'
+      '[UFO74]: Once your dossier has 10 files, type `leak`.'
     ),
     createEntry('system', ''),
   ],

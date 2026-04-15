@@ -10,7 +10,6 @@ import {
   getFileContent,
   fuzzyMatchFilename,
 } from '../filesystem';
-import { countEvidence, getCaseStrengthDescription } from '../evidenceRevelation';
 import { DETECTION_THRESHOLDS, MAX_DETECTION } from '../../constants/detection';
 import { createEntry, createEntryI18n, createInvalidCommandResult } from './utils';
 import {
@@ -372,90 +371,44 @@ export const inventoryCommands: CommandRegistry = {
   },
 
   progress: (args, state) => {
-    // Show player progress summary with evidence files collected
-    // IMPORTANT: Use file names only - no story spoilers
-    const filesReadCount = state.filesRead?.size || 0;
-    const bookmarksCount = state.bookmarkedFiles?.size || 0;
-    const notesCount = state.playerNotes?.length || 0;
-
-    // Get evidence count
-    const evidenceCount = countEvidence(state);
-    const caseStrength = getCaseStrengthDescription(state);
-
+    const savedFiles = state.savedFiles || new Set();
     const output: TerminalEntry[] = [
       createEntry('system', ''),
-      createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
-      createEntryI18n(
-        'system',
-        'engine.commands.inventory.investigation_progress',
-        '║            INVESTIGATION PROGRESS                     ║'
-      ),
-      createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
+      createEntry('system', '═══════════════════════════════════════'),
+      createEntry('system', '  DOSSIER — LEAK PREPARATION'),
+      createEntry('system', '═══════════════════════════════════════'),
+      createEntry('system', ''),
+      createEntry('system', `  Files saved: ${savedFiles.size}/10`),
       createEntry('system', ''),
     ];
 
-    // Show evidence count
-    output.push(
-      createEntryI18n(
-        'system',
-        'engine.commands.inventory.evidence_collected',
-        '  EVIDENCE COLLECTED:'
-      )
-    );
-    output.push(createEntry('system', ''));
-    output.push(createEntry('output', `    Evidence Found: ${evidenceCount}/10`));
-    output.push(createEntry('system', ''));
-
-    output.push(createEntry('system', '  ─────────────────────────────────────────────'));
-
-    // Case strength summary (neutral phrasing)
-    output.push(createEntry('system', ''));
-    output.push(createEntry('output', `  CASE STATUS: ${evidenceCount}/10 evidence confirmed`));
-    output.push(createEntry('system', `  STRENGTH: ${caseStrength}`));
-    output.push(createEntry('system', ''));
-
-    // Session Statistics
-    output.push(createEntry('system', '  ─────────────────────────────────────────────'));
-    output.push(
-      createEntryI18n(
-        'system',
-        'engine.commands.inventory.session_statistics',
-        '  SESSION STATISTICS:'
-      )
-    );
-    output.push(createEntry('output', `    Files examined: ${filesReadCount}`));
-    output.push(createEntry('output', `    Bookmarks: ${bookmarksCount}  |  Notes: ${notesCount}`));
-    output.push(createEntry('system', ''));
-
-    // Detection warning
-    if (state.detectionLevel >= DETECTION_THRESHOLDS.ALERT) {
-      output.push(
-        createEntryI18n(
-          'error',
-          'engine.commands.inventory.critical_detection_level_dangerously_high',
-          '  ⚠ CRITICAL: Detection level dangerously high'
-        )
-      );
-    } else if (state.detectionLevel >= DETECTION_THRESHOLDS.HOSTILITY_LOW) {
-      output.push(
-        createEntryI18n(
-          'warning',
-          'engine.commands.inventory.warning_detection_level_elevated',
-          '  ⚠ WARNING: Detection level elevated'
-        )
-      );
+    if (savedFiles.size === 0) {
+      output.push(createEntry('dim', '  No files saved. Use "save <filename>" after reading a file.'));
+    } else {
+      [...savedFiles].forEach((path, i) => {
+        const name = path.split('/').pop() || path;
+        output.push(createEntry('system', `  ${(i + 1).toString().padStart(2, ' ')}. ${name}`));
+      });
     }
 
     output.push(createEntry('system', ''));
-    output.push(createEntry('system', '╚═══════════════════════════════════════════════════════╝'));
+
+    if (savedFiles.size >= 10) {
+      output.push(createEntry('notice', '  DOSSIER COMPLETE — type "leak" when ready.'));
+    } else {
+      output.push(createEntry('dim', `  ${10 - savedFiles.size} more file(s) needed before leak.`));
+    }
+
+    output.push(createEntry('system', ''));
+    output.push(createEntry('system', '═══════════════════════════════════════'));
     output.push(createEntry('system', ''));
 
     return { output, stateChanges: {} };
   },
 
   search: (args, state) => {
-    const evidenceFound = countEvidence(state);
-    if (evidenceFound >= 5) {
+    const savedCount = (state.savedFiles?.size || 0);
+    if (savedCount >= 5) {
       return {
         output: [
           createEntry('warning', ''),

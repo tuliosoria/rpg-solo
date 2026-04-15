@@ -211,8 +211,7 @@ export const navigationCommands: CommandRegistry = {
   },
 
   wait: (args, state) => {
-    const evidenceFound = countEvidence(state);
-    if (evidenceFound >= 5) {
+    if (state.savedFiles.size >= 5) {
       return {
         output: [
           createEntry('warning', ''),
