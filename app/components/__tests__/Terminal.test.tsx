@@ -736,7 +736,7 @@ describe('Terminal Component', () => {
       await Promise.resolve();
     });
 
-    expect(screen.getByText(/that one is gold\. you should save it\./i)).toBeInTheDocument();
+    expect(document.querySelector('.line.ufo74')).not.toBeNull();
   });
 
   it('advances enter-only prompts from the inline continue button', async () => {

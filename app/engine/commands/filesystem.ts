@@ -790,12 +790,15 @@ export const filesystemCommands: CommandRegistry = {
     // After a few reads, nudge players toward the key evidence-heavy directories.
     // Only if no file-specific reaction already claimed the slot.
     const totalFilesRead = filesRead.size;
-    if (totalFilesRead === 3 && !state.flags.overrideSuggested && !state.flags.adminUnlocked && !ufo74ContextMessage) {
-      ufo74ContextMessage = createUFO74Message([
+    if (totalFilesRead === 3 && !state.flags.overrideSuggested && !state.flags.adminUnlocked) {
+      const directoryHintMessage = createUFO74Message([
         'UFO74: good pace, hackerkid.',
         '       start digging through /storage, /ops, and /comms.',
         '       the good files are scattered all over the system.',
       ]);
+      ufo74ContextMessage = ufo74ContextMessage
+        ? [...ufo74ContextMessage, ...directoryHintMessage]
+        : directoryHintMessage;
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, overrideSuggested: true };
     }
 
