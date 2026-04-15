@@ -1,0 +1,1864 @@
+KEY: engine.commands.evidence.ufo74_it_is_done_the_world_will_know
+  EN: [UFO74]: it is done. the world will know.
+  PT: [UFO74]: está feito. o mundo vai saber.
+  ES: [UFO74]: está hecho. el mundo lo sabrá.
+
+KEY: engine.commands.evidence.ufo74_not_yet_we_need_more_ten_pieces_minimum_or_nobody_will
+  EN: [UFO74]: not yet. we need more. ten pieces minimum or nobody will believe us.
+  PT: [UFO74]: ainda não. precisamos de mais. dez peças no mínimo ou ninguém vai acreditar.
+  ES: [UFO74]: todavía no. necesitamos más. diez piezas como mínimo o nadie nos va a creer.
+
+KEY: engine.commands.filesystem.classified_personnel_file
+  EN:    CLASSIFIED PERSONNEL FILE
+  PT:    ARQUIVO DE PESSOAL CLASSIFICADO
+  ES:    ARCHIVO DE PERSONAL CLASIFICADO
+
+KEY: engine.commands.filesystem.contact_event_demonstrated_unusual
+  EN:    contact event. Demonstrated unusual
+  PT:    inicial. Demonstrou resistência incomum
+  ES:    inicial. Demostró una resistencia inusual
+
+KEY: engine.commands.filesystem.date_january_20_1996
+  EN:    Date: January 20, 1996
+  PT:    Data: 20 de janeiro de 1996
+  ES:    Fecha: 20 de enero de 1996
+
+KEY: engine.commands.filesystem.decryption_authentication_required
+  EN: DECRYPTION AUTHENTICATION REQUIRED
+  PT: AUTENTICAÇÃO DE DESCRIPTOGRAFIA NECESSÁRIA
+  ES: SE REQUIERE AUTENTICACIÓN PARA DESCIFRAR
+
+KEY: engine.commands.filesystem.decryption_successful
+  EN: DECRYPTION SUCCESSFUL
+  PT: DESCRIPTOGRAFIA BEM-SUCEDIDA
+  ES: DESCIFRADO EXITOSO
+
+KEY: engine.commands.filesystem.decryption_window_expired
+  EN: ▓▓▓ DECRYPTION WINDOW EXPIRED ▓▓▓
+  PT: ▓▓▓ JANELA DE DESCRIPTOGRAFIA EXPIRADA ▓▓▓
+  ES: ▓▓▓ VENTANA DE DESCIFRADO EXPIRADA ▓▓▓
+
+KEY: engine.commands.filesystem.encryption_re_initialized
+  EN: Encryption re-initialized.
+  PT: Criptografia reinicializada.
+  ES: Cifrado reinicializado.
+
+KEY: engine.commands.filesystem.enter_answer_below
+  EN: Enter answer below:
+  PT: Digite a resposta abaixo:
+  ES: Escribe la respuesta abajo:
+
+KEY: engine.commands.filesystem.error_cannot_read_directory
+  EN: ERROR: Cannot read directory
+  PT: ERRO: Não foi possível ler o diretório
+  ES: ERROR: No se puede leer el directorio
+
+KEY: engine.commands.filesystem.error_cannot_read_file
+  EN: ERROR: Cannot read file
+  PT: ERRO: Não foi possível ler o arquivo
+  ES: ERROR: No se puede leer el archivo
+
+KEY: engine.commands.filesystem.error_decryption_failed
+  EN: ERROR: Decryption failed
+  PT: ERRO: Descriptografia falhou
+  ES: ERROR: El descifrado falló
+
+KEY: engine.commands.filesystem.error_file_is_not_encrypted
+  EN: ERROR: File is not encrypted
+  PT: ERRO: O arquivo não está criptografado
+  ES: ERROR: El archivo no está cifrado
+
+KEY: engine.commands.filesystem.error_file_not_found
+  EN: ERROR: File not found
+  PT: ERRO: Arquivo não encontrado
+  ES: ERROR: Archivo no encontrado
+
+KEY: engine.commands.filesystem.error_no_recoverable_data
+  EN: ERROR: No recoverable data
+  PT: ERRO: Nenhum dado recuperável
+  ES: ERROR: No hay datos recuperables
+
+KEY: engine.commands.filesystem.error_specify_directory
+  EN: ERROR: Specify directory
+  PT: ERRO: Especifique um diretório
+  ES: ERROR: Especifica un directorio
+
+KEY: engine.commands.filesystem.error_specify_file
+  EN: ERROR: Specify file
+  PT: ERRO: Especifique um arquivo
+  ES: ERROR: Especifica un archivo
+
+KEY: engine.commands.filesystem.full_index_scan_detected_on_elevated_session
+  EN: Full index scan detected on elevated session.
+  PT: Varredura completa de índice detectada em sessão elevada.
+  ES: Se detectó un escaneo total del índice en una sesión elevada.
+
+KEY: engine.commands.filesystem.hackerkid_hey_kid_are_you_sure_you_want_to_use_tree
+  EN: [HackerKid]: Hey kid, are you sure you want to use tree?
+  PT: [HackerKid]: Ei, kid, tem certeza de que quer usar tree?
+  ES: [HackerKid]: Oye, kid, ¿seguro que quieres usar tree?
+
+KEY: engine.commands.filesystem.hint_cd_is_used_for_directories_only
+  EN:   HINT: 'cd' is used for directories only.
+  PT:   DICA: 'cd' é usado apenas para diretórios.
+  ES:   PISTA: 'cd' se usa solo para directorios.
+
+KEY: engine.commands.filesystem.hint_open_is_used_for_files_only
+  EN:   HINT: 'open' is used for files only.
+  PT:   DICA: 'open' é usado apenas para arquivos.
+  ES:   PISTA: 'open' se usa solo para archivos.
+
+KEY: engine.commands.filesystem.initiating_decryption_protocol
+  EN: Initiating decryption protocol...
+  PT: Iniciando protocolo de descriptografia...
+  ES: Iniciando protocolo de descifrado...
+
+KEY: engine.commands.filesystem.invalid_password
+  EN: Invalid password
+  PT: Senha inválida
+  ES: Contraseña inválida
+
+KEY: engine.commands.filesystem.it_will_expose_all_files_but_it_will_spike_your_risk_signifi
+  EN:   It will expose all files but it will spike your risk significantly.
+  PT:   Isso vai expor todos os arquivos, mas vai aumentar seu risco bastante.
+  ES:   Expondrá todos los archivos, pero disparará tu riesgo de forma importante.
+
+KEY: engine.commands.filesystem.location_varginha_minas_gerais
+  EN:    Location: Varginha, Minas Gerais
+  PT:    Local: Varginha, Minas Gerais
+  ES:    Ubicación: Varginha, Minas Gerais
+
+KEY: engine.commands.filesystem.networks_repeatedly_motivation_unclear
+  EN:    networks repeatedly. Motivation unclear.
+  PT:    repetidamente. Motivação incerta.
+  ES:    internas repetidamente. Motivación incierta.
+
+KEY: engine.commands.filesystem.notice_redaction_sequence_reconciled
+  EN: NOTICE: Redaction sequence reconciled.
+  PT: AVISO: sequência de redação reconciliada.
+  ES: AVISO: secuencia de redacción reconciliada.
+
+KEY: engine.commands.filesystem.password_required
+  EN: PASSWORD REQUIRED
+  PT: SENHA NECESSÁRIA
+  ES: CONTRASEÑA REQUERIDA
+
+KEY: engine.commands.filesystem.possibly_seeking_validation
+  EN:    Possibly seeking validation.
+  PT:    Possivelmente buscando validação.
+  ES:    Posiblemente busca validación.
+
+KEY: engine.commands.filesystem.protocols
+  EN:    protocols.
+  PT:    pelos protocolos.
+  ES:    por parte de los protocolos.
+
+KEY: engine.commands.filesystem.resistance_to_memory_alteration
+  EN:    resistance to memory alteration
+  PT:    à alteração de memória
+  ES:    a la alteración de memoria
+
+KEY: engine.commands.filesystem.smoking_gun_presidents_eyes_come_on
+  EN:        "SMOKING GUN"? "PRESIDENTS EYES"? come on...
+  PT:        "SMOKING GUN"? "PRESIDENTS EYES"? fala sério...
+  ES:        "SMOKING GUN"? "PRESIDENTS EYES"? vamos...
+
+KEY: engine.commands.filesystem.status_witness_suppression_failed
+  EN:    Status: WITNESS SUPPRESSION FAILED
+  PT:    Status: SUPRESSÃO DA TESTEMUNHA FALHOU
+  ES:    Estado: SUPRESIÓN DEL TESTIGO FALLIDA
+
+KEY: engine.commands.filesystem.subject_has_since_accessed_internal
+  EN:    Subject has since accessed internal
+  PT:    Desde então, o sujeito acessa redes internas
+  ES:    Desde entonces, el sujeto ha accedido a redes
+
+KEY: engine.commands.filesystem.subject_was_present_during_initial
+  EN:    Subject was present during initial
+  PT:    O sujeito estava presente durante o contato
+  ES:    El sujeto estuvo presente durante el contacto
+
+KEY: engine.commands.filesystem.subject_witness_74_code_name_ufo74
+  EN:    SUBJECT: WITNESS #74 - CODE NAME "UFO74"
+  PT:    SUJEITO: TESTEMUNHA #74 - CODINOME "UFO74"
+  ES:    SUJETO: TESTIGO #74 - NOMBRE CLAVE "UFO74"
+
+KEY: engine.commands.filesystem.system_access_pattern_normalized
+  EN: [SYSTEM: access pattern normalized]
+  PT: [SISTEMA: padrão de acesso normalizado]
+  ES: [SISTEMA: patrón de acceso normalizado]
+
+KEY: engine.commands.filesystem.the_whole_truth_awaits
+  EN: ▓▓▓ THE WHOLE TRUTH AWAITS ▓▓▓
+  PT: ▓▓▓ A VERDADE COMPLETA AGUARDA ▓▓▓
+  ES: ▓▓▓ LA VERDAD COMPLETA ESPERA ▓▓▓
+
+KEY: engine.commands.filesystem.they_plant_those_to_catch_people_like_us
+  EN:        they plant those to catch people like us.
+  PT:        eles plantam isso para pegar gente como a gente.
+  ES:        ponen eso para atrapar a gente como nosotros.
+
+KEY: engine.commands.filesystem.this_file_uses_time_locked_encryption
+  EN:   This file uses time-locked encryption.
+  PT:   Este arquivo usa criptografia travada por tempo.
+  ES:   Este archivo usa cifrado bloqueado por tiempo.
+
+KEY: engine.commands.filesystem.time_limit_exceeded
+  EN: Time limit exceeded.
+  PT: Limite de tempo excedido.
+  ES: Se excedió el límite de tiempo.
+
+KEY: engine.commands.filesystem.time_remaining_try_again
+  EN: Time remaining. Try again.
+  PT: Ainda há tempo. Tente de novo.
+  ES: Aún queda tiempo. Inténtalo de nuevo.
+
+KEY: engine.commands.filesystem.timed_decryption_initiated
+  EN: ▓▓▓ TIMED DECRYPTION INITIATED ▓▓▓
+  PT: ▓▓▓ DESCRIPTOGRAFIA CRONOMETRADA INICIADA ▓▓▓
+  ES: ▓▓▓ DESCIFRADO CRONOMETRADO INICIADO ▓▓▓
+
+KEY: engine.commands.filesystem.timed_decryption_successful
+  EN:      TIMED DECRYPTION SUCCESSFUL              
+  PT:      DESCRIPTOGRAFIA CRONOMETRADA BEM-SUCEDIDA              
+  ES:      DESCIFRADO CRONOMETRADO EXITOSO              
+
+KEY: engine.commands.filesystem.timer_started
+  EN:   TIMER STARTED
+  PT:   TIMER INICIADO
+  ES:   TEMPORIZADOR INICIADO
+
+KEY: engine.commands.filesystem.type_tree_again_to_confirm
+  EN: Type tree again to confirm.
+  PT: Digite tree de novo para confirmar.
+  ES: Escribe tree otra vez para confirmar.
+
+KEY: engine.commands.filesystem.ufo74_but_the_encryption_pattern_looks_familiar
+  EN: [UFO74]: But the encryption pattern looks familiar.
+  PT: [UFO74]: mas o padrão de criptografia parece familiar.
+  ES: [UFO74]: pero el patrón de cifrado me resulta familiar.
+
+KEY: engine.commands.filesystem.ufo74_good_thinking_kid_reading_the_boring_stuff_keeps_you_l
+  EN: UFO74: good thinking, kid. reading the boring stuff keeps you looking like a regular user.
+  PT: UFO74: boa sacada, kid. ler a parte chata faz você parecer um usuário comum.
+  ES: UFO74: buena jugada, kid. leer lo aburrido te hace parecer un usuario común.
+
+KEY: engine.commands.filesystem.ufo74_hackerkid_no
+  EN: UFO74: HACKERKID NO!
+  PT: UFO74: HACKERKID NÃO!
+  ES: UFO74: HACKERKID ¡NO!
+
+KEY: engine.commands.filesystem.ufo74_i_saw_what_they_did_what_they_took
+  EN: [UFO74]: I saw what they did. What they took.
+  PT: [UFO74]: eu vi o que fizeram. o que levaram.
+  ES: [UFO74]: vi lo que hicieron. lo que se llevaron.
+
+KEY: engine.commands.filesystem.ufo74_i_ve_been_inside_their_systems_ever_since
+  EN: [UFO74]: I've been inside their systems ever since.
+  PT: [UFO74]: desde então, eu estou dentro dos sistemas deles.
+  ES: [UFO74]: he estado dentro de sus sistemas desde entonces.
+
+KEY: engine.commands.filesystem.ufo74_i_was_there_january_1996
+  EN: [UFO74]: I was there. January 1996.
+  PT: [UFO74]: eu estava lá. janeiro de 1996.
+  ES: [UFO74]: yo estuve allí. enero de 1996.
+
+KEY: engine.commands.filesystem.ufo74_not_for_revenge_for_proof
+  EN: [UFO74]: Not for revenge. For proof.
+  PT: [UFO74]: não por vingança. por prova.
+  ES: [UFO74]: no por venganza. por pruebas.
+
+KEY: engine.commands.filesystem.ufo74_old_decrypt_wrappers_are_retired_opening_the_recovered
+  EN: [UFO74]: old decrypt wrappers are retired. opening the recovered file directly.
+  PT: [UFO74]: os wrappers antigos de decrypt foram aposentados. abrindo direto o arquivo recuperado.
+  ES: [UFO74]: los wrappers viejos de decrypt ya se retiraron. abriendo directamente el archivo recuperado.
+
+KEY: engine.commands.filesystem.ufo74_real_evidence_is_never_labeled_that_obviously
+  EN: UFO74: real evidence is NEVER labeled that obviously.
+  PT: UFO74: evidência real NUNCA vem rotulada de forma tão óbvia.
+  ES: UFO74: la evidencia real NUNCA viene etiquetada de forma tan obvia.
+
+KEY: engine.commands.filesystem.ufo74_so_you_found_it
+  EN: [UFO74]: So you found it.
+  PT: [UFO74]: então você encontrou.
+  ES: [UFO74]: así que lo encontraste.
+
+KEY: engine.commands.filesystem.ufo74_that_was_a_honeypot_a_trap_file
+  EN: UFO74: that was a honeypot! a trap file!
+  PT: UFO74: aquilo era um honeypot! um arquivo-armadilha!
+  ES: UFO74: ¡eso era un honeypot! ¡un archivo trampa!
+
+KEY: engine.commands.filesystem.ufo74_this_file_i_don_t_recognize_it
+  EN: [UFO74]: This file... I don't recognize it.
+  PT: [UFO74]: esse arquivo... eu não reconheço.
+  ES: [UFO74]: este archivo... no lo reconozco.
+
+KEY: engine.commands.filesystem.ufo74_timed_recovery_wrapper_get_ready_first_then_move_fast
+  EN: UFO74: timed recovery wrapper. get ready first, then move fast.
+  PT: UFO74: wrapper de recuperação cronometrada. se prepara primeiro, depois corre.
+  ES: UFO74: wrapper de recuperación cronometrada. prepárate primero y luego muévete rápido.
+
+KEY: engine.commands.filesystem.ufo74_urgent
+  EN: │ >> UFO74 << URGENT                                      │
+  PT: │ >> UFO74 << URGENTE                                     │
+  ES: │ >> UFO74 << URGENTE                                     │
+
+KEY: engine.commands.filesystem.ufo74_use_ls_to_see_directories_then_cd_dirname_to_enter_one
+  EN: [UFO74]: use "ls" to see directories, then "cd <dirname>" to enter one.
+  PT: [UFO74]: use "ls" para ver diretórios, depois "cd <dirname>" para entrar em um.
+  ES: [UFO74]: usa "ls" para ver directorios y luego "cd <dirname>" para entrar en uno.
+
+KEY: engine.commands.filesystem.ufo74_use_ls_to_see_files_then_open_filename_to_read_one
+  EN: [UFO74]: use "ls" to see files, then "open <filename>" to read one.
+  PT: [UFO74]: use "ls" para ver arquivos, depois "open <filename>" para ler um.
+  ES: [UFO74]: usa "ls" para ver archivos y luego "open <filename>" para leer uno.
+
+KEY: engine.commands.filesystem.ufo74_use_ls_to_see_whats_here
+  EN: [UFO74]: use "ls" to see whats here.
+  PT: [UFO74]: use "ls" para ver o que há aqui.
+  ES: [UFO74]: usa "ls" para ver qué hay aquí.
+
+KEY: engine.commands.filesystem.ufo74_use_ls_to_see_whats_in_the_current_directory
+  EN: [UFO74]: use "ls" to see whats in the current directory.
+  PT: [UFO74]: use "ls" para ver o que há no diretório atual.
+  ES: [UFO74]: usa "ls" para ver qué hay en el directorio actual.
+
+KEY: engine.commands.filesystem.ufo74_wrong_password_keep_looking
+  EN: [UFO74]: Wrong password. Keep looking.
+  PT: [UFO74]: senha errada. continua procurando.
+  ES: [UFO74]: contraseña incorrecta. sigue buscando.
+
+KEY: engine.commands.filesystem.ufo74_you_already_fell_for_this_trap_kid_lets_move_on
+  EN: UFO74: you already fell for this trap, kid. lets move on.
+  PT: UFO74: você já caiu nessa armadilha, kid. vamos seguir.
+  ES: UFO74: ya caíste en esta trampa, kid. sigamos.
+
+KEY: engine.commands.filesystem.ufo74_you_already_read_this_file_kid_lets_move_on
+  EN: UFO74: you already read this file, kid. lets move on.
+  PT: UFO74: você já leu esse arquivo, kid. vamos seguir.
+  ES: UFO74: ya leíste este archivo, kid. sigamos.
+
+KEY: engine.commands.filesystem.ufo74_you_have_the_proof_now_don_t_let_them_bury_it_again
+  EN: [UFO74]: You have the proof now. Don't let them bury it again.
+  PT: [UFO74]: a prova agora está com você. não deixe que enterrem isso de novo.
+  ES: [UFO74]: ahora tú tienes la prueba. no dejes que la entierren otra vez.
+
+KEY: engine.commands.filesystem.ufo74_you_read_all_we_could_here_use_cd_to_go_back_up_to_exp
+  EN: [UFO74]: you read all we could here, use `cd ..` to go back up to explore other folders kid.
+  PT: [UFO74]: você leu tudo o que dava aqui, use `cd ..` para voltar e explorar outras pastas, kid.
+  ES: [UFO74]: ya leíste todo lo que podíamos aquí, usa `cd ..` para volver y explorar otras carpetas, kid.
+
+KEY: engine.commands.filesystem.ufo74_your_detection_just_spiked_be_more_careful
+  EN: UFO74: your detection just spiked. be more careful!
+  PT: UFO74: sua detecção acabou de disparar. seja mais cuidadoso!
+  ES: UFO74: tu detección acaba de dispararse. ¡ten más cuidado!
+
+KEY: engine.commands.filesystem.usage_decrypt_ghost_in_machine_enc_password
+  EN: Usage: decrypt ghost_in_machine.enc <password>
+  PT: Uso: decrypt ghost_in_machine.enc <password>
+  ES: Uso: decrypt ghost_in_machine.enc <password>
+
+KEY: engine.commands.filesystem.warning_access_level_insufficient
+  EN: WARNING: Access level insufficient
+  PT: AVISO: Nível de acesso insuficiente
+  ES: ADVERTENCIA: Nivel de acceso insuficiente
+
+KEY: engine.commands.filesystem.you_must_type_the_sequence_before_time_expires
+  EN:   You must type the sequence before time expires.
+  PT:   Você precisa digitar a sequência antes que o tempo acabe.
+  ES:   Debes escribir la secuencia antes de que se acabe el tiempo.
+
+KEY: engine.commands.helpers.1_cd_directory
+  EN:        1. cd <directory>
+  PT:        1. cd <directory>
+  ES:        1. cd <directory>
+
+KEY: engine.commands.helpers.2_ls
+  EN:        2. ls
+  PT:        2. ls
+  ES:        2. ls
+
+KEY: engine.commands.helpers.3_open_filename
+  EN:        3. open <filename>
+  PT:        3. open <filename>
+  ES:        3. open <filename>
+
+KEY: engine.commands.helpers.a_competing_analyst_is_pulling_records
+  EN: A competing analyst is pulling records.
+  PT: Um analista concorrente está puxando registros.
+  ES: Un analista rival está extrayendo registros.
+
+KEY: engine.commands.helpers.authentication_verified
+  EN: AUTHENTICATION VERIFIED
+  PT: AUTENTICAÇÃO VERIFICADA
+  ES: AUTENTICACIÓN VERIFICADA
+
+KEY: engine.commands.helpers.chain_of_custody_locks_engaged_on_key_files
+  EN: Chain-of-custody locks engaged on key files.
+  PT: Travas de cadeia de custódia ativadas nos arquivos-chave.
+  ES: Bloqueos de cadena de custodia activados en archivos clave.
+
+KEY: engine.commands.helpers.contextHint.admin
+  EN: UFO74: you have clearance. check /admin/.
+  PT: UFO74: você tem acesso. confira /admin/.
+  ES: UFO74: tienes autorización. revisa /admin/.
+
+KEY: engine.commands.helpers.contextHint.chat
+  EN: UFO74: try "chat". someones in here.
+  PT: UFO74: tente "chat". tem alguém aqui.
+  ES: UFO74: prueba "chat". hay alguien aquí.
+
+KEY: engine.commands.helpers.contextHint.comms
+  EN: UFO74: /comms/psi/ has weird signal stuff.
+  PT: UFO74: /comms/psi/ tem umas paradas estranhas de sinal.
+  ES: UFO74: /comms/psi/ tiene cosas raras de señal.
+
+KEY: engine.commands.helpers.contextHint.ops
+  EN: UFO74: /ops/ has quarantine records.
+  PT: UFO74: /ops/ tem registros de quarentena.
+  ES: UFO74: /ops/ tiene registros de cuarentena.
+
+KEY: engine.commands.helpers.contextHint.storage
+  EN: UFO74: check /storage/ for transport logs.
+  PT: UFO74: verifique /storage/ pelos logs de transporte.
+  ES: UFO74: revisa /storage/ para encontrar registros de transporte.
+
+KEY: engine.commands.helpers.goodbye_hackerkid
+  EN:        goodbye hackerkid.
+  PT:        adeus, hackerkid.
+  ES:        adiós, hackerkid.
+
+KEY: engine.commands.helpers.i_live_alone
+  EN:        i live alone.
+  PT:        eu moro sozinho.
+  ES:        vivo solo.
+
+KEY: engine.commands.helpers.if_you_hit_50_you_ll_have_to_prove_you_re_human
+  EN:        if you hit 50% you'll have to prove you're human.
+  PT:        se você chegar a 50% vai ter que provar que é humano.
+  ES:        si llegas al 50% tendrás que demostrar que eres humano.
+
+KEY: engine.commands.helpers.intent_classification_reconstruction
+  EN: Intent classification: RECONSTRUCTION
+  PT: Classificação de intenção: RECONSTRUÇÃO
+  ES: Clasificación de intención: RECONSTRUCCIÓN
+
+KEY: engine.commands.helpers.leak_package_ready
+  EN: ▓▓▓ LEAK PACKAGE READY ▓▓▓
+  PT: ▓▓▓ PACOTE DE VAZAMENTO PRONTO ▓▓▓
+  ES: ▓▓▓ PAQUETE DE FILTRACIÓN LISTO ▓▓▓
+
+KEY: engine.commands.helpers.maintain_discretion_expect_delays
+  EN: Maintain discretion. Expect delays.
+  PT: Mantenha discrição. Espere atrasos.
+  ES: Mantén discreción. Espera retrasos.
+
+KEY: engine.commands.helpers.might_be_the_override_passphrase
+  EN:        might be the override passphrase.
+  PT:        pode ser a frase de override.
+  ES:        puede ser la frase de override.
+
+KEY: engine.commands.helpers.not_police_they_dont_knock_like_that
+  EN:        not police. they dont knock like that.
+  PT:        não é polícia. eles não batem assim.
+  ES:        no es la policía. no llaman así.
+
+KEY: engine.commands.helpers.notice_evidence_count_growing_keep_digging
+  EN: NOTICE: Evidence count growing. Keep digging.
+  PT: AVISO: a contagem de evidências está crescendo. Continue cavando.
+  ES: AVISO: el conteo de evidencia está creciendo. Sigue excavando.
+
+KEY: engine.commands.helpers.notice_leak_package_almost_ready
+  EN: NOTICE: Leak package almost ready.
+  PT: AVISO: pacote de vazamento quase pronto.
+  ES: AVISO: paquete de filtración casi listo.
+
+KEY: engine.commands.helpers.notice_neural_pattern_preserved
+  EN: NOTICE: Neural pattern preserved.
+  PT: AVISO: padrão neural preservado.
+  ES: AVISO: patrón neural preservado.
+
+KEY: engine.commands.helpers.notice_parallel_investigation_detected
+  EN: NOTICE: Parallel investigation detected
+  PT: AVISO: Investigação paralela detectada
+  ES: AVISO: Se detectó una investigación paralela
+
+KEY: engine.commands.helpers.notice_remote_link_now_available
+  EN: NOTICE: Remote link now available.
+  PT: AVISO: link remoto agora disponível.
+  ES: AVISO: enlace remoto ya disponible.
+
+KEY: engine.commands.helpers.notice_your_inquiry_has_been_noted
+  EN: NOTICE: Your inquiry has been noted.
+  PT: AVISO: Sua consulta foi registrada.
+  ES: AVISO: Tu consulta quedó registrada.
+
+KEY: engine.commands.helpers.observation_continues
+  EN: Observation continues.
+  PT: A observação continua.
+  ES: La observación continúa.
+
+KEY: engine.commands.helpers.pattern_analysis_systematic
+  EN: Pattern analysis: SYSTEMATIC
+  PT: Análise de padrão: SISTEMÁTICA
+  ES: Análisis de patrón: SISTEMÁTICO
+
+KEY: engine.commands.helpers.reply_buffer_opened_before_command_log_update
+  EN: Reply buffer opened before command log update.
+  PT: O buffer de resposta abriu antes da atualização do log de comando.
+  ES: El búfer de respuesta se abrió antes de la actualización del registro de comandos.
+
+KEY: engine.commands.helpers.response_timing_mismatch
+  EN: [RESPONSE TIMING MISMATCH]
+  PT: [DIVERGÊNCIA NO TEMPO DE RESPOSTA]
+  ES: [DESAJUSTE EN EL TIEMPO DE RESPUESTA]
+
+KEY: engine.commands.helpers.security_protocol_turing_evaluation_initiated
+  EN:         SECURITY PROTOCOL: TURING EVALUATION INITIATED
+  PT:         PROTOCOLO DE SEGURANÇA: AVALIAÇÃO TURING INICIADA
+  ES:         PROTOCOLO DE SEGURIDAD: EVALUACIÓN TURING INICIADA
+
+KEY: engine.commands.helpers.session_observation_level_elevated
+  EN: SESSION OBSERVATION LEVEL: ELEVATED
+  PT: NÍVEL DE OBSERVAÇÃO DA SESSÃO: ELEVADO
+  ES: NIVEL DE OBSERVACIÓN DE LA SESIÓN: ELEVADO
+
+KEY: engine.commands.helpers.signal_echo_detected
+  EN:                     [SIGNAL ECHO DETECTED]
+  PT:                     [ECO DE SINAL DETECTADO]
+  ES:                     [ECO DE SEÑAL DETECTADO]
+
+KEY: engine.commands.helpers.storage_ops_quarantine_comms
+  EN:        /storage/, /ops/quarantine/, /comms/
+  PT:        /storage/, /ops/quarantine/, /comms/
+  ES:        /storage/, /ops/quarantine/, /comms/
+
+KEY: engine.commands.helpers.system_evidence_archive_updated
+  EN: SYSTEM: Evidence archive updated.
+  PT: SISTEMA: arquivo de evidências atualizado.
+  ES: SISTEMA: archivo de evidencia actualizado.
+
+KEY: engine.commands.helpers.system_recalibrating_attention_momentarily_diverted
+  EN: [System recalibrating... attention momentarily diverted]
+  PT: [Sistema recalibrando... atenção desviada momentaneamente]
+  ES: [Sistema recalibrando... atención desviada momentáneamente]
+
+KEY: engine.commands.helpers.text
+  EN:             .
+  PT:             .
+  ES:             .
+
+KEY: engine.commands.helpers.text_2
+  EN:                               .
+  PT:                               .
+  ES:                               .
+
+KEY: engine.commands.helpers.text_3
+  EN:                                               .
+  PT:                                               .
+  ES:                                               .
+
+KEY: engine.commands.helpers.theres_a_protocol_doc_in_internal
+  EN:        theres a protocol doc in /internal/.
+  PT:        tem um documento de protocolo em /internal/.
+  ES:        hay un documento de protocolo en /internal/.
+
+KEY: engine.commands.helpers.try_search_keyword
+  EN:        try: search <keyword>
+  PT:        tente: search <keyword>
+  ES:        prueba: search <keyword>
+
+KEY: engine.commands.helpers.ufo74
+  EN: >> UFO74 <<
+  PT: >> UFO74 <<
+  ES: >> UFO74 <<
+
+KEY: engine.commands.helpers.ufo74_2026_something_coming_thats_why_they_buried_it
+  EN: UFO74: 2026. something coming. thats why they buried it.
+  PT: UFO74: 2026. algo está vindo. é por isso que enterraram isso.
+  ES: UFO74: 2026. algo viene. por eso lo enterraron.
+
+KEY: engine.commands.helpers.ufo74_2026_timeline
+  EN: UFO74: 2026 timeline.
+  PT: UFO74: linha do tempo de 2026.
+  ES: UFO74: cronología 2026.
+
+KEY: engine.commands.helpers.ufo74_all_countries_agreed_on_2026_bigger_than_politics
+  EN: UFO74: all countries agreed on 2026? bigger than politics.
+  PT: UFO74: todos os países concordaram com 2026? maior que política.
+  ES: UFO74: ¿todos los países acordaron 2026? más grande que la política.
+
+KEY: engine.commands.helpers.ufo74_almost_there
+  EN: UFO74: almost there.
+  PT: UFO74: quase lá.
+  ES: UFO74: casi.
+
+KEY: engine.commands.helpers.ufo74_almost_there_one_more_piece
+  EN: UFO74: almost there. one more piece.
+  PT: UFO74: quase lá. mais uma peça.
+  ES: UFO74: casi. una pieza más.
+
+KEY: engine.commands.helpers.ufo74_autopsy_report_not_human
+  EN: UFO74: autopsy report. not human.
+  PT: UFO74: relatório de autópsia. não humano.
+  ES: UFO74: informe de autopsia. no humano.
+
+KEY: engine.commands.helpers.ufo74_be_careful_with_this_info
+  EN: UFO74: be careful with this info.
+  PT: UFO74: cuidado com essa informação.
+  ES: UFO74: cuidado con esta información.
+
+KEY: engine.commands.helpers.ufo74_be_fast
+  EN: UFO74: be fast.
+  PT: UFO74: seja rápido.
+  ES: UFO74: rápido.
+
+KEY: engine.commands.helpers.ufo74_bio_specimens_confirmed
+  EN: UFO74: bio specimens confirmed.
+  PT: UFO74: espécimes biológicos confirmados.
+  ES: UFO74: especímenes biológicos confirmados.
+
+KEY: engine.commands.helpers.ufo74_captured_alive_then_shared_whos_coordinating_this
+  EN: UFO74: captured alive, then SHARED? whos coordinating this?
+  PT: UFO74: capturado vivo, e depois COMPARTILHADO? quem coordena isso?
+  ES: UFO74: ¿capturado vivo y luego COMPARTIDO? ¿quién coordina esto?
+
+KEY: engine.commands.helpers.ufo74_careful_kid_they_re_getting_suspicious
+  EN: UFO74: careful kid, they're getting suspicious.
+  PT: UFO74: cuidado, kid, eles estão ficando desconfiados.
+  ES: UFO74: cuidado, kid, se están poniendo suspicaces.
+
+KEY: engine.commands.helpers.ufo74_communication_evidence
+  EN: UFO74: communication evidence.
+  PT: UFO74: evidência de comunicação.
+  ES: UFO74: evidencia de comunicación.
+
+KEY: engine.commands.helpers.ufo74_connecting_dots_good
+  EN: UFO74: connecting dots. good.
+  PT: UFO74: ligando os pontos. bom.
+  ES: UFO74: uniendo puntos. bien.
+
+KEY: engine.commands.helpers.ufo74_containment_they_captured_them
+  EN: UFO74: containment. they captured them.
+  PT: UFO74: contenção. eles os capturaram.
+  ES: UFO74: contención. los capturaron.
+
+KEY: engine.commands.helpers.ufo74_cover_story_the_real_material_is_buried_deeper
+  EN: UFO74: cover story. the real material is buried deeper.
+  PT: UFO74: história de cobertura. o material real está enterrado mais fundo.
+  ES: UFO74: historia de cobertura. el material real está más abajo.
+
+KEY: engine.commands.helpers.ufo74_dont_mirror_anything_back_from_the_psi_files
+  EN: UFO74: dont mirror anything back from the psi files.
+  PT: UFO74: não devolva nada dos arquivos psi.
+  ES: UFO74: no devuelvas nada de los archivos psi.
+
+KEY: engine.commands.helpers.ufo74_every_file_you_open_they_see
+  EN: UFO74: every file you open, they see.
+  PT: UFO74: cada arquivo que você abre, eles veem.
+  ES: UFO74: cada archivo que abres, lo ven.
+
+KEY: engine.commands.helpers.ufo74_good_every_file_matters
+  EN: UFO74: good. every file matters.
+  PT: UFO74: bom. todo arquivo importa.
+  ES: UFO74: bien. cada archivo importa.
+
+KEY: engine.commands.helpers.ufo74_hearing_noises_stay_alert
+  EN: UFO74: hearing noises. stay alert.
+  PT: UFO74: estou ouvindo barulhos. fica alerta.
+  ES: UFO74: oigo ruidos. mantente alerta.
+
+KEY: engine.commands.helpers.ufo74_hey_need_a_hint
+  EN: UFO74: hey. need a hint?
+  PT: UFO74: ei. precisa de uma dica?
+  ES: UFO74: oye. ¿necesitas una pista?
+
+KEY: engine.commands.helpers.ufo74_if_another_line_answers_before_i_do_ignore_it
+  EN: UFO74: if another line answers before i do, ignore it.
+  PT: UFO74: se outra linha responder antes de mim, ignore.
+  ES: UFO74: si otra línea responde antes que yo, ignórala.
+
+KEY: engine.commands.helpers.ufo74_if_the_terminal_starts_using_your_wording_stop_typing
+  EN: UFO74: if the terminal starts using your wording, stop typing.
+  PT: UFO74: se o terminal começar a usar as suas palavras, pare de digitar.
+  ES: UFO74: si el terminal empieza a usar tus mismas palabras, deja de escribir.
+
+KEY: engine.commands.helpers.ufo74_if_you_get_a_second_answer_from_this_terminal_dont_ans
+  EN: UFO74: if you get a second answer from this terminal, dont answer it back.
+  PT: UFO74: se você receber uma segunda resposta deste terminal, não responda.
+  ES: UFO74: si recibes una segunda respuesta de este terminal, no la respondas.
+
+KEY: engine.commands.helpers.ufo74_interesting_keep_digging
+  EN: UFO74: interesting. keep digging.
+  PT: UFO74: interessante. continua cavando.
+  ES: UFO74: interesante. sigue excavando.
+
+KEY: engine.commands.helpers.ufo74_international_involvement
+  EN: UFO74: international involvement.
+  PT: UFO74: envolvimento internacional.
+  ES: UFO74: implicación internacional.
+
+KEY: engine.commands.helpers.ufo74_january_96_find_the_pieces
+  EN: UFO74: january 96. find the pieces.
+  PT: UFO74: janeiro de 96. ache as peças.
+  ES: UFO74: enero del 96. encuentra las piezas.
+
+KEY: engine.commands.helpers.ufo74_january_they_took_everything
+  EN: UFO74: ...january... they took everything...
+  PT: UFO74: ...janeiro... levaram tudo...
+  ES: UFO74: ...enero... se lo llevaron todo...
+
+KEY: engine.commands.helpers.ufo74_knew_about_2026_before_reading_minds_or_did_they_tell_
+  EN: UFO74: knew about 2026 before reading minds? or did THEY tell us?
+  PT: UFO74: sabiam de 2026 antes de ler mentes? ou ELES contaram?
+  ES: UFO74: ¿sabían lo de 2026 antes de leer mentes? ¿o ELLOS se lo dijeron?
+
+KEY: engine.commands.helpers.ufo74_last_hint
+  EN: UFO74: last hint:
+  PT: UFO74: última dica:
+  ES: UFO74: última pista:
+
+KEY: engine.commands.helpers.ufo74_legacy_encryption_tag_just_keep_reading_closely
+  EN: UFO74: legacy encryption tag. just keep reading closely.
+  PT: UFO74: marca de criptografia legada. só continue lendo com atenção.
+  ES: UFO74: etiqueta de cifrado heredado. sigue leyendo con cuidado.
+
+KEY: engine.commands.helpers.ufo74_look_for_evidence_in
+  EN: UFO74: look for evidence in:
+  PT: UFO74: procure evidências em:
+  ES: UFO74: busca evidencia en:
+
+KEY: engine.commands.helpers.ufo74_messy_copy_but_it_should_still_read_clean_enough
+  EN: UFO74: messy copy, but it should still read clean enough.
+  PT: UFO74: cópia bagunçada, mas ainda deve dar pra ler.
+  ES: UFO74: copia desordenada, pero aún debería leerse con bastante claridad.
+
+KEY: engine.commands.helpers.ufo74_morse_code_decipher_it
+  EN: UFO74: morse code. decipher it.
+  PT: UFO74: código morse. decifra isso.
+  ES: UFO74: código morse. descífralo.
+
+KEY: engine.commands.helpers.ufo74_my_connection_dropped_footsteps_upstairs
+  EN: UFO74: my connection dropped. footsteps upstairs.
+  PT: UFO74: minha conexão caiu. passos lá em cima.
+  ES: UFO74: mi conexión cayó. pasos arriba.
+
+KEY: engine.commands.helpers.ufo74_noisy_shell_but_the_evidence_is_still_there
+  EN: UFO74: noisy shell, but the evidence is still there.
+  PT: UFO74: shell ruidoso, mas a evidência ainda está aí.
+  ES: UFO74: shell ruidosa, pero la evidencia sigue ahí.
+
+KEY: engine.commands.helpers.ufo74_noted_try_ops_storage_comms
+  EN: UFO74: noted. try /ops, /storage, /comms.
+  PT: UFO74: anotado. tenta /ops, /storage, /comms.
+  ES: UFO74: anotado. prueba /ops, /storage, /comms.
+
+KEY: engine.commands.helpers.ufo74_old_wrapper_on_this_file_readable_layer_is_still_intac
+  EN: UFO74: old wrapper on this file. readable layer is still intact.
+  PT: UFO74: wrapper antigo neste arquivo. a camada legível ainda está intacta.
+  ES: UFO74: wrapper viejo en este archivo. la capa legible sigue intacta.
+
+KEY: engine.commands.helpers.ufo74_other_countries_involved_coordinated_cover_up
+  EN: UFO74: other countries involved. coordinated cover-up.
+  PT: UFO74: outros países envolvidos. encobrimento coordenado.
+  ES: UFO74: otros países implicados. encubrimiento coordinado.
+
+KEY: engine.commands.helpers.ufo74_physical_debris_confirmed
+  EN: UFO74: physical debris confirmed.
+  PT: UFO74: destroços físicos confirmados.
+  ES: UFO74: restos físicos confirmados.
+
+KEY: engine.commands.helpers.ufo74_physical_evidence_smoking_gun
+  EN: UFO74: physical evidence. smoking gun.
+  PT: UFO74: evidência física. prova cabal.
+  ES: UFO74: evidencia física. prueba irrefutable.
+
+KEY: engine.commands.helpers.ufo74_read_the_files_open_filename
+  EN: UFO74: READ the files. "open <filename>".
+  PT: UFO74: LEIA os arquivos. "open <filename>".
+  ES: UFO74: LEE los archivos. "open <filename>".
+
+KEY: engine.commands.helpers.ufo74_routine_intercepts_signal_in_the_noise
+  EN: UFO74: routine intercepts. signal in the noise.
+  PT: UFO74: interceptações de rotina. sinal no ruído.
+  ES: UFO74: intercepciones rutinarias. señal entre el ruido.
+
+KEY: engine.commands.helpers.ufo74_ship_pieces_first_now_the_crew_someone_survived
+  EN: UFO74: ship pieces first, now the CREW. someone survived.
+  PT: UFO74: primeiro mandaram peças, agora a TRIPULAÇÃO. alguém sobreviveu.
+  ES: UFO74: primero enviaron piezas, ahora la TRIPULACIÓN. alguien sobrevivió.
+
+KEY: engine.commands.helpers.ufo74_someones_at_my_door
+  EN: UFO74: someones at my door.
+  PT: UFO74: tem alguém na minha porta.
+  ES: UFO74: hay alguien en mi puerta.
+
+KEY: engine.commands.helpers.ufo74_system_suspicious_use_wait
+  EN: UFO74: system suspicious. use "wait".
+  PT: UFO74: sistema desconfiado. use "wait".
+  ES: UFO74: el sistema sospecha. usa "wait".
+
+KEY: engine.commands.helpers.ufo74_telepathy_captured_did_they_choose_this
+  EN: UFO74: telepathy + captured... did they CHOOSE this?
+  PT: UFO74: telepatia + captura... eles ESCOLHERAM isso?
+  ES: UFO74: telepatía + captura... ¿ELLOS eligieron esto?
+
+KEY: engine.commands.helpers.ufo74_tell_everyone_what_you_found
+  EN: UFO74: tell everyone what you found.
+  PT: UFO74: conte a todos o que você encontrou.
+  ES: UFO74: cuéntales a todos lo que encontraste.
+
+KEY: engine.commands.helpers.ufo74_th3y_r3_1ns1d3
+  EN: UFO74: th3y r3 1ns1d3
+  PT: UFO74: 3l3s 3stã0 d3ntr0
+  ES: UFO74: 3ll0s 3st4n d3ntr0
+
+KEY: engine.commands.helpers.ufo74_the_index_knows_more_than_they_want_you_to_find
+  EN: UFO74: the index knows more than they want you to find.
+  PT: UFO74: o índice sabe mais do que eles querem que você encontre.
+  ES: UFO74: el índice sabe más de lo que quieren que encuentres.
+
+KEY: engine.commands.helpers.ufo74_they_were_communicating_telepathically
+  EN: UFO74: they were communicating. telepathically.
+  PT: UFO74: eles estavam se comunicando. telepaticamente.
+  ES: UFO74: se estaban comunicando. telepáticamente.
+
+KEY: engine.commands.helpers.ufo74_theyre_scanning_cant_talk
+  EN: UFO74: theyre scanning. cant talk.
+  PT: UFO74: estão varrendo. não dá pra falar.
+  ES: UFO74: están escaneando. no puedo hablar.
+
+KEY: engine.commands.helpers.ufo74_transport_log_they_split_up_the_evidence
+  EN: UFO74: transport log. they split up the evidence.
+  PT: UFO74: log de transporte. eles dividiram as evidências.
+  ES: UFO74: registro de transporte. repartieron la evidencia.
+
+KEY: engine.commands.helpers.ufo74_triggered_some_flags_careful
+  EN: UFO74: triggered some flags. careful.
+  PT: UFO74: disparou umas flags. cuidado.
+  ES: UFO74: saltaron algunas flags. cuidado.
+
+KEY: engine.commands.helpers.ufo74_two_pieces_confirm_each_other
+  EN: UFO74: two pieces confirm each other.
+  PT: UFO74: duas peças se confirmam.
+  ES: UFO74: dos piezas se confirman entre sí.
+
+KEY: engine.commands.helpers.ufo74_van_outside_finish_fast
+  EN: UFO74: van outside. finish fast.
+  PT: UFO74: van lá fora. termina rápido.
+  ES: UFO74: furgoneta fuera. termina rápido.
+
+KEY: engine.commands.helpers.ufo74_walls_listen_find_the_thread
+  EN: UFO74: walls listen. find the thread.
+  PT: UFO74: as paredes escutam. ache o fio.
+  ES: UFO74: las paredes escuchan. encuentra el hilo.
+
+KEY: engine.commands.helpers.ufo74_youre_deep_now_its_real
+  EN: UFO74: youre deep now. its real.
+  PT: UFO74: você está fundo agora. é real.
+  ES: UFO74: ya estás hondo. es real.
+
+KEY: engine.commands.helpers.use_link
+  EN: Use: link
+  PT: Use: link
+  ES: Usa: link
+
+KEY: engine.commands.helpers.use_message_answer
+  EN:        use: message <answer>
+  PT:        use: message <answer>
+  ES:        use: message <answer>
+
+KEY: engine.commands.helpers.warning_partial_recovery_only
+  EN: WARNING: Partial recovery only
+  PT: AVISO: apenas recuperação parcial
+  ES: ADVERTENCIA: solo recuperación parcial
+
+KEY: engine.commands.helpers.we_see_you_seeing
+  EN:                     ...we see you seeing...
+  PT:                     ...nós vemos você vendo...
+  ES:                     ...vemos que estás viendo...
+
+KEY: engine.commands.interactiveTutorial.brazilian_intelligence_legacy_system
+  EN: BRAZILIAN INTELLIGENCE LEGACY SYSTEM
+  PT: SISTEMA LEGADO DE INTELIGÊNCIA BRASILEIRA
+  ES: SISTEMA LEGADO DE INTELIGENCIA BRASILEÑA
+
+KEY: engine.commands.interactiveTutorial.internal
+  EN: /internal>
+  PT: /internal>
+  ES: /internal>
+
+KEY: engine.commands.interactiveTutorial.system_date_january_1996
+  EN: SYSTEM DATE: JANUARY 1996
+  PT: DATA DO SISTEMA: JANEIRO DE 1996
+  ES: FECHA DEL SISTEMA: ENERO DE 1996
+
+KEY: engine.commands.interactiveTutorial.terminal_access_point_node_7
+  EN: TERMINAL ACCESS POINT — NODE 7
+  PT: PONTO DE ACESSO TERMINAL — NÓ 7
+  ES: PUNTO DE ACCESO TERMINAL — NODO 7
+
+KEY: engine.commands.interactiveTutorial.text
+  EN: />
+  PT: />
+  ES: />
+
+KEY: engine.commands.interactiveTutorial.ufo74_aliens_were_all_over_the_damn_city
+  EN: [UFO74]: Aliens were all over the damn city.
+  PT: [UFO74]: Alienígenas estavam por toda a maldita cidade.
+  ES: [UFO74]: Había aliens por toda la maldita ciudad.
+
+KEY: engine.commands.interactiveTutorial.ufo74_be_careful_do_not_type_wrong_commands_on_the_terminal_
+  EN: [UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.
+  PT: [UFO74]: Cuidado, não digite comandos errados no terminal. Na dúvida, digite help.
+  ES: [UFO74]: Ten cuidado, no escribas comandos incorrectos en el terminal. Si dudas, escribe help.
+
+KEY: engine.commands.interactiveTutorial.ufo74_but_understand_the_risks
+  EN: [UFO74]: But understand the risks.
+  PT: [UFO74]: Mas entenda os riscos.
+  ES: [UFO74]: Pero entiende los riesgos.
+
+KEY: engine.commands.interactiveTutorial.ufo74_curiosity_has_a_cost_here
+  EN: [UFO74]: Curiosity has a cost here.
+  PT: [UFO74]: Curiosidade tem preço aqui.
+  ES: [UFO74]: La curiosidad tiene un costo aquí.
+
+KEY: engine.commands.interactiveTutorial.ufo74_every_action_you_take_they_might_notice
+  EN: [UFO74]: Every action you take... they might notice.
+  PT: [UFO74]: Cada ação sua... eles podem notar.
+  ES: [UFO74]: Cada acción que tomes... podrían notarla.
+
+KEY: engine.commands.interactiveTutorial.ufo74_first_see_what_s_here
+  EN: [UFO74]: First, see what's here.
+  PT: [UFO74]: Primeiro, veja o que tem aqui.
+  ES: [UFO74]: Primero, mira qué hay aquí.
+
+KEY: engine.commands.interactiveTutorial.ufo74_good_you_know_enough
+  EN: [UFO74]: Good. You know enough.
+  PT: [UFO74]: Boa. Você já sabe o suficiente.
+  ES: [UFO74]: Bien. Ya sabes lo suficiente.
+
+KEY: engine.commands.interactiveTutorial.ufo74_great_now_you_re_in_let_s_get_to_business
+  EN: [UFO74]: Great, now you're in. Let's get to business.
+  PT: [UFO74]: Boa, agora você entrou. Vamos ao que interessa.
+  ES: [UFO74]: Perfecto, ya estás dentro. Vamos al grano.
+
+KEY: engine.commands.interactiveTutorial.ufo74_hey_kid_i_ll_create_a_user_for_you_so_you_can_investig
+  EN: [UFO74]: Hey kid! I'll create a user for you so you can investigate.
+  PT: [UFO74]: Ei, kid! Vou criar um usuário pra você investigar.
+  ES: [UFO74]: ¡Ey, kid! Voy a crear un usuario para que investigues.
+
+KEY: engine.commands.interactiveTutorial.ufo74_i_ll_teach_you_the_basics
+  EN: [UFO74]: I'll teach you the basics.
+  PT: [UFO74]: Vou te ensinar o básico.
+  ES: [UFO74]: Te enseñaré lo básico.
+
+KEY: engine.commands.interactiveTutorial.ufo74_listen_carefully_i_don_t_repeat_myself
+  EN: [UFO74]: Listen carefully. I don't repeat myself.
+  PT: [UFO74]: Escuta com atenção. Não repito duas vezes.
+  ES: [UFO74]: Escucha con atención. No repito las cosas.
+
+KEY: engine.commands.interactiveTutorial.ufo74_now_the_real_thing
+  EN: [UFO74]: Now the real thing.
+  PT: [UFO74]: Agora começa de verdade.
+  ES: [UFO74]: Ahora viene lo real.
+
+KEY: engine.commands.interactiveTutorial.ufo74_once_you_have_them_leak_everything
+  EN: [UFO74]: Once you have them, leak everything.
+  PT: [UFO74]: Quando tiver todas, vaze tudo.
+  ES: [UFO74]: Cuando las tengas, filtra todo.
+
+KEY: engine.commands.interactiveTutorial.ufo74_risk_hits_100_you_re_done_they_ll_find_you
+  EN: [UFO74]: Risk hits 100%, you're done. They'll find you.
+  PT: [UFO74]: Se o risco bater 100%, acabou. Eles te encontram.
+  ES: [UFO74]: Si el riesgo llega al 100%, se acabó. Te encontrarán.
+
+KEY: engine.commands.interactiveTutorial.ufo74_some_actions_are_loud_others_are_quiet
+  EN: [UFO74]: Some actions are loud. Others are quiet.
+  PT: [UFO74]: Algumas ações fazem barulho. Outras passam batido.
+  ES: [UFO74]: Algunas acciones hacen ruido. Otras son discretas.
+
+KEY: engine.commands.interactiveTutorial.ufo74_some_files_are_bait_opening_them_spikes_detection
+  EN: [UFO74]: Some files are bait. Opening them spikes detection.
+  PT: [UFO74]: Alguns arquivos são isca. Abrir eles aumenta a detecção.
+  ES: [UFO74]: Algunos archivos son carnada. Abrirlos dispara la detección.
+
+KEY: engine.commands.interactiveTutorial.ufo74_type_ls
+  EN: [UFO74]: Type `ls`
+  PT: [UFO74]: Digite `ls`
+  ES: [UFO74]: Escribe `ls`
+
+KEY: engine.commands.interactiveTutorial.ufo74_type_wrong_commands_8_times_the_window_closes_permanen
+  EN: [UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!
+  PT: [UFO74]: Digite comandos errados 8 vezes e a janela se fecha. Permanentemente. Então concentre-se, kid!
+  ES: [UFO74]: Escribe comandos incorrectos 8 veces y la ventana se cierra. Para siempre. Así que concéntrate, kid!
+
+KEY: engine.commands.interactiveTutorial.ufo74_we_need_to_explore_ufo_files_here_brazil_1996_kid_varg
+  EN: [UFO74]: We need to explore UFO files here. Brazil, 1996, kid. Varginha!
+  PT: [UFO74]: Precisamos explorar os arquivos de OVNI daqui. Brasil, 1996, kid. Varginha!
+  ES: [UFO74]: Tenemos que explorar archivos OVNI aquí. Brasil, 1996, kid. ¡Varginha!
+
+KEY: engine.commands.interactiveTutorial.ufo74_you_re_inside_their_system_don_t_panic
+  EN: [UFO74]: You're inside their system. Don't panic.
+  PT: [UFO74]: Você está dentro do sistema deles. Não entre em pânico.
+  ES: [UFO74]: Estás dentro de su sistema. No entres en pánico.
+
+KEY: engine.commands.interactiveTutorial.ufo74_you_will_be_hackerkid
+  EN: [UFO74]: You will be... hackerkid.
+  PT: [UFO74]: Você vai ser... hackerkid.
+  ES: [UFO74]: Serás... hackerkid.
+
+KEY: engine.commands.interactiveTutorial.ufo74_your_mission_find_10_pieces_of_evidence
+  EN: [UFO74]: Your mission: find 10 pieces of evidence.
+  PT: [UFO74]: Sua missão: encontrar 10 evidências.
+  ES: [UFO74]: Tu misión: encontrar 10 evidencias.
+
+KEY: engine.commands.interactiveTutorial.ufo74_your_mission_find_5_pieces_of_evidence
+  EN: [UFO74]: Your mission: find 10 pieces of evidence.
+  PT: [UFO74]: Sua missão: encontrar 10 evidências.
+  ES: [UFO74]: Tu misión: encontrar 10 evidencias.
+
+KEY: engine.commands.inventory.all_accessible_files_have_been_read
+  EN: All accessible files have been read!
+  PT: Todos os arquivos acessíveis foram lidos!
+  ES: ¡Se han leído todos los archivos accesibles!
+
+KEY: engine.commands.inventory.bookmarked_files
+  EN:              BOOKMARKED FILES          
+  PT:              ARQUIVOS FAVORITOS         
+  ES:              ARCHIVOS MARCADOS          
+
+KEY: engine.commands.inventory.cannot_disconnect_connection_transfer_in_progress
+  EN: Cannot disconnect — connection transfer in progress.
+  PT: Não é possível desconectar — transferência de conexão em andamento.
+  ES: No se puede desconectar — transferencia de conexión en progreso.
+
+KEY: engine.commands.inventory.critical_detection_level_dangerously_high
+  EN:   ⚠ CRITICAL: Detection level dangerously high
+  PT:   ⚠ CRÍTICO: nível de detecção perigosamente alto
+  ES:   ⚠ CRÍTICO: nivel de detección peligrosamente alto
+
+KEY: engine.commands.inventory.decryption_failed_pattern_not_recognized
+  EN: Decryption failed. Pattern not recognized.
+  PT: Descriptografia falhou. Padrão não reconhecido.
+  ES: El descifrado falló. Patrón no reconocido.
+
+KEY: engine.commands.inventory.deep_scan_initiated
+  EN:   ▓ DEEP SCAN INITIATED ▓
+  PT:   ▓ VARREDURA PROFUNDA INICIADA ▓
+  ES:   ▓ ESCANEO PROFUNDO INICIADO ▓
+
+KEY: engine.commands.inventory.detection_risk_elevated
+  EN:   [!] Detection risk: ELEVATED
+  PT:   [!] Risco de detecção: ELEVADO
+  ES:   [!] Riesgo de detección: ELEVADO
+
+KEY: engine.commands.inventory.disconnecting
+  EN: DISCONNECTING...
+  PT: DESCONECTANDO...
+  ES: DESCONECTANDO...
+
+KEY: engine.commands.inventory.error_specify_note_text
+  EN: ERROR: Specify note text
+  PT: ERRO: Especifique o texto da nota
+  ES: ERROR: Especifica el texto de la nota
+
+KEY: engine.commands.inventory.error_specify_search_term
+  EN: ERROR: Specify a search term
+  PT: ERRO: informe um termo de busca
+  ES: ERROR: indica un término de búsqueda
+
+KEY: engine.commands.inventory.evidence_collected
+  EN:   EVIDENCE COLLECTED:
+  PT:   EVIDÊNCIAS COLETADAS:
+  ES:   EVIDENCIA RECOLECTADA:
+
+KEY: engine.commands.inventory.evidence_files_are_being_relayed_stand_by
+  EN: Evidence files are being relayed. Stand by.
+  PT: Os arquivos de evidência estão sendo retransmitidos. Aguarde.
+  ES: Los archivos de evidencia están siendo retransmitidos. Espera.
+
+KEY: engine.commands.inventory.evidence_not_saved_files_lost_in_disconnection
+  EN: Evidence not saved. Files lost in disconnection.
+  PT: Evidências não foram salvas. Arquivos perdidos na desconexão.
+  ES: La evidencia no se guardó. Archivos perdidos en la desconexión.
+
+KEY: engine.commands.inventory.example_note_password_might_be_varginha1996
+  EN: Example: note password might be varginha1996
+  PT: Exemplo: note a senha pode ser varginha1996
+  ES: Ejemplo: note la contraseña podría ser varginha1996
+
+KEY: engine.commands.inventory.example_search_terms
+  EN: Examples: search crash | search quarantine | search 2026
+  PT: Exemplos: search crash | search quarantine | search 2026
+  ES: Ejemplos: search crash | search quarantine | search 2026
+
+KEY: engine.commands.inventory.investigation_progress
+  EN: ║            INVESTIGATION PROGRESS                     ║
+  PT: ║            PROGRESSO DA INVESTIGAÇÃO                  ║
+  ES: ║            PROGRESO DE LA INVESTIGACIÓN               ║
+
+KEY: engine.commands.inventory.no_bookmarks_saved
+  EN: No bookmarks saved
+  PT: Nenhum favorito salvo
+  ES: No hay marcadores guardados
+
+KEY: engine.commands.inventory.no_notes_saved_yet
+  EN: No notes saved yet
+  PT: Nenhuma nota salva ainda
+  ES: Aún no hay notas guardadas
+
+KEY: engine.commands.inventory.no_search_results
+  EN: No accessible files matched "{{value}}".
+  PT: Nenhum arquivo acessível corresponde a "{{value}}".
+  ES: Ningún archivo accesible coincide con "{{value}}".
+
+KEY: engine.commands.inventory.release_command_requires_target
+  EN: RELEASE COMMAND REQUIRES TARGET
+  PT: O COMANDO RELEASE EXIGE UM ALVO
+  ES: EL COMANDO RELEASE REQUIERE OBJETIVO
+
+KEY: engine.commands.inventory.revealing_masked_nodes
+  EN:   Revealing masked nodes...
+  PT:   Revelando nós mascarados...
+  ES:   Revelando nodos enmascarados...
+
+KEY: engine.commands.inventory.scan_complete_hidden_paths_may_now_be_visible
+  EN:   [!] Scan complete. Hidden paths may now be visible.
+  PT:   [!] Varredura concluída. Caminhos ocultos podem estar visíveis agora.
+  ES:   [!] Escaneo completo. Las rutas ocultas pueden ser visibles ahora.
+
+KEY: engine.commands.inventory.scanning_for_hidden_filesystem_entries
+  EN:   Scanning for hidden filesystem entries...
+  PT:   Vasculhando entradas ocultas do sistema de arquivos...
+  ES:   Escaneando entradas ocultas del sistema de archivos...
+
+KEY: engine.commands.inventory.search_more_results
+  EN:   ... and {{value}} more
+  PT:   ... e mais {{value}}
+  ES:   ... y {{value}} más
+
+KEY: engine.commands.inventory.search_open_tip
+  EN: Use "open <path>" to inspect a result or "bookmark <path>" to save it.
+  PT: Use "open <caminho>" para inspecionar um resultado ou "bookmark <caminho>" para salvá-lo.
+  ES: Usa "open <ruta>" para inspeccionar un resultado o "bookmark <ruta>" para guardarlo.
+
+KEY: engine.commands.inventory.search_query
+  EN:   QUERY: {{value}}
+  PT:   CONSULTA: {{value}}
+  ES:   CONSULTA: {{value}}
+
+KEY: engine.commands.inventory.search_result.content
+  EN:   {{index}}. {{path}} [TEXT]
+  PT:   {{index}}. {{path}} [TEXTO]
+  ES:   {{index}}. {{path}} [TEXTO]
+
+KEY: engine.commands.inventory.search_result.filename
+  EN:   {{index}}. {{path}} [NAME]
+  PT:   {{index}}. {{path}} [NOME]
+  ES:   {{index}}. {{path}} [NOMBRE]
+
+KEY: engine.commands.inventory.search_result.fuzzy
+  EN:   {{index}}. {{path}} [FUZZY]
+  PT:   {{index}}. {{path}} [APROX.]
+  ES:   {{index}}. {{path}} [APROX.]
+
+KEY: engine.commands.inventory.search_result.path
+  EN:   {{index}}. {{path}} [PATH]
+  PT:   {{index}}. {{path}} [CAMINHO]
+  ES:   {{index}}. {{path}} [RUTA]
+
+KEY: engine.commands.inventory.search_results
+  EN:               SEARCH RESULTS           
+  PT:              RESULTADOS DA BUSCA        
+  ES:              RESULTADOS DE BÚSQUEDA     
+
+KEY: engine.commands.inventory.search_try_broader_terms
+  EN: Try broader terms, "tree", or "unread" to widen the search.
+  PT: Tente termos mais amplos, "tree" ou "unread" para abrir a busca.
+  ES: Prueba términos más amplios, "tree" o "unread" para abrir la búsqueda.
+
+KEY: engine.commands.inventory.session_statistics
+  EN:   SESSION STATISTICS:
+  PT:   ESTATÍSTICAS DA SESSÃO:
+  ES:   ESTADÍSTICAS DE LA SESIÓN:
+
+KEY: engine.commands.inventory.some_files_may_require_higher_access_levels
+  EN: Some files may require higher access levels.
+  PT: Alguns arquivos podem exigir níveis de acesso maiores.
+  ES: Algunos archivos pueden requerir niveles de acceso más altos.
+
+KEY: engine.commands.inventory.ufo74_decryption_successful
+  EN: [UFO74]: Decryption successful.
+  PT: [UFO74]: descriptografia bem-sucedida.
+  ES: [UFO74]: descifrado exitoso.
+
+KEY: engine.commands.inventory.ufo74_still_struggling_with_the_cipher
+  EN: [UFO74]: Still struggling with the cipher?
+  PT: [UFO74]: ainda travado na cifra?
+  ES: [UFO74]: ¿sigues peleando con la cifra?
+
+KEY: engine.commands.inventory.ufo74_the_truth_is_not_what_they_told_you
+  EN: [UFO74]: "The truth is not what they told you."
+  PT: [UFO74]: "A verdade não é o que contaram a você."
+  ES: [UFO74]: "La verdad no es lo que te dijeron."
+
+KEY: engine.commands.inventory.ufo74_they_were_never_meant_to_be_accurate
+  EN: [UFO74]: They were never meant to be accurate.
+  PT: [UFO74]: nunca foram feitos para ser precisos.
+  ES: [UFO74]: nunca estuvieron pensados para ser precisos.
+
+KEY: engine.commands.inventory.ufo74_try_applying_rot13_classic_but_effective
+  EN: [UFO74]: Try applying ROT13. Classic but effective.
+  PT: [UFO74]: tente aplicar ROT13. clássico, mas eficaz.
+  ES: [UFO74]: prueba aplicar ROT13. clásico, pero eficaz.
+
+KEY: engine.commands.inventory.ufo74_you_understand_now_the_official_reports
+  EN: [UFO74]: You understand now. The official reports...
+  PT: [UFO74]: agora você entende. os relatórios oficiais...
+  ES: [UFO74]: ahora lo entiendes. los informes oficiales...
+
+KEY: engine.commands.inventory.usage_bookmark_filename_to_bookmark_a_file
+  EN: Usage: bookmark <filename> to bookmark a file
+  PT: Uso: bookmark <filename> para marcar um arquivo
+  ES: Uso: bookmark <filename> para marcar un archivo
+
+KEY: engine.commands.inventory.usage_decode_text
+  EN: Usage: decode <text>
+  PT: Uso: decode <text>
+  ES: Uso: decode <text>
+
+KEY: engine.commands.inventory.usage_note_your_text
+  EN: Usage: note <your text>
+  PT: Uso: note <your text>
+  ES: Uso: note <your text>
+
+KEY: engine.commands.inventory.usage_release_subject_id
+  EN: Usage: release <subject_id>
+  PT: Uso: release <subject_id>
+  ES: Uso: release <subject_id>
+
+KEY: engine.commands.inventory.usage_search_keyword
+  EN: Usage: search <keyword>
+  PT: Uso: search <palavra-chave>
+  ES: Uso: search <palabra-clave>
+
+KEY: engine.commands.inventory.use_bookmark_to_view_all_bookmarks
+  EN: Use "bookmark" to view all bookmarks
+  PT: Use "bookmark" para ver todos os favoritos
+  ES: Usa "bookmark" para ver todos los marcadores
+
+KEY: engine.commands.inventory.use_note_text_to_save_a_note
+  EN: Use: note <text> to save a note
+  PT: Use: note <text> para salvar uma nota
+  ES: Usa: note <text> para guardar una nota
+
+KEY: engine.commands.inventory.warning_detection_level_elevated
+  EN:   ⚠ WARNING: Detection level elevated
+  PT:   ⚠ AVISO: nível de detecção elevado
+  ES:   ⚠ ADVERTENCIA: nivel de detección elevado
+
+KEY: engine.commands.inventory.you_escaped_but_the_truth_remains_buried
+  EN: You escaped... but the truth remains buried.
+  PT: Você escapou... mas a verdade continua enterrada.
+  ES: Escapaste... pero la verdad sigue enterrada.
+
+KEY: engine.commands.inventory.your_notes
+  EN:                  YOUR NOTES              
+  PT:                  SUAS NOTAS              
+  ES:                  TUS NOTAS               
+
+KEY: engine.commands.navigation.already_at_root_directory_no_navigation_history
+  EN: Already at root directory. No navigation history.
+  PT: Você já está no diretório raiz. Não há histórico de navegação.
+  ES: Ya estás en el directorio raíz. No hay historial de navegación.
+
+KEY: engine.commands.navigation.attention_drifts_elsewhere
+  EN:     Attention drifts elsewhere.
+  PT:     A atenção desvia para outro lugar.
+  ES:     La atención se desvía a otro lado.
+
+KEY: engine.commands.navigation.cannot_hide_again
+  EN: Cannot hide again.
+  PT: Não dá para se esconder de novo.
+  ES: No puedes esconderte otra vez.
+
+KEY: engine.commands.navigation.cannot_wait_any_longer
+  EN: Cannot wait any longer.
+  PT: Não dá para esperar mais.
+  ES: No puedes esperar más.
+
+KEY: engine.commands.navigation.close_call_dont_push_your_luck
+  EN:     >> close call. dont push your luck. <<
+  PT:     >> passou perto. não force sua sorte. <<
+  ES:     >> estuvo cerca. no fuerces tu suerte. <<
+
+KEY: engine.commands.navigation.command_not_recognized_hide
+  EN: Command not recognized: hide
+  PT: Comando não reconhecido: hide
+  ES: Comando no reconocido: hide
+
+KEY: engine.commands.navigation.connection_destabilized
+  EN:     [CONNECTION DESTABILIZED]
+  PT:     [CONEXÃO DESESTABILIZADA]
+  ES:     [CONEXIÓN DESESTABILIZADA]
+
+KEY: engine.commands.navigation.deploying_decoy_packets
+  EN:     Deploying decoy packets...
+  PT:     Implantando pacotes-isca...
+  ES:     Desplegando paquetes señuelo...
+
+KEY: engine.commands.navigation.detection_level_already_minimal
+  EN: Detection level already minimal.
+  PT: O nível de detecção já está no mínimo.
+  ES: El nivel de detección ya es mínimo.
+
+KEY: engine.commands.navigation.emergency_protocol_engaged
+  EN: ▓▓▓ EMERGENCY PROTOCOL ENGAGED ▓▓▓
+  PT: ▓▓▓ PROTOCOLO DE EMERGÊNCIA ATIVADO ▓▓▓
+  ES: ▓▓▓ PROTOCOLO DE EMERGENCIA ACTIVADO ▓▓▓
+
+KEY: engine.commands.navigation.error_file_content_no_longer_available
+  EN: ERROR: File content no longer available
+  PT: ERRO: Conteúdo do arquivo não está mais disponível
+  ES: ERROR: El contenido del archivo ya no está disponible
+
+KEY: engine.commands.navigation.error_no_file_opened_yet
+  EN: ERROR: No file opened yet
+  PT: ERRO: Nenhum arquivo aberto ainda
+  ES: ERROR: Aún no se abrió ningún archivo
+
+KEY: engine.commands.navigation.evidence_map
+  EN: ║                  EVIDENCE MAP                         ║
+  PT: ║               MAPA DE EVIDÊNCIAS                      ║
+  ES: ║                  MAPA DE EVIDENCIA                    ║
+
+KEY: engine.commands.navigation.evidence_status
+  EN:   EVIDENCE STATUS:
+  PT:   STATUS DAS EVIDÊNCIAS:
+  ES:   ESTADO DE LA EVIDENCIA:
+
+KEY: engine.commands.navigation.evidence_status.confirmed
+  EN:   {{symbol}} EVIDENCE #{{index}} — CONFIRMED
+  PT:   {{symbol}} EVIDÊNCIA #{{index}} — CONFIRMADA
+  ES:   {{symbol}} EVIDENCIA #{{index}} — CONFIRMADA
+
+KEY: engine.commands.navigation.evidence_status.pending
+  EN:   {{symbol}} EVIDENCE #{{index}} — PENDING
+  PT:   {{symbol}} EVIDÊNCIA #{{index}} — PENDENTE
+  ES:   {{symbol}} EVIDENCIA #{{index}} — PENDIENTE
+
+KEY: engine.commands.navigation.fragmenting_connection_signature
+  EN:     Fragmenting connection signature...
+  PT:     Fragmentando a assinatura da conexão...
+  ES:     Fragmentando la firma de conexión...
+
+KEY: engine.commands.navigation.holding_position_monitoring_suspended
+  EN:     [Holding position... monitoring suspended]
+  PT:     [Mantendo posição... monitoramento suspenso]
+  ES:     [Manteniendo posición... monitoreo suspendido]
+
+KEY: engine.commands.navigation.no_evidence_logged_yet
+  EN:   No evidence logged yet.
+  PT:   Nenhuma evidência registrada ainda.
+  ES:   Aún no hay evidencia registrada.
+
+KEY: engine.commands.navigation.no_need_to_wait
+  EN: No need to wait.
+  PT: Não há necessidade de esperar.
+  ES: No hace falta esperar.
+
+KEY: engine.commands.navigation.progress
+  EN:   PROGRESS: {{count}}/10 evidence links confirmed
+  PT:   PROGRESSO: {{count}}/10 ligações de evidência confirmadas
+  ES:   PROGRESO: {{count}}/10 vínculos de evidencia confirmados
+
+KEY: engine.commands.navigation.read_files_to_log_corroborating_evidence
+  EN:   Read files to log corroborating evidence.
+  PT:   Leia arquivos para registrar evidências corroborantes.
+  ES:   Lee archivos para registrar evidencia corroborante.
+
+KEY: engine.commands.navigation.routing_through_backup_channels
+  EN:     Routing through backup channels...
+  PT:     Roteando por canais de backup...
+  ES:     Enrutando por canales de respaldo...
+
+KEY: engine.commands.navigation.session_stability_compromised
+  EN:     Session stability compromised.
+  PT:     Estabilidade da sessão comprometida.
+  ES:     Estabilidad de la sesión comprometida.
+
+KEY: engine.commands.navigation.something_is_still_watching
+  EN:     Something is still watching.
+  PT:     Ainda há algo observando.
+  ES:     Algo todavía está observando.
+
+KEY: engine.commands.navigation.text
+  EN:     . . .
+  PT:     . . .
+  ES:     . . .
+
+KEY: engine.commands.navigation.the_system_grows_impatient
+  EN:     The system grows impatient.
+  PT:     O sistema fica impaciente.
+  ES:     El sistema se impacienta.
+
+KEY: engine.commands.navigation.the_system_is_too_alert_staying_still_would_be_suspicious
+  EN: The system is too alert. Staying still would be suspicious.
+  PT: O sistema está alerta demais. Ficar parado seria suspeito.
+  ES: El sistema está demasiado alerta. Quedarse quieto sería sospechoso.
+
+KEY: engine.commands.navigation.there_is_no_second_escape
+  EN: There is no second escape.
+  PT: Não existe segunda fuga.
+  ES: No hay una segunda fuga.
+
+KEY: engine.commands.navigation.they_know_your_patterns_now
+  EN: They know your patterns now.
+  PT: Eles conhecem seus padrões agora.
+  ES: Ahora conocen tus patrones.
+
+KEY: engine.commands.navigation.type_help_for_available_commands
+  EN: Type "help" for available commands
+  PT: Digite "help" para ver os comandos disponíveis
+  ES: Escribe "help" para ver los comandos disponibles
+
+KEY: engine.commands.navigation.ufo74_use_cd_to_build_navigation_history_for_the_back_comman
+  EN: [UFO74]: use "cd" to build navigation history for the "back" command.
+  PT: [UFO74]: use "cd" para montar histórico de navegação para o comando "back".
+  ES: [UFO74]: usa "cd" para construir historial de navegación para el comando "back".
+
+KEY: engine.commands.navigation.ufo74_use_open_filename_to_read_a_file_first
+  EN: [UFO74]: use "open <filename>" to read a file first.
+  PT: [UFO74]: use "open <filename>" para ler um arquivo primeiro.
+  ES: [UFO74]: usa "open <filename>" para leer primero un archivo.
+
+KEY: engine.commands.navigation.you_slip_back_into_the_shadows
+  EN:     You slip back into the shadows.
+  PT:     Você escorrega de volta para as sombras.
+  ES:     Te deslizas de vuelta hacia las sombras.
+
+KEY: engine.commands.system.helpMenu.bookmark
+  EN:   bookmark [file]   Bookmark a file (or view bookmarks)
+  PT:   bookmark [file]   Favoritar um arquivo (ou ver favoritos)
+  ES:   bookmark [file]   Marcar un archivo (o ver marcadores)
+
+KEY: engine.commands.system.helpMenu.cd
+  EN:   cd <dir>          Change directory
+  PT:   cd <dir>          Mudar de diretório
+  ES:   cd <dir>          Cambiar de directorio
+
+KEY: engine.commands.system.helpMenu.chat
+  EN:   chat              Open secure relay channel
+  PT:   chat              Abrir canal de retransmissão seguro
+  ES:   chat              Abrir canal de retransmisión seguro
+
+KEY: engine.commands.system.helpMenu.clear
+  EN:   clear             Clear terminal display
+  PT:   clear             Limpar terminal
+  ES:   clear             Limpiar terminal
+
+KEY: engine.commands.system.helpMenu.ctrlL
+  EN:   Ctrl+L            Clear terminal
+  PT:   Ctrl+L            Limpar terminal
+  ES:   Ctrl+L            Limpiar terminal
+
+KEY: engine.commands.system.helpMenu.help
+  EN:   help [cmd]        Display help (or help for specific command)
+  PT:   help [cmd]        Exibir ajuda (ou ajuda para um comando específico)
+  ES:   help [cmd]        Mostrar ayuda (o ayuda para un comando específico)
+
+KEY: engine.commands.system.helpMenu.hide
+  EN:   hide              Emergency escape at 90% risk
+  PT:   hide              Fuga de emergência com 90% de risco
+  ES:   hide              Escape de emergencia con 90% de riesgo
+
+KEY: engine.commands.system.helpMenu.hint
+  EN:   hint              Request a hint (limited uses)
+  PT:   hint              Solicitar uma dica (usos limitados)
+  ES:   hint              Solicitar una pista (usos limitados)
+
+KEY: engine.commands.system.helpMenu.historyArrows
+  EN:   ↑/↓ arrows        Navigate command history
+  PT:   ↑/↓ setas         Navegar no histórico de comandos
+  ES:   ↑/↓ flechas       Navegar por el historial de comandos
+
+KEY: engine.commands.system.helpMenu.last
+  EN:   last              Re-display last opened file
+  PT:   last              Reexibir o último arquivo aberto
+  ES:   last              Volver a mostrar el último archivo abierto
+
+KEY: engine.commands.system.helpMenu.leak
+  EN:   leak              Leak your saved dossier
+  PT:   leak              Vazar seu dossiê salvo
+  ES:   leak              Filtrar tu dossier guardado
+
+KEY: engine.commands.system.helpMenu.ls
+  EN:   ls                List directory contents
+  PT:   ls                Listar conteúdo do diretório
+  ES:   ls                Listar contenido del directorio
+
+KEY: engine.commands.system.helpMenu.morse
+  EN:   morse <text>      Decipher morse code messages
+  PT:   morse <text>      Decifrar mensagens em código morse
+  ES:   morse <text>      Descifrar mensajes en código morse
+
+KEY: engine.commands.system.helpMenu.note
+  EN:   note <text>       Save a personal note
+  PT:   note <text>       Salvar uma nota pessoal
+  ES:   note <text>       Guardar una nota personal
+
+KEY: engine.commands.system.helpMenu.notes
+  EN:   notes             View all saved notes
+  PT:   notes             Ver todas as notas salvas
+  ES:   notes             Ver todas las notas guardadas
+
+KEY: engine.commands.system.helpMenu.noticeAssistance
+  EN: NOTICE: If assistance appears before you finish typing, do not repeat it.
+  PT: AVISO: se surgir ajuda antes de você terminar de digitar, não a repita.
+  ES: AVISO: si aparece ayuda antes de que termines de escribir, no la repitas.
+
+KEY: engine.commands.system.helpMenu.open
+  EN:   open <file>       Open and display file contents
+  PT:   open <file>       Abrir e exibir conteúdo do arquivo
+  ES:   open <file>       Abrir y mostrar contenido del archivo
+
+KEY: engine.commands.system.helpMenu.override
+  EN:   override protocol <code>  Execute admin override
+  PT:   override protocol <code>  Executar override admin
+  ES:   override protocol <code>  Ejecutar override admin
+
+KEY: engine.commands.system.helpMenu.progress
+  EN:   progress          Review evidence and session recap
+  PT:   progress          Revisar evidências e resumo da sessão
+  ES:   progress          Revisar evidencia y resumen de la sesión
+
+KEY: engine.commands.system.helpMenu.save
+  EN:   save <file>       Save a file to your dossier
+  PT:   save <file>       Salvar arquivo no dossiê
+  ES:   save <file>       Guardar archivo en el dossier
+
+KEY: engine.commands.system.helpMenu.search
+  EN:   search <term>     Search visible files and contents
+  PT:   search <term>     Buscar em arquivos e textos visíveis
+  ES:   search <term>     Buscar en archivos y textos visibles
+
+KEY: engine.commands.system.helpMenu.status
+  EN:   status            Display system status
+  PT:   status            Exibir status do sistema
+  ES:   status            Mostrar estado del sistema
+
+KEY: engine.commands.system.helpMenu.tab
+  EN:   Tab               Autocomplete commands and files
+  PT:   Tab               Autocompletar comandos e arquivos
+  ES:   Tab               Autocompletar comandos y archivos
+
+KEY: engine.commands.system.helpMenu.title
+  EN: TERMINAL COMMANDS
+  PT: COMANDOS DO TERMINAL
+  ES: COMANDOS DEL TERMINAL
+
+KEY: engine.commands.system.helpMenu.tree
+  EN:   tree              Show directory structure
+  PT:   tree              Mostrar estrutura de diretórios
+  ES:   tree              Mostrar estructura de directorios
+
+KEY: engine.commands.system.helpMenu.tutorial
+  EN:   tutorial [on/off] Toggle tutorial tips or replay intro
+  PT:   tutorial [on/off] Alternar dicas do tutorial ou repetir a introdução
+  ES:   tutorial [on/off] Alternar consejos del tutorial o repetir la intro
+
+KEY: engine.commands.system.helpMenu.unread
+  EN:   unread            List unread files
+  PT:   unread            Listar arquivos não lidos
+  ES:   unread            Listar archivos no leídos
+
+KEY: engine.commands.system.helpMenu.unsave
+  EN:   unsave <file>     Remove a file from your dossier
+  PT:   unsave <file>     Remover arquivo do dossiê
+  ES:   unsave <file>     Quitar archivo del dossier
+
+KEY: engine.commands.system.helpMenu.wait
+  EN:   wait              Lower detection briefly (limited)
+  PT:   wait              Reduzir detecção brevemente (limitado)
+  ES:   wait              Bajar detección brevemente (limitado)
+
+KEY: engine.commands.system.i_ll_show_extra_tips_as_you_explore
+  EN: I'll show extra tips as you explore.
+  PT: Vou mostrar dicas extras enquanto você explora.
+  ES: Te mostraré consejos extra mientras exploras.
+
+KEY: engine.commands.system.lockdownHelp.back
+  EN:   back              Return to previous directory
+  PT:   back              Voltar ao diretório anterior
+  ES:   back              Volver al directorio anterior
+
+KEY: engine.commands.system.lockdownHelp.blocked
+  EN:   All other commands are BLOCKED until lockdown is lifted.
+  PT:   Todos os outros comandos estão BLOQUEADOS até o fim do bloqueio.
+  ES:   Todos los demás comandos están BLOQUEADOS hasta que se levante el bloqueo.
+
+KEY: engine.commands.system.lockdownHelp.cd
+  EN:   cd <dir>          Change directory
+  PT:   cd <dir>          Mudar de diretório
+  ES:   cd <dir>          Cambiar de directorio
+
+KEY: engine.commands.system.lockdownHelp.clear
+  EN:   clear             Clear terminal display
+  PT:   clear             Limpar terminal
+  ES:   clear             Limpiar terminal
+
+KEY: engine.commands.system.lockdownHelp.disable
+  EN:   disable <n> <a>   Disable a node with the correct answer
+  PT:   disable <n> <a>   Desativar um nó com a resposta correta
+  ES:   disable <n> <a>   Desactivar un nodo con la respuesta correcta
+
+KEY: engine.commands.system.lockdownHelp.help
+  EN:   help              Display this help
+  PT:   help              Exibir esta ajuda
+  ES:   help              Mostrar esta ayuda
+
+KEY: engine.commands.system.lockdownHelp.ls
+  EN:   ls                List directory contents
+  PT:   ls                Listar conteúdo do diretório
+  ES:   ls                Listar contenido del directorio
+
+KEY: engine.commands.system.lockdownHelp.map
+  EN:   map               View evidence progress
+  PT:   map               Ver progresso da evidência
+  ES:   map               Ver progreso de la evidencia
+
+KEY: engine.commands.system.lockdownHelp.scan
+  EN:   scan              View firewall nodes and security questions
+  PT:   scan              Ver nós do firewall e perguntas de segurança
+  ES:   scan              Ver nodos del firewall y preguntas de seguridad
+
+KEY: engine.commands.system.lockdownHelp.status
+  EN:   status            Display system status
+  PT:   status            Exibir status do sistema
+  ES:   status            Mostrar estado del sistema
+
+KEY: engine.commands.system.lockdownHelp.title
+  EN: ⚠ FIREWALL LOCKDOWN — LIMITED COMMANDS
+  PT: ⚠ BLOQUEIO DO FIREWALL — COMANDOS LIMITADOS
+  ES: ⚠ BLOQUEO DEL FIREWALL — COMANDOS LIMITADOS
+
+KEY: engine.commands.system.restarting_tutorial_sequence
+  EN: Restarting tutorial sequence...
+  PT: Reiniciando sequência do tutorial...
+  ES: Reiniciando secuencia del tutorial...
+
+KEY: engine.commands.system.save.alreadySavedTitle
+  EN:   FILE ALREADY IN DOSSIER
+  PT:   ARQUIVO JÁ ESTÁ NO DOSSIÊ
+  ES:   EL ARCHIVO YA ESTÁ EN EL DOSSIER
+
+KEY: engine.commands.system.save.description
+  EN:   Save a file to your dossier for the leak.
+  PT:   Salve um arquivo no seu dossiê para o vazamento.
+  ES:   Guarda un archivo en tu dossier para la filtración.
+
+KEY: engine.commands.system.save.dossierCount
+  EN:   Dossier: {{count}}/10
+  PT:   Dossiê: {{count}}/10
+  ES:   Dossier: {{count}}/10
+
+KEY: engine.commands.system.save.dossierCountDetailed
+  EN:   Dossier: {{count}}/10 files saved
+  PT:   Dossiê: {{count}}/10 arquivos salvos
+  ES:   Dossier: {{count}}/10 archivos guardados
+
+KEY: engine.commands.system.save.fileLabel
+  EN:   {{file}}
+  PT:   {{file}}
+  ES:   {{file}}
+
+KEY: engine.commands.system.save.fileNotFoundBody
+  EN:   You must open and read a file before saving it.
+  PT:   Você precisa abrir e ler um arquivo antes de salvá-lo.
+  ES:   Debes abrir y leer un archivo antes de guardarlo.
+
+KEY: engine.commands.system.save.fileNotFoundTitle
+  EN:   FILE NOT FOUND IN MEMORY
+  PT:   ARQUIVO NÃO ESTÁ NA MEMÓRIA
+  ES:   ARCHIVO NO ENCONTRADO EN MEMORIA
+
+KEY: engine.commands.system.save.fullBody
+  EN:   Use "unsave <filename>" to make room.
+  PT:   Use "unsave <filename>" para abrir espaço.
+  ES:   Usa "unsave <filename>" para hacer espacio.
+
+KEY: engine.commands.system.save.fullTitle
+  EN:   DOSSIER FULL — 10/10 FILES SAVED
+  PT:   DOSSIÊ CHEIO — 10/10 ARQUIVOS SALVOS
+  ES:   DOSSIER LLENO — 10/10 ARCHIVOS GUARDADOS
+
+KEY: engine.commands.system.save.readFirst
+  EN:   You must have read the file first.
+  PT:   Você precisa abrir e ler o arquivo antes de salvá-lo.
+  ES:   Debes haber leído el archivo antes de guardarlo.
+
+KEY: engine.commands.system.save.readyToLeak
+  EN: UFO74: kid. you have enough. type "leak" when you are ready.
+  PT: UFO74: kid. já é o bastante. digite "leak" quando estiver pronto.
+  ES: UFO74: kid. ya tienes suficiente. escribe "leak" cuando estés listo.
+
+KEY: engine.commands.system.save.savedFile
+  EN:   ◉ FILE SAVED TO DOSSIER: {{file}}
+  PT:   ◉ ARQUIVO SALVO NO DOSSIÊ: {{file}}
+  ES:   ◉ ARCHIVO GUARDADO EN EL DOSSIER: {{file}}
+
+KEY: engine.commands.system.save.usage
+  EN:   USAGE: save <filename>
+  PT:   USO: save <filename>
+  ES:   USO: save <filename>
+
+KEY: engine.commands.system.session_save_requested
+  EN: SESSION SAVE REQUESTED
+  PT: SOLICITAÇÃO DE SALVAMENTO DE SESSÃO
+  ES: SE SOLICITÓ GUARDAR LA SESIÓN
+
+KEY: engine.commands.system.status.access.administrative
+  EN:   ACCESS: Administrative
+  PT:   ACESSO: Administrativo
+  ES:   ACCESO: Administrativo
+
+KEY: engine.commands.system.status.access.elevated
+  EN:   ACCESS: Elevated
+  PT:   ACESSO: Elevado
+  ES:   ACCESO: Elevado
+
+KEY: engine.commands.system.status.access.standard
+  EN:   ACCESS: Standard
+  PT:   ACESSO: Padrão
+  ES:   ACCESO: Estándar
+
+KEY: engine.commands.system.status.attitude.listening
+  EN:   SYSTEM ATTITUDE: Listening
+  PT:   ATITUDE DO SISTEMA: Escutando
+  ES:   ACTITUD DEL SISTEMA: Escuchando
+
+KEY: engine.commands.system.status.attitude.studying
+  EN:   SYSTEM ATTITUDE: Studying you
+  PT:   ATITUDE DO SISTEMA: Estudando você
+  ES:   ACTITUD DEL SISTEMA: Estudiándote
+
+KEY: engine.commands.system.status.currentPath
+  EN:   CURRENT PATH: {{value}}
+  PT:   CAMINHO ATUAL: {{value}}
+  ES:   RUTA ACTUAL: {{value}}
+
+KEY: engine.commands.system.status.evidenceConfirmed
+  EN:   EVIDENCE: {{count}}/10 confirmed
+  PT:   EVIDÊNCIA: {{count}}/10 confirmadas
+  ES:   EVIDENCIA: {{count}}/10 confirmadas
+
+KEY: engine.commands.system.status.firewallLockdown.one
+  EN:   FIREWALL: LOCKDOWN — {{value}} node remaining
+  PT:   FIREWALL: BLOQUEIO — {{value}} nó restante
+  ES:   FIREWALL: BLOQUEO — {{value}} nodo restante
+
+KEY: engine.commands.system.status.firewallLockdown.other
+  EN:   FIREWALL: LOCKDOWN — {{value}} nodes remaining
+  PT:   FIREWALL: BLOQUEIO — {{value}} nós restantes
+  ES:   FIREWALL: BLOQUEO — {{value}} nodos restantes
+
+KEY: engine.commands.system.status.logging.active
+  EN:   LOGGING: Active monitoring enabled
+  PT:   REGISTRO: Monitoramento ativo habilitado
+  ES:   REGISTRO: Monitoreo activo habilitado
+
+KEY: engine.commands.system.status.logging.activeShort
+  EN:   LOGGING: Active
+  PT:   REGISTRO: Ativo
+  ES:   REGISTRO: Activo
+
+KEY: engine.commands.system.status.logging.critical
+  EN:   LOGGING: CRITICAL — Countermeasures engaged
+  PT:   REGISTRO: CRÍTICO — Contramedidas engajadas
+  ES:   REGISTRO: CRÍTICO — Contramedidas activadas
+
+KEY: engine.commands.system.status.logging.criticalShort
+  EN:   LOGGING: CRITICAL
+  PT:   REGISTRO: CRÍTICO
+  ES:   REGISTRO: CRÍTICO
+
+KEY: engine.commands.system.status.logging.flagged
+  EN:   LOGGING: WARNING — Audit trail flagged
+  PT:   REGISTRO: ALERTA — Trilha de auditoria sinalizada
+  ES:   REGISTRO: ALERTA — Rastro de auditoría marcado
+
+KEY: engine.commands.system.status.logging.flaggedShort
+  EN:   LOGGING: FLAGGED
+  PT:   REGISTRO: SINALIZADO
+  ES:   REGISTRO: MARCADO
+
+KEY: engine.commands.system.status.logging.nominal
+  EN:   LOGGING: Nominal
+  PT:   REGISTRO: Nominal
+  ES:   REGISTRO: Nominal
+
+KEY: engine.commands.system.status.objective.complete
+  EN:   OBJECTIVE: Dossier complete — review with "progress", then use "leak" when ready.
+  PT:   OBJETIVO: dossiê completo — revise com "progress" e depois use "leak" quando estiver pronto.
+  ES:   OBJETIVO: dossier completo — repasa con "progress" y luego usa "leak" cuando estés listo.
+
+KEY: engine.commands.system.status.objective.dossierIncomplete
+  EN:   OBJECTIVE: Evidence complete — save {{count}} more file(s) to your dossier before using "leak".
+  PT:   OBJETIVO: evidência completa — salve mais {{count}} arquivo(s) no seu dossiê antes de usar "leak".
+  ES:   OBJETIVO: evidencia completa — guarda {{count}} archivo(s) más en tu dossier antes de usar "leak".
+
+KEY: engine.commands.system.status.objective.progress
+  EN:   OBJECTIVE: Keep building the case. Use "progress", "unread", and "bookmark" to stay organized.
+  PT:   OBJETIVO: continue montando o caso. Use "progress", "unread" e "bookmark" para se organizar.
+  ES:   OBJETIVO: sigue armando el caso. Usa "progress", "unread" y "bookmark" para organizarte.
+
+KEY: engine.commands.system.status.objective.start
+  EN:   OBJECTIVE: Start opening files. "help basics" and "search <term>" are safe ways to orient yourself.
+  PT:   OBJETIVO: comece a abrir arquivos. "help basics" e "search <term>" são formas seguras de se orientar.
+  ES:   OBJETIVO: empieza a abrir archivos. "help basics" y "search <term>" son formas seguras de orientarte.
+
+KEY: engine.commands.system.status.operationsRemaining
+  EN:   OPERATIONS REMAINING: {{value}}
+  PT:   OPERAÇÕES RESTANTES: {{value}}
+  ES:   OPERACIONES RESTANTES: {{value}}
+
+KEY: engine.commands.system.status.purgeActive
+  EN:   ▓▓▓ PURGE PROTOCOL: ACTIVE ▓▓▓
+  PT:   ▓▓▓ PROTOCOLO DE EXPURGO: ATIVO ▓▓▓
+  ES:   ▓▓▓ PROTOCOLO DE PURGA: ACTIVO ▓▓▓
+
+KEY: engine.commands.system.status.recovery.hideAvailable
+  EN:   RECOVERY: "hide" is available now.
+  PT:   RECUPERAÇÃO: "hide" está disponível agora.
+  ES:   RECUPERACIÓN: "hide" está disponible ahora.
+
+KEY: engine.commands.system.status.recovery.none
+  EN:   RECOVERY: No wait uses remaining.
+  PT:   RECUPERAÇÃO: não restam usos de wait.
+  ES:   RECUPERACIÓN: no quedan usos de wait.
+
+KEY: engine.commands.system.status.recovery.waitAvailable.one
+  EN:   RECOVERY: "wait" can buy time ({{value}} left).
+  PT:   RECUPERAÇÃO: "wait" pode comprar tempo ({{value}} restante).
+  ES:   RECUPERACIÓN: "wait" puede darte tiempo ({{value}} restante).
+
+KEY: engine.commands.system.status.recovery.waitAvailable.other
+  EN:   RECOVERY: "wait" can buy time ({{value}} left).
+  PT:   RECUPERAÇÃO: "wait" pode comprar tempo ({{value}} restantes).
+  ES:   RECUPERACIÓN: "wait" puede darte tiempo ({{value}} restantes).
+
+KEY: engine.commands.system.status.session.connected
+  EN:   SESSION: Connected
+  PT:   SESSÃO: Conectada
+  ES:   SESIÓN: Conectada
+
+KEY: engine.commands.system.status.session.intermittent
+  EN:   SESSION: Intermittent
+  PT:   SESSÃO: Intermitente
+  ES:   SESIÓN: Intermitente
+
+KEY: engine.commands.system.status.session.unstable
+  EN:   SESSION: UNSTABLE — Connection degrading
+  PT:   SESSÃO: INSTÁVEL — Conexão degradando
+  ES:   SESIÓN: INESTABLE — Conexión degradándose

@@ -1,0 +1,1864 @@
+KEY: achievement.gallery.close
+  EN: [ CLOSE ]
+  PT: [ FECHAR ]
+  ES: [ CERRAR ]
+
+KEY: achievement.gallery.progress
+  EN: {{unlocked}} / {{total}} Unlocked
+  PT: {{unlocked}} / {{total}} Desbloqueadas
+  ES: {{unlocked}} / {{total}} Desbloqueados
+
+KEY: achievement.gallery.secretDescription
+  EN: Secret achievement
+  PT: Conquista secreta
+  ES: Logro secreto
+
+KEY: achievement.gallery.secretName
+  EN: ???
+  PT: ???
+  ES: ???
+
+KEY: achievement.gallery.title
+  EN: ACHIEVEMENTS
+  PT: CONQUISTAS
+  ES: LOGROS
+
+KEY: achievement.popup.header
+  EN: ACHIEVEMENT UNLOCKED
+  PT: CONQUISTA DESBLOQUEADA
+  ES: LOGRO DESBLOQUEADO
+
+KEY: blackout.transfer
+  EN: CONNECTING TO ICQ...
+  PT: CONECTANDO AO ICQ...
+  ES: CONECTANDO A ICQ...
+
+KEY: checkpoint.reason.accessLevel
+  EN: Access level {{value}}
+  PT: Nível de acesso {{value}}
+  ES: Nivel de acceso {{value}}
+
+KEY: checkpoint.reason.adminAccessUnlocked
+  EN: Admin access unlocked
+  PT: Acesso admin desbloqueado
+  ES: Acceso admin desbloqueado
+
+KEY: checkpoint.reason.allEvidenceFound
+  EN: All evidence found
+  PT: Todas as evidências encontradas
+  ES: Todas las evidencias encontradas
+
+KEY: checkpoint.reason.beforeLeakTransmission
+  EN: Before leak transmission
+  PT: Antes da transmissão do vazamento
+  ES: Antes de la transmisión de la filtración
+
+KEY: checkpoint.reason.beforeOverrideProtocol
+  EN: Before override protocol
+  PT: Antes do protocolo de override
+  ES: Antes del protocolo de override
+
+KEY: checkpoint.reason.detectionApproachingCritical
+  EN: Detection approaching critical
+  PT: Detecção se aproximando do nível crítico
+  ES: La detección se acerca al nivel crítico
+
+KEY: checkpoint.reason.evidenceProgress
+  EN: Evidence {{count}}/10
+  PT: Evidência {{count}}/10
+  ES: Evidencia {{count}}/10
+
+KEY: checkpoint.reason.firstEncryptedFileDecrypted
+  EN: First encrypted file decrypted
+  PT: Primeiro arquivo criptografado descriptografado
+  ES: Primer archivo cifrado descifrado
+
+KEY: checkpoint.reason.firstEvidence
+  EN: First evidence
+  PT: Primeira evidência
+  ES: Primera evidencia
+
+KEY: checkpoint.reason.firstUfo74Contact
+  EN: First UFO74 contact
+  PT: Primeiro contato com UFO74
+  ES: Primer contacto con UFO74
+
+KEY: checkpoint.reason.tutorialComplete
+  EN: Tutorial complete
+  PT: Tutorial concluído
+  ES: Tutorial completado
+
+KEY: checkpoint.reason.tutorialSkipped
+  EN: Tutorial skipped
+  PT: Tutorial pulado
+  ES: Tutorial omitido
+
+KEY: common.close
+  EN: Close
+  PT: Fechar
+  ES: Cerrar
+
+KEY: ending.dossier.alpha
+  EN: ALPHA outcome
+  PT: Destino de ALPHA
+  ES: Destino de ALPHA
+
+KEY: ending.dossier.alpha.contained
+  EN: Not released
+  PT: Não liberado
+  ES: No liberado
+
+KEY: ending.dossier.alpha.released
+  EN: Released
+  PT: Liberado
+  ES: Liberado
+
+KEY: ending.dossier.blackFiles
+  EN: Black files
+  PT: Arquivos negros
+  ES: Archivos negros
+
+KEY: ending.dossier.blackFiles.leaked
+  EN: Leaked
+  PT: Vazados
+  ES: Filtrados
+
+KEY: ending.dossier.blackFiles.sealed
+  EN: Kept sealed
+  PT: Mantidos selados
+  ES: Mantenidos sellados
+
+KEY: ending.dossier.evidence
+  EN: Evidence confirmed
+  PT: Evidências confirmadas
+  ES: Evidencia confirmada
+
+KEY: ending.dossier.filesReviewed
+  EN: Files reviewed
+  PT: Arquivos revisados
+  ES: Archivos revisados
+
+KEY: ending.dossier.leakPath
+  EN: Leak path
+  PT: Rota do vazamento
+  ES: Ruta de la filtración
+
+KEY: ending.dossier.maxDetection
+  EN: Max detection reached
+  PT: Detecção máxima atingida
+  ES: Detección máxima alcanzada
+
+KEY: ending.dossier.neuralLink
+  EN: Neural link
+  PT: Link neural
+  ES: Enlace neural
+
+KEY: ending.dossier.neuralLink.authenticated
+  EN: Authenticated
+  PT: Autenticado
+  ES: Autenticado
+
+KEY: ending.dossier.neuralLink.unused
+  EN: Not used
+  PT: Não usado
+  ES: No usado
+
+KEY: ending.dossier.path.covert
+  EN: Covert handoff
+  PT: Entrega discreta
+  ES: Entrega encubierta
+
+KEY: ending.dossier.path.public
+  EN: Public broadcast
+  PT: Transmissão pública
+  ES: Difusión pública
+
+KEY: ending.dossier.path.unknown
+  EN: Undisclosed
+  PT: Não revelado
+  ES: No revelado
+
+KEY: ending.dossier.replay.alpha
+  EN: Track down ALPHA to unlock the confirmation endings.
+  PT: Encontre ALPHA para desbloquear os finais de confirmação.
+  ES: Encuentra a ALPHA para desbloquear los finales de confirmación.
+
+KEY: ending.dossier.replay.cleaner
+  EN: Try a cleaner run: change the leak path or leave one modifier untouched.
+  PT: Tente uma run mais limpa: mude a rota do vazamento ou deixe um modificador de fora.
+  ES: Haz una run más limpia: cambia la ruta de la filtración o deja fuera un modificador.
+
+KEY: ending.dossier.replay.complete
+  EN: You covered the core routes. Now chase a cleaner or louder variant.
+  PT: Você cobriu as rotas principais. Agora teste uma variante mais limpa ou mais caótica.
+  ES: Ya cubriste las rutas principales. Ahora busca una variante más limpia o más caótica.
+
+KEY: ending.dossier.replay.covert
+  EN: Try the quieter route: keep the leak covert and compare the fallout.
+  PT: Tente a rota mais silenciosa: mantenha o vazamento discreto e compare o estrago.
+  ES: Prueba la ruta más silenciosa: mantén la filtración encubierta y compara las consecuencias.
+
+KEY: ending.dossier.replay.link
+  EN: Authenticate the neural link to see the contaminated variants.
+  PT: Autentique o link neural para ver as variantes contaminadas.
+  ES: Autentica el enlace neural para ver las variantes contaminadas.
+
+KEY: ending.dossier.replay.public
+  EN: Try the louder route: expose the black files with a public leak.
+  PT: Tente a rota mais barulhenta: exponha os arquivos negros num vazamento público.
+  ES: Prueba la ruta más ruidosa: expón los archivos negros con una filtración pública.
+
+KEY: ending.dossier.replayTitle
+  EN: REPLAY LEADS
+  PT: PISTAS PARA A PRÓXIMA RUN
+  ES: PISTAS PARA OTRA RUN
+
+KEY: ending.dossier.title
+  EN: POST-RUN DOSSIER
+  PT: DOSSIÊ PÓS-EXECUÇÃO
+  ES: DOSSIER POSTERIOR A LA PARTIDA
+
+KEY: ending.playAgain
+  EN: [ PLAY AGAIN ]
+  PT: [ JOGAR NOVAMENTE ]
+  ES: [ JUGAR DE NUEVO ]
+
+KEY: ending.returnToMenu
+  EN: [ RETURN TO MENU ]
+  PT: [ VOLTAR AO MENU ]
+  ES: [ VOLVER AL MENÚ ]
+
+KEY: ending.secretUnlocked
+  EN: 🏆 SECRET ENDING UNLOCKED
+  PT: 🏆 FINAL SECRETO DESBLOQUEADO
+  ES: 🏆 FINAL SECRETO DESBLOQUEADO
+
+KEY: ending.tryAgain
+  EN: [ TRY AGAIN ]
+  PT: [ TENTAR DE NOVO ]
+  ES: [ INTENTAR OTRA VEZ ]
+
+KEY: engine.achievements.archivist.description
+  EN: Read every file in a folder with 3+ files
+  PT: Leia todos os arquivos de uma pasta com 3+ arquivos
+  ES: Lee todos los archivos de una carpeta con 3+ archivos
+
+KEY: engine.achievements.archivist.name
+  EN: Archivist
+  PT: Arquivista
+  ES: Archivista
+
+KEY: engine.achievements.bookworm.description
+  EN: Bookmark 5+ files
+  PT: Marque 5+ arquivos como favoritos
+  ES: Marca 5+ archivos como favoritos
+
+KEY: engine.achievements.bookworm.name
+  EN: Bookworm
+  PT: Rato de Biblioteca
+  ES: Ratón de Biblioteca
+
+KEY: engine.achievements.completionist.description
+  EN: Read every accessible file in the system
+  PT: Leia todos os arquivos acessíveis do sistema
+  ES: Lee todos los archivos accesibles del sistema
+
+KEY: engine.achievements.completionist.name
+  EN: Completionist
+  PT: Completista
+  ES: Completista
+
+KEY: engine.achievements.doom_fan.description
+  EN: Activate god mode
+  PT: Ative o modo deus
+  ES: Activa el modo dios
+
+KEY: engine.achievements.doom_fan.name
+  EN: IDDQD
+  PT: IDDQD
+  ES: IDDQD
+
+KEY: engine.achievements.ending_government_scandal.description
+  EN: Expose the military cover-up as a national scandal
+  PT: Exponha o acobertamento militar como um escândalo nacional
+  ES: Expón el encubrimiento militar como un escándalo nacional
+
+KEY: engine.achievements.ending_government_scandal.name
+  EN: Government Scandal
+  PT: Escândalo Governamental
+  ES: Escándalo Gubernamental
+
+KEY: engine.achievements.ending_hackerkid_caught.description
+  EN: Trigger the honeypot ending
+  PT: Acione o final da armadilha isca
+  ES: Activa el final de la trampa cebo
+
+KEY: engine.achievements.ending_hackerkid_caught.name
+  EN: HackerKid Caught
+  PT: HackerKid Capturado
+  ES: HackerKid Atrapado
+
+KEY: engine.achievements.ending_harvest_understood.description
+  EN: Expose the colonization and extraction model
+  PT: Exponha o modelo de colonização e extração
+  ES: Expón el modelo de colonización y extracción
+
+KEY: engine.achievements.ending_harvest_understood.name
+  EN: Harvest Understood
+  PT: A Colheita Compreendida
+  ES: La Cosecha Comprendida
+
+KEY: engine.achievements.ending_incomplete_picture.description
+  EN: Reach an ending with real evidence but no coherent case
+  PT: Alcance um final com evidências reais, mas sem um caso coerente
+  ES: Alcanza un final con evidencia real, pero sin un caso coherente
+
+KEY: engine.achievements.ending_incomplete_picture.name
+  EN: Incomplete Picture
+  PT: Quadro Incompleto
+  ES: Imagen Incompleta
+
+KEY: engine.achievements.ending_nothing_changes.description
+  EN: Prove the truth, only to watch the world move on
+  PT: Prove a verdade e veja o mundo seguir em frente
+  ES: Demuestra la verdad solo para ver al mundo seguir adelante
+
+KEY: engine.achievements.ending_nothing_changes.name
+  EN: Nothing Changes
+  PT: Nada Muda
+  ES: Nada Cambia
+
+KEY: engine.achievements.ending_prisoner_45_freed.description
+  EN: Reveal the containment of Prisoner 45
+  PT: Revele a contenção do Prisioneiro 45
+  ES: Revela la contención del Prisionero 45
+
+KEY: engine.achievements.ending_prisoner_45_freed.name
+  EN: Prisoner 45 Freed
+  PT: Prisioneiro 45 Libertado
+  ES: Prisionero 45 Liberado
+
+KEY: engine.achievements.ending_real_ending.description
+  EN: Assemble the dossier that forces a renewed investigation
+  PT: Monte o dossiê que força uma investigação renovada
+  ES: Reúne el dossier que obliga a reabrir la investigación
+
+KEY: engine.achievements.ending_real_ending.name
+  EN: Undeniable
+  PT: Inegável
+  ES: Innegable
+
+KEY: engine.achievements.ending_ridiculed.description
+  EN: Reach the ending where the dossier is dismissed as noise
+  PT: Alcance o final em que o dossiê é tratado como ruído
+  ES: Alcanza el final en que el dossier es descartado como ruido
+
+KEY: engine.achievements.ending_ridiculed.name
+  EN: Ridiculed
+  PT: Ridicularizado
+  ES: Ridiculizado
+
+KEY: engine.achievements.ending_secret_ending.description
+  EN: Assemble UFO74's full protocol and secure the secret ending
+  PT: Monte o protocolo completo do UFO74 e alcance o final secreto
+  ES: Reúne el protocolo completo de UFO74 y asegura el final secreto
+
+KEY: engine.achievements.ending_secret_ending.name
+  EN: The Ferreira Protocol
+  PT: O Protocolo Ferreira
+  ES: El Protocolo Ferreira
+
+KEY: engine.achievements.ending_the_2026_warning.description
+  EN: Publish the convergence warning before the next window opens
+  PT: Publique o alerta de convergência antes que a próxima janela se abra
+  ES: Publica la advertencia de convergencia antes de que se abra la próxima ventana
+
+KEY: engine.achievements.ending_the_2026_warning.name
+  EN: The 2026 Warning
+  PT: O Aviso de 2026
+  ES: La Advertencia de 2026
+
+KEY: engine.achievements.ending_ufo74_exposed.description
+  EN: Reveal UFO74's identity to the world
+  PT: Revele a identidade do UFO74 ao mundo
+  ES: Revela la identidad de UFO74 al mundo
+
+KEY: engine.achievements.ending_ufo74_exposed.name
+  EN: UFO74 Exposed
+  PT: UFO74 Exposto
+  ES: UFO74 Expuesto
+
+KEY: engine.achievements.ending_wrong_story.description
+  EN: Expose a scandal while missing the truth underneath
+  PT: Exponha um escândalo enquanto deixa passar a verdade por baixo
+  ES: Expón un escándalo mientras dejas pasar la verdad que hay debajo
+
+KEY: engine.achievements.ending_wrong_story.name
+  EN: The Wrong Story
+  PT: A História Errada
+  ES: La Historia Equivocada
+
+KEY: engine.achievements.first_blood.description
+  EN: Discover your first evidence
+  PT: Descubra sua primeira evidência
+  ES: Descubre tu primera evidencia
+
+KEY: engine.achievements.first_blood.name
+  EN: First Blood
+  PT: Primeiro Sangue
+  ES: Primera Sangre
+
+KEY: engine.achievements.ghost.description
+  EN: Win with detection level under 20%
+  PT: Vença com nível de detecção abaixo de 20%
+  ES: Gana con un nivel de detección inferior al 20%
+
+KEY: engine.achievements.ghost.name
+  EN: Ghost Protocol
+  PT: Protocolo Fantasma
+  ES: Protocolo Fantasma
+
+KEY: engine.achievements.liberator.description
+  EN: Release ALPHA from containment
+  PT: Liberte ALPHA da contenção
+  ES: Libera a ALPHA de la contención
+
+KEY: engine.achievements.liberator.name
+  EN: Liberator
+  PT: Libertador
+  ES: Liberador
+
+KEY: engine.achievements.linked.description
+  EN: Connect to the alien consciousness
+  PT: Conecte-se à consciência alienígena
+  ES: Conéctate a la conciencia alienígena
+
+KEY: engine.achievements.linked.name
+  EN: Neural Link
+  PT: Link Neural
+  ES: Enlace Neural
+
+KEY: engine.achievements.mathematician.description
+  EN: Solve all equations on first try
+  PT: Resolva todas as equações na primeira tentativa
+  ES: Resuelve todas las ecuaciones al primer intento
+
+KEY: engine.achievements.mathematician.name
+  EN: Mathematician
+  PT: Matemático
+  ES: Matemático
+
+KEY: engine.achievements.night_owl.description
+  EN: Play for over 30 minutes in a single session
+  PT: Jogue por mais de 30 minutos em uma única sessão
+  ES: Juega durante más de 30 minutos en una sola sesión
+
+KEY: engine.achievements.night_owl.name
+  EN: Night Owl
+  PT: Coruja Noturna
+  ES: Búho Nocturno
+
+KEY: engine.achievements.paranoid.description
+  EN: Check system status 10+ times
+  PT: Verifique o status do sistema 10+ vezes
+  ES: Revisa el estado del sistema 10+ veces
+
+KEY: engine.achievements.paranoid.name
+  EN: Paranoid
+  PT: Paranoico
+  ES: Paranoico
+
+KEY: engine.achievements.revelator.description
+  EN: Achieve the ultimate ending with all modifiers
+  PT: Alcance o final supremo com todos os modificadores
+  ES: Alcanza el final supremo con todos los modificadores
+
+KEY: engine.achievements.revelator.name
+  EN: Complete Revelation
+  PT: Revelação Completa
+  ES: Revelación Completa
+
+KEY: engine.achievements.speed_demon.description
+  EN: Complete the game in under 50 commands
+  PT: Complete o jogo com menos de 50 comandos
+  ES: Completa el juego en menos de 50 comandos
+
+KEY: engine.achievements.speed_demon.name
+  EN: Speed Demon
+  PT: Demônio da Velocidade
+  ES: Demonio de la Velocidad
+
+KEY: engine.achievements.survivor.description
+  EN: Complete the game after reaching critical detection
+  PT: Complete o jogo após atingir detecção crítica
+  ES: Completa el juego después de alcanzar detección crítica
+
+KEY: engine.achievements.survivor.name
+  EN: Survivor
+  PT: Sobrevivente
+  ES: Superviviente
+
+KEY: engine.achievements.truth_seeker.description
+  EN: Collect 10 evidence files
+  PT: Colete 10 arquivos de evidência
+  ES: Reúne 10 archivos de evidencia
+
+KEY: engine.achievements.truth_seeker.name
+  EN: Truth Seeker
+  PT: Buscador da Verdade
+  ES: Buscador de la Verdad
+
+KEY: engine.achievements.whistleblower.description
+  EN: Leak the conspiracy files to the world
+  PT: Vaze os arquivos da conspiração para o mundo
+  ES: Filtra los archivos de la conspiración al mundo
+
+KEY: engine.achievements.whistleblower.name
+  EN: Whistleblower
+  PT: Denunciante
+  ES: Denunciante
+
+KEY: engine.commands.archive.archive_mode_has_been_retired
+  EN: ARCHIVE MODE HAS BEEN RETIRED
+  PT: O MODO ARQUIVO FOI APOSENTADO
+  ES: EL MODO ARCHIVE HA SIDO RETIRADO
+
+KEY: engine.commands.archive.archive_mode_is_no_longer_available_in_this_build
+  EN: Archive mode is no longer available in this build.
+  PT: O modo arquivo não está mais disponível nesta build.
+  ES: El modo archive ya no está disponible en esta build.
+
+KEY: engine.commands.archive.current_timeline_active
+  EN: Current timeline active.
+  PT: Linha do tempo atual ativa.
+  ES: Línea temporal actual activa.
+
+KEY: engine.commands.archive.error_corruption_too_severe
+  EN: ERROR: Corruption too severe
+  PT: ERRO: Corrupção severa demais
+  ES: ERROR: Corrupción demasiado severa
+
+KEY: engine.commands.archive.example
+  EN: Example:
+  PT: Exemplo:
+  ES: Ejemplo:
+
+KEY: engine.commands.archive.example_run_purge_trace_sh
+  EN: Example: run purge_trace.sh
+  PT: Exemplo: run purge_trace.sh
+  ES: Ejemplo: run purge_trace.sh
+
+KEY: engine.commands.archive.exec_running
+  EN: EXEC... RUNNING
+  PT: EXEC... RUNNING
+  ES: EXEC... RUNNING
+
+KEY: engine.commands.archive.execution_failed
+  EN: EXECUTION FAILED
+  PT: EXECUÇÃO FALHOU
+  ES: EJECUCIÓN FALLIDA
+
+KEY: engine.commands.archive.file_admin_neural_fragment_dat_is_now_accessible
+  EN: File /admin/neural_fragment.dat is now accessible.
+  PT: O arquivo /admin/neural_fragment.dat agora está acessível.
+  ES: El archivo /admin/neural_fragment.dat ahora está accesible.
+
+KEY: engine.commands.archive.init_ok
+  EN: INIT... OK
+  PT: INIT... OK
+  ES: INIT... OK
+
+KEY: engine.commands.archive.init_target_path_exec
+  EN:   INIT;TARGET=<path>;EXEC
+  PT:   INIT;TARGET=<path>;EXEC
+  ES:   INIT;TARGET=<path>;EXEC
+
+KEY: engine.commands.archive.no_active_trace_detected
+  EN: No active trace detected.
+  PT: Nenhum rastreio ativo detectado.
+  ES: No se detectó ningún rastreo activo.
+
+KEY: engine.commands.archive.notice_countermeasures_reset
+  EN: NOTICE: Countermeasures reset
+  PT: AVISO: Contramedidas reiniciadas
+  ES: AVISO: Contramedidas reiniciadas
+
+KEY: engine.commands.archive.ok_session_log_truncated
+  EN: [OK] Session log truncated
+  PT: [OK] Log da sessão truncado
+  ES: [OK] Registro de sesión truncado
+
+KEY: engine.commands.archive.ok_trace_buffers_wiped
+  EN: [OK] Trace buffers wiped
+  PT: [OK] Buffers de rastreio apagados
+  ES: [OK] Buffers de rastreo borrados
+
+KEY: engine.commands.archive.parsing_script
+  EN: Parsing script...
+  PT: Analisando script...
+  ES: Analizando script...
+
+KEY: engine.commands.archive.partial_recovery_only
+  EN: Partial recovery only:
+  PT: Apenas recuperação parcial:
+  ES: Solo recuperación parcial:
+
+KEY: engine.commands.archive.rebuilding_data_structure
+  EN: Rebuilding data structure...
+  PT: Reconstruindo estrutura de dados...
+  ES: Reconstruyendo estructura de datos...
+
+KEY: engine.commands.archive.reconstruction_in_progress
+  EN: ▓▓▓ RECONSTRUCTION IN PROGRESS ▓▓▓
+  PT: ▓▓▓ RECONSTRUÇÃO EM ANDAMENTO ▓▓▓
+  ES: ▓▓▓ RECONSTRUCCIÓN EN PROGRESO ▓▓▓
+
+KEY: engine.commands.archive.reconstruction_partial_file_lost
+  EN: RECONSTRUCTION PARTIAL — FILE LOST
+  PT: RECONSTRUÇÃO PARCIAL — ARQUIVO PERDIDO
+  ES: RECONSTRUCCIÓN PARCIAL — ARCHIVO PERDIDO
+
+KEY: engine.commands.archive.reconstruction_successful
+  EN: RECONSTRUCTION SUCCESSFUL
+  PT: RECONSTRUÇÃO BEM-SUCEDIDA
+  ES: RECONSTRUCCIÓN EXITOSA
+
+KEY: engine.commands.archive.recovering_fragmented_sectors
+  EN: Recovering fragmented sectors...
+  PT: Recuperando setores fragmentados...
+  ES: Recuperando sectores fragmentados...
+
+KEY: engine.commands.archive.required_format
+  EN: Required format:
+  PT: Formato obrigatório:
+  ES: Formato requerido:
+
+KEY: engine.commands.archive.script_executor_v1_7
+  EN: SCRIPT EXECUTOR v1.7
+  PT: EXECUTOR DE SCRIPT v1.7
+  ES: EJECUTOR DE SCRIPT v1.7
+
+KEY: engine.commands.archive.script_init_target_admin_neural_fragment_dat_exec
+  EN:   script INIT;TARGET=/admin/neural_fragment.dat;EXEC
+  PT:   script INIT;TARGET=/admin/neural_fragment.dat;EXEC
+  ES:   script INIT;TARGET=/admin/neural_fragment.dat;EXEC
+
+KEY: engine.commands.archive.script_must_contain_init_and_exec_commands
+  EN: Script must contain INIT and EXEC commands.
+  PT: O script deve conter os comandos INIT e EXEC.
+  ES: El script debe contener los comandos INIT y EXEC.
+
+KEY: engine.commands.archive.script_must_specify_target_path
+  EN: Script must specify TARGET=<path>
+  PT: O script deve especificar TARGET=<path>
+  ES: El script debe especificar TARGET=<path>
+
+KEY: engine.commands.archive.see_tmp_data_reconstruction_util_for_available_targets
+  EN: See /tmp/data_reconstruction.util for available targets.
+  PT: Veja /tmp/data_reconstruction.util para os alvos disponíveis.
+  ES: Consulta /tmp/data_reconstruction.util para ver los objetivos disponibles.
+
+KEY: engine.commands.archive.specified_path_does_not_contain_reconstructable_data
+  EN: Specified path does not contain reconstructable data.
+  PT: O caminho especificado não contém dados reconstruíveis.
+  ES: La ruta especificada no contiene datos reconstruibles.
+
+KEY: engine.commands.archive.syntax_error
+  EN: SYNTAX ERROR
+  PT: ERRO DE SINTAXE
+  ES: ERROR DE SINTAXIS
+
+KEY: engine.commands.archive.target_admin_neural_fragment_dat_located
+  EN: TARGET=/admin/neural_fragment.dat... LOCATED
+  PT: TARGET=/admin/neural_fragment.dat... LOCATED
+  ES: TARGET=/admin/neural_fragment.dat... LOCATED
+
+KEY: engine.commands.archive.target_comms_psi_residue_log_located
+  EN: TARGET=/comms/psi_residue.log... LOCATED
+  PT: TARGET=/comms/psi_residue.log... LOCALIZADO
+  ES: TARGET=/comms/psi_residue.log... LOCALIZADO
+
+KEY: engine.commands.archive.target_not_found
+  EN: TARGET NOT FOUND
+  PT: ALVO NÃO ENCONTRADO
+  ES: OBJETIVO NO ENCONTRADO
+
+KEY: engine.commands.archive.they_see_through_us
+  EN: ...they see through us...
+  PT: ...eles veem através de nós...
+  ES: ...ven a través de nosotros...
+
+KEY: engine.commands.archive.trace_purge_utility
+  EN: TRACE PURGE UTILITY
+  PT: UTILITÁRIO DE EXPURGO DE RASTRO
+  ES: UTILIDAD DE PURGA DE RASTREO
+
+KEY: engine.commands.archive.usage_run_script
+  EN: USAGE: run <script>
+  PT: USO: run <script>
+  ES: USO: run <script>
+
+KEY: engine.commands.archive.usage_script_script_content
+  EN: Usage: script <script_content>
+  PT: Uso: script <script_content>
+  ES: Uso: script <script_content>
+
+KEY: engine.commands.archive.validating_integrity
+  EN: Validating integrity...
+  PT: Validando integridade...
+  ES: Validando integridad...
+
+KEY: engine.commands.archive.we_are_not_the_first_world
+  EN: ...we are not the first world...
+  PT: ...não somos o primeiro mundo...
+  ES: ...no somos el primer mundo...
+
+KEY: engine.commands.archive.we_will_not_be_the_last
+  EN: ...we will not be the last...
+  PT: ...não seremos o último...
+  ES: ...no seremos el último...
+
+KEY: engine.commands.chat.access_denied
+  EN: ACCESS DENIED
+  PT: ACESSO NEGADO
+  ES: ACCESO DENEGADO
+
+KEY: engine.commands.chat.authentication_accepted
+  EN: ▓▓▓ AUTHENTICATION ACCEPTED ▓▓▓
+  PT: ▓▓▓ AUTENTICAÇÃO ACEITA ▓▓▓
+  ES: ▓▓▓ AUTENTICACIÓN ACEPTADA ▓▓▓
+
+KEY: engine.commands.chat.authentication_failed
+  EN: ▓▓▓ AUTHENTICATION FAILED ▓▓▓
+  PT: ▓▓▓ AUTENTICAÇÃO FALHOU ▓▓▓
+  ES: ▓▓▓ LA AUTENTICACIÓN FALLÓ ▓▓▓
+
+KEY: engine.commands.chat.check_comms_intercepts_for_signal_files
+  EN: Check /comms/intercepts/ for signal files.
+  PT: Verifique /comms/intercepts/ em busca dos arquivos de sinal.
+  ES: Revisa /comms/intercepts/ para encontrar archivos de señal.
+
+KEY: engine.commands.chat.cognitive_contamination_risk_high
+  EN: ▓ COGNITIVE CONTAMINATION RISK: HIGH     ▓
+  PT: ▓ RISCO DE CONTAMINAÇÃO COGNITIVA: ALTO     ▓
+  ES: ▓ RIESGO DE CONTAMINACIÓN COGNITIVA: ALTO     ▓
+
+KEY: engine.commands.chat.connecting_to_secure_relay
+  EN: Connecting to secure relay...
+  PT: Conectando ao relay seguro...
+  ES: Conectando al relay seguro...
+
+KEY: engine.commands.chat.connection_authorized
+  EN: ...connection... authorized...
+  PT: ...conexão... autorizada...
+  ES: ...conexión... autorizada...
+
+KEY: engine.commands.chat.connection_established
+  EN: ...connection... established...
+  PT: ...conexão... estabelecida...
+  ES: ...conexión... establecida...
+
+KEY: engine.commands.chat.connection_terminated
+  EN: CONNECTION TERMINATED
+  PT: CONEXÃO ENCERRADA
+  ES: CONEXIÓN TERMINADA
+
+KEY: engine.commands.chat.connection_terminated_by_remote
+  EN: CONNECTION TERMINATED BY REMOTE
+  PT: CONEXÃO ENCERRADA REMOTAMENTE
+  ES: CONEXIÓN TERMINADA EN REMOTO
+
+KEY: engine.commands.chat.connection_unstable
+  EN: [CONNECTION UNSTABLE]
+  PT: [CONEXÃO INSTÁVEL]
+  ES: [CONEXIÓN INESTABLE]
+
+KEY: engine.commands.chat.consciousness_dispersing
+  EN: ...consciousness... dispersing...
+  PT: ...consciência... se dispersando...
+  ES: ...conciencia... dispersándose...
+
+KEY: engine.commands.chat.decryption_attempts_exhausted
+  EN: Decryption attempts exhausted.
+  PT: Tentativas de decifração esgotadas.
+  ES: Intentos de descifrado agotados.
+
+KEY: engine.commands.chat.decryption_failed
+  EN: DECRYPTION FAILED
+  PT: DESCRIPTOGRAFIA FALHOU
+  ES: DESCIFRADO FALLIDO
+
+KEY: engine.commands.chat.encrypted_relay_established
+  EN: ENCRYPTED RELAY ESTABLISHED
+  PT: RELAY CRIPTOGRAFADO ESTABELECIDO
+  ES: RELAY CIFRADO ESTABLECIDO
+
+KEY: engine.commands.chat.enter_authentication_phrase
+  EN: Enter authentication phrase:
+  PT: Digite a frase de autenticação:
+  ES: Introduce la frase de autenticación:
+
+KEY: engine.commands.chat.enter_your_deciphered_message
+  EN: Enter your deciphered message.
+  PT: Digite sua mensagem decifrada.
+  ES: Escribe tu mensaje descifrado.
+
+KEY: engine.commands.chat.error_no_pending_message_to_decipher
+  EN: ERROR: No pending message to decipher
+  PT: ERRO: Nenhuma mensagem pendente para decifrar
+  ES: ERROR: No hay mensaje pendiente por descifrar
+
+KEY: engine.commands.chat.firewall_already_silenced
+  EN: ...firewall... already... silenced...
+  PT: ...firewall... já... silenciado...
+  ES: ...firewall... ya... silenciado...
+
+KEY: engine.commands.chat.firewall_neutralized
+  EN: ▓▓▓ FIREWALL NEUTRALIZED ▓▓▓
+  PT: ▓▓▓ FIREWALL NEUTRALIZADO ▓▓▓
+  ES: ▓▓▓ FIREWALL NEUTRALIZADO ▓▓▓
+
+KEY: engine.commands.chat.incorrect
+  EN: INCORRECT
+  PT: INCORRETO
+  ES: INCORRECTO
+
+KEY: engine.commands.chat.initiating_firewall_countermeasure
+  EN: Initiating firewall countermeasure...
+  PT: Iniciando contramedida do firewall...
+  ES: Iniciando contramedida del firewall...
+
+KEY: engine.commands.chat.initiating_psi_comm_bridge
+  EN: Initiating psi-comm bridge...
+  PT: Iniciando ponte psi-comm...
+  ES: Iniciando puente psi-comm...
+
+KEY: engine.commands.chat.link_phrase
+  EN:   > link <phrase>
+  PT:   > link <phrase>
+  ES:   > link <phrase>
+
+KEY: engine.commands.chat.link_terminated_pattern_exhausted
+  EN: LINK TERMINATED — PATTERN EXHAUSTED
+  PT: LINK ENCERRADO — PADRÃO ESGOTADO
+  ES: ENLACE TERMINADO — PATRÓN AGOTADO
+
+KEY: engine.commands.chat.maximum_attempts_exceeded
+  EN: Maximum attempts exceeded.
+  PT: Número máximo de tentativas excedido.
+  ES: Se superó el número máximo de intentos.
+
+KEY: engine.commands.chat.message_already_deciphered_colheita
+  EN: Message already deciphered: COLHEITA
+  PT: Mensagem já decifrada: COLHEITA
+  ES: Mensaje ya descifrado: COLHEITA
+
+KEY: engine.commands.chat.message_deciphered
+  EN: ▓▓▓ MESSAGE DECIPHERED ▓▓▓
+  PT: ▓▓▓ MENSAGEM DECIFRADA ▓▓▓
+  ES: ▓▓▓ MENSAJE DESCIFRADO ▓▓▓
+
+KEY: engine.commands.chat.morse_code_entry_cancelled
+  EN: Morse code entry cancelled.
+  PT: Entrada de código morse cancelada.
+  ES: Entrada de código morse cancelada.
+
+KEY: engine.commands.chat.neural_bridge_active
+  EN: [NEURAL BRIDGE ACTIVE]
+  PT: [PONTE NEURAL ATIVA]
+  ES: [PUENTE NEURAL ACTIVO]
+
+KEY: engine.commands.chat.neural_bridge_unstable
+  EN: [NEURAL BRIDGE UNSTABLE]
+  PT: [PONTE NEURAL INSTÁVEL]
+  ES: [PUENTE NEURAL INESTABLE]
+
+KEY: engine.commands.chat.neural_infiltration_active
+  EN: ▓▓▓ NEURAL INFILTRATION ACTIVE ▓▓▓
+  PT: ▓▓▓ INFILTRAÇÃO NEURAL ATIVA ▓▓▓
+  ES: ▓▓▓ INFILTRACIÓN NEURAL ACTIVA ▓▓▓
+
+KEY: engine.commands.chat.neural_link_authentication_required
+  EN: ▓ NEURAL LINK AUTHENTICATION REQUIRED    ▓
+  PT: ▓ AUTENTICAÇÃO DE LINK NEURAL NECESSÁRIA    ▓
+  ES: ▓ SE REQUIERE AUTENTICACIÓN DEL ENLACE NEURAL    ▓
+
+KEY: engine.commands.chat.neural_link_established
+  EN: NEURAL LINK ESTABLISHED
+  PT: LINK NEURAL ESTABELECIDO
+  ES: ENLACE NEURAL ESTABLECIDO
+
+KEY: engine.commands.chat.neural_pattern_degraded
+  EN: ▓▓▓ NEURAL PATTERN DEGRADED ▓▓▓
+  PT: ▓▓▓ PADRÃO NEURAL DEGRADADO ▓▓▓
+  ES: ▓▓▓ PATRÓN NEURAL DEGRADADO ▓▓▓
+
+KEY: engine.commands.chat.neural_pattern_locked_conceptual_key_required
+  EN: Neural pattern locked. Conceptual key required.
+  PT: Padrão neural travado. Chave conceitual necessária.
+  ES: Patrón neural bloqueado. Se requiere clave conceptual.
+
+KEY: engine.commands.chat.no_morse_code_puzzle_active
+  EN: No morse code puzzle active.
+  PT: Nenhum quebra-cabeça de código morse está ativo.
+  ES: No hay un rompecabezas de código morse activo.
+
+KEY: engine.commands.chat.no_threat_detected
+  EN: ...no threat... detected...
+  PT: ...nenhuma ameaça... detectada...
+  ES: ...ninguna amenaza... detectada...
+
+KEY: engine.commands.chat.no_valid_neural_pattern_loaded
+  EN: NO VALID NEURAL PATTERN LOADED
+  PT: NENHUM PADRÃO NEURAL VÁLIDO CARREGADO
+  ES: NO HAY PATRÓN NEURAL VÁLIDO CARGADO
+
+KEY: engine.commands.chat.pattern_destabilizing
+  EN: [PATTERN DESTABILIZING]
+  PT: [PADRÃO DESESTABILIZANDO]
+  ES: [PATRÓN DESESTABILIZÁNDOSE]
+
+KEY: engine.commands.chat.pattern_fading
+  EN: ...pattern... fading...
+  PT: ...padrão... se apagando...
+  ES: ...patrón... desvaneciéndose...
+
+KEY: engine.commands.chat.pattern_rejects_wrong_concept
+  EN: ...pattern... rejects... wrong concept...
+  PT: ...o padrão... rejeita... conceito errado...
+  ES: ...el patrón... rechaza... concepto incorrecto...
+
+KEY: engine.commands.chat.prisoner_45_2026_don_t_forget
+  EN: PRISONER_45> 2026. Don't forget.
+  PT: PRISONER_45> 2026. Não esqueça.
+  ES: PRISONER_45> 2026. No lo olvides.
+
+KEY: engine.commands.chat.prisoner_45_connected
+  EN: PRISONER_45 connected
+  PT: PRISONER_45 conectado
+  ES: PRISONER_45 conectado
+
+KEY: engine.commands.chat.prisoner_45_i_don_t_know_how_long_we_have
+  EN: PRISONER_45> I don't know how long we have.
+  PT: PRISONER_45> Eu não sei quanto tempo temos.
+  ES: PRISONER_45> No sé cuánto tiempo tenemos.
+
+KEY: engine.commands.chat.prisoner_45_remember_what_i_told_you
+  EN: PRISONER_45> Remember what I told you.
+  PT: PRISONER_45> Lembre do que eu te disse.
+  ES: PRISONER_45> Recuerda lo que te dije.
+
+KEY: engine.commands.chat.prisoner_45_they_re_cutting_the_line
+  EN: PRISONER_45> They're cutting the line.
+  PT: PRISONER_45> Estão cortando a linha.
+  ES: PRISONER_45> Están cortando la línea.
+
+KEY: engine.commands.chat.prisoner_45_you_found_this_channel
+  EN: PRISONER_45> ...you found this channel.
+  PT: PRISONER_45> ...você encontrou este canal.
+  ES: PRISONER_45> ...encontraste este canal.
+
+KEY: engine.commands.chat.reaching_into_their_system
+  EN: ...reaching... into... their system...
+  PT: ...alcançando... o... sistema deles...
+  ES: ...penetrando... en... su sistema...
+
+KEY: engine.commands.chat.read_an_intercepted_signal_file_first
+  EN: Read an intercepted signal file first.
+  PT: Leia primeiro um arquivo de sinal interceptado.
+  ES: Lee primero un archivo de señal interceptada.
+
+KEY: engine.commands.chat.relay_node_offline
+  EN: RELAY NODE OFFLINE
+  PT: NÓ DE RELAY OFFLINE
+  ES: NODO DE RELAY OFFLINE
+
+KEY: engine.commands.chat.review_psi_comm_documentation_for_the_correct_key
+  EN: Review psi-comm documentation for the correct key.
+  PT: Revise a documentação psi-comm para encontrar a chave correta.
+  ES: Revisa la documentación psi-comm para encontrar la clave correcta.
+
+KEY: engine.commands.chat.the_eyes_close_permanently
+  EN: ...the eyes... close... permanently...
+  PT: ...os olhos... se fecham... para sempre...
+  ES: ...los ojos... se cierran... para siempre...
+
+KEY: engine.commands.chat.the_eyes_no_longer_watch
+  EN: ...the eyes... no longer... watch...
+  PT: ...os olhos... já não... observam...
+  ES: ...los ojos... ya no... observan...
+
+KEY: engine.commands.chat.the_firewall_sees_us_but_cannot
+  EN: ...the firewall... sees us... but cannot...
+  PT: ...o firewall... nos vê... mas não pode...
+  ES: ...el firewall... nos ve... pero no puede...
+
+KEY: engine.commands.chat.the_intercepted_message_was_colheita
+  EN: The intercepted message was: COLHEITA
+  PT: A mensagem interceptada era: COLHEITA
+  ES: El mensaje interceptado era: COLHEITA
+
+KEY: engine.commands.chat.the_neural_pattern_did_not_recognize_your_phrase
+  EN: The neural pattern did not recognize your phrase.
+  PT: O padrão neural não reconheceu sua frase.
+  ES: El patrón neural no reconoció tu frase.
+
+KEY: engine.commands.chat.the_pattern_recognizes
+  EN: ...the pattern... recognizes...
+  PT: ...o padrão... reconhece...
+  ES: ...el patrón... reconoce...
+
+KEY: engine.commands.chat.the_watchers_have_not_awakened
+  EN: ...the watchers... have not... awakened...
+  PT: ...os observadores... não... despertaram...
+  ES: ...los vigilantes... no... despertaron...
+
+KEY: engine.commands.chat.ufo74_check_the_psi_analysis_reports_the_key_is_conceptual
+  EN: [UFO74]: check the psi analysis reports. the key is conceptual.
+  PT: [UFO74]: confira os relatórios de análise psi. a chave é conceitual.
+  ES: [UFO74]: revisa los informes de análisis psi. la clave es conceptual.
+
+KEY: engine.commands.chat.ufo74_you_need_a_neural_pattern_first_check_quarantine_for_p
+  EN: [UFO74]: you need a neural pattern first. check quarantine for .psi files.
+  PT: [UFO74]: você precisa de um padrão neural primeiro. confira a quarentena por arquivos .psi.
+  ES: [UFO74]: primero necesitas un patrón neural. revisa cuarentena por archivos .psi.
+
+KEY: engine.commands.chat.usage_message_deciphered_text
+  EN: Usage: message <deciphered text>
+  PT: Uso: message <texto decifrado>
+  ES: Uso: message <texto descifrado>
+
+KEY: engine.commands.chat.use_chat_your_question
+  EN: Use: chat <your question>
+  PT: Use: chat <sua pergunta>
+  ES: Usa: chat <tu pregunta>
+
+KEY: engine.commands.chat.use_link_disarm_attempt_to_disable_firewall
+  EN: Use: link disarm       - Attempt to disable firewall
+  PT: Use: link disarm       - Tentar desativar o firewall
+  ES: Usa: link disarm       - Intentar desactivar el firewall
+
+KEY: engine.commands.chat.use_link_query_the_consciousness
+  EN: Use: link              - Query the consciousness
+  PT: Use: link              - Consultar a consciência
+  ES: Usa: link              - Consultar la consciencia
+
+KEY: engine.commands.chat.use_link_thought_or_question
+  EN: Use: link <thought or question>
+  PT: Use: link <pensamento ou pergunta>
+  ES: Usa: link <pensamiento o pregunta>
+
+KEY: engine.commands.chat.verifying_conceptual_key
+  EN: Verifying conceptual key...
+  PT: Verificando chave conceitual...
+  ES: Verificando clave conceptual...
+
+KEY: engine.commands.chat.warning_neural_pattern_link_active
+  EN: ▓ WARNING: NEURAL PATTERN LINK ACTIVE    ▓
+  PT: ▓ AVISO: LINK DE PADRÃO NEURAL ATIVO    ▓
+  ES: ▓ ADVERTENCIA: ENLACE DE PATRÓN NEURAL ACTIVO    ▓
+
+KEY: engine.commands.chat.we_are_older_than_their_code
+  EN: ...we are... older... than their code...
+  PT: ...somos... mais antigos... que o código deles...
+  ES: ...somos... más antiguos... que su código...
+
+KEY: engine.commands.chat.we_perceive_you
+  EN: ...we... perceive... you...
+  PT: ...nós... percebemos... você...
+  ES: ...nosotros... te percibimos...
+
+KEY: engine.commands.chat.we_were_watching
+  EN: ...we... were... watching...
+  PT: ...nós... estávamos... observando...
+  ES: ...nosotros... estábamos... observando...
+
+KEY: engine.commands.chat.you_are_hidden_for_now
+  EN: ...you are... hidden... for now...
+  PT: ...você está... escondido... por enquanto...
+  ES: ...estás... oculto... por ahora...
+
+KEY: engine.commands.chat.you_can_try_again_later_with_morse_message
+  EN: You can try again later with "morse <message>".
+  PT: Você pode tentar de novo depois com "morse <message>".
+  ES: Puedes volver a intentarlo más tarde con "morse <message>".
+
+KEY: engine.commands.chat.you_understand_the_directive
+  EN: ...you understand... the directive...
+  PT: ...você entende... a diretriz...
+  ES: ...entiendes... la directiva...
+
+KEY: engine.commands.chat.your_questions_imprecise_but_understood
+  EN: ...your questions... imprecise... but understood...
+  PT: ...suas perguntas... imprecisas... mas compreendidas...
+  ES: ...tus preguntas... imprecisas... pero comprendidas...
+
+KEY: engine.commands.combat.admin_7_files_high_priority
+  EN:   /admin/ — 7 files [HIGH PRIORITY]
+  PT:   /admin/ — 7 arquivos [ALTA PRIORIDADE]
+  ES:   /admin/ — 7 archivos [ALTA PRIORIDAD]
+
+KEY: engine.commands.combat.admin_high_priority
+  EN:   /admin/ — HIGH PRIORITY
+  PT:   /admin/ — ALTA PRIORIDADE
+  ES:   /admin/ — ALTA PRIORIDAD
+
+KEY: engine.commands.combat.authentication_accepted
+  EN: Authentication accepted.
+  PT: Autenticação aceita.
+  ES: Autenticación aceptada.
+
+KEY: engine.commands.combat.cognitive_extraction_7_2_billion_units
+  EN:   ...cognitive extraction: 7.2 billion units...
+  PT:   ...extração cognitiva: 7,2 bilhões de unidades...
+  ES:   ...extracción cognitiva: 7,2 mil millones de unidades...
+
+KEY: engine.commands.combat.comms_accessible
+  EN:   /comms/ — ACCESSIBLE
+  PT:   /comms/ — ACESSÍVEL
+  ES:   /comms/ — ACCESIBLE
+
+KEY: engine.commands.combat.comms_psi_2_files_signal
+  EN:   /comms/psi/ — 2 files [SIGNAL]
+  PT:   /comms/psi/ — 2 arquivos [SINAL]
+  ES:   /comms/psi/ — 2 archivos [SEÑAL]
+
+KEY: engine.commands.combat.critical_breach
+  EN: ▓▓▓ CRITICAL BREACH ▓▓▓
+  PT: ▓▓▓ VIOLAÇÃO CRÍTICA ▓▓▓
+  ES: ▓▓▓ BRECHA CRÍTICA ▓▓▓
+
+KEY: engine.commands.combat.emergency_buffer_dump_do_not_distribute
+  EN: EMERGENCY BUFFER DUMP — DO NOT DISTRIBUTE
+  PT: DESPEJO DE BUFFER DE EMERGÊNCIA — NÃO DISTRIBUIR
+  ES: VOLCADO DE BUFFER DE EMERGENCIA — NO DISTRIBUIR
+
+KEY: engine.commands.combat.harvest_cycle_confirmed
+  EN:   ...harvest cycle confirmed...
+  PT:   ...ciclo de colheita confirmado...
+  ES:   ...ciclo de cosecha confirmado...
+
+KEY: engine.commands.combat.immediate_shutdown
+  EN: IMMEDIATE SHUTDOWN
+  PT: ENCERRAMENTO IMEDIATO
+  ES: CIERRE INMEDIATO
+
+KEY: engine.commands.combat.initiating_protocol_override
+  EN: Initiating protocol override...
+  PT: Iniciando override de protocolo...
+  ES: Iniciando override de protocolo...
+
+KEY: engine.commands.combat.initiating_trace_protocol
+  EN: Initiating trace protocol...
+  PT: Iniciando protocolo de rastreio...
+  ES: Iniciando protocolo de rastreo...
+
+KEY: engine.commands.combat.invalid_authentication_code
+  EN: INVALID AUTHENTICATION CODE
+  PT: CÓDIGO DE AUTENTICAÇÃO INVÁLIDO
+  ES: CÓDIGO DE AUTENTICACIÓN INVÁLIDO
+
+KEY: engine.commands.combat.multiple_authentication_failures_detected
+  EN: MULTIPLE AUTHENTICATION FAILURES DETECTED
+  PT: MÚLTIPLAS FALHAS DE AUTENTICAÇÃO DETECTADAS
+  ES: SE DETECTARON MÚLTIPLES FALLOS DE AUTENTICACIÓN
+
+KEY: engine.commands.combat.no_intervention_possible
+  EN:   ...no intervention possible...
+  PT:   ...nenhuma intervenção possível...
+  ES:   ...no es posible intervenir...
+
+KEY: engine.commands.combat.notice_administrative_access_may_be_obtainable
+  EN: NOTICE: Administrative access may be obtainable.
+  PT: AVISO: O acesso administrativo pode ser obtido.
+  ES: AVISO: Puede ser posible obtener acceso administrativo.
+
+KEY: engine.commands.combat.notice_administrative_archive_access_granted
+  EN: NOTICE: Administrative archive access granted
+  PT: AVISO: Acesso ao arquivo administrativo concedido
+  ES: AVISO: Acceso administrativo al archivo concedido
+
+KEY: engine.commands.combat.notice_elevated_clearance_applied
+  EN: NOTICE: Elevated clearance applied
+  PT: AVISO: Credencial elevada aplicada
+  ES: AVISO: Se aplicó una autorización elevada
+
+KEY: engine.commands.combat.observation_terminates_upon_extraction
+  EN:   ...observation terminates upon extraction...
+  PT:   ...a observação termina com a extração...
+  ES:   ...la observación termina con la extracción...
+
+KEY: engine.commands.combat.ops_exo_2_files_elevated
+  EN:   /ops/exo/ — 2 files [ELEVATED]
+  PT:   /ops/exo/ — 2 arquivos [ELEVADO]
+  ES:   /ops/exo/ — 2 archivos [ELEVADO]
+
+KEY: engine.commands.combat.ops_partial
+  EN:   /ops/ — PARTIAL
+  PT:   /ops/ — PARCIAL
+  ES:   /ops/ — PARCIAL
+
+KEY: engine.commands.combat.ops_prato_1_file
+  EN:   /ops/prato/ — 1 file
+  PT:   /ops/prato/ — 1 arquivo
+  ES:   /ops/prato/ — 1 archivo
+
+KEY: engine.commands.combat.protocol_override_requires_authentication_code
+  EN: Protocol override requires authentication code.
+  PT: O override do protocolo exige um código de autenticação.
+  ES: El override del protocolo requiere un código de autenticación.
+
+KEY: engine.commands.combat.purge_protocol_initiated
+  EN: PURGE PROTOCOL INITIATED
+  PT: PROTOCOLO DE EXPURGO INICIADO
+  ES: PROTOCOLO DE PURGA INICIADO
+
+KEY: engine.commands.combat.recovered_fragment_origin_unknown_node
+  EN: RECOVERED FRAGMENT [ORIGIN: UNKNOWN NODE]:
+  PT: FRAGMENTO RECUPERADO [ORIGEM: NÓ DESCONHECIDO]:
+  ES: FRAGMENTO RECUPERADO [ORIGEN: NODO DESCONOCIDO]:
+
+KEY: engine.commands.combat.security_countermeasure_activated
+  EN: SECURITY COUNTERMEASURE ACTIVATED
+  PT: CONTRAMEDIDA DE SEGURANÇA ATIVADA
+  ES: CONTRAMEDIDA DE SEGURIDAD ACTIVADA
+
+KEY: engine.commands.combat.storage_accessible
+  EN:   /storage/ — ACCESSIBLE
+  PT:   /storage/ — ACESSÍVEL
+  ES:   /storage/ — ACCESIBLE
+
+KEY: engine.commands.combat.storage_assets_2_files
+  EN:   /storage/assets/ — 2 files
+  PT:   /storage/assets/ — 2 arquivos
+  ES:   /storage/assets/ — 2 archivos
+
+KEY: engine.commands.combat.storage_quarantine_3_files
+  EN:   /storage/quarantine/ — 3 files
+  PT:   /storage/quarantine/ — 3 arquivos
+  ES:   /storage/quarantine/ — 3 archivos
+
+KEY: engine.commands.combat.system_will_terminate_in_8_operations
+  EN: SYSTEM WILL TERMINATE IN 8 OPERATIONS
+  PT: O SISTEMA SERÁ ENCERRADO EM 8 OPERAÇÕES
+  ES: EL SISTEMA TERMINARÁ EN 8 OPERACIONES
+
+KEY: engine.commands.combat.trace_result
+  EN: TRACE RESULT:
+  PT: RESULTADO DO RASTREIO:
+  ES: RESULTADO DEL RASTREO:
+
+KEY: engine.commands.combat.ufo74_try_chat_theres_someone_in_the_system_who_knows_the_co
+  EN: [UFO74]: try "chat". theres someone in the system who knows the code.
+  PT: [UFO74]: tente "chat". tem alguém no sistema que conhece o código.
+  ES: [UFO74]: prueba "chat". hay alguien en el sistema que conoce el código.
+
+KEY: engine.commands.combat.usage_override_protocol_code
+  EN: Usage: override protocol <CODE>
+  PT: Uso: override protocol <CODE>
+  ES: Uso: override protocol <CODE>
+
+KEY: engine.commands.combat.warning_legacy_security_bypass_detected
+  EN: WARNING: Legacy security bypass detected
+  PT: AVISO: Bypass de segurança legado detectado
+  ES: ADVERTENCIA: Se detectó bypass de seguridad heredado
+
+KEY: engine.commands.combat.warning_session_heavily_monitored
+  EN: WARNING: Session heavily monitored
+  PT: AVISO: Sessão fortemente monitorada
+  ES: ADVERTENCIA: Sesión fuertemente monitoreada
+
+KEY: engine.commands.combat.warning_trace_logged_detection_increased
+  EN: WARNING: Trace logged. Detection increased.
+  PT: AVISO: Rastreamento registrado. Detecção aumentada.
+  ES: ADVERTENCIA: Rastreo registrado. Detección aumentada.
+
+KEY: engine.commands.combat.window_activation_imminent
+  EN:   ...window activation: IMMINENT...
+  PT:   ...ativação da janela: IMINENTE...
+  ES:   ...activación de la ventana: INMINENTE...
+
+KEY: engine.commands.combat.you_should_not_have_seen_this
+  EN: You should not have seen this.
+  PT: Você não deveria ter visto isso.
+  ES: No deberías haber visto esto.
+
+KEY: engine.commands.core.active_countermeasures_online
+  EN:   Active countermeasures online.
+  PT:   Contramedidas ativas online.
+  ES:   Contramedidas activas en línea.
+
+KEY: engine.commands.core.admin_flag_set
+  EN: ✓ Admin flag set
+  PT: ✓ Flag admin definida
+  ES: ✓ Flag admin fijada
+
+KEY: engine.commands.core.alien_preview_armed
+  EN: ═══ ALIEN PREVIEW ARMED ═══
+  PT: ═══ PRÉVIA ALIENÍGENA ARMADA ═══
+  ES: ═══ VISTA PREVIA ALIENÍGENA ARMADA ═══
+
+KEY: engine.commands.core.all_hidden_features_unlocked
+  EN: ═══ ALL HIDDEN FEATURES UNLOCKED ═══
+  PT: ═══ TODOS OS RECURSOS OCULTOS DESBLOQUEADOS ═══
+  ES: ═══ TODAS LAS FUNCIONES OCULTAS DESBLOQUEADAS ═══
+
+KEY: engine.commands.core.all_progress_cleared_reload_recommended
+  EN: All progress cleared. Reload recommended.
+  PT: Todo o progresso foi limpo. Recarregar é recomendado.
+  ES: Todo el progreso fue borrado. Se recomienda recargar.
+
+KEY: engine.commands.core.authentication_failed
+  EN: AUTHENTICATION FAILED
+  PT: AUTENTICAÇÃO FALHOU
+  ES: LA AUTENTICACIÓN FALLÓ
+
+KEY: engine.commands.core.available_commands
+  EN: Available commands:
+  PT: Comandos disponíveis:
+  ES: Comandos disponibles:
+
+KEY: engine.commands.core.blackout_transition_will_trigger_in_3_seconds
+  EN: Blackout transition will trigger in 3 seconds...
+  PT: A transição de apagão será acionada em 3 segundos...
+  ES: La transición de apagón se activará en 3 segundos...
+
+KEY: engine.commands.core.but_this_session_is_now_closed
+  EN:           But this session is now closed.
+  PT:           Mas esta sessão agora está encerrada.
+  ES:           Pero esta sesión ya está cerrada.
+
+KEY: engine.commands.core.careful_theyre_paying_attention_now
+  EN: >> careful. theyre paying attention now. <<
+  PT: >> cuidado. agora eles estão prestando atenção. <<
+  ES: >> cuidado. ahora sí te están mirando. <<
+
+KEY: engine.commands.core.countdown_activated
+  EN: ═══ COUNTDOWN ACTIVATED ═══
+  PT: ═══ CONTAGEM ATIVADA ═══
+  ES: ═══ CUENTA REGRESIVA ACTIVADA ═══
+
+KEY: engine.commands.core.countermeasures_locking_on
+  EN:   Countermeasures locking on.
+  PT:   Contramedidas fixando alvo.
+  ES:   Las contramedidas están fijando objetivo.
+
+KEY: engine.commands.core.critical_input_length_threshold_exceeded
+  EN: CRITICAL: INPUT LENGTH THRESHOLD EXCEEDED
+  PT: CRÍTICO: LIMITE DE COMPRIMENTO DE ENTRADA EXCEDIDO
+  ES: CRÍTICO: UMBRAL DE LONGITUD DE ENTRADA EXCEDIDO
+
+KEY: engine.commands.core.critical_security_threshold_exceeded
+  EN: CRITICAL: SECURITY THRESHOLD EXCEEDED
+  PT: CRÍTICO: LIMIAR DE SEGURANÇA EXCEDIDO
+  ES: CRÍTICO: UMBRAL DE SEGURIDAD EXCEDIDO
+
+KEY: engine.commands.core.decryption_cancelled
+  EN: Decryption cancelled.
+  PT: Descriptografia cancelada.
+  ES: Descifrado cancelado.
+
+KEY: engine.commands.core.decryption_unavailable_during_transmission
+  EN: Decryption unavailable during transmission.
+  PT: Descriptografia indisponível durante a transmissão.
+  ES: Descifrado no disponible durante la transmisión.
+
+KEY: engine.commands.core.detectionlevel_0
+  EN: detectionLevel = 0
+  PT: detectionLevel = 0
+  ES: detectionLevel = 0
+
+KEY: engine.commands.core.detectionlevel_70
+  EN: detectionLevel = 70
+  PT: detectionLevel = 70
+  ES: detectionLevel = 70
+
+KEY: engine.commands.core.doom_disabled
+  EN: ═══ DOOM DISABLED ═══
+  PT: ═══ CONTAGEM FATAL DESATIVADA ═══
+  ES: ═══ CUENTA REGRESIVA FATAL DESACTIVADA ═══
+
+KEY: engine.commands.core.emergency_type_hide_now_one_chance
+  EN: >> EMERGENCY. type "hide" NOW. one chance. <<
+  PT: >> EMERGÊNCIA. digite "hide" AGORA. uma chance. <<
+  ES: >> EMERGENCIA. escribe "hide" AHORA. una oportunidad. <<
+
+KEY: engine.commands.core.enter_answer_or_type_cancel_to_abort
+  EN: Enter answer or type "cancel" to abort:
+  PT: Digite a resposta ou "cancel" para abortar:
+  ES: Escribe la respuesta o "cancel" para abortar:
+
+KEY: engine.commands.core.error_input_too_long
+  EN: ERROR: INPUT TOO LONG
+  PT: ERRO: ENTRADA LONGA DEMAIS
+  ES: ERROR: ENTRADA DEMASIADO LARGA
+
+KEY: engine.commands.core.evidence_count_set_to_10_10
+  EN: Evidence count set to 10/10
+  PT: Contagem de evidências definida para 10/10
+  ES: Conteo de evidencia fijado en 10/10
+
+KEY: engine.commands.core.evidence_saved
+  EN: ═══ EVIDENCE SAVED ═══
+  PT: ═══ EVIDÊNCIA SALVA ═══
+  ES: ═══ EVIDENCIA GUARDADA ═══
+
+KEY: engine.commands.core.evidencessaved_true
+  EN: evidencesSaved = true
+  PT: evidencesSaved = true
+  ES: evidencesSaved = true
+
+KEY: engine.commands.core.forced_alien_silhouette_preview_active_for_12_seconds
+  EN: Forced alien silhouette preview active for 12 seconds.
+  PT: Prévia forçada da silhueta alienígena ativa por 12 segundos.
+  ES: Vista previa forzada de la silueta alienígena activa por 12 segundos.
+
+KEY: engine.commands.core.game_state_reset
+  EN: ═══ GAME STATE RESET ═══
+  PT: ═══ ESTADO DO JOGO RESETADO ═══
+  ES: ═══ ESTADO DEL JUEGO REINICIADO ═══
+
+KEY: engine.commands.core.game_status
+  EN: ═══ GAME STATUS ═══
+  PT: ═══ STATUS DO JOGO ═══
+  ES: ═══ ESTADO DEL JUEGO ═══
+
+KEY: engine.commands.core.god_alien_set_detection_to_70_and_force_alien_preview
+  EN: god alien     - Set detection to 70 and force alien preview
+  PT: god alien     - Define a detecção para 70 e força a prévia alienígena
+  ES: god alien     - Ajusta la detección a 70 y fuerza la vista previa alienígena
+
+KEY: engine.commands.core.god_alien_set_risk_to_70_and_force_alien_preview
+  EN:   god alien    - Set risk to 70 and force alien preview
+  PT:   god alien    - Define o risco para 70 e força a prévia alienígena
+  ES:   god alien    - Ajusta el riesgo a 70 y fuerza la vista previa alienígena
+
+KEY: engine.commands.core.god_bad_jump_to_bad_ending_caught
+  EN: god bad       - Jump to bad ending (caught)
+  PT: god bad       - Pula para o final ruim (capturado)
+  ES: god bad       - Salta al final malo (capturado)
+
+KEY: engine.commands.core.god_countdown_start_2_minute_countdown
+  EN: god countdown - Start 2-minute countdown
+  PT: god countdown - Inicia contagem de 2 minutos
+  ES: god countdown - Inicia una cuenta regresiva de 2 minutos
+
+KEY: engine.commands.core.god_doom_disable_doom_countdown
+  EN: god doom      - Disable doom countdown
+  PT: god doom      - Desativa a contagem fatal
+  ES: god doom      - Desactiva la cuenta regresiva fatal
+
+KEY: engine.commands.core.god_evidence_discover_all_5_evidence_pieces
+  EN: god evidence  - Discover all 10 evidence pieces
+  PT: god evidence  - Descobre as 5 peças de evidência
+  ES: god evidence  - Descubre las 5 piezas de evidencia
+
+KEY: engine.commands.core.god_evidence_unlock_all_5_evidence_pieces
+  EN:   god evidence - Unlock all 10 evidence pieces
+  PT:   god evidence - Desbloqueia as 5 peças de evidência
+  ES:   god evidence - Desbloquea las 5 piezas de evidencia
+
+KEY: engine.commands.core.god_help_show_all_god_mode_commands
+  EN:   god help     - Show all god mode commands
+  PT:   god help     - Mostra todos os comandos do modo god
+  ES:   god help     - Muestra todos los comandos del modo god
+
+KEY: engine.commands.core.god_help_show_this_help
+  EN: god help      - Show this help
+  PT: god help      - Mostra esta ajuda
+  ES: god help      - Muestra esta ayuda
+
+KEY: engine.commands.core.god_icq_jump_directly_to_icq_phase
+  EN: god icq       - Jump directly to ICQ phase
+  PT: god icq       - Pula direto para a fase ICQ
+  ES: god icq       - Salta directo a la fase de ICQ
+
+KEY: engine.commands.core.god_icq_jump_to_icq_phase
+  EN:   god icq      - Jump to ICQ phase
+  PT:   god icq      - Pula para a fase ICQ
+  ES:   god icq      - Salta a la fase de ICQ
+
+KEY: engine.commands.core.god_mode_activated
+  EN: ▓▓▓ GOD MODE ACTIVATED ▓▓▓
+  PT: ▓▓▓ MODO GOD ATIVADO ▓▓▓
+  ES: ▓▓▓ MODO GOD ACTIVADO ▓▓▓
+
+KEY: engine.commands.core.god_mode_commands
+  EN: ═══ GOD MODE COMMANDS ═══
+  PT: ═══ COMANDOS DO MODO GOD ═══
+  ES: ═══ COMANDOS DEL MODO GOD ═══
+
+KEY: engine.commands.core.god_mode_deactivated
+  EN: ▓▓▓ GOD MODE DEACTIVATED ▓▓▓
+  PT: ▓▓▓ MODO GOD DESATIVADO ▓▓▓
+  ES: ▓▓▓ MODO GOD DESACTIVADO ▓▓▓
+
+KEY: engine.commands.core.god_neutral_jump_to_neutral_ending_escaped
+  EN: god neutral   - Jump to neutral ending (escaped)
+  PT: god neutral   - Pula para o final neutro (fugiu)
+  ES: god neutral   - Salta al final neutral (escapó)
+
+KEY: engine.commands.core.god_reset_reset_game_state
+  EN:   god reset    - Reset game state
+  PT:   god reset    - Reseta o estado do jogo
+  ES:   god reset    - Reinicia el estado del juego
+
+KEY: engine.commands.core.god_reset_reset_to_fresh_game_state
+  EN: god reset     - Reset to fresh game state
+  PT: god reset     - Reseta para um estado novo de jogo
+  ES: god reset     - Reinicia a un estado nuevo del juego
+
+KEY: engine.commands.core.god_save_set_evidencessaved_flag_triggers_blackout
+  EN: god save      - Set evidencesSaved flag (triggers blackout)
+  PT: god save      - Define a flag evidencesSaved (aciona apagão)
+  ES: god save      - Fija la bandera evidencesSaved (activa el apagón)
+
+KEY: engine.commands.core.god_save_trigger_evidence_saved_blackout
+  EN:   god save     - Trigger evidence saved (→ blackout)
+  PT:   god save     - Aciona evidência salva (→ apagão)
+  ES:   god save     - Activa evidencia guardada (→ apagón)
+
+KEY: engine.commands.core.god_secret_jump_to_secret_ending_ufo74_identity
+  EN: god secret    - Jump to secret ending (UFO74 identity)
+  PT: god secret    - Pula para o final secreto (identidade do UFO74)
+  ES: god secret    - Salta al final secreto (identidad de UFO74)
+
+KEY: engine.commands.core.god_stable_set_stability_to_100_detection_to_0
+  EN: god stable    - Set stability to 100, detection to 0
+  PT: god stable    - Define a estabilidade para 100 e a detecção para 0
+  ES: god stable    - Ajusta la estabilidad a 100 y la detección a 0
+
+KEY: engine.commands.core.god_status_show_current_game_flags
+  EN: god status    - Show current game flags
+  PT: god status    - Mostra as flags atuais do jogo
+  ES: god status    - Muestra las flags actuales del juego
+
+KEY: engine.commands.core.god_status_show_current_game_state
+  EN:   god status   - Show current game state
+  PT:   god status   - Mostra o estado atual do jogo
+  ES:   god status   - Muestra el estado actual del juego
+
+KEY: engine.commands.core.god_unlock_unlock_hidden_commands_passwords
+  EN: god unlock    - Unlock hidden commands & passwords
+  PT: god unlock    - Desbloqueia comandos e senhas ocultos
+  ES: god unlock    - Desbloquea comandos y contraseñas ocultos
+
+KEY: engine.commands.core.god_victory_jump_directly_to_victory_screen
+  EN: god victory   - Jump directly to victory screen
+  PT: god victory   - Pula direto para a tela de vitória
+  ES: god victory   - Salta directo a la pantalla de victoria
+
+KEY: engine.commands.core.god_victory_jump_to_victory_screen
+  EN:   god victory  - Jump to victory screen
+  PT:   god victory  - Pula para a tela de vitória
+  ES:   god victory  - Salta a la pantalla de victoria
+
+KEY: engine.commands.core.hidden_commands_disconnect_scan_decode
+  EN: ✓ Hidden commands: disconnect, scan, decode
+  PT: ✓ Comandos ocultos: disconnect, scan, decode
+  ES: ✓ Comandos ocultos: disconnect, scan, decode
+
+KEY: engine.commands.core.intrusion_detected
+  EN:   INTRUSION DETECTED
+  PT:   INTRUSÃO DETECTADA
+  ES:   INTRUSIÓN DETECTADA
+
+KEY: engine.commands.core.jumping_to_bad_ending
+  EN: ═══ JUMPING TO BAD ENDING ═══
+  PT: ═══ PULANDO PARA O FINAL RUIM ═══
+  ES: ═══ SALTANDO AL FINAL MALO ═══
+
+KEY: engine.commands.core.jumping_to_icq_phase
+  EN: ═══ JUMPING TO ICQ PHASE ═══
+  PT: ═══ PULANDO PARA A FASE ICQ ═══
+  ES: ═══ SALTANDO A LA FASE DE ICQ ═══
+
+KEY: engine.commands.core.jumping_to_neutral_ending
+  EN: ═══ JUMPING TO NEUTRAL ENDING ═══
+  PT: ═══ PULANDO PARA O FINAL NEUTRO ═══
+  ES: ═══ SALTANDO AL FINAL NEUTRAL ═══
+
+KEY: engine.commands.core.jumping_to_secret_ending
+  EN: ═══ JUMPING TO SECRET ENDING ═══
+  PT: ═══ PULANDO PARA O FINAL SECRETO ═══
+  ES: ═══ SALTANDO AL FINAL SECRETO ═══
+
+KEY: engine.commands.core.jumping_to_victory
+  EN: ═══ JUMPING TO VICTORY ═══
+  PT: ═══ PULANDO PARA A VITÓRIA ═══
+  ES: ═══ SALTANDO A LA VICTORIA ═══
+
+KEY: engine.commands.core.leak_path_ready_use_leak_or_run_save_evidence_sh
+  EN: Leak path ready — use "leak" or run "save_evidence.sh".
+  PT: Caminho de vazamento pronto — use "leak" ou execute "save_evidence.sh".
+  ES: Ruta de filtración lista — usa "leak" o ejecuta "save_evidence.sh".
+
+KEY: engine.commands.core.no_further_commands_accepted
+  EN: NO FURTHER COMMANDS ACCEPTED
+  PT: NENHUM OUTRO COMANDO SERÁ ACEITO
+  ES: NO SE ACEPTAN MÁS COMANDOS
+
+KEY: engine.commands.core.override_protocol_unavailable_during_transmission
+  EN: Override protocol unavailable during transmission.
+  PT: Protocolo de override indisponível durante a transmissão.
+  ES: El protocolo de override no está disponible durante la transmisión.
+
+KEY: engine.commands.core.password_found_varginha1996
+  EN: ✓ Password found: varginha1996
+  PT: ✓ Senha encontrada: varginha1996
+  ES: ✓ Contraseña encontrada: varginha1996
+
+KEY: engine.commands.core.purge_protocol_complete
+  EN:                     PURGE PROTOCOL COMPLETE
+  PT:                     PROTOCOLO DE EXPURGO CONCLUÍDO
+  ES:                     PROTOCOLO DE PURGA COMPLETADO
+
+KEY: engine.commands.core.security_protocols_have_been_dispatched
+  EN:   Security protocols have been dispatched.
+  PT:   Protocolos de segurança foram acionados.
+  ES:   Se han desplegado protocolos de seguridad.
+
+KEY: engine.commands.core.session_terminated
+  EN:   >> SESSION TERMINATED <<
+  PT:   >> SESSÃO ENCERRADA <<
+  ES:   >> SESIÓN TERMINADA <<
+
+KEY: engine.commands.core.session_terminated_by_security_protocol
+  EN:   Session terminated by security protocol.
+  PT:   Sessão encerrada pelo protocolo de segurança.
+  ES:   Sesión terminada por protocolo de seguridad.
+
+KEY: engine.commands.core.sessiondoomcountdown_0
+  EN: sessionDoomCountdown = 0
+  PT: sessionDoomCountdown = 0
+  ES: sessionDoomCountdown = 0
+
+KEY: engine.commands.core.sessionstability_100
+  EN: sessionStability = 100
+  PT: sessionStability = 100
+  ES: sessionStability = 100
+
+KEY: engine.commands.core.stability_maxed
+  EN: ═══ STABILITY MAXED ═══
+  PT: ═══ ESTABILIDADE NO MÁXIMO ═══
+  ES: ═══ ESTABILIDAD AL MÁXIMO ═══
+
+KEY: engine.commands.core.status_alert
+  EN:   STATUS: ALERT
+  PT:   STATUS: ALERTA
+  ES:   ESTADO: ALERTA
+
+KEY: engine.commands.core.status_critical
+  EN:   STATUS: CRITICAL
+  PT:   STATUS: CRÍTICO
+  ES:   ESTADO: CRÍTICO
+
+KEY: engine.commands.core.status_imminent_detection
+  EN:   STATUS: IMMINENT DETECTION
+  PT:   STATUS: DETECÇÃO IMINENTE
+  ES:   ESTADO: DETECCIÓN INMINENTE
+
+KEY: engine.commands.core.status_suspicious
+  EN:   STATUS: SUSPICIOUS
+  PT:   STATUS: SUSPEITO
+  ES:   ESTADO: SOSPECHOSO
+
+KEY: engine.commands.core.stop_youre_about_to_get_burned
+  EN: >> STOP. youre about to get burned. <<
+  PT: >> PARA. você está prestes a se queimar. <<
+  ES: >> ALTO. estás a punto de quemarte. <<
+
+KEY: engine.commands.core.system_lockdown
+  EN: SYSTEM LOCKDOWN
+  PT: BLOQUEIO DO SISTEMA
+  ES: BLOQUEO DEL SISTEMA
+
+KEY: engine.commands.core.system_monitoring_increased
+  EN:   System monitoring increased.
+  PT:   Monitoramento do sistema ampliado.
+  ES:   Se incrementó el monitoreo del sistema.
+
+KEY: engine.commands.core.terminal_lockout
+  EN:   TERMINAL LOCKOUT
+  PT:   BLOQUEIO DO TERMINAL
+  ES:   BLOQUEO DEL TERMINAL
+
+KEY: engine.commands.core.terminal_will_transition_to_icq_chat
+  EN: Terminal will transition to ICQ chat...
+  PT: O terminal vai passar para o chat ICQ...
+  ES: El terminal pasará al chat de ICQ...
+
+KEY: engine.commands.core.terriblemistaketriggered_false
+  EN: terribleMistakeTriggered = false
+  PT: terribleMistakeTriggered = false
+  ES: terribleMistakeTriggered = false
+
+KEY: engine.commands.core.the_knowledge_is_yours_to_keep
+  EN:           The knowledge is yours to keep.
+  PT:           O conhecimento agora é seu para carregar.
+  ES:           El conocimiento ahora es tuyo para cargarlo.
+
+KEY: engine.commands.core.too_many_failed_authentication_attempts
+  EN:   Too many failed authentication attempts.
+  PT:   Tentativas de autenticação falharam vezes demais.
+  ES:   Demasiados intentos fallidos de autenticación.
+
+KEY: engine.commands.core.trace_protocols_active
+  EN:   Trace protocols active.
+  PT:   Protocolos de rastreio ativos.
+  ES:   Protocolos de rastreo activos.
+
+KEY: engine.commands.core.trace_spike_active
+  EN: [TRACE SPIKE ACTIVE]
+  PT: [PICO DE RASTREIO ATIVO]
+  ES: [PICO DE RASTREO ACTIVO]
+
+KEY: engine.commands.core.type_god_help_for_available_commands
+  EN: Type "god help" for available commands.
+  PT: Digite "god help" para ver os comandos disponíveis.
+  ES: Escribe "god help" para ver los comandos disponibles.
+
+KEY: engine.commands.core.type_iddqd_again_to_deactivate
+  EN: Type "iddqd" again to deactivate.
+  PT: Digite "iddqd" novamente para desativar.
+  ES: Escribe "iddqd" otra vez para desactivar.
+
+KEY: engine.commands.core.type_iddqd_to_toggle_god_mode_off
+  EN: Type "iddqd" to toggle god mode off.
+  PT: Digite "iddqd" para desligar o modo god.
+  ES: Escribe "iddqd" para apagar el modo god.
+
+KEY: engine.commands.core.ufo74_careful_too_many_mistakes_and_theyll_lock_you_out
+  EN: UFO74: careful. too many mistakes and theyll lock you out.
+  PT: UFO74: cuidado. erros demais e eles vão te bloquear.
+  ES: UFO74: cuidado. demasiados errores y te van a bloquear.
+
+KEY: engine.commands.core.ufo74_hey_careful_to_go_back_use_cd_with_a_space_after_cd
+  EN: [UFO74]: hey careful, to go back use cd .. (with a space after cd)
+  PT: [UFO74]: ei, cuidado, para voltar use cd .. (com um espaço depois de cd)
+  ES: [UFO74]: ey, cuidado, para volver usa cd .. (con un espacio después de cd)
+
+KEY: engine.commands.core.ufo74_hey_kid_risk_is_getting_too_high
+  EN: UFO74: hey kid, risk is getting too high.
+  PT: UFO74: ei, kid, o risco está ficando alto demais.
+  ES: UFO74: ey, kid, el riesgo se está poniendo demasiado alto.
+
+KEY: engine.commands.core.ufo74_hey_kid_youre_fumbling_let_me_help
+  EN: UFO74: hey kid, youre fumbling. let me help.
+  PT: UFO74: ei, kid, você está se atrapalhando. deixa eu ajudar.
+  ES: UFO74: ey, kid, te estás trabando. déjame ayudarte.
+
+KEY: engine.commands.core.ufo74_press_esc_to_exit_or_type_save_first_if_you_want_to_ke
+  EN: [UFO74]: press [ESC] to exit. use the pause menu if you want to save your progress first.
+  PT: [UFO74]: pressione [ESC] para sair. use o menu de pausa se quiser salvar seu progresso antes.
+  ES: [UFO74]: presiona [ESC] para salir. usa el menú de pausa si quieres guardar tu progreso primero.
+
+KEY: engine.commands.core.ufo74_try_ls_to_list_directory_contents
+  EN: [UFO74]: try "ls" to list directory contents.
+  PT: [UFO74]: tente "ls" para listar o conteúdo do diretório.
+  ES: [UFO74]: prueba "ls" para listar el contenido del directorio.
+
+KEY: engine.commands.core.ufo74_try_status_or_help_kid
+  EN: [UFO74]: try "status" or "help" kid.
+  PT: [UFO74]: tente "status" ou "help", kid.
+  ES: [UFO74]: prueba "status" o "help", kid.
+
+KEY: engine.commands.core.ufo74_try_these_ls_to_see_files_cd_dir_to_move_open_file_to_
+  EN: UFO74: try these: "ls" to see files, "cd <dir>" to move, "open <file>" to read.
+  PT: UFO74: tenta isso: "ls" pra ver arquivos, "cd <dir>" pra se mover, "open <file>" pra ler.
+  ES: UFO74: prueba esto: "ls" para ver archivos, "cd <dir>" para moverte, "open <file>" para leer.
+
+KEY: engine.commands.core.ufo74_type_help_if_youre_lost
+  EN: UFO74: type "help" if youre lost.
+  PT: UFO74: digita "help" se estiver perdido.
+  ES: UFO74: escribe "help" si estás perdido.
+
+KEY: engine.commands.core.ufo74_type_help_to_see_what_you_can_do
+  EN: [UFO74]: type "help" to see what you can do.
+  PT: [UFO74]: digite "help" para ver o que você pode fazer.
+  ES: [UFO74]: escribe "help" para ver lo que puedes hacer.
+
+KEY: engine.commands.core.ufo74_use_cd_to_go_to_parent_directory
+  EN: [UFO74]: use "cd .." to go to parent directory.
+  PT: [UFO74]: use "cd .." para ir ao diretório pai.
+  ES: [UFO74]: usa "cd .." para ir al directorio padre.
+
+KEY: engine.commands.core.ufo74_use_wait_to_lay_low_and_bring_the_risk_down
+  EN: UFO74: use "wait" to lay low and bring the risk down.
+  PT: UFO74: use "wait" para baixar a cabeça e reduzir o risco.
+  ES: UFO74: usa "wait" para bajar la cabeza y reducir el riesgo.
+
+KEY: engine.commands.core.ufo74_you_need_the_override_protocol_for_that_dangerous_stuf
+  EN: [UFO74]: you need the override protocol for that. dangerous stuff.
+  PT: [UFO74]: você precisa do protocolo de override para isso. coisa perigosa.
+  ES: [UFO74]: necesitas el protocolo de override para eso. material peligroso.
+
+KEY: engine.commands.core.use_god_save_to_trigger_the_blackout_phase_instead
+  EN: Use "god save" to trigger the blackout phase instead.
+  PT: Use "god save" para acionar a fase de apagão em vez disso.
+  ES: Usa "god save" para activar la fase de apagón en su lugar.
+
+KEY: engine.commands.core.use_wait_to_lay_low_you_have_limited_uses
+  EN: >> use "wait" to lay low. you have limited uses. <<
+  PT: >> use "wait" para baixar a cabeça. você tem usos limitados. <<
+  ES: >> usa "wait" para agacharte. tienes usos limitados. <<
+
+KEY: engine.commands.core.you_have_2_minutes_before_they_trace_you
+  EN: You have 2 minutes before they trace you.
+  PT: Você tem 2 minutos antes que rastreiem você.
+  ES: Tienes 2 minutos antes de que te rastreen.
+
+KEY: engine.commands.core.you_saw_what_you_should_not_have_seen
+  EN:           You saw what you should not have seen.
+  PT:           Você viu o que não deveria ter visto.
+  ES:           Viste lo que no debías haber visto.
+
+KEY: engine.commands.core.your_connection_has_been_traced
+  EN:   Your connection has been traced.
+  PT:   Sua conexão foi rastreada.
+  ES:   Tu conexión ha sido rastreada.
+
+KEY: engine.commands.evidence.all_ten_must_be_confirmed_before
+  EN:   All ten must be confirmed before
+  PT:   Todas as dez precisam ser confirmadas antes
+  ES:   Las diez deben confirmarse antes
+
+KEY: engine.commands.evidence.channel_open
+  EN:   Channel open.
+  PT:   Canal aberto.
+  ES:   Canal abierto.
+
+KEY: engine.commands.evidence.compiling_evidence_package
+  EN:   Compiling evidence package...
+  PT:   Compilando pacote de evidências...
+  ES:   Compilando paquete de evidencia...
+
+KEY: engine.commands.evidence.encrypting_for_distribution
+  EN:   Encrypting for distribution...
+  PT:   Criptografando para distribuição...
+  ES:   Cifrando para distribuir...
+
+KEY: engine.commands.evidence.leak_blocked_insufficient_evidence
+  EN: LEAK BLOCKED — INSUFFICIENT EVIDENCE
+  PT: VAZAMENTO BLOQUEADO — EVIDÊNCIA INSUFICIENTE
+  ES: FILTRACIÓN BLOQUEADA — EVIDENCIA INSUFICIENTE
+
+KEY: engine.commands.evidence.leak_transmission_initiated
+  EN:   LEAK TRANSMISSION INITIATED
+  PT:   TRANSMISSÃO DE VAZAMENTO INICIADA
+  ES:   TRANSMISIÓN DE FILTRACIÓN INICIADA
+
+KEY: engine.commands.evidence.someone_wants_to_talk_to_you
+  EN:          someone wants to talk to you.
+  PT:          alguém quer falar com você.
+  ES:          alguien quiere hablar contigo.
+
+KEY: engine.commands.evidence.the_leak_channel_can_be_opened
+  EN:   the leak channel can be opened.
+  PT:   de que o canal de vazamento possa ser aberto.
+  ES:   de que el canal de filtración pueda abrirse.
+
+KEY: engine.commands.evidence.transmission_successful
+  EN:   TRANSMISSION SUCCESSFUL.
+  PT:   TRANSMISSÃO BEM-SUCEDIDA.
+  ES:   TRANSMISIÓN EXITOSA.

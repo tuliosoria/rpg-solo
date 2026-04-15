@@ -1,0 +1,1849 @@
+KEY: menu.load.progress
+  EN: Progress
+  PT: Progresso
+  ES: Progreso
+
+KEY: menu.load.risk
+  EN: Risk
+  PT: Risco
+  ES: Riesgo
+
+KEY: menu.load.title
+  EN: SAVED SESSIONS
+  PT: SESSÕES SALVAS
+  ES: SESIONES GUARDADAS
+
+KEY: menu.main.credits
+  EN: [ CREDITS ]
+  PT: [ CRÉDITOS ]
+  ES: [ CRÉDITOS ]
+
+KEY: menu.main.keyHint
+  EN: ↑↓ Navigate • Enter Select
+  PT: ↑↓ Navegar • Enter Selecionar
+  ES: ↑↓ Navegar • Enter Seleccionar
+
+KEY: menu.main.loadGame
+  EN: [ LOAD GAME ]
+  PT: [ CARREGAR JOGO ]
+  ES: [ CARGAR PARTIDA ]
+
+KEY: menu.main.newGame
+  EN: [ NEW GAME ]
+  PT: [ NOVO JOGO ]
+  ES: [ NUEVA PARTIDA ]
+
+KEY: menu.main.options
+  EN: [ OPTIONS ]
+  PT: [ OPÇÕES ]
+  ES: [ OPCIONES ]
+
+KEY: menu.main.sessionLogging
+  EN: Session logging enabled
+  PT: Registro de sessão ativado
+  ES: Registro de sesión habilitado
+
+KEY: menu.main.warningUnauthorized
+  EN: WARNING: Unauthorized access is monitored
+  PT: AVISO: acesso não autorizado é monitorado
+  ES: ADVERTENCIA: el acceso no autorizado está siendo monitoreado
+
+KEY: menu.options.ambientSound
+  EN: Ambient Sound
+  PT: Som ambiente
+  ES: Sonido ambiental
+
+KEY: menu.options.audio
+  EN: [ AUDIO ]
+  PT: [ ÁUDIO ]
+  ES: [ AUDIO ]
+
+KEY: menu.options.back
+  EN: [ BACK ]
+  PT: [ VOLTAR ]
+  ES: [ VOLVER ]
+
+KEY: menu.options.crtEffects
+  EN: CRT Effects
+  PT: Efeitos CRT
+  ES: Efectos CRT
+
+KEY: menu.options.flickerIntensity
+  EN: Flicker Intensity
+  PT: Intensidade da tremulação
+  ES: Intensidad del parpadeo
+
+KEY: menu.options.fontSize
+  EN: Font Size
+  PT: Tamanho da fonte
+  ES: Tamaño de fuente
+
+KEY: menu.options.keyHint
+  EN: ↑↓ Navigate • Enter/Click Toggle • Esc Back
+  PT: ↑↓ Navegar • Enter/Clique Alternar • Esc Voltar
+  ES: ↑↓ Navegar • Enter/Clic Alternar • Esc Volver
+
+KEY: menu.options.language
+  EN: Language
+  PT: Idioma
+  ES: Idioma
+
+KEY: menu.options.masterVolume
+  EN: Master Volume
+  PT: Volume geral
+  ES: Volumen maestro
+
+KEY: menu.options.screenFlicker
+  EN: Screen Flicker
+  PT: Tremulação de tela
+  ES: Parpadeo de pantalla
+
+KEY: menu.options.soundEffects
+  EN: Sound Effects
+  PT: Efeitos sonoros
+  ES: Efectos de sonido
+
+KEY: menu.options.textSpeed
+  EN: Text Speed
+  PT: Velocidade do texto
+  ES: Velocidad del texto
+
+KEY: menu.options.title
+  EN: OPTIONS
+  PT: OPÇÕES
+  ES: OPCIONES
+
+KEY: menu.options.turingVoice
+  EN: Turing Test Voice
+  PT: Voz do teste de Turing
+  ES: Voz de la prueba de Turing
+
+KEY: menu.options.visual
+  EN: [ VISUAL ]
+  PT: [ VISUAL ]
+  ES: [ VISUAL ]
+
+KEY: meta.description
+  EN: A terminal horror puzzle set during the 1996 Varginha incident. Explore a classified Brazilian intelligence system and uncover the hidden truths before detection catches up.
+  PT: Um puzzle de horror em terminal ambientado durante o incidente de Varginha em 1996. Explore um sistema classificado da inteligência brasileira e descubra as verdades ocultas antes que a detecção alcance você.
+  ES: Un puzzle de horror en terminal ambientado durante el incidente de Varginha de 1996. Explora un sistema clasificado de inteligencia brasileña y descubre las verdades ocultas antes de que la detección te alcance.
+
+KEY: meta.title
+  EN: Varginha: Terminal 1996
+  PT: Varginha: Terminal 1996
+  ES: Varginha: Terminal 1996
+
+KEY: options.value.fast
+  EN: FAST
+  PT: RÁPIDO
+  ES: RÁPIDO
+
+KEY: options.value.high
+  EN: HIGH
+  PT: ALTO
+  ES: ALTO
+
+KEY: options.value.instant
+  EN: INSTANT
+  PT: INSTANTÂNEO
+  ES: INSTANTÁNEO
+
+KEY: options.value.large
+  EN: LARGE
+  PT: GRANDE
+  ES: GRANDE
+
+KEY: options.value.low
+  EN: LOW
+  PT: BAIXO
+  ES: BAJO
+
+KEY: options.value.medium
+  EN: MEDIUM
+  PT: MÉDIO
+  ES: MEDIO
+
+KEY: options.value.normal
+  EN: NORMAL
+  PT: NORMAL
+  ES: NORMAL
+
+KEY: options.value.off
+  EN: OFF
+  PT: DESLIGADO
+  ES: DESACTIVADO
+
+KEY: options.value.on
+  EN: ON
+  PT: LIGADO
+  ES: ACTIVADO
+
+KEY: options.value.slow
+  EN: SLOW
+  PT: LENTO
+  ES: LENTO
+
+KEY: options.value.small
+  EN: SMALL
+  PT: PEQUENO
+  ES: PEQUEÑO
+
+KEY: pause.confirm.hint
+  EN: ↑↓ Navigate • Enter Select • Esc Cancel
+  PT: ↑↓ Navegar • Enter Selecionar • Esc Cancelar
+  ES: ↑↓ Navegar • Enter Seleccionar • Esc Cancelar
+
+KEY: pause.confirm.no
+  EN: NO, CONTINUE
+  PT: NÃO, CONTINUAR
+  ES: NO, CONTINUAR
+
+KEY: pause.confirm.title
+  EN: EXIT TO MENU?
+  PT: SAIR PARA O MENU?
+  ES: ¿SALIR AL MENÚ?
+
+KEY: pause.confirm.warning
+  EN: Unsaved progress will be lost.
+  PT: Progresso não salvo será perdido.
+  ES: Se perderá el progreso no guardado.
+
+KEY: pause.confirm.yes
+  EN: YES, EXIT
+  PT: SIM, SAIR
+  ES: SÍ, SALIR
+
+KEY: pause.exit
+  EN: EXIT TO MENU
+  PT: SAIR PARA O MENU
+  ES: SALIR AL MENÚ
+
+KEY: pause.hint
+  EN: ↑↓ Navigate • Enter Select • Esc Resume
+  PT: ↑↓ Navegar • Enter Selecionar • Esc Continuar
+  ES: ↑↓ Navegar • Enter Seleccionar • Esc Reanudar
+
+KEY: pause.load
+  EN: LOAD CHECKPOINT
+  PT: CARREGAR CHECKPOINT
+  ES: CARGAR CHECKPOINT
+
+KEY: pause.loadConfirm.title
+  EN: LOAD CHECKPOINT?
+  PT: CARREGAR CHECKPOINT?
+  ES: ¿CARGAR CHECKPOINT?
+
+KEY: pause.loadConfirm.yes
+  EN: YES, LOAD
+  PT: SIM, CARREGAR
+  ES: SÍ, CARGAR
+
+KEY: pause.resume
+  EN: RESUME GAME
+  PT: CONTINUAR JOGO
+  ES: REANUDAR PARTIDA
+
+KEY: pause.save
+  EN: SAVE SESSION
+  PT: SALVAR SESSÃO
+  ES: GUARDAR SESIÓN
+
+KEY: pause.settings
+  EN: SETTINGS
+  PT: CONFIGURAÇÕES
+  ES: CONFIGURACIÓN
+
+KEY: pause.title
+  EN: PAUSED
+  PT: PAUSADO
+  ES: PAUSADO
+
+KEY: runtime.andMore
+  EN: ... and {{value}} more
+  PT: ... e mais {{value}}
+  ES: ... y {{value}} más
+
+KEY: runtime.attemptsBeforeLockdown
+  EN: WARNING: {{value}} attempt(s) remaining before lockdown
+  PT: AVISO: {{value}} tentativa(s) restante(s) antes do bloqueio
+  ES: ADVERTENCIA: {{value}} intento(s) restante(s) antes del bloqueo
+
+KEY: runtime.attemptsRemaining
+  EN: [Attempts remaining: {{value}}]
+  PT: [Tentativas restantes: {{value}}]
+  ES: [Intentos restantes: {{value}}]
+
+KEY: runtime.bookmarkRemoved
+  EN: Bookmark removed: {{value}}
+  PT: Favorito removido: {{value}}
+  ES: Marcador eliminado: {{value}}
+
+KEY: runtime.bookmarked
+  EN: Bookmarked: {{value}}
+  PT: Favoritado: {{value}}
+  ES: Marcado: {{value}}
+
+KEY: runtime.bookmarksNotes
+  EN: Bookmarks: {{bookmarks}}  |  Notes: {{notes}}
+  PT: Favoritos: {{bookmarks}}  |  Notas: {{notes}}
+  ES: Marcadores: {{bookmarks}}  |  Notas: {{notes}}
+
+KEY: runtime.caseStatus
+  EN: CASE STATUS: {{current}}/{{total}} evidence confirmed
+  PT: STATUS DO CASO: {{current}}/{{total}} evidências confirmadas
+  ES: ESTADO DEL CASO: {{current}}/{{total}} evidencias confirmadas
+
+KEY: runtime.changedTo
+  EN: Changed to: {{value}}
+  PT: Alterado para: {{value}}
+  ES: Cambiado a: {{value}}
+
+KEY: runtime.commandNotRecognized
+  EN: Command not recognized: {{value}}
+  PT: Comando não reconhecido: {{value}}
+  ES: Comando no reconocido: {{value}}
+
+KEY: runtime.connectionSevered
+  EN: Connection severed.
+  PT: Conexão encerrada.
+  ES: Conexión cortada.
+
+KEY: runtime.conspiracyDocumentsCached
+  EN: You have {{value}} conspiracy document(s) in your cache.
+  PT: Você tem {{value}} documento(s) da conspiração no seu cache.
+  ES: Tienes {{value}} documento(s) de la conspiración en tu caché.
+
+KEY: runtime.currentLocation
+  EN: Current location: {{value}}
+  PT: Local atual: {{value}}
+  ES: Ubicación actual: {{value}}
+
+KEY: runtime.directoryPrefix
+  EN: Directory
+  PT: Diretório
+  ES: Directorio
+
+KEY: runtime.directoryStructure
+  EN: DIRECTORY STRUCTURE
+  PT: ESTRUTURA DE DIRETÓRIOS
+  ES: ESTRUCTURA DE DIRECTORIOS
+
+KEY: runtime.empty
+  EN: (empty)
+  PT: (vazio)
+  ES: (vacío)
+
+KEY: runtime.endingLabel
+  EN: >> ENDING: {{value}} <<
+  PT: >> FINAL: {{value}} <<
+  ES: >> FINAL: {{value}} <<
+
+KEY: runtime.errorDirectoryNotFound
+  EN: ERROR: Directory not found: {{value}}
+  PT: ERRO: Diretório não encontrado: {{value}}
+  ES: ERROR: Directorio no encontrado: {{value}}
+
+KEY: runtime.errorFileNoLongerAccessible
+  EN: ERROR: File no longer accessible: {{value}}
+  PT: ERRO: Arquivo não está mais acessível: {{value}}
+  ES: ERROR: El archivo ya no es accesible: {{value}}
+
+KEY: runtime.errorFileNotFound
+  EN: ERROR: File not found: {{value}}
+  PT: ERRO: Arquivo não encontrado: {{value}}
+  ES: ERROR: Archivo no encontrado: {{value}}
+
+KEY: runtime.errorIsDirectory
+  EN: ERROR: {{value}} is a directory
+  PT: ERRO: {{value}} é um diretório
+  ES: ERROR: {{value}} es un directorio
+
+KEY: runtime.errorNotDirectory
+  EN: ERROR: Not a directory: {{value}}
+  PT: ERRO: Não é um diretório: {{value}}
+  ES: ERROR: No es un directorio: {{value}}
+
+KEY: runtime.errorUnknownCommand
+  EN: ERROR: Unknown command
+  PT: ERRO: Comando desconhecido
+  ES: ERROR: Comando desconocido
+
+KEY: runtime.errorsProgress
+  EN:   Errors: {{current}}/{{total}}
+  PT:   Erros: {{current}}/{{total}}
+  ES:   Errores: {{current}}/{{total}}
+
+KEY: runtime.evidenceDocumented
+  EN: Evidence documented: {{current}}/{{total}}
+  PT: Evidências documentadas: {{current}}/{{total}}
+  ES: Evidencia documentada: {{current}}/{{total}}
+
+KEY: runtime.evidenceFound
+  EN: Evidence found: {{current}}/{{total}}
+  PT: Evidência encontrada: {{current}}/{{total}}
+  ES: Evidencia encontrada: {{current}}/{{total}}
+
+KEY: runtime.evidenceLegend
+  EN: {{symbol}}=evidence logged
+  PT: {{symbol}}=evidência registrada
+  ES: {{symbol}}=evidencia registrada
+
+KEY: runtime.expected
+  EN: Expected: {{value}}
+  PT: Esperado: {{value}}
+  ES: Esperado: {{value}}
+
+KEY: runtime.fileLabel
+  EN: FILE: {{value}}
+  PT: ARQUIVO: {{value}}
+  ES: ARCHIVO: {{value}}
+
+KEY: runtime.fileStatus.conditional
+  EN: [CONDITIONAL]
+  PT: [CONDICIONAL]
+  ES: [CONDICIONAL]
+
+KEY: runtime.fileStatus.corrupted
+  EN: [CORRUPTED]
+  PT: [CORROMPIDO]
+  ES: [CORROMPIDO]
+
+KEY: runtime.fileStatus.encrypted
+  EN: [ENCRYPTED]
+  PT: [CRIPTOGRAFADO]
+  ES: [CIFRADO]
+
+KEY: runtime.fileStatus.restricted
+  EN: [RESTRICTED]
+  PT: [RESTRITO]
+  ES: [RESTRINGIDO]
+
+KEY: runtime.fileStatus.restrictedBriefing
+  EN: [RESTRICTED BRIEFING]
+  PT: [BRIEFING RESTRITO]
+  ES: [INFORME RESTRINGIDO]
+
+KEY: runtime.fileStatus.unstable
+  EN: [UNSTABLE]
+  PT: [INSTÁVEL]
+  ES: [INESTABLE]
+
+KEY: runtime.filesExamined
+  EN: Files examined: {{value}}
+  PT: Arquivos examinados: {{value}}
+  ES: Archivos examinados: {{value}}
+
+KEY: runtime.firewallTriggered
+  EN: FIREWALL TRIGGERED
+  PT: FIREWALL ACIONADO
+  ES: FIREWALL ACTIVADO
+
+KEY: runtime.inputTooLong
+  EN: INPUT TOO LONG
+  PT: ENTRADA LONGA DEMAIS
+  ES: ENTRADA DEMASIADO LARGA
+
+KEY: runtime.invalidAttempts
+  EN: [Invalid attempts: {{value}}/8]
+  PT: [Tentativas inválidas: {{value}}/8]
+  ES: [Intentos inválidos: {{value}}/8]
+
+KEY: runtime.leakDetectionDelta
+  EN: DETECTION: +{{value}}%
+  PT: DETECÇÃO: +{{value}}%
+  ES: DETECCIÓN: +{{value}}%
+
+KEY: runtime.legacyWrapperDecrypt
+  EN: UFO74: legacy wrapper: "decrypt {{value}}".
+  PT: UFO74: wrapper legado: "decrypt {{value}}".
+  ES: UFO74: wrapper heredado: "decrypt {{value}}".
+
+KEY: runtime.maximumCommandLength
+  EN: Maximum command length is {{value}} characters.
+  PT: O comprimento máximo do comando é {{value}} caracteres.
+  ES: La longitud máxima del comando es de {{value}} caracteres.
+
+KEY: runtime.notEncryptedJustUseOpen
+  EN: UFO74: this ones not encrypted. just use: open {{value}}
+  PT: UFO74: isso não está criptografado. só use: open {{value}}
+  ES: UFO74: esto no está cifrado. solo usa: open {{value}}
+
+KEY: runtime.noteSaved
+  EN: Note saved: "{{value}}"
+  PT: Nota salva: "{{value}}"
+  ES: Nota guardada: "{{value}}"
+
+KEY: runtime.notesTotal
+  EN: [{{value}} notes total - use "notes" to view]
+  PT: [{{value}} notas no total - use "notes" para ver]
+  ES: [{{value}} notas en total - usa "notes" para verlas]
+
+KEY: runtime.onceYouHaveAnswerDecrypt
+  EN: UFO74: once you have the answer, the old recovery wrapper is "decrypt {{value}}".
+  PT: UFO74: quando tiver a resposta, o wrapper antigo de recuperação é "decrypt {{value}}".
+  ES: UFO74: cuando tengas la respuesta, el wrapper antiguo de recuperación es "decrypt {{value}}".
+
+KEY: runtime.patternStability
+  EN: [Pattern stability: {{value}} queries remaining]
+  PT: [Estabilidade do padrão: {{value}} consultas restantes]
+  ES: [Estabilidad del patrón: {{value}} consultas restantes]
+
+KEY: runtime.purgeCountdown
+  EN: [PURGE COUNTDOWN: {{value}}]
+  PT: [CONTAGEM DE EXPURGO: {{value}}]
+  ES: [CUENTA REGRESIVA DE PURGA: {{value}}]
+
+KEY: runtime.purgeIn
+  EN: ▓▓▓ PURGE IN {{value}} ▓▓▓
+  PT: ▓▓▓ EXPURGO EM {{value}} ▓▓▓
+  ES: ▓▓▓ PURGA EN {{value}} ▓▓▓
+
+KEY: runtime.questionProgress
+  EN:   Question: {{current}}/{{total}}
+  PT:   Pergunta: {{current}}/{{total}}
+  ES:   Pregunta: {{current}}/{{total}}
+
+KEY: runtime.questionsRemaining
+  EN: [{{value}} questions remaining]
+  PT: [{{value}} perguntas restantes]
+  ES: [{{value}} preguntas restantes]
+
+KEY: runtime.questionsRemainingBeforeTraceLockout
+  EN: [{{value}} questions remaining before trace lockout]
+  PT: [{{value}} perguntas restantes antes do bloqueio por rastreio]
+  ES: [{{value}} preguntas restantes antes del bloqueo por rastreo]
+
+KEY: runtime.readLabel
+  EN: [READ]
+  PT: [LIDO]
+  ES: [LEÍDO]
+
+KEY: runtime.readingEstimate
+  EN: [~{{value}}min]
+  PT: [~{{value}} min]
+  ES: [~{{value}} min]
+
+KEY: runtime.received
+  EN: Received: {{value}}
+  PT: Recebido: {{value}}
+  ES: Recibido: {{value}}
+
+KEY: runtime.rereading
+  EN: [Re-reading: {{value}}]
+  PT: [Relendo: {{value}}]
+  ES: [Releyendo: {{value}}]
+
+KEY: runtime.scriptNotFound
+  EN: Script not found: {{value}}
+  PT: Script não encontrado: {{value}}
+  ES: Script no encontrado: {{value}}
+
+KEY: runtime.sequenceMismatch
+  EN: SEQUENCE MISMATCH
+  PT: SEQUÊNCIA INCORRETA
+  ES: SECUENCIA INCORRECTA
+
+KEY: runtime.strengthLabel
+  EN: STRENGTH: {{value}}
+  PT: FORÇA: {{value}}
+  ES: FUERZA: {{value}}
+
+KEY: runtime.targetSearching
+  EN: TARGET={{value}}... SEARCHING
+  PT: TARGET={{value}}... PROCURANDO
+  ES: TARGET={{value}}... BUSCANDO
+
+KEY: runtime.thatsADirectoryUseCd
+  EN: UFO74: thats a directory. use: cd {{value}}
+  PT: UFO74: isso é um diretório. usa: cd {{value}}
+  ES: UFO74: eso es un directorio. usa: cd {{value}}
+
+KEY: runtime.thatsAFileTryOpen
+  EN: UFO74: thats a file. try: open {{value}}
+  PT: UFO74: isso é um arquivo. tenta: open {{value}}
+  ES: UFO74: eso es un archivo. prueba: open {{value}}
+
+KEY: runtime.timerStarted
+  EN: TIMER STARTED
+  PT: TIMER INICIADO
+  ES: TEMPORIZADOR INICIADO
+
+KEY: runtime.toExploreDirectoryUseCdThenLs
+  EN: To explore a directory use 'cd {{value}}' then 'ls'.
+  PT: Para explorar um diretório use 'cd {{value}}' e depois 'ls'.
+  ES: Para explorar un directorio usa 'cd {{value}}' y luego 'ls'.
+
+KEY: runtime.toReadFileUseCatOpen
+  EN: To read a file use 'cat {{catValue}}' or 'open {{openValue}}'.
+  PT: Para ler um arquivo use 'cat {{catValue}}' ou 'open {{openValue}}'.
+  ES: Para leer un archivo usa 'cat {{catValue}}' o 'open {{openValue}}'.
+
+KEY: runtime.tooSoonWait.one
+  EN: Too soon. Wait {{value}} second before trying again.
+  PT: Cedo demais. Espere {{value}} segundo antes de tentar novamente.
+  ES: Demasiado pronto. Espera {{value}} segundo antes de volver a intentarlo.
+
+KEY: runtime.tooSoonWait.other
+  EN: Too soon. Wait {{value}} seconds before trying again.
+  PT: Cedo demais. Espere {{value}} segundos antes de tentar novamente.
+  ES: Demasiado pronto. Espera {{value}} segundos antes de volver a intentarlo.
+
+KEY: runtime.tryAgainWithDecrypt
+  EN: Try again with: decrypt {{value}}
+  PT: Tente de novo com: decrypt {{value}}
+  ES: Inténtalo de nuevo con: decrypt {{value}}
+
+KEY: runtime.unknownCommand
+  EN: Unknown command: {{value}}
+  PT: Comando desconhecido: {{value}}
+  ES: Comando desconocido: {{value}}
+
+KEY: runtime.unknownGodCommand
+  EN: Unknown god command: {{value}}
+  PT: Comando god desconhecido: {{value}}
+  ES: Comando god desconocido: {{value}}
+
+KEY: runtime.unreadFilesHeader
+  EN: UNREAD FILES ({{value}})
+  PT: ARQUIVOS NÃO LIDOS ({{value}})
+  ES: ARCHIVOS NO LEÍDOS ({{value}})
+
+KEY: runtime.unreadLabel
+  EN: [UNREAD]
+  PT: [NÃO LIDO]
+  ES: [NO LEÍDO]
+
+KEY: runtime.verifyingCode
+  EN: Verifying code: {{value}}...
+  PT: Verificando código: {{value}}...
+  ES: Verificando código: {{value}}...
+
+KEY: runtime.waitRemaining.one
+  EN:     Detection reduced. [{{value}} wait remaining]
+  PT:     Detecção reduzida. [{{value}} uso de wait restante]
+  ES:     Detección reducida. [{{value}} uso de wait restante]
+
+KEY: runtime.waitRemaining.other
+  EN:     Detection reduced. [{{value}} waits remaining]
+  PT:     Detecção reduzida. [{{value}} usos de wait restantes]
+  ES:     Detección reducida. [{{value}} usos de wait restantes]
+
+KEY: runtime.warningInvalidAttempts
+  EN: WARNING: Invalid attempts: {{value}}/8
+  PT: AVISO: Tentativas inválidas: {{value}}/8
+  ES: ADVERTENCIA: Intentos inválidos: {{value}}/8
+
+KEY: runtime.whenReadyStartDecrypt
+  EN: UFO74: when you are ready, start it with "decrypt {{value}}".
+  PT: UFO74: quando estiver pronto, comece com "decrypt {{value}}".
+  ES: UFO74: cuando estés listo, arráncalo con "decrypt {{value}}".
+
+KEY: runtime.wrongAnswers
+  EN: Wrong answers: {{current}}/{{total}}
+  PT: Respostas erradas: {{current}}/{{total}}
+  ES: Respuestas incorrectas: {{current}}/{{total}}
+
+KEY: runtime.yourAnswer
+  EN: Your answer: {{value}}
+  PT: Sua resposta: {{value}}
+  ES: Tu respuesta: {{value}}
+
+KEY: save.button.cancel
+  EN: [ CANCEL ]
+  PT: [ CANCELAR ]
+  ES: [ CANCELAR ]
+
+KEY: save.button.idle
+  EN: [ SAVE ]
+  PT: [ SALVAR ]
+  ES: [ GUARDAR ]
+
+KEY: save.button.saving
+  EN: SAVING...
+  PT: SALVANDO...
+  ES: GUARDANDO...
+
+KEY: save.defaultName
+  EN: Session {{value}}
+  PT: Sessão {{value}}
+  ES: Sesión {{value}}
+
+KEY: save.error.failed
+  EN: SAVE FAILED — Storage unavailable. Free some space or try again.
+  PT: FALHA AO SALVAR — armazenamento indisponível. Libere espaço e tente novamente.
+  ES: ERROR AL GUARDAR — el almacenamiento no está disponible. Libera espacio y vuelve a intentarlo.
+
+KEY: save.nameLabel
+  EN: Session Name (optional):
+  PT: Nome da sessão (opcional):
+  ES: Nombre de sesión (opcional):
+
+KEY: save.path
+  EN: Current Path
+  PT: Caminho atual
+  ES: Ruta actual
+
+KEY: save.progress
+  EN: Progress
+  PT: Progresso
+  ES: Progreso
+
+KEY: save.progressSuffix
+  EN: files saved
+  PT: arquivos salvos
+  ES: archivos guardados
+
+KEY: save.recoveredName
+  EN: Recovered Save
+  PT: Sessão recuperada
+  ES: Sesión recuperada
+
+KEY: save.title
+  EN: SAVE SESSION
+  PT: SALVAR SESSÃO
+  ES: GUARDAR SESIÓN
+
+KEY: settings.close
+  EN: [ CLOSE ]
+  PT: [ FECHAR ]
+  ES: [ CERRAR ]
+
+KEY: settings.crtEffects
+  EN: CRT Effects
+  PT: Efeitos CRT
+  ES: Efectos CRT
+
+KEY: settings.crtHint
+  EN: Scanlines & glow
+  PT: Scanlines e brilho
+  ES: Scanlines y brillo
+
+KEY: settings.info.shortcuts
+  EN: Keyboard Shortcuts:
+  PT: Atalhos de teclado:
+  ES: Atajos de teclado:
+
+KEY: settings.language
+  EN: Language
+  PT: Idioma
+  ES: Idioma
+
+KEY: settings.masterVolume
+  EN: Master Volume
+  PT: Volume geral
+  ES: Volumen maestro
+
+KEY: settings.resetDefaults
+  EN: [ RESET DEFAULTS ]
+  PT: [ RESTAURAR PADRÕES ]
+  ES: [ RESTABLECER ]
+
+KEY: settings.shortcut.autocomplete
+  EN: Tab — Autocomplete
+  PT: Tab — Autocompletar
+  ES: Tab — Autocompletar
+
+KEY: settings.shortcut.close
+  EN: Esc — Close overlays
+  PT: Esc — Fechar sobreposições
+  ES: Esc — Cerrar superposiciones
+
+KEY: settings.shortcut.history
+  EN: ↑/↓ — Command history
+  PT: ↑/↓ — Histórico de comandos
+  ES: ↑/↓ — Historial de comandos
+
+KEY: settings.shortcut.skip
+  EN: Space/Enter — Skip streaming
+  PT: Espaço/Enter — Pular animação de texto
+  ES: Espacio/Enter — Saltar animación de texto
+
+KEY: settings.soundEffects
+  EN: Sound Effects
+  PT: Efeitos sonoros
+  ES: Efectos de sonido
+
+KEY: settings.textSpeed
+  EN: Text Speed
+  PT: Velocidade do texto
+  ES: Velocidad del texto
+
+KEY: settings.textSpeedHint
+  EN: Streaming pace for terminal and ending text
+  PT: Ritmo do terminal e do texto do final
+  ES: Ritmo del terminal y del texto final
+
+KEY: settings.title
+  EN: SETTINGS
+  PT: CONFIGURAÇÕES
+  ES: CONFIGURACIÓN
+
+KEY: stats.badEnding
+  EN: 💀 Bad Ending
+  PT: 💀 Final ruim
+  ES: 💀 Final malo
+
+KEY: stats.close
+  EN: [ CLOSE ]
+  PT: [ FECHAR ]
+  ES: [ CERRAR ]
+
+KEY: stats.commandsSuffix
+  EN: commands
+  PT: comandos
+  ES: comandos
+
+KEY: stats.commandsTyped
+  EN: Commands Typed
+  PT: Comandos digitados
+  ES: Comandos escritos
+
+KEY: stats.fastestCompletion
+  EN: Fastest Completion
+  PT: Conclusão mais rápida
+  ES: Finalización más rápida
+
+KEY: stats.filesRead
+  EN: Files Read
+  PT: Arquivos lidos
+  ES: Archivos leídos
+
+KEY: stats.gamesCompleted
+  EN: Games Completed
+  PT: Jogos concluídos
+  ES: Partidas completadas
+
+KEY: stats.gamesStarted
+  EN: Games Started
+  PT: Jogos iniciados
+  ES: Partidas iniciadas
+
+KEY: stats.goodEnding
+  EN: 🏆 Good Ending
+  PT: 🏆 Final bom
+  ES: 🏆 Final bueno
+
+KEY: stats.highestDetection
+  EN: Highest Detection Survived
+  PT: Maior detecção sobrevivida
+  ES: Nivel de detección más alto sobrevivido
+
+KEY: stats.neutralEnding
+  EN: 🚪 Neutral Ending
+  PT: 🚪 Final neutro
+  ES: 🚪 Final neutral
+
+KEY: stats.none
+  EN: —
+  PT: —
+  ES: —
+
+KEY: stats.secretEnding
+  EN: 🔮 Secret Ending
+  PT: 🔮 Final secreto
+  ES: 🔮 Final secreto
+
+KEY: stats.section.endings
+  EN: ENDINGS ACHIEVED
+  PT: FINAIS ALCANÇADOS
+  ES: FINALES OBTENIDOS
+
+KEY: stats.section.records
+  EN: RECORDS
+  PT: RECORDES
+  ES: RÉCORDS
+
+KEY: stats.section.session
+  EN: SESSION DATA
+  PT: DADOS DE SESSÃO
+  ES: DATOS DE SESIÓN
+
+KEY: stats.title
+  EN: STATISTICS
+  PT: ESTATÍSTICAS
+  ES: ESTADÍSTICAS
+
+KEY: stats.totalEndings
+  EN: Total Endings
+  PT: Total de finais
+  ES: Total de finales
+
+KEY: stats.totalPlaytime
+  EN: Total Playtime
+  PT: Tempo total jogado
+  ES: Tiempo total jugado
+
+KEY: terminal.enter.close
+  EN: Press Enter ↵ to close
+  PT: Pressione Enter ↵ para fechar
+  ES: Presiona Enter ↵ para cerrar
+
+KEY: terminal.enter.continue
+  EN: Press Enter ↵ to continue
+  PT: Pressione Enter ↵ para continuar
+  ES: Presiona Enter ↵ para continuar
+
+KEY: terminal.enter.proceed
+  EN: Press Enter ↵ to proceed
+  PT: Pressione Enter ↵ para prosseguir
+  ES: Presiona Enter ↵ para continuar
+
+KEY: terminal.enter.respond
+  EN: Press Enter ↵ to respond
+  PT: Pressione Enter ↵ para responder
+  ES: Presiona Enter ↵ para responder
+
+KEY: terminal.enter.view
+  EN: Press Enter ↵ to view
+  PT: Pressione Enter ↵ para visualizar
+  ES: Presiona Enter ↵ para ver
+
+KEY: terminal.firewall.scare
+  EN: I SEE YOU
+  PT: EU TE VEJO
+  ES: TE VEO
+
+KEY: terminal.firewallReaction.1
+  EN: UFO74: damn. the firewall is almost onto us.
+  PT: UFO74: merda. o firewall já tá quase em cima da gente.
+  ES: UFO74: mierda. el firewall ya casi nos tiene.
+
+KEY: terminal.firewallReaction.2
+  EN: UFO74: risk is climbing. stay low.
+  PT: UFO74: o risco tá subindo. fica na sua.
+  ES: UFO74: el riesgo está subiendo. mantente abajo.
+
+KEY: terminal.firewallReaction.3
+  EN: UFO74: it heard something. don't move.
+  PT: UFO74: ele ouviu alguma coisa. não se mexe.
+  ES: UFO74: oyó algo. no te muevas.
+
+KEY: terminal.firewallReaction.4
+  EN: UFO74: we need to move faster. it's getting closer.
+  PT: UFO74: a gente precisa correr mais. ele tá chegando.
+  ES: UFO74: tenemos que movernos más rápido. se está acercando.
+
+KEY: terminal.firewallReaction.5
+  EN: UFO74: keep your head down. it's scanning.
+  PT: UFO74: abaixa a cabeça. ele tá escaneando.
+  ES: UFO74: cabeza abajo. está escaneando.
+
+KEY: terminal.firewallReaction.6
+  EN: UFO74: that thing knows we're here.
+  PT: UFO74: essa coisa sabe que a gente tá aqui.
+  ES: UFO74: esa cosa sabe que estamos aquí.
+
+KEY: terminal.firewallReaction.7
+  EN: UFO74: don't react. it feeds on attention.
+  PT: UFO74: não reage. ele se alimenta de atenção.
+  ES: UFO74: no reacciones. se alimenta de la atención.
+
+KEY: terminal.header.title
+  EN: VARGINHA: TERMINAL 1996
+  PT: VARGINHA: TERMINAL 1996
+  ES: VARGINHA: TERMINAL 1996
+
+KEY: terminal.idleHint.1
+  EN: Use 'ls' to see what's in the current directory.
+  PT: Use `ls` para ver o que há no diretório atual.
+  ES: Usa `ls` para ver qué hay en el directorio actual.
+
+KEY: terminal.idleHint.10
+  EN: CAUTION: Detection critical. 'wait' might buy you time.
+  PT: CUIDADO: detecção crítica. `wait` pode te dar tempo.
+  ES: PRECAUCIÓN: detección crítica. `wait` podría darte tiempo.
+
+KEY: terminal.idleHint.11
+  EN: You've seen a lot. There may be... deeper access available.
+  PT: Você já viu muita coisa. Pode haver... um acesso mais profundo disponível.
+  ES: Has visto mucho. Tal vez haya... un acceso más profundo disponible.
+
+KEY: terminal.idleHint.12
+  EN: Some commands aren't listed. Keep digging.
+  PT: Alguns comandos não estão listados. Continue cavando.
+  ES: Algunos comandos no están listados. Sigue cavando.
+
+KEY: terminal.idleHint.13
+  EN: Use 'ls' to see what's in the current directory.
+  PT: Use `ls` para ver o que há no diretório atual.
+  ES: Usa `ls` para ver qué hay en el directorio actual.
+
+KEY: terminal.idleHint.14
+  EN: Some files still carry legacy encryption headers, but recovered text opens directly.
+  PT: Alguns arquivos ainda têm cabeçalhos de criptografia legada, mas o texto recuperado abre direto.
+  ES: Algunos archivos todavía tienen encabezados de cifrado heredado, pero el texto recuperado se abre directamente.
+
+KEY: terminal.idleHint.15
+  EN: Try the 'progress' command to see what you've found.
+  PT: Tente o comando `progress` para ver o que você já encontrou.
+  ES: Prueba el comando `progress` para ver lo que ya encontraste.
+
+KEY: terminal.idleHint.16
+  EN: Don't forget: 'note' saves reminders, 'bookmark' saves files.
+  PT: Não esqueça: `note` salva lembretes, `bookmark` salva arquivos.
+  ES: No olvides: `note` guarda recordatorios, `bookmark` guarda archivos.
+
+KEY: terminal.idleHint.17
+  EN: Check 'unread' to see what you haven't opened yet.
+  PT: Verifique `unread` para ver o que você ainda não abriu.
+  ES: Revisa `unread` para ver lo que aún no has abierto.
+
+KEY: terminal.idleHint.2
+  EN: Try 'open' on a .txt file to read it.
+  PT: Tente `open` em um arquivo `.txt` para lê-lo.
+  ES: Prueba `open` en un archivo `.txt` para leerlo.
+
+KEY: terminal.idleHint.3
+  EN: Navigation tip: 'cd' changes directories. Start exploring.
+  PT: Dica de navegação: `cd` muda de diretório. Comece a explorar.
+  ES: Consejo de navegación: `cd` cambia de directorio. Empieza a explorar.
+
+KEY: terminal.idleHint.4
+  EN: You need evidence. Look for files that seem... off.
+  PT: Você precisa de evidências. Procure arquivos que pareçam... errados.
+  ES: Necesitas evidencias. Busca archivos que parezcan... raros.
+
+KEY: terminal.idleHint.5
+  EN: Some documents contradict the official narrative. Find them.
+  PT: Alguns documentos contradizem a narrativa oficial. Encontre-os.
+  ES: Algunos documentos contradicen la narrativa oficial. Encuéntralos.
+
+KEY: terminal.idleHint.6
+  EN: Have you checked /internal?
+  PT: Você já verificou `/internal`?
+  ES: ¿Ya revisaste `/internal`?
+
+KEY: terminal.idleHint.7
+  EN: The /comms directory might have useful intel.
+  PT: O diretório `/comms` pode ter informações úteis.
+  ES: El directorio `/comms` puede tener información útil.
+
+KEY: terminal.idleHint.8
+  EN: Detection is high. The 'wait' command lets time pass safely.
+  PT: A detecção está alta. O comando `wait` deixa o tempo passar com segurança.
+  ES: La detección está alta. El comando `wait` deja pasar el tiempo con seguridad.
+
+KEY: terminal.idleHint.9
+  EN: They're watching closely. Consider using 'wait' to reduce suspicion.
+  PT: Eles estão observando de perto. Considere usar `wait` para reduzir a suspeita.
+  ES: Te observan de cerca. Considera usar `wait` para reducir la sospecha.
+
+KEY: terminal.imageComment.crash1
+  EN: UFO74: that wreckage... wrong metallurgy.
+  PT: UFO74: aqueles destroços... metalurgia errada.
+  ES: UFO74: esos restos... metalurgia equivocada.
+
+KEY: terminal.imageComment.crash2
+  EN: UFO74: they moved fast. knew what to hide.
+  PT: UFO74: eles se moveram rápido. sabiam o que esconder.
+  ES: UFO74: se movieron rápido. sabían qué ocultar.
+
+KEY: terminal.imageComment.drone1
+  EN: UFO74: no propulsion. no control surfaces. yet it flies.
+  PT: UFO74: sem propulsão. sem superfícies de controle. e mesmo assim voa.
+  ES: UFO74: sin propulsión. sin superficies de control. y aun así vuela.
+
+KEY: terminal.imageComment.et1
+  EN: UFO74: seen that face in dreams.
+  PT: UFO74: já vi aquele rosto em sonhos.
+  ES: UFO74: he visto esa cara en sueños.
+
+KEY: terminal.imageComment.et2
+  EN: UFO74: not fear in those eyes. recognition.
+  PT: UFO74: não era medo naqueles olhos. era reconhecimento.
+  ES: UFO74: no había miedo en esos ojos. había reconocimiento.
+
+KEY: terminal.imageComment.etBrain1
+  EN: UFO74: neural density off the charts.
+  PT: UFO74: densidade neural fora da escala.
+  ES: UFO74: densidad neural fuera de escala.
+
+KEY: terminal.imageComment.etBrain2
+  EN: UFO74: some patterns travel both ways. careful.
+  PT: UFO74: alguns padrões viajam nos dois sentidos. cuidado.
+  ES: UFO74: algunos patrones viajan en ambos sentidos. cuidado.
+
+KEY: terminal.imageComment.etScared1
+  EN: UFO74: during transmission, something reached back.
+  PT: UFO74: durante a transmissão, algo respondeu de volta.
+  ES: UFO74: durante la transmisión, algo respondió desde el otro lado.
+
+KEY: terminal.imageComment.etScared2
+  EN: UFO74: let itself be captured.
+  PT: UFO74: deixou-se capturar.
+  ES: UFO74: se dejó capturar.
+
+KEY: terminal.imageComment.pratoDelta1
+  EN: UFO74: three recovery sites. shipped everything out.
+  PT: UFO74: três locais de recuperação. despacharam tudo.
+  ES: UFO74: tres sitios de recuperación. sacaron todo.
+
+KEY: terminal.imageComment.secondShip1
+  EN: UFO74: SECOND one? they were arriving.
+  PT: UFO74: um SEGUNDO? eles estavam chegando.
+  ES: UFO74: ¿un SEGUNDO? estaban llegando.
+
+KEY: terminal.input.aria
+  EN: Terminal command input
+  PT: Entrada de comando do terminal
+  ES: Entrada de comandos del terminal
+
+KEY: terminal.input.placeholder
+  EN: Try: help, ls, progress, search crash
+  PT: Tente: help, ls, progress, search crash
+  ES: Prueba: help, ls, progress, search crash
+
+KEY: terminal.loading.icq
+  EN: CONNECTING TO ICQ...
+  PT: CONECTANDO AO ICQ...
+  ES: CONECTANDO A ICQ...
+
+KEY: terminal.menu.achievements
+  EN: 🏆 ACHIEVEMENTS
+  PT: 🏆 CONQUISTAS
+  ES: 🏆 LOGROS
+
+KEY: terminal.menu.load
+  EN: 📂 LOAD SESSION
+  PT: 📂 CARREGAR SESSÃO
+  ES: 📂 CARGAR SESIÓN
+
+KEY: terminal.menu.return
+  EN: 🚪 RETURN TO MENU
+  PT: 🚪 VOLTAR AO MENU
+  ES: 🚪 VOLVER AL MENÚ
+
+KEY: terminal.menu.save
+  EN: 💾 SAVE SESSION
+  PT: 💾 SALVAR SESSÃO
+  ES: 💾 GUARDAR SESIÓN
+
+KEY: terminal.menu.settings
+  EN: ⚙️ SETTINGS
+  PT: ⚙️ CONFIGURAÇÕES
+  ES: ⚙️ CONFIGURACIÓN
+
+KEY: terminal.menu.statistics
+  EN: 📊 STATISTICS
+  PT: 📊 ESTATÍSTICAS
+  ES: 📊 ESTADÍSTICAS
+
+KEY: terminal.paranoia.1
+  EN: TRACE DETECTED: External observer connected
+  PT: RASTRO DETECTADO: observador externo conectado
+  ES: RASTRO DETECTADO: observador externo conectado
+
+KEY: terminal.paranoia.10
+  EN: NOTICE: Session flagged for review
+  PT: AVISO: sessão marcada para revisão
+  ES: AVISO: sesión marcada para revisión
+
+KEY: terminal.paranoia.11
+  EN: ALERT: Third-party listener identified
+  PT: ALERTA: ouvinte terceirizado identificado
+  ES: ALERTA: oyente de terceros identificado
+
+KEY: terminal.paranoia.12
+  EN: SYSTEM: Memory dump in progress
+  PT: SISTEMA: despejo de memória em andamento
+  ES: SISTEMA: volcado de memoria en progreso
+
+KEY: terminal.paranoia.13
+  EN: TRACE: Unknown process accessing your session
+  PT: RASTRO: processo desconhecido acessando sua sessão
+  ES: RASTRO: proceso desconocido accediendo a tu sesión
+
+KEY: terminal.paranoia.14
+  EN: NOTICE: Query patterns being analyzed
+  PT: AVISO: padrões de consulta sendo analisados
+  ES: AVISO: patrones de consulta siendo analizados
+
+KEY: terminal.paranoia.15
+  EN: WARNING: Session duration exceeds normal parameters
+  PT: AVISO: duração da sessão excede parâmetros normais
+  ES: ADVERTENCIA: la duración de la sesión excede los parámetros normales
+
+KEY: terminal.paranoia.16
+  EN: SYSTEM: Behavioral profile update in progress
+  PT: SISTEMA: atualização de perfil comportamental em andamento
+  ES: SISTEMA: actualización del perfil conductual en progreso
+
+KEY: terminal.paranoia.17
+  EN: ALERT: File access sequence flagged as anomalous
+  PT: ALERTA: sequência de acesso a arquivos marcada como anômala
+  ES: ALERTA: secuencia de acceso a archivos marcada como anómala
+
+KEY: terminal.paranoia.18
+  EN: CAUTION: Terminal output being mirrored
+  PT: CUIDADO: saída do terminal está sendo espelhada
+  ES: PRECAUCIÓN: la salida del terminal está siendo replicada
+
+KEY: terminal.paranoia.19
+  EN: INFO: Your IP has been logged for review
+  PT: INFO: seu IP foi registrado para revisão
+  ES: INFO: tu IP fue registrada para revisión
+
+KEY: terminal.paranoia.2
+  EN: WARNING: Packet inspection in progress
+  PT: AVISO: inspeção de pacotes em andamento
+  ES: ADVERTENCIA: inspección de paquetes en progreso
+
+KEY: terminal.paranoia.20
+  EN: NOTICE: Command history archived to external server
+  PT: AVISO: histórico de comandos arquivado em servidor externo
+  ES: AVISO: historial de comandos archivado en un servidor externo
+
+KEY: terminal.paranoia.21
+  EN: WARNING: They know where you are
+  PT: AVISO: eles sabem onde você está
+  ES: ADVERTENCIA: saben dónde estás
+
+KEY: terminal.paranoia.22
+  EN: ALERT: Physical location triangulated
+  PT: ALERTA: localização física triangulada
+  ES: ALERTA: ubicación física triangulada
+
+KEY: terminal.paranoia.23
+  EN: SYSTEM: Dispatch notification pending
+  PT: SISTEMA: notificação de despacho pendente
+  ES: SISTEMA: notificación de despliegue pendiente
+
+KEY: terminal.paranoia.24
+  EN: NOTICE: Someone just accessed your personnel file
+  PT: AVISO: alguém acabou de acessar seu arquivo pessoal
+  ES: AVISO: alguien acaba de acceder a tu archivo de personal
+
+KEY: terminal.paranoia.25
+  EN: CAUTION: Your screen is being watched
+  PT: CUIDADO: sua tela está sendo observada
+  ES: PRECAUCIÓN: tu pantalla está siendo observada
+
+KEY: terminal.paranoia.26
+  EN: WARNING: Audio capture device detected
+  PT: AVISO: dispositivo de captura de áudio detectado
+  ES: ADVERTENCIA: dispositivo de captura de audio detectado
+
+KEY: terminal.paranoia.27
+  EN: ALERT: Camera feed request intercepted
+  PT: ALERTA: solicitação de feed da câmera interceptada
+  ES: ALERTA: solicitud de transmisión de cámara interceptada
+
+KEY: terminal.paranoia.28
+  EN: SYSTEM: Facial recognition scan initiated
+  PT: SISTEMA: varredura de reconhecimento facial iniciada
+  ES: SISTEMA: escaneo de reconocimiento facial iniciado
+
+KEY: terminal.paranoia.29
+  EN: SIGNAL: ...they remember you from before...
+  PT: SINAL: ...eles se lembram de você de antes...
+  ES: SEÑAL: ...te recuerdan de antes...
+
+KEY: terminal.paranoia.3
+  EN: NOTICE: Session being monitored
+  PT: AVISO: sessão sendo monitorada
+  ES: AVISO: sesión bajo monitoreo
+
+KEY: terminal.paranoia.30
+  EN: TRACE: Pattern matches previous intruder
+  PT: RASTRO: padrão corresponde ao intruso anterior
+  ES: RASTRO: el patrón coincide con el intruso anterior
+
+KEY: terminal.paranoia.31
+  EN: NOTICE: The watchers have been notified
+  PT: AVISO: os observadores foram notificados
+  ES: AVISO: los observadores han sido notificados
+
+KEY: terminal.paranoia.32
+  EN: ALERT: You were expected
+  PT: ALERTA: você era esperado
+  ES: ALERTA: te estaban esperando
+
+KEY: terminal.paranoia.33
+  EN: SYSTEM: Countermeasures initializing
+  PT: SISTEMA: contramedidas sendo inicializadas
+  ES: SISTEMA: contramedidas inicializándose
+
+KEY: terminal.paranoia.34
+  EN: WARNING: Too late to disconnect cleanly
+  PT: AVISO: tarde demais para desconectar com limpeza
+  ES: ADVERTENCIA: demasiado tarde para desconectarse limpiamente
+
+KEY: terminal.paranoia.35
+  EN: CAUTION: Your curiosity has been noted
+  PT: CUIDADO: sua curiosidade foi anotada
+  ES: PRECAUCIÓN: tu curiosidad ha sido anotada
+
+KEY: terminal.paranoia.36
+  EN: INFO: This session will be... remembered
+  PT: INFO: esta sessão vai ser... lembrada
+  ES: INFO: esta sesión será... recordada
+
+KEY: terminal.paranoia.4
+  EN: ALERT: Unauthorized access attempt logged
+  PT: ALERTA: tentativa de acesso não autorizado registrada
+  ES: ALERTA: intento de acceso no autorizado registrado
+
+KEY: terminal.paranoia.5
+  EN: SYSTEM: Someone else is in the system
+  PT: SISTEMA: há outra pessoa no sistema
+  ES: SISTEMA: alguien más está dentro del sistema
+
+KEY: terminal.paranoia.6
+  EN: ANOMALY: Data exfiltration detected
+  PT: ANOMALIA: exfiltração de dados detectada
+  ES: ANOMALÍA: exfiltración de datos detectada
+
+KEY: terminal.paranoia.7
+  EN: CAUTION: Your keystrokes are being recorded
+  PT: CUIDADO: suas teclas estão sendo gravadas
+  ES: PRECAUCIÓN: tus pulsaciones están siendo registradas
+
+KEY: terminal.paranoia.8
+  EN: INFO: Connection routed through unknown node
+  PT: INFO: conexão roteada por nó desconhecido
+  ES: INFO: conexión enrutada por un nodo desconocido
+
+KEY: terminal.paranoia.9
+  EN: WARNING: Firewall breach attempt detected
+  PT: AVISO: tentativa de violação do firewall detectada
+  ES: ADVERTENCIA: intento de violación del firewall detectado
+
+KEY: terminal.pause.aria
+  EN: Pause menu
+  PT: Menu de pausa
+  ES: Menú de pausa
+
+KEY: terminal.pause.title
+  EN: Pause Menu (ESC)
+  PT: Menu de pausa (ESC)
+  ES: Menú de pausa (ESC)
+
+KEY: terminal.processing
+  EN: Processing...
+  PT: Processando...
+  ES: Procesando...
+
+KEY: terminal.redaction.classified
+  EN: CLASSIFIED
+  PT: CLASSIFICADO
+  ES: CLASIFICADO
+
+KEY: terminal.risk.critical
+  EN: CRITICAL {{percent}}
+  PT: CRÍTICO {{percent}}
+  ES: CRÍTICO {{percent}}
+
+KEY: terminal.risk.elevated
+  EN: ELEVATED {{percent}}
+  PT: ELEVADO {{percent}}
+  ES: ELEVADO {{percent}}
+
+KEY: terminal.risk.high
+  EN: HIGH {{percent}}
+  PT: ALTO {{percent}}
+  ES: ALTO {{percent}}
+
+KEY: terminal.risk.low
+  EN: LOW {{percent}}
+  PT: BAIXO {{percent}}
+  ES: BAJO {{percent}}
+
+KEY: terminal.risk.minimal
+  EN: MINIMAL {{percent}}
+  PT: MÍNIMO {{percent}}
+  ES: MÍNIMO {{percent}}
+
+KEY: terminal.save.hours
+  EN: Saved: {{value}}h ago
+  PT: Salvo: há {{value}}h
+  ES: Guardado: hace {{value}}h
+
+KEY: terminal.save.justNow
+  EN: Saved: <1m ago
+  PT: Salvo: há <1m
+  ES: Guardado: hace <1m
+
+KEY: terminal.save.minutes
+  EN: Saved: {{value}}m ago
+  PT: Salvo: há {{value}}m
+  ES: Guardado: hace {{value}}m
+
+KEY: terminal.status.accessAdmin
+  EN: ACCESS: ADMIN
+  PT: ACESSO: ADMIN
+  ES: ACCESO: ADMIN
+
+KEY: terminal.status.auditActive
+  EN: AUDIT: ACTIVE
+  PT: AUDITORIA: ATIVA
+  ES: AUDITORÍA: ACTIVA
+
+KEY: terminal.status.paranoiaActive
+  EN: PARANOIA: ACTIVE
+  PT: PARANOIA: ATIVA
+  ES: PARANOIA: ACTIVA
+
+KEY: terminal.status.paranoiaElevated
+  EN: PARANOIA: ELEVATED
+  PT: PARANOIA: ELEVADA
+  ES: PARANOIA: ELEVADA
+
+KEY: terminal.status.sessionUnstable
+  EN: SESSION: UNSTABLE
+  PT: SESSÃO: INSTÁVEL
+  ES: SESIÓN: INESTABLE
+
+KEY: terminal.status.systemNominal
+  EN: SYSTEM NOMINAL
+  PT: SISTEMA ESTÁVEL
+  ES: SISTEMA ESTABLE
+
+KEY: terminal.status.terminated
+  EN: TERMINATED
+  PT: ENCERRADA
+  ES: TERMINADA
+
+KEY: terminal.system.mediaRecoveredVisual
+  EN: [SYSTEM: Media recovered. Visual data archived to session log.]
+  PT: [SISTEMA: mídia recuperada. Dados visuais arquivados no log da sessão.]
+  ES: [SISTEMA: medio recuperado. Datos visuales archivados en el registro de sesión.]
+
+KEY: terminal.timer.decryptWindow
+  EN: DECRYPTION WINDOW
+  PT: JANELA DE DESCRIPTOGRAFIA
+  ES: VENTANA DE DESCIFRADO
+
+KEY: terminal.timer.sequence
+  EN: Sequence: {{value}}
+  PT: Sequência: {{value}}
+  ES: Secuencia: {{value}}
+
+KEY: terminal.timer.traceActive
+  EN: ⚠️ TRACE ACTIVE
+  PT: ⚠️ RASTREIO ATIVO
+  ES: ⚠️ TRAZA ACTIVA
+
+KEY: terminal.tracker.alerts
+  EN: ATT:
+  PT: TENT:
+  ES: INT:
+
+KEY: terminal.tracker.alienFiles
+  EN: Alien Files
+  PT: Arquivos Alienígenas
+  ES: Archivos Alienígenas
+
+KEY: terminal.tracker.captured
+  EN: CAPTURED
+  PT: CAPTURADO
+  ES: CAPTURADO
+
+KEY: terminal.tracker.evidence
+  EN: EVIDENCE:
+  PT: EVIDÊNCIAS:
+  ES: EVIDENCIA:
+
+KEY: terminal.tracker.evidenceFound
+  EN: Saved: [{{count}}/{{total}}]
+  PT: Salvos: [{{count}}/{{total}}]
+  ES: Guardados: [{{count}}/{{total}}]
+
+KEY: terminal.tracker.foreign
+  EN: FOREIGN
+  PT: EXTERNO
+  ES: EXTERNO
+
+KEY: terminal.tracker.next
+  EN: NEXT
+  PT: PRÓX.
+  ES: SIG.
+
+KEY: terminal.tracker.recovered
+  EN: RECOVERED
+  PT: RECUPERADO
+  ES: RECUPERADO
+
+KEY: terminal.tracker.risk
+  EN: RISK:
+  PT: RISCO:
+  ES: RIESGO:
+
+KEY: terminal.tracker.signals
+  EN: SIGNALS
+  PT: SINAIS
+  ES: SEÑALES
+
+KEY: terminal.tracker.tooltip.captured
+  EN: Beings/specimens captured
+  PT: Seres/espécimes capturados
+  ES: Seres/especímenes capturados
+
+KEY: terminal.tracker.tooltip.foreign
+  EN: International involvement
+  PT: Envolvimento internacional
+  ES: Participación internacional
+
+KEY: terminal.tracker.tooltip.next
+  EN: Future plans/timeline window
+  PT: Planos futuros/janela temporal
+  ES: Planes futuros/ventana temporal
+
+KEY: terminal.tracker.tooltip.recovered
+  EN: Physical debris/materials recovered
+  PT: Detritos/materiais físicos recuperados
+  ES: Restos/materiales físicos recuperados
+
+KEY: terminal.tracker.tooltip.signals
+  EN: Communication/telepathy evidence
+  PT: Evidência de comunicação/telepatia
+  ES: Evidencia de comunicación/telepatía
+
+KEY: terminal.turing.failed.header
+  EN:   TURING EVALUATION: FAILED
+  PT:   AVALIAÇÃO TURING: FALHOU
+  ES:   EVALUACIÓN TURING: FALLIDA
+
+KEY: terminal.turing.failed.line1
+  EN:   Human behavioral patterns detected.
+  PT:   Padrões comportamentais humanos detectados.
+  ES:   Patrones de comportamiento humano detectados.
+
+KEY: terminal.turing.failed.line2
+  EN:   TERMINATING SESSION.
+  PT:   ENCERRANDO SESSÃO.
+  ES:   TERMINANDO SESIÓN.
+
+KEY: terminal.turing.failed.reason
+  EN: TURING EVALUATION FAILED
+  PT: AVALIAÇÃO TURING FALHOU
+  ES: EVALUACIÓN TURING FALLIDA
+
+KEY: terminal.turing.passed.header
+  EN:   TURING EVALUATION: PASSED
+  PT:   AVALIAÇÃO TURING: APROVADA
+  ES:   EVALUACIÓN TURING: APROBADA
+
+KEY: terminal.turing.passed.line1
+  EN:   SUBJECT IS NOT HUMAN, NOT A THREAT
+  PT:   SUJEITO NÃO É HUMANO, NÃO REPRESENTA AMEAÇA
+  ES:   EL SUJETO NO ES HUMANO, NO ES UNA AMENAZA
+
+KEY: terminal.turing.passed.line2
+  EN:   Identity verified as authorized terminal process.
+  PT:   Identidade validada como processo autorizado do terminal.
+  ES:   Identidad verificada como proceso autorizado del terminal.
+
+KEY: terminal.turing.passed.ufo1
+  EN: UFO74: nice work, kid. you fooled the machine.
+  PT: UFO74: mandou bem, kid. você enganou a máquina.
+  ES: UFO74: buen trabajo, kid. engañaste a la máquina.
+
+KEY: terminal.turing.passed.ufo2
+  EN: UFO74: keep digging.
+  PT: UFO74: continua cavando.
+  ES: UFO74: sigue excavando.
+
+KEY: terminal.tutorialSkip.accessLevel
+  EN: > ACCESS LEVEL: 1 [PROVISIONAL]
+  PT: > NÍVEL DE ACESSO: 1 [PROVISÓRIO]
+  ES: > NIVEL DE ACCESO: 1 [PROVISIONAL]
+
+KEY: terminal.tutorialSkip.alreadyKnow
+  EN: [UFO74]: You already know the drill, huh?
+  PT: [UFO74]: Você já sabe o esquema, né?
+  ES: [UFO74]: Ya te sabes el protocolo, ¿eh?
+
+KEY: terminal.tutorialSkip.connected
+  EN: [UFO74]: Connection established.
+  PT: [UFO74]: Conexão estabelecida.
+  ES: [UFO74]: Conexión establecida.
+
+KEY: terminal.tutorialSkip.createProfile
+  EN: > CREATING USER PROFILE...
+  PT: > CRIANDO PERFIL DE USUÁRIO...
+  ES: > CREANDO PERFIL DE USUARIO...
+
+KEY: terminal.tutorialSkip.disconnected
+  EN: [UFO74 has disconnected]
+  PT: [UFO74 desconectou]
+  ES: [UFO74 se desconectó]
+
+KEY: terminal.tutorialSkip.ellipsis
+  EN: [UFO74]: ...
+  PT: [UFO74]: ...
+  ES: [UFO74]: ...
+
+KEY: terminal.tutorialSkip.goodLuck
+  EN: [UFO74]: Good luck, kid.
+  PT: [UFO74]: Boa sorte, kid.
+  ES: [UFO74]: Suerte, kid.
+
+KEY: terminal.tutorialSkip.help
+  EN: [UFO74]: Type `help` if you forget something.
+  PT: [UFO74]: Digite `help` se esquecer de algo.
+  ES: [UFO74]: Escribe `help` si se te olvida algo.
+
+KEY: terminal.tutorialSkip.noHandHolding
+  EN: [UFO74]: Fine, I respect that. No hand-holding.
+  PT: [UFO74]: Beleza, respeito isso. Sem te pegar pela mão.
+  ES: [UFO74]: Bien, lo respeto. Sin llevarte de la mano.
+
+KEY: terminal.tutorialSkip.objective
+  EN: [UFO74]: Find 10 evidence pieces. Leak them. Watch your risk.
+  PT: [UFO74]: Encontre 10 evidências. Vaze tudo. Fique de olho no risco.
+  ES: [UFO74]: Encuentra 10 evidencias. Filtra todo. Vigila tu riesgo.
+
+KEY: terminal.tutorialSkip.statusActive
+  EN: > STATUS: ACTIVE
+  PT: > STATUS: ATIVO
+  ES: > ESTADO: ACTIVO
+
+KEY: terminal.tutorialSkip.userRegistered
+  EN: ✓ USER hackerkid REGISTERED
+  PT: ✓ USUÁRIO hackerkid REGISTRADO
+  ES: ✓ USUARIO hackerkid REGISTRADO
+
+KEY: terminal.tutorialSkip.username
+  EN: > USERNAME: hackerkid
+  PT: > USUÁRIO: hackerkid
+  ES: > USUARIO: hackerkid
+
+KEY: terminal.typing.warning
+  EN: SUSPICIOUS TYPING PATTERN DETECTED
+  PT: PADRÃO DE DIGITAÇÃO SUSPEITO DETECTADO
+  ES: PATRÓN DE ESCRITURA SOSPECHOSO DETECTADO
+
+KEY: terminal.video.closeComment.identity1
+  EN: UFO74: ...that is me. that is what i am.
+  PT: UFO74: ...sou eu. é isso que eu sou.
+  ES: UFO74: ...ese soy yo. eso es lo que soy.
+
+KEY: terminal.video.closeComment.identity2
+  EN: UFO74: kid. do not tell anyone you saw that.
+  PT: UFO74: kid. não conta pra ninguém que você viu isso.
+  ES: UFO74: kid. no le digas a nadie que viste eso.
+
+KEY: terminal.video.closeComment.prisoner45_1
+  EN: UFO74: that is prisoner 45. he has been in there since 1996.
+  PT: UFO74: esse é o prisioneiro 45. ele está lá dentro desde 1996.
+  ES: UFO74: ese es el prisionero 45. lleva ahí dentro desde 1996.
+
+KEY: terminal.video.closeComment.prisoner45_2
+  EN: UFO74: ask him the right questions. he does not have much time.
+  PT: UFO74: faz as perguntas certas. ele não tem muito tempo.
+  ES: UFO74: hazle las preguntas correctas. no le queda mucho tiempo.
+
+KEY: terminal.video.closeComment.transport1
+  EN: UFO74: they moved it at night. of course they did.
+  PT: UFO74: eles moveram aquilo de noite. claro que moveram.
+  ES: UFO74: lo movieron de noche. claro que sí.
+
+KEY: terminal.video.closeComment.transport2
+  EN: UFO74: save that. every detail matters.
+  PT: UFO74: salva isso. cada detalhe importa.
+  ES: UFO74: guarda eso. cada detalle importa.
+
+KEY: terminal.video.invalidChoice
+  EN: ERROR: Type "yes" or "no".
+  PT: ERRO: Digite "sim" ou "não".
+  ES: ERROR: Escribe "sí" o "no".
+
+KEY: terminal.video.prompt
+  EN: There is a video attached to this file. Open video? [yes] [no]
+  PT: Há um vídeo anexado a este arquivo. Abrir vídeo? [sim] [não]
+  ES: Hay un video adjunto a este archivo. ¿Abrir video? [sí] [no]
+
+KEY: terminal.video.ufoReaction1
+  EN: UFO74: damn. what the f*** is that, kid?
+  PT: UFO74: merda. que p*** é essa, kid?
+  ES: UFO74: mierda. ¿qué c*** es eso, kid?
+
+KEY: terminal.video.ufoReaction2
+  EN: UFO74: save it. we're going to have to leak this thing.
+  PT: UFO74: salva isso. vamos ter que vazar essa coisa.
+  ES: UFO74: guarda eso. vamos a tener que filtrar esta cosa.
+
+KEY: turing.feedback.acceptable
+  EN: [ ACCEPTABLE RESPONSE ]
+  PT: [ RESPOSTA ACEITÁVEL ]
+  ES: [ RESPUESTA ACEPTABLE ]
+
+KEY: turing.feedback.humanDetected
+  EN: [ HUMAN PATTERN DETECTED ]
+  PT: [ PADRÃO HUMANO DETECTADO ]
+  ES: [ PATRÓN HUMANO DETECTADO ]
+
+KEY: turing.footer
+  EN: Type A, B, or C to respond
+  PT: Digite A, B ou C para responder
+  ES: Escribe A, B o C para responder
+
+KEY: turing.header.title
+  EN: SECURITY PROTOCOL: TURING EVALUATION
+  PT: PROTOCOLO DE SEGURANÇA: AVALIAÇÃO TURING
+  ES: PROTOCOLO DE SEGURIDAD: EVALUACIÓN TURING
+
+KEY: turing.image.protocolAlt
+  EN: Turing Evaluation Protocol
+  PT: Protocolo da avaliação de Turing
+  ES: Protocolo de evaluación de Turing
+
+KEY: turing.image.resultAlt
+  EN: Turing Evaluation Result
+  PT: Resultado da avaliação de Turing
+  ES: Resultado de evaluación de Turing
+
+KEY: turing.instructions.notice
+  EN: NOTICE: Anomalous access pattern detected.
+  PT: AVISO: padrão de acesso anômalo detectado.
+  ES: AVISO: se detectó un patrón de acceso anómalo.
+
+KEY: turing.instructions.prove
+  EN: You must prove you are an AUTHORIZED TERMINAL PROCESS.
+  PT: Você deve provar que é um PROCESSO AUTORIZADO DO TERMINAL.
+  ES: Debes demostrar que eres un PROCESO AUTORIZADO DEL TERMINAL.
+
+KEY: turing.instructions.select
+  EN: Select the MACHINE response (cold, logical) to pass.
+  PT: Selecione a resposta de MÁQUINA (fria, lógica) para passar.
+  ES: Selecciona la respuesta de MÁQUINA (fría, lógica) para aprobar.
+
+KEY: turing.interrogation
+  EN: I need to ensure you are NOT a human.
+  PT: Preciso garantir que você NÃO é humano.
+  ES: Necesito asegurarme de que NO eres humano.
+
+KEY: turing.progress
+  EN: QUESTION {{current}} of {{total}}
+  PT: PERGUNTA {{current}} de {{total}}
+  ES: PREGUNTA {{current}} de {{total}}
+
+KEY: turing.result.complete
+  EN: [ VERIFICATION COMPLETE ]
+  PT: [ VERIFICAÇÃO CONCLUÍDA ]
+  ES: [ VERIFICACIÓN COMPLETA ]
+
+KEY: turing.result.failLine
+  EN: IDENTITY REJECTED: HUMAN BEHAVIORAL PATTERNS DETECTED
+  PT: IDENTIDADE REJEITADA: PADRÕES HUMANOS DETECTADOS
+  ES: IDENTIDAD RECHAZADA: PATRONES HUMANOS DETECTADOS
+
+KEY: turing.result.failed
+  EN: [ VERIFICATION FAILED ]
+  PT: [ VERIFICAÇÃO FALHOU ]
+  ES: [ VERIFICACIÓN FALLIDA ]
+
+KEY: turing.result.passLine
+  EN: SUBJECT IS NOT HUMAN, NOT A THREAT
+  PT: SUJEITO NÃO É HUMANO, NÃO REPRESENTA AMEAÇA
+  ES: EL SUJETO NO ES HUMANO, NO ES UNA AMENAZA
+
+KEY: turing.result.score
+  EN: MACHINE RESPONSES: {{value}}/3
+  PT: RESPOSTAS DE MÁQUINA: {{value}}/3
+  ES: RESPUESTAS DE MÁQUINA: {{value}}/3
+
+KEY: turing.voice.welcome
+  EN: Welcome to Turing Test
+  PT: Bem-vindo ao Teste de Turing
+  ES: Bienvenido a la Prueba de Turing
+
+KEY: tutorialSkip.header
+  EN: ⌐■-■ SECURITY CHECK ■-■⌐
+  PT: ⌐■-■ VERIFICAÇÃO DE SEGURANÇA ■-■⌐
+  ES: ⌐■-■ VERIFICACIÓN DE SEGURIDAD ■-■⌐
+
+KEY: tutorialSkip.line1.highlight
+  EN: pro hacker
+  PT: hacker profissional
+  ES: hacker pro
+
+KEY: tutorialSkip.line1.prefix
+  EN: Already a
+  PT: Já é
+  ES: ¿Ya eres
+
+KEY: tutorialSkip.line2
+  EN: Know all terminal commands?
+  PT: Já domina todos os comandos do terminal?
+  ES: ¿Ya conoces todos los comandos del terminal?
+
+KEY: tutorialSkip.line3
+  EN: Skip the tutorial if you want
+  PT: Pode pular o tutorial se quiser
+  ES: Puedes saltar el tutorial si quieres
+
+KEY: tutorialSkip.play
+  EN: [ N ] TUTORIAL
+  PT: [ N ] TUTORIAL
+  ES: [ N ] TUTORIAL
+
+KEY: tutorialSkip.skip
+  EN: [ Y ] SKIP
+  PT: [ Y ] PULAR
+  ES: [ Y ] SALTAR
+
+KEY: videoOverlay.aria
+  EN: Recovered video: {{value}}
+  PT: Vídeo recuperado: {{value}}
+  ES: Video recuperado: {{value}}
+
+KEY: videoOverlay.attachedTitle
+  EN: Attached Video - {{value}}
+  PT: Vídeo Anexado - {{value}}
+  ES: Video adjunto - {{value}}
+
+KEY: videoOverlay.button.pause
+  EN: Pause
+  PT: Pausar
+  ES: Pausar
+
+KEY: videoOverlay.button.play
+  EN: Play
+  PT: Reproduzir
+  ES: Reproducir
+
+KEY: videoOverlay.classification
+  EN: CLASSIFICATION: RESTRICTED
+  PT: CLASSIFICAÇÃO: RESTRITO
+  ES: CLASIFICACIÓN: RESTRINGIDO
+
+KEY: videoOverlay.error.corrupted
+  EN: VIDEO DATA CORRUPTED - RETRIEVAL FAILED
+  PT: DADOS DE VÍDEO CORROMPIDOS - FALHA NA RECUPERAÇÃO
+  ES: DATOS DE VIDEO CORRUPTOS - RECUPERACIÓN FALLIDA
+
+KEY: videoOverlay.error.playbackBlocked
+  EN: PLAYBACK BLOCKED - USER ACTION REQUIRED
+  PT: REPRODUÇÃO BLOQUEADA - AÇÃO DO USUÁRIO NECESSÁRIA
+  ES: REPRODUCCIÓN BLOQUEADA - ACCIÓN DEL USUARIO REQUERIDA
+
+KEY: videoOverlay.fileLabel
+  EN: FILE
+  PT: ARQUIVO
+  ES: ARCHIVO
+
+KEY: videoOverlay.header.full
+  EN: ═══ RECOVERED VIDEO DATA ═══
+  PT: ═══ DADOS DE VÍDEO RECUPERADOS ═══
+  ES: ═══ DATOS DE VIDEO RECUPERADOS ═══
+
+KEY: videoOverlay.header.partial
+  EN: ▓▓▓ PARTIAL VIDEO RECOVERY ▓▓▓
+  PT: ▓▓▓ RECUPERAÇÃO PARCIAL DE VÍDEO ▓▓▓
+  ES: ▓▓▓ RECUPERACIÓN PARCIAL DE VIDEO ▓▓▓
+
+KEY: videoOverlay.hint
+  EN: [SPACE] Play/Pause • [ESC] Close
+  PT: [ESPAÇO] Reproduzir/Pausar • [ESC] Fechar
+  ES: [ESPACIO] Reproducir/Pausar • [ESC] Cerrar
+
+KEY: videoOverlay.returnHint
+  EN: Press Esc or close to return to the terminal.
+  PT: Pressione Esc ou feche para voltar ao terminal.
+  ES: Presiona Esc o cierra para volver al terminal.
+
+KEY: videoOverlay.turingAria
+  EN: Turing test video
+  PT: Vídeo do teste de Turing
+  ES: Video de la prueba de Turing

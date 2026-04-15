@@ -81,6 +81,11 @@ export const PRISONER_45_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
+export const MIB_VIDEO_SRC = new URL(
+  '../../videos/video mib.mp4',
+  import.meta.url
+).toString();
+
 // Maps filesystem paths to their attached video evidence
 export const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
   '/internal/jardim_andere_incident.txt': {
@@ -112,6 +117,12 @@ export const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment>
     fileName: 'transport_log_96.txt',
     videoSrc: TRANSPORT_VIDEO_SRC,
     videoTitle: 'transport.mp4',
+  },
+  '/ops/mib/recantation_forms/recantation_001.txt': {
+    filePath: '/ops/mib/recantation_forms/recantation_001.txt',
+    fileName: 'recantation_001.txt',
+    videoSrc: MIB_VIDEO_SRC,
+    videoTitle: 'mib.mp4',
   },
 };
 
