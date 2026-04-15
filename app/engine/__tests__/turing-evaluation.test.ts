@@ -29,14 +29,15 @@ describe('Turing evaluation', () => {
     expect(result.triggerTuringTest).toBe(true);
   });
 
-  it('does not trigger if no evidence is discovered', () => {
+  it('triggers even if no evidence is discovered (risk-only path)', () => {
     const state = createState({
       detectionLevel: 50,
       evidenceCount: 0,
+      singularEventsTriggered: new Set(['turing_warning']),
     });
     const result = executeCommand('help', state);
 
-    expect(result.stateChanges.turingEvaluationActive).toBeFalsy();
+    expect(result.stateChanges.turingEvaluationActive).toBe(true);
   });
 
   it('passes A/B/C input through to normal command processing when active', () => {

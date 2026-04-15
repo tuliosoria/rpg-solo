@@ -99,6 +99,7 @@ vi.mock('../../hooks/useSound', () => ({
     stopAmbient: mockStopAmbient,
     toggleSound: mockToggleSound,
     updateAmbientTension: mockUpdateAmbientTension,
+    updateMusicForRisk: vi.fn(),
     setAmbientDisturbance: mockSetAmbientDisturbance,
     soundEnabled: mockSoundEnabled,
     masterVolume: 0.5,

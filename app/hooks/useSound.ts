@@ -105,16 +105,24 @@ const createNoiseBuffer = (audioContext: AudioContext, duration: number): AudioB
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// AMBIENT MUSIC — Looping MP3 tracks played at low volume beneath the
-// synthesized white-noise drone.  Tracks crossfade on each loop.
+// AMBIENT MUSIC — Risk-based MP3 tracks. The track changes based on the
+// current detection/risk level to escalate tension dynamically.
+//   Music 0 = low risk (0–29%)
+//   Music 1 = moderate risk (30–69%)
+//   Music 2 = high risk (70%+)
 // ═══════════════════════════════════════════════════════════════════════════
 
-const MUSIC_TRACKS = [
-  '/audio/music/geoffharvey-an-alien-presence-154528.mp3',
-  '/audio/music/sound4stock-dark-sci-fi-suspense-trailer-444587.mp3',
-  '/audio/music/welc0mei0-221027-piano-mysterious-fantasy-wonder-lo-fi-retro-155647.mp3',
-  '/audio/music/desifreemusic-spy-thriller-war-music-with-retro-synths-tension-building-bass-339979.mp3',
-];
+const MUSIC_TRACKS: Record<number, string> = {
+  0: '/audio/music/music-0.mp3',
+  1: '/audio/music/music-1.mp3',
+  2: '/audio/music/music-2.mp3',
+};
+
+function getMusicTier(risk: number): number {
+  if (risk >= 70) return 2;
+  if (risk >= 30) return 1;
+  return 0;
+}
 
 /** Base volume for music (before masterVolume multiplier). Keep low so the
  *  white-noise ambient drone remains audible. */
@@ -122,10 +130,8 @@ const MUSIC_BASE_VOLUME = 0.07;
 
 // Preload music tracks on module load (browser only)
 if (typeof window !== 'undefined') {
-  // Use requestIdleCallback for non-blocking preload
   const preloadTracks = () => {
-    MUSIC_TRACKS.forEach(track => {
-      // Create a link preload element
+    Object.values(MUSIC_TRACKS).forEach(track => {
       const link = document.createElement('link');
       link.rel = 'preload';
       link.as = 'audio';
@@ -133,11 +139,10 @@ if (typeof window !== 'undefined') {
       document.head.appendChild(link);
     });
   };
-  
+
   if ('requestIdleCallback' in window) {
     (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(preloadTracks);
   } else {
-    // Fallback for Safari
     setTimeout(preloadTracks, 1000);
   }
 }
@@ -157,7 +162,7 @@ export function useSound() {
   const musicElementRef = useRef<HTMLAudioElement | null>(null);
   const musicGainRef = useRef<GainNode | null>(null);
   const musicSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
-  const musicTrackIndexRef = useRef(0);
+  const musicTrackIndexRef = useRef(0); // current music tier (0/1/2)
   const [soundEnabled, setSoundEnabled] = useState(DEFAULT_OPTIONS.soundEffectsEnabled);
   const [ambientEnabled, setAmbientEnabled] = useState(DEFAULT_OPTIONS.ambientSoundEnabled);
   const [turingVoiceEnabled, setTuringVoiceEnabled] = useState(DEFAULT_OPTIONS.turingVoiceEnabled);
@@ -706,11 +711,12 @@ export function useSound() {
     if (!audioContext) return;
 
     try {
-      // Pick a random starting track
-      musicTrackIndexRef.current = Math.floor(Math.random() * MUSIC_TRACKS.length);
+      // Start with low-risk track (tier 0)
+      musicTrackIndexRef.current = 0;
 
       const audio = new Audio(MUSIC_TRACKS[musicTrackIndexRef.current]);
       audio.crossOrigin = 'anonymous';
+      audio.loop = true;
       audio.volume = 1; // volume controlled via GainNode
 
       // Route through Web Audio so masterVolume affects it
@@ -719,14 +725,6 @@ export function useSound() {
       gain.gain.setValueAtTime(MUSIC_BASE_VOLUME * masterVolume, audioContext.currentTime);
       source.connect(gain);
       gain.connect(audioContext.destination);
-
-      // When a track ends, advance to the next one
-      audio.addEventListener('ended', () => {
-        musicTrackIndexRef.current =
-          (musicTrackIndexRef.current + 1) % MUSIC_TRACKS.length;
-        audio.src = MUSIC_TRACKS[musicTrackIndexRef.current];
-        void audio.play().catch(() => {});
-      });
 
       musicElementRef.current = audio;
       musicSourceRef.current = source;
@@ -737,6 +735,19 @@ export function useSound() {
       // Audio/MediaElementSource not available (e.g. test environment)
     }
   }, [ambientEnabled, masterVolume, initAudio]);
+
+  // Switch music track when risk tier changes
+  const updateMusicForRisk = useCallback((risk: number) => {
+    const tier = getMusicTier(risk);
+    if (tier === musicTrackIndexRef.current) return;
+    musicTrackIndexRef.current = tier;
+
+    if (musicElementRef.current) {
+      musicElementRef.current.src = MUSIC_TRACKS[tier];
+      musicElementRef.current.loop = true;
+      void musicElementRef.current.play().catch(() => {});
+    }
+  }, []);
 
   const stopMusic = useCallback(() => {
     if (musicElementRef.current) {
@@ -907,6 +918,7 @@ export function useSound() {
     updateAmbientTension,
     setAmbientDisturbance,
     setMusicPlaybackRate,
+    updateMusicForRisk,
     speak,
     soundEnabled,
     masterVolume,

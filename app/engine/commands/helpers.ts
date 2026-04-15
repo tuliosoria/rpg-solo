@@ -63,7 +63,7 @@ const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'surveillance_recovery.vid': 'surveillance footage. someone saved this before the purge.',
   'field_report_delta.txt': 'field report from prato. 1977. this has been going on for decades.',
   'operation_prato_original.txt':
-    'operation prato. the air force ran this in 77. they documented everything and then buried it.',
+    'operation prato. the air force documented everything in 77. then buried it.',
   'initial_response_orders.txt':
     'response orders. standard military protocol for something very not standard.',
   'colares_incident_log_77.txt':
@@ -149,12 +149,12 @@ const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'energy_extraction_theory.txt':
     'that document. whoever wrote it understood what is happening. and it broke them.',
   'non_arrival_colonization.txt':
-    'non-arrival colonization. they do not need to come here. they are already taking what they want.',
+    'non-arrival colonization. they do not need to come here. they never did.',
   'window_clarification.red': 'window clarification. the dates are specific. and close.',
   'extraction_mechanism.red':
     'extraction mechanism. the process is automated. we never even notice.',
   'second_deployment.sig':
-    'second deployment signal. there was a second wave. there was always going to be a second wave.',
+    'second deployment. there was a second wave. there was always going to be.',
   'neural_fragment.dat':
     'neural fragment. reconstructed. whatever this was thinking, they captured it.',
   'emergency_broadcast.enc':
@@ -204,6 +204,8 @@ const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
     'generator test postponed. they needed it running for something else.',
   'cafeteria_menu_week03.txt':
     'last normal menu before the 20th. enjoy the feijoada.',
+  'incident_report_1996_01_VG.txt':
+    'the real report. three specimens. they called it a chemical spill.',
   'cafeteria_menu.txt':
     'they were still serving lunch. while storing a body downstairs.',
   'cafeteria_feedback.txt':
@@ -357,9 +359,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
       if (!state.tutorialComplete) return false;
-      return (
-        state.detectionLevel >= DETECTION_THRESHOLDS.TURING_WARNING && state.evidenceCount >= 1
-      );
+      return state.detectionLevel >= DETECTION_THRESHOLDS.TURING_WARNING;
     },
     execute: state => {
       return {
@@ -393,9 +393,7 @@ const SINGULAR_EVENTS: SingularEvent[] = [
       if (state.turingEvaluationCompleted) return false;
       if (state.turingEvaluationActive) return false;
       if (!state.tutorialComplete) return false;
-      return (
-        state.detectionLevel >= DETECTION_THRESHOLDS.TURING_TRIGGER && state.evidenceCount >= 1
-      );
+      return state.detectionLevel >= DETECTION_THRESHOLDS.TURING_TRIGGER;
     },
     execute: state => {
       return {

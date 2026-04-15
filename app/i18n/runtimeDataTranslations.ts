@@ -56,67 +56,39 @@ registerLines(
   archiveData.witness_statement_original.content,
   `
   DECLARAÇÃO DE TESTEMUNHA — SEM REDAÇÕES
-  ASSUNTO: MARIA ELENA SOUZA
-  DATA: 21 DE JANEIRO DE 1996
-  CLASSIFICAÇÃO: EXCLUÍDO — NÃO DISTRIBUIR
-  ENTREVISTADOR: Por favor, descreva exatamente o que você viu.
-  SOUZA: Eram por volta das 3h30. Eu não conseguia dormir por causa do
-  calor. Saí para fumar e vi o céu se iluminar.
-  Não como um relâmpago. Era... pulsante. Vermelho e branco.
-  Então vi aquilo descer. Em silêncio. Sem som algum.
-  Caiu em algum lugar além da fazenda, talvez 2 km ao norte.
-  ENTREVISTADOR: O que aconteceu depois?
-  SOUZA: Corri para dentro. Acordei meu marido. Quando nós
-  voltamos para fora, já havia caminhões. Caminhões militares.
-  Como chegaram tão rápido? Estamos a 40 km de qualquer coisa.
+  ASSUNTO: MARIA ELENA SOUZA | 21 DE JANEIRO DE 1996
+  CLASSIFICAÇÃO: EXCLUÍDO
+  SOUZA: Por volta das 3h30. Não conseguia dormir. Saí.
+  O céu estava pulsando. Vermelho e branco.
+  Algo desceu. Silencioso.
+  Quando olhamos, caminhões militares já estavam
+  lá. Estamos a 40km de qualquer coisa.
   [REDACTED IN FINAL VERSION]
-  SOUZA: Eu os vi carregando alguma coisa. Não eram destroços.
-  Era... era pequeno. Do tamanho de uma criança.
-  Mas não era uma criança. As proporções estavam erradas.
-  A cabeça era grande demais. Os membros, finos demais.
-  Um deles se virou na minha direção. Só por um momento.
-  Os olhos dele... eu ainda os vejo quando fecho os meus.
+  Carregaram algo. Do tamanho de uma criança. Mas as
+  proporções estavam erradas. Um se virou para mim.
+  Os olhos dele... ainda os vejo quando fecho os meus.
   [END REDACTED SECTION]
-  ENTREVISTADOR: Alguém falou com você?
-  SOUZA: Um homem de terno escuro. Não era militar.
-  Ele disse que eu tinha tido um sonho febril. Que o calor
-  pode fazer as pessoas verem coisas que não estão lá.
-  Ele me deu um número para ligar se eu me lembrasse
-  "corretamente". Disse que o emprego do meu marido dependia disso.
-  STATUS: DECLARAÇÃO EXPURGADA DO REGISTRO OFICIAL
-  MOTIVO: "Confiabilidade da testemunha comprometida pelo estresse"
+  Um homem de terno escuro. Disse que o emprego do meu marido dependia
+  de lembrar "corretamente."
+  STATUS: EXPURGADO DO REGISTRO OFICIAL
   `,
   `
   DECLARACIÓN DE TESTIGO — SIN REDACTAR
-  ASUNTO: MARIA ELENA SOUZA
-  FECHA: 21 DE ENERO DE 1996
-  CLASIFICACIÓN: ELIMINADO — NO DISTRIBUIR
-  ENTREVISTADOR: Por favor, describa exactamente lo que vio.
-  SOUZA: Eran alrededor de las 3:30 a. m. No podía dormir por el
-  calor. Salí a fumar y vi que el cielo se iluminó.
-  No como un relámpago. Era... pulsante. Rojo y blanco.
-  Entonces vi que bajó. En silencio. Sin ningún sonido.
-  Cayó en algún lugar más allá de la fazenda, quizá 2 km al norte.
-  ENTREVISTADOR: ¿Qué pasó después?
-  SOUZA: Corrí adentro. Desperté a mi esposo. Cuando
-  volvimos a salir, ya había camiones. Camiones militares.
-  ¿Cómo llegaron tan rápido? Estamos a 40 km de cualquier cosa.
+  ASUNTO: MARIA ELENA SOUZA | 21 DE ENERO DE 1996
+  CLASIFICACIÓN: ELIMINADO
+  SOUZA: Cerca de las 3:30 AM. No podía dormir. Salí.
+  El cielo pulsaba. Rojo y blanco.
+  Algo bajó. Silencioso.
+  Cuando miramos, los camiones militares ya estaban
+  ahí. Estamos a 40km de todo.
   [REDACTADO EN LA VERSIÓN FINAL]
-  SOUZA: Los vi cargar algo. No eran escombros.
-  Era... era pequeño. Del tamaño de un niño.
-  Pero no era un niño. Las proporciones estaban mal.
-  La cabeza era demasiado grande. Las extremidades, demasiado delgadas.
-  Uno de ellos se giró hacia mí. Solo por un instante.
-  Sus ojos... todavía los veo cuando cierro los míos.
+  Cargaron algo. Del tamaño de un niño. Pero las
+  proporciones estaban mal. Uno se giró hacia mí.
+  Sus ojos... aún los veo cuando cierro los míos.
   [FIN DE LA SECCIÓN REDACTADA]
-  ENTREVISTADOR: ¿Alguien le habló?
-  SOUZA: Un hombre de traje oscuro. No era militar.
-  Dijo que yo había tenido un sueño febril. Que el calor
-  puede hacer que la gente vea cosas que no están ahí.
-  Me dio un número al que llamar si recordaba
-  "correctamente". Dijo que el trabajo de mi esposo dependía de eso.
-  ESTADO: DECLARACIÓN EXPURGADA DEL REGISTRO OFICIAL
-  MOTIVO: "Fiabilidad de la testigo comprometida por el estrés"
+  Un hombre de traje oscuro. Dijo que el trabajo de mi esposo dependía
+  de recordar "correctamente."
+  ESTADO: EXPURGADO DEL REGISTRO OFICIAL
   `
 );
 
@@ -126,51 +98,45 @@ registerLines(
   RASCUNHO — DIRETRIZ ALPHA — ITERAÇÃO 1
   DATA: 19 DE JANEIRO DE 1996 — 04:22
   AUTOR: [EXCLUÍDO]
-  STATUS: SUBSTITUÍDO — MARCADO PARA EXCLUSÃO
-  AÇÃO IMEDIATA NECESSÁRIA
-  O cronograma de recuperação do ativo deve ser acelerado.
-  As projeções atuais sugerem que a janela de convergência de 2026 está
-  MAIS PRÓXIMA do que se modelou anteriormente. A nova análise de sinal
-  indica monitoramento ativo desta região.
+  STATUS: MARCADO PARA EXCLUSÃO
+  O cronograma de recuperação de ativos deve ser acelerado.
+  A janela de convergência de 2026 está MAIS PRÓXIMA do que modelado.
+  Análise de sinal indica monitoramento ativo.
   REMOVIDO DA VERSÃO FINAL:
-  Os sujeitos (designados BIO-A até BIO-C) demonstraram
-  persistência cognitiva inesperada apesar dos
-  protocolos de contenção. Recomenda-se realocação imediata
-  para o Site 7 para estudo de longo prazo.
-  NOTA: O sujeito BIO-B tentou se comunicar.
-  A análise preliminar sugere consciência da nossa
-  estrutura organizacional. COMO?
+  Os sujeitos (BIO-A até BIO-C) demonstraram
+  persistência cognitiva apesar dos protocolos de contenção.
+  Recomenda-se realocação para o Site 7.
+  NOTA: BIO-B tentou se comunicar.
+  Análise sugere consciência da nossa estrutura
+  organizacional. COMO?
   Recomenda-se protocolo de isolamento cognitivo.
   NOTA DE SANITIZAÇÃO:
-  A diretiva final fará referência apenas a "recuperação de material".
-  Toda terminologia biológica deve ser substituída por
-  "destroços" e "artefatos".
+  Diretiva final: referir apenas "recuperação de material".
+  Toda terminologia biológica substituída por
+  "destroços" e "artefatos."
   Referências ao Projeto SEED devem ser expurgadas.
   `,
   `
   BORRADOR — DIRECTIVA ALPHA — ITERACIÓN 1
   FECHA: 19 DE ENERO DE 1996 — 04:22
   AUTOR: [ELIMINADO]
-  ESTADO: REEMPLAZADO — MARCADO PARA ELIMINACIÓN
-  ACCIÓN INMEDIATA REQUERIDA
-  La cronología de recuperación del activo debe acelerarse.
-  Las proyecciones actuales sugieren que la ventana de convergencia de 2026 está
-  MÁS CERCA de lo modelado anteriormente. El nuevo análisis de señal
-  indica vigilancia activa de esta región.
+  ESTADO: MARCADO PARA ELIMINACIÓN
+  El cronograma de recuperación de activos debe acelerarse.
+  La ventana de convergencia de 2026 está MÁS CERCA de lo modelado.
+  El análisis de señal indica monitoreo activo.
   ELIMINADO DE LA VERSIÓN FINAL:
-  Los sujetos (designados BIO-A a BIO-C) han
-  demostrado una persistencia cognitiva inesperada pese a los
-  protocolos de contención. Se recomienda reubicación inmediata
-  al Sitio 7 para estudio a largo plazo.
-  NOTA: El sujeto BIO-B ha intentado comunicarse.
-  El análisis preliminar sugiere conocimiento de nuestra
-  estructura organizativa. ¿CÓMO?
+  Los sujetos (BIO-A hasta BIO-C) han demostrado
+  persistencia cognitiva pese a los protocolos de contención.
+  Se recomienda reubicación al Sitio 7.
+  NOTA: BIO-B ha intentado comunicarse.
+  El análisis sugiere conocimiento de nuestra estructura
+  organizativa. ¿CÓMO?
   Se recomienda protocolo de aislamiento cognitivo.
   NOTA DE SANITIZACIÓN:
-  La directiva final hará referencia solo a "recuperación de material".
-  Toda la terminología biológica debe reemplazarse por
-  "escombros" y "artefactos".
-  Deben purgarse las referencias a Project SEED.
+  Directiva final: referir solo "recuperación de material".
+  Toda terminología biológica reemplazada por
+  "escombros" y "artefactos."
+  Las referencias al Proyecto SEED deben ser purgadas.
   `
 );
 
@@ -179,76 +145,56 @@ registerLines(
   `
   REGISTRO DE COMUNICAÇÕES — EXPURGADO
   DATA: 20-22 DE JANEIRO DE 1996
-  STATUS DA RECUPERAÇÃO: RESTAURAÇÃO PARCIAL DO SETOR DE BACKUP
-  [20/01/96 02:17:33]
+  [20/01/96 02:17]
   SITE-3 > COMANDO: Confirmação visual. Múltiplas testemunhas.
-  [20/01/96 02:19:01]
+  [02:19]
   COMANDO > SITE-3: Mobilizar EQUIPE DE RECUPERAÇÃO. Sem envolvimento local.
-  [20/01/96 02:22:45]
-  SITE-3 > COMANDO: Equipe a caminho. ETA 18 minutos.
-  [20/01/96 02:41:12]
-  RECUPERAÇÃO > COMANDO: No local. Avaliação inicial concluída.
-                      Três biológicos confirmados. Um responsivo.
-  [20/01/96 02:43:08]
+  [02:41]
+  RECUPERAÇÃO > COMANDO: No local. Três biológicos confirmados.
+                      Um responsivo.
+  [02:43]
   COMANDO > RECUPERAÇÃO: Responsivo COMO?
-  [20/01/96 02:44:55]
-  RECUPERAÇÃO > COMANDO: Está olhando para nós. Para cada um de nós, por sua vez.
+  [02:44]
+  RECUPERAÇÃO > COMANDO: Está olhando para nós. Cada um por vez.
                       Como se estivesse... contando.
-  [20/01/96 02:45:30]
-  COMANDO > RECUPERAÇÃO: Conter imediatamente. Sem contato visual direto.
-  [20/01/96 02:47:18]
-  RECUPERAÇÃO > COMANDO: Solicitando autorização de override.
-                      Protocolos padrão insuficientes.
-  [20/01/96 02:48:02]
+  [02:45]
+  COMANDO > RECUPERAÇÃO: Conter imediatamente.
+  [02:48]
   COMANDO > RECUPERAÇÃO: Override concedido. Iniciar OPERAÇÃO COLHEITA.
-                      Os protocolos de colheita estão agora em vigor.
-  [20/01/96 03:12:00]
+  [03:12]
   RECUPERAÇÃO > COMANDO: Todos os biológicos contidos.
                       Um agente relatando dor de cabeça e náusea.
-                      Solicita prontidão médica.
-  [20/01/96 03:15:22]
-  COMANDO > TODOS: Iniciar apagão de comunicações.
-                 Este registro agora é CLASSIFICADO OMEGA.
+  [03:15]
+  COMANDO > TODOS: Apagão de comunicações. CLASSIFICADO OMEGA.
   [REGISTRO ENCERRADO]
   ORDEM DE EXCLUSÃO: COMM-1996-0120-DEL
-  AUTORIZAÇÃO: [ASSINATURA EXPURGADA]
   `,
   `
-  REGISTRO DE COMUNICACIONES — EXPURGADO
+  REGISTRO DE COMUNICACIONES — PURGADO
   FECHA: 20-22 DE ENERO DE 1996
-  ESTADO DE RECUPERACIÓN: RESTAURACIÓN PARCIAL DEL SECTOR DE RESPALDO
-  [20/01/96 02:17:33]
+  [20/01/96 02:17]
   SITIO-3 > COMANDO: Confirmación visual. Múltiples testigos.
-  [20/01/96 02:19:01]
+  [02:19]
   COMANDO > SITIO-3: Movilizar EQUIPO DE RECUPERACIÓN. Sin participación local.
-  [20/01/96 02:22:45]
-  SITIO-3 > COMANDO: Equipo en camino. ETA 18 minutos.
-  [20/01/96 02:41:12]
-  RECUPERACIÓN > COMANDO: En escena. Evaluación inicial completa.
-                      Tres biológicos confirmados. Uno responde.
-  [20/01/96 02:43:08]
-  COMANDO > RECUPERACIÓN: ¿Responde CÓMO?
-  [20/01/96 02:44:55]
+  [02:41]
+  RECUPERACIÓN > COMANDO: En escena. Tres biológicos confirmados.
+                      Uno responsivo.
+  [02:43]
+  COMANDO > RECUPERACIÓN: ¿Responsivo CÓMO?
+  [02:44]
   RECUPERACIÓN > COMANDO: Nos está mirando. A cada uno por turno.
                       Como si estuviera... contando.
-  [20/01/96 02:45:30]
-  COMANDO > RECUPERACIÓN: Contener de inmediato. Sin contacto visual directo.
-  [20/01/96 02:47:18]
-  RECUPERACIÓN > COMANDO: Solicitando autorización de override.
-                      Los protocolos estándar son insuficientes.
-  [20/01/96 02:48:02]
+  [02:45]
+  COMANDO > RECUPERACIÓN: Contener de inmediato.
+  [02:48]
   COMANDO > RECUPERACIÓN: Override concedido. Iniciar OPERAÇÃO COLHEITA.
-                      Los protocolos de cosecha quedan ahora en vigor.
-  [20/01/96 03:12:00]
+  [03:12]
   RECUPERACIÓN > COMANDO: Todos los biológicos contenidos.
-                      Un operador reporta dolor de cabeza y náuseas.
-                      Solicita guardia médica.
-  [20/01/96 03:15:22]
-  COMANDO > TODOS: Iniciar apagón de comunicaciones.
-                 Este registro ahora es CLASIFICADO OMEGA.
+                      Un operador reportando dolor de cabeza y náuseas.
+  [03:15]
+  COMANDO > TODOS: Apagón de comunicaciones. CLASIFICADO OMEGA.
   [REGISTRO TERMINADO]
   ORDEN DE ELIMINACIÓN: COMM-1996-0120-DEL
-  AUTORIZACIÓN: [FIRMA EXPURGADA]
   `
 );
 
@@ -256,63 +202,39 @@ registerLines(
   archiveData.personnel_file_costa.content,
   `
   ARQUIVO DE PESSOAL — COSTA, RICARDO MANUEL
-  ID DO FUNCIONÁRIO: [REGISTRO EXCLUÍDO]
   STATUS: INEXISTENTE (OFICIALMENTE)
-  NOTA: Este arquivo não deveria existir. Ricardo Costa foi
-  removido de todos os bancos de dados de pessoal em 25/01/1996.
-  CARGO: Especialista Sênior em Contenção
-  CREDENCIAL: Nível 4
-  LOTAÇÃO: Site 7, Ala de Pesquisa Biológica
-  RELATÓRIO DE INCIDENTE (REDIGIDO DE TODAS AS CÓPIAS)
-  DATA: 23 de janeiro de 1996
-  Costa foi designado para monitoramento noturno do Sujeito BIO-B.
-  Aproximadamente às 02h30, o equipamento de monitoramento detectou
-  padrões anômalos de ondas cerebrais em Costa. Os padrões estavam
-  sincronizados com emissões do Sujeito BIO-B.
-  Costa foi encontrado sem resposta na troca de turno das 06h00.
-  Os olhos estavam abertos. Pupilas dilatadas. Respiração normal.
-  Quando Costa recuperou a consciência (aproximadamente às 14h00),
-  relatou perda completa de memória das 12 horas anteriores.
-  Além disso, Costa demonstrou conhecimento de eventos que
-  ainda não haviam ocorrido — prevendo a chegada de uma
-  equipe de inspeção 3 horas antes do envio da notificação.
-  DISPOSIÇÃO FINAL
-  Costa foi transferido para avaliação psiquiátrica.
-  Seus registros empregatícios foram sanitizados.
-  Sua família foi informada de um "acidente de trabalho".
+  Costa foi removido de todos os bancos de dados em 25/01/1996.
+  Cargo: Especialista Sênior em Contenção, Site 7.
+  INCIDENTE: 23 de janeiro de 1996
+  Designado para monitoramento noturno de BIO-B.
+  Às 02h30, as ondas cerebrais de Costa sincronizaram com
+  emissões do sujeito. Encontrado sem resposta às 06h00.
+  Ao recuperar a consciência, Costa demonstrou
+  conhecimento de eventos ainda não ocorridos — prevendo
+  uma equipe de inspeção 3 horas antes da notificação.
+  Costa transferido para avaliação psiquiátrica.
+  Registros sanitizados. Família informada de "acidente de trabalho."
   Status atual: DESCONHECIDO
-  NOTA NÃO OFICIAL (varredura manuscrita):
+  NOTA NÃO OFICIAL (manuscrita):
   "Ele continua escrevendo a mesma data repetidamente.
    4 de setembro de 2026. O que acontece então?"
   `,
   `
   ARCHIVO DE PERSONAL — COSTA, RICARDO MANUEL
-  ID DE EMPLEADO: [REGISTRO ELIMINADO]
   ESTADO: INEXISTENTE (OFICIALMENTE)
-  NOTA: Este archivo no debería existir. Ricardo Costa fue
-  eliminado de todas las bases de datos de personal el 25/01/1996.
-  CARGO: Especialista Senior en Contención
-  AUTORIZACIÓN: Nivel 4
-  ASIGNADO A: Sitio 7, Ala de Investigación Biológica
-  INFORME DE INCIDENTE (REDACTADO DE TODAS LAS COPIAS)
-  FECHA: 23 de enero de 1996
-  Costa fue asignado a la supervisión nocturna del Sujeto BIO-B.
-  Aproximadamente a las 02:30, el equipo de monitoreo detectó
-  patrones anómalos de ondas cerebrales en Costa. Los patrones estaban
-  sincronizados con emisiones del Sujeto BIO-B.
-  Costa fue hallado inconsciente al cambio de turno de las 06:00.
-  Tenía los ojos abiertos. Pupilas dilatadas. Respiración normal.
-  Cuando Costa recuperó la conciencia (aproximadamente a las 14:00),
-  reportó pérdida completa de memoria de las 12 horas previas.
-  Además, Costa demostró conocimiento de eventos que
-  aún no habían ocurrido — predijo la llegada de un
-  equipo de inspección 3 horas antes de que se enviara la notificación.
-  DISPOSICIÓN FINAL
-  Costa fue transferido a evaluación psiquiátrica.
-  Sus registros laborales fueron sanitizados.
-  Su familia fue informada de un "accidente laboral".
+  Costa fue eliminado de todas las bases de datos el 25/01/1996.
+  Cargo: Especialista Senior en Contención, Sitio 7.
+  INCIDENTE: 23 de enero de 1996
+  Asignado a monitoreo nocturno de BIO-B.
+  A las 02:30, las ondas cerebrales de Costa se sincronizaron con
+  emisiones del sujeto. Hallado sin respuesta a las 06:00.
+  Al recuperar la conciencia, Costa demostró
+  conocimiento de eventos aún no ocurridos — predijo
+  un equipo de inspección 3 horas antes de la notificación.
+  Costa transferido a evaluación psiquiátrica.
+  Registros sanitizados. Familia informada de "accidente laboral."
   Estado actual: DESCONOCIDO
-  NOTA NO OFICIAL (escaneo manuscrito):
+  NOTA NO OFICIAL (manuscrita):
   "Sigue escribiendo la misma fecha una y otra vez.
    4 de septiembre de 2026. ¿Qué pasa entonces?"
   `
@@ -324,151 +246,85 @@ registerLines(
   MEMORANDO — PROJETO SEED
   CLASSIFICAÇÃO: ULTRA — EXCLUÍDO DE TODOS OS SISTEMAS
   DATA: 18 DE JANEIRO DE 1996
-  PARA: [REDACTED]
-  DE: Diretor, Divisão de Programas Especiais
-  RE: Revisão Acelerada do Cronograma
-  Os eventos de 20 de janeiro mudaram nossos cálculos.
-  O Projeto SEED se baseava na suposição de que o primeiro
-  contato ocorreria dentro de um ambiente controlado.
-  O incidente de Varginha invalidou essa suposição.
-  Os biológicos recuperados demonstram capacidades além
-  dos nossos modelos atuais. Especificamente:
-    1. Comunicação telepática aparente
+  O incidente de Varginha invalidou todos os modelos.
+  Os biológicos demonstram capacidades além das
+  projeções:
+    1. Comunicação telepática
     2. Conhecimento das estruturas organizacionais humanas
-    3. Referências a uma data futura específica (2026)
-  Mais preocupante: os biológicos parecem ter estado
-  NOS ESPERANDO. Não se surpreenderam com a captura.
-  Não eram hostis. Eram... pacientes.
+    3. Referências a uma data futura (2026)
+  Não se surpreenderam com a captura.
+  Eram... pacientes.
   AVALIAÇÃO REVISADA
   Não estamos lidando com uma queda acidental.
   Estamos lidando com uma ENTREGA.
-  A nave foi projetada para ser encontrada.
-  Os biológicos foram projetados para ser capturados.
-  São unidades de reconhecimento.
-  O PROJETO SEED deve girar de "preparação" para
-  "aceleração". A janela de 2026 agora é considerada
-  um prazo rígido, não uma estimativa.
-  DESTINO DESTE MEMORANDO
-  Este documento será expurgado de todos os sistemas em 72h.
-  Não criem cópias. Não façam referência ao PROJETO SEED
-  em nenhuma comunicação futura.
-  A narrativa oficial será: "nave experimental acidentada"
-  Os biológicos serão: "formações incomuns de destroços"
-  A cronologia será: "material de farsa irrelevante"
+  A janela de 2026 é um prazo rígido, não uma estimativa.
+  Este memorando será expurgado em 72h.
+  Narrativa oficial: "nave experimental acidentada."
+  Os biológicos: "formações incomuns de destroços."
   `,
   `
-  MEMORÁNDUM — PROJECT SEED
+  MEMORÁNDUM — PROYECTO SEED
   CLASIFICACIÓN: ULTRA — ELIMINADO DE TODOS LOS SISTEMAS
   FECHA: 18 DE ENERO DE 1996
-  PARA: [REDACTED]
-  DE: Director, División de Programas Especiales
-  RE: Revisión Acelerada del Cronograma
-  Los eventos del 20 de enero han cambiado nuestros cálculos.
-  Project SEED se basaba en la suposición de que el primer
-  contacto ocurriría dentro de un entorno controlado.
-  El incidente de Varginha ha invalidado esa suposición.
-  Los biológicos recuperados demuestran capacidades más allá de
-  nuestros modelos actuales. Específicamente:
-    1. Comunicación telepática aparente
+  El incidente de Varginha invalidó todos los modelos.
+  Los biológicos demuestran capacidades más allá de las
+  proyecciones:
+    1. Comunicación telepática
     2. Conocimiento de las estructuras organizativas humanas
-    3. Referencias a una fecha futura específica (2026)
-  Lo más preocupante: los biológicos parecen haber estado
-  ESPERÁNDONOS. No se sorprendieron por la captura.
-  No eran hostiles. Eran... pacientes.
+    3. Referencias a una fecha futura (2026)
+  No se sorprendieron por la captura.
+  Eran... pacientes.
   EVALUACIÓN REVISADA
   No estamos lidiando con un aterrizaje forzoso.
   Estamos lidiando con una ENTREGA.
-  La nave fue diseñada para ser encontrada.
-  Los biológicos fueron diseñados para ser capturados.
-  Son unidades de reconocimiento.
-  PROJECT SEED debe pasar de la "preparación" a la
-  "aceleración". La ventana de 2026 ahora se considera
-  una fecha límite rígida, no una estimación.
-  DESTINO DE ESTE MEMORÁNDUM
-  Este documento será purgado de todos los sistemas en 72 h.
-  No creen copias. No hagan referencia a PROJECT SEED
-  en ninguna comunicación futura.
-  La narrativa oficial será: "nave experimental estrellada"
-  Los biológicos serán: "formaciones inusuales de escombros"
-  La cronología será: "material de engaño irrelevante"
+  La ventana de 2026 es un plazo rígido, no una estimación.
+  Este memorándum será purgado en 72h.
+  Narrativa oficial: "nave experimental estrellada."
+  Los biológicos: "formaciones inusuales de escombros."
   `
 );
 
 registerLines(
   archiveData.autopsy_notes_unredacted.content,
   `
-  NOTAS DE AUTÓPSIA — VERSÃO SEM REDAÇÕES
-  ASSUNTO: BIO-C (FALECIDO)
-  EXAMINADOR: Dr. [NOME EXPURGADO]
-  DATA: 24 DE JANEIRO DE 1996
+  NOTAS DE AUTÓPSIA — SEM REDAÇÕES
+  ASSUNTO: BIO-C (FALECIDO) | 24 DE JANEIRO DE 1996
   STATUS: MARCADO PARA DESTRUIÇÃO
-  NOTAS PRÉ-EXAME:
-  O sujeito expirou às 04h17 de 24/01. Causa da morte incerta.
-  Sem trauma externo. Sem sinais de doença ou sofrimento.
-  O sujeito pareceu simplesmente... parar de funcionar.
-  EXAME FÍSICO
-  Altura: 127 cm (aprox. 4'2")
-  Peso: 18,3 kg (aprox. 40 lbs)
-  Pele: Pigmentação marrom-acinzentada, leve bioluminescência
-  CRÂNIO: Significativamente ampliado. Massa cerebral de aproximadamente
-  3x a média proporcional humana. Padrões incomuns de dobras.
-  OLHOS: Grandes, amendoados. Pupilas fixas e dilatadas.
-  A estrutura retiniana sugere especialização para baixa luminosidade.
-  MEMBROS: Proporcionalmente mais longos que os humanos. Quatro dígitos por
-  mão. Sem unhas. Pele fina sobre pequena estrutura óssea.
-  EXAME INTERNO — [EXCLUÍDO DO RELATÓRIO OFICIAL]
-  Cardiovascular: Um único coração, três câmaras. Eficiente.
-  Digestivo: Mínimo. O sujeito parece projetado para
-  absorção de nutrientes, em vez de processamento de alimentos.
-  Reprodutivo: Nada observado. O sujeito parece ser
-  feito para uma finalidade, e não desenvolvido naturalmente.
+  Sujeito expirou às 04h17. Sem trauma, sem doença.
+  Pareceu simplesmente... parar de funcionar.
+  Altura: 127cm. Peso: 18,3kg.
+  Pele: marrom-acinzentada, leve bioluminescência.
+  Crânio ampliado, massa cerebral 3x a média humana.
+  Olhos: grandes, amendoados. Especialização para baixa luminosidade.
+  INTERNO — [EXCLUÍDO DO RELATÓRIO OFICIAL]
+  Cardiovascular: Um coração, três câmaras.
+  Digestivo: Mínimo. Projetado para absorção.
+  Reprodutivo: Nenhum. Feito para um propósito.
   ACHADO CRÍTICO:
-  O tecido neural contém inclusões metálicas. A análise
-  sugere circuitaria orgânica. Este ser foi FABRICADO.
-  Não é uma forma de vida natural.
-  É um construto. Uma máquina biológica.
-  NOTA PESSOAL (não para o registro oficial):
-  Pratico medicina há 30 anos. Nunca
-  questionei no que acreditava sobre a vida e suas origens.
-  Hoje questionei tudo.
-  Eles não são visitantes. São mensageiros.
+  Tecido neural contém inclusões metálicas.
+  Este ser foi FABRICADO.
+  NOTA PESSOAL:
+  Estes não são visitantes. São mensageiros.
   E não estamos preparados para o que anunciam.
   `,
   `
-  NOTAS DE AUTOPSIA — VERSIÓN SIN REDACTAR
-  ASUNTO: BIO-C (FALLECIDO)
-  EXAMINADOR: Dr. [NOMBRE EXPURGADO]
-  FECHA: 24 DE ENERO DE 1996
+  NOTAS DE AUTOPSIA — SIN REDACTAR
+  ASUNTO: BIO-C (FALLECIDO) | 24 DE ENERO DE 1996
   ESTADO: MARCADO PARA DESTRUCCIÓN
-  NOTAS PREEXAMEN:
-  El sujeto expiró a las 04:17 del 24/01. Causa de muerte incierta.
-  Sin trauma externo. Sin señales de enfermedad o angustia.
-  El sujeto pareció simplemente... dejar de funcionar.
-  EXAMEN FÍSICO
-  Altura: 127 cm (aprox. 4'2")
-  Peso: 18,3 kg (aprox. 40 lbs)
-  Piel: Pigmentación gris parda, ligera bioluminiscencia
-  CRÁNEO: Significativamente agrandado. Masa cerebral aproximadamente
-  3x el promedio proporcional humano. Patrones de pliegue inusuales.
-  OJOS: Grandes, almendrados. Pupilas fijas y dilatadas.
-  La estructura retiniana sugiere especialización para baja luz.
-  MIEMBROS: Proporcionalmente más largos que los humanos. Cuatro dedos por
-  mano. Sin uñas. Piel fina sobre pequeña estructura ósea.
-  EXAMEN INTERNO — [ELIMINADO DEL INFORME OFICIAL]
-  Cardiovascular: Un solo corazón, tres cámaras. Eficiente.
-  Digestivo: Mínimo. El sujeto parece diseñado para
-  absorción de nutrientes más que para procesar alimentos.
-  Reproductivo: No se observó. El sujeto parece estar
-  fabricado para un propósito, en vez de desarrollado naturalmente.
+  Sujeto expiró a las 04:17. Sin trauma, sin enfermedad.
+  Pareció simplemente... dejar de funcionar.
+  Altura: 127cm. Peso: 18,3kg.
+  Piel: gris parduzca, ligera bioluminiscencia.
+  Cráneo agrandado, masa cerebral 3x el promedio humano.
+  Ojos: grandes, almendrados. Especialización para baja luz.
+  INTERNO — [ELIMINADO DEL INFORME OFICIAL]
+  Cardiovascular: Un corazón, tres cámaras.
+  Digestivo: Mínimo. Diseñado para absorción.
+  Reproductivo: Ninguno. Fabricado con propósito.
   HALLAZGO CRÍTICO:
-  El tejido neural contiene inclusiones metálicas. El análisis
-  sugiere circuitería orgánica. Este ser fue FABRICADO.
-  No es una forma de vida natural.
-  Es un constructo. Una máquina biológica.
-  NOTA PERSONAL (no para el registro oficial):
-  He ejercido la medicina durante 30 años. Nunca
-  cuestioné lo que creía sobre la vida y sus orígenes.
-  Hoy lo cuestioné todo.
+  El tejido neural contiene inclusiones metálicas.
+  Este ser fue FABRICADO.
+  NOTA PERSONAL:
   Estos no son visitantes. Son mensajeros.
   Y no estamos preparados para lo que anuncian.
   `
@@ -482,33 +338,20 @@ registerLines(
   CLASSIFICAÇÃO: DESTRUÍDO — RECONSTRUÍDO A PARTIR DE DUMP DE SETOR
   OPERAÇÃO: COLHEITA (HARVEST)
   ORIGEM: Zona de Recuperação Bravo, Varginha MG
-  DESTINO: ESA Campinas — Hangar 4 (Ala Restrita)
+  DESTINO: ESA Campinas — Hangar 4
   INVENTÁRIO DE CARGA
     ITEM 001: Fragmento de casco, liga desconhecida — 47 kg
-              STATUS: Contêiner lacrado, atmosfera de nitrogênio
-              NOTA: Material resiste a todas as ferramentas de corte
-    ITEM 002: Matriz de navegação (presumida) — 12 kg
-              STATUS: Ainda emitindo sinal de baixa frequência
-              AVISO: Não expor à luz solar direta
-    ITEM 003: Destroços de propulsão, 3 fragmentos — 89 kg no total
-              STATUS: Níveis de radiação dentro da tolerância
-              NOTA: Os fragmentos se reagrupam se colocados em proximidade
-    ITEM 004: Amostras de painéis internos — 8 kg
-              STATUS: Composição híbrida orgânico-metálica
-    ITEM 005: Amostras de solo da zona de impacto — 15 kg
-              STATUS: Razões isotópicas elevadas confirmadas
-  PROTOCOLO DE TRANSPORTE
-    Rota: Varginha → Três Corações → Campinas (ESA)
-    Comboio: 3 caminhões militares, sem identificação
-    Escolta: 2º Batalhão Blindado, sem insígnias
-    Tempo de trânsito: 6 horas (durante a noite, sem paradas)
-    OFICIAL RECEPTOR: Cel. [EXPURGADO]
-    ARMAZENAMENTO: Subnível 2, Hangar 4, cofre com controle climático
-  NOTA DE DESTINAÇÃO
-    A destruição deste manifesto foi ordenada em 28/01/1996.
+              Resiste a todas as ferramentas de corte.
+    ITEM 002: Matriz de navegação — 12 kg
+              Ainda emitindo sinal de baixa frequência.
+    ITEM 003: Destroços de propulsão — 89 kg no total
+              Fragmentos se reagrupam se colocados em proximidade.
+    ITEM 004: Painéis internos — composição híbrida orgânico-metálica.
+    ITEM 005: Amostras de solo — razões isotópicas elevadas.
+    Rota: Varginha → Campinas (durante a noite, sem paradas)
+    Comboio: 3 caminhões, sem identificação. Sem insígnias.
+    Destruição do manifesto ordenada em 28/01/1996.
     Não existe registro oficial desta transferência.
-    Todo o pessoal do comboio assinou acordos de não divulgação.
-    O material permanece na ESA Campinas na última auditoria.
   `,
   `
   MANIFIESTO DE TRANSFERENCIA DE ACTIVOS — COPIA ELIMINADA
@@ -516,33 +359,20 @@ registerLines(
   CLASIFICACIÓN: DESTRUIDO — RECONSTRUIDO A PARTIR DE VOLCADO DE SECTOR
   OPERACIÓN: COLHEITA (COSECHA)
   ORIGEN: Zona de Recuperación Bravo, Varginha MG
-  DESTINO: ESA Campinas — Hangar 4 (Ala Restringida)
+  DESTINO: ESA Campinas — Hangar 4
   INVENTARIO DE CARGA
     ÍTEM 001: Fragmento de casco, aleación desconocida — 47 kg
-              ESTADO: Contenedor sellado, atmósfera de nitrógeno
-              NOTA: El material resiste todas las herramientas de corte
-    ÍTEM 002: Matriz de navegación (presunta) — 12 kg
-              ESTADO: Sigue emitiendo señal de baja frecuencia
-              ADVERTENCIA: No exponer a la luz solar directa
-    ÍTEM 003: Restos de propulsión, 3 fragmentos — 89 kg en total
-              ESTADO: Niveles de radiación dentro de tolerancia
-              NOTA: Los fragmentos se reensamblan si se colocan próximos
-    ÍTEM 004: Muestras de paneles interiores — 8 kg
-              ESTADO: Composición híbrida orgánico-metálica
-    ÍTEM 005: Muestras de suelo de la zona de impacto — 15 kg
-              ESTADO: Ratios isotópicos elevados confirmados
-  PROTOCOLO DE TRANSPORTE
-    Ruta: Varginha → Três Corações → Campinas (ESA)
-    Convoy: 3 camiones militares, sin distintivos
-    Escolta: 2.º Batallón Blindado, sin insignias
-    Tiempo de tránsito: 6 horas (nocturno, sin paradas)
-    OFICIAL RECEPTOR: Cnel. [EXPURGADO]
-    ALMACENAMIENTO: Subnivel 2, Hangar 4, bóveda climatizada
-  NOTA DE DESTINO
-    Se ordenó destruir este manifiesto el 28/01/1996.
+              Resiste todas las herramientas de corte.
+    ÍTEM 002: Matriz de navegación — 12 kg
+              Sigue emitiendo señal de baja frecuencia.
+    ÍTEM 003: Restos de propulsión — 89 kg en total
+              Los fragmentos se reensamblan si se colocan próximos.
+    ÍTEM 004: Paneles interiores — composición híbrida orgánico-metálica.
+    ÍTEM 005: Muestras de suelo — razones isotópicas elevadas.
+    Ruta: Varginha → Campinas (nocturno, sin paradas)
+    Convoy: 3 camiones, sin distintivos. Sin insignias.
+    Destrucción del manifiesto ordenada el 28/01/1996.
     No existe registro oficial de esta transferencia.
-    Todo el personal del convoy firmó acuerdos de confidencialidad.
-    El material permanece en ESA Campinas según la última auditoría.
   `
 );
 
@@ -555,18 +385,15 @@ registerLines(
   REGISTRO DE ESPÉCIMES:
     BIO-A: Capturado 20/01, Jardim Andere. Responsivo.
       Transferido para Sítio 7 em 22/01.
-    BIO-B: Capturado 20/01 adjacente a BIO-A. Agitado.
-      Tentativas de sinal não-acústico. Operadores relataram
-      dores de cabeça em raio de 3m. Transferido para Sítio 7.
-    BIO-C: Capturado 22/01. Debilitado. Expirou 24/01
-      às 04:17. Causa desconhecida. Restos para patologia.
-  CONTENÇÃO: Gaiola de Faraday ativa. Monitoramento 24 horas.
-  Contato direto proibido sem autorização Nível 4.
+    BIO-B: Capturado 20/01. Agitado. Tentativas de sinal
+      não acústico. Operadores relataram dores de cabeça em raio de 3m.
+    BIO-C: Capturado 22/01. Debilitado. Expirou 24/01.
+      Causa desconhecida. Restos para patologia.
+  CONTENÇÃO: Gaiola de Faraday ativa.
   Espécimes recusam toda matéria orgânica. NÃO INTERAGIR.
   Pessoal exposto a BIO-B >10 min requer varredura neural.
   ORDEM DE ELIMINAÇÃO: Registro expurgado 30/01/1996.
   Registros oficiais: "Nenhum material biológico recuperado."
-  Registros hospitalares recodificados: "resposta a vazamento químico."
   `,
   `
   REGISTRO DE CONTENCIÓN BIOLÓGICA — REGISTRO PURGADO
@@ -575,18 +402,15 @@ registerLines(
   REGISTRO DE ESPECÍMENES:
     BIO-A: Capturado 20/01, Jardim Andere. Responsivo.
       Transferido a Sitio 7 el 22/01.
-    BIO-B: Capturado 20/01 adyacente a BIO-A. Agitado.
-      Intentos de señal no-acústica. Operadores reportaron
-      dolores de cabeza en radio de 3m. Transferido a Sitio 7.
-    BIO-C: Capturado 22/01. Debilitado. Expiró 24/01
-      a las 04:17. Causa desconocida. Restos a patología.
-  CONTENCIÓN: Jaula de Faraday activa. Monitoreo 24 horas.
-  Contacto directo prohibido sin autorización Nivel 4.
+    BIO-B: Capturado 20/01. Agitado. Intentos de señal
+      no acústica. Operadores reportaron dolores de cabeza en radio de 3m.
+    BIO-C: Capturado 22/01. Debilitado. Expiró 24/01.
+      Causa desconocida. Restos a patología.
+  CONTENCIÓN: Jaula de Faraday activa.
   Especímenes rechazan toda materia orgánica. NO INTERACTUAR.
   Personal expuesto a BIO-B >10 min requiere escaneo neural.
   ORDEN DE ELIMINACIÓN: Registro purgado 30/01/1996.
   Registros oficiales: "Ningún material biológico recuperado."
-  Registros hospitalarios recodificados: "respuesta a derrame químico."
   `
 );
 
@@ -595,11 +419,9 @@ registerLines(
   `
   ANÁLISE PSI-COMM — CLASSIFICADO
   ANALISTA: Dr. [NOME SUPRIMIDO] | 27 JAN, 1996
-  STATUS: DELETADO DE TODOS OS BANCOS DE DADOS
-  Arrays EEG a 1m, 3m, 10m de distância. Sujeitos humanos
-  de controle monitorados simultaneamente. A ≤3m, humanos
-  exibiram padrões de ondas theta sincronizados com
-  emissões de BIO-B. A 10m, caiu para nível basal.
+  Arrays EEG a 1m, 3m, 10m. A ≤3m, padrões de ondas
+  theta sincronizados com emissões de BIO-B.
+  A 10m, caiu para nível basal.
   DESCOBERTAS PRINCIPAIS:
     1. CAPACIDADE TELEPÁTICA CONFIRMADA. Conteúdo é
        conceitual, não linguístico. Receptores "sabem"
@@ -608,20 +430,18 @@ registerLines(
        incluem levantamentos topográficos e mapas de
        densidade populacional. Eles estavam nos CATALOGANDO.
     3. REFERÊNCIA TEMPORAL: "trinta rotações" = 2026.
-    4. NÃO-HOSTIL. Espécimes consideram captura como esperada.
+    4. NÃO-HOSTIL. Sujeitos consideram captura como esperada.
   Suprimido 01/02/1996. Oficial: "Nenhuma comunicação
   anômala detectada." Estes não são animais.
-  São batedores. E completaram sua missão
+  São batedores. Completaram sua missão
   antes de os capturarmos.
   `,
   `
   ANÁLISIS PSI-COMM — CLASIFICADO
   ANALISTA: Dr. [NOMBRE SUPRIMIDO] | 27 ENE, 1996
-  ESTADO: ELIMINADO DE TODAS LAS BASES DE DATOS
-  Arrays EEG a 1m, 3m, 10m de distancia. Sujetos humanos
-  de control monitoreados simultáneamente. A ≤3m, humanos
-  exhibieron patrones de ondas theta sincronizados con
-  emisiones de BIO-B. A 10m, cayó a nivel basal.
+  Arrays EEG a 1m, 3m, 10m. A ≤3m, patrones de ondas
+  theta sincronizados con emisiones de BIO-B.
+  A 10m, cayó a nivel basal.
   HALLAZGOS PRINCIPALES:
     1. CAPACIDAD TELEPÁTICA CONFIRMADA. Contenido es
        conceptual, no lingüístico. Receptores "saben"
@@ -630,10 +450,10 @@ registerLines(
        incluyen levantamientos topográficos y mapas de
        densidad poblacional. Nos estaban CATALOGANDO.
     3. REFERENCIA TEMPORAL: "treinta rotaciones" = 2026.
-    4. NO-HOSTIL. Especímenes consideran captura como esperada.
+    4. NO-HOSTIL. Sujetos consideran captura como esperada.
   Suprimido 01/02/1996. Oficial: "Ninguna comunicación
   anómala detectada." Estos no son animales.
-  Son exploradores. Y completaron su misión
+  Son exploradores. Completaron su misión
   antes de que los capturáramos.
   `
 );
@@ -647,17 +467,15 @@ registerLines(
   PRIORIDADE: FLASH
   Três espécimes biológicos assegurados por militares
   brasileiros. Um falecido, dois viáveis. Conforme Protocolo ECHO,
-  solicito avaliação técnica imediata de Langley.
+  solicito avaliação técnica.
   Contato brasileiro (Cel. [SUPRIMIDO]) cooperativo.
-  Solicita análise compartilhada para acesso aos espécimes.
   Tel Aviv solicita status de observador. Recomendo NEGAR.
-  Força Aérea Brasileira acionou interceptadores em 13/01 conforme
-  aviso do NORAD. Eles estão plenamente cientes.
+  Força Aérea Brasileira acionou interceptadores conforme
+  aviso do NORAD. Estão plenamente cientes.
   Janela de negação plausível está fechando.
   RESPOSTA (LANGLEY): APROVADO. Equipe a caminho, chegada em 48h.
   Custódia brasileira TEMPORÁRIA. Transferência total conforme
-  anexo classificado do tratado de 1988. Varredura de sinais NSA ordenada.
-  Todas as comunicações civis em 50km monitoradas por 90 dias.
+  anexo do tratado de 1988. Varredura de sinais NSA ordenada.
   Cabo destruído conforme protocolo diplomático.
   Sem registro em bancos de dados acessíveis via FOIA.
   `,
@@ -668,17 +486,15 @@ registerLines(
   PRIORIDAD: FLASH
   Tres especímenes biológicos asegurados por militares
   brasileños. Uno fallecido, dos viables. Según Protocolo ECHO,
-  solicito evaluación técnica inmediata de Langley.
+  solicito evaluación técnica.
   Contacto brasileño (Cnel. [SUPRIMIDO]) cooperativo.
-  Solicita análisis compartido para acceso a especímenes.
   Tel Aviv solicita estatus de observador. Recomiendo DENEGAR.
-  Fuerza Aérea Brasileña desplegó interceptores el 13/01 según
+  Fuerza Aérea Brasileña desplegó interceptores según
   aviso del NORAD. Están plenamente conscientes.
   Ventana de negación plausible se está cerrando.
   RESPUESTA (LANGLEY): APROBADO. Equipo en camino, llegada en 48h.
   Custodia brasileña TEMPORAL. Transferencia total según
-  anexo clasificado del tratado de 1988. Barrido de señales NSA ordenado.
-  Todas las comunicaciones civiles en 50km monitoreadas por 90 días.
+  anexo del tratado de 1988. Barrido de señales NSA ordenado.
   Cable destruido según protocolo diplomático.
   Sin registro en bases de datos accesibles vía FOIA.
   `
@@ -689,46 +505,42 @@ registerLines(
   `
   MODELO DE CONVERGÊNCIA — RASCUNHO (EXPURGADO)
   PROJETO SEED — ANÁLISE TEMPORAL | 3 FEV, 1996
-  STATUS: DELETADO DE TODOS OS SISTEMAS
-  Fragmentos psi-comm de BIO-A/B combinados com dados de
-  sinal do array de navegação recuperado resultam em:
+  Fragmentos psi-comm combinados com dados de sinal
+  do array de navegação resultam em:
   JANELA DE ATIVAÇÃO: Setembro 2026 (±2 meses)
-  "Trinta rotações" = 30 anos solares a partir da base de 1996.
-  Fase 1 — RECONHECIMENTO (Ativa, 1996):
-    Bio-construtos batedores mapeiam alvo. Dados transmitidos
+  "Trinta rotações" = 30 anos a partir da base de 1996.
+  Fase 1 — RECONHECIMENTO (1996):
+    Bio-construtos mapeiam alvo. Dados transmitidos
     via banda-psi para receptor externo.
-  Fase 2 — SEMEADURA (Passiva, 1996-2026):
-    Material biológico desencadeia sensibilização neurológica.
-    "Portadores" propagam receptividade ao sinal sem saber.
-  Fase 3 — TRANSIÇÃO (Projetada, 2026):
-    Ativação de espectro completo das vias neurais semeadas.
+  Fase 2 — SEMEADURA (1996-2026):
+    Sensibilização neurológica via material biológico.
+    "Portadores" propagam receptividade ao sinal.
+  Fase 3 — TRANSIÇÃO (2026):
+    Ativação neural de espectro completo.
     Natureza: DESCONHECIDA. Pior cenário: [DADOS SUPRIMIDOS]
-  Rejeitado pela supervisão. Oficial: "Referências a 2026 são
-  sem sentido. Output neural é ruído aleatório."
+  Rejeitado pela supervisão. Oficial: "Ruído aleatório."
   Este documento não sobreviverá ao próximo ciclo de expurgo.
-  Eles podem negar. A matemática não mente.
+  A matemática não mente.
   `,
   `
   MODELO DE CONVERGENCIA — BORRADOR (PURGADO)
   PROYECTO SEED — ANÁLISIS TEMPORAL | 3 FEB, 1996
-  ESTADO: ELIMINADO DE TODOS LOS SISTEMAS
-  Fragmentos psi-comm de BIO-A/B combinados con datos de
-  señal del array de navegación recuperado resultan en:
+  Fragmentos psi-comm combinados con datos de señal
+  del array de navegación resultan en:
   VENTANA DE ACTIVACIÓN: Septiembre 2026 (±2 meses)
-  "Treinta rotaciones" = 30 años solares desde base de 1996.
-  Fase 1 — RECONOCIMIENTO (Activa, 1996):
-    Bio-constructos exploradores mapean objetivo. Datos transmitidos
+  "Treinta rotaciones" = 30 años desde base de 1996.
+  Fase 1 — RECONOCIMIENTO (1996):
+    Bio-constructos mapean objetivo. Datos transmitidos
     vía banda-psi a receptor externo.
-  Fase 2 — SIEMBRA (Pasiva, 1996-2026):
-    Material biológico desencadena sensibilización neurológica.
-    "Portadores" propagan receptividad a la señal sin saberlo.
-  Fase 3 — TRANSICIÓN (Proyectada, 2026):
-    Activación de espectro completo de vías neurales sembradas.
+  Fase 2 — SIEMBRA (1996-2026):
+    Sensibilización neurológica vía material biológico.
+    "Portadores" propagan receptividad a la señal.
+  Fase 3 — TRANSICIÓN (2026):
+    Activación neural de espectro completo.
     Naturaleza: DESCONOCIDA. Peor escenario: [DATOS SUPRIMIDOS]
-  Rechazado por supervisión. Oficial: "Referencias a 2026 son
-  sin sentido. Output neural es ruido aleatorio."
+  Rechazado por supervisión. Oficial: "Ruido aleatorio."
   Este documento no sobrevivirá al próximo ciclo de purga.
-  Pueden negarlo. Las matemáticas no mienten.
+  Las matemáticas no mienten.
   `
 );
 
@@ -1430,35 +1242,25 @@ registerLines(
   expansionData.journalist_payments.decryptedFragment!,
   `
   REGISTRO DE DESEMBOLSO — RELAÇÕES COM A MÍDIA
-  CONTA: COOPERATIVA AGRÍCOLA SUL DE MINAS (FACHADA)
-  PERÍODO: JAN-FEB 1996 — SOMENTE PARA VISUALIZAÇÃO
+  JAN-FEB 1996 — SOMENTE PARA VISUALIZAÇÃO
   23-JAN — R$ 15.000 — RODRIGUES, A.
     O Diário Nacional. Matéria cancelada antes da composição.
   25-JAN — R$ 8.500 — NASCIMENTO, C.
-    Folha Paulista. Investigação substituída por
-    ângulo de "morador de rua perturba moradores". Publicado.
+    Folha Paulista. Substituída por ângulo de "morador de rua".
   27-JAN — R$ 22.000 — [REDACTED]
-    Rede Nacional TV. Segmento do Programa Dominical
-    retirado. Substituído por prévia de Carnaval.
+    Rede Nacional TV. Segmento retirado para prévia de Carnaval.
   TOTAL DESEMBOLSADO: R$ 62.500,00
-  PAGAMENTOS ADICIONAIS: Ver livro-razão suplementar.
-  Rastro documental limpo. Nenhum recibo retido.
   `,
   `
   REGISTRO DE DESEMBOLSO — RELACIONES CON MEDIOS
-  CUENTA: COOPERATIVA AGRÍCOLA SUL DE MINAS (FACHADA)
-  PERÍODO: ENE-FEB 1996 — SOLO LECTURA AUTORIZADA
+  ENE-FEB 1996 — SOLO LECTURA AUTORIZADA
   23-ENE — R$ 15.000 — RODRIGUES, A.
     O Diário Nacional. Nota cancelada antes de composición.
   25-ENE — R$ 8.500 — NASCIMENTO, C.
-    Folha Paulista. Investigación reemplazada por
-    ángulo de "indigente molesta a residentes". Publicado.
+    Folha Paulista. Reemplazada por ángulo de "indigente".
   27-ENE — R$ 22.000 — [REDACTED]
-    Rede Nacional TV. Segmento del Programa Dominical
-    retirado. Reemplazado con anticipo de Carnaval.
+    Rede Nacional TV. Segmento retirado para anticipo de Carnaval.
   TOTAL DESEMBOLSADO: R$ 62.500,00
-  PAGOS ADICIONALES: Ver libro auxiliar suplementario.
-  Rastro documental limpio. Ningún recibo retenido.
   `
 );
 
@@ -1512,9 +1314,8 @@ registerLines(
      Capa de 29-JAN. Matéria investigativa.
      STATUS: Redirecionado para ângulo de "morador de rua".
   3. REVISTA ISTO
-     Edição de fevereiro. Capa de 8 páginas na gráfica.
-     STATUS: CRÍTICO. Impressão atrasada.
-     Pagamento maior autorizado.
+     Edição de fevereiro. Matéria de capa na gráfica.
+     STATUS: CRÍTICO. Pagamento maior autorizado.
   Se jornalista não cooperar, encaminhar Protocolo SOMBRA.
   `,
   `
@@ -1529,9 +1330,8 @@ registerLines(
      Portada del 29-ENE. Artículo de investigación.
      ESTADO: Redirigido a ángulo de "indigente".
   3. REVISTA ISTO
-     Edición de febrero. Portada de 8 páginas en imprenta.
-     ESTADO: CRÍTICO. Impresión retrasada.
-     Pago mayor autorizado.
+     Edición de febrero. Portada en imprenta.
+     ESTADO: CRÍTICO. Pago mayor autorizado.
   Si periodista no coopera, referir Protocolo SOMBRA.
   `
 );
@@ -1614,20 +1414,16 @@ registerLines(
   REGISTRO DE CONTATO COM TESTEMUNHAS — OPERAÇÃO SILÊNCIO
   PERÍODO: 21-JAN a 15-FEB 1996 — RESTRITO
   VISITA #001 — 21-JAN, 22:00
-    WITNESS-1 (irmã mais velha). Residência, Jardim Andere.
-    Equipe: COBRA-1, COBRA-2. Duração: 45 min.
+    WITNESS-1 (irmã mais velha). Jardim Andere.
     Resultado: COOPERATIVA. Retratação assinada.
   VISITA #002 — 21-JAN, 23:30
     WITNESS-2 (irmã do meio). Mesma residência.
-    Duração: 30 min. Resultado: COOPERATIVA.
+    Resultado: COOPERATIVA.
   VISITA #003 — 22-JAN, 06:00
     WITNESS-3 (mais nova). Local de trabalho.
-    Equipe: COBRA-3, COBRA-4. Duração: 20 min.
     Resultado: RESISTENTE. Acompanhamento necessário.
   VISITA #005 — 23-JAN, 19:00
-    WITNESS-3 (acompanhamento). Residência.
-    Equipe: COBRA-1, COBRA-2, COBRA-5.
-    Duração: 90 min. Persuasão estendida.
+    WITNESS-3 (acompanhamento). 90 min. Persuasão estendida.
     Resultado: COOPERATIVA.
   TOTAL: 14 contatos. 12 cooperativos. 2 resistentes (resolvidos).
   `,
@@ -1635,20 +1431,16 @@ registerLines(
   REGISTRO DE CONTACTO CON TESTIGOS — OPERACIÓN SILÊNCIO
   PERÍODO: 21-ENE a 15-FEB 1996 — RESTRINGIDO
   VISITA #001 — 21-ENE, 22:00
-    WITNESS-1 (hermana mayor). Residencia, Jardim Andere.
-    Equipo: COBRA-1, COBRA-2. Duración: 45 min.
+    WITNESS-1 (hermana mayor). Jardim Andere.
     Resultado: COOPERATIVA. Retractación firmada.
   VISITA #002 — 21-ENE, 23:30
     WITNESS-2 (hermana del medio). Misma residencia.
-    Duración: 30 min. Resultado: COOPERATIVA.
+    Resultado: COOPERATIVA.
   VISITA #003 — 22-ENE, 06:00
     WITNESS-3 (menor). Lugar de trabajo.
-    Equipo: COBRA-3, COBRA-4. Duración: 20 min.
     Resultado: RESISTENTE. Seguimiento requerido.
   VISITA #005 — 23-ENE, 19:00
-    WITNESS-3 (seguimiento). Residencia.
-    Equipo: COBRA-1, COBRA-2, COBRA-5.
-    Duración: 90 min. Persuasión extendida.
+    WITNESS-3 (seguimiento). 90 min. Persuasión extendida.
     Resultado: COOPERATIVA.
   TOTAL: 14 contactos. 12 cooperativos. 2 resistentes (resueltos).
   `
@@ -1668,14 +1460,12 @@ registerLines(
     TIPO B (curioso): Enfatizar segurança nacional.
       "A segurança da sua família depende do silêncio."
     TIPO C (hostil): Acionar equipe secundária.
-      Sessão estendida. Ver SOMBRA-EXTENDED.
   FASE 3 — DOCUMENTAÇÃO
     Obter retratação assinada e NDA (Formulário W-7).
   FASE 4 — ACOMPANHAMENTO
     Monitorar no mínimo 30 dias. Verificar nenhum contato com mídia.
   AUTORIZADO: Persuasão verbal, incentivo financeiro.
-  PROIBIDO: Contato físico.
-  Todas as sessões NÃO REGISTRADAS. Sem anotações na presença da testemunha.
+  PROIBIDO: Contato físico. Todas as sessões NÃO REGISTRADAS.
   `,
   `
   INTERROGATORIO DE TESTIGO — PROTOCOLO SOMBRA
@@ -1689,14 +1479,12 @@ registerLines(
     TIPO B (curioso): Enfatizar seguridad nacional.
       "La seguridad de su familia depende del silencio."
     TIPO C (hostil): Desplegar equipo secundario.
-      Sesión extendida. Ver SOMBRA-EXTENDED.
   FASE 3 — DOCUMENTACIÓN
     Obtener retractación firmada y NDA (Formulario W-7).
   FASE 4 — SEGUIMIENTO
     Monitorear mínimo 30 días. Verificar ningún contacto con medios.
   AUTORIZADO: Persuasión verbal, incentivo financiero.
-  PROHIBIDO: Contacto físico.
-  Todas las sesiones NO REGISTRADAS. Sin notas en presencia del testigo.
+  PROHIBIDO: Contacto físico. Todas las sesiones NO REGISTRADAS.
   `
 );
 
@@ -1783,13 +1571,12 @@ registerLines(
   `
   ATIVO DE COBERTURA — CODINOME "MUDINHO"
   ARQUIVO: CS-96-001 — RESTRITO
-  Sujeito: [REDACTED], conhecido localmente como "Mudinho".
+  Sujeito: [REDACTED], conhecido localmente como "Mudinho."
   Idade: ~35-40. Deficiência mental. Em situação de rua.
-  Altura: 1,40m. Magro. Pele escura. Postura curvada.
+  Altura: 1,40m. Pele escura. Postura curvada.
   Não verbal — não pode contradizer a narrativa.
-  NARRATIVA IMPLANTADA:
-    "Testemunhas confundiram um homem local com deficiência mental
-     com algo incomum devido à iluminação precária."
+  NARRATIVA IMPLANTADA: "Testemunhas confundiram um homem local
+    deficiente por algo incomum."
   VANTAGENS: Conhecido localmente. Explica a postura agachada.
   DESVANTAGENS:
     — Cor da pele errada (marrom, não cinza)
@@ -1801,13 +1588,12 @@ registerLines(
   `
   ACTIVO DE COBERTURA — NOMBRE CLAVE "MUDINHO"
   ARCHIVO: CS-96-001 — RESTRINGIDO
-  Sujeto: [REDACTED], conocido localmente como "Mudinho".
+  Sujeto: [REDACTED], conocido localmente como "Mudinho."
   Edad: ~35-40. Discapacidad mental. En situación de calle.
-  Altura: 1,40m. Delgado. Piel oscura. Postura encorvada.
+  Altura: 1,40m. Piel oscura. Postura encorvada.
   No verbal — no puede contradecir la narrativa.
-  NARRATIVA IMPLANTADA:
-    "Testigos confundieron a un hombre local con discapacidad mental
-     con algo inusual debido a mala iluminación."
+  NARRATIVA IMPLANTADA: "Testigos confundieron a un hombre local
+    discapacitado con algo inusual."
   VENTAJAS: Conocido localmente. Explica postura agachada.
   DESVENTAJAS:
     — Color de piel incorrecto (marrón, no gris)
@@ -2015,10 +1801,9 @@ registerLines(
     Fez contato físico com espécime de fauna.
     Antebraço esquerdo, pele exposta. 3-4 segundos.
   23-JAN — Dores de cabeça, dores articulares. Irritação na pele
-    no local de contato. Relata "sonhos estranhos".
-  27-JAN — Hospitalizado. Febre, marcadores sanguíneos anômalos.
+    no local de contato.
+  27-JAN — Hospitalizado. Marcadores sanguíneos anômalos.
   02-FEB — Deterioração rápida. Múltiplos sistemas orgânicos.
-    Transferido para hospital militar, São Paulo.
   15-FEB 03:47 — Expirou.
     Causa oficial: "Pneumonia."
   SUPRIMIDO: Necrose tecidual no local de contato.
@@ -2035,10 +1820,9 @@ registerLines(
     Hizo contacto físico con espécimen de fauna.
     Antebrazo izquierdo, piel expuesta. 3-4 segundos.
   23-ENE — Dolores de cabeza, dolor articular. Irritación en piel
-    en sitio de contacto. Reporta "sueños extraños".
-  27-ENE — Hospitalizado. Fiebre, marcadores sanguíneos anómalos.
+    en sitio de contacto.
+  27-ENE — Hospitalizado. Marcadores sanguíneos anómalos.
   02-FEB — Deterioro rápido. Múltiples sistemas orgánicos.
-    Transferido a hospital militar, São Paulo.
   15-FEB 03:47 — Expiró.
     Causa oficial: "Neumonía."
   SUPRIMIDO: Necrosis tisular en sitio de contacto.
@@ -2726,23 +2510,17 @@ registerLines(
   INSTALAÇÃO 7, SUBNÍVEL 4 — CLASSIFICAÇÃO: ULTRA
   21 JAN 1996
   Sujeito chegou às 03h40 do Jardim Andere. Terceiro espécime.
-  Designado ALPHA. Os outros dois morreram — Hospital Regional,
-  ESA.
-  1,6m. Pele marrom escura, secreção oleosa. Três cristas ósseas
-  no crânio. Olhos vermelhos enormes. Amônia.
+  Designado ALPHA. Os outros dois morreram.
+  1,6m. Pele marrom escura, secreção oleosa. Olhos vermelhos. Amônia.
     Respiração: Nenhuma.
     Pulso: Nenhum.
-    Metabolismo: Nenhum.
     Amplitude teta do EEG: 847 µV.
     Linha de base humana: 12 µV.
   ALPHA está clinicamente morto. O EEG não.
-  25 JAN — Padrões mostram estrutura semelhante a linguagem. Guardas
-  relatam imagens involuntárias de campos estelares. Sensação de estar "observado."
-  1 FEV — Solicitação de psi-comm negada. Construindo a partir de
-  salvados do acidente.
-  2 FEV — EEG disparou durante acesso remoto não autorizado
-  a arquivos. A amônia me segue até meus aposentos.
-  A ventilação diz que não é possível.
+  25 JAN — Padrões mostram estrutura semelhante a linguagem.
+  Guardas relatam sensação de estar "observados."
+  2 FEV — EEG disparou durante acesso não autorizado a arquivos.
+  A amônia me segue até meus aposentos.
   Classificação: ULTRA — Somente para os olhos designados
   `,
   `
@@ -2751,23 +2529,17 @@ registerLines(
   INSTALACIÓN 7, SUBNIVEL 4 — CLASIFICACIÓN: ULTRA
   21 ENE 1996
   Sujeto llegó a las 03:40 desde Jardim Andere. Tercer espécimen.
-  Designado ALPHA. Los otros dos murieron — Hospital Regional,
-  ESA.
-  1,6m. Piel marrón oscura, secreción aceitosa. Tres crestas óseas
-  en el cráneo. Ojos rojos enormes. Amoníaco.
+  Designado ALPHA. Los otros dos murieron.
+  1,6m. Piel marrón oscura, secreción aceitosa. Ojos rojos. Amoníaco.
     Respiración: Ninguna.
     Pulso: Ninguno.
-    Metabolismo: Ninguno.
     Amplitud theta del EEG: 847 µV.
     Línea base humana: 12 µV.
   ALPHA está clínicamente muerto. El EEG no.
-  25 ENE — Los patrones muestran estructura similar al lenguaje. Guardias
-  reportan imágenes involuntarias de campos estelares. Sensación de ser "observado."
-  1 FEB — Solicitud de psi-comm denegada. Construyendo a partir de
-  restos del accidente.
-  2 FEB — El EEG se disparó durante acceso remoto no autorizado
-  a archivos. El amoníaco me sigue hasta mis aposentos.
-  Ventilación dice que no es posible.
+  25 ENE — Los patrones muestran estructura similar al lenguaje.
+  Guardias reportan sensación de ser "observados."
+  2 FEB — El EEG se disparó durante acceso no autorizado a archivos.
+  El amoníaco me sigue hasta mis aposentos.
   Clasificación: ULTRA — Solo para ojos designados
   `
 );
@@ -2779,22 +2551,15 @@ registerLines(
   CPEX — INSTALAÇÃO 7, SUBNÍVEL 4
   CLASSIFICAÇÃO: ULTRA
   5 FEV 1996
-  O dispositivo funciona. Conectei às 22h00, sozinho durante
-  a troca de turno dos guardas.
-  Não é comunicação. Conceitos chegam já
-  compreendidos — sem palavras, sem tradução. Como se
-  sempre fossem seus.
+  O dispositivo funciona. Conceitos chegam já compreendidos —
+  sem palavras, sem tradução. Como se sempre fossem seus.
   ALPHA não está morto. O corpo é uma antena.
-  8 FEV — ALPHA sabe mudanças de horário, transferências de pessoal
-  decididas três andares acima. Esta noite ele
-  disse um nome. Luísa. Minha filha. Sete anos.
-  Eu nunca a mencionei.
+  8 FEV — ALPHA sabe mudanças de horário decididas três
+  andares acima. Esta noite ele disse um nome. Luísa.
+  Minha filha. Sete anos. Eu nunca a mencionei.
     ALERTA DE CONTENÇÃO:
     Código de liberação de emergência: RELEASE ALPHA
-    AVISO: Liberação não autorizada aciona
-    bloqueio da instalação.
   10 FEV — O sargento da PM que tocou ALPHA morreu.
-  "Pneumonia." Nada de pneumônico nisso.
   Ele projetou "trinta rotações." Uma contagem regressiva.
   Classificação: ULTRA — Somente para os olhos designados
   `,
@@ -2803,22 +2568,15 @@ registerLines(
   CPEX — INSTALACIÓN 7, SUBNIVEL 4
   CLASIFICACIÓN: ULTRA
   5 FEB 1996
-  El dispositivo funciona. Me conecté a las 22:00, solo durante
-  el cambio de turno de los guardias.
-  No es comunicación. Los conceptos llegan ya
-  comprendidos — sin palabras, sin traducción. Como si
-  siempre fueran tuyos.
+  El dispositivo funciona. Los conceptos llegan ya comprendidos —
+  sin palabras, sin traducción. Como si siempre fueran tuyos.
   ALPHA no está muerto. El cuerpo es una antena.
-  8 FEB — ALPHA sabe cambios de horario, transferencias de personal
-  decididas tres pisos arriba. Esta noche
-  dijo un nombre. Luísa. Mi hija. Siete años.
-  Nunca la mencioné.
+  8 FEB — ALPHA sabe cambios de horario decididos tres
+  pisos arriba. Esta noche dijo un nombre. Luísa.
+  Mi hija. Siete años. Nunca la mencioné.
     ALERTA DE CONTENCIÓN:
     Código de liberación de emergencia: RELEASE ALPHA
-    ADVERTENCIA: Liberación no autorizada activa
-    bloqueo de la instalación.
   10 FEB — El sargento de la PM que tocó a ALPHA murió.
-  "Neumonía." Nada de neumónico en eso.
   Proyectó "treinta rotaciones." Una cuenta regresiva.
   Clasificación: ULTRA — Solo para ojos designados
   `
@@ -2828,21 +2586,17 @@ registerLines(
   alphaData.alpha_autopsy_addendum.content,
   `
   DIÁRIO DE CAMPO — MAJ. M.A. FERREIRA
-  CPEX — INSTALAÇÃO 7
+  INSTALAÇÃO 7
   12 FEV 1996
   Onze dias morto. EEG: 1.204 µV. Subindo.
-  O dispositivo ativa sozinho. Ou eu o ativo
-  sem lembrar.
+  O dispositivo ativa sozinho agora.
   13 FEV — Dispositivo ligou às 03h00. Eu estava nos
-  aposentos. Três andares acima. O laboratório estava trancado.
-  ALPHA perguntou:
-    "quando você vem?"
-  Quando você vem.
+  aposentos. Três andares acima. Laboratório trancado.
+  ALPHA perguntou: "quando você vem?"
   14 FEV
   Luísa ligou para a central da base. Ela tem sete anos.
   Ela não sabe esse número.
     "papai, o moço do escuro quer falar com você."
-    O moço do escuro quer falar com você.
   [SOLICITAÇÃO DE TRANSFERÊNCIA: NEGADA — PESSOAL ESSENCIAL]
   ...hackerkid...
   ...você está lendo isto...
@@ -2852,21 +2606,17 @@ registerLines(
   `,
   `
   DIARIO DE CAMPO — MAY. M.A. FERREIRA
-  CPEX — INSTALACIÓN 7
+  INSTALACIÓN 7
   12 FEB 1996
   Once días muerto. EEG: 1.204 µV. Subiendo.
-  El dispositivo se activa solo. O yo lo activo
-  sin recordar.
+  El dispositivo se activa solo ahora.
   13 FEB — El dispositivo se encendió a las 03:00. Yo estaba en
-  mis aposentos. Tres pisos arriba. El laboratorio estaba cerrado.
-  ALPHA preguntó:
-    "¿cuándo vienes?"
-  Cuándo vienes.
+  mis aposentos. Tres pisos arriba. Laboratorio cerrado.
+  ALPHA preguntó: "quando você vem?"
   14 FEB
   Luísa llamó a la central de la base. Tiene siete años.
   Ella no sabe este número.
-    "papi, el hombre de la oscuridad quiere hablar contigo."
-    El hombre de la oscuridad quiere hablar contigo.
+    "papai, o moço do escuro quer falar com você."
   [SOLICITUD DE TRANSFERENCIA: DENEGADA — PERSONAL ESENCIAL]
   ...hackerkid...
   ...estás leyendo esto...

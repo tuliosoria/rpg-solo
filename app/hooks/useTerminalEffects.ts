@@ -128,6 +128,7 @@ interface UseTerminalEffectsOptions {
   startAmbient: () => void;
   stopAmbient: () => void;
   updateAmbientTension: (level: number) => void;
+  updateMusicForRisk: (risk: number) => void;
   setTimedDecryptRemaining: React.Dispatch<React.SetStateAction<number>>;
   setIsWarmingUp: React.Dispatch<React.SetStateAction<boolean>>;
   setShowEvidenceTracker: React.Dispatch<React.SetStateAction<boolean>>;
@@ -178,6 +179,7 @@ export function useTerminalEffects({
   startAmbient,
   stopAmbient,
   updateAmbientTension,
+  updateMusicForRisk,
   setTimedDecryptRemaining,
   setIsWarmingUp,
   setShowEvidenceTracker,
@@ -564,7 +566,6 @@ export function useTerminalEffects({
       if (
         crossedTuringThreshold &&
         gameState.tutorialComplete &&
-        (gameState.evidenceCount || 0) >= 1 &&
         !gameState.turingEvaluationActive &&
         !gameState.turingEvaluationCompleted &&
         !gameState.singularEventsTriggered?.has('turing_evaluation') &&
@@ -623,7 +624,6 @@ export function useTerminalEffects({
   }, [
     gameState.detectionLevel,
     gameState.tutorialComplete,
-    gameState.evidenceCount,
     gameState.turingEvaluationActive,
     gameState.turingEvaluationCompleted,
     gameState.singularEventsTriggered,
@@ -660,12 +660,13 @@ export function useTerminalEffects({
     return () => stopAmbient();
   }, [gameState.tutorialComplete, soundEnabled, startAmbient, stopAmbient]);
 
-  // Update ambient tension based on detection level
+  // Update ambient tension and music track based on detection level
   useEffect(() => {
     if (gameState.tutorialComplete && soundEnabled) {
       updateAmbientTension(gameState.detectionLevel);
+      updateMusicForRisk(gameState.detectionLevel);
     }
-  }, [gameState.detectionLevel, gameState.tutorialComplete, soundEnabled, updateAmbientTension]);
+  }, [gameState.detectionLevel, gameState.tutorialComplete, soundEnabled, updateAmbientTension, updateMusicForRisk]);
 
   // Countdown timer logic
   useEffect(() => {
