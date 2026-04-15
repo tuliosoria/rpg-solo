@@ -172,6 +172,104 @@ const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'asset_disposition_report.txt':
     'asset disposition. where they moved everything. hidden in plain language.',
   'terminology_guide.txt': 'terminology guide. a dictionary of lies. every real word replaced.',
+  'duty_roster_jan96.txt':
+    'all hands on deck. no explanation. just... everyone.',
+  'birthdays_jan96.txt':
+    'one name redacted. even from a birthday list.',
+  'training_q1_96.txt':
+    'stress management workshop. right after the incident. subtle.',
+  'phone_directory_96.txt':
+    'every extension. every name. some of these people vanished.',
+  'vacation_calendar.txt':
+    'cancelled vacation. no reason given. just "incident."',
+  'facilities_memo_12.txt':
+    'new hours starting the 20th. they were expecting a long night.',
+  'parking_allocation_jan96.txt':
+    'resurfacing a parking lot during a coverup. convenient.',
+  'hvac_maintenance_log.txt':
+    'cold storage failure. classified spoilage. you know what was in there.',
+  'lost_found_jan96.txt':
+    'classified item in lost and found. someone dropped something.',
+  'budget_request_q1_96.txt':
+    'sector 7 budget. look at the equipment line. that is not office gear.',
+  'supplies_request_jan96.txt':
+    'correction fluid. twelve bottles. a lot of things to erase.',
+  'printer_notice.txt':
+    'printer jams for weeks. a lot of paper going through that machine.',
+  'badge_renewal_memo.txt':
+    'badge renewal. perfect excuse to revoke someone quietly.',
+  'budget_memo.txt':
+    'they had time to audit paper clips. while people disappeared.',
+  'maintenance_schedule.txt':
+    'generator test postponed. they needed it running for something else.',
+  'cafeteria_menu_week03.txt':
+    'last normal menu before the 20th. enjoy the feijoada.',
+  'cafeteria_menu.txt':
+    'they were still serving lunch. while storing a body downstairs.',
+  'cafeteria_feedback.txt':
+    'broken coffee machine. three weeks. nobody came to fix anything.',
+  'copa_94_celebration.txt':
+    'é tetra. three times per hour. at least someone was happy once.',
+  'vehicle_log_jan96.txt':
+    '142 kilometers in one night. classified driver. classified destination.',
+  'parking_regulations.txt':
+    'normal parking rules. at a facility that does not officially exist.',
+  'lost_found_log.txt':
+    'someone lost reading glasses near the conference room. saw too much.',
+  'coffee_harvest_q1_96.txt':
+    'coffee harvest report. same region. same soil. same everything.',
+  'weather_report_jan96.txt':
+    'clear skies over varginha. perfect visibility. that was the problem.',
+  'local_politics_memo.txt':
+    'election year. the mayor knew nothing. officially.',
+  'municipal_budget_96.txt':
+    'public safety got twelve percent. they needed every centavo that week.',
+  'railroad_schedule_jan96.txt':
+    'military freight at 3:30 am. three covered cars. nobody looked inside.',
+  'fire_dept_log_jan96.txt':
+    'they called the fire dept too. then someone called them off.',
+  'save_evidence.sh':
+    'i wrote that script. in case they cut me off.',
+  'purge_trace.sh':
+    'old utility. someone used it the night of the 20th.',
+  'core_dump_corrupted.bin':
+    'that crash was not random. something triggered it from inside.',
+  'encoded_transmission.enc':
+    'rot13. amateur cipher. but the message underneath is not amateur.',
+  'modem_log_jan96.txt':
+    '28.8 modem. geocities. someone was uploading before they got caught.',
+  '.signature.bak':
+    'that sig file. i know whose terminal that was.',
+  'URGENT_classified_alpha.txt':
+    'honeypot. do not trust filenames that scream at you.',
+  'LEAKED_classified_records.dat':
+    'decoy file. they put these everywhere to catch people like us.',
+  'FOR_PRESIDENTS_EYES_ONLY.enc':
+    'trap. real classified files never advertise themselves.',
+  'SMOKING_GUN_proof.txt':
+    'obvious bait. real proof does not come with a label.',
+  'witness_statement_original.txt':
+    'the original statement. before they rewrote her words.',
+  'directive_alpha_draft.txt':
+    'the first draft. they removed the parts about cognitive persistence.',
+  'deleted_comms_log.txt':
+    'three biologics confirmed. one responsive. read that again.',
+  'personnel_file_costa.txt':
+    'costa. they erased him. like he never existed.',
+  'project_seed_memo.txt':
+    'project seed. they had a name for it. they had a plan.',
+  'autopsy_notes_unredacted.txt':
+    'it just stopped. no trauma. no illness. it chose to stop.',
+  'transfer_manifest_deleted.txt':
+    'operation colheita. harvest. they named it harvest.',
+  'bio_containment_log_deleted.txt':
+    'bio-b caused headaches within three meters. without touching anyone.',
+  'psi_analysis_classified.txt':
+    'theta-wave sync. it was in their heads. literally.',
+  'foreign_liaison_cable_deleted.txt':
+    'langley knew. within 72 hours. they always know.',
+  'convergence_model_draft.txt':
+    'september 2026. we are running out of time.',
 };
 
 const GENERIC_EVIDENCE_REACTIONS: string[] = [

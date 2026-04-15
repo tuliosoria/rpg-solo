@@ -1079,7 +1079,7 @@ describe('Narrative Mechanics', () => {
           e => e.content.includes('INSUFFICIENT EVIDENCE') || e.content.includes('not yet')
         )
       ).toBe(true);
-      expect(result.stateChanges.inLeakSequence).toBeUndefined();
+      expect(result.stateChanges.icqPhase).toBeUndefined();
     });
 
     it('triggers direct-to-ICQ leak when all evidence found', () => {
@@ -1506,7 +1506,7 @@ describe('Narrative Mechanics', () => {
       const result = executeCommand('release alpha', state);
 
       expect(
-        result.output.some(e => e.content.includes('ALREADY') || e.content.includes('already'))
+        result.output.some(e => e.content.includes('ALREADY') || e.content.includes('already') || e.content.includes('previously'))
       ).toBe(true);
       // Should not set the flag again
       expect(result.stateChanges.flags?.alphaReleased).toBeUndefined();

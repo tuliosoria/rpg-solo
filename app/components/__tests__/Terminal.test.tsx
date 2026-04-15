@@ -803,7 +803,7 @@ describe('Terminal Component', () => {
 
     expect(screen.queryByText(/Processing\.\.\./i)).not.toBeInTheDocument();
 
-    expect(screen.getAllByText(/OFFICIAL INCIDENT SUMMARY/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/RELATÓRIO OFICIAL DE INCIDENTE/i).length).toBeGreaterThan(0);
   });
 
   it('pauses the timed decrypt window while the pause menu is open', () => {

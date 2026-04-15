@@ -116,7 +116,7 @@ export function useGameActions({
     const firewallWarning = createEntryI18n(
       'ufo74',
       'hooks.gameActions.firewallWarning',
-      'UFO74: ...they see us. the watchers are here.'
+      'UFO74: ...the firewall sees us. his watchers are here. We have to find the evidences soon!'
     );
     setGameState(prev => ({
       ...prev,

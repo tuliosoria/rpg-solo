@@ -236,79 +236,59 @@ const FIREWALL_PHRASES = [
   { key: 'firewall.voice.resistanceIsFutile', fallback: 'Resistance is futile' },
 ];
 
-// Cache for loaded voices
-let cachedVoices: SpeechSynthesisVoice[] = [];
-let _voicesLoaded = false;
-let speechUnlocked = false;
+// Firewall audio — plays pre-recorded audio files instead of TTS
+const FIREWALL_AUDIO_PATHS = [
+  '/audio/firewall-audio.wav',
+  '/audio/firewall-audio-2.wav',
+  '/audio/firewall-voice-3.wav',
+  '/audio/firewall-audio-4.wav',
+];
+let firewallAudioElements: HTMLAudioElement[] = [];
+let audioUnlocked = false;
+let lastAudioIndex = -1;
 
-// Initialize voices - must be called early to preload
+// Initialize firewall audio — preload all audio files
 export function initVoices(): void {
-  if (typeof window === 'undefined' || !window.speechSynthesis) {
-    return;
-  }
-
-  // Try to get voices immediately
-  cachedVoices = speechSynthesis.getVoices();
-  if (cachedVoices.length > 0) {
-    _voicesLoaded = true;
-  }
-
-  // Also listen for voiceschanged event (fires when voices are ready)
-  speechSynthesis.addEventListener('voiceschanged', () => {
-    cachedVoices = speechSynthesis.getVoices();
-    _voicesLoaded = true;
+  if (typeof window === 'undefined') return;
+  firewallAudioElements = FIREWALL_AUDIO_PATHS.map(path => {
+    const audio = new Audio(path);
+    audio.preload = 'auto';
+    return audio;
   });
 }
 
-// Unlock speech synthesis — must be called from a user gesture (click/keydown)
-// to satisfy browser autoplay policy. Without this, timer-based speech is blocked.
+// Unlock audio playback — must be called from a user gesture (click/keydown)
+// to satisfy browser autoplay policy.
 export function unlockSpeechSynthesis(): void {
-  if (speechUnlocked || typeof window === 'undefined' || !window.speechSynthesis) {
-    return;
+  if (audioUnlocked || typeof window === 'undefined') return;
+  const first = firewallAudioElements[0];
+  if (first) {
+    first.volume = 0;
+    first.play().then(() => {
+      first.pause();
+      first.currentTime = 0;
+      first.volume = 1.0;
+    }).catch(() => {});
   }
-  const silent = new SpeechSynthesisUtterance('');
-  silent.volume = 0;
-  speechSynthesis.speak(silent);
-  speechUnlocked = true;
+  audioUnlocked = true;
 }
 
-// Speak a specific phrase in creepy robotic voice
-export function speakCustomFirewallVoice(phrase: string): void {
-  if (typeof window === 'undefined' || !window.speechSynthesis) {
-    return;
-  }
-
+// Play a random firewall audio file (never same twice in a row)
+export function speakCustomFirewallVoice(_phrase: string): void {
+  if (typeof window === 'undefined' || !firewallAudioElements.length) return;
   try {
-    speechSynthesis.cancel();
+    let idx: number;
+    do {
+      idx = Math.floor(Math.random() * firewallAudioElements.length);
+    } while (idx === lastAudioIndex && firewallAudioElements.length > 1);
+    lastAudioIndex = idx;
 
-    const utterance = new SpeechSynthesisUtterance(phrase);
-    utterance.pitch = 0.3;
-    utterance.rate = 0.5;
-    utterance.volume = 1.0;
-
-    // Refresh voices if cache is empty
-    let voices = cachedVoices;
-    if (!voices.length) {
-      voices = speechSynthesis.getVoices();
-      if (voices.length) {
-        cachedVoices = voices;
-        _voicesLoaded = true;
-      }
-    }
-
-    const deepVoice = voices.find(
-      v =>
-        v.name.toLowerCase().includes('male') ||
-        v.name.includes('Daniel') ||
-        v.name.includes('Google UK English Male')
-    );
-    if (deepVoice) {
-      utterance.voice = deepVoice;
-    }
-
-    speechSynthesis.speak(utterance);
+    const audio = firewallAudioElements[idx];
+    audio.currentTime = 0;
+    audio.volume = 1.0;
+    audio.play().catch(() => {});
   } catch {
-    // Speech failed — glow + UFO74 reaction still fire from the caller
+    // Audio failed — glow + UFO74 reaction still fire from the caller
   }
 }
 

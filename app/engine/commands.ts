@@ -13,9 +13,6 @@ import { createEntry, createEntryI18n, sanitizeCommandInput, parseCommand } from
 // Import interactive tutorial system
 import { isInTutorialMode, processTutorialInput } from './commands/interactiveTutorial';
 
-// Import Elusive Man leak system (conspiracy choice kept for save compat)
-import { isPendingConspiracyChoice, processConspiracyChoice } from './elusiveMan';
-
 // Import helpers used by executeCommand
 import {
   checkSingularEvents,
@@ -794,13 +791,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         gameOverReason: 'LOCKDOWN',
       },
     };
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // CONSPIRACY FILES CHOICE (legacy — kept for save compatibility)
-  // ═══════════════════════════════════════════════════════════════════════════
-  if (isPendingConspiracyChoice(state)) {
-    return processConspiracyChoice(normalizedInput, state);
   }
 
   // Empty command
