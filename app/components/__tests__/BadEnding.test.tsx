@@ -118,4 +118,27 @@ describe('BadEnding Component', () => {
       expect(defaultProps.onRestartAction).toHaveBeenCalled();
     }
   });
+
+  it('honors instant text speed and focuses the retry button', () => {
+    render(<BadEnding {...defaultProps} textSpeed="instant" />);
+
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    expect(screen.queryByText('CONNECTION LOST')).not.toBeInTheDocument();
+
+    for (let i = 0; i < 40; i++) {
+      act(() => {
+        vi.advanceTimersByTime(20);
+      });
+    }
+
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    const restartButton = screen.getByRole('button', { name: /try again/i });
+    expect(restartButton).toHaveFocus();
+  });
 });

@@ -4,12 +4,15 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './BadEnding.module.css';
 import { recordEnding } from '../storage/statistics';
 import { useI18n } from '../i18n';
+import type { TextSpeed } from '../types';
+import { scaleTextSpeedDelay } from './textSpeed';
 
 interface BadEndingProps {
   onRestartAction: () => void;
   reason?: string;
   commandCount?: number;
   detectionLevel?: number;
+  textSpeed?: TextSpeed;
 }
 
 export default function BadEnding({
@@ -17,11 +20,13 @@ export default function BadEnding({
   reason = 'DETECTION THRESHOLD EXCEEDED',
   commandCount = 0,
   detectionLevel = 100,
+  textSpeed = 'normal',
 }: BadEndingProps) {
   const { t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'glitch' | 'lockdown' | 'message' | 'final'>('glitch');
   const [textLines, setTextLines] = useState<string[]>([]);
   const hasRecordedEnding = useRef(false);
+  const restartButtonRef = useRef<HTMLButtonElement>(null);
 
   // Record the bad ending in statistics
   useEffect(() => {
@@ -68,16 +73,16 @@ export default function BadEnding({
 
   // Glitch phase
   useEffect(() => {
-    const timer = setTimeout(() => setPhase('lockdown'), 2000);
+    const timer = setTimeout(() => setPhase('lockdown'), scaleTextSpeedDelay(2000, textSpeed));
     return () => clearTimeout(timer);
-  }, []);
+  }, [textSpeed]);
 
   // Lockdown phase
   useEffect(() => {
     if (phase !== 'lockdown') return;
-    const timer = setTimeout(() => setPhase('message'), 1500);
+    const timer = setTimeout(() => setPhase('message'), scaleTextSpeedDelay(1500, textSpeed));
     return () => clearTimeout(timer);
-  }, [phase]);
+  }, [phase, textSpeed]);
 
   // Message phase - type out text
   useEffect(() => {
@@ -89,22 +94,36 @@ export default function BadEnding({
     const interval = setInterval(() => {
       if (lineIndex >= lockdownText.length) {
         clearInterval(interval);
-        finalTimeout = setTimeout(() => setPhase('final'), 2000);
+        finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
         return;
       }
 
-      setTextLines(prev => [...prev, lockdownText[lineIndex]]);
+      const nextLine = lockdownText[lineIndex];
+      if (typeof nextLine === 'string') {
+        setTextLines(prev => [...prev, nextLine]);
+      }
       lineIndex++;
-    }, 150);
+    }, scaleTextSpeedDelay(150, textSpeed));
 
     return () => {
       clearInterval(interval);
       if (finalTimeout) clearTimeout(finalTimeout);
     };
-  }, [phase, lockdownText]);
+  }, [phase, lockdownText, textSpeed]);
+
+  useEffect(() => {
+    if (phase === 'final') {
+      restartButtonRef.current?.focus();
+    }
+  }, [phase]);
 
   return (
-    <div className={`${styles.container} ${phase === 'glitch' ? styles.glitching : ''}`}>
+    <div
+      className={`${styles.container} ${phase === 'glitch' ? styles.glitching : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={translateRuntimeText('SECURITY LOCKDOWN')}
+    >
       <div className={styles.scanlines} />
 
       {phase === 'glitch' && (
@@ -121,7 +140,7 @@ export default function BadEnding({
       )}
 
       {(phase === 'message' || phase === 'final') && (
-        <div className={styles.messageContent}>
+        <div className={styles.messageContent} role="status" aria-live="polite">
           {textLines.map((line, index) => (
             <div
               key={index}
@@ -149,11 +168,12 @@ export default function BadEnding({
 
       {phase === 'final' && (
         <div className={styles.restartSection}>
-            <button
-              className={styles.restartButton}
-              onClick={onRestartAction}
-              aria-label={translateRuntimeText('Try again - restart game')}
-            >
+          <button
+            ref={restartButtonRef}
+            className={styles.restartButton}
+            onClick={onRestartAction}
+            aria-label={translateRuntimeText('Try again - restart game')}
+          >
             {t('ending.tryAgain')}
           </button>
         </div>

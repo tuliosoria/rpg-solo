@@ -185,6 +185,18 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  - Searches only what your current access can already reveal',
     '  - Results can be opened directly with "open <path>"',
   ],
+  recovery: [
+    'COMMAND: help recovery',
+    '',
+    'Review the emergency recovery options that can keep a run alive.',
+    '',
+    'TOOLS:',
+    '  wait           - Lower detection briefly (limited uses)',
+    '  hide           - Emergency escape at 90% risk',
+    '  status         - Check current pressure before you commit',
+    '',
+    'Use recovery tools before the system forces your hand.',
+  ],
   tree: [
     'COMMAND: tree',
     '',

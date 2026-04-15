@@ -124,6 +124,22 @@ describe('GameOver', () => {
 
       expect(defaultProps.onMainMenuAction).toHaveBeenCalled();
     });
+
+    it('uses instant text speed for the restart flow and focuses the first option', () => {
+      render(<GameOver {...defaultProps} textSpeed="instant" />);
+
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(1500);
+      });
+
+      const mainMenuButton = screen.getByRole('button', { name: /main menu/i });
+      expect(mainMenuButton).toBeInTheDocument();
+      expect(mainMenuButton).toHaveFocus();
+    });
   });
 
   describe('Different Reasons', () => {

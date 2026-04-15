@@ -56,6 +56,20 @@ describe('i18n system', () => {
     expect(result.current.translateRuntimeText('MISSION COMPLETE')).toBe('MISSÃO CONCLUÍDA');
   });
 
+  it('translates UFO74 evidence reactions even with a prefixed speaker tag', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('es');
+    });
+
+    expect(
+      result.current.translateRuntimeText(
+        'UFO74: that journal. the scientist lost his mind. but he was right about everything.'
+      )
+    ).toBe('UFO74: ese diario. el científico perdió la cabeza. pero tenía razón en todo.');
+  });
+
   it('translates runtime dynamic patterns', async () => {
     const { result } = renderHook(() => useI18n(), { wrapper });
 
@@ -147,6 +161,34 @@ describe('i18n system', () => {
         '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.'
       )
     ).toBe('UFO74: Cuidado, não digite comandos errados no terminal. Na dúvida, digite help.');
+  });
+
+  it('translates progress, search, and recovery help detail lines for pt-BR', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('pt-BR');
+    });
+
+    expect(result.current.translateRuntimeText('COMMAND: progress')).toBe('COMANDO: progress');
+    expect(
+      result.current.translateRuntimeText(
+        'Review your evidence total, case strength, and session notes at a glance.'
+      )
+    ).toBe(
+      'Revise seu total de evidências, a força do caso e as notas da sessão de relance.'
+    );
+    expect(result.current.translateRuntimeText('COMMAND: search <keyword>')).toBe(
+      'COMANDO: search <keyword>'
+    );
+    expect(result.current.translateRuntimeText('COMMAND: help recovery')).toBe(
+      'COMANDO: help recovery'
+    );
+    expect(
+      result.current.translateRuntimeText(
+        'Review the emergency recovery options that can keep a run alive.'
+      )
+    ).toBe('Revise as opções de recuperação de emergência que podem manter a sessão viva.');
   });
 
   it('translates tutorial, warning, and boot lines for Spanish', async () => {

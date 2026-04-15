@@ -4,11 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './NeutralEnding.module.css';
 import { recordEnding } from '../storage/statistics';
 import { useI18n } from '../i18n';
+import type { TextSpeed } from '../types';
+import { scaleTextSpeedDelay } from './textSpeed';
 
 interface NeutralEndingProps {
   onRestartAction: () => void;
   commandCount?: number;
   detectionLevel?: number;
+  textSpeed?: TextSpeed;
 }
 
 const NEUTRAL_TEXT = [
@@ -56,11 +59,13 @@ export default function NeutralEnding({
   onRestartAction,
   commandCount = 0,
   detectionLevel = 50,
+  textSpeed = 'normal',
 }: NeutralEndingProps) {
   const { t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'disconnect' | 'message' | 'final'>('disconnect');
   const [textLines, setTextLines] = useState<string[]>([]);
   const hasRecordedEnding = useRef(false);
+  const restartButtonRef = useRef<HTMLButtonElement>(null);
 
   // Record the neutral ending in statistics
   useEffect(() => {
@@ -71,9 +76,9 @@ export default function NeutralEnding({
 
   // Disconnect phase
   useEffect(() => {
-    const timer = setTimeout(() => setPhase('message'), 2000);
+    const timer = setTimeout(() => setPhase('message'), scaleTextSpeedDelay(2000, textSpeed));
     return () => clearTimeout(timer);
-  }, []);
+  }, [textSpeed]);
 
   // Message phase - type out text
   useEffect(() => {
@@ -85,22 +90,36 @@ export default function NeutralEnding({
     const interval = setInterval(() => {
       if (lineIndex >= NEUTRAL_TEXT.length) {
         clearInterval(interval);
-        finalTimeout = setTimeout(() => setPhase('final'), 2000);
+        finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
         return;
       }
 
-      setTextLines(prev => [...prev, NEUTRAL_TEXT[lineIndex]]);
+      const nextLine = NEUTRAL_TEXT[lineIndex];
+      if (typeof nextLine === 'string') {
+        setTextLines(prev => [...prev, nextLine]);
+      }
       lineIndex++;
-    }, 200);
+    }, scaleTextSpeedDelay(200, textSpeed));
 
     return () => {
       clearInterval(interval);
       if (finalTimeout) clearTimeout(finalTimeout);
     };
+  }, [phase, textSpeed]);
+
+  useEffect(() => {
+    if (phase === 'final') {
+      restartButtonRef.current?.focus();
+    }
   }, [phase]);
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      role="dialog"
+      aria-modal="true"
+      aria-label={translateRuntimeText('CONNECTION SEVERED')}
+    >
       <div className={styles.scanlines} />
 
       {phase === 'disconnect' && (
@@ -112,7 +131,7 @@ export default function NeutralEnding({
       )}
 
       {(phase === 'message' || phase === 'final') && (
-        <div className={styles.messageContent}>
+        <div className={styles.messageContent} role="status" aria-live="polite">
           {textLines.map((line, index) => (
             <div
               key={index}
@@ -139,6 +158,7 @@ export default function NeutralEnding({
       {phase === 'final' && (
         <div className={styles.restartSection}>
           <button
+            ref={restartButtonRef}
             className={styles.restartButton}
             onClick={onRestartAction}
             aria-label={translateRuntimeText('Try again - restart game')}

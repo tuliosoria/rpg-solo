@@ -1210,6 +1210,7 @@ export default function Terminal({
         reason={gameState.gameOverReason}
         commandCount={gameState.sessionCommandCount}
         detectionLevel={gameState.detectionLevel}
+        textSpeed={textSpeed}
       />
     );
   }
@@ -1220,6 +1221,7 @@ export default function Terminal({
         onRestartAction={handleRestart}
         commandCount={gameState.sessionCommandCount}
         detectionLevel={gameState.detectionLevel}
+        textSpeed={textSpeed}
       />
     );
   }
@@ -1230,6 +1232,7 @@ export default function Terminal({
         onRestartAction={handleRestart}
         commandCount={gameState.sessionCommandCount}
         detectionLevel={gameState.detectionLevel}
+        textSpeed={textSpeed}
       />
     );
   }
@@ -1963,6 +1966,7 @@ export default function Terminal({
         {showGameOver && (
           <GameOver
             reason={gameOverReason}
+            textSpeed={textSpeed}
             onMainMenuAction={onExitAction}
             onLoadCheckpointAction={slotId => {
               if (onLoadCheckpointAction) {

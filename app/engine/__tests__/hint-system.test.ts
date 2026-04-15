@@ -97,7 +97,36 @@ describe('Hint System', () => {
       const hint = analyzeProgressForHint(createTestState());
 
       expect(hint?.primary.key.startsWith('engine.hints.progress.noFiles')).toBe(true);
-      expect(hint?.followUp?.key).toBe('engine.hints.action.start');
+      expect(hint?.followUp?.key).toBe('engine.hints.action.start.openRoutineFile');
+    });
+
+    it('uses a distinct early exploration follow-up for search guidance', () => {
+      const hint = analyzeProgressForHint(
+        createTestState({
+          filesRead: new Set(['/internal/file1.txt']),
+        })
+      );
+
+      expect(hint?.followUp?.key).toBe('engine.hints.action.start.useTreeAndSearch');
+    });
+
+    it('uses a separate fallback key when no evidence has clicked yet', () => {
+      const hint = analyzeProgressForHint(
+        createTestState({
+          filesRead: new Set([
+            '/storage/log1.txt',
+            '/ops/log2.txt',
+            '/comms/log3.txt',
+            '/admin/log4.txt',
+          ]),
+          accessLevel: 3,
+          flags: { adminUnlocked: true },
+          evidenceCount: 0,
+          prisoner45QuestionsAsked: 1,
+        })
+      );
+
+      expect(hint?.followUp?.key).toBe('engine.hints.action.start.widenSearch');
     });
 
     it('guides players toward unexplored sectors', () => {
@@ -147,6 +176,40 @@ describe('Hint System', () => {
       );
 
       expect(hint?.followUp?.key).toBe('engine.hints.action.leak');
+    });
+
+    it('keeps late-stage review guidance distinct from mid-run recap guidance', () => {
+      const nearCompleteHint = analyzeProgressForHint(
+        createTestState({
+          filesRead: new Set([
+            '/storage/log1.txt',
+            '/ops/log2.txt',
+            '/comms/log3.txt',
+            '/admin/log4.txt',
+          ]),
+          accessLevel: 3,
+          flags: { adminUnlocked: true },
+          evidenceCount: 7,
+          prisoner45QuestionsAsked: 1,
+        })
+      );
+      const midRunHint = analyzeProgressForHint(
+        createTestState({
+          filesRead: new Set([
+            '/storage/log1.txt',
+            '/ops/log2.txt',
+            '/comms/log3.txt',
+            '/admin/log4.txt',
+          ]),
+          accessLevel: 3,
+          flags: { adminUnlocked: true },
+          evidenceCount: 2,
+          prisoner45QuestionsAsked: 1,
+        })
+      );
+
+      expect(nearCompleteHint?.followUp?.key).toBe('engine.hints.action.review.looseThreads');
+      expect(midRunHint?.followUp?.key).toBe('engine.hints.action.review.searchGaps');
     });
   });
 

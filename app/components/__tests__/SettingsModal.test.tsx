@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SettingsModal from '../SettingsModal';
+import * as optionsModule from '../../hooks/useOptions';
 
 describe('SettingsModal', () => {
   const defaultProps = {
@@ -217,6 +218,25 @@ describe('SettingsModal', () => {
       expect(toggle?.textContent).toBe('FAST');
     });
     expect(JSON.parse(mockStorage['terminal1996_options']).textSpeed).toBe('fast');
+  });
+
+  it('keeps text speed ahead of language and reapplies options when it changes', async () => {
+    const applySpy = vi.spyOn(optionsModule, 'applyOptionsToDocument');
+    render(<SettingsModal {...defaultProps} />);
+
+    const labels = Array.from(document.querySelectorAll('[class*="label"]')).map(node =>
+      node.textContent?.trim()
+    );
+    expect(labels.indexOf('Text Speed')).toBeLessThan(labels.indexOf('Language'));
+
+    const textSpeedLabel = screen.getByText('Text Speed');
+    const row = textSpeedLabel.closest('[class*="setting"]');
+    const toggle = row?.querySelector('button');
+    fireEvent.click(toggle!);
+
+    await waitFor(() => {
+      expect(applySpy).toHaveBeenCalledWith(expect.objectContaining({ textSpeed: 'fast' }));
+    });
   });
 
   it('displays keyboard shortcuts info', () => {

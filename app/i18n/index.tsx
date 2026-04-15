@@ -536,6 +536,12 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (translated !== undefined) {
         return normalizeRuntimePresentation(translated);
       }
+      if (text.startsWith('UFO74: ')) {
+        const translatedInner = translateRuntimeText(text.slice('UFO74: '.length));
+        if (translatedInner !== text.slice('UFO74: '.length)) {
+          return normalizeRuntimePresentation(`UFO74: ${translatedInner}`);
+        }
+      }
       const translatedInlineTags = text
         .replace(
           /\[(READ|UNREAD|CORRUPTED|ENCRYPTED|RESTRICTED|RESTRICTED_BRIEFING|UNSTABLE|CONDITIONAL)\]/g,

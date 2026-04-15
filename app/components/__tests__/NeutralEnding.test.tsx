@@ -114,4 +114,19 @@ describe('NeutralEnding Component', () => {
       expect(defaultProps.onRestartAction).toHaveBeenCalled();
     }
   });
+
+  it('honors instant text speed and focuses the retry button', () => {
+    render(<NeutralEnding {...defaultProps} textSpeed="instant" />);
+
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    const restartButton = screen.getByRole('button', { name: /try again/i });
+    expect(restartButton).toHaveFocus();
+  });
 });

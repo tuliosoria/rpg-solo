@@ -114,4 +114,23 @@ describe('SecretEnding Component', () => {
       expect(defaultProps.onRestartAction).toHaveBeenCalled();
     }
   });
+
+  it('honors instant text speed and focuses the return button', () => {
+    render(<SecretEnding {...defaultProps} textSpeed="instant" />);
+
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    const restartButton = screen.getByRole('button', { name: /return to menu/i });
+    expect(restartButton).toHaveFocus();
+  });
 });

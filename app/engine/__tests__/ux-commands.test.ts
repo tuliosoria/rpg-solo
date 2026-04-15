@@ -291,8 +291,14 @@ describe('UX Commands', () => {
       const result = executeCommand('search session_objectives', state);
 
       expect(result.output.some(e => e.content.includes('SEARCH RESULTS'))).toBe(true);
+      expect(result.output.find(e => e.i18nKey === 'engine.commands.inventory.search_query')).toBeDefined();
       expect(
         result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))
+      ).toBe(true);
+      expect(
+        result.output.some(
+          e => e.i18nKey === 'engine.commands.inventory.search_result.filename'
+        )
       ).toBe(true);
     });
 
@@ -310,6 +316,30 @@ describe('UX Commands', () => {
       const result = executeCommand('search crash', state);
 
       expect(result.stateChanges.detectionLevel).toBe(12);
+    });
+
+    it('localizes the overflow line when more than eight results match', () => {
+      const state = createTestState();
+      const result = executeCommand('search report', state);
+
+      expect(
+        result.output.some(e => e.i18nKey === 'engine.commands.inventory.search_more_results')
+      ).toBe(true);
+    });
+  });
+
+  describe('help recovery', () => {
+    it('shows recovery guidance instead of an unknown-command dead end', () => {
+      const state = createTestState();
+      const result = executeCommand('help recovery', state);
+
+      expect(result.output.some(e => e.type === 'error')).toBe(false);
+      expect(
+        result.output.some(e => e.content.includes('Lower detection briefly (limited uses)'))
+      ).toBe(true);
+      expect(result.output.some(e => e.content.includes('Emergency escape at 90% risk'))).toBe(
+        true
+      );
     });
   });
 

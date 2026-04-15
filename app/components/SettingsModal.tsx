@@ -84,10 +84,12 @@ export default memo(function SettingsModal({
     const currentIdx = textSpeedOptions.indexOf(textSpeed);
     const nextSpeed = textSpeedOptions[(currentIdx + 1) % textSpeedOptions.length];
     setTextSpeed(nextSpeed);
-    persistOptions({
+    const nextOptions = {
       ...readStoredOptions(),
       textSpeed: nextSpeed,
-    });
+    };
+    persistOptions(nextOptions);
+    applyOptionsToDocument(nextOptions);
   };
 
   return (
@@ -148,6 +150,25 @@ export default memo(function SettingsModal({
             <span className={styles.hint}>{t('settings.crtHint')}</span>
           </div>
 
+          <div className={styles.setting}>
+            <label className={styles.label}>{t('settings.textSpeed')}</label>
+            <button
+              className={styles.toggle}
+              tabIndex={0}
+              onMouseDown={e => e.preventDefault()}
+              onClick={cycleTextSpeed}
+            >
+              {textSpeed === 'slow'
+                ? t('options.value.slow')
+                : textSpeed === 'fast'
+                  ? t('options.value.fast')
+                  : textSpeed === 'instant'
+                    ? t('options.value.instant')
+                    : t('options.value.normal')}
+            </button>
+            <span className={styles.hint}>{t('settings.textSpeedHint')}</span>
+          </div>
+
           {/* Language Select */}
           <div className={styles.setting}>
             <label className={styles.label}>{t('settings.language')}</label>
@@ -168,25 +189,6 @@ export default memo(function SettingsModal({
                   ? t('language.pt-BR')
                   : t('language.es')}
             </button>
-          </div>
-
-          <div className={styles.setting}>
-            <label className={styles.label}>{t('settings.textSpeed')}</label>
-            <button
-              className={styles.toggle}
-              tabIndex={0}
-              onMouseDown={e => e.preventDefault()}
-              onClick={cycleTextSpeed}
-            >
-              {textSpeed === 'slow'
-                ? t('options.value.slow')
-                : textSpeed === 'fast'
-                  ? t('options.value.fast')
-                  : textSpeed === 'instant'
-                    ? t('options.value.instant')
-                    : t('options.value.normal')}
-            </button>
-            <span className={styles.hint}>{t('settings.textSpeedHint')}</span>
           </div>
 
           {/* Info */}

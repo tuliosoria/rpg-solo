@@ -38,6 +38,11 @@ const COMMANDS = [
   'tutorial',
   'leak',
   'message',
+  'search',
+  'hint',
+  'wait',
+  'hide',
+  'morse',
 ];
 
 const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'run', 'bookmark'];

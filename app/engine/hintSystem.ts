@@ -99,7 +99,7 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
         },
       ]),
       followUp: {
-        key: 'engine.hints.action.start',
+        key: 'engine.hints.action.start.openRoutineFile',
         fallback: '       start small: "ls", then "open" something routine.',
       },
     };
@@ -118,7 +118,7 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
         },
       ]),
       followUp: {
-        key: 'engine.hints.action.start',
+        key: 'engine.hints.action.start.useTreeAndSearch',
         fallback: '       use "tree" for the map, then "search <term>" if you need a lead.',
       },
     };
@@ -270,7 +270,7 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
         },
       ]),
       followUp: {
-        key: 'engine.hints.action.review',
+        key: 'engine.hints.action.review.looseThreads',
         fallback: '       use "progress", "bookmark", and "unread" to find the loose threads.',
       },
     };
@@ -289,7 +289,7 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
         },
       ]),
       followUp: {
-        key: 'engine.hints.action.review',
+        key: 'engine.hints.action.review.searchGaps',
         fallback: '       run "progress" for the recap, then search the gaps instead of rereading everything.',
       },
     };
@@ -307,7 +307,7 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
       },
     ]),
     followUp: {
-      key: 'engine.hints.action.start',
+      key: 'engine.hints.action.start.widenSearch',
       fallback: '       widen the search. different sectors answer different parts of the case.',
     },
   };

@@ -37,6 +37,10 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: help [command]': 'COMANDO: help [command]',
     'Display available commands or detailed help for a specific command.':
       'Mostra os comandos disponíveis ou ajuda detalhada para um comando específico.',
+    'USAGE:': 'USO:',
+    'NOTES:': 'NOTAS:',
+    'REQUIREMENTS:': 'REQUISITOS:',
+    'HINT:': 'DICA:',
     '  help           - Show all commands': '  help           - Mostra todos os comandos',
     '  help ls        - Show detailed help for "ls"':
       '  help ls        - Mostra ajuda detalhada para "ls"',
@@ -85,6 +89,11 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: status': 'COMANDO: status',
     'Display current system status and risk indicators.':
       'Mostra o status atual do sistema e os indicadores de risco.',
+    'COMMAND: progress': 'COMANDO: progress',
+    'Review your evidence total, case strength, and session notes at a glance.':
+      'Revise seu total de evidências, a força do caso e as notas da sessão de relance.',
+    '  progress       - Show a spoiler-light investigation recap':
+      '  progress       - Mostra uma recapitulação leve da investigação',
     'Shows:': 'Mostra:',
     '  - Logging/audit status': '  - Status de logging/auditoria',
     '  - System tolerance (wrong attempts remaining)':
@@ -106,6 +115,29 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  last           - Show last opened file': '  last           - Mostra o último arquivo aberto',
     'COMMAND: unread': 'COMANDO: unread',
     '  unread         - Show unread files': '  unread         - Mostra arquivos não lidos',
+    'COMMAND: search <keyword>': 'COMANDO: search <keyword>',
+    'Search accessible filenames, paths, and document text for a keyword.':
+      'Procura um termo em nomes de arquivos, caminhos e texto dos documentos acessíveis.',
+    '  search crash       - Find crash-related files':
+      '  search crash       - Encontra arquivos sobre a queda',
+    '  search quarantine  - Find containment leads':
+      '  search quarantine  - Encontra pistas sobre contenção',
+    '  search 2026        - Find transition references':
+      '  search 2026        - Encontra referências à transição',
+    '  - Searches only what your current access can already reveal':
+      '  - Só busca no que seu acesso atual já consegue revelar',
+    '  - Results can be opened directly with "open <path>"':
+      '  - Resultados podem ser abertos direto com "open <path>"',
+    'COMMAND: help recovery': 'COMANDO: help recovery',
+    'Review the emergency recovery options that can keep a run alive.':
+      'Revise as opções de recuperação de emergência que podem manter a sessão viva.',
+    'TOOLS:': 'FERRAMENTAS:',
+    '  wait           - Lower detection briefly (limited uses)':
+      '  wait           - Reduz a detecção por um tempo (usos limitados)',
+    '  status         - Check current pressure before you commit':
+      '  status         - Verifica a pressão atual antes de arriscar',
+    'Use recovery tools before the system forces your hand.':
+      'Use as ferramentas de recuperação antes que o sistema te obrigue a agir.',
     'COMMAND: tree': 'COMANDO: tree',
     'Display a tree view of the directory structure.':
       'Mostra uma visualização em árvore da estrutura de diretórios.',
@@ -579,6 +611,10 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: help [command]': 'COMANDO: help [command]',
     'Display available commands or detailed help for a specific command.':
       'Muestra los comandos disponibles o ayuda detallada para un comando específico.',
+    'USAGE:': 'USO:',
+    'NOTES:': 'NOTAS:',
+    'REQUIREMENTS:': 'REQUISITOS:',
+    'HINT:': 'PISTA:',
     '  help           - Show all commands': '  help           - Muestra todos los comandos',
     '  help ls        - Show detailed help for "ls"':
       '  help ls        - Muestra ayuda detallada para "ls"',
@@ -627,6 +663,11 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: status': 'COMANDO: status',
     'Display current system status and risk indicators.':
       'Muestra el estado actual del sistema y los indicadores de riesgo.',
+    'COMMAND: progress': 'COMANDO: progress',
+    'Review your evidence total, case strength, and session notes at a glance.':
+      'Revisa de un vistazo tu total de evidencias, la fuerza del caso y las notas de la sesión.',
+    '  progress       - Show a spoiler-light investigation recap':
+      '  progress       - Muestra un resumen de la investigación sin grandes spoilers',
     'Shows:': 'Muestra:',
     '  - Logging/audit status': '  - Estado del registro/auditoría',
     '  - System tolerance (wrong attempts remaining)':
@@ -648,6 +689,29 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  last           - Show last opened file': '  last           - Muestra el último archivo abierto',
     'COMMAND: unread': 'COMANDO: unread',
     '  unread         - Show unread files': '  unread         - Muestra archivos no leídos',
+    'COMMAND: search <keyword>': 'COMANDO: search <keyword>',
+    'Search accessible filenames, paths, and document text for a keyword.':
+      'Busca una palabra clave en nombres de archivo, rutas y texto de documentos accesibles.',
+    '  search crash       - Find crash-related files':
+      '  search crash       - Encuentra archivos sobre el accidente',
+    '  search quarantine  - Find containment leads':
+      '  search quarantine  - Encuentra pistas de contención',
+    '  search 2026        - Find transition references':
+      '  search 2026        - Encuentra referencias a la transición',
+    '  - Searches only what your current access can already reveal':
+      '  - Solo busca en lo que tu acceso actual ya puede revelar',
+    '  - Results can be opened directly with "open <path>"':
+      '  - Los resultados pueden abrirse directamente con "open <path>"',
+    'COMMAND: help recovery': 'COMANDO: help recovery',
+    'Review the emergency recovery options that can keep a run alive.':
+      'Revisa las opciones de recuperación de emergencia que pueden mantener viva la sesión.',
+    'TOOLS:': 'HERRAMIENTAS:',
+    '  wait           - Lower detection briefly (limited uses)':
+      '  wait           - Reduce la detección por un momento (usos limitados)',
+    '  status         - Check current pressure before you commit':
+      '  status         - Revisa la presión actual antes de arriesgarte',
+    'Use recovery tools before the system forces your hand.':
+      'Usa las herramientas de recuperación antes de que el sistema te obligue a actuar.',
     'COMMAND: tree': 'COMANDO: tree',
     'Display a tree view of the directory structure.':
       'Muestra una vista en árbol de la estructura de directorios.',

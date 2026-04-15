@@ -511,21 +511,31 @@ export const inventoryCommands: CommandRegistry = {
       ),
       createEntry('system', '═══════════════════════════════════════'),
       createEntry('system', ''),
-      createEntry('output', `  QUERY: ${query}`),
+      createEntryI18n('output', 'engine.commands.inventory.search_query', `  QUERY: ${query}`, {
+        value: query,
+      }),
       createEntry('system', ''),
     ];
 
     limitedMatches.forEach((match, index) => {
-      const kindLabel =
+      const key =
         match.kind === 'filename'
-          ? 'NAME'
+          ? 'engine.commands.inventory.search_result.filename'
           : match.kind === 'path'
-            ? 'PATH'
+            ? 'engine.commands.inventory.search_result.path'
             : match.kind === 'content'
-              ? 'TEXT'
-              : 'FUZZY';
+              ? 'engine.commands.inventory.search_result.content'
+              : 'engine.commands.inventory.search_result.fuzzy';
+      const fallback =
+        match.kind === 'filename'
+          ? `  ${index + 1}. ${match.path} [NAME]`
+          : match.kind === 'path'
+            ? `  ${index + 1}. ${match.path} [PATH]`
+            : match.kind === 'content'
+              ? `  ${index + 1}. ${match.path} [TEXT]`
+              : `  ${index + 1}. ${match.path} [FUZZY]`;
 
-      output.push(createEntry('output', `  ${index + 1}. ${match.path} [${kindLabel}]`));
+      output.push(createEntryI18n('output', key, fallback, { index: index + 1, path: match.path }));
       if (match.preview && match.kind === 'content') {
         output.push(createEntry('system', `      "${match.preview}"`));
       }
@@ -533,7 +543,14 @@ export const inventoryCommands: CommandRegistry = {
 
     if (matches.length > limitedMatches.length) {
       output.push(createEntry('system', ''));
-      output.push(createEntry('system', `  ... and ${matches.length - limitedMatches.length} more`));
+      output.push(
+        createEntryI18n(
+          'system',
+          'engine.commands.inventory.search_more_results',
+          `  ... and ${matches.length - limitedMatches.length} more`,
+          { value: matches.length - limitedMatches.length }
+        )
+      );
     }
 
     output.push(createEntry('system', ''));

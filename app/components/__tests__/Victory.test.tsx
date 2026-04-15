@@ -187,4 +187,14 @@ describe('Victory Component', () => {
 
     expect(screen.getByText('POST-RUN DOSSIER')).toBeInTheDocument();
   });
+
+  it('keeps the dossier inside the scrollable message region and focuses replay', () => {
+    render(<Victory {...defaultProps} totalReadableFiles={20} />);
+
+    advanceToCredits();
+
+    const dossierTitle = screen.getByText('POST-RUN DOSSIER');
+    expect(dossierTitle.closest('[class*="messageContent"]')).toBeTruthy();
+    expect(screen.getByRole('button', { name: /play again/i })).toHaveFocus();
+  });
 });

@@ -4,11 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './SecretEnding.module.css';
 import { recordEnding } from '../storage/statistics';
 import { useI18n } from '../i18n';
+import type { TextSpeed } from '../types';
+import { scaleTextSpeedDelay } from './textSpeed';
 
 interface SecretEndingProps {
   onRestartAction: () => void;
   commandCount?: number;
   detectionLevel?: number;
+  textSpeed?: TextSpeed;
 }
 
 const SECRET_TEXT = [
@@ -78,11 +81,13 @@ export default function SecretEnding({
   onRestartAction,
   commandCount = 0,
   detectionLevel = 100,
+  textSpeed = 'normal',
 }: SecretEndingProps) {
   const { t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'static' | 'reveal' | 'message' | 'final'>('static');
   const [textLines, setTextLines] = useState<string[]>([]);
   const hasRecordedEnding = useRef(false);
+  const restartButtonRef = useRef<HTMLButtonElement>(null);
 
   // Record the secret ending in statistics
   useEffect(() => {
@@ -93,16 +98,16 @@ export default function SecretEnding({
 
   // Static phase
   useEffect(() => {
-    const timer = setTimeout(() => setPhase('reveal'), 2500);
+    const timer = setTimeout(() => setPhase('reveal'), scaleTextSpeedDelay(2500, textSpeed));
     return () => clearTimeout(timer);
-  }, []);
+  }, [textSpeed]);
 
   // Reveal phase
   useEffect(() => {
     if (phase !== 'reveal') return;
-    const timer = setTimeout(() => setPhase('message'), 2000);
+    const timer = setTimeout(() => setPhase('message'), scaleTextSpeedDelay(2000, textSpeed));
     return () => clearTimeout(timer);
-  }, [phase]);
+  }, [phase, textSpeed]);
 
   // Message phase - type out text
   useEffect(() => {
@@ -114,22 +119,36 @@ export default function SecretEnding({
     const interval = setInterval(() => {
       if (lineIndex >= SECRET_TEXT.length) {
         clearInterval(interval);
-        finalTimeout = setTimeout(() => setPhase('final'), 2000);
+        finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
         return;
       }
 
-      setTextLines(prev => [...prev, SECRET_TEXT[lineIndex]]);
+      const nextLine = SECRET_TEXT[lineIndex];
+      if (typeof nextLine === 'string') {
+        setTextLines(prev => [...prev, nextLine]);
+      }
       lineIndex++;
-    }, 250);
+    }, scaleTextSpeedDelay(250, textSpeed));
 
     return () => {
       clearInterval(interval);
       if (finalTimeout) clearTimeout(finalTimeout);
     };
+  }, [phase, textSpeed]);
+
+  useEffect(() => {
+    if (phase === 'final') {
+      restartButtonRef.current?.focus();
+    }
   }, [phase]);
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      role="dialog"
+      aria-modal="true"
+      aria-label={translateRuntimeText('THE WHOLE TRUTH')}
+    >
       <div className={styles.scanlines} />
 
       {phase === 'static' && (
@@ -148,7 +167,7 @@ export default function SecretEnding({
       )}
 
       {(phase === 'message' || phase === 'final') && (
-        <div className={styles.messageContent}>
+        <div className={styles.messageContent} role="status" aria-live="polite">
           {textLines.map((line, index) => (
             <div
               key={index}
@@ -176,6 +195,7 @@ export default function SecretEnding({
         <div className={styles.restartSection}>
           <div className={styles.secretBadge}>{t('ending.secretUnlocked')}</div>
           <button
+            ref={restartButtonRef}
             className={styles.restartButton}
             onClick={onRestartAction}
             aria-label={translateRuntimeText('Return to menu - restart game')}

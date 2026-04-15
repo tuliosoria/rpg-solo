@@ -1,22 +1,25 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { CheckpointSlot } from '../types';
+import { CheckpointSlot, TextSpeed } from '../types';
 import { getLatestCheckpoint } from '../storage/saves';
 import { uiChance, uiRandomFloat } from '../engine/rng';
 import { useI18n } from '../i18n';
 import styles from './GameOver.module.css';
+import { scaleTextSpeedDelay } from './textSpeed';
 
 interface GameOverProps {
   reason: string;
   onMainMenuAction: () => void;
   onLoadCheckpointAction: (slotId: string) => void;
+  textSpeed?: TextSpeed;
 }
 
 export default function GameOver({
   reason,
   onMainMenuAction,
   onLoadCheckpointAction,
+  textSpeed = 'normal',
 }: GameOverProps) {
   const { language, t, translateRuntimeText } = useI18n();
   const [phase, setPhase] = useState<'error' | 'restarting' | 'options'>('error');
@@ -27,6 +30,8 @@ export default function GameOver({
   const flickerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const flickerResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadCheckpointButtonRef = useRef<HTMLButtonElement>(null);
+  const mainMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   // Load checkpoints when component mounts
   useEffect(() => {
@@ -36,12 +41,15 @@ export default function GameOver({
   // Phase transitions
   useEffect(() => {
     // Initial flicker
-    flickerTimerRef.current = setTimeout(() => setFlickering(false), 500);
+    flickerTimerRef.current = setTimeout(
+      () => setFlickering(false),
+      scaleTextSpeedDelay(500, textSpeed)
+    );
 
     // Show error for 3 seconds, then start restart sequence
     errorTimerRef.current = setTimeout(() => {
       setPhase('restarting');
-    }, 3000);
+    }, scaleTextSpeedDelay(3000, textSpeed));
 
     return () => {
       if (flickerTimerRef.current) {
@@ -51,14 +59,14 @@ export default function GameOver({
         clearTimeout(errorTimerRef.current);
       }
     };
-  }, []);
+  }, [textSpeed]);
 
   // Progress bar animation
   useEffect(() => {
     if (phase !== 'restarting') return;
 
-    const duration = 3000; // 3 seconds for restart animation
-    const interval = 50;
+    const duration = scaleTextSpeedDelay(3000, textSpeed);
+    const interval = scaleTextSpeedDelay(50, textSpeed);
     const increment = 100 / (duration / interval);
 
     const timer = setInterval(() => {
@@ -80,9 +88,12 @@ export default function GameOver({
         if (flickerResetTimerRef.current) {
           clearTimeout(flickerResetTimerRef.current);
         }
-        flickerResetTimerRef.current = setTimeout(() => setFlickering(false), 150);
+        flickerResetTimerRef.current = setTimeout(
+          () => setFlickering(false),
+          scaleTextSpeedDelay(150, textSpeed)
+        );
       }
-    }, 800);
+    }, scaleTextSpeedDelay(800, textSpeed));
 
     return () => {
       clearInterval(timer);
@@ -91,7 +102,18 @@ export default function GameOver({
         clearTimeout(flickerResetTimerRef.current);
       }
     };
-  }, [phase]);
+  }, [phase, textSpeed]);
+
+  useEffect(() => {
+    if (phase !== 'options') return;
+
+    if (latestCheckpoint) {
+      loadCheckpointButtonRef.current?.focus();
+      return;
+    }
+
+    mainMenuButtonRef.current?.focus();
+  }, [latestCheckpoint, phase]);
 
   // Keyboard navigation for options phase
   const handleKeyDown = useCallback(
@@ -147,13 +169,18 @@ export default function GameOver({
   };
 
   return (
-    <div className={`${styles.container} ${flickering ? styles.flickering : ''}`}>
+    <div
+      className={`${styles.container} ${flickering ? styles.flickering : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={t('gameOver.options.title')}
+    >
       {/* Scanlines */}
       <div className={styles.scanlines} />
 
       {/* Error phase */}
       {phase === 'error' && (
-        <div className={styles.errorContent}>
+        <div className={styles.errorContent} role="status" aria-live="polite">
           <div className={styles.errorBox}>
             <div className={styles.errorHeader}>
               ═══════════════════════════════════════════════════════════
@@ -175,7 +202,7 @@ export default function GameOver({
 
       {/* Restarting phase */}
       {phase === 'restarting' && (
-        <div className={styles.restartContent}>
+        <div className={styles.restartContent} role="status" aria-live="polite">
           <div className={styles.restartBox}>
             <div className={styles.restartHeader}>{t('gameOver.restart.header')}</div>
             <div className={styles.restartStatus}>{t('gameOver.restart.status')}</div>
@@ -206,6 +233,7 @@ export default function GameOver({
             <div className={styles.optionsButtons}>
               {latestCheckpoint && (
                 <button
+                  ref={loadCheckpointButtonRef}
                   className={`${styles.optionButton} ${selectedIndex === 0 ? styles.selected : ''}`}
                   onClick={() => onLoadCheckpointAction(latestCheckpoint.id)}
                   onMouseEnter={() => setSelectedIndex(0)}
@@ -218,6 +246,7 @@ export default function GameOver({
               )}
 
               <button
+                ref={mainMenuButtonRef}
                 className={`${styles.optionButton} ${selectedIndex === (latestCheckpoint ? 1 : 0) ? styles.selected : ''}`}
                 onClick={onMainMenuAction}
                 onMouseEnter={() => setSelectedIndex(latestCheckpoint ? 1 : 0)}

@@ -1005,8 +1005,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   const commandCount = (state.sessionCommandCount || 0) + 1;
   if (commandCount >= 30 && !state.flags['earlyWindowPassed']) {
     result.stateChanges.flags = {
-      ...result.stateChanges.flags,
       ...state.flags,
+      ...result.stateChanges.flags,
       earlyWindowPassed: true,
     };
   }

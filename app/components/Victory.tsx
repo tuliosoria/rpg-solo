@@ -69,6 +69,7 @@ export default function Victory({
   const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null);
   const hasRecordedEnding = useRef(false);
   const creditsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const restartButtonRef = useRef<HTMLButtonElement>(null);
 
   // Determine ending variant based on flags
   const endingFlags: EndingFlags = {
@@ -211,6 +212,12 @@ export default function Victory({
     setCurrentAchievement(null);
   };
 
+  useEffect(() => {
+    if (phase === 'credits') {
+      restartButtonRef.current?.focus();
+    }
+  }, [phase]);
+
   // Intro phase
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -262,7 +269,7 @@ export default function Victory({
   }, [phase, timings.creditsDelay, timings.lineDelay, victoryText]);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} role="dialog" aria-modal="true" aria-label={endingTitle}>
       <div className={styles.scanlines} />
 
       {phase === 'intro' && (
@@ -272,7 +279,7 @@ export default function Victory({
       )}
 
       {(phase === 'message' || phase === 'credits') && (
-        <div className={styles.messageContent}>
+        <div className={styles.messageContent} role="status" aria-live="polite">
           {textLines.map((line, index) => (
             <div
               key={index}
@@ -295,70 +302,76 @@ export default function Victory({
               {translateRuntimeText(line)}
             </div>
           ))}
-        </div>
-      )}
 
-      {phase === 'credits' && (
-        <div className={styles.credits}>
-          <div className={styles.dossier}>
-            <div className={styles.dossierTitle}>{t('ending.dossier.title')}</div>
+          {phase === 'credits' && (
+            <div className={styles.credits}>
+              <div className={styles.dossier}>
+                <div className={styles.dossierTitle}>{t('ending.dossier.title')}</div>
 
-            <div className={styles.dossierRow}>
-              <span>{t('ending.dossier.evidence')}</span>
-              <span>{evidenceCount}/10</span>
-            </div>
-            <div className={styles.dossierRow}>
-              <span>{t('ending.dossier.filesReviewed')}</span>
-              <span>
-                {filesReadCount}/{Math.max(totalReadableFiles, filesReadCount)}
-              </span>
-            </div>
-            <div className={styles.dossierRow}>
-              <span>{t('ending.dossier.maxDetection')}</span>
-              <span>{maxDetectionReached}%</span>
-            </div>
-            <div className={styles.dossierRow}>
-              <span>{t('ending.dossier.leakPath')}</span>
-              <span>{leakPathLabel}</span>
-            </div>
-            <div className={styles.dossierRow}>
-              <span>{t('ending.dossier.blackFiles')}</span>
-              <span>
-                {conspiracyFilesLeaked
-                  ? t('ending.dossier.blackFiles.leaked')
-                  : t('ending.dossier.blackFiles.sealed')}
-              </span>
-            </div>
-            <div className={styles.dossierRow}>
-              <span>{t('ending.dossier.alpha')}</span>
-              <span>
-                {alphaReleased
-                  ? t('ending.dossier.alpha.released')
-                  : t('ending.dossier.alpha.contained')}
-              </span>
-            </div>
-            <div className={styles.dossierRow}>
-              <span>{t('ending.dossier.neuralLink')}</span>
-              <span>
-                {neuralLinkAuthenticated
-                  ? t('ending.dossier.neuralLink.authenticated')
-                  : t('ending.dossier.neuralLink.unused')}
-              </span>
-            </div>
+                <dl className={styles.dossierList}>
+                  <div className={styles.dossierRow}>
+                    <dt>{t('ending.dossier.evidence')}</dt>
+                    <dd>{evidenceCount}/10</dd>
+                  </div>
+                  <div className={styles.dossierRow}>
+                    <dt>{t('ending.dossier.filesReviewed')}</dt>
+                    <dd>
+                      {filesReadCount}/{Math.max(totalReadableFiles, filesReadCount)}
+                    </dd>
+                  </div>
+                  <div className={styles.dossierRow}>
+                    <dt>{t('ending.dossier.maxDetection')}</dt>
+                    <dd>{maxDetectionReached}%</dd>
+                  </div>
+                  <div className={styles.dossierRow}>
+                    <dt>{t('ending.dossier.leakPath')}</dt>
+                    <dd>{leakPathLabel}</dd>
+                  </div>
+                  <div className={styles.dossierRow}>
+                    <dt>{t('ending.dossier.blackFiles')}</dt>
+                    <dd>
+                      {conspiracyFilesLeaked
+                        ? t('ending.dossier.blackFiles.leaked')
+                        : t('ending.dossier.blackFiles.sealed')}
+                    </dd>
+                  </div>
+                  <div className={styles.dossierRow}>
+                    <dt>{t('ending.dossier.alpha')}</dt>
+                    <dd>
+                      {alphaReleased
+                        ? t('ending.dossier.alpha.released')
+                        : t('ending.dossier.alpha.contained')}
+                    </dd>
+                  </div>
+                  <div className={styles.dossierRow}>
+                    <dt>{t('ending.dossier.neuralLink')}</dt>
+                    <dd>
+                      {neuralLinkAuthenticated
+                        ? t('ending.dossier.neuralLink.authenticated')
+                        : t('ending.dossier.neuralLink.unused')}
+                    </dd>
+                  </div>
+                </dl>
 
-            <div className={styles.dossierSubtitle}>{t('ending.dossier.replayTitle')}</div>
-            {replaySuggestions.map(suggestion => (
-              <div key={suggestion} className={styles.dossierSuggestion}>
-                {suggestion}
+                <div className={styles.dossierSubtitle}>{t('ending.dossier.replayTitle')}</div>
+                {replaySuggestions.map(suggestion => (
+                  <div key={suggestion} className={styles.dossierSuggestion}>
+                    {suggestion}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <button className={styles.restartButton} onClick={onRestartAction}>
-            {t('ending.playAgain')}
-          </button>
-          <div className={styles.creditText}>VARGINHA: TERMINAL 1996</div>
-          <div className={styles.endingType}>{translateRuntimeText(endingTitle)}</div>
+              <button
+                ref={restartButtonRef}
+                className={styles.restartButton}
+                onClick={onRestartAction}
+              >
+                {t('ending.playAgain')}
+              </button>
+              <div className={styles.creditText}>VARGINHA: TERMINAL 1996</div>
+              <div className={styles.endingType}>{translateRuntimeText(endingTitle)}</div>
+            </div>
+          )}
         </div>
       )}
 
