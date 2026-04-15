@@ -568,9 +568,10 @@ export function executeCommand(input: string, state: GameState): CommandResult {
             createEntry('system', `═══ JUMPING TO ENDING #${num}: ${targetEnding} ═══`),
           ],
           stateChanges: {
-            evidencesSaved: true,
             gameWon: true,
+            endingType: 'good',
             endingId: targetEnding,
+            isGameOver: false,
           },
           skipToPhase: 'victory' as const,
         };
@@ -598,9 +599,10 @@ export function executeCommand(input: string, state: GameState): CommandResult {
             createEntry('system', `═══ JUMPING TO ENDING: ${targetEnding} ═══`),
           ],
           stateChanges: {
-            evidencesSaved: true,
             gameWon: true,
+            endingType: 'good',
             endingId: targetEnding,
+            isGameOver: false,
           },
           skipToPhase: 'victory' as const,
         };

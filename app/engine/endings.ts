@@ -428,12 +428,11 @@ export function determineEndingVariant(flags: EndingFlags): EndingVariant {
 }
 
 export function getEndingFlags(state: GameState): EndingFlags {
-  const conspiracyFilesLeaked = state.flags.conspiracyFilesLeaked === true;
-
+  const flags = state.flags || {};
   return {
-    conspiracyFilesLeaked,
-    alphaReleased: state.flags.alphaReleased === true,
-    neuralLinkAuthenticated: state.flags.neuralLinkAuthenticated === true,
+    conspiracyFilesLeaked: flags.conspiracyFilesLeaked === true,
+    alphaReleased: flags.alphaReleased === true,
+    neuralLinkAuthenticated: flags.neuralLinkAuthenticated === true,
   };
 }
 
