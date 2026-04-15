@@ -1,35 +1,39 @@
 ---
 name: version-bump
-description: Auto-increment the DEPLOY_VERSION in Terminal.tsx on every push.
+description: Guidance for the repo's current git-derived build/version display.
 ---
 
-## Version Bump — Auto-Increment on Push
+## Current Versioning Scheme
 
-The game build version is stored as a zero-padded string constant in
-`app/components/Terminal.tsx`:
+This repo no longer uses a hard-coded `DEPLOY_VERSION` in `Terminal.tsx`.
 
-```ts
-const DEPLOY_VERSION = 'v008';
-```
+- `next.config.ts` computes git metadata at build time.
+- It injects `NEXT_PUBLIC_BUILD_NUMBER` and `NEXT_PUBLIC_COMMIT_SHA`.
+- `app/components/terminalConstants.ts` derives:
+  - `BUILD_NUMBER`
+  - `COMMIT_SHA`
+  - `DEPLOY_VERSION`
+  - `VERSION_TOOLTIP`
 
-### When to run
+## What To Do When Asked for a “Version Bump”
 
-Run this skill **before every push** (or as part of a pre-push workflow).
+### Default answer
+Do **not** edit `Terminal.tsx` looking for a constant that no longer exists.
 
-### Steps
+### Usual cases
+1. **User wants the displayed build/version to reflect newer code**
+   - No source edit is normally required.
+   - A new commit/build changes the git-derived metadata automatically.
 
-1. Open `app/components/Terminal.tsx`.
-2. Find the line matching `const DEPLOY_VERSION = 'v___';` (three-digit number after `v`).
-3. Parse the numeric portion (e.g., `008` → `8`).
-4. Increment by 1 and zero-pad to 3 digits (e.g., `9` → `009`).
-5. Replace the line with the new version string, e.g.:
-   ```ts
-   const DEPLOY_VERSION = 'v009';
-   ```
-6. Stage the changed file and amend or create a commit that includes the bump.
+2. **User wants to change the display format**
+   - Edit `app/components/terminalConstants.ts`, not `Terminal.tsx`.
+   - Keep the fallback behavior (`dev-local` / `local build`) intact unless explicitly changing local-dev semantics.
 
-### Rules
+3. **User wants to debug missing version info**
+   - Check `next.config.ts` first.
+   - Then verify `terminalConstants.ts` uses the injected env vars correctly.
+   - Expect local builds without git metadata to fall back gracefully.
 
-- Never skip the zero-padding (always 3 digits: `001`, `012`, `123`).
-- If the current version cannot be parsed, **stop and ask** rather than guessing.
-- Do **not** touch any other line in the file.
+## Safe Validation
+- Use `npm run build` when you change version-formatting logic or build-time metadata handling.
+- Keep changes localized to version derivation unless the user explicitly asks for a broader release workflow change.

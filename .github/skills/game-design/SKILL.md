@@ -3,79 +3,46 @@ name: game-design
 description: Best practices for game mechanics, player experience, stealth systems, and narrative pacing.
 ---
 
-# Game Design Principles for Terminal 1996
+# Game Design Workflow
 
-## Core Philosophy
-- **Asymmetric risk with recovery windows**: Detection escalates but players need occasional relief
-- **Tension curves**: 1-3 high-tension beats should be followed by a release moment
-- **Non-binary states**: Use gradations (safe → suspicious → alerted → caught) not on/off
-- **Player forgiveness**: Grace periods, warnings, and escape routes before failure
+Use this skill when changing mechanics, command flow, pacing, endings pressure, or stealth balance.
 
-## Stealth & Detection System
+## Start Here
+- Detection tuning lives in `app/constants/detection.ts`. Reuse `DETECTION_THRESHOLDS`, `DETECTION_DECREASES`, and warmup helpers instead of hardcoding numbers.
+- Command behavior is split across `app/engine/commands/` modules and assembled in `app/engine/commands/index.ts`.
+- Navigation and gating depend on `app/engine/filesystem.ts`, `requiredFlags`, `accessThreshold`, and `state.flags`.
+- Treat `app/engine/commands/**` and in-app `help` (`app/engine/commands/system.ts`) as the live command source. README is a player-facing summary, not the authority for current behavior.
+- `rewind` is the retired compatibility path (`app/engine/commands/archive.ts`). Do not design around a `decrypt` flow unless you are also adding a real handler/help path for it.
 
-### Current Mechanics (commands.ts)
-- Detection level: 0-100 (100 = caught)
-- Per-action increases: +1-15 based on risk
-- Per-run variance: seeded RNG makes certain commands "hotter" or "safer"
-- System hostility: 0-5, affects terminal personality
+## Practical Design Rules
+1. **Keep pressure rising, not spiking randomly.** Low-risk actions should stay low-risk; powerful shortcuts should cost detection, trust, time, or access.
+2. **Preserve recovery windows.** If you add risk, keep a believable breather (`wait`, progress beats, softer early-game warmup).
+3. **Honor centralized thresholds.** UI tone, warnings, Turing triggers, wandering nudges, and recovery logic already key off shared constants.
+4. **Gate with flags, not hidden magic.** If a file/command appears late, tie it to `requiredFlags`, evidence/state milestones, or explicit prior reads.
+5. **Respect current player flow.** Core play is investigate → cross-reference → save evidence → leak. Avoid re-centering the game on retired command loops.
 
-### Best Practices for Detection Changes
-1. **Always warn before threshold**: At 70+ show urgent warnings, at 85+ screen effects
-2. **Recovery should cost something**: Time, stability, or limited uses
-3. **Major discoveries should provide relief**: Truth reveals = brief detection reduction
-4. **Feedback must be immediate and clear**: Visual + audio cues on detection changes
+## When Adding or Changing Commands
+- Add/update the handler in the appropriate `app/engine/commands/*.ts` module, not in a monolithic switch.
+- Check what players actually see in handler output and `help`, especially `system.ts`, `inventory.ts`, `evidence.ts`, and `archive.ts`.
+- Decide whether the command is:
+  - always visible (`help`, `ls`, `search`);
+  - context-sensitive but documented;
+  - hidden/discoverable through content.
+- Update README only after the live handlers/help are correct, and only when player-facing behavior changes now.
+- Check knock-on effects: detection, hostility, tutorial friction, hint flow, evidence progression, endings, and achievements.
 
-## Adding New Commands
+## Balance Heuristics
+- Browsing commands should usually feel safe enough to encourage exploration.
+- High-agency commands should either cost more or require prior commitment.
+- If a discovery is narratively major, give the player a short release beat instead of stacking punishment immediately after it.
+- Prefer small, testable numeric changes over broad rewrites.
 
-### In `app/engine/commands.ts`:
-1. Add to `COMMANDS` object with handler function
-2. Set appropriate detection/stability costs
-3. Use `addToHistory()` for terminal output
-4. Check `gameState` for prerequisites
-5. Add to help text only if discoverable from start
-
-### Detection Cost Guidelines
-| Risk Level | Detection | Examples |
-|------------|-----------|----------|
-| Safe | 0 | help, status, notes |
-| Low | +1-3 | ls, cd, open (normal files) |
-| Medium | +5-8 | open (sensitive), trace |
-| High | +10-15 | decrypt, override, recover |
-| Recovery | -3 to -10 | wait, truth discoveries |
-
-## Pacing & Tension
-
-### Singular Events (one-time per run)
-- Defined in `singularEventsTriggered` Set
-- Trigger based on gameState conditions
-- Should feel dramatic but not block progress
-- Examples: THE ECHO, THE SILENCE
-
-### Tension Breathers
-- After major discoveries, briefly reduce pressure
-- Can be: detection reduction, stability boost, or narrative pause
-- Prevents player fatigue from constant escalation
-
-## State Management
-
-### Key GameState Fields
-```typescript
-detectionLevel: number;      // 0-100
-dataIntegrity: number;       // 100-0
-accessLevel: number;         // 0-5
-sessionStability: number;    // 100-0
-systemHostility: number;     // 0-5
-evidenceCount: number;       // 0-5
-filesRead: Set<string>;
-singularEventsTriggered: Set<string>;
-```
-
-### Flags & Gating
-- `requiredFlags`: Array of flags that must be set to access content
-- `accessThreshold`: Minimum access level required
-- Flags set via `gameState.flags.add('flagName')`
-
-## Testing Requirements
-- Add tests in `app/engine/__tests__/` for new mechanics
-- Test edge cases: max detection, zero stability, flag combinations
-- Use existing test patterns from `narrative-mechanics.test.ts`
+## What to Test
+- Engine tests usually belong in `app/engine/__tests__/` (`narrative-mechanics`, `ux-commands`, `system-commands`, `warmup-detection`, `filesystem`).
+- Add hook/component coverage only if the mechanic changes rendered UI or phase transitions.
+- Validate:
+  - threshold crossings and warning behavior;
+  - flag-gated access;
+  - command help and retired `rewind` messaging;
+  - evidence/save/leak readiness;
+  - edge cases at 0 and max values.
