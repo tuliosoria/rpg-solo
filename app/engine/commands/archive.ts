@@ -1,5 +1,6 @@
 // Archive commands: script, run, rewind, present
 
+import { getNode } from '../filesystem';
 import { createEntry, createEntryI18n, createUFO74Message } from './utils';
 import type { CommandRegistry } from './types';
 
@@ -258,8 +259,24 @@ export const archiveCommands: CommandRegistry = {
 
     const scriptName = args[0].toLowerCase();
 
-    if (scriptName === 'save_evidence.sh') {
-      // Redirect to leak command — save_evidence.sh is no longer a separate path
+    if (scriptName === 'save_evidence.sh' || scriptName.endsWith('/save_evidence.sh')) {
+      // Gate save_evidence.sh through the actual filesystem visibility rules.
+      const visibleScript = getNode('/tmp/save_evidence.sh', state);
+      if (!visibleScript || visibleScript.type !== 'file') {
+        return {
+          output: [
+            createEntryI18n(
+              'error',
+              'engine.commands.archive.execution_failed',
+              'EXECUTION FAILED'
+            ),
+            createEntry('system', `Script not found: ${args[0]}`),
+          ],
+          stateChanges: {},
+        };
+      }
+
+      // Redirect to leak command
       return commandsRef!.leak([], state);
     }
 

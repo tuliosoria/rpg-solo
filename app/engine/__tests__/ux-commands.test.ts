@@ -711,9 +711,11 @@ describe('UX Commands', () => {
 
     it('should not expose removed mechanics in direct help', () => {
       const state = createTestState();
+      // back is now a documented command — verify it returns help instead of "Unknown"
       const result = executeCommand('help back', state);
 
-      expect(result.output.some(e => e.content.includes('Unknown command: back'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Unknown command: back'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('COMMAND: back'))).toBe(true);
     });
 
     it('should handle unknown command gracefully', () => {
@@ -722,6 +724,16 @@ describe('UX Commands', () => {
 
       // Should show general help or error message
       expect(result.output.length).toBeGreaterThan(0);
+    });
+
+    it('keeps help available after dossier prep starts', () => {
+      const state = createTestState({
+        savedFiles: new Set(['/a.txt', '/b.txt', '/c.txt', '/d.txt', '/e.txt']),
+      });
+      const result = executeCommand('help', state);
+
+      expect(result.output.some(e => e.content.includes('COMMAND RESTRICTED'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('TERMINAL COMMANDS'))).toBe(true);
     });
   });
 
@@ -732,6 +744,7 @@ describe('UX Commands', () => {
         detectionLevel: 88,
         waitUsesRemaining: 2,
         evidenceCount: 3,
+        savedFiles: new Set(['/a.txt', '/b.txt', '/c.txt']),
         filesRead: new Set(['/comms/psi/transcript_core.enc']),
       });
       const result = executeCommand('status', state);
@@ -772,6 +785,30 @@ describe('UX Commands', () => {
           e.content.includes('If assistance appears before you finish typing')
         )
       ).toBe(false);
+    });
+
+    it('keeps search and wait available after dossier prep starts', () => {
+      const savedFiles = new Set(['/a.txt', '/b.txt', '/c.txt', '/d.txt', '/e.txt']);
+      const searchState = createTestState({
+        currentPath: '/internal/protocols',
+        savedFiles,
+      });
+      const searchResult = executeCommand('search session', searchState);
+
+      expect(searchResult.output.some(e => e.content.includes('COMMAND RESTRICTED'))).toBe(false);
+      expect(searchResult.output.some(e => e.content.includes('SEARCH RESULTS'))).toBe(true);
+
+      const waitState = createTestState({
+        savedFiles,
+        detectionLevel: 50,
+        waitUsesRemaining: 2,
+      });
+      const waitResult = executeCommand('wait', waitState);
+
+      expect(waitResult.output.some(e => e.content.includes('COMMAND RESTRICTED'))).toBe(false);
+      expect((waitResult.stateChanges.detectionLevel ?? waitState.detectionLevel) < waitState.detectionLevel).toBe(
+        true
+      );
     });
   });
 

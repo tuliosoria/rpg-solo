@@ -563,6 +563,21 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('status', state);
 
+      // SESSION ARCHIVED only appears after leak (gameWon: true), not just at 10 evidence
+      expect(result.output.some(e => e.content.includes('SESSION ARCHIVED'))).toBe(false);
+      expect(result.stateChanges.isGameOver).toBeUndefined();
+      expect(result.stateChanges.gameOverReason).toBeUndefined();
+    });
+
+    it('status command shows SESSION ARCHIVED after game is won', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        evidenceCount: 10,
+        gameWon: true,
+      });
+      const result = executeCommand('status', state);
+
       expect(result.output.some(e => e.content.includes('SESSION ARCHIVED'))).toBe(true);
       expect(result.stateChanges.isGameOver).toBeUndefined();
       expect(result.stateChanges.gameOverReason).toBeUndefined();
@@ -968,6 +983,7 @@ describe('Narrative Mechanics', () => {
         tutorialStep: -1,
         tutorialComplete: true,
         currentPath: '/tmp',
+        evidenceCount: 10,
         savedFiles: new Set([
           '/internal/audio_transcript_brief.txt',
           '/internal/jardim_andere_incident.txt',
@@ -984,6 +1000,27 @@ describe('Narrative Mechanics', () => {
       const result = executeCommand('run save_evidence.sh', state);
       expect(result.output.some(e => e.content.includes('LEAK CHANNEL ENCRYPTED'))).toBe(true);
       expect(result.stateChanges.leakSequenceGenerated).toBe(true);
+    });
+
+    it('run save_evidence.sh stays hidden until the script becomes visible', () => {
+      const state = createTestState({
+        tutorialStep: -1,
+        tutorialComplete: true,
+        currentPath: '/tmp',
+        savedFiles: new Set([
+          '/internal/audio_transcript_brief.txt',
+          '/internal/jardim_andere_incident.txt',
+          '/internal/misc/incident_report_1996_01_VG.txt',
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/autopsy_alpha.log',
+        ]),
+      });
+      const result = executeCommand('run save_evidence.sh', state);
+
+      expect(result.output.some(e => e.content.includes('Script not found: save_evidence.sh'))).toBe(
+        true
+      );
+      expect(result.stateChanges.leakSequenceGenerated).toBeUndefined();
     });
 
     it('executes purge_trace.sh to clear countdown', () => {

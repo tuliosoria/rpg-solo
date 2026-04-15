@@ -38,8 +38,8 @@ Common terminal commands in the current build:
 | `bookmark <file>` | Save a file path for quick reference |
 | `hint` | Ask UFO74 for a nudge at a cost |
 | `wait` | Lower heat and let the system settle |
-| `leak` | Interrogate the Elusive Man (5 questions only) |
-| `chat <message>` | Ask the system or Prisoner 45 questions |
+| `leak` | Transmit your evidence dossier to external channels |
+| `chat <message>` | Ask the system or PRISONER_45 questions (limited exchange) |
 | `help` | Display command reference |
 
 Legacy builds mentioned `decrypt` and `rewind` as core mechanics; the live experience now centers on direct investigation and cross-referencing files instead.

@@ -118,19 +118,19 @@ export const evidenceCommands: CommandRegistry = {
           createEntry('system', `  Files saved: ${savedCount}/${MAX_EVIDENCE_COUNT}`),
           createEntryI18n(
             'system',
-            'engine.commands.evidence.all_ten_must_be_confirmed_before',
-            '  All ten must be confirmed before'
+            'engine.commands.evidence.save_at_least_five_files_to_begin',
+            '  Save at least five files to begin'
           ),
           createEntryI18n(
             'system',
-            'engine.commands.evidence.the_leak_channel_can_be_opened',
-            '  the leak channel can be opened.'
+            'engine.commands.evidence.the_leak_preparation_sequence',
+            '  the leak preparation sequence.'
           ),
           createEntry('system', ''),
           createEntryI18n(
             'ufo74',
-            'engine.commands.evidence.ufo74_not_yet_we_need_more_ten_pieces_minimum_or_nobody_will',
-            '[UFO74]: not yet. we need more. ten pieces minimum or nobody will believe us.'
+            'engine.commands.evidence.ufo74_not_yet_we_need_more_five_minimum_ten_to_finish',
+            '[UFO74]: not yet. we need more. five minimum to start the preparation. ten to finish the job.'
           ),
         ],
         stateChanges: {},

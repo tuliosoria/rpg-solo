@@ -10,7 +10,7 @@ import {
   getEvidenceBearingFiles,
 } from '../filesystem';
 import { createSeededRng, seededRandomInt } from '../rng';
-import { EVIDENCE_SYMBOL } from '../evidenceRevelation';
+import { EVIDENCE_SYMBOL, countEvidence } from '../evidenceRevelation';
 import { UFO74_CONSPIRACY_REACTIONS, CONSPIRACY_FILE_NAMES } from '../../data/conspiracyFiles';
 import { MAX_DETECTION } from '../../constants/detection';
 import {
@@ -24,6 +24,7 @@ import {
   getWarmupAdjustedDetection,
   isArchiveOnlyFile,
   EVIDENCE_UFO74_REACTIONS,
+  applyEvidenceDiscovery,
 } from './helpers';
 import type { CommandRegistry } from './types';
 
@@ -621,6 +622,7 @@ export const filesystemCommands: CommandRegistry = {
 
     // Check for reveals and disturbing content
     const notices: ReturnType<typeof createEntry>[] = [];
+    const evidenceBeforeOpen = countEvidence(state);
 
     // Track content category based on file path
     const categoriesRead = new Set(state.categoriesRead || []);
@@ -821,6 +823,12 @@ export const filesystemCommands: CommandRegistry = {
           ];
         }
       }
+    }
+
+    // Evidence discovery — increment evidenceCount on first read of evidence files
+    applyEvidenceDiscovery(state, stateChanges, filePath, file, content, notices);
+    if ((stateChanges.evidenceCount ?? evidenceBeforeOpen) > evidenceBeforeOpen) {
+      ufo74ContextMessage = null;
     }
 
     const output = [

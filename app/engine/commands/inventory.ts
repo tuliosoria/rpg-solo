@@ -407,23 +407,21 @@ export const inventoryCommands: CommandRegistry = {
   },
 
   search: (args, state) => {
-    const savedCount = (state.savedFiles?.size || 0);
-    if (savedCount >= 5) {
-      return {
-        output: [
+    // Late-game tension: warn but still allow search
+    const lateGameWarning = (state.savedFiles?.size || 0) >= 5
+      ? [
           createEntry('warning', ''),
-          createEntry('warning', '  COMMAND RESTRICTED — ELEVATED SECURITY PROTOCOL'),
+          createEntry('warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
           createEntry('warning', ''),
-        ],
-        stateChanges: {},
-      };
-    }
+        ]
+      : [];
 
     const query = args.join(' ').trim();
 
     if (query.length === 0) {
       return {
         output: [
+          ...lateGameWarning,
           createEntryI18n(
             'error',
             'engine.commands.inventory.error_specify_search_term',
@@ -448,6 +446,7 @@ export const inventoryCommands: CommandRegistry = {
       const nextDetection = Math.min(MAX_DETECTION, state.detectionLevel + BLOCKED_SEARCH_PENALTY);
       return {
         output: [
+          ...lateGameWarning,
           createEntry('system', ''),
           createEntry('system', '═══════════════════════════════════════'),
           createEntryI18n(
@@ -475,6 +474,7 @@ export const inventoryCommands: CommandRegistry = {
     if (limitedMatches.length === 0) {
       return {
         output: [
+          ...lateGameWarning,
           createEntry('system', ''),
           createEntry('system', '═══════════════════════════════════════'),
           createEntryI18n(
@@ -502,6 +502,7 @@ export const inventoryCommands: CommandRegistry = {
     }
 
     const output: TerminalEntry[] = [
+      ...lateGameWarning,
       createEntry('system', ''),
       createEntry('system', '═══════════════════════════════════════'),
       createEntryI18n(

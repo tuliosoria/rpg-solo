@@ -181,16 +181,14 @@ export const navigationCommands: CommandRegistry = {
   },
 
   wait: (args, state) => {
-    if (state.savedFiles.size >= 5) {
-      return {
-        output: [
+    // Late-game tension: warn but still allow wait
+    const lateGameWarning = state.savedFiles.size >= 5
+      ? [
           createEntry('warning', ''),
-          createEntry('warning', '  COMMAND RESTRICTED — ELEVATED SECURITY PROTOCOL'),
+          createEntry('warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
           createEntry('warning', ''),
-        ],
-        stateChanges: {},
-      };
-    }
+        ]
+      : [];
 
     const usesRemaining = state.waitUsesRemaining ?? 3;
 
@@ -304,7 +302,7 @@ export const navigationCommands: CommandRegistry = {
     );
 
     return {
-      output: messages,
+      output: [...lateGameWarning, ...messages],
       stateChanges: {
         detectionLevel: newDetection,
         waitUsesRemaining: usesRemaining - 1,

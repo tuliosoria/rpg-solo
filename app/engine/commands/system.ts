@@ -303,20 +303,78 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'NOTE: Requires discovery of containment manifests.',
   ],
+  back: [
+    'COMMAND: back',
+    '',
+    'Return to the previous directory in your navigation history.',
+    '',
+    'USAGE:',
+    '  back             - Go to last visited directory',
+    '',
+    'NOTE: Requires at least one "cd" in your session history.',
+  ],
+  map: [
+    'COMMAND: map',
+    '',
+    'Display the files currently saved to your dossier.',
+    '',
+    'USAGE:',
+    '  map              - Review dossier slots and saved files',
+  ],
+  trace: [
+    'COMMAND: trace',
+    '',
+    'Initiate a trace protocol on the system.',
+    '',
+    'USAGE:',
+    '  trace            - Probe accessible directories',
+    '',
+    'NOTE: Results depend on your current access level.',
+  ],
+  script: [
+    'COMMAND: script <script_content>',
+    '',
+    'Execute a reconstruction script against a target path.',
+    '',
+    'USAGE:',
+    '  script INIT;TARGET=/admin/neural_fragment.dat;EXEC',
+    '',
+    'NOTE: Check /tmp/data_reconstruction.util for valid targets.',
+  ],
+  run: [
+    'COMMAND: run <script>',
+    '',
+    'Execute a system script.',
+    '',
+    'USAGE:',
+    '  run purge_trace.sh   - Run the trace purge utility',
+    '',
+    'NOTE: Some scripts appear only after the relevant files are visible.',
+  ],
+  rewind: [
+    'COMMAND: rewind',
+    '',
+    'Archive mode has been retired.',
+    'Previously allowed rewinding to earlier timestamps.',
+  ],
+  present: [
+    'COMMAND: present',
+    '',
+    'Archive mode has been retired.',
+    'Returns to the current timeline (no-op in current build).',
+  ],
 };
 
 export const systemCommands: CommandRegistry = {
   help: (args, state) => {
-    if (state.savedFiles.size >= 5) {
-      return {
-        output: [
+    // Late-game tension: show a warning but still allow help
+    const lateGameWarning = state.savedFiles.size >= 5
+      ? [
           createEntry('warning', ''),
-          createEntry('warning', '  COMMAND RESTRICTED — ELEVATED SECURITY PROTOCOL'),
+          createEntry('warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
           createEntry('warning', ''),
-        ],
-        stateChanges: {},
-      };
-    }
+        ]
+      : [];
 
     // If a specific command is requested, show detailed help
     if (args.length > 0) {
@@ -325,7 +383,7 @@ export const systemCommands: CommandRegistry = {
       // Show leak help even before evidence is found — command is visible but locked
       if (cmdName === 'basics') {
         return {
-          output: getHelpBasics(),
+          output: [...lateGameWarning, ...getHelpBasics()],
           stateChanges: {},
         };
       }
@@ -335,6 +393,7 @@ export const systemCommands: CommandRegistry = {
       if (details) {
         return {
           output: [
+            ...lateGameWarning,
             createEntry('system', ''),
             ...details.map(line => createEntry('output', line)),
             createEntry('system', ''),
@@ -344,6 +403,7 @@ export const systemCommands: CommandRegistry = {
       } else {
         return {
           output: [
+            ...lateGameWarning,
             createEntry('error', `Unknown command: ${cmdName}`),
             createEntryI18n(
               'system',
@@ -366,7 +426,7 @@ export const systemCommands: CommandRegistry = {
       tSystem('helpMenu.help', '  help [cmd]        Display help (or help for specific command)'),
       tSystem('helpMenu.basics', '  help basics      Starter guide for first-time players'),
       tSystem('helpMenu.status', '  status            Display system status'),
-      tSystem('helpMenu.progress', '  progress          Review evidence and session recap'),
+      tSystem('helpMenu.progress', '  progress          Review saved dossier and session recap'),
       tSystem('helpMenu.ls', '  ls                List directory contents'),
       tSystem('helpMenu.cd', '  cd <dir>          Change directory'),
       tSystem('helpMenu.open', '  open <file>       Open and display file contents'),
@@ -416,7 +476,7 @@ export const systemCommands: CommandRegistry = {
     helpLines.push('');
 
     return {
-      output: createOutputEntries(helpLines),
+      output: [...lateGameWarning, ...createOutputEntries(helpLines)],
       stateChanges: {},
     };
   },
@@ -525,6 +585,13 @@ export const systemCommands: CommandRegistry = {
           '  OBJECTIVE: Dossier complete — review with "progress", then use "leak" when ready.'
         )
       );
+    } else if (checkVictory(state)) {
+      lines.push(
+        tSystem(
+          'status.objective.evidenceLogged',
+          '  OBJECTIVE: Evidence logged. Use "save <file>" until the dossier reaches 10/10.'
+        )
+      );
     } else if (savedCount > 0) {
       lines.push(
         tSystem(
@@ -596,8 +663,8 @@ export const systemCommands: CommandRegistry = {
     lines.push('');
     lines.push('═══════════════════════════════════════════════════════════');
 
-    // Victory check
-    if (checkVictory(state)) {
+    // Victory check — only show SESSION ARCHIVED after leak is successful
+    if (state.gameWon) {
       lines.push('');
       lines.push(tSystem('status.sessionArchived', 'SESSION ARCHIVED'));
       return {
