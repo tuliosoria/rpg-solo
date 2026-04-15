@@ -105,6 +105,13 @@ function toStringArray(value: unknown): string[] {
   return value.filter((entry): entry is string => typeof entry === 'string');
 }
 
+function normalizeLegacyFilePaths(values: string[]): string[] {
+  const normalized = values.map(value =>
+    value === '/sys/ghost_in_machine.enc' ? '/internal/ghost_in_machine.enc' : value
+  );
+  return [...new Set(normalized)];
+}
+
 function toPlainObject(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
   return value as Record<string, unknown>;
@@ -180,7 +187,7 @@ function deserializeState(json: string): GameState {
 
   const normalizedSeed = normalizeSeed(baseState.seed) ?? generateSeed();
   const normalizedRngState = normalizeSeed(baseState.rngState) ?? normalizedSeed;
-  const parsedFilesRead = toStringArray(parsed.filesRead);
+  const parsedFilesRead = normalizeLegacyFilePaths(toStringArray(parsed.filesRead));
   const normalizedFlags = toPlainObject(baseState.flags) as Record<string, boolean>;
 
   if (parsedFilesRead.includes('/sys/active_trace.sys')) {
@@ -242,11 +249,11 @@ function deserializeState(json: string): GameState {
     disinformationDiscovered: new Set(toStringArray(parsed.disinformationDiscovered)),
     hiddenCommandsDiscovered: new Set(toStringArray(parsed.hiddenCommandsDiscovered)),
     passwordsFound: new Set(toStringArray(parsed.passwordsFound)),
-    bookmarkedFiles: new Set(toStringArray(parsed.bookmarkedFiles)),
+    bookmarkedFiles: new Set(normalizeLegacyFilePaths(toStringArray(parsed.bookmarkedFiles))),
     trapsTriggered: new Set(toStringArray(parsed.trapsTriggered)),
     conspiracyFilesSeen: new Set(toStringArray(parsed.conspiracyFilesSeen)),
-    archiveFilesViewed: new Set(toStringArray(parsed.archiveFilesViewed)),
-    savedFiles: new Set(toStringArray(parsed.savedFiles)),
+    archiveFilesViewed: new Set(normalizeLegacyFilePaths(toStringArray(parsed.archiveFilesViewed))),
+    savedFiles: new Set(normalizeLegacyFilePaths(toStringArray(parsed.savedFiles))),
     // Limit command history to last MAX_COMMAND_HISTORY_SIZE entries
     commandHistory: toStringArray(parsed.commandHistory).slice(-MAX_COMMAND_HISTORY_SIZE),
     history: Array.isArray(baseState.history)

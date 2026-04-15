@@ -55,6 +55,8 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   public render() {
+    const showErrorDetails = process.env.NODE_ENV === 'development';
+
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
@@ -74,8 +76,8 @@ export class ErrorBoundary extends Component<Props, State> {
                 {translateStatic('errorBoundary.subtext')}
               </p>
             </div>
-            {this.state.error && (
-              <details className={styles.details} open>
+            {this.state.error && showErrorDetails && (
+              <details className={styles.details}>
                 <summary>{translateStatic('errorBoundary.details')}</summary>
                 <pre className={styles.errorStack}>
                   {this.state.error.toString()}

@@ -737,6 +737,30 @@ describe('Save/Load System', () => {
       expect(loaded!.evidenceCount).toBe(1);
     });
 
+    it('migrates legacy ghost_in_machine paths from /sys to /internal', async () => {
+      const { loadGame } = await import('../saves');
+
+      const legacySave = {
+        currentPath: '/sys',
+        history: [],
+        commandHistory: [],
+        filesRead: ['/sys/ghost_in_machine.enc'],
+        savedFiles: ['/sys/ghost_in_machine.enc'],
+        bookmarkedFiles: ['/sys/ghost_in_machine.enc'],
+      };
+
+      mockStore['terminal1996:save:legacy_ufo74'] = JSON.stringify(legacySave);
+
+      const loaded = loadGame('legacy_ufo74');
+
+      expect(loaded).not.toBeNull();
+      expect(loaded!.ufo74SecretDiscovered).toBe(true);
+      expect(loaded!.filesRead.has('/internal/ghost_in_machine.enc')).toBe(true);
+      expect(loaded!.filesRead.has('/sys/ghost_in_machine.enc')).toBe(false);
+      expect(loaded!.savedFiles.has('/internal/ghost_in_machine.enc')).toBe(true);
+      expect(loaded!.bookmarkedFiles.has('/internal/ghost_in_machine.enc')).toBe(true);
+    });
+
     it('handles versioned saves correctly', async () => {
       const { saveGame, loadGame } = await import('../saves');
 

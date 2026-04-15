@@ -189,6 +189,21 @@ describe('Narrative Mechanics', () => {
       });
     });
 
+    describe('ghost_session.log', () => {
+      it('reveals the buried iddqd easter egg when found', () => {
+        const state = createTestState({
+          currentPath: '/tmp',
+          flags: { ghostSessionAvailable: true },
+        });
+
+        const result = executeCommand('open ghost_session.log', state);
+
+        expect(result.output.some(e => e.content.includes('> iddqd'))).toBe(true);
+        expect(result.stateChanges.hiddenCommandsDiscovered?.has('iddqd')).toBe(true);
+        expect(result.stateChanges.paranoiaLevel).toBe(10);
+      });
+    });
+
     describe('safe internal files', () => {
       it('can reduce detection by two points on a deterministic safe-file read', () => {
         const state = createTestState({

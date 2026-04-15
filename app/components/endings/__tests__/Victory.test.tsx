@@ -1,6 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
+import type { ImgHTMLAttributes } from 'react';
 import Victory from '../Victory';
+
+vi.mock('next/image', () => ({
+  default: ({ alt, src, ...props }: ImgHTMLAttributes<HTMLImageElement>) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img alt={alt} src={typeof src === 'string' ? src : ''} {...props} />
+  ),
+}));
 
 // Mock the statistics module
 vi.mock('../../../storage/statistics', () => ({
@@ -182,7 +190,32 @@ describe('Victory Component', () => {
 
     expect(screen.getByText('POST-RUN DOSSIER')).toBeInTheDocument();
     expect(screen.getByText('Evidence confirmed')).toBeInTheDocument();
+    expect(screen.getByText('Public broadcast')).toBeInTheDocument();
+  });
+
+  it('keeps the leak path undisclosed for an incomplete dossier', () => {
+    render(<Victory {...defaultProps} textSpeed="instant" totalReadableFiles={30} />);
+
+    advanceToComplete('instant');
+
     expect(screen.getByText('Undisclosed')).toBeInTheDocument();
+  });
+
+  it('renders configured ending art when an AOL image source exists', () => {
+    render(<Victory {...defaultProps} endingId="ufo74_exposed" textSpeed="instant" />);
+
+    expect(
+      screen.getByAltText('ferreira_service_photo_CLASSIFIED.jpg (unable to load)')
+    ).toBeInTheDocument();
+  });
+
+  it('infers public leak modifiers from the ending when legacy flags are absent', () => {
+    render(<Victory {...defaultProps} endingId="government_scandal" textSpeed="instant" />);
+
+    advanceToComplete('instant');
+
+    expect(screen.getByText('Leaked')).toBeInTheDocument();
+    expect(screen.getByText('Public broadcast')).toBeInTheDocument();
   });
 
   it('supports instant text speed for the ending flow', () => {

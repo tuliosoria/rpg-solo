@@ -656,6 +656,9 @@ export const filesystemCommands: CommandRegistry = {
     }
 
     if (filePath.includes('ghost_session') && !isEncryptedAndLocked) {
+      const hiddenCmds = new Set(stateChanges.hiddenCommandsDiscovered || state.hiddenCommandsDiscovered || []);
+      hiddenCmds.add('iddqd');
+      stateChanges.hiddenCommandsDiscovered = hiddenCmds;
       stateChanges.paranoiaLevel = Math.min(100, (state.paranoiaLevel || 0) + 10);
     }
 

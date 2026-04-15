@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './Victory.module.css';
 import { unlockAchievement, Achievement } from '../../engine/achievements';
@@ -22,6 +23,36 @@ const AOL_TIMINGS: Record<
   normal: { loadingDuration: 2500, staggerBase: 350, dossierDelay: 2000 },
   fast: { loadingDuration: 1200, staggerBase: 150, dossierDelay: 1000 },
   instant: { loadingDuration: 0, staggerBase: 0, dossierDelay: 0 },
+};
+
+const ENDING_LEAK_PATHS: Record<EndingId, 'public' | 'covert' | 'unknown'> = {
+  ridiculed: 'public',
+  ufo74_exposed: 'public',
+  the_2026_warning: 'covert',
+  government_scandal: 'public',
+  prisoner_45_freed: 'public',
+  harvest_understood: 'covert',
+  nothing_changes: 'public',
+  incomplete_picture: 'unknown',
+  wrong_story: 'public',
+  hackerkid_caught: 'covert',
+  secret_ending: 'public',
+  real_ending: 'public',
+};
+
+const ENDING_IMPLIED_FLAGS: Partial<Record<EndingId, Partial<EndingFlags>>> = {
+  ridiculed: { conspiracyFilesLeaked: true, neuralLinkAuthenticated: true },
+  ufo74_exposed: { conspiracyFilesLeaked: true },
+  government_scandal: { conspiracyFilesLeaked: true },
+  prisoner_45_freed: { conspiracyFilesLeaked: true, alphaReleased: true },
+  nothing_changes: { conspiracyFilesLeaked: true },
+  wrong_story: { conspiracyFilesLeaked: true },
+  secret_ending: {
+    conspiracyFilesLeaked: true,
+    alphaReleased: true,
+    neuralLinkAuthenticated: true,
+  },
+  real_ending: { conspiracyFilesLeaked: true },
 };
 
 interface VictoryProps {
@@ -90,10 +121,16 @@ export default function Victory({
   const resolvedEndingId: EndingId = endingId && endingId in ENDINGS
     ? endingId
     : 'incomplete_picture';
-  const resolvedEndingFlags = endingFlags ?? {
-    conspiracyFilesLeaked,
-    alphaReleased,
-    neuralLinkAuthenticated,
+  const impliedEndingFlags = ENDING_IMPLIED_FLAGS[resolvedEndingId] ?? {};
+  const resolvedEndingFlags = {
+    conspiracyFilesLeaked:
+      (endingFlags?.conspiracyFilesLeaked ?? conspiracyFilesLeaked) ||
+      impliedEndingFlags.conspiracyFilesLeaked === true,
+    alphaReleased:
+      (endingFlags?.alphaReleased ?? alphaReleased) || impliedEndingFlags.alphaReleased === true,
+    neuralLinkAuthenticated:
+      (endingFlags?.neuralLinkAuthenticated ?? neuralLinkAuthenticated) ||
+      impliedEndingFlags.neuralLinkAuthenticated === true,
   };
   const {
     conspiracyFilesLeaked: hasLeakedFiles,
@@ -112,8 +149,8 @@ export default function Victory({
     visitorCount: 0,
   };
   const timings = AOL_TIMINGS[textSpeed] ?? AOL_TIMINGS.normal;
-
-  const leakPathLabel = t('ending.dossier.path.unknown');
+  const leakPath = hasLeakedFiles ? 'public' : ENDING_LEAK_PATHS[resolvedEndingId];
+  const leakPathLabel = t(`ending.dossier.path.${leakPath}`);
   const replaySuggestions = useMemo(() => {
     const suggestions: string[] = [];
     if (!hasLeakedFiles) suggestions.push(t('ending.dossier.replay.public'));
@@ -337,32 +374,36 @@ export default function Victory({
                 </p>
               ))}
 
-              {/* Photo */}
-              <div
-                className={`${sectionClass} ${aol.imageSrc ? styles.newsPhoto : styles.brokenImage}`}
-                style={staggerDelay(4 + aol.body.length)}
-              >
-                {aol.imageSrc ? (
-                  <>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={aol.imageSrc}
-                      alt={aol.imageAlt}
-                      className={styles.newsPhotoImg}
-                    />
-                    <div className={styles.imageCaption}>
-                      {aol.imageAlt}
-                    </div>
+              {/* Article image / broken-image fallback */}
+              {aol.imageSrc ? (
+                <figure
+                  className={`${sectionClass} ${styles.newsPhoto}`}
+                  style={staggerDelay(4 + aol.body.length)}
+                >
+                  <Image
+                    className={styles.newsPhotoImg}
+                    src={aol.imageSrc}
+                    alt={aol.imageAlt}
+                    width={420}
+                    height={280}
+                    sizes="(max-width: 480px) 100vw, 420px"
+                  />
+                  <figcaption>
+                    <div className={styles.imageCaption}>{aol.imageAlt}</div>
                     <div className={styles.imageCredit}>Photo: Associated Press Wire Service</div>
-                  </>
-                ) : (
-                  <>
-                    <div className={styles.brokenImageIcon} aria-hidden="true">✕</div>
-                    <div className={styles.brokenImageLabel}>{aol.imageAlt}</div>
-                    <div className={styles.imageCredit}>Photo: Associated Press Wire Service</div>
-                  </>
-                )}
-              </div>
+                  </figcaption>
+                </figure>
+              ) : (
+                <div
+                  className={`${sectionClass} ${styles.brokenImage}`}
+                  style={staggerDelay(4 + aol.body.length)}
+                  aria-hidden="true"
+                >
+                  <div className={styles.brokenImageIcon}>✕</div>
+                  <div className={styles.brokenImageLabel}>{aol.imageAlt}</div>
+                  <div className={styles.imageCredit}>Photo: Associated Press Wire Service</div>
+                </div>
+              )}
 
               {/* UFO74 Wire Footer */}
               <div
