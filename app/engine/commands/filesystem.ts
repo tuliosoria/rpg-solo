@@ -549,6 +549,9 @@ export const filesystemCommands: CommandRegistry = {
 
     let detectionChange = 3; // Default increase for reading files
     const safeFileNotice: ReturnType<typeof createEntry>[] = [];
+    // Declared early so safe-file UFO74 can be routed through the same
+    // single-message channel used by conspiracy/context reactions below.
+    let ufo74ContextMessage: TerminalEntry[] | null = null;
 
     if (isSafeFile && state.detectionLevel > DETECTION_FLOOR) {
       // Reduce detection by 1-2 points instead of increasing
@@ -568,15 +571,16 @@ export const filesystemCommands: CommandRegistry = {
       );
 
       // Occasionally add UFO74 comment (roughly 1 in 4 safe file reads)
+      // Routed through ufo74ContextMessage so only ONE UFO74 message fires per open.
       const showUFO74 = seededRandomInt(rng, 0, 4) === 0;
       if (showUFO74) {
-        safeFileNotice.push(
+        ufo74ContextMessage = [
           createEntryI18n(
             'ufo74',
             'engine.commands.filesystem.ufo74_good_thinking_kid_reading_the_boring_stuff_keeps_you_l',
             'UFO74: good thinking, kid. reading the boring stuff keeps you looking like a regular user.'
-          )
-        );
+          ),
+        ];
       }
     }
 
@@ -712,11 +716,10 @@ export const filesystemCommands: CommandRegistry = {
     // CODED LANGUAGE FILES - UFO74 explains these can't be used as evidence
     // Files in /internal/sanitized/ use euphemisms that provide plausible deniability
     // ═══════════════════════════════════════════════════════════════════════════
-    // Collect UFO74 contextual messages separately — only the LAST one is kept
-    // to avoid flooding the encrypted channel with multiple messages at once.
-    let ufo74ContextMessage: TerminalEntry[] | null = null;
+    // ufo74ContextMessage is declared earlier (safe-file block) so all UFO74
+    // reactions share a single slot — only ONE message per file open.
 
-    if (filePath.includes('/internal/sanitized/') && !isEncryptedAndLocked) {
+    if (!ufo74ContextMessage && filePath.includes('/internal/sanitized/') && !isEncryptedAndLocked) {
       ufo74ContextMessage = createUFO74Message([
         'UFO74: ugh. this is sanitized documentation.',
         '       "the package"? "visitors"? "guests"?',
@@ -751,8 +754,9 @@ export const filesystemCommands: CommandRegistry = {
     }
 
     // After a few reads, nudge players toward the key evidence-heavy directories.
+    // Only if no file-specific reaction already claimed the slot.
     const totalFilesRead = filesRead.size;
-    if (totalFilesRead === 3 && !state.flags.overrideSuggested && !state.flags.adminUnlocked) {
+    if (totalFilesRead === 3 && !state.flags.overrideSuggested && !state.flags.adminUnlocked && !ufo74ContextMessage) {
       ufo74ContextMessage = createUFO74Message([
         'UFO74: good pace, hackerkid.',
         '       start digging through /storage, /ops, and /comms.',
@@ -774,8 +778,8 @@ export const filesystemCommands: CommandRegistry = {
       if (allRead) {
         achievementsToCheck.push('archivist');
 
-        // UFO74 hint: all files read in this subdirectory — overrides previous messages
-        if (state.currentPath !== '/' && state.tutorialComplete) {
+        // UFO74 hint: all files read in this subdirectory — only if no other reaction pending
+        if (state.currentPath !== '/' && state.tutorialComplete && !ufo74ContextMessage) {
           ufo74ContextMessage = [
             createEntryI18n(
               'ufo74',

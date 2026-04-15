@@ -205,7 +205,7 @@ const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'cafeteria_menu_week03.txt':
     'last normal menu before the 20th. enjoy the feijoada.',
   'incident_report_1996_01_VG.txt':
-    'the real report. three specimens. they called it a chemical spill.',
+    'three specimens. they called it a chemical spill.',
   'cafeteria_menu.txt':
     'they were still serving lunch. while storing a body downstairs.',
   'cafeteria_feedback.txt':

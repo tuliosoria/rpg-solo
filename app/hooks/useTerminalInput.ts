@@ -292,10 +292,9 @@ export function useTerminalInput({
       playSound('transmission');
       playSound('message');
 
-      setPendingUfo74Messages([]);
       setEncryptedChannelState('idle');
     },
-    [gameState, playSound, setEncryptedChannelState, setGameState, setPendingUfo74Messages]
+    [gameState, playSound, setEncryptedChannelState, setGameState]
   );
 
   const streamOutput = useCallback(
@@ -362,12 +361,12 @@ export function useTerminalInput({
         return;
       }
 
-      // Merge both UFO74 message queues into a single encrypted channel
-      const allPendingUfo74 = [...pendingUfo74StartMessages, ...pendingUfo74Messages];
-      if (allPendingUfo74.length > 0 && !trimmedInput) {
+      // Only flush file-specific reactions (startMessages) on empty Enter.
+      // Deferred messages (e.g., evidence milestones) wait until after the next real command.
+      if (pendingUfo74StartMessages.length > 0 && !trimmedInput) {
+        const messages = [...pendingUfo74StartMessages];
         setPendingUfo74StartMessages([]);
-        setPendingUfo74Messages([]);
-        openEncryptedChannelWithMessages(allPendingUfo74);
+        openEncryptedChannelWithMessages(messages);
         return;
       }
 
@@ -838,6 +837,14 @@ export function useTerminalInput({
         } else {
           openEncryptedChannelWithMessages(result.pendingUfo74Messages);
         }
+      }
+
+      // Promote deferred UFO74 messages (e.g., evidence milestones from a previous
+      // file open) to the start queue so they appear on the next Enter press —
+      // but only after a real command and when no file reaction is already waiting.
+      if (pendingUfo74Messages.length > 0 && !shouldDeferUfo74) {
+        appendPendingUfo74StartMessages([...pendingUfo74Messages]);
+        setPendingUfo74Messages([]);
       }
 
       if (result.triggerTuringTest) {
