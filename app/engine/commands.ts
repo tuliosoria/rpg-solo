@@ -529,25 +529,25 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       };
     }
 
-    if (godCmd === 'icq') {
+    if (godCmd === 'icq' || godCmd === 'ending') {
       return {
         output: [
           createEntryI18n(
             'system',
             'engine.commands.core.jumping_to_icq_phase',
-            '═══ JUMPING TO ICQ PHASE ═══'
+            '═══ JUMPING TO ENDING PHASE ═══'
           ),
           createEntryI18n(
             'output',
             'engine.commands.core.terminal_will_transition_to_icq_chat',
-            'Terminal will transition to ICQ chat...'
+            'Terminal will transition to ending...'
           ),
         ],
         stateChanges: {
           evidencesSaved: true,
-          icqPhase: true,
+          gameWon: true,
         },
-        skipToPhase: 'icq' as const,
+        skipToPhase: 'victory' as const,
       };
     }
 

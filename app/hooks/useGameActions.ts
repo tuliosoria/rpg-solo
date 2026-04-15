@@ -37,11 +37,10 @@ export function useGameActions({
   triggerFlicker: _triggerFlicker,
 }: UseGameActionsOptions) {
   const handleBlackoutComplete = useCallback(() => {
-    setGamePhase('icq');
+    setGamePhase('victory');
     setGameState(prev => ({
       ...prev,
-      icqPhase: true,
-      // Clear any lingering game-over state so ICQ starts cleanly
+      gameWon: true,
       isGameOver: false,
       gameOverReason: undefined,
     }));

@@ -387,7 +387,6 @@ export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow';
 export type GamePhase =
   | 'terminal'
   | 'blackout'
-  | 'icq'
   | 'victory'
   | 'bad_ending'
   | 'neutral_ending'

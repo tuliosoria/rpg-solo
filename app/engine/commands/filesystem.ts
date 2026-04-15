@@ -767,7 +767,7 @@ export const filesystemCommands: CommandRegistry = {
 
       const hintFileName = filePath.split('/').pop() || '';
       const hint = saveHints[hintFileName];
-      if (hint && !state.savedFiles.has(filePath)) {
+      if (hint && !(state.savedFiles?.has(filePath))) {
         ufo74ContextMessage = hint.map(line => createEntry('ufo74', line));
       }
     }

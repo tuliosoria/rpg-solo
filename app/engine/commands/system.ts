@@ -735,7 +735,7 @@ export const systemCommands: CommandRegistry = {
           createEntry(
             'system',
             tSystem('save.dossierCountDetailed', '  Dossier: {{count}}/10 files saved', {
-              count: state.savedFiles.size,
+              count: state.savedFiles?.size || 0,
             })
           ),
           createEntry('system', ''),

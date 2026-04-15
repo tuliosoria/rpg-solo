@@ -438,7 +438,7 @@ export function useTerminalEffects({
     const interval = setInterval(() => {
       const currentState = gameStateRef.current;
       const isActivePlayPhase =
-        gamePhase === 'terminal' || gamePhase === 'blackout' || gamePhase === 'icq';
+        gamePhase === 'terminal' || gamePhase === 'blackout';
       if (isActivePlayPhase && !currentState.isGameOver && !currentState.gameWon) {
         const savedAt = autoSave(currentState);
         if (typeof savedAt === 'number') {
