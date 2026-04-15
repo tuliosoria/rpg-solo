@@ -1,11 +1,11 @@
-/* Terminal 1996 - Turing Test Overlay Styles */
+/* Terminal 1996 - Turing Test Overlay — Institutional Interrogation */
 
 .overlay {
   background: rgba(0, 0, 0, 0.98);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(4px, 0.8vw, 10px);
+  padding: clamp(12px, 2vw, 24px);
   box-sizing: border-box;
   overflow: hidden;
   border-radius: inherit;
@@ -13,7 +13,7 @@
   z-index: 200;
   font-family:
     ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
 @keyframes fadeIn {
@@ -34,13 +34,13 @@
     opacity: 1;
   }
   25% {
-    opacity: 0.3;
+    opacity: 0.2;
   }
   50% {
-    opacity: 0.9;
+    opacity: 0.85;
   }
   75% {
-    opacity: 0.4;
+    opacity: 0.3;
   }
   100% {
     opacity: 1;
@@ -57,53 +57,40 @@
   background: repeating-linear-gradient(
     0deg,
     transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.3) 2px,
-    rgba(0, 0, 0, 0.3) 4px
+    transparent 3px,
+    rgba(0, 0, 0, 0.15) 3px,
+    rgba(0, 0, 0, 0.15) 6px
   );
   pointer-events: none;
   z-index: 210;
 }
 
-/* Warning glow */
+/* Warning glow — cold, clinical */
 .glow {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  box-shadow: inset 0 0 200px rgba(255, 100, 0, 0.1);
+  box-shadow: inset 0 0 120px rgba(255, 80, 0, 0.06),
+    inset 0 0 40px rgba(255, 120, 0, 0.04);
   pointer-events: none;
   z-index: 205;
 }
 
-/* Container */
+/* Container — fills the bezel */
 .container {
   position: relative;
   z-index: 215;
   width: 100%;
-  max-width: 36rem;
+  max-width: 52rem;
   max-height: 100%;
-  padding: clamp(6px, 1vw, 12px);
+  padding: clamp(12px, 2vw, 28px) clamp(16px, 3vw, 40px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: clamp(4px, 0.6vh, 8px);
-}
-
-/* Turing Test Image */
-.imageContainer {
-  display: flex;
-  justify-content: center;
-}
-
-.turingImage {
-  width: clamp(48px, 7vw, 72px);
-  max-height: min(9vh, 72px);
-  height: auto;
-  border: 1px solid #ff6600;
-  box-shadow: 0 0 10px rgba(255, 100, 0, 0.3);
-  filter: sepia(20%) contrast(1.1);
+  gap: clamp(10px, 1.5vh, 18px);
+  overflow-y: auto;
 }
 
 /* Header */
@@ -112,20 +99,22 @@
 }
 
 .headerLine {
-  color: #ff6600;
-  font-size: clamp(7px, 0.7vw, 9px);
-  letter-spacing: clamp(0.5px, 0.08vw, 1px);
+  color: #cc5500;
+  font-size: clamp(10px, 1.2vw, 14px);
+  letter-spacing: clamp(1px, 0.15vw, 2px);
   overflow: hidden;
   white-space: nowrap;
+  opacity: 0.6;
 }
 
 .headerTitle {
-  color: #ff9900;
-  font-size: clamp(10px, 1vw, 13px);
+  color: #ff8800;
+  font-size: clamp(16px, 2vw, 24px);
   font-weight: bold;
-  letter-spacing: clamp(1px, 0.2vw, 2px);
-  padding: 2px 0;
-  animation: warningPulse 2s infinite;
+  letter-spacing: clamp(2px, 0.4vw, 5px);
+  padding: 4px 0;
+  text-transform: uppercase;
+  animation: warningPulse 3s infinite;
 }
 
 @keyframes warningPulse {
@@ -134,95 +123,113 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.7;
+    opacity: 0.65;
   }
+}
+
+/* Interrogation line — the centerpiece */
+.interrogation {
+  color: #ff4400;
+  font-size: clamp(18px, 2.4vw, 28px);
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: clamp(1px, 0.3vw, 3px);
+  padding: clamp(8px, 1.2vh, 14px) 0;
+  text-shadow: 0 0 20px rgba(255, 68, 0, 0.3);
 }
 
 /* Instructions */
 .instructions {
-  color: #888;
-  font-size: clamp(8px, 0.75vw, 10px);
-  line-height: 1.3;
+  color: #777;
+  font-size: clamp(12px, 1.3vw, 16px);
+  line-height: 1.5;
   text-align: center;
-  padding: clamp(4px, 0.6vw, 6px);
-  border: 1px solid #333;
-  background: rgba(30, 30, 30, 0.5);
+  padding: clamp(8px, 1vw, 14px) clamp(12px, 2vw, 24px);
+  border: 1px solid #2a2a2a;
+  background: rgba(15, 15, 15, 0.6);
 }
 
 .instructionHighlight {
-  color: #ffaa00;
+  color: #dd8800;
   font-weight: bold;
-  margin-top: 2px;
+  margin-top: 4px;
+  font-size: clamp(13px, 1.4vw, 17px);
 }
 
 /* Progress */
 .progress {
-  color: #666;
-  font-size: clamp(8px, 0.7vw, 10px);
+  color: #555;
+  font-size: clamp(11px, 1.1vw, 14px);
   text-align: center;
-  letter-spacing: clamp(1px, 0.14vw, 2px);
+  letter-spacing: clamp(2px, 0.3vw, 4px);
+  text-transform: uppercase;
 }
 
 /* Question Box */
 .questionBox {
-  border: 1px solid #ff6600;
-  background: rgba(40, 20, 0, 0.3);
-  padding: clamp(6px, 0.8vw, 10px);
+  border: 1px solid #cc5500;
+  background: rgba(30, 12, 0, 0.4);
+  padding: clamp(14px, 2vw, 24px);
 }
 
 .questionPrompt {
   color: #ffcc00;
-  font-size: clamp(9px, 0.85vw, 11px);
-  line-height: 1.3;
+  font-size: clamp(14px, 1.6vw, 20px);
+  line-height: 1.5;
   text-align: center;
-  margin-bottom: clamp(4px, 0.8vh, 8px);
-  padding: 0 2px;
+  margin-bottom: clamp(12px, 1.5vh, 20px);
+  padding: 0 clamp(4px, 1vw, 16px);
+  font-style: italic;
 }
 
-/* Options */
+/* Options — clearly clickable */
 .options {
   display: flex;
   flex-direction: column;
-  gap: clamp(3px, 0.4vh, 5px);
+  gap: clamp(6px, 1vh, 12px);
 }
 
 .option {
   display: flex;
-  align-items: flex-start;
-  padding: clamp(4px, 0.5vw, 6px) clamp(6px, 0.8vw, 8px);
-  border: 1px solid #444;
-  background: rgba(20, 20, 20, 0.8);
+  align-items: center;
+  padding: clamp(10px, 1.2vw, 16px) clamp(14px, 1.5vw, 20px);
+  border: 1px solid #3a3a3a;
+  background: rgba(15, 15, 15, 0.9);
   cursor: pointer;
   transition: all 0.15s ease;
+  min-height: 44px;
+  text-align: left;
 }
 
 .option:hover {
-  border-color: #ff9900;
-  background: rgba(60, 40, 0, 0.3);
+  border-color: #ff8800;
+  background: rgba(60, 30, 0, 0.35);
+  box-shadow: 0 0 12px rgba(255, 120, 0, 0.08);
 }
 
 .optionLetter {
-  color: #ff9900;
+  color: #ff8800;
   font-weight: bold;
-  margin-right: 6px;
-  min-width: 14px;
-  font-size: clamp(9px, 0.8vw, 11px);
+  margin-right: clamp(8px, 1vw, 14px);
+  min-width: 20px;
+  font-size: clamp(14px, 1.5vw, 18px);
+  flex-shrink: 0;
 }
 
 .optionText {
-  color: #ccc;
-  font-size: clamp(8px, 0.78vw, 10px);
-  line-height: 1.3;
+  color: #bbb;
+  font-size: clamp(13px, 1.4vw, 17px);
+  line-height: 1.4;
 }
 
 .optionSelected {
-  border-color: #ff9900;
-  background: rgba(80, 50, 0, 0.4);
+  border-color: #ff8800;
+  background: rgba(80, 40, 0, 0.5);
 }
 
 .optionCorrect {
   border-color: #88cc44 !important;
-  background: rgba(0, 60, 0, 0.4) !important;
+  background: rgba(0, 50, 0, 0.5) !important;
 }
 
 .optionCorrect .optionLetter,
@@ -232,7 +239,7 @@
 
 .optionWrong {
   border-color: #ff0000 !important;
-  background: rgba(60, 0, 0, 0.4) !important;
+  background: rgba(50, 0, 0, 0.5) !important;
 }
 
 .optionWrong .optionLetter,
@@ -243,9 +250,9 @@
 /* Feedback */
 .feedback {
   text-align: center;
-  font-size: clamp(8px, 0.75vw, 10px);
-  padding: 4px;
-  letter-spacing: clamp(1px, 0.14vw, 2px);
+  font-size: clamp(13px, 1.4vw, 17px);
+  padding: clamp(6px, 1vh, 10px);
+  letter-spacing: clamp(2px, 0.3vw, 4px);
   animation: feedbackPulse 0.5s ease-out;
 }
 
@@ -262,10 +269,10 @@
 
 /* Footer */
 .footer {
-  color: #666;
-  font-size: clamp(8px, 0.7vw, 10px);
+  color: #555;
+  font-size: clamp(12px, 1.2vw, 15px);
   text-align: center;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   animation: blink 1.5s infinite;
 }
 
@@ -282,102 +289,101 @@
 
 /* Result screen */
 .resultBox {
-  border: 1px solid #ff6600;
-  background: rgba(20, 10, 0, 0.9);
-  padding: clamp(8px, 1.2vw, 14px) clamp(8px, 1vw, 12px);
+  border: 1px solid #cc5500;
+  background: rgba(15, 8, 0, 0.9);
+  padding: clamp(20px, 3vw, 36px) clamp(16px, 2vw, 28px);
   text-align: center;
 }
 
 .resultHeader {
-  color: #ff9900;
-  font-size: clamp(11px, 1.1vw, 14px);
+  color: #ff8800;
+  font-size: clamp(18px, 2.2vw, 26px);
   font-weight: bold;
-  letter-spacing: clamp(1px, 0.2vw, 2px);
-  margin-bottom: 6px;
+  letter-spacing: clamp(2px, 0.4vw, 5px);
+  margin-bottom: clamp(10px, 1.5vh, 16px);
 }
 
 .resultScore {
-  color: #888;
-  font-size: clamp(9px, 0.8vw, 11px);
-  margin-bottom: 6px;
-  letter-spacing: clamp(1px, 0.14vw, 2px);
+  color: #777;
+  font-size: clamp(14px, 1.5vw, 18px);
+  margin-bottom: clamp(10px, 1.5vh, 16px);
+  letter-spacing: clamp(2px, 0.3vw, 4px);
 }
 
 .resultPass {
   color: #88cc44;
-  font-size: clamp(9px, 0.8vw, 11px);
-  padding: clamp(4px, 0.6vw, 8px);
+  font-size: clamp(14px, 1.5vw, 18px);
+  padding: clamp(8px, 1.2vw, 14px);
   border: 1px solid #445522;
   background: rgba(0, 40, 0, 0.3);
-  margin-bottom: 6px;
+  margin-bottom: clamp(10px, 1.5vh, 16px);
 }
 
 .resultFail {
   color: #ff4444;
-  font-size: clamp(9px, 0.8vw, 11px);
-  padding: clamp(4px, 0.6vw, 8px);
+  font-size: clamp(14px, 1.5vw, 18px);
+  padding: clamp(8px, 1.2vw, 14px);
   border: 1px solid #660000;
   background: rgba(40, 0, 0, 0.3);
-  margin-bottom: 6px;
+  margin-bottom: clamp(10px, 1.5vh, 16px);
 }
 
 .resultPrompt {
-  color: #666;
-  font-size: clamp(8px, 0.7vw, 10px);
+  color: #555;
+  font-size: clamp(14px, 1.5vw, 18px);
   animation: blink 1.5s infinite;
 }
 
-/* Responsive */
+/* Responsive — mobile */
 @media (max-width: 768px) {
   .overlay {
-    padding: 4px;
+    padding: 8px;
   }
 
   .container {
-    padding: 6px;
-    gap: 4px;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .interrogation {
+    font-size: 16px;
   }
 
   .headerTitle {
-    font-size: 10px;
-    letter-spacing: 1px;
+    font-size: 14px;
+    letter-spacing: 2px;
   }
 
   .questionPrompt {
-    font-size: 9px;
+    font-size: 13px;
   }
 
   .optionText {
-    font-size: 8px;
+    font-size: 12px;
   }
 
   .instructions {
-    font-size: 8px;
-    line-height: 1.2;
+    font-size: 11px;
   }
 }
 
+/* Short screens */
 @media (max-height: 820px) {
-  .overlay {
-    padding: 4px;
-  }
-
   .container {
-    max-width: 32rem;
-    padding: 6px;
-    gap: 4px;
+    gap: 8px;
+    padding: 10px 16px;
   }
 
-  .turingImage {
-    width: clamp(40px, 6vh, 60px);
-    max-height: 8vh;
+  .interrogation {
+    padding: 4px 0;
+    font-size: clamp(15px, 2vw, 22px);
   }
 
   .questionBox {
-    padding: 6px;
+    padding: 10px;
   }
 
   .resultBox {
-    padding: 8px 6px;
+    padding: 14px 12px;
   }
 }

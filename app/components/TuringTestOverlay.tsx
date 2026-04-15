@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import Image from 'next/image';
 import styles from './TuringTestOverlay.module.css';
 import { TURING_QUESTIONS } from '../constants/turing';
 import { uiChance, uiRandomInt } from '../engine/rng';
@@ -36,7 +35,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
   const [flickering, setFlickering] = useState(true);
   const flickerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { setMusicPlaybackRate, speak, playSound } = useSound();
+  const { setMusicPlaybackRate, playSound } = useSound();
 
   // Safely get current question with fallback
   const currentQuestion = TURING_QUESTIONS[questionIndex] || TURING_QUESTIONS[0];
@@ -44,12 +43,9 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
   // Check for invalid question data
   const isInvalidQuestion = !currentQuestion || !currentQuestion.options;
 
-  // Turing Test start effects: voice + music speed
+  // Turing Test start effects: music speed + alert
   useEffect(() => {
     if (isInvalidQuestion) return;
-
-    // Firewall speaks with menacing voice
-    speak(t('turing.voice.welcome'), { rate: 0.7, pitch: 0.3 });
 
     // Accelerate background music to 1.5x for intensity
     setMusicPlaybackRate(1.5);
@@ -61,7 +57,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
     return () => {
       setMusicPlaybackRate(1.0);
     };
-  }, [speak, setMusicPlaybackRate, playSound, isInvalidQuestion, t]);
+  }, [setMusicPlaybackRate, playSound, isInvalidQuestion]);
 
   // Initial flicker effect
   useEffect(() => {
@@ -185,18 +181,6 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
           className={styles.container}
           style={CONTAINER_LAYOUT_STYLE}
         >
-          {/* Turing Test Image */}
-          <div className={styles.imageContainer}>
-            <Image
-              src="/images/turing-test.webp"
-              alt={t('turing.image.resultAlt')}
-              width={120}
-              height={120}
-              className={styles.turingImage}
-              priority
-            />
-          </div>
-
           <div className={styles.resultBox}>
             <div className={styles.resultHeader}>
               {passed ? t('turing.result.complete') : t('turing.result.failed')}
@@ -231,24 +215,15 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
         className={styles.container}
         style={CONTAINER_LAYOUT_STYLE}
       >
-        {/* Turing Test Image */}
-        <div className={styles.imageContainer}>
-          <Image
-            src="/images/turing-test.webp"
-            alt={t('turing.image.protocolAlt')}
-            width={160}
-            height={160}
-            className={styles.turingImage}
-            priority
-          />
-        </div>
-
         {/* Header */}
         <div className={styles.header}>
-          <div className={styles.headerLine}>===============================================</div>
+          <div className={styles.headerLine}>═══════════════════════════════════════════════</div>
           <div className={styles.headerTitle}>{t('turing.header.title')}</div>
-          <div className={styles.headerLine}>===============================================</div>
+          <div className={styles.headerLine}>═══════════════════════════════════════════════</div>
         </div>
+
+        {/* Interrogation line */}
+        <div className={styles.interrogation}>{t('turing.interrogation')}</div>
 
         {/* Instructions */}
         <div className={styles.instructions}>
@@ -265,7 +240,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
         {/* Question Box */}
         <div className={styles.questionBox}>
           <div className={styles.questionPrompt}>
-            "{translateRuntimeText(currentQuestion.prompt)}"
+            &ldquo;{translateRuntimeText(currentQuestion.prompt)}&rdquo;
           </div>
 
           <div className={styles.options}>

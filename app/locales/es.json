@@ -206,6 +206,7 @@
   "tutorialSkip.skip": "[ Y ] SALTAR",
   "tutorialSkip.play": "[ N ] TUTORIAL",
   "turing.voice.welcome": "Bienvenido a la Prueba de Turing",
+  "turing.interrogation": "Necesito asegurarme de que NO eres humano.",
   "turing.result.complete": "[ VERIFICACIÓN COMPLETA ]",
   "turing.result.failed": "[ VERIFICACIÓN FALLIDA ]",
   "turing.result.score": "RESPUESTAS DE MÁQUINA: {{value}}/3",
