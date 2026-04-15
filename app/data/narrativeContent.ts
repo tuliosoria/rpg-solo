@@ -32,7 +32,7 @@ export const ufo74_identity_file: FileNode = {
     '═══════════════════════════════════════════════════════════',
     '',
     'Meu nome é Carlos Eduardo Ferreira.',
-    '2º Tenente, Força Aérea Brasileira. Vinte e três anos.',
+    '2º Tenente, Força Aérea Brasileira. Analista de inteligência.',
     'Janeiro de 1996.',
     '',
     'I processed the field reports from Varginha.',

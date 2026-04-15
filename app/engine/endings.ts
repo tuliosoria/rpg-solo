@@ -270,7 +270,7 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
     title: 'UFO74 EXPOSED',
     subtitle: 'The ghost had a name all along.',
     narrative: [
-      'The decrypted file spreads before anyone can suppress it. Carlos Eduardo Ferreira — 2nd Lieutenant, Brazilian Air Force, 1996. Twenty-three years old when he saw the being. Thirty years building the archive in secret.',
+      'The decrypted file spreads before anyone can suppress it. Carlos Eduardo Ferreira — intelligence officer, Brazilian Air Force, stationed at Guarulhos in 1996. Thirty years building the archive in secret.',
       'Military intelligence confirms the service record within hours. The denial is immediate, automatic, and too late. Ferreira\'s face is on every screen in the country. He never wanted fame. He wanted someone to believe him.',
       'The Air Force opens an internal inquiry. Three generals retire early. The archive survives because it was already everywhere. UFO74 is no longer a call sign. It is a name.',
     ],

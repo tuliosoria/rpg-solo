@@ -493,10 +493,9 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     'You found it. The file I never wanted you to see.':
       'Você encontrou. O arquivo que eu nunca quis que você visse.',
     'My name is not UFO74.': 'Meu nome não é UFO74.',
-    'In January 1996, I was a young military analyst.':
-      'Em janeiro de 1996, eu era um jovem analista militar.',
+    'In January 1996, I was a military intelligence analyst.':
+      'Em janeiro de 1996, eu era analista de inteligência militar.',
     'Stationed at Base Aérea de Guarulhos.': 'Lotado na Base Aérea de Guarulhos.',
-    'I was 23 years old.': 'Eu tinha 23 anos.',
     'When the call came about Varginha, I was one of the first':
       'Quando veio o chamado sobre Varginha, eu fui um dos primeiros',
     'to process the initial reports. I saw the photographs.':
@@ -6331,10 +6330,9 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     'You found it. The file I never wanted you to see.':
       'Lo encontraste. El archivo que nunca quise que vieras.',
     'My name is not UFO74.': 'Mi nombre no es UFO74.',
-    'In January 1996, I was a young military analyst.':
-      'En enero de 1996, yo era un joven analista militar.',
+    'In January 1996, I was a military intelligence analyst.':
+      'En enero de 1996, yo era analista de inteligencia militar.',
     'Stationed at Base Aérea de Guarulhos.': 'Destinado en la Base Aérea de Guarulhos.',
-    'I was 23 years old.': 'Tenía 23 años.',
     'When the call came about Varginha, I was one of the first':
       'Cuando llegó la llamada sobre Varginha, fui uno de los primeros',
     'to process the initial reports. I saw the photographs.':
