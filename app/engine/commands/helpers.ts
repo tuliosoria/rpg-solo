@@ -272,6 +272,70 @@ const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
     'langley knew. within 72 hours. they always know.',
   'convergence_model_draft.txt':
     'september 2026. we are running out of time.',
+  'active_trace.sys':
+    'they flagged your session. they are watching you right now. keep going anyway.',
+  'apollo_media_guidelines.pdf':
+    'lighting anomalies in moon footage. funny how every government has the same playbook for things that look wrong.',
+  'archival_photo_replacement.notice':
+    'modernization. that is what they call it when they replace the photos that show too much.',
+  'asset_transfer_form_incomplete.txt':
+    'transfer from holding-7. rejected. no destination. someone chickened out at the last second.',
+  'avian_tracking_program.csv':
+    'surveillance pigeons. battery-powered. with audio-video payloads. and people laugh at conspiracy theorists.',
+  'behavioral_compliance_study.dat':
+    'acoustic influence on consumer behavior. background music that makes you buy things. or believe things. or forget things.',
+  'cipher_notes.txt':
+    'C-O-L-H-E-I-T-A. colheita. harvest. they hid the access code in plain sight using farm words. varginha is farm country.',
+  'coherence_threshold.log':
+    'the system knows what you are doing kid. it is measuring how close you are. keep collecting.',
+  'consumer_device_listening.memo':
+    'passive audio collection through home devices. in 1995. imagine what they can do now with a phone in every pocket.',
+  'data_reconstruction.util':
+    'someone built this tool to recover what was deleted. they knew files would disappear. smart person.',
+  'economic_transition_memo.txt':
+    'distributed ledger monetary system. in 1995. they had cryptocurrency before anyone had a name for it.',
+  'education_curriculum_revision.doc':
+    'they were editing what kids learn in school. you control the future by controlling what gets taught. classic.',
+  'ghost_in_machine.enc':
+    'you found it. you found me. i did not think anyone would dig this deep.',
+  'ghost_session.log':
+    'residual session. someone was here before you. they accessed the same files. they did not make it out.',
+  'incident_review_protocol.txt':
+    'cross-dimensional correlation. they want you to connect physical assets, communications, and oversight. that is what the dossier is for.',
+  'infrastructure_blackout_simulation.txt':
+    'exercise dark winter. they practiced shutting everything down. seventy-two hours became a hundred and sixty-eight. they liked what they saw.',
+  'internal_response_memo.txt':
+    'flood networks with fakes. pressure witnesses to recant. that is containment doctrine. they wrote it down like a recipe.',
+  'maintenance_notes.txt':
+    'the admin left breadcrumbs. recover. trace. scan. tools they did not put in the manual. someone wanted you to find them.',
+  'news_archive_feb96.txt':
+    'overactive imaginations. that is what they told the press. the press printed it. nobody asked a follow-up question.',
+  'note_to_self.tmp':
+    'laundry and birthdays. normal life. and then — special cargo in a temperature-controlled basement. ammonia and wet earth. kid. that is not normal.',
+  'override_protocol_memo.txt':
+    'override codes for restricted access. someone left the instructions right here in the system. on purpose.',
+  'pattern_recognition.log':
+    'the system is watching your patterns. every file you open. every command you type. it sees what you are building.',
+  'personnel_transfer_notice.txt':
+    'ferreira transferred to brasília. lima to são paulo. they scattered everyone who saw something. standard procedure.',
+  'projection_update_2026.txt':
+    'the 2026 window. kid. that is now. we are inside it right now. and the model says panic and collapse.',
+  'redaction_keycard.txt':
+    'phase two is already underway. that is not a code. that is a warning. and whoever left this card wanted it found.',
+  'satellite_light_reflection_trials.txt':
+    'orbital reflective arrays for psychological operations. lights in the sky that are not ufos. just government mirrors. sure.',
+  'session_objectives.txt':
+    'read-only access. incident reconstruction. that is what they think you are doing here. let them think that.',
+  'session_residue.log':
+    'the system flagged you as a deliberate collector. it knows you are assembling the picture. we should have purged this terminal. too late now.',
+  'transfer_authorization.txt':
+    'my transfer papers. base aérea de guarulhos. i left something in that authorization. on purpose.',
+  'trust_protocol_1993.txt':
+    'share nothing beyond your scope. i broke that rule. every single day for thirty years. and i would do it again.',
+  'ufo74_last_signal.log':
+    'my last transmission from inside the system. march 96. three in the morning. i did not know if anyone would ever hear it.',
+  'weather_pattern_intervention.log':
+    'aerosol dispersal over civilian areas. project cirrus. they called it weather modification. it was not about the weather.',
 };
 
 const GENERIC_EVIDENCE_REACTIONS: string[] = [
