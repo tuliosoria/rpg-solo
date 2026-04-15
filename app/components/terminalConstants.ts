@@ -76,6 +76,11 @@ export const TURING_TEST_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
+export const PRISONER_45_VIDEO_SRC = new URL(
+  '../../videos/prisoner 45.mp4',
+  import.meta.url
+).toString();
+
 // Maps filesystem paths to their attached video evidence
 export const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
   '/internal/jardim_andere_incident.txt': {

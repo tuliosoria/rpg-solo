@@ -46,6 +46,7 @@ import {
   UFO74_IMAGE_COMMENT_KEYS,
   UFO74_FIREWALL_REACTION_KEYS,
   TURING_TEST_VIDEO_SRC,
+  PRISONER_45_VIDEO_SRC,
   DEPLOY_VERSION,
   VERSION_TOOLTIP,
   SCREEN_OVERLAY_BOUNDS,
@@ -296,7 +297,13 @@ export default function Terminal({
     const closingVideo = activeEvidenceVideo;
     setActiveEvidenceVideo(null);
     setGameState(prev => ({ ...prev, avatarExpression: 'scared' }));
-    if (closingVideo?.filePath === '/sys/ghost_in_machine.enc') {
+    if (closingVideo?.filePath === 'chat:prisoner45') {
+      setGameState(prev => ({ ...prev, prisoner45VideoPlayed: true }));
+      appendPendingUfo74StartMessages([
+        createEntry('ufo74', t('terminal.video.closeComment.prisoner45_1')),
+        createEntry('ufo74', t('terminal.video.closeComment.prisoner45_2')),
+      ]);
+    } else if (closingVideo?.filePath === '/sys/ghost_in_machine.enc') {
       appendPendingUfo74StartMessages([
         createEntry('ufo74', t('terminal.video.closeComment.identity1')),
         createEntry('ufo74', t('terminal.video.closeComment.identity2')),
@@ -315,7 +322,7 @@ export default function Terminal({
       ]);
     }
     setTimeout(() => inputRef.current?.focus(), 0);
-  }, [activeEvidenceVideo, appendPendingUfo74StartMessages, t]);
+  }, [activeEvidenceVideo, appendPendingUfo74StartMessages, setGameState, t]);
 
   const getEntryContent = useCallback(
     (entry: TerminalEntry): string => {
@@ -582,9 +589,11 @@ export default function Terminal({
         }
 
         if (normalizedInput === 'no') {
+          const isPrisoner45 = pendingEvidenceVideoPrompt?.filePath === 'chat:prisoner45';
           setGameState(prev => ({
             ...prev,
             history: [...prev.history, createEntry('input', trimmedInput)],
+            ...(isPrisoner45 ? { prisoner45VideoPlayed: true } : {}),
           }));
           setInputValue('');
           setPendingEvidenceVideoPrompt(null);
@@ -605,9 +614,27 @@ export default function Terminal({
       }
 
       const attachment = getEvidenceVideoAttachment(trimmedInput, gameState.currentPath);
-      pendingEvidenceVideoCheckRef.current = attachment
-        ? { attachment }
-        : null;
+
+      // First chat use triggers Prisoner 45 video
+      if (
+        !attachment &&
+        /^chat\b/i.test(trimmedInput) &&
+        !gameState.prisoner45VideoPlayed &&
+        !gameState.prisoner45Disconnected
+      ) {
+        pendingEvidenceVideoCheckRef.current = {
+          attachment: {
+            filePath: 'chat:prisoner45',
+            fileName: 'prisoner_45',
+            videoSrc: PRISONER_45_VIDEO_SRC,
+            videoTitle: 'prisoner_45.mp4',
+          },
+        };
+      } else {
+        pendingEvidenceVideoCheckRef.current = attachment
+          ? { attachment }
+          : null;
+      }
 
       await baseHandleSubmit(e);
     },
@@ -615,6 +642,8 @@ export default function Terminal({
       activeEvidenceVideo,
       baseHandleSubmit,
       gameState.currentPath,
+      gameState.prisoner45VideoPlayed,
+      gameState.prisoner45Disconnected,
       inputValue,
       pendingEvidenceVideoPrompt,
       setGameState,

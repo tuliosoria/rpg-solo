@@ -172,6 +172,7 @@ export interface GameState {
   prisoner45QuestionsAsked: number; // Max 5
   prisoner45Disconnected: boolean;
   prisoner45UsedResponses: Set<string>; // Track used responses to never repeat
+  prisoner45VideoPlayed: boolean; // First chat triggers video
 
   // Scout Link state
   scoutLinkUsedResponses: Set<string>; // Track used responses to never repeat
@@ -426,6 +427,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   prisoner45QuestionsAsked: 0,
   prisoner45Disconnected: false,
   prisoner45UsedResponses: new Set(),
+  prisoner45VideoPlayed: false,
   scoutLinkUsedResponses: new Set(),
   pendingDecryptFile: undefined,
   turingEvaluationActive: false,
