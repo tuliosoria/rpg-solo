@@ -294,6 +294,7 @@ export default function Terminal({
   const closeEvidenceVideo = useCallback(() => {
     const closingVideo = activeEvidenceVideo;
     setActiveEvidenceVideo(null);
+    setGameState(prev => ({ ...prev, avatarExpression: 'scared' }));
     if (closingVideo?.filePath === '/sys/ghost_in_machine.enc') {
       appendPendingUfo74StartMessages([
         createEntry('ufo74', t('terminal.video.closeComment.identity1')),
@@ -1544,6 +1545,7 @@ export default function Terminal({
                   onEnded={() => {
                     setActiveTuringVideo(false);
                     setShowTuringTest(true);
+                    setGameState(prev => ({ ...prev, avatarExpression: 'scared' }));
                   }}
                   style={{
                     width: '100%',

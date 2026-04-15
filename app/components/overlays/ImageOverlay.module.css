@@ -1,7 +1,7 @@
 /* Terminal 1996 - Image Overlay Styles */
 
 .overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -15,6 +15,7 @@
   font-family:
     ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   animation: fadeIn 0.1s ease-out;
+  overflow: hidden;
 }
 
 @keyframes fadeIn {
@@ -107,15 +108,16 @@
   display: flex;
   flex-direction: column;
   width: fit-content;
-  max-height: 90vh;
+  max-height: 85%;
+  max-width: 85%;
 }
 
 .landscapeContainer {
-  max-width: 80vw;
+  max-width: 75%;
 }
 
 .portraitContainer {
-  max-width: 45vw;
+  max-width: 40%;
 }
 
 /* Header */
@@ -157,7 +159,7 @@
 
 .image {
   max-width: 100%;
-  max-height: 70vh;
+  max-height: 55vh;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -271,11 +273,11 @@
 /* Responsive */
 @media (max-width: 768px) {
   .landscapeContainer {
-    max-width: 95vw;
+    max-width: 92%;
   }
 
   .portraitContainer {
-    max-width: 75vw;
+    max-width: 70%;
   }
 
   .headerText {

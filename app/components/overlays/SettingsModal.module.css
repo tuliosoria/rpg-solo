@@ -1,7 +1,7 @@
 /* Terminal 1996 - Settings Modal Styles */
 
 .overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -11,6 +11,7 @@
   align-items: center;
   justify-content: center;
   z-index: 100;
+  overflow: hidden;
 }
 
 .modal {
