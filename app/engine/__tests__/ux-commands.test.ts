@@ -4,6 +4,7 @@ import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 import { MAX_COMMAND_INPUT_LENGTH } from '../../constants/limits';
 import { determineEnding } from '../endings';
+import { isEvidencePath } from '../evidenceRevelation';
 
 // Helper to create a test state
 const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
@@ -385,17 +386,23 @@ describe('UX Commands', () => {
   });
 
   describe('god random command', () => {
-    it('builds a random 10-file dossier and jumps to the resolved victory ending', () => {
+    it('builds a mixed 10-file dossier and jumps to the resolved victory ending', () => {
       const state = createTestState({ godMode: true, savedFiles: new Set(), filesRead: new Set() });
       const result = executeCommand('god random', state);
-      const savedFiles = result.stateChanges.savedFiles;
+      const savedFiles = result.stateChanges.savedFiles ?? new Set<string>();
+      const selectedFiles = [...savedFiles];
+      const evidenceFiles = selectedFiles.filter(isEvidencePath);
+      const nonEvidenceFiles = selectedFiles.filter(path => !isEvidencePath(path));
 
       expect(result.skipToPhase).toBe('victory');
       expect(result.stateChanges.gameWon).toBe(true);
       expect(result.stateChanges.evidencesSaved).toBe(true);
-      expect(savedFiles?.size).toBe(10);
+      expect(savedFiles.size).toBe(10);
+      expect(evidenceFiles).toHaveLength(7);
+      expect(nonEvidenceFiles).toHaveLength(3);
+      expect(result.stateChanges.evidenceCount).toBe(7);
       expect(result.stateChanges.filesRead?.size).toBeGreaterThanOrEqual(10);
-      expect(result.stateChanges.endingId).toBe(determineEnding(savedFiles ?? new Set()));
+      expect(result.stateChanges.endingId).toBe(determineEnding(savedFiles));
       expect(result.output.some(e => e.content.includes('RANDOM DOSSIER GENERATED'))).toBe(true);
     });
 

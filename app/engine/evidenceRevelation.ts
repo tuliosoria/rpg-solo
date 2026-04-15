@@ -97,20 +97,34 @@ export function getDiscoveredEvidenceFiles(paths: Iterable<string>): Set<string>
   return discovered;
 }
 
-function collectEvidencePaths(node: FileSystemNode, currentPath = ''): string[] {
+function collectFilePaths(
+  node: FileSystemNode,
+  currentPath = '',
+  predicate: (file: FileNode) => boolean = () => true
+): string[] {
   if (node.type === 'file') {
-    return isEvidenceFile(node) ? [currentPath] : [];
+    return predicate(node) ? [currentPath] : [];
   }
 
   return Object.entries(node.children).flatMap(([name, child]) =>
-    collectEvidencePaths(child, currentPath ? `${currentPath}/${name}` : `/${name}`)
+    collectFilePaths(child, currentPath ? `${currentPath}/${name}` : `/${name}`, predicate)
   );
 }
 
-const ALL_EVIDENCE_PATHS = collectEvidencePaths(FILESYSTEM_ROOT);
+const ALL_FILE_PATHS = collectFilePaths(FILESYSTEM_ROOT);
+const ALL_EVIDENCE_PATHS = collectFilePaths(FILESYSTEM_ROOT, '', isEvidenceFile);
+const ALL_NON_EVIDENCE_PATHS = collectFilePaths(FILESYSTEM_ROOT, '', file => !isEvidenceFile(file));
+
+export function getAllFilePaths(): string[] {
+  return [...ALL_FILE_PATHS];
+}
 
 export function getAllEvidencePaths(): string[] {
   return [...ALL_EVIDENCE_PATHS];
+}
+
+export function getAllNonEvidencePaths(): string[] {
+  return [...ALL_NON_EVIDENCE_PATHS];
 }
 
 /**

@@ -6,7 +6,7 @@ import { resolvePath, getNode } from './filesystem';
 import { MAX_DETECTION } from '../constants/detection';
 import { MAX_WRONG_ATTEMPTS } from '../constants/gameplay';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
-import { MAX_EVIDENCE_COUNT, getAllEvidencePaths } from './evidenceRevelation';
+import { MAX_EVIDENCE_COUNT, getAllEvidencePaths, getAllNonEvidencePaths } from './evidenceRevelation';
 import { determineEnding, type EndingId } from './endings';
 import { createSeededRng, seededShuffle } from './rng';
 
@@ -69,6 +69,7 @@ const DEBUG_LEAK_READY_DOSSIER_FILES = [
   '/admin/colonization_model.red',
 ];
 const GOD_RANDOM_SEED_SALT = 0x52414e44;
+const GOD_RANDOM_NON_EVIDENCE_TARGET = 3;
 const DEBUG_ENDING_LIST: EndingId[] = [
   'ridiculed',
   'ufo74_exposed',
@@ -329,12 +330,38 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   });
   const createRandomDossierResult = () => {
     const evidencePaths = getAllEvidencePaths();
-    const selectionCount = Math.min(MAX_EVIDENCE_COUNT, evidencePaths.length);
+    const nonEvidencePaths = getAllNonEvidencePaths();
+    const selectionCount = Math.min(MAX_EVIDENCE_COUNT, evidencePaths.length + nonEvidencePaths.length);
     const randomSeed = ((state.rngState || state.seed || 1) ^ GOD_RANDOM_SEED_SALT) +
       (state.sessionCommandCount || 0);
     const rng = createSeededRng(randomSeed);
-    const selectedFiles = seededShuffle(rng, evidencePaths).slice(0, selectionCount);
-    const savedFiles = new Set(selectedFiles);
+    const shuffledEvidencePaths = seededShuffle(rng, evidencePaths);
+    const shuffledNonEvidencePaths = seededShuffle(rng, nonEvidencePaths);
+    const nonEvidenceSelectionCount = Math.min(
+      GOD_RANDOM_NON_EVIDENCE_TARGET,
+      shuffledNonEvidencePaths.length,
+      selectionCount
+    );
+    const evidenceSelectionCount = Math.min(
+      selectionCount - nonEvidenceSelectionCount,
+      shuffledEvidencePaths.length
+    );
+    const selectedFiles = [
+      ...shuffledEvidencePaths.slice(0, evidenceSelectionCount),
+      ...shuffledNonEvidencePaths.slice(0, nonEvidenceSelectionCount),
+    ];
+
+    if (selectedFiles.length < selectionCount) {
+      const remainingEvidencePaths = shuffledEvidencePaths.slice(evidenceSelectionCount);
+      const remainingNonEvidencePaths = shuffledNonEvidencePaths.slice(nonEvidenceSelectionCount);
+      const backfillPaths = [...remainingEvidencePaths, ...remainingNonEvidencePaths];
+      selectedFiles.push(...backfillPaths.slice(0, selectionCount - selectedFiles.length));
+    }
+
+    const orderedSelectedFiles = seededShuffle(rng, selectedFiles).slice(0, selectionCount);
+    const selectedEvidenceCount = orderedSelectedFiles.filter(path => evidencePaths.includes(path)).length;
+    const selectedNonEvidenceCount = orderedSelectedFiles.length - selectedEvidenceCount;
+    const savedFiles = new Set(orderedSelectedFiles);
     const endingId = determineEnding(savedFiles);
 
     return {
@@ -347,10 +374,13 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         createEntryI18n(
           'output',
           'engine.commands.core.random_dossier_selected_count',
-          'Selected {{count}} evidence files for the dossier.',
-          { count: selectionCount }
+          'Selected {{evidenceCount}} evidence files and {{otherCount}} non-evidence files for the dossier.',
+          {
+            evidenceCount: selectedEvidenceCount,
+            otherCount: selectedNonEvidenceCount,
+          }
         ),
-        ...selectedFiles.map(filePath => createEntry('output', `  ${filePath}`)),
+        ...orderedSelectedFiles.map(filePath => createEntry('output', `  ${filePath}`)),
         createEntry('output', ''),
         createEntryI18n(
           'output',
@@ -365,8 +395,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         ),
       ],
       stateChanges: {
-        evidenceCount: selectionCount,
-        filesRead: new Set([...(state.filesRead || []), ...selectedFiles]),
+        evidenceCount: selectedEvidenceCount,
+        filesRead: new Set([...(state.filesRead || []), ...orderedSelectedFiles]),
         savedFiles,
         evidencesSaved: true,
         gameWon: true,

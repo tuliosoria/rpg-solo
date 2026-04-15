@@ -185,7 +185,7 @@ export const evidenceCommands: CommandRegistry = {
           evidencesSaved: true,
           flags: { ...state.flags, leakSuccessful: true },
           gameWon: true,
-          endingId: undefined, // Ending determined at render time from savedFiles
+          endingId: undefined, // Ending determined when the blackout completion handler evaluates savedFiles
         },
         delayMs: 2000,
         triggerFlicker: true,

@@ -164,11 +164,15 @@ function writeMarkdownReport(analysis, outputPath = REPORT_MARKDOWN_PATH) {
 }
 
 function runVitestSuite(testFiles) {
-  const command = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-  const result = spawnSync(command, ['vitest', 'run', ...testFiles], {
+  const result = spawnSync('npx', ['vitest', 'run', '--configLoader', 'runner', ...testFiles], {
     cwd: REPO_ROOT,
     stdio: 'inherit',
+    shell: process.platform === 'win32',
   });
+
+  if (result.error) {
+    console.error(`Failed to run story validation suite: ${result.error.message}`);
+  }
 
   if (typeof result.status === 'number') {
     process.exit(result.status);

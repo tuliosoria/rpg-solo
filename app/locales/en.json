@@ -556,7 +556,7 @@
   "engine.commands.core.game_state_reset": "═══ GAME STATE RESET ═══",
   "engine.commands.core.all_progress_cleared_reload_recommended": "All progress cleared. Reload recommended.",
   "engine.commands.core.random_dossier_generated": "═══ RANDOM DOSSIER GENERATED ═══",
-  "engine.commands.core.random_dossier_selected_count": "Selected {{count}} evidence files for the dossier.",
+  "engine.commands.core.random_dossier_selected_count": "Selected {{evidenceCount}} evidence files and {{otherCount}} non-evidence files for the dossier.",
   "engine.commands.core.random_dossier_resolved_ending": "Resolved ending: {{ending}}",
   "engine.commands.core.random_dossier_jumping_to_victory": "Jumping directly to the resolved dossier ending...",
   "engine.commands.core.game_status": "═══ GAME STATUS ═══",

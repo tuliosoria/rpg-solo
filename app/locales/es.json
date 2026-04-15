@@ -556,7 +556,7 @@
   "engine.commands.core.game_state_reset": "═══ ESTADO DEL JUEGO REINICIADO ═══",
   "engine.commands.core.all_progress_cleared_reload_recommended": "Todo el progreso fue borrado. Se recomienda recargar.",
   "engine.commands.core.random_dossier_generated": "═══ DOSSIER ALEATORIO GENERADO ═══",
-  "engine.commands.core.random_dossier_selected_count": "Se seleccionaron {{count}} archivos de evidencia para el dossier.",
+  "engine.commands.core.random_dossier_selected_count": "Se seleccionaron {{evidenceCount}} archivos de evidencia y {{otherCount}} archivos sin evidencia para el dossier.",
   "engine.commands.core.random_dossier_resolved_ending": "Final resuelto: {{ending}}",
   "engine.commands.core.random_dossier_jumping_to_victory": "Saltando directo al final resuelto del dossier...",
   "engine.commands.core.game_status": "═══ ESTADO DEL JUEGO ═══",

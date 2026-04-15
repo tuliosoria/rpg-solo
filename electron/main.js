@@ -707,7 +707,7 @@ ipcMain.handle('steam:cloud:delete', (event, key) => {
 });
 
 ipcMain.handle('steam:cloud:list', () => {
-  return whenSteamReady(() => steamCloud.list());
+  return whenSteamReady(() => steamCloud.listFiles());
 });
 
 ipcMain.handle('steam:cloud:getQuota', () => {

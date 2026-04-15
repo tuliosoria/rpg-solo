@@ -556,7 +556,7 @@
   "engine.commands.core.game_state_reset": "═══ ESTADO DO JOGO RESETADO ═══",
   "engine.commands.core.all_progress_cleared_reload_recommended": "Todo o progresso foi limpo. Recarregar é recomendado.",
   "engine.commands.core.random_dossier_generated": "═══ DOSSIÊ ALEATÓRIO GERADO ═══",
-  "engine.commands.core.random_dossier_selected_count": "{{count}} arquivos de evidência foram escolhidos para o dossiê.",
+  "engine.commands.core.random_dossier_selected_count": "{{evidenceCount}} arquivos de evidência e {{otherCount}} arquivos sem evidência foram escolhidos para o dossiê.",
   "engine.commands.core.random_dossier_resolved_ending": "Final resolvido: {{ending}}",
   "engine.commands.core.random_dossier_jumping_to_victory": "Pulando direto para o final resolvido do dossiê...",
   "engine.commands.core.game_status": "═══ STATUS DO JOGO ═══",

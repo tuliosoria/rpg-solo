@@ -133,6 +133,7 @@ describe('Terminal Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00Z'));
     mockSoundEnabled = false;
   });
 
@@ -290,59 +291,69 @@ describe('Terminal Component', () => {
     expect(screen.getByText(readableLine)).toBeInTheDocument();
   });
 
-  it('restarts the alien silhouette timer when a new external state is loaded', () => {
+  it('restarts the alien silhouette timer when a new external state is loaded', async () => {
     const randomSpy = vi.spyOn(rngModule, 'uiRandom').mockReturnValue(0);
 
-    const { rerender } = render(
-      <Terminal
-        {...defaultProps}
-        initialState={{
-          ...defaultProps.initialState,
-          detectionLevel: 75,
-        }}
-      />
-    );
+    try {
+      const { rerender } = render(
+        <Terminal
+          {...defaultProps}
+          initialState={{
+            ...defaultProps.initialState,
+            detectionLevel: 75,
+          }}
+        />
+      );
 
-    act(() => {
-      vi.advanceTimersByTime(15000);
-    });
+      await act(async () => {});
 
-    mockStaticNoise.mockClear();
+      act(() => {
+        vi.advanceTimersByTime(15000);
+      });
 
-    rerender(
-      <Terminal
-        {...defaultProps}
-        initialState={{
-          ...defaultProps.initialState,
-          detectionLevel: 80,
-        }}
-      />
-    );
+      mockStaticNoise.mockClear();
 
-    act(() => {
-      vi.advanceTimersByTime(15001);
-    });
+      rerender(
+        <Terminal
+          {...defaultProps}
+          initialState={{
+            ...defaultProps.initialState,
+            detectionLevel: 80,
+          }}
+        />
+      );
 
-    expect(
-      mockStaticNoise.mock.calls.some(
-        ([props]) => (props as { alienVisible?: boolean }).alienVisible === true
-      )
-    ).toBe(false);
+      await act(async () => {});
 
-    act(() => {
-      vi.advanceTimersByTime(15000);
-    });
+      act(() => {
+        vi.advanceTimersByTime(15001);
+      });
 
-    expect(
-      mockStaticNoise.mock.calls.some(
-        ([props]) => (props as { alienVisible?: boolean }).alienVisible === true
-      )
-    ).toBe(true);
+      await act(async () => {});
 
-    randomSpy.mockRestore();
+      expect(
+        mockStaticNoise.mock.calls.some(
+          ([props]) => (props as { alienVisible?: boolean }).alienVisible === true
+        )
+      ).toBe(false);
+
+      act(() => {
+        vi.advanceTimersByTime(15000);
+      });
+
+      await act(async () => {});
+
+      expect(
+        mockStaticNoise.mock.calls.some(
+          ([props]) => (props as { alienVisible?: boolean }).alienVisible === true
+        )
+      ).toBe(true);
+    } finally {
+      randomSpy.mockRestore();
+    }
   });
 
-  it('forces the alien silhouette visible during preview mode at 70 detection', () => {
+  it('forces the alien silhouette visible during preview mode at 70 detection', async () => {
     render(
       <Terminal
         {...defaultProps}
@@ -354,9 +365,13 @@ describe('Terminal Component', () => {
       />
     );
 
+    await act(async () => {});
+
     act(() => {
       vi.advanceTimersByTime(1);
     });
+
+    await act(async () => {});
 
     expect(
       mockStaticNoise.mock.calls.some(
