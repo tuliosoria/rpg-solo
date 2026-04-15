@@ -338,11 +338,6 @@ export interface GameState {
   firewallActive: boolean; // True when detection >= 25%
   firewallDisarmed: boolean; // True if player used neural link to disable
 
-  // Firewall Lockdown system — triggers at 5 evidence, blocks file access until 3 nodes disabled
-  firewallLockdownActive: boolean;
-  firewallLockdownTriggered: boolean; // One-shot flag: don't re-trigger after save/load
-  firewallNodesDisabled: string[]; // IDs of disabled nodes: 'alpha', 'beta', 'gamma'
-
   // File reading state (for firewall eye spawn suppression)
   isReadingFile: boolean; // True while a file is being displayed
   lastFileReadTime: number; // Timestamp when last file read completed
@@ -355,6 +350,11 @@ export interface GameState {
   archiveActionsRemaining: number; // Actions left before returning to present (3-5)
   archiveTimestamp: string; // Display timestamp for archive state (e.g., "02:09:12")
   archiveFilesViewed: Set<string>; // Files accessed during this archive session
+
+  // Leak preparation sequence (unlocked at 5+ evidence)
+  leakSequence?: string[]; // 3-command preparation sequence
+  leakSequenceProgress: number; // 0-3, how many correct commands entered
+  leakSequenceGenerated: boolean; // Whether sequence has been generated this session
 }
 
 // Firewall Eye entity removed — eyes are now purely ambient (non-interactive)
@@ -543,10 +543,6 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   // Firewall Eyes system
   firewallActive: false,
   firewallDisarmed: false,
-  // Firewall Lockdown system
-  firewallLockdownActive: false,
-  firewallLockdownTriggered: false,
-  firewallNodesDisabled: [],
   // File reading state
   isReadingFile: false,
   lastFileReadTime: 0,
@@ -557,4 +553,8 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   archiveActionsRemaining: 0,
   archiveTimestamp: '',
   archiveFilesViewed: new Set(),
+  // Leak preparation sequence
+  leakSequence: undefined,
+  leakSequenceProgress: 0,
+  leakSequenceGenerated: false,
 };

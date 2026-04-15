@@ -361,12 +361,13 @@ export function useTerminalInput({
         return;
       }
 
-      // Only flush file-specific reactions (startMessages) on empty Enter.
-      // Deferred messages (e.g., evidence milestones) wait until after the next real command.
+      // One UFO74 message per Enter press — never stack multiple reactions.
+      // Deliver the first queued message; hold the rest for subsequent presses.
       if (pendingUfo74StartMessages.length > 0 && !trimmedInput) {
-        const messages = [...pendingUfo74StartMessages];
-        setPendingUfo74StartMessages([]);
-        openEncryptedChannelWithMessages(messages);
+        const firstMessage = pendingUfo74StartMessages[0];
+        const remaining = pendingUfo74StartMessages.slice(1);
+        setPendingUfo74StartMessages(remaining);
+        openEncryptedChannelWithMessages([firstMessage]);
         return;
       }
 

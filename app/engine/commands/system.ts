@@ -286,6 +286,18 @@ const COMMAND_HELP: Record<string, string[]> = {
 
 export const systemCommands: CommandRegistry = {
   help: (args, state) => {
+    const evidenceFound = countEvidence(state);
+    if (evidenceFound >= 5) {
+      return {
+        output: [
+          createEntry('warning', ''),
+          createEntry('warning', '  COMMAND RESTRICTED — ELEVATED SECURITY PROTOCOL'),
+          createEntry('warning', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
     // If a specific command is requested, show detailed help
     if (args.length > 0) {
       const cmdName = args[0].toLowerCase();
@@ -322,45 +334,6 @@ export const systemCommands: CommandRegistry = {
           stateChanges: {},
         };
       }
-    }
-
-    // During lockdown, show lockdown-specific help
-    if (state.firewallLockdownActive) {
-      const lockdownLines = [
-        '',
-        '═══════════════════════════════════════════════════════════',
-        tSystem('lockdownHelp.title', '⚠ FIREWALL LOCKDOWN — LIMITED COMMANDS'),
-        '═══════════════════════════════════════════════════════════',
-        '',
-        tSystem(
-          'lockdownHelp.scan',
-          '  scan              View firewall nodes and security questions'
-        ),
-        tSystem(
-          'lockdownHelp.disable',
-          '  disable <n> <a>   Disable a node with the correct answer'
-        ),
-        tSystem('lockdownHelp.ls', '  ls                List directory contents'),
-        tSystem('lockdownHelp.cd', '  cd <dir>          Change directory'),
-        tSystem('lockdownHelp.back', '  back              Return to previous directory'),
-        tSystem('lockdownHelp.status', '  status            Display system status'),
-        tSystem('lockdownHelp.map', '  map               View evidence progress'),
-        tSystem('lockdownHelp.help', '  help              Display this help'),
-        tSystem('lockdownHelp.clear', '  clear             Clear terminal display'),
-        '',
-        tSystem(
-          'lockdownHelp.blocked',
-          '  All other commands are BLOCKED until lockdown is lifted.'
-        ),
-        '',
-        '═══════════════════════════════════════════════════════════',
-        '',
-      ];
-
-      return {
-        output: createOutputEntries(lockdownLines),
-        stateChanges: {},
-      };
     }
 
     // Default: show all commands
@@ -523,18 +496,6 @@ export const systemCommands: CommandRegistry = {
         count: evidenceCount,
       })
     );
-
-    // Firewall lockdown status
-    if (state.firewallLockdownActive) {
-      const nodesLeft = 3 - (state.firewallNodesDisabled?.length || 0);
-      lines.push(
-        tSystem(
-          nodesLeft === 1 ? 'status.firewallLockdown.one' : 'status.firewallLockdown.other',
-          `  FIREWALL: LOCKDOWN — ${nodesLeft} node${nodesLeft === 1 ? '' : 's'} remaining`,
-          { value: nodesLeft }
-        )
-      );
-    }
 
     if (evidenceCount >= 10) {
       lines.push(

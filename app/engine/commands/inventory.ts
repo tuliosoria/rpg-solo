@@ -454,6 +454,18 @@ export const inventoryCommands: CommandRegistry = {
   },
 
   search: (args, state) => {
+    const evidenceFound = countEvidence(state);
+    if (evidenceFound >= 5) {
+      return {
+        output: [
+          createEntry('warning', ''),
+          createEntry('warning', '  COMMAND RESTRICTED — ELEVATED SECURITY PROTOCOL'),
+          createEntry('warning', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
     const query = args.join(' ').trim();
 
     if (query.length === 0) {

@@ -211,6 +211,18 @@ export const navigationCommands: CommandRegistry = {
   },
 
   wait: (args, state) => {
+    const evidenceFound = countEvidence(state);
+    if (evidenceFound >= 5) {
+      return {
+        output: [
+          createEntry('warning', ''),
+          createEntry('warning', '  COMMAND RESTRICTED — ELEVATED SECURITY PROTOCOL'),
+          createEntry('warning', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
     const usesRemaining = state.waitUsesRemaining ?? 3;
 
     if (usesRemaining <= 0) {
