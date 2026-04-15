@@ -735,6 +735,13 @@ export default function Terminal({
       return;
     }
 
+    // Auto-play prisoner 45 video (no y/n prompt)
+    if (pendingCheck.attachment.filePath === 'chat:prisoner45') {
+      pendingEvidenceVideoCheckRef.current = null;
+      setActiveEvidenceVideo(pendingCheck.attachment);
+      return;
+    }
+
     setGameState(prev => ({
       ...prev,
       history: [
