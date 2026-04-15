@@ -227,7 +227,7 @@ export default function Victory({
   // ── Focus restart button when complete ──
   useEffect(() => {
     if (phase === 'complete') {
-      restartButtonRef.current?.focus();
+      restartButtonRef.current?.focus({ preventScroll: true });
     }
   }, [phase]);
 
