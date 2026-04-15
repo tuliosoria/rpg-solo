@@ -323,6 +323,11 @@ export default function Terminal({
         createEntry('ufo74', t('terminal.video.closeComment.prato1')),
         createEntry('ufo74', t('terminal.video.closeComment.prato2')),
       ]);
+    } else if (closingVideo?.filePath === '/internal/protocols/sanitized/visitor_briefing.txt') {
+      appendPendingUfo74StartMessages([
+        createEntry('ufo74', t('terminal.video.closeComment.visitor1')),
+        createEntry('ufo74', t('terminal.video.closeComment.visitor2')),
+      ]);
     } else if (closingVideo?.filePath === '/internal/jardim_andere_incident.txt' ||
         closingVideo?.filePath === '/storage/assets/logistics_manifest_fragment.txt' ||
         closingVideo?.filePath === '/admin/energy_extraction_theory.txt') {

@@ -91,6 +91,11 @@ export const OPERACAO_PRATO_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
+export const VISITOR_VIDEO_SRC = new URL(
+  '../../videos/visitor.mp4',
+  import.meta.url
+).toString();
+
 // Maps filesystem paths to their attached video evidence
 export const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
   '/internal/jardim_andere_incident.txt': {
@@ -134,6 +139,12 @@ export const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment>
     fileName: 'operation_prato_original.txt',
     videoSrc: OPERACAO_PRATO_VIDEO_SRC,
     videoTitle: 'operacao_prato.mp4',
+  },
+  '/internal/protocols/sanitized/visitor_briefing.txt': {
+    filePath: '/internal/protocols/sanitized/visitor_briefing.txt',
+    fileName: 'visitor_briefing.txt',
+    videoSrc: VISITOR_VIDEO_SRC,
+    videoTitle: 'visitor.mp4',
   },
 };
 
