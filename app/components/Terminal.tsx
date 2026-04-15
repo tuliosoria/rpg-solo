@@ -1045,18 +1045,20 @@ export default function Terminal({
 
   if (gamePhase === 'victory') {
     return (
-      <Victory
-        onRestartAction={handleRestart}
-        commandCount={gameState.sessionCommandCount}
-        detectionLevel={gameState.detectionLevel}
-        maxDetectionReached={maxDetectionRef.current}
-        evidenceCount={gameState.savedFiles?.size || 0}
-        filesReadCount={gameState.filesRead?.size || 0}
-        totalReadableFiles={totalReadableFiles}
-        endingId={gameState.endingId as EndingId | undefined}
-        endingFlags={getEndingFlags(gameState)}
-        textSpeed={textSpeed}
-      />
+      <FloatingUIProvider>
+        <Victory
+          onRestartAction={handleRestart}
+          commandCount={gameState.sessionCommandCount}
+          detectionLevel={gameState.detectionLevel}
+          maxDetectionReached={maxDetectionRef.current}
+          evidenceCount={gameState.savedFiles?.size || 0}
+          filesReadCount={gameState.filesRead?.size || 0}
+          totalReadableFiles={totalReadableFiles}
+          endingId={gameState.endingId as EndingId | undefined}
+          endingFlags={getEndingFlags(gameState)}
+          textSpeed={textSpeed}
+        />
+      </FloatingUIProvider>
     );
   }
 
