@@ -884,6 +884,13 @@ export default function Terminal({
     speakCustomFirewallVoice(t('firewall.voice.disconnect'));
   }, [gameState.isGameOver, showGameOver, stopAmbient, t]);
 
+  // Stop game music when entering victory (ending screen has its own audio)
+  useEffect(() => {
+    if (gamePhase === 'victory') {
+      stopAmbient();
+    }
+  }, [gamePhase, stopAmbient]);
+
   // Refocus input when tutorial skip popup closes
   const prevShowTutorialSkipRef = useRef(showTutorialSkip);
   useEffect(() => {
