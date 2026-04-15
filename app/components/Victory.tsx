@@ -29,11 +29,6 @@ interface VictoryProps {
   commandCount?: number;
   detectionLevel?: number;
   maxDetectionReached?: number;
-  mathMistakes?: number;
-  evidenceLinks?: Array<[string, string]>;
-  wrongAttempts?: number;
-  choiceLeakPath?: 'public' | 'covert';
-  rivalInvestigatorActive?: boolean;
   evidenceCount?: number;
   filesReadCount?: number;
   totalReadableFiles?: number;
@@ -49,11 +44,6 @@ export default function Victory({
   commandCount = 999,
   detectionLevel = 50,
   maxDetectionReached = 50,
-  mathMistakes = 0,
-  evidenceLinks: _evidenceLinks = [],
-  wrongAttempts: _wrongAttempts = 0,
-  choiceLeakPath: _choiceLeakPath,
-  rivalInvestigatorActive: _rivalInvestigatorActive = false,
   evidenceCount = 0,
   filesReadCount = 0,
   totalReadableFiles = 0,
@@ -86,12 +76,7 @@ export default function Victory({
     [endingVariant]
   );
   const timings = VICTORY_TIMINGS[textSpeed];
-  const leakPathLabel =
-    _choiceLeakPath === 'public'
-      ? t('ending.dossier.path.public')
-      : _choiceLeakPath === 'covert'
-        ? t('ending.dossier.path.covert')
-        : t('ending.dossier.path.unknown');
+  const leakPathLabel = t('ending.dossier.path.unknown');
   const replaySuggestions = useMemo(() => {
     const suggestions: string[] = [];
 
@@ -104,9 +89,7 @@ export default function Victory({
     if (!neuralLinkAuthenticated) {
       suggestions.push(t('ending.dossier.replay.link'));
     }
-    if (_choiceLeakPath !== 'covert') {
-      suggestions.push(t('ending.dossier.replay.covert'));
-    }
+    suggestions.push(t('ending.dossier.replay.covert'));
 
     if (suggestions.length === 0 && (conspiracyFilesLeaked || alphaReleased || neuralLinkAuthenticated)) {
       suggestions.push(t('ending.dossier.replay.cleaner'));
@@ -117,7 +100,7 @@ export default function Victory({
     }
 
     return suggestions.slice(0, 2);
-  }, [alphaReleased, conspiracyFilesLeaked, neuralLinkAuthenticated, _choiceLeakPath, t]);
+  }, [alphaReleased, conspiracyFilesLeaked, neuralLinkAuthenticated, t]);
 
   // Check for achievements on mount
   useEffect(() => {
@@ -145,12 +128,6 @@ export default function Victory({
     // Survivor - won after ever reaching critical detection
     if (maxDetectionReached >= 80) {
       const result = unlockAchievement('survivor');
-      if (result?.isNew) newAchievements.push(result.achievement);
-    }
-
-    // Mathematician - all math on first try
-    if (mathMistakes === 0) {
-      const result = unlockAchievement('mathematician');
       if (result?.isNew) newAchievements.push(result.achievement);
     }
 
@@ -191,7 +168,6 @@ export default function Victory({
     commandCount,
     detectionLevel,
     maxDetectionReached,
-    mathMistakes,
     filesReadCount,
     totalReadableFiles,
     conspiracyFilesLeaked,

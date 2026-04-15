@@ -18,8 +18,6 @@ export {
   sanitizeCommandInput,
   parseCommand,
   calculateDelay,
-  shouldFlicker,
-  addHesitation,
   createUFO74Message,
 } from './utils';
 

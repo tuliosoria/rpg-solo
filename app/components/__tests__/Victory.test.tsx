@@ -21,9 +21,6 @@ describe('Victory Component', () => {
     commandCount: 100,
     detectionLevel: 30,
     maxDetectionReached: 50,
-    mathMistakes: 0,
-    evidenceLinks: [] as Array<[string, string]>,
-    wrongAttempts: 0,
     evidenceCount: 6,
     filesReadCount: 20,
   };
@@ -100,18 +97,6 @@ describe('Victory Component', () => {
     expect(unlockAchievement).toHaveBeenCalledWith('survivor');
   });
 
-  it('checks for mathematician achievement when mathMistakes = 0', () => {
-    render(<Victory {...defaultProps} mathMistakes={0} />);
-    
-    expect(unlockAchievement).toHaveBeenCalledWith('mathematician');
-  });
-
-  it('does not check for mathematician achievement when mathMistakes > 0', () => {
-    render(<Victory {...defaultProps} mathMistakes={2} />);
-    
-    expect(unlockAchievement).not.toHaveBeenCalledWith('mathematician');
-  });
-
   it('checks for completionist achievement when all readable files are found', () => {
     render(<Victory {...defaultProps} filesReadCount={85} totalReadableFiles={85} />);
     
@@ -171,7 +156,6 @@ describe('Victory Component', () => {
     render(
       <Victory
         {...defaultProps}
-        choiceLeakPath="public"
         conspiracyFilesLeaked={true}
         alphaReleased={false}
         neuralLinkAuthenticated={false}
@@ -183,7 +167,7 @@ describe('Victory Component', () => {
 
     expect(screen.getByText('POST-RUN DOSSIER')).toBeInTheDocument();
     expect(screen.getByText('Evidence confirmed')).toBeInTheDocument();
-    expect(screen.getByText('Public broadcast')).toBeInTheDocument();
+    expect(screen.getByText('Undisclosed')).toBeInTheDocument();
   });
 
   it('supports instant text speed for the ending flow', () => {

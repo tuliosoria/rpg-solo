@@ -2,39 +2,22 @@
 
 import { useCallback } from 'react';
 import { createEntryI18n } from '../engine/commands/utils';
-import { hasDiscoveredConspiracyFiles } from '../engine/endings';
-import type { GamePhase, GameState, ICQPhase } from '../types';
+import type { GamePhase, GameState } from '../types';
 import type { SoundType } from './useSound';
 import { appendToHistory } from '../lib/appendToHistory';
-
-interface ICQProgressSnapshot {
-  messages: GameState['icqMessages'];
-  phase: ICQPhase;
-  currentQuestion: number;
-  currentWrongAttempts: number;
-  trust: number;
-}
 
 interface UseGameActionsOptions {
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
-  setShowTuringTest: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowGameOver: React.Dispatch<React.SetStateAction<boolean>>;
-  setGameOverReason: React.Dispatch<React.SetStateAction<string>>;
   onExitAction: () => void;
   playSound: (sound: SoundType) => void;
-  triggerFlicker: () => void;
 }
 
 export function useGameActions({
   setGameState,
   setGamePhase,
-  setShowTuringTest: _setShowTuringTest,
-  setShowGameOver: _setShowGameOver,
-  setGameOverReason: _setGameOverReason,
   onExitAction,
   playSound,
-  triggerFlicker: _triggerFlicker,
 }: UseGameActionsOptions) {
   const handleBlackoutComplete = useCallback(() => {
     setGamePhase('victory');
@@ -52,55 +35,8 @@ export function useGameActions({
       ...prev,
       gameWon: true,
       endingType: 'good',
-      icqPhase: false,
     }));
   }, [setGamePhase, setGameState]);
-
-  const handleIcqTrustChange = useCallback(
-    (trust: number) => {
-      setGameState(prev => ({ ...prev, icqTrust: trust }));
-    },
-    [setGameState]
-  );
-
-  const handleIcqMathMistake = useCallback(() => {
-    setGameState(prev => ({ ...prev, mathQuestionWrong: (prev.mathQuestionWrong || 0) + 1 }));
-  }, [setGameState]);
-
-  const handleIcqLeakChoice = useCallback(
-    (choice: 'public' | 'covert') => {
-      setGameState(prev => ({
-        ...prev,
-        choiceLeakPath: choice,
-        flags: {
-          ...prev.flags,
-          leakExecuted: true,
-          conspiracyFilesLeaked:
-            choice === 'public' && hasDiscoveredConspiracyFiles(prev),
-        },
-      }));
-    },
-    [setGameState]
-  );
-
-  const handleIcqFilesSent = useCallback(() => {
-    setGameState(prev => ({ ...prev, filesSent: true }));
-  }, [setGameState]);
-
-  const handleIcqStateSync = useCallback(
-    ({ messages, phase, currentQuestion, currentWrongAttempts, trust }: ICQProgressSnapshot) => {
-      setGameState(prev => ({
-        ...prev,
-        icqMessages: messages,
-        icqConversationPhase: phase,
-        currentMathQuestion: currentQuestion,
-        mathQuestionsAnswered: Math.min(currentQuestion, 3),
-        icqCurrentWrongAttempts: currentWrongAttempts,
-        icqTrust: trust,
-      }));
-    },
-    [setGameState]
-  );
 
   const handleRestart = useCallback(() => {
     onExitAction();
@@ -126,11 +62,6 @@ export function useGameActions({
   return {
     handleBlackoutComplete,
     handleVictory,
-    handleIcqTrustChange,
-    handleIcqMathMistake,
-    handleIcqLeakChoice,
-    handleIcqFilesSent,
-    handleIcqStateSync,
     handleRestart,
     handleFirewallActivate,
   };

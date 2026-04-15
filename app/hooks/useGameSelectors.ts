@@ -1,7 +1,5 @@
 'use client';
 
-'use client';
-
 /**
  * Memoized selectors for game state to reduce re-renders.
  * Use these instead of accessing gameState directly in components.

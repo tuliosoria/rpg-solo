@@ -222,7 +222,6 @@ function deserializeState(json: string): GameState {
       0,
       5
     ),
-    icqTrust: clampNumber(baseState.icqTrust, DEFAULT_GAME_STATE.icqTrust, 0, 100),
     legacyAlertCounter: clampNumber(
       baseState.legacyAlertCounter,
       DEFAULT_GAME_STATE.legacyAlertCounter,
@@ -254,7 +253,6 @@ function deserializeState(json: string): GameState {
       ? baseState.history.slice(-MAX_HISTORY_SIZE)
       : DEFAULT_GAME_STATE.history,
     evidenceLinks: Array.isArray(baseState.evidenceLinks) ? baseState.evidenceLinks : [],
-    icqMessages: Array.isArray(baseState.icqMessages) ? baseState.icqMessages : [],
     ufo74SecretDiscovered:
       !!baseState.ufo74SecretDiscovered || parsedFilesRead.includes('/sys/ghost_in_machine.enc'),
     pendingDecryptFile: undefined,

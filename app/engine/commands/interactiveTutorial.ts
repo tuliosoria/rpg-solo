@@ -121,19 +121,6 @@ function generateListing(path: string): string[] {
   return lines;
 }
 
-export function getTutorialRootListing(): string[] {
-  return generateListing('/');
-}
-
-export function getTutorialInternalListing(): string[] {
-  return generateListing('/internal');
-}
-
-export function getTutorialMiscListing(): string[] {
-  return generateListing('/internal/misc');
-}
-
-// Keep backwards-compatible exports for barrel file
 export const TUTORIAL_ROOT_LISTING = generateListing('/');
 export const TUTORIAL_INTERNAL_LISTING = generateListing('/internal');
 export const TUTORIAL_MISC_LISTING = generateListing('/internal/misc');

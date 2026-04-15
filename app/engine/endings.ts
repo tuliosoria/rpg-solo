@@ -4,8 +4,7 @@
 // The game checks what combination of files the player chose to save and selects
 // the best-matching ending based on priority order.
 
-import { GameState, TerminalEntry } from '../types';
-import { generateEntryId } from './commands/utils';
+import { GameState } from '../types';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // NEW DOSSIER-BASED ENDING TYPES
@@ -381,15 +380,6 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// PUBLIC API
-// ═══════════════════════════════════════════════════════════════════════════
-
-export function getEnding(savedFiles: Set<string>): GameEnding {
-  const id = determineEnding(savedFiles);
-  return { id, ...ENDINGS[id] };
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
 // BACKWARD-COMPATIBLE EXPORTS — Used by Victory.tsx, Terminal.tsx, etc.
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -447,13 +437,7 @@ export function determineEndingVariant(flags: EndingFlags): EndingVariant {
 }
 
 export function getEndingFlags(state: GameState): EndingFlags {
-  const hasExplicitConspiracyChoice = Object.prototype.hasOwnProperty.call(
-    state.flags,
-    'conspiracyFilesLeaked'
-  );
-  const conspiracyFilesLeaked = hasExplicitConspiracyChoice
-    ? state.flags.conspiracyFilesLeaked === true
-    : state.choiceLeakPath === 'public' && hasDiscoveredConspiracyFiles(state);
+  const conspiracyFilesLeaked = state.flags.conspiracyFilesLeaked === true;
 
   return {
     conspiracyFilesLeaked,
@@ -484,12 +468,6 @@ function endingToLegacyResult(id: EndingId, flags: EndingFlags): EndingResult {
   };
 }
 
-export function generateEnding(state: GameState): EndingResult {
-  const flags = getEndingFlags(state);
-  const id = determineEnding(state.savedFiles ?? new Set<string>());
-  return endingToLegacyResult(id, flags);
-}
-
 export function getEndingTitle(variant: EndingVariant): string {
   const ending = (ENDINGS as Record<string, Omit<GameEnding, 'id'>>)[variant];
   return ending?.title ?? variant.toUpperCase().replace(/_/g, ' ');
@@ -518,43 +496,4 @@ export function getEndingNarrativeLines(variant: EndingVariant): string[] {
   ];
 }
 
-export function createEndingEntries(ending: EndingResult): TerminalEntry[] {
-  const entries: TerminalEntry[] = [];
 
-  const createEntry = (type: TerminalEntry['type'], content: string): TerminalEntry => ({
-    id: generateEntryId(),
-    type,
-    content,
-    timestamp: Date.now(),
-  });
-
-  for (const line of ending.worldAftermath) {
-    const type = line.startsWith('═') ? 'warning'
-               : line.includes('[UFO74]') ? 'notice'
-               : 'output';
-    entries.push(createEntry(type, line));
-  }
-
-  if (ending.personalAftermath) {
-    for (const line of ending.personalAftermath) {
-      const type = line.includes('▓▓▓') ? 'error'
-                 : line.startsWith('...') ? 'warning'
-                 : 'output';
-      entries.push(createEntry(type, line));
-    }
-  }
-
-  for (const line of ending.epilogue) {
-    const type = line.startsWith('═') ? 'warning'
-               : line.includes('>>') ? 'notice'
-               : line.includes('[UFO74]') ? 'notice'
-               : 'output';
-    entries.push(createEntry(type, line));
-  }
-
-  return entries;
-}
-
-export function hasDiscoveredConspiracyFiles(state: GameState): boolean {
-  return state.conspiracyFilesSeen.size > 0;
-}

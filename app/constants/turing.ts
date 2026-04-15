@@ -1,7 +1,7 @@
 // Turing test question structure and data
 // Shared between TuringTestOverlay and engine/commands.ts fallback handler
 
-export interface TuringQuestion {
+interface TuringQuestion {
   prompt: string;
   options: { letter: string; text: string; isMachine: boolean }[];
 }

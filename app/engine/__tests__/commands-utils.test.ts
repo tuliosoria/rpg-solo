@@ -7,11 +7,8 @@ import {
   createOutputEntries,
   generateEntryId,
   calculateDelay,
-  shouldFlicker,
-  addHesitation,
   createInvalidCommandResult,
 } from '../commands';
-import { maybeAddTypo } from '../commands/utils';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
 // Helper to create a test state
@@ -235,94 +232,6 @@ describe('Command Utilities', () => {
       const state = createTestState({ detectionLevel: 100 });
       const delay = calculateDelay(state);
       expect(delay).toBeGreaterThan(0);
-    });
-  });
-
-  describe('shouldFlicker', () => {
-    it('returns false for high stability', () => {
-      const state = createTestState({ sessionStability: 90 });
-      // Should almost never flicker
-      let flickerCount = 0;
-      for (let i = 0; i < 100; i++) {
-        if (shouldFlicker(state)) flickerCount++;
-      }
-      expect(flickerCount).toBe(0);
-    });
-
-    it('returns true more often for low stability', () => {
-      const state = createTestState({ sessionStability: 30 });
-      // Should flicker more often
-      let flickerCount = 0;
-      for (let i = 0; i < 100; i++) {
-        if (shouldFlicker(state)) flickerCount++;
-      }
-      // With 30 stability, probability is 0.25, expect 15-35 flickers
-      expect(flickerCount).toBeGreaterThan(5);
-    });
-
-    it('uses probability based on stability level', () => {
-      const highStab = createTestState({ sessionStability: 85 });
-      const lowStab = createTestState({ sessionStability: 20 });
-
-      // Run multiple times to get statistical difference
-      let highFlickers = 0;
-      let lowFlickers = 0;
-      for (let i = 0; i < 200; i++) {
-        if (shouldFlicker(highStab)) highFlickers++;
-        if (shouldFlicker(lowStab)) lowFlickers++;
-      }
-
-      expect(lowFlickers).toBeGreaterThan(highFlickers);
-    });
-  });
-
-  describe('addHesitation', () => {
-    it('adds dots before text', () => {
-      const result = addHesitation('scary content');
-      expect(result.length).toBe(2);
-      expect(result[0]).toContain('...');
-      expect(result[1]).toBe('scary content');
-    });
-
-    it('scales dots with intensity', () => {
-      const result1 = addHesitation('text', 1);
-      const result2 = addHesitation('text', 3);
-
-      expect(result2[0].length).toBeGreaterThanOrEqual(result1[0].length);
-    });
-
-    it('caps intensity at 3', () => {
-      const result = addHesitation('text', 10);
-      // Should not have more than 9 dots (3 groups of 3)
-      expect(result[0].length).toBeLessThanOrEqual(9);
-    });
-
-    it('handles intensity of 0', () => {
-      const result = addHesitation('text', 0);
-      expect(result[0].length).toBeGreaterThanOrEqual(3); // Minimum 1 dot, repeated 3 times
-    });
-  });
-
-  describe('maybeAddTypo', () => {
-    it('returns original text when no typo', () => {
-      const result = maybeAddTypo('hello world', 0);
-      expect(result).toEqual(['hello world']);
-    });
-
-    it('returns typo and correction when triggered', () => {
-      const result = maybeAddTypo('hello world', 1);
-      expect(result).toHaveLength(2);
-      expect(result[1]).toContain('[CORRECTION]');
-    });
-
-    it('does not typo short text', () => {
-      const result = maybeAddTypo('hi', 1);
-      expect(result).toEqual(['hi']);
-    });
-
-    it('respects custom chance parameter', () => {
-      expect(maybeAddTypo('hello world', 0)).toEqual(['hello world']);
-      expect(maybeAddTypo('hello world', 1)[1]).toContain('[CORRECTION]');
     });
   });
 

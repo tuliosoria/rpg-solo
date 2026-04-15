@@ -4,10 +4,8 @@ import {
   type EndingId,
   determineEnding,
   determineEndingVariant,
-  generateEnding,
   getEndingFlags,
   getEndingTitle,
-  hasDiscoveredConspiracyFiles,
 } from '../endings';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 
@@ -186,91 +184,6 @@ describe('Endings', () => {
       });
     });
 
-    it('falls back to the public leak choice when conspiracy files were discovered', () => {
-      const state = createTestState({
-        flags: {},
-        choiceLeakPath: 'public',
-        conspiracyFilesSeen: new Set(['/internal/misc/economic_transition_memo.txt']),
-      });
-
-      expect(getEndingFlags(state)).toEqual({
-        conspiracyFilesLeaked: true,
-        alphaReleased: false,
-        neuralLinkAuthenticated: false,
-      });
-    });
-
-    it('does not infer conspiracy leakage without discovered conspiracy files', () => {
-      const state = createTestState({
-        flags: {},
-        choiceLeakPath: 'public',
-        conspiracyFilesSeen: new Set<string>(),
-      });
-
-      expect(getEndingFlags(state)).toEqual({
-        conspiracyFilesLeaked: false,
-        alphaReleased: false,
-        neuralLinkAuthenticated: false,
-      });
-    });
-
-    it('prefers an explicit conspiracyFilesLeaked flag over the legacy leak-choice fallback', () => {
-      const state = createTestState({
-        flags: { conspiracyFilesLeaked: false },
-        choiceLeakPath: 'public',
-        conspiracyFilesSeen: new Set(['/internal/misc/economic_transition_memo.txt']),
-      });
-
-      expect(getEndingFlags(state)).toEqual({
-        conspiracyFilesLeaked: false,
-        alphaReleased: false,
-        neuralLinkAuthenticated: false,
-      });
-    });
-  });
-
-  describe('generateEnding', () => {
-    it('builds the ending from the saved dossier rather than legacy modifier flags', () => {
-      const ending = generateEnding(
-        createTestState({
-          savedFiles: REPRESENTATIVE_DOSSIERS.wrong_story,
-          flags: {
-            conspiracyFilesLeaked: true,
-            alphaReleased: true,
-            neuralLinkAuthenticated: true,
-          },
-        })
-      );
-
-      expect(ending.variant).toBe('wrong_story');
-      expect(ending.title).toBe('THE WRONG STORY');
-      expect(ending.flags).toEqual({
-        conspiracyFilesLeaked: true,
-        alphaReleased: true,
-        neuralLinkAuthenticated: true,
-      });
-      expect(ending.worldAftermath.length).toBeGreaterThan(0);
-      expect(ending.personalAftermath).toBeUndefined();
-      expect(ending.epilogue).toContain('>> ENDING: THE WRONG STORY <<');
-    });
-
-    it('produces the real ending when the dossier is comprehensive', () => {
-      const ending = generateEnding(
-        createTestState({
-          savedFiles: REPRESENTATIVE_DOSSIERS.real_ending,
-          flags: {
-            conspiracyFilesLeaked: true,
-            alphaReleased: true,
-            neuralLinkAuthenticated: false,
-          },
-        })
-      );
-
-      expect(ending.variant).toBe('real_ending');
-      expect(ending.title).toBe('UNDENIABLE');
-      expect(ending.worldAftermath.length).toBeGreaterThan(0);
-      expect(ending.epilogue).toContain('The dossier that could not be ignored.');
-    });
   });
 
   describe('getEndingTitle', () => {
@@ -280,22 +193,6 @@ describe('Endings', () => {
         expect(title).toBeTruthy();
         expect(typeof title).toBe('string');
       });
-    });
-  });
-
-  describe('hasDiscoveredConspiracyFiles', () => {
-    it('returns false when no conspiracy files were seen', () => {
-      expect(
-        hasDiscoveredConspiracyFiles(createTestState({ conspiracyFilesSeen: new Set<string>() }))
-      ).toBe(false);
-    });
-
-    it('returns true when conspiracy files were seen', () => {
-      expect(
-        hasDiscoveredConspiracyFiles(
-          createTestState({ conspiracyFilesSeen: new Set(['economic_transition_memo.txt']) })
-        )
-      ).toBe(true);
     });
   });
 });

@@ -984,7 +984,6 @@ describe('Narrative Mechanics', () => {
       const result = executeCommand('run save_evidence.sh', state);
       expect(result.output.some(e => e.content.includes('LEAK CHANNEL ENCRYPTED'))).toBe(true);
       expect(result.stateChanges.leakSequenceGenerated).toBe(true);
-      expect(result.stateChanges.icqPhase).toBeUndefined();
     });
 
     it('executes purge_trace.sh to clear countdown', () => {
@@ -1086,7 +1085,6 @@ describe('Narrative Mechanics', () => {
           e => e.content.includes('INSUFFICIENT EVIDENCE') || e.content.includes('not yet')
         )
       ).toBe(true);
-      expect(result.stateChanges.icqPhase).toBeUndefined();
     });
 
     it('transmits successfully once the dossier is complete and the leak sequence is prepared', () => {

@@ -54,20 +54,6 @@ export const DETECTION_THRESHOLDS = {
 // Maximum detection level
 export const MAX_DETECTION = 100;
 
-// Detection increases for various actions
-// BALANCE NOTE: Reduced values for more gradual pacing (Jan 2026)
-export const DETECTION_INCREASES = {
-  OPEN_FILE: 1, // was 2
-  OPEN_RESTRICTED: 3, // was 5
-  DECRYPT_SUCCESS: 2, // was 3
-  DECRYPT_FAILURE: 5, // was 8
-  OVERRIDE_ATTEMPT: 7, // was 10
-  TIMED_DECRYPT_EXPIRED: 5, // was 8
-  WRONG_PASSWORD: 3, // was 5
-  SCAN_COMMAND: 2, // was 3
-  TRACE_SPIKE: 10, // was 15
-} as const;
-
 // Detection decreases
 export const DETECTION_DECREASES = {
   WAIT_NORMAL: 5,

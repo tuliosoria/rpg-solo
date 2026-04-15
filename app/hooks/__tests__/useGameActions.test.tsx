@@ -22,12 +22,8 @@ describe('useGameActions', () => {
       useGameActions({
         setGameState,
         setGamePhase: vi.fn(),
-        setShowTuringTest: vi.fn(),
-        setShowGameOver: vi.fn(),
-        setGameOverReason: vi.fn(),
         onExitAction: vi.fn(),
         playSound: vi.fn(),
-        triggerFlicker: vi.fn(),
       })
     );
 
@@ -48,43 +44,5 @@ describe('useGameActions', () => {
     result.current.handleFirewallActivate();
 
     expect(getState().firewallActive).toBe(true);
-  });
-
-  it('marks conspiracyFilesLeaked when ICQ public leak follows discovered conspiracy files', () => {
-    const { result, getState } = createHook(
-      createState({
-        conspiracyFilesSeen: new Set(['/internal/misc/economic_transition_memo.txt']),
-      })
-    );
-
-    result.current.handleIcqLeakChoice('public');
-
-    expect(getState().choiceLeakPath).toBe('public');
-    expect(getState().flags.leakExecuted).toBe(true);
-    expect(getState().flags.conspiracyFilesLeaked).toBe(true);
-  });
-
-  it('keeps conspiracyFilesLeaked false for covert ICQ leaks', () => {
-    const { result, getState } = createHook(
-      createState({
-        conspiracyFilesSeen: new Set(['/internal/misc/economic_transition_memo.txt']),
-      })
-    );
-
-    result.current.handleIcqLeakChoice('covert');
-
-    expect(getState().choiceLeakPath).toBe('covert');
-    expect(getState().flags.leakExecuted).toBe(true);
-    expect(getState().flags.conspiracyFilesLeaked).toBe(false);
-  });
-
-  it('does not set conspiracyFilesLeaked on public ICQ leaks without conspiracy files', () => {
-    const { result, getState } = createHook(createState());
-
-    result.current.handleIcqLeakChoice('public');
-
-    expect(getState().choiceLeakPath).toBe('public');
-    expect(getState().flags.leakExecuted).toBe(true);
-    expect(getState().flags.conspiracyFilesLeaked).toBe(false);
   });
 });

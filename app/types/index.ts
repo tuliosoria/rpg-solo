@@ -237,19 +237,9 @@ export interface GameState {
   tutorialTipsShown: Set<string>; // Track which tutorial tips have been shown
   firstRunSeen: boolean; // Whether first-run welcome has been shown
 
-  // Evidence collection & ICQ phase
+  // Evidence collection
   evidencesSaved: boolean; // True after running save script
-  icqPhase: boolean; // True when in ICQ chat mode
-  icqMessages: { sender: 'player' | 'teen' | 'system'; text: string; timestamp?: string }[]; // Chat history
-  icqConversationPhase: ICQPhase; // Current ICQ conversation phase for save/load resume
-  mathQuestionsAnswered: number; // 0-3, how many equations solved
-  currentMathQuestion: number; // Current equation index
-  mathQuestionWrong: number; // Wrong attempts on current question
-  icqCurrentWrongAttempts: number; // Wrong attempts within the active ICQ math prompt
-  filesSent: boolean; // True after convincing teenager
   gameWon: boolean; // True on victory
-  choiceLeakPath?: 'public' | 'covert'; // Final evidence delivery choice
-  icqTrust: number; // Teen trust score (0-100)
 
   // Debug mode
   godMode: boolean; // Hidden dev mode for testing
@@ -393,7 +383,7 @@ export type GamePhase =
   | 'secret_ending';
 
 export type EndingType = 'bad' | 'neutral' | 'good' | 'secret';
-export type ICQPhase = 'intro' | 'scared' | 'bargain' | 'math' | 'leak' | 'sending' | 'victory';
+
 
 export interface CommandResult {
   output: TerminalEntry[];
@@ -473,17 +463,7 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   tutorialTipsShown: new Set(),
   firstRunSeen: false,
   evidencesSaved: false,
-  icqPhase: false,
-  icqMessages: [],
-  icqConversationPhase: 'intro',
-  mathQuestionsAnswered: 0,
-  currentMathQuestion: 0,
-  mathQuestionWrong: 0,
-  icqCurrentWrongAttempts: 0,
-  filesSent: false,
   gameWon: false,
-  choiceLeakPath: undefined,
-  icqTrust: 50,
   godMode: false,
   // Multiple endings
   endingType: undefined,

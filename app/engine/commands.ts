@@ -36,8 +36,6 @@ export {
   sanitizeCommandInput,
   parseCommand,
   calculateDelay,
-  shouldFlicker,
-  addHesitation,
   createUFO74Message,
 } from './commands/utils';
 
@@ -585,7 +583,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {
           evidenceCount: 0,
           evidencesSaved: false,
-          icqPhase: false,
           gameWon: false,
           detectionLevel: 0,
           sessionStability: 100,
@@ -604,7 +601,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntryI18n('system', 'engine.commands.core.game_status', '═══ GAME STATUS ═══'),
           createEntry('output', `Evidence found: ${evidCount}/10`),
           createEntry('output', `evidencesSaved: ${state.evidencesSaved}`),
-          createEntry('output', `icqPhase: ${state.icqPhase}`),
           createEntry('output', `gameWon: ${state.gameWon}`),
           createEntry('output', `detectionLevel: ${state.detectionLevel}`),
           createEntry('output', `sessionStability: ${state.sessionStability}`),

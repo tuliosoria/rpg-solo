@@ -624,12 +624,8 @@ export default function Terminal({
   } = useGameActions({
     setGameState,
     setGamePhase,
-    setShowTuringTest,
-    setShowGameOver,
-    setGameOverReason,
     onExitAction,
     playSound,
-    triggerFlicker,
   });
 
   const onTuringTestTrigger = useCallback(() => {
@@ -1185,15 +1181,9 @@ export default function Terminal({
         commandCount={gameState.sessionCommandCount}
         detectionLevel={gameState.detectionLevel}
         maxDetectionReached={maxDetectionRef.current}
-        mathMistakes={gameState.mathQuestionWrong}
-        evidenceLinks={gameState.evidenceLinks}
-        wrongAttempts={gameState.wrongAttempts}
-        choiceLeakPath={gameState.choiceLeakPath}
-        rivalInvestigatorActive={gameState.rivalInvestigatorActive}
         evidenceCount={gameState.evidenceCount}
         filesReadCount={gameState.filesRead?.size || 0}
         totalReadableFiles={totalReadableFiles}
-        // Multiple endings flags
         conspiracyFilesLeaked={endingFlags.conspiracyFilesLeaked}
         alphaReleased={endingFlags.alphaReleased}
         neuralLinkAuthenticated={endingFlags.neuralLinkAuthenticated}
