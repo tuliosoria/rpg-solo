@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './NeutralEnding.module.css';
-import { recordEnding } from '../storage/statistics';
-import { useI18n } from '../i18n';
-import type { TextSpeed } from '../types';
-import { scaleTextSpeedDelay } from './textSpeed';
+import { recordEnding } from '../../storage/statistics';
+import { useI18n } from '../../i18n';
+import type { TextSpeed } from '../../types';
+import { scaleTextSpeedDelay } from '../textSpeed';
 
 interface NeutralEndingProps {
   onRestartAction: () => void;

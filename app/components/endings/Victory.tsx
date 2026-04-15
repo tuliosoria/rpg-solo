@@ -2,17 +2,17 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './Victory.module.css';
-import { unlockAchievement, Achievement } from '../engine/achievements';
-import { recordEnding } from '../storage/statistics';
-import AchievementPopup from './AchievementPopup';
-import { useI18n } from '../i18n';
+import { unlockAchievement, Achievement } from '../../engine/achievements';
+import { recordEnding } from '../../storage/statistics';
+import AchievementPopup from '../overlays/AchievementPopup';
+import { useI18n } from '../../i18n';
 import {
   EndingFlags,
   determineEndingVariant,
   getEndingNarrativeLines,
   getEndingTitle,
-} from '../engine/endings';
-import type { TextSpeed } from '../types';
+} from '../../engine/endings';
+import type { TextSpeed } from '../../types';
 
 const VICTORY_TIMINGS: Record<
   TextSpeed,

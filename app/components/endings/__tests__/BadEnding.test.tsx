@@ -7,7 +7,7 @@ vi.mock('../../storage/statistics', () => ({
   recordEnding: vi.fn(),
 }));
 
-import { recordEnding } from '../../storage/statistics';
+import { recordEnding } from '../../../storage/statistics';
 
 describe('BadEnding Component', () => {
   const defaultProps = {

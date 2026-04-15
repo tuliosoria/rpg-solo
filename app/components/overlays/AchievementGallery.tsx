@@ -1,9 +1,9 @@
 'use client';
 
 import React, { memo, useRef, useEffect, useCallback } from 'react';
-import { ACHIEVEMENTS, getUnlockedAchievements } from '../engine/achievements';
-import { useI18n } from '../i18n';
-import { useFocusTrap } from '../hooks';
+import { ACHIEVEMENTS, getUnlockedAchievements } from '../../engine/achievements';
+import { useI18n } from '../../i18n';
+import { useFocusTrap } from '../../hooks';
 import styles from './AchievementGallery.module.css';
 
 interface AchievementGalleryProps {

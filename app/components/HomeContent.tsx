@@ -11,7 +11,7 @@ import ErrorBoundary from './ErrorBoundary';
 import Menu from './Menu';
 
 const Terminal = dynamic(() => import('./Terminal'), { ssr: false, loading: () => null });
-const SaveModal = dynamic(() => import('./SaveModal'), { ssr: false, loading: () => null });
+const SaveModal = dynamic(() => import('./overlays/SaveModal'), { ssr: false, loading: () => null });
 
 type View = 'menu' | 'game';
 

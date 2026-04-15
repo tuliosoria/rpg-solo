@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './TuringTestOverlay.module.css';
-import { TURING_QUESTIONS } from '../constants/turing';
-import { uiChance, uiRandomInt } from '../engine/rng';
-import { useSound } from '../hooks/useSound';
-import { useI18n } from '../i18n';
+import { TURING_QUESTIONS } from '../../constants/turing';
+import { uiChance, uiRandomInt } from '../../engine/rng';
+import { useSound } from '../../hooks/useSound';
+import { useI18n } from '../../i18n';
 
 interface TuringTestOverlayProps {
   onComplete: (passed: boolean) => void;

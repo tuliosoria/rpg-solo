@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { uiRandomFloat } from '../engine/rng';
-import { useI18n } from '../i18n';
+import { uiRandomFloat } from '../../engine/rng';
+import { useI18n } from '../../i18n';
 import styles from './Blackout.module.css';
 
 /** UFO74's final emergency transmission messages displayed during the blackout sequence */
@@ -12,24 +12,19 @@ const UFO74_FINAL_MESSAGES = [
   'UFO74: they cut the main connection.',
   'UFO74: i knew this was going to happen.',
   '',
-  'UFO74: but listen... the evidence is saved.',
-  'UFO74: it persisted outside the system that was wiped.',
+  'UFO74: but listen... the dossier is out.',
+  'UFO74: every file you saved just hit the open wire.',
   '',
-  'UFO74: now you need another way to send this out.',
+  'UFO74: there is no taking it back now.',
   '',
-  'UFO74: wait... i have an idea.',
-  'UFO74: i can "hang" the connection on a civilian computer.',
-  'UFO74: its risky but its the only chance.',
+  'UFO74: the firewall is screaming.',
+  'UFO74: they know what we did.',
   '',
-  'UFO74: i found someone online... a teenager on ICQ.',
-  'UFO74: im going to transfer you there.',
+  'UFO74: what happens next depends on what you chose to save.',
   '',
-  'UFO74: convince them to save the files on physical media.',
-  'UFO74: floppy disk, CD, anything.',
+  'UFO74: good luck hackerkid.',
   '',
-  'UFO74: good luck hackerkid. its all up to you now.',
-  '',
-  '>> INITIATING CONNECTION TRANSFER <<',
+  '>> EVALUATING DOSSIER <<',
 ];
 
 interface BlackoutProps {

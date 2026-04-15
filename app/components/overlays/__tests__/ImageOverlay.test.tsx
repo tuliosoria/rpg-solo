@@ -3,7 +3,7 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import ImageOverlay from '../ImageOverlay';
 
 // Mock the RNG module
-vi.mock('../../engine/rng', () => ({
+vi.mock('../../../engine/rng', () => ({
   uiChance: vi.fn(() => false),
   uiRandomInt: vi.fn(() => 50),
 }));
@@ -195,7 +195,7 @@ describe('ImageOverlay', () => {
 
   describe('Cleanup', () => {
     it('clears pending flicker timeouts on unmount', async () => {
-      const rng = await import('../../engine/rng');
+      const rng = await import('../../../engine/rng');
       const mockedChance = vi.mocked(rng.uiChance);
       mockedChance.mockReturnValueOnce(true).mockReturnValue(false);
 

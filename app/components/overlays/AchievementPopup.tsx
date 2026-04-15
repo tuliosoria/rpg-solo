@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import styles from './AchievementPopup.module.css';
-import { Achievement } from '../engine/achievements';
-import { FloatingElement } from './FloatingUI';
-import { useI18n } from '../i18n';
+import { Achievement } from '../../engine/achievements';
+import { FloatingElement } from '../FloatingUI';
+import { useI18n } from '../../i18n';
 
 interface AchievementPopupProps {
   achievement: Achievement;

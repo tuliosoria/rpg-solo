@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useCallback } from 'react';
-import { useI18n } from '../i18n';
+import { useI18n } from '../../i18n';
 import styles from './TutorialSkipPopup.module.css';
 
 interface TutorialSkipPopupProps {

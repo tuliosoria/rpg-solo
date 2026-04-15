@@ -94,25 +94,18 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     'UFO74: hackerkid... are you still there?': 'UFO74: hackerkid... você ainda está aí?',
     'UFO74: they cut the main connection.': 'UFO74: eles cortaram a conexão principal.',
     'UFO74: i knew this was going to happen.': 'UFO74: eu sabia que isso ia acontecer.',
-    'UFO74: but listen... the evidence is saved.':
-      'UFO74: mas escuta... as evidências foram salvas.',
-    'UFO74: it persisted outside the system that was wiped.':
-      'UFO74: elas persistiram fora do sistema que foi limpo.',
-    'UFO74: now you need another way to send this out.':
-      'UFO74: agora você precisa de outro jeito de enviar isso.',
-    'UFO74: wait... i have an idea.': 'UFO74: espera... tive uma ideia.',
-    'UFO74: i can "hang" the connection on a civilian computer.':
-      'UFO74: posso "pendurar" a conexão em um computador civil.',
-    'UFO74: its risky but its the only chance.': 'UFO74: é arriscado, mas é a única chance.',
-    'UFO74: i found someone online... a teenager on ICQ.':
-      'UFO74: encontrei alguém online... um adolescente no ICQ.',
-    'UFO74: im going to transfer you there.': 'UFO74: vou te transferir para lá.',
-    'UFO74: convince them to save the files on physical media.':
-      'UFO74: convença ele a salvar os arquivos em mídia física.',
-    'UFO74: floppy disk, CD, anything.': 'UFO74: disquete, CD, qualquer coisa.',
-    'UFO74: good luck hackerkid. its all up to you now.':
-      'UFO74: boa sorte, hackerkid. agora depende de você.',
-    '>> INITIATING CONNECTION TRANSFER <<': '>> INICIANDO TRANSFERÊNCIA DE CONEXÃO <<',
+    'UFO74: but listen... the dossier is out.':
+      'UFO74: mas escuta... o dossiê já saiu.',
+    'UFO74: every file you saved just hit the open wire.':
+      'UFO74: cada arquivo que você salvou acabou de ir pro ar.',
+    'UFO74: there is no taking it back now.':
+      'UFO74: não tem como voltar atrás agora.',
+    'UFO74: the firewall is screaming.': 'UFO74: o firewall está gritando.',
+    'UFO74: they know what we did.': 'UFO74: eles sabem o que fizemos.',
+    'UFO74: what happens next depends on what you chose to save.':
+      'UFO74: o que acontece agora depende do que você escolheu salvar.',
+    'UFO74: good luck hackerkid.': 'UFO74: boa sorte, hackerkid.',
+    '>> EVALUATING DOSSIER <<': '>> AVALIANDO DOSSIÊ <<',
     '│ >> UFO74 << EMERGENCY TRANSMISSION │': '│ >> UFO74 << TRANSMISSÃO DE EMERGÊNCIA │',
     'MISSION COMPLETE': 'MISSÃO CONCLUÍDA',
     'The evidence was saved to physical media.': 'As evidências foram salvas em mídia física.',
@@ -5924,26 +5917,18 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     'UFO74: hackerkid... are you still there?': 'UFO74: hackerkid... ¿sigues ahí?',
     'UFO74: they cut the main connection.': 'UFO74: cortaron la conexión principal.',
     'UFO74: i knew this was going to happen.': 'UFO74: sabía que esto iba a pasar.',
-    'UFO74: but listen... the evidence is saved.':
-      'UFO74: pero escucha... la evidencia está guardada.',
-    'UFO74: it persisted outside the system that was wiped.':
-      'UFO74: sobrevivió fuera del sistema que borraron.',
-    'UFO74: now you need another way to send this out.':
-      'UFO74: ahora necesitas otra forma de sacar esto.',
-    'UFO74: wait... i have an idea.': 'UFO74: espera... tengo una idea.',
-    'UFO74: i can "hang" the connection on a civilian computer.':
-      'UFO74: puedo "colgar" la conexión en una computadora civil.',
-    'UFO74: its risky but its the only chance.':
-      'UFO74: es arriesgado, pero es la única oportunidad.',
-    'UFO74: i found someone online... a teenager on ICQ.':
-      'UFO74: encontré a alguien en línea... un adolescente en ICQ.',
-    'UFO74: im going to transfer you there.': 'UFO74: voy a transferirte allí.',
-    'UFO74: convince them to save the files on physical media.':
-      'UFO74: convéncelo de guardar los archivos en medio físico.',
-    'UFO74: floppy disk, CD, anything.': 'UFO74: disquete, CD, lo que sea.',
-    'UFO74: good luck hackerkid. its all up to you now.':
-      'UFO74: suerte, hackerkid. ahora todo depende de ti.',
-    '>> INITIATING CONNECTION TRANSFER <<': '>> INICIANDO TRANSFERENCIA DE CONEXIÓN <<',
+    'UFO74: but listen... the dossier is out.':
+      'UFO74: pero escucha... el dosier ya salió.',
+    'UFO74: every file you saved just hit the open wire.':
+      'UFO74: cada archivo que guardaste acaba de salir al aire.',
+    'UFO74: there is no taking it back now.':
+      'UFO74: ya no hay vuelta atrás.',
+    'UFO74: the firewall is screaming.': 'UFO74: el firewall está gritando.',
+    'UFO74: they know what we did.': 'UFO74: saben lo que hicimos.',
+    'UFO74: what happens next depends on what you chose to save.':
+      'UFO74: lo que pase ahora depende de lo que elegiste guardar.',
+    'UFO74: good luck hackerkid.': 'UFO74: suerte, hackerkid.',
+    '>> EVALUATING DOSSIER <<': '>> EVALUANDO DOSIER <<',
     '│ >> UFO74 << EMERGENCY TRANSMISSION │': '│ >> UFO74 << TRANSMISIÓN DE EMERGENCIA │',
     'MISSION COMPLETE': 'MISIÓN COMPLETA',
     'The evidence was saved to physical media.': 'La evidencia fue guardada en medio físico.',

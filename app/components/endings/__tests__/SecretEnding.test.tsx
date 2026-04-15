@@ -1,19 +1,19 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import NeutralEnding from '../NeutralEnding';
+import SecretEnding from '../SecretEnding';
 
 // Mock the statistics module
 vi.mock('../../storage/statistics', () => ({
   recordEnding: vi.fn(),
 }));
 
-import { recordEnding } from '../../storage/statistics';
+import { recordEnding } from '../../../storage/statistics';
 
-describe('NeutralEnding Component', () => {
+describe('SecretEnding Component', () => {
   const defaultProps = {
     onRestartAction: vi.fn(),
-    commandCount: 75,
-    detectionLevel: 50,
+    commandCount: 120,
+    detectionLevel: 70,
   };
 
   beforeEach(() => {
@@ -26,38 +26,38 @@ describe('NeutralEnding Component', () => {
   });
 
   it('renders without crashing', () => {
-    render(<NeutralEnding {...defaultProps} />);
+    render(<SecretEnding {...defaultProps} />);
     expect(document.body).toBeTruthy();
   });
 
-  it('records neutral ending in statistics on mount', () => {
-    render(<NeutralEnding {...defaultProps} />);
+  it('records secret ending in statistics on mount', () => {
+    render(<SecretEnding {...defaultProps} />);
     
-    expect(recordEnding).toHaveBeenCalledWith('neutral', 75, 50);
+    expect(recordEnding).toHaveBeenCalledWith('secret', 120, 70);
     expect(recordEnding).toHaveBeenCalledTimes(1);
   });
 
   it('only records ending once even if props change', () => {
-    const { rerender } = render(<NeutralEnding {...defaultProps} />);
+    const { rerender } = render(<SecretEnding {...defaultProps} />);
     
     // Re-render with different props
-    rerender(<NeutralEnding {...defaultProps} commandCount={100} />);
+    rerender(<SecretEnding {...defaultProps} commandCount={150} />);
     
     // Should still only be called once
     expect(recordEnding).toHaveBeenCalledTimes(1);
   });
 
   it('uses default values when props not provided', () => {
-    render(<NeutralEnding onRestartAction={vi.fn()} />);
+    render(<SecretEnding onRestartAction={vi.fn()} />);
     
-    // Component should use default values (commandCount=0, detectionLevel=50)
-    expect(recordEnding).toHaveBeenCalledWith('neutral', 0, 50);
+    // Component should use default values (commandCount=0, detectionLevel=100)
+    expect(recordEnding).toHaveBeenCalledWith('secret', 0, 100);
   });
 
-  it('progresses through disconnect phase', () => {
-    render(<NeutralEnding {...defaultProps} />);
+  it('progresses through static phase', () => {
+    render(<SecretEnding {...defaultProps} />);
     
-    // Initial phase is 'disconnect'
+    // Initial phase is 'static'
     act(() => {
       vi.advanceTimersByTime(2000);
     });
@@ -65,8 +65,8 @@ describe('NeutralEnding Component', () => {
     expect(document.body).toBeTruthy();
   });
 
-  it('shows message content after disconnect phase', async () => {
-    render(<NeutralEnding {...defaultProps} />);
+  it('shows reveal content after static phase', async () => {
+    render(<SecretEnding {...defaultProps} />);
     
     // Fast-forward through phases
     act(() => {
@@ -76,47 +76,51 @@ describe('NeutralEnding Component', () => {
     expect(document.body).toBeTruthy();
   });
 
-  it('displays UFO74 messages', async () => {
-    render(<NeutralEnding {...defaultProps} />);
+  it('displays the truth revelation content', async () => {
+    render(<SecretEnding {...defaultProps} />);
     
     // Fast-forward to show content
     act(() => {
       vi.advanceTimersByTime(15000);
     });
     
-    // The neutral ending contains UFO74 messages
+    // The secret ending reveals UFO74's true identity
     expect(document.body).toBeTruthy();
   });
 
   it('shows restart option after animation completes', async () => {
-    render(<NeutralEnding {...defaultProps} />);
+    render(<SecretEnding {...defaultProps} />);
     
     // Fast-forward through all animations
     act(() => {
-      vi.advanceTimersByTime(30000);
+      vi.advanceTimersByTime(60000);
     });
     
     expect(document.body).toBeTruthy();
   });
 
   it('calls onRestartAction when restart is clicked', async () => {
-    render(<NeutralEnding {...defaultProps} />);
+    render(<SecretEnding {...defaultProps} />);
     
     // Fast-forward to final phase
     act(() => {
-      vi.advanceTimersByTime(60000);
+      vi.advanceTimersByTime(120000);
     });
     
     // Try to find and click restart
-    const restartButton = screen.queryByText(/try again/i) || screen.queryByText(/restart/i);
+    const restartButton = screen.queryByText(/play again/i) || screen.queryByText(/restart/i);
     if (restartButton) {
       fireEvent.click(restartButton);
       expect(defaultProps.onRestartAction).toHaveBeenCalled();
     }
   });
 
-  it('honors instant text speed and focuses the retry button', () => {
-    render(<NeutralEnding {...defaultProps} textSpeed="instant" />);
+  it('honors instant text speed and focuses the return button', () => {
+    render(<SecretEnding {...defaultProps} textSpeed="instant" />);
+
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
 
     act(() => {
       vi.advanceTimersByTime(300);
@@ -126,7 +130,7 @@ describe('NeutralEnding Component', () => {
       vi.advanceTimersByTime(5000);
     });
 
-    const restartButton = screen.getByRole('button', { name: /try again/i });
+    const restartButton = screen.getByRole('button', { name: /return to menu/i });
     expect(restartButton).toHaveFocus();
   });
 });

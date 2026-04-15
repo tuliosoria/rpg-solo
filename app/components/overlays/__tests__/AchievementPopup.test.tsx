@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import AchievementPopup from '../AchievementPopup';
-import { Achievement } from '../../engine/achievements';
-import { FloatingUIProvider } from '../FloatingUI';
+import { Achievement } from '../../../engine/achievements';
+import { FloatingUIProvider } from '../../FloatingUI';
 
 // Wrapper for FloatingUIProvider
 const renderWithProvider = (ui: React.ReactElement) => {

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useCallback, useLayoutEffect, useRef, memo, useMemo } from 'react';
-import { useI18n } from '../i18n';
-import { useFocusTrap } from '../hooks';
+import { useI18n } from '../../i18n';
+import { useFocusTrap } from '../../hooks';
 import styles from './PauseMenu.module.css';
 
 interface PauseMenuProps {

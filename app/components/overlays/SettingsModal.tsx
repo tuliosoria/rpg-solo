@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, useRef, memo } from 'react';
-import { useI18n } from '../i18n';
-import { useFocusTrap } from '../hooks';
-import type { TextSpeed } from '../types';
+import { useI18n } from '../../i18n';
+import { useFocusTrap } from '../../hooks';
+import type { TextSpeed } from '../../types';
 import {
   DEFAULT_OPTIONS,
   applyOptionsToDocument,
   persistOptions,
   readStoredOptions,
-} from '../hooks/useOptions';
+} from '../../hooks/useOptions';
 import styles from './SettingsModal.module.css';
 
 interface SettingsModalProps {

@@ -360,8 +360,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         ),
         createEntryI18n(
           'output',
-          'engine.commands.core.god_icq_jump_to_icq_phase',
-          '  god icq      - Jump to ICQ phase'
+          'engine.commands.core.god_ending_jump_to_ending_phase',
+          '  god ending   - Jump to ending phase'
         ),
         createEntryI18n(
           'output',
@@ -424,8 +424,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           ),
           createEntryI18n(
             'output',
-            'engine.commands.core.god_icq_jump_directly_to_icq_phase',
-            'god icq       - Jump directly to ICQ phase'
+            'engine.commands.core.god_ending_jump_directly_to_ending_phase',
+            'god ending    - Jump directly to ending phase'
           ),
           createEntryI18n(
             'output',
@@ -527,17 +527,17 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       };
     }
 
-    if (godCmd === 'icq' || godCmd === 'ending') {
+    if (godCmd === 'ending') {
       return {
         output: [
           createEntryI18n(
             'system',
-            'engine.commands.core.jumping_to_icq_phase',
+            'engine.commands.core.jumping_to_ending_phase',
             '═══ JUMPING TO ENDING PHASE ═══'
           ),
           createEntryI18n(
             'output',
-            'engine.commands.core.terminal_will_transition_to_icq_chat',
+            'engine.commands.core.terminal_will_transition_to_ending',
             'Terminal will transition to ending...'
           ),
         ],

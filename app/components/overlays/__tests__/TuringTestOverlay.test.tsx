@@ -20,7 +20,7 @@ vi.mock('next/image', () => ({
 }));
 
 // Mock the turing questions
-vi.mock('../../constants/turing', () => ({
+vi.mock('../../../constants/turing', () => ({
   TURING_QUESTIONS: [
     {
       prompt: 'Test question 1?',

@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import AchievementGallery from '../AchievementGallery';
 
 // Mock the achievements module
-vi.mock('../../engine/achievements', () => ({
+vi.mock('../../../engine/achievements', () => ({
   ACHIEVEMENTS: [
     {
       id: 'speed_demon',
@@ -28,7 +28,7 @@ vi.mock('../../engine/achievements', () => ({
   getUnlockedAchievements: vi.fn(),
 }));
 
-import { getUnlockedAchievements } from '../../engine/achievements';
+import { getUnlockedAchievements } from '../../../engine/achievements';
 
 describe('AchievementGallery', () => {
   const mockOnClose = vi.fn();

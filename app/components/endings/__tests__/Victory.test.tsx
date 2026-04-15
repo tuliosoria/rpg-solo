@@ -12,8 +12,8 @@ vi.mock('../../engine/achievements', () => ({
   unlockAchievement: vi.fn(() => null),
 }));
 
-import { recordEnding } from '../../storage/statistics';
-import { unlockAchievement } from '../../engine/achievements';
+import { recordEnding } from '../../../storage/statistics';
+import { unlockAchievement } from '../../../engine/achievements';
 
 describe('Victory Component', () => {
   const defaultProps = {

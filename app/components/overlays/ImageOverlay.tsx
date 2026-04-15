@@ -2,8 +2,8 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './ImageOverlay.module.css';
-import { uiChance, uiRandomInt } from '../engine/rng';
-import { useI18n } from '../i18n';
+import { uiChance, uiRandomInt } from '../../engine/rng';
+import { useI18n } from '../../i18n';
 
 interface ImageOverlayProps {
   src: string;

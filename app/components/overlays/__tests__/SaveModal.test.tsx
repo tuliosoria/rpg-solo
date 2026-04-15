@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import SaveModal from '../SaveModal';
-import { GameState, DEFAULT_GAME_STATE } from '../../types';
+import { GameState, DEFAULT_GAME_STATE } from '../../../types';
 
 // Mock the storage module
-vi.mock('../../storage/saves', () => ({
+vi.mock('../../../storage/saves', () => ({
   saveGame: vi.fn(),
 }));
 
-import { saveGame } from '../../storage/saves';
+import { saveGame } from '../../../storage/saves';
 
 describe('SaveModal', () => {
   const createMockGameState = (overrides: Partial<GameState> = {}): GameState => ({

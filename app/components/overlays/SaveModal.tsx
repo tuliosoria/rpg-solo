@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { GameState } from '../types';
-import { saveGame } from '../storage/saves';
-import { useI18n } from '../i18n';
-import { useFocusTrap } from '../hooks';
+import { GameState } from '../../types';
+import { saveGame } from '../../storage/saves';
+import { useI18n } from '../../i18n';
+import { useFocusTrap } from '../../hooks';
 import styles from './SaveModal.module.css';
 
 interface SaveModalProps {

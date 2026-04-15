@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SettingsModal from '../SettingsModal';
-import * as optionsModule from '../../hooks/useOptions';
+import * as optionsModule from '../../../hooks/useOptions';
 
 describe('SettingsModal', () => {
   const defaultProps = {

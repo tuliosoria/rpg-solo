@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { CheckpointSlot, TextSpeed } from '../types';
-import { getLatestCheckpoint } from '../storage/saves';
-import { uiChance, uiRandomFloat } from '../engine/rng';
-import { useI18n } from '../i18n';
+import { CheckpointSlot, TextSpeed } from '../../types';
+import { getLatestCheckpoint } from '../../storage/saves';
+import { uiChance, uiRandomFloat } from '../../engine/rng';
+import { useI18n } from '../../i18n';
 import styles from './GameOver.module.css';
-import { scaleTextSpeedDelay } from './textSpeed';
+import { scaleTextSpeedDelay } from '../textSpeed';
 
 interface GameOverProps {
   reason: string;

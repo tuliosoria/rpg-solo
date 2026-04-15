@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './BadEnding.module.css';
-import { recordEnding } from '../storage/statistics';
-import { useI18n } from '../i18n';
-import type { TextSpeed } from '../types';
-import { scaleTextSpeedDelay } from './textSpeed';
+import { recordEnding } from '../../storage/statistics';
+import { useI18n } from '../../i18n';
+import type { TextSpeed } from '../../types';
+import { scaleTextSpeedDelay } from '../textSpeed';
 
 interface BadEndingProps {
   onRestartAction: () => void;

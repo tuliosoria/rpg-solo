@@ -1,9 +1,9 @@
 'use client';
 
 import React, { memo, useRef, useEffect, useCallback } from 'react';
-import { getStatistics, formatPlaytime } from '../storage/statistics';
-import { useI18n } from '../i18n';
-import { useFocusTrap } from '../hooks';
+import { getStatistics, formatPlaytime } from '../../storage/statistics';
+import { useI18n } from '../../i18n';
+import { useFocusTrap } from '../../hooks';
 import styles from './StatisticsModal.module.css';
 
 interface StatisticsModalProps {

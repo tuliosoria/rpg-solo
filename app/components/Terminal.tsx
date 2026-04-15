@@ -30,27 +30,27 @@ import {
 import { unlockAchievement } from '../engine/achievements';
 import { uiRandomPick } from '../engine/rng';
 import type { TextSpeed } from '../types';
-import AchievementPopup from './AchievementPopup';
-import SettingsModal from './SettingsModal';
-import PauseMenu from './PauseMenu';
-import TutorialSkipPopup from './TutorialSkipPopup';
+import AchievementPopup from './overlays/AchievementPopup';
+import SettingsModal from './overlays/SettingsModal';
+import PauseMenu from './overlays/PauseMenu';
+import TutorialSkipPopup from './overlays/TutorialSkipPopup';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 import FirewallEyes, { speakCustomFirewallVoice, unlockSpeechSynthesis } from './FirewallEyes';
 
 
 // Lazy-load conditional components for better initial load performance
-const ImageOverlay = dynamic(() => import('./ImageOverlay'), { ssr: false });
-const TuringTestOverlay = dynamic(() => import('./TuringTestOverlay'), { ssr: false });
-const GameOver = dynamic(() => import('./GameOver'), { ssr: false });
-const Blackout = dynamic(() => import('./Blackout'), { ssr: false });
+const ImageOverlay = dynamic(() => import('./overlays/ImageOverlay'), { ssr: false });
+const TuringTestOverlay = dynamic(() => import('./overlays/TuringTestOverlay'), { ssr: false });
+const GameOver = dynamic(() => import('./endings/GameOver'), { ssr: false });
+const Blackout = dynamic(() => import('./endings/Blackout'), { ssr: false });
 const StaticNoise = dynamic(() => import('./StaticNoise'), { ssr: false });
-const Victory = dynamic(() => import('./Victory'), { ssr: false });
-const BadEnding = dynamic(() => import('./BadEnding'), { ssr: false });
-const NeutralEnding = dynamic(() => import('./NeutralEnding'), { ssr: false });
-const SecretEnding = dynamic(() => import('./SecretEnding'), { ssr: false });
-const AchievementGallery = dynamic(() => import('./AchievementGallery'), { ssr: false });
-const StatisticsModal = dynamic(() => import('./StatisticsModal'), { ssr: false });
+const Victory = dynamic(() => import('./endings/Victory'), { ssr: false });
+const BadEnding = dynamic(() => import('./endings/BadEnding'), { ssr: false });
+const NeutralEnding = dynamic(() => import('./endings/NeutralEnding'), { ssr: false });
+const SecretEnding = dynamic(() => import('./endings/SecretEnding'), { ssr: false });
+const AchievementGallery = dynamic(() => import('./overlays/AchievementGallery'), { ssr: false });
+const StatisticsModal = dynamic(() => import('./overlays/StatisticsModal'), { ssr: false });
 import styles from './Terminal.module.css';
 
 const UFO74_IMAGE_COMMENT_KEYS: Record<string, string[]> = {
