@@ -31,7 +31,6 @@ export interface AolPresentation {
   url: string;
   imageSrc?: string;
   imageAlt: string;
-  imageSrc?: string;
   visitorCount: number;
 }
 
@@ -267,8 +266,6 @@ export function determineEnding(savedFiles: Set<string>): EndingId {
 // ENDING CONTENT — 12 dossier-based endings
 // ═══════════════════════════════════════════════════════════════════════════
 
-const ENDING_IMAGE_ROOT = '/images/endings';
-
 export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
   ridiculed: {
     title: 'RIDICULED',
@@ -288,7 +285,6 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
         "Dr. Harold Simmons of the Center for Scientific Inquiry called the documents 'an elaborate but ultimately unconvincing fabrication,' pointing to what he described as 'inconsistencies in formatting and terminology that suggest a civilian author with limited military knowledge.'",
       ],
       url: 'http://www.aol.com/news/world/brazil_ufo_hoax_0196.htm',
-      imageSrc: `${ENDING_IMAGE_ROOT}/photo-unverified-document.jpg`,
       imageAlt: 'photo_unverified_document.jpg (43 KB)',
       imageSrc: '/images/endings/ridiculed.jpg',
       visitorCount: 1247,
@@ -312,7 +308,6 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
         "Three senior Air Force generals have submitted requests for early retirement in what analysts describe as an attempt to distance themselves from the growing scandal. The leaked archive, which Ferreira allegedly maintained for decades, contains documents related to military operations in southern Minas Gerais state.",
       ],
       url: 'http://www.aol.com/news/world/brazil_leak_officer_id.htm',
-      imageSrc: `${ENDING_IMAGE_ROOT}/ferreira_service_photo_CLASSIFIED.jpg`,
       imageAlt: 'ferreira_service_photo_CLASSIFIED.jpg (unable to load)',
       imageSrc: '/images/endings/ufo74_exposed.jpg',
       visitorCount: 89341,
@@ -336,7 +331,6 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
         "Several private aerospace companies have begun what industry sources describe as 'precautionary repositioning' of satellite monitoring arrays, though none would confirm a connection to the leaked data. The Brazilian government has issued no statement.",
       ],
       url: 'http://www.aol.com/news/science/30year_cycle_atmospheric.htm',
-      imageSrc: `${ENDING_IMAGE_ROOT}/convergence_chart_draft.jpg`,
       imageAlt: 'convergence_chart_draft.gif (image not available)',
       imageSrc: '/images/endings/the_2026_warning.jpg',
       visitorCount: 156782,
@@ -360,7 +354,6 @@ export const ENDINGS: Record<EndingId, Omit<GameEnding, 'id'>> = {
         "Three colonels have been subpoenaed to testify before a Congressional committee in Brasília. One has reportedly refused. The Ministry of Defense issued a brief statement calling the documents 'unverified' but did not deny their authenticity.",
       ],
       url: 'http://www.aol.com/news/world/brazil_military_coverup.htm',
-      imageSrc: `${ENDING_IMAGE_ROOT}/transport_log_scan.jpg`,
       imageAlt: 'transport_log_scan_96.jpg (connection timed out)',
       imageSrc: '/images/endings/government_scandal.jpg',
       visitorCount: 234519,
