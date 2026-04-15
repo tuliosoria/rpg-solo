@@ -1,7 +1,7 @@
 // Filesystem resolver and navigation
 
 import { FileSystemNode, FileNode, GameState } from '../types';
-import { FILESYSTEM_ROOT } from '../data/filesystem';
+import { FILESYSTEM_ROOT } from '../data/virtualFileSystem';
 import { countEvidence, isEvidenceFile, MAX_EVIDENCE_COUNT } from './evidenceRevelation';
 
 // Cached set of file paths that can potentially reveal evidence

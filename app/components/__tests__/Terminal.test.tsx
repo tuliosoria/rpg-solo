@@ -79,9 +79,16 @@ vi.mock('../../components/FirewallEyes', async () => {
       mockFirewallEyes(props);
       return <div data-testid="firewall-eyes" />;
     },
-    speakCustomFirewallVoice: mockSpeakCustomFirewallVoice,
   };
 });
+
+vi.mock('../../lib/firewallVoice', () => ({
+  speakCustomFirewallVoice: mockSpeakCustomFirewallVoice,
+  unlockSpeechSynthesis: vi.fn(),
+  initVoices: vi.fn(),
+  FIREWALL_PHRASES: [],
+  FIREWALL_PHRASE_TEXT: [],
+}));
 
 vi.mock('../../components/StaticNoise', () => ({
   default: (props: unknown) => {

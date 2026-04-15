@@ -4,7 +4,7 @@
 // evidence file, it counts as one piece of evidence. Disturbing files can
 // still drive avatar reactions independently from evidence counting.
 
-import { FILESYSTEM_ROOT } from '../data/filesystem';
+import { FILESYSTEM_ROOT } from '../data/virtualFileSystem';
 import { translateStatic } from '../i18n';
 import { FileNode, FileSystemNode, GameState } from '../types';
 

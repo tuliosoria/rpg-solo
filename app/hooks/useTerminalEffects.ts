@@ -16,7 +16,7 @@ import {
   RISK_PULSE_DURATION_MS,
 } from '../constants/timing';
 import { uiRandom, uiRandomPick } from '../engine/rng';
-import { initVoices } from '../components/FirewallEyes';
+import { initVoices } from '../lib/firewallVoice';
 import { applyOptionsToDocument, readStoredOptions } from './useOptions';
 import type { SoundType } from './useSound';
 import { useI18n } from '../i18n';

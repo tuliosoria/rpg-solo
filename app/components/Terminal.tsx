@@ -36,7 +36,8 @@ import PauseMenu from './overlays/PauseMenu';
 import TutorialSkipPopup from './overlays/TutorialSkipPopup';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
-import FirewallEyes, { speakCustomFirewallVoice, unlockSpeechSynthesis } from './FirewallEyes';
+import FirewallEyes from './FirewallEyes';
+import { speakCustomFirewallVoice, unlockSpeechSynthesis } from '../lib/firewallVoice';
 
 
 // Lazy-load conditional components for better initial load performance

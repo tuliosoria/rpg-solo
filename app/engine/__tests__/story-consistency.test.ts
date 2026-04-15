@@ -13,7 +13,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { FILESYSTEM_ROOT } from '../../data/filesystem';
+import { FILESYSTEM_ROOT } from '../../data/virtualFileSystem';
 import { executeCommand } from '../commands';
 import {
   GameState,

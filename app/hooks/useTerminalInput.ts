@@ -37,7 +37,7 @@ import {
 } from '../types';
 import type { SoundType } from './useSound';
 import { appendToHistory } from '../lib/appendToHistory';
-import { speakCustomFirewallVoice } from '../components/FirewallEyes';
+import { speakCustomFirewallVoice } from '../lib/firewallVoice';
 import { translateStatic } from '../i18n';
 
 const STREAMING_DELAYS: Record<

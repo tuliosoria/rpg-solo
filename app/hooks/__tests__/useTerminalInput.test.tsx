@@ -10,7 +10,7 @@ vi.mock('../../storage/statistics', () => ({
   incrementStatistic: vi.fn(),
 }));
 
-vi.mock('../../components/FirewallEyes', () => ({
+vi.mock('../../lib/firewallVoice', () => ({
   speakCustomFirewallVoice: vi.fn(),
 }));
 
