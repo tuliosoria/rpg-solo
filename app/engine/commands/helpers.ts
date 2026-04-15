@@ -24,7 +24,6 @@ import {
 } from '../../constants/detection';
 import { shouldSuppressPressure } from '../../constants/atmosphere';
 import { createEntry, createEntryI18n, createOutputEntries } from './utils';
-import { getTutorialTip, shouldShowTutorialTip } from './tutorial';
 import { getFileContent } from '../filesystem';
 import { saveCheckpoint } from '../../storage/saves';
 import { translateStatic } from '../../i18n';
@@ -337,21 +336,6 @@ export const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'weather_pattern_intervention.log':
     'aerosol dispersal over civilian areas. project cirrus. they called it weather modification. it was not about the weather.',
 };
-
-const GENERIC_EVIDENCE_REACTIONS: string[] = [
-  'kid. that is insane. save that.',
-  'good stuff. we are going to need this for the leak.',
-  'damn. they really buried this one.',
-  'you found it. i knew it was in there.',
-  'this is exactly what we came for. keep going.',
-  'they are going to hate that you found that.',
-  'one more like that and we blow this wide open.',
-  'save everything. do not skip a single file.',
-  'that one is going straight into the leak package.',
-  'this is why they locked this system down.',
-];
-
-let lastGenericReactionIndex = -1;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONTEXT RNG - Deterministic random based on game state and context
@@ -1105,8 +1089,7 @@ export function applyEvidenceDiscovery(
   stateChanges: Partial<GameState>,
   filePath: string,
   file: FileNode,
-  content: string[] | null,
-  notices: TerminalEntry[]
+  content: string[] | null
 ): void {
   if (!content) {
     return;
@@ -1129,106 +1112,6 @@ export function applyEvidenceDiscovery(
   }
 
   stateChanges.evidenceCount = newCount;
-  stateChanges.avatarExpression = 'scared';
-
-  // UFO74 reacts to the specific evidence found
-  const specificReaction = EVIDENCE_UFO74_REACTIONS[file.name];
-  if (specificReaction) {
-    notices.push(createEntry('ufo74', `UFO74: ${specificReaction}`));
-  } else {
-    // Fallback: pick from generic pool, never repeating consecutively
-    let idx = Math.floor(Math.random() * GENERIC_EVIDENCE_REACTIONS.length);
-    if (idx === lastGenericReactionIndex && GENERIC_EVIDENCE_REACTIONS.length > 1) {
-      idx = (idx + 1) % GENERIC_EVIDENCE_REACTIONS.length;
-    }
-    lastGenericReactionIndex = idx;
-    notices.push(createEntry('ufo74', `UFO74: ${GENERIC_EVIDENCE_REACTIONS[idx]}`));
-  }
-
-  notices.push(createEntry('system', ''));
-  notices.push(
-    createEntryI18n(
-      'system',
-      'engine.commands.helpers.system_recalibrating_attention_momentarily_diverted',
-      '[System recalibrating... attention momentarily diverted]'
-    )
-  );
-
-  if (newCount === 1) {
-    if (
-      shouldShowTutorialTip(
-        'first_evidence',
-        state.interactiveTutorialMode,
-        state.tutorialTipsShown || new Set()
-      )
-    ) {
-      notices.push(...getTutorialTip('first_evidence'));
-      const newTipsShown = new Set(state.tutorialTipsShown || []);
-      newTipsShown.add('first_evidence');
-      stateChanges.tutorialTipsShown = newTipsShown;
-    }
-  }
-  if (newCount === 2) {
-    notices.push(createEntry('notice', ''));
-    notices.push(
-      createEntryI18n(
-        'notice',
-        'engine.commands.helpers.system_evidence_archive_updated',
-        'SYSTEM: Evidence archive updated.'
-      )
-    );
-  }
-  if (newCount === 4) {
-    notices.push(createEntry('notice', ''));
-    notices.push(
-      createEntryI18n(
-        'notice',
-        'engine.commands.helpers.notice_evidence_count_growing_keep_digging',
-        'NOTICE: Evidence count growing. Keep digging.'
-      )
-    );
-  }
-  if (newCount === 7) {
-    notices.push(createEntry('notice', ''));
-    notices.push(
-      createEntryI18n(
-        'notice',
-        'engine.commands.helpers.notice_leak_package_almost_ready',
-        'NOTICE: Leak package almost ready.'
-      )
-    );
-  }
-  if (newCount === MAX_EVIDENCE_COUNT) {
-    notices.push(createEntry('notice', ''));
-    notices.push(
-      createEntryI18n(
-        'notice',
-        'engine.commands.helpers.evidence_log_complete',
-        '▓▓▓ EVIDENCE LOG COMPLETE ▓▓▓'
-      )
-    );
-    notices.push(
-      createEntryI18n(
-        'ufo74',
-        'engine.commands.helpers.ufo74_evidence_log_complete_line1',
-        'UFO74: thats the full set logged. now build the dossier.'
-      )
-    );
-    notices.push(
-      createEntryI18n(
-        'ufo74',
-        'engine.commands.helpers.ufo74_evidence_log_complete_line2',
-        '       use "save <file>" until the dossier reads 10/10.'
-      )
-    );
-    notices.push(
-      createEntryI18n(
-        'ufo74',
-        'engine.commands.helpers.ufo74_evidence_log_complete_line3',
-        '       then type: leak'
-      )
-    );
-  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1279,7 +1162,7 @@ export function performDecryption(
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
 
   const truthNotices: TerminalEntry[] = [];
-  applyEvidenceDiscovery(state, stateChanges, filePath, file, content, truthNotices);
+  applyEvidenceDiscovery(state, stateChanges, filePath, file, content);
 
   const output = [
     createEntryI18n(

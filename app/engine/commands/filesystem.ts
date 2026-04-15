@@ -7,10 +7,8 @@ import {
   listDirectory,
   getFileContent,
   canAccessFile,
-  getEvidenceBearingFiles,
 } from '../filesystem';
 import { createSeededRng, seededRandomInt } from '../rng';
-import { EVIDENCE_SYMBOL, countEvidence } from '../evidenceRevelation';
 import { UFO74_CONSPIRACY_REACTIONS, CONSPIRACY_FILE_NAMES } from '../../data/conspiracyFiles';
 import { MAX_DETECTION } from '../../constants/detection';
 import {
@@ -51,7 +49,6 @@ export const filesystemCommands: CommandRegistry = {
     }
 
     const allEntries = [...entries];
-    const evidenceFiles = getEvidenceBearingFiles();
 
     const lines: string[] = [];
     lines.push('');
@@ -74,12 +71,7 @@ export const filesystemCommands: CommandRegistry = {
               entry.status
             );
 
-          // Evidence indicator: show for evidence-bearing files the player has read
           const fileContent = getFileContent(fullPath, state);
-          const hasEvidenceMark = evidenceFiles.has(fullPath) && state.filesRead?.has(fullPath);
-          if (hasEvidenceMark) {
-            line = `  [${EVIDENCE_SYMBOL}] ${entry.name}`;
-          }
 
           if (state.bookmarkedFiles?.has(fullPath)) {
             line += ' ★';
@@ -104,9 +96,8 @@ export const filesystemCommands: CommandRegistry = {
           if (longFormat) {
             // Prominent status tag
             if (showStatusTag) {
-              const prefix = hasEvidenceMark ? `  [${EVIDENCE_SYMBOL}] ` : '  ';
               const statusLabel = (entry.status ?? 'intact').toUpperCase();
-              line = `${prefix}${entry.name}  [${statusLabel}]`;
+              line = `  ${entry.name}  [${statusLabel}]`;
             }
 
             if (fileContent && fileContent.length > 0) {
@@ -131,19 +122,6 @@ export const filesystemCommands: CommandRegistry = {
         }
         lines.push(line);
       }
-    }
-
-    // Add legend if any files have evidence markers
-    const hasEvidenceMarkers = allEntries.some(entry => {
-      if (entry.type !== 'file') return false;
-      const fullPath =
-        state.currentPath === '/' ? `/${entry.name}` : `${state.currentPath}/${entry.name}`;
-      return evidenceFiles.has(fullPath) && state.filesRead?.has(fullPath);
-    });
-
-    if (hasEvidenceMarkers) {
-      lines.push('');
-      lines.push(`  ${EVIDENCE_SYMBOL}=evidence logged`);
     }
 
     lines.push('');
@@ -622,7 +600,6 @@ export const filesystemCommands: CommandRegistry = {
 
     // Check for reveals and disturbing content
     const notices: ReturnType<typeof createEntry>[] = [];
-    const evidenceBeforeOpen = countEvidence(state);
 
     // Track content category based on file path
     const categoriesRead = new Set(state.categoriesRead || []);
@@ -764,29 +741,6 @@ export const filesystemCommands: CommandRegistry = {
       }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // UFO74 SAVE HINTS — contextual nudges for specific files before override
-    // ═══════════════════════════════════════════════════════════════════════════
-    if (!ufo74ContextMessage && !state.flags?.adminUnlocked) {
-      const saveHints: Record<string, string[]> = {
-        'audio_transcript_brief.txt': [
-          'UFO74: kid. that one is gold. you should save it.',
-        ],
-        'autopsy_protocol_v2.txt': [
-          'UFO74: that is exactly the kind of thing we need. save it.',
-        ],
-        'incident_report_1996_01_VG.txt': [
-          'UFO74: careful. that file could change everything. save it before they purge it.',
-        ],
-      };
-
-      const hintFileName = filePath.split('/').pop() || '';
-      const hint = saveHints[hintFileName];
-      if (hint && !(state.savedFiles?.has(filePath))) {
-        ufo74ContextMessage = hint.map(line => createEntry('ufo74', line));
-      }
-    }
-
     // After a few reads, nudge players toward the key evidence-heavy directories.
     // Only if no file-specific reaction already claimed the slot.
     const totalFilesRead = filesRead.size;
@@ -828,11 +782,8 @@ export const filesystemCommands: CommandRegistry = {
       }
     }
 
-    // Evidence discovery — increment evidenceCount on first read of evidence files
-    applyEvidenceDiscovery(state, stateChanges, filePath, file, content, notices);
-    if ((stateChanges.evidenceCount ?? evidenceBeforeOpen) > evidenceBeforeOpen) {
-      ufo74ContextMessage = null;
-    }
+    // Evidence discovery stays internal; player-facing confirmation now happens on save.
+    applyEvidenceDiscovery(state, stateChanges, filePath, file, content);
 
     const output = [
       ...createOutputEntries(['', `FILE: ${filePath}`, '']),

@@ -28,32 +28,34 @@ describe('HackerAvatar', () => {
     vi.useRealTimers();
   });
 
-  it('shows and hides the evidence found indicator when triggered', () => {
+  it('resets temporary expressions back to neutral after the timeout', () => {
+    const onExpressionTimeout = vi.fn();
     const { rerender } = render(
       <FloatingUIProvider>
         <HackerAvatar expression="neutral" detectionLevel={0} sessionStability={100} />
       </FloatingUIProvider>
     );
 
-    expect(screen.queryByText('Evidence Found')).not.toBeInTheDocument();
+    expect(screen.getByAltText('Hacker avatar')).toHaveAttribute('src', '/images/avatar/neutral.jpg');
 
     rerender(
       <FloatingUIProvider>
         <HackerAvatar
-          expression="neutral"
+          expression="scared"
           detectionLevel={0}
           sessionStability={100}
-          evidenceFoundIndicatorKey={1}
+          onExpressionTimeout={onExpressionTimeout}
         />
       </FloatingUIProvider>
     );
 
-    expect(screen.getByText('Evidence Found')).toBeInTheDocument();
+    expect(screen.getByAltText('Hacker avatar')).toHaveAttribute('src', '/images/avatar/scared.jpg');
 
     act(() => {
-      vi.advanceTimersByTime(1600);
+      vi.advanceTimersByTime(5150);
     });
 
-    expect(screen.queryByText('Evidence Found')).not.toBeInTheDocument();
+    expect(screen.getByAltText('Hacker avatar')).toHaveAttribute('src', '/images/avatar/neutral.jpg');
+    expect(onExpressionTimeout).toHaveBeenCalledTimes(1);
   });
 });

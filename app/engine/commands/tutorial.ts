@@ -342,7 +342,7 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.e_v_i_d_e_n_c_e_s_y_s_t_e_m',
-      '  E V I D E N C E   S Y S T E M'
+      '  D O S S I E R   W O R K F L O W'
     ),
     createEntry('output', '═══════════════════════════════════════════════'),
     createEntry('system', ''),
@@ -350,7 +350,7 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.collect_10_evidence_files_to_expose_5_truths',
-      '  Collect 10 evidence files to expose 5 core truths:'
+      '  Save 10 files that expose 5 core truths:'
     ),
     createEntry('system', ''),
     createEntryI18n(
@@ -377,7 +377,7 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
     createEntry('system', ''),
-    createEntryI18n('output', 'engine.commands.tutorial.evidence_workflow', '  EVIDENCE WORKFLOW:'),
+    createEntryI18n('output', 'engine.commands.tutorial.evidence_workflow', '  DOSSIER WORKFLOW:'),
     createEntry('system', ''),
     createEntryI18n(
       'output',
@@ -392,7 +392,7 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.3_watch_the_header_counter_update',
-      '  3. Watch the header counter update'
+      '  3. Save the strongest files with save <filename>'
     ),
     createEntry('system', ''),
     createEntry('output', '  ─────────────────────────────────────────────'),
@@ -402,12 +402,12 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.reach_10_of_10_evidence',
-      '  • Reach 10/10 evidence'
+      '  • Reach 10/10 saved files'
     ),
     createEntryI18n(
       'output',
       'engine.commands.tutorial.use_leak_to_transmit_the_evidence',
-      '  • Use "leak" to transmit the evidence'
+      '  • Use "leak" to transmit the dossier'
     ),
     createEntry('system', ''),
   ];
@@ -424,7 +424,7 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.collect_10_evidence_files_to_expose_5_truths',
-      '  Collect 10 evidence files to expose 5 core truths:'
+      '  Save 10 files that expose 5 core truths:'
     ),
     createEntry('system', ''),
     createEntryI18n(
@@ -456,7 +456,7 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.read_carefully_evidence_is_in_the_details',
-      '  • Read carefully - evidence is in the details'
+      '  • Read carefully - the case is in the details'
     ),
     createEntryI18n(
       'output',
@@ -495,6 +495,11 @@ export function getHelpWinning(): TerminalEntry[] {
     ),
     createEntryI18n(
       'output',
+      'engine.commands.tutorial.save_file_add_a_file_to_the_dossier',
+      '  save <file>      Add a file to the dossier'
+    ),
+    createEntryI18n(
+      'output',
       'engine.commands.tutorial.search_term_scan_accessible_files_and_text',
       '  search <term>   Scan accessible files and text'
     ),
@@ -507,6 +512,11 @@ export function getHelpWinning(): TerminalEntry[] {
       'output',
       'engine.commands.tutorial.unread_list_files_you_have_not_opened',
       '  unread          List files you have not opened'
+    ),
+    createEntryI18n(
+      'output',
+      'engine.commands.tutorial.leak_transmit_the_finished_dossier',
+      '  leak            Transmit the finished dossier'
     ),
     createEntry('system', ''),
   ];

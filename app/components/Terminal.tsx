@@ -124,7 +124,6 @@ export default function Terminal({
     setShowPauseMenu,
     pendingUfo74Messages,
     setPendingUfo74Messages,
-    appendPendingUfo74Messages,
     queuedAfterMediaMessages,
     setQueuedAfterMediaMessages,
     appendQueuedAfterMediaMessages,
@@ -169,8 +168,6 @@ export default function Terminal({
     setTimedDecryptRemaining,
     burnInLines,
     setBurnInLines,
-    evidenceFoundIndicatorKey,
-    setEvidenceFoundIndicatorKey,
     interferenceBurst,
     setInterferenceBurst,
     terminalStaticLevel,
@@ -520,7 +517,6 @@ export default function Terminal({
     setPendingUfo74StartMessages,
     appendPendingUfo74StartMessages,
     setPendingUfo74Messages,
-    appendPendingUfo74Messages,
     setQueuedAfterMediaMessages,
     appendQueuedAfterMediaMessages,
     setShowEvidenceTracker,
@@ -530,7 +526,6 @@ export default function Terminal({
     setAvatarCreepyEntrance,
     setIsShaking,
     setShowFirewallScare,
-    setEvidenceFoundIndicatorKey,
     setGamePhase,
     setGameOverReason,
     setShowGameOver,
@@ -1424,7 +1419,6 @@ export default function Terminal({
             detectionLevel={gameState.detectionLevel}
             sessionStability={gameState.sessionStability}
             creepyEntrance={avatarCreepyEntrance}
-            evidenceFoundIndicatorKey={evidenceFoundIndicatorKey}
             onExpressionTimeout={() => {
               setGameState(prev => ({ ...prev, avatarExpression: 'neutral' }));
             }}

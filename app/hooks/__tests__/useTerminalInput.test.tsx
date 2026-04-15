@@ -98,7 +98,6 @@ function createOptions(gameState: GameState, inputValue = 'status') {
     setAvatarCreepyEntrance: vi.fn(),
     setIsShaking: vi.fn(),
     setShowFirewallScare: vi.fn(),
-    setEvidenceFoundIndicatorKey: vi.fn(),
     setGamePhase: vi.fn(),
     setGameOverReason: vi.fn(),
     setShowGameOver: vi.fn(),
@@ -132,7 +131,7 @@ describe('useTerminalInput evidence progression', () => {
     vi.clearAllMocks();
   });
 
-  it('writes /10 evidence progress checkpoints before the final threshold', async () => {
+  it('writes hidden evidence checkpoints without triggering save-facing rewards', async () => {
     vi.mocked(executeCommand).mockReturnValue(
       createCommandResult({
         evidenceCount: 6,
@@ -153,22 +152,22 @@ describe('useTerminalInput evidence progression', () => {
 
     expect(saveCheckpoint).toHaveBeenCalledWith(
       expect.objectContaining({ evidenceCount: 6 }),
-      'Evidence 6/10'
+      'Investigation progress'
     );
+    expect(options.playSound).not.toHaveBeenCalledWith('fanfare');
+    expect(options.checkAchievement).not.toHaveBeenCalledWith('first_blood');
     expect(options.checkAchievement).not.toHaveBeenCalledWith('truth_seeker');
   });
 
-  it('grants truth_seeker and checkpoints the all-evidence state at 10', async () => {
+  it('grants first_blood when the first file is saved', async () => {
     vi.mocked(executeCommand).mockReturnValue(
       createCommandResult({
-        evidenceCount: 10,
-        filesRead: new Set(['/tmp/save_evidence.sh']),
+        savedFiles: new Set(['/tmp/save_evidence.sh']),
       })
     );
     const options = createOptions(
       createGameState({
-        evidenceCount: 9,
-        filesRead: new Set(['/tmp/session_residue.log']),
+        savedFiles: new Set(),
       })
     );
     const { result } = renderHook(() => useTerminalInput(options));
@@ -177,10 +176,48 @@ describe('useTerminalInput evidence progression', () => {
       await result.current.handleSubmit();
     });
 
-    expect(saveCheckpoint).toHaveBeenCalledWith(
-      expect.objectContaining({ evidenceCount: 10 }),
-      'All evidence found'
+    expect(options.checkAchievement).toHaveBeenCalledWith('first_blood');
+    expect(options.checkAchievement).not.toHaveBeenCalledWith('truth_seeker');
+  });
+
+  it('grants truth_seeker when the dossier reaches 10 saved files', async () => {
+    vi.mocked(executeCommand).mockReturnValue(
+      createCommandResult({
+        savedFiles: new Set([
+          '/tmp/1.txt',
+          '/tmp/2.txt',
+          '/tmp/3.txt',
+          '/tmp/4.txt',
+          '/tmp/5.txt',
+          '/tmp/6.txt',
+          '/tmp/7.txt',
+          '/tmp/8.txt',
+          '/tmp/9.txt',
+          '/tmp/10.txt',
+        ]),
+      })
     );
+    const options = createOptions(
+      createGameState({
+        savedFiles: new Set([
+          '/tmp/1.txt',
+          '/tmp/2.txt',
+          '/tmp/3.txt',
+          '/tmp/4.txt',
+          '/tmp/5.txt',
+          '/tmp/6.txt',
+          '/tmp/7.txt',
+          '/tmp/8.txt',
+          '/tmp/9.txt',
+        ]),
+      })
+    );
+    const { result } = renderHook(() => useTerminalInput(options));
+
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+
     expect(options.checkAchievement).toHaveBeenCalledWith('truth_seeker');
   });
 });

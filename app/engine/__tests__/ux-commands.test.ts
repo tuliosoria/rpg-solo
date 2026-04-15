@@ -425,6 +425,17 @@ describe('UX Commands', () => {
 
       expect(result.output.some(e => e.content.includes('[UNREAD]'))).toBe(true);
     });
+
+    it('should not mark evidence files with a special legend or icon', () => {
+      const state = createTestState({
+        currentPath: '/storage/quarantine',
+        filesRead: new Set(['/storage/quarantine/bio_container.log']),
+      });
+      const result = executeCommand('ls', state);
+
+      expect(result.output.some(e => e.content.includes('evidence logged'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('[●]'))).toBe(false);
+    });
   });
 
   describe('cd command navigation history', () => {

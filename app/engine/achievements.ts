@@ -124,7 +124,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     'first_blood',
     'first_blood',
     'First Blood',
-    'Discover your first evidence',
+    'Save your first file to the dossier',
     '🩸'
   ),
   createAchievement(
@@ -138,7 +138,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     'truth_seeker',
     'truth_seeker',
     'Truth Seeker',
-    'Collect 10 evidence files',
+    'Save 10 files to the dossier',
     '👁️'
   ),
   createAchievement('doom_fan', 'doom_fan', 'IDDQD', 'Activate god mode', '🎮', true),

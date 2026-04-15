@@ -74,77 +74,6 @@ function getStreamingDelayConfig(
   };
 }
 
-function getEvidenceMilestoneMessages(
-  previousEvidenceCount: number,
-  evidenceCount: number
-): TerminalEntry[] {
-  if (evidenceCount <= previousEvidenceCount) {
-    return [];
-  }
-
-  if (previousEvidenceCount < 1 && evidenceCount >= 1) {
-    return [
-      createEntryI18n(
-        'ufo74',
-        'hooks.useTerminalInput.milestone.1.line1',
-        'UFO74: good. first confirmation logged.'
-      ),
-      createEntryI18n(
-        'ufo74',
-        'hooks.useTerminalInput.milestone.1.line2',
-        '       run "progress" if you need a clean recap.'
-      ),
-    ];
-  }
-
-  if (previousEvidenceCount < 4 && evidenceCount >= 4) {
-    return [
-      createEntryI18n(
-        'ufo74',
-        'hooks.useTerminalInput.milestone.4.line1',
-        'UFO74: thats enough to see the outline of the case.'
-      ),
-      createEntryI18n(
-        'ufo74',
-        'hooks.useTerminalInput.milestone.4.line2',
-        '       use "search <term>" or "unread" to chase the gaps.'
-      ),
-    ];
-  }
-
-  if (previousEvidenceCount < 7 && evidenceCount >= 7) {
-    return [
-      createEntryI18n(
-        'ufo74',
-        'hooks.useTerminalInput.milestone.7.line1',
-        'UFO74: now bookmark the pieces that actually connect.'
-      ),
-      createEntryI18n(
-        'ufo74',
-        'hooks.useTerminalInput.milestone.7.line2',
-        '       if risk spikes, recover first. then finish the pattern.'
-      ),
-    ];
-  }
-
-  if (previousEvidenceCount < MAX_EVIDENCE_COUNT && evidenceCount >= MAX_EVIDENCE_COUNT) {
-    return [
-      createEntryI18n(
-        'ufo74',
-        'hooks.useTerminalInput.milestone.10.line1',
-        'UFO74: thats the full set. now choose what goes in the dossier.'
-      ),
-      createEntryI18n(
-        'ufo74',
-        'hooks.useTerminalInput.milestone.10.line2',
-        '       use "save <file>" until progress reads 10/10, then "leak".'
-      ),
-    ];
-  }
-
-  return [];
-}
-
 type EncryptedChannelState = 'idle' | 'awaiting_open' | 'open' | 'awaiting_close';
 
 interface TerminalInputRefs {
@@ -176,7 +105,6 @@ interface UseTerminalInputOptions {
   setPendingUfo74StartMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
   appendPendingUfo74StartMessages: (items: TerminalEntry[]) => void;
   setPendingUfo74Messages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
-  appendPendingUfo74Messages: (items: TerminalEntry[]) => void;
   setQueuedAfterMediaMessages: React.Dispatch<React.SetStateAction<TerminalEntry[]>>;
   appendQueuedAfterMediaMessages: (items: TerminalEntry[]) => void;
   setShowEvidenceTracker: React.Dispatch<React.SetStateAction<boolean>>;
@@ -186,7 +114,6 @@ interface UseTerminalInputOptions {
   setAvatarCreepyEntrance: React.Dispatch<React.SetStateAction<boolean>>;
   setIsShaking: React.Dispatch<React.SetStateAction<boolean>>;
   setShowFirewallScare: React.Dispatch<React.SetStateAction<boolean>>;
-  setEvidenceFoundIndicatorKey: React.Dispatch<React.SetStateAction<number>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
   setGameOverReason: React.Dispatch<React.SetStateAction<string>>;
   setShowGameOver: React.Dispatch<React.SetStateAction<boolean>>;
@@ -229,7 +156,6 @@ export function useTerminalInput({
   setPendingUfo74StartMessages,
   appendPendingUfo74StartMessages,
   setPendingUfo74Messages,
-  appendPendingUfo74Messages,
   appendQueuedAfterMediaMessages,
   setShowEvidenceTracker,
   setShowRiskTracker,
@@ -238,7 +164,6 @@ export function useTerminalInput({
   setAvatarCreepyEntrance,
   setIsShaking,
   setShowFirewallScare,
-  setEvidenceFoundIndicatorKey,
   setGamePhase,
   setGameOverReason,
   setShowGameOver,
@@ -882,6 +807,8 @@ export function useTerminalInput({
 
       const evidenceCount = intermediateState.evidenceCount || 0;
       const prevEvidenceCount = gameState.evidenceCount || 0;
+      const savedCount = intermediateState.savedFiles?.size || 0;
+      const prevSavedCount = gameState.savedFiles?.size || 0;
 
       const filesReadCount = intermediateState.filesRead?.size || 0;
       const prevFilesReadCount = gameState.filesRead?.size || 0;
@@ -890,33 +817,19 @@ export function useTerminalInput({
       }
 
       if (evidenceCount > prevEvidenceCount) {
-        setEvidenceFoundIndicatorKey(prev => prev + 1);
-        playSound('fanfare');
-        const checkpointReason =
-          evidenceCount === 1
-            ? translateStatic('checkpoint.reason.firstEvidence', undefined, 'First evidence')
-            : evidenceCount === MAX_EVIDENCE_COUNT
-              ? translateStatic('checkpoint.reason.allEvidenceFound', undefined, 'All evidence found')
-              : translateStatic(
-                  'checkpoint.reason.evidenceProgress',
-                  { count: evidenceCount },
-                 `Evidence ${evidenceCount}/${MAX_EVIDENCE_COUNT}`
-                );
+        const checkpointReason = translateStatic(
+          'checkpoint.reason.investigationProgress',
+          undefined,
+          'Investigation progress'
+        );
         saveCheckpoint(intermediateState, checkpointReason);
-        const milestoneMessages = getEvidenceMilestoneMessages(prevEvidenceCount, evidenceCount);
-        if (milestoneMessages.length > 0) {
-          appendPendingUfo74Messages(milestoneMessages);
-        }
       }
 
-      if (evidenceCount > 0 && prevEvidenceCount === 0) {
+      if (savedCount > prevSavedCount && prevSavedCount === 0) {
         checkAchievement('first_blood');
       }
 
-      if (
-        evidenceCount === MAX_EVIDENCE_COUNT &&
-        prevEvidenceCount < MAX_EVIDENCE_COUNT
-      ) {
+      if (savedCount === MAX_EVIDENCE_COUNT && prevSavedCount < MAX_EVIDENCE_COUNT) {
         checkAchievement('truth_seeker');
       }
 
@@ -1044,7 +957,6 @@ export function useTerminalInput({
       setPendingUfo74Messages,
       setPendingUfo74StartMessages,
       appendPendingUfo74StartMessages,
-      appendPendingUfo74Messages,
       appendQueuedAfterMediaMessages,
       setShowEvidenceTracker,
       setShowAttBar,
@@ -1064,7 +976,6 @@ export function useTerminalInput({
       streamStartScrollPos,
       scrollToBottom,
       triggerFlicker,
-      setEvidenceFoundIndicatorKey,
     ]
   );
 

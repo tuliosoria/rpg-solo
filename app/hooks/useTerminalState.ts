@@ -151,7 +151,6 @@ interface TrackerState {
   queuedAfterMediaMessages: TerminalEntry[];
   pendingUfo74StartMessages: TerminalEntry[];
   pendingAchievement: Achievement | null;
-  evidenceFoundIndicatorKey: number;
 }
 
 type TrackerAction =
@@ -166,7 +165,6 @@ type TrackerAction =
   | { type: 'APPEND_QUEUED_AFTER_MEDIA_MESSAGES'; payload: TerminalEntry[] }
   | { type: 'APPEND_PENDING_UFO74_START_MESSAGES'; payload: TerminalEntry[] }
   | { type: 'SET_PENDING_ACHIEVEMENT'; payload: Achievement | null }
-  | { type: 'SET_EVIDENCE_FOUND_INDICATOR_KEY'; payload: number }
   | { type: 'RESET_TRACKER'; payload: TrackerState };
 
 function trackerReducer(state: TrackerState, action: TrackerAction): TrackerState {
@@ -182,7 +180,6 @@ function trackerReducer(state: TrackerState, action: TrackerAction): TrackerStat
     case 'APPEND_QUEUED_AFTER_MEDIA_MESSAGES': return { ...state, queuedAfterMediaMessages: [...state.queuedAfterMediaMessages, ...action.payload] };
     case 'APPEND_PENDING_UFO74_START_MESSAGES': return { ...state, pendingUfo74StartMessages: [...state.pendingUfo74StartMessages, ...action.payload] };
     case 'SET_PENDING_ACHIEVEMENT': return { ...state, pendingAchievement: action.payload };
-    case 'SET_EVIDENCE_FOUND_INDICATOR_KEY': return { ...state, evidenceFoundIndicatorKey: action.payload };
     case 'RESET_TRACKER': return action.payload;
     default: return state;
   }
@@ -261,7 +258,6 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     queuedAfterMediaMessages: [],
     pendingUfo74StartMessages: [],
     pendingAchievement: null,
-    evidenceFoundIndicatorKey: 0,
   });
 
   const trackerStateRef = useRef(trackerState);
@@ -448,10 +444,6 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     trackerDispatch({ type: 'SET_PENDING_ACHIEVEMENT', payload: typeof value === 'function' ? value(trackerStateRef.current.pendingAchievement) : value });
   }, []);
 
-  const setEvidenceFoundIndicatorKey = useCallback((value: number | ((prev: number) => number)) => {
-    trackerDispatch({ type: 'SET_EVIDENCE_FOUND_INDICATOR_KEY', payload: typeof value === 'function' ? value(trackerStateRef.current.evidenceFoundIndicatorKey) : value });
-  }, []);
-
   // ═══════════════════════════════════════════════════════════════════════
   // SYNC EFFECT (checkpoint load)
   // ═══════════════════════════════════════════════════════════════════════
@@ -514,7 +506,6 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
         queuedAfterMediaMessages: [],
         pendingUfo74StartMessages: [],
         pendingAchievement: null,
-        evidenceFoundIndicatorKey: 0,
       }});
 
       // Update refs
@@ -600,8 +591,6 @@ export function useTerminalState(initialState: GameState, initialPhase: GamePhas
     setTimedDecryptRemaining,
     burnInLines: phaseState.burnInLines,
     setBurnInLines,
-    evidenceFoundIndicatorKey: trackerState.evidenceFoundIndicatorKey,
-    setEvidenceFoundIndicatorKey,
     interferenceBurst: phaseState.interferenceBurst,
     setInterferenceBurst,
     terminalStaticLevel: phaseState.terminalStaticLevel,
