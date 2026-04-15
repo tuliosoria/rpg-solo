@@ -2,19 +2,17 @@
 
 import React, { useRef, useCallback, useState, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { GamePhase, GameState, TerminalEntry } from '../types';
+import { GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
 import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
 import { getEndingFlags } from '../engine/endings';
-import { getAllAccessibleFiles, resolvePath } from '../engine/filesystem';
+import { getAllAccessibleFiles } from '../engine/filesystem';
 
 import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
-import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import { useI18n } from '../i18n';
 import { OPTIONS_CHANGED_EVENT, readStoredOptions } from '../hooks/useOptions';
 import {
-  MAX_WRONG_ATTEMPTS,
   SUSPICIOUS_TYPING_SPEED,
   KEYPRESS_TRACK_SIZE,
 } from '../constants/gameplay';
@@ -27,6 +25,12 @@ import {
   useTerminalInput,
   useTerminalState,
 } from '../hooks';
+import {
+  useRiskLevel,
+  useStatusBar,
+  useSaveIndicator,
+  useAttemptsDisplay,
+} from '../hooks/useGameSelectors';
 import { unlockAchievement } from '../engine/achievements';
 import { uiRandomPick } from '../engine/rng';
 import type { TextSpeed } from '../types';
@@ -38,6 +42,23 @@ import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 import FirewallEyes from './FirewallEyes';
 import { speakCustomFirewallVoice, unlockSpeechSynthesis } from '../lib/firewallVoice';
+import {
+  UFO74_IMAGE_COMMENT_KEYS,
+  UFO74_FIREWALL_REACTION_KEYS,
+  TURING_TEST_VIDEO_SRC,
+  DEPLOY_VERSION,
+  VERSION_TOOLTIP,
+  SCREEN_OVERLAY_BOUNDS,
+  type EvidenceVideoAttachment,
+} from './terminalConstants';
+import {
+  normalizeVideoPromptChoice,
+  getEvidenceVideoAttachment,
+  deriveGamePhase,
+  shouldSuppressUfo74Spacer,
+  shouldShowTutorialSkipPopup,
+} from './terminalHelpers';
+export { normalizeVideoPromptChoice } from './terminalHelpers';
 
 
 // Lazy-load conditional components for better initial load performance
@@ -54,198 +75,11 @@ const AchievementGallery = dynamic(() => import('./overlays/AchievementGallery')
 const StatisticsModal = dynamic(() => import('./overlays/StatisticsModal'), { ssr: false });
 import styles from './Terminal.module.css';
 
-const UFO74_IMAGE_COMMENT_KEYS: Record<string, string[]> = {
-  '/images/crash.webp': [
-    'terminal.imageComment.crash1',
-    'terminal.imageComment.crash2',
-  ],
-  '/images/et.webp': [
-    'terminal.imageComment.et1',
-    'terminal.imageComment.et2',
-  ],
-  '/images/et-scared.webp': [
-    'terminal.imageComment.etScared1',
-    'terminal.imageComment.etScared2',
-  ],
-  '/images/second-ship.webp': ['terminal.imageComment.secondShip1'],
-  '/images/drone.webp': ['terminal.imageComment.drone1'],
-  '/images/prato-delta.webp': ['terminal.imageComment.pratoDelta1'],
-  '/images/et-brain.webp': [
-    'terminal.imageComment.etBrain1',
-    'terminal.imageComment.etBrain2',
-  ],
-};
-
-const UFO74_FIREWALL_REACTION_KEYS = [
-  'terminal.firewallReaction.1',
-  'terminal.firewallReaction.2',
-  'terminal.firewallReaction.3',
-  'terminal.firewallReaction.4',
-  'terminal.firewallReaction.5',
-  'terminal.firewallReaction.6',
-  'terminal.firewallReaction.7',
-] as const;
-
-interface EvidenceVideoAttachment {
-  filePath: string;
-  fileName: string;
-  videoSrc: string;
-  videoTitle: string;
-}
-
-const JARDIM_ANDERE_INCIDENT_VIDEO_SRC = new URL(
-  '../../videos/jardim_andere_incident.mp4',
-  import.meta.url
-).toString();
-
-const AUTOPSY_VIDEO_SRC = new URL(
-  '../../videos/autopsy.mp4',
-  import.meta.url
-).toString();
-
-const THEY_ARE_ALREADY_HERE_VIDEO_SRC = new URL(
-  '../../videos/they-are-already-here.mp4',
-  import.meta.url
-).toString();
-
-const UFO74_VIDEO_SRC = new URL(
-  '../../videos/UFO74.mp4',
-  import.meta.url
-).toString();
-
-const TRANSPORT_VIDEO_SRC = new URL(
-  '../../videos/transport.mp4',
-  import.meta.url
-).toString();
-
-const TURING_TEST_VIDEO_SRC = new URL(
-  '../../videos/turing test.mp4',
-  import.meta.url
-).toString();
-
-const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
-  '/internal/jardim_andere_incident.txt': {
-    filePath: '/internal/jardim_andere_incident.txt',
-    fileName: 'jardim_andere_incident.txt',
-    videoSrc: JARDIM_ANDERE_INCIDENT_VIDEO_SRC,
-    videoTitle: 'jardim_andere_incident.mp4',
-  },
-  '/storage/assets/logistics_manifest_fragment.txt': {
-    filePath: '/storage/assets/logistics_manifest_fragment.txt',
-    fileName: 'logistics_manifest_fragment.txt',
-    videoSrc: AUTOPSY_VIDEO_SRC,
-    videoTitle: 'autopsy.mp4',
-  },
-  '/admin/energy_extraction_theory.txt': {
-    filePath: '/admin/energy_extraction_theory.txt',
-    fileName: 'energy_extraction_theory.txt',
-    videoSrc: THEY_ARE_ALREADY_HERE_VIDEO_SRC,
-    videoTitle: 'they-are-already-here.mp4',
-  },
-  '/sys/ghost_in_machine.enc': {
-    filePath: '/sys/ghost_in_machine.enc',
-    fileName: 'ghost_in_machine.enc',
-    videoSrc: UFO74_VIDEO_SRC,
-    videoTitle: 'UFO74.mp4',
-  },
-  '/storage/assets/transport_log_96.txt': {
-    filePath: '/storage/assets/transport_log_96.txt',
-    fileName: 'transport_log_96.txt',
-    videoSrc: TRANSPORT_VIDEO_SRC,
-    videoTitle: 'transport.mp4',
-  },
-};
-
-const AFFIRMATIVE_VIDEO_PROMPT_INPUTS = new Set(['y', 'yes', 's', 'sim', 'si', 'sí']);
-const NEGATIVE_VIDEO_PROMPT_INPUTS = new Set(['n', 'no', 'nao', 'não']);
-
-export function normalizeVideoPromptChoice(input: string): 'yes' | 'no' | null {
-  const normalized = input.trim().toLowerCase();
-
-  if (AFFIRMATIVE_VIDEO_PROMPT_INPUTS.has(normalized)) {
-    return 'yes';
-  }
-
-  if (NEGATIVE_VIDEO_PROMPT_INPUTS.has(normalized)) {
-    return 'no';
-  }
-
-  return null;
-}
-
-const getEvidenceVideoAttachment = (
-  commandInput: string,
-  currentPath: string
-): EvidenceVideoAttachment | null => {
-  // Match file-reading commands that can surface attached media prompts.
-  const match = /^(?:open|cat)\s+(\S+)/i.exec(commandInput.trim());
-  if (!match) {
-    return null;
-  }
-
-  const filePath = resolvePath(match[1].trim(), currentPath);
-  return EVIDENCE_VIDEO_ATTACHMENTS[filePath] ?? null;
-};
-
-const deriveGamePhase = (state: GameState): GamePhase => {
-  if (state.endingType === 'bad') return 'bad_ending';
-  if (state.endingType === 'neutral') return 'neutral_ending';
-  if (state.endingType === 'secret') return 'secret_ending';
-  if (state.gameWon || state.endingType === 'good') return 'victory';
-  if (state.evidencesSaved) return 'blackout';
-  return 'terminal';
-};
-
-const isBlankSystemSpacer = (entry: TerminalEntry) =>
-  entry.type === 'system' && entry.content.trim().length === 0;
-
-const getNearestNonSpacerEntry = (
-  entries: readonly TerminalEntry[],
-  startIndex: number,
-  direction: -1 | 1
-): TerminalEntry | undefined => {
-  let index = startIndex + direction;
-
-  while (index >= 0 && index < entries.length) {
-    const candidate = entries[index];
-    if (!isBlankSystemSpacer(candidate)) {
-      return candidate;
-    }
-    index += direction;
-  }
-
-  return undefined;
-};
-
-const shouldSuppressUfo74Spacer = (
-  entry: TerminalEntry,
-  index: number,
-  entries: readonly TerminalEntry[]
-) =>
-  isBlankSystemSpacer(entry) &&
-  (getNearestNonSpacerEntry(entries, index, -1)?.type === 'ufo74' ||
-    getNearestNonSpacerEntry(entries, index, 1)?.type === 'ufo74');
-
 interface TerminalProps {
   initialState: GameState;
   onExitAction: () => void;
   onSaveRequestAction: (state: GameState) => void;
   onLoadCheckpointAction?: (slotId: string) => void;
-}
-
-const BUILD_NUMBER = process.env.NEXT_PUBLIC_BUILD_NUMBER;
-const COMMIT_SHA = process.env.NEXT_PUBLIC_COMMIT_SHA || 'unknown';
-const HAS_BUILD_METADATA = !!BUILD_NUMBER && /^\d+$/.test(BUILD_NUMBER) && COMMIT_SHA !== 'unknown';
-const DEPLOY_VERSION = HAS_BUILD_METADATA ? `v0.${BUILD_NUMBER}.0` : 'dev-local';
-const VERSION_TOOLTIP = HAS_BUILD_METADATA ? COMMIT_SHA : 'local build';
-const SCREEN_OVERLAY_BOUNDS = { position: 'absolute' as const, inset: 0 };
-
-function shouldShowTutorialSkipPopup(state: GameState): boolean {
-  return (
-    !state.tutorialComplete &&
-    state.tutorialStep === 0 &&
-    state.interactiveTutorialState?.current === TutorialStateID.INTRO
-  );
 }
 
 export default function Terminal({
@@ -979,64 +813,11 @@ export default function Terminal({
     prevShowTutorialSkipRef.current = showTutorialSkip;
   }, [showTutorialSkip, focusTerminalInput]);
 
-  // Get status bar content
-  const getStatusBar = () => {
-    const parts: string[] = [];
-
-    if (gameState.detectionLevel >= DETECTION_THRESHOLDS.SUSPICIOUS) {
-      parts.push(t('terminal.status.auditActive'));
-    }
-    if (gameState.sessionStability < 50) {
-      parts.push(t('terminal.status.sessionUnstable'));
-    }
-    if (gameState.flags.adminUnlocked) {
-      parts.push(t('terminal.status.accessAdmin'));
-    }
-    if (gameState.paranoiaLevel >= 40) {
-      parts.push(t('terminal.status.paranoiaElevated'));
-    } else if (gameState.paranoiaLevel >= 15) {
-      parts.push(t('terminal.status.paranoiaActive'));
-    }
-    if (gameState.isGameOver) {
-      parts.push(translateRuntimeText(gameState.gameOverReason || t('terminal.status.terminated')));
-    }
-
-    return parts.join(' │ ') || t('terminal.status.systemNominal');
-  };
-
-  // Get save indicator text
-  const getSaveIndicator = () => {
-    if (!gameState.lastSaveTime) return null;
-    const elapsed = Math.floor((Date.now() - gameState.lastSaveTime) / 60000);
-    if (elapsed < 1) return t('terminal.save.justNow');
-    if (elapsed < 60) return t('terminal.save.minutes', { value: elapsed });
-    const hours = Math.floor(elapsed / 60);
-    return t('terminal.save.hours', { value: hours });
-  };
-
-  // Get risk level display with percentage
-  const getRiskLevel = () => {
-    const detection = gameState.detectionLevel;
-    const percent = `${detection}%`;
-    if (detection >= 80)
-      return { level: t('terminal.risk.critical', { percent }), color: 'critical' };
-    if (detection >= 60) return { level: t('terminal.risk.high', { percent }), color: 'high' };
-    if (detection >= 40)
-      return { level: t('terminal.risk.elevated', { percent }), color: 'elevated' };
-    if (detection >= 20) return { level: t('terminal.risk.low', { percent }), color: 'low' };
-    return { level: t('terminal.risk.minimal', { percent }), color: 'minimal' };
-  };
-
-  // Get invalid attempts display (shows attempts made, not remaining)
-  // Uses legacyAlertCounter which tracks invalid commands, matching inline "[Invalid attempts: X/8]"
-  const getAttemptsDisplay = () => {
-    const attempts = gameState.legacyAlertCounter || 0;
-    return `${attempts}/${MAX_WRONG_ATTEMPTS}`;
-  };
-
   const savedCount = gameState.savedFiles?.size || 0;
-  const riskInfo = getRiskLevel();
-  const saveIndicator = getSaveIndicator();
+  const statusBar = useStatusBar(gameState);
+  const riskInfo = useRiskLevel(gameState.detectionLevel);
+  const saveIndicator = useSaveIndicator(gameState.lastSaveTime);
+  const attemptsDisplay = useAttemptsDisplay(gameState.legacyAlertCounter || 0);
 
   // Render terminal entry
   // Render text with redaction styling (████████)
@@ -1350,7 +1131,7 @@ export default function Terminal({
               {saveIndicator}
             </span>
           )}
-          <span className={styles.statusRight}>{getStatusBar()}</span>
+          <span className={styles.statusRight}>{statusBar}</span>
 
           {/* Dropdown menu */}
           {showHeaderMenu && (
@@ -1446,7 +1227,7 @@ export default function Terminal({
               className={`${styles.attItem} ${showAttBar ? styles.trackerVisible : styles.trackerHidden}`}
             >
               <span className={styles.memoryLevel}>
-                {t('terminal.tracker.alerts')} {getAttemptsDisplay()}
+                {t('terminal.tracker.alerts')} {attemptsDisplay}
               </span>
             </span>
           </div>
