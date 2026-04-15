@@ -23,6 +23,7 @@ import {
 import {
   getWarmupAdjustedDetection,
   isArchiveOnlyFile,
+  EVIDENCE_UFO74_REACTIONS,
 } from './helpers';
 import type { CommandRegistry } from './types';
 
@@ -747,6 +748,18 @@ export const filesystemCommands: CommandRegistry = {
       const reaction = UFO74_CONSPIRACY_REACTIONS[reactionIndex];
 
       ufo74ContextMessage = createUFO74Message(reaction);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // UFO74 FILE-SPECIFIC REACTIONS — characterful comment for every file
+    // Fires when no higher-priority message (safe-file, sanitized, conspiracy)
+    // has already claimed the slot. Only on first read (re-reads return early).
+    // ═══════════════════════════════════════════════════════════════════════════
+    if (!ufo74ContextMessage && !isEncryptedAndLocked && state.tutorialComplete) {
+      const fileReaction = EVIDENCE_UFO74_REACTIONS[fileName];
+      if (fileReaction) {
+        ufo74ContextMessage = [createEntry('ufo74', `UFO74: ${fileReaction}`)];
+      }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════

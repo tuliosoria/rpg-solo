@@ -33,7 +33,7 @@ import { translateStatic } from '../../i18n';
 // UFO74 EVIDENCE REACTIONS
 // ═══════════════════════════════════════════════════════════════════════════
 
-const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
+export const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'alpha_journal.log':
     'that journal. the scientist lost his mind. but he was right about everything.',
   'alpha_neural_connection.psi':
