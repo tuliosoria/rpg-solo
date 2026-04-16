@@ -74,6 +74,12 @@ function getStreamingDelayConfig(
   };
 }
 
+function clampTutorialStep(step: number | undefined, steps: readonly TerminalEntry[][]): number {
+  if (steps.length === 0) return 0;
+  if (!Number.isFinite(step)) return 0;
+  return Math.min(steps.length - 1, Math.max(0, Math.floor(step ?? 0)));
+}
+
 type EncryptedChannelState = 'idle' | 'awaiting_open' | 'open' | 'awaiting_close';
 
 interface TerminalInputRefs {
@@ -306,7 +312,7 @@ export function useTerminalInput({
             return;
           }
 
-          const introStep = gameState.tutorialStep ?? 0;
+          const introStep = clampTutorialStep(gameState.tutorialStep, TUTORIAL_INTRO_STEPS);
 
           if (introStep < TUTORIAL_INTRO_STEPS.length) {
             const stepEntries = TUTORIAL_INTRO_STEPS[introStep];
@@ -361,7 +367,7 @@ export function useTerminalInput({
             return;
           }
 
-          const briefingStep = gameState.tutorialStep ?? 0;
+          const briefingStep = clampTutorialStep(gameState.tutorialStep, TUTORIAL_BRIEFING_STEPS);
 
           if (briefingStep < TUTORIAL_BRIEFING_STEPS.length) {
             const stepEntries = TUTORIAL_BRIEFING_STEPS[briefingStep];
