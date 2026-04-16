@@ -21,10 +21,15 @@ export const FIREWALL_PHRASE_TEXT = FIREWALL_PHRASES.map(phrase =>
 
 // Firewall audio — plays pre-recorded audio files instead of TTS
 const FIREWALL_AUDIO_PATHS = [
-  '/audio/firewall-audio.wav',
-  '/audio/firewall-audio-2.wav',
-  '/audio/firewall-voice-3.wav',
-  '/audio/firewall-audio-4.wav',
+  '/audio/firewall-taunt-1.wav',
+  '/audio/firewall-taunt-2.wav',
+  '/audio/firewall-taunt-3.wav',
+  '/audio/firewall-taunt-4.wav',
+  '/audio/firewall-taunt-5.wav',
+  '/audio/firewall-taunt-6.wav',
+  '/audio/firewall-taunt-7.wav',
+  '/audio/firewall-taunt-8.wav',
+  '/audio/firewall-taunt-9.wav',
 ];
 
 let firewallAudioElements: HTMLAudioElement[] = [];

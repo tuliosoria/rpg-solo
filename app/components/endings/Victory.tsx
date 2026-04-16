@@ -86,7 +86,7 @@ export default function Victory({
   neuralLinkAuthenticated = false,
   textSpeed = 'normal',
 }: VictoryProps) {
-  const { t } = useI18n();
+  const { t, translateRuntimeText } = useI18n();
   const isInstant = textSpeed === 'instant';
   const [phase, setPhase] = useState<'loading' | 'page' | 'complete'>(
     isInstant ? 'complete' : 'loading'
@@ -137,7 +137,7 @@ export default function Victory({
     alphaReleased: hasReleasedAlpha,
     neuralLinkAuthenticated: hasNeuralLink,
   } = resolvedEndingFlags;
-  const endingTitle = getEndingTitle(resolvedEndingId);
+  const endingTitle = translateRuntimeText(getEndingTitle(resolvedEndingId));
 
   const ending = ENDINGS[resolvedEndingId];
   const aol = ending?.aol ?? {
@@ -317,7 +317,7 @@ export default function Victory({
           {phase === 'loading' ? (
             <div className={styles.loadingScreen}>
               <div className={styles.loadingText}>
-                Transferring data from www.aol.com...
+                {t('ending.aol.loading')}
               </div>
               <div className={styles.progressBarTrack}>
                 <div
@@ -334,7 +334,7 @@ export default function Victory({
                 style={staggerDelay(0)}
                 aria-hidden="true"
               >
-                <span className={styles.blink}>★★★ BREAKING NEWS ★★★</span>
+                <span className={styles.blink}>★★★ {t('ending.aol.breakingNews')} ★★★</span>
               </div>
 
               {/* Pixel Divider */}
@@ -351,7 +351,7 @@ export default function Victory({
                 aria-hidden="true"
               >
                 <div className={styles.marqueeTrack}>
-                  <span className={styles.marqueeText}>{aol.subheadline}</span>
+                  <span className={styles.marqueeText}>{translateRuntimeText(aol.subheadline)}</span>
                 </div>
               </div>
 
@@ -360,7 +360,7 @@ export default function Victory({
                 className={`${sectionClass} ${styles.headline}`}
                 style={staggerDelay(3)}
               >
-                {aol.headline}
+                {translateRuntimeText(aol.headline)}
               </h1>
 
               {/* Body Paragraphs */}
@@ -370,40 +370,36 @@ export default function Victory({
                   className={`${sectionClass} ${styles.bodyText}`}
                   style={staggerDelay(4 + i)}
                 >
-                  {paragraph}
+                  {translateRuntimeText(paragraph)}
                 </p>
               ))}
 
-              {/* Article image / broken-image fallback */}
-              {aol.imageSrc ? (
-                <figure
-                  className={`${sectionClass} ${styles.newsPhoto}`}
-                  style={staggerDelay(4 + aol.body.length)}
-                >
-                  <Image
-                    className={styles.newsPhotoImg}
-                    src={aol.imageSrc}
-                    alt={aol.imageAlt}
-                    width={420}
-                    height={280}
-                    sizes="(max-width: 480px) 100vw, 420px"
-                  />
-                  <figcaption>
-                    <div className={styles.imageCaption}>{aol.imageAlt}</div>
-                    <div className={styles.imageCredit}>Photo: Associated Press Wire Service</div>
-                  </figcaption>
-                </figure>
-              ) : (
-                <div
-                  className={`${sectionClass} ${styles.brokenImage}`}
-                  style={staggerDelay(4 + aol.body.length)}
-                  aria-hidden="true"
-                >
-                  <div className={styles.brokenImageIcon}>✕</div>
-                  <div className={styles.brokenImageLabel}>{aol.imageAlt}</div>
-                  <div className={styles.imageCredit}>Photo: Associated Press Wire Service</div>
-                </div>
-              )}
+              {/* Photo */}
+              <div
+                className={`${sectionClass} ${aol.imageSrc ? styles.newsPhoto : styles.brokenImage}`}
+                style={staggerDelay(4 + aol.body.length)}
+              >
+                {aol.imageSrc ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={aol.imageSrc}
+                      alt={translateRuntimeText(aol.imageAlt)}
+                      className={styles.newsPhotoImg}
+                    />
+                    <div className={styles.imageCaption}>
+                      {translateRuntimeText(aol.imageAlt)}
+                    </div>
+                    <div className={styles.imageCredit}>{t('ending.aol.photoCredit')}</div>
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.brokenImageIcon} aria-hidden="true">✕</div>
+                    <div className={styles.brokenImageLabel}>{translateRuntimeText(aol.imageAlt)}</div>
+                    <div className={styles.imageCredit}>{t('ending.aol.photoCredit')}</div>
+                  </>
+                )}
+              </div>
 
               {/* UFO74 Wire Footer */}
               <div
@@ -412,7 +408,7 @@ export default function Victory({
               >
                 <hr className={styles.thinRule} />
                 <div className={styles.editorNote}>
-                  <em>Editor&apos;s note: {ending?.ufo74_final ?? ''}</em>
+                  <em>{t('ending.aol.editorNote')}: {translateRuntimeText(ending?.ufo74_final ?? '')}</em>
                 </div>
               </div>
 
@@ -478,11 +474,11 @@ export default function Victory({
                   {/* Visitor Counter */}
                   <div className={styles.visitorCounter} aria-hidden="true">
                     <span className={styles.counterIcon}>📊</span>
-                    You are visitor #{aol.visitorCount.toLocaleString()}
+                    {t('ending.aol.visitor', { count: aol.visitorCount.toLocaleString() })}
                   </div>
 
                   <div className={styles.bestViewed} aria-hidden="true">
-                    Best viewed in Netscape Navigator 3.0 at 800×600
+                    {t('ending.aol.bestViewed')}
                   </div>
 
                   <button
@@ -505,8 +501,8 @@ export default function Victory({
         <div className={styles.statusBar} aria-hidden="true">
           <span>
             {phase === 'loading'
-              ? `Transferring data... ${loadingProgress}%`
-              : 'Document: Done'}
+              ? t('ending.aol.transferring', { progress: String(loadingProgress) })
+              : t('ending.aol.documentDone')}
           </span>
         </div>
       </div>
