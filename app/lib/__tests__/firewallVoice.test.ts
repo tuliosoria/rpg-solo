@@ -23,7 +23,7 @@ describe('firewallVoice', () => {
       play = vi.fn(() => Promise.resolve());
       pause = vi.fn();
 
-      constructor(_src: string) {
+      constructor(_audioPath: string) {
         createdAudio.push(this);
       }
     }
