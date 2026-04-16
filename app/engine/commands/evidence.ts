@@ -24,7 +24,12 @@ const LEAK_SEQUENCE_POOL = [
 const EVIDENCE_THRESHOLD_FOR_SEQUENCE = 5;
 
 function generateLeakSequence(state: GameState): string[] {
-  const rng = createSeededRng(state.seed ^ 0x4c45414b); // XOR with "LEAK" for unique sequence
+  // Guard: migrated saves may lack `seed` — derive a stable fallback so the RNG is deterministic.
+  const baseSeed =
+    typeof state.seed === 'number' && Number.isFinite(state.seed)
+      ? state.seed
+      : ((state.savedFiles?.size || 0) + 1) * 0x9e3779b1;
+  const rng = createSeededRng(baseSeed ^ 0x4c45414b); // XOR with "LEAK" for unique sequence
   const shuffled = seededShuffle(rng, LEAK_SEQUENCE_POOL);
   return shuffled.slice(0, 3);
 }
@@ -40,6 +45,23 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
   const subcommand = args.join(' ');
   const sequence = state.leakSequence!;
   const progress = state.leakSequenceProgress;
+
+  // Sequence already complete — informational response, do not reset or penalize.
+  if (progress >= sequence.length) {
+    const savedCount = state.savedFiles?.size || 0;
+    return {
+      output: [
+        createEntry('notice', ''),
+        createEntry('notice', '  LEAK CHANNEL ALREADY PREPARED'),
+        createEntry('system', ''),
+        createEntry('system', `  Files saved: ${savedCount}/${MAX_EVIDENCE_COUNT}`),
+        createEntry('system', '  Run "leak" with no arguments to transmit once all files are saved.'),
+        createEntry('system', ''),
+      ],
+      stateChanges: {},
+    };
+  }
+
   const expected = sequence[progress];
 
   if (subcommand === expected) {

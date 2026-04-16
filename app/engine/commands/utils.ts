@@ -5,10 +5,16 @@ import { MAX_COMMAND_INPUT_LENGTH } from '../../constants/limits';
 import { createSeededRng } from '../rng';
 import { DETECTION_THRESHOLDS, applyWarmupDetection } from '../../constants/detection';
 
-// Generate unique ID for terminal entries
+// Generate unique ID for terminal entries.
+// Includes a random suffix so HMR-remounted modules and migrated saves can't collide.
 let entryIdCounter = 0;
 export function generateEntryId(): string {
-  return `entry_${Date.now()}_${entryIdCounter++}`;
+  const rand = Math.floor(Math.random() * 0xffffff).toString(36);
+  return `entry_${Date.now()}_${entryIdCounter++}_${rand}`;
+}
+
+export function resetEntryIdCounter(): void {
+  entryIdCounter = 0;
 }
 
 export function createEntry(type: TerminalEntry['type'], content: string): TerminalEntry {

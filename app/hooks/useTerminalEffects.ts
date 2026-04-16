@@ -437,9 +437,15 @@ export function useTerminalEffects({
   useEffect(() => {
     const interval = setInterval(() => {
       const currentState = gameStateRef.current;
-      const isActivePlayPhase =
-        gamePhase === 'terminal' || gamePhase === 'blackout';
-      if (isActivePlayPhase && !currentState.isGameOver && !currentState.gameWon) {
+      const isActivePlayPhase = gamePhase === 'terminal';
+      // Do not autosave during blackout / victory transition: gamePhase isn't persisted
+      // and saving a terminal state with evidencesSaved=true would lose the ending on reload.
+      if (
+        isActivePlayPhase &&
+        !currentState.isGameOver &&
+        !currentState.gameWon &&
+        !currentState.evidencesSaved
+      ) {
         const savedAt = autoSave(currentState);
         if (typeof savedAt === 'number') {
           setGameState(prev => ({ ...prev, lastSaveTime: savedAt }));
@@ -453,15 +459,16 @@ export function useTerminalEffects({
   }, [gamePhase, gameStateRef, setGameState]);
 
   // Phase transition: when evidencesSaved becomes true, trigger blackout
-  // Skip if isGameOver is true to avoid conflicting state (e.g., detection hit 100% on a prior command)
+  // Victory takes priority over isGameOver: if detection hit 100% on the same command,
+  // we still want to show the victory sequence rather than stall in 'terminal'.
   useEffect(() => {
-    if (gameState.evidencesSaved && gamePhase === 'terminal' && !gameState.isGameOver) {
+    if (gameState.evidencesSaved && gamePhase === 'terminal') {
       const timer = setTimeout(() => {
         setGamePhase('blackout');
       }, BLACKOUT_TRANSITION_DELAY_MS);
       return () => clearTimeout(timer);
     }
-  }, [gameState.evidencesSaved, gamePhase, gameState.isGameOver, setGamePhase]);
+  }, [gameState.evidencesSaved, gamePhase, setGamePhase]);
 
   // "They're watching" paranoia messages
   useEffect(() => {
@@ -895,7 +902,7 @@ export function useTerminalEffects({
       }
     };
   }, [
-    gameState.history,
+    gameState.lastActivityTime,
     gamePhase,
     gameState.isGameOver,
     gameState.tutorialStep,

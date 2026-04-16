@@ -1820,6 +1820,7 @@ export default function Terminal({
                 setTimeout(() => {
                   setGameOverReason(t('terminal.turing.failed.reason'));
                   setShowGameOver(true);
+                  setGamePhase('bad_ending');
                 }, GAME_OVER_DELAY_MS);
               }
 

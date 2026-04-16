@@ -188,8 +188,8 @@ export function validateTutorialInput(
       return /^cd\s+misc$/.test(normalized);
 
     case TutorialStateID.FILE_DISPLAY:
-      // Full command
-      if (/^open\s+cafeteria_menu_week03\.txt$/.test(normalized)) return true;
+      // Full command (with or without .txt extension)
+      if (/^open\s+cafeteria_menu_week03(\.txt)?$/.test(normalized)) return true;
       // Autocomplete: open c + TAB
       if (tabPressed && /^open\s+c/.test(normalized)) {
         const prefix = normalized.replace(/^open\s+/, '');

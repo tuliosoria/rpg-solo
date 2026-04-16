@@ -663,7 +663,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
               ufo74SecretDiscovered: true,
               endingType: 'secret',
               endingId: targetEnding,
-              isGameOver: true,
+              isGameOver: false,
             },
             skipToPhase: 'secret_ending' as const,
           };
@@ -694,7 +694,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
               ufo74SecretDiscovered: true,
               endingType: 'secret',
               endingId: targetEnding,
-              isGameOver: true,
+              isGameOver: false,
             },
             skipToPhase: 'secret_ending' as const,
           };

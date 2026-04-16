@@ -53,10 +53,6 @@ export function useGameActions({
   }, [onExitAction]);
 
   const handleFirewallActivate = useCallback(() => {
-    setGameState(prev => ({
-      ...prev,
-      firewallActive: true,
-    }));
     playSound('alert');
     const firewallWarning = createEntryI18n(
       'ufo74',
@@ -65,6 +61,7 @@ export function useGameActions({
     );
     setGameState(prev => ({
       ...prev,
+      firewallActive: true,
       history: appendToHistory(prev.history, firewallWarning),
     }));
   }, [playSound, setGameState]);
