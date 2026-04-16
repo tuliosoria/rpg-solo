@@ -36,14 +36,21 @@ let firewallAudioElements: HTMLAudioElement[] = [];
 let audioUnlocked = false;
 let lastAudioIndex = -1;
 
+function ensureVoiceElements(): HTMLAudioElement[] {
+  if (typeof window === 'undefined') return [];
+  if (firewallAudioElements.length === 0) {
+    firewallAudioElements = FIREWALL_AUDIO_PATHS.map(path => {
+      const audio = new Audio(path);
+      audio.preload = 'auto';
+      return audio;
+    });
+  }
+  return firewallAudioElements;
+}
+
 /** Initialize firewall audio — preload all audio files */
 export function initVoices(): void {
-  if (typeof window === 'undefined') return;
-  firewallAudioElements = FIREWALL_AUDIO_PATHS.map(path => {
-    const audio = new Audio(path);
-    audio.preload = 'auto';
-    return audio;
-  });
+  ensureVoiceElements();
 }
 
 /**
@@ -52,16 +59,20 @@ export function initVoices(): void {
  */
 export function unlockSpeechSynthesis(): void {
   if (audioUnlocked || typeof window === 'undefined') return;
-  const first = firewallAudioElements[0];
-  if (first) {
-    first.volume = 0;
-    first.play().then(() => {
+  const first = ensureVoiceElements()[0];
+  if (!first) return;
+  first.volume = 0;
+  void first
+    .play()
+    .then(() => {
       first.pause();
       first.currentTime = 0;
       first.volume = 1.0;
-    }).catch(() => {});
-  }
-  audioUnlocked = true;
+      audioUnlocked = true;
+    })
+    .catch(() => {
+      first.volume = 1.0;
+    });
 }
 
 /** Play a random firewall audio file (never same twice in a row) */

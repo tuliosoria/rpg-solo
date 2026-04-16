@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { DEFAULT_GAME_STATE, GameState } from '../../types';
+import { DEFAULT_GAME_STATE, GameState, TutorialStateID } from '../../types';
 
 vi.mock('../../storage/saves', () => ({
   saveCheckpoint: vi.fn(),
@@ -123,6 +123,7 @@ function createOptions(gameState: GameState, inputValue = 'status') {
       skipStreamingRef: { current: false },
       isProcessingRef: { current: false },
     },
+    getTrackedState: () => trackedState,
   };
 }
 
@@ -219,5 +220,66 @@ describe('useTerminalInput evidence progression', () => {
     });
 
     expect(options.checkAchievement).toHaveBeenCalledWith('truth_seeker');
+  });
+});
+
+describe('useTerminalInput tutorial recovery', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('recovers oversized intro steps by replaying the final intro block', async () => {
+    const options = createOptions(
+      createGameState({
+        tutorialComplete: false,
+        tutorialStep: 999,
+        interactiveTutorialState: {
+          ...DEFAULT_GAME_STATE.interactiveTutorialState!,
+          current: TutorialStateID.INTRO,
+        },
+      }),
+      ''
+    );
+    const { result } = renderHook(() => useTerminalInput(options));
+
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+
+    const nextState = options.getTrackedState();
+    expect(nextState.tutorialStep).toBe(0);
+    expect(nextState.interactiveTutorialState?.current).toBe(TutorialStateID.LS_PROMPT);
+  });
+
+  it('recovers oversized briefing steps by completing the tutorial', async () => {
+    const options = createOptions(
+      createGameState({
+        tutorialComplete: false,
+        tutorialStep: 999,
+        interactiveTutorialState: {
+          ...DEFAULT_GAME_STATE.interactiveTutorialState!,
+          current: TutorialStateID.TUTORIAL_END,
+          dialogueComplete: true,
+        },
+      }),
+      ''
+    );
+    const { result } = renderHook(() => useTerminalInput(options));
+
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+
+    const nextState = options.getTrackedState();
+    expect(nextState.tutorialComplete).toBe(true);
+    expect(nextState.tutorialStep).toBe(-1);
+    expect(nextState.interactiveTutorialState?.current).toBe(TutorialStateID.GAME_ACTIVE);
+    expect(saveCheckpoint).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tutorialComplete: true,
+        tutorialStep: -1,
+      }),
+      'Tutorial complete'
+    );
   });
 });

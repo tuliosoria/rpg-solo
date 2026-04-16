@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './Victory.module.css';
 import { unlockAchievement, Achievement } from '../../engine/achievements';
