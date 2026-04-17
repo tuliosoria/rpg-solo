@@ -277,7 +277,7 @@ export default function Terminal({
       currentPath: gameState.currentPath,
       detectionLevel: gameState.detectionLevel,
       gameOver: gameState.isGameOver || gamePhase === 'bad_ending' || gamePhase === 'neutral_ending',
-      gameWon: gameState.gameWon || gamePhase === 'victory' || gamePhase === 'secret_ending',
+      gameWon: gameState.gameWon || gamePhase === 'victory',
       gamePhase,
       savedCount: gameState.savedFiles?.size || 0,
       filesReadCount: gameState.filesRead?.size || 0,
@@ -1088,7 +1088,15 @@ export default function Terminal({
   if (gamePhase === 'secret_ending') {
     return (
       <SecretEnding
-        onRestartAction={handleRestart}
+        onDismissAction={() => {
+          setGamePhase('terminal');
+          setGameState(prev => ({
+            ...prev,
+            endingType: undefined,
+            isGameOver: false,
+            ufo74SecretDiscovered: false,
+          }));
+        }}
         commandCount={gameState.sessionCommandCount}
         detectionLevel={gameState.detectionLevel}
         textSpeed={textSpeed}

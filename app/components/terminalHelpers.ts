@@ -46,7 +46,6 @@ export const getEvidenceVideoAttachment = (
 export const deriveGamePhase = (state: GameState): GamePhase => {
   if (state.endingType === 'bad') return 'bad_ending';
   if (state.endingType === 'neutral') return 'neutral_ending';
-  if (state.endingType === 'secret') return 'secret_ending';
   if (state.gameWon || state.endingType === 'good') return 'victory';
   if (state.evidencesSaved) return 'blackout';
   return 'terminal';

@@ -901,7 +901,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {
           ufo74SecretDiscovered: true,
           endingType: 'secret',
-          isGameOver: true,
+          isGameOver: false,
         },
         skipToPhase: 'secret_ending' as const,
       };

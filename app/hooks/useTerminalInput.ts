@@ -287,7 +287,7 @@ export function useTerminalInput({
         setGameState(prev => ({
           ...prev,
           endingType: 'secret',
-          isGameOver: true,
+          isGameOver: false,
         }));
         return;
       }

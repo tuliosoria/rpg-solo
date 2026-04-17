@@ -11,7 +11,7 @@ import { recordEnding } from '../../../storage/statistics';
 
 describe('SecretEnding Component', () => {
   const defaultProps = {
-    onRestartAction: vi.fn(),
+    onDismissAction: vi.fn(),
     commandCount: 120,
     detectionLevel: 70,
   };
@@ -48,7 +48,7 @@ describe('SecretEnding Component', () => {
   });
 
   it('uses default values when props not provided', () => {
-    render(<SecretEnding onRestartAction={vi.fn()} />);
+    render(<SecretEnding onDismissAction={vi.fn()} />);
     
     // Component should use default values (commandCount=0, detectionLevel=100)
     expect(recordEnding).toHaveBeenCalledWith('secret', 0, 100);
@@ -99,7 +99,7 @@ describe('SecretEnding Component', () => {
     expect(document.body).toBeTruthy();
   });
 
-  it('calls onRestartAction when restart is clicked', async () => {
+  it('calls onDismissAction when restart is clicked', async () => {
     render(<SecretEnding {...defaultProps} />);
     
     // Fast-forward to final phase
@@ -111,7 +111,7 @@ describe('SecretEnding Component', () => {
     const restartButton = screen.queryByText(/play again/i) || screen.queryByText(/restart/i);
     if (restartButton) {
       fireEvent.click(restartButton);
-      expect(defaultProps.onRestartAction).toHaveBeenCalled();
+      expect(defaultProps.onDismissAction).toHaveBeenCalled();
     }
   });
 

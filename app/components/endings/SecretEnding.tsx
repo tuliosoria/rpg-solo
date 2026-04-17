@@ -8,7 +8,7 @@ import type { TextSpeed } from '../../types';
 import { scaleTextSpeedDelay } from '../textSpeed';
 
 interface SecretEndingProps {
-  onRestartAction: () => void;
+  onDismissAction: () => void;
   commandCount?: number;
   detectionLevel?: number;
   textSpeed?: TextSpeed;
@@ -77,7 +77,7 @@ const SECRET_TEXT = [
 ];
 
 export default function SecretEnding({
-  onRestartAction,
+  onDismissAction,
   commandCount = 0,
   detectionLevel = 100,
   textSpeed = 'normal',
@@ -196,10 +196,10 @@ export default function SecretEnding({
           <button
             ref={restartButtonRef}
             className={styles.restartButton}
-            onClick={onRestartAction}
-            aria-label={translateRuntimeText('Return to menu - restart game')}
+            onClick={onDismissAction}
+            aria-label={translateRuntimeText('Return to terminal')}
           >
-            {t('ending.returnToMenu')}
+            {t('ending.returnToTerminal')}
           </button>
         </div>
       )}
