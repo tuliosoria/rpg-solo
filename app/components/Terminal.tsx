@@ -515,7 +515,6 @@ export default function Terminal({
   } = useGameActions({
     setGameState,
     setGamePhase,
-    gameStateRef,
     onExitAction,
     playSound,
   });

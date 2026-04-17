@@ -163,10 +163,24 @@ function writeMarkdownReport(analysis, outputPath = REPORT_MARKDOWN_PATH) {
   fs.writeFileSync(outputPath, formatMarkdownReport(analysis));
 }
 
+function getInheritedNodeOptions() {
+  const nodeOptions = process.env.NODE_OPTIONS?.trim();
+  const inheritedOptions = nodeOptions ? [nodeOptions] : [];
+
+  // Node 20 rejects --no-webstorage in NODE_OPTIONS, while newer runtimes allow it.
+  if (
+    process.allowedNodeEnvironmentFlags?.has('--no-webstorage') &&
+    !inheritedOptions.some(option => option.includes('--no-webstorage'))
+  ) {
+    inheritedOptions.push('--no-webstorage');
+  }
+
+  return inheritedOptions.join(' ');
+}
+
 function runVitestSuite(testFiles) {
   const vitestEntry = path.join(REPO_ROOT, 'node_modules', 'vitest', 'vitest.mjs');
-  const nodeOptions = process.env.NODE_OPTIONS?.trim();
-  const inheritedNodeOptions = nodeOptions ? `${nodeOptions} --no-webstorage` : '--no-webstorage';
+  const inheritedNodeOptions = getInheritedNodeOptions();
   const result = spawnSync(
     process.execPath,
     [vitestEntry, 'run', '--configLoader', 'runner', ...testFiles],
@@ -174,7 +188,7 @@ function runVitestSuite(testFiles) {
       cwd: REPO_ROOT,
       env: {
         ...process.env,
-        NODE_OPTIONS: inheritedNodeOptions,
+        ...(inheritedNodeOptions ? { NODE_OPTIONS: inheritedNodeOptions } : {}),
       },
       stdio: 'inherit',
     }

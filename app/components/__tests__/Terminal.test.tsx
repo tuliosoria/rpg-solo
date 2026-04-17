@@ -5,7 +5,6 @@ import styles from '../Terminal.module.css';
 import { DEFAULT_GAME_STATE, GameState, TutorialStateID } from '../../types';
 import { I18nProvider } from '../../i18n';
 import { AUTOSAVE_INTERVAL_MS } from '../../constants/timing';
-import * as rngModule from '../../engine/rng';
 
 const { mockSpeakCustomFirewallVoice, mockFirewallEyes, mockStaticNoise } = vi.hoisted(() => ({
   mockSpeakCustomFirewallVoice: vi.fn(),
@@ -292,7 +291,7 @@ describe('Terminal Component', () => {
   });
 
   it('restarts the alien silhouette timer when a new external state is loaded', async () => {
-    const randomSpy = vi.spyOn(rngModule, 'uiRandom').mockReturnValue(0);
+    const mathRandomSpy = vi.spyOn(Math, 'random').mockReturnValue(0);
 
     try {
       const { rerender } = render(
@@ -308,7 +307,7 @@ describe('Terminal Component', () => {
       await act(async () => {});
 
       act(() => {
-        vi.advanceTimersByTime(15000);
+        vi.advanceTimersByTime(30000);
       });
 
       mockStaticNoise.mockClear();
@@ -326,7 +325,7 @@ describe('Terminal Component', () => {
       await act(async () => {});
 
       act(() => {
-        vi.advanceTimersByTime(15001);
+        vi.advanceTimersByTime(30001);
       });
 
       await act(async () => {});
@@ -338,7 +337,7 @@ describe('Terminal Component', () => {
       ).toBe(false);
 
       act(() => {
-        vi.advanceTimersByTime(15000);
+        vi.advanceTimersByTime(30000);
       });
 
       await act(async () => {});
@@ -349,7 +348,7 @@ describe('Terminal Component', () => {
         )
       ).toBe(true);
     } finally {
-      randomSpy.mockRestore();
+      mathRandomSpy.mockRestore();
     }
   });
 
@@ -940,16 +939,16 @@ describe('Terminal Component', () => {
     expect(saveIndicator).toHaveClass(styles.saveIndicator);
   });
 
-  it('renders blackout when evidencesSaved is active', async () => {
+  it('renders victory when evidencesSaved is active', async () => {
     vi.useRealTimers();
-    const blackoutState = {
+    const victoryState = {
       ...defaultProps.initialState,
       evidencesSaved: true,
     };
 
-    render(<Terminal {...defaultProps} initialState={blackoutState} />);
+    render(<Terminal {...defaultProps} initialState={victoryState} />);
 
-    expect(await screen.findByText(/CONNECTION INTERRUPTED/i)).toBeInTheDocument();
+    expect(await screen.findByRole('dialog', { name: /INCOMPLETE PICTURE/i })).toBeInTheDocument();
   });
 
   it('renders bad ending when endingType is bad', async () => {

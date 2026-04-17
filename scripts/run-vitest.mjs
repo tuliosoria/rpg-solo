@@ -5,8 +5,23 @@ import { fileURLToPath } from 'node:url';
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '..');
 const vitestEntry = path.join(repoRoot, 'node_modules', 'vitest', 'vitest.mjs');
-const nodeOptions = process.env.NODE_OPTIONS?.trim();
-const inheritedNodeOptions = nodeOptions ? `${nodeOptions} --no-webstorage` : '--no-webstorage';
+
+function getInheritedNodeOptions() {
+  const nodeOptions = process.env.NODE_OPTIONS?.trim();
+  const inheritedOptions = nodeOptions ? [nodeOptions] : [];
+
+  // Node 20 rejects --no-webstorage in NODE_OPTIONS, while newer runtimes allow it.
+  if (
+    process.allowedNodeEnvironmentFlags?.has('--no-webstorage') &&
+    !inheritedOptions.some(option => option.includes('--no-webstorage'))
+  ) {
+    inheritedOptions.push('--no-webstorage');
+  }
+
+  return inheritedOptions.join(' ');
+}
+
+const inheritedNodeOptions = getInheritedNodeOptions();
 
 const child = spawn(
   process.execPath,
@@ -15,7 +30,7 @@ const child = spawn(
     cwd: repoRoot,
     env: {
       ...process.env,
-      NODE_OPTIONS: inheritedNodeOptions,
+      ...(inheritedNodeOptions ? { NODE_OPTIONS: inheritedNodeOptions } : {}),
     },
     stdio: 'inherit',
   }

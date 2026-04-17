@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, type MutableRefObject } from 'react';
+import { useCallback } from 'react';
 import { createEntryI18n } from '../engine/commands/utils';
 import type { GamePhase, GameState } from '../types';
 import type { SoundType } from './useSound';
@@ -9,7 +9,6 @@ import { appendToHistory } from '../lib/appendToHistory';
 interface UseGameActionsOptions {
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
-  gameStateRef: MutableRefObject<GameState>;
   onExitAction: () => void;
   playSound: (sound: SoundType) => void;
 }
@@ -17,7 +16,6 @@ interface UseGameActionsOptions {
 export function useGameActions({
   setGameState,
   setGamePhase,
-  gameStateRef,
   onExitAction,
   playSound,
 }: UseGameActionsOptions) {

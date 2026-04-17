@@ -18,13 +18,11 @@ describe('useGameActions', () => {
       state = typeof updater === 'function' ? updater(state) : updater;
     });
     const setGamePhase = vi.fn();
-    const gameStateRef = { current: initialState };
 
     const { result } = renderHook(() =>
       useGameActions({
         setGameState,
         setGamePhase,
-        gameStateRef,
         onExitAction: vi.fn(),
         playSound: vi.fn(),
       })
