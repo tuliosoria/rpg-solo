@@ -46,7 +46,7 @@ import {
 // INSTITUTIONAL FRAMING - Implicit guidance through bureaucratic language
 // ═══════════════════════════════════════════════════════════════════════════
 
-const incident_review_protocol: FileNode = {
+export const incident_review_protocol: FileNode = {
   type: 'file',
   name: 'incident_review_protocol.txt',
   status: 'intact',
@@ -74,7 +74,7 @@ const incident_review_protocol: FileNode = {
   ],
 };
 
-const session_objectives_memo: FileNode = {
+export const session_objectives_memo: FileNode = {
   type: 'file',
   name: 'session_objectives.txt',
   status: 'intact',
@@ -103,7 +103,7 @@ const session_objectives_memo: FileNode = {
 // MUNDANE FILES - Administrative noise to obscure signal
 // ═══════════════════════════════════════════════════════════════════════════
 
-const facilities_memo_12: FileNode = {
+export const facilities_memo_12: FileNode = {
   type: 'file',
   name: 'facilities_memo_12.txt',
   status: 'intact',
@@ -127,7 +127,7 @@ const facilities_memo_12: FileNode = {
   ],
 };
 
-const parking_allocation_jan96: FileNode = {
+export const parking_allocation_jan96: FileNode = {
   type: 'file',
   name: 'parking_allocation_jan96.txt',
   status: 'intact',
@@ -150,7 +150,7 @@ const parking_allocation_jan96: FileNode = {
   ],
 };
 
-const budget_request_q1_96: FileNode = {
+export const budget_request_q1_96: FileNode = {
   type: 'file',
   name: 'budget_request_q1_96.txt',
   status: 'intact',
@@ -177,7 +177,7 @@ const budget_request_q1_96: FileNode = {
   ],
 };
 
-const intercept_summary_dec95: FileNode = {
+export const intercept_summary_dec95: FileNode = {
   type: 'file',
   name: 'intercept_summary_dec95.txt',
   status: 'intact',
@@ -204,7 +204,7 @@ const intercept_summary_dec95: FileNode = {
 };
 
 // Morse code audio intercept - encrypted signal from recovery site
-const morse_intercept: FileNode = {
+export const morse_intercept: FileNode = {
   type: 'file',
   name: 'morse_intercept.sig',
   status: 'intact',
@@ -235,7 +235,7 @@ const morse_intercept: FileNode = {
   ],
 };
 
-const hvac_maintenance_log: FileNode = {
+export const hvac_maintenance_log: FileNode = {
   type: 'file',
   name: 'hvac_maintenance_log.txt',
   status: 'intact',
@@ -263,7 +263,7 @@ const hvac_maintenance_log: FileNode = {
   ],
 };
 
-const personnel_transfer_notice: FileNode = {
+export const personnel_transfer_notice: FileNode = {
   type: 'file',
   name: 'personnel_transfer_notice.txt',
   status: 'intact',
@@ -289,7 +289,7 @@ const personnel_transfer_notice: FileNode = {
   ],
 };
 
-const regional_summary_jan96: FileNode = {
+export const regional_summary_jan96: FileNode = {
   type: 'file',
   name: 'regional_summary_jan96.txt',
   status: 'intact',
@@ -318,7 +318,7 @@ const regional_summary_jan96: FileNode = {
   ],
 };
 
-const asset_transfer_form_incomplete: FileNode = {
+export const asset_transfer_form_incomplete: FileNode = {
   type: 'file',
   name: 'asset_transfer_form_incomplete.txt',
   status: 'intact',
@@ -347,7 +347,7 @@ const asset_transfer_form_incomplete: FileNode = {
   ],
 };
 
-const tmp_note_deleted: FileNode = {
+export const tmp_note_deleted: FileNode = {
   type: 'file',
   name: 'note_to_self.tmp',
   status: 'intact',
@@ -375,7 +375,7 @@ const tmp_note_deleted: FileNode = {
 // RED HERRING FILES - Mundane content to obscure the signal
 // ═══════════════════════════════════════════════════════════════════════════
 
-const office_supplies_request: FileNode = {
+export const office_supplies_request: FileNode = {
   type: 'file',
   name: 'supplies_request_jan96.txt',
   status: 'intact',
@@ -402,7 +402,7 @@ const office_supplies_request: FileNode = {
   ],
 };
 
-const employee_birthday_list: FileNode = {
+export const employee_birthday_list: FileNode = {
   type: 'file',
   name: 'birthdays_jan96.txt',
   status: 'intact',
@@ -426,7 +426,7 @@ const employee_birthday_list: FileNode = {
   ],
 };
 
-const telephone_directory: FileNode = {
+export const telephone_directory: FileNode = {
   type: 'file',
   name: 'phone_directory_96.txt',
   status: 'intact',
@@ -456,7 +456,7 @@ const telephone_directory: FileNode = {
   ],
 };
 
-const vehicle_mileage_log: FileNode = {
+export const vehicle_mileage_log: FileNode = {
   type: 'file',
   name: 'vehicle_log_jan96.txt',
   status: 'intact',
@@ -481,7 +481,7 @@ const vehicle_mileage_log: FileNode = {
   ],
 };
 
-const printer_queue_notice: FileNode = {
+export const printer_queue_notice: FileNode = {
   type: 'file',
   name: 'printer_notice.txt',
   status: 'intact',
@@ -508,7 +508,7 @@ const printer_queue_notice: FileNode = {
   ],
 };
 
-const cafeteria_complaint: FileNode = {
+export const cafeteria_complaint: FileNode = {
   type: 'file',
   name: 'cafeteria_feedback.txt',
   status: 'intact',
@@ -537,7 +537,7 @@ const cafeteria_complaint: FileNode = {
   ],
 };
 
-const security_badge_memo: FileNode = {
+export const security_badge_memo: FileNode = {
   type: 'file',
   name: 'badge_renewal_memo.txt',
   status: 'intact',
@@ -566,7 +566,7 @@ const security_badge_memo: FileNode = {
   ],
 };
 
-const training_schedule: FileNode = {
+export const training_schedule: FileNode = {
   type: 'file',
   name: 'training_q1_96.txt',
   status: 'intact',
@@ -595,7 +595,7 @@ const training_schedule: FileNode = {
   ],
 };
 
-const lost_and_found: FileNode = {
+export const lost_and_found: FileNode = {
   type: 'file',
   name: 'lost_found_jan96.txt',
   status: 'intact',
@@ -621,7 +621,7 @@ const lost_and_found: FileNode = {
 };
 
 // Additional mundane files - red herrings for risk reduction mechanic
-const budget_memo_paperclips: FileNode = {
+export const budget_memo_paperclips: FileNode = {
   type: 'file',
   name: 'budget_memo.txt',
   status: 'intact',
@@ -651,7 +651,7 @@ const budget_memo_paperclips: FileNode = {
   ],
 };
 
-const maintenance_schedule_96: FileNode = {
+export const maintenance_schedule_96: FileNode = {
   type: 'file',
   name: 'maintenance_schedule.txt',
   status: 'intact',
@@ -680,7 +680,7 @@ const maintenance_schedule_96: FileNode = {
   ],
 };
 
-const cafeteria_menu_week04: FileNode = {
+export const cafeteria_menu_week04: FileNode = {
   type: 'file',
   name: 'cafeteria_menu.txt',
   status: 'intact',
@@ -707,7 +707,7 @@ const cafeteria_menu_week04: FileNode = {
   ],
 };
 
-const parking_regulations: FileNode = {
+export const parking_regulations: FileNode = {
   type: 'file',
   name: 'parking_regulations.txt',
   status: 'intact',
@@ -736,7 +736,7 @@ const parking_regulations: FileNode = {
   ],
 };
 
-const lost_found_log_extended: FileNode = {
+export const lost_found_log_extended: FileNode = {
   type: 'file',
   name: 'lost_found_log.txt',
   status: 'intact',
@@ -763,7 +763,7 @@ const lost_found_log_extended: FileNode = {
   ],
 };
 
-const vacation_calendar_96: FileNode = {
+export const vacation_calendar_96: FileNode = {
   type: 'file',
   name: 'vacation_calendar.txt',
   status: 'intact',
@@ -792,7 +792,7 @@ const vacation_calendar_96: FileNode = {
 };
 
 // Alternative password hint - cipher/anagram puzzle
-const cipher_notes: FileNode = {
+export const cipher_notes: FileNode = {
   type: 'file',
   name: 'cipher_notes.txt',
   status: 'intact',
@@ -822,7 +822,7 @@ const cipher_notes: FileNode = {
   ],
 };
 
-const weekend_duty_roster: FileNode = {
+export const weekend_duty_roster: FileNode = {
   type: 'file',
   name: 'duty_roster_jan96.txt',
   status: 'intact',
@@ -853,7 +853,7 @@ const weekend_duty_roster: FileNode = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Password hint file - reveals COLHEITA to attentive players
-const override_protocol_memo: FileNode = {
+export const override_protocol_memo: FileNode = {
   type: 'file',
   name: 'override_protocol_memo.txt',
   status: 'intact',
@@ -888,7 +888,7 @@ const override_protocol_memo: FileNode = {
 // RED HERRING TRAPS - Enticing files that spike detection when opened
 // ═══════════════════════════════════════════════════════════════════════════
 
-const honeypot_classified_alpha: FileNode = {
+export const honeypot_classified_alpha: FileNode = {
   type: 'file',
   name: 'URGENT_classified_alpha.txt',
   status: 'restricted',
@@ -909,7 +909,7 @@ const honeypot_classified_alpha: FileNode = {
   ],
 };
 
-const honeypot_alien_autopsy: FileNode = {
+export const honeypot_alien_autopsy: FileNode = {
   type: 'file',
   name: 'LEAKED_classified_records.dat',
   status: 'unstable',
@@ -927,7 +927,7 @@ const honeypot_alien_autopsy: FileNode = {
   ],
 };
 
-const honeypot_presidents_eyes: FileNode = {
+export const honeypot_presidents_eyes: FileNode = {
   type: 'file',
   name: 'FOR_PRESIDENTS_EYES_ONLY.enc',
   status: 'encrypted',
@@ -946,7 +946,7 @@ const honeypot_presidents_eyes: FileNode = {
   ],
 };
 
-const honeypot_smoking_gun: FileNode = {
+export const honeypot_smoking_gun: FileNode = {
   type: 'file',
   name: 'SMOKING_GUN_proof.txt',
   status: 'intact',
@@ -1007,7 +1007,7 @@ const emergency_broadcast: FileNode = {
   ],
 };
 
-const epilogue_news_clipping: FileNode = {
+export const epilogue_news_clipping: FileNode = {
   type: 'file',
   name: 'news_archive_feb96.txt',
   status: 'intact',
@@ -1034,7 +1034,7 @@ const epilogue_news_clipping: FileNode = {
   ],
 };
 
-const epilogue_government_response: FileNode = {
+export const epilogue_government_response: FileNode = {
   type: 'file',
   name: 'internal_response_memo.txt',
   status: 'intact',
@@ -1066,7 +1066,7 @@ const epilogue_government_response: FileNode = {
   ],
 };
 
-const epilogue_ufo74_fate: FileNode = {
+export const epilogue_ufo74_fate: FileNode = {
   type: 'file',
   name: 'ufo74_last_signal.log',
   status: 'unstable',
@@ -1097,7 +1097,7 @@ const epilogue_ufo74_fate: FileNode = {
   ],
 };
 
-const epilogue_2026_update: FileNode = {
+export const epilogue_2026_update: FileNode = {
   type: 'file',
   name: 'projection_update_2026.txt',
   status: 'restricted',
@@ -1126,7 +1126,7 @@ const epilogue_2026_update: FileNode = {
   ],
 };
 
-const aircraft_incident_report: FileNode = {
+export const aircraft_incident_report: FileNode = {
   type: 'file',
   name: 'aircraft_incident_report.txt',
   status: 'intact',
@@ -1155,7 +1155,7 @@ const aircraft_incident_report: FileNode = {
   ],
 };
 
-const foreign_drone_theory: FileNode = {
+export const foreign_drone_theory: FileNode = {
   type: 'file',
   name: 'foreign_drone_assessment.txt',
   status: 'intact',
@@ -1191,7 +1191,7 @@ const foreign_drone_theory: FileNode = {
   ],
 };
 
-const weather_balloon_memo: FileNode = {
+export const weather_balloon_memo: FileNode = {
   type: 'file',
   name: 'weather_balloon_memo.txt',
   status: 'intact',
@@ -1218,7 +1218,7 @@ const weather_balloon_memo: FileNode = {
   ],
 };
 
-const industrial_accident_theory: FileNode = {
+export const industrial_accident_theory: FileNode = {
   type: 'file',
   name: 'industrial_accident_theory.txt',
   status: 'intact',
@@ -1253,7 +1253,7 @@ const industrial_accident_theory: FileNode = {
 // MULTI-STEP INFERENCE FILES - Linked evidence across multiple files
 // ═══════════════════════════════════════════════════════════════════════════
 
-const logistics_manifest_fragment: FileNode = {
+export const logistics_manifest_fragment: FileNode = {
   type: 'file',
   name: 'logistics_manifest_fragment.txt',
   status: 'unstable',
@@ -1282,7 +1282,7 @@ const logistics_manifest_fragment: FileNode = {
   ],
 };
 
-const signal_analysis_partial: FileNode = {
+export const signal_analysis_partial: FileNode = {
   type: 'file',
   name: 'signal_analysis_partial.txt',
   status: 'unstable',
@@ -1309,7 +1309,7 @@ const signal_analysis_partial: FileNode = {
   ],
 };
 
-const foreign_liaison_note: FileNode = {
+export const foreign_liaison_note: FileNode = {
   type: 'file',
   name: 'foreign_liaison_note.txt',
   status: 'restricted',
@@ -1340,7 +1340,7 @@ const foreign_liaison_note: FileNode = {
 };
 
 // New international_actors content - encrypted diplomatic cable
-const encrypted_diplomatic_cable: FileNode = {
+export const encrypted_diplomatic_cable: FileNode = {
   type: 'file',
   name: 'diplomatic_cable_23jan.enc',
   status: 'encrypted',
@@ -1386,7 +1386,7 @@ const encrypted_diplomatic_cable: FileNode = {
 };
 
 // New international_actors content - standing orders memo
-const standing_orders_multinational: FileNode = {
+export const standing_orders_multinational: FileNode = {
   type: 'file',
   name: 'standing_orders_multinational.txt',
   status: 'restricted',
@@ -1422,7 +1422,7 @@ const standing_orders_multinational: FileNode = {
   ],
 };
 
-const medical_examiner_query: FileNode = {
+export const medical_examiner_query: FileNode = {
   type: 'file',
   name: 'medical_examiner_query.txt',
   status: 'intact',
@@ -1456,7 +1456,7 @@ const medical_examiner_query: FileNode = {
 // CONDITIONAL CONTENT - Files that appear based on simple progress thresholds
 // ═══════════════════════════════════════════════════════════════════════════
 
-const pattern_recognition_note: FileNode = {
+export const pattern_recognition_note: FileNode = {
   type: 'file',
   name: 'pattern_recognition.log',
   status: 'intact',
@@ -1476,7 +1476,7 @@ const pattern_recognition_note: FileNode = {
   ],
 };
 
-const coherence_threshold_memo: FileNode = {
+export const coherence_threshold_memo: FileNode = {
   type: 'file',
   name: 'coherence_threshold.log',
   status: 'intact',
@@ -1504,7 +1504,7 @@ const coherence_threshold_memo: FileNode = {
 // OPTIONAL DEEP LORE - For curious players only
 // ═══════════════════════════════════════════════════════════════════════════
 
-const operation_prato_original: FileNode = {
+export const operation_prato_original: FileNode = {
   type: 'file',
   name: 'operation_prato_original.txt',
   status: 'restricted',
@@ -1533,7 +1533,7 @@ const operation_prato_original: FileNode = {
 };
 
 // PRATO archive files (post-override)
-const prato_incident_log_77: FileNode = {
+export const prato_incident_log_77: FileNode = {
   type: 'file',
   name: 'colares_incident_log_77.txt',
   status: 'restricted',
@@ -1562,7 +1562,7 @@ const prato_incident_log_77: FileNode = {
   ],
 };
 
-const prato_patrol_observation_77: FileNode = {
+export const prato_patrol_observation_77: FileNode = {
   type: 'file',
   name: 'patrol_observation_shift_04.txt',
   status: 'restricted',
@@ -1591,7 +1591,7 @@ const prato_patrol_observation_77: FileNode = {
   ],
 };
 
-const prato_medical_effects_77: FileNode = {
+export const prato_medical_effects_77: FileNode = {
   type: 'file',
   name: 'medical_effects_brief_77.txt',
   status: 'restricted',
@@ -1619,7 +1619,7 @@ const prato_medical_effects_77: FileNode = {
   ],
 };
 
-const prato_photo_archive_77: FileNode = {
+export const prato_photo_archive_77: FileNode = {
   type: 'file',
   name: 'photo_archive_register_77.txt',
   status: 'restricted',
@@ -1647,7 +1647,7 @@ const prato_photo_archive_77: FileNode = {
   ],
 };
 
-const prato_retrospective_assessment: FileNode = {
+export const prato_retrospective_assessment: FileNode = {
   type: 'file',
   name: 'retrospective_scan_assessment.red',
   status: 'restricted',
@@ -1677,7 +1677,7 @@ const prato_retrospective_assessment: FileNode = {
   ],
 };
 
-const parallel_incidents_global: FileNode = {
+export const parallel_incidents_global: FileNode = {
   type: 'file',
   name: 'parallel_incidents_global.txt',
   status: 'restricted',
@@ -1707,7 +1707,7 @@ const parallel_incidents_global: FileNode = {
   ],
 };
 
-const thirty_year_cycle_analysis: FileNode = {
+export const thirty_year_cycle_analysis: FileNode = {
   type: 'file',
   name: 'thirty_year_cycle.txt',
   status: 'restricted',
@@ -1738,7 +1738,7 @@ const thirty_year_cycle_analysis: FileNode = {
   ],
 };
 
-const energy_extraction_theory: FileNode = {
+export const energy_extraction_theory: FileNode = {
   type: 'file',
   name: 'energy_extraction_theory.txt',
   status: 'restricted',
@@ -1767,7 +1767,7 @@ const energy_extraction_theory: FileNode = {
   ],
 };
 
-const non_arrival_colonization: FileNode = {
+export const non_arrival_colonization: FileNode = {
   type: 'file',
   name: 'non_arrival_colonization.txt',
   status: 'restricted',
@@ -1804,7 +1804,7 @@ const non_arrival_colonization: FileNode = {
 // TIME-SENSITIVE FILES - Degrade based on session progression
 // ═══════════════════════════════════════════════════════════════════════════
 
-const early_witness_statement: FileNode = {
+export const early_witness_statement: FileNode = {
   type: 'file',
   name: 'witness_statement_raw.txt',
   status: 'unstable',
@@ -1833,7 +1833,7 @@ const early_witness_statement: FileNode = {
   ],
 };
 
-const initial_response_orders: FileNode = {
+export const initial_response_orders: FileNode = {
   type: 'file',
   name: 'initial_response_orders.txt',
   status: 'unstable',
@@ -1867,7 +1867,7 @@ const initial_response_orders: FileNode = {
 // ORIGINAL FILES (preserved from MVP)
 // ═══════════════════════════════════════════════════════════════════════════
 
-const transport_log_96: FileNode = {
+export const transport_log_96: FileNode = {
   type: 'file',
   name: 'transport_log_96.txt',
   status: 'intact',
@@ -1895,7 +1895,7 @@ const transport_log_96: FileNode = {
   ],
 };
 
-const material_x_analysis: FileNode = {
+export const material_x_analysis: FileNode = {
   type: 'file',
   name: 'material_x_analysis.dat',
   status: 'restricted',
@@ -1930,7 +1930,7 @@ const material_x_analysis: FileNode = {
   ],
 };
 
-const bio_container_log: FileNode = {
+export const bio_container_log: FileNode = {
   type: 'file',
   name: 'bio_container.log',
   status: 'unstable',
@@ -1966,7 +1966,7 @@ const bio_container_log: FileNode = {
   ],
 };
 
-const autopsy_alpha_log: FileNode = {
+export const autopsy_alpha_log: FileNode = {
   type: 'file',
   name: 'autopsy_alpha.log',
   status: 'restricted',
@@ -2007,7 +2007,7 @@ const autopsy_alpha_log: FileNode = {
   ],
 };
 
-const autopsy_addendum_psi: FileNode = {
+export const autopsy_addendum_psi: FileNode = {
   type: 'file',
   name: 'autopsy_addendum_psi.txt',
   status: 'restricted',
@@ -2106,7 +2106,7 @@ const transcript_limit: FileNode = {
   ],
 };
 
-const field_report_delta: FileNode = {
+export const field_report_delta: FileNode = {
   type: 'file',
   name: 'field_report_delta.txt',
   status: 'intact',
@@ -2140,7 +2140,7 @@ const field_report_delta: FileNode = {
   ],
 };
 
-const scout_variants_meta: FileNode = {
+export const scout_variants_meta: FileNode = {
   type: 'file',
   name: 'scout_variants.meta',
   status: 'restricted',
@@ -2170,7 +2170,7 @@ const scout_variants_meta: FileNode = {
   ],
 };
 
-const energy_node_assessment: FileNode = {
+export const energy_node_assessment: FileNode = {
   type: 'file',
   name: 'energy_node_assessment.txt',
   status: 'restricted',
@@ -2203,7 +2203,7 @@ const energy_node_assessment: FileNode = {
   ],
 };
 
-const threat_window: FileNode = {
+export const threat_window: FileNode = {
   type: 'file',
   name: 'threat_window.red',
   status: 'restricted',
@@ -2238,7 +2238,7 @@ const threat_window: FileNode = {
   ],
 };
 
-const internal_note_07: FileNode = {
+export const internal_note_07: FileNode = {
   type: 'file',
   name: 'internal_note_07.txt',
   status: 'restricted',
@@ -2270,7 +2270,7 @@ const internal_note_07: FileNode = {
   ],
 };
 
-const colonization_model: FileNode = {
+export const colonization_model: FileNode = {
   type: 'file',
   name: 'colonization_model.red',
   status: 'restricted',
@@ -2306,7 +2306,7 @@ const colonization_model: FileNode = {
   ],
 };
 
-const briefing_watchers_1996: FileNode = {
+export const briefing_watchers_1996: FileNode = {
   type: 'file',
   name: 'briefing_watchers_1996.txt',
   status: 'restricted_briefing',
@@ -2346,7 +2346,7 @@ const briefing_watchers_1996: FileNode = {
   ],
 };
 
-const session_residue: FileNode = {
+export const session_residue: FileNode = {
   type: 'file',
   name: 'session_residue.log',
   status: 'conditional',
@@ -2366,7 +2366,7 @@ const session_residue: FileNode = {
   ],
 };
 
-const ethics_exception: FileNode = {
+export const ethics_exception: FileNode = {
   type: 'file',
   name: 'ethics_exception_03.txt',
   status: 'restricted',
@@ -2393,7 +2393,7 @@ const ethics_exception: FileNode = {
   ],
 };
 
-const bio_program_overview: FileNode = {
+export const bio_program_overview: FileNode = {
   type: 'file',
   name: 'bio_program_overview.red',
   status: 'restricted',
@@ -2430,7 +2430,7 @@ const bio_program_overview: FileNode = {
   ],
 };
 
-const window_alignment: FileNode = {
+export const window_alignment: FileNode = {
   type: 'file',
   name: 'window_alignment.meta',
   status: 'restricted',
@@ -2522,7 +2522,7 @@ const neural_dump_alfa: FileNode = {
 };
 
 // Analyst interpretation of scout communication
-const psi_analysis_report: FileNode = {
+export const psi_analysis_report: FileNode = {
   type: 'file',
   name: 'psi_analysis_report.txt',
   status: 'restricted',
@@ -2554,7 +2554,7 @@ const psi_analysis_report: FileNode = {
 };
 
 // Detailed file about scouts as tools
-const specimen_purpose_analysis: FileNode = {
+export const specimen_purpose_analysis: FileNode = {
   type: 'file',
   name: 'specimen_purpose_analysis.txt',
   status: 'restricted',
@@ -2633,7 +2633,7 @@ const second_deployment_intercept: FileNode = {
 };
 
 // File explaining what 2026 really means
-const window_clarification: FileNode = {
+export const window_clarification: FileNode = {
   type: 'file',
   name: 'window_clarification.red',
   status: 'restricted',
@@ -2668,7 +2668,7 @@ const window_clarification: FileNode = {
 };
 
 // Energy extraction theory - more detailed
-const extraction_mechanism: FileNode = {
+export const extraction_mechanism: FileNode = {
   type: 'file',
   name: 'extraction_mechanism.red',
   status: 'restricted',
@@ -2707,7 +2707,7 @@ const extraction_mechanism: FileNode = {
 };
 
 // Script puzzle file - requires player to write a script
-const data_reconstruction_util: FileNode = {
+export const data_reconstruction_util: FileNode = {
   type: 'file',
   name: 'data_reconstruction.util',
   status: 'intact',
@@ -2742,7 +2742,7 @@ const data_reconstruction_util: FileNode = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 // X-Files nod - "trust no one" reference disguised as security memo
-const trust_protocol_memo: FileNode = {
+export const trust_protocol_memo: FileNode = {
   type: 'file',
   name: 'trust_protocol_1993.txt',
   status: 'intact',
@@ -2772,7 +2772,7 @@ const trust_protocol_memo: FileNode = {
 };
 
 // Real Varginha incident details - actual locations and timeline
-const jardim_andere_report: FileNode = {
+export const jardim_andere_report: FileNode = {
   type: 'file',
   name: 'jardim_andere_incident.txt',
   status: 'intact',
@@ -2861,7 +2861,7 @@ export const witness_farm_recording: FileNode = {
 };
 
 // Brazilian culture touch - internal memo with Portuguese phrases
-const copa_94_celebration_memo: FileNode = {
+export const copa_94_celebration_memo: FileNode = {
   type: 'file',
   name: 'copa_94_celebration.txt',
   status: 'intact',
@@ -2889,7 +2889,7 @@ const copa_94_celebration_memo: FileNode = {
 };
 
 // 90s internet culture - dial-up connection log and early web reference
-const dialup_connection_log: FileNode = {
+export const dialup_connection_log: FileNode = {
   type: 'file',
   name: 'modem_log_jan96.txt',
   status: 'intact',
@@ -2921,7 +2921,7 @@ const dialup_connection_log: FileNode = {
 };
 
 // Another 90s touch - ASCII art signature file
-const ascii_signature_bak: FileNode = {
+export const ascii_signature_bak: FileNode = {
   type: 'file',
   name: '.signature.bak',
   status: 'intact',
@@ -2951,7 +2951,7 @@ const ascii_signature_bak: FileNode = {
 };
 
 // Brazilian food reference hidden in cafeteria file
-const cafeteria_menu_jan96: FileNode = {
+export const cafeteria_menu_jan96: FileNode = {
   type: 'file',
   name: 'cafeteria_menu_week03.txt',
   status: 'intact',
@@ -2980,7 +2980,7 @@ const cafeteria_menu_jan96: FileNode = {
 };
 
 // The incident report referenced in cafeteria_menu_week03
-const incident_report_vg: FileNode = {
+export const incident_report_vg: FileNode = {
   type: 'file',
   name: 'incident_report_1996_01_VG.txt',
   status: 'intact',
@@ -3015,7 +3015,7 @@ const incident_report_vg: FileNode = {
 };
 
 // Save evidence script - hidden in /tmp until all 10 evidence files are logged
-const save_evidence_script: FileNode = {
+export const save_evidence_script: FileNode = {
   type: 'file',
   name: 'save_evidence.sh',
   status: 'intact',
@@ -3043,7 +3043,7 @@ const save_evidence_script: FileNode = {
   ],
 };
 
-const purge_trace_script: FileNode = {
+export const purge_trace_script: FileNode = {
   type: 'file',
   name: 'purge_trace.sh',
   status: 'intact',
@@ -3068,7 +3068,7 @@ const purge_trace_script: FileNode = {
   ],
 };
 
-const trace_purge_memo: FileNode = {
+export const trace_purge_memo: FileNode = {
   type: 'file',
   name: 'trace_purge_memo.txt',
   status: 'restricted',
@@ -3094,7 +3094,7 @@ const trace_purge_memo: FileNode = {
   ],
 };
 
-const integrity_hashes_register: FileNode = {
+export const integrity_hashes_register: FileNode = {
   type: 'file',
   name: 'integrity_hashes.dat',
   status: 'restricted',
@@ -3120,7 +3120,7 @@ const integrity_hashes_register: FileNode = {
   ],
 };
 
-const ghost_session_log: FileNode = {
+export const ghost_session_log: FileNode = {
   type: 'file',
   name: 'ghost_session.log',
   status: 'unstable',
@@ -3151,7 +3151,7 @@ const ghost_session_log: FileNode = {
   ],
 };
 
-const redaction_keycard: FileNode = {
+export const redaction_keycard: FileNode = {
   type: 'file',
   name: 'redaction_keycard.txt',
   status: 'intact',
@@ -3169,7 +3169,7 @@ const redaction_keycard: FileNode = {
   ],
 };
 
-const redaction_override_memo: FileNode = {
+export const redaction_override_memo: FileNode = {
   type: 'file',
   name: 'redaction_override_memo.txt',
   status: 'restricted',
@@ -3188,7 +3188,7 @@ const redaction_override_memo: FileNode = {
   ],
 };
 
-const audio_transcript_brief: FileNode = {
+export const audio_transcript_brief: FileNode = {
   type: 'file',
   name: 'audio_transcript_brief.txt',
   status: 'intact',
@@ -3223,7 +3223,7 @@ const audio_transcript_brief: FileNode = {
 };
 
 // File that appears after running script successfully
-const reconstructed_neural: FileNode = {
+export const reconstructed_neural: FileNode = {
   type: 'file',
   name: 'neural_fragment.dat',
   status: 'intact',
@@ -3259,7 +3259,7 @@ const reconstructed_neural: FileNode = {
 };
 
 // Video file for surveillance footage
-const surveillance_footage_recovery: FileNode = {
+export const surveillance_footage_recovery: FileNode = {
   type: 'file',
   name: 'surveillance_recovery.vid',
   status: 'unstable',
@@ -3284,7 +3284,7 @@ const surveillance_footage_recovery: FileNode = {
 };
 
 // Restricted comms file describing the neural cluster experiment
-const neural_cluster_experiment: FileNode = {
+export const neural_cluster_experiment: FileNode = {
   type: 'file',
   name: 'neural_cluster_experiment.red',
   status: 'restricted',
@@ -3316,7 +3316,7 @@ const neural_cluster_experiment: FileNode = {
 // UFO74 cannot accept as evidence (too much plausible deniability)
 // ═══════════════════════════════════════════════════════════════════════════
 
-const cargo_transfer_memo: FileNode = {
+export const cargo_transfer_memo: FileNode = {
   type: 'file',
   name: 'cargo_transfer_memo.txt',
   status: 'intact',
@@ -3345,7 +3345,7 @@ const cargo_transfer_memo: FileNode = {
   ],
 };
 
-const visitor_briefing: FileNode = {
+export const visitor_briefing: FileNode = {
   type: 'file',
   name: 'visitor_briefing.txt',
   status: 'intact',
@@ -3375,7 +3375,7 @@ const visitor_briefing: FileNode = {
   ],
 };
 
-const asset_disposition_report: FileNode = {
+export const asset_disposition_report: FileNode = {
   type: 'file',
   name: 'asset_disposition_report.txt',
   status: 'intact',
@@ -3404,7 +3404,7 @@ const asset_disposition_report: FileNode = {
   ],
 };
 
-const euphemism_reference: FileNode = {
+export const euphemism_reference: FileNode = {
   type: 'file',
   name: 'terminology_guide.txt',
   status: 'intact',
