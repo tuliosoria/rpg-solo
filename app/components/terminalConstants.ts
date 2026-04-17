@@ -96,6 +96,11 @@ export const VISITOR_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
+export const ET_VARGINHA_VIDEO_SRC = new URL(
+  '../../videos/et varginha.mp4',
+  import.meta.url
+).toString();
+
 // Maps filesystem paths to their attached video evidence
 export const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment> = {
   '/internal/jardim_andere_incident.txt': {
@@ -145,6 +150,12 @@ export const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment>
     fileName: 'visitor_briefing.txt',
     videoSrc: VISITOR_VIDEO_SRC,
     videoTitle: 'visitor.mp4',
+  },
+  '/internal/witness_farm_recording.txt': {
+    filePath: '/internal/witness_farm_recording.txt',
+    fileName: 'witness_farm_recording.txt',
+    videoSrc: ET_VARGINHA_VIDEO_SRC,
+    videoTitle: 'et varginha.mp4',
   },
 };
 
