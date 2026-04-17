@@ -551,6 +551,15 @@ export const filesystemCommands: CommandRegistry = {
           }
         : {};
 
+      // Re-reading neural_dump_alfa.psi also unlocks link (covers saves from before the flag existed)
+      if (filePath.endsWith('neural_dump_alfa.psi') && !state.flags.neuralLinkAuthenticated) {
+        rereadStateChanges.flags = {
+          ...state.flags,
+          scoutLinkUnlocked: true,
+          neuralLinkAuthenticated: true,
+        };
+      }
+
       if (filePath.includes('ghost_in_machine') && !state.ufo74SecretDiscovered) {
         rereadStateChanges.ufo74SecretDiscovered = true;
       }
@@ -623,6 +632,15 @@ export const filesystemCommands: CommandRegistry = {
       isReadingFile: true, // Mark as reading file (suppresses firewall eyes)
       lastFileReadTime: Date.now(), // Track when file was read
     };
+
+    // Reading neural_dump_alfa.psi (even if already decrypted) unlocks link
+    if (filePath.endsWith('neural_dump_alfa.psi') && mutation?.decrypted) {
+      stateChanges.flags = {
+        ...state.flags,
+        scoutLinkUnlocked: true,
+        neuralLinkAuthenticated: true,
+      };
+    }
 
     if (!state.tutorialComplete) {
       delete stateChanges.detectionLevel;
