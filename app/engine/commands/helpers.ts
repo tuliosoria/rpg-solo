@@ -897,6 +897,30 @@ function getContextualExplorationHints(state: GameState): ContextualExplorationH
   const filesRead = state.filesRead || new Set<string>();
   const truthsCount = state.evidenceCount || 0;
   const prisoner45Used = state.prisoner45QuestionsAsked > 0;
+  const savedCount = state.savedFiles?.size || 0;
+
+  // Late-game: player has all files saved, hint to leak
+  if (savedCount >= MAX_EVIDENCE_COUNT && (state.leakSequenceProgress || 0) >= 3) {
+    return {
+      key: 'engine.commands.helpers.contextHint.leakReady',
+      fallback: 'UFO74: everything is ready. run "leak".',
+    };
+  }
+
+  if (savedCount >= MAX_EVIDENCE_COUNT) {
+    return {
+      key: 'engine.commands.helpers.contextHint.leakPrep',
+      fallback: 'UFO74: you have all ten. run "leak" to start the sequence.',
+    };
+  }
+
+  // Mid-late game: player has many files, hint to save more
+  if (truthsCount >= 5 && savedCount < MAX_EVIDENCE_COUNT) {
+    return {
+      key: 'engine.commands.helpers.contextHint.saveMore',
+      fallback: `UFO74: ${savedCount} files saved. need ${MAX_EVIDENCE_COUNT}. keep digging.`,
+    };
+  }
 
   const readFlags = {
     storage: false,

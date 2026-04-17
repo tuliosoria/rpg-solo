@@ -126,37 +126,6 @@
   font-size: 12px;
 }
 
-/* Message Phase */
-.messageContent {
-  width: 90%;
-  max-width: 650px;
-  max-height: 80vh;
-  overflow-y: auto;
-  padding: 20px;
-}
-
-.messageHeader {
-  color: #ffaa00;
-  text-align: center;
-  font-size: 13px;
-}
-
-.messageBody {
-  margin-top: 15px;
-}
-
-.ufoLine {
-  color: #88cc44;
-  margin-bottom: 3px;
-  text-shadow: 0 0 5px rgba(136, 204, 68, 0.5);
-}
-
-.systemLine {
-  color: #00aaaa;
-  margin-bottom: 3px;
-  font-weight: bold;
-}
-
 /* Fade Phase */
 .fadeContent {
   text-align: center;
@@ -171,18 +140,4 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
-}
-
-/* Scrollbar for message area */
-.messageContent::-webkit-scrollbar {
-  width: 8px;
-}
-
-.messageContent::-webkit-scrollbar-track {
-  background: #060d04;
-}
-
-.messageContent::-webkit-scrollbar-thumb {
-  background: #1a2a10;
-  border-radius: 4px;
 }

@@ -1,42 +1,18 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { uiRandomFloat } from '../../engine/rng';
 import { useI18n } from '../../i18n';
 import styles from './Blackout.module.css';
-
-/** UFO74's final emergency transmission messages displayed during the blackout sequence */
-const UFO74_FINAL_MESSAGES = [
-  'UFO74: hackerkid... are you still there?',
-  '',
-  'UFO74: they cut the main connection.',
-  'UFO74: i knew this was going to happen.',
-  '',
-  'UFO74: but listen... the dossier is out.',
-  'UFO74: every file you saved just hit the open wire.',
-  '',
-  'UFO74: there is no taking it back now.',
-  '',
-  'UFO74: the firewall is screaming.',
-  'UFO74: they know what we did.',
-  '',
-  'UFO74: what happens next depends on what you chose to save.',
-  '',
-  'UFO74: good luck hackerkid.',
-  '',
-  '>> EVALUATING DOSSIER <<',
-];
 
 interface BlackoutProps {
   onCompleteAction: () => void;
 }
 
 export default function Blackout({ onCompleteAction }: BlackoutProps) {
-  const { t, translateRuntimeText } = useI18n();
-  const [phase, setPhase] = useState<'glitch' | 'loading' | 'message' | 'fade'>('glitch');
+  const { translateRuntimeText } = useI18n();
+  const [phase, setPhase] = useState<'glitch' | 'loading' | 'fade'>('glitch');
   const [loadProgress, setLoadProgress] = useState(0);
-  const [messageLines, setMessageLines] = useState<string[]>([]);
-  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Phase 1: Glitch effect
   useEffect(() => {
@@ -55,7 +31,7 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
         const next = prev + uiRandomFloat(2, 10);
         if (next >= 100) {
           clearInterval(interval);
-          setPhase('message');
+          setPhase('fade');
           return 100;
         }
         return next;
@@ -65,34 +41,7 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
     return () => clearInterval(interval);
   }, [phase]);
 
-  // Phase 3: Show messages one by one
-  useEffect(() => {
-    if (phase !== 'message') return;
-
-    let lineIndex = 0;
-    const interval = setInterval(() => {
-      if (lineIndex >= UFO74_FINAL_MESSAGES.length) {
-        clearInterval(interval);
-        if (fadeTimerRef.current) {
-          clearTimeout(fadeTimerRef.current);
-        }
-        fadeTimerRef.current = setTimeout(() => setPhase('fade'), 2000);
-        return;
-      }
-
-      setMessageLines(prev => [...prev, UFO74_FINAL_MESSAGES[lineIndex]]);
-      lineIndex++;
-    }, 400);
-
-    return () => {
-      clearInterval(interval);
-      if (fadeTimerRef.current) {
-        clearTimeout(fadeTimerRef.current);
-      }
-    };
-  }, [phase]);
-
-  // Phase 4: Fade and transition
+  // Phase 3: Fade and transition to ending
   useEffect(() => {
     if (phase !== 'fade') return;
 
@@ -139,35 +88,10 @@ export default function Blackout({ onCompleteAction }: BlackoutProps) {
         </div>
       )}
 
-      {/* Message Phase */}
-      {phase === 'message' && (
-        <div className={styles.messageContent}>
-          <div className={styles.messageHeader}>
-            ┌─────────────────────────────────────────────────────────┐
-          </div>
-          <div className={styles.messageHeader}>
-            {translateRuntimeText('│ >> UFO74 << EMERGENCY TRANSMISSION │')}
-          </div>
-          <div className={styles.messageHeader}>
-            └─────────────────────────────────────────────────────────┘
-          </div>
-          <div className={styles.messageBody}>
-            {messageLines.map((line, index) => (
-              <div
-                key={index}
-                className={line.startsWith('UFO74:') ? styles.ufoLine : styles.systemLine}
-              >
-                {translateRuntimeText(line)}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Fade Phase */}
       {phase === 'fade' && (
         <div className={styles.fadeContent}>
-          <div className={styles.transferText}>{t('blackout.transfer')}</div>
+          <div className={styles.transferText}>{translateRuntimeText('>> EVALUATING DOSSIER <<')}</div>
         </div>
       )}
     </div>

@@ -447,6 +447,9 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'check /storage/ for transport logs.': 'verifique /storage/ atrás dos logs de transporte.',
     'try "chat". someones in here.': 'tente "chat". tem alguém aqui dentro.',
     'you have clearance. check /admin/.': 'você tem credencial. veja /admin/.',
+    'everything is ready. run "leak".': 'tudo pronto. execute "leak".',
+    'you have all ten. run "leak" to start the sequence.':
+      'você tem os dez. execute "leak" pra começar a sequência.',
     'UFO74: ten files logged. leak path is live.':
       'UFO74: dez arquivos registrados. o caminho de vazamento está aberto.',
     '       type: leak': '       digite: leak',
@@ -1251,6 +1254,9 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'revisa /storage/ para buscar los registros de transporte.',
     'try "chat". someones in here.': 'prueba "chat". hay alguien aquí dentro.',
     'you have clearance. check /admin/.': 'tienes autorización. mira /admin/.',
+    'everything is ready. run "leak".': 'todo listo. ejecuta "leak".',
+    'you have all ten. run "leak" to start the sequence.':
+      'tienes los diez. ejecuta "leak" para iniciar la secuencia.',
     'UFO74: ten files logged. leak path is live.':
       'UFO74: diez archivos registrados. la ruta de filtración está activa.',
     '       type: leak': '       escribe: leak',
