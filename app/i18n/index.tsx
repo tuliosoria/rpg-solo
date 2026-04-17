@@ -438,6 +438,69 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           text
         );
       }
+      const filesSavedMatch = text.match(/^(\s*)Files saved:\s*(\d+)\/(\d+)\s*$/);
+      if (filesSavedMatch) {
+        return applyLeadingWhitespace(
+          filesSavedMatch,
+          'runtime.filesSaved',
+          { count: filesSavedMatch[2], total: filesSavedMatch[3] },
+          text
+        );
+      }
+      const dossierFilesSavedMatch = text.match(/^(\s*)DOSSIER:\s*(\d+)\/(\d+)\s*files saved\s*$/);
+      if (dossierFilesSavedMatch) {
+        return applyLeadingWhitespace(
+          dossierFilesSavedMatch,
+          'runtime.dossierFilesSaved',
+          { count: dossierFilesSavedMatch[2], total: dossierFilesSavedMatch[3] },
+          text
+        );
+      }
+      const stepConfirmedMatch = text.match(/^(\s*)Step\s*(\d+)\/(\d+)\s*confirmed\.\s*$/);
+      if (stepConfirmedMatch) {
+        return applyLeadingWhitespace(
+          stepConfirmedMatch,
+          'runtime.stepConfirmed',
+          { step: stepConfirmedMatch[2], total: stepConfirmedMatch[3] },
+          text
+        );
+      }
+      const nextLeakMatch = text.match(/^(\s*)Next:\s*leak\s+(.+)\s*$/);
+      if (nextLeakMatch) {
+        return applyLeadingWhitespace(
+          nextLeakMatch,
+          'runtime.nextLeak',
+          { command: nextLeakMatch[2] },
+          text
+        );
+      }
+      const progressStepsMatch = text.match(/^(\s*)Progress:\s*(\d+)\/(\d+)\s*steps completed\.\s*$/);
+      if (progressStepsMatch) {
+        return applyLeadingWhitespace(
+          progressStepsMatch,
+          'runtime.progressSteps',
+          { done: progressStepsMatch[2], total: progressStepsMatch[3] },
+          text
+        );
+      }
+      const moreFilesNeededMatch = text.match(/^(\s*)(\d+)\s*more file\(s\) needed before leak\.\s*$/);
+      if (moreFilesNeededMatch) {
+        return applyLeadingWhitespace(
+          moreFilesNeededMatch,
+          'runtime.moreFilesNeeded',
+          { count: moreFilesNeededMatch[2] },
+          text
+        );
+      }
+      const compilingDossierMatch = text.match(/^(\s*)Compiling dossier\.\.\.\s*(\d+)\s*files confirmed\.\s*$/);
+      if (compilingDossierMatch) {
+        return applyLeadingWhitespace(
+          compilingDossierMatch,
+          'runtime.compilingDossier',
+          { count: compilingDossierMatch[2] },
+          text
+        );
+      }
       const questionProgressMatch = text.match(/^(\s*)Question:\s*(\d+)\/(\d+)$/);
       if (questionProgressMatch) {
         return applyLeadingWhitespace(
