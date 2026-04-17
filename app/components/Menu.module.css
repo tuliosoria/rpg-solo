@@ -271,6 +271,84 @@
   line-height: 1.6;
 }
 
+/* Legal Footer Links */
+.legalLinks {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.legalLink {
+  background: transparent;
+  border: none;
+  color: #4a6a20;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  padding: 2px 4px;
+  transition: color 0.2s;
+}
+
+.legalLink:hover {
+  color: #88cc44;
+  text-decoration: underline;
+}
+
+.legalSeparator {
+  color: #333;
+  font-size: 11px;
+}
+
+/* Legal Pages (Terms / Privacy) */
+.legalContent {
+  text-align: left;
+  margin-bottom: 30px;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.legalContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.legalContent::-webkit-scrollbar-track {
+  background: #060d04;
+}
+
+.legalContent::-webkit-scrollbar-thumb {
+  background: #1a2a10;
+}
+
+.legalDate {
+  color: #4a6a20;
+  font-size: 11px;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.legalSection {
+  margin-bottom: 18px;
+}
+
+.legalHeading {
+  color: #88cc44;
+  font-size: 13px;
+  font-weight: normal;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.legalSection p {
+  color: #5a8a28;
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 0;
+}
+
 /* Scrollbar */
 .savesList::-webkit-scrollbar {
   width: 8px;

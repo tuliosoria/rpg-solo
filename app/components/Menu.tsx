@@ -16,7 +16,7 @@ interface MenuProps {
   ) => void | boolean | Promise<void | boolean>;
 }
 
-type Screen = 'main' | 'load' | 'credits' | 'options';
+type Screen = 'main' | 'load' | 'credits' | 'options' | 'terms' | 'privacy';
 
 export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
   const [screen, setScreen] = useState<Screen>('main');
@@ -368,6 +368,23 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         <div className={styles.footerLine} style={{ marginTop: '1rem', opacity: 0.6 }}>
           {t('menu.footer.copyright')}
         </div>
+        <div className={styles.legalLinks}>
+          <button
+            className={styles.legalLink}
+            onClick={() => setScreen('terms')}
+            onMouseEnter={() => playSound('hover')}
+          >
+            {t('menu.footer.terms')}
+          </button>
+          <span className={styles.legalSeparator}>|</span>
+          <button
+            className={styles.legalLink}
+            onClick={() => setScreen('privacy')}
+            onMouseEnter={() => playSound('hover')}
+          >
+            {t('menu.footer.privacy')}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -488,6 +505,116 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         ▶ {t('menu.load.back')}
       </button>
       <div className={styles.keyHint}>{t('menu.credits.backHint')}</div>
+    </div>
+  );
+
+  const renderTerms = () => (
+    <div className={styles.menuContent}>
+      <div className={styles.header}>
+        <h2 className={styles.headerTitle}>{t('menu.terms.title')}</h2>
+        <div className={styles.titleLine}>═══════════════════════════════════</div>
+      </div>
+
+      <div className={styles.legalContent}>
+        <p className={styles.legalDate}>Last updated: April 2025</p>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> AGREEMENT'}</h3>
+          <p>By playing Varginha: Terminal 1996, you agree to these terms. If you do not agree, close the terminal and walk away. We will understand.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> WHAT THIS IS'}</h3>
+          <p>This is a free, browser-based indie game created by Tulio Soria and Arthur Ramos. It is a work of fiction inspired by real events. All characters, names, dialogue, and narrative elements are fictional.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> YOUR DATA'}</h3>
+          <p>Your game progress is saved locally in your browser using localStorage. We do not collect, transmit, or store any personal data on external servers. Your saves belong to you and stay on your device.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> INTELLECTUAL PROPERTY'}</h3>
+          <p>All game content — code, writing, design, and audio — is the property of its creators. You may stream, record, and share gameplay freely. You may not redistribute, sell, or claim the game or its assets as your own.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> WARRANTY'}</h3>
+          <p>This game is provided as-is with no warranty. We are not responsible for existential dread, paranoia, or the sudden urge to look at the sky. Play at your own risk.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> CONTACT'}</h3>
+          <p>Questions or concerns? Reach us through our GitHub repository.</p>
+        </div>
+      </div>
+
+      <button
+        className={`${styles.backButton} ${styles.selected}`}
+        onClick={() => setScreen('main')}
+      >
+        ▶ {t('menu.load.back')}
+      </button>
+    </div>
+  );
+
+  const renderPrivacy = () => (
+    <div className={styles.menuContent}>
+      <div className={styles.header}>
+        <h2 className={styles.headerTitle}>{t('menu.privacy.title')}</h2>
+        <div className={styles.titleLine}>═══════════════════════════════════</div>
+      </div>
+
+      <div className={styles.legalContent}>
+        <p className={styles.legalDate}>Last updated: April 2025</p>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> SUMMARY'}</h3>
+          <p>We do not collect your data. That is the entire privacy policy. But since you are here, we will elaborate.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> DATA COLLECTION'}</h3>
+          <p>Varginha: Terminal 1996 does not collect, store, or transmit any personal information. No analytics. No tracking. No cookies. No telemetry. No third-party scripts watching what you do.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> LOCAL STORAGE'}</h3>
+          <p>The game uses your browser&apos;s localStorage to save game progress and settings. This data never leaves your device. You can clear it at any time through your browser settings.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> THIRD PARTIES'}</h3>
+          <p>We do not share data with third parties because we do not have any data to share. The game runs entirely in your browser.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> AUDIO'}</h3>
+          <p>All audio is generated locally using the Web Audio API or played from bundled files. No external audio services are contacted.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> CHILDREN'}</h3>
+          <p>This game contains horror themes and is intended for mature audiences. We do not knowingly collect data from anyone — children or otherwise.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> CHANGES'}</h3>
+          <p>If this policy ever changes, it will be updated here. Given that our policy is &quot;we collect nothing,&quot; changes are unlikely.</p>
+        </div>
+
+        <div className={styles.legalSection}>
+          <h3 className={styles.legalHeading}>{'> CONTACT'}</h3>
+          <p>Created by Tulio Soria and Arthur Ramos. Reach us through our GitHub repository.</p>
+        </div>
+      </div>
+
+      <button
+        className={`${styles.backButton} ${styles.selected}`}
+        onClick={() => setScreen('main')}
+      >
+        ▶ {t('menu.load.back')}
+      </button>
     </div>
   );
 
@@ -706,6 +833,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
       {screen === 'load' && renderLoadScreen()}
       {screen === 'credits' && renderCredits()}
       {screen === 'options' && renderOptions()}
+      {screen === 'terms' && renderTerms()}
+      {screen === 'privacy' && renderPrivacy()}
     </div>
   );
 }
