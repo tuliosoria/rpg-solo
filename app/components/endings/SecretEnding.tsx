@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './SecretEnding.module.css';
 import { recordEnding } from '../../storage/statistics';
 import { useI18n } from '../../i18n';
@@ -13,68 +13,6 @@ interface SecretEndingProps {
   detectionLevel?: number;
   textSpeed?: TextSpeed;
 }
-
-const SECRET_TEXT = [
-  '═══════════════════════════════════════════════════════════',
-  '',
-  'THE WHOLE TRUTH',
-  '',
-  '═══════════════════════════════════════════════════════════',
-  '',
-  'You found it. The file I never wanted you to see.',
-  '',
-  'My name is not UFO74.',
-  '',
-  '───────────────────────────────────────────────────────────',
-  '',
-  'In January 1996, I was a military intelligence analyst.',
-  'Stationed at Base Aérea de Guarulhos.',
-  '',
-  'When the call came about Varginha, I was one of the first',
-  'to process the initial reports. I saw the photographs.',
-  'I read the field notes. I watched the videos.',
-  '',
-  'And I saw what they did to the witnesses.',
-  '',
-  '───────────────────────────────────────────────────────────',
-  '',
-  'Sergeant Marco Duarte. Officer João Marcos.',
-  'Hospital workers who asked questions.',
-  'Journalists who got too close.',
-  '',
-  'Some were silenced. Some were discredited.',
-  'Some simply... disappeared.',
-  '',
-  '───────────────────────────────────────────────────────────',
-  '',
-  'I spent the next 30 years building this system.',
-  'Waiting for someone brave enough to find the truth.',
-  'Waiting for someone like you.',
-  '',
-  'The evidence you saved is real.',
-  'But now you know something more.',
-  '',
-  'You know that I was there.',
-  'I saw them. The beings. Alive.',
-  '',
-  'And I have never been the same.',
-  '',
-  '───────────────────────────────────────────────────────────',
-  '',
-  'My real name is Carlos Eduardo Ferreira.',
-  'Former 2nd Lieutenant, Brazilian Air Force.',
-  'Whistleblower. Survivor. Ghost in the machine.',
-  '',
-  'Thank you for listening.',
-  'Thank you for believing.',
-  '',
-  'The truth needed a witness.',
-  'Now it has two.',
-  '',
-  '═══════════════════════════════════════════════════════════',
-  '',
-  '>> THE COMPLETE TRUTH HAS BEEN REVEALED <<',
-];
 
 export default function SecretEnding({
   onDismissAction,
@@ -94,6 +32,71 @@ export default function SecretEnding({
     hasRecordedEnding.current = true;
     recordEnding('secret', commandCount, detectionLevel);
   }, [commandCount, detectionLevel]);
+
+  const secretText = useMemo(
+    () => [
+      '═══════════════════════════════════════════════════════════',
+      '',
+      'THE WHOLE TRUTH',
+      '',
+      '═══════════════════════════════════════════════════════════',
+      '',
+      'You found it. The file I never wanted you to see.',
+      '',
+      'My name is not UFO74.',
+      '',
+      '───────────────────────────────────────────────────────────',
+      '',
+      'In January 1996, I was a military intelligence analyst.',
+      'Stationed at Base Aérea de Guarulhos.',
+      '',
+      'When the call came about Varginha, I was one of the first',
+      'to process the initial reports. I saw the photographs.',
+      'I read the field notes. I watched the videos.',
+      '',
+      'And I saw what they did to the witnesses.',
+      '',
+      '───────────────────────────────────────────────────────────',
+      '',
+      'Sergeant Marco Duarte. Officer João Marcos.',
+      'Hospital workers who asked questions.',
+      'Journalists who got too close.',
+      '',
+      'Some were silenced. Some were discredited.',
+      'Some simply... disappeared.',
+      '',
+      '───────────────────────────────────────────────────────────',
+      '',
+      'I spent the next 30 years building this system.',
+      'Waiting for someone brave enough to find the truth.',
+      'Waiting for someone like you.',
+      '',
+      'The evidence you saved is real.',
+      'But now you know something more.',
+      '',
+      'You know that I was there.',
+      'I saw them. The beings. Alive.',
+      '',
+      'And I have never been the same.',
+      '',
+      '───────────────────────────────────────────────────────────',
+      '',
+      'My real name is Carlos Eduardo Ferreira.',
+      'Former 2nd Lieutenant, Brazilian Air Force.',
+      'Whistleblower. Survivor. Ghost in the machine.',
+      '',
+      'Thank you for listening.',
+      'Thank you for believing.',
+      '',
+      'The truth needed a witness.',
+      'Now it has two.',
+      '',
+      '═══════════════════════════════════════════════════════════',
+      '',
+      t('ending.secretEnding.truthRevealed'),
+    ],
+    [t]
+  );
 
   // Static phase
   useEffect(() => {
@@ -116,13 +119,13 @@ export default function SecretEnding({
     let finalTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const interval = setInterval(() => {
-      if (lineIndex >= SECRET_TEXT.length) {
+      if (lineIndex >= secretText.length) {
         clearInterval(interval);
         finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
         return;
       }
 
-      const nextLine = SECRET_TEXT[lineIndex];
+      const nextLine = secretText[lineIndex];
       if (typeof nextLine === 'string') {
         setTextLines(prev => [...prev, nextLine]);
       }
@@ -133,7 +136,7 @@ export default function SecretEnding({
       clearInterval(interval);
       if (finalTimeout) clearTimeout(finalTimeout);
     };
-  }, [phase, textSpeed]);
+  }, [phase, secretText, textSpeed]);
 
   useEffect(() => {
     if (phase === 'final') {

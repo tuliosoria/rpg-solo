@@ -30,12 +30,17 @@ const BLOCKED_SEARCH_TERMS = [
   'et', 'extraterrestrial', 'extraterrestrials', 'creature', 'creatures',
   'varginha', 'saucer', 'saucers', 'coverup', 'cover-up', 'cover up',
   'ovni', 'ovnis', 'disco voador', 'extraterrestre', 'extraterrestres',
-  'criatura', 'criaturas', 'encobrimento',
+  'criatura', 'criaturas', 'encobrimento', 'autopsy',
 ];
 
 function isBlockedSearchTerm(query: string): boolean {
   const lower = query.toLowerCase();
-  return BLOCKED_SEARCH_TERMS.some(term => lower === term || lower.includes(term));
+  return BLOCKED_SEARCH_TERMS.some(term => {
+    if (lower === term) return true;
+    // Use word boundary regex to match whole words only
+    const regex = new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+    return regex.test(lower);
+  });
 }
 
 type SearchMatchKind = 'filename' | 'path' | 'content' | 'fuzzy';

@@ -378,7 +378,6 @@ export interface CheckpointSlot {
 export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow';
 export type GamePhase =
   | 'terminal'
-  | 'blackout'
   | 'victory'
   | 'bad_ending'
   | 'neutral_ending'

@@ -66,9 +66,9 @@ export default function BadEnding({
       '',
       '───────────────────────────────────────────────────────────',
       '',
-      '>> SESSION TERMINATED <<',
+      t('ending.badEnding.sessionTerminated'),
     ],
-    [reason]
+    [reason, t]
   );
 
   // Glitch phase

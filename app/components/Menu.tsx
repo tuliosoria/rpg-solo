@@ -516,36 +516,36 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
       </div>
 
       <div className={styles.legalContent}>
-        <p className={styles.legalDate}>Last updated: April 2025</p>
+        <p className={styles.legalDate}>{t('menu.terms.lastUpdated')}</p>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> AGREEMENT'}</h3>
-          <p>By playing Varginha: Terminal 1996, you agree to these terms. If you do not agree, close the terminal and walk away. We will understand.</p>
+          <h3 className={styles.legalHeading}>{t('menu.terms.agreementHeading')}</h3>
+          <p>{t('menu.terms.agreementBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> WHAT THIS IS'}</h3>
-          <p>This is a free, browser-based indie game created by Tulio Soria and Arthur Ramos. It is a work of fiction inspired by real events. All characters, names, dialogue, and narrative elements are fictional.</p>
+          <h3 className={styles.legalHeading}>{t('menu.terms.whatThisIsHeading')}</h3>
+          <p>{t('menu.terms.whatThisIsBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> YOUR DATA'}</h3>
-          <p>Your game progress is saved locally in your browser using localStorage. We do not collect, transmit, or store any personal data on external servers. Your saves belong to you and stay on your device.</p>
+          <h3 className={styles.legalHeading}>{t('menu.terms.yourDataHeading')}</h3>
+          <p>{t('menu.terms.yourDataBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> INTELLECTUAL PROPERTY'}</h3>
-          <p>All game content — code, writing, design, and audio — is the property of its creators. You may stream, record, and share gameplay freely. You may not redistribute, sell, or claim the game or its assets as your own.</p>
+          <h3 className={styles.legalHeading}>{t('menu.terms.ipHeading')}</h3>
+          <p>{t('menu.terms.ipBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> WARRANTY'}</h3>
-          <p>This game is provided as-is with no warranty. We are not responsible for existential dread, paranoia, or the sudden urge to look at the sky. Play at your own risk.</p>
+          <h3 className={styles.legalHeading}>{t('menu.terms.warrantyHeading')}</h3>
+          <p>{t('menu.terms.warrantyBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> CONTACT'}</h3>
-          <p>Questions or concerns? Reach us through our GitHub repository.</p>
+          <h3 className={styles.legalHeading}>{t('menu.terms.contactHeading')}</h3>
+          <p>{t('menu.terms.contactBody')}</p>
         </div>
       </div>
 
@@ -566,46 +566,46 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
       </div>
 
       <div className={styles.legalContent}>
-        <p className={styles.legalDate}>Last updated: April 2025</p>
+        <p className={styles.legalDate}>{t('menu.privacy.lastUpdated')}</p>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> SUMMARY'}</h3>
-          <p>We do not collect your data. That is the entire privacy policy. But since you are here, we will elaborate.</p>
+          <h3 className={styles.legalHeading}>{t('menu.privacy.summaryHeading')}</h3>
+          <p>{t('menu.privacy.summaryBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> DATA COLLECTION'}</h3>
-          <p>Varginha: Terminal 1996 does not collect, store, or transmit any personal information. No analytics. No tracking. No cookies. No telemetry. No third-party scripts watching what you do.</p>
+          <h3 className={styles.legalHeading}>{t('menu.privacy.dataCollectionHeading')}</h3>
+          <p>{t('menu.privacy.dataCollectionBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> LOCAL STORAGE'}</h3>
-          <p>The game uses your browser&apos;s localStorage to save game progress and settings. This data never leaves your device. You can clear it at any time through your browser settings.</p>
+          <h3 className={styles.legalHeading}>{t('menu.privacy.localStorageHeading')}</h3>
+          <p>{t('menu.privacy.localStorageBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> THIRD PARTIES'}</h3>
-          <p>We do not share data with third parties because we do not have any data to share. The game runs entirely in your browser.</p>
+          <h3 className={styles.legalHeading}>{t('menu.privacy.thirdPartiesHeading')}</h3>
+          <p>{t('menu.privacy.thirdPartiesBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> AUDIO'}</h3>
-          <p>All audio is generated locally using the Web Audio API or played from bundled files. No external audio services are contacted.</p>
+          <h3 className={styles.legalHeading}>{t('menu.privacy.audioHeading')}</h3>
+          <p>{t('menu.privacy.audioBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> CHILDREN'}</h3>
-          <p>This game contains horror themes and is intended for mature audiences. We do not knowingly collect data from anyone — children or otherwise.</p>
+          <h3 className={styles.legalHeading}>{t('menu.privacy.childrenHeading')}</h3>
+          <p>{t('menu.privacy.childrenBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> CHANGES'}</h3>
-          <p>If this policy ever changes, it will be updated here. Given that our policy is &quot;we collect nothing,&quot; changes are unlikely.</p>
+          <h3 className={styles.legalHeading}>{t('menu.privacy.changesHeading')}</h3>
+          <p>{t('menu.privacy.changesBody')}</p>
         </div>
 
         <div className={styles.legalSection}>
-          <h3 className={styles.legalHeading}>{'> CONTACT'}</h3>
-          <p>Created by Tulio Soria and Arthur Ramos. Reach us through our GitHub repository.</p>
+          <h3 className={styles.legalHeading}>{t('menu.privacy.contactHeading')}</h3>
+          <p>{t('menu.privacy.contactBody')}</p>
         </div>
       </div>
 

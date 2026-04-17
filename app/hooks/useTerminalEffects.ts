@@ -79,7 +79,12 @@ const PARANOIA_MESSAGES: LocalizedTerminalCopy[] = [
   { key: 'terminal.paranoia.36', fallback: 'INFO: This session will be... remembered' },
 ];
 
-const ALIEN_MANIFESTATION_INTERVAL_MS = 30000;
+const ALIEN_MANIFESTATION_MIN_MS = 60000;
+const ALIEN_MANIFESTATION_MAX_MS = 180000;
+
+const getRandomAlienInterval = () => {
+  return ALIEN_MANIFESTATION_MIN_MS + Math.random() * (ALIEN_MANIFESTATION_MAX_MS - ALIEN_MANIFESTATION_MIN_MS);
+};
 
 interface TerminalEffectsRefs {
   outputRef: React.RefObject<HTMLDivElement | null>;
@@ -1043,7 +1048,7 @@ export function useTerminalEffects({
     };
 
     const scheduleAlien = (delayOverride?: number) => {
-      const delay = delayOverride ?? ALIEN_MANIFESTATION_INTERVAL_MS;
+      const delay = delayOverride ?? getRandomAlienInterval();
       const t = setTimeout(() => {
         if (cancelled) return;
         if (pauseTimedMechanics) {
@@ -1053,7 +1058,7 @@ export function useTerminalEffects({
 
         const hideDelay = startManifestation();
         if (hideDelay !== undefined && !cancelled) {
-          scheduleAlien(ALIEN_MANIFESTATION_INTERVAL_MS);
+          scheduleAlien(getRandomAlienInterval());
         }
       }, delay);
       activeTimeouts.push(t);
@@ -1062,7 +1067,7 @@ export function useTerminalEffects({
     if (previewRemaining > 0) {
       startManifestation(previewRemaining);
       if (staticActive) {
-        scheduleAlien(ALIEN_MANIFESTATION_INTERVAL_MS);
+        scheduleAlien(getRandomAlienInterval());
       }
     } else if (staticActive) {
       scheduleAlien();

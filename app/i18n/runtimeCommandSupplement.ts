@@ -806,6 +806,259 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'minha última transmissão de dentro do sistema. março de 96. três da manhã. eu não sabia se alguém ia ouvir algum dia.',
     'aerosol dispersal over civilian areas. project cirrus. they called it weather modification. it was not about the weather.':
       'dispersão de aerossóis sobre áreas civis. projeto cirrus. chamaram de modificação climática. não era sobre clima.',
+
+    // ═══ Ending translations ═══
+
+    // ENDING 1: ridiculed
+    'RIDICULED': 'RIDICULARIZADO',
+    'The leak that proved nothing.': 'O vazamento que não provou nada.',
+    'The dossier surfaces on three forums and a defunct Geocities mirror. A television host holds up a printout and laughs for six minutes straight. The military issues no denial because none is required.':
+      'O dossiê aparece em três fóruns e num espelho defunto do Geocities. Um apresentador de TV levanta uma impressão e ri por seis minutos seguidos. Os militares não emitem nenhum desmentido porque nenhum é necessário.',
+    'Within forty-eight hours the files are catalogued alongside crop circles, chemtrails, and faith healers. Your name never enters the public record. The word "hoax" is generous — most call it fan fiction.':
+      'Em quarenta e oito horas os arquivos são catalogados junto com círculos nas plantações, chemtrails e curandeiros. Seu nome nunca entra nos registros públicos. A palavra "farsa" é generosa — a maioria chama de fan fiction.',
+    'The archive rots on a server in São Paulo. Nobody downloads it. The password expires. Varginha remains a punchline.':
+      'O arquivo apodrece num servidor em São Paulo. Ninguém baixa. A senha expira. Varginha continua sendo piada.',
+    'you gave them noise. they needed signal.': 'você deu ruído pra eles. precisavam de sinal.',
+    'INTERNET HOAX ALERT: \'CLASSIFIED UFO FILES\' FROM BRAZIL DISMISSED AS PRANK':
+      'ALERTA DE FARSA NA INTERNET: \'ARQUIVOS OVNI SECRETOS\' DO BRASIL DESCARTADOS COMO PEGADINHA',
+    'USAF spokesperson calls documents \'creative fiction\' — Brazilian Air Force declines comment — Internet forums debate authenticity':
+      'Porta-voz da USAF chama documentos de \'ficção criativa\' — Força Aérea Brasileira recusa comentar — Fóruns da Internet debatem autenticidade',
+    'VARGINHA, Brazil (AP) — A collection of documents purporting to be classified military files about an alleged \'unidentified flying object\' incident in southern Brazil surfaced on several Internet bulletin boards late Tuesday, drawing immediate skepticism from experts and officials alike.':
+      'VARGINHA, Brasil (AP) — Uma coleção de documentos que supostamente seriam arquivos militares secretos sobre um alegado incidente com \'objeto voador não identificado\' no sul do Brasil apareceu em vários fóruns da Internet na terça-feira à noite, gerando ceticismo imediato de especialistas e autoridades.',
+    'The files, which appear to describe military operations in the city of Varginha in January of this year, were reportedly obtained through an unauthorized computer intrusion. Air Force officials in Brasília declined to comment, noting only that the documents \'do not correspond to any known military operation.\'':
+      'Os arquivos, que parecem descrever operações militares na cidade de Varginha em janeiro deste ano, teriam sido obtidos por meio de uma invasão não autorizada a computadores. Autoridades da Força Aérea em Brasília recusaram comentar, observando apenas que os documentos \'não correspondem a nenhuma operação militar conhecida.\'',
+    'Dr. Harold Simmons of the Center for Scientific Inquiry called the documents \'an elaborate but ultimately unconvincing fabrication,\' pointing to what he described as \'inconsistencies in formatting and terminology that suggest a civilian author with limited military knowledge.\'':
+      'O Dr. Harold Simmons do Centro de Investigação Científica chamou os documentos de \'uma fabricação elaborada mas no fim das contas pouco convincente,\' apontando o que ele descreveu como \'inconsistências de formatação e terminologia que sugerem um autor civil com conhecimento militar limitado.\'',
+
+    // ENDING 2: ufo74_exposed
+    'UFO74 EXPOSED': 'UFO74 EXPOSTO',
+    'The ghost had a name all along.': 'O fantasma sempre teve um nome.',
+    'The decrypted file spreads before anyone can suppress it. Carlos Eduardo Ferreira — intelligence officer, Brazilian Air Force, stationed at Guarulhos in 1996. Thirty years building the archive in secret.':
+      'O arquivo descriptografado se espalha antes que alguém consiga suprimi-lo. Carlos Eduardo Ferreira — oficial de inteligência, Força Aérea Brasileira, estacionado em Guarulhos em 1996. Trinta anos construindo o arquivo em segredo.',
+    'Military intelligence confirms the service record within hours. The denial is immediate, automatic, and too late. Ferreira\'s face is on every screen in the country. He never wanted fame. He wanted someone to believe him.':
+      'A inteligência militar confirma a ficha de serviço em poucas horas. A negação é imediata, automática e tardia demais. O rosto de Ferreira está em todas as telas do país. Ele nunca quis fama. Queria que alguém acreditasse nele.',
+    'The Air Force opens an internal inquiry. Three generals retire early. The archive survives because it was already everywhere. UFO74 is no longer a call sign. It is a name.':
+      'A Força Aérea abre uma investigação interna. Três generais se aposentam antecipadamente. O arquivo sobrevive porque já estava em todo lugar. UFO74 não é mais um indicativo de chamada. É um nome.',
+    'you found me. now finish what i started.': 'você me achou. agora termine o que eu comecei.',
+    'MILITARY OFFICER IDENTIFIED AS SOURCE OF CLASSIFIED BRAZILIAN DATA LEAK':
+      'OFICIAL MILITAR IDENTIFICADO COMO FONTE DE VAZAMENTO DE DADOS SECRETOS BRASILEIROS',
+    'Carlos E. Ferreira, Brazilian Air Force intelligence — service record confirmed — three generals request early retirement':
+      'Carlos E. Ferreira, inteligência da Força Aérea Brasileira — ficha de serviço confirmada — três generais pedem aposentadoria antecipada',
+    'BRASÍLIA, Brazil (Reuters) — A decrypted computer file circulating on the Internet has identified a Brazilian Air Force intelligence officer as the source of a massive unauthorized disclosure of classified military documents, according to officials familiar with the matter.':
+      'BRASÍLIA, Brasil (Reuters) — Um arquivo de computador descriptografado circulando na Internet identificou um oficial de inteligência da Força Aérea Brasileira como a fonte de uma enorme divulgação não autorizada de documentos militares secretos, segundo autoridades familiarizadas com o caso.',
+    'The officer, identified as Carlos Eduardo Ferreira, was reportedly stationed at Guarulhos Air Base during the period described in the leaked files. Military intelligence confirmed the service record within hours of the file\'s release, though a spokesperson declined to comment on the substance of the allegations.':
+      'O oficial, identificado como Carlos Eduardo Ferreira, estava supostamente estacionado na Base Aérea de Guarulhos durante o período descrito nos arquivos vazados. A inteligência militar confirmou a ficha de serviço poucas horas após a divulgação do arquivo, embora um porta-voz tenha se recusado a comentar sobre o conteúdo das alegações.',
+    'Three senior Air Force generals have submitted requests for early retirement in what analysts describe as an attempt to distance themselves from the growing scandal. The leaked archive, which Ferreira allegedly maintained for decades, contains documents related to military operations in southern Minas Gerais state.':
+      'Três generais seniores da Força Aérea submeteram pedidos de aposentadoria antecipada no que analistas descrevem como uma tentativa de se distanciar do escândalo crescente. O arquivo vazado, que Ferreira supostamente manteve por décadas, contém documentos relacionados a operações militares no sul de Minas Gerais.',
+
+    // ENDING 3: the_2026_warning
+    'THE 2026 WARNING': 'O ALERTA DE 2026',
+    'Thirty rotations. The clock does not stop.': 'Trinta rotações. O relógio não para.',
+    'The convergence data hits academic servers first. Physicists in three countries confirm the thirty-year cycle independently. 1947. 1977. 1996. The pattern is clean, the projection is specific: September 2026, plus or minus two months.':
+      'Os dados de convergência chegam nos servidores acadêmicos primeiro. Físicos em três países confirmam o ciclo de trinta anos independentemente. 1947. 1977. 1996. O padrão é limpo, a projeção é específica: setembro de 2026, mais ou menos dois meses.',
+    'Governments issue no statements. Private aerospace firms begin relocating satellite arrays. The Brazilian Air Force reclassifies seven archived directives without explanation.':
+      'Governos não emitem declarações. Empresas aeroespaciais privadas começam a reposicionar conjuntos de satélites. A Força Aérea Brasileira reclassifica sete diretivas arquivadas sem explicação.',
+    'The public does not panic because the public does not understand logarithmic signal propagation. Those who do understand have gone very quiet.':
+      'O público não entra em pânico porque o público não entende propagação logarítmica de sinais. Quem entende ficou muito quieto.',
+    'the window is real. you gave them time.': 'a janela é real. você deu tempo a eles.',
+    'SCIENTISTS IDENTIFY 30-YEAR PATTERN IN UNEXPLAINED ATMOSPHERIC EVENTS':
+      'CIENTISTAS IDENTIFICAM PADRÃO DE 30 ANOS EM EVENTOS ATMOSFÉRICOS INEXPLICÁVEIS',
+    'Next predicted occurrence: September 2026 — private aerospace firms reportedly repositioning satellite arrays — no official comment':
+      'Próxima ocorrência prevista: setembro de 2026 — empresas aeroespaciais estariam reposicionando conjuntos de satélites — sem comentário oficial',
+    'GENEVA, Switzerland (AP) — Physicists at three independent research institutions have confirmed the existence of a thirty-year cyclical pattern in atmospheric anomaly data, according to a joint preliminary report released Wednesday. The pattern, if validated, would predict a significant event window in late 2026.':
+      'GENEBRA, Suíça (AP) — Físicos em três instituições de pesquisa independentes confirmaram a existência de um padrão cíclico de trinta anos em dados de anomalias atmosféricas, segundo um relatório preliminar conjunto divulgado na quarta-feira. O padrão, se validado, preveria uma janela de evento significativo no final de 2026.',
+    'The analysis was prompted by documents leaked from a Brazilian military archive earlier this month. While the researchers declined to speculate on the nature of the anomalies, they confirmed the mathematical model described in the leaked files is \'internally consistent and statistically significant.\'':
+      'A análise foi motivada por documentos vazados de um arquivo militar brasileiro no início deste mês. Embora os pesquisadores tenham se recusado a especular sobre a natureza das anomalias, confirmaram que o modelo matemático descrito nos arquivos vazados é \'internamente consistente e estatisticamente significativo.\'',
+    'Several private aerospace companies have begun what industry sources describe as \'precautionary repositioning\' of satellite monitoring arrays, though none would confirm a connection to the leaked data. The Brazilian government has issued no statement.':
+      'Várias empresas aeroespaciais privadas iniciaram o que fontes do setor descrevem como \'reposicionamento preventivo\' de conjuntos de monitoramento por satélite, embora nenhuma tenha confirmado conexão com os dados vazados. O governo brasileiro não emitiu declaração.',
+
+    // ENDING 4: government_scandal
+    'BRAZILIAN GOVERNMENT SCANDAL': 'ESCÂNDALO DO GOVERNO BRASILEIRO',
+    'The coverup was bigger than the event.': 'O acobertamento foi maior que o evento.',
+    'Transport logs. Response orders. Incident reports signed by officers who officially never existed. The leak does not prove alien contact — it proves the Brazilian military mobilized an entire region to hide something on January 20, 1996.':
+      'Registros de transporte. Ordens de resposta. Relatórios de incidentes assinados por oficiais que oficialmente nunca existiram. O vazamento não prova contato alienígena — prova que os militares brasileiros mobilizaram uma região inteira para esconder algo em 20 de janeiro de 1996.',
+    'Congressional inquiries open in Brasília. Three colonels are subpoenaed. One refuses to testify. The Jardim Andere site is cordoned off for "environmental assessment" that never produces a report.':
+      'Inquéritos parlamentares são abertos em Brasília. Três coronéis são intimados. Um se recusa a testemunhar. O local do Jardim Andere é isolado para "avaliação ambiental" que nunca produz um relatório.',
+    'The question shifts. It is no longer about what landed. It is about who authorized the silence, who paid for it, and where the bodies went.':
+      'A pergunta muda. Não é mais sobre o que pousou. É sobre quem autorizou o silêncio, quem pagou por ele e pra onde os corpos foram.',
+    'they will sacrifice officers to protect the secret.': 'eles vão sacrificar oficiais pra proteger o segredo.',
+    'LEAKED DOCUMENTS REVEAL MASSIVE BRAZILIAN MILITARY OPERATION IN VARGINHA':
+      'DOCUMENTOS VAZADOS REVELAM GRANDE OPERAÇÃO MILITAR BRASILEIRA EM VARGINHA',
+    'Transport logs and response orders prove classified mobilization — three colonels subpoenaed — Congressional inquiry opens in Brasília':
+      'Registros de transporte e ordens de resposta provam mobilização sigilosa — três coronéis intimados — inquérito parlamentar aberto em Brasília',
+    'BRASÍLIA, Brazil (AP) — Classified military documents leaked to the Internet this week reveal what appears to be a large-scale Brazilian Army operation in the southern city of Varginha in January 1996, involving troop movements, vehicle requisitions, and command orders that were never disclosed to the public or to civilian authorities.':
+      'BRASÍLIA, Brasil (AP) — Documentos militares secretos vazados na Internet esta semana revelam o que parece ser uma operação em larga escala do Exército Brasileiro na cidade de Varginha, no sul de Minas, em janeiro de 1996, envolvendo movimentações de tropas, requisições de veículos e ordens de comando que nunca foram divulgadas ao público ou às autoridades civis.',
+    'The documents include transport logs, incident reports signed by officers whose service records contain no reference to the operation, and response orders authorizing the cordoning of a residential area described only as \'the Jardim Andere site.\' The purpose of the operation is not specified in any of the recovered files.':
+      'Os documentos incluem registros de transporte, relatórios de incidentes assinados por oficiais cujas fichas de serviço não contêm referência à operação, e ordens de resposta autorizando o isolamento de uma área residencial descrita apenas como \'o local do Jardim Andere.\' O propósito da operação não é especificado em nenhum dos arquivos recuperados.',
+    'Three colonels have been subpoenaed to testify before a Congressional committee in Brasília. One has reportedly refused. The Ministry of Defense issued a brief statement calling the documents \'unverified\' but did not deny their authenticity.':
+      'Três coronéis foram intimados a testemunhar perante uma comissão do Congresso em Brasília. Um teria se recusado. O Ministério da Defesa emitiu uma breve declaração chamando os documentos de \'não verificados\', mas não negou sua autenticidade.',
+
+    // ENDING 5: prisoner_45_freed
+    'PRISONER 45 FREED': 'PRISIONEIRO 45 LIBERTADO',
+    'The containment logs were never supposed to leave.': 'Os registros de contenção nunca deviam ter saído.',
+    'Bio-containment records. Neural dump data. Ethics exceptions signed by committee. The dossier does not show a captured animal — it shows a detained intelligence, held in a Faraday cage for eleven days while handlers reported headaches and cognitive intrusion.':
+      'Registros de biocontenção. Dados de despejo neural. Exceções éticas assinadas por comitê. O dossiê não mostra um animal capturado — mostra uma inteligência detida, mantida numa gaiola de Faraday por onze dias enquanto os manipuladores relatavam dores de cabeça e intrusão cognitiva.',
+    'The witness statements give it weight. The sisters. The patrol officers. The veterinarian they silenced. Each testimony corroborates the containment timeline independently.':
+      'Os depoimentos das testemunhas dão peso. As irmãs. Os policiais da patrulha. O veterinário que eles silenciaram. Cada testemunho corrobora a linha do tempo da contenção independentemente.',
+    'A São Paulo judge orders the military to produce "all biological materials recovered January 1996." The military responds that no such materials exist. The containment logs say otherwise.':
+      'Um juiz de São Paulo ordena que os militares apresentem "todos os materiais biológicos recuperados em janeiro de 1996." Os militares respondem que tais materiais não existem. Os registros de contenção dizem o contrário.',
+    'it was never a specimen. it was a prisoner.': 'nunca foi um espécime. era um prisioneiro.',
+    'CLASSIFIED LOGS DESCRIBE \'NON-HUMAN ENTITY\' DETAINED IN MILITARY FACILITY':
+      'REGISTROS SECRETOS DESCREVEM \'ENTIDADE NÃO HUMANA\' DETIDA EM INSTALAÇÃO MILITAR',
+    'Bio-containment records leaked — handlers reported \'cognitive intrusion\' — São Paulo judge demands military disclosure':
+      'Registros de biocontenção vazados — manipuladores relataram \'intrusão cognitiva\' — juiz de São Paulo exige divulgação militar',
+    'SÃO PAULO, Brazil (UPI) — Leaked bio-containment records from a Brazilian military facility describe what personnel referred to as a \'detained biological intelligence\' held for eleven days in a Faraday-shielded chamber, according to documents released on the World Wide Web late Thursday.':
+      'SÃO PAULO, Brasil (UPI) — Registros de biocontenção vazados de uma instalação militar brasileira descrevem o que o pessoal chamou de \'inteligência biológica detida\' mantida por onze dias numa câmara blindada por Faraday, segundo documentos divulgados na World Wide Web na quinta-feira à noite.',
+    'The logs, which include ethics exception forms signed by a medical committee, describe handlers experiencing \'persistent headaches and reported cognitive intrusion events\' during the detention period. The entity, designated as \'Specimen Alpha\' in some documents and \'Prisoner 45\' in others, is described as exhibiting \'responsive behavior inconsistent with any known terrestrial species.\'':
+      'Os registros, que incluem formulários de exceção ética assinados por um comitê médico, descrevem manipuladores experimentando \'dores de cabeça persistentes e eventos de intrusão cognitiva relatados\' durante o período de detenção. A entidade, designada como \'Espécime Alpha\' em alguns documentos e \'Prisioneiro 45\' em outros, é descrita como exibindo \'comportamento responsivo inconsistente com qualquer espécie terrestre conhecida.\'',
+    'A judge in São Paulo has ordered the military to produce \'all biological materials recovered in January 1996.\' The military responded Friday that no such materials exist. The leaked containment logs appear to contradict this statement directly.':
+      'Um juiz em São Paulo ordenou que os militares apresentem \'todos os materiais biológicos recuperados em janeiro de 1996.\' Os militares responderam na sexta-feira que tais materiais não existem. Os registros de contenção vazados parecem contradizer diretamente esta declaração.',
+
+    // ENDING 6: harvest_understood
+    'THE HARVEST UNDERSTOOD': 'A COLHEITA COMPREENDIDA',
+    'Colonization does not require arrival.': 'Colonização não requer chegada.',
+    'The extraction documents land in the wrong hands — or the right ones. The colonization model. The harvest timeline. The mechanism that requires no ships, no invasion, no contact at all.':
+      'Os documentos de extração caem nas mãos erradas — ou nas certas. O modelo de colonização. O cronograma da colheita. O mecanismo que não requer naves, nenhuma invasão, nenhum contato.',
+    'Three universities publish independent analyses within a month. The consensus is clinical and devastating: the model is internally consistent, the energy mathematics are sound, and the thirty-year seeding cycle aligns with observed neurological data.':
+      'Três universidades publicam análises independentes em um mês. O consenso é clínico e devastador: o modelo é internamente consistente, a matemática energética é sólida, e o ciclo de semeadura de trinta anos se alinha com dados neurológicos observados.',
+    'Nobody wants to say the word "colonization" on television. They use "resource assessment" instead. It means the same thing.':
+      'Ninguém quer dizer a palavra "colonização" na televisão. Usam "avaliação de recursos" no lugar. Significa a mesma coisa.',
+    'they do not need to come here. they never did.': 'eles não precisam vir aqui. nunca precisaram.',
+    'LEAKED THEORY DESCRIBES \'COLONIZATION WITHOUT ARRIVAL\' BY UNKNOWN INTELLIGENCE':
+      'TEORIA VAZADA DESCREVE \'COLONIZAÇÃO SEM CHEGADA\' POR INTELIGÊNCIA DESCONHECIDA',
+    'Three universities confirm energy mathematics — \'internally consistent,\' researchers say — no government comment':
+      'Três universidades confirmam matemática energética — \'internamente consistente,\' dizem pesquisadores — sem comentário do governo',
+    'CAMBRIDGE, Mass. (AP) — Documents leaked from a classified Brazilian military archive describe a theoretical model for what the files term \'non-arrival colonization\' — a process by which an unknown intelligence could extract resources from a planetary system without physical presence or direct contact, according to an analysis published Thursday by researchers at MIT.':
+      'CAMBRIDGE, Mass. (AP) — Documentos vazados de um arquivo militar brasileiro secreto descrevem um modelo teórico para o que os arquivos chamam de \'colonização sem chegada\' — um processo pelo qual uma inteligência desconhecida poderia extrair recursos de um sistema planetário sem presença física ou contato direto, segundo uma análise publicada na quinta-feira por pesquisadores do MIT.',
+    'Three universities have now independently reviewed the leaked extraction model and confirmed that its energy mathematics are, in the words of one physicist, \'disturbingly sound.\' The model describes a thirty-year seeding cycle that researchers say aligns with observed neurological data from the Brazilian military\'s own classified medical files.':
+      'Três universidades revisaram independentemente o modelo de extração vazado e confirmaram que sua matemática energética é, nas palavras de um físico, \'perturbadoramente sólida.\' O modelo descreve um ciclo de semeadura de trinta anos que pesquisadores dizem se alinhar com dados neurológicos observados dos próprios arquivos médicos secretos dos militares brasileiros.',
+    'No government has issued a formal response. Television commentators have avoided the word \'colonization,\' preferring the term \'resource assessment.\' Scientists familiar with the data say the distinction is academic.':
+      'Nenhum governo emitiu resposta formal. Comentaristas de televisão evitaram a palavra \'colonização,\' preferindo o termo \'avaliação de recursos.\' Cientistas familiarizados com os dados dizem que a distinção é acadêmica.',
+
+    // ENDING 7: nothing_changes
+    'NOTHING CHANGES': 'NADA MUDA',
+    'The truth arrived. Nobody moved.': 'A verdade chegou. Ninguém se mexeu.',
+    'The dossier is strong. Autopsy reports. Field observations. Military intercepts. Enough to establish that something non-human was recovered in Varginha in January 1996. Enough to demand answers.':
+      'O dossiê é forte. Laudos de autópsia. Observações de campo. Interceptações militares. O suficiente pra estabelecer que algo não humano foi recuperado em Varginha em janeiro de 1996. O suficiente pra exigir respostas.',
+    'Panels convene. Experts testify. The footage circulates. For two weeks, the world pays attention. Then an election cycle begins, a currency collapses, a celebrity dies, and the feed moves on.':
+      'Painéis se reúnem. Especialistas testemunham. As imagens circulam. Por duas semanas, o mundo presta atenção. Aí começa um ciclo eleitoral, uma moeda desaba, uma celebridade morre, e o feed segue em frente.',
+    'The files remain available. Downloaded fourteen million times. Cited in zero policy changes. The truth is free and weightless.':
+      'Os arquivos continuam disponíveis. Baixados catorze milhões de vezes. Citados em zero mudanças de política. A verdade é livre e sem peso.',
+    'you proved everything. it was not enough.': 'você provou tudo. não foi suficiente.',
+    'VARGINHA FILES DOWNLOADED 14 MILLION TIMES; GOVERNMENTS WORLDWIDE SILENT':
+      'ARQUIVOS DE VARGINHA BAIXADOS 14 MILHÕES DE VEZES; GOVERNOS DO MUNDO TODO EM SILÊNCIO',
+    'Evidence called \'compelling\' by experts — zero policy changes — election coverage resumes':
+      'Evidências chamadas de \'convincentes\' por especialistas — zero mudanças de política — cobertura eleitoral retomada',
+    'NEW YORK (AP) — The collection of classified military documents known as the \'Varginha Files\' has been downloaded more than fourteen million times since its release on the Internet two weeks ago, making it one of the most widely distributed document leaks in the brief history of the World Wide Web. Despite this, no government has issued a formal response.':
+      'NOVA YORK (AP) — A coleção de documentos militares secretos conhecida como \'Arquivos de Varginha\' foi baixada mais de catorze milhões de vezes desde sua divulgação na Internet há duas semanas, tornando-se um dos maiores vazamentos de documentos na breve história da World Wide Web. Apesar disso, nenhum governo emitiu resposta formal.',
+    'Panels of experts convened at universities in four countries have called the evidence \'compelling\' and \'worthy of official investigation.\' Footage from the original incident has circulated on cable news networks for approximately twelve days before being displaced by coverage of ongoing elections and financial markets.':
+      'Painéis de especialistas reunidos em universidades de quatro países chamaram as evidências de \'convincentes\' e \'dignas de investigação oficial.\' Imagens do incidente original circularam em redes de notícias a cabo por aproximadamente doze dias antes de serem substituídas pela cobertura de eleições e mercados financeiros.',
+    'The files remain freely available on multiple mirror sites. Analysts note that the unprecedented volume of downloads has produced no measurable political or policy impact. \'The truth is out there,\' noted one commentator. \'It turns out that is not sufficient.\'':
+      'Os arquivos continuam disponíveis gratuitamente em múltiplos sites espelho. Analistas observam que o volume sem precedentes de downloads não produziu nenhum impacto político ou de políticas mensurável. \'A verdade está lá fora,\' observou um comentarista. \'Acontece que isso não é suficiente.\'',
+
+    // ENDING 8: incomplete_picture
+    'INCOMPLETE PICTURE': 'QUADRO INCOMPLETO',
+    'Fragments do not make a case.': 'Fragmentos não formam um caso.',
+    'The dossier contains evidence, but it tells no story. A medical report here. A transport log there. No thread connects them. No narrative emerges. The files are real and they prove nothing.':
+      'O dossiê contém evidências, mas não conta nenhuma história. Um laudo médico aqui. Um registro de transporte ali. Nenhum fio os conecta. Nenhuma narrativa emerge. Os arquivos são reais e não provam nada.',
+    'Debunkers dismantle the leak in a weekend. Each document, taken alone, has an innocent explanation. The military does not even need to respond. The files discredit themselves through isolation.':
+      'Desmentidores desmontam o vazamento num fim de semana. Cada documento, isolado, tem uma explicação inocente. Os militares nem precisam responder. Os arquivos se desacreditam sozinhos pelo isolamento.',
+    'You had the pieces. You did not assemble the picture.': 'Você tinha as peças. Não montou o quadro.',
+    'scattered evidence is the same as no evidence.': 'evidência espalhada é o mesmo que nenhuma evidência.',
+    'LEAKED MILITARY DOCUMENTS FAIL TO SUPPORT UFO CLAIMS, SAY ANALYSTS':
+      'DOCUMENTOS MILITARES VAZADOS NÃO SUSTENTAM ALEGAÇÕES SOBRE OVNIS, DIZEM ANALISTAS',
+    'Debunkers dismantle evidence in 72 hours — \'each file has innocent explanation\' — military issues no denial':
+      'Desmentidores desmontam evidências em 72 horas — \'cada arquivo tem explicação inocente\' — militares não emitem desmentido',
+    'WASHINGTON (AP) — A collection of documents leaked from a Brazilian military archive and purporting to describe contact with a non-human intelligence has been largely discredited by independent analysts, who say the files, while possibly authentic, fail to tell a coherent story.':
+      'WASHINGTON (AP) — Uma coleção de documentos vazados de um arquivo militar brasileiro que supostamente descrevem contato com uma inteligência não humana foi amplamente desacreditada por analistas independentes, que dizem que os arquivos, embora possivelmente autênticos, não contam uma história coerente.',
+    'The leak contains medical reports, transport logs, and communications intercepts, but analysts say no thread connects them into a meaningful narrative. \'Each document, taken individually, has an innocent explanation,\' said Dr. James Whitfield of Georgetown University. \'Taken together, they prove nothing more than that the Brazilian military generates paperwork.\'':
+      'O vazamento contém laudos médicos, registros de transporte e interceptações de comunicações, mas analistas dizem que nenhum fio os conecta numa narrativa significativa. \'Cada documento, analisado individualmente, tem uma explicação inocente,\' disse o Dr. James Whitfield da Universidade de Georgetown. \'Juntos, não provam nada além de que os militares brasileiros geram papelada.\'',
+    'The Brazilian Air Force has issued no official denial, which analysts interpret not as confirmation but as an indication that the documents do not warrant response. Several Internet forums that initially promoted the files have moved on to other topics.':
+      'A Força Aérea Brasileira não emitiu nenhum desmentido oficial, o que analistas interpretam não como confirmação, mas como indicação de que os documentos não merecem resposta. Vários fóruns da Internet que inicialmente promoveram os arquivos passaram para outros assuntos.',
+
+    // ENDING 9: wrong_story
+    'THE WRONG STORY': 'A HISTÓRIA ERRADA',
+    'You investigated the cafeteria.': 'Você investigou a cantina.',
+    'The dossier arrives on journalists\' desks and produces genuine confusion. Budget memos. Parking allocations. A coffee harvest report. Media payment records that prove corruption but not contact.':
+      'O dossiê chega nas mesas dos jornalistas e produz confusão genuína. Memorandos de orçamento. Alocações de estacionamento. Um relatório de safra de café. Registros de pagamento à mídia que provam corrupção, mas não contato.',
+    'The financial angle gains traction. Three military officials face embezzlement charges. A journalist wins an award for exposing the media suppression network. The actual event — the beings, the autopsies, the containment — is never mentioned.':
+      'O ângulo financeiro ganha tração. Três oficiais militares enfrentam acusações de desvio de verbas. Uma jornalista ganha um prêmio por expor a rede de supressão midiática. O evento real — os seres, as autópsias, a contenção — nunca é mencionado.',
+    'You exposed a scandal. The wrong one.': 'Você expôs um escândalo. O errado.',
+    'you found the lie but missed the truth behind it.': 'você achou a mentira mas perdeu a verdade por trás dela.',
+    'MILITARY BUDGET SCANDAL UNCOVERED IN LEAKED BRAZILIAN DOCUMENTS':
+      'ESCÂNDALO DE ORÇAMENTO MILITAR DESCOBERTO EM DOCUMENTOS BRASILEIROS VAZADOS',
+    'Three officials face embezzlement charges — journalist wins award for exposé — actual UFO claims ignored':
+      'Três oficiais enfrentam acusações de desvio de verbas — jornalista ganha prêmio por exposição — alegações reais sobre OVNIs ignoradas',
+    'BRASÍLIA, Brazil (Reuters) — Classified documents leaked from a Brazilian military installation have led not to the confirmation of extraterrestrial contact, as the anonymous source apparently intended, but to the exposure of a significant financial corruption network within the armed forces.':
+      'BRASÍLIA, Brasil (Reuters) — Documentos secretos vazados de uma instalação militar brasileira levaram não à confirmação de contato extraterrestre, como a fonte anônima aparentemente pretendia, mas à exposição de uma significativa rede de corrupção financeira dentro das forças armadas.',
+    'The leaked files contain detailed budget memoranda, media payment records, and what prosecutors describe as \'a systematic program to suppress unfavorable news coverage through direct payments to journalists.\' Three senior military officials now face embezzlement and fraud charges. A reporter for Folha de São Paulo has been awarded the Maria Moors Cabot Prize for her coverage of the scandal.':
+      'Os arquivos vazados contêm memorandos detalhados de orçamento, registros de pagamento à mídia, e o que promotores descrevem como \'um programa sistemático para suprimir cobertura jornalística desfavorável por meio de pagamentos diretos a jornalistas.\' Três oficiais militares seniores agora enfrentam acusações de desvio de verbas e fraude. Uma repórter da Folha de São Paulo recebeu o Prêmio Maria Moors Cabot por sua cobertura do escândalo.',
+    'Notably absent from the dossier are any substantive references to the alleged non-human contact that the leaker appeared to be documenting. Analysts describe the collection as \'accidentally important for entirely the wrong reasons.\'':
+      'Notavelmente ausentes do dossiê estão quaisquer referências substantivas ao alegado contato não humano que o responsável pelo vazamento parecia estar documentando. Analistas descrevem a coleção como \'acidentalmente importante por motivos completamente errados.\'',
+
+    // ENDING 10: hackerkid_caught
+    'HACKERKID CAUGHT': 'HACKERKID PEGO',
+    'The honeypots worked exactly as designed.': 'Os honeypots funcionaram exatamente como planejado.',
+    'Files named URGENT_classified_alpha. SMOKING_GUN_proof. FOR_PRESIDENTS_EYES_ONLY. Real classified material never advertises itself. Every file you saved was planted. Every download was logged.':
+      'Arquivos chamados URGENT_classified_alpha. SMOKING_GUN_proof. FOR_PRESIDENTS_EYES_ONLY. Material sigiloso de verdade nunca se anuncia. Todo arquivo que você salvou foi plantado. Todo download foi registrado.',
+    'Military cybersecurity traces the intrusion to your terminal within ninety minutes. The dossier is quarantined before it reaches a single journalist. Your access credentials are revoked, archived, and forwarded to federal prosecutors.':
+      'A cibersegurança militar rastreia a invasão até o seu terminal em noventa minutos. O dossiê é posto em quarentena antes de chegar a um único jornalista. Suas credenciais de acesso são revogadas, arquivadas e encaminhadas a promotores federais.',
+    'The decoy system was built for people exactly like you. Eager. Careless. Loud.':
+      'O sistema de iscas foi construído pra gente exatamente como você. Ansioso. Descuidado. Barulhento.',
+    'i tried to warn you. real secrets whisper.': 'tentei te avisar. segredos de verdade sussurram.',
+    'COMPUTER HACKER ARRESTED AFTER DOWNLOADING MILITARY DECOY FILES':
+      'HACKER DE COMPUTADOR PRESO APÓS BAIXAR ARQUIVOS MILITARES DE ISCA',
+    'Cybersecurity trap worked \'exactly as designed\' — suspect traced in 90 minutes — federal charges pending':
+      'Armadilha de cibersegurança funcionou \'exatamente como planejado\' — suspeito rastreado em 90 minutos — acusações federais pendentes',
+    'BRASÍLIA, Brazil (AP) — Brazilian military cybersecurity personnel have arrested an individual suspected of unauthorized intrusion into a classified computer network after the suspect downloaded files that had been deliberately planted as tracking devices, officials confirmed Saturday.':
+      'BRASÍLIA, Brasil (AP) — Pessoal de cibersegurança militar brasileiro prendeu um indivíduo suspeito de invasão não autorizada a uma rede de computadores sigilosa após o suspeito baixar arquivos que foram deliberadamente plantados como dispositivos de rastreamento, confirmaram autoridades no sábado.',
+    'The files, with titles such as \'URGENT_classified_alpha\' and \'FOR_PRESIDENTS_EYES_ONLY,\' were designed to appeal to inexperienced intruders and contained embedded tracking mechanisms that allowed military technicians to identify the suspect\'s terminal within ninety minutes of the initial download.':
+      'Os arquivos, com títulos como \'URGENT_classified_alpha\' e \'FOR_PRESIDENTS_EYES_ONLY,\' foram projetados para atrair invasores inexperientes e continham mecanismos de rastreamento embutidos que permitiram aos técnicos militares identificar o terminal do suspeito em noventa minutos após o download inicial.',
+    'A military spokesperson confirmed that the decoy system, which has been in place since 1994, was built specifically to identify and apprehend \'unsophisticated intrusion attempts.\' The suspect\'s collected files were quarantined before reaching any external recipient. Federal prosecutors have been notified.':
+      'Um porta-voz militar confirmou que o sistema de iscas, em funcionamento desde 1994, foi construído especificamente para identificar e apreender \'tentativas de invasão pouco sofisticadas.\' Os arquivos coletados pelo suspeito foram postos em quarentena antes de chegar a qualquer destinatário externo. Promotores federais foram notificados.',
+
+    // ENDING 11: secret_ending
+    'THE FERREIRA PROTOCOL': 'O PROTOCOLO FERREIRA',
+    'Ghost. Signal. Bridge. Ambassador.': 'Fantasma. Sinal. Ponte. Embaixador.',
+    'Carlos Eduardo Ferreira. UFO74. The ghost in the machine. His archive decrypted. His identity confirmed. But the dossier contains more than a confession — it contains the convergence model, the neural connection data, and the thirty-year projection.':
+      'Carlos Eduardo Ferreira. UFO74. O fantasma na máquina. Seu arquivo descriptografado. Sua identidade confirmada. Mas o dossiê contém mais que uma confissão — contém o modelo de convergência, os dados de conexão neural e a projeção de trinta anos.',
+    'The combination is deliberate. Ferreira designed it this way. The identity file authenticates the source. The neural data proves contact. The convergence model provides the timeline. Together they form a single argument no committee can dismiss.':
+      'A combinação é deliberada. Ferreira planejou assim. O arquivo de identidade autentica a fonte. Os dados neurais provam contato. O modelo de convergência fornece a linha do tempo. Juntos formam um único argumento que nenhum comitê pode rejeitar.',
+    'The Brazilian Air Force confirms the service record. Three allied governments request the neural data. The 2026 window enters official threat assessment documents. Ferreira\'s archive becomes the foundation of the first multinational contact protocol.':
+      'A Força Aérea Brasileira confirma a ficha de serviço. Três governos aliados solicitam os dados neurais. A janela de 2026 entra em documentos oficiais de avaliação de ameaças. O arquivo de Ferreira se torna a base do primeiro protocolo multinacional de contato.',
+    'He built this for thirty years. He built it for you.': 'Ele construiu isso por trinta anos. Ele construiu pra você.',
+    'you assembled everything. i can rest now.': 'você montou tudo. agora eu posso descansar.',
+    'MULTINATIONAL GOVERNMENTS ESTABLISH FIRST \'CONTACT PROTOCOL\' BASED ON LEAKED ARCHIVE':
+      'GOVERNOS MULTINACIONAIS ESTABELECEM PRIMEIRO \'PROTOCOLO DE CONTATO\' BASEADO EM ARQUIVO VAZADO',
+    'Three allied nations request neural data — 2026 threat window enters official assessment — Ferreira archive authenticated':
+      'Três nações aliadas solicitam dados neurais — janela de ameaça 2026 entra em avaliação oficial — arquivo Ferreira autenticado',
+    'UNITED NATIONS, New York (AP) — Representatives of three allied governments have formally requested access to neural interface data contained in a leaked Brazilian military archive, marking what diplomats describe as the first official acknowledgment that the documents may describe genuine non-human contact.':
+      'NAÇÕES UNIDAS, Nova York (AP) — Representantes de três governos aliados solicitaram formalmente acesso a dados de interface neural contidos em um arquivo militar brasileiro vazado, marcando o que diplomatas descrevem como o primeiro reconhecimento oficial de que os documentos podem descrever contato genuíno com inteligência não humana.',
+    'The archive, compiled over thirty years by Brazilian Air Force intelligence officer Carlos Eduardo Ferreira, contains identity verification documents, neural connection data, and a convergence model that projects a significant event window in September 2026. Intelligence analysts say the combination was deliberately designed to form \'a single argument no committee can dismiss.\'':
+      'O arquivo, compilado ao longo de trinta anos pelo oficial de inteligência da Força Aérea Brasileira Carlos Eduardo Ferreira, contém documentos de verificação de identidade, dados de conexão neural e um modelo de convergência que projeta uma janela de evento significativo em setembro de 2026. Analistas de inteligência dizem que a combinação foi deliberadamente projetada para formar \'um único argumento que nenhum comitê pode rejeitar.\'',
+    'The Brazilian Air Force has confirmed Ferreira\'s service record. The 2026 projection has entered official threat assessment documents in at least two NATO member states. Sources describe the emerging multinational response as \'the first contact protocol\' — a framework for coordinated government action in response to verified non-human intelligence.':
+      'A Força Aérea Brasileira confirmou a ficha de serviço de Ferreira. A projeção de 2026 entrou em documentos oficiais de avaliação de ameaças em pelo menos dois estados membros da OTAN. Fontes descrevem a resposta multinacional emergente como \'o primeiro protocolo de contato\' — uma estrutura para ação governamental coordenada em resposta a inteligência não humana verificada.',
+
+    // ENDING 12: real_ending
+    'UNDENIABLE': 'INEGÁVEL',
+    'The dossier that could not be ignored.': 'O dossiê que não podia ser ignorado.',
+    'Core evidence. Autopsy records. Witness testimony. Military logistics. Each category reinforces the others. The field journal establishes contact. The autopsy proves non-human biology. The witnesses confirm the timeline. The transport logs confirm the coverup.':
+      'Evidência central. Registros de autópsia. Testemunhos. Logística militar. Cada categoria reforça as outras. O diário de campo estabelece contato. A autópsia prova biologia não humana. As testemunhas confirmam a linha do tempo. Os registros de transporte confirmam o acobertamento.',
+    'The dossier does not ask questions. It presents facts in a sequence that permits only one conclusion. International press picks it up within hours. The Brazilian government requests seventy-two hours before responding. They use all of them.':
+      'O dossiê não faz perguntas. Apresenta fatos numa sequência que permite apenas uma conclusão. A imprensa internacional o pega em horas. O governo brasileiro pede setenta e duas horas antes de responder. Usam todas.',
+    'The response, when it comes, is seven words: "The matter is under renewed investigation." Those seven words change everything. Denial is no longer the official position. Thirty years of silence end with a single sentence.':
+      'A resposta, quando chega, são sete palavras: "O assunto está sob investigação renovada." Essas sete palavras mudam tudo. Negação não é mais a posição oficial. Trinta anos de silêncio terminam com uma única frase.',
+    'they cannot unsay those seven words.': 'eles não podem desdizer essas sete palavras.',
+    'BRAZIL BREAKS SILENCE: \'THE MATTER IS UNDER RENEWED INVESTIGATION\'':
+      'BRASIL QUEBRA O SILÊNCIO: \'O ASSUNTO ESTÁ SOB INVESTIGAÇÃO RENOVADA\'',
+    'Seven words end thirty years of official denial — international press demands full disclosure — dossier called \'undeniable\'':
+      'Sete palavras encerram trinta anos de negação oficial — imprensa internacional exige divulgação completa — dossiê chamado de \'inegável\'',
+    'BRASÍLIA, Brazil (AP) — The Brazilian government has issued its first official acknowledgment of the 1996 Varginha incident, stating in a seven-word response that \'the matter is under renewed investigation.\' The statement, released seventy-two hours after the most comprehensive dossier of evidence ever assembled reached international press outlets, effectively ends three decades of official denial.':
+      'BRASÍLIA, Brasil (AP) — O governo brasileiro emitiu seu primeiro reconhecimento oficial do incidente de Varginha de 1996, declarando em uma resposta de sete palavras que \'o assunto está sob investigação renovada.\' A declaração, divulgada setenta e duas horas depois que o dossiê de evidências mais abrangente já montado chegou aos veículos de imprensa internacionais, efetivamente encerra três décadas de negação oficial.',
+    'The dossier combines field journals establishing direct contact, autopsy records confirming non-human biology, independent witness testimony verifying the timeline, and military transport logs documenting the coverup. International press agencies describe the evidence as \'presenting facts in a sequence that permits only one conclusion.\'':
+      'O dossiê combina diários de campo estabelecendo contato direto, registros de autópsia confirmando biologia não humana, testemunhos independentes verificando a linha do tempo e registros de transporte militar documentando o acobertamento. Agências de imprensa internacionais descrevem as evidências como \'apresentando fatos numa sequência que permite apenas uma conclusão.\'',
+    'Analysts note that the carefully worded response stops short of confirming extraterrestrial contact but represents a fundamental shift in the government\'s position. \'They cannot unsay those seven words,\' noted one diplomatic observer. \'Denial is no longer the official position. Everything changes from here.\'':
+      'Analistas observam que a resposta cuidadosamente redigida não chega a confirmar contato extraterrestre, mas representa uma mudança fundamental na posição do governo. \'Eles não podem desdizer essas sete palavras,\' observou um observador diplomático. \'Negação não é mais a posição oficial. Tudo muda a partir daqui.\'',
   },
   es: {
     'UFO74: youre in. keep it quiet.': 'UFO74: ya entraste. mantén la cabeza baja.',
@@ -1613,5 +1866,258 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'mi última transmisión desde dentro del sistema. marzo del 96. las tres de la mañana. no sabía si alguien llegaría a oírla.',
     'aerosol dispersal over civilian areas. project cirrus. they called it weather modification. it was not about the weather.':
       'dispersión de aerosoles sobre zonas civiles. proyecto cirrus. lo llamaron modificación climática. no iba del clima.',
+
+    // ═══ Ending translations ═══
+
+    // ENDING 1: ridiculed
+    'RIDICULED': 'RIDICULIZADO',
+    'The leak that proved nothing.': 'La filtración que no probó nada.',
+    'The dossier surfaces on three forums and a defunct Geocities mirror. A television host holds up a printout and laughs for six minutes straight. The military issues no denial because none is required.':
+      'El dossier aparece en tres foros y un espejo difunto de Geocities. Un presentador de televisión levanta una impresión y se ríe durante seis minutos seguidos. Los militares no emiten ningún desmentido porque no hace falta.',
+    'Within forty-eight hours the files are catalogued alongside crop circles, chemtrails, and faith healers. Your name never enters the public record. The word "hoax" is generous — most call it fan fiction.':
+      'En cuarenta y ocho horas los archivos se catalogan junto con círculos en las cosechas, chemtrails y curanderos. Tu nombre nunca entra en los registros públicos. La palabra "farsa" es generosa — la mayoría lo llama fan fiction.',
+    'The archive rots on a server in São Paulo. Nobody downloads it. The password expires. Varginha remains a punchline.':
+      'El archivo se pudre en un servidor en São Paulo. Nadie lo descarga. La contraseña expira. Varginha sigue siendo un chiste.',
+    'you gave them noise. they needed signal.': 'les diste ruido. necesitaban señal.',
+    'INTERNET HOAX ALERT: \'CLASSIFIED UFO FILES\' FROM BRAZIL DISMISSED AS PRANK':
+      'ALERTA DE FARSA EN INTERNET: \'ARCHIVOS OVNI CLASIFICADOS\' DE BRASIL DESCARTADOS COMO BROMA',
+    'USAF spokesperson calls documents \'creative fiction\' — Brazilian Air Force declines comment — Internet forums debate authenticity':
+      'Portavoz de la USAF llama a los documentos \'ficción creativa\' — Fuerza Aérea Brasileña rechaza comentar — foros de Internet debaten autenticidad',
+    'VARGINHA, Brazil (AP) — A collection of documents purporting to be classified military files about an alleged \'unidentified flying object\' incident in southern Brazil surfaced on several Internet bulletin boards late Tuesday, drawing immediate skepticism from experts and officials alike.':
+      'VARGINHA, Brasil (AP) — Una colección de documentos que supuestamente serían archivos militares clasificados sobre un presunto incidente con un \'objeto volador no identificado\' en el sur de Brasil apareció en varios foros de Internet el martes por la noche, generando escepticismo inmediato de expertos y funcionarios por igual.',
+    'The files, which appear to describe military operations in the city of Varginha in January of this year, were reportedly obtained through an unauthorized computer intrusion. Air Force officials in Brasília declined to comment, noting only that the documents \'do not correspond to any known military operation.\'':
+      'Los archivos, que parecen describir operaciones militares en la ciudad de Varginha en enero de este año, habrían sido obtenidos mediante una intrusión informática no autorizada. Funcionarios de la Fuerza Aérea en Brasilia se negaron a comentar, señalando únicamente que los documentos \'no corresponden a ninguna operación militar conocida.\'',
+    'Dr. Harold Simmons of the Center for Scientific Inquiry called the documents \'an elaborate but ultimately unconvincing fabrication,\' pointing to what he described as \'inconsistencies in formatting and terminology that suggest a civilian author with limited military knowledge.\'':
+      'El Dr. Harold Simmons del Centro de Investigación Científica calificó los documentos como \'una fabricación elaborada pero en última instancia poco convincente,\' señalando lo que describió como \'inconsistencias de formato y terminología que sugieren un autor civil con conocimiento militar limitado.\'',
+
+    // ENDING 2: ufo74_exposed
+    'UFO74 EXPOSED': 'UFO74 EXPUESTO',
+    'The ghost had a name all along.': 'El fantasma siempre tuvo nombre.',
+    'The decrypted file spreads before anyone can suppress it. Carlos Eduardo Ferreira — intelligence officer, Brazilian Air Force, stationed at Guarulhos in 1996. Thirty years building the archive in secret.':
+      'El archivo descifrado se propaga antes de que alguien pueda suprimirlo. Carlos Eduardo Ferreira — oficial de inteligencia, Fuerza Aérea Brasileña, estacionado en Guarulhos en 1996. Treinta años construyendo el archivo en secreto.',
+    'Military intelligence confirms the service record within hours. The denial is immediate, automatic, and too late. Ferreira\'s face is on every screen in the country. He never wanted fame. He wanted someone to believe him.':
+      'La inteligencia militar confirma la hoja de servicio en pocas horas. La negación es inmediata, automática y demasiado tarde. La cara de Ferreira está en todas las pantallas del país. Nunca quiso fama. Quería que alguien le creyera.',
+    'The Air Force opens an internal inquiry. Three generals retire early. The archive survives because it was already everywhere. UFO74 is no longer a call sign. It is a name.':
+      'La Fuerza Aérea abre una investigación interna. Tres generales se jubilan anticipadamente. El archivo sobrevive porque ya estaba en todas partes. UFO74 ya no es un indicativo de llamada. Es un nombre.',
+    'you found me. now finish what i started.': 'me encontraste. ahora termina lo que empecé.',
+    'MILITARY OFFICER IDENTIFIED AS SOURCE OF CLASSIFIED BRAZILIAN DATA LEAK':
+      'OFICIAL MILITAR IDENTIFICADO COMO FUENTE DE FILTRACIÓN DE DATOS CLASIFICADOS BRASILEÑOS',
+    'Carlos E. Ferreira, Brazilian Air Force intelligence — service record confirmed — three generals request early retirement':
+      'Carlos E. Ferreira, inteligencia de la Fuerza Aérea Brasileña — hoja de servicio confirmada — tres generales solicitan jubilación anticipada',
+    'BRASÍLIA, Brazil (Reuters) — A decrypted computer file circulating on the Internet has identified a Brazilian Air Force intelligence officer as the source of a massive unauthorized disclosure of classified military documents, according to officials familiar with the matter.':
+      'BRASILIA, Brasil (Reuters) — Un archivo informático descifrado que circula en Internet ha identificado a un oficial de inteligencia de la Fuerza Aérea Brasileña como la fuente de una enorme divulgación no autorizada de documentos militares clasificados, según funcionarios familiarizados con el caso.',
+    'The officer, identified as Carlos Eduardo Ferreira, was reportedly stationed at Guarulhos Air Base during the period described in the leaked files. Military intelligence confirmed the service record within hours of the file\'s release, though a spokesperson declined to comment on the substance of the allegations.':
+      'El oficial, identificado como Carlos Eduardo Ferreira, habría estado estacionado en la Base Aérea de Guarulhos durante el período descrito en los archivos filtrados. La inteligencia militar confirmó la hoja de servicio pocas horas después de la divulgación del archivo, aunque un portavoz se negó a comentar sobre el contenido de las acusaciones.',
+    'Three senior Air Force generals have submitted requests for early retirement in what analysts describe as an attempt to distance themselves from the growing scandal. The leaked archive, which Ferreira allegedly maintained for decades, contains documents related to military operations in southern Minas Gerais state.':
+      'Tres generales sénior de la Fuerza Aérea han presentado solicitudes de jubilación anticipada en lo que analistas describen como un intento de distanciarse del creciente escándalo. El archivo filtrado, que Ferreira supuestamente mantuvo durante décadas, contiene documentos relacionados con operaciones militares en el sur del estado de Minas Gerais.',
+
+    // ENDING 3: the_2026_warning
+    'THE 2026 WARNING': 'LA ADVERTENCIA DE 2026',
+    'Thirty rotations. The clock does not stop.': 'Treinta rotaciones. El reloj no se detiene.',
+    'The convergence data hits academic servers first. Physicists in three countries confirm the thirty-year cycle independently. 1947. 1977. 1996. The pattern is clean, the projection is specific: September 2026, plus or minus two months.':
+      'Los datos de convergencia llegan primero a los servidores académicos. Físicos en tres países confirman el ciclo de treinta años de forma independiente. 1947. 1977. 1996. El patrón es limpio, la proyección es específica: septiembre de 2026, más o menos dos meses.',
+    'Governments issue no statements. Private aerospace firms begin relocating satellite arrays. The Brazilian Air Force reclassifies seven archived directives without explanation.':
+      'Los gobiernos no emiten declaraciones. Empresas aeroespaciales privadas comienzan a reubicar conjuntos de satélites. La Fuerza Aérea Brasileña reclasifica siete directivas archivadas sin explicación.',
+    'The public does not panic because the public does not understand logarithmic signal propagation. Those who do understand have gone very quiet.':
+      'El público no entra en pánico porque el público no entiende la propagación logarítmica de señales. Los que sí entienden se han quedado muy callados.',
+    'the window is real. you gave them time.': 'la ventana es real. les diste tiempo.',
+    'SCIENTISTS IDENTIFY 30-YEAR PATTERN IN UNEXPLAINED ATMOSPHERIC EVENTS':
+      'CIENTÍFICOS IDENTIFICAN PATRÓN DE 30 AÑOS EN EVENTOS ATMOSFÉRICOS INEXPLICABLES',
+    'Next predicted occurrence: September 2026 — private aerospace firms reportedly repositioning satellite arrays — no official comment':
+      'Próxima ocurrencia prevista: septiembre de 2026 — empresas aeroespaciales estarían reposicionando conjuntos de satélites — sin comentario oficial',
+    'GENEVA, Switzerland (AP) — Physicists at three independent research institutions have confirmed the existence of a thirty-year cyclical pattern in atmospheric anomaly data, according to a joint preliminary report released Wednesday. The pattern, if validated, would predict a significant event window in late 2026.':
+      'GINEBRA, Suiza (AP) — Físicos en tres instituciones de investigación independientes han confirmado la existencia de un patrón cíclico de treinta años en datos de anomalías atmosféricas, según un informe preliminar conjunto publicado el miércoles. El patrón, de ser validado, predeciría una ventana de evento significativo a finales de 2026.',
+    'The analysis was prompted by documents leaked from a Brazilian military archive earlier this month. While the researchers declined to speculate on the nature of the anomalies, they confirmed the mathematical model described in the leaked files is \'internally consistent and statistically significant.\'':
+      'El análisis fue motivado por documentos filtrados de un archivo militar brasileño a principios de este mes. Aunque los investigadores se negaron a especular sobre la naturaleza de las anomalías, confirmaron que el modelo matemático descrito en los archivos filtrados es \'internamente consistente y estadísticamente significativo.\'',
+    'Several private aerospace companies have begun what industry sources describe as \'precautionary repositioning\' of satellite monitoring arrays, though none would confirm a connection to the leaked data. The Brazilian government has issued no statement.':
+      'Varias empresas aeroespaciales privadas han iniciado lo que fuentes del sector describen como \'reposicionamiento preventivo\' de conjuntos de monitoreo por satélite, aunque ninguna confirmaría una conexión con los datos filtrados. El gobierno brasileño no ha emitido declaración.',
+
+    // ENDING 4: government_scandal
+    'BRAZILIAN GOVERNMENT SCANDAL': 'ESCÁNDALO DEL GOBIERNO BRASILEÑO',
+    'The coverup was bigger than the event.': 'El encubrimiento fue más grande que el evento.',
+    'Transport logs. Response orders. Incident reports signed by officers who officially never existed. The leak does not prove alien contact — it proves the Brazilian military mobilized an entire region to hide something on January 20, 1996.':
+      'Registros de transporte. Órdenes de respuesta. Informes de incidentes firmados por oficiales que oficialmente nunca existieron. La filtración no prueba contacto alienígena — prueba que los militares brasileños movilizaron una región entera para ocultar algo el 20 de enero de 1996.',
+    'Congressional inquiries open in Brasília. Three colonels are subpoenaed. One refuses to testify. The Jardim Andere site is cordoned off for "environmental assessment" that never produces a report.':
+      'Se abren investigaciones parlamentarias en Brasilia. Tres coroneles son citados a declarar. Uno se niega a testificar. El sitio del Jardim Andere es acordonado para una "evaluación ambiental" que nunca produce un informe.',
+    'The question shifts. It is no longer about what landed. It is about who authorized the silence, who paid for it, and where the bodies went.':
+      'La pregunta cambia. Ya no se trata de qué aterrizó. Se trata de quién autorizó el silencio, quién lo pagó y adónde fueron los cuerpos.',
+    'they will sacrifice officers to protect the secret.': 'van a sacrificar oficiales para proteger el secreto.',
+    'LEAKED DOCUMENTS REVEAL MASSIVE BRAZILIAN MILITARY OPERATION IN VARGINHA':
+      'DOCUMENTOS FILTRADOS REVELAN GRAN OPERACIÓN MILITAR BRASILEÑA EN VARGINHA',
+    'Transport logs and response orders prove classified mobilization — three colonels subpoenaed — Congressional inquiry opens in Brasília':
+      'Registros de transporte y órdenes de respuesta prueban movilización clasificada — tres coroneles citados — investigación parlamentaria abierta en Brasilia',
+    'BRASÍLIA, Brazil (AP) — Classified military documents leaked to the Internet this week reveal what appears to be a large-scale Brazilian Army operation in the southern city of Varginha in January 1996, involving troop movements, vehicle requisitions, and command orders that were never disclosed to the public or to civilian authorities.':
+      'BRASILIA, Brasil (AP) — Documentos militares clasificados filtrados a Internet esta semana revelan lo que parece ser una operación a gran escala del Ejército Brasileño en la ciudad de Varginha, en el sur de Minas Gerais, en enero de 1996, que involucró movimientos de tropas, requisiciones de vehículos y órdenes de mando que nunca fueron revelados al público ni a las autoridades civiles.',
+    'The documents include transport logs, incident reports signed by officers whose service records contain no reference to the operation, and response orders authorizing the cordoning of a residential area described only as \'the Jardim Andere site.\' The purpose of the operation is not specified in any of the recovered files.':
+      'Los documentos incluyen registros de transporte, informes de incidentes firmados por oficiales cuyas hojas de servicio no contienen referencia a la operación, y órdenes de respuesta autorizando el acordonamiento de un área residencial descrita solo como \'el sitio del Jardim Andere.\' El propósito de la operación no se especifica en ninguno de los archivos recuperados.',
+    'Three colonels have been subpoenaed to testify before a Congressional committee in Brasília. One has reportedly refused. The Ministry of Defense issued a brief statement calling the documents \'unverified\' but did not deny their authenticity.':
+      'Tres coroneles han sido citados para testificar ante una comisión del Congreso en Brasilia. Uno supuestamente se ha negado. El Ministerio de Defensa emitió una breve declaración calificando los documentos de \'no verificados\', pero no negó su autenticidad.',
+
+    // ENDING 5: prisoner_45_freed
+    'PRISONER 45 FREED': 'PRISIONERO 45 LIBERADO',
+    'The containment logs were never supposed to leave.': 'Los registros de contención nunca debían salir de ahí.',
+    'Bio-containment records. Neural dump data. Ethics exceptions signed by committee. The dossier does not show a captured animal — it shows a detained intelligence, held in a Faraday cage for eleven days while handlers reported headaches and cognitive intrusion.':
+      'Registros de biocontención. Datos de volcado neural. Excepciones éticas firmadas por comité. El dossier no muestra un animal capturado — muestra una inteligencia detenida, mantenida en una jaula de Faraday durante once días mientras los encargados reportaban dolores de cabeza e intrusión cognitiva.',
+    'The witness statements give it weight. The sisters. The patrol officers. The veterinarian they silenced. Each testimony corroborates the containment timeline independently.':
+      'Las declaraciones de los testigos le dan peso. Las hermanas. Los oficiales de patrulla. El veterinario al que silenciaron. Cada testimonio corrobora la línea de tiempo de la contención de forma independiente.',
+    'A São Paulo judge orders the military to produce "all biological materials recovered January 1996." The military responds that no such materials exist. The containment logs say otherwise.':
+      'Un juez de São Paulo ordena a los militares presentar "todos los materiales biológicos recuperados en enero de 1996." Los militares responden que dichos materiales no existen. Los registros de contención dicen lo contrario.',
+    'it was never a specimen. it was a prisoner.': 'nunca fue un espécimen. era un prisionero.',
+    'CLASSIFIED LOGS DESCRIBE \'NON-HUMAN ENTITY\' DETAINED IN MILITARY FACILITY':
+      'REGISTROS CLASIFICADOS DESCRIBEN \'ENTIDAD NO HUMANA\' DETENIDA EN INSTALACIÓN MILITAR',
+    'Bio-containment records leaked — handlers reported \'cognitive intrusion\' — São Paulo judge demands military disclosure':
+      'Registros de biocontención filtrados — encargados reportaron \'intrusión cognitiva\' — juez de São Paulo exige divulgación militar',
+    'SÃO PAULO, Brazil (UPI) — Leaked bio-containment records from a Brazilian military facility describe what personnel referred to as a \'detained biological intelligence\' held for eleven days in a Faraday-shielded chamber, according to documents released on the World Wide Web late Thursday.':
+      'SÃO PAULO, Brasil (UPI) — Registros de biocontención filtrados de una instalación militar brasileña describen lo que el personal denominó una \'inteligencia biológica detenida\' mantenida durante once días en una cámara blindada con Faraday, según documentos publicados en la World Wide Web el jueves por la noche.',
+    'The logs, which include ethics exception forms signed by a medical committee, describe handlers experiencing \'persistent headaches and reported cognitive intrusion events\' during the detention period. The entity, designated as \'Specimen Alpha\' in some documents and \'Prisoner 45\' in others, is described as exhibiting \'responsive behavior inconsistent with any known terrestrial species.\'':
+      'Los registros, que incluyen formularios de excepción ética firmados por un comité médico, describen encargados que experimentaron \'dolores de cabeza persistentes y eventos de intrusión cognitiva reportados\' durante el período de detención. La entidad, designada como \'Espécimen Alpha\' en algunos documentos y \'Prisionero 45\' en otros, se describe como exhibiendo \'comportamiento responsivo inconsistente con cualquier especie terrestre conocida.\'',
+    'A judge in São Paulo has ordered the military to produce \'all biological materials recovered in January 1996.\' The military responded Friday that no such materials exist. The leaked containment logs appear to contradict this statement directly.':
+      'Un juez en São Paulo ha ordenado a los militares presentar \'todos los materiales biológicos recuperados en enero de 1996.\' Los militares respondieron el viernes que dichos materiales no existen. Los registros de contención filtrados parecen contradecir directamente esta declaración.',
+
+    // ENDING 6: harvest_understood
+    'THE HARVEST UNDERSTOOD': 'LA COSECHA COMPRENDIDA',
+    'Colonization does not require arrival.': 'La colonización no requiere llegada.',
+    'The extraction documents land in the wrong hands — or the right ones. The colonization model. The harvest timeline. The mechanism that requires no ships, no invasion, no contact at all.':
+      'Los documentos de extracción caen en las manos equivocadas — o en las correctas. El modelo de colonización. El cronograma de la cosecha. El mecanismo que no requiere naves, ninguna invasión, ningún contacto en absoluto.',
+    'Three universities publish independent analyses within a month. The consensus is clinical and devastating: the model is internally consistent, the energy mathematics are sound, and the thirty-year seeding cycle aligns with observed neurological data.':
+      'Tres universidades publican análisis independientes en un mes. El consenso es clínico y devastador: el modelo es internamente consistente, las matemáticas energéticas son sólidas, y el ciclo de siembra de treinta años se alinea con los datos neurológicos observados.',
+    'Nobody wants to say the word "colonization" on television. They use "resource assessment" instead. It means the same thing.':
+      'Nadie quiere decir la palabra "colonización" en televisión. Usan "evaluación de recursos" en su lugar. Significa lo mismo.',
+    'they do not need to come here. they never did.': 'no necesitan venir aquí. nunca lo necesitaron.',
+    'LEAKED THEORY DESCRIBES \'COLONIZATION WITHOUT ARRIVAL\' BY UNKNOWN INTELLIGENCE':
+      'TEORÍA FILTRADA DESCRIBE \'COLONIZACIÓN SIN LLEGADA\' POR INTELIGENCIA DESCONOCIDA',
+    'Three universities confirm energy mathematics — \'internally consistent,\' researchers say — no government comment':
+      'Tres universidades confirman matemáticas energéticas — \'internamente consistente,\' dicen investigadores — sin comentario gubernamental',
+    'CAMBRIDGE, Mass. (AP) — Documents leaked from a classified Brazilian military archive describe a theoretical model for what the files term \'non-arrival colonization\' — a process by which an unknown intelligence could extract resources from a planetary system without physical presence or direct contact, according to an analysis published Thursday by researchers at MIT.':
+      'CAMBRIDGE, Mass. (AP) — Documentos filtrados de un archivo militar brasileño clasificado describen un modelo teórico para lo que los archivos denominan \'colonización sin llegada\' — un proceso por el cual una inteligencia desconocida podría extraer recursos de un sistema planetario sin presencia física ni contacto directo, según un análisis publicado el jueves por investigadores del MIT.',
+    'Three universities have now independently reviewed the leaked extraction model and confirmed that its energy mathematics are, in the words of one physicist, \'disturbingly sound.\' The model describes a thirty-year seeding cycle that researchers say aligns with observed neurological data from the Brazilian military\'s own classified medical files.':
+      'Tres universidades han revisado independientemente el modelo de extracción filtrado y confirmado que sus matemáticas energéticas son, en palabras de un físico, \'perturbadoramente sólidas.\' El modelo describe un ciclo de siembra de treinta años que los investigadores dicen se alinea con datos neurológicos observados de los propios archivos médicos clasificados de los militares brasileños.',
+    'No government has issued a formal response. Television commentators have avoided the word \'colonization,\' preferring the term \'resource assessment.\' Scientists familiar with the data say the distinction is academic.':
+      'Ningún gobierno ha emitido una respuesta formal. Los comentaristas de televisión han evitado la palabra \'colonización,\' prefiriendo el término \'evaluación de recursos.\' Científicos familiarizados con los datos dicen que la distinción es académica.',
+
+    // ENDING 7: nothing_changes
+    'NOTHING CHANGES': 'NADA CAMBIA',
+    'The truth arrived. Nobody moved.': 'La verdad llegó. Nadie se movió.',
+    'The dossier is strong. Autopsy reports. Field observations. Military intercepts. Enough to establish that something non-human was recovered in Varginha in January 1996. Enough to demand answers.':
+      'El dossier es fuerte. Informes de autopsia. Observaciones de campo. Interceptaciones militares. Suficiente para establecer que algo no humano fue recuperado en Varginha en enero de 1996. Suficiente para exigir respuestas.',
+    'Panels convene. Experts testify. The footage circulates. For two weeks, the world pays attention. Then an election cycle begins, a currency collapses, a celebrity dies, and the feed moves on.':
+      'Se convocan paneles. Expertos testifican. Las imágenes circulan. Durante dos semanas, el mundo presta atención. Luego empieza un ciclo electoral, una moneda colapsa, una celebridad muere y el feed sigue adelante.',
+    'The files remain available. Downloaded fourteen million times. Cited in zero policy changes. The truth is free and weightless.':
+      'Los archivos siguen disponibles. Descargados catorce millones de veces. Citados en cero cambios de política. La verdad es libre y sin peso.',
+    'you proved everything. it was not enough.': 'lo probaste todo. no fue suficiente.',
+    'VARGINHA FILES DOWNLOADED 14 MILLION TIMES; GOVERNMENTS WORLDWIDE SILENT':
+      'ARCHIVOS DE VARGINHA DESCARGADOS 14 MILLONES DE VECES; GOBIERNOS DE TODO EL MUNDO EN SILENCIO',
+    'Evidence called \'compelling\' by experts — zero policy changes — election coverage resumes':
+      'Evidencia calificada de \'convincente\' por expertos — cero cambios de política — cobertura electoral reanudada',
+    'NEW YORK (AP) — The collection of classified military documents known as the \'Varginha Files\' has been downloaded more than fourteen million times since its release on the Internet two weeks ago, making it one of the most widely distributed document leaks in the brief history of the World Wide Web. Despite this, no government has issued a formal response.':
+      'NUEVA YORK (AP) — La colección de documentos militares clasificados conocida como los \'Archivos de Varginha\' ha sido descargada más de catorce millones de veces desde su publicación en Internet hace dos semanas, convirtiéndola en una de las filtraciones de documentos más ampliamente distribuidas en la breve historia de la World Wide Web. A pesar de esto, ningún gobierno ha emitido una respuesta formal.',
+    'Panels of experts convened at universities in four countries have called the evidence \'compelling\' and \'worthy of official investigation.\' Footage from the original incident has circulated on cable news networks for approximately twelve days before being displaced by coverage of ongoing elections and financial markets.':
+      'Paneles de expertos convocados en universidades de cuatro países han calificado la evidencia de \'convincente\' y \'digna de investigación oficial.\' Imágenes del incidente original circularon en cadenas de noticias por cable durante aproximadamente doce días antes de ser desplazadas por la cobertura de elecciones y mercados financieros.',
+    'The files remain freely available on multiple mirror sites. Analysts note that the unprecedented volume of downloads has produced no measurable political or policy impact. \'The truth is out there,\' noted one commentator. \'It turns out that is not sufficient.\'':
+      'Los archivos siguen disponibles gratuitamente en múltiples sitios espejo. Analistas señalan que el volumen sin precedentes de descargas no ha producido ningún impacto político o de políticas medible. \'La verdad está allá afuera,\' señaló un comentarista. \'Resulta que eso no es suficiente.\'',
+
+    // ENDING 8: incomplete_picture
+    'INCOMPLETE PICTURE': 'CUADRO INCOMPLETO',
+    'Fragments do not make a case.': 'Los fragmentos no arman un caso.',
+    'The dossier contains evidence, but it tells no story. A medical report here. A transport log there. No thread connects them. No narrative emerges. The files are real and they prove nothing.':
+      'El dossier contiene evidencia, pero no cuenta ninguna historia. Un informe médico aquí. Un registro de transporte allá. Ningún hilo los conecta. Ninguna narrativa emerge. Los archivos son reales y no prueban nada.',
+    'Debunkers dismantle the leak in a weekend. Each document, taken alone, has an innocent explanation. The military does not even need to respond. The files discredit themselves through isolation.':
+      'Los desmentidores desmontan la filtración en un fin de semana. Cada documento, tomado por separado, tiene una explicación inocente. Los militares ni siquiera necesitan responder. Los archivos se desacreditan solos por aislamiento.',
+    'You had the pieces. You did not assemble the picture.': 'Tenías las piezas. No armaste el cuadro.',
+    'scattered evidence is the same as no evidence.': 'evidencia dispersa es lo mismo que ninguna evidencia.',
+    'LEAKED MILITARY DOCUMENTS FAIL TO SUPPORT UFO CLAIMS, SAY ANALYSTS':
+      'DOCUMENTOS MILITARES FILTRADOS NO LOGRAN SUSTENTAR AFIRMACIONES SOBRE OVNIS, DICEN ANALISTAS',
+    'Debunkers dismantle evidence in 72 hours — \'each file has innocent explanation\' — military issues no denial':
+      'Desmentidores desmontan evidencia en 72 horas — \'cada archivo tiene explicación inocente\' — militares no emiten desmentido',
+    'WASHINGTON (AP) — A collection of documents leaked from a Brazilian military archive and purporting to describe contact with a non-human intelligence has been largely discredited by independent analysts, who say the files, while possibly authentic, fail to tell a coherent story.':
+      'WASHINGTON (AP) — Una colección de documentos filtrados de un archivo militar brasileño que supuestamente describen contacto con una inteligencia no humana ha sido ampliamente desacreditada por analistas independientes, quienes dicen que los archivos, aunque posiblemente auténticos, no logran contar una historia coherente.',
+    'The leak contains medical reports, transport logs, and communications intercepts, but analysts say no thread connects them into a meaningful narrative. \'Each document, taken individually, has an innocent explanation,\' said Dr. James Whitfield of Georgetown University. \'Taken together, they prove nothing more than that the Brazilian military generates paperwork.\'':
+      'La filtración contiene informes médicos, registros de transporte e interceptaciones de comunicaciones, pero los analistas dicen que ningún hilo los conecta en una narrativa significativa. \'Cada documento, analizado individualmente, tiene una explicación inocente,\' dijo el Dr. James Whitfield de la Universidad de Georgetown. \'En conjunto, no prueban nada más que los militares brasileños generan papeleo.\'',
+    'The Brazilian Air Force has issued no official denial, which analysts interpret not as confirmation but as an indication that the documents do not warrant response. Several Internet forums that initially promoted the files have moved on to other topics.':
+      'La Fuerza Aérea Brasileña no ha emitido ningún desmentido oficial, lo que los analistas interpretan no como confirmación sino como indicación de que los documentos no ameritan respuesta. Varios foros de Internet que inicialmente promovieron los archivos han pasado a otros temas.',
+
+    // ENDING 9: wrong_story
+    'THE WRONG STORY': 'LA HISTORIA EQUIVOCADA',
+    'You investigated the cafeteria.': 'Investigaste la cafetería.',
+    'The dossier arrives on journalists\' desks and produces genuine confusion. Budget memos. Parking allocations. A coffee harvest report. Media payment records that prove corruption but not contact.':
+      'El dossier llega a los escritorios de los periodistas y produce confusión genuina. Memorandos de presupuesto. Asignaciones de estacionamiento. Un informe de cosecha de café. Registros de pagos a medios que prueban corrupción pero no contacto.',
+    'The financial angle gains traction. Three military officials face embezzlement charges. A journalist wins an award for exposing the media suppression network. The actual event — the beings, the autopsies, the containment — is never mentioned.':
+      'El ángulo financiero gana tracción. Tres oficiales militares enfrentan cargos de malversación. Una periodista gana un premio por exponer la red de supresión mediática. El evento real — los seres, las autopsias, la contención — nunca se menciona.',
+    'You exposed a scandal. The wrong one.': 'Expusiste un escándalo. El equivocado.',
+    'you found the lie but missed the truth behind it.': 'encontraste la mentira pero perdiste la verdad detrás de ella.',
+    'MILITARY BUDGET SCANDAL UNCOVERED IN LEAKED BRAZILIAN DOCUMENTS':
+      'ESCÁNDALO DE PRESUPUESTO MILITAR DESCUBIERTO EN DOCUMENTOS BRASILEÑOS FILTRADOS',
+    'Three officials face embezzlement charges — journalist wins award for exposé — actual UFO claims ignored':
+      'Tres oficiales enfrentan cargos de malversación — periodista gana premio por exposición — afirmaciones reales sobre OVNIs ignoradas',
+    'BRASÍLIA, Brazil (Reuters) — Classified documents leaked from a Brazilian military installation have led not to the confirmation of extraterrestrial contact, as the anonymous source apparently intended, but to the exposure of a significant financial corruption network within the armed forces.':
+      'BRASILIA, Brasil (Reuters) — Documentos clasificados filtrados de una instalación militar brasileña no llevaron a la confirmación de contacto extraterrestre, como la fuente anónima aparentemente pretendía, sino a la exposición de una significativa red de corrupción financiera dentro de las fuerzas armadas.',
+    'The leaked files contain detailed budget memoranda, media payment records, and what prosecutors describe as \'a systematic program to suppress unfavorable news coverage through direct payments to journalists.\' Three senior military officials now face embezzlement and fraud charges. A reporter for Folha de São Paulo has been awarded the Maria Moors Cabot Prize for her coverage of the scandal.':
+      'Los archivos filtrados contienen memorandos detallados de presupuesto, registros de pagos a medios, y lo que los fiscales describen como \'un programa sistemático para suprimir cobertura noticiosa desfavorable mediante pagos directos a periodistas.\' Tres oficiales militares sénior ahora enfrentan cargos de malversación y fraude. Una reportera de Folha de São Paulo ha recibido el Premio Maria Moors Cabot por su cobertura del escándalo.',
+    'Notably absent from the dossier are any substantive references to the alleged non-human contact that the leaker appeared to be documenting. Analysts describe the collection as \'accidentally important for entirely the wrong reasons.\'':
+      'Notablemente ausentes del dossier están las referencias sustantivas al presunto contacto no humano que el responsable de la filtración parecía estar documentando. Analistas describen la colección como \'accidentalmente importante por razones completamente equivocadas.\'',
+
+    // ENDING 10: hackerkid_caught
+    'HACKERKID CAUGHT': 'HACKERKID ATRAPADO',
+    'The honeypots worked exactly as designed.': 'Los honeypots funcionaron exactamente como fueron diseñados.',
+    'Files named URGENT_classified_alpha. SMOKING_GUN_proof. FOR_PRESIDENTS_EYES_ONLY. Real classified material never advertises itself. Every file you saved was planted. Every download was logged.':
+      'Archivos llamados URGENT_classified_alpha. SMOKING_GUN_proof. FOR_PRESIDENTS_EYES_ONLY. El material clasificado real nunca se anuncia. Cada archivo que guardaste fue plantado. Cada descarga fue registrada.',
+    'Military cybersecurity traces the intrusion to your terminal within ninety minutes. The dossier is quarantined before it reaches a single journalist. Your access credentials are revoked, archived, and forwarded to federal prosecutors.':
+      'La ciberseguridad militar rastrea la intrusión hasta tu terminal en noventa minutos. El dossier es puesto en cuarentena antes de llegar a un solo periodista. Tus credenciales de acceso son revocadas, archivadas y enviadas a fiscales federales.',
+    'The decoy system was built for people exactly like you. Eager. Careless. Loud.':
+      'El sistema de señuelos fue construido para gente exactamente como tú. Ansioso. Descuidado. Ruidoso.',
+    'i tried to warn you. real secrets whisper.': 'intenté advertirte. los secretos reales susurran.',
+    'COMPUTER HACKER ARRESTED AFTER DOWNLOADING MILITARY DECOY FILES':
+      'HACKER INFORMÁTICO ARRESTADO TRAS DESCARGAR ARCHIVOS MILITARES SEÑUELO',
+    'Cybersecurity trap worked \'exactly as designed\' — suspect traced in 90 minutes — federal charges pending':
+      'Trampa de ciberseguridad funcionó \'exactamente como fue diseñada\' — sospechoso rastreado en 90 minutos — cargos federales pendientes',
+    'BRASÍLIA, Brazil (AP) — Brazilian military cybersecurity personnel have arrested an individual suspected of unauthorized intrusion into a classified computer network after the suspect downloaded files that had been deliberately planted as tracking devices, officials confirmed Saturday.':
+      'BRASILIA, Brasil (AP) — Personal de ciberseguridad militar brasileño ha arrestado a un individuo sospechoso de intrusión no autorizada en una red informática clasificada después de que el sospechoso descargara archivos que habían sido deliberadamente plantados como dispositivos de rastreo, confirmaron funcionarios el sábado.',
+    'The files, with titles such as \'URGENT_classified_alpha\' and \'FOR_PRESIDENTS_EYES_ONLY,\' were designed to appeal to inexperienced intruders and contained embedded tracking mechanisms that allowed military technicians to identify the suspect\'s terminal within ninety minutes of the initial download.':
+      'Los archivos, con títulos como \'URGENT_classified_alpha\' y \'FOR_PRESIDENTS_EYES_ONLY,\' fueron diseñados para atraer a intrusos inexpertos y contenían mecanismos de rastreo integrados que permitieron a los técnicos militares identificar el terminal del sospechoso en noventa minutos desde la descarga inicial.',
+    'A military spokesperson confirmed that the decoy system, which has been in place since 1994, was built specifically to identify and apprehend \'unsophisticated intrusion attempts.\' The suspect\'s collected files were quarantined before reaching any external recipient. Federal prosecutors have been notified.':
+      'Un portavoz militar confirmó que el sistema de señuelos, en funcionamiento desde 1994, fue construido específicamente para identificar y aprehender \'intentos de intrusión poco sofisticados.\' Los archivos recopilados por el sospechoso fueron puestos en cuarentena antes de llegar a cualquier destinatario externo. Los fiscales federales han sido notificados.',
+
+    // ENDING 11: secret_ending
+    'THE FERREIRA PROTOCOL': 'EL PROTOCOLO FERREIRA',
+    'Ghost. Signal. Bridge. Ambassador.': 'Fantasma. Señal. Puente. Embajador.',
+    'Carlos Eduardo Ferreira. UFO74. The ghost in the machine. His archive decrypted. His identity confirmed. But the dossier contains more than a confession — it contains the convergence model, the neural connection data, and the thirty-year projection.':
+      'Carlos Eduardo Ferreira. UFO74. El fantasma en la máquina. Su archivo descifrado. Su identidad confirmada. Pero el dossier contiene más que una confesión — contiene el modelo de convergencia, los datos de conexión neural y la proyección de treinta años.',
+    'The combination is deliberate. Ferreira designed it this way. The identity file authenticates the source. The neural data proves contact. The convergence model provides the timeline. Together they form a single argument no committee can dismiss.':
+      'La combinación es deliberada. Ferreira lo diseñó así. El archivo de identidad autentica la fuente. Los datos neurales prueban contacto. El modelo de convergencia proporciona la línea de tiempo. Juntos forman un único argumento que ningún comité puede rechazar.',
+    'The Brazilian Air Force confirms the service record. Three allied governments request the neural data. The 2026 window enters official threat assessment documents. Ferreira\'s archive becomes the foundation of the first multinational contact protocol.':
+      'La Fuerza Aérea Brasileña confirma la hoja de servicio. Tres gobiernos aliados solicitan los datos neurales. La ventana de 2026 entra en documentos oficiales de evaluación de amenazas. El archivo de Ferreira se convierte en la base del primer protocolo multinacional de contacto.',
+    'He built this for thirty years. He built it for you.': 'Construyó esto durante treinta años. Lo construyó para ti.',
+    'you assembled everything. i can rest now.': 'lo armaste todo. ahora puedo descansar.',
+    'MULTINATIONAL GOVERNMENTS ESTABLISH FIRST \'CONTACT PROTOCOL\' BASED ON LEAKED ARCHIVE':
+      'GOBIERNOS MULTINACIONALES ESTABLECEN PRIMER \'PROTOCOLO DE CONTACTO\' BASADO EN ARCHIVO FILTRADO',
+    'Three allied nations request neural data — 2026 threat window enters official assessment — Ferreira archive authenticated':
+      'Tres naciones aliadas solicitan datos neurales — ventana de amenaza 2026 entra en evaluación oficial — archivo Ferreira autenticado',
+    'UNITED NATIONS, New York (AP) — Representatives of three allied governments have formally requested access to neural interface data contained in a leaked Brazilian military archive, marking what diplomats describe as the first official acknowledgment that the documents may describe genuine non-human contact.':
+      'NACIONES UNIDAS, Nueva York (AP) — Representantes de tres gobiernos aliados han solicitado formalmente acceso a datos de interfaz neural contenidos en un archivo militar brasileño filtrado, marcando lo que diplomáticos describen como el primer reconocimiento oficial de que los documentos pueden describir contacto genuino con inteligencia no humana.',
+    'The archive, compiled over thirty years by Brazilian Air Force intelligence officer Carlos Eduardo Ferreira, contains identity verification documents, neural connection data, and a convergence model that projects a significant event window in September 2026. Intelligence analysts say the combination was deliberately designed to form \'a single argument no committee can dismiss.\'':
+      'El archivo, compilado a lo largo de treinta años por el oficial de inteligencia de la Fuerza Aérea Brasileña Carlos Eduardo Ferreira, contiene documentos de verificación de identidad, datos de conexión neural y un modelo de convergencia que proyecta una ventana de evento significativo en septiembre de 2026. Analistas de inteligencia dicen que la combinación fue deliberadamente diseñada para formar \'un único argumento que ningún comité puede rechazar.\'',
+    'The Brazilian Air Force has confirmed Ferreira\'s service record. The 2026 projection has entered official threat assessment documents in at least two NATO member states. Sources describe the emerging multinational response as \'the first contact protocol\' — a framework for coordinated government action in response to verified non-human intelligence.':
+      'La Fuerza Aérea Brasileña ha confirmado la hoja de servicio de Ferreira. La proyección de 2026 ha entrado en documentos oficiales de evaluación de amenazas en al menos dos estados miembros de la OTAN. Fuentes describen la respuesta multinacional emergente como \'el primer protocolo de contacto\' — un marco para acción gubernamental coordinada en respuesta a inteligencia no humana verificada.',
+
+    // ENDING 12: real_ending
+    'UNDENIABLE': 'INNEGABLE',
+    'The dossier that could not be ignored.': 'El dossier que no podía ser ignorado.',
+    'Core evidence. Autopsy records. Witness testimony. Military logistics. Each category reinforces the others. The field journal establishes contact. The autopsy proves non-human biology. The witnesses confirm the timeline. The transport logs confirm the coverup.':
+      'Evidencia central. Registros de autopsia. Testimonios. Logística militar. Cada categoría refuerza las otras. El diario de campo establece contacto. La autopsia prueba biología no humana. Los testigos confirman la línea de tiempo. Los registros de transporte confirman el encubrimiento.',
+    'The dossier does not ask questions. It presents facts in a sequence that permits only one conclusion. International press picks it up within hours. The Brazilian government requests seventy-two hours before responding. They use all of them.':
+      'El dossier no hace preguntas. Presenta hechos en una secuencia que permite solo una conclusión. La prensa internacional lo recoge en horas. El gobierno brasileño pide setenta y dos horas antes de responder. Las usan todas.',
+    'The response, when it comes, is seven words: "The matter is under renewed investigation." Those seven words change everything. Denial is no longer the official position. Thirty years of silence end with a single sentence.':
+      'La respuesta, cuando llega, son siete palabras: "El asunto está bajo investigación renovada." Esas siete palabras lo cambian todo. La negación ya no es la posición oficial. Treinta años de silencio terminan con una sola oración.',
+    'they cannot unsay those seven words.': 'no pueden desdecir esas siete palabras.',
+    'BRAZIL BREAKS SILENCE: \'THE MATTER IS UNDER RENEWED INVESTIGATION\'':
+      'BRASIL ROMPE EL SILENCIO: \'EL ASUNTO ESTÁ BAJO INVESTIGACIÓN RENOVADA\'',
+    'Seven words end thirty years of official denial — international press demands full disclosure — dossier called \'undeniable\'':
+      'Siete palabras ponen fin a treinta años de negación oficial — prensa internacional exige divulgación completa — dossier calificado de \'innegable\'',
+    'BRASÍLIA, Brazil (AP) — The Brazilian government has issued its first official acknowledgment of the 1996 Varginha incident, stating in a seven-word response that \'the matter is under renewed investigation.\' The statement, released seventy-two hours after the most comprehensive dossier of evidence ever assembled reached international press outlets, effectively ends three decades of official denial.':
+      'BRASILIA, Brasil (AP) — El gobierno brasileño ha emitido su primer reconocimiento oficial del incidente de Varginha de 1996, declarando en una respuesta de siete palabras que \'el asunto está bajo investigación renovada.\' La declaración, publicada setenta y dos horas después de que el dossier de evidencias más completo jamás ensamblado llegara a los medios de prensa internacionales, efectivamente pone fin a tres décadas de negación oficial.',
+    'The dossier combines field journals establishing direct contact, autopsy records confirming non-human biology, independent witness testimony verifying the timeline, and military transport logs documenting the coverup. International press agencies describe the evidence as \'presenting facts in a sequence that permits only one conclusion.\'':
+      'El dossier combina diarios de campo que establecen contacto directo, registros de autopsia que confirman biología no humana, testimonios independientes que verifican la línea de tiempo y registros de transporte militar que documentan el encubrimiento. Agencias de prensa internacionales describen la evidencia como \'presentando hechos en una secuencia que permite solo una conclusión.\'',
+    'Analysts note that the carefully worded response stops short of confirming extraterrestrial contact but represents a fundamental shift in the government\'s position. \'They cannot unsay those seven words,\' noted one diplomatic observer. \'Denial is no longer the official position. Everything changes from here.\'':
+      'Analistas señalan que la respuesta cuidadosamente redactada no llega a confirmar contacto extraterrestre pero representa un cambio fundamental en la posición del gobierno. \'No pueden desdecir esas siete palabras,\' señaló un observador diplomático. \'La negación ya no es la posición oficial. Todo cambia a partir de aquí.\'',
   },
 };

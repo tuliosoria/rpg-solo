@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './NeutralEnding.module.css';
 import { recordEnding } from '../../storage/statistics';
 import { useI18n } from '../../i18n';
@@ -13,47 +13,6 @@ interface NeutralEndingProps {
   detectionLevel?: number;
   textSpeed?: TextSpeed;
 }
-
-const NEUTRAL_TEXT = [
-  '═══════════════════════════════════════════════════════════',
-  '',
-  'CONNECTION SEVERED',
-  '',
-  '═══════════════════════════════════════════════════════════',
-  '',
-  'The system detected your activity.',
-  'Emergency protocols activated.',
-  '',
-  'UFO74 managed to disconnect you before they traced the signal.',
-  'You escaped. But at a cost.',
-  '',
-  '───────────────────────────────────────────────────────────',
-  '',
-  'The evidence you collected...',
-  'The files you found...',
-  'All of it was purged in the emergency disconnect.',
-  '',
-  'The truth slipped through your fingers.',
-  '',
-  '───────────────────────────────────────────────────────────',
-  '',
-  'UFO74: sorry kid. had to pull the plug.',
-  'UFO74: they were too close.',
-  'UFO74: maybe next time we will be faster.',
-  'UFO74: the truth is still out there.',
-  'UFO74: waiting.',
-  '',
-  '───────────────────────────────────────────────────────────',
-  '',
-  'You survived. But the mission failed.',
-  '',
-  'The governments continue their cover-up.',
-  'The Varginha incident remains buried.',
-  '',
-  'For now.',
-  '',
-  '>> MISSION INCOMPLETE <<',
-];
 
 export default function NeutralEnding({
   onRestartAction,
@@ -74,6 +33,50 @@ export default function NeutralEnding({
     recordEnding('neutral', commandCount, detectionLevel);
   }, [commandCount, detectionLevel]);
 
+  const neutralText = useMemo(
+    () => [
+      '═══════════════════════════════════════════════════════════',
+      '',
+      'CONNECTION SEVERED',
+      '',
+      '═══════════════════════════════════════════════════════════',
+      '',
+      'The system detected your activity.',
+      'Emergency protocols activated.',
+      '',
+      'UFO74 managed to disconnect you before they traced the signal.',
+      'You escaped. But at a cost.',
+      '',
+      '───────────────────────────────────────────────────────────',
+      '',
+      'The evidence you collected...',
+      'The files you found...',
+      'All of it was purged in the emergency disconnect.',
+      '',
+      'The truth slipped through your fingers.',
+      '',
+      '───────────────────────────────────────────────────────────',
+      '',
+      'UFO74: sorry kid. had to pull the plug.',
+      'UFO74: they were too close.',
+      'UFO74: maybe next time we will be faster.',
+      'UFO74: the truth is still out there.',
+      'UFO74: waiting.',
+      '',
+      '───────────────────────────────────────────────────────────',
+      '',
+      'You survived. But the mission failed.',
+      '',
+      'The governments continue their cover-up.',
+      'The Varginha incident remains buried.',
+      '',
+      'For now.',
+      '',
+      t('ending.neutralEnding.missionIncomplete'),
+    ],
+    [t]
+  );
+
   // Disconnect phase
   useEffect(() => {
     const timer = setTimeout(() => setPhase('message'), scaleTextSpeedDelay(2000, textSpeed));
@@ -88,13 +91,13 @@ export default function NeutralEnding({
     let finalTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const interval = setInterval(() => {
-      if (lineIndex >= NEUTRAL_TEXT.length) {
+      if (lineIndex >= neutralText.length) {
         clearInterval(interval);
         finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
         return;
       }
 
-      const nextLine = NEUTRAL_TEXT[lineIndex];
+      const nextLine = neutralText[lineIndex];
       if (typeof nextLine === 'string') {
         setTextLines(prev => [...prev, nextLine]);
       }
@@ -105,7 +108,7 @@ export default function NeutralEnding({
       clearInterval(interval);
       if (finalTimeout) clearTimeout(finalTimeout);
     };
-  }, [phase, textSpeed]);
+  }, [phase, neutralText, textSpeed]);
 
   useEffect(() => {
     if (phase === 'final') {
