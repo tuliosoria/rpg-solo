@@ -15242,15 +15242,231 @@ const RUNTIME_TRANSLATIONS_WAVE_4: Record<Exclude<Language, 'en'>, RuntimeDictio
   ),
 };
 
+const RUNTIME_FINDINGS_FIXES: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
+  'pt-BR': {
+    'UFO74: ...that is me. that is what i am.': 'UFO74: ...esse sou eu. é isso que eu sou.',
+    'UFO74: kid. do not tell anyone you saw that.': 'UFO74: kid. não conte a ninguém que viu isso.',
+    'UFO74: they moved it at night. of course they did.':
+      'UFO74: moveram aquilo à noite. claro que moveram.',
+    'UFO74: save that. every detail matters.': 'UFO74: salva isso. cada detalhe importa.',
+    'UFO74: damn. the firewall is almost onto us.':
+      'UFO74: droga. o firewall está quase em cima da gente.',
+    'UFO74: risk is climbing. stay low.': 'UFO74: o risco está subindo. fica na moita.',
+    "UFO74: it heard something. don't move.": 'UFO74: aquilo ouviu alguma coisa. não se mexe.',
+    "UFO74: we need to move faster. it's getting closer.":
+      'UFO74: a gente precisa acelerar. está chegando mais perto.',
+    "UFO74: keep your head down. it's scanning.": 'UFO74: abaixa a cabeça. está escaneando.',
+    "UFO74: that thing knows we're here.": 'UFO74: aquela coisa sabe que estamos aqui.',
+    "UFO74: don't react. it feeds on attention.":
+      'UFO74: não reaja. aquilo se alimenta de atenção.',
+    'UFO74: ...they see us. the watchers are here.':
+      'UFO74: ...eles nos veem. os observadores estão aqui.',
+    "[UFO74]: ⚠️  Hey kid, that's the FIREWALL.": '[UFO74]: ⚠️  Ei, kid, isso é o FIREWALL.',
+    '[UFO74]: We better not mess with that crazy thing.':
+      '[UFO74]: É melhor não mexer nessa coisa maluca.',
+    '[UFO74]: █▓▒░ BE CAREFUL ░▒▓█': '[UFO74]: █▓▒░ TOMA CUIDADO ░▒▓█',
+    "[UFO74]: Let's try `cd ..` again.": '[UFO74]: Vamos tentar `cd ..` de novo.',
+    'ERROR: Incoming transmission in progress.': 'ERRO: transmissão recebida em andamento.',
+    '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓': '▓▓▓ RECUPERAÇÃO PARCIAL DISPONÍVEL ▓▓▓',
+    'TRACE DETECTED: External observer connected': 'RASTRO DETECTADO: observador externo conectado',
+    'WARNING: Packet inspection in progress': 'AVISO: inspeção de pacotes em andamento',
+    'NOTICE: Session being monitored': 'AVISO: sessão sendo monitorada',
+    'ALERT: Unauthorized access attempt logged':
+      'ALERTA: tentativa de acesso não autorizado registrada',
+    'SYSTEM: Someone else is in the system': 'SISTEMA: há outra pessoa no sistema',
+    'ANOMALY: Data exfiltration detected': 'ANOMALIA: exfiltração de dados detectada',
+    'CAUTION: Your keystrokes are being recorded': 'CUIDADO: suas teclas estão sendo registradas',
+    'INFO: Connection routed through unknown node': 'INFO: conexão roteada por um nó desconhecido',
+    'WARNING: Firewall breach attempt detected':
+      'AVISO: tentativa de violação do firewall detectada',
+    'NOTICE: Session flagged for review': 'AVISO: sessão sinalizada para revisão',
+    'ALERT: Third-party listener identified': 'ALERTA: ouvinte de terceiros identificado',
+    'SYSTEM: Memory dump in progress': 'SISTEMA: despejo de memória em andamento',
+    'TRACE: Unknown process accessing your session':
+      'RASTRO: processo desconhecido acessando sua sessão',
+    'NOTICE: Query patterns being analyzed': 'AVISO: padrões de consulta sendo analisados',
+    'WARNING: Session duration exceeds normal parameters':
+      'AVISO: a duração da sessão excede os parâmetros normais',
+    'SYSTEM: Behavioral profile update in progress':
+      'SISTEMA: atualização do perfil comportamental em andamento',
+    'ALERT: File access sequence flagged as anomalous':
+      'ALERTA: sequência de acesso a arquivos sinalizada como anômala',
+    'CAUTION: Terminal output being mirrored': 'CUIDADO: a saída do terminal está sendo espelhada',
+    'INFO: Your IP has been logged for review': 'INFO: seu IP foi registrado para revisão',
+    'NOTICE: Command history archived to external server':
+      'AVISO: histórico de comandos arquivado em servidor externo',
+    'WARNING: They know where you are': 'AVISO: eles sabem onde você está',
+    'ALERT: Physical location triangulated': 'ALERTA: localização física triangulada',
+    'SYSTEM: Dispatch notification pending': 'SISTEMA: notificação de despacho pendente',
+    'NOTICE: Someone just accessed your personnel file':
+      'AVISO: alguém acabou de acessar seu arquivo pessoal',
+    'CAUTION: Your screen is being watched': 'CUIDADO: sua tela está sendo observada',
+    'WARNING: Audio capture device detected': 'AVISO: dispositivo de captura de áudio detectado',
+    'ALERT: Camera feed request intercepted': 'ALERTA: solicitação de feed da câmera interceptada',
+    'SYSTEM: Facial recognition scan initiated':
+      'SISTEMA: varredura de reconhecimento facial iniciada',
+    'SIGNAL: ...they remember you from before...': 'SINAL: ...eles lembram de você de antes...',
+    'TRACE: Pattern matches previous intruder': 'RASTRO: padrão corresponde ao intruso anterior',
+    'NOTICE: The watchers have been notified': 'AVISO: os observadores foram avisados',
+    'ALERT: You were expected': 'ALERTA: você era esperado',
+    'SYSTEM: Countermeasures initializing': 'SISTEMA: inicializando contramedidas',
+    'WARNING: Too late to disconnect cleanly': 'AVISO: tarde demais para desconectar sem rastros',
+    'CAUTION: Your curiosity has been noted': 'CUIDADO: sua curiosidade foi registrada',
+    'INFO: This session will be... remembered': 'INFO: esta sessão será... lembrada',
+    "[UFO74]: Use 'ls' to see what's in the current directory.":
+      "[UFO74]: Use 'ls' para ver o que está no diretório atual.",
+    "[UFO74]: Try 'open' on a .txt file to read it.":
+      "[UFO74]: Tente 'open' em um arquivo .txt para lê-lo.",
+    "[UFO74]: Navigation tip: 'cd' changes directories. Start exploring.":
+      "[UFO74]: Dica de navegação: 'cd' muda de diretório. Comece a explorar.",
+    '[UFO74]: You need evidence. Look for files that seem... off.':
+      '[UFO74]: Você precisa de evidências. Procure arquivos que pareçam... errados.',
+    '[UFO74]: Some documents contradict the official narrative. Find them.':
+      '[UFO74]: Alguns documentos contradizem a narrativa oficial. Encontre-os.',
+    '[UFO74]: Have you checked /internal?': '[UFO74]: Você já verificou /internal?',
+    '[UFO74]: The /comms directory might have useful intel.':
+      '[UFO74]: O diretório /comms pode ter informações úteis.',
+    "[UFO74]: Detection is high. The 'wait' command lets time pass safely.":
+      "[UFO74]: A detecção está alta. O comando 'wait' deixa o tempo passar com segurança.",
+    "[UFO74]: They're watching closely. Consider using 'wait' to reduce suspicion.":
+      "[UFO74]: Estão observando de perto. Considere usar 'wait' para reduzir a suspeita.",
+    "[UFO74]: CAUTION: Detection critical. 'wait' might buy you time.":
+      "[UFO74]: CUIDADO: detecção crítica. 'wait' pode comprar algum tempo.",
+    "[UFO74]: You've seen a lot. There may be... deeper access available.":
+      '[UFO74]: Você já viu muita coisa. Pode haver... um acesso mais profundo disponível.',
+    "[UFO74]: Some commands aren't listed. Keep digging.":
+      '[UFO74]: Alguns comandos não estão listados. Continue cavando.',
+    '[UFO74]: Some files still carry legacy encryption headers, but recovered text opens directly.':
+      '[UFO74]: Alguns arquivos ainda carregam cabeçalhos legados de criptografia, mas o texto recuperado abre direto.',
+    "[UFO74]: Try the 'progress' command to see what you've found.":
+      "[UFO74]: Tente o comando 'progress' para ver o que você já encontrou.",
+    "[UFO74]: Don't forget: 'note' saves reminders, 'bookmark' saves files.":
+      "[UFO74]: Não esqueça: 'note' salva lembretes, 'bookmark' salva arquivos.",
+    "[UFO74]: Check 'unread' to see what you haven't opened yet.":
+      "[UFO74]: Use 'unread' para ver o que você ainda não abriu.",
+  },
+  es: {
+    'UFO74: ...that is me. that is what i am.': 'UFO74: ...ese soy yo. eso es lo que soy.',
+    'UFO74: kid. do not tell anyone you saw that.':
+      'UFO74: kid. no le cuentes a nadie que viste eso.',
+    'UFO74: they moved it at night. of course they did.':
+      'UFO74: lo movieron de noche. claro que lo hicieron.',
+    'UFO74: save that. every detail matters.': 'UFO74: guarda eso. cada detalle importa.',
+    'UFO74: damn. the firewall is almost onto us.':
+      'UFO74: mierda. el firewall casi nos tiene encima.',
+    'UFO74: risk is climbing. stay low.': 'UFO74: el riesgo está subiendo. mantén la cabeza baja.',
+    "UFO74: it heard something. don't move.": 'UFO74: eso oyó algo. no te muevas.',
+    "UFO74: we need to move faster. it's getting closer.":
+      'UFO74: tenemos que movernos más rápido. se está acercando.',
+    "UFO74: keep your head down. it's scanning.": 'UFO74: mantén la cabeza baja. está escaneando.',
+    "UFO74: that thing knows we're here.": 'UFO74: esa cosa sabe que estamos aquí.',
+    "UFO74: don't react. it feeds on attention.":
+      'UFO74: no reacciones. se alimenta de la atención.',
+    'UFO74: ...they see us. the watchers are here.':
+      'UFO74: ...nos ven. los vigilantes están aquí.',
+    "[UFO74]: ⚠️  Hey kid, that's the FIREWALL.": '[UFO74]: ⚠️  Oye, kid, eso es el FIREWALL.',
+    '[UFO74]: We better not mess with that crazy thing.':
+      '[UFO74]: Mejor no meternos con esa cosa loca.',
+    '[UFO74]: █▓▒░ BE CAREFUL ░▒▓█': '[UFO74]: █▓▒░ TEN CUIDADO ░▒▓█',
+    "[UFO74]: Let's try `cd ..` again.": '[UFO74]: Vamos a probar `cd ..` otra vez.',
+    'ERROR: Incoming transmission in progress.': 'ERROR: transmisión entrante en curso.',
+    '▓▓▓ PARTIAL RECOVERY AVAILABLE ▓▓▓': '▓▓▓ RECUPERACIÓN PARCIAL DISPONIBLE ▓▓▓',
+    'TRACE DETECTED: External observer connected': 'RASTRO DETECTADO: observador externo conectado',
+    'WARNING: Packet inspection in progress': 'ADVERTENCIA: inspección de paquetes en curso',
+    'NOTICE: Session being monitored': 'AVISO: sesión bajo vigilancia',
+    'ALERT: Unauthorized access attempt logged':
+      'ALERTA: intento de acceso no autorizado registrado',
+    'SYSTEM: Someone else is in the system': 'SISTEMA: hay alguien más dentro del sistema',
+    'ANOMALY: Data exfiltration detected': 'ANOMALÍA: exfiltración de datos detectada',
+    'CAUTION: Your keystrokes are being recorded':
+      'CUIDADO: tus pulsaciones están siendo registradas',
+    'INFO: Connection routed through unknown node':
+      'INFO: conexión enrutada por un nodo desconocido',
+    'WARNING: Firewall breach attempt detected':
+      'ADVERTENCIA: intento de vulnerar el firewall detectado',
+    'NOTICE: Session flagged for review': 'AVISO: sesión marcada para revisión',
+    'ALERT: Third-party listener identified': 'ALERTA: se identificó un oyente de terceros',
+    'SYSTEM: Memory dump in progress': 'SISTEMA: volcado de memoria en curso',
+    'TRACE: Unknown process accessing your session':
+      'RASTRO: proceso desconocido accediendo a tu sesión',
+    'NOTICE: Query patterns being analyzed': 'AVISO: se están analizando los patrones de consulta',
+    'WARNING: Session duration exceeds normal parameters':
+      'ADVERTENCIA: la duración de la sesión supera los parámetros normales',
+    'SYSTEM: Behavioral profile update in progress':
+      'SISTEMA: actualización del perfil conductual en curso',
+    'ALERT: File access sequence flagged as anomalous':
+      'ALERTA: secuencia de acceso a archivos marcada como anómala',
+    'CAUTION: Terminal output being mirrored':
+      'CUIDADO: la salida del terminal está siendo replicada',
+    'INFO: Your IP has been logged for review': 'INFO: tu IP ha sido registrada para revisión',
+    'NOTICE: Command history archived to external server':
+      'AVISO: historial de comandos archivado en un servidor externo',
+    'WARNING: They know where you are': 'ADVERTENCIA: saben dónde estás',
+    'ALERT: Physical location triangulated': 'ALERTA: ubicación física triangulada',
+    'SYSTEM: Dispatch notification pending': 'SISTEMA: notificación de despliegue pendiente',
+    'NOTICE: Someone just accessed your personnel file':
+      'AVISO: alguien acaba de acceder a tu expediente personal',
+    'CAUTION: Your screen is being watched': 'CUIDADO: están observando tu pantalla',
+    'WARNING: Audio capture device detected':
+      'ADVERTENCIA: dispositivo de captura de audio detectado',
+    'ALERT: Camera feed request intercepted': 'ALERTA: solicitud de cámara interceptada',
+    'SYSTEM: Facial recognition scan initiated':
+      'SISTEMA: escaneo de reconocimiento facial iniciado',
+    'SIGNAL: ...they remember you from before...': 'SEÑAL: ...te recuerdan de antes...',
+    'TRACE: Pattern matches previous intruder':
+      'RASTRO: el patrón coincide con el intruso anterior',
+    'NOTICE: The watchers have been notified': 'AVISO: se ha avisado a los vigilantes',
+    'ALERT: You were expected': 'ALERTA: te estaban esperando',
+    'SYSTEM: Countermeasures initializing': 'SISTEMA: inicializando contramedidas',
+    'WARNING: Too late to disconnect cleanly':
+      'ADVERTENCIA: demasiado tarde para desconectarse sin dejar rastro',
+    'CAUTION: Your curiosity has been noted': 'CUIDADO: tu curiosidad ha quedado registrada',
+    'INFO: This session will be... remembered': 'INFO: esta sesión será... recordada',
+    "[UFO74]: Use 'ls' to see what's in the current directory.":
+      "[UFO74]: Usa 'ls' para ver lo que hay en el directorio actual.",
+    "[UFO74]: Try 'open' on a .txt file to read it.":
+      "[UFO74]: Prueba 'open' sobre un archivo .txt para leerlo.",
+    "[UFO74]: Navigation tip: 'cd' changes directories. Start exploring.":
+      "[UFO74]: Consejo de navegación: 'cd' cambia de directorio. Empieza a explorar.",
+    '[UFO74]: You need evidence. Look for files that seem... off.':
+      '[UFO74]: Necesitas evidencia. Busca archivos que parezcan... raros.',
+    '[UFO74]: Some documents contradict the official narrative. Find them.':
+      '[UFO74]: Algunos documentos contradicen la narrativa oficial. Encuéntralos.',
+    '[UFO74]: Have you checked /internal?': '[UFO74]: ¿Ya revisaste /internal?',
+    '[UFO74]: The /comms directory might have useful intel.':
+      '[UFO74]: El directorio /comms podría tener información útil.',
+    "[UFO74]: Detection is high. The 'wait' command lets time pass safely.":
+      "[UFO74]: La detección está alta. El comando 'wait' deja pasar el tiempo con seguridad.",
+    "[UFO74]: They're watching closely. Consider using 'wait' to reduce suspicion.":
+      "[UFO74]: Están vigilando de cerca. Considera usar 'wait' para reducir la sospecha.",
+    "[UFO74]: CAUTION: Detection critical. 'wait' might buy you time.":
+      "[UFO74]: CUIDADO: detección crítica. 'wait' puede darte algo de tiempo.",
+    "[UFO74]: You've seen a lot. There may be... deeper access available.":
+      '[UFO74]: Ya has visto mucho. Puede que haya... un acceso más profundo disponible.',
+    "[UFO74]: Some commands aren't listed. Keep digging.":
+      '[UFO74]: Algunos comandos no están listados. Sigue cavando.',
+    '[UFO74]: Some files still carry legacy encryption headers, but recovered text opens directly.':
+      '[UFO74]: Algunos archivos todavía conservan cabeceras heredadas de cifrado, pero el texto recuperado se abre directamente.',
+    "[UFO74]: Try the 'progress' command to see what you've found.":
+      "[UFO74]: Prueba el comando 'progress' para ver lo que has encontrado.",
+    "[UFO74]: Don't forget: 'note' saves reminders, 'bookmark' saves files.":
+      "[UFO74]: No olvides que 'note' guarda recordatorios y 'bookmark' guarda archivos.",
+    "[UFO74]: Check 'unread' to see what you haven't opened yet.":
+      "[UFO74]: Revisa 'unread' para ver lo que todavía no has abierto.",
+  },
+};
+
 export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
   'pt-BR': {
     ...RUNTIME_TRANSLATIONS_PRE_WAVE_4['pt-BR'],
     ...RUNTIME_TRANSLATIONS_WAVE_4['pt-BR'],
     ...RUNTIME_DATA_TRANSLATIONS['pt-BR'],
+    ...RUNTIME_FINDINGS_FIXES['pt-BR'],
   },
   es: {
     ...RUNTIME_TRANSLATIONS_PRE_WAVE_4.es,
     ...RUNTIME_TRANSLATIONS_WAVE_4.es,
     ...RUNTIME_DATA_TRANSLATIONS.es,
+    ...RUNTIME_FINDINGS_FIXES.es,
   },
 };

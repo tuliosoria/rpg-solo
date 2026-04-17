@@ -15,6 +15,9 @@ function wrapper({ children }: { children: React.ReactNode }) {
 describe('i18n system', () => {
   beforeEach(() => {
     window.localStorage.clear();
+    document.documentElement.lang = 'en';
+    document.title = '';
+    document.head.querySelector('meta[name="description"]')?.remove();
   });
 
   it('translates static keys with interpolation', () => {
@@ -63,7 +66,9 @@ describe('i18n system', () => {
       result.current.setLanguage('es');
     });
 
-    expect(result.current.translateRuntimeText('Unknown command: xyz')).toBe('Comando desconocido: xyz');
+    expect(result.current.translateRuntimeText('Unknown command: xyz')).toBe(
+      'Comando desconocido: xyz'
+    );
     expect(result.current.translateRuntimeText('   [Invalid attempts: 3/8]')).toBe(
       '   [Intentos inválidos: 3/8]'
     );
@@ -86,9 +91,7 @@ describe('i18n system', () => {
       '  [Respostas erradas: 2/3]'
     );
     expect(
-      result.current.translateRuntimeText(
-        '  You have 3 conspiracy document(s) in your cache.'
-      )
+      result.current.translateRuntimeText('  You have 3 conspiracy document(s) in your cache.')
     ).toBe('  Você tem 3 documento(s) da conspiração no seu cache.');
   });
 
@@ -108,11 +111,9 @@ describe('i18n system', () => {
     expect(result.current.translateRuntimeText('UFO74: new here? type "help basics".')).toBe(
       'UFO74: é novo por aqui? digite "help basics".'
     );
-    expect(
-      result.current.translateRuntimeText(
-        '[UFO74]: Close idea, wrong system. Try: ls'
-      )
-    ).toBe('UFO74: Ideia certa, sistema errado. Tente: ls');
+    expect(result.current.translateRuntimeText('[UFO74]: Close idea, wrong system. Try: ls')).toBe(
+      'UFO74: Ideia certa, sistema errado. Tente: ls'
+    );
     expect(
       result.current.translateRuntimeText('ls              List files in current directory')
     ).toBe('ls              Lista arquivos no diretório atual');
@@ -157,9 +158,91 @@ describe('i18n system', () => {
       result.current.setLanguage('pt-BR');
     });
 
-    expect(result.current.t('engine.hints.protocol.activated')).toBe('>>> PROTOCOLO DE DICAS ATIVADO');
+    expect(result.current.t('engine.hints.protocol.activated')).toBe(
+      '>>> PROTOCOLO DE DICAS ATIVADO'
+    );
     expect(result.current.t('engine.invalidCommand.invalidAttempts', { value: 5 })).toBe(
       '   [Tentativas inválidas: 5/8]'
+    );
+  });
+
+  it('translates status/help command output and runtime overlays for pt-BR', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('pt-BR');
+    });
+
+    expect(
+      result.current.translateRuntimeText(
+        '  help [cmd]        Display help (or help for specific command)'
+      )
+    ).toBe('  help [cmd]        Exibe ajuda (ou ajuda para um comando específico)');
+    expect(result.current.translateRuntimeText('SYSTEM STATUS')).toBe('STATUS DO SISTEMA');
+    expect(result.current.translateRuntimeText('  EVIDENCE: 3/10 confirmed')).toBe(
+      '  EVIDÊNCIAS: 3/10 confirmadas'
+    );
+    expect(result.current.translateRuntimeText('  FIREWALL: LOCKDOWN — 2 nodes remaining')).toBe(
+      '  FIREWALL: BLOQUEIO — 2 nós restantes'
+    );
+    expect(result.current.translateRuntimeText('TRACE DETECTED: External observer connected')).toBe(
+      'RASTRO DETECTADO: observador externo conectado'
+    );
+    expect(
+      result.current.translateRuntimeText(
+        "[UFO74]: Don't forget: 'note' saves reminders, 'bookmark' saves files."
+      )
+    ).toBe("UFO74: Não esqueça: 'note' salva lembretes, 'bookmark' salva arquivos.");
+    expect(result.current.translateRuntimeText("[UFO74]: ⚠️  Hey kid, that's the FIREWALL.")).toBe(
+      'UFO74: ⚠️  Ei, kid, isso é o FIREWALL.'
+    );
+  });
+
+  it('updates document metadata and lang when the language changes', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('es');
+    });
+
+    await waitFor(() => {
+      expect(document.documentElement.lang).toBe('es');
+    });
+
+    expect(document.title).toBe(es['metadata.title']);
+    expect(document.head.querySelector('meta[name="description"]')?.getAttribute('content')).toBe(
+      es['metadata.description']
+    );
+  });
+
+  it('translates checkpoint reasons and turing video aria for pt-BR', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('pt-BR');
+    });
+
+    expect(result.current.translateRuntimeText('First UFO74 contact')).toBe(
+      'Primeiro contato com UFO74'
+    );
+    expect(result.current.translateRuntimeText('Tutorial skipped')).toBe('Tutorial ignorado');
+    expect(result.current.translateRuntimeText('Evidence 3/5')).toBe('Evidências 3/5');
+    expect(result.current.t('turing.video.aria')).toBe('Vídeo da avaliação de Turing');
+  });
+
+  it('translates checkpoint progress and access reasons for Spanish', async () => {
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    act(() => {
+      result.current.setLanguage('es');
+    });
+
+    expect(result.current.translateRuntimeText('Access level 2')).toBe('Nivel de acceso 2');
+    expect(result.current.translateRuntimeText('Before leak transmission')).toBe(
+      'Antes de la transmisión de la filtración'
+    );
+    expect(result.current.translateRuntimeText('Detection approaching critical')).toBe(
+      'La detección se acerca al nivel crítico'
     );
   });
 });

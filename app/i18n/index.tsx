@@ -4,11 +4,10 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import en from '../locales/en.json';
 import ptBr from '../locales/pt-br.json';
 import es from '../locales/es.json';
+import { getDocumentLocalization, LANGUAGE_STORAGE_KEY } from './documentMetadata';
 import { RUNTIME_TRANSLATIONS } from './runtime';
 
 export type Language = 'en' | 'pt-BR' | 'es';
-
-const STORAGE_KEY = 'terminal1996_language';
 const LANGUAGE_OPTIONS: Language[] = ['en', 'pt-BR', 'es'];
 
 type LocaleDictionary = Record<string, string>;
@@ -18,6 +17,19 @@ const LOCALES: Record<Language, LocaleDictionary> = {
   en,
   'pt-BR': ptBr,
   es,
+};
+
+const CHECKPOINT_REASON_KEYS: Record<string, string> = {
+  'First UFO74 contact': 'runtime.checkpoint.firstUfo74Contact',
+  'Tutorial complete': 'runtime.checkpoint.tutorialComplete',
+  'Tutorial skipped': 'runtime.checkpoint.tutorialSkipped',
+  'First evidence': 'runtime.checkpoint.firstEvidence',
+  'All evidence found': 'runtime.checkpoint.allEvidenceFound',
+  'Before leak transmission': 'runtime.checkpoint.beforeLeakTransmission',
+  'Before override protocol': 'runtime.checkpoint.beforeOverrideProtocol',
+  'First encrypted file decrypted': 'runtime.checkpoint.firstEncryptedFileDecrypted',
+  'Admin access unlocked': 'runtime.checkpoint.adminAccessUnlocked',
+  'Detection approaching critical': 'runtime.checkpoint.detectionApproachingCritical',
 };
 
 function normalizeRuntimePresentation(text: string): string {
@@ -43,7 +55,7 @@ function interpolate(template: string, values?: TranslationValues): string {
 function getStoredLanguage(): Language {
   if (typeof window === 'undefined') return 'en';
   try {
-    return normalizeLanguage(window.localStorage.getItem(STORAGE_KEY));
+    return normalizeLanguage(window.localStorage.getItem(LANGUAGE_STORAGE_KEY));
   } catch {
     return 'en';
   }
@@ -52,7 +64,7 @@ function getStoredLanguage(): Language {
 function persistLanguage(language: Language): void {
   if (typeof window === 'undefined') return;
   try {
-    window.localStorage.setItem(STORAGE_KEY, language);
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
   } catch {
     // Ignore storage failures and keep in-memory language.
   }
@@ -88,11 +100,7 @@ const FALLBACK_CONTEXT: I18nContextValue = {
 };
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('en');
-
-  useEffect(() => {
-    setLanguageState(getStoredLanguage());
-  }, []);
+  const [language, setLanguageState] = useState<Language>(() => getStoredLanguage());
 
   const setLanguage = useCallback((nextLanguage: Language) => {
     const normalized = normalizeLanguage(nextLanguage);
@@ -105,6 +113,22 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       translateStatic(key, values, fallback, language),
     [language]
   );
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const { description, lang, title } = getDocumentLocalization(language);
+    document.documentElement.lang = lang;
+    document.title = title;
+
+    let descriptionMeta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (!descriptionMeta) {
+      descriptionMeta = document.createElement('meta');
+      descriptionMeta.setAttribute('name', 'description');
+      document.head.appendChild(descriptionMeta);
+    }
+    descriptionMeta.setAttribute('content', description);
+  }, [language]);
 
   const translateRuntimeText = useCallback(
     (text: string): string => {
@@ -136,13 +160,11 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (directoryMatch) {
         return `${t('runtime.directoryPrefix')}: ${directoryMatch[1]}`;
       }
-      const maximumCommandLengthMatch = text.match(/^Maximum command length is (\d+) characters\.$/);
+      const maximumCommandLengthMatch = text.match(
+        /^Maximum command length is (\d+) characters\.$/
+      );
       if (maximumCommandLengthMatch) {
-        return t(
-          'runtime.maximumCommandLength',
-          { value: maximumCommandLengthMatch[1] },
-          text
-        );
+        return t('runtime.maximumCommandLength', { value: maximumCommandLengthMatch[1] }, text);
       }
       const changedToMatch = text.match(/^Changed to:\s*(.+)$/);
       if (changedToMatch) {
@@ -162,11 +184,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       }
       const errorDirectoryNotFoundMatch = text.match(/^ERROR: Directory not found:\s*(.+)$/);
       if (errorDirectoryNotFoundMatch) {
-        return t(
-          'runtime.errorDirectoryNotFound',
-          { value: errorDirectoryNotFoundMatch[1] },
-          text
-        );
+        return t('runtime.errorDirectoryNotFound', { value: errorDirectoryNotFoundMatch[1] }, text);
       }
       const errorNotDirectoryMatch = text.match(/^ERROR: Not a directory:\s*(.+)$/);
       if (errorNotDirectoryMatch) {
@@ -235,6 +253,15 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           text
         );
       }
+      const evidenceConfirmedMatch = text.match(/^(\s*)EVIDENCE:\s*(\d+)\/(\d+)\s+confirmed$/);
+      if (evidenceConfirmedMatch) {
+        return applyLeadingWhitespace(
+          evidenceConfirmedMatch,
+          'runtime.status.evidenceConfirmed',
+          { current: evidenceConfirmedMatch[2], total: evidenceConfirmedMatch[3] },
+          text
+        );
+      }
       const strengthLabelMatch = text.match(/^(\s*)STRENGTH:\s*(.+)$/);
       if (strengthLabelMatch) {
         return applyLeadingWhitespace(
@@ -271,6 +298,21 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           text
         );
       }
+      const firewallNodesRemainingMatch = text.match(
+        /^(\s*)FIREWALL:\s+LOCKDOWN\s+[—-]\s+(\d+)\s+node(s)?\s+remaining$/
+      );
+      if (firewallNodesRemainingMatch) {
+        const key =
+          firewallNodesRemainingMatch[2] === '1'
+            ? 'runtime.status.firewallNodesRemaining.one'
+            : 'runtime.status.firewallNodesRemaining.other';
+        return applyLeadingWhitespace(
+          firewallNodesRemainingMatch,
+          key,
+          { value: firewallNodesRemainingMatch[2] },
+          text
+        );
+      }
       const purgeInMatch = text.match(/^(\s*)▓▓▓ PURGE IN (\d+) ▓▓▓$/);
       if (purgeInMatch) {
         return applyLeadingWhitespace(
@@ -289,6 +331,15 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           text
         );
       }
+      const operationsRemainingMatch = text.match(/^(\s*)OPERATIONS REMAINING:\s*(\d+)$/);
+      if (operationsRemainingMatch) {
+        return applyLeadingWhitespace(
+          operationsRemainingMatch,
+          'runtime.status.operationsRemaining',
+          { value: operationsRemainingMatch[2] },
+          text
+        );
+      }
       const questionsBeforeLockoutMatch = text.match(
         /^\[(\d+)\s+questions remaining before trace lockout\]$/
       );
@@ -303,7 +354,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (questionsRemainingMatch) {
         return t('runtime.questionsRemaining', { value: questionsRemainingMatch[1] }, text);
       }
-      const patternStabilityMatch = text.match(/^\[Pattern stability:\s*(\d+)\s+queries remaining\]$/);
+      const patternStabilityMatch = text.match(
+        /^\[Pattern stability:\s*(\d+)\s+queries remaining\]$/
+      );
       if (patternStabilityMatch) {
         return t('runtime.patternStability', { value: patternStabilityMatch[1] }, text);
       }
@@ -331,11 +384,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         /^WARNING:\s*(\d+)\s+attempt\(s\)\s+remaining before lockdown$/
       );
       if (attemptsBeforeLockdownMatch) {
-        return t(
-          'runtime.attemptsBeforeLockdown',
-          { value: attemptsBeforeLockdownMatch[1] },
-          text
-        );
+        return t('runtime.attemptsBeforeLockdown', { value: attemptsBeforeLockdownMatch[1] }, text);
       }
       const warningInvalidAttemptsMatch = text.match(/^WARNING:\s*Invalid attempts:\s*(\d+)\/8$/);
       if (warningInvalidAttemptsMatch) {
@@ -345,17 +394,39 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         /^Too soon\. Wait (\d+) second(s)? before trying again\.$/
       );
       if (tooSoonWaitMatch) {
-        const key = tooSoonWaitMatch[1] === '1' ? 'runtime.tooSoonWait.one' : 'runtime.tooSoonWait.other';
+        const key =
+          tooSoonWaitMatch[1] === '1' ? 'runtime.tooSoonWait.one' : 'runtime.tooSoonWait.other';
         return t(key, { value: tooSoonWaitMatch[1] }, text);
       }
       const waitRemainingMatch = text.match(
         /^(\s*)Detection reduced\.\s*\[(\d+)\s+wait(s)? remaining\]$/
       );
       if (waitRemainingMatch) {
-        const key = waitRemainingMatch[2] === '1'
-          ? 'runtime.waitRemaining.one'
-          : 'runtime.waitRemaining.other';
-        return applyLeadingWhitespace(waitRemainingMatch, key, { value: waitRemainingMatch[2] }, text);
+        const key =
+          waitRemainingMatch[2] === '1'
+            ? 'runtime.waitRemaining.one'
+            : 'runtime.waitRemaining.other';
+        return applyLeadingWhitespace(
+          waitRemainingMatch,
+          key,
+          { value: waitRemainingMatch[2] },
+          text
+        );
+      }
+      const recoveryWaitMatch = text.match(
+        /^(\s*)RECOVERY:\s+"wait"\s+can\s+buy\s+time\s+\((\d+)\s+left\)\.$/
+      );
+      if (recoveryWaitMatch) {
+        const key =
+          recoveryWaitMatch[2] === '1'
+            ? 'runtime.status.recoveryWait.one'
+            : 'runtime.status.recoveryWait.other';
+        return applyLeadingWhitespace(
+          recoveryWaitMatch,
+          key,
+          { value: recoveryWaitMatch[2] },
+          text
+        );
       }
       const leakDetectionDeltaMatch = text.match(/^DETECTION:\s*\+(\d+)%$/);
       if (leakDetectionDeltaMatch) {
@@ -401,9 +472,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (targetSearchingMatch) {
         return t('runtime.targetSearching', { value: targetSearchingMatch[1] }, text);
       }
-      const toReadFileMatch = text.match(
-        /^(\s*)To read a file use 'cat (.+)' or 'open (.+)'\.$/
-      );
+      const toReadFileMatch = text.match(/^(\s*)To read a file use 'cat (.+)' or 'open (.+)'\.$/);
       if (toReadFileMatch) {
         return applyLeadingWhitespace(
           toReadFileMatch,
@@ -443,9 +512,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (whenReadyStartDecryptMatch) {
         return t('runtime.whenReadyStartDecrypt', { value: whenReadyStartDecryptMatch[1] }, text);
       }
-      const legacyWrapperDecryptMatch = text.match(
-        /^\[UFO74\]: legacy wrapper: "decrypt (.+)"\.$/
-      );
+      const legacyWrapperDecryptMatch = text.match(/^\[UFO74\]: legacy wrapper: "decrypt (.+)"\.$/);
       if (legacyWrapperDecryptMatch) {
         return t('runtime.legacyWrapperDecrypt', { value: legacyWrapperDecryptMatch[1] }, text);
       }
@@ -481,15 +548,36 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       }
       const endingLabelMatch = text.match(/^>> ENDING:\s*(.+?)\s*<<$/);
       if (endingLabelMatch) {
-        return t(
-          'runtime.endingLabel',
-          { value: translateRuntimeText(endingLabelMatch[1]) },
-          text
-        );
+        return t('runtime.endingLabel', { value: translateRuntimeText(endingLabelMatch[1]) }, text);
       }
       const scriptNotFoundMatch = text.match(/^Script not found:\s*(.+)$/);
       if (scriptNotFoundMatch) {
         return t('runtime.scriptNotFound', { value: scriptNotFoundMatch[1] }, text);
+      }
+      const checkpointReasonKey = CHECKPOINT_REASON_KEYS[text];
+      if (checkpointReasonKey) {
+        return t(checkpointReasonKey, undefined, text);
+      }
+      const checkpointEvidenceMatch = text.match(/^Evidence (\d+)\/(\d+)$/);
+      if (checkpointEvidenceMatch) {
+        return t(
+          'runtime.checkpoint.evidenceProgress',
+          { current: checkpointEvidenceMatch[1], total: checkpointEvidenceMatch[2] },
+          text
+        );
+      }
+      const checkpointAccessLevelMatch = text.match(/^Access level (\d+)$/);
+      if (checkpointAccessLevelMatch) {
+        return t('runtime.checkpoint.accessLevel', { value: checkpointAccessLevelMatch[1] }, text);
+      }
+      const currentPathMatch = text.match(/^(\s*)CURRENT PATH:\s*(.+)$/);
+      if (currentPathMatch) {
+        return applyLeadingWhitespace(
+          currentPathMatch,
+          'runtime.status.currentPath',
+          { value: currentPathMatch[2] },
+          text
+        );
       }
       const translated = RUNTIME_TRANSLATIONS[language][text];
       if (translated !== undefined) {

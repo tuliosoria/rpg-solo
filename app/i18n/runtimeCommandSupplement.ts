@@ -1,6 +1,6 @@
 type RuntimeDictionary = Record<string, string>;
 
-export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionary> = {
+const BASE_RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionary> = {
   'pt-BR': {
     'UFO74: youre in. keep it quiet.': 'UFO74: você entrou. fica na sua.',
     'UFO74: quick brief. you cant change anything here — read only.':
@@ -45,8 +45,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: ls [-l]': 'COMANDO: ls [-l]',
     '  ls             - List files and directories':
       '  ls             - Lista arquivos e diretórios',
-    '  ls -l          - Long format with previews':
-      '  ls -l          - Formato longo com prévias',
+    '  ls -l          - Long format with previews': '  ls -l          - Formato longo com prévias',
     'MARKERS:': 'MARCADORES:',
     '  [UNREAD]       - File not yet read': '  [UNREAD]       - Arquivo ainda não lido',
     '  [READ]         - File already opened': '  [READ]         - Arquivo já aberto',
@@ -55,8 +54,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  ★              - Bookmarked file': '  ★              - Arquivo favoritado',
     'COMMAND: cd <directory>': 'COMANDO: cd <directory>',
     'Change to a different directory.': 'Muda para outro diretório.',
-    '  cd ops         - Enter the "ops" directory':
-      '  cd ops         - Entra no diretório "ops"',
+    '  cd ops         - Enter the "ops" directory': '  cd ops         - Entra no diretório "ops"',
     '  cd /admin      - Go to absolute path': '  cd /admin      - Vai para o caminho absoluto',
     '  cd ..          - Go to parent directory': '  cd ..          - Volta ao diretório pai',
     'COMMAND: open <file>': 'COMANDO: open <file>',
@@ -115,8 +113,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       '  tutorial       - Reinicia a sequência do tutorial',
     '  tutorial on    - Enable tutorial tips during gameplay':
       '  tutorial on    - Ativa dicas de tutorial durante a jogabilidade',
-    '  tutorial off   - Disable tutorial tips':
-      '  tutorial off   - Desativa as dicas de tutorial',
+    '  tutorial off   - Disable tutorial tips': '  tutorial off   - Desativa as dicas de tutorial',
     '  - After your first evidence update': '  - Após sua primeira atualização de evidência',
     '  - When you discover new evidence categories':
       '  - Quando você descobre novas categorias de evidência',
@@ -126,10 +123,10 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  morse cancel     - Cancel current morse entry':
       '  morse cancel     - Cancela a entrada atual de morse',
     'COMMAND: leak': 'COMANDO: leak',
-    '  leak            - Initiate evidence leak': '  leak            - Inicia o vazamento das evidências',
+    '  leak            - Initiate evidence leak':
+      '  leak            - Inicia o vazamento das evidências',
     'COMMAND: wait': 'COMANDO: wait',
-    '  wait           - Reduce detection by ~10%':
-      '  wait           - Reduz a detecção em ~10%',
+    '  wait           - Reduce detection by ~10%': '  wait           - Reduz a detecção em ~10%',
     'COMMAND: hide': 'COMANDO: hide',
     '  hide           - Emergency escape at 90% risk':
       '  hide           - Fuga de emergência com 90% de risco',
@@ -145,8 +142,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       '  last              Exibe novamente o último arquivo aberto',
 
     'UFO74: HACKERKID NO!': 'UFO74: HACKERKID NÃO!',
-    'UFO74: ugh. this is sanitized documentation.':
-      'UFO74: argh. isso é documentação higienizada.',
+    'UFO74: ugh. this is sanitized documentation.': 'UFO74: argh. isso é documentação higienizada.',
     'UFO74: good pace, hackerkid.': 'UFO74: bom ritmo, hackerkid.',
     'UFO74: this one still hides behind a recovery phrase. look around for clues first.':
       'UFO74: este ainda se esconde atrás de uma frase de recuperação. procura pistas antes.',
@@ -339,19 +335,14 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'you found it. i knew it was in there.': 'você achou. eu sabia que estava aí.',
     'this is exactly what we came for. keep going.':
       'é exatamente isso que viemos buscar. continua.',
-    'they are going to hate that you found that.':
-      'eles vão odiar que você tenha encontrado isso.',
-    'one more like that and we blow this wide open.':
-      'mais um assim e arrebentamos tudo de vez.',
-    'save everything. do not skip a single file.':
-      'salva tudo. não pule um arquivo sequer.',
+    'they are going to hate that you found that.': 'eles vão odiar que você tenha encontrado isso.',
+    'one more like that and we blow this wide open.': 'mais um assim e arrebentamos tudo de vez.',
+    'save everything. do not skip a single file.': 'salva tudo. não pule um arquivo sequer.',
     'that one is going straight into the leak package.':
       'isso vai direto para o pacote do vazamento.',
-    'this is why they locked this system down.':
-      'é por isso que eles trancaram este sistema.',
-    "UFO74: hey. need a hint?": 'UFO74: ei. precisa de uma dica?',
-    'UFO74: READ the files. "open <filename>".':
-      'UFO74: LEIA os arquivos. "open <filename>".',
+    'this is why they locked this system down.': 'é por isso que eles trancaram este sistema.',
+    'UFO74: hey. need a hint?': 'UFO74: ei. precisa de uma dica?',
+    'UFO74: READ the files. "open <filename>".': 'UFO74: LEIA os arquivos. "open <filename>".',
     '       theres a protocol doc in /internal/.':
       '       tem um documento de protocolo em /internal/.',
     'UFO74: look for evidence in:': 'UFO74: procure evidências em:',
@@ -359,8 +350,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: o índice sabe mais do que eles querem que você encontre.',
     '       try: search <keyword>': '       tente: search <keyword>',
     'UFO74: last hint:': 'UFO74: última dica:',
-    'UFO74: january 96. find the pieces.':
-      'UFO74: janeiro de 96. ache as peças.',
+    'UFO74: january 96. find the pieces.': 'UFO74: janeiro de 96. ache as peças.',
     'check /storage/ for transport logs.': 'verifique /storage/ atrás dos logs de transporte.',
     'try "chat". someones in here.': 'tente "chat". tem alguém aqui dentro.',
     'you have clearance. check /admin/.': 'você tem credencial. veja /admin/.',
@@ -377,8 +367,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: cuidado, kid, eles estão ficando desconfiados.',
     "       if you hit 50% you'll have to prove you're human.":
       '       se você chegar a 50% vai ter que provar que é humano.',
-    '       /storage/, /ops/quarantine/, /comms/':
-      '       /storage/, /ops/quarantine/, /comms/',
+    '       /storage/, /ops/quarantine/, /comms/': '       /storage/, /ops/quarantine/, /comms/',
     '       1. cd <directory>': '       1. cd <directory>',
     '       2. ls': '       2. ls',
     '       3. open <filename>': '       3. open <filename>',
@@ -391,22 +380,15 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: sabiam de 2026 antes de ler mentes? ou ELES contaram?',
     'UFO74: connecting dots. good.': 'UFO74: ligando os pontos. bom.',
     'UFO74: almost there. one more piece.': 'UFO74: quase lá. mais uma peça.',
-    'UFO74: walls listen. find the thread.':
-      'UFO74: as paredes escutam. ache o fio.',
+    'UFO74: walls listen. find the thread.': 'UFO74: as paredes escutam. ache o fio.',
     'UFO74: th3y r3 1ns1d3': 'UFO74: 3l3s 3stã0 d3ntr0',
-    'UFO74: ...january... they took everything...':
-      'UFO74: ...janeiro... levaram tudo...',
-    'UFO74: theyre scanning. cant talk.':
-      'UFO74: estão varrendo. não dá pra falar.',
+    'UFO74: ...january... they took everything...': 'UFO74: ...janeiro... levaram tudo...',
+    'UFO74: theyre scanning. cant talk.': 'UFO74: estão varrendo. não dá pra falar.',
     'UFO74: be fast.': 'UFO74: seja rápido.',
-    'UFO74: every file you open, they see.':
-      'UFO74: cada arquivo que você abre, eles veem.',
-    'UFO74: triggered some flags. careful.':
-      'UFO74: disparou umas flags. cuidado.',
-    'UFO74: system suspicious. use "wait".':
-      'UFO74: sistema desconfiado. use "wait".',
-    'UFO74: autopsy report. not human.':
-      'UFO74: relatório de autópsia. não humano.',
+    'UFO74: every file you open, they see.': 'UFO74: cada arquivo que você abre, eles veem.',
+    'UFO74: triggered some flags. careful.': 'UFO74: disparou umas flags. cuidado.',
+    'UFO74: system suspicious. use "wait".': 'UFO74: sistema desconfiado. use "wait".',
+    'UFO74: autopsy report. not human.': 'UFO74: relatório de autópsia. não humano.',
     'UFO74: transport log. they split up the evidence.':
       'UFO74: log de transporte. eles dividiram as evidências.',
     'UFO74: they were communicating. telepathically.':
@@ -417,23 +399,19 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: outros países envolvidos. encobrimento coordenado.',
     'UFO74: 2026. something coming. thats why they buried it.':
       'UFO74: 2026. algo está vindo. é por isso que enterraram isso.',
-    'UFO74: containment. they captured them.':
-      'UFO74: contenção. eles os capturaram.',
-    'UFO74: physical evidence. smoking gun.':
-      'UFO74: evidência física. prova cabal.',
+    'UFO74: containment. they captured them.': 'UFO74: contenção. eles os capturaram.',
+    'UFO74: physical evidence. smoking gun.': 'UFO74: evidência física. prova cabal.',
     'UFO74: cover story. the real material is buried deeper.':
       'UFO74: história de cobertura. o material real está enterrado mais fundo.',
     'UFO74: morse code. decipher it.': 'UFO74: código morse. decifra isso.',
-    '       might be the override passphrase.':
-      '       pode ser a frase de override.',
+    '       might be the override passphrase.': '       pode ser a frase de override.',
     '        SECURITY PROTOCOL: TURING EVALUATION INITIATED':
       '        PROTOCOLO DE SEGURANÇA: AVALIAÇÃO TURING INICIADA',
     '                    [SIGNAL ECHO DETECTED]': '                    [ECO DE SINAL DETECTADO]',
     '                    ...we see you seeing...': '                    ...nós vemos você vendo...',
     'UFO74: interesting. keep digging.': 'UFO74: interessante. continua cavando.',
     'UFO74: good. every file matters.': 'UFO74: bom. todo arquivo importa.',
-    'UFO74: noted. try /ops, /storage, /comms.':
-      'UFO74: anotado. tenta /ops, /storage, /comms.',
+    'UFO74: noted. try /ops, /storage, /comms.': 'UFO74: anotado. tenta /ops, /storage, /comms.',
     'UFO74: messy copy, but it should still read clean enough.':
       'UFO74: cópia bagunçada, mas ainda deve dar pra ler.',
     'UFO74: old wrapper on this file. readable layer is still intact.':
@@ -443,8 +421,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'UFO74: noisy shell, but the evidence is still there.':
       'UFO74: shell ruidoso, mas a evidência ainda está aí.',
     'UFO74: someones at my door.': 'UFO74: tem alguém na minha porta.',
-    '       not police. they dont knock like that.':
-      '       não é polícia. eles não batem assim.',
+    '       not police. they dont knock like that.': '       não é polícia. eles não batem assim.',
     'UFO74: tell everyone what you found.': 'UFO74: conte a todos o que você encontrou.',
     '       goodbye hackerkid.': '       adeus, hackerkid.',
     'UFO74: hearing noises. stay alert.': 'UFO74: estou ouvindo barulhos. fica alerta.',
@@ -498,16 +475,13 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '[PATTERN DESTABILIZING]': '[PADRÃO DESESTABILIZANDO]',
     '[NEURAL BRIDGE ACTIVE]': '[PONTE NEURAL ATIVA]',
     'ERROR: No pending message to decipher': 'ERRO: Nenhuma mensagem pendente para decifrar',
-    'Read an intercepted signal file first.':
-      'Leia primeiro um arquivo de sinal interceptado.',
+    'Read an intercepted signal file first.': 'Leia primeiro um arquivo de sinal interceptado.',
     'Check /comms/intercepts/ for signal files.':
       'Verifique /comms/intercepts/ em busca dos arquivos de sinal.',
     'Message already deciphered: COLHEITA': 'Mensagem já decifrada: COLHEITA',
-    'UFO74: you already cracked it, hackerkid.':
-      'UFO74: você já decifrou isso, hackerkid.',
+    'UFO74: you already cracked it, hackerkid.': 'UFO74: você já decifrou isso, hackerkid.',
     '       the message was "COLHEITA".': '       a mensagem era "COLHEITA".',
-    '       now use it — override protocol.':
-      '       agora use isso — override protocol.',
+    '       now use it — override protocol.': '       agora use isso — override protocol.',
     'Decryption attempts exhausted.': 'Tentativas de decifração esgotadas.',
     'The intercepted message was: COLHEITA': 'A mensagem interceptada era: COLHEITA',
     'UFO74: you missed it, kid. but now you know.':
@@ -517,27 +491,21 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'Enter your deciphered message.': 'Digite sua mensagem decifrada.',
     'Usage: message <deciphered text>': 'Uso: message <texto decifrado>',
     'UFO74: you did it hackerkid!': 'UFO74: você conseguiu, hackerkid!',
-    '       "COLHEITA" — Portuguese for "HARVEST".':
-      '       "COLHEITA" — em português, "HARVEST".',
+    '       "COLHEITA" — Portuguese for "HARVEST".': '       "COLHEITA" — em português, "HARVEST".',
     'UFO74: this is an authentication passphrase.':
       'UFO74: isso é uma frase-senha de autenticação.',
-    '       someone embedded it in the signal.':
-      '       alguém embutiu isso no sinal.',
-    'UFO74: try it with the override protocol.':
-      'UFO74: tente isso com o protocolo de override.',
-    '       type: override protocol COLHEITA':
-      '       digite: override protocol COLHEITA',
+    '       someone embedded it in the signal.': '       alguém embutiu isso no sinal.',
+    'UFO74: try it with the override protocol.': 'UFO74: tente isso com o protocolo de override.',
+    '       type: override protocol COLHEITA': '       digite: override protocol COLHEITA',
     'Maximum attempts exceeded.': 'Número máximo de tentativas excedido.',
     'UFO74: damn. you ran out of tries hackerkid.':
       'UFO74: droga. você ficou sem tentativas, hackerkid.',
     '       the message was "COLHEITA" — means "HARVEST".':
       '       a mensagem era "COLHEITA" — significa "HARVEST".',
-    '       try it with override protocol.':
-      '       tente isso com override protocol.',
-    'INCORRECT': 'INCORRETO',
+    '       try it with override protocol.': '       tente isso com override protocol.',
+    INCORRECT: 'INCORRETO',
     'UFO74: thats not it hackerkid.': 'UFO74: não é isso, hackerkid.',
-    '       check the morse reference again.':
-      '       confira a referência morse de novo.',
+    '       check the morse reference again.': '       confira a referência morse de novo.',
     'No morse code puzzle active.': 'Nenhum quebra-cabeça de código morse está ativo.',
     'Morse code entry cancelled.': 'Entrada de código morse cancelada.',
     'You can try again later with "morse <message>".':
@@ -645,7 +613,8 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'Abre el canal seguro de retransmisión para comunicarte con contactos.',
     '  chat           - Open chat interface': '  chat           - Abre la interfaz de chat',
     'COMMAND: last': 'COMANDO: last',
-    '  last           - Show last opened file': '  last           - Muestra el último archivo abierto',
+    '  last           - Show last opened file':
+      '  last           - Muestra el último archivo abierto',
     'COMMAND: unread': 'COMANDO: unread',
     '  unread         - Show unread files': '  unread         - Muestra archivos no leídos',
     'COMMAND: tree': 'COMANDO: tree',
@@ -668,10 +637,10 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  morse cancel     - Cancel current morse entry':
       '  morse cancel     - Cancela la entrada morse actual',
     'COMMAND: leak': 'COMANDO: leak',
-    '  leak            - Initiate evidence leak': '  leak            - Inicia la filtración de evidencia',
+    '  leak            - Initiate evidence leak':
+      '  leak            - Inicia la filtración de evidencia',
     'COMMAND: wait': 'COMANDO: wait',
-    '  wait           - Reduce detection by ~10%':
-      '  wait           - Reduce la detección en ~10%',
+    '  wait           - Reduce detection by ~10%': '  wait           - Reduce la detección en ~10%',
     'COMMAND: hide': 'COMANDO: hide',
     '  hide           - Emergency escape at 90% risk':
       '  hide           - Escape de emergencia al 90% de riesgo',
@@ -887,13 +856,10 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'uno más como ese y reventamos esto de par en par.',
     'save everything. do not skip a single file.':
       'guárdalo todo. no te saltes ni un solo archivo.',
-    'that one is going straight into the leak package.':
-      'eso va directo al paquete de filtración.',
-    'this is why they locked this system down.':
-      'por esto cerraron este sistema.',
-    "UFO74: hey. need a hint?": 'UFO74: oye. ¿necesitas una pista?',
-    'UFO74: READ the files. "open <filename>".':
-      'UFO74: LEE los archivos. "open <filename>".',
+    'that one is going straight into the leak package.': 'eso va directo al paquete de filtración.',
+    'this is why they locked this system down.': 'por esto cerraron este sistema.',
+    'UFO74: hey. need a hint?': 'UFO74: oye. ¿necesitas una pista?',
+    'UFO74: READ the files. "open <filename>".': 'UFO74: LEE los archivos. "open <filename>".',
     '       theres a protocol doc in /internal/.':
       '       hay un documento de protocolo en /internal/.',
     'UFO74: look for evidence in:': 'UFO74: busca evidencia en:',
@@ -901,8 +867,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: el índice sabe más de lo que quieren que encuentres.',
     '       try: search <keyword>': '       prueba: search <keyword>',
     'UFO74: last hint:': 'UFO74: última pista:',
-    'UFO74: january 96. find the pieces.':
-      'UFO74: enero del 96. encuentra las piezas.',
+    'UFO74: january 96. find the pieces.': 'UFO74: enero del 96. encuentra las piezas.',
     'check /storage/ for transport logs.':
       'revisa /storage/ para buscar los registros de transporte.',
     'try "chat". someones in here.': 'prueba "chat". hay alguien aquí dentro.',
@@ -920,8 +885,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: cuidado, kid, se están poniendo suspicaces.',
     "       if you hit 50% you'll have to prove you're human.":
       '       si llegas al 50% tendrás que demostrar que eres humano.',
-    '       /storage/, /ops/quarantine/, /comms/':
-      '       /storage/, /ops/quarantine/, /comms/',
+    '       /storage/, /ops/quarantine/, /comms/': '       /storage/, /ops/quarantine/, /comms/',
     '       1. cd <directory>': '       1. cd <directory>',
     '       2. ls': '       2. ls',
     '       3. open <filename>': '       3. open <filename>',
@@ -934,22 +898,15 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: ¿sabían lo de 2026 antes de leer mentes? ¿o ELLOS se lo dijeron?',
     'UFO74: connecting dots. good.': 'UFO74: uniendo puntos. bien.',
     'UFO74: almost there. one more piece.': 'UFO74: casi. una pieza más.',
-    'UFO74: walls listen. find the thread.':
-      'UFO74: las paredes escuchan. encuentra el hilo.',
+    'UFO74: walls listen. find the thread.': 'UFO74: las paredes escuchan. encuentra el hilo.',
     'UFO74: th3y r3 1ns1d3': 'UFO74: 3ll0s 3st4n d3ntr0',
-    'UFO74: ...january... they took everything...':
-      'UFO74: ...enero... se lo llevaron todo...',
-    'UFO74: theyre scanning. cant talk.':
-      'UFO74: están escaneando. no puedo hablar.',
+    'UFO74: ...january... they took everything...': 'UFO74: ...enero... se lo llevaron todo...',
+    'UFO74: theyre scanning. cant talk.': 'UFO74: están escaneando. no puedo hablar.',
     'UFO74: be fast.': 'UFO74: rápido.',
-    'UFO74: every file you open, they see.':
-      'UFO74: cada archivo que abres, lo ven.',
-    'UFO74: triggered some flags. careful.':
-      'UFO74: saltaron algunas flags. cuidado.',
-    'UFO74: system suspicious. use "wait".':
-      'UFO74: el sistema sospecha. usa "wait".',
-    'UFO74: autopsy report. not human.':
-      'UFO74: informe de autopsia. no humano.',
+    'UFO74: every file you open, they see.': 'UFO74: cada archivo que abres, lo ven.',
+    'UFO74: triggered some flags. careful.': 'UFO74: saltaron algunas flags. cuidado.',
+    'UFO74: system suspicious. use "wait".': 'UFO74: el sistema sospecha. usa "wait".',
+    'UFO74: autopsy report. not human.': 'UFO74: informe de autopsia. no humano.',
     'UFO74: transport log. they split up the evidence.':
       'UFO74: registro de transporte. repartieron la evidencia.',
     'UFO74: they were communicating. telepathically.':
@@ -960,23 +917,20 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: otros países implicados. encubrimiento coordinado.',
     'UFO74: 2026. something coming. thats why they buried it.':
       'UFO74: 2026. algo viene. por eso lo enterraron.',
-    'UFO74: containment. they captured them.':
-      'UFO74: contención. los capturaron.',
-    'UFO74: physical evidence. smoking gun.':
-      'UFO74: evidencia física. prueba irrefutable.',
+    'UFO74: containment. they captured them.': 'UFO74: contención. los capturaron.',
+    'UFO74: physical evidence. smoking gun.': 'UFO74: evidencia física. prueba irrefutable.',
     'UFO74: cover story. the real material is buried deeper.':
       'UFO74: historia de cobertura. el material real está más abajo.',
     'UFO74: morse code. decipher it.': 'UFO74: código morse. descífralo.',
-    '       might be the override passphrase.':
-      '       puede ser la frase de override.',
+    '       might be the override passphrase.': '       puede ser la frase de override.',
     '        SECURITY PROTOCOL: TURING EVALUATION INITIATED':
       '        PROTOCOLO DE SEGURIDAD: EVALUACIÓN TURING INICIADA',
     '                    [SIGNAL ECHO DETECTED]': '                    [ECO DE SEÑAL DETECTADO]',
-    '                    ...we see you seeing...': '                    ...vemos que estás viendo...',
+    '                    ...we see you seeing...':
+      '                    ...vemos que estás viendo...',
     'UFO74: interesting. keep digging.': 'UFO74: interesante. sigue excavando.',
     'UFO74: good. every file matters.': 'UFO74: bien. cada archivo importa.',
-    'UFO74: noted. try /ops, /storage, /comms.':
-      'UFO74: anotado. prueba /ops, /storage, /comms.',
+    'UFO74: noted. try /ops, /storage, /comms.': 'UFO74: anotado. prueba /ops, /storage, /comms.',
     'UFO74: messy copy, but it should still read clean enough.':
       'UFO74: copia desordenada, pero aún debería leerse con bastante claridad.',
     'UFO74: old wrapper on this file. readable layer is still intact.':
@@ -986,13 +940,11 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'UFO74: noisy shell, but the evidence is still there.':
       'UFO74: shell ruidosa, pero la evidencia sigue ahí.',
     'UFO74: someones at my door.': 'UFO74: hay alguien en mi puerta.',
-    '       not police. they dont knock like that.':
-      '       no es la policía. no llaman así.',
+    '       not police. they dont knock like that.': '       no es la policía. no llaman así.',
     'UFO74: tell everyone what you found.': 'UFO74: cuéntales a todos lo que encontraste.',
     '       goodbye hackerkid.': '       adiós, hackerkid.',
     'UFO74: hearing noises. stay alert.': 'UFO74: oigo ruidos. mantente alerta.',
-    'UFO74: my connection dropped. footsteps upstairs.':
-      'UFO74: mi conexión cayó. pasos arriba.',
+    'UFO74: my connection dropped. footsteps upstairs.': 'UFO74: mi conexión cayó. pasos arriba.',
     '       i live alone.': '       vivo solo.',
     'UFO74: van outside. finish fast.': 'UFO74: furgoneta fuera. termina rápido.',
     'UFO74: youre deep now. its real.': 'UFO74: ya estás hondo. es real.',
@@ -1030,8 +982,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'Usa: link disarm       - Intentar desactivar el firewall',
     'Neural pattern link - Scout consciousness interface':
       'Enlace de patrón neural - Interfaz de consciencia exploradora',
-    'The neural pattern did not recognize your phrase.':
-      'El patrón neural no reconoció tu frase.',
+    'The neural pattern did not recognize your phrase.': 'El patrón neural no reconoció tu frase.',
     'Review psi-comm documentation for the correct key.':
       'Revisa la documentación psi-comm para encontrar la clave correcta.',
     'Initiating firewall countermeasure...': 'Iniciando contramedida del firewall...',
@@ -1041,16 +992,13 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '[PATTERN DESTABILIZING]': '[PATRÓN DESESTABILIZÁNDOSE]',
     '[NEURAL BRIDGE ACTIVE]': '[PUENTE NEURAL ACTIVO]',
     'ERROR: No pending message to decipher': 'ERROR: No hay mensaje pendiente por descifrar',
-    'Read an intercepted signal file first.':
-      'Lee primero un archivo de señal interceptada.',
+    'Read an intercepted signal file first.': 'Lee primero un archivo de señal interceptada.',
     'Check /comms/intercepts/ for signal files.':
       'Revisa /comms/intercepts/ para encontrar archivos de señal.',
     'Message already deciphered: COLHEITA': 'Mensaje ya descifrado: COLHEITA',
-    'UFO74: you already cracked it, hackerkid.':
-      'UFO74: ya lo descifraste, hackerkid.',
+    'UFO74: you already cracked it, hackerkid.': 'UFO74: ya lo descifraste, hackerkid.',
     '       the message was "COLHEITA".': '       el mensaje era "COLHEITA".',
-    '       now use it — override protocol.':
-      '       ahora úsalo — override protocol.',
+    '       now use it — override protocol.': '       ahora úsalo — override protocol.',
     'Decryption attempts exhausted.': 'Intentos de descifrado agotados.',
     'The intercepted message was: COLHEITA': 'El mensaje interceptado era: COLHEITA',
     'UFO74: you missed it, kid. but now you know.':
@@ -1062,28 +1010,324 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'UFO74: you did it hackerkid!': 'UFO74: ¡lo lograste, hackerkid!',
     '       "COLHEITA" — Portuguese for "HARVEST".':
       '       "COLHEITA" — en portugués significa "HARVEST".',
-    'UFO74: this is an authentication passphrase.':
-      'UFO74: esto es una frase de autenticación.',
-    '       someone embedded it in the signal.':
-      '       alguien lo incrustó en la señal.',
-    'UFO74: try it with the override protocol.':
-      'UFO74: pruébalo con el protocolo override.',
-    '       type: override protocol COLHEITA':
-      '       escribe: override protocol COLHEITA',
+    'UFO74: this is an authentication passphrase.': 'UFO74: esto es una frase de autenticación.',
+    '       someone embedded it in the signal.': '       alguien lo incrustó en la señal.',
+    'UFO74: try it with the override protocol.': 'UFO74: pruébalo con el protocolo override.',
+    '       type: override protocol COLHEITA': '       escribe: override protocol COLHEITA',
     'Maximum attempts exceeded.': 'Se superó el número máximo de intentos.',
     'UFO74: damn. you ran out of tries hackerkid.':
       'UFO74: mierda. te quedaste sin intentos, hackerkid.',
     '       the message was "COLHEITA" — means "HARVEST".':
       '       el mensaje era "COLHEITA" — significa "HARVEST".',
-    '       try it with override protocol.':
-      '       pruébalo con override protocol.',
-    'INCORRECT': 'INCORRECTO',
+    '       try it with override protocol.': '       pruébalo con override protocol.',
+    INCORRECT: 'INCORRECTO',
     'UFO74: thats not it hackerkid.': 'UFO74: no es eso, hackerkid.',
-    '       check the morse reference again.':
-      '       revisa de nuevo la referencia morse.',
+    '       check the morse reference again.': '       revisa de nuevo la referencia morse.',
     'No morse code puzzle active.': 'No hay un rompecabezas de código morse activo.',
     'Morse code entry cancelled.': 'Entrada de código morse cancelada.',
     'You can try again later with "morse <message>".':
       'Puedes volver a intentarlo más tarde con "morse <message>".',
+  },
+};
+
+const RUNTIME_COMMAND_FINDINGS_FIXES: Record<'pt-BR' | 'es', RuntimeDictionary> = {
+  'pt-BR': {
+    'USAGE:': 'USO:',
+    'List contents of current directory.': 'Lista o conteúdo do diretório atual.',
+    'Save a personal note to help you remember important details.':
+      'Salva uma nota pessoal para ajudar você a lembrar detalhes importantes.',
+    '  note Check the date on transport log': '  note Verifique a data no registro de transporte',
+    '  note Password might be varginha': '  note A senha pode ser varginha',
+    'Re-display the last opened file without increasing risk.':
+      'Exibe novamente o último arquivo aberto sem aumentar o risco.',
+    'List all files you have not yet opened.': 'Lista todos os arquivos que você ainda não abriu.',
+    'Toggle tutorial tips or replay the introduction.':
+      'Alterna as dicas de tutorial ou reinicia a introdução.',
+    'When tutorial mode is ON, helpful tips appear at key moments:':
+      'Quando o modo tutorial está ATIVO, dicas úteis aparecem em momentos-chave:',
+    'Decipher intercepted morse code messages.': 'Decifra mensagens em código morse interceptadas.',
+    'First read a morse intercept file (e.g., morse_intercept.sig).':
+      'Primeiro leia um arquivo de interceptação morse (ex.: morse_intercept.sig).',
+    'Then use this command to submit your translation.':
+      'Depois use este comando para enviar sua tradução.',
+    'Attempt to leak collected evidence to external channels.':
+      'Tenta vazar as evidências coletadas para canais externos.',
+    'REQUIREMENT: All 10 evidence files must be collected first.':
+      'REQUISITO: os 10 arquivos de evidência devem ser coletados antes.',
+    'WARNING: This action triggers the endgame sequence.':
+      'AVISO: esta ação dispara a sequência final.',
+    'COMMAND: hint': 'COMANDO: hint',
+    'Request guidance when you are stuck.': 'Solicita orientação quando você estiver travado.',
+    '  hint              - Receive a contextual hint':
+      '  hint              - Recebe uma dica contextual',
+    'NOTES:': 'NOTAS:',
+    '  - Hints are LIMITED (4 per run)': '  - As dicas são LIMITADAS (4 por execução)',
+    '  - Hints are vague — they guide thinking, not actions':
+      '  - As dicas são vagas — orientam o raciocínio, não as ações',
+    '  - Cannot reveal specific file names or answers':
+      '  - Não podem revelar nomes de arquivos específicos nem respostas',
+    'Use sparingly. Trust your own analysis.': 'Use com moderação. Confie na sua própria análise.',
+    'Wait and let attention drift elsewhere.': 'Espere e deixe a atenção desviar para outro lugar.',
+    'Limited uses per session (3).': 'Usos limitados por sessão (3).',
+    'Strategic use can help avoid detection.': 'O uso estratégico pode ajudar a evitar a detecção.',
+    'Establish neural connection with recovered consciousness.':
+      'Estabelece uma conexão neural com a consciência recuperada.',
+    'REQUIREMENTS:': 'REQUISITOS:',
+    '  Requires a .psi neural pattern file.': '  Requer um arquivo de padrão neural .psi.',
+    '  Check /storage/quarantine/ for psi files.':
+      '  Verifique /storage/quarantine/ em busca de arquivos psi.',
+    'Execute administrative override with access code.':
+      'Executa a substituição administrativa com o código de acesso.',
+    'HINT: The access code can be obtained through encrypted channels.':
+      'DICA: o código de acesso pode ser obtido por canais criptografados.',
+    'Release a containment subject.': 'Libera um sujeito contido.',
+    '⚠ FIREWALL LOCKDOWN — LIMITED COMMANDS': '⚠ BLOQUEIO DO FIREWALL — COMANDOS LIMITADOS',
+    '  scan              View firewall nodes and security questions':
+      '  scan              Exibe nós do firewall e perguntas de segurança',
+    '  disable <n> <a>   Disable a node with the correct answer':
+      '  disable <n> <a>   Desativa um nó com a resposta correta',
+    '  ls                List directory contents':
+      '  ls                Lista o conteúdo do diretório',
+    '  cd <dir>          Change directory': '  cd <dir>          Muda de diretório',
+    '  back              Return to previous directory':
+      '  back              Volta ao diretório anterior',
+    '  status            Display system status': '  status            Exibe o status do sistema',
+    '  map               View evidence progress':
+      '  map               Exibe o progresso das evidências',
+    '  help              Display this help': '  help              Exibe esta ajuda',
+    '  clear             Clear terminal display': '  clear             Limpa a tela do terminal',
+    '  All other commands are BLOCKED until lockdown is lifted.':
+      '  Todos os outros comandos ficam BLOQUEADOS até o bloqueio ser suspenso.',
+    'TERMINAL COMMANDS': 'COMANDOS DO TERMINAL',
+    '  help [cmd]        Display help (or help for specific command)':
+      '  help [cmd]        Exibe ajuda (ou ajuda para um comando específico)',
+    '  open <file>       Open and display file contents':
+      '  open <file>       Abre e exibe o conteúdo do arquivo',
+    '  last              Re-display last opened file':
+      '  last              Exibe novamente o último arquivo aberto',
+    '  unread            List unread files': '  unread            Lista arquivos não lidos',
+    '  note <text>       Save a personal note': '  note <text>       Salva uma nota pessoal',
+    '  notes             View all saved notes': '  notes             Exibe todas as notas salvas',
+    '  bookmark [file]   Bookmark a file (or view bookmarks)':
+      '  bookmark [file]   Marca um arquivo (ou exibe os favoritos)',
+    '  chat              Open secure relay channel':
+      '  chat              Abre o canal seguro de retransmissão',
+    '  tree              Show directory structure':
+      '  tree              Exibe a estrutura de diretórios',
+    '  morse <text>      Decipher morse code messages':
+      '  morse <text>      Decifra mensagens em código morse',
+    '  hint              Request a hint (limited uses)':
+      '  hint              Solicita uma dica (usos limitados)',
+    '  wait              Lower detection briefly (limited)':
+      '  wait              Reduz a detecção por um momento (limitado)',
+    '  leak              Leak collected evidence':
+      '  leak              Vaza as evidências coletadas',
+    '  override protocol <code>  Execute admin override':
+      '  override protocol <code>  Executa a substituição administrativa',
+    '  tutorial [on/off] Toggle tutorial tips or replay intro':
+      '  tutorial [on/off] Alterna dicas do tutorial ou reinicia a introdução',
+    '  save              Save current session': '  save              Salva a sessão atual',
+    '  ↑/↓ arrows        Navigate command history':
+      '  ↑/↓ arrows        Navega pelo histórico de comandos',
+    '  Tab               Autocomplete commands and files':
+      '  Tab               Autocompleta comandos e arquivos',
+    '  Ctrl+L            Clear terminal': '  Ctrl+L            Limpa o terminal',
+    'Clear the terminal display.': 'Limpa a tela do terminal.',
+    'SYSTEM STATUS': 'STATUS DO SISTEMA',
+    'LOGGING: Nominal': 'LOGS: Nominal',
+    'LOGGING: Active': 'LOGS: Ativo',
+    'LOGGING: Active monitoring enabled': 'LOGS: Monitoramento ativo habilitado',
+    'LOGGING: FLAGGED': 'LOGS: SINALIZADO',
+    'LOGGING: WARNING — Audit trail flagged': 'LOGS: AVISO — Trilha de auditoria sinalizada',
+    'LOGGING: CRITICAL': 'LOGS: CRÍTICO',
+    'LOGGING: CRITICAL — Countermeasures engaged': 'LOGS: CRÍTICO — Contramedidas acionadas',
+    'TOLERANCE: Normal': 'TOLERÂNCIA: Normal',
+    'SYSTEM TOLERANCE: Normal': 'TOLERÂNCIA DO SISTEMA: Normal',
+    'TOLERANCE: Reduced': 'TOLERÂNCIA: Reduzida',
+    'SYSTEM TOLERANCE: Reduced — Errors noted':
+      'TOLERÂNCIA DO SISTEMA: Reduzida — Erros registrados',
+    'TOLERANCE: CRITICAL': 'TOLERÂNCIA: CRÍTICA',
+    'SYSTEM TOLERANCE: CRITICAL — Few attempts remaining':
+      'TOLERÂNCIA DO SISTEMA: CRÍTICA — Restam poucas tentativas',
+    'TOLERANCE: NONE': 'TOLERÂNCIA: NENHUMA',
+    'SYSTEM TOLERANCE: EXHAUSTED — Lockdown imminent':
+      'TOLERÂNCIA DO SISTEMA: ESGOTADA — Bloqueio iminente',
+    'SESSION: Connected': 'SESSÃO: Conectada',
+    'SESSION: Intermittent': 'SESSÃO: Intermitente',
+    'SESSION: UNSTABLE': 'SESSÃO: INSTÁVEL',
+    'SESSION: UNSTABLE — Connection degrading': 'SESSÃO: INSTÁVEL — Conexão degradando',
+    'ACCESS: Standard': 'ACESSO: Padrão',
+    'ACCESS: Elevated': 'ACESSO: Elevado',
+    'ACCESS: Administrative': 'ACESSO: Administrativo',
+    'OBJECTIVE: Evidence complete — use "leak" when ready.':
+      'OBJETIVO: evidência completa — use "leak" quando estiver pronto.',
+    'OBJECTIVE: Keep reading. Each evidence file strengthens the case.':
+      'OBJETIVO: continue lendo. Cada arquivo de evidência fortalece o caso.',
+    'OBJECTIVE: Start opening files and build the evidence tracker.':
+      'OBJETIVO: comece a abrir arquivos e monte o rastreador de evidências.',
+    'RECOVERY: "hide" is available now.': 'RECUPERAÇÃO: "hide" está disponível agora.',
+    'RECOVERY: No wait uses remaining.': 'RECUPERAÇÃO: não restam usos de "wait".',
+    'SYSTEM ATTITUDE: Studying you': 'ATITUDE DO SISTEMA: Estudando você',
+    'SYSTEM ATTITUDE: Listening': 'ATITUDE DO SISTEMA: Escutando',
+    '▓▓▓ PURGE PROTOCOL: ACTIVE ▓▓▓': '▓▓▓ PROTOCOLO DE EXPURGO: ATIVO ▓▓▓',
+  },
+  es: {
+    'USAGE:': 'USO:',
+    'List contents of current directory.': 'Lista el contenido del directorio actual.',
+    'Save a personal note to help you remember important details.':
+      'Guarda una nota personal para ayudarte a recordar detalles importantes.',
+    '  note Check the date on transport log': '  note Revisa la fecha en el registro de transporte',
+    '  note Password might be varginha': '  note La contraseña podría ser varginha',
+    'Re-display the last opened file without increasing risk.':
+      'Vuelve a mostrar el último archivo abierto sin aumentar el riesgo.',
+    'List all files you have not yet opened.':
+      'Lista todos los archivos que todavía no has abierto.',
+    'Toggle tutorial tips or replay the introduction.':
+      'Activa o desactiva los consejos del tutorial o reinicia la introducción.',
+    'When tutorial mode is ON, helpful tips appear at key moments:':
+      'Cuando el modo tutorial está ACTIVO, aparecen consejos útiles en momentos clave:',
+    'Decipher intercepted morse code messages.': 'Descifra mensajes interceptados en código morse.',
+    'First read a morse intercept file (e.g., morse_intercept.sig).':
+      'Primero lee un archivo de interceptación morse (p. ej., morse_intercept.sig).',
+    'Then use this command to submit your translation.':
+      'Luego usa este comando para enviar tu traducción.',
+    'Attempt to leak collected evidence to external channels.':
+      'Intenta filtrar la evidencia recopilada a canales externos.',
+    'REQUIREMENT: All 10 evidence files must be collected first.':
+      'REQUISITO: primero debes reunir los 10 archivos de evidencia.',
+    'WARNING: This action triggers the endgame sequence.':
+      'ADVERTENCIA: esta acción activa la secuencia final.',
+    'COMMAND: hint': 'COMANDO: hint',
+    'Request guidance when you are stuck.': 'Solicita orientación cuando te quedes atascado.',
+    '  hint              - Receive a contextual hint':
+      '  hint              - Recibe una pista contextual',
+    'NOTES:': 'NOTAS:',
+    '  - Hints are LIMITED (4 per run)': '  - Las pistas son LIMITADAS (4 por partida)',
+    '  - Hints are vague — they guide thinking, not actions':
+      '  - Las pistas son vagas — orientan el pensamiento, no las acciones',
+    '  - Cannot reveal specific file names or answers':
+      '  - No pueden revelar nombres de archivos concretos ni respuestas',
+    'Use sparingly. Trust your own analysis.':
+      'Úsalo con moderación. Confía en tu propio análisis.',
+    'Wait and let attention drift elsewhere.':
+      'Espera y deja que la atención se desvíe a otra parte.',
+    'Limited uses per session (3).': 'Usos limitados por sesión (3).',
+    'Strategic use can help avoid detection.':
+      'Un uso estratégico puede ayudarte a evitar la detección.',
+    'Establish neural connection with recovered consciousness.':
+      'Establece una conexión neural con la conciencia recuperada.',
+    'REQUIREMENTS:': 'REQUISITOS:',
+    '  Requires a .psi neural pattern file.': '  Requiere un archivo de patrón neural .psi.',
+    '  Check /storage/quarantine/ for psi files.':
+      '  Revisa /storage/quarantine/ para encontrar archivos psi.',
+    'Execute administrative override with access code.':
+      'Ejecuta la anulación administrativa con el código de acceso.',
+    'HINT: The access code can be obtained through encrypted channels.':
+      'PISTA: el código de acceso se puede obtener a través de canales cifrados.',
+    'Release a containment subject.': 'Libera a un sujeto en contención.',
+    '⚠ FIREWALL LOCKDOWN — LIMITED COMMANDS': '⚠ BLOQUEO DEL FIREWALL — COMANDOS LIMITADOS',
+    '  scan              View firewall nodes and security questions':
+      '  scan              Muestra los nodos del firewall y las preguntas de seguridad',
+    '  disable <n> <a>   Disable a node with the correct answer':
+      '  disable <n> <a>   Desactiva un nodo con la respuesta correcta',
+    '  ls                List directory contents':
+      '  ls                Lista el contenido del directorio',
+    '  cd <dir>          Change directory': '  cd <dir>          Cambia de directorio',
+    '  back              Return to previous directory':
+      '  back              Vuelve al directorio anterior',
+    '  status            Display system status':
+      '  status            Muestra el estado del sistema',
+    '  map               View evidence progress':
+      '  map               Muestra el progreso de la evidencia',
+    '  help              Display this help': '  help              Muestra esta ayuda',
+    '  clear             Clear terminal display':
+      '  clear             Limpia la pantalla del terminal',
+    '  All other commands are BLOCKED until lockdown is lifted.':
+      '  Todos los demás comandos quedan BLOQUEADOS hasta que se levante el bloqueo.',
+    'TERMINAL COMMANDS': 'COMANDOS DEL TERMINAL',
+    '  help [cmd]        Display help (or help for specific command)':
+      '  help [cmd]        Muestra ayuda (o ayuda para un comando específico)',
+    '  open <file>       Open and display file contents':
+      '  open <file>       Abre y muestra el contenido del archivo',
+    '  last              Re-display last opened file':
+      '  last              Vuelve a mostrar el último archivo abierto',
+    '  unread            List unread files': '  unread            Lista archivos no leídos',
+    '  note <text>       Save a personal note': '  note <text>       Guarda una nota personal',
+    '  notes             View all saved notes':
+      '  notes             Muestra todas las notas guardadas',
+    '  bookmark [file]   Bookmark a file (or view bookmarks)':
+      '  bookmark [file]   Marca un archivo (o muestra marcadores)',
+    '  chat              Open secure relay channel':
+      '  chat              Abre el canal seguro de retransmisión',
+    '  tree              Show directory structure':
+      '  tree              Muestra la estructura de directorios',
+    '  morse <text>      Decipher morse code messages':
+      '  morse <text>      Descifra mensajes en código morse',
+    '  hint              Request a hint (limited uses)':
+      '  hint              Solicita una pista (usos limitados)',
+    '  wait              Lower detection briefly (limited)':
+      '  wait              Reduce la detección por un momento (limitado)',
+    '  leak              Leak collected evidence':
+      '  leak              Filtra la evidencia recopilada',
+    '  override protocol <code>  Execute admin override':
+      '  override protocol <code>  Ejecuta la anulación administrativa',
+    '  tutorial [on/off] Toggle tutorial tips or replay intro':
+      '  tutorial [on/off] Activa o desactiva consejos del tutorial o reinicia la intro',
+    '  save              Save current session': '  save              Guarda la sesión actual',
+    '  ↑/↓ arrows        Navigate command history':
+      '  ↑/↓ arrows        Recorren el historial de comandos',
+    '  Tab               Autocomplete commands and files':
+      '  Tab               Autocompleta comandos y archivos',
+    '  Ctrl+L            Clear terminal': '  Ctrl+L            Limpia el terminal',
+    'Clear the terminal display.': 'Limpia la pantalla del terminal.',
+    'SYSTEM STATUS': 'ESTADO DEL SISTEMA',
+    'LOGGING: Nominal': 'REGISTRO: Normal',
+    'LOGGING: Active': 'REGISTRO: Activo',
+    'LOGGING: Active monitoring enabled': 'REGISTRO: Monitorización activa habilitada',
+    'LOGGING: FLAGGED': 'REGISTRO: MARCADO',
+    'LOGGING: WARNING — Audit trail flagged': 'REGISTRO: ADVERTENCIA — Rastro de auditoría marcado',
+    'LOGGING: CRITICAL': 'REGISTRO: CRÍTICO',
+    'LOGGING: CRITICAL — Countermeasures engaged': 'REGISTRO: CRÍTICO — Contramedidas activadas',
+    'TOLERANCE: Normal': 'TOLERANCIA: Normal',
+    'SYSTEM TOLERANCE: Normal': 'TOLERANCIA DEL SISTEMA: Normal',
+    'TOLERANCE: Reduced': 'TOLERANCIA: Reducida',
+    'SYSTEM TOLERANCE: Reduced — Errors noted':
+      'TOLERANCIA DEL SISTEMA: Reducida — Errores detectados',
+    'TOLERANCE: CRITICAL': 'TOLERANCIA: CRÍTICA',
+    'SYSTEM TOLERANCE: CRITICAL — Few attempts remaining':
+      'TOLERANCIA DEL SISTEMA: CRÍTICA — Quedan pocos intentos',
+    'TOLERANCE: NONE': 'TOLERANCIA: NINGUNA',
+    'SYSTEM TOLERANCE: EXHAUSTED — Lockdown imminent':
+      'TOLERANCIA DEL SISTEMA: AGOTADA — Bloqueo inminente',
+    'SESSION: Connected': 'SESIÓN: Conectada',
+    'SESSION: Intermittent': 'SESIÓN: Intermitente',
+    'SESSION: UNSTABLE': 'SESIÓN: INESTABLE',
+    'SESSION: UNSTABLE — Connection degrading':
+      'SESIÓN: INESTABLE — La conexión se está degradando',
+    'ACCESS: Standard': 'ACCESO: Estándar',
+    'ACCESS: Elevated': 'ACCESO: Elevado',
+    'ACCESS: Administrative': 'ACCESO: Administrativo',
+    'OBJECTIVE: Evidence complete — use "leak" when ready.':
+      'OBJETIVO: evidencia completa — usa "leak" cuando estés listo.',
+    'OBJECTIVE: Keep reading. Each evidence file strengthens the case.':
+      'OBJETIVO: sigue leyendo. Cada archivo de evidencia refuerza el caso.',
+    'OBJECTIVE: Start opening files and build the evidence tracker.':
+      'OBJETIVO: empieza a abrir archivos y construye el rastreador de evidencia.',
+    'RECOVERY: "hide" is available now.': 'RECUPERACIÓN: "hide" ya está disponible.',
+    'RECOVERY: No wait uses remaining.': 'RECUPERACIÓN: no quedan usos de "wait".',
+    'SYSTEM ATTITUDE: Studying you': 'ACTITUD DEL SISTEMA: Estudiándote',
+    'SYSTEM ATTITUDE: Listening': 'ACTITUD DEL SISTEMA: Escuchando',
+    '▓▓▓ PURGE PROTOCOL: ACTIVE ▓▓▓': '▓▓▓ PROTOCOLO DE PURGA: ACTIVO ▓▓▓',
+  },
+};
+
+export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionary> = {
+  'pt-BR': {
+    ...BASE_RUNTIME_COMMAND_SUPPLEMENT['pt-BR'],
+    ...RUNTIME_COMMAND_FINDINGS_FIXES['pt-BR'],
+  },
+  es: {
+    ...BASE_RUNTIME_COMMAND_SUPPLEMENT.es,
+    ...RUNTIME_COMMAND_FINDINGS_FIXES.es,
   },
 };
