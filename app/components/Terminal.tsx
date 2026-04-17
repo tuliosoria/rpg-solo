@@ -1383,7 +1383,7 @@ export default function Terminal({
               aria-label={t('terminal.input.aria')}
               placeholder={
                 gameState.flags?.adminUnlocked
-                  ? t('terminal.input.placeholder')
+                  ? ''
                   : t('terminal.beginnerTip')
               }
               onChange={e => {
