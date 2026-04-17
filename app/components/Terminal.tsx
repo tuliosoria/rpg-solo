@@ -233,6 +233,8 @@ export default function Terminal({
     musicEnabled,
     masterVolume,
     setMasterVolume,
+    setSoundEnabledDirectly,
+    setMusicEnabledDirectly,
   } = useSound();
   const [textSpeed, setTextSpeed] = useState<TextSpeed>(() => readStoredOptions().textSpeed);
 
@@ -1431,7 +1433,7 @@ export default function Terminal({
               }}
               onKeyDown={handleKeyDown}
               className={styles.inputField}
-              disabled={isProcessing || gameState.isGameOver || activeEvidenceVideo !== null}
+              disabled={isProcessing || gameState.isGameOver || hasBlockingPopup}
               autoFocus={!showTutorialSkip}
               autoComplete="off"
               spellCheck={false}
@@ -1886,6 +1888,8 @@ export default function Terminal({
             }}
             onResetDefaults={() => {
               setMasterVolume(1);
+              setSoundEnabledDirectly(true);
+              setMusicEnabledDirectly(true);
             }}
           />
         )}

@@ -5,7 +5,6 @@ import { createEntryI18n } from '../engine/commands/utils';
 import type { GamePhase, GameState } from '../types';
 import type { SoundType } from './useSound';
 import { appendToHistory } from '../lib/appendToHistory';
-import { determineEnding } from '../engine/endings';
 
 interface UseGameActionsOptions {
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
@@ -22,23 +21,6 @@ export function useGameActions({
   onExitAction,
   playSound,
 }: UseGameActionsOptions) {
-  const handleBlackoutComplete = useCallback(() => {
-    // Evaluate the player's dossier and determine the correct ending
-    // All 12 dossier endings render through Victory.tsx which has the ENDINGS system
-    const currentState = gameStateRef.current;
-    const endingId = determineEnding(currentState.savedFiles);
-
-    setGamePhase('victory');
-    setGameState(prev => ({
-      ...prev,
-      gameWon: true,
-      isGameOver: false,
-      gameOverReason: undefined,
-      endingType: 'good',
-      endingId,
-    }));
-  }, [setGamePhase, setGameState, gameStateRef]);
-
   const handleVictory = useCallback(() => {
     setGamePhase('victory');
     setGameState(prev => ({
@@ -67,7 +49,6 @@ export function useGameActions({
   }, [playSound, setGameState]);
 
   return {
-    handleBlackoutComplete,
     handleVictory,
     handleRestart,
     handleFirewallActivate,

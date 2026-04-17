@@ -936,6 +936,23 @@ export function useSound() {
     speechSynthesis.speak(utterance);
   }, [turingVoiceEnabled, masterVolume]);
 
+  // Direct setters for sound and music enabled states (with persistence)
+  const setSoundEnabledDirectly = useCallback((enabled: boolean) => {
+    setSoundEnabled(enabled);
+    persistOptions({
+      ...readStoredOptions(),
+      soundEffectsEnabled: enabled,
+    });
+  }, []);
+
+  const setMusicEnabledDirectly = useCallback((enabled: boolean) => {
+    setMusicEnabled(enabled);
+    persistOptions({
+      ...readStoredOptions(),
+      musicEnabled: enabled,
+    });
+  }, []);
+
   return {
     playSound,
     playKeySound,
@@ -952,5 +969,7 @@ export function useSound() {
     masterVolume,
     setMasterVolume,
     toggleMusic,
+    setSoundEnabledDirectly,
+    setMusicEnabledDirectly,
   };
 }

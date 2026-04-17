@@ -43,7 +43,13 @@ function formatSequenceDisplay(sequence: string[], progress: number): string[] {
 
 function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
   const subcommand = args.join(' ');
-  const sequence = state.leakSequence!;
+  if (!state.leakSequence) {
+    return {
+      output: [createEntry('error', 'Leak sequence not initialized.')],
+      stateChanges: {},
+    };
+  }
+  const sequence = state.leakSequence;
   const progress = state.leakSequenceProgress;
 
   // Sequence already complete — informational response, do not reset or penalize.

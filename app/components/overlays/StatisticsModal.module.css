@@ -46,7 +46,8 @@
 
 .content {
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   margin-bottom: 20px;
 }
 
