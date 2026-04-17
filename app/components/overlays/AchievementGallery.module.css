@@ -103,7 +103,7 @@
 }
 
 .locked .name {
-  color: #666;
+  color: #999;
 }
 
 .description {
@@ -112,7 +112,7 @@
 }
 
 .locked .description {
-  color: #444;
+  color: #888;
 }
 
 .actions {

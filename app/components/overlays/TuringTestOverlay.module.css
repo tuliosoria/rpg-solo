@@ -140,7 +140,7 @@
 
 /* Instructions */
 .instructions {
-  color: #777;
+  color: #999;
   font-size: clamp(10px, 1.1vw, 14px);
   line-height: 1.4;
   text-align: center;
@@ -158,7 +158,7 @@
 
 /* Progress */
 .progress {
-  color: #555;
+  color: #888;
   font-size: clamp(11px, 1.1vw, 14px);
   text-align: center;
   letter-spacing: clamp(2px, 0.3vw, 4px);
@@ -269,7 +269,7 @@
 
 /* Footer */
 .footer {
-  color: #555;
+  color: #888;
   font-size: clamp(10px, 1vw, 13px);
   text-align: center;
   letter-spacing: 2px;
@@ -283,7 +283,7 @@
   }
   51%,
   100% {
-    opacity: 0.3;
+    opacity: 0.5;
   }
 }
 
@@ -329,7 +329,7 @@
 }
 
 .resultPrompt {
-  color: #555;
+  color: #888;
   font-size: clamp(12px, 1.3vw, 16px);
   animation: blink 1.5s infinite;
 }
@@ -363,7 +363,7 @@
   }
 
   .instructions {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 
