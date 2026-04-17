@@ -319,6 +319,40 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))).toBe(true);
     });
 
+    it('searches file content case-insensitively across multiple directories', () => {
+      const state = createTestState({
+        flags: { adminUnlocked: true },
+      });
+      const result = executeCommand('search ANOMALOUS', state);
+
+      expect(result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('/storage/quarantine/surveillance_recovery.vid'))).toBe(true);
+      expect(
+        result.output.some(e => e.i18nKey === 'engine.commands.inventory.search_result.content')
+      ).toBe(true);
+    });
+
+    it('keeps override-gated files hidden until override is used, then makes them searchable', () => {
+      const lockedState = createTestState({
+        accessLevel: 5,
+        flags: { adminUnlocked: true },
+      });
+      const unlockedState = createTestState({
+        accessLevel: 5,
+        flags: { adminUnlocked: true, tracePurgeUsed: true },
+      });
+
+      const lockedResult = executeCommand('search trace_purge_memo', lockedState);
+      const unlockedResult = executeCommand('search trace_purge_memo', unlockedState);
+
+      expect(lockedResult.output.some(e => e.content.includes('/admin/trace_purge_memo.txt'))).toBe(
+        false
+      );
+      expect(
+        unlockedResult.output.some(e => e.content.includes('/admin/trace_purge_memo.txt'))
+      ).toBe(true);
+    });
+
     it('adds a small detection penalty when searching', () => {
       const state = createTestState({ detectionLevel: 10 });
       const result = executeCommand('search crash', state);
@@ -326,13 +360,17 @@ describe('UX Commands', () => {
       expect(result.stateChanges.detectionLevel).toBe(12);
     });
 
-    it('localizes the overflow line when more than eight results match', () => {
-      const state = createTestState();
+    it('does not hide direct matches behind an overflow truncation line', () => {
+      const state = createTestState({
+        accessLevel: 5,
+        flags: { adminUnlocked: true, tracePurgeUsed: true },
+      });
       const result = executeCommand('search report', state);
 
-      expect(
-        result.output.some(e => e.i18nKey === 'engine.commands.inventory.search_more_results')
-      ).toBe(true);
+      expect(result.output.some(e => e.i18nKey === 'engine.commands.inventory.search_more_results')).toBe(false);
+      expect(result.output.some(e => e.content.includes('/internal/sanitized/asset_disposition_report.txt'))).toBe(
+        true
+      );
     });
   });
 

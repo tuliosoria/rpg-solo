@@ -1926,8 +1926,10 @@ export const chatCommands: CommandRegistry = {
   },
 
   link: (args, state) => {
-    // Requires access to neural dump file first
-    if (!state.flags.scoutLinkUnlocked) {
+    // Reading neural_dump_alfa.psi is the sole discovery path. The file
+    // itself explains the upload and the `link` command, so there is no
+    // password prompt and no external hint.
+    if (!state.flags.neuralLinkAuthenticated) {
       return {
         output: [
           createEntryI18n(
@@ -1944,180 +1946,15 @@ export const chatCommands: CommandRegistry = {
           ),
           createEntry('system', ''),
           createEntryI18n(
-            'ufo74',
-            'engine.commands.chat.ufo74_you_need_a_neural_pattern_first_check_quarantine_for_p',
-            '[UFO74]: you need a neural pattern first. check quarantine for .psi files.'
+            'system',
+            'engine.commands.chat.no_neural_pattern_indexed',
+            'No neural pattern is indexed on this terminal yet.'
           ),
-          createEntry('system', ''),
           createEntry('system', ''),
         ],
         stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 5 } : {},
         delayMs: 1500,
       };
-    }
-
-    // Password authentication required for first connection
-    const linkPasswordAlts = [
-      'harvest is not destruction',
-      'harvest',
-      'the crop continues living',
-      'crop continues living',
-    ];
-
-    if (!state.flags.neuralLinkAuthenticated) {
-      // Check if user is providing password
-      const attempt = args.join(' ').toLowerCase().trim();
-
-      if (args.length === 0) {
-        // Show password prompt
-        return {
-          output: [
-            createEntryI18n(
-              'system',
-              'engine.commands.chat.initiating_psi_comm_bridge',
-              'Initiating psi-comm bridge...'
-            ),
-            createEntry('warning', ''),
-            createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-            createEntryI18n(
-              'warning',
-              'engine.commands.chat.neural_link_authentication_required',
-              '▓ NEURAL LINK AUTHENTICATION REQUIRED    ▓'
-            ),
-            createEntry('warning', '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓'),
-            createEntry('system', ''),
-            createEntryI18n(
-              'output',
-              'engine.commands.chat.neural_pattern_locked_conceptual_key_required',
-              'Neural pattern locked. Conceptual key required.'
-            ),
-            createEntry('output', ''),
-            createEntryI18n(
-              'system',
-              'engine.commands.chat.enter_authentication_phrase',
-              'Enter authentication phrase:'
-            ),
-            createEntryI18n('system', 'engine.commands.chat.link_phrase', '  > link <phrase>'),
-            createEntry('system', ''),
-            createEntryI18n(
-              'ufo74',
-              'engine.commands.chat.ufo74_check_the_psi_analysis_reports_the_key_is_conceptual',
-              '[UFO74]: check the psi analysis reports. the key is conceptual.'
-            ),
-            createEntry('system', ''),
-          ],
-          stateChanges: {},
-          delayMs: 1000,
-        };
-      }
-
-      // Check password
-      if (linkPasswordAlts.some(pwd => attempt.includes(pwd))) {
-        // Password correct - authenticate
-        return {
-          output: [
-            createEntryI18n(
-              'system',
-              'engine.commands.chat.verifying_conceptual_key',
-              'Verifying conceptual key...'
-            ),
-            createEntry('warning', ''),
-            createEntryI18n(
-              'notice',
-              'engine.commands.chat.authentication_accepted',
-              '▓▓▓ AUTHENTICATION ACCEPTED ▓▓▓'
-            ),
-            createEntry('warning', ''),
-            createEntryI18n(
-              'output',
-              'engine.commands.chat.the_pattern_recognizes',
-              '...the pattern... recognizes...'
-            ),
-            createEntryI18n(
-              'output',
-              'engine.commands.chat.you_understand_the_directive',
-              '...you understand... the directive...'
-            ),
-            createEntryI18n(
-              'output',
-              'engine.commands.chat.connection_authorized',
-              '...connection... authorized...'
-            ),
-            createEntry('system', ''),
-            createEntryI18n(
-              'notice',
-              'engine.commands.chat.neural_link_established',
-              'NEURAL LINK ESTABLISHED'
-            ),
-            createEntry('system', ''),
-            createEntryI18n(
-              'system',
-              'engine.commands.chat.use_link_query_the_consciousness',
-              'Use: link              - Query the consciousness'
-            ),
-            createEntryI18n(
-              'system',
-              'engine.commands.chat.use_link_disarm_attempt_to_disable_firewall',
-              'Use: link disarm       - Attempt to disable firewall'
-            ),
-            createEntry('system', ''),
-          ],
-          stateChanges: state.tutorialComplete
-            ? {
-                flags: { ...state.flags, neuralLinkAuthenticated: true },
-                detectionLevel: state.detectionLevel + 10,
-              }
-            : {
-                flags: { ...state.flags, neuralLinkAuthenticated: true },
-              },
-          imageTrigger: {
-            src: '/images/et-brain.webp',
-            alt: 'Neural pattern link - Scout consciousness interface',
-            altKey: 'media.alt.neuralPatternLink',
-            tone: 'clinical',
-          },
-          triggerFlicker: true,
-          delayMs: 2000,
-        };
-      } else {
-        // Password incorrect
-        return {
-          output: [
-            createEntryI18n(
-              'system',
-              'engine.commands.chat.verifying_conceptual_key',
-              'Verifying conceptual key...'
-            ),
-            createEntry('error', ''),
-            createEntryI18n(
-              'error',
-              'engine.commands.chat.authentication_failed',
-              '▓▓▓ AUTHENTICATION FAILED ▓▓▓'
-            ),
-            createEntry('error', ''),
-            createEntryI18n(
-              'warning',
-              'engine.commands.chat.pattern_rejects_wrong_concept',
-              '...pattern... rejects... wrong concept...'
-            ),
-            createEntry('system', ''),
-            createEntryI18n(
-              'system',
-              'engine.commands.chat.the_neural_pattern_did_not_recognize_your_phrase',
-              'The neural pattern did not recognize your phrase.'
-            ),
-            createEntryI18n(
-              'system',
-              'engine.commands.chat.review_psi_comm_documentation_for_the_correct_key',
-              'Review psi-comm documentation for the correct key.'
-            ),
-            createEntry('system', ''),
-          ],
-          stateChanges: state.tutorialComplete ? { detectionLevel: state.detectionLevel + 3 } : {},
-          triggerFlicker: true,
-          delayMs: 1500,
-        };
-      }
     }
 
     // Handle disarm command - disable firewall through neural link

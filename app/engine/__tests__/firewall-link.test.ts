@@ -45,7 +45,9 @@ describe('Neural Link Command', () => {
   });
 
   describe('link with neural dump unlocked but not authenticated', () => {
-    it('prompts for authentication phrase', () => {
+    it('still denies access when only a non-alpha .psi file has been decrypted', () => {
+      // scoutLinkUnlocked can be set by any .psi file, but `link` should
+      // only authenticate after neural_dump_alfa.psi has been read.
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -54,23 +56,32 @@ describe('Neural Link Command', () => {
 
       const result = executeCommand('link', state);
 
-      expect(result.output.some(e => e.content.includes('AUTHENTICATION REQUIRED'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('phrase'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('ACCESS DENIED'))).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('No neural pattern is indexed'))
+      ).toBe(true);
     });
 
-    it('rejects incorrect password', () => {
+    it('does not prompt for a password or show UFO74 quarantine hints', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
         flags: { scoutLinkUnlocked: true },
       });
 
-      const result = executeCommand('link wrong password', state);
+      const result = executeCommand('link', state);
 
-      expect(result.output.some(e => e.content.includes('AUTHENTICATION FAILED'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('AUTHENTICATION REQUIRED'))).toBe(false);
+      expect(result.output.some(e => e.content.includes('phrase'))).toBe(false);
+      expect(
+        result.output.some(e => e.content.toLowerCase().includes('quarantine'))
+      ).toBe(false);
+      expect(
+        result.output.some(e => e.content.toLowerCase().includes('psi analysis'))
+      ).toBe(false);
     });
 
-    it('accepts correct password "harvest is not destruction"', () => {
+    it('ignores password arguments entirely — no auth flow exists', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
@@ -79,20 +90,9 @@ describe('Neural Link Command', () => {
 
       const result = executeCommand('link harvest is not destruction', state);
 
-      expect(result.output.some(e => e.content.includes('AUTHENTICATION ACCEPTED'))).toBe(true);
-      expect(result.stateChanges.flags?.neuralLinkAuthenticated).toBe(true);
-    });
-
-    it('accepts partial password "harvest"', () => {
-      const state = createTestState({
-        tutorialStep: -1,
-        tutorialComplete: true,
-        flags: { scoutLinkUnlocked: true },
-      });
-
-      const result = executeCommand('link harvest', state);
-
-      expect(result.output.some(e => e.content.includes('AUTHENTICATION ACCEPTED'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('ACCESS DENIED'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('AUTHENTICATION ACCEPTED'))).toBe(false);
+      expect(result.stateChanges.flags?.neuralLinkAuthenticated).toBeUndefined();
     });
   });
 

@@ -21,7 +21,7 @@ import {
 } from '../../data/alpha';
 import type { CommandRegistry } from './types';
 
-const SEARCH_RESULT_LIMIT = 8;
+const SEARCH_FUZZY_RESULT_LIMIT = 8;
 const SEARCH_DETECTION_PENALTY = 2;
 const BLOCKED_SEARCH_PENALTY = 5;
 
@@ -506,10 +506,14 @@ export const inventoryCommands: CommandRegistry = {
     }
 
     const matches = findSearchMatches(query, state);
-    const limitedMatches = matches.slice(0, SEARCH_RESULT_LIMIT);
+    const directMatches = matches.filter(match => match.kind !== 'fuzzy');
+    const visibleMatches =
+      directMatches.length > 0
+        ? directMatches
+        : matches.slice(0, SEARCH_FUZZY_RESULT_LIMIT);
     const nextDetection = Math.min(MAX_DETECTION, state.detectionLevel + SEARCH_DETECTION_PENALTY);
 
-    if (limitedMatches.length === 0) {
+    if (visibleMatches.length === 0) {
       return {
         output: [
           ...lateGameWarning,
@@ -556,7 +560,7 @@ export const inventoryCommands: CommandRegistry = {
       createEntry('system', ''),
     ];
 
-    limitedMatches.forEach((match, index) => {
+    visibleMatches.forEach((match, index) => {
       const key =
         match.kind === 'filename'
           ? 'engine.commands.inventory.search_result.filename'
@@ -580,14 +584,14 @@ export const inventoryCommands: CommandRegistry = {
       }
     });
 
-    if (matches.length > limitedMatches.length) {
+    if (directMatches.length === 0 && matches.length > visibleMatches.length) {
       output.push(createEntry('system', ''));
       output.push(
         createEntryI18n(
           'system',
           'engine.commands.inventory.search_more_results',
-          `  ... and ${matches.length - limitedMatches.length} more`,
-          { value: matches.length - limitedMatches.length }
+          `  ... and ${matches.length - visibleMatches.length} more`,
+          { value: matches.length - visibleMatches.length }
         )
       );
     }

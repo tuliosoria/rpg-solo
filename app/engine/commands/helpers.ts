@@ -1159,6 +1159,14 @@ export function performDecryption(
     stateChanges.flags = { ...stateChanges.flags, scoutLinkUnlocked: true };
   }
 
+  // Reading neural_dump_alfa.psi is the canonical discovery path for the
+  // `link` command — the file itself explains the upload, so no password
+  // or external hint is required. Any other .psi file still only unlocks
+  // scoutLinkUnlocked (it still won't authenticate link on its own).
+  if (filePath.endsWith('/neural_dump_alfa.psi') || filePath.endsWith('neural_dump_alfa.psi')) {
+    stateChanges.flags = { ...stateChanges.flags, neuralLinkAuthenticated: true };
+  }
+
   const content = getFileContent(filePath, { ...state, ...stateChanges } as GameState, true);
 
   const truthNotices: TerminalEntry[] = [];

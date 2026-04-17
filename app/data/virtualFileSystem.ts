@@ -2505,6 +2505,11 @@ const neural_dump_alfa: FileNode = {
     '',
     'ANALYST NOTE: Download incomplete.',
     'Pray it was enough. Pray it was not.',
+    '',
+    '— TERMINAL INTEGRATION —',
+    'ALPHA\'s residual brain patterns have been uploaded to this terminal.',
+    'The consciousness is indexed and queryable.',
+    'Use `link` to open a channel. Four queries before the pattern decays.',
   ],
   content: [
     '[ENCRYPTED — PSI-DIVISION CLEARANCE REQUIRED]',

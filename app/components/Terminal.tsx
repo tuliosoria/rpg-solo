@@ -1374,11 +1374,6 @@ export default function Terminal({
           </>
         ) : (
           <>
-            {!gameState.flags?.adminUnlocked && (
-              <div className={styles.beginnerTip}>
-                {t('terminal.beginnerTip')}
-              </div>
-            )}
             <form onSubmit={handleSubmit} className={styles.inputArea}>
             <span className={styles.prompt}>&gt;</span>
             <input
@@ -1386,7 +1381,11 @@ export default function Terminal({
               type="text"
               value={inputValue}
               aria-label={t('terminal.input.aria')}
-              placeholder={t('terminal.input.placeholder')}
+              placeholder={
+                gameState.flags?.adminUnlocked
+                  ? t('terminal.input.placeholder')
+                  : t('terminal.beginnerTip')
+              }
               onChange={e => {
                 const newValue = e.target.value;
                 setInputValue(newValue);
