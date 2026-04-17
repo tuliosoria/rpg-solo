@@ -133,30 +133,50 @@ function normalizeSeed(value: unknown): number | null {
 }
 
 // Serialize GameState (handle Set conversion)
+// Note: god-mode state (godMode flag, plus the password/hidden-command entries it injects)
+// is stripped from saves so enabling iddqd in a session never persists across reloads.
+const GOD_MODE_HIDDEN_COMMANDS = new Set(['iddqd']);
+const GOD_MODE_PASSWORDS = new Set(['varginha1996']);
+
+function stripGodModeState(state: GameState): GameState {
+  if (!state.godMode) return state;
+  return {
+    ...state,
+    godMode: false,
+    hiddenCommandsDiscovered: new Set(
+      Array.from(state.hiddenCommandsDiscovered || []).filter(c => !GOD_MODE_HIDDEN_COMMANDS.has(c))
+    ),
+    passwordsFound: new Set(
+      Array.from(state.passwordsFound || []).filter(p => !GOD_MODE_PASSWORDS.has(p))
+    ),
+  };
+}
+
 function serializeState(state: GameState): string {
-  const evidenceCount = countEvidence(state);
+  const cleaned = stripGodModeState(state);
+  const evidenceCount = countEvidence(cleaned);
   const data: VersionedSaveData = {
     version: SAVE_VERSION,
     state: {
-      ...state,
+      ...cleaned,
       evidenceCount,
-      singularEventsTriggered: Array.from(state.singularEventsTriggered || []),
-      imagesShownThisRun: Array.from(state.imagesShownThisRun || []),
-      categoriesRead: Array.from(state.categoriesRead || []),
-      filesRead: Array.from(state.filesRead || []),
-      tutorialTipsShown: Array.from(state.tutorialTipsShown || []),
-      prisoner45UsedResponses: Array.from(state.prisoner45UsedResponses || []),
-      scoutLinkUsedResponses: Array.from(state.scoutLinkUsedResponses || []),
-      disinformationDiscovered: Array.from(state.disinformationDiscovered || []),
-      hiddenCommandsDiscovered: Array.from(state.hiddenCommandsDiscovered || []),
-      passwordsFound: Array.from(state.passwordsFound || []),
-      bookmarkedFiles: Array.from(state.bookmarkedFiles || []),
-      trapsTriggered: Array.from(state.trapsTriggered || []),
-      conspiracyFilesSeen: Array.from(state.conspiracyFilesSeen || []),
-      archiveFilesViewed: Array.from(state.archiveFilesViewed || []),
-      savedFiles: Array.from(state.savedFiles || []),
+      singularEventsTriggered: Array.from(cleaned.singularEventsTriggered || []),
+      imagesShownThisRun: Array.from(cleaned.imagesShownThisRun || []),
+      categoriesRead: Array.from(cleaned.categoriesRead || []),
+      filesRead: Array.from(cleaned.filesRead || []),
+      tutorialTipsShown: Array.from(cleaned.tutorialTipsShown || []),
+      prisoner45UsedResponses: Array.from(cleaned.prisoner45UsedResponses || []),
+      scoutLinkUsedResponses: Array.from(cleaned.scoutLinkUsedResponses || []),
+      disinformationDiscovered: Array.from(cleaned.disinformationDiscovered || []),
+      hiddenCommandsDiscovered: Array.from(cleaned.hiddenCommandsDiscovered || []),
+      passwordsFound: Array.from(cleaned.passwordsFound || []),
+      bookmarkedFiles: Array.from(cleaned.bookmarkedFiles || []),
+      trapsTriggered: Array.from(cleaned.trapsTriggered || []),
+      conspiracyFilesSeen: Array.from(cleaned.conspiracyFilesSeen || []),
+      archiveFilesViewed: Array.from(cleaned.archiveFilesViewed || []),
+      savedFiles: Array.from(cleaned.savedFiles || []),
       // Limit history size to prevent quota issues
-      history: state.history.slice(-MAX_HISTORY_SIZE),
+      history: cleaned.history.slice(-MAX_HISTORY_SIZE),
     },
   };
   return JSON.stringify(data);

@@ -404,7 +404,12 @@ export const systemCommands: CommandRegistry = {
         return {
           output: [
             ...lateGameWarning,
-            createEntry('error', `Unknown command: ${cmdName}`),
+            createEntryI18n(
+              'error',
+              'runtime.unknownCommand',
+              `Unknown command: ${cmdName}`,
+              { value: cmdName }
+            ),
             createEntryI18n(
               'system',
               'engine.commands.system.type_help_to_see_all_available_commands',

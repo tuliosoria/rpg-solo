@@ -184,8 +184,18 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           'ERROR: INPUT TOO LONG'
         ),
         createEntry('warning', ''),
-        createEntry('warning', `Maximum command length is ${MAX_COMMAND_INPUT_LENGTH} characters.`),
-        createEntry('system', `   [Invalid attempts: ${newAlertCounter}/8]`),
+        createEntryI18n(
+          'warning',
+          'engine.commands.core.maximumCommandLength',
+          `Maximum command length is ${MAX_COMMAND_INPUT_LENGTH} characters.`,
+          { value: MAX_COMMAND_INPUT_LENGTH }
+        ),
+        createEntryI18n(
+          'system',
+          'engine.invalidCommand.invalidAttempts',
+          `   [Invalid attempts: ${newAlertCounter}/8]`,
+          { value: newAlertCounter }
+        ),
       ],
       stateChanges: {
         detectionLevel: nextDetection,
@@ -1617,11 +1627,31 @@ function getCommandTip(command: string, args: string[], state: GameState): Termi
       const node = getNode(filePath, state);
       if (node && node.type === 'dir') {
         return [
-          createEntry('error', `ERROR: ${args[0]} is a directory`),
-          createEntry('system', `  HINT: '${command}' is used for files only.`),
-          createEntry('system', `  To explore a directory use 'cd ${args[0]}' then 'ls'.`),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.isADirectory',
+            `ERROR: ${args[0]} is a directory`,
+            { value: args[0] }
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.core.hintCommandIsFilesOnly',
+            `  HINT: '${command}' is used for files only.`,
+            { value: command }
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.toExploreADirectoryUse',
+            `  To explore a directory use 'cd ${args[0]}' then 'ls'.`,
+            { value: args[0] }
+          ),
           createEntry('system', ''),
-          createEntry('ufo74', `[UFO74]: thats a directory kid. use: ls ${args[0]}`),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.core.ufo74ThatsADirectoryKidUseLs',
+            `[UFO74]: thats a directory kid. use: ls ${args[0]}`,
+            { value: args[0] }
+          ),
         ];
       }
     }
@@ -1682,7 +1712,12 @@ function getCommandTip(command: string, args: string[], state: GameState): Termi
 
   return [
     createEntry('system', ''),
-    createEntry('system', `Command not recognized: ${command}`),
+    createEntryI18n(
+      'system',
+      'engine.commands.core.commandNotRecognized',
+      `Command not recognized: ${command}`,
+      { value: command }
+    ),
     createEntry('system', ''),
     createEntryI18n(
       'ufo74',

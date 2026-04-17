@@ -224,7 +224,12 @@ export const archiveCommands: CommandRegistry = {
       output: [
         createEntryI18n('system', 'engine.commands.archive.parsing_script', 'Parsing script...'),
         createEntryI18n('system', 'engine.commands.archive.init_ok', 'INIT... OK'),
-        createEntry('system', `TARGET=${target}... SEARCHING`),
+        createEntryI18n(
+          'system',
+          'engine.commands.archive.targetSearching',
+          `TARGET=${target}... SEARCHING`,
+          { value: target }
+        ),
         createEntry('error', ''),
         createEntryI18n('error', 'engine.commands.archive.target_not_found', 'TARGET NOT FOUND'),
         createEntryI18n(
@@ -270,7 +275,7 @@ export const archiveCommands: CommandRegistry = {
               'engine.commands.archive.execution_failed',
               'EXECUTION FAILED'
             ),
-            createEntry('system', `Script not found: ${args[0]}`),
+            createEntryI18n('system', 'engine.commands.archive.scriptNotFound', `Script not found: ${args[0]}`, { value: args[0] }),
           ],
           stateChanges: {},
         };
@@ -348,7 +353,7 @@ export const archiveCommands: CommandRegistry = {
     return {
       output: [
         createEntryI18n('error', 'engine.commands.archive.execution_failed', 'EXECUTION FAILED'),
-        createEntry('system', `Script not found: ${args[0]}`),
+        createEntryI18n('system', 'engine.commands.archive.scriptNotFound', `Script not found: ${args[0]}`, { value: args[0] }),
       ],
       stateChanges: {},
     };

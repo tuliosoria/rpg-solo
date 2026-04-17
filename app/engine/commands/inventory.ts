@@ -146,8 +146,18 @@ export const inventoryCommands: CommandRegistry = {
 
     return {
       output: [
-        createEntry('system', `Note saved: "${noteText}"`),
-        createEntry('system', `[${newNotes.length} notes total - use "notes" to view]`),
+        createEntryI18n(
+          'system',
+          'engine.commands.inventory.noteSaved',
+          `Note saved: "${noteText}"`,
+          { value: noteText }
+        ),
+        createEntryI18n(
+          'system',
+          'engine.commands.inventory.notesTotal',
+          `[${newNotes.length} notes total - use "notes" to view]`,
+          { count: newNotes.length }
+        ),
       ],
       stateChanges: {
         playerNotes: newNotes,
@@ -262,7 +272,14 @@ export const inventoryCommands: CommandRegistry = {
 
     if (!node || node.type !== 'file') {
       return {
-        output: [createEntry('error', `ERROR: File not found: ${args[0]}`)],
+        output: [
+          createEntryI18n(
+            'error',
+            'engine.commands.inventory.fileNotFound',
+            `ERROR: File not found: ${args[0]}`,
+            { value: args[0] }
+          ),
+        ],
         stateChanges: {},
       };
     }
@@ -272,7 +289,14 @@ export const inventoryCommands: CommandRegistry = {
     if (bookmarks.has(filePath)) {
       bookmarks.delete(filePath);
       return {
-        output: [createEntry('system', `Bookmark removed: ${filePath}`)],
+        output: [
+          createEntryI18n(
+            'system',
+            'engine.commands.inventory.bookmarkRemoved',
+            `Bookmark removed: ${filePath}`,
+            { value: filePath }
+          ),
+        ],
         stateChanges: { bookmarkedFiles: bookmarks },
       };
     }
@@ -281,7 +305,12 @@ export const inventoryCommands: CommandRegistry = {
     const newBookmarkCount = bookmarks.size;
     return {
       output: [
-        createEntry('system', `Bookmarked: ${filePath}`),
+        createEntryI18n(
+          'system',
+          'engine.commands.inventory.bookmarked',
+          `Bookmarked: ${filePath}`,
+          { value: filePath }
+        ),
         createEntryI18n(
           'system',
           'engine.commands.inventory.use_bookmark_to_view_all_bookmarks',
@@ -456,13 +485,22 @@ export const inventoryCommands: CommandRegistry = {
           ),
           createEntry('system', '═══════════════════════════════════════'),
           createEntry('system', ''),
-          createEntry('error', `  QUERY REJECTED — "${query}"`),
+          createEntryI18n(
+            'error',
+            'engine.commands.inventory.queryRejected',
+            `  QUERY REJECTED — "${query}"`,
+            { value: query }
+          ),
           createEntry('system', ''),
         ],
         stateChanges: { detectionLevel: nextDetection },
         triggerFirewallTaunt: true,
         pendingUfo74Messages: [
-          createEntry('ufo74', 'UFO74: careful. they flag those words. use what you find, not what you search.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.inventory.ufo74CarefulFlagWords',
+            'UFO74: careful. they flag those words. use what you find, not what you search.'
+          ),
         ],
       };
     }

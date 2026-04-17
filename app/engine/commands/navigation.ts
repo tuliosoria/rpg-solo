@@ -32,7 +32,14 @@ export const navigationCommands: CommandRegistry = {
     const access = canAccessFile(state.lastOpenedFile, state);
     if (!access.accessible) {
       return {
-        output: [createEntry('error', `ERROR: File no longer accessible: ${access.reason}`)],
+        output: [
+          createEntryI18n(
+            'error',
+            'engine.commands.navigation.fileNoLongerAccessible',
+            `ERROR: File no longer accessible: ${access.reason}`,
+            { value: access.reason ?? '' }
+          ),
+        ],
         stateChanges: {},
       };
     }
@@ -53,7 +60,12 @@ export const navigationCommands: CommandRegistry = {
 
     const fileName = state.lastOpenedFile.split('/').pop() || state.lastOpenedFile;
     const output: TerminalEntry[] = [
-      createEntry('system', `[Re-reading: ${fileName}]`),
+      createEntryI18n(
+        'system',
+        'engine.commands.navigation.reReading',
+        `[Re-reading: ${fileName}]`,
+        { value: fileName }
+      ),
       createEntry('system', ''),
       ...content.map(line => createEntry('file', line)),
       createEntry('system', ''),
@@ -90,7 +102,12 @@ export const navigationCommands: CommandRegistry = {
 
       return {
         output: [
-          createEntry('output', `Changed to: ${newPath}`),
+          createEntryI18n(
+            'output',
+            'engine.commands.filesystem.changedTo',
+            `Changed to: ${newPath}`,
+            { value: newPath }
+          ),
           createEntryI18n(
             'ufo74',
             'engine.commands.navigation.ufo74_use_cd_to_build_navigation_history_for_the_back_comman',
@@ -113,7 +130,14 @@ export const navigationCommands: CommandRegistry = {
     const previousPath = newHistory.pop()!;
 
     return {
-      output: [createEntry('output', `Changed to: ${previousPath}`)],
+      output: [
+        createEntryI18n(
+          'output',
+          'engine.commands.filesystem.changedTo',
+          `Changed to: ${previousPath}`,
+          { value: previousPath }
+        ),
+      ],
       stateChanges: state.tutorialComplete
         ? {
             currentPath: previousPath,

@@ -186,7 +186,12 @@ export const filesystemCommands: CommandRegistry = {
 
       return {
         output: [
-          createEntry('error', `ERROR: Directory not found: ${args[0]}`),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.directoryNotFound',
+            `ERROR: Directory not found: ${args[0]}`,
+            { value: args[0] }
+          ),
           createEntry('system', ''),
           createEntryI18n(
             'ufo74',
@@ -201,21 +206,43 @@ export const filesystemCommands: CommandRegistry = {
     if (node.type !== 'dir') {
       return {
         output: [
-          createEntry('error', `ERROR: Not a directory: ${args[0]}`),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.notADirectory',
+            `ERROR: Not a directory: ${args[0]}`,
+            { value: args[0] }
+          ),
           createEntryI18n(
             'system',
             'engine.commands.filesystem.hint_cd_is_used_for_directories_only',
             `  HINT: 'cd' is used for directories only.`
           ),
-          createEntry('system', `  To read a file use 'cat ${args[0]}' or 'open ${args[0]}'.`),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.toReadAFileUse',
+            `  To read a file use 'cat ${args[0]}' or 'open ${args[0]}'.`,
+            { value: args[0] }
+          ),
           createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: thats a file. try: open ' + args[0]),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74ThatsAFileTry',
+            `[UFO74]: thats a file. try: open ${args[0]}`,
+            { value: args[0] }
+          ),
         ],
         stateChanges: {},
       };
     }
 
-    const output: TerminalEntry[] = [createEntry('output', `Changed to: ${targetPath}`)];
+    const output: TerminalEntry[] = [
+      createEntryI18n(
+        'output',
+        'engine.commands.filesystem.changedTo',
+        `Changed to: ${targetPath}`,
+        { value: targetPath }
+      ),
+    ];
 
     // Push current path to navigation history (for 'back' command)
     const updatedHistory = [...(state.navigationHistory || []), state.currentPath];
@@ -298,7 +325,14 @@ export const filesystemCommands: CommandRegistry = {
       }
 
       return {
-        output: [createEntry('error', `ERROR: ${access.reason}`)],
+        output: [
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.errorReason',
+            `ERROR: ${access.reason}`,
+            { value: access.reason ?? '' }
+          ),
+        ],
         stateChanges,
         delayMs: calculateDelay(state) + 500,
       };
@@ -310,15 +344,30 @@ export const filesystemCommands: CommandRegistry = {
     if (node && node.type === 'dir') {
       return {
         output: [
-          createEntry('error', `ERROR: ${args[0]} is a directory`),
+          createEntryI18n(
+            'error',
+            'engine.commands.filesystem.isADirectory',
+            `ERROR: ${args[0]} is a directory`,
+            { value: args[0] }
+          ),
           createEntryI18n(
             'system',
             'engine.commands.filesystem.hint_open_is_used_for_files_only',
             `  HINT: 'open' is used for files only.`
           ),
-          createEntry('system', `  To explore a directory use 'cd ${args[0]}' then 'ls'.`),
+          createEntryI18n(
+            'system',
+            'engine.commands.filesystem.toExploreADirectoryUse',
+            `  To explore a directory use 'cd ${args[0]}' then 'ls'.`,
+            { value: args[0] }
+          ),
           createEntry('system', ''),
-          createEntry('ufo74', '[UFO74]: thats a directory. use: cd ' + args[0]),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.filesystem.ufo74ThatsADirectoryUse',
+            `[UFO74]: thats a directory. use: cd ${args[0]}`,
+            { value: args[0] }
+          ),
         ],
         stateChanges: {},
       };

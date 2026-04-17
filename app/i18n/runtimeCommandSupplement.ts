@@ -625,6 +625,184 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'Morse code entry cancelled.': 'Entrada de código morse cancelada.',
     'You can try again later with "morse <message>".':
       'Você pode tentar de novo depois com "morse <message>".',
+
+    // Evidence file reactions (UFO74)
+    'interesting kid. we can leak this. not a clear evidence — but they were really hiding something.':
+      'interessante, kid. dá pra vazar isso. não é prova direta — mas eles estavam escondendo alguma coisa séria.',
+    'operation prato. the air force documented everything in 77. then buried it.':
+      'operação prato. a aeronáutica documentou tudo em 77. depois enterrou.',
+    'analyze biological material? that thing looks like a good old alien to me, kid.':
+      'analisar material biológico? pra mim aquela coisa é o bom e velho alienígena, kid.',
+    'thirty rotations. 2026. kid that is this year. i feel something bad will happen...':
+      'trinta rotações. 2026. kid, é esse ano. eu sinto que uma coisa ruim vai acontecer...',
+    'non-arrival colonization. they do not need to come here. they never did.':
+      'colonização sem chegada. não precisam vir aqui. nunca precisaram.',
+    'second deployment. there was a second wave. there was always going to be.':
+      'segundo desdobramento. teve uma segunda onda. sempre ia ter.',
+    'all hands on deck. no explanation. just... everyone.':
+      'todos a postos. sem explicação. só... todo mundo.',
+    'one name redacted. even from a birthday list.':
+      'um nome redigido. até numa lista de aniversariantes.',
+    'stress management workshop. right after the incident. subtle.':
+      'workshop de manejo de estresse. logo depois do incidente. sutil.',
+    'every extension. every name. some of these people vanished.':
+      'cada ramal. cada nome. algumas dessas pessoas sumiram.',
+    'cancelled vacation. no reason given. just "incident."':
+      'férias canceladas. sem motivo. só "incidente."',
+    'new hours starting the 20th. they were expecting a long night.':
+      'horário novo a partir do dia 20. esperavam uma noite longa.',
+    'resurfacing a parking lot during a coverup. convenient.':
+      'repavimentar um estacionamento no meio de um encobrimento. conveniente.',
+    'cold storage failure. classified spoilage. you know what was in there.':
+      'falha na câmara fria. estrago classificado. você sabe o que tava lá dentro.',
+    'classified item in lost and found. someone dropped something.':
+      'item classificado no achados e perdidos. alguém deixou cair alguma coisa.',
+    'sector 7 budget. look at the equipment line. that is not office gear.':
+      'orçamento do setor 7. olha a linha de equipamentos. isso não é material de escritório.',
+    'correction fluid. twelve bottles. a lot of things to erase.':
+      'corretivo líquido. doze vidros. bastante coisa pra apagar.',
+    'printer jams for weeks. a lot of paper going through that machine.':
+      'impressora travando há semanas. muito papel passando por aquela máquina.',
+    'badge renewal. perfect excuse to revoke someone quietly.':
+      'renovação de crachá. desculpa perfeita pra revogar alguém na surdina.',
+    'they had time to audit paper clips. while people disappeared.':
+      'tiveram tempo de auditar clipes de papel. enquanto pessoas sumiam.',
+    'generator test postponed. they needed it running for something else.':
+      'teste do gerador adiado. precisavam ele rodando pra outra coisa.',
+    'last normal menu before the 20th. enjoy the feijoada.':
+      'último cardápio normal antes do dia 20. aproveita a feijoada.',
+    'three specimens. they called it a chemical spill.':
+      'três espécimes. chamaram de vazamento químico.',
+    'they were still serving lunch. while storing a body downstairs.':
+      'ainda serviam almoço. enquanto guardavam um corpo no subsolo.',
+    'broken coffee machine. three weeks. nobody came to fix anything.':
+      'máquina de café quebrada. três semanas. ninguém foi consertar nada.',
+    'é tetra. three times per hour. at least someone was happy once.':
+      'é tetra. três vezes por hora. pelo menos alguém ficou feliz uma vez.',
+    '142 kilometers in one night. classified driver. classified destination.':
+      '142 quilômetros em uma noite. motorista classificado. destino classificado.',
+    'normal parking rules. at a facility that does not officially exist.':
+      'regras normais de estacionamento. numa instalação que oficialmente não existe.',
+    'someone lost reading glasses near the conference room. saw too much.':
+      'alguém perdeu óculos de leitura perto da sala de conferências. viu demais.',
+    'coffee harvest report. same region. same soil. same everything.':
+      'relatório de safra do café. mesma região. mesmo solo. mesmo tudo.',
+    'clear skies over varginha. perfect visibility. that was the problem.':
+      'céu limpo sobre varginha. visibilidade perfeita. esse era o problema.',
+    'election year. the mayor knew nothing. officially.':
+      'ano de eleição. o prefeito não sabia de nada. oficialmente.',
+    'public safety got twelve percent. they needed every centavo that week.':
+      'segurança pública ficou com doze por cento. precisaram de cada centavo naquela semana.',
+    'military freight at 3:30 am. three covered cars. nobody looked inside.':
+      'frete militar às 3:30 da manhã. três carros cobertos. ninguém olhou dentro.',
+    'they called the fire dept too. then someone called them off.':
+      'chamaram os bombeiros também. aí alguém cancelou.',
+    'i wrote that script. in case they cut me off.':
+      'eu escrevi esse script. caso me cortassem.',
+    'old utility. someone used it the night of the 20th.':
+      'utilitário antigo. alguém usou na noite do dia 20.',
+    'that crash was not random. something triggered it from inside.':
+      'aquele crash não foi aleatório. alguma coisa disparou por dentro.',
+    'rot13. amateur cipher. but the message underneath is not amateur.':
+      'rot13. cifra amadora. mas a mensagem por baixo não é amadora.',
+    '28.8 modem. geocities. someone was uploading before they got caught.':
+      'modem 28.8. geocities. alguém tava subindo coisa antes de ser pego.',
+    'that sig file. i know whose terminal that was.':
+      'aquele arquivo sig. eu sei de quem era aquele terminal.',
+    'honeypot. do not trust filenames that scream at you.':
+      'honeypot. não confie em arquivos que gritam com você.',
+    'decoy file. they put these everywhere to catch people like us.':
+      'arquivo isca. espalham esses por tudo pra pegar gente como a gente.',
+    'trap. real classified files never advertise themselves.':
+      'armadilha. arquivo classificado de verdade nunca se anuncia.',
+    'obvious bait. real proof does not come with a label.':
+      'isca na cara. prova de verdade não vem com etiqueta.',
+    'the original statement. before they rewrote her words.':
+      'a declaração original. antes de reescreverem as palavras dela.',
+    'the first draft. they removed the parts about cognitive persistence.':
+      'o primeiro rascunho. tiraram as partes sobre persistência cognitiva.',
+    'three biologics confirmed. one responsive. read that again.':
+      'três biológicos confirmados. um responsivo. leia de novo.',
+    'costa. they erased him. like he never existed.':
+      'costa. apagaram ele. como se nunca tivesse existido.',
+    'project seed. they had a name for it. they had a plan.':
+      'projeto semente. tinham um nome pra isso. tinham um plano.',
+    'it just stopped. no trauma. no illness. it chose to stop.':
+      'simplesmente parou. sem trauma. sem doença. escolheu parar.',
+    'operation colheita. harvest. they named it harvest.':
+      'operação colheita. colheita. deram o nome de colheita.',
+    'bio-b caused headaches within three meters. without touching anyone.':
+      'bio-b causava dor de cabeça num raio de três metros. sem encostar em ninguém.',
+    'theta-wave sync. it was in their heads. literally.':
+      'sincronia de ondas teta. estava na cabeça deles. literalmente.',
+    'langley knew. within 72 hours. they always know.':
+      'langley sabia. em 72 horas. eles sempre sabem.',
+    'september 2026. we are running out of time.':
+      'setembro de 2026. o tempo tá acabando.',
+    'they flagged your session. they are watching you right now. keep going anyway.':
+      'flagaram sua sessão. tão te vigiando agora. continua assim mesmo.',
+    'lighting anomalies in moon footage. funny how every government has the same playbook for things that look wrong.':
+      'anomalias de iluminação em imagens da lua. engraçado como todo governo usa o mesmo manual pra coisas que parecem erradas.',
+    'modernization. that is what they call it when they replace the photos that show too much.':
+      'modernização. é como chamam quando substituem as fotos que mostram demais.',
+    'transfer from holding-7. rejected. no destination. someone chickened out at the last second.':
+      'transferência da contenção-7. rejeitada. sem destino. alguém amarelou no último segundo.',
+    'surveillance pigeons. battery-powered. with audio-video payloads. and people laugh at conspiracy theorists.':
+      'pombos de vigilância. à bateria. com carga útil de áudio e vídeo. e ainda riem dos teóricos da conspiração.',
+    'acoustic influence on consumer behavior. background music that makes you buy things. or believe things. or forget things.':
+      'influência acústica no comportamento do consumidor. música ambiente que faz você comprar. ou acreditar. ou esquecer.',
+    'C-O-L-H-E-I-T-A. colheita. harvest. they hid the access code in plain sight using farm words. varginha is farm country.':
+      'C-O-L-H-E-I-T-A. colheita. harvest. esconderam o código de acesso à vista, em linguagem de roça. varginha é região de roça.',
+    'the system knows what you are doing kid. it is measuring how close you are. keep collecting.':
+      'o sistema sabe o que você tá fazendo, kid. ele tá medindo quão perto você chegou. continua coletando.',
+    'passive audio collection through home devices. in 1995. imagine what they can do now with a phone in every pocket.':
+      'coleta passiva de áudio por aparelhos domésticos. em 1995. imagina o que eles fazem agora com celular no bolso de cada um.',
+    'someone built this tool to recover what was deleted. they knew files would disappear. smart person.':
+      'alguém fez essa ferramenta pra recuperar o que foi apagado. sabiam que arquivos iam sumir. pessoa esperta.',
+    'distributed ledger monetary system. in 1995. they had cryptocurrency before anyone had a name for it.':
+      'sistema monetário de livro-razão distribuído. em 1995. eles tinham criptomoeda antes de isso ter nome.',
+    'they were editing what kids learn in school. you control the future by controlling what gets taught. classic.':
+      'estavam editando o que as crianças aprendem na escola. controla-se o futuro controlando o que se ensina. clássico.',
+    'you found it. you found me. i did not think anyone would dig this deep.':
+      'você achou. você me achou. não achei que alguém ia cavar tão fundo.',
+    'residual session. someone was here before you. they accessed the same files. they did not make it out.':
+      'sessão residual. alguém esteve aqui antes de você. acessou os mesmos arquivos. não saiu vivo.',
+    'cross-dimensional correlation. they want you to connect physical assets, communications, and oversight. that is what the dossier is for.':
+      'correlação cross-dimensional. querem que você conecte ativos físicos, comunicações e supervisão. é pra isso que serve o dossiê.',
+    'exercise dark winter. they practiced shutting everything down. seventy-two hours became a hundred and sixty-eight. they liked what they saw.':
+      'exercício dark winter. treinaram pra desligar tudo. setenta e duas horas viraram cento e sessenta e oito. gostaram do que viram.',
+    'flood networks with fakes. pressure witnesses to recant. that is containment doctrine. they wrote it down like a recipe.':
+      'inundar redes com falsificações. pressionar testemunhas a se retratarem. é doutrina de contenção. escreveram isso como receita.',
+    'the admin left breadcrumbs. recover. trace. scan. tools they did not put in the manual. someone wanted you to find them.':
+      'o admin deixou migalhas. recover. trace. scan. ferramentas que não colocaram no manual. alguém queria que você encontrasse.',
+    'overactive imaginations. that is what they told the press. the press printed it. nobody asked a follow-up question.':
+      'imaginação fértil demais. foi o que contaram pra imprensa. a imprensa imprimiu. ninguém fez uma segunda pergunta.',
+    'laundry and birthdays. normal life. and then — special cargo in a temperature-controlled basement. ammonia and wet earth. kid. that is not normal.':
+      'lavanderia e aniversários. vida normal. e aí — carga especial num subsolo climatizado. amônia e terra úmida. kid. isso não é normal.',
+    'override codes for restricted access. someone left the instructions right here in the system. on purpose.':
+      'códigos de override pra acesso restrito. alguém deixou as instruções aqui no sistema. de propósito.',
+    'the system is watching your patterns. every file you open. every command you type. it sees what you are building.':
+      'o sistema tá observando seus padrões. cada arquivo que você abre. cada comando que você digita. ele vê o que você tá montando.',
+    'ferreira transferred to brasília. lima to são paulo. they scattered everyone who saw something. standard procedure.':
+      'ferreira transferido pra brasília. lima pra são paulo. dispersaram todo mundo que viu alguma coisa. procedimento padrão.',
+    'the 2026 window. kid. that is now. we are inside it right now. and the model says panic and collapse.':
+      'a janela de 2026. kid. é agora. a gente tá dentro dela agora. e o modelo diz pânico e colapso.',
+    'phase two is already underway. that is not a code. that is a warning. and whoever left this card wanted it found.':
+      'fase dois já tá em andamento. isso não é código. é aviso. e quem deixou esse cartão queria que fosse achado.',
+    'orbital reflective arrays for psychological operations. lights in the sky that are not ufos. just government mirrors. sure.':
+      'arranjos refletores orbitais pra operações psicológicas. luzes no céu que não são ufos. só espelhos do governo. aham.',
+    'read-only access. incident reconstruction. that is what they think you are doing here. let them think that.':
+      'acesso só de leitura. reconstrução de incidente. é isso que eles pensam que você tá fazendo. deixa eles pensarem.',
+    'the system flagged you as a deliberate collector. it knows you are assembling the picture. we should have purged this terminal. too late now.':
+      'o sistema te classificou como coletor deliberado. ele sabe que você tá montando o quebra-cabeça. a gente devia ter purgado esse terminal. agora é tarde.',
+    'my transfer papers. base aérea de guarulhos. i left something in that authorization. on purpose.':
+      'meus papéis de transferência. base aérea de guarulhos. deixei uma coisa naquela autorização. de propósito.',
+    'share nothing beyond your scope. i broke that rule. every single day for thirty years. and i would do it again.':
+      'não compartilhe nada além do seu escopo. quebrei essa regra. todo dia durante trinta anos. e quebraria de novo.',
+    'my last transmission from inside the system. march 96. three in the morning. i did not know if anyone would ever hear it.':
+      'minha última transmissão de dentro do sistema. março de 96. três da manhã. eu não sabia se alguém ia ouvir algum dia.',
+    'aerosol dispersal over civilian areas. project cirrus. they called it weather modification. it was not about the weather.':
+      'dispersão de aerossóis sobre áreas civis. projeto cirrus. chamaram de modificação climática. não era sobre clima.',
   },
   es: {
     'UFO74: youre in. keep it quiet.': 'UFO74: ya entraste. mantén la cabeza baja.',
@@ -1251,5 +1429,183 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'Morse code entry cancelled.': 'Entrada de código morse cancelada.',
     'You can try again later with "morse <message>".':
       'Puedes volver a intentarlo más tarde con "morse <message>".',
+
+    // Evidence file reactions (UFO74)
+    'interesting kid. we can leak this. not a clear evidence — but they were really hiding something.':
+      'interesante, kid. podemos filtrar esto. no es evidencia clara — pero estaban escondiendo algo serio.',
+    'operation prato. the air force documented everything in 77. then buried it.':
+      'operación prato. la fuerza aérea lo documentó todo en 77. luego lo enterró.',
+    'analyze biological material? that thing looks like a good old alien to me, kid.':
+      '¿analizar material biológico? a mí esa cosa me parece un buen viejo alienígena, kid.',
+    'thirty rotations. 2026. kid that is this year. i feel something bad will happen...':
+      'treinta rotaciones. 2026. kid, es este año. siento que algo malo va a pasar...',
+    'non-arrival colonization. they do not need to come here. they never did.':
+      'colonización sin llegada. no necesitan venir aquí. nunca lo hicieron.',
+    'second deployment. there was a second wave. there was always going to be.':
+      'segundo despliegue. hubo una segunda ola. siempre iba a haber una.',
+    'all hands on deck. no explanation. just... everyone.':
+      'todos a cubierta. sin explicación. solo... todos.',
+    'one name redacted. even from a birthday list.':
+      'un nombre tachado. incluso en una lista de cumpleaños.',
+    'stress management workshop. right after the incident. subtle.':
+      'taller de manejo del estrés. justo después del incidente. qué sutil.',
+    'every extension. every name. some of these people vanished.':
+      'cada extensión. cada nombre. algunas de estas personas desaparecieron.',
+    'cancelled vacation. no reason given. just "incident."':
+      'vacaciones canceladas. sin motivo. solo "incidente."',
+    'new hours starting the 20th. they were expecting a long night.':
+      'nuevo horario a partir del 20. esperaban una noche larga.',
+    'resurfacing a parking lot during a coverup. convenient.':
+      'repavimentar un aparcamiento durante un encubrimiento. qué conveniente.',
+    'cold storage failure. classified spoilage. you know what was in there.':
+      'falla en la cámara fría. deterioro clasificado. ya sabes qué había allí.',
+    'classified item in lost and found. someone dropped something.':
+      'objeto clasificado en objetos perdidos. a alguien se le cayó algo.',
+    'sector 7 budget. look at the equipment line. that is not office gear.':
+      'presupuesto del sector 7. mira la línea de equipos. eso no es material de oficina.',
+    'correction fluid. twelve bottles. a lot of things to erase.':
+      'corrector líquido. doce frascos. muchas cosas que borrar.',
+    'printer jams for weeks. a lot of paper going through that machine.':
+      'atascos en la impresora por semanas. mucho papel pasando por esa máquina.',
+    'badge renewal. perfect excuse to revoke someone quietly.':
+      'renovación de credenciales. excusa perfecta para revocar a alguien sin ruido.',
+    'they had time to audit paper clips. while people disappeared.':
+      'tuvieron tiempo de auditar clips. mientras la gente desaparecía.',
+    'generator test postponed. they needed it running for something else.':
+      'prueba del generador aplazada. lo necesitaban funcionando para otra cosa.',
+    'last normal menu before the 20th. enjoy the feijoada.':
+      'último menú normal antes del 20. aprovecha la feijoada.',
+    'three specimens. they called it a chemical spill.':
+      'tres especímenes. lo llamaron un derrame químico.',
+    'they were still serving lunch. while storing a body downstairs.':
+      'seguían sirviendo almuerzo. mientras guardaban un cuerpo en el sótano.',
+    'broken coffee machine. three weeks. nobody came to fix anything.':
+      'máquina de café rota. tres semanas. nadie fue a arreglar nada.',
+    'é tetra. three times per hour. at least someone was happy once.':
+      'é tetra. tres veces por hora. al menos alguien fue feliz una vez.',
+    '142 kilometers in one night. classified driver. classified destination.':
+      '142 kilómetros en una noche. conductor clasificado. destino clasificado.',
+    'normal parking rules. at a facility that does not officially exist.':
+      'reglas normales de estacionamiento. en una instalación que oficialmente no existe.',
+    'someone lost reading glasses near the conference room. saw too much.':
+      'alguien perdió gafas de lectura cerca de la sala de conferencias. vio demasiado.',
+    'coffee harvest report. same region. same soil. same everything.':
+      'informe de cosecha de café. misma región. mismo suelo. todo igual.',
+    'clear skies over varginha. perfect visibility. that was the problem.':
+      'cielos despejados sobre varginha. visibilidad perfecta. ese era el problema.',
+    'election year. the mayor knew nothing. officially.':
+      'año electoral. el alcalde no sabía nada. oficialmente.',
+    'public safety got twelve percent. they needed every centavo that week.':
+      'seguridad pública se quedó con el doce por ciento. necesitaron cada centavo esa semana.',
+    'military freight at 3:30 am. three covered cars. nobody looked inside.':
+      'carga militar a las 3:30 am. tres coches cubiertos. nadie miró dentro.',
+    'they called the fire dept too. then someone called them off.':
+      'llamaron a los bomberos también. después alguien los desconvocó.',
+    'i wrote that script. in case they cut me off.':
+      'yo escribí ese script. por si me cortaban.',
+    'old utility. someone used it the night of the 20th.':
+      'utilidad antigua. alguien la usó la noche del 20.',
+    'that crash was not random. something triggered it from inside.':
+      'ese crash no fue aleatorio. algo lo disparó desde dentro.',
+    'rot13. amateur cipher. but the message underneath is not amateur.':
+      'rot13. cifrado amateur. pero el mensaje de abajo no es amateur.',
+    '28.8 modem. geocities. someone was uploading before they got caught.':
+      'módem 28.8. geocities. alguien estaba subiendo cosas antes de que lo pillaran.',
+    'that sig file. i know whose terminal that was.':
+      'ese archivo sig. yo sé de quién era ese terminal.',
+    'honeypot. do not trust filenames that scream at you.':
+      'honeypot. no te fíes de nombres de archivo que te gritan.',
+    'decoy file. they put these everywhere to catch people like us.':
+      'archivo señuelo. ponen estos por todas partes para cazar a gente como nosotros.',
+    'trap. real classified files never advertise themselves.':
+      'trampa. los archivos clasificados de verdad nunca se anuncian.',
+    'obvious bait. real proof does not come with a label.':
+      'cebo obvio. la prueba de verdad no viene con etiqueta.',
+    'the original statement. before they rewrote her words.':
+      'la declaración original. antes de que reescribieran sus palabras.',
+    'the first draft. they removed the parts about cognitive persistence.':
+      'el primer borrador. quitaron las partes sobre persistencia cognitiva.',
+    'three biologics confirmed. one responsive. read that again.':
+      'tres biológicos confirmados. uno responsivo. léelo otra vez.',
+    'costa. they erased him. like he never existed.':
+      'costa. lo borraron. como si nunca hubiera existido.',
+    'project seed. they had a name for it. they had a plan.':
+      'proyecto semilla. tenían un nombre para esto. tenían un plan.',
+    'it just stopped. no trauma. no illness. it chose to stop.':
+      'simplemente se detuvo. sin trauma. sin enfermedad. decidió detenerse.',
+    'operation colheita. harvest. they named it harvest.':
+      'operación colheita. cosecha. le pusieron colheita.',
+    'bio-b caused headaches within three meters. without touching anyone.':
+      'bio-b causaba dolores de cabeza en tres metros a la redonda. sin tocar a nadie.',
+    'theta-wave sync. it was in their heads. literally.':
+      'sincronía de ondas theta. estaba en sus cabezas. literalmente.',
+    'langley knew. within 72 hours. they always know.':
+      'langley lo sabía. en 72 horas. ellos siempre saben.',
+    'september 2026. we are running out of time.':
+      'septiembre de 2026. se nos acaba el tiempo.',
+    'they flagged your session. they are watching you right now. keep going anyway.':
+      'marcaron tu sesión. te están vigilando ahora mismo. sigue igual.',
+    'lighting anomalies in moon footage. funny how every government has the same playbook for things that look wrong.':
+      'anomalías de iluminación en imágenes de la luna. curioso cómo cada gobierno usa el mismo manual para cosas que parecen mal.',
+    'modernization. that is what they call it when they replace the photos that show too much.':
+      'modernización. así le llaman cuando reemplazan las fotos que muestran demasiado.',
+    'transfer from holding-7. rejected. no destination. someone chickened out at the last second.':
+      'traslado desde contención-7. rechazado. sin destino. alguien se echó atrás en el último segundo.',
+    'surveillance pigeons. battery-powered. with audio-video payloads. and people laugh at conspiracy theorists.':
+      'palomas de vigilancia. a batería. con carga útil de audio y vídeo. y encima se ríen de los conspiranoicos.',
+    'acoustic influence on consumer behavior. background music that makes you buy things. or believe things. or forget things.':
+      'influencia acústica en el comportamiento del consumidor. música de fondo que te hace comprar. o creer. o olvidar.',
+    'C-O-L-H-E-I-T-A. colheita. harvest. they hid the access code in plain sight using farm words. varginha is farm country.':
+      'C-O-L-H-E-I-T-A. colheita. cosecha. escondieron el código de acceso a la vista, con palabras del campo. varginha es zona rural.',
+    'the system knows what you are doing kid. it is measuring how close you are. keep collecting.':
+      'el sistema sabe lo que estás haciendo, kid. está midiendo qué tan cerca estás. sigue recolectando.',
+    'passive audio collection through home devices. in 1995. imagine what they can do now with a phone in every pocket.':
+      'recolección pasiva de audio por dispositivos domésticos. en 1995. imagínate lo que pueden hacer ahora con un móvil en cada bolsillo.',
+    'someone built this tool to recover what was deleted. they knew files would disappear. smart person.':
+      'alguien construyó esta herramienta para recuperar lo que se borrara. sabían que los archivos desaparecerían. gente lista.',
+    'distributed ledger monetary system. in 1995. they had cryptocurrency before anyone had a name for it.':
+      'sistema monetario de libro mayor distribuido. en 1995. tenían criptomoneda antes de que nadie tuviera un nombre para eso.',
+    'they were editing what kids learn in school. you control the future by controlling what gets taught. classic.':
+      'editaban lo que los niños aprenden en la escuela. el futuro se controla controlando lo que se enseña. un clásico.',
+    'you found it. you found me. i did not think anyone would dig this deep.':
+      'lo encontraste. me encontraste. no pensé que nadie cavaría tan hondo.',
+    'residual session. someone was here before you. they accessed the same files. they did not make it out.':
+      'sesión residual. alguien estuvo aquí antes que tú. accedió a los mismos archivos. no salió.',
+    'cross-dimensional correlation. they want you to connect physical assets, communications, and oversight. that is what the dossier is for.':
+      'correlación multidimensional. quieren que conectes activos físicos, comunicaciones y supervisión. para eso sirve el dosier.',
+    'exercise dark winter. they practiced shutting everything down. seventy-two hours became a hundred and sixty-eight. they liked what they saw.':
+      'ejercicio dark winter. practicaron cómo apagarlo todo. setenta y dos horas se volvieron ciento sesenta y ocho. les gustó lo que vieron.',
+    'flood networks with fakes. pressure witnesses to recant. that is containment doctrine. they wrote it down like a recipe.':
+      'inundar las redes con falsificaciones. presionar a testigos para que se retracten. es doctrina de contención. lo escribieron como una receta.',
+    'the admin left breadcrumbs. recover. trace. scan. tools they did not put in the manual. someone wanted you to find them.':
+      'el admin dejó migajas. recover. trace. scan. herramientas que no pusieron en el manual. alguien quería que las encontraras.',
+    'overactive imaginations. that is what they told the press. the press printed it. nobody asked a follow-up question.':
+      'imaginación demasiado activa. eso le dijeron a la prensa. la prensa lo imprimió. nadie hizo una pregunta de seguimiento.',
+    'laundry and birthdays. normal life. and then — special cargo in a temperature-controlled basement. ammonia and wet earth. kid. that is not normal.':
+      'lavandería y cumpleaños. vida normal. y entonces — carga especial en un sótano climatizado. amoníaco y tierra húmeda. kid. eso no es normal.',
+    'override codes for restricted access. someone left the instructions right here in the system. on purpose.':
+      'códigos de override para acceso restringido. alguien dejó las instrucciones aquí en el sistema. a propósito.',
+    'the system is watching your patterns. every file you open. every command you type. it sees what you are building.':
+      'el sistema está observando tus patrones. cada archivo que abres. cada comando que escribes. ve lo que estás construyendo.',
+    'ferreira transferred to brasília. lima to são paulo. they scattered everyone who saw something. standard procedure.':
+      'ferreira transferido a brasilia. lima a são paulo. dispersaron a todos los que vieron algo. procedimiento estándar.',
+    'the 2026 window. kid. that is now. we are inside it right now. and the model says panic and collapse.':
+      'la ventana de 2026. kid. es ahora. estamos dentro de ella ahora mismo. y el modelo dice pánico y colapso.',
+    'phase two is already underway. that is not a code. that is a warning. and whoever left this card wanted it found.':
+      'la fase dos ya está en marcha. eso no es código. es una advertencia. y quien dejó esta tarjeta quería que se encontrara.',
+    'orbital reflective arrays for psychological operations. lights in the sky that are not ufos. just government mirrors. sure.':
+      'matrices reflectoras orbitales para operaciones psicológicas. luces en el cielo que no son ovnis. solo espejos del gobierno. ajá.',
+    'read-only access. incident reconstruction. that is what they think you are doing here. let them think that.':
+      'acceso de solo lectura. reconstrucción del incidente. eso es lo que creen que estás haciendo. déjalos creerlo.',
+    'the system flagged you as a deliberate collector. it knows you are assembling the picture. we should have purged this terminal. too late now.':
+      'el sistema te marcó como recolector deliberado. sabe que estás armando el rompecabezas. deberíamos haber purgado este terminal. ya es tarde.',
+    'my transfer papers. base aérea de guarulhos. i left something in that authorization. on purpose.':
+      'mis papeles de traslado. base aérea de guarulhos. dejé algo en esa autorización. a propósito.',
+    'share nothing beyond your scope. i broke that rule. every single day for thirty years. and i would do it again.':
+      'no compartas nada fuera de tu alcance. rompí esa regla. cada día durante treinta años. y lo volvería a hacer.',
+    'my last transmission from inside the system. march 96. three in the morning. i did not know if anyone would ever hear it.':
+      'mi última transmisión desde dentro del sistema. marzo del 96. las tres de la mañana. no sabía si alguien llegaría a oírla.',
+    'aerosol dispersal over civilian areas. project cirrus. they called it weather modification. it was not about the weather.':
+      'dispersión de aerosoles sobre zonas civiles. proyecto cirrus. lo llamaron modificación climática. no iba del clima.',
   },
 };

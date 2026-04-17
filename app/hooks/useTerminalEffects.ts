@@ -936,34 +936,51 @@ export function useTerminalEffects({
     if (gamePhase !== 'terminal' || gameState.isGameOver) return;
     if (suppressPressure) return;
 
-    const scheduleNextBurst = () => {
-      // Random interval between 20-40 seconds
-      const delay = 20000 + uiRandom() * 20000;
-      return setTimeout(() => {
-        if (pauseTimedMechanics) return;
-        // Pick a random vertical position for the interference line
-        const top = Math.floor(uiRandom() * 100);
-        setInterferenceBurst({ top });
-        // Clear after the animation duration (120ms)
-        setTimeout(() => setInterferenceBurst(null), 150);
-      }, delay);
+    const pendingTimers = new Set<ReturnType<typeof setTimeout>>();
+    const track = (id: ReturnType<typeof setTimeout>) => {
+      pendingTimers.add(id);
+      return id;
+    };
+    const clearTracked = (id: ReturnType<typeof setTimeout>) => {
+      pendingTimers.delete(id);
+      clearTimeout(id);
     };
 
-    const timerId = scheduleNextBurst();
+    const triggerBurst = () => {
+      if (pauseTimedMechanics) return;
+      const top = Math.floor(uiRandom() * 100);
+      setInterferenceBurst({ top });
+      const clearId = setTimeout(() => {
+        setInterferenceBurst(null);
+        pendingTimers.delete(clearId);
+      }, 150);
+      track(clearId);
+    };
+
+    const scheduleNextBurst = () => {
+      const delay = 20000 + uiRandom() * 20000;
+      const id: ReturnType<typeof setTimeout> = setTimeout(() => {
+        pendingTimers.delete(id);
+        triggerBurst();
+      }, delay);
+      track(id);
+      return id;
+    };
+
+    scheduleNextBurst();
     // Reschedule periodically
     const interval = setInterval(() => {
-      const delay = 20000 + uiRandom() * 20000;
-      setTimeout(() => {
-        if (pauseTimedMechanics) return;
-        const top = Math.floor(uiRandom() * 100);
-        setInterferenceBurst({ top });
-        setTimeout(() => setInterferenceBurst(null), 150);
-      }, delay);
+      scheduleNextBurst();
     }, 30000); // Check roughly every 30s
 
     return () => {
-      clearTimeout(timerId);
       clearInterval(interval);
+      pendingTimers.forEach(clearTimeout);
+      pendingTimers.clear();
+      // Reset any in-flight burst rendering so we don't leak UI state on unmount.
+      setInterferenceBurst(null);
+      // keep reference to silence lint
+      void clearTracked;
     };
   }, [
     gamePhase,
