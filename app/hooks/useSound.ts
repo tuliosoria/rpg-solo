@@ -167,6 +167,7 @@ export function useSound() {
   const musicTrackIndexRef = useRef(0); // current music tier (0/1/2)
   const [soundEnabled, setSoundEnabled] = useState(DEFAULT_OPTIONS.soundEffectsEnabled);
   const [ambientEnabled, setAmbientEnabled] = useState(DEFAULT_OPTIONS.ambientSoundEnabled);
+  const [musicEnabled, setMusicEnabled] = useState(DEFAULT_OPTIONS.musicEnabled);
   const [turingVoiceEnabled, setTuringVoiceEnabled] = useState(DEFAULT_OPTIONS.turingVoiceEnabled);
   const [masterVolume, setMasterVolumeState] = useState(DEFAULT_OPTIONS.masterVolume / 100);
 
@@ -174,6 +175,7 @@ export function useSound() {
     const storedOptions = readStoredOptions();
     setSoundEnabled(storedOptions.soundEffectsEnabled);
     setAmbientEnabled(storedOptions.ambientSoundEnabled);
+    setMusicEnabled(storedOptions.musicEnabled);
     setTuringVoiceEnabled(storedOptions.turingVoiceEnabled);
     setMasterVolumeState(storedOptions.masterVolume / 100);
   }, []);
@@ -714,7 +716,7 @@ export function useSound() {
   // ═══════════════════════════════════════════════════════════════════════════
 
   const startMusic = useCallback(() => {
-    if (!ambientEnabled || musicElementRef.current) return;
+    if (!musicEnabled || musicElementRef.current) return;
 
     const audioContext = initAudio();
     if (!audioContext) return;
@@ -743,7 +745,7 @@ export function useSound() {
     } catch {
       // Audio/MediaElementSource not available (e.g. test environment)
     }
-  }, [ambientEnabled, masterVolume, initAudio]);
+  }, [musicEnabled, masterVolume, initAudio]);
 
   // Switch music track when risk tier changes
   const updateMusicForRisk = useCallback((risk: number) => {
@@ -818,7 +820,6 @@ export function useSound() {
     ambientGainRef.current = noiseGain;
     syncAmbientProfile(0.01);
 
-    // Also start background music
     startMusic();
   }, [ambientEnabled, masterVolume, initAudio, startMusic, syncAmbientProfile]);
 
@@ -858,14 +859,19 @@ export function useSound() {
     }
     ambientFilterRef.current = null;
     ambientGainRef.current = null;
-    stopMusic();
-  }, [stopMusic]);
+  }, []);
 
   useEffect(() => {
     if (!ambientEnabled) {
       stopAmbient();
     }
   }, [ambientEnabled, stopAmbient]);
+
+  useEffect(() => {
+    if (!musicEnabled) {
+      stopMusic();
+    }
+  }, [musicEnabled, stopMusic]);
 
   // Toggle sound on/off
   const toggleSound = useCallback(() => {
@@ -874,6 +880,18 @@ export function useSound() {
       persistOptions({
         ...readStoredOptions(),
         soundEffectsEnabled: next,
+      });
+      return next;
+    });
+  }, []);
+
+  // Toggle music on/off
+  const toggleMusic = useCallback(() => {
+    setMusicEnabled(prev => {
+      const next = !prev;
+      persistOptions({
+        ...readStoredOptions(),
+        musicEnabled: next,
       });
       return next;
     });
@@ -930,7 +948,9 @@ export function useSound() {
     updateMusicForRisk,
     speak,
     soundEnabled,
+    musicEnabled,
     masterVolume,
     setMasterVolume,
+    toggleMusic,
   };
 }

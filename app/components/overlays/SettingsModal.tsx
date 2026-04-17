@@ -14,8 +14,10 @@ import styles from './SettingsModal.module.css';
 
 interface SettingsModalProps {
   soundEnabled: boolean;
+  musicEnabled: boolean;
   masterVolume: number;
   onToggleSound: () => void;
+  onToggleMusic: () => void;
   onVolumeChange: (volume: number) => void;
   onCloseAction: () => void;
   onResetDefaults: () => void;
@@ -23,8 +25,10 @@ interface SettingsModalProps {
 
 export default memo(function SettingsModal({
   soundEnabled,
+  musicEnabled,
   masterVolume,
   onToggleSound,
+  onToggleMusic,
   onVolumeChange,
   onCloseAction,
   onResetDefaults,
@@ -111,6 +115,21 @@ export default memo(function SettingsModal({
               onClick={onToggleSound}
             >
               {soundEnabled
+                ? `[ ${t('options.value.on')} ]`
+                : `[ ${t('options.value.off')} ]`}
+            </button>
+          </div>
+
+          {/* Music Toggle */}
+          <div className={styles.setting}>
+            <label className={styles.label}>{t('settings.music')}</label>
+            <button
+              className={`${styles.toggle} ${musicEnabled ? styles.toggleOn : styles.toggleOff}`}
+              tabIndex={0}
+              onMouseDown={e => e.preventDefault()}
+              onClick={onToggleMusic}
+            >
+              {musicEnabled
                 ? `[ ${t('options.value.on')} ]`
                 : `[ ${t('options.value.off')} ]`}
             </button>

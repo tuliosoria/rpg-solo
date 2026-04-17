@@ -225,10 +225,12 @@ export default function Terminal({
     startAmbient,
     stopAmbient,
     toggleSound,
+    toggleMusic,
     updateAmbientTension,
     updateMusicForRisk,
     setAmbientDisturbance,
     soundEnabled,
+    musicEnabled,
     masterVolume,
     setMasterVolume,
   } = useSound();
@@ -1877,15 +1879,16 @@ export default function Terminal({
         {showSettings && (
           <SettingsModal
             soundEnabled={soundEnabled}
+            musicEnabled={musicEnabled}
             masterVolume={masterVolume}
             onToggleSound={toggleSound}
+            onToggleMusic={toggleMusic}
             onVolumeChange={setMasterVolume}
             onCloseAction={() => {
               setShowSettings(false);
               setTimeout(focusTerminalInput, 0);
             }}
             onResetDefaults={() => {
-              if (!soundEnabled) toggleSound();
               setMasterVolume(1);
             }}
           />

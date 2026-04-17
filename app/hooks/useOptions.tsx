@@ -46,6 +46,7 @@ export const DEFAULT_OPTIONS: OptionsState = {
   masterVolume: 100,
   ambientSoundEnabled: true,
   soundEffectsEnabled: true,
+  musicEnabled: true,
   turingVoiceEnabled: true,
 
   // Visual defaults: all ON, flicker medium, font medium

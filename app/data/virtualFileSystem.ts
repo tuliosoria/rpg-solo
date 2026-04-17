@@ -2801,7 +2801,7 @@ const jardim_andere_report: FileNode = {
 };
 
 // Witness testimony — farmer who recorded a being on his property
-const witness_farm_recording: FileNode = {
+export const witness_farm_recording: FileNode = {
   type: 'file',
   name: 'witness_farm_recording.txt',
   status: 'intact',

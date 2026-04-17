@@ -6,8 +6,10 @@ import * as optionsModule from '../../../hooks/useOptions';
 describe('SettingsModal', () => {
   const defaultProps = {
     soundEnabled: true,
+    musicEnabled: true,
     masterVolume: 0.5,
     onToggleSound: vi.fn(),
+    onToggleMusic: vi.fn(),
     onVolumeChange: vi.fn(),
     onCloseAction: vi.fn(),
     onResetDefaults: vi.fn(),

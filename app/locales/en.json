@@ -137,6 +137,7 @@
   "terminal.tutorialSkip.disconnected": "[UFO74 has disconnected]",
   "settings.title": "SETTINGS",
   "settings.soundEffects": "Sound Effects",
+  "settings.music": "Music",
   "settings.masterVolume": "Master Volume",
   "settings.crtEffects": "CRT Effects",
   "settings.crtHint": "Scanlines & glow",

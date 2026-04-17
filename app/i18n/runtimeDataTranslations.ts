@@ -4,6 +4,7 @@ import * as conspiracyData from '../data/conspiracyFiles';
 import * as expansionData from '../data/expansionContent';
 import * as narrativeData from '../data/narrativeContent';
 import neuralClusterMemo from '../data/neuralClusterMemo';
+import { witness_farm_recording } from '../data/virtualFileSystem';
 import type { Language } from './index';
 
 type RuntimeDictionary = Record<string, string>;
@@ -2741,6 +2742,91 @@ registerLines(
   actual del sistema. Localice los archivos clasificados de ALPHA antes
   de intentar la liberación. Nivel de acceso insuficiente o archivos
   aún no descubiertos.
+  `
+);
+
+// Witness farm recording (civilian VHS testimony)
+registerLines(
+  witness_farm_recording.content,
+  `
+  DEPOIMENTO CIVIL — TRANSCRIÇÃO DE ÁUDIO
+  FONTE: Gravação de filmadora VHS, propriedade rural
+  LOCALIZAÇÃO: Fazenda São Tomé, 12km NE de Varginha
+  DATA: 19-JAN-1996, ~22:40h
+  TESTEMUNHA: Eurico da Silva, 58, pecuarista
+  TRANSCRIÇÃO INÍCIO:
+  [ruído de câmera, respiração pesada]
+  "Tá gravando? Tá gravando. Olha... olha ali."
+  "Eu vi a luz caindo. Pensei que era estrela cadente."
+  "O gado todo fugiu pro fundo do pasto."
+  "Fui com a lanterna ver o que era."
+  [câmera gira para linha de árvores escura, brilho vermelho fraco visível]
+  "Tem... tem alguma coisa agachada ali no meio."
+  "Não é bicho. Não é gente. Eu sei o que é gente."
+  "O cheiro... meu Deus, o cheiro."
+  "Parece amônia. Queima o nariz."
+  [distorção de tracking do VHS — 8 segundos]
+  "Olhou pra mim. Os olhos são vermelhos."
+  "Não pisca. Não se mexe. Só... olha."
+  "Senti uma coisa na cabeça. Pressão."
+  "Como se alguém tivesse apertando por dentro."
+  [sujeito recuando audivelmente, passos em capim seco]
+  "Eu voltei correndo. Tranquei tudo."
+  "De manhã fui ver. Só tinha o chão queimado."
+  "Círculo perfeito. O capim tava preto."
+  "Duas horas depois os militares chegaram."
+  "Levaram a fita. Mas eu tinha feito cópia."
+  FIM DA TRANSCRIÇÃO
+  NOTA DO ANALISTA:
+    VHS recuperado da casa da testemunha durante varredura.
+    Cópia encontrada escondida dentro de uma Bíblia.
+    Testemunha detida 72h sob Protocolo 7.
+    Descrição consistente com espécimes do Jardim Andere.
+    Traço de amônia confirmado no local.
+    Cicatriz eletromagnética no solo: compatível.
+    Testemunha afirma "ele sabia que eu estava lá antes de eu vê-lo."
+    Esta é a única gravação civil conhecida.
+    Recomenda-se CLASSIFICAÇÃO PERMANENTE.
+  `,
+  `
+  TESTIMONIO CIVIL — TRANSCRIPCIÓN DE AUDIO
+  FUENTE: Grabación de cámara VHS, propiedad rural
+  UBICACIÓN: Fazenda São Tomé, 12km NE de Varginha
+  FECHA: 19-ENE-1996, ~22:40h
+  TESTIGO: Eurico da Silva, 58, ganadero
+  INICIO DE TRANSCRIPCIÓN:
+  [ruido de cámara, respiración pesada]
+  "Tá gravando? Tá gravando. Olha... olha ali."
+  "Eu vi a luz caindo. Pensei que era estrela cadente."
+  "O gado todo fugiu pro fundo do pasto."
+  "Fui com a lanterna ver o que era."
+  [cámara gira hacia línea de árboles oscura, resplandor rojo débil visible]
+  "Tem... tem alguma coisa agachada ali no meio."
+  "Não é bicho. Não é gente. Eu sei o que é gente."
+  "O cheiro... meu Deus, o cheiro."
+  "Parece amônia. Queima o nariz."
+  [distorsión de tracking del VHS — 8 segundos]
+  "Olhou pra mim. Os olhos são vermelhos."
+  "Não pisca. Não se mexe. Só... olha."
+  "Senti uma coisa na cabeça. Pressão."
+  "Como se alguém tivesse apertando por dentro."
+  [sujeto retrocediendo audiblemente, pasos en pasto seco]
+  "Eu voltei correndo. Tranquei tudo."
+  "De manhã fui ver. Só tinha o chão queimado."
+  "Círculo perfeito. O capim tava preto."
+  "Duas horas depois os militares chegaram."
+  "Levaram a fita. Mas eu tinha feito cópia."
+  FIN DE LA TRANSCRIPCIÓN
+  NOTA DEL ANALISTA:
+    VHS recuperado del hogar del testigo durante redada.
+    Copia encontrada oculta dentro de una Biblia.
+    Testigo detenido 72h bajo Protocolo 7.
+    Descripción consistente con especímenes de Jardim Andere.
+    Rastro de amoníaco confirmado en el sitio.
+    Cicatriz electromagnética en el suelo: coincide.
+    Testigo afirma "sabía que yo estaba ahí antes de que lo viera."
+    Esta es la única grabación civil conocida.
+    Se recomienda CLASIFICACIÓN PERMANENTE.
   `
 );
 

@@ -13,6 +13,7 @@ export interface OptionsState {
   masterVolume: number; // 0-100
   ambientSoundEnabled: boolean;
   soundEffectsEnabled: boolean;
+  musicEnabled: boolean;
   turingVoiceEnabled: boolean;
 
   // Visual Options
