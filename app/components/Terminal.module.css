@@ -1575,24 +1575,24 @@
 }
 
 .firewallScareEye {
-  width: 180px;
-  height: 120px;
+  width: 360px;
+  height: 240px;
   border-radius: 50%;
   background: radial-gradient(ellipse at center, #0d0a00 0%, #1a1200 40%, #050300 80%);
-  border: 3px solid rgba(80, 60, 10, 0.7);
+  border: 6px solid rgba(80, 60, 10, 0.7);
   position: relative;
   overflow: visible;
   box-shadow:
-    0 0 40px rgba(80, 100, 15, 0.5),
-    0 0 80px rgba(50, 70, 10, 0.25),
-    inset 0 0 30px rgba(20, 15, 0, 0.9);
+    0 0 80px rgba(80, 100, 15, 0.5),
+    0 0 160px rgba(50, 70, 10, 0.25),
+    inset 0 0 60px rgba(20, 15, 0, 0.9);
   animation: firewallEyePulse 0.3s ease-in-out infinite alternate;
 }
 
 .firewallScareEye::before {
   content: '';
   position: absolute;
-  inset: -12px;
+  inset: -24px;
   border-radius: 50%;
   background:
     radial-gradient(ellipse at 15% 25%, rgba(120, 20, 10, 0.3) 0%, transparent 50%),
@@ -1605,8 +1605,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 60px;
-  height: 60px;
+  width: 120px;
+  height: 120px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background:
@@ -1617,8 +1617,8 @@
       #2a3a04 80%,
       transparent 100%);
   box-shadow:
-    0 0 20px rgba(140, 160, 30, 0.5),
-    inset 0 0 10px rgba(0, 0, 0, 0.4);
+    0 0 40px rgba(140, 160, 30, 0.5),
+    inset 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
 .firewallScareIris::before {
@@ -1626,25 +1626,25 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 48px;
-  height: 48px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  border: 1px solid rgba(160, 140, 20, 0.3);
+  border: 2px solid rgba(160, 140, 20, 0.3);
 }
 
 .firewallScarePupil {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 8px;
-  height: 50px;
+  width: 16px;
+  height: 100px;
   transform: translate(-50%, -50%);
-  border-radius: 4px;
+  border-radius: 8px;
   background: #000;
   box-shadow:
-    0 0 8px rgba(0, 0, 0, 0.9),
-    0 0 16px rgba(20, 30, 0, 0.5);
+    0 0 16px rgba(0, 0, 0, 0.9),
+    0 0 32px rgba(20, 30, 0, 0.5);
   animation: firewallPupilTwitch 0.15s ease-in-out infinite alternate;
 }
 
@@ -1671,21 +1671,21 @@
 @keyframes firewallEyePulse {
   0% {
     box-shadow:
-      0 0 40px rgba(80, 100, 15, 0.5),
-      0 0 80px rgba(50, 70, 10, 0.25),
-      inset 0 0 30px rgba(20, 15, 0, 0.9);
+      0 0 80px rgba(80, 100, 15, 0.5),
+      0 0 160px rgba(50, 70, 10, 0.25),
+      inset 0 0 60px rgba(20, 15, 0, 0.9);
   }
   100% {
     box-shadow:
-      0 0 60px rgba(100, 130, 20, 0.7),
-      0 0 120px rgba(60, 80, 15, 0.4),
-      inset 0 0 40px rgba(25, 20, 0, 0.95);
+      0 0 120px rgba(100, 130, 20, 0.7),
+      0 0 240px rgba(60, 80, 15, 0.4),
+      inset 0 0 80px rgba(25, 20, 0, 0.95);
   }
 }
 
 @keyframes firewallPupilTwitch {
-  0% { transform: translate(-50%, -50%) translateX(-2px); }
-  100% { transform: translate(-50%, -50%) translateX(2px); }
+  0% { transform: translate(-50%, -50%) translateX(-4px); }
+  100% { transform: translate(-50%, -50%) translateX(4px); }
 }
 
 @keyframes firewallTextGlitch {
