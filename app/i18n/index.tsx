@@ -5,6 +5,7 @@ import en from '../locales/en.json';
 import ptBr from '../locales/pt-br.json';
 import es from '../locales/es.json';
 import { RUNTIME_TRANSLATIONS } from './runtime';
+import { setTrayLanguage } from '../lib/steamBridge';
 
 export type Language = 'en' | 'pt-BR' | 'es';
 
@@ -110,6 +111,23 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setLanguageState(getStoredLanguage());
   }, []);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language;
+      document.title = translateStatic('meta.title', undefined, undefined, language);
+
+      const description = document.querySelector('meta[name="description"]');
+      if (description) {
+        description.setAttribute(
+          'content',
+          translateStatic('meta.description', undefined, undefined, language)
+        );
+      }
+    }
+
+    void setTrayLanguage(language);
+  }, [language]);
 
   const setLanguage = useCallback((nextLanguage: Language) => {
     const normalized = normalizeLanguage(nextLanguage);

@@ -1,114 +1,123 @@
-import { type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
-export const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000';
+export const BASE_URL = process.env.BASE_URL ?? 'http://127.0.0.1:3000';
 
-export interface Bug {
-  id: number;
-  title: string;
-  steps: string[];
-  expected: string;
-  actual: string;
-  screenshot?: string;
-  severity: 'critical' | 'major' | 'minor' | 'cosmetic';
+export async function getContent(page: Page): Promise<string> {
+  return await page.locator('body').innerText();
 }
 
-export function createBugTracker(suiteName: string) {
-  const bugs: Bug[] = [];
-  let bugCounter = 0;
+export async function waitForContent(page: Page, expected: string | RegExp): Promise<void> {
+  const poller = expect.poll(() => getContent(page), {
+    timeout: 30000,
+    message: `Expected terminal output to include ${String(expected)}`,
+  });
 
-  const logBug = (bug: Omit<Bug, 'id'>): Bug => {
-    const newBug = { ...bug, id: ++bugCounter };
-    bugs.push(newBug);
-    console.log(`\n🐛 BUG #${newBug.id}: ${newBug.title}`);
-    console.log(`   Severity: ${newBug.severity}`);
-    console.log(`   Steps: ${newBug.steps.join(' → ')}`);
-    console.log(`   Expected: ${newBug.expected}`);
-    console.log(`   Actual: ${newBug.actual}`);
-    if (newBug.screenshot) {
-      console.log(`   Screenshot: ${newBug.screenshot}`);
-    }
-    return newBug;
-  };
+  if (typeof expected === 'string') {
+    await poller.toContain(expected);
+    return;
+  }
 
-  const reportBugs = () => {
-    if (bugs.length > 0) {
-      console.log('\n═══════════════════════════════════════════════════════════');
-      console.log(`${suiteName.toUpperCase()} BUGS FOUND: ${bugs.length}`);
-      console.log('═══════════════════════════════════════════════════════════\n');
-      bugs.forEach(bug => {
-        console.log(`#${bug.id} [${bug.severity.toUpperCase()}] ${bug.title}`);
-      });
+  await poller.toMatch(expected);
+}
+
+export async function waitForAllContent(page: Page, expected: Array<string | RegExp>): Promise<void> {
+  for (const value of expected) {
+    await waitForContent(page, value);
+  }
+}
+
+export function getCommandInput(page: Page): Locator {
+  return page.getByRole('textbox');
+}
+
+export async function openMainMenu(page: Page): Promise<void> {
+  await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 30000 });
+  await expect(page.getByRole('button', { name: /new game/i })).toBeVisible();
+  await waitForAllContent(page, ['VARGINHA', 'TERMINAL 1996', 'Brazilian Intelligence Legacy System, 1996']);
+}
+
+export async function openNewGamePrompt(page: Page): Promise<void> {
+  await openMainMenu(page);
+  await page.getByRole('button', { name: /new game/i }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByRole('button', { name: /skip/i })).toBeVisible();
+  await expect(page.getByRole('button', { name: /tutorial/i })).toBeVisible();
+}
+
+export async function startSkippedRun(page: Page): Promise<void> {
+  await openNewGamePrompt(page);
+  await page.getByRole('button', { name: /skip/i }).click();
+  await waitForAllContent(page, [
+    '✓ USER hackerkid REGISTERED',
+    'UFO74: Save 10 dossier files. Leak them. Watch your risk.',
+    '[UFO74 has disconnected]',
+  ]);
+  await expect(getCommandInput(page)).toBeVisible();
+  await expect(getCommandInput(page)).toBeEnabled();
+}
+
+export async function startTutorialRun(page: Page): Promise<void> {
+  await openNewGamePrompt(page);
+  await page.getByRole('button', { name: /tutorial/i }).click();
+  await waitForAllContent(page, ['BRAZILIAN INTELLIGENCE LEGACY SYSTEM', 'TERMINAL ACCESS POINT — NODE 7']);
+}
+
+export async function runCommand(
+  page: Page,
+  command: string,
+  options: { waitForInput?: boolean } = {}
+): Promise<void> {
+  const input = getCommandInput(page);
+  const previousContent = await getContent(page);
+
+  await expect(input).toBeVisible();
+  await expect(input).toBeEnabled();
+  await input.fill(command);
+  await input.press('Enter');
+
+  await expect.poll(() => getContent(page), { timeout: 30000 }).not.toBe(previousContent);
+
+  if (options.waitForInput !== false) {
+    await restoreCommandInput(page);
+  }
+}
+
+export async function continueStory(page: Page): Promise<void> {
+  const previousContent = await getContent(page);
+  const continueButton = page.getByRole('button', { name: /Press Enter/i });
+
+  if (await continueButton.isVisible().catch(() => false)) {
+    await continueButton.click();
+  } else {
+    await page.keyboard.press('Enter');
+  }
+
+  await expect.poll(() => getContent(page), { timeout: 30000 }).not.toBe(previousContent);
+}
+
+export async function restoreCommandInput(page: Page): Promise<void> {
+  const input = getCommandInput(page);
+
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const isVisible = await input.isVisible().catch(() => false);
+    const isEnabled = isVisible ? await input.isEnabled().catch(() => false) : false;
+    if (isVisible && isEnabled) {
       return;
     }
 
-    console.log(`\n✅ No ${suiteName.toLowerCase()} bugs found!\n`);
-  };
-
-  return { bugs, logBug, reportBugs };
-}
-
-export async function typeCommand(page: Page, command: string, stepName?: string): Promise<void> {
-  if (stepName) {
-    console.log(`  ⏳ ${stepName}: "${command}"...`);
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(250);
   }
-  await page.keyboard.type(command, { delay: 30 });
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(1500);
-  if (stepName) {
-    console.log(`  ✅ ${stepName}: Done`);
-  }
+
+  await expect(input).toBeVisible({ timeout: 10000 });
+  await expect(input).toBeEnabled({ timeout: 10000 });
 }
 
-export async function pressEnter(page: Page, stepName?: string): Promise<void> {
-  if (stepName) {
-    console.log(`  ⏳ ${stepName}: Pressing Enter...`);
-  }
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(1500);
-  if (stepName) {
-    console.log(`  ✅ ${stepName}: Done`);
-  }
+export function basename(filePath: string): string {
+  const parts = filePath.split('/');
+  return parts[parts.length - 1] || filePath;
 }
 
-export async function getContent(page: Page): Promise<string> {
-  return (await page.textContent('body')) || '';
-}
-
-export function contentContains(content: string, text: string): boolean {
-  return content.toLowerCase().includes(text.toLowerCase());
-}
-
-export async function screenshot(page: Page, name: string): Promise<string> {
-  const path = `e2e-tests/screenshots/${name}.png`;
-  await page.screenshot({ path });
-  return path;
-}
-
-export async function startGame(page: Page): Promise<void> {
-  console.log(`  🎮 Starting game at ${BASE_URL}...`);
-  await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 30000 });
-  await page.waitForTimeout(3000);
-
-  await pressEnter(page, 'Intro step 1');
-  await pressEnter(page, 'Intro step 2');
-  await pressEnter(page, 'Intro step 3');
-
-  await typeCommand(page, 'ls', 'Tutorial: ls');
-  await typeCommand(page, 'cd internal', 'Tutorial: cd internal');
-  await typeCommand(page, 'cd misc', 'Tutorial: cd misc');
-  await typeCommand(
-    page,
-    'open cafeteria_menu_week03.txt',
-    'Tutorial: open cafeteria_menu_week03.txt'
-  );
-  await typeCommand(page, 'cd ..', 'Tutorial: cd ..');
-  await typeCommand(page, 'cd ..', 'Tutorial: cd .. again');
-
-  await pressEnter(page, 'Briefing step 1');
-  await pressEnter(page, 'Briefing step 2');
-  await pressEnter(page, 'Briefing step 3');
-  await pressEnter(page, 'Briefing step 4');
-  await pressEnter(page, 'Briefing step 5');
-
-  console.log('  ✅ Tutorial completed, game active');
+export function extractLeakSequence(content: string): string[] {
+  return [...content.matchAll(/^\s*\d+\.\s+leak (.+)$/gm)].map((match) => match[1].trim());
 }

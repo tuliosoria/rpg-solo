@@ -5,10 +5,109 @@
 const { Tray, Menu, nativeImage, app } = require('electron');
 const path = require('path');
 
+const TRANSLATIONS = {
+  en: {
+    menu: {
+      showWindow: 'Show Window',
+      minimizeToTray: 'Minimize to Tray',
+      newGame: 'New Game',
+      quit: 'Quit',
+    },
+    status: {
+      inMenu: 'In menu',
+      victory: 'Victory!',
+      gameOver: 'Game Over',
+      detection: 'Detection: {{value}}%',
+      detectionCritical: '⚠️ Detection: {{value}}%',
+      investigating: 'Investigating...',
+    },
+  },
+  'pt-BR': {
+    menu: {
+      showWindow: 'Mostrar janela',
+      minimizeToTray: 'Minimizar para a bandeja',
+      newGame: 'Novo jogo',
+      quit: 'Sair',
+    },
+    status: {
+      inMenu: 'No menu',
+      victory: 'Vitória!',
+      gameOver: 'Fim de jogo',
+      detection: 'Detecção: {{value}}%',
+      detectionCritical: '⚠️ Detecção: {{value}}%',
+      investigating: 'Investigando...',
+    },
+  },
+  es: {
+    menu: {
+      showWindow: 'Mostrar ventana',
+      minimizeToTray: 'Minimizar a la bandeja',
+      newGame: 'Nueva partida',
+      quit: 'Salir',
+    },
+    status: {
+      inMenu: 'En el menú',
+      victory: '¡Victoria!',
+      gameOver: 'Fin de la partida',
+      detection: 'Detección: {{value}}%',
+      detectionCritical: '⚠️ Detección: {{value}}%',
+      investigating: 'Investigando...',
+    },
+  },
+};
+
 let tray = null;
 let mainWindow = null;
-let currentStatus = 'Idle';
+let currentLanguage = 'en';
+let currentStatus = '';
+let lastGameState = null;
 let minimizeToTray = false;
+
+function normalizeLanguage(value) {
+  if (typeof value !== 'string') {
+    return 'en';
+  }
+
+  const normalized = value.toLowerCase();
+  if (normalized.startsWith('pt')) {
+    return 'pt-BR';
+  }
+  if (normalized.startsWith('es')) {
+    return 'es';
+  }
+  return 'en';
+}
+
+function getCurrentLocale() {
+  return TRANSLATIONS[currentLanguage] || TRANSLATIONS.en;
+}
+
+function formatMessage(template, values = {}) {
+  return template.replace(/\{\{(.*?)\}\}/g, (_, token) => {
+    const key = token.trim();
+    return values[key] === undefined ? '' : String(values[key]);
+  });
+}
+
+function getStatusLabel(key, values) {
+  const locale = getCurrentLocale();
+  return formatMessage(locale.status[key] || TRANSLATIONS.en.status[key], values);
+}
+
+function getMenuLabel(key) {
+  const locale = getCurrentLocale();
+  return locale.menu[key] || TRANSLATIONS.en.menu[key];
+}
+
+function getCurrentStatus() {
+  return currentStatus || getStatusLabel('inMenu');
+}
+
+try {
+  currentLanguage = normalizeLanguage(typeof app.getLocale === 'function' ? app.getLocale() : null);
+} catch {
+  currentLanguage = 'en';
+}
 
 /**
  * Gets the tray icon path based on platform and packaging state.
@@ -63,9 +162,10 @@ function createFallbackIcon() {
  * @param {string} status - Status text to display
  */
 function updateTooltip(status) {
+  const resolvedStatus = status || getStatusLabel('inMenu');
+  currentStatus = resolvedStatus;
   if (tray) {
-    currentStatus = status || 'Idle';
-    tray.setToolTip(`Varginha: Terminal 1996 - ${currentStatus}`);
+    tray.setToolTip(`Varginha: Terminal 1996 - ${resolvedStatus}`);
   }
 }
 
@@ -83,7 +183,7 @@ function buildContextMenu() {
       type: 'separator',
     },
     {
-      label: currentStatus,
+      label: getCurrentStatus(),
       enabled: false,
       icon: null,
     },
@@ -91,7 +191,7 @@ function buildContextMenu() {
       type: 'separator',
     },
     {
-      label: 'Show Window',
+      label: getMenuLabel('showWindow'),
       click: () => {
         if (mainWindow) {
           mainWindow.show();
@@ -100,7 +200,7 @@ function buildContextMenu() {
       },
     },
     {
-      label: 'Minimize to Tray',
+      label: getMenuLabel('minimizeToTray'),
       type: 'checkbox',
       checked: minimizeToTray,
       click: (menuItem) => {
@@ -111,7 +211,7 @@ function buildContextMenu() {
       type: 'separator',
     },
     {
-      label: 'New Game',
+      label: getMenuLabel('newGame'),
       click: () => {
         if (mainWindow) {
           mainWindow.show();
@@ -124,7 +224,7 @@ function buildContextMenu() {
       type: 'separator',
     },
     {
-      label: 'Quit',
+      label: getMenuLabel('quit'),
       click: () => {
         app.quit();
       },
@@ -158,7 +258,7 @@ function initialize(window) {
     }
 
     tray = new Tray(icon);
-    tray.setToolTip('Varginha: Terminal 1996');
+    updateTooltip(getStatusLabel('inMenu'));
     tray.setContextMenu(buildContextMenu());
 
     // Double-click to show window (Windows behavior)
@@ -203,22 +303,22 @@ function initialize(window) {
  */
 function getTrayStatus(gameState) {
   if (!gameState) {
-    return 'In menu';
+    return getStatusLabel('inMenu');
   }
 
   if (gameState.gameOver || gameState.isGameOver) {
-    return gameState.gameWon ? 'Victory!' : 'Game Over';
+    return gameState.gameWon ? getStatusLabel('victory') : getStatusLabel('gameOver');
   }
 
   if (gameState.detectionLevel >= 90) {
-    return `⚠️ Detection: ${gameState.detectionLevel}%`;
+    return getStatusLabel('detectionCritical', { value: gameState.detectionLevel });
   }
 
   if (gameState.detectionLevel >= 50) {
-    return `Detection: ${gameState.detectionLevel}%`;
+    return getStatusLabel('detection', { value: gameState.detectionLevel });
   }
 
-  return 'Investigating...';
+  return getStatusLabel('investigating');
 }
 
 /**
@@ -226,11 +326,27 @@ function getTrayStatus(gameState) {
  * @param {Object} gameState - Current game state
  */
 function updateFromGameState(gameState) {
-  if (!tray) return;
-
+  lastGameState = gameState || null;
   const status = getTrayStatus(gameState);
   updateTooltip(status);
-  tray.setContextMenu(buildContextMenu());
+  if (tray) {
+    tray.setContextMenu(buildContextMenu());
+  }
+}
+
+/**
+ * Sets the tray language for shell-level desktop strings.
+ * @param {string} language - Active UI language
+ * @returns {string}
+ */
+function setLanguage(language) {
+  currentLanguage = normalizeLanguage(language);
+  currentStatus = lastGameState ? getTrayStatus(lastGameState) : getStatusLabel('inMenu');
+  if (tray) {
+    updateTooltip(currentStatus);
+    tray.setContextMenu(buildContextMenu());
+  }
+  return currentLanguage;
 }
 
 /**
@@ -275,6 +391,7 @@ module.exports = {
   updateTooltip,
   getTrayStatus,
   updateFromGameState,
+  setLanguage,
   isMinimizeToTrayEnabled,
   setMinimizeToTray,
   destroy,

@@ -168,7 +168,6 @@ export const BUILD_NUMBER = process.env.NEXT_PUBLIC_BUILD_NUMBER;
 export const COMMIT_SHA = process.env.NEXT_PUBLIC_COMMIT_SHA || 'unknown';
 export const HAS_BUILD_METADATA = !!BUILD_NUMBER && /^\d+$/.test(BUILD_NUMBER) && COMMIT_SHA !== 'unknown';
 export const DEPLOY_VERSION = HAS_BUILD_METADATA ? `v0.${BUILD_NUMBER}.0` : 'dev-local';
-export const VERSION_TOOLTIP = HAS_BUILD_METADATA ? COMMIT_SHA : 'local build';
 
 // CSS-in-JS constant for full-screen overlays
 export const SCREEN_OVERLAY_BOUNDS = { position: 'absolute' as const, inset: 0 };

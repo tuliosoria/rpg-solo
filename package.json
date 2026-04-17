@@ -14,10 +14,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "test": "vitest run --configLoader runner",
-    "test:watch": "vitest --configLoader runner",
-    "test:coverage": "vitest run --configLoader runner --coverage",
+    "start": "node scripts/serve-static.mjs",
+    "test": "node scripts/run-vitest.mjs run --configLoader runner",
+    "test:watch": "node scripts/run-vitest.mjs --configLoader runner",
+    "test:coverage": "node scripts/run-vitest.mjs run --configLoader runner --coverage",
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -29,12 +29,15 @@
     "generate-report": "node scripts/generate-report.js",
     "shrink-story": "node scripts/shrink_and_spice_story.js",
     "validate-fundamentals": "node scripts/story_validator.js",
+    "e2e": "playwright test --config=e2e-tests/playwright.config.ts",
+    "e2e:headed": "playwright test --config=e2e-tests/playwright.config.ts --headed",
     "electron:dev": "electron .",
-    "electron:build": "next build && electron-builder --config electron-builder.yml --win --mac --linux"
+    "electron:build": "npm run build && node scripts/build-electron.mjs",
+    "electron:build:all": "npm run build && electron-builder --config electron-builder.yml --win --mac --linux --publish never"
   },
   "dependencies": {
     "electron-updater": "^6.3.9",
-    "next": "^15.3.3",
+    "next": "^15.5.15",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "steamworks.js": "^0.4.0"

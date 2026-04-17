@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+/.playwright/
 
 # next.js
 /.next/
@@ -22,6 +23,7 @@
 !/build/entitlements.mac.plist
 !/build/icon.*
 !/build/ICON_INSTRUCTIONS.md
+/dist/
 
 # misc
 .DS_Store

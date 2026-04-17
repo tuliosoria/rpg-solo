@@ -789,6 +789,14 @@ ipcMain.handle('tray:updateStatus', (event, status) => {
   return { success: true };
 });
 
+ipcMain.handle('tray:setLanguage', (event, language) => {
+  if (typeof language !== 'string') {
+    return { success: false, error: 'language must be a string' };
+  }
+  if (tray) tray.setLanguage(language);
+  return { success: true };
+});
+
 // ============================================================
 // App lifecycle - Optimized startup sequence
 // ============================================================

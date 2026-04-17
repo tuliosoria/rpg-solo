@@ -164,11 +164,21 @@ function writeMarkdownReport(analysis, outputPath = REPORT_MARKDOWN_PATH) {
 }
 
 function runVitestSuite(testFiles) {
-  const result = spawnSync('npx', ['vitest', 'run', '--configLoader', 'runner', ...testFiles], {
-    cwd: REPO_ROOT,
-    stdio: 'inherit',
-    shell: process.platform === 'win32',
-  });
+  const vitestEntry = path.join(REPO_ROOT, 'node_modules', 'vitest', 'vitest.mjs');
+  const nodeOptions = process.env.NODE_OPTIONS?.trim();
+  const inheritedNodeOptions = nodeOptions ? `${nodeOptions} --no-webstorage` : '--no-webstorage';
+  const result = spawnSync(
+    process.execPath,
+    [vitestEntry, 'run', '--configLoader', 'runner', ...testFiles],
+    {
+      cwd: REPO_ROOT,
+      env: {
+        ...process.env,
+        NODE_OPTIONS: inheritedNodeOptions,
+      },
+      stdio: 'inherit',
+    }
+  );
 
   if (result.error) {
     console.error(`Failed to run story validation suite: ${result.error.message}`);

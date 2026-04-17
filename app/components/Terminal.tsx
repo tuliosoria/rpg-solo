@@ -48,8 +48,9 @@ import {
   UFO74_FIREWALL_REACTION_KEYS,
   TURING_TEST_VIDEO_SRC,
   PRISONER_45_VIDEO_SRC,
+  COMMIT_SHA,
   DEPLOY_VERSION,
-  VERSION_TOOLTIP,
+  HAS_BUILD_METADATA,
   SCREEN_OVERLAY_BOUNDS,
   type EvidenceVideoAttachment,
 } from './terminalConstants';
@@ -906,6 +907,7 @@ export default function Terminal({
   const savedCount = gameState.savedFiles?.size || 0;
   const statusBar = useStatusBar(gameState);
   const riskInfo = useRiskLevel(gameState.detectionLevel);
+  const versionTooltip = HAS_BUILD_METADATA ? COMMIT_SHA : t('terminal.version.localBuild');
   const saveIndicator = useSaveIndicator(gameState.lastSaveTime);
   const attemptsDisplay = useAttemptsDisplay(gameState.legacyAlertCounter || 0);
 
@@ -1210,7 +1212,7 @@ export default function Terminal({
             }}
           >
             {t('terminal.header.title')}{' '}
-            <span className={styles.versionTag} title={VERSION_TOOLTIP}>
+            <span className={styles.versionTag} title={versionTooltip}>
               {DEPLOY_VERSION}
             </span>{' '}
             ▼

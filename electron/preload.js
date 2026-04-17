@@ -238,6 +238,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
     updateStatus: (status) => safeInvoke('tray:updateStatus', status),
 
     /**
+     * Sets the tray language for desktop chrome strings.
+     * @param {'en'|'pt-BR'|'es'} language - Active UI language
+     * @returns {Promise<{success: boolean}>}
+     */
+    setLanguage: (language) => safeInvoke('tray:setLanguage', language),
+
+    /**
      * Listen for new game requests from tray menu.
      * @param {Function} callback - Called when user clicks "New Game" in tray
      */

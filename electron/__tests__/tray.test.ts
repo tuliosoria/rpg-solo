@@ -55,6 +55,7 @@ describe('System Tray Module', () => {
     expect(typeof trayModule.updateTooltip).toBe('function');
     expect(typeof trayModule.getTrayStatus).toBe('function');
     expect(typeof trayModule.updateFromGameState).toBe('function');
+    expect(typeof trayModule.setLanguage).toBe('function');
     expect(typeof trayModule.isMinimizeToTrayEnabled).toBe('function');
     expect(typeof trayModule.setMinimizeToTray).toBe('function');
     expect(typeof trayModule.destroy).toBe('function');

@@ -142,6 +142,12 @@ export interface TrayAPI {
   updateStatus: (status: string) => Promise<{ success: boolean }>;
 
   /**
+   * Sets the tray language for desktop chrome strings.
+   * @param language - Active UI language
+   */
+  setLanguage: (language: 'en' | 'pt-BR' | 'es') => Promise<{ success: boolean }>;
+
+  /**
    * Listen for new game requests from tray menu.
    * @param callback - Called when user clicks "New Game" in tray
    */

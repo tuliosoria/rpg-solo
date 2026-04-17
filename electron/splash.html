@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="und">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading...</title>
+  <title></title>
   <link rel="stylesheet" href="splash.css">
 </head>
 <body>
@@ -17,20 +17,84 @@
       <div class="loading-bar">
         <div class="loading-fill"></div>
       </div>
-      <p class="loading-text">Initializing...</p>
+      <p class="loading-text"></p>
     </div>
     <div class="offline-indicator" id="offline-indicator">
       <span class="offline-icon">⚠</span>
-      <span class="offline-text">Offline Mode</span>
+      <span class="offline-text"></span>
     </div>
   </div>
   <script>
     const splashAPI = window.splashAPI;
+    const TRANSLATIONS = {
+      en: {
+        title: 'Loading...',
+        offlineMode: 'Offline Mode',
+        statuses: {
+          'Initializing...': 'Initializing...',
+          'Checking network...': 'Checking network...',
+          'Connecting to Steam...': 'Connecting to Steam...',
+          'Loading game...': 'Loading game...',
+          'Ready!': 'Ready!',
+        },
+      },
+      'pt-BR': {
+        title: 'Carregando...',
+        offlineMode: 'Modo offline',
+        statuses: {
+          'Initializing...': 'Inicializando...',
+          'Checking network...': 'Verificando rede...',
+          'Connecting to Steam...': 'Conectando ao Steam...',
+          'Loading game...': 'Carregando jogo...',
+          'Ready!': 'Pronto!',
+        },
+      },
+      es: {
+        title: 'Cargando...',
+        offlineMode: 'Modo sin conexión',
+        statuses: {
+          'Initializing...': 'Inicializando...',
+          'Checking network...': 'Comprobando red...',
+          'Connecting to Steam...': 'Conectando con Steam...',
+          'Loading game...': 'Cargando juego...',
+          'Ready!': '¡Listo!',
+        },
+      },
+    };
+
+    function normalizeLanguage(value) {
+      if (typeof value !== 'string') {
+        return 'en';
+      }
+      const normalized = value.toLowerCase();
+      if (normalized.startsWith('pt')) return 'pt-BR';
+      if (normalized.startsWith('es')) return 'es';
+      return 'en';
+    }
+
+    const currentLanguage = normalizeLanguage(navigator.language);
+    const locale = TRANSLATIONS[currentLanguage] || TRANSLATIONS.en;
+    const loadingText = document.querySelector('.loading-text');
+    const offlineText = document.querySelector('.offline-text');
+
+    function translateStatus(status) {
+      return locale.statuses[status] || status;
+    }
+
+    document.documentElement.lang = currentLanguage;
+    document.title = locale.title;
+
+    if (loadingText) {
+      loadingText.textContent = translateStatus('Initializing...');
+    }
+
+    if (offlineText) {
+      offlineText.textContent = locale.offlineMode;
+    }
 
     splashAPI?.onStatus((status) => {
-      const loadingText = document.querySelector('.loading-text');
       if (loadingText) {
-        loadingText.textContent = status;
+        loadingText.textContent = translateStatus(status);
       }
     });
 

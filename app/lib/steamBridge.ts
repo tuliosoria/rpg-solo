@@ -482,6 +482,28 @@ export async function updateTrayStatus(status: string): Promise<SteamBridgeResul
 }
 
 /**
+ * Updates the tray locale to match the active renderer language.
+ *
+ * @param language - Active UI language
+ * @returns Result indicating success
+ */
+export async function setTrayLanguage(
+  language: 'en' | 'pt-BR' | 'es'
+): Promise<SteamBridgeResult> {
+  const api = getElectronAPI();
+  if (!api?.tray?.setLanguage) {
+    return { success: false, error: 'Tray not available' };
+  }
+  try {
+    return await api.tray.setLanguage(language);
+  } catch (e) {
+    const error = e instanceof Error ? e.message : 'Unknown error';
+    console.error('Set tray language failed:', error);
+    return { success: false, error };
+  }
+}
+
+/**
  * Registers a callback for new game requests from tray.
  *
  * @param callback - Function to call when user clicks "New Game" in tray
@@ -535,5 +557,6 @@ export const steamBridge = {
   setMinimizeToTray,
   isMinimizeToTrayEnabled,
   updateTrayStatus,
+  setTrayLanguage,
   onTrayNewGame,
 };

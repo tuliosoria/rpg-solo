@@ -150,6 +150,23 @@ export default function Victory({
   const timings = AOL_TIMINGS[textSpeed] ?? AOL_TIMINGS.normal;
   const leakPath = hasLeakedFiles ? 'public' : ENDING_LEAK_PATHS[resolvedEndingId];
   const leakPathLabel = t(`ending.dossier.path.${leakPath}`);
+  const browserMenuLabels = [
+    t('ending.aol.menu.file'),
+    t('ending.aol.menu.edit'),
+    t('ending.aol.menu.view'),
+    t('ending.aol.menu.go'),
+    t('ending.aol.menu.bookmarks'),
+    t('ending.aol.menu.options'),
+    t('ending.aol.menu.directory'),
+    t('ending.aol.menu.help'),
+  ];
+  const browserNavLabels = [
+    `◄ ${t('ending.aol.nav.back')}`,
+    `► ${t('ending.aol.nav.forward')}`,
+    `⟲ ${t('ending.aol.nav.reload')}`,
+    `🏠 ${t('ending.aol.nav.home')}`,
+    `🔍 ${t('ending.aol.nav.search')}`,
+  ];
   const replaySuggestions = useMemo(() => {
     const suggestions: string[] = [];
     if (!hasLeakedFiles) suggestions.push(t('ending.dossier.replay.public'));
@@ -280,7 +297,7 @@ export default function Victory({
         {/* ── Title Bar ── */}
         <div className={styles.titleBar} aria-hidden="true">
           <span className={styles.titleBarText}>
-            Netscape - [AOL News: Breaking Report]
+            {t('ending.aol.windowTitle')}
           </span>
           <div className={styles.windowControls}>
             <span className={styles.windowBtn}>_</span>
@@ -291,23 +308,21 @@ export default function Victory({
 
         {/* ── Menu Bar ── */}
         <div className={styles.menuBar} aria-hidden="true">
-          <span>File</span><span>Edit</span><span>View</span>
-          <span>Go</span><span>Bookmarks</span><span>Options</span>
-          <span>Directory</span><span>Help</span>
+          {browserMenuLabels.map(label => (
+            <span key={label}>{label}</span>
+          ))}
         </div>
 
         {/* ── Toolbar ── */}
         <div className={styles.toolbar} aria-hidden="true">
-          <span className={styles.navBtn}>◄ Back</span>
-          <span className={styles.navBtn}>► Forward</span>
-          <span className={styles.navBtn}>⟲ Reload</span>
-          <span className={styles.navBtn}>🏠 Home</span>
-          <span className={styles.navBtn}>🔍 Search</span>
+          {browserNavLabels.map(label => (
+            <span key={label} className={styles.navBtn}>{label}</span>
+          ))}
         </div>
 
         {/* ── Address Bar ── */}
         <div className={styles.addressBar} aria-hidden="true">
-          <span className={styles.locationLabel}>Location:</span>
+          <span className={styles.locationLabel}>{t('ending.aol.locationLabel')}</span>
           <div className={styles.urlField}>{aol.url}</div>
         </div>
 

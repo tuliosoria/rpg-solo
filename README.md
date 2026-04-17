@@ -63,7 +63,7 @@ Available for Windows, macOS, and Linux via Electron:
 npm run electron:build
 ```
 
-The local desktop build uses the same `electron-builder.yml` config as CI. Steam features degrade gracefully when no App ID or Steam client is available, and tray minimize remains optional instead of hijacking close by default.
+`electron:build` packages the current platform locally. CI still produces Windows, macOS, and Linux artifacts from the shared `electron-builder.yml` matrix. Steam features degrade gracefully when no App ID or Steam client is available, and tray minimize remains optional instead of hijacking close by default.
 
 ## Project Structure
 
@@ -88,6 +88,8 @@ app/
 
 GitHub Actions validates every commit:
 - ✅ Unit & integration tests
+- ✅ Story consistency validation
+- ✅ Playwright end-to-end smoke coverage
 - ✅ Web production build
 - ✅ Cross-platform desktop packaging
 
