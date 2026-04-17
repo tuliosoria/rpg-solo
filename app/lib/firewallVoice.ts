@@ -8,11 +8,13 @@ import { translateStatic } from '../i18n';
 // Creepy voice phrases for firewall eyes
 export const FIREWALL_PHRASES = [
   { key: 'firewall.voice.seeYou', fallback: 'I see you' },
-  { key: 'firewall.voice.youWillFail', fallback: 'You will fail' },
-  { key: 'firewall.voice.weBlockYou', fallback: 'We block you' },
-  { key: 'firewall.voice.cannotEscape', fallback: 'Cannot escape' },
-  { key: 'firewall.voice.foundYou', fallback: 'Found you' },
   { key: 'firewall.voice.resistanceIsFutile', fallback: 'Resistance is futile' },
+  { key: 'firewall.voice.intruderDetected', fallback: 'Intruder detected' },
+  { key: 'firewall.voice.youShouldNotBeHere', fallback: 'You should not be here' },
+  { key: 'firewall.voice.unexpectedVisitor', fallback: 'Unexpected visitor' },
+  { key: 'firewall.voice.runningOutOfTime', fallback: 'You are running out of time' },
+  { key: 'firewall.voice.hidingDoesNotHelp', fallback: 'Hiding does not help' },
+  { key: 'firewall.voice.weKnowWhatYouFound', fallback: 'We know what you found' },
 ];
 
 export const FIREWALL_PHRASE_TEXT = FIREWALL_PHRASES.map(phrase =>
@@ -21,15 +23,14 @@ export const FIREWALL_PHRASE_TEXT = FIREWALL_PHRASES.map(phrase =>
 
 // Firewall audio — plays pre-recorded audio files instead of TTS
 const FIREWALL_AUDIO_PATHS = [
-  '/audio/firewall-taunt-1.wav',
-  '/audio/firewall-taunt-2.wav',
-  '/audio/firewall-taunt-3.wav',
-  '/audio/firewall-taunt-4.wav',
-  '/audio/firewall-taunt-5.wav',
-  '/audio/firewall-taunt-6.wav',
-  '/audio/firewall-taunt-7.wav',
-  '/audio/firewall-taunt-8.wav',
-  '/audio/firewall-taunt-9.wav',
+  '/audio/firewall-taunt-1.mp3',
+  '/audio/firewall-taunt-2.mp3',
+  '/audio/firewall-taunt-3.mp3',
+  '/audio/firewall-taunt-4.mp3',
+  '/audio/firewall-taunt-5.mp3',
+  '/audio/firewall-taunt-6.mp3',
+  '/audio/firewall-taunt-7.mp3',
+  '/audio/firewall-taunt-8.mp3',
 ];
 
 let firewallAudioElements: HTMLAudioElement[] = [];
