@@ -1280,7 +1280,7 @@ registerLines(
     Confiabilidade: ALTA. Conexão familiar com militares.
   EVITAR:
     Revista Fenômenos — publicação de UFO.
-    Editor PACACCINI hostil, não pode ser controlado.
+    Editor MONTEIRO hostil, não pode ser controlado.
     Apenas monitorar. Não se envolver.
   `,
   `
@@ -1296,7 +1296,7 @@ registerLines(
     Confiabilidad: ALTA. Conexión familiar con militares.
   EVITAR:
     Revista Fenômenos — publicación de OVNI.
-    Editor PACACCINI hostil, no puede ser controlado.
+    Editor MONTEIRO hostil, no puede ser controlado.
     Solo monitorear. No contactar.
   `
 );
@@ -1792,7 +1792,7 @@ registerLines(
 );
 
 registerLines(
-  expansionData.chereze_incident_report.content,
+  expansionData.duarte_incident_report.content,
   `
   INCIDENTE DE CONTATO — OFICIAL [CLASSIFICADO]
   ARQUIVO: VAR-96-MED-007 — ULTRASSECRETO

@@ -502,7 +502,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       'a processar os relatórios iniciais. Eu vi as fotografias.',
     'I read the field notes. I watched the videos.': 'Li as notas de campo. Assisti aos vídeos.',
     'And I saw what they did to the witnesses.': 'E vi o que fizeram com as testemunhas.',
-    'Sergeant Marco Cherese. Officer João Marcos.': 'Sargento Marco Cherese. Oficial João Marcos.',
+    'Sergeant Marco Duarte. Officer João Marcos.': 'Sargento Marco Duarte. Oficial João Marcos.',
     'Hospital workers who asked questions.': 'Funcionários do hospital que fizeram perguntas.',
     'Journalists who got too close.': 'Jornalistas que chegaram perto demais.',
     'Some were silenced. Some were discredited.':
@@ -2301,7 +2301,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     'AVOID:': 'EVITAR:',
     '  Revista Fenômenos (UFO publication)': '  Revista Fenômenos (publicação sobre OVNIs)',
     '    CANNOT be controlled': '    NÃO PODE ser controlado',
-    '    Editor PACACCINI known hostile': '    Editor PACACCINI reconhecidamente hostil',
+    '    Editor MONTEIRO known hostile': '    Editor MONTEIRO reconhecidamente hostil',
     '    Monitor only, do not engage': '    Apenas monitorar, não engajar',
     // ═══ expansionContent.ts — kill_story_memo ═══
     'URGENT MEMORANDUM — MEDIA SUPPRESSION': 'MEMORANDO URGENTE — SUPRESSÃO DE MÍDIA',
@@ -2908,7 +2908,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '  temporary holding of recovered fauna specimen.':
       '  confinamento temporário do espécime de fauna recuperado.',
     '  See: /ops/zoo/animal_deaths_report.txt': '  Ver: /ops/zoo/animal_deaths_report.txt',
-    // ═══ expansionContent.ts — chereze_incident_report ═══
+    // ═══ expansionContent.ts — duarte_incident_report ═══
     'INCIDENT REPORT — OFFICER [CLASSIFIED]': 'RELATÓRIO DE INCIDENTE — OFICIAL [CLASSIFICADO]',
     'CLASSIFICATION: TOP SECRET': 'CLASSIFICAÇÃO: ULTRA SECRETO',
     'FILE: VAR-96-MED-007': 'ARQUIVO: VAR-96-MED-007',
@@ -6339,7 +6339,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       'en procesar los informes iniciales. Vi las fotografías.',
     'I read the field notes. I watched the videos.': 'Leí las notas de campo. Vi los videos.',
     'And I saw what they did to the witnesses.': 'Y vi lo que les hicieron a los testigos.',
-    'Sergeant Marco Cherese. Officer João Marcos.': 'Sargento Marco Cherese. Oficial João Marcos.',
+    'Sergeant Marco Duarte. Officer João Marcos.': 'Sargento Marco Duarte. Oficial João Marcos.',
     'Hospital workers who asked questions.': 'Trabajadores del hospital que hicieron preguntas.',
     'Journalists who got too close.': 'Periodistas que se acercaron demasiado.',
     'Some were silenced. Some were discredited.':
@@ -8153,7 +8153,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     'AVOID:': 'EVITAR:',
     '  Revista Fenômenos (UFO publication)': '  Revista Fenômenos (publicación sobre OVNIs)',
     '    CANNOT be controlled': '    NO PUEDE ser controlado',
-    '    Editor PACACCINI known hostile': '    Editor PACACCINI conocido como hostil',
+    '    Editor MONTEIRO known hostile': '    Editor MONTEIRO conocido como hostil',
     '    Monitor only, do not engage': '    Solo monitorear, no intervenir',
     // ═══ expansionContent.ts — kill_story_memo ═══
     'URGENT MEMORANDUM — MEDIA SUPPRESSION': 'MEMORANDO URGENTE — SUPRESIÓN DE MEDIOS',
@@ -8764,7 +8764,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '  temporary holding of recovered fauna specimen.':
       '  confinamiento temporal del espécimen de fauna recuperado.',
     '  See: /ops/zoo/animal_deaths_report.txt': '  Ver: /ops/zoo/animal_deaths_report.txt',
-    // ═══ expansionContent.ts — chereze_incident_report ═══
+    // ═══ expansionContent.ts — duarte_incident_report ═══
     'INCIDENT REPORT — OFFICER [CLASSIFIED]': 'INFORME DE INCIDENTE — OFICIAL [CLASIFICADO]',
     'CLASSIFICATION: TOP SECRET': 'CLASIFICACIÓN: ULTRA SECRETO',
     'FILE: VAR-96-MED-007': 'EXPEDIENTE: VAR-96-MED-007',

@@ -16,7 +16,7 @@ import {
   MIB_DIR,
   COVERUP_DIR,
   ZOO_DIR,
-  CHEREZE_DIR,
+  DUARTE_DIR,
   coffee_harvest_report,
   weather_report_jan96,
   local_politics_memo,
@@ -3523,13 +3523,13 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         mib: MIB_DIR,
         // NEW: Zoo incident (animal deaths)
         zoo: ZOO_DIR,
-        // NEW: Medical operations including Chereze case
+        // NEW: Medical operations including Duarte case
         medical: {
           type: 'dir',
           name: 'medical',
           requiredFlags: ['adminUnlocked'],
           children: {
-            contact_fatality: CHEREZE_DIR,
+            contact_fatality: DUARTE_DIR,
           },
         },
       },

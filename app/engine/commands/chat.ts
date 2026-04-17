@@ -60,7 +60,7 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
       'PRISONER_45> The surviving one grabbed Sergeant Lopes. Lopes said he saw the sun die. He shot himself in March.',
       'PRISONER_45> Brazil, Russia, Peru. Same week. Same type of craft. Coordinated. Like a survey team.',
       'PRISONER_45> The American team arrived within 4 hours. FOUR. From Wright-Patterson. They already had containment protocols ready. They KNEW.',
-      'PRISONER_45> The girls who saw it in Jardim Andere... Liliane, Valquiria, Katia. They were chosen. Selected. I saw their names in files that predate the crash by MONTHS.',
+      'PRISONER_45> The girls who saw it in Jardim Andere... Luciana, Renata, Cintia. They were chosen. Selected. I saw their names in files that predate the crash by MONTHS.',
       "PRISONER_45> The creature at Humanitas hospital. Room 18. It healed two patients before it died. The hospital's records for that week were incinerated.",
     ],
   ],
@@ -234,7 +234,7 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
     [
       'PRISONER_45> When they harvest, you keep experiencing. Forever. Consciousness without body. Without time. Without end.',
       "PRISONER_45> Death would be mercy. They don't offer mercy. They offer CONTINUATION.",
-      'PRISONER_45> Marco Cherese. Military police. First to touch one. Dead 7 months later. The autopsy found something GROWING in his temporal lobe. Still active.',
+      'PRISONER_45> Marco Duarte. Military police. First to touch one. Dead 7 months later. The autopsy found something GROWING in his temporal lobe. Still active.',
       'PRISONER_45> The doctors at Humanitas. The nurses. The janitor who mopped the room after. All dead within 5 years. All from different causes. All with the same expression frozen on their faces.',
     ],
   ],
@@ -302,7 +302,7 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
       'PRISONER_45> The lab is three floors below. I hear the machines at night.',
     ],
     [
-      'PRISONER_45> The autopsy of the dead creatures was performed at Unicamp. In secret. The lead pathologist, Dr. Badan Palhares. He went public years later. They silenced him.',
+      'PRISONER_45> The autopsy of the dead creatures was performed at Unicamp. In secret. The lead pathologist, Dr. Cortez. He went public years later. They silenced him.',
       'PRISONER_45> The tissue samples defied analysis. Cells without DNA as we know it. Information encoded in protein structures we have no names for.',
       'PRISONER_45> They tried to communicate with the surviving one through electrodes. It absorbed the electricity. The lab had to be evacuated.',
       'PRISONER_45> The experiments continue. On the exposed personnel. I am experiment 45. There are at least 70 of us.',
@@ -321,14 +321,14 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
       'PRISONER_45> Dozens of people saw things that week. Most were convinced they imagined it.',
     ],
     [
-      'PRISONER_45> Liliane, Valquiria, Katia. Three teenage girls. They saw it crouching by the wall. Oily brown skin. Those red eyes.',
+      'PRISONER_45> Luciana, Renata, Cintia. Three teenage girls. They saw it crouching by the wall. Oily brown skin. Those red eyes.',
       'PRISONER_45> The creature had three protrusions on its head. Not horns. Sensory organs. It was SCANNING them.',
       'PRISONER_45> The girls ran screaming. The creature watched them go. It could have followed. It chose not to. It had what it needed.',
       'PRISONER_45> Every witness was visited afterward. Men in suits. Not Brazilian suits. American tailoring. They all signed papers they never received copies of.',
     ],
     [
       'PRISONER_45> Some witnesses died. Conveniently. Heart attacks at 30. Car accidents on empty roads. A pattern invisible unless you map it.',
-      "PRISONER_45> Corporal Marco Cherese. He physically held one of the creatures. Bare hands. He described it as 'holding a living fever dream'. Dead February 15th. The shortest interval.",
+      "PRISONER_45> Corporal Marco Duarte. He physically held one of the creatures. Bare hands. He described it as 'holding a living fever dream'. Dead February 15th. The shortest interval.",
       'PRISONER_45> The zoo animals went berserk that week. The zoo director called the military. Why would you call the MILITARY about agitated animals?',
       'PRISONER_45> The Jardim Andere neighborhood. GPS coordinates: -21.551, -45.438. Stand there at 3:30 PM on January 20th. The ground still hums.',
     ],
@@ -637,10 +637,10 @@ function getPrisoner45Response(
     q.includes('testimony') ||
     q.includes('firefight') ||
     q.includes('bombeiro') ||
-    q.includes('liliane') ||
-    q.includes('valquiria') ||
-    q.includes('katia') ||
-    q.includes('kátia') ||
+    q.includes('luciana') ||
+    q.includes('renata') ||
+    q.includes('cintia') ||
+    q.includes('cintia') ||
     q.includes('testemunha') ||
     q.includes('jardim andere') ||
     q.includes('andere') ||
@@ -917,7 +917,7 @@ function getPrisoner45Response(
     q.includes('life') ||
     q.includes('living') ||
     q.includes('marco') ||
-    q.includes('cherese') ||
+    q.includes('duarte') ||
     q.includes('corporal')
   ) {
     category = 'death';

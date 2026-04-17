@@ -859,7 +859,7 @@
       "author": "Military medical / intelligence",
       "authorRole": "Medical cover-up officer",
       "voiceTone": "clinical, suppressive",
-      "ufo74Reaction": "chereze. the officer who touched it. dead within weeks. and they covered it up."
+      "ufo74Reaction": "duarte. the officer who touched it. dead within weeks. and they covered it up."
     },
     {
       "filename": "autopsy_suppression.txt",
@@ -1144,7 +1144,7 @@
     {
       "filename": "media_contacts.txt",
       "path": "/comms/media_ops/media_contacts.txt",
-      "content": "═══════════════════════════════════════════════════════════\nCOOPERATIVE MEDIA CONTACTS\nUPDATED: JAN 1996 — INTERNAL USE ONLY\n═══════════════════════════════════════════════════════════\n\nTELEVISION:\n  SANTOS, Eduardo — Rede Nacional, News Director\n  Reliability: HIGH. Cooperative since 1989.\n\nPRINT:\n  RODRIGUES, André — O Diário Nacional, City Desk\n  Reliability: HIGH. Has killed 3 stories for us.\n\n  PEREIRA, Helena — Estado de Minas, Regional\n  Reliability: HIGH. Family connection to military.\n\n───────────────────────────────────────────────────────────\nAVOID:\n\n  Revista Fenômenos — UFO publication.\n  Editor PACACCINI hostile, cannot be controlled.\n  Monitor only. Do not engage.\n\n═══════════════════════════════════════════════════════════",
+      "content": "═══════════════════════════════════════════════════════════\nCOOPERATIVE MEDIA CONTACTS\nUPDATED: JAN 1996 — INTERNAL USE ONLY\n═══════════════════════════════════════════════════════════\n\nTELEVISION:\n  SANTOS, Eduardo — Rede Nacional, News Director\n  Reliability: HIGH. Cooperative since 1989.\n\nPRINT:\n  RODRIGUES, André — O Diário Nacional, City Desk\n  Reliability: HIGH. Has killed 3 stories for us.\n\n  PEREIRA, Helena — Estado de Minas, Regional\n  Reliability: HIGH. Family connection to military.\n\n───────────────────────────────────────────────────────────\nAVOID:\n\n  Revista Fenômenos — UFO publication.\n  Editor MONTEIRO hostile, cannot be controlled.\n  Monitor only. Do not engage.\n\n═══════════════════════════════════════════════════════════",
       "isEvidence": true,
       "status": "restricted",
       "characterCount": 748,

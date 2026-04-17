@@ -38,7 +38,7 @@ const SECRET_TEXT = [
   '',
   '───────────────────────────────────────────────────────────',
   '',
-  'Sergeant Marco Cherese. Officer João Marcos.',
+  'Sergeant Marco Duarte. Officer João Marcos.',
   'Hospital workers who asked questions.',
   'Journalists who got too close.',
   '',

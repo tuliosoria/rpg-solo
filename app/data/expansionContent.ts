@@ -73,7 +73,7 @@ export const media_contacts: FileNode = {
     'AVOID:',
     '',
     '  Revista Fenômenos — UFO publication.',
-    '  Editor PACACCINI hostile, cannot be controlled.',
+    '  Editor MONTEIRO hostile, cannot be controlled.',
     '  Monitor only. Do not engage.',
     '',
     '═══════════════════════════════════════════════════════════',
@@ -538,7 +538,7 @@ export const contamination_theory: FileNode = {
 // Military police officer death from specimen contact
 // ═══════════════════════════════════════════════════════════════════════════
 
-export const chereze_incident_report: FileNode = {
+export const duarte_incident_report: FileNode = {
   type: 'file',
   name: 'contact_incident_report.txt',
   status: 'restricted',
@@ -888,13 +888,13 @@ export const ZOO_DIR: DirectoryNode = {
   },
 };
 
-export const CHEREZE_DIR: DirectoryNode = {
+export const DUARTE_DIR: DirectoryNode = {
   type: 'dir',
   name: 'contact_fatality',
   requiredFlags: ['adminUnlocked'],
   accessThreshold: 3,
   children: {
-    'contact_incident_report.txt': chereze_incident_report,
+    'contact_incident_report.txt': duarte_incident_report,
     'autopsy_suppression.txt': autopsy_suppression,
     'family_compensation.txt': family_compensation,
   },

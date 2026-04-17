@@ -96,7 +96,7 @@ export const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'contamination_theory.txt':
     'contamination theory. the story they fed to the press about the dead animals.',
   'contact_incident_report.txt':
-    'chereze. the officer who touched it. dead within weeks. and they covered it up.',
+    'duarte. the officer who touched it. dead within weeks. and they covered it up.',
   'autopsy_suppression.txt':
     'autopsy suppression. they blocked the examination of a dead officer. why.',
   'family_compensation.txt':

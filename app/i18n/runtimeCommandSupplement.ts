@@ -323,8 +323,8 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'silenciaram o veterinário. o que fez perguntas demais.',
     'contamination theory. the story they fed to the press about the dead animals.':
       'teoria da contaminação. a história que empurraram para a imprensa sobre os animais mortos.',
-    'chereze. the officer who touched it. dead within weeks. and they covered it up.':
-      'chereze. o oficial que tocou nele. morto em semanas. e encobriram tudo.',
+    'duarte. the officer who touched it. dead within weeks. and they covered it up.':
+      'duarte. o oficial que tocou nele. morto em semanas. e encobriram tudo.',
     'autopsy suppression. they blocked the examination of a dead officer. why.':
       'supressão da autópsia. bloquearam o exame de um oficial morto. por quê.',
     'family compensation. they paid the family to stay quiet. blood money.':
@@ -1126,8 +1126,8 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'silenciaron al veterinario. el que hizo demasiadas preguntas.',
     'contamination theory. the story they fed to the press about the dead animals.':
       'teoría de la contaminación. la historia que alimentaron a la prensa sobre los animales muertos.',
-    'chereze. the officer who touched it. dead within weeks. and they covered it up.':
-      'chereze. el oficial que lo tocó. muerto en semanas. y lo encubrieron.',
+    'duarte. the officer who touched it. dead within weeks. and they covered it up.':
+      'duarte. el oficial que lo tocó. muerto en semanas. y lo encubrieron.',
     'autopsy suppression. they blocked the examination of a dead officer. why.':
       'supresión de la autopsia. bloquearon el examen de un oficial muerto. por qué.',
     'family compensation. they paid the family to stay quiet. blood money.':
