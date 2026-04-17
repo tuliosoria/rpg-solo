@@ -36,6 +36,7 @@ export type SoundType =
   | 'creepy' // Unsettling avatar entrance
   | 'omen' // Sparse, low-volume unease cue
   | 'fanfare' // Zelda-like celebration sound
+  | 'hover' // Menu hover blip
   | 'morse'; // Morse code transmission beeps
 
 // Sound configuration
@@ -62,6 +63,7 @@ const SOUND_CONFIG: Record<SoundType, SoundConfig> = {
   creepy: { volume: 0.45 }, // Unsettling avatar entrance
   omen: { volume: 0.1 }, // Brief whisper/static pulse for subtle dread
   fanfare: { volume: 0.5 }, // Zelda-like celebration
+  hover: { volume: 0.12 }, // Menu hover blip
   morse: { volume: 0.4 }, // Morse code transmission beeps
 };
 
@@ -618,6 +620,13 @@ export function useSound() {
             }, delay * 1000);
             delay += note.duration;
           });
+          break;
+        }
+
+        case 'hover': {
+          // Short, soft blip for menu hover — retro terminal tick
+          createOscillatorSound(audioContext, 'sine', 1200, 0.025, volume * 0.5);
+          createOscillatorSound(audioContext, 'triangle', 600, 0.015, volume * 0.3);
           break;
         }
 

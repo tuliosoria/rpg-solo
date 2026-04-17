@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SaveSlot, FlickerIntensity, FontSize, TextSpeed } from '../types';
 import { getSaveSlots, getSaveSlotsAsync, deleteSave } from '../storage/saves';
 import { useOptions } from '../hooks/useOptions';
+import { useSound } from '../hooks';
 import { useI18n } from '../i18n';
 import styles from './Menu.module.css';
 
@@ -29,6 +30,15 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
   // Options state
   const { options, setOption } = useOptions();
   const { language, setLanguage, t } = useI18n();
+  const { playSound } = useSound();
+
+  const handleHover = useCallback(
+    (index: number) => {
+      setSelectedIndex(index);
+      playSound('hover');
+    },
+    [playSound]
+  );
 
   const cycleLanguage = useCallback((direction: 1 | -1 = 1) => {
     const ordered = ['en', 'pt-BR', 'es'] as const;
@@ -321,7 +331,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         <button
           className={`${styles.menuButton} ${selectedIndex === 0 ? styles.selected : ''}`}
           onClick={handleStartNewGame}
-          onMouseEnter={() => setSelectedIndex(0)}
+          onMouseEnter={() => handleHover(0)}
         >
           {selectedIndex === 0 ? '▶ ' : '  '}{t('menu.main.newGame')}
         </button>
@@ -329,7 +339,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         <button
           className={`${styles.menuButton} ${selectedIndex === 1 ? styles.selected : ''}`}
           onClick={() => setScreen('load')}
-          onMouseEnter={() => setSelectedIndex(1)}
+          onMouseEnter={() => handleHover(1)}
         >
           {selectedIndex === 1 ? '▶ ' : '  '}{t('menu.main.loadGame')}
         </button>
@@ -337,7 +347,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         <button
           className={`${styles.menuButton} ${selectedIndex === 2 ? styles.selected : ''}`}
           onClick={() => setScreen('options')}
-          onMouseEnter={() => setSelectedIndex(2)}
+          onMouseEnter={() => handleHover(2)}
         >
           {selectedIndex === 2 ? '▶ ' : '  '}{t('menu.main.options')}
         </button>
@@ -345,7 +355,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         <button
           className={`${styles.menuButton} ${selectedIndex === 3 ? styles.selected : ''}`}
           onClick={() => setScreen('credits')}
-          onMouseEnter={() => setSelectedIndex(3)}
+          onMouseEnter={() => handleHover(3)}
         >
           {selectedIndex === 3 ? '▶ ' : '  '}{t('menu.main.credits')}
         </button>
@@ -380,7 +390,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
               onClick={() => {
                 void handleLoadSelection(slot.id);
               }}
-              onMouseEnter={() => setSelectedIndex(index)}
+              onMouseEnter={() => handleHover(index)}
             >
               <div className={styles.saveSelector}>{selectedIndex === index ? '▶' : ' '}</div>
               <div className={styles.saveContent}>
@@ -418,7 +428,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
       <button
         className={`${styles.backButton} ${selectedIndex === saves.length ? styles.selected : ''}`}
         onClick={handleReturnToMain}
-        onMouseEnter={() => setSelectedIndex(saves.length)}
+        onMouseEnter={() => handleHover(saves.length)}
       >
         {selectedIndex === saves.length ? '▶ ' : '  '}{t('menu.load.back')}
       </button>
@@ -501,7 +511,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             {/* Master Volume Slider */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 0 ? styles.selected : ''}`}
-              onMouseEnter={() => setSelectedIndex(0)}
+              onMouseEnter={() => handleHover(0)}
             >
               <span className={styles.optionLabel}>{t('menu.options.masterVolume')}</span>
               <div className={styles.sliderContainer}>
@@ -520,7 +530,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             {/* Ambient Sound Toggle */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 1 ? styles.selected : ''}`}
-              onMouseEnter={() => setSelectedIndex(1)}
+              onMouseEnter={() => handleHover(1)}
               onClick={() => setOption('ambientSoundEnabled', !options.ambientSoundEnabled)}
             >
               <span className={styles.optionLabel}>{t('menu.options.ambientSound')}</span>
@@ -532,7 +542,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             {/* Sound Effects Toggle */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 2 ? styles.selected : ''}`}
-              onMouseEnter={() => setSelectedIndex(2)}
+              onMouseEnter={() => handleHover(2)}
               onClick={() => setOption('soundEffectsEnabled', !options.soundEffectsEnabled)}
             >
               <span className={styles.optionLabel}>{t('menu.options.soundEffects')}</span>
@@ -544,7 +554,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             {/* Turing Voice Toggle */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 3 ? styles.selected : ''}`}
-              onMouseEnter={() => setSelectedIndex(3)}
+              onMouseEnter={() => handleHover(3)}
               onClick={() => setOption('turingVoiceEnabled', !options.turingVoiceEnabled)}
             >
               <span className={styles.optionLabel}>{t('menu.options.turingVoice')}</span>
@@ -561,7 +571,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             {/* CRT Effects Toggle */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 4 ? styles.selected : ''}`}
-              onMouseEnter={() => setSelectedIndex(4)}
+              onMouseEnter={() => handleHover(4)}
               onClick={() => setOption('crtEffectsEnabled', !options.crtEffectsEnabled)}
             >
               <span className={styles.optionLabel}>{t('menu.options.crtEffects')}</span>
@@ -573,7 +583,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             {/* Screen Flicker Toggle */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 5 ? styles.selected : ''}`}
-              onMouseEnter={() => setSelectedIndex(5)}
+              onMouseEnter={() => handleHover(5)}
               onClick={() => setOption('screenFlickerEnabled', !options.screenFlickerEnabled)}
             >
               <span className={styles.optionLabel}>{t('menu.options.screenFlicker')}</span>
@@ -585,7 +595,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             {/* Flicker Intensity Select (only when flicker is on) */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 6 ? styles.selected : ''} ${!options.screenFlickerEnabled ? styles.optionDisabled : ''}`}
-              onMouseEnter={() => setSelectedIndex(6)}
+              onMouseEnter={() => handleHover(6)}
               onClick={() => {
                 if (options.screenFlickerEnabled) {
                   const currentIdx = flickerOptions.indexOf(options.flickerIntensity);
@@ -609,7 +619,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             {/* Font Size Select */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 7 ? styles.selected : ''}`}
-              onMouseEnter={() => setSelectedIndex(7)}
+              onMouseEnter={() => handleHover(7)}
               onClick={() => {
                 const currentIdx = fontSizeOptions.indexOf(options.fontSize);
                 const nextIdx = (currentIdx + 1) % fontSizeOptions.length;
@@ -631,7 +641,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             {/* Text Speed Select */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 8 ? styles.selected : ''}`}
-              onMouseEnter={() => setSelectedIndex(8)}
+              onMouseEnter={() => handleHover(8)}
               onClick={() => {
                 const currentIdx = textSpeedOptions.indexOf(options.textSpeed);
                 const nextIdx = (currentIdx + 1) % textSpeedOptions.length;
@@ -655,7 +665,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
             {/* Language Select */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 9 ? styles.selected : ''}`}
-              onMouseEnter={() => setSelectedIndex(9)}
+              onMouseEnter={() => handleHover(9)}
               onClick={() => cycleLanguage()}
             >
               <span className={styles.optionLabel}>{t('menu.options.language')}</span>
@@ -675,7 +685,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         <button
           className={`${styles.backButton} ${selectedIndex === 10 ? styles.selected : ''}`}
           onClick={() => setScreen('main')}
-          onMouseEnter={() => setSelectedIndex(10)}
+          onMouseEnter={() => handleHover(10)}
         >
           {selectedIndex === 10 ? '▶ ' : '  '}{t('menu.options.back')}
         </button>
