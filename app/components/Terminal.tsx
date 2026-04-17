@@ -68,7 +68,6 @@ export { normalizeVideoPromptChoice } from './terminalHelpers';
 const ImageOverlay = dynamic(() => import('./overlays/ImageOverlay'), { ssr: false });
 const TuringTestOverlay = dynamic(() => import('./overlays/TuringTestOverlay'), { ssr: false });
 const GameOver = dynamic(() => import('./endings/GameOver'), { ssr: false });
-const Blackout = dynamic(() => import('./endings/Blackout'), { ssr: false });
 const StaticNoise = dynamic(() => import('./StaticNoise'), { ssr: false });
 const Victory = dynamic(() => import('./endings/Victory'), { ssr: false });
 const BadEnding = dynamic(() => import('./endings/BadEnding'), { ssr: false });
@@ -509,7 +508,6 @@ export default function Terminal({
   }, [setFlickerActive]);
 
   const {
-    handleBlackoutComplete,
     handleRestart,
     handleFirewallActivate,
   } = useGameActions({
@@ -1043,10 +1041,6 @@ export default function Terminal({
   };
 
   // Render different phases
-  if (gamePhase === 'blackout') {
-    return <Blackout onCompleteAction={handleBlackoutComplete} />;
-  }
-
   if (gamePhase === 'victory') {
     return (
       <FloatingUIProvider>

@@ -47,7 +47,7 @@ export const deriveGamePhase = (state: GameState): GamePhase => {
   if (state.endingType === 'bad') return 'bad_ending';
   if (state.endingType === 'neutral') return 'neutral_ending';
   if (state.gameWon || state.endingType === 'good') return 'victory';
-  if (state.evidencesSaved) return 'blackout';
+  if (state.evidencesSaved) return 'victory';
   return 'terminal';
 };
 

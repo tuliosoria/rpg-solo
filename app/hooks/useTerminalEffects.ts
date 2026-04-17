@@ -7,6 +7,7 @@ import { createEntryI18n } from '../engine/commands/utils';
 import { appendToHistory } from '../lib/appendToHistory';
 import { autoSave } from '../storage/saves';
 import { addPlaytime } from '../storage/statistics';
+import { determineEnding } from '../engine/endings';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { AUTOSAVE_INTERVAL_MS } from '../constants/timing';
 import {
@@ -458,17 +459,27 @@ export function useTerminalEffects({
     return () => clearInterval(interval);
   }, [gamePhase, gameStateRef, setGameState]);
 
-  // Phase transition: when evidencesSaved becomes true, trigger blackout
+  // Phase transition: when evidencesSaved becomes true, go directly to victory
   // Victory takes priority over isGameOver: if detection hit 100% on the same command,
   // we still want to show the victory sequence rather than stall in 'terminal'.
   useEffect(() => {
     if (gameState.evidencesSaved && gamePhase === 'terminal') {
       const timer = setTimeout(() => {
-        setGamePhase('blackout');
+        const currentState = refs.gameStateRef.current;
+        const endingId = determineEnding(currentState.savedFiles);
+        setGameState(prev => ({
+          ...prev,
+          gameWon: true,
+          isGameOver: false,
+          gameOverReason: undefined,
+          endingType: 'good',
+          endingId,
+        }));
+        setGamePhase('victory');
       }, BLACKOUT_TRANSITION_DELAY_MS);
       return () => clearTimeout(timer);
     }
-  }, [gameState.evidencesSaved, gamePhase, setGamePhase]);
+  }, [gameState.evidencesSaved, gamePhase, setGamePhase, setGameState, refs.gameStateRef]);
 
   // "They're watching" paranoia messages
   useEffect(() => {
