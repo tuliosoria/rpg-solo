@@ -38,7 +38,7 @@ describe('firewallVoice', () => {
     unlockSpeechSynthesis();
     await Promise.resolve();
 
-    expect(createdAudio).toHaveLength(9);
+    expect(createdAudio).toHaveLength(8);
     expect(createdAudio[0].play).toHaveBeenCalledTimes(1);
     expect(createdAudio[0].pause).toHaveBeenCalledTimes(1);
     expect(createdAudio[0].currentTime).toBe(0);

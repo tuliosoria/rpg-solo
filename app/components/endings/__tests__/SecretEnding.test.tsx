@@ -130,7 +130,7 @@ describe('SecretEnding Component', () => {
       vi.advanceTimersByTime(5000);
     });
 
-    const restartButton = screen.getByRole('button', { name: /return to menu/i });
+    const restartButton = screen.getByRole('button', { name: /return to terminal/i });
     expect(restartButton).toHaveFocus();
   });
 });
