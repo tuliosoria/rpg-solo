@@ -671,7 +671,7 @@ export default function Terminal({
             filePath: 'chat:prisoner45',
             fileName: 'prisoner_45',
             videoSrc: PRISONER_45_VIDEO_SRC,
-            videoTitle: 'prisoner_45.mp4',
+            videoTitle: 'prisoner 45.mp4',
           },
         };
       } else {
@@ -1632,7 +1632,7 @@ export default function Terminal({
                   textTransform: 'uppercase',
                 }}
               >
-                {t('videoOverlay.attachedTitle', { value: 'turing_test.mp4' })}
+                {t('videoOverlay.attachedTitle', { value: 'turing test.mp4' })}
               </div>
               <div style={{ position: 'relative', width: '100%' }}>
                 <video

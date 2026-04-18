@@ -137,13 +137,13 @@ export const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment>
     filePath: '/ops/mib/recantation_forms/recantation_001.txt',
     fileName: 'recantation_001.txt',
     videoSrc: MIB_VIDEO_SRC,
-    videoTitle: 'mib.mp4',
+    videoTitle: 'video mib.mp4',
   },
   '/ops/prato/operation_prato_original.txt': {
     filePath: '/ops/prato/operation_prato_original.txt',
     fileName: 'operation_prato_original.txt',
     videoSrc: OPERACAO_PRATO_VIDEO_SRC,
-    videoTitle: 'operacao_prato.mp4',
+    videoTitle: 'operacao prato.mp4',
   },
   '/internal/protocols/sanitized/visitor_briefing.txt': {
     filePath: '/internal/protocols/sanitized/visitor_briefing.txt',
