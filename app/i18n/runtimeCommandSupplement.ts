@@ -8,7 +8,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'UFO74: type "ls" to see whats in front of you.':
       'UFO74: digite "ls" para ver o que está na sua frente.',
     'UFO74: type "cd <folder>" to go inside. "open <file>" to read.':
-      'UFO74: digite "cd <folder>" para entrar. "open <file>" para ler.',
+      'UFO74: digite "cd <folder>" para entrar. "abrir <file>" para ler.',
     'UFO74: when this channel closes, start with: ls':
       'UFO74: quando este canal fechar, comece com: ls',
     'UFO74: try internal/ first. routine paperwork. low heat.':
@@ -45,7 +45,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  help ls        - Show detailed help for "ls"':
       '  help ls        - Mostra ajuda detalhada para "ls"',
     '  help open      - Show detailed help for "open"':
-      '  help open      - Mostra ajuda detalhada para "open"',
+      '  help open      - Mostra ajuda detalhada para "abrir"',
     'COMMAND: ls [-l]': 'COMANDO: ls [-l]',
     '  ls             - List files and directories':
       '  ls             - Lista arquivos e diretórios',
@@ -135,7 +135,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  - Searches only what your current access can already reveal':
       '  - Só busca no que seu acesso atual já consegue revelar',
     '  - Results can be opened directly with "open <path>"':
-      '  - Resultados podem ser abertos direto com "open <path>"',
+      '  - Resultados podem ser abertos direto com "abrir <path>"',
     'COMMAND: help recovery': 'COMANDO: help recovery',
     'Review the emergency recovery options that can keep a run alive.':
       'Revise as opções de recuperação de emergência que podem manter a sessão viva.',
@@ -434,7 +434,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'é por isso que eles trancaram este sistema.',
     "UFO74: hey. need a hint?": 'UFO74: ei. precisa de uma dica?',
     'UFO74: READ the files. "open <filename>".':
-      'UFO74: LEIA os arquivos. "open <filename>".',
+      'UFO74: LEIA os arquivos. "abrir <filename>".',
     '       theres a protocol doc in /internal/.':
       '       tem um documento de protocolo em /internal/.',
     'UFO74: look for evidence in:': 'UFO74: procure evidências em:',
@@ -447,9 +447,9 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'check /storage/ for transport logs.': 'verifique /storage/ atrás dos logs de transporte.',
     'try "chat". someones in here.': 'tente "chat". tem alguém aqui dentro.',
     'you have clearance. check /admin/.': 'você tem credencial. veja /admin/.',
-    'everything is ready. run "leak".': 'tudo pronto. execute "leak".',
+    'everything is ready. run "leak".': 'tudo pronto. execute "vazar".',
     'you have all ten. run "leak" to start the sequence.':
-      'você tem os dez. execute "leak" pra começar a sequência.',
+      'você tem os dez. execute "vazar" pra começar a sequência.',
     'UFO74: ten files logged. leak path is live.':
       'UFO74: dez arquivos registrados. o caminho de vazamento está aberto.',
     '       type: leak': '       digite: leak',
@@ -490,7 +490,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'UFO74: triggered some flags. careful.':
       'UFO74: disparou umas flags. cuidado.',
     'UFO74: system suspicious. use "wait".':
-      'UFO74: sistema desconfiado. use "wait".',
+      'UFO74: sistema desconfiado. use "esperar".',
     'UFO74: autopsy report. not human.':
       'UFO74: relatório de autópsia. não humano.',
     'UFO74: transport log. they split up the evidence.':
@@ -1061,10 +1061,10 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'Analistas observam que a resposta cuidadosamente redigida não chega a confirmar contato extraterrestre, mas representa uma mudança fundamental na posição do governo. \'Eles não podem desdizer essas sete palavras,\' observou um observador diplomático. \'Negação não é mais a posição oficial. Tudo muda a partir daqui.\'',
     'Leak sequence not initialized.': 'Sequência de vazamento não inicializada.',
     '  LEAK CHANNEL ALREADY PREPARED': '  CANAL DE VAZAMENTO JÁ PREPARADO',
-    '  Run "leak" with no arguments to transmit once all files are saved.': '  Execute "leak" sem argumentos para transmitir quando todos os arquivos estiverem salvos.',
+    '  Run "leak" with no arguments to transmit once all files are saved.': '  Execute "vazar" sem argumentos para transmitir quando todos os arquivos estiverem salvos.',
     '  ▸ PREPARATION SEQUENCE COMPLETE': '  ▸ SEQUÊNCIA DE PREPARAÇÃO COMPLETA',
     '  ▸ Leak channel decrypted and standing by.': '  ▸ Canal de vazamento descriptografado e em espera.',
-    '[UFO74]: channel is open. run "leak" when you have all ten.': '[UFO74]: canal aberto. execute "leak" quando tiver todos os dez.',
+    '[UFO74]: channel is open. run "leak" when you have all ten.': '[UFO74]: canal aberto. execute "vazar" quando tiver todos os dez.',
     '  ✗ SEQUENCE MISMATCH — protocol reset': '  ✗ INCOMPATIBILIDADE DE SEQUÊNCIA — protocolo reiniciado',
     '  ⚠ Detection level increased (+5%)': '  ⚠ Nível de detecção aumentado (+5%)',
     '  Preparation sequence must be restarted from step 1.': '  A sequência de preparação deve ser reiniciada a partir do passo 1.',
@@ -1073,7 +1073,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  Channel open.': '  Canal aberto.',
     '  TRANSMISSION SUCCESSFUL.': '  TRANSMISSÃO BEM-SUCEDIDA.',
     '  LEAK CHANNEL READY — awaiting full evidence package.': '  CANAL DE VAZAMENTO PRONTO — aguardando pacote completo de evidências.',
-    '  Save all 10 files, then run "leak" again.': '  Salve todos os 10 arquivos, depois execute "leak" novamente.',
+    '  Save all 10 files, then run "leak" again.': '  Salve todos os 10 arquivos, depois execute "vazar" novamente.',
     '[UFO74]: channel is prepped. just need the rest of the files.': '[UFO74]: canal preparado. só falta o resto dos arquivos.',
     '  LEAK CHANNEL ENCRYPTED': '  CANAL DE VAZAMENTO CRIPTOGRAFADO',
     '  The leak channel requires a 3-command preparation': '  O canal de vazamento requer uma preparação de 3 comandos',
@@ -1083,13 +1083,13 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '[UFO74]: encrypted channel. follow the protocol exactly.': '[UFO74]: canal criptografado. siga o protocolo exatamente.',
     '  LEAK CHANNEL — PREPARATION IN PROGRESS': '  CANAL DE VAZAMENTO — PREPARAÇÃO EM ANDAMENTO',
     '  No files saved yet.': '  Nenhum arquivo salvo ainda.',
-    '  Use "save <filename>" after reading a file.': '  Use "save <arquivo>" após ler um arquivo.',
+    '  Use "save <filename>" after reading a file.': '  Use "salvar <arquivo>" após ler um arquivo.',
     '  SAVED FILES:': '  ARQUIVOS SALVOS:',
-    '  READY — type "leak" when prepared.': '  PRONTO — digite "leak" quando preparado.',
+    '  READY — type "leak" when prepared.': '  PRONTO — digite "vazar" quando preparado.',
     '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased': '  ⚠ PROTOCOLO DE SEGURANÇA ELEVADO — monitoramento aumentado',
     '  DOSSIER — LEAK PREPARATION': '  DOSSIÊ — PREPARAÇÃO DE VAZAMENTO',
-    '  No files saved. Use "save <filename>" after reading a file.': '  Nenhum arquivo salvo. Use "save <arquivo>" após ler um arquivo.',
-    '  DOSSIER COMPLETE — type "leak" when ready.': '  DOSSIÊ COMPLETO — digite "leak" quando pronto.',
+    '  No files saved. Use "save <filename>" after reading a file.': '  Nenhum arquivo salvo. Use "salvar <arquivo>" após ler um arquivo.',
+    '  DOSSIER COMPLETE — type "leak" when ready.': '  DOSSIÊ COMPLETO — digite "vazar" quando pronto.',
     '  SIGNAL: Residual echo persists in relay buffer.': '  SINAL: Eco residual persiste no buffer de retransmissão.',
     '  NOTE: One response arrived before keystroke registration.': '  NOTA: Uma resposta chegou antes do registro de tecla.',
     '  NOTE: Command cadence is being mirrored faintly.': '  NOTA: A cadência de comandos está sendo espelhada levemente.',
@@ -1165,7 +1165,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'UFO74: type "ls" to see whats in front of you.':
       'UFO74: escribe "ls" para ver lo que tienes delante.',
     'UFO74: type "cd <folder>" to go inside. "open <file>" to read.':
-      'UFO74: escribe "cd <folder>" para entrar. "open <file>" para leer.',
+      'UFO74: escribe "cd <folder>" para entrar. "abrir <file>" para leer.',
     'UFO74: when this channel closes, start with: ls':
       'UFO74: cuando este canal se cierre, empieza con: ls',
     'UFO74: try internal/ first. routine paperwork. low heat.':
@@ -1202,7 +1202,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  help ls        - Show detailed help for "ls"':
       '  help ls        - Muestra ayuda detallada para "ls"',
     '  help open      - Show detailed help for "open"':
-      '  help open      - Muestra ayuda detallada para "open"',
+      '  help open      - Muestra ayuda detallada para "abrir"',
     'COMMAND: ls [-l]': 'COMANDO: ls [-l]',
     '  ls             - List files and directories':
       '  ls             - Lista archivos y directorios',
@@ -1292,7 +1292,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  - Searches only what your current access can already reveal':
       '  - Solo busca en lo que tu acceso actual ya puede revelar',
     '  - Results can be opened directly with "open <path>"':
-      '  - Los resultados pueden abrirse directamente con "open <path>"',
+      '  - Los resultados pueden abrirse directamente con "abrir <path>"',
     'COMMAND: help recovery': 'COMANDO: help recovery',
     'Review the emergency recovery options that can keep a run alive.':
       'Revisa las opciones de recuperación de emergencia que pueden mantener viva la sesión.',
@@ -1591,7 +1591,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'por esto cerraron este sistema.',
     "UFO74: hey. need a hint?": 'UFO74: oye. ¿necesitas una pista?',
     'UFO74: READ the files. "open <filename>".':
-      'UFO74: LEE los archivos. "open <filename>".',
+      'UFO74: LEE los archivos. "abrir <filename>".',
     '       theres a protocol doc in /internal/.':
       '       hay un documento de protocolo en /internal/.',
     'UFO74: look for evidence in:': 'UFO74: busca evidencia en:',
@@ -1605,9 +1605,9 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'revisa /storage/ para buscar los registros de transporte.',
     'try "chat". someones in here.': 'prueba "chat". hay alguien aquí dentro.',
     'you have clearance. check /admin/.': 'tienes autorización. mira /admin/.',
-    'everything is ready. run "leak".': 'todo listo. ejecuta "leak".',
+    'everything is ready. run "leak".': 'todo listo. ejecuta "filtrar".',
     'you have all ten. run "leak" to start the sequence.':
-      'tienes los diez. ejecuta "leak" para iniciar la secuencia.',
+      'tienes los diez. ejecuta "filtrar" para iniciar la secuencia.',
     'UFO74: ten files logged. leak path is live.':
       'UFO74: diez archivos registrados. la ruta de filtración está activa.',
     '       type: leak': '       escribe: leak',
@@ -1648,7 +1648,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'UFO74: triggered some flags. careful.':
       'UFO74: saltaron algunas flags. cuidado.',
     'UFO74: system suspicious. use "wait".':
-      'UFO74: el sistema sospecha. usa "wait".',
+      'UFO74: el sistema sospecha. usa "esperar".',
     'UFO74: autopsy report. not human.':
       'UFO74: informe de autopsia. no humano.',
     'UFO74: transport log. they split up the evidence.':
@@ -2219,10 +2219,10 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'Analistas señalan que la respuesta cuidadosamente redactada no llega a confirmar contacto extraterrestre pero representa un cambio fundamental en la posición del gobierno. \'No pueden desdecir esas siete palabras,\' señaló un observador diplomático. \'La negación ya no es la posición oficial. Todo cambia a partir de aquí.\'',
     'Leak sequence not initialized.': 'Secuencia de filtración no inicializada.',
     '  LEAK CHANNEL ALREADY PREPARED': '  CANAL DE FILTRACIÓN YA PREPARADO',
-    '  Run "leak" with no arguments to transmit once all files are saved.': '  Ejecute "leak" sin argumentos para transmitir cuando todos los archivos estén guardados.',
+    '  Run "leak" with no arguments to transmit once all files are saved.': '  Ejecute "filtrar" sin argumentos para transmitir cuando todos los archivos estén guardados.',
     '  ▸ PREPARATION SEQUENCE COMPLETE': '  ▸ SECUENCIA DE PREPARACIÓN COMPLETA',
     '  ▸ Leak channel decrypted and standing by.': '  ▸ Canal de filtración descifrado y en espera.',
-    '[UFO74]: channel is open. run "leak" when you have all ten.': '[UFO74]: canal abierto. ejecute "leak" cuando tenga los diez.',
+    '[UFO74]: channel is open. run "leak" when you have all ten.': '[UFO74]: canal abierto. ejecute "filtrar" cuando tenga los diez.',
     '  ✗ SEQUENCE MISMATCH — protocol reset': '  ✗ DISCREPANCIA DE SECUENCIA — protocolo reiniciado',
     '  ⚠ Detection level increased (+5%)': '  ⚠ Nivel de detección aumentado (+5%)',
     '  Preparation sequence must be restarted from step 1.': '  La secuencia de preparación debe reiniciarse desde el paso 1.',
@@ -2231,7 +2231,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  Channel open.': '  Canal abierto.',
     '  TRANSMISSION SUCCESSFUL.': '  TRANSMISIÓN EXITOSA.',
     '  LEAK CHANNEL READY — awaiting full evidence package.': '  CANAL DE FILTRACIÓN LISTO — esperando paquete completo de evidencias.',
-    '  Save all 10 files, then run "leak" again.': '  Guarde los 10 archivos, luego ejecute "leak" de nuevo.',
+    '  Save all 10 files, then run "leak" again.': '  Guarde los 10 archivos, luego ejecute "filtrar" de nuevo.',
     '[UFO74]: channel is prepped. just need the rest of the files.': '[UFO74]: canal preparado. solo faltan el resto de los archivos.',
     '  LEAK CHANNEL ENCRYPTED': '  CANAL DE FILTRACIÓN CIFRADO',
     '  The leak channel requires a 3-command preparation': '  El canal de filtración requiere una preparación de 3 comandos',
@@ -2241,13 +2241,13 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '[UFO74]: encrypted channel. follow the protocol exactly.': '[UFO74]: canal cifrado. siga el protocolo exactamente.',
     '  LEAK CHANNEL — PREPARATION IN PROGRESS': '  CANAL DE FILTRACIÓN — PREPARACIÓN EN CURSO',
     '  No files saved yet.': '  Ningún archivo guardado aún.',
-    '  Use "save <filename>" after reading a file.': '  Use "save <archivo>" después de leer un archivo.',
+    '  Use "save <filename>" after reading a file.': '  Use "guardar <archivo>" después de leer un archivo.',
     '  SAVED FILES:': '  ARCHIVOS GUARDADOS:',
-    '  READY — type "leak" when prepared.': '  LISTO — escriba "leak" cuando esté preparado.',
+    '  READY — type "leak" when prepared.': '  LISTO — escriba "filtrar" cuando esté preparado.',
     '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased': '  ⚠ PROTOCOLO DE SEGURIDAD ELEVADO — monitoreo aumentado',
     '  DOSSIER — LEAK PREPARATION': '  DOSSIER — PREPARACIÓN DE FILTRACIÓN',
-    '  No files saved. Use "save <filename>" after reading a file.': '  Ningún archivo guardado. Use "save <archivo>" después de leer un archivo.',
-    '  DOSSIER COMPLETE — type "leak" when ready.': '  DOSSIER COMPLETO — escriba "leak" cuando esté listo.',
+    '  No files saved. Use "save <filename>" after reading a file.': '  Ningún archivo guardado. Use "guardar <archivo>" después de leer un archivo.',
+    '  DOSSIER COMPLETE — type "leak" when ready.': '  DOSSIER COMPLETO — escriba "filtrar" cuando esté listo.',
     '  SIGNAL: Residual echo persists in relay buffer.': '  SEÑAL: Eco residual persiste en el búfer de retransmisión.',
     '  NOTE: One response arrived before keystroke registration.': '  NOTA: Una respuesta llegó antes del registro de tecla.',
     '  NOTE: Command cadence is being mirrored faintly.': '  NOTA: La cadencia de comandos se refleja débilmente.',

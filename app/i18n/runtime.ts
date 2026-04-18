@@ -261,9 +261,9 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '[UFO74]: You can see the files. Now open one. Type: open cafeteria_menu_week03.txt':
       '[UFO74]: Você já vê os arquivos. Agora abra um. Digite: open cafeteria_menu_week03.txt',
     '[UFO74]: Use the open command. Type: open cafeteria_menu_week03.txt':
-      '[UFO74]: Use o comando open. Digite: open cafeteria_menu_week03.txt',
+      '[UFO74]: Use o comando abrir. Digite: abrir cafeteria_menu_week03.txt',
     '[UFO74]: Open the file. Type: open cafeteria_menu_week03.txt — or type open c and press TAB.':
-      '[UFO74]: Abra o arquivo. Digite: open cafeteria_menu_week03.txt — ou digite open c e pressione TAB.',
+      '[UFO74]: Abra o arquivo. Digite: abrir cafeteria_menu_week03.txt — ou digite abrir c e pressione TAB.',
     '[UFO74]: Two dots mean "go back." Type: cd ..':
       '[UFO74]: Dois pontos significam "voltar". Digite: cd ..',
     '[UFO74]: To go back up, use two dots. Type: cd ..':
@@ -295,7 +295,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     "[UFO74]: Risk hits 100%, you're done. They'll find you.":
       '[UFO74]: Se o risco bater 100%, acabou. Eles te encontram.',
     '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.':
-      '[UFO74]: Cuidado, não digite comandos errados no terminal. Na dúvida, digite help.',
+      '[UFO74]: Cuidado, não digite comandos errados no terminal. Na dúvida, digite ajuda.',
     '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!':
       '[UFO74]: Digite comandos errados 8 vezes e a janela se fecha. Permanentemente. Então concentre-se, kid!',
     '[UFO74]: Some files are bait. Opening them spikes detection.':
@@ -304,7 +304,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       '[UFO74]: Algumas ações fazem barulho. Outras passam batido.',
     '[UFO74]: Curiosity has a cost here.': '[UFO74]: Curiosidade tem preço aqui.',
     "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal.":
-      '[UFO74]: Fiz o que pude. Uma última coisa: digite `help` para ver outros comandos do terminal.',
+      '[UFO74]: Fiz o que pude. Uma última coisa: digite `ajuda` para ver outros comandos do terminal.',
     '[UFO74]: Good luck, kid.': '[UFO74]: Boa sorte, kid.',
     '[UFO74 has disconnected]': '[UFO74 desconectou]',
     '[UFO74]: Connection established.': '[UFO74]: Conexão estabelecida.',
@@ -328,7 +328,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '[UFO74]: Mundane stuff. Nothing critical.': '[UFO74]: Coisa comum. Nada crítico.',
     '[UFO74]: Open the cafeteria menu.': '[UFO74]: Abra o cardápio da cafeteria.',
     '[UFO74]: Type `open cafeteria_menu_week03.txt`':
-      '[UFO74]: Digite `open cafeteria_menu_week03.txt`',
+      '[UFO74]: Digite `abrir cafeteria_menu_week03.txt`',
     '[UFO74]: Or use TAB to autocomplete.': '[UFO74]: Ou use TAB para autocompletar.',
     '[UFO74]: Riveting.': '[UFO74]: Empolgante.',
     "[UFO74]: Not everything matters. You'll learn what does.":
@@ -361,7 +361,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     "[UFO74]: I'll teach you the basics.": '[UFO74]: Vou te ensinar o básico.',
     'UFO74: youre in. stay quiet.': 'UFO74: você entrou. fique quieto.',
     'UFO74: read-only. use "ls", "cd <folder>", and "open <file>".':
-      'UFO74: só leitura. use "ls", "cd <pasta>" e "open <arquivo>".',
+      'UFO74: só leitura. use "ls", "cd <pasta>" e "abrir <arquivo>".',
     'UFO74: start in internal/. dull files hide live wires.':
       'UFO74: comece em internal/. arquivos sem graça escondem fios vivos.',
     'UFO74: the header tracks evidence. when it ticks, youre close.':
@@ -371,8 +371,8 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     'UFO74: link dies here. trust the details.': 'UFO74: o link morre aqui. confie nos detalhes.',
     '>> CONNECTION IDLE <<': '>> CONEXÃO OCIOSA <<',
     'Type "help" for commands. "help basics" if youre new.':
-      'Digite "help" para ver os comandos. "help basics" se for iniciante.',
-    'UFO74: new here? type "help basics".': 'UFO74: é novo por aqui? digite "help basics".',
+      'Digite "ajuda" para ver os comandos. "ajuda basics" se for iniciante.',
+    'UFO74: new here? type "help basics".': 'UFO74: é novo por aqui? digite "ajuda basics".',
     '  SIGNAL: Residual echo persists in relay buffer.':
       '  SINAL: eco residual persiste no buffer do relay.',
     '  NOTE: One response arrived before keystroke registration.':
@@ -424,11 +424,11 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '2. Read files with open <filename>': '2. Leia arquivos com open <filename>',
     '3. Watch the header counter update': '3. Observe o contador no cabeçalho atualizar',
     '• Collect all 5 categories': '• Colete as 5 categorias',
-    '• Use "leak" to transmit the evidence': '• Use "leak" para transmitir as evidências',
+    '• Use "leak" to transmit the evidence': '• Use "vazar" para transmitir as evidências',
     'Collect evidence in 5 categories:': 'Colete evidências em 5 categorias:',
     '• Read carefully - evidence is in the details':
       '• Leia com atenção - as evidências estão nos detalhes',
-    '• Use "note" to track important details': '• Use "note" para registrar detalhes importantes',
+    '• Use "note" to track important details': '• Use "nota" para registrar detalhes importantes',
     '• Watch your detection level!': '• Fique de olho no nível de detecção!',
     'COMMANDS TO KNOW': 'COMANDOS IMPORTANTES',
     'note <text>      Save personal notes': 'note <text>      Salva anotações pessoais',
@@ -6086,9 +6086,9 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '[UFO74]: You can see the files. Now open one. Type: open cafeteria_menu_week03.txt':
       '[UFO74]: Puedes ver los archivos. Ahora abre uno. Escribe: open cafeteria_menu_week03.txt',
     '[UFO74]: Use the open command. Type: open cafeteria_menu_week03.txt':
-      '[UFO74]: Usa el comando open. Escribe: open cafeteria_menu_week03.txt',
+      '[UFO74]: Usa el comando abrir. Escribe: abrir cafeteria_menu_week03.txt',
     '[UFO74]: Open the file. Type: open cafeteria_menu_week03.txt — or type open c and press TAB.':
-      '[UFO74]: Abre el archivo. Escribe: open cafeteria_menu_week03.txt — o escribe open c y presiona TAB.',
+      '[UFO74]: Abre el archivo. Escribe: abrir cafeteria_menu_week03.txt — o escribe abrir c y presiona TAB.',
     '[UFO74]: Two dots mean "go back." Type: cd ..':
       '[UFO74]: Dos puntos significan "volver". Escribe: cd ..',
     '[UFO74]: To go back up, use two dots. Type: cd ..':
@@ -6120,7 +6120,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     "[UFO74]: Risk hits 100%, you're done. They'll find you.":
       '[UFO74]: Si el riesgo llega al 100%, se acabó. Te encontrarán.',
     '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.':
-      '[UFO74]: Ten cuidado, no escribas comandos incorrectos en el terminal. Si dudas, escribe help.',
+      '[UFO74]: Ten cuidado, no escribas comandos incorrectos en el terminal. Si dudas, escribe ayuda.',
     '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!':
       '[UFO74]: Escribe comandos incorrectos 8 veces y la ventana se cierra. Para siempre. Así que concéntrate, kid!',
     '[UFO74]: Some files are bait. Opening them spikes detection.':
@@ -6129,7 +6129,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       '[UFO74]: Algunas acciones hacen ruido. Otras son discretas.',
     '[UFO74]: Curiosity has a cost here.': '[UFO74]: La curiosidad tiene un costo aquí.',
     "[UFO74]: I've done what I can. One last thing, type `help` to see other commands you can use in the terminal.":
-      '[UFO74]: Hice lo que pude. Una última cosa: escribe `help` para ver otros comandos del terminal.',
+      '[UFO74]: Hice lo que pude. Una última cosa: escribe `ayuda` para ver otros comandos del terminal.',
     '[UFO74]: Good luck, kid.': '[UFO74]: Suerte, kid.',
     '[UFO74 has disconnected]': '[UFO74 se desconectó]',
     '[UFO74]: Connection established.': '[UFO74]: Conexión establecida.',
@@ -6153,7 +6153,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '[UFO74]: Mundane stuff. Nothing critical.': '[UFO74]: Cosas comunes. Nada crítico.',
     '[UFO74]: Open the cafeteria menu.': '[UFO74]: Abre el menú de la cafetería.',
     '[UFO74]: Type `open cafeteria_menu_week03.txt`':
-      '[UFO74]: Escribe `open cafeteria_menu_week03.txt`',
+      '[UFO74]: Escribe `abrir cafeteria_menu_week03.txt`',
     '[UFO74]: Or use TAB to autocomplete.': '[UFO74]: O usa TAB para autocompletar.',
     '[UFO74]: Riveting.': '[UFO74]: Fascinante.',
     "[UFO74]: Not everything matters. You'll learn what does.":
@@ -6196,7 +6196,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     "[UFO74]: I'll teach you the basics.": '[UFO74]: Te enseñaré lo básico.',
     'UFO74: youre in. stay quiet.': 'UFO74: ya entraste. mantente quieto.',
     'UFO74: read-only. use "ls", "cd <folder>", and "open <file>".':
-      'UFO74: solo lectura. usa "ls", "cd <carpeta>" y "open <archivo>".',
+      'UFO74: solo lectura. usa "ls", "cd <carpeta>" y "abrir <archivo>".',
     'UFO74: start in internal/. dull files hide live wires.':
       'UFO74: empieza en internal/. los archivos aburridos esconden cables vivos.',
     'UFO74: the header tracks evidence. when it ticks, youre close.':
@@ -6207,8 +6207,8 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       'UFO74: el enlace muere aquí. confía en los detalles.',
     '>> CONNECTION IDLE <<': '>> CONEXIÓN EN ESPERA <<',
     'Type "help" for commands. "help basics" if youre new.':
-      'Escribe "help" para ver comandos. "help basics" si eres nuevo.',
-    'UFO74: new here? type "help basics".': 'UFO74: ¿nuevo por aquí? escribe "help basics".',
+      'Escribe "ayuda" para ver comandos. "ayuda basics" si eres nuevo.',
+    'UFO74: new here? type "help basics".': 'UFO74: ¿nuevo por aquí? escribe "ayuda basics".',
     '  SIGNAL: Residual echo persists in relay buffer.':
       '  SEÑAL: persiste un eco residual en el búfer del enlace.',
     '  NOTE: One response arrived before keystroke registration.':
@@ -6261,11 +6261,11 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '2. Read files with open <filename>': '2. Lee archivos con open <filename>',
     '3. Watch the header counter update': '3. Observa cómo se actualiza el contador del encabezado',
     '• Collect all 5 categories': '• Reúne las 5 categorías',
-    '• Use "leak" to transmit the evidence': '• Usa "leak" para transmitir la evidencia',
+    '• Use "leak" to transmit the evidence': '• Usa "filtrar" para transmitir la evidencia',
     'Collect evidence in 5 categories:': 'Reúne evidencia en 5 categorías:',
     '• Read carefully - evidence is in the details':
       '• Lee con atención: la evidencia está en los detalles',
-    '• Use "note" to track important details': '• Usa "note" para registrar detalles importantes',
+    '• Use "note" to track important details': '• Usa "nota" para registrar detalles importantes',
     '• Watch your detection level!': '• ¡Vigila tu nivel de detección!',
     'COMMANDS TO KNOW': 'COMANDOS CLAVE',
     'note <text>      Save personal notes': 'note <text>      Guarda notas personales',
@@ -11745,14 +11745,14 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     'UFO74: hey kid, youre fumbling. let me help.':
       'UFO74: ei, kid, você está se atrapalhando. deixa eu ajudar.',
     'UFO74: try these: "ls" to see files, "cd <dir>" to move, "open <file>" to read.':
-      'UFO74: tenta isso: "ls" pra ver arquivos, "cd <dir>" pra se mover, "open <file>" pra ler.',
-    'UFO74: type "help" if youre lost.': 'UFO74: digita "help" se estiver perdido.',
+      'UFO74: tenta isso: "ls" pra ver arquivos, "cd <dir>" pra se mover, "abrir <file>" pra ler.',
+    'UFO74: type "help" if youre lost.': 'UFO74: digita "ajuda" se estiver perdido.',
     'UFO74: careful. too many mistakes and theyll lock you out.':
       'UFO74: cuidado. erros demais e eles vão te bloquear.',
     'UFO74: hey kid, risk is getting too high.':
       'UFO74: ei, kid, o risco está ficando alto demais.',
     'UFO74: use "wait" to lay low and bring the risk down.':
-      'UFO74: use "wait" para baixar a cabeça e reduzir o risco.',
+      'UFO74: use "esperar" para baixar a cabeça e reduzir o risco.',
     '  STATUS: SUSPICIOUS': '  STATUS: SUSPEITO',
     '  System monitoring increased.': '  Monitoramento do sistema ampliado.',
     '  STATUS: ALERT': '  STATUS: ALERTA',
@@ -11763,7 +11763,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     '  Trace protocols active.': '  Protocolos de rastreio ativos.',
     '>> STOP. youre about to get burned. <<': '>> PARA. você está prestes a se queimar. <<',
     '>> use "wait" to lay low. you have limited uses. <<':
-      '>> use "wait" para baixar a cabeça. você tem usos limitados. <<',
+      '>> use "esperar" para baixar a cabeça. você tem usos limitados. <<',
     '  STATUS: IMMINENT DETECTION': '  STATUS: DETECÇÃO IMINENTE',
     '  Countermeasures locking on.': '  Contramedidas fixando alvo.',
     '>> EMERGENCY. type "hide" NOW. one chance. <<':
@@ -11774,14 +11774,14 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     '[UFO74]: try "ls" to list directory contents.':
       '[UFO74]: tente "ls" para listar o conteúdo do diretório.',
     '[UFO74]: press [ESC] to exit. or type "save" first if you want to keep your progress.':
-      '[UFO74]: pressione [ESC] para sair. ou digite "save" antes se quiser manter seu progresso.',
+      '[UFO74]: pressione [ESC] para sair. ou digite "salvar" antes se quiser manter seu progresso.',
     '[UFO74]: you need the override protocol for that. dangerous stuff.':
       '[UFO74]: você precisa do protocolo de override para isso. coisa perigosa.',
     '[UFO74]: use "cd .." to go to parent directory.':
       '[UFO74]: use "cd .." para ir ao diretório pai.',
-    '[UFO74]: try "status" or "help" kid.': '[UFO74]: tente "status" ou "help", kid.',
+    '[UFO74]: try "status" or "help" kid.': '[UFO74]: tente "estado" ou "ajuda", kid.',
     '[UFO74]: type "help" to see what you can do.':
-      '[UFO74]: digite "help" para ver o que você pode fazer.',
+      '[UFO74]: digite "ajuda" para ver o que você pode fazer.',
     'ERROR: Cannot read directory': 'ERRO: Não foi possível ler o diretório',
     'ERROR: Specify directory': 'ERRO: Especifique um diretório',
     '[UFO74]: use "ls" to see directories, then "cd <dirname>" to enter one.':
@@ -11791,7 +11791,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     "  HINT: 'cd' is used for directories only.": "  DICA: 'cd' é usado apenas para diretórios.",
     'ERROR: Specify file': 'ERRO: Especifique um arquivo',
     '[UFO74]: use "ls" to see files, then "open <filename>" to read one.':
-      '[UFO74]: use "ls" para ver arquivos, depois "open <filename>" para ler um.',
+      '[UFO74]: use "ls" para ver arquivos, depois "abrir <filename>" para ler um.',
     'ERROR: File not found': 'ERRO: Arquivo não encontrado',
     '[UFO74]: use "ls" to see whats here.': '[UFO74]: use "ls" para ver o que há aqui.',
     "  HINT: 'open' is used for files only.": "  DICA: 'open' é usado apenas para arquivos.",
@@ -11878,7 +11878,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     'Type tree again to confirm.': 'Digite tree de novo para confirmar.',
     'ERROR: No file opened yet': 'ERRO: Nenhum arquivo aberto ainda',
     '[UFO74]: use "open <filename>" to read a file first.':
-      '[UFO74]: use "open <filename>" para ler um arquivo primeiro.',
+      '[UFO74]: use "abrir <filename>" para ler um arquivo primeiro.',
     'ERROR: File content no longer available': 'ERRO: Conteúdo do arquivo não está mais disponível',
     'Already at root directory. No navigation history.':
       'Você já está no diretório raiz. Não há histórico de navegação.',
@@ -11900,7 +11900,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     '    The system grows impatient.': '    O sistema fica impaciente.',
     '    Something is still watching.': '    Ainda há algo observando.',
     '    Attention drifts elsewhere.': '    A atenção desvia para outro lugar.',
-    'Type "help" for available commands': 'Digite "help" para ver os comandos disponíveis',
+    'Type "help" for available commands': 'Digite "ajuda" para ver os comandos disponíveis',
     'Cannot hide again.': 'Não dá para se esconder de novo.',
     'They know your patterns now.': 'Eles conhecem seus padrões agora.',
     'There is no second escape.': 'Não existe segunda fuga.',
@@ -11970,7 +11970,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
       '  - Não podem revelar nomes de arquivos ou respostas específicas',
     'Use sparingly. Trust your own analysis.': 'Use com parcimônia. Confie na sua própria análise.',
     'Type "help" to see all available commands.':
-      'Digite "help" para ver todos os comandos disponíveis.',
+      'Digite "ajuda" para ver todos os comandos disponíveis.',
     "I'll show extra tips as you explore.": 'Vou mostrar dicas extras enquanto você explora.',
     'Type "tutorial off" anytime to disable.':
       'Digite "tutorial off" a qualquer momento para desativar.',
@@ -12007,15 +12007,15 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     '  2. Read files with open <filename>': '  2. Leia arquivos com open <filename>',
     '  3. Watch the header counter update': '  3. Observe o contador do cabeçalho atualizar',
     '  • Collect all 5 categories': '  • Colete as 5 categorias',
-    '  • Use "leak" to transmit the evidence': '  • Use "leak" para transmitir a evidência',
+    '  • Use "leak" to transmit the evidence': '  • Use "vazar" para transmitir a evidência',
     '  Collect evidence in 5 categories:': '  Colete evidências em 5 categorias:',
     '  • Read carefully - evidence is in the details':
       '  • Leia com atenção - a evidência está nos detalhes',
     '  • Use "note" to track important details':
-      '  • Use "note" para rastrear detalhes importantes',
+      '  • Use "nota" para rastrear detalhes importantes',
     '  • Watch your detection level!': '  • Observe seu nível de detecção!',
     '  • If risk spikes, use "wait" to buy time':
-      '  • Se o risco disparar, use "wait" para ganhar tempo',
+      '  • Se o risco disparar, use "esperar" para ganhar tempo',
     '  • At 90% risk, "hide" becomes a one-time escape':
       '  • Com 90% de risco, "hide" vira uma fuga única',
     '  COMMANDS TO KNOW': '  COMANDOS IMPORTANTES',
@@ -12168,7 +12168,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
       '  Eles expõem operações governamentais além da evidência alienígena.',
     '  WARNING: Releasing these may cause widespread panic.':
       '  AVISO: liberar isso pode causar pânico generalizado.',
-    '  Type "leak all" to release everything.': '  Digite "leak all" para liberar tudo.',
+    '  Type "leak all" to release everything.': '  Digite "vazar all" para liberar tudo.',
     '  Type "continue" to proceed with alien evidence only.':
       '  Digite "continue" para prosseguir só com a evidência alienígena.',
     '  Try again.': '  Tente de novo.',
@@ -12189,7 +12189,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     '       the conspiracy stuff can wait.': '       a parte da conspiração pode esperar.',
     '  Please clarify:': '  Esclareça, por favor:',
     '  Type "leak all" to release ALL documents.':
-      '  Digite "leak all" para liberar TODOS os documentos.',
+      '  Digite "vazar all" para liberar TODOS os documentos.',
   },
   es: {
     '  INTRUSION DETECTED': '  INTRUSIÓN DETECTADA',
@@ -12214,14 +12214,14 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     'UFO74: hey kid, youre fumbling. let me help.':
       'UFO74: ey, kid, te estás trabando. déjame ayudarte.',
     'UFO74: try these: "ls" to see files, "cd <dir>" to move, "open <file>" to read.':
-      'UFO74: prueba esto: "ls" para ver archivos, "cd <dir>" para moverte, "open <file>" para leer.',
-    'UFO74: type "help" if youre lost.': 'UFO74: escribe "help" si estás perdido.',
+      'UFO74: prueba esto: "ls" para ver archivos, "cd <dir>" para moverte, "abrir <file>" para leer.',
+    'UFO74: type "help" if youre lost.': 'UFO74: escribe "ayuda" si estás perdido.',
     'UFO74: careful. too many mistakes and theyll lock you out.':
       'UFO74: cuidado. demasiados errores y te van a bloquear.',
     'UFO74: hey kid, risk is getting too high.':
       'UFO74: ey, kid, el riesgo se está poniendo demasiado alto.',
     'UFO74: use "wait" to lay low and bring the risk down.':
-      'UFO74: usa "wait" para bajar la cabeza y reducir el riesgo.',
+      'UFO74: usa "esperar" para bajar la cabeza y reducir el riesgo.',
     '  STATUS: SUSPICIOUS': '  ESTADO: SOSPECHOSO',
     '  System monitoring increased.': '  Se incrementó el monitoreo del sistema.',
     '  STATUS: ALERT': '  ESTADO: ALERTA',
@@ -12231,7 +12231,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     '  Trace protocols active.': '  Protocolos de rastreo activos.',
     '>> STOP. youre about to get burned. <<': '>> ALTO. estás a punto de quemarte. <<',
     '>> use "wait" to lay low. you have limited uses. <<':
-      '>> usa "wait" para agacharte. tienes usos limitados. <<',
+      '>> usa "esperar" para agacharte. tienes usos limitados. <<',
     '  STATUS: IMMINENT DETECTION': '  ESTADO: DETECCIÓN INMINENTE',
     '  Countermeasures locking on.': '  Las contramedidas están fijando objetivo.',
     '>> EMERGENCY. type "hide" NOW. one chance. <<':
@@ -12242,14 +12242,14 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     '[UFO74]: try "ls" to list directory contents.':
       '[UFO74]: prueba "ls" para listar el contenido del directorio.',
     '[UFO74]: press [ESC] to exit. or type "save" first if you want to keep your progress.':
-      '[UFO74]: presiona [ESC] para salir. o escribe "save" primero si quieres conservar tu progreso.',
+      '[UFO74]: presiona [ESC] para salir. o escribe "guardar" primero si quieres conservar tu progreso.',
     '[UFO74]: you need the override protocol for that. dangerous stuff.':
       '[UFO74]: necesitas el protocolo de override para eso. material peligroso.',
     '[UFO74]: use "cd .." to go to parent directory.':
       '[UFO74]: usa "cd .." para ir al directorio padre.',
-    '[UFO74]: try "status" or "help" kid.': '[UFO74]: prueba "status" o "help", kid.',
+    '[UFO74]: try "status" or "help" kid.': '[UFO74]: prueba "estado" o "ayuda", kid.',
     '[UFO74]: type "help" to see what you can do.':
-      '[UFO74]: escribe "help" para ver lo que puedes hacer.',
+      '[UFO74]: escribe "ayuda" para ver lo que puedes hacer.',
     'ERROR: Cannot read directory': 'ERROR: No se puede leer el directorio',
     'ERROR: Specify directory': 'ERROR: Especifica un directorio',
     '[UFO74]: use "ls" to see directories, then "cd <dirname>" to enter one.':
@@ -12259,7 +12259,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     "  HINT: 'cd' is used for directories only.": "  PISTA: 'cd' se usa solo para directorios.",
     'ERROR: Specify file': 'ERROR: Especifica un archivo',
     '[UFO74]: use "ls" to see files, then "open <filename>" to read one.':
-      '[UFO74]: usa "ls" para ver archivos y luego "open <filename>" para leer uno.',
+      '[UFO74]: usa "ls" para ver archivos y luego "abrir <filename>" para leer uno.',
     'ERROR: File not found': 'ERROR: Archivo no encontrado',
     '[UFO74]: use "ls" to see whats here.': '[UFO74]: usa "ls" para ver qué hay aquí.',
     "  HINT: 'open' is used for files only.": "  PISTA: 'open' se usa solo para archivos.",
@@ -12346,7 +12346,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     'Type tree again to confirm.': 'Escribe tree otra vez para confirmar.',
     'ERROR: No file opened yet': 'ERROR: Aún no se abrió ningún archivo',
     '[UFO74]: use "open <filename>" to read a file first.':
-      '[UFO74]: usa "open <filename>" para leer primero un archivo.',
+      '[UFO74]: usa "abrir <filename>" para leer primero un archivo.',
     'ERROR: File content no longer available':
       'ERROR: El contenido del archivo ya no está disponible',
     'Already at root directory. No navigation history.':
@@ -12369,7 +12369,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     '    The system grows impatient.': '    El sistema se impacienta.',
     '    Something is still watching.': '    Algo todavía está observando.',
     '    Attention drifts elsewhere.': '    La atención se desvía a otro lado.',
-    'Type "help" for available commands': 'Escribe "help" para ver los comandos disponibles',
+    'Type "help" for available commands': 'Escribe "ayuda" para ver los comandos disponibles',
     'Cannot hide again.': 'No puedes esconderte otra vez.',
     'They know your patterns now.': 'Ahora conocen tus patrones.',
     'There is no second escape.': 'No hay una segunda fuga.',
@@ -12440,7 +12440,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     'Use sparingly. Trust your own analysis.':
       'Úsalo con moderación. Confía en tu propio análisis.',
     'Type "help" to see all available commands.':
-      'Escribe "help" para ver todos los comandos disponibles.',
+      'Escribe "ayuda" para ver todos los comandos disponibles.',
     "I'll show extra tips as you explore.": 'Te mostraré consejos extra mientras exploras.',
     'Type "tutorial off" anytime to disable.':
       'Escribe "tutorial off" cuando quieras para desactivarlo.',
@@ -12478,14 +12478,14 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     '  3. Watch the header counter update':
       '  3. Observa cómo se actualiza el contador del encabezado',
     '  • Collect all 5 categories': '  • Reúne las 5 categorías',
-    '  • Use "leak" to transmit the evidence': '  • Usa "leak" para transmitir la evidencia',
+    '  • Use "leak" to transmit the evidence': '  • Usa "filtrar" para transmitir la evidencia',
     '  Collect evidence in 5 categories:': '  Reúne evidencia en 5 categorías:',
     '  • Read carefully - evidence is in the details':
       '  • Lee con cuidado - la evidencia está en los detalles',
-    '  • Use "note" to track important details': '  • Usa "note" para seguir detalles importantes',
+    '  • Use "note" to track important details': '  • Usa "nota" para seguir detalles importantes',
     '  • Watch your detection level!': '  • ¡Vigila tu nivel de detección!',
     '  • If risk spikes, use "wait" to buy time':
-      '  • Si el riesgo se dispara, usa "wait" para ganar tiempo',
+      '  • Si el riesgo se dispara, usa "esperar" para ganar tiempo',
     '  • At 90% risk, "hide" becomes a one-time escape':
       '  • Al 90% de riesgo, "hide" se vuelve un escape de una sola vez',
     '  COMMANDS TO KNOW': '  COMANDOS QUE DEBES CONOCER',
@@ -12641,7 +12641,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
       '  Exponen operaciones gubernamentales más allá de la evidencia alienígena.',
     '  WARNING: Releasing these may cause widespread panic.':
       '  ADVERTENCIA: liberar esto puede causar pánico generalizado.',
-    '  Type "leak all" to release everything.': '  Escribe "leak all" para soltarlo todo.',
+    '  Type "leak all" to release everything.': '  Escribe "filtrar all" para soltarlo todo.',
     '  Type "continue" to proceed with alien evidence only.':
       '  Escribe "continue" para seguir solo con la evidencia alienígena.',
     '  Try again.': '  Inténtalo otra vez.',
@@ -12661,7 +12661,7 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     '       the conspiracy stuff can wait.': '       lo de la conspiración puede esperar.',
     '  Please clarify:': '  Acláralo, por favor:',
     '  Type "leak all" to release ALL documents.':
-      '  Escribe "leak all" para soltar TODOS los documentos.',
+      '  Escribe "filtrar all" para soltar TODOS los documentos.',
   },
 };
 
