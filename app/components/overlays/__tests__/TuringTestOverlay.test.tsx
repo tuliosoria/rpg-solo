@@ -23,27 +23,27 @@ vi.mock('next/image', () => ({
 vi.mock('../../../constants/turing', () => ({
   TURING_QUESTIONS: [
     {
-      prompt: 'Test question 1?',
+      promptKey: 'Test question 1?',
       options: [
-        { letter: 'A', text: 'Human answer 1', isMachine: false },
-        { letter: 'B', text: 'Machine answer 1', isMachine: true },
-        { letter: 'C', text: 'Human answer 2', isMachine: false },
+        { letter: 'A', textKey: 'Human answer 1', isMachine: false },
+        { letter: 'B', textKey: 'Machine answer 1', isMachine: true },
+        { letter: 'C', textKey: 'Human answer 2', isMachine: false },
       ],
     },
     {
-      prompt: 'Test question 2?',
+      promptKey: 'Test question 2?',
       options: [
-        { letter: 'A', text: 'Machine answer 2', isMachine: true },
-        { letter: 'B', text: 'Human answer 3', isMachine: false },
-        { letter: 'C', text: 'Human answer 4', isMachine: false },
+        { letter: 'A', textKey: 'Machine answer 2', isMachine: true },
+        { letter: 'B', textKey: 'Human answer 3', isMachine: false },
+        { letter: 'C', textKey: 'Human answer 4', isMachine: false },
       ],
     },
     {
-      prompt: 'Test question 3?',
+      promptKey: 'Test question 3?',
       options: [
-        { letter: 'A', text: 'Human answer 5', isMachine: false },
-        { letter: 'B', text: 'Human answer 6', isMachine: false },
-        { letter: 'C', text: 'Machine answer 3', isMachine: true },
+        { letter: 'A', textKey: 'Human answer 5', isMachine: false },
+        { letter: 'B', textKey: 'Human answer 6', isMachine: false },
+        { letter: 'C', textKey: 'Machine answer 3', isMachine: true },
       ],
     },
   ],

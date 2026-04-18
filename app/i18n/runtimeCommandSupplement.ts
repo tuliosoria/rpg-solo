@@ -1096,6 +1096,67 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  SIGNAL: Background carrier present. Source unresolved.': '  SINAL: Portadora de fundo presente. Origem não resolvida.',
     '  NOTICE: Query pattern resembles prior containment interviews.': '  AVISO: Padrão de consulta assemelha-se a entrevistas anteriores de contenção.',
     '║                  DOSSIER MAP                          ║': '║                  MAPA DO DOSSIÊ                       ║',
+
+    // Missing COMMAND_HELP detailed help translations
+    '  help basics    - Show the new-player guide':
+      '  help basics    - Mostra o guia para novos jogadores',
+    'List contents of current directory.': 'Lista o conteúdo do diretório atual.',
+    'Save a personal note to help you remember important details.':
+      'Salve uma nota pessoal para lembrar detalhes importantes.',
+    '  note Check the date on transport log': '  note Conferir a data no log de transporte',
+    '  note Password might be varginha': '  note Senha pode ser varginha',
+    'Review the files saved to your dossier.': 'Revise os arquivos salvos no seu dossiê.',
+    '  progress       - Show your saved files and dossier status':
+      '  progress       - Mostra seus arquivos salvos e o status do dossiê',
+    'Clear the terminal display.': 'Limpa a exibição do terminal.',
+    'Re-display the last opened file without increasing risk.':
+      'Reexibe o último arquivo aberto sem aumentar o risco.',
+    'List all files you have not yet opened.':
+      'Lista todos os arquivos que você ainda não abriu.',
+    'Toggle tutorial tips or replay the introduction.':
+      'Alterna dicas do tutorial ou repete a introdução.',
+    'When tutorial mode is ON, helpful tips appear at key moments:':
+      'Quando o modo tutorial está ATIVO, dicas úteis aparecem em momentos-chave:',
+    '  - When the case reaches major evidence milestones':
+      '  - Quando o caso atinge marcos importantes de evidência',
+    'Decipher intercepted morse code messages.':
+      'Decifre mensagens interceptadas em código morse.',
+    'First read a morse intercept file (e.g., morse_intercept.sig).':
+      'Primeiro leia um arquivo de interceptação morse (ex.: morse_intercept.sig).',
+    'Then use this command to submit your translation.':
+      'Depois use este comando para enviar sua tradução.',
+    'WARNING: This action triggers the endgame sequence.':
+      'AVISO: Esta ação dispara a sequência final.',
+    'COMMAND: hint': 'COMANDO: hint',
+    'Request guidance when you are stuck.':
+      'Solicite orientação quando estiver travado.',
+    '  hint              - Receive a contextual hint':
+      '  hint              - Recebe uma dica contextual',
+    '  - Hints are LIMITED (8 per run)': '  - As dicas são LIMITADAS (8 por sessão)',
+    '  - Hints react to your progress, risk, and missing leads':
+      '  - As dicas reagem ao seu progresso, risco e pistas faltantes',
+    '  - Cannot reveal specific file names or answers':
+      '  - Não podem revelar nomes de arquivos ou respostas específicas',
+    'Use sparingly. Trust your own analysis.':
+      'Use com moderação. Confie na sua própria análise.',
+    'Wait and let attention drift elsewhere.':
+      'Aguarde e deixe a atenção desviar para outro lugar.',
+    'Limited uses per session (3).': 'Usos limitados por sessão (3).',
+    'Strategic use can help avoid detection.':
+      'Uso estratégico pode ajudar a evitar detecção.',
+    'Establish neural connection with recovered consciousness.':
+      'Estabeleça conexão neural com a consciência recuperada.',
+    '  Requires a .psi neural pattern file.':
+      '  Requer um arquivo de padrão neural .psi.',
+    '  Check /storage/quarantine/ for psi files.':
+      '  Verifique /storage/quarantine/ para arquivos psi.',
+    'Execute administrative override with access code.':
+      'Execute override administrativo com código de acesso.',
+    '  override protocol <code>': '  override protocol <code>',
+    'HINT: The access code can be obtained through encrypted channels.':
+      'DICA: O código de acesso pode ser obtido através de canais criptografados.',
+    'Release a containment subject.': 'Libere um sujeito de contenção.',
+    '  release <target>': '  release <target>',
   },
   es: {
     'UFO74: youre in. keep it quiet.': 'UFO74: ya entraste. mantén la cabeza baja.',
@@ -2193,5 +2254,68 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  SIGNAL: Background carrier present. Source unresolved.': '  SEÑAL: Portadora de fondo presente. Origen no resuelto.',
     '  NOTICE: Query pattern resembles prior containment interviews.': '  AVISO: Patrón de consulta se asemeja a entrevistas previas de contención.',
     '║                  DOSSIER MAP                          ║': '║                 MAPA DEL DOSSIER                       ║',
+
+    // Missing COMMAND_HELP detailed help translations
+    '  help basics    - Show the new-player guide':
+      '  help basics    - Muestra la guía para nuevos jugadores',
+    'List contents of current directory.': 'Lista el contenido del directorio actual.',
+    'Save a personal note to help you remember important details.':
+      'Guarda una nota personal para recordar detalles importantes.',
+    '  note Check the date on transport log':
+      '  note Verificar la fecha en el registro de transporte',
+    '  note Password might be varginha': '  note La contraseña podría ser varginha',
+    'Review the files saved to your dossier.':
+      'Revisa los archivos guardados en tu dossier.',
+    '  progress       - Show your saved files and dossier status':
+      '  progress       - Muestra tus archivos guardados y el estado del dossier',
+    'Clear the terminal display.': 'Limpia la pantalla del terminal.',
+    'Re-display the last opened file without increasing risk.':
+      'Vuelve a mostrar el último archivo abierto sin aumentar el riesgo.',
+    'List all files you have not yet opened.':
+      'Lista todos los archivos que aún no has abierto.',
+    'Toggle tutorial tips or replay the introduction.':
+      'Alterna los consejos del tutorial o repite la introducción.',
+    'When tutorial mode is ON, helpful tips appear at key moments:':
+      'Cuando el modo tutorial está ACTIVO, aparecen consejos útiles en momentos clave:',
+    '  - When the case reaches major evidence milestones':
+      '  - Cuando el caso alcanza hitos importantes de evidencia',
+    'Decipher intercepted morse code messages.':
+      'Descifra mensajes interceptados en código morse.',
+    'First read a morse intercept file (e.g., morse_intercept.sig).':
+      'Primero lee un archivo de interceptación morse (p. ej., morse_intercept.sig).',
+    'Then use this command to submit your translation.':
+      'Luego usa este comando para enviar tu traducción.',
+    'WARNING: This action triggers the endgame sequence.':
+      'ADVERTENCIA: Esta acción activa la secuencia final.',
+    'COMMAND: hint': 'COMANDO: hint',
+    'Request guidance when you are stuck.':
+      'Solicita orientación cuando estés atascado.',
+    '  hint              - Receive a contextual hint':
+      '  hint              - Recibe una pista contextual',
+    '  - Hints are LIMITED (8 per run)': '  - Las pistas son LIMITADAS (8 por sesión)',
+    '  - Hints react to your progress, risk, and missing leads':
+      '  - Las pistas reaccionan a tu progreso, riesgo y pistas faltantes',
+    '  - Cannot reveal specific file names or answers':
+      '  - No pueden revelar nombres de archivos o respuestas específicas',
+    'Use sparingly. Trust your own analysis.':
+      'Úsalas con moderación. Confía en tu propio análisis.',
+    'Wait and let attention drift elsewhere.':
+      'Espera y deja que la atención se desvíe hacia otro lugar.',
+    'Limited uses per session (3).': 'Usos limitados por sesión (3).',
+    'Strategic use can help avoid detection.':
+      'El uso estratégico puede ayudar a evitar la detección.',
+    'Establish neural connection with recovered consciousness.':
+      'Establece conexión neural con la consciencia recuperada.',
+    '  Requires a .psi neural pattern file.':
+      '  Requiere un archivo de padrón neural .psi.',
+    '  Check /storage/quarantine/ for psi files.':
+      '  Revisa /storage/quarantine/ para archivos psi.',
+    'Execute administrative override with access code.':
+      'Ejecuta override administrativo con código de acceso.',
+    '  override protocol <code>': '  override protocol <code>',
+    'HINT: The access code can be obtained through encrypted channels.':
+      'PISTA: El código de acceso se puede obtener a través de canales encriptados.',
+    'Release a containment subject.': 'Libera a un sujeto de contención.',
+    '  release <target>': '  release <target>',
   },
 };

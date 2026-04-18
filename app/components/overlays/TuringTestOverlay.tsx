@@ -26,7 +26,7 @@ const CONTAINER_LAYOUT_STYLE: React.CSSProperties = {
 };
 
 export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: TuringTestOverlayProps) {
-  const { t, translateRuntimeText } = useI18n();
+  const { t } = useI18n();
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -239,7 +239,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
         {/* Question Box */}
         <div className={styles.questionBox}>
           <div className={styles.questionPrompt}>
-            &ldquo;{translateRuntimeText(currentQuestion.prompt)}&rdquo;
+            &ldquo;{t(currentQuestion.promptKey)}&rdquo;
           </div>
 
           <div className={styles.options}>
@@ -259,7 +259,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
                   onClick={() => handleSelect(option.letter)}
                 >
                   <span className={styles.optionLetter}>{option.letter}.</span>
-                  <span className={styles.optionText}>{translateRuntimeText(option.text)}</span>
+                  <span className={styles.optionText}>{t(option.textKey)}</span>
                 </button>
               );
             })}

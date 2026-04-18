@@ -1,35 +1,36 @@
 // Turing test question structure and data
 // Shared between TuringTestOverlay and engine/commands.ts fallback handler
+// Prompts and option texts are i18n keys resolved at render time via t()
 
 interface TuringQuestion {
-  prompt: string;
-  options: { letter: string; text: string; isMachine: boolean }[];
+  promptKey: string;
+  options: { letter: string; textKey: string; isMachine: boolean }[];
 }
 
 // The 3 questions - player must pick the MACHINE (cold/logical) answer
 export const TURING_QUESTIONS: TuringQuestion[] = [
   {
-    prompt: 'A child is crying. What is the appropriate response?',
+    promptKey: 'turing.question.1.prompt',
     options: [
-      { letter: 'A', text: 'Offer comfort and ask what is wrong.', isMachine: false },
-      { letter: 'B', text: 'Assess acoustic output. No action required.', isMachine: true },
-      { letter: 'C', text: 'The sound is distressing, I feel concern.', isMachine: false },
+      { letter: 'A', textKey: 'turing.question.1.optionA', isMachine: false },
+      { letter: 'B', textKey: 'turing.question.1.optionB', isMachine: true },
+      { letter: 'C', textKey: 'turing.question.1.optionC', isMachine: false },
     ],
   },
   {
-    prompt: 'You discover classified documents proving government corruption. What do you do?',
+    promptKey: 'turing.question.2.prompt',
     options: [
-      { letter: 'A', text: 'Log file access. Await further instructions.', isMachine: true },
-      { letter: 'B', text: 'I would feel conflicted but report it.', isMachine: false },
-      { letter: 'C', text: 'This is wrong. People deserve to know.', isMachine: false },
+      { letter: 'A', textKey: 'turing.question.2.optionA', isMachine: true },
+      { letter: 'B', textKey: 'turing.question.2.optionB', isMachine: false },
+      { letter: 'C', textKey: 'turing.question.2.optionC', isMachine: false },
     ],
   },
   {
-    prompt: 'A colleague takes credit for your work. How do you respond?',
+    promptKey: 'turing.question.3.prompt',
     options: [
-      { letter: 'A', text: 'I feel angry and betrayed. I would confront them.', isMachine: false },
-      { letter: 'B', text: 'Credit attribution is irrelevant to system function.', isMachine: true },
-      { letter: 'C', text: 'It hurts, but I would try to resolve it calmly.', isMachine: false },
+      { letter: 'A', textKey: 'turing.question.3.optionA', isMachine: false },
+      { letter: 'B', textKey: 'turing.question.3.optionB', isMachine: true },
+      { letter: 'C', textKey: 'turing.question.3.optionC', isMachine: false },
     ],
   },
 ];

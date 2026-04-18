@@ -195,6 +195,7 @@ registerLines(
   STATUS: PENDENTE
   NOTA: Submetido ANTES do incidente de 20-JAN.
   Solicitação suplementar a seguir.
+  Valor: [CLASSIFICADO].
   `,
   `
   SOLICITUD PRESUPUESTARIA — Q1 1996
@@ -211,6 +212,7 @@ registerLines(
   STATUS: PENDIENTE
   NOTA: Presentado ANTES del incidente de 20-JAN.
   Solicitud suplementaria a seguir.
+  Monto: [CLASIFICADO].
   `
 );
 
@@ -338,6 +340,14 @@ registerLines(
   As seguintes transferências estão confirmadas:
     CPT. R. FERREIRA → Brasília (Comando Central)
     SGT. A. LIMA → São Paulo (Escritório de Ligação)
+    ANALISTA M. COSTA → [DESTINO CLASSIFICADO]
+  Entrevistas de desligamento agendadas para 30-JAN.
+  Todos os três recusaram entrevista de desligamento.
+  Credenciais de acesso revogadas 01-FEB 00:00.
+  NOTA: Ferreira solicitou que itens pessoais fossem
+  enviados. Não retirados pessoalmente.
+  Andrade assume processos pendentes de substituição.
+  Pessoal substituto: NENHUM DESIGNADO.
   `,
   `
   AVISO DE TRANSFERENCIA DE PERSONAL
@@ -345,6 +355,14 @@ registerLines(
   Las siguientes transferencias están confirmadas:
     CPT. R. FERREIRA → Brasília (Comando Central)
     SGT. A. LIMA → São Paulo (Oficina de Enlace)
+    ANALISTA M. COSTA → [DESTINO CLASIFICADO]
+  Entrevistas de desvinculación programadas para 30-JAN.
+  Los tres rechazaron entrevista de desvinculación.
+  Credenciales de acceso revocadas 01-FEB 00:00.
+  NOTA: Ferreira solicitó que sus artículos personales fueran
+  enviados. No recogidos en persona.
+  Andrade asume expedientes pendientes de reemplazo.
+  Personal de reemplazo: NINGUNO ASIGNADO.
   `
 );
 
@@ -366,6 +384,8 @@ registerLines(
     20-JAN: Múltiplos relatos civis de fenômenos
       aéreos ao sul de Varginha.
       Avaliação: Balão meteorológico.
+      [Avaliação revogada pelo Comando do Setor]
+  Nenhum item requer escalação.
   `,
   `
   RESUMEN DE INTELIGENCIA REGIONAL — ENE 1996
@@ -383,6 +403,8 @@ registerLines(
     20-JAN: Múltiples reportes civiles de fenómenos
       aéreos al sur de Varginha.
       Evaluación: Globo meteorológico.
+      [Evaluación revocada por Comando del Sector]
+  Ningún elemento requiere escalamiento.
   `
 );
 
@@ -392,11 +414,37 @@ registerLines(
   FORMULÁRIO DE TRANSFERÊNCIA DE ATIVOS — ATF-1996-0023
   STATUS: INCOMPLETO — DEVOLVIDO
   TRANSFERÊNCIA DE: HOLDING-7
+  TRANSFERÊNCIA PARA: [CAMPO EM BRANCO]
+  DATA: 24-JAN-1996
+  ITENS:
+    1x Contêiner, lacrado, 45kg — classificação biológica
+    1x Maleta, documentos, classificados
+  ERRO: Assinatura da parte receptora AUSENTE
+  ERRO: Código de autorização INVÁLIDO
+  ERRO: Código de destino NÃO RECONHECIDO
+  Formulário devolvido ao originador. Transferência pendente.
+  ESCRITURÁRIO: T. SANTOS
+  NOTA: Santos relatou temperatura incomum
+  emanando do contêiner lacrado.
+  Relatório registrado, depois retirado no mesmo dia.
   `,
   `
   FORMULARIO DE TRANSFERENCIA DE ACTIVOS — ATF-1996-0023
   STATUS: INCOMPLETO — DEVUELTO
   TRANSFERENCIA DESDE: HOLDING-7
+  TRANSFERENCIA A: [CAMPO EN BLANCO]
+  FECHA: 24-JAN-1996
+  ARTÍCULOS:
+    1x Contenedor, sellado, 45kg — clasificación biológica
+    1x Maletín, documentos, clasificados
+  ERROR: Firma de la parte receptora AUSENTE
+  ERROR: Código de autorización INVÁLIDO
+  ERROR: Código de destino NO RECONOCIDO
+  Formulario devuelto al originador. Transferencia pendiente.
+  ESCRIBIENTE: T. SANTOS
+  NOTA: Santos reportó temperatura inusual
+  emanando del contenedor sellado.
+  Informe registrado, luego retirado el mismo día.
   `
 );
 
@@ -481,6 +529,13 @@ registerLines(
     08-JAN: OLIVEIRA, Paulo (Instalações)
     12-JAN: RIBEIRO, Ana (Registros)
     17-JAN: FERREIRA, João (Segurança)
+    24-JAN: [SUPRIMIDO] (Ops)
+    29-JAN: COSTA, Lucia (Recepção)
+  Contribuições para bolo são voluntárias.
+  Lista de inscrição na sala de descanso.
+  NOTA: Comemoração de 24-JAN cancelada.
+  Todo o andar de Ops com acesso restrito.
+  Nenhuma explicação fornecida.
   `,
   `
   CUMPLEAÑOS DEL PERSONAL — ENERO 1996
@@ -489,6 +544,13 @@ registerLines(
     08-JAN: OLIVEIRA, Paulo (Instalaciones)
     12-JAN: RIBEIRO, Ana (Registros)
     17-JAN: FERREIRA, João (Seguridad)
+    24-JAN: [SUPRIMIDO] (Ops)
+    29-JAN: COSTA, Lucia (Recepción)
+  Contribuciones para pastel son voluntarias.
+  Hoja de inscripción en la sala de descanso.
+  NOTA: Celebración de 24-JAN cancelada.
+  Toda la planta de Ops con acceso restringido.
+  Ninguna explicación proporcionada.
   `
 );
 
@@ -509,6 +571,10 @@ registerLines(
     Instalações ................... ramal 4100
     Médico (B-3) .................. ramal 4200
     Ala de Contenção .............. ramal 4500
+    [RESTRITO] .................... ramal 9999
+  EMERGÊNCIA: Disque 0 para linha externa.
+  Ramal 9999 requer autorização por voz.
+  Não tente sem autorização.
   `,
   `
   DIRECTORIO TELEFÓNICO — 1996
@@ -525,6 +591,10 @@ registerLines(
     Instalaciones ................. ext. 4100
     Médico (B-3) .................. ext. 4200
     Ala de Contención ............. ext. 4500
+    [RESTRINGIDO] ................ ext. 9999
+  EMERGENCIA: Marque 0 para línea externa.
+  Ext. 9999 requiere autorización por voz.
+  No intente sin autorización.
   `
 );
 
@@ -538,6 +608,14 @@ registerLines(
   05-JAN    COSTA, M.     45.248   45.312   Aeroporto
   09-JAN    LIMA, A.      45.312   45.340   Escritório regional
   15-JAN    SANTOS, P.    45.340   45.356   Fornecedor
+  19-JAN    [CLASSIFICADO]  45.356   45.498   [CLASSIFICADO]
+  20-JAN    [CLASSIFICADO]  45.498   45.512   [CLASSIFICADO]
+  21-JAN    [CLASSIFICADO]  45.512   45.687   [CLASSIFICADO]
+  23-JAN    COSTA, M.     45.687   45.720   Aeroporto
+  NOTA: 175km em uma viagem classificada (19-JAN).
+  Veículo devolvido com manchas no interior.
+  Ordem de limpeza: PRIORIDADE / SEM FORNECEDOR EXTERNO.
+  Ref. cruzada: transport_log_96.txt
   `,
   `
   REGISTRO DE KILOMETRAJE DE VEHÍCULOS — ENERO 1996
@@ -547,6 +625,14 @@ registerLines(
   05-JAN    COSTA, M.     45.248   45.312   Aeropuerto
   09-JAN    LIMA, A.      45.312   45.340   Oficina regional
   15-JAN    SANTOS, P.    45.340   45.356   Proveedor
+  19-JAN    [CLASIFICADO]  45.356   45.498   [CLASIFICADO]
+  20-JAN    [CLASIFICADO]  45.498   45.512   [CLASIFICADO]
+  21-JAN    [CLASIFICADO]  45.512   45.687   [CLASIFICADO]
+  23-JAN    COSTA, M.     45.687   45.720   Aeropuerto
+  NOTA: 175km en un viaje clasificado (19-JAN).
+  Vehículo devuelto con manchas en el interior.
+  Orden de limpieza: PRIORIDAD / SIN PROVEEDOR EXTERNO.
+  Ref. cruzada: transport_log_96.txt
   `
 );
 
@@ -718,6 +804,13 @@ registerLines(
     11-JAN: Jogo de chaves (carro + casa)
     14-JAN: Relógio, prata, digital (refeitório)
     19-JAN: Carteira, couro marrom (Lote B)
+    22-JAN: [DESCRIÇÃO DO ITEM CLASSIFICADA]
+    22-JAN: [DESCRIÇÃO DO ITEM CLASSIFICADA]
+    23-JAN: [DESCRIÇÃO DO ITEM CLASSIFICADA]
+  Itens mantidos por 30 dias, depois doados.
+  NOTA: Itens registrados 22-23 JAN reclamados pelo
+  Comando do Setor. Nenhum recibo emitido.
+  Não questione. Ver duty_roster_jan96.txt.
   `,
   `
   OBJETOS PERDIDOS — ENERO 1996
@@ -727,6 +820,13 @@ registerLines(
     11-JAN: Juego de llaves (auto + casa)
     14-JAN: Reloj, plata, digital (comedor)
     19-JAN: Billetera, cuero marrón (Lote B)
+    22-JAN: [DESCRIPCIÓN DEL ARTÍCULO CLASIFICADA]
+    22-JAN: [DESCRIPCIÓN DEL ARTÍCULO CLASIFICADA]
+    23-JAN: [DESCRIPCIÓN DEL ARTÍCULO CLASIFICADA]
+  Artículos retenidos por 30 días, luego donados.
+  NOTA: Artículos registrados 22-23 JAN reclamados por
+  Comando del Sector. Ningún recibo emitido.
+  No pregunte. Ver duty_roster_jan96.txt.
   `
 );
 
@@ -864,6 +964,11 @@ registerLines(
     VERDE:   Pessoal permanente
     AMARELO: Temporário / prestador
     VERMELHO: Somente veículos de emergência
+    PRETO:   [NOVO — Somente Comando do Setor]
+  NOTA 22-JAN: Lote C fechado até segunda ordem.
+  Veículos com permissão PRETA estacionam no Lote C.
+  Não fotografe veículos com permissão PRETA.
+  Permissões perdidas: Segurança, ramal 2000
   `,
   `
   REGLAMENTO DEL ESTACIONAMIENTO
@@ -879,6 +984,11 @@ registerLines(
     VERDE:    Personal permanente
     AMARILLO: Temporario / contratista
     ROJO:     Solo vehículos de emergencia
+    NEGRO:    [NUEVO — Solo Comando del Sector]
+  NOTA 22-JAN: Lote C cerrado hasta nuevo aviso.
+  Vehículos con permiso NEGRO estacionan en Lote C.
+  No fotografíe vehículos con permiso NEGRO.
+  Permisos perdidos: Seguridad, ext. 2000
   `
 );
 
@@ -897,6 +1007,11 @@ registerLines(
     NÃO RECLAMADO.
   19-JAN | 18:20 | Carteira marrom, entrada Lote B.
     RECLAMADO 20-JAN. Proprietário verificado.
+  22-JAN | 03:00 | [REGISTRO LACRADO]
+    Sobreposição: COMANDO DO SETOR
+    Guarda de plantão (P. Rocha) colocado em licença.
+    Rocha descreveu o item como "não é daqui."
+    Significado incerto. Rocha indisponível.
   `,
   `
   REGISTRO DE OBJETOS PERDIDOS — DETALLADO
@@ -911,6 +1026,11 @@ registerLines(
     NO RECLAMADO.
   19-JAN | 18:20 | Billetera marrón, entrada Lote B.
     RECLAMADO 20-JAN. Propietario verificado.
+  22-JAN | 03:00 | [REGISTRO SELLADO]
+    Anulación: COMANDO DEL SECTOR
+    Guardia de turno (P. Rocha) puesto en licencia.
+    Rocha describió el artículo como "no es de aquí."
+    Significado incierto. Rocha no disponible.
   `
 );
 
@@ -926,6 +1046,16 @@ registerLines(
     OLIVEIRA, P. ........... 02 a 12-JAN
     SANTOS, M. ............. 08 a 15-JAN
     RIBEIRO, J.S. .......... 15 a 26-JAN
+    NASCIMENTO, R. ......... [CANCELADO — INCIDENTE]
+  FEVEREIRO:
+    COSTA, L. .............. 05 a 16-FEV
+    FERREIRA, R. ........... [CANCELADO — TRANSFERÊNCIA]
+    LIMA, A. ............... [CANCELADO — TRANSFERÊNCIA]
+    CARVALHO, M. ........... [CANCELADO — MÉDICO]
+  TODAS AS FÉRIAS DE MARÇO SUSPENSAS.
+  Diretriz do Comando do Setor.
+  Motivo: "Requisitos operacionais."
+  Dúvidas: RH, ramal 2050
   `,
   `
   CALENDARIO DE VACACIONES — T1 1996
@@ -934,6 +1064,16 @@ registerLines(
     OLIVEIRA, P. ........... 02 a 12-ENE
     SANTOS, M. ............. 08 a 15-ENE
     RIBEIRO, J.S. .......... 15 a 26-ENE
+    NASCIMENTO, R. ......... [CANCELADO — INCIDENTE]
+  FEBRERO:
+    COSTA, L. .............. 05 a 16-FEB
+    FERREIRA, R. ........... [CANCELADO — TRANSFERENCIA]
+    LIMA, A. ............... [CANCELADO — TRANSFERENCIA]
+    CARVALHO, M. ........... [CANCELADO — MÉDICO]
+  TODAS LAS VACACIONES DE MARZO SUSPENDIDAS.
+  Directiva del Comando del Sector.
+  Motivo: "Requisitos operacionales."
+  Consultas: RRHH, ext. 2050
   `
 );
 registerLines(
@@ -982,12 +1122,32 @@ registerLines(
   CENTRO DE OPERAÇÕES
   06-07 JAN: SILVA, R. / OLIVEIRA, P.
   13-14 JAN: SANTOS, M. / COSTA, L.
+  20-21 JAN: [CANCELADO — TODOS EM ALERTA]
+  27-28 JAN: FERREIRA, J. / LIMA, A.
+  Fim de semana de 20-21 JAN: Mobilização total do pessoal
+  por ordem do Diretor. Nenhum detalhe fornecido.
+  Solicitações de hora extra ao RH até quarta anterior.
+  NOTA: Pessoal reportando em 20-JAN expressou
+  relutância. Dois solicitaram transferência imediata.
+  Solicitações negadas. Aditivos de NDA assinados.
+  Ver: vacation_calendar.txt (cancelamentos)
+  Oficial de Plantão: ramal 3000 (24h)
   `,
   `
   GUARDIA DE FIN DE SEMANA — ENERO 1996
   CENTRO DE OPERACIONES
   06-07 ENE: SILVA, R. / OLIVEIRA, P.
   13-14 ENE: SANTOS, M. / COSTA, L.
+  20-21 ENE: [CANCELADO — TODOS EN ALERTA]
+  27-28 ENE: FERREIRA, J. / LIMA, A.
+  Fin de semana de 20-21 ENE: Movilización total del personal
+  por orden del Director. Ningún detalle proporcionado.
+  Solicitudes de horas extra a RRHH antes del miércoles.
+  NOTA: Personal reportándose el 20-JAN expresó
+  renuencia. Dos solicitaron transferencia inmediata.
+  Solicitudes denegadas. Enmiendas de NDA firmadas.
+  Ver: vacation_calendar.txt (cancelaciones)
+  Oficial de Guardia: ext. 3000 (24h)
   `
 );
 registerLines(
@@ -1131,6 +1291,7 @@ registerLines(
   "TESTEMUNHA RETIRA DEPOIMENTO"
     Mulher local retirou seu testemunho sobre a criatura.
     "Eu estava enganada. Eram apenas sombras."
+    [Ela foi visitada por homens de terno dois dias antes.]
   `,
   `
   RECORTES DE PRENSA ARCHIVADOS — FEBRERO 1996
@@ -1148,6 +1309,7 @@ registerLines(
   "TESTIGO RETIRA DECLARACIÓN"
     Mujer local retiró su testimonio sobre la criatura.
     "Estaba equivocada. Eran solo sombras."
+    [Fue visitada por hombres de traje dos días antes.]
   `
 );
 registerLines(
@@ -1200,10 +1362,38 @@ registerLines(
   `
   INTERCEPTAÇÃO DE SINAL — NÃO VERIFICADO
   TIMESTAMP: 15-MAR-1996 03:47:22 UTC
+  [FRAGMENTÁRIO — RECONSTRUÍDO]
+  ...conseguiu cruzar a fronteira...
+  ...eles vieram ao apartamento mas...
+  ...identidade diferente agora...
+  ...o hackerkid fez isso...
+  ...os arquivos estão em todo lugar agora...
+  ...não dá pra colocar a pasta de volta no tubo...
+  ...eles acham que estou morto...
+  ...deixe-os pensar assim...
+  ...2026. estarei observando...
+  ...todos nós estaremos...
+  [SINAL PERDIDO]
+  ANÁLISE: Origem irrastreável. Possivelmente fabricado.
+  Status do sujeito: DESCONHECIDO
   `,
   `
   INTERCEPCIÓN DE SEÑAL — NO VERIFICADO
   TIMESTAMP: 15-MAR-1996 03:47:22 UTC
+  [FRAGMENTARIO — RECONSTRUIDO]
+  ...logró cruzar la frontera...
+  ...vinieron al apartamento pero...
+  ...identidad diferente ahora...
+  ...el hackerkid lo hizo...
+  ...los archivos están en todas partes ahora...
+  ...no se puede meter la pasta de vuelta en el tubo...
+  ...creen que estoy muerto...
+  ...que lo crean...
+  ...2026. estaré observando...
+  ...todos lo estaremos...
+  [SEÑAL PERDIDA]
+  ANÁLISIS: Origen irrastreable. Posiblemente fabricado.
+  Estado del sujeto: DESCONOCIDO
   `
 );
 registerLines(
@@ -1216,6 +1406,16 @@ registerLines(
   MODELO ANTERIOR:
     - Zero consciência pública na transição
     - Resposta da população: Pânico, colapso
+    - Baixas estimadas: [SUPRIMIDO]
+  MODELO REVISADO (PÓS-VIOLAÇÃO):
+    - Consciência parcial existente
+    - Redes clandestinas preparadas
+    - Resposta coordenada possível
+    - Baixas estimadas: REDUZIDAS
+  A violação, embora operacionalmente danosa, pode ter
+  melhorado as taxas de sobrevivência na transição.
+  As ações do intruso podem ter salvado vidas.
+  Esta avaliação é classificada e será negada.
   `,
   `
   ACTUALIZACIÓN DE PROYECCIÓN — VENTANA DE TRANSICIÓN 2026
@@ -1225,6 +1425,16 @@ registerLines(
   MODELO ANTERIOR:
     - Cero conciencia pública en la transición
     - Respuesta de la población: Pánico, colapso
+    - Bajas estimadas: [SUPRIMIDO]
+  MODELO REVISADO (POST-VIOLACIÓN):
+    - Conciencia parcial existente
+    - Redes clandestinas preparadas
+    - Respuesta coordinada posible
+    - Bajas estimadas: REDUCIDAS
+  La violación, aunque operacionalmente dañina, puede haber
+  mejorado las tasas de supervivencia en la transición.
+  Las acciones del intruso pueden haber salvado vidas.
+  Esta evaluación es clasificada y será negada.
   `
 );
 registerLines(
@@ -1270,9 +1480,43 @@ registerLines(
   vfs.foreign_drone_theory.content,
   `
   AVALIAÇÃO — HIPÓTESE DE DRONE ESTRANGEIRO
+  ANALISTA: [CLASSIFICADO]
+  DATA: 25-JAN-1996
+  HIPÓTESE:
+    Material recuperado é um drone de reconhecimento
+    estrangeiro (origem EUA ou europeia).
+  A FAVOR:
+    - Materiais avançados, grau aeroespacial
+    - Tamanho apropriado para plataforma não tripulada
+    - Local de recuperação próximo a infraestrutura estratégica
+  CONTRA:
+    - Nenhum sistema de propulsão identificado
+    - Nenhum drone conhecido utiliza estes materiais
+    - Variabilidade de massa inexplicável
+    - Assinatura térmica não corresponde a nenhum tipo de motor
+  CONCLUSÃO:
+    Hipótese NÃO PODE ser sustentada.
+    Propriedades inconsistentes com QUALQUER aeronave conhecida.
   `,
   `
   EVALUACIÓN — HIPÓTESIS DE DRON EXTRANJERO
+  ANALISTA: [CLASIFICADO]
+  FECHA: 25-JAN-1996
+  HIPÓTESIS:
+    Material recuperado es un dron de reconocimiento
+    extranjero (origen EE.UU. o europeo).
+  A FAVOR:
+    - Materiales avanzados, grado aeroespacial
+    - Tamaño apropiado para plataforma no tripulada
+    - Sitio de recuperación cerca de infraestructura estratégica
+  EN CONTRA:
+    - Ningún sistema de propulsión identificado
+    - Ningún dron conocido utiliza estos materiales
+    - Variabilidad de masa inexplicable
+    - Firma térmica no corresponde a ningún tipo de motor
+  CONCLUSIÓN:
+    Hipótesis NO PUEDE ser sostenida.
+    Propiedades inconsistentes con CUALQUIER aeronave conocida.
   `
 );
 registerLines(
@@ -1362,12 +1606,36 @@ registerLines(
   DATA: 21-JAN-1996
   STATUS: FRAGMENTO — DANO DE SETOR
   REMESSAS DE SAÍDA:
+    [CORROMPIDO] ... Contêiner C-7 ...
+    Destino: CÓDIGO ECHO
+    Peso: 45kg
+    Responsável: Protocolo 7-ECHO autorizado
+    [CORROMPIDO] ... Contêiner C-12 ...
+    Destino: DESCONHECIDO (canal diplomático)
+    Peso: 112kg
+    Responsável: [PERDA DE DADOS]
+  Referência cruzada transport_log_96.
+  NOTA: Peso de C-12 excede qualquer amostra
+  individual de material recuperado. Conteúdo não especificado.
+  Embalagem com classificação biológica confirmada.
   `,
   `
   MANIFIESTO LOGÍSTICO — RECUPERACIÓN PARCIAL
   FECHA: 21-ENE-1996
   ESTADO: FRAGMENTO — DAÑO DE SECTOR
   ENVÍOS DE SALIDA:
+    [CORRUPTO] ... Contenedor C-7 ...
+    Destino: CÓDIGO ECHO
+    Peso: 45kg
+    Responsable: Protocolo 7-ECHO autorizado
+    [CORRUPTO] ... Contenedor C-12 ...
+    Destino: DESCONOCIDO (canal diplomático)
+    Peso: 112kg
+    Responsable: [PÉRDIDA DE DATOS]
+  Referencia cruzada transport_log_96.
+  NOTA: Peso de C-12 excede cualquier muestra
+  individual de material recuperado. Contenido no especificado.
+  Embalaje con clasificación biológica confirmado.
   `
 );
 registerLines(
@@ -1451,12 +1719,16 @@ registerLines(
   ORIGEM: LANGLEY
   DESTINO: ESTAÇÃO BRASÍLIA
   DATA: 23-JAN-1996 04:12 UTC
+  [CIFRADO — REQUER AUTORIZAÇÃO]
+  Referência cruzada: /comms/liaison/foreign_liaison_note.txt
   `,
   `
   CABLE CIFRADO — PRIORIDAD ALFA
   ORIGEN: LANGLEY
   DESTINO: ESTACIÓN BRASILIA
   FECHA: 23-ENE-1996 04:12 UTC
+  [CIFRADO — REQUIERE AUTORIZACIÓN]
+  Referencia cruzada: /comms/liaison/foreign_liaison_note.txt
   `
 );
 registerLines(
@@ -1528,6 +1800,7 @@ registerLines(
   incomuns por horas. Muito abaixo dos parâmetros normais.
   Sou obrigado a manter registros completos.
   Solicito orientações.
+  [RESPOSTA: "Arquivo classificado. Destrua esta consulta."]
   `,
   `
   CONSULTA — MÉDICO FORENSE REGIONAL
@@ -1545,15 +1818,32 @@ registerLines(
   inusuales durante horas. Muy por debajo de los parámetros normales.
   Estoy obligado a mantener registros completos.
   Solicito orientación.
+  [RESPUESTA: "Archivo clasificado. Destruya esta consulta."]
   `
 );
 registerLines(
   vfs.pattern_recognition_note.content,
   `
   LOG DO SISTEMA — RECONHECIMENTO DE PADRÃO
+  TIMESTAMP: [SESSÃO ATUAL]
+  Varredura ampla de arquivos detectada.
+  Usuário acessou múltiplos setores do sistema.
+  Padrão: Revisão persistente de registros dispersos.
+  Isto é uma auditoria ou uma intrusão.
+  De qualquer forma, alguém está prestando atenção.
+  Arquivos adicionais podem estar disponíveis.
+  Verifique /admin se o acesso permitir.
   `,
   `
   LOG DEL SISTEMA — RECONOCIMIENTO DE PATRÓN
+  TIMESTAMP: [SESIÓN ACTUAL]
+  Barrido amplio de archivos detectado.
+  Usuario ha accedido a múltiples sectores del sistema.
+  Patrón: Revisión persistente de registros dispersos.
+  Esto es una auditoría o una intrusión.
+  De cualquier forma, alguien está prestando atención.
+  Archivos adicionales pueden estar disponibles.
+  Verifique /admin si el acceso lo permite.
   `
 );
 registerLines(
@@ -1955,6 +2245,7 @@ registerLines(
   percebem uma ameaça. O processo é gradual,
   invisível e irreversível.
   Terra: Fase 1 avançada. Fase 2 não pode ser descartada.
+  [ASSINATURAS: 4 de 6. Dois recusaram — objeções arquivadas.]
   `,
   `
   MARCO TEÓRICO — COLONIZACIÓN SIN LLEGADA
@@ -1973,6 +2264,7 @@ registerLines(
   perciben una amenaza. El proceso es gradual,
   invisible e irreversible.
   Tierra: Fase 1 avanzada. Fase 2 no puede descartarse.
+  [FIRMAS: 4 de 6. Dos rechazaron — objeciones archivadas.]
   `
 );
 registerLines(
@@ -2070,6 +2362,12 @@ registerLines(
   21-JAN 02:45 — 12 fragmentos distintos catalogados
   21-JAN 03:30 — Material dividido para redundância
   21-JAN 04:00 — Lote A → HOLDING-7
+  21-JAN 04:00 — Lote B → [SUPRIMIDO] mala diplomática
+  22-JAN — Transferência completa. Custódia lacrada.
+  23-JAN 11:00 — Inventário de HOLDING-7 reconciliado
+  23-JAN 11:30 — Confirmação do Lote B pendente
+  Transferência estrangeira: Protocolo 7-ECHO.
+  Nação destinatária não registrada neste sistema.
   `,
   `
   REGISTRO DE TRANSPORTE — EXTENSIÓN OPERACIÓN PRATO
@@ -2082,6 +2380,12 @@ registerLines(
   21-JAN 02:45 — 12 fragmentos distintos catalogados
   21-JAN 03:30 — Material dividido para redundancia
   21-JAN 04:00 — Lote A → HOLDING-7
+  21-JAN 04:00 — Lote B → [SUPRIMIDO] valija diplomática
+  22-JAN — Transferencia completa. Custodia sellada.
+  23-JAN 11:00 — Inventario de HOLDING-7 reconciliado
+  23-JAN 11:30 — Confirmación del Lote B pendiente
+  Transferencia extranjera: Protocolo 7-ECHO.
+  Nación destinataria no registrada en este sistema.
   `
 );
 registerLines(
@@ -2127,27 +2431,123 @@ registerLines(
   vfs.bio_container_log.content,
   `
   REGISTRO DE BIOCONTENÇÃO — QUARENTENA
+  LOCAL: HOSPITAL REGIONAL [NOME SUPRIMIDO]
+  DATA: 20-JAN-1996
+  20-JAN 04:30 — Sujeito ALFA assegurado. Sinais vitais instáveis.
+  20-JAN 05:15 — Sujeito BETA assegurado. Sinais vitais em declínio.
+  20-JAN 06:00 — Sujeito ALFA expirou. Causa desconhecida.
+  20-JAN 08:00 — Ordem de transferência recebida.
+  20-JAN 09:30 — BETA transferido para custódia militar.
+  20-JAN 10:00 — Restos de ALFA → protocolo de autópsia.
+  Sujeitos apresentam morfologia não humana.
+  Sem correspondência em qualquer espécie catalogada.
+  21-JAN 02:00 — Terceiro sujeito reportado. Sítio GAMMA.
+  21-JAN 04:00 — Assegurado. Designado GAMMA.
+  21-JAN 06:00 — GAMMA transferido. Destino desconhecido.
+  AVISO: Todo bio-material classificado CÓSMICO.
+  O cheiro. O cheiro naquela sala.
   `,
   `
   REGISTRO DE BIOCONTENCIÓN — CUARENTENA
+  SITIO: HOSPITAL REGIONAL [NOME SUPRIMIDO]
+  FECHA: 20-JAN-1996
+  20-JAN 04:30 — Sujeto ALFA asegurado. Signos vitales inestables.
+  20-JAN 05:15 — Sujeto BETA asegurado. Signos vitales en declive.
+  20-JAN 06:00 — Sujeto ALFA expiró. Causa desconocida.
+  20-JAN 08:00 — Orden de transferencia recibida.
+  20-JAN 09:30 — BETA transferido a custodia militar.
+  20-JAN 10:00 — Restos de ALFA → protocolo de autopsia.
+  Sujetos presentan morfología no humana.
+  Sin correspondencia en ninguna especie catalogada.
+  21-JAN 02:00 — Tercer sujeto reportado. Sitio GAMMA.
+  21-JAN 04:00 — Asegurado. Designado GAMMA.
+  21-JAN 06:00 — GAMMA transferido. Destino desconocido.
+  ADVERTENCIA: Todo bio-material clasificado CÓSMICO.
+  El olor. El olor en esa sala.
   `
 );
 registerLines(
   vfs.autopsy_alpha_log.content,
   `
   PROTOCOLO DE AUTÓPSIA — SUJEITO ALFA
+  PATOLOGISTA: [CLASSIFICADO — universidade estadual]
+  INSTALAÇÃO: Hospital Regional do Sul de Minas
+  DATA: 21-JAN-1996
+  EXTERNO:
+    Altura: 1.6m (contraído na recuperação)
+    Pele: Marrom escura, oleosa, forte odor de amônia
+    Crânio: Três cristas ósseas, anteroposterior
+    Olhos: Grandes, vermelho profundo, sem esclera
+    Membros: Quatro dígitos por extremidade
+  INTERNO:
+    Cardiovascular: Órgão de câmara única
+    Digestivo: Vestigial. Não funcional.
+    Reprodutivo: Ausente.
+    Neural: Massa craniana superdesenvolvida.
+  Estruturas cranianas sugerem processamento
+  de sinais de alta largura de banda. Sem aparelho vocal.
+  Comunicação por meios não acústicos.
+  Tecidos transferidos conforme Protocolo 7-ECHO.
+  "Este organismo foi projetado, não evoluiu."
   `,
   `
   PROTOCOLO DE AUTOPSIA — SUJETO ALFA
+  PATÓLOGO: [CLASIFICADO — universidad estatal]
+  INSTALACIÓN: Hospital Regional do Sul de Minas
+  FECHA: 21-JAN-1996
+  EXTERNO:
+    Altura: 1.6m (contraído en la recuperación)
+    Piel: Marrón oscura, aceitosa, fuerte olor a amoníaco
+    Cráneo: Tres crestas óseas, anteroposterior
+    Ojos: Grandes, rojo profundo, sin esclerótica
+    Extremidades: Cuatro dígitos por extremidad
+  INTERNO:
+    Cardiovascular: Órgano de cámara única
+    Digestivo: Vestigial. No funcional.
+    Reproductivo: Ausente.
+    Neural: Masa craneal sobredesarrollada.
+  Estructuras craneales sugieren procesamiento
+  de señales de gran ancho de banda. Sin aparato vocal.
+  Comunicación por medios no acústicos.
+  Tejidos transferidos según Protocolo 7-ECHO.
+  "Este organismo fue diseñado, no evolucionó."
   `
 );
 registerLines(
   vfs.autopsy_addendum_psi.content,
   `
   ADENDO PSI — AVALIAÇÃO NEURAL
+  CONSULTOR: [CLASSIFICADO]
+  DATA: 25-JAN-1996
+  ANÁLISE DE ESTRUTURA CRANIANA:
+    - Capacidade massiva de processamento paralelo
+    - Estruturas análogas a receptores de sinal
+    - Sem equivalente de córtex de tomada de decisão
+  Sujeito ALFA não era autônomo.
+  Recebia instruções de fonte externa.
+  Funcionava apenas como observador/relé.
+  Se sujeitos são receptores, devem existir
+  transmissores. Os transmissores não foram recuperados.
+  Presumir que a missão de observação foi bem-sucedida.
+  Presumir que dados foram transmitidos antes da expiração.
+  O que quer que os enviou agora sabe que estamos aqui.
   `,
   `
   ADENDA PSI — EVALUACIÓN NEURAL
+  CONSULTOR: [CLASIFICADO]
+  FECHA: 25-JAN-1996
+  ANÁLISIS DE ESTRUCTURA CRANEAL:
+    - Capacidad masiva de procesamiento paralelo
+    - Estructuras análogas a receptores de señal
+    - Sin equivalente de córtex de toma de decisiones
+  Sujeto ALFA no era autónomo.
+  Recibía instrucciones de fuente externa.
+  Funcionaba solo como observador/relé.
+  Si los sujetos son receptores, deben existir
+  transmisores. Los transmisores no fueron recuperados.
+  Asumir que la misión de observación fue exitosa.
+  Asumir que los datos fueron transmitidos antes de la expiración.
+  Lo que sea que los envió ahora sabe que estamos aquí.
   `
 );
 registerLines(
@@ -2159,6 +2559,16 @@ registerLines(
   Todas as evidências físicas asseguradas.
   Todo material biológico assegurado.
   LIGAÇÃO ESTRANGEIRA:
+    Representantes de [SUPRIMIDO] chegaram 22-JAN.
+    Protocolo conjunto estabelecido.
+    Acordo de compartilhamento de material assinado.
+  PREOCUPAÇÕES:
+    Testemunhas locais: 30+.
+    Supressão de mídia parcialmente efetiva.
+    Contenção a longo prazo incerta.
+  Manter postura de negação.
+  Acelerar transferência de material estrangeiro.
+  Descontinuar análise local para prevenir vazamentos.
   `,
   `
   INFORME DE CAMPO — OPERACIÓN PRATO DELTA
@@ -2167,6 +2577,16 @@ registerLines(
   Todas las evidencias físicas aseguradas.
   Todo material biológico asegurado.
   ENLACE EXTRANJERO:
+    Representantes de [SUPRIMIDO] llegaron 22-JAN.
+    Protocolo conjunto establecido.
+    Acuerdo de intercambio de material firmado.
+  PREOCUPACIONES:
+    Testigos locales: 30+.
+    Supresión mediática parcialmente efectiva.
+    Contención a largo plazo incierta.
+  Mantener postura de negación.
+  Acelerar transferencia de material extranjero.
+  Descontinuar análisis local para prevenir filtraciones.
   `
 );
 registerLines(
@@ -2302,9 +2722,41 @@ registerLines(
   vfs.internal_note_07.content,
   `
   NOTA INTERNA 07
+  DE: [SUPRIMIDO]
+  PARA: DIRETOR
+  DATA: 28-JAN-1996
+  RE: Preocupações com Envolvimento Estrangeiro
+  Devo registrar minha objeção.
+  A delegação estrangeira chegou antes da avaliação
+  inicial ser concluída. Seu acesso às amostras
+  biológicas foi concedido antes da cadeia de custódia.
+  Acredito que:
+    - Tinham conhecimento prévio
+    - Seu equipamento estava pré-posicionado
+    - Seus protocolos se sobrepuseram aos nossos
+  Isto não foi cooperação.
+  Isto foi assunção de controle.
+  Recomendo protesto formal através de
+  canais diplomáticos.
   `,
   `
   NOTA INTERNA 07
+  DE: [SUPRIMIDO]
+  PARA: DIRECTOR
+  FECHA: 28-JAN-1996
+  RE: Preocupaciones sobre Participación Extranjera
+  Debo registrar mi objeción.
+  La delegación extranjera llegó antes de que la evaluación
+  inicial estuviera completa. Su acceso a las muestras
+  biológicas fue concedido antes de la cadena de custodia.
+  Creo que:
+    - Tenían conocimiento previo
+    - Su equipo estaba preposicionado
+    - Sus protocolos reemplazaron los nuestros
+  Esto no fue cooperación.
+  Esto fue asunción de control.
+  Recomiendo protesta formal a través de
+  canales diplomáticos.
   `
 );
 registerLines(
@@ -2443,6 +2895,9 @@ registerLines(
     - Todos os procedimentos conduzidos fora do local
     - Sem registros institucionais
     - Resultados compartilhados somente com parceiros estrangeiros
+  APROVAÇÃO: [ASSINATURA SUPRIMIDA]
+  O comitê de ética não perguntou o que o espécime
+  era. Acredito que não queriam saber.
   `,
   `
   EXCEPCIÓN ÉTICA — SOLICITUD 03
@@ -2455,6 +2910,9 @@ registerLines(
     - Todos los procedimientos realizados fuera del sitio
     - Sin registros institucionales
     - Resultados compartidos solo con socios extranjeros
+  APROBACIÓN: [FIRMA SUPRIMIDA]
+  El comité de ética no preguntó qué era el espécimen.
+  Creo que no querían saberlo.
   `
 );
 registerLines(
@@ -2470,6 +2928,13 @@ registerLines(
     - Preparar estruturas de resposta
   PARTICIPANTES:
     - Inteligência Brasileira (Líder, Local)
+    - [SUPRIMIDO] (Análise Técnica)
+    - [SUPRIMIDO] (Avaliação Biológica)
+  DIVISÃO:
+    - Brasil: Restos do Sujeito ALFA
+    - Estrangeiro: Sujeitos BETA, GAMMA
+    - Materiais conforme Protocolo 7-ECHO
+  STATUS: Em andamento. Se Deus quiser, desnecessário.
   `,
   `
   VISIÓN GENERAL DEL PROGRAMA — INICIATIVA DE BIOEVALUACIÓN
@@ -2482,6 +2947,13 @@ registerLines(
     - Preparar marcos de respuesta
   PARTICIPANTES:
     - Inteligencia Brasileña (Líder, Local)
+    - [SUPRIMIDO] (Análisis Técnico)
+    - [SUPRIMIDO] (Evaluación Biológica)
+  DIVISIÓN:
+    - Brasil: Restos del Sujeto ALFA
+    - Extranjero: Sujetos BETA, GAMMA
+    - Materiales según Protocolo 7-ECHO
+  ESTADO: En curso. Si Dios quiere, innecesario.
   `
 );
 registerLines(
@@ -2497,6 +2969,13 @@ registerLines(
   CORRELAÇÃO ASTRONÔMICA (2026):
     - Alinhamentos planetários incomuns
     - Atividade solar: projeções elevadas
+    - [DADOS INSUFICIENTES]
+  CONFIANÇA: MODERADA
+  Estabelecer monitoramento para 2026.
+  Natureza do evento esperado: DESCONHECIDA.
+  A frequência de "trinta rotações" em
+  extrações independentes de espécimes é difícil
+  de descartar como coincidência.
   `,
   `
   ANÁLISIS TEMPORAL — ALINEACIÓN DE VENTANA
@@ -2509,6 +2988,13 @@ registerLines(
   CORRELACIÓN ASTRONÓMICA (2026):
     - Alineaciones planetarias inusuales
     - Actividad solar: proyecciones elevadas
+    - [DATOS INSUFICIENTES]
+  CONFIANZA: MODERADA
+  Establecer monitoreo para 2026.
+  Naturaleza del evento esperado: DESCONOCIDA.
+  La frecuencia de "treinta rotaciones" en
+  extracciones independientes de especímenes es difícil
+  de descartar como coincidencia.
   `
 );
 
@@ -2532,6 +3018,9 @@ registerLines(
   Nunca foram projetados para diálogo.
   ACESSO DE LINK: Preservação de padrão neural permite
   link post-mortem. Frase de autenticação derivada de
+  psi-comm — ver despejo neural [transmissão conceitual].
+    > link
+    > Enter phrase: ___________
   `,
   `
   ANÁLISIS DE PSI-COMUNICACIÓN
@@ -2548,6 +3037,9 @@ registerLines(
   Nunca fueron diseñados para el diálogo.
   ACCESO DE ENLACE: La preservación de patrón neural permite
   enlace post-mortem. Frase de autenticación derivada de
+  psi-comm — ver volcado neural [transmisión conceptual].
+    > link
+    > Enter phrase: ___________
   `
 );
 
@@ -2566,6 +3058,7 @@ registerLines(
   IMPLICAÇÃO: Se a Terra recebeu batedores, passou na triagem.
   Se os batedores transmitiram, fomos catalogados.
   Algo agora sabe o que somos e quanto valemos.
+  [ASSINATURA SUPRIMIDA]
   `,
   `
   ANÁLISIS DE FUNCIÓN Y PROPÓSITO DE ESPECÍMENES
@@ -2580,6 +3073,7 @@ registerLines(
   IMPLICACIÓN: Si la Tierra recibió exploradores, pasó la selección.
   Si los exploradores transmitieron, hemos sido catalogados.
   Algo ahora sabe lo que somos y cuánto valemos.
+  [FIRMA SUPRIMIDA]
   `
 );
 
@@ -2602,6 +3096,7 @@ registerLines(
   Sem adversário a enfrentar.
   O Ministério foi informado. Sua única resposta foi
   reclassificar este memorando para VERMELHO.
+  [ASSINATURA SUPRIMIDA]
   `,
   `
   MEMORÁNDUM — ACLARACIÓN DE LA REFERENCIA A 2026
@@ -2620,6 +3115,7 @@ registerLines(
   Sin adversario que enfrentar.
   El Ministerio fue informado. Su única respuesta fue
   reclasificar este memorándum a ROJO.
+  [FIRMA SUPRIMIDA]
   `
 );
 
@@ -2641,6 +3137,7 @@ registerLines(
   atividade cognitiva, matar a fonte encerra
   o fornecimento. A extração deve ser invisível.
   Deus me livre — minhas mãos não param de tremer.
+  [ASSINATURA SUPRIMIDA]
   `,
   `
   ANÁLISIS INTERNO — HIPÓTESIS DE EXTRACCIÓN DE ENERGÍA
@@ -2658,6 +3155,7 @@ registerLines(
   actividad cognitiva, matar la fuente termina
   el suministro. La extracción debe ser invisible.
   Dios me libre — mis manos no dejan de temblar.
+  [FIRMA SUPRIMIDA]
   `
 );
 
@@ -2676,6 +3174,9 @@ registerLines(
   EXEMPLO:
     script INIT;TARGET=/admin/fragment.dat;EXEC
   ALVOS DISPONÍVEIS:
+    /admin/neural_fragment.dat    [FRAGMENTADO]
+    /comms/psi_residue.log        [CORROMPIDO]
+  NOTA: Reconstrução bem-sucedida pode revelar conteúdo oculto.
   `,
   `
   UTILIDAD — HERRAMIENTA DE RECONSTRUCCIÓN DE DATOS v1.7 (LEGADO)
@@ -2690,6 +3191,9 @@ registerLines(
   EJEMPLO:
     script INIT;TARGET=/admin/fragment.dat;EXEC
   OBJETIVOS DISPONIBLES:
+    /admin/neural_fragment.dat    [FRAGMENTADO]
+    /comms/psi_residue.log        [CORROMPIDO]
+  NOTA: La reconstrucción exitosa puede revelar contenido oculto.
   `
 );
 
@@ -2859,9 +3363,39 @@ registerLines(
   vfs.ascii_signature_bak.content,
   `
   ARQUIVO RECUPERADO — BACKUP DE DIRETÓRIO DE USUÁRIO
+  PROPRIETÁRIO: [SUPRIMIDO]
+  -- 
+      _____
+     /     \\    "O BRASIL É O PAÍS DO FUTURO"
+    | () () |
+     \\  ^  /    A realidade é só uma ilusão,
+      |||||     mas uma bem persistente.
+      |||||              — A. Einstein
+    streber@bbs.unesp.br
+    PGP Key: 0xDEADBEEF
+    Melhor visualizado no Netscape Navigator 2.0
+    <BLINK>EM CONSTRUÇÃO</BLINK>
+    Esta .sig é trazida por muito café,
+    pouco sono e saudade.
+    O futuro chegou. Não era o que esperávamos.
   `,
   `
   ARCHIVO RECUPERADO — RESPALDO DE DIRECTORIO DE USUARIO
+  PROPIETARIO: [SUPRIMIDO]
+  -- 
+      _____
+     /     \\    "O BRASIL É O PAÍS DO FUTURO"
+    | () () |
+     \\  ^  /    La realidad es solo una ilusión,
+      |||||     pero una bien persistente.
+      |||||              — A. Einstein
+    streber@bbs.unesp.br
+    PGP Key: 0xDEADBEEF
+    Mejor visto en Netscape Navigator 2.0
+    <BLINK>EN CONSTRUCCIÓN</BLINK>
+    Esta .sig es cortesía de mucho café,
+    poco sueño y saudade.
+    El futuro llegó. No era lo que esperábamos.
   `
 );
 
@@ -2875,6 +3409,15 @@ registerLines(
   QUINTA: Carne assada, macarrão ao sugo.
   SEXTA-FEIRA:
     *** CARDÁPIO CANCELADO ***
+    [RESPOSTA A INCIDENTE ATIVA]
+    Rações de emergência distribuídas.
+  Cardápio de sexta cancelado devido a bloqueio
+  não programado da instalação. Ver RELATÓRIO DE INCIDENTE 1996-01-VG.
+  Equipe da cafeteria redesignada para apoio a operações.
+  Máquinas de venda automática permanecem operacionais.
+  Dona Maria pede desculpas pelo inconveniente.
+  Ela não sabe o que aconteceu na sexta.
+  Nenhum de nós vai contar a ela.
   `,
   `
   MENÚ DE CAFETERÍA — SEMANA 03 (15-19 ENE 1996)
@@ -2884,6 +3427,15 @@ registerLines(
   JUEVES: Carne asada, macarrones al sugo.
   VIERNES:
     *** MENÚ CANCELADO ***
+    [RESPUESTA A INCIDENTE ACTIVA]
+    Raciones de emergencia distribuidas.
+  Menú del viernes cancelado por bloqueo
+  no programado de la instalación. Ver INFORME DE INCIDENTE 1996-01-VG.
+  Personal de cafetería reasignado a operaciones de apoyo.
+  Máquinas expendedoras siguen operativas.
+  Dona Maria se disculpa por la inconveniencia.
+  Ella no sabe qué pasó el viernes.
+  Ninguno de nosotros se lo dirá.
   `
 );
 
@@ -2939,6 +3491,13 @@ registerLines(
   # Preservar o que encontramos
   for evidence in /collected/*.dat; do
       cp "$evidence" /external/backup/
+      echo "[OK] $(basename $evidence) salvo"
+  done
+  echo ""
+  echo "Backup completo. Evidência persistida."
+  echo "AVISO: Desconexão iminente..."
+  # INSTRUÇÕES: Execute com: run save_evidence.sh
+  # A verdade não se salva sozinha.
   `,
   `
   #!/bin/bash
@@ -2950,6 +3509,13 @@ registerLines(
   # Preservar lo que encontramos
   for evidence in /collected/*.dat; do
       cp "$evidence" /external/backup/
+      echo "[OK] $(basename $evidence) guardado"
+  done
+  echo ""
+  echo "Respaldo completo. Evidencia persistida."
+  echo "ADVERTENCIA: Desconexión inminente..."
+  # INSTRUCCIONES: Ejecutar con: run save_evidence.sh
+  # La verdad no se salva sola.
   `
 );
 
@@ -2963,6 +3529,13 @@ registerLines(
   # Eles estão observando. Isto lhe compra tempo.
   echo "PURGA: Iniciando limpeza de buffer de rastro..."
   echo ""
+  echo "[OK] TRACE_QUEUE limpo"
+  echo "[OK] ROUTE_TABLE removido"
+  echo "[OK] SESSION_LOG truncado"
+  echo ""
+  echo "AVISO: Contramedidas reiniciadas. Espere re-varredura."
+  # INSTRUÇÕES: Execute com: run purge_trace.sh
+  # Você não terá uma segunda chance.
   `,
   `
   #!/bin/bash
@@ -2972,6 +3545,13 @@ registerLines(
   # Están observando. Esto le compra tiempo.
   echo "PURGA: Iniciando limpieza de buffer de rastro..."
   echo ""
+  echo "[OK] TRACE_QUEUE limpiado"
+  echo "[OK] ROUTE_TABLE depurado"
+  echo "[OK] SESSION_LOG truncado"
+  echo ""
+  echo "AVISO: Contramedidas reiniciadas. Espere re-escaneo."
+  # INSTRUCCIONES: Ejecutar con: run purge_trace.sh
+  # No tendrá una segunda oportunidad.
   `
 );
 
@@ -2979,9 +3559,33 @@ registerLines(
   vfs.trace_purge_memo.content,
   `
   LOG DE SEGURANÇA — EVENTO DE PURGA DE RASTRO
+  TIMESTAMP: [SESSÃO ATUAL]
+  Utilitário de purga legado executado durante rastro ativo.
+  Integridade do buffer reiniciada. Janela de rastro reaberta.
+  Operador demonstrou conhecimento de ferramentas internas.
+  Sessão classificada como ALTA PRIORIDADE.
+  Avaliação: Este operador compreende infraestrutura
+  que nunca foi documentada em materiais de treinamento.
+  Ou possuem conhecimento interno, ou são
+  mais engenhosos do que o previsto.
+  Recomendação: Manter vigilância. Não encerrar.
+  Deixe-os encontrar o que procuram.
+  Precisamos saber quem os enviou.
   `,
   `
   LOG DE SEGURIDAD — EVENTO DE PURGA DE RASTRO
+  TIMESTAMP: [SESIÓN ACTUAL]
+  Utilidad de purga legada ejecutada durante rastro activo.
+  Integridad del buffer reiniciada. Ventana de rastro reabierta.
+  Operador demostró conocimiento de herramientas internas.
+  Sesión clasificada como ALTA PRIORIDAD.
+  Evaluación: Este operador comprende infraestructura
+  que nunca fue documentada en materiales de entrenamiento.
+  O tienen conocimiento interno, o son
+  más ingeniosos de lo previsto.
+  Recomendación: Mantener vigilancia. No terminar.
+  Déjelos encontrar lo que buscan.
+  Necesitamos saber quién los envió.
   `
 );
 
@@ -3023,9 +3627,43 @@ registerLines(
   vfs.ghost_session_log.content,
   `
   CAPTURA DE SESSÃO RESIDUAL — QUADRO FANTASMA
+  TIMESTAMP: [SUPRIMIDO]
+  [RASTRO PARCIAL DE COMANDOS]
+    > cd /storage/quarantine
+    > open bio_container.log
+    > open autopsy_alpha.log
+    > cd /comms/psi
+    > open transcript_core.enc
+    > connect autopsy_alpha.log transcript_core.enc
+    > iddqd
+    > god status
+  Operador anterior alcançou vinculação coerente antes da purga.
+  Trilhas de evidência permanecem viáveis.
+  Frase de manutenção não documentada aceita após colapso de rastro.
+  Nenhuma referência correspondente existe nos manuais atuais do operador.
+  Eles estiveram aqui antes de você. Encontraram o que você
+  está procurando. Então a sessão foi encerrada.
+  Não repita os erros deles.
   `,
   `
   CAPTURA DE SESIÓN RESIDUAL — CUADRO FANTASMA
+  TIMESTAMP: [SUPRIMIDO]
+  [RASTRO PARCIAL DE COMANDOS]
+    > cd /storage/quarantine
+    > open bio_container.log
+    > open autopsy_alpha.log
+    > cd /comms/psi
+    > open transcript_core.enc
+    > connect autopsy_alpha.log transcript_core.enc
+    > iddqd
+    > god status
+  Operador anterior logró vinculación coherente antes de la purga.
+  Rastros de evidencia permanecen viables.
+  Frase de mantenimiento no documentada aceptada tras colapso de rastro.
+  Ninguna referencia correspondiente existe en los manuales actuales del operador.
+  Estuvieron aquí antes que usted. Encontraron lo que usted
+  está buscando. Luego la sesión fue terminada.
+  No repita sus errores.
   `
 );
 
@@ -3083,13 +3721,39 @@ registerLines(
   CLASSIFICAÇÃO: USO INTERNO — NÃO ARQUIVAR
   VOZ A: Masculina. ~40 anos. Não solicitada.
   VOZ B: Masculina. ~50 anos. Oficial receptor.
+  [TRANSCRIÇÃO PARCIAL]
+  A: "...muitas pessoas viram. você não pode silenciá-las."
+  B: "nós controlamos o que dizem."
+  A: "...o que quer que lhe digam sobre os corpos —"
+  B: "pare. os corpos civis."
+  A: "os outros."
+  B: "não houve outros. diga."
+  A: "..."
+  B: "DIGA."
+  A: "...corpos humanos."
+  B: "não ligue para este número novamente."
+  [LINHA DESCONECTADA]
+  NOTA DO ANALISTA: Irrastreável. Instinto: não desconsiderar.
   `,
   `
   SEGURIDAD INTERNA — TRANSCRIPCIÓN DE LÍNEA RESERVADA
-  FECHA: 21-ENE-1996 — 02:12
+  FECHA: 21-JAN-1996 — 02:12
   CLASIFICACIÓN: USO INTERNO — NO ARCHIVAR
   VOZ A: Masculina. ~40 años. No solicitada.
   VOZ B: Masculina. ~50 años. Oficial receptor.
+  [TRANSCRIPCIÓN PARCIAL]
+  A: "...demasiada gente lo vio. no puede silenciarlos."
+  B: "nosotros controlamos lo que dicen."
+  A: "...lo que sea que le digan sobre los cuerpos —"
+  B: "pare. los cuerpos civiles."
+  A: "los otros."
+  B: "no hubo otros. dígalo."
+  A: "..."
+  B: "DÍGALO."
+  A: "...cuerpos humanos."
+  B: "no llame a este número de nuevo."
+  [LÍNEA DESCONECTADA]
+  NOTA DEL ANALISTA: Irrastreable. Instinto: no desestimar.
   `
 );
 
@@ -3100,12 +3764,44 @@ registerLines(
   RECONSTRUÇÃO: BEM-SUCEDIDA
   Fragmento capturado durante momentos finais da
   consciência do Espécime GAMMA.
+  [TRANSCRIÇÃO NEURAL DIRETA]
+  ...missão completa... transmissão recebida...
+  ...esta forma expira... aceitável...
+  ...nós não somos indivíduos... somos função...
+  ...os vigilantes não lamentam...
+  ...os vigilantes não celebram...
+  ...eles apenas medem...
+  ...sua espécie também mede...
+  ...mas vocês medem as coisas erradas...
+  ...vocês contam anos... eles contam mentes...
+  ...vocês temem a morte...
+  ...há continuações piores...
+  NOTA DO ANALISTA: Classificado além da autorização normal.
+  Implica que a consciência continua após a extração.
+  Indefinidamente. O comitê decidiu que isso apenas
+  causaria dano ao moral do pessoal.
   `,
   `
   DATOS RECONSTRUIDOS — FRAGMENTO NEURAL
   RECONSTRUCCIÓN: EXITOSA
   Fragmento capturado durante momentos finales de la
   consciencia del Espécimen GAMMA.
+  [TRANSCRIPCIÓN NEURAL DIRECTA]
+  ...misión completa... transmisión recibida...
+  ...esta forma expira... aceptable...
+  ...no somos individuos... somos función...
+  ...los vigilantes no se lamentan...
+  ...los vigilantes no celebran...
+  ...solo miden...
+  ...su especie también mide...
+  ...pero miden las cosas equivocadas...
+  ...ustedes cuentan años... ellos cuentan mentes...
+  ...ustedes temen la muerte...
+  ...hay continuaciones peores...
+  NOTA DEL ANALISTA: Clasificado más allá de la autorización normal.
+  Implica que la consciencia continúa después de la extracción.
+  Indefinidamente. El comité decidió que esto solo
+  causaría daño a la moral del personal.
   `
 );
 
@@ -3194,6 +3890,7 @@ registerLines(
   Assegurar que a baía de recebimento esteja liberada.
   NOTA: "Equipamento" é o termo aprovado.
   Não descreva o que viu nos caixotes.
+  [assinatura ilegível]
   `,
   `
   MEMORÁNDUM INTERNO — COORDINACIÓN DE TRANSFERENCIA DE CARGA
@@ -3210,6 +3907,7 @@ registerLines(
   Asegurar que el área de recepción esté despejada.
   NOTA: "Equipo" es el término aprobado.
   No describa lo que vio en las cajas.
+  [firma ilegible]
   `
 );
 

@@ -110,6 +110,48 @@ export function createInvalidCommandResult(state: GameState, commandName: string
   };
 }
 
+// Alias map: translated command names → canonical English command names
+const COMMAND_ALIASES: Record<string, string> = {
+  // PT-BR aliases
+  'ajuda': 'help',
+  'salvar': 'save',
+  'vazar': 'leak',
+  'esperar': 'wait',
+  'buscar': 'search',
+  'progresso': 'progress',
+  'abrir': 'open',
+  'remover': 'unsave',
+  'estado': 'status',
+  'limpar': 'clear',
+  'dica': 'hint',
+  'nota': 'note',
+  'notas': 'notes',
+  'ultimo': 'last',
+  // ES aliases
+  'ayuda': 'help',
+  'guardar': 'save',
+  'filtrar': 'leak',
+  // 'esperar' already mapped above (same in PT-BR and ES)
+  // 'buscar' already mapped above
+  'progreso': 'progress',
+  // 'abrir' already mapped above
+  'quitar': 'unsave',
+  // 'estado' already mapped above
+  'limpiar': 'clear',
+  'pista': 'hint',
+  // 'nota' already mapped above
+  // 'notas' already mapped above
+  // 'ultimo' already mapped above
+};
+
+/**
+ * Resolve a command alias to its canonical English command name.
+ * Returns the original command if no alias exists.
+ */
+export function resolveCommandAlias(cmd: string): string {
+  return COMMAND_ALIASES[cmd] || cmd;
+}
+
 // Parse command into name and args
 const CONTROL_CHARS_REGEX = /\p{Cc}/gu;
 const ZERO_WIDTH_REGEX = /[\u200B-\u200F\uFEFF]/g;
@@ -133,7 +175,8 @@ export function parseCommand(input: string): { command: string; args: string[] }
   const { value } = sanitizeCommandInput(input);
   const trimmed = value.trim();
   const parts = trimmed.split(/\s+/);
-  const command = (parts[0] || '').toLowerCase();
+  const rawCommand = (parts[0] || '').toLowerCase();
+  const command = resolveCommandAlias(rawCommand);
   const args = parts.slice(1);
   return { command, args };
 }

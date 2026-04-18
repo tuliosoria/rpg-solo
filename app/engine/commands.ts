@@ -38,6 +38,7 @@ export {
   createInvalidCommandResult,
   sanitizeCommandInput,
   parseCommand,
+  resolveCommandAlias,
   calculateDelay,
   createUFO74Message,
 } from './commands/utils';
