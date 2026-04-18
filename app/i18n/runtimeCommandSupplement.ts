@@ -181,7 +181,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  link           - Attempt connection': '  link           - Tenta conexão',
     '  link <phrase>  - Authenticate with conceptual key':
       '  link <phrase>  - Autentica com a chave conceitual',
-    'COMMAND: override protocol <code>': 'COMANDO: override protocol <code>',
+    'COMMAND: override protocol <code>': 'COMANDO: protocolo <código>',
     'COMMAND: release <target>': 'COMANDO: release <target>',
     'NOTE: Requires discovery of containment manifests.':
       'NOTA: Requer descoberta dos manifestos de contenção.',
@@ -398,7 +398,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'emergency broadcast. encrypted. whoever sent this was not expecting to send it.':
       'transmissão de emergência. criptografada. quem mandou isso não esperava precisar mandar.',
     'redaction override. someone had the authority to unlock everything. and used it.':
-      'override de redação. alguém tinha autoridade para destrancar tudo. e usou.',
+      'protocolo de redação. alguém tinha autoridade para destrancar tudo. e usou.',
     'trace purge memo. the order to erase everything. we got here just in time.':
       'memorando de purga de rastreio. a ordem para apagar tudo. chegamos em cima da hora.',
     'mudinho dossier. a planted witness. they fabricated the whole thing.':
@@ -511,7 +511,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: história de cobertura. o material real está enterrado mais fundo.',
     'UFO74: morse code. decipher it.': 'UFO74: código morse. decifra isso.',
     '       might be the override passphrase.':
-      '       pode ser a frase de override.',
+      '       pode ser a senha do protocolo.',
     '        SECURITY PROTOCOL: TURING EVALUATION INITIATED':
       '        PROTOCOLO DE SEGURANÇA: AVALIAÇÃO TURING INICIADA',
     '                    [SIGNAL ECHO DETECTED]': '                    [ECO DE SINAL DETECTADO]',
@@ -593,13 +593,13 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: você já decifrou isso, hackerkid.',
     '       the message was "COLHEITA".': '       a mensagem era "COLHEITA".',
     '       now use it — override protocol.':
-      '       agora use isso — override protocol.',
+      '       agora use isso — protocolo.',
     'Decryption attempts exhausted.': 'Tentativas de decifração esgotadas.',
     'The intercepted message was: COLHEITA': 'A mensagem interceptada era: COLHEITA',
     'UFO74: you missed it, kid. but now you know.':
       'UFO74: você deixou passar, kid. mas agora sabe.',
     '       "COLHEITA" — try it with the override protocol.':
-      '       "COLHEITA" — tente com o protocolo de override.',
+      '       "COLHEITA" — tente com o protocolo.',
     'Enter your deciphered message.': 'Digite sua mensagem decifrada.',
     'Usage: message <deciphered text>': 'Uso: message <texto decifrado>',
     'UFO74: you did it hackerkid!': 'UFO74: você conseguiu, hackerkid!',
@@ -610,16 +610,16 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '       someone embedded it in the signal.':
       '       alguém embutiu isso no sinal.',
     'UFO74: try it with the override protocol.':
-      'UFO74: tente isso com o protocolo de override.',
+      'UFO74: tente isso com o protocolo.',
     '       type: override protocol COLHEITA':
-      '       digite: override protocol COLHEITA',
+      '       digite: protocolo COLHEITA',
     'Maximum attempts exceeded.': 'Número máximo de tentativas excedido.',
     'UFO74: damn. you ran out of tries hackerkid.':
       'UFO74: droga. você ficou sem tentativas, hackerkid.',
     '       the message was "COLHEITA" — means "HARVEST".':
       '       a mensagem era "COLHEITA" — significa "HARVEST".',
     '       try it with override protocol.':
-      '       tente isso com override protocol.',
+      '       tente isso com protocolo.',
     'INCORRECT': 'INCORRETO',
     'UFO74: thats not it hackerkid.': 'UFO74: não é isso, hackerkid.',
     '       check the morse reference again.':
@@ -783,7 +783,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'laundry and birthdays. normal life. and then — special cargo in a temperature-controlled basement. ammonia and wet earth. kid. that is not normal.':
       'lavanderia e aniversários. vida normal. e aí — carga especial num subsolo climatizado. amônia e terra úmida. kid. isso não é normal.',
     'override codes for restricted access. someone left the instructions right here in the system. on purpose.':
-      'códigos de override pra acesso restrito. alguém deixou as instruções aqui no sistema. de propósito.',
+      'códigos do protocolo pra acesso restrito. alguém deixou as instruções aqui no sistema. de propósito.',
     'the system is watching your patterns. every file you open. every command you type. it sees what you are building.':
       'o sistema tá observando seus padrões. cada arquivo que você abre. cada comando que você digita. ele vê o que você tá montando.',
     'ferreira transferred to brasília. lima to são paulo. they scattered everyone who saw something. standard procedure.':
@@ -1151,8 +1151,8 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  Check /storage/quarantine/ for psi files.':
       '  Verifique /storage/quarantine/ para arquivos psi.',
     'Execute administrative override with access code.':
-      'Execute override administrativo com código de acesso.',
-    '  override protocol <code>': '  override protocol <code>',
+      'Execute protocolo administrativo com código de acesso.',
+    '  override protocol <code>': '  protocolo <código>',
     'HINT: The access code can be obtained through encrypted channels.':
       'DICA: O código de acesso pode ser obtido através de canais criptografados.',
     'Release a containment subject.': 'Libere um sujeito de contenção.',
@@ -1338,7 +1338,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  link           - Attempt connection': '  link           - Intenta conexión',
     '  link <phrase>  - Authenticate with conceptual key':
       '  link <phrase>  - Autentica con la clave conceptual',
-    'COMMAND: override protocol <code>': 'COMANDO: override protocol <code>',
+    'COMMAND: override protocol <code>': 'COMANDO: protocolo <código>',
     'COMMAND: release <target>': 'COMANDO: release <target>',
     'NOTE: Requires discovery of containment manifests.':
       'NOTA: Requiere descubrir los manifiestos de contención.',
@@ -1555,7 +1555,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'emergency broadcast. encrypted. whoever sent this was not expecting to send it.':
       'emisión de emergencia. cifrada. quien la envió no esperaba tener que hacerlo.',
     'redaction override. someone had the authority to unlock everything. and used it.':
-      'override de redacción. alguien tenía autoridad para desbloquearlo todo. y la usó.',
+      'protocolo de redacción. alguien tenía autoridad para desbloquearlo todo. y la usó.',
     'trace purge memo. the order to erase everything. we got here just in time.':
       'memorando de purga de rastreo. la orden de borrarlo todo. llegamos justo a tiempo.',
     'mudinho dossier. a planted witness. they fabricated the whole thing.':
@@ -1669,7 +1669,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: historia de cobertura. el material real está más abajo.',
     'UFO74: morse code. decipher it.': 'UFO74: código morse. descífralo.',
     '       might be the override passphrase.':
-      '       puede ser la frase de override.',
+      '       puede ser la contraseña del protocolo.',
     '        SECURITY PROTOCOL: TURING EVALUATION INITIATED':
       '        PROTOCOLO DE SEGURIDAD: EVALUACIÓN TURING INICIADA',
     '                    [SIGNAL ECHO DETECTED]': '                    [ECO DE SEÑAL DETECTADO]',
@@ -1751,13 +1751,13 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'UFO74: ya lo descifraste, hackerkid.',
     '       the message was "COLHEITA".': '       el mensaje era "COLHEITA".',
     '       now use it — override protocol.':
-      '       ahora úsalo — override protocol.',
+      '       ahora úsalo — protocolo.',
     'Decryption attempts exhausted.': 'Intentos de descifrado agotados.',
     'The intercepted message was: COLHEITA': 'El mensaje interceptado era: COLHEITA',
     'UFO74: you missed it, kid. but now you know.':
       'UFO74: se te escapó, kid. pero ahora ya lo sabes.',
     '       "COLHEITA" — try it with the override protocol.':
-      '       "COLHEITA" — pruébalo con el protocolo override.',
+      '       "COLHEITA" — pruébalo con el protocolo.',
     'Enter your deciphered message.': 'Escribe tu mensaje descifrado.',
     'Usage: message <deciphered text>': 'Uso: message <texto descifrado>',
     'UFO74: you did it hackerkid!': 'UFO74: ¡lo lograste, hackerkid!',
@@ -1768,16 +1768,16 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '       someone embedded it in the signal.':
       '       alguien lo incrustó en la señal.',
     'UFO74: try it with the override protocol.':
-      'UFO74: pruébalo con el protocolo override.',
+      'UFO74: pruébalo con el protocolo.',
     '       type: override protocol COLHEITA':
-      '       escribe: override protocol COLHEITA',
+      '       escribe: protocolo COLHEITA',
     'Maximum attempts exceeded.': 'Se superó el número máximo de intentos.',
     'UFO74: damn. you ran out of tries hackerkid.':
       'UFO74: mierda. te quedaste sin intentos, hackerkid.',
     '       the message was "COLHEITA" — means "HARVEST".':
       '       el mensaje era "COLHEITA" — significa "HARVEST".',
     '       try it with override protocol.':
-      '       pruébalo con override protocol.',
+      '       pruébalo con protocolo.',
     'INCORRECT': 'INCORRECTO',
     'UFO74: thats not it hackerkid.': 'UFO74: no es eso, hackerkid.',
     '       check the morse reference again.':
@@ -1941,7 +1941,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'laundry and birthdays. normal life. and then — special cargo in a temperature-controlled basement. ammonia and wet earth. kid. that is not normal.':
       'lavandería y cumpleaños. vida normal. y entonces — carga especial en un sótano climatizado. amoníaco y tierra húmeda. kid. eso no es normal.',
     'override codes for restricted access. someone left the instructions right here in the system. on purpose.':
-      'códigos de override para acceso restringido. alguien dejó las instrucciones aquí en el sistema. a propósito.',
+      'códigos del protocolo para acceso restringido. alguien dejó las instrucciones aquí en el sistema. a propósito.',
     'the system is watching your patterns. every file you open. every command you type. it sees what you are building.':
       'el sistema está observando tus patrones. cada archivo que abres. cada comando que escribes. ve lo que estás construyendo.',
     'ferreira transferred to brasília. lima to são paulo. they scattered everyone who saw something. standard procedure.':
@@ -2311,8 +2311,8 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  Check /storage/quarantine/ for psi files.':
       '  Revisa /storage/quarantine/ para archivos psi.',
     'Execute administrative override with access code.':
-      'Ejecuta override administrativo con código de acceso.',
-    '  override protocol <code>': '  override protocol <code>',
+      'Ejecuta protocolo administrativo con código de acceso.',
+    '  override protocol <code>': '  protocolo <código>',
     'HINT: The access code can be obtained through encrypted channels.':
       'PISTA: El código de acceso se puede obtener a través de canales encriptados.',
     'Release a containment subject.': 'Libera a un sujeto de contención.',

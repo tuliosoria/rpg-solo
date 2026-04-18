@@ -134,14 +134,20 @@ export const combatCommands: CommandRegistry = {
   },
 
   override: (args, state) => {
-    // Requires: "override protocol <PASSWORD>"
-    if (args.length === 0 || args[0].toLowerCase() !== 'protocol') {
-      // Invalid override syntax - treat as invalid command
+    // Accepts: "override protocol <PASSWORD>", "override protocolo <PASSWORD>", or "protocolo <PASSWORD>"
+    // The "protocol"/"protocolo" keyword is optional — if first arg is not the keyword, treat all args as password
+    const PROTOCOL_KEYWORDS = ['protocol', 'protocolo'];
+    const firstArg = (args[0] || '').toLowerCase();
+    const hasProtocolKeyword = PROTOCOL_KEYWORDS.includes(firstArg);
+    const passwordArgs = hasProtocolKeyword ? args.slice(1) : args;
+
+    if (args.length === 0) {
+      // No args at all — treat as invalid command
       return createInvalidCommandResult(state, '');
     }
 
     // Check if password was provided
-    if (args.length < 2) {
+    if (passwordArgs.length === 0) {
       const stateChanges: Partial<GameState> = {
         detectionLevel: state.detectionLevel + 5,
       };
@@ -183,7 +189,7 @@ export const combatCommands: CommandRegistry = {
       };
     }
 
-    const password = args.slice(1).join(' ').toUpperCase();
+    const password = passwordArgs.join(' ').toUpperCase();
     const correctPassword = 'COLHEITA';
 
     // Track failed attempts

@@ -127,6 +127,7 @@ const COMMAND_ALIASES: Record<string, string> = {
   'nota': 'note',
   'notas': 'notes',
   'ultimo': 'last',
+  'protocolo': 'override',
   // ES aliases
   'ayuda': 'help',
   'guardar': 'save',
@@ -142,6 +143,7 @@ const COMMAND_ALIASES: Record<string, string> = {
   // 'nota' already mapped above
   // 'notas' already mapped above
   // 'ultimo' already mapped above
+  // 'protocolo' already mapped above (same in PT-BR and ES)
 };
 
 /**
