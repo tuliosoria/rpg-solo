@@ -146,6 +146,44 @@ const COMMAND_ALIASES: Record<string, string> = {
   // 'protocolo' already mapped above (same in PT-BR and ES)
 };
 
+// Per-language command translations: english command → translated command name
+export const COMMAND_TRANSLATIONS: Record<string, Record<string, string>> = {
+  'pt-BR': {
+    'help': 'ajuda',
+    'save': 'salvar',
+    'leak': 'vazar',
+    'wait': 'esperar',
+    'search': 'buscar',
+    'progress': 'progresso',
+    'open': 'abrir',
+    'unsave': 'remover',
+    'status': 'estado',
+    'clear': 'limpar',
+    'hint': 'dica',
+    'note': 'nota',
+    'notes': 'notas',
+    'last': 'ultimo',
+    'override': 'protocolo',
+  },
+  'es': {
+    'help': 'ayuda',
+    'save': 'guardar',
+    'leak': 'filtrar',
+    'wait': 'esperar',
+    'search': 'buscar',
+    'progress': 'progreso',
+    'open': 'abrir',
+    'unsave': 'quitar',
+    'status': 'estado',
+    'clear': 'limpiar',
+    'hint': 'pista',
+    'note': 'nota',
+    'notes': 'notas',
+    'last': 'ultimo',
+    'override': 'protocolo',
+  },
+};
+
 /**
  * Resolve a command alias to its canonical English command name.
  * Returns the original command if no alias exists.

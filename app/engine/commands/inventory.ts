@@ -382,6 +382,7 @@ export const inventoryCommands: CommandRegistry = {
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '═══════════════════════════════════════'),
+      // i18n: dynamic string
       createEntry('system', `            UNREAD FILES (${unreadFiles.length})          `),
       createEntry('system', '═══════════════════════════════════════'),
       createEntry('system', ''),
@@ -395,6 +396,7 @@ export const inventoryCommands: CommandRegistry = {
     });
 
     if (unreadFiles.length > 15) {
+      // i18n: dynamic string
       output.push(createEntry('system', `  ... and ${unreadFiles.length - 15} more`));
     }
 
@@ -409,15 +411,16 @@ export const inventoryCommands: CommandRegistry = {
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '═══════════════════════════════════════'),
-      createEntry('system', '  DOSSIER — LEAK PREPARATION'),
+      createEntryI18n('system', 'engine.commands.inventory.dossier_leak_preparation', '  DOSSIER — LEAK PREPARATION'),
       createEntry('system', '═══════════════════════════════════════'),
       createEntry('system', ''),
+      // i18n: dynamic string
       createEntry('system', `  Files saved: ${savedFiles.size}/10`),
       createEntry('system', ''),
     ];
 
     if (savedFiles.size === 0) {
-      output.push(createEntry('dim', '  No files saved. Use "save <filename>" after reading a file.'));
+      output.push(createEntryI18n('dim', 'engine.commands.inventory.no_files_saved_use_save', '  No files saved. Use "save <filename>" after reading a file.'));
     } else {
       [...savedFiles].forEach((path, i) => {
         const name = path.split('/').pop() || path;
@@ -428,8 +431,9 @@ export const inventoryCommands: CommandRegistry = {
     output.push(createEntry('system', ''));
 
     if (savedFiles.size >= 10) {
-      output.push(createEntry('notice', '  DOSSIER COMPLETE — type "leak" when ready.'));
+      output.push(createEntryI18n('notice', 'engine.commands.inventory.dossier_complete', '  DOSSIER COMPLETE — type "leak" when ready.'));
     } else {
+      // i18n: dynamic string
       output.push(createEntry('dim', `  ${10 - savedFiles.size} more file(s) needed before leak.`));
     }
 
@@ -445,7 +449,7 @@ export const inventoryCommands: CommandRegistry = {
     const lateGameWarning = (state.savedFiles?.size || 0) >= 5
       ? [
           createEntry('warning', ''),
-          createEntry('warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
+          createEntryI18n('warning', 'engine.commands.elevated_security_protocol_warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
           createEntry('warning', ''),
         ]
       : [];

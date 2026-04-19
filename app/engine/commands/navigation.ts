@@ -160,12 +160,12 @@ export const navigationCommands: CommandRegistry = {
         output: [
           createEntry('system', ''),
           createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
-          createEntry('system', '║                  DOSSIER MAP                          ║'),
+          createEntryI18n('system', 'engine.commands.navigation.dossier_map_title', '║                  DOSSIER MAP                          ║'),
           createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
           createEntry('system', ''),
-          createEntry('system', '  No files saved yet.'),
+          createEntryI18n('system', 'engine.commands.navigation.no_files_saved_yet', '  No files saved yet.'),
           createEntry('system', ''),
-          createEntry('system', '  Use "save <filename>" after reading a file.'),
+          createEntryI18n('system', 'engine.commands.navigation.use_save_filename', '  Use "save <filename>" after reading a file.'),
           createEntry('system', ''),
           createEntry('system', '╚═══════════════════════════════════════════════════════╝'),
         ],
@@ -176,10 +176,10 @@ export const navigationCommands: CommandRegistry = {
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
-      createEntry('system', '║                  DOSSIER MAP                          ║'),
+      createEntryI18n('system', 'engine.commands.navigation.dossier_map_title', '║                  DOSSIER MAP                          ║'),
       createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
       createEntry('system', ''),
-      createEntry('system', '  SAVED FILES:'),
+      createEntryI18n('system', 'engine.commands.navigation.saved_files', '  SAVED FILES:'),
       createEntry('system', ''),
     ];
 
@@ -194,9 +194,10 @@ export const navigationCommands: CommandRegistry = {
 
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
+    // i18n: dynamic string
     output.push(createEntry('system', `  DOSSIER: ${savedCount}/10 files saved`));
     if (savedCount >= 10) {
-      output.push(createEntry('notice', '  READY — type "leak" when prepared.'));
+      output.push(createEntryI18n('notice', 'engine.commands.navigation.ready_type_leak', '  READY — type "leak" when prepared.'));
     }
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '╚═══════════════════════════════════════════════════════╝'));
@@ -209,7 +210,7 @@ export const navigationCommands: CommandRegistry = {
     const lateGameWarning = state.savedFiles.size >= 5
       ? [
           createEntry('warning', ''),
-          createEntry('warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
+          createEntryI18n('warning', 'engine.commands.elevated_security_protocol_warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
           createEntry('warning', ''),
         ]
       : [];
@@ -242,6 +243,7 @@ export const navigationCommands: CommandRegistry = {
       const remaining = Math.ceil((WAIT_COOLDOWN_MS - timeSinceLastWait) / 1000);
       return {
         output: [
+          // i18n: dynamic string
           createEntry(
             'system',
             `Too soon. Wait ${remaining} second${remaining === 1 ? '' : 's'} before trying again.`

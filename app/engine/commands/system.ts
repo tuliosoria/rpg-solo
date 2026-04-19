@@ -371,7 +371,7 @@ export const systemCommands: CommandRegistry = {
     const lateGameWarning = state.savedFiles.size >= 5
       ? [
           createEntry('warning', ''),
-          createEntry('warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
+          createEntryI18n('warning', 'engine.commands.elevated_security_protocol_warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
           createEntry('warning', ''),
         ]
       : [];

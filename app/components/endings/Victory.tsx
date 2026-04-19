@@ -140,11 +140,11 @@ export default function Victory({
 
   const ending = ENDINGS[resolvedEndingId];
   const aol = ending?.aol ?? {
-    headline: 'BREAKING NEWS',
-    subheadline: 'Story developing...',
-    body: ['Details are still emerging.'],
+    headline: t('ending.aol.fallback.headline'),
+    subheadline: t('ending.aol.fallback.subheadline'),
+    body: [t('ending.aol.fallback.body')],
     url: 'http://www.aol.com/news/',
-    imageAlt: '[Image unavailable]',
+    imageAlt: t('ending.aol.fallback.imageAlt'),
     visitorCount: 0,
   };
   const timings = AOL_TIMINGS[textSpeed] ?? AOL_TIMINGS.normal;
@@ -503,6 +503,7 @@ export default function Victory({
                     {t('ending.playAgain')}
                   </button>
 
+                  {/* Game title — intentionally not translated (proper name) */}
                   <div className={styles.creditText}>VARGINHA: TERMINAL 1996</div>
                   <div className={styles.endingType}>{endingTitle}</div>
                 </>

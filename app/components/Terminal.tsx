@@ -90,7 +90,7 @@ export default function Terminal({
   onSaveRequestAction,
   onLoadCheckpointAction,
 }: TerminalProps) {
-  const { t, translateRuntimeText } = useI18n();
+  const { t, translateRuntimeText, language } = useI18n();
   const initialPhase = deriveGamePhase(initialState);
   const {
     gameState,
@@ -250,7 +250,7 @@ export default function Terminal({
 
   // Autocomplete hook
   const { getCompletions, completeInput, markTabPressed, consumeTabPressed } =
-    useAutocomplete(gameState);
+    useAutocomplete(gameState, language);
 
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);

@@ -33,72 +33,80 @@ export const INITIAL_TUTORIAL_STATE: InteractiveTutorialState = {
 // TUTORIAL DIALOGUE SCRIPTS
 // ═══════════════════════════════════════════════════════════════════════════
 
-export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, string[]>> = {
+type DialogueLine = { key: string; fallback: string };
+
+export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, (DialogueLine | null)[]>> = {
   [TutorialStateID.INTRO]: [
-    '[UFO74]: Connection established.',
-    "[UFO74]: Listen carefully. I don't repeat myself.",
-    "[UFO74]: You're inside their system. Don't panic.",
-    '',
-    "[UFO74]: Hey kid! I'll create a user for you so you can investigate.",
-    '[UFO74]: You will be... hackerkid.',
+    { key: 'terminal.tutorialSkip.connected', fallback: '[UFO74]: Connection established.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_listen_carefully_i_don_t_repeat_myself', fallback: "[UFO74]: Listen carefully. I don't repeat myself." },
+    { key: 'engine.commands.interactiveTutorial.ufo74_you_re_inside_their_system_don_t_panic', fallback: "[UFO74]: You're inside their system. Don't panic." },
+    null,
+    { key: 'engine.commands.interactiveTutorial.ufo74_hey_kid_i_ll_create_a_user_for_you_so_you_can_investig', fallback: "[UFO74]: Hey kid! I'll create a user for you so you can investigate." },
+    { key: 'engine.commands.interactiveTutorial.ufo74_you_will_be_hackerkid', fallback: '[UFO74]: You will be... hackerkid.' },
   ],
-  [TutorialStateID.LS_PROMPT]: ["[UFO74]: First, see what's here.", '[UFO74]: Type `ls`'],
+  [TutorialStateID.LS_PROMPT]: [
+    { key: 'engine.commands.interactiveTutorial.ufo74_first_see_what_s_here', fallback: "[UFO74]: First, see what's here." },
+    { key: 'engine.commands.interactiveTutorial.ufo74_type_ls', fallback: '[UFO74]: Type `ls`' },
+  ],
   [TutorialStateID.CD_PROMPT]: [
-    '[UFO74]: Good. These are the main directories.',
-    '[UFO74]: Start with internal — it has basic files.',
-    '[UFO74]: Type `cd internal`',
+    { key: 'engine.commands.interactiveTutorial.ufo74_good_these_are_the_main_directories', fallback: '[UFO74]: Good. These are the main directories.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_start_with_internal', fallback: '[UFO74]: Start with internal — it has basic files.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_type_cd_internal', fallback: '[UFO74]: Type `cd internal`' },
   ],
   [TutorialStateID.OPEN_PROMPT]: [
-    "[UFO74]: Multiple folders here. Let's check misc.",
-    '[UFO74]: Type `cd misc`',
+    { key: 'engine.commands.interactiveTutorial.ufo74_multiple_folders_lets_check_misc', fallback: "[UFO74]: Multiple folders here. Let's check misc." },
+    { key: 'engine.commands.interactiveTutorial.ufo74_type_cd_misc', fallback: '[UFO74]: Type `cd misc`' },
   ],
   [TutorialStateID.FILE_DISPLAY]: [
-    '[UFO74]: Mundane stuff. Nothing critical.',
-    '[UFO74]: Open the cafeteria menu.',
-    '[UFO74]: Type `open cafeteria_menu_week03.txt`',
-    '[UFO74]: Or use TAB to autocomplete.',
+    { key: 'engine.commands.interactiveTutorial.ufo74_mundane_stuff_nothing_critical', fallback: '[UFO74]: Mundane stuff. Nothing critical.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_open_the_cafeteria_menu', fallback: '[UFO74]: Open the cafeteria menu.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_type_open_cafeteria_menu', fallback: '[UFO74]: Type `open cafeteria_menu_week03.txt`' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_or_use_tab_to_autocomplete', fallback: '[UFO74]: Or use TAB to autocomplete.' },
   ],
   [TutorialStateID.CD_BACK_PROMPT]: [
-    '[UFO74]: Riveting.',
-    "[UFO74]: Not everything matters. You'll learn what does.",
-    '[UFO74]: Go back up one level.',
-    '[UFO74]: Type `cd ..`',
+    { key: 'engine.commands.interactiveTutorial.ufo74_riveting', fallback: '[UFO74]: Riveting.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_not_everything_matters', fallback: "[UFO74]: Not everything matters. You'll learn what does." },
+    { key: 'engine.commands.interactiveTutorial.ufo74_go_back_up_one_level', fallback: '[UFO74]: Go back up one level.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_type_cd_dotdot', fallback: '[UFO74]: Type `cd ..`' },
   ],
-  [TutorialStateID.LS_REINFORCE]: ['[UFO74]: Now go back to root.', '[UFO74]: Type `cd ..`'],
+  [TutorialStateID.LS_REINFORCE]: [
+    { key: 'engine.commands.interactiveTutorial.ufo74_now_go_back_to_root', fallback: '[UFO74]: Now go back to root.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_type_cd_dotdot', fallback: '[UFO74]: Type `cd ..`' },
+  ],
   [TutorialStateID.TUTORIAL_END]: [
-    '[UFO74]: Now the real thing.',
-    '',
-    '[UFO74]: Your mission: save 10 files to your dossier.',
-    '[UFO74]: Use `save <filename>` after reading a file.',
-    '[UFO74]: Changed your mind? `unsave <filename>` removes it.',
-    '[UFO74]: Check your progress with `progress`.',
-    '[UFO74]: Once your dossier has 10 files, type `leak`.',
-    '',
-    '[UFO74]: But understand the risks.',
-    '[UFO74]: Every action you take... they might notice.',
-    "[UFO74]: Risk hits 100%, you're done. They'll find you.",
-    '',
-    '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.',
-    '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!',
-    '',
-    '[UFO74]: Some files are bait. Opening them spikes detection.',
-    '[UFO74]: Some actions are loud. Others are quiet.',
-    '[UFO74]: Curiosity has a cost here.',
-    '',
-    '[UFO74]: ...',
-    '',
-    '[UFO74 has disconnected]',
+    { key: 'engine.commands.interactiveTutorial.ufo74_now_the_real_thing', fallback: '[UFO74]: Now the real thing.' },
+    null,
+    { key: 'engine.commands.interactiveTutorial.ufo74_your_mission_find_10_pieces_of_evidence', fallback: '[UFO74]: Your mission: save 10 files to your dossier.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_use_save_filename', fallback: '[UFO74]: Use `save <filename>` after reading a file.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_use_unsave_filename', fallback: "[UFO74]: Changed your mind? `unsave <filename>` removes it." },
+    { key: 'engine.commands.interactiveTutorial.ufo74_check_progress', fallback: '[UFO74]: Check your progress with `progress`.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_once_you_have_them_leak_everything', fallback: '[UFO74]: Once your dossier has 10 files, type `leak`.' },
+    null,
+    { key: 'engine.commands.interactiveTutorial.ufo74_but_understand_the_risks', fallback: '[UFO74]: But understand the risks.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_every_action_you_take_they_might_notice', fallback: '[UFO74]: Every action you take... they might notice.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_risk_hits_100_you_re_done_they_ll_find_you', fallback: "[UFO74]: Risk hits 100%, you're done. They'll find you." },
+    null,
+    { key: 'engine.commands.interactiveTutorial.ufo74_be_careful_do_not_type_wrong_commands_on_the_terminal_', fallback: '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_type_wrong_commands_8_times_the_window_closes_permanen', fallback: '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!' },
+    null,
+    { key: 'engine.commands.interactiveTutorial.ufo74_some_files_are_bait_opening_them_spikes_detection', fallback: '[UFO74]: Some files are bait. Opening them spikes detection.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_some_actions_are_loud_others_are_quiet', fallback: '[UFO74]: Some actions are loud. Others are quiet.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_curiosity_has_a_cost_here', fallback: '[UFO74]: Curiosity has a cost here.' },
+    null,
+    { key: 'terminal.tutorialSkip.ellipsis', fallback: '[UFO74]: ...' },
+    null,
+    { key: 'terminal.tutorialSkip.disconnected', fallback: '[UFO74 has disconnected]' },
   ],
 };
 
-export const TUTORIAL_NUDGES: Record<TutorialStateID, string | null> = {
+export const TUTORIAL_NUDGES: Record<TutorialStateID, DialogueLine | null> = {
   [TutorialStateID.INTRO]: null,
-  [TutorialStateID.LS_PROMPT]: '[UFO74]: Two letters. Lowercase. ls',
-  [TutorialStateID.CD_PROMPT]: '[UFO74]: cd means change directory. cd internal',
-  [TutorialStateID.OPEN_PROMPT]: '[UFO74]: Navigate to misc folder. cd misc',
-  [TutorialStateID.FILE_DISPLAY]: '[UFO74]: open followed by the filename. Try TAB key.',
-  [TutorialStateID.CD_BACK_PROMPT]: '[UFO74]: Two dots. cd space dot dot.',
-  [TutorialStateID.LS_REINFORCE]: '[UFO74]: Same command. cd ..',
+  [TutorialStateID.LS_PROMPT]: { key: 'engine.commands.interactiveTutorial.nudge_ls', fallback: '[UFO74]: Two letters. Lowercase. ls' },
+  [TutorialStateID.CD_PROMPT]: { key: 'engine.commands.interactiveTutorial.nudge_cd', fallback: '[UFO74]: cd means change directory. cd internal' },
+  [TutorialStateID.OPEN_PROMPT]: { key: 'engine.commands.interactiveTutorial.nudge_cd_misc', fallback: '[UFO74]: Navigate to misc folder. cd misc' },
+  [TutorialStateID.FILE_DISPLAY]: { key: 'engine.commands.interactiveTutorial.nudge_open', fallback: '[UFO74]: open followed by the filename. Try TAB key.' },
+  [TutorialStateID.CD_BACK_PROMPT]: { key: 'engine.commands.interactiveTutorial.nudge_cd_back', fallback: '[UFO74]: Two dots. cd space dot dot.' },
+  [TutorialStateID.LS_REINFORCE]: { key: 'engine.commands.interactiveTutorial.nudge_cd_root', fallback: '[UFO74]: Same command. cd ..' },
   [TutorialStateID.TUTORIAL_END]: null,
   [TutorialStateID.GAME_ACTIVE]: null,
 };
@@ -270,7 +278,11 @@ export function generateIntroDialogue(): TerminalEntry[] {
 
   const introDialogue = TUTORIAL_DIALOGUE[TutorialStateID.INTRO] ?? [];
   for (const line of introDialogue) {
-    entries.push(createEntry('ufo74', line));
+    if (line === null) {
+      entries.push(createEntry('system', ''));
+    } else {
+      entries.push(createEntryI18n('ufo74', line.key, line.fallback));
+    }
   }
 
   entries.push(createEntry('system', ''));
@@ -288,12 +300,12 @@ export function generateStateDialogue(state: TutorialStateID): TerminalEntry[] {
   const entries: TerminalEntry[] = [createEntry('system', '')];
 
   for (const line of dialogue) {
-    if (line === '') {
+    if (line === null) {
       entries.push(createEntry('system', ''));
-    } else if (line.startsWith('[UFO74]')) {
-      entries.push(createEntry('ufo74', line));
+    } else if (line.fallback.startsWith('[UFO74]')) {
+      entries.push(createEntryI18n('ufo74', line.key, line.fallback));
     } else {
-      entries.push(createEntry('system', line));
+      entries.push(createEntryI18n('system', line.key, line.fallback));
     }
   }
 

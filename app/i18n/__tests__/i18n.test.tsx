@@ -146,7 +146,7 @@ describe('i18n system', () => {
     });
 
     expect(result.current.translateRuntimeText('UFO74: new here? type "help basics".')).toBe(
-      'UFO74: é novo por aqui? digite "help basics".'
+      'UFO74: é novo por aqui? digite "ajuda basics".'
     );
     expect(
       result.current.translateRuntimeText(
@@ -160,7 +160,7 @@ describe('i18n system', () => {
       result.current.translateRuntimeText(
         '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.'
       )
-    ).toBe('UFO74: Cuidado, não digite comandos errados no terminal. Na dúvida, digite help.');
+    ).toBe('UFO74: Cuidado, não digite comandos errados no terminal. Na dúvida, digite ajuda.');
   });
 
   it('translates progress, search, and recovery help detail lines for pt-BR', async () => {

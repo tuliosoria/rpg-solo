@@ -3,16 +3,18 @@
  *
  * Provides command and file path autocompletion for the terminal interface.
  * Supports command name completion and context-aware file/directory completion.
+ * Language-aware: suggests translated command names for non-English locales.
  *
  * @module hooks/useAutocomplete
  */
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useMemo } from 'react';
 import { GameState } from '../types';
 import { listDirectory, resolvePath } from '../engine/filesystem';
 import { isInTutorialMode, getTutorialAutocomplete } from '../engine/commands/interactiveTutorial';
+import { COMMAND_TRANSLATIONS } from '../engine/commands/utils';
 
-// Available commands for auto-completion
+// Canonical English commands for auto-completion
 const COMMANDS = [
   'help',
   'status',
@@ -59,13 +61,49 @@ export interface AutocompleteResult {
 }
 
 /**
+ * Build the list of completable commands for the given language.
+ * For non-English locales, translated commands replace their English counterparts
+ * and untranslated commands (cd, ls, etc.) remain as-is.
+ */
+function buildCommandList(language: string): string[] {
+  const translations = COMMAND_TRANSLATIONS[language];
+  if (!translations) return COMMANDS;
+
+  // Translated English commands (these get replaced)
+  const translatedEnglishSet = new Set(Object.keys(translations));
+
+  // Start with commands that have no translation (cd, ls, back, etc.)
+  const result = COMMANDS.filter(cmd => !translatedEnglishSet.has(cmd));
+
+  // Add the translated versions
+  result.push(...Object.values(translations));
+
+  return result;
+}
+
+/**
+ * Build the set of commands that accept file arguments, including translations.
+ */
+function buildFileArgCommands(language: string): string[] {
+  const translations = COMMAND_TRANSLATIONS[language];
+  if (!translations) return COMMANDS_WITH_FILE_ARGS;
+
+  return COMMANDS_WITH_FILE_ARGS.map(cmd => translations[cmd] ?? cmd);
+}
+
+/**
  * Hook for terminal command and file path autocompletion
  * @param gameState - Current game state for filesystem access
+ * @param language - Current UI language ('en', 'pt-BR', 'es')
  * @returns getCompletions function, completeInput function, and tabPressed tracking
  */
-export function useAutocomplete(gameState: GameState) {
+export function useAutocomplete(gameState: GameState, language: string = 'en') {
   // Track if Tab was pressed (for tutorial autocomplete validation)
   const tabPressedRef = useRef(false);
+
+  // Memoize language-aware command lists
+  const commandList = useMemo(() => buildCommandList(language), [language]);
+  const fileArgCommands = useMemo(() => buildFileArgCommands(language), [language]);
 
   /**
    * Get auto-complete suggestions for the given input
@@ -89,14 +127,14 @@ export function useAutocomplete(gameState: GameState) {
       const parts = trimmed.split(/\s+/);
 
       if (parts.length <= 1) {
-        // Complete command names
+        // Complete command names (translated or English depending on language)
         const partial = parts[0].toLowerCase();
-        return COMMANDS.filter(cmd => cmd.startsWith(partial));
+        return commandList.filter(cmd => cmd.startsWith(partial));
       }
 
       // Complete file/directory arguments for specific commands
       const cmd = parts[0].toLowerCase();
-      if (!COMMANDS_WITH_FILE_ARGS.includes(cmd)) return [];
+      if (!fileArgCommands.includes(cmd)) return [];
 
       const partial = parts[parts.length - 1];
       const currentPath = gameState.currentPath;
@@ -130,7 +168,7 @@ export function useAutocomplete(gameState: GameState) {
 
       return matches;
     },
-    [gameState]
+    [gameState, commandList, fileArgCommands]
   );
 
   /**
