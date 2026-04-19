@@ -9,7 +9,7 @@ import {
   TutorialStateID,
   InteractiveTutorialState,
 } from '../../types';
-import { createEntry, createEntryI18n } from './utils';
+import { createEntry, createEntryI18n, resolveCommandAlias } from './utils';
 import { listDirectory } from '../filesystem';
 import { DEFAULT_GAME_STATE } from '../../types';
 
@@ -172,7 +172,10 @@ export const CAFETERIA_MENU_CONTENT = [
  * Normalize input for comparison: trim, lowercase, collapse multiple spaces
  */
 function normalizeInput(input: string): string {
-  return input.trim().toLowerCase().replace(/\s+/g, ' ');
+  const trimmed = input.trim().toLowerCase().replace(/\s+/g, ' ');
+  const parts = trimmed.split(' ');
+  parts[0] = resolveCommandAlias(parts[0]);
+  return parts.join(' ');
 }
 
 /**

@@ -258,13 +258,13 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '[UFO74]: Move into the misc folder. Type: cd misc':
       '[UFO74]: Entre na pasta misc. Digite: cd misc',
     '[UFO74]: Wrong file. Try: open cafeteria_menu_week03.txt':
-      '[UFO74]: Arquivo errado. Tente: open cafeteria_menu_week03.txt',
+      '[UFO74]: Arquivo errado. Tente: abrir cafeteria_menu_week03.txt',
     '[UFO74]: open needs a filename. Try: open cafeteria_menu_week03.txt':
-      '[UFO74]: open precisa de um nome de arquivo. Tente: open cafeteria_menu_week03.txt',
+      '[UFO74]: abrir precisa de um nome de arquivo. Tente: abrir cafeteria_menu_week03.txt',
     "[UFO74]: We're where we need to be. Now open a file. Type: open cafeteria_menu_week03.txt":
-      '[UFO74]: Estamos onde precisamos. Agora abra um arquivo. Digite: open cafeteria_menu_week03.txt',
+      '[UFO74]: Estamos onde precisamos. Agora abra um arquivo. Digite: abrir cafeteria_menu_week03.txt',
     '[UFO74]: You can see the files. Now open one. Type: open cafeteria_menu_week03.txt':
-      '[UFO74]: Você já vê os arquivos. Agora abra um. Digite: open cafeteria_menu_week03.txt',
+      '[UFO74]: Você já vê os arquivos. Agora abra um. Digite: abrir cafeteria_menu_week03.txt',
     '[UFO74]: Use the open command. Type: open cafeteria_menu_week03.txt':
       '[UFO74]: Use o comando abrir. Digite: abrir cafeteria_menu_week03.txt',
     '[UFO74]: Open the file. Type: open cafeteria_menu_week03.txt — or type open c and press TAB.':
@@ -6088,13 +6088,13 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '[UFO74]: Move into the misc folder. Type: cd misc':
       '[UFO74]: Entra en la carpeta misc. Escribe: cd misc',
     '[UFO74]: Wrong file. Try: open cafeteria_menu_week03.txt':
-      '[UFO74]: Archivo incorrecto. Prueba: open cafeteria_menu_week03.txt',
+      '[UFO74]: Archivo incorrecto. Prueba: abrir cafeteria_menu_week03.txt',
     '[UFO74]: open needs a filename. Try: open cafeteria_menu_week03.txt':
-      '[UFO74]: open necesita un nombre de archivo. Prueba: open cafeteria_menu_week03.txt',
+      '[UFO74]: abrir necesita un nombre de archivo. Prueba: abrir cafeteria_menu_week03.txt',
     "[UFO74]: We're where we need to be. Now open a file. Type: open cafeteria_menu_week03.txt":
-      '[UFO74]: Ya estamos donde debemos. Ahora abre un archivo. Escribe: open cafeteria_menu_week03.txt',
+      '[UFO74]: Ya estamos donde debemos. Ahora abre un archivo. Escribe: abrir cafeteria_menu_week03.txt',
     '[UFO74]: You can see the files. Now open one. Type: open cafeteria_menu_week03.txt':
-      '[UFO74]: Puedes ver los archivos. Ahora abre uno. Escribe: open cafeteria_menu_week03.txt',
+      '[UFO74]: Puedes ver los archivos. Ahora abre uno. Escribe: abrir cafeteria_menu_week03.txt',
     '[UFO74]: Use the open command. Type: open cafeteria_menu_week03.txt':
       '[UFO74]: Usa el comando abrir. Escribe: abrir cafeteria_menu_week03.txt',
     '[UFO74]: Open the file. Type: open cafeteria_menu_week03.txt — or type open c and press TAB.':

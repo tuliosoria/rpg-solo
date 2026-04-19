@@ -1642,7 +1642,7 @@
   "engine.commands.interactiveTutorial.ufo74_type_cd_misc": "[UFO74]: Escribe `cd misc`",
   "engine.commands.interactiveTutorial.ufo74_mundane_stuff_nothing_critical": "[UFO74]: Cosas rutinarias. Nada crítico.",
   "engine.commands.interactiveTutorial.ufo74_open_the_cafeteria_menu": "[UFO74]: Abre el menú de la cafetería.",
-  "engine.commands.interactiveTutorial.ufo74_type_open_cafeteria_menu": "[UFO74]: Escribe `open cafeteria_menu_week03.txt`",
+  "engine.commands.interactiveTutorial.ufo74_type_open_cafeteria_menu": "[UFO74]: Escribe `abrir cafeteria_menu_week03.txt`",
   "engine.commands.interactiveTutorial.ufo74_or_use_tab_to_autocomplete": "[UFO74]: O usa TAB para autocompletar.",
   "engine.commands.interactiveTutorial.ufo74_riveting": "[UFO74]: Fascinante.",
   "engine.commands.interactiveTutorial.ufo74_not_everything_matters": "[UFO74]: No todo importa. Aprenderás qué sí.",
