@@ -180,7 +180,7 @@ describe('Terminal Component', () => {
     window.localStorage.removeItem('terminal1996_language');
   });
 
-  it('uses localized command names in onboarding card three for portuguese and spanish', async () => {
+  it('renders localized onboarding commands as highlighted command tokens', async () => {
     window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
 
     const tutorialState = {
@@ -208,6 +208,8 @@ describe('Terminal Component', () => {
 
     expect(document.body).toHaveTextContent(/digite salvar para guardar\./i);
     expect(document.body).toHaveTextContent(/digite vazar\./i);
+    expect(screen.getByText('salvar', { selector: 'strong' })).toBeInTheDocument();
+    expect(screen.getByText('vazar', { selector: 'strong' })).toBeInTheDocument();
 
     portuguese.unmount();
 
@@ -227,8 +229,35 @@ describe('Terminal Component', () => {
 
     expect(document.body).toHaveTextContent(/escribe guardar para guardarlo\./i);
     expect(document.body).toHaveTextContent(/escribe filtrar\./i);
+    expect(screen.getByText('guardar', { selector: 'strong' })).toBeInTheDocument();
+    expect(screen.getByText('filtrar', { selector: 'strong' })).toBeInTheDocument();
 
     window.localStorage.removeItem('terminal1996_language');
+  });
+
+  it('renders english onboarding commands as highlighted command tokens', () => {
+    window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
+
+    const tutorialState = {
+      ...DEFAULT_GAME_STATE,
+      seed: 12345,
+      rngState: 12345,
+      sessionStartTime: Date.now(),
+      tutorialComplete: false,
+      tutorialStep: 0,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={tutorialState} />);
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+
+    expect(screen.getByText('save', { selector: 'strong' })).toBeInTheDocument();
+    expect(screen.getByText('leak', { selector: 'strong' })).toBeInTheDocument();
   });
 
   it('removes obsolete eye-click instructions from onboarding card four', () => {

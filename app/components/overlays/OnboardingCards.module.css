@@ -102,6 +102,14 @@
   text-shadow: 0 0 10px rgba(159, 224, 106, 0.18);
 }
 
+.command {
+  font-weight: 800;
+  color: #d9ffb8;
+  text-shadow:
+    0 0 12px rgba(217, 255, 184, 0.45),
+    0 0 22px rgba(159, 224, 106, 0.22);
+}
+
 .footer {
   position: relative;
   z-index: 20;

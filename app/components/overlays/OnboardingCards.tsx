@@ -15,7 +15,12 @@ interface OnboardingCardsProps {
 
 interface OnboardingCard {
   title: string;
-  body: string;
+  bodySegments: OnboardingBodySegment[];
+}
+
+interface OnboardingBodySegment {
+  text: string;
+  isCommand: boolean;
 }
 
 const TYPING_DELAY_MS: Record<TextSpeed, number> = {
@@ -25,8 +30,76 @@ const TYPING_DELAY_MS: Record<TextSpeed, number> = {
   instant: 0,
 };
 
+function parseBodySegments(body: string): OnboardingBodySegment[] {
+  const segments: OnboardingBodySegment[] = [];
+  const markerPattern = /\*\*(.+?)\*\*/g;
+  let lastIndex = 0;
+
+  for (const match of body.matchAll(markerPattern)) {
+    const [fullMatch, commandText] = match;
+    const matchIndex = match.index ?? 0;
+
+    if (matchIndex > lastIndex) {
+      segments.push({
+        text: body.slice(lastIndex, matchIndex),
+        isCommand: false,
+      });
+    }
+
+    segments.push({
+      text: commandText,
+      isCommand: true,
+    });
+
+    lastIndex = matchIndex + fullMatch.length;
+  }
+
+  if (lastIndex < body.length) {
+    segments.push({
+      text: body.slice(lastIndex),
+      isCommand: false,
+    });
+  }
+
+  return segments;
+}
+
+function getBodyLength(segments: OnboardingBodySegment[]): number {
+  return segments.reduce((total, segment) => total + segment.text.length, 0);
+}
+
 function getCardLength(card: OnboardingCard): number {
-  return card.title.length + card.body.length;
+  return card.title.length + getBodyLength(card.bodySegments);
+}
+
+function renderVisibleBody(
+  segments: OnboardingBodySegment[],
+  visibleChars: number
+): React.ReactNode[] {
+  let remainingChars = visibleChars;
+
+  return segments.flatMap((segment, index) => {
+    if (remainingChars <= 0) {
+      return [];
+    }
+
+    const visibleText = segment.text.slice(0, remainingChars);
+    remainingChars -= visibleText.length;
+
+    if (!visibleText) {
+      return [];
+    }
+
+    if (segment.isCommand) {
+      return (
+        <strong key={`command-${index}`} className={styles.command}>
+          {visibleText}
+        </strong>
+      );
+    }
+
+    return <React.Fragment key={`text-${index}`}>{visibleText}</React.Fragment>;
+  });
 }
 
 export default function OnboardingCards({
@@ -40,24 +113,24 @@ export default function OnboardingCards({
     () => [
       {
         title: t('onboarding.card1.title'),
-        body: t('onboarding.card1.body'),
-      },
-      {
-        title: t('onboarding.card2.title'),
-        body: t('onboarding.card2.body'),
-      },
-      {
-        title: t('onboarding.card3.title'),
-        body: t('onboarding.card3.body'),
-      },
-      {
-        title: t('onboarding.card4.title'),
-        body: t('onboarding.card4.body'),
-      },
-      {
-        title: t('onboarding.card5.title'),
-        body: t('onboarding.card5.body'),
-      },
+         bodySegments: parseBodySegments(t('onboarding.card1.body')),
+       },
+       {
+         title: t('onboarding.card2.title'),
+         bodySegments: parseBodySegments(t('onboarding.card2.body')),
+       },
+       {
+         title: t('onboarding.card3.title'),
+         bodySegments: parseBodySegments(t('onboarding.card3.body')),
+       },
+       {
+         title: t('onboarding.card4.title'),
+         bodySegments: parseBodySegments(t('onboarding.card4.body')),
+       },
+       {
+         title: t('onboarding.card5.title'),
+         bodySegments: parseBodySegments(t('onboarding.card5.body')),
+       },
     ],
     [t]
   );
@@ -141,7 +214,7 @@ export default function OnboardingCards({
 
       <div className={styles.card}>
         <div className={styles.title}>{currentCard.title.slice(0, titleChars)}</div>
-        <div className={styles.body}>{currentCard.body.slice(0, bodyChars)}</div>
+        <div className={styles.body}>{renderVisibleBody(currentCard.bodySegments, bodyChars)}</div>
       </div>
 
       <div className={styles.footer}>
