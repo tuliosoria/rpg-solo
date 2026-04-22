@@ -176,6 +176,85 @@ describe('Terminal Component', () => {
     window.localStorage.removeItem('terminal1996_language');
   });
 
+  it('uses localized command names in onboarding card three for portuguese and spanish', async () => {
+    window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
+
+    const tutorialState = {
+      ...DEFAULT_GAME_STATE,
+      seed: 12345,
+      rngState: 12345,
+      sessionStartTime: Date.now(),
+      tutorialComplete: false,
+      tutorialStep: 0,
+    } as GameState;
+
+    window.localStorage.setItem('terminal1996_language', 'pt-BR');
+    const portuguese = render(
+      <I18nProvider>
+        <Terminal {...defaultProps} initialState={tutorialState} />
+      </I18nProvider>
+    );
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+
+    expect(document.body).toHaveTextContent(/digite salvar para guardar\./i);
+    expect(document.body).toHaveTextContent(/digite vazar\./i);
+
+    portuguese.unmount();
+
+    window.localStorage.setItem('terminal1996_language', 'es');
+    render(
+      <I18nProvider>
+        <Terminal {...defaultProps} initialState={tutorialState} />
+      </I18nProvider>
+    );
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+
+    expect(document.body).toHaveTextContent(/escribe guardar para guardarlo\./i);
+    expect(document.body).toHaveTextContent(/escribe filtrar\./i);
+
+    window.localStorage.removeItem('terminal1996_language');
+  });
+
+  it('removes obsolete eye-click instructions from onboarding card four', () => {
+    window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
+
+    const tutorialState = {
+      ...DEFAULT_GAME_STATE,
+      seed: 12345,
+      rngState: 12345,
+      sessionStartTime: Date.now(),
+      tutorialComplete: false,
+      tutorialStep: 0,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={tutorialState} />);
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+
+    expect(document.body).toHaveTextContent(/already listening for noise, hesitation/i);
+    expect(document.body).not.toHaveTextContent(/click them before they report back/i);
+  });
+
   it('shows the tutorial skip popup after onboarding completes', async () => {
     window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
 
@@ -200,7 +279,7 @@ describe('Terminal Component', () => {
     expect(screen.getByRole('button', { name: /\[ n \] tutorial/i })).toBeInTheDocument();
   });
 
-  it('plays a static cue when onboarding cards load and advance', () => {
+  it('plays static cues on card load, during onboarding, and when advancing', () => {
     window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
 
     const tutorialState = {
@@ -216,6 +295,14 @@ describe('Terminal Component', () => {
 
     expect(mockPlaySound).toHaveBeenCalledWith('static');
     expect(screen.getAllByTestId('static-noise').length).toBeGreaterThan(0);
+
+    mockPlaySound.mockClear();
+
+    act(() => {
+      vi.advanceTimersByTime(1800);
+    });
+
+    expect(mockPlaySound).toHaveBeenCalledWith('static');
 
     mockPlaySound.mockClear();
 

@@ -248,6 +248,16 @@ export default function Terminal({
     return () => window.removeEventListener(OPTIONS_CHANGED_EVENT, syncTextSpeed);
   }, []);
 
+  useEffect(() => {
+    if (!showOnboarding) return;
+
+    const staticLoopId = window.setInterval(() => {
+      playSound('static');
+    }, 1800);
+
+    return () => window.clearInterval(staticLoopId);
+  }, [playSound, showOnboarding]);
+
   // Autocomplete hook
   const { getCompletions, completeInput, markTabPressed, consumeTabPressed } =
     useAutocomplete(gameState, language);
