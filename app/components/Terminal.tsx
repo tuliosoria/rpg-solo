@@ -4,11 +4,11 @@ import React, { useRef, useCallback, useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic';
 import { GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
-import { isTutorialInputState } from '../engine/commands/interactiveTutorial';
+import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
 import { getEndingFlags, type EndingId } from '../engine/endings';
 import { getAllAccessibleFiles } from '../engine/filesystem';
 
-import { getLatestCheckpoint, loadCheckpoint } from '../storage/saves';
+import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import { useI18n } from '../i18n';
 import { OPTIONS_CHANGED_EVENT, readStoredOptions } from '../hooks/useOptions';
@@ -38,6 +38,7 @@ import AchievementPopup from './overlays/AchievementPopup';
 import SettingsModal from './overlays/SettingsModal';
 import PauseMenu from './overlays/PauseMenu';
 import OnboardingCards from './overlays/OnboardingCards';
+import TutorialSkipPopup from './overlays/TutorialSkipPopup';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 import FirewallEyes from './FirewallEyes';
@@ -180,6 +181,7 @@ export default function Terminal({
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const [showOnboarding, setShowOnboarding] = useState(shouldShowOnboardingCards(initialState));
+  const [showTutorialSkip, setShowTutorialSkip] = useState(false);
   const [pendingEvidenceVideoPrompt, setPendingEvidenceVideoPrompt] =
     useState<EvidenceVideoAttachment | null>(null);
   const [activeEvidenceVideo, setActiveEvidenceVideo] = useState<EvidenceVideoAttachment | null>(
@@ -194,13 +196,14 @@ export default function Terminal({
   const timedMechanicPauseStartRef = useRef<number | null>(null);
   const timedMechanicResumeAdjustmentRef = useRef(0);
   const turingOverlayTimeoutRef = useRef<number | null>(null);
+  const showIntroOverlay = showOnboarding || showTutorialSkip;
   const hasBlockingPopup =
     showSettings ||
     showAchievements ||
     showStatistics ||
     showPauseMenu ||
     showHeaderMenu ||
-    showOnboarding ||
+    showIntroOverlay ||
     showGameOver ||
     activeEvidenceVideo !== null ||
     pendingAchievement !== null ||
@@ -270,6 +273,7 @@ export default function Terminal({
 
   useEffect(() => {
     setShowOnboarding(shouldShowOnboardingCards(initialState));
+    setShowTutorialSkip(false);
   }, [initialState]);
 
   const totalReadableFiles = useMemo(() => getAllAccessibleFiles(gameState).length, [gameState]);
@@ -420,6 +424,75 @@ export default function Terminal({
 
   const handleOnboardingComplete = useCallback(() => {
     setShowOnboarding(false);
+    setShowTutorialSkip(true);
+  }, []);
+
+  const handleOnboardingSkip = useCallback(() => {
+    setShowOnboarding(false);
+    setShowTutorialSkip(true);
+  }, []);
+
+  const handleTutorialSkip = useCallback(() => {
+    setShowTutorialSkip(false);
+
+    const skipIntroEntries = [
+      createEntry('system', ''),
+      createEntry('ufo74', t('terminal.tutorialSkip.connected')),
+      createEntry('ufo74', t('terminal.tutorialSkip.alreadyKnow')),
+      createEntry('ufo74', t('terminal.tutorialSkip.noHandHolding')),
+      createEntry('system', ''),
+      createEntry('system', t('terminal.tutorialSkip.createProfile')),
+      createEntry('system', t('terminal.tutorialSkip.username')),
+      createEntry('system', t('terminal.tutorialSkip.accessLevel')),
+      createEntry('system', t('terminal.tutorialSkip.statusActive')),
+      createEntry('system', ''),
+      createEntry('notice', t('terminal.tutorialSkip.userRegistered')),
+      createEntry('system', ''),
+      createEntry('ufo74', t('terminal.tutorialSkip.objective')),
+      createEntry('ufo74', t('terminal.tutorialSkip.help')),
+      createEntry('ufo74', t('terminal.tutorialSkip.goodLuck')),
+      createEntry('system', ''),
+      createEntry('ufo74', t('terminal.tutorialSkip.ellipsis')),
+      createEntry('system', ''),
+      createEntry('system', t('terminal.tutorialSkip.disconnected')),
+      createEntry('system', ''),
+    ];
+
+    const newState: GameState = {
+      ...gameState,
+      history: [...gameState.history, ...skipIntroEntries],
+      tutorialStep: -1,
+      tutorialComplete: true,
+      currentPath: '/',
+      interactiveTutorialState: {
+        current: TutorialStateID.GAME_ACTIVE,
+        inputLocked: false,
+        dialogueComplete: true,
+        failCount: 0,
+        nudgeShown: false,
+      },
+    };
+
+    setGameState(newState);
+    setShowEvidenceTracker(true);
+    setShowRiskTracker(true);
+    setShowAttBar(true);
+    setShowAvatar(true);
+    startAmbient();
+    saveCheckpoint(newState, t('checkpoint.reason.tutorialSkipped'));
+  }, [
+    gameState,
+    setGameState,
+    setShowEvidenceTracker,
+    setShowRiskTracker,
+    setShowAttBar,
+    setShowAvatar,
+    startAmbient,
+    t,
+  ]);
+
+  const handleTutorialContinue = useCallback(() => {
+    setShowTutorialSkip(false);
   }, []);
 
   // Check for achievements
@@ -641,7 +714,7 @@ export default function Terminal({
     showStatistics,
     showPauseMenu,
     showHeaderMenu,
-    showOnboarding,
+    showIntroOverlay,
     isEnterOnlyMode,
     pauseTimedMechanics,
     suppressPressure,
@@ -824,14 +897,14 @@ export default function Terminal({
     }
   }, [gamePhase, stopAmbient]);
 
-  // Refocus input when onboarding closes
-  const prevShowOnboardingRef = useRef(showOnboarding);
+  // Refocus input when intro overlays close
+  const prevShowIntroOverlayRef = useRef(showIntroOverlay);
   useEffect(() => {
-    if (prevShowOnboardingRef.current && !showOnboarding) {
+    if (prevShowIntroOverlayRef.current && !showIntroOverlay) {
       setTimeout(focusTerminalInput, 0);
     }
-    prevShowOnboardingRef.current = showOnboarding;
-  }, [showOnboarding, focusTerminalInput]);
+    prevShowIntroOverlayRef.current = showIntroOverlay;
+  }, [showIntroOverlay, focusTerminalInput]);
 
   const savedCount = gameState.savedFiles?.size || 0;
   const statusBar = useStatusBar(gameState);
@@ -1285,7 +1358,7 @@ export default function Terminal({
               onSubmit={handleSubmit}
               style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
             >
-              <button ref={enterOnlyButtonRef} type="submit" autoFocus={!showOnboarding} />
+              <button ref={enterOnlyButtonRef} type="submit" autoFocus={!showIntroOverlay} />
             </form>
             {/* Centered enter prompt - inline in flex layout to prevent overlap */}
             <div className={styles.enterPromptArea}>
@@ -1363,7 +1436,7 @@ export default function Terminal({
               onKeyDown={handleKeyDown}
               className={styles.inputField}
               disabled={isProcessing || gameState.isGameOver || hasBlockingPopup}
-              autoFocus={!showOnboarding}
+              autoFocus={!showIntroOverlay}
               autoComplete="off"
               spellCheck={false}
             />
@@ -1890,7 +1963,18 @@ export default function Terminal({
         )}
 
                 {showOnboarding && (
-                  <OnboardingCards textSpeed={textSpeed} onComplete={handleOnboardingComplete} />
+                  <OnboardingCards
+                    textSpeed={textSpeed}
+                    onComplete={handleOnboardingComplete}
+                    onSkip={handleOnboardingSkip}
+                    onCardLoad={() => playSound('static')}
+                  />
+                )}
+                {showTutorialSkip && (
+                  <TutorialSkipPopup
+                    onSkip={handleTutorialSkip}
+                    onContinue={handleTutorialContinue}
+                  />
                 )}
               </div>
             </div>

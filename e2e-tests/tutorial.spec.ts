@@ -21,6 +21,13 @@ test.describe('Interactive Tutorial', () => {
     ]);
 
     await advanceOnboarding(page);
+    await expect(page.getByRole('button', { name: /skip/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /tutorial/i })).toBeVisible();
+    await page.getByRole('button', { name: /tutorial/i }).click();
+    await waitForAllContent(page, [
+      'BRAZILIAN INTELLIGENCE LEGACY SYSTEM',
+      'TERMINAL ACCESS POINT — NODE 7',
+    ]);
 
     await continueStory(page);
     await waitForAllContent(page, [

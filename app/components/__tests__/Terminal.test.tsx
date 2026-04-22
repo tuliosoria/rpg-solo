@@ -171,8 +171,82 @@ describe('Terminal Component', () => {
     expect(document.body).toHaveTextContent(
       /Eres un hacker\. No de los que salen en las películas\./i
     );
+    expect(document.body).toHaveTextContent(/presiona esc para saltar la introducción/i);
 
     window.localStorage.removeItem('terminal1996_language');
+  });
+
+  it('shows the tutorial skip popup after onboarding completes', async () => {
+    window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
+
+    const tutorialState = {
+      ...DEFAULT_GAME_STATE,
+      seed: 12345,
+      rngState: 12345,
+      sessionStartTime: Date.now(),
+      tutorialComplete: false,
+      tutorialStep: 0,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={tutorialState} />);
+
+    for (let step = 0; step < 5; step += 1) {
+      act(() => {
+        fireEvent.keyDown(window, { key: 'Enter' });
+      });
+    }
+
+    expect(screen.getByRole('button', { name: /\[ y \] skip/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /\[ n \] tutorial/i })).toBeInTheDocument();
+  });
+
+  it('plays a static cue when onboarding cards load and advance', () => {
+    window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
+
+    const tutorialState = {
+      ...DEFAULT_GAME_STATE,
+      seed: 12345,
+      rngState: 12345,
+      sessionStartTime: Date.now(),
+      tutorialComplete: false,
+      tutorialStep: 0,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={tutorialState} />);
+
+    expect(mockPlaySound).toHaveBeenCalledWith('static');
+    expect(screen.getAllByTestId('static-noise').length).toBeGreaterThan(0);
+
+    mockPlaySound.mockClear();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Enter' });
+    });
+
+    expect(mockPlaySound).toHaveBeenCalledWith('static');
+  });
+
+  it('skips onboarding with Escape and then shows the tutorial skip popup', async () => {
+    window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
+
+    const tutorialState = {
+      ...DEFAULT_GAME_STATE,
+      seed: 12345,
+      rngState: 12345,
+      sessionStartTime: Date.now(),
+      tutorialComplete: false,
+      tutorialStep: 0,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={tutorialState} />);
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.queryByText('WHO YOU ARE')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /\[ y \] skip/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /\[ n \] tutorial/i })).toBeInTheDocument();
   });
 
   it('renders the command input', () => {

@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n';
 import type { TextSpeed } from '../../types';
+import StaticNoise from '../StaticNoise';
 import styles from './OnboardingCards.module.css';
 
 interface OnboardingCardsProps {
   textSpeed: TextSpeed;
   onComplete: () => void;
+  onSkip: () => void;
+  onCardLoad: () => void;
 }
 
 interface OnboardingCard {
@@ -26,7 +29,12 @@ function getCardLength(card: OnboardingCard): number {
   return card.title.length + card.body.length;
 }
 
-export default function OnboardingCards({ textSpeed, onComplete }: OnboardingCardsProps) {
+export default function OnboardingCards({
+  textSpeed,
+  onComplete,
+  onSkip,
+  onCardLoad,
+}: OnboardingCardsProps) {
   const { t } = useI18n();
   const cards = useMemo<OnboardingCard[]>(
     () => [
@@ -55,6 +63,7 @@ export default function OnboardingCards({ textSpeed, onComplete }: OnboardingCar
   );
 
   const [cardIndex, setCardIndex] = useState(0);
+  const lastSoundCardIndexRef = useRef<number | null>(null);
   const [visibleChars, setVisibleChars] = useState(() =>
     textSpeed === 'instant' ? getCardLength(cards[0]) : 0
   );
@@ -70,6 +79,12 @@ export default function OnboardingCards({ textSpeed, onComplete }: OnboardingCar
   useEffect(() => {
     setVisibleChars(textSpeed === 'instant' ? totalChars : 0);
   }, [cardIndex, textSpeed, totalChars]);
+
+  useEffect(() => {
+    if (lastSoundCardIndexRef.current === cardIndex) return;
+    lastSoundCardIndexRef.current = cardIndex;
+    onCardLoad();
+  }, [cardIndex, onCardLoad]);
 
   useEffect(() => {
     if (textSpeed === 'instant' || isFullyRevealed) return;
@@ -101,16 +116,27 @@ export default function OnboardingCards({ textSpeed, onComplete }: OnboardingCar
     const handleKeyDown = (event: KeyboardEvent) => {
       event.preventDefault();
       event.stopPropagation();
+
+      if (event.key === 'Escape') {
+        onSkip();
+        return;
+      }
+
       advance();
     };
 
     window.addEventListener('keydown', handleKeyDown, true);
     return () => window.removeEventListener('keydown', handleKeyDown, true);
-  }, [advance]);
+  }, [advance, onSkip]);
 
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-label={t('onboarding.aria')}>
       <div className={styles.scanlines} />
+      <div className={styles.noiseLayer}>
+        <StaticNoise intensity={0.2} alienVisible={false} />
+      </div>
+      <div className={styles.noiseDrift} />
+      <div className={styles.interferenceBand} />
       <div className={styles.vignette} />
 
       <div className={styles.card}>
@@ -119,6 +145,15 @@ export default function OnboardingCards({ textSpeed, onComplete }: OnboardingCar
       </div>
 
       <div className={styles.footer}>
+        <button
+          type="button"
+          className={styles.skipPrompt}
+          onMouseDown={event => event.preventDefault()}
+          onClick={onSkip}
+        >
+          {t('onboarding.prompt.skip')}
+        </button>
+
         {isFullyRevealed ? (
           <button
             type="button"

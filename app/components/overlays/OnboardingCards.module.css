@@ -15,13 +15,17 @@
 }
 
 .scanlines,
-.vignette {
+.vignette,
+.noiseLayer,
+.noiseDrift,
+.interferenceBand {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
 .scanlines {
+  z-index: 4;
   background: repeating-linear-gradient(
     0deg,
     rgba(0, 0, 0, 0) 0,
@@ -32,7 +36,39 @@
   opacity: 0.7;
 }
 
+.noiseLayer {
+  z-index: 5;
+}
+
+.noiseDrift {
+  z-index: 6;
+  opacity: 0.18;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.22) 0, transparent 20%),
+    radial-gradient(circle at 72% 34%, rgba(255, 255, 255, 0.14) 0, transparent 18%),
+    radial-gradient(circle at 48% 72%, rgba(255, 255, 255, 0.12) 0, transparent 22%);
+  mix-blend-mode: screen;
+  animation: noiseDrift 5s steps(6) infinite;
+}
+
+.interferenceBand {
+  z-index: 7;
+  opacity: 0.12;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 28%,
+    rgba(194, 234, 152, 0.2) 44%,
+    rgba(194, 234, 152, 0.08) 50%,
+    transparent 68%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+  animation: interferenceSweep 3.8s linear infinite;
+}
+
 .vignette {
+  z-index: 8;
   box-shadow:
     inset 0 0 120px rgba(0, 0, 0, 0.9),
     inset 0 0 36px rgba(159, 224, 106, 0.08);
@@ -40,7 +76,7 @@
 
 .card {
   position: relative;
-  z-index: 1;
+  z-index: 20;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -68,19 +104,26 @@
 
 .footer {
   position: relative;
-  z-index: 1;
+  z-index: 20;
   display: flex;
+  justify-content: space-between;
   min-height: 48px;
   align-items: flex-end;
+  gap: 24px;
+}
+
+.prompt,
+.typing,
+.skipPrompt {
+  font: inherit;
+  font-size: clamp(0.9rem, 1.7vw, 1rem);
+  letter-spacing: 0.16em;
+  text-transform: lowercase;
 }
 
 .prompt,
 .typing {
-  font: inherit;
-  font-size: clamp(0.9rem, 1.7vw, 1rem);
-  letter-spacing: 0.16em;
   color: #b7ef89;
-  text-transform: lowercase;
 }
 
 .prompt {
@@ -100,6 +143,21 @@
   outline: none;
 }
 
+.skipPrompt {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(183, 239, 137, 0.7);
+  cursor: pointer;
+}
+
+.skipPrompt:hover,
+.skipPrompt:focus-visible {
+  color: #d9ffb8;
+  text-shadow: 0 0 12px rgba(183, 239, 137, 0.25);
+  outline: none;
+}
+
 .cursor {
   display: inline-block;
   animation: blink 1s step-end infinite;
@@ -108,5 +166,32 @@
 @keyframes blink {
   50% {
     opacity: 0;
+  }
+}
+
+@keyframes noiseDrift {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1.03);
+  }
+  25% {
+    transform: translate3d(1%, 2%, 0) scale(1.06);
+  }
+  50% {
+    transform: translate3d(-1%, 1%, 0) scale(1.04);
+  }
+  75% {
+    transform: translate3d(2%, -2%, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(-2%, -1%, 0) scale(1.03);
+  }
+}
+
+@keyframes interferenceSweep {
+  0% {
+    transform: translateY(-110%);
+  }
+  100% {
+    transform: translateY(110%);
   }
 }

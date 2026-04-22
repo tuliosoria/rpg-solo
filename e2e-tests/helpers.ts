@@ -25,7 +25,7 @@ const ONBOARDING_STEPS = [
   },
   {
     title: 'WHAT IS AT STAKE',
-    body: 'This is not a game about aliens.',
+    body: 'This is about the future of humanity.',
     prompt: 'press any key to connect.',
   },
 ] as const;
@@ -81,15 +81,18 @@ export async function advanceOnboarding(page: Page): Promise<void> {
     await page.keyboard.press('Enter');
   }
 
-  await waitForAllContent(page, [
-    'BRAZILIAN INTELLIGENCE LEGACY SYSTEM',
-    'TERMINAL ACCESS POINT — NODE 7',
-  ]);
+  await expect(page.getByRole('button', { name: /skip/i })).toBeVisible();
+  await expect(page.getByRole('button', { name: /tutorial/i })).toBeVisible();
 }
 
 export async function startTutorialRun(page: Page): Promise<void> {
   await openNewGamePrompt(page);
   await advanceOnboarding(page);
+  await page.getByRole('button', { name: /tutorial/i }).click();
+  await waitForAllContent(page, [
+    'BRAZILIAN INTELLIGENCE LEGACY SYSTEM',
+    'TERMINAL ACCESS POINT — NODE 7',
+  ]);
 }
 
 export async function startLiveRun(page: Page): Promise<void> {

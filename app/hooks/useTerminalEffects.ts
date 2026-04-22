@@ -124,7 +124,7 @@ interface UseTerminalEffectsOptions {
   showStatistics: boolean;
   showPauseMenu: boolean;
   showHeaderMenu: boolean;
-  showOnboarding: boolean;
+  showIntroOverlay: boolean;
   isEnterOnlyMode: boolean;
   pauseTimedMechanics: boolean;
   suppressPressure: boolean;
@@ -175,7 +175,7 @@ export function useTerminalEffects({
   showStatistics,
   showPauseMenu,
   showHeaderMenu,
-  showOnboarding,
+  showIntroOverlay,
   isEnterOnlyMode,
   pauseTimedMechanics,
   suppressPressure,
@@ -243,7 +243,7 @@ export function useTerminalEffects({
     !showStatistics &&
     !showPauseMenu &&
     !showHeaderMenu &&
-    !showOnboarding;
+    !showIntroOverlay;
 
   const focusTerminalTarget = useCallback(() => {
     const target = isEnterOnlyMode
