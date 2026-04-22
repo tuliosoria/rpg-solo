@@ -6,7 +6,7 @@ import {
   getContent,
   restoreCommandInput,
   runCommand,
-  startSkippedRun,
+  startLiveRun,
   waitForAllContent,
 } from './helpers';
 
@@ -39,7 +39,7 @@ test.describe('Dossier Leak Flow', () => {
   test('can prepare a dossier, unlock the leak sequence, and transmit it', async ({ page }) => {
     test.setTimeout(240000);
 
-    await startSkippedRun(page);
+    await startLiveRun(page);
 
     for (const filePath of DOSSIER_FILES.slice(0, 5)) {
       await saveFileToDossier(page, filePath);

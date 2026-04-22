@@ -1,18 +1,26 @@
 import { test, expect } from '@playwright/test';
 import {
+  advanceOnboarding,
   continueStory,
   getCommandInput,
+  openNewGamePrompt,
   restoreCommandInput,
   runCommand,
-  startTutorialRun,
   waitForAllContent,
 } from './helpers';
 
 test.describe('Interactive Tutorial', () => {
-  test('walks through the gated tutorial and unlocks live play', async ({ page }) => {
+  test('shows the onboarding cards before the gated tutorial unlocks live play', async ({ page }) => {
     test.setTimeout(180000);
 
-    await startTutorialRun(page);
+    await openNewGamePrompt(page);
+    await waitForAllContent(page, [
+      'WHO YOU ARE',
+      'You are a hacker. Not the kind they make movies about.',
+      'press any key to continue.',
+    ]);
+
+    await advanceOnboarding(page);
 
     await continueStory(page);
     await waitForAllContent(page, [

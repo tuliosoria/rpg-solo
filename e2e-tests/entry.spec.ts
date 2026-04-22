@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { getCommandInput, getContent, runCommand, startSkippedRun } from './helpers';
+import { getCommandInput, getContent, runCommand, startLiveRun } from './helpers';
 
 test.describe('Entry Flow', () => {
-  test('skip tutorial lands in the active terminal with the current command set', async ({ page }) => {
-    await startSkippedRun(page);
+  test('onboarding and tutorial land in the active terminal with the current command set', async ({ page }) => {
+    await startLiveRun(page);
 
     await expect(getCommandInput(page)).toHaveAttribute('placeholder', /Try: help, ls/i);
 

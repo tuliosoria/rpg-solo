@@ -2,6 +2,34 @@ import { expect, type Locator, type Page } from '@playwright/test';
 
 export const BASE_URL = process.env.BASE_URL ?? 'http://127.0.0.1:3000';
 
+const ONBOARDING_STEPS = [
+  {
+    title: 'WHO YOU ARE',
+    body: 'You are a hacker. Not the kind they make movies about.',
+    prompt: 'press any key to continue.',
+  },
+  {
+    title: 'WHAT HAPPENED',
+    body: 'On January 20, 1996, something landed near Varginha, Brazil.',
+    prompt: 'press any key to continue.',
+  },
+  {
+    title: 'WHAT YOU NEED TO DO',
+    body: 'Navigate the filesystem. Read the files.',
+    prompt: 'press any key to continue.',
+  },
+  {
+    title: 'WHO IS WATCHING',
+    body: 'You are not alone in that terminal.',
+    prompt: 'press any key to continue.',
+  },
+  {
+    title: 'WHAT IS AT STAKE',
+    body: 'This is not a game about aliens.',
+    prompt: 'press any key to connect.',
+  },
+] as const;
+
 export async function getContent(page: Page): Promise<string> {
   return await page.locator('body').innerText();
 }
@@ -40,27 +68,85 @@ export async function openNewGamePrompt(page: Page): Promise<void> {
   await openMainMenu(page);
   await page.getByRole('button', { name: /new game/i }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
-  await expect(page.getByRole('button', { name: /skip/i })).toBeVisible();
-  await expect(page.getByRole('button', { name: /tutorial/i })).toBeVisible();
+  await waitForAllContent(page, [
+    ONBOARDING_STEPS[0].title,
+    ONBOARDING_STEPS[0].body,
+    ONBOARDING_STEPS[0].prompt,
+  ]);
 }
 
-export async function startSkippedRun(page: Page): Promise<void> {
-  await openNewGamePrompt(page);
-  await page.getByRole('button', { name: /skip/i }).click();
+export async function advanceOnboarding(page: Page): Promise<void> {
+  for (const step of ONBOARDING_STEPS) {
+    await waitForAllContent(page, [step.title, step.body, step.prompt]);
+    await page.keyboard.press('Enter');
+  }
+
   await waitForAllContent(page, [
-    '✓ USER hackerkid REGISTERED',
-    'UFO74: Save 10 dossier files. Leak them. Watch your risk.',
-    '[UFO74 has disconnected]',
+    'BRAZILIAN INTELLIGENCE LEGACY SYSTEM',
+    'TERMINAL ACCESS POINT — NODE 7',
   ]);
-  await expect(getCommandInput(page)).toBeVisible();
-  await expect(getCommandInput(page)).toBeEnabled();
 }
 
 export async function startTutorialRun(page: Page): Promise<void> {
   await openNewGamePrompt(page);
-  await page.getByRole('button', { name: /tutorial/i }).click();
-  await waitForAllContent(page, ['BRAZILIAN INTELLIGENCE LEGACY SYSTEM', 'TERMINAL ACCESS POINT — NODE 7']);
+  await advanceOnboarding(page);
 }
+
+export async function startLiveRun(page: Page): Promise<void> {
+  await startTutorialRun(page);
+
+  await continueStory(page);
+  await waitForAllContent(page, [
+    'Connection established.',
+    "You're inside their system. Don't panic.",
+  ]);
+
+  await continueStory(page);
+  await waitForAllContent(page, [
+    "Hey kid! I'll create a user for you so you can investigate.",
+    'You will be... hackerkid.',
+  ]);
+
+  await continueStory(page);
+  await waitForAllContent(page, ['✓ USER hackerkid REGISTERED', 'Type ls']);
+
+  await runCommand(page, 'ls');
+  await waitForAllContent(page, ['Directory: /', 'comms/', 'internal/', 'ops/', 'tmp/']);
+
+  await runCommand(page, 'cd internal');
+  await waitForAllContent(page, ['Directory: /internal', 'misc']);
+
+  await runCommand(page, 'cd misc');
+  await waitForAllContent(page, ['Directory: /internal/misc', 'cafeteria_menu_week03.txt']);
+
+  await runCommand(page, 'open cafeteria_menu_week03.txt', { waitForInput: false });
+  await waitForAllContent(page, [
+    'CAFETERIA MENU — WEEK 3, JANUARY 1996',
+    'Coffee machine still OUT OF SERVICE.',
+  ]);
+  await restoreCommandInput(page);
+
+  await runCommand(page, 'cd ..');
+  await waitForAllContent(page, ['/internal>', 'Now go back to root.']);
+
+  await runCommand(page, 'cd ..');
+  await waitForAllContent(page, ['/>', 'Now the real thing.']);
+  await waitForAllContent(page, [
+    '/>',
+    'Your mission: save 10 files to your dossier.',
+    'Use save <filename> after reading a file.',
+    'Once your dossier has 10 files, type leak.',
+    "Risk hits 100%, you're done. They'll find you.",
+    'Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!',
+    'Some files are bait. Opening them spikes detection.',
+    '[UFO74 has disconnected]',
+  ]);
+
+  await expect(getCommandInput(page)).toBeVisible();
+  await expect(getCommandInput(page)).toBeEnabled();
+}
+
+export const startSkippedRun = startLiveRun;
 
 export async function runCommand(
   page: Page,

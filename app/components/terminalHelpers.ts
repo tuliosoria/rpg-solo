@@ -84,8 +84,8 @@ export const shouldSuppressUfo74Spacer = (
   (getNearestNonSpacerEntry(entries, index, -1)?.type === 'ufo74' ||
     getNearestNonSpacerEntry(entries, index, 1)?.type === 'ufo74');
 
-/** Check if the tutorial skip popup should be shown */
-export function shouldShowTutorialSkipPopup(state: GameState): boolean {
+/** Check if the pre-tutorial onboarding cards should be shown */
+export function shouldShowOnboardingCards(state: GameState): boolean {
   return (
     !state.tutorialComplete &&
     state.tutorialStep === 0 &&

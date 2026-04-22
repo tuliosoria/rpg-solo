@@ -4,11 +4,11 @@ import React, { useRef, useCallback, useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic';
 import { GameState, TerminalEntry } from '../types';
 import { createEntry } from '../engine/commands';
-import { isTutorialInputState, TutorialStateID } from '../engine/commands/interactiveTutorial';
+import { isTutorialInputState } from '../engine/commands/interactiveTutorial';
 import { getEndingFlags, type EndingId } from '../engine/endings';
 import { getAllAccessibleFiles } from '../engine/filesystem';
 
-import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
+import { getLatestCheckpoint, loadCheckpoint } from '../storage/saves';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import { useI18n } from '../i18n';
 import { OPTIONS_CHANGED_EVENT, readStoredOptions } from '../hooks/useOptions';
@@ -37,7 +37,7 @@ import type { TextSpeed } from '../types';
 import AchievementPopup from './overlays/AchievementPopup';
 import SettingsModal from './overlays/SettingsModal';
 import PauseMenu from './overlays/PauseMenu';
-import TutorialSkipPopup from './overlays/TutorialSkipPopup';
+import OnboardingCards from './overlays/OnboardingCards';
 import HackerAvatar, { AvatarExpression } from './HackerAvatar';
 import { FloatingUIProvider, FloatingElement } from './FloatingUI';
 import FirewallEyes from './FirewallEyes';
@@ -59,7 +59,7 @@ import {
   getEvidenceVideoAttachment,
   deriveGamePhase,
   shouldSuppressUfo74Spacer,
-  shouldShowTutorialSkipPopup,
+  shouldShowOnboardingCards,
 } from './terminalHelpers';
 export { normalizeVideoPromptChoice } from './terminalHelpers';
 
@@ -179,10 +179,7 @@ export default function Terminal({
   const keypressTimestamps = useRef<number[]>([]);
   const typingSpeedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // Tutorial skip popup — show only on fresh new games (not loaded saves)
-  const [showTutorialSkip, setShowTutorialSkip] = useState(
-    shouldShowTutorialSkipPopup(initialState)
-  );
+  const [showOnboarding, setShowOnboarding] = useState(shouldShowOnboardingCards(initialState));
   const [pendingEvidenceVideoPrompt, setPendingEvidenceVideoPrompt] =
     useState<EvidenceVideoAttachment | null>(null);
   const [activeEvidenceVideo, setActiveEvidenceVideo] = useState<EvidenceVideoAttachment | null>(
@@ -203,7 +200,7 @@ export default function Terminal({
     showStatistics ||
     showPauseMenu ||
     showHeaderMenu ||
-    showTutorialSkip ||
+    showOnboarding ||
     showGameOver ||
     activeEvidenceVideo !== null ||
     pendingAchievement !== null ||
@@ -272,7 +269,7 @@ export default function Terminal({
   const suppressPressure = shouldSuppressPressure(gameState);
 
   useEffect(() => {
-    setShowTutorialSkip(shouldShowTutorialSkipPopup(initialState));
+    setShowOnboarding(shouldShowOnboardingCards(initialState));
   }, [initialState]);
 
   const totalReadableFiles = useMemo(() => getAllAccessibleFiles(gameState).length, [gameState]);
@@ -421,74 +418,8 @@ export default function Terminal({
     pendingUfo74StartMessages.length > 0 ||
     (gameState.ufo74SecretDiscovered && gamePhase === 'terminal'));
 
-  // Handle tutorial skip — replicate full tutorial completion state
-  const handleTutorialSkip = useCallback(() => {
-    setShowTutorialSkip(false);
-
-    const skipIntroEntries = [
-      createEntry('system', ''),
-      createEntry('ufo74', t('terminal.tutorialSkip.connected')),
-      createEntry('ufo74', t('terminal.tutorialSkip.alreadyKnow')),
-      createEntry('ufo74', t('terminal.tutorialSkip.noHandHolding')),
-      createEntry('system', ''),
-      createEntry('system', t('terminal.tutorialSkip.createProfile')),
-      createEntry('system', t('terminal.tutorialSkip.username')),
-      createEntry('system', t('terminal.tutorialSkip.accessLevel')),
-      createEntry('system', t('terminal.tutorialSkip.statusActive')),
-      createEntry('system', ''),
-      createEntry('notice', t('terminal.tutorialSkip.userRegistered')),
-      createEntry('system', ''),
-      createEntry('ufo74', t('terminal.tutorialSkip.objective')),
-      createEntry('ufo74', t('terminal.tutorialSkip.help')),
-      createEntry('ufo74', t('terminal.tutorialSkip.goodLuck')),
-      createEntry('system', ''),
-      createEntry('ufo74', t('terminal.tutorialSkip.ellipsis')),
-      createEntry('system', ''),
-      createEntry('system', t('terminal.tutorialSkip.disconnected')),
-      createEntry('system', ''),
-    ];
-
-    const newState: GameState = {
-      ...gameState,
-      history: [...gameState.history, ...skipIntroEntries],
-      tutorialStep: -1,
-      tutorialComplete: true,
-      currentPath: '/',
-      interactiveTutorialState: {
-        current: TutorialStateID.GAME_ACTIVE,
-        inputLocked: false,
-        dialogueComplete: true,
-        failCount: 0,
-        nudgeShown: false,
-      },
-    };
-
-    setGameState(newState);
-
-    // Reveal all UI trackers
-    setShowEvidenceTracker(true);
-    setShowRiskTracker(true);
-    setShowAttBar(true);
-    setShowAvatar(true);
-
-    // Start ambient sound
-    startAmbient();
-
-    // Save checkpoint
-    saveCheckpoint(newState, t('checkpoint.reason.tutorialSkipped'));
-  }, [
-    gameState,
-    setGameState,
-    setShowEvidenceTracker,
-    setShowRiskTracker,
-    setShowAttBar,
-    setShowAvatar,
-    startAmbient,
-    t,
-  ]);
-
-  const handleTutorialContinue = useCallback(() => {
-    setShowTutorialSkip(false);
+  const handleOnboardingComplete = useCallback(() => {
+    setShowOnboarding(false);
   }, []);
 
   // Check for achievements
@@ -710,7 +641,7 @@ export default function Terminal({
     showStatistics,
     showPauseMenu,
     showHeaderMenu,
-    showTutorialSkip,
+    showOnboarding,
     isEnterOnlyMode,
     pauseTimedMechanics,
     suppressPressure,
@@ -893,15 +824,14 @@ export default function Terminal({
     }
   }, [gamePhase, stopAmbient]);
 
-  // Refocus input when tutorial skip popup closes
-  const prevShowTutorialSkipRef = useRef(showTutorialSkip);
+  // Refocus input when onboarding closes
+  const prevShowOnboardingRef = useRef(showOnboarding);
   useEffect(() => {
-    // If popup was just closed (was showing, now not showing), refocus
-    if (prevShowTutorialSkipRef.current && !showTutorialSkip) {
+    if (prevShowOnboardingRef.current && !showOnboarding) {
       setTimeout(focusTerminalInput, 0);
     }
-    prevShowTutorialSkipRef.current = showTutorialSkip;
-  }, [showTutorialSkip, focusTerminalInput]);
+    prevShowOnboardingRef.current = showOnboarding;
+  }, [showOnboarding, focusTerminalInput]);
 
   const savedCount = gameState.savedFiles?.size || 0;
   const statusBar = useStatusBar(gameState);
@@ -1355,7 +1285,7 @@ export default function Terminal({
               onSubmit={handleSubmit}
               style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
             >
-              <button ref={enterOnlyButtonRef} type="submit" autoFocus={!showTutorialSkip} />
+              <button ref={enterOnlyButtonRef} type="submit" autoFocus={!showOnboarding} />
             </form>
             {/* Centered enter prompt - inline in flex layout to prevent overlap */}
             <div className={styles.enterPromptArea}>
@@ -1433,7 +1363,7 @@ export default function Terminal({
               onKeyDown={handleKeyDown}
               className={styles.inputField}
               disabled={isProcessing || gameState.isGameOver || hasBlockingPopup}
-              autoFocus={!showTutorialSkip}
+              autoFocus={!showOnboarding}
               autoComplete="off"
               spellCheck={false}
             />
@@ -1959,9 +1889,8 @@ export default function Terminal({
           />
         )}
 
-                {/* Tutorial skip popup — shown on fresh new game */}
-                {showTutorialSkip && (
-                  <TutorialSkipPopup onSkip={handleTutorialSkip} onContinue={handleTutorialContinue} />
+                {showOnboarding && (
+                  <OnboardingCards textSpeed={textSpeed} onComplete={handleOnboardingComplete} />
                 )}
               </div>
             </div>

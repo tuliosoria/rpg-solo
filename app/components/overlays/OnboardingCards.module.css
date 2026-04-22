@@ -1,0 +1,112 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(24px, 4vw, 48px);
+  background:
+    radial-gradient(circle at top center, rgba(124, 191, 65, 0.08), transparent 42%),
+    linear-gradient(180deg, rgba(4, 10, 6, 0.98) 0%, rgba(2, 5, 3, 0.995) 100%);
+  color: #9fe06a;
+  font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
+  overflow: hidden;
+}
+
+.scanlines,
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(159, 224, 106, 0.04) 2px,
+    rgba(159, 224, 106, 0.04) 4px
+  );
+  opacity: 0.7;
+}
+
+.vignette {
+  box-shadow:
+    inset 0 0 120px rgba(0, 0, 0, 0.9),
+    inset 0 0 36px rgba(159, 224, 106, 0.08);
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(20px, 3vh, 32px);
+  max-width: min(920px, 100%);
+}
+
+.title {
+  min-height: 1.3em;
+  font-size: clamp(0.9rem, 1.9vw, 1.15rem);
+  letter-spacing: 0.32em;
+  color: #b7ef89;
+  text-shadow: 0 0 14px rgba(159, 224, 106, 0.45);
+}
+
+.body {
+  min-height: 14rem;
+  white-space: pre-wrap;
+  font-size: clamp(1rem, 2vw, 1.24rem);
+  line-height: 1.85;
+  color: #9fe06a;
+  text-shadow: 0 0 10px rgba(159, 224, 106, 0.18);
+}
+
+.footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 48px;
+  align-items: flex-end;
+}
+
+.prompt,
+.typing {
+  font: inherit;
+  font-size: clamp(0.9rem, 1.7vw, 1rem);
+  letter-spacing: 0.16em;
+  color: #b7ef89;
+  text-transform: lowercase;
+}
+
+.prompt {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.prompt:hover,
+.prompt:focus-visible {
+  color: #d9ffb8;
+  text-shadow: 0 0 16px rgba(183, 239, 137, 0.4);
+  outline: none;
+}
+
+.cursor {
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}

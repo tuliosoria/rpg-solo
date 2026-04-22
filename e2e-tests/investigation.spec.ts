@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import {
   runCommand,
-  startSkippedRun,
+  startLiveRun,
   waitForAllContent,
 } from './helpers';
 
@@ -9,7 +9,7 @@ test.describe('Investigation Commands', () => {
   test('search, bookmark, unread, and progress reflect the live investigation flow', async ({
     page,
   }) => {
-    await startSkippedRun(page);
+    await startLiveRun(page);
 
     await runCommand(page, 'progress');
     await waitForAllContent(page, [

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import Terminal, { normalizeVideoPromptChoice } from '../Terminal';
 import styles from '../Terminal.module.css';
 import { DEFAULT_GAME_STATE, GameState, TutorialStateID } from '../../types';
@@ -134,6 +134,7 @@ describe('Terminal Component', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:00Z'));
     mockSoundEnabled = false;
+    window.localStorage.clear();
   });
 
   afterEach(() => {
@@ -145,9 +146,9 @@ describe('Terminal Component', () => {
     expect(document.body).toBeTruthy();
   });
 
-  it('localizes tutorial skip output using selected language', async () => {
-    vi.useRealTimers();
+  it('localizes the onboarding cards using the selected language', async () => {
     window.localStorage.setItem('terminal1996_language', 'es');
+    window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
 
     const tutorialState = {
       ...DEFAULT_GAME_STATE,
@@ -164,17 +165,12 @@ describe('Terminal Component', () => {
       </I18nProvider>
     );
 
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: /\[ Y \] SALTAR/i })).toBeInTheDocument();
-    });
+    await act(async () => {});
 
-    fireEvent.click(screen.getByRole('button', { name: /\[ Y \] SALTAR/i }));
-
-    await waitFor(() => {
-      expect(screen.getByText('> CREANDO PERFIL DE USUARIO...')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('[UFO74 se desconectó]')).toBeInTheDocument();
+    expect(document.body).toHaveTextContent('QUIÉN ERES');
+    expect(document.body).toHaveTextContent(
+      /Eres un hacker\. No de los que salen en las películas\./i
+    );
 
     window.localStorage.removeItem('terminal1996_language');
   });
@@ -583,7 +579,7 @@ describe('Terminal Component', () => {
     });
 
     // Help output should contain terminal commands header
-    expect(screen.getByText(/TERMINAL COMMANDS/i)).toBeInTheDocument();
+    expect(document.body).toHaveTextContent(/TERMINAL COMMANDS/i);
   });
 
   it('navigates command history with arrow keys', async () => {
