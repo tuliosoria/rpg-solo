@@ -158,6 +158,8 @@ export function useSound() {
   const ambientSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const ambientFilterRef = useRef<BiquadFilterNode | null>(null);
   const ambientGainRef = useRef<GainNode | null>(null);
+  const onboardingStaticSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const onboardingStaticGainRef = useRef<GainNode | null>(null);
   const ambientTensionLevelRef = useRef(0);
   const ambientDisturbanceRef = useRef(0);
   // Ambient music refs
@@ -237,6 +239,22 @@ export function useSound() {
 
       filter.frequency.linearRampToValueAtTime(frequency, targetTime);
       filter.Q.linearRampToValueAtTime(q, targetTime);
+      gain.gain.linearRampToValueAtTime(volume, targetTime);
+    },
+    [masterVolume]
+  );
+
+  const syncOnboardingStaticLevel = useCallback(
+    (rampSeconds: number) => {
+      const audioContext = audioContextRef.current;
+      const gain = onboardingStaticGainRef.current;
+
+      if (!audioContext || !gain) return;
+
+      const targetTime = audioContext.currentTime + Math.max(rampSeconds, 0.01);
+      const volume = SOUND_CONFIG.static.volume * masterVolume * 0.08;
+
+      gain.gain.cancelScheduledValues?.(audioContext.currentTime);
       gain.gain.linearRampToValueAtTime(volume, targetTime);
     },
     [masterVolume]
@@ -787,6 +805,67 @@ export function useSound() {
     syncAmbientProfile(0.15);
   }, [masterVolume, syncAmbientProfile]);
 
+  useEffect(() => {
+    syncOnboardingStaticLevel(0.15);
+  }, [masterVolume, syncOnboardingStaticLevel]);
+
+  const startOnboardingStatic = useCallback(() => {
+    if (!soundEnabled || onboardingStaticSourceRef.current) return;
+
+    const audioContext = initAudio();
+    if (!audioContext) return;
+
+    if (audioContext.state === 'suspended') {
+      void audioContext.resume().catch(() => {});
+    }
+
+    const noiseBuffer = createNoiseBuffer(audioContext, 1.5);
+    const noiseSource = audioContext.createBufferSource();
+    const noiseGain = audioContext.createGain();
+    const noiseFilter = audioContext.createBiquadFilter();
+
+    noiseSource.buffer = noiseBuffer;
+    noiseSource.loop = true;
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.setValueAtTime(1800, audioContext.currentTime);
+    noiseFilter.Q.setValueAtTime(0.7, audioContext.currentTime);
+    noiseGain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+
+    noiseSource.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(audioContext.destination);
+
+    noiseSource.start();
+    onboardingStaticSourceRef.current = noiseSource;
+    onboardingStaticGainRef.current = noiseGain;
+    syncOnboardingStaticLevel(0.2);
+  }, [initAudio, soundEnabled, syncOnboardingStaticLevel]);
+
+  const stopOnboardingStatic = useCallback(() => {
+    const audioContext = audioContextRef.current;
+    const noiseSource = onboardingStaticSourceRef.current;
+    const noiseGain = onboardingStaticGainRef.current;
+
+    if (audioContext && noiseGain) {
+      const currentGain =
+        typeof noiseGain.gain.value === 'number' ? Math.max(noiseGain.gain.value, 0.0001) : 0.0001;
+      noiseGain.gain.cancelScheduledValues?.(audioContext.currentTime);
+      noiseGain.gain.setValueAtTime(currentGain, audioContext.currentTime);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.08);
+    }
+
+    if (noiseSource) {
+      try {
+        noiseSource.stop(audioContext ? audioContext.currentTime + 0.08 : 0);
+      } catch {
+        // Already stopped
+      }
+    }
+
+    onboardingStaticSourceRef.current = null;
+    onboardingStaticGainRef.current = null;
+  }, []);
+
   // Start ambient background drone
   const startAmbient = useCallback(() => {
     if (!ambientEnabled || ambientSourceRef.current) return;
@@ -868,6 +947,12 @@ export function useSound() {
   }, [ambientEnabled, stopAmbient]);
 
   useEffect(() => {
+    if (!soundEnabled) {
+      stopOnboardingStatic();
+    }
+  }, [soundEnabled, stopOnboardingStatic]);
+
+  useEffect(() => {
     if (!musicEnabled) {
       stopMusic();
     }
@@ -909,13 +994,14 @@ export function useSound() {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      stopOnboardingStatic();
       stopAmbient();
       stopMusic();
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close();
       }
     };
-  }, [stopAmbient, stopMusic]);
+  }, [stopAmbient, stopMusic, stopOnboardingStatic]);
 
   // Set music playback rate (for Turing Test intensity effect)
   const setMusicPlaybackRate = useCallback((rate: number) => {
@@ -956,6 +1042,8 @@ export function useSound() {
   return {
     playSound,
     playKeySound,
+    startOnboardingStatic,
+    stopOnboardingStatic,
     startAmbient,
     stopAmbient,
     toggleSound,

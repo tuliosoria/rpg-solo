@@ -31,6 +31,8 @@ vi.mock('next/image', () => ({
 
 const mockPlaySound = vi.fn();
 const mockPlayKeySound = vi.fn();
+const mockStartOnboardingStatic = vi.fn();
+const mockStopOnboardingStatic = vi.fn();
 const mockStartAmbient = vi.fn();
 const mockStopAmbient = vi.fn();
 const mockToggleSound = vi.fn();
@@ -101,6 +103,8 @@ vi.mock('../../hooks/useSound', () => ({
   useSound: () => ({
     playSound: mockPlaySound,
     playKeySound: mockPlayKeySound,
+    startOnboardingStatic: mockStartOnboardingStatic,
+    stopOnboardingStatic: mockStopOnboardingStatic,
     startAmbient: mockStartAmbient,
     stopAmbient: mockStopAmbient,
     toggleSound: mockToggleSound,
@@ -279,7 +283,7 @@ describe('Terminal Component', () => {
     expect(screen.getByRole('button', { name: /\[ n \] tutorial/i })).toBeInTheDocument();
   });
 
-  it('plays static cues on card load, during onboarding, and when advancing', () => {
+  it('starts constant onboarding static and still plays card transition cues', () => {
     window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
 
     const tutorialState = {
@@ -293,16 +297,9 @@ describe('Terminal Component', () => {
 
     render(<Terminal {...defaultProps} initialState={tutorialState} />);
 
+    expect(mockStartOnboardingStatic).toHaveBeenCalled();
     expect(mockPlaySound).toHaveBeenCalledWith('static');
     expect(screen.getAllByTestId('static-noise').length).toBeGreaterThan(0);
-
-    mockPlaySound.mockClear();
-
-    act(() => {
-      vi.advanceTimersByTime(1800);
-    });
-
-    expect(mockPlaySound).toHaveBeenCalledWith('static');
 
     mockPlaySound.mockClear();
 
@@ -311,6 +308,27 @@ describe('Terminal Component', () => {
     });
 
     expect(mockPlaySound).toHaveBeenCalledWith('static');
+  });
+
+  it('stops constant onboarding static when onboarding is skipped', () => {
+    window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
+
+    const tutorialState = {
+      ...DEFAULT_GAME_STATE,
+      seed: 12345,
+      rngState: 12345,
+      sessionStartTime: Date.now(),
+      tutorialComplete: false,
+      tutorialStep: 0,
+    } as GameState;
+
+    render(<Terminal {...defaultProps} initialState={tutorialState} />);
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(mockStopOnboardingStatic).toHaveBeenCalled();
   });
 
   it('skips onboarding with Escape and then shows the tutorial skip popup', async () => {

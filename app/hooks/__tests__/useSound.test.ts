@@ -28,6 +28,7 @@ describe('useSound', () => {
 
     createGainSpy = vi.fn(() => ({
       gain: {
+        value: 0,
         setValueAtTime: vi.fn(),
         exponentialRampToValueAtTime: vi.fn(),
         linearRampToValueAtTime: vi.fn(),
@@ -89,6 +90,8 @@ describe('useSound', () => {
 
       expect(result.current.playSound).toBeInstanceOf(Function);
       expect(result.current.playKeySound).toBeInstanceOf(Function);
+      expect(result.current.startOnboardingStatic).toBeInstanceOf(Function);
+      expect(result.current.stopOnboardingStatic).toBeInstanceOf(Function);
       expect(result.current.startAmbient).toBeInstanceOf(Function);
       expect(result.current.stopAmbient).toBeInstanceOf(Function);
       expect(result.current.toggleSound).toBeInstanceOf(Function);
@@ -370,6 +373,34 @@ describe('useSound', () => {
       expect(restoredQTime).toBeCloseTo(0.3);
       expect(restoredVolume).toBeCloseTo(0.164);
       expect(restoredVolumeTime).toBeCloseTo(0.3);
+    });
+  });
+
+  describe('onboarding static', () => {
+    it('starts a looping low static bed', () => {
+      const { result } = renderHook(() => useSound());
+
+      act(() => {
+        result.current.startOnboardingStatic();
+      });
+
+      expect(createBufferSpy).toHaveBeenCalled();
+      expect(createBufferSourceSpy).toHaveBeenCalled();
+      expect(createBiquadFilterSpy).toHaveBeenCalled();
+    });
+
+    it('stops the onboarding static without error', () => {
+      const { result } = renderHook(() => useSound());
+
+      act(() => {
+        result.current.startOnboardingStatic();
+      });
+
+      act(() => {
+        result.current.stopOnboardingStatic();
+      });
+
+      expect(true).toBe(true);
     });
   });
 

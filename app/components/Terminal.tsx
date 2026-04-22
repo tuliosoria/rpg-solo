@@ -222,6 +222,8 @@ export default function Terminal({
   const {
     playSound,
     playKeySound,
+    startOnboardingStatic,
+    stopOnboardingStatic,
     startAmbient,
     stopAmbient,
     toggleSound,
@@ -249,14 +251,14 @@ export default function Terminal({
   }, []);
 
   useEffect(() => {
-    if (!showOnboarding) return;
+    if (!showOnboarding) {
+      stopOnboardingStatic();
+      return;
+    }
 
-    const staticLoopId = window.setInterval(() => {
-      playSound('static');
-    }, 1800);
-
-    return () => window.clearInterval(staticLoopId);
-  }, [playSound, showOnboarding]);
+    startOnboardingStatic();
+    return () => stopOnboardingStatic();
+  }, [showOnboarding, startOnboardingStatic, stopOnboardingStatic]);
 
   // Autocomplete hook
   const { getCompletions, completeInput, markTabPressed, consumeTabPressed } =
