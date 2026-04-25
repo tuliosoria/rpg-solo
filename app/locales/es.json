@@ -1014,7 +1014,7 @@
   "engine.commands.interactiveTutorial.ufo74_but_understand_the_risks": "[UFO74]: Pero entiende los riesgos.",
   "engine.commands.interactiveTutorial.ufo74_every_action_you_take_they_might_notice": "[UFO74]: Cada acción que tomes... podrían notarla.",
   "engine.commands.interactiveTutorial.ufo74_risk_hits_100_you_re_done_they_ll_find_you": "[UFO74]: Si el riesgo llega al 100%, se acabó. Te encontrarán.",
-  "engine.commands.interactiveTutorial.ufo74_be_careful_do_not_type_wrong_commands_on_the_terminal_": "[UFO74]: Ten cuidado, no escribas comandos incorrectos en el terminal. Si dudas, escribe ayuda.",
+  "engine.commands.interactiveTutorial.ufo74_be_careful_do_not_type_wrong_commands_on_the_terminal_": "[UFO74]: Ten cuidado, no escribas comandos incorrectos en el terminal. Si dudas, escribe `ayuda`.",
   "engine.commands.interactiveTutorial.ufo74_type_wrong_commands_8_times_the_window_closes_permanen": "[UFO74]: Escribe comandos incorrectos 8 veces y la ventana se cierra. Para siempre. Así que concéntrate, kid!",
   "engine.commands.interactiveTutorial.ufo74_some_files_are_bait_opening_them_spikes_detection": "[UFO74]: Algunos archivos son carnada. Abrirlos dispara la detección.",
   "engine.commands.interactiveTutorial.ufo74_some_actions_are_loud_others_are_quiet": "[UFO74]: Algunas acciones hacen ruido. Otras son discretas.",
