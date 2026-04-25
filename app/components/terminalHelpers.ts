@@ -6,6 +6,7 @@
 import { GameState, GamePhase, TerminalEntry } from '../types';
 import { resolvePath } from '../engine/filesystem';
 import { TutorialStateID } from '../engine/commands/interactiveTutorial';
+import { resolveCommandAlias } from '../engine/commands/utils';
 import {
   AFFIRMATIVE_VIDEO_PROMPT_INPUTS,
   NEGATIVE_VIDEO_PROMPT_INPUTS,
@@ -33,12 +34,17 @@ export const getEvidenceVideoAttachment = (
   commandInput: string,
   currentPath: string
 ): EvidenceVideoAttachment | null => {
-  const match = /^(?:open|cat)\s+(\S+)/i.exec(commandInput.trim());
+  const match = /^(\S+)\s+(\S+)/.exec(commandInput.trim());
   if (!match) {
     return null;
   }
 
-  const filePath = resolvePath(match[1].trim(), currentPath);
+  const canonicalCommand = resolveCommandAlias(match[1].toLowerCase());
+  if (canonicalCommand !== 'open' && canonicalCommand !== 'cat') {
+    return null;
+  }
+
+  const filePath = resolvePath(match[2].trim(), currentPath);
   return EVIDENCE_VIDEO_ATTACHMENTS[filePath] ?? null;
 };
 
