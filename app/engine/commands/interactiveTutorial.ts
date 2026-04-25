@@ -86,14 +86,14 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, (DialogueLine | 
     { key: 'engine.commands.interactiveTutorial.ufo74_every_action_you_take_they_might_notice', fallback: '[UFO74]: Every action you take... they might notice.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_risk_hits_100_you_re_done_they_ll_find_you', fallback: "[UFO74]: Risk hits 100%, you're done. They'll find you." },
     null,
-    { key: 'engine.commands.interactiveTutorial.ufo74_be_careful_do_not_type_wrong_commands_on_the_terminal_', fallback: '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_be_careful_do_not_type_wrong_commands_on_the_terminal_', fallback: '[UFO74]: Be careful, do not type wrong commands on the terminal.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_type_wrong_commands_8_times_the_window_closes_permanen', fallback: '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!' },
     null,
     { key: 'engine.commands.interactiveTutorial.ufo74_some_files_are_bait_opening_them_spikes_detection', fallback: '[UFO74]: Some files are bait. Opening them spikes detection.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_some_actions_are_loud_others_are_quiet', fallback: '[UFO74]: Some actions are loud. Others are quiet.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_curiosity_has_a_cost_here', fallback: '[UFO74]: Curiosity has a cost here.' },
     null,
-    { key: 'terminal.tutorialSkip.help', fallback: '[UFO74]: Type `help` if you forget something.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_type_help_if_you_forget', fallback: '[UFO74]: Type `help` if you forget something.' },
     null,
     { key: 'terminal.tutorialSkip.ellipsis', fallback: '[UFO74]: ...' },
     null,
@@ -504,7 +504,7 @@ function handleValidInput(
 /**
  * Get a contextual hint based on what the player typed vs. what's expected
  */
-function getTutorialHint(input: string, state: TutorialStateID): string {
+export function getTutorialHint(input: string, state: TutorialStateID): string {
   const normalized = normalizeInput(input);
 
   switch (state) {
@@ -724,7 +724,7 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
     createEntryI18n(
       'ufo74',
       'engine.commands.interactiveTutorial.ufo74_be_careful_do_not_type_wrong_commands_on_the_terminal_',
-      '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.'
+      '[UFO74]: Be careful, do not type wrong commands on the terminal.'
     ),
     createEntryI18n(
       'ufo74',
@@ -752,7 +752,16 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
     ),
     createEntry('system', ''),
   ],
-  // Step 4 — Final / disconnect
+  // Step 4 — Final help reminder
+  [
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_type_help_if_you_forget',
+      '[UFO74]: Type `help` if you forget something.'
+    ),
+    createEntry('system', ''),
+  ],
+  // Step 5 — Disconnect
   [
     createEntryI18n('ufo74', 'terminal.tutorialSkip.ellipsis', '[UFO74]: ...'),
     createEntry('system', ''),

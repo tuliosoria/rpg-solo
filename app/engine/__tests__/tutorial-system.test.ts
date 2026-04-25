@@ -9,6 +9,7 @@ import {
 import type { TutorialTipId } from '../commands/tutorial';
 import {
   getTutorialAutocomplete,
+  getTutorialHint,
   TUTORIAL_BRIEFING_STEPS,
   TUTORIAL_INTRO_STEPS,
   TutorialStateID,
@@ -96,11 +97,42 @@ describe('Tutorial System', () => {
       expect(introText).toContain("[UFO74]: Great, now you're in. Let's get to business.");
       expect(briefingText).toContain('[UFO74]: Your mission: save 10 files to your dossier.');
       expect(briefingText).toContain(
-        '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.'
+        '[UFO74]: Be careful, do not type wrong commands on the terminal.'
       );
       expect(briefingText).toContain(
         '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
       );
+      expect(briefingText).toContain('[UFO74]: Type `help` if you forget something.');
+    });
+
+    it('places the help reminder as the final UFO74 tip before disconnect', () => {
+      const lastBriefingStep = TUTORIAL_BRIEFING_STEPS[TUTORIAL_BRIEFING_STEPS.length - 1];
+      const lastUfoLines = lastBriefingStep.filter(e => e.type === 'ufo74').map(e => e.content);
+      expect(lastUfoLines).toContain('[UFO74]: ...');
+
+      const helpStep = TUTORIAL_BRIEFING_STEPS[TUTORIAL_BRIEFING_STEPS.length - 2];
+      const helpUfoLines = helpStep.filter(e => e.type === 'ufo74').map(e => e.content);
+      expect(helpUfoLines).toContain('[UFO74]: Type `help` if you forget something.');
+    });
+  });
+
+  describe('getTutorialHint', () => {
+    it('catches the L-vs-1 mistake at LS_PROMPT', () => {
+      expect(getTutorialHint('1s', TutorialStateID.LS_PROMPT)).toBe(
+        "[UFO74]: Hey, it's ls — letter L, not number 1, kid... Come on."
+      );
+      // normalizeInput lowercases/trims, so 1S and ' 1s ' should also match
+      expect(getTutorialHint('1S', TutorialStateID.LS_PROMPT)).toBe(
+        "[UFO74]: Hey, it's ls — letter L, not number 1, kid... Come on."
+      );
+      expect(getTutorialHint('  1s ', TutorialStateID.LS_PROMPT)).toBe(
+        "[UFO74]: Hey, it's ls — letter L, not number 1, kid... Come on."
+      );
+    });
+
+    it('still falls through to existing hints for other LS_PROMPT mistakes', () => {
+      expect(getTutorialHint('dir', TutorialStateID.LS_PROMPT)).toMatch(/wrong system/);
+      expect(getTutorialHint('cd internal', TutorialStateID.LS_PROMPT)).toMatch(/Not yet/);
     });
   });
 });

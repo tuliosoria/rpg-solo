@@ -6068,7 +6068,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '[UFO74]: Close idea, wrong system. Try: ls':
       '[UFO74]: Buena idea, sistema equivocado. Prueba: ls',
     "[UFO74]: Hey, it's ls — letter L, not number 1, kid... Come on.":
-      '[UFO74]: Eh, es ls — letra L, no número 1, kid... Por favor.',
+      '[UFO74]: Eh, es ls — letra L, no número 1, kid... En serio.',
     "[UFO74]: Not yet. First, let's see what's here. Type: ls":
       '[UFO74]: Aún no. Primero veamos qué hay aquí. Escribe: ls',
     '[UFO74]: Type ls to list the files here.':
