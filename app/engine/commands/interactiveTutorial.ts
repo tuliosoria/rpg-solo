@@ -93,6 +93,8 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, (DialogueLine | 
     { key: 'engine.commands.interactiveTutorial.ufo74_some_actions_are_loud_others_are_quiet', fallback: '[UFO74]: Some actions are loud. Others are quiet.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_curiosity_has_a_cost_here', fallback: '[UFO74]: Curiosity has a cost here.' },
     null,
+    { key: 'terminal.tutorialSkip.help', fallback: '[UFO74]: Type `help` if you forget something.' },
+    null,
     { key: 'terminal.tutorialSkip.ellipsis', fallback: '[UFO74]: ...' },
     null,
     { key: 'terminal.tutorialSkip.disconnected', fallback: '[UFO74 has disconnected]' },
