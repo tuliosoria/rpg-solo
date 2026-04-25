@@ -510,6 +510,9 @@ function getTutorialHint(input: string, state: TutorialStateID): string {
   switch (state) {
     case TutorialStateID.LS_PROMPT: {
       // Expected: ls
+      if (normalized === '1s') {
+        return "[UFO74]: Hey, it's ls — letter L, not number 1, kid... Come on.";
+      }
       if (normalized === 'dir' || normalized === 'list') {
         return '[UFO74]: Close idea, wrong system. Try: ls';
       }

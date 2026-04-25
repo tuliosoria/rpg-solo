@@ -236,6 +236,8 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       'A atribuição de crédito é irrelevante para a função do sistema.',
     'It hurts, but I would try to resolve it calmly.': 'Dói, mas eu tentaria resolver com calma.',
     '[UFO74]: Close idea, wrong system. Try: ls': '[UFO74]: Ideia certa, sistema errado. Tente: ls',
+    "[UFO74]: Hey, it's ls — letter L, not number 1, kid... Come on.":
+      '[UFO74]: Ei, é ls — letra L, não número 1, kid... Fala sério.',
     "[UFO74]: Not yet. First, let's see what's here. Type: ls":
       '[UFO74]: Ainda não. Primeiro vamos ver o que tem aqui. Digite: ls',
     '[UFO74]: Type ls to list the files here.': '[UFO74]: Digite ls para listar os arquivos daqui.',
@@ -6065,6 +6067,8 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       'Duele, pero intentaría resolverlo con calma.',
     '[UFO74]: Close idea, wrong system. Try: ls':
       '[UFO74]: Buena idea, sistema equivocado. Prueba: ls',
+    "[UFO74]: Hey, it's ls — letter L, not number 1, kid... Come on.":
+      '[UFO74]: Eh, es ls — letra L, no número 1, kid... Por favor.',
     "[UFO74]: Not yet. First, let's see what's here. Type: ls":
       '[UFO74]: Aún no. Primero veamos qué hay aquí. Escribe: ls',
     '[UFO74]: Type ls to list the files here.':
