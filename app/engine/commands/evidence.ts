@@ -60,7 +60,12 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
         createEntry('notice', ''),
         createEntryI18n('notice', 'engine.commands.evidence.leak_channel_already_prepared', '  LEAK CHANNEL ALREADY PREPARED'),
         createEntry('system', ''),
-        createEntry('system', `  Files saved: ${savedCount}/${MAX_EVIDENCE_COUNT}`), // i18n: dynamic string
+        createEntryI18n(
+          'system',
+          'engine.commands.evidence.files_saved_progress',
+          '  Files saved: {{savedCount}}/{{maxCount}}',
+          { savedCount, maxCount: MAX_EVIDENCE_COUNT }
+        ),
         createEntryI18n('system', 'engine.commands.evidence.run_leak_to_transmit', '  Run "leak" with no arguments to transmit once all files are saved.'),
         createEntry('system', ''),
       ],
@@ -97,8 +102,18 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
       output: [
         createEntry('system', ''),
         createEntry('notice', `  ✓ ${subcommand}`),
-        createEntry('system', `  Step ${newProgress}/3 confirmed.`), // i18n: dynamic string
-        createEntry('system', `  Next: leak ${sequence[newProgress]}`), // i18n: dynamic string
+        createEntryI18n(
+          'system',
+          'engine.commands.evidence.step_progress_confirmed',
+          '  Step {{current}}/{{total}} confirmed.',
+          { current: newProgress, total: 3 }
+        ),
+        createEntryI18n(
+          'system',
+          'engine.commands.evidence.next_leak_step',
+          '  Next: leak {{command}}',
+          { command: sequence[newProgress] }
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {
@@ -113,8 +128,18 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
     output: [
       createEntry('error', ''),
       createEntryI18n('error', 'engine.commands.evidence.sequence_mismatch_reset', '  ✗ SEQUENCE MISMATCH — protocol reset'),
-      createEntry('error', `  Expected: leak ${expected}`), // i18n: dynamic string
-      createEntry('error', `  Received: leak ${subcommand}`), // i18n: dynamic string
+      createEntryI18n(
+        'error',
+        'engine.commands.evidence.expected_leak_command',
+        '  Expected: leak {{command}}',
+        { command: expected }
+      ),
+      createEntryI18n(
+        'error',
+        'engine.commands.evidence.received_leak_command',
+        '  Received: leak {{command}}',
+        { command: subcommand }
+      ),
       createEntry('system', ''),
       createEntryI18n('warning', 'engine.commands.evidence.detection_level_increased', '  ⚠ Detection level increased (+5%)'),
       createEntryI18n('system', 'engine.commands.evidence.preparation_must_restart', '  Preparation sequence must be restarted from step 1.'),
@@ -143,7 +168,12 @@ export const evidenceCommands: CommandRegistry = {
             'LEAK BLOCKED — INSUFFICIENT EVIDENCE'
           ),
           createEntry('system', ''),
-          createEntry('system', `  Files saved: ${savedCount}/${MAX_EVIDENCE_COUNT}`), // i18n: dynamic string
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.files_saved_progress',
+            '  Files saved: {{savedCount}}/{{maxCount}}',
+            { savedCount, maxCount: MAX_EVIDENCE_COUNT }
+          ),
           createEntryI18n(
             'system',
             'engine.commands.evidence.save_at_least_five_files_to_begin',
@@ -202,7 +232,12 @@ export const evidenceCommands: CommandRegistry = {
           createEntryI18n('system', 'engine.commands.evidence.leak_transmission_initiated', '  LEAK TRANSMISSION INITIATED'),
           createEntry('system', '═══════════════════════════════════════'),
           createEntry('system', ''),
-          createEntry('system', '  Compiling dossier... ' + savedCount + ' files confirmed.'), // i18n: dynamic string
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.compiling_dossier',
+            '  Compiling dossier... {{savedCount}} files confirmed.',
+            { savedCount }
+          ),
           createEntryI18n('system', 'engine.commands.evidence.encrypting_for_distribution', '  Encrypting for distribution...'),
           createEntryI18n('system', 'engine.commands.evidence.channel_open', '  Channel open.'),
           createEntry('system', ''),
@@ -227,7 +262,12 @@ export const evidenceCommands: CommandRegistry = {
           createEntry('notice', ''),
           createEntryI18n('notice', 'engine.commands.evidence.leak_channel_ready', '  LEAK CHANNEL READY — awaiting full evidence package.'),
           createEntry('system', ''),
-          createEntry('system', `  Files saved: ${savedCount}/${MAX_EVIDENCE_COUNT}`), // i18n: dynamic string
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.files_saved_progress',
+            '  Files saved: {{savedCount}}/{{maxCount}}',
+            { savedCount, maxCount: MAX_EVIDENCE_COUNT }
+          ),
           createEntryI18n('system', 'engine.commands.evidence.save_all_ten_then_leak', '  Save all 10 files, then run "leak" again.'),
           createEntry('system', ''),
           createEntryI18n('ufo74', 'engine.commands.evidence.ufo74_channel_prepped', '[UFO74]: channel is prepped. just need the rest of the files.'),
@@ -270,11 +310,21 @@ export const evidenceCommands: CommandRegistry = {
         createEntry('warning', ''),
         createEntryI18n('warning', 'engine.commands.evidence.leak_channel_preparation_in_progress', '  LEAK CHANNEL — PREPARATION IN PROGRESS'),
         createEntry('system', ''),
-        createEntry('system', `  Progress: ${progress}/3 steps completed.`), // i18n: dynamic string
+        createEntryI18n(
+          'system',
+          'engine.commands.evidence.steps_completed_progress',
+          '  Progress: {{current}}/{{total}} steps completed.',
+          { current: progress, total: 3 }
+        ),
         createEntry('system', ''),
         ...formatSequenceDisplay(sequence, progress).map((line) => createEntry('system' as const, line)),
         createEntry('system', ''),
-        createEntry('system', `  Next: leak ${sequence[progress]}`), // i18n: dynamic string
+        createEntryI18n(
+          'system',
+          'engine.commands.evidence.next_leak_step',
+          '  Next: leak {{command}}',
+          { command: sequence[progress] }
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {},
