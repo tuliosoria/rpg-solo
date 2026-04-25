@@ -815,11 +815,24 @@ export const filesystemCommands: CommandRegistry = {
     // Only if no file-specific reaction already claimed the slot.
     const totalFilesRead = filesRead.size;
     if (totalFilesRead === 3 && !state.flags.overrideSuggested && !state.flags.adminUnlocked) {
-      const directoryHintMessage = createUFO74Message([
-        'UFO74: good pace, hackerkid.',
-        '       start digging through /storage, /ops, and /comms.',
-        '       the good files are scattered all over the system.',
-      ]);
+      const directoryHintMessage: TerminalEntry[] = [
+        createEntry('system', ''),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.filesystem.ufo74_good_pace_hackerkid',
+          'UFO74: good pace, hackerkid.'
+        ),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.filesystem.ufo74_start_digging_through_directories',
+          '       start digging through /storage, /ops, and /comms.'
+        ),
+        createEntryI18n(
+          'ufo74',
+          'engine.commands.filesystem.ufo74_the_good_files_are_scattered',
+          '       the good files are scattered all over the system.'
+        ),
+      ];
       ufo74ContextMessage = ufo74ContextMessage
         ? [...ufo74ContextMessage, ...directoryHintMessage]
         : directoryHintMessage;
