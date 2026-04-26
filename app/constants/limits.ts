@@ -3,7 +3,7 @@
 
 // Save file version - increment when save format changes
 // Migration logic should be added to saves.ts migrateState()
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 // Maximum number of terminal history entries to keep
 export const MAX_HISTORY_SIZE = 500;

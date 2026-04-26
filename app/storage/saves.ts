@@ -90,12 +90,19 @@ function migrateState(data: VersionedSaveData): Record<string, unknown> {
     version = 1;
   }
 
-  // Add future migrations here:
-  // if (version === 1) {
-  //   // Migrate v1 -> v2
-  //   state = { ...state, newField: defaultValue };
-  //   version = 2;
-  // }
+  // v1 -> v2: a new tutorial hand-off step (UFO74 "ls/cd" nudge) was appended
+  // to TUTORIAL_MESSAGES. Existing players already have tutorialComplete=true
+  // from before that step existed, so they would never see it. Rewind them one
+  // step so the new line plays on their next Enter, then naturally re-completes.
+  if (version === 1) {
+    if (state && (state as Record<string, unknown>).tutorialComplete === true) {
+      const stateRecord = state as Record<string, unknown>;
+      stateRecord.tutorialComplete = false;
+      // 10 is the index of the new appended step in TUTORIAL_MESSAGES.
+      stateRecord.tutorialStep = 10;
+    }
+    version = 2;
+  }
 
   return state;
 }
