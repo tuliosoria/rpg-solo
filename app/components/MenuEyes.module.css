@@ -1,0 +1,107 @@
+/* Slowly drifting watcher eyes around the menu perimeter */
+
+.eyesLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.eye {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: top, left;
+  animation:
+    menuEyeOrbit 80s linear infinite,
+    menuEyeBreathe 4.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85))
+          drop-shadow(0 0 14px rgba(255, 255, 255, 0.45));
+}
+
+.eyeSocket {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    #050505 0%,
+    #0a0a0a 50%,
+    #000 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.55),
+    0 0 24px rgba(255, 255, 255, 0.28),
+    inset 0 0 6px rgba(0, 0, 0, 0.95);
+  overflow: hidden;
+}
+
+.iris {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle at center,
+    #ffffff 0%,
+    #e8f0ff 35%,
+    #8aa0bb 70%,
+    #2a3340 100%
+  );
+  box-shadow:
+    0 0 6px rgba(255, 255, 255, 0.9),
+    inset 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
+.pupil {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #000;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
+}
+
+@keyframes menuEyeOrbit {
+  0%   { top: 0;                         left: 0; }
+  25%  { top: 0;                         left: calc(100% - 28px); }
+  50%  { top: calc(100% - 28px);         left: calc(100% - 28px); }
+  75%  { top: calc(100% - 28px);         left: 0; }
+  100% { top: 0;                         left: 0; }
+}
+
+@keyframes menuEyeBreathe {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.06); }
+}
+
+/* Occasional blink — staggered per eye via animation-delay */
+.blink {
+  animation:
+    menuEyeOrbit 80s linear infinite,
+    menuEyeBreathe 4.5s ease-in-out infinite,
+    menuEyeBlink 7s steps(1) infinite;
+}
+
+@keyframes menuEyeBlink {
+  0%, 96%, 100% { transform: scaleY(1); }
+  97%, 99%      { transform: scaleY(0.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eye {
+    animation: none;
+  }
+}

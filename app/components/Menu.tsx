@@ -8,6 +8,7 @@ import { useSound } from '../hooks';
 import { useI18n } from '../i18n';
 import { startMenuMusic, setMenuMusicVolume, stopMenuMusic } from '../audio/menuMusic';
 import MenuLogo from './MenuLogo';
+import MenuEyes from './MenuEyes';
 import styles from './Menu.module.css';
 
 interface MenuProps {
@@ -847,6 +848,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
 
       {/* CRT glow effect */}
       <div className={styles.glow} />
+
+      {/* Watcher eyes drifting around the menu perimeter */}
+      <MenuEyes />
 
       {screen === 'main' && renderMainMenu()}
       {screen === 'load' && renderLoadScreen()}

@@ -10,7 +10,7 @@
   display: block;
   width: fit-content;
   max-width: 100%;
-  padding: 1.4rem 2.4rem 1.6rem;
+  padding: 1.4rem 3.4rem 1.6rem;
   margin: 0 auto;
   background:
     radial-gradient(
@@ -130,20 +130,30 @@
   font-weight: 400;
   line-height: 1;
   margin: 0.35rem 0 0.15rem;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.28em;
   /* Compensate for trailing letter-spacing pushing the last char outside */
-  padding-right: 0.32em;
+  padding-left: 0.28em;
+  padding-right: 0.28em;
   text-transform: uppercase;
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 .subtitle {
   font-size: clamp(1.15rem, 2.4vw, 1.8rem);
   line-height: 1;
   margin: 0.2rem 0 0.55rem;
-  letter-spacing: 0.42em;
-  padding-right: 0.42em;
+  letter-spacing: 0.38em;
+  padding-left: 0.38em;
+  padding-right: 0.38em;
   text-transform: uppercase;
   color: #d4ff7a;
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 /* Wider gap between words in the subtitle (TERMINAL  1996) */
