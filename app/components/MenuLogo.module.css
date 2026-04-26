@@ -1,0 +1,177 @@
+.logoFrame {
+  position: relative;
+  display: inline-block;
+  padding: 1.4rem 2.4rem 1.6rem;
+  margin: 0 auto;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(20, 50, 18, 0.55) 0%,
+      rgba(8, 18, 8, 0.85) 60%,
+      rgba(0, 0, 0, 0.95) 100%
+    );
+  border-radius: 22px / 18px;
+  box-shadow:
+    inset 0 0 30px rgba(0, 0, 0, 0.85),
+    inset 0 0 90px rgba(40, 110, 40, 0.18),
+    0 0 18px rgba(80, 200, 80, 0.18);
+  overflow: hidden;
+  isolation: isolate;
+  color: #b8e07c;
+  font-family: 'VT323', 'Courier New', monospace;
+  text-align: center;
+}
+
+.logoFrame::before,
+.logoFrame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Scanlines */
+.logoFrame::before {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.32) 3px,
+    rgba(0, 0, 0, 0.32) 4px
+  );
+  mix-blend-mode: multiply;
+}
+
+/* Screen vignette / curvature */
+.logoFrame::after {
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(0, 0, 0, 0) 55%,
+      rgba(0, 0, 0, 0.6) 100%
+    );
+}
+
+/* Soft phosphor flicker on the whole frame */
+.logoFrame {
+  animation: phosphorFlicker 5.6s infinite;
+}
+
+@keyframes phosphorFlicker {
+  0%, 100% { filter: brightness(1); }
+  43%      { filter: brightness(1); }
+  44%      { filter: brightness(0.92); }
+  45%      { filter: brightness(1); }
+  78%      { filter: brightness(1); }
+  79%      { filter: brightness(1.05); }
+  80%      { filter: brightness(0.95); }
+  81%      { filter: brightness(1); }
+}
+
+.line {
+  position: relative;
+  z-index: 1;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+  text-shadow:
+    0 0 4px rgba(184, 224, 124, 0.65),
+    0 0 12px rgba(120, 200, 80, 0.35);
+  opacity: 0;
+  animation: lineFadeIn 0.45s steps(6, end) forwards;
+}
+
+.divider {
+  font-size: clamp(0.7rem, 1.2vw, 0.95rem);
+  color: rgba(184, 224, 124, 0.7);
+  letter-spacing: 0;
+  margin: 0.2rem 0;
+}
+
+.title {
+  font-size: clamp(2.2rem, 6vw, 4.6rem);
+  font-weight: 400;
+  line-height: 1;
+  margin: 0.35rem 0 0.15rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-size: clamp(1.15rem, 2.4vw, 1.8rem);
+  line-height: 1;
+  margin: 0.2rem 0 0.55rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: #d4ff7a;
+}
+
+.tagline {
+  font-size: clamp(0.85rem, 1.45vw, 1.1rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(216, 231, 198, 0.85);
+  margin: 0.1rem 0 0.4rem;
+}
+
+/* Per-character flicker */
+.char {
+  display: inline-block;
+  opacity: 0;
+  animation: charFlicker 0.42s steps(3, end) forwards;
+}
+
+.char.space {
+  width: 0.22em;
+}
+
+@keyframes lineFadeIn {
+  0%   { opacity: 0; }
+  40%  { opacity: 0.4; }
+  60%  { opacity: 0.15; }
+  80%  { opacity: 0.85; }
+  100% { opacity: 1; }
+}
+
+@keyframes charFlicker {
+  0%   { opacity: 0; transform: translateY(0); }
+  30%  { opacity: 0.5; }
+  45%  { opacity: 0.1; }
+  70%  { opacity: 0.85; }
+  100% { opacity: 1; }
+}
+
+/* Caret blink at the very end of the boot sequence */
+.caret {
+  display: inline-block;
+  width: 0.55ch;
+  margin-left: 0.25ch;
+  vertical-align: baseline;
+  background: #b8e07c;
+  height: 1em;
+  opacity: 0;
+  animation: caretAppear 0.2s ease forwards, caretBlink 1s steps(2) infinite;
+  box-shadow: 0 0 6px rgba(184, 224, 124, 0.55);
+}
+
+@keyframes caretAppear {
+  to { opacity: 1; }
+}
+
+@keyframes caretBlink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Visually hidden but readable by screen readers / queryable by tests */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

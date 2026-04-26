@@ -7,6 +7,7 @@ import { useOptions } from '../hooks/useOptions';
 import { useSound } from '../hooks';
 import { useI18n } from '../i18n';
 import { startMenuMusic, setMenuMusicVolume, stopMenuMusic } from '../audio/menuMusic';
+import MenuLogo from './MenuLogo';
 import styles from './Menu.module.css';
 
 interface MenuProps {
@@ -265,10 +266,12 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
         case 'ArrowUp':
           e.preventDefault();
           setSelectedIndex(prev => (prev > 0 ? prev - 1 : maxIndex));
+          playSound('hover');
           break;
         case 'ArrowDown':
           e.preventDefault();
           setSelectedIndex(prev => (prev < maxIndex ? prev + 1 : 0));
+          playSound('hover');
           break;
         case 'Enter':
           e.preventDefault();
@@ -313,6 +316,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
       handleReturnToMain,
       handleLoadSelection,
       adjustOptionValue,
+      playSound,
     ]
   );
 
@@ -339,11 +343,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
   const renderMainMenu = () => (
     <div className={styles.menuContent} ref={mainMenuRef}>
       <div className={styles.title}>
-        <div className={styles.titleLine}>═══════════════════════════════════</div>
-        <h1 className={styles.titleText}>VARGINHA</h1>
-        <h2 className={styles.subtitleText}>TERMINAL 1996</h2>
-        <div className={styles.subtitle}>{t('menu.credits.settingValue')}</div>
-        <div className={styles.titleLine}>═══════════════════════════════════</div>
+        <MenuLogo />
       </div>
 
       <div className={styles.menuOptions}>
