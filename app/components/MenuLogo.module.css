@@ -126,32 +126,33 @@
 }
 
 .title {
-  font-size: clamp(2.2rem, 6vw, 4.6rem);
+  font-size: clamp(1.6rem, 4.2vw, 3.2rem);
   font-weight: 400;
   line-height: 1;
-  margin: 0.35rem 0 0.15rem;
-  letter-spacing: 0.28em;
-  /* Compensate for trailing letter-spacing pushing the last char outside */
-  padding-left: 0.28em;
-  padding-right: 0.28em;
+  margin: 0.35rem auto 0.15rem;
+  letter-spacing: 0.22em;
+  padding-left: 0.22em;
+  padding-right: 0.22em;
   text-transform: uppercase;
-  display: inline-block;
-  width: 100%;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
   box-sizing: border-box;
   text-align: center;
 }
 
 .subtitle {
-  font-size: clamp(1.15rem, 2.4vw, 1.8rem);
+  font-size: clamp(0.95rem, 1.9vw, 1.4rem);
   line-height: 1;
-  margin: 0.2rem 0 0.55rem;
-  letter-spacing: 0.38em;
-  padding-left: 0.38em;
-  padding-right: 0.38em;
+  margin: 0.2rem auto 0.55rem;
+  letter-spacing: 0.32em;
+  padding-left: 0.32em;
+  padding-right: 0.32em;
   text-transform: uppercase;
   color: #d4ff7a;
-  display: inline-block;
-  width: 100%;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
   box-sizing: border-box;
   text-align: center;
 }
