@@ -10,7 +10,7 @@ interface IntroSequenceProps {
   onCompleteAction: () => void;
 }
 
-type Scene = 'video' | 'transition' | 'logo' | 'title' | 'done';
+type Scene = 'gate' | 'video' | 'transition' | 'logo' | 'title' | 'done';
 
 const TRANSITION_MS = 900;
 const LOGO_DURATION_MS = 4500;
@@ -18,7 +18,7 @@ const TITLE_DURATION_MS = 5500;
 
 export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) {
   const { t } = useI18n();
-  const [scene, setScene] = useState<Scene>('video');
+  const [scene, setScene] = useState<Scene>('gate');
   const [transitioning, setTransitioning] = useState(false);
   const completedRef = useRef(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -38,17 +38,23 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
     }, TRANSITION_MS);
   }, []);
 
-  // Skip on any key / click
+  // Skip on Esc / Enter / Space
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+      if (e.key === 'Escape') {
         e.preventDefault();
         finish();
+        return;
+      }
+      // Use Enter/Space to dismiss the gate as a user gesture
+      if (scene === 'gate' && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        goTo('video');
       }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [finish]);
+  }, [finish, goTo, scene]);
 
   // Scene 1 -> Scene 2: when video ends OR fails to load, transition to logo
   const handleVideoEnded = useCallback(() => goTo('logo'), [goTo]);
@@ -71,35 +77,57 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
     return () => window.clearTimeout(id);
   }, [scene, finish]);
 
-  // Try to autoplay video (muted, so browsers allow it). If it still fails
-  // for any reason (decoder, network, missing file), fall through to logo.
+  // Play video with sound (gate ensured a user gesture). If the play()
+  // promise still rejects (rare), fall through to the logo scene.
   useEffect(() => {
     if (scene !== 'video' || !videoRef.current) return;
     const el = videoRef.current;
-    el.muted = true;
+    el.muted = false;
+    el.volume = 1;
     const playPromise = el.play();
     if (playPromise && typeof playPromise.catch === 'function') {
       playPromise.catch(() => {
-        goTo('logo');
+        // Last-ditch: try muted so something plays
+        el.muted = true;
+        el.play().catch(() => goTo('logo'));
       });
     }
   }, [scene, goTo]);
 
+  const handleRootClick = useCallback(() => {
+    if (scene === 'gate') {
+      goTo('video');
+    } else {
+      finish();
+    }
+  }, [scene, goTo, finish]);
+
   return (
     <div
       className={styles.root}
-      onClick={finish}
+      onClick={handleRootClick}
       role="button"
       tabIndex={0}
       aria-label={t('intro.skip.aria') || 'Skip intro'}
     >
+      {scene === 'gate' && (
+        <>
+          <div className={styles.grain} />
+          <div className={styles.gateScene}>
+            <div className={styles.gateGlyph}>▶</div>
+            <div className={styles.gateText}>
+              {t('intro.gate.prompt') || 'Click to begin'}
+            </div>
+          </div>
+        </>
+      )}
+
       {scene === 'video' && (
         <div className={styles.videoWrap}>
           <video
             ref={videoRef}
             className={styles.video}
             src={INTRO_VIDEO_SRC}
-            muted
             playsInline
             autoPlay
             onEnded={handleVideoEnded}
@@ -147,7 +175,7 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
         <div className={styles.transitionStatic} />
       </div>
 
-      {scene !== 'done' && (
+      {scene !== 'done' && scene !== 'gate' && (
         <div className={styles.skipHint}>
           {t('intro.skip.hint') || 'Press any key to skip'}
         </div>

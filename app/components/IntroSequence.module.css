@@ -311,3 +311,33 @@
   from { opacity: 0.6; }
   to   { opacity: 1; }
 }
+
+/* === Scene 0: click-to-begin gate === */
+.gateScene {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: rgba(216, 231, 198, 0.9);
+  animation: gatePulse 2.4s ease-in-out infinite;
+  user-select: none;
+}
+
+.gateGlyph {
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  line-height: 1;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 12px rgba(184, 224, 124, 0.55);
+  color: #b8e07c;
+}
+
+.gateText {
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+@keyframes gatePulse {
+  0%, 100% { opacity: 0.65; }
+  50%      { opacity: 1; }
+}

@@ -4,6 +4,7 @@
   "intro.title.subtitle": "The secret will be revealed",
   "intro.skip.hint": "Press any key to skip",
   "intro.skip.aria": "Skip intro",
+  "intro.gate.prompt": "Click to begin",
   "language.label": "Language",
   "language.en": "English",
   "language.pt-BR": "Portuguese (Brazil)",

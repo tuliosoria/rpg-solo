@@ -217,6 +217,33 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
     return () => clearTimeout(timer);
   }, []);
 
+  // Looping menu music. Plays while Menu is mounted; stops when the player
+  // starts a new game / loads a save (Menu unmounts) or when music is
+  // disabled in options.
+  useEffect(() => {
+    if (!options.musicEnabled) return;
+    const audio = new Audio('/audio/music/menu.mp3');
+    audio.loop = true;
+    audio.volume = Math.max(0, Math.min(1, options.masterVolume / 100));
+    let cancelled = false;
+    audio.play().catch(() => {
+      // Autoplay blocked (no user gesture yet). Will retry on first interaction.
+      if (cancelled) return;
+      const retry = () => {
+        audio.play().catch(() => {});
+        window.removeEventListener('pointerdown', retry);
+        window.removeEventListener('keydown', retry);
+      };
+      window.addEventListener('pointerdown', retry, { once: true });
+      window.addEventListener('keydown', retry, { once: true });
+    });
+    return () => {
+      cancelled = true;
+      audio.pause();
+      audio.src = '';
+    };
+  }, [options.musicEnabled, options.masterVolume]);
+
   // Keyboard navigation
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
