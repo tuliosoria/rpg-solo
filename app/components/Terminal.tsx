@@ -419,6 +419,7 @@ export default function Terminal({
     visibleHistory.length,
     gameState.history.length,
     pendingImage,
+    pendingEvidenceVideoPrompt,
     encryptedChannelState,
   ]);
 
@@ -807,7 +808,7 @@ export default function Terminal({
       history: [
         ...prev.history,
         createEntry('system', ''),
-        createEntry('notice', t('terminal.video.prompt')),
+        createEntry('prompt', t('terminal.video.prompt')),
       ],
     }));
     setPendingEvidenceVideoPrompt(pendingCheck.attachment);
@@ -1025,6 +1026,9 @@ export default function Terminal({
         break;
       case 'notice':
         className = `${styles.line} ${styles.notice}`;
+        break;
+      case 'prompt':
+        className = `${styles.line} ${styles.promptLine}`;
         break;
       case 'ufo74':
         className = `${styles.line} ${styles.ufo74} ${styles.ufo74Flush}`;

@@ -1048,6 +1048,14 @@
   font-style: italic;
 }
 
+.promptLine {
+  color: #d4ff7a;
+  font-weight: 700;
+  font-style: normal;
+  text-shadow: 0 0 6px rgba(160, 204, 119, 0.45);
+  letter-spacing: 0.02em;
+}
+
 .readLine {
   color: #3d5530;
 }
