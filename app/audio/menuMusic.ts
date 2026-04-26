@@ -7,8 +7,8 @@
  */
 
 const MENU_MUSIC_SRC = '/audio/music/menu.mp3';
-/** Cap menu music at 80% of master volume — track is mastered hot. */
-const MENU_MUSIC_MAX = 0.8;
+/** Cap menu music at 60% of master volume — track is mastered hot. */
+const MENU_MUSIC_MAX = 0.6;
 
 let audio: HTMLAudioElement | null = null;
 let started = false;
