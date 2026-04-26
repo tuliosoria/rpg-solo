@@ -28,7 +28,6 @@ export default memo(function PauseMenu({
   const modalRef = useRef<HTMLDivElement>(null);
   useFocusTrap(modalRef);
   const [confirmMode, setConfirmMode] = useState<ConfirmMode>(null);
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const isConfirming = confirmMode !== null;
 
@@ -37,8 +36,8 @@ export default memo(function PauseMenu({
       isConfirming
         ? ['confirm', 'cancel']
         : canLoadAction
-          ? ['resume', 'save', 'load', 'help', 'settings', 'exit']
-          : ['resume', 'save', 'help', 'settings', 'exit'],
+          ? ['resume', 'save', 'load', 'settings', 'exit']
+          : ['resume', 'save', 'settings', 'exit'],
     [canLoadAction, isConfirming]
   );
 
@@ -49,7 +48,7 @@ export default memo(function PauseMenu({
         return;
       }
 
-      setSelectedIndex(canLoadAction ? 5 : 4);
+      setSelectedIndex(canLoadAction ? 4 : 3);
     },
     [canLoadAction]
   );
@@ -63,7 +62,6 @@ export default memo(function PauseMenu({
   );
 
   const openConfirm = useCallback((mode: Exclude<ConfirmMode, null>) => {
-    setIsHelpOpen(false);
     setConfirmMode(mode);
     setSelectedIndex(1); // Default to "No" for safety
   }, []);
@@ -108,9 +106,6 @@ export default memo(function PauseMenu({
                 break;
               case 'load':
                 openConfirm('load');
-                break;
-              case 'help':
-                setIsHelpOpen(prev => !prev);
                 break;
               case 'settings':
                 onSettingsAction();
@@ -195,12 +190,17 @@ export default memo(function PauseMenu({
   return (
     <div className={styles.overlay} onClick={onResumeAction} role="dialog" aria-modal="true" aria-labelledby="pausemenu-title">
       <div className={styles.menu} ref={modalRef} onClick={e => e.stopPropagation()}>
-        <div className={styles.header}>
-          <h2 id="pausemenu-title">{t('pause.title')}</h2>
-          <div className={styles.line}>═══════════════════════════</div>
-        </div>
+          <div className={styles.header}>
+            <h2 id="pausemenu-title">{t('pause.title')}</h2>
+            <div className={styles.line}>═══════════════════════════</div>
+          </div>
 
-        <div className={styles.options}>
+          <div className={styles.objectivePanel}>
+            <div className={styles.objectiveTitle}>{t('pause.objectiveTitle')}</div>
+            <p>{t('pause.objective')}</p>
+          </div>
+
+          <div className={styles.options}>
           <button
             className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('resume') ? styles.selected : ''}`}
             tabIndex={0}
@@ -234,18 +234,6 @@ export default memo(function PauseMenu({
             </button>
           )}
           <button
-            className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('help') ? styles.selected : ''}`}
-            tabIndex={0}
-            onMouseDown={e => e.preventDefault()}
-            onClick={() => setIsHelpOpen(prev => !prev)}
-            onMouseEnter={() => setSelectedIndex(menuItems.indexOf('help'))}
-            aria-expanded={isHelpOpen}
-            aria-controls="pause-help-panel"
-          >
-            {selectedIndex === menuItems.indexOf('help') ? '▶ ' : '  '}
-            {t('pause.help')}
-          </button>
-          <button
             className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('settings') ? styles.selected : ''}`}
             tabIndex={0}
             onMouseDown={e => e.preventDefault()}
@@ -266,13 +254,6 @@ export default memo(function PauseMenu({
             {t('pause.exit')}
           </button>
         </div>
-
-        {isHelpOpen && (
-          <div id="pause-help-panel" className={styles.helpPanel}>
-            <div className={styles.helpTitle}>{t('pause.helpTitle')}</div>
-            <p>{t('pause.helpObjective')}</p>
-          </div>
-        )}
 
         <div className={styles.hint}>{t('pause.hint')}</div>
       </div>

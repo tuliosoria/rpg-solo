@@ -32,19 +32,16 @@ describe('PauseMenu', () => {
       expect(screen.getByRole('button', { name: /RESUME GAME/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /SAVE SESSION/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /LOAD CHECKPOINT/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /HELP/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /SETTINGS/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /EXIT TO MENU/i })).toBeInTheDocument();
     });
 
-    it('shows a succinct objective from Help', () => {
+    it('shows a succinct objective reminder', () => {
       render(<PauseMenu {...defaultProps} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /HELP/i }));
-
       expect(screen.getByText('OBJECTIVE')).toBeInTheDocument();
-      expect(screen.getByText(/Save the ones that strengthen your case/i)).toBeInTheDocument();
-      expect(screen.getByText(/once you leak, there is no coming back/i)).toBeInTheDocument();
+      expect(screen.getByText(/Save files that strengthen your case/i)).toBeInTheDocument();
+      expect(screen.getByText(/Leak only when your dossier is ready/i)).toBeInTheDocument();
     });
 
     it('shows keyboard navigation hint', () => {
@@ -134,7 +131,7 @@ describe('PauseMenu', () => {
       render(<PauseMenu {...defaultProps} />);
 
       // Press down through all menu items to wrap to beginning
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 5; i++) {
         fireEvent.keyDown(window, { key: 'ArrowDown' });
       }
 
@@ -161,8 +158,8 @@ describe('PauseMenu', () => {
     it('navigates to settings on Enter when selected', () => {
       render(<PauseMenu {...defaultProps} />);
 
-      // Navigate to settings (index 4)
-      for (let i = 0; i < 4; i++) {
+      // Navigate to settings (index 3)
+      for (let i = 0; i < 3; i++) {
         fireEvent.keyDown(window, { key: 'ArrowDown' });
       }
       fireEvent.keyDown(window, { key: 'Enter' });
@@ -175,8 +172,8 @@ describe('PauseMenu', () => {
     it('shows confirmation dialog when EXIT is selected with Enter', () => {
       render(<PauseMenu {...defaultProps} />);
 
-      // Navigate to EXIT (index 5)
-      for (let i = 0; i < 5; i++) {
+      // Navigate to EXIT (index 4)
+      for (let i = 0; i < 4; i++) {
         fireEvent.keyDown(window, { key: 'ArrowDown' });
       }
       fireEvent.keyDown(window, { key: 'Enter' });

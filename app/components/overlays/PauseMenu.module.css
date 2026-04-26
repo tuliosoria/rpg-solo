@@ -118,8 +118,8 @@
   letter-spacing: 1px;
 }
 
-.helpPanel {
-  margin-top: 20px;
+.objectivePanel {
+  margin-bottom: 20px;
   padding: 16px;
   border: 1px solid #2a3a18;
   background: rgba(136, 204, 68, 0.06);
@@ -128,13 +128,13 @@
   line-height: 1.5;
 }
 
-.helpTitle {
+.objectiveTitle {
   margin-bottom: 8px;
   color: #88cc44;
   letter-spacing: 3px;
 }
 
-.helpPanel p {
+.objectivePanel p {
   margin: 0;
 }
 
