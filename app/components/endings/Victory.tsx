@@ -59,7 +59,6 @@ interface VictoryProps {
   commandCount?: number;
   detectionLevel?: number;
   maxDetectionReached?: number;
-  evidenceCount?: number;
   filesReadCount?: number;
   totalReadableFiles?: number;
   endingId?: EndingId;
@@ -75,7 +74,6 @@ export default function Victory({
   commandCount = 999,
   detectionLevel = 50,
   maxDetectionReached = 50,
-  evidenceCount = 0,
   filesReadCount = 0,
   totalReadableFiles = 0,
   endingId,
@@ -435,10 +433,6 @@ export default function Victory({
                     <div className={styles.dossierTitle}>{t('ending.dossier.title')}</div>
 
                     <dl className={styles.dossierList}>
-                      <div className={styles.dossierRow}>
-                        <dt>{t('ending.dossier.evidence')}</dt>
-                        <dd>{evidenceCount}/10</dd>
-                      </div>
                       <div className={styles.dossierRow}>
                         <dt>{t('ending.dossier.filesReviewed')}</dt>
                         <dd>{filesReadCount}/{Math.max(totalReadableFiles, filesReadCount)}</dd>

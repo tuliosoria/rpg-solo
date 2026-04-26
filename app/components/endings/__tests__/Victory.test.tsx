@@ -29,7 +29,6 @@ describe('Victory Component', () => {
     commandCount: 100,
     detectionLevel: 30,
     maxDetectionReached: 50,
-    evidenceCount: 6,
     filesReadCount: 20,
   };
 
@@ -189,7 +188,6 @@ describe('Victory Component', () => {
     advanceToComplete();
 
     expect(screen.getByText('POST-RUN DOSSIER')).toBeInTheDocument();
-    expect(screen.getByText('Evidence confirmed')).toBeInTheDocument();
     expect(screen.getByText('Public broadcast')).toBeInTheDocument();
   });
 
