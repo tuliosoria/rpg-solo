@@ -59,6 +59,9 @@ export function getCommandInput(page: Page): Locator {
 }
 
 export async function openMainMenu(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    window.sessionStorage.setItem('terminal1996_introSeen', '1');
+  });
   await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 30000 });
   await expect(page.getByRole('button', { name: /new game/i })).toBeVisible();
   await waitForAllContent(page, ['VARGINHA', 'TERMINAL 1996', 'Brazilian Intelligence Legacy System, 1996']);
@@ -136,9 +139,9 @@ export async function startLiveRun(page: Page): Promise<void> {
   await waitForAllContent(page, ['/>', 'Now the real thing.']);
   await waitForAllContent(page, [
     '/>',
-    'Your mission: save 10 files to your dossier.',
-    'Use save <filename> after reading a file.',
-    'Once your dossier has 10 files, type leak.',
+    'Your mission: read carefully and save files that strengthen your case.',
+    'Use save <filename> after a file proves something.',
+    'Once your dossier has 10 files, type leak. no coming back.',
     "Risk hits 100%, you're done. They'll find you.",
     'Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!',
     'Some files are bait. Opening them spikes detection.',

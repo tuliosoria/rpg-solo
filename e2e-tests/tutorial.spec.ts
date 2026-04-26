@@ -67,9 +67,9 @@ test.describe('Interactive Tutorial', () => {
     await waitForAllContent(page, ['/>', 'Now the real thing.']);
     await waitForAllContent(page, [
       '/>',
-      'Your mission: save 10 files to your dossier.',
-      'Use save <filename> after reading a file.',
-      'Once your dossier has 10 files, type leak.',
+      'Your mission: read carefully and save files that strengthen your case.',
+      'Use save <filename> after a file proves something.',
+      'Once your dossier has 10 files, type leak. no coming back.',
       "Risk hits 100%, you're done. They'll find you.",
       'Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!',
       'Some files are bait. Opening them spikes detection.',
