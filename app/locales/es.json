@@ -1,4 +1,9 @@
 {
+  "intro.logo.studio": "Simple Man Productions",
+  "intro.title.main": "Terminal Varginha",
+  "intro.title.subtitle": "El secreto será revelado",
+  "intro.skip.hint": "Presiona cualquier tecla para saltar",
+  "intro.skip.aria": "Saltar introducción",
   "language.label": "Idioma",
   "language.en": "Inglés",
   "language.pt-BR": "Portugués (Brasil)",

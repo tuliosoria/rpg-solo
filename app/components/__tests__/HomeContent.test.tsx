@@ -97,6 +97,7 @@ describe('HomeContent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(createNewGame).mockReturnValue(createGameState('/new-game'));
+    sessionStorage.setItem('terminal1996_introSeen', '1');
   });
 
   it('ignores an aborted stale load after the player starts a new game', async () => {

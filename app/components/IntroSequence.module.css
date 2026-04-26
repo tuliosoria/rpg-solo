@@ -1,0 +1,313 @@
+.root {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #d8e7c6;
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: 'VT323', 'Courier New', monospace;
+}
+
+.skipHint {
+  position: absolute;
+  bottom: 18px;
+  right: 22px;
+  font-size: 0.85rem;
+  color: rgba(216, 231, 198, 0.45);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+  z-index: 10;
+}
+
+/* === Scene 1: Video (VHS look) === */
+.videoWrap {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.75) contrast(1.1) brightness(0.9) hue-rotate(-3deg);
+}
+
+.vhsScanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.18) 3px,
+    rgba(0, 0, 0, 0.18) 4px
+  );
+  mix-blend-mode: multiply;
+}
+
+.vhsNoise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.9'/></svg>");
+  animation: noiseShift 0.18s steps(4) infinite;
+}
+
+.vhsVignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+.vhsChroma {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    linear-gradient(90deg, rgba(255, 0, 60, 0.06), transparent 6%),
+    linear-gradient(-90deg, rgba(0, 180, 255, 0.06), transparent 6%);
+}
+
+.vhsTracking {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 18px;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: trackingRoll 7s linear infinite;
+  mix-blend-mode: overlay;
+}
+
+@keyframes trackingRoll {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+@keyframes noiseShift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 2px); }
+  50% { transform: translate(2px, -2px); }
+  75% { transform: translate(-2px, -1px); }
+  100% { transform: translate(1px, 2px); }
+}
+
+/* === Static / black transition layer === */
+.transitionLayer {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: 5;
+}
+
+.transitionLayer.visible {
+  opacity: 1;
+}
+
+.transitionStatic {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: noiseShift 0.12s steps(5) infinite;
+  mix-blend-mode: screen;
+}
+
+/* === Film grain (scenes 2 & 3) === */
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: noiseShift 0.2s steps(4) infinite;
+  mix-blend-mode: overlay;
+}
+
+/* === Scene 2: Production logo === */
+.logoScene {
+  position: relative;
+  text-align: center;
+  z-index: 2;
+  animation: logoLifecycle 4.5s ease forwards;
+  opacity: 0;
+}
+
+.logoText {
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 200;
+  letter-spacing: 0.35em;
+  font-size: clamp(1.4rem, 3.2vw, 2.4rem);
+  color: #e8e8e8;
+  text-transform: uppercase;
+  animation: subtleFlicker 3.4s infinite;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes logoLifecycle {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes subtleFlicker {
+  0%, 100% { opacity: 1; }
+  3%       { opacity: 0.78; }
+  6%       { opacity: 1; }
+  48%      { opacity: 1; }
+  50%      { opacity: 0.85; }
+  52%      { opacity: 1; }
+  90%      { opacity: 0.92; }
+}
+
+/* === Scene 3: Title === */
+.titleScene {
+  position: relative;
+  text-align: center;
+  z-index: 2;
+  animation: titleLifecycle 5.5s ease forwards;
+  opacity: 0;
+}
+
+.titleMain {
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  letter-spacing: 0.18em;
+  color: #b8e07c;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 4px rgba(184, 224, 124, 0.6),
+    0 0 14px rgba(120, 200, 80, 0.35);
+  position: relative;
+  display: inline-block;
+  animation: glitch 3.2s infinite;
+}
+
+.titleMain::before,
+.titleMain::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.titleMain::before {
+  color: #ff3b6b;
+  transform: translate(-2px, 0);
+  mix-blend-mode: screen;
+  animation: glitchBefore 2.4s infinite steps(2);
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+
+.titleMain::after {
+  color: #4cc9ff;
+  transform: translate(2px, 0);
+  mix-blend-mode: screen;
+  animation: glitchAfter 2.7s infinite steps(2);
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+
+.titleSub {
+  margin-top: 1.4rem;
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: clamp(1rem, 1.8vw, 1.4rem);
+  letter-spacing: 0.32em;
+  color: rgba(216, 231, 198, 0.78);
+  text-transform: uppercase;
+  text-shadow: 0 0 2px rgba(216, 231, 198, 0.4);
+  animation: subFadeIn 2.2s ease 1.2s forwards;
+  opacity: 0;
+}
+
+.crtScanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.22) 3px,
+    rgba(0, 0, 0, 0.22) 4px
+  );
+  mix-blend-mode: multiply;
+  z-index: 3;
+}
+
+.crtFlicker {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(184, 224, 124, 0.04);
+  animation: crtFlicker 0.18s infinite alternate;
+  z-index: 3;
+}
+
+@keyframes titleLifecycle {
+  0%   { opacity: 0; }
+  18%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes subFadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 0.85; }
+}
+
+@keyframes glitch {
+  0%, 92%, 100% { transform: translate(0, 0); }
+  93%           { transform: translate(-2px, 1px); }
+  94%           { transform: translate(2px, -1px); }
+  95%           { transform: translate(-1px, 0); }
+  96%           { transform: translate(1px, 1px); }
+}
+
+@keyframes glitchBefore {
+  0%, 100% { transform: translate(-2px, 0); }
+  20%      { transform: translate(-3px, 1px); }
+  40%      { transform: translate(-1px, -1px); }
+  60%      { transform: translate(-4px, 0); }
+  80%      { transform: translate(-2px, 1px); }
+}
+
+@keyframes glitchAfter {
+  0%, 100% { transform: translate(2px, 0); }
+  25%      { transform: translate(3px, -1px); }
+  50%      { transform: translate(1px, 1px); }
+  75%      { transform: translate(4px, 0); }
+}
+
+@keyframes crtFlicker {
+  from { opacity: 0.6; }
+  to   { opacity: 1; }
+}
