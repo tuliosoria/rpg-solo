@@ -2,6 +2,8 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useI18n } from '../i18n';
+import { useOptions } from '../hooks/useOptions';
+import { startMenuMusic } from '../audio/menuMusic';
 import styles from './IntroSequence.module.css';
 
 const INTRO_VIDEO_SRC = new URL('../../videos/intro.mp4', import.meta.url).toString();
@@ -18,6 +20,7 @@ const TITLE_DURATION_MS = 5500;
 
 export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) {
   const { t } = useI18n();
+  const { options } = useOptions();
   const [scene, setScene] = useState<Scene>('gate');
   const [transitioning, setTransitioning] = useState(false);
   const completedRef = useRef(false);
@@ -63,9 +66,15 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
   // Scene 2 -> Scene 3
   useEffect(() => {
     if (scene !== 'logo') return;
+    // Start the looping menu music when the production logo appears so it
+    // carries seamlessly into the title scene and the menu.
+    startMenuMusic({
+      musicEnabled: options.musicEnabled,
+      masterVolume: options.masterVolume,
+    });
     const id = window.setTimeout(() => goTo('title'), LOGO_DURATION_MS);
     return () => window.clearTimeout(id);
-  }, [scene, goTo]);
+  }, [scene, goTo, options.musicEnabled, options.masterVolume]);
 
   // Scene 3 -> finish
   useEffect(() => {

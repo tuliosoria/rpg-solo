@@ -10,6 +10,7 @@ import { I18nProvider } from '../i18n';
 import ErrorBoundary from './ErrorBoundary';
 import Menu from './Menu';
 import IntroSequence from './IntroSequence';
+import { stopMenuMusic } from '../audio/menuMusic';
 
 const Terminal = dynamic(() => import('./Terminal'), { ssr: false, loading: () => null });
 const SaveModal = dynamic(() => import('./overlays/SaveModal'), { ssr: false, loading: () => null });
@@ -58,6 +59,7 @@ function HomeContentInner() {
 
   const handleNewGame = useCallback(() => {
     invalidatePendingLoads();
+    stopMenuMusic();
     const newState = createNewGame();
     incrementStatistic('gamesPlayed');
     setGameState(newState);
@@ -76,6 +78,7 @@ function HomeContentInner() {
     }
 
     if (loadedState) {
+      stopMenuMusic();
       setGameState(loadedState);
       setSaveRequestState(null);
       setShowSaveModal(false);
@@ -89,6 +92,7 @@ function HomeContentInner() {
     invalidatePendingLoads();
     const loadedState = loadCheckpoint(slotId);
     if (loadedState) {
+      stopMenuMusic();
       // Reset game over state when loading checkpoint
       setGameState({
         ...loadedState,

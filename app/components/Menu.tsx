@@ -6,6 +6,7 @@ import { getSaveSlots, getSaveSlotsAsync, deleteSave } from '../storage/saves';
 import { useOptions } from '../hooks/useOptions';
 import { useSound } from '../hooks';
 import { useI18n } from '../i18n';
+import { startMenuMusic, setMenuMusicVolume, stopMenuMusic } from '../audio/menuMusic';
 import styles from './Menu.module.css';
 
 interface MenuProps {
@@ -217,31 +218,22 @@ export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Looping menu music. Plays while Menu is mounted; stops when the player
-  // starts a new game / loads a save (Menu unmounts) or when music is
-  // disabled in options.
+  // Looping menu music (shared singleton). The IntroSequence starts it
+  // when the production logo appears so it carries seamlessly into the
+  // menu. We just keep volume in sync and ensure it's running while
+  // mounted. HomeContent stops it when the player starts/loads a game.
   useEffect(() => {
-    if (!options.musicEnabled) return;
-    const audio = new Audio('/audio/music/menu.mp3');
-    audio.loop = true;
-    audio.volume = Math.max(0, Math.min(1, options.masterVolume / 100));
-    let cancelled = false;
-    audio.play().catch(() => {
-      // Autoplay blocked (no user gesture yet). Will retry on first interaction.
-      if (cancelled) return;
-      const retry = () => {
-        audio.play().catch(() => {});
-        window.removeEventListener('pointerdown', retry);
-        window.removeEventListener('keydown', retry);
-      };
-      window.addEventListener('pointerdown', retry, { once: true });
-      window.addEventListener('keydown', retry, { once: true });
+    startMenuMusic({
+      musicEnabled: options.musicEnabled,
+      masterVolume: options.masterVolume,
     });
-    return () => {
-      cancelled = true;
-      audio.pause();
-      audio.src = '';
-    };
+    setMenuMusicVolume({
+      musicEnabled: options.musicEnabled,
+      masterVolume: options.masterVolume,
+    });
+    if (!options.musicEnabled) {
+      stopMenuMusic();
+    }
   }, [options.musicEnabled, options.masterVolume]);
 
   // Keyboard navigation
