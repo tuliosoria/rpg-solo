@@ -118,6 +118,26 @@
   letter-spacing: 1px;
 }
 
+.helpPanel {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #2a3a18;
+  background: rgba(136, 204, 68, 0.06);
+  color: #78b838;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.helpTitle {
+  margin-bottom: 8px;
+  color: #88cc44;
+  letter-spacing: 3px;
+}
+
+.helpPanel p {
+  margin: 0;
+}
+
 /* Selection state for keyboard navigation */
 .menuButton.selected {
   background: rgba(136, 204, 68, 0.15);

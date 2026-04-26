@@ -21,7 +21,7 @@ describe('systemCommands save/unsave localization', () => {
     const output = result.output.map(entry => entry.content);
 
     expect(output).toContain('  USO: save <filename>');
-    expect(output).toContain('  Guarda un archivo en tu dossier para la filtración.');
+    expect(output).toContain('  Guarda un archivo leído cuando refuerce tu caso.');
     expect(output).toContain('  Dossier: 0/10 archivos guardados');
   });
 

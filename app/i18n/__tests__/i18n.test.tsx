@@ -202,8 +202,8 @@ describe('i18n system', () => {
       'COMANDO: save <filename>'
     );
     expect(
-      result.current.translateRuntimeText('Save a file to your dossier for the leak.')
-    ).toBe('Salve um arquivo no seu dossiê para o vazamento.');
+      result.current.translateRuntimeText('Save a read file when it strengthens your case.')
+    ).toBe('Salve um arquivo já lido quando ele fortalecer seu caso.');
     expect(result.current.translateRuntimeText('COMMAND: unsave <filename>')).toBe(
       'COMANDO: unsave <filename>'
     );

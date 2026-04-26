@@ -206,7 +206,7 @@ describe('Terminal Component', () => {
       fireEvent.keyDown(window, { key: 'Enter' });
     });
 
-    expect(document.body).toHaveTextContent(/digite salvar para guardar\./i);
+    expect(document.body).toHaveTextContent(/use salvar com o nome dele/i);
     expect(document.body).toHaveTextContent(/digite vazar\./i);
     expect(screen.getByText('salvar', { selector: 'strong' })).toBeInTheDocument();
     expect(screen.getByText('vazar', { selector: 'strong' })).toBeInTheDocument();
@@ -227,7 +227,7 @@ describe('Terminal Component', () => {
       fireEvent.keyDown(window, { key: 'Enter' });
     });
 
-    expect(document.body).toHaveTextContent(/escribe guardar para guardarlo\./i);
+    expect(document.body).toHaveTextContent(/usa guardar con su nombre/i);
     expect(document.body).toHaveTextContent(/escribe filtrar\./i);
     expect(screen.getByText('guardar', { selector: 'strong' })).toBeInTheDocument();
     expect(screen.getByText('filtrar', { selector: 'strong' })).toBeInTheDocument();

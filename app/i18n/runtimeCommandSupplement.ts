@@ -103,14 +103,14 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  clear          - Clear screen': '  clear          - Limpa a tela',
     'SHORTCUT: Ctrl+L': 'ATALHO: Ctrl+L',
     'COMMAND: save <filename>': 'COMANDO: save <filename>',
-    'Save a file to your dossier for the leak.':
-      'Salve um arquivo no seu dossiê para o vazamento.',
+    'Save a read file when it strengthens your case.':
+      'Salve um arquivo já lido quando ele fortalecer seu caso.',
     'You must have read the file first.':
       'Você precisa abrir e ler o arquivo antes de salvá-lo.',
     '  save report.txt    - Save report.txt to dossier':
       '  save report.txt    - Salva report.txt no dossiê',
-    'NOTE: Your dossier can hold up to 10 files.':
-      'NOTA: Seu dossiê pode guardar até 10 arquivos.',
+    'NOTE: Your dossier can hold up to 10 files. Choose carefully.':
+      'NOTA: Seu dossiê pode guardar até 10 arquivos. Escolha com cuidado.',
     'COMMAND: unsave <filename>': 'COMANDO: unsave <filename>',
     'Remove a file from your dossier.': 'Remova um arquivo do seu dossiê.',
     '  unsave report.txt  - Remove report.txt from dossier':
@@ -166,11 +166,11 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  morse cancel     - Cancel current morse entry':
       '  morse cancel     - Cancela a entrada atual de morse',
     'COMMAND: leak': 'COMANDO: leak',
-    'Attempt to leak your saved dossier to external channels.':
-      'Tenta vazar seu dossiê salvo para canais externos.',
+    'Transmit the dossier you chose to save.':
+      'Transmite o dossiê que você escolheu salvar.',
     '  leak            - Initiate dossier leak': '  leak            - Inicia o vazamento do dossiê',
-    'REQUIREMENT: Save 10 files to your dossier first.':
-      'REQUISITO: Salve 10 arquivos no seu dossiê primeiro.',
+    'REQUIREMENT: Save 10 files that make your strongest case first.':
+      'REQUISITO: Salve primeiro 10 arquivos que montem seu caso mais forte.',
     'COMMAND: wait': 'COMANDO: wait',
     '  wait           - Reduce detection by ~10%':
       '  wait           - Reduz a detecção em ~10%',
@@ -1125,8 +1125,8 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'Primeiro leia um arquivo de interceptação morse (ex.: morse_intercept.sig).',
     'Then use this command to submit your translation.':
       'Depois use este comando para enviar sua tradução.',
-    'WARNING: This action triggers the endgame sequence.':
-      'AVISO: Esta ação dispara a sequência final.',
+    'WARNING: Once you leak, there is no coming back.':
+      'AVISO: Depois de vazar, não tem volta.',
     'COMMAND: hint': 'COMANDO: hint',
     'Request guidance when you are stuck.':
       'Solicite orientação quando estiver travado.',
@@ -1260,14 +1260,14 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  clear          - Clear screen': '  clear          - Limpia la pantalla',
     'SHORTCUT: Ctrl+L': 'ATAJO: Ctrl+L',
     'COMMAND: save <filename>': 'COMANDO: save <filename>',
-    'Save a file to your dossier for the leak.':
-      'Guarda un archivo en tu dossier para la filtración.',
+    'Save a read file when it strengthens your case.':
+      'Guarda un archivo leído cuando refuerce tu caso.',
     'You must have read the file first.':
       'Debes haber leído el archivo antes de guardarlo.',
     '  save report.txt    - Save report.txt to dossier':
       '  save report.txt    - Guarda report.txt en el dossier',
-    'NOTE: Your dossier can hold up to 10 files.':
-      'NOTA: Tu dossier puede guardar hasta 10 archivos.',
+    'NOTE: Your dossier can hold up to 10 files. Choose carefully.':
+      'NOTA: Tu dossier puede guardar hasta 10 archivos. Elige con cuidado.',
     'COMMAND: unsave <filename>': 'COMANDO: unsave <filename>',
     'Remove a file from your dossier.': 'Quita un archivo de tu dossier.',
     '  unsave report.txt  - Remove report.txt from dossier':
@@ -1323,11 +1323,11 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  morse cancel     - Cancel current morse entry':
       '  morse cancel     - Cancela la entrada morse actual',
     'COMMAND: leak': 'COMANDO: leak',
-    'Attempt to leak your saved dossier to external channels.':
-      'Intenta filtrar tu dossier guardado hacia canales externos.',
+    'Transmit the dossier you chose to save.':
+      'Transmite el dossier que decidiste guardar.',
     '  leak            - Initiate dossier leak': '  leak            - Inicia la filtración del dossier',
-    'REQUIREMENT: Save 10 files to your dossier first.':
-      'REQUISITO: Guarda primero 10 archivos en tu dossier.',
+    'REQUIREMENT: Save 10 files that make your strongest case first.':
+      'REQUISITO: Guarda primero 10 archivos que armen tu caso más fuerte.',
     'COMMAND: wait': 'COMANDO: wait',
     '  wait           - Reduce detection by ~10%':
       '  wait           - Reduce la detección en ~10%',
@@ -2285,8 +2285,8 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'Primero lee un archivo de interceptación morse (p. ej., morse_intercept.sig).',
     'Then use this command to submit your translation.':
       'Luego usa este comando para enviar tu traducción.',
-    'WARNING: This action triggers the endgame sequence.':
-      'ADVERTENCIA: Esta acción activa la secuencia final.',
+    'WARNING: Once you leak, there is no coming back.':
+      'ADVERTENCIA: Después de filtrar, no hay vuelta atrás.',
     'COMMAND: hint': 'COMANDO: hint',
     'Request guidance when you are stuck.':
       'Solicita orientación cuando estés atascado.',

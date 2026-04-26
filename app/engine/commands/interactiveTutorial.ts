@@ -76,11 +76,11 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, (DialogueLine | 
   [TutorialStateID.TUTORIAL_END]: [
     { key: 'engine.commands.interactiveTutorial.ufo74_now_the_real_thing', fallback: '[UFO74]: Now the real thing.' },
     null,
-    { key: 'engine.commands.interactiveTutorial.ufo74_your_mission_find_10_pieces_of_evidence', fallback: '[UFO74]: Your mission: save 10 files to your dossier.' },
-    { key: 'engine.commands.interactiveTutorial.ufo74_use_save_filename', fallback: '[UFO74]: Use `save <filename>` after reading a file.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_your_mission_find_10_pieces_of_evidence', fallback: '[UFO74]: Your mission: read carefully and save files that strengthen your case.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_use_save_filename', fallback: '[UFO74]: Use `save <filename>` after a file proves something.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_use_unsave_filename', fallback: "[UFO74]: Changed your mind? `unsave <filename>` removes it." },
     { key: 'engine.commands.interactiveTutorial.ufo74_check_progress', fallback: '[UFO74]: Check your progress with `progress`.' },
-    { key: 'engine.commands.interactiveTutorial.ufo74_once_you_have_them_leak_everything', fallback: '[UFO74]: Once your dossier has 10 files, type `leak`.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_once_you_have_them_leak_everything', fallback: '[UFO74]: Once your dossier has 10 files, type `leak`. no coming back.' },
     null,
     { key: 'engine.commands.interactiveTutorial.ufo74_but_understand_the_risks', fallback: '[UFO74]: But understand the risks.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_every_action_you_take_they_might_notice', fallback: '[UFO74]: Every action you take... they might notice.' },
@@ -676,12 +676,12 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
     createEntryI18n(
       'ufo74',
       'engine.commands.interactiveTutorial.ufo74_your_mission_find_10_pieces_of_evidence',
-      '[UFO74]: Your mission: save 10 files to your dossier.'
+      '[UFO74]: Your mission: read carefully and save files that strengthen your case.'
     ),
     createEntryI18n(
       'ufo74',
       'engine.commands.interactiveTutorial.ufo74_use_save_filename',
-      '[UFO74]: Use `save <filename>` after reading a file.'
+      '[UFO74]: Use `save <filename>` after a file proves something.'
     ),
     createEntryI18n(
       'ufo74',
@@ -696,7 +696,7 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
     createEntryI18n(
       'ufo74',
       'engine.commands.interactiveTutorial.ufo74_once_you_have_them_leak_everything',
-      '[UFO74]: Once your dossier has 10 files, type `leak`.'
+      '[UFO74]: Once your dossier has 10 files, type `leak`. no coming back.'
     ),
     createEntry('system', ''),
   ],

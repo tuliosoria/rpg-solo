@@ -131,13 +131,13 @@ const COMMAND_HELP: Record<string, string[]> = {
   save: [
     'COMMAND: save <filename>',
     '',
-    'Save a file to your dossier for the leak.',
+    'Save a read file when it strengthens your case.',
     'You must have read the file first.',
     '',
     'USAGE:',
     '  save report.txt    - Save report.txt to dossier',
     '',
-    'NOTE: Your dossier can hold up to 10 files.',
+    'NOTE: Your dossier can hold up to 10 files. Choose carefully.',
   ],
   unsave: [
     'COMMAND: unsave <filename>',
@@ -234,14 +234,14 @@ const COMMAND_HELP: Record<string, string[]> = {
   leak: [
     'COMMAND: leak',
     '',
-    'Attempt to leak your saved dossier to external channels.',
+    'Transmit the dossier you chose to save.',
     '',
     'USAGE:',
     '  leak            - Initiate dossier leak',
     '',
-    'REQUIREMENT: Save 10 files to your dossier first.',
+    'REQUIREMENT: Save 10 files that make your strongest case first.',
     '',
-    'WARNING: This action triggers the endgame sequence.',
+    'WARNING: Once you leak, there is no coming back.',
   ],
   hint: [
     'COMMAND: hint',
@@ -587,7 +587,7 @@ export const systemCommands: CommandRegistry = {
       lines.push(
         tSystem(
           'status.objective.complete',
-          '  OBJECTIVE: Dossier complete — review with "progress", then use "leak" when ready.'
+          '  OBJECTIVE: Dossier complete — review with "progress", then use "leak" when ready. No coming back.'
         )
       );
     } else if (checkVictory(state)) {
@@ -797,7 +797,7 @@ export const systemCommands: CommandRegistry = {
           createEntry('system', tSystem('save.usage', '  USAGE: save <filename>')),
           createEntry(
             'system',
-            tSystem('save.description', '  Save a file to your dossier for the leak.')
+            tSystem('save.description', '  Save a read file when it strengthens your case.')
           ),
           createEntry(
             'system',
@@ -920,7 +920,7 @@ export const systemCommands: CommandRegistry = {
           'ufo74',
           tSystem(
             'save.readyToLeak',
-            'UFO74: kid. you have enough. type "leak" when you are ready.'
+            'UFO74: kid. you have ten. review the dossier, then leak when ready. no coming back.'
           )
         ),
       ];

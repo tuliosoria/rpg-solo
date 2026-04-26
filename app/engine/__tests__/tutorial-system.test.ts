@@ -95,7 +95,12 @@ describe('Tutorial System', () => {
 
       expect(introText).toContain('[UFO74]: Connection established.');
       expect(introText).toContain("[UFO74]: Great, now you're in. Let's get to business.");
-      expect(briefingText).toContain('[UFO74]: Your mission: save 10 files to your dossier.');
+      expect(briefingText).toContain(
+        '[UFO74]: Your mission: read carefully and save files that strengthen your case.'
+      );
+      expect(briefingText).toContain(
+        '[UFO74]: Once your dossier has 10 files, type `leak`. no coming back.'
+      );
       expect(briefingText).toContain(
         '[UFO74]: Be careful, do not type wrong commands on the terminal.'
       );

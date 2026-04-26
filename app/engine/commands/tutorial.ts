@@ -218,7 +218,7 @@ export const TUTORIAL_TIPS: Record<TutorialTipId, TutorialTipLine[]> = {
     },
     {
       key: 'engine.commands.tutorial.tip.first_evidence.line4',
-      fallback: 'Save 10 files to unlock the leak.',
+      fallback: 'Save strong files for the leak.',
     },
   ],
 };
@@ -363,7 +363,7 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.collect_10_evidence_files_to_expose_5_truths',
-      '  Save 10 files that expose 5 core truths:'
+      '  Save 10 files that best strengthen your case:'
     ),
     createEntry('system', ''),
     createEntryI18n(
@@ -420,7 +420,7 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.use_leak_to_transmit_the_evidence',
-      '  • Use "leak" to transmit the dossier'
+      '  • Use "leak" only when ready - no coming back'
     ),
     createEntry('system', ''),
   ];
@@ -437,7 +437,7 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.collect_10_evidence_files_to_expose_5_truths',
-      '  Save 10 files that expose 5 core truths:'
+      '  Save 10 files that best strengthen your case:'
     ),
     createEntry('system', ''),
     createEntryI18n(
@@ -469,7 +469,7 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.read_carefully_evidence_is_in_the_details',
-      '  • Read carefully - the case is in the details'
+      '  • Read carefully - save files that strengthen the case'
     ),
     createEntryI18n(
       'output',
@@ -509,7 +509,7 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.save_file_add_a_file_to_the_dossier',
-      '  save <file>      Add a file to the dossier'
+      '  save <file>      Add a strong file to the dossier'
     ),
     createEntryI18n(
       'output',
@@ -529,7 +529,7 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.leak_transmit_the_finished_dossier',
-      '  leak            Transmit the finished dossier'
+      '  leak            Transmit dossier (no return)'
     ),
     createEntry('system', ''),
   ];
