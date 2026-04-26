@@ -1181,6 +1181,8 @@
   "engine.commands.tutorial.message.8.line1": "UFO74: im cutting the link. from here, youre on your own.",
   "engine.commands.tutorial.message.8.line2": "       move slow. read everything. the truth is in the details.",
   "engine.commands.tutorial.message.9.line2": "Type \"help\" for commands. \"help basics\" if youre new.",
+  "engine.commands.tutorial.message.10.line1": "UFO74: start with `ls`, kid. see what directories we have here.",
+  "engine.commands.tutorial.message.10.line2": "       then use `cd` to open the folders. now its on you.",
   "engine.commands.tutorial.tip.first_evidence.line1": "║  Evidence updated.                        ║",
   "engine.commands.tutorial.tip.first_evidence.line3": "║  Use \"progress\" if you want a clean recap.║",
   "engine.commands.tutorial.tip.first_evidence.line4": "║  Save 10 files to unlock the leak.        ║",

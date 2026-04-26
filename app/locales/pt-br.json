@@ -1181,6 +1181,8 @@
   "engine.commands.tutorial.message.8.line1": "UFO74: estou cortando o link. daqui em diante, você está por conta própria.",
   "engine.commands.tutorial.message.8.line2": "       vá devagar. leia tudo. a verdade está nos detalhes.",
   "engine.commands.tutorial.message.9.line2": "Digite \"ajuda\" para ver os comandos. \"ajuda basics\" se for iniciante.",
+  "engine.commands.tutorial.message.10.line1": "UFO74: começa com `ls`, garoto. olha que diretórios a gente tem aqui.",
+  "engine.commands.tutorial.message.10.line2": "       depois usa `cd` pra abrir as pastas. agora é contigo.",
   "engine.commands.tutorial.tip.first_evidence.line1": "║  Evidência atualizada.                    ║",
   "engine.commands.tutorial.tip.first_evidence.line3": "║  Use \"progresso\" para um resumo limpo.    ║",
   "engine.commands.tutorial.tip.first_evidence.line4": "║  Salve 10 arquivos para liberar \"vazar\". ║",

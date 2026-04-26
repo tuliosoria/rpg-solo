@@ -94,6 +94,19 @@ export const TUTORIAL_MESSAGES: TutorialMessageLine[][] = [
       fallback: 'Type "help" for commands. "help basics" if youre new.',
     },
   ],
+  [
+    { kind: 'system', fallback: '' },
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.10.line1',
+      fallback: 'UFO74: start with `ls`, kid. see what directories we have here.',
+    },
+    {
+      kind: 'ufo74',
+      key: 'engine.commands.tutorial.message.10.line2',
+      fallback: '       then `cd` to open the folders. now its on you.',
+    },
+  ],
 ];
 
 // Boot sequence for new game (without UFO74 tutorial)

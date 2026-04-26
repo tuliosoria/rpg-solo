@@ -1181,6 +1181,8 @@
   "engine.commands.tutorial.message.8.line1": "UFO74: corto el enlace. desde aquí, quedas por tu cuenta.",
   "engine.commands.tutorial.message.8.line2": "       ve despacio. léelo todo. la verdad está en los detalles.",
   "engine.commands.tutorial.message.9.line2": "Escribe \"ayuda\" para ver los comandos. \"ayuda basics\" si eres nuevo.",
+  "engine.commands.tutorial.message.10.line1": "UFO74: empieza con `ls`, chico. mira qué directorios tenemos aquí.",
+  "engine.commands.tutorial.message.10.line2": "       después usa `cd` para abrir las carpetas. ahora es cosa tuya.",
   "engine.commands.tutorial.tip.first_evidence.line1": "║  Evidencia actualizada.                   ║",
   "engine.commands.tutorial.tip.first_evidence.line3": "║  Usa \"progreso\" para un resumen limpio.  ║",
   "engine.commands.tutorial.tip.first_evidence.line4": "║  Guarda 10 archivos para usar \"filtrar\". ║",
