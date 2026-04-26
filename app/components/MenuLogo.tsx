@@ -82,34 +82,38 @@ export default function MenuLogo() {
   const dividerBottomDelay = taglineDelay + LINE_STAGGER_MS;
 
   return (
-    <div className={styles.logoFrame} role="banner" aria-label={`${titleText} ${subtitleText}`}>
-      <FlickerLine
-        text={DIVIDER}
-        className={`${styles.line} ${styles.divider}`}
-        startDelayMs={dividerTopDelay}
-        perChar={false}
-      />
-      <FlickerLine
-        text={titleText.toUpperCase()}
-        className={`${styles.line} ${styles.title}`}
-        startDelayMs={titleDelay}
-      />
-      <FlickerLine
-        text={subtitleText}
-        className={`${styles.line} ${styles.subtitle}`}
-        startDelayMs={subtitleDelay}
-      />
-      <FlickerLine
-        text={tagline}
-        className={`${styles.line} ${styles.tagline}`}
-        startDelayMs={taglineDelay}
-      />
-      <FlickerLine
-        text={DIVIDER}
-        className={`${styles.line} ${styles.divider}`}
-        startDelayMs={dividerBottomDelay}
-        perChar={false}
-      />
+    <div className={styles.logoCenter}>
+      <div className={styles.logoFrame} role="banner" aria-label={`${titleText} ${subtitleText}`}>
+        <div className={styles.noise} aria-hidden="true" />
+        <FlickerLine
+          text={DIVIDER}
+          className={`${styles.line} ${styles.divider}`}
+          startDelayMs={dividerTopDelay}
+          perChar={false}
+        />
+        <FlickerLine
+          text={titleText.toUpperCase()}
+          className={`${styles.line} ${styles.title}`}
+          startDelayMs={titleDelay}
+        />
+        <FlickerLine
+          text={subtitleText}
+          className={`${styles.line} ${styles.subtitle}`}
+          startDelayMs={subtitleDelay}
+        />
+        <FlickerLine
+          text={tagline}
+          className={`${styles.line} ${styles.tagline}`}
+          startDelayMs={taglineDelay}
+          perChar={false}
+        />
+        <FlickerLine
+          text={DIVIDER}
+          className={`${styles.line} ${styles.divider}`}
+          startDelayMs={dividerBottomDelay}
+          perChar={false}
+        />
+      </div>
     </div>
   );
 }
