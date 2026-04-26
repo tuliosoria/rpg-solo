@@ -71,13 +71,18 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
     return () => window.clearTimeout(id);
   }, [scene, finish]);
 
-  // Try to autoplay video
+  // Try to autoplay video (muted, so browsers allow it). If it still fails
+  // for any reason (decoder, network, missing file), fall through to logo.
   useEffect(() => {
     if (scene !== 'video' || !videoRef.current) return;
-    videoRef.current.play().catch(() => {
-      // Autoplay blocked or media missing -> move on
-      goTo('logo');
-    });
+    const el = videoRef.current;
+    el.muted = true;
+    const playPromise = el.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {
+        goTo('logo');
+      });
+    }
   }, [scene, goTo]);
 
   return (
@@ -94,7 +99,7 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
             ref={videoRef}
             className={styles.video}
             src={INTRO_VIDEO_SRC}
-            muted={false}
+            muted
             playsInline
             autoPlay
             onEnded={handleVideoEnded}
