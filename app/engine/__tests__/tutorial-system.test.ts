@@ -110,12 +110,16 @@ describe('Tutorial System', () => {
       expect(briefingText).toContain('[UFO74]: Type `help` if you forget something.');
     });
 
-    it('places the help reminder as the final UFO74 tip before disconnect', () => {
+    it('places the help reminder followed by the hand-off, then disconnect', () => {
       const lastBriefingStep = TUTORIAL_BRIEFING_STEPS[TUTORIAL_BRIEFING_STEPS.length - 1];
       const lastUfoLines = lastBriefingStep.filter(e => e.type === 'ufo74').map(e => e.content);
       expect(lastUfoLines).toContain('[UFO74]: ...');
 
-      const helpStep = TUTORIAL_BRIEFING_STEPS[TUTORIAL_BRIEFING_STEPS.length - 2];
+      const handoffStep = TUTORIAL_BRIEFING_STEPS[TUTORIAL_BRIEFING_STEPS.length - 2];
+      const handoffUfoLines = handoffStep.filter(e => e.type === 'ufo74').map(e => e.content);
+      expect(handoffUfoLines).toContain('[UFO74]: Now is with you.');
+
+      const helpStep = TUTORIAL_BRIEFING_STEPS[TUTORIAL_BRIEFING_STEPS.length - 3];
       const helpUfoLines = helpStep.filter(e => e.type === 'ufo74').map(e => e.content);
       expect(helpUfoLines).toContain('[UFO74]: Type `help` if you forget something.');
     });

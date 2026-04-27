@@ -95,6 +95,10 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, (DialogueLine | 
     null,
     { key: 'engine.commands.interactiveTutorial.ufo74_type_help_if_you_forget', fallback: '[UFO74]: Type `help` if you forget something.' },
     null,
+    { key: 'engine.commands.interactiveTutorial.ufo74_start_with_ls_kid', fallback: '[UFO74]: Start with `ls`, kid. just to check what directories we have here.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_then_use_cd_to_open_folders', fallback: '[UFO74]: Then use `cd` to open the folders.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_now_is_with_you', fallback: '[UFO74]: Now is with you.' },
+    null,
     { key: 'terminal.tutorialSkip.ellipsis', fallback: '[UFO74]: ...' },
     null,
     { key: 'terminal.tutorialSkip.disconnected', fallback: '[UFO74 has disconnected]' },
@@ -758,6 +762,25 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
       'ufo74',
       'engine.commands.interactiveTutorial.ufo74_type_help_if_you_forget',
       '[UFO74]: Type `help` if you forget something.'
+    ),
+    createEntry('system', ''),
+  ],
+  // Step 4b — Hand-off
+  [
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_start_with_ls_kid',
+      '[UFO74]: Start with `ls`, kid. just to check what directories we have here.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_then_use_cd_to_open_folders',
+      '[UFO74]: Then use `cd` to open the folders.'
+    ),
+    createEntryI18n(
+      'ufo74',
+      'engine.commands.interactiveTutorial.ufo74_now_is_with_you',
+      '[UFO74]: Now is with you.'
     ),
     createEntry('system', ''),
   ],
