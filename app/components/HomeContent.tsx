@@ -31,6 +31,12 @@ function HomeContentInner() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [saveRequestState, setSaveRequestState] = useState<GameState | null>(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
+  // Increment whenever a fresh session is loaded (new game, load slot, load checkpoint)
+  // to force the Terminal subtree to remount with the loaded state. Without this, the
+  // Terminal's internal state hooks keep the prior session's UI/phase state and the
+  // sync-effect path is fragile (missing risk header, no warmup animation, stale flags
+  // that can fire an instant game over on the next command).
+  const [sessionEpoch, setSessionEpoch] = useState(0);
   const loadRequestIdRef = useRef(0);
 
   // sessionStorage may change in tests/SSR-hydration; sync once on mount as a safety net
@@ -65,6 +71,7 @@ function HomeContentInner() {
     setGameState(newState);
     setSaveRequestState(null);
     setShowSaveModal(false);
+    setSessionEpoch(prev => prev + 1);
     setView('game');
   }, [invalidatePendingLoads]);
 
@@ -82,6 +89,7 @@ function HomeContentInner() {
       setGameState(loadedState);
       setSaveRequestState(null);
       setShowSaveModal(false);
+      setSessionEpoch(prev => prev + 1);
       setView('game');
       return true;
     }
@@ -101,6 +109,7 @@ function HomeContentInner() {
       });
       setSaveRequestState(null);
       setShowSaveModal(false);
+      setSessionEpoch(prev => prev + 1);
       setView('game');
     }
   }, [invalidatePendingLoads]);
@@ -135,6 +144,7 @@ function HomeContentInner() {
     return (
       <>
         <Terminal
+          key={`game-${sessionEpoch}`}
           initialState={gameState}
           onExitAction={handleExit}
           onSaveRequestAction={handleSaveRequest}
