@@ -1,4 +1,5 @@
 import * as vfs from '../data/virtualFileSystem';
+import { official_summary_report } from '../data/narrativeContent';
 import type { Language } from './index';
 
 type RuntimeDictionary = Record<string, string>;
@@ -4034,7 +4035,129 @@ registerLines(
 );
 
 
+registerLines(
+  vfs.witness_farm_recording.content,
+  `
+  TESTEMUNHO CIVIL — TRANSCRIÇÃO DE ÁUDIO
+  FONTE: gravação de filmadora VHS, propriedade rural
+  LOCAL: Fazenda São Tomé, 12km NE de Varginha
+  DATA: 19-JAN-1996, ~22:40h
+  TESTEMUNHA: Eurico da Silva, 58, fazendeiro de gado
+  INÍCIO DA TRANSCRIÇÃO:
+  [ruído da câmera, respiração pesada]
+  "Tá gravando? Tá gravando. Olha... olha ali."
+  "Eu vi a luz caindo. Pensei que era estrela cadente."
+  "O gado todo fugiu pro fundo do pasto."
+  "Fui com a lanterna ver o que era."
+  [câmera vira para a linha de árvores escura, brilho vermelho fraco visível]
+  "Tem... tem alguma coisa agachada ali no meio."
+  "Não é bicho. Não é gente. Eu sei o que é gente."
+  "O cheiro... meu Deus, o cheiro."
+  "Parece amônia. Queima o nariz."
+  [distorção do tracking VHS — 8 segundos]
+  "Olhou pra mim. Os olhos são vermelhos."
+  "Não pisca. Não se mexe. Só... olha."
+  "Senti uma coisa na cabeça. Pressão."
+  "Como se alguém tivesse apertando por dentro."
+  [sujeito recuando audivelmente, passos na grama seca]
+  "Eu voltei correndo. Tranquei tudo."
+  "De manhã fui ver. Só tinha o chão queimado."
+  "Círculo perfeito. O capim tava preto."
+  "Duas horas depois os militares chegaram."
+  "Levaram a fita. Mas eu tinha feito cópia."
+  FIM DA TRANSCRIÇÃO
+  NOTA DO ANALISTA:
+    VHS recuperada da casa da testemunha durante varredura.
+    Cópia foi encontrada escondida dentro de uma Bíblia.
+    Testemunha detida 72h sob Protocolo 7.
+    Descrição consistente com espécimes de Jardim Andere.
+    Traço de amônia confirmado no local.
+    Marcação eletromagnética no solo: confere.
+    Testemunha alega que "ele sabia que eu estava lá antes de eu ver."
+    Esta é a única gravação civil conhecida.
+    Recomenda-se CLASSIFICAÇÃO PERMANENTE.
+  `,
+  `
+  TESTIMONIO CIVIL — TRANSCRIPCIÓN DE AUDIO
+  FUENTE: grabación de videocámara VHS, propiedad rural
+  LUGAR: Fazenda São Tomé, 12km NE de Varginha
+  FECHA: 19-ENE-1996, ~22:40h
+  TESTIGO: Eurico da Silva, 58, ganadero
+  INICIO DE LA TRANSCRIPCIÓN:
+  [ruido de la cámara, respiración pesada]
+  "¿Está grabando? Está grabando. Mira... mira allí."
+  "Vi la luz cayendo. Pensé que era una estrella fugaz."
+  "Todo el ganado huyó al fondo del pasto."
+  "Fui con la linterna a ver qué era."
+  [la cámara gira hacia la línea oscura de árboles, leve resplandor rojo visible]
+  "Hay... hay algo agachado ahí en el medio."
+  "No es animal. No es gente. Yo sé qué es la gente."
+  "El olor... Dios mío, el olor."
+  "Parece amoníaco. Quema la nariz."
+  [distorsión del tracking VHS — 8 segundos]
+  "Me miró. Los ojos son rojos."
+  "No parpadea. No se mueve. Solo... mira."
+  "Sentí algo en la cabeza. Presión."
+  "Como si alguien apretara por dentro."
+  [el sujeto se retira audiblemente, pasos sobre hierba seca]
+  "Volví corriendo. Cerré todo."
+  "Por la mañana fui a ver. Solo había suelo quemado."
+  "Círculo perfecto. El pasto estaba negro."
+  "Dos horas después llegaron los militares."
+  "Se llevaron la cinta. Pero yo había hecho una copia."
+  FIN DE LA TRANSCRIPCIÓN
+  NOTA DEL ANALISTA:
+    VHS recuperada de la casa del testigo durante el barrido.
+    La copia fue hallada oculta dentro de una Biblia.
+    Testigo detenido 72h bajo el Protocolo 7.
+    Descripción consistente con especímenes de Jardim Andere.
+    Rastro de amoníaco confirmado en el sitio.
+    Marca electromagnética en el suelo: coincide.
+    El testigo alega que "él sabía que yo estaba allí antes de que lo viera."
+    Esta es la única grabación civil conocida.
+    Se recomienda CLASIFICACIÓN PERMANENTE.
+  `
+);
+
 export const RUNTIME_VFS_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
   'pt-BR': ptBrTranslations,
   es: esTranslations,
 };
+
+registerLines(
+  official_summary_report.content,
+  `
+  RELATÓRIO OFICIAL DE INCIDENTE
+  RECUPERAÇÃO DE EQUIPAMENTO — JANEIRO 1996
+  CLASSIFICAÇÃO: VERSÃO PARA DIVULGAÇÃO PÚBLICA
+  RESUMO:
+    Em 20 de janeiro de 1996, equipes responderam a
+    relatos de destroços na região do Jardim Andere
+    após condições meteorológicas severas.
+  CONCLUSÕES OFICIAIS:
+    1. Estação meteorológica danificada durante temporal.
+    2. Materiais de construção deslocados por ventos fortes.
+    3. Antena de telecomunicações caída.
+  PRESENÇA MILITAR:
+    Comboios militares reportados na área confirmados como
+    exercícios de rotina. Sem relação com os destroços.
+  OCORRÊNCIAS HOSPITALARES: Nenhuma.
+  `,
+  `
+  INFORME OFICIAL DE INCIDENTE
+  RECUPERACIÓN DE EQUIPO — ENERO 1996
+  CLASIFICACIÓN: VERSIÓN PARA DIVULGACIÓN PÚBLICA
+  RESUMEN:
+    El 20 de enero de 1996, equipos respondieron a
+    informes de escombros en la región del Jardim Andere
+    tras condiciones meteorológicas severas.
+  CONCLUSIONES OFICIALES:
+    1. Estación meteorológica dañada durante la tormenta.
+    2. Materiales de construcción desplazados por vientos fuertes.
+    3. Antena de telecomunicaciones caída.
+  PRESENCIA MILITAR:
+    Convoyes militares reportados en el área confirmados como
+    ejercicios de rutina. Sin relación con los escombros.
+  OCURRENCIAS HOSPITALARIAS: Ninguna.
+  `
+);
