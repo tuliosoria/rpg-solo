@@ -17,12 +17,13 @@ interface MenuProps {
     slotId: string,
     signal?: AbortSignal
   ) => void | boolean | Promise<void | boolean>;
+  initialScreen?: 'main' | 'load';
 }
 
 type Screen = 'main' | 'load' | 'credits' | 'options' | 'terms' | 'privacy';
 
-export default function Menu({ onNewGameAction, onLoadGameAction }: MenuProps) {
-  const [screen, setScreen] = useState<Screen>('main');
+export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen = 'main' }: MenuProps) {
+  const [screen, setScreen] = useState<Screen>(initialScreen);
   const [saves, setSaves] = useState<SaveSlot[]>([]);
   const [flickerActive, setFlickerActive] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);

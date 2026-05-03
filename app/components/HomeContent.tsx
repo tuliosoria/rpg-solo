@@ -31,6 +31,7 @@ function HomeContentInner() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [saveRequestState, setSaveRequestState] = useState<GameState | null>(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [menuInitialScreen, setMenuInitialScreen] = useState<'main' | 'load'>('main');
   // Increment whenever a fresh session is loaded (new game, load slot, load checkpoint)
   // to force the Terminal subtree to remount with the loaded state. Without this, the
   // Terminal's internal state hooks keep the prior session's UI/phase state and the
@@ -117,6 +118,36 @@ function HomeContentInner() {
   const handleExit = useCallback(() => {
     invalidatePendingLoads();
     setView('menu');
+    setMenuInitialScreen('main');
+    setGameState(null);
+    setSaveRequestState(null);
+    setShowSaveModal(false);
+  }, [invalidatePendingLoads]);
+
+  const handleOpenLoadGameList = useCallback(() => {
+    invalidatePendingLoads();
+    setMenuInitialScreen('load');
+    setGameState(null);
+    setSaveRequestState(null);
+    setShowSaveModal(false);
+    setView('menu');
+  }, [invalidatePendingLoads]);
+
+  const handleQuitApp = useCallback(() => {
+    invalidatePendingLoads();
+    // In Electron, closing the BrowserWindow triggers app quit on close.
+    // In a regular browser, window.close() is typically a no-op for tabs the
+    // user opened, so we fall back to returning to the main menu so the
+    // player isn't stuck on the Game Over screen.
+    if (typeof window !== 'undefined') {
+      try {
+        window.close();
+      } catch {
+        // ignore — fall through to main menu
+      }
+    }
+    setView('menu');
+    setMenuInitialScreen('main');
     setGameState(null);
     setSaveRequestState(null);
     setShowSaveModal(false);
@@ -137,7 +168,13 @@ function HomeContentInner() {
   }
 
   if (view === 'menu') {
-    return <Menu onNewGameAction={handleNewGame} onLoadGameAction={handleLoadGame} />;
+    return (
+      <Menu
+        onNewGameAction={handleNewGame}
+        onLoadGameAction={handleLoadGame}
+        initialScreen={menuInitialScreen}
+      />
+    );
   }
 
   if (view === 'game' && gameState) {
@@ -149,6 +186,8 @@ function HomeContentInner() {
           onExitAction={handleExit}
           onSaveRequestAction={handleSaveRequest}
           onLoadCheckpointAction={handleLoadCheckpoint}
+          onLoadSavedGameAction={handleOpenLoadGameList}
+          onQuitAction={handleQuitApp}
         />
         {showSaveModal && (
           <SaveModal

@@ -83,7 +83,7 @@ describe('GameOver', () => {
   });
 
   describe('Options Phase', () => {
-    it('shows main menu button after restart animation', async () => {
+    it('shows the recovery menu after restart animation', async () => {
       render(<GameOver {...defaultProps} />);
 
       // Fast-forward through error phase (3 seconds)
@@ -99,46 +99,76 @@ describe('GameOver', () => {
         });
       }
 
-      // Should show options
-      expect(screen.getByText(/MAIN MENU/)).toBeInTheDocument();
+      expect(screen.getByText(/LAST CHECKPOINT/)).toBeInTheDocument();
+      expect(screen.getByText(/LOAD SAVED GAME/)).toBeInTheDocument();
+      expect(screen.getByText(/EXIT/)).toBeInTheDocument();
     });
 
-    it('calls onMainMenuAction when main menu is clicked', async () => {
-      render(<GameOver {...defaultProps} />);
+    it('calls onLoadSavedGameAction when Load Saved Game is clicked', async () => {
+      const onLoadSavedGameAction = vi.fn();
+      render(<GameOver {...defaultProps} onLoadSavedGameAction={onLoadSavedGameAction} />);
 
-      // Fast-forward through error phase
       act(() => {
         vi.advanceTimersByTime(3100);
       });
-
-      // Advance through restart animation
       for (let i = 0; i < 70; i++) {
         act(() => {
           vi.advanceTimersByTime(50);
         });
       }
 
-      // Click main menu button
-      const mainMenuButton = screen.getByText(/MAIN MENU/);
-      fireEvent.click(mainMenuButton);
+      fireEvent.click(screen.getByText(/LOAD SAVED GAME/));
+      expect(onLoadSavedGameAction).toHaveBeenCalled();
+    });
 
+    it('calls onQuitAction when Exit is clicked', async () => {
+      const onQuitAction = vi.fn();
+      render(<GameOver {...defaultProps} onQuitAction={onQuitAction} />);
+
+      act(() => {
+        vi.advanceTimersByTime(3100);
+      });
+      for (let i = 0; i < 70; i++) {
+        act(() => {
+          vi.advanceTimersByTime(50);
+        });
+      }
+
+      fireEvent.click(screen.getByText(/EXIT/));
+      expect(onQuitAction).toHaveBeenCalled();
+    });
+
+    it('falls back to onMainMenuAction when Exit is clicked without onQuitAction', async () => {
+      render(<GameOver {...defaultProps} />);
+
+      act(() => {
+        vi.advanceTimersByTime(3100);
+      });
+      for (let i = 0; i < 70; i++) {
+        act(() => {
+          vi.advanceTimersByTime(50);
+        });
+      }
+
+      fireEvent.click(screen.getByText(/EXIT/));
       expect(defaultProps.onMainMenuAction).toHaveBeenCalled();
     });
 
-    it('uses instant text speed for the restart flow and focuses the first option', () => {
+    it('disables Last Checkpoint when no checkpoint exists and focuses Load Saved Game', () => {
       render(<GameOver {...defaultProps} textSpeed="instant" />);
 
       act(() => {
         vi.advanceTimersByTime(300);
       });
-
       act(() => {
         vi.advanceTimersByTime(1500);
       });
 
-      const mainMenuButton = screen.getByRole('button', { name: /main menu/i });
-      expect(mainMenuButton).toBeInTheDocument();
-      expect(mainMenuButton).toHaveFocus();
+      const lastCheckpointButton = screen.getByRole('button', { name: /LAST CHECKPOINT/i });
+      expect(lastCheckpointButton).toBeDisabled();
+
+      const loadSavedGameButton = screen.getByRole('button', { name: /LOAD SAVED GAME/i });
+      expect(loadSavedGameButton).toHaveFocus();
     });
   });
 

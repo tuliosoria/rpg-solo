@@ -12,6 +12,8 @@ interface GameOverProps {
   reason: string;
   onMainMenuAction: () => void;
   onLoadCheckpointAction: (slotId: string) => void;
+  onLoadSavedGameAction?: () => void;
+  onQuitAction?: () => void;
   textSpeed?: TextSpeed;
 }
 
@@ -19,6 +21,8 @@ export default function GameOver({
   reason,
   onMainMenuAction,
   onLoadCheckpointAction,
+  onLoadSavedGameAction,
+  onQuitAction,
   textSpeed = 'normal',
 }: GameOverProps) {
   const { language, t, translateRuntimeText } = useI18n();
@@ -31,7 +35,37 @@ export default function GameOver({
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const flickerResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadCheckpointButtonRef = useRef<HTMLButtonElement>(null);
-  const mainMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const loadSavedGameButtonRef = useRef<HTMLButtonElement>(null);
+  const exitButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Recovery menu always exposes the same three options. Disabled options stay
+  // visible so the menu reads consistently across runs (e.g. when there is no
+  // checkpoint yet) and matches the terminal aesthetic.
+  const handleQuit = onQuitAction ?? onMainMenuAction;
+  const handleLoadSavedGame = onLoadSavedGameAction ?? onMainMenuAction;
+  const hasCheckpoint = latestCheckpoint !== null;
+
+  type OptionId = 'lastCheckpoint' | 'loadSavedGame' | 'exit';
+  const options = React.useMemo<
+    Array<{ id: OptionId; disabled: boolean; activate: () => void }>
+  >(
+    () => [
+      {
+        id: 'lastCheckpoint',
+        disabled: !hasCheckpoint,
+        activate: () => {
+          if (latestCheckpoint) {
+            onLoadCheckpointAction(latestCheckpoint.id);
+          }
+        },
+      },
+      { id: 'loadSavedGame', disabled: false, activate: handleLoadSavedGame },
+      { id: 'exit', disabled: false, activate: handleQuit },
+    ],
+    [hasCheckpoint, latestCheckpoint, onLoadCheckpointAction, handleLoadSavedGame, handleQuit]
+  );
+
+  const firstEnabledIndex = options.findIndex(o => !o.disabled);
 
   // Load checkpoints when component mounts
   useEffect(() => {
@@ -107,42 +141,50 @@ export default function GameOver({
   useEffect(() => {
     if (phase !== 'options') return;
 
-    if (latestCheckpoint) {
-      loadCheckpointButtonRef.current?.focus();
-      return;
-    }
-
-    mainMenuButtonRef.current?.focus();
-  }, [latestCheckpoint, phase]);
+    const refs = [loadCheckpointButtonRef, loadSavedGameButtonRef, exitButtonRef];
+    const initial = firstEnabledIndex >= 0 ? firstEnabledIndex : 0;
+    setSelectedIndex(initial);
+    refs[initial]?.current?.focus();
+  }, [firstEnabledIndex, phase]);
 
   // Keyboard navigation for options phase
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (phase !== 'options') return;
 
-      const hasCheckpoint = latestCheckpoint !== null;
-      const maxIndex = hasCheckpoint ? 1 : 0; // 0 = Load Checkpoint (if available), 1 = Main Menu
+      const enabledIndices = options
+        .map((o, i) => (o.disabled ? -1 : i))
+        .filter(i => i !== -1);
+      if (enabledIndices.length === 0) return;
+
+      const currentEnabledPos = enabledIndices.indexOf(selectedIndex);
 
       switch (e.key) {
-        case 'ArrowUp':
+        case 'ArrowUp': {
           e.preventDefault();
-          setSelectedIndex(prev => (prev > 0 ? prev - 1 : maxIndex));
+          const pos = currentEnabledPos === -1 ? 0 : currentEnabledPos;
+          const nextPos = (pos - 1 + enabledIndices.length) % enabledIndices.length;
+          setSelectedIndex(enabledIndices[nextPos]);
           break;
-        case 'ArrowDown':
+        }
+        case 'ArrowDown': {
           e.preventDefault();
-          setSelectedIndex(prev => (prev < maxIndex ? prev + 1 : 0));
+          const pos = currentEnabledPos === -1 ? -1 : currentEnabledPos;
+          const nextPos = (pos + 1) % enabledIndices.length;
+          setSelectedIndex(enabledIndices[nextPos]);
           break;
-        case 'Enter':
+        }
+        case 'Enter': {
           e.preventDefault();
-          if (hasCheckpoint && selectedIndex === 0) {
-            onLoadCheckpointAction(latestCheckpoint.id);
-          } else {
-            onMainMenuAction();
+          const target = options[selectedIndex];
+          if (target && !target.disabled) {
+            target.activate();
           }
           break;
+        }
       }
     },
-    [phase, selectedIndex, latestCheckpoint, onLoadCheckpointAction, onMainMenuAction]
+    [phase, selectedIndex, options]
   );
 
   useEffect(() => {
@@ -231,28 +273,46 @@ export default function GameOver({
             </div>
 
             <div className={styles.optionsButtons}>
-              {latestCheckpoint && (
-                <button
-                  ref={loadCheckpointButtonRef}
-                  className={`${styles.optionButton} ${selectedIndex === 0 ? styles.selected : ''}`}
-                  onClick={() => onLoadCheckpointAction(latestCheckpoint.id)}
-                  onMouseEnter={() => setSelectedIndex(0)}
-                >
-                  {selectedIndex === 0 ? '▶ ' : '  '}{t('gameOver.options.loadCheckpoint')}
-                  <div className={styles.checkpointInfo}>
-                    {formatCheckpointInfo(latestCheckpoint)}
-                  </div>
-                </button>
-              )}
+              <button
+                ref={loadCheckpointButtonRef}
+                className={`${styles.optionButton} ${selectedIndex === 0 ? styles.selected : ''}`}
+                onClick={() => {
+                  if (latestCheckpoint) {
+                    onLoadCheckpointAction(latestCheckpoint.id);
+                  }
+                }}
+                onMouseEnter={() => {
+                  if (hasCheckpoint) setSelectedIndex(0);
+                }}
+                disabled={!hasCheckpoint}
+                aria-disabled={!hasCheckpoint}
+              >
+                {selectedIndex === 0 ? '▶ ' : '  '}{t('gameOver.options.lastCheckpoint')}
+                <div className={styles.checkpointInfo}>
+                  {latestCheckpoint
+                    ? formatCheckpointInfo(latestCheckpoint)
+                    : t('gameOver.options.noCheckpoint')}
+                </div>
+              </button>
 
               <button
-                ref={mainMenuButtonRef}
-                className={`${styles.optionButton} ${selectedIndex === (latestCheckpoint ? 1 : 0) ? styles.selected : ''}`}
-                onClick={onMainMenuAction}
-                onMouseEnter={() => setSelectedIndex(latestCheckpoint ? 1 : 0)}
+                ref={loadSavedGameButtonRef}
+                className={`${styles.optionButton} ${selectedIndex === 1 ? styles.selected : ''}`}
+                onClick={handleLoadSavedGame}
+                onMouseEnter={() => setSelectedIndex(1)}
               >
-                {selectedIndex === (latestCheckpoint ? 1 : 0) ? '▶ ' : '  '}
-                {t('gameOver.options.mainMenu')}
+                {selectedIndex === 1 ? '▶ ' : '  '}
+                {t('gameOver.options.loadSavedGame')}
+              </button>
+
+              <button
+                ref={exitButtonRef}
+                className={`${styles.optionButton} ${selectedIndex === 2 ? styles.selected : ''}`}
+                onClick={handleQuit}
+                onMouseEnter={() => setSelectedIndex(2)}
+              >
+                {selectedIndex === 2 ? '▶ ' : '  '}
+                {t('gameOver.options.exit')}
               </button>
             </div>
 

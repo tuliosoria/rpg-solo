@@ -83,6 +83,8 @@ interface TerminalProps {
   onExitAction: () => void;
   onSaveRequestAction: (state: GameState) => void;
   onLoadCheckpointAction?: (slotId: string) => void;
+  onLoadSavedGameAction?: () => void;
+  onQuitAction?: () => void;
 }
 
 export default function Terminal({
@@ -90,6 +92,8 @@ export default function Terminal({
   onExitAction,
   onSaveRequestAction,
   onLoadCheckpointAction,
+  onLoadSavedGameAction,
+  onQuitAction,
 }: TerminalProps) {
   const { t, translateRuntimeText, language } = useI18n();
   const initialPhase = deriveGamePhase(initialState);
@@ -1859,6 +1863,8 @@ export default function Terminal({
             reason={gameOverReason}
             textSpeed={textSpeed}
             onMainMenuAction={onExitAction}
+            onLoadSavedGameAction={onLoadSavedGameAction ?? onExitAction}
+            onQuitAction={onQuitAction ?? onExitAction}
             onLoadCheckpointAction={slotId => {
               if (onLoadCheckpointAction) {
                 onLoadCheckpointAction(slotId);
