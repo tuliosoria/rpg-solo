@@ -33,7 +33,6 @@
 |---------|---------|-------------|----------------|-------|
 | `note <text>` | `nota` / `nota` | Save personal note with timestamp | 0 | Persists across saves |
 | `notes` | `notas` / `notas` | Display all saved notes | 0 | — |
-| `bookmark [filename]` | — | Toggle bookmark on a file (★ marker) | 0 | — |
 | `unread` | — | List all files not yet opened | 0 | — |
 | `progress` | `progresso` / `progreso` | Review saved dossier files and count | 0 | Shows count toward 10-file goal |
 | `search <keyword>` | `buscar` / `buscar` | Search filenames, paths, and text | +2 normal, +5 blocked | Blocked terms trigger UFO74 warning |
@@ -70,7 +69,7 @@
 
 | Command | Aliases | Description | Detection Cost | Notes |
 |---------|---------|-------------|----------------|-------|
-| `wait` | `esperar` / `esperar` | Reduce detection level | −5 to −8 | 3 uses per run. 5s cooldown. High detection = −8. |
+| `wait` | `esperar` / `esperar` | Reduce detection level | −5 to −8 | 8 uses per run. 5s cooldown. High detection = −8. |
 | `hide` | — | Emergency escape | 0 | Only available at 90%+ detection |
 
 ### Archive / Script Commands

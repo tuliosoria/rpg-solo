@@ -106,19 +106,13 @@ describe('i18n system', () => {
     ).toBe('  Você tem 3 documento(s) da conspiração no seu cache.');
   });
 
-  it('translates bookmark and listing runtime patterns for pt-BR', async () => {
+  it('translates listing runtime patterns for pt-BR', async () => {
     const { result } = renderHook(() => useI18n(), { wrapper });
 
     act(() => {
       result.current.setLanguage('pt-BR');
     });
 
-    expect(result.current.translateRuntimeText('Bookmarked: /internal/protocols/session_objectives.txt')).toBe(
-      'Favoritado: /internal/protocols/session_objectives.txt'
-    );
-    expect(
-      result.current.translateRuntimeText('Bookmark removed: /internal/protocols/session_objectives.txt')
-    ).toBe('Favorito removido: /internal/protocols/session_objectives.txt');
     expect(
       result.current.translateRuntimeText('            UNREAD FILES (12)          ')
     ).toBe('            ARQUIVOS NÃO LIDOS (12)          ');

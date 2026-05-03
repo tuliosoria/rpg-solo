@@ -1,9 +1,7 @@
-// Inventory/management commands: note, notes, bookmark, unread, progress, search, scan, decode, disconnect, release
+// Inventory/management commands: note, notes, unread, progress, search, scan, decode, disconnect, release
 
 import { GameState, TerminalEntry } from '../../types';
 import {
-  resolvePath,
-  getNode,
   listDirectory,
   canAccessFile,
   getAllAccessibleFiles,
@@ -218,112 +216,6 @@ export const inventoryCommands: CommandRegistry = {
     return {
       output,
       stateChanges: {},
-    };
-  },
-
-  bookmark: (args, state) => {
-    if (args.length === 0) {
-      // Show current bookmarks
-      const bookmarks = state.bookmarkedFiles || new Set<string>();
-
-      if (bookmarks.size === 0) {
-        return {
-          output: [
-            createEntryI18n(
-              'system',
-              'engine.commands.inventory.no_bookmarks_saved',
-              'No bookmarks saved'
-            ),
-            createEntryI18n(
-              'system',
-              'engine.commands.inventory.usage_bookmark_filename_to_bookmark_a_file',
-              'Usage: bookmark <filename> to bookmark a file'
-            ),
-          ],
-          stateChanges: {},
-        };
-      }
-
-      const output: TerminalEntry[] = [
-        createEntry('system', ''),
-        createEntry('system', '═══════════════════════════════════════'),
-        createEntryI18n(
-          'system',
-          'engine.commands.inventory.bookmarked_files',
-          '             BOOKMARKED FILES          '
-        ),
-        createEntry('system', '═══════════════════════════════════════'),
-        createEntry('system', ''),
-      ];
-
-      let index = 0;
-      for (const path of bookmarks) {
-        index += 1;
-        const fileName = path.split('/').pop() || path;
-        const isRead = state.filesRead?.has(path);
-        output.push(createEntry('output', `  ${index}. ${fileName} ${isRead ? '[READ]' : ''}`));
-        output.push(createEntry('system', `      └─ ${path}`));
-      }
-
-      output.push(createEntry('system', ''));
-      output.push(createEntry('system', '═══════════════════════════════════════'));
-      output.push(createEntry('system', ''));
-
-      return { output, stateChanges: {} };
-    }
-
-    const filePath = resolvePath(args[0], state.currentPath);
-    const node = getNode(filePath, state);
-
-    if (!node || node.type !== 'file') {
-      return {
-        output: [
-          createEntryI18n(
-            'error',
-            'engine.commands.inventory.fileNotFound',
-            `ERROR: File not found: ${args[0]}`,
-            { value: args[0] }
-          ),
-        ],
-        stateChanges: {},
-      };
-    }
-
-    const bookmarks = new Set(state.bookmarkedFiles || []);
-
-    if (bookmarks.has(filePath)) {
-      bookmarks.delete(filePath);
-      return {
-        output: [
-          createEntryI18n(
-            'system',
-            'engine.commands.inventory.bookmarkRemoved',
-            `Bookmark removed: ${filePath}`,
-            { value: filePath }
-          ),
-        ],
-        stateChanges: { bookmarkedFiles: bookmarks },
-      };
-    }
-
-    bookmarks.add(filePath);
-    const newBookmarkCount = bookmarks.size;
-    return {
-      output: [
-        createEntryI18n(
-          'system',
-          'engine.commands.inventory.bookmarked',
-          `Bookmarked: ${filePath}`,
-          { value: filePath }
-        ),
-        createEntryI18n(
-          'system',
-          'engine.commands.inventory.use_bookmark_to_view_all_bookmarks',
-          'Use "bookmark" to view all bookmarks'
-        ),
-      ],
-      stateChanges: { bookmarkedFiles: bookmarks },
-      checkAchievements: newBookmarkCount >= 5 ? ['bookworm'] : undefined,
     };
   },
 
@@ -610,7 +502,7 @@ export const inventoryCommands: CommandRegistry = {
       createEntryI18n(
         'system',
         'engine.commands.inventory.search_open_tip',
-        'Use "open <path>" to inspect a result or "bookmark <path>" to save it.'
+        'Use "open <path>" to inspect a result or "save <path>" to keep it.'
       )
     );
     output.push(createEntry('system', ''));

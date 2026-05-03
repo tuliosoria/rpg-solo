@@ -73,10 +73,6 @@ export const filesystemCommands: CommandRegistry = {
 
           const fileContent = getFileContent(fullPath, state);
 
-          if (state.bookmarkedFiles?.has(fullPath)) {
-            line += ' ★';
-          }
-
           if (state.filesRead?.has(fullPath)) {
             line += ' [READ]';
           } else {

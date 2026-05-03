@@ -21,7 +21,6 @@ export interface AchievementMap {
   doom_fan: string;
   archivist: string;
   paranoid: string;
-  bookworm: string;
   night_owl: string;
   liberator: string;
   whistleblower: string;

@@ -159,14 +159,6 @@ export const ACHIEVEMENTS: Achievement[] = [
     true
   ),
   createAchievement(
-    'bookworm',
-    'bookworm',
-    'Bookworm',
-    'Bookmark 5+ files',
-    '🔖',
-    true
-  ),
-  createAchievement(
     'night_owl',
     'night_owl',
     'Night Owl',

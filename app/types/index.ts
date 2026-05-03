@@ -278,9 +278,8 @@ export interface GameState {
   morseMessageAttempts: number; // Wrong attempts on morse message (max 3)
   morseMessageSolved: boolean; // True after correctly identifying the message
 
-  // UX: Notes & bookmarks system
+  // UX: Notes
   playerNotes: { note: string; timestamp: number }[]; // Player-saved notes
-  bookmarkedFiles: Set<string>; // Files player has bookmarked
   lastOpenedFile?: string; // Last file opened (for 'last' command)
   navigationHistory: string[]; // Stack of visited directories for 'back' command
 
@@ -289,7 +288,7 @@ export interface GameState {
   idleHintsGiven: number; // How many idle hints have been shown
 
   // Stealth recovery system
-  waitUsesRemaining: number; // Max 3 per run, resets on new game
+  waitUsesRemaining: number; // Max 8 per run, resets on new game
   lastWaitTime: number; // Timestamp of last wait command use (for 5s cooldown)
   hideAvailable: boolean; // Becomes true at 90+ detection
 
@@ -489,16 +488,15 @@ export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionS
   morseFileRead: false,
   morseMessageAttempts: 0,
   morseMessageSolved: false,
-  // UX: Notes & bookmarks
+  // UX: Notes
   playerNotes: [],
-  bookmarkedFiles: new Set(),
   lastOpenedFile: undefined,
   navigationHistory: [],
   // UX: Idle detection
   lastActivityTime: 0,
   idleHintsGiven: 0,
   // Stealth recovery
-  waitUsesRemaining: 3,
+  waitUsesRemaining: 8,
   lastWaitTime: 0,
   hideAvailable: false,
   // Evidence linking

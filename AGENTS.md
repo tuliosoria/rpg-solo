@@ -67,7 +67,7 @@ Other useful commands: `npm run test:coverage`, `npm run lint:fix`, `npm run for
 - Has a discoverable secret identity (password puzzle). At very low trust, paranoia hints surface.
 
 ### Player Commands
-Live command set: `ls`, `cd`, `open`, `search`, `progress`, `unread`, `bookmark`, `hint`, `wait`, `leak`, `chat`, `help`. Older builds mentioned `decrypt`/`rewind`, but the current experience centers on direct investigation.
+Live command set: `ls`, `cd`, `open`, `search`, `progress`, `unread`, `hint`, `wait`, `leak`, `chat`, `help`. Older builds mentioned `decrypt`/`rewind`, but the current experience centers on direct investigation.
 
 ---
 

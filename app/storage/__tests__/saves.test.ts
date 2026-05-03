@@ -31,7 +31,6 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
     disinformationDiscovered: new Set(),
     hiddenCommandsDiscovered: new Set(),
     passwordsFound: new Set(),
-    bookmarkedFiles: new Set(),
     trapsTriggered: new Set(),
     ...overrides,
   };
@@ -119,7 +118,6 @@ describe('Save/Load System', () => {
         disinformationDiscovered: new Set(['disinfo1']),
         hiddenCommandsDiscovered: new Set(['cmd1']),
         passwordsFound: new Set(['pass1', 'pass2']),
-        bookmarkedFiles: new Set(['bookmark1']),
         trapsTriggered: new Set(['trap1']),
       });
 
@@ -746,7 +744,6 @@ describe('Save/Load System', () => {
         commandHistory: [],
         filesRead: ['/sys/ghost_in_machine.enc'],
         savedFiles: ['/sys/ghost_in_machine.enc'],
-        bookmarkedFiles: ['/sys/ghost_in_machine.enc'],
       };
 
       mockStore['terminal1996:save:legacy_ufo74'] = JSON.stringify(legacySave);
@@ -758,7 +755,6 @@ describe('Save/Load System', () => {
       expect(loaded!.filesRead.has('/internal/ghost_in_machine.enc')).toBe(true);
       expect(loaded!.filesRead.has('/sys/ghost_in_machine.enc')).toBe(false);
       expect(loaded!.savedFiles.has('/internal/ghost_in_machine.enc')).toBe(true);
-      expect(loaded!.bookmarkedFiles.has('/internal/ghost_in_machine.enc')).toBe(true);
     });
 
     it('handles versioned saves correctly', async () => {

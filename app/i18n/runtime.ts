@@ -36,7 +36,6 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     Paranoid: 'Paranoico',
     'Check system status 10+ times': 'Verifique o status do sistema 10+ vezes',
     Bookworm: 'Rato de Biblioteca',
-    'Bookmark 5+ files': 'Marque 5+ arquivos como favoritos',
     'Night Owl': 'Coruja Noturna',
     'Play for over 30 minutes in a single session':
       'Jogue por mais de 30 minutos em uma única sessão',
@@ -418,7 +417,6 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     'last            Re-read last opened file': 'last            Reabre o último arquivo lido',
     'note <text>     Save a personal note': 'note <text>     Salva uma anotação pessoal',
     'notes           View all your notes': 'notes           Mostra todas as suas anotações',
-    'bookmark <file> Bookmark a file for later': 'bookmark <file> Marca um arquivo para depois',
     'help            Show all commands': 'help            Mostra todos os comandos',
     'Collect evidence in all 5 categories:': 'Colete evidências nas 5 categorias:',
     '1. Debris Relocation': '1. Relocação de Destroços',
@@ -439,7 +437,6 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '• Watch your detection level!': '• Fique de olho no nível de detecção!',
     'COMMANDS TO KNOW': 'COMANDOS IMPORTANTES',
     'note <text>      Save personal notes': 'note <text>      Salva anotações pessoais',
-    'bookmark <file>  Mark files for later': 'bookmark <file>  Marca arquivos para depois',
     'BRAZILIAN INTELLIGENCE LEGACY SYSTEM': 'SISTEMA LEGADO DE INTELIGÊNCIA BRASILEIRA',
     'TERMINAL ACCESS POINT — NODE 7': 'PONTO DE ACESSO TERMINAL — NÓ 7',
     'SYSTEM DATE: JANUARY 1996': 'DATA DO SISTEMA: JANEIRO DE 1996',
@@ -5866,7 +5863,6 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     Paranoid: 'Paranoico',
     'Check system status 10+ times': 'Revisa el estado del sistema 10+ veces',
     Bookworm: 'Ratón de Biblioteca',
-    'Bookmark 5+ files': 'Marca 5+ archivos',
     'Night Owl': 'Búho Nocturno',
     'Play for over 30 minutes in a single session': 'Juega más de 30 minutos en una sola sesión',
     Liberator: 'Liberador',
@@ -6262,7 +6258,6 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       'last            Vuelve a leer el último archivo abierto',
     'note <text>     Save a personal note': 'note <text>     Guarda una nota personal',
     'notes           View all your notes': 'notes           Muestra todas tus notas',
-    'bookmark <file> Bookmark a file for later': 'bookmark <file> Marca un archivo para después',
     'help            Show all commands': 'help            Muestra todos los comandos',
     'Collect evidence in all 5 categories:': 'Reúne evidencia en las 5 categorías:',
     '1. Debris Relocation': '1. Reubicación de Restos',
@@ -6283,7 +6278,6 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     '• Watch your detection level!': '• ¡Vigila tu nivel de detección!',
     'COMMANDS TO KNOW': 'COMANDOS CLAVE',
     'note <text>      Save personal notes': 'note <text>      Guarda notas personales',
-    'bookmark <file>  Mark files for later': 'bookmark <file>  Marca archivos para después',
     'BRAZILIAN INTELLIGENCE LEGACY SYSTEM': 'SISTEMA LEGADO DE INTELIGENCIA BRASILEÑA',
     'TERMINAL ACCESS POINT — NODE 7': 'PUNTO DE ACCESO TERMINAL — NODO 7',
     'SYSTEM DATE: JANUARY 1996': 'FECHA DEL SISTEMA: ENERO DE 1996',
@@ -11931,11 +11925,6 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     'No notes saved yet': 'Nenhuma nota salva ainda',
     'Use: note <text> to save a note': 'Use: note <text> para salvar uma nota',
     '                 YOUR NOTES              ': '                 SUAS NOTAS              ',
-    'No bookmarks saved': 'Nenhum favorito salvo',
-    'Usage: bookmark <filename> to bookmark a file':
-      'Uso: bookmark <filename> para marcar um arquivo',
-    '             BOOKMARKED FILES          ': '             ARQUIVOS FAVORITOS         ',
-    'Use "bookmark" to view all bookmarks': 'Use "bookmark" para ver todos os favoritos',
     'All accessible files have been read!': 'Todos os arquivos acessíveis foram lidos!',
     'Some files may require higher access levels.':
       'Alguns arquivos podem exigir níveis de acesso maiores.',
@@ -12001,8 +11990,6 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
       '  last            Releia o último arquivo aberto',
     '  note <text>     Save a personal note': '  note <text>     Salve uma nota pessoal',
     '  notes           View all your notes': '  notes           Veja todas as suas notas',
-    '  bookmark <file> Bookmark a file for later':
-      '  bookmark <file> Marque um arquivo para depois',
     '  help            Show all commands': '  help            Mostre todos os comandos',
     '  status          Check risk and session pressure':
       '  status          Verifique risco e pressão da sessão',
@@ -12034,7 +12021,6 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
       '  • Com 90% de risco, "hide" vira uma fuga única',
     '  COMMANDS TO KNOW': '  COMANDOS IMPORTANTES',
     '  note <text>      Save personal notes': '  note <text>      Salve notas pessoais',
-    '  bookmark <file>  Mark files for later': '  bookmark <file>  Marque arquivos para depois',
     '    Lowers detection for a moment.': '    Reduz a detecção por um instante.',
     '    Limited to 3 uses per run.': '    Limitado a 3 usos por partida.',
     '    Unlocks automatically at 90% risk.':
@@ -12401,11 +12387,6 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     'No notes saved yet': 'Aún no hay notas guardadas',
     'Use: note <text> to save a note': 'Usa: note <text> para guardar una nota',
     '                 YOUR NOTES              ': '                 TUS NOTAS               ',
-    'No bookmarks saved': 'No hay marcadores guardados',
-    'Usage: bookmark <filename> to bookmark a file':
-      'Uso: bookmark <filename> para marcar un archivo',
-    '             BOOKMARKED FILES          ': '             ARCHIVOS MARCADOS          ',
-    'Use "bookmark" to view all bookmarks': 'Usa "bookmark" para ver todos los marcadores',
     'All accessible files have been read!': '¡Se han leído todos los archivos accesibles!',
     'Some files may require higher access levels.':
       'Algunos archivos pueden requerir niveles de acceso más altos.',
@@ -12471,8 +12452,6 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
       '  last            Vuelve a leer el último archivo abierto',
     '  note <text>     Save a personal note': '  note <text>     Guarda una nota personal',
     '  notes           View all your notes': '  notes           Ve todas tus notas',
-    '  bookmark <file> Bookmark a file for later':
-      '  bookmark <file> Marca un archivo para después',
     '  help            Show all commands': '  help            Muestra todos los comandos',
     '  status          Check risk and session pressure':
       '  status          Revisa el riesgo y la presión de la sesión',
@@ -12504,7 +12483,6 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
       '  • Al 90% de riesgo, "hide" se vuelve un escape de una sola vez',
     '  COMMANDS TO KNOW': '  COMANDOS QUE DEBES CONOCER',
     '  note <text>      Save personal notes': '  note <text>      Guarda notas personales',
-    '  bookmark <file>  Mark files for later': '  bookmark <file>  Marca archivos para después',
     '    Lowers detection for a moment.': '    Baja la detección por un momento.',
     '    Limited to 3 uses per run.': '    Limitado a 3 usos por partida.',
     '    Unlocks automatically at 90% risk.': '    Se desbloquea automáticamente al 90% de riesgo.',

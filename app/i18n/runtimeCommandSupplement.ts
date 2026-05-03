@@ -56,7 +56,6 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  [READ]         - File already opened': '  [READ]         - Arquivo já aberto',
     '  [~2min]        - Longer document estimate':
       '  [~2min]        - Estimativa de documento mais longo',
-    '  ★              - Bookmarked file': '  ★              - Arquivo favoritado',
     'COMMAND: cd <directory>': 'COMANDO: cd <directory>',
     'Change to a different directory.': 'Muda para outro diretório.',
     '  cd ops         - Enter the "ops" directory':
@@ -77,15 +76,6 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'Display all saved personal notes.': 'Mostra todas as notas pessoais salvas.',
     '  notes          - Show all notes with timestamps':
       '  notes          - Mostra todas as notas com timestamps',
-    'COMMAND: bookmark [file]': 'COMANDO: bookmark [file]',
-    'Bookmark a file for quick reference, or view bookmarks.':
-      'Marca um arquivo para referência rápida ou exibe os favoritos.',
-    '  bookmark                    - List all bookmarks':
-      '  bookmark                    - Lista todos os favoritos',
-    '  bookmark report.txt         - Toggle bookmark on file':
-      '  bookmark report.txt         - Alterna favorito no arquivo',
-    'Bookmarked files show a ★ marker in directory listings.':
-      'Arquivos favoritados exibem um marcador ★ nas listagens.',
     'COMMAND: status': 'COMANDO: status',
     'Display current system status and risk indicators.':
       'Mostra o status atual do sistema e os indicadores de risco.',
@@ -255,8 +245,6 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'uma autópsia em algo que ainda estava vivo. essas pessoas eram insanas.',
     'that is the original field report. the one they tried to destroy.':
       'esse é o relatório de campo original. o que tentaram destruir.',
-    'the official version. compare it to what we have. they rewrote everything.':
-      'a versão oficial. compara com o que temos. eles reescreveram tudo.',
     'audio transcript. listen to how calm they sound. they practiced this.':
       'transcrição de áudio. escuta como soam calmos. ensaiaram isso.',
     'material analysis. whatever they found, it is not from here.':
@@ -1213,7 +1201,6 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  [READ]         - File already opened': '  [READ]         - Archivo ya abierto',
     '  [~2min]        - Longer document estimate':
       '  [~2min]        - Estimación de documento más largo',
-    '  ★              - Bookmarked file': '  ★              - Archivo marcado',
     'COMMAND: cd <directory>': 'COMANDO: cd <directory>',
     'Change to a different directory.': 'Cambia a otro directorio.',
     '  cd ops         - Enter the "ops" directory':
@@ -1234,15 +1221,6 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'Display all saved personal notes.': 'Muestra todas las notas personales guardadas.',
     '  notes          - Show all notes with timestamps':
       '  notes          - Muestra todas las notas con marcas temporales',
-    'COMMAND: bookmark [file]': 'COMANDO: bookmark [file]',
-    'Bookmark a file for quick reference, or view bookmarks.':
-      'Marca un archivo para referencia rápida o muestra los marcadores.',
-    '  bookmark                    - List all bookmarks':
-      '  bookmark                    - Lista todos los marcadores',
-    '  bookmark report.txt         - Toggle bookmark on file':
-      '  bookmark report.txt         - Activa o desactiva el marcador en el archivo',
-    'Bookmarked files show a ★ marker in directory listings.':
-      'Los archivos marcados muestran un símbolo ★ en los listados.',
     'COMMAND: status': 'COMANDO: status',
     'Display current system status and risk indicators.':
       'Muestra el estado actual del sistema y los indicadores de riesgo.',
@@ -1412,8 +1390,6 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'una autopsia sobre algo que aún estaba vivo. esta gente estaba loca.',
     'that is the original field report. the one they tried to destroy.':
       'ese es el informe de campo original. el que intentaron destruir.',
-    'the official version. compare it to what we have. they rewrote everything.':
-      'la versión oficial. compárala con lo que tenemos. reescribieron todo.',
     'audio transcript. listen to how calm they sound. they practiced this.':
       'transcripción de audio. escucha lo tranquilos que suenan. ensayaron esto.',
     'material analysis. whatever they found, it is not from here.':

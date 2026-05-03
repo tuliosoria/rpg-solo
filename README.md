@@ -35,7 +35,6 @@ Common terminal commands in the current build:
 | `search <keyword>` | Search accessible file names, paths, and document text |
 | `progress` | Review your saved dossier and session recap |
 | `unread` | List accessible files you have not opened yet |
-| `bookmark <file>` | Save a file path for quick reference |
 | `hint` | Ask UFO74 for a nudge at a cost |
 | `wait` | Lower heat and let the system settle |
 | `leak` | Transmit your evidence dossier to external channels |

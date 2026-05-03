@@ -17,7 +17,6 @@ const ACHIEVEMENT_MAP = {
   doom_fan: 'IDDQD',
   archivist: 'ARCHIVIST',
   paranoid: 'PARANOID',
-  bookworm: 'BOOKWORM',
   night_owl: 'NIGHT_OWL',
   liberator: 'LIBERATOR',
   whistleblower: 'WHISTLEBLOWER',

@@ -40,8 +40,6 @@ export const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'alpha_autopsy_addendum.txt':
     'an autopsy on something that was still alive. these people were insane.',
   'jardim_andere_incident.txt': 'that is the original field report. the one they tried to destroy.',
-  'incident_summary_official.txt':
-    'the official version. compare it to what we have. they rewrote everything.',
   'audio_transcript_brief.txt':
     'interesting kid. we can leak this. not a clear evidence — but they were really hiding something.',
   'material_x_analysis.dat': 'material analysis. whatever they found, it is not from here.',
@@ -737,7 +735,11 @@ export function checkSingularEvents(
 // SYSTEM PERSONALITY DEGRADATION
 // ═══════════════════════════════════════════════════════════════════════════
 
-function getHostileSystemMessage(hostilityLevel: number, normalMessage: string): string {
+function getHostileSystemMessage(
+  hostilityLevel: number,
+  normalMessage: string,
+  detectionLevel: number
+): string {
   if (hostilityLevel <= 1) return normalMessage;
   if (hostilityLevel === 2) {
     return normalMessage.replace(/\.$/, '').replace('Use:', 'Command:');
@@ -751,7 +753,10 @@ function getHostileSystemMessage(hostilityLevel: number, normalMessage: string):
     if (normalMessage.toLowerCase().includes('tip:')) return '';
     if (normalMessage.toLowerCase().includes('hint:')) return '';
     if (normalMessage.toLowerCase().includes('use:')) return '';
-    if (normalMessage.length > 40) return normalMessage.substring(0, 35) + '...';
+    // Length truncation only kicks in once risk exceeds 89%.
+    if (detectionLevel > 89 && normalMessage.length > 40) {
+      return normalMessage.substring(0, 35) + '...';
+    }
     return normalMessage;
   }
   return normalMessage;
@@ -759,14 +764,15 @@ function getHostileSystemMessage(hostilityLevel: number, normalMessage: string):
 
 export function applyHostileFiltering(
   entries: TerminalEntry[],
-  hostilityLevel: number
+  hostilityLevel: number,
+  detectionLevel: number
 ): TerminalEntry[] {
   if (hostilityLevel <= 1) return entries;
 
   return entries
     .map(entry => ({
       ...entry,
-      content: getHostileSystemMessage(hostilityLevel, entry.content),
+      content: getHostileSystemMessage(hostilityLevel, entry.content, detectionLevel),
     }))
     .filter(entry => entry.content !== '' || entry.type === 'system');
 }

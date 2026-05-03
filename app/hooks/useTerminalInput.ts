@@ -578,7 +578,6 @@ export function useTerminalInput({
         'cd',
         'back',
         'notes',
-        'bookmark',
         'progress',
         'search',
       ];

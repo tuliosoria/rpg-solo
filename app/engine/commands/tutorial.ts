@@ -299,11 +299,6 @@ export function getHelpBasics(): TerminalEntry[] {
     ),
     createEntryI18n(
       'output',
-      'engine.commands.tutorial.bookmark_file_bookmark_a_file_for_later',
-      '  bookmark <file> Bookmark a file for later'
-    ),
-    createEntryI18n(
-      'output',
       'engine.commands.tutorial.progress_review_case_summary',
       '  progress        Review your case summary'
     ),
@@ -500,11 +495,6 @@ export function getHelpWinning(): TerminalEntry[] {
       'output',
       'engine.commands.tutorial.note_text_save_personal_notes',
       '  note <text>      Save personal notes'
-    ),
-    createEntryI18n(
-      'output',
-      'engine.commands.tutorial.bookmark_file_mark_files_for_later',
-      '  bookmark <file>  Mark files for later'
     ),
     createEntryI18n(
       'output',

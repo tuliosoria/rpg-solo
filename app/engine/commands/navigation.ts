@@ -215,7 +215,7 @@ export const navigationCommands: CommandRegistry = {
         ]
       : [];
 
-    const usesRemaining = state.waitUsesRemaining ?? 3;
+    const usesRemaining = state.waitUsesRemaining ?? 8;
 
     if (usesRemaining <= 0) {
       return {

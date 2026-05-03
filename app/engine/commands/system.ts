@@ -47,7 +47,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  [UNREAD]       - File not yet read',
     '  [READ]         - File already opened',
     '  [~2min]        - Longer document estimate',
-    '  ★              - Bookmarked file',
   ],
   cd: [
     'COMMAND: cd <directory>',
@@ -88,17 +87,6 @@ const COMMAND_HELP: Record<string, string[]> = {
     '',
     'USAGE:',
     '  notes          - Show all notes with timestamps',
-  ],
-  bookmark: [
-    'COMMAND: bookmark [file]',
-    '',
-    'Bookmark a file for quick reference, or view bookmarks.',
-    '',
-    'USAGE:',
-    '  bookmark                    - List all bookmarks',
-    '  bookmark report.txt         - Toggle bookmark on file',
-    '',
-    'Bookmarked files show a ★ marker in directory listings.',
   ],
   status: [
     'COMMAND: status',
@@ -440,7 +428,6 @@ export const systemCommands: CommandRegistry = {
       tSystem('helpMenu.unread', '  unread            List unread files'),
       tSystem('helpMenu.note', '  note <text>       Save a personal note'),
       tSystem('helpMenu.notes', '  notes             View all saved notes'),
-      tSystem('helpMenu.bookmark', '  bookmark [file]   Bookmark a file (or view bookmarks)'),
       tSystem('helpMenu.chat', '  chat              Open secure relay channel'),
       tSystem('helpMenu.tree', '  tree              Show directory structure'),
       tSystem('helpMenu.morse', '  morse <text>      Decipher morse code messages'),

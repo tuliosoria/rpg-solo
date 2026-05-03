@@ -241,14 +241,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (notesTotalMatch) {
         return t('runtime.notesTotal', { value: notesTotalMatch[1] }, text);
       }
-      const bookmarkRemovedMatch = text.match(/^Bookmark removed:\s*(.+)$/);
-      if (bookmarkRemovedMatch) {
-        return t('runtime.bookmarkRemoved', { value: bookmarkRemovedMatch[1] }, text);
-      }
-      const bookmarkedMatch = text.match(/^Bookmarked:\s*(.+)$/);
-      if (bookmarkedMatch) {
-        return t('runtime.bookmarked', { value: bookmarkedMatch[1] }, text);
-      }
       const unreadFilesHeaderMatch = text.match(/^(\s*)UNREAD FILES \((\d+)\)(\s*)$/);
       if (unreadFilesHeaderMatch) {
         return `${unreadFilesHeaderMatch[1]}${t(
@@ -309,15 +301,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           filesExaminedMatch,
           'runtime.filesExamined',
           { value: filesExaminedMatch[2] },
-          text
-        );
-      }
-      const bookmarksNotesMatch = text.match(/^(\s*)Bookmarks:\s*(\d+)\s+\|\s+Notes:\s*(\d+)$/);
-      if (bookmarksNotesMatch) {
-        return applyLeadingWhitespace(
-          bookmarksNotesMatch,
-          'runtime.bookmarksNotes',
-          { bookmarks: bookmarksNotesMatch[2], notes: bookmarksNotesMatch[3] },
           text
         );
       }

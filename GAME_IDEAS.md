@@ -92,7 +92,7 @@
 - ✅ **Command history** - ↑/↓ arrows to navigate previous commands
 - ✅ **"last" command** - Re-display last opened file without detection increase
 - ✅ **"back" command** - Navigate to parent directory quickly
-- ✅ **Bookmark/note system** - `note`, `notes`, `bookmark` commands for player organization
+- ✅ **Note system** - `note`, `notes` commands for player organization
 - ✅ **Progress indicator** - `progress` command shows evidence collected (X/5)
 
 ### Medium Impact

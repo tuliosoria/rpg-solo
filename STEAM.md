@@ -82,7 +82,6 @@ Game achievements are mapped to Steam achievements in `electron/steam-achievemen
 | `doom_fan` | `IDDQD` | Activate god mode |
 | `archivist` | `ARCHIVIST` | Read every file in a folder with 3+ files |
 | `paranoid` | `PARANOID` | Check system status 10+ times |
-| `bookworm` | `BOOKWORM` | Bookmark 5+ files |
 | `night_owl` | `NIGHT_OWL` | Play for over 30 minutes |
 | `liberator` | `LIBERATOR` | Release ALPHA from containment |
 | `whistleblower` | `WHISTLEBLOWER` | Leak the dossier successfully |

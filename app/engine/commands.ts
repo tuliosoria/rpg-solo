@@ -1256,7 +1256,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   const currentHostility =
     result.stateChanges.systemHostilityLevel ?? state.systemHostilityLevel ?? 0;
   if (currentHostility >= 3) {
-    result.output = applyHostileFiltering(result.output, currentHostility);
+    result.output = applyHostileFiltering(result.output, currentHostility, state.detectionLevel);
 
     const triggered = state.singularEventsTriggered || new Set<string>();
     if (!triggered.has('ufo74_risk_corruption_warning')) {

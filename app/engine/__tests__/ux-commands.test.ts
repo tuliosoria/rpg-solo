@@ -1,4 +1,4 @@
-// UX Commands Tests - last, back, note, notes, bookmark, unread, progress
+// UX Commands Tests - last, back, note, notes, unread, progress
 import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
@@ -165,47 +165,6 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('YOUR NOTES'))).toBe(true);
       expect(result.output.some(e => e.content.includes('test note 1'))).toBe(true);
       expect(result.output.some(e => e.content.includes('test note 2'))).toBe(true);
-    });
-  });
-
-  describe('bookmark command', () => {
-    it('should show bookmarks when no args', () => {
-      const state = createTestState({
-        bookmarkedFiles: new Set(['/internal/test.txt']),
-      });
-      const result = executeCommand('bookmark', state);
-
-      expect(result.output.some(e => e.content.includes('BOOKMARKED FILES'))).toBe(true);
-    });
-
-    it('should show empty message when no bookmarks', () => {
-      const state = createTestState();
-      const result = executeCommand('bookmark', state);
-
-      expect(result.output.some(e => e.content.includes('No bookmarks saved'))).toBe(true);
-    });
-
-    it('should add a bookmark', () => {
-      const state = createTestState({ currentPath: '/internal/protocols' });
-      const result = executeCommand('bookmark session_objectives.txt', state);
-
-      expect(result.stateChanges.bookmarkedFiles).toBeDefined();
-      expect(
-        result.stateChanges.bookmarkedFiles?.has('/internal/protocols/session_objectives.txt')
-      ).toBe(true);
-    });
-
-    it('should toggle bookmark off', () => {
-      const state = createTestState({
-        currentPath: '/internal/protocols',
-        bookmarkedFiles: new Set(['/internal/protocols/session_objectives.txt']),
-      });
-      const result = executeCommand('bookmark session_objectives.txt', state);
-
-      expect(
-        result.stateChanges.bookmarkedFiles?.has('/internal/protocols/session_objectives.txt')
-      ).toBe(false);
-      expect(result.output.some(e => e.content.includes('removed'))).toBe(true);
     });
   });
 
@@ -469,16 +428,6 @@ describe('UX Commands', () => {
   });
 
   describe('ls command enhancements', () => {
-    it('should show bookmark star for bookmarked files', () => {
-      const state = createTestState({
-        currentPath: '/internal/protocols',
-        bookmarkedFiles: new Set(['/internal/protocols/session_objectives.txt']),
-      });
-      const result = executeCommand('ls', state);
-
-      expect(result.output.some(e => e.content.includes('★'))).toBe(true);
-    });
-
     it('should show [READ] for read files', () => {
       const state = createTestState({
         currentPath: '/internal/protocols',

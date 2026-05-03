@@ -851,7 +851,7 @@ export function useTerminalEffects({
       },
       {
         key: 'terminal.idleHint.16',
-        fallback: "Don't forget: 'note' saves reminders, 'bookmark' saves files.",
+        fallback: "UFO74: Don't forget: 'note' saves your notes about the files you read, 'save' saves files to leak later. Found a file that seems suspicious, kid? Save it!",
         condition: (s: GameState) =>
           (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0,
       },
@@ -859,6 +859,20 @@ export function useTerminalEffects({
         key: 'terminal.idleHint.17',
         fallback: "Check 'unread' to see what you haven't opened yet.",
         condition: (s: GameState) => (s.filesRead?.size || 0) >= 3,
+      },
+      {
+        key: 'terminal.idleHint.18',
+        fallback: "UFO74: don't react. it feeds on attention. Use command 'wait' to reduce risk.",
+        condition: (s: GameState) =>
+          s.detectionLevel > DETECTION_THRESHOLDS.SUSPICIOUS &&
+          s.detectionLevel < DETECTION_THRESHOLDS.HEAVY_GLITCH,
+      },
+      {
+        key: 'terminal.idleHint.19',
+        fallback: "UFO74: found /internal/maintenance_notes.txt yet? interesting reading. something about an override protocol. wonder what's behind it.",
+        condition: (s: GameState) =>
+          (s.filesRead?.size || 0) >= 4 &&
+          !s.filesRead?.has('/internal/maintenance_notes.txt'),
       },
     ],
     []
