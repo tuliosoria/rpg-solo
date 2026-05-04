@@ -12,6 +12,7 @@ import {
   getEndingTitle,
 } from '../../engine/endings';
 import type { EndingFlags } from '../../engine/endings';
+import { buildLeakPrologue } from '../../engine/leakPrologue';
 import type { TextSpeed } from '../../types';
 
 const AOL_TIMINGS: Record<
@@ -67,6 +68,7 @@ interface VictoryProps {
   alphaReleased?: boolean;
   neuralLinkAuthenticated?: boolean;
   textSpeed?: TextSpeed;
+  savedFiles?: ReadonlySet<string>;
 }
 
 export default function Victory({
@@ -82,6 +84,7 @@ export default function Victory({
   alphaReleased = false,
   neuralLinkAuthenticated = false,
   textSpeed = 'normal',
+  savedFiles,
 }: VictoryProps) {
   const { t, translateRuntimeText } = useI18n();
   const isInstant = textSpeed === 'instant';
@@ -137,14 +140,22 @@ export default function Victory({
   const endingTitle = translateRuntimeText(getEndingTitle(resolvedEndingId));
 
   const ending = ENDINGS[resolvedEndingId];
-  const aol = ending?.aol ?? {
-    headline: t('ending.aol.fallback.headline'),
-    subheadline: t('ending.aol.fallback.subheadline'),
-    body: [t('ending.aol.fallback.body')],
-    url: 'http://www.aol.com/news/',
-    imageAlt: t('ending.aol.fallback.imageAlt'),
-    visitorCount: 0,
-  };
+  const leakPrologue = useMemo(
+    () => buildLeakPrologue(savedFiles, resolvedEndingId),
+    [savedFiles, resolvedEndingId],
+  );
+  const aol = useMemo(() => {
+    const baseAol = ending?.aol ?? {
+      headline: t('ending.aol.fallback.headline'),
+      subheadline: t('ending.aol.fallback.subheadline'),
+      body: [t('ending.aol.fallback.body')],
+      url: 'http://www.aol.com/news/',
+      imageAlt: t('ending.aol.fallback.imageAlt'),
+      visitorCount: 0,
+    };
+    if (leakPrologue.length === 0) return baseAol;
+    return { ...baseAol, body: [...leakPrologue, ...baseAol.body] };
+  }, [ending, leakPrologue, t]);
   const timings = AOL_TIMINGS[textSpeed] ?? AOL_TIMINGS.normal;
   const leakPath = hasLeakedFiles ? 'public' : ENDING_LEAK_PATHS[resolvedEndingId];
   const leakPathLabel = t(`ending.dossier.path.${leakPath}`);

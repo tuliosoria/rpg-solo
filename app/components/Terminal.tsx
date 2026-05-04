@@ -1078,6 +1078,7 @@ export default function Terminal({
           endingId={gameState.endingId as EndingId | undefined}
           endingFlags={getEndingFlags(gameState)}
           textSpeed={textSpeed}
+          savedFiles={gameState.savedFiles}
         />
       </FloatingUIProvider>
     );
