@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { analyzeLeak, buildLeakPrologue } from '../leakPrologue';
 import { EVIDENCE_VIDEO_ATTACHMENTS } from '../../components/terminalConstants';
+import { RUNTIME_TRANSLATIONS } from '../../i18n/runtime';
 
 const ALIEN_FILES = [
   '/internal/autopsy_alpha.log',
@@ -116,4 +117,26 @@ describe('leak prologue ↔ terminal constants drift', () => {
       expect(summary.hasVideos, `expected video detection for ${fullPath}`).toBe(true);
     }
   });
+});
+
+describe('leak prologue translations', () => {
+  const ALL_PROLOGUE_STRINGS = new Set<string>([
+    ...buildLeakPrologue(new Set([IMAGE_BEARING_PATH, VIDEO_BEARING_PATH]), 'real_ending'),
+    ...buildLeakPrologue(new Set([IMAGE_BEARING_PATH, '/internal/witness_statement_raw.txt']), 'real_ending'),
+    ...buildLeakPrologue(new Set([VIDEO_BEARING_PATH, '/internal/witness_statement_raw.txt']), 'real_ending'),
+    ...buildLeakPrologue(
+      new Set(['/internal/autopsy_alpha.log', '/internal/witness_statement_raw.txt']),
+      'real_ending',
+    ),
+  ]);
+
+  for (const language of ['pt-BR', 'es'] as const) {
+    it(`${language} dictionary covers every prologue paragraph`, () => {
+      const dict = RUNTIME_TRANSLATIONS[language];
+      for (const paragraph of ALL_PROLOGUE_STRINGS) {
+        expect(dict[paragraph], `missing ${language} translation for: ${paragraph}`).toBeDefined();
+        expect(dict[paragraph]).not.toBe(paragraph);
+      }
+    });
+  }
 });

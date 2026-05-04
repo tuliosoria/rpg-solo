@@ -15236,17 +15236,54 @@ const RUNTIME_TRANSLATIONS_WAVE_4: Record<Exclude<Language, 'en'>, RuntimeDictio
   ),
 };
 
+const RUNTIME_TRANSLATIONS_LEAK_PROLOGUE: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
+  'pt-BR': {
+    'A user known only as hackerkid has leaked classified Brazilian government files appearing to prove the existence of extraterrestrial life, and the world is in international uproar.':
+      'Um usuário conhecido apenas como hackerkid vazou arquivos confidenciais do governo brasileiro que parecem comprovar a existência de vida extraterrestre, e o mundo vive uma comoção internacional.',
+    'The dump includes photographic evidence and video footage, amplifying the hysteria with every replay.':
+      'O vazamento inclui evidências fotográficas e imagens em vídeo, amplificando a histeria a cada nova exibição.',
+    'The dump includes photographic evidence, and broadcasters loop the stills on every channel.':
+      'O vazamento inclui evidências fotográficas, e as emissoras repetem as imagens em todos os canais.',
+    'The dump includes raw video footage, and the clips amplify the hysteria with every replay.':
+      'O vazamento inclui imagens em vídeo brutas, e os clipes amplificam a histeria a cada nova exibição.',
+    'The dump is text-only, but the documents read like internal memos no one was ever meant to see.':
+      'O vazamento é apenas em texto, mas os documentos parecem memorandos internos que ninguém deveria ter visto.',
+    'Skeptics insist the files are forged. Forensic analysts, working around the clock, are reporting that they may be authentic.':
+      'Céticos insistem que os arquivos são forjados. Analistas forenses, trabalhando sem parar, relatam que eles podem ser autênticos.',
+    'Aliens are all anyone is talking about. Then, buried inside the same archive, a second story begins to surface.':
+      'Aliens são tudo sobre o que se fala. Então, enterrada dentro do mesmo arquivo, uma segunda história começa a vir à tona.',
+  },
+  es: {
+    'A user known only as hackerkid has leaked classified Brazilian government files appearing to prove the existence of extraterrestrial life, and the world is in international uproar.':
+      'Un usuario conocido sólo como hackerkid ha filtrado archivos clasificados del gobierno brasileño que parecen probar la existencia de vida extraterrestre, y el mundo está en conmoción internacional.',
+    'The dump includes photographic evidence and video footage, amplifying the hysteria with every replay.':
+      'La filtración incluye evidencia fotográfica y material en video, amplificando la histeria con cada repetición.',
+    'The dump includes photographic evidence, and broadcasters loop the stills on every channel.':
+      'La filtración incluye evidencia fotográfica, y las cadenas repiten las imágenes en todos los canales.',
+    'The dump includes raw video footage, and the clips amplify the hysteria with every replay.':
+      'La filtración incluye material en video sin editar, y los clips amplifican la histeria con cada repetición.',
+    'The dump is text-only, but the documents read like internal memos no one was ever meant to see.':
+      'La filtración es sólo de texto, pero los documentos parecen memorandos internos que nadie debió haber visto.',
+    'Skeptics insist the files are forged. Forensic analysts, working around the clock, are reporting that they may be authentic.':
+      'Los escépticos insisten en que los archivos son falsificados. Analistas forenses, trabajando sin descanso, informan que podrían ser auténticos.',
+    'Aliens are all anyone is talking about. Then, buried inside the same archive, a second story begins to surface.':
+      'Los extraterrestres son todo de lo que se habla. Entonces, enterrada dentro del mismo archivo, una segunda historia comienza a salir a la luz.',
+  },
+};
+
 export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
   'pt-BR': {
     ...RUNTIME_TRANSLATIONS_PRE_WAVE_4['pt-BR'],
     ...RUNTIME_TRANSLATIONS_WAVE_4['pt-BR'],
     ...RUNTIME_DATA_TRANSLATIONS['pt-BR'],
     ...RUNTIME_VFS_TRANSLATIONS['pt-BR'],
+    ...RUNTIME_TRANSLATIONS_LEAK_PROLOGUE['pt-BR'],
   },
   es: {
     ...RUNTIME_TRANSLATIONS_PRE_WAVE_4.es,
     ...RUNTIME_TRANSLATIONS_WAVE_4.es,
     ...RUNTIME_DATA_TRANSLATIONS.es,
     ...RUNTIME_VFS_TRANSLATIONS.es,
+    ...RUNTIME_TRANSLATIONS_LEAK_PROLOGUE.es,
   },
 };
