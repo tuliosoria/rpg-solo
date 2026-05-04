@@ -1259,7 +1259,11 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     result.output = applyHostileFiltering(result.output, currentHostility, state.detectionLevel);
 
     const triggered = state.singularEventsTriggered || new Set<string>();
-    if (!triggered.has('ufo74_risk_corruption_warning')) {
+    // Suppress the "use wait to lower risk" tip when the player just used
+    // the wait command — telling them to do what they already did is
+    // redundant and breaks immersion. The warning will fire on the next
+    // non-wait command if hostility is still elevated.
+    if (!triggered.has('ufo74_risk_corruption_warning') && command !== 'wait') {
       const newTriggered = new Set(triggered);
       newTriggered.add('ufo74_risk_corruption_warning');
       result.stateChanges.singularEventsTriggered = new Set([
