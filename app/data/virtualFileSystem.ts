@@ -41,6 +41,7 @@ import {
   alpha_neural_connection,
   alpha_autopsy_addendum,
 } from './alpha';
+import { convergence_model_draft } from './archiveFiles';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // INSTITUTIONAL FRAMING - Implicit guidance through bureaucratic language
@@ -3600,6 +3601,11 @@ export const FILESYSTEM_ROOT: DirectoryNode = {
         'emergency_broadcast.enc': emergency_broadcast,
         'redaction_override_memo.txt': redaction_override_memo,
         'trace_purge_memo.txt': trace_purge_memo,
+        // Convergence Model — formerly archive-only. Surfaced into live /admin
+        // so the THE FERREIRA PROTOCOL secret_ending dossier (which requires
+        // a saved file with "convergence" in the basename) is reachable now
+        // that rewind/archive mode has been retired.
+        'convergence_model_draft.txt': convergence_model_draft,
         // NEW: Cover story management
         coverup: COVERUP_DIR,
       },

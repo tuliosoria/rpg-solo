@@ -1693,7 +1693,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       '  Nenhum registro existe em bancos de dados acessíveis via FOIA.',
 
     // ═══════════════════════════════════════════════════════════
-    // ARCHIVE FILES — convergence_model_draft.txt
+    // /admin/convergence_model_draft.txt
     // ═══════════════════════════════════════════════════════════
     'CONVERGENCE MODEL — DRAFT (PURGED)': 'MODELO DE CONVERGÊNCIA — RASCUNHO (EXPURGADO)',
     'PROJECT SEED — TEMPORAL ANALYSIS DIVISION': 'PROJETO SEED — DIVISÃO DE ANÁLISE TEMPORAL',
@@ -7543,7 +7543,7 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
       '  No existe registro en bases de datos accesibles vía FOIA.',
 
     // ═══════════════════════════════════════════════════════════
-    // ARCHIVE FILES — convergence_model_draft.txt
+    // /admin/convergence_model_draft.txt
     // ═══════════════════════════════════════════════════════════
     'CONVERGENCE MODEL — DRAFT (PURGED)': 'MODELO DE CONVERGENCIA — BORRADOR (PURGADO)',
     'PROJECT SEED — TEMPORAL ANALYSIS DIVISION': 'PROYECTO SEED — DIVISIÓN DE ANÁLISIS TEMPORAL',

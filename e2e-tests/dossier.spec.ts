@@ -79,5 +79,17 @@ test.describe('Dossier Leak Flow', () => {
     await expect(getCommandInput(page)).toBeEnabled();
     await runCommand(page, 'leak', { waitForInput: false });
     await waitForAllContent(page, ['LEAK TRANSMISSION INITIATED', 'TRANSMISSION SUCCESSFUL.']);
+
+    // After transmission, the engine resolves the dossier to an ending and
+    // transitions to the Victory phase. This dossier (7 conspiracy_unrelated
+    // + 1 corruption_financial + 2 uncategorized + 0 ufo_core) trips the
+    // `wrong_story` priority rule (corruption+conspiracy >= 5 && core <= 1).
+    // Verify the Victory AOL page actually renders that ending so a future
+    // change to determineEnding() or the Victory pipeline cannot silently
+    // break the leak → ending wiring.
+    await waitForAllContent(page, [
+      'MILITARY BUDGET SCANDAL UNCOVERED IN LEAKED BRAZILIAN DOCUMENTS',
+      'THE WRONG STORY',
+    ]);
   });
 });
