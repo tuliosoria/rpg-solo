@@ -20,7 +20,7 @@ describe('systemCommands save/unsave localization', () => {
     const result = systemCommands.save([], createTestState());
     const output = result.output.map(entry => entry.content);
 
-    expect(output).toContain('  USO: save <filename>');
+    expect(output).toContain('  USO: guardar <archivo>');
     expect(output).toContain('  Guarda un archivo leído cuando refuerce tu caso.');
     expect(output).toContain('  Dossier: 0/10 archivos guardados');
   });

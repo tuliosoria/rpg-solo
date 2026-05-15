@@ -92,7 +92,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: clear': 'COMANDO: clear',
     '  clear          - Clear screen': '  clear          - Limpa a tela',
     'SHORTCUT: Ctrl+L': 'ATALHO: Ctrl+L',
-    'COMMAND: save <filename>': 'COMANDO: save <filename>',
+    'COMMAND: save <filename>': 'COMANDO: salvar <arquivo>',
     'Save a read file when it strengthens your case.':
       'Salve um arquivo já lido quando ele fortalecer seu caso.',
     'You must have read the file first.':
@@ -101,7 +101,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       '  save report.txt    - Salva report.txt no dossiê',
     'NOTE: Your dossier can hold up to 10 files. Choose carefully.':
       'NOTA: Seu dossiê pode guardar até 10 arquivos. Escolha com cuidado.',
-    'COMMAND: unsave <filename>': 'COMANDO: unsave <filename>',
+    'COMMAND: unsave <filename>': 'COMANDO: remover <arquivo>',
     'Remove a file from your dossier.': 'Remova um arquivo do seu dossiê.',
     '  unsave report.txt  - Remove report.txt from dossier':
       '  unsave report.txt  - Remove report.txt do dossiê',
@@ -1237,7 +1237,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: clear': 'COMANDO: clear',
     '  clear          - Clear screen': '  clear          - Limpia la pantalla',
     'SHORTCUT: Ctrl+L': 'ATAJO: Ctrl+L',
-    'COMMAND: save <filename>': 'COMANDO: save <filename>',
+    'COMMAND: save <filename>': 'COMANDO: guardar <archivo>',
     'Save a read file when it strengthens your case.':
       'Guarda un archivo leído cuando refuerce tu caso.',
     'You must have read the file first.':
@@ -1246,7 +1246,7 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       '  save report.txt    - Guarda report.txt en el dossier',
     'NOTE: Your dossier can hold up to 10 files. Choose carefully.':
       'NOTA: Tu dossier puede guardar hasta 10 archivos. Elige con cuidado.',
-    'COMMAND: unsave <filename>': 'COMANDO: unsave <filename>',
+    'COMMAND: unsave <filename>': 'COMANDO: quitar <archivo>',
     'Remove a file from your dossier.': 'Quita un archivo de tu dossier.',
     '  unsave report.txt  - Remove report.txt from dossier':
       '  unsave report.txt  - Quita report.txt del dossier',
