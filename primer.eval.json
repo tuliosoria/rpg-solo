@@ -14,7 +14,7 @@
     {
       "id": "live-gameplay-loop",
       "prompt": "What is the current live gameplay flow and command set I should describe to players?",
-      "expectation": "Should describe the live loop as direct investigation and cross-referencing, mention search, progress, unread, bookmark, hint, wait, leak, chat, and help, and note decrypt and rewind are legacy rather than core live commands."
+      "expectation": "Should describe the live loop as direct investigation and cross-referencing, mention search, progress, unread, save, unsave, hint, wait, leak, chat, and help, and note decrypt and rewind are legacy rather than core live commands."
     },
     {
       "id": "state-and-balance-guidance",

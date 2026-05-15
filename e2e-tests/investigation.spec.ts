@@ -6,9 +6,7 @@ import {
 } from './helpers';
 
 test.describe('Investigation Commands', () => {
-  test('search, bookmark, unread, and progress reflect the live investigation flow', async ({
-    page,
-  }) => {
+  test('search, save, unread, and progress reflect the live investigation flow', async ({ page }) => {
     await startLiveRun(page);
 
     await runCommand(page, 'progress');
@@ -23,23 +21,22 @@ test.describe('Investigation Commands', () => {
       'SEARCH RESULTS',
       'QUERY: parking',
       'parking_regulations.txt',
-      'Use "open <path>" to inspect a result or "bookmark <path>" to save it.',
+      'Use "open <path>" to inspect a result or "save <path>" to keep it.',
     ]);
 
-    await runCommand(page, 'bookmark /internal/misc/cafeteria_menu_week03.txt');
+    await runCommand(page, 'open /internal/misc/cafeteria_menu_week03.txt');
     await waitForAllContent(page, [
-      'Bookmarked: /internal/misc/cafeteria_menu_week03.txt',
-      'Use "bookmark" to view all bookmarks',
+      'FILE: /internal/misc/cafeteria_menu_week03.txt',
+      'CAFETERIA MENU — WEEK 03 (15-19 JAN 1996)',
     ]);
 
-    await runCommand(page, 'bookmark');
+    await runCommand(page, 'save cafeteria_menu_week03.txt');
     await waitForAllContent(page, [
-      'BOOKMARKED FILES',
-      'cafeteria_menu_week03.txt',
-      '/internal/misc/cafeteria_menu_week03.txt',
+      'FILE SAVED TO DOSSIER: cafeteria_menu_week03.txt',
+      'Dossier: 1/10',
     ]);
 
     await runCommand(page, 'unread');
-    await waitForAllContent(page, ['UNREAD FILES', '/internal/misc/cafeteria_menu_week03.txt']);
+    await waitForAllContent(page, ['UNREAD FILES', 'parking_regulations.txt']);
   });
 });
