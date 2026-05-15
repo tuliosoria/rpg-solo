@@ -13,7 +13,8 @@ test.describe('Entry Flow', () => {
     expect(content).toContain('TERMINAL COMMANDS');
     expect(content).toContain('open <file>');
     expect(content).toContain('search <term>');
-    expect(content).toContain('bookmark [file]');
+    expect(content).toContain('save <file>');
+    expect(content).toContain('unsave <file>');
     expect(content).toContain('wait');
     expect(content).toContain('leak');
   });

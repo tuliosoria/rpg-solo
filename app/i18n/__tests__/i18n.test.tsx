@@ -193,13 +193,13 @@ describe('i18n system', () => {
     });
 
     expect(result.current.translateRuntimeText('COMMAND: save <filename>')).toBe(
-      'COMANDO: save <filename>'
+      'COMANDO: salvar <arquivo>'
     );
     expect(
       result.current.translateRuntimeText('Save a read file when it strengthens your case.')
     ).toBe('Salve um arquivo já lido quando ele fortalecer seu caso.');
     expect(result.current.translateRuntimeText('COMMAND: unsave <filename>')).toBe(
-      'COMANDO: unsave <filename>'
+      'COMANDO: remover <arquivo>'
     );
   });
 

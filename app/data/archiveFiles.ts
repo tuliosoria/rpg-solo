@@ -430,6 +430,14 @@ export const convergence_model_draft: FileNode = {
 // Map of archive files by their full paths
 // These files only appear in archive mode (during rewind)
 // Placed in existing directories for easier access
+//
+// NOTE: convergence_model_draft is NOT listed here because it is the unique
+// trigger for the secret_ending dossier (the determineEnding() check looks for
+// any saved file whose basename contains "convergence", and no other file in
+// the live filesystem matches). Since archive/rewind has been retired, the
+// file is wired into the live /admin/ directory via virtualFileSystem.ts so
+// the THE FERREIRA PROTOCOL ending and its Steam achievement remain
+// reachable through normal play.
 export const ARCHIVE_FILES: Record<string, FileNode> = {
   '/storage/quarantine/witness_statement_original.txt': witness_statement_original,
   '/storage/assets/directive_alpha_draft.txt': directive_alpha_draft,
@@ -442,7 +450,6 @@ export const ARCHIVE_FILES: Record<string, FileNode> = {
   '/admin/bio_containment_log_deleted.txt': bio_containment_log_deleted,
   '/admin/psi_analysis_classified.txt': psi_analysis_classified,
   '/admin/foreign_liaison_cable_deleted.txt': foreign_liaison_cable_deleted,
-  '/admin/convergence_model_draft.txt': convergence_model_draft,
 };
 
 // Directories that gain additional files in archive mode
@@ -458,7 +465,6 @@ export const ARCHIVE_DIRECTORY_ADDITIONS: Record<string, string[]> = {
     'bio_containment_log_deleted.txt',
     'psi_analysis_classified.txt',
     'foreign_liaison_cable_deleted.txt',
-    'convergence_model_draft.txt',
   ],
 };
 
