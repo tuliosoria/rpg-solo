@@ -48,3 +48,42 @@ describe('help body — command localization (BUG-002)', () => {
     });
   });
 });
+
+describe('hide-referencing strings localize the command name (BUG-003)', () => {
+  const hideKeysToCheck: string[] = [
+    'engine.commands.core.emergency_type_hide_now_one_chance',
+    'engine.commands.tutorial.at_90_risk_hide_becomes_a_one_time_escape',
+    'engine.commands.tutorial.hide',
+    'engine.commands.system.helpMenu.hide',
+    'engine.commands.system.status.recovery.hideAvailable',
+  ];
+
+  describe('PT-BR', () => {
+    for (const key of hideKeysToCheck) {
+      it(`${key} mentions "esconder", not "hide"`, () => {
+        const v = (ptBr as Record<string, string>)[key];
+        if (v === undefined) return;
+        expect(v).not.toMatch(/\bhide\b/);
+        expect(v).toMatch(/esconder/);
+      });
+    }
+  });
+
+  describe('ES', () => {
+    for (const key of hideKeysToCheck) {
+      it(`${key} mentions "esconder", not "hide"`, () => {
+        const v = (es as Record<string, string>)[key];
+        if (v === undefined) return;
+        expect(v).not.toMatch(/\bhide\b/);
+        expect(v).toMatch(/esconder/);
+      });
+    }
+  });
+
+  describe('EN regression', () => {
+    it('EN helpMenu.hide still references "hide"', () => {
+      const v = (en as Record<string, string>)['engine.commands.system.helpMenu.hide'];
+      expect(v).toMatch(/\bhide\b/);
+    });
+  });
+});

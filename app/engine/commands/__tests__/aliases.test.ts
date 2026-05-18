@@ -55,3 +55,21 @@ describe('resolveCommandAlias — existing aliases regression', () => {
     expect(resolveCommandAlias('ayuda')).toBe('help');
   });
 });
+
+describe('resolveCommandAlias — BUG-003 hide alias', () => {
+  it('maps PT-BR/ES "esconder" → "hide"', () => {
+    expect(resolveCommandAlias('esconder')).toBe('hide');
+  });
+});
+
+describe('localizedCommandName — BUG-003 hide', () => {
+  it('returns "esconder" for hide in PT-BR', () => {
+    expect(localizedCommandName('hide', 'pt-BR')).toBe('esconder');
+  });
+  it('returns "esconder" for hide in ES', () => {
+    expect(localizedCommandName('hide', 'es')).toBe('esconder');
+  });
+  it('returns "hide" for hide in EN', () => {
+    expect(localizedCommandName('hide', 'en')).toBe('hide');
+  });
+});
