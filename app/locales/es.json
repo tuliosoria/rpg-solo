@@ -1585,7 +1585,7 @@
   "engine.commands.system.helpMenu.morse": "  morse <text>      Descifrar mensajes en código morse",
   "engine.commands.system.helpMenu.hint": "  pista              Solicitar una pista (usos limitados)",
   "engine.commands.system.helpMenu.wait": "  esperar            Bajar detección brevemente (limitado)",
-  "engine.commands.system.helpMenu.hide": "  esconder          Escape de emergencia con 90% de riesgo",
+  "engine.commands.system.helpMenu.hide": "  esconder           Escape de emergencia con 90% de riesgo",
   "engine.commands.system.helpMenu.leak": "  filtrar            Transmitir dossier (sin vuelta)",
   "engine.commands.system.helpMenu.override": "  protocolo <código>  Ejecutar protocolo admin",
   "engine.commands.system.helpMenu.tutorial": "  tutorial [on/off] Alternar consejos del tutorial o repetir la intro",
