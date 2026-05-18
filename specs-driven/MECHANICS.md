@@ -70,7 +70,7 @@
 | Command | Aliases | Description | Detection Cost | Notes |
 |---------|---------|-------------|----------------|-------|
 | `wait` | `esperar` / `esperar` | Reduce detection level | −5 to −8 | 8 uses per run. 5s cooldown. High detection = −8. |
-| `hide` | — | Emergency escape | 0 | Only available at 90%+ detection |
+| `hide` | `esconder` / `esconder` | Emergency escape | 0 | Only available at 90%+ detection |
 
 ### Archive / Script Commands
 
