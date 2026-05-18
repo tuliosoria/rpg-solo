@@ -52,3 +52,6 @@ next-env.d.ts
 !/public/videos/README.md
 out/
 steam_appid.txt
+
+# git worktrees
+/.worktrees/
