@@ -157,6 +157,12 @@ Skills live in `.github/skills/`. Read the relevant `SKILL.md` before working in
 | `game-content` | Writing in-world files, UFO74 dialogue, terminal messages |
 | `testing` | Writing or fixing tests |
 | `version-bump` | Understanding or adjusting git-derived version/build display behavior |
+| `skill-authoring` | Creating, editing, or proposing a new skill (read before adding any `.github/skills/<name>/SKILL.md` or `specs-driven/skills/SKILL_*.md`) |
+
+Long-form reference deep-dives live in `specs-driven/skills/SKILL_*.md`
+(`BUGS`, `FILES`, `NARRATIVE`, `TRANSLATION`, `ENDINGS`, `AUDIO_VIDEO`).
+Those are not auto-loaded; the active `.github/skills/` skills link to them
+where relevant. See `skill-authoring` for the rules.
 
 ---
 
