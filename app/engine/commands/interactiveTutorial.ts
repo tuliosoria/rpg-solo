@@ -93,7 +93,7 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, (DialogueLine | 
     { key: 'engine.commands.interactiveTutorial.ufo74_some_actions_are_loud_others_are_quiet', fallback: '[UFO74]: Some actions are loud. Others are quiet.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_curiosity_has_a_cost_here', fallback: '[UFO74]: Curiosity has a cost here.' },
     null,
-    { key: 'engine.commands.interactiveTutorial.ufo74_type_help_if_you_forget', fallback: '[UFO74]: Type `help` if you forget something.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_type_help_if_you_forget', fallback: '[UFO74]: Type `help` or `hint` if you are lost and need help.' },
     null,
     { key: 'engine.commands.interactiveTutorial.ufo74_start_with_ls_kid', fallback: '[UFO74]: Start with `ls`, kid. just to check what directories we have here.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_then_use_cd_to_open_folders', fallback: '[UFO74]: Then use `cd` to open the folders.' },
@@ -761,7 +761,7 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
     createEntryI18n(
       'ufo74',
       'engine.commands.interactiveTutorial.ufo74_type_help_if_you_forget',
-      '[UFO74]: Type `help` if you forget something.'
+      '[UFO74]: Type `help` or `hint` if you are lost and need help.'
     ),
     createEntry('system', ''),
   ],

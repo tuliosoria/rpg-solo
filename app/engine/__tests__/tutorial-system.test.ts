@@ -107,7 +107,7 @@ describe('Tutorial System', () => {
       expect(briefingText).toContain(
         '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
       );
-      expect(briefingText).toContain('[UFO74]: Type `help` if you forget something.');
+      expect(briefingText).toContain('[UFO74]: Type `help` or `hint` if you are lost and need help.');
     });
 
     it('places the help reminder followed by the hand-off, then disconnect', () => {
@@ -121,7 +121,7 @@ describe('Tutorial System', () => {
 
       const helpStep = TUTORIAL_BRIEFING_STEPS[TUTORIAL_BRIEFING_STEPS.length - 3];
       const helpUfoLines = helpStep.filter(e => e.type === 'ufo74').map(e => e.content);
-      expect(helpUfoLines).toContain('[UFO74]: Type `help` if you forget something.');
+      expect(helpUfoLines).toContain('[UFO74]: Type `help` or `hint` if you are lost and need help.');
     });
   });
 
