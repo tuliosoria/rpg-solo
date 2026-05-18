@@ -192,6 +192,40 @@ export function resolveCommandAlias(cmd: string): string {
   return COMMAND_ALIASES[cmd] || cmd;
 }
 
+/**
+ * Return the localized form of an English canonical command for display.
+ * Falls back to the English canonical name when no localization exists
+ * (e.g. `ls`, `cd`, `tree` — see LANGUAGES.md "Terms That Stay in English").
+ */
+export function localizedCommandName(
+  englishCommand: string,
+  language: 'en' | 'pt-BR' | 'es'
+): string {
+  if (language === 'en') return englishCommand;
+  return COMMAND_TRANSLATIONS[language]?.[englishCommand] ?? englishCommand;
+}
+
+// Subcommand aliases (e.g. `help basics`): translated subcommand → canonical English.
+// Keys are lowercased and stripped of diacritics so lookups are accent-insensitive.
+const SUBCOMMAND_ALIASES: Record<string, string> = {
+  'basica': 'basics',
+  'basico': 'basics',
+  'basicos': 'basics',
+  'recuperacao': 'recovery',
+  'recuperacion': 'recovery',
+};
+
+function stripDiacritics(s: string): string {
+  return typeof s.normalize === 'function'
+    ? s.normalize('NFD').replace(/\p{Diacritic}/gu, '')
+    : s;
+}
+
+export function resolveSubcommandAlias(sub: string): string {
+  const normalized = stripDiacritics(sub.toLowerCase());
+  return SUBCOMMAND_ALIASES[normalized] ?? normalized;
+}
+
 // Parse command into name and args
 const CONTROL_CHARS_REGEX = /\p{Cc}/gu;
 const ZERO_WIDTH_REGEX = /[\u200B-\u200F\uFEFF]/g;
