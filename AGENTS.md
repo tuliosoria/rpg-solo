@@ -158,6 +158,7 @@ Skills live in `.github/skills/`. Read the relevant `SKILL.md` before working in
 | `game-design` | Modifying mechanics, detection, player psychology |
 | `game-content` | Writing in-world files, UFO74 dialogue, terminal messages |
 | `i18n` | Touching player-facing strings, locale JSON, runtime translation supplements, or command aliases |
+| `commands` | Adding, modifying, removing, or renaming any command (or the strings that display its name) |
 | `testing` | Writing or fixing tests; running the e2e suite or optional live-browser (Playwright MCP) checks |
 | `version-bump` | Understanding or adjusting git-derived version/build display behavior |
 | `skill-authoring` | Creating, editing, or proposing a new skill (read before adding any `.github/skills/<name>/SKILL.md` or `specs-driven/skills/SKILL_*.md`) |
