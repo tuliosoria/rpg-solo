@@ -19,3 +19,8 @@ export const MAX_SAVE_SLOTS = 10;
 
 // Maximum number of checkpoint saves (rolling, oldest deleted)
 export const MAX_CHECKPOINT_SAVES = 5;
+
+// Investigation-progress autosave throttle: only checkpoint once every N files read.
+// Prevents checkpoint spam on commands that read files (cat/scan/etc.) while still
+// preserving milestone checkpoints (access level, admin unlock, critical detection).
+export const CHECKPOINT_FILES_READ_INTERVAL = 5;
