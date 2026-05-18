@@ -132,17 +132,28 @@ describe('useTerminalInput evidence progression', () => {
     vi.clearAllMocks();
   });
 
-  it('writes hidden evidence checkpoints without triggering save-facing rewards', async () => {
+  it('writes hidden evidence checkpoints once every 5 files read', async () => {
     vi.mocked(executeCommand).mockReturnValue(
       createCommandResult({
         evidenceCount: 6,
-        filesRead: new Set(['/storage/quarantine/logistics_manifest_fragment.txt']),
+        filesRead: new Set([
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/manifest_a.txt',
+          '/storage/quarantine/manifest_b.txt',
+          '/storage/quarantine/manifest_c.txt',
+          '/storage/quarantine/logistics_manifest_fragment.txt',
+        ]),
       })
     );
     const options = createOptions(
       createGameState({
         evidenceCount: 5,
-        filesRead: new Set(['/storage/quarantine/bio_container.log']),
+        filesRead: new Set([
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/manifest_a.txt',
+          '/storage/quarantine/manifest_b.txt',
+          '/storage/quarantine/manifest_c.txt',
+        ]),
       })
     );
     const { result } = renderHook(() => useTerminalInput(options));
@@ -158,6 +169,34 @@ describe('useTerminalInput evidence progression', () => {
     expect(options.playSound).not.toHaveBeenCalledWith('fanfare');
     expect(options.checkAchievement).not.toHaveBeenCalledWith('first_blood');
     expect(options.checkAchievement).not.toHaveBeenCalledWith('truth_seeker');
+  });
+
+  it('does not write an investigation-progress checkpoint until 5 files have been read', async () => {
+    vi.mocked(executeCommand).mockReturnValue(
+      createCommandResult({
+        evidenceCount: 6,
+        filesRead: new Set([
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/logistics_manifest_fragment.txt',
+        ]),
+      })
+    );
+    const options = createOptions(
+      createGameState({
+        evidenceCount: 5,
+        filesRead: new Set(['/storage/quarantine/bio_container.log']),
+      })
+    );
+    const { result } = renderHook(() => useTerminalInput(options));
+
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+
+    expect(saveCheckpoint).not.toHaveBeenCalledWith(
+      expect.anything(),
+      'Investigation progress'
+    );
   });
 
   it('grants first_blood when the first file is saved', async () => {
