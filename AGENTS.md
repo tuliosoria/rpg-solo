@@ -140,10 +140,10 @@ The game is set during the **real Varginha UFO incident** (January 1996, Minas G
 |---|---|
 | Add a game file | Add FileNode/content in `app/data/virtualFileSystem.ts` or the relevant `app/data/*.ts` module |
 | Adjust difficulty | Edit `app/constants/detection.ts` |
-| Add a command | Add handler in `app/engine/commands.ts` |
+| Add a command | Add handler in the appropriate `app/engine/commands/*.ts` module (assembled by `app/engine/commands/index.ts`) |
 | Change starting state | Edit `DEFAULT_GAME_STATE` in `app/types/index.ts` |
 | Add UFO74 dialogue | See `app/engine/commands/` subdirectory |
-| Understand version string | Read `app/components/terminalConstants.ts` (lines 144–149) |
+| Understand version string | Read `app/components/terminalConstants.ts` |
 
 ---
 
@@ -155,6 +155,7 @@ Skills live in `.github/skills/`. Read the relevant `SKILL.md` before working in
 |---|---|
 | `game-design` | Modifying mechanics, detection, player psychology |
 | `game-content` | Writing in-world files, UFO74 dialogue, terminal messages |
+| `i18n` | Touching player-facing strings, locale JSON, runtime translation supplements, or command aliases |
 | `testing` | Writing or fixing tests |
 | `version-bump` | Understanding or adjusting git-derived version/build display behavior |
 

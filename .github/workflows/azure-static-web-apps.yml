@@ -8,6 +8,13 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
+    # Docs-only PRs should not consume an Azure SWA staging-environment slot
+    # (the per-app cap is ~10 and is shared across all open PRs).
+    # Keep this in sync with the actual locations of repo documentation —
+    # do NOT add app/, public/, electron/, or other build inputs here.
+    paths-ignore:
+      - '**/*.md'
+      - '.github/**'
   workflow_dispatch:
 
 jobs:
