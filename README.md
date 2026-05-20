@@ -4,7 +4,7 @@
 
 A terminal-based discovery puzzle game. You've illegally accessed a Brazilian intelligence legacy system. Reconstruct the truth before shutdown, corruption, or detection.
 
-**[▶ PLAY NOW](https://thankful-grass-0f49be40f.2.azurestaticapps.net)**
+**Steam release candidate:** packaged desktop builds include Steam achievements, cloud saves, and rich presence when launched through Steam.
 
 ---
 
@@ -62,7 +62,7 @@ Available for Windows, macOS, and Linux via Electron:
 npm run electron:build
 ```
 
-`electron:build` packages the current platform locally. CI still produces Windows, macOS, and Linux artifacts from the shared `electron-builder.yml` matrix. Steam features degrade gracefully when no App ID or Steam client is available, and tray minimize remains optional instead of hijacking close by default.
+`electron:build` packages the current platform locally. CI still produces Windows, macOS, and Linux artifacts from the shared `electron-builder.yml` matrix. Steam features degrade gracefully when no App ID or Steam client is available, while tagged release builds require a configured App ID before packaging.
 
 ## Project Structure
 
@@ -98,7 +98,7 @@ GitHub Actions validates every commit:
 |----------|--------|
 | Web | Azure Static Apps |
 | Desktop | Windows, macOS, Linux |
-| Steam | Electron build with Steamworks features when `STEAM_APP_ID` is configured |
+| Steam | Electron build with Steamworks features when `STEAM_APP_ID` is configured at packaging time |
 
 ---
 

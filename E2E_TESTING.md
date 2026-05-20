@@ -112,7 +112,7 @@ export default defineConfig({
   timeout: 120000,                 // 2-minute timeout per test
 
   use: {
-    baseURL: 'https://thankful-grass-0f49be40f.2.azurestaticapps.net',
+    baseURL: process.env.BASE_URL ?? 'http://127.0.0.1:3000',
     trace: 'on-first-retry',       // Capture trace on retry
     screenshot: 'only-on-failure', // Auto-screenshot on failure
     headless: true,                // Run without visible browser
@@ -141,8 +141,8 @@ export default defineConfig({
 ```typescript
 import { test, expect, Page } from '@playwright/test';
 
-// Target URL (production or staging)
-const URL = 'https://thankful-grass-0f49be40f.2.azurestaticapps.net';
+// Target URL (local by default; override with BASE_URL for deployed smoke tests)
+const URL = process.env.BASE_URL ?? 'http://127.0.0.1:3000';
 
 // Helper: Type a command and press Enter
 async function typeCommand(page: Page, command: string, stepName: string) {
@@ -217,7 +217,7 @@ Running 1 test using 1 worker
 
 ========== TUTORIAL E2E TEST ==========
 
-Navigating to: https://thankful-grass-0f49be40f.2.azurestaticapps.net
+Navigating to: http://127.0.0.1:3000
 
 Step 1: Load page - ✅ PASS
 
@@ -301,7 +301,7 @@ Screenshots are saved to `e2e-tests/screenshots/`. Review them to:
 // e2e-tests/command-help.spec.ts
 import { test, expect, Page } from '@playwright/test';
 
-const URL = 'https://thankful-grass-0f49be40f.2.azurestaticapps.net';
+const URL = process.env.BASE_URL ?? 'http://127.0.0.1:3000';
 
 async function typeCommand(page: Page, command: string) {
   await page.keyboard.type(command, { delay: 50 });
@@ -462,14 +462,14 @@ For CI that tests against a local build:
 - name: Run E2E tests
   run: npx playwright test --config=e2e-tests/playwright.config.ts
   env:
-    E2E_BASE_URL: http://localhost:3000
+    BASE_URL: http://127.0.0.1:3000
 ```
 
 Then update your config:
 
 ```typescript
 use: {
-  baseURL: process.env.E2E_BASE_URL || 'https://thankful-grass-0f49be40f.2.azurestaticapps.net',
+  baseURL: process.env.BASE_URL ?? 'http://127.0.0.1:3000',
   // ...
 },
 ```

@@ -1,11 +1,15 @@
 {
   "name": "varginha-terminal-1996",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "A narrative puzzle game about the 1996 Varginha UFO incident in Brazil.",
   "author": {
     "name": "Varginha Terminal 1996 contributors",
     "email": "dev@varginha1996.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tuliosoria/rpg-solo.git"
   },
   "main": "electron/main.js",
   "engines": {
