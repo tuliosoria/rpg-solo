@@ -1,4 +1,10 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+vi.mock('../../lib/steamBridge', () => ({
+  unlockAchievement: vi.fn(async () => ({ success: true })),
+}));
+
+import { unlockAchievement as steamUnlockAchievement } from '../../lib/steamBridge';
 import {
   ACHIEVEMENTS,
   getUnlockedAchievements,
@@ -7,6 +13,7 @@ import {
   clearAchievements,
   getAchievement,
   getAllAchievementsWithStatus,
+  syncUnlockedAchievementsToSteam,
 } from '../achievements';
 
 // Mock localStorage
@@ -31,6 +38,7 @@ Object.defineProperty(global, 'localStorage', { value: localStorageMock });
 describe('Achievements', () => {
   beforeEach(() => {
     localStorageMock.clear();
+    vi.clearAllMocks();
   });
 
   describe('ACHIEVEMENTS constant', () => {
@@ -136,6 +144,52 @@ describe('Achievements', () => {
       const unlocked = getUnlockedAchievements();
       expect(unlocked.has('speed_demon')).toBe(true);
       expect(unlocked.has('ghost')).toBe(true);
+    });
+  });
+
+  describe('syncUnlockedAchievementsToSteam', () => {
+    it('replays locally unlocked achievements to Steam', async () => {
+      saveAchievements(new Set(['speed_demon', 'ghost']));
+
+      const result = await syncUnlockedAchievementsToSteam({ force: true });
+
+      expect(result).toEqual({ attempted: 2, failed: 0, skipped: false });
+      expect(steamUnlockAchievement).toHaveBeenCalledWith('speed_demon');
+      expect(steamUnlockAchievement).toHaveBeenCalledWith('ghost');
+    });
+
+    it('filters stale achievement IDs before syncing', async () => {
+      localStorageMock.setItem(
+        'rpg-solo-achievements',
+        JSON.stringify(['speed_demon', 'mathematician'])
+      );
+
+      const result = await syncUnlockedAchievementsToSteam({ force: true });
+
+      expect(result.attempted).toBe(1);
+      expect(steamUnlockAchievement).toHaveBeenCalledTimes(1);
+      expect(steamUnlockAchievement).toHaveBeenCalledWith('speed_demon');
+    });
+
+    it('does not reject when Steam sync fails', async () => {
+      saveAchievements(new Set(['speed_demon']));
+      vi.mocked(steamUnlockAchievement).mockRejectedValueOnce(new Error('Steam offline'));
+
+      const result = await syncUnlockedAchievementsToSteam({ force: true });
+
+      expect(result).toEqual({ attempted: 1, failed: 1, skipped: false });
+    });
+
+    it('only reconciles once per renderer session unless forced', async () => {
+      saveAchievements(new Set(['speed_demon']));
+
+      await syncUnlockedAchievementsToSteam({ force: true });
+      vi.clearAllMocks();
+
+      const result = await syncUnlockedAchievementsToSteam();
+
+      expect(result).toEqual({ attempted: 0, failed: 0, skipped: true });
+      expect(steamUnlockAchievement).not.toHaveBeenCalled();
     });
   });
 

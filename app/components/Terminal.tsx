@@ -31,7 +31,7 @@ import {
   useSaveIndicator,
   useAttemptsDisplay,
 } from '../hooks/useGameSelectors';
-import { unlockAchievement } from '../engine/achievements';
+import { syncUnlockedAchievementsToSteam, unlockAchievement } from '../engine/achievements';
 import { uiRandomPick } from '../engine/rng';
 import type { TextSpeed } from '../types';
 import AchievementPopup from './overlays/AchievementPopup';
@@ -336,6 +336,10 @@ export default function Terminal({
   useEffect(() => {
     void updatePresence(steamPresenceState);
   }, [steamPresenceState]);
+
+  useEffect(() => {
+    void syncUnlockedAchievementsToSteam();
+  }, []);
 
   useEffect(() => {
     return () => {

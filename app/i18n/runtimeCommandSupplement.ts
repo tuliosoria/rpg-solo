@@ -82,8 +82,18 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: progress': 'COMANDO: progress',
     'Review your evidence total, case strength, and session notes at a glance.':
       'Revise seu total de evidências, a força do caso e as notas da sessão de relance.',
+    'Review discovered evidence, saved dossier files, and leak readiness.':
+      'Revise as evidências descobertas, arquivos salvos no dossiê e prontidão para vazamento.',
     '  progress       - Show a spoiler-light investigation recap':
       '  progress       - Mostra uma recapitulação leve da investigação',
+    '  progress       - Show the next safest objective':
+      '  progress       - Mostra o próximo objetivo mais seguro',
+    'FLOW:': 'FLUXO:',
+    '  open files to discover evidence': '  abra arquivos para descobrir evidências',
+    '  save strong read files to the dossier':
+      '  salve no dossiê arquivos fortes que você já leu',
+    '  leak once the dossier and channel are ready':
+      '  vaze quando o dossiê e o canal estiverem prontos',
     'Shows:': 'Mostra:',
     '  - Logging/audit status': '  - Status de logging/auditoria',
     '  - System tolerance (wrong attempts remaining)':
@@ -101,6 +111,8 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       '  save report.txt    - Salva report.txt no dossiê',
     'NOTE: Your dossier can hold up to 10 files. Choose carefully.':
       'NOTA: Seu dossiê pode guardar até 10 arquivos. Escolha com cuidado.',
+    'TIP: Run "progress" to see whether to keep reading, save, or leak.':
+      'DICA: Execute "progress" para saber se deve continuar lendo, salvar ou vazar.',
     'COMMAND: unsave <filename>': 'COMANDO: remover <arquivo>',
     'Remove a file from your dossier.': 'Remova um arquivo do seu dossiê.',
     '  unsave report.txt  - Remove report.txt from dossier':
@@ -161,6 +173,12 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  leak            - Initiate dossier leak': '  leak            - Inicia o vazamento do dossiê',
     'REQUIREMENT: Save 10 files that make your strongest case first.':
       'REQUISITO: Salve primeiro 10 arquivos que montem seu caso mais forte.',
+    'REQUIREMENT: Save at least 5 files to start leak preparation.':
+      'REQUISITO: Salve pelo menos 5 arquivos para iniciar a preparação do vazamento.',
+    'REQUIREMENT: Save 10 files and complete preparation to transmit.':
+      'REQUISITO: Salve 10 arquivos e complete a preparação para transmitir.',
+    'TIP: Run "progress" if you are unsure what is missing.':
+      'DICA: Execute "progress" se não souber o que está faltando.',
     'COMMAND: wait': 'COMANDO: wait',
     '  wait           - Reduce detection by ~10%':
       '  wait           - Reduz a detecção em ~10%',
@@ -1227,8 +1245,18 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     'COMMAND: progress': 'COMANDO: progress',
     'Review your evidence total, case strength, and session notes at a glance.':
       'Revisa de un vistazo tu total de evidencias, la fuerza del caso y las notas de la sesión.',
+    'Review discovered evidence, saved dossier files, and leak readiness.':
+      'Revisa la evidencia descubierta, los archivos guardados en el dossier y la preparación para filtrar.',
     '  progress       - Show a spoiler-light investigation recap':
       '  progress       - Muestra un resumen de la investigación sin grandes spoilers',
+    '  progress       - Show the next safest objective':
+      '  progress       - Muestra el siguiente objetivo más seguro',
+    'FLOW:': 'FLUJO:',
+    '  open files to discover evidence': '  abre archivos para descubrir evidencia',
+    '  save strong read files to the dossier':
+      '  guarda en el dossier archivos sólidos que ya leíste',
+    '  leak once the dossier and channel are ready':
+      '  filtra cuando el dossier y el canal estén listos',
     'Shows:': 'Muestra:',
     '  - Logging/audit status': '  - Estado del registro/auditoría',
     '  - System tolerance (wrong attempts remaining)':
@@ -1246,6 +1274,8 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       '  save report.txt    - Guarda report.txt en el dossier',
     'NOTE: Your dossier can hold up to 10 files. Choose carefully.':
       'NOTA: Tu dossier puede guardar hasta 10 archivos. Elige con cuidado.',
+    'TIP: Run "progress" to see whether to keep reading, save, or leak.':
+      'PISTA: Ejecuta "progress" para saber si debes seguir leyendo, guardar o filtrar.',
     'COMMAND: unsave <filename>': 'COMANDO: quitar <archivo>',
     'Remove a file from your dossier.': 'Quita un archivo de tu dossier.',
     '  unsave report.txt  - Remove report.txt from dossier':
@@ -1306,6 +1336,12 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
     '  leak            - Initiate dossier leak': '  leak            - Inicia la filtración del dossier',
     'REQUIREMENT: Save 10 files that make your strongest case first.':
       'REQUISITO: Guarda primero 10 archivos que armen tu caso más fuerte.',
+    'REQUIREMENT: Save at least 5 files to start leak preparation.':
+      'REQUISITO: Guarda al menos 5 archivos para iniciar la preparación de la filtración.',
+    'REQUIREMENT: Save 10 files and complete preparation to transmit.':
+      'REQUISITO: Guarda 10 archivos y completa la preparación para transmitir.',
+    'TIP: Run "progress" if you are unsure what is missing.':
+      'PISTA: Ejecuta "progress" si no sabes qué falta.',
     'COMMAND: wait': 'COMANDO: wait',
     '  wait           - Reduce detection by ~10%':
       '  wait           - Reduce la detección en ~10%',

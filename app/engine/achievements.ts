@@ -207,6 +207,7 @@ const VALID_ACHIEVEMENT_IDS = new Set(ACHIEVEMENTS.map(a => a.id));
 
 // Storage key for achievements
 const ACHIEVEMENTS_KEY = 'rpg-solo-achievements';
+let steamAchievementReconciliationStarted = false;
 
 /**
  * Retrieves the set of unlocked achievement IDs from localStorage.
@@ -254,6 +255,44 @@ export function unlockAchievement(id: string): { achievement: Achievement; isNew
   }
 
   return { achievement, isNew };
+}
+
+/**
+ * Replays locally unlocked achievements to Steam once per renderer session.
+ * This covers players who earned achievements before Steam was available.
+ */
+export async function syncUnlockedAchievementsToSteam(
+  options: { force?: boolean } = {}
+): Promise<{ attempted: number; failed: number; skipped: boolean }> {
+  if (typeof window === 'undefined') {
+    return { attempted: 0, failed: 0, skipped: true };
+  }
+
+  if (steamAchievementReconciliationStarted && !options.force) {
+    return { attempted: 0, failed: 0, skipped: true };
+  }
+
+  steamAchievementReconciliationStarted = true;
+
+  const unlocked = [...getUnlockedAchievements()].filter(id => VALID_ACHIEVEMENT_IDS.has(id));
+  let failed = 0;
+
+  await Promise.all(
+    unlocked.map(async id => {
+      try {
+        const result = await steamUnlockAchievement(id);
+        if (!result.success && !result.alreadyUnlocked) {
+          failed += 1;
+        }
+      } catch (e) {
+        failed += 1;
+        // eslint-disable-next-line no-console
+        console.error('Steam achievement reconciliation failed:', e);
+      }
+    })
+  );
+
+  return { attempted: unlocked.length, failed, skipped: false };
 }
 
 /**

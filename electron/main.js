@@ -115,6 +115,32 @@ function sendToRenderer(channel, payload) {
   }
 }
 
+function safeGetAppPath(name) {
+  try {
+    return app.getPath(name);
+  } catch {
+    return null;
+  }
+}
+
+function getSupportInfo() {
+  return {
+    version: app.getVersion(),
+    platform: process.platform,
+    isPackaged: app.isPackaged,
+    steam: {
+      appIdConfigured: Boolean(STEAM_APP_ID),
+      initialized: steamInitialized,
+      ready: steamReady,
+    },
+    paths: {
+      userData: safeGetAppPath('userData'),
+      logs: safeGetAppPath('logs'),
+      crashDumps: safeGetAppPath('crashDumps'),
+    },
+  };
+}
+
 // Mark app as not quitting (for tray minimize)
 app.isQuitting = false;
 
@@ -608,6 +634,7 @@ function createWindow() {
 // ============================================================
 
 ipcMain.handle('app:getVersion', () => app.getVersion());
+ipcMain.handle('app:getSupportInfo', () => getSupportInfo());
 
 ipcMain.handle('app:checkForUpdates', async () => {
   if (isDev) {
@@ -993,6 +1020,8 @@ setupCrashReporter();
 
 // Set up auto-updater after app is ready (deferred)
 app.whenReady().then(() => {
+  console.log('[Support] Local diagnostics:', getSupportInfo());
+
   // Defer auto-updater setup to not block startup
   setImmediate(() => {
     setupAutoUpdater();
