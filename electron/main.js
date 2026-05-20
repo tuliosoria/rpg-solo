@@ -10,6 +10,10 @@ function devLog(...args) {
   }
 }
 
+function shouldOpenDevTools() {
+  return isDev && (process.env.VARGINHA_DEVTOOLS === '1' || process.argv.includes('--devtools'));
+}
+
 // ============================================================
 // STARTUP OPTIMIZATION: Memory management flags
 // ============================================================
@@ -69,10 +73,31 @@ function logStartupTime(phase) {
   devLog(`[Startup] ${phase}: ${Date.now() - startupTime}ms`);
 }
 
+function getGeneratedSteamAppId() {
+  try {
+    const generatedSteamAppId = require('./steam-app-id.generated');
+    const appId =
+      typeof generatedSteamAppId === 'string'
+        ? generatedSteamAppId
+        : generatedSteamAppId?.steamAppId;
+    return typeof appId === 'string' ? appId.trim() : null;
+  } catch (error) {
+    if (error?.code !== 'MODULE_NOT_FOUND') {
+      console.error('Failed to load generated Steam App ID:', error.message);
+    }
+    return null;
+  }
+}
+
 function getSteamAppId() {
   const configuredAppId = process.env.STEAM_APP_ID?.trim();
   if (configuredAppId) {
     return configuredAppId;
+  }
+
+  const generatedAppId = getGeneratedSteamAppId();
+  if (generatedAppId) {
+    return generatedAppId;
   }
 
   if (isDev) {
@@ -349,7 +374,7 @@ function initializeSteam() {
   
   try {
     if (!STEAM_APP_ID) {
-      devLog('STEAM_APP_ID not configured; Steam integration disabled for this build');
+      devLog('Steam App ID not configured; Steam integration disabled for this build');
       loadSteamModules();
       markSteamReady();
       logStartupTime('Steam skipped (no app id)');
@@ -486,8 +511,13 @@ function createWindow() {
   if (isDev) {
     // Development: load from Next.js dev server
     mainWindow.loadURL('http://localhost:3000');
+  }
+
+  if (shouldOpenDevTools()) {
     mainWindow.webContents.openDevTools();
-  } else {
+  }
+
+  if (!isDev) {
     // Production: load from local server
     const http = require('http');
     const outDir = path.join(__dirname, '../out');

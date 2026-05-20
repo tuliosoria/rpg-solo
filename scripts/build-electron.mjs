@@ -54,6 +54,18 @@ if (process.platform === 'darwin' && !hasMacNotarizationCredentials) {
 }
 
 const passthroughArgs = process.argv.slice(2);
+const prepareResult = spawnSync(process.execPath, [path.join(scriptDir, 'prepare-steam-app-id.mjs')], {
+  cwd: repoRoot,
+  stdio: 'inherit',
+});
+
+if (prepareResult.error) {
+  console.error(prepareResult.error);
+}
+
+if (prepareResult.status !== 0) {
+  process.exit(typeof prepareResult.status === 'number' ? prepareResult.status : 1);
+}
 
 const result = spawnSync(
   builderBin,

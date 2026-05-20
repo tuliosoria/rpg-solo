@@ -52,6 +52,7 @@ next-env.d.ts
 !/public/videos/README.md
 out/
 steam_appid.txt
+electron/steam-app-id.generated.js
 
 # git worktrees
 /.worktrees/

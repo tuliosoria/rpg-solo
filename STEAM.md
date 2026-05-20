@@ -17,10 +17,13 @@ The game uses [steamworks.js](https://github.com/nicobrinkkemper/steamworks.js) 
 `electron/main.js` resolves the Steam App ID in this order:
 
 1. `STEAM_APP_ID` environment variable
-2. Development fallback: `480`
-3. Production fallback: **disable Steam features and continue launching**
+2. Generated release artifact: `electron/steam-app-id.generated.js`
+3. Development fallback: `480`
+4. Production fallback: **disable Steam features and continue launching**
 
-That means packaged builds no longer crash when an App ID is missing. They simply run without Steam integration until `STEAM_APP_ID` is configured.
+`scripts/prepare-steam-app-id.mjs` creates the generated artifact from `STEAM_APP_ID` immediately before Electron packaging. The generated file is ignored by git but included by `electron-builder` because it lives under `electron/`.
+
+That means local and PR packaged builds no longer crash when an App ID is missing. They simply run without Steam integration until `STEAM_APP_ID` is configured. Tagged `v*` release builds fail before packaging if the App ID is missing or if the tag does not match `package.json` version.
 
 ## Local testing
 
@@ -44,6 +47,8 @@ npm run electron:dev
 
 4. Confirm the console prints `Steam initialized successfully`.
 
+Developer tools no longer open automatically in desktop dev mode. Set `VARGINHA_DEVTOOLS=1` or pass `--devtools` when you need them.
+
 ## Production packaging
 
 Use the standard Electron packaging script:
@@ -52,11 +57,11 @@ Use the standard Electron packaging script:
 npm run electron:build
 ```
 
-That script now points explicitly at `electron-builder.yml`, so local desktop builds use the same packaging config as CI.
+That script now prepares the generated Steam App ID file and points explicitly at `electron-builder.yml`, so local desktop builds use the same packaging config as CI.
 
 For a Steam-enabled packaged build:
 
-1. Set `STEAM_APP_ID`
+1. Set `STEAM_APP_ID` locally, or configure the GitHub Actions `STEAM_APP_ID` secret before creating a `v*` release tag
 2. Configure Steam achievements to match `electron/steam-achievements.js`
 3. Enable Steam Cloud in Steamworks Partner
 4. Upload store/achievement art in Steamworks Partner
@@ -113,6 +118,7 @@ If Steam Cloud is unavailable, the game continues to use local storage.
 ## Release checklist
 
 - Configure `STEAM_APP_ID`
+- Confirm the release tag matches `package.json` version, for example `v1.0.0`
 - Verify Steam achievements and hidden-achievement flags
 - Verify Steam Cloud quota/settings
 - Verify packaged desktop build starts with Steam running
