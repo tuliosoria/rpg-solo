@@ -177,7 +177,7 @@ export interface AppAPI {
       logs: string | null;
       crashDumps: string | null;
     };
-  }>;
+  } | null>;
 
   /**
    * Triggers a manual update check when the desktop updater is available.

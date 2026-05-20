@@ -272,9 +272,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     /**
      * Gets local support diagnostics for troubleshooting.
-     * @returns {Promise<{version: string, platform: string, isPackaged: boolean, steam: Object, paths: Object}>}
+     * @returns {Promise<{version: string, platform: string, isPackaged: boolean, steam: Object, paths: Object}|null>}
      */
-    getSupportInfo: () => safeInvoke('app:getSupportInfo'),
+    getSupportInfo: () => safeInvokeNullable('app:getSupportInfo'),
 
     /**
      * Manually checks for updates.
