@@ -95,13 +95,13 @@ function getSteamAppId() {
     return configuredAppId;
   }
 
+  if (isDev) {
+    return '480';
+  }
+
   const generatedAppId = getGeneratedSteamAppId();
   if (generatedAppId) {
     return generatedAppId;
-  }
-
-  if (isDev) {
-    return '480';
   }
 
   return null;
