@@ -547,6 +547,50 @@ function buildRecoveredCloudSlot(slotId: string, state: GameState): SaveSlot {
   };
 }
 
+interface ParsedSaveState {
+  raw: string;
+  state: GameState;
+}
+
+function parseSavedState(raw: string | null): ParsedSaveState | null {
+  if (!raw) return null;
+
+  try {
+    return { raw, state: deserializeState(raw) };
+  } catch {
+    return null;
+  }
+}
+
+function getComparableTimestamp(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+function getSavedStateTimestamp(state: GameState, slotTimestamp: number = 0): number {
+  return Math.max(
+    getComparableTimestamp(state.lastSaveTime),
+    getComparableTimestamp(state.sessionStartTime),
+    getComparableTimestamp(slotTimestamp)
+  );
+}
+
+function shouldUseCloudSave(
+  cloudState: GameState,
+  localState: GameState | null,
+  localSlotTimestamp: number = 0
+): boolean {
+  if (!localState) return true;
+
+  const cloudTimestamp = getSavedStateTimestamp(cloudState);
+  const localTimestamp = getSavedStateTimestamp(localState, localSlotTimestamp);
+
+  if (cloudTimestamp === 0 && localTimestamp === 0) {
+    return true;
+  }
+
+  return cloudTimestamp > localTimestamp;
+}
+
 function persistRecoveredSaveSlot(slot: SaveSlot): void {
   const existingSlots = getSaveSlots().filter(existing => existing.id !== slot.id);
   const nextSlots = [slot, ...existingSlots];
@@ -687,31 +731,43 @@ export async function loadGameAsync(
   if (!isBrowserWithStorage() || signal?.aborted) return null;
 
   try {
-    // Try Steam Cloud first
+    const localRaw = window.localStorage.getItem(SAVE_PREFIX + slotId);
+    const localSave = parseSavedState(localRaw);
+    const localSlot = getSaveSlots().find(slot => slot.id === slotId);
+
     const cloudData = await loadSaveFromCloud(slotId);
     if (signal?.aborted) return null;
+
     if (cloudData) {
       try {
         const cloudState = deserializeState(cloudData);
         if (signal?.aborted) return null;
 
-        const saveStorageConfig: SlotStorageConfig<SaveSlot> = {
-          itemPrefix: SAVE_PREFIX,
-          listKey: SAVES_KEY,
-          maxSlots: MAX_SAVE_SLOTS,
-          readSlots: getSaveSlots,
-        };
-        const cachedLocally = persistSlotDataWithQuotaRetry(
-          SAVE_PREFIX + slotId,
-          cloudData,
-          saveStorageConfig,
-          'cache cloud save'
-        );
-        if (cachedLocally) {
-          persistRecoveredSaveSlot(buildRecoveredCloudSlot(slotId, cloudState));
+        if (shouldUseCloudSave(cloudState, localSave?.state ?? null, localSlot?.timestamp)) {
+          const saveStorageConfig: SlotStorageConfig<SaveSlot> = {
+            itemPrefix: SAVE_PREFIX,
+            listKey: SAVES_KEY,
+            maxSlots: MAX_SAVE_SLOTS,
+            readSlots: getSaveSlots,
+          };
+          const cachedLocally = persistSlotDataWithQuotaRetry(
+            SAVE_PREFIX + slotId,
+            cloudData,
+            saveStorageConfig,
+            'cache cloud save'
+          );
+          if (cachedLocally) {
+            persistRecoveredSaveSlot(buildRecoveredCloudSlot(slotId, cloudState));
+          }
+
+          return cloudState;
         }
 
-        return cloudState;
+        if (localSave) {
+          void syncSaveToCloud(slotId, localSave.raw);
+          if (signal?.aborted) return null;
+          return localSave.state;
+        }
       } catch {
         // Cloud data corrupted, fall back to localStorage
       }
@@ -719,9 +775,7 @@ export async function loadGameAsync(
 
     // Fall back to localStorage
     if (signal?.aborted) return null;
-    const raw = window.localStorage.getItem(SAVE_PREFIX + slotId);
-    if (signal?.aborted || !raw) return null;
-    return deserializeState(raw);
+    return localSave?.state ?? null;
   } catch {
     return null;
   }
@@ -846,27 +900,35 @@ export async function loadAutoSaveAsync(): Promise<GameState | null> {
   if (!isBrowserWithStorage()) return null;
 
   try {
-    // Try Steam Cloud first
+    const localRaw = window.localStorage.getItem('terminal1996:autosave');
+    const localSave = parseSavedState(localRaw);
+
     const cloudData = await loadSaveFromCloud('autosave');
     if (cloudData) {
       try {
         const cloudState = deserializeState(cloudData);
-        try {
-          window.localStorage.setItem('terminal1996:autosave', cloudData);
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to cache autosave locally:', error);
+
+        if (shouldUseCloudSave(cloudState, localSave?.state ?? null)) {
+          try {
+            window.localStorage.setItem('terminal1996:autosave', cloudData);
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('Failed to cache autosave locally:', error);
+          }
+          return cloudState;
         }
-        return cloudState;
+
+        if (localSave) {
+          void syncSaveToCloud('autosave', localSave.raw);
+          return localSave.state;
+        }
       } catch {
         // Cloud data corrupted, fall back to localStorage
       }
     }
 
     // Fall back to localStorage
-    const raw = window.localStorage.getItem('terminal1996:autosave');
-    if (!raw) return null;
-    return deserializeState(raw);
+    return localSave?.state ?? null;
   } catch {
     return null;
   }

@@ -197,7 +197,9 @@ describe('UX Commands', () => {
       const result = executeCommand('progress', state);
 
       expect(result.output.some(e => e.content.includes('DOSSIER — LEAK PREPARATION'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Evidence discovered: 0/10'))).toBe(true);
       expect(result.output.some(e => e.content.includes('Files saved: 0/10'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Next: open unread files'))).toBe(true);
     });
 
     it('should show saved dossier file count', () => {
@@ -243,6 +245,22 @@ describe('UX Commands', () => {
 
       expect(result.output.some(e => e.content.includes('audio_transcript_brief.txt'))).toBe(true);
       expect(result.output.some(e => e.content.includes('bio_container.log'))).toBe(true);
+    });
+
+    it('points players to leak preparation after five saved files', () => {
+      const state = createTestState({
+        savedFiles: new Set([
+          '/internal/audio_transcript_brief.txt',
+          '/internal/jardim_andere_incident.txt',
+          '/internal/misc/incident_report_1996_01_VG.txt',
+          '/storage/quarantine/bio_container.log',
+          '/storage/quarantine/autopsy_alpha.log',
+        ]),
+      });
+      const result = executeCommand('progress', state);
+
+      expect(result.output.some(e => e.content.includes('LEAK PREP AVAILABLE'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('3-step channel'))).toBe(true);
     });
   });
 

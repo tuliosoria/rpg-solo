@@ -8,6 +8,7 @@ import {
   getFileContent,
   fuzzyMatchFilename,
 } from '../filesystem';
+import { countEvidence, MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
 import { MAX_DETECTION } from '../../constants/detection';
 import { createEntry, createEntryI18n, createInvalidCommandResult } from './utils';
 import {
@@ -298,20 +299,23 @@ export const inventoryCommands: CommandRegistry = {
     return { output, stateChanges: {} };
   },
 
-  progress: (args, state) => {
+  progress: (_args, state) => {
     const savedFiles = state.savedFiles || new Set();
+    const savedCount = savedFiles.size;
+    const discoveredCount = countEvidence(state);
+    const leakProgress = state.leakSequenceProgress || 0;
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '═══════════════════════════════════════'),
       createEntryI18n('system', 'engine.commands.inventory.dossier_leak_preparation', '  DOSSIER — LEAK PREPARATION'),
       createEntry('system', '═══════════════════════════════════════'),
       createEntry('system', ''),
-      // i18n: dynamic string
-      createEntry('system', `  Files saved: ${savedFiles.size}/10`),
+      createEntryI18n('system', 'engine.commands.inventory.evidence_discovered_progress', `  Evidence discovered: ${discoveredCount}/${MAX_EVIDENCE_COUNT}`, { count: discoveredCount, total: MAX_EVIDENCE_COUNT }),
+      createEntryI18n('system', 'engine.commands.inventory.files_saved_progress', `  Files saved: ${savedCount}/${MAX_EVIDENCE_COUNT}`, { count: savedCount, total: MAX_EVIDENCE_COUNT }),
       createEntry('system', ''),
     ];
 
-    if (savedFiles.size === 0) {
+    if (savedCount === 0) {
       output.push(createEntryI18n('dim', 'engine.commands.inventory.no_files_saved_use_save', '  No files saved. Use "save <filename>" after reading a file.'));
     } else {
       [...savedFiles].forEach((path, i) => {
@@ -322,11 +326,25 @@ export const inventoryCommands: CommandRegistry = {
 
     output.push(createEntry('system', ''));
 
-    if (savedFiles.size >= 10) {
-      output.push(createEntryI18n('notice', 'engine.commands.inventory.dossier_complete', '  DOSSIER COMPLETE — type "leak" when ready.'));
+    if (savedCount >= MAX_EVIDENCE_COUNT && leakProgress >= 3) {
+      output.push(createEntryI18n('notice', 'engine.commands.inventory.ready_to_transmit', '  READY TO TRANSMIT — run "leak" to publish the dossier.'));
+    } else if (savedCount >= MAX_EVIDENCE_COUNT) {
+      output.push(createEntryI18n('notice', 'engine.commands.inventory.dossier_complete', '  DOSSIER COMPLETE — run "leak" and finish channel preparation.'));
+    } else if (state.leakSequenceGenerated && leakProgress >= 3) {
+      output.push(createEntryI18n('notice', 'engine.commands.inventory.channel_ready_keep_saving', `  LEAK CHANNEL READY — save ${MAX_EVIDENCE_COUNT - savedCount} more file(s), then run "leak".`, { remaining: MAX_EVIDENCE_COUNT - savedCount }));
+    } else if (state.leakSequenceGenerated) {
+      output.push(createEntryI18n('notice', 'engine.commands.inventory.channel_preparation_in_progress', '  LEAK PREP IN PROGRESS — run "leak" for the next channel step.'));
+    } else if (savedCount >= 5) {
+      output.push(createEntryI18n('notice', 'engine.commands.inventory.leak_preparation_available', '  LEAK PREP AVAILABLE — run "leak" to open the 3-step channel.'));
+      output.push(createEntryI18n('dim', 'engine.commands.inventory.keep_saving_until_ten', '  Keep saving strong files until the dossier reaches 10/10.'));
+    } else if (discoveredCount > savedCount) {
+      output.push(createEntryI18n('dim', 'engine.commands.inventory.next_save_read_file', '  Next: save a strong file you already opened with "save <filename>".'));
     } else {
-      // i18n: dynamic string
-      output.push(createEntry('dim', `  ${10 - savedFiles.size} more file(s) needed before leak.`));
+      output.push(createEntryI18n('dim', 'engine.commands.inventory.next_open_unread_file', '  Next: open unread files, or use "search" and "unread" to find leads.'));
+    }
+
+    if (savedCount < 5) {
+      output.push(createEntryI18n('dim', 'engine.commands.inventory.files_needed_before_prep', `  ${5 - savedCount} more saved file(s) needed before leak preparation unlocks.`, { count: 5 - savedCount }));
     }
 
     output.push(createEntry('system', ''));

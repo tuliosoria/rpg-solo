@@ -28,6 +28,11 @@ vi.mock('../../storage/statistics', () => ({
 }));
 vi.mock('../../engine/achievements', () => ({
   unlockAchievement: vi.fn(() => null),
+  syncUnlockedAchievementsToSteam: vi.fn(async () => ({
+    attempted: 0,
+    failed: 0,
+    skipped: true,
+  })),
   getAchievements: vi.fn(() => []),
   Achievement: {},
 }));
