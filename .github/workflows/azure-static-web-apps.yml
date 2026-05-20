@@ -8,13 +8,12 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
-    # Docs-only PRs should not consume an Azure SWA staging-environment slot
+    # Docs-only PRs should not run the static export build.
+    # PRs build without deploying so they do not consume Azure SWA staging slots
     # (the per-app cap is ~10 and is shared across all open PRs).
-    # Keep this in sync with the actual locations of repo documentation —
-    # do NOT add app/, public/, electron/, or other build inputs here.
+    # Keep this in sync with the actual locations of repo documentation.
     paths-ignore:
       - '**/*.md'
-      - '.github/**'
   workflow_dispatch:
 
 jobs:
@@ -44,6 +43,7 @@ jobs:
           NODE_ENV: production
 
       - name: Deploy to Azure Static Web Apps
+        if: github.event_name != 'pull_request'
         id: deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
