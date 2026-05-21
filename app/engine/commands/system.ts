@@ -908,14 +908,34 @@ export const systemCommands: CommandRegistry = {
       soundTrigger: 'evidence',
     };
 
-    // After 10th save, add UFO74 message
-    if (newSavedFiles.size === 10) {
+    // Let UFO74 reinforce dossier stakes at major commitment points.
+    if (newSavedFiles.size === 5 && !state.leakSequenceGenerated) {
+      result.pendingUfo74Messages = [
+        createEntry(
+          'ufo74',
+          tSystem(
+            'save.fiveSaved',
+            'UFO74: five saved. enough to open the channel. not enough to make them believe you.'
+          )
+        ),
+      ];
+    } else if (newSavedFiles.size === 8) {
+      result.pendingUfo74Messages = [
+        createEntry(
+          'ufo74',
+          tSystem(
+            'save.eightSaved',
+            'UFO74: eight files. the dossier has a shape now. if it says the wrong thing, the world repeats it.'
+          )
+        ),
+      ];
+    } else if (newSavedFiles.size === 10) {
       result.pendingUfo74Messages = [
         createEntry(
           'ufo74',
           tSystem(
             'save.readyToLeak',
-            'UFO74: kid. you have ten. review the dossier, then leak when ready. no coming back.'
+            'UFO74: ten files. review progress before leak. the leak tells the story you saved, not the one you meant.'
           )
         ),
       ];

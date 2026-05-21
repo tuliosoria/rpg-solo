@@ -286,6 +286,8 @@ export const evidenceCommands: CommandRegistry = {
           createEntry('system', ''),
           createEntryI18n('system', 'engine.commands.evidence.leak_channel_requires_preparation', '  The leak channel requires a 3-command preparation'),
           createEntryI18n('system', 'engine.commands.evidence.sequence_before_opened', '  sequence before it can be opened.'),
+          createEntryI18n('system', 'engine.commands.evidence.channel_carries_saved_story', '  It will carry exactly what you saved — not what you meant to prove.'),
+          createEntryI18n('system', 'engine.commands.evidence.review_progress_before_final', '  Review "progress" before final transmission if the story feels wrong.'),
           createEntry('system', ''),
           createEntryI18n('system', 'engine.commands.evidence.run_commands_in_order', '  Run the following commands IN ORDER:'),
           createEntry('system', ''),

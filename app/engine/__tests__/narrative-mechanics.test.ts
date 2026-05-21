@@ -1014,6 +1014,7 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('run save_evidence.sh', state);
       expect(result.output.some(e => e.content.includes('LEAK CHANNEL ENCRYPTED'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('exactly what you saved'))).toBe(true);
       expect(result.stateChanges.leakSequenceGenerated).toBe(true);
     });
 

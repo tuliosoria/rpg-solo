@@ -199,6 +199,7 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('DOSSIER — LEAK PREPARATION'))).toBe(true);
       expect(result.output.some(e => e.content.includes('Evidence discovered: 0/10'))).toBe(true);
       expect(result.output.some(e => e.content.includes('Files saved: 0/10'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('CASE PROFILE'))).toBe(false);
       expect(result.output.some(e => e.content.includes('Next: open unread files'))).toBe(true);
     });
 
@@ -212,6 +213,22 @@ describe('UX Commands', () => {
       const result = executeCommand('progress', state);
 
       expect(result.output.some(e => e.content.includes('Files saved: 2/10'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('CASE PROFILE'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Saved files determine what the world believes'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('Threads in dossier'))).toBe(true);
+    });
+
+    it('adds personal pressure to the dossier profile when detection is high', () => {
+      const state = createTestState({
+        detectionLevel: 85,
+        savedFiles: new Set([
+          '/internal/audio_transcript_brief.txt',
+          '/storage/quarantine/bio_container.log',
+        ]),
+      });
+      const result = executeCommand('progress', state);
+
+      expect(result.output.some(e => e.content.includes('OBSERVER: an audit cursor'))).toBe(true);
     });
 
     it('shows dossier completion when all 10 files are saved', () => {
