@@ -194,33 +194,133 @@ const FILE_CATEGORIES = {
   ],
 };
 
-// ═══════════════════════════════════════════════════════════════════════════
-// ENDING DETERMINATION — Dossier pattern matching
-// ═══════════════════════════════════════════════════════════════════════════
+export type DossierThreadId =
+  | 'military'
+  | 'medical'
+  | 'witness'
+  | 'containment'
+  | 'ufoCore'
+  | 'temporal'
+  | 'harvest'
+  | 'comms'
+  | 'diplomatic';
 
-export function determineEnding(savedFiles: Set<string>): EndingId {
+export interface DossierCategoryCounts {
+  militaryCoverup: number;
+  medicalAutopsy: number;
+  witness: number;
+  containment: number;
+  ufoCore: number;
+  temporalConvergence: number;
+  extractionHarvest: number;
+  conspiracyUnrelated: number;
+  corruptionFinancial: number;
+  honeypotTrap: number;
+  alphaNeural: number;
+  commsIntercept: number;
+  diplomatic: number;
+  coverup: number;
+}
+
+export interface DossierAnalysis {
+  savedCount: number;
+  fileNames: string[];
+  counts: DossierCategoryCounts;
+  visibleThreads: DossierThreadId[];
+  hasGhostMachine: boolean;
+  hasAlphaNeural: boolean;
+  hasConvergence: boolean;
+  hasPhysicist: boolean;
+}
+
+const DOSSIER_THREAD_COUNT_KEYS: Record<DossierThreadId, keyof DossierCategoryCounts> = {
+  military: 'militaryCoverup',
+  medical: 'medicalAutopsy',
+  witness: 'witness',
+  containment: 'containment',
+  ufoCore: 'ufoCore',
+  temporal: 'temporalConvergence',
+  harvest: 'extractionHarvest',
+  comms: 'commsIntercept',
+  diplomatic: 'diplomatic',
+};
+
+const DOSSIER_THREAD_ORDER: DossierThreadId[] = [
+  'military',
+  'medical',
+  'witness',
+  'containment',
+  'ufoCore',
+  'temporal',
+  'harvest',
+  'comms',
+  'diplomatic',
+];
+
+export function analyzeDossier(savedFiles: Set<string>): DossierAnalysis {
   const files = [...savedFiles];
   const fileNames = files.map(f => f.split('/').pop() || '');
 
   const countCategory = (category: string[]): number =>
     fileNames.filter(f => category.includes(f)).length;
 
-  const hasGhostMachine = fileNames.some(f => f.includes('ghost_in_machine'));
-  const hasAlphaNeural = countCategory(FILE_CATEGORIES.alpha_neural) > 0;
-  const hasConvergence = fileNames.some(f => f.includes('convergence'));
-  const hasPhysicist = fileNames.some(f =>
-    f.includes('thirty_year_cycle') || f.includes('projection_update_2026')
+  const counts: DossierCategoryCounts = {
+    militaryCoverup: countCategory(FILE_CATEGORIES.military_coverup),
+    medicalAutopsy: countCategory(FILE_CATEGORIES.medical_autopsy),
+    witness: countCategory(FILE_CATEGORIES.witness),
+    containment: countCategory(FILE_CATEGORIES.containment),
+    ufoCore: countCategory(FILE_CATEGORIES.ufo_core),
+    temporalConvergence: countCategory(FILE_CATEGORIES.temporal_convergence),
+    extractionHarvest: countCategory(FILE_CATEGORIES.extraction_harvest),
+    conspiracyUnrelated: countCategory(FILE_CATEGORIES.conspiracy_unrelated),
+    corruptionFinancial: countCategory(FILE_CATEGORIES.corruption_financial),
+    honeypotTrap: countCategory(FILE_CATEGORIES.honeypot_trap),
+    alphaNeural: countCategory(FILE_CATEGORIES.alpha_neural),
+    commsIntercept: countCategory(FILE_CATEGORIES.comms_intercept),
+    diplomatic: countCategory(FILE_CATEGORIES.diplomatic),
+    coverup: countCategory(FILE_CATEGORIES.coverup),
+  };
+
+  const visibleThreads = DOSSIER_THREAD_ORDER.filter(
+    thread => counts[DOSSIER_THREAD_COUNT_KEYS[thread]] > 0
   );
-  const honeypotCount = countCategory(FILE_CATEGORIES.honeypot_trap);
-  const militaryCount = countCategory(FILE_CATEGORIES.military_coverup);
-  const corruptionCount = countCategory(FILE_CATEGORIES.corruption_financial);
-  const conspiracyCount = countCategory(FILE_CATEGORIES.conspiracy_unrelated);
-  const witnessCount = countCategory(FILE_CATEGORIES.witness);
-  const containmentCount = countCategory(FILE_CATEGORIES.containment);
-  const temporalCount = countCategory(FILE_CATEGORIES.temporal_convergence);
-  const harvestCount = countCategory(FILE_CATEGORIES.extraction_harvest);
-  const medicalCount = countCategory(FILE_CATEGORIES.medical_autopsy);
-  const coreCount = countCategory(FILE_CATEGORIES.ufo_core);
+
+  return {
+    savedCount: savedFiles.size,
+    fileNames,
+    counts,
+    visibleThreads,
+    hasGhostMachine: fileNames.some(f => f.includes('ghost_in_machine')),
+    hasAlphaNeural: counts.alphaNeural > 0,
+    hasConvergence: fileNames.some(f => f.includes('convergence')),
+    hasPhysicist: fileNames.some(f =>
+      f.includes('thirty_year_cycle') || f.includes('projection_update_2026')
+    ),
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ENDING DETERMINATION — Dossier pattern matching
+// ═══════════════════════════════════════════════════════════════════════════
+
+export function determineEnding(savedFiles: Set<string>): EndingId {
+  const {
+    counts,
+    hasGhostMachine,
+    hasAlphaNeural,
+    hasConvergence,
+    hasPhysicist,
+  } = analyzeDossier(savedFiles);
+  const honeypotCount = counts.honeypotTrap;
+  const militaryCount = counts.militaryCoverup;
+  const corruptionCount = counts.corruptionFinancial;
+  const conspiracyCount = counts.conspiracyUnrelated;
+  const witnessCount = counts.witness;
+  const containmentCount = counts.containment;
+  const temporalCount = counts.temporalConvergence;
+  const harvestCount = counts.extractionHarvest;
+  const medicalCount = counts.medicalAutopsy;
+  const coreCount = counts.ufoCore;
 
   // Priority 1: HackerKid Caught — saved obvious honeypot files
   if (honeypotCount >= 2) return 'hackerkid_caught';

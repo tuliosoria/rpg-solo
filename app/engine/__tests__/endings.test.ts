@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   type EndingFlags,
   type EndingId,
+  analyzeDossier,
   determineEnding,
   determineEndingVariant,
   getEndingFlags,
@@ -78,6 +79,24 @@ describe('Endings', () => {
       it(`reaches ${endingId}`, () => {
         expect(determineEnding(savedFiles)).toBe(endingId);
       });
+    });
+  });
+
+  describe('analyzeDossier', () => {
+    it('surfaces spoiler-light dossier threads without exposing trap categories', () => {
+      const analysis = analyzeDossier(
+        dossier(
+          'incident_report_1996_01_VG.txt',
+          'autopsy_alpha.log',
+          'URGENT_classified_alpha.txt',
+          'SMOKING_GUN_proof.txt'
+        )
+      );
+
+      expect(analysis.counts.honeypotTrap).toBe(2);
+      expect(analysis.visibleThreads).toContain('military');
+      expect(analysis.visibleThreads).toContain('medical');
+      expect(analysis.visibleThreads.map(String)).not.toContain('honeypot');
     });
   });
 
