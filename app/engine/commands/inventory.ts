@@ -171,17 +171,17 @@ function getDossierAssessment(analysis: DossierAnalysis): string {
     },
   } = analysis;
 
-  if (savedCount < 3) {
-    return tInventory(
-      'caseProfile.assessment.early',
-      '  Assessment: fragments only. The terminal is still louder than the case.'
-    );
-  }
-
   if (honeypotTrap >= 2) {
     return tInventory(
       'caseProfile.assessment.hostile',
       '  Assessment: the archive is pushing back. Some files want to be found too badly.'
+    );
+  }
+
+  if (savedCount < 3) {
+    return tInventory(
+      'caseProfile.assessment.early',
+      '  Assessment: fragments only. The terminal is still louder than the case.'
     );
   }
 

@@ -231,6 +231,20 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('OBSERVER: an audit cursor'))).toBe(true);
     });
 
+    it('prioritizes trap-like dossier feedback even before three files are saved', () => {
+      const state = createTestState({
+        savedFiles: new Set([
+          '/admin/URGENT_classified_alpha.txt',
+          '/admin/SMOKING_GUN_proof.txt',
+        ]),
+      });
+      const result = executeCommand('progress', state);
+      const output = result.output.map(e => e.content).join('\n');
+
+      expect(output).toContain('Some files want to be found too badly');
+      expect(output).not.toContain('fragments only');
+    });
+
     it('shows dossier completion when all 10 files are saved', () => {
       const state = createTestState({
         savedFiles: new Set([
