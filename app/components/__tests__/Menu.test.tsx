@@ -360,6 +360,7 @@ describe('Menu', () => {
       expect(screen.getByText('Screen Flicker')).toBeInTheDocument();
       expect(screen.getByText('Flicker Intensity')).toBeInTheDocument();
       expect(screen.getByText('Font Size')).toBeInTheDocument();
+      expect(screen.getByText('Typing Pattern Warnings')).toBeInTheDocument();
     });
 
     it('returns to main menu when BACK is clicked', () => {
