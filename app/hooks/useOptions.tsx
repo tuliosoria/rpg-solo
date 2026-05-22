@@ -57,6 +57,7 @@ export const DEFAULT_OPTIONS: OptionsState = {
 
   // Pacing defaults
   textSpeed: 'normal',
+  typingPatternWarningsEnabled: true,
 };
 
 export function readStoredOptions(): OptionsState {

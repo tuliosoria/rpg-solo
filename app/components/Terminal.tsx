@@ -243,16 +243,32 @@ export default function Terminal({
     setMusicEnabledDirectly,
   } = useSound();
   const [textSpeed, setTextSpeed] = useState<TextSpeed>(() => readStoredOptions().textSpeed);
+  const [typingPatternWarningsEnabled, setTypingPatternWarningsEnabled] = useState(
+    () => readStoredOptions().typingPatternWarningsEnabled
+  );
 
   useEffect(() => {
-    const syncTextSpeed = () => {
-      setTextSpeed(readStoredOptions().textSpeed);
+    const syncTerminalOptions = () => {
+      const storedOptions = readStoredOptions();
+      setTextSpeed(storedOptions.textSpeed);
+      setTypingPatternWarningsEnabled(storedOptions.typingPatternWarningsEnabled);
     };
 
-    syncTextSpeed();
-    window.addEventListener(OPTIONS_CHANGED_EVENT, syncTextSpeed);
-    return () => window.removeEventListener(OPTIONS_CHANGED_EVENT, syncTextSpeed);
+    syncTerminalOptions();
+    window.addEventListener(OPTIONS_CHANGED_EVENT, syncTerminalOptions);
+    return () => window.removeEventListener(OPTIONS_CHANGED_EVENT, syncTerminalOptions);
   }, []);
+
+  useEffect(() => {
+    if (typingPatternWarningsEnabled) return;
+
+    keypressTimestamps.current = [];
+    if (typingSpeedWarningTimeout.current) {
+      clearTimeout(typingSpeedWarningTimeout.current);
+      typingSpeedWarningTimeout.current = null;
+    }
+    setTypingSpeedWarning(false);
+  }, [setTypingSpeedWarning, typingPatternWarningsEnabled]);
 
   useEffect(() => {
     if (!showOnboarding) {
@@ -1428,31 +1444,33 @@ export default function Terminal({
                   const typedChar = newValue.charAt(newValue.length - 1);
                   playKeySound(typedChar === ' ' ? ' ' : typedChar);
 
-                  // Track typing speed
-                  const now = Date.now();
-                  keypressTimestamps.current.push(now);
-                  // Keep only last KEYPRESS_TRACK_SIZE keypresses
-                  if (keypressTimestamps.current.length > KEYPRESS_TRACK_SIZE) {
-                    keypressTimestamps.current.shift();
-                  }
+                  if (typingPatternWarningsEnabled) {
+                    // Track typing speed
+                    const now = Date.now();
+                    keypressTimestamps.current.push(now);
+                    // Keep only last KEYPRESS_TRACK_SIZE keypresses
+                    if (keypressTimestamps.current.length > KEYPRESS_TRACK_SIZE) {
+                      keypressTimestamps.current.shift();
+                    }
 
-                  // Check typing speed (if enough chars in short time = too fast)
-                  if (keypressTimestamps.current.length >= KEYPRESS_TRACK_SIZE - 2) {
-                    const oldest = keypressTimestamps.current[0];
-                    const timeSpan = (now - oldest) / 1000; // seconds
-                    const charsPerSecond = keypressTimestamps.current.length / timeSpan;
+                    // Check typing speed (if enough chars in short time = too fast)
+                    if (keypressTimestamps.current.length >= KEYPRESS_TRACK_SIZE - 2) {
+                      const oldest = keypressTimestamps.current[0];
+                      const timeSpan = (now - oldest) / 1000; // seconds
+                      const charsPerSecond = keypressTimestamps.current.length / timeSpan;
 
-                    if (charsPerSecond > SUSPICIOUS_TYPING_SPEED && !typingSpeedWarning) {
-                      setTypingSpeedWarning(true);
-                      playSound('warning');
-                      // Clear warning after timeout
-                      if (typingSpeedWarningTimeout.current) {
-                        clearTimeout(typingSpeedWarningTimeout.current);
+                      if (charsPerSecond > SUSPICIOUS_TYPING_SPEED && !typingSpeedWarning) {
+                        setTypingSpeedWarning(true);
+                        playSound('warning');
+                        // Clear warning after timeout
+                        if (typingSpeedWarningTimeout.current) {
+                          clearTimeout(typingSpeedWarningTimeout.current);
+                        }
+                        typingSpeedWarningTimeout.current = setTimeout(
+                          () => setTypingSpeedWarning(false),
+                          TYPING_WARNING_TIMEOUT_MS
+                        );
                       }
-                      typingSpeedWarningTimeout.current = setTimeout(
-                        () => setTypingSpeedWarning(false),
-                        TYPING_WARNING_TIMEOUT_MS
-                      );
                     }
                   }
                 }

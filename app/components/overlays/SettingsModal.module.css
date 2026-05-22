@@ -20,6 +20,8 @@
   padding: 30px;
   max-width: 400px;
   width: 90%;
+  max-height: min(90vh, 760px);
+  overflow-y: auto;
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   color: #88cc44;
   box-shadow: 0 0 40px rgba(136, 204, 68, 0.2);

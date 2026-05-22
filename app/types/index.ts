@@ -24,6 +24,7 @@ export interface OptionsState {
 
   // Pacing Options
   textSpeed: TextSpeed;
+  typingPatternWarningsEnabled: boolean;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

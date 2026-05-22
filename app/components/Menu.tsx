@@ -97,6 +97,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
           break;
         }
         case 9:
+          setOption('typingPatternWarningsEnabled', !options.typingPatternWarningsEnabled);
+          break;
+        case 10:
           cycleLanguage(direction);
           break;
         default:
@@ -249,7 +252,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
           : screen === 'load'
             ? (saves.length > 0 ? saves.length : 0)
             : screen === 'options'
-              ? 10
+              ? 11
               : 0;
 
       switch (e.key) {
@@ -291,7 +294,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
           } else if (screen === 'credits') {
             setScreen('main');
           } else if (screen === 'options') {
-            if (selectedIndex === 10) {
+            if (selectedIndex === 11) {
               setScreen('main');
             } else {
               adjustOptionValue(selectedIndex, 1);
@@ -810,10 +813,24 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
               </span>
             </div>
 
-            {/* Language Select */}
+            {/* Typing Pattern Warnings Toggle */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 9 ? styles.selected : ''}`}
               onMouseEnter={() => handleHover(9)}
+              onClick={() =>
+                setOption('typingPatternWarningsEnabled', !options.typingPatternWarningsEnabled)
+              }
+            >
+              <span className={styles.optionLabel}>{t('menu.options.typingWarnings')}</span>
+              <span className={styles.optionToggle}>
+                [ {options.typingPatternWarningsEnabled ? t('options.value.on') : t('options.value.off')} ]
+              </span>
+            </div>
+
+            {/* Language Select */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 10 ? styles.selected : ''}`}
+              onMouseEnter={() => handleHover(10)}
               onClick={() => cycleLanguage()}
             >
               <span className={styles.optionLabel}>{t('menu.options.language')}</span>
@@ -831,11 +848,11 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
         </div>
 
         <button
-          className={`${styles.backButton} ${selectedIndex === 10 ? styles.selected : ''}`}
+          className={`${styles.backButton} ${selectedIndex === 11 ? styles.selected : ''}`}
           onClick={() => setScreen('main')}
-          onMouseEnter={() => handleHover(10)}
+          onMouseEnter={() => handleHover(11)}
         >
-          {selectedIndex === 10 ? '▶ ' : '  '}{t('menu.options.back')}
+          {selectedIndex === 11 ? '▶ ' : '  '}{t('menu.options.back')}
         </button>
         <div className={styles.keyHint}>{t('menu.options.keyHint')}</div>
       </div>

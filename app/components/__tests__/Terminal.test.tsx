@@ -713,6 +713,25 @@ describe('Terminal Component', () => {
     expect(input.value).toBe('help');
   });
 
+  it('suppresses typing pattern warnings when the accessibility option is disabled', () => {
+    window.localStorage.setItem(
+      'terminal1996_options',
+      JSON.stringify({ typingPatternWarningsEnabled: false })
+    );
+    render(<Terminal {...defaultProps} />);
+
+    const input = document.querySelector('input') as HTMLInputElement;
+
+    act(() => {
+      for (let i = 1; i <= 10; i += 1) {
+        fireEvent.change(input, { target: { value: 'abcdefghij'.slice(0, i) } });
+      }
+    });
+
+    expect(mockPlaySound).not.toHaveBeenCalledWith('warning');
+    expect(screen.queryByText(/SUSPICIOUS TYPING PATTERN DETECTED/i)).not.toBeInTheDocument();
+  });
+
   it('clears input after command submission', async () => {
     render(<Terminal {...defaultProps} />);
 
