@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import type { ImgHTMLAttributes } from 'react';
 import Victory from '../Victory';
+import { ENDINGS, type EndingId } from '../../../engine/endings';
 
 vi.mock('next/image', () => ({
   default: ({ alt, src, ...props }: ImgHTMLAttributes<HTMLImageElement>) => (
@@ -24,6 +25,7 @@ import { recordEnding } from '../../../storage/statistics';
 import { unlockAchievement } from '../../../engine/achievements';
 
 describe('Victory Component', () => {
+  const endingIds = Object.keys(ENDINGS) as EndingId[];
   const defaultProps = {
     onRestartAction: vi.fn(),
     commandCount: 100,
@@ -238,6 +240,18 @@ describe('Victory Component', () => {
     render(<Victory {...defaultProps} endingId="ridiculed" textSpeed="instant" />);
 
     expect(screen.getByText(/INTERNET HOAX ALERT/i)).toBeInTheDocument();
+  });
+
+  it.each(endingIds)('renders polished AOL presentation for %s', (endingId) => {
+    const ending = ENDINGS[endingId];
+
+    render(<Victory {...defaultProps} endingId={endingId} textSpeed="instant" />);
+
+    expect(screen.getByRole('dialog', { name: ending.title })).toBeInTheDocument();
+    expect(screen.getByText(ending.aol.headline)).toBeInTheDocument();
+    expect(screen.getByText(ending.aol.subheadline)).toBeInTheDocument();
+    expect(screen.getByAltText(ending.aol.imageAlt)).toHaveAttribute('src', ending.aol.imageSrc);
+    expect(screen.getByText(ending.title)).toBeInTheDocument();
   });
 
   it('shows browser chrome elements', () => {

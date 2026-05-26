@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import {
+  ENDINGS,
   type EndingFlags,
   type EndingId,
   analyzeDossier,
@@ -20,6 +23,8 @@ function createTestState(overrides: Partial<GameState> = {}): GameState {
 function dossier(...fileNames: string[]): Set<string> {
   return new Set(fileNames.map(fileName => `/archive/${fileName}`));
 }
+
+const ALL_ENDING_IDS = Object.keys(ENDINGS) as EndingId[];
 
 const REPRESENTATIVE_DOSSIERS: Record<EndingId, Set<string>> = {
   ridiculed: dossier(
@@ -212,6 +217,51 @@ describe('Endings', () => {
         expect(title).toBeTruthy();
         expect(typeof title).toBe('string');
       });
+    });
+  });
+
+  describe('ending content polish', () => {
+    it('has complete presentation copy for every dossier ending', () => {
+      expect(ALL_ENDING_IDS).toHaveLength(12);
+
+      for (const endingId of ALL_ENDING_IDS) {
+        const ending = ENDINGS[endingId];
+        const copy = [
+          ending.title,
+          ending.subtitle,
+          ...ending.narrative,
+          ending.ufo74_final,
+          ending.aol.headline,
+          ending.aol.subheadline,
+          ...ending.aol.body,
+          ending.aol.url,
+          ending.aol.imageAlt,
+        ].join('\n');
+
+        expect(ending.title, `${endingId} title`).toMatch(/\S/);
+        expect(ending.subtitle, `${endingId} subtitle`).toMatch(/\S/);
+        expect(ending.narrative.length, `${endingId} narrative`).toBeGreaterThanOrEqual(3);
+        expect(ending.ufo74_final, `${endingId} UFO74 final line`).toMatch(/\S/);
+        expect(ending.aol.headline, `${endingId} AOL headline`).toMatch(/\S/);
+        expect(ending.aol.subheadline, `${endingId} AOL subheadline`).toMatch(/\S/);
+        expect(ending.aol.body.length, `${endingId} AOL body`).toBeGreaterThanOrEqual(3);
+        expect(ending.aol.url, `${endingId} AOL URL`).toMatch(/^http:\/\/www\.aol\.com\/news\//);
+        expect(ending.aol.imageAlt, `${endingId} image alt`).toMatch(/\S/);
+        expect(ending.aol.visitorCount, `${endingId} visitor count`).toBeGreaterThan(0);
+        expect(copy, `${endingId} placeholder copy`).not.toMatch(/TODO|PLACEHOLDER|ENDING NOT FOUND/i);
+      }
+    });
+
+    it('points every ending image at an existing public asset', () => {
+      for (const endingId of ALL_ENDING_IDS) {
+        const imageSrc = ENDINGS[endingId].aol.imageSrc;
+
+        expect(imageSrc, `${endingId} image source`).toMatch(/^\/images\/endings\/.+\.jpg$/);
+        expect(
+          existsSync(join(process.cwd(), 'public', imageSrc?.replace(/^\//, '') ?? '')),
+          `${endingId} image asset is missing: ${imageSrc}`,
+        ).toBe(true);
+      }
     });
   });
 });
