@@ -4119,6 +4119,242 @@ registerLines(
   `
 );
 
+registerLines(
+  vfs.neural_dump_alfa.content,
+  `
+  [CRIPTOGRAFADO — AUTORIZAÇÃO DIVISÃO-PSI NECESSÁRIA]
+  Dados de captura neural de espécime recuperado.
+  Autenticação necessária para descriptografia.
+  Use: open neural_dump_alfa.psi
+  `,
+  `
+  [ENCRIPTADO — SE REQUIERE AUTORIZACIÓN DIVISIÓN-PSI]
+  Datos de captura neuronal de espécimen recuperado.
+  Se requiere autenticación para descifrado.
+  Use: open neural_dump_alfa.psi
+  `
+);
+
+registerLines(
+  vfs.emergency_broadcast.content,
+  `
+  [CRIPTOGRAFIA LEGADA — CÓPIA RECUPERADA DISPONÍVEL]
+  Este arquivo anteriormente usava um invólucro temporizado.
+  Texto recuperado disponível diretamente.
+  `,
+  `
+  [CIFRADO HEREDADO — COPIA RECUPERADA DISPONIBLE]
+  Este archivo anteriormente usaba un envoltorio temporizado.
+  Texto recuperado disponible directamente.
+  `
+);
+
+registerLines(
+  vfs.second_deployment_intercept.content,
+  `
+  [CRIPTOGRAFADO — CLASSIFICAÇÃO ULTRA]
+  Dados de sinal interceptado. Autenticação necessária.
+  Use: open second_deployment.sig
+  `,
+  `
+  [ENCRIPTADO — CLASIFICACIÓN ULTRA]
+  Datos de señal interceptada. Se requiere autenticación.
+  Use: open second_deployment.sig
+  `
+);
+
+// Decrypted evidence-document supplements: lines added/edited after the original
+// fragment dictionaries were built. Keys are listed explicitly so only the
+// previously-untranslated lines are registered (existing translations untouched).
+registerLines(
+  [
+    '>>>IMAGE: something watching, never moving',
+    'STREAM TERMINATED — SUBJECT EXPIRED',
+    'ANALYST NOTE: Download incomplete.',
+    'Pray it was enough. Pray it was not.',
+    '— TERMINAL INTEGRATION —',
+    "ALPHA's residual brain patterns have been uploaded to this terminal.",
+    'The consciousness is indexed and queryable.',
+    'Use `link` to open a channel. Four queries before the pattern decays.',
+  ],
+  `
+  >>>IMAGEM: algo observando, nunca se movendo
+  FLUXO ENCERRADO — SUJEITO EXPIRADO
+  NOTA DO ANALISTA: Download incompleto.
+  Reze para que tenha sido suficiente. Reze para que não.
+  — INTEGRAÇÃO AO TERMINAL —
+  Os padrões cerebrais residuais de ALPHA foram carregados neste terminal.
+  A consciência está indexada e consultável.
+  Use \`link\` para abrir um canal. Quatro consultas antes que o padrão se degrade.
+  `,
+  `
+  >>>IMAGEN: algo observando, nunca moviéndose
+  FLUJO TERMINADO — SUJETO EXPIRADO
+  NOTA DEL ANALISTA: Descarga incompleta.
+  Reza para que haya sido suficiente. Reza para que no.
+  — INTEGRACIÓN AL TERMINAL —
+  Los patrones cerebrales residuales de ALPHA han sido cargados en este terminal.
+  La consciencia está indexada y consultable.
+  Usa \`link\` para abrir un canal. Cuatro consultas antes de que el patrón se degrade.
+  `
+);
+
+registerLines(
+  [
+    'METHOD: EEG + computational reconstruction',
+    'Signal strength suggests transmission reached',
+    'destination before subject expiration.',
+  ],
+  `
+  MÉTODO: EEG + reconstrução computacional
+  A intensidade do sinal sugere que a transmissão alcançou
+  o destino antes da expiração do sujeito.
+  `,
+  `
+  MÉTODO: EEG + reconstrucción computacional
+  La intensidad de la señal sugiere que la transmisión alcanzó
+  el destino antes de la expiración del sujeto.
+  `
+);
+
+registerLines(
+  [
+    'PSI-COMM TRANSCRIPT — SECONDARY',
+    '"Thirty rotations" = 30 Earth years.',
+    'Base date: 1996. Projected window: 2026.',
+  ],
+  `
+  TRANSCRIÇÃO PSI-COMM — SECUNDÁRIA
+  "Trinta rotações" = 30 anos terrestres.
+  Data base: 1996. Janela projetada: 2026.
+  `,
+  `
+  TRANSCRIPCIÓN PSI-COMM — SECUNDARIA
+  "Treinta rotaciones" = 30 años terrestres.
+  Fecha base: 1996. Ventana proyectada: 2026.
+  `
+);
+
+registerLines(
+  [
+    'ORIGIN: LANGLEY | DEST: BRASÍLIA STATION',
+    'Recovery teams report multiple specimens secured.',
+    'Division as agreed: Primary to you, Secondary to us.',
+    'Tertiary inbound to Tel Aviv per standing agreement.',
+    'Protocol 7-ECHO remains in effect.',
+    'No domestic agencies read-in.',
+    'Cover story: industrial accident, toxic waste.',
+    'CRITICAL: Specimen 3 showed residual cognitive activity.',
+    'Recommend immediate neural extraction before decay.',
+    'Our team brings equipment. ETA 6 hours.',
+  ],
+  `
+  ORIGEM: LANGLEY | DEST: ESTAÇÃO BRASÍLIA
+  Equipes de recuperação relatam múltiplos espécimes assegurados.
+  Divisão conforme acordado: Primário para vocês, Secundário para nós.
+  Terciário a caminho de Tel Aviv conforme acordo permanente.
+  Protocolo 7-ECHO permanece em vigor.
+  Nenhuma agência doméstica informada.
+  História de fachada: acidente industrial, resíduos tóxicos.
+  CRÍTICO: Espécime 3 apresentou atividade cognitiva residual.
+  Recomenda-se extração neural imediata antes da degradação.
+  Nossa equipe leva o equipamento. ETA 6 horas.
+  `,
+  `
+  ORIGEN: LANGLEY | DEST: ESTACIÓN BRASILIA
+  Los equipos de recuperación informan múltiples especímenes asegurados.
+  División según lo acordado: Primario para ustedes, Secundario para nosotros.
+  Terciario en camino a Tel Aviv según acuerdo permanente.
+  El Protocolo 7-ECHO permanece en vigor.
+  Ninguna agencia nacional informada.
+  Historia de tapadera: accidente industrial, residuos tóxicos.
+  CRÍTICO: El Espécimen 3 mostró actividad cognitiva residual.
+  Se recomienda extracción neuronal inmediata antes de la degradación.
+  Nuestro equipo lleva el equipo. ETA 6 horas.
+  `
+);
+
+registerLines(
+  [
+    'INTERCEPT DATE: 03-MAR-1996 | ORIGIN: EXTRASOLAR',
+    'Transmission detected six weeks post-incident.',
+    'Source triangulation: beyond solar system boundary.',
+    '>>ASSESSMENT: High cognitive density — OPTIMAL yield',
+    '>>ASSESSMENT: Resistance threshold — NEGLIGIBLE',
+    '>>NOTE: Local biology serves as intermediary',
+    'ANALYST NOTE: The scouts completed their mission.',
+    'A response has been sent. They are not coming.',
+    'Something else is.',
+    '[SEE ATTACHED SIGNAL VISUALIZATION]',
+  ],
+  `
+  DATA DE INTERCEPTAÇÃO: 03-MAR-1996 | ORIGEM: EXTRASSOLAR
+  Transmissão detectada seis semanas após o incidente.
+  Triangulação da fonte: além da fronteira do sistema solar.
+  >>AVALIAÇÃO: Alta densidade cognitiva — rendimento ÓTIMO
+  >>AVALIAÇÃO: Limiar de resistência — NEGLIGENCIÁVEL
+  >>NOTA: Biologia local serve como intermediária
+  NOTA DO ANALISTA: Os batedores completaram sua missão.
+  Uma resposta foi enviada. Eles não estão vindo.
+  Outra coisa está.
+  [VEJA VISUALIZAÇÃO DO SINAL EM ANEXO]
+  `,
+  `
+  FECHA DE INTERCEPCIÓN: 03-MAR-1996 | ORIGEN: EXTRASOLAR
+  Transmisión detectada seis semanas después del incidente.
+  Triangulación de la fuente: más allá del límite del sistema solar.
+  >>EVALUACIÓN: Alta densidad cognitiva — rendimiento ÓPTIMO
+  >>EVALUACIÓN: Umbral de resistencia — INSIGNIFICANTE
+  >>NOTA: La biología local sirve como intermediaria
+  NOTA DEL ANALISTA: Los exploradores completaron su misión.
+  Se ha enviado una respuesta. No van a venir.
+  Otra cosa sí.
+  [VER VISUALIZACIÓN DE SEÑAL ADJUNTA]
+  `
+);
+
+registerLines(
+  [
+    'EMERGENCY BROADCAST — INTERCEPTED',
+    'PILOT: "Negative. Heavy cloud cover at 3000m."',
+    'TOWER: "Proceed to 21.5519 S, 45.4331 W."',
+    'PILOT: "Confirmed. ETA 8 minutes."',
+    '[STATIC — 14 SECONDS]',
+    'PILOT: "Tower, something on radar. Not moving."',
+    'TOWER: "Weapons inactive. Observe only."',
+    'PILOT: "Beginning visual approach."',
+    '[STATIC — 8 SECONDS]',
+    `PILOT: "Deus me livre... I don't know what I'm looking at."`,
+    'TOWER: "Maintain radio silence from this point."',
+  ],
+  `
+  TRANSMISSÃO DE EMERGÊNCIA — INTERCEPTADA
+  PILOTO: "Negativo. Cobertura densa de nuvens a 3000m."
+  TORRE: "Prossiga para 21.5519 S, 45.4331 W."
+  PILOTO: "Confirmado. ETA 8 minutos."
+  [ESTÁTICA — 14 SEGUNDOS]
+  PILOTO: "Torre, algo no radar. Parado."
+  TORRE: "Armamento inativo. Apenas observe."
+  PILOTO: "Iniciando aproximação visual."
+  [ESTÁTICA — 8 SEGUNDOS]
+  PILOTO: "Deus me livre... não sei o que estou vendo."
+  TORRE: "Mantenha silêncio de rádio a partir deste ponto."
+  `,
+  `
+  TRANSMISIÓN DE EMERGENCIA — INTERCEPTADA
+  PILOTO: "Negativo. Densa cobertura de nubes a 3000m."
+  TORRE: "Proceda a 21.5519 S, 45.4331 W."
+  PILOTO: "Confirmado. ETA 8 minutos."
+  [ESTÁTICA — 14 SEGUNDOS]
+  PILOTO: "Torre, algo en el radar. No se mueve."
+  TORRE: "Armamento inactivo. Solo observe."
+  PILOTO: "Iniciando aproximación visual."
+  [ESTÁTICA — 8 SEGUNDOS]
+  PILOTO: "Deus me livre... no sé qué estoy viendo."
+  TORRE: "Mantenga silencio de radio a partir de este punto."
+  `
+);
+
 export const RUNTIME_VFS_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
   'pt-BR': ptBrTranslations,
   es: esTranslations,

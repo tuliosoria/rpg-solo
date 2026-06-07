@@ -710,14 +710,24 @@ describe('Narrative Mechanics', () => {
       expect(result.output.length).toBeGreaterThan(0);
     });
 
-    it('recover command shows usage or attempts recovery', () => {
+    it('recover is operational and does not penalize the player', () => {
       const state = createTestState({
         tutorialStep: -1,
         tutorialComplete: true,
       });
-      const result = executeCommand('recover', state);
 
-      expect(result.output.length).toBeGreaterThan(0);
+      // No args: shows the recovery utility usage.
+      const usage = executeCommand('recover', state);
+      expect(usage.output.length).toBeGreaterThan(0);
+      // Must NOT be treated as an invalid command (no detection/alert penalty).
+      expect(usage.stateChanges.legacyAlertCounter).toBeUndefined();
+      expect(usage.stateChanges.detectionLevel).toBeUndefined();
+
+      // With a target: attempts recovery and points the player at `open`.
+      const attempt = executeCommand('recover bio_container.log', state);
+      expect(attempt.output.length).toBeGreaterThan(0);
+      expect(attempt.stateChanges.legacyAlertCounter).toBeUndefined();
+      expect(attempt.stateChanges.detectionLevel).toBeUndefined();
     });
 
     it('save command triggers evidence save flow', () => {
