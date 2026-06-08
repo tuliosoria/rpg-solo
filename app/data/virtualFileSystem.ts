@@ -970,7 +970,7 @@ export const honeypot_smoking_gun: FileNode = {
 // LEGACY-WRAPPED FILES - readable directly in the streamlined build
 // ═══════════════════════════════════════════════════════════════════════════
 
-const emergency_broadcast: FileNode = {
+export const emergency_broadcast: FileNode = {
   type: 'file',
   name: 'emergency_broadcast.enc',
   status: 'encrypted',
@@ -2036,7 +2036,7 @@ export const autopsy_addendum_psi: FileNode = {
   ],
 };
 
-const transcript_core: FileNode = {
+export const transcript_core: FileNode = {
   type: 'file',
   name: 'transcript_core.enc',
   status: 'encrypted',
@@ -2078,7 +2078,7 @@ const transcript_core: FileNode = {
   ],
 };
 
-const transcript_limit: FileNode = {
+export const transcript_limit: FileNode = {
   type: 'file',
   name: 'transcript_limit.enc',
   status: 'encrypted',
@@ -2467,7 +2467,7 @@ export const window_alignment: FileNode = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Raw neural dump from scout - fragmented telepathic communication
-const neural_dump_alfa: FileNode = {
+export const neural_dump_alfa: FileNode = {
   type: 'file',
   name: 'neural_dump_alfa.psi',
   status: 'encrypted',
@@ -2583,7 +2583,7 @@ export const specimen_purpose_analysis: FileNode = {
 };
 
 // Second deployment file with image trigger
-const second_deployment_intercept: FileNode = {
+export const second_deployment_intercept: FileNode = {
   type: 'file',
   name: 'second_deployment.sig',
   status: 'encrypted',
