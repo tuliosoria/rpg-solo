@@ -68,38 +68,41 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
           setOption('soundEffectsEnabled', !options.soundEffectsEnabled);
           break;
         case 3:
-          setOption('turingVoiceEnabled', !options.turingVoiceEnabled);
+          setOption('musicEnabled', !options.musicEnabled);
           break;
         case 4:
-          setOption('crtEffectsEnabled', !options.crtEffectsEnabled);
+          setOption('turingVoiceEnabled', !options.turingVoiceEnabled);
           break;
         case 5:
-          setOption('screenFlickerEnabled', !options.screenFlickerEnabled);
+          setOption('crtEffectsEnabled', !options.crtEffectsEnabled);
           break;
         case 6:
+          setOption('screenFlickerEnabled', !options.screenFlickerEnabled);
+          break;
+        case 7:
           if (options.screenFlickerEnabled) {
             const currentIdx = flickerOptions.indexOf(options.flickerIntensity);
             const nextIdx = (currentIdx + direction + flickerOptions.length) % flickerOptions.length;
             setOption('flickerIntensity', flickerOptions[nextIdx]);
           }
           break;
-        case 7: {
+        case 8: {
           const currentIdx = fontSizeOptions.indexOf(options.fontSize);
           const nextIdx = (currentIdx + direction + fontSizeOptions.length) % fontSizeOptions.length;
           setOption('fontSize', fontSizeOptions[nextIdx]);
           break;
         }
-        case 8: {
+        case 9: {
           const currentIdx = textSpeedOptions.indexOf(options.textSpeed);
           const nextIdx =
             (currentIdx + direction + textSpeedOptions.length) % textSpeedOptions.length;
           setOption('textSpeed', textSpeedOptions[nextIdx]);
           break;
         }
-        case 9:
+        case 10:
           setOption('typingPatternWarningsEnabled', !options.typingPatternWarningsEnabled);
           break;
-        case 10:
+        case 11:
           cycleLanguage(direction);
           break;
         default:
@@ -252,7 +255,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
           : screen === 'load'
             ? (saves.length > 0 ? saves.length : 0)
             : screen === 'options'
-              ? 11
+              ? 12
               : 0;
 
       switch (e.key) {
@@ -294,7 +297,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
           } else if (screen === 'credits') {
             setScreen('main');
           } else if (screen === 'options') {
-            if (selectedIndex === 11) {
+            if (selectedIndex === 12) {
               setScreen('main');
             } else {
               adjustOptionValue(selectedIndex, 1);
@@ -702,10 +705,22 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
               </span>
             </div>
 
-            {/* Turing Voice Toggle */}
+            {/* Music Toggle */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 3 ? styles.selected : ''}`}
               onMouseEnter={() => handleHover(3)}
+              onClick={() => setOption('musicEnabled', !options.musicEnabled)}
+            >
+              <span className={styles.optionLabel}>{t('menu.options.music')}</span>
+              <span className={styles.optionToggle}>
+                [ {options.musicEnabled ? t('options.value.on') : t('options.value.off')} ]
+              </span>
+            </div>
+
+            {/* Turing Voice Toggle */}
+            <div
+              className={`${styles.optionRow} ${selectedIndex === 4 ? styles.selected : ''}`}
+              onMouseEnter={() => handleHover(4)}
               onClick={() => setOption('turingVoiceEnabled', !options.turingVoiceEnabled)}
             >
               <span className={styles.optionLabel}>{t('menu.options.turingVoice')}</span>
@@ -721,8 +736,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
 
             {/* CRT Effects Toggle */}
             <div
-              className={`${styles.optionRow} ${selectedIndex === 4 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(4)}
+              className={`${styles.optionRow} ${selectedIndex === 5 ? styles.selected : ''}`}
+              onMouseEnter={() => handleHover(5)}
               onClick={() => setOption('crtEffectsEnabled', !options.crtEffectsEnabled)}
             >
               <span className={styles.optionLabel}>{t('menu.options.crtEffects')}</span>
@@ -733,8 +748,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
 
             {/* Screen Flicker Toggle */}
             <div
-              className={`${styles.optionRow} ${selectedIndex === 5 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(5)}
+              className={`${styles.optionRow} ${selectedIndex === 6 ? styles.selected : ''}`}
+              onMouseEnter={() => handleHover(6)}
               onClick={() => setOption('screenFlickerEnabled', !options.screenFlickerEnabled)}
             >
               <span className={styles.optionLabel}>{t('menu.options.screenFlicker')}</span>
@@ -745,8 +760,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
 
             {/* Flicker Intensity Select (only when flicker is on) */}
             <div
-              className={`${styles.optionRow} ${selectedIndex === 6 ? styles.selected : ''} ${!options.screenFlickerEnabled ? styles.optionDisabled : ''}`}
-              onMouseEnter={() => handleHover(6)}
+              className={`${styles.optionRow} ${selectedIndex === 7 ? styles.selected : ''} ${!options.screenFlickerEnabled ? styles.optionDisabled : ''}`}
+              onMouseEnter={() => handleHover(7)}
               onClick={() => {
                 if (options.screenFlickerEnabled) {
                   const currentIdx = flickerOptions.indexOf(options.flickerIntensity);
@@ -769,8 +784,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
 
             {/* Font Size Select */}
             <div
-              className={`${styles.optionRow} ${selectedIndex === 7 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(7)}
+              className={`${styles.optionRow} ${selectedIndex === 8 ? styles.selected : ''}`}
+              onMouseEnter={() => handleHover(8)}
               onClick={() => {
                 const currentIdx = fontSizeOptions.indexOf(options.fontSize);
                 const nextIdx = (currentIdx + 1) % fontSizeOptions.length;
@@ -791,8 +806,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
 
             {/* Text Speed Select */}
             <div
-              className={`${styles.optionRow} ${selectedIndex === 8 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(8)}
+              className={`${styles.optionRow} ${selectedIndex === 9 ? styles.selected : ''}`}
+              onMouseEnter={() => handleHover(9)}
               onClick={() => {
                 const currentIdx = textSpeedOptions.indexOf(options.textSpeed);
                 const nextIdx = (currentIdx + 1) % textSpeedOptions.length;
@@ -815,8 +830,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
 
             {/* Typing Pattern Warnings Toggle */}
             <div
-              className={`${styles.optionRow} ${selectedIndex === 9 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(9)}
+              className={`${styles.optionRow} ${selectedIndex === 10 ? styles.selected : ''}`}
+              onMouseEnter={() => handleHover(10)}
               onClick={() =>
                 setOption('typingPatternWarningsEnabled', !options.typingPatternWarningsEnabled)
               }
@@ -829,8 +844,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
 
             {/* Language Select */}
             <div
-              className={`${styles.optionRow} ${selectedIndex === 10 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(10)}
+              className={`${styles.optionRow} ${selectedIndex === 11 ? styles.selected : ''}`}
+              onMouseEnter={() => handleHover(11)}
               onClick={() => cycleLanguage()}
             >
               <span className={styles.optionLabel}>{t('menu.options.language')}</span>
@@ -848,11 +863,11 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
         </div>
 
         <button
-          className={`${styles.backButton} ${selectedIndex === 11 ? styles.selected : ''}`}
+          className={`${styles.backButton} ${selectedIndex === 12 ? styles.selected : ''}`}
           onClick={() => setScreen('main')}
-          onMouseEnter={() => handleHover(11)}
+          onMouseEnter={() => handleHover(12)}
         >
-          {selectedIndex === 11 ? '▶ ' : '  '}{t('menu.options.back')}
+          {selectedIndex === 12 ? '▶ ' : '  '}{t('menu.options.back')}
         </button>
         <div className={styles.keyHint}>{t('menu.options.keyHint')}</div>
       </div>
