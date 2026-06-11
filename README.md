@@ -64,6 +64,10 @@ npm run electron:build
 
 `electron:build` packages the current platform locally. CI still produces Windows, macOS, and Linux artifacts from the shared `electron-builder.yml` matrix. Steam features degrade gracefully when no App ID or Steam client is available, while tagged release builds require a configured App ID before packaging.
 
+### Releasing to Steam
+
+Pushing a `v*` tag (matching `package.json`'s version) uploads the desktop builds to your Steam depots via SteamPipe — see the full runbook in [`docs/STEAM_RELEASE.md`](docs/STEAM_RELEASE.md). The upload is safely skipped until the `STEAM_APP_ID`, `STEAM_USERNAME`, and `STEAM_CONFIG_VDF` secrets are configured. For manual or local uploads, use `npm run steam:deploy` (run `npm run steam:deploy:dry` first to preview).
+
 ## Project Structure
 
 ```

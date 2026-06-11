@@ -2,6 +2,11 @@
 
 This document describes the Steam-facing desktop integration for the Electron build.
 
+> **Shipping to Steam?** See [`docs/STEAM_RELEASE.md`](docs/STEAM_RELEASE.md) for
+> the end-to-end release runbook: partner setup, depots, achievements, the
+> SteamPipe upload pipeline (CI + `npm run steam:deploy`), beta testing, and
+> go-live. This document covers how the *runtime* integration behaves.
+
 ## Overview
 
 The game uses [steamworks.js](https://github.com/nicobrinkkemper/steamworks.js) for:

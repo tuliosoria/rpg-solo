@@ -41,6 +41,7 @@ Other useful commands: `npm run test:coverage`, `npm run lint:fix`, `npm run for
 | **Versioning / build metadata** | `next.config.ts`, `app/components/terminalConstants.ts` | See "Versioning" below |
 | **Story validation scripts** | `scripts/` | `validate-story.js`, `validate-enhanced-story.js`, `story_validator.js` |
 | **Desktop packaging** | `electron/` | Electron is for distribution; dev happens in browser |
+| **Steam release / SteamPipe** | `docs/STEAM_RELEASE.md` | `scripts/steamPipe.mjs`, `scripts/steam-local-deploy.mjs`, `.github/workflows/steam-release.yml` |
 
 ---
 

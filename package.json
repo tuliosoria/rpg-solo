@@ -37,7 +37,10 @@
     "e2e:headed": "playwright test --config=e2e-tests/playwright.config.ts --headed",
     "electron:dev": "electron .",
     "electron:build": "npm run build && node scripts/build-electron.mjs",
-    "electron:build:all": "npm run build && electron-builder --config electron-builder.yml --win --mac --linux --publish never"
+    "electron:build:all": "npm run build && electron-builder --config electron-builder.yml --win --mac --linux --publish never",
+    "steam:appid": "node scripts/write-steam-appid.mjs",
+    "steam:deploy": "node scripts/steam-local-deploy.mjs",
+    "steam:deploy:dry": "node scripts/steam-local-deploy.mjs --dry-run"
   },
   "dependencies": {
     "electron-updater": "^6.3.9",

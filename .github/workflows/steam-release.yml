@@ -1,0 +1,167 @@
+name: Steam Release
+
+# Uploads packaged desktop builds to Steam via SteamPipe.
+#
+# This complements desktop-build.yml (which produces downloadable installers and
+# a GitHub release). This workflow uploads the *unpacked* app trees to your Steam
+# depots so the build appears in the Steamworks "Builds" page.
+#
+# It is SAFE BY DEFAULT:
+#   * The deploy step only runs when the required secrets are configured. With no
+#     secrets it is skipped, so forks and contributors never fail here.
+#   * Uploads do NOT auto-set-live unless you pass a release branch on manual
+#     dispatch. Promote builds to the default branch from Steamworks yourself.
+#
+# Required repository secrets (see docs/STEAM_RELEASE.md):
+#   STEAM_APP_ID      - numeric App ID from Steamworks
+#   STEAM_USERNAME    - Steam BUILD account name (not your personal login)
+#   STEAM_CONFIG_VDF  - base64-encoded config.vdf from a logged-in steamcmd
+#
+# Triggers:
+#   * push of a tag matching v*  (e.g. v1.0.0) -> uploads to the "prerelease" branch
+#   * manual dispatch            -> choose the Steam branch to upload to
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      steam_branch:
+        description: 'Steam branch to upload to (leave blank to upload without setting live)'
+        required: false
+        default: 'prerelease'
+
+concurrency:
+  group: steam-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # Gate everything on the secrets being present. Secrets cannot be read inside
+  # `if:` at the job level for matrix-shared steps, so surface a boolean output.
+  guard:
+    name: Check Steam credentials
+    runs-on: ubuntu-latest
+    outputs:
+      configured: ${{ steps.check.outputs.configured }}
+    steps:
+      - name: Detect required secrets
+        id: check
+        env:
+          STEAM_APP_ID: ${{ secrets.STEAM_APP_ID }}
+          STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+          STEAM_CONFIG_VDF: ${{ secrets.STEAM_CONFIG_VDF }}
+        run: |
+          if [ -n "$STEAM_APP_ID" ] && [ -n "$STEAM_USERNAME" ] && [ -n "$STEAM_CONFIG_VDF" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "Steam credentials detected; release will proceed."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Steam secrets not configured (STEAM_APP_ID / STEAM_USERNAME / STEAM_CONFIG_VDF). Skipping Steam upload."
+          fi
+
+  build:
+    name: Build ${{ matrix.platform }}
+    needs: guard
+    if: needs.guard.outputs.configured == 'true'
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win
+            content_dir: win-unpacked
+          - os: macos-latest
+            platform: mac
+            content_dir: mac
+          - os: ubuntu-latest
+            platform: linux
+            content_dir: linux-unpacked
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history so the git-derived version is accurate
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js
+        run: npm run build
+
+      # The beforeBuild hook embeds STEAM_APP_ID into the packaged app and, on a
+      # v* tag, enforces that the tag matches package.json's version.
+      - name: Package unpacked app (Windows)
+        if: matrix.platform == 'win'
+        run: npx electron-builder --config electron-builder.yml --win --x64 --dir --publish never
+        env:
+          STEAM_APP_ID: ${{ secrets.STEAM_APP_ID }}
+          REQUIRE_STEAM_APP_ID: '1'
+
+      - name: Package unpacked app (macOS)
+        if: matrix.platform == 'mac'
+        run: npx electron-builder --config electron-builder.yml --mac --x64 --dir --publish never
+        env:
+          STEAM_APP_ID: ${{ secrets.STEAM_APP_ID }}
+          REQUIRE_STEAM_APP_ID: '1'
+
+      - name: Package unpacked app (Linux)
+        if: matrix.platform == 'linux'
+        run: npx electron-builder --config electron-builder.yml --linux --x64 --dir --publish never
+        env:
+          STEAM_APP_ID: ${{ secrets.STEAM_APP_ID }}
+          REQUIRE_STEAM_APP_ID: '1'
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: steam-content-${{ matrix.platform }}
+          path: dist/${{ matrix.content_dir }}
+          retention-days: 7
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy to Steam
+    needs: [guard, build]
+    if: needs.guard.outputs.configured == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve build metadata
+        id: meta
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "desc=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            echo "branch=prerelease" >> "$GITHUB_OUTPUT"
+          else
+            echo "desc=manual-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+            echo "branch=${{ github.event.inputs.steam_branch }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: steam-content
+
+      # game-ci/steam-deploy lays out depots from rootPath + depotNPath and
+      # generates the SteamPipe VDFs internally. Depot IDs follow the Steamworks
+      # convention: appId+1 (win), appId+2 (mac), appId+3 (linux). They must
+      # match the depots configured in Steamworks. See docs/STEAM_RELEASE.md.
+      - name: Upload to Steam
+        uses: game-ci/steam-deploy@v3
+        with:
+          username: ${{ secrets.STEAM_USERNAME }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF }}
+          appId: ${{ secrets.STEAM_APP_ID }}
+          buildDescription: ${{ steps.meta.outputs.desc }}
+          rootPath: steam-content
+          depot1Path: steam-content-win
+          depot2Path: steam-content-mac
+          depot3Path: steam-content-linux
+          releaseBranch: ${{ steps.meta.outputs.branch }}
