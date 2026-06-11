@@ -6,6 +6,7 @@ import { recordEnding } from '../../storage/statistics';
 import { useI18n } from '../../i18n';
 import type { TextSpeed } from '../../types';
 import { scaleTextSpeedDelay } from '../textSpeed';
+import { useEndingMusic } from './useEndingMusic';
 
 interface SecretEndingProps {
   onDismissAction: () => void;
@@ -25,6 +26,9 @@ export default function SecretEnding({
   const [textLines, setTextLines] = useState<string[]>([]);
   const hasRecordedEnding = useRef(false);
   const restartButtonRef = useRef<HTMLButtonElement>(null);
+
+  // ── Underscore the confession with a low, somber bed (settings-aware) ──
+  useEndingMusic('/audio/music/ending-game.mp3', { baseVolume: 0.32 });
 
   // Record the secret ending in statistics
   useEffect(() => {

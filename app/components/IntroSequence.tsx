@@ -41,19 +41,32 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
     }, TRANSITION_MS);
   }, []);
 
-  // Skip on Esc / Enter / Space
+  // Skip handling. The gate needs a deliberate user gesture (Enter/Space/click)
+  // so the browser lets the intro video play with sound. Once past the gate,
+  // the on-screen hint promises "press any key to skip" — so honour any key,
+  // ignoring lone modifier presses and auto-repeat so Alt-Tab or a held key
+  // doesn't skip unintentionally.
   useEffect(() => {
+    const MODIFIER_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta', 'CapsLock']);
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        finish();
+      if (e.repeat || MODIFIER_KEYS.has(e.key)) return;
+
+      if (scene === 'gate') {
+        // On the gate, Enter/Space provides the gesture that unlocks audio;
+        // Escape skips the whole intro outright.
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          finish();
+        } else if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          goTo('video');
+        }
         return;
       }
-      // Use Enter/Space to dismiss the gate as a user gesture
-      if (scene === 'gate' && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault();
-        goTo('video');
-      }
+
+      // Past the gate: any key skips to the menu.
+      e.preventDefault();
+      finish();
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);

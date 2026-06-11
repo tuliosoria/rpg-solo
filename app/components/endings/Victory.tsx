@@ -13,6 +13,7 @@ import {
 } from '../../engine/endings';
 import type { EndingFlags } from '../../engine/endings';
 import { buildLeakPrologue } from '../../engine/leakPrologue';
+import { useEndingMusic } from './useEndingMusic';
 import type { TextSpeed } from '../../types';
 
 const AOL_TIMINGS: Record<
@@ -96,27 +97,9 @@ export default function Victory({
   const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null);
   const hasRecordedEnding = useRef(false);
   const restartButtonRef = useRef<HTMLButtonElement>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // ── Ending music ──
-  useEffect(() => {
-    try {
-      const audio = new Audio('/audio/music/ending-game.mp3');
-      audio.loop = true;
-      audio.volume = 0.5;
-      audioRef.current = audio;
-      void audio.play().catch(() => {});
-    } catch {
-      // Audio not available
-    }
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = '';
-        audioRef.current = null;
-      }
-    };
-  }, []);
+  // ── Ending music (honours the player's music + volume settings) ──
+  useEndingMusic('/audio/music/ending-game.mp3', { baseVolume: 0.5 });
 
   const resolvedEndingId: EndingId = endingId && endingId in ENDINGS
     ? endingId
