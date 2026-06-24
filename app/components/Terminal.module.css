@@ -630,9 +630,9 @@
 
 /* ESC button in header */
 .escButton {
-  background: rgba(255, 100, 0, 0.15);
-  border: 2px solid #ff6600;
-  color: #ff9900;
+  background: rgba(136, 204, 68, 0.1);
+  border: 2px solid #6b9930;
+  color: #88cc44;
   padding: 4px 12px;
   font-family: inherit;
   font-size: 12px;
@@ -640,15 +640,15 @@
   letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.2s;
-  text-shadow: 0 0 4px rgba(255, 100, 0, 0.5);
+  text-shadow: 0 0 4px rgba(136, 204, 68, 0.5);
   flex-shrink: 0;
 }
 
 .escButton:hover {
-  background: rgba(255, 100, 0, 0.3);
-  border-color: #ff9900;
-  color: #ffcc00;
-  box-shadow: 0 0 12px rgba(255, 100, 0, 0.4);
+  background: rgba(136, 204, 68, 0.2);
+  border-color: #88cc44;
+  color: #99dd55;
+  box-shadow: 0 0 12px rgba(136, 204, 68, 0.4);
 }
 
 /* Header dropdown menu */
