@@ -56,3 +56,6 @@ electron/steam-app-id.generated.js
 
 # git worktrees
 /.worktrees/
+
+# impeccable design-detector runtime cache (transient)
+.impeccable/hook.cache.json

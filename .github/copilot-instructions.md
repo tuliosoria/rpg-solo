@@ -163,4 +163,15 @@ This project uses skills in `.github/skills/`. When a task matches a skill domai
 
 ---
 
+## Design Context
+
+Visual and product-design work is anchored by two root docs (generated via the `impeccable` design skill). Read them before changing any player-facing UI, styling, or visual copy:
+
+- **`PRODUCT.md`** — strategic context. Register is `product`; the in-game terminal UX is the primary surface. Captures users, purpose, brand personality (clinical, paranoid, analog), anti-references, design principles, and accessibility requirements.
+- **`DESIGN.md`** — the visual system in Stitch format. Creative North Star: **"The Haunted Government Terminal."** Documents the phosphor-green-on-near-black palette, the simulated-CRT depth model, the semantic detection ramp (with colorblind-safe shape cues), square-cornered chrome, and the reserved anomaly-violet accent. The machine-readable token sidecar lives at `.impeccable/design.json`.
+
+When doing UI design tasks, invoke the `impeccable` skill — it reads these files automatically.
+
+---
+
 **Keep edits minimal, match existing style, and run `npm test && npm run typecheck` after logic changes.**

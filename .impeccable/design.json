@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-24T10:24:00-04:00",
+  "title": "Design System: Varginha: Terminal 1996",
+  "extensions": {
+    "colorMeta": {
+      "phosphor-green": {
+        "role": "primary",
+        "displayName": "Phosphor Green",
+        "canonical": "#88cc44",
+        "tonalRamp": ["#1a2a10", "#2a3a18", "#445522", "#5a8a28", "#6b9930", "#88cc44", "#99dd55", "#b8e07c"]
+      },
+      "phosphor-bright": {
+        "role": "primary",
+        "displayName": "Phosphor Bright",
+        "canonical": "#99dd55",
+        "tonalRamp": ["#1a2a10", "#2a3a18", "#445522", "#5a8a28", "#78b838", "#99dd55", "#b8e07c", "#d9ffb8"]
+      },
+      "risk-elevated": {
+        "role": "secondary",
+        "displayName": "Warning Yellow",
+        "canonical": "#ffff00",
+        "tonalRamp": ["#2a2a00", "#555500", "#888800", "#aaaa00", "#cccc00", "#ffff00", "#ffff66", "#ffffaa"]
+      },
+      "risk-high": {
+        "role": "secondary",
+        "displayName": "Alarm Orange",
+        "canonical": "#ff9900",
+        "tonalRamp": ["#331f00", "#663d00", "#995c00", "#cc6600", "#ff8800", "#ff9900", "#ffb347", "#ffd699"]
+      },
+      "risk-critical": {
+        "role": "secondary",
+        "displayName": "Critical Red",
+        "canonical": "#ff0000",
+        "tonalRamp": ["#330000", "#660000", "#990000", "#cc0000", "#ff0000", "#ff3333", "#ff6666", "#ff9999"]
+      },
+      "anomaly-violet": {
+        "role": "tertiary",
+        "displayName": "Anomaly Violet",
+        "canonical": "#aa88ff",
+        "tonalRamp": ["#241a3a", "#3a2a66", "#5a44aa", "#7a5fd0", "#aa88ff", "#bb9fff", "#ddaaff", "#ece0ff"]
+      },
+      "screen-black": {
+        "role": "neutral",
+        "displayName": "Screen Black",
+        "canonical": "#080a06",
+        "tonalRamp": ["#060d04", "#080a06", "#0a0a0a", "#0c1a08", "#101810", "#1a2a10", "#2a3a18", "#445522"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display (VT323)", "purpose": "Intro title and menu wordmark only — stamped-on-glass signage, wide tracking." },
+      "headline": { "displayName": "Headline (VT323)", "purpose": "Screen titles and logo subtitles." },
+      "title": { "displayName": "Title (Mono Bold)", "purpose": "Modal headers and bold uppercase section labels." },
+      "body": { "displayName": "Body (Mono)", "purpose": "Terminal output, documents, command echo — the base reading size." },
+      "label": { "displayName": "Label (Mono)", "purpose": "Toggles, key hints, status chips — small tracked caps." }
+    },
+    "shadows": [
+      { "name": "glow-text-soft", "value": "0 0 4px rgba(136,204,68,0.5)", "purpose": "Default phosphor bloom on live green text." },
+      { "name": "glow-text-strong", "value": "0 0 20px rgba(136,204,68,0.5)", "purpose": "Emphasis bloom for titles and active elements." },
+      { "name": "glow-modal", "value": "0 0 40px rgba(136,204,68,0.2)", "purpose": "Green halo around dialogs — a brighter window, never a dark cast." },
+      { "name": "glow-button-hover", "value": "0 0 20px rgba(136,204,68,0.2)", "purpose": "Button hover energization." },
+      { "name": "glow-critical", "value": "0 0 6px rgba(255,0,0,0.8)", "purpose": "Critical detection text alarm." },
+      { "name": "bezel-depth", "value": "0 26px 70px rgba(0,0,0,0.7), 0 8px 18px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -28px 44px rgba(0,0,0,0.55)", "purpose": "The molded CRT monitor housing — the system's only true drop shadow." }
+    ],
+    "motion": [
+      { "name": "transition-standard", "value": "all 0.2s ease", "purpose": "Default state change on buttons, toggles, links." },
+      { "name": "screen-warp", "value": "perspective(1400px) scaleX(0.982) scaleY(0.968)", "purpose": "The curvature of the CRT glass over the live surface." },
+      { "name": "scanlines", "value": "repeating-linear-gradient drift, ~8s linear infinite", "purpose": "Ever-present horizontal CRT raster lines (toggle-able)." },
+      { "name": "phosphor-flicker", "value": "opacity flicker, var(--flicker-intensity) 0.05", "purpose": "Subtle brightness instability of the tube (photosensitivity toggle)." },
+      { "name": "critical-pulse", "value": "opacity 1 -> 0.5, 1s ease-in-out infinite", "purpose": "Critical risk and error alarm heartbeat." },
+      { "name": "placeholder-pulse", "value": "opacity 0.6 -> 1, 1.5s ease-in-out infinite", "purpose": "Breathing input placeholder, inviting a command." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "480px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Bracketed menu action — transparent, square, green border, glows and lifts on hover.",
+      "html": "<div class=\"ds-btn-stage\"><button class=\"ds-btn-primary\">[ NEW GAME ]</button></div>",
+      "css": ".ds-btn-stage{background:#080a06;padding:32px;display:flex;justify-content:center}.ds-btn-primary{background:transparent;border:1px solid #2a3a18;color:#88cc44;padding:16px 32px;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:18px;letter-spacing:2px;cursor:pointer;transition:all .2s ease}.ds-btn-primary:hover{background:rgba(136,204,68,0.1);border-color:#88cc44;box-shadow:0 0 20px rgba(136,204,68,0.2);transform:translateY(-2px)}.ds-btn-primary:active{transform:translateY(0)}.ds-btn-primary:focus-visible{outline:2px solid #99dd55;outline-offset:2px}"
+    },
+    {
+      "name": "Terminal Command Input",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "The command line — recessed gutter, bold green prompt with bloom, transparent borderless field.",
+      "html": "<div class=\"ds-terminal-input\"><span class=\"ds-prompt\">visitor@varginha:/internal$</span><input value=\"open witness_farm_recording.txt\" aria-label=\"command\" /></div>",
+      "css": ".ds-terminal-input{display:flex;align-items:center;background:#060d04;border-top:2px solid #6b9930;padding:10px 16px;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:14px}.ds-terminal-input .ds-prompt{color:#88cc44;font-weight:bold;margin-right:8px;text-shadow:0 0 4px rgba(136,204,68,0.5);white-space:nowrap}.ds-terminal-input input{flex:1;background:transparent;border:none;outline:none;color:#88cc44;font-family:inherit;font-size:1em;caret-color:#88cc44;padding:6px 0}.ds-terminal-input input::placeholder{color:#5a8a28}"
+    },
+    {
+      "name": "Settings Toggle",
+      "kind": "custom",
+      "refersTo": "toggle-on",
+      "description": "Binary in-world switch. On = green-tinted, lit. Off = the only place neutral gray lives inside the terminal.",
+      "html": "<div class=\"ds-toggle-stage\"><button class=\"ds-toggle ds-toggle-on\">CRT FX: ON</button><button class=\"ds-toggle ds-toggle-off\">FLICKER: OFF</button></div>",
+      "css": ".ds-toggle-stage{background:#080a06;padding:28px;display:flex;gap:12px;justify-content:center}.ds-toggle{padding:8px 16px;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .2s}.ds-toggle-on{background:rgba(136,204,68,0.15);border:1px solid #88cc44;color:#88cc44}.ds-toggle-on:hover{background:rgba(136,204,68,0.2)}.ds-toggle-off{background:transparent;border:1px solid #444;color:#666}"
+    },
+    {
+      "name": "Dialog / Modal",
+      "kind": "card",
+      "refersTo": "modal",
+      "description": "A brighter window onto the same screen — near-black fill, 1px green border, green halo, square corners.",
+      "html": "<div class=\"ds-modal-stage\"><div class=\"ds-modal\"><h2>SETTINGS</h2><div class=\"ds-rule\">\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</div><div class=\"ds-row\"><span>SCANLINES</span><span>[ ON ]</span></div><div class=\"ds-row\" style=\"border-bottom:none\"><span>MASTER VOLUME</span><span>72%</span></div></div></div>",
+      "css": ".ds-modal-stage{background:#050505;padding:36px;display:flex;justify-content:center}.ds-modal{background:#0a0a0a;border:1px solid #88cc44;box-shadow:0 0 40px rgba(136,204,68,0.2);padding:30px;max-width:360px;width:100%;color:#88cc44;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace}.ds-modal h2{font-size:20px;letter-spacing:4px;margin:0 0 10px;text-align:center}.ds-modal .ds-rule{color:#445522;font-size:14px;text-align:center;margin-bottom:16px;overflow:hidden}.ds-modal .ds-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #1a2a10;font-size:14px;color:#78b838}"
+    },
+    {
+      "name": "Risk Indicator",
+      "kind": "custom",
+      "refersTo": "risk-critical",
+      "description": "Detection HUD chip. Steps through the ramp by color AND a colorblind-safe shape prefix; critical state pulses.",
+      "html": "<div class=\"ds-risk-stage\"><span class=\"ds-risk ds-risk-minimal\">RISK: MINIMAL</span><span class=\"ds-risk ds-risk-elevated\">RISK: ELEVATED</span><span class=\"ds-risk ds-risk-critical\">RISK: CRITICAL</span></div>",
+      "css": ".ds-risk-stage{background:#080a06;padding:24px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace}.ds-risk{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:bold}.ds-risk::before{content:'';display:inline-block;width:8px;height:8px;border:2px solid currentColor}.ds-risk-minimal{color:#88cc44;text-shadow:0 0 4px rgba(136,204,68,0.5)}.ds-risk-elevated{color:#ffff00;text-shadow:0 0 4px rgba(255,255,0,0.6)}.ds-risk-elevated::before{background:linear-gradient(to right,currentColor 50%,transparent 50%)}.ds-risk-critical{color:#ff0000;text-shadow:0 0 6px rgba(255,0,0,0.8);animation:ds-critical-pulse 1s ease-in-out infinite}.ds-risk-critical::before{background:currentColor}@keyframes ds-critical-pulse{0%,100%{opacity:1}50%{opacity:.5}}@media (prefers-reduced-motion: reduce){.ds-risk-critical{animation:none}}"
+    },
+    {
+      "name": "Classified Document",
+      "kind": "custom",
+      "refersTo": "body",
+      "description": "In-world file readout — box-drawing rules, ALL-CAPS header, indented body, redaction blocks.",
+      "html": "<div class=\"ds-doc\"><pre>\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nFIELD REPORT \u2014 INCIDENT 1996-0120\nCLASSIFICATION: SECRET / EYES ONLY\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\nSUMMARY\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  Subject recovered near Jardim Andere. Biological\n  material transferred under escort. Witnesses\n  processed; recantation forms on file.\n\n  Cause of transition event: [DATA EXPUNGED]\n\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588  [REDACTED]  \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588</pre></div>",
+      "css": ".ds-doc{background:#080a06;padding:22px;color:#88cc44;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:13px;line-height:1.55;text-shadow:0 0 4px rgba(136,204,68,0.35)}.ds-doc pre{margin:0;white-space:pre-wrap}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Haunted Government Terminal",
+    "overview": "This is a drab 1996 Brazilian intelligence machine that has absorbed everything it processed \u2014 and started to leak it back. The entire interface is a single piece of amber-era hardware rendered in software: a phosphor-green CRT inside a molded plastic bezel, its glass faintly curved, its scanlines never quite still. The horror is not on the screen; it is the screen. Dread arrives through bureaucracy \u2014 redacted forms, euphemism, a detection meter climbing in the corner \u2014 not through spectacle. Restraint is the whole discipline: the palette is essentially one color (phosphor green) on near-black, and that monochrome scarcity is what makes the rare intrusions \u2014 a yellow warning, a red critical alarm, an impossible violet glow \u2014 land like a gut-punch. Depth comes from the simulated tube, never from floating Material cards.",
+    "keyCharacteristics": [
+      "One-color monochrome (phosphor green on near-black); intrusions are events, not d\u00e9cor.",
+      "A fully simulated CRT: molded bezel, curved glass (perspective warp), scanlines, glow, flicker.",
+      "Square corners everywhere on content; the only curves are the physical monitor housing.",
+      "Diegetic to the bone \u2014 even errors and toggles speak in-world, in clinical caps.",
+      "Period-correct typography: monospace body, VT323 bitmap display."
+    ],
+    "rules": [
+      { "name": "The Monochrome Scarcity Rule", "body": "The screen is green on black. Yellow, orange, red, and violet are events, not palette. If more than one non-green hue is visible at rest, the cover-up has already failed.", "section": "colors" },
+      { "name": "The Green-Tinted Black Rule", "body": "Backgrounds and borders carry a trace of the phosphor hue (#080a06, #1a2a10), never neutral gray. Neutral gray belongs to the Windows-95 Victory ending only.", "section": "colors" },
+      { "name": "The Stamped-Glass Rule", "body": "VT323 earns positive letter-spacing (0.18em+) because bitmap caps read as engraved signage; monospace body stays at normal tracking. Never tighten display type below 0.", "section": "typography" },
+      { "name": "The In-World Document Rule", "body": "Long classified documents use box-drawing rules and ALL-CAPS headers with two-space indented bodies \u2014 a typewriter/form feel, not web typography.", "section": "typography" },
+      { "name": "The Light-Not-Shadow Rule", "body": "Elements gain presence by glowing (phosphor bloom), not by casting drop shadows. The only true shadows belong to the physical monitor.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the screen monochrome at rest \u2014 phosphor green (#88cc44) on green-tinted black (#080a06). Treat every non-green hue as a narrative event.",
+      "Do reserve the Detection Ramp (#ffff00 -> #ff9900 -> #ff0000) strictly for threat/heat, and always pair color with a shape/icon cue for colorblind safety.",
+      "Do convey depth with the CRT (bezel shadow, screen warp, vignette) and convey active with phosphor glow, not drop shadows.",
+      "Do keep all content square (border-radius: 0); the only curves are the physical monitor housing.",
+      "Do keep effects switchable \u2014 honor prefers-reduced-motion and the in-game CRT/flicker toggles; flicker is a photosensitivity safety control, not d\u00e9cor.",
+      "Do write controls and errors diegetically, in clinical uppercase, as if the 1996 system is speaking."
+    ],
+    "donts": [
+      "Don't do the neon-cyberpunk Hollywood hacker look \u2014 no rainbow neon, no glowing 3D UI, no glamor.",
+      "Don't use the Matrix green-rain clich\u00e9 or decorative hacker gibberish; the green is phosphor, not spectacle.",
+      "Don't introduce glossy flat-SaaS polish \u2014 no rounded cards, no soft drop shadows, no friendly gradients, nothing that reads as designed in 2026.",
+      "Don't chase jump-scares; dread is earned through documents, pacing, and silence.",
+      "Don't spend Anomaly Violet (#aa88ff) anywhere green belongs \u2014 it is the Secret-Ending reveal, and its rarity is the payload.",
+      "Don't use neutral gray for live text or borders (use the green ramp); gray belongs only to disabled toggles and the Windows-95 Victory ending.",
+      "Don't use background-clip: text gradient text, or border-left/border-right colored side-stripes as accents."
+    ]
+  }
+}
