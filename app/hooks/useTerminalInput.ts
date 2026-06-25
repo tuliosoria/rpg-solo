@@ -21,6 +21,7 @@ import { MAX_EVIDENCE_COUNT } from '../engine/evidenceRevelation';
 import { saveCheckpoint } from '../storage/saves';
 import { incrementStatistic } from '../storage/statistics';
 import {
+  CHECKPOINT_FILES_READ_INTERVAL,
   MAX_COMMAND_HISTORY_SIZE,
   MAX_COMMAND_INPUT_LENGTH,
 } from '../constants/limits';
@@ -822,12 +823,21 @@ export function useTerminalInput({
       }
 
       if (evidenceCount > prevEvidenceCount) {
-        const checkpointReason = translateStatic(
-          'checkpoint.reason.investigationProgress',
-          undefined,
-          'Investigation progress'
+        // Throttle "investigation progress" autosave so it only fires once every
+        // CHECKPOINT_FILES_READ_INTERVAL files read, rather than on every evidence
+        // increment. Avoids checkpoint spam while still preserving progress.
+        const filesReadBucket = Math.floor(filesReadCount / CHECKPOINT_FILES_READ_INTERVAL);
+        const prevFilesReadBucket = Math.floor(
+          prevFilesReadCount / CHECKPOINT_FILES_READ_INTERVAL
         );
-        saveCheckpoint(intermediateState, checkpointReason);
+        if (filesReadBucket > prevFilesReadBucket) {
+          const checkpointReason = translateStatic(
+            'checkpoint.reason.investigationProgress',
+            undefined,
+            'Investigation progress'
+          );
+          saveCheckpoint(intermediateState, checkpointReason);
+        }
       }
 
       if (savedCount > prevSavedCount && prevSavedCount === 0) {
