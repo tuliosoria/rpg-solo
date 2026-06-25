@@ -42,6 +42,7 @@ Other useful commands: `npm run test:coverage`, `npm run lint:fix`, `npm run for
 | **Hooks** | `app/hooks/` | Custom React hooks |
 | **Versioning / build metadata** | `next.config.ts`, `app/components/terminalConstants.ts` | See "Versioning" below |
 | **Story validation scripts** | `scripts/` | `validate-story.js`, `validate-enhanced-story.js`, `story_validator.js` |
+| **Browser / E2E testing** | `e2e-tests/`, `testing` skill | `npm run e2e` (committed Playwright suite); optional Playwright MCP for live, agent-driven browser checks — see `.github/skills/testing/SKILL.md` |
 | **Desktop packaging** | `electron/` | Electron is for distribution; dev happens in browser |
 
 ---
@@ -158,7 +159,7 @@ This project uses skills in `.github/skills/`. When a task matches a skill domai
 | `game-design` | Modifying mechanics, detection, player psychology | Read `.github/skills/game-design/SKILL.md` |
 | `game-content` | Writing in-world files, UFO74 dialogue, terminal messages | Read `.github/skills/game-content/SKILL.md` |
 | `i18n` | Touching player-facing strings, locale JSON, runtime translation supplements, or command aliases | Read `.github/skills/i18n/SKILL.md` |
-| `testing` | Writing or fixing tests | Read `.github/skills/testing/SKILL.md` |
+| `testing` | Writing or fixing tests; running the e2e suite or optional live-browser (Playwright MCP) checks | Read `.github/skills/testing/SKILL.md` |
 | `version-bump` | Understanding or adjusting git-derived version/build display behavior | Read `.github/skills/version-bump/SKILL.md` |
 
 ---
