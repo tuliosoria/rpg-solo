@@ -1,7 +1,7 @@
 // System commands: help, status, clear, hint, tutorial, save, unsave
 
 import { GameState, CommandResult } from '../../types';
-import { createEntry, createEntryI18n, createOutputEntries } from './utils';
+import { createEntry, createEntryI18n, createOutputEntries, resolveSubcommandAlias } from './utils';
 import {
   checkVictory,
   getObserverStatusLines,
@@ -374,7 +374,7 @@ export const systemCommands: CommandRegistry = {
 
     // If a specific command is requested, show detailed help
     if (args.length > 0) {
-      const cmdName = args[0].toLowerCase();
+      const cmdName = resolveSubcommandAlias(args[0]);
 
       // Show leak help even before evidence is found — command is visible but locked
       if (cmdName === 'basics') {
