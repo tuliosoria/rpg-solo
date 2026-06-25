@@ -523,7 +523,7 @@
   width: 150px;
   height: 6px;
   background: #1a2a10;
-  border-radius: 3px;
+  border-radius: 0;
   outline: none;
   cursor: pointer;
 }
@@ -534,7 +534,7 @@
   width: 14px;
   height: 14px;
   background: #88cc44;
-  border-radius: 50%;
+  border-radius: 0;
   cursor: pointer;
   box-shadow: 0 0 8px rgba(136, 204, 68, 0.5);
   transition: all 0.2s ease;
@@ -549,7 +549,7 @@
   width: 14px;
   height: 14px;
   background: #88cc44;
-  border-radius: 50%;
+  border-radius: 0;
   cursor: pointer;
   border: none;
   box-shadow: 0 0 8px rgba(136, 204, 68, 0.5);

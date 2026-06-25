@@ -1562,7 +1562,6 @@ export default function Terminal({
                 <video
                   key={activeEvidenceVideo.videoSrc}
                   src={activeEvidenceVideo.videoSrc}
-                  controls
                   autoPlay
                   playsInline
                   style={{
@@ -1683,7 +1682,6 @@ export default function Terminal({
                 <video
                   key={TURING_TEST_VIDEO_SRC}
                   src={TURING_TEST_VIDEO_SRC}
-                  controls
                   autoPlay
                   playsInline
                   onEnded={() => {
