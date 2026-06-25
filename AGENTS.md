@@ -159,6 +159,12 @@ Skills live in `.github/skills/`. Read the relevant `SKILL.md` before working in
 | `i18n` | Touching player-facing strings, locale JSON, runtime translation supplements, or command aliases |
 | `testing` | Writing or fixing tests |
 | `version-bump` | Understanding or adjusting git-derived version/build display behavior |
+| `skill-authoring` | Creating, editing, or proposing a new skill (read before adding any `.github/skills/<name>/SKILL.md` or `specs-driven/skills/SKILL_*.md`) |
+
+Long-form reference deep-dives live in `specs-driven/skills/SKILL_*.md`
+(`BUGS`, `FILES`, `NARRATIVE`, `TRANSLATION`, `ENDINGS`, `AUDIO_VIDEO`).
+Those are not auto-loaded; the active `.github/skills/` skills link to them
+where relevant. See `skill-authoring` for the rules.
 
 ---
 
