@@ -1,14 +1,62 @@
-# Deploying the game to game.terminalufo.com (AWS Amplify)
+# Deploying the game to game.terminalufo.com
 
-The game is a static Next.js export (`output: 'export'` → `./out`). It is
-deployed as its own AWS Amplify app served at the subdomain
-`game.terminalufo.com`. Served at the domain root, so no `basePath` or asset
-changes are required — the export deploys as-is.
+The game is a static Next.js export (`output: 'export'` → `./out`). Served at
+the domain root, so no `basePath` or asset changes are required — the export
+deploys as-is. Electron/Steam builds consume the same `out/` from the filesystem
+root and are unaffected by any web hosting choice below.
 
-Build is driven by the repo-committed `amplify.yml` and Node is pinned by
-`.nvmrc` (Node 20).
+`terminalufo.com` DNS is hosted in **AWS Route 53** (name servers `awsdns-*`),
+so any subdomain record for `game` is added in the existing `terminalufo.com`
+hosted zone. Do **not** create a separate `game.terminalufo.com` hosted zone —
+without an `NS` delegation from the parent it routes nothing and can cause
+confusion/validation conflicts. If one was created, delete it.
 
-## One-time setup (AWS Console)
+## Recommended: Azure Static Web Apps (existing pipeline)
+
+The repo already ships a working Azure Static Web Apps CI/CD pipeline
+(`.github/workflows/azure-static-web-apps.yml`): every push to `main` runs
+`npm run build` and deploys `out/` to the Static Web App via the
+`AZURE_STATIC_WEB_APPS_API_TOKEN` secret. The README lists Azure Static Apps as
+the project's web host. This is the path of least resistance for
+`game.terminalufo.com` — a single CNAME, no reverse proxy, no `basePath`.
+
+1. **Confirm the app is deploying**
+   - GitHub → *Actions* → *Azure Static Web Apps CI/CD* → latest run on `main`
+     is green. (Prereq: the `AZURE_STATIC_WEB_APPS_API_TOKEN` secret is set and
+     an Azure Static Web App resource exists. If not, create a Static Web App in
+     the Azure Portal, choose "Other"/skip build details, and paste its
+     deployment token into the repo secret — then re-run the workflow.)
+   - Note the app's default hostname, e.g. `<name>.azurestaticapps.net`, and
+     confirm the game loads there (audio/images play, no 404s).
+
+2. **Add the custom subdomain in Azure**
+   - Azure Portal → the Static Web App → *Custom domains* → *Add* →
+     *Custom domain on other DNS*.
+   - Enter `game.terminalufo.com`. Azure shows a **CNAME** target
+     (`<name>.azurestaticapps.net`) and validates via that CNAME.
+
+3. **Add the CNAME in Route 53**
+   - Route 53 → `terminalufo.com` hosted zone → *Create record*.
+   - Record name: `game`  ·  Type: `CNAME`  ·  Value:
+     `<name>.azurestaticapps.net`  ·  TTL: 300.
+   - Save. Back in Azure, complete/validate the custom domain; Azure
+     auto-provisions the managed TLS certificate once the CNAME resolves.
+
+4. **Verify the live subdomain**
+   - Open `https://game.terminalufo.com/`.
+   - Confirm: valid HTTPS, game loads, audio + images play, refresh works, and
+     `https://terminalufo.com` (the existing site) is unaffected.
+
+**Ongoing deploys:** automatic on every push to `main` via the GitHub Actions
+workflow. No manual step.
+
+## Alternative: AWS Amplify (attempted — managed-domain DNS failed once)
+
+Repo config for Amplify is present (`amplify.yml`, `.nvmrc`). The managed custom
+-domain association failed during first setup (a stray `game.terminalufo.com`
+hosted zone conflicting with Amplify's managed DNS is the likely cause). Prefer
+the Azure path above. If you still want Amplify, delete the stray hosted zone
+first, then:
 
 1. **Create the Amplify app**
    - Amplify Console → *Create new app* → *Host web app*.
@@ -61,14 +109,14 @@ Build is driven by the repo-committed `amplify.yml` and Node is pinned by
      root works, and `https://terminalufo.com` (the existing site) is
      unaffected.
 
-## Ongoing deploys
+## Ongoing deploys (Amplify)
 
 - Amplify auto-builds on every push to `main` using `amplify.yml`. No manual
   step. Roll back from the Amplify Console if a build regresses.
 
 ## Notes
 
-- The apex `terminalufo.com` and this game app are independent Amplify apps;
-  attaching only the `game` subdomain does not touch the existing site.
-- Electron and Steam builds are unaffected by this deployment — they consume the
-  same `out/` export from the filesystem root and require no config changes.
+- The apex `terminalufo.com` and the game are independent; attaching only the
+  `game` subdomain does not touch the existing site.
+- Electron and Steam builds are unaffected by any web deployment — they consume
+  the same `out/` export from the filesystem root and require no config changes.
