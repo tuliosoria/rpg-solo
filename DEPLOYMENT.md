@@ -8,10 +8,25 @@ root and are unaffected by any web hosting choice below.
 `terminalufo.com` DNS is hosted in **AWS Route 53** (name servers `awsdns-*`),
 so any subdomain record for `game` is added in the existing `terminalufo.com`
 hosted zone. Do **not** create a separate `game.terminalufo.com` hosted zone —
-without an `NS` delegation from the parent it routes nothing and can cause
-confusion/validation conflicts. If one was created, delete it.
+without an `NS` delegation from the parent it routes nothing and actively
+*breaks* Amplify's ACM validation (see Troubleshooting). If one was created,
+delete it.
 
-## Recommended: Azure Static Web Apps (existing pipeline)
+## Architecture: two hosts, two responsibilities
+
+The project intentionally keeps **both** hosting setups:
+
+| Host | Serves | DNS |
+| --- | --- | --- |
+| **AWS Amplify** | the main site — `terminalufo.com` / `www.terminalufo.com` | CloudFront (`d1cuj0sblmfi6d.cloudfront.net`) |
+| **Azure Static Web Apps** | the **game** — `game.terminalufo.com` | one CNAME → `<name>.azurestaticapps.net` |
+
+A single subdomain can only point at one host, so `game.terminalufo.com` is
+served by **Azure** (its CI/CD deploy is already green), while Amplify keeps the
+main domain. Do not also attach `game.terminalufo.com` to Amplify — that creates
+a two-hosts-one-name conflict and is what left the Amplify SSL stuck.
+
+## Game host: Azure Static Web Apps (existing pipeline)
 
 The repo already ships a working Azure Static Web Apps CI/CD pipeline
 (`.github/workflows/azure-static-web-apps.yml`): every push to `main` runs
@@ -50,13 +65,49 @@ the project's web host. This is the path of least resistance for
 **Ongoing deploys:** automatic on every push to `main` via the GitHub Actions
 workflow. No manual step.
 
-## Alternative: AWS Amplify (attempted — managed-domain DNS failed once)
+## Main site: AWS Amplify (terminalufo.com / www)
 
-Repo config for Amplify is present (`amplify.yml`, `.nvmrc`). The managed custom
--domain association failed during first setup (a stray `game.terminalufo.com`
-hosted zone conflicting with Amplify's managed DNS is the likely cause). Prefer
-the Azure path above. If you still want Amplify, delete the stray hosted zone
-first, then:
+Amplify serves the existing main site at the apex and `www`. Repo config for an
+Amplify-hosted build is present (`amplify.yml`, `.nvmrc`) if you ever want to run
+the game on Amplify too, but the **game subdomain is on Azure** (above) — do not
+attach `game.terminalufo.com` to Amplify as well.
+
+### Troubleshooting: Amplify domain activation stuck on "Creating records…"
+
+Symptom: adding a custom domain in Amplify hangs at *Domain activation →
+"Creating records associated with your domain… This step should only take a few
+minutes"* (SSL creation/configuration never completes).
+
+Diagnosed root cause for `game.terminalufo.com` (verified via DNS):
+
+- The authoritative `terminalufo.com` zone returns **NXDOMAIN** for
+  `game.terminalufo.com` — the ACM validation record
+  (`_<hash>.game.terminalufo.com → …acm-validations.aws`) is **not** in the real
+  zone, so ACM can never validate and the flow spins until it times out.
+- **No CAA records** exist on the zone, so CAA is *not* the blocker (ruled out).
+- A **stray standalone `game.terminalufo.com` hosted zone** was created. It has
+  **no `NS` delegation** from the parent (`dig NS game.terminalufo.com` →
+  empty), so nothing in it resolves publicly.
+- **The "most-specific zone" trap:** with both `terminalufo.com` (delegated) and
+  `game.terminalufo.com` (not delegated) present, Amplify writes the validation
+  record into the *more specific* `game.terminalufo.com` zone — a dead end.
+
+Fix (only needed if you deliberately move the game to Amplify):
+
+1. Route 53 → delete the stray `game.terminalufo.com` hosted zone.
+2. Amplify → the app → *Custom domains* → remove the stuck `game` subdomain, then
+   re-add it. With only the parent zone present (same AWS account), Amplify
+   writes the ACM validation `CNAME` **and** the app `CNAME` into the
+   authoritative `terminalufo.com` zone; validation then finishes in minutes.
+3. Manual/cross-account alternative: copy the two records shown on Amplify's
+   domain screen — the `_<hash>.game` validation `CNAME` and the
+   `game → <id>.cloudfront.net` `CNAME` — into the parent `terminalufo.com` zone
+   by hand.
+
+The same stray-zone deletion is worth doing regardless, since it currently
+serves no purpose.
+
+## Reference: full Amplify custom-domain setup
 
 1. **Create the Amplify app**
    - Amplify Console → *Create new app* → *Host web app*.
@@ -118,5 +169,10 @@ first, then:
 
 - The apex `terminalufo.com` and the game are independent; attaching only the
   `game` subdomain does not touch the existing site.
+- **Apex check (2026-07-04):** `terminalufo.com` currently has **no A/alias
+  record** in Route 53 and does not resolve — only `www.terminalufo.com`
+  (→ CloudFront) works. If the bare apex should serve the main site, add an
+  A-record **Alias** to the CloudFront/Amplify target in the `terminalufo.com`
+  zone (Amplify Console → the main app → *Custom domains* can create it).
 - Electron and Steam builds are unaffected by any web deployment — they consume
   the same `out/` export from the filesystem root and require no config changes.
