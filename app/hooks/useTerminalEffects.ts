@@ -5,11 +5,8 @@ import { type GamePhase, type GameState, type ImageTrigger } from '../types';
 import { createEntry } from '../engine/commands';
 import { createEntryI18n } from '../engine/commands/utils';
 import { appendToHistory } from '../lib/appendToHistory';
-import { autoSave } from '../storage/saves';
-import { addPlaytime } from '../storage/statistics';
 import { determineEnding } from '../engine/endings';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
-import { AUTOSAVE_INTERVAL_MS } from '../constants/timing';
 import {
   BLACKOUT_TRANSITION_DELAY_MS,
   CRT_WARMUP_DURATION_MS,
@@ -438,31 +435,6 @@ export function useTerminalEffects({
   ]);
 
   // Avatar entrance is now triggered by INTRO block 1 in useTerminalInput
-
-  // Auto-save periodically
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const currentState = gameStateRef.current;
-      const isActivePlayPhase = gamePhase === 'terminal';
-      // Do not autosave during blackout / victory transition: gamePhase isn't persisted
-      // and saving a terminal state with evidencesSaved=true would lose the ending on reload.
-      if (
-        isActivePlayPhase &&
-        !currentState.isGameOver &&
-        !currentState.gameWon &&
-        !currentState.evidencesSaved
-      ) {
-        const savedAt = autoSave(currentState);
-        if (typeof savedAt === 'number') {
-          setGameState(prev => ({ ...prev, lastSaveTime: savedAt }));
-        }
-        // Track playtime every autosave interval
-        addPlaytime(AUTOSAVE_INTERVAL_MS);
-      }
-    }, AUTOSAVE_INTERVAL_MS);
-
-    return () => clearInterval(interval);
-  }, [gamePhase, gameStateRef, setGameState]);
 
   // Phase transition: when evidencesSaved becomes true, go directly to victory
   // Victory takes priority over isGameOver: if detection hit 100% on the same command,

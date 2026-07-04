@@ -8,7 +8,7 @@ import { isTutorialInputState, TutorialStateID } from '../engine/commands/intera
 import { getEndingFlags, type EndingId } from '../engine/endings';
 import { getAllAccessibleFiles } from '../engine/filesystem';
 
-import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
+import { getLatestCheckpoint, loadCheckpoint } from '../storage/saves';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import { useI18n } from '../i18n';
 import { OPTIONS_CHANGED_EVENT, readStoredOptions } from '../hooks/useOptions';
@@ -19,6 +19,7 @@ import {
 import { shouldSuppressPressure } from '../constants/atmosphere';
 import {
   useAutocomplete,
+  computeGhostSuffix,
   useGameActions,
   useSound,
   useTerminalEffects,
@@ -81,7 +82,7 @@ import styles from './Terminal.module.css';
 interface TerminalProps {
   initialState: GameState;
   onExitAction: () => void;
-  onSaveRequestAction: (state: GameState) => void;
+  onSaveRequestAction: (state: GameState, onComplete?: (savedAt: number) => void) => void;
   onLoadCheckpointAction?: (slotId: string) => void;
   onLoadSavedGameAction?: () => void;
   onQuitAction?: () => void;
@@ -283,6 +284,16 @@ export default function Terminal({
   // Autocomplete hook
   const { getCompletions, completeInput, markTabPressed, consumeTabPressed } =
     useAutocomplete(gameState, language);
+
+  // Inline "ghost text": the unambiguous completion suffix for the current
+  // input, rendered as a dimmed hint after the caret. Visual only — never part
+  // of inputValue and never submitted. Tab (handled in useTerminalInput) applies it.
+  const ghostSuffix = useMemo(
+    () => (inputValue ? computeGhostSuffix(inputValue, getCompletions(inputValue)) : null),
+    [inputValue, getCompletions]
+  );
+  const showGhost =
+    ghostSuffix !== null && !isProcessing && !gameState.isGameOver && !hasBlockingPopup;
 
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -516,7 +527,6 @@ export default function Terminal({
     setShowAttBar(true);
     setShowAvatar(true);
     startAmbient();
-    saveCheckpoint(newState, t('checkpoint.reason.tutorialSkipped'));
   }, [
     gameState,
     setGameState,
@@ -1284,7 +1294,9 @@ export default function Terminal({
                 tabIndex={-1}
                 onMouseDown={e => e.preventDefault()}
                 onClick={() => {
-                  onSaveRequestAction(gameState);
+                  onSaveRequestAction(gameState, savedAt =>
+                    setGameState(prev => ({ ...prev, lastSaveTime: savedAt }))
+                  );
                   setShowHeaderMenu(false);
                   setTimeout(focusTerminalInput, 0);
                 }}
@@ -1426,6 +1438,7 @@ export default function Terminal({
           <>
             <form onSubmit={handleSubmit} className={styles.inputArea}>
             <span className={styles.prompt}>&gt;</span>
+            <span className={styles.inputWrapper}>
             <input
               ref={inputRef}
               type="text"
@@ -1482,6 +1495,13 @@ export default function Terminal({
               autoComplete="off"
               spellCheck={false}
             />
+            {showGhost && (
+              <span className={styles.ghostOverlay} aria-hidden="true">
+                <span className={styles.ghostMirror}>{inputValue}</span>
+                <span className={styles.ghostText}>{ghostSuffix}</span>
+              </span>
+            )}
+            </span>
             <span className={styles.cursor}>_</span>
             {/* Typing speed warning - inline within input area to prevent overlap */}
             {typingSpeedWarning && (
@@ -1558,7 +1578,7 @@ export default function Terminal({
                 {t('videoOverlay.attachedTitle', { value: activeEvidenceVideo.videoTitle })}
               </div>
               {/* Video with CRT/terminal overlay */}
-              <div style={{ position: 'relative', width: '100%' }}>
+              <div style={{ position: 'relative', width: '100%', flex: '1 1 auto', minHeight: 0 }}>
                 <video
                   key={activeEvidenceVideo.videoSrc}
                   src={activeEvidenceVideo.videoSrc}
@@ -1566,7 +1586,8 @@ export default function Terminal({
                   playsInline
                   style={{
                     width: '100%',
-                    maxHeight: '70vh',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
                     background: '#000',
                     filter: 'sepia(100%) saturate(300%) brightness(70%) hue-rotate(70deg)',
                   }}
@@ -1610,6 +1631,7 @@ export default function Terminal({
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   gap: '1rem',
+                  flexShrink: 0,
                   color: '#88cc44',
                   fontFamily: 'VT323, monospace',
                   fontSize: '1.1rem',
@@ -1678,7 +1700,7 @@ export default function Terminal({
               >
                 {t('videoOverlay.attachedTitle', { value: 'turing test.mp4' })}
               </div>
-              <div style={{ position: 'relative', width: '100%' }}>
+              <div style={{ position: 'relative', width: '100%', flex: '1 1 auto', minHeight: 0 }}>
                 <video
                   key={TURING_TEST_VIDEO_SRC}
                   src={TURING_TEST_VIDEO_SRC}
@@ -1691,7 +1713,8 @@ export default function Terminal({
                   }}
                   style={{
                     width: '100%',
-                    maxHeight: '70vh',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
                     background: '#000',
                     filter: 'sepia(100%) saturate(300%) brightness(70%) hue-rotate(70deg)',
                   }}
@@ -1732,6 +1755,7 @@ export default function Terminal({
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   gap: '1rem',
+                  flexShrink: 0,
                   color: '#88cc44',
                   fontFamily: 'VT323, monospace',
                   fontSize: '1.1rem',
@@ -1968,7 +1992,9 @@ export default function Terminal({
             }}
             onSaveAction={() => {
               setShowPauseMenu(false);
-              onSaveRequestAction(gameState);
+              onSaveRequestAction(gameState, savedAt =>
+                setGameState(prev => ({ ...prev, lastSaveTime: savedAt }))
+              );
               setTimeout(focusTerminalInput, 0);
             }}
             onLoadAction={() => {

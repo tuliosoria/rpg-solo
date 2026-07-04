@@ -25,8 +25,6 @@ import {
 import { shouldSuppressPressure } from '../../constants/atmosphere';
 import { createEntry, createEntryI18n, createOutputEntries } from './utils';
 import { getFileContent } from '../filesystem';
-import { saveCheckpoint } from '../../storage/saves';
-import { translateStatic } from '../../i18n';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // UFO74 EVIDENCE REACTIONS
@@ -1153,11 +1151,6 @@ export function performDecryption(
   file: FileNode,
   state: GameState
 ): CommandResult {
-  const isFirstDecryption = !state.flags?.firstDecryptionComplete;
-  if (isFirstDecryption) {
-    saveCheckpoint(state, translateStatic('checkpoint.reason.firstEncryptedFileDecrypted'));
-  }
-
   const mutation: FileMutation = state.fileMutations[filePath] || {
     decrypted: false,
   };

@@ -18,10 +18,8 @@ import {
 } from '../engine/commands/interactiveTutorial';
 import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { MAX_EVIDENCE_COUNT } from '../engine/evidenceRevelation';
-import { saveCheckpoint } from '../storage/saves';
 import { incrementStatistic } from '../storage/statistics';
 import {
-  CHECKPOINT_FILES_READ_INTERVAL,
   MAX_COMMAND_HISTORY_SIZE,
   MAX_COMMAND_INPUT_LENGTH,
 } from '../constants/limits';
@@ -207,14 +205,6 @@ export function useTerminalInput({
     (messages: TerminalEntry[]) => {
       if (messages.length === 0) return;
 
-      // Checkpoint on first UFO74 contact (major story moment)
-      if (!gameState.flags?.firstUfo74Contact) {
-        saveCheckpoint(
-          { ...gameState, flags: { ...gameState.flags, firstUfo74Contact: true } },
-          translateStatic('checkpoint.reason.firstUfo74Contact', undefined, 'First UFO74 contact')
-        );
-      }
-
       setGameState(prev => ({
         ...prev,
         // Mark first UFO74 contact
@@ -226,7 +216,7 @@ export function useTerminalInput({
 
       setEncryptedChannelState('idle');
     },
-    [gameState, playSound, setEncryptedChannelState, setGameState]
+    [playSound, setEncryptedChannelState, setGameState]
   );
 
   const streamOutput = useCallback(
@@ -412,10 +402,6 @@ export function useTerminalInput({
                   },
                   currentPath: '/',
                 };
-                saveCheckpoint(
-                  newState,
-                  translateStatic('checkpoint.reason.tutorialComplete', undefined, 'Tutorial complete')
-                );
                 return newState;
               });
             } else {
@@ -546,10 +532,6 @@ export function useTerminalInput({
               tutorialStep: -1,
               tutorialComplete: true,
             };
-            saveCheckpoint(
-              newState,
-              translateStatic('checkpoint.reason.tutorialComplete', undefined, 'Tutorial complete')
-            );
             return newState;
           });
         } else {
@@ -811,8 +793,6 @@ export function useTerminalInput({
         return;
       }
 
-      const evidenceCount = intermediateState.evidenceCount || 0;
-      const prevEvidenceCount = gameState.evidenceCount || 0;
       const savedCount = intermediateState.savedFiles?.size || 0;
       const prevSavedCount = gameState.savedFiles?.size || 0;
 
@@ -822,79 +802,12 @@ export function useTerminalInput({
         incrementStatistic('filesRead');
       }
 
-      if (evidenceCount > prevEvidenceCount) {
-        // Throttle "investigation progress" autosave so it only fires once every
-        // CHECKPOINT_FILES_READ_INTERVAL files read, rather than on every evidence
-        // increment. Avoids checkpoint spam while still preserving progress.
-        const filesReadBucket = Math.floor(filesReadCount / CHECKPOINT_FILES_READ_INTERVAL);
-        const prevFilesReadBucket = Math.floor(
-          prevFilesReadCount / CHECKPOINT_FILES_READ_INTERVAL
-        );
-        if (filesReadBucket > prevFilesReadBucket) {
-          const checkpointReason = translateStatic(
-            'checkpoint.reason.investigationProgress',
-            undefined,
-            'Investigation progress'
-          );
-          saveCheckpoint(intermediateState, checkpointReason);
-        }
-      }
-
       if (savedCount > prevSavedCount && prevSavedCount === 0) {
         checkAchievement('first_blood');
       }
 
       if (savedCount === MAX_EVIDENCE_COUNT && prevSavedCount < MAX_EVIDENCE_COUNT) {
         checkAchievement('truth_seeker');
-      }
-
-      if (intermediateState.accessLevel > gameState.accessLevel && intermediateState.accessLevel >= 2) {
-        saveCheckpoint(
-          intermediateState,
-          translateStatic(
-            'checkpoint.reason.accessLevel',
-            { value: intermediateState.accessLevel },
-            `Access level ${intermediateState.accessLevel}`
-          )
-        );
-      }
-
-      if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {
-        saveCheckpoint(
-          intermediateState,
-          translateStatic(
-            'checkpoint.reason.adminAccessUnlocked',
-            undefined,
-            'Admin access unlocked'
-          )
-        );
-      }
-
-      // Checkpoint when detection approaches critical threshold (80%+)
-      // Only checkpoint once per session to avoid spam
-      if (
-        intermediateState.detectionLevel >= 80 &&
-        gameState.detectionLevel < 80 &&
-        !gameState.flags?.criticalDetectionCheckpointed
-      ) {
-        // Save checkpoint with the flag set to prevent duplicate checkpoints
-        const stateWithFlag = {
-          ...intermediateState,
-          flags: { ...intermediateState.flags, criticalDetectionCheckpointed: true },
-        };
-        saveCheckpoint(
-          stateWithFlag,
-          translateStatic(
-            'checkpoint.reason.detectionApproachingCritical',
-            undefined,
-            'Detection approaching critical'
-          )
-        );
-        // Update the intermediate state so the flag persists
-        setGameState(prev => ({
-          ...prev,
-          flags: { ...prev.flags, criticalDetectionCheckpointed: true },
-        }));
       }
 
       if (!gameState.flags?.adminUnlocked && intermediateState.flags?.adminUnlocked) {

@@ -153,12 +153,20 @@ function HomeContentInner() {
     setShowSaveModal(false);
   }, [invalidatePendingLoads]);
 
-  const handleSaveRequest = useCallback((state: GameState) => {
-    setSaveRequestState(state);
-    setShowSaveModal(true);
-  }, []);
+  const saveCompleteRef = useRef<((savedAt: number) => void) | null>(null);
 
-  const handleSaved = useCallback(() => {
+  const handleSaveRequest = useCallback(
+    (state: GameState, onComplete?: (savedAt: number) => void) => {
+      saveCompleteRef.current = onComplete ?? null;
+      setSaveRequestState(state);
+      setShowSaveModal(true);
+    },
+    []
+  );
+
+  const handleSaved = useCallback((savedAt: number) => {
+    saveCompleteRef.current?.(savedAt);
+    saveCompleteRef.current = null;
     setShowSaveModal(false);
     setSaveRequestState(null);
   }, []);
@@ -193,6 +201,7 @@ function HomeContentInner() {
           <SaveModal
             gameState={saveRequestState ?? gameState}
             onCloseAction={() => {
+              saveCompleteRef.current = null;
               setShowSaveModal(false);
               setSaveRequestState(null);
             }}

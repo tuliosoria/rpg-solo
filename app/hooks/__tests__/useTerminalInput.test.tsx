@@ -132,7 +132,7 @@ describe('useTerminalInput evidence progression', () => {
     vi.clearAllMocks();
   });
 
-  it('writes hidden evidence checkpoints once every 5 files read', async () => {
+  it('no longer writes an investigation-progress checkpoint when 5 files are read', async () => {
     vi.mocked(executeCommand).mockReturnValue(
       createCommandResult({
         evidenceCount: 6,
@@ -162,10 +162,7 @@ describe('useTerminalInput evidence progression', () => {
       await result.current.handleSubmit();
     });
 
-    expect(saveCheckpoint).toHaveBeenCalledWith(
-      expect.objectContaining({ evidenceCount: 6 }),
-      'Investigation progress'
-    );
+    expect(saveCheckpoint).not.toHaveBeenCalled();
     expect(options.playSound).not.toHaveBeenCalledWith('fanfare');
     expect(options.checkAchievement).not.toHaveBeenCalledWith('first_blood');
     expect(options.checkAchievement).not.toHaveBeenCalledWith('truth_seeker');
@@ -313,12 +310,6 @@ describe('useTerminalInput tutorial recovery', () => {
     expect(nextState.tutorialComplete).toBe(true);
     expect(nextState.tutorialStep).toBe(-1);
     expect(nextState.interactiveTutorialState?.current).toBe(TutorialStateID.GAME_ACTIVE);
-    expect(saveCheckpoint).toHaveBeenCalledWith(
-      expect.objectContaining({
-        tutorialComplete: true,
-        tutorialStep: -1,
-      }),
-      'Tutorial complete'
-    );
+    expect(saveCheckpoint).not.toHaveBeenCalled();
   });
 });
