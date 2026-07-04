@@ -18,7 +18,7 @@
  * - **useOptions** – Game options state and persistence
  * - **useFocusTrap** – Keyboard focus trapping for modal dialogs
  */
-export { useAutocomplete, type AutocompleteResult } from './useAutocomplete';
+export { useAutocomplete, computeGhostSuffix, type AutocompleteResult } from './useAutocomplete';
 export { useGameActions } from './useGameActions';
 export { useTerminalEffects } from './useTerminalEffects';
 export { useTerminalInput } from './useTerminalInput';
