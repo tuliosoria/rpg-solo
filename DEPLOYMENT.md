@@ -31,14 +31,29 @@ Build is driven by the repo-committed `amplify.yml` and Node is pinned by
    - Enter `terminalufo.com` and add a **subdomain** mapping:
      `game` → this app's `main` branch. (Do not remap the apex/root — the
      existing terminalufo site keeps `terminalufo.com`.)
-   - **If `terminalufo.com` is managed in this AWS account (Route 53 / Amplify
-     domain):** Amplify provisions the ACM certificate and DNS records
-     automatically. Approve and wait for the domain status to reach
+   - **`terminalufo.com` is managed in AWS Route 53** (confirmed: its name
+     servers are `awsdns-*`). If the Route 53 hosted zone is in the **same AWS
+     account** as this Amplify app, Amplify auto-creates the ACM certificate and
+     the DNS records **directly in the existing `terminalufo.com` hosted zone** —
+     no manual record entry. Approve and wait for the domain status to reach
      *Available*.
-   - **If DNS is managed at an external registrar/provider:** Amplify shows one
-     or more CNAME records (the `game` subdomain CNAME + an ACM validation
-     CNAME). Add them at the DNS provider exactly as shown, then wait for
-     validation.
+   - **You do NOT need a separate `game.terminalufo.com` hosted zone.** Because
+     the parent `terminalufo.com` zone already lives in Route 53, the subdomain
+     records belong in that existing zone. A standalone `game.terminalufo.com`
+     hosted zone only works if you also add an `NS` delegation record for `game`
+     in the parent zone pointing to the sub-zone's four name servers — extra
+     complexity with no benefit here. If one was created by mistake, delete it
+     (an empty, undelegated hosted zone routes nothing) to avoid confusion.
+   - **Important:** the actual DNS record *values* (the Amplify/CloudFront target
+     and the ACM validation `CNAME`) are produced by the Amplify *Add custom
+     domain* step above — creating a Route 53 hosted zone by itself does not
+     generate them. Always run the Amplify domain step first, then let Amplify
+     populate Route 53 (same account) or copy the shown records into DNS.
+   - **Cross-account edge case:** if the `terminalufo.com` Route 53 zone is in a
+     *different* AWS account than the Amplify app, Amplify cannot auto-write to
+     it. In that case, complete the Amplify *Add domain* step to reveal the
+     target + ACM validation records, then add them manually as `CNAME`s in the
+     `terminalufo.com` zone in the account that owns it.
 
 4. **Verify the live subdomain**
    - Open `https://game.terminalufo.com/`.
