@@ -10,7 +10,7 @@ import styles from './SaveModal.module.css';
 interface SaveModalProps {
   gameState: GameState;
   onCloseAction: () => void;
-  onSavedAction: () => void;
+  onSavedAction: (savedAt: number) => void;
 }
 
 export default function SaveModal({ gameState, onCloseAction, onSavedAction }: SaveModalProps) {
@@ -48,7 +48,7 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
       setSaveError(t('save.error.failed'));
       return;
     }
-    onSavedAction();
+    onSavedAction(savedSlot.timestamp);
   }, [gameState, language, onSavedAction, slotName, t]);
 
   return (

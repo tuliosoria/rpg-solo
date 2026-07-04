@@ -162,12 +162,14 @@ Represents connection quality. Decreases with risky actions. Visual indicator in
 - `unsave <filename>` removes from dossier
 - `progress` / `map` shows current dossier contents
 
-### Checkpoint System
+### Session Saves
 
-- Auto-save every 30 seconds
-- Manual checkpoints before high-risk actions (override, leak)
-- Maximum 5 checkpoint saves
-- Maximum 10 save slots total
+- Session persistence is **manual only** — there is no auto-save timer and no
+  automatic checkpoints. The session is lost on refresh/close unless the player
+  explicitly saves.
+- Save the current session from the pause menu / terminal menu Save action.
+- Maximum 10 save slots total.
+- The "Saved: Xm ago" header indicator updates only when a manual save occurs.
 
 ---
 

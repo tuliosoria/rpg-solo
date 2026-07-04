@@ -1,9 +1,7 @@
 // Evidence commands: leak
 
 import { createEntry, createEntryI18n } from './utils';
-import { saveCheckpoint } from '../../storage/saves';
 import { MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
-import { translateStatic } from '../../i18n';
 import { createSeededRng, seededShuffle } from '../rng';
 import type { CommandRegistry } from './types';
 import type { GameState, CommandResult } from '../../types';
@@ -223,8 +221,6 @@ export const evidenceCommands: CommandRegistry = {
 
     // Sequence complete AND all 10 files saved: execute leak
     if (progress >= 3 && savedCount >= MAX_EVIDENCE_COUNT) {
-      saveCheckpoint(state, translateStatic('checkpoint.reason.beforeLeakTransmission'));
-
       return {
         output: [
           createEntry('system', ''),

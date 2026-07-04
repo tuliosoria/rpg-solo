@@ -4,7 +4,6 @@ import Terminal, { normalizeVideoPromptChoice } from '../Terminal';
 import styles from '../Terminal.module.css';
 import { DEFAULT_GAME_STATE, GameState, TutorialStateID } from '../../types';
 import { I18nProvider } from '../../i18n';
-import { AUTOSAVE_INTERVAL_MS } from '../../constants/timing';
 
 const { mockSpeakCustomFirewallVoice, mockFirewallEyes, mockStaticNoise } = vi.hoisted(() => ({
   mockSpeakCustomFirewallVoice: vi.fn(),
@@ -1127,20 +1126,25 @@ describe('Terminal Component', () => {
     expect(screen.getByText(/AUDIT.*ACTIVE/i)).toBeInTheDocument();
   });
 
-  it('shows the save indicator after an autosave runs', () => {
-    render(<Terminal {...defaultProps} />);
+  it('shows the save indicator when the session has a saved timestamp', () => {
+    const savedState = {
+      ...defaultProps.initialState,
+      lastSaveTime: Date.now(),
+    };
 
-    expect(screen.queryByText(/Saved: <1m ago/i)).not.toBeInTheDocument();
-
-    act(() => {
-      vi.advanceTimersByTime(AUTOSAVE_INTERVAL_MS);
-    });
+    render(<Terminal {...defaultProps} initialState={savedState} />);
 
     const saveIndicator = screen.getByText(/Saved: <1m ago/i);
 
     expect(saveIndicator).toBeInTheDocument();
     expect(saveIndicator).toHaveAttribute('aria-live', 'polite');
     expect(saveIndicator).toHaveClass(styles.saveIndicator);
+  });
+
+  it('does not show the save indicator before any save has occurred', () => {
+    render(<Terminal {...defaultProps} />);
+
+    expect(screen.queryByText(/Saved: <1m ago/i)).not.toBeInTheDocument();
   });
 
   it('renders victory when evidencesSaved is active', async () => {
