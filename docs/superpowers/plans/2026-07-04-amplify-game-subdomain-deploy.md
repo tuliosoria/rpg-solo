@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-07-04-amplify-game-deployment-design.md`
 
+**Execution status (2026-07-04):** Tasks 1–4 (repo config, build spec, runbook, local build verification) are **complete and pushed to `main`** (commit `9ea66f3`). Local build verified: `npm run build` succeeds and the export serves at root with `index`, `/audio/*`, `/images/*` all returning `200`. **Task 5 (AWS Console app creation + subdomain attach) remains for the owner** — it needs AWS account access and cannot be run from the repo. Follow `DEPLOYMENT.md`.
+
 ---
 
 ## File Structure
