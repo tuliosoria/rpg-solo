@@ -14,63 +14,72 @@ delete it.
 
 ## Architecture: two hosts, two responsibilities
 
-The project intentionally keeps **both** hosting setups:
+The project keeps **both** hosting setups:
 
-| Host | Serves | DNS |
+| Host | Serves | Notes |
 | --- | --- | --- |
-| **AWS Amplify** | the main site — `terminalufo.com` / `www.terminalufo.com` | CloudFront (`d1cuj0sblmfi6d.cloudfront.net`) |
-| **Azure Static Web Apps** | the **game** — `game.terminalufo.com` | one CNAME → `<name>.azurestaticapps.net` |
+| **AWS Amplify — app `terminalufo`** | the main site — `terminalufo.com` / `www.terminalufo.com` | CloudFront (`d1cuj0sblmfi6d.cloudfront.net`) |
+| **AWS Amplify — app `rpg-solo`** | the **game** — `game.terminalufo.com` | appId `d1415cbj9psdno`, default `main.d1415cbj9psdno.amplifyapp.com` |
+| **Azure Static Web Apps** | backup / CI build of the game | `.github/workflows/azure-static-web-apps.yml` stays green as a fallback URL |
 
-A single subdomain can only point at one host, so `game.terminalufo.com` is
-served by **Azure** (its CI/CD deploy is already green), while Amplify keeps the
-main domain. Do not also attach `game.terminalufo.com` to Amplify — that creates
-a two-hosts-one-name conflict and is what left the Amplify SSL stuck.
+A single subdomain can only point at one host: `game.terminalufo.com` is served
+by the **Amplify `rpg-solo`** app. Azure remains wired up as a backup and does
+not own the subdomain.
 
-## Game host: Azure Static Web Apps (existing pipeline)
+## Game host: AWS Amplify app `rpg-solo` (manual deploy)
 
-The repo already ships a working Azure Static Web Apps CI/CD pipeline
+- **App:** `rpg-solo`  ·  **appId:** `d1415cbj9psdno`  ·  **platform:** WEB
+- **Default URL:** https://main.d1415cbj9psdno.amplifyapp.com (live, serving the
+  game — index, `/audio/*`, `/images/*` all 200)
+- **Deploy model:** *manual* (no GitHub connection — the account has no valid
+  GitHub token / CodeConnection). Each release uploads a zip of the static
+  `out/` export. To wire up automatic CI later, connect the GitHub repo in the
+  Amplify Console (one-time OAuth) — the repo's `amplify.yml` build spec is
+  already attached to the app.
+
+### Redeploy a new build (manual)
+
+```bash
+APP=d1415cbj9psdno
+npm run build                                   # produces ./out
+( cd out && zip -q -r /tmp/rpg-solo-deploy.zip . )   # index.html at zip ROOT
+aws amplify create-deployment --app-id $APP --branch-name main \
+  --output json > /tmp/dep.json                 # returns zipUploadUrl + jobId
+python3 -c "import json;d=json.load(open('/tmp/dep.json'));open('/tmp/u','w').write(d['zipUploadUrl']);open('/tmp/j','w').write(str(d['jobId']))"
+curl -sS -X PUT --upload-file /tmp/rpg-solo-deploy.zip "$(cat /tmp/u)"
+aws amplify start-deployment --app-id $APP --branch-name main --job-id "$(cat /tmp/j)"
+# poll: aws amplify get-job --app-id $APP --branch-name main --job-id <j> --query 'job.summary.status'
+```
+
+If a prior deployment is stuck `PENDING`, cancel it first:
+`aws amplify stop-job --app-id $APP --branch-name main --job-id <id>`.
+
+### Attach the subdomain `game.terminalufo.com`
+
+1. **Delete the stray `game.terminalufo.com` hosted zone** in Route 53 first
+   (see Troubleshooting — it hijacks ACM validation).
+2. Amplify Console → app `rpg-solo` → *Hosting* → *Custom domains* → *Add domain*
+   → enter `terminalufo.com` → add subdomain `game` → branch `main`. (Do **not**
+   remap the apex/root — that belongs to the `terminalufo` app.)
+3. Since the `terminalufo.com` Route 53 zone is in this same AWS account
+   (`825081952316`), Amplify auto-creates the ACM validation record and the
+   subdomain record in the authoritative parent zone. Wait for status
+   *Available*, then open `https://game.terminalufo.com/`.
+
+## Backup: Azure Static Web Apps (existing pipeline)
+
+The repo also ships an Azure Static Web Apps CI/CD pipeline
 (`.github/workflows/azure-static-web-apps.yml`): every push to `main` runs
-`npm run build` and deploys `out/` to the Static Web App via the
-`AZURE_STATIC_WEB_APPS_API_TOKEN` secret. The README lists Azure Static Apps as
-the project's web host. This is the path of least resistance for
-`game.terminalufo.com` — a single CNAME, no reverse proxy, no `basePath`.
-
-1. **Confirm the app is deploying**
-   - GitHub → *Actions* → *Azure Static Web Apps CI/CD* → latest run on `main`
-     is green. (Prereq: the `AZURE_STATIC_WEB_APPS_API_TOKEN` secret is set and
-     an Azure Static Web App resource exists. If not, create a Static Web App in
-     the Azure Portal, choose "Other"/skip build details, and paste its
-     deployment token into the repo secret — then re-run the workflow.)
-   - Note the app's default hostname, e.g. `<name>.azurestaticapps.net`, and
-     confirm the game loads there (audio/images play, no 404s).
-
-2. **Add the custom subdomain in Azure**
-   - Azure Portal → the Static Web App → *Custom domains* → *Add* →
-     *Custom domain on other DNS*.
-   - Enter `game.terminalufo.com`. Azure shows a **CNAME** target
-     (`<name>.azurestaticapps.net`) and validates via that CNAME.
-
-3. **Add the CNAME in Route 53**
-   - Route 53 → `terminalufo.com` hosted zone → *Create record*.
-   - Record name: `game`  ·  Type: `CNAME`  ·  Value:
-     `<name>.azurestaticapps.net`  ·  TTL: 300.
-   - Save. Back in Azure, complete/validate the custom domain; Azure
-     auto-provisions the managed TLS certificate once the CNAME resolves.
-
-4. **Verify the live subdomain**
-   - Open `https://game.terminalufo.com/`.
-   - Confirm: valid HTTPS, game loads, audio + images play, refresh works, and
-     `https://terminalufo.com` (the existing site) is unaffected.
-
-**Ongoing deploys:** automatic on every push to `main` via the GitHub Actions
-workflow. No manual step.
+`npm run build` and deploys `out/` via the `AZURE_STATIC_WEB_APPS_API_TOKEN`
+secret. It stays green as a fallback host (default `*.azurestaticapps.net`) but
+does not own `game.terminalufo.com`. To promote Azure to the live host instead,
+point the `game` CNAME at the Azure app and detach the subdomain from Amplify.
 
 ## Main site: AWS Amplify (terminalufo.com / www)
 
-Amplify serves the existing main site at the apex and `www`. Repo config for an
-Amplify-hosted build is present (`amplify.yml`, `.nvmrc`) if you ever want to run
-the game on Amplify too, but the **game subdomain is on Azure** (above) — do not
-attach `game.terminalufo.com` to Amplify as well.
+Amplify serves the existing main site at the apex and `www` via the separate
+`terminalufo` app. The game lives in its own `rpg-solo` app (above); the two are
+independent.
 
 ### Troubleshooting: Amplify domain activation stuck on "Creating records…"
 
@@ -92,7 +101,7 @@ Diagnosed root cause for `game.terminalufo.com` (verified via DNS):
   `game.terminalufo.com` (not delegated) present, Amplify writes the validation
   record into the *more specific* `game.terminalufo.com` zone — a dead end.
 
-Fix (only needed if you deliberately move the game to Amplify):
+Fix (required before the `game` subdomain can validate on Amplify):
 
 1. Route 53 → delete the stray `game.terminalufo.com` hosted zone.
 2. Amplify → the app → *Custom domains* → remove the stuck `game` subdomain, then
