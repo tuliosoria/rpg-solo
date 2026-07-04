@@ -91,6 +91,32 @@ function buildFileArgCommands(language: string): string[] {
 }
 
 /**
+ * Compute the inline "ghost text" suffix for the current input.
+ *
+ * Pure function: given the raw input string and the candidate completions
+ * produced by getCompletions, return the remaining characters that would
+ * complete the token currently being typed, or null when there is not exactly
+ * one unambiguous, non-empty completion.
+ *
+ * The fragment being completed is the final whitespace-delimited token, and
+ * (for path arguments) the portion after its last '/'. Matching is
+ * case-insensitive, but the returned suffix preserves the candidate's casing.
+ */
+export function computeGhostSuffix(input: string, candidates: string[]): string | null {
+  if (candidates.length !== 1) return null;
+  const candidate = candidates[0];
+  if (!candidate) return null;
+
+  const token = input.match(/\S*$/)?.[0] ?? '';
+  const fragment = token.slice(token.lastIndexOf('/') + 1);
+
+  if (!candidate.toLowerCase().startsWith(fragment.toLowerCase())) return null;
+
+  const suffix = candidate.slice(fragment.length);
+  return suffix.length > 0 ? suffix : null;
+}
+
+/**
  * Hook for terminal command and file path autocompletion
  * @param gameState - Current game state for filesystem access
  * @param language - Current UI language ('en', 'pt-BR', 'es')
