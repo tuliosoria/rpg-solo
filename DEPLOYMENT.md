@@ -28,9 +28,12 @@ not own the subdomain.
 
 ## Game host: AWS Amplify app `rpg-solo` (manual deploy)
 
+**Status: LIVE** at **https://game.terminalufo.com/** (valid HTTPS, Amplify
+domain status `AVAILABLE`).
+
 - **App:** `rpg-solo`  ·  **appId:** `d1415cbj9psdno`  ·  **platform:** WEB
-- **Default URL:** https://main.d1415cbj9psdno.amplifyapp.com (live, serving the
-  game — index, `/audio/*`, `/images/*` all 200)
+- **Default URL:** https://main.d1415cbj9psdno.amplifyapp.com (also live)
+- **Custom domain:** `game.terminalufo.com` → CloudFront `d2g329vn3esmel.cloudfront.net`
 - **Deploy model:** *manual* (no GitHub connection — the account has no valid
   GitHub token / CodeConnection). Each release uploads a zip of the static
   `out/` export. To wire up automatic CI later, connect the GitHub repo in the
@@ -54,17 +57,26 @@ aws amplify start-deployment --app-id $APP --branch-name main --job-id "$(cat /t
 If a prior deployment is stuck `PENDING`, cancel it first:
 `aws amplify stop-job --app-id $APP --branch-name main --job-id <id>`.
 
-### Attach the subdomain `game.terminalufo.com`
+### How the subdomain was attached (done 2026-07-04)
 
-1. **Delete the stray `game.terminalufo.com` hosted zone** in Route 53 first
-   (see Troubleshooting — it hijacks ACM validation).
-2. Amplify Console → app `rpg-solo` → *Hosting* → *Custom domains* → *Add domain*
-   → enter `terminalufo.com` → add subdomain `game` → branch `main`. (Do **not**
-   remap the apex/root — that belongs to the `terminalufo` app.)
-3. Since the `terminalufo.com` Route 53 zone is in this same AWS account
-   (`825081952316`), Amplify auto-creates the ACM validation record and the
-   subdomain record in the authoritative parent zone. Wait for status
-   *Available*, then open `https://game.terminalufo.com/`.
+The subdomain was added in Amplify as its own root domain (`game.terminalufo.com`),
+which — combined with the pre-existing stray `game.terminalufo.com` hosted zone —
+left the ACM validation stuck (records went to the undelegated stray zone). Fixed
+by writing the records Amplify required into the **authoritative parent
+`terminalufo.com` zone** (`Z01679753BP0SSBUARENS`) and deleting the stray zone:
+
+```bash
+PARENT=Z01679753BP0SSBUARENS
+# From: aws amplify get-domain-association --app-id d1415cbj9psdno \
+#         --domain-name game.terminalufo.com  (cert + subDomains[].dnsRecord)
+# UPSERT into PARENT zone (CNAMEs, TTL 300):
+#   _<hash>.game.terminalufo.com  CNAME  _<hash>.<id>.acm-validations.aws.
+#   game.terminalufo.com          CNAME  d2g329vn3esmel.cloudfront.net
+#   www.game.terminalufo.com      CNAME  d2g329vn3esmel.cloudfront.net
+# Then delete the stray game.terminalufo.com hosted zone (empty its records first).
+```
+
+Validation completed in minutes once the records resolved from the parent zone.
 
 ## Backup: Azure Static Web Apps (existing pipeline)
 
