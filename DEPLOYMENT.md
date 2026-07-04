@@ -26,7 +26,7 @@ A single subdomain can only point at one host: `game.terminalufo.com` is served
 by the **Amplify `rpg-solo`** app. Azure remains wired up as a backup and does
 not own the subdomain.
 
-## Game host: AWS Amplify app `rpg-solo` (manual deploy)
+## Game host: AWS Amplify app `rpg-solo` (auto-deploy)
 
 **Status: LIVE** at **https://game.terminalufo.com/** (valid HTTPS, Amplify
 domain status `AVAILABLE`).
@@ -34,13 +34,25 @@ domain status `AVAILABLE`).
 - **App:** `rpg-solo`  ·  **appId:** `d1415cbj9psdno`  ·  **platform:** WEB
 - **Default URL:** https://main.d1415cbj9psdno.amplifyapp.com (also live)
 - **Custom domain:** `game.terminalufo.com` → CloudFront `d2g329vn3esmel.cloudfront.net`
-- **Deploy model:** *manual* (no GitHub connection — the account has no valid
-  GitHub token / CodeConnection). Each release uploads a zip of the static
-  `out/` export. To wire up automatic CI later, connect the GitHub repo in the
-  Amplify Console (one-time OAuth) — the repo's `amplify.yml` build spec is
-  already attached to the app.
+- **Deploy model:** *automatic on every push to `main`* via
+  `.github/workflows/amplify-deploy.yml` — it builds `out/` and pushes it to the
+  Amplify app as a manual deployment. Auth uses **GitHub OIDC** assuming the IAM
+  role `github-actions-amplify-rpg-solo` (scoped to Amplify actions on this app
+  only); **no long-lived AWS secrets** are stored in the repo. A concurrency
+  group serialises deployments so two pushes can't collide.
 
-### Redeploy a new build (manual)
+### CI auth wiring (GitHub OIDC → IAM, set up once)
+
+- **OIDC provider:** `token.actions.githubusercontent.com` (audience
+  `sts.amazonaws.com`) in account `825081952316`.
+- **Role:** `arn:aws:iam::825081952316:role/github-actions-amplify-rpg-solo` —
+  trust condition `sub` like `repo:tuliosoria/rpg-solo:*`; inline policy
+  `amplify-deploy-rpg-solo` allows `amplify:CreateDeployment/StartDeployment/
+  GetJob/ListJobs/StopJob/GetApp/GetBranch` on `apps/d1415cbj9psdno*`.
+- The workflow requests `permissions: id-token: write` and assumes the role via
+  `aws-actions/configure-aws-credentials@v4` (role ARN is public, not a secret).
+
+### Redeploy manually (fallback — normally CI handles this)
 
 ```bash
 APP=d1415cbj9psdno
