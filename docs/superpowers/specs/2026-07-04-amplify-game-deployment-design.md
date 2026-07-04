@@ -1,6 +1,6 @@
 # Deploying rpg-solo to terminalufo.com on AWS Amplify — Design
 
-**Status:** Draft — awaiting owner decision on two open questions (see "Open Decisions").
+**Status:** Approved — target is the **subdomain** `game.terminalufo.com` (owner decision, 2026-07-04). Proceeding to implementation plan.
 **Date:** 2026-07-04
 **Author:** Copilot (brainstorming session, owner unavailable — worked autonomously from repo evidence + live DNS)
 
@@ -136,16 +136,20 @@ proxy rewrites to an external host are brittle for an asset-heavy SPA.
   images play, deep links resolve, and the existing terminalufo site is
   unaffected.
 
-## Open Decisions (need owner input)
+## Open Decisions (resolved)
 
-1. **URL shape:** accept **`game.terminalufo.com`** (recommended, minimal work),
-   or insist on **`terminalufo.com/game`** (subpath, requires the basePath +
-   64-asset-path work)?
-2. **Existing terminalufo app:** is it an Amplify app in *this* repo, a
-   *separate* repo, or a non-Amplify origin behind that CloudFront? This
-   determines whether the subpath can use single-app subfolder (Approach A) and
-   how the domain/subdomain is currently managed. Needed before writing the
-   implementation plan for the subpath option.
+1. **URL shape — RESOLVED:** the target is **`game.terminalufo.com`** (subdomain).
+   The subpath (`/game`) `basePath` + 64-asset-path work is therefore **out of
+   scope**; the existing `out/` export deploys unchanged.
+2. **Existing terminalufo app — reduced to an ops detail:** the game gets its own
+   Amplify app regardless. The only remaining unknown is where DNS for
+   `terminalufo.com` is managed:
+   - If the domain is **managed in this AWS account's Amplify/Route 53**, attach
+     `game.terminalufo.com` to the new app via Amplify domain management (Amplify
+     provisions the ACM cert automatically).
+   - If DNS is managed **at an external registrar/provider**, add the CNAME
+     record Amplify supplies for the subdomain (plus the ACM validation CNAME).
+   This is a console/DNS step for the owner; it does not change repo work.
 
 ## Out of scope
 
