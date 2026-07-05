@@ -6,6 +6,7 @@
 
 import { GameState } from '../types';
 import { resolveGovernmentScandalNarrative } from './governmentScandalCopy';
+import { resolveNarrativeWithRevelations } from './alienRevelationCopy';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // NEW DOSSIER-BASED ENDING TYPES
@@ -720,10 +721,11 @@ export function getEndingNarrativeLines(
 ): string[] {
   const ending = (ENDINGS as Record<string, Omit<GameEnding, 'id'>>)[variant];
   if (!ending) return ['ENDING NOT FOUND'];
-  const narrative =
+  const baseNarrative =
     variant === 'government_scandal'
       ? resolveGovernmentScandalNarrative(ending.narrative, savedFiles)
       : ending.narrative;
+  const narrative = resolveNarrativeWithRevelations(variant, baseNarrative, savedFiles);
   return [
     ENDING_DIVIDER,
     '',

@@ -14,6 +14,7 @@ import {
 import type { EndingFlags } from '../../engine/endings';
 import { buildLeakPrologue } from '../../engine/leakPrologue';
 import { resolveGovernmentScandalAolBody } from '../../engine/governmentScandalCopy';
+import { resolveAolBodyWithRevelations } from '../../engine/alienRevelationCopy';
 import { useEndingMusic } from './useEndingMusic';
 import type { TextSpeed } from '../../types';
 
@@ -137,10 +138,15 @@ export default function Victory({
       imageAlt: t('ending.aol.fallback.imageAlt'),
       visitorCount: 0,
     };
-    const resolvedBody =
+    const scandalResolvedBody =
       resolvedEndingId === 'government_scandal'
         ? resolveGovernmentScandalAolBody(baseAol.body, savedFiles)
         : baseAol.body;
+    const resolvedBody = resolveAolBodyWithRevelations(
+      resolvedEndingId,
+      scandalResolvedBody,
+      savedFiles,
+    );
     if (leakPrologue.length === 0) return { ...baseAol, body: resolvedBody };
     return { ...baseAol, body: [...leakPrologue, ...resolvedBody] };
   }, [ending, leakPrologue, t, resolvedEndingId, savedFiles]);
