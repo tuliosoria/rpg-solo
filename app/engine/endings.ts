@@ -5,6 +5,7 @@
 // the best-matching ending based on priority order.
 
 import { GameState } from '../types';
+import { resolveGovernmentScandalNarrative } from './governmentScandalCopy';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // NEW DOSSIER-BASED ENDING TYPES
@@ -713,9 +714,16 @@ export function getEndingTitle(variant: EndingVariant): string {
   return ending?.title ?? variant.toUpperCase().replace(/_/g, ' ');
 }
 
-export function getEndingNarrativeLines(variant: EndingVariant): string[] {
+export function getEndingNarrativeLines(
+  variant: EndingVariant,
+  savedFiles?: ReadonlySet<string> | null,
+): string[] {
   const ending = (ENDINGS as Record<string, Omit<GameEnding, 'id'>>)[variant];
   if (!ending) return ['ENDING NOT FOUND'];
+  const narrative =
+    variant === 'government_scandal'
+      ? resolveGovernmentScandalNarrative(ending.narrative, savedFiles)
+      : ending.narrative;
   return [
     ENDING_DIVIDER,
     '',
@@ -723,7 +731,7 @@ export function getEndingNarrativeLines(variant: EndingVariant): string[] {
     '',
     ENDING_DIVIDER,
     '',
-    ...ending.narrative,
+    ...narrative,
     '',
     `[UFO74]: ${ending.ufo74_final}`,
     '',

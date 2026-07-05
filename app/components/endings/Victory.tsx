@@ -13,6 +13,7 @@ import {
 } from '../../engine/endings';
 import type { EndingFlags } from '../../engine/endings';
 import { buildLeakPrologue } from '../../engine/leakPrologue';
+import { resolveGovernmentScandalAolBody } from '../../engine/governmentScandalCopy';
 import { useEndingMusic } from './useEndingMusic';
 import type { TextSpeed } from '../../types';
 
@@ -136,9 +137,13 @@ export default function Victory({
       imageAlt: t('ending.aol.fallback.imageAlt'),
       visitorCount: 0,
     };
-    if (leakPrologue.length === 0) return baseAol;
-    return { ...baseAol, body: [...leakPrologue, ...baseAol.body] };
-  }, [ending, leakPrologue, t]);
+    const resolvedBody =
+      resolvedEndingId === 'government_scandal'
+        ? resolveGovernmentScandalAolBody(baseAol.body, savedFiles)
+        : baseAol.body;
+    if (leakPrologue.length === 0) return { ...baseAol, body: resolvedBody };
+    return { ...baseAol, body: [...leakPrologue, ...resolvedBody] };
+  }, [ending, leakPrologue, t, resolvedEndingId, savedFiles]);
   const timings = AOL_TIMINGS[textSpeed] ?? AOL_TIMINGS.normal;
   const leakPath = hasLeakedFiles ? 'public' : ENDING_LEAK_PATHS[resolvedEndingId];
   const leakPathLabel = t(`ending.dossier.path.${leakPath}`);

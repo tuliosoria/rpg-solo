@@ -218,6 +218,46 @@ describe('Victory Component', () => {
     expect(screen.getByText('Public broadcast')).toBeInTheDocument();
   });
 
+  it('shows the smoking-gun purpose line when a contact file is leaked', () => {
+    render(
+      <Victory
+        {...defaultProps}
+        endingId="government_scandal"
+        textSpeed="instant"
+        savedFiles={new Set(['/internal/jardim_andere_incident.txt'])}
+      />
+    );
+
+    advanceToComplete('instant');
+
+    expect(
+      screen.getByText(/two of the leaked files name the operation/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/purpose of the operation is not specified/i)
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps the mundane purpose line for a pure-logistics leak', () => {
+    render(
+      <Victory
+        {...defaultProps}
+        endingId="government_scandal"
+        textSpeed="instant"
+        savedFiles={new Set(['/storage/assets/transport_log_96.txt'])}
+      />
+    );
+
+    advanceToComplete('instant');
+
+    expect(
+      screen.getByText(/purpose of the operation is not specified/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/two of the leaked files name the operation/i)
+    ).not.toBeInTheDocument();
+  });
+
   it('supports instant text speed for the ending flow', () => {
     render(<Victory {...defaultProps} textSpeed="instant" totalReadableFiles={20} />);
 

@@ -9,6 +9,7 @@ import {
   determineEnding,
   determineEndingVariant,
   getEndingFlags,
+  getEndingNarrativeLines,
   getEndingTitle,
 } from '../endings';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
@@ -84,6 +85,30 @@ describe('Endings', () => {
       it(`reaches ${endingId}`, () => {
         expect(determineEnding(savedFiles)).toBe(endingId);
       });
+    });
+  });
+
+  describe('getEndingNarrativeLines (government_scandal smoking-gun)', () => {
+    it('uses the smoking-gun intro when a contact file is in the dossier', () => {
+      const lines = getEndingNarrativeLines(
+        'government_scandal',
+        dossier('jardim_andere_incident.txt', 'transport_log_96.txt')
+      );
+      expect(lines.some(l => l.includes('the first page of what it was hiding'))).toBe(true);
+      expect(lines.some(l => l.includes('The leak does not prove alien contact'))).toBe(false);
+    });
+
+    it('keeps the mundane intro for a pure-logistics dossier', () => {
+      const lines = getEndingNarrativeLines(
+        'government_scandal',
+        dossier('transport_log_96.txt', 'duty_roster_jan96.txt')
+      );
+      expect(lines.some(l => l.includes('The leak does not prove alien contact'))).toBe(true);
+    });
+
+    it('is backward compatible when savedFiles is omitted', () => {
+      const lines = getEndingNarrativeLines('government_scandal');
+      expect(lines.some(l => l.includes('The leak does not prove alien contact'))).toBe(true);
     });
   });
 
