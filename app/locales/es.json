@@ -842,7 +842,7 @@
   "engine.commands.evidence.sequence_mismatch_reset": "  ✗ SECUENCIA INCORRECTA — protocolo reiniciado",
   "engine.commands.evidence.detection_level_increased": "  ⚠ Nivel de detección aumentado (+5%)",
   "engine.commands.evidence.preparation_must_restart": "  La secuencia de preparación debe reiniciarse desde el paso 1.",
-  "engine.commands.evidence.save_at_least_five_files_to_begin": "  Guarde al menos cinco archivos para iniciar",
+  "engine.commands.evidence.save_at_least_five_files_to_begin": "  Guarde {{needed}} más para iniciar",
   "engine.commands.evidence.the_leak_preparation_sequence": "  la secuencia de preparación de filtración.",
   "engine.commands.evidence.ufo74_not_yet_we_need_more_five_minimum_ten_to_finish": "[UFO74]: todavía no. necesitamos más. cinco como mínimo para empezar la preparación. diez para terminar el trabajo.",
   "engine.commands.evidence.leak_transmission_initiated": "  TRANSMISIÓN DE FILTRACIÓN INICIADA",

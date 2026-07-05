@@ -842,7 +842,7 @@
   "engine.commands.evidence.sequence_mismatch_reset": "  ✗ SEQUÊNCIA INCORRETA — protocolo reiniciado",
   "engine.commands.evidence.detection_level_increased": "  ⚠ Nível de detecção aumentado (+5%)",
   "engine.commands.evidence.preparation_must_restart": "  A sequência de preparação deve ser reiniciada a partir do passo 1.",
-  "engine.commands.evidence.save_at_least_five_files_to_begin": "  Salve pelo menos cinco arquivos para iniciar",
+  "engine.commands.evidence.save_at_least_five_files_to_begin": "  Salve mais {{needed}} para iniciar",
   "engine.commands.evidence.the_leak_preparation_sequence": "  a sequência de preparação do vazamento.",
   "engine.commands.evidence.ufo74_not_yet_we_need_more_five_minimum_ten_to_finish": "[UFO74]: ainda não. precisamos de mais. cinco no mínimo pra começar a preparação. dez pra terminar o trabalho.",
   "engine.commands.evidence.leak_transmission_initiated": "  TRANSMISSÃO DE VAZAMENTO INICIADA",

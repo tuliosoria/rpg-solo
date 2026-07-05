@@ -842,7 +842,7 @@
   "engine.commands.evidence.sequence_mismatch_reset": "  ✗ SEQUENCE MISMATCH — protocol reset",
   "engine.commands.evidence.detection_level_increased": "  ⚠ Detection level increased (+5%)",
   "engine.commands.evidence.preparation_must_restart": "  Preparation sequence must be restarted from step 1.",
-  "engine.commands.evidence.save_at_least_five_files_to_begin": "  Save at least five files to begin",
+  "engine.commands.evidence.save_at_least_five_files_to_begin": "  Save {{needed}} more to begin",
   "engine.commands.evidence.the_leak_preparation_sequence": "  the leak preparation sequence.",
   "engine.commands.evidence.ufo74_not_yet_we_need_more_five_minimum_ten_to_finish": "[UFO74]: not yet. we need more. five minimum to start the preparation. ten to finish the job.",
   "engine.commands.evidence.leak_transmission_initiated": "  LEAK TRANSMISSION INITIATED",

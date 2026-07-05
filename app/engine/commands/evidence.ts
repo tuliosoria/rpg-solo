@@ -175,7 +175,8 @@ export const evidenceCommands: CommandRegistry = {
           createEntryI18n(
             'system',
             'engine.commands.evidence.save_at_least_five_files_to_begin',
-            '  Save at least five files to begin'
+            '  Save {{needed}} more to begin',
+            { needed: EVIDENCE_THRESHOLD_FOR_SEQUENCE - savedCount }
           ),
           createEntryI18n(
             'system',
