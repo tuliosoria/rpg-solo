@@ -12,40 +12,12 @@ import { useCallback, useRef, useMemo } from 'react';
 import { GameState } from '../types';
 import { listDirectory, resolvePath } from '../engine/filesystem';
 import { isInTutorialMode, getTutorialAutocomplete } from '../engine/commands/interactiveTutorial';
-import { COMMAND_TRANSLATIONS } from '../engine/commands/utils';
+import { COMMAND_TRANSLATIONS, PUBLIC_COMMANDS } from '../engine/commands/utils';
 
-// Canonical English commands for auto-completion
-const COMMANDS = [
-  'help',
-  'status',
-  'progress',
-  'ls',
-  'cd',
-  'back',
-  'open',
-  'last',
-  'unread',
-  'note',
-  'notes',
-  'unsave',
-  'trace',
-  'chat',
-  'clear',
-  'save',
-  'exit',
-  'override',
-  'run',
-  'map',
-  'tree',
-  'tutorial',
-  'leak',
-  'message',
-  'search',
-  'hint',
-  'wait',
-  'hide',
-  'morse',
-];
+// Canonical English commands for auto-completion.
+// Shared with the engine so Tab never completes to something that has no
+// handler (which would cost the player detection and an invalid attempt).
+const COMMANDS: string[] = [...PUBLIC_COMMANDS];
 
 const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'run', 'save', 'unsave'];
 

@@ -21,6 +21,16 @@ const LEAK_SEQUENCE_POOL = [
 
 const EVIDENCE_THRESHOLD_FOR_SEQUENCE = 5;
 
+/**
+ * Normalize a leak step so the preparation sequence is forgiving about the
+ * things players get wrong by accident (capitalisation, doubled spaces) while
+ * still requiring the correct step in the correct order. Mistyping the actual
+ * words remains a mismatch.
+ */
+function normalizeLeakStep(value: string): string {
+  return value.trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
 function generateLeakSequence(state: GameState): string[] {
   // Guard: migrated saves may lack `seed` — derive a stable fallback so the RNG is deterministic.
   const baseSeed =
@@ -40,7 +50,7 @@ function formatSequenceDisplay(sequence: string[], progress: number): string[] {
 }
 
 function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
-  const subcommand = args.join(' ');
+  const subcommand = normalizeLeakStep(args.join(' '));
   if (!state.leakSequence) {
     return {
       output: [createEntryI18n('error', 'engine.commands.evidence.leak_sequence_not_initialized', 'Leak sequence not initialized.')],
@@ -73,7 +83,7 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
 
   const expected = sequence[progress];
 
-  if (subcommand === expected) {
+  if (subcommand === normalizeLeakStep(expected)) {
     const newProgress = progress + 1;
 
     if (newProgress >= 3) {
@@ -117,6 +127,33 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
       stateChanges: {
         leakSequenceProgress: newProgress,
       },
+    };
+  }
+
+  // Not a protocol step at all (typo, stray word, "leak now"). The stated rule is
+  // that *wrong order* resets the sequence — an unrecognized token is not an
+  // ordering mistake, so re-state the protocol instead of punishing the player.
+  const isKnownStep = sequence.some((step) => normalizeLeakStep(step) === subcommand);
+  if (!isKnownStep) {
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntryI18n(
+          'warning',
+          'engine.commands.evidence.unrecognized_protocol_step',
+          '  ⚠ UNRECOGNIZED PROTOCOL STEP — nothing transmitted'
+        ),
+        createEntryI18n(
+          'system',
+          'engine.commands.evidence.next_leak_step',
+          '  Next: leak {{command}}',
+          { command: expected }
+        ),
+        createEntry('system', ''),
+        ...formatSequenceDisplay(sequence, progress).map((line) => createEntry('system' as const, line)),
+        createEntry('system', ''),
+      ],
+      stateChanges: {},
     };
   }
 

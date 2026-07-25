@@ -11,7 +11,7 @@ import { determineEnding, type EndingId } from './endings';
 import { createSeededRng, seededShuffle } from './rng';
 
 // Import utilities
-import { createEntry, createEntryI18n, sanitizeCommandInput, parseCommand } from './commands/utils';
+import { createEntry, createEntryI18n, sanitizeCommandInput, parseCommand, suggestCommand } from './commands/utils';
 
 // Import interactive tutorial system
 import { isInTutorialMode, processTutorialInput } from './commands/interactiveTutorial';
@@ -1710,6 +1710,31 @@ function getCommandTip(command: string, args: string[], state: GameState): Termi
         'ufo74',
         'engine.commands.core.ufo74_try_status_or_help_kid',
         '[UFO74]: try "status" or "help" kid.'
+      ),
+      createEntry('system', ''),
+    ];
+  }
+
+  // Near-miss typo: name the command they almost typed. Invalid commands still
+  // cost detection (the system noticing fumbling is the point), but the player
+  // should never be left guessing which key they missed — eight invalid
+  // attempts end the run.
+  const suggestion = suggestCommand(command);
+  if (suggestion) {
+    return [
+      createEntry('system', ''),
+      createEntryI18n(
+        'system',
+        'engine.commands.core.commandNotRecognized',
+        `Command not recognized: ${command}`,
+        { value: command }
+      ),
+      createEntry('system', ''),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.ufo74DidYouMean',
+        `[UFO74]: did you mean "${suggestion}"?`,
+        { value: suggestion }
       ),
       createEntry('system', ''),
     ];

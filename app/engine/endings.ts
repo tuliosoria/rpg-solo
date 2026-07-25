@@ -72,11 +72,9 @@ export const FILE_CATEGORIES = {
     'medical_examiner_query.txt',
     'medical_effects_brief_77.txt',
     'contact_incident_report.txt',
-    'autopsy_notes_unredacted.txt',
   ],
   witness: [
     'witness_statement_raw.txt',
-    'witness_statement_original.txt',
     'witness_visit_log.txt',
     'witness_subjects_file.txt',
     'debriefing_protocol.txt',
@@ -86,7 +84,6 @@ export const FILE_CATEGORIES = {
   ],
   containment: [
     'bio_container.log',
-    'bio_containment_log_deleted.txt',
     'bio_program_overview.red',
     'ethics_exception_03.txt',
     'neural_dump_alfa.psi',
@@ -101,7 +98,6 @@ export const FILE_CATEGORIES = {
     'field_report_delta.txt',
     'scout_variants.meta',
     'energy_node_assessment.txt',
-    'deleted_comms_log.txt',
   ],
   temporal_convergence: [
     'convergence_model_draft.txt',
@@ -117,7 +113,6 @@ export const FILE_CATEGORIES = {
     'colonization_model.red',
     'non_arrival_colonization.txt',
     'energy_extraction_theory.txt',
-    'transfer_manifest_deleted.txt',
     'briefing_watchers_1996.txt',
   ],
   conspiracy_unrelated: [
@@ -170,7 +165,6 @@ export const FILE_CATEGORIES = {
     'transcript_core.enc',
     'transcript_limit.enc',
     'psi_analysis_report.txt',
-    'psi_analysis_classified.txt',
     'signal_analysis_partial.txt',
     'intercept_summary_dec95.txt',
     'morse_intercept.sig',
@@ -178,7 +172,6 @@ export const FILE_CATEGORIES = {
   ],
   diplomatic: [
     'foreign_liaison_note.txt',
-    'foreign_liaison_cable_deleted.txt',
     'diplomatic_cable_23jan.enc',
     'standing_orders_multinational.txt',
     'parallel_incidents_global.txt',

@@ -840,6 +840,7 @@
   "engine.commands.evidence.leak_channel_decrypted_standing_by": "  ▸ Canal de vazamento descriptografado e em espera.",
   "engine.commands.evidence.ufo74_channel_is_open": "[UFO74]: canal aberto. execute \"leak\" quando tiver todos os dez.",
   "engine.commands.evidence.sequence_mismatch_reset": "  ✗ SEQUÊNCIA INCORRETA — protocolo reiniciado",
+  "engine.commands.evidence.unrecognized_protocol_step": "  ⚠ PASSO DE PROTOCOLO NÃO RECONHECIDO — nada transmitido",
   "engine.commands.evidence.detection_level_increased": "  ⚠ Nível de detecção aumentado (+5%)",
   "engine.commands.evidence.preparation_must_restart": "  A sequência de preparação deve ser reiniciada a partir do passo 1.",
   "engine.commands.evidence.save_at_least_five_files_to_begin": "  Salve mais {{needed}} para iniciar",
@@ -1704,6 +1705,7 @@
   "engine.commands.core.hintCommandIsFilesOnly": "  DICA: '{{value}}' é usado apenas para arquivos.",
   "engine.commands.core.ufo74ThatsADirectoryKidUseLs": "[UFO74]: isso é um diretório, kid. use: ls {{value}}",
   "engine.commands.core.commandNotRecognized": "Comando não reconhecido: {{value}}",
+  "engine.commands.core.ufo74DidYouMean": "[UFO74]: você quis dizer \"{{value}}\"?",
   "engine.commands.archive.targetSearching": "TARGET={{value}}... PROCURANDO",
   "engine.commands.archive.scriptNotFound": "Script não encontrado: {{value}}",
   "engine.commands.chat.questionsRemainingLockout": "[{{count}} perguntas restantes antes do bloqueio de rastreamento]",
@@ -1738,5 +1740,10 @@
   "ending.aol.fallback.headline": "NOTÍCIA DE ÚLTIMA HORA",
   "ending.aol.fallback.subheadline": "História em desenvolvimento...",
   "ending.aol.fallback.body": "Detalhes ainda estão surgindo.",
-  "ending.aol.fallback.imageAlt": "[Imagem indisponível]"
+  "ending.aol.fallback.imageAlt": "[Imagem indisponível]",
+  "engine.commands.chat.no_neural_pattern_indexed": "Nenhum padrão neural está indexado neste terminal ainda.",
+  "engine.commands.tutorial.save_file_save_to_dossier": "  save <arquivo>   Salva um arquivo no seu dossiê",
+  "engine.commands.tutorial.unsave_file_remove_from_dossier": "  unsave <arquivo> Remove um arquivo do seu dossiê",
+  "engine.commands.core.god_ending_jump_to_ending_phase": "  god ending <n> - Pular para um final específico (1-12)",
+  "engine.commands.core.god_ending_jump_directly_to_ending_phase": "god ending <n> - Pular direto para um final específico (1-12)"
 }

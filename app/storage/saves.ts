@@ -32,6 +32,7 @@ import { MAX_DETECTION } from '../constants/detection';
 import { countEvidence, MAX_EVIDENCE_COUNT } from '../engine/evidenceRevelation';
 import { isCloudAvailable, cloudSave, cloudLoad, cloudDelete, cloudList } from '../lib/steamBridge';
 import { safeSetJSON } from './safeStorage';
+import { getStatistics } from './statistics';
 import { translateStatic } from '../i18n';
 
 const SAVES_KEY = 'terminal1996:saves';
@@ -822,10 +823,21 @@ export function createNewGame(): GameState {
     // localStorage may be unavailable
   }
   const ghostSessionAvailable = hasPriorSave || hasAutoSave;
+  // New Game+: /aftermath holds post-leak documents (Feb–Mar 1996 press, the
+  // containment memo, UFO74's last signal, the revised 2026 projection). They
+  // only make sense once a run has actually reached an ending, so they stay
+  // sealed until the player has finished the game at least once.
+  let epilogueUnlocked = false;
+  try {
+    epilogueUnlocked = getStatistics().gamesCompleted > 0;
+  } catch {
+    // statistics storage may be unavailable
+  }
   const flags = {
     ...DEFAULT_GAME_STATE.flags,
     ...(variantAlpha ? { variant_route_alpha: true } : { variant_route_beta: true }),
     ...(ghostSessionAvailable ? { ghostSessionAvailable: true } : {}),
+    ...(epilogueUnlocked ? { epilogueUnlocked: true } : {}),
   };
 
   return {
@@ -835,6 +847,7 @@ export function createNewGame(): GameState {
     sessionStartTime: Date.now(),
     history: bootSequence,
     evidenceCount: 0,
+    epilogueUnlocked,
     singularEventsTriggered: new Set(),
     imagesShownThisRun: new Set(),
     flags,
