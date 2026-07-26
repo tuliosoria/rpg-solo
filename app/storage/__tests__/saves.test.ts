@@ -134,6 +134,60 @@ describe('Save/Load System', () => {
       expect(loaded!.tutorialTipsShown.size).toBe(1);
     });
 
+    // The test above names its fields by hand, which makes it a record of what
+    // someone remembered rather than a guarantee. `Set` cannot survive
+    // `JSON.stringify` on its own, so every Set field needs an explicit
+    // Array.from on write and a `new Set` on read — in two separate lists, in
+    // two functions. Miss either half for a newly added field and it degrades to
+    // an empty object on save and an undefined on load: no error, no warning,
+    // just a player whose progress silently stops persisting.
+    //
+    // Deriving the field list from DEFAULT_GAME_STATE means a field added
+    // tomorrow is covered by this test today.
+    it('preserves every Set field declared on the default state', async () => {
+      const { saveGame, loadGame } = await import('../saves');
+
+      // DEFAULT_GAME_STATE omits the few fields that are always supplied per
+      // run (seed, rngState, sessionStartTime); none are Sets, so enumerating
+      // its own keys loses nothing here.
+      type DefaultStateKey = keyof typeof DEFAULT_GAME_STATE;
+      const setFields = (Object.keys(DEFAULT_GAME_STATE) as DefaultStateKey[]).filter(
+        key => DEFAULT_GAME_STATE[key] instanceof Set
+      );
+
+      // Guards against the enumeration silently finding nothing — if the state
+      // shape changed to hold these elsewhere, an empty list would make every
+      // assertion below vacuous.
+      expect(setFields.length).toBeGreaterThanOrEqual(10);
+
+      // A distinct marker per field proves values land back in the field they
+      // came from, not merely that something Set-shaped survived. Path-like so
+      // the file-path normalisation applied to some fields leaves it untouched.
+      const marker = (field: string) => `/internal/round_trip_${field}.txt`;
+
+      const populated = createTestState(
+        Object.fromEntries(
+          setFields.map(field => [field, new Set([marker(field)])])
+        ) as Partial<GameState>
+      );
+
+      const slot = saveGame(populated, 'Set round-trip');
+      const loaded = loadGame(slot!.id);
+      expect(loaded).not.toBeNull();
+
+      const dropped: string[] = [];
+      for (const field of setFields) {
+        const value = loaded![field];
+        if (!(value instanceof Set)) {
+          dropped.push(`${String(field)}: expected a Set, got ${typeof value}`);
+        } else if (!value.has(marker(String(field)))) {
+          dropped.push(`${String(field)}: lost its entry (has ${JSON.stringify([...value])})`);
+        }
+      }
+
+      expect(dropped).toEqual([]);
+    });
+
     it('preserves conspiracyFilesSeen and archiveFilesViewed through save/load cycle', async () => {
       const { saveGame, loadGame } = await import('../saves');
 
