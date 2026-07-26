@@ -1,6 +1,6 @@
 // System commands: help, status, clear, hint, tutorial, save, unsave
 
-import { GameState, CommandResult } from '../../types';
+import { GameState, CommandResult, DEFAULT_GAME_STATE } from '../../types';
 import { createEntry, createEntryI18n, createOutputEntries } from './utils';
 import {
   checkVictory,
@@ -8,9 +8,9 @@ import {
   getWarmupAdjustedDetection,
   hasReadPsiMaterial,
 } from './helpers';
-import { DETECTION_THRESHOLDS } from '../../constants/detection';
+import { DETECTION_THRESHOLDS, DETECTION_DECREASES } from '../../constants/detection';
 
-import { generateHintOutput } from '../hintSystem';
+import { generateHintOutput, HINT_CONFIG } from '../hintSystem';
 import type { CommandRegistry } from './types';
 import { translateStatic } from '../../i18n';
 import { getHelpBasics } from './tutorial';
@@ -248,7 +248,8 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  hint              - Receive a contextual hint',
     '',
     'NOTES:',
-    '  - Hints are LIMITED (8 per run)',
+    `  - Hints are LIMITED (${HINT_CONFIG.maxHints} per run)`,
+    `  - Each hint costs ${HINT_CONFIG.detectionPenalty}% detection`,
     '  - Hints react to your progress, risk, and missing leads',
     '  - Cannot reveal specific file names or answers',
     '',
@@ -260,10 +261,11 @@ const COMMAND_HELP: Record<string, string[]> = {
     'Wait and let attention drift elsewhere.',
     '',
     'USAGE:',
-    '  wait           - Reduce detection by ~10%',
+    `  wait           - Reduce detection by ${DETECTION_DECREASES.WAIT_NORMAL}%`,
     '',
-    'Limited uses per session (3).',
-    'Strategic use can help avoid detection.',
+    `Above ${DETECTION_THRESHOLDS.HIGH_WAIT_REDUCTION}% risk it removes ${DETECTION_DECREASES.WAIT_HIGH_DETECTION}% instead.`,
+    `Limited to ${DEFAULT_GAME_STATE.waitUsesRemaining} uses per run, with a short cooldown between them.`,
+    'Each use also makes the system a little more hostile.',
   ],
   hide: ['COMMAND: hide', 'USAGE:', '  hide           - Emergency escape at 90% risk'],
   link: [

@@ -512,6 +512,41 @@ describe('Save/Load System', () => {
       expect(newGame.sessionStartTime).toBeGreaterThanOrEqual(before);
       expect(newGame.sessionStartTime).toBeLessThanOrEqual(after);
     });
+
+    it('keeps the /aftermath epilogue sealed on a first playthrough', async () => {
+      const { createNewGame } = await import('../saves');
+
+      const newGame = createNewGame();
+
+      expect(newGame.epilogueUnlocked).toBe(false);
+      expect(newGame.flags.epilogueUnlocked).toBeUndefined();
+    });
+
+    it('unlocks the /aftermath epilogue once a run has been completed', async () => {
+      const { recordEnding } = await import('../statistics');
+      const { createNewGame } = await import('../saves');
+
+      recordEnding('good', 120, 42);
+      const newGame = createNewGame();
+
+      // /aftermath holds post-leak documents, so they only make sense on a
+      // replay after the player has actually seen an ending.
+      expect(newGame.epilogueUnlocked).toBe(true);
+      expect(newGame.flags.epilogueUnlocked).toBe(true);
+    });
+
+    it('exposes the epilogue directory to the filesystem once unlocked', async () => {
+      const { recordEnding } = await import('../statistics');
+      const { createNewGame } = await import('../saves');
+      const { listDirectory } = await import('../../engine/filesystem');
+
+      const firstRun = createNewGame();
+      expect(listDirectory('/', firstRun)?.some(e => e.name === 'aftermath/')).toBe(false);
+
+      recordEnding('good', 120, 42);
+      const replay = createNewGame();
+      expect(listDirectory('/', replay)?.some(e => e.name === 'aftermath/')).toBe(true);
+    });
   });
 
   describe('deleteSave', () => {

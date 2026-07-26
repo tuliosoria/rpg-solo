@@ -840,6 +840,7 @@
   "engine.commands.evidence.leak_channel_decrypted_standing_by": "  ▸ Leak channel decrypted and standing by.",
   "engine.commands.evidence.ufo74_channel_is_open": "[UFO74]: channel is open. run \"leak\" when you have all ten.",
   "engine.commands.evidence.sequence_mismatch_reset": "  ✗ SEQUENCE MISMATCH — protocol reset",
+  "engine.commands.evidence.unrecognized_protocol_step": "  ⚠ UNRECOGNIZED PROTOCOL STEP — nothing transmitted",
   "engine.commands.evidence.detection_level_increased": "  ⚠ Detection level increased (+5%)",
   "engine.commands.evidence.preparation_must_restart": "  Preparation sequence must be restarted from step 1.",
   "engine.commands.evidence.save_at_least_five_files_to_begin": "  Save {{needed}} more to begin",
@@ -1704,6 +1705,7 @@
   "engine.commands.core.hintCommandIsFilesOnly": "  HINT: '{{value}}' is used for files only.",
   "engine.commands.core.ufo74ThatsADirectoryKidUseLs": "[UFO74]: thats a directory kid. use: ls {{value}}",
   "engine.commands.core.commandNotRecognized": "Command not recognized: {{value}}",
+  "engine.commands.core.ufo74DidYouMean": "[UFO74]: did you mean \"{{value}}\"?",
   "engine.commands.archive.targetSearching": "TARGET={{value}}... SEARCHING",
   "engine.commands.archive.scriptNotFound": "Script not found: {{value}}",
   "engine.commands.chat.questionsRemainingLockout": "[{{count}} questions remaining before trace lockout]",
@@ -1738,5 +1740,10 @@
   "ending.aol.fallback.headline": "BREAKING NEWS",
   "ending.aol.fallback.subheadline": "Story developing...",
   "ending.aol.fallback.body": "Details are still emerging.",
-  "ending.aol.fallback.imageAlt": "[Image unavailable]"
+  "ending.aol.fallback.imageAlt": "[Image unavailable]",
+  "engine.commands.chat.no_neural_pattern_indexed": "No neural pattern is indexed on this terminal yet.",
+  "engine.commands.tutorial.save_file_save_to_dossier": "  save <file>     Save a file to your dossier",
+  "engine.commands.tutorial.unsave_file_remove_from_dossier": "  unsave <file>   Remove a file from your dossier",
+  "engine.commands.core.god_ending_jump_to_ending_phase": "  god ending <n> - Jump to specific ending (1-12)",
+  "engine.commands.core.god_ending_jump_directly_to_ending_phase": "god ending <n> - Jump to specific ending (1-12)"
 }

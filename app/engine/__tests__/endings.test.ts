@@ -12,7 +12,19 @@ import {
   getEndingNarrativeLines,
   getEndingTitle,
 } from '../endings';
-import { GameState, DEFAULT_GAME_STATE } from '../../types';
+import { GameState, DEFAULT_GAME_STATE, type FileSystemNode } from '../../types';
+import { FILESYSTEM_ROOT } from '../../data/virtualFileSystem';
+
+function collectFilePaths(node: FileSystemNode, current = '', out: string[] = []): string[] {
+  if (node.type === 'file') {
+    out.push(current);
+    return out;
+  }
+  for (const [name, child] of Object.entries(node.children)) {
+    collectFilePaths(child, current ? `${current}/${name}` : `/${name}`, out);
+  }
+  return out;
+}
 
 function createTestState(overrides: Partial<GameState> = {}): GameState {
   return {
@@ -30,7 +42,7 @@ const ALL_ENDING_IDS = Object.keys(ENDINGS) as EndingId[];
 const REPRESENTATIVE_DOSSIERS: Record<EndingId, Set<string>> = {
   ridiculed: dossier(
     'witness_statement_raw.txt',
-    'witness_statement_original.txt',
+    'witness_subjects_file.txt',
     'witness_visit_log.txt'
   ),
   ufo74_exposed: dossier('ghost_in_machine.enc', 'audio_transcript_brief.txt'),
@@ -81,6 +93,24 @@ const REPRESENTATIVE_DOSSIERS: Record<EndingId, Set<string>> = {
 
 describe('Endings', () => {
   describe('determineEnding', () => {
+    it('builds every representative dossier from files that exist in the game', () => {
+      // The `ridiculed` fixture once relied on `witness_statement_original.txt`,
+      // a file that had been removed with the archive/rewind mechanic. The test
+      // kept passing while the ending was only reachable through a phantom
+      // filename, so assert the fixtures use real, openable content.
+      const realBasenames = new Set(
+        collectFilePaths(FILESYSTEM_ROOT).map(path => path.split('/').pop()!)
+      );
+      const phantom = Object.entries(REPRESENTATIVE_DOSSIERS).flatMap(([endingId, files]) =>
+        [...files]
+          .map(path => path.split('/').pop()!)
+          .filter(name => !realBasenames.has(name))
+          .map(name => `${endingId} -> ${name}`)
+      );
+
+      expect(phantom).toEqual([]);
+    });
+
     Object.entries(REPRESENTATIVE_DOSSIERS).forEach(([endingId, savedFiles]) => {
       it(`reaches ${endingId}`, () => {
         expect(determineEnding(savedFiles)).toBe(endingId);
