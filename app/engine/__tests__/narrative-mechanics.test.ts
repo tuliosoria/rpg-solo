@@ -37,6 +37,17 @@ describe('Narrative Mechanics', () => {
       const afterModem = executeCommand('open modem_log_jan96.txt', second);
       expect(afterModem.checkAchievements ?? []).toContain('ghost_handle');
     });
+
+    it('shows the refreshed UFO74 reactions on read', () => {
+      // File-specific UFO74 reactions are returned via pendingUfo74Messages, NOT output.
+      const sig = executeCommand('open .signature.bak', createTestState({ currentPath: '/tmp' }));
+      const sigText = (sig.pendingUfo74Messages ?? []).map(e => e.content).join('\n');
+      expect(sigText).toContain('streber. that was me.');
+
+      const modem = executeCommand('open modem_log_jan96.txt', createTestState({ currentPath: '/tmp' }));
+      const modemText = (modem.pendingUfo74Messages ?? []).map(e => e.content).join('\n');
+      expect(modemText).toContain('i practically lived there.');
+    });
   });
 
   describe('Hidden Commands', () => {

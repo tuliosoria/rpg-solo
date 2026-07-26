@@ -716,8 +716,10 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'rot13. cifra amadora. mas a mensagem por baixo não é amadora.',
     '28.8 modem. geocities. someone was uploading before they got caught.':
       'modem 28.8. geocities. alguém tava subindo coisa antes de ser pego.',
-    'that sig file. i know whose terminal that was.':
-      'aquele arquivo sig. eu sei de quem era aquele terminal.',
+    'that bbs. i practically lived there. cruzeiro lost that game. i remember.':
+      'aquele bbs. eu praticamente morava lá. o cruzeiro perdeu aquele jogo. eu lembro.',
+    'streber. that was me. a long time ago. before the call sign. before all of this.':
+      'streber. era eu. muito tempo atrás. antes do codinome. antes de tudo isso.',
     'honeypot. do not trust filenames that scream at you.':
       'honeypot. não confie em arquivos que gritam com você.',
     'decoy file. they put these everywhere to catch people like us.':
@@ -1884,8 +1886,10 @@ export const RUNTIME_COMMAND_SUPPLEMENT: Record<'pt-BR' | 'es', RuntimeDictionar
       'rot13. cifrado amateur. pero el mensaje de abajo no es amateur.',
     '28.8 modem. geocities. someone was uploading before they got caught.':
       'módem 28.8. geocities. alguien estaba subiendo cosas antes de que lo pillaran.',
-    'that sig file. i know whose terminal that was.':
-      'ese archivo sig. yo sé de quién era ese terminal.',
+    'that bbs. i practically lived there. cruzeiro lost that game. i remember.':
+      'ese bbs. prácticamente vivía ahí. el cruzeiro perdió ese partido. me acuerdo.',
+    'streber. that was me. a long time ago. before the call sign. before all of this.':
+      'streber. ese era yo. hace mucho tiempo. antes del nombre en clave. antes de todo esto.',
     'honeypot. do not trust filenames that scream at you.':
       'honeypot. no te fíes de nombres de archivo que te gritan.',
     'decoy file. they put these everywhere to catch people like us.':
