@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { determineEnding, type EndingId } from '../endings';
+import { determineEnding, FILE_CATEGORIES, type EndingId } from '../endings';
 import { getAllAccessibleFiles } from '../filesystem';
-import { DEFAULT_GAME_STATE, type GameState } from '../../types';
+import { FILESYSTEM_ROOT } from '../../data/virtualFileSystem';
+import { DEFAULT_GAME_STATE, type FileSystemNode, type GameState } from '../../types';
 
 // ──────────────────────────────────────────────────────────────────────────
 // Reachability regression test for the dossier-based endings.
@@ -16,32 +17,39 @@ import { DEFAULT_GAME_STATE, type GameState } from '../../types';
 // files an actual player could open and save.
 // ──────────────────────────────────────────────────────────────────────────
 
+/**
+ * Every flag any node in the live filesystem gates on.
+ *
+ * Collected from the tree rather than hand-listed. A hand-written list can only
+ * be as complete as the moment someone wrote it: this one silently missed
+ * `tracePurgeUsed`, `scriptExecuted`, and `ghostSessionAvailable`, so three
+ * files — including one named in the filler list below — were invisible to a
+ * helper whose entire job was to see everything. A gate added tomorrow is
+ * included today.
+ */
+function allGatingFlags(): Record<string, boolean> {
+  const flags: Record<string, boolean> = {};
+
+  (function walk(node: FileSystemNode) {
+    for (const flag of (node as { requiredFlags?: string[] }).requiredFlags ?? []) {
+      flags[flag] = true;
+    }
+    if (node.type === 'dir') {
+      for (const child of Object.values(node.children)) walk(child as FileSystemNode);
+    }
+  })(FILESYSTEM_ROOT);
+
+  return flags;
+}
+
 function fullyUnlockedState(): GameState {
-  // Mark every flag the live filesystem checks so getAllAccessibleFiles()
-  // returns the union of every path a player could reach over a full run.
-  const allFlags: Record<string, boolean> = {
-    adminUnlocked: true,
-    overrideGateActive: false,
-    redactionKeycardRead: true,
-    redactionOverrideSolved: true,
-    neuralLinkAuthenticated: true,
-    scoutLinkUnlocked: true,
-    conspiracyFilesLeaked: true,
-    alphaReleased: true,
-    leakSuccessful: false,
-    evidencesSaved: false,
-    forbiddenKnowledge: true,
-    traceMonitorReviewed: true,
-    tamperEvidenceNoted: true,
-    overrideSuggested: true,
-  };
   return {
     ...DEFAULT_GAME_STATE,
     accessLevel: 5,
     tutorialComplete: true,
-    // Top-level flags that some VFS subtrees gate on (e.g. /aftermath).
+    // Also a top-level GameState field, checked separately from flags.
     epilogueUnlocked: true,
-    flags: allFlags,
+    flags: allGatingFlags(),
   } as GameState;
 }
 
@@ -218,5 +226,50 @@ describe('Ending reachability through the live virtualFileSystem', () => {
       convergenceMatches.length,
       'No live file contains "convergence" in its basename. The secret_ending priority cannot trigger.',
     ).toBeGreaterThan(0);
+  });
+
+  // The dossiers above pin the files each ending needs. They say nothing about
+  // the rest of a thread — and `determineEnding` counts whole threads, so a
+  // basename that matches nothing makes its thread quietly count lower than it
+  // reads, shifting which ending a player earns.
+  describe('dossier thread wiring', () => {
+    const categories = FILE_CATEGORIES as Record<string, string[]>;
+
+    it('matches every categorised basename to a reachable file', () => {
+      const orphaned: string[] = [];
+
+      for (const [category, names] of Object.entries(categories)) {
+        for (const name of names) {
+          if (!reachableBasenames.has(name)) orphaned.push(`${category}: ${name}`);
+        }
+      }
+
+      expect(
+        orphaned,
+        'Categorised files that no player can reach. Either the file was renamed or ' +
+          'moved behind a gate, or the category still names a file that no longer exists.',
+      ).toEqual([]);
+    });
+
+    it('keeps categorised basenames unambiguous', () => {
+      // Threads count basenames, not paths, so the same basename at two paths
+      // lets a single piece of evidence count twice toward an ending — the
+      // duplication trap AGENTS.md warns about.
+      const byName = new Map<string, string[]>();
+      for (const path of reachablePathsList) {
+        const base = path.split('/').pop() ?? path;
+        byName.set(base, [...(byName.get(base) ?? []), path]);
+      }
+
+      const duplicated: string[] = [];
+      for (const [category, names] of Object.entries(categories)) {
+        for (const name of names) {
+          const matches = byName.get(name) ?? [];
+          if (matches.length > 1) duplicated.push(`${category}: ${name} at ${matches.join(', ')}`);
+        }
+      }
+
+      expect(duplicated).toEqual([]);
+    });
   });
 });
