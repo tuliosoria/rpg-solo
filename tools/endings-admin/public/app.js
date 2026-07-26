@@ -92,12 +92,24 @@ async function renderEditor() {
   function drawFields(id) {
     form.innerHTML = '';
     const f = content[id].fields;
+    const rec = content[id];
+    rec.fieldLocales = rec.fieldLocales || {};
+    const tr = (loc, en) => (rec.translations[loc] && rec.translations[loc][en]) || '';
     const addField = (label, getVal, setVal) => {
       const wrap = document.createElement('div'); wrap.className = 'cat';
       const h = document.createElement('h4'); h.textContent = label; wrap.appendChild(h);
-      const ta = document.createElement('textarea'); ta.value = getVal(); ta.style.width = '100%'; ta.rows = 2;
-      ta.addEventListener('input', () => setVal(ta.value));
-      wrap.appendChild(ta); form.appendChild(wrap);
+      const en = document.createElement('textarea'); en.value = getVal(); en.style.width = '100%'; en.rows = 2;
+      en.addEventListener('input', () => setVal(en.value));
+      wrap.appendChild(document.createTextNode('EN')); wrap.appendChild(en);
+      ['pt-BR', 'es'].forEach((loc) => {
+        const ta = document.createElement('textarea'); ta.value = tr(loc, getVal()); ta.style.width = '100%'; ta.rows = 2;
+        ta.addEventListener('input', () => {
+          rec.fieldLocales[label] = rec.fieldLocales[label] || {};
+          rec.fieldLocales[label][loc] = ta.value;
+        });
+        wrap.appendChild(document.createTextNode(loc)); wrap.appendChild(ta);
+      });
+      form.appendChild(wrap);
     };
     addField('title', () => f.title, (v) => (f.title = v));
     addField('subtitle', () => f.subtitle, (v) => (f.subtitle = v));
