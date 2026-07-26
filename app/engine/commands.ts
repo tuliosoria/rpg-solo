@@ -477,7 +477,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         createEntryI18n(
           'output',
           'engine.commands.core.god_random_generate_random_dossier_ending',
-          '  god random   - Generate a random 10-file dossier ending'
+          '  god random   - Generate a random {{max}}-file dossier ending',
+          { max: MAX_EVIDENCE_COUNT }
         ),
         createEntryI18n(
           'output',
@@ -546,7 +547,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntryI18n(
             'output',
             'engine.commands.core.god_random_generate_random_dossier_ending_help',
-            'god random    - Generate a random 10-file dossier ending'
+            'god random    - Generate a random {{max}}-file dossier ending',
+            { max: MAX_EVIDENCE_COUNT }
           ),
           createEntryI18n(
             'output',

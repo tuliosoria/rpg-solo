@@ -1,6 +1,7 @@
 // Tests for the new tutorial system
 
 import { describe, it, expect } from 'vitest';
+import { translateStatic } from '../../i18n';
 import {
   getTutorialTip,
   shouldShowTutorialTip,
@@ -89,9 +90,21 @@ describe('Tutorial System', () => {
   });
 
   describe('interactive tutorial copy', () => {
+    // Entries carry a translation key plus the raw fallback as a template, and
+    // Terminal resolves them with `t(key, values, content)` at render time. So
+    // assert on the resolved string — the fallback alone still holds
+    // placeholders like {{max}}, and checking it would be testing the template
+    // rather than the line the player reads.
+    const render = (entry: {
+      i18nKey?: string;
+      i18nValues?: Record<string, string | number>;
+      content: string;
+    }) =>
+      entry.i18nKey ? translateStatic(entry.i18nKey, entry.i18nValues, entry.content) : entry.content;
+
     it('keeps the live onboarding path on the original tone', () => {
-      const introText = TUTORIAL_INTRO_STEPS.flat().map(entry => entry.content).join('\n');
-      const briefingText = TUTORIAL_BRIEFING_STEPS.flat().map(entry => entry.content).join('\n');
+      const introText = TUTORIAL_INTRO_STEPS.flat().map(render).join('\n');
+      const briefingText = TUTORIAL_BRIEFING_STEPS.flat().map(render).join('\n');
 
       expect(introText).toContain('[UFO74]: Connection established.');
       expect(introText).toContain("[UFO74]: Great, now you're in. Let's get to business.");

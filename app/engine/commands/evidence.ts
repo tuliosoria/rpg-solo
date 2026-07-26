@@ -302,7 +302,7 @@ export const evidenceCommands: CommandRegistry = {
             '  Files saved: {{savedCount}}/{{maxCount}}',
             { savedCount, maxCount: MAX_EVIDENCE_COUNT }
           ),
-          createEntryI18n('system', 'engine.commands.evidence.save_all_ten_then_leak', '  Save all 10 files, then run "leak" again.'),
+          createEntryI18n('system', 'engine.commands.evidence.save_all_ten_then_leak', '  Save all {{max}} files, then run "leak" again.', { max: MAX_EVIDENCE_COUNT }),
           createEntry('system', ''),
           createEntryI18n('ufo74', 'engine.commands.evidence.ufo74_channel_prepped', '[UFO74]: channel is prepped. just need the rest of the files.'),
           createEntry('system', ''),

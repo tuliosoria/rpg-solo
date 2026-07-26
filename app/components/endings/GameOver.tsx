@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { CheckpointSlot, TextSpeed } from '../../types';
 import { getLatestCheckpoint } from '../../storage/saves';
 import { uiChance, uiRandomFloat } from '../../engine/rng';
+import { MAX_EVIDENCE_COUNT } from '../../engine/evidenceRevelation';
 import { useI18n } from '../../i18n';
 import styles from './GameOver.module.css';
 import { scaleTextSpeedDelay } from '../textSpeed';
@@ -205,6 +206,7 @@ export default function GameOver({
     return t('gameOver.checkpoint.info', {
       reason: translateRuntimeText(checkpoint.reason),
       truths: checkpoint.truthCount,
+      max: MAX_EVIDENCE_COUNT,
       risk: checkpoint.detectionLevel,
       time: timeStr,
     });
