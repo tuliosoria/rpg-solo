@@ -2,7 +2,7 @@
 
 import { TerminalEntry } from '../../types';
 import { canAccessFile, getFileContent } from '../filesystem';
-import { EVIDENCE_SYMBOL } from '../evidenceRevelation';
+import { EVIDENCE_SYMBOL, MAX_EVIDENCE_COUNT, LEAK_PREPARATION_THRESHOLD } from '../evidenceRevelation';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES } from '../../constants/detection';
 import { createEntry, createEntryI18n } from './utils';
 import { getWarmupAdjustedDetection } from './helpers';
@@ -195,8 +195,10 @@ export const navigationCommands: CommandRegistry = {
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '  ─────────────────────────────────────────────'));
     // i18n: dynamic string
-    output.push(createEntry('system', `  DOSSIER: ${savedCount}/10 files saved`));
-    if (savedCount >= 10) {
+    output.push(
+      createEntry('system', `  DOSSIER: ${savedCount}/${MAX_EVIDENCE_COUNT} files saved`)
+    );
+    if (savedCount >= MAX_EVIDENCE_COUNT) {
       output.push(createEntryI18n('notice', 'engine.commands.navigation.ready_type_leak', '  READY — type "leak" when prepared.'));
     }
     output.push(createEntry('system', ''));
@@ -207,7 +209,7 @@ export const navigationCommands: CommandRegistry = {
 
   wait: (args, state) => {
     // Late-game tension: warn but still allow wait
-    const lateGameWarning = state.savedFiles.size >= 5
+    const lateGameWarning = state.savedFiles.size >= LEAK_PREPARATION_THRESHOLD
       ? [
           createEntry('warning', ''),
           createEntryI18n('warning', 'engine.commands.elevated_security_protocol_warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
