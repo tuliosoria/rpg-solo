@@ -826,6 +826,7 @@ export default function Terminal({
     hasActiveOverlay: activeImage !== null || activeEvidenceVideo !== null,
     hasEnterPrompt: pendingImage !== null || pendingUfo74StartMessages.length > 0,
     hasVideoPrompt: pendingEvidenceVideoPrompt !== null,
+    hasBlockingPopup,
     submit: useCallback((input: string) => { void handleSubmit(undefined, input); }, [handleSubmit]),
     dismissActiveOverlay: useCallback(() => {
       setActiveImage(null);

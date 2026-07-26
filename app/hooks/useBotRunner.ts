@@ -13,22 +13,19 @@ export function isTerminalIdle(g: {
   return !g.isProcessing && !g.showTuringTest && !g.hasPendingMedia;
 }
 
-/** Returns an anomaly string for this turn, or null. */
-export function detectAnomaly(command: string, hadErrorOutput: boolean): string | null {
-  if (hadErrorOutput) return `command returned error: ${command}`;
-  return null;
-}
-
 interface BotRunnerArgs {
   gameState: GameState;
   isProcessing: boolean;
   showTuringTest: boolean;
-  /** Full-screen overlays that require a dedicated dismiss (image/video). */
+  /** Full-screen media overlays the bot actively dismisses (image/evidence video). */
   hasActiveOverlay: boolean;
   /** Inline prompts advanced by pressing Enter (image reveal, UFO74 messages). */
   hasEnterPrompt: boolean;
   /** The yes/no evidence-video prompt (skipped with "no"). */
   hasVideoPrompt: boolean;
+  /** Any other blocking popup (turing video, achievement toast, firewall scare,
+   *  menus, game-over). The bot waits for these to clear on their own. */
+  hasBlockingPopup: boolean;
   submit: (overrideInput: string) => void;
   dismissActiveOverlay: () => void;
   appendOutput: (entries: TerminalEntry[]) => void;
@@ -43,6 +40,7 @@ export function useBotRunner(args: BotRunnerArgs): void {
     hasActiveOverlay,
     hasEnterPrompt,
     hasVideoPrompt,
+    hasBlockingPopup,
     submit,
     dismissActiveOverlay,
     appendOutput,
@@ -52,27 +50,30 @@ export function useBotRunner(args: BotRunnerArgs): void {
   const memoryRef = useRef<BotMemory>(createBotMemory());
   const logRef = useRef<BotRunLogEntry[]>([]);
   const inFlightRef = useRef(false);
-  const activeRef = useRef(false);
+  const runIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     const cfg = gameState.botTest;
     if (!cfg?.active) {
-      if (activeRef.current) {
-        activeRef.current = false;
+      if (runIdRef.current !== null) {
+        runIdRef.current = null;
         memoryRef.current = createBotMemory();
         logRef.current = [];
       }
       return;
     }
-    // New run: reset memory/log exactly once.
-    if (!activeRef.current) {
-      activeRef.current = true;
+
+    // Reset memory/log at the start of each distinct run (including a fresh
+    // bot-test issued while another run is still flagged active).
+    const runId = `${cfg.level}:${cfg.seed}`;
+    if (runIdRef.current !== runId) {
+      runIdRef.current = runId;
       memoryRef.current = createBotMemory();
       logRef.current = [];
     }
 
-    // Still streaming a previous command, or the turing overlay is up (it
-    // auto-answers itself) — just wait; the effect re-runs when state settles.
+    // Wait while a command is streaming or the turing overlay is up (it
+    // auto-answers itself). The effect re-runs once those settle.
     if (isProcessing || showTuringTest) return;
     if (inFlightRef.current) return;
 
@@ -80,7 +81,17 @@ export function useBotRunner(args: BotRunnerArgs): void {
     const timer = setTimeout(() => {
       inFlightRef.current = false;
 
-      // Clear any blocking media so autoplay can continue.
+      // Terminal-ending states finalize regardless of any popup on screen.
+      if (gameState.gameWon || gameState.isGameOver) {
+        const { decision } = decideNextCommand(gameState, memoryRef.current, cfg.level, cfg.seed);
+        if (decision.kind === 'done') {
+          appendOutput(buildRunSummary(logRef.current, cfg, gameState));
+          clearBot();
+        }
+        return;
+      }
+
+      // Clear blocking media so autoplay can continue.
       if (hasActiveOverlay) {
         dismissActiveOverlay();
         return;
@@ -93,6 +104,11 @@ export function useBotRunner(args: BotRunnerArgs): void {
         submit(''); // advance image reveal / UFO74 messages
         return;
       }
+
+      // Any other blocking popup (turing video, achievement, firewall scare,
+      // menus) auto-clears on its own — wait for it. The effect re-runs when
+      // hasBlockingPopup flips because it is a dependency.
+      if (hasBlockingPopup) return;
 
       const { decision, memory } = decideNextCommand(
         gameState,
@@ -131,6 +147,7 @@ export function useBotRunner(args: BotRunnerArgs): void {
     hasActiveOverlay,
     hasEnterPrompt,
     hasVideoPrompt,
+    hasBlockingPopup,
     submit,
     dismissActiveOverlay,
     appendOutput,
