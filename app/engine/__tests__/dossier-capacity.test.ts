@@ -20,6 +20,7 @@ import {
   getAllFilePaths,
 } from '../evidenceRevelation';
 import { DEFAULT_GAME_STATE, type GameState } from '../../types';
+import { translateStatic } from '../../i18n';
 
 /**
  * DEFAULT_GAME_STATE's Set fields are shared by reference and executeCommand
@@ -119,19 +120,73 @@ describe('dossier capacity matches the leak requirement', () => {
     expect(LEAK_PREPARATION_THRESHOLD).toBeGreaterThan(0);
   });
 
-  it('keeps player-facing copy in step with the requirement', () => {
-    // Locale copy spells the number out ("10/10", "Save 10 files") in keys
-    // across every language, and those strings cannot be derived from the
-    // constant without a placeholder migration. Rather than let the UI quietly
-    // contradict the rules, fail here: whoever changes the constant is told,
-    // at that moment, that the copy is part of the change.
-    expect(
-      MAX_EVIDENCE_COUNT,
-      'MAX_EVIDENCE_COUNT changed — update the locale strings that spell this number out ' +
-        '(save.fullTitle, save.dossierCount, save.dossierCountDetailed, ' +
-        'tutorial.reach_10_of_10_evidence, evidence.save_all_ten_then_leak, ' +
-        'inventory.keep_saving_until_ten, onboarding.card3.body, and their ' +
-        'es / pt-br counterparts), then update this expectation.'
-    ).toBe(10);
+  it('keeps player-facing copy in step with the requirement', async () => {
+    // Copy used to spell this number out ("10/10", "Save 10 files") in keys
+    // across every language, so changing the constant silently made the UI
+    // contradict the rules. Those keys now interpolate {{max}}. What can still
+    // go wrong is the other half: a key that gained the placeholder while its
+    // call site was never given a value, which ships a literal "{{max}}" to the
+    // player.
+    const locales = await Promise.all([
+      import('../../locales/en.json'),
+      import('../../locales/es.json'),
+      import('../../locales/pt-br.json'),
+    ]);
+
+    const placeholderKeys = new Set<string>();
+    for (const locale of locales) {
+      const table = locale.default as Record<string, string>;
+      for (const [key, value] of Object.entries(table)) {
+        if (typeof value === 'string' && value.includes('{{max}}')) placeholderKeys.add(key);
+      }
+    }
+
+    // Every locale must agree on which keys interpolate the dossier size —
+    // a translation that hardcodes the digit goes stale the moment the
+    // constant moves, and only for the players who read that language.
+    const disagreements: string[] = [];
+    for (const key of placeholderKeys) {
+      for (const [index, locale] of locales.entries()) {
+        const value = (locale.default as Record<string, string>)[key];
+        if (typeof value === 'string' && !value.includes('{{max}}')) {
+          disagreements.push(`${key} [locale ${index}]: ${JSON.stringify(value)}`);
+        }
+      }
+    }
+
+    expect(disagreements).toEqual([]);
+    expect(placeholderKeys.size).toBeGreaterThan(0);
+  });
+
+  it('never shows the player an unsubstituted placeholder', () => {
+    // The failure this replaces the old tripwire with. A key that gained
+    // {{max}} while its call site was never given a value renders the literal
+    // braces into the terminal — visible, ugly, and invisible to a type check.
+    //
+    // Entries must be resolved the way Terminal resolves them. `content` alone
+    // is the raw fallback template, which legitimately still holds {{max}};
+    // what matters is the string after translation.
+    const paths = distinctFilePaths(needed + 1);
+    const start = freshState({ filesRead: new Set(paths) });
+
+    const transcripts = [
+      // Usage text, shown when `save` is typed bare.
+      executeCommand('save', start),
+      // A normal save, which echoes the running dossier count.
+      executeCommand(`save ${paths[0].split('/').pop()}`, start),
+    ];
+
+    // And the dossier-full refusal, which needs a filled dossier first.
+    const { state: full } = saveAll(paths.slice(0, needed), start);
+    transcripts.push(executeCommand(`save ${paths[needed].split('/').pop()}`, full));
+
+    const leaked = transcripts
+      .flatMap(result => result.output)
+      .map(entry =>
+        entry.i18nKey ? translateStatic(entry.i18nKey, entry.i18nValues, entry.content) : entry.content
+      )
+      .filter(line => typeof line === 'string' && /\{\{\w+\}\}/.test(line));
+
+    expect(leaked).toEqual([]);
   });
 });

@@ -4,6 +4,7 @@ import { translateStatic } from '../i18n';
 import { safeGetJSON, safeSetJSON, safeRemoveItem } from '../storage/safeStorage';
 import { unlockAchievement as steamUnlockAchievement } from '../lib/steamBridge';
 import type { EndingId } from './endings';
+import { MAX_EVIDENCE_COUNT } from './evidenceRevelation';
 
 export interface Achievement {
   id: string;
@@ -12,6 +13,15 @@ export interface Achievement {
   icon: string; // Emoji or ASCII art
   secret?: boolean; // Hidden until unlocked
 }
+
+/**
+ * Game constants achievement copy is allowed to interpolate.
+ *
+ * Supplied to every description so copy can quote a rule without restating it —
+ * "Save {{max}} files to the dossier" cannot drift from the number `leak`
+ * actually demands. Unreferenced values are simply ignored.
+ */
+const ACHIEVEMENT_COPY_VALUES = { max: MAX_EVIDENCE_COUNT };
 
 function createAchievement(
   id: string,
@@ -29,7 +39,7 @@ function createAchievement(
     get description() {
       return translateStatic(
         `engine.achievements.${key}.description`,
-        undefined,
+        ACHIEVEMENT_COPY_VALUES,
         fallbackDescription
       );
     },
@@ -138,7 +148,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     'truth_seeker',
     'truth_seeker',
     'Truth Seeker',
-    'Save 10 files to the dossier',
+    'Save {{max}} files to the dossier',
     '👁️'
   ),
   createAchievement('doom_fan', 'doom_fan', 'IDDQD', 'Activate god mode', '🎮', true),

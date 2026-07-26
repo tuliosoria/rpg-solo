@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n';
 import type { TextSpeed } from '../../types';
+import { MAX_EVIDENCE_COUNT } from '../../engine/evidenceRevelation';
 import StaticNoise from '../StaticNoise';
 import styles from './OnboardingCards.module.css';
 
@@ -121,7 +122,7 @@ export default function OnboardingCards({
        },
        {
          title: t('onboarding.card3.title'),
-         bodySegments: parseBodySegments(t('onboarding.card3.body')),
+         bodySegments: parseBodySegments(t('onboarding.card3.body', { max: MAX_EVIDENCE_COUNT })),
        },
        {
          title: t('onboarding.card4.title'),

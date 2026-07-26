@@ -496,7 +496,7 @@ export const inventoryCommands: CommandRegistry = {
       output.push(createEntryI18n('notice', 'engine.commands.inventory.channel_preparation_in_progress', '  LEAK PREP IN PROGRESS — run "leak" for the next channel step.'));
     } else if (savedCount >= 5) {
       output.push(createEntryI18n('notice', 'engine.commands.inventory.leak_preparation_available', '  LEAK PREP AVAILABLE — run "leak" to open the 3-step channel.'));
-      output.push(createEntryI18n('dim', 'engine.commands.inventory.keep_saving_until_ten', '  Keep saving strong files until the dossier reaches 10/10.'));
+      output.push(createEntryI18n('dim', 'engine.commands.inventory.keep_saving_until_ten', '  Keep saving strong files until the dossier reaches {{max}}/{{max}}.', { max: MAX_EVIDENCE_COUNT }));
     } else if (discoveredCount > savedCount) {
       output.push(createEntryI18n('dim', 'engine.commands.inventory.next_save_read_file', '  Next: save a strong file you already opened with "save <filename>".'));
     } else {

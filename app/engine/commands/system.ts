@@ -804,8 +804,9 @@ export const systemCommands: CommandRegistry = {
           createEntry('system', ''),
           createEntry(
             'system',
-            tSystem('save.dossierCountDetailed', '  Dossier: {{count}}/10 files saved', {
+            tSystem('save.dossierCountDetailed', '  Dossier: {{count}}/{{max}} files saved', {
               count: state.savedFiles?.size || 0,
+              max: MAX_EVIDENCE_COUNT,
             })
           ),
           createEntry('system', ''),
@@ -869,7 +870,12 @@ export const systemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('warning', ''),
-          createEntry('warning', tSystem('save.fullTitle', '  DOSSIER FULL — 10/10 FILES SAVED')),
+          createEntry(
+            'warning',
+            tSystem('save.fullTitle', '  DOSSIER FULL — {{max}}/{{max}} FILES SAVED', {
+              max: MAX_EVIDENCE_COUNT,
+            })
+          ),
           createEntry(
             'warning',
             tSystem('save.fullBody', '  Use "unsave <filename>" to make room.')
@@ -894,7 +900,10 @@ export const systemCommands: CommandRegistry = {
       ),
       createEntry(
         'system',
-        tSystem('save.dossierCount', '  Dossier: {{count}}/10', { count: newSavedFiles.size })
+        tSystem('save.dossierCount', '  Dossier: {{count}}/{{max}}', {
+          count: newSavedFiles.size,
+          max: MAX_EVIDENCE_COUNT,
+        })
       ),
       createEntry('system', ''),
     ];
@@ -995,7 +1004,10 @@ export const systemCommands: CommandRegistry = {
         ),
         createEntry(
           'system',
-          tSystem('save.dossierCount', '  Dossier: {{count}}/10', { count: newSavedFiles.size })
+          tSystem('save.dossierCount', '  Dossier: {{count}}/{{max}}', {
+          count: newSavedFiles.size,
+          max: MAX_EVIDENCE_COUNT,
+        })
         ),
         createEntry('system', ''),
       ],
