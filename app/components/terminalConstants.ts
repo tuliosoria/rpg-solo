@@ -145,8 +145,8 @@ export const EVIDENCE_VIDEO_ATTACHMENTS: Record<string, EvidenceVideoAttachment>
     videoSrc: OPERACAO_PRATO_VIDEO_SRC,
     videoTitle: 'operacao prato.mp4',
   },
-  '/internal/protocols/sanitized/visitor_briefing.txt': {
-    filePath: '/internal/protocols/sanitized/visitor_briefing.txt',
+  '/internal/sanitized/visitor_briefing.txt': {
+    filePath: '/internal/sanitized/visitor_briefing.txt',
     fileName: 'visitor_briefing.txt',
     videoSrc: VISITOR_VIDEO_SRC,
     videoTitle: 'visitor.mp4',

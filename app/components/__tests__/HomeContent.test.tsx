@@ -40,6 +40,9 @@ vi.mock('../../storage/saves', () => ({
 
 vi.mock('../../storage/statistics', () => ({
   incrementStatistic: vi.fn(),
+  startPlaytimeSession: vi.fn(),
+  endPlaytimeSession: vi.fn(),
+  flushPlaytime: vi.fn(),
 }));
 
 vi.mock('../Menu', () => {

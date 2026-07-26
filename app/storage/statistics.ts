@@ -123,6 +123,9 @@ export function recordEnding(
   commandCount: number,
   detectionLevel: number
 ): void {
+  // Bank the run's playtime before reading, so `current` already includes it.
+  flushPlaytime();
+
   const current = getStatistics();
   current.endingsAchieved[type]++;
   current.gamesCompleted++;
@@ -150,6 +153,49 @@ export function addPlaytime(milliseconds: number): void {
   current.totalPlaytime += milliseconds;
   current.lastPlayed = Date.now();
   saveStatistics(current);
+}
+
+/**
+ * Wall-clock marker for the session currently in progress.
+ *
+ * Held in memory only: an interrupted session (crash, tab close) simply forfeits
+ * its unflushed tail rather than persisting a start time that would later be
+ * flushed as hours of phantom playtime.
+ */
+let sessionStartedAt: number | null = null;
+
+/**
+ * Starts (or restarts) the playtime clock. Call when the player enters a game.
+ */
+export function startPlaytimeSession(): void {
+  sessionStartedAt = Date.now();
+}
+
+/**
+ * Banks the time elapsed since the last flush and rearms the clock, so calling
+ * this repeatedly during one session accumulates rather than double-counts.
+ */
+export function flushPlaytime(): void {
+  if (sessionStartedAt === null) return;
+
+  const now = Date.now();
+  const elapsed = now - sessionStartedAt;
+  sessionStartedAt = now;
+
+  // A non-monotonic clock (system time moved backwards) would otherwise
+  // subtract from the lifetime total.
+  if (elapsed > 0) {
+    addPlaytime(elapsed);
+  }
+}
+
+/**
+ * Banks the final stretch of playtime and stops the clock. Call when the player
+ * leaves a game, so time spent sitting in the menu is not counted as play.
+ */
+export function endPlaytimeSession(): void {
+  flushPlaytime();
+  sessionStartedAt = null;
 }
 
 /**
