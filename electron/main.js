@@ -1,6 +1,7 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { listenOnStablePort } = require('./stable-port');
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
@@ -620,12 +621,25 @@ function createWindow() {
       });
     });
 
-    localServer.listen(0, '127.0.0.1', () => {
-      const port = localServer.address().port;
-      mainWindow.loadURL(`http://127.0.0.1:${port}`);
-    });
+    // A FIXED port is load-bearing, not a preference: Chromium keys Web Storage
+    // by (scheme, host, port), so the ephemeral port this used to bind gave the
+    // renderer a fresh, empty localStorage on every launch — silently discarding
+    // saves, settings, statistics, and achievements.
+    listenOnStablePort(localServer)
+      .then(port => {
+        devLog(`Local server listening on 127.0.0.1:${port}`);
+        mainWindow.loadURL(`http://127.0.0.1:${port}`);
+      })
+      .catch(error => {
+        console.error('[Startup] Local server failed to bind:', error.message);
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          dialog.showErrorBox(
+            'Unable to start',
+            `${error.message}\n\nVarginha: Terminal 1996 could not start its local content server.`
+          );
+        }
+      });
   }
-
   return mainWindow;
 }
 

@@ -363,7 +363,7 @@ export const combatCommands: CommandRegistry = {
             overrideGateActive: false,
           },
           accessLevel: 5,
-          detectionLevel: MAX_DETECTION,
+          detectionLevel: MAX_DETECTION - 5,
           systemHostilityLevel: 5,
           rngState: seededRandomInt(rng, 0, 2147483647),
           avatarExpression: 'angry', // Terrible mistake - angry expression
@@ -378,7 +378,7 @@ export const combatCommands: CommandRegistry = {
       flags: { ...state.flags, adminUnlocked: true, overrideGateActive: false },
       overrideFailedAttempts: 0,
       accessLevel: 5,
-      detectionLevel: state.detectionLevel + 15, // was 25, reduced for pacing
+      detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 15), // was 25, reduced for pacing
       sessionStability: state.sessionStability - 15,
       systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
       rngState: seededRandomInt(rng, 0, 2147483647),

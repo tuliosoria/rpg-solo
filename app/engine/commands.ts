@@ -1022,7 +1022,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {},
       };
     }
-    return commands.override(args, state);
   }
 
 
@@ -1246,9 +1245,10 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   if (state.tutorialComplete) {
     const hostilityIncrease = calculateHostilityIncrease(state, command);
     if (hostilityIncrease > 0) {
-      result.stateChanges.systemHostilityLevel = Math.min(
-        (state.systemHostilityLevel || 0) + hostilityIncrease,
-        5
+      const pipelineHostility = Math.min((state.systemHostilityLevel || 0) + hostilityIncrease, 5);
+      result.stateChanges.systemHostilityLevel = Math.max(
+        result.stateChanges.systemHostilityLevel ?? 0,
+        pipelineHostility
       );
     }
   }
@@ -1464,6 +1464,14 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     ];
     result.triggerFlicker = true;
     result.stateChanges.avatarExpression = 'scared';
+  }
+
+  if (state.tutorialComplete && newDetection >= 90) {
+    // Arm the escape whenever the player is LEFT in the danger band, not only on
+    // the command that crosses into it. A command can drop the player at 90+
+    // from an already-critical level (override at 99%), and gating the flag on
+    // the crossing left them at the cap with no way out.
+    result.stateChanges.hideAvailable = true;
   }
 
   if (state.tutorialComplete && newDetection >= 90 && prevDetection < 90) {

@@ -104,8 +104,12 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
   useEffect(() => {
     if (scene !== 'video' || !videoRef.current) return;
     const el = videoRef.current;
-    el.muted = false;
-    el.volume = 1;
+    // Honour the master volume the player set in a previous session — the intro
+    // runs before they can reach settings, so ignoring it means a muted player
+    // gets a full-volume video on every launch.
+    const level = Math.max(0, Math.min(1, options.masterVolume / 100));
+    el.muted = level === 0;
+    el.volume = level;
     const playPromise = el.play();
     if (playPromise && typeof playPromise.catch === 'function') {
       playPromise.catch(() => {
@@ -114,7 +118,7 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
         el.play().catch(() => goTo('logo'));
       });
     }
-  }, [scene, goTo]);
+  }, [scene, goTo, options.masterVolume]);
 
   const handleRootClick = useCallback(() => {
     if (scene === 'gate') {

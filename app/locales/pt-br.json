@@ -1235,7 +1235,7 @@
   "engine.commands.tutorial.message.10.line2": "       depois usa `cd` pra abrir as pastas. agora é contigo.",
   "engine.commands.tutorial.tip.first_evidence.line1": "║  Evidência atualizada.                    ║",
   "engine.commands.tutorial.tip.first_evidence.line3": "║  Use \"progresso\" para um resumo limpo.    ║",
-  "engine.commands.tutorial.tip.first_evidence.line4": "║  Salve arquivos fortes para o vazamento. ║",
+  "engine.commands.tutorial.tip.first_evidence.line4": "║  Salve arquivos fortes para o vazamento.  ║",
   "engine.commands.tutorial.b_a_s_i_c_s": "  B Á S I C O",
   "engine.commands.tutorial.navigation": "  NAVEGAÇÃO",
   "engine.commands.tutorial.ls_list_files_in_current_directory": "  ls              Liste arquivos no diretório atual",

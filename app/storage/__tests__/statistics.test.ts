@@ -386,4 +386,101 @@ describe('Statistics Storage', () => {
       expect(stats.gamesCompleted).toBe(0);
     });
   });
+
+  describe('playtime session clock', () => {
+    // `totalPlaytime` was previously never written by anything, so the
+    // statistics screen showed "0m" no matter how long the player had played.
+    const MINUTE = 60_000;
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('banks elapsed time between starting a session and flushing', async () => {
+      const { startPlaytimeSession, flushPlaytime, getStatistics } = await import('../statistics');
+      const now = vi.spyOn(Date, 'now');
+
+      now.mockReturnValue(1_000_000);
+      startPlaytimeSession();
+
+      now.mockReturnValue(1_000_000 + 5 * MINUTE);
+      flushPlaytime();
+
+      expect(getStatistics().totalPlaytime).toBe(5 * MINUTE);
+    });
+
+    it('accumulates across repeated flushes without double-counting', async () => {
+      const { startPlaytimeSession, flushPlaytime, getStatistics } = await import('../statistics');
+      const now = vi.spyOn(Date, 'now');
+
+      now.mockReturnValue(0);
+      startPlaytimeSession();
+
+      now.mockReturnValue(3 * MINUTE);
+      flushPlaytime();
+      now.mockReturnValue(8 * MINUTE);
+      flushPlaytime();
+
+      // 3 + 5, not 3 + 8 — each flush rearms the clock.
+      expect(getStatistics().totalPlaytime).toBe(8 * MINUTE);
+    });
+
+    it('records nothing when no session is in progress', async () => {
+      const { flushPlaytime, getStatistics } = await import('../statistics');
+      const now = vi.spyOn(Date, 'now');
+
+      now.mockReturnValue(9 * MINUTE);
+      flushPlaytime();
+
+      expect(getStatistics().totalPlaytime).toBe(0);
+    });
+
+    it('ignores a system clock that moves backwards', async () => {
+      const { startPlaytimeSession, flushPlaytime, getStatistics } = await import('../statistics');
+      const now = vi.spyOn(Date, 'now');
+
+      now.mockReturnValue(10 * MINUTE);
+      startPlaytimeSession();
+
+      now.mockReturnValue(4 * MINUTE);
+      flushPlaytime();
+
+      expect(getStatistics().totalPlaytime).toBe(0);
+    });
+
+    it('stops accruing once the session ends', async () => {
+      const { startPlaytimeSession, endPlaytimeSession, flushPlaytime, getStatistics } =
+        await import('../statistics');
+      const now = vi.spyOn(Date, 'now');
+
+      now.mockReturnValue(0);
+      startPlaytimeSession();
+
+      now.mockReturnValue(2 * MINUTE);
+      endPlaytimeSession();
+
+      // Time spent back in the menu must not count as play.
+      now.mockReturnValue(60 * MINUTE);
+      flushPlaytime();
+
+      expect(getStatistics().totalPlaytime).toBe(2 * MINUTE);
+    });
+
+    it('banks the run when an ending is recorded', async () => {
+      const { startPlaytimeSession, recordEnding, getStatistics } = await import('../statistics');
+      const now = vi.spyOn(Date, 'now');
+
+      now.mockReturnValue(0);
+      startPlaytimeSession();
+
+      now.mockReturnValue(12 * MINUTE);
+      recordEnding('good', 80, 42);
+
+      const stats = getStatistics();
+      expect(stats.totalPlaytime).toBe(12 * MINUTE);
+      // The ending itself must still be recorded normally.
+      expect(stats.endingsAchieved.good).toBe(1);
+      expect(stats.gamesCompleted).toBe(1);
+    });
+  });
 });

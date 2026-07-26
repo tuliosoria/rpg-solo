@@ -404,7 +404,7 @@ export default function Terminal({
         createEntry('ufo74', t('terminal.video.closeComment.prato1')),
         createEntry('ufo74', t('terminal.video.closeComment.prato2')),
       ]);
-    } else if (closingVideo?.filePath === '/internal/protocols/sanitized/visitor_briefing.txt') {
+    } else if (closingVideo?.filePath === '/internal/sanitized/visitor_briefing.txt') {
       appendPendingUfo74StartMessages([
         createEntry('ufo74', t('terminal.video.closeComment.visitor1')),
         createEntry('ufo74', t('terminal.video.closeComment.visitor2')),
@@ -1584,6 +1584,10 @@ export default function Terminal({
                   src={activeEvidenceVideo.videoSrc}
                   autoPlay
                   playsInline
+                  muted={masterVolume === 0}
+                  onLoadedMetadata={e => {
+                    e.currentTarget.volume = masterVolume;
+                  }}
                   style={{
                     width: '100%',
                     maxHeight: '100%',
@@ -1706,6 +1710,10 @@ export default function Terminal({
                   src={TURING_TEST_VIDEO_SRC}
                   autoPlay
                   playsInline
+                  muted={masterVolume === 0}
+                  onLoadedMetadata={e => {
+                    e.currentTarget.volume = masterVolume;
+                  }}
                   onEnded={() => {
                     setActiveTuringVideo(false);
                     setShowTuringTest(true);
