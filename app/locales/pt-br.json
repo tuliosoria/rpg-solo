@@ -425,6 +425,8 @@
   "engine.hints.action.start.useTreeAndSearch": "       use \"tree\" para ver o mapa e depois \"buscar <term>\" se precisar de uma pista.",
   "engine.hints.action.start.widenSearch": "       amplie a busca. setores diferentes respondem partes diferentes do caso.",
   "engine.hints.action.morse": "       o intercepto quer uma resposta em \"morse\", não mais uma leitura de arquivo.",
+  "engine.hints.ghostMachine.sealed": "UFO74: agora a casa é sua. tem um arquivo que eu mesmo lacrei.",
+  "engine.hints.ghostMachine.open": "       /internal/ghost_in_machine.enc. abre ele. você mereceu.",
   "engine.hints.action.storage": "       siga os manifestos. \"buscar transport\" é um bom começo.",
   "engine.hints.action.ops": "       mergulhe em /ops/ antes de assumir que era só destroço.",
   "engine.hints.action.comms": "       /comms/ é onde a história para de soar humana.",

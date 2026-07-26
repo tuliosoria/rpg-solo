@@ -109,6 +109,20 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
     };
   }
 
+  // ─── Admin unlocked, streber trail found, but the sealed identity file is still unread ───
+  if (adminUnlocked && state.flags?.streberSigFound === true && !state.ufo74SecretDiscovered) {
+    return {
+      primary: {
+        key: 'engine.hints.ghostMachine.sealed',
+        fallback: 'UFO74: you have the run of the place now. there is a file i sealed myself.',
+      },
+      followUp: {
+        key: 'engine.hints.ghostMachine.open',
+        fallback: '       /internal/ghost_in_machine.enc. open it. you earned it.',
+      },
+    };
+  }
+
   // ─── Priority 4: Player hasn't read anything yet ───
   if (filesReadCount === 0) {
     return {
