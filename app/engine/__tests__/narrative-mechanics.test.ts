@@ -48,6 +48,12 @@ describe('Narrative Mechanics', () => {
       const modemText = (modem.pendingUfo74Messages ?? []).map(e => e.content).join('\n');
       expect(modemText).toContain('i practically lived there.');
     });
+
+    it('.signature.bak content carries the subtle UFO nod', () => {
+      const sig = executeCommand('open .signature.bak', createTestState({ currentPath: '/tmp' }));
+      const text = sig.output.map(e => e.content).join('\n');
+      expect(text).toContain('Something that flies.');
+    });
   });
 
   describe('Hidden Commands', () => {
