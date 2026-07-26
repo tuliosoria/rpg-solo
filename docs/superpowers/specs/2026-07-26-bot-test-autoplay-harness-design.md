@@ -80,13 +80,15 @@ bot-test / bot-stop command  ──sets──▶  state.botTest = { active, leve
 | File | Responsibility |
 |---|---|
 | `app/engine/bot/types.ts` | `BotLevel`, `BotMemory`, `BotDecision`, `BotRunConfig`, `BotRunLog` types |
-| `app/engine/bot/strategy.ts` | **Pure** `decideNextCommand(state, memory, level, rng) → { command, memory, done?, reason? }`. Phase state machine + per-level policy. Enumerates dirs/files from the **live VFS** (via the same `listDirectory` the engine uses), not hardcoded paths. |
+| `app/engine/bot/strategy.ts` | **Pure** `decideNextCommand(state, memory, level, rng) → { decision: BotDecision, memory }`. Phase state machine + per-level policy. Enumerates dirs/files from the **live VFS** by importing the engine's own helpers — `listDirectory(path, state)` / `getAllAccessibleFiles(state)` (`app/engine/filesystem.ts:157,262`) and `getAllEvidencePaths` / `isEvidencePath` (`app/engine/evidenceRevelation.ts:83`) — **not** by parsing `ls` output and not hardcoded paths. |
+| `app/engine/bot/targets.ts` | Per-level target file-sets for the desired ending. `pro` targets the secret-ending set (incl. non-evidence files like `ghost_in_machine.enc`) derived from the endings source-of-truth (`app/engine/endings.ts`), so it reserves dossier slots for required non-evidence files. |
 | `app/engine/bot/rng.ts` | Small seeded PRNG (mulberry32 or reuse existing seeded RNG util) for reproducible `dummy` choices. |
 | `app/engine/bot/report.ts` | **Pure** `buildRunSummary(runLog) → TerminalEntry[]` — summary + anomalies list. |
-| `app/engine/commands/debug.ts` (new) | Registers `bot-test` and `bot-stop` (dev-gated). They only set/clear `state.botTest` and print an intro/stop banner. |
-| `app/hooks/useTerminalInput.ts` | `handleSubmit` gains an optional `overrideInput?: string` param so the bot can submit a command without depending on async `setInputValue`. Human path unchanged (param defaults to current `inputValue`). |
-| `app/hooks/useBotRunner.ts` (new) | The dev-only effect/loop: idle+delay gating, calls `decideNextCommand` + `handleSubmit(override)`, records `runLog`, detects termination, prints report. Any user keystroke or `bot-stop` halts. |
-| `app/components/Terminal.tsx` | Wire `useBotRunner` (dev-gated); pass override-capable `handleSubmit`. |
+| `app/engine/commands/debug.ts` (new) | Registers `bot-test` and `bot-stop` (**dev-gated**). They only set/clear `state.botTest` and print an intro/stop banner. |
+| `app/engine/overrideSecret.ts` (new, small refactor) | Single source-of-truth exports `OVERRIDE_PASSWORD` (currently a local literal `'COLHEITA'` duplicated in `app/engine/commands/combat.ts:190` and `app/engine/commands/chat.ts:2403`) and its morse encoding. `combat.ts`/`chat.ts` import from here; the pro bot imports from here too so it never hardcodes a drifting literal. |
+| `app/hooks/useTerminalInput.ts` | `handleSubmit(e?, overrideInput?)` — compute `submittedInput = overrideInput ?? inputValue` (nullish, **not** `||`, so `''` stays valid for Enter-only states) and use it **everywhere** the closure currently reads `inputValue` (sanitize, history push, and the `executeCommand(...)` call — note today it passes `inputValue`, not the parsed `command`). Human path unchanged when `overrideInput` is omitted. |
+| `app/hooks/useBotRunner.ts` (new) | Dev-only effect/loop. Reactive idle-gating (see below), calls `decideNextCommand`, dispatches via `handleSubmit(undefined, decision.text)` for commands or `handleSubmit(undefined, '')` for `enter` decisions, records `runLog`, detects termination, prints report. Any user keystroke or `bot-stop` halts. |
+| `app/components/Terminal.tsx` | Thread `overrideInput` through the wrapping `handleSubmit(e?, overrideInput?)` (it reads `inputValue` for video/chat branches — use `submittedInput` there too). Wire `useBotRunner` (dev-gated). |
 | `app/types/index.ts` | Add optional `botTest?: BotRunConfig` to `GameState` (dev-only, **excluded from persistence**). |
 
 ### Decision core (phase state machine)
@@ -94,23 +96,69 @@ bot-test / bot-stop command  ──sets──▶  state.botTest = { active, leve
 `decideNextCommand` inspects the current `GameState` (`filesRead`, `savedFiles`, `flags`,
 `detectionLevel`, `waitUsesRemaining`, current path, prisoner/morse/admin state) plus a
 small private `BotMemory` (visit queue, current phase, RNG cursor, last-command guard),
-and returns the next command string. Phases:
+and returns a **`BotDecision`**:
 
-1. **SURVEY** — `tree`/`ls` to enumerate; seed the directory + file work queues from the
-   live VFS.
+```ts
+type BotDecision =
+  | { kind: 'command'; text: string }   // a normal command line, e.g. "cd /admin"
+  | { kind: 'enter' }                    // a bare Enter (empty input) for Enter-only modes
+  | { kind: 'done'; reason: string };    // stop the run
+```
+
+The `enter` kind is required because several game transitions are driven by a **bare
+Enter**, not a command (see `useTerminalInput.ts:269-293`): dismissing a pending image,
+advancing queued UFO74 messages, and — critically — triggering `secret_ending` once
+`ufo74SecretDiscovered` is set. `enter` dispatches as `handleSubmit(undefined, '')`, which
+is why `submittedInput` must use nullish-coalescing so `''` reaches those branches.
+
+Phases:
+
+1. **SURVEY** — `tree`/`ls`; seed dir + file work queues from the live VFS helpers.
 2. **EXPLORE_READ** — `cd` into queued dirs, `open` unread files.
-3. **SAVE_EVIDENCE** — `save <file>` for evidence the game flagged on read.
-4. **UNLOCK** *(novice+ / pro)* — `chat` (Prisoner 45), `morse`/`decode` (pro), `override`
-   to unlock admin (pro).
+3. **SAVE_EVIDENCE** — `save <file>` for evidence (via `isEvidencePath`) **and** for any
+   level-target files that aren't flagged evidence but are required for the target ending
+   (e.g. `ghost_in_machine.enc`).
+4. **UNLOCK** *(novice+ / pro)* — `chat` (Prisoner 45), `morse`/`decode` (pro; using the
+   morse from `overrideSecret.ts`), `override <password>` to unlock admin (pro; password
+   imported from `overrideSecret.ts`).
 5. **COLLECT_GATED** *(pro)* — explore `/admin` & `/internal`, `open ghost_in_machine.enc`
-   and the secret-ending file set.
+   and the rest of the secret-ending target set.
 6. **MANAGE_DETECTION** — interleaved: if `detectionLevel` high and `waitUsesRemaining>0`,
-   issue `wait` (novice near-critical; pro proactively).
-7. **LEAK** — when saved-file count ≥ level threshold, `leak`.
-8. **DONE** — ending/game-over/leak-resolved → `done`.
+   issue `wait` (novice near-critical; pro proactively, staying below the Turing threshold).
+7. **FINISH** — `pro`: once the secret set is discovered, handle the `ufo74SecretDiscovered`
+   bare-Enter transition; otherwise `leak` when saved-file count ≥ level threshold.
+8. **DONE** — ending/game-over/leak-resolved → `{ kind: 'done' }`.
 
-Per-level policy gates which phases run and how thorough each is, plus detection care and
-whether `dummy` injects seeded near-miss commands.
+Per-level policy gates which phases run and how thorough each is (using `targets.ts`), plus
+detection care and whether `dummy` injects seeded near-miss commands.
+
+### Runner loop & idle gating (`useBotRunner`)
+
+`isProcessingRef` alone is **not** a sufficient idle signal — it's a ref (no re-render) and
+several blocking states aren't covered by it: `pendingImage`, `pendingUfo74StartMessages`,
+`pendingEvidenceVideoPrompt`, `activeEvidenceVideo`, `showTuringTest`, `activeTuringVideo`
+(`Terminal.tsx:465-471,662-709,818-849`). Non-streaming command paths also `setGameState`
+and return before React commits (`useTerminalInput.ts:720-739`).
+
+Design:
+- The runner is a `useEffect` scheduled via `setTimeout` (the watchable delay) that depends
+  on a **reactive turn/command counter** (e.g. `gameState.history.length` or a dedicated
+  counter) plus `isProcessing`, `gamePhase`, `showTuringTest`, and the pending-media flags.
+  This guarantees the next turn is computed only **after** the previous command's state has
+  rendered.
+- An `inFlightRef` guard prevents double-scheduling under React 18 StrictMode double-invoke,
+  and every timeout is cleared on cleanup.
+- Each tick: if not idle → do nothing (effect re-fires when flags settle). If idle →
+  `decideNextCommand`, dispatch, append to `runLog`.
+
+### Turing test handling
+
+If `showTuringTest` becomes true, `handleSubmit` refuses all commands
+(`useTerminalInput.ts:549`) and the overlay needs keyboard-option interaction outside the
+command pipeline (`overlays/TuringTestOverlay.tsx`). For v1: `novice`/`pro` manage detection
+to **stay below the Turing threshold**; if the overlay appears anyway, the runner **stops
+and records a "Turing test triggered" anomaly** (a genuinely useful test signal — detection
+got too high). Teaching the runner to answer the overlay is a documented future follow-up.
 
 ### Termination & safety
 
@@ -120,11 +168,18 @@ whether `dummy` injects seeded near-miss commands.
 
 ### Reporting (test value)
 
+The runner records a per-turn `runLog` entry capturing enough to catch breakage:
+`{ turn, command, phase, detectionBefore, detectionAfter, filesReadDelta, savedDelta,
+observations }`. `observations` flags result-level signals the rendered state alone may
+miss — command error/invalid output, `triggerTuringTest`, `imageTrigger`, unexpected
+detection spikes. (Captured via before/after `GameState` snapshots plus a minimal dev-only
+observation hook from the submit path.)
+
 On stop, `buildRunSummary` emits a terminal block:
 - level, seed, turns taken, files read / saved counts, final detection level,
   ending type / outcome (or game-over reason);
-- **Anomalies:** turns where a command returned an error/invalid result, unexpected
-  detection spikes, or "reached max-turns without an ending."
+- **Anomalies:** turns with an error/invalid result, detection spikes, "Turing test
+  triggered," or "reached max-turns without an ending."
 - In dev, also `console.table` the transcript for debugging.
 
 ## Determinism & reproducibility
@@ -163,10 +218,16 @@ The developer was away and delegated these calls; flagging them for review:
 3. **Command form** `bot-test [level] [seed]` + `bot-stop`, rather than separate
    `bot-test-dummy`/`bot-test-pro` commands. Aliases can be added if preferred.
 4. **Autoplay with fixed watchable delay** (not manual step-through). `bot-stop`/keystroke halts.
-5. **Strategy driven by live VFS + completeness policy** (not hardcoded ending scripts), so
-   it doesn't rot as content changes. Where a step needs a specific secret the bot can't
-   derive (exact morse answer / admin password), prefer obtaining it via the same in-game
-   flow a player uses; if impractical, read it from the game's own source-of-truth module
-   (never a hand-copied literal). To be finalized in the plan.
+5. **Strategy driven by live VFS + explicit ending targets** (not hardcoded ending scripts),
+   so it doesn't rot as content changes. Enumeration uses the engine's own `listDirectory`/
+   `getAllAccessibleFiles`/`getAllEvidencePaths` helpers. `pro`'s secret-ending target set
+   (which includes the non-evidence `ghost_in_machine.enc`) comes from the endings
+   source-of-truth, and the override password/morse are extracted to a shared
+   `overrideSecret.ts` module the bot imports — **no hand-copied literals**.
 6. **Dev-only gating** via `NODE_ENV`; never shipped to players.
 7. **No headless CI mode** this iteration (human-watched only).
+8. **Turing-test overlay = stop-with-anomaly** in v1 (not auto-answered). `novice`/`pro`
+   manage detection to avoid triggering it.
+9. **Command visibility** relies on the normal transcript echo (history entry), which the
+   real submit path already produces. Briefly rendering the command in the live input line
+   before submit is an optional realism nice-to-have, not required.
