@@ -1,5 +1,6 @@
 import { createServer as createHttpServer, type Server, type IncomingMessage, type ServerResponse } from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, readFile as readFileAsync, writeFile as writeFileAsync } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, extname } from 'node:path';
 
@@ -13,6 +14,8 @@ import { filesByCategory, exampleSaveSet, describeRuleFor } from './rules';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(__dirname, 'public');
+const CONTENT_PATH = join(__dirname, '../../app/data/endingsContent.json');
+const REPO_ROOT = join(__dirname, '../../');
 
 const MIME: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -71,6 +74,23 @@ export function createServer(): Server {
         const endingId = determineEnding(files);
         const { counts } = analyzeDossier(files);
         return sendJson(res, 200, { endingId, counts, matchedRule: describeRuleFor(endingId) });
+      }
+      if (req.method === 'GET' && url.pathname === '/api/content') {
+        const raw = await readFileAsync(CONTENT_PATH, 'utf-8');
+        res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
+        return void res.end(raw);
+      }
+      if (req.method === 'POST' && url.pathname === '/api/save') {
+        const body = (await readBody(req)) as { content?: unknown };
+        if (!body.content || typeof body.content !== 'object') {
+          return sendJson(res, 400, { error: 'missing content' });
+        }
+        await writeFileAsync(CONTENT_PATH, JSON.stringify(body.content, null, 2) + '\n', 'utf-8');
+        // Regenerate the modules the game consumes.
+        execFileSync('npx', ['tsx', 'scripts/gen-endings-from-content.ts'], { cwd: REPO_ROOT });
+        let diff = '';
+        try { diff = execFileSync('git', ['diff', '--stat'], { cwd: REPO_ROOT, encoding: 'utf-8' }); } catch { /* ignore */ }
+        return sendJson(res, 200, { ok: true, diff });
       }
       if (req.method === 'GET' && !url.pathname.startsWith('/api/')) {
         return void (await serveStatic(res, url.pathname));
