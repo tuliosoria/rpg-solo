@@ -2,6 +2,7 @@
 // Context-aware UFO74 hints that evaluate full game state before speaking.
 
 import { DETECTION_THRESHOLDS } from '../constants/detection';
+import { MAX_EVIDENCE_COUNT } from './evidenceRevelation';
 import { GameState, TerminalEntry } from '../types';
 import { createEntry, createEntryI18n } from './commands/utils';
 
@@ -54,9 +55,9 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
   const waitUsesRemaining = state.waitUsesRemaining || 0;
   const adminUnlocked = state.flags?.adminUnlocked === true || state.accessLevel >= 3;
 
-  // ─── Priority 1: Leak ready — 10+ files saved ───
+  // ─── Priority 1: Leak ready — full dossier saved ───
   // The only valid message at this point is the leak prompt.
-  if (!state.gameWon && savedCount >= 10) {
+  if (!state.gameWon && savedCount >= MAX_EVIDENCE_COUNT) {
     return {
       primary: {
         key: 'engine.hints.leak.ready',

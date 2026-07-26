@@ -9,6 +9,7 @@ import {
   hasReadPsiMaterial,
 } from './helpers';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES } from '../../constants/detection';
+import { MAX_EVIDENCE_COUNT, LEAK_PREPARATION_THRESHOLD } from '../evidenceRevelation';
 
 import { generateHintOutput, HINT_CONFIG } from '../hintSystem';
 import type { CommandRegistry } from './types';
@@ -366,7 +367,7 @@ const COMMAND_HELP: Record<string, string[]> = {
 export const systemCommands: CommandRegistry = {
   help: (args, state) => {
     // Late-game tension: show a warning but still allow help
-    const lateGameWarning = state.savedFiles.size >= 5
+    const lateGameWarning = state.savedFiles.size >= LEAK_PREPARATION_THRESHOLD
       ? [
           createEntry('warning', ''),
           createEntryI18n('warning', 'engine.commands.elevated_security_protocol_warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
@@ -580,7 +581,7 @@ export const systemCommands: CommandRegistry = {
       })
     );
 
-    if (savedCount >= 10) {
+    if (savedCount >= MAX_EVIDENCE_COUNT) {
       lines.push(
         tSystem(
           'status.objective.complete',
@@ -864,7 +865,7 @@ export const systemCommands: CommandRegistry = {
     }
 
     // Check if dossier is full
-    if (state.savedFiles.size >= 10) {
+    if (state.savedFiles.size >= MAX_EVIDENCE_COUNT) {
       return {
         output: [
           createEntry('warning', ''),
@@ -911,7 +912,7 @@ export const systemCommands: CommandRegistry = {
     };
 
     // Let UFO74 reinforce dossier stakes at major commitment points.
-    if (newSavedFiles.size === 5 && !state.leakSequenceGenerated) {
+    if (newSavedFiles.size === LEAK_PREPARATION_THRESHOLD && !state.leakSequenceGenerated) {
       result.pendingUfo74Messages = [
         createEntry(
           'ufo74',
