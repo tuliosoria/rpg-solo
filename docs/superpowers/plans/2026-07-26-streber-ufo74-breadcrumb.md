@@ -47,11 +47,9 @@
 
 - [ ] **Step 1: Write the failing test**
 
-Add to `app/engine/__tests__/achievements.test.ts` (inside the top-level `describe`):
+Add to `app/engine/__tests__/achievements.test.ts` (inside the top-level `describe`). NOTE: `ACHIEVEMENTS` and `getAchievement` are ALREADY imported at the top of this file (lines 8-17) — do NOT add a duplicate import.
 
 ```typescript
-import { ACHIEVEMENTS, getAchievement } from '../achievements';
-
 describe('Ghost Handle achievement', () => {
   it('is registered as a secret achievement', () => {
     const a = getAchievement('ghost_handle');
@@ -87,6 +85,22 @@ In `app/engine/achievements.ts`, inside the `ACHIEVEMENTS` array, immediately af
   ),
 ```
 
+- [ ] **Step 3b: Register the Steam achievement mapping**
+
+`electron/__tests__/steam-achievements.test.ts` asserts `Object.keys(ACHIEVEMENT_MAP)` equals every `ACHIEVEMENTS` id. Adding a game achievement WITHOUT a Steam mapping breaks that test.
+
+In `electron/steam-achievements.js`, add to the `ACHIEVEMENT_MAP` object (after `revelator: 'REVELATOR',`):
+
+```javascript
+  ghost_handle: 'GHOST_HANDLE',
+```
+
+In `electron/steam-achievements.d.ts`, add to the `AchievementMap` interface (after `revelator: string;`):
+
+```typescript
+  ghost_handle: string;
+```
+
 - [ ] **Step 4: Add locale keys**
 
 In `app/locales/en.json`, after the `engine.achievements.doom_fan.description` line (~1323):
@@ -118,7 +132,7 @@ Expected: PASS.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add app/engine/achievements.ts app/locales/en.json app/locales/pt-br.json app/locales/es.json app/engine/__tests__/achievements.test.ts
+git add app/engine/achievements.ts app/locales/en.json app/locales/pt-br.json app/locales/es.json app/engine/__tests__/achievements.test.ts electron/steam-achievements.js electron/steam-achievements.d.ts
 git commit -m "feat(achievements): add secret Ghost Handle achievement" -m "" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
 ```
 
@@ -220,11 +234,14 @@ Add inside the `describe('Streber breadcrumb', ...)` block:
 
 ```typescript
   it('shows the refreshed UFO74 reactions on read', () => {
+    // File-specific UFO74 reactions are returned via pendingUfo74Messages, NOT output.
     const sig = executeCommand('open .signature.bak', createTestState({ currentPath: '/tmp' }));
-    expect(sig.output.some(e => e.content.includes('streber. that was me.'))).toBe(true);
+    const sigText = (sig.pendingUfo74Messages ?? []).map(e => e.content).join('\n');
+    expect(sigText).toContain('streber. that was me.');
 
     const modem = executeCommand('open modem_log_jan96.txt', createTestState({ currentPath: '/tmp' }));
-    expect(modem.output.some(e => e.content.includes('i practically lived there.'))).toBe(true);
+    const modemText = (modem.pendingUfo74Messages ?? []).map(e => e.content).join('\n');
+    expect(modemText).toContain('i practically lived there.');
   });
 ```
 
@@ -370,7 +387,7 @@ git commit -m "feat(game): add subtle UFO nod breadcrumb to streber .signature.b
 - Modify: `app/locales/{en,pt-br,es}.json`
 - Test: `app/engine/__tests__/` — create `hintSystem.test.ts` if none exists; otherwise add to the existing hint test.
 
-Notes: `analyzeProgressForHint` computes `adminUnlocked = state.flags?.adminUnlocked === true || state.accessLevel >= 3` (`hintSystem.ts:55`). Reading the identity file sets `ufo74SecretDiscovered = true`, so gate the hint on `!state.ufo74SecretDiscovered`. Place it AFTER Priority 1 (leak ready) and Priority 2 (critical detection) so survival/leak messaging still wins, but before generic exploration hints.
+Notes: `analyzeProgressForHint` computes `adminUnlocked = state.flags?.adminUnlocked === true || state.accessLevel >= 3` (`hintSystem.ts:55`). Reading the identity file sets `ufo74SecretDiscovered = true`. **Critical:** many existing hint-system tests set `adminUnlocked: true` and assert specific hints or `null` (e.g. `hint-system.test.ts:113-129, 156-174, 189-220`). Gating the new hint ONLY on `adminUnlocked && !ufo74SecretDiscovered` would clobber those. Instead gate it additionally on the brand-new `streberSigFound` flag (set in Task 2, used by NO existing test) so it fires only after the player has followed the breadcrumb — this makes the hint non-clobbering AND narratively tighter. Place it AFTER Priority 1 (leak ready) and Priority 2 (critical detection) so survival/leak messaging still wins, but before generic exploration hints.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -388,9 +405,9 @@ const base = (overrides: Partial<GameState> = {}): GameState => ({
 });
 
 describe('post-admin ghost_in_machine hint', () => {
-  it('points to the sealed identity file once admin is unlocked and it is unread', () => {
+  it('points to the sealed identity file once admin is unlocked, the streber trail is found, and it is unread', () => {
     const state = base({
-      flags: { adminUnlocked: true },
+      flags: { adminUnlocked: true, streberSigFound: true },
       filesRead: new Set(['/internal/redaction_keycard.txt']),
       ufo74SecretDiscovered: false,
     });
@@ -400,9 +417,20 @@ describe('post-admin ghost_in_machine hint', () => {
     expect(text).toContain('/internal/ghost_in_machine.enc');
   });
 
-  it('does not fire once the identity file has been read', () => {
+  it('does not fire before the streber trail is found (avoids clobbering other hints)', () => {
     const state = base({
       flags: { adminUnlocked: true },
+      filesRead: new Set(['/internal/redaction_keycard.txt']),
+      ufo74SecretDiscovered: false,
+    });
+    const hint = analyzeProgressForHint(state);
+    const text = hint ? `${hint.primary.fallback} ${hint.followUp?.fallback ?? ''}` : '';
+    expect(text).not.toContain('/internal/ghost_in_machine.enc');
+  });
+
+  it('does not fire once the identity file has been read', () => {
+    const state = base({
+      flags: { adminUnlocked: true, streberSigFound: true },
       filesRead: new Set(['/internal/ghost_in_machine.enc']),
       ufo74SecretDiscovered: true,
     });
@@ -423,8 +451,8 @@ Expected: FAIL — no hint references the identity file.
 In `app/engine/hintSystem.ts`, immediately after the Priority 3 morse block closes (after line 110, before the `// ─── Priority 4` comment), insert:
 
 ```typescript
-  // ─── Admin unlocked but the sealed identity file is still unread ───
-  if (adminUnlocked && !state.ufo74SecretDiscovered) {
+  // ─── Admin unlocked, streber trail found, but the sealed identity file is still unread ───
+  if (adminUnlocked && state.flags?.streberSigFound === true && !state.ufo74SecretDiscovered) {
     return {
       primary: {
         key: 'engine.hints.ghostMachine.sealed',
