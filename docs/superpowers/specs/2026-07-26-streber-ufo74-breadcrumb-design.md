@@ -37,7 +37,8 @@ This design covers two requested changes, which combine into one arc:
 ## Non-goals
 
 - No change to ending-determination rules or `FILE_CATEGORIES` (so `ufo74_exposed` /
-  `secret_ending` reachability is unchanged).
+  `secret_ending` reachability is unchanged). The new achievement is standalone lore and does
+  **not** feed any ending.
 - No new ending. No change to the admin/override unlock mechanic itself.
 - No unrelated refactoring of the terminal/filesystem code.
 
@@ -105,17 +106,71 @@ Additive breadcrumb arc, no ending-rule changes:
    the UFO74 reaction once; that the post-admin hint references the identity file; and a
    guard that ending determination for the existing UFO74 endings is unchanged.
 
-## Open questions for the author (please answer before implementation)
+## Locked decisions (author, 2026-07-26)
 
-1. **Mystery level:** subtle breadcrumb (recommended) vs. explicit path pointer? (Default: subtle.)
-2. **Mechanical payoff:** keep it pure lore + hint (recommended), or should recognizing
-   streber = UFO74 grant an achievement / feed the secret ending? (Default: lore + hint only.)
-3. **Gate:** keep `ghost_in_machine.enc` gated behind admin + threshold 3 (recommended), or
-   actually lower it? (Default: keep gate, add guidance.)
-4. **Scope of the reaction:** react on `.signature.bak` only, or also `modem_log_jan96.txt`?
-   (Default: `.signature.bak` primary, IRC log optional.)
-5. **Exact UFO74 line(s):** placeholder copy above is a draft in UFO74's lowercase voice —
-   want to write/approve the final wording yourself?
+1. **Mystery level:** subtle breadcrumb — no explicit path in the sig/IRC copy.
+2. **Mechanical payoff:** pure lore **AND** a secret achievement for recognizing streber = UFO74.
+3. **Gate:** keep `ghost_in_machine.enc` gated behind `adminUnlocked` + `accessThreshold:3`;
+   improve discoverability via the post-admin hint + breadcrumb only.
+4. **Reaction scope:** fire a UFO74 reaction on **both** `.signature.bak` and `modem_log_jan96.txt`.
+5. **Wording:** drafted below for author review (EN). pt-BR + es to be authored during
+   implementation once EN is approved.
+
+## Draft copy for review (EN — UFO74 voice: lowercase, periods only, no exclamations)
+
+### 1. `.signature.bak` — subtle breadcrumb line (appended to the existing sig)
+Existing file ends with *"The future arrived. It was not what we expected."* Add, in streber's
+own 1996 voice (this is his civilian sig, before the call sign):
+
+```
+  Someday I will need a new handle. Something they
+  will not think to look for. Something that flies.
+```
+
+(*"something that flies"* = the subtle UFO nod; combined with `streber74` → `UFO74`. No path,
+no name.)
+
+### 2a. UFO74 reaction on reading `.signature.bak` (the recognition — fires once)
+```
+ufo74: streber. that was me. a long time ago.
+       before the call sign. before all of this.
+```
+
+### 2b. UFO74 reaction on reading `modem_log_jan96.txt` (earlier, lighter hint — fires once)
+```
+ufo74: that bbs. i practically lived there.
+       cruzeiro lost that game. i remember.
+```
+
+### 3. Post-admin-unlock hint pointing to the identity file (`hintSystem.ts`)
+Surfaces once `adminUnlocked` is true and the identity file has not yet been read:
+```
+ufo74: you have the run of the place now. there is a file i sealed myself.
+       /internal/ghost_in_machine.enc. open it. you earned it.
+```
+
+### 4. `decrypt` → `open` nudge (if the `.enc` was decrypted but not yet opened)
+```
+ufo74: you cracked it. now open it. the rest only shows when you read it proper.
+```
+
+### 5. New secret achievement
+- **id:** `ghost_handle`
+- **name:** `Ghost Handle`
+- **description:** `Trace UFO74 back to a BBS signature from 1996`
+- **icon:** 💾
+- **secret:** true
+- **Unlock trigger:** player has read **both** `/tmp/.signature.bak` and
+  `/tmp/modem_log_jan96.txt` (i.e. the `streberSigFound` flag is set by reading the sig, and the
+  IRC log has also been read). Unlocked via the existing `checkAchievements` return channel from
+  the filesystem read handler.
+- **Steam note:** if a matching Steam achievement id is required, add it to the Steam bridge
+  mapping during implementation (mirrors existing secret achievements).
+
+### i18n
+Strings 1–4 and the achievement name/description are player-facing → require pt-BR + es entries
+(runtime translation tables for the file/UFO74 strings; `engine.achievements.ghost_handle.*` for
+the achievement). Authored during implementation.
 
 ## Risks / constraints
 
