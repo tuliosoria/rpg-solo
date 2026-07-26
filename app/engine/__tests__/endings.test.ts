@@ -3,11 +3,9 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   ENDINGS,
-  type EndingFlags,
   type EndingId,
   analyzeDossier,
   determineEnding,
-  determineEndingVariant,
   getEndingFlags,
   getEndingNarrativeLines,
   getEndingTitle,
@@ -157,84 +155,6 @@ describe('Endings', () => {
       expect(analysis.visibleThreads).toContain('military');
       expect(analysis.visibleThreads).toContain('medical');
       expect(analysis.visibleThreads.map(String)).not.toContain('honeypot');
-    });
-  });
-
-  describe('determineEndingVariant', () => {
-    const combinations: Array<{ flags: EndingFlags; expected: EndingId }> = [
-      {
-        flags: {
-          conspiracyFilesLeaked: false,
-          alphaReleased: false,
-          neuralLinkAuthenticated: false,
-        },
-        expected: 'incomplete_picture',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: true,
-          alphaReleased: false,
-          neuralLinkAuthenticated: false,
-        },
-        expected: 'government_scandal',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: false,
-          alphaReleased: true,
-          neuralLinkAuthenticated: false,
-        },
-        expected: 'prisoner_45_freed',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: true,
-          alphaReleased: true,
-          neuralLinkAuthenticated: false,
-        },
-        expected: 'real_ending',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: false,
-          alphaReleased: false,
-          neuralLinkAuthenticated: true,
-        },
-        expected: 'ridiculed',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: true,
-          alphaReleased: false,
-          neuralLinkAuthenticated: true,
-        },
-        expected: 'government_scandal',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: false,
-          alphaReleased: true,
-          neuralLinkAuthenticated: true,
-        },
-        expected: 'prisoner_45_freed',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: true,
-          alphaReleased: true,
-          neuralLinkAuthenticated: true,
-        },
-        expected: 'real_ending',
-      },
-    ];
-
-    combinations.forEach(({ flags, expected }) => {
-      it(
-        `maps flags (${String(flags.conspiracyFilesLeaked)}, ${String(flags.alphaReleased)}, ${String(flags.neuralLinkAuthenticated)}) to ${expected}`,
-        () => {
-          expect(determineEndingVariant(flags)).toBe(expected);
-        }
-      );
     });
   });
 

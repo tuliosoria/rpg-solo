@@ -62,16 +62,10 @@ const PATH_LITERAL = new RegExp(
 const INTENTIONALLY_ABSENT: Array<{ prefix: string; reason: string }> = [
   {
     // ARCHIVE_FILES are injected into directories only while archive/rewind mode
-    // is active; by definition they are not part of the live tree.
+    // is active; by definition they are not part of the live tree. `open` still
+    // consults them, to keep retired archive paths answering "file not found".
     prefix: 'app/data/archiveFiles.ts',
     reason: 'archive-mode overlay files, injected at runtime rather than mounted in the live tree',
-  },
-  {
-    // determineEndingVariant() builds a synthetic savedFiles set to map the
-    // retired 3-flag ending system onto the dossier system. The paths are inputs
-    // to a pure function, never resolved against the filesystem.
-    prefix: 'app/engine/endings.ts',
-    reason: 'synthetic dossier entries for the legacy flag-to-ending mapping',
   },
 ];
 

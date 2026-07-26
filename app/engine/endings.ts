@@ -659,40 +659,6 @@ export interface EndingFlags {
 
 const ENDING_DIVIDER = '═══════════════════════════════════════════════════════════';
 
-/**
- * Legacy: determine ending variant from boolean flags.
- * Maps the old 3-flag system to the new dossier system via a synthetic savedFiles set.
- */
-export function determineEndingVariant(flags: EndingFlags): EndingVariant {
-  const syntheticFiles = new Set<string>();
-
-  // Map old flags to representative file sets
-  if (flags.neuralLinkAuthenticated) {
-    syntheticFiles.add('/storage/quarantine/alpha_neural_connection.psi');
-    syntheticFiles.add('/storage/quarantine/alpha_journal.log');
-  }
-  if (flags.alphaReleased) {
-    syntheticFiles.add('/ops/medical/bio_container.log');
-    syntheticFiles.add('/ops/medical/autopsy_alpha.log');
-    syntheticFiles.add('/ops/assessments/witness_statement_raw.txt');
-    syntheticFiles.add('/comms/psi/neural_dump_alfa.psi');
-    syntheticFiles.add('/comms/psi/psi_analysis_report.txt');
-  }
-  if (flags.conspiracyFilesLeaked) {
-    syntheticFiles.add('/ops/exo/jardim_andere_incident.txt');
-    syntheticFiles.add('/admin/incident_report_1996_01_VG.txt');
-    syntheticFiles.add('/ops/assessments/initial_response_orders.txt');
-    syntheticFiles.add('/ops/assessments/transport_log_96.txt');
-    syntheticFiles.add('/comms/liaison/foreign_liaison_note.txt');
-  }
-
-  // Always provide base evidence for a non-empty dossier
-  syntheticFiles.add('/ops/exo/audio_transcript_brief.txt');
-  syntheticFiles.add('/storage/assets/alpha_journal.log');
-
-  return determineEnding(syntheticFiles);
-}
-
 export function getEndingFlags(state: GameState): EndingFlags {
   const flags = state.flags || {};
   return {
