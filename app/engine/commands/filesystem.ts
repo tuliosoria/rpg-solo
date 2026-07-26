@@ -714,6 +714,10 @@ export const filesystemCommands: CommandRegistry = {
       stateChanges.ufo74SecretDiscovered = true;
     }
 
+    if (fileName === '.signature.bak' && !state.flags.streberSigFound) {
+      stateChanges.flags = { ...state.flags, ...stateChanges.flags, streberSigFound: true };
+    }
+
     if (filePath.includes('integrity_hashes') && !isEncryptedAndLocked) {
       stateChanges.flags = { ...state.flags, ...stateChanges.flags, tamperEvidenceNoted: true };
     }
@@ -859,6 +863,15 @@ export const filesystemCommands: CommandRegistry = {
           ];
         }
       }
+    }
+
+    // Ghost Handle: reading both streber Easter-egg files reveals UFO74's civilian handle.
+    if (
+      (fileName === '.signature.bak' || fileName === 'modem_log_jan96.txt') &&
+      filesRead.has('/tmp/.signature.bak') &&
+      filesRead.has('/tmp/modem_log_jan96.txt')
+    ) {
+      achievementsToCheck.push('ghost_handle');
     }
 
     // Evidence discovery stays internal; player-facing confirmation now happens on save.

@@ -14,6 +14,31 @@ const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
 });
 
 describe('Narrative Mechanics', () => {
+  describe('Streber breadcrumb', () => {
+    it('sets streberSigFound when reading .signature.bak', () => {
+      const state = createTestState({ currentPath: '/tmp' });
+      const result = executeCommand('open .signature.bak', state);
+      expect(result.stateChanges.flags?.streberSigFound).toBe(true);
+    });
+
+    it('unlocks ghost_handle only after both streber files are read', () => {
+      const first = createTestState({ currentPath: '/tmp' });
+      const afterSig = executeCommand('open .signature.bak', first);
+
+      // Reading the sig alone must not grant the achievement.
+      expect(afterSig.checkAchievements ?? []).not.toContain('ghost_handle');
+
+      // Carry filesRead forward, then read the modem log.
+      const second = createTestState({
+        currentPath: '/tmp',
+        filesRead: afterSig.stateChanges.filesRead,
+        flags: { ...(afterSig.stateChanges.flags ?? {}) },
+      });
+      const afterModem = executeCommand('open modem_log_jan96.txt', second);
+      expect(afterModem.checkAchievements ?? []).toContain('ghost_handle');
+    });
+  });
+
   describe('Hidden Commands', () => {
     describe('disconnect command', () => {
       it('returns error when command not discovered', () => {
