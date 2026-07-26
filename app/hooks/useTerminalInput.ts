@@ -36,6 +36,7 @@ import {
 } from '../types';
 import type { SoundType } from './useSound';
 import { appendToHistory } from '../lib/appendToHistory';
+import { resolveSubmitInput } from './resolveSubmitInput';
 import { speakCustomFirewallVoice } from '../lib/firewallVoice';
 import { translateStatic } from '../i18n';
 
@@ -260,10 +261,11 @@ export function useTerminalInput({
   );
 
   const handleSubmit = useCallback(
-    async (e?: React.SyntheticEvent) => {
+    async (e?: React.SyntheticEvent, overrideInput?: string) => {
       e?.preventDefault?.();
 
-      const sanitizedInput = sanitizeCommandInput(inputValue, MAX_COMMAND_INPUT_LENGTH);
+      const sourceInput = resolveSubmitInput(inputValue, overrideInput);
+      const sanitizedInput = sanitizeCommandInput(sourceInput, MAX_COMMAND_INPUT_LENGTH);
       const trimmedInput = sanitizedInput.value.trim();
 
       if (pendingImage && !trimmedInput) {
@@ -602,7 +604,7 @@ export function useTerminalInput({
 
       incrementStatistic('commandsTyped');
 
-      const result = executeCommand(inputValue, newState);
+      const result = executeCommand(command, newState);
       const previousSingularEvents = newState.singularEventsTriggered || new Set<string>();
       const nextSingularEvents =
         result.stateChanges.singularEventsTriggered || previousSingularEvents;

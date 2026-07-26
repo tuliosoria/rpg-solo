@@ -653,7 +653,7 @@ export default function Terminal({
   }, [appendPendingUfo74StartMessages, t]);
 
   const handleSubmit = useCallback(
-    async (e?: React.SyntheticEvent) => {
+    async (e?: React.SyntheticEvent, overrideInput?: string) => {
       e?.preventDefault?.();
 
       // Unlock speech synthesis on first user gesture (browser autoplay policy)
@@ -663,7 +663,8 @@ export default function Terminal({
         return;
       }
 
-      const trimmedInput = inputValue.trim();
+      const submittedInput = overrideInput ?? inputValue;
+      const trimmedInput = submittedInput.trim();
 
       if (pendingEvidenceVideoPrompt) {
         if (!trimmedInput) {
@@ -731,7 +732,7 @@ export default function Terminal({
           : null;
       }
 
-      await baseHandleSubmit(e);
+      await baseHandleSubmit(e, overrideInput);
     },
     [
       activeEvidenceVideo,
