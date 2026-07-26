@@ -18,6 +18,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "admin": "tsx tools/endings-admin/server.ts",
+    "gen:endings-content": "tsx scripts/gen-endings-content.ts",
+    "gen:endings-from-content": "tsx scripts/gen-endings-from-content.ts",
     "start": "node scripts/serve-static.mjs",
     "test": "node scripts/run-vitest.mjs run --configLoader runner --maxWorkers=1 --reporter=dot",
     "test:watch": "node scripts/run-vitest.mjs --configLoader runner",
@@ -71,6 +74,7 @@
     "playwright": "^1.58.0",
     "prettier": "^3.8.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.1",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.53.1",
     "vitest": "^4.0.17"
