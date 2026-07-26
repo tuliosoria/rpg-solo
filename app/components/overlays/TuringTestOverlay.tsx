@@ -10,6 +10,9 @@ import { useI18n } from '../../i18n';
 interface TuringTestOverlayProps {
   onComplete: (passed: boolean) => void;
   onCorrectAnswer?: () => void;
+  /** Dev-only: when the bot-test harness is driving, auto-answer with the
+   *  machine option for each question and auto-dismiss the result screen. */
+  autoPilot?: boolean;
 }
 
 const OVERLAY_LAYOUT_STYLE: React.CSSProperties = {
@@ -25,7 +28,7 @@ const CONTAINER_LAYOUT_STYLE: React.CSSProperties = {
   maxHeight: '100%',
 };
 
-export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: TuringTestOverlayProps) {
+export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPilot }: TuringTestOverlayProps) {
   const { t } = useI18n();
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -157,6 +160,32 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer }: Turin
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleSelect, showFeedback, showResult, onComplete, correctAnswers, isInvalidQuestion]);
+
+  // Dev-only bot autoplay: answer each question with the machine option, then
+  // dismiss the result screen. Driven by the overlay's own state (questionIndex/
+  // showFeedback/showResult) so it stays in sync and cannot double-submit.
+  useEffect(() => {
+    if (!autoPilot || isInvalidQuestion) return;
+    if (showResult) {
+      const timer = setTimeout(() => onComplete(correctAnswers === 3), 700);
+      return () => clearTimeout(timer);
+    }
+    if (showFeedback) return;
+    const machine = currentQuestion.options.find(o => o.isMachine);
+    if (!machine) return;
+    const timer = setTimeout(() => handleSelect(machine.letter), 500);
+    return () => clearTimeout(timer);
+  }, [
+    autoPilot,
+    isInvalidQuestion,
+    showResult,
+    showFeedback,
+    questionIndex,
+    currentQuestion,
+    correctAnswers,
+    onComplete,
+    handleSelect,
+  ]);
 
   // Guard against invalid state - must be after all hooks
   if (isInvalidQuestion) {
