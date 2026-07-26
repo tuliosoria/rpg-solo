@@ -9,6 +9,32 @@ account) plus configuring three GitHub secrets.
 presence). This document is the *release pipeline* — how a build actually gets
 onto Steam.
 
+> ⏱️ **Start ~30 days before your target launch date.** Beyond the technical
+> pipeline, Steam Direct imposes calendar gates you cannot shortcut. Front-load
+> the fee + onboarding on day 1.
+
+## Timeline & calendar gates (Steam Direct)
+
+Source: Valve onboarding docs (`partner.steamgames.com/doc/gettingstarted/onboarding`).
+These are schedule gates, not code, and they set the earliest possible launch:
+
+| Gate | Duration / rule | Notes |
+|---|---|---|
+| $100 app deposit fee | one-time, per product | Paying it starts the clocks below. |
+| Tax + bank + identity verification | 2–7 business days | Third-party verified; may request more docs. Bank holder name must match your legal name. |
+| New-account release wait | **30 days** from fee payment | You cannot release your first title before this elapses. |
+| "Coming soon" page public window | **≥ 2 weeks** before release | Builds wishlists; runs in parallel with the 30-day wait. |
+| Valve review (store page + build) | 1–5 business days | They run the game and check the store page before anything goes live. |
+
+**Realistic critical path:** ~30 days from paying the fee to being able to press
+Release, dominated by the 30-day new-account gate (with the 2-week coming-soon
+window and tax verification running inside it). Do the fee, tax/bank onboarding,
+and a public coming-soon page as early as possible; the technical upload is fast
+by comparison.
+
+See `docs/steam/store-page.md` for ready-to-paste store copy and the required
+capsule/art sizes.
+
 ---
 
 ## Overview: who does what
