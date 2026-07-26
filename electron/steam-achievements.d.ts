@@ -26,6 +26,7 @@ export interface AchievementMap {
   whistleblower: string;
   linked: string;
   revelator: string;
+  ghost_handle: string;
   ending_ridiculed: string;
   ending_ufo74_exposed: string;
   ending_the_2026_warning: string;

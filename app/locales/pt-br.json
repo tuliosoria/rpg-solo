@@ -1321,6 +1321,8 @@
   "engine.achievements.truth_seeker.description": "Salve 10 arquivos no dossiê",
   "engine.achievements.doom_fan.name": "IDDQD",
   "engine.achievements.doom_fan.description": "Ative o modo deus",
+  "engine.achievements.ghost_handle.name": "Codinome Fantasma",
+  "engine.achievements.ghost_handle.description": "Rastreie o UFO74 até uma assinatura de BBS de 1996",
   "engine.achievements.archivist.name": "Arquivista",
   "engine.achievements.archivist.description": "Leia todos os arquivos de uma pasta com 3+ arquivos",
   "engine.achievements.paranoid.name": "Paranoico",

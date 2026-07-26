@@ -41,6 +41,20 @@ describe('Achievements', () => {
     vi.clearAllMocks();
   });
 
+  describe('Ghost Handle achievement', () => {
+    it('is registered as a secret achievement', () => {
+      const a = getAchievement('ghost_handle');
+      expect(a).toBeDefined();
+      expect(a!.secret).toBe(true);
+      expect(a!.name.length).toBeGreaterThan(0);
+      expect(a!.description.length).toBeGreaterThan(0);
+    });
+
+    it('is included in the ACHIEVEMENTS registry exactly once', () => {
+      expect(ACHIEVEMENTS.filter(a => a.id === 'ghost_handle')).toHaveLength(1);
+    });
+  });
+
   describe('ACHIEVEMENTS constant', () => {
     it('contains expected achievements', () => {
       expect(ACHIEVEMENTS.length).toBeGreaterThanOrEqual(10);

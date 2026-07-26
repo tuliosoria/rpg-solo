@@ -1321,6 +1321,8 @@
   "engine.achievements.truth_seeker.description": "Save 10 files to the dossier",
   "engine.achievements.doom_fan.name": "IDDQD",
   "engine.achievements.doom_fan.description": "Activate god mode",
+  "engine.achievements.ghost_handle.name": "Ghost Handle",
+  "engine.achievements.ghost_handle.description": "Trace UFO74 back to a BBS signature from 1996",
   "engine.achievements.archivist.name": "Archivist",
   "engine.achievements.archivist.description": "Read every file in a folder with 3+ files",
   "engine.achievements.paranoid.name": "Paranoid",
