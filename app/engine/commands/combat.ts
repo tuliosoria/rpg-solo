@@ -7,6 +7,7 @@ import { shouldSuppressPenalties } from '../../constants/atmosphere';
 import { createEntry, createEntryI18n, createInvalidCommandResult } from './utils';
 import { applyDetectionVariance } from './helpers';
 import type { CommandRegistry } from './types';
+import { OVERRIDE_PASSWORD } from '../overrideSecret';
 
 export const combatCommands: CommandRegistry = {
   trace: (args, state) => {
@@ -188,7 +189,7 @@ export const combatCommands: CommandRegistry = {
     }
 
     const password = passwordArgs.join(' ').toUpperCase();
-    const correctPassword = 'COLHEITA';
+    const correctPassword = OVERRIDE_PASSWORD;
 
     // Track failed attempts
     const failedAttempts = state.overrideFailedAttempts || 0;

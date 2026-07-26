@@ -22,6 +22,7 @@ import {
   computeGhostSuffix,
   useGameActions,
   useSound,
+  useBotRunner,
   useTerminalEffects,
   useTerminalInput,
   useTerminalState,
@@ -653,7 +654,7 @@ export default function Terminal({
   }, [appendPendingUfo74StartMessages, t]);
 
   const handleSubmit = useCallback(
-    async (e?: React.SyntheticEvent) => {
+    async (e?: React.SyntheticEvent, overrideInput?: string) => {
       e?.preventDefault?.();
 
       // Unlock speech synthesis on first user gesture (browser autoplay policy)
@@ -663,7 +664,8 @@ export default function Terminal({
         return;
       }
 
-      const trimmedInput = inputValue.trim();
+      const submittedInput = overrideInput ?? inputValue;
+      const trimmedInput = submittedInput.trim();
 
       if (pendingEvidenceVideoPrompt) {
         if (!trimmedInput) {
@@ -731,7 +733,7 @@ export default function Terminal({
           : null;
       }
 
-      await baseHandleSubmit(e);
+      await baseHandleSubmit(e, overrideInput);
     },
     [
       activeEvidenceVideo,
@@ -814,6 +816,34 @@ export default function Terminal({
       turingOverlayTimeoutRef,
     },
   });
+
+  // Dev-only autoplay harness. Inert in production because `gameState.botTest`
+  // can only be set by the dev-gated `bot-test` command (see commands/debug.ts).
+  useBotRunner({
+    gameState,
+    isProcessing,
+    showTuringTest,
+    hasActiveOverlay: activeImage !== null || activeEvidenceVideo !== null,
+    hasEnterPrompt: pendingImage !== null || pendingUfo74StartMessages.length > 0,
+    hasVideoPrompt: pendingEvidenceVideoPrompt !== null,
+    hasBlockingPopup,
+    submit: useCallback((input: string) => { void handleSubmit(undefined, input); }, [handleSubmit]),
+    dismissActiveOverlay: useCallback(() => {
+      setActiveImage(null);
+      setActiveEvidenceVideo(null);
+    }, [setActiveImage, setActiveEvidenceVideo]),
+    appendOutput: useCallback(
+      (entries: TerminalEntry[]) =>
+        setGameState(prev => ({ ...prev, history: [...prev.history, ...entries] })),
+      [setGameState]
+    ),
+    clearBot: useCallback(
+      () => setGameState(prev => ({ ...prev, botTest: undefined })),
+      [setGameState]
+    ),
+  });
+
+
 
   useEffect(() => {
     const pendingCheck = pendingEvidenceVideoCheckRef.current;
@@ -1856,6 +1886,7 @@ export default function Terminal({
         {/* Turing Test overlay */}
         {showTuringTest && (
           <TuringTestOverlay
+            autoPilot={Boolean(gameState.botTest?.active)}
             onCorrectAnswer={() => playSound('success')}
             onComplete={passed => {
               setShowTuringTest(false);

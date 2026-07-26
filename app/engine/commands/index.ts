@@ -9,6 +9,7 @@ import { chatCommands, setCommandsRef as setChatRef } from './chat';
 import { archiveCommands, setCommandsRef as setArchiveRef } from './archive';
 import { navigationCommands } from './navigation';
 import { inventoryCommands } from './inventory';
+import { debugCommands } from './debug';
 // Re-export from existing modules for backward compatibility
 export {
   generateEntryId,
@@ -66,3 +67,9 @@ export const commands: CommandRegistry = {
 setFilesystemRef(commands);
 setChatRef(commands);
 setArchiveRef(commands);
+
+// Dev-only autoplay harness commands. Production static-export builds run with
+// NODE_ENV=production, so bot-test/bot-stop are never registered for players.
+if (process.env.NODE_ENV === 'development') {
+  Object.assign(commands, debugCommands);
+}
