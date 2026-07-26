@@ -2,22 +2,28 @@ import { GameState } from '../../types';
 import { getAllAccessibleFiles } from '../filesystem';
 import { isEvidencePath } from '../evidenceRevelation';
 import { OVERRIDE_PASSWORD } from '../overrideSecret';
-import { isSecretTarget } from './targets';
+import { isSecretTarget, secretCriticalTargets } from './targets';
 import { BotDecision, BotLevel, BotMemory, DEFAULT_BOT_MAX_TURNS } from './types';
 
 const MAX_SAVED = 10;
-const DETECTION_HIGH = 60;
 
-// How much of the game each level engages with.
+// Per-level engagement policy.
+//  - dummy:  a clueless player. Never unlocks admin, so only the handful of
+//            pre-admin evidence files are reachable; it cannot reach the 10
+//            saves a win requires and terminates gracefully.
+//  - novice: a competent player. Unlocks admin, saves evidence broadly, and
+//            wins a (non-secret) ending.
+//  - pro:    an expert. Unlocks admin, prioritises the secret-ending file set,
+//            and wins the secret ending.
 const LEVEL_POLICY: Record<BotLevel, {
-  readLimit: number;      // max distinct files to read before moving on
-  saveTarget: number;     // saved-file count that triggers the leak
-  managesDetection: boolean;
   unlocksAdmin: boolean;
+  saveTarget: number;
+  readLimit: number;
+  targetsSecret: boolean;
 }> = {
-  dummy: { readLimit: 4, saveTarget: 5, managesDetection: false, unlocksAdmin: false },
-  novice: { readLimit: 999, saveTarget: 10, managesDetection: true, unlocksAdmin: false },
-  pro: { readLimit: 999, saveTarget: 10, managesDetection: true, unlocksAdmin: true },
+  dummy: { unlocksAdmin: false, saveTarget: 5, readLimit: 12, targetsSecret: false },
+  novice: { unlocksAdmin: true, saveTarget: 10, readLimit: 999, targetsSecret: false },
+  pro: { unlocksAdmin: true, saveTarget: 10, readLimit: 999, targetsSecret: true },
 };
 
 function basename(path: string): string {
@@ -26,13 +32,28 @@ function basename(path: string): string {
 
 function progressSignature(state: GameState): string {
   const admin = state.flags?.adminUnlocked ? 1 : 0;
-  return `${state.filesRead.size}:${state.savedFiles.size}:${state.leakSequenceProgress}:${admin}`;
+  const gen = state.leakSequenceGenerated ? 1 : 0;
+  return `${state.filesRead.size}:${state.savedFiles.size}:${state.leakSequenceProgress}:${admin}:${gen}`;
 }
 
-/** Whether this level wants to save this file (and it fits the dossier priority). */
-function shouldSave(path: string, level: BotLevel): boolean {
+/** Whether this level wants to read/save the given file at all. */
+function wantsFile(path: string, level: BotLevel): boolean {
   if (level === 'pro') return isSecretTarget(path) || isEvidencePath(path);
   return isEvidencePath(path);
+}
+
+/**
+ * Save/read priority. Higher = handled first. For pro the secret-critical files
+ * outrank other secret targets, which outrank plain evidence, so the 4 files the
+ * secret ending requires always claim dossier slots before the cap is hit.
+ */
+function fileRank(path: string, level: BotLevel): number {
+  const evidence = isEvidencePath(path) ? 1 : 0;
+  if (level !== 'pro') return evidence;
+  const name = basename(path);
+  if (secretCriticalTargets().includes(name)) return 3;
+  if (isSecretTarget(path)) return 2;
+  return evidence;
 }
 
 export function decideNextCommand(
@@ -69,44 +90,42 @@ export function decideNextCommand(
     return { decision: { kind: 'command', text }, memory: m };
   };
 
-  // Detection management (novice/pro).
-  if (policy.managesDetection && state.detectionLevel >= DETECTION_HIGH && state.waitUsesRemaining > 0) {
-    return decide('wait');
-  }
-
-  const accessible = getAllAccessibleFiles(state);
-  const savedCount = state.savedFiles.size;
-
-  // pro: unlock admin once, before exhausting reads, to reveal gated files.
+  // Unlock admin once, EARLY (detection still ~0, no evidence counted) so the
+  // clean unlock branch runs rather than the "terrible mistake" doom branch.
   if (policy.unlocksAdmin && !state.flags?.adminUnlocked && !m.overrideAttempted) {
     m.overrideAttempted = true;
     return decide(`override protocol ${OVERRIDE_PASSWORD}`);
   }
 
-  // Save priority: for pro, save secret-target files first so they fit in the dossier.
-  const readNotSaved = accessible.filter(
-    p => state.filesRead.has(p) && !state.savedFiles.has(p) && shouldSave(p, level)
-  );
+  const accessible = getAllAccessibleFiles(state);
+  const savedCount = state.savedFiles.size;
+
+  // Save a wanted file we have already read (highest priority first).
+  const readNotSaved = accessible
+    .filter(p => state.filesRead.has(p) && !state.savedFiles.has(p) && wantsFile(p, level))
+    .sort((a, b) => fileRank(b, level) - fileRank(a, level));
   if (savedCount < MAX_SAVED && readNotSaved.length > 0) {
-    readNotSaved.sort((a, b) => Number(isSecretTarget(b)) - Number(isSecretTarget(a)));
     return decide(`save ${basename(readNotSaved[0])}`);
   }
 
-  // Read unread accessible files (respecting the level's read limit).
-  const unread = accessible.filter(p => !state.filesRead.has(p));
-  if (unread.length > 0 && state.filesRead.size < policy.readLimit) {
-    return decide(`open ${unread[0]}`);
+  // Read a wanted file we have not read yet (highest priority first) so the bot
+  // only ever opens files it intends to save — keeping runs short and detection
+  // low without relying on the rate-limited `wait` command.
+  if (state.filesRead.size < policy.readLimit) {
+    const unread = accessible
+      .filter(p => !state.filesRead.has(p) && wantsFile(p, level))
+      .sort((a, b) => fileRank(b, level) - fileRank(a, level));
+    if (unread.length > 0) {
+      return decide(`open ${unread[0]}`);
+    }
   }
 
-  // Ready to finish: drive the leak sequence.
+  // Enough saved to finish: drive the leak sequence to the winning transmit.
   if (savedCount >= Math.min(policy.saveTarget, MAX_SAVED)) {
     return driveLeak(state, decide);
   }
 
-  // Nothing productive left but not enough saved — leak with what we have (weak ending) or stop.
-  if (savedCount >= 5) {
-    return driveLeak(state, decide);
-  }
+  // Nothing productive left and not enough to win — stop gracefully.
   return { decision: { kind: 'done', reason: 'no productive action' }, memory: m };
 }
 
