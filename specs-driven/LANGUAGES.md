@@ -55,6 +55,7 @@ Commands that translate — the player types the translated word:
 | `search` | `buscar` | `buscar` |
 | `leak` | `vazar` | `filtrar` |
 | `wait` | `esperar` | `esperar` |
+| `hide` | `esconder` | `esconder` |
 | `progress` | `progresso` | `progreso` |
 | `hint` | `dica` | `pista` |
 | `note` | `nota` | `nota` |
