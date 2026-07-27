@@ -22,6 +22,7 @@ const ACHIEVEMENT_MAP = {
   whistleblower: 'WHISTLEBLOWER',
   linked: 'LINKED',
   revelator: 'REVELATOR',
+  ghost_handle: 'GHOST_HANDLE',
   ending_ridiculed: 'ENDING_RIDICULED',
   ending_ufo74_exposed: 'ENDING_UFO74_EXPOSED',
   ending_the_2026_warning: 'ENDING_THE_2026_WARNING',

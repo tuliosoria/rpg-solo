@@ -260,4 +260,43 @@ describe('Hint System', () => {
       expect(ufo74Entries.some(entry => entry.content.includes('progress'))).toBe(true);
     });
   });
+
+  describe('post-admin ghost_in_machine hint', () => {
+    it('points to the sealed identity file once admin is unlocked, the streber trail is found, and it is unread', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        flags: { adminUnlocked: true, streberSigFound: true },
+        filesRead: new Set(['/internal/redaction_keycard.txt']),
+        ufo74SecretDiscovered: false,
+      });
+      const hint = analyzeProgressForHint(state);
+      expect(hint).not.toBeNull();
+      const text = `${hint!.primary.fallback} ${hint!.followUp?.fallback ?? ''}`;
+      expect(text).toContain('/internal/ghost_in_machine.enc');
+    });
+
+    it('does not fire before the streber trail is found (avoids clobbering other hints)', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        flags: { adminUnlocked: true },
+        filesRead: new Set(['/internal/redaction_keycard.txt']),
+        ufo74SecretDiscovered: false,
+      });
+      const hint = analyzeProgressForHint(state);
+      const text = hint ? `${hint.primary.fallback} ${hint.followUp?.fallback ?? ''}` : '';
+      expect(text).not.toContain('/internal/ghost_in_machine.enc');
+    });
+
+    it('does not fire once the identity file has been read', () => {
+      const state = createTestState({
+        tutorialComplete: true,
+        flags: { adminUnlocked: true, streberSigFound: true },
+        filesRead: new Set(['/internal/ghost_in_machine.enc']),
+        ufo74SecretDiscovered: true,
+      });
+      const hint = analyzeProgressForHint(state);
+      const text = hint ? `${hint.primary.fallback} ${hint.followUp?.fallback ?? ''}` : '';
+      expect(text).not.toContain('/internal/ghost_in_machine.enc');
+    });
+  });
 });

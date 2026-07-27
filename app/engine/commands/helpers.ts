@@ -234,9 +234,9 @@ export const EVIDENCE_UFO74_REACTIONS: Record<string, string> = {
   'encoded_transmission.enc':
     'rot13. amateur cipher. but the message underneath is not amateur.',
   'modem_log_jan96.txt':
-    '28.8 modem. geocities. someone was uploading before they got caught.',
+    'that bbs. i practically lived there. cruzeiro lost that game. i remember.',
   '.signature.bak':
-    'that sig file. i know whose terminal that was.',
+    'streber. that was me. a long time ago. before the call sign. before all of this.',
   'URGENT_classified_alpha.txt':
     'honeypot. do not trust filenames that scream at you.',
   'LEAKED_classified_records.dat':

@@ -208,6 +208,14 @@ export const ACHIEVEMENTS: Achievement[] = [
     '✨',
     true
   ),
+  createAchievement(
+    'ghost_handle',
+    'ghost_handle',
+    'Ghost Handle',
+    'Trace UFO74 back to a BBS signature from 1996',
+    '💾',
+    true
+  ),
   ...DOSSIER_ENDING_ACHIEVEMENTS.map(([id, fallbackName, fallbackDescription, icon]) =>
     createAchievement(`ending_${id}`, `ending_${id}`, fallbackName, fallbackDescription, icon, true)
   ),

@@ -3379,6 +3379,8 @@ registerLines(
     Esta .sig é trazida por muito café,
     pouco sono e saudade.
     O futuro chegou. Não era o que esperávamos.
+    Um dia vou precisar de um novo apelido. Algo que
+    eles não vão pensar em procurar. Algo que voa.
   `,
   `
   ARCHIVO RECUPERADO — RESPALDO DE DIRECTORIO DE USUARIO
@@ -3397,6 +3399,8 @@ registerLines(
     Esta .sig es cortesía de mucho café,
     poco sueño y saudade.
     El futuro llegó. No era lo que esperábamos.
+    Algún día necesitaré un nuevo apodo. Algo que
+    no se les ocurrirá buscar. Algo que vuela.
   `
 );
 
