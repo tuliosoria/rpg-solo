@@ -10,6 +10,7 @@ import { archiveCommands, setCommandsRef as setArchiveRef } from './archive';
 import { navigationCommands } from './navigation';
 import { inventoryCommands } from './inventory';
 import { debugCommands } from './debug';
+import { BOT_ENABLED } from '../../constants/bot';
 // Re-export from existing modules for backward compatibility
 export {
   generateEntryId,
@@ -68,8 +69,10 @@ setFilesystemRef(commands);
 setChatRef(commands);
 setArchiveRef(commands);
 
-// Dev-only autoplay harness commands. Production static-export builds run with
-// NODE_ENV=production, so bot-test/bot-stop are never registered for players.
-if (process.env.NODE_ENV === 'development') {
+// Autoplay harness commands (bot-test / bot-stop). Registered in development
+// always, and in production while the BOT_ENABLED kill-switch is on. They are
+// deliberately absent from PUBLIC_COMMANDS, so they never surface in help, Tab
+// completion, or typo suggestions. Set BOT_ENABLED to false to remove them.
+if (BOT_ENABLED || process.env.NODE_ENV === 'development') {
   Object.assign(commands, debugCommands);
 }
