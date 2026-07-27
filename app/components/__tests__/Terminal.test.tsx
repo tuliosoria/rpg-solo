@@ -4,7 +4,6 @@ import Terminal, { normalizeVideoPromptChoice } from '../Terminal';
 import styles from '../Terminal.module.css';
 import { DEFAULT_GAME_STATE, GameState, TutorialStateID } from '../../types';
 import { I18nProvider } from '../../i18n';
-import { AUTOSAVE_INTERVAL_MS } from '../../constants/timing';
 
 const { mockSpeakCustomFirewallVoice, mockFirewallEyes, mockStaticNoise } = vi.hoisted(() => ({
   mockSpeakCustomFirewallVoice: vi.fn(),
@@ -65,6 +64,11 @@ vi.mock('../../storage/statistics', () => ({
 // Mock the achievements module
 vi.mock('../../engine/achievements', () => ({
   unlockAchievement: vi.fn(() => null),
+  syncUnlockedAchievementsToSteam: vi.fn(async () => ({
+    attempted: 0,
+    failed: 0,
+    skipped: true,
+  })),
   getAchievements: vi.fn(() => []),
   Achievement: {},
 }));
@@ -708,6 +712,25 @@ describe('Terminal Component', () => {
     expect(input.value).toBe('help');
   });
 
+  it('suppresses typing pattern warnings when the accessibility option is disabled', () => {
+    window.localStorage.setItem(
+      'terminal1996_options',
+      JSON.stringify({ typingPatternWarningsEnabled: false })
+    );
+    render(<Terminal {...defaultProps} />);
+
+    const input = document.querySelector('input') as HTMLInputElement;
+
+    act(() => {
+      for (let i = 1; i <= 10; i += 1) {
+        fireEvent.change(input, { target: { value: 'abcdefghij'.slice(0, i) } });
+      }
+    });
+
+    expect(mockPlaySound).not.toHaveBeenCalledWith('warning');
+    expect(screen.queryByText(/SUSPICIOUS TYPING PATTERN DETECTED/i)).not.toBeInTheDocument();
+  });
+
   it('clears input after command submission', async () => {
     render(<Terminal {...defaultProps} />);
 
@@ -1127,20 +1150,25 @@ describe('Terminal Component', () => {
     expect(screen.getByText(/AUDIT.*ACTIVE/i)).toBeInTheDocument();
   });
 
-  it('shows the save indicator after an autosave runs', () => {
-    render(<Terminal {...defaultProps} />);
+  it('shows the save indicator when the session has a saved timestamp', () => {
+    const savedState = {
+      ...defaultProps.initialState,
+      lastSaveTime: Date.now(),
+    };
 
-    expect(screen.queryByText(/Saved: <1m ago/i)).not.toBeInTheDocument();
-
-    act(() => {
-      vi.advanceTimersByTime(AUTOSAVE_INTERVAL_MS);
-    });
+    render(<Terminal {...defaultProps} initialState={savedState} />);
 
     const saveIndicator = screen.getByText(/Saved: <1m ago/i);
 
     expect(saveIndicator).toBeInTheDocument();
     expect(saveIndicator).toHaveAttribute('aria-live', 'polite');
     expect(saveIndicator).toHaveClass(styles.saveIndicator);
+  });
+
+  it('does not show the save indicator before any save has occurred', () => {
+    render(<Terminal {...defaultProps} />);
+
+    expect(screen.queryByText(/Saved: <1m ago/i)).not.toBeInTheDocument();
   });
 
   it('renders victory when evidencesSaved is active', async () => {

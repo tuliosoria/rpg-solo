@@ -4,7 +4,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { GameState } from '../types';
 import { createNewGame, loadGameAsync, loadCheckpoint } from '../storage/saves';
-import { incrementStatistic } from '../storage/statistics';
+import { incrementStatistic, startPlaytimeSession, endPlaytimeSession, flushPlaytime } from '../storage/statistics';
 import { useGlobalErrorHandler } from '../hooks/useGlobalErrorHandler';
 import { I18nProvider } from '../i18n';
 import ErrorBoundary from './ErrorBoundary';
@@ -51,6 +51,24 @@ function HomeContentInner() {
     }
   }, []);
 
+  // Bank playtime when the page goes away mid-run. Without this, a player who
+  // closes the tab instead of exiting to the menu forfeits the whole session's
+  // time. `pagehide` fires in cases `beforeunload` misses (notably mobile
+  // Safari), and flushing is idempotent, so overlapping events cannot
+  // double-count.
+  useEffect(() => {
+    if (view !== 'game') return;
+
+    const bank = () => flushPlaytime();
+    window.addEventListener('pagehide', bank);
+    document.addEventListener('visibilitychange', bank);
+
+    return () => {
+      window.removeEventListener('pagehide', bank);
+      document.removeEventListener('visibilitychange', bank);
+    };
+  }, [view]);
+
   const handleIntroComplete = useCallback(() => {
     try {
       sessionStorage.setItem(INTRO_SESSION_KEY, '1');
@@ -69,6 +87,7 @@ function HomeContentInner() {
     stopMenuMusic();
     const newState = createNewGame();
     incrementStatistic('gamesPlayed');
+    startPlaytimeSession();
     setGameState(newState);
     setSaveRequestState(null);
     setShowSaveModal(false);
@@ -87,6 +106,7 @@ function HomeContentInner() {
 
     if (loadedState) {
       stopMenuMusic();
+      startPlaytimeSession();
       setGameState(loadedState);
       setSaveRequestState(null);
       setShowSaveModal(false);
@@ -102,6 +122,7 @@ function HomeContentInner() {
     const loadedState = loadCheckpoint(slotId);
     if (loadedState) {
       stopMenuMusic();
+      startPlaytimeSession();
       // Reset game over state when loading checkpoint
       setGameState({
         ...loadedState,
@@ -117,6 +138,7 @@ function HomeContentInner() {
 
   const handleExit = useCallback(() => {
     invalidatePendingLoads();
+    endPlaytimeSession();
     setView('menu');
     setMenuInitialScreen('main');
     setGameState(null);
@@ -153,12 +175,20 @@ function HomeContentInner() {
     setShowSaveModal(false);
   }, [invalidatePendingLoads]);
 
-  const handleSaveRequest = useCallback((state: GameState) => {
-    setSaveRequestState(state);
-    setShowSaveModal(true);
-  }, []);
+  const saveCompleteRef = useRef<((savedAt: number) => void) | null>(null);
 
-  const handleSaved = useCallback(() => {
+  const handleSaveRequest = useCallback(
+    (state: GameState, onComplete?: (savedAt: number) => void) => {
+      saveCompleteRef.current = onComplete ?? null;
+      setSaveRequestState(state);
+      setShowSaveModal(true);
+    },
+    []
+  );
+
+  const handleSaved = useCallback((savedAt: number) => {
+    saveCompleteRef.current?.(savedAt);
+    saveCompleteRef.current = null;
     setShowSaveModal(false);
     setSaveRequestState(null);
   }, []);
@@ -193,6 +223,7 @@ function HomeContentInner() {
           <SaveModal
             gameState={saveRequestState ?? gameState}
             onCloseAction={() => {
+              saveCompleteRef.current = null;
               setShowSaveModal(false);
               setSaveRequestState(null);
             }}

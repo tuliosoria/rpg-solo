@@ -4,6 +4,7 @@ import { translateStatic } from '../i18n';
 import { safeGetJSON, safeSetJSON, safeRemoveItem } from '../storage/safeStorage';
 import { unlockAchievement as steamUnlockAchievement } from '../lib/steamBridge';
 import type { EndingId } from './endings';
+import { MAX_EVIDENCE_COUNT } from './evidenceRevelation';
 
 export interface Achievement {
   id: string;
@@ -12,6 +13,15 @@ export interface Achievement {
   icon: string; // Emoji or ASCII art
   secret?: boolean; // Hidden until unlocked
 }
+
+/**
+ * Game constants achievement copy is allowed to interpolate.
+ *
+ * Supplied to every description so copy can quote a rule without restating it —
+ * "Save {{max}} files to the dossier" cannot drift from the number `leak`
+ * actually demands. Unreferenced values are simply ignored.
+ */
+const ACHIEVEMENT_COPY_VALUES = { max: MAX_EVIDENCE_COUNT };
 
 function createAchievement(
   id: string,
@@ -29,7 +39,7 @@ function createAchievement(
     get description() {
       return translateStatic(
         `engine.achievements.${key}.description`,
-        undefined,
+        ACHIEVEMENT_COPY_VALUES,
         fallbackDescription
       );
     },
@@ -138,7 +148,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     'truth_seeker',
     'truth_seeker',
     'Truth Seeker',
-    'Save 10 files to the dossier',
+    'Save {{max}} files to the dossier',
     '👁️'
   ),
   createAchievement('doom_fan', 'doom_fan', 'IDDQD', 'Activate god mode', '🎮', true),
@@ -198,6 +208,14 @@ export const ACHIEVEMENTS: Achievement[] = [
     '✨',
     true
   ),
+  createAchievement(
+    'ghost_handle',
+    'ghost_handle',
+    'Ghost Handle',
+    'Trace UFO74 back to a BBS signature from 1996',
+    '💾',
+    true
+  ),
   ...DOSSIER_ENDING_ACHIEVEMENTS.map(([id, fallbackName, fallbackDescription, icon]) =>
     createAchievement(`ending_${id}`, `ending_${id}`, fallbackName, fallbackDescription, icon, true)
   ),
@@ -207,6 +225,7 @@ const VALID_ACHIEVEMENT_IDS = new Set(ACHIEVEMENTS.map(a => a.id));
 
 // Storage key for achievements
 const ACHIEVEMENTS_KEY = 'rpg-solo-achievements';
+let steamAchievementReconciliationStarted = false;
 
 /**
  * Retrieves the set of unlocked achievement IDs from localStorage.
@@ -254,6 +273,44 @@ export function unlockAchievement(id: string): { achievement: Achievement; isNew
   }
 
   return { achievement, isNew };
+}
+
+/**
+ * Replays locally unlocked achievements to Steam once per renderer session.
+ * This covers players who earned achievements before Steam was available.
+ */
+export async function syncUnlockedAchievementsToSteam(
+  options: { force?: boolean } = {}
+): Promise<{ attempted: number; failed: number; skipped: boolean }> {
+  if (typeof window === 'undefined') {
+    return { attempted: 0, failed: 0, skipped: true };
+  }
+
+  if (steamAchievementReconciliationStarted && !options.force) {
+    return { attempted: 0, failed: 0, skipped: true };
+  }
+
+  steamAchievementReconciliationStarted = true;
+
+  const unlocked = [...getUnlockedAchievements()].filter(id => VALID_ACHIEVEMENT_IDS.has(id));
+  let failed = 0;
+
+  await Promise.all(
+    unlocked.map(async id => {
+      try {
+        const result = await steamUnlockAchievement(id);
+        if (!result.success && !result.alreadyUnlocked) {
+          failed += 1;
+        }
+      } catch (e) {
+        failed += 1;
+        // eslint-disable-next-line no-console
+        console.error('Steam achievement reconciliation failed:', e);
+      }
+    })
+  );
+
+  return { attempted: unlocked.length, failed, skipped: false };
 }
 
 /**

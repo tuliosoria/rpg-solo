@@ -1,5 +1,7 @@
 // Terminal 1996 - Type Definitions
 
+import type { BotRunConfig } from '../engine/bot/types';
+
 // ═══════════════════════════════════════════════════════════════════════════
 // OPTIONS STATE
 // ═══════════════════════════════════════════════════════════════════════════
@@ -24,6 +26,7 @@ export interface OptionsState {
 
   // Pacing Options
   textSpeed: TextSpeed;
+  typingPatternWarningsEnabled: boolean;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -352,6 +355,7 @@ export interface GameState {
   leakSequence?: string[]; // 3-command preparation sequence
   leakSequenceProgress: number; // 0-3, how many correct commands entered
   leakSequenceGenerated: boolean; // Whether sequence has been generated this session
+  botTest?: BotRunConfig; // Dev-only autoplay harness config; never persisted.
 }
 
 // Firewall Eye entity removed — eyes are now purely ambient (non-interactive)

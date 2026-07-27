@@ -1,0 +1,74 @@
+name: Deploy game to Amplify (game.terminalufo.com)
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
+
+# Never run two Amplify deployments at once (Amplify rejects a new deployment
+# while a previous job is still PENDING/RUNNING).
+concurrency:
+  group: amplify-deploy-rpg-solo
+  cancel-in-progress: false
+
+permissions:
+  id-token: write   # required to request the GitHub OIDC token
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      APP_ID: d1415cbj9psdno
+      BRANCH: main
+      AWS_REGION: us-east-1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # next.config derives the build number from git history
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static export
+        run: npm run build   # produces ./out
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::825081952316:role/github-actions-amplify-rpg-solo
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy out/ to Amplify
+        run: |
+          set -euo pipefail
+          ( cd out && zip -q -r ../deploy.zip . )   # index.html at zip ROOT
+
+          DEP=$(aws amplify create-deployment --app-id "$APP_ID" --branch-name "$BRANCH" --output json)
+          URL=$(echo "$DEP" | python3 -c "import json,sys;print(json.load(sys.stdin)['zipUploadUrl'])")
+          JOB=$(echo "$DEP" | python3 -c "import json,sys;print(json.load(sys.stdin)['jobId'])")
+          echo "Amplify deployment job: $JOB"
+
+          curl -sS -f -X PUT -H "Content-Type: application/zip" --upload-file deploy.zip "$URL"
+          aws amplify start-deployment --app-id "$APP_ID" --branch-name "$BRANCH" --job-id "$JOB" >/dev/null
+
+          for i in $(seq 1 60); do
+            S=$(aws amplify get-job --app-id "$APP_ID" --branch-name "$BRANCH" --job-id "$JOB" --query 'job.summary.status' --output text)
+            echo "[$i] status=$S"
+            case "$S" in
+              SUCCEED) echo "✅ Deployed to https://game.terminalufo.com/"; exit 0 ;;
+              FAILED|CANCELLED) echo "❌ Deploy $S"; exit 1 ;;
+            esac
+            sleep 10
+          done
+          echo "❌ Timed out waiting for deployment"; exit 1

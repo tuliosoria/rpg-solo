@@ -8,7 +8,7 @@ import { isTutorialInputState, TutorialStateID } from '../engine/commands/intera
 import { getEndingFlags, type EndingId } from '../engine/endings';
 import { getAllAccessibleFiles } from '../engine/filesystem';
 
-import { getLatestCheckpoint, loadCheckpoint, saveCheckpoint } from '../storage/saves';
+import { getLatestCheckpoint, loadCheckpoint } from '../storage/saves';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import { useI18n } from '../i18n';
 import { OPTIONS_CHANGED_EVENT, readStoredOptions } from '../hooks/useOptions';
@@ -19,8 +19,10 @@ import {
 import { shouldSuppressPressure } from '../constants/atmosphere';
 import {
   useAutocomplete,
+  computeGhostSuffix,
   useGameActions,
   useSound,
+  useBotRunner,
   useTerminalEffects,
   useTerminalInput,
   useTerminalState,
@@ -31,7 +33,7 @@ import {
   useSaveIndicator,
   useAttemptsDisplay,
 } from '../hooks/useGameSelectors';
-import { unlockAchievement } from '../engine/achievements';
+import { syncUnlockedAchievementsToSteam, unlockAchievement } from '../engine/achievements';
 import { uiRandomPick } from '../engine/rng';
 import type { TextSpeed } from '../types';
 import AchievementPopup from './overlays/AchievementPopup';
@@ -81,7 +83,7 @@ import styles from './Terminal.module.css';
 interface TerminalProps {
   initialState: GameState;
   onExitAction: () => void;
-  onSaveRequestAction: (state: GameState) => void;
+  onSaveRequestAction: (state: GameState, onComplete?: (savedAt: number) => void) => void;
   onLoadCheckpointAction?: (slotId: string) => void;
   onLoadSavedGameAction?: () => void;
   onQuitAction?: () => void;
@@ -243,16 +245,32 @@ export default function Terminal({
     setMusicEnabledDirectly,
   } = useSound();
   const [textSpeed, setTextSpeed] = useState<TextSpeed>(() => readStoredOptions().textSpeed);
+  const [typingPatternWarningsEnabled, setTypingPatternWarningsEnabled] = useState(
+    () => readStoredOptions().typingPatternWarningsEnabled
+  );
 
   useEffect(() => {
-    const syncTextSpeed = () => {
-      setTextSpeed(readStoredOptions().textSpeed);
+    const syncTerminalOptions = () => {
+      const storedOptions = readStoredOptions();
+      setTextSpeed(storedOptions.textSpeed);
+      setTypingPatternWarningsEnabled(storedOptions.typingPatternWarningsEnabled);
     };
 
-    syncTextSpeed();
-    window.addEventListener(OPTIONS_CHANGED_EVENT, syncTextSpeed);
-    return () => window.removeEventListener(OPTIONS_CHANGED_EVENT, syncTextSpeed);
+    syncTerminalOptions();
+    window.addEventListener(OPTIONS_CHANGED_EVENT, syncTerminalOptions);
+    return () => window.removeEventListener(OPTIONS_CHANGED_EVENT, syncTerminalOptions);
   }, []);
+
+  useEffect(() => {
+    if (typingPatternWarningsEnabled) return;
+
+    keypressTimestamps.current = [];
+    if (typingSpeedWarningTimeout.current) {
+      clearTimeout(typingSpeedWarningTimeout.current);
+      typingSpeedWarningTimeout.current = null;
+    }
+    setTypingSpeedWarning(false);
+  }, [setTypingSpeedWarning, typingPatternWarningsEnabled]);
 
   useEffect(() => {
     if (!showOnboarding) {
@@ -267,6 +285,16 @@ export default function Terminal({
   // Autocomplete hook
   const { getCompletions, completeInput, markTabPressed, consumeTabPressed } =
     useAutocomplete(gameState, language);
+
+  // Inline "ghost text": the unambiguous completion suffix for the current
+  // input, rendered as a dimmed hint after the caret. Visual only — never part
+  // of inputValue and never submitted. Tab (handled in useTerminalInput) applies it.
+  const ghostSuffix = useMemo(
+    () => (inputValue ? computeGhostSuffix(inputValue, getCompletions(inputValue)) : null),
+    [inputValue, getCompletions]
+  );
+  const showGhost =
+    ghostSuffix !== null && !isProcessing && !gameState.isGameOver && !hasBlockingPopup;
 
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -338,6 +366,10 @@ export default function Terminal({
   }, [steamPresenceState]);
 
   useEffect(() => {
+    void syncUnlockedAchievementsToSteam();
+  }, []);
+
+  useEffect(() => {
     return () => {
       void clearPresence();
     };
@@ -373,7 +405,7 @@ export default function Terminal({
         createEntry('ufo74', t('terminal.video.closeComment.prato1')),
         createEntry('ufo74', t('terminal.video.closeComment.prato2')),
       ]);
-    } else if (closingVideo?.filePath === '/internal/protocols/sanitized/visitor_briefing.txt') {
+    } else if (closingVideo?.filePath === '/internal/sanitized/visitor_briefing.txt') {
       appendPendingUfo74StartMessages([
         createEntry('ufo74', t('terminal.video.closeComment.visitor1')),
         createEntry('ufo74', t('terminal.video.closeComment.visitor2')),
@@ -496,7 +528,6 @@ export default function Terminal({
     setShowAttBar(true);
     setShowAvatar(true);
     startAmbient();
-    saveCheckpoint(newState, t('checkpoint.reason.tutorialSkipped'));
   }, [
     gameState,
     setGameState,
@@ -623,7 +654,7 @@ export default function Terminal({
   }, [appendPendingUfo74StartMessages, t]);
 
   const handleSubmit = useCallback(
-    async (e?: React.SyntheticEvent) => {
+    async (e?: React.SyntheticEvent, overrideInput?: string) => {
       e?.preventDefault?.();
 
       // Unlock speech synthesis on first user gesture (browser autoplay policy)
@@ -633,7 +664,8 @@ export default function Terminal({
         return;
       }
 
-      const trimmedInput = inputValue.trim();
+      const submittedInput = overrideInput ?? inputValue;
+      const trimmedInput = submittedInput.trim();
 
       if (pendingEvidenceVideoPrompt) {
         if (!trimmedInput) {
@@ -701,7 +733,7 @@ export default function Terminal({
           : null;
       }
 
-      await baseHandleSubmit(e);
+      await baseHandleSubmit(e, overrideInput);
     },
     [
       activeEvidenceVideo,
@@ -784,6 +816,34 @@ export default function Terminal({
       turingOverlayTimeoutRef,
     },
   });
+
+  // Dev-only autoplay harness. Inert in production because `gameState.botTest`
+  // can only be set by the dev-gated `bot-test` command (see commands/debug.ts).
+  useBotRunner({
+    gameState,
+    isProcessing,
+    showTuringTest,
+    hasActiveOverlay: activeImage !== null || activeEvidenceVideo !== null,
+    hasEnterPrompt: pendingImage !== null || pendingUfo74StartMessages.length > 0,
+    hasVideoPrompt: pendingEvidenceVideoPrompt !== null,
+    hasBlockingPopup,
+    submit: useCallback((input: string) => { void handleSubmit(undefined, input); }, [handleSubmit]),
+    dismissActiveOverlay: useCallback(() => {
+      setActiveImage(null);
+      setActiveEvidenceVideo(null);
+    }, [setActiveImage, setActiveEvidenceVideo]),
+    appendOutput: useCallback(
+      (entries: TerminalEntry[]) =>
+        setGameState(prev => ({ ...prev, history: [...prev.history, ...entries] })),
+      [setGameState]
+    ),
+    clearBot: useCallback(
+      () => setGameState(prev => ({ ...prev, botTest: undefined })),
+      [setGameState]
+    ),
+  });
+
+
 
   useEffect(() => {
     const pendingCheck = pendingEvidenceVideoCheckRef.current;
@@ -1264,7 +1324,9 @@ export default function Terminal({
                 tabIndex={-1}
                 onMouseDown={e => e.preventDefault()}
                 onClick={() => {
-                  onSaveRequestAction(gameState);
+                  onSaveRequestAction(gameState, savedAt =>
+                    setGameState(prev => ({ ...prev, lastSaveTime: savedAt }))
+                  );
                   setShowHeaderMenu(false);
                   setTimeout(focusTerminalInput, 0);
                 }}
@@ -1406,6 +1468,7 @@ export default function Terminal({
           <>
             <form onSubmit={handleSubmit} className={styles.inputArea}>
             <span className={styles.prompt}>&gt;</span>
+            <span className={styles.inputWrapper}>
             <input
               ref={inputRef}
               type="text"
@@ -1424,42 +1487,74 @@ export default function Terminal({
                   const typedChar = newValue.charAt(newValue.length - 1);
                   playKeySound(typedChar === ' ' ? ' ' : typedChar);
 
-                  // Track typing speed
-                  const now = Date.now();
-                  keypressTimestamps.current.push(now);
-                  // Keep only last KEYPRESS_TRACK_SIZE keypresses
-                  if (keypressTimestamps.current.length > KEYPRESS_TRACK_SIZE) {
-                    keypressTimestamps.current.shift();
-                  }
+                  if (typingPatternWarningsEnabled) {
+                    // Track typing speed
+                    const now = Date.now();
+                    keypressTimestamps.current.push(now);
+                    // Keep only last KEYPRESS_TRACK_SIZE keypresses
+                    if (keypressTimestamps.current.length > KEYPRESS_TRACK_SIZE) {
+                      keypressTimestamps.current.shift();
+                    }
 
-                  // Check typing speed (if enough chars in short time = too fast)
-                  if (keypressTimestamps.current.length >= KEYPRESS_TRACK_SIZE - 2) {
-                    const oldest = keypressTimestamps.current[0];
-                    const timeSpan = (now - oldest) / 1000; // seconds
-                    const charsPerSecond = keypressTimestamps.current.length / timeSpan;
+                    // Check typing speed (if enough chars in short time = too fast)
+                    if (keypressTimestamps.current.length >= KEYPRESS_TRACK_SIZE - 2) {
+                      const oldest = keypressTimestamps.current[0];
+                      const timeSpan = (now - oldest) / 1000; // seconds
+                      const charsPerSecond = keypressTimestamps.current.length / timeSpan;
 
-                    if (charsPerSecond > SUSPICIOUS_TYPING_SPEED && !typingSpeedWarning) {
-                      setTypingSpeedWarning(true);
-                      playSound('warning');
-                      // Clear warning after timeout
-                      if (typingSpeedWarningTimeout.current) {
-                        clearTimeout(typingSpeedWarningTimeout.current);
+                      if (charsPerSecond > SUSPICIOUS_TYPING_SPEED && !typingSpeedWarning) {
+                        setTypingSpeedWarning(true);
+                        playSound('warning');
+                        // Clear warning after timeout
+                        if (typingSpeedWarningTimeout.current) {
+                          clearTimeout(typingSpeedWarningTimeout.current);
+                        }
+                        typingSpeedWarningTimeout.current = setTimeout(
+                          () => setTypingSpeedWarning(false),
+                          TYPING_WARNING_TIMEOUT_MS
+                        );
                       }
-                      typingSpeedWarningTimeout.current = setTimeout(
-                        () => setTypingSpeedWarning(false),
-                        TYPING_WARNING_TIMEOUT_MS
-                      );
                     }
                   }
                 }
               }}
-              onKeyDown={handleKeyDown}
+              onKeyDown={e => {
+                // Dev-only: any real keystroke halts the autoplay bot. The bot
+                // submits via handleSubmit(overrideInput) and never through this
+                // handler, so a keydown here is always the watching developer.
+                // Inert in production because botTest can't be active there.
+                if (
+                  gameState.botTest?.active &&
+                  !['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)
+                ) {
+                  setGameState(prev =>
+                    prev.botTest?.active
+                      ? {
+                          ...prev,
+                          botTest: undefined,
+                          history: [
+                            ...prev.history,
+                            createEntry('system', '  BOT-TEST halted (key pressed).'),
+                          ],
+                        }
+                      : prev
+                  );
+                }
+                handleKeyDown(e);
+              }}
               className={styles.inputField}
               disabled={isProcessing || gameState.isGameOver || hasBlockingPopup}
               autoFocus={!showIntroOverlay}
               autoComplete="off"
               spellCheck={false}
             />
+            {showGhost && (
+              <span className={styles.ghostOverlay} aria-hidden="true">
+                <span className={styles.ghostMirror}>{inputValue}</span>
+                <span className={styles.ghostText}>{ghostSuffix}</span>
+              </span>
+            )}
+            </span>
             <span className={styles.cursor}>_</span>
             {/* Typing speed warning - inline within input area to prevent overlap */}
             {typingSpeedWarning && (
@@ -1536,16 +1631,20 @@ export default function Terminal({
                 {t('videoOverlay.attachedTitle', { value: activeEvidenceVideo.videoTitle })}
               </div>
               {/* Video with CRT/terminal overlay */}
-              <div style={{ position: 'relative', width: '100%' }}>
+              <div style={{ position: 'relative', width: '100%', flex: '1 1 auto', minHeight: 0 }}>
                 <video
                   key={activeEvidenceVideo.videoSrc}
                   src={activeEvidenceVideo.videoSrc}
-                  controls
                   autoPlay
                   playsInline
+                  muted={masterVolume === 0}
+                  onLoadedMetadata={e => {
+                    e.currentTarget.volume = masterVolume;
+                  }}
                   style={{
                     width: '100%',
-                    maxHeight: '70vh',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
                     background: '#000',
                     filter: 'sepia(100%) saturate(300%) brightness(70%) hue-rotate(70deg)',
                   }}
@@ -1589,6 +1688,7 @@ export default function Terminal({
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   gap: '1rem',
+                  flexShrink: 0,
                   color: '#88cc44',
                   fontFamily: 'VT323, monospace',
                   fontSize: '1.1rem',
@@ -1657,13 +1757,16 @@ export default function Terminal({
               >
                 {t('videoOverlay.attachedTitle', { value: 'turing test.mp4' })}
               </div>
-              <div style={{ position: 'relative', width: '100%' }}>
+              <div style={{ position: 'relative', width: '100%', flex: '1 1 auto', minHeight: 0 }}>
                 <video
                   key={TURING_TEST_VIDEO_SRC}
                   src={TURING_TEST_VIDEO_SRC}
-                  controls
                   autoPlay
                   playsInline
+                  muted={masterVolume === 0}
+                  onLoadedMetadata={e => {
+                    e.currentTarget.volume = masterVolume;
+                  }}
                   onEnded={() => {
                     setActiveTuringVideo(false);
                     setShowTuringTest(true);
@@ -1671,7 +1774,8 @@ export default function Terminal({
                   }}
                   style={{
                     width: '100%',
-                    maxHeight: '70vh',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
                     background: '#000',
                     filter: 'sepia(100%) saturate(300%) brightness(70%) hue-rotate(70deg)',
                   }}
@@ -1712,6 +1816,7 @@ export default function Terminal({
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   gap: '1rem',
+                  flexShrink: 0,
                   color: '#88cc44',
                   fontFamily: 'VT323, monospace',
                   fontSize: '1.1rem',
@@ -1804,6 +1909,7 @@ export default function Terminal({
         {/* Turing Test overlay */}
         {showTuringTest && (
           <TuringTestOverlay
+            autoPilot={Boolean(gameState.botTest?.active)}
             onCorrectAnswer={() => playSound('success')}
             onComplete={passed => {
               setShowTuringTest(false);
@@ -1948,7 +2054,9 @@ export default function Terminal({
             }}
             onSaveAction={() => {
               setShowPauseMenu(false);
-              onSaveRequestAction(gameState);
+              onSaveRequestAction(gameState, savedAt =>
+                setGameState(prev => ({ ...prev, lastSaveTime: savedAt }))
+              );
               setTimeout(focusTerminalInput, 0);
             }}
             onLoadAction={() => {

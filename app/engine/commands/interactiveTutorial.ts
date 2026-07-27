@@ -10,6 +10,7 @@ import {
   InteractiveTutorialState,
 } from '../../types';
 import { createEntry, createEntryI18n, resolveCommandAlias } from './utils';
+import { MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
 import { listDirectory } from '../filesystem';
 import { DEFAULT_GAME_STATE } from '../../types';
 
@@ -33,7 +34,12 @@ export const INITIAL_TUTORIAL_STATE: InteractiveTutorialState = {
 // TUTORIAL DIALOGUE SCRIPTS
 // ═══════════════════════════════════════════════════════════════════════════
 
-type DialogueLine = { key: string; fallback: string };
+/**
+ * A scripted UFO74 line. `values` supplies interpolation for lines whose copy
+ * embeds a game constant, so the number the tutorial quotes cannot drift from
+ * the number the rules enforce.
+ */
+type DialogueLine = { key: string; fallback: string; values?: Record<string, string | number> };
 
 export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, (DialogueLine | null)[]>> = {
   [TutorialStateID.INTRO]: [
@@ -80,7 +86,7 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, (DialogueLine | 
     { key: 'engine.commands.interactiveTutorial.ufo74_use_save_filename', fallback: '[UFO74]: Use `save <filename>` after a file proves something.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_use_unsave_filename', fallback: "[UFO74]: Changed your mind? `unsave <filename>` removes it." },
     { key: 'engine.commands.interactiveTutorial.ufo74_check_progress', fallback: '[UFO74]: Check your progress with `progress`.' },
-    { key: 'engine.commands.interactiveTutorial.ufo74_once_you_have_them_leak_everything', fallback: '[UFO74]: Once your dossier has 10 files, type `leak`. no coming back.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_once_you_have_them_leak_everything', fallback: '[UFO74]: Once your dossier has {{max}} files, type `leak`. no coming back.', values: { max: MAX_EVIDENCE_COUNT } },
     null,
     { key: 'engine.commands.interactiveTutorial.ufo74_but_understand_the_risks', fallback: '[UFO74]: But understand the risks.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_every_action_you_take_they_might_notice', fallback: '[UFO74]: Every action you take... they might notice.' },
@@ -93,7 +99,7 @@ export const TUTORIAL_DIALOGUE: Partial<Record<TutorialStateID, (DialogueLine | 
     { key: 'engine.commands.interactiveTutorial.ufo74_some_actions_are_loud_others_are_quiet', fallback: '[UFO74]: Some actions are loud. Others are quiet.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_curiosity_has_a_cost_here', fallback: '[UFO74]: Curiosity has a cost here.' },
     null,
-    { key: 'engine.commands.interactiveTutorial.ufo74_type_help_if_you_forget', fallback: '[UFO74]: Type `help` if you forget something.' },
+    { key: 'engine.commands.interactiveTutorial.ufo74_type_help_if_you_forget', fallback: '[UFO74]: Type `help` or `hint` if you are lost and need help.' },
     null,
     { key: 'engine.commands.interactiveTutorial.ufo74_start_with_ls_kid', fallback: '[UFO74]: Start with `ls`, kid. just to check what directories we have here.' },
     { key: 'engine.commands.interactiveTutorial.ufo74_then_use_cd_to_open_folders', fallback: '[UFO74]: Then use `cd` to open the folders.' },
@@ -290,7 +296,7 @@ export function generateIntroDialogue(): TerminalEntry[] {
     if (line === null) {
       entries.push(createEntry('system', ''));
     } else {
-      entries.push(createEntryI18n('ufo74', line.key, line.fallback));
+      entries.push(createEntryI18n('ufo74', line.key, line.fallback, line.values));
     }
   }
 
@@ -312,9 +318,9 @@ export function generateStateDialogue(state: TutorialStateID): TerminalEntry[] {
     if (line === null) {
       entries.push(createEntry('system', ''));
     } else if (line.fallback.startsWith('[UFO74]')) {
-      entries.push(createEntryI18n('ufo74', line.key, line.fallback));
+      entries.push(createEntryI18n('ufo74', line.key, line.fallback, line.values));
     } else {
-      entries.push(createEntryI18n('system', line.key, line.fallback));
+      entries.push(createEntryI18n('system', line.key, line.fallback, line.values));
     }
   }
 
@@ -700,7 +706,8 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
     createEntryI18n(
       'ufo74',
       'engine.commands.interactiveTutorial.ufo74_once_you_have_them_leak_everything',
-      '[UFO74]: Once your dossier has 10 files, type `leak`. no coming back.'
+      '[UFO74]: Once your dossier has {{max}} files, type `leak`. no coming back.',
+      { max: MAX_EVIDENCE_COUNT }
     ),
     createEntry('system', ''),
   ],
@@ -761,7 +768,7 @@ export const TUTORIAL_BRIEFING_STEPS: TerminalEntry[][] = [
     createEntryI18n(
       'ufo74',
       'engine.commands.interactiveTutorial.ufo74_type_help_if_you_forget',
-      '[UFO74]: Type `help` if you forget something.'
+      '[UFO74]: Type `help` or `hint` if you are lost and need help.'
     ),
     createEntry('system', ''),
   ],

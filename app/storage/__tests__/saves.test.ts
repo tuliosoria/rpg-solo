@@ -51,6 +51,7 @@ describe('Save/Load System', () => {
     vi.resetModules();
     steamBridge = await import('../../lib/steamBridge');
     vi.mocked(steamBridge.isCloudAvailable).mockResolvedValue(false);
+    vi.mocked(steamBridge.cloudSave).mockResolvedValue({ success: true });
     vi.mocked(steamBridge.cloudLoad).mockResolvedValue({ success: false, data: null });
     vi.mocked(steamBridge.cloudList).mockResolvedValue({ success: true, files: [] });
 
@@ -133,12 +134,70 @@ describe('Save/Load System', () => {
       expect(loaded!.tutorialTipsShown.size).toBe(1);
     });
 
+    // The test above names its fields by hand, which makes it a record of what
+    // someone remembered rather than a guarantee. `Set` cannot survive
+    // `JSON.stringify` on its own, so every Set field needs an explicit
+    // Array.from on write and a `new Set` on read — in two separate lists, in
+    // two functions. Miss either half for a newly added field and it degrades to
+    // an empty object on save and an undefined on load: no error, no warning,
+    // just a player whose progress silently stops persisting.
+    //
+    // Deriving the field list from DEFAULT_GAME_STATE means a field added
+    // tomorrow is covered by this test today.
+    it('preserves every Set field declared on the default state', async () => {
+      const { saveGame, loadGame } = await import('../saves');
+
+      // DEFAULT_GAME_STATE omits the few fields that are always supplied per
+      // run (seed, rngState, sessionStartTime); none are Sets, so enumerating
+      // its own keys loses nothing here.
+      type DefaultStateKey = keyof typeof DEFAULT_GAME_STATE;
+      const setFields = (Object.keys(DEFAULT_GAME_STATE) as DefaultStateKey[]).filter(
+        key => DEFAULT_GAME_STATE[key] instanceof Set
+      );
+
+      // Guards against the enumeration silently finding nothing — if the state
+      // shape changed to hold these elsewhere, an empty list would make every
+      // assertion below vacuous.
+      expect(setFields.length).toBeGreaterThanOrEqual(10);
+
+      // A distinct marker per field proves values land back in the field they
+      // came from, not merely that something Set-shaped survived. Path-like so
+      // the file-path normalisation applied to some fields leaves it untouched.
+      const marker = (field: string) => `/internal/round_trip_${field}.txt`;
+
+      const populated = createTestState(
+        Object.fromEntries(
+          setFields.map(field => [field, new Set([marker(field)])])
+        ) as Partial<GameState>
+      );
+
+      const slot = saveGame(populated, 'Set round-trip');
+      const loaded = loadGame(slot!.id);
+      expect(loaded).not.toBeNull();
+
+      const dropped: string[] = [];
+      for (const field of setFields) {
+        const value = loaded![field];
+        if (!(value instanceof Set)) {
+          dropped.push(`${String(field)}: expected a Set, got ${typeof value}`);
+        } else if (!value.has(marker(String(field)))) {
+          dropped.push(`${String(field)}: lost its entry (has ${JSON.stringify([...value])})`);
+        }
+      }
+
+      expect(dropped).toEqual([]);
+    });
+
     it('preserves conspiracyFilesSeen and archiveFilesViewed through save/load cycle', async () => {
       const { saveGame, loadGame } = await import('../saves');
 
       const state = createTestState({
         conspiracyFilesSeen: new Set(['file_a.txt', 'file_b.txt']),
-        archiveFilesViewed: new Set(['/archive/doc1.txt', '/archive/doc2.txt', '/archive/doc3.txt']),
+        archiveFilesViewed: new Set([
+          '/archive/doc1.txt',
+          '/archive/doc2.txt',
+          '/archive/doc3.txt',
+        ]),
       });
 
       const slot = saveGame(state, 'Conspiracy Test');
@@ -236,6 +295,81 @@ describe('Save/Load System', () => {
       expect(loaded).not.toBeNull();
       expect(loaded!.currentPath).toBe('/storage/quarantine');
       expect(mockStore[payloadKey]).toBeUndefined();
+    });
+
+    it('keeps a newer local save when Steam Cloud has an older copy', async () => {
+      const { saveGame, loadGameAsync } = await import('../saves');
+      const cloudSlot = saveGame(
+        createTestState({
+          currentPath: '/internal',
+          detectionLevel: 12,
+        }),
+        'Older Cloud Save'
+      );
+      const cloudRaw = mockStore[`terminal1996:save:${cloudSlot!.id}`];
+
+      await new Promise(r => setTimeout(r, 5));
+
+      const localSlot = saveGame(
+        createTestState({
+          currentPath: '/storage/quarantine',
+          detectionLevel: 77,
+        }),
+        'Newer Local Save'
+      );
+      const localPayloadKey = `terminal1996:save:${localSlot!.id}`;
+      const localRaw = mockStore[localPayloadKey];
+
+      await new Promise(r => setTimeout(r, 0));
+      vi.clearAllMocks();
+      vi.mocked(steamBridge.isCloudAvailable).mockResolvedValue(true);
+      vi.mocked(steamBridge.cloudLoad).mockResolvedValue({ success: true, data: cloudRaw });
+      vi.mocked(steamBridge.cloudSave).mockResolvedValue({ success: true });
+
+      const loaded = await loadGameAsync(localSlot!.id);
+      await new Promise(r => setTimeout(r, 0));
+
+      expect(loaded).not.toBeNull();
+      expect(loaded!.currentPath).toBe('/storage/quarantine');
+      expect(loaded!.detectionLevel).toBe(77);
+      expect(mockStore[localPayloadKey]).toBe(localRaw);
+      expect(steamBridge.cloudSave).toHaveBeenCalledWith(localSlot!.id, localRaw);
+    });
+
+    it('loads and caches a newer Steam Cloud save over an older local copy', async () => {
+      const { saveGame, loadGameAsync } = await import('../saves');
+      const localSlot = saveGame(
+        createTestState({
+          currentPath: '/internal',
+          detectionLevel: 21,
+        }),
+        'Older Local Save'
+      );
+      const localPayloadKey = `terminal1996:save:${localSlot!.id}`;
+
+      await new Promise(r => setTimeout(r, 5));
+
+      const cloudSlot = saveGame(
+        createTestState({
+          currentPath: '/ops/prato',
+          detectionLevel: 64,
+        }),
+        'Newer Cloud Save'
+      );
+      const cloudRaw = mockStore[`terminal1996:save:${cloudSlot!.id}`];
+
+      await new Promise(r => setTimeout(r, 0));
+      vi.clearAllMocks();
+      vi.mocked(steamBridge.isCloudAvailable).mockResolvedValue(true);
+      vi.mocked(steamBridge.cloudLoad).mockResolvedValue({ success: true, data: cloudRaw });
+
+      const loaded = await loadGameAsync(localSlot!.id);
+
+      expect(loaded).not.toBeNull();
+      expect(loaded!.currentPath).toBe('/ops/prato');
+      expect(loaded!.detectionLevel).toBe(64);
+      expect(mockStore[localPayloadKey]).toBe(cloudRaw);
+      expect(steamBridge.cloudSave).not.toHaveBeenCalled();
     });
 
     it('persists metadata for a recovered cloud-only save after loading it', async () => {
@@ -432,6 +566,41 @@ describe('Save/Load System', () => {
       expect(newGame.sessionStartTime).toBeGreaterThanOrEqual(before);
       expect(newGame.sessionStartTime).toBeLessThanOrEqual(after);
     });
+
+    it('keeps the /aftermath epilogue sealed on a first playthrough', async () => {
+      const { createNewGame } = await import('../saves');
+
+      const newGame = createNewGame();
+
+      expect(newGame.epilogueUnlocked).toBe(false);
+      expect(newGame.flags.epilogueUnlocked).toBeUndefined();
+    });
+
+    it('unlocks the /aftermath epilogue once a run has been completed', async () => {
+      const { recordEnding } = await import('../statistics');
+      const { createNewGame } = await import('../saves');
+
+      recordEnding('good', 120, 42);
+      const newGame = createNewGame();
+
+      // /aftermath holds post-leak documents, so they only make sense on a
+      // replay after the player has actually seen an ending.
+      expect(newGame.epilogueUnlocked).toBe(true);
+      expect(newGame.flags.epilogueUnlocked).toBe(true);
+    });
+
+    it('exposes the epilogue directory to the filesystem once unlocked', async () => {
+      const { recordEnding } = await import('../statistics');
+      const { createNewGame } = await import('../saves');
+      const { listDirectory } = await import('../../engine/filesystem');
+
+      const firstRun = createNewGame();
+      expect(listDirectory('/', firstRun)?.some(e => e.name === 'aftermath/')).toBe(false);
+
+      recordEnding('good', 120, 42);
+      const replay = createNewGame();
+      expect(listDirectory('/', replay)?.some(e => e.name === 'aftermath/')).toBe(true);
+    });
   });
 
   describe('deleteSave', () => {
@@ -510,6 +679,56 @@ describe('Save/Load System', () => {
 
       const loaded = loadAutoSave();
       expect(loaded!.lastSaveTime).toBeGreaterThanOrEqual(before);
+    });
+
+    it('keeps a newer local autosave when Steam Cloud has an older copy', async () => {
+      const { autoSave, loadAutoSaveAsync } = await import('../saves');
+      autoSave(createTestState({ currentPath: '/internal', detectionLevel: 14 }));
+      const cloudRaw = mockStore['terminal1996:autosave'];
+
+      await new Promise(r => setTimeout(r, 5));
+
+      autoSave(createTestState({ currentPath: '/admin', detectionLevel: 48 }));
+      const localRaw = mockStore['terminal1996:autosave'];
+
+      await new Promise(r => setTimeout(r, 0));
+      vi.clearAllMocks();
+      vi.mocked(steamBridge.isCloudAvailable).mockResolvedValue(true);
+      vi.mocked(steamBridge.cloudLoad).mockResolvedValue({ success: true, data: cloudRaw });
+      vi.mocked(steamBridge.cloudSave).mockResolvedValue({ success: true });
+
+      const loaded = await loadAutoSaveAsync();
+
+      expect(loaded).not.toBeNull();
+      expect(loaded!.currentPath).toBe('/admin');
+      expect(loaded!.detectionLevel).toBe(48);
+      expect(mockStore['terminal1996:autosave']).toBe(localRaw);
+      expect(steamBridge.cloudSave).toHaveBeenCalledWith('autosave', localRaw);
+    });
+
+    it('loads and caches a newer Steam Cloud autosave', async () => {
+      const { autoSave, loadAutoSaveAsync } = await import('../saves');
+      autoSave(createTestState({ currentPath: '/internal', detectionLevel: 14 }));
+      const localRaw = mockStore['terminal1996:autosave'];
+
+      await new Promise(r => setTimeout(r, 5));
+
+      autoSave(createTestState({ currentPath: '/comms', detectionLevel: 82 }));
+      const cloudRaw = mockStore['terminal1996:autosave'];
+      mockStore['terminal1996:autosave'] = localRaw;
+
+      await new Promise(r => setTimeout(r, 0));
+      vi.clearAllMocks();
+      vi.mocked(steamBridge.isCloudAvailable).mockResolvedValue(true);
+      vi.mocked(steamBridge.cloudLoad).mockResolvedValue({ success: true, data: cloudRaw });
+
+      const loaded = await loadAutoSaveAsync();
+
+      expect(loaded).not.toBeNull();
+      expect(loaded!.currentPath).toBe('/comms');
+      expect(loaded!.detectionLevel).toBe(82);
+      expect(mockStore['terminal1996:autosave']).toBe(cloudRaw);
+      expect(steamBridge.cloudSave).not.toHaveBeenCalled();
     });
   });
 

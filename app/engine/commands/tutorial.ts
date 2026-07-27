@@ -2,6 +2,7 @@
 
 import { TerminalEntry } from '../../types';
 import { createEntry, createEntryI18n } from './utils';
+import { MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
 
 type TutorialMessageLine = {
   kind: 'system' | 'ufo74';
@@ -358,7 +359,8 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.collect_10_evidence_files_to_expose_5_truths',
-      '  Save 10 files that best strengthen your case:'
+      '  Save {{max}} files that best strengthen your case:',
+      { max: MAX_EVIDENCE_COUNT }
     ),
     createEntry('system', ''),
     createEntryI18n(
@@ -410,7 +412,8 @@ export function getHelpEvidence(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.reach_10_of_10_evidence',
-      '  • Reach 10/10 saved files'
+      '  • Reach {{max}}/{{max}} saved files',
+      { max: MAX_EVIDENCE_COUNT }
     ),
     createEntryI18n(
       'output',
@@ -432,7 +435,8 @@ export function getHelpWinning(): TerminalEntry[] {
     createEntryI18n(
       'output',
       'engine.commands.tutorial.collect_10_evidence_files_to_expose_5_truths',
-      '  Save 10 files that best strengthen your case:'
+      '  Save {{max}} files that best strengthen your case:',
+      { max: MAX_EVIDENCE_COUNT }
     ),
     createEntry('system', ''),
     createEntryI18n(

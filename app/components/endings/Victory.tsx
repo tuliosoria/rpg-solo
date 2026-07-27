@@ -13,6 +13,9 @@ import {
 } from '../../engine/endings';
 import type { EndingFlags } from '../../engine/endings';
 import { buildLeakPrologue } from '../../engine/leakPrologue';
+import { resolveGovernmentScandalAolBody } from '../../engine/governmentScandalCopy';
+import { resolveAolBodyWithRevelations } from '../../engine/alienRevelationCopy';
+import { useEndingMusic } from './useEndingMusic';
 import type { TextSpeed } from '../../types';
 
 const AOL_TIMINGS: Record<
@@ -96,27 +99,9 @@ export default function Victory({
   const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null);
   const hasRecordedEnding = useRef(false);
   const restartButtonRef = useRef<HTMLButtonElement>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // ── Ending music ──
-  useEffect(() => {
-    try {
-      const audio = new Audio('/audio/music/ending-game.mp3');
-      audio.loop = true;
-      audio.volume = 0.5;
-      audioRef.current = audio;
-      void audio.play().catch(() => {});
-    } catch {
-      // Audio not available
-    }
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = '';
-        audioRef.current = null;
-      }
-    };
-  }, []);
+  // ── Ending music (honours the player's music + volume settings) ──
+  useEndingMusic('/audio/music/ending-game.mp3', { baseVolume: 0.5 });
 
   const resolvedEndingId: EndingId = endingId && endingId in ENDINGS
     ? endingId
@@ -153,9 +138,18 @@ export default function Victory({
       imageAlt: t('ending.aol.fallback.imageAlt'),
       visitorCount: 0,
     };
-    if (leakPrologue.length === 0) return baseAol;
-    return { ...baseAol, body: [...leakPrologue, ...baseAol.body] };
-  }, [ending, leakPrologue, t]);
+    const scandalResolvedBody =
+      resolvedEndingId === 'government_scandal'
+        ? resolveGovernmentScandalAolBody(baseAol.body, savedFiles)
+        : baseAol.body;
+    const resolvedBody = resolveAolBodyWithRevelations(
+      resolvedEndingId,
+      scandalResolvedBody,
+      savedFiles,
+    );
+    if (leakPrologue.length === 0) return { ...baseAol, body: resolvedBody };
+    return { ...baseAol, body: [...leakPrologue, ...resolvedBody] };
+  }, [ending, leakPrologue, t, resolvedEndingId, savedFiles]);
   const timings = AOL_TIMINGS[textSpeed] ?? AOL_TIMINGS.normal;
   const leakPath = hasLeakedFiles ? 'public' : ENDING_LEAK_PATHS[resolvedEndingId];
   const leakPathLabel = t(`ending.dossier.path.${leakPath}`);

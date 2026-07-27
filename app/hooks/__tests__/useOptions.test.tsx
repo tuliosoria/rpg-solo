@@ -62,6 +62,12 @@ describe('useOptions', () => {
 
       expect(result.current.options.textSpeed).toBe('normal');
     });
+
+    it('has typing pattern warnings enabled by default', () => {
+      const { result } = renderHook(() => useOptions());
+
+      expect(result.current.options.typingPatternWarningsEnabled).toBe(true);
+    });
   });
 
   describe('localStorage Persistence', () => {
@@ -115,6 +121,7 @@ describe('useOptions', () => {
       expect(result.current.options.flickerIntensity).toBe('medium');
       expect(result.current.options.fontSize).toBe('medium');
       expect(result.current.options.textSpeed).toBe('normal');
+      expect(result.current.options.typingPatternWarningsEnabled).toBe(true);
     });
   });
 
@@ -177,6 +184,18 @@ describe('useOptions', () => {
       });
 
       expect(result.current.options.textSpeed).toBe('fast');
+    });
+
+    it('setOption updates typingPatternWarningsEnabled', async () => {
+      const { result } = renderHook(() => useOptions());
+
+      await vi.waitFor(() => expect(result.current.isLoaded).toBe(true));
+
+      act(() => {
+        result.current.setOption('typingPatternWarningsEnabled', false);
+      });
+
+      expect(result.current.options.typingPatternWarningsEnabled).toBe(false);
     });
 
     it('resetOptions restores all defaults', async () => {

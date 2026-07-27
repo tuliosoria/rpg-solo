@@ -46,7 +46,10 @@ test.describe('Dossier Leak Flow', () => {
     }
 
     await runCommand(page, 'progress');
-    await waitForAllContent(page, ['Files saved: 5/10', '5 more file(s) needed before leak.']);
+    await waitForAllContent(page, [
+      'Files saved: 5/10',
+      'LEAK PREP AVAILABLE — run "leak" to open the 3-step channel.',
+    ]);
 
     await runCommand(page, 'leak');
     await waitForAllContent(page, ['LEAK CHANNEL ENCRYPTED']);

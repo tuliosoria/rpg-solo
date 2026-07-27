@@ -52,4 +52,25 @@ describe('systemCommands save/unsave localization', () => {
       '  ◎ ARQUIVO REMOVIDO DO DOSSIÊ: report.txt'
     );
   });
+
+  it('adds UFO74 dossier-stakes feedback when the fifth file is saved', () => {
+    const savedFiles = new Set([
+      '/ops/incident_report_1996_01_VG.txt',
+      '/ops/initial_response_orders.txt',
+      '/storage/autopsy_alpha.log',
+      '/storage/witness_statement_raw.txt',
+    ]);
+    const filePath = '/storage/bio_container.log';
+
+    const result = systemCommands.save(
+      ['bio_container.log'],
+      createTestState({
+        filesRead: new Set([filePath]),
+        savedFiles,
+      })
+    );
+
+    expect(result.pendingUfo74Messages?.some(entry => entry.content.includes('five saved'))).toBe(true);
+    expect(result.pendingUfo74Messages?.some(entry => entry.content.includes('not enough to make them believe you'))).toBe(true);
+  });
 });

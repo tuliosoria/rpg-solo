@@ -5,7 +5,7 @@ import { DEFAULT_GAME_STATE, GameState } from '../../types';
 import { I18nProvider } from '../../i18n';
 
 vi.mock('next/image', () => ({
-  default: (p: Record<string, unknown>) => {
+  default: ({ priority: _priority, ...p }: Record<string, unknown>) => {
     // eslint-disable-next-line @next/next/no-img-element
     return <img {...(p as React.ImgHTMLAttributes<HTMLImageElement>)} />;
   },
@@ -28,6 +28,11 @@ vi.mock('../../storage/statistics', () => ({
 }));
 vi.mock('../../engine/achievements', () => ({
   unlockAchievement: vi.fn(() => null),
+  syncUnlockedAchievementsToSteam: vi.fn(async () => ({
+    attempted: 0,
+    failed: 0,
+    skipped: true,
+  })),
   getAchievements: vi.fn(() => []),
   Achievement: {},
 }));

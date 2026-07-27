@@ -1,6 +1,7 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { listenOnStablePort } = require('./stable-port');
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
@@ -8,6 +9,10 @@ function devLog(...args) {
   if (isDev) {
     console.log(...args);
   }
+}
+
+function shouldOpenDevTools() {
+  return isDev && (process.env.VARGINHA_DEVTOOLS === '1' || process.argv.includes('--devtools'));
 }
 
 // ============================================================
@@ -69,6 +74,22 @@ function logStartupTime(phase) {
   devLog(`[Startup] ${phase}: ${Date.now() - startupTime}ms`);
 }
 
+function getGeneratedSteamAppId() {
+  try {
+    const generatedSteamAppId = require('./steam-app-id.generated');
+    const appId =
+      typeof generatedSteamAppId === 'string'
+        ? generatedSteamAppId
+        : generatedSteamAppId?.steamAppId;
+    return typeof appId === 'string' ? appId.trim() : null;
+  } catch (error) {
+    if (error?.code !== 'MODULE_NOT_FOUND') {
+      console.error('Failed to load generated Steam App ID:', error.message);
+    }
+    return null;
+  }
+}
+
 function getSteamAppId() {
   const configuredAppId = process.env.STEAM_APP_ID?.trim();
   if (configuredAppId) {
@@ -77,6 +98,11 @@ function getSteamAppId() {
 
   if (isDev) {
     return '480';
+  }
+
+  const generatedAppId = getGeneratedSteamAppId();
+  if (generatedAppId) {
+    return generatedAppId;
   }
 
   return null;
@@ -88,6 +114,32 @@ function sendToRenderer(channel, payload) {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send(channel, payload);
   }
+}
+
+function safeGetAppPath(name) {
+  try {
+    return app.getPath(name);
+  } catch {
+    return null;
+  }
+}
+
+function getSupportInfo() {
+  return {
+    version: app.getVersion(),
+    platform: process.platform,
+    isPackaged: app.isPackaged,
+    steam: {
+      appIdConfigured: Boolean(STEAM_APP_ID),
+      initialized: steamInitialized,
+      ready: steamReady,
+    },
+    paths: {
+      userData: safeGetAppPath('userData'),
+      logs: safeGetAppPath('logs'),
+      crashDumps: safeGetAppPath('crashDumps'),
+    },
+  };
 }
 
 // Mark app as not quitting (for tray minimize)
@@ -349,7 +401,7 @@ function initializeSteam() {
   
   try {
     if (!STEAM_APP_ID) {
-      devLog('STEAM_APP_ID not configured; Steam integration disabled for this build');
+      devLog('Steam App ID not configured; Steam integration disabled for this build');
       loadSteamModules();
       markSteamReady();
       logStartupTime('Steam skipped (no app id)');
@@ -486,8 +538,13 @@ function createWindow() {
   if (isDev) {
     // Development: load from Next.js dev server
     mainWindow.loadURL('http://localhost:3000');
+  }
+
+  if (shouldOpenDevTools()) {
     mainWindow.webContents.openDevTools();
-  } else {
+  }
+
+  if (!isDev) {
     // Production: load from local server
     const http = require('http');
     const outDir = path.join(__dirname, '../out');
@@ -564,12 +621,25 @@ function createWindow() {
       });
     });
 
-    localServer.listen(0, '127.0.0.1', () => {
-      const port = localServer.address().port;
-      mainWindow.loadURL(`http://127.0.0.1:${port}`);
-    });
+    // A FIXED port is load-bearing, not a preference: Chromium keys Web Storage
+    // by (scheme, host, port), so the ephemeral port this used to bind gave the
+    // renderer a fresh, empty localStorage on every launch — silently discarding
+    // saves, settings, statistics, and achievements.
+    listenOnStablePort(localServer)
+      .then(port => {
+        devLog(`Local server listening on 127.0.0.1:${port}`);
+        mainWindow.loadURL(`http://127.0.0.1:${port}`);
+      })
+      .catch(error => {
+        console.error('[Startup] Local server failed to bind:', error.message);
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          dialog.showErrorBox(
+            'Unable to start',
+            `${error.message}\n\nVarginha: Terminal 1996 could not start its local content server.`
+          );
+        }
+      });
   }
-
   return mainWindow;
 }
 
@@ -578,6 +648,7 @@ function createWindow() {
 // ============================================================
 
 ipcMain.handle('app:getVersion', () => app.getVersion());
+ipcMain.handle('app:getSupportInfo', () => getSupportInfo());
 
 ipcMain.handle('app:checkForUpdates', async () => {
   if (isDev) {
@@ -963,6 +1034,8 @@ setupCrashReporter();
 
 // Set up auto-updater after app is ready (deferred)
 app.whenReady().then(() => {
+  console.log('[Support] Local diagnostics:', getSupportInfo());
+
   // Defer auto-updater setup to not block startup
   setImmediate(() => {
     setupAutoUpdater();

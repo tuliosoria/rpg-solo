@@ -6,9 +6,8 @@ import { DETECTION_THRESHOLDS, MAX_DETECTION } from '../../constants/detection';
 import { shouldSuppressPenalties } from '../../constants/atmosphere';
 import { createEntry, createEntryI18n, createInvalidCommandResult } from './utils';
 import { applyDetectionVariance } from './helpers';
-import { saveCheckpoint } from '../../storage/saves';
-import { translateStatic } from '../../i18n';
 import type { CommandRegistry } from './types';
+import { OVERRIDE_PASSWORD } from '../overrideSecret';
 
 export const combatCommands: CommandRegistry = {
   trace: (args, state) => {
@@ -190,15 +189,10 @@ export const combatCommands: CommandRegistry = {
     }
 
     const password = passwordArgs.join(' ').toUpperCase();
-    const correctPassword = 'COLHEITA';
+    const correctPassword = OVERRIDE_PASSWORD;
 
     // Track failed attempts
     const failedAttempts = state.overrideFailedAttempts || 0;
-
-    // Checkpoint before high-risk override protocol attempt (only if first real attempt)
-    if (failedAttempts === 0) {
-      saveCheckpoint(state, translateStatic('checkpoint.reason.beforeOverrideProtocol'));
-    }
 
     // Wrong password
     if (password !== correctPassword) {
@@ -370,7 +364,7 @@ export const combatCommands: CommandRegistry = {
             overrideGateActive: false,
           },
           accessLevel: 5,
-          detectionLevel: MAX_DETECTION,
+          detectionLevel: MAX_DETECTION - 5,
           systemHostilityLevel: 5,
           rngState: seededRandomInt(rng, 0, 2147483647),
           avatarExpression: 'angry', // Terrible mistake - angry expression
@@ -385,7 +379,7 @@ export const combatCommands: CommandRegistry = {
       flags: { ...state.flags, adminUnlocked: true, overrideGateActive: false },
       overrideFailedAttempts: 0,
       accessLevel: 5,
-      detectionLevel: state.detectionLevel + 15, // was 25, reduced for pacing
+      detectionLevel: Math.min(MAX_DETECTION, state.detectionLevel + 15), // was 25, reduced for pacing
       sessionStability: state.sessionStability - 15,
       systemHostilityLevel: Math.min((state.systemHostilityLevel || 0) + 1, 5),
       rngState: seededRandomInt(rng, 0, 2147483647),

@@ -38,12 +38,16 @@ export default memo(function SettingsModal({
   useFocusTrap(modalRef);
   const [crtEnabled, setCrtEnabled] = useState(DEFAULT_OPTIONS.crtEffectsEnabled);
   const [textSpeed, setTextSpeed] = useState<TextSpeed>(DEFAULT_OPTIONS.textSpeed);
+  const [typingWarningsEnabled, setTypingWarningsEnabled] = useState(
+    DEFAULT_OPTIONS.typingPatternWarningsEnabled
+  );
 
-  // Load CRT preference on mount
+  // Load shared options on mount
   useEffect(() => {
     const storedOptions = readStoredOptions();
     setCrtEnabled(storedOptions.crtEffectsEnabled);
     setTextSpeed(storedOptions.textSpeed);
+    setTypingWarningsEnabled(storedOptions.typingPatternWarningsEnabled);
     applyOptionsToDocument(storedOptions);
   }, []);
 
@@ -78,6 +82,7 @@ export default memo(function SettingsModal({
     const defaults = { ...DEFAULT_OPTIONS };
     setCrtEnabled(defaults.crtEffectsEnabled);
     setTextSpeed(defaults.textSpeed);
+    setTypingWarningsEnabled(defaults.typingPatternWarningsEnabled);
     persistOptions(defaults);
     applyOptionsToDocument(defaults);
     onResetDefaults();
@@ -91,6 +96,17 @@ export default memo(function SettingsModal({
     const nextOptions = {
       ...readStoredOptions(),
       textSpeed: nextSpeed,
+    };
+    persistOptions(nextOptions);
+    applyOptionsToDocument(nextOptions);
+  };
+
+  const toggleTypingWarnings = () => {
+    const newValue = !typingWarningsEnabled;
+    setTypingWarningsEnabled(newValue);
+    const nextOptions = {
+      ...readStoredOptions(),
+      typingPatternWarningsEnabled: newValue,
     };
     persistOptions(nextOptions);
     applyOptionsToDocument(nextOptions);
@@ -186,6 +202,21 @@ export default memo(function SettingsModal({
                     : t('options.value.normal')}
             </button>
             <span className={styles.hint}>{t('settings.textSpeedHint')}</span>
+          </div>
+
+          <div className={styles.setting}>
+            <label className={styles.label}>{t('settings.typingWarnings')}</label>
+            <button
+              className={`${styles.toggle} ${typingWarningsEnabled ? styles.toggleOn : styles.toggleOff}`}
+              tabIndex={0}
+              onMouseDown={e => e.preventDefault()}
+              onClick={toggleTypingWarnings}
+            >
+              {typingWarningsEnabled
+                ? `[ ${t('options.value.on')} ]`
+                : `[ ${t('options.value.off')} ]`}
+            </button>
+            <span className={styles.hint}>{t('settings.typingWarningsHint')}</span>
           </div>
 
           {/* Language Select */}

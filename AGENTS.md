@@ -40,7 +40,9 @@ Other useful commands: `npm run test:coverage`, `npm run lint:fix`, `npm run for
 | **Hooks** | `app/hooks/` | Custom React hooks |
 | **Versioning / build metadata** | `next.config.ts`, `app/components/terminalConstants.ts` | See "Versioning" below |
 | **Story validation scripts** | `scripts/` | `validate-story.js`, `validate-enhanced-story.js`, `story_validator.js` |
+| **Browser / E2E testing** | `e2e-tests/`, `testing` skill | `npm run e2e` (committed Playwright suite); optional Playwright MCP for live, agent-driven browser checks — see `.github/skills/testing/SKILL.md` |
 | **Desktop packaging** | `electron/` | Electron is for distribution; dev happens in browser |
+| **Steam release / SteamPipe** | `docs/STEAM_RELEASE.md` | `scripts/steamPipe.mjs`, `scripts/steam-local-deploy.mjs`, `.github/workflows/steam-release.yml` |
 
 ---
 
@@ -140,10 +142,10 @@ The game is set during the **real Varginha UFO incident** (January 1996, Minas G
 |---|---|
 | Add a game file | Add FileNode/content in `app/data/virtualFileSystem.ts` or the relevant `app/data/*.ts` module |
 | Adjust difficulty | Edit `app/constants/detection.ts` |
-| Add a command | Add handler in `app/engine/commands.ts` |
+| Add a command | Add handler in the appropriate `app/engine/commands/*.ts` module (assembled by `app/engine/commands/index.ts`) |
 | Change starting state | Edit `DEFAULT_GAME_STATE` in `app/types/index.ts` |
 | Add UFO74 dialogue | See `app/engine/commands/` subdirectory |
-| Understand version string | Read `app/components/terminalConstants.ts` (lines 144–149) |
+| Understand version string | Read `app/components/terminalConstants.ts` |
 
 ---
 
@@ -155,7 +157,8 @@ Skills live in `.github/skills/`. Read the relevant `SKILL.md` before working in
 |---|---|
 | `game-design` | Modifying mechanics, detection, player psychology |
 | `game-content` | Writing in-world files, UFO74 dialogue, terminal messages |
-| `testing` | Writing or fixing tests |
+| `i18n` | Touching player-facing strings, locale JSON, runtime translation supplements, or command aliases |
+| `testing` | Writing or fixing tests; running the e2e suite or optional live-browser (Playwright MCP) checks |
 | `version-bump` | Understanding or adjusting git-derived version/build display behavior |
 
 ---

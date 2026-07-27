@@ -47,11 +47,18 @@ export default function TutorialSkipPopup({
   }, [handleKeyDown]);
 
   return (
-    <div className={styles.overlay} role="dialog" aria-modal="true">
+    <div
+      className={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tutorial-skip-header"
+    >
       <div className={styles.popup}>
         <div className={styles.scanlines} />
 
-        <div className={styles.header}>{t('tutorialSkip.header')}</div>
+        <div className={styles.header} id="tutorial-skip-header">
+          {t('tutorialSkip.header')}
+        </div>
 
         <div className={styles.body}>
           <p>

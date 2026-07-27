@@ -1,9 +1,7 @@
 // Evidence commands: leak
 
 import { createEntry, createEntryI18n } from './utils';
-import { saveCheckpoint } from '../../storage/saves';
 import { MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
-import { translateStatic } from '../../i18n';
 import { createSeededRng, seededShuffle } from '../rng';
 import type { CommandRegistry } from './types';
 import type { GameState, CommandResult } from '../../types';
@@ -22,6 +20,16 @@ const LEAK_SEQUENCE_POOL = [
 ];
 
 const EVIDENCE_THRESHOLD_FOR_SEQUENCE = 5;
+
+/**
+ * Normalize a leak step so the preparation sequence is forgiving about the
+ * things players get wrong by accident (capitalisation, doubled spaces) while
+ * still requiring the correct step in the correct order. Mistyping the actual
+ * words remains a mismatch.
+ */
+function normalizeLeakStep(value: string): string {
+  return value.trim().replace(/\s+/g, ' ').toLowerCase();
+}
 
 function generateLeakSequence(state: GameState): string[] {
   // Guard: migrated saves may lack `seed` — derive a stable fallback so the RNG is deterministic.
@@ -42,7 +50,7 @@ function formatSequenceDisplay(sequence: string[], progress: number): string[] {
 }
 
 function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
-  const subcommand = args.join(' ');
+  const subcommand = normalizeLeakStep(args.join(' '));
   if (!state.leakSequence) {
     return {
       output: [createEntryI18n('error', 'engine.commands.evidence.leak_sequence_not_initialized', 'Leak sequence not initialized.')],
@@ -75,7 +83,7 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
 
   const expected = sequence[progress];
 
-  if (subcommand === expected) {
+  if (subcommand === normalizeLeakStep(expected)) {
     const newProgress = progress + 1;
 
     if (newProgress >= 3) {
@@ -119,6 +127,33 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
       stateChanges: {
         leakSequenceProgress: newProgress,
       },
+    };
+  }
+
+  // Not a protocol step at all (typo, stray word, "leak now"). The stated rule is
+  // that *wrong order* resets the sequence — an unrecognized token is not an
+  // ordering mistake, so re-state the protocol instead of punishing the player.
+  const isKnownStep = sequence.some((step) => normalizeLeakStep(step) === subcommand);
+  if (!isKnownStep) {
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntryI18n(
+          'warning',
+          'engine.commands.evidence.unrecognized_protocol_step',
+          '  ⚠ UNRECOGNIZED PROTOCOL STEP — nothing transmitted'
+        ),
+        createEntryI18n(
+          'system',
+          'engine.commands.evidence.next_leak_step',
+          '  Next: leak {{command}}',
+          { command: expected }
+        ),
+        createEntry('system', ''),
+        ...formatSequenceDisplay(sequence, progress).map((line) => createEntry('system' as const, line)),
+        createEntry('system', ''),
+      ],
+      stateChanges: {},
     };
   }
 
@@ -177,7 +212,8 @@ export const evidenceCommands: CommandRegistry = {
           createEntryI18n(
             'system',
             'engine.commands.evidence.save_at_least_five_files_to_begin',
-            '  Save at least five files to begin'
+            '  Save {{needed}} more to begin',
+            { needed: EVIDENCE_THRESHOLD_FOR_SEQUENCE - savedCount }
           ),
           createEntryI18n(
             'system',
@@ -223,8 +259,6 @@ export const evidenceCommands: CommandRegistry = {
 
     // Sequence complete AND all 10 files saved: execute leak
     if (progress >= 3 && savedCount >= MAX_EVIDENCE_COUNT) {
-      saveCheckpoint(state, translateStatic('checkpoint.reason.beforeLeakTransmission'));
-
       return {
         output: [
           createEntry('system', ''),
@@ -268,7 +302,7 @@ export const evidenceCommands: CommandRegistry = {
             '  Files saved: {{savedCount}}/{{maxCount}}',
             { savedCount, maxCount: MAX_EVIDENCE_COUNT }
           ),
-          createEntryI18n('system', 'engine.commands.evidence.save_all_ten_then_leak', '  Save all 10 files, then run "leak" again.'),
+          createEntryI18n('system', 'engine.commands.evidence.save_all_ten_then_leak', '  Save all {{max}} files, then run "leak" again.', { max: MAX_EVIDENCE_COUNT }),
           createEntry('system', ''),
           createEntryI18n('ufo74', 'engine.commands.evidence.ufo74_channel_prepped', '[UFO74]: channel is prepped. just need the rest of the files.'),
           createEntry('system', ''),
@@ -286,6 +320,8 @@ export const evidenceCommands: CommandRegistry = {
           createEntry('system', ''),
           createEntryI18n('system', 'engine.commands.evidence.leak_channel_requires_preparation', '  The leak channel requires a 3-command preparation'),
           createEntryI18n('system', 'engine.commands.evidence.sequence_before_opened', '  sequence before it can be opened.'),
+          createEntryI18n('system', 'engine.commands.evidence.channel_carries_saved_story', '  It will carry exactly what you saved — not what you meant to prove.'),
+          createEntryI18n('system', 'engine.commands.evidence.review_progress_before_final', '  Review "progress" before final transmission if the story feels wrong.'),
           createEntry('system', ''),
           createEntryI18n('system', 'engine.commands.evidence.run_commands_in_order', '  Run the following commands IN ORDER:'),
           createEntry('system', ''),

@@ -1,6 +1,6 @@
 // System commands: help, status, clear, hint, tutorial, save, unsave
 
-import { GameState, CommandResult } from '../../types';
+import { GameState, CommandResult, DEFAULT_GAME_STATE } from '../../types';
 import { createEntry, createEntryI18n, createOutputEntries } from './utils';
 import {
   checkVictory,
@@ -8,9 +8,10 @@ import {
   getWarmupAdjustedDetection,
   hasReadPsiMaterial,
 } from './helpers';
-import { DETECTION_THRESHOLDS } from '../../constants/detection';
+import { DETECTION_THRESHOLDS, DETECTION_DECREASES } from '../../constants/detection';
+import { MAX_EVIDENCE_COUNT, LEAK_PREPARATION_THRESHOLD } from '../evidenceRevelation';
 
-import { generateHintOutput } from '../hintSystem';
+import { generateHintOutput, HINT_CONFIG } from '../hintSystem';
 import type { CommandRegistry } from './types';
 import { translateStatic } from '../../i18n';
 import { getHelpBasics } from './tutorial';
@@ -101,10 +102,15 @@ const COMMAND_HELP: Record<string, string[]> = {
   progress: [
     'COMMAND: progress',
     '',
-    'Review the files saved to your dossier.',
+    'Review discovered evidence, saved dossier files, and leak readiness.',
     '',
     'USAGE:',
-    '  progress       - Show your saved files and dossier status',
+    '  progress       - Show the next safest objective',
+    '',
+    'FLOW:',
+    '  open files to discover evidence',
+    '  save strong read files to the dossier',
+    '  leak once the dossier and channel are ready',
   ],
   clear: [
     'COMMAND: clear',
@@ -126,6 +132,7 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  save report.txt    - Save report.txt to dossier',
     '',
     'NOTE: Your dossier can hold up to 10 files. Choose carefully.',
+    'TIP: Run "progress" to see whether to keep reading, save, or leak.',
   ],
   unsave: [
     'COMMAND: unsave <filename>',
@@ -227,7 +234,9 @@ const COMMAND_HELP: Record<string, string[]> = {
     'USAGE:',
     '  leak            - Initiate dossier leak',
     '',
-    'REQUIREMENT: Save 10 files that make your strongest case first.',
+    'REQUIREMENT: Save at least 5 files to start leak preparation.',
+    'REQUIREMENT: Save 10 files and complete preparation to transmit.',
+    'TIP: Run "progress" if you are unsure what is missing.',
     '',
     'WARNING: Once you leak, there is no coming back.',
   ],
@@ -240,7 +249,8 @@ const COMMAND_HELP: Record<string, string[]> = {
     '  hint              - Receive a contextual hint',
     '',
     'NOTES:',
-    '  - Hints are LIMITED (8 per run)',
+    `  - Hints are LIMITED (${HINT_CONFIG.maxHints} per run)`,
+    `  - Each hint costs ${HINT_CONFIG.detectionPenalty}% detection`,
     '  - Hints react to your progress, risk, and missing leads',
     '  - Cannot reveal specific file names or answers',
     '',
@@ -252,10 +262,11 @@ const COMMAND_HELP: Record<string, string[]> = {
     'Wait and let attention drift elsewhere.',
     '',
     'USAGE:',
-    '  wait           - Reduce detection by ~10%',
+    `  wait           - Reduce detection by ${DETECTION_DECREASES.WAIT_NORMAL}%`,
     '',
-    'Limited uses per session (3).',
-    'Strategic use can help avoid detection.',
+    `Above ${DETECTION_THRESHOLDS.HIGH_WAIT_REDUCTION}% risk it removes ${DETECTION_DECREASES.WAIT_HIGH_DETECTION}% instead.`,
+    `Limited to ${DEFAULT_GAME_STATE.waitUsesRemaining} uses per run, with a short cooldown between them.`,
+    'Each use also makes the system a little more hostile.',
   ],
   hide: ['COMMAND: hide', 'USAGE:', '  hide           - Emergency escape at 90% risk'],
   link: [
@@ -356,7 +367,7 @@ const COMMAND_HELP: Record<string, string[]> = {
 export const systemCommands: CommandRegistry = {
   help: (args, state) => {
     // Late-game tension: show a warning but still allow help
-    const lateGameWarning = state.savedFiles.size >= 5
+    const lateGameWarning = state.savedFiles.size >= LEAK_PREPARATION_THRESHOLD
       ? [
           createEntry('warning', ''),
           createEntryI18n('warning', 'engine.commands.elevated_security_protocol_warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
@@ -570,7 +581,7 @@ export const systemCommands: CommandRegistry = {
       })
     );
 
-    if (savedCount >= 10) {
+    if (savedCount >= MAX_EVIDENCE_COUNT) {
       lines.push(
         tSystem(
           'status.objective.complete',
@@ -793,8 +804,9 @@ export const systemCommands: CommandRegistry = {
           createEntry('system', ''),
           createEntry(
             'system',
-            tSystem('save.dossierCountDetailed', '  Dossier: {{count}}/10 files saved', {
+            tSystem('save.dossierCountDetailed', '  Dossier: {{count}}/{{max}} files saved', {
               count: state.savedFiles?.size || 0,
+              max: MAX_EVIDENCE_COUNT,
             })
           ),
           createEntry('system', ''),
@@ -854,11 +866,16 @@ export const systemCommands: CommandRegistry = {
     }
 
     // Check if dossier is full
-    if (state.savedFiles.size >= 10) {
+    if (state.savedFiles.size >= MAX_EVIDENCE_COUNT) {
       return {
         output: [
           createEntry('warning', ''),
-          createEntry('warning', tSystem('save.fullTitle', '  DOSSIER FULL — 10/10 FILES SAVED')),
+          createEntry(
+            'warning',
+            tSystem('save.fullTitle', '  DOSSIER FULL — {{max}}/{{max}} FILES SAVED', {
+              max: MAX_EVIDENCE_COUNT,
+            })
+          ),
           createEntry(
             'warning',
             tSystem('save.fullBody', '  Use "unsave <filename>" to make room.')
@@ -883,7 +900,10 @@ export const systemCommands: CommandRegistry = {
       ),
       createEntry(
         'system',
-        tSystem('save.dossierCount', '  Dossier: {{count}}/10', { count: newSavedFiles.size })
+        tSystem('save.dossierCount', '  Dossier: {{count}}/{{max}}', {
+          count: newSavedFiles.size,
+          max: MAX_EVIDENCE_COUNT,
+        })
       ),
       createEntry('system', ''),
     ];
@@ -900,14 +920,34 @@ export const systemCommands: CommandRegistry = {
       soundTrigger: 'evidence',
     };
 
-    // After 10th save, add UFO74 message
-    if (newSavedFiles.size === 10) {
+    // Let UFO74 reinforce dossier stakes at major commitment points.
+    if (newSavedFiles.size === LEAK_PREPARATION_THRESHOLD && !state.leakSequenceGenerated) {
+      result.pendingUfo74Messages = [
+        createEntry(
+          'ufo74',
+          tSystem(
+            'save.fiveSaved',
+            'UFO74: five saved. enough to open the channel. not enough to make them believe you.'
+          )
+        ),
+      ];
+    } else if (newSavedFiles.size === 8) {
+      result.pendingUfo74Messages = [
+        createEntry(
+          'ufo74',
+          tSystem(
+            'save.eightSaved',
+            'UFO74: eight files. the dossier has a shape now. if it says the wrong thing, the world repeats it.'
+          )
+        ),
+      ];
+    } else if (newSavedFiles.size === 10) {
       result.pendingUfo74Messages = [
         createEntry(
           'ufo74',
           tSystem(
             'save.readyToLeak',
-            'UFO74: kid. you have ten. review the dossier, then leak when ready. no coming back.'
+            'UFO74: ten files. review progress before leak. the leak tells the story you saved, not the one you meant.'
           )
         ),
       ];
@@ -964,7 +1004,10 @@ export const systemCommands: CommandRegistry = {
         ),
         createEntry(
           'system',
-          tSystem('save.dossierCount', '  Dossier: {{count}}/10', { count: newSavedFiles.size })
+          tSystem('save.dossierCount', '  Dossier: {{count}}/{{max}}', {
+          count: newSavedFiles.size,
+          max: MAX_EVIDENCE_COUNT,
+        })
         ),
         createEntry('system', ''),
       ],

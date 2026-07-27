@@ -1,13 +1,28 @@
 import { describe, it, expect } from 'vitest';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import {
-  type EndingFlags,
+  ENDINGS,
   type EndingId,
+  analyzeDossier,
   determineEnding,
-  determineEndingVariant,
   getEndingFlags,
+  getEndingNarrativeLines,
   getEndingTitle,
 } from '../endings';
-import { GameState, DEFAULT_GAME_STATE } from '../../types';
+import { GameState, DEFAULT_GAME_STATE, type FileSystemNode } from '../../types';
+import { FILESYSTEM_ROOT } from '../../data/virtualFileSystem';
+
+function collectFilePaths(node: FileSystemNode, current = '', out: string[] = []): string[] {
+  if (node.type === 'file') {
+    out.push(current);
+    return out;
+  }
+  for (const [name, child] of Object.entries(node.children)) {
+    collectFilePaths(child, current ? `${current}/${name}` : `/${name}`, out);
+  }
+  return out;
+}
 
 function createTestState(overrides: Partial<GameState> = {}): GameState {
   return {
@@ -20,10 +35,12 @@ function dossier(...fileNames: string[]): Set<string> {
   return new Set(fileNames.map(fileName => `/archive/${fileName}`));
 }
 
+const ALL_ENDING_IDS = Object.keys(ENDINGS) as EndingId[];
+
 const REPRESENTATIVE_DOSSIERS: Record<EndingId, Set<string>> = {
   ridiculed: dossier(
     'witness_statement_raw.txt',
-    'witness_statement_original.txt',
+    'witness_subjects_file.txt',
     'witness_visit_log.txt'
   ),
   ufo74_exposed: dossier('ghost_in_machine.enc', 'audio_transcript_brief.txt'),
@@ -74,6 +91,24 @@ const REPRESENTATIVE_DOSSIERS: Record<EndingId, Set<string>> = {
 
 describe('Endings', () => {
   describe('determineEnding', () => {
+    it('builds every representative dossier from files that exist in the game', () => {
+      // The `ridiculed` fixture once relied on `witness_statement_original.txt`,
+      // a file that had been removed with the archive/rewind mechanic. The test
+      // kept passing while the ending was only reachable through a phantom
+      // filename, so assert the fixtures use real, openable content.
+      const realBasenames = new Set(
+        collectFilePaths(FILESYSTEM_ROOT).map(path => path.split('/').pop()!)
+      );
+      const phantom = Object.entries(REPRESENTATIVE_DOSSIERS).flatMap(([endingId, files]) =>
+        [...files]
+          .map(path => path.split('/').pop()!)
+          .filter(name => !realBasenames.has(name))
+          .map(name => `${endingId} -> ${name}`)
+      );
+
+      expect(phantom).toEqual([]);
+    });
+
     Object.entries(REPRESENTATIVE_DOSSIERS).forEach(([endingId, savedFiles]) => {
       it(`reaches ${endingId}`, () => {
         expect(determineEnding(savedFiles)).toBe(endingId);
@@ -81,81 +116,45 @@ describe('Endings', () => {
     });
   });
 
-  describe('determineEndingVariant', () => {
-    const combinations: Array<{ flags: EndingFlags; expected: EndingId }> = [
-      {
-        flags: {
-          conspiracyFilesLeaked: false,
-          alphaReleased: false,
-          neuralLinkAuthenticated: false,
-        },
-        expected: 'incomplete_picture',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: true,
-          alphaReleased: false,
-          neuralLinkAuthenticated: false,
-        },
-        expected: 'government_scandal',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: false,
-          alphaReleased: true,
-          neuralLinkAuthenticated: false,
-        },
-        expected: 'prisoner_45_freed',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: true,
-          alphaReleased: true,
-          neuralLinkAuthenticated: false,
-        },
-        expected: 'real_ending',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: false,
-          alphaReleased: false,
-          neuralLinkAuthenticated: true,
-        },
-        expected: 'ridiculed',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: true,
-          alphaReleased: false,
-          neuralLinkAuthenticated: true,
-        },
-        expected: 'government_scandal',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: false,
-          alphaReleased: true,
-          neuralLinkAuthenticated: true,
-        },
-        expected: 'prisoner_45_freed',
-      },
-      {
-        flags: {
-          conspiracyFilesLeaked: true,
-          alphaReleased: true,
-          neuralLinkAuthenticated: true,
-        },
-        expected: 'real_ending',
-      },
-    ];
-
-    combinations.forEach(({ flags, expected }) => {
-      it(
-        `maps flags (${String(flags.conspiracyFilesLeaked)}, ${String(flags.alphaReleased)}, ${String(flags.neuralLinkAuthenticated)}) to ${expected}`,
-        () => {
-          expect(determineEndingVariant(flags)).toBe(expected);
-        }
+  describe('getEndingNarrativeLines (government_scandal smoking-gun)', () => {
+    it('uses the smoking-gun intro when a contact file is in the dossier', () => {
+      const lines = getEndingNarrativeLines(
+        'government_scandal',
+        dossier('jardim_andere_incident.txt', 'transport_log_96.txt')
       );
+      expect(lines.some(l => l.includes('the first page of what it was hiding'))).toBe(true);
+      expect(lines.some(l => l.includes('The leak does not prove alien contact'))).toBe(false);
+    });
+
+    it('keeps the mundane intro for a pure-logistics dossier', () => {
+      const lines = getEndingNarrativeLines(
+        'government_scandal',
+        dossier('transport_log_96.txt', 'duty_roster_jan96.txt')
+      );
+      expect(lines.some(l => l.includes('The leak does not prove alien contact'))).toBe(true);
+    });
+
+    it('is backward compatible when savedFiles is omitted', () => {
+      const lines = getEndingNarrativeLines('government_scandal');
+      expect(lines.some(l => l.includes('The leak does not prove alien contact'))).toBe(true);
+    });
+  });
+
+  describe('analyzeDossier', () => {
+    it('surfaces spoiler-light dossier threads without exposing trap categories', () => {
+      const analysis = analyzeDossier(
+        dossier(
+          'incident_report_1996_01_VG.txt',
+          'autopsy_alpha.log',
+          'URGENT_classified_alpha.txt',
+          'SMOKING_GUN_proof.txt'
+        )
+      );
+
+      expect(analysis.counts.honeypotTrap).toBe(2);
+      expect(analysis.visibleThreads).toContain('military');
+      expect(analysis.visibleThreads).toContain('medical');
+      expect(analysis.visibleThreads.map(String)).not.toContain('honeypot');
     });
   });
 
@@ -193,6 +192,51 @@ describe('Endings', () => {
         expect(title).toBeTruthy();
         expect(typeof title).toBe('string');
       });
+    });
+  });
+
+  describe('ending content polish', () => {
+    it('has complete presentation copy for every dossier ending', () => {
+      expect(ALL_ENDING_IDS).toHaveLength(12);
+
+      for (const endingId of ALL_ENDING_IDS) {
+        const ending = ENDINGS[endingId];
+        const copy = [
+          ending.title,
+          ending.subtitle,
+          ...ending.narrative,
+          ending.ufo74_final,
+          ending.aol.headline,
+          ending.aol.subheadline,
+          ...ending.aol.body,
+          ending.aol.url,
+          ending.aol.imageAlt,
+        ].join('\n');
+
+        expect(ending.title, `${endingId} title`).toMatch(/\S/);
+        expect(ending.subtitle, `${endingId} subtitle`).toMatch(/\S/);
+        expect(ending.narrative.length, `${endingId} narrative`).toBeGreaterThanOrEqual(3);
+        expect(ending.ufo74_final, `${endingId} UFO74 final line`).toMatch(/\S/);
+        expect(ending.aol.headline, `${endingId} AOL headline`).toMatch(/\S/);
+        expect(ending.aol.subheadline, `${endingId} AOL subheadline`).toMatch(/\S/);
+        expect(ending.aol.body.length, `${endingId} AOL body`).toBeGreaterThanOrEqual(3);
+        expect(ending.aol.url, `${endingId} AOL URL`).toMatch(/^http:\/\/www\.aol\.com\/news\//);
+        expect(ending.aol.imageAlt, `${endingId} image alt`).toMatch(/\S/);
+        expect(ending.aol.visitorCount, `${endingId} visitor count`).toBeGreaterThan(0);
+        expect(copy, `${endingId} placeholder copy`).not.toMatch(/TODO|PLACEHOLDER|ENDING NOT FOUND/i);
+      }
+    });
+
+    it('points every ending image at an existing public asset', () => {
+      for (const endingId of ALL_ENDING_IDS) {
+        const imageSrc = ENDINGS[endingId].aol.imageSrc;
+
+        expect(imageSrc, `${endingId} image source`).toMatch(/^\/images\/endings\/.+\.jpg$/);
+        expect(
+          existsSync(join(process.cwd(), 'public', imageSrc?.replace(/^\//, '') ?? '')),
+          `${endingId} image asset is missing: ${imageSrc}`,
+        ).toBe(true);
+      }
     });
   });
 });

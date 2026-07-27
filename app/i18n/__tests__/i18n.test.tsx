@@ -2,6 +2,15 @@ import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { I18nProvider, translateStatic, useI18n } from '../index';
+import { RUNTIME_TRANSLATIONS } from '../runtime';
+import {
+  emergency_broadcast,
+  neural_dump_alfa,
+  second_deployment_intercept,
+  transcript_core,
+  transcript_limit,
+  encrypted_diplomatic_cable,
+} from '../../data/virtualFileSystem';
 import en from '../../locales/en.json';
 import ptBr from '../../locales/pt-br.json';
 import es from '../../locales/es.json';
@@ -130,6 +139,59 @@ describe('i18n system', () => {
     const enKeys = Object.keys(en).sort();
     expect(Object.keys(ptBr).sort()).toEqual(enKeys);
     expect(Object.keys(es).sort()).toEqual(enKeys);
+  });
+
+  it('localizes encrypted-file placeholder content (guards against translation drift)', () => {
+    // These encrypted files show placeholder `content` before decryption. Their
+    // prose must be registered for runtime translation; command lines stay verbatim.
+    const isNonTranslatable = (line: string) =>
+      line.trim() === '' ||
+      /^[\s]*[═─▓█]+[\s]*$/.test(line) ||
+      /^\s*Use:\s+open\s/.test(line);
+
+    const files = [emergency_broadcast, neural_dump_alfa, second_deployment_intercept];
+    for (const file of files) {
+      const prose = file.content.filter(line => !isNonTranslatable(line));
+      expect(prose.length).toBeGreaterThan(0);
+      for (const line of prose) {
+        for (const lang of ['pt-BR', 'es'] as const) {
+          const translated = RUNTIME_TRANSLATIONS[lang][line];
+          expect(
+            translated !== undefined && translated !== line,
+            `${file.name}: line not localized for ${lang}: "${line}"`
+          ).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('localizes decrypted evidence documents (guards against fragment translation drift)', () => {
+    // Decrypted fragments are the evidence players actually read. Every prose line
+    // must resolve to a real PT/ES translation (not fall back to the English key).
+    const isSeparator = (line: string) =>
+      line.trim() === '' || /^[\s]*[═─▓█]+[\s]*$/.test(line);
+
+    const files = [
+      neural_dump_alfa,
+      transcript_core,
+      transcript_limit,
+      encrypted_diplomatic_cable,
+      second_deployment_intercept,
+      emergency_broadcast,
+    ];
+    for (const file of files) {
+      const lines = (file.decryptedFragment ?? []).filter(line => !isSeparator(line));
+      expect(lines.length).toBeGreaterThan(0);
+      for (const line of lines) {
+        for (const lang of ['pt-BR', 'es'] as const) {
+          const translated = RUNTIME_TRANSLATIONS[lang][line];
+          expect(
+            translated !== undefined && translated !== line,
+            `${file.name}: fragment line not localized for ${lang}: "${line}"`
+          ).toBe(true);
+        }
+      }
+    }
   });
 
   it('translates tutorial guidance and command-hint lines for pt-BR', async () => {
