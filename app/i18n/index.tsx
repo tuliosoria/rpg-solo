@@ -38,8 +38,24 @@ function isInlineRuntimeTag(value: string): value is InlineRuntimeTag {
   return Object.prototype.hasOwnProperty.call(INLINE_RUNTIME_TAG_KEYS, value);
 }
 
+/**
+ * Presents UFO74's speaker label in one form, whichever way the line reached us.
+ *
+ * The locale files carry both: 112 strings written `[UFO74]:` and 201 written
+ * `UFO74:`. Rather than rewrite hundreds of strings in three languages, the
+ * label is normalized here, at the single point every line passes through on
+ * its way to the screen.
+ *
+ * Anchored at the start so the only thing it can touch is a speaker prefix.
+ * Lines that merely mention UFO74 — the `[UFO74 has disconnected]` status, the
+ * fixed-width `│ >> UFO74 << URGENT │` banner, in-fiction prose — are left
+ * exactly as written, which matters because at least one of them is a
+ * box-drawn row whose width is load-bearing.
+ */
 function normalizeRuntimePresentation(text: string): string {
-  return text.replace(/^\[UFO74\]:\s*/, 'UFO74: ');
+  // Idempotent: an already-labelled line must not become [[UFO74]].
+  if (/^\[UFO74\]:/.test(text)) return text;
+  return text.replace(/^UFO74:[ \t]*/, '[UFO74]: ');
 }
 
 function normalizeLanguage(value: string | null | undefined): Language {

@@ -76,7 +76,7 @@ describe('i18n system', () => {
       result.current.translateRuntimeText(
         'UFO74: that journal. the scientist lost his mind. but he was right about everything.'
       )
-    ).toBe('UFO74: ese diario. el científico perdió la cabeza. pero tenía razón en todo.');
+    ).toBe('[UFO74]: ese diario. el científico perdió la cabeza. pero tenía razón en todo.');
   });
 
   it('translates runtime dynamic patterns', async () => {
@@ -202,13 +202,13 @@ describe('i18n system', () => {
     });
 
     expect(result.current.translateRuntimeText('UFO74: new here? type "help basics".')).toBe(
-      'UFO74: é novo por aqui? digite "ajuda basics".'
+      '[UFO74]: é novo por aqui? digite "ajuda basics".'
     );
     expect(
       result.current.translateRuntimeText(
         '[UFO74]: Close idea, wrong system. Try: ls'
       )
-    ).toBe('UFO74: Ideia certa, sistema errado. Tente: ls');
+    ).toBe('[UFO74]: Ideia certa, sistema errado. Tente: ls');
     expect(
       result.current.translateRuntimeText('ls              List files in current directory')
     ).toBe('ls              Lista arquivos no diretório atual');
@@ -216,7 +216,7 @@ describe('i18n system', () => {
       result.current.translateRuntimeText(
         '[UFO74]: Be careful, do not type wrong commands on the terminal. In doubt, type help.'
       )
-    ).toBe('UFO74: Cuidado, não digite comandos errados no terminal. Na dúvida, digite ajuda.');
+    ).toBe('[UFO74]: Cuidado, não digite comandos errados no terminal. Na dúvida, digite ajuda.');
   });
 
   it('translates progress, search, and recovery help detail lines for pt-BR', async () => {
@@ -273,14 +273,14 @@ describe('i18n system', () => {
     });
 
     expect(result.current.translateRuntimeText('[UFO74]: Connection established.')).toBe(
-      'UFO74: Conexión establecida.'
+      '[UFO74]: Conexión establecida.'
     );
     expect(
       result.current.translateRuntimeText(
         '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
       )
     ).toBe(
-      'UFO74: Escribe comandos incorrectos 8 veces y la ventana se cierra. Para siempre. Así que concéntrate, kid!'
+      '[UFO74]: Escribe comandos incorrectos 8 veces y la ventana se cierra. Para siempre. Así que concéntrate, kid!'
     );
     expect(
       result.current.translateRuntimeText(
@@ -304,7 +304,7 @@ describe('i18n system', () => {
         'engine.commands.core.ufo74_press_esc_to_exit_or_type_save_first_if_you_want_to_ke'
       )
     ).toBe(
-      'UFO74: presiona [ESC] para salir. usa el menú de pausa si quieres guardar tu progreso primero.'
+      '[UFO74]: presiona [ESC] para salir. usa el menú de pausa si quieres guardar tu progreso primero.'
     );
   });
 
