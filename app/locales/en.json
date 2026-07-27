@@ -1621,7 +1621,7 @@
   "engine.commands.system.lockdownHelp.blocked": "  All other commands are BLOCKED until lockdown is lifted.",
   "engine.commands.system.helpMenu.title": "TERMINAL COMMANDS",
   "engine.commands.system.helpMenu.help": "  help [cmd]        Display help (or help for specific command)",
-  "engine.commands.system.helpMenu.basics": "  help basics      Starter guide for first-time players",
+  "engine.commands.system.helpMenu.basics": "  help basics       Starter guide for first-time players",
   "engine.commands.system.helpMenu.progress": "  progress          Review saved dossier and session recap",
   "engine.commands.system.helpMenu.status": "  status            Display system status",
   "engine.commands.system.helpMenu.ls": "  ls                List directory contents",
