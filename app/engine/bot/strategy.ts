@@ -7,6 +7,12 @@ import { BotDecision, BotLevel, BotMemory, DEFAULT_BOT_MAX_TURNS } from './types
 
 const MAX_SAVED = 10;
 
+// The designed override-password hint file (a riddle whose answer is COLHEITA),
+// accessible before admin is unlocked. A real "attentive player" deduces the
+// password from it, so the bot reads this file first rather than knowing the
+// password up front — reading it stands in for that deduction.
+const PASSWORD_HINT_FILE = '/internal/override_protocol_memo.txt';
+
 // Per-level engagement policy.
 //  - dummy:  a clueless player. Never unlocks admin, so only the handful of
 //            pre-admin evidence files are reachable; it cannot reach the 10
@@ -92,9 +98,16 @@ export function decideNextCommand(
 
   // Unlock admin once, EARLY (detection still ~0, no evidence counted) so the
   // clean unlock branch runs rather than the "terrible mistake" doom branch.
-  if (policy.unlocksAdmin && !state.flags?.adminUnlocked && !m.overrideAttempted) {
-    m.overrideAttempted = true;
-    return decide(`override protocol ${OVERRIDE_PASSWORD}`);
+  // A real player has to first find the password, so the bot reads the override
+  // hint memo before attempting the override instead of knowing it up front.
+  if (policy.unlocksAdmin && !state.flags?.adminUnlocked) {
+    if (!state.filesRead.has(PASSWORD_HINT_FILE)) {
+      return decide(`open ${PASSWORD_HINT_FILE}`);
+    }
+    if (!m.overrideAttempted) {
+      m.overrideAttempted = true;
+      return decide(`override protocol ${OVERRIDE_PASSWORD}`);
+    }
   }
 
   const accessible = getAllAccessibleFiles(state);
@@ -108,6 +121,13 @@ export function decideNextCommand(
     return decide(`save ${basename(readNotSaved[0])}`);
   }
 
+  // Enough saved to finish: drive the leak sequence BEFORE opening any more
+  // files. Once the dossier is full, extra reads only raise detection (and risk
+  // honeypots/turing checks) without helping — so leak immediately.
+  if (savedCount >= Math.min(policy.saveTarget, MAX_SAVED)) {
+    return driveLeak(state, decide);
+  }
+
   // Read a wanted file we have not read yet (highest priority first) so the bot
   // only ever opens files it intends to save — keeping runs short and detection
   // low without relying on the rate-limited `wait` command.
@@ -118,11 +138,6 @@ export function decideNextCommand(
     if (unread.length > 0) {
       return decide(`open ${unread[0]}`);
     }
-  }
-
-  // Enough saved to finish: drive the leak sequence to the winning transmit.
-  if (savedCount >= Math.min(policy.saveTarget, MAX_SAVED)) {
-    return driveLeak(state, decide);
   }
 
   // Nothing productive left and not enough to win — stop gracefully.

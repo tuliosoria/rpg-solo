@@ -42,4 +42,4 @@ export function createBotMemory(): BotMemory {
 }
 
 export const DEFAULT_BOT_MAX_TURNS = 400;
-export const DEFAULT_BOT_DELAY_MS = 900;
+export const DEFAULT_BOT_DELAY_MS = 3000;
