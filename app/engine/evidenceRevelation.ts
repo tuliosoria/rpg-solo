@@ -60,7 +60,25 @@ const VERY_DISTURBING_PATTERNS: RegExp[] = [
   /feel(?:ing)?\s+(?:its|their)\s+thoughts/i,
 ];
 
+/**
+ * Files the dossier holds, and the number `leak` requires to transmit.
+ *
+ * Read by both the `save` cap and the win check. Those two must agree: if the
+ * cap were lower than the win requirement the dossier could never be completed
+ * and the game would be quietly unwinnable, with no error to explain why `leak`
+ * kept refusing.
+ *
+ * Note that player-facing copy spells this number out ("10/10", "Save 10
+ * files") across every locale, so changing it means changing that copy too.
+ * `dossier-capacity.test.ts` fails loudly if the two drift apart.
+ */
 export const MAX_EVIDENCE_COUNT = 10;
+
+/**
+ * Saved files that unlock the leak preparation sequence — the point where the
+ * endgame becomes visible to the player, well before the dossier is full.
+ */
+export const LEAK_PREPARATION_THRESHOLD = 5;
 
 function getStaticNode(path: string): FileSystemNode | null {
   const segments = path.split('/').filter(Boolean);

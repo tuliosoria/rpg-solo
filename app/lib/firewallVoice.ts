@@ -4,6 +4,7 @@
  */
 
 import { translateStatic } from '../i18n';
+import { readStoredOptions } from '../hooks/useOptions';
 
 // Creepy voice phrases for firewall eyes
 export const FIREWALL_PHRASES = [
@@ -37,6 +38,22 @@ let firewallAudioElements: HTMLAudioElement[] = [];
 let audioUnlocked = false;
 let lastAudioIndex = -1;
 
+/**
+ * Playback level for firewall audio, honouring the player's audio settings.
+ *
+ * Returns `null` when the taunt should stay silent — either sound effects are
+ * switched off or the master volume is at zero. These taunts are jump-scare
+ * loud, so ignoring a mute is not a cosmetic bug: a player who deliberately
+ * silenced the game still gets shouted at.
+ */
+function resolveFirewallVolume(): number | null {
+  const { soundEffectsEnabled, masterVolume } = readStoredOptions();
+  if (!soundEffectsEnabled) return null;
+
+  const level = Math.max(0, Math.min(1, masterVolume / 100));
+  return level > 0 ? level : null;
+}
+
 function ensureVoiceElements(): HTMLAudioElement[] {
   if (typeof window === 'undefined') return [];
   if (firewallAudioElements.length === 0) {
@@ -62,23 +79,27 @@ export function unlockSpeechSynthesis(): void {
   if (audioUnlocked || typeof window === 'undefined') return;
   const first = ensureVoiceElements()[0];
   if (!first) return;
+  // The unlock play is silent by design; leave the element muted afterwards so
+  // a stale 1.0 can never leak into a later taunt. Playback volume is resolved
+  // per taunt from the player's settings instead.
   first.volume = 0;
   void first
     .play()
     .then(() => {
       first.pause();
       first.currentTime = 0;
-      first.volume = 1.0;
       audioUnlocked = true;
     })
-    .catch(() => {
-      first.volume = 1.0;
-    });
+    .catch(() => {});
 }
 
 /** Play a random firewall audio file (never same twice in a row) */
 export function speakCustomFirewallVoice(_phrase: string): void {
   if (typeof window === 'undefined' || !firewallAudioElements.length) return;
+
+  const volume = resolveFirewallVolume();
+  if (volume === null) return;
+
   try {
     let idx: number;
     do {
@@ -88,7 +109,7 @@ export function speakCustomFirewallVoice(_phrase: string): void {
 
     const audio = firewallAudioElements[idx];
     audio.currentTime = 0;
-    audio.volume = 1.0;
+    audio.volume = volume;
     audio.play().catch(() => {});
   } catch {
     // Audio failed — glow + UFO74 reaction still fire from the caller

@@ -117,7 +117,7 @@ const FILES_WITH_VIDEOS = new Set<string>([
   '/storage/assets/transport_log_96.txt',
   '/ops/mib/recantation_forms/recantation_001.txt',
   '/ops/prato/operation_prato_original.txt',
-  '/internal/protocols/sanitized/visitor_briefing.txt',
+  '/internal/sanitized/visitor_briefing.txt',
   '/internal/witness_farm_recording.txt',
 ]);
 

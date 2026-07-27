@@ -2,6 +2,7 @@
 // Context-aware UFO74 hints that evaluate full game state before speaking.
 
 import { DETECTION_THRESHOLDS } from '../constants/detection';
+import { MAX_EVIDENCE_COUNT } from './evidenceRevelation';
 import { GameState, TerminalEntry } from '../types';
 import { createEntry, createEntryI18n } from './commands/utils';
 
@@ -54,9 +55,9 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
   const waitUsesRemaining = state.waitUsesRemaining || 0;
   const adminUnlocked = state.flags?.adminUnlocked === true || state.accessLevel >= 3;
 
-  // ─── Priority 1: Leak ready — 10+ files saved ───
+  // ─── Priority 1: Leak ready — full dossier saved ───
   // The only valid message at this point is the leak prompt.
-  if (!state.gameWon && savedCount >= 10) {
+  if (!state.gameWon && savedCount >= MAX_EVIDENCE_COUNT) {
     return {
       primary: {
         key: 'engine.hints.leak.ready',
@@ -105,6 +106,20 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
       followUp: {
         key: 'engine.hints.action.morse',
         fallback: '       the intercept is waiting for a "morse" response, not another file read.',
+      },
+    };
+  }
+
+  // ─── Admin unlocked, streber trail found, but the sealed identity file is still unread ───
+  if (adminUnlocked && state.flags?.streberSigFound === true && !state.ufo74SecretDiscovered) {
+    return {
+      primary: {
+        key: 'engine.hints.ghostMachine.sealed',
+        fallback: 'UFO74: you have the run of the place now. there is a file i sealed myself.',
+      },
+      followUp: {
+        key: 'engine.hints.ghostMachine.open',
+        fallback: '       /internal/ghost_in_machine.enc. open it. you earned it.',
       },
     };
   }

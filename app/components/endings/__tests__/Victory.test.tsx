@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import type { ImgHTMLAttributes } from 'react';
 import Victory from '../Victory';
+import { ENDINGS, type EndingId } from '../../../engine/endings';
 
 vi.mock('next/image', () => ({
   default: ({ alt, src, ...props }: ImgHTMLAttributes<HTMLImageElement>) => (
@@ -24,6 +25,7 @@ import { recordEnding } from '../../../storage/statistics';
 import { unlockAchievement } from '../../../engine/achievements';
 
 describe('Victory Component', () => {
+  const endingIds = Object.keys(ENDINGS) as EndingId[];
   const defaultProps = {
     onRestartAction: vi.fn(),
     commandCount: 100,
@@ -216,6 +218,46 @@ describe('Victory Component', () => {
     expect(screen.getByText('Public broadcast')).toBeInTheDocument();
   });
 
+  it('shows the smoking-gun purpose line when a contact file is leaked', () => {
+    render(
+      <Victory
+        {...defaultProps}
+        endingId="government_scandal"
+        textSpeed="instant"
+        savedFiles={new Set(['/internal/jardim_andere_incident.txt'])}
+      />
+    );
+
+    advanceToComplete('instant');
+
+    expect(
+      screen.getByText(/two of the leaked files name the operation/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/purpose of the operation is not specified/i)
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps the mundane purpose line for a pure-logistics leak', () => {
+    render(
+      <Victory
+        {...defaultProps}
+        endingId="government_scandal"
+        textSpeed="instant"
+        savedFiles={new Set(['/storage/assets/transport_log_96.txt'])}
+      />
+    );
+
+    advanceToComplete('instant');
+
+    expect(
+      screen.getByText(/purpose of the operation is not specified/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/two of the leaked files name the operation/i)
+    ).not.toBeInTheDocument();
+  });
+
   it('supports instant text speed for the ending flow', () => {
     render(<Victory {...defaultProps} textSpeed="instant" totalReadableFiles={20} />);
 
@@ -238,6 +280,18 @@ describe('Victory Component', () => {
     render(<Victory {...defaultProps} endingId="ridiculed" textSpeed="instant" />);
 
     expect(screen.getByText(/INTERNET HOAX ALERT/i)).toBeInTheDocument();
+  });
+
+  it.each(endingIds)('renders polished AOL presentation for %s', (endingId) => {
+    const ending = ENDINGS[endingId];
+
+    render(<Victory {...defaultProps} endingId={endingId} textSpeed="instant" />);
+
+    expect(screen.getByRole('dialog', { name: ending.title })).toBeInTheDocument();
+    expect(screen.getByText(ending.aol.headline)).toBeInTheDocument();
+    expect(screen.getByText(ending.aol.subheadline)).toBeInTheDocument();
+    expect(screen.getByAltText(ending.aol.imageAlt)).toHaveAttribute('src', ending.aol.imageSrc);
+    expect(screen.getByText(ending.title)).toBeInTheDocument();
   });
 
   it('shows browser chrome elements', () => {

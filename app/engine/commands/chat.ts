@@ -5,6 +5,7 @@ import { shouldSuppressPenalties } from '../../constants/atmosphere';
 import { createEntry, createEntryI18n, createUFO74Message } from './utils';
 import { contextChance, contextRandomPick } from './helpers';
 import type { CommandRegistry } from './types';
+import { OVERRIDE_PASSWORD } from '../overrideSecret';
 
 // Forward reference to commands registry (needed for morse -> message redirect)
 let commandsRef: CommandRegistry | null = null;
@@ -2401,7 +2402,7 @@ export const chatCommands: CommandRegistry = {
     }
 
     const guess = args.join(' ').toUpperCase().trim();
-    const correct = 'COLHEITA';
+    const correct = OVERRIDE_PASSWORD;
     const attemptsUsed = (state.morseMessageAttempts || 0) + 1;
     const attemptsRemaining = 3 - attemptsUsed;
 

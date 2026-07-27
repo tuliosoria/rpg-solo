@@ -630,9 +630,9 @@
 
 /* ESC button in header */
 .escButton {
-  background: rgba(255, 100, 0, 0.15);
-  border: 2px solid #ff6600;
-  color: #ff9900;
+  background: rgba(136, 204, 68, 0.1);
+  border: 2px solid #6b9930;
+  color: #88cc44;
   padding: 4px 12px;
   font-family: inherit;
   font-size: 12px;
@@ -640,15 +640,15 @@
   letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.2s;
-  text-shadow: 0 0 4px rgba(255, 100, 0, 0.5);
+  text-shadow: 0 0 4px rgba(136, 204, 68, 0.5);
   flex-shrink: 0;
 }
 
 .escButton:hover {
-  background: rgba(255, 100, 0, 0.3);
-  border-color: #ff9900;
-  color: #ffcc00;
-  box-shadow: 0 0 12px rgba(255, 100, 0, 0.4);
+  background: rgba(136, 204, 68, 0.2);
+  border-color: #88cc44;
+  color: #99dd55;
+  box-shadow: 0 0 12px rgba(136, 204, 68, 0.4);
 }
 
 /* Header dropdown menu */
@@ -1040,7 +1040,7 @@
 }
 
 .system {
-  color: #00aaaa;
+  color: #88cc44;
 }
 
 .notice {
@@ -1166,6 +1166,7 @@
 
 .inputField {
   flex: 1;
+  min-width: 0;
   background: transparent;
   border: none;
   outline: none;
@@ -1174,6 +1175,43 @@
   font-size: 1em;
   caret-color: #88cc44;
   padding: 6px 0;
+}
+
+/* Wrapper so inline completion "ghost text" can be overlaid on the input */
+.inputWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.inputWrapper .inputField {
+  flex: 1;
+}
+
+.ghostOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  font-family: inherit;
+  font-size: 1em;
+  line-height: normal;
+  white-space: pre;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Reserves the exact width of the typed text (monospace) so the ghost
+   suffix lines up immediately after the caret. */
+.ghostMirror {
+  visibility: hidden;
+}
+
+.ghostText {
+  color: var(--terminal-green);
+  opacity: 0.4;
 }
 
 .inputField::placeholder {

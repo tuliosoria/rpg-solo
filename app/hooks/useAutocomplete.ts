@@ -12,40 +12,12 @@ import { useCallback, useRef, useMemo } from 'react';
 import { GameState } from '../types';
 import { listDirectory, resolvePath } from '../engine/filesystem';
 import { isInTutorialMode, getTutorialAutocomplete } from '../engine/commands/interactiveTutorial';
-import { COMMAND_TRANSLATIONS } from '../engine/commands/utils';
+import { COMMAND_TRANSLATIONS, PUBLIC_COMMANDS } from '../engine/commands/utils';
 
-// Canonical English commands for auto-completion
-const COMMANDS = [
-  'help',
-  'status',
-  'progress',
-  'ls',
-  'cd',
-  'back',
-  'open',
-  'last',
-  'unread',
-  'note',
-  'notes',
-  'unsave',
-  'trace',
-  'chat',
-  'clear',
-  'save',
-  'exit',
-  'override',
-  'run',
-  'map',
-  'tree',
-  'tutorial',
-  'leak',
-  'message',
-  'search',
-  'hint',
-  'wait',
-  'hide',
-  'morse',
-];
+// Canonical English commands for auto-completion.
+// Shared with the engine so Tab never completes to something that has no
+// handler (which would cost the player detection and an invalid attempt).
+const COMMANDS: string[] = [...PUBLIC_COMMANDS];
 
 const COMMANDS_WITH_FILE_ARGS = ['cd', 'open', 'run', 'save', 'unsave'];
 
@@ -88,6 +60,32 @@ function buildFileArgCommands(language: string): string[] {
   if (!translations) return COMMANDS_WITH_FILE_ARGS;
 
   return COMMANDS_WITH_FILE_ARGS.map(cmd => translations[cmd] ?? cmd);
+}
+
+/**
+ * Compute the inline "ghost text" suffix for the current input.
+ *
+ * Pure function: given the raw input string and the candidate completions
+ * produced by getCompletions, return the remaining characters that would
+ * complete the token currently being typed, or null when there is not exactly
+ * one unambiguous, non-empty completion.
+ *
+ * The fragment being completed is the final whitespace-delimited token, and
+ * (for path arguments) the portion after its last '/'. Matching is
+ * case-insensitive, but the returned suffix preserves the candidate's casing.
+ */
+export function computeGhostSuffix(input: string, candidates: string[]): string | null {
+  if (candidates.length !== 1) return null;
+  const candidate = candidates[0];
+  if (!candidate) return null;
+
+  const token = input.match(/\S*$/)?.[0] ?? '';
+  const fragment = token.slice(token.lastIndexOf('/') + 1);
+
+  if (!candidate.toLowerCase().startsWith(fragment.toLowerCase())) return null;
+
+  const suffix = candidate.slice(fragment.length);
+  return suffix.length > 0 ? suffix : null;
 }
 
 /**

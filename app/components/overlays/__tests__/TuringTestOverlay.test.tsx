@@ -474,4 +474,18 @@ describe('TuringTestOverlay', () => {
 
     expect(overlay?.className).not.toContain('flickering');
   });
+
+  it('auto-answers every question with the machine option and completes when autoPilot is set', () => {
+    render(<TuringTestOverlay onComplete={mockOnComplete} autoPilot />);
+
+    // Drive all three questions plus the result-screen dismissal. Each question
+    // needs 500ms (auto-select) + 1500ms (advance); the result adds 700ms.
+    for (let i = 0; i < 4; i++) {
+      act(() => {
+        vi.advanceTimersByTime(2000);
+      });
+    }
+
+    expect(mockOnComplete).toHaveBeenCalledWith(true);
+  });
 });

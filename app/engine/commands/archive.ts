@@ -1,4 +1,4 @@
-// Archive commands: script, run, rewind, present
+// Archive commands: recover, script, run, rewind, present
 
 import { getNode } from '../filesystem';
 import { createEntry, createEntryI18n, createUFO74Message } from './utils';
@@ -11,6 +11,62 @@ export function setCommandsRef(cmds: CommandRegistry) {
 }
 
 export const archiveCommands: CommandRegistry = {
+  // Legacy recovery utility advertised in maintenance_notes.txt and UFO74 hints.
+  // Operational (no detection penalty); recovery is folded into `open` in this build.
+  recover: (args, _state) => {
+    if (args.length === 0) {
+      return {
+        output: [
+          createEntry('system', ''),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.recover_utility',
+            'RECOVERY UTILITY v1.2'
+          ),
+          createEntry('system', ''),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.recover_usage',
+            'Usage: recover <filename>'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.archive.recover_description',
+            'Restores files flagged as deleted in the legacy sectors.'
+          ),
+          createEntry('system', ''),
+        ],
+        stateChanges: {},
+      };
+    }
+
+    const target = args.join(' ').trim();
+    return {
+      output: [
+        createEntry('system', ''),
+        createEntryI18n(
+          'system',
+          'engine.commands.archive.recover_scanning',
+          'Scanning deleted sectors for {{target}}...',
+          { target }
+        ),
+        createEntry('system', ''),
+        createEntryI18n(
+          'system',
+          'engine.commands.archive.recover_auto',
+          'This build auto-restores recoverable files on access.'
+        ),
+        createEntryI18n(
+          'system',
+          'engine.commands.archive.recover_open_hint',
+          'If the file exists, read it directly: open {{target}}',
+          { target }
+        ),
+        createEntry('system', ''),
+      ],
+      stateChanges: {},
+    };
+  },
   script: (args, state) => {
     if (args.length === 0) {
       return {

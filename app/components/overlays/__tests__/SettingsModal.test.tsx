@@ -131,6 +131,12 @@ describe('SettingsModal', () => {
     expect(screen.getByText('Text Speed')).toBeInTheDocument();
   });
 
+  it('displays typing pattern warnings toggle', () => {
+    render(<SettingsModal {...defaultProps} />);
+
+    expect(screen.getByText('Typing Pattern Warnings')).toBeInTheDocument();
+  });
+
   it('loads CRT preference from shared options storage on mount', async () => {
     mockStorage['terminal1996_options'] = JSON.stringify({ crtEffectsEnabled: false });
     
@@ -222,6 +228,25 @@ describe('SettingsModal', () => {
     expect(JSON.parse(mockStorage['terminal1996_options']).textSpeed).toBe('fast');
   });
 
+  it('toggles typing pattern warnings and saves to shared options storage', async () => {
+    render(<SettingsModal {...defaultProps} />);
+
+    const label = screen.getByText('Typing Pattern Warnings');
+    const row = label.closest('[class*="setting"]');
+    const toggle = row?.querySelector('button');
+
+    expect(toggle?.textContent).toBe('[ ON ]');
+
+    fireEvent.click(toggle!);
+
+    await waitFor(() => {
+      expect(toggle?.textContent).toBe('[ OFF ]');
+    });
+    expect(JSON.parse(mockStorage['terminal1996_options']).typingPatternWarningsEnabled).toBe(
+      false
+    );
+  });
+
   it('keeps text speed ahead of language and reapplies options when it changes', async () => {
     const applySpy = vi.spyOn(optionsModule, 'applyOptionsToDocument');
     render(<SettingsModal {...defaultProps} />);
@@ -229,7 +254,10 @@ describe('SettingsModal', () => {
     const labels = Array.from(document.querySelectorAll('[class*="label"]')).map(node =>
       node.textContent?.trim()
     );
-    expect(labels.indexOf('Text Speed')).toBeLessThan(labels.indexOf('Language'));
+    expect(labels.indexOf('Text Speed')).toBeLessThan(
+      labels.indexOf('Typing Pattern Warnings')
+    );
+    expect(labels.indexOf('Typing Pattern Warnings')).toBeLessThan(labels.indexOf('Language'));
 
     const textSpeedLabel = screen.getByText('Text Speed');
     const row = textSpeedLabel.closest('[class*="setting"]');

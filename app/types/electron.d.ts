@@ -161,6 +161,25 @@ export interface AppAPI {
   getVersion: () => Promise<string | null>;
 
   /**
+   * Gets local support diagnostics for troubleshooting.
+   */
+  getSupportInfo: () => Promise<{
+    version: string;
+    platform: string;
+    isPackaged: boolean;
+    steam: {
+      appIdConfigured: boolean;
+      initialized: boolean;
+      ready: boolean;
+    };
+    paths: {
+      userData: string | null;
+      logs: string | null;
+      crashDumps: string | null;
+    };
+  } | null>;
+
+  /**
    * Triggers a manual update check when the desktop updater is available.
    */
   checkForUpdates: () => Promise<{ available: boolean; version?: string; error?: string }>;

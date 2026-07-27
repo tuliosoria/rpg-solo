@@ -192,6 +192,111 @@ export function resolveCommandAlias(cmd: string): string {
   return COMMAND_ALIASES[cmd] || cmd;
 }
 
+/**
+ * Commands the game openly advertises to the player (via `help`, Tab completion
+ * and "did you mean" suggestions).
+ *
+ * This is deliberately NOT `Object.keys(commands)`: several handlers
+ * (`link`, `release`, `script`, `recover`, ...) are meant to be discovered
+ * through documents, so surfacing them here would spoil that discovery.
+ * Every entry must exist in the command registry — `exit` used to be listed for
+ * Tab completion despite having no handler, which meant completing it cost the
+ * player detection and an invalid attempt.
+ */
+export const PUBLIC_COMMANDS = [
+  'help',
+  'status',
+  'progress',
+  'ls',
+  'cd',
+  'back',
+  'open',
+  'last',
+  'unread',
+  'note',
+  'notes',
+  'unsave',
+  'trace',
+  'chat',
+  'clear',
+  'save',
+  'override',
+  'run',
+  'map',
+  'tree',
+  'tutorial',
+  'leak',
+  'message',
+  'search',
+  'hint',
+  'wait',
+  'hide',
+  'morse',
+] as const;
+
+/**
+ * Names of every localized command alias, so typo suggestions still work for
+ * players typing in pt-BR or es.
+ */
+export function getCommandAliasNames(): string[] {
+  return Object.keys(COMMAND_ALIASES);
+}
+
+/** Levenshtein edit distance, capped early once it exceeds `max`. */
+function editDistance(a: string, b: string, max: number): number {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+
+  let previous = Array.from({ length: b.length + 1 }, (_, i) => i);
+
+  for (let i = 1; i <= a.length; i++) {
+    const current = [i];
+    let rowMin = i;
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      const value = Math.min(current[j - 1] + 1, previous[j] + 1, previous[j - 1] + cost);
+      current.push(value);
+      if (value < rowMin) rowMin = value;
+    }
+    if (rowMin > max) return max + 1;
+    previous = current;
+  }
+
+  return previous[b.length];
+}
+
+/**
+ * Suggest the closest known command for a mistyped one.
+ *
+ * Only advertised commands (plus their localized aliases) are candidates, so
+ * this never leaks a command the player is supposed to discover in the fiction.
+ * Returns the canonical English command name, or null when nothing is close
+ * enough to be worth guessing.
+ */
+export function suggestCommand(input: string): string | null {
+  const typed = input.trim().toLowerCase();
+  if (typed.length < 2) return null;
+
+  const candidates = [...PUBLIC_COMMANDS, ...getCommandAliasNames()];
+  if (candidates.includes(typed)) return null;
+
+  // Short commands tolerate a single edit; longer ones tolerate two.
+  const maxDistance = typed.length <= 3 ? 1 : 2;
+
+  let best: string | null = null;
+  let bestDistance = maxDistance + 1;
+
+  for (const candidate of candidates) {
+    const distance = editDistance(typed, candidate, maxDistance);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = candidate;
+    }
+  }
+
+  if (best === null || bestDistance > maxDistance) return null;
+  return resolveCommandAlias(best);
+}
+
 // Parse command into name and args
 const CONTROL_CHARS_REGEX = /\p{Cc}/gu;
 const ZERO_WIDTH_REGEX = /[\u200B-\u200F\uFEFF]/g;

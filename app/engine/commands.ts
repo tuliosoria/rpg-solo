@@ -11,7 +11,7 @@ import { determineEnding, type EndingId } from './endings';
 import { createSeededRng, seededShuffle } from './rng';
 
 // Import utilities
-import { createEntry, createEntryI18n, sanitizeCommandInput, parseCommand } from './commands/utils';
+import { createEntry, createEntryI18n, sanitizeCommandInput, parseCommand, suggestCommand } from './commands/utils';
 
 // Import interactive tutorial system
 import { isInTutorialMode, processTutorialInput } from './commands/interactiveTutorial';
@@ -477,7 +477,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         createEntryI18n(
           'output',
           'engine.commands.core.god_random_generate_random_dossier_ending',
-          '  god random   - Generate a random 10-file dossier ending'
+          '  god random   - Generate a random {{max}}-file dossier ending',
+          { max: MAX_EVIDENCE_COUNT }
         ),
         createEntryI18n(
           'output',
@@ -546,7 +547,8 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           createEntryI18n(
             'output',
             'engine.commands.core.god_random_generate_random_dossier_ending_help',
-            'god random    - Generate a random 10-file dossier ending'
+            'god random    - Generate a random {{max}}-file dossier ending',
+            { max: MAX_EVIDENCE_COUNT }
           ),
           createEntryI18n(
             'output',
@@ -1022,7 +1024,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         stateChanges: {},
       };
     }
-    return commands.override(args, state);
   }
 
 
@@ -1246,9 +1247,10 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   if (state.tutorialComplete) {
     const hostilityIncrease = calculateHostilityIncrease(state, command);
     if (hostilityIncrease > 0) {
-      result.stateChanges.systemHostilityLevel = Math.min(
-        (state.systemHostilityLevel || 0) + hostilityIncrease,
-        5
+      const pipelineHostility = Math.min((state.systemHostilityLevel || 0) + hostilityIncrease, 5);
+      result.stateChanges.systemHostilityLevel = Math.max(
+        result.stateChanges.systemHostilityLevel ?? 0,
+        pipelineHostility
       );
     }
   }
@@ -1464,6 +1466,14 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     ];
     result.triggerFlicker = true;
     result.stateChanges.avatarExpression = 'scared';
+  }
+
+  if (state.tutorialComplete && newDetection >= 90) {
+    // Arm the escape whenever the player is LEFT in the danger band, not only on
+    // the command that crosses into it. A command can drop the player at 90+
+    // from an already-critical level (override at 99%), and gating the flag on
+    // the crossing left them at the cap with no way out.
+    result.stateChanges.hideAvailable = true;
   }
 
   if (state.tutorialComplete && newDetection >= 90 && prevDetection < 90) {
@@ -1710,6 +1720,31 @@ function getCommandTip(command: string, args: string[], state: GameState): Termi
         'ufo74',
         'engine.commands.core.ufo74_try_status_or_help_kid',
         '[UFO74]: try "status" or "help" kid.'
+      ),
+      createEntry('system', ''),
+    ];
+  }
+
+  // Near-miss typo: name the command they almost typed. Invalid commands still
+  // cost detection (the system noticing fumbling is the point), but the player
+  // should never be left guessing which key they missed — eight invalid
+  // attempts end the run.
+  const suggestion = suggestCommand(command);
+  if (suggestion) {
+    return [
+      createEntry('system', ''),
+      createEntryI18n(
+        'system',
+        'engine.commands.core.commandNotRecognized',
+        `Command not recognized: ${command}`,
+        { value: command }
+      ),
+      createEntry('system', ''),
+      createEntryI18n(
+        'ufo74',
+        'engine.commands.core.ufo74DidYouMean',
+        `[UFO74]: did you mean "${suggestion}"?`,
+        { value: suggestion }
       ),
       createEntry('system', ''),
     ];

@@ -4,7 +4,7 @@
 
 A terminal-based discovery puzzle game. You've illegally accessed a Brazilian intelligence legacy system. Reconstruct the truth before shutdown, corruption, or detection.
 
-**[▶ PLAY NOW](https://thankful-grass-0f49be40f.2.azurestaticapps.net)**
+**Steam release candidate:** packaged desktop builds include Steam achievements, cloud saves, and rich presence when launched through Steam.
 
 ---
 
@@ -54,6 +54,21 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to play locally.
 
+## Endings admin tool (localhost)
+
+A local, dev-only tool to explore/simulate all endings and edit ending copy.
+It is never part of the deployed game.
+
+```bash
+npm run admin   # http://localhost:4599
+```
+
+- **Explorer/Simulator:** see each ending's trigger rule and toggle leaked files
+  to see which ending fires (uses the real `determineEnding`).
+- **Editor:** edit ending copy in EN/pt-BR/es and Save. Saving writes
+  `app/data/endingsContent.json` and regenerates the modules the game consumes.
+  Review `git diff`, then commit and push to deploy.
+
 ## Desktop App
 
 Available for Windows, macOS, and Linux via Electron:
@@ -62,7 +77,11 @@ Available for Windows, macOS, and Linux via Electron:
 npm run electron:build
 ```
 
-`electron:build` packages the current platform locally. CI still produces Windows, macOS, and Linux artifacts from the shared `electron-builder.yml` matrix. Steam features degrade gracefully when no App ID or Steam client is available, and tray minimize remains optional instead of hijacking close by default.
+`electron:build` packages the current platform locally. CI still produces Windows, macOS, and Linux artifacts from the shared `electron-builder.yml` matrix. Steam features degrade gracefully when no App ID or Steam client is available, while tagged release builds require a configured App ID before packaging.
+
+### Releasing to Steam
+
+Pushing a `v*` tag (matching `package.json`'s version) uploads the desktop builds to your Steam depots via SteamPipe — see the full runbook in [`docs/STEAM_RELEASE.md`](docs/STEAM_RELEASE.md). The upload is safely skipped until the `STEAM_APP_ID`, `STEAM_USERNAME`, and `STEAM_CONFIG_VDF` secrets are configured. For manual or local uploads, use `npm run steam:deploy` (run `npm run steam:deploy:dry` first to preview).
 
 ## Project Structure
 
@@ -98,7 +117,7 @@ GitHub Actions validates every commit:
 |----------|--------|
 | Web | Azure Static Apps |
 | Desktop | Windows, macOS, Linux |
-| Steam | Electron build with Steamworks features when `STEAM_APP_ID` is configured |
+| Steam | Electron build with Steamworks features when `STEAM_APP_ID` is configured at packaging time |
 
 ---
 

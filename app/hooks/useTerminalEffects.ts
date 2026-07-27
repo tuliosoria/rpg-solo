@@ -1,15 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
+import { useCallback, useEffect, useLayoutEffect } from 'react';
 import { type GamePhase, type GameState, type ImageTrigger } from '../types';
 import { createEntry } from '../engine/commands';
 import { createEntryI18n } from '../engine/commands/utils';
 import { appendToHistory } from '../lib/appendToHistory';
-import { autoSave } from '../storage/saves';
-import { addPlaytime } from '../storage/statistics';
 import { determineEnding } from '../engine/endings';
 import { DETECTION_THRESHOLDS } from '../constants/detection';
-import { AUTOSAVE_INTERVAL_MS } from '../constants/timing';
 import {
   BLACKOUT_TRANSITION_DELAY_MS,
   CRT_WARMUP_DURATION_MS,
@@ -161,6 +158,130 @@ interface UseTerminalEffectsOptions {
   setAlienSilhouetteVisible: React.Dispatch<React.SetStateAction<boolean>>;
   refs: TerminalEffectsRefs;
 }
+
+/**
+ * Idle nudges, evaluated in order; the first whose condition matches is shown.
+ *
+ * Module scope rather than a per-instance useMemo: the list is constant, so the
+ * only thing the hook needs is a reference. Exported so each condition can be
+ * exercised directly — these are pure predicates over GameState, and a wrong one
+ * fails silently (a hint that never fires, or one that never stops).
+ */
+export const IDLE_HINTS: Array<LocalizedTerminalCopy & { condition: (s: GameState) => boolean }> =
+  [
+    {
+      key: 'terminal.idleHint.1',
+      fallback: "Use 'ls' to see what's in the current directory.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
+    },
+    {
+      key: 'terminal.idleHint.2',
+      fallback: "Try 'open' on a .txt file to read it.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
+    },
+    {
+      key: 'terminal.idleHint.3',
+      fallback: "Navigation tip: 'cd' changes directories. Start exploring.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
+    },
+    {
+      key: 'terminal.idleHint.4',
+      fallback: 'You need evidence. Look for files that seem... off.',
+      condition: (s: GameState) =>
+        (s.evidenceCount || 0) === 0 && (s.filesRead?.size || 0) >= 3,
+    },
+    {
+      key: 'terminal.idleHint.5',
+      fallback: 'Some documents contradict the official narrative. Find them.',
+      condition: (s: GameState) =>
+        (s.evidenceCount || 0) === 0 && (s.filesRead?.size || 0) >= 5,
+    },
+    {
+      key: 'terminal.idleHint.6',
+      fallback: 'Have you checked /internal?',
+      condition: (s: GameState) =>
+        s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt'),
+    },
+    {
+      key: 'terminal.idleHint.7',
+      fallback: 'The /comms directory might have useful intel.',
+      // Retires once the player has read anything in /comms. This used to gate
+      // on a specific /comms/radio_intercept_log.txt, which does not exist — so
+      // the lookup was permanently false and the nudge kept firing at players
+      // who had already read the directory end to end. The hint points at a
+      // directory, so checking the directory is both the honest test and one
+      // that cannot rot when a file is renamed.
+      condition: (s: GameState) =>
+        !s.currentPath.includes('comms') &&
+        !Array.from(s.filesRead ?? []).some(path => path.startsWith('/comms/')),
+    },
+    {
+      key: 'terminal.idleHint.8',
+      fallback: "Detection is high. The 'wait' command lets time pass safely.",
+      condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HOSTILITY_MED,
+    },
+    {
+      key: 'terminal.idleHint.9',
+      fallback: "They're watching closely. Consider using 'wait' to reduce suspicion.",
+      condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.ALERT,
+    },
+    {
+      key: 'terminal.idleHint.10',
+      fallback: "CAUTION: Detection critical. 'wait' might buy you time.",
+      condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HEAVY_GLITCH,
+    },
+    {
+      key: 'terminal.idleHint.11',
+      fallback: "You've seen a lot. There may be... deeper access available.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.adminUnlocked,
+    },
+    {
+      key: 'terminal.idleHint.12',
+      fallback: "Some commands aren't listed. Keep digging.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.adminUnlocked,
+    },
+    {
+      key: 'terminal.idleHint.13',
+      fallback: "Use 'ls' to see what's in the current directory.",
+      condition: (s: GameState) => s.sessionCommandCount < 5,
+    },
+    {
+      key: 'terminal.idleHint.14',
+      fallback: 'Some files still carry legacy encryption headers, but recovered text opens directly.',
+      condition: (s: GameState) =>
+        (s.categoriesRead?.size || 0) >= 2 && (s.evidenceCount || 0) < 2,
+    },
+    {
+      key: 'terminal.idleHint.15',
+      fallback: "Try the 'progress' command to see what you've found.",
+      condition: (s: GameState) => (s.evidenceCount || 0) >= 1,
+    },
+    {
+      key: 'terminal.idleHint.16',
+      fallback: "UFO74: Don't forget: 'note' saves your notes about the files you read, 'save' saves files to leak later. Found a file that seems suspicious, kid? Save it!",
+      condition: (s: GameState) =>
+        (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0,
+    },
+    {
+      key: 'terminal.idleHint.17',
+      fallback: "Check 'unread' to see what you haven't opened yet.",
+      condition: (s: GameState) => (s.filesRead?.size || 0) >= 3,
+    },
+    {
+      key: 'terminal.idleHint.18',
+      fallback: "UFO74: don't react. it feeds on attention. Use command 'wait' to reduce risk.",
+      condition: (s: GameState) =>
+        s.detectionLevel > DETECTION_THRESHOLDS.SUSPICIOUS &&
+        s.detectionLevel < DETECTION_THRESHOLDS.HEAVY_GLITCH,
+    },
+    {
+      key: 'terminal.idleHint.19',
+      fallback: "UFO74: found /internal/maintenance_notes.txt yet? interesting reading. something about an override protocol. wonder what's behind it.",
+      condition: (s: GameState) =>
+        (s.filesRead?.size || 0) >= 4 &&
+        !s.filesRead?.has('/internal/maintenance_notes.txt'),
+    },
+  ];
 
 export function useTerminalEffects({
   gameState,
@@ -438,31 +559,6 @@ export function useTerminalEffects({
   ]);
 
   // Avatar entrance is now triggered by INTRO block 1 in useTerminalInput
-
-  // Auto-save periodically
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const currentState = gameStateRef.current;
-      const isActivePlayPhase = gamePhase === 'terminal';
-      // Do not autosave during blackout / victory transition: gamePhase isn't persisted
-      // and saving a terminal state with evidencesSaved=true would lose the ending on reload.
-      if (
-        isActivePlayPhase &&
-        !currentState.isGameOver &&
-        !currentState.gameWon &&
-        !currentState.evidencesSaved
-      ) {
-        const savedAt = autoSave(currentState);
-        if (typeof savedAt === 'number') {
-          setGameState(prev => ({ ...prev, lastSaveTime: savedAt }));
-        }
-        // Track playtime every autosave interval
-        addPlaytime(AUTOSAVE_INTERVAL_MS);
-      }
-    }, AUTOSAVE_INTERVAL_MS);
-
-    return () => clearInterval(interval);
-  }, [gamePhase, gameStateRef, setGameState]);
 
   // Phase transition: when evidencesSaved becomes true, go directly to victory
   // Victory takes priority over isGameOver: if detection hit 100% on the same command,
@@ -767,116 +863,7 @@ export function useTerminalEffects({
     return () => outputEl.removeEventListener('scroll', handleScroll);
   }, [outputRef, lastScrollTimeRef]);
 
-  const idleHints = useMemo(
-    (): Array<LocalizedTerminalCopy & { condition: (s: GameState) => boolean }> => [
-      {
-        key: 'terminal.idleHint.1',
-        fallback: "Use 'ls' to see what's in the current directory.",
-        condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
-      },
-      {
-        key: 'terminal.idleHint.2',
-        fallback: "Try 'open' on a .txt file to read it.",
-        condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
-      },
-      {
-        key: 'terminal.idleHint.3',
-        fallback: "Navigation tip: 'cd' changes directories. Start exploring.",
-        condition: (s: GameState) => (s.filesRead?.size || 0) === 0,
-      },
-      {
-        key: 'terminal.idleHint.4',
-        fallback: 'You need evidence. Look for files that seem... off.',
-        condition: (s: GameState) =>
-          (s.evidenceCount || 0) === 0 && (s.filesRead?.size || 0) >= 3,
-      },
-      {
-        key: 'terminal.idleHint.5',
-        fallback: 'Some documents contradict the official narrative. Find them.',
-        condition: (s: GameState) =>
-          (s.evidenceCount || 0) === 0 && (s.filesRead?.size || 0) >= 5,
-      },
-      {
-        key: 'terminal.idleHint.6',
-        fallback: 'Have you checked /internal?',
-        condition: (s: GameState) =>
-          s.currentPath === '/' && !s.filesRead?.has('/internal/protocols/session_objectives.txt'),
-      },
-      {
-        key: 'terminal.idleHint.7',
-        fallback: 'The /comms directory might have useful intel.',
-        condition: (s: GameState) =>
-          !s.currentPath.includes('comms') && !s.filesRead?.has('/comms/radio_intercept_log.txt'),
-      },
-      {
-        key: 'terminal.idleHint.8',
-        fallback: "Detection is high. The 'wait' command lets time pass safely.",
-        condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HOSTILITY_MED,
-      },
-      {
-        key: 'terminal.idleHint.9',
-        fallback: "They're watching closely. Consider using 'wait' to reduce suspicion.",
-        condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.ALERT,
-      },
-      {
-        key: 'terminal.idleHint.10',
-        fallback: "CAUTION: Detection critical. 'wait' might buy you time.",
-        condition: (s: GameState) => s.detectionLevel > DETECTION_THRESHOLDS.HEAVY_GLITCH,
-      },
-      {
-        key: 'terminal.idleHint.11',
-        fallback: "You've seen a lot. There may be... deeper access available.",
-        condition: (s: GameState) => (s.filesRead?.size || 0) >= 10 && !s.flags?.adminUnlocked,
-      },
-      {
-        key: 'terminal.idleHint.12',
-        fallback: "Some commands aren't listed. Keep digging.",
-        condition: (s: GameState) => (s.filesRead?.size || 0) >= 15 && !s.flags?.adminUnlocked,
-      },
-      {
-        key: 'terminal.idleHint.13',
-        fallback: "Use 'ls' to see what's in the current directory.",
-        condition: (s: GameState) => s.sessionCommandCount < 5,
-      },
-      {
-        key: 'terminal.idleHint.14',
-        fallback: 'Some files still carry legacy encryption headers, but recovered text opens directly.',
-        condition: (s: GameState) =>
-          (s.categoriesRead?.size || 0) >= 2 && (s.evidenceCount || 0) < 2,
-      },
-      {
-        key: 'terminal.idleHint.15',
-        fallback: "Try the 'progress' command to see what you've found.",
-        condition: (s: GameState) => (s.evidenceCount || 0) >= 1,
-      },
-      {
-        key: 'terminal.idleHint.16',
-        fallback: "UFO74: Don't forget: 'note' saves your notes about the files you read, 'save' saves files to leak later. Found a file that seems suspicious, kid? Save it!",
-        condition: (s: GameState) =>
-          (s.filesRead?.size || 0) >= 5 && (s.playerNotes?.length || 0) === 0,
-      },
-      {
-        key: 'terminal.idleHint.17',
-        fallback: "Check 'unread' to see what you haven't opened yet.",
-        condition: (s: GameState) => (s.filesRead?.size || 0) >= 3,
-      },
-      {
-        key: 'terminal.idleHint.18',
-        fallback: "UFO74: don't react. it feeds on attention. Use command 'wait' to reduce risk.",
-        condition: (s: GameState) =>
-          s.detectionLevel > DETECTION_THRESHOLDS.SUSPICIOUS &&
-          s.detectionLevel < DETECTION_THRESHOLDS.HEAVY_GLITCH,
-      },
-      {
-        key: 'terminal.idleHint.19',
-        fallback: "UFO74: found /internal/maintenance_notes.txt yet? interesting reading. something about an override protocol. wonder what's behind it.",
-        condition: (s: GameState) =>
-          (s.filesRead?.size || 0) >= 4 &&
-          !s.filesRead?.has('/internal/maintenance_notes.txt'),
-      },
-    ],
-    []
-  );
+  const idleHints = IDLE_HINTS;
 
   const lastHistoryEntryType = gameState.history[gameState.history.length - 1]?.type;
 

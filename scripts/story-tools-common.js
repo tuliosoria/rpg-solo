@@ -183,7 +183,7 @@ function runVitestSuite(testFiles) {
   const inheritedNodeOptions = getInheritedNodeOptions();
   const result = spawnSync(
     process.execPath,
-    [vitestEntry, 'run', '--configLoader', 'runner', ...testFiles],
+    [vitestEntry, 'run', '--configLoader', 'runner', '--maxWorkers=1', ...testFiles],
     {
       cwd: REPO_ROOT,
       env: {

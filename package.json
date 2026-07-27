@@ -1,11 +1,15 @@
 {
   "name": "varginha-terminal-1996",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "A narrative puzzle game about the 1996 Varginha UFO incident in Brazil.",
   "author": {
     "name": "Varginha Terminal 1996 contributors",
     "email": "dev@varginha1996.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tuliosoria/rpg-solo.git"
   },
   "main": "electron/main.js",
   "engines": {
@@ -14,6 +18,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "admin": "tsx tools/endings-admin/server.ts",
+    "gen:endings-content": "tsx scripts/gen-endings-content.ts",
+    "gen:endings-from-content": "tsx scripts/gen-endings-from-content.ts",
     "start": "node scripts/serve-static.mjs",
     "test": "node scripts/run-vitest.mjs run --configLoader runner --maxWorkers=1 --reporter=dot",
     "test:watch": "node scripts/run-vitest.mjs --configLoader runner",
@@ -33,7 +40,10 @@
     "e2e:headed": "playwright test --config=e2e-tests/playwright.config.ts --headed",
     "electron:dev": "electron .",
     "electron:build": "npm run build && node scripts/build-electron.mjs",
-    "electron:build:all": "npm run build && electron-builder --config electron-builder.yml --win --mac --linux --publish never"
+    "electron:build:all": "npm run build && electron-builder --config electron-builder.yml --win --mac --linux --publish never",
+    "steam:appid": "node scripts/write-steam-appid.mjs",
+    "steam:deploy": "node scripts/steam-local-deploy.mjs",
+    "steam:deploy:dry": "node scripts/steam-local-deploy.mjs --dry-run"
   },
   "dependencies": {
     "electron-updater": "^6.3.9",
@@ -64,6 +74,7 @@
     "playwright": "^1.58.0",
     "prettier": "^3.8.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.1",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.53.1",
     "vitest": "^4.0.17"

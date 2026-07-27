@@ -4,6 +4,7 @@
 appId: com.terminal1996.varginha
 productName: "Varginha Terminal 1996"
 copyright: "Copyright © 2026"
+beforeBuild: electron/before-build.js
 afterExtract: electron/after-pack.js
 afterPack: electron/after-pack.js
 

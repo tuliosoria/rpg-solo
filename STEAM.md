@@ -2,6 +2,11 @@
 
 This document describes the Steam-facing desktop integration for the Electron build.
 
+> **Shipping to Steam?** See [`docs/STEAM_RELEASE.md`](docs/STEAM_RELEASE.md) for
+> the end-to-end release runbook: partner setup, depots, achievements, the
+> SteamPipe upload pipeline (CI + `npm run steam:deploy`), beta testing, and
+> go-live. This document covers how the *runtime* integration behaves.
+
 ## Overview
 
 The game uses [steamworks.js](https://github.com/nicobrinkkemper/steamworks.js) for:
@@ -18,9 +23,12 @@ The game uses [steamworks.js](https://github.com/nicobrinkkemper/steamworks.js) 
 
 1. `STEAM_APP_ID` environment variable
 2. Development fallback: `480`
-3. Production fallback: **disable Steam features and continue launching**
+3. Generated release artifact: `electron/steam-app-id.generated.js`
+4. Production fallback: **disable Steam features and continue launching**
 
-That means packaged builds no longer crash when an App ID is missing. They simply run without Steam integration until `STEAM_APP_ID` is configured.
+`scripts/prepare-steam-app-id.mjs` creates the generated artifact from `STEAM_APP_ID` immediately before Electron packaging. The generated file is ignored by git but included by `electron-builder` because it lives under `electron/`.
+
+That means local and PR packaged builds no longer crash when an App ID is missing. They simply run without Steam integration until `STEAM_APP_ID` is configured. Tagged `v*` release builds fail before packaging if the App ID is missing or if the tag does not match `package.json` version.
 
 ## Local testing
 
@@ -44,6 +52,8 @@ npm run electron:dev
 
 4. Confirm the console prints `Steam initialized successfully`.
 
+Developer tools no longer open automatically in desktop dev mode. Set `VARGINHA_DEVTOOLS=1` or pass `--devtools` when you need them.
+
 ## Production packaging
 
 Use the standard Electron packaging script:
@@ -52,11 +62,11 @@ Use the standard Electron packaging script:
 npm run electron:build
 ```
 
-That script now points explicitly at `electron-builder.yml`, so local desktop builds use the same packaging config as CI.
+That script points explicitly at `electron-builder.yml`, so local desktop builds use the same packaging config as CI. The Electron builder `beforeBuild` hook prepares the generated Steam App ID file immediately before packaging.
 
 For a Steam-enabled packaged build:
 
-1. Set `STEAM_APP_ID`
+1. Set `STEAM_APP_ID` locally, or configure the GitHub Actions `STEAM_APP_ID` secret before creating a `v*` release tag
 2. Configure Steam achievements to match `electron/steam-achievements.js`
 3. Enable Steam Cloud in Steamworks Partner
 4. Upload store/achievement art in Steamworks Partner
@@ -70,6 +80,7 @@ Non-Steam desktop builds can still use the GitHub-backed updater path.
 ## Achievement mapping
 
 Game achievements are mapped to Steam achievements in `electron/steam-achievements.js`.
+When the renderer starts, locally unlocked achievements are reconciled back to Steam once per session. This protects players who earned achievements while Steam was offline, unavailable, or not yet initialized.
 
 | Game ID | Steam API Name | Description |
 |---------|----------------|-------------|
@@ -109,16 +120,41 @@ Steam Cloud files are prefixed with `terminal1996_`:
 - `terminal1996_achievements`
 
 If Steam Cloud is unavailable, the game continues to use local storage.
+When both local storage and Steam Cloud contain the same slot, the loader compares save timestamps and keeps the newer copy. If local storage is newer, it is pushed back to Steam Cloud in the background so another machine does not keep restoring stale progress.
+
+## Local support diagnostics
+
+Crash reporting is local-only (`uploadToServer: false`). The desktop build logs a local diagnostics block at startup with:
+
+- App version, platform, packaged/dev state
+- Steam App ID/initialization readiness
+- `userData`, `logs`, and `crashDumps` paths
+
+The same values are available to the renderer through `window.electronAPI.app.getSupportInfo()` for future support UI. No diagnostics are uploaded automatically.
 
 ## Release checklist
 
 - Configure `STEAM_APP_ID`
+- Confirm the release tag matches `package.json` version, for example `v1.0.0`
 - Verify Steam achievements and hidden-achievement flags
 - Verify Steam Cloud quota/settings
-- Verify packaged desktop build starts with Steam running
+- Verify packaged desktop build starts with Steam running and reconciles a locally unlocked achievement
 - Verify packaged desktop build still starts without Steam/App ID
+- Verify Steam Cloud conflict handling: newer local save wins, newer cloud save wins
+- Verify local diagnostics paths are printed and crash dumps remain local-only
 - Upload store assets and capsule art in Steamworks Partner
 - Smoke-test overlay, achievement unlocks, and a cloud save round-trip
+
+### Steam sandbox matrix
+
+Before release, test the packaged build in these states:
+
+| Scenario | Expected result |
+|----------|-----------------|
+| Steam running with real App ID | Achievements, overlay, rich presence, and cloud saves work |
+| Steam running with App ID 480 in dev | Integration smoke tests work without release secrets |
+| Steam not running | Game starts, saves locally, and Steam calls fail gracefully |
+| Steam Cloud disabled or quota exhausted | Local saves remain usable; errors stay non-fatal |
 
 ## Relevant files
 

@@ -452,22 +452,6 @@ export const ARCHIVE_FILES: Record<string, FileNode> = {
   '/admin/foreign_liaison_cable_deleted.txt': foreign_liaison_cable_deleted,
 };
 
-// Directories that gain additional files in archive mode
-export const ARCHIVE_DIRECTORY_ADDITIONS: Record<string, string[]> = {
-  '/storage/quarantine': ['witness_statement_original.txt'],
-  '/storage/assets': ['directive_alpha_draft.txt'],
-  '/comms': ['deleted_comms_log.txt'],
-  '/internal': ['personnel_file_costa.txt', 'project_seed_memo.txt'],
-  '/ops/medical': ['autopsy_notes_unredacted.txt'],
-  // Admin archive additions — these require adminUnlocked to see the /admin dir
-  '/admin': [
-    'transfer_manifest_deleted.txt',
-    'bio_containment_log_deleted.txt',
-    'psi_analysis_classified.txt',
-    'foreign_liaison_cable_deleted.txt',
-  ],
-};
-
 // Generate a random archive timestamp (formatted like 02:09:12)
 export function generateArchiveTimestamp(seed: number): string {
   const rng = createSeededRng(seed);
