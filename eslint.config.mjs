@@ -97,6 +97,22 @@ export default [
     },
   },
   {
+    files: ['tools/endings-admin/**/*.{ts,js}'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
+    files: ['tools/endings-admin/public/**/*.js'],
+    languageOptions: {
+      globals: {
+        document: 'readonly',
+        window: 'readonly',
+        fetch: 'readonly',
+      },
+    },
+  },
+  {
     ignores: [
       '.next/**',
       'node_modules/**',

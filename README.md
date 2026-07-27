@@ -54,6 +54,21 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to play locally.
 
+## Endings admin tool (localhost)
+
+A local, dev-only tool to explore/simulate all endings and edit ending copy.
+It is never part of the deployed game.
+
+```bash
+npm run admin   # http://localhost:4599
+```
+
+- **Explorer/Simulator:** see each ending's trigger rule and toggle leaked files
+  to see which ending fires (uses the real `determineEnding`).
+- **Editor:** edit ending copy in EN/pt-BR/es and Save. Saving writes
+  `app/data/endingsContent.json` and regenerates the modules the game consumes.
+  Review `git diff`, then commit and push to deploy.
+
 ## Desktop App
 
 Available for Windows, macOS, and Linux via Electron:
