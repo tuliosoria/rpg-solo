@@ -84,7 +84,12 @@ export function translateStatic(
 ): string {
   const targetLanguage = language ?? getStoredLanguage();
   const message = LOCALES[targetLanguage][key] ?? LOCALES.en[key] ?? fallback ?? key;
-  return interpolate(message, values);
+  // UFO74 speaks through two pipelines: scripted lines resolved by key here,
+  // and improvised lines resolved by `translateRuntimeText` below. Only the
+  // latter normalized the speaker prefix, so the tutorial rendered
+  // "[UFO74]: Type ls" one line above "UFO74: Close idea, wrong system" — the
+  // same character, labelled two ways, in the first minute of the game.
+  return normalizeRuntimePresentation(interpolate(message, values));
 }
 
 interface I18nContextValue {

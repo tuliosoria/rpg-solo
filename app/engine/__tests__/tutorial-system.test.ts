@@ -106,21 +106,21 @@ describe('Tutorial System', () => {
       const introText = TUTORIAL_INTRO_STEPS.flat().map(render).join('\n');
       const briefingText = TUTORIAL_BRIEFING_STEPS.flat().map(render).join('\n');
 
-      expect(introText).toContain('[UFO74]: Connection established.');
-      expect(introText).toContain("[UFO74]: Great, now you're in. Let's get to business.");
+      expect(introText).toContain('UFO74: Connection established.');
+      expect(introText).toContain("UFO74: Great, now you're in. Let's get to business.");
       expect(briefingText).toContain(
-        '[UFO74]: Your mission: read carefully and save files that strengthen your case.'
+        'UFO74: Your mission: read carefully and save files that strengthen your case.'
       );
       expect(briefingText).toContain(
-        '[UFO74]: Once your dossier has 10 files, type `leak`. no coming back.'
+        'UFO74: Once your dossier has 10 files, type `leak`. no coming back.'
       );
       expect(briefingText).toContain(
-        '[UFO74]: Be careful, do not type wrong commands on the terminal.'
+        'UFO74: Be careful, do not type wrong commands on the terminal.'
       );
       expect(briefingText).toContain(
-        '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
+        'UFO74: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
       );
-      expect(briefingText).toContain('[UFO74]: Type `help` or `hint` if you are lost and need help.');
+      expect(briefingText).toContain('UFO74: Type `help` or `hint` if you are lost and need help.');
     });
 
     it('places the help reminder followed by the hand-off, then disconnect', () => {

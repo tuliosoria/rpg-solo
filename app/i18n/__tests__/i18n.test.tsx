@@ -304,7 +304,7 @@ describe('i18n system', () => {
         'engine.commands.core.ufo74_press_esc_to_exit_or_type_save_first_if_you_want_to_ke'
       )
     ).toBe(
-      '[UFO74]: presiona [ESC] para salir. usa el menú de pausa si quieres guardar tu progreso primero.'
+      'UFO74: presiona [ESC] para salir. usa el menú de pausa si quieres guardar tu progreso primero.'
     );
   });
 
