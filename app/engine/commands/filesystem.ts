@@ -7,6 +7,7 @@ import {
   listDirectory,
   getFileContent,
   canAccessFile,
+  accessReasonKey,
 } from '../filesystem';
 import { createSeededRng, seededRandomInt } from '../rng';
 import { UFO74_CONSPIRACY_REACTIONS, CONSPIRACY_FILE_NAMES } from '../../data/conspiracyFiles';
@@ -324,7 +325,7 @@ export const filesystemCommands: CommandRegistry = {
         output: [
           createEntryI18n(
             'error',
-            'engine.commands.filesystem.errorReason',
+            accessReasonKey('engine.commands.filesystem.errorReason', access.reason),
             `ERROR: ${access.reason}`,
             { value: access.reason ?? '' }
           ),
@@ -950,10 +951,16 @@ export const filesystemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('warning', ''),
+          // UFO74 speaking, not the player: "hackerkid" is the handle UFO74
+          // hands the player in the tutorial ("You will be... hackerkid."), so
+          // labelling this line [HackerKid] put UFO74's warning in the player's
+          // own mouth. Left typed 'warning' rather than 'ufo74' because the
+          // terminal defers 'ufo74' entries to the end of a command's output,
+          // which would land the question after "Type tree again to confirm."
           createEntryI18n(
             'warning',
-            'engine.commands.filesystem.hackerkid_hey_kid_are_you_sure_you_want_to_use_tree',
-            '[HackerKid]: Hey kid, are you sure you want to use tree?'
+            'engine.commands.filesystem.ufo74_hey_kid_are_you_sure_you_want_to_use_tree',
+            '[UFO74]: Hey kid, are you sure you want to use tree?'
           ),
           createEntryI18n(
             'warning',

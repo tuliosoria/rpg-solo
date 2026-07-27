@@ -394,7 +394,12 @@ export const inventoryCommands: CommandRegistry = {
       for (const entry of entries) {
         if (scannedCount >= MAX_SCAN_FILES) break;
 
-        const fullPath = dirPath === '/' ? `/${entry.name}` : `${dirPath}/${entry.name}`;
+        // listDirectory reports directories with a trailing slash ("admin/").
+        // Carrying it into the child path yields "/internal//admin//memo.txt",
+        // which matches nothing in filesRead — so every file stayed "unread"
+        // forever. Strip it the same way getAllAccessibleFiles does.
+        const name = entry.name.replace(/\/$/, '');
+        const fullPath = dirPath === '/' ? `/${name}` : `${dirPath}/${name}`;
 
         if (entry.type === 'file') {
           scannedCount++;

@@ -11879,8 +11879,8 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     'Enter answer below:': 'Digite a resposta abaixo:',
     'Full index scan detected on elevated session.':
       'Varredura completa de índice detectada em sessão elevada.',
-    '[HackerKid]: Hey kid, are you sure you want to use tree?':
-      '[HackerKid]: Ei, kid, tem certeza de que quer usar tree?',
+    '[UFO74]: Hey kid, are you sure you want to use tree?':
+      '[UFO74]: Ei, kid, tem certeza de que quer usar tree?',
     '  It will expose all files but it will spike your risk significantly.':
       '  Isso vai expor todos os arquivos, mas vai aumentar seu risco bastante.',
     'Type tree again to confirm.': 'Digite tree de novo para confirmar.',
@@ -12339,8 +12339,8 @@ const RUNTIME_TRANSLATIONS_SUPPLEMENTAL: Record<Exclude<Language, 'en'>, Runtime
     'Enter answer below:': 'Escribe la respuesta abajo:',
     'Full index scan detected on elevated session.':
       'Se detectó un escaneo total del índice en una sesión elevada.',
-    '[HackerKid]: Hey kid, are you sure you want to use tree?':
-      '[HackerKid]: Oye, kid, ¿seguro que quieres usar tree?',
+    '[UFO74]: Hey kid, are you sure you want to use tree?':
+      '[UFO74]: Oye, kid, ¿seguro que quieres usar tree?',
     '  It will expose all files but it will spike your risk significantly.':
       '  Expondrá todos los archivos, pero disparará tu riesgo de forma importante.',
     'Type tree again to confirm.': 'Escribe tree otra vez para confirmar.',
