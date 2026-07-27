@@ -92,6 +92,26 @@ describe('i18n system', () => {
     );
   });
 
+  it('keeps an indented runtime line at its original column in every language', async () => {
+    // Lines matched with a leading-whitespace capture get that whitespace put
+    // back around the translation, so the locale value must not carry an indent
+    // of its own. `runtime.waitRemaining.*` did, and the `wait` confirmation sat
+    // eight spaces deep in pt-BR and Spanish against four in English — visible
+    // every time the player used the game's one detection-lowering command.
+    const { result } = renderHook(() => useI18n(), { wrapper });
+    const line = '    Detection reduced. [3 waits remaining]';
+
+    for (const language of ['pt-BR', 'es'] as const) {
+      act(() => {
+        result.current.setLanguage(language);
+      });
+
+      const rendered = result.current.translateRuntimeText(line);
+      expect(rendered, `${language} did not translate the line`).not.toBe(line);
+      expect(rendered.match(/^ */)?.[0], `${language} shifted the line`).toBe('    ');
+    }
+  });
+
   it('translates leak-sequence wrapped runtime lines for pt-BR', async () => {
     const { result } = renderHook(() => useI18n(), { wrapper });
 

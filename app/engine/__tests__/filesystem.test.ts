@@ -4,6 +4,8 @@ import {
   getNode,
   listDirectory,
   canAccessFile,
+  accessReasonKey,
+  ACCESS_REASON_KEY_SUFFIX,
   fuzzyMatchFilename,
   findFilesMatching,
   smartResolvePath,
@@ -274,6 +276,26 @@ describe('Filesystem', () => {
       const result = canAccessFile('/admin/trace_purge_memo.txt', state);
       expect(result.accessible).toBe(false);
       expect(result.reason).toBe('FILE NOT FOUND');
+    });
+  });
+
+  describe('accessReasonKey', () => {
+    it('has a locale key for every reason canAccessFile can return', () => {
+      // The reasons are English codes callers match on, so they cannot be
+      // translated in place. Each one needs its own key or the reason renders
+      // raw inside a translated shell: "ERRO: FILE NOT FOUND".
+      const reasons = ['FILE NOT FOUND', 'NOT A FILE', 'FILE DELETED', 'FILE LOCKED'];
+
+      for (const reason of reasons) {
+        expect(ACCESS_REASON_KEY_SUFFIX[reason], `no key for ${reason}`).toBeDefined();
+        expect(accessReasonKey('base', reason)).toBe(`base.${ACCESS_REASON_KEY_SUFFIX[reason]}`);
+      }
+      expect(Object.keys(ACCESS_REASON_KEY_SUFFIX).sort()).toEqual([...reasons].sort());
+    });
+
+    it('falls back to the generic key for an unmapped or missing reason', () => {
+      expect(accessReasonKey('base', 'SOMETHING NEW')).toBe('base');
+      expect(accessReasonKey('base', undefined)).toBe('base');
     });
   });
 

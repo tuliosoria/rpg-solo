@@ -236,6 +236,29 @@ export function getFileContent(
  * @param state - Current game state for access checks
  * @returns Object with accessible boolean and optional reason if denied
  */
+/**
+ * Locale-key suffix for each reason `canAccessFile` can return.
+ *
+ * The reasons themselves stay stable English codes — callers and tests match on
+ * them — but they used to be interpolated raw into an otherwise translated
+ * shell, so a pt-BR player who mistyped a filename got "ERRO: FILE NOT FOUND".
+ * Callers append the suffix to their own key prefix instead, so the whole line
+ * resolves in a single lookup. An unmapped reason falls back to the generic
+ * `{{value}}` form rather than rendering a bare key.
+ */
+export const ACCESS_REASON_KEY_SUFFIX: Record<string, string> = {
+  'FILE NOT FOUND': 'fileNotFound',
+  'NOT A FILE': 'notAFile',
+  'FILE DELETED': 'fileDeleted',
+  'FILE LOCKED': 'fileLocked',
+};
+
+/** Resolves the reason-specific locale key, or `base` when the reason is unmapped. */
+export function accessReasonKey(base: string, reason?: string): string {
+  const suffix = reason ? ACCESS_REASON_KEY_SUFFIX[reason] : undefined;
+  return suffix ? `${base}.${suffix}` : base;
+}
+
 export function canAccessFile(
   path: string,
   state: GameState

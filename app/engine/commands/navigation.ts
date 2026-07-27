@@ -1,7 +1,7 @@
 // Navigation commands: last, back, map, wait, hide
 
 import { TerminalEntry } from '../../types';
-import { canAccessFile, getFileContent } from '../filesystem';
+import { canAccessFile, accessReasonKey, getFileContent } from '../filesystem';
 import { EVIDENCE_SYMBOL, MAX_EVIDENCE_COUNT, LEAK_PREPARATION_THRESHOLD } from '../evidenceRevelation';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES } from '../../constants/detection';
 import { createEntry, createEntryI18n } from './utils';
@@ -35,7 +35,7 @@ export const navigationCommands: CommandRegistry = {
         output: [
           createEntryI18n(
             'error',
-            'engine.commands.navigation.fileNoLongerAccessible',
+            accessReasonKey('engine.commands.navigation.fileNoLongerAccessible', access.reason),
             `ERROR: File no longer accessible: ${access.reason}`,
             { value: access.reason ?? '' }
           ),

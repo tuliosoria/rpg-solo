@@ -90,8 +90,28 @@ describe('UFO74 speaker prefix', () => {
     expect(bracketed).toBeGreaterThan(0);
   });
 
-  it('leaves lines that merely mention UFO74 alone', () => {
-    // Only a speaker prefix may be rewritten. The disconnect notice and the
+  it('gives the speaker slot to no handle but UFO74', () => {
+    // The normalizer can only unify labels it recognizes as UFO74's. It cannot
+    // catch a line of theirs filed under a different handle, which is how the
+    // `tree` confirmation came to read "[HackerKid]: Hey kid, ..." — UFO74's
+    // warning attributed to hackerkid, the handle UFO74 hands the *player* in
+    // the tutorial ("You will be... hackerkid.").
+    const foreign: string[] = [];
+
+    for (const [language, table] of LOCALES) {
+      for (const [key, value] of Object.entries(table)) {
+        if (typeof value !== 'string') continue;
+        const speaker = value.match(/^\s*\[([A-Za-z0-9_ ]{2,20})\]\s*:/);
+        if (speaker && speaker[1] !== 'UFO74') {
+          foreign.push(`${language} ${key}: ${JSON.stringify(value.slice(0, 60))}`);
+        }
+      }
+    }
+
+    expect(foreign).toEqual([]);
+  });
+
+  it('leaves lines that merely mention UFO74 alone', () => {    // Only a speaker prefix may be rewritten. The disconnect notice and the
     // fixed-width banner are not prefixes, and one of them is a box-drawn row
     // whose width is load-bearing.
     const untouched = [

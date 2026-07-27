@@ -189,6 +189,36 @@ describe('UX Commands', () => {
       const result = executeCommand('unread', state);
       expect(result.output.length).toBeGreaterThan(0);
     });
+
+    it('should print listed paths without doubled separators', () => {
+      const result = executeCommand('unread', createTestState());
+      const paths = result.output.filter(e => e.content.includes('└─')).map(e => e.content);
+
+      expect(paths.length).toBeGreaterThan(0);
+      expect(paths.filter(p => p.includes('//'))).toEqual([]);
+    });
+
+    it('should drop a nested file from the list once it is read', () => {
+      const target = '/internal/jardim_andere_incident.txt';
+      const countOf = (state: GameState) =>
+        parseInt(
+          executeCommand('unread', state)
+            .output.map(e => e.content)
+            .find(c => c.includes('UNREAD FILES'))
+            ?.match(/\((\d+)\)/)?.[1] ?? '-1',
+          10
+        );
+
+      const before = createTestState();
+      const after = createTestState({ filesRead: new Set([target]) });
+
+      // Every file in the game lives in a subdirectory, so a scan that mangles
+      // nested paths can never match filesRead and the count never moves.
+      expect(countOf(after)).toBe(countOf(before) - 1);
+      expect(
+        executeCommand('unread', after).output.some(e => e.content.includes(target))
+      ).toBe(false);
+    });
   });
 
   describe('progress command', () => {
