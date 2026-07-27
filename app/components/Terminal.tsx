@@ -1518,7 +1518,30 @@ export default function Terminal({
                   }
                 }
               }}
-              onKeyDown={handleKeyDown}
+              onKeyDown={e => {
+                // Dev-only: any real keystroke halts the autoplay bot. The bot
+                // submits via handleSubmit(overrideInput) and never through this
+                // handler, so a keydown here is always the watching developer.
+                // Inert in production because botTest can't be active there.
+                if (
+                  gameState.botTest?.active &&
+                  !['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)
+                ) {
+                  setGameState(prev =>
+                    prev.botTest?.active
+                      ? {
+                          ...prev,
+                          botTest: undefined,
+                          history: [
+                            ...prev.history,
+                            createEntry('system', '  BOT-TEST halted (key pressed).'),
+                          ],
+                        }
+                      : prev
+                  );
+                }
+                handleKeyDown(e);
+              }}
               className={styles.inputField}
               disabled={isProcessing || gameState.isGameOver || hasBlockingPopup}
               autoFocus={!showIntroOverlay}
