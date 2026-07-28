@@ -167,6 +167,7 @@ export function useBotRunner(args: BotRunnerArgs): void {
         savedBefore: gameState.savedFiles.size,
         filesReadAfter: gameState.filesRead.size,
         savedAfter: gameState.savedFiles.size,
+        probe: decision.kind === 'command' ? decision.probe : undefined,
       };
       logRef.current.push(entry);
       openTurnRef.current = {

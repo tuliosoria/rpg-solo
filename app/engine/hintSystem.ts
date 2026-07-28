@@ -157,10 +157,20 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
           fallback: 'UFO74: Many directories remain unexplored.',
         },
       ]),
-      followUp: {
-        key: 'engine.hints.action.start.useTreeAndSearch',
-        fallback: '       use "tree" for the map, then "search <term>" if you need a lead.',
-      },
+      // `tree` ends the run outright on an elevated session, so UFO74 must not
+      // point at it once admin is unlocked. This branch fires on `filesRead < 4`,
+      // and the intended opening unlocks admin after reading exactly one file
+      // (the override memo) — so the recommended path put "use tree for the map"
+      // one keystroke away from a firewall game over.
+      followUp: adminUnlocked
+        ? {
+            key: 'engine.hints.action.start.useSearch',
+            fallback: '       cast wider: "ls" around, then "search <term>" if you need a lead.',
+          }
+        : {
+            key: 'engine.hints.action.start.useTreeAndSearch',
+            fallback: '       use "tree" for the map, then "search <term>" if you need a lead.',
+          },
     };
   }
 

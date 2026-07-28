@@ -920,8 +920,56 @@ export const filesystemCommands: CommandRegistry = {
   },
 
   tree: (args, state) => {
-    // Post-override: tree fails and triggers Firewall (game over)
+    // Post-override: a full index scan on an elevated session trips the
+    // firewall and ends the run.
+    //
+    // That trap is deliberate, but it used to fire on the FIRST `tree` with no
+    // warning at all — while the harmless pre-admin version sat behind a
+    // two-step confirmation. The gating was exactly inverted: the survivable
+    // branch asked "are you sure?", the fatal one did not. And `tree` is not
+    // an obscure command a player has to go looking for — it is in
+    // PUBLIC_COMMANDS, it is listed in `help` as "Show directory structure",
+    // failed searches suggest it, and the hint system used to recommend it
+    // outright. A player could read the override memo, unlock admin (the
+    // intended opening), type `hint`, be told "use tree for the map", type
+    // `tree`, and lose the run to a single unwarned keystroke.
+    //
+    // The trap stays — insisting still kills you — but it now costs the same
+    // deliberate second keystroke the safe version always cost, and the
+    // warning says plainly that this one is fatal.
     if (state.flags?.adminUnlocked) {
+      if (!state.pendingTreeConfirm) {
+        return {
+          output: [
+            createEntry('warning', ''),
+            // Typed 'warning' rather than 'ufo74' for the same reason as the
+            // pre-admin gate below: 'ufo74' entries are deferred to the end of
+            // a command's output, which would land the question after the
+            // confirmation instruction.
+            createEntryI18n(
+              'warning',
+              'engine.commands.filesystem.ufo74_tree_elevated_warning',
+              '[UFO74]: kid. NO. not on this session.'
+            ),
+            createEntryI18n(
+              'warning',
+              'engine.commands.filesystem.tree_elevated_warning_detail',
+              '  a full index scan from an elevated login trips the firewall. it ends here.'
+            ),
+            createEntry('warning', ''),
+            createEntryI18n(
+              'system',
+              'engine.commands.filesystem.type_tree_again_to_confirm',
+              'Type tree again to confirm.'
+            ),
+            createEntry('system', ''),
+          ],
+          stateChanges: {
+            pendingTreeConfirm: true,
+          },
+        };
+      }
+
       return {
         output: [
           createEntry('error', ''),
@@ -940,6 +988,7 @@ export const filesystemCommands: CommandRegistry = {
         stateChanges: {
           isGameOver: true,
           gameOverReason: 'FIREWALL — TREE SCAN ON ELEVATED SESSION',
+          pendingTreeConfirm: false,
         },
         triggerFlicker: true,
         delayMs: 2000,

@@ -2,6 +2,7 @@ import type { Language } from './index';
 import { RUNTIME_DATA_TRANSLATIONS } from './runtimeDataTranslations';
 import { RUNTIME_VFS_TRANSLATIONS } from './runtimeVfsTranslations';
 import { RUNTIME_COMMAND_SUPPLEMENT } from './runtimeCommandSupplement';
+import { RUNTIME_PRISONER_TRANSLATIONS } from './runtimePrisonerTranslations';
 
 type RuntimeDictionary = Record<string, string>;
 
@@ -15310,13 +15311,15 @@ export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictio
     RUNTIME_TRANSLATIONS_WAVE_4['pt-BR'],
     RUNTIME_DATA_TRANSLATIONS['pt-BR'],
     RUNTIME_VFS_TRANSLATIONS['pt-BR'],
-    RUNTIME_TRANSLATIONS_LEAK_PROLOGUE['pt-BR']
+    RUNTIME_TRANSLATIONS_LEAK_PROLOGUE['pt-BR'],
+    RUNTIME_PRISONER_TRANSLATIONS['pt-BR']
   ),
   es: mergeRuntimeLayers(
     RUNTIME_TRANSLATIONS_PRE_WAVE_4.es,
     RUNTIME_TRANSLATIONS_WAVE_4.es,
     RUNTIME_DATA_TRANSLATIONS.es,
     RUNTIME_VFS_TRANSLATIONS.es,
-    RUNTIME_TRANSLATIONS_LEAK_PROLOGUE.es
+    RUNTIME_TRANSLATIONS_LEAK_PROLOGUE.es,
+    RUNTIME_PRISONER_TRANSLATIONS.es
   ),
 };

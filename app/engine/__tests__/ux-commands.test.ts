@@ -742,8 +742,25 @@ describe('UX Commands', () => {
       expect(result.stateChanges.detectionLevel).toBe(40);
     });
 
-    it('should trigger firewall when adminUnlocked', () => {
+    it('should warn before triggering the firewall when adminUnlocked', () => {
+      // The firewall trap is deliberate, but it used to fire on the first
+      // keystroke while the *survivable* pre-admin tree sat behind a
+      // confirmation gate. `tree` is advertised in `help` and was recommended
+      // by the hint system, so that made a documented command an unwarned
+      // instant loss. It now costs the same deliberate second keystroke.
       const state = createTestState({ flags: { adminUnlocked: true } });
+      const result = executeCommand('tree', state);
+
+      expect(result.output.some(e => e.content.includes('FIREWALL TRIGGERED'))).toBe(false);
+      expect(result.stateChanges.isGameOver).toBeFalsy();
+      expect(result.stateChanges.pendingTreeConfirm).toBe(true);
+    });
+
+    it('should trigger firewall when adminUnlocked and the player confirms', () => {
+      const state = createTestState({
+        flags: { adminUnlocked: true },
+        pendingTreeConfirm: true,
+      });
       const result = executeCommand('tree', state);
 
       expect(result.output.some(e => e.content.includes('FIREWALL TRIGGERED'))).toBe(true);
