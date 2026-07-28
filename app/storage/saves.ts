@@ -168,6 +168,11 @@ function serializeState(state: GameState): string {
     state: {
       ...cleaned,
       evidenceCount,
+      // The autoplay harness is session-only. Persisting it meant a player who
+      // started `bot-test` and then reloaded came back to a save that resumed
+      // playing itself, with no way to tell why — the autosave fires on state
+      // change, so it captured `active: true` mid-run.
+      botTest: undefined,
       singularEventsTriggered: Array.from(cleaned.singularEventsTriggered || []),
       imagesShownThisRun: Array.from(cleaned.imagesShownThisRun || []),
       categoriesRead: Array.from(cleaned.categoriesRead || []),
@@ -210,6 +215,10 @@ function deserializeState(json: string): GameState {
   const baseState = {
     ...DEFAULT_GAME_STATE,
     ...parsed,
+    // Older builds wrote the autoplay config into the save. Those files are
+    // already on players' machines, so drop it on the way in as well as out —
+    // otherwise loading one hands the session straight back to the bot.
+    botTest: undefined,
   } as GameState & Record<string, unknown>;
 
   const normalizedSeed = normalizeSeed(baseState.seed) ?? generateSeed();

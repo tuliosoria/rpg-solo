@@ -18,6 +18,13 @@ export const debugCommands: CommandRegistry = {
       ],
       stateChanges: {
         botTest: { active: true, level, seed, maxTurns: DEFAULT_BOT_MAX_TURNS, delayMs: DEFAULT_BOT_DELAY_MS },
+        // An explicit seed has to reach the game, not just the run summary.
+        // `state.seed` is what actually drives play — the leak sequence, file
+        // content variation, honeypot rolls — so storing the argument only on
+        // `botTest` left it inert: every `bot-test novice 42` ran on whatever
+        // seed the session happened to have while the summary claimed 42, and
+        // re-running a reported seed reproduced nothing.
+        ...(seedArg ? { seed, rngState: seed } : {}),
       },
     };
   },

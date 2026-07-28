@@ -31,7 +31,16 @@ bot-stop                               # or press any key — both halt it
 
 Both commands are deliberately absent from `PUBLIC_COMMANDS`, so they never
 appear in `help`, Tab completion, or "did you mean" suggestions. Type them
-exactly. `botTest` state is never persisted to a save.
+exactly. `botTest` is stripped on both save and load, so a run that was
+underway can never be restored into a session and resume playing on its own.
+
+Passing a seed **reseeds the game** (`state.seed` and `state.rngState`), it does
+not merely label the run: `state.seed` is what drives the leak sequence, file
+content variation and honeypot rolls, so the seed printed in the summary is the
+one another machine can replay. Omit it and the session's own seed is used and
+reported unchanged. Note this means `bot-test <level> <seed>` changes the RNG of
+a session already in progress — which is the point, but makes it a poor thing to
+type mid-playthrough.
 
 One command per turn at 3s, and the bot submits through the same path a human
 uses — streaming, UFO74 reactions, and overlays all play out — so a full winning
@@ -75,6 +84,20 @@ several live providers at once does not give you three languages. Comparing raw
 `entry.content` instead is the trap: it still holds `{{placeholders}}` and the
 English fallback, so real bugs hide and false ones appear.
 
+**Set the language before running the command, not just before rendering it.**
+Translation happens at two different times: entries carrying an `i18nKey` are
+resolved at render, but handlers that call `translateStatic` directly (`status`,
+`save`, `unsave`, …) bake the string in *when the command executes*, and with no
+explicit language argument `translateStatic` falls back to reading the language
+straight out of `localStorage`. So a sweep that executes each command once and
+then renders it three times measures one language wearing three hats — and
+because the provider persists on `setLanguage`, the language it reports is
+whichever pass ran last. Write the key
+(`localStorage.setItem('terminal1996_language', lang)`) *before* `executeCommand`
+and run the whole command once per locale. Getting this backwards manufactures
+convincing findings: it reported the entire `help` table and every `status` line
+as untranslated, all of which were fine.
+
 **Sweep documents from a fresh low-detection state, one per file.** Opening
 every file in a single session drives detection into the hostile tiers, where
 the terminal deliberately truncates and mangles its own output. A truncated
@@ -84,8 +107,14 @@ artifact once produced a 54-line "translation gap" in files that were fully
 translated all along. Re-measure anything suspicious at detection 0 before
 believing it.
 
+**Expect legitimate matches.** Many lines are identical in all three languages on
+purpose: proper names, morse tables, hashes, modem logs, command names quoted in
+prose, and the in-fiction Portuguese that is already Portuguese in the English
+build. Filter those out before counting, or the signal drowns.
+
 This is how the `unread` doubled-slash bug, an untranslated error reason, a
-misattributed speaker label, and a doubled indent were found. See
+misattributed speaker label, a doubled indent, and the runtime-merge precedence
+bug (`app/i18n/__tests__/runtimeMergePrecedence.test.ts`) were found. See
 `app/engine/bot/__tests__/strategy.integration.test.ts` for the loop skeleton.
 
 ## Reading the Run Summary
@@ -109,9 +138,15 @@ the first two on `novice` or `pro` means something regressed.
 ## Common Pitfalls
 
 - **It is live in production.** `BOT_ENABLED` is `true`, so the commands ship;
-  only their absence from `PUBLIC_COMMANDS` keeps them out of reach. The
-  comment at the `useBotRunner` call site calling it "dev-gated" understates
-  this. To actually remove them, set `BOT_ENABLED = false` and redeploy.
+  only their absence from `PUBLIC_COMMANDS` keeps them out of reach. Treat
+  anything it can reach — saves included — as player-facing. To actually remove
+  the commands, set `BOT_ENABLED = false` and redeploy.
+- **Session-only means enforced, not just intended.** `botTest` is stripped in
+  `serializeState` *and* in `deserializeState`; the type comment saying it is
+  never persisted was true of the intent and false of the code, and the autosave
+  fires on state change, so a run in progress was written straight to disk and
+  resumed on load. Guarded by
+  `app/storage/__tests__/botTestNotPersisted.test.ts`.
 - **The bot is not a player.** It beelines: it only opens files it intends to
   save, and never browses, uses `hint`, or mistypes. A clean run says the path
   works, not that the surface is clean — sweep commands separately.
