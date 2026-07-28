@@ -14,8 +14,9 @@ reporting.
 
 | File | Role |
 |---|---|
-| `app/engine/bot/strategy.ts` | `decideNextCommand` — the whole brain. Pure: `(state, memory, level) → command` |
+| `app/engine/bot/strategy.ts` | `decideNextCommand` — the whole brain. Pure: `(state, memory, level, seed) → command` |
 | `app/engine/bot/targets.ts` | Secret-ending file sets, derived from `FILE_CATEGORIES` so they can't drift |
+| `app/engine/bot/probes.ts` | `BOT_PROBE_COMMANDS` — the command surface `chaos` pokes at |
 | `app/engine/bot/types.ts` | `BotLevel`, `BotMemory`, `DEFAULT_BOT_MAX_TURNS` (400), `DEFAULT_BOT_DELAY_MS` (3000) |
 | `app/engine/bot/report.ts` | `buildRunSummary` — the block printed when a run ends |
 | `app/hooks/useBotRunner.ts` | Browser driver: pacing, overlay dismissal, terminal-idle gating |
@@ -25,8 +26,8 @@ reporting.
 ## Watching a Run
 
 ```
-bot-test [dummy|novice|pro] [seed]     # level defaults to novice, seed to state.seed
-bot-stop                               # or press any key — both halt it
+bot-test [dummy|novice|pro|chaos] [seed]   # level defaults to novice, seed to state.seed
+bot-stop                                   # or press any key — both halt it
 ```
 
 Both commands are deliberately absent from `PUBLIC_COMMANDS`, so they never
@@ -53,10 +54,38 @@ run takes a few minutes to watch.
 | `dummy` | Never unlocks admin; only pre-admin evidence is reachable | The game stops gracefully when a player cannot win — no hang, no loop |
 | `novice` | Unlocks admin, fills the dossier broadly, wins | The mainline path is completable |
 | `pro` | Prioritizes `secretCriticalTargets()` before the 10-slot cap | The secret ending is still reachable |
+| `chaos` | Wins like `novice`, but spends spare turns on `BOT_PROBE_COMMANDS` | The rest of the command surface survives contact with a player |
 
 `pro` is the canary for ending logic: it claims the four files
 `determineEnding` actually requires *first*, so a change to `FILE_CATEGORIES`
 or the dossier cap shows up as a wrong ending rather than a silent near-miss.
+
+`chaos` is the canary for everything the win path never touches. `novice` and
+`pro` only ever type `open`, `save`, `override` and `leak`, so a clean run says
+nothing at all about the other two dozen commands. That is not theoretical:
+`chaos` is what found `tree` ending an admin session on the first unwarned
+keystroke, while the *survivable* pre-admin version sat behind a confirmation
+gate — on a command `help` advertises and the hint system used to recommend.
+
+**Seeds vary the dossier, not just the leak sequence.** `strategy.ts` orders
+equal-priority files by `seededOrder(seed, path)`, so different seeds
+investigate different files and reach different endings. Before that the file
+order came from the filesystem walk and was identical on every seed, which
+meant a 24-seed `novice` sweep produced `the_2026_warning` 24 times and eleven
+of the twelve endings were never exercised by any run. `pro` keeps its priority
+tiers on top of the shuffle, so the secret ending stays guaranteed; only the
+interchangeable remainder moves.
+
+### Changing the probe list
+
+`BOT_PROBE_COMMANDS` runs once per entry, in order, and must contain nothing
+that ends the run or rewrites the session. `tutorial` with no argument is the
+cautionary tale: it sets `tutorialComplete: false` and clears `history`, handing
+the session back to the interactive tutorial, and every turn after it reported
+empty output and "changed nothing" — twenty lines that looked like engine bugs
+and were one self-inflicted wound. Probe turns are also marked `probe: true` so
+`settleBotTurn` exempts them from "turn changed nothing"; a read-only command
+changing nothing is the expected result, not a finding.
 
 ## Headless Sweep (the fast way to find bugs)
 
@@ -147,13 +176,17 @@ the first two on `novice` or `pro` means something regressed.
   fires on state change, so a run in progress was written straight to disk and
   resumed on load. Guarded by
   `app/storage/__tests__/botTestNotPersisted.test.ts`.
-- **The bot is not a player.** It beelines: it only opens files it intends to
-  save, and never browses, uses `hint`, or mistypes. A clean run says the path
-  works, not that the surface is clean — sweep commands separately.
+- **`dummy`, `novice` and `pro` are not players.** They beeline: they only open
+  files they intend to save, and never browse, use `hint`, or mistype. A clean
+  run on those levels says the win path works, not that the surface is clean —
+  that is what `chaos` is for, and it is still only a probe list, so a command
+  absent from `BOT_PROBE_COMMANDS` is a command no bot has ever typed.
 - **Don't hardcode ending files in `strategy.ts`.** Go through
   `app/engine/bot/targets.ts`, which derives them from `endings.ts`.
 - **New blocking overlay? Teach the runner.** `useBotRunner` only knows the
   overlays passed to it; an unhandled one stalls the run until the turn cap.
-- Changing levels, targets, or the stop conditions means re-running
+- Changing levels, targets, probes, or the stop conditions means re-running
   `app/engine/bot/__tests__/strategy.integration.test.ts`, which asserts that
-  `novice` wins and `pro` reaches `secret_ending`.
+  every level terminates, `novice` and `chaos` win, `pro` reaches
+  `secret_ending` on every seed, seeds produce more than one ending, and each
+  probe is issued exactly once.

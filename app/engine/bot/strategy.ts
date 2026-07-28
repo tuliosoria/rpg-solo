@@ -3,6 +3,7 @@ import { getAllAccessibleFiles } from '../filesystem';
 import { isEvidencePath } from '../evidenceRevelation';
 import { OVERRIDE_PASSWORD } from '../overrideSecret';
 import { isSecretTarget, secretCriticalTargets } from './targets';
+import { BOT_PROBE_COMMANDS } from './probes';
 import { BotDecision, BotLevel, BotMemory, DEFAULT_BOT_MAX_TURNS } from './types';
 
 const MAX_SAVED = 10;
@@ -21,15 +22,21 @@ const PASSWORD_HINT_FILE = '/internal/override_protocol_memo.txt';
 //            wins a (non-secret) ending.
 //  - pro:    an expert. Unlocks admin, prioritises the secret-ending file set,
 //            and wins the secret ending.
+//  - chaos:  a restless player. Wins like novice, but spends its spare turns
+//            poking at the whole command surface — including inputs a careful
+//            bot would never type — so a run exercises far more than the
+//            happy path.
 const LEVEL_POLICY: Record<BotLevel, {
   unlocksAdmin: boolean;
   saveTarget: number;
   readLimit: number;
   targetsSecret: boolean;
+  probes: boolean;
 }> = {
-  dummy: { unlocksAdmin: false, saveTarget: 5, readLimit: 12, targetsSecret: false },
-  novice: { unlocksAdmin: true, saveTarget: 10, readLimit: 999, targetsSecret: false },
-  pro: { unlocksAdmin: true, saveTarget: 10, readLimit: 999, targetsSecret: true },
+  dummy: { unlocksAdmin: false, saveTarget: 5, readLimit: 12, targetsSecret: false, probes: false },
+  novice: { unlocksAdmin: true, saveTarget: 10, readLimit: 999, targetsSecret: false, probes: false },
+  pro: { unlocksAdmin: true, saveTarget: 10, readLimit: 999, targetsSecret: true, probes: false },
+  chaos: { unlocksAdmin: true, saveTarget: 10, readLimit: 999, targetsSecret: false, probes: true },
 };
 
 function basename(path: string): string {
@@ -40,6 +47,28 @@ function progressSignature(state: GameState): string {
   const admin = state.flags?.adminUnlocked ? 1 : 0;
   const gen = state.leakSequenceGenerated ? 1 : 0;
   return `${state.filesRead.size}:${state.savedFiles.size}:${state.leakSequenceProgress}:${admin}:${gen}`;
+}
+
+/**
+ * Stable per-(seed, path) hash used to order files of equal priority.
+ *
+ * Without this the bot was seed-invariant in everything that mattered: file
+ * order came from the filesystem walk, so every seed opened the same files in
+ * the same order and `novice` produced `the_2026_warning` on all 24 seeds of a
+ * sweep. `determineEnding` reads the *dossier*, so a sweep that always builds
+ * the same dossier can only ever exercise one of the twelve endings — the
+ * other eleven, and every content path behind them, went unswept.
+ *
+ * FNV-1a over the path, mixed with the seed. Deterministic, so a reported seed
+ * still replays exactly; varied, so different seeds build different dossiers.
+ */
+function seededOrder(seed: number, path: string): number {
+  let hash = (0x811c9dc5 ^ seed) >>> 0;
+  for (let i = 0; i < path.length; i++) {
+    hash = (hash ^ path.charCodeAt(i)) >>> 0;
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash;
 }
 
 /** Whether this level wants to read/save the given file at all. */
@@ -62,11 +91,26 @@ function fileRank(path: string, level: BotLevel): number {
   return evidence;
 }
 
+/**
+ * Orders candidates by priority tier, then by the seeded hash within a tier.
+ *
+ * `pro` keeps its tiering, so the four secret-critical files still claim the
+ * first four dossier slots on every seed and the secret ending stays reachable;
+ * only the order of the interchangeable remainder moves.
+ */
+function orderCandidates(paths: string[], level: BotLevel, seed: number): string[] {
+  return [...paths].sort((a, b) => {
+    const rank = fileRank(b, level) - fileRank(a, level);
+    if (rank !== 0) return rank;
+    return seededOrder(seed, a) - seededOrder(seed, b);
+  });
+}
+
 export function decideNextCommand(
   state: GameState,
   memory: BotMemory,
   level: BotLevel,
-  _seed: number
+  seed: number
 ): { decision: BotDecision; memory: BotMemory } {
   const policy = LEVEL_POLICY[level];
   const m: BotMemory = { ...memory, turnsTaken: memory.turnsTaken + 1 };
@@ -87,13 +131,17 @@ export function decideNextCommand(
     m.noProgressStreak = 0;
     m.lastProgressSignature = sig;
   }
-  if (m.noProgressStreak >= 6) {
+  // Probe turns deliberately change nothing about progress, so the streak has
+  // to tolerate a run of them or `chaos` would stop itself as "stuck" while
+  // working exactly as designed.
+  const stuckLimit = policy.probes ? 6 + BOT_PROBE_COMMANDS.length : 6;
+  if (m.noProgressStreak >= stuckLimit) {
     return { decision: { kind: 'done', reason: 'no progress (stuck)' }, memory: m };
   }
 
-  const decide = (text: string): { decision: BotDecision; memory: BotMemory } => {
+  const decide = (text: string, probe = false): { decision: BotDecision; memory: BotMemory } => {
     m.lastDecision = text;
-    return { decision: { kind: 'command', text }, memory: m };
+    return { decision: { kind: 'command', text, probe }, memory: m };
   };
 
   // Unlock admin once, EARLY (detection still ~0, no evidence counted) so the
@@ -110,13 +158,24 @@ export function decideNextCommand(
     }
   }
 
+  // Probe the wider command surface between useful turns. Deferred until admin
+  // is unlocked so the probes run against a fully-opened filesystem, and each
+  // probe is issued exactly once so the run still terminates.
+  if (policy.probes && m.probesIssued < BOT_PROBE_COMMANDS.length) {
+    const probe = BOT_PROBE_COMMANDS[m.probesIssued];
+    m.probesIssued += 1;
+    return decide(probe, true);
+  }
+
   const accessible = getAllAccessibleFiles(state);
   const savedCount = state.savedFiles.size;
 
   // Save a wanted file we have already read (highest priority first).
-  const readNotSaved = accessible
-    .filter(p => state.filesRead.has(p) && !state.savedFiles.has(p) && wantsFile(p, level))
-    .sort((a, b) => fileRank(b, level) - fileRank(a, level));
+  const readNotSaved = orderCandidates(
+    accessible.filter(p => state.filesRead.has(p) && !state.savedFiles.has(p) && wantsFile(p, level)),
+    level,
+    seed
+  );
   if (savedCount < MAX_SAVED && readNotSaved.length > 0) {
     return decide(`save ${basename(readNotSaved[0])}`);
   }
@@ -132,9 +191,11 @@ export function decideNextCommand(
   // only ever opens files it intends to save — keeping runs short and detection
   // low without relying on the rate-limited `wait` command.
   if (state.filesRead.size < policy.readLimit) {
-    const unread = accessible
-      .filter(p => !state.filesRead.has(p) && wantsFile(p, level))
-      .sort((a, b) => fileRank(b, level) - fileRank(a, level));
+    const unread = orderCandidates(
+      accessible.filter(p => !state.filesRead.has(p) && wantsFile(p, level)),
+      level,
+      seed
+    );
     if (unread.length > 0) {
       return decide(`open ${unread[0]}`);
     }

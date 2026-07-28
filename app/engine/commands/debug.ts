@@ -2,7 +2,7 @@ import { CommandRegistry } from './types';
 import { createEntry } from './utils';
 import { BotLevel, DEFAULT_BOT_DELAY_MS, DEFAULT_BOT_MAX_TURNS } from '../bot/types';
 
-const LEVELS: BotLevel[] = ['dummy', 'novice', 'pro'];
+const LEVELS: BotLevel[] = ['dummy', 'novice', 'pro', 'chaos'];
 
 export const debugCommands: CommandRegistry = {
   'bot-test': (args, state) => {

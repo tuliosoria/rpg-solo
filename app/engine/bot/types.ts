@@ -1,7 +1,7 @@
-export type BotLevel = 'dummy' | 'novice' | 'pro';
+export type BotLevel = 'dummy' | 'novice' | 'pro' | 'chaos';
 
 export type BotDecision =
-  | { kind: 'command'; text: string }
+  | { kind: 'command'; text: string; /** True for `chaos` surface probes. */ probe?: boolean }
   | { kind: 'enter' }
   | { kind: 'done'; reason: string };
 
@@ -19,6 +19,8 @@ export interface BotMemory {
   noProgressStreak: number;
   overrideAttempted: boolean;
   lastProgressSignature: string;
+  /** How many entries of `BOT_PROBE_COMMANDS` the `chaos` level has issued. */
+  probesIssued: number;
 }
 
 export interface BotRunLogEntry {
@@ -31,6 +33,13 @@ export interface BotRunLogEntry {
   savedBefore: number;
   filesReadAfter: number;
   savedAfter: number;
+  /**
+   * True when the turn was a `chaos` surface probe rather than a move toward
+   * winning. Probes are exempt from the "turn changed nothing" rule: `help`,
+   * `map`, `unread` and friends are read-only by design, so flagging them
+   * buried the real findings under eighteen lines of expected noise.
+   */
+  probe?: boolean;
   anomaly?: string;
 }
 
@@ -41,6 +50,7 @@ export function createBotMemory(): BotMemory {
     noProgressStreak: 0,
     overrideAttempted: false,
     lastProgressSignature: '',
+    probesIssued: 0,
   };
 }
 
@@ -105,7 +115,10 @@ export function settleBotTurn(
     // gameWon and leaves every counter where it was.
     after.gameWon ||
     after.isGameOver;
-  if (!movedSomething) {
+  // Probe turns are read-only on purpose, so "changed nothing" is the expected
+  // result rather than a finding. Rejection and detection spikes are still
+  // flagged on probes — those are exactly what a probe is looking for.
+  if (!movedSomething && !entry.probe) {
     reasons.push('turn changed nothing');
   }
 
