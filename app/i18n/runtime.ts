@@ -5,6 +5,39 @@ import { RUNTIME_COMMAND_SUPPLEMENT } from './runtimeCommandSupplement';
 
 type RuntimeDictionary = Record<string, string>;
 
+/**
+ * Merges runtime dictionaries left to right, with one rule a plain object
+ * spread cannot express: a line that translates to *itself* is not a
+ * translation, it is an untranslated line, and it must never displace a real
+ * one contributed by an earlier layer.
+ *
+ * The layers are batches written at different times, and the later ones are
+ * built line-by-line from whole file blocks (`registerLines` in
+ * runtimeVfsTranslations.ts writes an entry for every line of a document,
+ * including the ones the translator left in English). Under a plain spread the
+ * last batch wins unconditionally, so a single English line copied verbatim
+ * into an otherwise-translated block silently reverted a translation an earlier
+ * batch had already made — that is how `PHASE ███ IS ██████ UNDERWAY` and its
+ * matching keycard line, both translated in the base and wave-2 batches, ended
+ * up rendering in English in all three languages.
+ *
+ * Seeding a brand-new key with an identity value is still allowed: it costs
+ * nothing (an absent key renders as English anyway) and keeps the key present
+ * for coverage tooling.
+ */
+function mergeRuntimeLayers(...layers: RuntimeDictionary[]): RuntimeDictionary {
+  const merged: RuntimeDictionary = {};
+  for (const layer of layers) {
+    for (const key of Object.keys(layer)) {
+      const value = layer[key];
+      const existing = merged[key];
+      if (value === key && existing !== undefined && existing !== key) continue;
+      merged[key] = value;
+    }
+  }
+  return merged;
+}
+
 const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
   'pt-BR': {
     'Speed Demon': 'Demônio da Velocidade',
@@ -13146,18 +13179,18 @@ const RUNTIME_TRANSLATIONS_WAVE_2: Record<Exclude<Language, 'en'>, RuntimeDictio
 };
 
 const RUNTIME_TRANSLATIONS_PRE_WAVE_4: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
-  'pt-BR': {
-    ...BASE_RUNTIME_TRANSLATIONS['pt-BR'],
-    ...RUNTIME_TRANSLATIONS_SUPPLEMENTAL['pt-BR'],
-    ...RUNTIME_COMMAND_SUPPLEMENT['pt-BR'],
-    ...RUNTIME_TRANSLATIONS_WAVE_2['pt-BR'],
-  },
-  es: {
-    ...BASE_RUNTIME_TRANSLATIONS.es,
-    ...RUNTIME_TRANSLATIONS_SUPPLEMENTAL.es,
-    ...RUNTIME_COMMAND_SUPPLEMENT.es,
-    ...RUNTIME_TRANSLATIONS_WAVE_2.es,
-  },
+  'pt-BR': mergeRuntimeLayers(
+    BASE_RUNTIME_TRANSLATIONS['pt-BR'],
+    RUNTIME_TRANSLATIONS_SUPPLEMENTAL['pt-BR'],
+    RUNTIME_COMMAND_SUPPLEMENT['pt-BR'],
+    RUNTIME_TRANSLATIONS_WAVE_2['pt-BR']
+  ),
+  es: mergeRuntimeLayers(
+    BASE_RUNTIME_TRANSLATIONS.es,
+    RUNTIME_TRANSLATIONS_SUPPLEMENTAL.es,
+    RUNTIME_COMMAND_SUPPLEMENT.es,
+    RUNTIME_TRANSLATIONS_WAVE_2.es
+  ),
 };
 
 const RUNTIME_TRANSLATIONS_WAVE_4_KEYS = [
@@ -15272,18 +15305,18 @@ const RUNTIME_TRANSLATIONS_LEAK_PROLOGUE: Record<Exclude<Language, 'en'>, Runtim
 };
 
 export const RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictionary> = {
-  'pt-BR': {
-    ...RUNTIME_TRANSLATIONS_PRE_WAVE_4['pt-BR'],
-    ...RUNTIME_TRANSLATIONS_WAVE_4['pt-BR'],
-    ...RUNTIME_DATA_TRANSLATIONS['pt-BR'],
-    ...RUNTIME_VFS_TRANSLATIONS['pt-BR'],
-    ...RUNTIME_TRANSLATIONS_LEAK_PROLOGUE['pt-BR'],
-  },
-  es: {
-    ...RUNTIME_TRANSLATIONS_PRE_WAVE_4.es,
-    ...RUNTIME_TRANSLATIONS_WAVE_4.es,
-    ...RUNTIME_DATA_TRANSLATIONS.es,
-    ...RUNTIME_VFS_TRANSLATIONS.es,
-    ...RUNTIME_TRANSLATIONS_LEAK_PROLOGUE.es,
-  },
+  'pt-BR': mergeRuntimeLayers(
+    RUNTIME_TRANSLATIONS_PRE_WAVE_4['pt-BR'],
+    RUNTIME_TRANSLATIONS_WAVE_4['pt-BR'],
+    RUNTIME_DATA_TRANSLATIONS['pt-BR'],
+    RUNTIME_VFS_TRANSLATIONS['pt-BR'],
+    RUNTIME_TRANSLATIONS_LEAK_PROLOGUE['pt-BR']
+  ),
+  es: mergeRuntimeLayers(
+    RUNTIME_TRANSLATIONS_PRE_WAVE_4.es,
+    RUNTIME_TRANSLATIONS_WAVE_4.es,
+    RUNTIME_DATA_TRANSLATIONS.es,
+    RUNTIME_VFS_TRANSLATIONS.es,
+    RUNTIME_TRANSLATIONS_LEAK_PROLOGUE.es
+  ),
 };

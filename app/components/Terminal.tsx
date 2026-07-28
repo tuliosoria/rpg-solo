@@ -817,8 +817,10 @@ export default function Terminal({
     },
   });
 
-  // Dev-only autoplay harness. Inert in production because `gameState.botTest`
-  // can only be set by the dev-gated `bot-test` command (see commands/debug.ts).
+  // Autoplay harness. This ships: `bot-test` is registered whenever
+  // BOT_ENABLED is on (it is), and only its absence from PUBLIC_COMMANDS keeps
+  // it out of help, Tab completion and typo suggestions. It stays dormant until
+  // a player types the exact command.
   useBotRunner({
     gameState,
     isProcessing,
@@ -1519,10 +1521,10 @@ export default function Terminal({
                 }
               }}
               onKeyDown={e => {
-                // Dev-only: any real keystroke halts the autoplay bot. The bot
-                // submits via handleSubmit(overrideInput) and never through this
-                // handler, so a keydown here is always the watching developer.
-                // Inert in production because botTest can't be active there.
+                // Any real keystroke halts the autoplay bot. The bot submits via
+                // handleSubmit(overrideInput) and never through this handler, so
+                // a keydown here is always the person watching. No-ops unless a
+                // run is actually active.
                 if (
                   gameState.botTest?.active &&
                   !['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)
