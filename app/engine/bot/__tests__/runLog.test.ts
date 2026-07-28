@@ -112,22 +112,80 @@ describe('bot run log', () => {
     expect(entry.anomaly).toBeUndefined();
   });
 
-  it('flags a turn that changed nothing', () => {
-    const entry: BotRunLogEntry = {
-      turn: 9, command: 'open /gone.txt', detectionBefore: 30, detectionAfter: 30,
-      filesReadBefore: 8, savedBefore: 4, filesReadAfter: 8, savedAfter: 4,
-    };
-    settleBotTurn(entry,
-      { detectionLevel: 30, filesRead: 8, savedFiles: 4, wrongAttempts: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 0, leakProgress: 0, leakGenerated: false });
-    expect(entry.anomaly).toContain('turn changed nothing');
-  });
-
   it('names why a run stopped instead of just saying it stopped', () => {
     const { log, state, reason } = runWithLog('dummy');
     const text = buildRunSummary(log, { active: false, level: 'dummy', seed: 1, maxTurns: 400, delayMs: 10 }, state, reason)
       .map(e => e.content).join('\n');
     expect(reason).toBe('no productive action');
     expect(text).toContain('stopped — no productive action');
+  });
+
+  /**
+   * `tree` warns first and fires second. The warning turn moves no counter the
+   * log watches, so it was reported as a turn that did nothing — a false
+   * finding on the one command most likely to be under investigation, and the
+   * first thing a `tree-firewall` run printed next to its PASS.
+   */
+  it('does not flag the turn that arms a confirmation gate', () => {
+    const entry: BotRunLogEntry = {
+      turn: 3, command: 'tree', detectionBefore: 16, detectionAfter: 16,
+      filesReadBefore: 1, savedBefore: 0, filesReadAfter: 1, savedAfter: 0,
+    };
+    settleBotTurn(entry,
+      { detectionLevel: 16, filesRead: 1, savedFiles: 0, wrongAttempts: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false, pendingTreeConfirm: true },
+      { wrongAttempts: 0, leakProgress: 0, leakGenerated: false, pendingTreeConfirm: false });
+    expect(entry.anomaly).toBeUndefined();
+  });
+
+  it('still flags a turn that changed nothing when no gate moved either', () => {
+    const entry: BotRunLogEntry = {
+      turn: 9, command: 'open /gone.txt', detectionBefore: 30, detectionAfter: 30,
+      filesReadBefore: 8, savedBefore: 4, filesReadAfter: 8, savedAfter: 4,
+    };
+    settleBotTurn(entry,
+      { detectionLevel: 30, filesRead: 8, savedFiles: 4, wrongAttempts: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false, pendingTreeConfirm: false },
+      { wrongAttempts: 0, leakProgress: 0, leakGenerated: false, pendingTreeConfirm: false });
+    expect(entry.anomaly).toContain('turn changed nothing');
+  });
+
+  /**
+   * A scenario whose whole point is bouncing off a limit must not print a
+   * "turn changed nothing" anomaly beside its PASS — that is how people learn
+   * to skim the anomaly list, which is the harness's only real output.
+   */
+  it('exempts a scenario step that expects to change nothing', () => {
+    const entry: BotRunLogEntry = {
+      turn: 25, command: 'save extra.txt', detectionBefore: 30, detectionAfter: 30,
+      filesReadBefore: 12, savedBefore: 10, filesReadAfter: 12, savedAfter: 10,
+      probe: true,
+    };
+    settleBotTurn(entry,
+      { detectionLevel: 30, filesRead: 12, savedFiles: 10, wrongAttempts: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
+      { wrongAttempts: 0, leakProgress: 0, leakGenerated: false });
+    expect(entry.anomaly).toBeUndefined();
+  });
+
+  it('marks the refused eleventh save as an expected no-op', () => {
+    // The strategy has to be the one that says so — the log entry only carries
+    // what the decision told it.
+    const goal = { kind: 'scenario' as const, scenario: 'dossier-full' as const };
+    let state: GameState = {
+      ...DEFAULT_GAME_STATE, tutorialComplete: true, seed: 1, rngState: 1,
+      filesRead: new Set<string>(), savedFiles: new Set<string>(),
+    } as GameState;
+    let memory = createBotMemory();
+    let sawExpectedNoOp = false;
+    for (let i = 0; i < 200; i++) {
+      const { decision, memory: next } = decideNextCommand(state, memory, 'novice', 1, goal);
+      memory = next;
+      if (decision.kind === 'done') break;
+      if (decision.kind === 'command' && decision.probe) {
+        expect(decision.text.startsWith('save ')).toBe(true);
+        sawExpectedNoOp = true;
+      }
+      const input = decision.kind === 'enter' ? '' : decision.text;
+      state = { ...state, ...executeCommand(input, state).stateChanges } as GameState;
+    }
+    expect(sawExpectedNoOp).toBe(true);
   });
 });
