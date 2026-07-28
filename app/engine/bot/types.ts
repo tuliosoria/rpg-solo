@@ -1,7 +1,43 @@
+import { EndingId } from '../endings';
+import { BotScenarioId } from './scenarios';
+
 export type BotLevel = 'dummy' | 'novice' | 'pro' | 'chaos';
 
+/**
+ * What a run is trying to reach, layered on top of `BotLevel` (which describes
+ * how skilled the player pretending to type is).
+ *
+ * The two are orthogonal on purpose. A level answers "does the mainline path
+ * still work for this kind of player"; a goal answers "is this specific outcome
+ * still reachable at all". Before goals existed only one of the twelve endings
+ * (`secret_ending`, via `pro`) was ever aimed at, the other eleven were hit by
+ * accident or not at all, and no bot had ever seen a game-over screen.
+ */
+export type BotGoal =
+  | { kind: 'default' }
+  | { kind: 'ending'; ending: EndingId }
+  | { kind: 'scenario'; scenario: BotScenarioId };
+
+export const DEFAULT_BOT_GOAL: BotGoal = { kind: 'default' };
+
+/** Human-readable label for a goal, for the run summary and the boot banner. */
+export function describeGoal(goal: BotGoal | undefined): string {
+  if (!goal || goal.kind === 'default') return 'default';
+  if (goal.kind === 'ending') return `ending:${goal.ending}`;
+  return `scenario:${goal.scenario}`;
+}
+
 export type BotDecision =
-  | { kind: 'command'; text: string; /** True for `chaos` surface probes. */ probe?: boolean }
+  | {
+      kind: 'command';
+      text: string;
+      /**
+       * True when this turn is not expected to move anything — a `chaos`
+       * surface probe, or a scenario step that deliberately bounces off a
+       * limit. See `BotRunLogEntry.probe`.
+       */
+      probe?: boolean;
+    }
   | { kind: 'enter' }
   | { kind: 'done'; reason: string };
 
@@ -11,6 +47,8 @@ export interface BotRunConfig {
   seed: number;
   maxTurns: number;
   delayMs: number;
+  /** Omitted for the plain `bot-test <level>` form, which is level-driven. */
+  goal?: BotGoal;
 }
 
 export interface BotMemory {
@@ -21,6 +59,16 @@ export interface BotMemory {
   lastProgressSignature: string;
   /** How many entries of `BOT_PROBE_COMMANDS` the `chaos` level has issued. */
   probesIssued: number;
+  /** Scenario commands issued so far; the cursor a scenario driver reads. */
+  scenarioStep: number;
+  /** Per-run scratch space for scenario drivers. See `BotScenarioContext`. */
+  scenarioFlags: Record<string, boolean>;
+  /**
+   * Files an ending run asked for and could not open. Anything listed here is
+   * dropped from the next plan, so one unreachable file re-routes the dossier
+   * instead of wedging the run against a door that will not open.
+   */
+  unavailablePaths: string[];
 }
 
 export interface BotRunLogEntry {
@@ -34,10 +82,12 @@ export interface BotRunLogEntry {
   filesReadAfter: number;
   savedAfter: number;
   /**
-   * True when the turn was a `chaos` surface probe rather than a move toward
-   * winning. Probes are exempt from the "turn changed nothing" rule: `help`,
-   * `map`, `unread` and friends are read-only by design, so flagging them
-   * buried the real findings under eighteen lines of expected noise.
+   * True when the turn is not expected to move anything: a `chaos` surface
+   * probe, or a scenario step that deliberately bounces off a limit. `help`,
+   * `map` and `unread` are read-only by design and the 11th save is refused by
+   * design, so flagging them buried the real findings under expected noise.
+   * Rejection and detection spikes are still flagged on these turns — those are
+   * exactly what such a turn is looking for.
    */
   probe?: boolean;
   anomaly?: string;
@@ -51,6 +101,9 @@ export function createBotMemory(): BotMemory {
     overrideAttempted: false,
     lastProgressSignature: '',
     probesIssued: 0,
+    scenarioStep: 0,
+    scenarioFlags: {},
+    unavailablePaths: [],
   };
 }
 
@@ -85,8 +138,15 @@ export function settleBotTurn(
     gameWon: boolean;
     isGameOver: boolean;
     gameOverReason?: string;
+    /** Whether `tree`'s confirmation gate is armed. */
+    pendingTreeConfirm?: boolean;
   },
-  before: { wrongAttempts: number; leakProgress: number; leakGenerated: boolean }
+  before: {
+    wrongAttempts: number;
+    leakProgress: number;
+    leakGenerated: boolean;
+    pendingTreeConfirm?: boolean;
+  }
 ): void {
   entry.detectionAfter = after.detectionLevel;
   entry.filesReadAfter = after.filesRead;
@@ -111,13 +171,19 @@ export function settleBotTurn(
     jump !== 0 ||
     after.leakProgress !== before.leakProgress ||
     after.leakGenerated !== before.leakGenerated ||
+    // Arming a confirmation gate is a state change like any other. Without
+    // this, the first of `tree`'s two turns — the one that puts the warning on
+    // screen — was reported as a turn that did nothing, on the single command
+    // most likely to be under investigation.
+    Boolean(after.pendingTreeConfirm) !== Boolean(before.pendingTreeConfirm) ||
     // The turn that wins the run moves nothing else: the final `leak` flips
     // gameWon and leaves every counter where it was.
     after.gameWon ||
     after.isGameOver;
-  // Probe turns are read-only on purpose, so "changed nothing" is the expected
-  // result rather than a finding. Rejection and detection spikes are still
-  // flagged on probes — those are exactly what a probe is looking for.
+  // Some turns are expected to change nothing: `chaos` probes are read-only,
+  // and a scenario step that bounces off a limit is doing its job. Rejection
+  // and detection spikes are still flagged on them — those are exactly what
+  // such a turn is looking for.
   if (!movedSomething && !entry.probe) {
     reasons.push('turn changed nothing');
   }

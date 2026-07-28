@@ -1189,7 +1189,10 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     };
   }
 
-  const result = handler(args, state);
+  // The executor is handed to the handler so anything that needs to drive whole
+  // games (`bot-test sweep`) can do so without importing this module back —
+  // that import was a cycle through the command registry. See `CommandExecutor`.
+  const result = handler(args, state, executeCommand);
 
   // Clear pending tree confirmation when any non-tree command is executed
   if (command !== 'tree' && state.pendingTreeConfirm) {

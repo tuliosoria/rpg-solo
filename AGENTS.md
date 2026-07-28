@@ -41,7 +41,7 @@ Other useful commands: `npm run test:coverage`, `npm run lint:fix`, `npm run for
 | **Versioning / build metadata** | `next.config.ts`, `app/components/terminalConstants.ts` | See "Versioning" below |
 | **Story validation scripts** | `scripts/` | `validate-story.js`, `validate-enhanced-story.js`, `story_validator.js` |
 | **Browser / E2E testing** | `e2e-tests/`, `testing` skill | `npm run e2e` (committed Playwright suite); optional Playwright MCP for live, agent-driven browser checks — see `.github/skills/testing/SKILL.md` |
-| **Autoplay harness (bot-test)** | `app/engine/bot/`, `bot-test` skill | `strategy.ts` (`decideNextCommand`), `targets.ts`, `app/hooks/useBotRunner.ts`; kill switch in `app/constants/bot.ts` |
+| **Autoplay harness (bot-test)** | `app/engine/bot/`, `bot-test` skill | `strategy.ts` (`decideNextCommand`), `endingTargets.ts` (per-ending recipes), `scenarios.ts` (game-over paths), `sweep.ts` (`bot-test sweep`), `app/hooks/useBotRunner.ts`; kill switch in `app/constants/bot.ts` |
 | **Desktop packaging** | `electron/` | Electron is for distribution; dev happens in browser |
 | **Steam release / SteamPipe** | `docs/STEAM_RELEASE.md` | `scripts/steamPipe.mjs`, `scripts/steam-local-deploy.mjs`, `.github/workflows/steam-release.yml` |
 
@@ -161,7 +161,7 @@ Skills live in `.github/skills/`. Read the relevant `SKILL.md` before working in
 | `i18n` | Touching player-facing strings, locale JSON, runtime translation supplements, or command aliases |
 | `commands` | Adding, modifying, removing, or renaming any command (or the strings that display its name) |
 | `testing` | Writing or fixing tests; running the e2e suite or optional live-browser (Playwright MCP) checks |
-| `bot-test` | Driving the autoplay harness to watch a path or sweep for regressions; changing bot strategy, levels, or its run report |
+| `bot-test` | Driving the autoplay harness to watch a path, aim at a specific ending or game-over scenario, or sweep every outcome for regressions; changing bot strategy, levels, goals, or its run report |
 | `version-bump` | Understanding or adjusting git-derived version/build display behavior |
 | `skill-authoring` | Creating, editing, or proposing a new skill (read before adding any `.github/skills/<name>/SKILL.md` or `specs-driven/skills/SKILL_*.md`) |
 

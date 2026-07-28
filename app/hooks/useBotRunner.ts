@@ -2,7 +2,13 @@ import { useEffect, useRef } from 'react';
 import { GameState, TerminalEntry } from '../types';
 import { decideNextCommand } from '../engine/bot/strategy';
 import { buildRunSummary } from '../engine/bot/report';
-import { createBotMemory, settleBotTurn, BotMemory, BotRunLogEntry } from '../engine/bot/types';
+import {
+  createBotMemory,
+  describeGoal,
+  settleBotTurn,
+  BotMemory,
+  BotRunLogEntry,
+} from '../engine/bot/types';
 
 /** True only when the terminal is free to accept the next bot command. */
 export function isTerminalIdle(g: {
@@ -58,7 +64,12 @@ export function useBotRunner(args: BotRunnerArgs): void {
    */
   const openTurnRef = useRef<{
     entry: BotRunLogEntry;
-    before: { wrongAttempts: number; leakProgress: number; leakGenerated: boolean };
+    before: {
+      wrongAttempts: number;
+      leakProgress: number;
+      leakGenerated: boolean;
+      pendingTreeConfirm: boolean;
+    };
   } | null>(null);
 
   useEffect(() => {
@@ -74,7 +85,10 @@ export function useBotRunner(args: BotRunnerArgs): void {
 
     // Reset memory/log at the start of each distinct run (including a fresh
     // bot-test issued while another run is still flagged active).
-    const runId = `${cfg.level}:${cfg.seed}`;
+    // The goal is part of the run identity: `bot-test ending ridiculed` issued
+    // over a running `bot-test ending real_ending` on the same seed is a new run,
+    // and reusing the old memory would leave it planning the previous dossier.
+    const runId = `${cfg.level}:${cfg.seed}:${describeGoal(cfg.goal)}`;
     if (runIdRef.current !== runId) {
       runIdRef.current = runId;
       memoryRef.current = createBotMemory();
@@ -108,6 +122,7 @@ export function useBotRunner(args: BotRunnerArgs): void {
             gameWon: Boolean(gameState.gameWon),
             isGameOver: Boolean(gameState.isGameOver),
             gameOverReason: gameState.gameOverReason,
+            pendingTreeConfirm: Boolean(gameState.pendingTreeConfirm),
           },
           open.before
         );
@@ -116,7 +131,13 @@ export function useBotRunner(args: BotRunnerArgs): void {
 
       // Terminal-ending states finalize regardless of any popup on screen.
       if (gameState.gameWon || gameState.isGameOver) {
-        const { decision } = decideNextCommand(gameState, memoryRef.current, cfg.level, cfg.seed);
+        const { decision } = decideNextCommand(
+          gameState,
+          memoryRef.current,
+          cfg.level,
+          cfg.seed,
+          cfg.goal
+        );
         if (decision.kind === 'done') {
           appendOutput(buildRunSummary(logRef.current, cfg, gameState, decision.reason));
           clearBot();
@@ -147,7 +168,8 @@ export function useBotRunner(args: BotRunnerArgs): void {
         gameState,
         memoryRef.current,
         cfg.level,
-        cfg.seed
+        cfg.seed,
+        cfg.goal
       );
       memoryRef.current = memory;
 
@@ -176,6 +198,7 @@ export function useBotRunner(args: BotRunnerArgs): void {
           wrongAttempts: gameState.wrongAttempts,
           leakProgress: gameState.leakSequenceProgress,
           leakGenerated: Boolean(gameState.leakSequenceGenerated),
+          pendingTreeConfirm: Boolean(gameState.pendingTreeConfirm),
         },
       };
       submit(input);
