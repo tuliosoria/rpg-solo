@@ -75,6 +75,15 @@ several live providers at once does not give you three languages. Comparing raw
 `entry.content` instead is the trap: it still holds `{{placeholders}}` and the
 English fallback, so real bugs hide and false ones appear.
 
+**Sweep documents from a fresh low-detection state, one per file.** Opening
+every file in a single session drives detection into the hostile tiers, where
+the terminal deliberately truncates and mangles its own output. A truncated
+English fragment matches nothing in the runtime tables, so it renders identically
+in all three languages and reads exactly like an untranslated string — that
+artifact once produced a 54-line "translation gap" in files that were fully
+translated all along. Re-measure anything suspicious at detection 0 before
+believing it.
+
 This is how the `unread` doubled-slash bug, an untranslated error reason, a
 misattributed speaker label, and a doubled indent were found. See
 `app/engine/bot/__tests__/strategy.integration.test.ts` for the loop skeleton.
@@ -82,18 +91,20 @@ misattributed speaker label, and a doubled indent were found. See
 ## Reading the Run Summary
 
 `buildRunSummary` prints level, seed, turns, files read/saved, final detection,
-and outcome (`WON — ending: <id>` / `GAME OVER — <reason>` / `stopped`).
+and outcome (`WON — ending: <id>` / `GAME OVER — <reason>` /
+`stopped — <reason>`).
 
-> **The `ANOMALIES` count is always 0.** `BotRunLogEntry.anomaly` is declared
-> and rendered but never assigned, and `detectionBefore`/`detectionAfter` are
-> both written from the same pre-command state. Read the outcome line and the
-> terminal itself; do not treat "ANOMALIES (0)" as a clean bill of health.
+`ANOMALIES` lists turns worth a second look. A turn is flagged when the command
+was rejected (invalid attempts went up — the strategy and the parser disagree),
+when detection moved more than `BOT_EXPECTED_MAX_DETECTION_JUMP` in one turn,
+when nothing changed at all, or when the game ended. A clean `novice` or `pro`
+run reports zero; anything listed is a real finding, so read it.
 
 `decideNextCommand` stops on its own for: `ending reached`, `game over`,
 `max turns reached` (400), `no progress (stuck)` (6 turns with an unchanged
 `filesRead:savedFiles:leakProgress:admin:generated` signature), and
-`no productive action`. A stop reason other than the first two on `novice` or
-`pro` means something regressed.
+`no productive action`. The reason is printed on the outcome line. Anything but
+the first two on `novice` or `pro` means something regressed.
 
 ## Common Pitfalls
 

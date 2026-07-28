@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { GameState, TerminalEntry } from '../types';
 import { decideNextCommand } from '../engine/bot/strategy';
 import { buildRunSummary } from '../engine/bot/report';
-import { createBotMemory, BotMemory, BotRunLogEntry } from '../engine/bot/types';
+import { createBotMemory, settleBotTurn, BotMemory, BotRunLogEntry } from '../engine/bot/types';
 
 /** True only when the terminal is free to accept the next bot command. */
 export function isTerminalIdle(g: {
@@ -51,6 +51,15 @@ export function useBotRunner(args: BotRunnerArgs): void {
   const logRef = useRef<BotRunLogEntry[]>([]);
   const inFlightRef = useRef(false);
   const runIdRef = useRef<string | null>(null);
+  /**
+   * The turn that has been submitted but whose effect is not known yet. A
+   * command's outcome only shows up in gameState after it has run, so each
+   * entry is closed out at the start of the following turn.
+   */
+  const openTurnRef = useRef<{
+    entry: BotRunLogEntry;
+    before: { wrongAttempts: number; leakProgress: number; leakGenerated: boolean };
+  } | null>(null);
 
   useEffect(() => {
     const cfg = gameState.botTest;
@@ -70,6 +79,7 @@ export function useBotRunner(args: BotRunnerArgs): void {
       runIdRef.current = runId;
       memoryRef.current = createBotMemory();
       logRef.current = [];
+      openTurnRef.current = null;
     }
 
     // Wait while a command is streaming or the turing overlay is up (it
@@ -81,11 +91,34 @@ export function useBotRunner(args: BotRunnerArgs): void {
     const timer = setTimeout(() => {
       inFlightRef.current = false;
 
+      // The previous command has run by now, so its effect is readable. Close
+      // the turn out before doing anything else, including terminating — the
+      // turn that ends a run is usually the interesting one.
+      const open = openTurnRef.current;
+      if (open) {
+        settleBotTurn(
+          open.entry,
+          {
+            detectionLevel: gameState.detectionLevel,
+            filesRead: gameState.filesRead.size,
+            savedFiles: gameState.savedFiles.size,
+            wrongAttempts: gameState.wrongAttempts,
+            leakProgress: gameState.leakSequenceProgress,
+            leakGenerated: Boolean(gameState.leakSequenceGenerated),
+            gameWon: Boolean(gameState.gameWon),
+            isGameOver: Boolean(gameState.isGameOver),
+            gameOverReason: gameState.gameOverReason,
+          },
+          open.before
+        );
+        openTurnRef.current = null;
+      }
+
       // Terminal-ending states finalize regardless of any popup on screen.
       if (gameState.gameWon || gameState.isGameOver) {
         const { decision } = decideNextCommand(gameState, memoryRef.current, cfg.level, cfg.seed);
         if (decision.kind === 'done') {
-          appendOutput(buildRunSummary(logRef.current, cfg, gameState));
+          appendOutput(buildRunSummary(logRef.current, cfg, gameState, decision.reason));
           clearBot();
         }
         return;
@@ -119,20 +152,31 @@ export function useBotRunner(args: BotRunnerArgs): void {
       memoryRef.current = memory;
 
       if (decision.kind === 'done') {
-        appendOutput(buildRunSummary(logRef.current, cfg, gameState));
+        appendOutput(buildRunSummary(logRef.current, cfg, gameState, decision.reason));
         clearBot();
         return;
       }
 
       const input = decision.kind === 'enter' ? '' : decision.text;
-      logRef.current.push({
+      const entry: BotRunLogEntry = {
         turn: memory.turnsTaken,
         command: input || '(enter)',
         detectionBefore: gameState.detectionLevel,
         detectionAfter: gameState.detectionLevel,
+        filesReadBefore: gameState.filesRead.size,
+        savedBefore: gameState.savedFiles.size,
         filesReadAfter: gameState.filesRead.size,
         savedAfter: gameState.savedFiles.size,
-      });
+      };
+      logRef.current.push(entry);
+      openTurnRef.current = {
+        entry,
+        before: {
+          wrongAttempts: gameState.wrongAttempts,
+          leakProgress: gameState.leakSequenceProgress,
+          leakGenerated: Boolean(gameState.leakSequenceGenerated),
+        },
+      };
       submit(input);
     }, cfg.delayMs);
 

@@ -8,8 +8,8 @@ const cfg = { active: false, level: 'pro' as const, seed: 7, maxTurns: 400, dela
 describe('buildRunSummary', () => {
   it('summarizes turns, saves, outcome, and lists anomalies', () => {
     const log: BotRunLogEntry[] = [
-      { turn: 1, command: 'open /a.txt', detectionBefore: 0, detectionAfter: 1, filesReadAfter: 1, savedAfter: 0 },
-      { turn: 2, command: 'save a.txt', detectionBefore: 1, detectionAfter: 1, filesReadAfter: 1, savedAfter: 1, anomaly: 'command returned error' },
+      { turn: 1, command: 'open /a.txt', detectionBefore: 0, detectionAfter: 1, filesReadBefore: 0, savedBefore: 0, filesReadAfter: 1, savedAfter: 0 },
+      { turn: 2, command: 'save a.txt', detectionBefore: 1, detectionAfter: 1, filesReadBefore: 1, savedBefore: 0, filesReadAfter: 1, savedAfter: 1, anomaly: 'command returned error' },
     ];
     const finalState: GameState = { ...DEFAULT_GAME_STATE, savedFiles: new Set(['/a.txt']), gameWon: true } as GameState;
     const entries = buildRunSummary(log, cfg, finalState);

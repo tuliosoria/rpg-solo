@@ -6,14 +6,18 @@ import { BotRunConfig, BotRunLogEntry } from './types';
 export function buildRunSummary(
   log: BotRunLogEntry[],
   config: BotRunConfig,
-  finalState: GameState
+  finalState: GameState,
+  stopReason?: string
 ): TerminalEntry[] {
   const anomalies = log.filter(e => e.anomaly);
   const outcome = finalState.gameWon
     ? `WON — ending: ${determineEnding(finalState.savedFiles)}`
     : finalState.isGameOver
       ? `GAME OVER — ${finalState.gameOverReason || 'unknown'}`
-      : 'stopped';
+      : // "stopped" alone hid the useful half: a run that ends on "no progress
+        // (stuck)" or "max turns reached" looks identical to one that finished
+        // on purpose.
+        `stopped — ${stopReason || 'unknown'}`;
 
   const lines: TerminalEntry[] = [
     createEntry('system', ''),
