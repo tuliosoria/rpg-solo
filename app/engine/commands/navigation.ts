@@ -343,19 +343,26 @@ export const navigationCommands: CommandRegistry = {
   },
 
   hide: (args, state) => {
-    // Only available at 90+ detection
+    // Only available at 90+ detection.
+    //
+    // This used to answer "Command not recognized: hide — type 'help' for
+    // available commands", which is a loop: `help` lists `hide` by name, states
+    // this exact threshold, and `status` announces it the moment it unlocks. So
+    // the game documented the command and then denied it existed, and sent the
+    // player to the screen that had just documented it. Say it is locked, and
+    // say what unlocks it.
     if (state.detectionLevel < DETECTION_THRESHOLDS.HIDE_AVAILABLE) {
       return {
         output: [
           createEntryI18n(
             'error',
-            'engine.commands.navigation.command_not_recognized_hide',
-            'Command not recognized: hide'
+            'engine.commands.navigation.hide_not_available_yet',
+            'Emergency escape is not available yet.'
           ),
           createEntryI18n(
             'system',
-            'engine.commands.navigation.type_help_for_available_commands',
-            'Type "help" for available commands'
+            'engine.commands.navigation.hide_unlocks_at_threshold',
+            'It unlocks at 90% risk.'
           ),
         ],
         stateChanges: {},

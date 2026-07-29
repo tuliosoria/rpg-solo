@@ -313,3 +313,46 @@ describe('useTerminalInput tutorial recovery', () => {
     expect(saveCheckpoint).not.toHaveBeenCalled();
   });
 });
+
+/**
+ * Bare `save` is a UI action, not an engine command: it is intercepted here and
+ * opens the save-session modal, so `executeCommand` never sees it.
+ *
+ * The intercept compared the raw input against the literal English `save`,
+ * which made the save-session UI English-only — pt-BR help tells the player to
+ * type `salvar` and ES help says `guardar`, and both fell straight through to
+ * the engine's "usage: save <filename>" message instead.
+ */
+describe('useTerminalInput save-session intercept', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(executeCommand).mockReturnValue(createCommandResult({}));
+  });
+
+  async function submit(input: string) {
+    const options = createOptions(createGameState(), input);
+    const { result } = renderHook(() => useTerminalInput(options));
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+    return options;
+  }
+
+  it.each(['save', 'salvar', 'guardar', 'SAVE', 'Salvar'])(
+    'opens the save modal for %s',
+    async input => {
+      const options = await submit(input);
+      expect(options.onSaveRequestAction).toHaveBeenCalledTimes(1);
+      expect(executeCommand).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each(['save report.txt', 'salvar arquivo.txt', 'guardar archivo.txt'])(
+    'still treats %s as a dossier save',
+    async input => {
+      const options = await submit(input);
+      expect(options.onSaveRequestAction).not.toHaveBeenCalled();
+      expect(executeCommand).toHaveBeenCalled();
+    }
+  );
+});

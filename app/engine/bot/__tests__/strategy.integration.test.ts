@@ -1,11 +1,34 @@
 import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../../commands';
+import { PUBLIC_COMMANDS } from '../../commands/utils';
+import { OVERRIDE_PASSWORD } from '../../overrideSecret';
 import { decideNextCommand } from '../strategy';
 import { createBotMemory } from '../types';
-import { BOT_PROBE_COMMANDS } from '../probes';
+import { BOT_PROBE_COMMANDS, BOT_PROBES_EXPECTING_REJECTION } from '../probes';
 import { DEFAULT_GAME_STATE, GameState } from '../../../types';
 import { BotLevel } from '../types';
 import { determineEnding } from '../../endings';
+
+/** A post-override session, which is where `chaos` issues its probes. */
+function elevatedState(): GameState {
+  let state: GameState = {
+    ...DEFAULT_GAME_STATE,
+    tutorialComplete: true,
+    seed: 1,
+    rngState: 1,
+    sessionStartTime: 0,
+    filesRead: new Set<string>(),
+    savedFiles: new Set<string>(),
+    flags: { ...(DEFAULT_GAME_STATE.flags || {}) },
+  } as GameState;
+  for (const cmd of [
+    'open /internal/override_protocol_memo.txt',
+    `override protocol ${OVERRIDE_PASSWORD}`,
+  ]) {
+    state = { ...state, ...executeCommand(cmd, state).stateChanges } as GameState;
+  }
+  return state;
+}
 
 function runBot(level: BotLevel): { state: GameState; turns: number; reason: string } {
   let state: GameState = {
@@ -206,6 +229,65 @@ describe('chaos level probes the command surface', () => {
     // history, handing the session back to the interactive tutorial. A probe
     // that does that stops measuring the game and starts rewriting the run.
     expect(BOT_PROBE_COMMANDS).not.toContain('tutorial');
+    // `clear` is the same wound in miniature: its whole job is `history: []`,
+    // so it erases the run a human is watching, and the summary is printed into
+    // that same history.
+    expect(BOT_PROBE_COMMANDS).not.toContain('clear');
+  });
+
+  /**
+   * Some inputs never reach `executeCommand` at all — `useTerminalInput`
+   * intercepts them and drives the UI instead. Probing those headlessly is
+   * worse than not probing them: it exercises an engine branch the player can
+   * never reach and reports it as covered, while in a live run it opens an
+   * overlay `useBotRunner` was never told about. Bare `save` opened the
+   * save-session modal, which is owned by `HomeContent` — one level above the
+   * terminal — so the runner could not see it to dismiss it, and it sat on
+   * screen for the rest of the run.
+   */
+  it('never probes with an input the terminal intercepts before the engine', () => {
+    const uiIntercepted = ['save', 'salvar', 'guardar', 'exit', 'quit'];
+    for (const input of uiIntercepted) {
+      expect(BOT_PROBE_COMMANDS, `${input} never reaches executeCommand`).not.toContain(input);
+    }
+  });
+
+  /**
+   * A command absent from the probe list is a command no bot has ever typed:
+   * `novice` and `pro` only ever issue `open`, `save`, `override` and `leak`, so
+   * a green sweep says nothing about the rest of the surface. Every advertised
+   * command should be reached unless there is a reason it cannot be.
+   */
+  it('types every advertised command it safely can', () => {
+    const probed = new Set(BOT_PROBE_COMMANDS.map(c => c.split(' ')[0]));
+    // `leak` is the win condition, bare `override` falls through to the invalid
+    // command path, `clear` rewrites the session, and bare `save` never reaches
+    // the engine at all — the terminal intercepts it to open the save modal.
+    // `save` still appears with an argument, which is a real engine command.
+    const excused = new Set(['leak', 'override', 'clear']);
+    const never = PUBLIC_COMMANDS.filter(c => !probed.has(c) && !excused.has(c));
+    expect(never, `advertised commands no bot has ever typed: ${never.join(', ')}`).toEqual([]);
+  });
+
+  it('marks the suggestion-path probes as expecting refusal', () => {
+    // They cannot reach the "did you mean" branch without being refused, so
+    // without this the run summary reports two anomalies on every chaos run.
+    for (const probe of BOT_PROBES_EXPECTING_REJECTION) {
+      expect(BOT_PROBE_COMMANDS).toContain(probe);
+    }
+    // ...and nothing else in the list is allowed to be refused, or the check
+    // stops meaning anything.
+    for (const probe of BOT_PROBE_COMMANDS) {
+      if (BOT_PROBES_EXPECTING_REJECTION.has(probe)) continue;
+      const before = elevatedState();
+      const after = { ...before, ...executeCommand(probe, before).stateChanges } as GameState;
+      expect(after.legacyAlertCounter, `probe ${JSON.stringify(probe)} was refused`).toBe(
+        before.legacyAlertCounter
+      );
+      expect(after.wrongAttempts, `probe ${JSON.stringify(probe)} was refused`).toBe(
+        before.wrongAttempts
+      );
+    }
   });
 
   it('marks probe turns so they are exempt from the "changed nothing" rule', () => {

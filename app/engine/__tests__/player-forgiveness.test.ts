@@ -130,3 +130,61 @@ describe('unknown command feedback', () => {
     expect(next.detectionLevel).toBeGreaterThan(state.detectionLevel);
   });
 });
+
+/**
+ * The opening grace period is documented as "exploration without punishment":
+ * `shouldSuppressPenalties` deletes the detection cost and the strike for a
+ * wrong override password. The failed-attempt counter was not suppressed with
+ * them, so the third guess still ended the run outright — with risk reading 0%
+ * and no strikes on the board, the two meters that exist to warn about exactly
+ * this. The harshest punishment in the game was the one the grace period did
+ * not cover.
+ */
+describe('override lockdown respects the opening grace period', () => {
+  const guessing = (overrides: Partial<GameState> = {}): GameState =>
+    ({
+      ...DEFAULT_GAME_STATE,
+      seed: 7,
+      rngState: 7,
+      sessionStartTime: 0,
+      tutorialStep: -1,
+      tutorialComplete: true,
+      interactiveTutorialState: undefined,
+      filesRead: new Set<string>(),
+      savedFiles: new Set<string>(),
+      ...overrides,
+    }) as GameState;
+
+  it('does not bank a strike the player was never shown', () => {
+    let state = guessing();
+    for (let i = 0; i < 5; i++) {
+      ({ state } = apply(state, 'override protocol WRONGCODE'));
+      expect(state.isGameOver).toBeFalsy();
+    }
+    expect(state.overrideFailedAttempts || 0).toBe(0);
+    expect(state.detectionLevel).toBe(0);
+    expect(state.wrongAttempts).toBe(0);
+  });
+
+  it('still says the guess was wrong', () => {
+    const { text } = apply(guessing(), 'override protocol WRONGCODE');
+    expect(text).toContain('INVALID AUTHENTICATION CODE');
+  });
+
+  it('locks down on the third failure once the grace period is over', () => {
+    // evidenceCount > 0 ends the atmosphere phase, so penalties apply again.
+    let state = guessing({ evidenceCount: 1 });
+    ({ state } = apply(state, 'override protocol WRONGCODE'));
+    expect(state.overrideFailedAttempts).toBe(1);
+    ({ state } = apply(state, 'override protocol WRONGCODE'));
+    expect(state.overrideFailedAttempts).toBe(2);
+    expect(state.isGameOver).toBeFalsy();
+
+    ({ state } = apply(state, 'override protocol WRONGCODE'));
+    expect(state.isGameOver).toBe(true);
+    expect(state.gameOverReason).toBe('SECURITY LOCKDOWN - AUTHENTICATION FAILURE');
+    // The counter that fired the lockdown is written back, so a state saved on
+    // this turn agrees with the screen it produced.
+    expect(state.overrideFailedAttempts).toBe(3);
+  });
+});

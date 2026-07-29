@@ -4,6 +4,7 @@ import { isEvidencePath, MAX_EVIDENCE_COUNT } from '../evidenceRevelation';
 import { OVERRIDE_PASSWORD } from '../overrideSecret';
 import { createSeededRng } from '../rng';
 import { DETECTION_THRESHOLDS } from '../../constants/detection';
+import { shouldSuppressPenalties } from '../../constants/atmosphere';
 
 /**
  * Named edge paths the win-path levels can never reach.
@@ -49,12 +50,16 @@ export interface BotScenarioContext {
 }
 
 /**
- * One scenario turn. The object form marks a turn that is *supposed* to change
- * nothing — bouncing off the full dossier is the point of that step, not a
- * finding — so the run summary does not print a scary anomaly on a passing run
- * and teach everyone to skim the anomaly list.
+ * One scenario turn. The object form marks a turn whose "failure" is the point:
+ * `expectNoOp` for one that is *supposed* to change nothing (bouncing off the
+ * full dossier is the step, not a finding) and `expectRejected` for one the
+ * parser is *supposed* to refuse (`invalid-threshold` types gibberish on
+ * purpose). Without them the run summary prints scary anomalies beside a PASS,
+ * and everyone learns to skim the anomaly list.
  */
-export type BotScenarioStep = string | { text: string; expectNoOp: true };
+export type BotScenarioStep =
+  | string
+  | { text: string; expectNoOp?: boolean; expectRejected?: boolean };
 
 /** Produces the next command for a scenario, or `null` once it has played out. */
 export type BotScenarioDriver = (ctx: BotScenarioContext) => BotScenarioStep | null;
@@ -115,6 +120,19 @@ function openAnything(state: GameState): string | null {
   return all.length > 0 ? `open ${all[0]}` : null;
 }
 
+/**
+ * Opens the next unread evidence file, or null when there is none left.
+ *
+ * The fastest way out of the opening grace period: `isInAtmospherePhase` ends on
+ * the first piece of evidence, well before the meaningful-file count would get
+ * there, so this costs a scenario one turn instead of fifteen reads' worth of
+ * detection it did not want to spend.
+ */
+function openEvidence(state: GameState): string | null {
+  const unread = sortedAccessible(state).find(p => isEvidencePath(p) && !state.filesRead.has(p));
+  return unread ? `open ${unread}` : null;
+}
+
 export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
   /** Reads until the trace completes. */
   'detection-trace': {
@@ -132,7 +150,11 @@ export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
     id: 'invalid-threshold',
     summary: 'Type gibberish until the 8-strike invalid-attempt lockdown fires.',
     expect: { kind: 'gameOver', reason: 'INVALID ATTEMPT THRESHOLD' },
-    next: ({ step }) => (step < 12 ? `qzxjvw${step}` : null),
+    // Every one of these is meant to be refused — that refusal *is* the
+    // mechanic under test — so the summary must not report eight findings on a
+    // scenario doing exactly what it says on the tin.
+    next: ({ step }) =>
+      step < 12 ? { text: `qzxjvw${step}`, expectRejected: true } : null,
   },
 
   /** Three wrong override passwords, which is its own lockdown, not a strike. */
@@ -140,7 +162,18 @@ export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
     id: 'override-lockdown',
     summary: 'Fail the override password three times and trip the security lockdown.',
     expect: { kind: 'gameOver', reason: 'SECURITY LOCKDOWN - AUTHENTICATION FAILURE' },
-    next: ({ step }) => (step < 5 ? 'override protocol NOTTHEPASSWORD' : null),
+    next: ({ state, step }) => {
+      if (step >= MAX_SCENARIO_STEPS) return null;
+      // The opening grace period suppresses the failed-attempt counter along
+      // with the rest of the penalties, so a run that starts guessing straight
+      // off the boot screen can never reach the lockdown. Find one piece of
+      // evidence first — the cheapest way out of the phase, and what a player
+      // who is guessing at a password has done anyway.
+      if (shouldSuppressPenalties(state)) return openEvidence(state) ?? openAnything(state);
+      // A wrong password is refused on purpose here; the scenario exists to be
+      // refused three times.
+      return { text: 'override protocol NOTTHEPASSWORD', expectRejected: true };
+    },
   },
 
   /**
@@ -228,7 +261,14 @@ export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
       const unsaved = read.filter(p => !state.savedFiles.has(p));
       const saved = read.filter(p => state.savedFiles.has(p));
 
-      if (state.savedFiles.size < MAX_EVIDENCE_COUNT) {
+      // Fill the dossier — but only before the bounce. Leaving this branch open
+      // afterwards is what stopped this scenario from ever swapping anything:
+      // `unsave` drops the count to 9, this test passes again, and the run
+      // re-saves the file it had just removed. The dossier ended where it
+      // started, the actual swap step then bounced off a full dossier a second
+      // time, and that unmarked no-op was reported as an anomaly on a run the
+      // sweep called PASS.
+      if (!flags.bounced && state.savedFiles.size < MAX_EVIDENCE_COUNT) {
         return unsaved[0] ? `save ${basename(unsaved[0])}` : null;
       }
       if (!flags.bounced) {
@@ -240,11 +280,19 @@ export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
       }
       if (!flags.madeRoom) {
         flags.madeRoom = true;
-        return saved.length > 0 ? `unsave ${basename(saved[saved.length - 1])}` : null;
+        // Drop the alphabetically *first* saved file. `flags` only holds
+        // booleans, so the swap below cannot be told which file left — but it
+        // can work it out: filling always takes the smallest unsaved path, so
+        // the never-saved file is the largest, and evicting the smallest keeps
+        // those two unambiguous.
+        return saved.length > 0 ? `unsave ${basename(saved[0])}` : null;
       }
       if (!flags.swapped) {
         flags.swapped = true;
-        return unsaved[0] ? `save ${basename(unsaved[0])}` : null;
+        // The largest unsaved path is the one that has never been in the
+        // dossier, so this is a genuine swap rather than an undo.
+        const fresh = unsaved[unsaved.length - 1];
+        return fresh ? `save ${basename(fresh)}` : null;
       }
       return null;
     },
@@ -284,7 +332,8 @@ export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
       }
       if (!flags.confirmed) {
         flags.confirmed = true;
-        return 'progress';
+        // Read-only: it exists to show the reset landed, not to move anything.
+        return { text: 'progress', expectNoOp: true };
       }
       return null;
     },

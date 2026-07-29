@@ -8,7 +8,7 @@ import {
   TUTORIAL_MESSAGES,
   sanitizeCommandInput,
 } from '../engine/commands';
-import { createEntryI18n } from '../engine/commands/utils';
+import { createEntryI18n, resolveCommandAlias } from '../engine/commands/utils';
 import {
   isInTutorialMode,
   processTutorialInput,
@@ -589,7 +589,13 @@ export function useTerminalInput({
 
       setGameState(newState);
 
-      if (command.toLowerCase() === 'save') {
+      // Bare "save" is a UI action, not an engine command: it opens the
+      // save-session modal and never reaches `executeCommand`. Resolve the
+      // alias first, or the modal is English-only — pt-BR help tells the player
+      // to type `salvar` and ES help says `guardar`, and both fell through to
+      // the engine's "usage: save <filename>" message instead of opening it.
+      // Still only the bare form: `salvar arquivo.txt` is a real dossier save.
+      if (resolveCommandAlias(command.toLowerCase().trim()) === 'save') {
         onSaveRequestAction(newState);
         return;
       }

@@ -20,7 +20,9 @@
  *
  * Deliberately excluded: anything that ends the run early or spends a resource
  * the win path needs — no `leak` (it is the win condition), and nothing that
- * can push `wrongAttempts` to the 8-strike game over on its own.
+ * can push `wrongAttempts` to the 8-strike game over on its own. Bare
+ * `override` is excluded for that reason: with no arguments it falls through to
+ * `createInvalidCommandResult`, so it is a strike rather than a usage hint.
  *
  * Also excluded: `tutorial` with no argument. It is a documented, deliberate
  * player action, but it restarts the introduction — `tutorialComplete: false`
@@ -30,6 +32,20 @@
  * empty output and "changed nothing", which read like twenty separate engine
  * bugs and was one self-inflicted wound. `tutorial off` is safe and covers the
  * argument path.
+ *
+ * And `clear`, for the same reason in miniature: its entire job is to set
+ * `history: []`. Probing it proves only that it does not crash, at the cost of
+ * erasing the run a human is sitting there watching — and the run summary is
+ * printed into that same history.
+ *
+ * And bare `save`, which is not an engine command at all. `useTerminalInput`
+ * intercepts it before `executeCommand` and opens the save-session modal, which
+ * `useBotRunner` has never been told about — it is owned by `HomeContent`, one
+ * level above the terminal, so the runner cannot even see it to dismiss it. A
+ * live `chaos` run left that modal on screen for its remaining twenty turns.
+ * Headlessly the same probe was worse than useless: it exercised an engine
+ * branch the player can never reach, and reported it as covered. `save` with an
+ * argument is a real command and stays.
  */
 export const BOT_PROBE_COMMANDS: readonly string[] = [
   // Bare public commands.
@@ -47,6 +63,8 @@ export const BOT_PROBE_COMMANDS: readonly string[] = [
   'morse',
   'hint',
   'wait',
+  'back',
+  'message',
   'tutorial off',
 
   // Arguments, good and bad. Error copy is only reachable from the bad ones.
@@ -59,7 +77,7 @@ export const BOT_PROBE_COMMANDS: readonly string[] = [
   'search zzzqqq',
   'note the coffee harvest memo is not about coffee',
   'open',
-  'save',
+  'save nosuchfile.txt',
   'unsave',
   'run',
 
@@ -77,3 +95,16 @@ export const BOT_PROBE_COMMANDS: readonly string[] = [
   'hlep',
   'xyzzy',
 ] as const;
+
+/**
+ * The probes the parser is *supposed* to refuse.
+ *
+ * Every other probe is a real command and a rejection would be a finding, so
+ * the run summary flags rejection even on probe turns. These two exist to drive
+ * the "did you mean" path, which cannot be reached without being refused first —
+ * without saying so, they would report an anomaly on every single `chaos` run.
+ */
+export const BOT_PROBES_EXPECTING_REJECTION: ReadonlySet<string> = new Set([
+  'hlep',
+  'xyzzy',
+]);
