@@ -4,6 +4,13 @@ import { determineEnding } from '../endings';
 import { BOT_SCENARIOS } from './scenarios';
 import { BotRunConfig, BotRunLogEntry, describeGoal } from './types';
 
+const SUMMARY_COMMAND_PREVIEW_LENGTH = 72;
+
+function summarizeCommand(command: string): string {
+  if (command.length <= SUMMARY_COMMAND_PREVIEW_LENGTH) return command;
+  return `${command.slice(0, SUMMARY_COMMAND_PREVIEW_LENGTH)}... (${command.length} chars)`;
+}
+
 /**
  * Whether a finished run produced what its goal asked for, in words.
  *
@@ -78,7 +85,9 @@ export function buildRunSummary(
     createEntry(anomalies.length ? 'warning' : 'system', `  ANOMALIES (${anomalies.length})`)
   );
   for (const a of anomalies) {
-    lines.push(createEntry('warning', `    turn ${a.turn} [${a.command}]: ${a.anomaly}`));
+    lines.push(
+      createEntry('warning', `    turn ${a.turn} [${summarizeCommand(a.command)}]: ${a.anomaly}`)
+    );
   }
   lines.push(createEntry('system', ''));
   return lines;

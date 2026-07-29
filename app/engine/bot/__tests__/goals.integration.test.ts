@@ -88,6 +88,36 @@ describe('every scenario reaches the path it was written for', () => {
       expect(sweepScenario(executeCommand, scenario, 1).turns, `${scenario}`).toBeLessThan(100);
     }
   });
+
+  it('covers the terminal guardrails that ordinary win paths avoid', () => {
+    const overflow = runHeadless(
+      executeCommand,
+      'novice',
+      1,
+      { kind: 'scenario', scenario: 'input-length-threshold' }
+    ).state;
+    expect(overflow.gameOverReason).toBe('INVALID INPUT THRESHOLD');
+    expect(overflow.legacyAlertCounter).toBe(8);
+
+    const disconnect = runHeadless(
+      executeCommand,
+      'novice',
+      1,
+      { kind: 'scenario', scenario: 'neutral-disconnect' }
+    ).state;
+    expect(disconnect.gameOverReason).toBe('NEUTRAL ENDING - DISCONNECTED');
+    expect(disconnect.endingType).toBe('neutral');
+
+    const morse = runHeadless(
+      executeCommand,
+      'novice',
+      1,
+      { kind: 'scenario', scenario: 'morse-exhaustion' }
+    ).state;
+    expect(morse.isGameOver).toBe(false);
+    expect(morse.morseMessageAttempts).toBe(3);
+    expect(morse.wrongAttempts).toBe(1);
+  });
 });
 
 describe('scenario seed preconditions', () => {

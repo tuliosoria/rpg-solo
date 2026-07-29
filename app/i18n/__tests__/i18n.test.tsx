@@ -92,6 +92,32 @@ describe('i18n system', () => {
     );
   });
 
+  it('localizes every gameplay terminal-outcome reason', () => {
+    const reasons = [
+      'INTRUSION DETECTED - TRACED',
+      'INVALID ATTEMPT THRESHOLD',
+      'INVALID INPUT THRESHOLD',
+      'SECURITY LOCKDOWN - AUTHENTICATION FAILURE',
+      'TERMINAL LOCKOUT - AUTHENTICATION FAILURE',
+      'FIREWALL — TREE SCAN ON ELEVATED SESSION',
+      'PURGE PROTOCOL - FORBIDDEN KNOWLEDGE',
+      'NEUTRAL ENDING - DISCONNECTED',
+      'TRACE WINDOW EXPIRED',
+    ];
+    const { result } = renderHook(() => useI18n(), { wrapper });
+
+    for (const language of ['en', 'pt-BR', 'es'] as const) {
+      act(() => {
+        result.current.setLanguage(language);
+      });
+      for (const reason of reasons) {
+        const translated = result.current.translateRuntimeText(reason);
+        if (language === 'en') expect(translated).toBe(reason);
+        else expect(translated, `${language}: ${reason}`).not.toBe(reason);
+      }
+    }
+  });
+
   it('keeps an indented runtime line at its original column in every language', async () => {
     // Lines matched with a leading-whitespace capture get that whitespace put
     // back around the translation, so the locale value must not carry an indent

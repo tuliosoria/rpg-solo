@@ -5,6 +5,7 @@ import { OVERRIDE_PASSWORD } from '../overrideSecret';
 import { createSeededRng } from '../rng';
 import { DETECTION_THRESHOLDS } from '../../constants/detection';
 import { shouldSuppressPenalties } from '../../constants/atmosphere';
+import { MAX_COMMAND_INPUT_LENGTH } from '../../constants/limits';
 
 /**
  * Named edge paths the win-path levels can never reach.
@@ -21,10 +22,13 @@ import { shouldSuppressPenalties } from '../../constants/atmosphere';
 export type BotScenarioId =
   | 'detection-trace'
   | 'invalid-threshold'
+  | 'input-length-threshold'
   | 'override-lockdown'
   | 'tree-firewall'
   | 'purge-protocol'
+  | 'neutral-disconnect'
   | 'honeypot-traps'
+  | 'morse-exhaustion'
   | 'dossier-full'
   | 'leak-misfire';
 
@@ -77,6 +81,9 @@ export interface BotScenarioSpec {
 }
 
 const PASSWORD_HINT_FILE = '/internal/override_protocol_memo.txt';
+const MAINTENANCE_NOTES_FILE = '/internal/maintenance_notes.txt';
+const MORSE_INTERCEPT_FILE = '/comms/intercepts/morse_intercept.sig';
+const OVERLONG_INPUT = 'x'.repeat(MAX_COMMAND_INPUT_LENGTH + 1);
 
 /** The four trap filenames, mirrored from the `open` handler's TRAP_FILES. */
 const TRAP_NAMES = [
@@ -157,6 +164,15 @@ export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
       step < 12 ? { text: `qzxjvw${step}`, expectRejected: true } : null,
   },
 
+  /** Eight inputs beyond the hard command-length limit. */
+  'input-length-threshold': {
+    id: 'input-length-threshold',
+    summary: 'Exceed the command-length limit until its dedicated lockdown fires.',
+    expect: { kind: 'gameOver', reason: 'INVALID INPUT THRESHOLD' },
+    next: ({ step }) =>
+      step < 12 ? { text: OVERLONG_INPUT, expectRejected: true } : null,
+  },
+
   /** Three wrong override passwords, which is its own lockdown, not a strike. */
   'override-lockdown': {
     id: 'override-lockdown',
@@ -224,6 +240,21 @@ export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
     },
   },
 
+  /** Discover the emergency disconnect command, then leave without leaking. */
+  'neutral-disconnect': {
+    id: 'neutral-disconnect',
+    summary: 'Discover the emergency disconnect and take the neutral ending.',
+    expect: { kind: 'gameOver', reason: 'NEUTRAL ENDING - DISCONNECTED' },
+    next: ({ state }) => {
+      if (!state.hiddenCommandsDiscovered?.has('disconnect')) {
+        return !state.filesRead.has(MAINTENANCE_NOTES_FILE)
+          ? `open ${MAINTENANCE_NOTES_FILE}`
+          : null;
+      }
+      return 'disconnect';
+    },
+  },
+
   /** All four traps, which is a warning path rather than a fatal one. */
   'honeypot-traps': {
     id: 'honeypot-traps',
@@ -232,6 +263,25 @@ export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
     next: ({ state }) => {
       const unread = trapPaths(state).filter(p => !state.filesRead.has(p));
       return unread.length > 0 ? `open ${unread[0]}` : null;
+    },
+  },
+
+  /** Exhaust the Morse puzzle, then confirm further guesses are safely refused. */
+  'morse-exhaustion': {
+    id: 'morse-exhaustion',
+    summary: 'Spend every Morse attempt and confirm the exhausted puzzle remains survivable.',
+    expect: { kind: 'survives' },
+    next: ({ state, flags }) => {
+      if (shouldSuppressPenalties(state)) return openEvidence(state) ?? openAnything(state);
+      if (!state.morseFileRead) return `open ${MORSE_INTERCEPT_FILE}`;
+      if (state.morseMessageAttempts < 3) {
+        return { text: 'message bot-test-wrong', expectRejected: true };
+      }
+      if (!flags.exhaustionConfirmed) {
+        flags.exhaustionConfirmed = true;
+        return { text: 'message bot-test-wrong', expectNoOp: true };
+      }
+      return null;
     },
   },
 

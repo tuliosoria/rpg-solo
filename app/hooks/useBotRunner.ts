@@ -88,6 +88,7 @@ export function useBotRunner(args: BotRunnerArgs): void {
       leakGenerated: boolean;
       pendingTreeConfirm: boolean;
       doomCountdown: number;
+      morseAttempts: number;
     };
   } | null>(null);
 
@@ -144,6 +145,7 @@ export function useBotRunner(args: BotRunnerArgs): void {
             gameOverReason: gameState.gameOverReason,
             pendingTreeConfirm: Boolean(gameState.pendingTreeConfirm),
             doomCountdown: gameState.sessionDoomCountdown,
+            morseAttempts: gameState.morseMessageAttempts,
           },
           open.before
         );
@@ -227,6 +229,7 @@ export function useBotRunner(args: BotRunnerArgs): void {
           leakGenerated: Boolean(gameState.leakSequenceGenerated),
           pendingTreeConfirm: Boolean(gameState.pendingTreeConfirm),
           doomCountdown: gameState.sessionDoomCountdown,
+          morseAttempts: gameState.morseMessageAttempts,
         },
       };
       submit(input);

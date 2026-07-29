@@ -41,6 +41,29 @@ describe('buildRunSummary', () => {
     expect(text).toContain('ANOMALIES (1)');
     expect(text).toContain('command returned error');
   });
+
+  it('keeps overlong commands readable in the anomaly list', () => {
+    const command = 'x'.repeat(257);
+    const log: BotRunLogEntry[] = [
+      {
+        turn: 8,
+        command,
+        detectionBefore: 12,
+        detectionAfter: 14,
+        filesReadBefore: 0,
+        savedBefore: 0,
+        filesReadAfter: 0,
+        savedAfter: 0,
+        anomaly: 'game over — INVALID INPUT THRESHOLD',
+      },
+    ];
+
+    const text = buildRunSummary(log, cfg, DEFAULT_GAME_STATE as GameState)
+      .map(e => e.content)
+      .join('\n');
+    expect(text).toContain('(257 chars)');
+    expect(text).not.toContain(command);
+  });
 });
 
 /**

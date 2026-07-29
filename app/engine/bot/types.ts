@@ -161,6 +161,8 @@ export function settleBotTurn(
     pendingTreeConfirm?: boolean;
     /** Operations left before the purge fires, once the doom branch is armed. */
     doomCountdown?: number;
+    /** Wrong guesses spent on the Morse puzzle. */
+    morseAttempts?: number;
   },
   before: {
     wrongAttempts: number;
@@ -169,6 +171,7 @@ export function settleBotTurn(
     leakGenerated: boolean;
     pendingTreeConfirm?: boolean;
     doomCountdown?: number;
+    morseAttempts?: number;
   }
 ): void {
   entry.detectionAfter = after.detectionLevel;
@@ -221,6 +224,7 @@ export function settleBotTurn(
     // nothing" — eight false alarms attached to the scenario most likely to be
     // read closely.
     (after.doomCountdown ?? 0) !== (before.doomCountdown ?? 0) ||
+    (after.morseAttempts ?? 0) !== (before.morseAttempts ?? 0) ||
     // The turn that wins the run moves nothing else: the final `leak` flips
     // gameWon and leaves every counter where it was.
     after.gameWon ||

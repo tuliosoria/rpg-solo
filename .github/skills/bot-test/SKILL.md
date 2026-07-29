@@ -124,14 +124,17 @@ summary can print PASS/FAIL instead of leaving you to remember.
 |---|---|
 | `detection-trace` | `INTRUSION DETECTED - TRACED` |
 | `invalid-threshold` | `INVALID ATTEMPT THRESHOLD` |
+| `input-length-threshold` | `INVALID INPUT THRESHOLD` |
 | `override-lockdown` | `SECURITY LOCKDOWN - AUTHENTICATION FAILURE` |
 | `tree-firewall` | `FIREWALL — TREE SCAN ON ELEVATED SESSION` |
 | `purge-protocol` | `PURGE PROTOCOL - FORBIDDEN KNOWLEDGE` |
+| `neutral-disconnect` | `NEUTRAL ENDING - DISCONNECTED` |
 | `honeypot-traps` | survives (warning path, all four traps) |
+| `morse-exhaustion` | survives (all guesses spent, further input refused) |
 | `dossier-full` | survives (11th save refused, then `unsave` and swap) |
 | `leak-misfire` | survives (preparation sequence entered out of order) |
 
-Three things bite when writing one:
+Five things bite when writing one:
 
 **Some turns leave no trace in the state.** A refused save is byte-for-byte
 identical to the turn before it, and a wrong leak step resets progress to where
@@ -164,6 +167,11 @@ picks a seed that satisfies it, honouring an explicit one that already works.
 nothing but `override` ever moves, so the seed alone decides reachability and an
 unlucky one would make a FAIL mean nothing.
 
+**Live input must preserve what headless input proves.** The terminal can
+sanitize what it stores in history, but it must hand the original input to
+`executeCommand`; otherwise an overlong command is truncated before the engine
+can recognize it, and `input-length-threshold` only covers a headless-only path.
+
 Goal runs also relax the stuck detector, because "progress" means something else
 for them — `invalid-threshold` reads and saves nothing for eight turns straight.
 `goalProgressSignature` watches detection, the strike counters and the doom
@@ -175,7 +183,7 @@ countdown instead.
 bot-test sweep [seed]
 ```
 
-Runs all four levels, all 12 endings and all 8 scenarios against the pure
+Runs all four levels, all 12 endings and all 11 scenarios against the pure
 command engine and prints one PASS/FAIL row each. It finishes in well under a
 second, which is what makes "is every outcome still reachable" a question you
 can answer in one command instead of an afternoon of 3s turns.
@@ -193,7 +201,9 @@ the dossier that run actually built, in all three languages. That matters
 because `Victory.test.tsx` renders every ending from `defaultProps` — no dossier
 and English only — so the parts of the screen assembled from what the player
 saved (`buildLeakPrologue`, the revelation-resolved AOL body) were only ever
-rendered from an empty set. Nothing equivalent exists for the game-over screens.
+rendered from an empty set. `endingScreens.botScenarios.test.tsx` does the same
+for bot-produced bad and neutral outcomes, plus the identity-reveal screen
+reached by the pro path.
 
 **The sweep takes the engine as an argument, and must keep doing so.**
 `runBotSweep(execute, opts)` is handed `executeCommand` by the command layer —
