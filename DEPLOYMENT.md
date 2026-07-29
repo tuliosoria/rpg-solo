@@ -148,9 +148,9 @@ serves no purpose.
    - Amplify auto-detects `amplify.yml`. Confirm the build settings show
      `baseDirectory: out`. Do **not** enable server-side rendering / "Web
      Compute" — this is a static site.
-   - Confirm the build image uses Node 20 (it will via `.nvmrc` + the
-     `nvm use 20` preBuild step). If the default image is older, no action is
-     needed — `nvm use 20 || nvm install 20` handles it.
+   - Confirm the build image uses Node 22.12.0 (it will via `.nvmrc` + the
+     `nvm use 22.12.0` preBuild step). If the default image is older, no action
+     is needed — `nvm use 22.12.0 || nvm install 22.12.0` handles it.
    - Save and deploy. Wait for the build to go green.
 
 2. **Verify the default Amplify URL**

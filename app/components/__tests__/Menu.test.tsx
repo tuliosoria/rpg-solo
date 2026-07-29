@@ -318,7 +318,7 @@ describe('Menu', () => {
       render(<Menu {...defaultProps} />);
 
       const loadGameButton = screen.getByRole('button', { name: /LOAD GAME/i });
-      fireEvent.mouseEnter(loadGameButton);
+      fireEvent.pointerMove(loadGameButton);
 
       expect(loadGameButton.textContent).toContain('▶');
     });
@@ -391,7 +391,7 @@ describe('Menu', () => {
       fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
 
       // Default is ON
-      const ambientRow = screen.getByText('Ambient Sound').closest('div');
+      const ambientRow = screen.getByText('Ambient Sound').closest('button');
       expect(ambientRow).toHaveTextContent('ON');
 
       // Click to toggle
@@ -413,7 +413,7 @@ describe('Menu', () => {
       render(<Menu {...defaultProps} />);
       fireEvent.click(screen.getByRole('button', { name: /OPTIONS/i }));
 
-      const fontSizeRow = screen.getByText('Font Size').closest('div');
+      const fontSizeRow = screen.getByText('Font Size').closest('button');
       // Default is medium
       expect(fontSizeRow).toHaveTextContent('MEDIUM');
 
@@ -436,7 +436,7 @@ describe('Menu', () => {
 
       // Press down to go to Ambient Sound
       fireEvent.keyDown(window, { key: 'ArrowDown' });
-      const ambientRow = screen.getByText('Ambient Sound').closest('div');
+      const ambientRow = screen.getByText('Ambient Sound').closest('button');
       expect(ambientRow?.className).toContain('selected');
     });
 
@@ -446,7 +446,7 @@ describe('Menu', () => {
 
       fireEvent.keyDown(window, { key: 'ArrowDown' });
 
-      const ambientRow = screen.getByText('Ambient Sound').closest('div');
+      const ambientRow = screen.getByText('Ambient Sound').closest('button');
       const wasEnabled = ambientRow?.textContent?.includes('ON');
 
       fireEvent.keyDown(window, { key: 'Enter' });

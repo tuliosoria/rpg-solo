@@ -13,7 +13,11 @@
   },
   "main": "electron/main.js",
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": ">=22.12.0"
+  },
+  "overrides": {
+    "postcss": "8.5.22",
+    "sharp": "0.35.0"
   },
   "scripts": {
     "dev": "next dev",
@@ -46,8 +50,8 @@
     "steam:deploy:dry": "node scripts/steam-local-deploy.mjs --dry-run"
   },
   "dependencies": {
-    "electron-updater": "^6.3.9",
-    "next": "^15.5.15",
+    "electron-updater": "^6.8.9",
+    "next": "^15.5.21",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "steamworks.js": "^0.4.0"
@@ -66,7 +70,7 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.0.18",
-    "electron": "^40.0.0",
+    "electron": "^40.10.6",
     "electron-builder": "^26.4.0",
     "eslint": "^9.39.2",
     "eslint-plugin-react-hooks": "^7.0.1",

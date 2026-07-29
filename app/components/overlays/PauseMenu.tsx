@@ -79,14 +79,29 @@ export default memo(function PauseMenu({
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      const target = e.target;
+      const nativeInteractiveTarget =
+        target instanceof HTMLElement &&
+        ['A', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName);
+
+      if (e.key === 'Enter' && nativeInteractiveTarget) {
+        return;
+      }
+
       switch (e.key) {
         case 'ArrowUp':
           e.preventDefault();
-          setSelectedIndex(prev => (prev > 0 ? prev - 1 : menuItems.length - 1));
+          {
+            const nextIndex = selectedIndex > 0 ? selectedIndex - 1 : menuItems.length - 1;
+            setSelectedIndex(nextIndex);
+          }
           break;
         case 'ArrowDown':
           e.preventDefault();
-          setSelectedIndex(prev => (prev < menuItems.length - 1 ? prev + 1 : 0));
+          {
+            const nextIndex = selectedIndex < menuItems.length - 1 ? selectedIndex + 1 : 0;
+            setSelectedIndex(nextIndex);
+          }
           break;
         case 'Enter':
           e.preventDefault();
@@ -144,6 +159,14 @@ export default memo(function PauseMenu({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  useLayoutEffect(() => {
+    const control = modalRef.current?.querySelectorAll<HTMLButtonElement>('button')[selectedIndex];
+    control?.focus({ preventScroll: true });
+    if (typeof control?.scrollIntoView === 'function') {
+      control.scrollIntoView({ block: 'nearest' });
+    }
+  }, [confirmMode, selectedIndex]);
+
   if (confirmMode) {
     const titleKey = confirmMode === 'load' ? 'pause.loadConfirm.title' : 'pause.confirm.title';
     const yesKey = confirmMode === 'load' ? 'pause.loadConfirm.yes' : 'pause.confirm.yes';
@@ -164,7 +187,8 @@ export default memo(function PauseMenu({
               tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={handleConfirmAction}
-              onMouseEnter={() => setSelectedIndex(0)}
+              onPointerMove={() => setSelectedIndex(0)}
+              onFocus={() => setSelectedIndex(0)}
             >
               {selectedIndex === 0 ? '▶ ' : '  '}
               {t(yesKey)}
@@ -174,7 +198,8 @@ export default memo(function PauseMenu({
               tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={() => closeConfirm(confirmMode)}
-              onMouseEnter={() => setSelectedIndex(1)}
+              onPointerMove={() => setSelectedIndex(1)}
+              onFocus={() => setSelectedIndex(1)}
             >
               {selectedIndex === 1 ? '▶ ' : '  '}
               {t('pause.confirm.no')}
@@ -206,7 +231,8 @@ export default memo(function PauseMenu({
             tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onResumeAction}
-            onMouseEnter={() => setSelectedIndex(menuItems.indexOf('resume'))}
+            onPointerMove={() => setSelectedIndex(menuItems.indexOf('resume'))}
+            onFocus={() => setSelectedIndex(menuItems.indexOf('resume'))}
           >
             {selectedIndex === menuItems.indexOf('resume') ? '▶ ' : '  '}
             {t('pause.resume')}
@@ -216,7 +242,8 @@ export default memo(function PauseMenu({
             tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onSaveAction}
-            onMouseEnter={() => setSelectedIndex(menuItems.indexOf('save'))}
+            onPointerMove={() => setSelectedIndex(menuItems.indexOf('save'))}
+            onFocus={() => setSelectedIndex(menuItems.indexOf('save'))}
           >
             {selectedIndex === menuItems.indexOf('save') ? '▶ ' : '  '}
             {t('pause.save')}
@@ -227,7 +254,8 @@ export default memo(function PauseMenu({
               tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={() => openConfirm('load')}
-              onMouseEnter={() => setSelectedIndex(menuItems.indexOf('load'))}
+              onPointerMove={() => setSelectedIndex(menuItems.indexOf('load'))}
+              onFocus={() => setSelectedIndex(menuItems.indexOf('load'))}
             >
               {selectedIndex === menuItems.indexOf('load') ? '▶ ' : '  '}
               {t('pause.load')}
@@ -238,7 +266,8 @@ export default memo(function PauseMenu({
             tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={onSettingsAction}
-            onMouseEnter={() => setSelectedIndex(menuItems.indexOf('settings'))}
+            onPointerMove={() => setSelectedIndex(menuItems.indexOf('settings'))}
+            onFocus={() => setSelectedIndex(menuItems.indexOf('settings'))}
           >
             {selectedIndex === menuItems.indexOf('settings') ? '▶ ' : '  '}
             {t('pause.settings')}
@@ -248,7 +277,8 @@ export default memo(function PauseMenu({
             tabIndex={0}
             onMouseDown={e => e.preventDefault()}
             onClick={() => openConfirm('exit')}
-            onMouseEnter={() => setSelectedIndex(menuItems.indexOf('exit'))}
+            onPointerMove={() => setSelectedIndex(menuItems.indexOf('exit'))}
+            onFocus={() => setSelectedIndex(menuItems.indexOf('exit'))}
           >
             {selectedIndex === menuItems.indexOf('exit') ? '▶ ' : '  '}
             {t('pause.exit')}

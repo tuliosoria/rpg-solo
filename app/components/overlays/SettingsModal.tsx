@@ -112,6 +112,21 @@ export default memo(function SettingsModal({
     applyOptionsToDocument(nextOptions);
   };
 
+  const textSpeedLabel =
+    textSpeed === 'slow'
+      ? t('options.value.slow')
+      : textSpeed === 'fast'
+        ? t('options.value.fast')
+        : textSpeed === 'instant'
+          ? t('options.value.instant')
+          : t('options.value.normal');
+  const languageLabel =
+    language === 'en'
+      ? t('language.en')
+      : language === 'pt-BR'
+        ? t('language.pt-BR')
+        : t('language.es');
+
   return (
     <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="settings-title">
       <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
@@ -129,6 +144,8 @@ export default memo(function SettingsModal({
               tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={onToggleSound}
+              aria-label={t('settings.soundEffects')}
+              aria-pressed={soundEnabled}
             >
               {soundEnabled
                 ? `[ ${t('options.value.on')} ]`
@@ -144,6 +161,8 @@ export default memo(function SettingsModal({
               tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={onToggleMusic}
+              aria-label={t('settings.music')}
+              aria-pressed={musicEnabled}
             >
               {musicEnabled
                 ? `[ ${t('options.value.on')} ]`
@@ -164,6 +183,7 @@ export default memo(function SettingsModal({
                 className={styles.slider}
                 tabIndex={0}
                 disabled={!soundEnabled}
+                aria-label={t('settings.masterVolume')}
               />
               <span className={styles.volumeValue}>{Math.round(masterVolume * 100)}%</span>
             </div>
@@ -177,6 +197,8 @@ export default memo(function SettingsModal({
               tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={toggleCrt}
+              aria-label={t('settings.crtEffects')}
+              aria-pressed={crtEnabled}
             >
               {crtEnabled
                 ? `[ ${t('options.value.on')} ]`
@@ -192,14 +214,9 @@ export default memo(function SettingsModal({
               tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={cycleTextSpeed}
+              aria-label={`${t('settings.textSpeed')}: ${textSpeedLabel}`}
             >
-              {textSpeed === 'slow'
-                ? t('options.value.slow')
-                : textSpeed === 'fast'
-                  ? t('options.value.fast')
-                  : textSpeed === 'instant'
-                    ? t('options.value.instant')
-                    : t('options.value.normal')}
+              {textSpeedLabel}
             </button>
             <span className={styles.hint}>{t('settings.textSpeedHint')}</span>
           </div>
@@ -211,6 +228,8 @@ export default memo(function SettingsModal({
               tabIndex={0}
               onMouseDown={e => e.preventDefault()}
               onClick={toggleTypingWarnings}
+              aria-label={t('settings.typingWarnings')}
+              aria-pressed={typingWarningsEnabled}
             >
               {typingWarningsEnabled
                 ? `[ ${t('options.value.on')} ]`
@@ -232,12 +251,9 @@ export default memo(function SettingsModal({
                 const nextIndex = (currentIndex + 1) % ordered.length;
                 setLanguage(ordered[nextIndex]);
               }}
+              aria-label={`${t('settings.language')}: ${languageLabel}`}
             >
-              {language === 'en'
-                ? t('language.en')
-                : language === 'pt-BR'
-                  ? t('language.pt-BR')
-                  : t('language.es')}
+              {languageLabel}
             </button>
           </div>
 

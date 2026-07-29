@@ -27,8 +27,12 @@
 .menu {
   background: #0a0a0a;
   border: 2px solid #88cc44;
-  padding: 40px;
-  min-width: 320px;
+  width: min(calc(100% - 16px), 400px);
+  max-height: calc(100% - 16px);
+  padding: clamp(24px, 5vw, 40px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   font-family:
     ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   color: #88cc44;
@@ -163,4 +167,20 @@
   border: 1px solid #2a3a18;
   color: #88cc44;
   font-size: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .menu {
+    animation: none;
+  }
+
+  .menuButton {
+    transition: none;
+  }
+
+  .menuButton:hover,
+  .menuButton.selected {
+    transform: none;
+  }
 }

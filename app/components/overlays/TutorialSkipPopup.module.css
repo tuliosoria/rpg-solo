@@ -9,6 +9,7 @@
   align-items: center;
   justify-content: center;
   z-index: 500;
+  padding: 8px;
   overflow: hidden;
   animation: fadeIn 0.4s ease-out;
 }
@@ -29,6 +30,10 @@
   padding: 36px 44px;
   max-width: 520px;
   width: 90%;
+  max-height: calc(100% - 16px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   font-family: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
   color: #88cc44;
   box-shadow:
@@ -87,6 +92,7 @@
 }
 
 .btn {
+  min-height: 50px;
   font-family: inherit;
   font-size: 14px;
   padding: 10px 32px;
@@ -140,5 +146,33 @@
 @keyframes blink {
   50% {
     opacity: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup {
+    width: 100%;
+    padding: 24px;
+  }
+
+  .buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .popup,
+  .cursor {
+    animation: none;
+  }
+
+  .btn {
+    transition: none;
   }
 }

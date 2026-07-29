@@ -293,7 +293,7 @@ describe('PauseMenu', () => {
       render(<PauseMenu {...defaultProps} />);
 
       const loadButton = screen.getByRole('button', { name: /LOAD CHECKPOINT/i });
-      fireEvent.mouseEnter(loadButton);
+      fireEvent.pointerMove(loadButton);
 
       expect(loadButton.textContent).toContain('▶');
     });
@@ -310,7 +310,7 @@ describe('PauseMenu', () => {
       fireEvent.click(screen.getByRole('button', { name: /EXIT TO MENU/i }));
 
       const yesButton = screen.getByRole('button', { name: /YES, EXIT/i });
-      fireEvent.mouseEnter(yesButton);
+      fireEvent.pointerMove(yesButton);
 
       expect(yesButton.textContent).toContain('▶');
     });

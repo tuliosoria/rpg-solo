@@ -339,7 +339,7 @@ export default function Victory({
               <div className={styles.progressBarTrack}>
                 <div
                   className={styles.progressBarFill}
-                  style={{ width: `${loadingProgress}%` }}
+                  style={{ transform: `scaleX(${loadingProgress / 100})` }}
                 />
               </div>
             </div>

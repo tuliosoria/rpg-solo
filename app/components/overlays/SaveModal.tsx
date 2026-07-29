@@ -60,8 +60,11 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
         </div>
 
         <div className={styles.content}>
-          <label className={styles.label}>{t('save.nameLabel')}</label>
+          <label className={styles.label} htmlFor="save-session-name">
+            {t('save.nameLabel')}
+          </label>
           <input
+            id="save-session-name"
             type="text"
             value={slotName}
             onChange={e => {

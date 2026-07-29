@@ -50,7 +50,7 @@ npm install
 npm run dev
 ```
 
-**Node.js:** `^20.19.0 || >=22.12.0`
+**Node.js:** `>=22.12.0`
 
 Open [http://localhost:3000](http://localhost:3000) to play locally.
 
