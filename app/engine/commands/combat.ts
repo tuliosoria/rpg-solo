@@ -196,7 +196,18 @@ export const combatCommands: CommandRegistry = {
 
     // Wrong password
     if (password !== correctPassword) {
-      const newFailedAttempts = failedAttempts + 1;
+      // The grace period has to cover the lockdown too, not just the meters.
+      // `shouldSuppressPenalties` deletes the detection cost and the strike for
+      // a wrong password — the two things the player can actually see — while
+      // this counter used to keep climbing underneath, so a third guess during
+      // the phase designed for "exploration without punishment" ended the run
+      // outright with risk still reading 0% and no strikes on the board. Freeze
+      // the counter alongside the penalties it belongs to: the guess still
+      // fails and still says so, it just does not bank a strike the player was
+      // never shown. Once the phase ends the full three-strike lockdown applies
+      // exactly as before.
+      const penaltiesSuppressed = shouldSuppressPenalties(state);
+      const newFailedAttempts = penaltiesSuppressed ? failedAttempts : failedAttempts + 1;
 
       // Too many failed attempts = lockdown
       if (newFailedAttempts >= 3) {
@@ -227,6 +238,9 @@ export const combatCommands: CommandRegistry = {
           stateChanges: {
             isGameOver: true,
             gameOverReason: 'SECURITY LOCKDOWN - AUTHENTICATION FAILURE',
+            // The counter that fired the lockdown was never written back, so a
+            // state saved on this turn disagreed with the screen it produced.
+            overrideFailedAttempts: newFailedAttempts,
             wrongAttempts: (state.wrongAttempts || 0) + 1,
           },
           triggerFlicker: true,
@@ -240,8 +254,8 @@ export const combatCommands: CommandRegistry = {
         wrongAttempts: (state.wrongAttempts || 0) + 1,
       };
 
-      // Suppress penalties during tutorial or atmosphere phase
-      if (shouldSuppressPenalties(state)) {
+      // Suppress penalties during tutorial or atmosphere phase.
+      if (penaltiesSuppressed) {
         delete stateChanges.detectionLevel;
         delete stateChanges.wrongAttempts;
       }
@@ -256,10 +270,26 @@ export const combatCommands: CommandRegistry = {
             'INVALID AUTHENTICATION CODE'
           ),
           createEntry('error', ''),
-          createEntry(
-            'warning',
-            `WARNING: ${3 - newFailedAttempts} attempt(s) remaining before lockdown`
-          ),
+          // The lockdown countdown is only real once the grace period is over.
+          // Announcing "2 attempt(s) remaining" while nothing is being counted
+          // is the same lie the suppressed counter used to tell, from the other
+          // side: it threatens a consequence that cannot happen yet, and it
+          // would have to repeat the same number every time. Point at the
+          // password instead, which is what the player actually needs.
+          ...(penaltiesSuppressed
+            ? [
+                createEntryI18n(
+                  'ufo74' as const,
+                  'engine.commands.combat.ufo74_try_chat_theres_someone_in_the_system_who_knows_the_co',
+                  '[UFO74]: try "chat". theres someone in the system who knows the code.'
+                ),
+              ]
+            : [
+                createEntry(
+                  'warning' as const,
+                  `WARNING: ${3 - newFailedAttempts} attempt(s) remaining before lockdown`
+                ),
+              ]),
         ],
         stateChanges,
         triggerFlicker: true,

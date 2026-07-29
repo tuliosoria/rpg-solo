@@ -6,6 +6,7 @@ import { resolvePath, getNode } from './filesystem';
 import { MAX_DETECTION } from '../constants/detection';
 import { MAX_WRONG_ATTEMPTS } from '../constants/gameplay';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
+import { shouldSuppressPressure } from '../constants/atmosphere';
 import { MAX_EVIDENCE_COUNT, getAllEvidencePaths, getAllNonEvidencePaths } from './evidenceRevelation';
 import { determineEnding, type EndingId } from './endings';
 import { createSeededRng, seededShuffle } from './rng';
@@ -1268,7 +1269,20 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     // the wait command — telling them to do what they already did is
     // redundant and breaks immersion. The warning will fire on the next
     // non-wait command if hostility is still elevated.
-    if (!triggered.has('ufo74_risk_corruption_warning') && command !== 'wait') {
+    //
+    // It is also suppressed during the opening grace period, like every other
+    // pressure event in `helpers.ts`. Hostility is not the risk meter: two
+    // wrong `override` guesses add 2 apiece and cross this threshold on their
+    // own, so a player three commands into the game was told "risk is getting
+    // too high" with the meter reading 0% and sent to spend one of a limited
+    // number of `wait` charges, which lowers detection and can do nothing at
+    // all about hostility. A warning that contradicts the meter it names is
+    // worse than no warning: it teaches the player to stop believing both.
+    if (
+      !triggered.has('ufo74_risk_corruption_warning') &&
+      command !== 'wait' &&
+      !shouldSuppressPressure(state)
+    ) {
       const newTriggered = new Set(triggered);
       newTriggered.add('ufo74_risk_corruption_warning');
       result.stateChanges.singularEventsTriggered = new Set([

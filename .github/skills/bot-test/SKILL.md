@@ -139,10 +139,19 @@ it already was. A driver keying off `GameState` alone repeats those forever, so
 `BotScenarioContext.flags` is a per-run scratch bag on `BotMemory` for exactly
 that. Reach for it only when the state genuinely cannot tell you.
 
-Return `{ text, expectNoOp: true }` for such a step. Otherwise the summary
-prints "turn changed nothing" beside a PASS, and a scary anomaly on a passing
-run is how everyone learns to skim the anomaly list — which is the only real
-output the harness has.
+Return `{ text, expectNoOp: true }` for such a step, and
+`{ text, expectRejected: true }` for one the parser is *supposed* to refuse.
+Otherwise the summary prints "turn changed nothing" or "command rejected" beside
+a PASS, and a scary anomaly on a passing run is how everyone learns to skim the
+anomaly list — which is the only real output the harness has.
+
+**A scenario that starts at the boot screen starts inside the grace period.**
+`shouldSuppressPenalties` suppresses detection, strikes and the override
+failed-attempt counter until the player finds their first evidence, so
+`override-lockdown` guessing straight off the boot screen can never reach the
+lockdown at all. Open one evidence file first — one turn, and what a player who
+is guessing at a password has done anyway. Reading ordinary files instead costs
+fifteen reads' worth of detection the scenario did not want to spend.
 
 **Read-only is not free.** `purge-protocol` burns its doom countdown with
 `progress`, not `status`, because the buffer dump leaves detection at 95 and
@@ -177,6 +186,15 @@ A sweep is a report, not a run: it never arms autoplay.
 `executeCommand` and nothing else — no streaming, no overlays, no UFO74 timing,
 no ending screen. Watch a level run for that.
 
+The one place the two halves are joined automatically is
+`app/components/endings/__tests__/endingScreens.botDossier.test.tsx`: it walks
+the bot to each of the twelve endings and renders the real `Victory` screen from
+the dossier that run actually built, in all three languages. That matters
+because `Victory.test.tsx` renders every ending from `defaultProps` — no dossier
+and English only — so the parts of the screen assembled from what the player
+saved (`buildLeakPrologue`, the revelation-resolved AOL body) were only ever
+rendered from an empty set. Nothing equivalent exists for the game-over screens.
+
 **The sweep takes the engine as an argument, and must keep doing so.**
 `runBotSweep(execute, opts)` is handed `executeCommand` by the command layer —
 see `CommandExecutor` in `app/engine/commands/types.ts`, which `commands.ts`
@@ -205,9 +223,32 @@ that ends the run or rewrites the session. `tutorial` with no argument is the
 cautionary tale: it sets `tutorialComplete: false` and clears `history`, handing
 the session back to the interactive tutorial, and every turn after it reported
 empty output and "changed nothing" — twenty lines that looked like engine bugs
-and were one self-inflicted wound. Probe turns are also marked `probe: true` so
-`settleBotTurn` exempts them from "turn changed nothing"; a read-only command
-changing nothing is the expected result, not a finding.
+and were one self-inflicted wound. `clear` is the same wound in miniature: its
+whole job is `history: []`, so it erases the run a human is watching, and the
+summary is printed into that same history. Bare `override` is out for a
+different reason — with no arguments it falls through to
+`createInvalidCommandResult`, so it is a strike rather than a usage hint.
+
+Probe turns are marked `probe: true` so `settleBotTurn` exempts them from "turn
+changed nothing"; a read-only command changing nothing is the expected result,
+not a finding. They are **not** exempt from rejection: a real command being
+refused is a finding wherever it happens. The two probes that exist to be
+refused say so through `BOT_PROBES_EXPECTING_REJECTION`.
+
+**Some inputs never reach the engine.** `useTerminalInput` intercepts bare
+`save` (and its `salvar`/`guardar` aliases) plus `exit`/`quit` before
+`executeCommand` ever runs, and drives the UI instead. Probing one of those is
+worse than skipping it: headlessly it exercises an engine branch the player can
+never reach and reports it as covered, and in a live run it opens an overlay
+`useBotRunner` was never told about — the save-session modal is owned by
+`HomeContent`, one level above the terminal, so the runner cannot see it to
+dismiss it, and it sat on screen for the remaining twenty turns of a `chaos`
+run. That is a bug the headless sweep is structurally incapable of finding, and
+it is the reason to watch a live run occasionally.
+
+Everything else in `PUBLIC_COMMANDS` should be in the list, and
+`strategy.integration.test.ts` fails if a new advertised command is added
+without one — otherwise it ships as a command no bot has ever typed.
 
 ## Driving the Bot from a Test
 
@@ -282,24 +323,52 @@ bug (`app/i18n/__tests__/runtimeMergePrecedence.test.ts`) were found. See
 detection, and outcome (`WON — ending: <id>` / `GAME OVER — <reason>` /
 `stopped — <reason>`).
 
+It also goes to the browser console as plain text, because the on-screen copy
+does not always survive. `Terminal` returns the ending component *instead of*
+the terminal once `gamePhase` becomes `victory` or `bad_ending`, so a winning
+run finishes by unmounting the only surface the summary was printed on, and the
+ending screen's one control restarts the game. That hid the summary for every
+winning level run and all twelve ending runs. Read it in devtools when the run
+ends on an ending screen.
+
 A goal run adds a verdict line. It is the point of aiming: "WON — ending:
 incomplete_picture" reads like a success right up until you remember the run was
 asked for `ridiculed`, so the summary says so out loud
 (`Goal: FAIL — expected ending ridiculed, got incomplete_picture`).
 
 `ANOMALIES` lists turns worth a second look. A turn is flagged when the command
-was rejected (invalid attempts went up — the strategy and the parser disagree),
-when detection moved more than `BOT_EXPECTED_MAX_DETECTION_JUMP` in one turn,
-when nothing changed at all, or when the game ended. A clean `novice` or `pro`
-run reports zero; anything listed is a real finding, so read it. Scenario runs
-are the exception: they aim at a game over, so the turn that ends them is
-flagged by design.
+was rejected (the strategy and the parser disagree), when detection moved more
+than `BOT_EXPECTED_MAX_DETECTION_JUMP` in one turn, when nothing changed at all,
+or when the game ended. A clean `novice` or `pro` run reports zero; anything
+listed is a real finding, so read it. Scenario runs are the exception: they aim
+at a game over, so the turn that ends them is flagged by design, and
+`purge-protocol` also flags the buffer dump's jump to detection 95 — the branch
+it exists to reach.
 
-Turns exempt from "changed nothing" are `chaos` probes and scenario steps
-marked `expectNoOp`. Everything else is fair game — including turns that only
-arm a confirmation gate, which is why `settleBotTurn` watches
-`pendingTreeConfirm`: without it, the first of `tree`'s two turns was reported
-as doing nothing, on the one command most likely to be under investigation.
+Rejection is read from **both** counters, because they are charged by different
+code paths and only one is the engine's verdict on "I did not understand that":
+`createInvalidCommandResult` increments `legacyAlertCounter`, which is what the
+8-strike lockout reads, while `wrongAttempts` is bumped by the handful of
+handlers that understood the command and rejected its argument. Watching
+`wrongAttempts` alone meant the check billed as the most useful signal here had
+never once fired on a genuinely unparsed command: `xyzzy` and `hlep` move
+`legacyAlertCounter` and leave `wrongAttempts` untouched, so every `chaos` run
+reported a clean sheet on the one thing it was built to notice.
+
+Turns exempt from "changed nothing" are `chaos` probes and scenario steps marked
+`expectNoOp`. Everything else is fair game — including turns that only arm a
+confirmation gate or burn an operation off the purge countdown, which is why
+`settleBotTurn` watches `pendingTreeConfirm` and `sessionDoomCountdown`: without
+the first, `tree`'s warning turn was reported as doing nothing, on the one
+command most likely to be under investigation; without the second,
+`purge-protocol` printed eight false alarms while doing exactly what its name
+says.
+
+Turns exempt from **rejection** are the ones that say so with `expectRejected` —
+the two suggestion-path probes, which cannot reach the "did you mean" branch
+without being refused, and `invalid-threshold`'s eight deliberate gibberish
+commands. `probe` alone does not suppress it: a real command being refused is a
+finding even on a probe turn.
 
 `decideNextCommand` stops on its own for: `ending reached`, `game over`,
 `max turns reached` (400), `no progress (stuck)` (6 turns with an unchanged
@@ -324,6 +393,13 @@ Anything but the first two on `novice` or `pro` means something regressed.
   run on those levels says the win path works, not that the surface is clean —
   that is what `chaos` is for, and it is still only a probe list, so a command
   absent from `BOT_PROBE_COMMANDS` is a command no bot has ever typed.
+  `strategy.integration.test.ts` now fails when an advertised command has no
+  probe, but the excuse list in that test is a list of holes, not of exemptions.
+- **The grace period is not cosmetic, and a scenario has to respect it.**
+  `shouldSuppressPenalties` covers detection, strikes *and* the override
+  failed-attempt counter until the player finds their first evidence. A scenario
+  aiming at a penalty-driven game over has to leave the phase first, or it will
+  bounce off a mechanic that is switched off.
 - **Don't hardcode ending files in `strategy.ts`.** Go through
   `app/engine/bot/targets.ts` (secret ending) or `endingTargets.ts` (all twelve),
   both of which derive from `endings.ts`.

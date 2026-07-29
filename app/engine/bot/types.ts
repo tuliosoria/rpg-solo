@@ -37,6 +37,11 @@ export type BotDecision =
        * limit. See `BotRunLogEntry.probe`.
        */
       probe?: boolean;
+      /**
+       * True when the parser is supposed to refuse this turn. See
+       * `BotRunLogEntry.expectRejected`.
+       */
+      expectRejected?: boolean;
     }
   | { kind: 'enter' }
   | { kind: 'done'; reason: string };
@@ -90,6 +95,18 @@ export interface BotRunLogEntry {
    * exactly what such a turn is looking for.
    */
   probe?: boolean;
+  /**
+   * True when the parser is *supposed* to refuse this turn.
+   *
+   * Rejection is normally the most useful signal the harness has, because the
+   * bot only issues commands it believes are valid — so `probe` deliberately
+   * does not suppress it. Two probes are the exception: `hlep` and `xyzzy` exist
+   * to drive the suggestion path, and being refused is the entire point of
+   * typing them. Without a way to say so, teaching the harness to notice
+   * rejection at all would have added two permanent anomalies to every `chaos`
+   * run, which is how an anomaly list stops being read.
+   */
+  expectRejected?: boolean;
   anomaly?: string;
 }
 
@@ -133,6 +150,8 @@ export function settleBotTurn(
     filesRead: number;
     savedFiles: number;
     wrongAttempts: number;
+    /** The counter the engine actually charges a rejected command to. */
+    legacyAlertCounter: number;
     leakProgress: number;
     leakGenerated: boolean;
     gameWon: boolean;
@@ -140,12 +159,16 @@ export function settleBotTurn(
     gameOverReason?: string;
     /** Whether `tree`'s confirmation gate is armed. */
     pendingTreeConfirm?: boolean;
+    /** Operations left before the purge fires, once the doom branch is armed. */
+    doomCountdown?: number;
   },
   before: {
     wrongAttempts: number;
+    legacyAlertCounter: number;
     leakProgress: number;
     leakGenerated: boolean;
     pendingTreeConfirm?: boolean;
+    doomCountdown?: number;
   }
 ): void {
   entry.detectionAfter = after.detectionLevel;
@@ -156,8 +179,23 @@ export function settleBotTurn(
 
   // The bot only issues commands it believes are valid, so a rejected one means
   // the strategy and the parser disagree — the single most useful signal here.
-  if (after.wrongAttempts > before.wrongAttempts) {
-    reasons.push(`command rejected (invalid attempts ${before.wrongAttempts} → ${after.wrongAttempts})`);
+  //
+  // Both counters are read because they are charged by different code paths and
+  // only one of them is the engine's actual verdict on "I did not understand
+  // that": `createInvalidCommandResult` increments `legacyAlertCounter`, which
+  // is what the 8-strike lockout reads, while `wrongAttempts` is bumped by a
+  // handful of handlers that understood the command and rejected its argument.
+  // Watching `wrongAttempts` alone meant this check had never once fired on a
+  // genuinely unparsed command — `xyzzy` and `hlep` move `legacyAlertCounter`
+  // and leave `wrongAttempts` untouched, so every `chaos` run reported a clean
+  // sheet on the one thing it was built to notice.
+  const rejected =
+    after.wrongAttempts > before.wrongAttempts ||
+    after.legacyAlertCounter > before.legacyAlertCounter;
+  if (rejected && !entry.expectRejected) {
+    const from = before.wrongAttempts + before.legacyAlertCounter;
+    const to = after.wrongAttempts + after.legacyAlertCounter;
+    reasons.push(`command rejected (invalid attempts ${from} → ${to})`);
   }
 
   const jump = after.detectionLevel - entry.detectionBefore;
@@ -176,6 +214,13 @@ export function settleBotTurn(
     // screen — was reported as a turn that did nothing, on the single command
     // most likely to be under investigation.
     Boolean(after.pendingTreeConfirm) !== Boolean(before.pendingTreeConfirm) ||
+    // Burning an operation off the purge countdown is progress towards the only
+    // outcome that turn is trying to reach. `purge-protocol` spends its last
+    // eight turns on a read-only command precisely because it costs nothing but
+    // the countdown, and every one of them was reported as "turn changed
+    // nothing" — eight false alarms attached to the scenario most likely to be
+    // read closely.
+    (after.doomCountdown ?? 0) !== (before.doomCountdown ?? 0) ||
     // The turn that wins the run moves nothing else: the final `leak` flips
     // gameWon and leaves every counter where it was.
     after.gameWon ||

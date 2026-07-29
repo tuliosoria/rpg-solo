@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
 import {
   isInAtmospherePhase,
@@ -239,5 +240,60 @@ describe('Atmosphere Phase Integration', () => {
     expect(isInAtmospherePhase(state)).toBe(false);
     expect(shouldSuppressPressure(state)).toBe(false);
     expect(shouldSuppressPenalties(state)).toBe(false);
+  });
+});
+
+/**
+ * The one pressure event that was not gated on `shouldSuppressPressure`.
+ *
+ * `systemHostilityLevel` is not the risk meter: `override` adds 2 apiece, so
+ * two wrong password guesses cross the warning threshold on their own. A player
+ * three commands into the game was told "risk is getting too high" with the
+ * meter reading 0%, and sent to spend one of a limited number of `wait` charges
+ * — which lowers detection and can do nothing at all about hostility. A warning
+ * that contradicts the meter it names teaches the player to distrust both.
+ */
+describe('the UFO74 risk warning respects the grace period', () => {
+  const guessing = (overrides: Partial<GameState> = {}): GameState =>
+    createTestState({
+      interactiveTutorialState: undefined,
+      filesRead: new Set<string>(),
+      savedFiles: new Set<string>(),
+      ...overrides,
+    });
+
+  function run(state: GameState, inputs: string[]): { state: GameState; text: string } {
+    let current = state;
+    const lines: string[] = [];
+    for (const input of inputs) {
+      const result = executeCommand(input, current);
+      lines.push(...result.output.map(e => e.content));
+      current = { ...current, ...result.stateChanges } as GameState;
+    }
+    return { state: current, text: lines.join('\n') };
+  }
+
+  it('stays quiet while risk is still zero', () => {
+    const start = guessing();
+    const { state, text } = run(start, [
+      'override protocol WRONGCODE',
+      'override protocol WRONGCODE',
+      'override protocol WRONGCODE',
+    ]);
+
+    expect(shouldSuppressPressure(start)).toBe(true);
+    expect(state.detectionLevel).toBe(0);
+    expect(text).not.toContain('risk is getting too high');
+    expect(text).not.toContain('lay low');
+  });
+
+  it('still fires once the grace period is over', () => {
+    // evidenceCount > 0 ends the atmosphere phase.
+    const start = guessing({ evidenceCount: 1 });
+    const { state, text } = run(start, ['override protocol WRONGCODE', 'trace']);
+
+    expect(shouldSuppressPressure(start)).toBe(false);
+    expect(state.detectionLevel).toBeGreaterThan(0);
+    expect(text).toContain('risk is getting too high');
   });
 });

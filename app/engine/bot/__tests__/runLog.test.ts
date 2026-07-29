@@ -18,7 +18,7 @@ function runWithLog(level: BotLevel, seed = 12345): { log: BotRunLogEntry[]; sta
   } as GameState;
   let memory = createBotMemory();
   const log: BotRunLogEntry[] = [];
-  let open: { entry: BotRunLogEntry; before: { wrongAttempts: number; leakProgress: number; leakGenerated: boolean } } | null = null;
+  let open: { entry: BotRunLogEntry; before: { wrongAttempts: number; legacyAlertCounter: number; leakProgress: number; leakGenerated: boolean } } | null = null;
   let reason = 'unterminated';
 
   const settle = () => {
@@ -28,6 +28,7 @@ function runWithLog(level: BotLevel, seed = 12345): { log: BotRunLogEntry[]; sta
       filesRead: state.filesRead.size,
       savedFiles: state.savedFiles.size,
       wrongAttempts: state.wrongAttempts,
+      legacyAlertCounter: state.legacyAlertCounter,
       leakProgress: state.leakSequenceProgress,
       leakGenerated: Boolean(state.leakSequenceGenerated),
       gameWon: Boolean(state.gameWon),
@@ -50,7 +51,7 @@ function runWithLog(level: BotLevel, seed = 12345): { log: BotRunLogEntry[]; sta
       filesReadAfter: state.filesRead.size, savedAfter: state.savedFiles.size,
     };
     log.push(entry);
-    open = { entry, before: { wrongAttempts: state.wrongAttempts, leakProgress: state.leakSequenceProgress, leakGenerated: Boolean(state.leakSequenceGenerated) } };
+    open = { entry, before: { wrongAttempts: state.wrongAttempts, legacyAlertCounter: state.legacyAlertCounter, leakProgress: state.leakSequenceProgress, leakGenerated: Boolean(state.leakSequenceGenerated) } };
     const result = executeCommand(input, state);
     state = { ...state, ...result.stateChanges } as GameState;
   }
@@ -84,10 +85,63 @@ describe('bot run log', () => {
       filesReadBefore: 2, savedBefore: 1, filesReadAfter: 2, savedAfter: 1,
     };
     settleBotTurn(entry,
-      { detectionLevel: 12, filesRead: 2, savedFiles: 1, wrongAttempts: 4, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 3, leakProgress: 0, leakGenerated: false });
+      { detectionLevel: 12, filesRead: 2, savedFiles: 1, wrongAttempts: 4, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
+      { wrongAttempts: 3, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
     expect(entry.anomaly).toContain('command rejected');
     expect(entry.detectionAfter).toBe(12);
+  });
+
+  /**
+   * The engine charges an unparseable command to `legacyAlertCounter` — that is
+   * the counter the 8-strike lockout reads — and leaves `wrongAttempts` alone.
+   * Watching only `wrongAttempts` meant this check, described as the single most
+   * useful signal the harness has, had never once fired on a command the parser
+   * genuinely did not understand.
+   */
+  it('flags a command the parser did not understand at all', () => {
+    const entry: BotRunLogEntry = {
+      turn: 3, command: 'xyzzy', detectionBefore: 10, detectionAfter: 10,
+      filesReadBefore: 2, savedBefore: 1, filesReadAfter: 2, savedAfter: 1,
+    };
+    settleBotTurn(entry,
+      { detectionLevel: 12, filesRead: 2, savedFiles: 1, wrongAttempts: 0, legacyAlertCounter: 1, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
+    expect(entry.anomaly).toContain('command rejected');
+  });
+
+  /**
+   * ...but the two probes that exist to drive the "did you mean" path can only
+   * do so by being refused, and `invalid-threshold` types gibberish eight times
+   * on purpose. Teaching the harness to notice rejection without this would add
+   * a permanent anomaly to every `chaos` run and eight to that scenario.
+   */
+  it('exempts a turn that expects to be refused', () => {
+    const entry: BotRunLogEntry = {
+      turn: 3, command: 'xyzzy', detectionBefore: 10, detectionAfter: 10,
+      filesReadBefore: 2, savedBefore: 1, filesReadAfter: 2, savedAfter: 1,
+      probe: true, expectRejected: true,
+    };
+    settleBotTurn(entry,
+      { detectionLevel: 12, filesRead: 2, savedFiles: 1, wrongAttempts: 0, legacyAlertCounter: 1, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
+    expect(entry.anomaly).toBeUndefined();
+  });
+
+  /**
+   * `purge-protocol` spends its last eight turns on a read-only command chosen
+   * precisely because it costs nothing but the countdown. Every one of those
+   * turns was reported as "turn changed nothing" — eight false alarms on the
+   * scenario most likely to be read closely.
+   */
+  it('does not flag a turn that only burns the purge countdown', () => {
+    const entry: BotRunLogEntry = {
+      turn: 64, command: 'progress', detectionBefore: 95, detectionAfter: 95,
+      filesReadBefore: 62, savedBefore: 0, filesReadAfter: 62, savedAfter: 0,
+    };
+    settleBotTurn(entry,
+      { detectionLevel: 95, filesRead: 62, savedFiles: 0, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false, doomCountdown: 7 },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, doomCountdown: 8 });
+    expect(entry.anomaly).toBeUndefined();
   });
 
   it('flags a detection spike past what any bot command costs', () => {
@@ -96,8 +150,8 @@ describe('bot run log', () => {
       filesReadBefore: 5, savedBefore: 2, filesReadAfter: 5, savedAfter: 2,
     };
     settleBotTurn(entry,
-      { detectionLevel: 20 + BOT_EXPECTED_MAX_DETECTION_JUMP + 1, filesRead: 6, savedFiles: 2, wrongAttempts: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 0, leakProgress: 0, leakGenerated: false });
+      { detectionLevel: 20 + BOT_EXPECTED_MAX_DETECTION_JUMP + 1, filesRead: 6, savedFiles: 2, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
     expect(entry.anomaly).toContain('detection +16%');
   });
 
@@ -107,8 +161,8 @@ describe('bot run log', () => {
       filesReadBefore: 1, savedBefore: 0, filesReadAfter: 1, savedAfter: 0,
     };
     settleBotTurn(entry,
-      { detectionLevel: 16, filesRead: 1, savedFiles: 0, wrongAttempts: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 0, leakProgress: 0, leakGenerated: false });
+      { detectionLevel: 16, filesRead: 1, savedFiles: 0, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
     expect(entry.anomaly).toBeUndefined();
   });
 
@@ -132,8 +186,8 @@ describe('bot run log', () => {
       filesReadBefore: 1, savedBefore: 0, filesReadAfter: 1, savedAfter: 0,
     };
     settleBotTurn(entry,
-      { detectionLevel: 16, filesRead: 1, savedFiles: 0, wrongAttempts: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false, pendingTreeConfirm: true },
-      { wrongAttempts: 0, leakProgress: 0, leakGenerated: false, pendingTreeConfirm: false });
+      { detectionLevel: 16, filesRead: 1, savedFiles: 0, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false, pendingTreeConfirm: true },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, pendingTreeConfirm: false });
     expect(entry.anomaly).toBeUndefined();
   });
 
@@ -143,8 +197,8 @@ describe('bot run log', () => {
       filesReadBefore: 8, savedBefore: 4, filesReadAfter: 8, savedAfter: 4,
     };
     settleBotTurn(entry,
-      { detectionLevel: 30, filesRead: 8, savedFiles: 4, wrongAttempts: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false, pendingTreeConfirm: false },
-      { wrongAttempts: 0, leakProgress: 0, leakGenerated: false, pendingTreeConfirm: false });
+      { detectionLevel: 30, filesRead: 8, savedFiles: 4, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false, pendingTreeConfirm: false },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, pendingTreeConfirm: false });
     expect(entry.anomaly).toContain('turn changed nothing');
   });
 
@@ -160,8 +214,8 @@ describe('bot run log', () => {
       probe: true,
     };
     settleBotTurn(entry,
-      { detectionLevel: 30, filesRead: 12, savedFiles: 10, wrongAttempts: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 0, leakProgress: 0, leakGenerated: false });
+      { detectionLevel: 30, filesRead: 12, savedFiles: 10, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
     expect(entry.anomaly).toBeUndefined();
   });
 
@@ -187,5 +241,40 @@ describe('bot run log', () => {
       state = { ...state, ...executeCommand(input, state).stateChanges } as GameState;
     }
     expect(sawExpectedNoOp).toBe(true);
+  });
+
+  /**
+   * The scenario is named "unsave and swap a file in", and for as long as the
+   * dossier-filling branch ran ahead of the swap flags it did no such thing:
+   * `unsave` dropped the count to 9, the fill branch matched again, and the run
+   * re-saved the file it had just removed.
+   */
+  it('really swaps a different file into the dossier', () => {
+    const goal = { kind: 'scenario' as const, scenario: 'dossier-full' as const };
+    let state: GameState = {
+      ...DEFAULT_GAME_STATE, tutorialComplete: true, seed: 1, rngState: 1,
+      filesRead: new Set<string>(), savedFiles: new Set<string>(),
+    } as GameState;
+    let memory = createBotMemory();
+    let unsaved: string | null = null;
+    let resaved: string | null = null;
+
+    for (let i = 0; i < 200; i++) {
+      const { decision, memory: next } = decideNextCommand(state, memory, 'novice', 1, goal);
+      memory = next;
+      if (decision.kind === 'done') break;
+      const input = decision.kind === 'enter' ? '' : decision.text;
+      if (input.startsWith('unsave ')) unsaved = input.slice('unsave '.length);
+      else if (unsaved && input.startsWith('save ')) resaved = input.slice('save '.length);
+      state = { ...state, ...executeCommand(input, state).stateChanges } as GameState;
+    }
+
+    expect(unsaved).not.toBeNull();
+    expect(resaved).not.toBeNull();
+    expect(resaved).not.toBe(unsaved);
+    // And the swap actually landed, rather than bouncing off a full dossier.
+    expect(state.savedFiles.size).toBe(10);
+    expect([...state.savedFiles].some(p => p.endsWith(`/${resaved}`))).toBe(true);
+    expect([...state.savedFiles].some(p => p.endsWith(`/${unsaved}`))).toBe(false);
   });
 });

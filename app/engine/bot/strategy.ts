@@ -6,7 +6,7 @@ import { OVERRIDE_PASSWORD } from '../overrideSecret';
 import { isSecretTarget, secretCriticalTargets } from './targets';
 import { buildEndingDossier } from './endingTargets';
 import { BOT_SCENARIOS, BotScenarioId } from './scenarios';
-import { BOT_PROBE_COMMANDS } from './probes';
+import { BOT_PROBE_COMMANDS, BOT_PROBES_EXPECTING_REJECTION } from './probes';
 import {
   BotDecision,
   BotGoal,
@@ -172,9 +172,13 @@ export function decideNextCommand(
     return { decision: { kind: 'done', reason: 'no progress (stuck)' }, memory: m };
   }
 
-  const decide = (text: string, probe = false): { decision: BotDecision; memory: BotMemory } => {
+  const decide = (
+    text: string,
+    probe = false,
+    expectRejected = false
+  ): { decision: BotDecision; memory: BotMemory } => {
     m.lastDecision = text;
-    return { decision: { kind: 'command', text, probe }, memory: m };
+    return { decision: { kind: 'command', text, probe, expectRejected }, memory: m };
   };
 
   if (goal.kind === 'scenario') return decideScenario(state, m, goal.scenario, seed, decide);
@@ -200,7 +204,7 @@ export function decideNextCommand(
   if (policy.probes && m.probesIssued < BOT_PROBE_COMMANDS.length) {
     const probe = BOT_PROBE_COMMANDS[m.probesIssued];
     m.probesIssued += 1;
-    return decide(probe, true);
+    return decide(probe, true, BOT_PROBES_EXPECTING_REJECTION.has(probe));
   }
 
   const accessible = getAllAccessibleFiles(state);
@@ -256,7 +260,11 @@ function driveLeak(
   return decide('leak'); // sequence complete → transmit
 }
 
-type Decider = (text: string, probe?: boolean) => { decision: BotDecision; memory: BotMemory };
+type Decider = (
+  text: string,
+  probe?: boolean,
+  expectRejected?: boolean
+) => { decision: BotDecision; memory: BotMemory };
 
 /**
  * Builds one specific ending.
@@ -338,5 +346,6 @@ function decideScenario(
     return { decision: { kind: 'done', reason: `scenario ${scenario} script complete` }, memory: m };
   }
   m.scenarioStep += 1;
-  return typeof next === 'string' ? decide(next) : decide(next.text, next.expectNoOp);
+  if (typeof next === 'string') return decide(next);
+  return decide(next.text, next.expectNoOp, next.expectRejected);
 }

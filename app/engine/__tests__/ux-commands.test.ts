@@ -630,7 +630,26 @@ describe('UX Commands', () => {
       const state = createTestState({ detectionLevel: 50 });
       const result = executeCommand('hide', state);
 
-      expect(result.output.some(e => e.content.includes('not recognized'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('not available yet'))).toBe(true);
+      expect(result.stateChanges.detectionLevel).toBeUndefined();
+    });
+
+    /**
+     * `help` lists `hide` by name and states the 90% threshold, `help hide`
+     * repeats it, and `status` announces the moment it unlocks — but typing it
+     * below the threshold answered "Command not recognized: hide — type 'help'
+     * for available commands". The game documented the command, denied it
+     * existed, and sent the player back to the screen that had just documented
+     * it.
+     */
+    it('says it is locked rather than denying the command exists', () => {
+      const state = createTestState({ detectionLevel: 50 });
+      const text = executeCommand('hide', state)
+        .output.map(e => e.content)
+        .join('\n');
+
+      expect(text).not.toMatch(/not recognized/i);
+      expect(text).toMatch(/90% risk/);
     });
 
     it('should work at 90+ detection and reset to 70', () => {

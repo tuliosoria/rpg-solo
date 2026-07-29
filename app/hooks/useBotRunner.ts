@@ -19,6 +19,23 @@ export function isTerminalIdle(g: {
   return !g.isProcessing && !g.showTuringTest && !g.hasPendingMedia;
 }
 
+/**
+ * Emits the run summary somewhere it survives the screen that follows it.
+ *
+ * `buildRunSummary` writes into the terminal history, and `Terminal` unmounts
+ * the terminal outright when `gamePhase` becomes `victory` or `bad_ending` —
+ * it returns the ending component *instead of* the history. So the summary was
+ * invisible for exactly the runs most worth reading: every winning level run
+ * and all twelve ending runs finished by replacing the only surface it was
+ * printed on, and the ending screen's one control restarts the game. The
+ * console copy is plain text, survives the unmount, and can be copied out.
+ */
+function logRunSummary(entries: TerminalEntry[]): void {
+  if (typeof console === 'undefined') return;
+  // eslint-disable-next-line no-console
+  console.log(entries.map(entry => entry.content).join('\n'));
+}
+
 interface BotRunnerArgs {
   gameState: GameState;
   isProcessing: boolean;
@@ -66,9 +83,11 @@ export function useBotRunner(args: BotRunnerArgs): void {
     entry: BotRunLogEntry;
     before: {
       wrongAttempts: number;
+      legacyAlertCounter: number;
       leakProgress: number;
       leakGenerated: boolean;
       pendingTreeConfirm: boolean;
+      doomCountdown: number;
     };
   } | null>(null);
 
@@ -117,12 +136,14 @@ export function useBotRunner(args: BotRunnerArgs): void {
             filesRead: gameState.filesRead.size,
             savedFiles: gameState.savedFiles.size,
             wrongAttempts: gameState.wrongAttempts,
+            legacyAlertCounter: gameState.legacyAlertCounter,
             leakProgress: gameState.leakSequenceProgress,
             leakGenerated: Boolean(gameState.leakSequenceGenerated),
             gameWon: Boolean(gameState.gameWon),
             isGameOver: Boolean(gameState.isGameOver),
             gameOverReason: gameState.gameOverReason,
             pendingTreeConfirm: Boolean(gameState.pendingTreeConfirm),
+            doomCountdown: gameState.sessionDoomCountdown,
           },
           open.before
         );
@@ -139,7 +160,9 @@ export function useBotRunner(args: BotRunnerArgs): void {
           cfg.goal
         );
         if (decision.kind === 'done') {
-          appendOutput(buildRunSummary(logRef.current, cfg, gameState, decision.reason));
+          const summary = buildRunSummary(logRef.current, cfg, gameState, decision.reason);
+          appendOutput(summary);
+          logRunSummary(summary);
           clearBot();
         }
         return;
@@ -174,7 +197,9 @@ export function useBotRunner(args: BotRunnerArgs): void {
       memoryRef.current = memory;
 
       if (decision.kind === 'done') {
-        appendOutput(buildRunSummary(logRef.current, cfg, gameState, decision.reason));
+        const summary = buildRunSummary(logRef.current, cfg, gameState, decision.reason);
+        appendOutput(summary);
+        logRunSummary(summary);
         clearBot();
         return;
       }
@@ -190,15 +215,18 @@ export function useBotRunner(args: BotRunnerArgs): void {
         filesReadAfter: gameState.filesRead.size,
         savedAfter: gameState.savedFiles.size,
         probe: decision.kind === 'command' ? decision.probe : undefined,
+        expectRejected: decision.kind === 'command' ? decision.expectRejected : undefined,
       };
       logRef.current.push(entry);
       openTurnRef.current = {
         entry,
         before: {
           wrongAttempts: gameState.wrongAttempts,
+          legacyAlertCounter: gameState.legacyAlertCounter,
           leakProgress: gameState.leakSequenceProgress,
           leakGenerated: Boolean(gameState.leakSequenceGenerated),
           pendingTreeConfirm: Boolean(gameState.pendingTreeConfirm),
+          doomCountdown: gameState.sessionDoomCountdown,
         },
       };
       submit(input);
