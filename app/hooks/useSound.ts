@@ -135,8 +135,11 @@ if (typeof window !== 'undefined') {
   const preloadTracks = () => {
     Object.values(MUSIC_TRACKS).forEach(track => {
       const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'audio';
+      // Chromium does not consistently support `as="audio"` for preload and
+      // emits a warning for every track. Idle prefetch keeps the warm-cache
+      // intent without advertising an unsupported destination.
+      link.rel = 'prefetch';
+      link.type = 'audio/mpeg';
       link.href = track;
       document.head.appendChild(link);
     });
@@ -202,6 +205,13 @@ export function useSound() {
   // Initialize audio context on first interaction
   const initAudio = useCallback(() => {
     if (typeof window === 'undefined') return null;
+    // React Strict Mode runs effect cleanup once during development mount. If
+    // that cleanup closes a context created by a sibling effect, the ref
+    // survives the probe and every later sound tries to build nodes on a closed
+    // context. Drop it so the next interaction gets a live context.
+    if (audioContextRef.current?.state === 'closed') {
+      audioContextRef.current = null;
+    }
     if (!audioContextRef.current) {
       const AudioContextClass =
         window.AudioContext ||
@@ -997,8 +1007,10 @@ export function useSound() {
       stopOnboardingStatic();
       stopAmbient();
       stopMusic();
-      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        audioContextRef.current.close();
+      const audioContext = audioContextRef.current;
+      audioContextRef.current = null;
+      if (audioContext && audioContext.state !== 'closed') {
+        void audioContext.close();
       }
     };
   }, [stopAmbient, stopMusic, stopOnboardingStatic]);

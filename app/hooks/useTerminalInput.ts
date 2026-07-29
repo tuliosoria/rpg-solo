@@ -610,7 +610,10 @@ export function useTerminalInput({
 
       incrementStatistic('commandsTyped');
 
-      const result = executeCommand(command, newState);
+      // Keep history and UI routing sanitized, but let the engine inspect the
+      // original length. Passing the already-truncated value made its dedicated
+      // input-length warning and lockdown unreachable from the real terminal.
+      const result = executeCommand(sourceInput, newState);
       const previousSingularEvents = newState.singularEventsTriggered || new Set<string>();
       const nextSingularEvents =
         result.stateChanges.singularEventsTriggered || previousSingularEvents;

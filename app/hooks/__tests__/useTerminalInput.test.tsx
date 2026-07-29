@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { DEFAULT_GAME_STATE, GameState, TutorialStateID } from '../../types';
+import { MAX_COMMAND_INPUT_LENGTH } from '../../constants/limits';
 
 vi.mock('../../storage/saves', () => ({
   saveCheckpoint: vi.fn(),
@@ -32,9 +33,10 @@ vi.mock('../../engine/commands', () => {
     }),
     getTutorialMessage: vi.fn(),
     TUTORIAL_MESSAGES: {},
-    sanitizeCommandInput: (input: string) => ({
-      value: input,
-      truncated: false,
+    sanitizeCommandInput: (input: string, maxLength = 256) => ({
+      value: input.slice(0, maxLength),
+      wasModified: input.length > maxLength,
+      wasTruncated: input.length > maxLength,
     }),
   };
 });
@@ -355,4 +357,28 @@ describe('useTerminalInput save-session intercept', () => {
       expect(executeCommand).toHaveBeenCalled();
     }
   );
+});
+
+describe('useTerminalInput command-length handoff', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(executeCommand).mockReturnValue(createCommandResult({}));
+  });
+
+  it('keeps sanitized history but gives the engine the original overlong input', async () => {
+    const overlong = 'x'.repeat(MAX_COMMAND_INPUT_LENGTH + 1);
+    const options = createOptions(createGameState(), overlong);
+    const { result } = renderHook(() => useTerminalInput(options));
+
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+
+    expect(executeCommand).toHaveBeenCalledWith(
+      overlong,
+      expect.objectContaining({
+        commandHistory: ['x'.repeat(MAX_COMMAND_INPUT_LENGTH)],
+      })
+    );
+  });
 });

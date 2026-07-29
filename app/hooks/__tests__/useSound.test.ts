@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSound } from '../useSound';
 
@@ -10,6 +10,7 @@ describe('useSound', () => {
   let createBufferSourceSpy: ReturnType<typeof vi.fn>;
   let createBiquadFilterSpy: ReturnType<typeof vi.fn>;
   let resumeSpy: ReturnType<typeof vi.fn>;
+  let audioContextConstructorSpy: Mock<() => void>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -56,6 +57,7 @@ describe('useSound', () => {
     }));
 
     resumeSpy = vi.fn(() => Promise.resolve());
+    audioContextConstructorSpy = vi.fn<() => void>();
 
     // Create a proper class mock
     class MockAudioContext {
@@ -70,7 +72,14 @@ describe('useSound', () => {
       createBufferSource = createBufferSourceSpy;
       createBiquadFilter = createBiquadFilterSpy;
       resume = resumeSpy;
-      close = vi.fn(() => Promise.resolve());
+      close = vi.fn(() => {
+        this.state = 'closed';
+        return Promise.resolve();
+      });
+
+      constructor() {
+        audioContextConstructorSpy();
+      }
     }
 
     // @ts-expect-error - Mocking AudioContext
@@ -109,6 +118,22 @@ describe('useSound', () => {
       const { result } = renderHook(() => useSound());
 
       expect(result.current.masterVolume).toBe(1);
+    });
+
+    it('recreates audio for a delayed callback after cleanup closes its context', () => {
+      const { result, unmount } = renderHook(() => useSound());
+      const delayedPlay = result.current.playSound;
+
+      act(() => {
+        delayedPlay('enter');
+      });
+      unmount();
+      act(() => {
+        delayedPlay('enter');
+      });
+
+      expect(audioContextConstructorSpy).toHaveBeenCalledTimes(2);
+      expect(createOscillatorSpy).toHaveBeenCalledTimes(4);
     });
   });
 
