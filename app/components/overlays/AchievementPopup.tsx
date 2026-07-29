@@ -51,7 +51,8 @@ function AchievementPopup({ achievement, onDismiss }: AchievementPopupProps) {
 
   return (
     <FloatingElement id="achievement-popup" zone="bottom-right" priority={2} baseOffset={32}>
-      <div
+      <button
+        type="button"
         className={`${styles.popup} ${visible ? styles.visible : ''} ${exiting ? styles.exiting : ''}`}
         onClick={triggerDismiss}
       >
@@ -61,7 +62,7 @@ function AchievementPopup({ achievement, onDismiss }: AchievementPopupProps) {
           <div className={styles.name}>{translateRuntimeText(achievement.name)}</div>
           <div className={styles.description}>{translateRuntimeText(achievement.description)}</div>
         </div>
-      </div>
+      </button>
     </FloatingElement>
   );
 }

@@ -1448,6 +1448,34 @@
 
 /* Responsive - Small screens */
 @media (max-width: 768px) {
+  .crtShell {
+    min-height: 100dvh;
+    height: 100dvh;
+    padding: 4px;
+  }
+
+  .crtBezel {
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    border-radius: 30px;
+  }
+
+  .screenViewport {
+    padding: 5px;
+    border-radius: 30px;
+  }
+
+  .screenViewport::before {
+    inset: 6px;
+    border-radius: 30px;
+  }
+
+  .screenWarp {
+    border-radius: 30px;
+    transform: perspective(1400px) scaleX(0.992) scaleY(0.985);
+  }
+
   .terminal {
     font-size: 11px;
   }
@@ -1455,6 +1483,12 @@
   .statusBar {
     padding: 4px 10px;
     font-size: 9px;
+  }
+
+  .statusLeft {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .progressTracker {
@@ -1495,14 +1529,26 @@
   }
 
   .escButton {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 46px;
+    min-width: 46px;
     padding: 8px 16px;
   }
 
   .menuItem {
     min-height: 44px;
     padding: 10px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .versionTag,
+  .saveIndicator,
+  .statusRight {
+    display: none;
+  }
+
+  .escButton {
+    margin-left: auto;
   }
 }
 

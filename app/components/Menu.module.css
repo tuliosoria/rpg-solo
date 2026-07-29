@@ -77,7 +77,13 @@
   text-align: center;
   padding: 40px;
   max-width: 600px;
+  max-height: 100vh;
+  max-height: 100dvh;
   width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Title */
@@ -189,6 +195,17 @@
   transition: all 0.2s ease;
 }
 
+.saveSlotButton {
+  width: 100%;
+  padding: 0 32px 0 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .saveSlot:hover {
   background: rgba(136, 204, 68, 0.05);
   border-color: #88cc44;
@@ -286,9 +303,10 @@
   color: #4a6a20;
   font-family: inherit;
   font-size: 11px;
+  min-height: 44px;
   cursor: pointer;
   letter-spacing: 1px;
-  padding: 2px 4px;
+  padding: 10px 4px;
   transition: color 0.2s;
 }
 
@@ -463,8 +481,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  min-height: 44px;
   padding: 10px 12px;
   border: 1px solid #1a2a10;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   margin-bottom: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -495,6 +520,8 @@
   font-size: 13px;
   color: #78b838;
   letter-spacing: 1px;
+  min-width: 0;
+  padding-right: 12px;
 }
 
 .optionToggle {
@@ -502,12 +529,16 @@
   color: #88cc44;
   letter-spacing: 1px;
   font-weight: bold;
+  flex: 0 0 auto;
+  text-align: right;
 }
 
 .optionSelect {
   font-size: 13px;
   color: #88cc44;
   letter-spacing: 1px;
+  flex: 0 0 auto;
+  text-align: right;
 }
 
 /* Slider Styles */
@@ -520,7 +551,7 @@
 .slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 150px;
+  width: clamp(96px, 35vw, 150px);
   height: 6px;
   background: #1a2a10;
   border-radius: 0;
@@ -565,4 +596,24 @@
   color: #88cc44;
   min-width: 40px;
   text-align: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flicker {
+    animation: none;
+  }
+
+  .menuButton,
+  .saveSlot,
+  .backButton,
+  .legalLink,
+  .optionRow,
+  .slider::-webkit-slider-thumb {
+    transition: none;
+  }
+
+  .menuButton:hover,
+  .menuButton.selected {
+    transform: none;
+  }
 }

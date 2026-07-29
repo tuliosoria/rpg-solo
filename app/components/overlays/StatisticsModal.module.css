@@ -95,6 +95,7 @@
 }
 
 .closeButton {
+  min-height: 46px;
   padding: 12px 32px;
   font-family: inherit;
   font-size: 14px;

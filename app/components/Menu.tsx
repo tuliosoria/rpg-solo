@@ -36,14 +36,6 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
   const { language, setLanguage, t } = useI18n();
   const { playSound } = useSound();
 
-  const handleHover = useCallback(
-    (index: number) => {
-      setSelectedIndex(index);
-      playSound('hover');
-    },
-    [playSound]
-  );
-
   const cycleLanguage = useCallback((direction: 1 | -1 = 1) => {
     const ordered = ['en', 'pt-BR', 'es'] as const;
     const currentIndex = ordered.indexOf(language);
@@ -192,6 +184,47 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
   // Refs for menu buttons for focus management
   const mainMenuRef = useRef<HTMLDivElement>(null);
   const loadListRef = useRef<HTMLDivElement>(null);
+  const optionsMenuRef = useRef<HTMLDivElement>(null);
+
+  const focusSelectedControl = useCallback(
+    (index: number) => {
+      window.requestAnimationFrame(() => {
+        const root =
+          screen === 'main'
+            ? mainMenuRef.current
+            : screen === 'load'
+              ? loadListRef.current
+              : screen === 'options'
+                ? optionsMenuRef.current
+                : null;
+        const selector =
+          screen === 'main'
+            ? `button.${styles.menuButton}`
+            : screen === 'load'
+              ? `button.${styles.saveSlotButton}, button.${styles.backButton}`
+              : `input.${styles.slider}, button.${styles.optionRow}, button.${styles.backButton}`;
+        const control = root?.querySelectorAll<HTMLElement>(selector)[index];
+        control?.focus({ preventScroll: true });
+        if (typeof control?.scrollIntoView === 'function') {
+          control.scrollIntoView({ block: 'nearest' });
+        }
+      });
+    },
+    [screen]
+  );
+
+  const handleHover = useCallback(
+    (index: number) => {
+      if (screen === 'options' && index === 7 && !options.screenFlickerEnabled) {
+        return;
+      }
+
+      setSelectedIndex(index);
+      focusSelectedControl(index);
+      playSound('hover');
+    },
+    [focusSelectedControl, options.screenFlickerEnabled, playSound, screen]
+  );
 
   // Load saves when showing load screen
   useEffect(() => {
@@ -248,6 +281,17 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
   // Keyboard navigation
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      const target = e.target;
+      const nativeInteractiveTarget =
+        target instanceof HTMLElement &&
+        ['A', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName);
+
+      // Let focused native controls keep their standard Enter behavior. The
+      // global handler is only for the menu's arrow-selected, unfocused path.
+      if (e.key === 'Enter' && nativeInteractiveTarget) {
+        return;
+      }
+
       // Main menu has 4 items now: NEW GAME, LOAD GAME, OPTIONS, CREDITS
       const maxIndex =
         screen === 'main'
@@ -273,12 +317,26 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
           break;
         case 'ArrowUp':
           e.preventDefault();
-          setSelectedIndex(prev => (prev > 0 ? prev - 1 : maxIndex));
+          {
+            let nextIndex = selectedIndex > 0 ? selectedIndex - 1 : maxIndex;
+            if (screen === 'options' && nextIndex === 7 && !options.screenFlickerEnabled) {
+              nextIndex = 6;
+            }
+            setSelectedIndex(nextIndex);
+            focusSelectedControl(nextIndex);
+          }
           playSound('hover');
           break;
         case 'ArrowDown':
           e.preventDefault();
-          setSelectedIndex(prev => (prev < maxIndex ? prev + 1 : 0));
+          {
+            let nextIndex = selectedIndex < maxIndex ? selectedIndex + 1 : 0;
+            if (screen === 'options' && nextIndex === 7 && !options.screenFlickerEnabled) {
+              nextIndex = 8;
+            }
+            setSelectedIndex(nextIndex);
+            focusSelectedControl(nextIndex);
+          }
           playSound('hover');
           break;
         case 'Enter':
@@ -324,6 +382,8 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
       handleReturnToMain,
       handleLoadSelection,
       adjustOptionValue,
+      focusSelectedControl,
+      options.screenFlickerEnabled,
       playSound,
     ]
   );
@@ -358,33 +418,41 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
         <button
           className={`${styles.menuButton} ${selectedIndex === 0 ? styles.selected : ''}`}
           onClick={handleStartNewGame}
-          onMouseEnter={() => handleHover(0)}
+          onPointerMove={() => handleHover(0)}
+          onFocus={() => setSelectedIndex(0)}
         >
-          {selectedIndex === 0 ? '▶ ' : '  '}{t('menu.main.newGame')}
+          {selectedIndex === 0 ? '▶ ' : '  '}
+          {t('menu.main.newGame')}
         </button>
 
         <button
           className={`${styles.menuButton} ${selectedIndex === 1 ? styles.selected : ''}`}
           onClick={() => setScreen('load')}
-          onMouseEnter={() => handleHover(1)}
+          onPointerMove={() => handleHover(1)}
+          onFocus={() => setSelectedIndex(1)}
         >
-          {selectedIndex === 1 ? '▶ ' : '  '}{t('menu.main.loadGame')}
+          {selectedIndex === 1 ? '▶ ' : '  '}
+          {t('menu.main.loadGame')}
         </button>
 
         <button
           className={`${styles.menuButton} ${selectedIndex === 2 ? styles.selected : ''}`}
           onClick={() => setScreen('options')}
-          onMouseEnter={() => handleHover(2)}
+          onPointerMove={() => handleHover(2)}
+          onFocus={() => setSelectedIndex(2)}
         >
-          {selectedIndex === 2 ? '▶ ' : '  '}{t('menu.main.options')}
+          {selectedIndex === 2 ? '▶ ' : '  '}
+          {t('menu.main.options')}
         </button>
 
         <button
           className={`${styles.menuButton} ${selectedIndex === 3 ? styles.selected : ''}`}
           onClick={() => setScreen('credits')}
-          onMouseEnter={() => handleHover(3)}
+          onPointerMove={() => handleHover(3)}
+          onFocus={() => setSelectedIndex(3)}
         >
-          {selectedIndex === 3 ? '▶ ' : '  '}{t('menu.main.credits')}
+          {selectedIndex === 3 ? '▶ ' : '  '}
+          {t('menu.main.credits')}
         </button>
       </div>
 
@@ -431,35 +499,50 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
             <div
               key={slot.id}
               className={`${styles.saveSlot} ${selectedIndex === index ? styles.selected : ''}`}
-              onClick={() => {
-                void handleLoadSelection(slot.id);
-              }}
-              onMouseEnter={() => handleHover(index)}
+              onPointerMove={() => handleHover(index)}
             >
-              <div className={styles.saveSelector}>{selectedIndex === index ? '▶' : ' '}</div>
-              <div className={styles.saveContent}>
-                <div className={styles.saveName}>
-                  {slot.name}
-                  {loadingSaveId === slot.id ? ` ${t('menu.load.loading')}` : ''}
+              <button
+                type="button"
+                className={styles.saveSlotButton}
+                onClick={() => {
+                  void handleLoadSelection(slot.id);
+                }}
+                onFocus={() => setSelectedIndex(index)}
+              >
+                <div className={styles.saveSelector}>{selectedIndex === index ? '▶' : ' '}</div>
+                <div className={styles.saveContent}>
+                  <div className={styles.saveName}>
+                    {slot.name}
+                    {loadingSaveId === slot.id ? ` ${t('menu.load.loading')}` : ''}
+                  </div>
+                  <div className={styles.saveInfo}>
+                    <span>
+                      {t('menu.load.path')}: {slot.currentPath}
+                    </span>
+                    <span>
+                      {t('menu.load.progress')}: {slot.truthCount}/10
+                    </span>
+                    <span
+                      className={
+                        slot.detectionLevel >= 80
+                          ? styles.riskCritical
+                          : slot.detectionLevel >= 50
+                            ? styles.riskHigh
+                            : styles.riskLow
+                      }
+                    >
+                      {t('menu.load.risk')}: {slot.detectionLevel ?? 0}%
+                    </span>
+                  </div>
+                  <div className={styles.saveDate}>{formatDate(slot.timestamp)}</div>
                 </div>
-                <div className={styles.saveInfo}>
-                  <span>{t('menu.load.path')}: {slot.currentPath}</span>
-                  <span>{t('menu.load.progress')}: {slot.truthCount}/10</span>
-                  <span
-                    className={
-                      slot.detectionLevel >= 80
-                        ? styles.riskCritical
-                        : slot.detectionLevel >= 50
-                          ? styles.riskHigh
-                          : styles.riskLow
-                    }
-                  >
-                    {t('menu.load.risk')}: {slot.detectionLevel ?? 0}%
-                  </span>
-                </div>
-                <div className={styles.saveDate}>{formatDate(slot.timestamp)}</div>
-              </div>
-              <button className={styles.deleteButton} onClick={e => handleDelete(slot.id, e)}>
+              </button>
+              <button
+                type="button"
+                className={styles.deleteButton}
+                onClick={e => handleDelete(slot.id, e)}
+                aria-label={`${t('menu.confirm.deleteSave')} ${slot.name}`}
+              >
                 [X]
               </button>
             </div>
@@ -467,14 +550,20 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
         )}
       </div>
 
-      {loadError && <div className={styles.noSaves} role="alert">{loadError}</div>}
+      {loadError && (
+        <div className={styles.noSaves} role="alert">
+          {loadError}
+        </div>
+      )}
 
       <button
         className={`${styles.backButton} ${selectedIndex === saves.length ? styles.selected : ''}`}
         onClick={handleReturnToMain}
-        onMouseEnter={() => handleHover(saves.length)}
+        onPointerMove={() => handleHover(saves.length)}
+        onFocus={() => setSelectedIndex(saves.length)}
       >
-        {selectedIndex === saves.length ? '▶ ' : '  '}{t('menu.load.back')}
+        {selectedIndex === saves.length ? '▶ ' : '  '}
+        {t('menu.load.back')}
       </button>
       <div className={styles.keyHint}>
         {loadingSaveId ? t('menu.load.loading') : t('menu.load.keyHint')}
@@ -651,7 +740,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
     const textSpeedOptions: TextSpeed[] = ['slow', 'normal', 'fast', 'instant'];
 
     return (
-      <div className={styles.menuContent}>
+      <div className={styles.menuContent} ref={optionsMenuRef}>
         <div className={styles.header}>
           <h2 className={styles.headerTitle}>{t('menu.options.title')}</h2>
           <div className={styles.titleLine}>═══════════════════════════════════</div>
@@ -665,7 +754,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
             {/* Master Volume Slider */}
             <div
               className={`${styles.optionRow} ${selectedIndex === 0 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(0)}
+              onPointerMove={() => handleHover(0)}
             >
               <span className={styles.optionLabel}>{t('menu.options.masterVolume')}</span>
               <div className={styles.sliderContainer}>
@@ -676,58 +765,72 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
                   value={options.masterVolume}
                   onChange={e => setOption('masterVolume', parseInt(e.target.value))}
                   className={styles.slider}
+                  aria-label={t('menu.options.masterVolume')}
+                  onFocus={() => setSelectedIndex(0)}
                 />
                 <span className={styles.sliderValue}>{options.masterVolume}%</span>
               </div>
             </div>
 
             {/* Ambient Sound Toggle */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 1 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(1)}
+              onPointerMove={() => handleHover(1)}
+              onFocus={() => setSelectedIndex(1)}
               onClick={() => setOption('ambientSoundEnabled', !options.ambientSoundEnabled)}
+              aria-pressed={options.ambientSoundEnabled}
             >
               <span className={styles.optionLabel}>{t('menu.options.ambientSound')}</span>
               <span className={styles.optionToggle}>
                 [ {options.ambientSoundEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
-            </div>
+            </button>
 
             {/* Sound Effects Toggle */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 2 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(2)}
+              onPointerMove={() => handleHover(2)}
+              onFocus={() => setSelectedIndex(2)}
               onClick={() => setOption('soundEffectsEnabled', !options.soundEffectsEnabled)}
+              aria-pressed={options.soundEffectsEnabled}
             >
               <span className={styles.optionLabel}>{t('menu.options.soundEffects')}</span>
               <span className={styles.optionToggle}>
                 [ {options.soundEffectsEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
-            </div>
+            </button>
 
             {/* Music Toggle */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 3 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(3)}
+              onPointerMove={() => handleHover(3)}
+              onFocus={() => setSelectedIndex(3)}
               onClick={() => setOption('musicEnabled', !options.musicEnabled)}
+              aria-pressed={options.musicEnabled}
             >
               <span className={styles.optionLabel}>{t('menu.options.music')}</span>
               <span className={styles.optionToggle}>
                 [ {options.musicEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
-            </div>
+            </button>
 
             {/* Turing Voice Toggle */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 4 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(4)}
+              onPointerMove={() => handleHover(4)}
+              onFocus={() => setSelectedIndex(4)}
               onClick={() => setOption('turingVoiceEnabled', !options.turingVoiceEnabled)}
+              aria-pressed={options.turingVoiceEnabled}
             >
               <span className={styles.optionLabel}>{t('menu.options.turingVoice')}</span>
               <span className={styles.optionToggle}>
                 [ {options.turingVoiceEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
-            </div>
+            </button>
           </div>
 
           {/* VISUAL SECTION */}
@@ -735,33 +838,41 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
             <div className={styles.optionSectionTitle}>{t('menu.options.visual')}</div>
 
             {/* CRT Effects Toggle */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 5 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(5)}
+              onPointerMove={() => handleHover(5)}
+              onFocus={() => setSelectedIndex(5)}
               onClick={() => setOption('crtEffectsEnabled', !options.crtEffectsEnabled)}
+              aria-pressed={options.crtEffectsEnabled}
             >
               <span className={styles.optionLabel}>{t('menu.options.crtEffects')}</span>
               <span className={styles.optionToggle}>
                 [ {options.crtEffectsEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
-            </div>
+            </button>
 
             {/* Screen Flicker Toggle */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 6 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(6)}
+              onPointerMove={() => handleHover(6)}
+              onFocus={() => setSelectedIndex(6)}
               onClick={() => setOption('screenFlickerEnabled', !options.screenFlickerEnabled)}
+              aria-pressed={options.screenFlickerEnabled}
             >
               <span className={styles.optionLabel}>{t('menu.options.screenFlicker')}</span>
               <span className={styles.optionToggle}>
                 [ {options.screenFlickerEnabled ? t('options.value.on') : t('options.value.off')} ]
               </span>
-            </div>
+            </button>
 
             {/* Flicker Intensity Select (only when flicker is on) */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 7 ? styles.selected : ''} ${!options.screenFlickerEnabled ? styles.optionDisabled : ''}`}
-              onMouseEnter={() => handleHover(7)}
+              onPointerMove={() => handleHover(7)}
+              onFocus={() => setSelectedIndex(7)}
               onClick={() => {
                 if (options.screenFlickerEnabled) {
                   const currentIdx = flickerOptions.indexOf(options.flickerIntensity);
@@ -769,6 +880,7 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
                   setOption('flickerIntensity', flickerOptions[nextIdx]);
                 }
               }}
+              disabled={!options.screenFlickerEnabled}
             >
               <span className={styles.optionLabel}>{t('menu.options.flickerIntensity')}</span>
               <span className={styles.optionSelect}>
@@ -780,12 +892,14 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
                     : t('options.value.medium')}
                 {' >'}
               </span>
-            </div>
+            </button>
 
             {/* Font Size Select */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 8 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(8)}
+              onPointerMove={() => handleHover(8)}
+              onFocus={() => setSelectedIndex(8)}
               onClick={() => {
                 const currentIdx = fontSizeOptions.indexOf(options.fontSize);
                 const nextIdx = (currentIdx + 1) % fontSizeOptions.length;
@@ -802,12 +916,14 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
                     : t('options.value.medium')}
                 {' >'}
               </span>
-            </div>
+            </button>
 
             {/* Text Speed Select */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 9 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(9)}
+              onPointerMove={() => handleHover(9)}
+              onFocus={() => setSelectedIndex(9)}
               onClick={() => {
                 const currentIdx = textSpeedOptions.indexOf(options.textSpeed);
                 const nextIdx = (currentIdx + 1) % textSpeedOptions.length;
@@ -826,26 +942,35 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
                       : t('options.value.normal')}
                 {' >'}
               </span>
-            </div>
+            </button>
 
             {/* Typing Pattern Warnings Toggle */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 10 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(10)}
+              onPointerMove={() => handleHover(10)}
+              onFocus={() => setSelectedIndex(10)}
               onClick={() =>
                 setOption('typingPatternWarningsEnabled', !options.typingPatternWarningsEnabled)
               }
+              aria-pressed={options.typingPatternWarningsEnabled}
             >
               <span className={styles.optionLabel}>{t('menu.options.typingWarnings')}</span>
               <span className={styles.optionToggle}>
-                [ {options.typingPatternWarningsEnabled ? t('options.value.on') : t('options.value.off')} ]
+                [{' '}
+                {options.typingPatternWarningsEnabled
+                  ? t('options.value.on')
+                  : t('options.value.off')}{' '}
+                ]
               </span>
-            </div>
+            </button>
 
             {/* Language Select */}
-            <div
+            <button
+              type="button"
               className={`${styles.optionRow} ${selectedIndex === 11 ? styles.selected : ''}`}
-              onMouseEnter={() => handleHover(11)}
+              onPointerMove={() => handleHover(11)}
+              onFocus={() => setSelectedIndex(11)}
               onClick={() => cycleLanguage()}
             >
               <span className={styles.optionLabel}>{t('menu.options.language')}</span>
@@ -858,16 +983,18 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
                     : t('language.es')}
                 {' >'}
               </span>
-            </div>
+            </button>
           </div>
         </div>
 
         <button
           className={`${styles.backButton} ${selectedIndex === 12 ? styles.selected : ''}`}
           onClick={() => setScreen('main')}
-          onMouseEnter={() => handleHover(12)}
+          onPointerMove={() => handleHover(12)}
+          onFocus={() => setSelectedIndex(12)}
         >
-          {selectedIndex === 12 ? '▶ ' : '  '}{t('menu.options.back')}
+          {selectedIndex === 12 ? '▶ ' : '  '}
+          {t('menu.options.back')}
         </button>
         <div className={styles.keyHint}>{t('menu.options.keyHint')}</div>
       </div>
