@@ -967,7 +967,9 @@ describe('Terminal Component', () => {
       await Promise.resolve();
     });
 
-    const proceedButton = screen.getByRole('button', { name: /Press Enter ↵ to (?:continue|proceed)/i });
+    const proceedButton = screen.getByRole('button', {
+      name: /Press Enter ↵ to (?:continue|proceed)/i,
+    });
 
     act(() => {
       fireEvent.click(proceedButton);
@@ -1009,7 +1011,9 @@ describe('Terminal Component', () => {
     expect(screen.getByText(/Press Enter ↵ to proceed/i)).toBeInTheDocument();
     expect(document.querySelector('.line.ufo74')).toBeNull();
 
-    const proceedButton = screen.getByRole('button', { name: /Press Enter ↵ to (?:continue|proceed)/i });
+    const proceedButton = screen.getByRole('button', {
+      name: /Press Enter ↵ to (?:continue|proceed)/i,
+    });
 
     act(() => {
       fireEvent.click(proceedButton);
@@ -1020,7 +1024,9 @@ describe('Terminal Component', () => {
     });
 
     const output = container.querySelector(`.${styles.output}`);
-    const ufo74Lines = Array.from(output?.querySelectorAll<HTMLElement>(`.${styles.ufo74Flush}`) ?? []);
+    const ufo74Lines = Array.from(
+      output?.querySelectorAll<HTMLElement>(`.${styles.ufo74Flush}`) ?? []
+    );
 
     expect(ufo74Lines.length).toBeGreaterThan(0);
     expect(ufo74Lines[0]).toBeDefined();
@@ -1029,7 +1035,8 @@ describe('Terminal Component', () => {
     expect(
       ufo74Lines.some(
         line =>
-          line.previousElementSibling?.textContent === '' || line.nextElementSibling?.textContent === ''
+          line.previousElementSibling?.textContent === '' ||
+          line.nextElementSibling?.textContent === ''
       )
     ).toBe(false);
   });
@@ -1292,7 +1299,9 @@ describe('Terminal Component', () => {
         },
       } as GameState;
 
-      const { container } = render(<Terminal {...defaultProps} initialState={tutorialScareState} />);
+      const { container } = render(
+        <Terminal {...defaultProps} initialState={tutorialScareState} />
+      );
 
       const input = screen.getByLabelText(/terminal command input/i) as HTMLInputElement;
 

@@ -183,7 +183,9 @@ describe('dossier capacity matches the leak requirement', () => {
     const leaked = transcripts
       .flatMap(result => result.output)
       .map(entry =>
-        entry.i18nKey ? translateStatic(entry.i18nKey, entry.i18nValues, entry.content) : entry.content
+        entry.i18nKey
+          ? translateStatic(entry.i18nKey, entry.i18nValues, entry.content)
+          : entry.content
       )
       .filter(line => typeof line === 'string' && /\{\{\w+\}\}/.test(line));
 

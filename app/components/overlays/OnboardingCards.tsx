@@ -114,24 +114,24 @@ export default function OnboardingCards({
     () => [
       {
         title: t('onboarding.card1.title'),
-         bodySegments: parseBodySegments(t('onboarding.card1.body')),
-       },
-       {
-         title: t('onboarding.card2.title'),
-         bodySegments: parseBodySegments(t('onboarding.card2.body')),
-       },
-       {
-         title: t('onboarding.card3.title'),
-         bodySegments: parseBodySegments(t('onboarding.card3.body', { max: MAX_EVIDENCE_COUNT })),
-       },
-       {
-         title: t('onboarding.card4.title'),
-         bodySegments: parseBodySegments(t('onboarding.card4.body')),
-       },
-       {
-         title: t('onboarding.card5.title'),
-         bodySegments: parseBodySegments(t('onboarding.card5.body')),
-       },
+        bodySegments: parseBodySegments(t('onboarding.card1.body')),
+      },
+      {
+        title: t('onboarding.card2.title'),
+        bodySegments: parseBodySegments(t('onboarding.card2.body')),
+      },
+      {
+        title: t('onboarding.card3.title'),
+        bodySegments: parseBodySegments(t('onboarding.card3.body', { max: MAX_EVIDENCE_COUNT })),
+      },
+      {
+        title: t('onboarding.card4.title'),
+        bodySegments: parseBodySegments(t('onboarding.card4.body')),
+      },
+      {
+        title: t('onboarding.card5.title'),
+        bodySegments: parseBodySegments(t('onboarding.card5.body')),
+      },
     ],
     [t]
   );
@@ -188,6 +188,18 @@ export default function OnboardingCards({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target;
+      const isButtonActivation =
+        target instanceof HTMLElement &&
+        target.closest('button') &&
+        (event.key === 'Enter' || event.key === ' ');
+
+      // Keep native keyboard behavior for buttons and normal Tab navigation.
+      // Other keys intentionally advance the cinematic onboarding sequence.
+      if (isButtonActivation || event.key === 'Tab') {
+        return;
+      }
+
       event.preventDefault();
       event.stopPropagation();
 
@@ -204,7 +216,12 @@ export default function OnboardingCards({
   }, [advance, onSkip]);
 
   return (
-    <div className={styles.overlay} role="dialog" aria-modal="true" aria-label={t('onboarding.aria')}>
+    <div
+      className={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-label={t('onboarding.aria')}
+    >
       <div className={styles.scanlines} />
       <div className={styles.noiseLayer}>
         <StaticNoise intensity={0.2} alienVisible={false} />

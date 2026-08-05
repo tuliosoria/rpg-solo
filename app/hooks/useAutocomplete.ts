@@ -254,12 +254,12 @@ export function useAutocomplete(gameState: GameState, language: string = 'en') {
     return wasPressed;
   }, []);
 
-  return { 
-    getCompletions, 
-    completeInput, 
+  return {
+    getCompletions,
+    completeInput,
     markTabPressed,
     consumeTabPressed,
-    COMMANDS, 
-    COMMANDS_WITH_FILE_ARGS 
+    COMMANDS,
+    COMMANDS_WITH_FILE_ARGS,
   };
 }

@@ -25,8 +25,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     // ─── default: guarded ───
     "PRISONER_45> ...I don't remember how I got here.":
       'PRISONER_45> ...não lembro como vim parar aqui.',
-    'PRISONER_45> Who are you? Are you one of them?':
-      'PRISONER_45> Quem é você? Você é um deles?',
+    'PRISONER_45> Who are you? Are you one of them?': 'PRISONER_45> Quem é você? Você é um deles?',
     'PRISONER_45> Sometimes I hear... clicking. Not human clicking.':
       'PRISONER_45> Às vezes eu ouço... estalos. Não são estalos humanos.',
     "PRISONER_45> Are you real? Sometimes I can't tell anymore.":
@@ -56,8 +55,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     "PRISONER_45> I found a note in my own handwriting. It says 'STOP ASKING'. I don't remember writing it.":
       "PRISONER_45> Achei um bilhete com a minha própria letra. Diz 'PARE DE PERGUNTAR'. Não lembro de ter escrito.",
     // ─── varginha ───
-    'PRISONER_45> Varginha... yes. I was there.':
-      'PRISONER_45> Varginha... sim. Eu estive lá.',
+    'PRISONER_45> Varginha... yes. I was there.': 'PRISONER_45> Varginha... sim. Eu estive lá.',
     "PRISONER_45> They told us it was a dwarf. It wasn't a dwarf.":
       'PRISONER_45> Disseram que era um anão. Não era um anão.',
     "PRISONER_45> January 20th. I'll never forget that date.":
@@ -118,8 +116,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     // ─── identity ───
     "PRISONER_45> I was military. That's all I can say.":
       'PRISONER_45> Eu era militar. É tudo que posso dizer.',
-    "PRISONER_45> My name doesn't matter anymore.":
-      'PRISONER_45> Meu nome não importa mais.',
+    "PRISONER_45> My name doesn't matter anymore.": 'PRISONER_45> Meu nome não importa mais.',
     "PRISONER_45> Number 45. That's what I am now.":
       'PRISONER_45> Número 45. É isso que eu sou agora.',
     'PRISONER_45> Sergeant. Recovery Unit. Specialized in things that should not exist.':
@@ -139,8 +136,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     "PRISONER_45> I used to be someone. Now I'm a resource. Specimen 45. They study what the touch did to me.":
       'PRISONER_45> Eu já fui alguém. Agora sou um recurso. Espécime 45. Eles estudam o que o toque fez comigo.',
     // ─── escape ───
-    'PRISONER_45> There is no escape. Only waiting.':
-      'PRISONER_45> Não existe fuga. Só espera.',
+    'PRISONER_45> There is no escape. Only waiting.': 'PRISONER_45> Não existe fuga. Só espera.',
     'PRISONER_45> They let me use this terminal sometimes. I think they want me to talk.':
       'PRISONER_45> Eles me deixam usar este terminal às vezes. Acho que eles querem que eu fale.',
     "PRISONER_45> I've tried. The doors open to more rooms. Forever.":
@@ -212,7 +208,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     "PRISONER_45> They're monitoring this conversation. They always are. But they can't stop information that's already been READ.":
       'PRISONER_45> Eles estão monitorando esta conversa. Sempre estão. Mas eles não conseguem parar informação que já foi LIDA.',
     // ─── password (morse and the literal command stay verbatim) ───
-    "PRISONER_45> ...you want the override code? Smart.":
+    'PRISONER_45> ...you want the override code? Smart.':
       'PRISONER_45> ...você quer o código de override? Esperto.',
     "PRISONER_45> The code... it's a Portuguese word. Think about what they DO to us.":
       'PRISONER_45> O código... é uma palavra em português. Pense no que eles FAZEM com a gente.',
@@ -256,8 +252,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     'PRISONER_45> The Campinas military base. Sub-level 4. The surviving creature lived there for 3 weeks. Everyone on that level changed.':
       'PRISONER_45> A base militar de Campinas. Subnível 4. A criatura sobrevivente viveu lá por 3 semanas. Todo mundo naquele nível mudou.',
     // ─── crash ───
-    "PRISONER_45> The crash wasn't an accident.":
-      'PRISONER_45> A queda não foi um acidente.',
+    "PRISONER_45> The crash wasn't an accident.": 'PRISONER_45> A queda não foi um acidente.',
     'PRISONER_45> The debris was scattered across two kilometers. We found pieces for weeks.':
       'PRISONER_45> Os destroços se espalharam por dois quilômetros. Achamos pedaços por semanas.',
     'PRISONER_45> Material like nothing on Earth. It remembered shapes.':
@@ -279,8 +274,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     'PRISONER_45> The craft was grown, not built. Like a wasp nest. The inside was warm. Months after the crash. Still warm.':
       'PRISONER_45> A nave foi cultivada, não construída. Como um ninho de vespas. Por dentro era quente. Meses depois da queda. Ainda quente.',
     // ─── death ───
-    'PRISONER_45> Death? I used to fear death.':
-      'PRISONER_45> Morte? Eu tinha medo da morte.',
+    'PRISONER_45> Death? I used to fear death.': 'PRISONER_45> Morte? Eu tinha medo da morte.',
     "PRISONER_45> Now I know death isn't the end. That's worse.":
       'PRISONER_45> Agora eu sei que a morte não é o fim. Isso é pior.',
     "PRISONER_45> The creatures didn't die. They... disconnected.":
@@ -300,8 +294,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     'PRISONER_45> The doctors at Humanitas. The nurses. The janitor who mopped the room after. All dead within 5 years. All from different causes. All with the same expression frozen on their faces.':
       'PRISONER_45> Os médicos do Humanitas. As enfermeiras. O faxineiro que passou pano na sala depois. Todos mortos em 5 anos. Todos por causas diferentes. Todos com a mesma expressão congelada no rosto.',
     // ─── god ───
-    'PRISONER_45> God? I used to pray.':
-      'PRISONER_45> Deus? Eu costumava rezar.',
+    'PRISONER_45> God? I used to pray.': 'PRISONER_45> Deus? Eu costumava rezar.',
     "PRISONER_45> If God exists, He's very far away.":
       'PRISONER_45> Se Deus existe, Ele está muito longe.',
     "PRISONER_45> I don't know what to believe anymore.":
@@ -348,7 +341,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     // ─── telepathy ───
     "PRISONER_45> Telepathy is the wrong word. It's more like... forced download.":
       'PRISONER_45> Telepatia é a palavra errada. É mais como... download forçado.',
-    'PRISONER_45> They don\'t read your mind. They WRITE to it.':
+    "PRISONER_45> They don't read your mind. They WRITE to it.":
       'PRISONER_45> Eles não leem a sua mente. Eles ESCREVEM nela.',
     'PRISONER_45> The psychic connection... it hurts. Like a migraine inside a migraine.':
       'PRISONER_45> A conexão psíquica... dói. Como uma enxaqueca dentro de outra enxaqueca.',
@@ -573,8 +566,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     'PRISONER_45> Remember what I told you.': 'PRISONER_45> Lembre do que eu te disse.',
     "PRISONER_45> 2026. Don't forget.": 'PRISONER_45> 2026. Não esqueça.',
     'PRISONER_45> ...you found this channel.': 'PRISONER_45> ...você achou este canal.',
-    "PRISONER_45> I don't know how long we have.":
-      'PRISONER_45> Não sei quanto tempo nós temos.',
+    "PRISONER_45> I don't know how long we have.": 'PRISONER_45> Não sei quanto tempo nós temos.',
   },
   es: {
     // ─── default: guarded ───
@@ -611,8 +603,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     "PRISONER_45> I found a note in my own handwriting. It says 'STOP ASKING'. I don't remember writing it.":
       "PRISONER_45> Encontré una nota con mi propia letra. Dice 'DEJA DE PREGUNTAR'. No recuerdo haberla escrito.",
     // ─── varginha ───
-    'PRISONER_45> Varginha... yes. I was there.':
-      'PRISONER_45> Varginha... sí. Yo estuve allí.',
+    'PRISONER_45> Varginha... yes. I was there.': 'PRISONER_45> Varginha... sí. Yo estuve allí.',
     "PRISONER_45> They told us it was a dwarf. It wasn't a dwarf.":
       'PRISONER_45> Nos dijeron que era un enano. No era un enano.',
     "PRISONER_45> January 20th. I'll never forget that date.":
@@ -673,8 +664,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     // ─── identity ───
     "PRISONER_45> I was military. That's all I can say.":
       'PRISONER_45> Yo era militar. Es todo lo que puedo decir.',
-    "PRISONER_45> My name doesn't matter anymore.":
-      'PRISONER_45> Mi nombre ya no importa.',
+    "PRISONER_45> My name doesn't matter anymore.": 'PRISONER_45> Mi nombre ya no importa.',
     "PRISONER_45> Number 45. That's what I am now.":
       'PRISONER_45> Número 45. Eso es lo que soy ahora.',
     'PRISONER_45> Sergeant. Recovery Unit. Specialized in things that should not exist.':
@@ -811,8 +801,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     'PRISONER_45> The Campinas military base. Sub-level 4. The surviving creature lived there for 3 weeks. Everyone on that level changed.':
       'PRISONER_45> La base militar de Campinas. Subnivel 4. La criatura superviviente vivió allí 3 semanas. Todos en ese nivel cambiaron.',
     // ─── crash ───
-    "PRISONER_45> The crash wasn't an accident.":
-      'PRISONER_45> El impacto no fue un accidente.',
+    "PRISONER_45> The crash wasn't an accident.": 'PRISONER_45> El impacto no fue un accidente.',
     'PRISONER_45> The debris was scattered across two kilometers. We found pieces for weeks.':
       'PRISONER_45> Los restos se esparcieron por dos kilómetros. Encontramos piezas durante semanas.',
     'PRISONER_45> Material like nothing on Earth. It remembered shapes.':
@@ -855,12 +844,10 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     'PRISONER_45> The doctors at Humanitas. The nurses. The janitor who mopped the room after. All dead within 5 years. All from different causes. All with the same expression frozen on their faces.':
       'PRISONER_45> Los médicos del Humanitas. Las enfermeras. El conserje que trapeó la sala después. Todos muertos en 5 años. Todos por causas distintas. Todos con la misma expresión congelada en la cara.',
     // ─── god ───
-    'PRISONER_45> God? I used to pray.':
-      'PRISONER_45> ¿Dios? Yo solía rezar.',
+    'PRISONER_45> God? I used to pray.': 'PRISONER_45> ¿Dios? Yo solía rezar.',
     "PRISONER_45> If God exists, He's very far away.":
       'PRISONER_45> Si Dios existe, está muy lejos.',
-    "PRISONER_45> I don't know what to believe anymore.":
-      'PRISONER_45> Ya no sé qué creer.',
+    "PRISONER_45> I don't know what to believe anymore.": 'PRISONER_45> Ya no sé qué creer.',
     'PRISONER_45> The universe is indifferent. But they are NOT. They are very, very interested.':
       'PRISONER_45> El universo es indiferente. Pero ellos NO. Están muy, muy interesados.',
     'PRISONER_45> The Vatican has files. Older than any government. The Fatima prophecy. It was about THEM.':
@@ -903,7 +890,7 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     // ─── telepathy ───
     "PRISONER_45> Telepathy is the wrong word. It's more like... forced download.":
       'PRISONER_45> Telepatía es la palabra equivocada. Es más como... descarga forzada.',
-    'PRISONER_45> They don\'t read your mind. They WRITE to it.':
+    "PRISONER_45> They don't read your mind. They WRITE to it.":
       'PRISONER_45> No leen tu mente. ESCRIBEN en ella.',
     'PRISONER_45> The psychic connection... it hurts. Like a migraine inside a migraine.':
       'PRISONER_45> La conexión psíquica... duele. Como una migraña dentro de otra migraña.',
@@ -1128,7 +1115,6 @@ export const RUNTIME_PRISONER_TRANSLATIONS: Record<'pt-BR' | 'es', RuntimeDictio
     'PRISONER_45> Remember what I told you.': 'PRISONER_45> Recuerda lo que te dije.',
     "PRISONER_45> 2026. Don't forget.": 'PRISONER_45> 2026. No lo olvides.',
     'PRISONER_45> ...you found this channel.': 'PRISONER_45> ...encontraste este canal.',
-    "PRISONER_45> I don't know how long we have.":
-      'PRISONER_45> No sé cuánto tiempo tenemos.',
+    "PRISONER_45> I don't know how long we have.": 'PRISONER_45> No sé cuánto tiempo tenemos.',
   },
 };

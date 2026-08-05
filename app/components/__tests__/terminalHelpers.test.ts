@@ -20,10 +20,7 @@ describe('getEvidenceVideoAttachment', () => {
   });
 
   it('matches "abrir" with witness_farm_recording', () => {
-    const attachment = getEvidenceVideoAttachment(
-      'abrir witness_farm_recording.txt',
-      internalRoot
-    );
+    const attachment = getEvidenceVideoAttachment('abrir witness_farm_recording.txt', internalRoot);
     expect(attachment?.fileName).toBe('witness_farm_recording.txt');
   });
 

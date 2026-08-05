@@ -43,7 +43,10 @@ function runBot(level: BotLevel): { state: GameState; turns: number; reason: str
   for (let i = 0; i < 600; i++) {
     const { decision, memory: nextMemory } = decideNextCommand(state, memory, level, 12345);
     memory = nextMemory;
-    if (decision.kind === 'done') { reason = decision.reason; break; }
+    if (decision.kind === 'done') {
+      reason = decision.reason;
+      break;
+    }
     const input = decision.kind === 'enter' ? '' : decision.text;
     const result = executeCommand(input, state);
     state = { ...state, ...result.stateChanges } as GameState;
@@ -203,9 +206,10 @@ describe('seeds actually vary what the bot investigates', () => {
     for (const seed of SPREAD) {
       const { state } = runSeededFull('pro', seed);
       expect(state.gameWon, `pro failed to win on seed ${seed}`).toBe(true);
-      expect(determineEnding(state.savedFiles), `pro missed the secret ending on seed ${seed}`).toBe(
-        'secret_ending'
-      );
+      expect(
+        determineEnding(state.savedFiles),
+        `pro missed the secret ending on seed ${seed}`
+      ).toBe('secret_ending');
     }
   });
 
@@ -220,7 +224,10 @@ describe('chaos level probes the command surface', () => {
   it('issues every probe exactly once', () => {
     const commands = runSeededTrace('chaos', '4242');
     for (const probe of BOT_PROBE_COMMANDS) {
-      expect(commands.filter(c => c === probe), `probe ${JSON.stringify(probe)}`).toHaveLength(1);
+      expect(
+        commands.filter(c => c === probe),
+        `probe ${JSON.stringify(probe)}`
+      ).toHaveLength(1);
     }
   });
 
@@ -353,9 +360,10 @@ describe('seeded runs are reproducible', () => {
         expect(state.gameWon, `${level} failed to win on seed ${seed}`).toBe(true);
         expect(state.detectionLevel).toBeLessThan(100);
         if (level === 'pro') {
-          expect(determineEnding(state.savedFiles), `pro missed the secret ending on seed ${seed}`).toBe(
-            'secret_ending'
-          );
+          expect(
+            determineEnding(state.savedFiles),
+            `pro missed the secret ending on seed ${seed}`
+          ).toBe('secret_ending');
         }
       }
     }

@@ -92,8 +92,6 @@ export function getUIRng(): () => number {
   return uiRngInstance;
 }
 
-
-
 // Convenience functions that use the global UI RNG
 export function uiRandomInt(min: number, max: number): number {
   return seededRandomInt(getUIRng(), min, max);

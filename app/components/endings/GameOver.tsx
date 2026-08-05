@@ -47,9 +47,7 @@ export default function GameOver({
   const hasCheckpoint = latestCheckpoint !== null;
 
   type OptionId = 'lastCheckpoint' | 'loadSavedGame' | 'exit';
-  const options = React.useMemo<
-    Array<{ id: OptionId; disabled: boolean; activate: () => void }>
-  >(
+  const options = React.useMemo<Array<{ id: OptionId; disabled: boolean; activate: () => void }>>(
     () => [
       {
         id: 'lastCheckpoint',
@@ -82,9 +80,12 @@ export default function GameOver({
     );
 
     // Show error for 3 seconds, then start restart sequence
-    errorTimerRef.current = setTimeout(() => {
-      setPhase('restarting');
-    }, scaleTextSpeedDelay(3000, textSpeed));
+    errorTimerRef.current = setTimeout(
+      () => {
+        setPhase('restarting');
+      },
+      scaleTextSpeedDelay(3000, textSpeed)
+    );
 
     return () => {
       if (flickerTimerRef.current) {
@@ -117,18 +118,21 @@ export default function GameOver({
     }, interval);
 
     // Random pauses to simulate system struggle
-    const pauseTimer = setInterval(() => {
-      if (uiChance(0.2)) {
-        setFlickering(true);
-        if (flickerResetTimerRef.current) {
-          clearTimeout(flickerResetTimerRef.current);
+    const pauseTimer = setInterval(
+      () => {
+        if (uiChance(0.2)) {
+          setFlickering(true);
+          if (flickerResetTimerRef.current) {
+            clearTimeout(flickerResetTimerRef.current);
+          }
+          flickerResetTimerRef.current = setTimeout(
+            () => setFlickering(false),
+            scaleTextSpeedDelay(150, textSpeed)
+          );
         }
-        flickerResetTimerRef.current = setTimeout(
-          () => setFlickering(false),
-          scaleTextSpeedDelay(150, textSpeed)
-        );
-      }
-    }, scaleTextSpeedDelay(800, textSpeed));
+      },
+      scaleTextSpeedDelay(800, textSpeed)
+    );
 
     return () => {
       clearInterval(timer);
@@ -153,9 +157,7 @@ export default function GameOver({
     (e: KeyboardEvent) => {
       if (phase !== 'options') return;
 
-      const enabledIndices = options
-        .map((o, i) => (o.disabled ? -1 : i))
-        .filter(i => i !== -1);
+      const enabledIndices = options.map((o, i) => (o.disabled ? -1 : i)).filter(i => i !== -1);
       if (enabledIndices.length === 0) return;
 
       const currentEnabledPos = enabledIndices.indexOf(selectedIndex);
@@ -289,7 +291,8 @@ export default function GameOver({
                 disabled={!hasCheckpoint}
                 aria-disabled={!hasCheckpoint}
               >
-                {selectedIndex === 0 ? '▶ ' : '  '}{t('gameOver.options.lastCheckpoint')}
+                {selectedIndex === 0 ? '▶ ' : '  '}
+                {t('gameOver.options.lastCheckpoint')}
                 <div className={styles.checkpointInfo}>
                   {latestCheckpoint
                     ? formatCheckpointInfo(latestCheckpoint)

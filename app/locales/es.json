@@ -241,6 +241,7 @@
   "turing.result.score": "RESPUESTAS DE MÁQUINA: {{value}}/3",
   "turing.result.passLine": "EL SUJETO NO ES HUMANO, NO ES UNA AMENAZA",
   "turing.result.failLine": "IDENTIDAD RECHAZADA: PATRONES HUMANOS DETECTADOS",
+  "turing.result.continue": "Presiona Enter para continuar",
   "turing.header.title": "PROTOCOLO DE SEGURIDAD: EVALUACIÓN TURING",
   "turing.instructions.notice": "AVISO: se detectó un patrón de acceso anómalo.",
   "turing.instructions.prove": "Debes demostrar que eres un PROCESO AUTORIZADO DEL TERMINAL.",
@@ -1762,5 +1763,7 @@
   "engine.commands.tutorial.save_file_save_to_dossier": "  save <archivo>   Guarda un archivo en tu dosier",
   "engine.commands.tutorial.unsave_file_remove_from_dossier": "  unsave <archivo> Quita un archivo de tu dosier",
   "engine.commands.core.god_ending_jump_to_ending_phase": "  god ending <n> - Saltar a un final específico (1-12)",
-  "engine.commands.core.god_ending_jump_directly_to_ending_phase": "god ending <n> - Saltar directamente a un final específico (1-12)"
+  "engine.commands.core.god_ending_jump_directly_to_ending_phase": "god ending <n> - Saltar directamente a un final específico (1-12)",
+  "engine.commands.core.god_ending_selector_usage": "Uso: god ending <número|nombre>",
+  "engine.commands.core.god_ending_selector_example": "Ejemplo: god ending 1"
 }

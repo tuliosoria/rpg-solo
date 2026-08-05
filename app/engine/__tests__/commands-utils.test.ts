@@ -246,8 +246,8 @@ describe('Command Utilities', () => {
 
     it('increases detection level', () => {
       // Provide enough files read to be past warmup phase (8+ files)
-      const state = createTestState({ 
-        detectionLevel: 10, 
+      const state = createTestState({
+        detectionLevel: 10,
         legacyAlertCounter: 0,
         filesRead: new Set(['/a', '/b', '/c', '/d', '/e', '/f', '/g', '/h']),
       });
@@ -268,7 +268,9 @@ describe('Command Utilities', () => {
       const state = createTestState({ legacyAlertCounter: 2 });
       const result = createInvalidCommandResult(state, 'badcmd');
 
-      expect(result.output.find(e => e.content.includes('badcmd'))?.i18nKey).toBe('runtime.unknownCommand');
+      expect(result.output.find(e => e.content.includes('badcmd'))?.i18nKey).toBe(
+        'runtime.unknownCommand'
+      );
       expect(result.output.find(e => e.content.includes('RISK INCREASED'))?.i18nKey).toBe(
         'engine.invalidCommand.riskIncreased'
       );

@@ -14,7 +14,9 @@ describe('runtimeCommandSupplement smoking-gun keys', () => {
   });
 
   it('has Spanish translations for both new strings', () => {
-    expect(RUNTIME_COMMAND_SUPPLEMENT['es'][AOL_PURPOSE_KEY]).toContain('propósito de la operación');
+    expect(RUNTIME_COMMAND_SUPPLEMENT['es'][AOL_PURPOSE_KEY]).toContain(
+      'propósito de la operación'
+    );
     expect(RUNTIME_COMMAND_SUPPLEMENT['es'][NARRATIVE_INTRO_KEY]).toContain('primera página');
   });
 });

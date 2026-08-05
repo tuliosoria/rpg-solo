@@ -15,4 +15,3 @@ describe('createBotMemory', () => {
     expect(DEFAULT_BOT_DELAY_MS).toBe(3000);
   });
 });
-

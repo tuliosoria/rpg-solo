@@ -62,52 +62,52 @@ describe('Victory Component', () => {
 
   it('records good ending in statistics on mount', () => {
     render(<Victory {...defaultProps} />);
-    
+
     expect(recordEnding).toHaveBeenCalledWith('good', 100, 30);
     expect(recordEnding).toHaveBeenCalledTimes(1);
   });
 
   it('only records ending once even if props change', () => {
     const { rerender } = render(<Victory {...defaultProps} />);
-    
+
     rerender(<Victory {...defaultProps} commandCount={150} />);
-    
+
     expect(recordEnding).toHaveBeenCalledTimes(1);
   });
 
   it('checks for speed_demon achievement when commands < 50', () => {
     render(<Victory {...defaultProps} commandCount={45} />);
-    
+
     expect(unlockAchievement).toHaveBeenCalledWith('speed_demon');
   });
 
   it('does not check for speed_demon achievement when commands >= 50', () => {
     render(<Victory {...defaultProps} commandCount={100} />);
-    
+
     expect(unlockAchievement).not.toHaveBeenCalledWith('speed_demon');
   });
 
   it('checks for ghost achievement when detection < 20', () => {
     render(<Victory {...defaultProps} detectionLevel={15} />);
-    
+
     expect(unlockAchievement).toHaveBeenCalledWith('ghost');
   });
 
   it('does not check for ghost achievement when detection >= 20', () => {
     render(<Victory {...defaultProps} detectionLevel={30} />);
-    
+
     expect(unlockAchievement).not.toHaveBeenCalledWith('ghost');
   });
 
   it('checks for survivor achievement when maxDetection >= 80', () => {
     render(<Victory {...defaultProps} maxDetectionReached={85} />);
-    
+
     expect(unlockAchievement).toHaveBeenCalledWith('survivor');
   });
 
   it('checks for completionist achievement when all readable files are found', () => {
     render(<Victory {...defaultProps} filesReadCount={85} totalReadableFiles={85} />);
-    
+
     expect(unlockAchievement).toHaveBeenCalledWith('completionist');
   });
 
@@ -140,35 +140,35 @@ describe('Victory Component', () => {
 
   it('progresses through phases with timers', async () => {
     render(<Victory {...defaultProps} />);
-    
+
     // Advance through loading phase
     act(() => {
       vi.advanceTimersByTime(3000);
     });
-    
+
     // Should eventually show page content
     expect(document.body).toBeTruthy();
   });
 
   it('shows restart button after all phases complete', async () => {
     render(<Victory {...defaultProps} />);
-    
+
     // Fast-forward through all phases
     act(() => {
       vi.advanceTimersByTime(30000);
     });
-    
+
     expect(document.body).toBeTruthy();
   });
 
   it('calls onRestartAction when restart is clicked', async () => {
     render(<Victory {...defaultProps} />);
-    
+
     // Fast-forward to complete phase
     act(() => {
       vi.advanceTimersByTime(60000);
     });
-    
+
     const restartButton = screen.queryByText(/play again/i) || screen.queryByText(/restart/i);
     if (restartButton) {
       fireEvent.click(restartButton);
@@ -230,9 +230,7 @@ describe('Victory Component', () => {
 
     advanceToComplete('instant');
 
-    expect(
-      screen.getByText(/two of the leaked files name the operation/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/two of the leaked files name the operation/i)).toBeInTheDocument();
     expect(
       screen.queryByText(/purpose of the operation is not specified/i)
     ).not.toBeInTheDocument();
@@ -250,9 +248,7 @@ describe('Victory Component', () => {
 
     advanceToComplete('instant');
 
-    expect(
-      screen.getByText(/purpose of the operation is not specified/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/purpose of the operation is not specified/i)).toBeInTheDocument();
     expect(
       screen.queryByText(/two of the leaked files name the operation/i)
     ).not.toBeInTheDocument();
@@ -282,7 +278,7 @@ describe('Victory Component', () => {
     expect(screen.getByText(/INTERNET HOAX ALERT/i)).toBeInTheDocument();
   });
 
-  it.each(endingIds)('renders polished AOL presentation for %s', (endingId) => {
+  it.each(endingIds)('renders polished AOL presentation for %s', endingId => {
     const ending = ENDINGS[endingId];
 
     render(<Victory {...defaultProps} endingId={endingId} textSpeed="instant" />);

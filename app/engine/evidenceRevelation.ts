@@ -152,7 +152,9 @@ export function isDisturbingContent(fileContent: string[]): boolean {
   const contentText = fileContent.join(' ');
 
   // Count how many disturbing patterns match
-  const matchCount = DISTURBING_CONTENT_PATTERNS.filter(pattern => pattern.test(contentText)).length;
+  const matchCount = DISTURBING_CONTENT_PATTERNS.filter(pattern =>
+    pattern.test(contentText)
+  ).length;
 
   // Consider disturbing if 2+ patterns match
   return matchCount >= 2;

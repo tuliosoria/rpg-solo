@@ -172,7 +172,12 @@ export default memo(function PauseMenu({
     const yesKey = confirmMode === 'load' ? 'pause.loadConfirm.yes' : 'pause.confirm.yes';
 
     return (
-      <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="pausemenu-title">
+      <div
+        className={styles.overlay}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pausemenu-title"
+      >
         <div className={styles.menu} ref={modalRef} onClick={e => e.stopPropagation()}>
           <div className={styles.header}>
             <h2 id="pausemenu-title">{t(titleKey)}</h2>
@@ -213,19 +218,25 @@ export default memo(function PauseMenu({
   }
 
   return (
-    <div className={styles.overlay} onClick={onResumeAction} role="dialog" aria-modal="true" aria-labelledby="pausemenu-title">
+    <div
+      className={styles.overlay}
+      onClick={onResumeAction}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pausemenu-title"
+    >
       <div className={styles.menu} ref={modalRef} onClick={e => e.stopPropagation()}>
-          <div className={styles.header}>
-            <h2 id="pausemenu-title">{t('pause.title')}</h2>
-            <div className={styles.line}>═══════════════════════════</div>
-          </div>
+        <div className={styles.header}>
+          <h2 id="pausemenu-title">{t('pause.title')}</h2>
+          <div className={styles.line}>═══════════════════════════</div>
+        </div>
 
-          <div className={styles.objectivePanel}>
-            <div className={styles.objectiveTitle}>{t('pause.objectiveTitle')}</div>
-            <p>{t('pause.objective')}</p>
-          </div>
+        <div className={styles.objectivePanel}>
+          <div className={styles.objectiveTitle}>{t('pause.objectiveTitle')}</div>
+          <p>{t('pause.objective')}</p>
+        </div>
 
-          <div className={styles.options}>
+        <div className={styles.options}>
           <button
             className={`${styles.menuButton} ${selectedIndex === menuItems.indexOf('resume') ? styles.selected : ''}`}
             tabIndex={0}

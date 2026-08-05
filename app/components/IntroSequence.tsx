@@ -141,9 +141,7 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
           <div className={styles.grain} />
           <div className={styles.gateScene}>
             <div className={styles.gateGlyph}>▶</div>
-            <div className={styles.gateText}>
-              {t('intro.gate.prompt') || 'Click to begin'}
-            </div>
+            <div className={styles.gateText}>{t('intro.gate.prompt') || 'Click to begin'}</div>
           </div>
         </>
       )}
@@ -171,7 +169,9 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
         <>
           <div className={styles.grain} />
           <div className={styles.logoScene}>
-            <div className={styles.logoText}>{t('intro.logo.studio') || 'Simple Man Productions'}</div>
+            <div className={styles.logoText}>
+              {t('intro.logo.studio') || 'Simple Man Productions'}
+            </div>
           </div>
         </>
       )}
@@ -195,16 +195,12 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
         </>
       )}
 
-      <div
-        className={`${styles.transitionLayer} ${transitioning ? styles.visible : ''}`}
-      >
+      <div className={`${styles.transitionLayer} ${transitioning ? styles.visible : ''}`}>
         <div className={styles.transitionStatic} />
       </div>
 
       {scene !== 'done' && scene !== 'gate' && (
-        <div className={styles.skipHint}>
-          {t('intro.skip.hint') || 'Press any key to skip'}
-        </div>
+        <div className={styles.skipHint}>{t('intro.skip.hint') || 'Press any key to skip'}</div>
       )}
     </div>
   );

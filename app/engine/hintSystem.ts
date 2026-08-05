@@ -75,7 +75,10 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
           fallback: 'UFO74: dont get greedy. the system is awake now.',
         },
         followUp: {
-          key: waitUsesRemaining === 1 ? 'engine.hints.action.recover.one' : 'engine.hints.action.recover.other',
+          key:
+            waitUsesRemaining === 1
+              ? 'engine.hints.action.recover.one'
+              : 'engine.hints.action.recover.other',
           fallback: `       cool the heat first. "wait" still has ${waitUsesRemaining} use${waitUsesRemaining === 1 ? '' : 's'} left.`,
           values: { value: waitUsesRemaining },
         },
@@ -253,7 +256,8 @@ export function analyzeProgressForHint(state: GameState): HintDescriptor | null 
       ]),
       followUp: {
         key: 'engine.hints.action.override',
-        fallback: '       if the trail narrows, ask Prisoner 45 about the password and decode what he gives you.',
+        fallback:
+          '       if the trail narrows, ask Prisoner 45 about the password and decode what he gives you.',
       },
     };
   }
@@ -383,8 +387,16 @@ export function generateHintOutput(state: GameState): {
     return {
       output: [
         createEntry('system', ''),
-        createEntryI18n('warning', 'engine.hints.protocol.activated', '>>> HINT PROTOCOL ACTIVATED'),
-        createEntryI18n('ufo74', 'engine.hints.progress.line1', 'UFO74: you seem to be making progress.'),
+        createEntryI18n(
+          'warning',
+          'engine.hints.protocol.activated',
+          '>>> HINT PROTOCOL ACTIVATED'
+        ),
+        createEntryI18n(
+          'ufo74',
+          'engine.hints.progress.line1',
+          'UFO74: you seem to be making progress.'
+        ),
         createEntryI18n(
           'ufo74',
           'engine.hints.progress.line2',
@@ -415,7 +427,14 @@ export function generateHintOutput(state: GameState): {
       createEntry('system', ''),
       createEntryI18n('ufo74', hint.primary.key, hint.primary.fallback, hint.primary.values),
       ...(hint.followUp
-        ? [createEntryI18n('ufo74', hint.followUp.key, hint.followUp.fallback, hint.followUp.values)]
+        ? [
+            createEntryI18n(
+              'ufo74',
+              hint.followUp.key,
+              hint.followUp.fallback,
+              hint.followUp.values
+            ),
+          ]
         : []),
       createEntry('system', ''),
       createEntryI18n(

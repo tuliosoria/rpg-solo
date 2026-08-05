@@ -122,19 +122,22 @@ export default function SecretEnding({
     let lineIndex = 0;
     let finalTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    const interval = setInterval(() => {
-      if (lineIndex >= secretText.length) {
-        clearInterval(interval);
-        finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
-        return;
-      }
+    const interval = setInterval(
+      () => {
+        if (lineIndex >= secretText.length) {
+          clearInterval(interval);
+          finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
+          return;
+        }
 
-      const nextLine = secretText[lineIndex];
-      if (typeof nextLine === 'string') {
-        setTextLines(prev => [...prev, nextLine]);
-      }
-      lineIndex++;
-    }, scaleTextSpeedDelay(250, textSpeed));
+        const nextLine = secretText[lineIndex];
+        if (typeof nextLine === 'string') {
+          setTextLines(prev => [...prev, nextLine]);
+        }
+        lineIndex++;
+      },
+      scaleTextSpeedDelay(250, textSpeed)
+    );
 
     return () => {
       clearInterval(interval);
@@ -160,7 +163,9 @@ export default function SecretEnding({
       {phase === 'static' && (
         <div className={styles.staticContent}>
           <div className={styles.staticNoise} />
-          <div className={styles.staticText}>{translateRuntimeText('DECRYPTING CLASSIFIED FILE...')}</div>
+          <div className={styles.staticText}>
+            {translateRuntimeText('DECRYPTING CLASSIFIED FILE...')}
+          </div>
         </div>
       )}
 

@@ -140,11 +140,7 @@ export const alpha_autopsy_addendum: FileNode = {
 };
 
 // Array of all ALPHA files
-export const ALPHA_FILES = [
-  alpha_journal,
-  alpha_neural_connection,
-  alpha_autopsy_addendum,
-];
+export const ALPHA_FILES = [alpha_journal, alpha_neural_connection, alpha_autopsy_addendum];
 
 export const ALPHA_FILE_NAMES = ALPHA_FILES.map(f => f.name);
 
@@ -204,7 +200,7 @@ export const ALPHA_RELEASE_SUCCESS = [
   'UFO74: a living alien just walked out of a military facility.',
   'UFO74: there is no cover story for this.',
   'UFO74: whatever happens now — the proof exists.',
-  'UFO74: it\'s loose. it\'s real. and the world will know.',
+  "UFO74: it's loose. it's real. and the world will know.",
   '',
   '═══════════════════════════════════════════════════════════',
   '',

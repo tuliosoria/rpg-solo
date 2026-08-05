@@ -2,11 +2,12 @@
 
 import React, { useEffect, useRef, useMemo, useState, memo } from 'react';
 import { useI18n } from '../i18n';
+import { DETECTION_THRESHOLDS } from '../constants/detection';
 import { FIREWALL_PHRASES, speakCustomFirewallVoice } from '../lib/firewallVoice';
 import styles from './FirewallEyes.module.css';
 
 // Detection threshold for firewall activation
-const DETECTION_THRESHOLD = 25;
+const DETECTION_THRESHOLD = DETECTION_THRESHOLDS.FIREWALL_ACTIVATION;
 const SCREEN_OVERLAY_BOUNDS = { position: 'absolute' as const, inset: 0 };
 
 // Detection band → eye count
@@ -64,11 +65,16 @@ function getEdgeStyle(pos: EyePosition): React.CSSProperties {
 
 function getEdgeClassName(edge: string): string {
   switch (edge) {
-    case 'top': return styles.edgeTop;
-    case 'bottom': return styles.edgeBottom;
-    case 'left': return styles.edgeLeft;
-    case 'right': return styles.edgeRight;
-    default: return '';
+    case 'top':
+      return styles.edgeTop;
+    case 'bottom':
+      return styles.edgeBottom;
+    case 'left':
+      return styles.edgeLeft;
+    case 'right':
+      return styles.edgeRight;
+    default:
+      return '';
   }
 }
 
@@ -179,7 +185,7 @@ function FirewallEyesComponent({
         tauntTimerRef.current = null;
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firewallActive, firewallDisarmed]);
 
   // External glow trigger (e.g. blocked search term)
@@ -204,7 +210,9 @@ function FirewallEyesComponent({
           isHighAlert ? styles.highAlert : '',
           isTrackingEye ? styles.tracking : '',
           isGlowing ? styles.glowing : '',
-        ].filter(Boolean).join(' ');
+        ]
+          .filter(Boolean)
+          .join(' ');
 
         return (
           <div
@@ -217,14 +225,8 @@ function FirewallEyesComponent({
             data-testid="firewall-ambient-eye"
           >
             <div className={styles.eyeSocket}>
-              <div
-                className={styles.iris}
-                ref={isTrackingEye ? trackingIrisRef : undefined}
-              >
-                <div
-                  className={styles.pupil}
-                  ref={isTrackingEye ? trackingPupilRef : undefined}
-                />
+              <div className={styles.iris} ref={isTrackingEye ? trackingIrisRef : undefined}>
+                <div className={styles.pupil} ref={isTrackingEye ? trackingPupilRef : undefined} />
               </div>
             </div>
           </div>

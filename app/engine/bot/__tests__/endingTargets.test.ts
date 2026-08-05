@@ -74,7 +74,9 @@ describe('buildEndingDossier', () => {
       expect(plan.missing, `${id} missing files`).toEqual([]);
       // A win needs all ten slots filled, so a plan that resolves correctly but
       // stops at eight files is still a plan that cannot finish the game.
-      expect(plan.paths.length, `${id} planned ${plan.paths.length} files`).toBe(MAX_EVIDENCE_COUNT);
+      expect(plan.paths.length, `${id} planned ${plan.paths.length} files`).toBe(
+        MAX_EVIDENCE_COUNT
+      );
       expect(plan.full).toBe(true);
       expect(plan.resolves).toBe(true);
       expect(determineEnding(new Set(plan.paths)), `${id} plan resolves elsewhere`).toBe(id);

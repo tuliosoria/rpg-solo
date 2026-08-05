@@ -75,14 +75,11 @@ export interface ImageTrigger {
   durationMs?: number;
 }
 
-
 export interface SecurityQuestion {
   question: string;
   answers: string[]; // Multiple valid answers (case insensitive)
   hint: string; // Where to find the answer
 }
-
-
 
 export interface FileNode {
   type: 'file';
@@ -116,7 +113,17 @@ export interface FileMutation {
 
 export interface TerminalEntry {
   id: string;
-  type: 'input' | 'output' | 'system' | 'warning' | 'error' | 'notice' | 'ufo74' | 'file' | 'dim' | 'prompt';
+  type:
+    | 'input'
+    | 'output'
+    | 'system'
+    | 'warning'
+    | 'error'
+    | 'notice'
+    | 'ufo74'
+    | 'file'
+    | 'dim'
+    | 'prompt';
   content: string;
   i18nKey?: string;
   i18nValues?: Record<string, string | number>;
@@ -298,8 +305,6 @@ export interface GameState {
   // Evidence linking system
   evidenceLinks: Array<[string, string]>; // Pairs of linked file paths
 
-
-
   // Timed decryption state
   timedDecryptActive: boolean;
   timedDecryptFile?: string;
@@ -379,15 +384,9 @@ export interface CheckpointSlot {
 }
 
 export type StreamingMode = 'none' | 'fast' | 'normal' | 'slow';
-export type GamePhase =
-  | 'terminal'
-  | 'victory'
-  | 'bad_ending'
-  | 'neutral_ending'
-  | 'secret_ending';
+export type GamePhase = 'terminal' | 'victory' | 'bad_ending' | 'neutral_ending' | 'secret_ending';
 
 export type EndingType = 'bad' | 'neutral' | 'good' | 'secret';
-
 
 export interface CommandResult {
   output: TerminalEntry[];
@@ -403,8 +402,6 @@ export interface CommandResult {
   soundTrigger?: 'evidence' | 'error' | 'morse'; // Sound effect to play
   triggerFirewallTaunt?: boolean; // Trigger firewall audio + glow (blocked search, etc.)
 }
-
-
 
 export const DEFAULT_GAME_STATE: Omit<GameState, 'seed' | 'rngState' | 'sessionStartTime'> = {
   currentPath: '/',

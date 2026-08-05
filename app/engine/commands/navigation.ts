@@ -2,7 +2,11 @@
 
 import { TerminalEntry } from '../../types';
 import { canAccessFile, accessReasonKey, getFileContent } from '../filesystem';
-import { EVIDENCE_SYMBOL, MAX_EVIDENCE_COUNT, LEAK_PREPARATION_THRESHOLD } from '../evidenceRevelation';
+import {
+  EVIDENCE_SYMBOL,
+  MAX_EVIDENCE_COUNT,
+  LEAK_PREPARATION_THRESHOLD,
+} from '../evidenceRevelation';
 import { DETECTION_THRESHOLDS, DETECTION_DECREASES } from '../../constants/detection';
 import { createEntry, createEntryI18n } from './utils';
 import { getWarmupAdjustedDetection } from './helpers';
@@ -160,12 +164,24 @@ export const navigationCommands: CommandRegistry = {
         output: [
           createEntry('system', ''),
           createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
-          createEntryI18n('system', 'engine.commands.navigation.dossier_map_title', '║                  DOSSIER MAP                          ║'),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.dossier_map_title',
+            '║                  DOSSIER MAP                          ║'
+          ),
           createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
           createEntry('system', ''),
-          createEntryI18n('system', 'engine.commands.navigation.no_files_saved_yet', '  No files saved yet.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.no_files_saved_yet',
+            '  No files saved yet.'
+          ),
           createEntry('system', ''),
-          createEntryI18n('system', 'engine.commands.navigation.use_save_filename', '  Use "save <filename>" after reading a file.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.navigation.use_save_filename',
+            '  Use "save <filename>" after reading a file.'
+          ),
           createEntry('system', ''),
           createEntry('system', '╚═══════════════════════════════════════════════════════╝'),
         ],
@@ -176,7 +192,11 @@ export const navigationCommands: CommandRegistry = {
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '╔═══════════════════════════════════════════════════════╗'),
-      createEntryI18n('system', 'engine.commands.navigation.dossier_map_title', '║                  DOSSIER MAP                          ║'),
+      createEntryI18n(
+        'system',
+        'engine.commands.navigation.dossier_map_title',
+        '║                  DOSSIER MAP                          ║'
+      ),
       createEntry('system', '╠═══════════════════════════════════════════════════════╣'),
       createEntry('system', ''),
       createEntryI18n('system', 'engine.commands.navigation.saved_files', '  SAVED FILES:'),
@@ -186,7 +206,12 @@ export const navigationCommands: CommandRegistry = {
     for (let i = 1; i <= 10; i++) {
       if (i <= savedCount) {
         const fileName = savedFiles[i - 1]?.split('/').pop() || '?';
-        output.push(createEntry('output', `  ${EVIDENCE_SYMBOL} ${i.toString().padStart(2, ' ')}. ${fileName}`));
+        output.push(
+          createEntry(
+            'output',
+            `  ${EVIDENCE_SYMBOL} ${i.toString().padStart(2, ' ')}. ${fileName}`
+          )
+        );
       } else {
         output.push(createEntry('system', `  ○ ${i.toString().padStart(2, ' ')}. ─────────`));
       }
@@ -199,7 +224,13 @@ export const navigationCommands: CommandRegistry = {
       createEntry('system', `  DOSSIER: ${savedCount}/${MAX_EVIDENCE_COUNT} files saved`)
     );
     if (savedCount >= MAX_EVIDENCE_COUNT) {
-      output.push(createEntryI18n('notice', 'engine.commands.navigation.ready_type_leak', '  READY — type "leak" when prepared.'));
+      output.push(
+        createEntryI18n(
+          'notice',
+          'engine.commands.navigation.ready_type_leak',
+          '  READY — type "leak" when prepared.'
+        )
+      );
     }
     output.push(createEntry('system', ''));
     output.push(createEntry('system', '╚═══════════════════════════════════════════════════════╝'));
@@ -209,13 +240,18 @@ export const navigationCommands: CommandRegistry = {
 
   wait: (args, state) => {
     // Late-game tension: warn but still allow wait
-    const lateGameWarning = state.savedFiles.size >= LEAK_PREPARATION_THRESHOLD
-      ? [
-          createEntry('warning', ''),
-          createEntryI18n('warning', 'engine.commands.elevated_security_protocol_warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
-          createEntry('warning', ''),
-        ]
-      : [];
+    const lateGameWarning =
+      state.savedFiles.size >= LEAK_PREPARATION_THRESHOLD
+        ? [
+            createEntry('warning', ''),
+            createEntryI18n(
+              'warning',
+              'engine.commands.elevated_security_protocol_warning',
+              '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'
+            ),
+            createEntry('warning', ''),
+          ]
+        : [];
 
     const usesRemaining = state.waitUsesRemaining ?? 8;
 

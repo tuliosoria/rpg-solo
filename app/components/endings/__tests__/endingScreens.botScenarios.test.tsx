@@ -28,18 +28,11 @@ import SecretEnding from '../SecretEnding';
 const LANGUAGES: Language[] = ['en', 'pt-BR', 'es'];
 const PLACEHOLDER = /\{\{\s*\w+\s*\}\}/;
 const RAW_KEY = /\b(?:ending|runtime|engine)\.[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)+/;
-const FATAL_SCENARIOS = ALL_SCENARIO_IDS.filter(
-  id => BOT_SCENARIOS[id].expect.kind === 'gameOver'
-);
+const FATAL_SCENARIOS = ALL_SCENARIO_IDS.filter(id => BOT_SCENARIOS[id].expect.kind === 'gameOver');
 
 function playScenario(scenario: BotScenarioId) {
   const seed = resolveScenarioSeed(scenario, 1);
-  return runHeadless(
-    executeCommand,
-    'novice',
-    seed,
-    { kind: 'scenario', scenario }
-  ).state;
+  return runHeadless(executeCommand, 'novice', seed, { kind: 'scenario', scenario }).state;
 }
 
 function finishAnimation() {
@@ -105,12 +98,7 @@ describe.each(FATAL_SCENARIOS)('screen for bot scenario %s', scenario => {
 });
 
 describe('identity reveal reached by bot-test pro', () => {
-  const state = runHeadless(
-    executeCommand,
-    'pro',
-    1,
-    { kind: 'default' }
-  ).state;
+  const state = runHeadless(executeCommand, 'pro', 1, { kind: 'default' }).state;
 
   it.each(LANGUAGES)('renders cleanly in %s', language => {
     window.localStorage.setItem('terminal1996_language', language);

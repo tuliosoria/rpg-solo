@@ -70,7 +70,13 @@ describe('systemCommands save/unsave localization', () => {
       })
     );
 
-    expect(result.pendingUfo74Messages?.some(entry => entry.content.includes('five saved'))).toBe(true);
-    expect(result.pendingUfo74Messages?.some(entry => entry.content.includes('not enough to make them believe you'))).toBe(true);
+    expect(result.pendingUfo74Messages?.some(entry => entry.content.includes('five saved'))).toBe(
+      true
+    );
+    expect(
+      result.pendingUfo74Messages?.some(entry =>
+        entry.content.includes('not enough to make them believe you')
+      )
+    ).toBe(true);
   });
 });

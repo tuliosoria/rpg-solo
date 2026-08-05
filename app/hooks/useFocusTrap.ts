@@ -20,7 +20,7 @@ const FOCUSABLE_SELECTOR = [
  * - Focuses the first focusable child inside the container on mount.
  * - Wraps Tab / Shift+Tab so focus cannot leave the container.
  */
-export function useFocusTrap(containerRef: RefObject<HTMLElement | null>) {
+export function useFocusTrap(containerRef: RefObject<HTMLElement | null>, resetKey?: unknown) {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -69,5 +69,5 @@ export function useFocusTrap(containerRef: RefObject<HTMLElement | null>) {
       // Restore focus to the previously focused element
       previouslyFocused?.focus();
     };
-  }, [containerRef]);
+  }, [containerRef, resetKey]);
 }

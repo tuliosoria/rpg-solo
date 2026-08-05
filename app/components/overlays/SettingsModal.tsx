@@ -128,7 +128,13 @@ export default memo(function SettingsModal({
         : t('language.es');
 
   return (
-    <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div
+      className={styles.overlay}
+      onClick={onCloseAction}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-title"
+    >
       <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 id="settings-title">{t('settings.title')}</h2>
@@ -147,9 +153,7 @@ export default memo(function SettingsModal({
               aria-label={t('settings.soundEffects')}
               aria-pressed={soundEnabled}
             >
-              {soundEnabled
-                ? `[ ${t('options.value.on')} ]`
-                : `[ ${t('options.value.off')} ]`}
+              {soundEnabled ? `[ ${t('options.value.on')} ]` : `[ ${t('options.value.off')} ]`}
             </button>
           </div>
 
@@ -164,9 +168,7 @@ export default memo(function SettingsModal({
               aria-label={t('settings.music')}
               aria-pressed={musicEnabled}
             >
-              {musicEnabled
-                ? `[ ${t('options.value.on')} ]`
-                : `[ ${t('options.value.off')} ]`}
+              {musicEnabled ? `[ ${t('options.value.on')} ]` : `[ ${t('options.value.off')} ]`}
             </button>
           </div>
 
@@ -200,9 +202,7 @@ export default memo(function SettingsModal({
               aria-label={t('settings.crtEffects')}
               aria-pressed={crtEnabled}
             >
-              {crtEnabled
-                ? `[ ${t('options.value.on')} ]`
-                : `[ ${t('options.value.off')} ]`}
+              {crtEnabled ? `[ ${t('options.value.on')} ]` : `[ ${t('options.value.off')} ]`}
             </button>
             <span className={styles.hint}>{t('settings.crtHint')}</span>
           </div>

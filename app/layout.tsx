@@ -1,23 +1,23 @@
-import type { Metadata } from "next";
-import en from "./locales/en.json";
-import es from "./locales/es.json";
-import ptBr from "./locales/pt-br.json";
-import "./globals.css";
+import type { Metadata } from 'next';
+import en from './locales/en.json';
+import es from './locales/es.json';
+import ptBr from './locales/pt-br.json';
+import './globals.css';
 
 const LANGUAGE_STORAGE_KEY = 'terminal1996_language';
 
 const LOCALIZED_METADATA = {
   en: {
-    title: en["meta.title"],
-    description: en["meta.description"],
+    title: en['meta.title'],
+    description: en['meta.description'],
   },
   'pt-BR': {
-    title: ptBr["meta.title"],
-    description: ptBr["meta.description"],
+    title: ptBr['meta.title'],
+    description: ptBr['meta.description'],
   },
   es: {
-    title: es["meta.title"],
-    description: es["meta.description"],
+    title: es['meta.title'],
+    description: es['meta.description'],
   },
 } as const;
 
@@ -53,8 +53,8 @@ const I18N_BOOTSTRAP_SCRIPT = `
 `;
 
 export const metadata: Metadata = {
-  title: en["meta.title"],
-  description: en["meta.description"],
+  title: en['meta.title'],
+  description: en['meta.description'],
 };
 
 export const viewport = {

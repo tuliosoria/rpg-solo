@@ -5,6 +5,7 @@ import styles from './TuringTestOverlay.module.css';
 import { TURING_QUESTIONS } from '../../constants/turing';
 import { uiChance, uiRandomInt } from '../../engine/rng';
 import { useSound } from '../../hooks/useSound';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { useI18n } from '../../i18n';
 
 interface TuringTestOverlayProps {
@@ -28,7 +29,11 @@ const CONTAINER_LAYOUT_STYLE: React.CSSProperties = {
   maxHeight: '100%',
 };
 
-export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPilot }: TuringTestOverlayProps) {
+export default function TuringTestOverlay({
+  onComplete,
+  onCorrectAnswer,
+  autoPilot,
+}: TuringTestOverlayProps) {
   const { t } = useI18n();
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -38,7 +43,10 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPil
   const [flickering, setFlickering] = useState(true);
   const flickerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const resultContinueRef = useRef<HTMLButtonElement>(null);
   const { setMusicPlaybackRate, playSound } = useSound();
+  useFocusTrap(overlayRef, showResult);
 
   // Safely get current question with fallback
   const currentQuestion = TURING_QUESTIONS[questionIndex] || TURING_QUESTIONS[0];
@@ -142,6 +150,14 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPil
     const handleKeyDown = (e: KeyboardEvent) => {
       if (showResult) {
         if (e.key === 'Enter' || e.key === ' ') {
+          // The result prompt is a real button. Let the browser dispatch its
+          // native click when it has focus; otherwise handle the legacy
+          // keyboard shortcut here for screen-reader and focus-edge cases.
+          const target = e.target;
+          if (target instanceof HTMLElement && target.closest('button')) {
+            return;
+          }
+          e.preventDefault();
           // Need all 3 correct to pass
           onComplete(correctAnswers === 3);
         }
@@ -160,6 +176,12 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPil
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleSelect, showFeedback, showResult, onComplete, correctAnswers, isInvalidQuestion]);
+
+  useEffect(() => {
+    if (showResult) {
+      resultContinueRef.current?.focus({ preventScroll: true });
+    }
+  }, [showResult]);
 
   // Dev-only bot autoplay: answer each question with the machine option, then
   // dismiss the result screen. Driven by the overlay's own state (questionIndex/
@@ -197,9 +219,14 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPil
     const passed = correctAnswers === 3;
     return (
       <div
+        ref={overlayRef}
         data-testid="turing-test-overlay"
         className={`${styles.overlay} ${flickering ? styles.flickering : ''}`}
         style={OVERLAY_LAYOUT_STYLE}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="turing-result-title"
+        onClick={event => event.stopPropagation()}
       >
         <div className={styles.scanlines} />
         <div className={styles.glow} />
@@ -210,7 +237,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPil
           style={CONTAINER_LAYOUT_STYLE}
         >
           <div className={styles.resultBox}>
-            <div className={styles.resultHeader}>
+            <div className={styles.resultHeader} id="turing-result-title">
               {passed ? t('turing.result.complete') : t('turing.result.failed')}
             </div>
 
@@ -222,7 +249,15 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPil
               {passed ? t('turing.result.passLine') : t('turing.result.failLine')}
             </div>
 
-            <div className={styles.resultPrompt}>↵</div>
+            <button
+              ref={resultContinueRef}
+              type="button"
+              className={styles.resultPrompt}
+              onClick={() => onComplete(passed)}
+              aria-label={t('turing.result.continue')}
+            >
+              ↵
+            </button>
           </div>
         </div>
       </div>
@@ -231,9 +266,14 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPil
 
   return (
     <div
+      ref={overlayRef}
       data-testid="turing-test-overlay"
       className={`${styles.overlay} ${flickering ? styles.flickering : ''}`}
       style={OVERLAY_LAYOUT_STYLE}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="turing-header-title"
+      onClick={event => event.stopPropagation()}
     >
       <div className={styles.scanlines} />
       <div className={styles.glow} />
@@ -246,7 +286,9 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPil
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.headerLine}>═══════════════════════════════════════════════</div>
-          <div className={styles.headerTitle}>{t('turing.header.title')}</div>
+          <div className={styles.headerTitle} id="turing-header-title">
+            {t('turing.header.title')}
+          </div>
           <div className={styles.headerLine}>═══════════════════════════════════════════════</div>
         </div>
 
@@ -267,9 +309,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPil
 
         {/* Question Box */}
         <div className={styles.questionBox}>
-          <div className={styles.questionPrompt}>
-            &ldquo;{t(currentQuestion.promptKey)}&rdquo;
-          </div>
+          <div className={styles.questionPrompt}>&ldquo;{t(currentQuestion.promptKey)}&rdquo;</div>
 
           <div className={styles.options}>
             {currentQuestion.options.map(option => {
@@ -297,7 +337,7 @@ export default function TuringTestOverlay({ onComplete, onCorrectAnswer, autoPil
 
         {/* Feedback */}
         {showFeedback && (
-          <div className={styles.feedback}>
+          <div className={styles.feedback} role="status" aria-live="polite">
             {currentQuestion.options.find(o => o.letter === selectedOption)?.isMachine
               ? t('turing.feedback.acceptable')
               : t('turing.feedback.humanDetected')}

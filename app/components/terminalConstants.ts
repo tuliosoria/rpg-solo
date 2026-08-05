@@ -5,25 +5,13 @@
 
 // UFO74 image comment i18n keys — maps image paths to available comment keys
 export const UFO74_IMAGE_COMMENT_KEYS: Record<string, string[]> = {
-  '/images/crash.webp': [
-    'terminal.imageComment.crash1',
-    'terminal.imageComment.crash2',
-  ],
-  '/images/et.webp': [
-    'terminal.imageComment.et1',
-    'terminal.imageComment.et2',
-  ],
-  '/images/et-scared.webp': [
-    'terminal.imageComment.etScared1',
-    'terminal.imageComment.etScared2',
-  ],
+  '/images/crash.webp': ['terminal.imageComment.crash1', 'terminal.imageComment.crash2'],
+  '/images/et.webp': ['terminal.imageComment.et1', 'terminal.imageComment.et2'],
+  '/images/et-scared.webp': ['terminal.imageComment.etScared1', 'terminal.imageComment.etScared2'],
   '/images/second-ship.webp': ['terminal.imageComment.secondShip1'],
   '/images/drone.webp': ['terminal.imageComment.drone1'],
   '/images/prato-delta.webp': ['terminal.imageComment.pratoDelta1'],
-  '/images/et-brain.webp': [
-    'terminal.imageComment.etBrain1',
-    'terminal.imageComment.etBrain2',
-  ],
+  '/images/et-brain.webp': ['terminal.imageComment.etBrain1', 'terminal.imageComment.etBrain2'],
 };
 
 // UFO74 firewall reaction i18n keys
@@ -51,20 +39,14 @@ export const JARDIM_ANDERE_INCIDENT_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
-export const AUTOPSY_VIDEO_SRC = new URL(
-  '../../videos/autopsy.mp4',
-  import.meta.url
-).toString();
+export const AUTOPSY_VIDEO_SRC = new URL('../../videos/autopsy.mp4', import.meta.url).toString();
 
 export const THEY_ARE_ALREADY_HERE_VIDEO_SRC = new URL(
   '../../videos/they-are-already-here.mp4',
   import.meta.url
 ).toString();
 
-export const UFO74_VIDEO_SRC = new URL(
-  '../../videos/UFO74.mp4',
-  import.meta.url
-).toString();
+export const UFO74_VIDEO_SRC = new URL('../../videos/UFO74.mp4', import.meta.url).toString();
 
 export const TRANSPORT_VIDEO_SRC = new URL(
   '../../videos/transport.mp4',
@@ -81,20 +63,14 @@ export const PRISONER_45_VIDEO_SRC = new URL(
   import.meta.url
 ).toString();
 
-export const MIB_VIDEO_SRC = new URL(
-  '../../videos/video mib.mp4',
-  import.meta.url
-).toString();
+export const MIB_VIDEO_SRC = new URL('../../videos/video mib.mp4', import.meta.url).toString();
 
 export const OPERACAO_PRATO_VIDEO_SRC = new URL(
   '../../videos/operacao prato.mp4',
   import.meta.url
 ).toString();
 
-export const VISITOR_VIDEO_SRC = new URL(
-  '../../videos/visitor.mp4',
-  import.meta.url
-).toString();
+export const VISITOR_VIDEO_SRC = new URL('../../videos/visitor.mp4', import.meta.url).toString();
 
 export const ET_VARGINHA_VIDEO_SRC = new URL(
   '../../videos/et varginha.mp4',
@@ -166,7 +142,8 @@ export const NEGATIVE_VIDEO_PROMPT_INPUTS = new Set(['n', 'no', 'nao', 'não']);
 // Build/version metadata
 export const BUILD_NUMBER = process.env.NEXT_PUBLIC_BUILD_NUMBER;
 export const COMMIT_SHA = process.env.NEXT_PUBLIC_COMMIT_SHA || 'unknown';
-export const HAS_BUILD_METADATA = !!BUILD_NUMBER && /^\d+$/.test(BUILD_NUMBER) && COMMIT_SHA !== 'unknown';
+export const HAS_BUILD_METADATA =
+  !!BUILD_NUMBER && /^\d+$/.test(BUILD_NUMBER) && COMMIT_SHA !== 'unknown';
 export const DEPLOY_VERSION = HAS_BUILD_METADATA ? `v0.${BUILD_NUMBER}.0` : 'dev-local';
 
 // CSS-in-JS constant for full-screen overlays

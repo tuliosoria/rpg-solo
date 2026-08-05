@@ -1,8 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { EndingId } from '../../endings';
-import {
-  ALL_ENDING_IDS,
-} from '../endingTargets';
+import { ALL_ENDING_IDS } from '../endingTargets';
 import { ALL_SCENARIO_IDS, BOT_SCENARIOS, BotScenarioId } from '../scenarios';
 import { runBotSweep, runHeadless, sweepEnding, sweepScenario, SWEEP_LEVELS } from '../sweep';
 import { determineEnding } from '../../endings';
@@ -56,9 +54,10 @@ describe('every scenario reaches the path it was written for', () => {
     it(`plays out ${scenario}`, () => {
       for (const seed of SEEDS) {
         const row = sweepScenario(executeCommand, scenario, seed);
-        expect(row.pass, `${scenario} on seed ${seed}: ${row.actual} (expected ${row.expected})`).toBe(
-          true
-        );
+        expect(
+          row.pass,
+          `${scenario} on seed ${seed}: ${row.actual} (expected ${row.expected})`
+        ).toBe(true);
         expect(row.stopReason).not.toBe('max turns reached');
         expect(row.stopReason).not.toBe('unterminated');
       }
@@ -90,30 +89,24 @@ describe('every scenario reaches the path it was written for', () => {
   });
 
   it('covers the terminal guardrails that ordinary win paths avoid', () => {
-    const overflow = runHeadless(
-      executeCommand,
-      'novice',
-      1,
-      { kind: 'scenario', scenario: 'input-length-threshold' }
-    ).state;
+    const overflow = runHeadless(executeCommand, 'novice', 1, {
+      kind: 'scenario',
+      scenario: 'input-length-threshold',
+    }).state;
     expect(overflow.gameOverReason).toBe('INVALID INPUT THRESHOLD');
     expect(overflow.legacyAlertCounter).toBe(8);
 
-    const disconnect = runHeadless(
-      executeCommand,
-      'novice',
-      1,
-      { kind: 'scenario', scenario: 'neutral-disconnect' }
-    ).state;
+    const disconnect = runHeadless(executeCommand, 'novice', 1, {
+      kind: 'scenario',
+      scenario: 'neutral-disconnect',
+    }).state;
     expect(disconnect.gameOverReason).toBe('NEUTRAL ENDING - DISCONNECTED');
     expect(disconnect.endingType).toBe('neutral');
 
-    const morse = runHeadless(
-      executeCommand,
-      'novice',
-      1,
-      { kind: 'scenario', scenario: 'morse-exhaustion' }
-    ).state;
+    const morse = runHeadless(executeCommand, 'novice', 1, {
+      kind: 'scenario',
+      scenario: 'morse-exhaustion',
+    }).state;
     expect(morse.isGameOver).toBe(false);
     expect(morse.morseMessageAttempts).toBe(3);
     expect(morse.wrongAttempts).toBe(1);
@@ -152,9 +145,7 @@ describe('the sweep itself', () => {
       failures.map(f => `${f.label}: ${f.actual} (expected ${f.expected})`),
       'unreachable targets'
     ).toEqual([]);
-    expect(rows.length).toBe(
-      SWEEP_LEVELS.length + ALL_ENDING_IDS.length + ALL_SCENARIO_IDS.length
-    );
+    expect(rows.length).toBe(SWEEP_LEVELS.length + ALL_ENDING_IDS.length + ALL_SCENARIO_IDS.length);
   });
 
   it('runs a full playthrough without touching the browser', () => {
@@ -168,7 +159,13 @@ describe('the sweep itself', () => {
   it('reports a failure rather than throwing when an ending goes unreachable', () => {
     // Sanity check on the reporting path: a plan that cannot be satisfied has to
     // surface as a FAIL row with the real outcome on it.
-    const run = runHeadless(executeCommand, 'pro', 1, { kind: 'ending', ending: 'secret_ending' }, 3);
+    const run = runHeadless(
+      executeCommand,
+      'pro',
+      1,
+      { kind: 'ending', ending: 'secret_ending' },
+      3
+    );
     expect(run.state.gameWon).toBeFalsy();
     expect(determineEnding(run.state.savedFiles)).toBeTruthy();
   });

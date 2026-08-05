@@ -22,15 +22,15 @@ function dedentBlock(text: string): string[] {
 
   const lines = normalized.split('\n');
   const indents = lines
-    .filter((line) => line.trim().length > 0)
-    .map((line) => line.match(/^\s*/)?.[0].length ?? 0);
+    .filter(line => line.trim().length > 0)
+    .map(line => line.match(/^\s*/)?.[0].length ?? 0);
   const commonIndent = indents.length > 0 ? Math.min(...indents) : 0;
 
-  return lines.map((line) => line.slice(commonIndent));
+  return lines.map(line => line.slice(commonIndent));
 }
 
 function registerLines(sourceLines: readonly string[], ptBlock: string, esBlock: string): void {
-  const keys = sourceLines.filter((line) => !isNonTranslatableLine(line));
+  const keys = sourceLines.filter(line => !isNonTranslatableLine(line));
   const ptLines = dedentBlock(ptBlock);
   const esLines = dedentBlock(esBlock);
 

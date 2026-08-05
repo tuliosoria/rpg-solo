@@ -1,7 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../../commands';
 import { decideNextCommand } from '../strategy';
-import { createBotMemory, settleBotTurn, BotRunLogEntry, BOT_EXPECTED_MAX_DETECTION_JUMP } from '../types';
+import {
+  createBotMemory,
+  settleBotTurn,
+  BotRunLogEntry,
+  BOT_EXPECTED_MAX_DETECTION_JUMP,
+} from '../types';
 import { buildRunSummary } from '../report';
 import { DEFAULT_GAME_STATE, GameState } from '../../../types';
 import { BotLevel } from '../types';
@@ -11,30 +16,48 @@ import { BotLevel } from '../types';
  * the previous turn out once the state has moved — so the anomaly logic is
  * exercised against real command results rather than hand-built fixtures.
  */
-function runWithLog(level: BotLevel, seed = 12345): { log: BotRunLogEntry[]; state: GameState; reason: string } {
+function runWithLog(
+  level: BotLevel,
+  seed = 12345
+): { log: BotRunLogEntry[]; state: GameState; reason: string } {
   let state: GameState = {
-    ...DEFAULT_GAME_STATE, tutorialComplete: true, seed,
-    filesRead: new Set<string>(), savedFiles: new Set<string>(),
+    ...DEFAULT_GAME_STATE,
+    tutorialComplete: true,
+    seed,
+    filesRead: new Set<string>(),
+    savedFiles: new Set<string>(),
   } as GameState;
   let memory = createBotMemory();
   const log: BotRunLogEntry[] = [];
-  let open: { entry: BotRunLogEntry; before: { wrongAttempts: number; legacyAlertCounter: number; leakProgress: number; leakGenerated: boolean } } | null = null;
+  let open: {
+    entry: BotRunLogEntry;
+    before: {
+      wrongAttempts: number;
+      legacyAlertCounter: number;
+      leakProgress: number;
+      leakGenerated: boolean;
+    };
+  } | null = null;
   let reason = 'unterminated';
 
   const settle = () => {
     if (!open) return;
-    settleBotTurn(open.entry, {
-      detectionLevel: state.detectionLevel,
-      filesRead: state.filesRead.size,
-      savedFiles: state.savedFiles.size,
-      wrongAttempts: state.wrongAttempts,
-      legacyAlertCounter: state.legacyAlertCounter,
-      leakProgress: state.leakSequenceProgress,
-      leakGenerated: Boolean(state.leakSequenceGenerated),
-      gameWon: Boolean(state.gameWon),
-      isGameOver: Boolean(state.isGameOver),
-      gameOverReason: state.gameOverReason,
-    }, open.before);
+    settleBotTurn(
+      open.entry,
+      {
+        detectionLevel: state.detectionLevel,
+        filesRead: state.filesRead.size,
+        savedFiles: state.savedFiles.size,
+        wrongAttempts: state.wrongAttempts,
+        legacyAlertCounter: state.legacyAlertCounter,
+        leakProgress: state.leakSequenceProgress,
+        leakGenerated: Boolean(state.leakSequenceGenerated),
+        gameWon: Boolean(state.gameWon),
+        isGameOver: Boolean(state.isGameOver),
+        gameOverReason: state.gameOverReason,
+      },
+      open.before
+    );
     open = null;
   };
 
@@ -42,16 +65,31 @@ function runWithLog(level: BotLevel, seed = 12345): { log: BotRunLogEntry[]; sta
     settle();
     const { decision, memory: next } = decideNextCommand(state, memory, level, seed);
     memory = next;
-    if (decision.kind === 'done') { reason = decision.reason; break; }
+    if (decision.kind === 'done') {
+      reason = decision.reason;
+      break;
+    }
     const input = decision.kind === 'enter' ? '' : decision.text;
     const entry: BotRunLogEntry = {
-      turn: memory.turnsTaken, command: input || '(enter)',
-      detectionBefore: state.detectionLevel, detectionAfter: state.detectionLevel,
-      filesReadBefore: state.filesRead.size, savedBefore: state.savedFiles.size,
-      filesReadAfter: state.filesRead.size, savedAfter: state.savedFiles.size,
+      turn: memory.turnsTaken,
+      command: input || '(enter)',
+      detectionBefore: state.detectionLevel,
+      detectionAfter: state.detectionLevel,
+      filesReadBefore: state.filesRead.size,
+      savedBefore: state.savedFiles.size,
+      filesReadAfter: state.filesRead.size,
+      savedAfter: state.savedFiles.size,
     };
     log.push(entry);
-    open = { entry, before: { wrongAttempts: state.wrongAttempts, legacyAlertCounter: state.legacyAlertCounter, leakProgress: state.leakSequenceProgress, leakGenerated: Boolean(state.leakSequenceGenerated) } };
+    open = {
+      entry,
+      before: {
+        wrongAttempts: state.wrongAttempts,
+        legacyAlertCounter: state.legacyAlertCounter,
+        leakProgress: state.leakSequenceProgress,
+        leakGenerated: Boolean(state.leakSequenceGenerated),
+      },
+    };
     const result = executeCommand(input, state);
     state = { ...state, ...result.stateChanges } as GameState;
   }
@@ -81,12 +119,30 @@ describe('bot run log', () => {
 
   it('flags a rejected command', () => {
     const entry: BotRunLogEntry = {
-      turn: 3, command: 'opne file', detectionBefore: 10, detectionAfter: 10,
-      filesReadBefore: 2, savedBefore: 1, filesReadAfter: 2, savedAfter: 1,
+      turn: 3,
+      command: 'opne file',
+      detectionBefore: 10,
+      detectionAfter: 10,
+      filesReadBefore: 2,
+      savedBefore: 1,
+      filesReadAfter: 2,
+      savedAfter: 1,
     };
-    settleBotTurn(entry,
-      { detectionLevel: 12, filesRead: 2, savedFiles: 1, wrongAttempts: 4, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 3, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
+    settleBotTurn(
+      entry,
+      {
+        detectionLevel: 12,
+        filesRead: 2,
+        savedFiles: 1,
+        wrongAttempts: 4,
+        legacyAlertCounter: 0,
+        leakProgress: 0,
+        leakGenerated: false,
+        gameWon: false,
+        isGameOver: false,
+      },
+      { wrongAttempts: 3, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false }
+    );
     expect(entry.anomaly).toContain('command rejected');
     expect(entry.detectionAfter).toBe(12);
   });
@@ -100,12 +156,30 @@ describe('bot run log', () => {
    */
   it('flags a command the parser did not understand at all', () => {
     const entry: BotRunLogEntry = {
-      turn: 3, command: 'xyzzy', detectionBefore: 10, detectionAfter: 10,
-      filesReadBefore: 2, savedBefore: 1, filesReadAfter: 2, savedAfter: 1,
+      turn: 3,
+      command: 'xyzzy',
+      detectionBefore: 10,
+      detectionAfter: 10,
+      filesReadBefore: 2,
+      savedBefore: 1,
+      filesReadAfter: 2,
+      savedAfter: 1,
     };
-    settleBotTurn(entry,
-      { detectionLevel: 12, filesRead: 2, savedFiles: 1, wrongAttempts: 0, legacyAlertCounter: 1, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
+    settleBotTurn(
+      entry,
+      {
+        detectionLevel: 12,
+        filesRead: 2,
+        savedFiles: 1,
+        wrongAttempts: 0,
+        legacyAlertCounter: 1,
+        leakProgress: 0,
+        leakGenerated: false,
+        gameWon: false,
+        isGameOver: false,
+      },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false }
+    );
     expect(entry.anomaly).toContain('command rejected');
   });
 
@@ -117,13 +191,32 @@ describe('bot run log', () => {
    */
   it('exempts a turn that expects to be refused', () => {
     const entry: BotRunLogEntry = {
-      turn: 3, command: 'xyzzy', detectionBefore: 10, detectionAfter: 10,
-      filesReadBefore: 2, savedBefore: 1, filesReadAfter: 2, savedAfter: 1,
-      probe: true, expectRejected: true,
+      turn: 3,
+      command: 'xyzzy',
+      detectionBefore: 10,
+      detectionAfter: 10,
+      filesReadBefore: 2,
+      savedBefore: 1,
+      filesReadAfter: 2,
+      savedAfter: 1,
+      probe: true,
+      expectRejected: true,
     };
-    settleBotTurn(entry,
-      { detectionLevel: 12, filesRead: 2, savedFiles: 1, wrongAttempts: 0, legacyAlertCounter: 1, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
+    settleBotTurn(
+      entry,
+      {
+        detectionLevel: 12,
+        filesRead: 2,
+        savedFiles: 1,
+        wrongAttempts: 0,
+        legacyAlertCounter: 1,
+        leakProgress: 0,
+        leakGenerated: false,
+        gameWon: false,
+        isGameOver: false,
+      },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false }
+    );
     expect(entry.anomaly).toBeUndefined();
   });
 
@@ -135,41 +228,108 @@ describe('bot run log', () => {
    */
   it('does not flag a turn that only burns the purge countdown', () => {
     const entry: BotRunLogEntry = {
-      turn: 64, command: 'progress', detectionBefore: 95, detectionAfter: 95,
-      filesReadBefore: 62, savedBefore: 0, filesReadAfter: 62, savedAfter: 0,
+      turn: 64,
+      command: 'progress',
+      detectionBefore: 95,
+      detectionAfter: 95,
+      filesReadBefore: 62,
+      savedBefore: 0,
+      filesReadAfter: 62,
+      savedAfter: 0,
     };
-    settleBotTurn(entry,
-      { detectionLevel: 95, filesRead: 62, savedFiles: 0, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false, doomCountdown: 7 },
-      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, doomCountdown: 8 });
+    settleBotTurn(
+      entry,
+      {
+        detectionLevel: 95,
+        filesRead: 62,
+        savedFiles: 0,
+        wrongAttempts: 0,
+        legacyAlertCounter: 0,
+        leakProgress: 0,
+        leakGenerated: false,
+        gameWon: false,
+        isGameOver: false,
+        doomCountdown: 7,
+      },
+      {
+        wrongAttempts: 0,
+        legacyAlertCounter: 0,
+        leakProgress: 0,
+        leakGenerated: false,
+        doomCountdown: 8,
+      }
+    );
     expect(entry.anomaly).toBeUndefined();
   });
 
   it('flags a detection spike past what any bot command costs', () => {
     const entry: BotRunLogEntry = {
-      turn: 4, command: 'open /trap.txt', detectionBefore: 20, detectionAfter: 20,
-      filesReadBefore: 5, savedBefore: 2, filesReadAfter: 5, savedAfter: 2,
+      turn: 4,
+      command: 'open /trap.txt',
+      detectionBefore: 20,
+      detectionAfter: 20,
+      filesReadBefore: 5,
+      savedBefore: 2,
+      filesReadAfter: 5,
+      savedAfter: 2,
     };
-    settleBotTurn(entry,
-      { detectionLevel: 20 + BOT_EXPECTED_MAX_DETECTION_JUMP + 1, filesRead: 6, savedFiles: 2, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
+    settleBotTurn(
+      entry,
+      {
+        detectionLevel: 20 + BOT_EXPECTED_MAX_DETECTION_JUMP + 1,
+        filesRead: 6,
+        savedFiles: 2,
+        wrongAttempts: 0,
+        legacyAlertCounter: 0,
+        leakProgress: 0,
+        leakGenerated: false,
+        gameWon: false,
+        isGameOver: false,
+      },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false }
+    );
     expect(entry.anomaly).toContain('detection +16%');
   });
 
   it('does not flag the admin override, the one large increase it makes on purpose', () => {
     const entry: BotRunLogEntry = {
-      turn: 2, command: 'override protocol COLHEITA', detectionBefore: 1, detectionAfter: 1,
-      filesReadBefore: 1, savedBefore: 0, filesReadAfter: 1, savedAfter: 0,
+      turn: 2,
+      command: 'override protocol COLHEITA',
+      detectionBefore: 1,
+      detectionAfter: 1,
+      filesReadBefore: 1,
+      savedBefore: 0,
+      filesReadAfter: 1,
+      savedAfter: 0,
     };
-    settleBotTurn(entry,
-      { detectionLevel: 16, filesRead: 1, savedFiles: 0, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
+    settleBotTurn(
+      entry,
+      {
+        detectionLevel: 16,
+        filesRead: 1,
+        savedFiles: 0,
+        wrongAttempts: 0,
+        legacyAlertCounter: 0,
+        leakProgress: 0,
+        leakGenerated: false,
+        gameWon: false,
+        isGameOver: false,
+      },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false }
+    );
     expect(entry.anomaly).toBeUndefined();
   });
 
   it('names why a run stopped instead of just saying it stopped', () => {
     const { log, state, reason } = runWithLog('dummy');
-    const text = buildRunSummary(log, { active: false, level: 'dummy', seed: 1, maxTurns: 400, delayMs: 10 }, state, reason)
-      .map(e => e.content).join('\n');
+    const text = buildRunSummary(
+      log,
+      { active: false, level: 'dummy', seed: 1, maxTurns: 400, delayMs: 10 },
+      state,
+      reason
+    )
+      .map(e => e.content)
+      .join('\n');
     expect(reason).toBe('no productive action');
     expect(text).toContain('stopped — no productive action');
   });
@@ -182,23 +342,73 @@ describe('bot run log', () => {
    */
   it('does not flag the turn that arms a confirmation gate', () => {
     const entry: BotRunLogEntry = {
-      turn: 3, command: 'tree', detectionBefore: 16, detectionAfter: 16,
-      filesReadBefore: 1, savedBefore: 0, filesReadAfter: 1, savedAfter: 0,
+      turn: 3,
+      command: 'tree',
+      detectionBefore: 16,
+      detectionAfter: 16,
+      filesReadBefore: 1,
+      savedBefore: 0,
+      filesReadAfter: 1,
+      savedAfter: 0,
     };
-    settleBotTurn(entry,
-      { detectionLevel: 16, filesRead: 1, savedFiles: 0, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false, pendingTreeConfirm: true },
-      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, pendingTreeConfirm: false });
+    settleBotTurn(
+      entry,
+      {
+        detectionLevel: 16,
+        filesRead: 1,
+        savedFiles: 0,
+        wrongAttempts: 0,
+        legacyAlertCounter: 0,
+        leakProgress: 0,
+        leakGenerated: false,
+        gameWon: false,
+        isGameOver: false,
+        pendingTreeConfirm: true,
+      },
+      {
+        wrongAttempts: 0,
+        legacyAlertCounter: 0,
+        leakProgress: 0,
+        leakGenerated: false,
+        pendingTreeConfirm: false,
+      }
+    );
     expect(entry.anomaly).toBeUndefined();
   });
 
   it('still flags a turn that changed nothing when no gate moved either', () => {
     const entry: BotRunLogEntry = {
-      turn: 9, command: 'open /gone.txt', detectionBefore: 30, detectionAfter: 30,
-      filesReadBefore: 8, savedBefore: 4, filesReadAfter: 8, savedAfter: 4,
+      turn: 9,
+      command: 'open /gone.txt',
+      detectionBefore: 30,
+      detectionAfter: 30,
+      filesReadBefore: 8,
+      savedBefore: 4,
+      filesReadAfter: 8,
+      savedAfter: 4,
     };
-    settleBotTurn(entry,
-      { detectionLevel: 30, filesRead: 8, savedFiles: 4, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false, pendingTreeConfirm: false },
-      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, pendingTreeConfirm: false });
+    settleBotTurn(
+      entry,
+      {
+        detectionLevel: 30,
+        filesRead: 8,
+        savedFiles: 4,
+        wrongAttempts: 0,
+        legacyAlertCounter: 0,
+        leakProgress: 0,
+        leakGenerated: false,
+        gameWon: false,
+        isGameOver: false,
+        pendingTreeConfirm: false,
+      },
+      {
+        wrongAttempts: 0,
+        legacyAlertCounter: 0,
+        leakProgress: 0,
+        leakGenerated: false,
+        pendingTreeConfirm: false,
+      }
+    );
     expect(entry.anomaly).toContain('turn changed nothing');
   });
 
@@ -209,13 +419,31 @@ describe('bot run log', () => {
    */
   it('exempts a scenario step that expects to change nothing', () => {
     const entry: BotRunLogEntry = {
-      turn: 25, command: 'save extra.txt', detectionBefore: 30, detectionAfter: 30,
-      filesReadBefore: 12, savedBefore: 10, filesReadAfter: 12, savedAfter: 10,
+      turn: 25,
+      command: 'save extra.txt',
+      detectionBefore: 30,
+      detectionAfter: 30,
+      filesReadBefore: 12,
+      savedBefore: 10,
+      filesReadAfter: 12,
+      savedAfter: 10,
       probe: true,
     };
-    settleBotTurn(entry,
-      { detectionLevel: 30, filesRead: 12, savedFiles: 10, wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false, gameWon: false, isGameOver: false },
-      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false });
+    settleBotTurn(
+      entry,
+      {
+        detectionLevel: 30,
+        filesRead: 12,
+        savedFiles: 10,
+        wrongAttempts: 0,
+        legacyAlertCounter: 0,
+        leakProgress: 0,
+        leakGenerated: false,
+        gameWon: false,
+        isGameOver: false,
+      },
+      { wrongAttempts: 0, legacyAlertCounter: 0, leakProgress: 0, leakGenerated: false }
+    );
     expect(entry.anomaly).toBeUndefined();
   });
 
@@ -224,8 +452,12 @@ describe('bot run log', () => {
     // what the decision told it.
     const goal = { kind: 'scenario' as const, scenario: 'dossier-full' as const };
     let state: GameState = {
-      ...DEFAULT_GAME_STATE, tutorialComplete: true, seed: 1, rngState: 1,
-      filesRead: new Set<string>(), savedFiles: new Set<string>(),
+      ...DEFAULT_GAME_STATE,
+      tutorialComplete: true,
+      seed: 1,
+      rngState: 1,
+      filesRead: new Set<string>(),
+      savedFiles: new Set<string>(),
     } as GameState;
     let memory = createBotMemory();
     let sawExpectedNoOp = false;
@@ -252,8 +484,12 @@ describe('bot run log', () => {
   it('really swaps a different file into the dossier', () => {
     const goal = { kind: 'scenario' as const, scenario: 'dossier-full' as const };
     let state: GameState = {
-      ...DEFAULT_GAME_STATE, tutorialComplete: true, seed: 1, rngState: 1,
-      filesRead: new Set<string>(), savedFiles: new Set<string>(),
+      ...DEFAULT_GAME_STATE,
+      tutorialComplete: true,
+      seed: 1,
+      rngState: 1,
+      filesRead: new Set<string>(),
+      savedFiles: new Set<string>(),
     } as GameState;
     let memory = createBotMemory();
     let unsaved: string | null = null;

@@ -2,11 +2,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { translateStatic } from '../../i18n';
-import {
-  getTutorialTip,
-  shouldShowTutorialTip,
-  getFirstRunMessage,
-} from '../commands/tutorial';
+import { getTutorialTip, shouldShowTutorialTip, getFirstRunMessage } from '../commands/tutorial';
 import type { TutorialTipId } from '../commands/tutorial';
 import {
   getTutorialAutocomplete,
@@ -73,9 +69,15 @@ describe('Tutorial System', () => {
     });
 
     it('returns cafeteria_menu_week03.txt for partial matches', () => {
-      expect(getTutorialAutocomplete('open ca', TutorialStateID.FILE_DISPLAY)).toBe('cafeteria_menu_week03.txt');
-      expect(getTutorialAutocomplete('open caf', TutorialStateID.FILE_DISPLAY)).toBe('cafeteria_menu_week03.txt');
-      expect(getTutorialAutocomplete('open cafeteria', TutorialStateID.FILE_DISPLAY)).toBe('cafeteria_menu_week03.txt');
+      expect(getTutorialAutocomplete('open ca', TutorialStateID.FILE_DISPLAY)).toBe(
+        'cafeteria_menu_week03.txt'
+      );
+      expect(getTutorialAutocomplete('open caf', TutorialStateID.FILE_DISPLAY)).toBe(
+        'cafeteria_menu_week03.txt'
+      );
+      expect(getTutorialAutocomplete('open cafeteria', TutorialStateID.FILE_DISPLAY)).toBe(
+        'cafeteria_menu_week03.txt'
+      );
     });
 
     it('returns null for non-matching input', () => {
@@ -100,7 +102,9 @@ describe('Tutorial System', () => {
       i18nValues?: Record<string, string | number>;
       content: string;
     }) =>
-      entry.i18nKey ? translateStatic(entry.i18nKey, entry.i18nValues, entry.content) : entry.content;
+      entry.i18nKey
+        ? translateStatic(entry.i18nKey, entry.i18nValues, entry.content)
+        : entry.content;
 
     it('keeps the live onboarding path on the original tone', () => {
       const introText = TUTORIAL_INTRO_STEPS.flat().map(render).join('\n');
@@ -120,7 +124,9 @@ describe('Tutorial System', () => {
       expect(briefingText).toContain(
         '[UFO74]: Type wrong commands 8 times, the window closes. Permanently. So concentrate, kid!'
       );
-      expect(briefingText).toContain('[UFO74]: Type `help` or `hint` if you are lost and need help.');
+      expect(briefingText).toContain(
+        '[UFO74]: Type `help` or `hint` if you are lost and need help.'
+      );
     });
 
     it('places the help reminder followed by the hand-off, then disconnect', () => {
@@ -134,7 +140,9 @@ describe('Tutorial System', () => {
 
       const helpStep = TUTORIAL_BRIEFING_STEPS[TUTORIAL_BRIEFING_STEPS.length - 3];
       const helpUfoLines = helpStep.filter(e => e.type === 'ufo74').map(e => e.content);
-      expect(helpUfoLines).toContain('[UFO74]: Type `help` or `hint` if you are lost and need help.');
+      expect(helpUfoLines).toContain(
+        '[UFO74]: Type `help` or `hint` if you are lost and need help.'
+      );
     });
   });
 

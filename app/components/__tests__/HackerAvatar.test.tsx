@@ -36,7 +36,10 @@ describe('HackerAvatar', () => {
       </FloatingUIProvider>
     );
 
-    expect(screen.getByAltText('Hacker avatar')).toHaveAttribute('src', '/images/avatar/neutral.jpg');
+    expect(screen.getByAltText('Hacker avatar')).toHaveAttribute(
+      'src',
+      '/images/avatar/neutral.jpg'
+    );
 
     rerender(
       <FloatingUIProvider>
@@ -49,13 +52,19 @@ describe('HackerAvatar', () => {
       </FloatingUIProvider>
     );
 
-    expect(screen.getByAltText('Hacker avatar')).toHaveAttribute('src', '/images/avatar/scared.jpg');
+    expect(screen.getByAltText('Hacker avatar')).toHaveAttribute(
+      'src',
+      '/images/avatar/scared.jpg'
+    );
 
     act(() => {
       vi.advanceTimersByTime(5150);
     });
 
-    expect(screen.getByAltText('Hacker avatar')).toHaveAttribute('src', '/images/avatar/neutral.jpg');
+    expect(screen.getByAltText('Hacker avatar')).toHaveAttribute(
+      'src',
+      '/images/avatar/neutral.jpg'
+    );
     expect(onExpressionTimeout).toHaveBeenCalledTimes(1);
   });
 });

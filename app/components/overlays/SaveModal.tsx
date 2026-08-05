@@ -41,7 +41,8 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
     setSaving(true);
     setSaveError(null);
     const locale = language === 'pt-BR' ? 'pt-BR' : language === 'es' ? 'es' : 'en-US';
-    const name = slotName.trim() || t('save.defaultName', { value: new Date().toLocaleString(locale) });
+    const name =
+      slotName.trim() || t('save.defaultName', { value: new Date().toLocaleString(locale) });
     const savedSlot = saveGame(gameState, name);
     setSaving(false);
     if (!savedSlot) {
@@ -52,7 +53,13 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
   }, [gameState, language, onSavedAction, slotName, t]);
 
   return (
-    <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="savemodal-title">
+    <div
+      className={styles.overlay}
+      onClick={onCloseAction}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="savemodal-title"
+    >
       <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 id="savemodal-title">{t('save.title')}</h2>
@@ -83,7 +90,9 @@ export default function SaveModal({ gameState, onCloseAction, onSavedAction }: S
           />
 
           <div className={styles.info}>
-            <div>{t('save.path')}: {gameState.currentPath}</div>
+            <div>
+              {t('save.path')}: {gameState.currentPath}
+            </div>
             <div>
               {t('save.progress')}: {gameState.savedFiles?.size || 0}/10 {t('save.progressSuffix')}
             </div>

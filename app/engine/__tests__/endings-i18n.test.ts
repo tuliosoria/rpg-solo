@@ -27,10 +27,7 @@
 import { describe, it, expect } from 'vitest';
 import endingsData from '../../data/endingsContent.json';
 import { ENDINGS_SUPPLEMENT } from '../../i18n/generated/endingsSupplement.generated';
-import {
-  SMOKING_GUN_NARRATIVE_INTRO,
-  SMOKING_GUN_AOL_PURPOSE,
-} from '../governmentScandalCopy';
+import { SMOKING_GUN_NARRATIVE_INTRO, SMOKING_GUN_AOL_PURPOSE } from '../governmentScandalCopy';
 import { WRONG_STORY_NARRATIVE_SWAP, WRONG_STORY_AOL_SWAP } from '../alienRevelationCopy';
 
 type Ending = {
@@ -59,7 +56,7 @@ function proseOf(ending: Ending, id?: string): string[] {
     aol.headline,
     aol.subheadline,
     ...((aol.body as string[]) ?? []),
-    ...(id ? DYNAMIC_COPY[id] ?? [] : []),
+    ...(id ? (DYNAMIC_COPY[id] ?? []) : []),
   ].filter((s): s is string => typeof s === 'string' && s.trim().length > 3);
 }
 

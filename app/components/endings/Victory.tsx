@@ -6,11 +6,7 @@ import { unlockAchievement, Achievement } from '../../engine/achievements';
 import { recordEnding } from '../../storage/statistics';
 import AchievementPopup from '../overlays/AchievementPopup';
 import { useI18n } from '../../i18n';
-import {
-  EndingId,
-  ENDINGS,
-  getEndingTitle,
-} from '../../engine/endings';
+import { EndingId, ENDINGS, getEndingTitle } from '../../engine/endings';
 import type { EndingFlags } from '../../engine/endings';
 import { buildLeakPrologue } from '../../engine/leakPrologue';
 import { resolveGovernmentScandalAolBody } from '../../engine/governmentScandalCopy';
@@ -103,9 +99,8 @@ export default function Victory({
   // ── Ending music (honours the player's music + volume settings) ──
   useEndingMusic('/audio/music/ending-game.mp3', { baseVolume: 0.5 });
 
-  const resolvedEndingId: EndingId = endingId && endingId in ENDINGS
-    ? endingId
-    : 'incomplete_picture';
+  const resolvedEndingId: EndingId =
+    endingId && endingId in ENDINGS ? endingId : 'incomplete_picture';
   const impliedEndingFlags = ENDING_IMPLIED_FLAGS[resolvedEndingId] ?? {};
   const resolvedEndingFlags = {
     conspiracyFilesLeaked:
@@ -127,7 +122,7 @@ export default function Victory({
   const ending = ENDINGS[resolvedEndingId];
   const leakPrologue = useMemo(
     () => buildLeakPrologue(savedFiles, resolvedEndingId),
-    [savedFiles, resolvedEndingId],
+    [savedFiles, resolvedEndingId]
   );
   const aol = useMemo(() => {
     const baseAol = ending?.aol ?? {
@@ -145,7 +140,7 @@ export default function Victory({
     const resolvedBody = resolveAolBodyWithRevelations(
       resolvedEndingId,
       scandalResolvedBody,
-      savedFiles,
+      savedFiles
     );
     if (leakPrologue.length === 0) return { ...baseAol, body: resolvedBody };
     return { ...baseAol, body: [...leakPrologue, ...resolvedBody] };
@@ -238,9 +233,15 @@ export default function Victory({
 
     setAchievements(newAchievements);
   }, [
-    commandCount, detectionLevel, maxDetectionReached,
-    filesReadCount, totalReadableFiles,
-    hasLeakedFiles, hasReleasedAlpha, hasNeuralLink, resolvedEndingId,
+    commandCount,
+    detectionLevel,
+    maxDetectionReached,
+    filesReadCount,
+    totalReadableFiles,
+    hasLeakedFiles,
+    hasReleasedAlpha,
+    hasNeuralLink,
+    resolvedEndingId,
   ]);
 
   useEffect(() => {
@@ -290,18 +291,14 @@ export default function Victory({
   const staggerDelay = (index: number): React.CSSProperties =>
     isInstant ? {} : { animationDelay: `${index * timings.staggerBase}ms` };
 
-  const sectionClass = isInstant
-    ? styles.sectionInstant
-    : styles.section;
+  const sectionClass = isInstant ? styles.sectionInstant : styles.section;
 
   return (
     <div className={styles.container} role="dialog" aria-modal="true" aria-label={endingTitle}>
       <div className={styles.browserWindow}>
         {/* ── Title Bar ── */}
         <div className={styles.titleBar} aria-hidden="true">
-          <span className={styles.titleBarText}>
-            {t('ending.aol.windowTitle')}
-          </span>
+          <span className={styles.titleBarText}>{t('ending.aol.windowTitle')}</span>
           <div className={styles.windowControls}>
             <span className={styles.windowBtn}>_</span>
             <span className={styles.windowBtn}>□</span>
@@ -319,7 +316,9 @@ export default function Victory({
         {/* ── Toolbar ── */}
         <div className={styles.toolbar} aria-hidden="true">
           {browserNavLabels.map(label => (
-            <span key={label} className={styles.navBtn}>{label}</span>
+            <span key={label} className={styles.navBtn}>
+              {label}
+            </span>
           ))}
         </div>
 
@@ -333,9 +332,7 @@ export default function Victory({
         <div className={styles.contentArea}>
           {phase === 'loading' ? (
             <div className={styles.loadingScreen}>
-              <div className={styles.loadingText}>
-                {t('ending.aol.loading')}
-              </div>
+              <div className={styles.loadingText}>{t('ending.aol.loading')}</div>
               <div className={styles.progressBarTrack}>
                 <div
                   className={styles.progressBarFill}
@@ -368,15 +365,14 @@ export default function Victory({
                 aria-hidden="true"
               >
                 <div className={styles.marqueeTrack}>
-                  <span className={styles.marqueeText}>{translateRuntimeText(aol.subheadline)}</span>
+                  <span className={styles.marqueeText}>
+                    {translateRuntimeText(aol.subheadline)}
+                  </span>
                 </div>
               </div>
 
               {/* Headline */}
-              <h1
-                className={`${sectionClass} ${styles.headline}`}
-                style={staggerDelay(3)}
-              >
+              <h1 className={`${sectionClass} ${styles.headline}`} style={staggerDelay(3)}>
                 {translateRuntimeText(aol.headline)}
               </h1>
 
@@ -404,15 +400,17 @@ export default function Victory({
                       alt={translateRuntimeText(aol.imageAlt)}
                       className={styles.newsPhotoImg}
                     />
-                    <div className={styles.imageCaption}>
-                      {translateRuntimeText(aol.imageAlt)}
-                    </div>
+                    <div className={styles.imageCaption}>{translateRuntimeText(aol.imageAlt)}</div>
                     <div className={styles.imageCredit}>{t('ending.aol.photoCredit')}</div>
                   </>
                 ) : (
                   <>
-                    <div className={styles.brokenImageIcon} aria-hidden="true">✕</div>
-                    <div className={styles.brokenImageLabel}>{translateRuntimeText(aol.imageAlt)}</div>
+                    <div className={styles.brokenImageIcon} aria-hidden="true">
+                      ✕
+                    </div>
+                    <div className={styles.brokenImageLabel}>
+                      {translateRuntimeText(aol.imageAlt)}
+                    </div>
                     <div className={styles.imageCredit}>{t('ending.aol.photoCredit')}</div>
                   </>
                 )}
@@ -425,7 +423,9 @@ export default function Victory({
               >
                 <hr className={styles.thinRule} />
                 <div className={styles.editorNote}>
-                  <em>{t('ending.aol.editorNote')}: {translateRuntimeText(ending?.ufo74_final ?? '')}</em>
+                  <em>
+                    {t('ending.aol.editorNote')}: {translateRuntimeText(ending?.ufo74_final ?? '')}
+                  </em>
                 </div>
               </div>
 
@@ -440,7 +440,9 @@ export default function Victory({
                     <dl className={styles.dossierList}>
                       <div className={styles.dossierRow}>
                         <dt>{t('ending.dossier.filesReviewed')}</dt>
-                        <dd>{filesReadCount}/{Math.max(totalReadableFiles, filesReadCount)}</dd>
+                        <dd>
+                          {filesReadCount}/{Math.max(totalReadableFiles, filesReadCount)}
+                        </dd>
                       </div>
                       <div className={styles.dossierRow}>
                         <dt>{t('ending.dossier.maxDetection')}</dt>

@@ -21,7 +21,7 @@ describe('Morse Puzzle', () => {
     it('should show error when morse file has not been read', () => {
       const state = createTestState({ morseFileRead: false });
       const result = executeCommand('message COLHEITA', state);
-      
+
       expect(result.output.some(e => e.content.includes('No pending message'))).toBe(true);
       expect(result.output.some(e => e.content.includes('/comms/intercepts/'))).toBe(true);
     });
@@ -29,7 +29,7 @@ describe('Morse Puzzle', () => {
     it('should show usage when no argument provided', () => {
       const state = createTestState({ morseFileRead: true });
       const result = executeCommand('message', state);
-      
+
       expect(result.output.some(e => e.content.includes('Usage: message'))).toBe(true);
       expect(result.output.some(e => e.content.includes('Attempts remaining: 3'))).toBe(true);
     });
@@ -39,7 +39,7 @@ describe('Morse Puzzle', () => {
     it('should accept correct answer "COLHEITA"', () => {
       const state = createTestState({ morseFileRead: true });
       const result = executeCommand('message COLHEITA', state);
-      
+
       expect(result.output.some(e => e.content.includes('MESSAGE DECIPHERED'))).toBe(true);
       expect(result.stateChanges.morseMessageSolved).toBe(true);
     });
@@ -47,21 +47,21 @@ describe('Morse Puzzle', () => {
     it('should accept lowercase answer', () => {
       const state = createTestState({ morseFileRead: true });
       const result = executeCommand('message colheita', state);
-      
+
       expect(result.stateChanges.morseMessageSolved).toBe(true);
     });
 
     it('should accept hyphenated or spaced variations', () => {
       const state = createTestState({ morseFileRead: true });
       const result = executeCommand('message COL-HEITA', state);
-      
+
       expect(result.stateChanges.morseMessageSolved).toBe(true);
     });
 
     it('should hint at override protocol on success', () => {
       const state = createTestState({ morseFileRead: true });
       const result = executeCommand('message COLHEITA', state);
-      
+
       expect(result.output.some(e => e.content.includes('override protocol'))).toBe(true);
       expect(result.soundTrigger).toBe('evidence');
     });
@@ -71,7 +71,7 @@ describe('Morse Puzzle', () => {
     it('should show wrong answer message and decrement attempts', () => {
       const state = createTestState({ morseFileRead: true, morseMessageAttempts: 0 });
       const result = executeCommand('message WRONG ANSWER', state);
-      
+
       expect(result.output.some(e => e.content.includes('INCORRECT'))).toBe(true);
       expect(result.stateChanges.morseMessageAttempts).toBe(1);
       expect(result.stateChanges.morseMessageSolved).toBeUndefined();
@@ -80,7 +80,7 @@ describe('Morse Puzzle', () => {
     it('should show remaining attempts after wrong answer', () => {
       const state = createTestState({ morseFileRead: true, morseMessageAttempts: 1 });
       const result = executeCommand('message WRONG', state);
-      
+
       expect(result.output.some(e => e.content.includes('Attempts remaining: 1'))).toBe(true);
       expect(result.stateChanges.morseMessageAttempts).toBe(2);
     });
@@ -90,7 +90,7 @@ describe('Morse Puzzle', () => {
     it('should trigger failure after 3 wrong attempts', () => {
       const state = createTestState({ morseFileRead: true, morseMessageAttempts: 2 });
       const result = executeCommand('message WRONG', state);
-      
+
       expect(result.output.some(e => e.content.includes('DECRYPTION FAILED'))).toBe(true);
       expect(result.output.some(e => e.content.includes('COLHEITA'))).toBe(true);
       expect(result.stateChanges.morseMessageAttempts).toBe(3);
@@ -100,7 +100,7 @@ describe('Morse Puzzle', () => {
     it('should show puzzle failed state when already exhausted', () => {
       const state = createTestState({ morseFileRead: true, morseMessageAttempts: 3 });
       const result = executeCommand('message', state);
-      
+
       expect(result.output.some(e => e.content.includes('exhausted'))).toBe(true);
       expect(result.output.some(e => e.content.includes('COLHEITA'))).toBe(true);
     });
@@ -108,7 +108,7 @@ describe('Morse Puzzle', () => {
     it('should show puzzle failed for any input after exhaustion', () => {
       const state = createTestState({ morseFileRead: true, morseMessageAttempts: 3 });
       const result = executeCommand('message COLHEITA', state);
-      
+
       // Even correct answer should fail after exhaustion
       expect(result.output.some(e => e.content.includes('exhausted'))).toBe(true);
       expect(result.stateChanges.morseMessageSolved).toBeUndefined();
@@ -117,12 +117,12 @@ describe('Morse Puzzle', () => {
 
   describe('message command - already solved', () => {
     it('should show already solved message', () => {
-      const state = createTestState({ 
-        morseFileRead: true, 
-        morseMessageSolved: true 
+      const state = createTestState({
+        morseFileRead: true,
+        morseMessageSolved: true,
       });
       const result = executeCommand('message COLHEITA', state);
-      
+
       expect(result.output.some(e => e.content.includes('already deciphered'))).toBe(true);
     });
   });
@@ -130,18 +130,26 @@ describe('Morse Puzzle', () => {
 
 describe('Wrong Attempts Game Over', () => {
   it('should trigger game over when wrongAttempts reaches 8', () => {
-    const state = createTestState({ wrongAttempts: 7, morseFileRead: true, morseMessageAttempts: 2 });
+    const state = createTestState({
+      wrongAttempts: 7,
+      morseFileRead: true,
+      morseMessageAttempts: 2,
+    });
     // This will be the 3rd failed morse attempt, which adds +1 wrongAttempts = 8
     const result = executeCommand('message WRONG', state);
-    
+
     expect(result.stateChanges.isGameOver).toBe(true);
     expect(result.stateChanges.gameOverReason).toContain('TERMINAL LOCKOUT');
   });
 
   it('should not trigger game over at 7 wrongAttempts', () => {
-    const state = createTestState({ wrongAttempts: 6, morseFileRead: true, morseMessageAttempts: 2 });
+    const state = createTestState({
+      wrongAttempts: 6,
+      morseFileRead: true,
+      morseMessageAttempts: 2,
+    });
     const result = executeCommand('message WRONG', state);
-    
+
     expect(result.stateChanges.wrongAttempts).toBe(7);
     expect(result.stateChanges.isGameOver).toBeUndefined();
   });
@@ -151,7 +159,7 @@ describe('Morse File Read Flag', () => {
   it('should set morseFileRead when opening morse_intercept file', () => {
     const state = createTestState({ currentPath: '/comms/intercepts' });
     const result = executeCommand('open morse_intercept.sig', state);
-    
+
     expect(result.stateChanges.morseFileRead).toBe(true);
   });
 });
@@ -201,9 +209,9 @@ describe('Override Failures', () => {
     const result = executeCommand('override protocol COLHEITA', state);
 
     expect(result.output.some(e => e.content.includes('Authentication accepted.'))).toBe(true);
-    expect(result.output.some(e => e.content.includes('Administrative archive access granted'))).toBe(
-      true
-    );
+    expect(
+      result.output.some(e => e.content.includes('Administrative archive access granted'))
+    ).toBe(true);
     expect(result.stateChanges.flags?.adminUnlocked).toBe(true);
     expect(result.stateChanges.accessLevel).toBe(5);
     expect(result.stateChanges.wrongAttempts).toBeUndefined();

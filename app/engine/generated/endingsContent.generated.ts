@@ -3,283 +3,297 @@
 
 import type { EndingId, GameEnding } from '../endings';
 
-export const ENDINGS_CONTENT: Record<EndingId, Omit<GameEnding, 'id'>> =
-{
-  "ridiculed": {
-    "title": "RIDICULED",
-    "subtitle": "The leak that proved nothing.",
-    "narrative": [
-      "The dossier surfaces on three forums and a defunct Geocities mirror. A television host holds up a printout and laughs for six minutes straight. The military issues no denial because none is required.",
-      "Within forty-eight hours the files are catalogued alongside crop circles, chemtrails, and faith healers. Your name never enters the public record. The word \"hoax\" is generous — most call it fan fiction.",
-      "The archive rots on a server in São Paulo. Nobody downloads it. The password expires. Varginha remains a punchline."
+export const ENDINGS_CONTENT: Record<EndingId, Omit<GameEnding, 'id'>> = {
+  ridiculed: {
+    title: 'RIDICULED',
+    subtitle: 'The leak that proved nothing.',
+    narrative: [
+      'The dossier surfaces on three forums and a defunct Geocities mirror. A television host holds up a printout and laughs for six minutes straight. The military issues no denial because none is required.',
+      'Within forty-eight hours the files are catalogued alongside crop circles, chemtrails, and faith healers. Your name never enters the public record. The word "hoax" is generous — most call it fan fiction.',
+      'The archive rots on a server in São Paulo. Nobody downloads it. The password expires. Varginha remains a punchline.',
     ],
-    "ufo74_final": "you gave them noise. they needed signal.",
-    "aol": {
-      "headline": "INTERNET HOAX ALERT: 'CLASSIFIED UFO FILES' FROM BRAZIL DISMISSED AS PRANK",
-      "subheadline": "USAF spokesperson calls documents 'creative fiction' — Brazilian Air Force declines comment — Internet forums debate authenticity",
-      "body": [
+    ufo74_final: 'you gave them noise. they needed signal.',
+    aol: {
+      headline: "INTERNET HOAX ALERT: 'CLASSIFIED UFO FILES' FROM BRAZIL DISMISSED AS PRANK",
+      subheadline:
+        "USAF spokesperson calls documents 'creative fiction' — Brazilian Air Force declines comment — Internet forums debate authenticity",
+      body: [
         "VARGINHA, Brazil (AP) — A collection of documents purporting to be classified military files about an alleged 'unidentified flying object' incident in southern Brazil surfaced on several Internet bulletin boards late Tuesday, drawing immediate skepticism from experts and officials alike.",
         "The files, which appear to describe military operations in the city of Varginha in January of this year, were reportedly obtained through an unauthorized computer intrusion. Air Force officials in Brasília declined to comment, noting only that the documents 'do not correspond to any known military operation.'",
-        "Dr. Harold Simmons of the Center for Scientific Inquiry called the documents 'an elaborate but ultimately unconvincing fabrication,' pointing to what he described as 'inconsistencies in formatting and terminology that suggest a civilian author with limited military knowledge.'"
+        "Dr. Harold Simmons of the Center for Scientific Inquiry called the documents 'an elaborate but ultimately unconvincing fabrication,' pointing to what he described as 'inconsistencies in formatting and terminology that suggest a civilian author with limited military knowledge.'",
       ],
-      "url": "http://www.aol.com/news/world/brazil_ufo_hoax_0196.htm",
-      "imageAlt": "photo_unverified_document.jpg (43 KB)",
-      "imageSrc": "/images/endings/ridiculed.jpg",
-      "visitorCount": 1247
-    }
+      url: 'http://www.aol.com/news/world/brazil_ufo_hoax_0196.htm',
+      imageAlt: 'photo_unverified_document.jpg (43 KB)',
+      imageSrc: '/images/endings/ridiculed.jpg',
+      visitorCount: 1247,
+    },
   },
-  "ufo74_exposed": {
-    "title": "UFO74 EXPOSED",
-    "subtitle": "The ghost had a name all along.",
-    "narrative": [
-      "The decrypted file spreads before anyone can suppress it. Carlos Eduardo Ferreira — intelligence officer, Brazilian Air Force, stationed at Guarulhos in 1996. Thirty years building the archive in secret.",
+  ufo74_exposed: {
+    title: 'UFO74 EXPOSED',
+    subtitle: 'The ghost had a name all along.',
+    narrative: [
+      'The decrypted file spreads before anyone can suppress it. Carlos Eduardo Ferreira — intelligence officer, Brazilian Air Force, stationed at Guarulhos in 1996. Thirty years building the archive in secret.',
       "Military intelligence confirms the service record within hours. The denial is immediate, automatic, and too late — the file is already mirrored on four continents. Ferreira's face is on every screen in the country by the evening news. He never wanted fame. He wanted one person to finish reading before they decided he was lying.",
-      "The Air Force opens an internal inquiry. Three generals request early retirement inside a week. The archive survives because it was everywhere before anyone thought to bury it. UFO74 is no longer a call sign, a rumor, or a signature at the bottom of a leaked file. It is a name with a service number, and the service number checks out."
+      'The Air Force opens an internal inquiry. Three generals request early retirement inside a week. The archive survives because it was everywhere before anyone thought to bury it. UFO74 is no longer a call sign, a rumor, or a signature at the bottom of a leaked file. It is a name with a service number, and the service number checks out.',
     ],
-    "ufo74_final": "you found me. now finish what i started.",
-    "aol": {
-      "headline": "MILITARY OFFICER IDENTIFIED AS SOURCE OF CLASSIFIED BRAZILIAN DATA LEAK",
-      "subheadline": "Carlos E. Ferreira, Brazilian Air Force intelligence — service record confirmed — three generals request early retirement",
-      "body": [
-        "BRASÍLIA, Brazil (Reuters) — A decrypted computer file circulating on the Internet has identified a Brazilian Air Force intelligence officer as the source of a massive unauthorized disclosure of classified military documents, according to officials familiar with the matter.",
+    ufo74_final: 'you found me. now finish what i started.',
+    aol: {
+      headline: 'MILITARY OFFICER IDENTIFIED AS SOURCE OF CLASSIFIED BRAZILIAN DATA LEAK',
+      subheadline:
+        'Carlos E. Ferreira, Brazilian Air Force intelligence — service record confirmed — three generals request early retirement',
+      body: [
+        'BRASÍLIA, Brazil (Reuters) — A decrypted computer file circulating on the Internet has identified a Brazilian Air Force intelligence officer as the source of a massive unauthorized disclosure of classified military documents, according to officials familiar with the matter.',
         "The officer, identified as Carlos Eduardo Ferreira, was reportedly stationed at Guarulhos Air Base during the period described in the leaked files. Military intelligence confirmed the service record within hours of the file's release, though a spokesperson declined to comment on the substance of the allegations.",
-        "Three senior Air Force generals have submitted requests for early retirement in what analysts describe as an attempt to distance themselves from the growing scandal. The leaked archive, which Ferreira allegedly maintained for decades, contains documents related to military operations in southern Minas Gerais state."
+        'Three senior Air Force generals have submitted requests for early retirement in what analysts describe as an attempt to distance themselves from the growing scandal. The leaked archive, which Ferreira allegedly maintained for decades, contains documents related to military operations in southern Minas Gerais state.',
       ],
-      "url": "http://www.aol.com/news/world/brazil_leak_officer_id.htm",
-      "imageAlt": "ferreira_service_photo_CLASSIFIED.jpg (unable to load)",
-      "imageSrc": "/images/endings/ufo74_exposed.jpg",
-      "visitorCount": 176508
-    }
+      url: 'http://www.aol.com/news/world/brazil_leak_officer_id.htm',
+      imageAlt: 'ferreira_service_photo_CLASSIFIED.jpg (unable to load)',
+      imageSrc: '/images/endings/ufo74_exposed.jpg',
+      visitorCount: 176508,
+    },
   },
-  "the_2026_warning": {
-    "title": "THE 2026 WARNING",
-    "subtitle": "Thirty rotations. The clock does not stop.",
-    "narrative": [
-      "The convergence data reaches academic servers on a Tuesday. By Thursday, physicists in three countries have confirmed the cycle independently and stopped calling it atmospheric. 1947. 1977. 1996. The intervals do not drift. The projection is specific and it is not weather: September 2026, plus or minus two months. An arrival window.",
-      "The word \"arrival\" is what breaks containment. Once one preprint uses it, the rest follow within days. Private aerospace firms begin relocating satellite arrays without explanation. The Brazilian Air Force reclassifies seven archived directives in a single afternoon. Two national space agencies convene emergency sessions and decline to say why.",
-      "No government issues a denial, because a denial would require naming the thing being denied. A NATO threat-assessment cell adds a line item for the 2026 window. The public is told the models describe \"a recurring geophysical phenomenon.\" The scientists who built the models have stopped giving interviews. They are not calm. They are counting."
+  the_2026_warning: {
+    title: 'THE 2026 WARNING',
+    subtitle: 'Thirty rotations. The clock does not stop.',
+    narrative: [
+      'The convergence data reaches academic servers on a Tuesday. By Thursday, physicists in three countries have confirmed the cycle independently and stopped calling it atmospheric. 1947. 1977. 1996. The intervals do not drift. The projection is specific and it is not weather: September 2026, plus or minus two months. An arrival window.',
+      'The word "arrival" is what breaks containment. Once one preprint uses it, the rest follow within days. Private aerospace firms begin relocating satellite arrays without explanation. The Brazilian Air Force reclassifies seven archived directives in a single afternoon. Two national space agencies convene emergency sessions and decline to say why.',
+      'No government issues a denial, because a denial would require naming the thing being denied. A NATO threat-assessment cell adds a line item for the 2026 window. The public is told the models describe "a recurring geophysical phenomenon." The scientists who built the models have stopped giving interviews. They are not calm. They are counting.',
     ],
-    "ufo74_final": "the window is real. now they have to watch it open.",
-    "aol": {
-      "headline": "PHYSICISTS CONFIRM 30-YEAR CONTACT CYCLE; NEXT WINDOW PROJECTED FOR SEPTEMBER 2026",
-      "subheadline": "Three national research bodies validate the model independently — aerospace firms relocate orbital arrays — Brazilian Air Force reclassifies seven directives without comment",
-      "body": [
+    ufo74_final: 'the window is real. now they have to watch it open.',
+    aol: {
+      headline:
+        'PHYSICISTS CONFIRM 30-YEAR CONTACT CYCLE; NEXT WINDOW PROJECTED FOR SEPTEMBER 2026',
+      subheadline:
+        'Three national research bodies validate the model independently — aerospace firms relocate orbital arrays — Brazilian Air Force reclassifies seven directives without comment',
+      body: [
         "GENEVA, Switzerland (AP) — Physicists at three independent research institutions have confirmed a thirty-year cyclical pattern underlying a series of contact events long filed as unexplained, according to a joint report released Wednesday. The model, drawn from documents leaked from a Brazilian military archive, projects the next occurrence for September 2026 and describes it, in the words of one contributing researcher, as 'a recurrence window, not a weather event.'",
         "The analysis aligns three dates the leaked files treat as instances of the same phenomenon — 1947, 1977, and 1996 — and confirms the underlying mathematics as 'internally consistent and statistically significant.' Two of the three institutions declined to characterize the nature of the recurrence on the record. The third did not decline. 'We have stopped describing atmospheric anomalies,' its lead author said. 'We are describing a schedule.'",
-        "Within seventy-two hours of the report, several private aerospace companies began what industry sources called 'precautionary repositioning' of orbital monitoring arrays. The Brazilian Air Force reclassified seven archived directives in a single afternoon and declined comment. A NATO threat-assessment cell has, according to two officials, added the 2026 window to its standing agenda. No government has issued a denial — a fact one analyst called 'the loudest response available to them.'"
+        "Within seventy-two hours of the report, several private aerospace companies began what industry sources called 'precautionary repositioning' of orbital monitoring arrays. The Brazilian Air Force reclassified seven archived directives in a single afternoon and declined comment. A NATO threat-assessment cell has, according to two officials, added the 2026 window to its standing agenda. No government has issued a denial — a fact one analyst called 'the loudest response available to them.'",
       ],
-      "url": "http://www.aol.com/news/science/30year_cycle_atmospheric.htm",
-      "imageAlt": "convergence_projection_2026.gif (image withheld pending review)",
-      "imageSrc": "/images/endings/the_2026_warning.jpg",
-      "visitorCount": 638914
-    }
+      url: 'http://www.aol.com/news/science/30year_cycle_atmospheric.htm',
+      imageAlt: 'convergence_projection_2026.gif (image withheld pending review)',
+      imageSrc: '/images/endings/the_2026_warning.jpg',
+      visitorCount: 638914,
+    },
   },
-  "government_scandal": {
-    "title": "BRAZILIAN GOVERNMENT SCANDAL",
-    "subtitle": "The coverup was bigger than the event.",
-    "narrative": [
-      "Transport logs. Response orders. Incident reports signed by officers who officially never existed. The leak does not prove alien contact — it proves the Brazilian military mobilized an entire region to hide something on January 20, 1996.",
-      "Congressional inquiries open in Brasília. Three colonels are subpoenaed. One refuses to testify. The Jardim Andere site is cordoned off for \"environmental assessment\" that never produces a report.",
-      "The question shifts. It is no longer about what landed. It is about who authorized the silence, who paid for it, and where the bodies went. A defense minister resigns rather than answer the third question. Denial of the operation is no longer tenable in Brasília; only its purpose remains classified — and every day that it stays classified, the purpose looks less like an accident and more like a body."
+  government_scandal: {
+    title: 'BRAZILIAN GOVERNMENT SCANDAL',
+    subtitle: 'The coverup was bigger than the event.',
+    narrative: [
+      'Transport logs. Response orders. Incident reports signed by officers who officially never existed. The leak does not prove alien contact — it proves the Brazilian military mobilized an entire region to hide something on January 20, 1996.',
+      'Congressional inquiries open in Brasília. Three colonels are subpoenaed. One refuses to testify. The Jardim Andere site is cordoned off for "environmental assessment" that never produces a report.',
+      'The question shifts. It is no longer about what landed. It is about who authorized the silence, who paid for it, and where the bodies went. A defense minister resigns rather than answer the third question. Denial of the operation is no longer tenable in Brasília; only its purpose remains classified — and every day that it stays classified, the purpose looks less like an accident and more like a body.',
     ],
-    "ufo74_final": "they will sacrifice officers to protect the secret.",
-    "aol": {
-      "headline": "LEAKED DOCUMENTS REVEAL MASSIVE BRAZILIAN MILITARY OPERATION IN VARGINHA",
-      "subheadline": "Transport logs and response orders prove classified mobilization — three colonels subpoenaed — Congressional inquiry opens in Brasília",
-      "body": [
-        "BRASÍLIA, Brazil (AP) — Classified military documents leaked to the Internet this week reveal what appears to be a large-scale Brazilian Army operation in the southern city of Varginha in January 1996, involving troop movements, vehicle requisitions, and command orders that were never disclosed to the public or to civilian authorities.",
+    ufo74_final: 'they will sacrifice officers to protect the secret.',
+    aol: {
+      headline: 'LEAKED DOCUMENTS REVEAL MASSIVE BRAZILIAN MILITARY OPERATION IN VARGINHA',
+      subheadline:
+        'Transport logs and response orders prove classified mobilization — three colonels subpoenaed — Congressional inquiry opens in Brasília',
+      body: [
+        'BRASÍLIA, Brazil (AP) — Classified military documents leaked to the Internet this week reveal what appears to be a large-scale Brazilian Army operation in the southern city of Varginha in January 1996, involving troop movements, vehicle requisitions, and command orders that were never disclosed to the public or to civilian authorities.',
         "The documents include transport logs, incident reports signed by officers whose service records contain no reference to the operation, and response orders authorizing the cordoning of a residential area described only as 'the Jardim Andere site.' The purpose of the operation is not specified in any of the recovered files.",
-        "Three colonels have been subpoenaed to testify before a Congressional committee in Brasília. One has reportedly refused. The Ministry of Defense issued a brief statement calling the documents 'unverified' but did not deny their authenticity."
+        "Three colonels have been subpoenaed to testify before a Congressional committee in Brasília. One has reportedly refused. The Ministry of Defense issued a brief statement calling the documents 'unverified' but did not deny their authenticity.",
       ],
-      "url": "http://www.aol.com/news/world/brazil_military_coverup.htm",
-      "imageAlt": "transport_log_scan_96.jpg (connection timed out)",
-      "imageSrc": "/images/endings/government_scandal.jpg",
-      "visitorCount": 351902
-    }
+      url: 'http://www.aol.com/news/world/brazil_military_coverup.htm',
+      imageAlt: 'transport_log_scan_96.jpg (connection timed out)',
+      imageSrc: '/images/endings/government_scandal.jpg',
+      visitorCount: 351902,
+    },
   },
-  "prisoner_45_freed": {
-    "title": "PRISONER 45 FREED",
-    "subtitle": "The containment logs were never supposed to leave.",
-    "narrative": [
-      "Bio-containment records. Neural dump data. Ethics exceptions signed by committee. The dossier does not show a captured animal — it shows a detained intelligence, held in a Faraday cage for eleven days while handlers reported headaches and cognitive intrusion.",
-      "The witness statements give it weight. The sisters. The patrol officers. The veterinarian they silenced. Each testimony corroborates the containment timeline independently.",
-      "A São Paulo judge orders the military to produce \"all biological materials recovered January 1996.\" The military responds that no such materials exist. The containment logs say otherwise — in the military's own file numbers. Within a week the phrase \"detained biological intelligence\" is read aloud in the Chamber of Deputies. The question is no longer whether something was held. It is who signed the ethics exception, and what they believed they were authorizing."
+  prisoner_45_freed: {
+    title: 'PRISONER 45 FREED',
+    subtitle: 'The containment logs were never supposed to leave.',
+    narrative: [
+      'Bio-containment records. Neural dump data. Ethics exceptions signed by committee. The dossier does not show a captured animal — it shows a detained intelligence, held in a Faraday cage for eleven days while handlers reported headaches and cognitive intrusion.',
+      'The witness statements give it weight. The sisters. The patrol officers. The veterinarian they silenced. Each testimony corroborates the containment timeline independently.',
+      'A São Paulo judge orders the military to produce "all biological materials recovered January 1996." The military responds that no such materials exist. The containment logs say otherwise — in the military\'s own file numbers. Within a week the phrase "detained biological intelligence" is read aloud in the Chamber of Deputies. The question is no longer whether something was held. It is who signed the ethics exception, and what they believed they were authorizing.',
     ],
-    "ufo74_final": "it was never a specimen. it was a prisoner.",
-    "aol": {
-      "headline": "CLASSIFIED LOGS DESCRIBE 'NON-HUMAN ENTITY' DETAINED IN MILITARY FACILITY",
-      "subheadline": "Bio-containment records leaked — handlers reported 'cognitive intrusion' — São Paulo judge demands military disclosure",
-      "body": [
+    ufo74_final: 'it was never a specimen. it was a prisoner.',
+    aol: {
+      headline: "CLASSIFIED LOGS DESCRIBE 'NON-HUMAN ENTITY' DETAINED IN MILITARY FACILITY",
+      subheadline:
+        "Bio-containment records leaked — handlers reported 'cognitive intrusion' — São Paulo judge demands military disclosure",
+      body: [
         "SÃO PAULO, Brazil (UPI) — Leaked bio-containment records from a Brazilian military facility describe what personnel referred to as a 'detained biological intelligence' held for eleven days in a Faraday-shielded chamber, according to documents released on the World Wide Web late Thursday.",
         "The logs, which include ethics exception forms signed by a medical committee, describe handlers experiencing 'persistent headaches and reported cognitive intrusion events' during the detention period. The entity, designated as 'Specimen Alpha' in some documents and 'Prisoner 45' in others, is described as exhibiting 'responsive behavior inconsistent with any known terrestrial species.'",
-        "A judge in São Paulo has ordered the military to produce 'all biological materials recovered in January 1996.' The military responded within forty-eight hours that no such materials exist — a denial that analysts note is contradicted directly by the file numbers cited in the leaked containment logs. A parliamentary commission has since requested the roster of the medical ethics committee that signed the detention exception forms."
+        "A judge in São Paulo has ordered the military to produce 'all biological materials recovered in January 1996.' The military responded within forty-eight hours that no such materials exist — a denial that analysts note is contradicted directly by the file numbers cited in the leaked containment logs. A parliamentary commission has since requested the roster of the medical ethics committee that signed the detention exception forms.",
       ],
-      "url": "http://www.aol.com/news/world/brazil_containment_logs.htm",
-      "imageAlt": "bio_container_photo_EXPUNGED.jpg (file not found)",
-      "imageSrc": "/images/endings/prisoner_45_freed.jpg",
-      "visitorCount": 418766
-    }
+      url: 'http://www.aol.com/news/world/brazil_containment_logs.htm',
+      imageAlt: 'bio_container_photo_EXPUNGED.jpg (file not found)',
+      imageSrc: '/images/endings/prisoner_45_freed.jpg',
+      visitorCount: 418766,
+    },
   },
-  "harvest_understood": {
-    "title": "THE HARVEST UNDERSTOOD",
-    "subtitle": "Colonization does not require arrival.",
-    "narrative": [
-      "The extraction documents land in the wrong hands — or exactly the right ones. The colonization model. The harvest timeline. The mechanism that needs no ships, no landing, no contact at all. It describes Earth not as a target but as a crop: already planted, already seeded, thirty years into a cycle nobody agreed to.",
-      "Three universities publish independent analyses within a month. The consensus is clinical and total: the model is internally consistent, the energy mathematics are sound, and the thirty-year seeding cycle aligns — file by file — with the neurological data in the military's own classified medical archive. The word the reviewers keep circling, then deleting from their drafts, is \"livestock.\"",
-      "A UN scientific advisory panel is convened and, within two days, closed to the press. Two governments quietly stand up research programs under agricultural headings with budgets that make no sense for agriculture. Nobody says \"colonization\" on television. They say \"resource assessment.\" Everyone who has read the model understands which side of the assessment we are on."
+  harvest_understood: {
+    title: 'THE HARVEST UNDERSTOOD',
+    subtitle: 'Colonization does not require arrival.',
+    narrative: [
+      'The extraction documents land in the wrong hands — or exactly the right ones. The colonization model. The harvest timeline. The mechanism that needs no ships, no landing, no contact at all. It describes Earth not as a target but as a crop: already planted, already seeded, thirty years into a cycle nobody agreed to.',
+      'Three universities publish independent analyses within a month. The consensus is clinical and total: the model is internally consistent, the energy mathematics are sound, and the thirty-year seeding cycle aligns — file by file — with the neurological data in the military\'s own classified medical archive. The word the reviewers keep circling, then deleting from their drafts, is "livestock."',
+      'A UN scientific advisory panel is convened and, within two days, closed to the press. Two governments quietly stand up research programs under agricultural headings with budgets that make no sense for agriculture. Nobody says "colonization" on television. They say "resource assessment." Everyone who has read the model understands which side of the assessment we are on.',
     ],
-    "ufo74_final": "they do not need to arrive. we were already the harvest.",
-    "aol": {
-      "headline": "LEAKED MODEL DESCRIBES EARTH AS TARGET OF 'COLONIZATION WITHOUT ARRIVAL'",
-      "subheadline": "Three universities confirm the mathematics — thirty-year seeding cycle matches classified medical data — UN advisory panel convened, then closed to press",
-      "body": [
+    ufo74_final: 'they do not need to arrive. we were already the harvest.',
+    aol: {
+      headline: "LEAKED MODEL DESCRIBES EARTH AS TARGET OF 'COLONIZATION WITHOUT ARRIVAL'",
+      subheadline:
+        'Three universities confirm the mathematics — thirty-year seeding cycle matches classified medical data — UN advisory panel convened, then closed to press',
+      body: [
         "CAMBRIDGE, Mass. (AP) — Documents leaked from a classified Brazilian military archive describe a working model for what the files term 'non-arrival colonization' — a process by which an unknown intelligence could extract resources from a planetary system without physical presence, landing, or direct contact. An analysis published Thursday by researchers at MIT concludes the model is 'not speculative.'",
         "Three universities have now independently reviewed the extraction model and confirmed its energy mathematics as, in one physicist's words, 'disturbingly sound.' The model describes a thirty-year seeding cycle that reviewers say aligns, entry by entry, with neurological data drawn from the Brazilian military's own classified medical files. Several researchers declined to be quoted characterizing what the aligned data implies.",
-        "A scientific advisory panel convened at the United Nations was closed to the press within two days of its first session. At least two governments have quietly established research programs under agricultural and environmental headings, with budgets analysts describe as 'inexplicable for their stated purpose.' No official has used the word 'colonization.' Those who have read the model say the euphemism does not change the arithmetic."
+        "A scientific advisory panel convened at the United Nations was closed to the press within two days of its first session. At least two governments have quietly established research programs under agricultural and environmental headings, with budgets analysts describe as 'inexplicable for their stated purpose.' No official has used the word 'colonization.' Those who have read the model say the euphemism does not change the arithmetic.",
       ],
-      "url": "http://www.aol.com/news/science/colonization_theory_leaked.htm",
-      "imageAlt": "extraction_diagram_classified.gif (access denied)",
-      "imageSrc": "/images/endings/harvest_understood.jpg",
-      "visitorCount": 511240
-    }
+      url: 'http://www.aol.com/news/science/colonization_theory_leaked.htm',
+      imageAlt: 'extraction_diagram_classified.gif (access denied)',
+      imageSrc: '/images/endings/harvest_understood.jpg',
+      visitorCount: 511240,
+    },
   },
-  "nothing_changes": {
-    "title": "NOTHING CHANGES",
-    "subtitle": "The truth arrived. Nobody moved.",
-    "narrative": [
-      "The dossier is strong. Autopsy reports confirming non-human biology. Field observations. Military intercepts ordering the cordon. It is enough to establish, beyond reasonable dispute, that something not of this world was recovered in Varginha in January 1996. It is enough to demand answers from three governments at once.",
-      "Panels convene. Experts testify under oath that the biology is authentic and has no terrestrial precedent. The footage runs on every network for two weeks. Then an election cycle begins, a currency collapses, a pop star dies in a car, and the feed moves on — completely, and without malice, the way a tide goes out.",
-      "The files remain available. Downloaded fourteen million times. Cited in zero hearings, zero policy changes, zero resignations. Humanity was handed proof that it is not alone and filed it, unread, under yesterday. The truth turned out to be free — and free things are the easiest to set down."
+  nothing_changes: {
+    title: 'NOTHING CHANGES',
+    subtitle: 'The truth arrived. Nobody moved.',
+    narrative: [
+      'The dossier is strong. Autopsy reports confirming non-human biology. Field observations. Military intercepts ordering the cordon. It is enough to establish, beyond reasonable dispute, that something not of this world was recovered in Varginha in January 1996. It is enough to demand answers from three governments at once.',
+      'Panels convene. Experts testify under oath that the biology is authentic and has no terrestrial precedent. The footage runs on every network for two weeks. Then an election cycle begins, a currency collapses, a pop star dies in a car, and the feed moves on — completely, and without malice, the way a tide goes out.',
+      'The files remain available. Downloaded fourteen million times. Cited in zero hearings, zero policy changes, zero resignations. Humanity was handed proof that it is not alone and filed it, unread, under yesterday. The truth turned out to be free — and free things are the easiest to set down.',
     ],
-    "ufo74_final": "you proved we are not alone. the feed scrolled past it.",
-    "aol": {
-      "headline": "VARGINHA FILES DOWNLOADED 14 MILLION TIMES; GOVERNMENTS WORLDWIDE SILENT",
-      "subheadline": "Experts confirm non-human biology under oath — zero hearings, zero policy changes — election coverage resumes",
-      "body": [
+    ufo74_final: 'you proved we are not alone. the feed scrolled past it.',
+    aol: {
+      headline: 'VARGINHA FILES DOWNLOADED 14 MILLION TIMES; GOVERNMENTS WORLDWIDE SILENT',
+      subheadline:
+        'Experts confirm non-human biology under oath — zero hearings, zero policy changes — election coverage resumes',
+      body: [
         "NEW YORK (AP) — The collection of classified military documents known as the 'Varginha Files' — which includes autopsy records that four independent panels have called consistent with non-human biology — has been downloaded more than fourteen million times since its release on the Internet two weeks ago, making it one of the most widely distributed leaks in the brief history of the World Wide Web. No government has issued a formal response.",
         "Panels of experts convened at universities in four countries have testified that the medical evidence is 'authentic and without terrestrial precedent.' Footage from the original incident ran on cable news networks for approximately twelve days before being displaced by coverage of ongoing elections and a regional currency crisis.",
-        "The files remain freely available on dozens of mirror sites. Analysts note the unprecedented volume of downloads has produced no measurable political or policy impact whatsoever. 'The evidence is no longer in question,' one commentator observed. 'What is in question is whether a species that can prove it is not alone is capable of caring for longer than a news cycle. So far the answer appears to be no.'"
+        "The files remain freely available on dozens of mirror sites. Analysts note the unprecedented volume of downloads has produced no measurable political or policy impact whatsoever. 'The evidence is no longer in question,' one commentator observed. 'What is in question is whether a species that can prove it is not alone is capable of caring for longer than a news cycle. So far the answer appears to be no.'",
       ],
-      "url": "http://www.aol.com/news/world/varginha_files_14million.htm",
-      "imageAlt": "download_counter_screenshot.gif (server busy)",
-      "imageSrc": "/images/endings/nothing_changes.jpg",
-      "visitorCount": 14023847
-    }
+      url: 'http://www.aol.com/news/world/varginha_files_14million.htm',
+      imageAlt: 'download_counter_screenshot.gif (server busy)',
+      imageSrc: '/images/endings/nothing_changes.jpg',
+      visitorCount: 14023847,
+    },
   },
-  "incomplete_picture": {
-    "title": "INCOMPLETE PICTURE",
-    "subtitle": "Fragments do not make a case.",
-    "narrative": [
-      "The dossier contains evidence, but it tells no story. An autopsy report describing an organism with no human anatomical analog. A containment log counting eleven days. A transport order for a cargo that is never named. Several of these files, on their own, should end the argument. Together, they refuse to line up into one.",
-      "Debunkers dismantle the leak over a weekend — not by disproving any single document, but by pointing out that nothing connects them. Each horror sits in isolation, uncorroborated by the others. The most damning page in the set is a medical finding no one can fix to a date or a place, so no one is required to believe it.",
-      "You had the pieces. Some of them were terrible. You did not assemble the picture — and a terrible page that nobody can situate is, in the end, filed as no page at all."
+  incomplete_picture: {
+    title: 'INCOMPLETE PICTURE',
+    subtitle: 'Fragments do not make a case.',
+    narrative: [
+      'The dossier contains evidence, but it tells no story. An autopsy report describing an organism with no human anatomical analog. A containment log counting eleven days. A transport order for a cargo that is never named. Several of these files, on their own, should end the argument. Together, they refuse to line up into one.',
+      'Debunkers dismantle the leak over a weekend — not by disproving any single document, but by pointing out that nothing connects them. Each horror sits in isolation, uncorroborated by the others. The most damning page in the set is a medical finding no one can fix to a date or a place, so no one is required to believe it.',
+      'You had the pieces. Some of them were terrible. You did not assemble the picture — and a terrible page that nobody can situate is, in the end, filed as no page at all.',
     ],
-    "ufo74_final": "the worst pages were real. no one could tell where they fit.",
-    "aol": {
-      "headline": "LEAKED MILITARY FILES INCLUDE DISTURBING RECORDS BUT 'NO COHERENT CASE,' ANALYSTS SAY",
-      "subheadline": "Individual documents called 'genuinely alarming' — investigators find no connecting thread — military declines to respond to 'fragments'",
-      "body": [
+    ufo74_final: 'the worst pages were real. no one could tell where they fit.',
+    aol: {
+      headline:
+        "LEAKED MILITARY FILES INCLUDE DISTURBING RECORDS BUT 'NO COHERENT CASE,' ANALYSTS SAY",
+      subheadline:
+        "Individual documents called 'genuinely alarming' — investigators find no connecting thread — military declines to respond to 'fragments'",
+      body: [
         "WASHINGTON (AP) — A collection of documents leaked from a Brazilian military archive contains individual records that analysts describe as 'genuinely alarming' — including a medical report describing an organism with 'no human anatomical analog' — but fails, in their assessment, to assemble into a case that could withstand official scrutiny.",
         "The leak includes autopsy findings, a bio-containment log, and transport orders, several of which reviewers concede are difficult to explain away. 'Any one of these, properly sourced and corroborated, would be a serious matter,' said Dr. James Whitfield of Georgetown University. 'The problem is that nothing in the dossier corroborates anything else. The alarming pages arrive without context, and context is what turns a document into evidence.'",
-        "The Brazilian Air Force has declined to respond to what a spokesperson called 'unconnected fragments.' Analysts note the approach is effective precisely because it is candid: the files reached the public without the narrative that would make them legible, and a horror that cannot be placed on a timeline is, functionally, a horror no one has to answer for."
+        "The Brazilian Air Force has declined to respond to what a spokesperson called 'unconnected fragments.' Analysts note the approach is effective precisely because it is candid: the files reached the public without the narrative that would make them legible, and a horror that cannot be placed on a timeline is, functionally, a horror no one has to answer for.",
       ],
-      "url": "http://www.aol.com/news/world/brazil_ufo_debunked.htm",
-      "imageAlt": "autopsy_fragment_unplaced.jpg (partial file — page 2 returns 404)",
-      "imageSrc": "/images/endings/incomplete_picture.jpg",
-      "visitorCount": 54120
-    }
+      url: 'http://www.aol.com/news/world/brazil_ufo_debunked.htm',
+      imageAlt: 'autopsy_fragment_unplaced.jpg (partial file — page 2 returns 404)',
+      imageSrc: '/images/endings/incomplete_picture.jpg',
+      visitorCount: 54120,
+    },
   },
-  "wrong_story": {
-    "title": "THE WRONG STORY",
-    "subtitle": "You investigated the cafeteria.",
-    "narrative": [
+  wrong_story: {
+    title: 'THE WRONG STORY',
+    subtitle: 'You investigated the cafeteria.',
+    narrative: [
       "The dossier arrives on journalists' desks and produces genuine confusion. Budget memos. Parking allocations. A coffee harvest report. Media payment records that prove corruption but not contact.",
-      "The financial angle gains traction. Three military officials face embezzlement charges. A journalist wins an award for exposing the media suppression network. The actual event — the beings, the autopsies, the containment — is never mentioned.",
-      "You exposed a scandal. It was real, it was ugly, and it was the smallest secret in the archive. Two folders away from the budget memos sat an autopsy of a body with no human analog and a containment log counting eleven days. No journalist opened them — the corruption was easier to explain and easier to print. The bodies stayed in the ground, buried a second time under a story about parking allocations."
+      'The financial angle gains traction. Three military officials face embezzlement charges. A journalist wins an award for exposing the media suppression network. The actual event — the beings, the autopsies, the containment — is never mentioned.',
+      'You exposed a scandal. It was real, it was ugly, and it was the smallest secret in the archive. Two folders away from the budget memos sat an autopsy of a body with no human analog and a containment log counting eleven days. No journalist opened them — the corruption was easier to explain and easier to print. The bodies stayed in the ground, buried a second time under a story about parking allocations.',
     ],
-    "ufo74_final": "you indicted the accountants. the bodies are still in the ground.",
-    "aol": {
-      "headline": "MILITARY BUDGET SCANDAL UNCOVERED IN LEAKED BRAZILIAN DOCUMENTS",
-      "subheadline": "Three officials face embezzlement charges — journalist wins award for exposé — actual UFO claims ignored",
-      "body": [
-        "BRASÍLIA, Brazil (Reuters) — Classified documents leaked from a Brazilian military installation have led not to the confirmation of extraterrestrial contact, as the anonymous source apparently intended, but to the exposure of a significant financial corruption network within the armed forces.",
+    ufo74_final: 'you indicted the accountants. the bodies are still in the ground.',
+    aol: {
+      headline: 'MILITARY BUDGET SCANDAL UNCOVERED IN LEAKED BRAZILIAN DOCUMENTS',
+      subheadline:
+        'Three officials face embezzlement charges — journalist wins award for exposé — actual UFO claims ignored',
+      body: [
+        'BRASÍLIA, Brazil (Reuters) — Classified documents leaked from a Brazilian military installation have led not to the confirmation of extraterrestrial contact, as the anonymous source apparently intended, but to the exposure of a significant financial corruption network within the armed forces.',
         "The leaked files contain detailed budget memoranda, media payment records, and what prosecutors describe as 'a systematic program to suppress unfavorable news coverage through direct payments to journalists.' Three senior military officials now face embezzlement and fraud charges. A reporter for Folha de São Paulo has been awarded the Maria Moors Cabot Prize for her coverage of the scandal.",
-        "The dossier also contained medical and bio-containment records, which prosecutors set aside as 'unrelated to the financial matter under investigation.' No outlet has reported their contents. Analysts describe the collection as 'accidentally important for entirely the wrong reasons' — a leak that indicted a bookkeeping fraud while an autopsy of a non-human body sat, unexamined, in the same folder."
+        "The dossier also contained medical and bio-containment records, which prosecutors set aside as 'unrelated to the financial matter under investigation.' No outlet has reported their contents. Analysts describe the collection as 'accidentally important for entirely the wrong reasons' — a leak that indicted a bookkeeping fraud while an autopsy of a non-human body sat, unexamined, in the same folder.",
       ],
-      "url": "http://www.aol.com/news/world/brazil_budget_scandal.htm",
-      "imageAlt": "budget_memo_redacted.gif (file corrupted)",
-      "imageSrc": "/images/endings/wrong_story.jpg",
-      "visitorCount": 178234
-    }
+      url: 'http://www.aol.com/news/world/brazil_budget_scandal.htm',
+      imageAlt: 'budget_memo_redacted.gif (file corrupted)',
+      imageSrc: '/images/endings/wrong_story.jpg',
+      visitorCount: 178234,
+    },
   },
-  "hackerkid_caught": {
-    "title": "HACKERKID CAUGHT",
-    "subtitle": "The honeypots worked exactly as designed.",
-    "narrative": [
-      "Files named URGENT_classified_alpha. SMOKING_GUN_proof. FOR_PRESIDENTS_EYES_ONLY. Real classified material never advertises itself. Every file you saved was planted. Every download was logged.",
-      "Military cybersecurity traces the intrusion to your terminal within ninety minutes. The dossier is quarantined before it reaches a single journalist. Your access credentials are revoked, archived, and forwarded to federal prosecutors.",
-      "The decoy system was built for people exactly like you. Eager. Careless. Loud."
+  hackerkid_caught: {
+    title: 'HACKERKID CAUGHT',
+    subtitle: 'The honeypots worked exactly as designed.',
+    narrative: [
+      'Files named URGENT_classified_alpha. SMOKING_GUN_proof. FOR_PRESIDENTS_EYES_ONLY. Real classified material never advertises itself. Every file you saved was planted. Every download was logged.',
+      'Military cybersecurity traces the intrusion to your terminal within ninety minutes. The dossier is quarantined before it reaches a single journalist. Your access credentials are revoked, archived, and forwarded to federal prosecutors.',
+      'The decoy system was built for people exactly like you. Eager. Careless. Loud.',
     ],
-    "ufo74_final": "i tried to warn you. real secrets whisper.",
-    "aol": {
-      "headline": "COMPUTER HACKER ARRESTED AFTER DOWNLOADING MILITARY DECOY FILES",
-      "subheadline": "Cybersecurity trap worked 'exactly as designed' — suspect traced in 90 minutes — federal charges pending",
-      "body": [
-        "BRASÍLIA, Brazil (AP) — Brazilian military cybersecurity personnel have arrested an individual suspected of unauthorized intrusion into a classified computer network after the suspect downloaded files that had been deliberately planted as tracking devices, officials confirmed Saturday.",
+    ufo74_final: 'i tried to warn you. real secrets whisper.',
+    aol: {
+      headline: 'COMPUTER HACKER ARRESTED AFTER DOWNLOADING MILITARY DECOY FILES',
+      subheadline:
+        "Cybersecurity trap worked 'exactly as designed' — suspect traced in 90 minutes — federal charges pending",
+      body: [
+        'BRASÍLIA, Brazil (AP) — Brazilian military cybersecurity personnel have arrested an individual suspected of unauthorized intrusion into a classified computer network after the suspect downloaded files that had been deliberately planted as tracking devices, officials confirmed Saturday.',
         "The files, with titles such as 'URGENT_classified_alpha' and 'FOR_PRESIDENTS_EYES_ONLY,' were designed to appeal to inexperienced intruders and contained embedded tracking mechanisms that allowed military technicians to identify the suspect's terminal within ninety minutes of the initial download.",
-        "A military spokesperson confirmed that the decoy system, which has been in place since 1994, was built specifically to identify and apprehend 'unsophisticated intrusion attempts.' The suspect's collected files were quarantined before reaching any external recipient. Federal prosecutors have been notified."
+        "A military spokesperson confirmed that the decoy system, which has been in place since 1994, was built specifically to identify and apprehend 'unsophisticated intrusion attempts.' The suspect's collected files were quarantined before reaching any external recipient. Federal prosecutors have been notified.",
       ],
-      "url": "http://www.aol.com/news/tech/hacker_military_decoy.htm",
-      "imageAlt": "suspect_terminal_photo.jpg (CLASSIFIED)",
-      "imageSrc": "/images/endings/hackerkid_caught.jpg",
-      "visitorCount": 12
-    }
+      url: 'http://www.aol.com/news/tech/hacker_military_decoy.htm',
+      imageAlt: 'suspect_terminal_photo.jpg (CLASSIFIED)',
+      imageSrc: '/images/endings/hackerkid_caught.jpg',
+      visitorCount: 12,
+    },
   },
-  "secret_ending": {
-    "title": "THE FERREIRA PROTOCOL",
-    "subtitle": "Ghost. Signal. Bridge. Ambassador.",
-    "narrative": [
-      "Carlos Eduardo Ferreira. UFO74. The ghost in the machine. His archive decrypted. His identity confirmed. But the dossier contains more than a confession — it contains the convergence model, the neural connection data, and the thirty-year projection.",
-      "The combination is deliberate. Ferreira designed it this way. The identity file authenticates the source. The neural data proves contact. The convergence model provides the timeline. Together they form a single argument no committee can dismiss.",
+  secret_ending: {
+    title: 'THE FERREIRA PROTOCOL',
+    subtitle: 'Ghost. Signal. Bridge. Ambassador.',
+    narrative: [
+      'Carlos Eduardo Ferreira. UFO74. The ghost in the machine. His archive decrypted. His identity confirmed. But the dossier contains more than a confession — it contains the convergence model, the neural connection data, and the thirty-year projection.',
+      'The combination is deliberate. Ferreira designed it this way. The identity file authenticates the source. The neural data proves contact. The convergence model provides the timeline. Together they form a single argument no committee can dismiss.',
       "The Brazilian Air Force confirms the service record. Three allied governments request the neural data. The 2026 window enters official threat assessment documents. Ferreira's archive becomes the foundation of the first multinational contact protocol.",
-      "He built this for thirty years. He built it for you."
+      'He built this for thirty years. He built it for you.',
     ],
-    "ufo74_final": "you assembled everything. i can rest now.",
-    "aol": {
-      "headline": "MULTINATIONAL GOVERNMENTS ESTABLISH FIRST 'CONTACT PROTOCOL' BASED ON LEAKED ARCHIVE",
-      "subheadline": "Three allied nations request neural data — 2026 threat window enters official assessment — Ferreira archive authenticated",
-      "body": [
-        "UNITED NATIONS, New York (AP) — Representatives of three allied governments have formally requested access to neural interface data contained in a leaked Brazilian military archive, marking what diplomats describe as the first official acknowledgment that the documents may describe genuine non-human contact.",
+    ufo74_final: 'you assembled everything. i can rest now.',
+    aol: {
+      headline:
+        "MULTINATIONAL GOVERNMENTS ESTABLISH FIRST 'CONTACT PROTOCOL' BASED ON LEAKED ARCHIVE",
+      subheadline:
+        'Three allied nations request neural data — 2026 threat window enters official assessment — Ferreira archive authenticated',
+      body: [
+        'UNITED NATIONS, New York (AP) — Representatives of three allied governments have formally requested access to neural interface data contained in a leaked Brazilian military archive, marking what diplomats describe as the first official acknowledgment that the documents may describe genuine non-human contact.',
         "The archive, compiled over thirty years by Brazilian Air Force intelligence officer Carlos Eduardo Ferreira, contains identity verification documents, neural connection data, and a convergence model that projects a significant event window in September 2026. Intelligence analysts say the combination was deliberately designed to form 'a single argument no committee can dismiss.'",
-        "The Brazilian Air Force has confirmed Ferreira's service record. The 2026 projection has entered official threat assessment documents in at least two NATO member states. Sources describe the emerging multinational response as 'the first contact protocol' — a framework for coordinated government action in response to verified non-human intelligence."
+        "The Brazilian Air Force has confirmed Ferreira's service record. The 2026 projection has entered official threat assessment documents in at least two NATO member states. Sources describe the emerging multinational response as 'the first contact protocol' — a framework for coordinated government action in response to verified non-human intelligence.",
       ],
-      "url": "http://www.aol.com/news/world/contact_protocol_established.htm",
-      "imageAlt": "ferreira_protocol_document.jpg (RESTRICTED)",
-      "imageSrc": "/images/endings/secret_ending.jpg",
-      "visitorCount": 1
-    }
+      url: 'http://www.aol.com/news/world/contact_protocol_established.htm',
+      imageAlt: 'ferreira_protocol_document.jpg (RESTRICTED)',
+      imageSrc: '/images/endings/secret_ending.jpg',
+      visitorCount: 1,
+    },
   },
-  "real_ending": {
-    "title": "UNDENIABLE",
-    "subtitle": "The dossier that could not be ignored.",
-    "narrative": [
-      "Core evidence. Autopsy records. Witness testimony. Military logistics. Each category reinforces the others. The field journal establishes contact. The autopsy proves non-human biology. The witnesses confirm the timeline. The transport logs confirm the coverup.",
-      "The dossier does not ask questions. It presents facts in a sequence that permits only one conclusion. International press picks it up within hours. The Brazilian government requests seventy-two hours before responding. They use all of them.",
-      "The response, when it comes, is seven words: \"The matter is under renewed investigation.\" Those seven words change everything. Denial is no longer the official position. Thirty years of silence end with a single sentence."
+  real_ending: {
+    title: 'UNDENIABLE',
+    subtitle: 'The dossier that could not be ignored.',
+    narrative: [
+      'Core evidence. Autopsy records. Witness testimony. Military logistics. Each category reinforces the others. The field journal establishes contact. The autopsy proves non-human biology. The witnesses confirm the timeline. The transport logs confirm the coverup.',
+      'The dossier does not ask questions. It presents facts in a sequence that permits only one conclusion. International press picks it up within hours. The Brazilian government requests seventy-two hours before responding. They use all of them.',
+      'The response, when it comes, is seven words: "The matter is under renewed investigation." Those seven words change everything. Denial is no longer the official position. Thirty years of silence end with a single sentence.',
     ],
-    "ufo74_final": "they cannot unsay those seven words.",
-    "aol": {
-      "headline": "BRAZIL BREAKS SILENCE: 'THE MATTER IS UNDER RENEWED INVESTIGATION'",
-      "subheadline": "Seven words end thirty years of official denial — international press demands full disclosure — dossier called 'undeniable'",
-      "body": [
+    ufo74_final: 'they cannot unsay those seven words.',
+    aol: {
+      headline: "BRAZIL BREAKS SILENCE: 'THE MATTER IS UNDER RENEWED INVESTIGATION'",
+      subheadline:
+        "Seven words end thirty years of official denial — international press demands full disclosure — dossier called 'undeniable'",
+      body: [
         "BRASÍLIA, Brazil (AP) — The Brazilian government has issued its first official acknowledgment of the 1996 Varginha incident, stating in a seven-word response that 'the matter is under renewed investigation.' The statement, released seventy-two hours after the most comprehensive dossier of evidence ever assembled reached international press outlets, effectively ends three decades of official denial.",
         "The dossier combines field journals establishing direct contact, autopsy records confirming non-human biology, independent witness testimony verifying the timeline, and military transport logs documenting the coverup. International press agencies describe the evidence as 'presenting facts in a sequence that permits only one conclusion.'",
-        "Analysts note that the carefully worded response stops short of confirming extraterrestrial contact but represents a fundamental shift in the government's position. 'They cannot unsay those seven words,' noted one diplomatic observer. 'Denial is no longer the official position. Everything changes from here.'"
+        "Analysts note that the carefully worded response stops short of confirming extraterrestrial contact but represents a fundamental shift in the government's position. 'They cannot unsay those seven words,' noted one diplomatic observer. 'Denial is no longer the official position. Everything changes from here.'",
       ],
-      "url": "http://www.aol.com/news/world/brazil_renewed_investigation.htm",
-      "imageAlt": "official_statement_brasilia.jpg (loading...)",
-      "imageSrc": "/images/endings/real_ending.jpg",
-      "visitorCount": 847291
-    }
-  }
+      url: 'http://www.aol.com/news/world/brazil_renewed_investigation.htm',
+      imageAlt: 'official_statement_brasilia.jpg (loading...)',
+      imageSrc: '/images/endings/real_ending.jpg',
+      visitorCount: 847291,
+    },
+  },
 };

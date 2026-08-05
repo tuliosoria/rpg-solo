@@ -20,9 +20,7 @@ export interface SteamAchievementsAPI {
    * Unlocks an achievement on Steam.
    * @param id - The game's internal achievement ID
    */
-  unlock: (
-    id: string
-  ) => Promise<{ success: boolean; error?: string; alreadyUnlocked?: boolean }>;
+  unlock: (id: string) => Promise<{ success: boolean; error?: string; alreadyUnlocked?: boolean }>;
 
   /**
    * Checks if an achievement is unlocked on Steam.

@@ -54,7 +54,7 @@ function fullyUnlockedState(): GameState {
 }
 
 function basenamesOf(paths: string[]): Set<string> {
-  return new Set(paths.map((p) => p.split('/').pop() ?? p));
+  return new Set(paths.map(p => p.split('/').pop() ?? p));
 }
 
 // Build a dossier out of paths whose basename matches one of the requested
@@ -62,7 +62,7 @@ function basenamesOf(paths: string[]): Set<string> {
 function buildDossier(
   preferred: readonly string[],
   reachablePaths: ReadonlyMap<string, string>,
-  fillerCandidates: readonly string[],
+  fillerCandidates: readonly string[]
 ): Set<string> {
   const dossier = new Set<string>();
   const add = (basename: string) => {
@@ -126,10 +126,7 @@ describe('Ending reachability through the live virtualFileSystem', () => {
       'thirty_year_cycle.txt',
       'convergence_model_draft.txt',
     ],
-    ufo74_exposed: [
-      'ghost_in_machine.enc',
-      'audio_transcript_brief.txt',
-    ],
+    ufo74_exposed: ['ghost_in_machine.enc', 'audio_transcript_brief.txt'],
     real_ending: [
       'audio_transcript_brief.txt',
       'alpha_journal.log',
@@ -200,10 +197,10 @@ describe('Ending reachability through the live virtualFileSystem', () => {
 
     it(`reaches ${endingId} using only live-filesystem files`, () => {
       // Every preferred file must be reachable in the live VFS.
-      const missing = preferred.filter((f) => !reachableBasenames.has(f));
+      const missing = preferred.filter(f => !reachableBasenames.has(f));
       expect(
         missing,
-        `Files required for ${endingId} are missing from the live filesystem: ${missing.join(', ')}`,
+        `Files required for ${endingId} are missing from the live filesystem: ${missing.join(', ')}`
       ).toEqual([]);
 
       const dossier = buildDossier(preferred, reachablePaths, safeFiller);
@@ -219,12 +216,12 @@ describe('Ending reachability through the live virtualFileSystem', () => {
   // Dedicated guard for the historical regression: secret_ending must be
   // reachable, and the convergence trigger must come from a live file.
   it('keeps a "convergence" file mounted in the live filesystem', () => {
-    const convergenceMatches = [...reachableBasenames].filter((b) =>
-      b.toLowerCase().includes('convergence'),
+    const convergenceMatches = [...reachableBasenames].filter(b =>
+      b.toLowerCase().includes('convergence')
     );
     expect(
       convergenceMatches.length,
-      'No live file contains "convergence" in its basename. The secret_ending priority cannot trigger.',
+      'No live file contains "convergence" in its basename. The secret_ending priority cannot trigger.'
     ).toBeGreaterThan(0);
   });
 
@@ -247,7 +244,7 @@ describe('Ending reachability through the live virtualFileSystem', () => {
       expect(
         orphaned,
         'Categorised files that no player can reach. Either the file was renamed or ' +
-          'moved behind a gate, or the category still names a file that no longer exists.',
+          'moved behind a gate, or the category still names a file that no longer exists.'
       ).toEqual([]);
     });
 

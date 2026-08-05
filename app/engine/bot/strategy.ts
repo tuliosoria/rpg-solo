@@ -36,15 +36,24 @@ const PASSWORD_HINT_FILE = '/internal/override_protocol_memo.txt';
 //            poking at the whole command surface — including inputs a careful
 //            bot would never type — so a run exercises far more than the
 //            happy path.
-const LEVEL_POLICY: Record<BotLevel, {
-  unlocksAdmin: boolean;
-  saveTarget: number;
-  readLimit: number;
-  targetsSecret: boolean;
-  probes: boolean;
-}> = {
+const LEVEL_POLICY: Record<
+  BotLevel,
+  {
+    unlocksAdmin: boolean;
+    saveTarget: number;
+    readLimit: number;
+    targetsSecret: boolean;
+    probes: boolean;
+  }
+> = {
   dummy: { unlocksAdmin: false, saveTarget: 5, readLimit: 12, targetsSecret: false, probes: false },
-  novice: { unlocksAdmin: true, saveTarget: 10, readLimit: 999, targetsSecret: false, probes: false },
+  novice: {
+    unlocksAdmin: true,
+    saveTarget: 10,
+    readLimit: 999,
+    targetsSecret: false,
+    probes: false,
+  },
   pro: { unlocksAdmin: true, saveTarget: 10, readLimit: 999, targetsSecret: true, probes: false },
   chaos: { unlocksAdmin: true, saveTarget: 10, readLimit: 999, targetsSecret: false, probes: true },
 };
@@ -150,7 +159,10 @@ export function decideNextCommand(
 
   // Terminal conditions.
   if (state.gameWon || state.isGameOver) {
-    return { decision: { kind: 'done', reason: state.gameWon ? 'ending reached' : 'game over' }, memory: m };
+    return {
+      decision: { kind: 'done', reason: state.gameWon ? 'ending reached' : 'game over' },
+      memory: m,
+    };
   }
   if (m.turnsTaken > DEFAULT_BOT_MAX_TURNS) {
     return { decision: { kind: 'done', reason: 'max turns reached' }, memory: m };
@@ -212,7 +224,9 @@ export function decideNextCommand(
 
   // Save a wanted file we have already read (highest priority first).
   const readNotSaved = orderCandidates(
-    accessible.filter(p => state.filesRead.has(p) && !state.savedFiles.has(p) && wantsFile(p, level)),
+    accessible.filter(
+      p => state.filesRead.has(p) && !state.savedFiles.has(p) && wantsFile(p, level)
+    ),
     level,
     seed
   );
@@ -322,9 +336,10 @@ function decideEnding(
   return {
     decision: {
       kind: 'done',
-      reason: plan.missing.length > 0
-        ? `ending ${ending} unreachable — missing ${plan.missing.join(', ')}`
-        : `ending ${ending} unreachable — only ${plan.paths.length}/${MAX_SAVED} files planned`,
+      reason:
+        plan.missing.length > 0
+          ? `ending ${ending} unreachable — missing ${plan.missing.join(', ')}`
+          : `ending ${ending} unreachable — only ${plan.paths.length}/${MAX_SAVED} files planned`,
     },
     memory: m,
   };
@@ -343,7 +358,10 @@ function decideScenario(
   const next = spec.next({ state, step: m.scenarioStep, seed, flags });
   m.scenarioFlags = flags;
   if (!next) {
-    return { decision: { kind: 'done', reason: `scenario ${scenario} script complete` }, memory: m };
+    return {
+      decision: { kind: 'done', reason: `scenario ${scenario} script complete` },
+      memory: m,
+    };
   }
   m.scenarioStep += 1;
   if (typeof next === 'string') return decide(next);

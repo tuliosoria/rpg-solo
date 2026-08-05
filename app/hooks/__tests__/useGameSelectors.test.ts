@@ -160,9 +160,9 @@ describe('useGameSelectors', () => {
     });
 
     it('shows game over reason when game is over', () => {
-      const gameState = createMockGameState({ 
-        isGameOver: true, 
-        gameOverReason: 'SECURITY BREACH' 
+      const gameState = createMockGameState({
+        isGameOver: true,
+        gameOverReason: 'SECURITY BREACH',
       });
       const { result } = renderHook(() => useStatusBar(gameState));
       expect(result.current).toContain('SECURITY BREACH');
@@ -181,7 +181,7 @@ describe('useGameSelectors', () => {
         flags: { adminUnlocked: true },
       });
       const { result } = renderHook(() => useStatusBar(gameState));
-      
+
       expect(result.current).toContain('│');
       expect(result.current).toContain('AUDIT: ACTIVE');
       expect(result.current).toContain('SESSION: UNSTABLE');
@@ -192,39 +192,38 @@ describe('useGameSelectors', () => {
   describe('useEvidenceState', () => {
     it('returns zero count for undefined evidence', () => {
       const { result } = renderHook(() => useEvidenceState(undefined));
-      
+
       expect(result.current.count).toBe(0);
     });
 
     it('counts discovered evidence correctly', () => {
       const { result } = renderHook(() => useEvidenceState(2));
-      
+
       expect(result.current.count).toBe(2);
     });
 
     it('returns correct count for single evidence', () => {
       const { result } = renderHook(() => useEvidenceState(1));
-      
+
       expect(result.current.count).toBe(1);
     });
 
     it('returns correct count for all evidence', () => {
       const { result } = renderHook(() => useEvidenceState(5));
-      
+
       expect(result.current.count).toBe(5);
     });
 
     it('returns zero count for zero evidence', () => {
       const { result } = renderHook(() => useEvidenceState(0));
-      
+
       expect(result.current.count).toBe(0);
     });
 
     it('is memoized - same input returns same reference', () => {
-      const { result, rerender } = renderHook(
-        ({ t }) => useEvidenceState(t), 
-        { initialProps: { t: 1 as number } }
-      );
+      const { result, rerender } = renderHook(({ t }) => useEvidenceState(t), {
+        initialProps: { t: 1 as number },
+      });
 
       const firstResult = result.current;
       rerender({ t: 1 });

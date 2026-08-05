@@ -70,10 +70,7 @@ const THEME_FILES: Record<RevelationTheme, ReadonlySet<string>> = {
     'scout_variants.meta',
     'contact_incident_report.txt',
   ]),
-  craft: new Set([
-    'transfer_manifest_deleted.txt',
-    'material_x_analysis.dat',
-  ]),
+  craft: new Set(['transfer_manifest_deleted.txt', 'material_x_analysis.dat']),
   witness: new Set([
     'witness_farm_recording.txt',
     'witness_statement_original.txt',
@@ -143,12 +140,7 @@ const THEME_AOL: Record<RevelationTheme, string> = {
 const FOREGROUNDED: Record<string, ReadonlySet<RevelationTheme>> = {
   the_2026_warning: new Set<RevelationTheme>(['window2026']),
   government_scandal: new Set<RevelationTheme>(['biology', 'witness']),
-  prisoner_45_freed: new Set<RevelationTheme>([
-    'containment',
-    'telepathy',
-    'biology',
-    'witness',
-  ]),
+  prisoner_45_freed: new Set<RevelationTheme>(['containment', 'telepathy', 'biology', 'witness']),
   harvest_understood: new Set<RevelationTheme>(['harvest', 'window2026']),
   nothing_changes: new Set<RevelationTheme>(['biology']),
   real_ending: new Set<RevelationTheme>(['biology', 'witness', 'telepathy']),
@@ -173,7 +165,7 @@ function basenames(savedFiles: ReadonlySet<string> | undefined | null): Set<stri
 }
 
 export function detectRevelationThemes(
-  savedFiles: ReadonlySet<string> | undefined | null,
+  savedFiles: ReadonlySet<string> | undefined | null
 ): Set<RevelationTheme> {
   const names = basenames(savedFiles);
   const themes = new Set<RevelationTheme>();
@@ -188,9 +180,7 @@ export function detectRevelationThemes(
   return themes;
 }
 
-export function hasAnyRevelation(
-  savedFiles: ReadonlySet<string> | undefined | null,
-): boolean {
+export function hasAnyRevelation(savedFiles: ReadonlySet<string> | undefined | null): boolean {
   return detectRevelationThemes(savedFiles).size > 0;
 }
 
@@ -198,7 +188,7 @@ export function hasAnyRevelation(
 // foreground, or null if there is nothing worth adding.
 export function pickAcknowledgmentTheme(
   endingId: string,
-  savedFiles: ReadonlySet<string> | undefined | null,
+  savedFiles: ReadonlySet<string> | undefined | null
 ): RevelationTheme | null {
   if (APPEND_EXCLUDED.has(endingId)) return null;
   const present = detectRevelationThemes(savedFiles);
@@ -220,7 +210,7 @@ export const WRONG_STORY_AOL_SWAP =
 export function resolveNarrativeWithRevelations(
   endingId: string,
   baseNarrative: readonly string[],
-  savedFiles: ReadonlySet<string> | undefined | null,
+  savedFiles: ReadonlySet<string> | undefined | null
 ): string[] {
   if (baseNarrative.length === 0) return [...baseNarrative];
 
@@ -239,7 +229,7 @@ export function resolveNarrativeWithRevelations(
 export function resolveAolBodyWithRevelations(
   endingId: string,
   baseBody: readonly string[],
-  savedFiles: ReadonlySet<string> | undefined | null,
+  savedFiles: ReadonlySet<string> | undefined | null
 ): string[] {
   if (baseBody.length === 0) return [...baseBody];
 

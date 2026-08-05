@@ -157,11 +157,7 @@ export const FILE_CATEGORIES = {
     'SMOKING_GUN_proof.txt',
   ],
   ghost_machine: ['ghost_in_machine.enc'],
-  alpha_neural: [
-    'alpha_neural_connection.psi',
-    'alpha_journal.log',
-    'alpha_autopsy_addendum.txt',
-  ],
+  alpha_neural: ['alpha_neural_connection.psi', 'alpha_journal.log', 'alpha_autopsy_addendum.txt'],
   comms_intercept: [
     'transcript_core.enc',
     'transcript_limit.enc',
@@ -289,8 +285,8 @@ export function analyzeDossier(savedFiles: Set<string>): DossierAnalysis {
     hasGhostMachine: fileNames.some(f => f.includes('ghost_in_machine')),
     hasAlphaNeural: counts.alphaNeural > 0,
     hasConvergence: fileNames.some(f => f.includes('convergence')),
-    hasPhysicist: fileNames.some(f =>
-      f.includes('thirty_year_cycle') || f.includes('projection_update_2026')
+    hasPhysicist: fileNames.some(
+      f => f.includes('thirty_year_cycle') || f.includes('projection_update_2026')
     ),
   };
 }
@@ -300,13 +296,8 @@ export function analyzeDossier(savedFiles: Set<string>): DossierAnalysis {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function determineEnding(savedFiles: Set<string>): EndingId {
-  const {
-    counts,
-    hasGhostMachine,
-    hasAlphaNeural,
-    hasConvergence,
-    hasPhysicist,
-  } = analyzeDossier(savedFiles);
+  const { counts, hasGhostMachine, hasAlphaNeural, hasConvergence, hasPhysicist } =
+    analyzeDossier(savedFiles);
   const honeypotCount = counts.honeypotTrap;
   const militaryCount = counts.militaryCoverup;
   const corruptionCount = counts.corruptionFinancial;
@@ -328,7 +319,8 @@ export function determineEnding(savedFiles: Set<string>): EndingId {
   if (hasGhostMachine) return 'ufo74_exposed';
 
   // Priority 4: The Real Ending — comprehensive dossier
-  if (coreCount >= 2 && medicalCount >= 2 && witnessCount >= 1 && militaryCount >= 2) return 'real_ending';
+  if (coreCount >= 2 && medicalCount >= 2 && witnessCount >= 1 && militaryCount >= 2)
+    return 'real_ending';
 
   // Priority 5: The Wrong Story — mostly corruption/mundane, minimal core evidence
   if (corruptionCount + conspiracyCount >= 5 && coreCount <= 1) return 'wrong_story';
@@ -353,7 +345,12 @@ export function determineEnding(savedFiles: Set<string>): EndingId {
   // that never cohered into a case. Such evidence should not be laughed off as
   // 'ridiculed' — the horror leaked through even if the narrative did not.
   const maxCategory = Math.max(
-    militaryCount, medicalCount, witnessCount, coreCount, temporalCount, harvestCount
+    militaryCount,
+    medicalCount,
+    witnessCount,
+    coreCount,
+    temporalCount,
+    harvestCount
   );
   const hardEvidence = medicalCount >= 2 || containmentCount >= 2;
   if (maxCategory <= 2 || hardEvidence) return 'incomplete_picture';
@@ -391,7 +388,6 @@ export function getEndingFlags(state: GameState): EndingFlags {
   };
 }
 
-
 export function getEndingTitle(variant: EndingVariant): string {
   const ending = (ENDINGS as Record<string, Omit<GameEnding, 'id'>>)[variant];
   return ending?.title ?? variant.toUpperCase().replace(/_/g, ' ');
@@ -399,7 +395,7 @@ export function getEndingTitle(variant: EndingVariant): string {
 
 export function getEndingNarrativeLines(
   variant: EndingVariant,
-  savedFiles?: ReadonlySet<string> | null,
+  savedFiles?: ReadonlySet<string> | null
 ): string[] {
   const ending = (ENDINGS as Record<string, Omit<GameEnding, 'id'>>)[variant];
   if (!ending) return ['ENDING NOT FOUND'];
@@ -427,5 +423,3 @@ export function getEndingNarrativeLines(
     '',
   ];
 }
-
-

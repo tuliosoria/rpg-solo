@@ -9,6 +9,7 @@ export const DETECTION_THRESHOLDS = {
   IMMINENT: 90, // Emergency escape available
 
   // Gameplay mechanic thresholds
+  FIREWALL_ACTIVATION: 25, // Ambient firewall watchers become active
   LIGHT_GLITCH: 40, // Light visual glitches begin
   MEDIUM_GLITCH: 60, // Medium glitches
   HEAVY_GLITCH: 80, // Heavy glitches with screen shake
@@ -112,10 +113,7 @@ export function applyWarmupDetection(
     if (wouldBe > WARMUP_PHASE.SOFT_CAP) {
       // Allow going slightly over soft cap, but heavily diminish returns
       const overCap = wouldBe - WARMUP_PHASE.SOFT_CAP;
-      modifiedIncrease = Math.max(
-        1,
-        modifiedIncrease - Math.floor(overCap * 0.7)
-      );
+      modifiedIncrease = Math.max(1, modifiedIncrease - Math.floor(overCap * 0.7));
     }
   }
 

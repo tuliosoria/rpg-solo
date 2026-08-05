@@ -51,8 +51,7 @@ describe('runtime translation merge', () => {
     const MEMO = '  PHASE ███ IS ██████ UNDERWAY';
 
     for (const lang of [...LANGS, 'en'] as const) {
-      const keycard =
-        lang === 'en' ? KEYCARD : RUNTIME_TRANSLATIONS[lang][KEYCARD];
+      const keycard = lang === 'en' ? KEYCARD : RUNTIME_TRANSLATIONS[lang][KEYCARD];
       const memo = lang === 'en' ? MEMO : RUNTIME_TRANSLATIONS[lang][MEMO];
 
       const visible = memo

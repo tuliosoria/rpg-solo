@@ -37,7 +37,9 @@ describe('useEndingMusic', () => {
 
   it('plays at master-scaled volume when music is enabled', () => {
     setOptions({ musicEnabled: true, masterVolume: 50 });
-    const { result } = renderHook(() => useEndingMusic('/audio/music/ending-game.mp3', { baseVolume: 0.5 }));
+    const { result } = renderHook(() =>
+      useEndingMusic('/audio/music/ending-game.mp3', { baseVolume: 0.5 })
+    );
     expect(result.current).toBeUndefined(); // hook returns nothing
     expect(playSpy).toHaveBeenCalled();
   });

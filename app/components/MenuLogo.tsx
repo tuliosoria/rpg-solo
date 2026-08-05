@@ -46,20 +46,14 @@ function FlickerLine({ text, className, startDelayMs, perChar = true }: FlickerL
 
   if (!perChar) {
     return (
-      <div
-        className={className}
-        style={{ animationDelay: `${startDelayMs}ms` }}
-      >
+      <div className={className} style={{ animationDelay: `${startDelayMs}ms` }}>
         {text}
       </div>
     );
   }
 
   return (
-    <div
-      className={className}
-      style={{ animationDelay: `${startDelayMs}ms`, opacity: 1 }}
-    >
+    <div className={className} style={{ animationDelay: `${startDelayMs}ms`, opacity: 1 }}>
       <span className={styles.srOnly}>{text}</span>
       <span aria-hidden="true">{chars}</span>
     </div>

@@ -153,11 +153,11 @@ const PRISONER_45_RESPONSES: Record<string, string[][]> = {
       "PRISONER_45> Document everything. They can't erase all copies.",
     ],
     [
-        'PRISONER_45> The override code. That opens everything. Ask me about the PASSWORD.',
-        "PRISONER_45> Don't trust the obvious files. Look deeper. The real evidence hides in plain sight.",
-        "PRISONER_45> If enough people know, they can't complete the transition.",
-        'PRISONER_45> Find the buried files. Cross-reference them. The truth is layered.',
-      ],
+      'PRISONER_45> The override code. That opens everything. Ask me about the PASSWORD.',
+      "PRISONER_45> Don't trust the obvious files. Look deeper. The real evidence hides in plain sight.",
+      "PRISONER_45> If enough people know, they can't complete the transition.",
+      'PRISONER_45> Find the buried files. Cross-reference them. The truth is layered.',
+    ],
     [
       'PRISONER_45> Before the window opens in 2026. Before the harvest. SPREAD THE TRUTH.',
       "PRISONER_45> You're already helping. By listening. Your awareness creates interference in their signal.",
@@ -1797,7 +1797,12 @@ export const chatCommands: CommandRegistry = {
             'engine.commands.chat.prisoner_45_connected',
             'PRISONER_45 connected'
           ),
-          createEntryI18n('system', 'engine.commands.chat.questionsRemainingLockout', `[${remaining} questions remaining before trace lockout]`, { count: remaining }),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.questionsRemainingLockout',
+            `[${remaining} questions remaining before trace lockout]`,
+            { count: remaining }
+          ),
           createEntry('system', ''),
           createEntryI18n(
             'output',
@@ -1855,7 +1860,14 @@ export const chatCommands: CommandRegistry = {
       ];
 
       if (remaining > 0) {
-        output.push(createEntryI18n('warning', 'engine.commands.chat.questionsRemaining', `[${remaining} questions remaining]`, { count: remaining }));
+        output.push(
+          createEntryI18n(
+            'warning',
+            'engine.commands.chat.questionsRemaining',
+            `[${remaining} questions remaining]`,
+            { count: remaining }
+          )
+        );
       } else {
         output.push(
           createEntryI18n(
@@ -1897,7 +1909,14 @@ export const chatCommands: CommandRegistry = {
     output.push(createEntry('system', ''));
 
     if (remaining > 0) {
-      output.push(createEntryI18n('system', 'engine.commands.chat.questionsRemaining', `[${remaining} questions remaining]`, { count: remaining }));
+      output.push(
+        createEntryI18n(
+          'system',
+          'engine.commands.chat.questionsRemaining',
+          `[${remaining} questions remaining]`,
+          { count: remaining }
+        )
+      );
     } else {
       output.push(
         createEntryI18n(
@@ -2169,7 +2188,12 @@ export const chatCommands: CommandRegistry = {
             '...your questions... imprecise... but understood...'
           ),
           createEntry('system', ''),
-          createEntryI18n('system', 'engine.commands.chat.patternStability', `[Pattern stability: ${remaining} queries remaining]`, { count: remaining }),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.patternStability',
+            `[Pattern stability: ${remaining} queries remaining]`,
+            { count: remaining }
+          ),
           createEntry('system', ''),
           createEntryI18n(
             'system',
@@ -2225,7 +2249,14 @@ export const chatCommands: CommandRegistry = {
       output.push(createEntry('system', ''));
 
       if (remaining > 0) {
-        output.push(createEntryI18n('system', 'engine.commands.chat.patternStability', `[Pattern stability: ${remaining} queries remaining]`, { count: remaining }));
+        output.push(
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.patternStability',
+            `[Pattern stability: ${remaining} queries remaining]`,
+            { count: remaining }
+          )
+        );
       } else {
         output.push(
           createEntryI18n(
@@ -2274,7 +2305,14 @@ export const chatCommands: CommandRegistry = {
     output.push(createEntry('system', ''));
 
     if (remaining > 0) {
-      output.push(createEntryI18n('system', 'engine.commands.chat.patternStability', `[Pattern stability: ${remaining} queries remaining]`, { count: remaining }));
+      output.push(
+        createEntryI18n(
+          'system',
+          'engine.commands.chat.patternStability',
+          `[Pattern stability: ${remaining} queries remaining]`,
+          { count: remaining }
+        )
+      );
     } else {
       output.push(
         createEntryI18n(
@@ -2394,7 +2432,12 @@ export const chatCommands: CommandRegistry = {
             'Usage: message <deciphered text>'
           ),
           createEntry('system', ''),
-          createEntryI18n('system', 'engine.commands.chat.attemptsRemaining', `[Attempts remaining: ${attemptsRemaining}]`, { count: attemptsRemaining }),
+          createEntryI18n(
+            'system',
+            'engine.commands.chat.attemptsRemaining',
+            `[Attempts remaining: ${attemptsRemaining}]`,
+            { count: attemptsRemaining }
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {},
@@ -2421,7 +2464,9 @@ export const chatCommands: CommandRegistry = {
             '▓▓▓ MESSAGE DECIPHERED ▓▓▓'
           ),
           createEntry('system', ''),
-          createEntryI18n('warning', 'engine.commands.chat.decoded', `  DECODED: ${correct}`, { value: correct }),
+          createEntryI18n('warning', 'engine.commands.chat.decoded', `  DECODED: ${correct}`, {
+            value: correct,
+          }),
           ...createUFO74Message([
             'UFO74: you did it hackerkid!',
             '       "COLHEITA" — Portuguese for "HARVEST".',
@@ -2456,7 +2501,9 @@ export const chatCommands: CommandRegistry = {
           createEntry('error', ''),
           createEntryI18n('error', 'engine.commands.chat.decryption_failed', 'DECRYPTION FAILED'),
           createEntry('error', ''),
-          createEntryI18n('warning', 'engine.commands.chat.yourAnswer', `Your answer: ${guess}`, { value: guess }),
+          createEntryI18n('warning', 'engine.commands.chat.yourAnswer', `Your answer: ${guess}`, {
+            value: guess,
+          }),
           createEntryI18n(
             'warning',
             'engine.commands.chat.maximum_attempts_exceeded',
@@ -2478,9 +2525,16 @@ export const chatCommands: CommandRegistry = {
       output: [
         createEntry('warning', ''),
         createEntryI18n('warning', 'engine.commands.chat.incorrect', 'INCORRECT'),
-        createEntryI18n('warning', 'engine.commands.chat.yourAnswer', `Your answer: ${guess}`, { value: guess }),
+        createEntryI18n('warning', 'engine.commands.chat.yourAnswer', `Your answer: ${guess}`, {
+          value: guess,
+        }),
         createEntry('system', ''),
-        createEntryI18n('system', 'engine.commands.chat.attemptsRemaining', `[Attempts remaining: ${attemptsRemaining}]`, { count: attemptsRemaining }),
+        createEntryI18n(
+          'system',
+          'engine.commands.chat.attemptsRemaining',
+          `[Attempts remaining: ${attemptsRemaining}]`,
+          { count: attemptsRemaining }
+        ),
         ...createUFO74Message([
           'UFO74: thats not it hackerkid.',
           '       check the morse reference again.',

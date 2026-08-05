@@ -19,10 +19,7 @@ import {
 import { resolvePath, getFileContent, getNode } from '../engine/filesystem';
 import { MAX_EVIDENCE_COUNT } from '../engine/evidenceRevelation';
 import { incrementStatistic } from '../storage/statistics';
-import {
-  MAX_COMMAND_HISTORY_SIZE,
-  MAX_COMMAND_INPUT_LENGTH,
-} from '../constants/limits';
+import { MAX_COMMAND_HISTORY_SIZE, MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
 import { NIGHT_OWL_DURATION_MS } from '../constants/timing';
 import { uiRandom } from '../engine/rng';
 import {
@@ -40,10 +37,7 @@ import { resolveSubmitInput } from './resolveSubmitInput';
 import { speakCustomFirewallVoice } from '../lib/firewallVoice';
 import { translateStatic } from '../i18n';
 
-const STREAMING_DELAYS: Record<
-  StreamingMode,
-  { base: number; variance: number }
-> = {
+const STREAMING_DELAYS: Record<StreamingMode, { base: number; variance: number }> = {
   none: { base: 0, variance: 0 },
   fast: { base: 40, variance: 20 },
   normal: { base: 80, variance: 30 },
@@ -556,16 +550,7 @@ export function useTerminalInput({
       setInputValue('');
 
       const dangerousCommands = ['recover', 'trace', 'override', 'leak'];
-      const quietCommands = [
-        'help',
-        'status',
-        'ls',
-        'cd',
-        'back',
-        'notes',
-        'progress',
-        'search',
-      ];
+      const quietCommands = ['help', 'status', 'ls', 'cd', 'back', 'notes', 'progress', 'search'];
       const systemCommands = ['scan', 'wait', 'hide'];
 
       if (dangerousCommands.includes(commandLower)) {
@@ -584,7 +569,10 @@ export function useTerminalInput({
       const newState: GameState = {
         ...gameState,
         history: appendToHistory(gameState.history, inputEntry),
-        commandHistory: [command, ...gameState.commandHistory.slice(0, MAX_COMMAND_HISTORY_SIZE - 1)],
+        commandHistory: [
+          command,
+          ...gameState.commandHistory.slice(0, MAX_COMMAND_HISTORY_SIZE - 1),
+        ],
       };
 
       setGameState(newState);

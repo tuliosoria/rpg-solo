@@ -24,7 +24,10 @@ describe('hasSmokingGunContact', () => {
   it('is false for pure-logistics military files', () => {
     expect(
       hasSmokingGunContact(
-        new Set(['/storage/assets/transport_log_96.txt', '/ops/assessments/initial_response_orders.txt'])
+        new Set([
+          '/storage/assets/transport_log_96.txt',
+          '/ops/assessments/initial_response_orders.txt',
+        ])
       )
     ).toBe(false);
   });
@@ -38,20 +41,29 @@ describe('hasSmokingGunContact', () => {
 
 describe('resolveGovernmentScandalNarrative', () => {
   it('swaps narrative[0] when a smoking gun is present', () => {
-    const out = resolveGovernmentScandalNarrative(baseNarrative, new Set(['/internal/jardim_andere_incident.txt']));
+    const out = resolveGovernmentScandalNarrative(
+      baseNarrative,
+      new Set(['/internal/jardim_andere_incident.txt'])
+    );
     expect(out[0]).toBe(SMOKING_GUN_NARRATIVE_INTRO);
     expect(out.slice(1)).toEqual(baseNarrative.slice(1));
   });
 
   it('returns the base narrative unchanged for mundane dossiers', () => {
-    const out = resolveGovernmentScandalNarrative(baseNarrative, new Set(['/storage/assets/transport_log_96.txt']));
+    const out = resolveGovernmentScandalNarrative(
+      baseNarrative,
+      new Set(['/storage/assets/transport_log_96.txt'])
+    );
     expect(out).toEqual(baseNarrative);
   });
 });
 
 describe('resolveGovernmentScandalAolBody', () => {
   it('swaps body[1] when a smoking gun is present', () => {
-    const out = resolveGovernmentScandalAolBody(baseBody, new Set(['/admin/incident_report_1996_01_VG.txt']));
+    const out = resolveGovernmentScandalAolBody(
+      baseBody,
+      new Set(['/admin/incident_report_1996_01_VG.txt'])
+    );
     expect(out[1]).toBe(SMOKING_GUN_AOL_PURPOSE);
     expect(out[0]).toBe('body-0');
     expect(out[2]).toBe('body-2');

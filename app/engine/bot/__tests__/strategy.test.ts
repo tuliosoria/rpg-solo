@@ -8,14 +8,15 @@ import { OVERRIDE_PASSWORD } from '../../overrideSecret';
 
 const PASSWORD_HINT_FILE = '/internal/override_protocol_memo.txt';
 
-const base = (overrides: Partial<GameState> = {}): GameState => ({
-  ...DEFAULT_GAME_STATE,
-  tutorialComplete: true,
-  seed: 42,
-  filesRead: new Set<string>(),
-  savedFiles: new Set<string>(),
-  ...overrides,
-} as GameState);
+const base = (overrides: Partial<GameState> = {}): GameState =>
+  ({
+    ...DEFAULT_GAME_STATE,
+    tutorialComplete: true,
+    seed: 42,
+    filesRead: new Set<string>(),
+    savedFiles: new Set<string>(),
+    ...overrides,
+  }) as GameState;
 
 describe('decideNextCommand — explore/read/save', () => {
   it('discovers the password by reading the override hint before overriding', () => {
@@ -46,7 +47,10 @@ describe('decideNextCommand — explore/read/save', () => {
   });
 
   it('drives the leak sequence once the save target is met, instead of opening more files', () => {
-    const s0 = base({ flags: { ...DEFAULT_GAME_STATE.flags, adminUnlocked: true }, accessLevel: 5 });
+    const s0 = base({
+      flags: { ...DEFAULT_GAME_STATE.flags, adminUnlocked: true },
+      accessLevel: 5,
+    });
     const evidence = getAllAccessibleFiles(s0).filter(isEvidencePath);
     // Precondition: there must be MORE than 10 evidence files, so unread wanted
     // files remain after the dossier is full — the exact situation that used to

@@ -53,7 +53,13 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
   const subcommand = normalizeLeakStep(args.join(' '));
   if (!state.leakSequence) {
     return {
-      output: [createEntryI18n('error', 'engine.commands.evidence.leak_sequence_not_initialized', 'Leak sequence not initialized.')],
+      output: [
+        createEntryI18n(
+          'error',
+          'engine.commands.evidence.leak_sequence_not_initialized',
+          'Leak sequence not initialized.'
+        ),
+      ],
       stateChanges: {},
     };
   }
@@ -66,7 +72,11 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
     return {
       output: [
         createEntry('notice', ''),
-        createEntryI18n('notice', 'engine.commands.evidence.leak_channel_already_prepared', '  LEAK CHANNEL ALREADY PREPARED'),
+        createEntryI18n(
+          'notice',
+          'engine.commands.evidence.leak_channel_already_prepared',
+          '  LEAK CHANNEL ALREADY PREPARED'
+        ),
         createEntry('system', ''),
         createEntryI18n(
           'system',
@@ -74,7 +84,11 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
           '  Files saved: {{savedCount}}/{{maxCount}}',
           { savedCount, maxCount: MAX_EVIDENCE_COUNT }
         ),
-        createEntryI18n('system', 'engine.commands.evidence.run_leak_to_transmit', '  Run "leak" with no arguments to transmit once all files are saved.'),
+        createEntryI18n(
+          'system',
+          'engine.commands.evidence.run_leak_to_transmit',
+          '  Run "leak" with no arguments to transmit once all files are saved.'
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {},
@@ -93,10 +107,22 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
           createEntry('system', ''),
           createEntry('notice', `  ✓ ${subcommand}`),
           createEntry('system', ''),
-          createEntryI18n('notice', 'engine.commands.evidence.preparation_sequence_complete', '  ▸ PREPARATION SEQUENCE COMPLETE'),
-          createEntryI18n('notice', 'engine.commands.evidence.leak_channel_decrypted_standing_by', '  ▸ Leak channel decrypted and standing by.'),
+          createEntryI18n(
+            'notice',
+            'engine.commands.evidence.preparation_sequence_complete',
+            '  ▸ PREPARATION SEQUENCE COMPLETE'
+          ),
+          createEntryI18n(
+            'notice',
+            'engine.commands.evidence.leak_channel_decrypted_standing_by',
+            '  ▸ Leak channel decrypted and standing by.'
+          ),
           createEntry('system', ''),
-          createEntryI18n('ufo74', 'engine.commands.evidence.ufo74_channel_is_open', '[UFO74]: channel is open. run "leak" when you have all ten.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.evidence.ufo74_channel_is_open',
+            '[UFO74]: channel is open. run "leak" when you have all ten.'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {
@@ -133,7 +159,7 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
   // Not a protocol step at all (typo, stray word, "leak now"). The stated rule is
   // that *wrong order* resets the sequence — an unrecognized token is not an
   // ordering mistake, so re-state the protocol instead of punishing the player.
-  const isKnownStep = sequence.some((step) => normalizeLeakStep(step) === subcommand);
+  const isKnownStep = sequence.some(step => normalizeLeakStep(step) === subcommand);
   if (!isKnownStep) {
     return {
       output: [
@@ -150,7 +176,9 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
           { command: expected }
         ),
         createEntry('system', ''),
-        ...formatSequenceDisplay(sequence, progress).map((line) => createEntry('system' as const, line)),
+        ...formatSequenceDisplay(sequence, progress).map(line =>
+          createEntry('system' as const, line)
+        ),
         createEntry('system', ''),
       ],
       stateChanges: {},
@@ -162,7 +190,11 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
   return {
     output: [
       createEntry('error', ''),
-      createEntryI18n('error', 'engine.commands.evidence.sequence_mismatch_reset', '  ✗ SEQUENCE MISMATCH — protocol reset'),
+      createEntryI18n(
+        'error',
+        'engine.commands.evidence.sequence_mismatch_reset',
+        '  ✗ SEQUENCE MISMATCH — protocol reset'
+      ),
       createEntryI18n(
         'error',
         'engine.commands.evidence.expected_leak_command',
@@ -176,10 +208,18 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
         { command: subcommand }
       ),
       createEntry('system', ''),
-      createEntryI18n('warning', 'engine.commands.evidence.detection_level_increased', '  ⚠ Detection level increased (+5%)'),
-      createEntryI18n('system', 'engine.commands.evidence.preparation_must_restart', '  Preparation sequence must be restarted from step 1.'),
+      createEntryI18n(
+        'warning',
+        'engine.commands.evidence.detection_level_increased',
+        '  ⚠ Detection level increased (+5%)'
+      ),
+      createEntryI18n(
+        'system',
+        'engine.commands.evidence.preparation_must_restart',
+        '  Preparation sequence must be restarted from step 1.'
+      ),
       createEntry('system', ''),
-      ...formatSequenceDisplay(sequence, 0).map((line) => createEntry('system' as const, line)),
+      ...formatSequenceDisplay(sequence, 0).map(line => createEntry('system' as const, line)),
       createEntry('system', ''),
     ],
     stateChanges: {
@@ -191,7 +231,7 @@ function handleLeakSubcommand(args: string[], state: GameState): CommandResult {
 
 export const evidenceCommands: CommandRegistry = {
   leak: (args, state) => {
-    const savedCount = (state.savedFiles?.size || 0);
+    const savedCount = state.savedFiles?.size || 0;
 
     // Below 5 saved files: standard block message
     if (savedCount < EVIDENCE_THRESHOLD_FOR_SEQUENCE) {
@@ -263,7 +303,11 @@ export const evidenceCommands: CommandRegistry = {
         output: [
           createEntry('system', ''),
           createEntry('system', '═══════════════════════════════════════'),
-          createEntryI18n('system', 'engine.commands.evidence.leak_transmission_initiated', '  LEAK TRANSMISSION INITIATED'),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.leak_transmission_initiated',
+            '  LEAK TRANSMISSION INITIATED'
+          ),
           createEntry('system', '═══════════════════════════════════════'),
           createEntry('system', ''),
           createEntryI18n(
@@ -272,10 +316,18 @@ export const evidenceCommands: CommandRegistry = {
             '  Compiling dossier... {{savedCount}} files confirmed.',
             { savedCount }
           ),
-          createEntryI18n('system', 'engine.commands.evidence.encrypting_for_distribution', '  Encrypting for distribution...'),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.encrypting_for_distribution',
+            '  Encrypting for distribution...'
+          ),
           createEntryI18n('system', 'engine.commands.evidence.channel_open', '  Channel open.'),
           createEntry('system', ''),
-          createEntryI18n('system', 'engine.commands.evidence.transmission_successful', '  TRANSMISSION SUCCESSFUL.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.transmission_successful',
+            '  TRANSMISSION SUCCESSFUL.'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {
@@ -294,7 +346,11 @@ export const evidenceCommands: CommandRegistry = {
       return {
         output: [
           createEntry('notice', ''),
-          createEntryI18n('notice', 'engine.commands.evidence.leak_channel_ready', '  LEAK CHANNEL READY — awaiting full evidence package.'),
+          createEntryI18n(
+            'notice',
+            'engine.commands.evidence.leak_channel_ready',
+            '  LEAK CHANNEL READY — awaiting full evidence package.'
+          ),
           createEntry('system', ''),
           createEntryI18n(
             'system',
@@ -302,9 +358,18 @@ export const evidenceCommands: CommandRegistry = {
             '  Files saved: {{savedCount}}/{{maxCount}}',
             { savedCount, maxCount: MAX_EVIDENCE_COUNT }
           ),
-          createEntryI18n('system', 'engine.commands.evidence.save_all_ten_then_leak', '  Save all {{max}} files, then run "leak" again.', { max: MAX_EVIDENCE_COUNT }),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.save_all_ten_then_leak',
+            '  Save all {{max}} files, then run "leak" again.',
+            { max: MAX_EVIDENCE_COUNT }
+          ),
           createEntry('system', ''),
-          createEntryI18n('ufo74', 'engine.commands.evidence.ufo74_channel_prepped', '[UFO74]: channel is prepped. just need the rest of the files.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.evidence.ufo74_channel_prepped',
+            '[UFO74]: channel is prepped. just need the rest of the files.'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {},
@@ -316,20 +381,52 @@ export const evidenceCommands: CommandRegistry = {
       return {
         output: [
           createEntry('warning', ''),
-          createEntryI18n('warning', 'engine.commands.evidence.leak_channel_encrypted', '  LEAK CHANNEL ENCRYPTED'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.evidence.leak_channel_encrypted',
+            '  LEAK CHANNEL ENCRYPTED'
+          ),
           createEntry('system', ''),
-          createEntryI18n('system', 'engine.commands.evidence.leak_channel_requires_preparation', '  The leak channel requires a 3-command preparation'),
-          createEntryI18n('system', 'engine.commands.evidence.sequence_before_opened', '  sequence before it can be opened.'),
-          createEntryI18n('system', 'engine.commands.evidence.channel_carries_saved_story', '  It will carry exactly what you saved — not what you meant to prove.'),
-          createEntryI18n('system', 'engine.commands.evidence.review_progress_before_final', '  Review "progress" before final transmission if the story feels wrong.'),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.leak_channel_requires_preparation',
+            '  The leak channel requires a 3-command preparation'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.sequence_before_opened',
+            '  sequence before it can be opened.'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.channel_carries_saved_story',
+            '  It will carry exactly what you saved — not what you meant to prove.'
+          ),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.review_progress_before_final',
+            '  Review "progress" before final transmission if the story feels wrong.'
+          ),
           createEntry('system', ''),
-          createEntryI18n('system', 'engine.commands.evidence.run_commands_in_order', '  Run the following commands IN ORDER:'),
+          createEntryI18n(
+            'system',
+            'engine.commands.evidence.run_commands_in_order',
+            '  Run the following commands IN ORDER:'
+          ),
           createEntry('system', ''),
-          ...formatSequenceDisplay(sequence, 0).map((line) => createEntry('notice' as const, line)),
+          ...formatSequenceDisplay(sequence, 0).map(line => createEntry('notice' as const, line)),
           createEntry('system', ''),
-          createEntryI18n('warning', 'engine.commands.evidence.wrong_order_warning', '  ⚠ Wrong order will reset the sequence and raise detection.'),
+          createEntryI18n(
+            'warning',
+            'engine.commands.evidence.wrong_order_warning',
+            '  ⚠ Wrong order will reset the sequence and raise detection.'
+          ),
           createEntry('system', ''),
-          createEntryI18n('ufo74', 'engine.commands.evidence.ufo74_encrypted_channel', '[UFO74]: encrypted channel. follow the protocol exactly.'),
+          createEntryI18n(
+            'ufo74',
+            'engine.commands.evidence.ufo74_encrypted_channel',
+            '[UFO74]: encrypted channel. follow the protocol exactly.'
+          ),
           createEntry('system', ''),
         ],
         stateChanges: {
@@ -344,7 +441,11 @@ export const evidenceCommands: CommandRegistry = {
     return {
       output: [
         createEntry('warning', ''),
-        createEntryI18n('warning', 'engine.commands.evidence.leak_channel_preparation_in_progress', '  LEAK CHANNEL — PREPARATION IN PROGRESS'),
+        createEntryI18n(
+          'warning',
+          'engine.commands.evidence.leak_channel_preparation_in_progress',
+          '  LEAK CHANNEL — PREPARATION IN PROGRESS'
+        ),
         createEntry('system', ''),
         createEntryI18n(
           'system',
@@ -353,7 +454,9 @@ export const evidenceCommands: CommandRegistry = {
           { current: progress, total: 3 }
         ),
         createEntry('system', ''),
-        ...formatSequenceDisplay(sequence, progress).map((line) => createEntry('system' as const, line)),
+        ...formatSequenceDisplay(sequence, progress).map(line =>
+          createEntry('system' as const, line)
+        ),
         createEntry('system', ''),
         createEntryI18n(
           'system',

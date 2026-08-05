@@ -26,19 +26,19 @@ export { useBotRunner } from './useBotRunner';
 export { useTerminalState } from './useTerminalState';
 export { useSound, type SoundType } from './useSound';
 export { useGlobalErrorHandler } from './useGlobalErrorHandler';
-export { 
-  useRiskLevel, 
-  useStatusBar, 
-  useSaveIndicator, 
-  useEvidenceState, 
+export {
+  useRiskLevel,
+  useStatusBar,
+  useSaveIndicator,
+  useEvidenceState,
   useAttemptsDisplay,
   useIsReadingFile,
   useFirewallState,
 } from './useGameSelectors';
-export { 
-  useOptions, 
-  useOptionsContext, 
-  OptionsProvider, 
+export {
+  useOptions,
+  useOptionsContext,
+  OptionsProvider,
   DEFAULT_OPTIONS,
   type OptionsState,
   type FlickerIntensity,

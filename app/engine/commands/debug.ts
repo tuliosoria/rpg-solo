@@ -9,7 +9,12 @@ import {
   describeGoal,
 } from '../bot/types';
 import { ALL_ENDING_IDS, ENDING_RECIPES, isEndingId } from '../bot/endingTargets';
-import { ALL_SCENARIO_IDS, BOT_SCENARIOS, isScenarioId, resolveScenarioSeed } from '../bot/scenarios';
+import {
+  ALL_SCENARIO_IDS,
+  BOT_SCENARIOS,
+  isScenarioId,
+  resolveScenarioSeed,
+} from '../bot/scenarios';
 import { runBotSweep, summariseSweep } from '../bot/sweep';
 
 const LEVELS: BotLevel[] = ['dummy', 'novice', 'pro', 'chaos'];
@@ -83,7 +88,10 @@ function listing(): TerminalEntry[] {
   );
   for (const id of ALL_ENDING_IDS) {
     lines.push(
-      createEntry('system', `    ${id.padEnd(20)} anchored on ${ENDING_RECIPES[id].required.length} file(s)`)
+      createEntry(
+        'system',
+        `    ${id.padEnd(20)} anchored on ${ENDING_RECIPES[id].required.length} file(s)`
+      )
     );
   }
 
@@ -111,7 +119,10 @@ function sweepReport(execute: CommandExecutor, seed: number): TerminalEntry[] {
     createEntry('system', '═══════════════════════════════════════'),
     createEntry('system', '  BOT-TEST SWEEP'),
     createEntry('system', '═══════════════════════════════════════'),
-    createEntry('system', `  Seed: ${seed}   Runs: ${rows.length}   Passed: ${passed}   Failed: ${failed}`),
+    createEntry(
+      'system',
+      `  Seed: ${seed}   Runs: ${rows.length}   Passed: ${passed}   Failed: ${failed}`
+    ),
     createEntry('system', ''),
   ];
   for (const row of rows) {

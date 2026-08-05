@@ -20,10 +20,7 @@ const MAX_NOISE_OPACITY = 0.22;
 const ALIEN_VISIBILITY_BOOST = 0.07;
 const MAX_ALIEN_CANVAS_OPACITY = 0.28;
 
-const StaticNoise = memo(function StaticNoise({
-  intensity,
-  alienVisible,
-}: StaticNoiseProps) {
+const StaticNoise = memo(function StaticNoise({ intensity, alienVisible }: StaticNoiseProps) {
   const isActive = intensity > 0;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const alienDataRef = useRef<ImageData | null>(null);
@@ -94,10 +91,7 @@ const StaticNoise = memo(function StaticNoise({
               target
             );
           } else if (alienOpacityRef.current > target) {
-            alienOpacityRef.current = Math.max(
-              alienOpacityRef.current - ALIEN_FADE_OUT_STEP,
-              0
-            );
+            alienOpacityRef.current = Math.max(alienOpacityRef.current - ALIEN_FADE_OUT_STEP, 0);
           }
 
           const imageData = ctx.createImageData(CANVAS_SIZE, CANVAS_SIZE);
@@ -117,10 +111,7 @@ const StaticNoise = memo(function StaticNoise({
               // the face "forms" from the noise as more pixels cross the threshold
               if (featureStrength > 0.01 && Math.random() < alienOp * featureStrength * 2.4) {
                 const blend = 0.52 + featureStrength * 0.28 + Math.random() * 0.12;
-                const highlight = Math.min(
-                  255,
-                  alienBrightness + 20 + featureStrength * 48
-                );
+                const highlight = Math.min(255, alienBrightness + 20 + featureStrength * 48);
                 const v = highlight * blend + noise * (1 - blend);
                 data[i] = data[i + 1] = data[i + 2] = v;
               } else {

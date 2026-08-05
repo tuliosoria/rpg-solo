@@ -19,12 +19,12 @@ export const witness_statement_original: FileNode = {
     'CLASSIFICATION: DELETED',
     '═══════════════════════════════════════════════════════════',
     '',
-    'SOUZA: Around 3:30 AM. Couldn\'t sleep. Went outside.',
+    "SOUZA: Around 3:30 AM. Couldn't sleep. Went outside.",
     'The sky was pulsing. Red and white.',
     'Something came down. Silent.',
     '',
     'By the time we looked, military trucks were already',
-    'there. We\'re 40km from anything.',
+    "there. We're 40km from anything.",
     '',
     '[REDACTED IN FINAL VERSION]',
     'They loaded something. The size of a child. But the',
@@ -32,14 +32,13 @@ export const witness_statement_original: FileNode = {
     'Its eyes... I still see them when I close mine.',
     '[END REDACTED SECTION]',
     '',
-    'A man in a dark suit. Said my husband\'s job depended',
+    "A man in a dark suit. Said my husband's job depended",
     'on remembering "correctly."',
     '',
     '───────────────────────────────────────────────────────────',
     'STATUS: EXPUNGED FROM OFFICIAL RECORD',
     '───────────────────────────────────────────────────────────',
   ],
-
 };
 
 export const directive_alpha_draft: FileNode = {
@@ -84,7 +83,6 @@ export const directive_alpha_draft: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-
 };
 
 export const deleted_comms_log: FileNode = {
@@ -111,8 +109,8 @@ export const deleted_comms_log: FileNode = {
     'COMMAND > RECOVERY: Responsive HOW?',
     '',
     '[02:44]',
-    'RECOVERY > COMMAND: It\'s looking at us. Each in turn.',
-    '                    Like it\'s... counting.',
+    "RECOVERY > COMMAND: It's looking at us. Each in turn.",
+    "                    Like it's... counting.",
     '',
     '[02:45]',
     'COMMAND > RECOVERY: Contain immediately.',
@@ -133,7 +131,6 @@ export const deleted_comms_log: FileNode = {
     'DELETION ORDER: COMM-1996-0120-DEL',
     '───────────────────────────────────────────────────────────',
   ],
-
 };
 
 export const personnel_file_costa: FileNode = {
@@ -152,7 +149,7 @@ export const personnel_file_costa: FileNode = {
     'INCIDENT: January 23, 1996',
     '',
     'Assigned to overnight monitoring of BIO-B.',
-    'At 02:30, Costa\'s brainwaves synchronized with',
+    "At 02:30, Costa's brainwaves synchronized with",
     'subject emissions. Found unresponsive at 06:00.',
     '',
     'Upon regaining consciousness, Costa demonstrated',
@@ -169,7 +166,6 @@ export const personnel_file_costa: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-
 };
 
 export const project_seed_memo: FileNode = {
@@ -210,7 +206,6 @@ export const project_seed_memo: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-
 };
 
 export const autopsy_notes_unredacted: FileNode = {
@@ -250,7 +245,6 @@ export const autopsy_notes_unredacted: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -300,7 +294,6 @@ export const transfer_manifest_deleted: FileNode = {
     '',
     '═══════════════════════════════════════════════════════════',
   ],
-
 };
 
 export const bio_containment_log_deleted: FileNode = {
@@ -328,7 +321,6 @@ export const bio_containment_log_deleted: FileNode = {
     'DELETION ORDER: Log purged 01/30/1996.',
     'Official records: "No biological material recovered."',
   ],
-
 };
 
 export const psi_analysis_classified: FileNode = {
@@ -359,7 +351,6 @@ export const psi_analysis_classified: FileNode = {
     'They are scouts. They accomplished their mission',
     'before we caught them.',
   ],
-
 };
 
 export const foreign_liaison_cable_deleted: FileNode = {
@@ -392,7 +383,6 @@ export const foreign_liaison_cable_deleted: FileNode = {
     'Cable destroyed per diplomatic protocol.',
     'No record in FOIA-accessible databases.',
   ],
-
 };
 
 export const convergence_model_draft: FileNode = {
@@ -422,9 +412,8 @@ export const convergence_model_draft: FileNode = {
     '',
     'Rejected by oversight. Official: "Random noise."',
     'This document will not survive the next purge cycle.',
-    'The math doesn\'t lie.',
+    "The math doesn't lie.",
   ],
-
 };
 
 // Map of archive files by their full paths

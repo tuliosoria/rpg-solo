@@ -46,12 +46,7 @@ const EXCLUDED_PATH_PATTERNS: RegExp[] = [
  * Directories that contain primarily mundane/administrative content.
  * Files in these directories don't count toward meaningful reads.
  */
-const MUNDANE_DIRECTORIES: string[] = [
-  '/admin/',
-  '/logs/',
-  '/temp/',
-  '/tmp/',
-];
+const MUNDANE_DIRECTORIES: string[] = ['/admin/', '/logs/', '/temp/', '/tmp/'];
 
 // ═══════════════════════════════════════════════════════════════════════════
 // HELPER FUNCTIONS

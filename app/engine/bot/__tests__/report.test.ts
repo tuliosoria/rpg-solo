@@ -29,10 +29,33 @@ const ELEVATED_FILES = (() => {
 describe('buildRunSummary', () => {
   it('summarizes turns, saves, outcome, and lists anomalies', () => {
     const log: BotRunLogEntry[] = [
-      { turn: 1, command: 'open /a.txt', detectionBefore: 0, detectionAfter: 1, filesReadBefore: 0, savedBefore: 0, filesReadAfter: 1, savedAfter: 0 },
-      { turn: 2, command: 'save a.txt', detectionBefore: 1, detectionAfter: 1, filesReadBefore: 1, savedBefore: 0, filesReadAfter: 1, savedAfter: 1, anomaly: 'command returned error' },
+      {
+        turn: 1,
+        command: 'open /a.txt',
+        detectionBefore: 0,
+        detectionAfter: 1,
+        filesReadBefore: 0,
+        savedBefore: 0,
+        filesReadAfter: 1,
+        savedAfter: 0,
+      },
+      {
+        turn: 2,
+        command: 'save a.txt',
+        detectionBefore: 1,
+        detectionAfter: 1,
+        filesReadBefore: 1,
+        savedBefore: 0,
+        filesReadAfter: 1,
+        savedAfter: 1,
+        anomaly: 'command returned error',
+      },
     ];
-    const finalState: GameState = { ...DEFAULT_GAME_STATE, savedFiles: new Set(['/a.txt']), gameWon: true } as GameState;
+    const finalState: GameState = {
+      ...DEFAULT_GAME_STATE,
+      savedFiles: new Set(['/a.txt']),
+      gameWon: true,
+    } as GameState;
     const entries = buildRunSummary(log, cfg, finalState);
     const text = entries.map(e => e.content).join('\n');
     expect(text).toContain('BOT-TEST RUN SUMMARY');
@@ -119,12 +142,16 @@ describe('buildRunSummary goal verdicts', () => {
       }) as GameState;
     const goal = goalCfg({ kind: 'scenario', scenario: 'tree-firewall' });
 
-    expect(buildRunSummary([], goal, ended(reason)).map(e => e.content).join('\n')).toContain(
-      `PASS — game over "${reason}"`
-    );
-    expect(buildRunSummary([], goal, ended('LOCKDOWN')).map(e => e.content).join('\n')).toContain(
-      'FAIL — expected game over'
-    );
+    expect(
+      buildRunSummary([], goal, ended(reason))
+        .map(e => e.content)
+        .join('\n')
+    ).toContain(`PASS — game over "${reason}"`);
+    expect(
+      buildRunSummary([], goal, ended('LOCKDOWN'))
+        .map(e => e.content)
+        .join('\n')
+    ).toContain('FAIL — expected game over');
   });
 
   it('fails a survivable scenario that ended the run', () => {
@@ -135,8 +162,10 @@ describe('buildRunSummary goal verdicts', () => {
       isGameOver: true,
       gameOverReason: 'LOCKDOWN',
     } as GameState;
-    expect(buildRunSummary([], goal, dead).map(e => e.content).join('\n')).toContain(
-      'FAIL — scenario should survive'
-    );
+    expect(
+      buildRunSummary([], goal, dead)
+        .map(e => e.content)
+        .join('\n')
+    ).toContain('FAIL — scenario should survive');
   });
 });

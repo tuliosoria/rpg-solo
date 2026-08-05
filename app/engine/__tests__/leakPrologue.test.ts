@@ -3,10 +3,7 @@ import { analyzeLeak, buildLeakPrologue } from '../leakPrologue';
 import { EVIDENCE_VIDEO_ATTACHMENTS } from '../../components/terminalConstants';
 import { RUNTIME_TRANSLATIONS } from '../../i18n/runtime';
 
-const ALIEN_FILES = [
-  '/internal/autopsy_alpha.log',
-  '/internal/jardim_andere_incident.txt',
-];
+const ALIEN_FILES = ['/internal/autopsy_alpha.log', '/internal/jardim_andere_incident.txt'];
 
 const VIDEO_BEARING_PATH = '/internal/jardim_andere_incident.txt';
 const IMAGE_BEARING_BASENAME = 'autopsy_alpha.log';
@@ -52,7 +49,7 @@ describe('analyzeLeak', () => {
         '/admin/parking_allocation_jan96.txt',
         '/admin/URGENT_classified_alpha.txt',
         '/admin/SMOKING_GUN_proof.txt',
-      ]),
+      ])
     );
     expect(summary.alienFileCount).toBe(0);
     expect(summary.qualifies).toBe(false);
@@ -87,7 +84,7 @@ describe('buildLeakPrologue', () => {
   it('mentions photographic evidence when an image-bearing file was saved', () => {
     const paragraphs = buildLeakPrologue(
       new Set([IMAGE_BEARING_PATH, '/internal/witness_statement_raw.txt']),
-      'real_ending',
+      'real_ending'
     );
     expect(paragraphs.some(p => /photographic evidence/i.test(p))).toBe(true);
   });
@@ -95,7 +92,7 @@ describe('buildLeakPrologue', () => {
   it('mentions video footage when a video-bearing file was saved', () => {
     const paragraphs = buildLeakPrologue(
       new Set([VIDEO_BEARING_PATH, '/internal/witness_statement_raw.txt']),
-      'real_ending',
+      'real_ending'
     );
     expect(paragraphs.some(p => /video footage/i.test(p))).toBe(true);
   });
@@ -103,7 +100,7 @@ describe('buildLeakPrologue', () => {
   it('combines image and video phrasing into a single line when both are present', () => {
     const paragraphs = buildLeakPrologue(
       new Set([IMAGE_BEARING_PATH, VIDEO_BEARING_PATH]),
-      'real_ending',
+      'real_ending'
     );
     const evidenceLine = paragraphs.find(p => /photographic/i.test(p) && /video/i.test(p));
     expect(evidenceLine).toBeDefined();
@@ -122,11 +119,17 @@ describe('leak prologue ↔ terminal constants drift', () => {
 describe('leak prologue translations', () => {
   const ALL_PROLOGUE_STRINGS = new Set<string>([
     ...buildLeakPrologue(new Set([IMAGE_BEARING_PATH, VIDEO_BEARING_PATH]), 'real_ending'),
-    ...buildLeakPrologue(new Set([IMAGE_BEARING_PATH, '/internal/witness_statement_raw.txt']), 'real_ending'),
-    ...buildLeakPrologue(new Set([VIDEO_BEARING_PATH, '/internal/witness_statement_raw.txt']), 'real_ending'),
+    ...buildLeakPrologue(
+      new Set([IMAGE_BEARING_PATH, '/internal/witness_statement_raw.txt']),
+      'real_ending'
+    ),
+    ...buildLeakPrologue(
+      new Set([VIDEO_BEARING_PATH, '/internal/witness_statement_raw.txt']),
+      'real_ending'
+    ),
     ...buildLeakPrologue(
       new Set(['/internal/autopsy_alpha.log', '/internal/witness_statement_raw.txt']),
-      'real_ending',
+      'real_ending'
     ),
   ]);
 

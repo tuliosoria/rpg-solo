@@ -20,7 +20,10 @@ describe('StaticNoise', () => {
   } as unknown as CanvasRenderingContext2D;
 
   beforeEach(() => {
-    vi.stubGlobal('requestAnimationFrame', vi.fn(() => 1));
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn(() => 1)
+    );
     vi.stubGlobal('cancelAnimationFrame', vi.fn());
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(mockContext);
   });

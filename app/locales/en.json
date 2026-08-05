@@ -241,6 +241,7 @@
   "turing.result.score": "MACHINE RESPONSES: {{value}}/3",
   "turing.result.passLine": "SUBJECT IS NOT HUMAN, NOT A THREAT",
   "turing.result.failLine": "IDENTITY REJECTED: HUMAN BEHAVIORAL PATTERNS DETECTED",
+  "turing.result.continue": "Press Enter to continue",
   "turing.header.title": "SECURITY PROTOCOL: TURING EVALUATION",
   "turing.instructions.notice": "NOTICE: Anomalous access pattern detected.",
   "turing.instructions.prove": "You must prove you are an AUTHORIZED TERMINAL PROCESS.",
@@ -1762,5 +1763,7 @@
   "engine.commands.tutorial.save_file_save_to_dossier": "  save <file>     Save a file to your dossier",
   "engine.commands.tutorial.unsave_file_remove_from_dossier": "  unsave <file>   Remove a file from your dossier",
   "engine.commands.core.god_ending_jump_to_ending_phase": "  god ending <n> - Jump to specific ending (1-12)",
-  "engine.commands.core.god_ending_jump_directly_to_ending_phase": "god ending <n> - Jump to specific ending (1-12)"
+  "engine.commands.core.god_ending_jump_directly_to_ending_phase": "god ending <n> - Jump to specific ending (1-12)",
+  "engine.commands.core.god_ending_selector_usage": "Usage: god ending <number|name>",
+  "engine.commands.core.god_ending_selector_example": "Example: god ending 1"
 }

@@ -238,9 +238,7 @@ function deserializeState(json: string): GameState {
     Number.MAX_SAFE_INTEGER
   );
   const shouldClearExpiredCountdown =
-    !!baseState.countdownActive &&
-    rawCountdownEndTime > 0 &&
-    rawCountdownEndTime <= Date.now();
+    !!baseState.countdownActive && rawCountdownEndTime > 0 && rawCountdownEndTime <= Date.now();
 
   const state = {
     ...baseState,
@@ -296,7 +294,8 @@ function deserializeState(json: string): GameState {
       : DEFAULT_GAME_STATE.history,
     evidenceLinks: Array.isArray(baseState.evidenceLinks) ? baseState.evidenceLinks : [],
     ufo74SecretDiscovered:
-      !!baseState.ufo74SecretDiscovered || parsedFilesRead.includes('/internal/ghost_in_machine.enc'),
+      !!baseState.ufo74SecretDiscovered ||
+      parsedFilesRead.includes('/internal/ghost_in_machine.enc'),
     pendingDecryptFile: undefined,
     timedDecryptActive: false,
     timedDecryptFile: undefined,
@@ -308,14 +307,13 @@ function deserializeState(json: string): GameState {
         ? false
         : !!baseState.countdownActive,
     countdownEndTime:
+      shouldClearLegacyTraceCountdown || shouldClearExpiredCountdown ? 0 : rawCountdownEndTime,
+    countdownTriggeredBy:
       shouldClearLegacyTraceCountdown || shouldClearExpiredCountdown
-      ? 0
-      : rawCountdownEndTime,
-    countdownTriggeredBy: shouldClearLegacyTraceCountdown || shouldClearExpiredCountdown
-      ? undefined
-      : typeof baseState.countdownTriggeredBy === 'string'
-        ? baseState.countdownTriggeredBy
-        : undefined,
+        ? undefined
+        : typeof baseState.countdownTriggeredBy === 'string'
+          ? baseState.countdownTriggeredBy
+          : undefined,
   } as GameState;
 
   state.evidenceCount =
@@ -694,7 +692,14 @@ export function saveGame(state: GameState, slotName?: string): SaveSlot | null {
     readSlots: getSaveSlots,
   };
 
-  if (!persistSlotDataWithQuotaRetry(SAVE_PREFIX + id, serializedState, saveStorageConfig, 'save game')) {
+  if (
+    !persistSlotDataWithQuotaRetry(
+      SAVE_PREFIX + id,
+      serializedState,
+      saveStorageConfig,
+      'save game'
+    )
+  ) {
     return null;
   }
 

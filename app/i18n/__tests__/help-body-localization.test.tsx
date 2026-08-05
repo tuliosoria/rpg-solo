@@ -44,7 +44,9 @@ describe('help body — command localization (BUG-002)', () => {
 
   describe('EN regression', () => {
     it('EN helpMenu.save still starts with "save"', () => {
-      expect((en as Record<string, string>)['engine.commands.system.helpMenu.save']).toMatch(/^\s*save\b/);
+      expect((en as Record<string, string>)['engine.commands.system.helpMenu.save']).toMatch(
+        /^\s*save\b/
+      );
     });
   });
 });

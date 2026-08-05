@@ -44,7 +44,10 @@ describe('Narrative Mechanics', () => {
       const sigText = (sig.pendingUfo74Messages ?? []).map(e => e.content).join('\n');
       expect(sigText).toContain('streber. that was me.');
 
-      const modem = executeCommand('open modem_log_jan96.txt', createTestState({ currentPath: '/tmp' }));
+      const modem = executeCommand(
+        'open modem_log_jan96.txt',
+        createTestState({ currentPath: '/tmp' })
+      );
       const modemText = (modem.pendingUfo74Messages ?? []).map(e => e.content).join('\n');
       expect(modemText).toContain('i practically lived there.');
     });
@@ -196,9 +199,9 @@ describe('Narrative Mechanics', () => {
         accessLevel: 3,
       });
       const result = executeCommand('open /internal/ghost_in_machine.enc', state);
-      expect(result.output.some(e => e.content.includes('FILE: /internal/ghost_in_machine.enc'))).toBe(
-        true
-      );
+      expect(
+        result.output.some(e => e.content.includes('FILE: /internal/ghost_in_machine.enc'))
+      ).toBe(true);
       expect(result.stateChanges.ufo74SecretDiscovered).toBe(true);
       expect(result.skipToPhase).toBeUndefined();
       expect(result.triggerFlicker).toBe(false);
@@ -1085,9 +1088,9 @@ describe('Narrative Mechanics', () => {
       });
       const result = executeCommand('run save_evidence.sh', state);
 
-      expect(result.output.some(e => e.content.includes('Script not found: save_evidence.sh'))).toBe(
-        true
-      );
+      expect(
+        result.output.some(e => e.content.includes('Script not found: save_evidence.sh'))
+      ).toBe(true);
       expect(result.stateChanges.leakSequenceGenerated).toBeUndefined();
     });
 
@@ -1511,7 +1514,9 @@ describe('Narrative Mechanics', () => {
 
       expect(result.stateChanges.evidenceCount).toBe(1);
       expect(result.stateChanges.avatarExpression).toBe('scared');
-      expect(result.stateChanges.filesRead?.has('/storage/quarantine/bio_container.log')).toBe(true);
+      expect(result.stateChanges.filesRead?.has('/storage/quarantine/bio_container.log')).toBe(
+        true
+      );
     });
 
     it('counts each evidence file separately even when they cover similar material', () => {
@@ -1637,7 +1642,12 @@ describe('Narrative Mechanics', () => {
       const result = executeCommand('release alpha', state);
 
       expect(
-        result.output.some(e => e.content.includes('ALREADY') || e.content.includes('already') || e.content.includes('previously'))
+        result.output.some(
+          e =>
+            e.content.includes('ALREADY') ||
+            e.content.includes('already') ||
+            e.content.includes('previously')
+        )
       ).toBe(true);
       // Should not set the flag again
       expect(result.stateChanges.flags?.alphaReleased).toBeUndefined();

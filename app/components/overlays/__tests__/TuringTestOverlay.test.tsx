@@ -210,6 +210,24 @@ describe('TuringTestOverlay', () => {
     // Should show result screen
     expect(screen.getByText('[ VERIFICATION COMPLETE ]')).toBeInTheDocument();
     expect(screen.getByText('MACHINE RESPONSES: 3/3')).toBeInTheDocument();
+    const continueButton = screen.getByRole('button', { name: 'Press Enter to continue' });
+    expect(continueButton).toHaveFocus();
+
+    const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+    continueButton.dispatchEvent(tabEvent);
+    expect(tabEvent.defaultPrevented).toBe(true);
+    expect(continueButton).toHaveFocus();
+
+    // A focused native button must not also be completed by the global
+    // keyboard shortcut handler.
+    act(() => {
+      fireEvent.keyDown(continueButton, { key: 'Enter' });
+    });
+    expect(mockOnComplete).not.toHaveBeenCalled();
+    act(() => {
+      fireEvent.click(continueButton);
+    });
+    expect(mockOnComplete).toHaveBeenCalledTimes(1);
   });
 
   it('shows pass result when all answers are correct', () => {
@@ -420,6 +438,7 @@ describe('TuringTestOverlay', () => {
     });
 
     expect(screen.getByText('↵')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Press Enter to continue' })).toBeInTheDocument();
   });
 
   it('keeps the result screen constrained within the terminal screen', () => {

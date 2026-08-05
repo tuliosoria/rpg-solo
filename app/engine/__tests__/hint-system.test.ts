@@ -43,7 +43,9 @@ describe('Hint System', () => {
       expect(result.output.find(e => e.content.includes('HINT PROTOCOL ACTIVATED'))?.i18nKey).toBe(
         'engine.hints.protocol.activated'
       );
-      expect(result.output.find(e => e.type === 'ufo74' && e.content.includes('UFO74:'))?.i18nKey).toBeDefined();
+      expect(
+        result.output.find(e => e.type === 'ufo74' && e.content.includes('UFO74:'))?.i18nKey
+      ).toBeDefined();
     });
 
     it('refuses hints when exhausted', () => {
@@ -132,7 +134,12 @@ describe('Hint System', () => {
     it('guides players toward unexplored sectors', () => {
       const hint = analyzeProgressForHint(
         createTestState({
-          filesRead: new Set(['/ops/file1.txt', '/ops/file2.txt', '/internal/file3.txt', '/internal/file4.txt']),
+          filesRead: new Set([
+            '/ops/file1.txt',
+            '/ops/file2.txt',
+            '/internal/file3.txt',
+            '/internal/file4.txt',
+          ]),
           savedFiles: new Set(['file1.txt']),
         })
       );
@@ -157,10 +164,14 @@ describe('Hint System', () => {
       const hint = analyzeProgressForHint(
         createTestState({
           filesRead: new Set([
-            '/storage/log1.txt', '/storage/log2.txt',
-            '/ops/log2.txt', '/ops/log3.txt',
-            '/comms/log3.txt', '/comms/log4.txt',
-            '/internal/log5.txt', '/internal/log6.txt',
+            '/storage/log1.txt',
+            '/storage/log2.txt',
+            '/ops/log2.txt',
+            '/ops/log3.txt',
+            '/comms/log3.txt',
+            '/comms/log4.txt',
+            '/internal/log5.txt',
+            '/internal/log6.txt',
           ]),
           savedFiles: new Set(['file1.txt', 'file2.txt', 'file3.txt', 'file4.txt', 'file5.txt']),
           accessLevel: 3,

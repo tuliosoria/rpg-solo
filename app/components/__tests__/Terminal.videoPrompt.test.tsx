@@ -45,10 +45,7 @@ async function runFileOpenCase(opts: {
   expectedPromptRegex: RegExp;
 }) {
   window.localStorage.setItem('terminal1996_language', opts.language);
-  window.localStorage.setItem(
-    'terminal1996_options',
-    JSON.stringify({ textSpeed: 'instant' })
-  );
+  window.localStorage.setItem('terminal1996_options', JSON.stringify({ textSpeed: 'instant' }));
 
   const state: GameState = {
     ...DEFAULT_GAME_STATE,

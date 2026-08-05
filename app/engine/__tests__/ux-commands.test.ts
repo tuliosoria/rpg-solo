@@ -215,9 +215,9 @@ describe('UX Commands', () => {
       // Every file in the game lives in a subdirectory, so a scan that mangles
       // nested paths can never match filesRead and the count never moves.
       expect(countOf(after)).toBe(countOf(before) - 1);
-      expect(
-        executeCommand('unread', after).output.some(e => e.content.includes(target))
-      ).toBe(false);
+      expect(executeCommand('unread', after).output.some(e => e.content.includes(target))).toBe(
+        false
+      );
     });
   });
 
@@ -244,7 +244,9 @@ describe('UX Commands', () => {
 
       expect(result.output.some(e => e.content.includes('Files saved: 2/10'))).toBe(true);
       expect(result.output.some(e => e.content.includes('CASE PROFILE'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('Saved files determine what the world believes'))).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('Saved files determine what the world believes'))
+      ).toBe(true);
       expect(result.output.some(e => e.content.includes('Threads in dossier'))).toBe(true);
     });
 
@@ -263,10 +265,7 @@ describe('UX Commands', () => {
 
     it('prioritizes trap-like dossier feedback even before three files are saved', () => {
       const state = createTestState({
-        savedFiles: new Set([
-          '/admin/URGENT_classified_alpha.txt',
-          '/admin/SMOKING_GUN_proof.txt',
-        ]),
+        savedFiles: new Set(['/admin/URGENT_classified_alpha.txt', '/admin/SMOKING_GUN_proof.txt']),
       });
       const result = executeCommand('progress', state);
       const output = result.output.map(e => e.content).join('\n');
@@ -339,14 +338,14 @@ describe('UX Commands', () => {
       const result = executeCommand('search session_objectives', state);
 
       expect(result.output.some(e => e.content.includes('SEARCH RESULTS'))).toBe(true);
-      expect(result.output.find(e => e.i18nKey === 'engine.commands.inventory.search_query')).toBeDefined();
+      expect(
+        result.output.find(e => e.i18nKey === 'engine.commands.inventory.search_query')
+      ).toBeDefined();
       expect(
         result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))
       ).toBe(true);
       expect(
-        result.output.some(
-          e => e.i18nKey === 'engine.commands.inventory.search_result.filename'
-        )
+        result.output.some(e => e.i18nKey === 'engine.commands.inventory.search_result.filename')
       ).toBe(true);
     });
 
@@ -354,7 +353,9 @@ describe('UX Commands', () => {
       const state = createTestState();
       const result = executeCommand('search anomalous', state);
 
-      expect(result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))
+      ).toBe(true);
     });
 
     it('searches file content case-insensitively across multiple directories', () => {
@@ -363,8 +364,12 @@ describe('UX Commands', () => {
       });
       const result = executeCommand('search ANOMALOUS', state);
 
-      expect(result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('/storage/quarantine/surveillance_recovery.vid'))).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('/internal/protocols/session_objectives.txt'))
+      ).toBe(true);
+      expect(
+        result.output.some(e => e.content.includes('/storage/quarantine/surveillance_recovery.vid'))
+      ).toBe(true);
       expect(
         result.output.some(e => e.i18nKey === 'engine.commands.inventory.search_result.content')
       ).toBe(true);
@@ -405,10 +410,14 @@ describe('UX Commands', () => {
       });
       const result = executeCommand('search report', state);
 
-      expect(result.output.some(e => e.i18nKey === 'engine.commands.inventory.search_more_results')).toBe(false);
-      expect(result.output.some(e => e.content.includes('/internal/sanitized/asset_disposition_report.txt'))).toBe(
-        true
-      );
+      expect(
+        result.output.some(e => e.i18nKey === 'engine.commands.inventory.search_more_results')
+      ).toBe(false);
+      expect(
+        result.output.some(e =>
+          e.content.includes('/internal/sanitized/asset_disposition_report.txt')
+        )
+      ).toBe(true);
     });
   });
 
@@ -830,7 +839,11 @@ describe('UX Commands', () => {
       const result = executeCommand('help open', state);
 
       expect(result.output.some(e => e.content.includes('COMMAND: open'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('Opening certain files may increase detection risk.'))).toBe(true);
+      expect(
+        result.output.some(e =>
+          e.content.includes('Opening certain files may increase detection risk.')
+        )
+      ).toBe(true);
     });
 
     it('should not expose removed decrypt help', () => {
@@ -847,14 +860,42 @@ describe('UX Commands', () => {
       expect(result.output.some(e => e.content.includes('TERMINAL COMMANDS'))).toBe(true);
       expect(result.output.some(e => e.content.includes('wait'))).toBe(true);
       expect(result.output.some(e => e.content.includes('hide'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('  back              Go to previous directory'))).toBe(false);
-      expect(result.output.some(e => e.content.includes('  progress          Show investigation progress'))).toBe(false);
-      expect(result.output.some(e => e.content.includes('  map               Show evidence connections'))).toBe(false);
-      expect(result.output.some(e => e.content.includes('  decrypt <file>    Attempt decryption of .enc files'))).toBe(false);
-      expect(result.output.some(e => e.content.includes('  recover <file>    Attempt file recovery (RISK)'))).toBe(false);
-      expect(result.output.some(e => e.content.includes('  trace             Trace system connections (RISK)'))).toBe(false);
-      expect(result.output.some(e => e.content.includes('  rewind            Access archive state (RISK)'))).toBe(false);
-      expect(result.output.some(e => e.content.includes('  present           Return to present from archive'))).toBe(false);
+      expect(
+        result.output.some(e => e.content.includes('  back              Go to previous directory'))
+      ).toBe(false);
+      expect(
+        result.output.some(e =>
+          e.content.includes('  progress          Show investigation progress')
+        )
+      ).toBe(false);
+      expect(
+        result.output.some(e => e.content.includes('  map               Show evidence connections'))
+      ).toBe(false);
+      expect(
+        result.output.some(e =>
+          e.content.includes('  decrypt <file>    Attempt decryption of .enc files')
+        )
+      ).toBe(false);
+      expect(
+        result.output.some(e =>
+          e.content.includes('  recover <file>    Attempt file recovery (RISK)')
+        )
+      ).toBe(false);
+      expect(
+        result.output.some(e =>
+          e.content.includes('  trace             Trace system connections (RISK)')
+        )
+      ).toBe(false);
+      expect(
+        result.output.some(e =>
+          e.content.includes('  rewind            Access archive state (RISK)')
+        )
+      ).toBe(false);
+      expect(
+        result.output.some(e =>
+          e.content.includes('  present           Return to present from archive')
+        )
+      ).toBe(false);
     });
 
     it('should not expose removed mechanics in direct help', () => {
@@ -898,8 +939,12 @@ describe('UX Commands', () => {
       const result = executeCommand('status', state);
 
       expect(result.output.some(e => e.content.includes('3/10'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('RECOVERY: "wait" can buy time'))).toBe(true);
-      expect(result.output.some(e => e.content.includes('SIGNAL: Residual echo persists'))).toBe(true);
+      expect(result.output.some(e => e.content.includes('RECOVERY: "wait" can buy time'))).toBe(
+        true
+      );
+      expect(result.output.some(e => e.content.includes('SIGNAL: Residual echo persists'))).toBe(
+        true
+      );
     });
 
     it('can trigger a delayed second-voice warning after psi exposure', () => {
@@ -927,7 +972,9 @@ describe('UX Commands', () => {
       const statusResult = executeCommand('status', state);
       const helpResult = executeCommand('help', state);
 
-      expect(statusResult.output.some(e => e.content.includes('Residual echo persists'))).toBe(false);
+      expect(statusResult.output.some(e => e.content.includes('Residual echo persists'))).toBe(
+        false
+      );
       expect(
         helpResult.output.some(e =>
           e.content.includes('If assistance appears before you finish typing')
@@ -954,9 +1001,10 @@ describe('UX Commands', () => {
       const waitResult = executeCommand('wait', waitState);
 
       expect(waitResult.output.some(e => e.content.includes('COMMAND RESTRICTED'))).toBe(false);
-      expect((waitResult.stateChanges.detectionLevel ?? waitState.detectionLevel) < waitState.detectionLevel).toBe(
-        true
-      );
+      expect(
+        (waitResult.stateChanges.detectionLevel ?? waitState.detectionLevel) <
+          waitState.detectionLevel
+      ).toBe(true);
     });
   });
 

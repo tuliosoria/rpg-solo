@@ -32,9 +32,7 @@ export type BotScenarioId =
   | 'dossier-full'
   | 'leak-misfire';
 
-export type BotScenarioExpectation =
-  | { kind: 'gameOver'; reason: string }
-  | { kind: 'survives' };
+export type BotScenarioExpectation = { kind: 'gameOver'; reason: string } | { kind: 'survives' };
 
 export interface BotScenarioContext {
   state: GameState;
@@ -160,8 +158,7 @@ export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
     // Every one of these is meant to be refused — that refusal *is* the
     // mechanic under test — so the summary must not report eight findings on a
     // scenario doing exactly what it says on the tin.
-    next: ({ step }) =>
-      step < 12 ? { text: `qzxjvw${step}`, expectRejected: true } : null,
+    next: ({ step }) => (step < 12 ? { text: `qzxjvw${step}`, expectRejected: true } : null),
   },
 
   /** Eight inputs beyond the hard command-length limit. */
@@ -169,8 +166,7 @@ export const BOT_SCENARIOS: Record<BotScenarioId, BotScenarioSpec> = {
     id: 'input-length-threshold',
     summary: 'Exceed the command-length limit until its dedicated lockdown fires.',
     expect: { kind: 'gameOver', reason: 'INVALID INPUT THRESHOLD' },
-    next: ({ step }) =>
-      step < 12 ? { text: OVERLONG_INPUT, expectRejected: true } : null,
+    next: ({ step }) => (step < 12 ? { text: OVERLONG_INPUT, expectRejected: true } : null),
   },
 
   /** Three wrong override passwords, which is its own lockdown, not a strike. */

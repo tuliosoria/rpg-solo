@@ -101,7 +101,7 @@ export function useSaveIndicator(lastSaveTime: number | undefined) {
 export function useEvidenceState(evidenceCount: number | undefined) {
   return useMemo(() => {
     const count = evidenceCount ?? 0;
-    
+
     return {
       count,
     };
@@ -125,9 +125,7 @@ export function useIsReadingFile(isReadingFile: boolean, lastFileReadTime: numbe
   return useMemo(() => {
     const FILE_READ_COOLDOWN_MS = 15000;
     return Boolean(
-      isReadingFile && 
-      lastFileReadTime && 
-      (Date.now() - lastFileReadTime < FILE_READ_COOLDOWN_MS)
+      isReadingFile && lastFileReadTime && Date.now() - lastFileReadTime < FILE_READ_COOLDOWN_MS
     );
   }, [isReadingFile, lastFileReadTime]);
 }
@@ -136,11 +134,11 @@ export function useIsReadingFile(isReadingFile: boolean, lastFileReadTime: numbe
  * Get memoized firewall state
  */
 export function useFirewallState(gameState: GameState) {
-  return useMemo(() => ({
-    active: gameState.firewallActive,
-    disarmed: gameState.firewallDisarmed,
-  }), [
-    gameState.firewallActive,
-    gameState.firewallDisarmed,
-  ]);
+  return useMemo(
+    () => ({
+      active: gameState.firewallActive,
+      disarmed: gameState.firewallDisarmed,
+    }),
+    [gameState.firewallActive, gameState.firewallDisarmed]
+  );
 }

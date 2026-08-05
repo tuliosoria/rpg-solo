@@ -122,7 +122,7 @@ function HackerAvatar({
 
 // Memoize to prevent re-renders when only detectionLevel changes
 // Only re-render when expression actually changes
-export default memo(HackerAvatar, (prev, next) => 
-  prev.expression === next.expression &&
-  prev.creepyEntrance === next.creepyEntrance
+export default memo(
+  HackerAvatar,
+  (prev, next) => prev.expression === next.expression && prev.creepyEntrance === next.creepyEntrance
 );

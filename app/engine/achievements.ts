@@ -63,36 +63,21 @@ const DOSSIER_ENDING_ACHIEVEMENTS = [
     'Expose the military cover-up as a national scandal',
     '⚖️',
   ],
-  [
-    'prisoner_45_freed',
-    'Prisoner 45 Freed',
-    'Reveal the containment of Prisoner 45',
-    '🔓',
-  ],
+  ['prisoner_45_freed', 'Prisoner 45 Freed', 'Reveal the containment of Prisoner 45', '🔓'],
   [
     'harvest_understood',
     'Harvest Understood',
     'Expose the colonization and extraction model',
     '🌾',
   ],
-  [
-    'nothing_changes',
-    'Nothing Changes',
-    'Prove the truth, only to watch the world move on',
-    '🕳️',
-  ],
+  ['nothing_changes', 'Nothing Changes', 'Prove the truth, only to watch the world move on', '🕳️'],
   [
     'incomplete_picture',
     'Incomplete Picture',
     'Reach an ending with real evidence but no coherent case',
     '🧩',
   ],
-  [
-    'wrong_story',
-    'The Wrong Story',
-    'Expose a scandal while missing the truth underneath',
-    '🧾',
-  ],
+  ['wrong_story', 'The Wrong Story', 'Expose a scandal while missing the truth underneath', '🧾'],
   ['hackerkid_caught', 'HackerKid Caught', 'Trigger the honeypot ending', '🚨'],
   [
     'secret_ending',
@@ -100,12 +85,7 @@ const DOSSIER_ENDING_ACHIEVEMENTS = [
     "Assemble UFO74's full protocol and secure the secret ending",
     '🔐',
   ],
-  [
-    'real_ending',
-    'Undeniable',
-    'Assemble the dossier that forces a renewed investigation',
-    '🌐',
-  ],
+  ['real_ending', 'Undeniable', 'Assemble the dossier that forces a renewed investigation', '🌐'],
 ] as const satisfies ReadonlyArray<readonly [EndingId, string, string, string]>;
 
 export const ACHIEVEMENTS: Achievement[] = [
@@ -116,13 +96,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     'Complete the game in under 50 commands',
     '⚡'
   ),
-  createAchievement(
-    'ghost',
-    'ghost',
-    'Ghost Protocol',
-    'Win with detection level under 20%',
-    '👻'
-  ),
+  createAchievement('ghost', 'ghost', 'Ghost Protocol', 'Win with detection level under 20%', '👻'),
   createAchievement(
     'completionist',
     'completionist',

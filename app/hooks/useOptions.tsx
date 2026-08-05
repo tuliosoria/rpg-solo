@@ -9,14 +9,7 @@
  * @module hooks/useOptions
  */
 
-import {
-  useState,
-  useEffect,
-  useCallback,
-  createContext,
-  useContext,
-  type ReactNode,
-} from 'react';
+import { useState, useEffect, useCallback, createContext, useContext, type ReactNode } from 'react';
 import type { FlickerIntensity, FontSize, OptionsState } from '../types';
 import { safeGetJSON, safeSetJSON } from '../storage/safeStorage';
 
@@ -78,7 +71,10 @@ export function applyOptionsToDocument(options: OptionsState): void {
 
   document.body.classList.toggle('no-crt', !options.crtEffectsEnabled);
   document.body.classList.toggle('screen-flicker-disabled', !options.screenFlickerEnabled);
-  document.documentElement.style.setProperty('--terminal-font-size', FONT_SIZE_MAP[options.fontSize]);
+  document.documentElement.style.setProperty(
+    '--terminal-font-size',
+    FONT_SIZE_MAP[options.fontSize]
+  );
   document.documentElement.style.setProperty(
     '--flicker-intensity',
     FLICKER_INTENSITY_MAP[options.flickerIntensity]

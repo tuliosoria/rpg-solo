@@ -4,7 +4,12 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { GameState } from '../types';
 import { createNewGame, loadGameAsync, loadCheckpoint } from '../storage/saves';
-import { incrementStatistic, startPlaytimeSession, endPlaytimeSession, flushPlaytime } from '../storage/statistics';
+import {
+  incrementStatistic,
+  startPlaytimeSession,
+  endPlaytimeSession,
+  flushPlaytime,
+} from '../storage/statistics';
 import { useGlobalErrorHandler } from '../hooks/useGlobalErrorHandler';
 import { I18nProvider } from '../i18n';
 import ErrorBoundary from './ErrorBoundary';
@@ -13,7 +18,10 @@ import IntroSequence from './IntroSequence';
 import { stopMenuMusic } from '../audio/menuMusic';
 
 const Terminal = dynamic(() => import('./Terminal'), { ssr: false, loading: () => null });
-const SaveModal = dynamic(() => import('./overlays/SaveModal'), { ssr: false, loading: () => null });
+const SaveModal = dynamic(() => import('./overlays/SaveModal'), {
+  ssr: false,
+  loading: () => null,
+});
 
 type View = 'intro' | 'menu' | 'game';
 
@@ -117,24 +125,27 @@ function HomeContentInner() {
     return false;
   }, []);
 
-  const handleLoadCheckpoint = useCallback((slotId: string) => {
-    invalidatePendingLoads();
-    const loadedState = loadCheckpoint(slotId);
-    if (loadedState) {
-      stopMenuMusic();
-      startPlaytimeSession();
-      // Reset game over state when loading checkpoint
-      setGameState({
-        ...loadedState,
-        isGameOver: false,
-        gameOverReason: undefined,
-      });
-      setSaveRequestState(null);
-      setShowSaveModal(false);
-      setSessionEpoch(prev => prev + 1);
-      setView('game');
-    }
-  }, [invalidatePendingLoads]);
+  const handleLoadCheckpoint = useCallback(
+    (slotId: string) => {
+      invalidatePendingLoads();
+      const loadedState = loadCheckpoint(slotId);
+      if (loadedState) {
+        stopMenuMusic();
+        startPlaytimeSession();
+        // Reset game over state when loading checkpoint
+        setGameState({
+          ...loadedState,
+          isGameOver: false,
+          gameOverReason: undefined,
+        });
+        setSaveRequestState(null);
+        setShowSaveModal(false);
+        setSessionEpoch(prev => prev + 1);
+        setView('game');
+      }
+    },
+    [invalidatePendingLoads]
+  );
 
   const handleExit = useCallback(() => {
     invalidatePendingLoads();

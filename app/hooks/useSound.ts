@@ -14,7 +14,12 @@
  */
 
 import { useCallback, useRef, useEffect, useState } from 'react';
-import { DEFAULT_OPTIONS, OPTIONS_CHANGED_EVENT, persistOptions, readStoredOptions } from './useOptions';
+import {
+  DEFAULT_OPTIONS,
+  OPTIONS_CHANGED_EVENT,
+  persistOptions,
+  readStoredOptions,
+} from './useOptions';
 
 /**
  * Available sound effect types.
@@ -146,7 +151,9 @@ if (typeof window !== 'undefined') {
   };
 
   if ('requestIdleCallback' in window) {
-    (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(preloadTracks);
+    (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(
+      preloadTracks
+    );
   } else {
     setTimeout(preloadTracks, 1000);
   }
@@ -671,14 +678,14 @@ export function useSound() {
 
           // COLHEITA morse sequences: each letter is an array of dot/dash durations
           const morseLetters: number[][] = [
-            [DASH, DOT, DASH, DOT],     // C: -.-.
-            [DASH, DASH, DASH],          // O: ---
-            [DOT, DASH, DOT, DOT],       // L: .-..
-            [DOT, DOT, DOT, DOT],        // H: ....
-            [DOT],                        // E: .
-            [DOT, DOT],                   // I: ..
-            [DASH],                       // T: -
-            [DOT, DASH],                  // A: .-
+            [DASH, DOT, DASH, DOT], // C: -.-.
+            [DASH, DASH, DASH], // O: ---
+            [DOT, DASH, DOT, DOT], // L: .-..
+            [DOT, DOT, DOT, DOT], // H: ....
+            [DOT], // E: .
+            [DOT, DOT], // I: ..
+            [DASH], // T: -
+            [DOT, DASH], // A: .-
           ];
 
           let morseDelay = 0.15; // initial pause
@@ -795,7 +802,11 @@ export function useSound() {
       musicElementRef.current = null;
     }
     if (musicSourceRef.current) {
-      try { musicSourceRef.current.disconnect(); } catch { /* noop */ }
+      try {
+        musicSourceRef.current.disconnect();
+      } catch {
+        /* noop */
+      }
       musicSourceRef.current = null;
     }
     musicGainRef.current = null;
@@ -1023,16 +1034,19 @@ export function useSound() {
   }, []);
 
   // Speak text using Web Speech API (for Firewall voice)
-  const speak = useCallback((text: string, options?: { rate?: number; pitch?: number }) => {
-    if (!turingVoiceEnabled || typeof window === 'undefined' || !window.speechSynthesis) return;
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = options?.rate ?? 0.8; // Slow, menacing
-    utterance.pitch = options?.pitch ?? 0.5; // Deep voice
-    utterance.volume = masterVolume;
-    
-    speechSynthesis.speak(utterance);
-  }, [turingVoiceEnabled, masterVolume]);
+  const speak = useCallback(
+    (text: string, options?: { rate?: number; pitch?: number }) => {
+      if (!turingVoiceEnabled || typeof window === 'undefined' || !window.speechSynthesis) return;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = options?.rate ?? 0.8; // Slow, menacing
+      utterance.pitch = options?.pitch ?? 0.5; // Deep voice
+      utterance.volume = masterVolume;
+
+      speechSynthesis.speak(utterance);
+    },
+    [turingVoiceEnabled, masterVolume]
+  );
 
   // Direct setters for sound and music enabled states (with persistence)
   const setSoundEnabledDirectly = useCallback((enabled: boolean) => {

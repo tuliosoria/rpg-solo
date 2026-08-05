@@ -63,10 +63,7 @@ describe('Simplified Evidence System', () => {
     it('should count currently designated evidence files like thirty_year_cycle.txt', () => {
       const state = createTestState({
         evidenceCount: 0,
-        filesRead: new Set([
-          '/admin/thirty_year_cycle.txt',
-          '/admin/thirty_year_cycle.txt',
-        ]),
+        filesRead: new Set(['/admin/thirty_year_cycle.txt', '/admin/thirty_year_cycle.txt']),
       });
 
       const count = countEvidence(state);

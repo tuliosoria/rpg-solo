@@ -9,16 +9,26 @@ interface TutorialSkipPopupProps {
   onContinue: () => void;
 }
 
-export default function TutorialSkipPopup({
-  onSkip,
-  onContinue,
-}: TutorialSkipPopupProps) {
+export default function TutorialSkipPopup({ onSkip, onContinue }: TutorialSkipPopupProps) {
   const { t } = useI18n();
   const skipBtnRef = useRef<HTMLButtonElement>(null);
   const playBtnRef = useRef<HTMLButtonElement>(null);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
+      const target = event.target;
+      const isButtonActivation =
+        target instanceof HTMLElement &&
+        target.closest('button') &&
+        (event.key === 'Enter' || event.key === ' ');
+
+      // Let the focused native button handle Enter/Space so keyboard users
+      // get the same action as a click. The popup's custom shortcuts still
+      // own Y/N/Escape and the left/right/Tab focus toggle.
+      if (isButtonActivation) {
+        return;
+      }
+
       event.preventDefault();
       event.stopPropagation();
 

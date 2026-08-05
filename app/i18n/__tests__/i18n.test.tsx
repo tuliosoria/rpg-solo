@@ -31,6 +31,33 @@ describe('i18n system', () => {
     expect(message).toBe('Sequence: 7-3-1');
   });
 
+  it('localizes the god ending selector guidance in every language', () => {
+    const expected = {
+      en: ['Usage: god ending <number|name>', 'Example: god ending 1'],
+      'pt-BR': ['Uso: god ending <número|nome>', 'Exemplo: god ending 1'],
+      es: ['Uso: god ending <número|nombre>', 'Ejemplo: god ending 1'],
+    } as const;
+
+    for (const language of ['en', 'pt-BR', 'es'] as const) {
+      expect(
+        translateStatic(
+          'engine.commands.core.god_ending_selector_usage',
+          undefined,
+          undefined,
+          language
+        )
+      ).toBe(expected[language][0]);
+      expect(
+        translateStatic(
+          'engine.commands.core.god_ending_selector_example',
+          undefined,
+          undefined,
+          language
+        )
+      ).toBe(expected[language][1]);
+    }
+  });
+
   it('loads persisted language from localStorage', async () => {
     window.localStorage.setItem(STORAGE_KEY, 'pt-BR');
     const { result } = renderHook(() => useI18n(), { wrapper });
@@ -86,7 +113,9 @@ describe('i18n system', () => {
       result.current.setLanguage('es');
     });
 
-    expect(result.current.translateRuntimeText('Unknown command: xyz')).toBe('Comando desconocido: xyz');
+    expect(result.current.translateRuntimeText('Unknown command: xyz')).toBe(
+      'Comando desconocido: xyz'
+    );
     expect(result.current.translateRuntimeText('   [Invalid attempts: 3/8]')).toBe(
       '   [Intentos inválidos: 3/8]'
     );
@@ -155,9 +184,7 @@ describe('i18n system', () => {
       '  [Respostas erradas: 2/3]'
     );
     expect(
-      result.current.translateRuntimeText(
-        '  You have 3 conspiracy document(s) in your cache.'
-      )
+      result.current.translateRuntimeText('  You have 3 conspiracy document(s) in your cache.')
     ).toBe('  Você tem 3 documento(s) da conspiração no seu cache.');
   });
 
@@ -168,9 +195,9 @@ describe('i18n system', () => {
       result.current.setLanguage('pt-BR');
     });
 
-    expect(
-      result.current.translateRuntimeText('            UNREAD FILES (12)          ')
-    ).toBe('            ARQUIVOS NÃO LIDOS (12)          ');
+    expect(result.current.translateRuntimeText('            UNREAD FILES (12)          ')).toBe(
+      '            ARQUIVOS NÃO LIDOS (12)          '
+    );
     expect(
       result.current.translateRuntimeText(
         '  session_objectives.txt [READ] [~3min] [RESTRICTED_BRIEFING]'
@@ -191,9 +218,7 @@ describe('i18n system', () => {
     // These encrypted files show placeholder `content` before decryption. Their
     // prose must be registered for runtime translation; command lines stay verbatim.
     const isNonTranslatable = (line: string) =>
-      line.trim() === '' ||
-      /^[\s]*[═─▓█]+[\s]*$/.test(line) ||
-      /^\s*Use:\s+open\s/.test(line);
+      line.trim() === '' || /^[\s]*[═─▓█]+[\s]*$/.test(line) || /^\s*Use:\s+open\s/.test(line);
 
     const files = [emergency_broadcast, neural_dump_alfa, second_deployment_intercept];
     for (const file of files) {
@@ -214,8 +239,7 @@ describe('i18n system', () => {
   it('localizes decrypted evidence documents (guards against fragment translation drift)', () => {
     // Decrypted fragments are the evidence players actually read. Every prose line
     // must resolve to a real PT/ES translation (not fall back to the English key).
-    const isSeparator = (line: string) =>
-      line.trim() === '' || /^[\s]*[═─▓█]+[\s]*$/.test(line);
+    const isSeparator = (line: string) => line.trim() === '' || /^[\s]*[═─▓█]+[\s]*$/.test(line);
 
     const files = [
       neural_dump_alfa,
@@ -250,11 +274,9 @@ describe('i18n system', () => {
     expect(result.current.translateRuntimeText('UFO74: new here? type "help basics".')).toBe(
       '[UFO74]: é novo por aqui? digite "ajuda basics".'
     );
-    expect(
-      result.current.translateRuntimeText(
-        '[UFO74]: Close idea, wrong system. Try: ls'
-      )
-    ).toBe('[UFO74]: Ideia certa, sistema errado. Tente: ls');
+    expect(result.current.translateRuntimeText('[UFO74]: Close idea, wrong system. Try: ls')).toBe(
+      '[UFO74]: Ideia certa, sistema errado. Tente: ls'
+    );
     expect(
       result.current.translateRuntimeText('ls              List files in current directory')
     ).toBe('ls              Lista arquivos no diretório atual');
@@ -277,9 +299,7 @@ describe('i18n system', () => {
       result.current.translateRuntimeText(
         'Review your evidence total, case strength, and session notes at a glance.'
       )
-    ).toBe(
-      'Revise seu total de evidências, a força do caso e as notas da sessão de relance.'
-    );
+    ).toBe('Revise seu total de evidências, a força do caso e as notas da sessão de relance.');
     expect(result.current.translateRuntimeText('COMMAND: search <keyword>')).toBe(
       'COMANDO: search <keyword>'
     );
@@ -361,7 +381,9 @@ describe('i18n system', () => {
       result.current.setLanguage('pt-BR');
     });
 
-    expect(result.current.t('engine.hints.protocol.activated')).toBe('>>> PROTOCOLO DE DICAS ATIVADO');
+    expect(result.current.t('engine.hints.protocol.activated')).toBe(
+      '>>> PROTOCOLO DE DICAS ATIVADO'
+    );
     expect(result.current.t('engine.invalidCommand.invalidAttempts', { value: 5 })).toBe(
       '   [Tentativas inválidas: 5/8]'
     );

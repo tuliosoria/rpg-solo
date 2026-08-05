@@ -91,19 +91,22 @@ export default function BadEnding({
     let lineIndex = 0;
     let finalTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    const interval = setInterval(() => {
-      if (lineIndex >= lockdownText.length) {
-        clearInterval(interval);
-        finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
-        return;
-      }
+    const interval = setInterval(
+      () => {
+        if (lineIndex >= lockdownText.length) {
+          clearInterval(interval);
+          finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
+          return;
+        }
 
-      const nextLine = lockdownText[lineIndex];
-      if (typeof nextLine === 'string') {
-        setTextLines(prev => [...prev, nextLine]);
-      }
-      lineIndex++;
-    }, scaleTextSpeedDelay(150, textSpeed));
+        const nextLine = lockdownText[lineIndex];
+        if (typeof nextLine === 'string') {
+          setTextLines(prev => [...prev, nextLine]);
+        }
+        lineIndex++;
+      },
+      scaleTextSpeedDelay(150, textSpeed)
+    );
 
     return () => {
       clearInterval(interval);

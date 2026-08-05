@@ -121,7 +121,9 @@ export default function ImageOverlay({
         className={`${styles.glow} ${tone === 'clinical' ? styles.greenGlow : styles.amberGlow}`}
       />
 
-      <div className={`${styles.container} ${orientation === 'portrait' ? styles.portraitContainer : styles.landscapeContainer}`}>
+      <div
+        className={`${styles.container} ${orientation === 'portrait' ? styles.portraitContainer : styles.landscapeContainer}`}
+      >
         {/* Header - minimal, no decoration */}
         <div className={styles.header}>
           <span className={styles.headerText}>

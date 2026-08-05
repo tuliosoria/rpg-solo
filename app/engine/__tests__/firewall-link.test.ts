@@ -5,9 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
-import {
-  DETECTION_THRESHOLD,
-} from '../../components/FirewallEyes';
+import { DETECTION_THRESHOLD } from '../../components/FirewallEyes';
 
 // Helper to create a test state
 function createTestState(overrides: Partial<GameState> = {}): GameState {
@@ -57,9 +55,9 @@ describe('Neural Link Command', () => {
       const result = executeCommand('link', state);
 
       expect(result.output.some(e => e.content.includes('ACCESS DENIED'))).toBe(true);
-      expect(
-        result.output.some(e => e.content.includes('No neural pattern is indexed'))
-      ).toBe(true);
+      expect(result.output.some(e => e.content.includes('No neural pattern is indexed'))).toBe(
+        true
+      );
     });
 
     it('does not prompt for a password or show UFO74 quarantine hints', () => {
@@ -73,12 +71,8 @@ describe('Neural Link Command', () => {
 
       expect(result.output.some(e => e.content.includes('AUTHENTICATION REQUIRED'))).toBe(false);
       expect(result.output.some(e => e.content.includes('phrase'))).toBe(false);
-      expect(
-        result.output.some(e => e.content.toLowerCase().includes('quarantine'))
-      ).toBe(false);
-      expect(
-        result.output.some(e => e.content.toLowerCase().includes('psi analysis'))
-      ).toBe(false);
+      expect(result.output.some(e => e.content.toLowerCase().includes('quarantine'))).toBe(false);
+      expect(result.output.some(e => e.content.toLowerCase().includes('psi analysis'))).toBe(false);
     });
 
     it('ignores password arguments entirely — no auth flow exists', () => {

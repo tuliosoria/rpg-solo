@@ -34,9 +34,9 @@ describe('detectRevelationThemes', () => {
 describe('pickAcknowledgmentTheme', () => {
   it('picks the highest-severity theme not already foregrounded', () => {
     // the_2026_warning foregrounds window2026; harvest outranks it and is present
-    expect(
-      pickAcknowledgmentTheme('the_2026_warning', new Set([CYCLE, COLONIZATION])),
-    ).toBe('harvest');
+    expect(pickAcknowledgmentTheme('the_2026_warning', new Set([CYCLE, COLONIZATION]))).toBe(
+      'harvest'
+    );
   });
 
   it('returns null when the only present theme is already foregrounded', () => {
@@ -66,10 +66,10 @@ describe('resolveNarrativeWithRevelations', () => {
   it('leaves narrative unchanged when nothing new to add', () => {
     const base = ['line a', 'line b'];
     expect(resolveNarrativeWithRevelations('the_2026_warning', base, new Set([CYCLE]))).toEqual(
-      base,
+      base
     );
     expect(resolveNarrativeWithRevelations('the_2026_warning', base, new Set([CAFETERIA]))).toEqual(
-      base,
+      base
     );
   });
 
@@ -82,7 +82,9 @@ describe('resolveNarrativeWithRevelations', () => {
 
   it('leaves wrong_story untouched with no revelation', () => {
     const base = ['intro', 'the beings are never mentioned', 'outro'];
-    expect(resolveNarrativeWithRevelations('wrong_story', base, new Set([CAFETERIA]))).toEqual(base);
+    expect(resolveNarrativeWithRevelations('wrong_story', base, new Set([CAFETERIA]))).toEqual(
+      base
+    );
   });
 });
 

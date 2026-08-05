@@ -111,7 +111,8 @@ describe('UFO74 speaker prefix', () => {
     expect(foreign).toEqual([]);
   });
 
-  it('leaves lines that merely mention UFO74 alone', () => {    // Only a speaker prefix may be rewritten. The disconnect notice and the
+  it('leaves lines that merely mention UFO74 alone', () => {
+    // Only a speaker prefix may be rewritten. The disconnect notice and the
     // fixed-width banner are not prefixes, and one of them is a box-drawn row
     // whose width is load-bearing.
     const untouched = [

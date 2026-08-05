@@ -4,7 +4,10 @@ import { DEFAULT_GAME_STATE, GameState } from '../../types';
 const base = (o: Partial<GameState> = {}): GameState =>
   ({ ...DEFAULT_GAME_STATE, tutorialComplete: true, ...o }) as GameState;
 
-afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.resetModules();
+});
 
 describe('bot-test / bot-stop (dev only)', () => {
   it('activates the bot with a level and seed in development', async () => {
@@ -19,7 +22,10 @@ describe('bot-test / bot-stop (dev only)', () => {
   it('bot-stop clears the active run', async () => {
     vi.stubEnv('NODE_ENV', 'development');
     const { debugCommands } = await import('../commands/debug');
-    const res = debugCommands['bot-stop']([], base({ botTest: { active: true, level: 'pro', seed: 1, maxTurns: 400, delayMs: 900 } }));
+    const res = debugCommands['bot-stop'](
+      [],
+      base({ botTest: { active: true, level: 'pro', seed: 1, maxTurns: 400, delayMs: 900 } })
+    );
     expect(res.stateChanges.botTest?.active).toBe(false);
   });
 

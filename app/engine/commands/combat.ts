@@ -213,7 +213,12 @@ export const combatCommands: CommandRegistry = {
       if (newFailedAttempts >= 3) {
         return {
           output: [
-            createEntryI18n('system', 'engine.commands.combat.verifyingCode', `Verifying code: ${password}...`, { value: password }),
+            createEntryI18n(
+              'system',
+              'engine.commands.combat.verifyingCode',
+              `Verifying code: ${password}...`,
+              { value: password }
+            ),
             createEntry('error', ''),
             createEntry('error', '═══════════════════════════════════════════════════════════'),
             createEntryI18n(
@@ -262,7 +267,12 @@ export const combatCommands: CommandRegistry = {
 
       return {
         output: [
-          createEntryI18n('system', 'engine.commands.combat.verifyingCode', `Verifying code: ${password}...`, { value: password }),
+          createEntryI18n(
+            'system',
+            'engine.commands.combat.verifyingCode',
+            `Verifying code: ${password}...`,
+            { value: password }
+          ),
           createEntry('error', ''),
           createEntryI18n(
             'error',
@@ -311,7 +321,12 @@ export const combatCommands: CommandRegistry = {
     if (isTerribleMistakeCondition) {
       return {
         output: [
-          createEntryI18n('system', 'engine.commands.combat.verifyingCode', `Verifying code: ${password}...`, { value: password }),
+          createEntryI18n(
+            'system',
+            'engine.commands.combat.verifyingCode',
+            `Verifying code: ${password}...`,
+            { value: password }
+          ),
           createEntryI18n(
             'system',
             'engine.commands.combat.authentication_accepted',
@@ -422,7 +437,12 @@ export const combatCommands: CommandRegistry = {
 
     return {
       output: [
-        createEntryI18n('system', 'engine.commands.combat.verifyingCode', `Verifying code: ${password}...`, { value: password }),
+        createEntryI18n(
+          'system',
+          'engine.commands.combat.verifyingCode',
+          `Verifying code: ${password}...`,
+          { value: password }
+        ),
         createEntryI18n(
           'system',
           'engine.commands.combat.authentication_accepted',

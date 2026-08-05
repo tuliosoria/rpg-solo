@@ -12,10 +12,7 @@ import { getLatestCheckpoint, loadCheckpoint } from '../storage/saves';
 import { TYPING_WARNING_TIMEOUT_MS, GAME_OVER_DELAY_MS } from '../constants/timing';
 import { useI18n } from '../i18n';
 import { OPTIONS_CHANGED_EVENT, readStoredOptions } from '../hooks/useOptions';
-import {
-  SUSPICIOUS_TYPING_SPEED,
-  KEYPRESS_TRACK_SIZE,
-} from '../constants/gameplay';
+import { SUSPICIOUS_TYPING_SPEED, KEYPRESS_TRACK_SIZE } from '../constants/gameplay';
 import { shouldSuppressPressure } from '../constants/atmosphere';
 import {
   useAutocomplete,
@@ -65,7 +62,6 @@ import {
   shouldShowOnboardingCards,
 } from './terminalHelpers';
 export { normalizeVideoPromptChoice } from './terminalHelpers';
-
 
 // Lazy-load conditional components for better initial load performance
 const ImageOverlay = dynamic(() => import('./overlays/ImageOverlay'), { ssr: false });
@@ -215,8 +211,7 @@ export default function Terminal({
     pendingAchievement !== null ||
     showFirewallScare ||
     activeTuringVideo;
-  const pauseTimedMechanics =
-    activeImage !== null || showTuringTest || hasBlockingPopup;
+  const pauseTimedMechanics = activeImage !== null || showTuringTest || hasBlockingPopup;
 
   // Track max detection ever reached for Survivor achievement
   const maxDetectionRef = useRef(0);
@@ -283,8 +278,10 @@ export default function Terminal({
   }, [showOnboarding, startOnboardingStatic, stopOnboardingStatic]);
 
   // Autocomplete hook
-  const { getCompletions, completeInput, markTabPressed, consumeTabPressed } =
-    useAutocomplete(gameState, language);
+  const { getCompletions, completeInput, markTabPressed, consumeTabPressed } = useAutocomplete(
+    gameState,
+    language
+  );
 
   // Inline "ghost text": the unambiguous completion suffix for the current
   // input, rendered as a dimmed hint after the caret. Visual only — never part
@@ -325,7 +322,8 @@ export default function Terminal({
     () => ({
       currentPath: gameState.currentPath,
       detectionLevel: gameState.detectionLevel,
-      gameOver: gameState.isGameOver || gamePhase === 'bad_ending' || gamePhase === 'neutral_ending',
+      gameOver:
+        gameState.isGameOver || gamePhase === 'bad_ending' || gamePhase === 'neutral_ending',
       gameWon: gameState.gameWon || gamePhase === 'victory',
       gamePhase,
       savedCount: gameState.savedFiles?.size || 0,
@@ -352,14 +350,7 @@ export default function Terminal({
       pendingImage,
       hasBlockingPopup,
     };
-  }, [
-    activeImage,
-    gamePhase,
-    hasBlockingPopup,
-    pendingImage,
-    showGameOver,
-    showTuringTest,
-  ]);
+  }, [activeImage, gamePhase, hasBlockingPopup, pendingImage, showGameOver, showTuringTest]);
 
   useEffect(() => {
     void updatePresence(steamPresenceState);
@@ -410,9 +401,11 @@ export default function Terminal({
         createEntry('ufo74', t('terminal.video.closeComment.visitor1')),
         createEntry('ufo74', t('terminal.video.closeComment.visitor2')),
       ]);
-    } else if (closingVideo?.filePath === '/internal/jardim_andere_incident.txt' ||
-        closingVideo?.filePath === '/storage/assets/logistics_manifest_fragment.txt' ||
-        closingVideo?.filePath === '/admin/energy_extraction_theory.txt') {
+    } else if (
+      closingVideo?.filePath === '/internal/jardim_andere_incident.txt' ||
+      closingVideo?.filePath === '/storage/assets/logistics_manifest_fragment.txt' ||
+      closingVideo?.filePath === '/admin/energy_extraction_theory.txt'
+    ) {
       appendPendingUfo74StartMessages([
         createEntry('ufo74', t('terminal.video.ufoReaction1')),
         createEntry('ufo74', t('terminal.video.ufoReaction2')),
@@ -434,8 +427,9 @@ export default function Terminal({
 
   const visibleHistory = useMemo(
     () =>
-      gameState.history
-        .filter((entry, index, entries) => !shouldSuppressUfo74Spacer(entry, index, entries)),
+      gameState.history.filter(
+        (entry, index, entries) => !shouldSuppressUfo74Spacer(entry, index, entries)
+      ),
     [gameState.history]
   );
 
@@ -466,10 +460,10 @@ export default function Terminal({
   const isEnterOnlyMode =
     !pendingEvidenceVideoPrompt &&
     ((!gameState.tutorialComplete && !isInteractiveTutorialInput) ||
-    encryptedChannelState !== 'idle' ||
-    !!pendingImage ||
-    pendingUfo74StartMessages.length > 0 ||
-    (gameState.ufo74SecretDiscovered && gamePhase === 'terminal'));
+      encryptedChannelState !== 'idle' ||
+      !!pendingImage ||
+      pendingUfo74StartMessages.length > 0 ||
+      (gameState.ufo74SecretDiscovered && gamePhase === 'terminal'));
 
   const handleOnboardingComplete = useCallback(() => {
     setShowOnboarding(false);
@@ -561,10 +555,7 @@ export default function Terminal({
     setTimeout(() => setFlickerActive(false), 300);
   }, [setFlickerActive]);
 
-  const {
-    handleRestart,
-    handleFirewallActivate,
-  } = useGameActions({
+  const { handleRestart, handleFirewallActivate } = useGameActions({
     setGameState,
     setGamePhase,
     onExitAction,
@@ -648,9 +639,7 @@ export default function Terminal({
     } while (idx === lastUfo74ReactionIndexRef.current && UFO74_FIREWALL_REACTION_KEYS.length > 1);
     lastUfo74ReactionIndexRef.current = idx;
 
-    appendPendingUfo74StartMessages([
-      createEntry('ufo74', t(UFO74_FIREWALL_REACTION_KEYS[idx])),
-    ]);
+    appendPendingUfo74StartMessages([createEntry('ufo74', t(UFO74_FIREWALL_REACTION_KEYS[idx]))]);
   }, [appendPendingUfo74StartMessages, t]);
 
   const handleSubmit = useCallback(
@@ -728,9 +717,7 @@ export default function Terminal({
           },
         };
       } else {
-        pendingEvidenceVideoCheckRef.current = attachment
-          ? { attachment }
-          : null;
+        pendingEvidenceVideoCheckRef.current = attachment ? { attachment } : null;
       }
 
       await baseHandleSubmit(e, overrideInput);
@@ -829,7 +816,12 @@ export default function Terminal({
     hasEnterPrompt: pendingImage !== null || pendingUfo74StartMessages.length > 0,
     hasVideoPrompt: pendingEvidenceVideoPrompt !== null,
     hasBlockingPopup,
-    submit: useCallback((input: string) => { void handleSubmit(undefined, input); }, [handleSubmit]),
+    submit: useCallback(
+      (input: string) => {
+        void handleSubmit(undefined, input);
+      },
+      [handleSubmit]
+    ),
     dismissActiveOverlay: useCallback(() => {
       setActiveImage(null);
       setActiveEvidenceVideo(null);
@@ -844,8 +836,6 @@ export default function Terminal({
       [setGameState]
     ),
   });
-
-
 
   useEffect(() => {
     const pendingCheck = pendingEvidenceVideoCheckRef.current;
@@ -1217,882 +1207,928 @@ export default function Terminal({
                   />
                 )}
 
-        {/* White noise static overlay + alien face materialization */}
-        <StaticNoise
-          intensity={terminalStaticLevel}
-          alienVisible={alienSilhouetteVisible}
-          aria-hidden="true"
-        />
+                {/* White noise static overlay + alien face materialization */}
+                <StaticNoise
+                  intensity={terminalStaticLevel}
+                  alienVisible={alienSilhouetteVisible}
+                  aria-hidden="true"
+                />
 
-        {/* Screen burn-in effect - ghost text from previous outputs */}
-        {burnInLines.length > 0 && (
-          <div className={styles.burnIn} aria-hidden="true">
-            {burnInLines.map((line, i) => (
-              <div
-                key={i}
-                className={styles.burnInLine}
-                style={{ opacity: 0.02 * (burnInLines.length - i) }}
-              >
-                {translateRuntimeText(line)}
-              </div>
-            ))}
-          </div>
-        )}
+                {/* Screen burn-in effect - ghost text from previous outputs */}
+                {burnInLines.length > 0 && (
+                  <div className={styles.burnIn} aria-hidden="true">
+                    {burnInLines.map((line, i) => (
+                      <div
+                        key={i}
+                        className={styles.burnInLine}
+                        style={{ opacity: 0.02 * (burnInLines.length - i) }}
+                      >
+                        {translateRuntimeText(line)}
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-        {/* Paranoia message overlay */}
-        {paranoiaMessage && (
-          <div
-            className={styles.paranoiaMessage}
-            style={{ top: paranoiaPosition.top, left: paranoiaPosition.left }}
-            role="alert"
-            aria-live="assertive"
-          >
-            {translateRuntimeText(paranoiaMessage)}
-          </div>
-        )}
+                {/* Paranoia message overlay */}
+                {paranoiaMessage && (
+                  <div
+                    className={styles.paranoiaMessage}
+                    style={{ top: paranoiaPosition.top, left: paranoiaPosition.left }}
+                    role="alert"
+                    aria-live="assertive"
+                  >
+                    {translateRuntimeText(paranoiaMessage)}
+                  </div>
+                )}
 
-        {/* Firewall Eyes - ambient Lovecraftian watchers */}
-        {gameState.tutorialComplete && !gameState.isGameOver && (
-          <FirewallEyes
-            detectionLevel={gameState.detectionLevel}
-            firewallActive={gameState.firewallActive}
-            firewallDisarmed={gameState.firewallDisarmed}
-            onActivateFirewall={handleFirewallActivate}
-            onFirewallTaunt={handleFirewallTaunt}
-            externalGlowTrigger={firewallGlowTrigger}
-          />
-        )}
+                {/* Firewall Eyes - ambient Lovecraftian watchers */}
+                {gameState.tutorialComplete && !gameState.isGameOver && (
+                  <FirewallEyes
+                    detectionLevel={gameState.detectionLevel}
+                    firewallActive={gameState.firewallActive}
+                    firewallDisarmed={gameState.firewallDisarmed}
+                    onActivateFirewall={handleFirewallActivate}
+                    onFirewallTaunt={handleFirewallTaunt}
+                    externalGlowTrigger={firewallGlowTrigger}
+                  />
+                )}
 
-        {/* Sound toggle moved to Settings menu (ESC -> Settings) */}
+                {/* Sound toggle moved to Settings menu (ESC -> Settings) */}
 
-        {/* Countdown timer */}
-        {countdownDisplay && (
-          <FloatingElement id="countdown-timer" zone="top-center" priority={1} baseOffset={80}>
-            <div className={styles.countdownTimerContent}>
-              <span className={styles.countdownLabel}>{t('terminal.timer.traceActive')}</span>
-              <span className={styles.countdownTime}>{countdownDisplay}</span>
-            </div>
-          </FloatingElement>
-        )}
+                {/* Countdown timer */}
+                {countdownDisplay && (
+                  <FloatingElement
+                    id="countdown-timer"
+                    zone="top-center"
+                    priority={1}
+                    baseOffset={80}
+                  >
+                    <div className={styles.countdownTimerContent}>
+                      <span className={styles.countdownLabel}>
+                        {t('terminal.timer.traceActive')}
+                      </span>
+                      <span className={styles.countdownTime}>{countdownDisplay}</span>
+                    </div>
+                  </FloatingElement>
+                )}
 
-        {/* Status bar with dropdown menu */}
-        <div className={styles.statusBar}>
-          <span
-            className={`${styles.statusLeft} ${styles.clickable}`}
-            role="button"
-            tabIndex={0}
-            aria-expanded={showHeaderMenu}
-            aria-controls="terminal-header-menu"
-            onClick={() => setShowHeaderMenu(!showHeaderMenu)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setShowHeaderMenu(prev => !prev);
-              }
-            }}
-          >
-            {t('terminal.header.title')}{' '}
-            <span className={styles.versionTag} title={versionTooltip}>
-              {DEPLOY_VERSION}
-            </span>{' '}
-            ▼
-          </span>
-          {/* ESC button */}
-          <button
-            className={styles.escButton}
-            onClick={() => setShowPauseMenu(true)}
-            title={t('terminal.pause.title')}
-            aria-label={t('terminal.pause.aria')}
-          >
-            ESC
-          </button>
-          {saveIndicator && (
-            <span aria-live="polite" className={styles.saveIndicator}>
-              {saveIndicator}
-            </span>
-          )}
-          <span className={styles.statusRight}>{statusBar}</span>
-
-          {/* Dropdown menu */}
-          {showHeaderMenu && (
-            <div
-              ref={headerMenuRef}
-              className={styles.headerMenu}
-              id="terminal-header-menu"
-              role="menu"
-            >
-              <button
-                className={styles.menuItem}
-                tabIndex={-1}
-                onMouseDown={e => e.preventDefault()}
-                onClick={() => {
-                  onSaveRequestAction(gameState, savedAt =>
-                    setGameState(prev => ({ ...prev, lastSaveTime: savedAt }))
-                  );
-                  setShowHeaderMenu(false);
-                  setTimeout(focusTerminalInput, 0);
-                }}
-              >
-                {t('terminal.menu.save')}
-              </button>
-              <button
-                className={styles.menuItem}
-                tabIndex={-1}
-                onMouseDown={e => e.preventDefault()}
-                onClick={() => {
-                  setShowHeaderMenu(false);
-                  onExitAction();
-                }}
-              >
-                {t('terminal.menu.return')}
-              </button>
-              <button
-                className={styles.menuItem}
-                tabIndex={-1}
-                onMouseDown={e => e.preventDefault()}
-                onClick={() => {
-                  setShowSettings(true);
-                  setShowHeaderMenu(false);
-                }}
-              >
-                {t('terminal.menu.settings')}
-              </button>
-              <button
-                className={styles.menuItem}
-                tabIndex={-1}
-                onMouseDown={e => e.preventDefault()}
-                onClick={() => {
-                  setShowAchievements(true);
-                  setShowHeaderMenu(false);
-                  setTimeout(focusTerminalInput, 0);
-                }}
-              >
-                {t('terminal.menu.achievements')}
-              </button>
-              <button
-                className={styles.menuItem}
-                tabIndex={-1}
-                onMouseDown={e => e.preventDefault()}
-                onClick={() => {
-                  setShowStatistics(true);
-                  setShowHeaderMenu(false);
-                  setTimeout(focusTerminalInput, 0);
-                }}
-              >
-                {t('terminal.menu.statistics')}
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Progress tracker */}
-        <div className={styles.progressTracker}>
-          <div
-            className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}
-          >
-            <span className={styles.evidenceTrackerTitle}>{t('terminal.tracker.alienFiles')}</span>
-            <span className={styles.evidenceTrackerDivider}>—</span>
-            <span className={styles.truthCount}>
-              {t('terminal.tracker.evidenceFound', { count: savedCount, total: 10 })}
-            </span>
-          </div>
-          <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
-            <span
-              className={`${styles.riskItem} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}
-            >
-              <span className={styles.trackerLabel}>{t('terminal.tracker.risk')}</span>
-              <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
-                {riskInfo.level}
-              </span>
-            </span>
-            <span
-              className={`${styles.attItem} ${showAttBar ? styles.trackerVisible : styles.trackerHidden}`}
-            >
-              <span className={styles.memoryLevel}>
-                {t('terminal.tracker.alerts')} {attemptsDisplay}
-              </span>
-            </span>
-          </div>
-        </div>
-
-        {/* Output area */}
-        <div
-          className={styles.output}
-          ref={outputRef}
-          role="log"
-          aria-live="polite"
-          aria-relevant="additions"
-        >
-          {visibleHistory.map((entry, index) => renderEntry(entry, visibleHistory[index + 1]))}
-          {isProcessing && (
-            <div className={`${styles.line} ${styles.processing}`}>{t('terminal.processing')}</div>
-          )}
-          {/* Blinking enter prompt at end of text when in enter-only mode */}
-          {!isProcessing && isEnterOnlyMode && !gameState.isGameOver && (
-            <div className={styles.enterHintInline}>{t('terminal.enter.proceed')}</div>
-          )}
-        </div>
-
-        {/* Input area */}
-        {/* Show subtle enter prompt when in enter-only mode (tutorial, encrypted channel, pending media, staged UFO74, secret ending confirmation) */}
-        {isEnterOnlyMode && !gameState.isGameOver ? (
-          <>
-            {/* Hidden form for keyboard enter handling */}
-            <form
-              onSubmit={handleSubmit}
-              style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
-            >
-              <button ref={enterOnlyButtonRef} type="submit" autoFocus={!showIntroOverlay} />
-            </form>
-            {/* Centered enter prompt - inline in flex layout to prevent overlap */}
-            <div className={styles.enterPromptArea}>
-              <button
-                type="button"
-                className={styles.enterPromptContent}
-                disabled={isProcessing}
-                onClick={handleSubmit}
-                onMouseDown={e => e.preventDefault()}
-                tabIndex={-1}
-              >
-                <span className={styles.enterPromptText}>
-                  {encryptedChannelState === 'awaiting_close'
-                    ? t('terminal.enter.close')
-                    : encryptedChannelState !== 'idle'
-                      ? t('terminal.enter.respond')
-                      : pendingImage
-                        ? t('terminal.enter.view')
-                        : t('terminal.enter.continue')}
-                </span>
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <form onSubmit={handleSubmit} className={styles.inputArea}>
-            <span className={styles.prompt}>&gt;</span>
-            <span className={styles.inputWrapper}>
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputValue}
-              aria-label={t('terminal.input.aria')}
-              placeholder={
-                gameState.flags?.adminUnlocked
-                  ? ''
-                  : t('terminal.beginnerTip')
-              }
-              onChange={e => {
-                const newValue = e.target.value;
-                setInputValue(newValue);
-                if (newValue.length > inputValue.length) {
-                  // Detect the typed character (last char of new value)
-                  const typedChar = newValue.charAt(newValue.length - 1);
-                  playKeySound(typedChar === ' ' ? ' ' : typedChar);
-
-                  if (typingPatternWarningsEnabled) {
-                    // Track typing speed
-                    const now = Date.now();
-                    keypressTimestamps.current.push(now);
-                    // Keep only last KEYPRESS_TRACK_SIZE keypresses
-                    if (keypressTimestamps.current.length > KEYPRESS_TRACK_SIZE) {
-                      keypressTimestamps.current.shift();
-                    }
-
-                    // Check typing speed (if enough chars in short time = too fast)
-                    if (keypressTimestamps.current.length >= KEYPRESS_TRACK_SIZE - 2) {
-                      const oldest = keypressTimestamps.current[0];
-                      const timeSpan = (now - oldest) / 1000; // seconds
-                      const charsPerSecond = keypressTimestamps.current.length / timeSpan;
-
-                      if (charsPerSecond > SUSPICIOUS_TYPING_SPEED && !typingSpeedWarning) {
-                        setTypingSpeedWarning(true);
-                        playSound('warning');
-                        // Clear warning after timeout
-                        if (typingSpeedWarningTimeout.current) {
-                          clearTimeout(typingSpeedWarningTimeout.current);
-                        }
-                        typingSpeedWarningTimeout.current = setTimeout(
-                          () => setTypingSpeedWarning(false),
-                          TYPING_WARNING_TIMEOUT_MS
-                        );
+                {/* Status bar with dropdown menu */}
+                <div className={styles.statusBar}>
+                  <span
+                    className={`${styles.statusLeft} ${styles.clickable}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={showHeaderMenu}
+                    aria-controls="terminal-header-menu"
+                    onClick={() => setShowHeaderMenu(!showHeaderMenu)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setShowHeaderMenu(prev => !prev);
                       }
-                    }
-                  }
-                }
-              }}
-              onKeyDown={e => {
-                // Any real keystroke halts the autoplay bot. The bot submits via
-                // handleSubmit(overrideInput) and never through this handler, so
-                // a keydown here is always the person watching. No-ops unless a
-                // run is actually active.
-                if (
-                  gameState.botTest?.active &&
-                  !['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)
-                ) {
-                  setGameState(prev =>
-                    prev.botTest?.active
-                      ? {
+                    }}
+                  >
+                    {t('terminal.header.title')}{' '}
+                    <span className={styles.versionTag} title={versionTooltip}>
+                      {DEPLOY_VERSION}
+                    </span>{' '}
+                    ▼
+                  </span>
+                  {/* ESC button */}
+                  <button
+                    className={styles.escButton}
+                    onClick={() => setShowPauseMenu(true)}
+                    title={t('terminal.pause.title')}
+                    aria-label={t('terminal.pause.aria')}
+                  >
+                    ESC
+                  </button>
+                  {saveIndicator && (
+                    <span aria-live="polite" className={styles.saveIndicator}>
+                      {saveIndicator}
+                    </span>
+                  )}
+                  <span className={styles.statusRight}>{statusBar}</span>
+
+                  {/* Dropdown menu */}
+                  {showHeaderMenu && (
+                    <div
+                      ref={headerMenuRef}
+                      className={styles.headerMenu}
+                      id="terminal-header-menu"
+                      role="menu"
+                    >
+                      <button
+                        className={styles.menuItem}
+                        tabIndex={-1}
+                        onMouseDown={e => e.preventDefault()}
+                        onClick={() => {
+                          onSaveRequestAction(gameState, savedAt =>
+                            setGameState(prev => ({ ...prev, lastSaveTime: savedAt }))
+                          );
+                          setShowHeaderMenu(false);
+                          setTimeout(focusTerminalInput, 0);
+                        }}
+                      >
+                        {t('terminal.menu.save')}
+                      </button>
+                      <button
+                        className={styles.menuItem}
+                        tabIndex={-1}
+                        onMouseDown={e => e.preventDefault()}
+                        onClick={() => {
+                          setShowHeaderMenu(false);
+                          onExitAction();
+                        }}
+                      >
+                        {t('terminal.menu.return')}
+                      </button>
+                      <button
+                        className={styles.menuItem}
+                        tabIndex={-1}
+                        onMouseDown={e => e.preventDefault()}
+                        onClick={() => {
+                          setShowSettings(true);
+                          setShowHeaderMenu(false);
+                        }}
+                      >
+                        {t('terminal.menu.settings')}
+                      </button>
+                      <button
+                        className={styles.menuItem}
+                        tabIndex={-1}
+                        onMouseDown={e => e.preventDefault()}
+                        onClick={() => {
+                          setShowAchievements(true);
+                          setShowHeaderMenu(false);
+                          setTimeout(focusTerminalInput, 0);
+                        }}
+                      >
+                        {t('terminal.menu.achievements')}
+                      </button>
+                      <button
+                        className={styles.menuItem}
+                        tabIndex={-1}
+                        onMouseDown={e => e.preventDefault()}
+                        onClick={() => {
+                          setShowStatistics(true);
+                          setShowHeaderMenu(false);
+                          setTimeout(focusTerminalInput, 0);
+                        }}
+                      >
+                        {t('terminal.menu.statistics')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Progress tracker */}
+                <div className={styles.progressTracker}>
+                  <div
+                    className={`${styles.truthsSection} ${showEvidenceTracker ? styles.trackerVisible : styles.trackerHidden}`}
+                  >
+                    <span className={styles.evidenceTrackerTitle}>
+                      {t('terminal.tracker.alienFiles')}
+                    </span>
+                    <span className={styles.evidenceTrackerDivider}>—</span>
+                    <span className={styles.truthCount}>
+                      {t('terminal.tracker.evidenceFound', { count: savedCount, total: 10 })}
+                    </span>
+                  </div>
+                  <div className={`${styles.riskSection} ${riskPulse ? styles.riskPulse : ''}`}>
+                    <span
+                      className={`${styles.riskItem} ${showRiskTracker ? styles.trackerVisible : styles.trackerHidden}`}
+                    >
+                      <span className={styles.trackerLabel}>{t('terminal.tracker.risk')}</span>
+                      <span className={`${styles.riskLevel} ${styles[riskInfo.color]}`}>
+                        {riskInfo.level}
+                      </span>
+                    </span>
+                    <span
+                      className={`${styles.attItem} ${showAttBar ? styles.trackerVisible : styles.trackerHidden}`}
+                    >
+                      <span className={styles.memoryLevel}>
+                        {t('terminal.tracker.alerts')} {attemptsDisplay}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Output area */}
+                <div
+                  className={styles.output}
+                  ref={outputRef}
+                  role="log"
+                  aria-live="polite"
+                  aria-relevant="additions"
+                >
+                  {visibleHistory.map((entry, index) =>
+                    renderEntry(entry, visibleHistory[index + 1])
+                  )}
+                  {isProcessing && (
+                    <div className={`${styles.line} ${styles.processing}`}>
+                      {t('terminal.processing')}
+                    </div>
+                  )}
+                  {/* Blinking enter prompt at end of text when in enter-only mode */}
+                  {!isProcessing && isEnterOnlyMode && !gameState.isGameOver && (
+                    <div className={styles.enterHintInline}>{t('terminal.enter.proceed')}</div>
+                  )}
+                </div>
+
+                {/* Input area */}
+                {/* Show subtle enter prompt when in enter-only mode (tutorial, encrypted channel, pending media, staged UFO74, secret ending confirmation) */}
+                {isEnterOnlyMode && !gameState.isGameOver ? (
+                  <>
+                    {/* Hidden form for keyboard enter handling */}
+                    <form
+                      onSubmit={handleSubmit}
+                      style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
+                    >
+                      <button
+                        ref={enterOnlyButtonRef}
+                        type="submit"
+                        autoFocus={!showIntroOverlay}
+                      />
+                    </form>
+                    {/* Centered enter prompt - inline in flex layout to prevent overlap */}
+                    <div className={styles.enterPromptArea}>
+                      <button
+                        type="button"
+                        className={styles.enterPromptContent}
+                        disabled={isProcessing}
+                        onClick={handleSubmit}
+                        onMouseDown={e => e.preventDefault()}
+                        tabIndex={-1}
+                      >
+                        <span className={styles.enterPromptText}>
+                          {encryptedChannelState === 'awaiting_close'
+                            ? t('terminal.enter.close')
+                            : encryptedChannelState !== 'idle'
+                              ? t('terminal.enter.respond')
+                              : pendingImage
+                                ? t('terminal.enter.view')
+                                : t('terminal.enter.continue')}
+                        </span>
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <form onSubmit={handleSubmit} className={styles.inputArea}>
+                      <span className={styles.prompt}>&gt;</span>
+                      <span className={styles.inputWrapper}>
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={inputValue}
+                          aria-label={t('terminal.input.aria')}
+                          placeholder={
+                            gameState.flags?.adminUnlocked ? '' : t('terminal.beginnerTip')
+                          }
+                          onChange={e => {
+                            const newValue = e.target.value;
+                            setInputValue(newValue);
+                            if (newValue.length > inputValue.length) {
+                              // Detect the typed character (last char of new value)
+                              const typedChar = newValue.charAt(newValue.length - 1);
+                              playKeySound(typedChar === ' ' ? ' ' : typedChar);
+
+                              if (typingPatternWarningsEnabled) {
+                                // Track typing speed
+                                const now = Date.now();
+                                keypressTimestamps.current.push(now);
+                                // Keep only last KEYPRESS_TRACK_SIZE keypresses
+                                if (keypressTimestamps.current.length > KEYPRESS_TRACK_SIZE) {
+                                  keypressTimestamps.current.shift();
+                                }
+
+                                // Check typing speed (if enough chars in short time = too fast)
+                                if (keypressTimestamps.current.length >= KEYPRESS_TRACK_SIZE - 2) {
+                                  const oldest = keypressTimestamps.current[0];
+                                  const timeSpan = (now - oldest) / 1000; // seconds
+                                  const charsPerSecond =
+                                    keypressTimestamps.current.length / timeSpan;
+
+                                  if (
+                                    charsPerSecond > SUSPICIOUS_TYPING_SPEED &&
+                                    !typingSpeedWarning
+                                  ) {
+                                    setTypingSpeedWarning(true);
+                                    playSound('warning');
+                                    // Clear warning after timeout
+                                    if (typingSpeedWarningTimeout.current) {
+                                      clearTimeout(typingSpeedWarningTimeout.current);
+                                    }
+                                    typingSpeedWarningTimeout.current = setTimeout(
+                                      () => setTypingSpeedWarning(false),
+                                      TYPING_WARNING_TIMEOUT_MS
+                                    );
+                                  }
+                                }
+                              }
+                            }
+                          }}
+                          onKeyDown={e => {
+                            // Any real keystroke halts the autoplay bot. The bot submits via
+                            // handleSubmit(overrideInput) and never through this handler, so
+                            // a keydown here is always the person watching. No-ops unless a
+                            // run is actually active.
+                            if (
+                              gameState.botTest?.active &&
+                              !['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)
+                            ) {
+                              setGameState(prev =>
+                                prev.botTest?.active
+                                  ? {
+                                      ...prev,
+                                      botTest: undefined,
+                                      history: [
+                                        ...prev.history,
+                                        createEntry('system', '  BOT-TEST halted (key pressed).'),
+                                      ],
+                                    }
+                                  : prev
+                              );
+                            }
+                            handleKeyDown(e);
+                          }}
+                          className={styles.inputField}
+                          disabled={isProcessing || gameState.isGameOver || hasBlockingPopup}
+                          autoFocus={!showIntroOverlay}
+                          autoComplete="off"
+                          spellCheck={false}
+                        />
+                        {showGhost && (
+                          <span className={styles.ghostOverlay} aria-hidden="true">
+                            <span className={styles.ghostMirror}>{inputValue}</span>
+                            <span className={styles.ghostText}>{ghostSuffix}</span>
+                          </span>
+                        )}
+                      </span>
+                      <span className={styles.cursor}>_</span>
+                      {/* Typing speed warning - inline within input area to prevent overlap */}
+                      {typingSpeedWarning && (
+                        <span className={styles.typingWarningInline}>
+                          {t('terminal.typing.warning')}
+                        </span>
+                      )}
+                    </form>
+                  </>
+                )}
+
+                {/* Timed decryption timer overlay */}
+                {gameState.timedDecryptActive && timedDecryptRemaining > 0 && (
+                  <FloatingElement
+                    id="timed-decrypt-timer"
+                    zone="top-right"
+                    priority={1}
+                    baseOffset={130}
+                  >
+                    <div className={styles.timedDecryptTimerContent}>
+                      <div className={styles.timerLabel}>{t('terminal.timer.decryptWindow')}</div>
+                      <div className={styles.timerValue}>
+                        {(timedDecryptRemaining / 1000).toFixed(1)}s
+                      </div>
+                      <div className={styles.timerSequence}>
+                        {t('terminal.timer.sequence', {
+                          value: gameState.timedDecryptSequence ?? '',
+                        })}
+                      </div>
+                    </div>
+                  </FloatingElement>
+                )}
+
+                {/* Hacker avatar HUD panel */}
+                {(showAvatar || gameState.tutorialComplete) && (
+                  <HackerAvatar
+                    expression={(gameState.avatarExpression as AvatarExpression) || 'neutral'}
+                    detectionLevel={gameState.detectionLevel}
+                    sessionStability={gameState.sessionStability}
+                    creepyEntrance={avatarCreepyEntrance}
+                    onExpressionTimeout={() => {
+                      setGameState(prev => ({ ...prev, avatarExpression: 'neutral' }));
+                    }}
+                  />
+                )}
+
+                {activeEvidenceVideo && (
+                  <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={t('videoOverlay.aria', { value: activeEvidenceVideo.videoTitle })}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      zIndex: 2500,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '1.5rem',
+                      background: 'rgba(0, 0, 0, 0.92)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 'min(960px, 100%)',
+                        maxHeight: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.75rem',
+                        padding: '1rem',
+                        background: '#040704',
+                        border: '1px solid #88cc44',
+                        boxShadow: '0 0 30px rgba(136, 204, 68, 0.18)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: '#88cc44',
+                          fontFamily: 'VT323, monospace',
+                          fontSize: '1.6rem',
+                          letterSpacing: '0.08em',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {t('videoOverlay.attachedTitle', { value: activeEvidenceVideo.videoTitle })}
+                      </div>
+                      {/* Video with CRT/terminal overlay */}
+                      <div
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          flex: '1 1 auto',
+                          minHeight: 0,
+                        }}
+                      >
+                        <video
+                          key={activeEvidenceVideo.videoSrc}
+                          src={activeEvidenceVideo.videoSrc}
+                          autoPlay
+                          playsInline
+                          muted={masterVolume === 0}
+                          onLoadedMetadata={e => {
+                            e.currentTarget.volume = masterVolume;
+                          }}
+                          style={{
+                            width: '100%',
+                            maxHeight: '100%',
+                            objectFit: 'contain',
+                            background: '#000',
+                            filter: 'sepia(100%) saturate(300%) brightness(70%) hue-rotate(70deg)',
+                          }}
+                        />
+                        {/* Scanlines */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background:
+                              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)',
+                            pointerEvents: 'none',
+                            zIndex: 1,
+                          }}
+                        />
+                        {/* Green CRT glow */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            boxShadow: 'inset 0 0 60px rgba(0,255,0,0.1)',
+                            pointerEvents: 'none',
+                            zIndex: 2,
+                          }}
+                        />
+                        {/* Static noise overlay */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+                            opacity: 0.06,
+                            pointerEvents: 'none',
+                            mixBlendMode: 'overlay',
+                            zIndex: 3,
+                          }}
+                        />
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '1rem',
+                          flexShrink: 0,
+                          color: '#88cc44',
+                          fontFamily: 'VT323, monospace',
+                          fontSize: '1.1rem',
+                        }}
+                      >
+                        <span>{t('videoOverlay.returnHint')}</span>
+                        <button
+                          type="button"
+                          onClick={closeEvidenceVideo}
+                          style={{
+                            border: '1px solid #88cc44',
+                            background: 'transparent',
+                            color: '#88cc44',
+                            padding: '0.35rem 0.85rem',
+                            fontFamily: 'VT323, monospace',
+                            fontSize: '1.1rem',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {t('common.close')}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Turing test video */}
+                {activeTuringVideo && (
+                  <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={t('videoOverlay.turingAria')}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      zIndex: 2500,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '1.5rem',
+                      background: 'rgba(0, 0, 0, 0.92)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 'min(960px, 100%)',
+                        maxHeight: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.75rem',
+                        padding: '1rem',
+                        background: '#040704',
+                        border: '1px solid #88cc44',
+                        boxShadow: '0 0 30px rgba(136, 204, 68, 0.18)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: '#88cc44',
+                          fontFamily: 'VT323, monospace',
+                          fontSize: '1.6rem',
+                          letterSpacing: '0.08em',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {t('videoOverlay.attachedTitle', { value: 'turing test.mp4' })}
+                      </div>
+                      <div
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          flex: '1 1 auto',
+                          minHeight: 0,
+                        }}
+                      >
+                        <video
+                          key={TURING_TEST_VIDEO_SRC}
+                          src={TURING_TEST_VIDEO_SRC}
+                          autoPlay
+                          playsInline
+                          muted={masterVolume === 0}
+                          onLoadedMetadata={e => {
+                            e.currentTarget.volume = masterVolume;
+                          }}
+                          onEnded={() => {
+                            setActiveTuringVideo(false);
+                            setShowTuringTest(true);
+                            setGameState(prev => ({ ...prev, avatarExpression: 'scared' }));
+                          }}
+                          style={{
+                            width: '100%',
+                            maxHeight: '100%',
+                            objectFit: 'contain',
+                            background: '#000',
+                            filter: 'sepia(100%) saturate(300%) brightness(70%) hue-rotate(70deg)',
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background:
+                              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)',
+                            pointerEvents: 'none',
+                            zIndex: 1,
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            boxShadow: 'inset 0 0 60px rgba(0,255,0,0.1)',
+                            pointerEvents: 'none',
+                            zIndex: 2,
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+                            opacity: 0.06,
+                            pointerEvents: 'none',
+                            mixBlendMode: 'overlay',
+                            zIndex: 3,
+                          }}
+                        />
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '1rem',
+                          flexShrink: 0,
+                          color: '#88cc44',
+                          fontFamily: 'VT323, monospace',
+                          fontSize: '1.1rem',
+                        }}
+                      >
+                        <span>{t('videoOverlay.returnHint')}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveTuringVideo(false);
+                            setShowTuringTest(true);
+                          }}
+                          style={{
+                            border: '1px solid #88cc44',
+                            background: 'transparent',
+                            color: '#88cc44',
+                            padding: '0.35rem 0.85rem',
+                            fontFamily: 'VT323, monospace',
+                            fontSize: '1.1rem',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {t('common.close')}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Image overlay */}
+                {activeImage && (
+                  <ImageOverlay
+                    src={activeImage.src}
+                    alt={activeImage.alt}
+                    altKey={activeImage.altKey}
+                    tone={activeImage.tone}
+                    corrupted={activeImage.corrupted}
+                    onCloseAction={() => {
+                      // Add "Media recovered" message to terminal
+                      const recoveredMessage = createEntry(
+                        'system',
+                        t('terminal.system.mediaRecoveredVisual')
+                      );
+
+                      // Collect all UFO74 messages to show after image closes
+                      const allUfo74Messages: TerminalEntry[] = [];
+
+                      // First add any queued messages from the command result (content reactions)
+                      if (queuedAfterMediaMessages.length > 0) {
+                        allUfo74Messages.push(...queuedAfterMediaMessages);
+                        setQueuedAfterMediaMessages([]); // Clear the queue
+                      }
+
+                      // Then add image-specific comments
+                      const imageCommentKeys = UFO74_IMAGE_COMMENT_KEYS[activeImage.src];
+                      if (imageCommentKeys && imageCommentKeys.length > 0) {
+                        const commentKey = uiRandomPick(imageCommentKeys);
+                        allUfo74Messages.push(createEntry('ufo74', t(commentKey)));
+                      }
+
+                      setGameState(prev => ({
+                        ...prev,
+                        history: [...prev.history, recoveredMessage],
+                      }));
+                      if (allUfo74Messages.length > 0) {
+                        appendPendingUfo74StartMessages(allUfo74Messages);
+                      }
+                      setActiveImage(null);
+                      inputRef.current?.focus();
+                    }}
+                  />
+                )}
+
+                {/* Firewall Scare overlay */}
+                {showFirewallScare && (
+                  <div
+                    className={styles.firewallScareOverlay}
+                    style={SCREEN_OVERLAY_BOUNDS}
+                    role="alert"
+                  >
+                    <div className={styles.firewallScareEye}>
+                      <div className={styles.firewallScareIris} />
+                      <div className={styles.firewallScarePupil} />
+                    </div>
+                    <div className={styles.firewallScareText}>{t('terminal.firewall.scare')}</div>
+                  </div>
+                )}
+
+                {/* Turing Test overlay */}
+                {showTuringTest && (
+                  <TuringTestOverlay
+                    autoPilot={Boolean(gameState.botTest?.active)}
+                    onCorrectAnswer={() => playSound('success')}
+                    onComplete={passed => {
+                      setShowTuringTest(false);
+
+                      if (passed) {
+                        // Turing test passed
+                        const passedMessages = [
+                          createEntry('system', ''),
+                          createEntry('notice', t('terminal.turing.passed.header')),
+                          createEntry('notice', t('terminal.turing.passed.line1')),
+                          createEntry('notice', t('terminal.turing.passed.line2')),
+                          createEntry('system', ''),
+                          createEntry('ufo74', t('terminal.turing.passed.ufo1')),
+                          createEntry('ufo74', t('terminal.turing.passed.ufo2')),
+                          createEntry('system', ''),
+                        ];
+                        setGameState(prev => ({
                           ...prev,
-                          botTest: undefined,
-                          history: [
-                            ...prev.history,
-                            createEntry('system', '  BOT-TEST halted (key pressed).'),
-                          ],
+                          history: [...prev.history, ...passedMessages],
+                          turingEvaluationActive: false,
+                          turingEvaluationCompleted: true,
+                          detectionLevel: Math.max(0, prev.detectionLevel - 10), // Reward: reduce detection
+                        }));
+                        playSound('success');
+                      } else {
+                        // Turing test failed - game over
+                        const failedMessages = [
+                          createEntry('system', ''),
+                          createEntry('error', t('terminal.turing.failed.header')),
+                          createEntry('error', t('terminal.turing.failed.line1')),
+                          createEntry('error', t('terminal.turing.failed.line2')),
+                          createEntry('system', ''),
+                        ];
+                        setGameState(prev => ({
+                          ...prev,
+                          history: [...prev.history, ...failedMessages],
+                          turingEvaluationActive: false,
+                          isGameOver: true,
+                          gameOverReason: t('terminal.turing.failed.reason'),
+                          endingType: 'bad',
+                        }));
+                        playSound('error');
+                        setTimeout(() => {
+                          setGameOverReason(t('terminal.turing.failed.reason'));
+                          setShowGameOver(true);
+                          setGamePhase('bad_ending');
+                        }, GAME_OVER_DELAY_MS);
+                      }
+
+                      inputRef.current?.focus();
+                    }}
+                  />
+                )}
+
+                {/* Game Over overlay */}
+                {showGameOver && (
+                  <GameOver
+                    reason={gameOverReason}
+                    textSpeed={textSpeed}
+                    onMainMenuAction={onExitAction}
+                    onLoadSavedGameAction={onLoadSavedGameAction ?? onExitAction}
+                    onQuitAction={onQuitAction ?? onExitAction}
+                    onLoadCheckpointAction={slotId => {
+                      if (onLoadCheckpointAction) {
+                        onLoadCheckpointAction(slotId);
+                      } else {
+                        // Fallback: load checkpoint inline
+                        const loadedState = loadCheckpoint(slotId);
+                        if (loadedState) {
+                          setGameState({
+                            ...loadedState,
+                            isGameOver: false,
+                            gameOverReason: undefined,
+                          });
+                          setShowGameOver(false);
+                          setGamePhase('terminal');
                         }
-                      : prev
-                  );
-                }
-                handleKeyDown(e);
-              }}
-              className={styles.inputField}
-              disabled={isProcessing || gameState.isGameOver || hasBlockingPopup}
-              autoFocus={!showIntroOverlay}
-              autoComplete="off"
-              spellCheck={false}
-            />
-            {showGhost && (
-              <span className={styles.ghostOverlay} aria-hidden="true">
-                <span className={styles.ghostMirror}>{inputValue}</span>
-                <span className={styles.ghostText}>{ghostSuffix}</span>
-              </span>
-            )}
-            </span>
-            <span className={styles.cursor}>_</span>
-            {/* Typing speed warning - inline within input area to prevent overlap */}
-            {typingSpeedWarning && (
-              <span className={styles.typingWarningInline}>{t('terminal.typing.warning')}</span>
-            )}
-          </form>
-          </>
-        )}
+                      }
+                    }}
+                  />
+                )}
 
-        {/* Timed decryption timer overlay */}
-        {gameState.timedDecryptActive && timedDecryptRemaining > 0 && (
-          <FloatingElement id="timed-decrypt-timer" zone="top-right" priority={1} baseOffset={130}>
-            <div className={styles.timedDecryptTimerContent}>
-              <div className={styles.timerLabel}>{t('terminal.timer.decryptWindow')}</div>
-              <div className={styles.timerValue}>{(timedDecryptRemaining / 1000).toFixed(1)}s</div>
-              <div className={styles.timerSequence}>
-                {t('terminal.timer.sequence', { value: gameState.timedDecryptSequence ?? '' })}
-              </div>
-            </div>
-          </FloatingElement>
-        )}
+                {/* Achievement popup */}
+                {pendingAchievement && (
+                  <AchievementPopup
+                    achievement={pendingAchievement}
+                    onDismiss={() => {
+                      setPendingAchievement(null);
+                      setTimeout(focusTerminalInput, 0);
+                    }}
+                  />
+                )}
 
-        {/* Hacker avatar HUD panel */}
-        {(showAvatar || gameState.tutorialComplete) && (
-          <HackerAvatar
-            expression={(gameState.avatarExpression as AvatarExpression) || 'neutral'}
-            detectionLevel={gameState.detectionLevel}
-            sessionStability={gameState.sessionStability}
-            creepyEntrance={avatarCreepyEntrance}
-            onExpressionTimeout={() => {
-              setGameState(prev => ({ ...prev, avatarExpression: 'neutral' }));
-            }}
-          />
-        )}
+                {/* Settings modal */}
+                {showSettings && (
+                  <SettingsModal
+                    soundEnabled={soundEnabled}
+                    musicEnabled={musicEnabled}
+                    masterVolume={masterVolume}
+                    onToggleSound={toggleSound}
+                    onToggleMusic={toggleMusic}
+                    onVolumeChange={setMasterVolume}
+                    onCloseAction={() => {
+                      setShowSettings(false);
+                      setTimeout(focusTerminalInput, 0);
+                    }}
+                    onResetDefaults={() => {
+                      setMasterVolume(1);
+                      setSoundEnabledDirectly(true);
+                      setMusicEnabledDirectly(true);
+                    }}
+                  />
+                )}
 
-        {activeEvidenceVideo && (
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={t('videoOverlay.aria', { value: activeEvidenceVideo.videoTitle })}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              zIndex: 2500,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '1.5rem',
-              background: 'rgba(0, 0, 0, 0.92)',
-            }}
-          >
-            <div
-              style={{
-                width: 'min(960px, 100%)',
-                maxHeight: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.75rem',
-                padding: '1rem',
-                background: '#040704',
-                border: '1px solid #88cc44',
-                boxShadow: '0 0 30px rgba(136, 204, 68, 0.18)',
-              }}
-            >
-              <div
-                style={{
-                  color: '#88cc44',
-                  fontFamily: 'VT323, monospace',
-                  fontSize: '1.6rem',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {t('videoOverlay.attachedTitle', { value: activeEvidenceVideo.videoTitle })}
-              </div>
-              {/* Video with CRT/terminal overlay */}
-              <div style={{ position: 'relative', width: '100%', flex: '1 1 auto', minHeight: 0 }}>
-                <video
-                  key={activeEvidenceVideo.videoSrc}
-                  src={activeEvidenceVideo.videoSrc}
-                  autoPlay
-                  playsInline
-                  muted={masterVolume === 0}
-                  onLoadedMetadata={e => {
-                    e.currentTarget.volume = masterVolume;
-                  }}
-                  style={{
-                    width: '100%',
-                    maxHeight: '100%',
-                    objectFit: 'contain',
-                    background: '#000',
-                    filter: 'sepia(100%) saturate(300%) brightness(70%) hue-rotate(70deg)',
-                  }}
-                />
-                {/* Scanlines */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)',
-                    pointerEvents: 'none',
-                    zIndex: 1,
-                  }}
-                />
-                {/* Green CRT glow */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    boxShadow: 'inset 0 0 60px rgba(0,255,0,0.1)',
-                    pointerEvents: 'none',
-                    zIndex: 2,
-                  }}
-                />
-                {/* Static noise overlay */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-                    opacity: 0.06,
-                    pointerEvents: 'none',
-                    mixBlendMode: 'overlay',
-                    zIndex: 3,
-                  }}
-                />
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '1rem',
-                  flexShrink: 0,
-                  color: '#88cc44',
-                  fontFamily: 'VT323, monospace',
-                  fontSize: '1.1rem',
-                }}
-              >
-                <span>{t('videoOverlay.returnHint')}</span>
-                <button
-                  type="button"
-                  onClick={closeEvidenceVideo}
-                  style={{
-                    border: '1px solid #88cc44',
-                    background: 'transparent',
-                    color: '#88cc44',
-                    padding: '0.35rem 0.85rem',
-                    fontFamily: 'VT323, monospace',
-                    fontSize: '1.1rem',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {t('common.close')}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+                {/* Achievement gallery */}
+                {showAchievements && (
+                  <AchievementGallery
+                    onCloseAction={() => {
+                      setShowAchievements(false);
+                      setTimeout(focusTerminalInput, 0);
+                    }}
+                  />
+                )}
 
-        {/* Turing test video */}
-        {activeTuringVideo && (
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={t('videoOverlay.turingAria')}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              zIndex: 2500,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '1.5rem',
-              background: 'rgba(0, 0, 0, 0.92)',
-            }}
-          >
-            <div
-              style={{
-                width: 'min(960px, 100%)',
-                maxHeight: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.75rem',
-                padding: '1rem',
-                background: '#040704',
-                border: '1px solid #88cc44',
-                boxShadow: '0 0 30px rgba(136, 204, 68, 0.18)',
-              }}
-            >
-              <div
-                style={{
-                  color: '#88cc44',
-                  fontFamily: 'VT323, monospace',
-                  fontSize: '1.6rem',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {t('videoOverlay.attachedTitle', { value: 'turing test.mp4' })}
-              </div>
-              <div style={{ position: 'relative', width: '100%', flex: '1 1 auto', minHeight: 0 }}>
-                <video
-                  key={TURING_TEST_VIDEO_SRC}
-                  src={TURING_TEST_VIDEO_SRC}
-                  autoPlay
-                  playsInline
-                  muted={masterVolume === 0}
-                  onLoadedMetadata={e => {
-                    e.currentTarget.volume = masterVolume;
-                  }}
-                  onEnded={() => {
-                    setActiveTuringVideo(false);
-                    setShowTuringTest(true);
-                    setGameState(prev => ({ ...prev, avatarExpression: 'scared' }));
-                  }}
-                  style={{
-                    width: '100%',
-                    maxHeight: '100%',
-                    objectFit: 'contain',
-                    background: '#000',
-                    filter: 'sepia(100%) saturate(300%) brightness(70%) hue-rotate(70deg)',
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)',
-                    pointerEvents: 'none',
-                    zIndex: 1,
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    boxShadow: 'inset 0 0 60px rgba(0,255,0,0.1)',
-                    pointerEvents: 'none',
-                    zIndex: 2,
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-                    opacity: 0.06,
-                    pointerEvents: 'none',
-                    mixBlendMode: 'overlay',
-                    zIndex: 3,
-                  }}
-                />
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '1rem',
-                  flexShrink: 0,
-                  color: '#88cc44',
-                  fontFamily: 'VT323, monospace',
-                  fontSize: '1.1rem',
-                }}
-              >
-                <span>{t('videoOverlay.returnHint')}</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveTuringVideo(false);
-                    setShowTuringTest(true);
-                  }}
-                  style={{
-                    border: '1px solid #88cc44',
-                    background: 'transparent',
-                    color: '#88cc44',
-                    padding: '0.35rem 0.85rem',
-                    fontFamily: 'VT323, monospace',
-                    fontSize: '1.1rem',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {t('common.close')}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+                {/* Statistics modal */}
+                {showStatistics && (
+                  <StatisticsModal
+                    onCloseAction={() => {
+                      setShowStatistics(false);
+                      setTimeout(focusTerminalInput, 0);
+                    }}
+                  />
+                )}
 
-        {/* Image overlay */}
-        {activeImage && (
-          <ImageOverlay
-            src={activeImage.src}
-            alt={activeImage.alt}
-            altKey={activeImage.altKey}
-            tone={activeImage.tone}
-            corrupted={activeImage.corrupted}
-            onCloseAction={() => {
-              // Add "Media recovered" message to terminal
-              const recoveredMessage = createEntry(
-                'system',
-                t('terminal.system.mediaRecoveredVisual')
-              );
+                {/* Pause menu */}
+                {showPauseMenu && (
+                  <PauseMenu
+                    canLoadAction={getLatestCheckpoint() !== null}
+                    onResumeAction={() => {
+                      setShowPauseMenu(false);
+                      setTimeout(focusTerminalInput, 0);
+                    }}
+                    onSaveAction={() => {
+                      setShowPauseMenu(false);
+                      onSaveRequestAction(gameState, savedAt =>
+                        setGameState(prev => ({ ...prev, lastSaveTime: savedAt }))
+                      );
+                      setTimeout(focusTerminalInput, 0);
+                    }}
+                    onLoadAction={() => {
+                      const latestCheckpoint = getLatestCheckpoint();
+                      setShowPauseMenu(false);
+                      if (!latestCheckpoint) {
+                        setTimeout(focusTerminalInput, 0);
+                        return;
+                      }
 
-              // Collect all UFO74 messages to show after image closes
-              const allUfo74Messages: TerminalEntry[] = [];
-
-              // First add any queued messages from the command result (content reactions)
-              if (queuedAfterMediaMessages.length > 0) {
-                allUfo74Messages.push(...queuedAfterMediaMessages);
-                setQueuedAfterMediaMessages([]); // Clear the queue
-              }
-
-              // Then add image-specific comments
-              const imageCommentKeys = UFO74_IMAGE_COMMENT_KEYS[activeImage.src];
-              if (imageCommentKeys && imageCommentKeys.length > 0) {
-                const commentKey = uiRandomPick(imageCommentKeys);
-                allUfo74Messages.push(createEntry('ufo74', t(commentKey)));
-              }
-
-              setGameState(prev => ({
-                ...prev,
-                history: [...prev.history, recoveredMessage],
-              }));
-              if (allUfo74Messages.length > 0) {
-                appendPendingUfo74StartMessages(allUfo74Messages);
-              }
-              setActiveImage(null);
-              inputRef.current?.focus();
-            }}
-          />
-        )}
-
-        {/* Firewall Scare overlay */}
-        {showFirewallScare && (
-          <div
-            className={styles.firewallScareOverlay}
-            style={SCREEN_OVERLAY_BOUNDS}
-            role="alert"
-          >
-            <div className={styles.firewallScareEye}>
-              <div className={styles.firewallScareIris} />
-              <div className={styles.firewallScarePupil} />
-            </div>
-            <div className={styles.firewallScareText}>{t('terminal.firewall.scare')}</div>
-          </div>
-        )}
-
-        {/* Turing Test overlay */}
-        {showTuringTest && (
-          <TuringTestOverlay
-            autoPilot={Boolean(gameState.botTest?.active)}
-            onCorrectAnswer={() => playSound('success')}
-            onComplete={passed => {
-              setShowTuringTest(false);
-
-              if (passed) {
-                // Turing test passed
-                const passedMessages = [
-                  createEntry('system', ''),
-                  createEntry('notice', t('terminal.turing.passed.header')),
-                  createEntry('notice', t('terminal.turing.passed.line1')),
-                  createEntry('notice', t('terminal.turing.passed.line2')),
-                  createEntry('system', ''),
-                  createEntry('ufo74', t('terminal.turing.passed.ufo1')),
-                  createEntry('ufo74', t('terminal.turing.passed.ufo2')),
-                  createEntry('system', ''),
-                ];
-                setGameState(prev => ({
-                  ...prev,
-                  history: [...prev.history, ...passedMessages],
-                  turingEvaluationActive: false,
-                  turingEvaluationCompleted: true,
-                  detectionLevel: Math.max(0, prev.detectionLevel - 10), // Reward: reduce detection
-                }));
-                playSound('success');
-              } else {
-                // Turing test failed - game over
-                const failedMessages = [
-                  createEntry('system', ''),
-                  createEntry('error', t('terminal.turing.failed.header')),
-                  createEntry('error', t('terminal.turing.failed.line1')),
-                  createEntry('error', t('terminal.turing.failed.line2')),
-                  createEntry('system', ''),
-                ];
-                setGameState(prev => ({
-                  ...prev,
-                  history: [...prev.history, ...failedMessages],
-                  turingEvaluationActive: false,
-                  isGameOver: true,
-                  gameOverReason: t('terminal.turing.failed.reason'),
-                  endingType: 'bad',
-                }));
-                playSound('error');
-                setTimeout(() => {
-                  setGameOverReason(t('terminal.turing.failed.reason'));
-                  setShowGameOver(true);
-                  setGamePhase('bad_ending');
-                }, GAME_OVER_DELAY_MS);
-              }
-
-              inputRef.current?.focus();
-            }}
-          />
-        )}
-
-        {/* Game Over overlay */}
-        {showGameOver && (
-          <GameOver
-            reason={gameOverReason}
-            textSpeed={textSpeed}
-            onMainMenuAction={onExitAction}
-            onLoadSavedGameAction={onLoadSavedGameAction ?? onExitAction}
-            onQuitAction={onQuitAction ?? onExitAction}
-            onLoadCheckpointAction={slotId => {
-              if (onLoadCheckpointAction) {
-                onLoadCheckpointAction(slotId);
-              } else {
-                // Fallback: load checkpoint inline
-                const loadedState = loadCheckpoint(slotId);
-                if (loadedState) {
-                  setGameState({
-                    ...loadedState,
-                    isGameOver: false,
-                    gameOverReason: undefined,
-                  });
-                  setShowGameOver(false);
-                  setGamePhase('terminal');
-                }
-              }
-            }}
-          />
-        )}
-
-        {/* Achievement popup */}
-        {pendingAchievement && (
-          <AchievementPopup
-            achievement={pendingAchievement}
-            onDismiss={() => {
-              setPendingAchievement(null);
-              setTimeout(focusTerminalInput, 0);
-            }}
-          />
-        )}
-
-        {/* Settings modal */}
-        {showSettings && (
-          <SettingsModal
-            soundEnabled={soundEnabled}
-            musicEnabled={musicEnabled}
-            masterVolume={masterVolume}
-            onToggleSound={toggleSound}
-            onToggleMusic={toggleMusic}
-            onVolumeChange={setMasterVolume}
-            onCloseAction={() => {
-              setShowSettings(false);
-              setTimeout(focusTerminalInput, 0);
-            }}
-            onResetDefaults={() => {
-              setMasterVolume(1);
-              setSoundEnabledDirectly(true);
-              setMusicEnabledDirectly(true);
-            }}
-          />
-        )}
-
-        {/* Achievement gallery */}
-        {showAchievements && (
-          <AchievementGallery
-            onCloseAction={() => {
-              setShowAchievements(false);
-              setTimeout(focusTerminalInput, 0);
-            }}
-          />
-        )}
-
-        {/* Statistics modal */}
-        {showStatistics && (
-          <StatisticsModal
-            onCloseAction={() => {
-              setShowStatistics(false);
-              setTimeout(focusTerminalInput, 0);
-            }}
-          />
-        )}
-
-        {/* Pause menu */}
-        {showPauseMenu && (
-          <PauseMenu
-            canLoadAction={getLatestCheckpoint() !== null}
-            onResumeAction={() => {
-              setShowPauseMenu(false);
-              setTimeout(focusTerminalInput, 0);
-            }}
-            onSaveAction={() => {
-              setShowPauseMenu(false);
-              onSaveRequestAction(gameState, savedAt =>
-                setGameState(prev => ({ ...prev, lastSaveTime: savedAt }))
-              );
-              setTimeout(focusTerminalInput, 0);
-            }}
-            onLoadAction={() => {
-              const latestCheckpoint = getLatestCheckpoint();
-              setShowPauseMenu(false);
-              if (!latestCheckpoint) {
-                setTimeout(focusTerminalInput, 0);
-                return;
-              }
-
-              if (onLoadCheckpointAction) {
-                onLoadCheckpointAction(latestCheckpoint.id);
-              } else {
-                const loadedState = loadCheckpoint(latestCheckpoint.id);
-                if (loadedState) {
-                  setGameState({
-                    ...loadedState,
-                    isGameOver: false,
-                    gameOverReason: undefined,
-                  });
-                  setGamePhase('terminal');
-                }
-              }
-            }}
-            onSettingsAction={() => {
-              setShowPauseMenu(false);
-              setShowSettings(true);
-            }}
-            onExitAction={() => {
-              setShowPauseMenu(false);
-              onExitAction();
-            }}
-          />
-        )}
+                      if (onLoadCheckpointAction) {
+                        onLoadCheckpointAction(latestCheckpoint.id);
+                      } else {
+                        const loadedState = loadCheckpoint(latestCheckpoint.id);
+                        if (loadedState) {
+                          setGameState({
+                            ...loadedState,
+                            isGameOver: false,
+                            gameOverReason: undefined,
+                          });
+                          setGamePhase('terminal');
+                        }
+                      }
+                    }}
+                    onSettingsAction={() => {
+                      setShowPauseMenu(false);
+                      setShowSettings(true);
+                    }}
+                    onExitAction={() => {
+                      setShowPauseMenu(false);
+                      onExitAction();
+                    }}
+                  />
+                )}
 
                 {showOnboarding && (
                   <OnboardingCards

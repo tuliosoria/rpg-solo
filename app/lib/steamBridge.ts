@@ -404,7 +404,14 @@ export async function getPresenceStates(): Promise<Record<string, string>> {
  * @returns Result indicating success or failure
  */
 export async function activateOverlay(
-  dialog: 'friends' | 'community' | 'players' | 'settings' | 'officialgamegroup' | 'stats' | 'achievements' = 'achievements'
+  dialog:
+    | 'friends'
+    | 'community'
+    | 'players'
+    | 'settings'
+    | 'officialgamegroup'
+    | 'stats'
+    | 'achievements' = 'achievements'
 ): Promise<SteamBridgeResult> {
   const api = getElectronAPI();
   if (!api?.steamOverlay) {
@@ -487,9 +494,7 @@ export async function updateTrayStatus(status: string): Promise<SteamBridgeResul
  * @param language - Active UI language
  * @returns Result indicating success
  */
-export async function setTrayLanguage(
-  language: 'en' | 'pt-BR' | 'es'
-): Promise<SteamBridgeResult> {
+export async function setTrayLanguage(language: 'en' | 'pt-BR' | 'es'): Promise<SteamBridgeResult> {
   const api = getElectronAPI();
   if (!api?.tray?.setLanguage) {
     return { success: false, error: 'Tray not available' };

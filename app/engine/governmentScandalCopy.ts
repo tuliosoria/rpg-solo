@@ -8,8 +8,8 @@
 
 // Basenames of files that contain direct creature-contact / specimen evidence.
 export const SMOKING_GUN_CONTACT_FILES: ReadonlySet<string> = new Set<string>([
-  'jardim_andere_incident.txt',      // direct-contact field report
-  'incident_report_1996_01_VG.txt',  // "biological specimens recovered"
+  'jardim_andere_incident.txt', // direct-contact field report
+  'incident_report_1996_01_VG.txt', // "biological specimens recovered"
 ]);
 
 // Replaces government_scandal narrative[0] when a smoking gun is present.
@@ -20,9 +20,7 @@ export const SMOKING_GUN_NARRATIVE_INTRO =
 export const SMOKING_GUN_AOL_PURPOSE =
   "Unlike the transport and command records, two of the leaked files name the operation's purpose: an incident report references 'biological specimens recovered' from the Jardim Andere site, and a field report describes a surviving occupant. Forensic analysts working around the clock report the documents may be authentic; wire services are already calling it the most consequential leak of the decade.";
 
-export function hasSmokingGunContact(
-  savedFiles: ReadonlySet<string> | undefined | null,
-): boolean {
+export function hasSmokingGunContact(savedFiles: ReadonlySet<string> | undefined | null): boolean {
   if (!savedFiles) return false;
   for (const fullPath of savedFiles) {
     const basename = fullPath.split('/').pop() ?? fullPath;
@@ -33,7 +31,7 @@ export function hasSmokingGunContact(
 
 export function resolveGovernmentScandalNarrative(
   baseNarrative: readonly string[],
-  savedFiles: ReadonlySet<string> | undefined | null,
+  savedFiles: ReadonlySet<string> | undefined | null
 ): string[] {
   if (baseNarrative.length === 0 || !hasSmokingGunContact(savedFiles)) {
     return [...baseNarrative];
@@ -43,7 +41,7 @@ export function resolveGovernmentScandalNarrative(
 
 export function resolveGovernmentScandalAolBody(
   baseBody: readonly string[],
-  savedFiles: ReadonlySet<string> | undefined | null,
+  savedFiles: ReadonlySet<string> | undefined | null
 ): string[] {
   if (baseBody.length < 2 || !hasSmokingGunContact(savedFiles)) {
     return [...baseBody];

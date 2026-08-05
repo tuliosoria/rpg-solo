@@ -72,9 +72,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </h1>
             <div className={styles.message}>
               <p>{translateStatic('errorBoundary.message')}</p>
-              <p className={styles.subtext}>
-                {translateStatic('errorBoundary.subtext')}
-              </p>
+              <p className={styles.subtext}>{translateStatic('errorBoundary.subtext')}</p>
             </div>
             {this.state.error && showErrorDetails && (
               <details className={styles.details}>

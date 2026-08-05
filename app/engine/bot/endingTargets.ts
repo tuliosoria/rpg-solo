@@ -133,11 +133,7 @@ export const ENDING_RECIPES: Record<EndingId, EndingRecipe> = {
   // Default: one category above 2 with no hard evidence anywhere. Witness
   // testimony alone is exactly the dossier the world laughs at.
   ridiculed: {
-    required: [
-      'witness_statement_raw.txt',
-      'witness_visit_log.txt',
-      'witness_subjects_file.txt',
-    ],
+    required: ['witness_statement_raw.txt', 'witness_visit_log.txt', 'witness_subjects_file.txt'],
     padFrom: ['witness', 'conspiracy_unrelated'],
   },
 };

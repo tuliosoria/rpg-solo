@@ -22,23 +22,29 @@ describe('SettingsModal', () => {
     vi.clearAllMocks();
     mockStorage = {};
     originalLocalStorage = window.localStorage;
-    
+
     // Create a mock localStorage object
     const localStorageMock = {
       getItem: vi.fn((key: string) => mockStorage[key] ?? null),
-      setItem: vi.fn((key: string, value: string) => { mockStorage[key] = value; }),
-      removeItem: vi.fn((key: string) => { delete mockStorage[key]; }),
-      clear: vi.fn(() => { mockStorage = {}; }),
+      setItem: vi.fn((key: string, value: string) => {
+        mockStorage[key] = value;
+      }),
+      removeItem: vi.fn((key: string) => {
+        delete mockStorage[key];
+      }),
+      clear: vi.fn(() => {
+        mockStorage = {};
+      }),
       length: 0,
       key: vi.fn(() => null),
     };
-    
+
     Object.defineProperty(window, 'localStorage', {
       value: localStorageMock,
       writable: true,
       configurable: true,
     });
-    
+
     // Reset document.body.classList
     document.body.classList.remove('no-crt');
   });
@@ -55,13 +61,13 @@ describe('SettingsModal', () => {
 
   it('renders the settings modal header', () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     expect(screen.getByText('SETTINGS')).toBeInTheDocument();
   });
 
   it('displays sound enabled toggle in ON state', () => {
     render(<SettingsModal {...defaultProps} soundEnabled={true} />);
-    
+
     const soundLabel = screen.getByText('Sound Effects');
     const soundRow = soundLabel.closest('[class*="setting"]');
     const soundToggle = soundRow?.querySelector('button');
@@ -70,7 +76,7 @@ describe('SettingsModal', () => {
 
   it('displays sound disabled toggle in OFF state', () => {
     render(<SettingsModal {...defaultProps} soundEnabled={false} />);
-    
+
     const soundLabel = screen.getByText('Sound Effects');
     const soundRow = soundLabel.closest('[class*="setting"]');
     const soundToggle = soundRow?.querySelector('button');
@@ -79,49 +85,49 @@ describe('SettingsModal', () => {
 
   it('calls onToggleSound when sound toggle is clicked', () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     // There are multiple toggles, find the one in the Sound Effects row
     const soundLabel = screen.getByText('Sound Effects');
     const soundRow = soundLabel.closest('[class*="setting"]');
     const soundToggle = soundRow?.querySelector('button');
-    
+
     fireEvent.click(soundToggle!);
-    
+
     expect(defaultProps.onToggleSound).toHaveBeenCalledTimes(1);
   });
 
   it('displays volume slider with correct value', () => {
     render(<SettingsModal {...defaultProps} masterVolume={0.75} />);
-    
+
     expect(screen.getByText('75%')).toBeInTheDocument();
   });
 
   it('calls onVolumeChange when slider is changed', () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     const slider = screen.getByRole('slider');
     fireEvent.change(slider, { target: { value: '80' } });
-    
+
     expect(defaultProps.onVolumeChange).toHaveBeenCalledWith(0.8);
   });
 
   it('disables volume slider when sound is disabled', () => {
     render(<SettingsModal {...defaultProps} soundEnabled={false} />);
-    
+
     const slider = screen.getByRole('slider');
     expect(slider).toBeDisabled();
   });
 
   it('enables volume slider when sound is enabled', () => {
     render(<SettingsModal {...defaultProps} soundEnabled={true} />);
-    
+
     const slider = screen.getByRole('slider');
     expect(slider).not.toBeDisabled();
   });
 
   it('displays CRT effects toggle', () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     expect(screen.getByText('CRT Effects')).toBeInTheDocument();
   });
 
@@ -139,9 +145,9 @@ describe('SettingsModal', () => {
 
   it('loads CRT preference from shared options storage on mount', async () => {
     mockStorage['terminal1996_options'] = JSON.stringify({ crtEffectsEnabled: false });
-    
+
     render(<SettingsModal {...defaultProps} />);
-    
+
     // Wait for useEffect to run
     await waitFor(() => {
       const crtLabel = screen.getByText('CRT Effects');
@@ -153,17 +159,17 @@ describe('SettingsModal', () => {
 
   it('toggles CRT effects and saves to shared options storage', async () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     const crtLabel = screen.getByText('CRT Effects');
     const crtRow = crtLabel.closest('[class*="setting"]');
     const crtToggle = crtRow?.querySelector('button');
-    
+
     // Initially ON (default state)
     expect(crtToggle?.textContent).toBe('[ ON ]');
-    
+
     // Click to toggle OFF
     fireEvent.click(crtToggle!);
-    
+
     await waitFor(() => {
       expect(crtToggle?.textContent).toBe('[ OFF ]');
     });
@@ -172,14 +178,14 @@ describe('SettingsModal', () => {
 
   it('adds no-crt class to body when CRT is disabled', async () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     const crtLabel = screen.getByText('CRT Effects');
     const crtRow = crtLabel.closest('[class*="setting"]');
     const crtToggle = crtRow?.querySelector('button');
-    
+
     // Toggle CRT off
     fireEvent.click(crtToggle!);
-    
+
     await waitFor(() => {
       expect(document.body.classList.contains('no-crt')).toBe(true);
     });
@@ -188,9 +194,9 @@ describe('SettingsModal', () => {
   it('removes no-crt class from body when CRT is enabled', async () => {
     document.body.classList.add('no-crt');
     mockStorage['terminal1996_options'] = JSON.stringify({ crtEffectsEnabled: false });
-    
+
     render(<SettingsModal {...defaultProps} />);
-    
+
     // Wait for useEffect to load the OFF state
     await waitFor(() => {
       const crtLabel = screen.getByText('CRT Effects');
@@ -198,14 +204,14 @@ describe('SettingsModal', () => {
       const crtToggle = crtRow?.querySelector('button');
       expect(crtToggle?.textContent).toBe('[ OFF ]');
     });
-    
+
     const crtLabel = screen.getByText('CRT Effects');
     const crtRow = crtLabel.closest('[class*="setting"]');
     const crtToggle = crtRow?.querySelector('button');
-    
+
     // Toggle CRT on
     fireEvent.click(crtToggle!);
-    
+
     await waitFor(() => {
       expect(document.body.classList.contains('no-crt')).toBe(false);
     });
@@ -254,9 +260,7 @@ describe('SettingsModal', () => {
     const labels = Array.from(document.querySelectorAll('[class*="label"]')).map(node =>
       node.textContent?.trim()
     );
-    expect(labels.indexOf('Text Speed')).toBeLessThan(
-      labels.indexOf('Typing Pattern Warnings')
-    );
+    expect(labels.indexOf('Text Speed')).toBeLessThan(labels.indexOf('Typing Pattern Warnings'));
     expect(labels.indexOf('Typing Pattern Warnings')).toBeLessThan(labels.indexOf('Language'));
 
     const textSpeedLabel = screen.getByText('Text Speed');
@@ -271,7 +275,7 @@ describe('SettingsModal', () => {
 
   it('displays keyboard shortcuts info', () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     expect(screen.getByText('Keyboard Shortcuts:')).toBeInTheDocument();
     expect(screen.getByText(/Command history/)).toBeInTheDocument();
     expect(screen.getByText(/Autocomplete/)).toBeInTheDocument();
@@ -280,53 +284,57 @@ describe('SettingsModal', () => {
 
   it('calls onCloseAction when close button is clicked', () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     const closeButton = screen.getByText('[ CLOSE ]');
     fireEvent.click(closeButton);
-    
+
     expect(defaultProps.onCloseAction).toHaveBeenCalledTimes(1);
   });
 
   it('calls onCloseAction when overlay background is clicked', () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     const overlay = document.querySelector('[class*="overlay"]');
     fireEvent.click(overlay!);
-    
+
     expect(defaultProps.onCloseAction).toHaveBeenCalledTimes(1);
   });
 
   it('does not call onCloseAction when modal content is clicked', () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     const modal = document.querySelector('[class*="modal"]');
     fireEvent.click(modal!);
-    
+
     expect(defaultProps.onCloseAction).not.toHaveBeenCalled();
   });
 
   it('displays scanlines hint for CRT effects', () => {
     render(<SettingsModal {...defaultProps} />);
-    
+
     expect(screen.getByText('Scanlines & glow')).toBeInTheDocument();
   });
 
   it('handles localStorage being unavailable', () => {
     const localStorageMock = {
-      getItem: vi.fn(() => { throw new Error('localStorage not available'); }),
-      setItem: vi.fn(() => { throw new Error('localStorage not available'); }),
+      getItem: vi.fn(() => {
+        throw new Error('localStorage not available');
+      }),
+      setItem: vi.fn(() => {
+        throw new Error('localStorage not available');
+      }),
       removeItem: vi.fn(),
       clear: vi.fn(),
       length: 0,
       key: vi.fn(),
     };
-    
+
     Object.defineProperty(window, 'localStorage', {
       value: localStorageMock,
       writable: true,
       configurable: true,
     });
-    
+
     // Should not throw
     expect(() => render(<SettingsModal {...defaultProps} />)).not.toThrow();
   });

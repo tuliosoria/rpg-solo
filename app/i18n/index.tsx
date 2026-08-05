@@ -192,13 +192,11 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (directoryMatch) {
         return `${t('runtime.directoryPrefix')}: ${directoryMatch[1]}`;
       }
-      const maximumCommandLengthMatch = text.match(/^Maximum command length is (\d+) characters\.$/);
+      const maximumCommandLengthMatch = text.match(
+        /^Maximum command length is (\d+) characters\.$/
+      );
       if (maximumCommandLengthMatch) {
-        return t(
-          'runtime.maximumCommandLength',
-          { value: maximumCommandLengthMatch[1] },
-          text
-        );
+        return t('runtime.maximumCommandLength', { value: maximumCommandLengthMatch[1] }, text);
       }
       const changedToMatch = text.match(/^Changed to:\s*(.+)$/);
       if (changedToMatch) {
@@ -218,11 +216,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       }
       const errorDirectoryNotFoundMatch = text.match(/^ERROR: Directory not found:\s*(.+)$/);
       if (errorDirectoryNotFoundMatch) {
-        return t(
-          'runtime.errorDirectoryNotFound',
-          { value: errorDirectoryNotFoundMatch[1] },
-          text
-        );
+        return t('runtime.errorDirectoryNotFound', { value: errorDirectoryNotFoundMatch[1] }, text);
       }
       const errorNotDirectoryMatch = text.match(/^ERROR: Not a directory:\s*(.+)$/);
       if (errorNotDirectoryMatch) {
@@ -366,7 +360,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (questionsRemainingMatch) {
         return t('runtime.questionsRemaining', { value: questionsRemainingMatch[1] }, text);
       }
-      const patternStabilityMatch = text.match(/^\[Pattern stability:\s*(\d+)\s+queries remaining\]$/);
+      const patternStabilityMatch = text.match(
+        /^\[Pattern stability:\s*(\d+)\s+queries remaining\]$/
+      );
       if (patternStabilityMatch) {
         return t('runtime.patternStability', { value: patternStabilityMatch[1] }, text);
       }
@@ -394,11 +390,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         /^WARNING:\s*(\d+)\s+attempt\(s\)\s+remaining before lockdown$/
       );
       if (attemptsBeforeLockdownMatch) {
-        return t(
-          'runtime.attemptsBeforeLockdown',
-          { value: attemptsBeforeLockdownMatch[1] },
-          text
-        );
+        return t('runtime.attemptsBeforeLockdown', { value: attemptsBeforeLockdownMatch[1] }, text);
       }
       const warningInvalidAttemptsMatch = text.match(/^WARNING:\s*Invalid attempts:\s*(\d+)\/8$/);
       if (warningInvalidAttemptsMatch) {
@@ -408,17 +400,24 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         /^Too soon\. Wait (\d+) second(s)? before trying again\.$/
       );
       if (tooSoonWaitMatch) {
-        const key = tooSoonWaitMatch[1] === '1' ? 'runtime.tooSoonWait.one' : 'runtime.tooSoonWait.other';
+        const key =
+          tooSoonWaitMatch[1] === '1' ? 'runtime.tooSoonWait.one' : 'runtime.tooSoonWait.other';
         return t(key, { value: tooSoonWaitMatch[1] }, text);
       }
       const waitRemainingMatch = text.match(
         /^(\s*)Detection reduced\.\s*\[(\d+)\s+wait(s)? remaining\]$/
       );
       if (waitRemainingMatch) {
-        const key = waitRemainingMatch[2] === '1'
-          ? 'runtime.waitRemaining.one'
-          : 'runtime.waitRemaining.other';
-        return applyLeadingWhitespace(waitRemainingMatch, key, { value: waitRemainingMatch[2] }, text);
+        const key =
+          waitRemainingMatch[2] === '1'
+            ? 'runtime.waitRemaining.one'
+            : 'runtime.waitRemaining.other';
+        return applyLeadingWhitespace(
+          waitRemainingMatch,
+          key,
+          { value: waitRemainingMatch[2] },
+          text
+        );
       }
       const leakDetectionDeltaMatch = text.match(/^DETECTION:\s*\+(\d+)%$/);
       if (leakDetectionDeltaMatch) {
@@ -478,7 +477,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           text
         );
       }
-      const progressStepsMatch = text.match(/^(\s*)Progress:\s*(\d+)\/(\d+)\s*steps completed\.\s*$/);
+      const progressStepsMatch = text.match(
+        /^(\s*)Progress:\s*(\d+)\/(\d+)\s*steps completed\.\s*$/
+      );
       if (progressStepsMatch) {
         return applyLeadingWhitespace(
           progressStepsMatch,
@@ -487,7 +488,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           text
         );
       }
-      const moreFilesNeededMatch = text.match(/^(\s*)(\d+)\s*more file\(s\) needed before leak\.\s*$/);
+      const moreFilesNeededMatch = text.match(
+        /^(\s*)(\d+)\s*more file\(s\) needed before leak\.\s*$/
+      );
       if (moreFilesNeededMatch) {
         return applyLeadingWhitespace(
           moreFilesNeededMatch,
@@ -496,7 +499,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           text
         );
       }
-      const compilingDossierMatch = text.match(/^(\s*)Compiling dossier\.\.\.\s*(\d+)\s*files confirmed\.\s*$/);
+      const compilingDossierMatch = text.match(
+        /^(\s*)Compiling dossier\.\.\.\s*(\d+)\s*files confirmed\.\s*$/
+      );
       if (compilingDossierMatch) {
         return applyLeadingWhitespace(
           compilingDossierMatch,
@@ -527,9 +532,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (targetSearchingMatch) {
         return t('runtime.targetSearching', { value: targetSearchingMatch[1] }, text);
       }
-      const toReadFileMatch = text.match(
-        /^(\s*)To read a file use 'cat (.+)' or 'open (.+)'\.$/
-      );
+      const toReadFileMatch = text.match(/^(\s*)To read a file use 'cat (.+)' or 'open (.+)'\.$/);
       if (toReadFileMatch) {
         return applyLeadingWhitespace(
           toReadFileMatch,
@@ -569,9 +572,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       if (whenReadyStartDecryptMatch) {
         return t('runtime.whenReadyStartDecrypt', { value: whenReadyStartDecryptMatch[1] }, text);
       }
-      const legacyWrapperDecryptMatch = text.match(
-        /^\[UFO74\]: legacy wrapper: "decrypt (.+)"\.$/
-      );
+      const legacyWrapperDecryptMatch = text.match(/^\[UFO74\]: legacy wrapper: "decrypt (.+)"\.$/);
       if (legacyWrapperDecryptMatch) {
         return t('runtime.legacyWrapperDecrypt', { value: legacyWrapperDecryptMatch[1] }, text);
       }
@@ -607,11 +608,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       }
       const endingLabelMatch = text.match(/^>> ENDING:\s*(.+?)\s*<<$/);
       if (endingLabelMatch) {
-        return t(
-          'runtime.endingLabel',
-          { value: translateRuntimeText(endingLabelMatch[1]) },
-          text
-        );
+        return t('runtime.endingLabel', { value: translateRuntimeText(endingLabelMatch[1]) }, text);
       }
       const scriptNotFoundMatch = text.match(/^Script not found:\s*(.+)$/);
       if (scriptNotFoundMatch) {

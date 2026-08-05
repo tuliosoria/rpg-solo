@@ -90,19 +90,22 @@ export default function NeutralEnding({
     let lineIndex = 0;
     let finalTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    const interval = setInterval(() => {
-      if (lineIndex >= neutralText.length) {
-        clearInterval(interval);
-        finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
-        return;
-      }
+    const interval = setInterval(
+      () => {
+        if (lineIndex >= neutralText.length) {
+          clearInterval(interval);
+          finalTimeout = setTimeout(() => setPhase('final'), scaleTextSpeedDelay(2000, textSpeed));
+          return;
+        }
 
-      const nextLine = neutralText[lineIndex];
-      if (typeof nextLine === 'string') {
-        setTextLines(prev => [...prev, nextLine]);
-      }
-      lineIndex++;
-    }, scaleTextSpeedDelay(200, textSpeed));
+        const nextLine = neutralText[lineIndex];
+        if (typeof nextLine === 'string') {
+          setTextLines(prev => [...prev, nextLine]);
+        }
+        lineIndex++;
+      },
+      scaleTextSpeedDelay(200, textSpeed)
+    );
 
     return () => {
       clearInterval(interval);
@@ -128,8 +131,12 @@ export default function NeutralEnding({
       {phase === 'disconnect' && (
         <div className={styles.disconnectContent}>
           <div className={styles.disconnectIcon}>⚡</div>
-          <div className={styles.disconnectText}>{translateRuntimeText('EMERGENCY DISCONNECT')}</div>
-          <div className={styles.disconnectSub}>{translateRuntimeText('Purging session data...')}</div>
+          <div className={styles.disconnectText}>
+            {translateRuntimeText('EMERGENCY DISCONNECT')}
+          </div>
+          <div className={styles.disconnectSub}>
+            {translateRuntimeText('Purging session data...')}
+          </div>
         </div>
       )}
 

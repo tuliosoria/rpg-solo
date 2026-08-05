@@ -22,9 +22,7 @@ import {
   DirectoryNode,
   FileSystemNode,
 } from '../../types';
-import {
-  getFirstRunMessage,
-} from '../commands/tutorial';
+import { getFirstRunMessage } from '../commands/tutorial';
 
 // Helper to create a test state
 const createTestState = (overrides: Partial<GameState> = {}): GameState => ({

@@ -367,13 +367,18 @@ const COMMAND_HELP: Record<string, string[]> = {
 export const systemCommands: CommandRegistry = {
   help: (args, state) => {
     // Late-game tension: show a warning but still allow help
-    const lateGameWarning = state.savedFiles.size >= LEAK_PREPARATION_THRESHOLD
-      ? [
-          createEntry('warning', ''),
-          createEntryI18n('warning', 'engine.commands.elevated_security_protocol_warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
-          createEntry('warning', ''),
-        ]
-      : [];
+    const lateGameWarning =
+      state.savedFiles.size >= LEAK_PREPARATION_THRESHOLD
+        ? [
+            createEntry('warning', ''),
+            createEntryI18n(
+              'warning',
+              'engine.commands.elevated_security_protocol_warning',
+              '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'
+            ),
+            createEntry('warning', ''),
+          ]
+        : [];
 
     // If a specific command is requested, show detailed help
     if (args.length > 0) {
@@ -403,12 +408,9 @@ export const systemCommands: CommandRegistry = {
         return {
           output: [
             ...lateGameWarning,
-            createEntryI18n(
-              'error',
-              'runtime.unknownCommand',
-              `Unknown command: ${cmdName}`,
-              { value: cmdName }
-            ),
+            createEntryI18n('error', 'runtime.unknownCommand', `Unknown command: ${cmdName}`, {
+              value: cmdName,
+            }),
             createEntryI18n(
               'system',
               'engine.commands.system.type_help_to_see_all_available_commands',
@@ -446,10 +448,7 @@ export const systemCommands: CommandRegistry = {
       tSystem('helpMenu.wait', '  wait              Lower detection briefly (limited)'),
       tSystem('helpMenu.hide', '  hide              Emergency escape at 90% risk'),
       tSystem('helpMenu.leak', '  leak              Leak your saved dossier'),
-      tSystem(
-        'helpMenu.override',
-        '  override protocol <code>  Execute admin override'
-      ),
+      tSystem('helpMenu.override', '  override protocol <code>  Execute admin override'),
       tSystem('helpMenu.tutorial', '  tutorial [on/off] Toggle tutorial tips or replay intro'),
       tSystem('helpMenu.save', '  save <file>       Save a file to your dossier'),
       tSystem('helpMenu.unsave', '  unsave <file>     Remove a file from your dossier'),
@@ -621,7 +620,9 @@ export const systemCommands: CommandRegistry = {
       if (waitsLeft > 0) {
         lines.push(
           tSystem(
-            waitsLeft === 1 ? 'status.recovery.waitAvailable.one' : 'status.recovery.waitAvailable.other',
+            waitsLeft === 1
+              ? 'status.recovery.waitAvailable.one'
+              : 'status.recovery.waitAvailable.other',
             `  RECOVERY: "wait" can buy time (${waitsLeft} left).`,
             { value: waitsLeft }
           )
@@ -662,7 +663,11 @@ export const systemCommands: CommandRegistry = {
     }
 
     lines.push('');
-    lines.push(tSystem('status.currentPath', `  CURRENT PATH: ${state.currentPath}`, { value: state.currentPath }));
+    lines.push(
+      tSystem('status.currentPath', `  CURRENT PATH: ${state.currentPath}`, {
+        value: state.currentPath,
+      })
+    );
     lines.push('');
     lines.push('═══════════════════════════════════════════════════════════');
 
@@ -797,10 +802,7 @@ export const systemCommands: CommandRegistry = {
             'system',
             tSystem('save.description', '  Save a read file when it strengthens your case.')
           ),
-          createEntry(
-            'system',
-            tSystem('save.readFirst', '  You must have read the file first.')
-          ),
+          createEntry('system', tSystem('save.readFirst', '  You must have read the file first.')),
           createEntry('system', ''),
           createEntry(
             'system',
@@ -820,23 +822,20 @@ export const systemCommands: CommandRegistry = {
     // Find the file in filesRead that matches
     const matchingPaths = [...state.filesRead].filter(path => {
       const name = path.split('/').pop() || '';
-      return name.toLowerCase() === filename.toLowerCase() || path.toLowerCase().endsWith('/' + filename.toLowerCase());
+      return (
+        name.toLowerCase() === filename.toLowerCase() ||
+        path.toLowerCase().endsWith('/' + filename.toLowerCase())
+      );
     });
 
     if (matchingPaths.length === 0) {
       return {
         output: [
           createEntry('error', ''),
+          createEntry('error', tSystem('save.fileNotFoundTitle', '  FILE NOT FOUND IN MEMORY')),
           createEntry(
             'error',
-            tSystem('save.fileNotFoundTitle', '  FILE NOT FOUND IN MEMORY')
-          ),
-          createEntry(
-            'error',
-            tSystem(
-              'save.fileNotFoundBody',
-              '  You must open and read a file before saving it.'
-            )
+            tSystem('save.fileNotFoundBody', '  You must open and read a file before saving it.')
           ),
           createEntry('error', ''),
         ],
@@ -851,10 +850,7 @@ export const systemCommands: CommandRegistry = {
       return {
         output: [
           createEntry('warning', ''),
-          createEntry(
-            'warning',
-            tSystem('save.alreadySavedTitle', '  FILE ALREADY IN DOSSIER')
-          ),
+          createEntry('warning', tSystem('save.alreadySavedTitle', '  FILE ALREADY IN DOSSIER')),
           createEntry(
             'warning',
             tSystem('save.fileLabel', '  {{file}}', { file: filePath.split('/').pop() || filename })
@@ -1005,9 +1001,9 @@ export const systemCommands: CommandRegistry = {
         createEntry(
           'system',
           tSystem('save.dossierCount', '  Dossier: {{count}}/{{max}}', {
-          count: newSavedFiles.size,
-          max: MAX_EVIDENCE_COUNT,
-        })
+            count: newSavedFiles.size,
+            max: MAX_EVIDENCE_COUNT,
+          })
         ),
         createEntry('system', ''),
       ],

@@ -168,8 +168,7 @@ export function sweepScenario(
   const run = runHeadless(execute, 'novice', resolvedSeed, goal);
   const row = baseRow(`scenario:${scenario}`, goal, 'novice', resolvedSeed, run);
 
-  const expected =
-    spec.expect.kind === 'gameOver' ? `gameOver:${spec.expect.reason}` : 'survived';
+  const expected = spec.expect.kind === 'gameOver' ? `gameOver:${spec.expect.reason}` : 'survived';
   const actual = describeOutcome(run.state);
   const pass =
     spec.expect.kind === 'gameOver'

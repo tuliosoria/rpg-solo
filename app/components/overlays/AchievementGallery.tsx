@@ -38,7 +38,9 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
     return {
       ...achievement,
       isUnlocked,
-      displayName: isSecret ? t('achievement.gallery.secretName') : translateRuntimeText(achievement.name),
+      displayName: isSecret
+        ? t('achievement.gallery.secretName')
+        : translateRuntimeText(achievement.name),
       displayDescription: isSecret
         ? t('achievement.gallery.secretDescription')
         : translateRuntimeText(achievement.description),
@@ -50,7 +52,13 @@ export default memo(function AchievementGallery({ onCloseAction }: AchievementGa
   const totalCount = ACHIEVEMENTS.length;
 
   return (
-    <div className={styles.overlay} onClick={onCloseAction} role="dialog" aria-modal="true" aria-labelledby="achievements-title">
+    <div
+      className={styles.overlay}
+      onClick={onCloseAction}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="achievements-title"
+    >
       <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 id="achievements-title">{t('achievement.gallery.title')}</h2>

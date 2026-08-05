@@ -37,10 +37,7 @@ function prisonerLines(): string[] {
   const found = new Set<string>();
   let match: RegExpExecArray | null;
   while ((match = literal.exec(source)) !== null) {
-    const value = match[2]
-      .replace(/\\'/g, "'")
-      .replace(/\\"/g, '"')
-      .replace(/\\\\/g, '\\');
+    const value = match[2].replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\');
     if (value.startsWith('PRISONER_45')) found.add(value);
   }
   return [...found];

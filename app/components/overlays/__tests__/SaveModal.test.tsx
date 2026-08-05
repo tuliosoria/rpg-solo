@@ -18,7 +18,10 @@ describe('SaveModal', () => {
     sessionStartTime: Date.now(),
     currentPath: '/home/hackerkid',
     evidenceCount: 2,
-    savedFiles: new Set(['/admin/thirty_year_cycle.txt', '/ops/prato/archive/patrol_observation_shift_04.txt']),
+    savedFiles: new Set([
+      '/admin/thirty_year_cycle.txt',
+      '/ops/prato/archive/patrol_observation_shift_04.txt',
+    ]),
     detectionLevel: 25,
     ...overrides,
   });

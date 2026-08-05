@@ -47,16 +47,16 @@ describe('Conspiracy Easter Egg Files', () => {
     conspiracyFiles.forEach(filename => {
       it(`should have ${filename} in /internal/misc`, () => {
         const result = executeCommand(`open ${filename}`, state);
-        
+
         // Should not return file not found error
         const hasError = result.output.some(
           e => e.type === 'error' && e.content.includes('not found')
         );
         expect(hasError).toBe(false);
-        
+
         // Should show the file content
-        const hasFileHeader = result.output.some(
-          e => e.content.includes(`FILE: /internal/misc/${filename}`)
+        const hasFileHeader = result.output.some(e =>
+          e.content.includes(`FILE: /internal/misc/${filename}`)
         );
         expect(hasFileHeader).toBe(true);
       });
@@ -66,11 +66,11 @@ describe('Conspiracy Easter Egg Files', () => {
   describe('UFO74 reactions', () => {
     it('should trigger UFO74 reaction when opening a conspiracy file', () => {
       const result = executeCommand('open economic_transition_memo.txt', state);
-      
+
       // Should have pending UFO74 messages
       expect(result.pendingUfo74Messages).toBeDefined();
       expect(result.pendingUfo74Messages!.length).toBeGreaterThan(0);
-      
+
       // UFO74 message should contain dismissive content
       const ufo74Content = result.pendingUfo74Messages!.map(e => e.content).join(' ');
       expect(ufo74Content.toLowerCase()).toContain('ufo74');
@@ -81,7 +81,7 @@ describe('Conspiracy Easter Egg Files', () => {
       const result1 = executeCommand('open economic_transition_memo.txt', state);
       expect(result1.pendingUfo74Messages).toBeDefined();
       expect(result1.pendingUfo74Messages!.length).toBeGreaterThan(0);
-      
+
       // Update state with changes
       const newState: GameState = {
         ...state,
@@ -89,34 +89,38 @@ describe('Conspiracy Easter Egg Files', () => {
         filesRead: new Set([...(state.filesRead || []), ...(result1.stateChanges.filesRead || [])]),
         conspiracyFilesSeen: result1.stateChanges.conspiracyFilesSeen || state.conspiracyFilesSeen,
       };
-      
+
       // Second open - should NOT trigger conspiracy reaction (file already seen)
       // Note: May still have other UFO74 messages (like sanitized folder warning)
       executeCommand('open economic_transition_memo.txt', newState);
-      
+
       // Check if this specific file was marked as seen
-      expect(newState.conspiracyFilesSeen.has('/internal/misc/economic_transition_memo.txt')).toBe(true);
+      expect(newState.conspiracyFilesSeen.has('/internal/misc/economic_transition_memo.txt')).toBe(
+        true
+      );
     });
 
     it('should track conspiracy files seen in state', () => {
       const result = executeCommand('open avian_tracking_program.csv', state);
-      
+
       expect(result.stateChanges.conspiracyFilesSeen).toBeDefined();
-      expect(result.stateChanges.conspiracyFilesSeen!.has('/internal/misc/avian_tracking_program.csv')).toBe(true);
+      expect(
+        result.stateChanges.conspiracyFilesSeen!.has('/internal/misc/avian_tracking_program.csv')
+      ).toBe(true);
     });
 
     it('should allow different conspiracy files to each trigger reactions', () => {
       // Open first file
       const result1 = executeCommand('open economic_transition_memo.txt', state);
       expect(result1.pendingUfo74Messages).toBeDefined();
-      
+
       // Update state
       const state2: GameState = {
         ...state,
         ...result1.stateChanges,
         conspiracyFilesSeen: result1.stateChanges.conspiracyFilesSeen || new Set(),
       };
-      
+
       // Open second file - should also trigger reaction
       const result2 = executeCommand('open apollo_media_guidelines.pdf', state2);
       expect(result2.pendingUfo74Messages).toBeDefined();
@@ -128,7 +132,7 @@ describe('Conspiracy Easter Egg Files', () => {
     it('economic_transition_memo.txt should reference S.N. signature', () => {
       const result = executeCommand('open economic_transition_memo.txt', state);
       const content = result.output.map(e => e.content).join('\n');
-      
+
       expect(content).toContain('S.N.');
       expect(content.toLowerCase()).toContain('cryptographic');
     });
@@ -136,7 +140,7 @@ describe('Conspiracy Easter Egg Files', () => {
     it('apollo_media_guidelines.pdf should reference visual inconsistencies', () => {
       const result = executeCommand('open apollo_media_guidelines.pdf', state);
       const content = result.output.map(e => e.content).join('\n');
-      
+
       expect(content.toLowerCase()).toContain('visual inconsistencies');
       expect(content.toLowerCase()).toContain('lunar');
     });
@@ -144,7 +148,7 @@ describe('Conspiracy Easter Egg Files', () => {
     it('avian_tracking_program.csv should have surveillance data format', () => {
       const result = executeCommand('open avian_tracking_program.csv', state);
       const content = result.output.map(e => e.content).join('\n');
-      
+
       expect(content).toContain('UNIT_ID');
       expect(content).toContain('SPECIES_COVER');
       expect(content.toLowerCase()).toContain('surveillance');
@@ -153,7 +157,7 @@ describe('Conspiracy Easter Egg Files', () => {
     it('consumer_device_listening.memo should reference passive audio', () => {
       const result = executeCommand('open consumer_device_listening.memo', state);
       const content = result.output.map(e => e.content).join('\n');
-      
+
       expect(content.toLowerCase()).toContain('passive');
       expect(content.toLowerCase()).toContain('microphone');
     });

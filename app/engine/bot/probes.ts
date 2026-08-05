@@ -104,7 +104,4 @@ export const BOT_PROBE_COMMANDS: readonly string[] = [
  * the "did you mean" path, which cannot be reached without being refused first —
  * without saying so, they would report an anomaly on every single `chaos` run.
  */
-export const BOT_PROBES_EXPECTING_REJECTION: ReadonlySet<string> = new Set([
-  'hlep',
-  'xyzzy',
-]);
+export const BOT_PROBES_EXPECTING_REJECTION: ReadonlySet<string> = new Set(['hlep', 'xyzzy']);

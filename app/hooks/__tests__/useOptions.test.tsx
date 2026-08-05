@@ -106,10 +106,7 @@ describe('useOptions', () => {
 
     it('merges stored options with defaults for new options', async () => {
       // Simulate old stored options missing new keys
-      localStorage.setItem(
-        'terminal1996_options',
-        JSON.stringify({ masterVolume: 80 })
-      );
+      localStorage.setItem('terminal1996_options', JSON.stringify({ masterVolume: 80 }));
 
       const { result } = renderHook(() => useOptions());
 

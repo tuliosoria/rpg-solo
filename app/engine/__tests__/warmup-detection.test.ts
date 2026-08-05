@@ -1,11 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { executeCommand } from '../commands';
 import { GameState, DEFAULT_GAME_STATE } from '../../types';
-import {
-  getWarmupMultiplier,
-  applyWarmupDetection,
-  WARMUP_PHASE,
-} from '../../constants/detection';
+import { getWarmupMultiplier, applyWarmupDetection, WARMUP_PHASE } from '../../constants/detection';
 
 const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   ...DEFAULT_GAME_STATE,

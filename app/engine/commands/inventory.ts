@@ -33,11 +33,33 @@ function tInventory(key: string, fallback: string, values?: TranslationValues): 
 }
 
 const BLOCKED_SEARCH_TERMS = [
-  'alien', 'aliens', 'ufo', 'ufos', 'classified', 'spaceship', 'spaceships',
-  'et', 'extraterrestrial', 'extraterrestrials', 'creature', 'creatures',
-  'varginha', 'saucer', 'saucers', 'coverup', 'cover-up', 'cover up',
-  'ovni', 'ovnis', 'disco voador', 'extraterrestre', 'extraterrestres',
-  'criatura', 'criaturas', 'encobrimento', 'autopsy',
+  'alien',
+  'aliens',
+  'ufo',
+  'ufos',
+  'classified',
+  'spaceship',
+  'spaceships',
+  'et',
+  'extraterrestrial',
+  'extraterrestrials',
+  'creature',
+  'creatures',
+  'varginha',
+  'saucer',
+  'saucers',
+  'coverup',
+  'cover-up',
+  'cover up',
+  'ovni',
+  'ovnis',
+  'disco voador',
+  'extraterrestre',
+  'extraterrestres',
+  'criatura',
+  'criaturas',
+  'encobrimento',
+  'autopsy',
 ];
 
 function isBlockedSearchTerm(query: string): boolean {
@@ -148,10 +170,7 @@ function getDossierThreadSummary(analysis: DossierAnalysis): string {
   const labels = analysis.visibleThreads.slice(0, 4).map(getThreadLabel);
 
   if (labels.length === 0) {
-    return tInventory(
-      'caseProfile.thread.unresolved',
-      'unresolved administrative residue'
-    );
+    return tInventory('caseProfile.thread.unresolved', 'unresolved administrative residue');
   }
 
   return labels.join(' / ');
@@ -255,18 +274,13 @@ function buildDossierProfileEntries(state: GameState, savedFiles: Set<string>): 
     createEntry('system', tInventory('caseProfile.title', '  CASE PROFILE')),
     createEntry(
       'system',
-      tInventory(
-        'caseProfile.consequence',
-        '  Saved files determine what the world believes.'
-      )
+      tInventory('caseProfile.consequence', '  Saved files determine what the world believes.')
     ),
     createEntry(
       'system',
-      tInventory(
-        'caseProfile.threads',
-        '  Threads in dossier: {{threads}}',
-        { threads: getDossierThreadSummary(analysis) }
-      )
+      tInventory('caseProfile.threads', '  Threads in dossier: {{threads}}', {
+        threads: getDossierThreadSummary(analysis),
+      })
     ),
     createEntry('system', getDossierAssessment(analysis)),
   ];
@@ -470,16 +484,36 @@ export const inventoryCommands: CommandRegistry = {
     const output: TerminalEntry[] = [
       createEntry('system', ''),
       createEntry('system', '═══════════════════════════════════════'),
-      createEntryI18n('system', 'engine.commands.inventory.dossier_leak_preparation', '  DOSSIER — LEAK PREPARATION'),
+      createEntryI18n(
+        'system',
+        'engine.commands.inventory.dossier_leak_preparation',
+        '  DOSSIER — LEAK PREPARATION'
+      ),
       createEntry('system', '═══════════════════════════════════════'),
       createEntry('system', ''),
-      createEntryI18n('system', 'engine.commands.inventory.evidence_discovered_progress', `  Evidence discovered: ${discoveredCount}/${MAX_EVIDENCE_COUNT}`, { count: discoveredCount, total: MAX_EVIDENCE_COUNT }),
-      createEntryI18n('system', 'engine.commands.inventory.files_saved_progress', `  Files saved: ${savedCount}/${MAX_EVIDENCE_COUNT}`, { count: savedCount, total: MAX_EVIDENCE_COUNT }),
+      createEntryI18n(
+        'system',
+        'engine.commands.inventory.evidence_discovered_progress',
+        `  Evidence discovered: ${discoveredCount}/${MAX_EVIDENCE_COUNT}`,
+        { count: discoveredCount, total: MAX_EVIDENCE_COUNT }
+      ),
+      createEntryI18n(
+        'system',
+        'engine.commands.inventory.files_saved_progress',
+        `  Files saved: ${savedCount}/${MAX_EVIDENCE_COUNT}`,
+        { count: savedCount, total: MAX_EVIDENCE_COUNT }
+      ),
       createEntry('system', ''),
     ];
 
     if (savedCount === 0) {
-      output.push(createEntryI18n('dim', 'engine.commands.inventory.no_files_saved_use_save', '  No files saved. Use "save <filename>" after reading a file.'));
+      output.push(
+        createEntryI18n(
+          'dim',
+          'engine.commands.inventory.no_files_saved_use_save',
+          '  No files saved. Use "save <filename>" after reading a file.'
+        )
+      );
     } else {
       [...savedFiles].forEach((path, i) => {
         const name = path.split('/').pop() || path;
@@ -492,24 +526,81 @@ export const inventoryCommands: CommandRegistry = {
     output.push(createEntry('system', ''));
 
     if (savedCount >= MAX_EVIDENCE_COUNT && leakProgress >= 3) {
-      output.push(createEntryI18n('notice', 'engine.commands.inventory.ready_to_transmit', '  READY TO TRANSMIT — run "leak" to publish the dossier.'));
+      output.push(
+        createEntryI18n(
+          'notice',
+          'engine.commands.inventory.ready_to_transmit',
+          '  READY TO TRANSMIT — run "leak" to publish the dossier.'
+        )
+      );
     } else if (savedCount >= MAX_EVIDENCE_COUNT) {
-      output.push(createEntryI18n('notice', 'engine.commands.inventory.dossier_complete', '  DOSSIER COMPLETE — run "leak" and finish channel preparation.'));
+      output.push(
+        createEntryI18n(
+          'notice',
+          'engine.commands.inventory.dossier_complete',
+          '  DOSSIER COMPLETE — run "leak" and finish channel preparation.'
+        )
+      );
     } else if (state.leakSequenceGenerated && leakProgress >= 3) {
-      output.push(createEntryI18n('notice', 'engine.commands.inventory.channel_ready_keep_saving', `  LEAK CHANNEL READY — save ${MAX_EVIDENCE_COUNT - savedCount} more file(s), then run "leak".`, { remaining: MAX_EVIDENCE_COUNT - savedCount }));
+      output.push(
+        createEntryI18n(
+          'notice',
+          'engine.commands.inventory.channel_ready_keep_saving',
+          `  LEAK CHANNEL READY — save ${MAX_EVIDENCE_COUNT - savedCount} more file(s), then run "leak".`,
+          { remaining: MAX_EVIDENCE_COUNT - savedCount }
+        )
+      );
     } else if (state.leakSequenceGenerated) {
-      output.push(createEntryI18n('notice', 'engine.commands.inventory.channel_preparation_in_progress', '  LEAK PREP IN PROGRESS — run "leak" for the next channel step.'));
+      output.push(
+        createEntryI18n(
+          'notice',
+          'engine.commands.inventory.channel_preparation_in_progress',
+          '  LEAK PREP IN PROGRESS — run "leak" for the next channel step.'
+        )
+      );
     } else if (savedCount >= 5) {
-      output.push(createEntryI18n('notice', 'engine.commands.inventory.leak_preparation_available', '  LEAK PREP AVAILABLE — run "leak" to open the 3-step channel.'));
-      output.push(createEntryI18n('dim', 'engine.commands.inventory.keep_saving_until_ten', '  Keep saving strong files until the dossier reaches {{max}}/{{max}}.', { max: MAX_EVIDENCE_COUNT }));
+      output.push(
+        createEntryI18n(
+          'notice',
+          'engine.commands.inventory.leak_preparation_available',
+          '  LEAK PREP AVAILABLE — run "leak" to open the 3-step channel.'
+        )
+      );
+      output.push(
+        createEntryI18n(
+          'dim',
+          'engine.commands.inventory.keep_saving_until_ten',
+          '  Keep saving strong files until the dossier reaches {{max}}/{{max}}.',
+          { max: MAX_EVIDENCE_COUNT }
+        )
+      );
     } else if (discoveredCount > savedCount) {
-      output.push(createEntryI18n('dim', 'engine.commands.inventory.next_save_read_file', '  Next: save a strong file you already opened with "save <filename>".'));
+      output.push(
+        createEntryI18n(
+          'dim',
+          'engine.commands.inventory.next_save_read_file',
+          '  Next: save a strong file you already opened with "save <filename>".'
+        )
+      );
     } else {
-      output.push(createEntryI18n('dim', 'engine.commands.inventory.next_open_unread_file', '  Next: open unread files, or use "search" and "unread" to find leads.'));
+      output.push(
+        createEntryI18n(
+          'dim',
+          'engine.commands.inventory.next_open_unread_file',
+          '  Next: open unread files, or use "search" and "unread" to find leads.'
+        )
+      );
     }
 
     if (savedCount < 5) {
-      output.push(createEntryI18n('dim', 'engine.commands.inventory.files_needed_before_prep', `  ${5 - savedCount} more saved file(s) needed before leak preparation unlocks.`, { count: 5 - savedCount }));
+      output.push(
+        createEntryI18n(
+          'dim',
+          'engine.commands.inventory.files_needed_before_prep',
+          `  ${5 - savedCount} more saved file(s) needed before leak preparation unlocks.`,
+          { count: 5 - savedCount }
+        )
+      );
     }
 
     output.push(createEntry('system', ''));
@@ -521,13 +612,18 @@ export const inventoryCommands: CommandRegistry = {
 
   search: (args, state) => {
     // Late-game tension: warn but still allow search
-    const lateGameWarning = (state.savedFiles?.size || 0) >= 5
-      ? [
-          createEntry('warning', ''),
-          createEntryI18n('warning', 'engine.commands.elevated_security_protocol_warning', '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'),
-          createEntry('warning', ''),
-        ]
-      : [];
+    const lateGameWarning =
+      (state.savedFiles?.size || 0) >= 5
+        ? [
+            createEntry('warning', ''),
+            createEntryI18n(
+              'warning',
+              'engine.commands.elevated_security_protocol_warning',
+              '  ⚠ ELEVATED SECURITY PROTOCOL — monitoring increased'
+            ),
+            createEntry('warning', ''),
+          ]
+        : [];
 
     const query = args.join(' ').trim();
 
@@ -592,9 +688,7 @@ export const inventoryCommands: CommandRegistry = {
     const matches = findSearchMatches(query, state);
     const directMatches = matches.filter(match => match.kind !== 'fuzzy');
     const visibleMatches =
-      directMatches.length > 0
-        ? directMatches
-        : matches.slice(0, SEARCH_FUZZY_RESULT_LIMIT);
+      directMatches.length > 0 ? directMatches : matches.slice(0, SEARCH_FUZZY_RESULT_LIMIT);
     const nextDetection = Math.min(MAX_DETECTION, state.detectionLevel + SEARCH_DETECTION_PENALTY);
 
     if (visibleMatches.length === 0) {

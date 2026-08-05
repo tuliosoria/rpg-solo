@@ -113,34 +113,34 @@ export function createInvalidCommandResult(state: GameState, commandName: string
 // Alias map: translated command names → canonical English command names
 const COMMAND_ALIASES: Record<string, string> = {
   // PT-BR aliases
-  'ajuda': 'help',
-  'salvar': 'save',
-  'vazar': 'leak',
-  'esperar': 'wait',
-  'esconder': 'hide',
-  'buscar': 'search',
-  'progresso': 'progress',
-  'abrir': 'open',
-  'remover': 'unsave',
-  'estado': 'status',
-  'limpar': 'clear',
-  'dica': 'hint',
-  'nota': 'note',
-  'notas': 'notes',
-  'ultimo': 'last',
-  'protocolo': 'override',
+  ajuda: 'help',
+  salvar: 'save',
+  vazar: 'leak',
+  esperar: 'wait',
+  esconder: 'hide',
+  buscar: 'search',
+  progresso: 'progress',
+  abrir: 'open',
+  remover: 'unsave',
+  estado: 'status',
+  limpar: 'clear',
+  dica: 'hint',
+  nota: 'note',
+  notas: 'notes',
+  ultimo: 'last',
+  protocolo: 'override',
   // ES aliases
-  'ayuda': 'help',
-  'guardar': 'save',
-  'filtrar': 'leak',
+  ayuda: 'help',
+  guardar: 'save',
+  filtrar: 'leak',
   // 'esperar' already mapped above (same in PT-BR and ES)
   // 'buscar' already mapped above
-  'progreso': 'progress',
+  progreso: 'progress',
   // 'abrir' already mapped above
-  'quitar': 'unsave',
+  quitar: 'unsave',
   // 'estado' already mapped above
-  'limpiar': 'clear',
-  'pista': 'hint',
+  limpiar: 'clear',
+  pista: 'hint',
   // 'nota' already mapped above
   // 'notas' already mapped above
   // 'ultimo' already mapped above
@@ -150,40 +150,40 @@ const COMMAND_ALIASES: Record<string, string> = {
 // Per-language command translations: english command → translated command name
 export const COMMAND_TRANSLATIONS: Record<string, Record<string, string>> = {
   'pt-BR': {
-    'help': 'ajuda',
-    'save': 'salvar',
-    'leak': 'vazar',
-    'wait': 'esperar',
-    'hide': 'esconder',
-    'search': 'buscar',
-    'progress': 'progresso',
-    'open': 'abrir',
-    'unsave': 'remover',
-    'status': 'estado',
-    'clear': 'limpar',
-    'hint': 'dica',
-    'note': 'nota',
-    'notes': 'notas',
-    'last': 'ultimo',
-    'override': 'protocolo',
+    help: 'ajuda',
+    save: 'salvar',
+    leak: 'vazar',
+    wait: 'esperar',
+    hide: 'esconder',
+    search: 'buscar',
+    progress: 'progresso',
+    open: 'abrir',
+    unsave: 'remover',
+    status: 'estado',
+    clear: 'limpar',
+    hint: 'dica',
+    note: 'nota',
+    notes: 'notas',
+    last: 'ultimo',
+    override: 'protocolo',
   },
-  'es': {
-    'help': 'ayuda',
-    'save': 'guardar',
-    'leak': 'filtrar',
-    'wait': 'esperar',
-    'hide': 'esconder',
-    'search': 'buscar',
-    'progress': 'progreso',
-    'open': 'abrir',
-    'unsave': 'quitar',
-    'status': 'estado',
-    'clear': 'limpiar',
-    'hint': 'pista',
-    'note': 'nota',
-    'notes': 'notas',
-    'last': 'ultimo',
-    'override': 'protocolo',
+  es: {
+    help: 'ayuda',
+    save: 'guardar',
+    leak: 'filtrar',
+    wait: 'esperar',
+    hide: 'esconder',
+    search: 'buscar',
+    progress: 'progreso',
+    open: 'abrir',
+    unsave: 'quitar',
+    status: 'estado',
+    clear: 'limpiar',
+    hint: 'pista',
+    note: 'nota',
+    notes: 'notas',
+    last: 'ultimo',
+    override: 'protocolo',
   },
 };
 
@@ -316,17 +316,15 @@ export function localizedCommandName(
 // Subcommand aliases (e.g. `help basics`): translated subcommand → canonical English.
 // Keys are lowercased and stripped of diacritics so lookups are accent-insensitive.
 const SUBCOMMAND_ALIASES: Record<string, string> = {
-  'basica': 'basics',
-  'basico': 'basics',
-  'basicos': 'basics',
-  'recuperacao': 'recovery',
-  'recuperacion': 'recovery',
+  basica: 'basics',
+  basico: 'basics',
+  basicos: 'basics',
+  recuperacao: 'recovery',
+  recuperacion: 'recovery',
 };
 
 function stripDiacritics(s: string): string {
-  return typeof s.normalize === 'function'
-    ? s.normalize('NFD').replace(/\p{Diacritic}/gu, '')
-    : s;
+  return typeof s.normalize === 'function' ? s.normalize('NFD').replace(/\p{Diacritic}/gu, '') : s;
 }
 
 export function resolveSubcommandAlias(sub: string): string {

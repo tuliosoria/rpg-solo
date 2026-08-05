@@ -22,7 +22,11 @@ interface MenuProps {
 
 type Screen = 'main' | 'load' | 'credits' | 'options' | 'terms' | 'privacy';
 
-export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen = 'main' }: MenuProps) {
+export default function Menu({
+  onNewGameAction,
+  onLoadGameAction,
+  initialScreen = 'main',
+}: MenuProps) {
   const [screen, setScreen] = useState<Screen>(initialScreen);
   const [saves, setSaves] = useState<SaveSlot[]>([]);
   const [flickerActive, setFlickerActive] = useState(false);
@@ -36,12 +40,15 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
   const { language, setLanguage, t } = useI18n();
   const { playSound } = useSound();
 
-  const cycleLanguage = useCallback((direction: 1 | -1 = 1) => {
-    const ordered = ['en', 'pt-BR', 'es'] as const;
-    const currentIndex = ordered.indexOf(language);
-    const nextIndex = (currentIndex + direction + ordered.length) % ordered.length;
-    setLanguage(ordered[nextIndex]);
-  }, [language, setLanguage]);
+  const cycleLanguage = useCallback(
+    (direction: 1 | -1 = 1) => {
+      const ordered = ['en', 'pt-BR', 'es'] as const;
+      const currentIndex = ordered.indexOf(language);
+      const nextIndex = (currentIndex + direction + ordered.length) % ordered.length;
+      setLanguage(ordered[nextIndex]);
+    },
+    [language, setLanguage]
+  );
 
   const adjustOptionValue = useCallback(
     (index: number, direction: 1 | -1 = 1) => {
@@ -51,7 +58,10 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
 
       switch (index) {
         case 0:
-          setOption('masterVolume', Math.max(0, Math.min(100, options.masterVolume + direction * 10)));
+          setOption(
+            'masterVolume',
+            Math.max(0, Math.min(100, options.masterVolume + direction * 10))
+          );
           break;
         case 1:
           setOption('ambientSoundEnabled', !options.ambientSoundEnabled);
@@ -74,13 +84,15 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
         case 7:
           if (options.screenFlickerEnabled) {
             const currentIdx = flickerOptions.indexOf(options.flickerIntensity);
-            const nextIdx = (currentIdx + direction + flickerOptions.length) % flickerOptions.length;
+            const nextIdx =
+              (currentIdx + direction + flickerOptions.length) % flickerOptions.length;
             setOption('flickerIntensity', flickerOptions[nextIdx]);
           }
           break;
         case 8: {
           const currentIdx = fontSizeOptions.indexOf(options.fontSize);
-          const nextIdx = (currentIdx + direction + fontSizeOptions.length) % fontSizeOptions.length;
+          const nextIdx =
+            (currentIdx + direction + fontSizeOptions.length) % fontSizeOptions.length;
           setOption('fontSize', fontSizeOptions[nextIdx]);
           break;
         }
@@ -297,7 +309,9 @@ export default function Menu({ onNewGameAction, onLoadGameAction, initialScreen 
         screen === 'main'
           ? 3
           : screen === 'load'
-            ? (saves.length > 0 ? saves.length : 0)
+            ? saves.length > 0
+              ? saves.length
+              : 0
             : screen === 'options'
               ? 12
               : 0;

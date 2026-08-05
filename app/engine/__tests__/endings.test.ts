@@ -182,7 +182,6 @@ describe('Endings', () => {
         neuralLinkAuthenticated: false,
       });
     });
-
   });
 
   describe('getEndingTitle', () => {
@@ -223,7 +222,9 @@ describe('Endings', () => {
         expect(ending.aol.url, `${endingId} AOL URL`).toMatch(/^http:\/\/www\.aol\.com\/news\//);
         expect(ending.aol.imageAlt, `${endingId} image alt`).toMatch(/\S/);
         expect(ending.aol.visitorCount, `${endingId} visitor count`).toBeGreaterThan(0);
-        expect(copy, `${endingId} placeholder copy`).not.toMatch(/TODO|PLACEHOLDER|ENDING NOT FOUND/i);
+        expect(copy, `${endingId} placeholder copy`).not.toMatch(
+          /TODO|PLACEHOLDER|ENDING NOT FOUND/i
+        );
       }
     });
 
@@ -234,7 +235,7 @@ describe('Endings', () => {
         expect(imageSrc, `${endingId} image source`).toMatch(/^\/images\/endings\/.+\.jpg$/);
         expect(
           existsSync(join(process.cwd(), 'public', imageSrc?.replace(/^\//, '') ?? '')),
-          `${endingId} image asset is missing: ${imageSrc}`,
+          `${endingId} image asset is missing: ${imageSrc}`
         ).toBe(true);
       }
     });

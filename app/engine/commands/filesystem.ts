@@ -724,7 +724,9 @@ export const filesystemCommands: CommandRegistry = {
     }
 
     if (filePath.includes('ghost_session') && !isEncryptedAndLocked) {
-      const hiddenCmds = new Set(stateChanges.hiddenCommandsDiscovered || state.hiddenCommandsDiscovered || []);
+      const hiddenCmds = new Set(
+        stateChanges.hiddenCommandsDiscovered || state.hiddenCommandsDiscovered || []
+      );
       hiddenCmds.add('iddqd');
       stateChanges.hiddenCommandsDiscovered = hiddenCmds;
       stateChanges.paranoiaLevel = Math.min(100, (state.paranoiaLevel || 0) + 10);
@@ -766,7 +768,11 @@ export const filesystemCommands: CommandRegistry = {
     // ufo74ContextMessage is declared earlier (safe-file block) so all UFO74
     // reactions share a single slot — only ONE message per file open.
 
-    if (!ufo74ContextMessage && filePath.includes('/internal/sanitized/') && !isEncryptedAndLocked) {
+    if (
+      !ufo74ContextMessage &&
+      filePath.includes('/internal/sanitized/') &&
+      !isEncryptedAndLocked
+    ) {
       ufo74ContextMessage = createUFO74Message([
         'UFO74: ugh. this is sanitized documentation.',
         '       "the package"? "visitors"? "guests"?',

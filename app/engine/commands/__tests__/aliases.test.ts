@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  resolveCommandAlias,
-  resolveSubcommandAlias,
-  localizedCommandName,
-} from '../utils';
+import { resolveCommandAlias, resolveSubcommandAlias, localizedCommandName } from '../utils';
 
 describe('resolveSubcommandAlias (BUG-002)', () => {
   it('maps PT-BR "básica" → "basics"', () => {

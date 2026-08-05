@@ -192,10 +192,7 @@ describe('useTerminalInput evidence progression', () => {
       await result.current.handleSubmit();
     });
 
-    expect(saveCheckpoint).not.toHaveBeenCalledWith(
-      expect.anything(),
-      'Investigation progress'
-    );
+    expect(saveCheckpoint).not.toHaveBeenCalledWith(expect.anything(), 'Investigation progress');
   });
 
   it('grants first_blood when the first file is saved', async () => {

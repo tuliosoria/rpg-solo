@@ -128,12 +128,10 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     'UFO74: hackerkid... are you still there?': 'UFO74: hackerkid... você ainda está aí?',
     'UFO74: they cut the main connection.': 'UFO74: eles cortaram a conexão principal.',
     'UFO74: i knew this was going to happen.': 'UFO74: eu sabia que isso ia acontecer.',
-    'UFO74: but listen... the dossier is out.':
-      'UFO74: mas escuta... o dossiê já saiu.',
+    'UFO74: but listen... the dossier is out.': 'UFO74: mas escuta... o dossiê já saiu.',
     'UFO74: every file you saved just hit the open wire.':
       'UFO74: cada arquivo que você salvou acabou de ir pro ar.',
-    'UFO74: there is no taking it back now.':
-      'UFO74: não tem como voltar atrás agora.',
+    'UFO74: there is no taking it back now.': 'UFO74: não tem como voltar atrás agora.',
     'UFO74: the firewall is screaming.': 'UFO74: o firewall está gritando.',
     'UFO74: they know what we did.': 'UFO74: eles sabem o que fizemos.',
     'UFO74: what happens next depends on what you chose to save.':
@@ -5955,12 +5953,10 @@ const BASE_RUNTIME_TRANSLATIONS: Record<Exclude<Language, 'en'>, RuntimeDictiona
     'UFO74: hackerkid... are you still there?': 'UFO74: hackerkid... ¿sigues ahí?',
     'UFO74: they cut the main connection.': 'UFO74: cortaron la conexión principal.',
     'UFO74: i knew this was going to happen.': 'UFO74: sabía que esto iba a pasar.',
-    'UFO74: but listen... the dossier is out.':
-      'UFO74: pero escucha... el dosier ya salió.',
+    'UFO74: but listen... the dossier is out.': 'UFO74: pero escucha... el dosier ya salió.',
     'UFO74: every file you saved just hit the open wire.':
       'UFO74: cada archivo que guardaste acaba de salir al aire.',
-    'UFO74: there is no taking it back now.':
-      'UFO74: ya no hay vuelta atrás.',
+    'UFO74: there is no taking it back now.': 'UFO74: ya no hay vuelta atrás.',
     'UFO74: the firewall is screaming.': 'UFO74: el firewall está gritando.',
     'UFO74: they know what we did.': 'UFO74: saben lo que hicimos.',
     'UFO74: what happens next depends on what you chose to save.':

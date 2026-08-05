@@ -7,12 +7,22 @@ import { MAX_DETECTION } from '../constants/detection';
 import { MAX_WRONG_ATTEMPTS } from '../constants/gameplay';
 import { MAX_COMMAND_INPUT_LENGTH } from '../constants/limits';
 import { shouldSuppressPressure } from '../constants/atmosphere';
-import { MAX_EVIDENCE_COUNT, getAllEvidencePaths, getAllNonEvidencePaths } from './evidenceRevelation';
+import {
+  MAX_EVIDENCE_COUNT,
+  getAllEvidencePaths,
+  getAllNonEvidencePaths,
+} from './evidenceRevelation';
 import { determineEnding, type EndingId } from './endings';
 import { createSeededRng, seededShuffle } from './rng';
 
 // Import utilities
-import { createEntry, createEntryI18n, sanitizeCommandInput, parseCommand, suggestCommand } from './commands/utils';
+import {
+  createEntry,
+  createEntryI18n,
+  sanitizeCommandInput,
+  parseCommand,
+  suggestCommand,
+} from './commands/utils';
 
 // Import interactive tutorial system
 import { isInTutorialMode, processTutorialInput } from './commands/interactiveTutorial';
@@ -25,8 +35,6 @@ import {
   checkWanderingState,
   getIncognitoMessage,
 } from './commands/helpers';
-
-
 
 // Import the combined commands registry from domain modules
 import { commands } from './commands/index';
@@ -343,8 +351,12 @@ export function executeCommand(input: string, state: GameState): CommandResult {
   const createRandomDossierResult = () => {
     const evidencePaths = getAllEvidencePaths();
     const nonEvidencePaths = getAllNonEvidencePaths();
-    const selectionCount = Math.min(MAX_EVIDENCE_COUNT, evidencePaths.length + nonEvidencePaths.length);
-    const randomSeed = ((state.rngState || state.seed || 1) ^ GOD_RANDOM_SEED_SALT) +
+    const selectionCount = Math.min(
+      MAX_EVIDENCE_COUNT,
+      evidencePaths.length + nonEvidencePaths.length
+    );
+    const randomSeed =
+      ((state.rngState || state.seed || 1) ^ GOD_RANDOM_SEED_SALT) +
       (state.sessionCommandCount || 0);
     const rng = createSeededRng(randomSeed);
     const shuffledEvidencePaths = seededShuffle(rng, evidencePaths);
@@ -371,7 +383,9 @@ export function executeCommand(input: string, state: GameState): CommandResult {
     }
 
     const orderedSelectedFiles = seededShuffle(rng, selectedFiles).slice(0, selectionCount);
-    const selectedEvidenceCount = orderedSelectedFiles.filter(path => evidencePaths.includes(path)).length;
+    const selectedEvidenceCount = orderedSelectedFiles.filter(path =>
+      evidencePaths.includes(path)
+    ).length;
     const selectedNonEvidenceCount = orderedSelectedFiles.length - selectedEvidenceCount;
     const savedFiles = new Set(orderedSelectedFiles);
     const endingId = determineEnding(savedFiles);
@@ -670,9 +684,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         // Secret ending goes to secret_ending phase
         if (targetEnding === 'secret_ending') {
           return {
-            output: [
-              createEntry('system', `═══ JUMPING TO ENDING #${num}: ${targetEnding} ═══`),
-            ],
+            output: [createEntry('system', `═══ JUMPING TO ENDING #${num}: ${targetEnding} ═══`)],
             stateChanges: {
               ufo74SecretDiscovered: true,
               endingType: 'secret',
@@ -683,9 +695,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           };
         }
         return {
-          output: [
-            createEntry('system', `═══ JUMPING TO ENDING #${num}: ${targetEnding} ═══`),
-          ],
+          output: [createEntry('system', `═══ JUMPING TO ENDING #${num}: ${targetEnding} ═══`)],
           stateChanges: {
             gameWon: true,
             endingType: 'good',
@@ -701,9 +711,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         const targetEnding = endingArg as EndingId;
         if (targetEnding === 'secret_ending') {
           return {
-            output: [
-              createEntry('system', `═══ JUMPING TO ENDING: ${targetEnding} ═══`),
-            ],
+            output: [createEntry('system', `═══ JUMPING TO ENDING: ${targetEnding} ═══`)],
             stateChanges: {
               ufo74SecretDiscovered: true,
               endingType: 'secret',
@@ -714,9 +722,7 @@ export function executeCommand(input: string, state: GameState): CommandResult {
           };
         }
         return {
-          output: [
-            createEntry('system', `═══ JUMPING TO ENDING: ${targetEnding} ═══`),
-          ],
+          output: [createEntry('system', `═══ JUMPING TO ENDING: ${targetEnding} ═══`)],
           stateChanges: {
             gameWon: true,
             endingType: 'good',
@@ -732,13 +738,19 @@ export function executeCommand(input: string, state: GameState): CommandResult {
         output: [
           createEntry('system', '═══ ENDING SELECTOR ═══'),
           createEntry('output', ''),
-          createEntry('output', 'Usage: god ending <number|name>'),
-          createEntry('output', ''),
-          ...DEBUG_ENDING_LIST.map((id, i) =>
-            createEntry('output', `  ${i + 1}. ${id}`)
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_ending_selector_usage',
+            'Usage: god ending <number|name>'
           ),
           createEntry('output', ''),
-          createEntry('output', 'Example: god ending 1'),
+          ...DEBUG_ENDING_LIST.map((id, i) => createEntry('output', `  ${i + 1}. ${id}`)),
+          createEntry('output', ''),
+          createEntryI18n(
+            'output',
+            'engine.commands.core.god_ending_selector_example',
+            'Example: god ending 1'
+          ),
         ],
         stateChanges: {},
       };
@@ -1026,7 +1038,6 @@ export function executeCommand(input: string, state: GameState): CommandResult {
       };
     }
   }
-
 
   // Find command handler
   const handler = commands[command];

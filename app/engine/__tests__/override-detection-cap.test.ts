@@ -83,7 +83,9 @@ describe('override never strands the player above the detection cap', () => {
         const after = resultingDetection(result, detectionLevel);
 
         if (after >= MAX_DETECTION && !result.stateChanges.isGameOver) {
-          stranded.push(`detection ${detectionLevel} / seed ${rngState} -> ${after}, run not ended`);
+          stranded.push(
+            `detection ${detectionLevel} / seed ${rngState} -> ${after}, run not ended`
+          );
         }
       }
     }

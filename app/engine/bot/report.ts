@@ -70,14 +70,19 @@ export function buildRunSummary(
     createEntry('system', `  Level: ${config.level}   Seed: ${config.seed}`),
     createEntry('system', `  Goal: ${describeGoal(config.goal)}`),
     createEntry('system', `  Turns: ${log.length}`),
-    createEntry('system', `  Files read: ${finalState.filesRead.size}   Saved: ${finalState.savedFiles.size}`),
+    createEntry(
+      'system',
+      `  Files read: ${finalState.filesRead.size}   Saved: ${finalState.savedFiles.size}`
+    ),
     createEntry('system', `  Final detection: ${finalState.detectionLevel}`),
     createEntry('system', `  Outcome: ${outcome}`),
   ];
 
   const verdict = evaluateGoal(config, finalState);
   if (verdict) {
-    lines.push(createEntry(verdict.startsWith('PASS') ? 'system' : 'warning', `  Goal: ${verdict}`));
+    lines.push(
+      createEntry(verdict.startsWith('PASS') ? 'system' : 'warning', `  Goal: ${verdict}`)
+    );
   }
 
   lines.push(

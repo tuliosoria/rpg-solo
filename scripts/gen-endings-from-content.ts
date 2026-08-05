@@ -7,6 +7,7 @@
 import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { format, resolveConfig } from 'prettier';
 
 type Locale = 'pt-BR' | 'es';
 type EndingRecord = {
@@ -27,7 +28,7 @@ const HEADER =
  * per-field edit.
  */
 export function buildSupplement(
-  content: Record<string, EndingRecordV2>,
+  content: Record<string, EndingRecordV2>
 ): Record<Locale, Record<string, string>> {
   const merged: Record<Locale, Record<string, string>> = { 'pt-BR': {}, es: {} };
   for (const rec of Object.values(content)) {
@@ -36,7 +37,10 @@ export function buildSupplement(
     }
     if (rec.fieldLocales) {
       const f = rec.fields as {
-        title: string; subtitle: string; ufo74_final: string; narrative: string[];
+        title: string;
+        subtitle: string;
+        ufo74_final: string;
+        narrative: string[];
         aol: { headline: string; subheadline: string; imageAlt: string; body: string[] };
       };
       const englishFor = (key: string): string | undefined => {
@@ -46,8 +50,10 @@ export function buildSupplement(
         if (key === 'aol.headline') return f.aol.headline;
         if (key === 'aol.subheadline') return f.aol.subheadline;
         if (key === 'aol.imageAlt') return f.aol.imageAlt;
-        const nm = key.match(/^narrative\[(\d+)\]$/); if (nm) return f.narrative[Number(nm[1])];
-        const bm = key.match(/^aol\.body\[(\d+)\]$/); if (bm) return f.aol.body[Number(bm[1])];
+        const nm = key.match(/^narrative\[(\d+)\]$/);
+        if (nm) return f.narrative[Number(nm[1])];
+        const bm = key.match(/^aol\.body\[(\d+)\]$/);
+        if (bm) return f.aol.body[Number(bm[1])];
         return undefined;
       };
       for (const [fieldKey, locales] of Object.entries(rec.fieldLocales)) {
@@ -63,7 +69,13 @@ export function buildSupplement(
   return merged;
 }
 
-function generate(): void {
+async function writeFormattedFile(filePath: string, source: string): Promise<void> {
+  const config = (await resolveConfig(filePath)) ?? {};
+  const formatted = await format(source, { ...config, filepath: filePath });
+  writeFileSync(filePath, formatted, 'utf-8');
+}
+
+async function generate(): Promise<void> {
   const contentPath = resolve(import.meta.dirname, '../app/data/endingsContent.json');
   const content = JSON.parse(readFileSync(contentPath, 'utf-8')) as Record<string, EndingRecordV2>;
 
@@ -79,7 +91,7 @@ function generate(): void {
 
   const contentDir = resolve(import.meta.dirname, '../app/engine/generated');
   mkdirSync(contentDir, { recursive: true });
-  writeFileSync(resolve(contentDir, 'endingsContent.generated.ts'), contentTs, 'utf-8');
+  await writeFormattedFile(resolve(contentDir, 'endingsContent.generated.ts'), contentTs);
 
   // 2. Translations module.
   const merged = buildSupplement(content);
@@ -92,12 +104,15 @@ function generate(): void {
 
   const suppDir = resolve(import.meta.dirname, '../app/i18n/generated');
   mkdirSync(suppDir, { recursive: true });
-  writeFileSync(resolve(suppDir, 'endingsSupplement.generated.ts'), suppTs, 'utf-8');
+  await writeFormattedFile(resolve(suppDir, 'endingsSupplement.generated.ts'), suppTs);
 
   console.log('generated endingsContent.generated.ts + endingsSupplement.generated.ts');
 }
 
 // Only write files when run directly (not when imported by tests).
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  generate();
+  generate().catch(error => {
+    console.error(error);
+    process.exitCode = 1;
+  });
 }

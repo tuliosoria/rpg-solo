@@ -161,7 +161,7 @@ export function analyzeLeak(savedFiles: ReadonlySet<string> | undefined | null):
 
 export function buildLeakPrologue(
   savedFiles: ReadonlySet<string> | undefined | null,
-  endingId: EndingId | undefined | null,
+  endingId: EndingId | undefined | null
 ): string[] {
   if (endingId && ENDINGS_WITHOUT_PROLOGUE.has(endingId)) return [];
   const summary = analyzeLeak(savedFiles);

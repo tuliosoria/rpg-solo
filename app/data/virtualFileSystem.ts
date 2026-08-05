@@ -36,11 +36,7 @@ import {
   education_curriculum_revision,
   satellite_light_reflection,
 } from './conspiracyFiles';
-import {
-  alpha_journal,
-  alpha_neural_connection,
-  alpha_autopsy_addendum,
-} from './alpha';
+import { alpha_journal, alpha_neural_connection, alpha_autopsy_addendum } from './alpha';
 import { convergence_model_draft } from './archiveFiles';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1122,7 +1118,7 @@ export const epilogue_2026_update: FileNode = {
     '',
     'The breach, while operationally damaging, may have',
     'improved transition survival rates.',
-    'The intruder\'s actions may have saved lives.',
+    "The intruder's actions may have saved lives.",
     'This assessment is classified and will be denied.',
   ],
 };
@@ -2508,7 +2504,7 @@ export const neural_dump_alfa: FileNode = {
     'Pray it was enough. Pray it was not.',
     '',
     '— TERMINAL INTEGRATION —',
-    'ALPHA\'s residual brain patterns have been uploaded to this terminal.',
+    "ALPHA's residual brain patterns have been uploaded to this terminal.",
     'The consciousness is indexed and queryable.',
     'Use `link` to open a channel. Four queries before the pattern decays.',
   ],
@@ -2871,7 +2867,7 @@ export const copa_94_celebration_memo: FileNode = {
     'DATE: 19-JUL-1994',
     'RE: Copa do Mundo Celebration Guidelines',
     '',
-    'Following Brazil\'s victory, the following apply:',
+    "Following Brazil's victory, the following apply:",
     '  1. Television viewing: break areas ONLY.',
     '  2. Caipirinha service: after-hours events only.',
     '  3. Samba music: must not exceed 70dB.',
@@ -2972,7 +2968,7 @@ export const cafeteria_menu_jan96: FileNode = {
     '  [INCIDENT RESPONSE ACTIVE]',
     '  Emergency rations distributed.',
     '',
-    'Friday\'s menu cancelled due to unscheduled facility',
+    "Friday's menu cancelled due to unscheduled facility",
     'lockdown. See INCIDENT REPORT 1996-01-VG.',
     'Cafeteria staff reassigned to support operations.',
     'Vending machines remain operational.',
