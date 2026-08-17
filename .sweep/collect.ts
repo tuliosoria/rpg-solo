@@ -120,20 +120,20 @@ export function collectCommandSurface(out: Collected[]) {
   n = step(out, 'nav', n, 'back');
   n = step(out, 'nav', n, 'cd /nowhere');
   n = step(out, 'nav', n, 'tree');
-  n = step(out, 'nav', n, 'map');
+  step(out, 'nav', n, 'map');
 
   // Search.
   let q = base();
   q = step(out, 'search', q, 'search varginha');
   q = step(out, 'search', q, 'search zzzznotfound');
-  q = step(out, 'search', q, 'search');
+  step(out, 'search', q, 'search');
 
   // Override / auth failures.
   let a = freshState();
   a = step(out, 'override', a, 'override protocol WRONGPASS');
   a = step(out, 'override', a, 'override');
   a = step(out, 'override', a, `override protocol ${OVERRIDE_PASSWORD}`);
-  a = step(out, 'override', a, `override protocol ${OVERRIDE_PASSWORD}`); // repeat
+  step(out, 'override', a, `override protocol ${OVERRIDE_PASSWORD}`); // repeat
 
   // Chat / hint / wait.
   let c = base();
@@ -142,12 +142,12 @@ export function collectCommandSurface(out: Collected[]) {
   c = step(out, 'chat', c, 'hint');
   c = step(out, 'chat', c, 'hint');
   c = step(out, 'chat', c, 'wait');
-  c = step(out, 'chat', c, 'wait');
+  step(out, 'chat', c, 'wait');
 
   // Leak with an empty dossier, and mid-sequence misuse.
   let l = base();
   l = step(out, 'leak:empty', l, 'leak');
-  l = step(out, 'leak:empty', l, 'leak 999');
+  step(out, 'leak:empty', l, 'leak 999');
 
   // High detection tiers — terminal personality changes.
   for (const det of [45, 55, 75, 92]) {

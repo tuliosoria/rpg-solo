@@ -1,5 +1,6 @@
+/* eslint-disable no-console -- this diagnostic harness intentionally reports its findings. */
 import React from 'react';
-import { describe, it, beforeAll } from 'vitest';
+import { describe, it } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { I18nProvider, useI18n, Language } from '../app/i18n';
 import { Collected } from './collect';
