@@ -141,8 +141,8 @@ export function collectCommandSurface(out: Collected[]) {
   c = step(out, 'chat', c, 'chat hello');
   c = step(out, 'chat', c, 'hint');
   c = step(out, 'chat', c, 'hint');
-  step(out, 'chat', c, 'wait');
   c = step(out, 'chat', c, 'wait');
+  step(out, 'chat', c, 'wait');
 
   // Leak with an empty dossier, and mid-sequence misuse.
   let l = base();
