@@ -891,6 +891,78 @@ describe('Save/Load System', () => {
     });
   });
 
+  describe.each(['en', 'pt-BR', 'es'])('save index recovery (%s)', language => {
+    beforeEach(() => {
+      mockStore.terminal1996_language = language;
+    });
+
+    it.each(['{}', 'null', '42', '"invalid"', '[null, {}, 1]', 'not json'])(
+      'can save and load after malformed metadata: %s',
+      async raw => {
+        const {
+          getSaveSlots,
+          getSaveSlotsAsync,
+          saveGame,
+          loadGameAsync,
+          getCheckpointSlots,
+          saveCheckpoint,
+          loadCheckpoint,
+        } = await import('../saves');
+        mockStore['terminal1996:saves'] = raw;
+        mockStore['terminal1996:checkpoints'] = raw;
+
+        expect(getSaveSlots()).toEqual([]);
+        await expect(getSaveSlotsAsync()).resolves.toEqual([]);
+        expect(getCheckpointSlots()).toEqual([]);
+        const state = createTestState({ currentPath: '/storage' });
+        const save = saveGame(state);
+        const checkpoint = saveCheckpoint(state, 'recovery fixture');
+        expect(save).not.toBeNull();
+        expect(checkpoint).not.toBeNull();
+        expect((await loadGameAsync(save!.id))?.currentPath).toBe('/storage');
+        expect(loadCheckpoint(checkpoint!.id)?.currentPath).toBe('/storage');
+      }
+    );
+
+    it('keeps valid slots and payloads when adjacent metadata is corrupt', async () => {
+      const {
+        saveGame,
+        saveCheckpoint,
+        getSaveSlotsAsync,
+        getCheckpointSlots,
+        loadGameAsync,
+        loadCheckpoint,
+      } = await import('../saves');
+      const state = createTestState({ currentPath: '/storage' });
+      const save = saveGame(state)!;
+      const checkpoint = saveCheckpoint(state, 'recovery fixture')!;
+      const savePayload = mockStore[`terminal1996:save:${save.id}`];
+      const checkpointPayload = mockStore[`terminal1996:checkpoint:${checkpoint.id}`];
+      mockStore['terminal1996:saves'] = JSON.stringify([
+        null,
+        save,
+        { ...save, name: {} },
+        { ...save, timestamp: 'yesterday' },
+        { ...save, currentPath: null },
+        { ...save, truthCount: {} },
+        { ...save, detectionLevel: null },
+        { ...save, id: '' },
+      ]);
+      mockStore['terminal1996:checkpoints'] = JSON.stringify([
+        null,
+        checkpoint,
+        { ...checkpoint, reason: {} },
+      ]);
+
+      await expect(getSaveSlotsAsync()).resolves.toEqual([save]);
+      expect(getCheckpointSlots()).toEqual([checkpoint]);
+      expect((await loadGameAsync(save.id))?.currentPath).toBe('/storage');
+      expect(loadCheckpoint(checkpoint.id)?.currentPath).toBe('/storage');
+      expect(mockStore[`terminal1996:save:${save.id}`]).toBe(savePayload);
+      expect(mockStore[`terminal1996:checkpoint:${checkpoint.id}`]).toBe(checkpointPayload);
+    });
+  });
+
   describe('loadGame edge cases', () => {
     it('returns null for non-existent save', async () => {
       const { loadGame } = await import('../saves');

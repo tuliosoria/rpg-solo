@@ -527,16 +527,42 @@ async function deleteSaveFromCloud(key: string): Promise<void> {
  * Retrieves all saved game slots from localStorage.
  * @returns Array of save slot metadata, empty if none exist or storage unavailable
  */
-export function getSaveSlots(): SaveSlot[] {
+function isSlotMetadata(value: unknown): value is Omit<SaveSlot, 'name'> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const slot = value as Record<string, unknown>;
+  return (
+    typeof slot.id === 'string' &&
+    slot.id.length > 0 &&
+    typeof slot.currentPath === 'string' &&
+    typeof slot.timestamp === 'number' &&
+    Number.isFinite(slot.timestamp) &&
+    typeof slot.truthCount === 'number' &&
+    Number.isFinite(slot.truthCount) &&
+    typeof slot.detectionLevel === 'number' &&
+    Number.isFinite(slot.detectionLevel)
+  );
+}
+
+function readSlotMetadata<T>(key: string, isSlot: (value: unknown) => value is T): T[] {
   if (!isBrowserWithStorage()) return [];
 
   try {
-    const raw = window.localStorage.getItem(SAVES_KEY);
+    const raw = window.localStorage.getItem(key);
     if (!raw) return [];
-    return JSON.parse(raw);
+    const parsed: unknown = JSON.parse(raw);
+    // Ignore damaged index entries without deleting their underlying save data.
+    return Array.isArray(parsed) ? parsed.filter(isSlot) : [];
   } catch {
     return [];
   }
+}
+
+export function getSaveSlots(): SaveSlot[] {
+  return readSlotMetadata(
+    SAVES_KEY,
+    (value): value is SaveSlot =>
+      isSlotMetadata(value) && 'name' in value && typeof value.name === 'string'
+  );
 }
 
 function sortSaveSlots(slots: SaveSlot[]): SaveSlot[] {
@@ -966,15 +992,11 @@ export async function loadAutoSaveAsync(): Promise<GameState | null> {
  * @returns Array of checkpoint slot metadata, empty if none exist
  */
 export function getCheckpointSlots(): CheckpointSlot[] {
-  if (!isBrowserWithStorage()) return [];
-
-  try {
-    const raw = window.localStorage.getItem(CHECKPOINTS_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
+  return readSlotMetadata(
+    CHECKPOINTS_KEY,
+    (value): value is CheckpointSlot =>
+      isSlotMetadata(value) && 'reason' in value && typeof value.reason === 'string'
+  );
 }
 
 /**
