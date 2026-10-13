@@ -21,7 +21,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync, statSync } from 'fs';
-import { join } from 'path';
+import { join, sep } from 'path';
 import { FILESYSTEM_ROOT } from '../../data/virtualFileSystem';
 import { FileSystemNode } from '../../types';
 
@@ -189,7 +189,7 @@ function collectPathReferences(): Reference[] {
       if (!VFS_ROOTS.includes(path.split('/')[1])) continue;
 
       const line = source.slice(0, match.index).split('\n').length;
-      references.push({ path, file, line });
+      references.push({ path, file: file.split(sep).join('/'), line });
     }
   }
 

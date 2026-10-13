@@ -75,8 +75,8 @@ async function writeFormattedFile(filePath: string, source: string): Promise<voi
   writeFileSync(filePath, formatted, 'utf-8');
 }
 
-async function generate(): Promise<void> {
-  const contentPath = resolve(import.meta.dirname, '../app/data/endingsContent.json');
+export async function generate(repoRoot = resolve(import.meta.dirname, '..')): Promise<void> {
+  const contentPath = resolve(repoRoot, 'app/data/endingsContent.json');
   const content = JSON.parse(readFileSync(contentPath, 'utf-8')) as Record<string, EndingRecordV2>;
 
   // 1. English content module.
@@ -89,7 +89,7 @@ async function generate(): Promise<void> {
     JSON.stringify(fields, null, 2) +
     ';\n';
 
-  const contentDir = resolve(import.meta.dirname, '../app/engine/generated');
+  const contentDir = resolve(repoRoot, 'app/engine/generated');
   mkdirSync(contentDir, { recursive: true });
   await writeFormattedFile(resolve(contentDir, 'endingsContent.generated.ts'), contentTs);
 
@@ -102,7 +102,7 @@ async function generate(): Promise<void> {
     JSON.stringify(merged, null, 2) +
     ';\n';
 
-  const suppDir = resolve(import.meta.dirname, '../app/i18n/generated');
+  const suppDir = resolve(repoRoot, 'app/i18n/generated');
   mkdirSync(suppDir, { recursive: true });
   await writeFormattedFile(resolve(suppDir, 'endingsSupplement.generated.ts'), suppTs);
 
