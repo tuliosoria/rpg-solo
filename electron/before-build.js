@@ -38,4 +38,8 @@ module.exports = async function beforeBuild() {
   if (result.status !== 0) {
     throw new Error('Steam App ID preparation failed');
   }
+
+  // Explicitly keep dependency installation/rebuild and runtime module packaging
+  // enabled. A falsy hook result tells electron-builder we handle them ourselves.
+  return true;
 };

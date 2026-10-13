@@ -26,7 +26,7 @@ function packageFixture(appId: string, tag: string) {
     process.execPath,
     [
       '-e',
-      "require('./electron/before-build.js')().catch(e => { console.error(e.message); process.exit(1); })",
+      "require('./electron/before-build.js')().then(result => { require('node:assert/strict').equal(result, true, 'builder must continue packaging runtime dependencies'); }).catch(e => { console.error(e.message); process.exit(1); })",
     ],
     {
       cwd: root,
@@ -51,6 +51,11 @@ describe('desktop release preparation', () => {
     expect(readFileSync(path.join(root, 'electron/steam-app-id.generated.js'), 'utf8')).toContain(
       'module.exports = "1234567"'
     );
+  });
+
+  it('keeps dependency packaging enabled for an ordinary build with a configured App ID', () => {
+    const { result } = packageFixture('1234567', '');
+    expect(result.status, result.stderr).toBe(0);
   });
 
   it('rejects tagged packaging without an App ID', () => {
