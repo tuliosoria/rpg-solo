@@ -119,11 +119,17 @@ jobs:
           STEAM_APP_ID: ${{ secrets.STEAM_APP_ID }}
           REQUIRE_STEAM_APP_ID: '1'
 
+      # Artifact ZIP transport does not preserve executable modes or symlinks.
+      # Keep each app tree inside a tar archive until it reaches the deploy job.
+      - name: Archive unpacked app
+        shell: bash
+        run: tar -cf "steam-content-${{ matrix.platform }}.tar" -C "dist/${{ matrix.content_dir }}" .
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: steam-content-${{ matrix.platform }}
-          path: dist/${{ matrix.content_dir }}
+          path: steam-content-${{ matrix.platform }}.tar
           retention-days: 7
           if-no-files-found: error
 
@@ -147,7 +153,18 @@ jobs:
       - name: Download all build artifacts
         uses: actions/download-artifact@v4
         with:
-          path: steam-content
+          pattern: steam-content-*
+          path: steam-archives
+
+      - name: Restore unpacked apps
+        shell: bash
+        run: |
+          for platform in win mac linux; do
+            mkdir -p "steam-content/steam-content-$platform"
+            tar -xpf "steam-archives/steam-content-$platform/steam-content-$platform.tar" -C "steam-content/steam-content-$platform"
+          done
+          test -x "steam-content/steam-content-linux/varginha-terminal-1996"
+          test -x "steam-content/steam-content-mac/Varginha Terminal 1996.app/Contents/MacOS/Varginha Terminal 1996"
 
       # game-ci/steam-deploy lays out depots from rootPath + depotNPath and
       # generates the SteamPipe VDFs internally. Depot IDs follow the Steamworks
