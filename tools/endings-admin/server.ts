@@ -1,20 +1,20 @@
-import { createServer as createHttpServer, type Server, type IncomingMessage, type ServerResponse } from 'node:http';
+import {
+  createServer as createHttpServer,
+  type Server,
+  type IncomingMessage,
+  type ServerResponse,
+} from 'node:http';
 import { readFile, readFile as readFileAsync, writeFile as writeFileAsync } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, extname } from 'node:path';
 
-import {
-  ENDINGS,
-  determineEnding,
-  analyzeDossier,
-  type EndingId,
-} from '../../app/engine/endings';
+import { ENDINGS, determineEnding, analyzeDossier, type EndingId } from '../../app/engine/endings';
 import { filesByCategory, exampleSaveSet, describeRuleFor } from './rules';
+import { generate } from '../../scripts/gen-endings-from-content';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(__dirname, 'public');
-const CONTENT_PATH = join(__dirname, '../../app/data/endingsContent.json');
 const REPO_ROOT = join(__dirname, '../../');
 
 const MIME: Record<string, string> = {
@@ -61,7 +61,8 @@ async function serveStatic(res: ServerResponse, urlPath: string): Promise<void> 
   }
 }
 
-export function createServer(): Server {
+export function createServer({ repoRoot = REPO_ROOT }: { repoRoot?: string } = {}): Server {
+  const contentPath = join(repoRoot, 'app/data/endingsContent.json');
   return createHttpServer(async (req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
     try {
@@ -76,7 +77,7 @@ export function createServer(): Server {
         return sendJson(res, 200, { endingId, counts, matchedRule: describeRuleFor(endingId) });
       }
       if (req.method === 'GET' && url.pathname === '/api/content') {
-        const raw = await readFileAsync(CONTENT_PATH, 'utf-8');
+        const raw = await readFileAsync(contentPath, 'utf-8');
         res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
         return void res.end(raw);
       }
@@ -85,11 +86,19 @@ export function createServer(): Server {
         if (!body.content || typeof body.content !== 'object') {
           return sendJson(res, 400, { error: 'missing content' });
         }
-        await writeFileAsync(CONTENT_PATH, JSON.stringify(body.content, null, 2) + '\n', 'utf-8');
+        await writeFileAsync(contentPath, JSON.stringify(body.content, null, 2) + '\n', 'utf-8');
         // Regenerate the modules the game consumes.
-        execFileSync('npx', ['tsx', 'scripts/gen-endings-from-content.ts'], { cwd: REPO_ROOT });
+        await generate(repoRoot);
         let diff = '';
-        try { diff = execFileSync('git', ['diff', '--stat'], { cwd: REPO_ROOT, encoding: 'utf-8' }); } catch { /* ignore */ }
+        try {
+          diff = execFileSync('git', ['diff', '--stat'], {
+            cwd: repoRoot,
+            encoding: 'utf-8',
+            stdio: ['ignore', 'pipe', 'ignore'],
+          });
+        } catch {
+          /* ignore */
+        }
         return sendJson(res, 200, { ok: true, diff });
       }
       if (req.method === 'GET' && !url.pathname.startsWith('/api/')) {
