@@ -632,12 +632,14 @@ function createWindow() {
       })
       .catch(error => {
         console.error('[Startup] Local server failed to bind:', error.message);
+        closeSplashWindow();
         if (mainWindow && !mainWindow.isDestroyed()) {
           dialog.showErrorBox(
             'Unable to start',
             `${error.message}\n\nVarginha: Terminal 1996 could not start its local content server.`
           );
         }
+        app.quit();
       });
   }
   return mainWindow;

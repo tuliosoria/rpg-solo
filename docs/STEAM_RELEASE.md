@@ -1,9 +1,13 @@
 # Steam Release Runbook
 
 This is the end-to-end checklist for shipping **Varginha: Terminal 1996** to
-Steam. The code is release-ready; most of the remaining work is one-time setup
-in the **Steamworks partner site** (which only you can do with the partner
-account) plus configuring three GitHub secrets.
+Steam. Completing this checklist requires verified gameplay and save recovery,
+packaged-app smoke tests on the supported platforms, asset rights records, and
+Steamworks account validation. Successful automated builds alone do not establish
+release readiness. Partner-site setup requires the owner's account.
+
+See [desktop save recovery](DESKTOP_SAVES.md) for the stable storage origin and
+the upgrade checks needed for profiles from earlier builds.
 
 `STEAM.md` documents how the *runtime* integration behaves (achievements, cloud,
 presence). This document is the *release pipeline* — how a build actually gets
