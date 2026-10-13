@@ -45,14 +45,20 @@ jobs:
       - name: Build Electron (Windows)
         if: matrix.platform == 'win'
         run: npx electron-builder --config electron-builder.yml --win --x64 --publish never
+        env:
+          STEAM_APP_ID: ${{ secrets.STEAM_APP_ID }}
 
       - name: Build Electron (macOS)
         if: matrix.platform == 'mac'
         run: npx electron-builder --config electron-builder.yml --mac --x64 --arm64 --publish never
+        env:
+          STEAM_APP_ID: ${{ secrets.STEAM_APP_ID }}
 
       - name: Build Electron (Linux)
         if: matrix.platform == 'linux'
         run: npx electron-builder --config electron-builder.yml --linux --x64 --publish never
+        env:
+          STEAM_APP_ID: ${{ secrets.STEAM_APP_ID }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
