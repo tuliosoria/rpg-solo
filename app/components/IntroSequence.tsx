@@ -128,20 +128,22 @@ export default function IntroSequence({ onCompleteAction }: IntroSequenceProps) 
     }
   }, [scene, goTo, finish]);
 
+  const gatePrompt = t('intro.gate.prompt') || 'Click to begin';
+
   return (
     <div
       className={styles.root}
       onClick={handleRootClick}
       role="button"
       tabIndex={0}
-      aria-label={t('intro.skip.aria') || 'Skip intro'}
+      aria-label={scene === 'gate' ? gatePrompt : (t('intro.skip.aria') || 'Skip intro')}
     >
       {scene === 'gate' && (
         <>
           <div className={styles.grain} />
           <div className={styles.gateScene}>
             <div className={styles.gateGlyph}>▶</div>
-            <div className={styles.gateText}>{t('intro.gate.prompt') || 'Click to begin'}</div>
+            <div className={styles.gateText}>{gatePrompt}</div>
           </div>
         </>
       )}

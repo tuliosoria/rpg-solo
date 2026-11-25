@@ -52,7 +52,24 @@ const I18N_BOOTSTRAP_SCRIPT = `
 })();
 `;
 
+const PUBLIC_GAME_URL = 'https://game.terminalufo.com/';
+const PUBLIC_GAME_ICON = `${PUBLIC_GAME_URL}icon.png`;
+
 export const metadata: Metadata = {
+  alternates: { canonical: PUBLIC_GAME_URL },
+  openGraph: {
+    type: 'website',
+    url: PUBLIC_GAME_URL,
+    title: en['meta.title'],
+    description: en['meta.description'],
+    images: [{ url: PUBLIC_GAME_ICON, width: 512, height: 512, alt: en['meta.title'] }],
+  },
+  twitter: {
+    card: 'summary',
+    title: en['meta.title'],
+    description: en['meta.description'],
+    images: [PUBLIC_GAME_ICON],
+  },
   title: en['meta.title'],
   description: en['meta.description'],
 };
@@ -68,7 +85,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="und" suppressHydrationWarning={true}>
+    <html lang="en" suppressHydrationWarning={true}>
       <body
         className="antialiased"
         // suppressHydrationWarning is required because Next.js injects attributes
